@@ -1,8 +1,6 @@
 import SwiftUI
 import UIKit
 
-/// The one way to say something out loud: Record, then Stop with how long it's been, while a
-/// level meter shows the microphone hears the learner. A screen's main action.
 struct RecordButton: View {
   let recorder: VoiceRecorder
   var isDisabled = false
@@ -52,8 +50,6 @@ struct RecordButton: View {
   }
 }
 
-/// How loud the microphone hears the learner, as the waveform symbol filling up. With Reduce
-/// Motion it stays still.
 struct LevelMeter: View {
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   let level: Double
@@ -65,9 +61,6 @@ struct LevelMeter: View {
   }
 }
 
-/// Why help didn't come, in one sentence, and the one thing to do about it: a guest creates a free
-/// account, a free learner gets Plus; Plus and a short break just wait. Port of main's
-/// `HelpLimitNotice`.
 struct HelpLimitNotice: View {
   @Environment(AppRouter.self) private var router
   let limit: HelpLimit
@@ -136,7 +129,6 @@ struct HelpLimitNotice: View {
   }
 }
 
-/// The microphone is off for Zoonk: how to turn it on, and what to do meanwhile.
 struct MicrophoneOffView<Actions: View>: View {
   @Environment(\.openURL) private var openURL
   let description: Text

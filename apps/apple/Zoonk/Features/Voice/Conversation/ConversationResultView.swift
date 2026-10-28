@@ -1,13 +1,9 @@
 import SwiftUI
 
-/// A finished call's result: its stars, goals and Brain Power, what went well and what to improve
-/// (a better way to say something, words to practice saying, each one playable); an exam task or a
-/// speaking mock rates each criterion with the evidence and a tip instead.
 struct ConversationResultView: View {
   @Environment(\.dismiss) private var dismiss
   let conversation: LanguageConversation
-  /// What the call did to the day, when it was just saved here; a call opened later shows only its
-  /// own result.
+  /// Nil for a call opened later, which shows only its own result.
   var day: DayResult?
 
   var body: some View {
@@ -152,9 +148,7 @@ struct ConversationResultView: View {
     }
   }
 
-  /// A criterion's name: an exam task's official one, or the speaking mocks' as learners read them.
-  /// An exam task's criterion's official name, in the exam's language, shown beside what it rates
-  /// in the learner's words.
+  /// In the exam's language, shown beside what it rates in the learner's words.
   private func officialName(_ key: String) -> String? {
     conversation.speakingTask?.criteria.first { $0.key == key }?.name
   }
@@ -165,7 +159,6 @@ struct ConversationResultView: View {
 
 }
 
-/// A practice call's or checkpoint's feedback: what went well, then what to improve.
 private struct CallFeedbackSections: View {
   let conversation: LanguageConversation
   let feedback: Components.Schemas.LanguageCallFeedback
@@ -258,7 +251,6 @@ private struct CallFeedbackSections: View {
   }
 }
 
-/// An exam task's or a speaking mock's rating: each criterion's band range, the evidence and a tip.
 private struct CriteriaSection: View {
   struct Criterion {
     let name: String
@@ -325,7 +317,6 @@ private struct CriteriaSection: View {
   }
 }
 
-/// Plays a phrase read aloud in its language; the phrase stays on screen if the sound fails.
 struct SpeakButton: View {
   @Environment(VoiceServices.self) private var voice
   @State private var owner = UUID()
@@ -364,7 +355,6 @@ struct SpeakButton: View {
 }
 
 extension LabeledContentStyle where Self == VerticalLabeledContentStyle {
-  /// The label over its content, for longer phrases.
   fileprivate static var vertical: VerticalLabeledContentStyle { VerticalLabeledContentStyle() }
 }
 

@@ -2,9 +2,7 @@ import Foundation
 import HTTPTypes
 import OpenAPIRuntime
 
-/// The voice feature's requests: recordings to grade, clips to voice, pronunciation rounds, the
-/// speaking paper and live calls. Refusals the screens explain come back as `VoiceRefusal`; every
-/// other failure is an `APIError`.
+/// Refusals the screens explain come back as `VoiceRefusal`; every other failure is an `APIError`.
 struct VoiceAPI: Sendable {
   private let clients: APIClientFactory
 
@@ -12,9 +10,6 @@ struct VoiceAPI: Sendable {
     self.clients = clients
   }
 
-  // MARK: - Recordings
-
-  /// Grades a lesson's spoken screen (`createSpokenAnswer`).
   func answerSpokenStep(
     stepId: String,
     studySessionId: String?,
@@ -56,7 +51,6 @@ struct VoiceAPI: Sendable {
     }
   }
 
-  /// Grades a review word said again (`answerPronunciationReview`).
   func answerPronunciation(
     reviewId: String,
     goalId: String,
@@ -97,7 +91,6 @@ struct VoiceAPI: Sendable {
     }
   }
 
-  /// Grades the level test's sentence said out loud (`answerLanguageLevelTestOutLoud`).
   func answerLevelTestOutLoud(
     goalId: String,
     recording: VoiceRecording,
@@ -134,9 +127,7 @@ struct VoiceAPI: Sendable {
     }
   }
 
-  // MARK: - Clips
-
-  /// The clip that reads `text` aloud (`requestSpeechClip`): only ever on a learner's tap.
+  /// Only ever on a learner's tap.
   func speechClip(
     text: String,
     language: String,
@@ -167,8 +158,6 @@ struct VoiceAPI: Sendable {
       }
     }
   }
-
-  // MARK: - Pronunciation rounds
 
   func pronunciationReviews(
     goalId: String,
@@ -211,9 +200,7 @@ struct VoiceAPI: Sendable {
     }
   }
 
-  // MARK: - Speaking practice
-
-  /// A language goal's speaking paper; nil when no exam's format fits the goal.
+  /// Nil when no exam's format fits the goal.
   func speakingPaper(goalId: String, token: String) async throws -> Components.Schemas
     .SpeakingPaper?
   {

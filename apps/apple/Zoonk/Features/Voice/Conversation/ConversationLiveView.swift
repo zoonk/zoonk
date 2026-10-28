@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// The call itself: who the learner talks to, the goals as they're met, what was said with the
-/// call's status under it, and a tip for the next goal (or, when the plan's call time is running
-/// out, that it is); the clock on top; at the bottom a typed reply and three controls: Help
-/// (phrases to use), the microphone, which mutes, and End. Nothing is graded while talking.
+/// Nothing is graded while talking.
 struct ConversationLiveView: View {
   @Environment(\.horizontalSizeClass) private var sizeClass
   @State private var reply = ""
@@ -41,7 +38,6 @@ struct ConversationLiveView: View {
       .frame(maxWidth: .infinity, alignment: .leading)
       .scenePadding()
     }
-    // Starts at the top, then follows what's said.
     .defaultScrollAnchor(.top, for: .alignment)
     .defaultScrollAnchor(.bottom, for: .sizeChanges)
     .scrollDismissesKeyboard(.interactively)
@@ -54,7 +50,6 @@ struct ConversationLiveView: View {
       }
       .scenePadding()
     }
-    // On a wide screen the goals, the tip and Help's phrases sit beside the call, as main's aside.
     .inspector(isPresented: .constant(showsAside)) {
       ScrollView {
         VStack(alignment: .leading, spacing: 20) {
@@ -107,8 +102,6 @@ struct ConversationLiveView: View {
       : String(localized: "Listening…", table: "Voice", comment: "The call is listening")
   }
 
-  /// What was said: the character's words as plain text on the left, the learner's in a soft
-  /// bubble on the right.
   private var transcript: some View {
     VStack(alignment: .leading, spacing: 12) {
       ForEach(Array(call.turns.enumerated()), id: \.offset) { _, turn in
@@ -179,7 +172,7 @@ struct ConversationLiveView: View {
     }
   }
 
-  /// Typing works from the first ring: what's sent while the call connects goes out once it does.
+  /// What's sent while the call connects goes out once it does.
   private var typedReply: some View {
     HStack(spacing: 8) {
       TextField(
@@ -206,7 +199,7 @@ struct ConversationLiveView: View {
     }
   }
 
-  /// Help, the microphone and End, one row of equal buttons. Hanging up is the one red control.
+  /// Hanging up is the one red control.
   private var controls: some View {
     HStack(spacing: 8) {
       Button {
@@ -253,7 +246,6 @@ struct ConversationLiveView: View {
   }
 }
 
-/// The call's goals, checked off as they're met.
 private struct CallGoals: View {
   let conversation: LanguageConversation
   let met: [String]
@@ -295,7 +287,6 @@ private struct CallGoals: View {
   }
 }
 
-/// The clock in the bar: a blue dot once the call is live, how long it's run and its length.
 private struct CallClock: View {
   let call: LiveCall
 

@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// The voice feature's part of the lesson player, set once at the app root: a lesson's recordings
-/// and clips play through the app's one player (a clip only on the learner's tap), and spoken
-/// screens record and grade out loud.
+/// A clip that has to be voiced plays only on the learner's tap.
 extension LessonAudio {
   static func voice(_ voice: VoiceServices) -> LessonAudio {
     LessonAudio(
@@ -19,11 +17,8 @@ extension SpokenAnswerRecording {
   }
 }
 
-/// Whose sound a lesson plays: one at a time, like every screen's.
 private let lessonSound = "lesson"
 
-/// Records a spoken screen's sentence and grades it (`createSpokenAnswer`); the player shows the
-/// verdict. An answered screen shows no recorder.
 private struct SpokenStepRecorder: View {
   let context: SpokenAnswerContext
 

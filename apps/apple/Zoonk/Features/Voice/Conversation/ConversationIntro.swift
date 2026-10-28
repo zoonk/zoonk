@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Before the call: what it is, who the learner talks to and what to get across, or an exam
-/// task's card; then Start. A call the learner's plan leaves to Plus shows the same intro, locked.
+/// A call the learner's plan leaves to Plus shows the same intro, locked.
 struct ConversationIntro: View {
   let conversation: LanguageConversation
   let isLocked: Bool
@@ -92,8 +91,6 @@ struct ConversationIntro: View {
   }
 }
 
-/// Who the learner talks to: their initial, their name, and who they are ("Landlord · Toronto").
-/// While they talk, a ring around the initial shows it.
 struct CharacterRow: View {
   let conversation: LanguageConversation
   let isTalking: Bool
@@ -135,8 +132,6 @@ struct CharacterRow: View {
   }
 }
 
-/// An exam task's card as the candidate gets it: what to do, the points to cover, a text, a table
-/// or photos, in the exam's language.
 private struct ExamTaskCard: View {
   let task: Components.Schemas.ExamSpeakingTask
 

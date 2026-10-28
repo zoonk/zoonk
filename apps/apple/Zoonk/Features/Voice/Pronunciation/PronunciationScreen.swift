@@ -1,16 +1,12 @@
 import SwiftUI
 
-/// "Say it again": the words a language learner mispronounced, back when they're due, one at a
-/// time with their native sound, a slow version, the respelling and the tip; they record it, see
-/// what we heard, and try again or go on, and the round counts toward their day at the end. A word
-/// they can't say right now is skipped from the "…" menu. Nothing due shows a short note.
 struct PronunciationScreen: View {
   @Environment(VoiceServices.self) private var voice
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(\.dismiss) private var dismiss
   @State private var reviews: Resource<Components.Schemas.PronunciationReviews>?
 
-  /// The goal whose words to say again; the active goal when the link names none.
+  /// Nil for the active goal.
   var goalId: String? = nil
 
   var body: some View {
@@ -86,7 +82,6 @@ struct PronunciationScreen: View {
   }
 }
 
-/// A round over the words it opened with.
 private struct PronunciationRoundView: View {
   @Environment(VoiceServices.self) private var voice
   @Environment(\.dismiss) private var dismiss
@@ -119,7 +114,6 @@ private struct PronunciationRoundView: View {
 
     return PronunciationRound.Actions(
       answer: { reviewId, roundId, recording in
-        // The word's next review moves.
         await voice.grade(invalidating: [.learnerModel]) { [api = voice.api] token in
           try await api.answerPronunciation(
             reviewId: reviewId, goalId: goalId, roundId: roundId, recording: recording,
@@ -127,7 +121,6 @@ private struct PronunciationRoundView: View {
         }
       },
       finish: { roundId in
-        // Brain Power, today's time and missions.
         await voice.cache.mutate(invalidating: [.userProgress]) { [api = voice.api] identity in
           try await api.completePronunciationRound(
             roundId: roundId, goalId: goalId, token: identity.bearerToken)
@@ -195,7 +188,6 @@ private struct PronunciationRoundView: View {
     }
   }
 
-  /// Skipping a word is offered while it waits to be said and the microphone is on.
   private func showsOptions(_ state: PronunciationRound.WordState) -> Bool {
     if case .ready = state { return !recorder.isDenied }
     return false
@@ -347,8 +339,6 @@ private struct PronunciationRoundView: View {
   }
 }
 
-/// One part per word: blue once it sounded right, pink when it didn't yet, quiet if skipped, a ring
-/// on the word in view, then the ones ahead.
 private struct RoundMeter: View {
   let round: PronunciationRound
 
@@ -378,7 +368,6 @@ private struct RoundMeter: View {
   }
 }
 
-/// What the grader heard, and when the word comes back.
 private struct GradeNote: View {
   let grade: PronunciationRound.Grade
 
@@ -418,13 +407,10 @@ private struct GradeNote: View {
   }
 }
 
-/// The round's end: "Practice done" with what an accent means under it, the tries that sounded
-/// right and the Brain Power it paid; with nothing said, its own title.
 private struct PronunciationResultView: View {
   let isEmpty: Bool
   let result: PronunciationRound.Result?
 
-  /// What the round did to the learner's day.
   private var day: DayResult? {
     result.flatMap { DayResult($0) }
   }

@@ -1,17 +1,14 @@
 import AVFoundation
 import Observation
 
-/// A spoken answer as the API takes it: AAC in an M4A file, and how long the learner spoke.
 struct VoiceRecording: Sendable {
   let audio: Data
   let durationMs: Int
 }
 
-/// Records one short answer from the microphone: a word, a sentence, the level test's line. The
-/// system asks for the microphone the first time; a learner who said no gets `denied`, and screens
-/// explain how to turn it on. Each recording lives in a temporary file that's read and deleted as
-/// soon as it stops, so nothing is kept. An interruption (a phone call, Siri) throws the recording
-/// away: half a sentence isn't worth grading.
+/// Each recording lives in a temporary file that's read and deleted as soon as it stops, so nothing
+/// is kept. An interruption (a phone call, Siri) throws the recording away: half a sentence isn't
+/// worth grading.
 @MainActor
 @Observable
 final class VoiceRecorder {
@@ -26,7 +23,7 @@ final class VoiceRecorder {
   static let maxDuration: TimeInterval = 30
 
   private(set) var status = Status.idle
-  /// The input's loudness from 0 to 1, for a level meter while recording.
+  /// From 0 to 1.
   private(set) var level: Double = 0
 
   @ObservationIgnored private var recorder: AVAudioRecorder?
@@ -43,15 +40,12 @@ final class VoiceRecorder {
     return false
   }
 
-  /// Whether the learner turned the microphone off for the app. Before they're asked it's false:
-  /// tapping Record asks.
+  /// False before the learner is asked: tapping Record asks.
   var isDenied: Bool {
     status == .denied || AVAudioApplication.shared.recordPermission == .denied
   }
 
-  /// Starts recording, asking for the microphone first if the learner wasn't asked yet. The
-  /// recording comes to `onRecorded` when the learner stops or it reaches `maxDuration`. False when
-  /// the microphone is off or couldn't start.
+  /// False when the microphone is off or couldn't start.
   @discardableResult
   func start(onRecorded: @escaping @MainActor (VoiceRecording) -> Void) async -> Bool {
     guard status == .idle || status == .denied else {
@@ -92,12 +86,10 @@ final class VoiceRecorder {
     return true
   }
 
-  /// Stops and delivers the recording.
   func stop() {
     recorder?.stop()
   }
 
-  /// Stops without delivering anything, as leaving the screen does.
   func cancel() {
     onRecorded = nil
     recorder?.stop()
@@ -127,7 +119,6 @@ final class VoiceRecorder {
     return try? AVAudioRecorder(url: url, settings: settings)
   }
 
-  /// The recorder stopped: by Stop, its time limit, or an interruption.
   private func finish() {
     guard let recorder else {
       return
@@ -163,7 +154,6 @@ final class VoiceRecorder {
     recorder.deleteRecording()
   }
 
-  /// Samples the input ten times a second. Screens draw it only while recording.
   private func startMeter() {
     meter = Task { [weak self] in
       while !Task.isCancelled {

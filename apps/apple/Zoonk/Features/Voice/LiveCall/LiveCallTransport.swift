@@ -2,8 +2,7 @@ import AVFoundation
 import Foundation
 import WebRTC
 
-/// What GPT-Live says on the call's data channel that the call acts on. Its other events (usage,
-/// acknowledgments, errors for a cue it rejected) don't move the call.
+/// GPT-Live's other events (usage, acknowledgments, errors for a cue it rejected) don't move the call.
 enum LiveServerEvent: Equatable, Sendable {
   case started
   case closed
@@ -40,7 +39,6 @@ enum LiveClientCommand: Equatable, Sendable {
 }
 
 extension LiveServerEvent {
-  /// Reads one data-channel message; nil for events the call doesn't act on.
   init?(json: Data) {
     struct Envelope: Decodable {
       struct Delegation: Decodable { let id: String }
@@ -85,16 +83,12 @@ extension LiveServerEvent {
   }
 }
 
-/// A call's connection to GPT-Live. The live one is WebRTC; tests use a fake.
 @MainActor
 protocol LiveCallTransport: AnyObject {
-  /// GPT-Live's events, on the main actor.
   var onEvent: ((LiveServerEvent) -> Void)? { get set }
   /// The connection went away without GPT-Live saying the session closed.
   var onLost: (() -> Void)? { get set }
-  /// Opens the microphone's track and the data channel and returns the offer to send.
   func makeOffer() async throws -> String
-  /// Applies GPT-Live's answer and waits for the data channel to open.
   func accept(answer: String) async throws
   func send(_ command: LiveClientCommand)
   /// Stops the learner's audio going out and the character's playing, for good.
@@ -102,9 +96,7 @@ protocol LiveCallTransport: AnyObject {
   func close()
 }
 
-/// The call over WebRTC: the microphone goes out as the call's audio track, the character's voice
-/// plays back through the system's voice-chat audio (echo cancellation, Bluetooth, the speaker),
-/// and GPT-Live's events come on the `oai-events` data channel. The peer is created per call and
+/// GPT-Live's events come on the `oai-events` data channel. The peer is created per call and
 /// released when it closes.
 @MainActor
 final class WebRTCLiveCallTransport: LiveCallTransport {
@@ -223,8 +215,6 @@ final class WebRTCLiveCallTransport: LiveCallTransport {
     onLost = nil
   }
 
-  // MARK: - Peer events, on the main actor
-
   fileprivate func iceGatheringChanged(_ state: RTCIceGatheringState) {
     if state == .complete {
       gathered?.resume()
@@ -284,8 +274,6 @@ final class WebRTCLiveCallTransport: LiveCallTransport {
     onLost?()
   }
 
-  /// A voice call: the learner's microphone and the character's voice through the speaker (or
-  /// headphones), with the system's echo cancellation, kept running in the background.
   private func configureAudioSession() {
     let configuration = RTCAudioSessionConfiguration.webRTC()
     configuration.category = AVAudioSession.Category.playAndRecord.rawValue

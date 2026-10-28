@@ -1,10 +1,6 @@
 import SwiftUI
 
-/// A language goal's phase or final challenge is the unit's live call: Start creates its checkpoint
-/// call and opens it in the screen's place, only on the learner's tap. The challenge screen
-/// (practice lane) shows this in place of its Start through `PracticeHooks.challengeCall`, which
-/// begins the challenge's block first; a checkpoint opened from the session already has its block
-/// (`PracticeHooks.checkpointCall`). A call the learner's plan leaves to Plus shows the Plus lock.
+/// Start creates the checkpoint call only on the learner's tap.
 struct ChallengeCallView: View {
   @Environment(VoiceServices.self) private var voice
   @Environment(PracticeStore.self) private var practice
@@ -100,7 +96,6 @@ struct ChallengeCallView: View {
 }
 
 extension ChallengeCallView {
-  /// The checkpoint's block: a challenge's starts now, a session's already has one.
   fileprivate func block() async -> String? {
     switch challenge {
     case .block(let blockId):
@@ -123,7 +118,6 @@ extension ChallengeCallView {
   }
 }
 
-/// A language checkpoint opened straight from the session: the unit's call, started on a tap.
 struct CheckpointCallView: View {
   let blockId: String
 
@@ -145,7 +139,6 @@ struct CheckpointCallView: View {
 }
 
 extension MutationResult {
-  /// The write failed for the learner still here; an obsolete one says nothing.
   fileprivate var isFailure: Bool {
     if case .failed = self {
       return true

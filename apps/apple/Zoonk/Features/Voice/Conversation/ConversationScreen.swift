@@ -1,20 +1,17 @@
 import SwiftUI
 
-/// A live conversation from its intro to its result: a unit's practice call, a language goal's
-/// checkpoint, an IELTS or TOEFL speaking mock, or a task of a DELE, DELF, Goethe or Cambridge
-/// speaking paper. A call that already ended opens on its result.
+/// A call that already ended opens on its result.
 struct ConversationScreen: View {
   @Environment(VoiceServices.self) private var voice
   @Environment(\.dismiss) private var dismiss
   @State private var conversation: Resource<LanguageConversation>?
   /// A call in progress can't be swiped away: End hangs it up and saves it.
   @State private var isInCall = false
-  /// What the call just saved did to the learner's day, for its result.
   @State private var day: DayResult?
 
   let conversationId: String
-  /// A running mock's speaking task goes back to the mock once its call is saved, without the
-  /// call's own result: the mock's result reads it.
+  /// A running mock's speaking task goes back to the mock without the call's own result: the mock's
+  /// result reads it.
   var onSaved: (() -> Void)? = nil
 
   var body: some View {
@@ -92,7 +89,6 @@ struct ConversationScreen: View {
             return
           }
 
-          // The saved call's result, with its feedback, replaces the run.
           day = saved
           await resource.refresh()
         }
@@ -102,7 +98,6 @@ struct ConversationScreen: View {
   }
 }
 
-/// Where saving a finished call stands.
 enum LiveCallSaveState: Equatable {
   case saving
   case closing
@@ -111,7 +106,6 @@ enum LiveCallSaveState: Equatable {
   case takenOver
 }
 
-/// What kind of call this is, as the header says it; an exam task names its exam ("DELE B2").
 struct ConversationTitle {
   let conversation: LanguageConversation
 
@@ -137,8 +131,6 @@ struct ConversationTitle {
   }
 }
 
-/// One call from the first ring to hanging up, then saved once with what was said. "Try again"
-/// and a takeover start a fresh run that calls right away.
 private struct LiveCallRun: View {
   @Environment(VoiceServices.self) private var voice
   @Environment(\.dismiss) private var dismiss
@@ -188,7 +180,6 @@ private struct LiveCallRun: View {
     }
   }
 
-  /// A fresh run: "Try again" calls right away, a takeover ends the other call first.
   private func restart(takeover: Bool = false, callNow: Bool = true) {
     call?.leave()
     saving = nil
@@ -278,7 +269,6 @@ private struct LiveCallRun: View {
 
     switch completion {
     case .done(.completed(let completed)):
-      // Brain Power, missions, today's time, the unit's or exam's standing, and call time.
       voice.cache.invalidate([.userProgress, .goals, .learnerModel, .allowance])
       await onSaved(DayResult(completed))
     case .done(.ended):

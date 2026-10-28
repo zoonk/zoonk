@@ -1,9 +1,5 @@
 import SwiftUI
 
-/// Records one spoken answer and has it graded: Record, Stop, then the grade goes to `onGraded`.
-/// While it's checked the button waits; a recording with no words, a failed check or a used-up
-/// limit is explained under it, and Record tries again. Used by the lesson's spoken screens and the
-/// level test's sentence; the host draws the verdict.
 struct VoiceAnswerRecorder<Grade: Sendable>: View {
   @Environment(VoiceServices.self) private var voice
   @State private var recorder = VoiceRecorder()
@@ -12,10 +8,9 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
 
   let grade: @MainActor (VoiceServices, VoiceRecording) async -> GradeOutcome<Grade>
   let onGraded: @MainActor (Grade) -> Void
-  /// Says "Tap and say it out loud" while idle; off where the screen already asks.
   var asksToSpeak = true
-  /// Where the screen has another way to answer (typing), a microphone that's off hands over to
-  /// it instead of showing how to turn it on.
+  /// A microphone that's off hands over to the screen's other way to answer instead of showing how
+  /// to turn it on.
   var onBlocked: (() -> Void)?
 
   private enum Issue: Equatable {
@@ -117,8 +112,6 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
 }
 
 extension VoiceServices {
-  /// Grades a lesson's spoken screen. What the learner says feeds their pronunciation reviews, so
-  /// the learner model changes.
   func gradeSpokenStep(
     stepId: String,
     studySessionId: String?,
@@ -130,7 +123,6 @@ extension VoiceServices {
     }
   }
 
-  /// Grades the level test's sentence said out loud; the test's next step comes with it.
   func gradeLevelTestSentence(
     goalId: String,
     recording: VoiceRecording

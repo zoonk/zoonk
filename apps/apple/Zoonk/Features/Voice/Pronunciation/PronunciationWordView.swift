@@ -1,11 +1,9 @@
 import SwiftUI
 
-/// The word on the page, as large as a title, as a native speaker says it, then slowly, with how
-/// to spell the sound and how to fix it.
 struct PronunciationWordView: View {
   let word: PronunciationRound.Word
   let language: String
-  /// Who the word's sound belongs to, so leaving the round stops it.
+  /// So leaving the round stops the word's sound.
   let owner: AnyHashable
 
   var body: some View {
@@ -42,9 +40,6 @@ struct PronunciationWordView: View {
   }
 }
 
-/// Listen and Listen slowly: the native recording when the word has one, otherwise the word read
-/// aloud in its language. The button that started the sound shows it loading or playing, and a
-/// second tap stops it.
 private struct ListenButtons: View {
   @Environment(VoiceServices.self) private var voice
   @State private var pace = Pace.normal

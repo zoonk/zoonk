@@ -1,9 +1,6 @@
 import Foundation
 import Observation
 
-/// The voice feature's app-wide parts, created once in the composition root and read from the
-/// environment: the requests, the one player every screen's sounds go through, and the cache that
-/// learns what a recording or a call changed.
 @MainActor
 @Observable
 final class VoiceServices {
@@ -24,8 +21,7 @@ final class VoiceServices {
       api: api, session: cache.session, files: VoiceFileCache(apiURL: clients.serverURL))
   }
 
-  /// Grades a recording for the current learner through `AppCache.mutate`; what was heard
-  /// changes `domains` only once it's graded.
+  /// What was heard changes `domains` only once it's graded.
   func grade<Value: Sendable>(
     invalidating domains: Set<DataDomain> = [],
     _ request: (String) async throws -> Refusable<Value>
@@ -47,8 +43,6 @@ final class VoiceServices {
     }
   }
 
-  /// A language goal's speaking paper, kept for the app's lifetime. A finished exam task's call
-  /// changes its last tries.
   func speakingPaper(goalId: String) -> Resource<Components.Schemas.SpeakingPaper> {
     if let paper = speakingPapers[goalId] {
       return paper

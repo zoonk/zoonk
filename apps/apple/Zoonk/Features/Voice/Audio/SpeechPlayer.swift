@@ -2,22 +2,18 @@ import AVFoundation
 import CryptoKit
 import Observation
 
-/// What to play: a recording, or text read aloud in its language when it has none (a clip asked
-/// for on the learner's tap). `personal` text is the learner's own words, read in a clip of theirs.
+/// `personal` text is the learner's own words, read in a clip of theirs.
 enum SpokenSound: Hashable, Sendable {
   case recording(URL)
   case text(String, language: String, personal: Bool = false)
 
-  /// A word with a native recording plays it; without one, it's read aloud.
   static func word(_ text: String, recording: URL?, language: String) -> SpokenSound {
     recording.map(SpokenSound.recording) ?? .text(text, language: language)
   }
 }
 
-/// Every sound the app plays for learning, one at a time: starting one stops the last, and the
-/// screen that started it sees whether it's loading, playing or failed. Text without a recording
-/// is voiced by `POST /v1/speech-clips` on the learner's tap only, once per session however often
-/// it plays; the files are kept on disk so a word heard yesterday plays at once and offline.
+/// Text without a recording is voiced only on the learner's tap, once per session however often it
+/// plays.
 @MainActor
 @Observable
 final class SpeechPlayer {
@@ -25,14 +21,13 @@ final class SpeechPlayer {
     case idle
     case loading
     case playing
-    /// The sound didn't come; with a limit when the plan's help for the day is used up.
     case failed(HelpLimit?)
   }
 
   /// Slow enough to hear each sound, close enough to real speech to still sound like the word.
   static let slowRate: Float = 0.7
 
-  /// What the sound `owner` started is doing; other screens' sounds read as idle.
+  /// Other screens' sounds read as idle.
   func state(for owner: AnyHashable) -> State {
     current?.owner == owner ? current?.state ?? .idle : .idle
   }
@@ -53,8 +48,7 @@ final class SpeechPlayer {
     self.files = files
   }
 
-  /// Plays `sound` for `owner` and returns when it ends, stops or fails. A recording that won't
-  /// play is read aloud instead when `fallback` text is given.
+  /// A recording that won't play is read aloud instead when `fallback` text is given.
   func play(
     _ sound: SpokenSound,
     rate: Float = 1,
@@ -97,7 +91,7 @@ final class SpeechPlayer {
     }
   }
 
-  /// Stops `owner`'s sound; another screen's keeps playing.
+  /// Another screen's sound keeps playing.
   func stop(owner: AnyHashable) {
     guard current?.owner == owner else {
       return
@@ -127,8 +121,7 @@ final class SpeechPlayer {
     }
   }
 
-  /// The clip for the text, asked for once per session. A failure isn't kept, so trying again
-  /// asks again. Another session never reuses this one's clips.
+  /// A failure isn't kept, so trying again asks again. Another session never reuses this one's clips.
   private func clipURL(_ key: ClipKey) async throws -> URL {
     guard let owner = session.authenticatedSession else {
       throw APIError.unauthorized
@@ -210,7 +203,6 @@ private final class PlayerDelegate: NSObject, AVAudioPlayerDelegate {
     self.continuation = continuation
   }
 
-  /// Stopped by a newer sound or the screen: the playback ends quietly.
   func finish() {
     finish(throwing: CancellationError())
   }
@@ -238,8 +230,7 @@ private final class PlayerDelegate: NSObject, AVAudioPlayerDelegate {
   }
 }
 
-/// Sound files kept in the app's caches folder by their URL, so a clip downloads once. The system
-/// may clear the folder when space runs low; a missing file downloads again.
+/// The system may clear the caches folder when space runs low; a missing file downloads again.
 struct VoiceFileCache: Sendable {
   private let apiURL: URL
   private let directory: URL

@@ -2,11 +2,9 @@ import AVFoundation
 import Foundation
 import Observation
 
-/// What a call needs from the server and the device, so the engine runs against fakes in tests.
 struct LiveCallClient {
   /// Reserves the call; `takeover` ends the learner's other open call first.
   let connect: @MainActor (_ takeover: Bool) async -> CallReservation
-  /// Trades the WebRTC offer for GPT-Live's answer.
   let redeem: @MainActor (_ connectionId: String, _ offer: String) async throws -> String
   /// Has the server hang up: whether it already had at the call's deadline, nil if unconfirmed.
   let end: @MainActor (_ connectionId: String) async -> Bool?
@@ -17,14 +15,9 @@ struct LiveCallClient {
   let requestMicrophone: @MainActor () async -> Bool
 }
 
-/// A live call on GPT-Live, as main's `useLiveCall` runs it. The microphone is asked for first,
-/// so the permission prompt never takes time from the call; then the call is reserved on the
-/// server, which fixes its deadline and creates the session; the device sends its audio and plays
-/// the character's voice over WebRTC. The transcript builds up from both sides, the goals are
-/// checked once the character answers each learner turn, and the call wraps up before its
-/// deadline. Ending it, from here or by the server, silences it at once; the server then hangs it
-/// up and confirms before the peer goes and before anything is saved. Typing always works, even
-/// while the call connects (those replies go out once it does).
+/// Mirrors main's `useLiveCall`. The microphone is asked for first, so the permission prompt never
+/// takes time from the call. Ending it silences it at once; the server then hangs it up and confirms
+/// before the peer goes and before anything is saved.
 @MainActor
 @Observable
 final class LiveCall {
@@ -36,7 +29,6 @@ final class LiveCall {
     case failed
   }
 
-  /// Why the call couldn't go on.
   enum Failure: Equatable {
     case callInProgress
     case callsPaused
@@ -71,7 +63,6 @@ final class LiveCall {
   private(set) var micBlocked = false
   private(set) var reconnecting = false
   private(set) var isCharacterTalking = false
-  /// When the call went live, for its clock.
   private(set) var liveSince: Date?
   /// The plan's call time running out while the character wraps up: today's or this month's.
   private(set) var limitNear: EndsAtLimit?
@@ -107,8 +98,7 @@ final class LiveCall {
     limitSeconds = conversation.minutes * 60
   }
 
-  /// Starts a call: the microphone, then the reservation, then the peer. Leaving the screen or
-  /// starting again cancels a start still on its way.
+  /// Leaving the screen or starting again cancels a start still on its way.
   func start(takeover: Bool = false) async {
     attempt += 1
     let mine = attempt
@@ -165,7 +155,6 @@ final class LiveCall {
     }
   }
 
-  /// Ends the call from here: silenced at once, then saved by the screen.
   func hangUp() {
     guard phase == .connecting || phase == .live else {
       return
@@ -175,8 +164,7 @@ final class LiveCall {
     phase = .ended
   }
 
-  /// Leaving the screen ends the call too: one still going shows as dropped, and the server
-  /// hangs it up.
+  /// A call still going shows as dropped, and the server hangs it up.
   func leave() {
     attempt += 1
 
@@ -190,7 +178,7 @@ final class LiveCall {
     }
   }
 
-  /// A reply the learner typed joins the transcript at once; while the call connects it waits.
+  /// While the call connects, a typed reply waits.
   func sendText(_ text: String) {
     let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
 
@@ -208,7 +196,6 @@ final class LiveCall {
     }
   }
 
-  /// The microphone button mutes the learner during a live call: GPT-Live ignores their audio.
   func toggleMute() {
     guard phase == .live, !micBlocked else {
       return
@@ -218,9 +205,8 @@ final class LiveCall {
     transport?.send(.mute(muted))
   }
 
-  /// Hangs the call up on the server and returns what it saves, whether or not the hangup went
-  /// through: completing hangs it up too before anything is reviewed. Nil only for a call that
-  /// never got a connection.
+  /// Returns what it saves whether or not the hangup went through: completing hangs it up too before
+  /// anything is reviewed. Nil only for a call that never got a connection.
   func finish() async -> Components.Schemas.LanguageConversationCompletionInput? {
     guard let connectionId else {
       return nil
@@ -236,10 +222,8 @@ final class LiveCall {
       usedHelp: false)
   }
 
-  /// Ends the call on this device at once (silence, then the peer goes, which also ends any wait
-  /// for ICE or the channel) and has the server hang it up: true once the server confirmed. The
-  /// connection's ID stays for that, so asking again after a failure sends a new request, and
-  /// nothing is saved until the server confirms.
+  /// True once the server confirmed the hangup. The connection's ID stays, so asking again after a
+  /// failure sends a new request, and nothing is saved until the server confirms.
   func release() async -> Bool {
     silence()
     closeTransport()
@@ -267,8 +251,6 @@ final class LiveCall {
     ending = task
     return await task.value
   }
-
-  // MARK: - Reservation
 
   private func reserve(takeover: Bool, isCurrent: () -> Bool) async -> CallReservation? {
     let first = await client.connect(takeover)
@@ -306,8 +288,6 @@ final class LiveCall {
     case .ready, .failed, .previousConnectionClosing: .connect
     }
   }
-
-  // MARK: - Events
 
   private func handle(_ event: LiveServerEvent, run: Int) {
     guard run == attempt else {
@@ -384,8 +364,6 @@ final class LiveCall {
     startClock()
   }
 
-  /// The call's clock while it's live: an exam task's cues as it runs, the wrap-up before the end,
-  /// a nudge when the learner is quiet, and the end at the deadline or after a long silence.
   private func startClock() {
     let cues = conversation.speakingTask?.cues ?? []
 
@@ -428,8 +406,7 @@ final class LiveCall {
       })
   }
 
-  /// Every word the learner says or types keeps the call from ending on its silence timeout, and
-  /// the character's next answer gets its goals checked.
+  /// Every word the learner says or types keeps the call from ending on its silence timeout.
   private func learnerTurn() {
     lastLearnerAt = .now
     nudged = false
@@ -466,8 +443,7 @@ final class LiveCall {
     }
   }
 
-  /// One check at a time; a turn that ends meanwhile is checked right after it. GPT-Live is told
-  /// where the learner is, so it wraps up once everything is done.
+  /// One check at a time; a turn that ends meanwhile is checked right after it.
   private func checkObjectives() async {
     guard !checking else {
       checkAgain = true
@@ -489,8 +465,6 @@ final class LiveCall {
 
     checking = false
   }
-
-  // MARK: - Ending
 
   /// The connection went away without GPT-Live saying the session closed: our server hanging it up
   /// at its deadline closes the channel that way, and that call ended normally; anything else
@@ -525,8 +499,6 @@ final class LiveCall {
     Task { _ = await release() }
   }
 
-  /// Silences the call on this side for good: the learner's audio stops going out and the
-  /// character's stops playing, while the server closes the session.
   private func silence() {
     for timer in timers {
       timer.cancel()
@@ -557,8 +529,7 @@ extension CallReservation {
 }
 
 extension LiveCallClient {
-  /// The live client: the API for the call's conversation, WebRTC, and the system's microphone
-  /// prompt. Every request runs under the session that started the call.
+  /// Every request runs under the session that started the call.
   @MainActor
   static func live(conversationId: String, voice: VoiceServices, api: LiveCallAPI) -> LiveCallClient
   {
@@ -625,7 +596,6 @@ extension LiveCallClient {
   }
 }
 
-/// The learner who reserved a call, for hanging it up under them.
 @MainActor
 private final class CallOwner {
   var identity: AuthenticatedSession?

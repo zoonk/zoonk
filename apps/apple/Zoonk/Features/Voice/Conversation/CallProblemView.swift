@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// Why the call can't go on (it didn't connect, it dropped, it ended, calls are paused, another
-/// call is open, the plan's call time is used): one title and what to do, never the learner's
-/// fault.
+/// One title and what to do, never the learner's fault.
 struct CallProblemView: View {
   @Environment(AppRouter.self) private var router
   enum Problem: Equatable {
@@ -129,7 +127,6 @@ struct CallProblemView: View {
         Text("Try again", tableName: "Voice", comment: "Calls again")
       }
     case .call(.limit, let limit?) where limit.tier != .plus:
-      // The one thing to do: a guest creates a free account, a free learner gets Plus.
       Group {
         if limit.tier == .guest {
           Button {
@@ -170,8 +167,7 @@ struct CallProblemView: View {
   }
 }
 
-/// What the plan's call time being used means, as main's call limit notice says it: until when,
-/// and never how much call time a plan has.
+/// Never says how much call time a plan has.
 private struct CallLimitText: View {
   let limit: CallLimit
 
@@ -202,8 +198,6 @@ private struct CallLimitText: View {
   }
 }
 
-/// Saving a finished call: its feedback being written (an exam task's grade takes longer), or why
-/// it wasn't saved yet, with a way to try again.
 struct SavingCallView: View {
   @State private var isSlow = false
 

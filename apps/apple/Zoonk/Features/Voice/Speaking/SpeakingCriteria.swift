@@ -1,8 +1,6 @@
 import Foundation
 
-/// What a criterion rates, in the learner's words (main's `useCriterionGloss` and
-/// `useCriterionName`): "Fluidez" reads as fluency to a Portuguese speaker,
-/// "Aufgabenerfüllung" doesn't. An unknown key keeps its official name.
+/// Mirrors main's `useCriterionGloss` and `useCriterionName`. An unknown key keeps its official name.
 func speakingCriterionName(_ key: String, officialName: String?) -> String {
   switch key {
   case "accuracy":

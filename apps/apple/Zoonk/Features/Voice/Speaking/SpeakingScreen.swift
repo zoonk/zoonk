@@ -1,8 +1,5 @@
 import SwiftUI
 
-/// A language goal's speaking practice in an exam's format at the level it aims for, from Today's
-/// "Practice anytime" and the sidebar: the paper's tasks, one at a time, and their last results.
-/// Each task is a call; starting one writes its card, then opens the call.
 struct SpeakingScreen: View {
   @Environment(VoiceServices.self) private var voice
   @Environment(LearnerSummaryStore.self) private var summary
@@ -35,7 +32,6 @@ private struct SpeakingPaperView: View {
   @Environment(AppRouter.self) private var router
   @State private var startingTask: String?
   @State private var startFailure: StartFailure?
-  /// The task shown open, one at a time, as main's list does.
   @State private var openTask: String?
 
   let goalId: String
@@ -178,7 +174,6 @@ private struct SpeakingPaperView: View {
     }
   }
 
-  /// A task by its place in the paper and official name, whom the learner talks to and how long.
   private func taskHeader(_ task: Components.Schemas.SpeakingPaperTask, index: Int) -> some View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
       Text(index + 1, format: .number)
@@ -197,7 +192,6 @@ private struct SpeakingPaperView: View {
     .padding(.vertical, 4)
   }
 
-  /// An open task: what it's rated on, the last try, and its call.
   private func taskDetails(
     _ task: Components.Schemas.SpeakingPaperTask, paper: Components.Schemas.SpeakingPaper
   ) -> some View {
@@ -327,7 +321,7 @@ private struct SpeakingPaperView: View {
         comment: "Every criterion below the exam's level on the last try")
   }
 
-  /// Writes the task's card and opens its call (only on the learner's tap).
+  /// Only on the learner's tap: it writes the task's card.
   private func start(_ task: String) async {
     startingTask = task
     startFailure = nil
@@ -353,7 +347,7 @@ private struct SpeakingPaperView: View {
 }
 
 extension VoiceServices {
-  /// Creates a conversation the learner tapped to start.
+  /// Only on the learner's tap.
   func startConversation(
     _ input: Components.Schemas.LanguageConversationStartInput
   ) async -> MutationResult<Refusable<String>> {

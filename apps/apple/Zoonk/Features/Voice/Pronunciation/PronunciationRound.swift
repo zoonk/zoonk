@@ -1,10 +1,8 @@
 import Foundation
 import Observation
 
-/// One round of pronunciation reviews, as main's `usePronunciationRound` runs it: each word is
-/// heard, said and graded before the next one; a word that still sounds different can be tried
-/// again or skipped. The round is counted once, at the end, and only when a word was said. The
-/// round keeps the words it started with, even if grading changes what's due.
+/// Mirrors main's `usePronunciationRound`. The round is counted once, at the end, and only when a
+/// word was said. It keeps the words it started with, even if grading changes what's due.
 @MainActor
 @Observable
 final class PronunciationRound {
@@ -12,7 +10,6 @@ final class PronunciationRound {
   typealias Grade = Components.Schemas.PronunciationAnswerGrade
   typealias Result = Components.Schemas.PronunciationRoundResult
 
-  /// Why the last recording wasn't graded.
   enum Notice: Equatable {
     case failed
     case noSpeech
@@ -30,7 +27,6 @@ final class PronunciationRound {
     case result(Result?)
   }
 
-  /// How a word went, for its part of the header's meter.
   enum Outcome: Equatable {
     case right
     case wrong
@@ -76,8 +72,6 @@ final class PronunciationRound {
     index + 1 == words.count
   }
 
-  /// Grades the current word said out loud. A request that didn't get through says so, and the
-  /// word waits to be said again.
   func record(_ recording: VoiceRecording) async {
     guard case .word(let index, _) = step, let word = current else {
       return
@@ -102,7 +96,6 @@ final class PronunciationRound {
     }
   }
 
-  /// Trying again starts the word over, so its part waits for the new grade.
   func tryAgain() {
     guard case .word(let index, _) = step else {
       return
@@ -112,7 +105,7 @@ final class PronunciationRound {
     step = .word(index: index, state: .ready(nil))
   }
 
-  /// Goes on to the next word, or ends the round. A word left without a grade was skipped.
+  /// A word left without a grade was skipped.
   func next() async {
     guard case .word(let index, _) = step else {
       return
@@ -130,7 +123,6 @@ final class PronunciationRound {
     await finish()
   }
 
-  /// Counts the round toward the learner's day; with nothing said there's nothing to count.
   func finish() async {
     guard answered > 0 else {
       step = .result(nil)

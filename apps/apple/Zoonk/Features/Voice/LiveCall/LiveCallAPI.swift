@@ -6,20 +6,17 @@ typealias CompletedLanguageConversation = Components.Schemas.CompletedLanguageCo
 typealias ConversationTurn = Components.Schemas.LanguageConversationTurn
 
 extension LanguageConversation {
-  /// The exam task an `examSpeaking` call practices.
   var speakingTask: Components.Schemas.ExamSpeakingTask? { examTask?.value1 }
-  /// The exam a speaking mock follows.
   var mockExam: Components.Schemas.SpeakingMockExam? { exam?.value1 }
 }
 
-/// Why the plan's call time is used: today's, this month's, or (`total`) a guest's plan has none.
+/// `total`: a guest's plan has no call time.
 struct CallLimit: Equatable, Sendable {
   let period: HelpLimit.Period
   let tier: LearnerTier
 }
 
-/// Reserving a call: its setup, or why it can't be made now, as main's `readConnectionRefusal`
-/// reads the API's refusal.
+/// Mirrors main's `readConnectionRefusal`.
 enum CallReservation: Equatable, Sendable {
   case ready(Components.Schemas.LanguageConversationSetup)
   case limit(CallLimit)
@@ -63,7 +60,6 @@ enum CallReservation: Equatable, Sendable {
   }
 }
 
-/// Saving a finished call: it with its result, or why it wasn't saved.
 enum CallCompletion: Equatable, Sendable {
   case completed(CompletedLanguageConversation)
   case ended
@@ -71,9 +67,6 @@ enum CallCompletion: Equatable, Sendable {
   case failed
 }
 
-/// What a live call asks of the API, one capability per request: start a conversation, read it,
-/// reserve a connection, trade the WebRTC offer for GPT-Live's answer, hang up, check the goals,
-/// and save it.
 struct LiveCallAPI: Sendable {
   private let clients: APIClientFactory
 
@@ -81,7 +74,7 @@ struct LiveCallAPI: Sendable {
     self.clients = clients
   }
 
-  /// Creates a conversation the learner tapped to start.
+  /// Only on the learner's tap.
   func start(
     _ input: Components.Schemas.LanguageConversationStartInput,
     token: String
@@ -127,7 +120,6 @@ struct LiveCallAPI: Sendable {
     }
   }
 
-  /// Reserves the call; `takeover` ends the learner's other open call first.
   func connect(conversationId: String, takeover: Bool, token: String) async throws
     -> CallReservation
   {
@@ -158,8 +150,7 @@ struct LiveCallAPI: Sendable {
     }
   }
 
-  /// Sends the WebRTC offer to the reservation's session URL and returns GPT-Live's answer. Our
-  /// server creates the session with its own model, instructions and voice.
+  /// Our server creates the session with its own model, instructions and voice.
   func redeemSdp(
     conversationId: String,
     connectionId: String,
@@ -183,8 +174,8 @@ struct LiveCallAPI: Sendable {
     }
   }
 
-  /// Has the server hang the connection up. `endedAtDeadline` when the server already had at the
-  /// call's deadline; nil while it couldn't confirm, so asking again sends a new request.
+  /// True when the server already hung up at the call's deadline; nil while it couldn't confirm, so
+  /// asking again sends a new request.
   func end(conversationId: String, connectionId: String, token: String) async throws -> Bool? {
     try await clients.perform(token: token) { client in
       let output = try await client.endLanguageConversationConnection(
@@ -201,7 +192,6 @@ struct LiveCallAPI: Sendable {
     }
   }
 
-  /// Every goal met so far, from what was said; nil when the check didn't run.
   func checkObjectives(
     conversationId: String,
     turns: [ConversationTurn],
@@ -219,7 +209,6 @@ struct LiveCallAPI: Sendable {
     }
   }
 
-  /// Saves the finished call under the connection it ran on.
   func complete(
     conversationId: String,
     input: Components.Schemas.LanguageConversationCompletionInput,
