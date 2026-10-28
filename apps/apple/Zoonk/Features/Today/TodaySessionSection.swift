@@ -129,7 +129,7 @@ struct TodaySessionSection: View {
           .font(.footnote)
           .foregroundStyle(.secondary)
         }
-        .listRowBackground(Color(.tertiarySystemFill))
+        .listRowBackground(NextRowBackground())
         .listRowSeparator(.hidden, edges: .top)
       }
     }
@@ -176,7 +176,7 @@ struct TodaySessionSection: View {
       }
       .tint(.primary)
       .disabled(busy != nil)
-      .listRowBackground(isNext ? Color(.tertiarySystemFill) : nil)
+      .listRowBackground(isNext ? NextRowBackground() : nil)
     } else {
       row
     }
@@ -606,5 +606,15 @@ private struct TodayDayStatus: View {
 
     let day = next.formatted(.studyDay.weekday(.wide))
     return String(localized: "See you \(day)!", table: "Today", comment: "Next study day")
+  }
+}
+
+/// The day's next row, highlighted as main's muted row: a system fill over the row's own background,
+/// so it reads on dark rows (where a fill alone shows the black page through it) and grows with
+/// Increase Contrast.
+struct NextRowBackground: View {
+  var body: some View {
+    Color(.secondarySystemGroupedBackground)
+      .overlay(Color(.tertiarySystemFill))
   }
 }

@@ -25,7 +25,7 @@ struct TodayUpNextSection: View {
           Button(action: keepLearning) { row }
             .tint(.primary)
             .disabled(isBusy)
-            .listRowBackground(Color(.tertiarySystemFill))
+            .listRowBackground(NextRowBackground())
         } else {
           row
         }
