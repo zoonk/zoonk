@@ -335,12 +335,22 @@ private struct SpokenAnswerStepView: View {
             onBlocked: { micBlocked = true }))
       } else {
         if micBlocked, !context.isLocked {
-          Text(
-            "The microphone is blocked. Type your answer instead.", tableName: "Player",
-            comment: "A spoken screen falls back to typing when the microphone is off"
-          )
+          VStack(alignment: .leading, spacing: 4) {
+            Text(
+              "The microphone is blocked. Type your answer instead.", tableName: "Player",
+              comment: "A spoken screen falls back to typing when the microphone is off"
+            )
+            .foregroundStyle(.secondary)
+
+            if let settings = URL(string: UIApplication.openSettingsURLString) {
+              Link(destination: settings) {
+                Text(
+                  "Open Settings", tableName: "Player",
+                  comment: "Opens the app's settings to turn the microphone back on")
+              }
+            }
+          }
           .font(.subheadline)
-          .foregroundStyle(.secondary)
         }
 
         LessonAnswerField(
