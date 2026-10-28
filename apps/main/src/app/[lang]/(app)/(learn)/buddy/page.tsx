@@ -1,7 +1,5 @@
 import { AuthGatePage } from "@/components/auth-gate";
 import { FirstPaintContent } from "@/components/first-paint-content";
-import { NextIntlClientProvider } from "@/i18n/intl-client-provider";
-import { getClientMessages } from "@/i18n/messages";
 import { getReadAt } from "@/lib/learn/read-at";
 import { getActiveGoalId } from "@zoonk/core/goals/active-goal";
 import { getOwnedGoal } from "@zoonk/core/goals/owned-goal";
@@ -15,7 +13,7 @@ import { BUDDY_COLUMN_CLASS, BuddyDaySkeleton } from "@zoonk/learn/buddy";
 import { PageWithAside } from "@zoonk/learn/shell";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
-import { getExtracted, getLocale, getTimeZone } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { BuddyGoalStartClient } from "./buddy-goal-start-client";
 import { BuddyPageClient } from "./buddy-page-client";
 
@@ -97,32 +95,25 @@ async function BuddyContent() {
   }
 
   const canAsk = !session.user.isAnonymous;
-  const locale = await getLocale();
-  const timeZone = await getTimeZone();
 
-  const [hasMistake, thread, memoryCount, messages] = await Promise.all([
+  const [hasMistake, thread, memoryCount] = await Promise.all([
     hasOpenMistake(goal.id),
     loadThread({ canAsk, goalId: goal.id }),
     countCurrentUserMemory(),
-    getClientMessages({ locale, scope: "player" }),
   ]);
 
-  // The conversation is the lesson tutor's, so the tab needs the player's messages, read with the
-  // rest: the content renders in one pass, as the first paint waits for its end.
   return (
-    <NextIntlClientProvider locale={locale} messages={messages} timeZone={timeZone}>
-      <BuddyPageClient
-        canAsk={canAsk}
-        goalId={goal.id}
-        hasEarlierQuestions={earlierQuestions}
-        initialThread={thread}
-        memoryCount={memoryCount ?? 0}
-        readAt={readAt}
-        situation={{ hasMistake, hasToday: Boolean(result.buddy.today) }}
-        status={result.buddy}
-        viewerId={session.user.id}
-      />
-    </NextIntlClientProvider>
+    <BuddyPageClient
+      canAsk={canAsk}
+      goalId={goal.id}
+      hasEarlierQuestions={earlierQuestions}
+      initialThread={thread}
+      memoryCount={memoryCount ?? 0}
+      readAt={readAt}
+      situation={{ hasMistake, hasToday: Boolean(result.buddy.today) }}
+      status={result.buddy}
+      viewerId={session.user.id}
+    />
   );
 }
 

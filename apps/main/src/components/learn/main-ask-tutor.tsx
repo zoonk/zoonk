@@ -20,7 +20,7 @@ export type TutorViewer = {
  * "Ask" the learner's buddy on a learn screen, with main's tutor connection and links, so server
  * pages can place it with plain props (`buddy` from `getLearnerBuddy`). Inside a goal, its answers
  * show the plan changes and features the buddy offers, as on the buddy tab. Pages that render it
- * need the player's messages (`scope="player"`).
+ * need the learn catalog (`scope="learn"`), which includes the player's messages.
  */
 export function MainAskTutor({
   buddy,

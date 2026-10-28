@@ -2,7 +2,6 @@ import { AuthGateScreen } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { MainLearnProvider } from "@/components/learn/main-learn-provider";
 import { TaskNotFound } from "@/components/learn/task-not-found";
-import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { redirect } from "@/i18n/navigation";
 import { getLearnerBuddy } from "@/lib/learn/learner-buddy";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
@@ -230,12 +229,9 @@ async function SavedDayView({
       return <SessionNotFound />;
     }
 
-    // Asking the buddy about a question opens the player's conversation.
     return (
       <SessionMain>
-        <ClientMessagesProvider scope="player">
-          <SessionBlockClient detail={detail.detail} session={session} tutor={tutor} />
-        </ClientMessagesProvider>
+        <SessionBlockClient detail={detail.detail} session={session} tutor={tutor} />
       </SessionMain>
     );
   }

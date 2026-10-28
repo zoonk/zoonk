@@ -1,6 +1,5 @@
 import { AuthGateScreen } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
-import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { Link } from "@/i18n/navigation";
 import { type EarlierQuestion, listEarlierQuestions } from "@zoonk/core/lesson-questions/earlier";
 import { Page, PageHeader, PageHeaderContent, PageSubtitle, PageTitle } from "@zoonk/learn/page";
@@ -92,14 +91,11 @@ async function EarlierQuestionsContent({ searchParams }: Pick<Props, "searchPara
         {result.questions.length === 0 ? (
           <p className="text-muted-foreground text-sm">{t("You have no earlier questions.")}</p>
         ) : (
-          // The tutor's answers link out through the player's confirmation dialog.
-          <ClientMessagesProvider scope="player">
-            <ol className="divide-border max-w-column flex flex-col divide-y">
-              {result.questions.map((question) => (
-                <EarlierQuestionEntry key={question.id} question={question} />
-              ))}
-            </ol>
-          </ClientMessagesProvider>
+          <ol className="divide-border max-w-column flex flex-col divide-y">
+            {result.questions.map((question) => (
+              <EarlierQuestionEntry key={question.id} question={question} />
+            ))}
+          </ol>
         )}
 
         {result.nextCursor && (

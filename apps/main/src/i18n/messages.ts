@@ -9,11 +9,12 @@ type Messages = Record<string, unknown>;
 /**
  * Which catalogs a part of the app sends to the browser. Every page gets main's own messages and
  * learn's site messages (votes and the feedback form are everywhere, and goals start from public
- * pages); learn screens add the learn
- * catalog, and the lesson player adds the player's. Server components read every catalog through
- * `request.ts` either way, so this only decides what client components can use.
+ * pages); the app's frame and the task screens get every catalog, the player's included, once for
+ * the whole section, so no page inside them sends a catalog of its own. Server components read
+ * every catalog through `request.ts` either way, so this only decides what client components can
+ * use.
  */
-export type ClientMessagesScope = "learn" | "player" | "site";
+export type ClientMessagesScope = "learn" | "site";
 
 async function appMessages(locale: string): Promise<Messages> {
   const translations: unknown = await import(`../../messages/${locale}.po`);
@@ -32,7 +33,7 @@ async function loadMessages({
   locale: string;
   scope: ClientMessagesScope;
 }): Promise<Messages> {
-  if (scope === "player") {
+  if (scope === "learn") {
     const [player, learn, app] = await Promise.all([
       playerMessages(locale),
       learnMessages(locale),
@@ -40,11 +41,6 @@ async function loadMessages({
     ]);
 
     return mergeMessages(player, learn, app);
-  }
-
-  if (scope === "learn") {
-    const [learn, app] = await Promise.all([learnMessages(locale), appMessages(locale)]);
-    return mergeMessages(learn, app);
   }
 
   const [site, app] = await Promise.all([learnSiteMessages(locale), appMessages(locale)]);
@@ -84,5 +80,5 @@ export function getClientMessages(input: {
 
 /** Every catalog, for server components. App messages win a key collision unless still untranslated. */
 export function getAllMessages(locale: string): Promise<Messages> {
-  return getClientMessages({ locale, scope: "player" });
+  return getClientMessages({ locale, scope: "learn" });
 }

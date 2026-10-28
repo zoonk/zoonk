@@ -1,7 +1,6 @@
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { DetailSkeleton } from "@/components/learn/detail-skeleton";
 import { JourneyPageBar } from "@/components/learn/journey-page-bar";
-import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { listGoalMindMaps } from "@zoonk/core/mind-maps/list";
 import { type SyllabusSubject } from "@zoonk/core/view-models/syllabus/contract";
@@ -83,24 +82,21 @@ async function SubjectBody({ params }: Props) {
     );
   }
 
-  // "Ask" opens the buddy's conversation with the player's components.
   return (
-    <ClientMessagesProvider scope="player">
-      <SubjectScreenClient
-        goalId={result.syllabus.goal.id}
-        hasMindMaps={hasSubjectMindMaps({ mindMaps, subject })}
-        subject={subject}
-        syllabus={{
-          examDocument: result.syllabus.examDocument,
-          fromMaterial: result.syllabus.fromMaterial,
-          kind: result.syllabus.kind,
-          knownTopicsReturn: result.syllabus.knownTopicsReturn,
-          questionsSource: result.syllabus.questionsSource,
-          writtenPractice: result.syllabus.writtenPractice,
-        }}
-        tutor={tutor}
-      />
-    </ClientMessagesProvider>
+    <SubjectScreenClient
+      goalId={result.syllabus.goal.id}
+      hasMindMaps={hasSubjectMindMaps({ mindMaps, subject })}
+      subject={subject}
+      syllabus={{
+        examDocument: result.syllabus.examDocument,
+        fromMaterial: result.syllabus.fromMaterial,
+        kind: result.syllabus.kind,
+        knownTopicsReturn: result.syllabus.knownTopicsReturn,
+        questionsSource: result.syllabus.questionsSource,
+        writtenPractice: result.syllabus.writtenPractice,
+      }}
+      tutor={tutor}
+    />
   );
 }
 

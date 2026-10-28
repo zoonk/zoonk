@@ -2,7 +2,6 @@ import { AuthGatePage } from "@/components/auth-gate";
 import { NotFoundPage } from "@/components/errors/not-found-page";
 import { DetailSkeleton } from "@/components/learn/detail-skeleton";
 import { type TutorViewer } from "@/components/learn/main-ask-tutor";
-import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { withQuery } from "@/lib/with-query";
 import { getReachedCap } from "@zoonk/core/entitlements/contract";
@@ -61,13 +60,7 @@ async function UnitInPlace({ chapterId, tutor }: { chapterId: string; tutor: Tut
   }
 
   return (
-    <ClientMessagesProvider scope="player">
-      <UnitScreenClient
-        tutor={tutor}
-        unit={unit.unit}
-        upNext={isCurrentUnit({ chapterId, plan })}
-      />
-    </ClientMessagesProvider>
+    <UnitScreenClient tutor={tutor} unit={unit.unit} upNext={isCurrentUnit({ chapterId, plan })} />
   );
 }
 
@@ -107,17 +100,14 @@ async function ChapterBody({ params, searchParams }: Props) {
     return <UnitInPlace chapterId={chapterId} tutor={tutor} />;
   }
 
-  // The chapter's "Ask" opens the player's questions sheet, so it needs the player's messages.
   return (
-    <ClientMessagesProvider scope="player">
-      <ChapterScreenClient
-        back={back}
-        chapter={result.chapter}
-        mindMap={mindMap.status === "ready" ? mindMap.mindMap : null}
-        mindMapCap={allowance && getReachedCap({ allowance, kind: "mindMap" })}
-        tutor={tutor}
-      />
-    </ClientMessagesProvider>
+    <ChapterScreenClient
+      back={back}
+      chapter={result.chapter}
+      mindMap={mindMap.status === "ready" ? mindMap.mindMap : null}
+      mindMapCap={allowance && getReachedCap({ allowance, kind: "mindMap" })}
+      tutor={tutor}
+    />
   );
 }
 
