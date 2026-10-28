@@ -165,6 +165,21 @@ async function getRouting({
 }
 
 /**
+ * Screens need a session, so visitors from a public page become guests before the lesson opens
+ * (`LessonGuestGate`); outside a study session, a guest's lesson ends with a way to keep it. A
+ * guest's session lessons keep the session's moments.
+ */
+function isGuestLesson({
+  session,
+  studySessionId,
+}: {
+  session: Awaited<ReturnType<typeof getSession>>;
+  studySessionId: string | null;
+}): boolean {
+  return Boolean(session?.user.isAnonymous) && studySessionId === null;
+}
+
+/**
  * A missing task's message is left to the browser here, unlike other task pages (`NotFoundPage`):
  * drawing the task's frame on the server too makes this page's scripts carry the frame's code
  * twice, about 11 KB more on every visit.
@@ -173,41 +188,60 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
   const [{ lessonId }, query] = await Promise.all([params, searchParams]);
   const { firstAnswer, origin, studySessionId } = readPlayerQuery(query);
 
-  const [result, session, profile, fit, sessionContext, support, resume, tutor] = await Promise.all(
-    [
-      getPlayableLibraryLesson({ lessonId }),
-      getSession(),
-      getLearningProfile(),
-      getLessonFit({ lessonId }),
-      getLessonSessionContext(studySessionId),
-      getLessonSupport({ lessonId }),
-      getLessonProgress({ lessonId }),
-      getTutorViewer(),
-    ],
+  const lessonRead = getPlayableLibraryLesson({ lessonId });
+  const sessionRead = getSession();
+  const sessionContextRead = getLessonSessionContext(studySessionId);
+
+  // What the lesson itself decides is read as soon as the lesson is, beside the other reads.
+  const lessonDetailsRead = lessonRead.then((lessonResult) => {
+    const lesson = lessonResult?.status === "ready" ? lessonResult.lesson : null;
+
+    return Promise.all([
+      getLessonChallengeTeam(lesson && { lesson }),
+      lesson ? wordTutorSuggestions(lesson.language) : [],
+      loadWaitingState(lessonResult),
+    ]);
+  });
+
+  const routingRead = Promise.all([lessonRead, sessionRead, sessionContextRead]).then(
+    ([lessonResult, lessonSession, context]) =>
+      getRouting({
+        inSession: context !== null,
+        isGuest: isGuestLesson({ session: lessonSession, studySessionId }),
+        lesson: lessonResult?.status === "ready" ? lessonResult.lesson : null,
+        origin,
+      }),
   );
 
-  /**
-   * Screens need a session, so visitors from a public page become guests before the lesson opens
-   * (`LessonGuestGate`); outside a study session, a guest's lesson ends with a way to keep it. A
-   * guest's session lessons keep the session's moments.
-   */
-  const isGuest = Boolean(session?.user.isAnonymous) && studySessionId === null;
+  const [
+    result,
+    session,
+    profile,
+    fit,
+    sessionContext,
+    support,
+    resume,
+    tutor,
+    [challengeTeam, tutorSuggestions, waiting],
+    routing,
+  ] = await Promise.all([
+    lessonRead,
+    sessionRead,
+    getLearningProfile(),
+    getLessonFit({ lessonId }),
+    sessionContextRead,
+    getLessonSupport({ lessonId }),
+    getLessonProgress({ lessonId }),
+    getTutorViewer(),
+    lessonDetailsRead,
+    routingRead,
+  ]);
+
+  const isGuest = isGuestLesson({ session, studySessionId });
   /** Sounds stay on until the learner turns them off in Appearance. */
   const soundsEnabled = profile?.soundsEnabled ?? true;
 
   const played = result?.status === "ready" ? { lesson: result.lesson } : null;
-
-  const [challengeTeam, routing, tutorSuggestions, waiting] = await Promise.all([
-    getLessonChallengeTeam(played),
-    getRouting({
-      inSession: sessionContext !== null,
-      isGuest,
-      lesson: played?.lesson ?? null,
-      origin,
-    }),
-    played ? wordTutorSuggestions(played.lesson.language) : [],
-    loadWaitingState(result),
-  ]);
 
   if (!result) {
     notFound();
