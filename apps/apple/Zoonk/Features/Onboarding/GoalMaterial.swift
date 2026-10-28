@@ -1,14 +1,13 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// What the learner wants from the material they attached (main's `MaterialIntent`): an exam on it with a date, lessons that teach it in order, or answers to their questions about it.
 enum MaterialIntent: Hashable {
   case exam
   case understand
   case questions
 }
 
-/// The goal box's paperclip (main's `GoalAttachments`): the material attached, ways to add more, and, once there's some, what the learner wants to do with it. Only accounts can add material, so guests and visitors are told how to create one.
+/// Only accounts can add material, so guests and visitors are told how to create one.
 struct GoalMaterialSections: View {
   @Binding var material: [AttachedSource]
   @Binding var intent: MaterialIntent?
@@ -20,7 +19,6 @@ struct GoalMaterialSections: View {
   @State private var pasting: Pasting?
   @State private var isAdding = false
   @State private var error: LocalizedStringResource?
-  /// A guest or visitor tapped the paperclip: how to get an account shows.
   @State private var showsSignUp = false
 
   private enum Pasting: Identifiable {
@@ -30,7 +28,7 @@ struct GoalMaterialSections: View {
     var id: Self { self }
   }
 
-  /// What the uploads route reads: PDFs, Word, PowerPoint, text, Markdown and photos.
+  /// What the uploads route reads.
   private static let readableTypes: [UTType] = [
     .pdf, .plainText, .jpeg, .png, .webP,
     UTType("org.openxmlformats.wordprocessingml.document"),
@@ -208,7 +206,6 @@ struct GoalMaterialSections: View {
     }
   }
 
-  /// Guests and visitors add material once they have an account.
   private var canAttach: Bool {
     learner.summary.value.map { !$0.identity.isAnonymous } ?? false
   }
@@ -219,7 +216,6 @@ struct GoalMaterialSections: View {
         localized: "Your text", table: "Onboarding", comment: "Pasted material without a title")
   }
 
-  /// A file from Files, read while the app may open it.
   private func attach(_ file: URL) async throws -> AttachedSource {
     let isScoped = file.startAccessingSecurityScopedResource()
     defer {
@@ -243,7 +239,6 @@ struct GoalMaterialSections: View {
         material = material.filter { $0.id != source.id } + [source]
         pasting = nil
       } catch is CancellationError {
-        // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch {
         self.error = Self.message(for: error)
       }
@@ -284,7 +279,6 @@ struct GoalMaterialSections: View {
   }
 }
 
-/// Pasting the syllabus, notes or a chapter, or a link to an article, a class page or a PDF, in place under the paperclip.
 private struct PasteMaterialRow: View {
   let isLink: Bool
   let isAdding: Bool
@@ -351,7 +345,6 @@ private struct PasteMaterialRow: View {
   }
 }
 
-/// "Ask questions" about the material the learner attached (main's `MaterialQuestions`): each answer comes from their pages and shows the page it came from, so they can read it there.
 struct MaterialQuestionsView: View {
   let sources: [AttachedSource]
 
@@ -482,14 +475,12 @@ struct MaterialQuestionsView: View {
           question: asked, sourceIDs: sources.map(\.id))
         turns.append(Turn(question: asked, answer: .success(answer)))
       } catch is CancellationError {
-        // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch {
         turns.append(Turn(question: asked, answer: .failure(error)))
       }
     }
   }
 
-  /// "Notes.pdf, page 4", "Deck.pptx, slide 2", or just the title.
   /// Pasted text has no title, so it's named as its chip is.
   private func label(_ citation: MaterialAnswer.Citation) -> String {
     let title =

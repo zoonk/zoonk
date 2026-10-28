@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// How much time a day and on which days (main's `ScheduleStep`). It comes after placement, once the plan knows what the learner already knows. With a date to cover the goal by, the estimate says what the time picked covers, and follows every pick; while that's less than everything, "Find the time that covers everything" plans the goal at each time, only when the learner asks, and marks the time it finds without picking it. An exam can also study everything, even after the exam; any other goal moves its date on the next screen. The days and the weekend's own time are one tap away.
+/// "Find the time that covers everything" plans the goal at each time only when the learner asks, and
+/// marks the time it finds without picking it.
 struct ScheduleQuestion: View {
   let view: GoalOnboarding
   let onAnswer: ([String: Any]) -> Void
@@ -10,10 +11,8 @@ struct ScheduleQuestion: View {
   @State private var weekendMinutes: Int?
   @State private var days: Set<Int>
   @State private var fullCourse = false
-  /// The plan's last answer, with the week and time it was for.
   @State private var answer: AdviceAnswer?
   @State private var asking = Asking.asking
-  /// Asking again after it stopped.
   @State private var attempt = 0
   @State private var finding = Finding.idle
 
@@ -29,7 +28,6 @@ struct ScheduleQuestion: View {
     case stopped
   }
 
-  /// "Find the time that covers everything" for the week it was asked for.
   private enum Finding: Equatable {
     case idle
     case pending(ScheduleWeek)
@@ -51,9 +49,8 @@ struct ScheduleQuestion: View {
     let attempt: Int
   }
 
-  /// Main's times a day: a short habit to a full study day for a big exam.
+  /// Main's times a day.
   private static let presets = [15, 30, 45, 60, 90, 120, 180, 240]
-  /// Every time a day "Other time" offers: quarter hours up to 4 hours, then half hours to a day.
   private static let everyTime =
     Array(stride(from: 15, through: 240, by: 15))
     + Array(stride(from: 270, through: 1440, by: 30))
@@ -183,9 +180,6 @@ struct ScheduleQuestion: View {
     }
   }
 
-  // MARK: The estimate
-
-  /// What the time picked covers by the date; while another time is asked about, the last share, dimmed.
   @ViewBuilder
   private func estimate(_ share: (known: Bool, value: Double?)) -> some View {
     let stopped = !share.known && asking == .stopped
@@ -265,9 +259,6 @@ struct ScheduleQuestion: View {
         tableName: "Onboarding", comment: "What a time a day covers of a goal by its date")
   }
 
-  // MARK: Covering everything
-
-  /// What studying everything would take, only while the time picked leaves something out (or before that's known): the time that covers it, then an exam's switch to go on after the exam, or that any other goal moves its date next.
   @ViewBuilder
   private func coverEverything(_ share: (known: Bool, value: Double?)) -> some View {
     let shown = share.known ? share.value : lastAdvice?.coveredShare
@@ -306,7 +297,6 @@ struct ScheduleQuestion: View {
     }
   }
 
-  /// "Find the time that covers everything", its search and its answer; while the plan is still built, that it's being built.
   @ViewBuilder
   private var findLine: some View {
     if !planReady {
@@ -364,7 +354,6 @@ struct ScheduleQuestion: View {
     }
   }
 
-  /// The time that covers everything in depth by the date, or that no time does, with the time that studies every topic.
   @ViewBuilder
   private func foundWords(_ found: TimeToCover) -> some View {
     if let targetDate = found.targetDate {
@@ -393,7 +382,6 @@ struct ScheduleQuestion: View {
     }
   }
 
-  /// What studying everything does: when it ends, once the plan says so for the time picked, and that until the exam what comes up most comes first.
   private var fullCourseText: String {
     let until = String(
       localized: "Until the exam, what comes up most comes first.", table: "Onboarding",
@@ -416,11 +404,8 @@ struct ScheduleQuestion: View {
     return "\(finish) \(until)"
   }
 
-  // MARK: State
-
   private var isExam: Bool { view.goal.kind == .exam }
 
-  /// The goal has a date (its own, or its exam's) to cover it by.
   private var dated: Bool { view.goal.targetDate != nil || isExam }
 
   private var studiesOnWeekends: Bool { !days.isDisjoint(with: Self.weekend) }
@@ -432,7 +417,6 @@ struct ScheduleQuestion: View {
       studyDays: days.sorted(), weekendMinutes: weekend, fullCourse: isExam && fullCourse)
   }
 
-  /// The week Find searches: the days and any weekend time the learner set, whatever the time a day.
   private var findWeek: ScheduleWeek {
     ScheduleWeek(studyDays: days.sorted(), weekendMinutes: studiesOnWeekends ? weekendMinutes : nil)
   }
@@ -447,7 +431,6 @@ struct ScheduleQuestion: View {
     }
   }
 
-  /// The plan's answer for this week, once it's ready.
   private var currentAdvice: TimeAdvice? {
     guard let answer, answer.week == week, answer.advice.ready else {
       return nil
@@ -456,7 +439,6 @@ struct ScheduleQuestion: View {
     return answer.advice
   }
 
-  /// The last ready answer, for any week, to keep showing while another is asked about.
   private var lastAdvice: TimeAdvice? {
     answer?.advice.ready == true ? answer?.advice : nil
   }
@@ -473,7 +455,6 @@ struct ScheduleQuestion: View {
     return nil
   }
 
-  /// What the time picked covers, and whether that's known: the plan's answer for this very time, or the time Find found (all of it).
   private var pickedShare: (known: Bool, value: Double?) {
     guard let advice = currentAdvice else {
       return (false, nil)
@@ -490,7 +471,6 @@ struct ScheduleQuestion: View {
     return (false, nil)
   }
 
-  /// The plan said it's built, or asking stopped: Find can answer.
   private var planReady: Bool {
     answer?.advice.ready == true || asking == .stopped
   }
@@ -500,12 +480,10 @@ struct ScheduleQuestion: View {
     fullCourse && !(share.known && (share.value ?? 0) >= 1)
   }
 
-  /// The presets, with the time picked and the time Find offers among them.
   private var choices: [Int] {
     Set(Self.presets + [minutes, offeredMinutes].compactMap { $0 }).sorted()
   }
 
-  /// The time Find offers: the one that covers everything, or else the one that studies every topic.
   private var offeredMinutes: Int? {
     found.flatMap { $0.recommendedMinutes ?? $0.coreMinutes }
   }
@@ -523,7 +501,6 @@ struct ScheduleQuestion: View {
         comment: "Marks the time that covers the whole goal")
   }
 
-  /// The week as the learner's calendar starts it.
   private var orderedDays: [Int] {
     let first = Calendar.current.firstWeekday - 1
     return (0..<7).map { (first + $0) % 7 }
@@ -537,9 +514,8 @@ struct ScheduleQuestion: View {
     Duration.seconds(minutes * 60).formatted(.units(allowed: [.hours, .minutes], width: .wide))
   }
 
-  // MARK: Asking
-
-  /// Asks the plan what the time picked covers in the week shown, again after each change; the plan may still be built, so it asks until it's ready, and says so when asking keeps failing or runs too long.
+  /// The plan may still be built, so it asks until it's ready, and says so when asking keeps failing
+  /// or runs too long.
   private func ask() async {
     guard dated, !pickedShare.known else {
       return
@@ -582,7 +558,7 @@ struct ScheduleQuestion: View {
     asking = .stopped
   }
 
-  /// Plans the goal at each time a day for the week shown, only when the learner asks.
+  /// Only when the learner asks.
   private func find() async {
     let week = findWeek
     finding = .pending(week)

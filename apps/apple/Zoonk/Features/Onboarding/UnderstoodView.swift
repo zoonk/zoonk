@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// What a read draft turned out to be, each with its own next step: goals to confirm, a question's quick explanation, an instrument's waitlist and musicianship, or a goal too vague or unsafe to plan.
 struct ReadDraftView: View {
   let draft: OnboardingDraft
   /// Sent in this flow just now: a question opens its explanation by itself.
@@ -8,9 +7,7 @@ struct ReadDraftView: View {
   let onDraft: (OnboardingDraft) -> Void
   let onRewrite: (String) -> Void
   let onBack: () -> Void
-  /// The main goal was created: its onboarding continues.
   let onCreated: (String) -> Void
-  /// The material attached, linked to the main goal.
   var sourceIDs: [String] = []
 
   @Environment(AppRouter.self) private var router
@@ -91,7 +88,6 @@ struct ReadDraftView: View {
       do {
         then(try await run())
       } catch is CancellationError {
-        // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch {
         self.error = GoalError.creating(error)
       }
@@ -99,7 +95,6 @@ struct ReadDraftView: View {
   }
 }
 
-/// "Here's what I understood": every fact the typed goal already gave, one row each, with its source when it's official. Confirming is one tap; one wrong fact is fixed in place; "Fix something" changes the words themselves, which are read again from scratch. A goal Plus would let start has Plus and the free way in place of "Looks right".
 private struct UnderstoodCard: View {
   let draft: OnboardingDraft
   let understood: Components.Schemas.GoalUnderstanding.Case1Payload
@@ -179,7 +174,6 @@ private struct UnderstoodCard: View {
     }
   }
 
-  /// Each goal's rows; the first also carries when the learner studies, shared by every goal.
   private func rows(goal index: Int) -> [UnderstoodRow] {
     let rows = UnderstoodRows.rows(for: understood.goals[index])
 
@@ -192,8 +186,7 @@ private struct UnderstoodCard: View {
     return rows + [schedule]
   }
 
-  /// Saves one fix; false when it couldn't be saved, so the editor stays open to try again.
-  /// An obsolete save (the learner who made it is gone) changes nothing and says nothing.
+  /// False when it couldn't be saved, so the editor stays open to try again.
   private func save(row: UnderstoodRow, goal: Int, value: String) async -> Bool {
     guard let field = row.field else {
       return false
@@ -213,7 +206,6 @@ private struct UnderstoodCard: View {
   }
 }
 
-/// What the learner wrote, above what was understood. "Fix something" opens it to change the words, read again from scratch so every fact follows them.
 private struct RewritableWords: View {
   let words: String
   @Binding var rewriting: Bool
@@ -273,7 +265,6 @@ private struct RewritableWords: View {
   }
 }
 
-/// One understood fact: what it is over the value, its note and source, and a pencil to fix it in place.
 private struct UnderstoodRowView: View {
   let row: UnderstoodRow
   let isEditing: Bool
@@ -297,7 +288,6 @@ private struct UnderstoodRowView: View {
     }
   }
 
-  /// The notice's day ("Use this date") or the sittings to pick from, each saved with one tap.
   private var dateChoices: some View {
     VStack(alignment: .leading, spacing: 6) {
       HStack {
@@ -424,7 +414,6 @@ private struct TrailingIconLabelStyle: LabelStyle {
   }
 }
 
-/// Fixes one fact in place: words, a full date from today on, or the time of day the learner studies.
 private struct RowEditor: View {
   let row: UnderstoodRow
   let field: UnderstoodField
@@ -543,7 +532,6 @@ private struct RowEditor: View {
   }
 }
 
-/// The glyph, title and words of an outcome, as a list's first section.
 private struct OutcomeHeader: View {
   let systemImage: String
   let title: Text
@@ -567,7 +555,6 @@ private struct OutcomeHeader: View {
   }
 }
 
-/// A question gets a short explanation instead of a plan.
 private struct ExplainOutcome: View {
   let goal: String
   let question: String
@@ -606,7 +593,7 @@ private struct ExplainOutcome: View {
   }
 }
 
-/// Playing an instrument needs someone to hear you play, so it's a waitlist for now; musicianship is a goal to start today.
+/// Playing an instrument needs someone to hear you play, so it's a waitlist for now.
 private struct InstrumentOutcome: View {
   let goal: String
   let instrument: String
@@ -697,14 +684,12 @@ private struct InstrumentOutcome: View {
     do {
       waitlist = try await onboarding.joinInstrumentWaitlist(instrument: instrument)
     } catch is CancellationError {
-      // The write is obsolete: the learner who asked is gone, so nothing shows.
     } catch {
       joinFailed = true
     }
   }
 }
 
-/// A goal the app can't help with, said kindly, with another way to start.
 private struct DeclinedOutcome: View {
   let goal: String
   let onRetry: () -> Void
@@ -731,7 +716,6 @@ private struct DeclinedOutcome: View {
   }
 }
 
-/// Too vague to plan: ask for a little more instead of guessing.
 private struct UnclearOutcome: View {
   let goal: String
   let onRetry: () -> Void

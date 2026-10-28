@@ -1,9 +1,8 @@
 import Foundation
 import UniformTypeIdentifiers
 
-/// Sends one file to Vercel Blob with a presigned URL the API signed, the request `@vercel/blob`'s
-/// `uploadPresigned()` makes from a browser (API version 12). The URL's delegation token says which
-/// store it's for, so the app holds no store credentials.
+/// Mirrors the request `@vercel/blob`'s `uploadPresigned()` makes from a browser (API version 12),
+/// so the app holds no store credentials.
 enum BlobUpload {
   private static let apiURL = URL(string: "https://vercel.com/api/blob/")!
   private static let apiVersion = "12"
@@ -55,7 +54,7 @@ enum BlobUpload {
     }
   }
 
-  /// The store a delegation token is for: its first segment is base64url JSON with `storeId`.
+  /// A delegation token's first segment is base64url JSON with `storeId`.
   static func storeID(in delegationToken: String) -> String? {
     struct Payload: Decodable {
       let storeId: String

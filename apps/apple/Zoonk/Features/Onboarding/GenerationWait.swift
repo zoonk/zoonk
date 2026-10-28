@@ -1,15 +1,11 @@
 import SwiftUI
 
-/// A run's phases as main's waits show them: each phase's label, and whether it's waiting, going or done. Steps map to phases the way `packages/learn/src/generation/generation-kinds.ts` maps them.
+/// Steps map to phases the way `packages/learn/src/generation/generation-kinds.ts` maps them.
 struct GenerationWait: Equatable, Sendable {
   enum Kind: Sendable {
-    /// Reading typed words (`createGoalUnderstanding`).
     case understanding
-    /// Writing a goal's skills and plan (`createGoals`, `createGoalGeneration`).
     case curriculum
-    /// Writing a quick explanation of a question.
     case explanation
-    /// Writing a language pair's level test questions, for its first learner.
     case levelTestBank
   }
 
@@ -31,7 +27,6 @@ struct GenerationWait: Equatable, Sendable {
   let kind: Kind
   private(set) var phases: [Phase]
   private(set) var isDone = false
-  /// The run already doing the same work, to follow instead (`joinRunning…`).
   private(set) var joinedGenerationID: String?
 
   init(kind: Kind) {
@@ -39,7 +34,6 @@ struct GenerationWait: Equatable, Sendable {
     phases = Self.phases(for: kind)
   }
 
-  /// The first phase going, before any event says so.
   var started: GenerationWait {
     var wait = self
 
@@ -79,7 +73,7 @@ struct GenerationWait: Equatable, Sendable {
       phases[index].isReported = true
       phases[index].state = event.status == "completed" ? .done : .working
 
-      // The plan is saved: Today builds the first day from it while the outlines go on. An explanation can be read once it's written.
+      // Today builds the first day once the plan is saved, while the outlines go on.
       if event.status == "completed",
         (kind == .curriculum && event.step == "createPlan")
           || (kind == .explanation && event.step == "writeExplanation")
@@ -201,15 +195,13 @@ struct GenerationWait: Equatable, Sendable {
   }
 }
 
-/// Why a wait stopped, as main's waits say it: the run never appeared, the updates stopped coming
-/// although the run may still be working, or the run itself failed.
 enum GenerationFailure: Equatable, Sendable {
   case notStarted
   case connection
   case generation
 }
 
-/// The wait while a run works: its phases as a checklist, with the one going now marked by a spinner. Follows the run's event stream, and a run it hands over to, then `readResult` reads what it made. It never gives up silently: no run, a lost stream or a stopped run each say so, with the way out. Without a run yet (the words were just sent), the first phase shows as going.
+/// It never gives up silently: no run, a lost stream or a stopped run each say so, with the way out.
 struct GenerationWaitView<Leading: View, Trailing: View>: View {
   let title: LocalizedStringResource
   let description: LocalizedStringResource
@@ -217,18 +209,17 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
   let kind: GenerationWait.Kind
   /// Asks for the run's id while the caller doesn't have it: a run saves it a few seconds after it starts.
   var readGenerationID: (() async -> String?)?
-  /// Starts the run again after it stopped or never started (a POST the learner's tap makes), returning the new run's id, or nil when there's nothing left to write. Without it, a stopped run is the caller's to read.
+  /// A POST the learner's tap makes; nil when there's nothing left to write. Without it, a stopped
+  /// run is the caller's to read.
   var restart: (() async throws -> String?)?
-  /// Reads what the run made once it says it's done; false while it isn't there, which shows as lost updates.
+  /// False while the result isn't there, which shows as lost updates.
   let readResult: () async -> Bool
   @ViewBuilder let leading: () -> Leading
-  /// What's under the wait, such as a way to skip it.
   @ViewBuilder let trailing: () -> Trailing
 
   @Environment(OnboardingStore.self) private var onboarding
   @State private var wait: GenerationWait?
   @State private var failure: GenerationFailure?
-  /// The run read while the caller had none, or started again.
   @State private var followedID: String?
   /// Counts reconnections, so following the same run again opens its stream again.
   @State private var connection = 0
@@ -290,7 +281,6 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
     }
   }
 
-  /// Before the first event, the first phase is already going: the run started with the tap.
   private var shown: GenerationWait {
     wait ?? GenerationWait(kind: kind).started
   }
@@ -398,7 +388,6 @@ struct GenerationWaitView<Leading: View, Trailing: View>: View {
         followedID = id
         connection += 1
       } catch is CancellationError {
-        // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch {
         self.failure = .notStarted
       }
@@ -459,8 +448,6 @@ extension GenerationWaitView where Leading == EmptyView, Trailing == EmptyView {
   }
 }
 
-/// Why a run stopped, with the way out: reconnecting to a run that may still be working, or
-/// starting one again that failed or never started. Without `act`, there's nothing to tap.
 struct GenerationFailureSection: View {
   let failure: GenerationFailure
   var isActing = false

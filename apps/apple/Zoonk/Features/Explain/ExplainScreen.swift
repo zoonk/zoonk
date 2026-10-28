@@ -287,7 +287,6 @@ private struct ExplanationView: View {
       _ = try await onboarding.writeGoal(goalID: explanation.goalId)
       await reload()
     } catch is CancellationError {
-      // The learner who asked is gone, so nothing shows.
     } catch {
       retryFailed = true
     }

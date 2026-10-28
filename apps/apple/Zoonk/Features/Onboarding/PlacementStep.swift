@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// Placement while the first lessons are made (main's `PlacementStep`): adaptive questions from the goal's skill map, with "I don't know yet" welcome and no score. It ends when every area has a starting point, when nothing more can be asked today, or whenever the learner stops; "Skip and start from the basics" skips it. While the skill map or the next questions are being written, it waits for them. An exam also offers the whole exam as a mock instead, whose answers set the starting point; stopping it midway keeps them.
+/// "I don't know yet" is welcome and there's no score. It ends when every area has a starting point,
+/// when nothing more can be asked today, or whenever the learner stops.
 struct PlacementStep: View {
   let view: GoalOnboarding
   let subject: String
@@ -24,7 +25,6 @@ struct PlacementStep: View {
     case done(forToday: Bool)
     case unavailable
 
-    /// Placement's own state is read, so the mock's can take over.
     var isSettled: Bool {
       if case .loading = self {
         return false
@@ -36,7 +36,6 @@ struct PlacementStep: View {
 
   var body: some View {
     Group {
-      // The whole exam taken as a mock instead decides the step: left running, or done.
       if let mock = placementMock, phase.isSettled {
         switch mock.status {
         case .running:
@@ -107,7 +106,6 @@ struct PlacementStep: View {
     }
   }
 
-  /// An exam's placement mock once started, from the goal's mocks the offer reads too.
   private var placementMock: MockOptions.Placement.Mock? {
     guard view.goal.kind == .exam else {
       return nil
@@ -116,7 +114,6 @@ struct PlacementStep: View {
     return exam.mockOptions(goalId: view.goal.id).value?.placement?.mock
   }
 
-  /// The placement mock was left running: go on with it, or stop here and its answers set where the plan starts.
   private func mockRunning(_ mockID: String) -> some View {
     Form {
       StepHeader(
@@ -192,7 +189,6 @@ struct PlacementStep: View {
     .disabled(isSaving)
   }
 
-  /// The questions come from the goal's skill map, which may still be drawn right after the goal: the wait follows the goal's run, then reads again until they come.
   private var waiting: some View {
     Form {
       StepHeader(
@@ -247,7 +243,6 @@ struct PlacementStep: View {
     .disabled(isSaving)
   }
 
-  /// Coming back returns to where placement was: its next question once it has answers, else its start.
   private func resume() async {
     guard case .loading = phase else {
       return
@@ -284,7 +279,6 @@ struct PlacementStep: View {
     }
 
     if let generationID = view.generationId {
-      // Each step of the goal's run may have written what placement asks.
       do {
         for try await _ in onboarding.events(generationID: generationID) {
           await read()
@@ -352,7 +346,6 @@ struct PlacementStep: View {
         shown.answered += 1
         show(result.placement)
       } catch is CancellationError {
-        // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch {
         failed = true
       }
@@ -388,7 +381,6 @@ struct PlacementStep: View {
           break
         }
       } catch is CancellationError {
-        // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch {
         failed = true
       }
@@ -410,7 +402,6 @@ struct PlacementStep: View {
         try await onboarding.finishPlacement(goalID: view.goal.id, fromScratch: fromScratch)
         onDone()
       } catch is CancellationError {
-        // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch {
         failed = true
       }
@@ -418,11 +409,11 @@ struct PlacementStep: View {
   }
 }
 
-/// A placement-style question (main's `PlacementQuestionScreen`): which question it is over the bar, what it plays or shows first (`media`), the question, then Confirm, "I don't know yet" and stopping to see the plan. Placement and the level test ask this way; a new question gets a fresh view (`.id`), so nothing picked carries over.
+/// A new question gets a fresh view (`.id`), so nothing picked carries over.
 struct PlacementQuestionScreen<Media: View>: View {
   var subject: String?
   let number: Int
-  /// How far along it is, from 0 to 1.
+  /// From 0 to 1.
   let progress: Double
   let question: PracticeQuestion
   var labels = PracticeTrueFalseLabels.trueFalse

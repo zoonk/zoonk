@@ -1,9 +1,9 @@
 import SwiftUI
 
-/// "Start a goal" on Today, for a visitor or a learner without a goal: one box for the goal in the learner's own words, the paperclip for their own material, and examples that start it in one tap. Today embeds it inside its `List`; sending opens the start flow as a task, which reads the words right away (the tap is what starts it). A visitor becomes a guest when they send, as on main.
+/// Sending opens the start flow, which reads the words right away: the tap is what starts it. A
+/// visitor becomes a guest when they send.
 struct GoalStartEntry: View {
-  /// The catalog's box under its title (main's `GoalForm` there): only the words and "Build my
-  /// plan", since the courses below are its examples.
+  /// The catalog's box: only the words and "Build my plan", since the courses below are its examples.
   var isBoxOnly = false
 
   @Environment(AppRouter.self) private var router
@@ -28,13 +28,11 @@ struct GoalStartEntry: View {
   }
 }
 
-/// What Today's box sends to the start flow: the words, and the material attached with what to do with it.
 struct SentGoal {
   let words: String
   var material: [AttachedSource] = []
   var intent: MaterialIntent?
 
-  /// With material attached, what the learner chose to do with it decides: questions open answers from its pages, and a plan without words is read from its titles.
   var start: GoalStart {
     let withMaterial = material.isEmpty ? nil : intent
 
@@ -45,7 +43,6 @@ struct SentGoal {
     return .goal(words.isEmpty ? materialGoal(exam: withMaterial == .exam) : words)
   }
 
-  /// A goal in words for material attached without any: what to do with it, and its titles.
   private func materialGoal(exam: Bool) -> String {
     let titles = material.map { source in
       source.title.flatMap { $0.isEmpty ? nil : $0 }
@@ -65,25 +62,20 @@ struct SentGoal {
   }
 }
 
-/// Where sending the box goes: answers from the material, or a goal to read.
 enum GoalStart: Equatable {
   case questions
   case goal(String)
 }
 
-/// The entry's sections, shared by Today's embed and the start flow's first screen: the box (with the start flow's material under it) and "Build my plan", what stops a goal (an error, or a limit said up front), then the examples.
 struct GoalEntrySections<Attachment: View>: View {
   @Binding var words: String
-  /// On Today, the box is the page's "Start a goal" section; the start flow has its own title.
   var isSection = false
   var showsExamples = true
   var error: GoalError?
-  /// A goal limit Plus lifts, said before the learner types.
   var limit: GoalLimitReason?
   /// With material and what to do with it, the box may stay empty.
   var canSubmitEmpty = false
   let onSubmit: (String) -> Void
-  /// Under the box: the start flow's material.
   @ViewBuilder var attachment: () -> Attachment
 
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -282,7 +274,7 @@ struct GoalEntrySections<Attachment: View>: View {
   }
 }
 
-/// The examples' local exam and a language to speak, so they feel local (main's `useLocalGoalExample`).
+/// Mirrors main's `useLocalGoalExample`.
 private enum LocalExample {
   enum Exam {
     case abitur, bac, enem, pau, sat
@@ -298,7 +290,7 @@ private enum LocalExample {
     }
   }
 
-  /// A language that isn't the interface's own, named mid-sentence in its casing ("inglês", "Spanish").
+  /// Named mid-sentence in its casing ("inglês", "Spanish").
   static var language: String {
     let spoken = Locale.current.language.languageCode?.identifier == "en" ? "es" : "en"
     return Locale.current.localizedString(forLanguageCode: spoken) ?? spoken

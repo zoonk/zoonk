@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// A course's start (`/start/course/[courseId]`), where "Build my plan" on a Library course leads: the learner's level (a chapter's start doesn't ask: the plan starts at that chapter), then one button that starts the course as their goal (as a guest when there's no session) and goes on to the goal's own steps. Opening or leaving it creates nothing.
+/// Opening or leaving it creates nothing.
 struct CourseStartScreen: View {
   let courseId: String
   var chapterId: String? = nil
@@ -91,7 +91,6 @@ struct CourseStartScreen: View {
         goalID = try await onboarding.startCourse(
           courseID: courseId, chapterID: chapterId, level: level.flatMap(LevelChoices.answer))
       } catch is CancellationError {
-        // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch {
         self.error = GoalError.creating(error)
       }

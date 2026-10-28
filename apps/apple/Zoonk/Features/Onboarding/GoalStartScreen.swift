@@ -1,8 +1,8 @@
 import SwiftUI
 
-/// The start flow as a full-screen task ("New goal", or what Today's box sent): the typed goal, a short wait while it's read, "Here's what I understood" to confirm, then the goal's own onboarding screens in place. Back goes to the words, kept. A guest whose one goal is taken is asked to create an account before typing anything.
+/// A guest whose one goal is taken is asked to create an account before typing anything.
 struct GoalStartScreen: View {
-  /// Words a link or another screen filled in (main's `/start?goal=`); the learner sends them.
+  /// Words a link or another screen filled in; the learner sends them.
   var goal: String?
 
   @Environment(LearnerSummaryStore.self) private var learner
@@ -13,7 +13,6 @@ struct GoalStartScreen: View {
       sentGoal: onboarding.sentGoal, prefill: goal, needsAccount: needsAccount, limit: upFrontLimit)
   }
 
-  /// A guest whose one goal is taken: only an account adds another.
   private var needsAccount: Bool {
     guard let summary = learner.summary.value else {
       return false
@@ -22,7 +21,7 @@ struct GoalStartScreen: View {
     return summary.identity.isAnonymous && !summary.followedGoals.isEmpty
   }
 
-  /// The free plan's one goal at a time, said before the learner types; creating a goal checks it again.
+  /// Said before the learner types; creating a goal checks it again.
   private var upFrontLimit: GoalLimitReason? {
     guard let summary = learner.summary.value, summary.tier == .free,
       summary.followedGoals.contains(where: { $0.status == .active })
@@ -34,7 +33,6 @@ struct GoalStartScreen: View {
   }
 }
 
-/// A guest whose one goal is taken, before they type another: only an account adds one, and their plan comes with them (main's `GuestGoalGate`).
 private struct GuestGoalGate: View {
   @Environment(AppRouter.self) private var router
 
@@ -73,11 +71,9 @@ private struct GuestGoalGate: View {
 
 private enum StartPage: Hashable {
   case draft
-  /// "Ask questions" about the material attached.
   case questions
 }
 
-/// What the draft page shows: the words just sent, or the draft they became.
 private enum DraftState {
   case sending(String)
   case draft(OnboardingDraft, sentHere: Bool)
@@ -226,7 +222,6 @@ private struct GoalStartFlow: View {
 
         draft = .draft(value, sentHere: true)
       } catch is CancellationError {
-        // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch {
         guard !Task.isCancelled else {
           return
@@ -239,7 +234,6 @@ private struct GoalStartFlow: View {
   }
 }
 
-/// The typed goal as its draft says now: the wait while its words are read (or the way to try again), then what they turned out to be.
 private struct DraftView: View {
   let draft: OnboardingDraft
   let sentHere: Bool
@@ -247,7 +241,6 @@ private struct DraftView: View {
   let onRewrite: (String) -> Void
   let onBack: () -> Void
   let onCreated: (String) -> Void
-  /// The material attached, linked to the goal it becomes.
   let sourceIDs: [String]
 
   @Environment(OnboardingStore.self) private var onboarding
@@ -257,7 +250,6 @@ private struct DraftView: View {
   var body: some View {
     switch draft.status {
     case .understanding:
-      // However the run ended, the draft says where the reading is.
       UnderstandingWaitView(
         goal: draft.prompt, generationID: draft.generationId, readResult: reload)
     case .failed:
@@ -269,7 +261,7 @@ private struct DraftView: View {
     }
   }
 
-  /// The words couldn't be read: starting it again is new work, so it waits for the learner's tap.
+  /// Starting it again is new work, so it waits for the learner's tap.
   private var failed: some View {
     List {
       StepHeader(
@@ -298,13 +290,12 @@ private struct DraftView: View {
     do {
       onDraft(try await onboarding.readAgain(id: draft.id))
     } catch is CancellationError {
-      // The write is obsolete: the learner who asked is gone, so nothing shows.
     } catch {
       retryError = GoalError.starting(error)
     }
   }
 
-  /// The run ended: read the draft, whether it was read or failed. A run that ended before the draft was saved reads it again a moment later.
+  /// A run that ended before the draft was saved reads it again a moment later.
   private func reload() async -> Bool {
     for attempt in 0..<5 {
       if let fresh = try? await onboarding.understanding(id: draft.id),
@@ -325,7 +316,6 @@ private struct DraftView: View {
   }
 }
 
-/// What the learner typed, as they typed it, above what's being read.
 struct TypedGoalSection: View {
   let goal: String
 
@@ -340,7 +330,6 @@ struct TypedGoalSection: View {
   }
 }
 
-/// The wait while typed words are read: the words, then how far reading them got.
 private struct UnderstandingWaitView: View {
   let goal: String
   /// The run reading them; nil right after sending, before the draft exists.

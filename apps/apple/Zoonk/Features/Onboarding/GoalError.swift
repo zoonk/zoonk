@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// Which of the plan's goal limits refused a goal, so the learner reads what applies to them (main's `GoalLimitReason`).
 enum GoalLimitReason: Equatable, Sendable {
   case dailyExplanations
   case dailyGoals
@@ -11,10 +10,9 @@ enum GoalLimitReason: Equatable, Sendable {
   case signUpRequired
   case slowDown
 
-  /// The limits Plus lifts: the free plan's one goal at a time, and its goals for the month.
   var isPlusLimit: Bool { self == .oneActiveGoal || self == .monthlyGoals }
 
-  /// Which cap refused creating a goal (`GOAL_LIMIT_REACHED`'s details), as main's `getGoalLimitReason` reads it.
+  /// Mirrors main's `getGoalLimitReason`.
   init(_ limit: OnboardingLimit) {
     let monthly = limit.period == "month"
 
@@ -69,15 +67,14 @@ enum GoalLimitReason: Equatable, Sendable {
   }
 }
 
-/// Why a goal couldn't be read or created, as the screen says it (main's `GoalError`). A limit only an account lifts isn't an error: it says why, and creating a free account is the way on.
+/// A limit only an account lifts isn't an error: it says why, and creating a free account is the way
+/// on.
 struct GoalError: Equatable {
   let message: LocalizedStringResource
-  /// A guest's one goal is taken, their small AI calls for today, or the guests' daily AI budget.
   var needsAccount = false
-  /// The goal limit that refused it, when one did: one Plus lifts shows as the Plus notice.
   var limit: GoalLimitReason?
 
-  /// Why typed words couldn't be sent; the entry keeps them to send again (main's `useStartError`).
+  /// The entry keeps the words to send again.
   static func starting(_ error: Error) -> GoalError {
     switch error as? OnboardingError {
     case .limit(let limit) where limit.isGoalLimit:
@@ -118,7 +115,6 @@ struct GoalError: Equatable {
     }
   }
 
-  /// Why goals couldn't be created from what was understood (main's `useGoalCreation`).
   static func creating(_ error: Error) -> GoalError {
     let reason: GoalLimitReason? =
       switch error as? OnboardingError {
@@ -142,7 +138,6 @@ struct GoalError: Equatable {
   }
 }
 
-/// Where a screen that starts a goal puts its error (main's `GoalErrorAlert`/`GoalFooter`): a plain error in pink, "Create a free account" when only an account helps, and the Plus notice for a limit Plus lifts.
 struct GoalErrorSection: View {
   let error: GoalError
 
@@ -162,7 +157,6 @@ struct GoalErrorSection: View {
   }
 }
 
-/// Creating a free account, as a screen's one main action: the account sheet signs a guest up and keeps their plan.
 struct CreateAccountButton: View {
   @Environment(AppRouter.self) private var router
 
@@ -184,10 +178,8 @@ struct CreateAccountButton: View {
   }
 }
 
-/// A goal limit Plus lifts, said up front where goals start, while quick questions still work (main's `GoalLimitNotice`).
 struct GoalLimitNoticeSection: View {
   let reason: GoalLimitReason
-  /// Before anything is typed: the free plan's one goal says how to start another.
   var upFront = false
 
   @Environment(AppRouter.self) private var router

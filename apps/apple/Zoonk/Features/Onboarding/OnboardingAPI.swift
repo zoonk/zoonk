@@ -6,9 +6,7 @@ typealias GoalOnboarding = Components.Schemas.Onboarding
 typealias OnboardingAnswer = Components.Schemas.OnboardingAnswerInput
 typealias GoalPlacement = Components.Schemas.Placement
 
-/// Why a goal couldn't start or a step couldn't save, in the terms main's onboarding explains. The
-/// API throws these only for product refusals; transport and session failures are `APIError`s,
-/// which `AppCache.onboardingWrite` turns into `.failed` (or signs out on `unauthorized`).
+/// Only product refusals; transport and session failures are `APIError`s.
 enum OnboardingError: Error, Equatable, Sendable {
   /// Reading words hit a cap: small AI calls, or a guest's one goal (`USAGE_LIMIT_REACHED`).
   case limit(OnboardingLimit)
@@ -18,18 +16,15 @@ enum OnboardingError: Error, Equatable, Sendable {
   case signUpRequired
   /// Too many new goals at once (`SLOW_DOWN`).
   case slowDown
-  /// Material in a format that can't be read.
   case unsupported
   case failed(APIError)
 }
 
-/// Material the learner attached, saved as their own source: a chip on the goal box.
 struct AttachedSource: Decodable, Equatable, Identifiable, Sendable {
   let id: String
   let title: String?
 }
 
-/// What `POST /uploads` saves: pasted text, a link, or a file already uploaded to storage.
 struct MaterialInput: Encodable, Sendable {
   let kind: String
   let language = OnboardingAPI.language
@@ -44,7 +39,6 @@ struct MaterialInput: Encodable, Sendable {
   }
 }
 
-/// An answer from the learner's material, with the pages it came from.
 struct MaterialAnswer: Decodable, Equatable, Sendable {
   struct Citation: Decodable, Equatable, Hashable, Sendable {
     let page: Int?
@@ -57,7 +51,6 @@ struct MaterialAnswer: Decodable, Equatable, Sendable {
   let citations: [Citation]
 }
 
-/// Vercel Blob's presigned-upload request for one file (`POST /uploads/tokens`).
 private struct BlobPresignRequest: Encodable {
   struct Payload: Encodable {
     let pathname: String
@@ -80,15 +73,13 @@ private struct BlobPresignRequest: Encodable {
   let payload: Payload
 }
 
-/// The week the time question shows: its study days (Sunday first), the weekend's own time when
-/// it has one, and, for an exam, whether it studies everything, even after the exam.
+/// Study days Sunday first.
 struct ScheduleWeek: Hashable, Sendable {
   var studyDays: [Int]
   var weekendMinutes: Int?
   var fullCourse = false
 }
 
-/// A week as the plan's time questions take it; the time a day only for what a time covers.
 private struct ScheduleWeekInput: Encodable {
   let studyDays: [Int]
   let weekendMinutes: Int?
@@ -103,8 +94,7 @@ private struct ScheduleWeekInput: Encodable {
   }
 }
 
-/// What a time a day covers by the goal's date (`POST /goals/{goalId}/plan/time-advice`); not
-/// `ready` while the plan is still being built.
+/// Not `ready` while the plan is still being built.
 struct TimeAdvice: Decodable, Equatable, Sendable {
   /// Nil for a plan with nothing to cover by.
   let coveredShare: Double?
@@ -119,8 +109,7 @@ struct TimeAdvice: Decodable, Equatable, Sendable {
   let targetDateNamedMonth: Bool
 }
 
-/// The time that covers everything by the goal's date (`POST /goals/{goalId}/plan/time-to-cover`):
-/// `recommendedMinutes`, or, when no time does, `coreMinutes`, the time that studies every topic.
+/// When no time covers everything, `coreMinutes` is the time that studies every topic.
 struct TimeToCover: Decodable, Equatable, Sendable {
   let coreMinutes: Int?
   let ready: Bool
@@ -129,8 +118,6 @@ struct TimeToCover: Decodable, Equatable, Sendable {
   let targetDateNamedMonth: Bool
 }
 
-/// A language goal's level test (`GET /goals/{goalId}/language-level-test`): its questions still
-/// being written for the language pair, or its next step with the level of each skill so far.
 struct LevelTest: Decodable, Equatable, Sendable {
   enum Status: String, Decodable, Sendable {
     case preparing
@@ -145,7 +132,6 @@ struct LevelTest: Decodable, Equatable, Sendable {
   }
 
   struct Level: Decodable, Equatable, Identifiable, Sendable {
-    /// "B1": the level on the A1 to C2 scale.
     let label: String
     /// From 0 to 5, A1 to C2.
     let score: Double
@@ -183,7 +169,6 @@ struct LevelTest: Decodable, Equatable, Sendable {
   let next: Next?
 }
 
-/// A run's status (`GET /generations/{id}`), as a wait reads it once the stream ends.
 enum GenerationStatus: Sendable {
   case working
   case completed
@@ -200,7 +185,6 @@ struct OnboardingLimit: Decodable, Equatable, Sendable {
   var isGoalLimit: Bool { ["activeGoals", "goal"].contains(resource) }
 }
 
-/// What joining the instrument waitlist did (main's `WaitlistOutcome`).
 enum WaitlistOutcome: Equatable {
   case joined
   /// A visitor or guest: an account is how they're told when lessons are ready.
@@ -255,7 +239,6 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  /// Starts reading a draft again after its run failed.
   func readAgain(id: String, token: String) async throws -> OnboardingDraft {
     let output = try await clients.perform(token: token) { client in
       try await client.createGoalUnderstandingGeneration(path: .init(understandingId: id))
@@ -362,8 +345,6 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  /// Starts a goal's curriculum again after its run stopped; a run already going is joined.
-  /// Where a run is: still working, done, or stopped without its content.
   func generationStatus(id: String, token: String) async throws -> GenerationStatus {
     let output = try await clients.perform(token: token) { client in
       try await client.getGeneration(path: .init(generationId: id))
@@ -402,7 +383,6 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  /// "Start over" archives what this onboarding created, so the next goal starts clean.
   func archive(goalID: String, token: String) async throws {
     let output = try await clients.perform(token: token) { client in
       try await client.updateGoal(
@@ -488,7 +468,6 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  /// What a time a day covers by the goal's date in a week, as the goal's plan works it out.
   func timeAdvice(goalID: String, week: ScheduleWeek, dailyMinutes: Int, token: String)
     async throws -> TimeAdvice
   {
@@ -511,7 +490,6 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  /// The fewest minutes a day that cover everything by the goal's date in a week.
   func timeToCover(goalID: String, week: ScheduleWeek, token: String) async throws -> TimeToCover {
     let input = try PracticeJSON.recode(
       ScheduleWeekInput(week: week, dailyMinutes: nil),
@@ -532,8 +510,6 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  /// Saves material the learner attached (pasted text, a link, or a file already in their Blob
-  /// folder) as their own source, which the plan and lessons use once a goal links it.
   func attach(_ material: MaterialInput, token: String) async throws -> AttachedSource {
     let input = try PracticeJSON.recode(material, as: Components.Schemas.CreateUploadRequest.self)
     let output = try await clients.perform(token: token) { client in
@@ -590,7 +566,6 @@ struct OnboardingAPI: Sendable {
       signature: presigned.signature, params: presigned.params.additionalProperties)
   }
 
-  /// A question about the learner's material, answered from its pages.
   func askMaterial(question: String, sourceIDs: [String], token: String) async throws
     -> MaterialAnswer
   {
@@ -615,7 +590,7 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  /// The level test's next step; read-only, so it never starts writing questions.
+  /// Read-only: it never starts writing questions.
   func levelTest(goalID: String, token: String) async throws -> LevelTest {
     let output = try await clients.perform(token: token) { client in
       try await client.getLanguageLevelTest(path: .init(goalId: goalID))
@@ -633,8 +608,7 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  /// Asks for the language pair's questions when nothing writes them, or joins the run that does;
-  /// nil when they're written.
+  /// Joins the run already writing the questions; nil when they're written.
   func prepareLevelTest(goalID: String, token: String) async throws -> String? {
     let output = try await clients.perform(token: token) { client in
       try await client.createLanguageLevelTestGeneration(path: .init(goalId: goalID))
@@ -675,7 +649,6 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  /// Ends a language goal's level test; skipped, the plan starts from the level the learner gave.
   func finishLevelTest(goalID: String, token: String) async throws {
     let output = try await clients.perform(token: token) { client in
       try await client.finishLanguageLevelTest(path: .init(goalId: goalID))
@@ -691,7 +664,6 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  /// Writes the plan's first lessons ahead, so none waits when the learner gets there.
   func prepareLessons(goalID: String, token: String) async throws {
     let output = try await clients.perform(token: token) { client in
       try await client.createGoalLessonPreparation(path: .init(goalId: goalID))
@@ -707,7 +679,7 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  /// Starts a Library course (or one of its chapters) as the learner's goal, from the level they gave (nil for a quick test). The learner's goal already on the course starts nothing new.
+  /// A nil level asks for a quick test. The learner's goal already on the course starts nothing new.
   func startCourse(
     courseID: String,
     chapterID: String?,
@@ -747,7 +719,7 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  /// A shared plan's outline: only its subject and shape, never its owner's progress.
+  /// Never its owner's progress.
   func planLink(id: String, token: String?) async throws -> Components.Schemas.PlanLink {
     let output = try await clients.perform(token: token) { client in
       try await client.getPlanLink(path: .init(planId: id))
@@ -763,7 +735,6 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  /// Starts the learner's own plan from a shared one, at their own time a day. Returns the goal and whether it's new.
   func startFromPlanLink(
     id: String,
     dailyMinutes: Int,
@@ -791,12 +762,11 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  /// The language main's onboarding writes titles and notes in: the app's interface language.
   static var language: String {
     Bundle.main.preferredLocalizations.first.map { String($0.prefix(2)) } ?? "en"
   }
 
-  /// Reads the product codes a refusal carries; anything else is a plain failure.
+  /// A refusal without a product code is a plain failure.
   static func error(_ payload: Components.Schemas._Error) -> OnboardingError {
     switch payload.error.code {
     case "SIGN_UP_REQUIRED":
@@ -814,7 +784,7 @@ struct OnboardingAPI: Sendable {
     }
   }
 
-  /// A cap's period, resource and tier: under `details.limit` for usage, as `details` itself for goals.
+  /// Under `details.limit` for usage, as `details` itself for goals.
   private static func limit(from details: OpenAPIValueContainer?, nested: Bool) -> OnboardingLimit?
   {
     struct Details: Decodable {

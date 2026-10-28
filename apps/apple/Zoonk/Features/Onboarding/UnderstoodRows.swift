@@ -1,6 +1,5 @@
 import Foundation
 
-/// A fact the learner can fix in place on "Here's what I understood": a goal's title, date or one of its details, or when they study (shared by every goal of the card).
 enum UnderstoodField: String, Equatable, Sendable {
   case title
   case targetDate
@@ -27,21 +26,16 @@ enum UnderstoodField: String, Equatable, Sendable {
   }
 }
 
-/// One understood fact as a row: what it is, the value, where it came from, and how to fix it (main's `UnderstoodRow`).
 struct UnderstoodRow: Identifiable, Equatable {
   let id: String
   let label: LocalizedStringResource
   let value: String
-  /// A small marker next to the value, such as "you said" for a level.
   var badge: LocalizedStringResource?
   var note: String?
   var source: UnderstoodSource?
   var field: UnderstoodField?
-  /// What the editor starts from: the fact's own value, or a default such as the exam's first day.
   var editValue: String?
-  /// The exam's official day when the row's date is another, one tap to take ("Use this date").
   var suggestedDate: String?
-  /// The dates the row's date is picked from (an exam's next sittings), each one tap away.
   var choiceDates: [String] = []
 }
 
@@ -52,7 +46,6 @@ struct UnderstoodSource: Equatable {
   /// Past this, a notice's title (often its whole heading, in capitals) reads as its site instead.
   private static let maxTitleLength = 40
 
-  /// The source as a few words: its short title, else the site it's on ("cebraspe.org.br").
   var name: String {
     let host = url.host()?.replacing(/^www\./, with: "") ?? url.absoluteString
 
@@ -66,7 +59,6 @@ struct UnderstoodSource: Equatable {
   }
 }
 
-/// What a goal draft says of itself, read from its JSON details as main's rows read them.
 struct UnderstoodFacts: Decodable {
   let kind: String
   let title: String
@@ -76,7 +68,6 @@ struct UnderstoodFacts: Decodable {
   let details: Details?
 
   struct Details: Decodable {
-    /// The questions the words already answered, such as `schedule` when they said how long.
     let answered: [String]?
     let institution: String?
     let levelNote: String?
@@ -96,7 +87,7 @@ struct UnderstoodFacts: Decodable {
   }
 }
 
-/// The "Here's what I understood" rows in the order the learner reads them (main's `useUnderstoodRows`): the goal, its one date, the language, the target and why, and the level they gave. What the title already says gets no row of its own.
+/// What the title already says gets no row of its own.
 enum UnderstoodRows {
   static func rows(
     for goal: Components.Schemas.UnderstoodGoal,
@@ -137,7 +128,6 @@ enum UnderstoodRows {
     return rows
   }
 
-  /// When the learner studies, shared by every goal of the card: their words or time, and the minutes when they said them.
   static func scheduleRow(
     _ understood: Components.Schemas.GoalUnderstanding.Case1Payload
   ) -> UnderstoodRow? {
@@ -211,7 +201,6 @@ enum UnderstoodRows {
     return rows
   }
 
-  /// The goal's course or where, its target, the last cut-off, why, and the learner's role, each once.
   private static func detailRows(
     facts: UnderstoodFacts,
     cutoff: Components.Schemas.TargetCutoff?
@@ -304,7 +293,7 @@ enum UnderstoodRows {
     return rows
   }
 
-  /// Where the bar was for the target, when another learner's research found it: a reference, never a promise.
+  /// A reference, never a promise.
   private static func cutoffRow(_ cutoff: Components.Schemas.TargetCutoff) -> UnderstoodRow {
     let number = FloatingPointFormatStyle<Double>.number.precision(.fractionLength(0...1))
     let detail = [
@@ -327,7 +316,7 @@ enum UnderstoodRows {
       source: URL(string: cutoff.source.url).map { UnderstoodSource(title: nil, url: $0) })
   }
 
-  /// The goal's one date row (main's `useDateRow`): the day the learner or their words gave (with its official source when a search found it, or the notice's day one tap away when it's another), else the month they named when the plan keeps it, else the sitting to pick for an exam held several times a year, else the exam's days (official or estimated), else, for an exam whose day isn't out, that it's to be confirmed.
+  /// Mirrors main's `useDateRow`.
   private static func dateRow(
     facts: UnderstoodFacts,
     examDates: [Components.Schemas.OnboardingExamDate],
@@ -426,7 +415,6 @@ enum UnderstoodRows {
   private static let examDateLabel = LocalizedStringResource(
     "Exam date", table: "Onboarding", comment: "Row with an exam's date")
 
-  /// The month the learner named when the plan keeps it: over the notice's day in another month, which the row offers one tap away, or, for an exam held several times a year, with no sitting in their month to offer.
   private static func keptMonthRow(
     examDates: [Components.Schemas.OnboardingExamDate],
     month: Int?,
@@ -454,7 +442,7 @@ enum UnderstoodRows {
       field: .targetDate, editValue: kept, suggestedDate: noticeDay?.date)
   }
 
-  /// An exam held several times a year when the learner gave no date or month: which sitting they'll take, from the next ones open for registration, each one tap away. Until they pick, the plan counts down to the first.
+  /// Until the learner picks, the plan counts down to the first sitting.
   private static func sittingChoiceRow(
     examDates: [Components.Schemas.OnboardingExamDate],
     month: Int?,
@@ -482,7 +470,6 @@ enum UnderstoodRows {
       field: .targetDate, editValue: first.date, choiceDates: open.map(\.date))
   }
 
-  /// What the exam's notice (or a certificate's official calendar) says its day is.
   private static func noticeDayText(_ isoDate: String, isGuide: Bool) -> String {
     let date = day(isoDate)?.formatted(.dateTime.day().month(.wide).year()) ?? isoDate
 
@@ -497,7 +484,6 @@ enum UnderstoodRows {
           comment: "The day an exam's notice gives"))
   }
 
-  /// The exam's days in one line, the year said once at the end when they share it: "November 8 and November 15, 2026".
   private static func examDaysText(_ days: [Components.Schemas.OnboardingExamDate]) -> String {
     let sameYear = Set(days.map { yearOf($0.date) }).count == 1
 
@@ -517,7 +503,6 @@ enum UnderstoodRows {
     Int(isoDate.prefix(4)) ?? 0
   }
 
-  /// An exam without its official day, as far as the learner's words go: "March 2027, to be confirmed" when they named the month, else the year, else just to be confirmed.
   private static func toBeConfirmed(month: Int?, year: Int?) -> String {
     guard let year else {
       return String(
@@ -540,7 +525,6 @@ enum UnderstoodRows {
         comment: "An exam date that isn't out yet, with the month the learner named"))
   }
 
-  /// The learner's today as an ISO date.
   private static func isoDay(_ date: Date) -> String {
     let parts = Calendar.current.dateComponents([.year, .month, .day], from: date)
     return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
@@ -561,7 +545,6 @@ enum UnderstoodRows {
     URL(string: value.url).map { UnderstoodSource(title: value.title, url: $0) }
   }
 
-  /// A local day from an ISO date ("2027-11-08").
   static func day(_ isoDate: String) -> Date? {
     let parts = isoDate.split(separator: "-").compactMap { Int($0) }
 
@@ -573,7 +556,6 @@ enum UnderstoodRows {
       from: DateComponents(year: parts[0], month: parts[1], day: parts[2]))
   }
 
-  /// "07:30" as the learner's clock shows it.
   private static func timeOfDay(_ value: String) -> String? {
     let parts = value.split(separator: ":").compactMap { Int($0) }
 

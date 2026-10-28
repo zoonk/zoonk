@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// A question about the goal (main's question steps): what it's for, the role, why, the target, the date, the exam's choices, the level, the time a day and the buddy. A single choice moves on as soon as it's picked; boxes wait for Continue, and optional ones can be skipped.
+/// A single choice moves on as soon as it's picked; boxes wait for Continue, and optional ones can be
+/// skipped.
 struct QuestionStep: View {
   let step: Components.Schemas.OnboardingStep
   let view: GoalOnboarding
@@ -68,7 +69,6 @@ struct QuestionStep: View {
   }
 }
 
-/// One of a goal's details as JSON: only its text matters to the questions.
 private struct OnboardingDetail: Decodable {
   let text: String?
 
@@ -77,7 +77,6 @@ private struct OnboardingDetail: Decodable {
   }
 }
 
-/// What the question is about, the question itself and why it's asked, above its answers.
 struct StepHeader: View {
   var subject: String?
   let title: Text
@@ -106,13 +105,11 @@ struct StepHeader: View {
   }
 }
 
-/// Continue, and under it the way to skip an optional question, as one block at the end of the screen.
 struct StepButtons: View {
   var canContinue = true
   var canSkip = true
   var continueLabel: Text?
   var skipLabel: Text?
-  /// A line under the buttons, such as what starting needs.
   var note: Text?
   let onContinue: () -> Void
   var onSkip: (() -> Void)?
@@ -153,7 +150,6 @@ struct StepButtons: View {
   }
 }
 
-/// A list of choices, each a title and a line under it; picking one answers at once.
 struct ChoiceRows<Value: Hashable>: View {
   struct Choice {
     let value: Value
@@ -197,7 +193,6 @@ struct ChoiceRows<Value: Hashable>: View {
   }
 }
 
-/// Learn goals: an overview and a deep dive make very different plans.
 private struct PurposeQuestion: View {
   let subject: String
   let onAnswer: ([String: Any]) -> Void
@@ -254,7 +249,6 @@ private struct PurposeQuestion: View {
   }
 }
 
-/// Work and career-change plans are built around the learner's role.
 private struct RoleQuestion: View {
   let subject: String
   let isCareerChange: Bool
@@ -323,7 +317,6 @@ private struct RoleQuestion: View {
   }
 }
 
-/// A box with its label over it, as a form row.
 struct LabeledField: View {
   let label: Text
   let prompt: Text
@@ -350,12 +343,10 @@ private func value(_ text: String) -> Any {
   trimmed(text).isEmpty ? NSNull() : trimmed(text)
 }
 
-/// A short answer: why they learn a language, or the exam's target of its kind.
 private struct TextQuestion: View {
   enum Kind {
     case admission, position, score, reason
 
-    /// What the exam's target question asks: a course and score unless the exam ranks a position or reports a score.
     init(examTarget: String?) {
       self =
         switch examTarget {
@@ -460,7 +451,7 @@ private struct TextQuestion: View {
   }
 }
 
-/// A deadline is optional: without one, the learner studies everything at their own pace. An exam course's sitting leads instead, with another date as its other path.
+/// A deadline is optional: without one, the learner studies everything at their own pace.
 private struct DateQuestion: View {
   let subject: String
   let examDays: Components.Schemas.Onboarding.ExamDaysPayload?
@@ -572,13 +563,11 @@ private struct DateQuestion: View {
   }
 }
 
-/// "2027-11-08" for a local day.
 func isoDay(_ date: Date) -> String {
   let parts = Calendar.current.dateComponents([.year, .month, .day], from: date)
   return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
 }
 
-/// Questions asked about an unusual goal, answered together on one screen.
 private struct FollowUpsQuestion: View {
   let questions: [String]
   let onAnswer: ([String: Any]) -> Void
@@ -618,7 +607,6 @@ private struct FollowUpsQuestion: View {
   }
 }
 
-/// An exam whose candidates take one of several subjects (ENEM's foreign language) asks which, so the plan and the mocks teach only that one.
 private struct ExamChoiceQuestion: View {
   let subject: String
   let choices: [Components.Schemas.ExamChoice]
@@ -695,7 +683,7 @@ private struct ExamChoiceQuestion: View {
   }
 }
 
-/// How much the learner knows sets where the plan starts; "Not sure" is still an answer: a quick test finds it.
+/// "Not sure" is still an answer: a quick test finds it.
 private struct LevelQuestion: View {
   let subject: String
   let onAnswer: ([String: Any]) -> Void
@@ -715,7 +703,6 @@ private struct LevelQuestion: View {
   }
 }
 
-/// How much the learner already knows, as the level question and a course's start ask it.
 enum LevelChoices {
   /// "Not sure": placement finds the level instead.
   private static let quickTest = "quickTest"
@@ -760,7 +747,6 @@ enum LevelChoices {
   }
 }
 
-/// An exam with several subjects asks which ones the learner already knows well: one level for nine subjects says little.
 private struct SubjectsLevelQuestion: View {
   let subject: String
   let subjects: [Components.Schemas.Onboarding.ExamSubjectsPayloadPayload]
@@ -820,7 +806,7 @@ private struct SubjectsLevelQuestion: View {
   }
 }
 
-/// The buddy is offered once, in the learner's first onboarding: who it is and, if they like, its name.
+/// The buddy is offered once, in the learner's first onboarding.
 private struct BuddyQuestion: View {
   let onAnswer: ([String: Any]) -> Void
 

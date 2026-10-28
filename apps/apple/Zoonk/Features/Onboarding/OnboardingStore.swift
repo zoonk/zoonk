@@ -1,11 +1,10 @@
 import Foundation
 import Observation
 
-/// Starting a goal: reading the typed words, creating the goals, and the goal's own onboarding screens. Generation runs start only from these calls, which a learner's tap makes.
+/// Generation runs start only from these calls, which a learner's tap makes.
 @MainActor
 @Observable
 final class OnboardingStore {
-  /// What Today's box sent with the tap that opened the start flow, read once by it.
   private(set) var sentGoal: SentGoal?
 
   @ObservationIgnored private let api: OnboardingAPI
@@ -22,7 +21,6 @@ final class OnboardingStore {
     self.session = session
   }
 
-  /// Hands the words and material to the start flow Today opens next; it reads them once.
   func send(_ goal: SentGoal) {
     sentGoal = goal
   }
@@ -32,8 +30,7 @@ final class OnboardingStore {
     return sentGoal
   }
 
-  /// Signs a visitor in as a guest first, as main does when a visitor sends a goal or starts a
-  /// course, so the write that follows has a session to belong to.
+  /// So the write that follows has a session to belong to.
   private func ensureSession() async throws {
     if session.authenticatedSession != nil {
       return
@@ -51,7 +48,7 @@ final class OnboardingStore {
     }
   }
 
-  /// Reads a draft again once its run reports it's done; reading starts nothing.
+  /// Reading starts nothing.
   func understanding(id: String) async throws -> OnboardingDraft {
     guard let token = session.authenticatedSession?.bearerToken else {
       throw CancellationError()
@@ -74,7 +71,6 @@ final class OnboardingStore {
     }
   }
 
-  /// Saves one fix on the card: a goal's fact by its place on the card, or when the learner studies.
   func revise(
     draftID: String,
     field: UnderstoodField,
@@ -100,7 +96,6 @@ final class OnboardingStore {
     clients.generationEvents(id: generationID, token: session.authenticatedSession?.bearerToken)
   }
 
-  /// Creates the goals the learner confirmed on the card; they share the day's time. Returns the main goal's id.
   func createGoals(
     _ goals: [Components.Schemas.GoalDraftOutput],
     schedule: Components.Schemas.GoalUnderstanding.Case1Payload.SchedulePayload,
@@ -116,7 +111,6 @@ final class OnboardingStore {
         timeZone: TimeZone.current.identifier))
   }
 
-  /// A question gets its quick explanation: an explain goal named after it, closing the draft.
   func createExplanation(draft: OnboardingDraft, question: String) async throws -> String {
     try await create(
       .init(
@@ -133,7 +127,6 @@ final class OnboardingStore {
         timeZone: TimeZone.current.identifier))
   }
 
-  /// Musicianship for an instrument (reading music, ear training and rhythm): a learn goal to start today.
   func createMusicianship(draft: OnboardingDraft, instrument: String) async throws -> String {
     try await create(
       .init(
@@ -165,7 +158,6 @@ final class OnboardingStore {
     }
   }
 
-  /// The rest of a new goal's onboarding, one screen per question, ending with the plan.
   func onboarding(goalID: String) -> Resource<GoalOnboarding> {
     if let resource = onboardings[goalID] {
       return resource
@@ -184,7 +176,6 @@ final class OnboardingStore {
     return resource
   }
 
-  /// Saves one answer; the response is the screens still ahead, shown without another read.
   func answer(_ answer: OnboardingAnswer, goalID: String) async throws -> GoalOnboarding {
     let updated = try await cache.onboardingWrite(invalidating: [.goals, .learningProfile]) {
       [api] identity in
@@ -195,14 +186,12 @@ final class OnboardingStore {
     return updated
   }
 
-  /// Starts the goal's curriculum again after its run stopped.
   func writeGoal(goalID: String) async throws -> String {
     try await cache.onboardingWrite { [api] identity in
       try await api.writeGoal(goalID: goalID, token: identity.bearerToken)
     }
   }
 
-  /// "Start over" archives every goal this onboarding created, so the next goal starts clean.
   func startOver(goalIDs: [String]) async throws {
     try await cache.onboardingWrite(invalidating: [.goals, .learningProfile]) { [api] identity in
       try await withThrowingTaskGroup { group in
@@ -215,7 +204,7 @@ final class OnboardingStore {
     }
   }
 
-  /// Placement's next step; reading it writes nothing.
+  /// Reading it writes nothing.
   func placement(goalID: String) async throws -> GoalPlacement {
     guard let token = session.authenticatedSession?.bearerToken else {
       throw CancellationError()
@@ -241,7 +230,6 @@ final class OnboardingStore {
     }
   }
 
-  /// Ends placement, then writes the plan's first lessons ahead, as main does once it's done.
   func finishPlacement(goalID: String, fromScratch: Bool) async throws {
     try await cache.onboardingWrite(invalidating: [.goals, .learnerModel, .learningProfile]) {
       [api] identity in
@@ -251,7 +239,6 @@ final class OnboardingStore {
     }
   }
 
-  /// Starts a Library course as the learner's goal from its start page's tap; a visitor becomes a guest first.
   func startCourse(courseID: String, chapterID: String?, level: String?) async throws -> String {
     try await ensureSession()
     return try await cache.onboardingWrite(invalidating: [.goals, .learningProfile]) {
@@ -261,7 +248,6 @@ final class OnboardingStore {
     }
   }
 
-  /// A shared plan's outline, as anyone reads it; a signed-in owner is sent to their own plan.
   func planLink(id: String) -> Resource<Components.Schemas.PlanLink> {
     if let resource = planLinks[id] {
       return resource
@@ -305,14 +291,14 @@ final class OnboardingStore {
     return try await api.timeToCover(goalID: goalID, week: week, token: token)
   }
 
-  /// Saves pasted text or a link as the learner's own material.
   func attach(_ material: MaterialInput) async throws -> AttachedSource {
     try await cache.onboardingWrite { [api] identity in
       try await api.attach(material, token: identity.bearerToken)
     }
   }
 
-  /// A file the learner picked: uploaded into their own folder (`sources/{userId}/`), then saved like pasted text. A name can't nest folders or climb out with "..", and its own id keeps two files of the same name apart.
+  /// A name can't nest folders or climb out with "..", and its own id keeps two files of the same
+  /// name apart.
   func attachFile(_ file: URL) async throws -> AttachedSource {
     guard let userID = session.account?.user.id else {
       throw OnboardingError.signUpRequired
@@ -327,7 +313,6 @@ final class OnboardingStore {
     }
   }
 
-  /// A question about the learner's material, answered from its pages.
   func askMaterial(question: String, sourceIDs: [String]) async throws -> MaterialAnswer {
     try await cache.onboardingWrite { [api] identity in
       try await api.askMaterial(
@@ -343,7 +328,7 @@ final class OnboardingStore {
     return try await api.levelTest(goalID: goalID, token: token)
   }
 
-  /// The learner's tap asks for the pair's questions; the run writing them, or nil once they're written.
+  /// Only from the learner's tap; nil once the questions are written.
   func prepareLevelTest(goalID: String) async throws -> String? {
     try await cache.onboardingWrite { [api] identity in
       try await api.prepareLevelTest(goalID: goalID, token: identity.bearerToken)
@@ -365,7 +350,6 @@ final class OnboardingStore {
     }
   }
 
-  /// Ends a language goal's level test with its answers, or skips it: the plan starts from the level the learner gave.
   func finishLevelTest(goalID: String) async throws {
     try await cache.onboardingWrite(invalidating: [.goals, .learnerModel, .learningProfile]) {
       [api] identity in
@@ -386,10 +370,8 @@ final class OnboardingStore {
     return goalID
   }
 
-  /// The day's time an explanation takes, as main sends it.
   private static let explanationMinutes = 5
 
-  /// Musicianship starts with a gentle daily time.
   private static let musicianshipMinutes = 15
 
   private static func goalDraft(_ json: [String: Any]) throws -> Components.Schemas.GoalDraft {
@@ -399,11 +381,9 @@ final class OnboardingStore {
 }
 
 extension AppCache {
-  /// `mutate` for onboarding's writes, which the API can refuse for a product reason (a goal
-  /// limit, the guests' daily budget, haste): a refusal is thrown as that `OnboardingError`, an
-  /// `APIError` failure as `OnboardingError.failed`, and a result for a session that ended or
-  /// changed meanwhile (or signed out on `unauthorized`) as `CancellationError`, which screens
-  /// ignore: nothing they'd show belongs to the learner on screen now.
+  /// Throws a product refusal as its `OnboardingError`, an `APIError` failure as
+  /// `OnboardingError.failed`, and a result for a session that changed meanwhile as
+  /// `CancellationError`, which screens ignore.
   func onboardingWrite<Value: Sendable>(
     invalidating domains: Set<DataDomain> = [],
     _ write: (AuthenticatedSession) async throws -> Value

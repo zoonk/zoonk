@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// A goal's own onboarding as a full-screen task (`/start/[goalId]`), opened from Today while a goal's questions are left.
 struct GoalSetupScreen: View {
   let goalId: String
 
@@ -11,7 +10,7 @@ struct GoalSetupScreen: View {
   }
 }
 
-/// The questions the typed goal didn't answer, one per screen with Back and a way to start over, then placement and the plan. A screen that comes back shows the same step, since each answer is saved.
+/// A screen that comes back shows the same step, since each answer is saved.
 struct GoalSetupContent: View {
   /// Inside the start flow, starting over goes back to its box; opened on its own, the start flow opens.
   var onStartOver: (() -> Void)?
@@ -92,7 +91,6 @@ private struct GoalSteps: View {
     revisiting ?? view.steps.first ?? .plan
   }
 
-  /// Leaving to finish later and starting over, in the toolbar's menu.
   @ViewBuilder private var moreActions: some View {
     Group {
       Button {
@@ -185,7 +183,6 @@ private struct GoalSteps: View {
     .onDisappear { startingOver?.cancel() }
   }
 
-  /// The step counter beside the bar: answered steps, this one and the ones still ahead.
   private var progress: (current: Int, total: Int)? {
     guard stepScreens.contains(step) else {
       return nil
@@ -220,7 +217,6 @@ private struct GoalSteps: View {
           onGoalMoved(updated.goal.id)
         }
       } catch is CancellationError {
-        // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch {
         failed = true
       }
@@ -236,7 +232,6 @@ private struct GoalSteps: View {
     revisiting = previous
   }
 
-  /// Archives what this onboarding created and goes back to typing a goal.
   private func startOver() async {
     isSaving = true
     defer { isSaving = false }
@@ -257,13 +252,12 @@ private struct GoalSteps: View {
         router.open(.startGoal())
       }
     } catch is CancellationError {
-      // The write is obsolete: the learner who asked is gone, so nothing shows.
     } catch {
       failed = true
     }
   }
 
-  /// The steps already answered, in order, so Back returns to them after coming back later.
+  /// So Back returns to them after coming back later.
   private static func answeredSteps(_ view: GoalOnboarding) -> [Components.Schemas.OnboardingStep] {
     struct Details: Decodable {
       let answered: [String]?
@@ -277,7 +271,6 @@ private struct GoalSteps: View {
   }
 }
 
-/// The screen for one step. Each answer goes back through the flow.
 private struct StepScreen: View {
   let step: Components.Schemas.OnboardingStep
   let view: GoalOnboarding
@@ -305,7 +298,6 @@ private struct StepScreen: View {
     }
   }
 
-  /// How the questions name the goal: its subject, such as "quantum physics", or its title.
   private var subject: String {
     struct Details: Decodable {
       let subject: String?

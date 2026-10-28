@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// A language goal's placement (main's `LanguageLevelTestStep`): a three-minute test of reading and listening questions that adapt to each answer, one sentence out loud, then the level of each skill. When the language pair's questions don't exist yet, the learner's Start asks for them and the test waits while they're written. Coming back returns to the test once it has answers. Skipping keeps the level the learner gave.
+/// When the language pair's questions don't exist yet, only the learner's Start asks for them.
 struct LevelTestStep: View {
   let goalID: String
   /// The learner's own language.
@@ -94,7 +94,6 @@ struct LevelTestStep: View {
     }
   }
 
-  /// A reading question shows its text; a listening one plays it as a voice message instead.
   private func questionScreen(_ question: LevelTest.Question, number: Int, progress: Double)
     -> some View
   {
@@ -124,7 +123,7 @@ struct LevelTestStep: View {
       })
   }
 
-  /// Coming back returns to the test once it has answers; otherwise it starts from its intro, and only the learner's Start asks for questions.
+  /// Without answers it starts from its intro, and only the learner's Start asks for questions.
   private func resume() async {
     guard case .loading = phase else {
       return
@@ -140,7 +139,6 @@ struct LevelTestStep: View {
     show(test)
   }
 
-  /// The learner's Start: the test's first question, or the wait while its questions are written (joining a run already writing them).
   private func begin() async {
     guard !isSaving else {
       return
@@ -157,7 +155,6 @@ struct LevelTestStep: View {
         show(try await onboarding.levelTest(goalID: goalID))
       }
     } catch is CancellationError {
-      // The write is obsolete: the learner who asked is gone, so nothing shows.
     } catch {
       failed = true
     }
@@ -211,14 +208,12 @@ struct LevelTestStep: View {
             goalID: goalID, questionID: question.id, answerIndex: index,
             duration: shownAt.duration(to: .now)))
       } catch is CancellationError {
-        // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch {
         failed = true
       }
     }
   }
 
-  /// Ends the test with what it has, or skips it: the plan starts from there.
   private func finish() {
     guard !isSaving else {
       return
@@ -234,7 +229,6 @@ struct LevelTestStep: View {
         try await onboarding.finishLevelTest(goalID: goalID)
         onDone()
       } catch is CancellationError {
-        // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch {
         failed = true
       }
@@ -242,17 +236,14 @@ struct LevelTestStep: View {
   }
 }
 
-/// "pt" for "pt-BR": the language without its script or region.
 private func baseLanguage(_ code: String) -> String {
   String(code.lowercased().prefix { $0 != "-" && $0 != "_" })
 }
 
-/// A language's name in the language the app is in: "Japanese".
 private func languageName(_ code: String) -> String {
   Locale.current.localizedString(forLanguageCode: code) ?? code
 }
 
-/// The test's start: what it is in one sentence, Start, and skipping it as the quiet way around. A new alphabet says the first session teaches it; a learner whose own language the app speaks is offered the app in it.
 private struct LevelTestIntro: View {
   let language: String
   let targetLanguage: String
@@ -313,7 +304,7 @@ private struct LevelTestIntro: View {
     }
   }
 
-  /// Main's list of languages written in another alphabet than Latin's.
+  /// Mirrors main's list.
   private var usesNonLatinScript: Bool {
     Self.nonLatinLanguages.contains(baseLanguage(targetLanguage))
   }
@@ -324,7 +315,6 @@ private struct LevelTestIntro: View {
     "te", "th", "ti", "uk", "ur", "yi", "zh",
   ]
 
-  /// The learner's own language when the app speaks it but shows another.
   private var offersOwnLanguage: Bool {
     let base = baseLanguage(language)
     let shown = Bundle.main.preferredLocalizations.first.map(baseLanguage)
@@ -332,7 +322,7 @@ private struct LevelTestIntro: View {
   }
 }
 
-/// A listening question's voice message, read aloud a little slower than normal so the test isn't one of catching fast speech. Without the sound, its text shows instead.
+/// Read a little slower than normal, so the test isn't one of catching fast speech.
 private struct ListeningMessage: View {
   let text: String
   let language: String
@@ -418,7 +408,7 @@ private struct ListeningMessage: View {
   }
 }
 
-/// The one sentence out loud: record it, and it's checked word by word. Like the test's other questions it has no way back; skipping it ends the test.
+/// Like the test's other questions it has no way back; skipping it ends the test.
 private struct LevelTestSpeaking: View {
   let goalID: String
   let sentence: LevelTest.Sentence
@@ -462,7 +452,6 @@ private struct LevelTestSpeaking: View {
   }
 }
 
-/// "Your level today": each skill's level on the A1 to C2 scale, then building the plan from it.
 private struct LevelTestDone: View {
   let levels: [LevelTest.Level]
   let isSaving: Bool

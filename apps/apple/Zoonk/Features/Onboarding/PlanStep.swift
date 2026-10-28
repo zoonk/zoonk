@@ -1,6 +1,7 @@
 import SwiftUI
 
-/// The end of a goal's onboarding: "Building your plan" while the goal's run writes it, then the plan itself, shown only once the plan says it's ready. An exam's plan first waits for research to read its official documents, so the learner sees the plan they follow.
+/// An exam's plan first waits for research to read its official documents, so the learner sees the
+/// plan they follow.
 struct PlanStep: View {
   let view: GoalOnboarding
 
@@ -9,7 +10,6 @@ struct PlanStep: View {
   /// Once the wait shows, reading the plan again never swaps it for a spinner.
   @State private var isWaiting = false
 
-  /// How often the reveal checks an exam's documents are read.
   private static let noticeCheck = Duration.seconds(3)
 
   var body: some View {
@@ -58,7 +58,6 @@ struct PlanStep: View {
       readResult: { await readUntilReady(plan) })
   }
 
-  /// The run saved the plan: read it, again a moment later while the save lands.
   private func readUntilReady(_ plan: Resource<PlanRead>) async -> Bool {
     for attempt in 0..<5 {
       await plan.refresh()
@@ -78,7 +77,6 @@ struct PlanStep: View {
   }
 }
 
-/// An exam's plan while research reads its official documents: the plan from what the learner said is done, and the documents' subjects, topics and dates go into it before they see it.
 private struct NoticeReadingView: View {
   let plan: GoalPlan
 
@@ -141,7 +139,6 @@ private struct NoticeReadingView: View {
   }
 }
 
-/// "Plan created", as the plan's page: the goal and its facts in one line, Start (Return) and Adjust, then the phases in time, the goal's structure or its path, and the one thing the plan wants the learner to know.
 private struct PlanReveal: View {
   let view: GoalOnboarding
   let plan: GoalPlan
@@ -266,7 +263,6 @@ private struct PlanReveal: View {
       title: view.goal.title)
   }
 
-  /// How long until the goal (or when it ends at this pace), the time a day and the study time it adds up to: "About 375 days · 30 min a day · about 120 hr of study".
   private var facts: [String] {
     let schedule = plan.schedule
     var facts: [String] = []
@@ -306,7 +302,7 @@ private struct PlanReveal: View {
     return facts
   }
 
-  /// What the plan studies before the date, or all of it without one; to five minutes under two hours and to the hour above, as "about" says.
+  /// To five minutes under two hours and to the hour above, as "about" says.
   private var studyMinutes: Double? {
     guard let numbers = plan.numbers else {
       return nil
@@ -320,11 +316,10 @@ private struct PlanReveal: View {
   }
 }
 
-/// A one-phase plan's chapters in order, the first few with a count of the rest, so the learner sees what the plan holds before starting (main's `PlanChapterList`). Lessons still being written ahead aren't chapters yet.
+/// Lessons still being written ahead aren't chapters yet.
 private struct RevealChapters: View {
   let plan: GoalPlan
 
-  /// How many rows the reveal shows; the Plan has the rest.
   private static let shown = 5
 
   var body: some View {
