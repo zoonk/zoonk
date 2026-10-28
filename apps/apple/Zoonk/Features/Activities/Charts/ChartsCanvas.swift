@@ -102,6 +102,8 @@ private struct ChartsAdjustable: ViewModifier {
   let isEnabled: Bool
   let move: (Int) -> Void
 
+  @FocusState private var isFocused: Bool
+
   func body(content: Content) -> some View {
     content
       .accessibilityElement(children: .ignore)
@@ -115,7 +117,14 @@ private struct ChartsAdjustable: ViewModifier {
         @unknown default: break
         }
       }
-      .focusable(isEnabled)
+      .focusable(isEnabled, interactions: .edit)
+      .focused($isFocused)
+      // Touching or clicking a handle gives it the keyboard, as clicking a slider does on the web.
+      .simultaneousGesture(
+        DragGesture(minimumDistance: 0).onChanged { _ in
+          if !isFocused { isFocused = true }
+        }, isEnabled: isEnabled
+      )
       .onKeyPress(keys: [.leftArrow, .rightArrow, .upArrow, .downArrow, .pageUp, .pageDown]) {
         press in
         guard isEnabled else { return .ignored }

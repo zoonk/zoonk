@@ -9,6 +9,7 @@ struct GeometryBoardCanvas: View {
   let fields: GeometryBoardFields
 
   @State private var points: [GeometryBoardFields.Point]
+  @FocusState private var focusedCorner: Int?
 
   init(context: ActivityCanvasContext, fields: GeometryBoardFields) {
     self.context = context
@@ -153,7 +154,14 @@ struct GeometryBoardCanvas: View {
           }
         }
       }
-      .focusable(!isChecked)
+      .focusable(!isChecked, interactions: .edit)
+      .focused($focusedCorner, equals: index)
+      // Touching or clicking a corner gives it the keyboard, as on the web.
+      .simultaneousGesture(
+        DragGesture(minimumDistance: 0).onChanged { _ in
+          if focusedCorner != index { focusedCorner = index }
+        }, isEnabled: !isChecked
+      )
       .onKeyPress(keys: [.leftArrow, .rightArrow, .upArrow, .downArrow]) { press in
         guard !isChecked else { return .ignored }
         var offset: (Double, Double) =
