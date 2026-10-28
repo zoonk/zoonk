@@ -156,13 +156,17 @@ struct MemoryInsightCard: View {
     failed = false
 
     Task {
-      let saved = await store.answer(insight, accepted: accepted)
+      let result = await store.answer(insight, accepted: accepted)
       isSaving = false
 
-      if saved {
+      switch result {
+      case .done:
         answer = accepted
-      } else {
+      case .failed:
         failed = true
+      case .obsolete:
+        // The learner who answered is gone: nothing of theirs shows anymore.
+        break
       }
     }
   }

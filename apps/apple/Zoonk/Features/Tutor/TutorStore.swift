@@ -175,49 +175,49 @@ final class TutorConversation {
     }
   }
 
-  /// Saves the learner's answer to a plan change the buddy proposed. False when it wasn't saved.
+  /// Saves the learner's answer to a plan change the buddy proposed.
   func decide(
     _ change: Components.Schemas.PlanChange, in turnID: String, decision: TutorPlanChangeDecision
-  ) async -> Bool {
-    guard let goalId = scope.goalId, let session = cache.session.authenticatedSession else {
-      return false
+  ) async -> MutationResult<Void> {
+    guard let goalId = scope.goalId else {
+      return .failed(.unavailable)
     }
 
-    do {
-      let decided = try await api.decidePlanChange(
-        goalId: goalId, changeId: change.id, decision: decision, token: session.bearerToken)
+    // Declining changes only the proposal; applying or undoing changes the plan and today's
+    // session.
+    let result = await cache.mutate(
+      invalidating: decision == .declined ? [] : [.goals, .userSession]
+    ) { identity in
+      try await api.decidePlanChange(
+        goalId: goalId, changeId: change.id, decision: decision, token: identity.bearerToken)
+    }
 
-      guard cache.session.authenticatedSession == session else {
-        return false
-      }
-
+    switch result {
+    case .done(let decided):
       update(turnID) { $0.planChange = decided }
-
-      if decision != .declined {
-        cache.invalidate([.goals, .userSession])
-      }
-
-      return true
-    } catch {
-      return false
+      return .done(())
+    case .failed(let error):
+      return .failed(error)
+    case .obsolete:
+      return .obsolete
     }
   }
 
   /// Undoes what an answer changed in memory.
-  func undoMemory(of turnID: String) async -> Bool {
-    guard let changes = memoryChanges[turnID], let session = cache.session.authenticatedSession
-    else {
-      return false
+  func undoMemory(of turnID: String) async -> MutationResult<Void> {
+    guard let changes = memoryChanges[turnID] else {
+      return .obsolete
     }
 
-    do {
-      try await api.undoMemoryChanges(changes, token: session.bearerToken)
-      memoryChanges[turnID] = nil
-      cache.invalidate([.memory])
-      return true
-    } catch {
-      return false
+    let result = await cache.mutate(invalidating: [.memory]) { identity in
+      try await api.undoMemoryChanges(changes, token: identity.bearerToken)
     }
+
+    if case .done = result {
+      memoryChanges[turnID] = nil
+    }
+
+    return result
   }
 
   private func ask(_ question: String, suggestion: String?) async {

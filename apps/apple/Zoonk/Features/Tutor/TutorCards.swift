@@ -144,11 +144,18 @@ struct TutorPlanChangeCard: View {
     failed = false
 
     Task {
-      let saved = await conversation.decide(change, in: turnID, decision: decision)
+      let result = await conversation.decide(change, in: turnID, decision: decision)
       isSaving = false
-      failed = !saved
-      // The buttons leave with the answer, so VoiceOver lands on what it did.
-      isResultFocused = saved
+
+      switch result {
+      case .done:
+        // The buttons leave with the answer, so VoiceOver lands on what it did.
+        isResultFocused = true
+      case .failed:
+        failed = true
+      case .obsolete:
+        break
+      }
     }
   }
 }
@@ -182,7 +189,14 @@ struct TutorMemoryUpdate: View {
 
         Button {
           Task {
-            result = await conversation.undoMemory(of: turnID)
+            switch await conversation.undoMemory(of: turnID) {
+            case .done:
+              result = true
+            case .failed:
+              result = false
+            case .obsolete:
+              break
+            }
           }
         } label: {
           Text("Undo", tableName: "Tutor", comment: "Undoes what the buddy remembered")

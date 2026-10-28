@@ -127,6 +127,52 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertNil(conversation.answeringID)
   }
 
+  func testAppliedPlanChangeShowsInItsTurn() async {
+    let turn = TutorTurn.fixture(id: "turn", planChange: .fixture(id: "change"))
+    let api = TutorAPIStub(thread: TutorThreadPage(turns: [turn], hasMore: false, nextCursor: nil))
+    let conversation = makeConversation(api: api)
+    await conversation.thread.load()
+
+    let result = await conversation.decide(.fixture(id: "change"), in: "turn", decision: .applied)
+
+    guard case .done = result else {
+      return XCTFail("Expected the decision to be saved, got \(result)")
+    }
+    XCTAssertEqual(conversation.turns.first?.planChange?.status, .applied)
+  }
+
+  func testExpiredSessionOnAPlanChangeSignsOutInsteadOfFailing() async {
+    let session = SessionStore.preview(account: .tutorTestAccount)
+    let turn = TutorTurn.fixture(id: "turn", planChange: .fixture(id: "change"))
+    let api = TutorAPIStub(thread: TutorThreadPage(turns: [turn], hasMore: false, nextCursor: nil))
+    api.decideFailure = APIError.unauthorized
+    let conversation = TutorStore(api: api, cache: AppCache(session: session))
+      .conversation(.plan(goalId: "goal"))
+    await conversation.thread.load()
+
+    let result = await conversation.decide(.fixture(id: "change"), in: "turn", decision: .applied)
+
+    guard case .obsolete = result else {
+      return XCTFail("Expected an obsolete result, got \(result)")
+    }
+    XCTAssertNil(session.authenticatedSession)
+  }
+
+  func testFailedPlanChangeKeepsTheProposal() async {
+    let turn = TutorTurn.fixture(id: "turn", planChange: .fixture(id: "change"))
+    let api = TutorAPIStub(thread: TutorThreadPage(turns: [turn], hasMore: false, nextCursor: nil))
+    api.decideFailure = APIError.network
+    let conversation = makeConversation(api: api)
+    await conversation.thread.load()
+
+    let result = await conversation.decide(.fixture(id: "change"), in: "turn", decision: .applied)
+
+    guard case .failed(.network) = result else {
+      return XCTFail("Expected a network failure, got \(result)")
+    }
+    XCTAssertEqual(conversation.turns.first?.planChange?.status, .proposed)
+  }
+
   func testLoadingEarlierMessagesPutsThemFirst() async {
     let latest = TutorTurn.fixture(id: "latest")
     let earlier = TutorTurn.fixture(id: "earlier")
@@ -192,6 +238,7 @@ private final class TutorAPIStub: TutorAPIClient, @unchecked Sendable {
   var askFailures: [Error]
   var answers: [[TutorAnswerEvent]]
   var answerFailure: TutorFailure?
+  var decideFailure: Error?
   var beforeAnswer: (@MainActor () async -> Void)?
   private(set) var requestIDs: [String] = []
   private var asked = 0
@@ -251,7 +298,13 @@ private final class TutorAPIStub: TutorAPIClient, @unchecked Sendable {
   func decidePlanChange(
     goalId: String, changeId: String, decision: TutorPlanChangeDecision, token: String
   ) async throws -> Components.Schemas.PlanChange {
-    .fixture(id: changeId)
+    if let decideFailure {
+      throw decideFailure
+    }
+
+    var change = Components.Schemas.PlanChange.fixture(id: changeId)
+    change.status = .applied
+    return change
   }
 
   func undoMemoryChanges(_ changes: [TutorMemoryChange], token: String) async throws {}

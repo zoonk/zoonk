@@ -53,12 +53,9 @@ final class BuddyStore {
   }
 
   /// Picks a buddy, its name or its glasses. The buddy changes at once; a failed save puts the
-  /// one before back, and only the latest save can report a failure.
+  /// one before back, and only the latest save can report a failure. A save whose session ended
+  /// changes nothing on screen: another learner's buddy may be there now.
   func save(_ choice: BuddyChoice) async {
-    guard let session = cache.session.authenticatedSession else {
-      return
-    }
-
     latestSave += 1
     let request = latestSave
     let previous = status.value?.buddy
@@ -66,26 +63,28 @@ final class BuddyStore {
     status.update { status in
       var status = status
       status.buddy = .init(
-        glasses: choice.glasses, kind: choice.kind, name: choice.name, picked: true)
+        glasses: .init(rawValue: choice.glasses.rawValue) ?? .round,
+        kind: .init(rawValue: choice.kind.rawValue) ?? .zu,
+        name: choice.name,
+        picked: true)
       return status
     }
 
-    do {
-      try await api.save(choice, token: session.bearerToken)
-      cache.invalidate([.learningProfile])
-    } catch {
-      guard request == latestSave, cache.session.authenticatedSession == session else {
-        return
-      }
+    let result = await cache.mutate(invalidating: [.learningProfile]) { identity in
+      try await api.save(choice, token: identity.bearerToken)
+    }
 
-      saveFailed = true
+    guard request == latestSave, case .failed = result else {
+      return
+    }
 
-      if let previous {
-        status.update { status in
-          var status = status
-          status.buddy = previous
-          return status
-        }
+    saveFailed = true
+
+    if let previous {
+      status.update { status in
+        var status = status
+        status.buddy = previous
+        return status
       }
     }
   }
@@ -119,18 +118,10 @@ final class BuddyStore {
   }
 
   /// Answers an insight from recent sessions. Accepting a plan change or a schedule idea changes
-  /// the plan, so Today and the plan read it again. False when it wasn't saved.
-  func answer(_ insight: MemoryInsight, accepted: Bool) async -> Bool {
-    guard let session = cache.session.authenticatedSession else {
-      return false
-    }
-
-    do {
-      try await api.answer(insightId: insight.id, accepted: accepted, token: session.bearerToken)
-      cache.invalidate([.goals, .learnerModel, .memory, .userSession])
-      return true
-    } catch {
-      return false
+  /// the plan, so Today and the plan read it again.
+  func answer(_ insight: MemoryInsight, accepted: Bool) async -> MutationResult<Void> {
+    await cache.mutate(invalidating: [.goals, .learnerModel, .memory, .userSession]) { identity in
+      try await api.answer(insightId: insight.id, accepted: accepted, token: identity.bearerToken)
     }
   }
 }

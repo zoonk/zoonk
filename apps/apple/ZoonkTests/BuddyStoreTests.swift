@@ -30,6 +30,33 @@ final class BuddyStoreTests: XCTestCase {
     XCTAssertTrue(store.saveFailed)
   }
 
+  func testExpiredSessionOnSaveSignsOutWithoutRollingBack() async {
+    let session = SessionStore.preview(account: .buddyTestAccount)
+    let api = BuddyAPIStub()
+    api.saveFailure = APIError.unauthorized
+    let store = BuddyStore(api: api, cache: AppCache(session: session))
+    await store.status.load()
+
+    await store.save(BuddyChoice(kind: .otto, name: "Octo", glasses: .round))
+
+    XCTAssertNil(session.authenticatedSession)
+    XCTAssertFalse(store.saveFailed)
+  }
+
+  func testExpiredSessionOnAnInsightAnswerIsObsolete() async {
+    let session = SessionStore.preview(account: .buddyTestAccount)
+    let api = BuddyAPIStub()
+    api.answerFailure = APIError.unauthorized
+    let store = BuddyStore(api: api, cache: AppCache(session: session))
+
+    let result = await store.answer(.fixture, accepted: true)
+
+    guard case .obsolete = result else {
+      return XCTFail("Expected an obsolete result, got \(result)")
+    }
+    XCTAssertNil(session.authenticatedSession)
+  }
+
   func testOlderEarlierQuestionsAppend() async {
     let api = BuddyAPIStub()
     api.pages = [
@@ -48,6 +75,7 @@ final class BuddyStoreTests: XCTestCase {
 
 private final class BuddyAPIStub: BuddyAPIClient, @unchecked Sendable {
   var saveFailure: Error?
+  var answerFailure: Error?
   var pages: [String?: EarlierQuestionsPage] = [:]
 
   func status(timeZone: String, token: String) async throws -> BuddyStatus {
@@ -64,7 +92,11 @@ private final class BuddyAPIStub: BuddyAPIClient, @unchecked Sendable {
     pages[cursor] ?? EarlierQuestionsPage(questions: [], nextCursor: nil)
   }
 
-  func answer(insightId: String, accepted: Bool, token: String) async throws {}
+  func answer(insightId: String, accepted: Bool, token: String) async throws {
+    if let answerFailure {
+      throw answerFailure
+    }
+  }
 }
 
 extension BuddyStatus {
@@ -80,6 +112,12 @@ extension BuddyStatus {
     stage: .baby,
     thisWeek: .init(fixes: 0, newIdeas: 0, reviews: 0),
     today: nil)
+}
+
+extension MemoryInsight {
+  fileprivate static let fixture = MemoryInsight(
+    createdAt: .now, goalId: nil, id: "insight", kind: .tip, message: "Review before bed.",
+    planChange: nil, status: .pending, studyTime: nil)
 }
 
 extension Components.Schemas.EarlierQuestion {
