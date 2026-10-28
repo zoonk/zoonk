@@ -13,7 +13,6 @@ struct ZoonkApp: App {
   @State private var plan: PlanStore
   @State private var practice: PracticeStore
   @State private var progress: ProgressStore
-  @State private var router: AppRouter
   @State private var session: SessionStore
   @State private var settings: SettingsStore
   @State private var studySession: StudySessionStore
@@ -22,10 +21,8 @@ struct ZoonkApp: App {
   @State private var tutor: TutorStore
   @State private var voice: VoiceServices
   private let cache: AppCache
+  private let initialSheet: AppSheet?
   private let lessonPlayer: LessonPlayerDependencies
-  private let lessonPlayerRoutes: LessonPlayerRoutes
-  private let practiceHooks: PracticeHooks
-  private let tutorPlaces: TutorPlaces
   private let privateImages: PrivateImageLoader
 
   init() {
@@ -52,14 +49,7 @@ struct ZoonkApp: App {
     _practice = State(initialValue: dependencies.practiceStore)
     privateImages = dependencies.privateImageLoader
     _progress = State(initialValue: dependencies.progressStore)
-    let router = AppRouter(
-      sheet: initiallyPresentsAccount ? .account : nil,
-      openBlock: AppRouter.openingTodayBlocks(
-        today: dependencies.todayStore, sessions: dependencies.studySessionStore))
-    _router = State(initialValue: router)
-    lessonPlayerRoutes = .routed(by: router)
-    practiceHooks = .routed(by: router)
-    tutorPlaces = .routed(by: router)
+    initialSheet = initiallyPresentsAccount ? .account : nil
     _session = State(initialValue: dependencies.sessionStore)
     _settings = State(initialValue: dependencies.settingsStore)
     _studySession = State(initialValue: dependencies.studySessionStore)
@@ -71,13 +61,7 @@ struct ZoonkApp: App {
 
   var body: some Scene {
     WindowGroup {
-      AppView()
-        #if DEBUG
-          .modifier(DebugLessonLaunch())
-          // Inside the environment below, so the gallery's screens get the app's renderers.
-          .modifier(ActivityGalleryLaunch())
-          .modifier(DebugCharacterGallery())
-        #endif
+      AppWindow(initialSheet: initialSheet, today: today, sessions: studySession)
         .loads(learnerSummary.summary, refreshable: false)
         .task(id: learnerSummary.summary.value?.nextChangeAt) {
           await learnerSummary.refreshAtNextChange()
@@ -96,9 +80,6 @@ struct ZoonkApp: App {
         .environment(onboarding)
         .environment(practice)
         .environment(progress)
-        .environment(router)
-        .environment(\.lessonPlayerRoutes, lessonPlayerRoutes)
-        .environment(\.practiceHooks, practiceHooks)
         .environment(session)
         .environment(settings)
         .environment(studySession)
@@ -108,16 +89,44 @@ struct ZoonkApp: App {
         .environment(voice)
         .environment(\.privateImageLoader, privateImages)
         .environment(\.lessonTutor, .buddy)
-        .environment(\.tutorPlaces, tutorPlaces)
         .environment(\.lessonPlayer, lessonPlayer)
         .environment(\.lessonAudio, .voice(voice))
         .environment(\.spokenAnswerRecording, .voice)
         .environment(\.activityRenderers, .app)
-        .onOpenURL { url in
-          if !router.open(url: url) {
-            session.handleGoogleSignInURL(url)
-          }
-        }
     }
+  }
+}
+
+/// One window's navigation: its tabs, stacks, tasks and sheet, so two Zoonk windows (on iPad or the
+/// open iPhone Duo) go their own ways while the stores they show stay the app's.
+private struct AppWindow: View {
+  @Environment(SessionStore.self) private var session
+  @State private var router: AppRouter
+
+  init(initialSheet: AppSheet?, today: TodayStore, sessions: StudySessionStore) {
+    _router = State(
+      initialValue: AppRouter(
+        sheet: initialSheet,
+        openBlock: AppRouter.openingTodayBlocks(today: today, sessions: sessions)))
+  }
+
+  var body: some View {
+    AppView()
+      #if DEBUG
+        .modifier(DebugLessonLaunch())
+        // Inside the app's environment, so the gallery's screens get the app's renderers.
+        .modifier(ActivityGalleryLaunch())
+        .modifier(DebugCharacterGallery())
+      #endif
+      // Made from the router the window keeps: `init` runs again on every update of the app.
+      .environment(router)
+      .environment(\.lessonPlayerRoutes, .routed(by: router))
+      .environment(\.practiceHooks, .routed(by: router))
+      .environment(\.tutorPlaces, .routed(by: router))
+      .onOpenURL { url in
+        if !router.open(url: url) {
+          session.handleGoogleSignInURL(url)
+        }
+      }
   }
 }
