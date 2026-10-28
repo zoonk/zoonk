@@ -22,7 +22,6 @@ function isPicked({ answer, index }: { answer: CheckpointAnswer | null; index: n
   return "isTrue" in answer && answer.isTrue === (index === 0);
 }
 
-/** How the learner's pick turned out, once it has its verdict. */
 function getPickResult(verdict: Verdict) {
   if (!verdict) {
     return null;
@@ -35,12 +34,7 @@ function toAnswer({ format, index }: { format: CheckpointQuestion["format"]; ind
   return format === "trueFalse" ? { isTrue: index === 0 } : { selectedIndex: index };
 }
 
-/**
- * A checkpoint question's options, numbered like a lesson's and picked with the same number keys.
- * They lock from Confirm (`locked`, while the answer is graded) through the verdict, so the pick on
- * screen is the one graded. After an answer the pick turns blue or red ("Your answer"); a wrong
- * pick never reveals the right one until the end.
- */
+/** A wrong pick never reveals the right one until the end. */
 export function CheckpointOptions({
   locked,
   onSelect,
@@ -48,7 +42,6 @@ export function CheckpointOptions({
   selected,
   verdict,
 }: {
-  /** The answer is on its way to be graded: the pick can't change. */
   locked: boolean;
   onSelect: (answer: CheckpointAnswer | null) => void;
   question: CheckpointQuestion;

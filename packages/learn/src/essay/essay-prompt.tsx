@@ -8,7 +8,6 @@ import { ItemStem, ItemText, QUESTION_TEXT_CLASS } from "../questions/item-text"
 import { useEssayScreen } from "./essay-context";
 import { CriteriaInView } from "./essay-rewrite-guide";
 
-/** The writing's name and what it's graded by, as the screen's title. */
 export function usePromptLabel(rubric: EssayView["rubric"]): string {
   const t = useExtracted();
 
@@ -22,7 +21,6 @@ export function usePromptLabel(rubric: EssayView["rubric"]): string {
   return labels[rubric];
 }
 
-/** What the texts to read before writing are, in the exam's own words where it has some. */
 export function useTextsLabel(rubric: EssayView["rubric"]): string {
   const t = useExtracted();
 
@@ -36,12 +34,6 @@ export function useTextsLabel(rubric: EssayView["rubric"]): string {
   return labels[rubric];
 }
 
-/**
- * The texts to read before writing (ENEM's motivating texts, a case, sources) as a quote, under
- * their label on a phone, where they come before the instruction as in the exam's booklet; from
- * `lg` beside the box, the aside's label naming them, with the last grade's criteria under them
- * while rewriting. A short context (a theme, a situation) is part of the instruction instead.
- */
 export function EssayTexts({ criteria, texts }: { criteria: boolean; texts: string | null }) {
   const { essay } = useEssayScreen();
   const label = useTextsLabel(essay.rubric);
@@ -66,10 +58,6 @@ export function EssayTexts({ criteria, texts }: { criteria: boolean; texts: stri
   );
 }
 
-/**
- * What to write, over the box at every size: a short context (a theme, the situation a
- * discursive question is about) as a quote, then the instruction in the question face.
- */
 export function EssayInstruction({ context }: { context: string | null }) {
   const { essay } = useEssayScreen();
 

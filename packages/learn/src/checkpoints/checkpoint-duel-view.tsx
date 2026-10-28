@@ -33,13 +33,11 @@ function useDuelNumbers() {
   const visibleIds = new Set(checkpoint.questions.map((candidate) => candidate.itemId));
   const removedVerdicts = Object.entries(duel.state.verdicts).filter(([id]) => !visibleIds.has(id));
 
-  // Without a question on screen the duel is over: the last one answered stays the place.
   const position = question
     ? removedVerdicts.length +
       checkpoint.questions.findIndex((candidate) => candidate.itemId === question.itemId)
     : score.answered - 1;
 
-  // Each question's segment: blue or red once it has its verdict, the one in view, the rest ahead.
   const visibleSegments = checkpoint.questions.map((candidate, index): TaskSegment => {
     const verdict = duel.state.verdicts[candidate.itemId];
 
@@ -66,7 +64,6 @@ function getVerdictResult(verdict: { isCorrect: boolean } | null) {
   return verdict.isCorrect ? "correct" : "wrong";
 }
 
-/** How the question is answered: a number, a few typed words, or one option. */
 function DuelAnswer({
   question,
   verdict,
@@ -131,11 +128,6 @@ function QuestionCard({ question }: { question: CheckpointQuestion }) {
   );
 }
 
-/**
- * A listening phase's recording above its questions, played as strictly as a mock: every play
- * counts, a reload's too. Keyed by its set, it keeps playing while the learner answers along, and
- * once its last question is answered it plays freely with its transcript.
- */
 function DuelRecording({ question }: { question: CheckpointQuestion }) {
   const { checkpoint, duel } = useCheckpointScreen();
   const { set } = question;
@@ -183,15 +175,10 @@ function DuelAction() {
   );
 }
 
-/** A prize's Brain Power, in its violet. */
 function reward(chunks: React.ReactNode) {
   return <span className="text-brain-text">{chunks}</span>;
 }
 
-/**
- * What winning (or finishing the week's challenge) is worth, as one row: "+300 · phase 1 done",
- * its Brain Power in violet, as every reward amount reads, offered or earned.
- */
 function PrizeRow() {
   const t = useExtracted();
   const format = useFormatter();
@@ -220,12 +207,6 @@ function PrizeRow() {
   );
 }
 
-/**
- * The opponent beside the question on wide screens: his face, reacting to each answer, his shield
- * as plates with where it stands ("2 broken · 3 to go · 3 questions left", just "7 broken" once the
- * duel is decided, since nothing more is asked), the duel's one rule and what winning pays, until it
- * can't be won.
- */
 function TricksterPanel() {
   const t = useExtracted();
   const { checkpoint } = useCheckpointScreen();
@@ -271,7 +252,6 @@ function TricksterPanel() {
   );
 }
 
-/** The week's challenge beside its question on wide screens: its one rule and what finishing pays. */
 function WeeklyPanel() {
   const t = useExtracted();
 
@@ -286,10 +266,6 @@ function WeeklyPanel() {
   );
 }
 
-/**
- * What helps beside the duel from `lg`: the Trickster (or the week's rule and prize), under the
- * challenge's name with what winning takes. Phones keep his shield in the header instead.
- */
 function useDuelAside(): TaskFrameAside {
   const t = useExtracted();
   const { checkpoint } = useCheckpointScreen();
@@ -308,12 +284,6 @@ function useDuelAside(): TaskFrameAside {
   };
 }
 
-/**
- * One question at a time, without hints: right or wrong shows after each answer, and the answers
- * and the traps wait for the end. Every duel fills one segment per question under its header,
- * blue or red, like every task's; against the Trickster a phone shows his shield there instead,
- * breaking a piece for each right answer, while a wide screen shows it beside the question.
- */
 export function CheckpointDuelView() {
   const t = useExtracted();
   const { checkpoint } = useCheckpointScreen();
@@ -325,7 +295,6 @@ export function CheckpointDuelView() {
   const label = t("Question {current, number} of {total, number}", { current, total });
   const value = total > 0 ? (score.answered / total) * PERCENT : 0;
 
-  // Only one of the two shows at a time, so screen readers hear one progress bar.
   const shieldThenQuestions = (
     <>
       <TricksterShield

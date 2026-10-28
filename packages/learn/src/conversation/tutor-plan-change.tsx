@@ -29,10 +29,7 @@ import { TUTOR_CARD_WIDTH_CLASS } from "./tutor-offer-card";
 
 type Decision = Extract<PlanChangeDecisionInput["status"], "applied" | "declined" | "undone">;
 
-/**
- * Saves the learner's answer to a change; resolves to the change as it stands now (whether today's
- * session took it, whether it can still be undone), or null when it wasn't saved.
- */
+/** Resolves to the change as it stands now, or null when it wasn't saved. */
 export type DecideTutorPlanChange = (input: {
   changeId: string;
   status: Decision;
@@ -40,12 +37,6 @@ export type DecideTutorPlanChange = (input: {
 
 type ChangeEffect = NonNullable<PlanChangeView["effect"]>;
 
-/**
- * What else a proposal does, in words under its diff (`PlanEffectDiff`, which counts the lessons it
- * leaves out or adds first, then every date and count that moves): the lessons it leaves out by
- * name, the topics, when focused areas start, an area that still ends on its day, the review it
- * opens. Null when the diff says it all.
- */
 function useChangeFootnote() {
   const lessonsText = useLessonsEffectText();
   const topicsText = useTopicsEffectText();
@@ -61,7 +52,6 @@ function useChangeFootnote() {
 
     const ends: ChangeEffect["areaEnds"] = effect.areaEnds ?? [];
 
-    // A start that stays says nothing when a review ahead opens with the area, or its end moves.
     const starts = (effect.areaStarts ?? []).filter(
       (start) =>
         start.after !== start.before ||
@@ -82,7 +72,6 @@ function useChangeFootnote() {
   };
 }
 
-/** How long a change lasts, when it's for a while only: a light week, a weekly event moved. */
 function ChangeScope({ operations }: { operations: PlanChangeView["operations"] }) {
   const t = useExtracted();
 
@@ -97,7 +86,6 @@ function ChangeScope({ operations }: { operations: PlanChangeView["operations"] 
   return <span className={CHIP_CLASS}>{t("1 week")}</span>;
 }
 
-/** What became of the change, in the place its buttons were. */
 function useStatusLine(change: PlanChangeView): string | null {
   const t = useExtracted();
   const appliedLine = useAppliedLine();
@@ -154,10 +142,6 @@ function useAnswer({
   return { answer, failed, isPending };
 }
 
-/**
- * Apply or Not now; for a change that moves the exam off the day its notice sets, the buttons say
- * what each one keeps: the learner's own date anyway, or the notice's.
- */
 function ChangeActions({
   answer,
   canUndo,
@@ -228,14 +212,6 @@ function ChangeActions({
   return null;
 }
 
-/**
- * A change to the plan the buddy proposed in the conversation, on one panel: what changes in one
- * sentence (and for how long, when it's for a week), what it moves as a diff (the lessons it leaves
- * out or adds first, then each date and count as it is now and as it would be), what else it does
- * in a quiet line, and Apply or Not now side by side. The sentence stays once it's answered.
- * Nothing changes until the learner taps Apply; once applied it can be undone while it's the
- * plan's latest change.
- */
 export function TutorPlanChange({
   change,
   decide,
@@ -277,7 +253,6 @@ export function TutorPlanChange({
         <ChangeScope operations={change.operations} />
       </div>
 
-      {/* What the change is, then what it does: the diff leads with the lessons it moves. */}
       <p className="text-sm leading-snug">{sentence}</p>
       {proposed && <PlanEffectDiff effect={change.effect} />}
       {footnote && <p className="text-muted-foreground text-xs leading-snug">{footnote}</p>}

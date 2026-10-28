@@ -3,14 +3,10 @@
 import { type EssayDraft, type EssayView } from "@zoonk/core/exams/essays/contract";
 import { createContext, use } from "react";
 
-/** How the writing screen reaches the server. */
 export type EssayActions = {
-  /** Finishes the writing block and goes on with the session; false when it didn't go through. */
+  /** False when it didn't go through. */
   finish: () => Promise<boolean>;
-  /**
-   * Grades a draft; null when it couldn't be graded, "limitReached" when today's grades ran out.
-   * A draft sent again after that keeps its `attemptId`, so the server grades it once.
-   */
+  /** Null when it couldn't be graded. A draft sent again keeps its `attemptId`, so the server grades it once. */
   submit: (input: {
     attemptId: string;
     durationMs: number;
@@ -18,7 +14,6 @@ export type EssayActions = {
   }) => Promise<EssayDraft | "limitReached" | null>;
 };
 
-/** Where the screen leads when the learner leaves. */
 export type EssayHrefs = { exit: string };
 
 type EssayScreenValue = {

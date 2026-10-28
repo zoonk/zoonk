@@ -5,7 +5,6 @@ import { useExtracted } from "next-intl";
 
 type CourseLevel = PlanCourseLevel["level"];
 
-/** A course level as the learner reads it: Overview, Beginner, Intermediate or Advanced. */
 export function useLevelName() {
   const t = useExtracted();
 

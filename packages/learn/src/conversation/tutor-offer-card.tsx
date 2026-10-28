@@ -7,18 +7,8 @@ import { PlusMark } from "../_components/plus-lock";
 import { SURFACE_CLASS } from "../_components/surface";
 import { LearnLink } from "../learn-link";
 
-/**
- * A card in a conversation (a plan change, a feature offered) as wide as its content needs: the
- * full width of a sheet, never stretched across a wide thread.
- */
 export const TUTOR_CARD_WIDTH_CLASS = "w-full max-w-130";
 
-/**
- * The card around a feature the buddy offered: its mark, what it is in a few words, and its button,
- * on the same panel as a plan change, the thread's one kind of card. A feature the learner's plan
- * doesn't include looks the same, marked Plus, with Plus's notice in place of its button
- * (`PlusNotice inset`).
- */
 export function OfferCard({
   children,
   description,
@@ -54,7 +44,6 @@ export function OfferCard({
   );
 }
 
-/** The card's way in: its feature's page. */
 export function OfferLink({ children, href }: { children: React.ReactNode; href: string }) {
   return (
     <LearnLink
@@ -66,16 +55,11 @@ export function OfferLink({ children, href }: { children: React.ReactNode; href:
   );
 }
 
-/**
- * The mark of a feature on its card: a kind's dot, or for one that isn't a learning kind (a new
- * goal, statistics, memory) its 16px icon, quiet.
- */
 export function OfferTile({
   children,
   className,
 }: {
   children: React.ReactNode;
-  /** The icon's color, for a feature whose rows elsewhere have one (pronunciation's amber). */
   className?: string;
 }) {
   return (

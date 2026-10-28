@@ -9,10 +9,6 @@ import { useEssayScreen } from "./essay-context";
 import { CriteriaRows } from "./essay-feedback";
 import { useCriterionName } from "./essay-labels";
 
-/**
- * The last grade's criteria beside the text on a wide screen, the next step marked, so rewriting
- * keeps the whole grade in view; a phone has the next step alone, over the text (`RewriteGuide`).
- */
 export function CriteriaInView() {
   const t = useExtracted();
   const { drafts, essay } = useEssayScreen();
@@ -30,7 +26,6 @@ export function CriteriaInView() {
   );
 }
 
-/** While rewriting, the next step stays in view, and the whole grade one tap back. */
 export function RewriteGuide({ onSeeGrade }: { onSeeGrade: () => void }) {
   const t = useExtracted();
   const criterionName = useCriterionName();

@@ -6,7 +6,6 @@ import { FeedbackExplanation, FeedbackPanel, FeedbackVerdict } from "../_compone
 import { useCheckpointScreen } from "./checkpoint-context";
 import { getDuelScore } from "./checkpoint-duel-state";
 
-/** How a boss's duel was decided: his shield is broken, or it held, with the new try a loss brings. */
 function DecisionLine({ decision }: { decision: DuelDecision }) {
   const t = useExtracted();
   const { duel } = useCheckpointScreen();
@@ -26,12 +25,6 @@ function DecisionLine({ decision }: { decision: DuelDecision }) {
   );
 }
 
-/**
- * How the answer went, on the panel every question's feedback uses, in the words every question
- * uses: "Correct!", or "Not quite" with the duel's rule as its one line (the why waits for the
- * end, with the traps). The answer that decides a boss's duel says how (`DecisionLine`), so
- * questions left in the bar never read as skipped.
- */
 export function Verdict({
   decision,
   isCorrect,
@@ -60,11 +53,6 @@ export function Verdict({
   );
 }
 
-/**
- * A duel over but not finished yet, as a reload after its last answer finds it: no question is
- * left to show, so the column says how it ended, in its deciding answer's words, above the button
- * to the result. A duel with nothing answered and nothing left to ask claims neither.
- */
 export function DuelOver() {
   const t = useExtracted();
   const { checkpoint, duel } = useCheckpointScreen();

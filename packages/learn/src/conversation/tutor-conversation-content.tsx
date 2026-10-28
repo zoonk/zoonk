@@ -5,31 +5,19 @@ import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { type TutorCardActions, type TutorCards, getTutorCards } from "./tutor-cards";
 import { useTutorIdentity } from "./tutor-identity";
 
-/**
- * What the buddy's first suggestions lean on: whether today's session is there and whether the
- * learner has an open mistake in this goal (the buddy sees the latest ones).
- */
 export type TutorSituation = { hasMistake: boolean; hasToday: boolean };
 
-/** Everything a host's conversation needs from the buddy: who it is and how it starts. */
 export type TutorConversationContent = TutorCards & {
   composerLabel: string;
   greeting: string;
-  /** One action under the hello, such as customizing the learner's default buddy. */
   greetingAction?: React.ReactNode;
   identity: { avatar: React.ReactNode; name: string };
-  /** An answer the learner waited for came in: the buddy's face reacts to it. */
   onAnswered?: () => void;
-  /** The learner asked something: the buddy's face reacts to it. */
   onAsked?: () => void;
   placeholder: string;
   suggestions: { id: string; label: string }[];
 };
 
-/**
- * Three ways to start, from the learner's day: why today's lessons, a lighter week (a plan change),
- * and a doubt: their latest mistake when there is one.
- */
 function useSuggestions(situation: TutorSituation): TutorConversationContent["suggestions"] {
   const t = useExtracted();
 
@@ -48,11 +36,6 @@ function useSuggestions(situation: TutorSituation): TutorConversationContent["su
   ];
 }
 
-/**
- * The buddy as the learner's tutor: its name and face in the conversation, its hello, how the
- * composer asks, the first suggestions, the card for a plan change it proposes and the button for
- * an app tool it offers.
- */
 export function useTutorConversationContent({
   buddy,
   decide,
@@ -74,7 +57,6 @@ export function useTutorConversationContent({
     { name },
   );
 
-  // The placeholder teaches both things the buddy does: answer, and change the plan.
   return {
     composerLabel: t("Message {name}", { name }),
     greeting,

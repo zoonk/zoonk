@@ -14,15 +14,15 @@ import {
   getDuelScore,
 } from "./checkpoint-duel-state";
 
-/**
- * How the screen reaches the server: the host wires these to the study session's block
- * capabilities. Each resolves to null when the request didn't go through.
- */
+/** Each resolves to null when the request didn't go through. */
 export type CheckpointActions = {
-  answer: (input: { answer: CheckpointAnswer; durationMs: number; itemId: string }) => Promise<{
+  answer: (input: {
+    answer: CheckpointAnswer;
+    durationMs: number;
+    itemId: string;
+  }) => Promise<{
     isCorrect: boolean;
     reinforcementLessons: number | null;
-    /** A recording's transcript, on the answer that finishes its questions. */
     transcript: ListeningSetView["transcript"];
   } | null>;
   finish: () => Promise<StudyBlockCompletionView | null>;
@@ -35,7 +35,6 @@ const MILESTONE_EVENT_KINDS = {
   glasses: "glasses",
 } as const;
 
-/** The duel's result and what it earned, for the shared event catalog. */
 function trackFinish({
   analytics,
   completion,
@@ -65,7 +64,6 @@ function trackFinish({
   }
 }
 
-/** Longer than this, the learner took a break: the answer's time is capped, never refused. */
 const MAX_ANSWER_MS = 3_600_000;
 
 export type CheckpointDuel = {
@@ -76,7 +74,6 @@ export type CheckpointDuel = {
   state: CheckpointDuelState;
 };
 
-/** Runs a started checkpoint: answer one question at a time, then finish for the result. */
 export function useCheckpointDuel({
   actions,
   checkpoint,
@@ -86,7 +83,6 @@ export function useCheckpointDuel({
 }): CheckpointDuel {
   const analytics = useLearnAnalytics();
   const [state, dispatch] = useReducer(checkpointDuelReducer, checkpoint, createDuelState);
-  // The first question shows as the duel opens; each later one when the learner moves on.
   const shownAt = useRef<number | null>(null);
 
   useEffect(() => {
@@ -95,7 +91,6 @@ export function useCheckpointDuel({
 
   async function finish() {
     dispatch({ type: "pending" });
-    // A request that didn't get through reads as failed, with Try again, never as stuck.
     const completion = await actions.finish().catch(() => null);
 
     if (!completion) {

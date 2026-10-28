@@ -20,17 +20,11 @@ import { getReviewedOptions } from "./review-options";
 
 type ReviewedAnswer = NonNullable<StudyBlockCompletionView["checkpoint"]>["answers"][number];
 
-/** The answers explained now that the duel is over, the traps included; none when reopened later. */
 export function useReviewedAnswers(): ReviewedAnswer[] {
   const { duel } = useCheckpointScreen();
   return duel.state.completion?.checkpoint?.answers ?? [];
 }
 
-/**
- * A choice question's right option and the learner's pick, drawn as the options were in the duel
- * (same numbers), with "Your answer" and "Correct" on them; a number or typed words say the right
- * answer in a line instead.
- */
 function ReviewAnswer({
   answer,
   question,
@@ -101,7 +95,6 @@ function ReviewItem({
   return (
     <li className="border-border flex flex-col gap-3 border-b py-4 first:pt-0 last:border-b-0">
       <div className="flex items-start gap-3">
-        {/* The verdict as a plain glyph in its color, as the feedback panel's: no tinted badge. */}
         <LineMarker className={answer.isCorrect ? "text-success-text" : "text-destructive-text"}>
           {answer.isCorrect ? (
             <CheckIcon aria-label={t("Correct")} className="size-4" role="img" />
@@ -114,7 +107,6 @@ function ReviewItem({
           <ItemStem text={question.question} />
         </div>
 
-        {/* The duel has no hints or menus; its questions are voted on here, once it's over. */}
         <ContentFeedbackMenu
           label={t("Question options")}
           screen="checkpoint-review"
@@ -133,11 +125,6 @@ function ReviewItem({
   );
 }
 
-/**
- * The recordings a listening phase's boss played, now with their transcripts and free replays, so
- * the learner hears what they missed. One whose questions were never asked (the duel was won
- * before them) wasn't played, so it isn't here.
- */
 function ReviewRecordings() {
   const { checkpoint, duel } = useCheckpointScreen();
 
@@ -162,7 +149,6 @@ function ReviewRecordings() {
   ));
 }
 
-/** Each question with the learner's answer, the right one and why, the traps included. */
 function ReviewList() {
   const { checkpoint } = useCheckpointScreen();
   const answers = useReviewedAnswers();
@@ -185,7 +171,6 @@ function ReviewList() {
   );
 }
 
-/** The answers on the result's page itself, under the outcome, where a wide screen has the room. */
 export function CheckpointReviewSection() {
   const t = useExtracted();
   const titleId = useId();
@@ -198,7 +183,6 @@ export function CheckpointReviewSection() {
   );
 }
 
-/** On a phone, the answers wait in a sheet, opened beside Continue, so the result reads first. */
 export function CheckpointReviewDrawer() {
   const t = useExtracted();
 

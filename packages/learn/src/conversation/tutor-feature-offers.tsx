@@ -20,7 +20,6 @@ import { OfferCard, OfferLink, OfferTile } from "./tutor-offer-card";
 
 type Offer<Kind extends TutorToolOffer["kind"]> = Extract<TutorToolOffer, { kind: Kind }>;
 
-/** The catalog's ready course for a new goal's subject, opening its page. */
 function CatalogCourseRow({
   course,
   href,
@@ -52,11 +51,6 @@ function CatalogCourseRow({
   );
 }
 
-/**
- * Starting a new goal with the learner's own words filled in, for something their goal doesn't
- * cover, and the catalog's course for it when one matches. Locked when the plan follows one goal
- * at a time: pausing the current one frees it, or Plus follows more.
- */
 export function StartGoalOffer({
   hrefs,
   offer,
@@ -98,7 +92,6 @@ export function StartGoalOffer({
   );
 }
 
-/** The exam's written test, as its page in the plan says when it's practiced. */
 export function EssayOffer({ href, offer }: { href: string; offer: Offer<"essay"> }) {
   const t = useExtracted();
   const locked = offer.access === "plusRequired";
@@ -129,7 +122,6 @@ export function EssayOffer({ href, offer }: { href: string; offer: Offer<"essay"
   );
 }
 
-/** The mistakes notebook, with the mistakes waiting to be fixed. */
 export function MistakesOffer({ href, offer }: { href: string; offer: Offer<"mistakes"> }) {
   const t = useExtracted();
 
@@ -151,7 +143,6 @@ export function MistakesOffer({ href, offer }: { href: string; offer: Offer<"mis
   );
 }
 
-/** The mispronounced words due to be said again, named by the first few. */
 export function PronunciationOffer({
   href,
   offer,
@@ -179,7 +170,6 @@ export function PronunciationOffer({
   );
 }
 
-/** A place of the app with nothing to say beyond where it opens: statistics, the week, memory. */
 export function PlaceOffer({
   href,
   kind,
@@ -220,7 +210,6 @@ export function PlaceOffer({
   );
 }
 
-/** The Plus page: what it includes, or managing it for a learner who has it. */
 export function PlusOffer({ offer }: { offer: Offer<"plus"> }) {
   const t = useExtracted();
   const routes = useLearnRoutes();

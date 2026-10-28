@@ -37,17 +37,9 @@ function countWords(text: string): number {
   return text.match(WORD_PATTERN)?.length ?? 0;
 }
 
-/**
- * Grading an essay takes about 9 to 17 seconds (a fallback model takes up to 24 s): past `slowMs`
- * the screen says it's still grading, and past `timeoutMs` it stops waiting and lets the learner
- * send it again, with the text kept.
- */
+/** Grading takes about 9 to 17 s, and up to 24 s on the fallback model. */
 const GRADING_BOUNDS = { slowMs: 20_000, timeoutMs: 90_000 } as const;
 
-/**
- * The bar's quiet line about sending: why it didn't go through, why Send waits (today's grades are
- * used: before a send is refused too), or that it's grading and roughly for how long.
- */
 function StatusLine({ gradesLeft, status }: { gradesLeft: number; status: Status }) {
   const t = useExtracted();
   const isSlow = useTakingLong({ active: status === "pending", afterMs: GRADING_BOUNDS.slowMs });
@@ -68,7 +60,6 @@ function StatusLine({ gradesLeft, status }: { gradesLeft: number; status: Status
     );
   }
 
-  // Grading takes ten to thirty seconds, so the learner knows it's working and roughly for how long.
   if (status === "pending") {
     return (
       <p className="text-muted-foreground text-sm" role="status">
@@ -82,16 +73,11 @@ function StatusLine({ gradesLeft, status }: { gradesLeft: number; status: Status
   return null;
 }
 
-/** Another tab writing the same essay keeps its text too: until this one types, it shows here. */
 function subscribeToStorage(onChange: () => void) {
   globalThis.addEventListener("storage", onChange);
   return () => globalThis.removeEventListener("storage", onChange);
 }
 
-/**
- * The text typed on this device and not graded yet, read once the page is in the browser: the
- * server never has it, so the page first draws the last graded text, as the server did.
- */
 function useKeptText(blockId: string): string | null {
   return useSyncExternalStore(
     subscribeToStorage,
@@ -100,25 +86,14 @@ function useKeptText(blockId: string): string | null {
   );
 }
 
-/**
- * The learner's text and sending it for grading: the text is kept on screen whatever happens, and
- * on the device as it's typed until it's graded (opening the essay again brings it back), writing
- * time runs from the first keystroke, and a grade that fails or takes too long lets the learner
- * send it again, under the same id when the text didn't change, so the server grades it once.
- * `unsent` is text that leaving would leave behind; `gradesLeft` counts the grades this visit
- * used, so Send says it's waiting for tomorrow before a send is refused.
- */
 function useEssayWriter(onGraded: (draft: EssayDraft) => void) {
   const { actions, drafts, essay } = useEssayScreen();
   const graded = drafts[0]?.text ?? "";
-  // What the learner typed since the screen opened; until then, the text kept on this device.
   const [typed, setTyped] = useState<string | null>(null);
   const kept = useKeptText(essay.blockId);
   const text = typed ?? (kept?.trim() && kept !== graded ? kept : graded);
   const [status, setStatus] = useState<Status>("idle");
-  // Writing time runs from the first keystroke, not from when the screen opened.
   const startedAt = useRef<number | null>(null);
-  // The last text sent that wasn't graded on screen, with the id it goes again under.
   const ungraded = useRef<{ attemptId: string; text: string } | null>(null);
   const words = countWords(text);
   const gradesLeft = Math.max(0, essay.gradesLeft - (drafts.length - essay.drafts.length));
@@ -133,8 +108,6 @@ function useEssayWriter(onGraded: (draft: EssayDraft) => void) {
 
     ungraded.current = { attemptId, text };
 
-    // A request that fails outright or takes too long reads as "couldn't grade": the text stays
-    // and Send works again.
     const settled = await settleWithin({
       ms: GRADING_BOUNDS.timeoutMs,
       request: () => actions.submit({ attemptId, durationMs, text }),
@@ -168,12 +141,6 @@ function useEssayWriter(onGraded: (draft: EssayDraft) => void) {
 
 type EssayWriter = ReturnType<typeof useEssayWriter>;
 
-/**
- * The box to write in, in the text face at 16px on every screen, filling the column down to the
- * action bar, with its word count in the mono face. From `lg` it keeps that size and scrolls inside
- * as the text grows, so the instruction over it stays in view while writing, and a short window
- * takes its room from the box first, down to about four lines.
- */
 function EssayBox({ writer }: { writer: EssayWriter }) {
   const t = useExtracted();
   const textId = useId();
@@ -191,7 +158,6 @@ function EssayBox({ writer }: { writer: EssayWriter }) {
         onChange={(event) => writer.write(event.target.value)}
         value={writer.text}
       />
-      {/* Counted from the first word: "0 words" under an empty box says nothing. */}
       <p
         aria-live="polite"
         className="text-muted-foreground min-h-4 font-mono text-xs tabular-nums"
@@ -203,11 +169,6 @@ function EssayBox({ writer }: { writer: EssayWriter }) {
   );
 }
 
-/**
- * The writing screen's pinned action bar: sending the text for grading, and once a draft is
- * graded, skipping the rewrite beside it (going on with the session). Nothing more is sent once
- * the block is being finished.
- */
 function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
   const t = useExtracted();
   const { drafts } = useEssayScreen();
@@ -247,12 +208,6 @@ function EssayWriteFooter({ writer }: { writer: EssayWriter }) {
   );
 }
 
-/**
- * Writing (or rewriting) the essay: the texts to read, the instruction with its theme, the next
- * step while rewriting, the box, and Send in the pinned action bar. What the learner needs while
- * writing stays over the box at every size (the instruction, the next step); from `lg` the texts
- * sit beside it, with the last grade's criteria while rewriting.
- */
 function EssayWriteScreen({
   onGraded,
   onSeeGrade,
@@ -267,10 +222,8 @@ function EssayWriteScreen({
   const writer = useEssayWriter(onGraded);
   const lastGrade = drafts[0]?.grade;
   const criteria = Boolean(lastGrade) && lastGrade?.zeroReason !== "tooShort";
-  // Long texts are read beside the box; a short context goes with the instruction over it.
   const texts = isLongText(essay.context) ? essay.context : null;
 
-  // Unsent text stays on the device, so leaving loses nothing, but the learner hears it first.
   const confirmExit = writer.unsent
     ? {
         cancel: t("Keep writing"),
@@ -304,12 +257,6 @@ function EssayWriteScreen({
   );
 }
 
-/**
- * Writing practice for an exam's essay: the prompt and the learner's text, then the grade in steps
- * (the estimated range by the official rubric, then the one next step, with ENEM's proposal
- * elements). Rewriting is then the main action and grades a new draft, with the next step in view;
- * skipping the rewrite goes on with the session.
- */
 export function EssayScreen({
   actions,
   essay,

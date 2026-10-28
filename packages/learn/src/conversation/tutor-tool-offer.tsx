@@ -23,12 +23,7 @@ import {
 } from "./tutor-feature-offers";
 import { OfferCard, OfferLink, OfferTile } from "./tutor-offer-card";
 
-/**
- * How the host opens the features the buddy offers: where each one lives (a new goal with the
- * learner's words, a catalog course, a written test's subject page), and the two that start in
- * place: a chapter's test (asking for its questions, then opening it) and a unit's practice call
- * (false when it didn't start). Plus opens the host's `upgrade` route.
- */
+/** `startConversation` resolves to false when the call didn't start. */
 export type TutorToolActions = {
   hrefs: {
     chooseFocus: string;
@@ -145,7 +140,6 @@ function ConversationCallOffer({
   );
 }
 
-/** Choosing a mock to take now; for a plan without mock exams, the same card with Plus's notice. */
 function MockExamOffer({
   href,
   offer,
@@ -156,7 +150,6 @@ function MockExamOffer({
   const t = useExtracted();
   const locked = offer.access === "plusRequired";
 
-  // What the mocks are, the same for every plan; the notice says what it takes.
   const description = useMockEntryDescription({ bySubject: offer.subjects.length > 0 });
 
   return (
@@ -181,13 +174,6 @@ function MockExamOffer({
   );
 }
 
-/**
- * One of the app's own features the buddy offered under its answer, as a card with the button
- * that opens it, or locked with Plus's notice when the learner's plan doesn't include it: starting
- * a new goal (with the catalog's course for it), a chapter's test, choosing where the plan's depth
- * goes, a mock exam, the exam's written test, the mistakes notebook, a practice call, words to say
- * again, statistics, the week in review, memory, or Plus.
- */
 export function TutorToolOfferCard({
   actions,
   offer,

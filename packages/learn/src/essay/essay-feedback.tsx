@@ -34,7 +34,6 @@ type Grade = EssayDraft["grade"];
 
 const ELEMENTS = ["agent", "action", "means", "effect", "detail"] as const;
 
-/** Whether a proposal is missing any of ENEM's five elements; null outside ENEM. */
 function hasMissingElements(grade: Grade): boolean {
   const elements = grade.enemInterventionElements;
   return elements !== null && ELEMENTS.some((key) => !elements[key]);
@@ -42,16 +41,11 @@ function hasMissingElements(grade: Grade): boolean {
 
 type Criterion = Grade["criteria"][number];
 
-/** A number in a sentence keeps the sentence's face, with figures that line up. */
 function renderNumber(chunks: React.ReactNode) {
   return <span className="tabular-nums">{chunks}</span>;
 }
 
-/**
- * A criterion's score as its row says it, out of its maximum: an official rubric's own points
- * (ENEM's 200, OAB's sections), and a custom rubric's equal share on the total's scale, so a
- * 10-point answer's three criteria read "10 of 10", never "3.34 · 3.33 · 3.33".
- */
+/** A custom rubric's criteria each show on the total's scale, so three read "10 of 10", never "3.34 · 3.33 · 3.33". */
 function toShownScore({
   criterion,
   rubric,
@@ -68,10 +62,6 @@ function toShownScore({
   return { max: total.maxScore, score: (criterion.score / criterion.maxScore) * total.maxScore };
 }
 
-/**
- * Each criterion's score as a flat row, a meter and its mono score; the one to work on next stands
- * out (its name heavier, its meter amber). The grade's first step and the rewrite's aside use it.
- */
 export function CriteriaRows({ grade, rubric }: { grade: Grade; rubric: string }) {
   const t = useExtracted();
   const criterionName = useCriterionName();
@@ -105,10 +95,6 @@ export function CriteriaRows({ grade, rubric }: { grade: Grade; rubric: string }
   );
 }
 
-/**
- * The estimated range, big, and each criterion's score; the one to work on next stands out. Also
- * a full mock's essay grade, by the exam's rubric (`rubric`).
- */
 export function EssayGradeCard({ grade, rubric }: { grade: Grade; rubric: string }) {
   const t = useExtracted();
   const formatScore = useFormatScore();
@@ -154,7 +140,6 @@ function GradeStep({ grade }: { grade: Grade }) {
   return <EssayGradeCard grade={grade} rubric={rubric} />;
 }
 
-/** With every point scored, nothing is left to work on, and the step says so. */
 function NothingLeftComment() {
   const t = useExtracted();
 
@@ -169,7 +154,6 @@ function NothingLeftComment() {
   );
 }
 
-/** The one next step, on the criterion that would gain the most, with the learner's own words. */
 export function NextStepComment({ grade }: { grade: Grade }) {
   const t = useExtracted();
   const criterionName = useCriterionName();
@@ -201,10 +185,6 @@ export function NextStepComment({ grade }: { grade: Grade }) {
   );
 }
 
-/**
- * ENEM's five elements of an intervention proposal, under the next step when the proposal misses
- * any: the ones there checked, the missing ones open.
- */
 function ProposalElements({ grade }: { grade: Grade }) {
   const t = useExtracted();
   const elementName = useInterventionElementName();
@@ -236,7 +216,6 @@ function ProposalElements({ grade }: { grade: Grade }) {
   );
 }
 
-/** The grade's second step: the one next step, then the proposal's missing elements (ENEM). */
 function NextStep({ grade }: { grade: Grade }) {
   return (
     <>
@@ -246,7 +225,6 @@ function NextStep({ grade }: { grade: Grade }) {
   );
 }
 
-/** Every criterion's comment, with the passage of the text it's about. */
 function CriterionComments({ grade }: { grade: Grade }) {
   const criterionName = useCriterionName();
 
@@ -267,13 +245,6 @@ function CriterionComments({ grade }: { grade: Grade }) {
   );
 }
 
-/**
- * A graded draft, one thing at a time: the estimated range with each criterion, then the one next
- * step with the learner's own words and ENEM's five proposal elements when any is missing.
- * Rewriting is then the main action, with skipping the rewrite (going on with the session) beside
- * it, so Continue only ever means the next step. Every criterion's comment is one link away on a
- * phone, and beside the grade in the aside from `lg`.
- */
 export function EssayGradeSteps({ grade, onRewrite }: { grade: Grade; onRewrite: () => void }) {
   const t = useExtracted();
   const { hrefs } = useEssayScreen();

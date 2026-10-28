@@ -6,11 +6,6 @@ import { StepCard, StepDetail, StepEyebrow, StepHeader, StepTitle } from "../_co
 import { useCheckpointScreen } from "./checkpoint-context";
 import { useCheckpointEyebrow } from "./checkpoint-labels";
 
-/**
- * A checkpoint whose questions were all removed before any was answered says so calmly, as a mock
- * that ran out unanswered does: not scored, nothing lost. No Trickster, score, reward or new try,
- * since nothing was decided.
- */
 export function NoVerdictStep() {
   const t = useExtracted();
   const { checkpoint } = useCheckpointScreen();

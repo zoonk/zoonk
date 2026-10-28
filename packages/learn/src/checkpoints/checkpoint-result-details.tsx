@@ -16,7 +16,6 @@ import { useCheckpointScreen } from "./checkpoint-context";
 import { phaseNumber, usePhaseLabel } from "./checkpoint-labels";
 import { useIsWon, useRetry } from "./use-checkpoint-outcome";
 
-/** A block of the result's details: its sentence-case title, then its flat rows. */
 function DetailsSection({ children, title }: { children: React.ReactNode; title: string }) {
   return (
     <section className="flex w-full flex-col gap-1">
@@ -26,10 +25,6 @@ function DetailsSection({ children, title }: { children: React.ReactNode; title:
   );
 }
 
-/**
- * The Brain Power the duel added, its value in the mono face and Brain Power's violet on the row's
- * right, as every reward amount reads.
- */
 function BrainPowerRow({ points }: { points: number }) {
   const t = useExtracted();
   const format = useFormatter();
@@ -45,11 +40,6 @@ function BrainPowerRow({ points }: { points: number }) {
   );
 }
 
-/**
- * What a won checkpoint (or a finished weekly one) earned: its Brain Power (what the duel actually
- * earned, answers included, right after it; the day's bonus it paid is the missions' to show),
- * the phase it checks off and the "Trap hunter" badge; then the phase that comes next, by its name.
- */
 function WonDetails() {
   const t = useExtracted();
   const phaseLabel = usePhaseLabel();
@@ -94,10 +84,6 @@ function WonDetails() {
   );
 }
 
-/**
- * A duel not won costs nothing, said concretely: a new try after short lessons, the next phase
- * already open, and the Brain Power its right answers still earned.
- */
 function NotWonDetails() {
   const t = useExtracted();
   const phaseLabel = usePhaseLabel();
@@ -146,11 +132,6 @@ function NotWonDetails() {
   );
 }
 
-/**
- * The result beyond its score, as labeled flat rows: what it earned and the next phase after a
- * win, or the new try after a duel not won. A phone shows them under the score; a wide screen,
- * beside it in the aside.
- */
 export function CheckpointResultDetails() {
   const won = useIsWon();
   return won ? <WonDetails /> : <NotWonDetails />;

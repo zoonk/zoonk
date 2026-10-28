@@ -34,12 +34,6 @@ function useHeadline(): string {
   return won ? t("You beat the Trickster!") : t("Not this time");
 }
 
-/**
- * "5 of 6 right" as a readout, as every task's end draws its score; a duel not won also says what
- * winning took, of all its questions ("7 of 10 right to win"), since it ends as soon as it can't be
- * won: "2 of 6 right" alone would read as if 7 were never in reach. Its Brain Power is the rewards'
- * row, so the readouts leave it out.
- */
 function ScoreLine() {
   const t = useExtracted();
   const { checkpoint, duel } = useCheckpointScreen();
@@ -67,11 +61,6 @@ function ScoreLine() {
   );
 }
 
-/**
- * The Trickster, beaten or not; the week's challenge has no art, its title says it all. As the
- * result comes in he acts it out: his defeat when the learner won, smug when he did. A result
- * opened again later (no fresh completion) draws him still, in the pose he ended in.
- */
 function ResultArt() {
   const { checkpoint, duel } = useCheckpointScreen();
   const won = useIsWon();
@@ -87,11 +76,6 @@ function ResultArt() {
   );
 }
 
-/**
- * What the duel did to the day, right under its score, as every block's moment says it: the
- * missions it completed by name (the day's bonus when it was the last), then the belt level and
- * the tenth of Energy it reached.
- */
 function DuelDayMoment() {
   const { buddy, duel } = useCheckpointScreen();
   const completion = duel.state.completion;
@@ -114,11 +98,6 @@ function DuelDayMoment() {
   );
 }
 
-/**
- * How it went, on one page: the Trickster and the score, what it did to the day's missions and
- * level; on a phone, what it earned and what's next under them (a wide screen has those in the
- * aside); and, where the aside shows, the answers explained right under the outcome.
- */
 function OutcomeStep({ showsReview }: { showsReview: boolean }) {
   const headline = useHeadline();
 
@@ -142,14 +121,6 @@ function OutcomeStep({ showsReview }: { showsReview: boolean }) {
   );
 }
 
-/**
- * The end of a checkpoint, on one screen. A win: the Trickster beaten, the score, what it earned
- * and the next phase. A duel not won is kind and concrete: a new try after short lessons, and the
- * next phase already open. The answers and the traps are explained under the outcome where the
- * screen is wide (its aside then holds what it earned), and one tap away beside Continue on a
- * phone. One whose questions were removed before any answer has nothing to judge: one line says
- * so, without an aside, and Continue moves on.
- */
 export function CheckpointResultView() {
   const t = useExtracted();
   const { checkpoint, duel, hrefs, renderCeremony } = useCheckpointScreen();
@@ -176,7 +147,6 @@ export function CheckpointResultView() {
           action: hasReview && !docked ? <CheckpointReviewDrawer /> : null,
           content: outcome ? <OutcomeStep showsReview={hasReview && docked} /> : <NoVerdictStep />,
           id: "outcome",
-          // A milestone the duel earned (the Star glasses) opens right over its result.
           moment: getCeremonyMoment({ milestone: ceremony, render: renderCeremony }),
         },
       ]}

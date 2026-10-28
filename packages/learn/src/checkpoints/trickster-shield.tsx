@@ -6,12 +6,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useLocale } from "next-intl";
 import { TASK_COLUMN_CLASS } from "../_components/task-layout";
 
-/**
- * The shield itself: one plate per right answer needed to win, each right answer breaking one and
- * filling it blue, as a right answer does in a lesson's segments, so the pass mark is visible at
- * a glance and a wrong answer never takes anything away. It's one meter for screen readers ("2 of
- * 5 broken"), drawn as the phone's thin header bar or as the wide screen's plates in the aside.
- */
 function ShieldMeter({
   broken,
   className,
@@ -54,14 +48,6 @@ function ShieldMeter({
   );
 }
 
-/**
- * The Trickster's shield as the duel's progress under its header on phones and tablets in
- * portrait: his face, then the shield's plates, then how many are still to go ("Broken" once won,
- * "Held" once the duel can't be won anymore: `held`). It's the duel's one
- * bar, in the task's column like every task's progress; screen readers also hear which question
- * is on screen (`label`, `value` in percent), as on every task. Wide screens show the questions
- * there instead, and the shield beside them (`TricksterShieldPlates`).
- */
 export function TricksterShield({
   broken,
   className,
@@ -113,7 +99,6 @@ export function TricksterShield({
   );
 }
 
-/** The shield as plates, for the duel's aside on wide screens. */
 export function TricksterShieldPlates({ broken, segments }: { broken: number; segments: number }) {
   return <ShieldMeter broken={broken} className="gap-1" plateClassName="h-2" segments={segments} />;
 }
