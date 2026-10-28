@@ -88,20 +88,18 @@ final class StudySessionStore {
   }
 
   /// "Stop for today": what was done counts and the rest waits on Today.
-  func stop(sessionID: String) async -> Bool {
-    guard let token = cache.session.authenticatedSession?.bearerToken else {
-      return false
+  func stop(sessionID: String) async -> MutationResult<Void> {
+    let result = await cache.mutate(invalidating: [.userProgress, .userSession]) { identity in
+      try await api.stop(
+        token: identity.bearerToken, sessionID: sessionID, timeZone: TimeZone.current.identifier)
     }
 
-    do {
-      try await api.stop(token: token, sessionID: sessionID, timeZone: TimeZone.current.identifier)
+    if case .done = result {
       playingBlockID = nil
       stoppedSessionID = sessionID
-      cache.invalidate([.userSession, .userProgress])
-      return true
-    } catch {
-      return false
     }
+
+    return result
   }
 
   /// Plays a question block on the session screen.
@@ -132,11 +130,9 @@ final class StudySessionStore {
   /// Marks a milestone's ceremony as shown, so it never repeats; a failed mark only means it may
   /// show again.
   func markShown(_ milestone: Milestone) async {
-    guard let token = cache.session.authenticatedSession?.bearerToken else {
-      return
+    _ = await cache.mutate { identity in
+      try await api.markMilestoneShown(token: identity.bearerToken, milestoneID: milestone.id)
     }
-
-    try? await api.markMilestoneShown(token: token, milestoneID: milestone.id)
   }
 
   /// Where a lesson of the session stands while it's written: `ready`, `generating`,

@@ -13,6 +13,7 @@ struct TodayDayView: View {
   /// The tap in flight, so its control shows it's working and no second tap starts another.
   @State private var busy: Tap?
   @State private var failed: Tap?
+  @State private var tapTask: Task<Void, Never>?
 
   enum Tap: Equatable {
     case block(Int)
@@ -64,6 +65,9 @@ struct TodayDayView: View {
     .task(id: view.isWaitingForLessons) {
       await pollWhileWriting()
     }
+    .onDisappear {
+      tapTask?.cancel()
+    }
   }
 
   /// The quiet line under Today's title: the date, the days left, the exam's own day and where the
@@ -111,7 +115,9 @@ struct TodayDayView: View {
     }
   }
 
-  private func run(_ tap: Tap, _ action: @escaping () async -> StudyDestination?) {
+  /// Runs a tap's write for the learner who made it; a tap whose screen went (another day, another
+  /// tab) or whose learner left is cancelled and opens nothing.
+  private func run(_ tap: Tap, _ action: @escaping () async -> MutationResult<StudyDestination>) {
     guard busy == nil else {
       return
     }
@@ -119,19 +125,22 @@ struct TodayDayView: View {
     busy = tap
     failed = nil
 
-    Task {
-      let destination = await action()
+    tapTask = Task {
+      let result = await action()
       busy = nil
 
-      if let destination {
+      switch result {
+      case .done(let destination) where !Task.isCancelled:
         router.openStudy(destination, sessions: sessions)
-      } else {
+      case .failed:
         failed = tap
+      case .done, .obsolete:
+        break
       }
     }
   }
 
-  private func perform(_ tap: Tap, _ action: @escaping () async -> Bool) {
+  private func perform(_ tap: Tap, _ action: @escaping () async -> MutationResult<Void>) {
     guard busy == nil else {
       return
     }
@@ -139,10 +148,13 @@ struct TodayDayView: View {
     busy = tap
     failed = nil
 
-    Task {
-      let done = await action()
+    tapTask = Task {
+      let result = await action()
       busy = nil
-      failed = done ? nil : tap
+
+      if case .failed = result {
+        failed = tap
+      }
     }
   }
 

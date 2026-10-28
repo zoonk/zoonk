@@ -19,7 +19,13 @@ struct SessionScreen: View {
           onFinished: { completion in
             store.finish(try? StudyJSON.recode(completion, as: BlockMoment.self))
           },
-          onStop: { await store.stop(sessionID: sessionID) }
+          onStop: {
+            if case .failed = await store.stop(sessionID: sessionID) {
+              return false
+            }
+
+            return true
+          }
         )
         .id(blockID)
       } else {
@@ -135,6 +141,7 @@ private struct NextStopView: View {
   let sessionID: String
   let moment: BlockMoment?
 
+  @State private var action: Task<Void, Never>?
   @State private var isOpening = false
   @State private var isStopping = false
   @State private var failed = false
@@ -235,6 +242,9 @@ private struct NextStopView: View {
     .task(id: next?.lessonId) {
       await followLesson()
     }
+    .onDisappear {
+      action?.cancel()
+    }
   }
 
   /// The finished block's name, as the day lists it.
@@ -277,15 +287,19 @@ private struct NextStopView: View {
     isOpening = true
     failed = false
 
-    Task {
-      let destination = await today.open(block, sessionID: sessionID)
+    action = Task {
+      let result = await today.open(block, sessionID: sessionID)
       isOpening = false
 
-      if let destination, destination != .session {
+      switch result {
+      case .done(let destination) where destination != .session && !Task.isCancelled:
         router.openStudy(destination, sessions: store)
-      } else {
-        failed = destination == nil
+      case .done:
         await followLesson()
+      case .failed:
+        failed = true
+      case .obsolete:
+        break
       }
     }
   }
@@ -294,8 +308,10 @@ private struct NextStopView: View {
     isStopping = true
     failed = false
 
-    Task {
-      failed = await !store.stop(sessionID: sessionID)
+    action = Task {
+      if case .failed = await store.stop(sessionID: sessionID) {
+        failed = true
+      }
 
       isStopping = false
     }

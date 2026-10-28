@@ -15,6 +15,7 @@ struct SessionSummaryView: View {
   let stopped: Bool
 
   @State private var ceremony: Milestone?
+  @State private var action: Task<Void, Never>?
   @State private var isAddingTime = false
   @State private var failed = false
 
@@ -49,6 +50,9 @@ struct SessionSummaryView: View {
       if let milestone, store.claimCeremony(milestone) {
         ceremony = milestone
       }
+    }
+    .onDisappear {
+      action?.cancel()
     }
     .fullScreenCover(item: $ceremony) { milestone in
       MilestoneCeremony(milestone: milestone) {
@@ -219,14 +223,17 @@ struct SessionSummaryView: View {
     isAddingTime = true
     failed = false
 
-    Task {
-      let destination = await today.addExtraTime(sessionID: sessionID)
+    action = Task {
+      let result = await today.addExtraTime(sessionID: sessionID)
       isAddingTime = false
 
-      if let destination {
+      switch result {
+      case .done(let destination) where !Task.isCancelled:
         router.openStudy(destination, sessions: store)
-      } else {
+      case .failed:
         failed = true
+      case .done, .obsolete:
+        break
       }
     }
   }

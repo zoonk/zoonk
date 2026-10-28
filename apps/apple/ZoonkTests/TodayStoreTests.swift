@@ -22,7 +22,7 @@ final class TodayStoreTests: XCTestCase {
     let view = try today(
       session: day(blocks: [block(position: 0, kind: "review")], nextPosition: 0))
 
-    let destination = await store.open(view.session.blocks[0], next: true, in: view)
+    let destination = await store.open(view.session.blocks[0], next: true, in: view).destination
 
     XCTAssertEqual(destination, .questionBlock(sessionID: "s1", blockID: "b1"))
     XCTAssertEqual(store.sessionID, "s1")
@@ -39,7 +39,7 @@ final class TodayStoreTests: XCTestCase {
     let view = try today(
       session: day(blocks: [lesson], nextPosition: 0, id: "s1"), lessonStatus: ["l1": "ready"])
 
-    let destination = await store.open(view.session.blocks[0], next: false, in: view)
+    let destination = await store.open(view.session.blocks[0], next: false, in: view).destination
 
     XCTAssertEqual(destination, .lesson(lessonID: "l1", sessionID: "s1"))
     let starts = await api.startedBlocks
@@ -53,7 +53,7 @@ final class TodayStoreTests: XCTestCase {
     let view = try today(
       session: day(blocks: [lesson], nextPosition: 0, id: "s1"), lessonStatus: ["l1": "notStarted"])
 
-    let destination = await store.open(view.session.blocks[0], next: false, in: view)
+    let destination = await store.open(view.session.blocks[0], next: false, in: view).destination
 
     XCTAssertEqual(destination, .session)
     let starts = await api.startedBlocks
@@ -66,7 +66,7 @@ final class TodayStoreTests: XCTestCase {
     let challenge = try block(position: 0, kind: "checkpoint", id: "b1", planItemID: "p1")
     let view = try today(session: day(blocks: [challenge], nextPosition: 0, id: "s1"))
 
-    let destination = await store.open(view.session.blocks[0], next: false, in: view)
+    let destination = await store.open(view.session.blocks[0], next: false, in: view).destination
 
     XCTAssertEqual(destination, .challenge(planItemID: "p1", sessionID: "s1"))
   }
@@ -78,9 +78,9 @@ final class TodayStoreTests: XCTestCase {
     let view = try today(
       session: day(blocks: [lesson], nextPosition: 0, id: "s1"), lessonStatus: ["l1": "ready"])
 
-    let destination = await store.open(view.session.blocks[0], next: true, in: view)
+    let destination = await store.open(view.session.blocks[0], next: true, in: view).destination
 
-    XCTAssertNil(destination)
+    XCTAssertNil(destination, "the tap fails and Today reads the day again")
   }
 
   func testAMilestoneCeremonyShowsOnceOnTheSessionScreen() {
@@ -95,11 +95,28 @@ final class TodayStoreTests: XCTestCase {
     let store = StudySessionStore(api: StudyAPIStub(), cache: signedInCache())
     store.play(blockID: "b1")
 
-    let stopped = await store.stop(sessionID: "s1")
+    let stopped = await store.stop(sessionID: "s1").destination != nil
 
     XCTAssertTrue(stopped)
     XCTAssertNil(store.playingBlockID)
     XCTAssertEqual(store.stoppedSessionID, "s1")
+  }
+
+  func testAnExpiredSessionSignsOutInsteadOfFailingTheTap() async throws {
+    let api = StudyAPIStub(startError: .unauthorized)
+    let cache = signedInCache()
+    let store = TodayStore(api: api, cache: cache)
+    let lesson = try block(position: 0, kind: "learn", id: "b1", lessonID: "l1")
+    let view = try today(
+      session: day(blocks: [lesson], nextPosition: 0, id: "s1"), lessonStatus: ["l1": "ready"])
+
+    let result = await store.open(view.session.blocks[0], next: true, in: view)
+
+    guard case .obsolete = result else {
+      return XCTFail("a 401 signs out; nothing opens and nothing fails on screen")
+    }
+
+    XCTAssertNil(cache.session.authenticatedSession)
   }
 
   func testShownStepEncodesItsWorkAsCoreReadsIt() throws {
@@ -223,12 +240,14 @@ private func opened(target: StudyBlock) throws -> OpenedStudyDay {
 private actor StudyAPIStub: StudyAPIClient {
   private let opened: OpenedStudyDay?
   private let startResult: BlockStart
+  private let startError: APIError?
   private(set) var openedTargets: [String] = []
   private(set) var startedBlocks: [String] = []
 
-  init(opened: OpenedStudyDay? = nil, start: BlockStart = .started) {
+  init(opened: OpenedStudyDay? = nil, start: BlockStart = .started, startError: APIError? = nil) {
     self.opened = opened
     self.startResult = start
+    self.startError = startError
   }
 
   func getToday(token: String, timeZone: String) async throws -> TodayContent { .goalNotActive }
@@ -253,6 +272,10 @@ private actor StudyAPIStub: StudyAPIClient {
     async throws -> BlockStart
   {
     startedBlocks.append(blockID)
+
+    if let startError {
+      throw startError
+    }
     return startResult
   }
 
@@ -277,5 +300,12 @@ private actor StudyAPIStub: StudyAPIClient {
 
   func getWeeklyRecap(token: String, goalID: String?) async throws -> WeeklyRecap {
     throw APIError.unavailable
+  }
+}
+
+extension MutationResult {
+  /// What a tap opened, for assertions; nil when it failed or came back obsolete.
+  fileprivate var destination: Value? {
+    if case .done(let value) = self { value } else { nil }
   }
 }
