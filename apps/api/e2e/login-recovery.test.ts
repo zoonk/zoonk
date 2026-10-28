@@ -14,7 +14,7 @@ test("central login keeps its form on an error and rejects a revoked cached sess
     baseURL,
     prefix: "login-recovery",
   });
-  // Populate the signed cookie cache, then keep those cookies after the database session is revoked.
+
   await apiContext.get("/v1/auth/get-session");
 
   const context = await browser.newContext({

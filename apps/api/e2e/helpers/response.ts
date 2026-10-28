@@ -4,7 +4,6 @@ import { type ZodType } from "zod";
 
 const OK = 200;
 
-/** Checks the status, showing the body when it's wrong, and parses the body with its schema. */
 export async function readBody<Body>({
   response,
   schema,

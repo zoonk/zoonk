@@ -5,11 +5,7 @@ import { BaseBuilder, createBaseBuilderConfig } from "@workflow/builders";
 /** Where `@workflow/vitest` looks for the bundle by default. */
 const OUT_DIR = join(import.meta.dirname, ".workflow-vitest");
 
-/**
- * The bundle `@workflow/vitest` builds, with one difference: `@zoonk/ai` stays an import instead of
- * being inlined with the other workspace packages, so a test's `vi.mock` replaces the provider and
- * the review models while the steps run real core against the test database.
- */
+/** `@zoonk/ai` stays an import instead of being inlined, so a test's `vi.mock` can replace it. */
 class ApiWorkflowTestBuilder extends BaseBuilder {
   constructor() {
     super({

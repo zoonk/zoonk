@@ -14,7 +14,6 @@ vi.mock("next/cache", () => ({
   updateTag: vi.fn(),
 }));
 
-// The edges every test replaces, declared once (see `mocks/boundaries.ts`).
 Object.entries(boundaries).forEach(([path, mocks]) => {
   vi.doMock(path, async (importOriginal) => ({ ...(await importOriginal<object>()), ...mocks }));
 });

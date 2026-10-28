@@ -22,15 +22,10 @@ import { goalSchema } from "../src/lib/openapi/schemas/goals";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { readBody } from "./helpers/response";
 
-/** A published course with two Beginner chapters of two one-skill lessons each. */
 async function createOutlinedCourse({
   everyBand = false,
   lessonsPerChapter = 2,
-}: {
-  /** Every band of the course written, so a whole-course start plans from this outline. */
-  everyBand?: boolean;
-  lessonsPerChapter?: number;
-} = {}) {
+}: { everyBand?: boolean; lessonsPerChapter?: number } = {}) {
   const course = await courseFixture({
     isPublished: true,
     title: `Robotics ${randomUUID()}`,
@@ -232,9 +227,6 @@ test.describe("Course goals API", () => {
     await apiContext.dispose();
   });
 
-  // A course one goal outlined only in part (its beginner band) would give the next learner a plan
-  // without the levels the first one skipped: the goal's run plans it from its own graph.
-
   test("starts the plan at a chapter of the course", async () => {
     const [{ apiContext }, { chapters, course }, other] = await Promise.all([
       createAuthenticatedApiContext({ baseURL, prefix: "course-chapter" }),
@@ -296,7 +288,6 @@ test.describe("Course goals API", () => {
     await expect(prisma.goal.count({ where: { userId: user.id } })).resolves.toBe(0);
     await expect(prisma.plan.count({ where: { goal: { userId: user.id } } })).resolves.toBe(0);
 
-    // The free plan follows one goal at a time.
     await goalFixture({ userId: user.id });
 
     const refused = await apiContext.post(`/v1/courses/${course.id}/goals`, { data: {} });

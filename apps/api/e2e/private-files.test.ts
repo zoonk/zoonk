@@ -6,12 +6,7 @@ import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons"
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { createBearerLearner } from "./helpers/bearer";
 
-/**
- * A private course's pictures live in the private Blob store, which only the server can read, so
- * the API points them at `GET /v1/files/...` and serves them to their owner alone. Reading the
- * owner's file reaches Blob storage, an external service E2E servers never call; core's tests
- * cover it with the store standing in.
- */
+/** Reading the owner's file reaches Blob storage, which E2E servers never call; core's tests cover it. */
 test("points a private lesson's picture at the file route, which serves the private store's files to their owner alone", async () => {
   const baseURL = process.env.E2E_BASE_URL ?? "";
 
@@ -22,7 +17,6 @@ test("points a private lesson's picture at the file route, which serves the priv
   ]);
 
   const filePath = `images/${owner.userId}/step-${randomUUID()}.webp`;
-  // A call's better version of what the learner said, read aloud, is their own clip.
   const clipPath = `audio/${owner.userId}/it-${randomUUID()}.mp3`;
 
   const picture = await mediaAssetFixture({
@@ -58,7 +52,6 @@ test("points a private lesson's picture at the file route, which serves the priv
     visitor.get(`/v1/files/${filePath}`),
     other.api.get(`/v1/files/${clipPath}`),
     visitor.get(`/v1/files/${clipPath}`),
-    // The route only knows the private store's folders.
     owner.api.get(`/v1/files/library/${owner.userId}/step.webp`),
   ]);
 

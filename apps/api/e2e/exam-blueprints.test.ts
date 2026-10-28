@@ -43,7 +43,6 @@ test.describe("Exam blueprints API", () => {
 
     const response = await anonymous.get(`/v1/exam-blueprints/${blueprint.id}`);
     const body = await readBody({ response, schema: examBlueprintResourceSchema });
-    // The reading's check is research's own record, never part of the public resource.
     const { check: _check, ...publicEdition } = edition;
 
     expect(body).toMatchObject({
@@ -64,7 +63,6 @@ test.describe("Exam blueprints API", () => {
       topicFrequency: [],
     });
 
-    // The notice's text, hash and storage stay on the server.
     const raw = await response.json();
 
     expect(Object.keys(raw.source).toSorted()).toStrictEqual(

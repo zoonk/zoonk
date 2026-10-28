@@ -77,7 +77,6 @@ test.describe("Goal understandings API", () => {
       readBody({ response: await api.get(path), schema: onboardingDraftViewSchema }),
     ).resolves.toStrictEqual(draft);
 
-    // Nothing to run for a goal already understood.
     await expect(
       readBody({
         response: await api.post(`${path}/generations`),
@@ -114,7 +113,6 @@ test.describe("Goal understandings API", () => {
       }),
     ).resolves.toStrictEqual({ resume: null });
 
-    // The reading is the learner's own: another learner's same words are read for them.
     const theirs = await other.api.post("/v1/goal-understandings", {
       data: { goal, language: "en", timeZone: "America/New_York" },
     });

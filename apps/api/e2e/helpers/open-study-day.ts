@@ -7,7 +7,6 @@ import { readBody } from "./response";
 const EXISTING_DAY = 200;
 const CREATED_DAY = 201;
 
-/** Playing a real block first opens its displayed day through the public learner POST. */
 export async function openStudyDay({
   api,
   goalId,

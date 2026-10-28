@@ -1,13 +1,8 @@
 import { vi } from "vitest";
 
 /**
- * What every API test replaces at the edge of the code under test, by module, declared once in
- * `setup-tests.ts`: model calls (each AI task a test reaches, which tests replay recorded outputs
- * through), PostHog, Vercel Blob, the web pages research fetches (undici's fetch) and Next.js'
- * request headers, which only exist inside a request.
- * A module keeps its other exports. Test files share workers, so a worker keeps one set of these
- * functions for every file it runs, and each file starts with them reset (`resetBoundaries`). A
- * new model call a test reaches goes here: a file's own `vi.mock` gives it a worker of its own.
+ * Test files share workers, so these are mocked once per worker and reset for each file. A new
+ * model call a test reaches goes here: a file's own `vi.mock` gives it a worker of its own.
  */
 export const boundaries = {
   "@vercel/blob": { del: vi.fn(), list: vi.fn(), put: vi.fn() },
@@ -75,7 +70,6 @@ export const boundaries = {
   undici: { fetch: vi.fn() },
 };
 
-/** Puts every boundary back as a fresh worker has it, before a test file runs. */
 export function resetBoundaries(): void {
   Object.values(boundaries)
     .flatMap((mocks) => Object.values(mocks))

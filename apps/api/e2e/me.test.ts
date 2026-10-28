@@ -13,10 +13,6 @@ import { getOTPForEmail } from "./helpers/db";
 
 const PASSWORD = "password123";
 
-/**
- * Verifies the public API error envelope so tests assert the client contract
- * instead of coupling to framework-specific response details.
- */
 async function expectApiError({
   code,
   response,
@@ -33,11 +29,6 @@ async function expectApiError({
   expect(body.error.code).toBe(code);
 }
 
-/**
- * Signs in through the public auth endpoint only to mint the session token, then
- * returns a bearer-authenticated context so `/v1/me` is tested like native apps
- * will call it instead of relying on browser cookies.
- */
 async function createBearerApiContext({
   baseURL,
   uniqueId,
@@ -179,8 +170,6 @@ test.describe("Current User API", () => {
       prisma.user.update({ data: { username: takenUsername }, where: { id: taken.id } }),
     ]);
 
-    // A taken username; an empty update, fields outside the public contract and usernames outside
-    // its documented syntax.
     const [conflict, ...invalid] = await Promise.all([
       apiContext.patch("/v1/me", { data: { username: takenUsername } }),
       apiContext.patch("/v1/me", { data: {} }),
@@ -219,7 +208,6 @@ test.describe("Current User API", () => {
       username: nextUsername,
     });
 
-    // The update answers with the account's state, as reads do.
     expect(updateBody.account.deletion.hasAppleAccount).toBe(true);
 
     const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });

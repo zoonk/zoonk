@@ -13,7 +13,6 @@ import { createAuthenticatedApiContext } from "./helpers/auth";
 const RECORDING = { buffer: Buffer.from([1, 2, 3]), mimeType: "audio/webm", name: "word.webm" };
 const DAY_MS = 86_400_000;
 
-/** A language learner with one word due to be said again and one waiting for tomorrow. */
 async function learnerWithReviews(userId: string) {
   const [{ goal }, organization] = await Promise.all([
     languageGoalFixture({ userId }),

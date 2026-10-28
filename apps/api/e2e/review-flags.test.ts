@@ -7,7 +7,6 @@ import { sourceChangeNoticeFixture, sourceFixture } from "@zoonk/testing/fixture
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { createBearerAdmin } from "./helpers/bearer";
 
-/** An open flag on a question built on a source that changed; no model runs to rewrite it. */
 async function openFlag() {
   const [source, skill] = await Promise.all([sourceFixture(), skillFixture()]);
 

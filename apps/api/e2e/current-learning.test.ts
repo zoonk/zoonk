@@ -14,7 +14,6 @@ function hoursAgo(hours: number) {
   return new Date(Date.now() - hours * HOUR_MS);
 }
 
-/** A lesson the learner started in a chapter, as the lesson player records it in the ledger. */
 function startedLessonFixture({
   chapterId,
   startedAt,

@@ -9,10 +9,9 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { createGuest } from "./helpers/bearer";
 
-/** A few bytes in a supported format: enough to pass validation, never sent to a model here. */
 const RECORDING = { buffer: Buffer.from([1, 2, 3]), mimeType: "audio/webm", name: "answer.webm" };
 
-/** A guest's small AI help for a day (`assist` in core's limits). */
+/** `assist` in core's limits. */
 const GUEST_DAILY_HELP = 40;
 
 async function createPrivateSpokenStep(ownerId: string) {

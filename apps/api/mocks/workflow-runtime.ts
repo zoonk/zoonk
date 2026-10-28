@@ -4,10 +4,6 @@ type RunEvent = { createdAt: Date; eventData?: { resumeAt?: Date }; eventType: s
 
 let lastEvents = new Map<string, RunEvent>();
 
-/**
- * The World only exists inside the workflow runtime, so a test says what each run last recorded
- * (none by default): a run quiet for long enough has stalled.
- */
 export function mockLastRunEvent(runId: string, event: RunEvent): void {
   lastEvents.set(runId, event);
 }

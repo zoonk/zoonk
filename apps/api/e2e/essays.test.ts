@@ -28,7 +28,6 @@ const ESSAY = {
   sampleOutline: "Introdução, dois argumentos e a proposta.",
 };
 
-/** A draft as grading stores it: essays are graded by a model, which tests don't call. */
 const GRADED_DRAFT = {
   grade: {
     criteria: [
@@ -59,13 +58,11 @@ const GRADED_DRAFT = {
 
 const DRAFT = { durationMs: 600_000, text: "Minha redação sobre desinformação.", timeZone: "UTC" };
 
-/** An ENEM learner's writing block in today's session, in the given state. */
 async function createEssayBlock({
   localDate,
   status,
   userId,
 }: {
-  /** The session's day; today when left out. */
   localDate?: Date;
   status: StudyBlockStatus;
   userId: string;
@@ -131,7 +128,6 @@ test.describe("Essays API", () => {
       createBearerLearner({ baseURL, prefix: "essay-other" }),
     ]);
 
-    // Sending a draft starts today's writing block; a block from another day's session waits.
     const yesterday = new Date(Date.now() - MS_PER_DAY);
     yesterday.setUTCHours(0, 0, 0, 0);
 

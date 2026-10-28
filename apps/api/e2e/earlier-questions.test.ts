@@ -6,7 +6,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { earlierQuestionsResponseSchema } from "../src/lib/openapi/schemas/lesson-questions";
 import { createBearerLearner } from "./helpers/bearer";
 
-/** A question saved before the Library rewrote every course: its lesson is gone. */
 async function earlierQuestion({ question, userId }: { question: string; userId: string }) {
   const thread = await prisma.lessonQuestionThread.create({ data: { kind: "lesson", userId } });
 

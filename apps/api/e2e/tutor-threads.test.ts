@@ -51,7 +51,6 @@ async function readCreated(response: APIResponse) {
   return createdLessonQuestionSchema.parse(await response.json());
 }
 
-/** A learn goal whose plan teaches one skill, so the plan is built and can be asked about. */
 async function createPlannedGoal(userId: string) {
   const goal = await goalFixture({ timezone: "UTC", userId });
 
@@ -65,7 +64,6 @@ async function createPlannedGoal(userId: string) {
   return goal;
 }
 
-/** A goal whose plan has two modules, each a chapter: its syllabus lists them as subjects. */
 async function createModulesGoal(userId: string) {
   const [goal, research, figma, interview, prototype] = await Promise.all([
     goalFixture({ title: "Become a UX designer", userId }),
@@ -105,7 +103,6 @@ async function createModulesGoal(userId: string) {
   return goal;
 }
 
-/** Today's mock of a Plus learner's exam goal. */
 async function createMockBlock({ api, userId }: { api: APIRequestContext; userId: string }) {
   const { goal } = await createExamGoal(userId);
 
@@ -219,7 +216,6 @@ test.describe("Tutor threads beyond lessons", () => {
 
     expect(hiddenThread.status()).toBe(404);
 
-    // A plan change the buddy proposed in its answer comes with the question, waiting for an OK.
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
 
     const change = await planChangeFixture({
@@ -250,7 +246,6 @@ test.describe("Tutor threads beyond lessons", () => {
       api.get(`/v1/questions/${question.id}`),
     ]);
 
-    // The app says a change read from the learner's words from its operations, not the model's.
     const proposal = {
       id: change.id,
       operations: [{ kind: "setDailyMinutes", minutes: 20 }],
@@ -282,7 +277,6 @@ test.describe("Tutor threads beyond lessons", () => {
     expect(subjects.map((subject) => subject.key)).toStrictEqual(["user-research", "prototyping"]);
     const path = `/v1/goals/${goal.id}/subjects/user-research/questions`;
 
-    // Opening the conversation reads it: nothing is there before the first question.
     const empty = await api.get(path);
     await expect(empty.json()).resolves.toBeNull();
 
@@ -325,7 +319,6 @@ test.describe("Tutor threads beyond lessons", () => {
     const path = `/v1/items/${itemId}/questions`;
     const context = { answered: false, kind: "item" };
 
-    // No help with an exam that's still running, even asked about its question elsewhere.
     const [running, runningThread] = await Promise.all([
       ask({ api, context, path }),
       api.get(path),
@@ -364,7 +357,6 @@ test.describe("Tutor threads beyond lessons", () => {
       const path = `/v1/items/${item.id}/questions`;
       const context = { answered: false, kind: "item" };
 
-      // Legacy learner records do not grant access to another owner's private Library content.
       await Promise.all(
         [owner.userId, other.userId, guest.userId].map((userId) =>
           mistakeFixture({ itemId: item.id, skillId: skill.id, userId }),
@@ -386,7 +378,6 @@ test.describe("Tutor threads beyond lessons", () => {
       const unseen = await itemFixture({ content: choiceItemContent(), skillId: publicSkill.id });
       const unseenPath = `/v1/items/${unseen.id}/questions`;
 
-      // Another learner's practice history does not authorize this learner's no-block context.
       await mistakeFixture({ itemId: unseen.id, skillId: publicSkill.id, userId: owner.userId });
       const missingEvidence = await ask({ api: other.api, context, path: unseenPath });
 
@@ -408,7 +399,6 @@ test.describe("Tutor threads beyond lessons", () => {
     const started = await api.post(`${mockPath}/starts`, { data: { timeZone: "UTC" } });
     expect(started.status()).toBe(204);
 
-    // No help with an exam that's still running.
     const [running, runningThread] = await Promise.all([
       ask({ api, context: { kind: "mock" }, path }),
       api.get(path),
@@ -499,7 +489,6 @@ test.describe("Tutor threads beyond lessons", () => {
       status: "completed",
     });
 
-    // A saved answer costs no generation, so it doesn't count against the tutor allowance.
     expect(usage).toBe(0);
 
     await expect(

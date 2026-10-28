@@ -10,7 +10,6 @@ function createBearerContext({ baseURL, token }: { baseURL: string; token: strin
   return request.newContext({ baseURL, extraHTTPHeaders: { Authorization: `Bearer ${token}` } });
 }
 
-/** A learner with a bearer session, the way native clients call the API. */
 export async function createBearerLearner({
   baseURL,
   prefix,
@@ -24,7 +23,6 @@ export async function createBearerLearner({
   return { api: await createBearerContext({ baseURL, token }), userId: user.id };
 }
 
-/** A learner promoted to admin; the bearer context reads the session again, with the new role. */
 export async function createBearerAdmin({ baseURL, prefix }: { baseURL: string; prefix: string }) {
   const { apiContext, token, user } = await createAuthenticatedApiContext({ baseURL, prefix });
 
@@ -36,7 +34,6 @@ export async function createBearerAdmin({ baseURL, prefix }: { baseURL: string; 
   return createBearerContext({ baseURL, token });
 }
 
-/** A guest with a bearer session, started the way the apps start one. */
 export async function createGuest(baseURL: string) {
   const anonymous = await request.newContext({ baseURL });
 

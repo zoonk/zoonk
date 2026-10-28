@@ -42,10 +42,7 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   turbopack: {
     resolveAlias: { ...e2eAliases },
-    rules: {
-      // Allow to import MDX files used for AI prompts
-      "*.md": { as: "*.js", loaders: ["raw-loader"] },
-    },
+    rules: { "*.md": { as: "*.js", loaders: ["raw-loader"] } },
   },
   typedRoutes: true,
   typescript: { ignoreBuildErrors: true },

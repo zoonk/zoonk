@@ -15,10 +15,8 @@ import { TEST_LIVE_SDP_ANSWER } from "../../../packages/e2e/src/live-call-provid
 import { createBearerLearner } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
 
-/** A structurally valid WebRTC offer: the no-spend provider answers it. */
 const OFFER = { sdp: LIVE_CALL_SDP_OFFER };
 
-/** The lane's Next alias replaces only @zoonk/ai with a fixed no-spend provider answer. */
 async function callFixture(prefix: string) {
   const learner = await createBearerLearner({ baseURL: process.env.E2E_BASE_URL ?? "", prefix });
   const { renting } = await languageGoalFixture({ userId: learner.userId });
@@ -147,7 +145,6 @@ test.describe("Live-call connection HTTP contract", () => {
         prisma.liveCallConnection.findUniqueOrThrow({ where: { id: setup.connectionId } }),
       ).resolves.toMatchObject({ startedAt: null, state: "reserved" });
 
-      // A reservation past its connect window can't create a session anymore.
       await prisma.liveCallConnection.update({
         data: { createdAt: new Date(Date.now() - 61_000) },
         where: { id: setup.connectionId },

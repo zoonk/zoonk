@@ -17,10 +17,6 @@ import { readBody } from "./helpers/response";
 
 const DAY_MS = 86_400_000;
 
-/**
- * A goal with one lesson done: its skill is due, has three questions and a mistake of the given
- * cause saved yesterday, so "Practice mistakes" and today's practice both drill it.
- */
 async function createMistakeGoal({
   cause,
   userId,

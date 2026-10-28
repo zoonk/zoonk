@@ -13,7 +13,6 @@ const FOREIGN = "Língua Estrangeira";
 const SPANISH = "Língua Espanhola";
 const TIME_ZONE = "America/Sao_Paulo";
 
-/** An exam goal whose notice has a choice (English or Spanish), its plan not built yet. */
 async function createChoiceGoal(userId: string) {
   const citation = { passage: "Língua Estrangeira (Inglês ou Espanhol)", sourceId: "notice" };
   const option = { choiceGroup: FOREIGN, citation, questions: 5, topics: [], weight: null };
@@ -95,7 +94,6 @@ test.describe("Exam choices API", () => {
       schema: planChangeResultSchema,
     });
 
-    // The plan isn't built yet: the pick waits for it, with no change to show.
     expect(picked).toMatchObject({ change: null, status: "applied" });
     await expect(loadPicks(goal.id)).resolves.toStrictEqual([{ group: FOREIGN, subject: SPANISH }]);
 

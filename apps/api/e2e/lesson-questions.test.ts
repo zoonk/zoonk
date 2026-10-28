@@ -46,10 +46,6 @@ async function askQuestion(input: Parameters<typeof ask>[0]) {
   return readBody({ response: await ask(input), schema: createdLessonQuestionSchema, status: 201 });
 }
 
-/**
- * A question as reading it again returns it: what asking did to the day's missions comes only in
- * the answer to asking.
- */
 function asRead({ missionMoment, ...question }: Awaited<ReturnType<typeof askQuestion>>) {
   expect(missionMoment).toBeNull();
   return question;
@@ -247,7 +243,6 @@ test.describe("Lesson questions API", () => {
 
     const second = await askQuestion({ api, lessonId: lesson.id, question: "Second question" });
 
-    // The first turn is unfinished again, and the tutor allowance is used up so no model is called.
     await Promise.all([
       prisma.lessonQuestion.update({
         data: { answer: null, status: "pending" },

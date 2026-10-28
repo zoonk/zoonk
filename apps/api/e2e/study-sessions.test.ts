@@ -32,7 +32,6 @@ import { readBody } from "./helpers/response";
 const DAY_MS = 86_400_000;
 const CHALLENGE_QUESTIONS = 5;
 
-/** No goal means starting these blocks cannot schedule content generation. */
 async function createSessionWithChallengeQuestions(userId: string) {
   const [session, skill] = await Promise.all([
     studySessionFixture({ missions: [], userId }),
@@ -104,11 +103,6 @@ async function expectEarlierFirst({
   expect(after).toStrictEqual(before);
 }
 
-/**
- * A goal whose first of two lessons is done: its skill is due for review and has a mistake saved
- * yesterday, so today's session has capsules, the next lesson and a mistake to fix. It's past its
- * first week, when sessions still ask placement questions about skills placement was unsure of.
- */
 async function createGoal(userId: string) {
   const [goal, skills, lessons] = await Promise.all([
     goalFixture({
@@ -189,7 +183,6 @@ async function playBlock({
     schema: studyBlockDetailResponseSchema,
   });
 
-  // Questions are answered one after another, like a learner does.
   await detail.questions.reduce(async (previous, question) => {
     await previous;
 
@@ -296,7 +289,6 @@ test.describe("Study sessions API", () => {
     expect(summary).toMatchObject({ fullMeal: true, status: "completed", tomorrow: null });
     expect(summary.questions).toBeGreaterThan(0);
 
-    // No lesson of the plan is left, and today's taught its skill, so more time is practice on it.
     await learnerSkillFixture({ reps: 1, skillId: skills[1]?.id ?? "", state: "learning", userId });
 
     const extra = await readBody({
@@ -307,9 +299,6 @@ test.describe("Study sessions API", () => {
 
     expect(extra).toMatchObject({ extra: true, kind: "practice", status: "pending" });
   });
-
-  // Will's plan had a day off, and Will wanted to study anyway: more time gave practice instead of
-  // the plan's next lessons. It now adds them, and the day lists them before the tap.
 
   test("holds a phase challenge for unfinished lessons without opening it or the session", async () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "study-order-lessons" });
@@ -438,7 +427,6 @@ test.describe("Study sessions API", () => {
       notMineToOpen.status(),
     ]).toStrictEqual([404, 404, 404, 404]);
 
-    // On pace, the session has nothing to catch up, and says so instead of adding anything.
     expect(today.catchUp).toBeNull();
     expect(onPace.status()).toBe(422);
 
@@ -449,7 +437,6 @@ test.describe("Study sessions API", () => {
       schema: studySessionSummaryResponseSchema,
     });
 
-    // Nothing is skipped: the rest of the session waits to be picked up.
     expect(stopped).toMatchObject({
       extraTime: { available: false, reason: "sessionNotFinished" },
       finished: false,
@@ -464,8 +451,6 @@ test.describe("Study sessions API", () => {
     expect(after).toMatchObject({ nextBlockId: today.blocks[0]?.id });
   });
 
-  // rafa3 (Câmara, free, day 12): Today said Plus opens new lessons, yet "Catch up today" added
-  // 205 of them, and bonus time and the phase challenge stayed open.
   test("holds catch-up, bonus time, challenges, test-outs and writing ahead for Plus once a free exam plan's first week is over", async () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "study-free-week" });
 
@@ -478,7 +463,6 @@ test.describe("Study sessions API", () => {
 
     const studied = await libraryLessonFixture({ title: "Studied lesson" });
 
-    // The phase's lesson is done, so its challenge closes it.
     const [plan, session] = await Promise.all([
       planFixture({
         goalId: goal.id,
@@ -523,8 +507,6 @@ test.describe("Study sessions API", () => {
     expect(writing.status()).toBe(402);
     await expect(writing.json()).resolves.toMatchObject(plusRequired);
 
-    // A chapter's test-out takes the learner past lessons only Plus opens: nothing is written,
-    // graded or skipped, even with a right answer to a planned lesson's question.
     const [chapter, skill] = await Promise.all([libraryChapterFixture(), skillFixture()]);
 
     const [lesson, question] = await Promise.all([
@@ -556,13 +538,11 @@ test.describe("Study sessions API", () => {
       prisma.planItem.findUniqueOrThrow({ where: { id: lesson.id } }),
     ).resolves.toMatchObject({ status: "todo" });
 
-    // Nothing is written ahead for it: no lessons, outlines or questions.
     const preparation = await api.post(`${sessionPath}/preparations`);
 
     expect(preparation.status()).toBe(202);
     await expect(preparation.json()).resolves.toStrictEqual({ preparationId: null });
 
-    // Nothing joined the day and nothing was written or counted.
     await expect(
       prisma.studySessionBlock.count({ where: { sessionId: session.id } }),
     ).resolves.toBe(0);

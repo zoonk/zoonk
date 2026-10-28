@@ -29,10 +29,6 @@ function getAll({ apiContext, paths }: { apiContext: APIRequestContext; paths: s
   return Promise.all(paths.map((path) => apiContext.get(path)));
 }
 
-/**
- * Creates one isolated published course in a language of its own, so collection
- * and search assertions don't depend on seeded content.
- */
 async function createLanguageCourse() {
   const uniqueId = randomUUID().slice(0, 8);
   const language = uniqueId;

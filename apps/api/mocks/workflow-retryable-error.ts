@@ -1,4 +1,3 @@
-/** Steps throw it to be retried after a delay, such as after a provider's rate limit. */
 export class RetryableError extends Error {
   retryAfter: unknown;
 

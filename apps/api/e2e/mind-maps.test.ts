@@ -20,10 +20,6 @@ const ACCEPTED = 202;
 const PAYMENT_REQUIRED = 402;
 const UNPROCESSABLE = 422;
 
-/**
- * A goal whose plan has two chapters of one written lesson each: the first finished, the second
- * still to study.
- */
 async function createGoal(userId: string) {
   const suffix = randomUUID().slice(0, 6);
 
@@ -121,7 +117,6 @@ test.describe("Mind maps API", () => {
       title: finished.title,
     });
 
-    // Maps are for chapters the learner finished.
     const notYet = await apiContext.post(
       `/v1/goals/${goal.id}/chapters/${current.id}/mind-map/generations`,
     );
@@ -139,7 +134,6 @@ test.describe("Mind maps API", () => {
     expect(body).toStrictEqual({ generationId: expect.any(String), status: "generating" });
     expect(started.headers().location).toBe(`/v1/generations/${body.generationId}`);
 
-    // A second tap joins the same run instead of paying for another map.
     await expect(
       readBody({
         response: await apiContext.post(`${chapterPath}/generations`),
@@ -148,7 +142,6 @@ test.describe("Mind maps API", () => {
       }),
     ).resolves.toMatchObject({ status: "generating" });
 
-    // The new map counts once toward the learner's mind map limits.
     await expect(
       prisma.usageRecord.findMany({
         select: { kind: true, targetId: true },
@@ -210,7 +203,6 @@ test.describe("Mind maps API", () => {
       },
     });
 
-    // Nothing was claimed: the map can still be made once the day's maps come back.
     await expect(prisma.chapterMindMap.count({ where: { chapterId: finished.id } })).resolves.toBe(
       0,
     );

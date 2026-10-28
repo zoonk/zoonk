@@ -38,13 +38,7 @@ const LESSONS_PER_DAY = 4;
 const DAY_MS = 86_400_000;
 const HOUR_MS = 3_600_000;
 
-/**
- * A goal whose plan has its skill graph (what the goal-driven workflow writes) and a Library chapter
- * with twelve 3-minute lessons for its one skill, for a public course, saved as a plan the learner
- * saw laid out: four lessons a day from today at 12 minutes a day, its phase dated and closed by its
- * challenge on its last day. A fixed layout, not the planner's own (its days and minutes can differ):
- * reads keep a layout the learner saw while its inputs stay the same.
- */
+/** A fixed layout, not the planner's own: reads keep a layout the learner saw while its inputs stay the same. */
 async function createPlannedGoal(userId: string) {
   const [course, chapter, skill] = await Promise.all([
     courseFixture({
@@ -265,7 +259,6 @@ test.describe("Goals and plans API", () => {
     const second = await apiContext.post("/v1/goals", {
       data: {
         dailyMinutes: 30,
-        // A quick explanation has its own allowance, so the second goal to plan is refused.
         goals: [{ kind: "learn", language: "pt", prompt: "Astronomia", title: "Astronomia" }],
       },
     });
@@ -303,7 +296,7 @@ test.describe("Goals and plans API", () => {
       schedule: { dailyMinutes: 12 },
       weekTime: { studiedMinutes: 0 },
     });
-    // This legacy fixture has no saved advice; a read never computes it.
+
     expect(before.feasibility).toBeNull();
 
     const changed = await readBody({
@@ -351,7 +344,6 @@ test.describe("Goals and plans API", () => {
 
     expect(untouched).toStrictEqual(savedChange);
 
-    // "Got it" only marks it read: it stays applied and can still be undone.
     const seen = await readBody({
       response: await apiContext.post(`/v1/goals/${goal.id}/plan/changes/${changed.change?.id}`, {
         data: { status: "seen" },
@@ -407,7 +399,6 @@ test.describe("Goals and plans API", () => {
       createPlannedGoal(stranger.id),
     ]);
 
-    // Due the day after tomorrow: twelve 3-minute lessons don't fit in 12 minutes a day.
     const targetDate = new Date(Date.now() + 2 * DAY_MS).toISOString().slice(0, 10);
 
     await prisma.goal.update({
@@ -434,7 +425,6 @@ test.describe("Goals and plans API", () => {
 
     const advice = await readBody({ response: everyDay, schema: planTimeAdviceSchema });
 
-    // Only an exam studies everything after its date: a goal's plan is the same, with no end to say.
     await expect(
       readBody({ response: everything, schema: planTimeAdviceSchema }),
     ).resolves.toMatchObject({ coveredShare: advice.coveredShare, fullCourseEndDate: null });
@@ -444,7 +434,6 @@ test.describe("Goals and plans API", () => {
     expect(advice.numbers).not.toBeNull();
     expect(advice.numbers?.context).toMatchObject({ dailyMinutes: 12, targetDate });
 
-    // Reads say only what the learner's own time does: no other daily time is searched for them.
     const [everyDayBody, planBody] = await Promise.all([everyDay.json(), plan.json()]);
     expect(everyDayBody).not.toHaveProperty("recommendedMinutes");
     expect(planBody).not.toHaveProperty("feasibility.recommendedMinutes");
@@ -453,7 +442,6 @@ test.describe("Goals and plans API", () => {
       readBody({ response: weekdays, schema: planTimeAdviceSchema }),
     ).resolves.toMatchObject({ ready: true });
 
-    // The weekend's own time is part of the week asked about (core's tests check what it changes).
     await expect(
       readBody({ response: weekend, schema: planTimeAdviceSchema }),
     ).resolves.toMatchObject({ ready: true });
@@ -465,7 +453,6 @@ test.describe("Goals and plans API", () => {
       badEverything.status(),
     ]).toStrictEqual([400, 400, 404, 400]);
 
-    // The learner asks for the time that covers everything: the fewest minutes that do.
     const [found, foundWeekdays, foundWeekend, badDays, badWeekend, foundHidden] =
       await Promise.all([
         apiContext.post(`/v1/goals/${goal.id}/plan/time-to-cover`, { data: {} }),
@@ -499,7 +486,6 @@ test.describe("Goals and plans API", () => {
       400, 400, 404,
     ]);
 
-    // Finding the time changes nothing: the goal keeps its own time until the learner picks one.
     await expect(
       readBody({
         response: await apiContext.post(`/v1/goals/${goal.id}/plan/time-advice`, { data: {} }),
@@ -521,8 +507,6 @@ test.describe("Goals and plans API", () => {
       createPlannedGoal(stranger.id),
     ]);
 
-    // Core's tests cover which writes count; here, a read from before the plan was saved and one
-    // from after it (writes up to two seconds before a read still count).
     const before = new Date(Date.now() - HOUR_MS).toISOString();
     const after = new Date(Date.now() + 5000).toISOString();
     const path = `/v1/goals/${goal.id}/plan/changed-since`;
@@ -629,10 +613,8 @@ test.describe("Goals and plans API", () => {
 
     await apiContext.patch(`/v1/goals/${goal.id}`, { data: { status: "paused" } });
 
-    // Resumed the day it paused, the plan stays as it is.
     await expect(preview()).resolves.toBe(false);
 
-    // Days went by while it was paused: their lessons are now on days past.
     const items = await prisma.planItem.findMany({ where: { planId: plan.id } });
 
     await Promise.all(

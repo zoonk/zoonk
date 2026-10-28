@@ -14,7 +14,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { areaPracticeResponseSchema } from "../src/lib/openapi/schemas/learn-views";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 
-/** A goal with one outlined lesson in a chapter, ready for that area's extra practice. */
 async function createGoal(userId: string) {
   const [goal, chapter, skill] = await Promise.all([
     goalFixture({ title: "Percentages for the exam", userId }),

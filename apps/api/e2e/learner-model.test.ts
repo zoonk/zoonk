@@ -27,7 +27,6 @@ import { readBody } from "./helpers/response";
 
 const SKILLS = 4;
 
-/** A goal with one chapter of four chained skills, one plan item and one question per skill. */
 async function createGoal(userId: string) {
   const [goal, chapter, skills] = await Promise.all([
     goalFixture({ userId }),
@@ -56,7 +55,6 @@ async function createGoal(userId: string) {
   return { chapter, goal, items, skills };
 }
 
-/** The goal's plan skills, which `createGoal` gives one question each. */
 async function chapterSkillIds(goalId: string): Promise<string[]> {
   const items = await prisma.planItem.findMany({
     select: { skillId: true },
@@ -138,7 +136,6 @@ test.describe("Learner model API", () => {
       status: "asking",
     });
 
-    // The raw response carries the question and its options only: nothing that tells the answer.
     expect(Object.keys(placement.next ?? {}).toSorted()).toStrictEqual(
       Object.keys((sent as { next: object }).next).toSorted(),
     );
@@ -157,7 +154,6 @@ test.describe("Learner model API", () => {
       schema: placementAnswerResponseSchema,
     });
 
-    // Once answered, coming back resumes placement instead of showing its start.
     expect(answered).toMatchObject({
       isCorrect: false,
       placement: {
@@ -198,7 +194,6 @@ test.describe("Learner model API", () => {
       schema: placementCompletionResponseSchema,
     });
 
-    // Day 1 opens it minutes later: asked for now, it counts as its start like opening it.
     await expect
       .poll(() =>
         prisma.usageRecord.findMany({
@@ -246,7 +241,6 @@ test.describe("Learner model API", () => {
     const said = { correct: SKILLS, lessonsSkipped: SKILLS, passed: true, total: SKILLS };
     expect(result).toMatchObject(said);
 
-    // Its result reads back as it was recorded, for a reload or a link.
     await expect(
       readBody({
         response: await apiContext.get(`${path}/results/${requestId}`),
@@ -266,12 +260,10 @@ test.describe("Learner model API", () => {
     const { chapter, goal } = await createGoal(user.id);
     const path = `/v1/goals/${goal.id}/chapters/${chapter.id}/test-out/generations`;
 
-    // Every sampled skill has a question: nothing to write.
     await expect(
       readBody({ response: await apiContext.post(path), schema: testOutGenerationSchema }),
     ).resolves.toStrictEqual({ generationId: null, status: "ready" });
 
-    // Without questions, asking writes them.
     const skillIds = await chapterSkillIds(goal.id);
     await prisma.item.deleteMany({ where: { skillId: { in: skillIds } } });
 

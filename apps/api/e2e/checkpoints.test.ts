@@ -27,7 +27,6 @@ import { readBody } from "./helpers/response";
 const QUESTIONS_PER_SKILL = 3;
 const SKILL_NAMES = ["Discounts", "Ratios"];
 
-/** The boss asks every question of the phase's skills, since there are fewer than ten. */
 const BOSS_QUESTIONS = QUESTIONS_PER_SKILL * SKILL_NAMES.length;
 
 function addQuestions({ count, skillId }: { count: number; skillId: string }) {
@@ -36,10 +35,6 @@ function addQuestions({ count, skillId }: { count: number; skillId: string }) {
   );
 }
 
-/**
- * A goal whose first phase (two lessons) is done, so today's session is the phase's boss, its two
- * skills holding `questionsPerSkill` questions each.
- */
 async function createGoalAtBoss(userId: string, questionsPerSkill = QUESTIONS_PER_SKILL) {
   const [goal, [skills, next], lessons] = await Promise.all([
     goalFixture({ dailyMinutes: 30, timezone: "UTC", userId }),
@@ -79,7 +74,6 @@ async function createGoalAtBoss(userId: string, questionsPerSkill = QUESTIONS_PE
         {
           kind: "boss" as const,
           position: SKILL_NAMES.length,
-          // C2 requires the saved due day; completed teaching does not unlock an undated boss.
           scheduledFor: getDateInTimeZone({ date: new Date(), timeZone: "UTC" }),
           titleSnapshot: "Boss",
         },
@@ -91,7 +85,6 @@ async function createGoalAtBoss(userId: string, questionsPerSkill = QUESTIONS_PE
   return goal;
 }
 
-/** A Plus learner's language unit reached with its phase challenge's call already written. */
 async function createLanguageBoss(userId: string) {
   const [fixture] = await Promise.all([
     languageGoalFixture({ userId }),
@@ -182,7 +175,6 @@ test.describe("Checkpoints API", () => {
     const hidden = await other.api.get(path);
     expect(hidden.status()).toBe(404);
 
-    // Only the week's challenge moves to Monday; a boss keeps its day.
     const bossMove = await api.post(`${path}/moves`, { data: {} });
     expect(bossMove.status()).toBe(404);
   });
@@ -217,7 +209,6 @@ test.describe("Checkpoints API", () => {
       waitReason: null,
     });
 
-    // Reading the intro writes nothing: only Start makes the day's session and its block.
     await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(0);
 
     const started = await readBody({
@@ -246,11 +237,9 @@ test.describe("Checkpoints API", () => {
 
     expect(hidden.status()).toBe(404);
 
-    // Only the week's challenge moves to Monday; a boss keeps its day.
     expect(bossMove.status()).toBe(409);
   });
 
-  // Which work a challenge waits for is core's (`read-only-challenge`, `start-challenge`).
   test("a boss after today's unfinished challenge says it waits, as Start refuses, until that work is completed", async () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "challenge-wait" });
     const goal = await createGoalAtBoss(userId);
@@ -267,7 +256,6 @@ test.describe("Checkpoints API", () => {
         schema: challengeResponseSchema,
       });
 
-    // Nothing waits before the day is saved, nor in the order Open saves it in.
     await expect(readIntro()).resolves.toMatchObject({ status: "ready", waitReason: null });
 
     const today = await openStudyDay({ api, goalId: goal.id });
@@ -283,7 +271,6 @@ test.describe("Checkpoints API", () => {
       waitReason: null,
     });
 
-    // Unfinished work saved ahead of it in today's order, as a rematch's reinforcement lessons are.
     const last = Math.max(...today.blocks.map((block) => block.position));
 
     await prisma.studySessionBlock.update({
@@ -328,8 +315,6 @@ test.describe("Checkpoints API", () => {
     await api.dispose();
   });
 
-  // A boss the bank held too few questions for stays in the day: starting it says so, and its
-  // generations write what it lacks of its ten (a model call, so each counts as AI help).
   test("a boss short of questions asks for them to be written before it starts", async () => {
     const [{ api, userId }, other] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "challenge-thin" }),
@@ -371,7 +356,6 @@ test.describe("Checkpoints API", () => {
     expect(run).toStrictEqual({ generationId: expect.any(String), status: "generating" });
     expect(writing.headers().location).toBe(`/v1/generations/${run.generationId}`);
 
-    // Once the bank holds them, nothing is written and it starts.
     const skills = await prisma.lessonSkill.findMany({
       where: { lesson: { planItems: { some: { phase: 0, plan: { goalId: goal.id } } } } },
     });
@@ -444,7 +428,6 @@ test.describe("Checkpoints API", () => {
       }),
     );
 
-    // Neither the intro nor the refused Start made the day's session or the call's block.
     await expect(prisma.studySession.count({ where: { userId } })).resolves.toBe(0);
 
     const locked = await readBody({
@@ -512,7 +495,6 @@ test.describe("Checkpoints API", () => {
 
     expect(after).toMatchObject({ kind: "checkpoint", locked: true });
 
-    // The block started while Plus was active: neither it nor its call opens again without Plus.
     const [refused, blockStart, callStart] = await Promise.all([
       api.post(`/v1/language-conversations/${call.conversationId}/connections`),
       api.post(`/v1/study-sessions/${started.sessionId}/blocks/${started.blockId}/starts`, {
@@ -530,7 +512,6 @@ test.describe("Checkpoints API", () => {
       }),
     );
 
-    // Existing completed feedback stays readable, but another challenge call still needs Plus.
     await prisma.languageConversation.update({
       data: { spokenSeconds: 0, status: "completed" },
       where: { id: call.conversationId },

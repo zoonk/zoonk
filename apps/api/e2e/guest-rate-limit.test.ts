@@ -22,7 +22,7 @@ test("the 61st guest attempt is blocked without creating an account", async ({
   const headers = createGuestHeaders(baseURL);
   const key = `${headers["x-forwarded-for"]}|/sign-in/anonymous`;
 
-  /** Seed only the counter to exercise the real boundary without creating 60 extra accounts. */
+  // Seeds the counter one short of the limit instead of creating 59 accounts.
   await prisma.rateLimit.create({ data: { count: 59, key, lastRequest: BigInt(Date.now()) } });
 
   try {

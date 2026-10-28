@@ -91,7 +91,6 @@ test.describe("Onboarding API", () => {
 
     const goalId = created.goals[0]?.id ?? "";
 
-    // The goal carries its draft's id, so the draft now leads to it.
     await expect(
       readBody({
         response: await apiContext.get(`/v1/goal-understandings/${draft.id}`),
@@ -106,7 +105,7 @@ test.describe("Onboarding API", () => {
 
     expect(onboarding.steps[0]).toBe("purpose");
     expect(onboarding.steps.at(-1)).toBe("plan");
-    // The material attached with the goal is linked to it for research and the curriculum.
+
     await expect(
       prisma.learnerSource.findFirstOrThrow({ where: { sourceId: notes.id, userId: user.id } }),
     ).resolves.toMatchObject({ goalId });

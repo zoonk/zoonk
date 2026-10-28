@@ -11,7 +11,6 @@ import { createBearerLearner } from "./helpers/bearer";
 import { readBody } from "./helpers/response";
 import { privateUploadFixture } from "./helpers/sources";
 
-/** An exam goal whose research couldn't find the official notice. */
 function examGoalWaitingForNotice(userId: string) {
   return goalFixture({
     kind: "exam",
@@ -95,7 +94,6 @@ test.describe("Research upload requests API", () => {
       privateUploadFixture({ ownerId: other.userId }),
     ]);
 
-    // Someone else's upload is never read.
     const refused = await learner.api.post("/v1/research", {
       data: { goalId: goal.id, sourceIds: [othersUpload.id] },
     });
@@ -110,7 +108,6 @@ test.describe("Research upload requests API", () => {
     const research = researchResourceSchema.parse(await started.json());
     expect(research).toMatchObject({ result: null });
 
-    // The unguessable run id is the capability, so the run reads without a session.
     const anonymous = await request.newContext({ baseURL });
 
     const run = await readBody({
@@ -132,7 +129,6 @@ test.describe("Research upload requests API", () => {
 
     expect(link).toMatchObject({ goalId: goal.id, origin: "upload" });
 
-    // The ask is answered: another upload can't rebuild the goal again.
     const again = await learner.api.post("/v1/research", {
       data: { goalId: goal.id, sourceIds: [upload.id] },
     });

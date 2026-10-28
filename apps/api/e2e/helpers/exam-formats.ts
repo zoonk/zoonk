@@ -5,13 +5,10 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { citation } from "./exams";
 
-/** A quick question per format beside the three in the exam's other answer formats. */
 const FORMATS_QUICK_QUESTIONS = 3;
 
-/** The questions of `createFormatsExamGoal`'s mock: the quick ones and the three formats. */
 export const FORMATS_QUESTIONS = FORMATS_QUICK_QUESTIONS + 3;
 
-/** Two of four options right, as JEE Advanced's "one or more options correct". */
 const SEVERAL_PICKS = {
   context: null,
   fixedOrder: true,
@@ -25,7 +22,6 @@ const SEVERAL_PICKS = {
   select: "all",
 };
 
-/** Two thirds of a pizza left, with fixed numbers, typed as a fraction or a decimal. */
 const FRACTION = {
   context: null,
   entry: { kind: "fraction", places: null },
@@ -55,12 +51,6 @@ const WORD = {
   sampleAnswer: "prime",
 };
 
-/**
- * An exam goal like JEE Advanced: one paper whose questions may have one right option or several
- * (+1 per right option picked, all of them the full mark), take a fraction typed into a box, or a
- * word typed in, in the mix the notice counts, which the bank holds; one mock section asks every
- * question in its bank.
- */
 export async function createFormatsExamGoal(userId: string) {
   const [blueprint, skill] = await Promise.all([
     examBlueprintFixture({

@@ -9,7 +9,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { ownLevelChangeSchema } from "../src/lib/openapi/schemas/plans";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 
-/** A goal whose plan has two chapters of two skills each, learned by someone who said "basic". */
 async function createGoal(userId: string) {
   const [goal, chapters, skills] = await Promise.all([
     goalFixture({ details: { level: "basic" }, title: "Percentages", userId }),

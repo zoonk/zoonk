@@ -23,7 +23,6 @@ import { createAuthenticatedApiContext } from "./helpers/auth";
 
 const DAY_MS = 86_400_000;
 
-/** A learn goal from a public course's Overview chapter: two one-skill lessons, one of them done. */
 async function createCourseGoal({
   createdAt,
   statuses = ["done", "todo"],
@@ -63,7 +62,6 @@ async function createCourseGoal({
     userId,
   });
 
-  // The phase's challenge closes it once its lessons are done.
   const challenge = statuses.every((status) => status === "done") ? "done" : "todo";
 
   await planFixture({
@@ -130,8 +128,6 @@ test.describe("Goal maps API", () => {
       prefix: "maps-refresh",
     });
 
-    // Past its first week, like a skill last reviewed 20 days ago: a first-week session asks
-    // placement questions, which would already use the skill's only question.
     const { goal, skills } = await createCourseGoal({
       createdAt: new Date(Date.now() - 30 * DAY_MS),
       userId: user.id,
@@ -155,7 +151,6 @@ test.describe("Goal maps API", () => {
     const first = await apiContext.post(path, { data: { timeZone: "UTC" } });
     expect(first.status()).toBe(201);
 
-    // Today's review of the fading skill opens first; a second tap returns the same block.
     const created = areaPracticeResponseSchema.parse(await first.json());
     expect(created.block.status).toBe("pending");
 
@@ -200,7 +195,4 @@ test.describe("Goal maps API", () => {
 
     await apiContext.dispose();
   });
-
-  // A plan without a date sets a lesson aside only when the Library couldn't write it: nothing is
-  // left for the learner, so it's finished, with what's next and the next level.
 });

@@ -15,25 +15,20 @@ const COPY_KEY_LENGTH = 6;
 /** Usernames take at most 30 characters: `persona_`, the name, `_` and the copy key. */
 const USERNAME_NAME_LENGTH = 15;
 
-/** A clone's last write lands this long before now at the latest, never in the future. */
 const LAST_WRITE_MARGIN_MS = 60_000;
 
-/** What a persona pass asks for: a seeded persona by first name, on a day of its plan. */
 export type PersonaRequest = {
   name: string;
-  /** The day of the plan the learner is on today; day 1 is the day the plan was made. */
+  /** Day 1 is the day the plan was made. */
   day?: number;
-  /** Days in a row the learner skipped before today. */
   awayDays?: number;
   plus?: boolean;
   timeZone?: string;
   language?: SeedLanguage;
 };
 
-/** A copy of a learner an onboarding pass made, by email, on a day of its plan. */
 export type PersonaCloneRequest = Omit<PersonaRequest, "language" | "name"> & { from: string };
 
-/** The seeded personas a pass can copy, by the first name the persona catalog uses. */
 export function listPersonaNames(): string[] {
   return listSeedPersonas({ now: new Date() })
     .filter((learner) => !learner.isAnonymous)
@@ -42,9 +37,8 @@ export function listPersonaNames(): string[] {
 }
 
 /**
- * A copy's own `@zoonk/test` account. Its email isn't a seed email, so `remove-test-learners`
- * removes it with the other test learners, and a username lets sign-in go straight to the app, as
- * it does for the seeded personas.
+ * Not a seed email, so `remove-test-learners` removes it, and a username lets sign-in go straight
+ * to the app.
  */
 function newPersonaAccount(name: string) {
   const copyKey = randomUUID().slice(0, COPY_KEY_LENGTH);
@@ -56,10 +50,6 @@ function newPersonaAccount(name: string) {
   };
 }
 
-/**
- * Writes a private copy of a seeded persona, so a persona pass can change its plan without
- * touching the shared one. Writes data only: nothing here calls a model.
- */
 export async function createPersona({ name, ...options }: PersonaRequest) {
   const persona = findSeedPersonaName(name);
 
@@ -70,7 +60,6 @@ export async function createPersona({ name, ...options }: PersonaRequest) {
   return seedV2PersonaCopy({ ...options, ...newPersonaAccount(name), persona });
 }
 
-/** The name in a clone's email: its source's, without the prefix that keeps it or marks a copy. */
 function getCloneName(email: string): string {
   const [local = ""] = email.toLowerCase().split("@");
   const prefix = [ONBOARDED_PREFIX, "persona-"].find((start) => local.startsWith(start)) ?? "";
@@ -87,12 +76,7 @@ function toDayNumber(date: Date, timeZone: string): number {
   return Math.round(getDateInTimeZone({ date, timeZone }).getTime() / MS_PER_DAY);
 }
 
-/**
- * How far to move the source so today is `day` of its plan. The clone can't be on a day before
- * the source's last change: what the source did by then is real and can't be undone. Without a
- * day it's on that day, back after `awayDays` days. In another time zone, it did everything at the
- * same local times.
- */
+/** A clone can't be on a day before its source's last change: what the source did by then is real. */
 function getCloneShift({
   awayDays,
   day,
@@ -162,12 +146,6 @@ async function findSource(email: string) {
   return { goal, plus: source.subscriptions.length > 0, userId: source.id };
 }
 
-/**
- * Writes a private copy of a learner an onboarding pass made (their goal, plan, Library links,
- * history and private content) under its own account, moved in time so today is `day` of its plan.
- * Every date moves with it, the goal's date and the weekdays it studies included, so the plan stays
- * the one the planner made. No model is called, so one paid onboarding serves every later pass.
- */
 export async function clonePersona({ awayDays, day, from, plus, timeZone }: PersonaCloneRequest) {
   const source = await findSource(from);
   const learner = await readLearner(source.userId);

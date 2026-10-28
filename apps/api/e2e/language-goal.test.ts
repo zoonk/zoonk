@@ -14,15 +14,12 @@ import {
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 
-/** A structurally valid WebRTC offer: the no-spend provider answers it. */
 const OFFER = { sdp: LIVE_CALL_SDP_OFFER };
 
 const LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
-/** The free plan's call time a day, in seconds. */
 const FREE_CALL_SECONDS = 120;
 const DAY_MS = 86_400_000;
 
-/** A level test bank for Portuguese speakers learning English, so no model writes one here. */
 async function ensureLevelTestBank() {
   const questions = LEVELS.flatMap((level) =>
     (["reading", "listening"] as const).flatMap((skill) =>
@@ -188,7 +185,6 @@ test.describe("Language goal API", () => {
     expect(refused.status()).toBe(402);
     expect(await refused.json()).toMatchObject({ error: { code: "PLUS_REQUIRED" } });
 
-    // A card written ahead and never called starts at once, with no model writing another.
     const waiting = await prisma.languageConversation.create({
       data: {
         goalId: plusGoal.goal.id,
@@ -302,7 +298,6 @@ test.describe("Language goal API", () => {
     const connected = await apiContext.post(setup.sessionUrl, { data: OFFER });
     expect(connected.status()).toBe(201);
 
-    // Only the character spoke, so no objective or feedback model is called.
     const completion = {
       connectionId: setup.connectionId,
       spokenSeconds: 0,
@@ -366,12 +361,9 @@ test.describe("Language goal API", () => {
     expect(reopened.status()).toBe(201);
     const reopenedSetup = languageConversationSetupSchema.parse(await reopened.json());
 
-    // A reservation that never connected gives today's time back when it ends.
     const released = await apiContext.post(reopenedSetup.sessionUrl.replace(/\/sdp$/u, "/end"));
     expect(released.status()).toBe(200);
 
-    // Half a minute of today's two is used: a new two-minute call runs the minute and a half left,
-    // and says it ends at the day's limit.
     await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 30, userId: user.id });
 
     const nextCall = await start();
@@ -384,12 +376,10 @@ test.describe("Language goal API", () => {
     const setup = languageConversationSetupSchema.parse(await shortened.json());
     expect(setup.endsAtLimit).toBe("day");
 
-    // `seconds` counts down from the held minute and a half while the request runs.
     await expect(
       prisma.liveCallConnection.findUniqueOrThrow({ where: { id: setup.connectionId } }),
     ).resolves.toMatchObject({ heldSeconds: 90 });
 
-    // A reservation that never connected doesn't block another call: starting one ends it.
     const replacing = await apiContext.post(`/v1/language-conversations/${nextCall}/connections`);
     expect(replacing.status()).toBe(201);
 
@@ -397,7 +387,6 @@ test.describe("Language goal API", () => {
       prisma.liveCallConnection.findUniqueOrThrow({ where: { id: setup.connectionId } }),
     ).resolves.toMatchObject({ costMicros: 0, state: "ended" });
 
-    // Fill the allowance with settled history: the next start ends its own unused hold first.
     await usageRecordsFixture({ count: 1, kind: "conversation", seconds: 90, userId: user.id });
     const limited = await apiContext.post(`/v1/language-conversations/${nextCall}/connections`);
 
@@ -469,7 +458,6 @@ test.describe("Language goal API", () => {
       goalFixture({ userId: user.id }),
     ]);
 
-    // A pair no other test writes: the learner language is a made-up code shaped like a real one.
     const letters = Array.from({ length: 5 }, () => String.fromCodePoint(97 + randomInt(26)));
     const language = `${letters.slice(0, 3).join("")}-${letters.slice(3).join("").toUpperCase()}`;
     const pair = { language, targetLanguage: "en" };
@@ -549,7 +537,6 @@ test.describe("Language goal API", () => {
       },
     });
 
-    // The mistakes notebook offers it beside the goal's mistakes.
     const offered = await apiContext.get(`/v1/goals/${goal.id}/mistake-pattern`);
 
     expect(await offered.json()).toStrictEqual({
@@ -573,7 +560,6 @@ test.describe("Language goal API", () => {
     const result = await practice.json();
     expect(result).toMatchObject({ correct: 1, total: 1 });
 
-    // The same drill sent again (a retry after a lost response) returns what it already counted.
     const retry = await apiContext.post(`/v1/mistake-patterns/${pattern.id}/practices`, {
       data: drill,
     });
@@ -586,7 +572,6 @@ test.describe("Language goal API", () => {
     const afterDismissal = await apiContext.get(`/v1/goals/${goal.id}/mistake-pattern`);
     expect(await afterDismissal.json()).toStrictEqual({ pattern: null });
 
-    // Every other goal has no pattern to offer, rather than an error.
     const otherGoal = await goalFixture({ userId: user.id });
     const other = await apiContext.get(`/v1/goals/${otherGoal.id}/mistake-pattern`);
     expect(await other.json()).toStrictEqual({ pattern: null });

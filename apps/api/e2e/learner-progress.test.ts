@@ -37,20 +37,12 @@ const WEEKDAYS = [
   "saturday",
 ] as const;
 
-/**
- * Uses the current UTC date because API progress reads intentionally resolve
- * their bounded windows from the request clock instead of accepting test-only
- * date overrides.
- */
+/** Progress reads take their windows from the request clock and accept no date override. */
 function getCurrentUtcDate(): Date {
   const current = new Date();
   return new Date(Date.UTC(current.getUTCFullYear(), current.getUTCMonth(), current.getUTCDate()));
 }
 
-/**
- * Reads a response body only after proving the endpoint returned the successful
- * contract expected by the rest of the test.
- */
 async function getSuccessfulBody<Body>({
   response,
   schema,
@@ -62,19 +54,11 @@ async function getSuccessfulBody<Body>({
   return schema.parse(await getResponseBody(response));
 }
 
-/**
- * Treats unvalidated network JSON as unknown until an endpoint-specific schema
- * or assertion proves the response contract used by the test.
- */
 async function getResponseBody(response: APIResponse): Promise<unknown> {
   const body: unknown = await response.json();
   return body;
 }
 
-/**
- * Requests every learner-wide progress resource concurrently while preserving
- * a typed tuple for the resource-specific assertions below.
- */
 async function getProgressResponses(apiContext: APIRequestContext) {
   return Promise.all([
     apiContext.get(PROGRESS_PATHS[0]),
@@ -86,10 +70,6 @@ async function getProgressResponses(apiContext: APIRequestContext) {
   ]);
 }
 
-/**
- * Uses bearer authentication for the populated mobile-client scenario while
- * preserving the cookie-authenticated context for cleanup.
- */
 async function createBearerProgressContext({
   baseURL,
   prefix,
@@ -110,10 +90,6 @@ async function createBearerProgressContext({
   return { apiContext, cookieContext: authenticated.apiContext, userId: authenticated.user.id };
 }
 
-/**
- * Creates one real learning history plus deliberately larger rows for another
- * user so the response proves every aggregate remains caller-scoped.
- */
 async function createPopulatedProgress({ userId }: { userId: string }) {
   const today = getCurrentUtcDate();
   const previousDay = new Date(today.getTime() - DAY_IN_MILLISECONDS);
@@ -156,7 +132,6 @@ async function createPopulatedProgress({ userId }: { userId: string }) {
         userId: otherUser.id,
       },
     ]),
-    // Enough answers in the day and the morning to be named the strongest (core's minimum).
     learningEventFixture({
       correctAnswers: 10,
       endedAt: today,

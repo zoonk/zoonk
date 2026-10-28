@@ -6,21 +6,17 @@ import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixture
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 
-/** The exam's section asks more than the bank holds; the mock uses the bank's questions. */
 export const MOCK_QUESTIONS = 6;
 
-/** Where a fixture exam's facts come from: its notice. */
 export const citation = { passage: "", sourceId: "notice" };
 
 export const DAY_MS = 86_400_000;
 export const EXAM_IN_DAYS = 60;
 
-/** An ISO day this many days from today in UTC. */
 export function isoDayFromToday(days: number): string {
   return new Date(Date.now() + days * DAY_MS).toISOString().slice(0, "yyyy-mm-dd".length);
 }
 
-/** A Cebraspe-style edition: one exam day, a wrong answer cancelling a right one. */
 export function examEdition(examDay: string) {
   return {
     check: null,
@@ -34,10 +30,6 @@ export function examEdition(examDay: string) {
   };
 }
 
-/**
- * A Plus learner's exam goal two months out, whose plan teaches one skill with the exam's own
- * questions and has this week's mock scheduled today.
- */
 export async function createExamGoal(userId: string) {
   const [blueprint, skill, lesson] = await Promise.all([
     examBlueprintFixture({
@@ -104,14 +96,8 @@ export async function createExamGoal(userId: string) {
 
 const BREAK_AREAS = ["Physics", "Mathematics"] as const;
 
-/** Questions in each of the break exam's two sections, all in the exam's bank. */
 export const BREAK_SECTION_QUESTIONS = 4;
 
-/**
- * A Plus learner's exam goal whose exam day has two sections with a ten-minute break between
- * them, each with the notice's tools, and enough of the exam's questions for its full mock. With
- * `navigation`, the first section moves as it says (one question after another, say).
- */
 export async function createBreakExamGoal(
   userId: string,
   { navigation = null }: { navigation?: SectionNavigation | null } = {},

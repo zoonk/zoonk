@@ -33,13 +33,11 @@ function toIsoDay(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
-/** A zone whose day isn't the goal's right now: far ahead of it, or far behind it early on. */
 function zoneOnAnotherDay(goalZone: string): string {
   const zones = ["Pacific/Kiritimati", "Pacific/Pago_Pago"];
   return zones.find((zone) => localDay(zone).getTime() !== localDay(goalZone).getTime()) ?? "UTC";
 }
 
-/** An exam goal 20 days away with one lesson in its plan, set as the learner's active goal. */
 async function createExamGoal(userId: string) {
   const today = new Date(`${new Date().toISOString().slice(0, 10)}T00:00:00Z`);
 
@@ -111,7 +109,6 @@ test.describe("Today API", () => {
       courseFixture({ isPublished: true, title: "Physics", visibility: "public" }),
     ]);
 
-    // The course the learner was taking still exists, so apps start it instead of onboarding.
     const [suggestion, theirs] = await Promise.all([
       suggestedGoalFixture({ courseId: course.id, title: "Physics", userId }),
       suggestedGoalFixture({ userId: stranger.id }),
@@ -172,7 +169,6 @@ test.describe("Today API", () => {
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "today" });
     const { goal, lesson } = await createExamGoal(userId);
 
-    // Insights come from memory, which a learner without an adult's age answer turns on.
     const [insight] = await Promise.all([
       memoryInsightFixture({ goalId: goal.id, userId }),
       learningProfileFixture({ memoryEnabled: true, userId }),
@@ -336,7 +332,6 @@ test.describe("Today API", () => {
 
     const device = zoneOnAnotherDay(SAO_PAULO);
 
-    // She answered a question today in São Paulo, so her day stays the goal's until tomorrow.
     await attemptFixture({ localDate: localDay(SAO_PAULO), userId: studied.userId });
 
     const [kept, moved] = await Promise.all(

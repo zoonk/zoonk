@@ -65,10 +65,8 @@ describe(findTestLearners, () => {
       prisma.user.create({
         data: { email: `guest-${randomUUID()}@example.test`, isAnonymous: true, name: "Guest" },
       }),
-      /**
-       * The persona tests seed the same accounts at the same time: insert only the ones still
-       * missing, in one statement that waits for their writes instead of failing on them.
-       */
+      // The persona tests seed the same accounts at the same time, so one statement inserts only
+      // the missing ones and waits for their writes instead of failing on them.
       prisma.user.createMany({
         data: keptEmails.map((email) => ({ email, name: "Kept" })),
         skipDuplicates: true,

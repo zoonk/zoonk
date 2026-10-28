@@ -17,7 +17,6 @@ test.describe("Today's mandatory notice acknowledgment API", () => {
     const baseURL = process.env.E2E_BASE_URL ?? "";
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "mandatory-notice" });
     const localDate = getDateInTimeZone({ date: new Date(), timeZone: "UTC" });
-    // A missed day that puts the goal's date at risk: the one automatic change Today asks about.
     const fixture = await mandatoryNoticeDayFixture({ atRisk: true, localDate, userId });
     const before = await prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } });
     const response = await api.get(`/v1/today?goalId=${fixture.goal.id}&timeZone=UTC`);

@@ -10,12 +10,10 @@ import { createGuest } from "./helpers/bearer";
 
 const GUEST_DAILY_HELP = 40;
 
-/** Words no other test asks for, so each test owns its clip. */
 function uniqueSentence() {
   return `Ciao, questa è la frase ${randomUUID().slice(0, 8)}.`;
 }
 
-/** A clip someone already heard: stored under the key the API looks it up by. */
 function storedClip({ language, text }: { language: string; text: string }) {
   return mediaAssetFixture({
     durationMs: 1900,
@@ -48,7 +46,6 @@ test.describe("Speech clips API", () => {
     await apiContext.dispose();
   });
 
-  // A call's better version of what the learner said is their own sentence, kept for them alone.
   test("plays a learner's own words from their private clip, through the file route", async () => {
     const { apiContext, user } = await createAuthenticatedApiContext({
       baseURL,
@@ -80,7 +77,6 @@ test.describe("Speech clips API", () => {
     expect(body).toMatchObject({ id: clip.id });
     expect(new URL(body.url).pathname).toBe(`/v1/files/${filePath}`);
 
-    // The same words asked as shared words never reach the learner's own clip.
     await expect(shared.json()).resolves.not.toMatchObject({ id: clip.id });
     await apiContext.dispose();
   });

@@ -5,7 +5,6 @@ import { cleanupVerifications, disconnectDb, getOTPForEmail } from "./helpers/db
 
 const REDIRECT_URL = "http://localhost:49152/test";
 
-/** Holds each request to `url` until the test lets it through, like a slow phone network. */
 async function holdRequests(page: Page, url: string) {
   const held: Route[] = [];
 
@@ -39,7 +38,6 @@ test.describe("OTP Login Flow", () => {
       throw new Error("OTP not found in database");
     }
 
-    // Pasted straight into the focused input, even copied with a space in the middle.
     await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
 
     await page.evaluate(
@@ -50,10 +48,8 @@ test.describe("OTP Login Flow", () => {
     await input.focus();
     await page.keyboard.press("ControlOrMeta+V");
 
-    // The sixth digit sends the code: nothing else to press.
     await expect(input).toHaveValue(otp);
 
-    // New users without a name are asked for one
     await page.waitForURL(/\/auth\/setup/u);
     await expect(page.getByRole("heading", { name: "What should we call you?" })).toBeVisible();
 
@@ -77,11 +73,6 @@ test.describe("OTP Login Flow", () => {
     const wrong = page.getByText("That code isn't right. Check the email and try again.");
     const tooMany = page.getByText("Too many wrong tries with this code. Get a new one.");
 
-    /**
-     * One try: the sixth digit sends it, from an empty box, as a learner retyping it would. It starts
-     * once the last answer shows (Continue is ready again): the same code retyped while it's still
-     * checked isn't sent twice.
-     */
     async function tryCode(attempt: string) {
       await expect(continueButton).toBeEnabled();
 
@@ -97,8 +88,6 @@ test.describe("OTP Login Flow", () => {
     await tryCode(wrongCode);
     await expect(wrong).toBeVisible();
 
-    // Continue tries the same code again from the keyboard, also after the connection drops: a try
-    // that never reaches auth doesn't count.
     await expect(continueButton).toBeEnabled();
     await page.route("**/sign-in/email-otp", (route) => route.abort("internetdisconnected"));
     await page.keyboard.press("Enter");
@@ -111,7 +100,6 @@ test.describe("OTP Login Flow", () => {
 
     await tryCode(wrongCode);
 
-    // Auth allows three tries per code: the fourth, even the right code, says the code is gone.
     await tryCode(code ?? "");
     await expect(tooMany).toBeVisible();
 
@@ -145,7 +133,6 @@ test.describe("OTP Login Flow", () => {
     const checks = await holdRequests(page, "**/sign-in/email-otp");
     const checkedCodes = () => checks.map((check) => String(check.request().postDataJSON().otp));
 
-    // Retyping the code being checked waits for its answer instead of trying it twice.
     await input.fill(wrongCode);
     await expect.poll(checkedCodes).toEqual([wrongCode]);
     await input.fill("");
@@ -158,8 +145,6 @@ test.describe("OTP Login Flow", () => {
 
     expect(checkedCodes()).toEqual([wrongCode]);
 
-    // A different code typed before the answer arrives is checked next, instead of sitting under
-    // the older code's error. No new code can be asked for meanwhile: the answer would land on it.
     await input.fill("");
     await input.fill(wrongCode);
     await expect.poll(checkedCodes).toEqual([wrongCode, wrongCode]);
@@ -220,7 +205,6 @@ test.describe("OTP Login Flow", () => {
       }
     });
 
-    // A new code that never leaves the phone says so, and codes can still be tried.
     await page.route(newCodeUrl, (route) => route.abort("internetdisconnected"));
     await sendAgain.click();
 
@@ -237,7 +221,6 @@ test.describe("OTP Login Flow", () => {
     await sendAgain.click();
     await expect.poll(() => newCodeRequests).toHaveLength(1);
 
-    // The old code, finished while the new one is on its way, isn't tried: it's about to stop working.
     await input.fill("");
     await input.fill(firstCode);
     await newCodeRequests[0]?.continue();

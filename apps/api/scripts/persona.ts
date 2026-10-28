@@ -1,9 +1,4 @@
-/**
- * Writes a private copy of a seeded persona, or of a learner an onboarding pass made (`--from`), on
- * the local development database, on the day of its plan a persona pass needs, and prints how to
- * sign in as it. No model is called. Run it through `pnpm dev:persona`, which passes the URLs
- * `pnpm dev` serves.
- */
+/** Run it through `pnpm dev:persona`, which passes the URLs `pnpm dev` serves. */
 import { parseArgs } from "node:util";
 import { prisma } from "@zoonk/db";
 import { SEED_LANGUAGES, type SeedLanguage } from "@zoonk/db/seed/v2/localize";
@@ -43,7 +38,6 @@ function parseWholeNumber(
   return number;
 }
 
-/** `--plus` and `--free` override the persona's own plan; neither keeps it. */
 function parsePlus({ free, plus }: { free?: boolean; plus?: boolean }): boolean | undefined {
   if (plus && free) {
     throw new Error("Pick --plus or --free, not both.");
@@ -109,7 +103,6 @@ function parseRequest(): ParsedRequest {
   };
 }
 
-/** Whole days from an instant to now, on the calendar of the learner's time zone. */
 function daysSince(date: Date, timeZone: string): number {
   const day = (moment: Date) => getDateInTimeZone({ date: moment, timeZone }).getTime();
 
@@ -130,7 +123,6 @@ function describeLastStudy(endedAt: Date | null | undefined, timeZone: string): 
   return days === 1 ? "last studied yesterday" : `last studied ${days} days ago`;
 }
 
-/** The persona as written, read back: who they are, where their plan is and how to sign in. */
 async function describePersona({ email, goalId }: { email: string; goalId: string }) {
   const goal = await prisma.goal.findUniqueOrThrow({
     include: { user: true },
@@ -159,7 +151,6 @@ async function describePersona({ email, goalId }: { email: string; goalId: strin
   ].join("\n");
 }
 
-/** How a clone differs from its source, since every date moved with it. */
 function describeClone({ from, movedDays }: { from: string; movedDays: number }): string {
   if (movedDays === 0) {
     return `Copied from ${from}.`;

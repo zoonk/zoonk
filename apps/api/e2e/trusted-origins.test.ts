@@ -49,7 +49,6 @@ test.describe("Trusted Origin Validation", () => {
 
     await expect(page.getByRole("link", { name: /continue to zoonk/iu })).toBeVisible();
 
-    // The E2E server's main app (`MAIN_APP_URL`).
     const link = page.getByRole("link", { name: /continue to zoonk/iu });
     await expect(link).toHaveAttribute("href", "http://localhost:49153");
   });

@@ -26,12 +26,10 @@ function hoursAgo(hours: number) {
   return new Date(Date.now() - hours * HOUR_MS);
 }
 
-/** A file the learner says they uploaded to Blob storage, by its pathname. */
 function uploadedFile(pathname: string) {
   return { kind: "file", language: "en", pathname };
 }
 
-/** What Vercel Blob's `uploadPresigned()` sends to sign one file's upload. */
 function uploadTokenRequest(pathname: string) {
   return {
     payload: { clientPayload: null, multipart: false, pathname },
@@ -93,7 +91,6 @@ test.describe("Sources API", () => {
       privateUploadFixture({ ownerId: learner.userId }),
     ]);
 
-    // Both learners' research found the same public source for their own goals.
     await Promise.all([
       learnerSourceFixture({
         createdAt: hoursAgo(2),
@@ -135,7 +132,6 @@ test.describe("Sources API", () => {
       visibility: "private",
     });
 
-    // Storage details (the blob, the text, its hash and the owner) stay on the server.
     const raw = await all.json();
 
     expect(Object.keys(raw.sources[0].source).toSorted()).toStrictEqual(
@@ -242,7 +238,6 @@ test.describe("Sources API", () => {
       },
     });
 
-    // Pasting the same text again links the stored copy instead of storing it twice.
     const again = await readBody({
       response: await learner.api.post("/v1/uploads", { data: pasted }),
       schema: uploadResourceSchema,
@@ -251,7 +246,6 @@ test.describe("Sources API", () => {
 
     expect(again).toMatchObject({ checkingVisibility: false, source: { id: created.source.id } });
 
-    // A goal id that isn't the learner's own stores the material without the goal.
     const unlinked = await readBody({
       response: await learner.api.post("/v1/uploads", { data: pastedText(otherGoal.id) }),
       schema: uploadResourceSchema,
@@ -311,7 +305,6 @@ test.describe("Sources API", () => {
       400, 400, 400, 400, 400, 400, 400, 400,
     ]);
 
-    // Guests can't upload, so nothing is signed or stored for them.
     const [guestToken, guestUpload, stored] = await Promise.all([
       guestApi.post("/v1/uploads/tokens", {
         data: uploadTokenRequest(`sources/${guest.userId}/notice.pdf`),
@@ -320,7 +313,6 @@ test.describe("Sources API", () => {
       prisma.learnerSource.count({ where: { userId: learner.userId } }),
     ]);
 
-    // A guest's plan has no uploads: 403 asks them to create an account.
     expect([guestToken.status(), guestUpload.status()]).toStrictEqual([403, 403]);
 
     await expect(guestUpload.json()).resolves.toMatchObject({
@@ -368,7 +360,6 @@ test.describe("Sources API", () => {
       [othersMaterial, unlinked, empty, noSources, extraField].map((res) => res.status()),
     ).toStrictEqual([404, 404, 400, 400, 400]);
 
-    // Guests have no tutor messages, so the question is refused before anything reads it.
     const guestQuestion = await guest.guestApi.post("/v1/material-questions", {
       data: materialQuestion([guestUpload.id]),
     });
@@ -416,7 +407,6 @@ test.describe("Sources API", () => {
         message: "The Civil Code changed article 5.",
         sourceId: law.id,
       }),
-      // Before the goal started, so the plan already reflects it.
       sourceChangeNoticeFixture({ createdAt: new Date(Date.now() - 2 * DAY_MS), sourceId: law.id }),
       sourceChangeNoticeFixture({ createdAt: hoursAgo(1), sourceId: unrelated.id }),
     ]);

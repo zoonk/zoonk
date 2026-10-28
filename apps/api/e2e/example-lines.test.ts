@@ -44,7 +44,7 @@ test.describe("Personal example lines", () => {
 
     const read = async () =>
       readBody({ response: await api.get(path), schema: stepExampleLineSchema });
-    // Stored fixtures share the known context, exactly as a prior learner request would.
+
     const contextKey = createHash("sha256")
       .update(JSON.stringify({ goal: null, statements: [fact.statement] }))
       .digest("hex");

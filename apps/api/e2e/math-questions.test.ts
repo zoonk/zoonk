@@ -16,7 +16,6 @@ import { readBody } from "./helpers/response";
 
 const SAVED_REASON = "That's what you save. You pay what's left after it.";
 
-/** A discount problem stored as data: each block asks it with its own price and discount. */
 const DISCOUNT_PROBLEM = {
   context: null,
   math: {
@@ -100,7 +99,6 @@ test.describe("Math problems over the study sessions API", () => {
       unit: { position: "prefix", symbol: "R$" },
     });
 
-    // The same block always shows the same numbers, so the answer is graded against them.
     const again = await readBody({
       response: await api.get(blockPath),
       schema: studyBlockDetailResponseSchema,

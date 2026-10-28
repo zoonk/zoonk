@@ -15,19 +15,16 @@ import { findTestLearners, removeTestLearner } from "./test-learners";
 const NOVEMBER = 10;
 const SUNDAY = 0;
 
-/** Days from a calendar day, as `@db.Date` columns store it, to today in the goal's time zone. */
 function daysBefore(day: Date, timeZone: string): number {
   return Math.round(
     (getDateInTimeZone({ date: new Date(), timeZone }).getTime() - day.getTime()) / MS_PER_DAY,
   );
 }
 
-/** Days from an instant to today, on the calendar of the goal's time zone. */
 function daysAgo(date: Date, timeZone: string): number {
   return daysBefore(getDateInTimeZone({ date, timeZone }), timeZone);
 }
 
-/** Exercise both sides of São Paulo midnight without faking database or network timers. */
 async function atStudyClocks(check: () => Promise<void>): Promise<void> {
   vi.useFakeTimers({ toFake: ["Date"] });
 
@@ -43,7 +40,6 @@ async function atStudyClocks(check: () => Promise<void>): Promise<void> {
 
 type LoadedPersona = Awaited<ReturnType<typeof loadPersona>>;
 
-/** Days before today the persona's sessions are on: those it finished, and the one it left open. */
 function listSessionDays(persona: LoadedPersona, timeZone: string) {
   const days = (status: "finished" | "open") =>
     persona.studySessions
@@ -54,7 +50,6 @@ function listSessionDays(persona: LoadedPersona, timeZone: string) {
   return { finished: days("finished"), open: days("open") };
 }
 
-/** Days before today the persona studied, by its ledger, which its past sessions follow. */
 function listStudyDays(persona: LoadedPersona, timeZone: string) {
   const days = persona.learningEvents.map((event) => daysBefore(event.localDate, timeZone));
   return [...new Set(days)].filter((day) => day > 0).toSorted((first, second) => first - second);
@@ -85,7 +80,6 @@ function getGoal(persona: Awaited<ReturnType<typeof loadPersona>>) {
   return { ...goal, plan: goal.plan, timeZone: goal.timezone ?? "UTC" };
 }
 
-/** A seeded persona's copy as an onboarding pass would leave it, with a lesson only they have. */
 async function createSource() {
   const { email, userId } = await createPersona({ name: "pedro" });
   const key = `own-lesson-${randomUUID()}`;
@@ -127,7 +121,6 @@ async function loadPlan(userId: string) {
 
 type LoadedPlan = Awaited<ReturnType<typeof loadPlan>>;
 
-/** The hour the learner made their goal, on their own clock. */
 function getLocalHour({ goal, timeZone }: LoadedPlan) {
   return getHourInTimeZone({ date: goal.createdAt, timeZone });
 }
@@ -136,7 +129,6 @@ function getWeekdayMinutes({ plan }: LoadedPlan) {
   return isJsonObject(plan.settings) ? plan.settings.weekdayMinutes : null;
 }
 
-/** The plan and sessions as the learner sees them, with their dates `days` days later. */
 function describePlan(
   { plan, sessions }: LoadedPlan,
   {
@@ -169,8 +161,6 @@ function describePlan(
 }
 
 describe("persona command", () => {
-  // Copies point at the seeded Library and personas; each copy gets its own plan, so the seeded
-  // personas' plans (\`seedV2\`) aren't needed.
   beforeAll(async () => {
     await writeSeedV2(prisma);
   }, 120_000);
@@ -185,11 +175,9 @@ describe("persona command", () => {
         expect(email).toMatch(/^persona-ana-[\da-f]{6}@zoonk\.test$/u);
         expect(daysAgo(goal.createdAt, goal.timeZone)).toBe(0);
 
-        // Her exam keeps a real date: the first Enem day, a Sunday in November.
         expect(goal.targetDate?.getUTCMonth()).toBe(NOVEMBER);
         expect(goal.targetDate?.getUTCDay()).toBe(SUNDAY);
 
-        // Placement's answers stay; lessons, mocks, mistakes, belts and today's session come later.
         expect(
           persona.attempts.map((attempt) => daysAgo(attempt.answeredAt, goal.timeZone)),
         ).toStrictEqual([0, 0, 0, 0]);
@@ -216,7 +204,6 @@ describe("persona command", () => {
       expect(daysAgo(goal.createdAt, goal.timeZone)).toBe(29);
       expect(oldestStudy).toBeGreaterThan(20);
 
-      // Today's session, and a finished one on each day of his history.
       expect(listSessionDays(persona, goal.timeZone)).toStrictEqual({
         finished: listStudyDays(persona, goal.timeZone),
         open: [0],
@@ -229,14 +216,12 @@ describe("persona command", () => {
         const persona = await loadPersona(userId);
         const goal = getGoal(persona);
 
-        // He was in the middle of that day's session when he stopped coming.
         const newestStudy = Math.min(
           ...persona.studySessions.flatMap((session) =>
             session.startedAt ? [daysAgo(session.startedAt, goal.timeZone)] : [],
           ),
         );
 
-        // Lucas is on day 19 of his plan when he last studies.
         expect(daysAgo(goal.createdAt, goal.timeZone)).toBe(18 + 5);
 
         expect(listSessionDays(persona, goal.timeZone)).toStrictEqual({
@@ -317,7 +302,6 @@ describe("persona command", () => {
         prisma.account.count({ where: { userId: clone.userId } }),
       ]);
 
-      // An onboarding pass's copy is on the day of the learner's last change: today, here.
       expect(clone.movedDays).toBe(0);
       expect(clone.email).toMatch(/^persona-pedro-[\da-f]{6}-[\da-f]{6}@zoonk\.test$/u);
 
@@ -335,7 +319,6 @@ describe("persona command", () => {
       expect(sourceLesson.ownerId).toBe(source.userId);
       expect(accounts).toBe(0);
 
-      // Nothing of the copy, inside JSON included, points at the source's rows.
       const sourceIds = [
         original.goal.id,
         original.plan.id,
@@ -357,7 +340,6 @@ describe("persona command", () => {
       const { plan } = await loadPlan(source.userId);
       const settings = isJsonObject(plan.settings) ? plan.settings : {};
 
-      // Pedro rests on Sundays.
       await prisma.plan.update({
         data: { settings: { ...settings, weekdayMinutes: [0, 15, 15, 15, 15, 15, 15] } },
         where: { id: plan.id },
@@ -383,7 +365,6 @@ describe("persona command", () => {
         daysAgo(original.goal.createdAt, original.timeZone) + 3,
       );
 
-      // Three days earlier, the day his plan rests is a Thursday.
       expect(getWeekdayMinutes(copy)).toStrictEqual([15, 15, 15, 15, 0, 15, 15]);
 
       expect(progress.length).toBeGreaterThan(0);
@@ -395,7 +376,6 @@ describe("persona command", () => {
       const source = await createSource();
       const later = await clonePersona({ day: 9, from: source.email });
 
-      // Pedro is on day 7.
       expect(later.movedDays).toBe(-2);
 
       await expect(clonePersona({ day: 6, from: source.email })).rejects.toThrow(/day 7 or later/u);

@@ -15,7 +15,6 @@ import { readBody } from "./helpers/response";
 const AREAS = ["Algebra", "Geometry"] as const;
 const SKILLS_PER_AREA = 4;
 
-/** A goal whose plan has two areas of four skills, each skill with one multiple-choice question. */
 async function createGoal(userId: string) {
   const suffix = randomUUID().slice(0, 6);
   const goal = await goalFixture({ userId });
@@ -95,7 +94,6 @@ test.describe("Focus test API", () => {
 
     expect(focusTest).toMatchObject({ areas: [...AREAS], needsItems: [], questionsPerArea: 4 });
 
-    // Someone else's goal stays hidden.
     const hidden = await other.apiContext.get(path);
     expect(hidden.status()).toBe(404);
 
@@ -132,7 +130,6 @@ test.describe("Focus test API", () => {
     const { goal, skills } = await createGoal(user.id);
     const path = `/v1/goals/${goal.id}/plan/focus-test/generations`;
 
-    // Every area has its questions: nothing to write.
     await expect(
       readBody({ response: await apiContext.post(path), schema: focusTestGenerationSchema }),
     ).resolves.toStrictEqual({ generationId: null, status: "ready" });
@@ -140,7 +137,6 @@ test.describe("Focus test API", () => {
     const geometry = skills.filter(({ area }) => area === "Geometry").map(({ skill }) => skill.id);
     await prisma.item.deleteMany({ where: { skillId: { in: geometry } } });
 
-    // Algebra's questions are asked while geometry's are written.
     const partial = await readBody({
       response: await apiContext.get(`/v1/goals/${goal.id}/plan/focus-test`),
       schema: focusTestResponseSchema,

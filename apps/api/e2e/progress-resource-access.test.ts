@@ -14,11 +14,6 @@ import { createAuthenticatedApiContext } from "./helpers/auth";
 
 const baseURL = process.env.E2E_BASE_URL ?? "";
 
-/**
- * Requests both public learner-state subresources for one course or chapter so
- * each access case proves that progress and next-learning use the same catalog
- * boundary.
- */
 async function getScopedProgressResponses({
   apiContext,
   resourceId,

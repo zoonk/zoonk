@@ -6,10 +6,6 @@ import { getString } from "@zoonk/utils/json";
 const AUTH_UNIQUE_ID_LENGTH = 8;
 const AUTH_PREFIX_MAX_LENGTH = 24;
 
-/**
- * Fails auth setup with the upstream response body so workflow tests do not
- * hide a broken signup or signin request behind a later 401 assertion.
- */
 async function assertAuthResponseOk({
   action,
   response,
@@ -24,11 +20,6 @@ async function assertAuthResponseOk({
   throw new Error(`${action} failed with ${response.status()}: ${await response.text()}`);
 }
 
-/**
- * Builds stable but unique test credentials for API workflow auth tests. The
- * prefix keeps failures searchable by workflow while the UUID prevents parallel
- * test workers from sharing Better Auth users.
- */
 function getAuthCredentials(prefix: string) {
   const uniqueId = randomUUID().slice(0, AUTH_UNIQUE_ID_LENGTH);
   const safePrefix = prefix.replaceAll(/[^a-z0-9-]/gu, "-").slice(0, AUTH_PREFIX_MAX_LENGTH);
@@ -36,12 +27,6 @@ function getAuthCredentials(prefix: string) {
   return { email: `e2e-${safePrefix}-${uniqueId}@zoonk.test`, password: "password123", uniqueId };
 }
 
-/**
- * Creates a real Better Auth session for API route tests. Workflow triggers now
- * reject anonymous requests before parsing route-specific details, so tests
- * that exercise validation, 404s, or subscription checks need authenticated
- * request contexts rather than direct database session shortcuts.
- */
 export async function createAuthenticatedApiContext({
   baseURL,
   prefix,

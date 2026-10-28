@@ -99,7 +99,6 @@ test.describe("Exams API", () => {
     expect(questions).toHaveLength(MOCK_QUESTIONS);
     expect(JSON.stringify(running.current)).not.toContain("isCorrect");
 
-    // The first question is left blank and flagged as unsure; the rest are right.
     await questions.reduce(async (previous, question, index) => {
       await previous;
 
@@ -141,7 +140,6 @@ test.describe("Exams API", () => {
     expect(early.status()).toBe(409);
     expect(await early.json()).toMatchObject({ error: { code: "EXAM_NOT_TAKEN_YET" } });
 
-    // The exam was yesterday, for a goal started weeks before it.
     await Promise.all([
       prisma.examBlueprint.update({
         data: { edition: examEdition(isoDayFromToday(-1)) },
@@ -183,7 +181,6 @@ test.describe("Exams API", () => {
     const path = `/v1/mocks/${mock?.id}`;
     const inUtc = { data: { timeZone: "UTC" } };
 
-    // Taking the plan's mock is the day's only mission.
     await prisma.studySession.update({
       data: {
         missions: {
@@ -215,7 +212,6 @@ test.describe("Exams API", () => {
 
     const [right, wrong] = running.current?.questions ?? [];
 
-    // One right and one wrong; the other questions are never answered.
     const saved = [
       await api.put(`${path}/answers`, {
         data: {
@@ -237,7 +233,6 @@ test.describe("Exams API", () => {
 
     expect(saved.map((response) => response.status())).toStrictEqual([204, 204]);
 
-    // Its essays are graded once it's handed in.
     const gradedTooSoon = await api.post(`${path}/essay-grades`, inUtc);
 
     expect(gradedTooSoon.status()).toBe(409);
@@ -271,14 +266,12 @@ test.describe("Exams API", () => {
       status: "finished",
     });
 
-    // Handing it in completed the day's last mission, and every read of it today says so.
     expect(view.missionMoment).toMatchObject({
       completed: ["mock"],
       fullMeal: { bonus: 50, paid: true },
       missions: [{ kind: "mock", status: "done" }],
     });
 
-    // A retried finish, after a dropped connection, reads as finished instead of failing.
     const retried = await api.post(`${path}/finishes`, inUtc);
 
     expect(retried.status()).toBe(200);
@@ -309,7 +302,6 @@ test.describe("Exams API", () => {
 
     await readBody({ response: await api.get(mocksPath), schema: mockOptionsResponseSchema });
 
-    // The bank holds half the exam's questions: the full one needs more written first.
     const [hidden, full] = await Promise.all([
       other.api.get(mocksPath),
       readBody({
@@ -418,7 +410,6 @@ test.describe("Exams API", () => {
 
     expect(step.status).toBe("next");
 
-    // On the break: no section runs, and the next one's clock starts when it ends.
     const onBreak = await readMock();
     const breakLeft = new Date(onBreak.breakUntil ?? 0).getTime() - Date.now();
 
@@ -480,7 +471,6 @@ test.describe("Exams API", () => {
     const save = (itemId: string, answer: object) =>
       api.put(`${path}/answers`, { data: { answer, durationMs: 4000, flagged: false, itemId } });
 
-    // Words only go to a question answered in words.
     const wrongShape = await save(itemIds.picks, { text: "2 + 2 = 4" });
 
     expect(wrongShape.status()).toBe(422);
@@ -524,7 +514,6 @@ test.describe("Exams API", () => {
       api.post(`/v1/goals/${goal.id}/mocks`, { data: placement }),
     ]);
 
-    // The free plan still sees the diagnostic mock's lengths, with what it takes.
     expect(options).toMatchObject({
       access: "plusRequired",
       placement: { mock: null, options: [{ length: "short" }, { length: "long" }] },

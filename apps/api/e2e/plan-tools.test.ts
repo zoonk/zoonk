@@ -17,10 +17,6 @@ import { readBody } from "./helpers/response";
 
 const LESSONS = 4;
 
-/**
- * A planned goal over one Library chapter whose lessons use two tools. Tool names are unique per
- * test, so the setup lesson this test adds is its own.
- */
 async function createToolGoal(userId: string) {
   const word = randomUUID().slice(0, 8);
   const tools = { python: `Python ${word}`, sheet: `Spreadsheet ${word} (Sheets or Excel)` };
@@ -69,7 +65,6 @@ async function createToolGoal(userId: string) {
     phases: [{ kind: "learn", milestone: "Clean real data", minutes: 0, name: "Basics" }],
   });
 
-  // The items a built plan has: the card lists the tools of the chapters they come from.
   await Promise.all(
     lessons.map((lesson, position) =>
       planItemFixture({
@@ -86,10 +81,6 @@ async function createToolGoal(userId: string) {
   return { goal, tools };
 }
 
-/**
- * The setup lesson an earlier learner's choice wrote, found by the tool and the device. Tests
- * never call the model, so they start from one that exists.
- */
 async function createSetupLesson({ system, tool }: { system: string; tool: string }) {
   const title = `Set up ${tool} on Windows`;
 
@@ -133,7 +124,6 @@ test.describe("Plan tools API", () => {
 
     const { goal, tools } = await createToolGoal(user.id);
 
-    // A tool the plan doesn't use, a setup without a device and another learner's goal.
     const [unknown, noDevice, foreign] = await Promise.all([
       apiContext.post(`/v1/goals/${goal.id}/plan/tool-choices`, {
         data: { choice: "have", tools: ["Photoshop"] },

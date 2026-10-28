@@ -8,10 +8,6 @@ import { createAuthenticatedApiContext } from "./helpers/auth";
 import { openStudyDay } from "./helpers/open-study-day";
 import { readBody } from "./helpers/response";
 
-/**
- * The learner's choices when time is short, through the API as the apps make them: how to study
- * the plan's bases (with what a choice would do before it's made) and studying everything.
- */
 test.describe("Plan choices API", () => {
   let baseURL: string;
 
@@ -33,7 +29,6 @@ test.describe("Plan choices API", () => {
     const [cells, living] = bases;
     const plan = `/v1/goals/${goal.id}/plan`;
 
-    // Opening the day the learner sees on Today (a POST) lays out the plan the run handed over.
     await openStudyDay({ api: apiContext, goalId: goal.id });
 
     const read = await apiContext.get(plan);
@@ -48,7 +43,6 @@ test.describe("Plan choices API", () => {
       knownCount: 0,
     });
 
-    // Reading the plan never plans every base in depth to recommend a choice: the learner asks.
     const readJson = await read.json();
     expect(readJson).not.toHaveProperty("bases.recommended");
 
@@ -74,7 +68,6 @@ test.describe("Plan choices API", () => {
     expect(preview).toMatchObject({ ready: true, unchanged: false });
     expect(preview.feasibility?.measure).toBe("exam");
 
-    // A preview saves nothing.
     const previewed = await readBody({
       response: await apiContext.get(plan),
       schema: planResponseSchema,

@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { clearLeftOpenLiveCalls, resetGuestSpend } from "@zoonk/testing/fixtures/usage";
 
-/** Clears the AI budget guests share, which every run's test guests would spend. */
+/** Every run's test guests spend the AI budget guests share. */
 export default async function globalSetup(): Promise<void> {
   await Promise.all([
     resetGuestSpend(),

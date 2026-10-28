@@ -22,16 +22,13 @@ const WRITTEN_AT_COLUMNS = new Set(["created_at", "updated_at"]);
 const JSON_TYPES = new Set(["json", "jsonb"]);
 const TIME_ZONE_COLUMNS = new Set(["time_zone", "timezone"]);
 
-/** Stats columns that keep the weekday (Sunday is 0) of the moment beside them. */
 const WEEKDAY_COLUMNS = new Set(["day_of_week", "weekday"]);
 
-/** Minutes per weekday, Sunday first, as plan settings and the states a change can undo keep them. */
 const WEEKDAY_LISTS = new Set(["weekdayMinutes"]);
 
 /**
- * How far a copy moves in time. Calendar days move by whole days, so dates stay the learner's own
- * days; instants move by the same days, plus the hours that keep their local times in a new time
- * zone, less the hours that would put a write later than now.
+ * Calendar days move by whole `days`; instants also move by `ms`, the hours that keep their local
+ * times in a new time zone, less the hours that would put a write later than now.
  */
 export type TimeShift = { days: number; ms: number };
 
@@ -44,7 +41,6 @@ function toInstant(value: string, type: string): number {
   return new Date(type === "timestamp without time zone" ? `${value}Z` : value).getTime();
 }
 
-/** The latest moment any of the learner's rows was written. */
 export function findLastWrite(learner: LearnerTable[]): Date {
   const times = learner.flatMap((table) => {
     const columns = table.columns.filter((column) => WRITTEN_AT_COLUMNS.has(column.name));
@@ -88,7 +84,6 @@ function toWeekday(day: number): number {
   return ((day % DAYS_PER_WEEK) + DAYS_PER_WEEK) % DAYS_PER_WEEK;
 }
 
-/** A week's minutes move with the days they were planned for. */
 function rotateWeekdays(value: unknown, days: number): unknown {
   if (!Array.isArray(value) || value.length !== DAYS_PER_WEEK) {
     return value;
@@ -99,7 +94,6 @@ function rotateWeekdays(value: unknown, days: number): unknown {
   return minutes.map((_, weekday) => minutes[toWeekday(weekday - days)]);
 }
 
-/** Text inside JSON: ids point at the copy's rows, and dates move with the learner. */
 function copyJsonText(text: string, copy: CopyContext): string {
   const remapped = remapIds(text, copy.ids);
 
@@ -165,7 +159,6 @@ function copyValue({
   return mapJsonStrings(value, (text) => remapIds(text, copy.ids));
 }
 
-/** A copy signs in with its own email and username, and has no billing of its own. */
 function withCopyAccount(row: CopiedRow, account: { email: string; username: string }) {
   return {
     ...row,
@@ -177,7 +170,6 @@ function withCopyAccount(row: CopiedRow, account: { email: string; username: str
   };
 }
 
-/** Rows pointing at another row of the same table go after it. */
 function orderSelfReferences({
   columns,
   rows,
@@ -222,10 +214,7 @@ function copyTable({
   return orderSelfReferences({ columns: table.selfReferences, rows });
 }
 
-/**
- * New ids for every row, given in the order of the old ones: ids are time-ordered (UUIDv7), so
- * rows keep the order they were written in.
- */
+/** Ids are time-ordered (UUIDv7), so new ones are given in the old ones' order. */
 async function mapIds(learner: LearnerTable[]): Promise<Map<string, string>> {
   const oldIds = learner.flatMap((table) => listIds(table.rows)).toSorted();
 
@@ -245,12 +234,6 @@ function toInserts({ name, rows }: { name: string; rows: CopiedRow[] }) {
   }));
 }
 
-/**
- * Writes an independent copy of a learner read by `readLearner`, under new ids and its own
- * account, in one transaction: every reference to one of the learner's rows, in columns or inside
- * JSON (a private identity key or file path carries the owner's id), points at the copy's row, and
- * shared content stays shared. Returns the copy's user id.
- */
 export async function writeLearnerCopy({
   account,
   learner,

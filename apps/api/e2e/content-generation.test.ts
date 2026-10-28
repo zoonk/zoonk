@@ -67,7 +67,6 @@ test.describe("Content generation API", () => {
       }),
     ).resolves.toStrictEqual({ generationId: null, status: "ready" });
 
-    // Its claim names a run that no longer exists: following it would wait forever.
     const replaced = await readBody({
       response: await api.post(`/v1/library/lessons/${abandoned.id}/generations`),
       schema: lessonGenerationSchema,
@@ -167,7 +166,6 @@ test.describe("Content generation API", () => {
       }),
     ).resolves.toStrictEqual({ preparationId: null });
 
-    // The day's other lessons wait until the guest opens them.
     await expect
       .poll(() =>
         prisma.usageRecord.findMany({
@@ -252,7 +250,6 @@ test.describe("Content generation API", () => {
     const goal = await goalFixture({ userId });
     const goalRun = `/v1/goals/${goal.id}/generations`;
 
-    // A wait that opened without the run asks for it until one is saved on the goal.
     await expect(
       readBody({ response: await api.get(goalRun), schema: goalGenerationRunSchema }),
     ).resolves.toStrictEqual({ generationId: null });

@@ -75,7 +75,6 @@ test.describe("Freshness commands API", () => {
     await apiContext.dispose();
   });
 
-  // Nothing reads a stored notice again on its own: an admin asks for it.
   test("reads an exam's notice again on an admin's request, never a source's", async () => {
     const [apiContext, exam, source] = await Promise.all([
       createBearerAdmin({ baseURL, prefix: "freshness-read-again" }),

@@ -26,7 +26,6 @@ const LESSON_STEPS = ["hook", "explanation", "check", "typedAnswer", "summary"] 
 const RIGHT_TYPED = "It shows where the electron is likely to be";
 const OVERNIGHT_MS = 36_000_000;
 
-/** Days since a free exam goal started that put it past its free first week. */
 const FREE_WEEK_OVER_DAYS = 10;
 
 function stepId(steps: { id: string; kind: string }[], kind: string): string {
@@ -203,7 +202,6 @@ test.describe("Library lessons API", () => {
 
     expect(early.status()).toBe(422);
 
-    // Answered the next morning: a screen left open overnight still saves, counted as an hour.
     const typed = await readBody({
       response: await check({
         answer: { kind: "typedAnswer", text: RIGHT_TYPED },
@@ -217,7 +215,6 @@ test.describe("Library lessons API", () => {
 
     expect(typed).toMatchObject({ isCorrect: true, score: 1 });
 
-    // Starting again (a reload, or coming back within half an hour) resumes the run, answers kept.
     const resumed = await readBody({
       response: await api.post(`/v1/library/lessons/${lesson.id}/starts`, {
         data: { timeZone: "America/Sao_Paulo" },
@@ -312,8 +309,6 @@ test.describe("Library lessons API", () => {
     await guestApi.dispose();
   });
 
-  // rafa3 (Câmara, free, day 12): Today said Plus opens new lessons, yet her plan's lessons
-  // opened and were written for her.
   test("holds a free exam plan's new lessons for Plus once its first week is over", async () => {
     const [{ api, userId }, { lesson }, unwritten] = await Promise.all([
       createBearerLearner({ baseURL, prefix: "free-week" }),
@@ -350,7 +345,6 @@ test.describe("Library lessons API", () => {
     expect(writing.status()).toBe(402);
     await expect(writing.json()).resolves.toMatchObject(plusRequired);
 
-    // Nothing was counted, started or written.
     await expect(prisma.usageRecord.count({ where: { userId } })).resolves.toBe(0);
     await expect(prisma.learningEvent.count({ where: { userId } })).resolves.toBe(0);
 

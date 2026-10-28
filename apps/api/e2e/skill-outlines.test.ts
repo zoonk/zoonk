@@ -16,7 +16,6 @@ const ACCEPTED = 202;
 const PAYMENT_REQUIRED = 402;
 const DAY_MS = 86_400_000;
 
-/** A goal whose plan has one topic of its own subject, months away, its lessons not written yet. */
 async function createFarGoal({ userId }: { userId: string }) {
   const [goal, course, skill] = await Promise.all([
     goalFixture({ timezone: "UTC", title: "Learn statistics", userId }),
@@ -116,12 +115,10 @@ test.describe("Far topics' lesson plans API", () => {
     expect(body).toStrictEqual({ generationId: expect.any(String), status: "writing" });
     expect(started.headers().location).toBe(`/v1/generations/${body.generationId}`);
 
-    // It reads as being written from the tap on, before its run gets to the subject.
     await expect(
       readBody({ response: await apiContext.get(path), schema: skillOutlineSchema }),
     ).resolves.toStrictEqual({ chapters: [], status: "writing" });
 
-    // A second tap, while it's written or after its run failed, never counts again.
     const again = await apiContext.post(`${path}/generations`);
     expect(again.status()).toBe(ACCEPTED);
 
@@ -141,7 +138,6 @@ test.describe("Far topics' lesson plans API", () => {
       prefix: "outline-limit",
     });
 
-    // Three topics written today, each counted once as a request counts it (see above).
     const [{ first, goal }] = await Promise.all([
       createFarGoal({ userId: user.id }),
       usageRecordsFixture({ count: 3, kind: "outline", userId: user.id }),

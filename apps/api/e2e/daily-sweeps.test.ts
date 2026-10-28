@@ -4,10 +4,7 @@ import { createBearerLearner } from "./helpers/bearer";
 
 const PATH = "/cron/daily-sweeps";
 
-/**
- * Only Vercel Cron, with the deployment's secret, may start the daily sweeps. Starting them runs a
- * durable workflow over every learner's data, so the accepted request isn't exercised here.
- */
+/** An accepted request would run the sweeps over every learner's data, so it isn't exercised here. */
 test.describe("Daily sweeps cron", () => {
   test("refuses requests without the cron secret, signed in or not", async () => {
     const baseURL = process.env.E2E_BASE_URL ?? "";

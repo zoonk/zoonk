@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { sourceFixture } from "@zoonk/testing/fixtures/sources";
 
-/** A learner's private upload, stored the way registering one stores it, with its text read. */
 export function privateUploadFixture({
   ownerId,
   text = "Edital nº 1: a prova terá 120 questões.",

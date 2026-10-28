@@ -1,13 +1,8 @@
 import { prisma, sql } from "@zoonk/db";
 import { type JsonObject } from "@zoonk/utils/json";
 
-/** A learner's rows are the ones deleting their user takes, as account deletion does. */
 export const USERS_TABLE = "users";
 
-/**
- * Tables in a learner's cascade that aren't their learning: sign-in and billing, which a copy gets
- * its own of; organization seats; and admin quality runs.
- */
 const NOT_LEARNING = new Set([
   "accounts",
   "evaluation_runs",
@@ -17,7 +12,6 @@ const NOT_LEARNING = new Set([
   "subscriptions",
 ]);
 
-/** Other people's answers, kept without them on shared content, never one learner's. */
 const ANONYMOUS_PREFIX = "anonymous_";
 
 type ForeignKey = { cascades: boolean; child: string; column: string; parent: string };
@@ -30,11 +24,9 @@ export type LearnerTable = {
   columns: LearnerColumn[];
   name: string;
   rows: LearnerRow[];
-  /** Columns pointing at another row of the same table, which has to be written first. */
   selfReferences: string[];
 };
 
-/** Quotes a table or column name the catalog gave, for the statements that name them. */
 export function quoteName(name: string): string {
   return `"${name.replaceAll('"', '""')}"`;
 }
@@ -83,7 +75,6 @@ async function readColumns(): Promise<Map<string, LearnerColumn[]>> {
   return Map.groupBy(columns, (column) => column.table);
 }
 
-/** Every table deleting a user reaches through cascading references, except the ones not learning. */
 function listLearnerTables(keys: ForeignKey[], tables: ReadonlySet<string>): Set<string> {
   const reached = keys
     .filter((key) => key.cascades && tables.has(key.parent) && !tables.has(key.child))
@@ -95,7 +86,6 @@ function listLearnerTables(keys: ForeignKey[], tables: ReadonlySet<string>): Set
     : listLearnerTables(keys, new Set([...tables, ...reached]));
 }
 
-/** Tables in an order that writes every referenced row before the rows pointing at it. */
 function orderParentsFirst(keys: ForeignKey[], tables: ReadonlySet<string>): string[] {
   if (tables.size === 0) {
     return [];
@@ -143,7 +133,6 @@ export function listIds(rows: LearnerRow[]): string[] {
   return rows.flatMap((row) => (typeof row.id === "string" ? [row.id] : []));
 }
 
-/** A table's rows are the ones a cascading reference ties to rows of the learner already read. */
 function listFilters({
   ids,
   keys,
@@ -164,7 +153,6 @@ function listFilters({
     .map((key) => ({ column: key.column, ids: ids.get(key.parent) ?? [] }));
 }
 
-/** Reads the tables in order: each one's rows are found from the rows of the tables before it. */
 async function readTables({
   columns,
   ids,
@@ -206,11 +194,7 @@ async function readTables({
   return [read, ...later];
 }
 
-/**
- * Reads everything of one learner that deleting their account would delete, with referenced rows
- * first: their goals, plans, sessions, answers, memory and private content. Shared Library content
- * has no owner, so it stays out and their rows keep pointing at it.
- */
+/** Shared Library content has no owner, so it stays out and the learner's rows keep pointing at it. */
 export async function readLearner(userId: string): Promise<LearnerTable[]> {
   const [keys, columns] = await Promise.all([readForeignKeys(), readColumns()]);
   const tables = orderParentsFirst(keys, listLearnerTables(keys, new Set([USERS_TABLE])));

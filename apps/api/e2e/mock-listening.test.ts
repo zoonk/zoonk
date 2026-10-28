@@ -16,10 +16,6 @@ import { readBody } from "./helpers/response";
 const PARTS = ["Part 1: a conversation", "Part 2: a talk"];
 const READING_QUESTIONS = 2;
 
-/**
- * An IELTS-like Plus learner whose full mock opens on a listening section of two voiced
- * recordings, each played once with two questions on it, then a reading section the bank holds.
- */
 async function createListeningExamGoal(userId: string) {
   const unique = randomUUID();
 
@@ -185,13 +181,11 @@ test.describe("Mock listening API", () => {
       await readBody({ response: await play(first), schema: mockPlayResponseSchema }),
     ).toStrictEqual({ played: 1 });
 
-    // The exam plays it once: a second play, from any client, is refused.
     const again = await play(first);
 
     expect(again.status()).toBe(409);
     await expect(again.json()).resolves.toMatchObject({ error: { code: "MOCK_PLAYS_USED" } });
 
-    // A recording the mock doesn't ask is never counted on it.
     const elsewhere = await play(randomUUID());
 
     expect(elsewhere.status()).toBe(422);

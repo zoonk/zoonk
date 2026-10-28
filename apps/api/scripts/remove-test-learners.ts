@@ -1,9 +1,4 @@
-/**
- * Removes every learner the seed didn't write from the local development database, except the
- * onboarded learners kept to copy from, and keeps the shared Library content they generated, so the
- * next persona pass reuses it instead of paying to write it again. Lists them by default; `--yes`
- * removes them.
- */
+/** Lists the test learners by default; `--yes` removes them. */
 import { parseArgs } from "node:util";
 import { prisma } from "@zoonk/db";
 import { logError, logInfo } from "@zoonk/utils/logger";

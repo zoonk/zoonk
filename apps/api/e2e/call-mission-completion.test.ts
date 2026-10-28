@@ -14,7 +14,7 @@ test("a completed call's HTTP retry returns its mission moment and pays the bonu
 
   try {
     const { goal, renting } = await languageGoalFixture({ userId: learner.userId });
-    // A persisted completed call exercises the transport and recovery without a model or live provider.
+
     const [call, day] = await Promise.all([
       prisma.languageConversation.create({
         data: {
