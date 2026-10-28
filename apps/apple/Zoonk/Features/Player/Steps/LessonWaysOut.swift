@@ -130,7 +130,7 @@ struct LessonAskBuddyOffer: View {
   }
 
   private var buddyName: String? {
-    learnerSummary?.summary.value?.buddyName
+    learnerSummary?.summary.value?.buddyDisplayName
   }
 
   @ViewBuilder

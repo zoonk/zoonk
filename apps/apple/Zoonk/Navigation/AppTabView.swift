@@ -31,7 +31,7 @@ struct AppTabView: View {
       Tab(value: AppTab.buddy) {
         TabRoot(tab: .buddy, tabBarPlacement: $tabBarPlacement)
       } label: {
-        if let name = learner.summary.value?.buddyName {
+        if let name = learner.summary.value?.buddyDisplayName {
           Label(name, systemImage: AppTab.buddy.systemImage)
         } else {
           TabLabel(tab: .buddy)
