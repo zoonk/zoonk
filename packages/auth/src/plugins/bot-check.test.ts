@@ -1,11 +1,16 @@
 import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
 import { betterAuth } from "better-auth/minimal";
 import { checkBotId } from "botid/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { makeAssertion, makeDeviceKey } from "../app-attest/_test-utils/assertion";
+import { RECORDED_APP } from "../app-attest/_test-utils/recorded-attestations";
+import { APP_ATTEST_HEADERS } from "../app-attest/app-attest-contract";
 import { BETTER_AUTH_BASE_PATH } from "../config";
 import { createEmailOTPPlugin } from "../email-otp-plugin";
 import { NativeAuthResponseError, getAuthError } from "../errors";
 import { baseAuthConfig } from "../server";
+import { appAttestPlugin } from "./app-attest";
 import { botCheckPlugin } from "./bot-check";
 import { guestPlugin } from "./guest";
 
@@ -18,7 +23,12 @@ const BASE_URL = "http://localhost:3000";
 const auth = betterAuth({
   ...baseAuthConfig,
   baseURL: BASE_URL,
-  plugins: [botCheckPlugin(), createEmailOTPPlugin({ storeOTP: "plain" }), guestPlugin()],
+  plugins: [
+    botCheckPlugin(),
+    appAttestPlugin(),
+    createEmailOTPPlugin({ storeOTP: "plain" }),
+    guestPlugin(),
+  ],
   rateLimit: { enabled: false },
   secret: "bot-check-test-secret-with-enough-entropy",
   socialProviders: { google: { clientId: "test-client", clientSecret: "test-secret" } },
@@ -34,11 +44,11 @@ function verdict({ isBot }: { isBot: boolean }) {
 }
 
 /** A browser request to Better Auth's HTTP boundary, where the captcha plugin runs. */
-function post(path: string, body: unknown) {
+function post(path: string, body: unknown, headers: Record<string, string> = {}) {
   return auth.handler(
     new Request(`${BASE_URL}${BETTER_AUTH_BASE_PATH}${path}`, {
       body: JSON.stringify(body),
-      headers: { "content-type": "application/json", origin: BASE_URL },
+      headers: { "content-type": "application/json", origin: BASE_URL, ...headers },
       method: "POST",
     }),
   );
@@ -111,6 +121,63 @@ describe("bot check on auth requests", () => {
     // The token itself is checked next: this one is refused, but never as a bot.
     expect(response.status).not.toBe(403);
     await expect(readCode(response)).resolves.not.toBe("VERIFICATION_FAILED");
+  });
+
+  it("lets the iOS app make a guest and ask for a code with App Attest assertions", async () => {
+    vi.stubEnv("APPLE_TEAM_ID", RECORDED_APP.teamIdentifier);
+    vi.stubEnv("APPLE_APP_BUNDLE_IDENTIFIER", RECORDED_APP.bundleIdentifier);
+
+    const key = makeDeviceKey();
+    await prisma.appAttestKey.create({ data: { keyId: key.keyId, publicKey: key.publicKey } });
+
+    async function attested(counter: number) {
+      const response = await post("/app-attest/challenge", {});
+      const { challenge } = (await response.json()) as { challenge: string };
+
+      return {
+        [APP_ATTEST_HEADERS.assertion]: makeAssertion({
+          challenge,
+          counter,
+          privateKey: key.privateKey,
+        }),
+        [APP_ATTEST_HEADERS.challenge]: challenge,
+        [APP_ATTEST_HEADERS.keyId]: key.keyId,
+      };
+    }
+
+    const guest = await post("/sign-in/anonymous", {}, await attested(1));
+
+    const code = await post(
+      "/email-otp/send-verification-otp",
+      { email: email(), type: "sign-in" },
+      await attested(2),
+    );
+
+    expect([guest.status, code.status]).toStrictEqual([200, 200]);
+    expect(checkBotId).not.toHaveBeenCalled();
+
+    // A counter the key already spent proves nothing, and BotID decides.
+    const replayed = await post("/sign-in/anonymous", {}, await attested(2));
+
+    expect(replayed.status).toBe(403);
+    await expect(readCode(replayed)).resolves.toBe("VERIFICATION_FAILED");
+  });
+
+  it("refuses to register a key without a genuine attestation", async () => {
+    vi.stubEnv("APPLE_TEAM_ID", RECORDED_APP.teamIdentifier);
+    vi.stubEnv("APPLE_APP_BUNDLE_IDENTIFIER", RECORDED_APP.bundleIdentifier);
+
+    const challengeResponse = await post("/app-attest/challenge", {});
+    const { challenge } = (await challengeResponse.json()) as { challenge: string };
+
+    const response = await post("/app-attest/key", {
+      attestation: Buffer.from("not an attestation").toString("base64"),
+      challenge,
+      keyId: makeDeviceKey().keyId,
+    });
+
+    expect(response.status).toBe(400);
+    await expect(readCode(response)).resolves.toBe("APP_ATTESTATION_INVALID");
   });
 
   it("leaves other auth requests alone", async () => {

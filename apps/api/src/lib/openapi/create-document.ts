@@ -7,6 +7,7 @@ import {
   createDocument,
 } from "zod-openapi";
 import { accountPaths } from "./paths/account";
+import { appAttestPaths } from "./paths/app-attest";
 import { catalogPaths } from "./paths/catalog";
 import { catalogResourcePaths } from "./paths/catalog-resources";
 import { checkpointPaths } from "./paths/checkpoints";
@@ -107,6 +108,7 @@ function withInternalErrorResponses(paths: ZodOpenApiPathsObject): ZodOpenApiPat
 
 const paths = withInternalErrorResponses({
   ...accountPaths,
+  ...appAttestPaths,
   ...catalogPaths,
   ...catalogResourcePaths,
   ...checkpointPaths,

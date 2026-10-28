@@ -2,12 +2,14 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { type AuthContext, type BetterAuthPlugin } from "better-auth";
 import { getEndpoints } from "better-auth/api";
 import { captcha } from "better-auth/plugins";
+import { hasAppAttestAssertion } from "../app-attest/app-attest";
 import { getBotIdVerification } from "../request-guards/bot-id";
 
 /**
  * Every auth request that creates a session or emails a sign-in code, without the auth base path.
- * BotID protects anonymous email requests; authenticated native deletion proofs are checked
- * separately. Each app's `initBotId` protects main's `/api/auth/*` and the API's `/v1/auth/*`.
+ * BotID protects anonymous email requests; authenticated native deletion proofs and App Attest
+ * assertions are checked separately. Each app's `initBotId` protects main's `/api/auth/*` and the
+ * API's `/v1/auth/*`.
  */
 const BOT_CHECKED_AUTH_PATHS = [
   "/email-otp/send-verification-otp",
@@ -81,9 +83,31 @@ async function isAuthenticatedEmailCodeRequest({
 }
 
 /**
+ * The iOS app can't run BotID, so a genuine copy proves itself with an App Attest assertion on
+ * the same requests BotID guards. A missing or failed assertion falls through to BotID, which
+ * answers the usual 403.
+ */
+async function isAppAttestedRequest({
+  context,
+  request,
+}: {
+  context: AuthContext;
+  request: Request;
+}) {
+  const basePath = context.options.basePath ?? "/api/auth";
+  const { pathname } = new URL(request.url);
+
+  return (
+    request.method === "POST" &&
+    BOT_CHECKED_AUTH_PATHS.some((path) => pathname === `${basePath}${path}`) &&
+    (await hasAppAttestAssertion(request.headers))
+  );
+}
+
+/**
  * The shared guard accepts local development and E2E without BotID proof. Deployed requests
- * without browser proof fail with 403, except a provider ID token or an existing account's
- * bearer requesting its own email proof. Anonymous native email and guest sign-ins stay closed.
+ * without browser proof fail with 403, except a provider ID token, an existing account's bearer
+ * requesting its own email proof, or the iOS app's App Attest assertion.
  */
 export function botCheckPlugin() {
   const plugin = captcha({
@@ -97,7 +121,10 @@ export function botCheckPlugin() {
   return {
     ...plugin,
     onRequest: async (request, context) => {
-      if (await isAuthenticatedEmailCodeRequest({ context, request })) {
+      if (
+        (await isAuthenticatedEmailCodeRequest({ context, request })) ||
+        (await isAppAttestedRequest({ context, request }))
+      ) {
         return;
       }
 

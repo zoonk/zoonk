@@ -309,6 +309,129 @@
         }
       }
     },
+    "/app-attest/challenges": {
+      "post": {
+        "description": "A one-time challenge for Apple App Attest. The iOS app asks for one before attesting its key and before each request that needs bot proof (`POST /v1/guests`, `POST /v1/email-sign-in-codes`, `POST /v1/sessions/email-code`), where it sends the assertion in the `X-App-Attest-*` headers instead of BotID's browser proof.",
+        "operationId": "createAppAttestChallenge",
+        "security": [],
+        "summary": "Get an App Attest challenge",
+        "tags": [
+          "Sessions"
+        ],
+        "responses": {
+          "201": {
+            "description": "Challenge issued",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppAttestChallenge"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request rate limit exceeded. Error code: RATE_LIMIT_EXCEEDED.",
+            "headers": {
+              "Retry-After": {
+                "required": true,
+                "description": "Seconds until another attempt can be made",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991,
+                  "description": "Seconds until another attempt can be made"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/app-attest/keys": {
+      "post": {
+        "description": "Registers a key one install of the iOS app generated and Apple attested over a challenge from `POST /v1/app-attest/challenges`. Register once per install; registering the same key again is a no-op. Keys made by Xcode builds (the development environment) are refused in production.",
+        "operationId": "createAppAttestKey",
+        "security": [],
+        "summary": "Register an App Attest key",
+        "tags": [
+          "Sessions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppAttestKeyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Key registered"
+          },
+          "400": {
+            "description": "Request validation failed, or the attestation is invalid or its challenge was already used or expired. Error code: APP_ATTESTATION_INVALID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request rate limit exceeded. Error code: RATE_LIMIT_EXCEEDED.",
+            "headers": {
+              "Retry-After": {
+                "required": true,
+                "description": "Seconds until another attempt can be made",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991,
+                  "description": "Seconds until another attempt can be made"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/catalog/categories": {
       "get": {
         "operationId": "listCourseCategoryCounts",
@@ -3742,12 +3865,51 @@
     },
     "/guests": {
       "post": {
-        "description": "A guest can take up to three lessons, at most one newly generated, start one goal and use a day's worth of small AI help, and all guests share one daily AI budget: once it's spent, a guest's new AI work answers 403 `SIGN_UP_REQUIRED` (ask them to create a free account to continue), while lessons already written and pictures already drawn stay free. Signing up or in later moves the guest's progress to that account, whose own caps apply from then on. Requests must pass Vercel BotID, which runs in a browser: native apps get 403 BOT_DETECTED in production until the API accepts app attestation (App Attest on iOS, Play Integrity on Android).",
+        "description": "A guest can take up to three lessons, at most one newly generated, start one goal and use a day's worth of small AI help, and all guests share one daily AI budget: once it's spent, a guest's new AI work answers 403 `SIGN_UP_REQUIRED` (ask them to create a free account to continue), while lessons already written and pictures already drawn stay free. Signing up or in later moves the guest's progress to that account, whose own caps apply from then on. Requests must pass Vercel BotID, which runs in a browser, or carry the iOS app's App Attest assertion in the `X-App-Attest-*` headers (see `POST /v1/app-attest/challenges`).",
         "operationId": "createGuestSession",
         "security": [],
         "summary": "Create a guest session",
         "tags": [
           "Sessions"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-app-attest-assertion",
+            "schema": {
+              "description": "Base64 of the assertion `DCAppAttestService.generateAssertion` made over the challenge",
+              "type": "string",
+              "maxLength": 4096,
+              "format": "base64",
+              "contentEncoding": "base64",
+              "pattern": "^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$"
+            },
+            "description": "Base64 of the assertion `DCAppAttestService.generateAssertion` made over the challenge"
+          },
+          {
+            "in": "header",
+            "name": "x-app-attest-challenge",
+            "schema": {
+              "description": "A fresh challenge from `POST /v1/app-attest/challenges`",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "description": "A fresh challenge from `POST /v1/app-attest/challenges`"
+          },
+          {
+            "in": "header",
+            "name": "x-app-attest-key-id",
+            "schema": {
+              "description": "The key registered with `POST /v1/app-attest/keys`",
+              "type": "string",
+              "maxLength": 64,
+              "format": "base64",
+              "contentEncoding": "base64",
+              "pattern": "^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$"
+            },
+            "description": "The key registered with `POST /v1/app-attest/keys`"
+          }
         ],
         "responses": {
           "201": {
@@ -3761,7 +3923,7 @@
             }
           },
           "403": {
-            "description": "The request looks automated. Error code: BOT_DETECTED.",
+            "description": "The request had neither BotID's nor App Attest's proof. Error code: BOT_DETECTED.",
             "content": {
               "application/json": {
                 "schema": {
@@ -10750,7 +10912,7 @@
     },
     "/email-sign-in-codes": {
       "post": {
-        "description": "Emails a sign-in code; signing in with it creates the account the first time. An optional existing bearer session, even one too old to delete the account directly, authorizes delivery only to that account's email without BotID. The session must still be active; guests and disabled accounts are excluded. This does not refresh the session or authorize deletion: submit the emailed code to DELETE /v1/me. All sends retain Better Auth's IP rate limit. Anonymous requests still require browser BotID proof.",
+        "description": "Emails a sign-in code; signing in with it creates the account the first time. An optional existing bearer session, even one too old to delete the account directly, authorizes delivery only to that account's email without BotID. The session must still be active; guests and disabled accounts are excluded. This does not refresh the session or authorize deletion: submit the emailed code to DELETE /v1/me. All sends retain Better Auth's IP rate limit. Requests must pass Vercel BotID, which runs in a browser, or carry the iOS app's App Attest assertion in the `X-App-Attest-*` headers (see `POST /v1/app-attest/challenges`); without either they get 403 BOT_DETECTED.",
         "operationId": "createEmailSignInCode",
         "security": [
           {},
@@ -10761,6 +10923,45 @@
         "summary": "Send an email sign-in code",
         "tags": [
           "Sessions"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-app-attest-assertion",
+            "schema": {
+              "description": "Base64 of the assertion `DCAppAttestService.generateAssertion` made over the challenge",
+              "type": "string",
+              "maxLength": 4096,
+              "format": "base64",
+              "contentEncoding": "base64",
+              "pattern": "^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$"
+            },
+            "description": "Base64 of the assertion `DCAppAttestService.generateAssertion` made over the challenge"
+          },
+          {
+            "in": "header",
+            "name": "x-app-attest-challenge",
+            "schema": {
+              "description": "A fresh challenge from `POST /v1/app-attest/challenges`",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "description": "A fresh challenge from `POST /v1/app-attest/challenges`"
+          },
+          {
+            "in": "header",
+            "name": "x-app-attest-key-id",
+            "schema": {
+              "description": "The key registered with `POST /v1/app-attest/keys`",
+              "type": "string",
+              "maxLength": 64,
+              "format": "base64",
+              "contentEncoding": "base64",
+              "pattern": "^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$"
+            },
+            "description": "The key registered with `POST /v1/app-attest/keys`"
+          }
         ],
         "requestBody": {
           "required": true,
@@ -10787,7 +10988,7 @@
             }
           },
           "403": {
-            "description": "The request didn't pass BotID, or it has browser fetch metadata (Sec-Fetch-*) without an Origin Zoonk trusts. Error codes: BOT_DETECTED, UNTRUSTED_ORIGIN.",
+            "description": "The request had neither BotID's nor App Attest's proof, or it has browser fetch metadata (Sec-Fetch-*) without an Origin Zoonk trusts. Error codes: BOT_DETECTED, UNTRUSTED_ORIGIN.",
             "content": {
               "application/json": {
                 "schema": {
@@ -10970,12 +11171,51 @@
     },
     "/sessions/email-code": {
       "post": {
-        "description": "Signs in with the code from `POST /v1/email-sign-in-codes`, creating the account the first time. Requests must pass Vercel BotID, which runs in a browser. Native apps get 403 BOT_DETECTED in production until the API accepts app attestation (App Attest on iOS, Play Integrity on Android); Sign in with Apple and Google work meanwhile.",
+        "description": "Signs in with the code from `POST /v1/email-sign-in-codes`, creating the account the first time. Requests must pass Vercel BotID, which runs in a browser, or carry the iOS app's App Attest assertion in the `X-App-Attest-*` headers (see `POST /v1/app-attest/challenges`); without either they get 403 BOT_DETECTED.",
         "operationId": "createEmailCodeSession",
         "security": [],
         "summary": "Sign in with an email code",
         "tags": [
           "Sessions"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "x-app-attest-assertion",
+            "schema": {
+              "description": "Base64 of the assertion `DCAppAttestService.generateAssertion` made over the challenge",
+              "type": "string",
+              "maxLength": 4096,
+              "format": "base64",
+              "contentEncoding": "base64",
+              "pattern": "^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$"
+            },
+            "description": "Base64 of the assertion `DCAppAttestService.generateAssertion` made over the challenge"
+          },
+          {
+            "in": "header",
+            "name": "x-app-attest-challenge",
+            "schema": {
+              "description": "A fresh challenge from `POST /v1/app-attest/challenges`",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "description": "A fresh challenge from `POST /v1/app-attest/challenges`"
+          },
+          {
+            "in": "header",
+            "name": "x-app-attest-key-id",
+            "schema": {
+              "description": "The key registered with `POST /v1/app-attest/keys`",
+              "type": "string",
+              "maxLength": 64,
+              "format": "base64",
+              "contentEncoding": "base64",
+              "pattern": "^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$"
+            },
+            "description": "The key registered with `POST /v1/app-attest/keys`"
+          }
         ],
         "requestBody": {
           "required": true,
@@ -11009,7 +11249,7 @@
             }
           },
           "403": {
-            "description": "Account disabled, email code locked, or the request didn't pass BotID. Error codes: ACCOUNT_DISABLED, EMAIL_SIGN_IN_CODE_LOCKED, BOT_DETECTED.",
+            "description": "Account disabled, email code locked, or the request had neither BotID's nor App Attest's proof. Error codes: ACCOUNT_DISABLED, EMAIL_SIGN_IN_CODE_LOCKED, BOT_DETECTED.",
             "content": {
               "application/json": {
                 "schema": {
@@ -22670,6 +22910,39 @@
         "additionalProperties": false,
         "minProperties": 1
       },
+      "AppAttestKeyRequest": {
+        "type": "object",
+        "properties": {
+          "attestation": {
+            "type": "string",
+            "maxLength": 16384,
+            "format": "base64",
+            "contentEncoding": "base64",
+            "pattern": "^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$",
+            "description": "Base64 of the attestation object `DCAppAttestService.attestKey` returned"
+          },
+          "challenge": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "description": "The challenge from `POST /v1/app-attest/challenges` the attestation was made over"
+          },
+          "keyId": {
+            "type": "string",
+            "maxLength": 64,
+            "format": "base64",
+            "contentEncoding": "base64",
+            "pattern": "^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$",
+            "description": "The key ID `DCAppAttestService.generateKey` returned"
+          }
+        },
+        "required": [
+          "attestation",
+          "challenge",
+          "keyId"
+        ],
+        "additionalProperties": false
+      },
       "StudySessionTimeZone": {
         "type": "object",
         "properties": {
@@ -27930,6 +28203,20 @@
         ],
         "additionalProperties": false,
         "description": "The chosen buddy, or Zu with round glasses by default"
+      },
+      "AppAttestChallenge": {
+        "type": "object",
+        "properties": {
+          "challenge": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Single-use and valid for five minutes. Hash its UTF-8 bytes with SHA-256 for the client data of the attestation or assertion it's for."
+          }
+        },
+        "required": [
+          "challenge"
+        ],
+        "additionalProperties": false
       },
       "CourseCategoryCounts": {
         "type": "object",

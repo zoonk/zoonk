@@ -26,6 +26,7 @@ import { validateEmailBeforeOTP } from "./email-signup-policy";
 import { guardUserCreation } from "./guests/account-creation-guard";
 import { ac, admin, member, owner } from "./permissions";
 import { accessGuardsPlugin } from "./plugins/access-guards";
+import { appAttestPlugin } from "./plugins/app-attest";
 import { botCheckPlugin } from "./plugins/bot-check";
 import { guestPlugin } from "./plugins/guest";
 import { sessionHintPlugin } from "./plugins/session-hint";
@@ -97,6 +98,7 @@ export const baseAuthPlugins = [
 
 export const fullPlugins = [
   botCheckPlugin(),
+  appAttestPlugin(),
   createEmailOTPPlugin({ storeOTP: "hashed" }),
   oneTimeToken({ storeToken: "hashed" }),
   bearer(),

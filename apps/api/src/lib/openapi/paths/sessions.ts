@@ -2,6 +2,7 @@ import { nativeAppleCredentialsSchema } from "@zoonk/auth/native-apple-contract"
 import { z } from "zod";
 import { accessErrorCodes } from "../../access-error-codes";
 import { sessionErrorCodes } from "../../session-error-codes";
+import { appAttestHeaderParamsSchema } from "../schemas/app-attest";
 import {
   badRequestResponse,
   forbiddenResponse,
@@ -44,19 +45,20 @@ const signupValidationResponse = {
 
 const emailCodeForbiddenResponse = {
   ...forbiddenResponse,
-  description: `Account disabled, email code locked, or the request didn't pass BotID. Error codes: ${sessionErrorCodes.accountDisabled}, ${sessionErrorCodes.emailCodeLocked}, ${accessErrorCodes.botDetected}.`,
+  description: `Account disabled, email code locked, or the request had neither BotID's nor App Attest's proof. Error codes: ${sessionErrorCodes.accountDisabled}, ${sessionErrorCodes.emailCodeLocked}, ${accessErrorCodes.botDetected}.`,
 } as const;
 
 const botCheckForbiddenResponse = {
   ...forbiddenResponse,
-  description: `The request didn't pass BotID, or it has browser fetch metadata (Sec-Fetch-*) without an Origin Zoonk trusts. Error codes: ${accessErrorCodes.botDetected}, ${accessErrorCodes.untrustedOrigin}.`,
+  description: `The request had neither BotID's nor App Attest's proof, or it has browser fetch metadata (Sec-Fetch-*) without an Origin Zoonk trusts. Error codes: ${accessErrorCodes.botDetected}, ${accessErrorCodes.untrustedOrigin}.`,
 } as const;
 
 /**
- * Anonymous email sign-in creates accounts, so it needs browser BotID proof. Existing native
- * accounts can request their own deletion proof with a still-active bearer, even when stale.
+ * Anonymous email sign-in creates accounts, so it needs bot proof: BotID in a browser, App Attest
+ * from the iOS app. Existing native accounts can request their own deletion proof with a
+ * still-active bearer, even when stale.
  */
-const EMAIL_CODE_BOT_CHECK = `Requests must pass Vercel BotID, which runs in a browser. Native apps get 403 ${accessErrorCodes.botDetected} in production until the API accepts app attestation (App Attest on iOS, Play Integrity on Android); Sign in with Apple and Google work meanwhile.`;
+const EMAIL_CODE_BOT_CHECK = `Requests must pass Vercel BotID, which runs in a browser, or carry the iOS app's App Attest assertion in the \`X-App-Attest-*\` headers (see \`POST /v1/app-attest/challenges\`); without either they get 403 ${accessErrorCodes.botDetected}.`;
 
 const googleAuthorizationResponse = {
   ...unauthorizedResponse,
@@ -79,12 +81,13 @@ export const authRateLimitResponse = {
 export const sessionPaths = {
   "/email-sign-in-codes": {
     post: {
-      description: `Emails a sign-in code; signing in with it creates the account the first time. An optional existing bearer session, even one too old to delete the account directly, authorizes delivery only to that account's email without BotID. The session must still be active; guests and disabled accounts are excluded. This does not refresh the session or authorize deletion: submit the emailed code to DELETE /v1/me. All sends retain Better Auth's IP rate limit. Anonymous requests still require browser BotID proof.`,
+      description: `Emails a sign-in code; signing in with it creates the account the first time. An optional existing bearer session, even one too old to delete the account directly, authorizes delivery only to that account's email without BotID. The session must still be active; guests and disabled accounts are excluded. This does not refresh the session or authorize deletion: submit the emailed code to DELETE /v1/me. All sends retain Better Auth's IP rate limit. ${EMAIL_CODE_BOT_CHECK}`,
       operationId: "createEmailSignInCode",
       requestBody: {
         content: { "application/json": { schema: emailSignInCodeRequestSchema } },
         required: true,
       },
+      requestParams: { header: appAttestHeaderParamsSchema },
       responses: {
         "204": { description: "Sign-in code sent" },
         "400": signupValidationResponse,
@@ -137,6 +140,7 @@ export const sessionPaths = {
         content: { "application/json": { schema: emailCodeSessionRequestSchema } },
         required: true,
       },
+      requestParams: { header: appAttestHeaderParamsSchema },
       responses: {
         "200": sessionTokenResponse,
         "400": emailCodeErrorResponse,

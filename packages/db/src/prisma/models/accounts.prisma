@@ -121,6 +121,20 @@ model Verification {
   @@map("verifications")
 }
 
+/// A key one install of the iOS app proved, with Apple App Attest, it holds inside a genuine copy of
+/// the app. Requests that need bot proof carry an assertion signed by it; each assertion's counter
+/// must be higher than the stored one, so none is accepted twice.
+model AppAttestKey {
+  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  keyId     String   @unique @map("key_id")
+  publicKey String   @map("public_key")
+  signCount Int      @default(0) @map("sign_count")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("app_attest_keys")
+}
+
 model Organization {
   id               String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
   name             String
