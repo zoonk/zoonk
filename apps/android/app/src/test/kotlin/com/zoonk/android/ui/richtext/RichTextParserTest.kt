@@ -16,10 +16,6 @@ private fun marked(
     value: String,
 ) = RichSegment(kind, value, marked = true)
 
-/**
- * Main's parser cases (`packages/player/src/lesson/_utils/lesson-rich-text.test.ts` and the
- * formulas `math-markup.test.ts` finds), plus Apple's `RichTextBlockTests`.
- */
 class RichTextParserTest {
     @Test
     fun readsInlineAndDisplayMathBetweenDollarSigns() {

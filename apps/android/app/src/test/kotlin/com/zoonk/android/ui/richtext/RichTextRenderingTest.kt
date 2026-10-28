@@ -95,7 +95,6 @@ class RichTextRenderingTest {
                     results.single()
                 }
 
-        // The column is at least as wide as its longest word, so a word never breaks inside.
         assertEquals(2, layout.lineCount)
         assertTrue(horizontalRange() > 0f)
     }

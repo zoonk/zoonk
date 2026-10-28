@@ -12,7 +12,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.ZoonkTheme
 
-/** Lesson text from the seeded Library (`percent-discount`, `why-colors-exist`) and main's tests. */
 internal object RichTextSamples {
     val question = "An R$ 80 T-shirt is 25% off. How much do you pay?"
 
@@ -51,7 +50,6 @@ internal object RichTextSamples {
             "See [percent basics](https://www.zoonk.com/learn) or try:\n\n```python\nprice * 0.75\n```"
 }
 
-/** Every way lesson text is drawn, with real lesson samples. */
 @Composable
 internal fun RichTextGallery(modifier: Modifier = Modifier) {
     Surface(modifier) {

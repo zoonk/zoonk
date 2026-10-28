@@ -4,7 +4,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 
-/** Main's `@zoonk/utils/markdown-table` cases. */
 class MarkdownTableTest {
     private val lines =
         listOf(

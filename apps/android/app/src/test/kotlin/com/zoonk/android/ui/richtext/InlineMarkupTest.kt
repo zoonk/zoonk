@@ -7,7 +7,6 @@ import com.zoonk.android.ui.richtext.MarkupKind.Text
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** Main's `@zoonk/utils/inline-markup` cases. */
 class InlineMarkupTest {
     @Test
     fun readsBoldItalicsWithStarsOrUnderscoresAndInlineCode() {

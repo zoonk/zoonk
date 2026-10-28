@@ -6,7 +6,6 @@ import java.util.Locale
 
 private const val NBSP = "\u00A0"
 
-/** Main's `rich-text-typography.test.ts` cases. */
 class NumberTypesettingTest {
     private val english = Locale.ENGLISH
     private val portuguese = Locale.forLanguageTag("pt")
