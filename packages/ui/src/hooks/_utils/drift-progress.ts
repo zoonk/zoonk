@@ -1,14 +1,8 @@
 /** Estimates are never the finish line: only the end of the work shows a full bar. */
 const DRIFT_CAP = 97;
 
-/** Without an estimate, a phase is assumed to take about half a minute. */
 const DEFAULT_ESTIMATE_MS = 30_000;
 
-/**
- * Where a progress bar should be while a phase runs: from `base` it closes in on the phase's end
- * (`target`) along an easing curve that covers most of the gap by the phase's estimated duration
- * and keeps creeping after it, so the bar never stops or overtakes the phase however long it runs.
- */
 export function getDriftedProgress({
   base,
   elapsedMs,

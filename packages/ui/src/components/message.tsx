@@ -45,11 +45,6 @@ function MessageHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-/**
- * What the learner said in a conversation (to their buddy, on a call, in a challenge): a soft
- * bubble on the right, its corner toward them tucked in, so it reads apart from the other side's
- * plain text at a glance. The one way every conversation draws the learner's words.
- */
 function LearnerBubble({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

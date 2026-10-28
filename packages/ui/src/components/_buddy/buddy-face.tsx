@@ -1,11 +1,6 @@
 import { Part } from "../_character/part";
 
-/**
- * Every buddy shares one face layout (eyes at x 44 and 76, y 58; mouth near y 80),
- * which is why every expression and every pair of glasses fits every buddy. Each face is drawn as
- * parts an act moves (`eye-left`, `pupil-left`, `lid-left`, `brow-left`, `mouth` and their right
- * twins), and expressions swap whole faces, as a 2D animator replaces a drawing.
- */
+/** Every buddy shares one face layout (eyes at x 44 and 76, y 58; mouth near y 80), so every expression and pair of glasses fits every buddy. */
 export type BuddyExpression =
   | "neutral"
   | "happy"
@@ -19,15 +14,10 @@ export type BuddyExpression =
 const INK = "#221b52";
 const PUPIL = "#16123a";
 
-/** Where each eye turns and closes: a lid comes down further than the lower one comes up. */
 const EYE_PIVOTS = { left: [44, 61], right: [76, 61] } as const;
 
 type Side = "left" | "right";
 
-/**
- * An open eye: its white, then the pupil with its glint, which a glance moves as one, and the line
- * a blink shows while the eye is closed.
- */
 function OpenEye({
   glint,
   pupil,
@@ -50,7 +40,6 @@ function OpenEye({
   );
 }
 
-/** The lids' line while a blink holds the eyes shut: drawn only by an act. */
 function BlinkLids() {
   return (
     <>
@@ -96,7 +85,6 @@ function OpenEyes() {
   );
 }
 
-/** Eyes shut in a smile's squint, or in content: an arc for each. */
 function ArcEyes({ left, right, width }: { left: string; right: string; width: number }) {
   return (
     <>
@@ -126,7 +114,6 @@ function LineMouth({ path }: { path: string }) {
   );
 }
 
-/** Soft brows over the glasses, in ink at half strength. */
 function Brows({ left, right }: { left: string; right: string }) {
   return (
     <>
@@ -184,7 +171,6 @@ function CheerFace() {
   );
 }
 
-/** Content: eyes shut in an easy arc, brows up, a closed smile with one corner higher. */
 function ProudFace() {
   return (
     <>
@@ -249,7 +235,6 @@ function KindFace() {
   );
 }
 
-/** Closed eyes sit 3 units lower, so the glasses move down with them (see Buddy). */
 export const SLEEPY_EYES_OFFSET = 3;
 
 function SleepyFace() {
@@ -323,10 +308,6 @@ function FaceDrawing({ expression }: { expression: BuddyExpression }) {
   }
 }
 
-/**
- * One expression's face, named by `data-face` so an act can swap it for the next one. `hidden`
- * draws a face an act is about to swap in.
- */
 export function BuddyFace({
   expression,
   hidden = false,

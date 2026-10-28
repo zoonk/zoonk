@@ -33,12 +33,6 @@ import type * as React from "react";
 
 const Command = Autocomplete.Root;
 
-/**
- * CommandDialog provides the Base UI dialog structure used by command palettes. On a phone it's
- * the whole screen, from the top, with the keyboard up; from `sm` it's a card high on the page,
- * over a light dim (a darker one in dark mode, where a light one doesn't read), casting the one
- * soft shadow overlays have.
- */
 function CommandDialog({
   children,
   className,
@@ -53,8 +47,6 @@ function CommandDialog({
             className={cn(
               "flex h-dvh w-full flex-col overflow-hidden pt-[env(safe-area-inset-top)]",
               "sm:bg-popover sm:text-popover-foreground sm:ring-input sm:max-w-column sm:h-auto sm:max-h-[calc(100dvh-12vh-1rem)] sm:rounded-xl sm:pt-0 sm:shadow-[0_16px_48px_-12px_rgb(0_0_0/0.35)] sm:ring-1 sm:ring-inset",
-              // On the dark dim the panel's edge carries its lift: a brighter hairline and a deeper
-              // shadow. Its surface stays the popover's, a step under the highlighted row's.
               "sm:dark:ring-foreground/20 sm:dark:shadow-[0_24px_64px_-12px_rgb(0_0_0/0.8)]",
               className,
             )}
@@ -67,18 +59,10 @@ function CommandDialog({
   );
 }
 
-/**
- * CommandDialogTitle keeps the accessible dialog title in the DOM without
- * adding visible chrome above the command input.
- */
 function CommandDialogTitle({ className, ...props }: React.ComponentProps<typeof DialogTitle>) {
   return <DialogTitle className={cn("sr-only", className)} {...props} />;
 }
 
-/**
- * CommandDialogDescription keeps the accessible dialog description in the DOM
- * without adding visible text that duplicates the command input placeholder.
- */
 function CommandDialogDescription({
   className,
   ...props
@@ -86,12 +70,7 @@ function CommandDialogDescription({
   return <DialogDescription className={cn("sr-only", className)} {...props} />;
 }
 
-/**
- * The field, focused when the dialog opens. On a phone it's a 44px field where the search field the
- * learner tapped was, with the way out beside it (`cancelLabel`, the caller's translated "Cancel");
- * from `sm` it's the card's 52px top row, with Escape's keycap where there's a keyboard. Its text
- * stays 16px on phones so iOS Safari doesn't zoom in.
- */
+/** Its text stays 16px on phones so iOS Safari doesn't zoom in. */
 function CommandInput({
   cancelLabel,
   className,
@@ -127,11 +106,6 @@ function CommandInput({
   );
 }
 
-/**
- * The results, scrolling vertically only (long labels truncate). From `sm` the list is as tall as
- * its results, up to `min(60vh, 28rem)`, so one result doesn't sit in an empty box; on a phone it
- * takes the rest of the screen.
- */
 function CommandList({ children, className, ...props }: Omit<AutocompleteListProps, "render">) {
   return (
     <ScrollAreaRoot
@@ -159,10 +133,6 @@ function CommandList({ children, className, ...props }: Omit<AutocompleteListPro
   );
 }
 
-/**
- * CommandGroup scopes a set of related command items and passes the group's
- * items to Base UI's collection renderer for keyboard navigation order.
- */
 function CommandGroup({ className, ...props }: AutocompleteGroupProps) {
   return (
     <Autocomplete.Group
@@ -173,9 +143,6 @@ function CommandGroup({ className, ...props }: AutocompleteGroupProps) {
   );
 }
 
-/**
- * A group's name: a section label over hairline rows on a phone, a quiet line from `sm`.
- */
 function CommandGroupLabel({ className, ...props }: AutocompleteGroupLabelProps) {
   return (
     <Autocomplete.GroupLabel
@@ -189,19 +156,10 @@ function CommandGroupLabel({ className, ...props }: AutocompleteGroupLabelProps)
   );
 }
 
-/**
- * CommandCollection renders the filtered items from the nearest command group
- * or root, letting consumers choose their own item contents.
- */
 function CommandCollection({ ...props }: AutocompleteCollectionProps) {
   return <Autocomplete.Collection {...props} />;
 }
 
-/**
- * One row: a 44px row with a hairline above it on a phone, a quiet rounded row from `sm`. Base UI owns
- * pointer and keyboard activation. With a keyboard at hand, the highlighted row ends with ⏎, the
- * key that runs it; a row's label takes the room (`flex-1`), so what ends a row sits at its end.
- */
 function CommandItem({ className, ...props }: AutocompleteItemProps) {
   return (
     <Autocomplete.Item
@@ -218,10 +176,6 @@ function CommandItem({ className, ...props }: AutocompleteItemProps) {
   );
 }
 
-/**
- * The keys the palette answers to, under its list where there's a keyboard: the caller lays out
- * its translated hints ("↑ ↓ move · ⏎ open · Esc close") with `Kbd`.
- */
 function CommandFooter({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

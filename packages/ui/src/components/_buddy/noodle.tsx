@@ -1,10 +1,6 @@
 import { Part } from "../_character/part";
 import { BELT_FILL, type BuddyBodyProps, buddyDefId, buddyDefUrl } from "./buddy-parts";
 
-/**
- * Noodle, a brain with legs. It wears no light: its Energy shows in its face (sleepy while it
- * naps, beaming from 80%) and as a number wherever Energy is shown.
- */
 export function NoodleBody({ face, uid }: BuddyBodyProps) {
   return (
     <>

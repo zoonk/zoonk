@@ -34,7 +34,6 @@ function Antenna({ glow, isNapping, uid }: Omit<BuddyBodyProps, "face">) {
   );
 }
 
-/** Beep, a tidy robot whose antenna bulb glows with Energy. */
 export function BeepBody({ face, glow, isNapping, uid }: BuddyBodyProps) {
   const metal = buddyDefUrl(uid, "beep-metal");
 

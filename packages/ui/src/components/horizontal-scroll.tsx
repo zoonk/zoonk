@@ -4,10 +4,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-/**
- * A row that scrolls sideways, with arrow buttons for mouse users when it overflows. The arrows'
- * accessible names come from the caller (`labels`), since this package has no translations.
- */
 function HorizontalScroll({
   className,
   children,

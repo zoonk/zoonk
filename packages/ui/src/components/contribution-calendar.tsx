@@ -10,13 +10,8 @@ const DAY_SELECTOR = '[data-slot="contribution-calendar-day"]';
 
 const NO_LABELS: readonly string[] = [];
 
-/**
- * Which day the calendar reads out: the one under the pointer, tapped, or reached with the arrow
- * keys, starting on the caller's default (usually the newest day with activity).
- */
 type ContributionCalendarContextValue = {
   activeIndex: number;
-  /** Whether the learner moved to a day yet; until then no square is marked. */
   inspecting: boolean;
   labels: readonly string[];
   readoutId: string;
@@ -35,7 +30,6 @@ function useContributionCalendar(): ContributionCalendarContextValue {
   return context;
 }
 
-/** The day a pointer or tap event is on, by the index its square carries. */
 function getEventDayIndex(target: EventTarget | null): number | null {
   if (!(target instanceof Element)) {
     return null;
@@ -47,25 +41,12 @@ function getEventDayIndex(target: EventTarget | null): number | null {
   return Number.isInteger(index) ? index : null;
 }
 
-/**
- * The squares' size. With a mouse or trackpad the year fills the calendar's width (its weeks share
- * it, `--calendar-weeks`), from 10px up to 16px a square, so a wide screen shows every month
- * whole; narrower than that it scrolls from its newest edge. A touch screen keeps 20px squares to
- * tap, and scrolls.
- */
 const CALENDAR_SIZE_CLASS = cn(
   "@container/calendar [--calendar-gap:0.125rem]",
   "[--calendar-cell:clamp(0.625rem,round(down,calc((100cqw-(var(--calendar-weeks,53)-1)*var(--calendar-gap))/var(--calendar-weeks,53)),1px),1rem)]",
   "pointer-coarse:[--calendar-cell:1.25rem]",
 );
 
-/**
- * A year of days as small squares, the way contribution charts look, read one day at a time: the
- * readout under the grid says the day under the pointer, the one tapped, or the one reached with
- * the arrow keys. The grid is the calendar's one control (a single tab stop, as large as the
- * chart), so the squares stay small without hundreds of tiny targets. `labels` has one sentence
- * per day, in the days' order; `weeks`, how many columns the grid has, sizes the squares.
- */
 export function ContributionCalendar({
   children,
   className,
@@ -75,11 +56,8 @@ export function ContributionCalendar({
   weeks,
   ...props
 }: ComponentProps<"figure"> & {
-  /** The day read out before the learner picks one. */
   defaultIndex?: number;
-  /** One sentence per day; a loading calendar has none yet. */
   labels?: readonly string[];
-  /** How many week columns the grid has (53 for a year), so the squares fill the width. */
   weeks?: number;
 }) {
   const readoutId = useId();
@@ -112,10 +90,6 @@ export function ContributionCalendar({
   );
 }
 
-/**
- * The calendar's title row: its name on the left and, when it has one, the key to its shades on
- * the right (`ContributionCalendarLegend`), wrapping under it when the row is too narrow.
- */
 export function ContributionCalendarCaption({
   children,
   className,
@@ -132,12 +106,6 @@ export function ContributionCalendarCaption({
   );
 }
 
-/**
- * Gives each contribution calendar a visible heading while keeping its
- * typography consistent across metrics and applications: a page block's
- * title in sentence case ("Past 12 months"), as every block of a page is
- * named, never an uppercase label.
- */
 export function ContributionCalendarTitle({ children, className, ...props }: ComponentProps<"h2">) {
   return (
     <h2
@@ -150,12 +118,7 @@ export function ContributionCalendarTitle({ children, className, ...props }: Com
   );
 }
 
-/**
- * Starts overflowing calendars at their newest edge while remaining a normal
- * left-aligned viewport when the complete grid fits. On a touch screen, where
- * it scrolls, the viewport rounds down to a whole number of week columns, so
- * no square is cut.
- */
+/** RTL so an overflowing calendar opens at its newest edge. */
 export function ContributionCalendarViewport({
   children,
   className,
@@ -176,11 +139,7 @@ export function ContributionCalendarViewport({
   );
 }
 
-/**
- * Keeps the grid and its supporting content on one intrinsic-width canvas, at least as wide as
- * the viewport so a calendar that fits spans it. The physical auto margin left-aligns it while
- * the surrounding RTL viewport still opens overflowing calendars at their newest edge.
- */
+/** A physical auto margin left-aligns it inside the RTL viewport. */
 export function ContributionCalendarContent({
   children,
   className,
@@ -198,13 +157,7 @@ export function ContributionCalendarContent({
   );
 }
 
-/**
- * The calendar's one control: the pointer or a tap picks the day under it, and once focused the
- * arrow keys move a day or a week (scrolling the day into view). Name it with `aria-label`; the
- * readout under it says the day. A year that fits spreads its weeks across the calendar's width,
- * so its last week ends under the key to its shades; squares are whole pixels, so the room left
- * over goes to the gaps between them.
- */
+/** Name it with `aria-label`. */
 export function ContributionCalendarGrid({ children, className, ...props }: ComponentProps<"div">) {
   const { activeIndex, labels, readoutId, setActiveIndex } = useContributionCalendar();
 
@@ -259,10 +212,6 @@ export function ContributionCalendarGrid({ children, className, ...props }: Comp
   );
 }
 
-/**
- * Aligns seven contribution days vertically and reserves a compact header row
- * for an optional month or period label.
- */
 export function ContributionCalendarWeek({ children, className, ...props }: ComponentProps<"div">) {
   return (
     <div
@@ -278,10 +227,6 @@ export function ContributionCalendarWeek({ children, className, ...props }: Comp
   );
 }
 
-/**
- * Positions a period label above the first week that represents it without
- * affecting the seven-row day grid.
- */
 export function ContributionCalendarPeriod({
   children,
   className,
@@ -301,10 +246,6 @@ export function ContributionCalendarPeriod({
   );
 }
 
-/**
- * One day's square, in the caller's color for its value (`className`), at its place in the days'
- * order (`index`). The day being read out is ringed once the learner picks one.
- */
 export function ContributionCalendarDay({
   className,
   index,
@@ -329,10 +270,6 @@ export function ContributionCalendarDay({
   );
 }
 
-/**
- * Says the day being read out, in the caller's words ("Oct 12 · 1 activity"), as the learner moves
- * through the days, in the mono face as every date and count reads.
- */
 export function ContributionCalendarReadout({ className, ...props }: ComponentProps<"p">) {
   const { activeIndex, labels, readoutId } = useContributionCalendar();
 
@@ -352,10 +289,6 @@ export function ContributionCalendarReadout({ className, ...props }: ComponentPr
   );
 }
 
-/**
- * The key to the shades ("Less ■■■■ More"), at the end of the calendar's title row, with its
- * labels and swatches composed by the caller.
- */
 export function ContributionCalendarLegend({
   children,
   className,
@@ -377,10 +310,6 @@ export function ContributionCalendarLegend({
   );
 }
 
-/**
- * Gives legend copy a stable semantic element without prescribing what the
- * scale means in any particular product context.
- */
 export function ContributionCalendarLegendLabel({
   children,
   className,
@@ -393,7 +322,6 @@ export function ContributionCalendarLegendLabel({
   );
 }
 
-/** One shade of the key, a small square in the caller's color or intensity class. */
 export function ContributionCalendarLegendSwatch({ className, ...props }: ComponentProps<"span">) {
   return (
     <span
@@ -405,10 +333,6 @@ export function ContributionCalendarLegendSwatch({ className, ...props }: Compon
   );
 }
 
-/**
- * Reserves the grid's height (the period labels' row and seven squares) while a consumer's private
- * data streams, at the size the squares will have, so nothing moves when they come.
- */
 export function ContributionCalendarGridSkeleton({
   className,
   ...props
@@ -425,7 +349,6 @@ export function ContributionCalendarGridSkeleton({
   );
 }
 
-/** Reserves the key's place at the end of the title row while its data streams. */
 export function ContributionCalendarLegendSkeleton({
   className,
   ...props

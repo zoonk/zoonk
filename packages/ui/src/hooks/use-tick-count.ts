@@ -5,11 +5,6 @@ import { useEffect, useState } from "react";
 const MIN_INTERVAL_MS = 2200;
 const MAX_INTERVAL_MS = 3600;
 
-/**
- * Counts up at a relaxed, slightly irregular pace, starting over at 0 whenever `resetKey` changes.
- * It drives detail lines that change while a long step runs ("Writing lesson 2…"), slow enough to
- * read each one.
- */
 export function useTickCount({ resetKey }: { resetKey: string }): number {
   const [state, setState] = useState({ count: 0, resetKey });
 

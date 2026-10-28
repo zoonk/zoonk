@@ -136,10 +136,6 @@ export function ContainerBody({ children, className }: ContainerBodyProps) {
 
 type ContainerHeaderSkeletonProps = { className?: string };
 
-/**
- * Mirrors the real header primitives so streamed titles replace the fallback
- * without changing the header's height, padding, or sibling spacing.
- */
 export function ContainerHeaderSkeleton({ className }: ContainerHeaderSkeletonProps) {
   return (
     <ContainerHeader aria-hidden="true" className={className}>

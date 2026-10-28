@@ -8,7 +8,7 @@ import { useIsMounted } from "./use-is-mounted";
 const MAX_RECORDING_MS = 30_000;
 const TICK_MS = 250;
 
-/** Formats the grader accepts, in the order browsers support them (Chrome, then Safari). */
+/** Formats the grader accepts. */
 const RECORDING_TYPES = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"];
 
 type RecorderStatus = "acquiring" | "denied" | "idle" | "recording";
@@ -22,7 +22,6 @@ function canRecord(): boolean {
   );
 }
 
-/** Whether this browser can record audio. False while rendering on the server. */
 export function useCanRecord(): boolean {
   return useIsMounted() && canRecord();
 }
@@ -39,7 +38,6 @@ type ActiveRecording = {
   timeout: ReturnType<typeof setTimeout>;
 };
 
-/** Release the session's own resources before the asynchronous stop event arrives. */
 function finishRecording(active: ActiveRecording) {
   if (active.released) {
     return;
@@ -55,7 +53,6 @@ function finishRecording(active: ActiveRecording) {
   active.stream.getTracks().forEach((track) => track.stop());
 }
 
-/** Constructor/start failures still release the microphone, even before a session is ready. */
 async function createRecording({
   onStopped,
   stream,
@@ -111,10 +108,6 @@ async function createRecording({
   return active;
 }
 
-/**
- * Records one spoken answer in the browser. Audio stays in memory and goes only to the grader;
- * the microphone turns off as soon as recording stops. Recording stops by itself after 30 seconds.
- */
 export function useVoiceRecorder({ onRecorded }: { onRecorded: (recording: Recording) => void }) {
   const [status, setStatus] = useState<RecorderStatus>("idle");
   const [elapsedMs, setElapsedMs] = useState(0);

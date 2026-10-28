@@ -5,14 +5,6 @@ import { useKeyboardCallback } from "./use-keyboard";
 
 const DEFAULT_SEARCH_DEBOUNCE_MS = 300;
 
-/**
- * A hook that handles common command palette search logic:
- * - Open/close state with Cmd+K keyboard shortcut
- * - Query state with controlled input
- * - Debounced search with useTransition and race condition handling
- * - Minimum query length before searching
- * - Reset on close
- */
 export function useCommandPaletteSearch<TResults>(options: {
   debounceMs?: number;
   emptyResults: TResults;

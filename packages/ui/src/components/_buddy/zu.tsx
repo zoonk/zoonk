@@ -47,7 +47,6 @@ function Antenna({
   );
 }
 
-/** Zu, a curious alien whose antenna tips glow with Energy. */
 export function ZuBody({ face, glow, isNapping, uid }: BuddyBodyProps) {
   return (
     <>

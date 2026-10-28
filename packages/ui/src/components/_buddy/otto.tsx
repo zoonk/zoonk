@@ -1,7 +1,6 @@
 import { Part } from "../_character/part";
 import { BELT_FILL, type BuddyBodyProps, buddyDefId, buddyDefUrl } from "./buddy-parts";
 
-/** The spots on Otto's head: its skin, a shade deeper than it, never a light. */
 const SPOTS = [
   { cx: 62, cy: 25, radius: 3.6 },
   { cx: 81, cy: 31, radius: 3 },
@@ -19,10 +18,6 @@ const TENTACLE = {
 
 const TENTACLE_TIP = { fill: "#efe6ff", opacity: 0.9 } as const;
 
-/**
- * Otto, a know-it-all octopus. It wears no light: its Energy shows in its face (sleepy while it
- * naps, beaming from 80%) and as a number wherever Energy is shown.
- */
 export function OttoBody({ face, uid }: BuddyBodyProps) {
   return (
     <>
@@ -38,7 +33,6 @@ export function OttoBody({ face, uid }: BuddyBodyProps) {
         <ellipse cx="60" cy="116" fill="#000" opacity=".12" rx="30" ry="3.4" />
       </Part>
       <Part name="body" pivot={[60, 112]}>
-        {/* The outer tentacles are Otto's arms; the three between them stand. */}
         <Part name="arm-left" pivot={[36, 84]}>
           <path {...TENTACLE} d="M36 84 C 28 95, 18 99, 16 107 C 15 113, 23 114, 25 109" />
           <circle {...TENTACLE_TIP} cx="19" cy="104" r="1.8" />

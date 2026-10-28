@@ -1,34 +1,20 @@
 import { createContext, use, useEffect, useSyncExternalStore } from "react";
 import { useIsMounted } from "../hooks/use-is-mounted";
 
-/**
- * Set where a fallback above already covers code still loading (a conversation's skeleton on its
- * first look): an on-demand module waits for its code there instead of drawing without it.
- */
+/** Set where a fallback above already covers loading code, so on-demand modules wait there. */
 export const OnDemandWaitContext = createContext(false);
 
 type OnDemand<T> = {
-  /** The module once it's here; null before. */
   getLoaded: () => T | null;
-  /** Starts loading it, once; settles as null when its chunk can't load (offline, a stale deploy). */
+  /** Settles as null when its chunk can't load (offline, a stale deploy). */
   load: () => Promise<T | null>;
   /**
-   * The module once it's here. Before that, server rendering and hydration wait for it (the HTML
-   * is drawn with it), and so does a screen where `wait` is true, or, by default, inside an
-   * `OnDemandWaitContext`; anywhere else it's null for that moment while it loads. Not `enabled`,
-   * it's null and never loads.
+   * Server rendering, hydration, `wait` and an `OnDemandWaitContext` suspend until it's here;
+   * elsewhere it's null while it loads.
    */
   useModule: (options?: { enabled?: boolean; wait?: boolean }) => T | null;
 };
 
-/**
- * Code a screen needs only sometimes, in its own chunk: loaded on demand or ahead (`load`), and
- * drawn at once once it's here.
- *
- * ```ts
- * const renderer = createOnDemand(() => import("./tutor-markdown"));
- * ```
- */
 export function createOnDemand<T>(importer: () => Promise<T>): OnDemand<T> {
   const state: {
     failed: boolean;
@@ -66,7 +52,6 @@ export function createOnDemand<T>(importer: () => Promise<T>): OnDemand<T> {
   }
 
   function useModule({ enabled = true, wait }: { enabled?: boolean; wait?: boolean } = {}) {
-    // The server renders with the module (it waits for it), so hydration reads it the same way.
     const loaded = useSyncExternalStore(subscribe, getLoaded, getLoaded);
     const waitsAbove = use(OnDemandWaitContext);
     const hydrating = !useIsMounted();

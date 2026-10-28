@@ -4,10 +4,6 @@ import { safeAsync } from "@zoonk/utils/error";
 import { useCallback, useRef, useState } from "react";
 import useInfiniteScroll from "react-infinite-scroll-hook";
 
-/**
- * Infinite lists page from the last rendered item, so this keeps cursor
- * bookkeeping tied to the deduped list instead of the raw server response.
- */
 function getLastKey<TItem>(
   items: TItem[],
   getKey: (item: TItem) => string | number,
@@ -42,10 +38,6 @@ export function useInfiniteList<TItem>({
   const [hasNextPage, setHasNextPage] = useState(initialItems.length >= limit);
   const loadInFlight = useRef(false);
 
-  /**
-   * Load-more requests are opportunistic background fetches. Network failures
-   * should stop auto-loading instead of escaping as global promise rejections.
-   */
   const loadMore = useCallback(async () => {
     const cursor = getLastKey(items, getKey);
 
@@ -76,10 +68,7 @@ export function useInfiniteList<TItem>({
     setHasLoadError(false);
   }, [fetchMore, getKey, items, limit]);
 
-  /**
-   * A failed background load should be user-recoverable without reloading the
-   * page, but retrying only on intent prevents a visible sentinel from looping.
-   */
+  /** Retrying only on intent keeps a visible sentinel from looping after a failure. */
   const retry = useCallback(() => {
     setHasLoadError(false);
     void loadMore();

@@ -5,9 +5,6 @@ type BrandIconProps = Omit<React.ComponentProps<"svg">, "stroke"> & {
 
 export type BrandIconComponent = React.ComponentType<BrandIconProps>;
 
-/**
- * Keeps every locally owned brand mark on the same sizing and accessibility contract while allowing each brand to provide its own view box and colors.
- */
 function BrandIcon({
   children,
   color = "currentColor",
@@ -30,7 +27,6 @@ function BrandIcon({
   );
 }
 
-/** Renders the Apple mark from local SVG data so authentication UI does not depend on a general-purpose icon package. */
 export function AppleBrandIcon({ children, ...props }: BrandIconProps) {
   return (
     <BrandIcon {...props}>
@@ -40,7 +36,6 @@ export function AppleBrandIcon({ children, ...props }: BrandIconProps) {
   );
 }
 
-/** Renders the Bluesky mark from local SVG data so social surfaces share one dependency-free source of truth. */
 export function BlueskyBrandIcon({ children, ...props }: BrandIconProps) {
   return (
     <BrandIcon {...props}>
@@ -50,7 +45,6 @@ export function BlueskyBrandIcon({ children, ...props }: BrandIconProps) {
   );
 }
 
-/** Renders the Facebook mark from local SVG data so social surfaces share one dependency-free source of truth. */
 export function FacebookBrandIcon({ children, ...props }: BrandIconProps) {
   return (
     <BrandIcon {...props}>
@@ -60,7 +54,6 @@ export function FacebookBrandIcon({ children, ...props }: BrandIconProps) {
   );
 }
 
-/** Renders the GitHub mark from local SVG data so social surfaces share one dependency-free source of truth. */
 export function GithubBrandIcon({ children, ...props }: BrandIconProps) {
   return (
     <BrandIcon {...props}>
@@ -70,7 +63,6 @@ export function GithubBrandIcon({ children, ...props }: BrandIconProps) {
   );
 }
 
-/** Renders the Google mark from local SVG data so authentication UI does not depend on a general-purpose icon package. */
 export function GoogleBrandIcon({ children, ...props }: BrandIconProps) {
   return (
     <BrandIcon viewBox="0 0 48 48" {...props}>
@@ -95,7 +87,6 @@ export function GoogleBrandIcon({ children, ...props }: BrandIconProps) {
   );
 }
 
-/** Renders the Instagram mark from local SVG data so social surfaces share one dependency-free source of truth. */
 export function InstagramBrandIcon({ children, ...props }: BrandIconProps) {
   return (
     <BrandIcon {...props}>
@@ -105,7 +96,6 @@ export function InstagramBrandIcon({ children, ...props }: BrandIconProps) {
   );
 }
 
-/** Renders the LinkedIn mark from local SVG data so social surfaces share one dependency-free source of truth. */
 export function LinkedinBrandIcon({ children, ...props }: BrandIconProps) {
   return (
     <BrandIcon viewBox="0 0 448 512" {...props}>
@@ -115,7 +105,6 @@ export function LinkedinBrandIcon({ children, ...props }: BrandIconProps) {
   );
 }
 
-/** Renders the Reddit mark from local SVG data so social surfaces share one dependency-free source of truth. */
 export function RedditBrandIcon({ children, ...props }: BrandIconProps) {
   return (
     <BrandIcon {...props}>
@@ -125,7 +114,6 @@ export function RedditBrandIcon({ children, ...props }: BrandIconProps) {
   );
 }
 
-/** Renders the Threads mark from local SVG data so social surfaces share one dependency-free source of truth. */
 export function ThreadsBrandIcon({ children, ...props }: BrandIconProps) {
   return (
     <BrandIcon {...props}>
@@ -135,7 +123,6 @@ export function ThreadsBrandIcon({ children, ...props }: BrandIconProps) {
   );
 }
 
-/** Renders the TikTok mark from local SVG data so social surfaces share one dependency-free source of truth. */
 export function TiktokBrandIcon({ children, ...props }: BrandIconProps) {
   return (
     <BrandIcon {...props}>
@@ -145,7 +132,6 @@ export function TiktokBrandIcon({ children, ...props }: BrandIconProps) {
   );
 }
 
-/** Renders the X mark from local SVG data so social surfaces share one dependency-free source of truth. */
 export function XBrandIcon({ children, ...props }: BrandIconProps) {
   return (
     <BrandIcon {...props}>
@@ -155,7 +141,6 @@ export function XBrandIcon({ children, ...props }: BrandIconProps) {
   );
 }
 
-/** Renders the YouTube mark from local SVG data so social surfaces share one dependency-free source of truth. */
 export function YoutubeBrandIcon({ children, ...props }: BrandIconProps) {
   return (
     <BrandIcon {...props}>

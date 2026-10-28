@@ -32,11 +32,6 @@ function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {
   );
 }
 
-/**
- * A sheet has a close button when it gets the caller's translated `closeLabel` (this package has
- * no translations of its own). `overlayClassName` changes the backdrop, such as a light one for a
- * panel whose changes show on the page behind it.
- */
 function SheetContent({
   className,
   children,

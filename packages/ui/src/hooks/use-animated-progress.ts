@@ -3,23 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { getDriftedProgress } from "./_utils/drift-progress";
 
-/** One decimal is enough for the bar's width; the label shows whole percents. */
 const PRECISION = 10;
 
-/**
- * The bar takes a step this often and its width eases over most of it (the timeline's transition),
- * so it keeps moving without re-rendering every frame, and animations settle between steps.
- */
 const STEP_MS = 1000;
 
-/**
- * A progress bar that keeps moving while the work does. `progress` is the share of work finished
- * (0 to 100) and `target` where it will be once the running phase finishes; while `active`, the
- * shown value drifts from one toward the other at the phase's `estimatedMs` pace, never going
- * back and never reaching 100 before `progress` does. Inactive, it holds where it was (a failure)
- * or jumps to `progress` when that's ahead (done). A restarted run starts over from its own
- * progress.
- */
+/** `target` is where `progress` will be once the running phase finishes. */
 export function useAnimatedProgress({
   active,
   estimatedMs,

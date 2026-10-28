@@ -67,54 +67,15 @@ function checkModifiers({
   return checks.every(Boolean);
 }
 
-/**
- * A custom hook that executes a callback when a keyboard shortcut is pressed.
- *
- * @param key The shortcut key to listen for.
- * @param callback The function to call when the shortcut is pressed.
- * @param options Optional configuration for modifier keys and matching mode.
- *
- * Callbacks return `void` (handled — `preventDefault` is called) or
- * `false` (not handled — `preventDefault` is skipped).
- *
- * @example
- * // Cmd+K OR Ctrl+K (cross-platform toggle)
- * useKeyboardCallback("k", () => toggle(), {
- *   mode: "any",
- *   modifiers: { ctrlKey: true, metaKey: true },
- * });
- *
- * @example
- * // Just Enter, no modifiers allowed
- * useKeyboardCallback("Enter", () => submit(), { mode: "none" });
- *
- * @example
- * // Conditionally handle — return false to skip preventDefault
- * useKeyboardCallback("ArrowRight", () => {
- *   if (!canNavigate) return false;
- *   goNext();
- * }, { mode: "none" });
- */
 export function useKeyboardCallback(
   key: string,
   callback: (event: KeyboardEvent) => ShortcutResult,
   options: {
-    /**
-     * How to match modifiers:
-     * - "all": ALL specified modifiers must be pressed (AND) — default
-     * - "any": ANY specified modifier triggers (OR)
-     * - "none": NO modifier keys can be pressed
-     */
+    /** `all` (the default) needs every modifier, `any` one of them, `none` no modifier at all. */
     mode?: ModifierMode;
-    /**
-     * Modifiers to check. If undefined/empty, modifiers are ignored (just the key matters).
-     */
+    /** With none given, only the key matters. */
     modifiers?: KeyboardModifiers;
-    /**
-     * A screen's own shortcut, such as Enter to continue or an arrow to the next screen, rather
-     * than an app-wide one: it leaves the key to the control in focus (a field, a dialog or menu,
-     * Enter on a button or a link) and acts once however long the key is held.
-     */
+    /** Leaves the key to the control in focus and acts once however long the key is held. */
     screen?: boolean;
   } = {},
 ) {
@@ -153,11 +114,7 @@ export function useKeyboardCallback(
   }, [key, mode, screen, inPopup, altKey, ctrlKey, metaKey, shiftKey]);
 }
 
-/**
- * Enter runs the screen's main action (continue, check, start), keyboard first. A focused button
- * or link keeps its own Enter, and so do fields, dialogs and menus. Return `false` when the
- * action can't run, so Enter keeps its default.
- */
+/** Return `false` when the action can't run, so Enter keeps its default. */
 export function useEnterKey(
   callback: () => ShortcutResult,
   { enabled = true }: { enabled?: boolean } = {},
@@ -168,10 +125,6 @@ export function useEnterKey(
   });
 }
 
-/**
- * For a screen whose next step is a link (or a button elsewhere on the page): Enter presses the
- * element this ref is on, as if it had focus.
- */
 export function useEnterClick<Target extends HTMLElement>({
   enabled = true,
 }: { enabled?: boolean } = {}) {
@@ -191,11 +144,7 @@ export function useEnterClick<Target extends HTMLElement>({
   return ref;
 }
 
-/**
- * For a full-screen task whose leaving loses nothing: Escape presses its close link (the element
- * this ref is on), the same way the lesson player closes. Dialogs, menus and fields keep their own
- * Escape.
- */
+/** Only for a full-screen task whose leaving loses nothing. */
 export function useEscapeClick<Target extends HTMLElement>({
   enabled = true,
 }: { enabled?: boolean } = {}) {
@@ -216,11 +165,7 @@ export function useEscapeClick<Target extends HTMLElement>({
   return ref;
 }
 
-/**
- * Number keys 1 to 9 pick the screen's options, as fast as a tap. Digits typed in a field, or
- * pressed inside a dialog or a menu, stay there. Return `false` from `onPick` for a key that
- * picked nothing.
- */
+/** Return `false` from `onPick` for a key that picked nothing. */
 export function useNumberKeys({
   count,
   enabled = true,

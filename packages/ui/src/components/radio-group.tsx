@@ -7,7 +7,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CircleIcon } from "lucide-react";
 import { type ComponentProps, createContext, useContext, useId } from "react";
 
-/** The id of the option label a radio sits in, which names it. */
 const OptionLabelContext = createContext<string | undefined>(undefined);
 
 function RadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
@@ -20,11 +19,7 @@ function RadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
   );
 }
 
-/**
- * One choice: a label around its radio and whatever describes it, so the whole option picks it.
- * Base UI names a radio from a label around it only once the page hydrates, so the option names
- * its radio itself and the page reads the same before then.
- */
+/** Base UI names a radio from its wrapping label only after hydration, so the option names it itself. */
 function RadioGroupOption({ id, ...props }: ComponentProps<typeof Label>) {
   const generatedId = useId();
   const labelId = id ?? generatedId;

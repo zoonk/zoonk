@@ -1,11 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
 
-/**
- * A place with nothing in it yet, said plainly on the page: a quiet glyph, a short title, one line
- * and the one thing to do, aligned to the column's edge like the content it stands in for. No
- * card, no tile.
- */
 function Empty({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -29,7 +24,6 @@ function EmptyHeader({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-/** A bare, muted glyph above the title; `icon` is the same glyph, kept for its callers. */
 const emptyMediaVariants = cva(
   "text-muted-foreground mb-2 flex shrink-0 items-center [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {

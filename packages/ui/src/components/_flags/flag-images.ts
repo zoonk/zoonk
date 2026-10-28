@@ -70,13 +70,8 @@ import uzFlag from "flag-icons/flags/4x3/uz.svg";
 import vnFlag from "flag-icons/flags/4x3/vn.svg";
 import zaFlag from "flag-icons/flags/4x3/za.svg";
 
-/** A static SVG import: its URL (Turbopack) or image data with the URL in `src` (webpack). */
 type FlagImage = string | { height: number; src: string; width: number };
 
-/**
- * Every flag a language course can show, as static files the host's bundler serves (flag-icons,
- * MIT). The record must list every `LanguageFlagCode`, so a new language can't lose its flag.
- */
 export const FLAG_IMAGES: Record<LanguageFlagCode, FlagImage> = {
   af: afFlag,
   al: alFlag,

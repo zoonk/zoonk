@@ -2,17 +2,11 @@ import { type Act } from "../_character/acting";
 import { type ActKey, type ActTrack } from "../_character/keyframes";
 import { type BuddyExpression } from "./buddy-face";
 
-/** The buddy's acts: each one a short performance on its parts, timed in frames at 24 a second. */
 export type BuddyActName = "blink" | "cheer" | "glance" | "proud" | "smile" | "surprise";
 
-/** A blink's lid line rests hidden; it shows only while the eyes are shut. */
 const LID_REST = { opacity: 0 } as const;
 
-/**
- * A blink starting at `from`: the lids close fast and open slower (2 frames down, 1 shut, 3 up),
- * as people blink, and the eyes shut all the way (Trutoiu et al., "Modeling and Animating Eye
- * Blinks", 2011).
- */
+/** Lids close fast and open slower, as people blink (Trutoiu et al., "Modeling and Animating Eye Blinks", 2011). */
 function blink(from: number): { eyes: ActKey[]; lids: ActKey[] } {
   return {
     eyes: [
@@ -28,7 +22,6 @@ function blink(from: number): { eyes: ActKey[]; lids: ActKey[] } {
   };
 }
 
-/** The same keys for both eyes, or both lids. */
 function both(part: "eye" | "lid" | "pupil", keys: readonly ActKey[]): ActTrack[] {
   const rest = part === "lid" ? LID_REST : undefined;
 
@@ -38,17 +31,11 @@ function both(part: "eye" | "lid" | "pupil", keys: readonly ActKey[]): ActTrack[
   ];
 }
 
-/** A blink on its own: the eyes shut and open, nothing else moves. */
 const BLINK: Act<BuddyExpression> = {
   frames: 6,
   tracks: [...both("eye", blink(0).eyes), ...both("lid", blink(0).lids)],
 };
 
-/**
- * A glance to the side and back: the eyes dart first (2 frames), the face slides and the head
- * turns after them, the antennae lag behind the head and swing past it, and a blink comes with the
- * return, as people blink on a big change of gaze.
- */
 const GLANCE: Act<BuddyExpression> = {
   frames: 26,
   tracks: [
@@ -110,10 +97,6 @@ const GLANCE: Act<BuddyExpression> = {
   ],
 };
 
-/**
- * A smile forming: the eyes lead with a slight squint, the mouth stretches and becomes a smile,
- * the head tips a little and the body lifts, the antennae following.
- */
 const SMILE: Act<BuddyExpression> = {
   frames: 16,
   swapAt: 4,
@@ -148,12 +131,6 @@ const SMILE: Act<BuddyExpression> = {
   ],
 };
 
-/**
- * A cheer: anticipation first (the body dips and the eyes squeeze shut), then the action (it
- * stretches up, the arms swing high, one a frame behind the other and not as far, so they never
- * mirror), the face bursts into a grin, and the follow-through: the antennae drag behind the
- * stretch and wobble before they settle, after the body has.
- */
 const CHEER: Act<BuddyExpression> = {
   frames: 30,
   swapAt: 4,
@@ -249,10 +226,6 @@ const CHEER: Act<BuddyExpression> = {
   ],
 };
 
-/**
- * Surprise, a take: a quick dip, then the eyes pop wide and the mouth opens, the body stretches,
- * the arms lift, the antennae spring back, and a blink a moment later, while it sinks in.
- */
 const SURPRISE: Act<BuddyExpression> = {
   frames: 22,
   swapAt: 3,
@@ -294,10 +267,6 @@ const SURPRISE: Act<BuddyExpression> = {
   ],
 };
 
-/**
- * Pride: the eyes close into a content arc (the face swaps while they're shut), the chin lifts as
- * the face slides up and the head tips back, the chest fills, the brows rise last.
- */
 const PROUD: Act<BuddyExpression> = {
   frames: 24,
   swapAt: 5,
@@ -359,10 +328,6 @@ const PROUD: Act<BuddyExpression> = {
   ],
 };
 
-/**
- * The faces whose eyes are open, the only ones a blink can close: a reaction landing in one blinks
- * once a while later. Cheering, proud and sleepy eyes are already shut.
- */
 export const BUDDY_OPEN_EYES: ReadonlySet<BuddyExpression> = new Set([
   "happy",
   "kind",

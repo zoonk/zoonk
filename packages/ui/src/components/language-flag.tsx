@@ -2,21 +2,14 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { getLanguageFlagCode } from "@zoonk/utils/language-flags";
 import { FLAG_IMAGES } from "./_flags/flag-images";
 
-/** Every flag is drawn at 4:3 (flag-icons' 4x3 set); CSS sets the rendered size. */
+/** flag-icons' 4x3 set; CSS sets the rendered size. */
 const FLAG_WIDTH = 640;
 const FLAG_HEIGHT = 480;
 
-/** Whether a language course has a flag to show instead of its picture. */
 export function hasLanguageFlag(language: string | null | undefined): language is string {
   return Boolean(language && getLanguageFlagCode(language));
 }
 
-/**
- * A language course's picture: the exact flag of the variety it teaches (US English, Brazilian
- * Portuguese, Spain Spanish), with soft corners and a hairline edge so white flags still show on
- * white and glass. Size it with `className` (it keeps 4:3). Decorative unless given `alt`, such as
- * "American English" when the title doesn't say which variety.
- */
 export function LanguageFlag({
   alt = "",
   className,

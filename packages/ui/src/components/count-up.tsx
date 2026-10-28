@@ -5,19 +5,7 @@ import { readDuration, readEasing } from "@zoonk/ui/lib/motion";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useEffectEvent, useLayoutEffect, useRef } from "react";
 
-/**
- * A number counting up to what was reached, once, when it's earned: the Brain Power a task or
- * the day earned (a positive number). The value is on the page from the first frame, so screen readers, tests
- * and the layout read it (its width held, the digits tabular); the counting digits draw over it
- * for the fill's time on the ease-out (`duration-fill`), in step with a meter filling beside it,
- * then give way to it. It counts only when the celebration plays (`useCelebration`: never on a
- * reload, a revisit or the way back); with reduced motion, or where the stylesheet isn't loaded,
- * it shows the value at once.
- *
- * ```tsx
- * <CountUp format={(points) => `+${format.number(points)}`} value={27} />
- * ```
- */
+/** The final value is on the page from the first frame for screen readers and layout; the counting digits draw over it. */
 export function CountUp({
   className,
   delay = 0,
@@ -25,9 +13,7 @@ export function CountUp({
   value,
 }: {
   className?: string;
-  /** Milliseconds before it counts: its beat in the moment's order. */
   delay?: number;
-  /** Writes a number as the page shows it (`+27`, `1,240`), the same way at every step. */
   format?: (value: number) => string;
   value: number;
 }) {

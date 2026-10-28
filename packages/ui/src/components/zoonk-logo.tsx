@@ -1,7 +1,3 @@
-/**
- * The Zoonk brain with its bolt, drawn in the current text color. The bolt is
- * cut out in the page background, so the mark works on light and dark pages.
- */
 export function ZoonkLogo({ className }: { className?: string }) {
   return (
     <svg

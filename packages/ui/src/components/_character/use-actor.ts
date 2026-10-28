@@ -6,39 +6,23 @@ import { useCallback, useImperativeHandle, useLayoutEffect, useRef, useState } f
 import { flushSync } from "react-dom";
 import { type Act, type PosesByExpression, playAct } from "./acting";
 
-/**
- * `delay` holds the act for its beat in a moment, in milliseconds on the animation clock;
- * `playbackRate` slows an act down to study it (0.1 plays it at 10%).
- */
+/** `delay` is in milliseconds on the animation clock. */
 export type PlayOptions = { delay?: number; playbackRate?: number };
 
-/**
- * What a character's parent can ask of it: play one of its acts, resolved once it lands (true) or
- * once another act stops it (false).
- */
+/** `play` resolves true once the act lands, false once another act stops it. */
 export type ActorHandle<ActName extends string> = {
   play: (name: ActName, options?: PlayOptions) => Promise<boolean>;
 };
 
-/**
- * What a character does because something happened, once, when the moment it's in plays
- * (`useCelebration`): an act, on the moment's beat (`delay`, in milliseconds).
- */
 export type Reaction<ActName extends string> = { act: ActName; delay?: number };
 
-/**
- * One blink a while after a reaction lands, so the character holds its pose without freezing (a
- * moving hold): its blink, and the faces it shows its eyes open in, the only ones a blink closes.
- */
 export type AfterBlink<Expression extends string, ActName extends string> = {
   act: ActName;
   faces: ReadonlySet<Expression>;
 };
 
-/** How long a character holds the pose a reaction landed in before it blinks once: about 2 s. */
 const BLINK_AFTER_FRAMES = 48;
 
-/** The keys that move a screen on (Continue's ⏎, Esc): pressing one lands an act at once. */
 const LANDING_KEYS: ReadonlySet<string> = new Set(["Enter", "Escape"]);
 
 type Queued<Expression extends string> = {
@@ -48,12 +32,10 @@ type Queued<Expression extends string> = {
   run: number;
 };
 
-/** The act under way, and what stops listening for the learner moving on. */
 type Running = { animations: Animation[]; release?: () => void; run: number };
 
 const IDLE: Running = { animations: [], run: 0 };
 
-/** Stops the act under way where it is: its parts go back to the still drawing. */
 function stopActing(running: React.RefObject<Running>) {
   for (const animation of running.current.animations) {
     animation.cancel();
@@ -63,10 +45,7 @@ function stopActing(running: React.RefObject<Running>) {
   running.current = IDLE;
 }
 
-/**
- * While an act plays, the learner moving on (a press anywhere, Continue's ⏎, Esc) lands it at once,
- * so it never plays on behind what they do next. Returns what stops listening.
- */
+/** The learner moving on lands the act at once, so it never plays on behind what they do next. */
 function landOnInput(animations: readonly Animation[]): () => void {
   const land = (event: Event) => {
     if (event instanceof KeyboardEvent && (event.repeat || !LANDING_KEYS.has(event.key))) {
@@ -88,16 +67,8 @@ function landOnInput(animations: readonly Animation[]): () => void {
 }
 
 /**
- * Makes a character drawn in `svg` act: it draws `expression` still until an act plays, then draws
- * the faces the act swaps in (hidden), plays the act on its parts in the commit that drew them, and
- * lands by drawing the act's expression still in the same task as it cancels the animations, so the
- * last frame and the still drawing never flash between them. A new act stops the one under way
- * where it is.
- *
- * A `reaction` plays once, when the moment the character is in plays (`useCelebration`), from
- * `expression`, then one blink (`afterBlink`) about 2 s after it lands. Where the moment doesn't
- * play (the server's page, a reload, a revisit, the way back), the character is drawn still in the
- * expression the reaction lands in, so the server draws the final pose and nothing flashes.
+ * Lands by drawing the act's expression in the same task that cancels the animations, so nothing
+ * flashes between them. Where the moment doesn't play, the reaction's landing pose is drawn still.
  */
 export function useActor<Expression extends string, ActName extends string>({
   acts,
@@ -133,12 +104,10 @@ export function useActor<Expression extends string, ActName extends string>({
   const running = useRef<Running>(IDLE);
   const reacted = useRef(false);
 
-  // The next act starts from the expression drawn now.
   useLayoutEffect(() => {
     current.current = shown;
   }, [shown]);
 
-  // Starts the queued act in the commit that drew the faces it swaps in.
   useLayoutEffect(() => {
     const next = queued.current;
     const root = svg.current;

@@ -3,10 +3,6 @@
 import { ScrollArea as ScrollAreaPrimitive } from "@base-ui/react/scroll-area";
 import { cn } from "@zoonk/ui/lib/utils";
 
-/**
- * ScrollAreaRoot is exposed separately so composed primitives like Autocomplete
- * can render their own content element inside Base UI's scroll viewport.
- */
 function ScrollAreaRoot({ className, ...props }: ScrollAreaPrimitive.Root.Props) {
   return (
     <ScrollAreaPrimitive.Root
@@ -17,10 +13,6 @@ function ScrollAreaRoot({ className, ...props }: ScrollAreaPrimitive.Root.Props)
   );
 }
 
-/**
- * ScrollAreaViewport owns the native scroll container while keeping focus
- * styles consistent with the rest of the UI package.
- */
 function ScrollAreaViewport({ className, ...props }: ScrollAreaPrimitive.Viewport.Props) {
   return (
     <ScrollAreaPrimitive.Viewport
@@ -34,10 +26,6 @@ function ScrollAreaViewport({ className, ...props }: ScrollAreaPrimitive.Viewpor
   );
 }
 
-/**
- * ScrollAreaContent lets list primitives render as the measured scroll content
- * element that Base UI expects for stable scrolling and thumb sizing.
- */
 function ScrollAreaContent({ className, ...props }: ScrollAreaPrimitive.Content.Props) {
   return (
     <ScrollAreaPrimitive.Content
@@ -48,7 +36,6 @@ function ScrollAreaContent({ className, ...props }: ScrollAreaPrimitive.Content.
   );
 }
 
-/** The scrollbar's thumb, inside `ScrollAreaScrollbar`. */
 function ScrollAreaThumb({ className, ...props }: ScrollAreaPrimitive.Thumb.Props) {
   return (
     <ScrollAreaPrimitive.Thumb
@@ -59,10 +46,6 @@ function ScrollAreaThumb({ className, ...props }: ScrollAreaPrimitive.Thumb.Prop
   );
 }
 
-/**
- * ScrollAreaScrollbar wraps the native scrollbar primitive while preserving the
- * shared orientation-aware sizing and touch behavior.
- */
 function ScrollAreaScrollbar({
   className,
   orientation = "vertical",

@@ -3,22 +3,15 @@ import { ChevronDownIcon } from "lucide-react";
 import type * as React from "react";
 
 /**
- * The small select (`size="sm"`), as tall as a small button (30px) beside a row's text: its line,
- * its hover and its focus ring are drawn by the wrapper, centered on the select, which stays 44px
- * tall and see-through so it's as easy to press as any target (a select can't widen itself with a
- * `::before` the way `hit-area` does). `isolate` keeps the drawn box under the select's words in
- * any surroundings.
+ * A select can't grow its hit area with a `::before` like `hit-area`, so it stays 44px tall and
+ * see-through while the wrapper draws the small box.
  */
 const SMALL_SELECT_FRAME_CLASS = cn(
   "data-[size=sm]:before:border-input data-[size=sm]:isolate data-[size=sm]:before:pointer-events-none data-[size=sm]:before:absolute data-[size=sm]:before:inset-x-0 data-[size=sm]:before:top-1/2 data-[size=sm]:before:-z-10 data-[size=sm]:before:h-7.5 data-[size=sm]:before:-translate-y-1/2 data-[size=sm]:before:rounded-md data-[size=sm]:before:border data-[size=sm]:before:transition-colors",
   "data-[size=sm]:has-[select:hover]:before:bg-muted data-[size=sm]:has-[select:focus-visible]:before:border-ring data-[size=sm]:has-[select:focus-visible]:before:ring-ring/50 data-[size=sm]:has-[select:focus-visible]:before:ring-[3px]",
 );
 
-/**
- * `focusableWhenDisabled` works as it does on Button for a controlled select: one that waits on a
- * save stays in the tab order as `aria-disabled` and ignores changes, so keyboard focus isn't
- * dropped to the page.
- */
+/** A native select has no `focusableWhenDisabled`, so it's added here to match Button. */
 function NativeSelect({
   className,
   disabled,

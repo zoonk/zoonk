@@ -1,19 +1,13 @@
 import { type PartPose } from "./part";
 
-/**
- * How a part moves into a key: on a motion token's curve, or held until the key and then changed
- * at once (`hold`, as an animator swaps a drawing).
- */
+/** `hold` stays put until the key, then changes at once. */
 type ActEase = "accelerate" | "follow" | "hold" | "out" | "spring" | "swing";
 
-/** A part's pose at one frame of an act, and the curve it arrives there on. */
 export type ActKey = PartPose & { at: number; ease?: ActEase };
 
 /**
- * One part's motion through an act. It starts from the pose the part is drawn in and ends at the
- * pose of the expression the act lands in, on `settle`'s curve, so an act never jumps at either end;
- * a key at frame 0 or at the last frame replaces that end. `rest` is the part's pose when no
- * expression poses it (a blink's lid line rests hidden).
+ * Starts from the part's drawn pose and ends at the landing expression's on `settle`'s curve; a key
+ * at frame 0 or the last frame replaces that end.
  */
 export type ActTrack = { keys: readonly ActKey[]; part: string; rest?: PartPose; settle?: ActEase };
 
@@ -21,7 +15,6 @@ type PoseProperty = keyof PartPose;
 
 const PROPERTIES: readonly PoseProperty[] = ["opacity", "rotate", "scale", "translate"];
 
-/** A pose value as CSS writes it, for `element.animate()`; a part at rest where unposed. */
 function formatValue(property: PoseProperty, pose: PartPose): string | number {
   switch (property) {
     case "opacity":
@@ -41,13 +34,9 @@ function formatValue(property: PoseProperty, pose: PartPose): string | number {
   }
 }
 
-/** A curve as `element.animate()` takes it: a token from the stylesheet, or a held step. */
 export type EaseResolver = (ease: ActEase) => string;
 
-/**
- * One property's keyframes for a track: the part's start pose, the act's keys, its landing pose.
- * Each keyframe carries the curve that reaches the next one, as `element.animate()` reads it.
- */
+/** Each keyframe carries the curve that reaches the next one, as `element.animate()` reads it. */
 export function buildPropertyKeyframes({
   ease,
   frames,
@@ -77,11 +66,6 @@ export function buildPropertyKeyframes({
   }));
 }
 
-/**
- * The properties a track moves: the ones its keys set, and the ones its part's pose changes in
- * between the expression it starts from and the one it lands in (`from`, `to`), so the part eases
- * there over the act on `settle`'s curve instead of jumping as it lands.
- */
 export function getTrackProperties(
   track: ActTrack,
   from: PartPose = {},
@@ -94,7 +78,6 @@ export function getTrackProperties(
   );
 }
 
-/** A face swap: the old face shown until the swap frame, the new one from it. */
 export function buildSwapKeyframes({
   frames,
   showing,

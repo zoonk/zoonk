@@ -21,14 +21,6 @@ function DrawerPortal({ ...props }: DrawerPrimitive.Portal.Props) {
   return <DrawerPrimitive.Portal data-slot="drawer-portal" {...props} />;
 }
 
-/**
- * Semi-transparent overlay behind the drawer.
- *
- * Opacity is tied to `--drawer-swipe-progress` so it fades
- * as the user swipes to dismiss. Transitions are disabled
- * during active swiping (`data-[swiping]:duration-0`) so the
- * backdrop tracks the finger exactly.
- */
 function DrawerBackdrop({ className, ...props }: DrawerPrimitive.Backdrop.Props) {
   return (
     <DrawerPrimitive.Backdrop
@@ -48,16 +40,7 @@ function DrawerBackdrop({ className, ...props }: DrawerPrimitive.Backdrop.Props)
   );
 }
 
-/**
- * The main drawer panel. Renders as a bottom sheet by default
- * with swipe-to-dismiss support via base-ui's Drawer primitive.
- *
- * The Viewport wrapper is required for swipe gestures to work.
- * The Popup tracks the swipe via `translateY(var(--drawer-swipe-movement-y))`
- * and uses velocity-based exit duration via `--drawer-swipe-strength`.
- * `backdropClassName` changes the backdrop, such as a lighter one that
- * leaves what the drawer is about readable above it.
- */
+/** Base UI needs the Viewport wrapper for swipe gestures. */
 function DrawerPopup({
   backdropClassName,
   className,
@@ -93,10 +76,6 @@ function DrawerPopup({
   );
 }
 
-/**
- * Wraps text content inside the drawer to allow text selection
- * without triggering swipe-to-dismiss gestures.
- */
 function DrawerContent({ className, ...props }: DrawerPrimitive.Content.Props) {
   return (
     <DrawerPrimitive.Content

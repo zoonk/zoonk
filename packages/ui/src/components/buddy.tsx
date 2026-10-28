@@ -22,21 +22,14 @@ import { Part } from "./_character/part";
 
 export type { BuddyExpression } from "./_buddy/buddy-face";
 
-/** Buddies grow with the belts: 70% as a baby, 85% young, full size as an adult. */
 const STAGE_SCALE: Record<BuddyStage, number> = { adult: 1, baby: 0.7, young: 0.85 };
 
-/** Growth scales around the feet so a buddy always stands on the same ground line. */
 const GROUND_X = 60;
 const GROUND_Y = 116;
 
-/** Every buddy's face sits in the same square of the full-size art: eyes at y 58, mouth near 80. */
 const FACE_CENTER_Y = 60;
 const FACE_SIZE = 96;
 
-/**
- * The square around the face at the buddy's current size, so a small icon shows the face at the
- * same size whatever the stage: a baby's face would otherwise be a dot in the corner of the box.
- */
 function getFaceViewBox(scale: number) {
   const size = FACE_SIZE * scale;
   const centerY = GROUND_Y - (GROUND_Y - FACE_CENTER_Y) * scale;
@@ -52,7 +45,6 @@ const EXPRESSION_BY_ENERGY: Record<BuddyEnergyState, BuddyExpression> = {
   napping: "sleepy",
 };
 
-/** The buddy's everyday face, from its Energy: sleepy while it naps, beaming once it glows. */
 export function getBuddyEnergyExpression({
   energy,
   studiedToday = false,
@@ -78,7 +70,6 @@ function BuddyBody({ kind, ...props }: BuddyBodyProps & { kind: BuddyKind }) {
 export type BuddyProps = Omit<React.ComponentProps<"svg">, "children" | "viewBox"> & {
   beltColor: BeltColor;
   crop?: "face";
-  /** Null before the learner has any Energy: the buddy is awake, without a glow. */
   energy: number | null;
   expression?: BuddyExpression;
   glasses?: BuddyGlasses;
@@ -88,10 +79,6 @@ export type BuddyProps = Omit<React.ComponentProps<"svg">, "children" | "viewBox
   studiedToday?: boolean;
 };
 
-/**
- * The buddy's drawing, with the faces an act swaps in (`swapFaces`) drawn hidden over its own.
- * `Buddy` draws it still; `BuddyActor` (`@zoonk/ui/components/buddy-actor`) makes it act.
- */
 export function BuddyFigure({
   beltColor,
   className,
@@ -160,14 +147,7 @@ export function BuddyFigure({
   );
 }
 
-/**
- * The learner's buddy: Zu, Noodle, Beep or Otto. The stage comes from the belt, the
- * glow and the default expression from Energy, and every pair of glasses fits
- * every buddy. Pass a translated `label` so the buddy is announced as an image; omit
- * it only when adjacent text already names the buddy. `crop="face"` frames only the face, for
- * icon sizes such as a tab. It holds still: a character never moves as one block, and only
- * `BuddyActor` makes its parts act.
- */
+/** Omit `label` only when adjacent text already names the buddy. */
 function Buddy(props: BuddyProps) {
   return <BuddyFigure {...props} />;
 }

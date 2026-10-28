@@ -9,7 +9,6 @@ import {
   getTrackProperties,
 } from "./keyframes";
 
-/** Names each curve, so a test reads which one reaches each key. */
 const ease: EaseResolver = (name) => name;
 
 describe(buildPropertyKeyframes, () => {
@@ -132,7 +131,6 @@ describe(buildSwapKeyframes, () => {
   });
 });
 
-/** The keys of every act, by part, as `element.animate()` will read them. */
 function describeAct(act: Act<string>) {
   return act.tracks.flatMap((track) =>
     getTrackProperties(track).map((property) => ({

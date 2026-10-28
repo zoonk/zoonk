@@ -3,10 +3,6 @@
 import { Slider as SliderPrimitive } from "@base-ui/react/slider";
 import { cn } from "@zoonk/ui/lib/utils";
 
-/**
- * Base UI's slider renders a real `input type="range"` per thumb, so arrow keys, Page Up/Down,
- * Home/End, snapping to `step` and `aria-valuetext` work without extra code.
- */
 function Slider({ className, thumbAlignment = "edge", ...props }: SliderPrimitive.Root.Props) {
   return (
     <SliderPrimitive.Root
@@ -28,7 +24,6 @@ function SliderLabel({ className, ...props }: SliderPrimitive.Label.Props) {
   );
 }
 
-/** The control is 44px tall so the whole row is an easy touch target, not just the thumb. */
 function SliderControl({ className, ...props }: SliderPrimitive.Control.Props) {
   return (
     <SliderPrimitive.Control
@@ -62,7 +57,6 @@ function SliderIndicator({ className, ...props }: SliderPrimitive.Indicator.Prop
   );
 }
 
-/** The thumb stays white in both themes, like native sliders, so it stands out on dark tracks. */
 function SliderThumb({ className, ...props }: SliderPrimitive.Thumb.Props) {
   return (
     <SliderPrimitive.Thumb

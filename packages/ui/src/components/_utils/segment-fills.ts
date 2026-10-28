@@ -4,10 +4,6 @@ function sum(values: readonly number[]): number {
   return values.reduce((total, value) => total + value, 0);
 }
 
-/**
- * How full each segment of a segmented bar is (0 to 1) when the whole bar is at `value` percent.
- * Segments are as wide as their `weights`, so filling them in order matches the percentage.
- */
 export function getSegmentFills({
   value,
   weights,

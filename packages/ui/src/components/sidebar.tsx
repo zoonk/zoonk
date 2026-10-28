@@ -65,8 +65,6 @@ function SidebarProvider({
   const isMobile = useIsMobile();
   const [openMobile, setOpenMobile] = useState(false);
 
-  // This is the internal state of the sidebar.
-  // We use openProp and setOpenProp for control from outside the component.
   const [open, setOpen] = useState(defaultOpen);
   const isOpen = openProp ?? open;
 
@@ -80,26 +78,21 @@ function SidebarProvider({
         setOpen(openState);
       }
 
-      // This sets the cookie to keep the sidebar state.
       void setCookie(SIDEBAR_COOKIE_NAME, String(openState), { maxAge: SIDEBAR_COOKIE_MAX_AGE });
     },
     [setOpenProp, isOpen],
   );
 
-  // Helper to toggle the sidebar.
   const toggleSidebar = useCallback(
     () => (isMobile ? setOpenMobile((prev) => !prev) : setIsOpen((prev) => !prev)),
     [isMobile, setIsOpen],
   );
 
-  // Adds a keyboard shortcut to toggle the sidebar.
   useKeyboardCallback(SIDEBAR_KEYBOARD_SHORTCUT, () => toggleSidebar(), {
     mode: "any",
     modifiers: { ctrlKey: true, metaKey: true },
   });
 
-  // We add a state so that we can do data-state="expanded" or "collapsed".
-  // This makes it easier to style the sidebar with Tailwind classes.
   const state = isOpen ? "expanded" : "collapsed";
 
   const contextValue = useMemo<SidebarContextProps>(
@@ -173,7 +166,6 @@ function Sidebar({
 
   return (
     <>
-      {/* Sheet overlay for mobile when expanded */}
       <Sheet onOpenChange={setOpenMobile} open={openMobile}>
         <SheetContent
           className="bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 md:hidden [&>button]:hidden"
@@ -191,7 +183,6 @@ function Sidebar({
         </SheetContent>
       </Sheet>
 
-      {/* Icon sidebar - always visible, forced to icon mode on mobile */}
       <div
         className="group peer text-sidebar-foreground"
         data-collapsible={state === "collapsed" ? collapsible : ""}
@@ -200,13 +191,10 @@ function Sidebar({
         data-state={state}
         data-variant={variant}
       >
-        {/* This is what handles the sidebar gap */}
         <div
           className={cn(
             "relative bg-transparent transition-[width] duration-200 ease-linear",
-            // Mobile: always show icon width
             "w-(--sidebar-width-icon)",
-            // Desktop: responsive width based on state
             "md:w-(--sidebar-width)",
             "md:group-data-[collapsible=offcanvas]:w-0",
             "group-data-[side=right]:rotate-180",
@@ -219,14 +207,11 @@ function Sidebar({
         <div
           className={cn(
             "fixed inset-y-0 z-10 flex h-svh transition-[left,right,width] duration-200 ease-linear",
-            // Mobile: always icon width
             "w-(--sidebar-width-icon)",
-            // Desktop: full width with responsive behavior
             "md:w-(--sidebar-width)",
             side === "left"
               ? "left-0 md:group-data-[collapsible=offcanvas]:-left-(--sidebar-width)"
               : "right-0 md:group-data-[collapsible=offcanvas]:-right-(--sidebar-width)",
-            // Adjust the padding for floating and inset variants.
             variant === "floating" || variant === "inset"
               ? "p-2 md:group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]"
               : "group-data-[side=left]:border-r group-data-[side=right]:border-l md:group-data-[collapsible=icon]:w-(--sidebar-width-icon)",

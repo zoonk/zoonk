@@ -9,13 +9,7 @@ import { createContext, useContext } from "react";
 import { PopupShortcutLayer } from "../hooks/_utils/popup-shortcut-layer";
 import type * as React from "react";
 
-/**
- * Passes the `open` state from Dialog to DialogPortal so it can hide the portal
- * on Activity cleanup (preventing flash on back-navigation) and only remove
- * the hidden class on genuine close-to-open transitions.
- *
- * Workaround for: https://github.com/vercel/next.js/issues/86577
- */
+/** Lets the portal stay hidden after Next.js's Activity cleanup until a real reopen: https://github.com/vercel/next.js/issues/86577 */
 const DialogOpenContext = createContext<boolean | undefined>(undefined);
 
 function Dialog({ open, ...props }: DialogPrimitive.Root.Props) {
@@ -36,11 +30,6 @@ function DialogPortal({ ...props }: DialogPrimitive.Portal.Props) {
   return <DialogPrimitive.Portal data-slot="dialog-portal" ref={ref} {...props} />;
 }
 
-/**
- * Some dialog layouts need Base UI's viewport between the backdrop and popup so
- * the popup can be positioned and clipped like the upstream command palette
- * demo instead of using the centered default DialogContent wrapper.
- */
 function DialogViewport({ className, ...props }: DialogPrimitive.Viewport.Props) {
   return (
     <DialogPrimitive.Viewport
@@ -68,10 +57,6 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
   );
 }
 
-/**
- * A dialog has a close button when it gets the caller's translated `closeLabel` (this package has
- * no translations of its own).
- */
 function DialogContent({
   className,
   children,
@@ -104,11 +89,6 @@ function DialogContent({
   );
 }
 
-/**
- * DialogPopup exposes the raw Base UI popup for custom layouts that cannot use
- * DialogContent because they need to supply their own portal, backdrop, or
- * viewport structure.
- */
 function DialogPopup({ children, className, ...props }: DialogPrimitive.Popup.Props) {
   return (
     <DialogPrimitive.Popup
@@ -132,10 +112,7 @@ function DialogFooter({
   closeLabel,
   children,
   ...props
-}: React.ComponentProps<"div"> & {
-  /** A "Close" button at the end, with the caller's translated label. */
-  closeLabel?: string;
-}) {
+}: React.ComponentProps<"div"> & { closeLabel?: string }) {
   return (
     <div
       className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}

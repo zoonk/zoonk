@@ -22,10 +22,6 @@ function ProgressTrack({ className, ...props }: ProgressPrimitive.Track.Props) {
   );
 }
 
-/**
- * The share done, in blue (progress made: lessons done, a chapter's way through). A bar that says
- * where the learner is in a task they're doing passes the text color (`bg-foreground`).
- */
 function ProgressIndicator({ className, ...props }: ProgressPrimitive.Indicator.Props) {
   return (
     <ProgressPrimitive.Indicator

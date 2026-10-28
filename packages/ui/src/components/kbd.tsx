@@ -1,7 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { type VariantProps, cva } from "class-variance-authority";
 
-// No extra fading: the muted colors already keep hints quiet and readable (AA).
 const shortcutKbdVariants = cva("hidden pointer-fine:inline-flex", {
   defaultVariants: { tone: "default" },
   variants: {
@@ -29,11 +28,7 @@ function Kbd({ className, ...props }: React.ComponentProps<"kbd">) {
   );
 }
 
-/**
- * Shows keyboard shortcut hints only on devices with a mouse or trackpad, where a keyboard is at
- * hand. Keys are glyphs (`⏎`, `Esc`, `⌘K`). The host control owns `aria-keyshortcuts`; this
- * component is visual-only.
- */
+/** Visual only: the host control owns `aria-keyshortcuts`. */
 function ShortcutKbd({ children, className, tone }: ShortcutKbdProps) {
   return (
     <Kbd

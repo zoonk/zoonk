@@ -1,9 +1,6 @@
 /*
- * A list of flat rows with a hairline between them: its children, or the items of one `ol`/`ul`
- * directly inside. The row the list highlights on a fill (`aria-current`, or `data-highlighted`
- * where it isn't the current one: a picked choice, where an outline starts) drops the hairlines
- * touching it, above and below, so the fill reads as one shape. They turn transparent rather than
- * go, so nothing moves when the highlight does.
+ * Hairlines touching the highlighted row turn transparent rather than go, so nothing moves when the
+ * highlight does.
  */
 @utility divided-rows {
   & > * + *,

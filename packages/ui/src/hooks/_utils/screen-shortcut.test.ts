@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { getNumberKeyIndex, isScreenShortcut } from "./screen-shortcut";
 
-/** Dispatches a key press on an element, so `event.target` is that element as in a browser. */
 function pressOn(target: EventTarget, init: KeyboardEventInit) {
   const event = new KeyboardEvent("keydown", { bubbles: true, cancelable: true, ...init });
   target.dispatchEvent(event);

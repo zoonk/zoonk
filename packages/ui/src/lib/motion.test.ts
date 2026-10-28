@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { readDuration, readEasing } from "./motion";
 
-/** An element inside one that sets `styles`, as a page's root sets the tokens for everything in it. */
 function elementUnder(styles: Record<string, string>): HTMLElement {
   const parent = document.createElement("div");
 

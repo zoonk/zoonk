@@ -1,7 +1,6 @@
 import { type BuddyGlasses } from "@zoonk/utils/buddy";
 import { Spark, buddyDefId, buddyDefUrl } from "./buddy-parts";
 
-/** Mirrors a left lens onto the right eye around the face's vertical axis. */
 const MIRROR = "matrix(-1 0 0 1 120 0)";
 
 const HIGHLIGHT = { fill: "none", stroke: "#fff", strokeLinecap: "round" } as const;

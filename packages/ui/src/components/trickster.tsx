@@ -6,17 +6,10 @@ import { Part, type PartPose } from "./_character/part";
 const INK = "#2a1260";
 const PUPIL = "#16123a";
 
-/** How the Trickster feels: sly while he runs a challenge, smug when he scores, defeated when beaten. */
 export type TricksterExpression = "sly" | "smug" | "defeated";
 
-/** The parts an expression poses beyond his face, by their `data-part`. */
 export type TricksterPart = "arm-left" | "arm-right" | "body" | "crown" | "tail";
 
-/**
- * Each expression's pose, one source for the still drawing and for the acts that reach it. Sly is
- * his rest. Smug cocks his crown and curls his tail. Defeated slumps: shorter and wider, leaning
- * back, the crown slipping over his brow, the tail wilting and the arms hanging.
- */
 export const TRICKSTER_POSES: Record<
   TricksterExpression,
   Partial<Record<TricksterPart, PartPose>>
@@ -32,7 +25,6 @@ export const TRICKSTER_POSES: Record<
   smug: { crown: { rotate: -7 }, tail: { rotate: -5 } },
 };
 
-/** The upper lids, as each eye's clip: their top edge is the lid. */
 const LIDS: Record<TricksterExpression, { left: string; right: string }> = {
   defeated: {
     left: "M40 104.6 L70 100.4 L70 120 L40 120 Z",
@@ -92,7 +84,6 @@ function TricksterDefs({ uid }: { uid: string }) {
   );
 }
 
-/** A plasma "?" tail curling out of his head. */
 function Tail({ uid }: { uid: string }) {
   const tail = buddyDefUrl(uid, "tail");
 
@@ -122,7 +113,6 @@ function Tail({ uid }: { uid: string }) {
   );
 }
 
-/** One eye under its lid, with the pupil and glint a glance moves as one. */
 function MaskEye({
   expression,
   glint,
@@ -162,7 +152,6 @@ function Brow({ path, side }: { path: string; side: "left" | "right" }) {
   );
 }
 
-/** The domino mask he wears in every mood. */
 function Mask() {
   return (
     <Part name="mask" pivot={[70, 102]}>
@@ -174,7 +163,6 @@ function Mask() {
   );
 }
 
-/** A lopsided grin with a fang, and the dimple at its high corner. */
 function Grin({ cheek, fang, grin }: { cheek: string; fang: string; grin: string }) {
   return (
     <Part name="mouth" pivot={[70, 120]}>
@@ -185,7 +173,6 @@ function Grin({ cheek, fang, grin }: { cheek: string; fang: string; grin: string
   );
 }
 
-/** One eyebrow raised and a lopsided grin with a fang: his face while he runs a challenge. */
 function SlyFace({ uid }: { uid: string }) {
   return (
     <>
@@ -218,7 +205,6 @@ function SlyFace({ uid }: { uid: string }) {
   );
 }
 
-/** Pleased with himself: lids lower, a sidelong look, the brow higher, the grin wider. */
 function SmugFace({ uid }: { uid: string }) {
   return (
     <>
@@ -252,7 +238,6 @@ function SmugFace({ uid }: { uid: string }) {
   );
 }
 
-/** Beaten: brows up in the middle, heavy lids, eyes down, a wobbly mouth and a drop of sweat. */
 function DefeatedFace({ uid }: { uid: string }) {
   return (
     <>
@@ -355,10 +340,6 @@ function Crown({ uid }: { uid: string }) {
   );
 }
 
-/**
- * The "?" sign on a stick he holds up when he's the star of the card. It turns around his left
- * shoulder, as the arm holding it does, so an act moves both together.
- */
 function QuestionSign() {
   return (
     <Part name="sign" pivot={[46, 116]}>
@@ -385,11 +366,6 @@ export type TricksterProps = Omit<React.ComponentProps<"svg">, "children"> & {
   pose?: "hero" | "sly";
 };
 
-/**
- * The Trickster's drawing, with the faces an act swaps in (`swapFaces`) drawn hidden over his own.
- * `Trickster` draws him still; `TricksterActor` (`@zoonk/ui/components/trickster-actor`) makes him
- * act.
- */
 export function TricksterFigure({
   className,
   expression = "sly",
@@ -470,13 +446,7 @@ export function TricksterFigure({
   );
 }
 
-/**
- * The Trickster, the checkpoints' boss: a sly comet with a "?" tail and a crown he
- * hasn't earned. `hero` holds up a "?" sign; `expression` is how he feels (sly, smug, defeated).
- * Pass a translated `label` so he's announced as an image; omit it when adjacent text already
- * names him. He holds still: a character never moves as one block, and only `TricksterActor`
- * makes his parts act.
- */
+/** Omit `label` only when adjacent text already names him. */
 function Trickster(props: TricksterProps) {
   return <TricksterFigure {...props} />;
 }

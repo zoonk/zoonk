@@ -9,11 +9,7 @@ import { getSegmentFills } from "./_utils/segment-fills";
 
 type GenerationTimelineStepStatus = "active" | "completed" | "failed" | "pending";
 
-/**
- * A wait for generated content: a header with the progress bar, then one flat row per phase. It
- * holds no copy; callers pass every label. `data-paused` on it (a lost connection) stops the rows'
- * working animations while their statuses stay as they were.
- */
+/** `data-paused` (a lost connection) stops the rows' working animations; their statuses stay. */
 function GenerationTimeline({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -34,10 +30,6 @@ function GenerationTimelineHeader({ className, ...props }: React.ComponentProps<
   );
 }
 
-/**
- * The wait is usually the page's main content, so its title is the page's heading, sized as every
- * page's; a wait inside a screen that has its own (`render`, such as `<h2 />`) takes the next level.
- */
 function GenerationTimelineTitle({ className, render, ...props }: useRender.ComponentProps<"h1">) {
   return useRender({
     defaultTagName: "h1",
@@ -57,12 +49,6 @@ function GenerationTimelineDescription({ className, ...props }: React.ComponentP
   );
 }
 
-/**
- * The bar with its percentage: one segment per phase, as wide as the phase usually takes
- * (`weights`), so the segments fill in step with the percentage. The ones done are blue, the one
- * running fills as it goes, the rest wait on the track. `aria-label` names what is being made;
- * pass `locale` so the server and the browser format the percentage the same way.
- */
 function GenerationTimelineProgress({
   className,
   value,
@@ -100,10 +86,6 @@ function GenerationTimelineProgress({
   );
 }
 
-/**
- * Says the current phase to screen readers when it changes (a polite, visually hidden status), so
- * they hear each phase once instead of every percent or detail line.
- */
 function GenerationTimelineStatus({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
@@ -125,10 +107,6 @@ function GenerationTimelineSteps({ className, ...props }: React.ComponentProps<"
   );
 }
 
-/**
- * One phase as a flat row: its mark, its label and, while it runs, a detail line under it, with its
- * time at the end when the row has one.
- */
 function GenerationTimelineStep({
   className,
   status,
@@ -148,10 +126,6 @@ function GenerationTimelineStep({
   );
 }
 
-/**
- * A quiet ring while the phase waits, a dot in the text color while it runs, a faint check once
- * done and an alert where it stopped. Level with the label's first line.
- */
 function GenerationTimelineStepIndicator({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -168,7 +142,6 @@ function GenerationTimelineStepIndicator({ className, ...props }: React.Componen
   );
 }
 
-/** The phase's name, muted unless it's the one running (or where it stopped). */
 function GenerationTimelineStepLabel({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -184,7 +157,6 @@ function GenerationTimelineStepLabel({ className, ...props }: React.ComponentPro
   );
 }
 
-/** What the running phase is doing right now; hidden on every other row. */
 function GenerationTimelineStepDetail({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -198,7 +170,6 @@ function GenerationTimelineStepDetail({ className, ...props }: React.ComponentPr
   );
 }
 
-/** How long the phase took, or has taken so far, in mono at the row's end, level with its label. */
 function GenerationTimelineStepTime({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span

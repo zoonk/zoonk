@@ -9,10 +9,8 @@ import {
 import { type PartPose } from "./part";
 
 /**
- * A short performance on a character's parts, timed in frames at 24 a second: what moves, when, and
- * the expression it lands in. At `swapAt` the face is replaced by the landing expression's, the way
- * a 2D animator swaps a mouth or a pair of eyes, usually while the eyes are shut or a part is
- * squashed, so the change reads as one motion.
+ * Timed in frames at 24 a second. Put `swapAt` where the eyes are shut or a part is squashed, so the
+ * face swap reads as one motion.
  */
 export type Act<Expression extends string> = {
   frames: number;
@@ -21,12 +19,10 @@ export type Act<Expression extends string> = {
   tracks: readonly ActTrack[];
 };
 
-/** Each expression's part poses, by `data-part`. */
 export type PosesByExpression<Expression extends string> = Partial<
   Record<Expression, Partial<Record<string, PartPose>>>
 >;
 
-/** An act under way: its animations, and a promise that settles once it landed or stopped. */
 type ActPlayback = { animations: Animation[]; finished: Promise<unknown> };
 
 /**
@@ -45,12 +41,8 @@ function resolveEase(root: Element): EaseResolver {
 }
 
 /**
- * Plays an act on a character drawn in `root`, from the expression it shows (`from`), on the
- * browser's animation clock: every part moves on its own (`rotate`, `scale`, `translate`,
- * `opacity`), held at its last frame until the caller draws the landing expression and cancels
- * them. `delay` holds the drawing still for that many milliseconds first, on the same clock, so a
- * slowed page slows the wait too. With reduced motion (the frame token is 0) nothing moves and
- * nothing waits: the caller draws the landing expression at once.
+ * Parts hold their last frame until the caller draws the landing expression and cancels them. With
+ * reduced motion nothing moves or waits, and the caller draws the landing expression at once.
  */
 export function playAct<Expression extends string>({
   act,

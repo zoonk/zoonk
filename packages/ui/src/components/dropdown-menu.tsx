@@ -6,14 +6,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon } from "lucide-react";
 import type * as React from "react";
 
-/**
- * When using DropdownMenu inside dynamic route segments (e.g., `[slug]`),
- * add a `key` prop that changes with the route to prevent Base UI Menu's
- * internal context from becoming stale during soft navigations.
- *
- * @example
- * <DropdownMenu key={params.slug}>
- */
+/** Inside a dynamic segment, give it a `key` that changes with the route: Base UI Menu's context goes stale across soft navigations. */
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
 }
@@ -22,11 +15,7 @@ function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
   return <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />;
 }
 
-/**
- * A menu whose items are prefetching links keeps them mounted while closed (`keepMounted`): an item
- * that closes the menu would otherwise unmount its link before the router reads it, and the
- * navigation would lose what the link prefetched.
- */
+/** Prefetching link items need `keepMounted`: closing the menu would otherwise unmount the link before the router reads its prefetch. */
 function DropdownMenuContent({
   align = "start",
   alignOffset = 0,

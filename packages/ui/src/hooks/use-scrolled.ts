@@ -13,7 +13,6 @@ function getServerSnapshot() {
   return false;
 }
 
-/** Whether the page has scrolled at all, which draws a sticky bar's bottom edge. */
 export function useScrolled() {
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }

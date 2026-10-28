@@ -10,7 +10,6 @@
 @source "../../../apps/**/src/**/*.{ts,tsx}";
 @source "../../../**/src/**/*.{ts,tsx}";
 
-/* `dark:` and the dark tokens below follow the device's light or dark theme. */
 @custom-variant dark {
   @media (prefers-color-scheme: dark) {
     @slot;
@@ -18,10 +17,6 @@
 }
 
 @theme inline {
-  /*
-   * Geist and Geist Mono when the app loads them (main does, through next/font), the system's
-   * faces otherwise. Numbers that change or line up (times, counts, scores) use the mono face.
-   */
   --font-sans:
     var(--font-geist-sans, ui-sans-serif), ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
@@ -32,17 +27,9 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  /*
-   * App pages fill the room beside the sidebar from one left edge; only what has to stay readable
-   * keeps a measure, on that same edge.
-   */
-  /* A task's column, prose and a page's supporting line: a readable line. */
   --container-column: 40rem;
-  /* A form or a conversation: the settings forms, Plus in the app, the buddy's chat. */
   --container-form: 45rem;
-  /* A public page's widest sections. */
   --container-wide: 84rem;
-  /* An answer option and a stat tile: between a button (10) and a panel (14). */
   --radius-option: calc(var(--radius) + 2px);
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
@@ -116,37 +103,19 @@
 }
 
 /*
- * Motion. Everyday screens stay still; feedback is quick and never overshoots; only a celebration
- * lands on a spring, once, when it's earned. What each token is for:
- * `apps/playground/src/design-system/motion.ts`, moving live at the playground's `/design/motion`;
- * how to use them: the `zoonk-motion` skill. Static, so scripts read the same values
- * (`@zoonk/ui/lib/motion`), and every Tailwind transition takes the quick time and the ease-out.
+ * What each token is for: `apps/playground/src/design-system/motion.ts` and the `zoonk-motion`
+ * skill. Static, so scripts read the same values through `@zoonk/ui/lib/motion`.
  */
 @theme static {
-  /* A state change, a color, a press; an overlay closing. */
   --transition-duration-quick: 150ms;
-  /* An overlay opening, a disclosure, the lesson's screen turn. */
   --transition-duration-base: 200ms;
-  /* Something already there swells once (`animate-pop`). */
   --transition-duration-pop: 300ms;
-  /* Something earned lands on the spring (`animate-settle`). */
   --transition-duration-settle: 650ms;
-  /* A meter filling and a number counting up to what was reached, together. */
   --transition-duration-fill: 700ms;
-  /* The sparks of a burst, out and gone. */
   --transition-duration-burst: 750ms;
-  /*
-   * One frame of a character's act, 24 a second: acts are timed in frames, as animators time them
-   * (a blink is 6, a glance's dart 2). With reduced motion it's 0, and an act only changes the face.
-   */
   --transition-duration-frame: 41.667ms;
-  /* Fast out of the gate, gentle landing: everything that enters, responds or fills. */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  /*
-   * Apple's bouncy spring (SwiftUI's `Spring(duration: 0.5, bounce: 0.3)`: damping 0.7), sampled
-   * over the settle's 650ms: a 4.6% overshoot, still within 1% after 520ms. Only for something
-   * earned landing, never for data, color or opacity.
-   */
+  /* SwiftUI's `Spring(duration: 0.5, bounce: 0.3)` (damping 0.7), sampled over the settle's 650ms. */
   --ease-spring: linear(
     0,
     0.007 1.5%,
@@ -172,15 +141,9 @@
     1 93%,
     1
   );
-  /* A character moving into a pose, speeding up: the dip before a cheer, a lid closing. */
   --ease-accelerate: cubic-bezier(0.55, 0, 1, 0.45);
-  /* Slow out of one pose and into the next: a head turning, weight shifting, a slump. */
   --ease-swing: cubic-bezier(0.45, 0, 0.55, 1);
-  /*
-   * Overlapping action: a character's loose part (an antenna, a tail, a crown) lagging behind and
-   * swinging past its stop before it settles. A looser spring (damping 0.45: a 20% overshoot, then
-   * one small swing back), only for those parts, never for a whole character or for data.
-   */
+  /* A spring with damping 0.45: a 20% overshoot, then one small swing back. */
   --ease-follow: linear(
     0,
     0.11 4.2%,
@@ -216,19 +179,7 @@
   --animate-spark: spark var(--transition-duration-burst) var(--ease-out) forwards;
 }
 
-/*
- * Instrument: warm neutrals, hairline edges and the text color as the primary (the main action is
- * inverted). Neutral tone steps set a page's parts apart (`background`, `ground` for a band,
- * `card` for a panel, `muted` and `surface-3` for tracks and the row the learner is on), and soft
- * color goes only where it means something, one meaning per hue: blue for progress made (done,
- * right, studied, activity), pink-red for wrong or removed, amber for a flag, violet for Brain
- * Power, a kind's hue on its icon, a subject's hue on its label and line. What the learner picks
- * is drawn in the text color, so a pick never looks like a right answer; where they are is the
- * edge of their progress, in its blue, as a ring or a dot with a halo. Neutral text
- * meets WCAG AA on every surface; colored marks and text stay soft here and turn strict under
- * `prefers-contrast: more` (the blocks below). What each token means and where it goes:
- * `apps/playground/src/design-system/tokens.ts`, shown live in the playground's design system.
- */
+/* What each token means and where it goes: `apps/playground/src/design-system/color.ts`. */
 :root {
   --radius: 0.625rem;
   --press-scale: 0.97;
@@ -243,47 +194,21 @@
   --secondary: oklch(0.96 0.002 106);
   --secondary-foreground: oklch(0.185 0.004 286);
   --muted: oklch(0.96 0.002 106);
-  /* Quiet text: meta lines, descriptions, trailing numbers. AA on every surface, the sidebar's
-   * current item included. */
   --muted-foreground: oklch(0.505 0.012 286);
-  /*
-   * Quieter still, for section labels over the content they name, eyebrows, list numbers and axis
-   * labels: a step lighter than muted, and still AA (4.5:1) on the page, cards, the sidebar and a
-   * row's highlight.
-   */
   --faint: oklch(0.54 0.012 286);
-  /* The third surface: tracks of bars and meters, the answered squares of a question map. */
   --surface-3: oklch(0.939 0.004 106.5);
   --accent: oklch(0.96 0.002 106);
   --accent-foreground: oklch(0.185 0.004 286);
-  /*
-   * A wrong answer, a destructive action, an error: a soft red leaning pink. Fills, rings and icons
-   * take `destructive`; words take `destructive-text`, a step deeper.
-   */
   --destructive: oklch(0.65 0.19 6);
   --destructive-text: oklch(0.575 0.2 4);
-  /*
-   * The learner's pick before it's judged, in the text color: a 2px ring and a faint tint. Blue is
-   * progress made, so a pick can't be mistaken for a right answer. The tint keeps a muted line on
-   * it at AA.
-   */
   --selected: var(--foreground);
   --selected-foreground: var(--background);
   --selected-tint: color-mix(in srgb, var(--selected) 5%, transparent);
-  /* What asks for attention: a suggestion, a flag, the one thing to improve. */
   --warning: oklch(0.74 0.14 70);
   --warning-text: oklch(0.575 0.12 60);
-  /*
-   * Progress made, a soft blue: done, a right answer, studied, reached, a day of activity, and
-   * where the learner is now, the edge of their progress (a ring, or a dot with a halo, where done
-   * is a fill or a check). Fills, rings and checks take `success`; words take `success-text`.
-   */
   --success: oklch(0.66 0.14 252);
   --success-text: oklch(0.56 0.15 255);
-  /* A band that sets a public page's part apart from its neighbors; a panel on it is `card`. */
   --ground: oklch(0.975 0.0015 106);
-  /* Hairlines and the stronger line (inputs, options, secondary buttons) are see-through, so they
-   * read the same on the page, on cards and on muted surfaces. */
   --border: oklch(0 0 0 / 7%);
   --input: oklch(0 0 0 / 13%);
   --ring: var(--color-primary);
@@ -295,33 +220,14 @@
   --sidebar-accent-foreground: oklch(0.185 0.004 286);
   --sidebar-border: oklch(0.925 0.002 106);
   --sidebar-ring: var(--color-primary);
-  /* Energy is amber (its meter, its bolt, its calendar); Score is the right answers' blue. */
   --energy: oklch(0.782 0.158 72.3);
-  /*
-   * Brain Power is violet, and nothing else is: points earned, the missions' track and reward, and
-   * the mark on the block a mission opens. Words take `brain-text`.
-   */
   --brain: oklch(0.64 0.17 293);
   --brain-text: oklch(0.56 0.19 293);
   --score: var(--success);
-  /*
-   * The kinds of things a learner meets, each one hue for its icon and its dot (`KIND_MARKS` in
-   * `@zoonk/learn/kind-tile` maps every kind to one of these): going back over what was learned
-   * (review, practice, mistakes) amber, testing what the learner knows (a mock, a challenge)
-   * orange, making something (a conversation, an essay) teal, a mind map fuchsia. A lesson, the
-   * default, is neutral. No kind is green or rose: green isn't Zoonk's, and rose sat beside wrong's
-   * pink-red.
-   */
   --kind-review: oklch(0.7 0.13 68);
   --kind-mock: oklch(0.68 0.15 45);
   --kind-conversation: oklch(0.66 0.1 185);
   --kind-mind-map: oklch(0.65 0.2 325);
-  /*
-   * Data visualization in interactive activities, three hues apart from every meaning outside the
-   * canvas: the thing the learner moves (accent, teal), a target, a highlight or a prize (amber,
-   * "look here", never the red of wrong) and a second series (fuchsia). Never blue (progress) or
-   * violet (Brain Power). Each reads as text on the background and on its own soft fill.
-   */
   --viz-accent: oklch(0.57 0.1 185);
   --viz-accent-soft: var(--color-teal-100);
   --viz-highlight: oklch(0.6 0.13 62);
@@ -392,7 +298,6 @@
   }
 }
 
-/* Dark tokens, through the `dark` variant: the document on a dark device. */
 :root {
   @variant dark {
     --background: oklch(0.145 0.0025 286);
@@ -411,7 +316,6 @@
     --surface-3: oklch(0.245 0.008 285.8);
     --accent: oklch(0.225 0.005 286);
     --accent-foreground: oklch(0.94 0.003 286);
-    /* These read on the dark surfaces as text too, so text and fills share them. */
     --destructive: oklch(0.74 0.15 6);
     --destructive-text: var(--destructive);
     --selected-tint: color-mix(in srgb, var(--selected) 10%, transparent);
@@ -419,7 +323,6 @@
     --warning-text: var(--warning);
     --success: oklch(0.77 0.11 248);
     --success-text: var(--success);
-    /* A band a step above the page and under a panel, so a card on it reads as a sheet, as in light. */
     --ground: oklch(0.16 0.003 286);
     --border: oklch(1 0 0 / 7.5%);
     --input: oklch(1 0 0 / 13%);
@@ -512,14 +415,8 @@
 }
 
 /*
- * A course's subject, from one table: each category's hue and chroma, turned into three roles
- * wherever an element carries `data-subject` (`getSubject` in `@zoonk/learn/subject-label` picks
- * it): `subject` for its line, glyph and strokes, `subject-tint` behind its label and
- * `subject-text` for the label's words. Every subject reads at one strength: its chroma is about
- * the same share (55%) of the most the screen can show at its hue, and at most 0.11 for the pinks,
- * whose room is widest. One chroma for all made teal and cyan, which reach the screen's edge
- * first, look neon beside a dusty pink, and the old muted olives and slates look gray. Soft in the
- * regular theme; with more contrast the label is plain text and the line goes deep.
+ * Every subject reads at one strength: its chroma is about 55% of the most the screen can show at
+ * its hue, and at most 0.11 for the pinks, whose room is widest.
  */
 [data-subject] {
   --subject-chroma: 0.84;
@@ -630,12 +527,7 @@
   --subject-chroma: 0.92;
 }
 
-/*
- * Reduced motion: a celebration shows its end state from the first frame (numbers final, meters
- * full, the earned thing in place, no sparks) and a press doesn't give way, while fades and color
- * changes keep their time. Dialogs, menus, popovers and sheets keep their fade but drop the zoom,
- * slide and spin (tw-animate-css reads these variables), so every enter and exit has a calm version.
- */
+/* Overlays keep their fade but drop tw-animate-css's zoom, slide and spin, which read these variables. */
 @media (prefers-reduced-motion: reduce) {
   :root {
     --transition-duration-pop: 0ms;
@@ -665,7 +557,6 @@
 }
 
 @layer base {
-  /* Native controls (scrollbars, form fields, date pickers) follow the device's theme too. */
   :root {
     color-scheme: light dark;
   }
@@ -711,7 +602,6 @@
   }
 }
 
-/* Something earned lands: it grows in from smaller (`--settle-from`) and settles on the spring. */
 @keyframes settle {
   from {
     opacity: 0;
@@ -719,24 +609,18 @@
   }
 }
 
-/* Something already there changes: it swells once and settles back. */
 @keyframes pop {
   40% {
     scale: 1.12;
   }
 }
 
-/*
- * A meter part fills from where it was (`--fill-from`, a share of its own length; empty by
- * default) to where it is now. Its `origin-left` sets where it grows from.
- */
 @keyframes fill {
   from {
     scale: var(--fill-from, 0) 1;
   }
 }
 
-/* A spark flies out to `--spark-x`, `--spark-y` and fades as it drifts a little further. */
 @keyframes spark {
   from {
     opacity: 1;
@@ -756,11 +640,6 @@
   }
 }
 
-/*
- * Something people press gives way a little while it's held (`--press-scale`: a button's 0.97, a
- * wide option sets 0.99), its colors changing in the same quick time. Focus rings and outlines
- * stay instant.
- */
 @utility press {
   transition-property:
     color, background-color, border-color, text-decoration-color, fill, stroke, opacity, scale;
@@ -776,7 +655,6 @@
   @apply bg-primary text-primary-foreground;
 }
 
-/* The landing's promise, its one display line: 40px on a phone, 64px from `sm`. */
 @utility text-display {
   font-size: 2.5rem;
   line-height: 2.75rem;
@@ -790,7 +668,6 @@
   }
 }
 
-/* A public page's name (a course, a chapter, a lesson): 34px on a phone, 48px from `sm`. */
 @utility text-headline {
   font-size: 2.125rem;
   line-height: 2.375rem;
@@ -804,7 +681,6 @@
   }
 }
 
-/* A public page's lead: the promise under its name or a part's title, in the muted step. */
 @utility text-lead {
   font-size: 1.0625rem;
   line-height: 1.625rem;
@@ -818,7 +694,6 @@
   }
 }
 
-/* A part of a public page, named by a real title in sentence case ("Example plan"). */
 @utility text-section {
   font-size: 1.25rem;
   line-height: 1.625rem;
@@ -827,10 +702,6 @@
   text-wrap: balance;
 }
 
-/*
- * A readout: one big number per block in the text face with tabular figures, its unit smaller
- * beside it (`BigQuantity`). Size it with a text size; mono stays for data in rows and eyebrows.
- */
 @utility text-readout {
   line-height: 1;
   font-weight: 600;
@@ -838,7 +709,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* A page's title: the tab, the section or the task the learner is on. */
 @utility text-title {
   font-size: 1.875rem;
   line-height: 1.1;
@@ -847,10 +717,6 @@
   text-wrap: balance;
 }
 
-/*
- * A label inside a panel ("TRY A LESSON · FREE"), quiet so the content leads. A page's parts are
- * named by titles instead (`PageSectionTitle`, `text-section`).
- */
 @utility text-label {
   font-size: 0.71875rem;
   line-height: 1rem;

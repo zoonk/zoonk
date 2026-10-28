@@ -16,9 +16,6 @@ const toggleVariants = cva(
       },
       variant: {
         default: "bg-transparent",
-        // Pressed is the learner's pick: a border in the text color on its tint. Toggles come in
-        // sets where most may be on (a week's study days), so their line stays 1px, quieter than a
-        // single pick.
         outline:
           "border-input hover:bg-muted aria-pressed:border-selected aria-pressed:bg-selected-tint aria-pressed:hover:bg-selected-tint border bg-transparent",
       },
@@ -26,11 +23,7 @@ const toggleVariants = cva(
   },
 );
 
-/**
- * `focusableWhenDisabled` works as it does on Button, which Base UI's Toggle doesn't offer: a toggle
- * that waits on a save stays in the tab order as `aria-disabled` and ignores presses, so keyboard
- * focus isn't dropped to the page.
- */
+/** Base UI's Toggle has no `focusableWhenDisabled`, so it's added here to match Button. */
 function Toggle({
   className,
   disabled,

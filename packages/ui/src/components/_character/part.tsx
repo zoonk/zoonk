@@ -1,13 +1,3 @@
-/**
- * Characters (the buddy, the Trickster) are drawn as parts, so they act the way a person does:
- * their eyes, lids, brows, mouth and limbs move, never the whole drawing at once. A part turns,
- * stretches and moves around its own pivot, in the character's drawing units.
- */
-
-/**
- * Where a part sits when it isn't at rest: its turn in degrees, its stretch, its move, and how
- * much of it shows.
- */
 export type PartPose = {
   opacity?: number;
   rotate?: number;
@@ -15,19 +5,13 @@ export type PartPose = {
   translate?: readonly [x: number, y: number];
 };
 
-/** The point a part turns and stretches around, in the character's drawing units. */
 type Pivot = readonly [x: number, y: number];
 
 function formatScale(scale: NonNullable<PartPose["scale"]>): string {
   return typeof scale === "number" ? String(scale) : `${scale[0]} ${scale[1]}`;
 }
 
-/**
- * The part's pose as CSS's own transform properties, which an act animates (`rotate`, `scale`,
- * `translate`) without touching the drawing's attributes. A part at rest only sets its pivot, so
- * it draws exactly as before. Never put an SVG `transform` attribute on the same element: the two
- * don't compose.
- */
+/** Never put an SVG `transform` attribute on the same element: it doesn't compose with these. */
 function partStyle(pivot: Pivot, pose?: PartPose): React.CSSProperties {
   return {
     opacity: pose?.opacity,
@@ -39,10 +23,6 @@ function partStyle(pivot: Pivot, pose?: PartPose): React.CSSProperties {
   };
 }
 
-/**
- * One named part of a character, the handle an act moves by its `data-part`. A `hidden` part (a
- * closed lid's line) draws nothing until an act shows it.
- */
 export function Part({
   children,
   hidden = false,

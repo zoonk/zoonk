@@ -22,50 +22,26 @@ const DEFAULT_TOAST_TITLE_RENDER = <div />;
 const TOAST_CLASS =
   "group/toast bg-popover text-popover-foreground focus-visible:border-ring focus-visible:ring-ring/50 pointer-events-auto absolute right-0 bottom-0 z-[calc(1000-var(--toast-index))] h-(--height) w-full origin-bottom transform-[translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)-(var(--toast-index)*var(--peek))-(var(--shrink)*var(--height))))_scale(var(--scale))] rounded-lg border shadow-[0_4px_12px_rgb(0_0_0/0.1)] will-change-transform outline-none select-none [--gap:0.75rem] [--height:var(--toast-frontmost-height,var(--toast-height))] [--offset-y:calc(var(--toast-offset-y)*-1+calc(var(--toast-index)*var(--gap)*-1)+var(--toast-swipe-movement-y))] [--peek:0.75rem] [--scale:calc(max(0,1-(var(--toast-index)*0.1)))] [--shrink:calc(1-var(--scale))] [transition:transform_500ms_cubic-bezier(0.22,1,0.36,1),opacity_500ms,height_150ms] after:absolute after:top-full after:left-0 after:h-[calc(var(--gap)+1px)] after:w-full after:content-[''] focus-visible:ring-[3px] data-expanded:h-(--toast-height) data-expanded:transform-[translateX(var(--toast-swipe-movement-x))_translateY(var(--offset-y))] data-limited:opacity-0 data-starting-style:transform-[translateY(150%)] data-ending-style:data-[swipe-direction=down]:transform-[translateY(calc(var(--toast-swipe-movement-y)+150%))] data-expanded:data-ending-style:data-[swipe-direction=down]:transform-[translateY(calc(var(--toast-swipe-movement-y)+150%))] data-ending-style:data-[swipe-direction=left]:transform-[translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))] data-expanded:data-ending-style:data-[swipe-direction=left]:transform-[translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))] data-ending-style:data-[swipe-direction=right]:transform-[translateX(calc(var(--toast-swipe-movement-x)+150%))_translateY(var(--offset-y))] data-expanded:data-ending-style:data-[swipe-direction=right]:transform-[translateX(calc(var(--toast-swipe-movement-x)+150%))_translateY(var(--offset-y))] data-ending-style:data-[swipe-direction=up]:transform-[translateY(calc(var(--toast-swipe-movement-y)-150%))] data-expanded:data-ending-style:data-[swipe-direction=up]:transform-[translateY(calc(var(--toast-swipe-movement-y)-150%))] [&[data-ending-style]:not([data-limited]):not([data-swipe-direction])]:transform-[translateY(150%)]";
 
-/**
- * Below `lg`, a page with a tab bar at the bottom of the screen (`data-bottom-bar`) lifts toasts
- * above it, so they never cover the tabs (a margin, because it adds to `bottom` at every width).
- */
+/** A margin, not `bottom`, lifts toasts above a bottom tab bar, since it adds to `bottom` at every width. */
 const TOAST_VIEWPORT_CLASS =
   "pointer-events-none fixed inset-x-4 bottom-4 z-50 mx-auto w-auto max-w-[356px] outline-none sm:right-8 sm:bottom-8 sm:left-auto sm:mx-0 sm:w-full max-lg:in-[body:has([data-bottom-bar])]:mb-[calc(4rem+env(safe-area-inset-bottom))]";
 
-/**
- * Keeps success notifications visually consistent without making every
- * producer repeat the renderer's status-type contract.
- */
 function showSuccessToast(title: ReactNode) {
   return toast.add({ title, type: "success" });
 }
 
-/**
- * Couples error styling with an urgent live-region announcement so producers
- * cannot accidentally render an error icon that assistive technology treats
- * as a routine update.
- */
 function showErrorToast(title: ReactNode) {
   return toast.add({ priority: "high", title, type: "error" });
 }
 
-/**
- * Keeps Base UI's provider available through the shared component boundary so
- * custom managers can reuse the same renderer without importing primitives.
- */
 function ToastProvider({ ...props }: ToastPrimitive.Provider.Props) {
   return <ToastPrimitive.Provider {...props} />;
 }
 
-/**
- * Marks the portal in the DOM so composed toast renderers have a stable slot
- * while Base UI remains responsible for where the portal is mounted.
- */
 function ToastPortal({ ...props }: ToastPrimitive.Portal.Props) {
   return <ToastPrimitive.Portal data-slot="toast-portal" {...props} />;
 }
 
-/**
- * Positions the toast stack above application content and gives Base UI the
- * focusable notification region it needs for keyboard navigation.
- */
 function ToastViewport({ className, ...props }: ToastPrimitive.Viewport.Props) {
   return (
     <ToastPrimitive.Viewport
@@ -76,20 +52,12 @@ function ToastViewport({ className, ...props }: ToastPrimitive.Viewport.Props) {
   );
 }
 
-/**
- * Owns the shared toast surface and Base UI's stack, transition, and swipe
- * variables so every notification uses one visual and interaction contract.
- */
 function Toast({ className, ...props }: ToastPrimitive.Root.Props) {
   return (
     <ToastPrimitive.Root className={cn(TOAST_CLASS, className)} data-slot="toast" {...props} />
   );
 }
 
-/**
- * Clips stacked toast content while preserving the layout Base UI measures for
- * expansion, focus, and swipe animations.
- */
 function ToastContent({ className, ...props }: ToastPrimitive.Content.Props) {
   return (
     <ToastPrimitive.Content
@@ -103,10 +71,6 @@ function ToastContent({ className, ...props }: ToastPrimitive.Content.Props) {
   );
 }
 
-/**
- * Keeps toast labels out of the page's heading hierarchy while Base UI still
- * connects the rendered title to the dialog through aria-labelledby.
- */
 function ToastTitle({
   className,
   render = DEFAULT_TOAST_TITLE_RENDER,
@@ -122,10 +86,6 @@ function ToastTitle({
   );
 }
 
-/**
- * Renders the primary toast message through Base UI so both visible content and
- * assistive-technology announcements use the same source.
- */
 function ToastDescription({ className, ...props }: ToastPrimitive.Description.Props) {
   return (
     <ToastPrimitive.Description
@@ -136,10 +96,6 @@ function ToastDescription({ className, ...props }: ToastPrimitive.Description.Pr
   );
 }
 
-/**
- * Uses the shared button for optional toast actions while Base UI supplies the
- * action label and handler from the manager entry.
- */
 function ToastAction({
   className,
   render = DEFAULT_TOAST_ACTION_RENDER,
@@ -155,10 +111,6 @@ function ToastAction({
   );
 }
 
-/**
- * Keeps every toast dismissible by pointer or keyboard with the same compact
- * shared button and a larger invisible hit target.
- */
 function ToastClose({
   className,
   children,
@@ -181,10 +133,6 @@ function ToastClose({
   );
 }
 
-/**
- * Maps the manager's status string to the icon language used throughout Zoonk
- * without coupling notification producers to visual React elements.
- */
 function getToastIcon(type: string | undefined): ReactNode {
   if (type === "success") {
     return <CircleCheckIcon aria-hidden="true" />;
@@ -209,10 +157,6 @@ function getToastIcon(type: string | undefined): ReactNode {
   return null;
 }
 
-/**
- * Reserves one compact leading slot for recognized statuses and omits the slot
- * entirely for neutral notifications such as keyboard guidance.
- */
 function ToastIcon({ type }: { type: string | undefined }) {
   const icon = getToastIcon(type);
 
@@ -230,9 +174,6 @@ function ToastIcon({ type }: { type: string | undefined }) {
   );
 }
 
-/**
- * Turns the current manager entries into the compound toast structure.
- */
 function ToastList() {
   const { toasts } = ToastPrimitive.useToastManager();
 
@@ -251,10 +192,7 @@ function ToastList() {
   ));
 }
 
-/**
- * The app's one toast region: Base UI's provider, the viewport screen readers know as
- * "Notifications", and the shared renderer. Mount it once per app.
- */
+/** Mount it once per app. */
 function Toaster(props: Omit<ToastPrimitive.Provider.Props, "children" | "toastManager">) {
   return (
     <ToastProvider toastManager={toast} {...props}>
