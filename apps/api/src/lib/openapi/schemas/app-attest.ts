@@ -12,7 +12,7 @@ export const appAttestChallengeResponseSchema = z
       .min(1)
       .meta({
         description:
-          "Single-use and valid for five minutes. Hash its UTF-8 bytes with SHA-256 for the client data of the attestation or assertion it's for.",
+          "Single-use and valid for five minutes. An attestation's client data hash is the SHA-256 of its UTF-8 bytes; an assertion signs it inside the request's client data (see the `x-app-attest-assertion` header).",
       }),
   })
   .meta({ id: "AppAttestChallenge" });
@@ -41,7 +41,7 @@ export const appAttestHeaderParamsSchema = z.object({
     .optional()
     .meta({
       description:
-        "Base64 of the assertion `DCAppAttestService.generateAssertion` made over the challenge",
+        "Base64 of the assertion `DCAppAttestService.generateAssertion` made over the SHA-256 of the request's client data: UTF-8 lines joined by a line feed, with `zoonk-app-attest:1`, the challenge, the operation (`guest` for POST /v1/guests, `email-code` for POST /v1/email-sign-in-codes, `email-session` for POST /v1/sessions/email-code), then the email and, for `email-session`, the code, exactly as sent in the body",
     }),
   [APP_ATTEST_HEADERS.challenge]: appAttestHeadersSchema.shape[APP_ATTEST_HEADERS.challenge]
     .optional()

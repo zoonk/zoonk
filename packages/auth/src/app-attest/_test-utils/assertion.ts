@@ -1,4 +1,9 @@
 import { type KeyObject, createHash, generateKeyPairSync, sign } from "node:crypto";
+import {
+  APP_ATTEST_OPERATIONS,
+  type AppAttestBinding,
+  getAppAttestClientData,
+} from "../app-attest-contract";
 import { RECORDED_APP } from "./recorded-attestations";
 
 /**
@@ -68,14 +73,19 @@ export function makeDeviceKey() {
   };
 }
 
-/** An assertion like `generateAssertion` makes over the challenge, base64 for its header. */
+/**
+ * An assertion like `generateAssertion` makes over the request's client data, base64 for its
+ * header. It signs a guest unless told which request.
+ */
 export function makeAssertion({
   appId = `${RECORDED_APP.teamIdentifier}.${RECORDED_APP.bundleIdentifier}`,
+  binding = { fields: [], operation: APP_ATTEST_OPERATIONS.guest },
   challenge,
   counter,
   privateKey,
 }: {
   appId?: string;
+  binding?: AppAttestBinding;
   challenge: string;
   counter: number;
   privateKey: KeyObject;
@@ -89,7 +99,8 @@ export function makeAssertion({
     counterBytes,
   ]);
 
-  const nonce = sha256(Buffer.concat([authenticatorData, sha256(challenge)]));
+  const clientData = getAppAttestClientData({ binding, challenge });
+  const nonce = sha256(Buffer.concat([authenticatorData, sha256(clientData)]));
   const signature = sign("sha256", nonce, privateKey);
 
   return encodeAssertion({ authenticatorData, signature }).toString("base64");

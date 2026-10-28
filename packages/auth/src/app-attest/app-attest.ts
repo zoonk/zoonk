@@ -3,7 +3,12 @@ import { prisma } from "@zoonk/db";
 import { getEnvironment } from "@zoonk/utils/environment";
 import { verifyAssertion, verifyAttestation } from "node-app-attest";
 import { z } from "zod";
-import { APP_ATTEST_HEADERS, appAttestHeadersSchema } from "./app-attest-contract";
+import {
+  APP_ATTEST_HEADERS,
+  type AppAttestBinding,
+  appAttestHeadersSchema,
+  getAppAttestClientData,
+} from "./app-attest-contract";
 
 /** A challenge is for the attestation or assertion the app makes right after asking for it. */
 const CHALLENGE_LIFETIME_MS = 300_000;
@@ -68,8 +73,10 @@ function attempt<T>(verify: () => T): T | null {
 /**
  * Registers a key one install of the app made and Apple attested, after checking the
  * attestation's certificate chain to Apple's App Attest root, that it signed this server's
- * challenge, and that it names this app. Development keys (Xcode builds) count everywhere but
- * production. Registering the same key again changes nothing, so its counter never goes back.
+ * challenge, and that it names this app. Keys from App Attest's development environment count
+ * everywhere but production. A build signed by our team can still choose the production
+ * environment; only our team can sign this App ID, so that's accepted. Registering the same key
+ * again changes nothing, so its counter never goes back.
  */
 export async function registerAppAttestKey({
   attestation,
@@ -117,10 +124,17 @@ export async function registerAppAttestKey({
 
 /**
  * Checks a request's App Attest assertion: signed by a registered key over a challenge this
- * server issued, for this app, with a counter above the last one accepted. The challenge is spent
- * first, so no assertion counts twice; the stored counter only rises, even when requests race.
+ * server issued and over the request itself (its operation and fields), for this app, with a
+ * counter above the last one accepted. The challenge is spent first, so no assertion counts twice;
+ * the stored counter only rises, even when requests race.
  */
-export async function hasAppAttestAssertion(headers: Headers): Promise<boolean> {
+export async function hasAppAttestAssertion({
+  binding,
+  headers,
+}: {
+  binding: AppAttestBinding;
+  headers: Headers;
+}): Promise<boolean> {
   const app = getAppIdentity();
 
   const parsed = appAttestHeadersSchema.safeParse({
@@ -129,7 +143,7 @@ export async function hasAppAttestAssertion(headers: Headers): Promise<boolean> 
     [APP_ATTEST_HEADERS.keyId]: headers.get(APP_ATTEST_HEADERS.keyId),
   });
 
-  if (!app || !parsed.success) {
+  if (!app || !parsed.success || binding.fields.some((field) => field.includes("\n"))) {
     return false;
   }
 
@@ -150,7 +164,7 @@ export async function hasAppAttestAssertion(headers: Headers): Promise<boolean> 
       verifyAssertion({
         ...app,
         assertion: Buffer.from(assertion, "base64"),
-        payload: challenge,
+        payload: getAppAttestClientData({ binding, challenge }),
         publicKey: key.publicKey,
         signCount: key.signCount,
       }),

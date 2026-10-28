@@ -3,6 +3,11 @@ import { type AuthContext, type BetterAuthPlugin } from "better-auth";
 import { getEndpoints } from "better-auth/api";
 import { captcha } from "better-auth/plugins";
 import { hasAppAttestAssertion } from "../app-attest/app-attest";
+import {
+  APP_ATTEST_HEADERS,
+  APP_ATTEST_OPERATIONS,
+  type AppAttestBinding,
+} from "../app-attest/app-attest-contract";
 import { getBotIdVerification } from "../request-guards/bot-id";
 
 /**
@@ -83,9 +88,41 @@ async function isAuthenticatedEmailCodeRequest({
 }
 
 /**
- * The iOS app can't run BotID, so a genuine copy proves itself with an App Attest assertion on
- * the same requests BotID guards. A missing or failed assertion falls through to BotID, which
- * answers the usual 403.
+ * The request an App Attest assertion must have signed, read from what Better Auth will act on:
+ * a guest, or the email (and code) of an email sign-in. Other bot-checked paths take no assertion.
+ */
+async function readAppAttestBinding(
+  path: string,
+  request: Request,
+): Promise<AppAttestBinding | null> {
+  if (path === "/sign-in/anonymous") {
+    return { fields: [], operation: APP_ATTEST_OPERATIONS.guest };
+  }
+
+  const body: unknown = await request
+    .clone()
+    .json()
+    .catch(() => null);
+
+  if (!isJsonObject(body) || typeof body.email !== "string") {
+    return null;
+  }
+
+  if (path === "/email-otp/send-verification-otp" && body.type === "sign-in") {
+    return { fields: [body.email], operation: APP_ATTEST_OPERATIONS.emailCode };
+  }
+
+  if (path === "/sign-in/email-otp" && typeof body.otp === "string") {
+    return { fields: [body.email, body.otp], operation: APP_ATTEST_OPERATIONS.emailSession };
+  }
+
+  return null;
+}
+
+/**
+ * The iOS app can't run BotID, so a genuine copy proves itself with an App Attest assertion over
+ * the request it sends, on the same requests BotID guards. A missing or failed assertion falls
+ * through to BotID, which answers the usual 403.
  */
 async function isAppAttestedRequest({
   context,
@@ -96,12 +133,15 @@ async function isAppAttestedRequest({
 }) {
   const basePath = context.options.basePath ?? "/api/auth";
   const { pathname } = new URL(request.url);
+  const path = BOT_CHECKED_AUTH_PATHS.find((checked) => pathname === `${basePath}${checked}`);
 
-  return (
-    request.method === "POST" &&
-    BOT_CHECKED_AUTH_PATHS.some((path) => pathname === `${basePath}${path}`) &&
-    (await hasAppAttestAssertion(request.headers))
-  );
+  if (request.method !== "POST" || !path || !request.headers.has(APP_ATTEST_HEADERS.keyId)) {
+    return false;
+  }
+
+  const binding = await readAppAttestBinding(path, request);
+
+  return binding !== null && (await hasAppAttestAssertion({ binding, headers: request.headers }));
 }
 
 /**

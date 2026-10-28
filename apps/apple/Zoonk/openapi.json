@@ -366,7 +366,7 @@
     },
     "/app-attest/keys": {
       "post": {
-        "description": "Registers a key one install of the iOS app generated and Apple attested over a challenge from `POST /v1/app-attest/challenges`. Register once per install; registering the same key again is a no-op. Keys made by Xcode builds (the development environment) are refused in production.",
+        "description": "Registers a key one install of the iOS app generated and Apple attested over a challenge from `POST /v1/app-attest/challenges`. Register once per install; registering the same key again is a no-op. Keys from App Attest's development environment are refused in production.",
         "operationId": "createAppAttestKey",
         "security": [],
         "summary": "Register an App Attest key",
@@ -3877,14 +3877,14 @@
             "in": "header",
             "name": "x-app-attest-assertion",
             "schema": {
-              "description": "Base64 of the assertion `DCAppAttestService.generateAssertion` made over the challenge",
+              "description": "Base64 of the assertion `DCAppAttestService.generateAssertion` made over the SHA-256 of the request's client data: UTF-8 lines joined by a line feed, with `zoonk-app-attest:1`, the challenge, the operation (`guest` for POST /v1/guests, `email-code` for POST /v1/email-sign-in-codes, `email-session` for POST /v1/sessions/email-code), then the email and, for `email-session`, the code, exactly as sent in the body",
               "type": "string",
               "maxLength": 4096,
               "format": "base64",
               "contentEncoding": "base64",
               "pattern": "^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$"
             },
-            "description": "Base64 of the assertion `DCAppAttestService.generateAssertion` made over the challenge"
+            "description": "Base64 of the assertion `DCAppAttestService.generateAssertion` made over the SHA-256 of the request's client data: UTF-8 lines joined by a line feed, with `zoonk-app-attest:1`, the challenge, the operation (`guest` for POST /v1/guests, `email-code` for POST /v1/email-sign-in-codes, `email-session` for POST /v1/sessions/email-code), then the email and, for `email-session`, the code, exactly as sent in the body"
           },
           {
             "in": "header",
@@ -10929,14 +10929,14 @@
             "in": "header",
             "name": "x-app-attest-assertion",
             "schema": {
-              "description": "Base64 of the assertion `DCAppAttestService.generateAssertion` made over the challenge",
+              "description": "Base64 of the assertion `DCAppAttestService.generateAssertion` made over the SHA-256 of the request's client data: UTF-8 lines joined by a line feed, with `zoonk-app-attest:1`, the challenge, the operation (`guest` for POST /v1/guests, `email-code` for POST /v1/email-sign-in-codes, `email-session` for POST /v1/sessions/email-code), then the email and, for `email-session`, the code, exactly as sent in the body",
               "type": "string",
               "maxLength": 4096,
               "format": "base64",
               "contentEncoding": "base64",
               "pattern": "^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$"
             },
-            "description": "Base64 of the assertion `DCAppAttestService.generateAssertion` made over the challenge"
+            "description": "Base64 of the assertion `DCAppAttestService.generateAssertion` made over the SHA-256 of the request's client data: UTF-8 lines joined by a line feed, with `zoonk-app-attest:1`, the challenge, the operation (`guest` for POST /v1/guests, `email-code` for POST /v1/email-sign-in-codes, `email-session` for POST /v1/sessions/email-code), then the email and, for `email-session`, the code, exactly as sent in the body"
           },
           {
             "in": "header",
@@ -11183,14 +11183,14 @@
             "in": "header",
             "name": "x-app-attest-assertion",
             "schema": {
-              "description": "Base64 of the assertion `DCAppAttestService.generateAssertion` made over the challenge",
+              "description": "Base64 of the assertion `DCAppAttestService.generateAssertion` made over the SHA-256 of the request's client data: UTF-8 lines joined by a line feed, with `zoonk-app-attest:1`, the challenge, the operation (`guest` for POST /v1/guests, `email-code` for POST /v1/email-sign-in-codes, `email-session` for POST /v1/sessions/email-code), then the email and, for `email-session`, the code, exactly as sent in the body",
               "type": "string",
               "maxLength": 4096,
               "format": "base64",
               "contentEncoding": "base64",
               "pattern": "^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$"
             },
-            "description": "Base64 of the assertion `DCAppAttestService.generateAssertion` made over the challenge"
+            "description": "Base64 of the assertion `DCAppAttestService.generateAssertion` made over the SHA-256 of the request's client data: UTF-8 lines joined by a line feed, with `zoonk-app-attest:1`, the challenge, the operation (`guest` for POST /v1/guests, `email-code` for POST /v1/email-sign-in-codes, `email-session` for POST /v1/sessions/email-code), then the email and, for `email-session`, the code, exactly as sent in the body"
           },
           {
             "in": "header",
@@ -28210,7 +28210,7 @@
           "challenge": {
             "type": "string",
             "minLength": 1,
-            "description": "Single-use and valid for five minutes. Hash its UTF-8 bytes with SHA-256 for the client data of the attestation or assertion it's for."
+            "description": "Single-use and valid for five minutes. An attestation's client data hash is the SHA-256 of its UTF-8 bytes; an assertion signs it inside the request's client data (see the `x-app-attest-assertion` header)."
           }
         },
         "required": [

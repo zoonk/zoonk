@@ -5,7 +5,11 @@ import { checkBotId } from "botid/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { makeAssertion, makeDeviceKey } from "../app-attest/_test-utils/assertion";
 import { RECORDED_APP } from "../app-attest/_test-utils/recorded-attestations";
-import { APP_ATTEST_HEADERS } from "../app-attest/app-attest-contract";
+import {
+  APP_ATTEST_HEADERS,
+  APP_ATTEST_OPERATIONS,
+  type AppAttestBinding,
+} from "../app-attest/app-attest-contract";
 import { BETTER_AUTH_BASE_PATH } from "../config";
 import { createEmailOTPPlugin } from "../email-otp-plugin";
 import { NativeAuthResponseError, getAuthError } from "../errors";
@@ -130,12 +134,13 @@ describe("bot check on auth requests", () => {
     const key = makeDeviceKey();
     await prisma.appAttestKey.create({ data: { keyId: key.keyId, publicKey: key.publicKey } });
 
-    async function attested(counter: number) {
+    async function attested(counter: number, binding?: AppAttestBinding) {
       const response = await post("/app-attest/challenge", {});
       const { challenge } = (await response.json()) as { challenge: string };
 
       return {
         [APP_ATTEST_HEADERS.assertion]: makeAssertion({
+          binding,
           challenge,
           counter,
           privateKey: key.privateKey,
@@ -145,22 +150,32 @@ describe("bot check on auth requests", () => {
       };
     }
 
+    const address = email();
+    const signedFor = { fields: [address], operation: APP_ATTEST_OPERATIONS.emailCode };
     const guest = await post("/sign-in/anonymous", {}, await attested(1));
 
     const code = await post(
       "/email-otp/send-verification-otp",
-      { email: email(), type: "sign-in" },
-      await attested(2),
+      { email: address, type: "sign-in" },
+      await attested(2, signedFor),
     );
 
     expect([guest.status, code.status]).toStrictEqual([200, 200]);
     expect(checkBotId).not.toHaveBeenCalled();
 
-    // A counter the key already spent proves nothing, and BotID decides.
-    const replayed = await post("/sign-in/anonymous", {}, await attested(2));
+    // A proof signed for one email or request proves nothing for another, nor does a counter the
+    // key already spent: BotID decides.
+    const refused = await Promise.all([
+      post(
+        "/email-otp/send-verification-otp",
+        { email: email(), type: "sign-in" },
+        await attested(3, signedFor),
+      ),
+      post("/sign-in/anonymous", {}, await attested(4, signedFor)),
+      post("/sign-in/anonymous", {}, await attested(2)),
+    ]);
 
-    expect(replayed.status).toBe(403);
-    await expect(readCode(replayed)).resolves.toBe("VERIFICATION_FAILED");
+    expect(refused.map((response) => response.status)).toStrictEqual([403, 403, 403]);
   });
 
   it("refuses to register a key without a genuine attestation", async () => {

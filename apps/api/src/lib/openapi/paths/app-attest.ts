@@ -28,7 +28,7 @@ export const appAttestPaths = {
   "/app-attest/keys": {
     post: {
       description:
-        "Registers a key one install of the iOS app generated and Apple attested over a challenge from `POST /v1/app-attest/challenges`. Register once per install; registering the same key again is a no-op. Keys made by Xcode builds (the development environment) are refused in production.",
+        "Registers a key one install of the iOS app generated and Apple attested over a challenge from `POST /v1/app-attest/challenges`. Register once per install; registering the same key again is a no-op. Keys from App Attest's development environment are refused in production.",
       operationId: "createAppAttestKey",
       requestBody: {
         content: { "application/json": { schema: appAttestKeyRequestBodySchema } },
