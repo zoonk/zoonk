@@ -218,6 +218,7 @@ async function handle({
         : { error: "Unknown session" },
       HTTP_NOT_FOUND,
     );
+
     return;
   }
 
