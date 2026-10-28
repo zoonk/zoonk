@@ -191,6 +191,8 @@ private struct GoalStartFlow: View {
         }
 
         draft = .draft(value, sentHere: true)
+      } catch is CancellationError {
+        // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch {
         guard !Task.isCancelled else {
           return
@@ -279,6 +281,8 @@ private struct DraftView: View {
 
     do {
       onDraft(try await onboarding.readAgain(id: draft.id))
+    } catch is CancellationError {
+      // The write is obsolete: the learner who asked is gone, so nothing shows.
     } catch {
       retryError = GoalError.starting(error)
     }

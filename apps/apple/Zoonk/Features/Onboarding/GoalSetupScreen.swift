@@ -217,6 +217,8 @@ private struct GoalSteps: View {
         if updated.goal.id != view.goal.id {
           onGoalMoved(updated.goal.id)
         }
+      } catch is CancellationError {
+        // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch {
         failed = true
       }
@@ -246,6 +248,8 @@ private struct GoalSteps: View {
         router.dismissTask()
         router.open(.startGoal())
       }
+    } catch is CancellationError {
+      // The write is obsolete: the learner who asked is gone, so nothing shows.
     } catch {
       failed = true
     }

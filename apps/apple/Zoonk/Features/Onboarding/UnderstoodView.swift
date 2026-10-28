@@ -82,6 +82,8 @@ struct ReadDraftView: View {
 
       do {
         then(try await run())
+      } catch is CancellationError {
+        // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch {
         self.error = GoalError.creating(error)
       }
@@ -183,17 +185,23 @@ private struct UnderstoodCard: View {
   }
 
   /// Saves one fix; false when it couldn't be saved, so the editor stays open to try again.
+  /// An obsolete save (the learner who made it is gone) changes nothing and says nothing.
   private func save(row: UnderstoodRow, goal: Int, value: String) async -> Bool {
-    guard let field = row.field,
-      let updated = try? await onboarding.revise(
-        draftID: draft.id, field: field, goal: goal, value: value)
-    else {
+    guard let field = row.field else {
       return false
     }
 
-    editing = nil
-    onDraft(updated)
-    return true
+    do {
+      let updated = try await onboarding.revise(
+        draftID: draft.id, field: field, goal: goal, value: value)
+      editing = nil
+      onDraft(updated)
+      return true
+    } catch is CancellationError {
+      return true
+    } catch {
+      return false
+    }
   }
 }
 
@@ -620,6 +628,8 @@ private struct InstrumentOutcome: View {
 
     do {
       waitlist = try await onboarding.joinInstrumentWaitlist(instrument: instrument)
+    } catch is CancellationError {
+      // The write is obsolete: the learner who asked is gone, so nothing shows.
     } catch {
       joinFailed = true
     }

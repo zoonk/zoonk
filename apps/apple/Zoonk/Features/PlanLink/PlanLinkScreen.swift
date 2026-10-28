@@ -180,6 +180,8 @@ struct PlanLinkScreen: View {
         } else {
           router.showRoot(of: .plan)
         }
+      } catch is CancellationError {
+        // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch OnboardingError.goalLimit, OnboardingError.signUpRequired, OnboardingError.slowDown {
         error = GoalError(
           message: LocalizedStringResource(

@@ -32,30 +32,38 @@ final class OnboardingStore {
     return sentGoal
   }
 
-  /// The learner's bearer, signing a visitor in as a guest first, as main does when a visitor sends a goal.
-  func token() async throws -> String {
-    if let token = session.authenticatedSession?.bearerToken {
-      return token
+  /// Signs a visitor in as a guest first, as main does when a visitor sends a goal or starts a
+  /// course, so the write that follows has a session to belong to.
+  private func ensureSession() async throws {
+    if session.authenticatedSession != nil {
+      return
     }
 
-    guard await session.continueAsGuest(), let token = session.authenticatedSession?.bearerToken
-    else {
+    guard await session.continueAsGuest() else {
       throw OnboardingError.failed(.unauthorized)
     }
-
-    return token
   }
 
   func understand(goal: String) async throws -> OnboardingDraft {
-    try await api.understand(goal: goal, token: token())
+    try await ensureSession()
+    return try await cache.onboardingWrite { [api] identity in
+      try await api.understand(goal: goal, token: identity.bearerToken)
+    }
   }
 
+  /// Reads a draft again once its run reports it's done; reading starts nothing.
   func understanding(id: String) async throws -> OnboardingDraft {
-    try await api.understanding(id: id, token: token())
+    guard let token = session.authenticatedSession?.bearerToken else {
+      throw CancellationError()
+    }
+
+    return try await api.understanding(id: id, token: token)
   }
 
   func readAgain(id: String) async throws -> OnboardingDraft {
-    try await api.readAgain(id: id, token: token())
+    try await cache.onboardingWrite { [api] identity in
+      try await api.readAgain(id: id, token: identity.bearerToken)
+    }
   }
 
   /// Saves one fix on the card: a goal's fact by its place on the card, or when the learner studies.
@@ -71,12 +79,13 @@ final class OnboardingStore {
       edit["goal"] = goal
     }
 
-    return try await api.revise(
-      id: draftID,
-      edit: JSONDecoder().decode(
-        Components.Schemas.OnboardingDraftEdit.self,
-        from: JSONSerialization.data(withJSONObject: edit)),
-      token: token())
+    let draftEdit = try JSONDecoder().decode(
+      Components.Schemas.OnboardingDraftEdit.self,
+      from: JSONSerialization.data(withJSONObject: edit))
+
+    return try await cache.onboardingWrite { [api] identity in
+      try await api.revise(id: draftID, edit: draftEdit, token: identity.bearerToken)
+    }
   }
 
   func events(generationID: String) -> AsyncThrowingStream<GenerationEvent, Error> {
@@ -141,8 +150,9 @@ final class OnboardingStore {
   }
 
   func joinInstrumentWaitlist(instrument: String) async throws -> WaitlistOutcome {
-    try await api.joinInstrumentWaitlist(
-      instrument: instrument, token: session.authenticatedSession?.bearerToken)
+    try await cache.onboardingWrite { [api] identity in
+      try await api.joinInstrumentWaitlist(instrument: instrument, token: identity.bearerToken)
+    }
   }
 
   /// The rest of a new goal's onboarding, one screen per question, ending with the plan.
@@ -166,34 +176,42 @@ final class OnboardingStore {
 
   /// Saves one answer; the response is the screens still ahead, shown without another read.
   func answer(_ answer: OnboardingAnswer, goalID: String) async throws -> GoalOnboarding {
-    let updated = try await api.answer(answer, goalID: goalID, token: token())
+    let updated = try await cache.onboardingWrite(invalidating: [.goals, .learningProfile]) {
+      [api] identity in
+      try await api.answer(answer, goalID: goalID, token: identity.bearerToken)
+    }
+
     onboarding(goalID: updated.goal.id).update { _ in updated }
-    cache.invalidate([.goals, .learningProfile])
     return updated
   }
 
   /// Starts the goal's curriculum again after its run stopped.
   func writeGoal(goalID: String) async throws -> String {
-    try await api.writeGoal(goalID: goalID, token: token())
+    try await cache.onboardingWrite { [api] identity in
+      try await api.writeGoal(goalID: goalID, token: identity.bearerToken)
+    }
   }
 
   /// "Start over" archives every goal this onboarding created, so the next goal starts clean.
   func startOver(goalIDs: [String]) async throws {
-    let token = try await token()
+    try await cache.onboardingWrite(invalidating: [.goals, .learningProfile]) { [api] identity in
+      try await withThrowingTaskGroup { group in
+        for goalID in goalIDs {
+          group.addTask { try await api.archive(goalID: goalID, token: identity.bearerToken) }
+        }
 
-    try await withThrowingTaskGroup { group in
-      for goalID in goalIDs {
-        group.addTask { [api] in try await api.archive(goalID: goalID, token: token) }
+        try await group.waitForAll()
       }
-
-      try await group.waitForAll()
     }
-
-    cache.invalidate([.goals, .learningProfile])
   }
 
+  /// Placement's next step; reading it writes nothing.
   func placement(goalID: String) async throws -> GoalPlacement {
-    try await api.placement(goalID: goalID, token: token())
+    guard let token = session.authenticatedSession?.bearerToken else {
+      throw CancellationError()
+    }
+
+    return try await api.placement(goalID: goalID, token: token)
   }
 
   func answerPlacement(
@@ -202,33 +220,35 @@ final class OnboardingStore {
     answer: PracticeAnswer,
     duration: Duration
   ) async throws -> Components.Schemas.PlacementAnswerResult {
-    let result = try await api.answerPlacement(
-      .init(
-        answer: PracticeJSON.recode(answer),
-        durationMs: Int(duration.components.seconds * 1000),
-        itemId: itemID,
-        timeZone: TimeZone.current.identifier),
-      goalID: goalID,
-      token: token())
+    let input = Components.Schemas.PlacementAnswerInput(
+      answer: try PracticeJSON.recode(answer),
+      durationMs: Int(duration.components.seconds * 1000),
+      itemId: itemID,
+      timeZone: TimeZone.current.identifier)
 
-    cache.invalidate([.learnerModel])
-    return result
+    return try await cache.onboardingWrite(invalidating: [.learnerModel]) { [api] identity in
+      try await api.answerPlacement(input, goalID: goalID, token: identity.bearerToken)
+    }
   }
 
   /// Ends placement, then writes the plan's first lessons ahead, as main does once it's done.
   func finishPlacement(goalID: String, fromScratch: Bool) async throws {
-    let token = try await token()
-    try await api.completePlacement(goalID: goalID, fromScratch: fromScratch, token: token)
-    try? await api.prepareLessons(goalID: goalID, token: token)
-    cache.invalidate([.goals, .learnerModel, .learningProfile])
+    try await cache.onboardingWrite(invalidating: [.goals, .learnerModel, .learningProfile]) {
+      [api] identity in
+      try await api.completePlacement(
+        goalID: goalID, fromScratch: fromScratch, token: identity.bearerToken)
+      try? await api.prepareLessons(goalID: goalID, token: identity.bearerToken)
+    }
   }
 
   /// Starts a Library course as the learner's goal from its start page's tap; a visitor becomes a guest first.
   func startCourse(courseID: String, chapterID: String?, level: String?) async throws -> String {
-    let goalID = try await api.startCourse(
-      courseID: courseID, chapterID: chapterID, level: level, token: token())
-    cache.invalidate([.goals, .learningProfile])
-    return goalID
+    try await ensureSession()
+    return try await cache.onboardingWrite(invalidating: [.goals, .learningProfile]) {
+      [api] identity in
+      try await api.startCourse(
+        courseID: courseID, chapterID: chapterID, level: level, token: identity.bearerToken)
+    }
   }
 
   /// A shared plan's outline, as anyone reads it; a signed-in owner is sent to their own plan.
@@ -249,21 +269,27 @@ final class OnboardingStore {
   func startFromPlanLink(id: String, dailyMinutes: Int) async throws -> (
     goalID: String, isNew: Bool
   ) {
-    let started = try await api.startFromPlanLink(
-      id: id, dailyMinutes: dailyMinutes, token: token())
-    cache.invalidate([.goals, .learningProfile])
-    return started
+    try await ensureSession()
+    return try await cache.onboardingWrite(invalidating: [.goals, .learningProfile]) {
+      [api] identity in
+      try await api.startFromPlanLink(
+        id: id, dailyMinutes: dailyMinutes, token: identity.bearerToken)
+    }
   }
 
   /// Skips a language goal's level test: the plan starts from the level the learner gave.
   func skipLevelTest(goalID: String) async throws {
-    try await api.finishLevelTest(goalID: goalID, token: token())
-    cache.invalidate([.goals, .learnerModel, .learningProfile])
+    try await cache.onboardingWrite(invalidating: [.goals, .learnerModel, .learningProfile]) {
+      [api] identity in
+      try await api.finishLevelTest(goalID: goalID, token: identity.bearerToken)
+    }
   }
 
   private func create(_ input: Components.Schemas.GoalCreateInput) async throws -> String {
-    let response = try await api.createGoals(input, token: token())
-    cache.invalidate([.goals, .learningProfile])
+    let response = try await cache.onboardingWrite(invalidating: [.goals, .learningProfile]) {
+      [api] identity in
+      try await api.createGoals(input, token: identity.bearerToken)
+    }
 
     guard let goalID = response.goals.first?.id else {
       throw OnboardingError.failed(.unavailable)
@@ -281,5 +307,37 @@ final class OnboardingStore {
   private static func goalDraft(_ json: [String: Any]) throws -> Components.Schemas.GoalDraft {
     try JSONDecoder().decode(
       Components.Schemas.GoalDraft.self, from: JSONSerialization.data(withJSONObject: json))
+  }
+}
+
+extension AppCache {
+  /// `mutate` for onboarding's writes, which the API can refuse for a product reason (a goal
+  /// limit, the guests' daily budget, haste): a refusal is thrown as that `OnboardingError`, a
+  /// transport failure as `OnboardingError.failed`, and a result for a session that ended or
+  /// changed meanwhile (or signed out on `unauthorized`) as `CancellationError`, which screens
+  /// ignore: nothing they'd show belongs to the learner on screen now.
+  func onboardingWrite<Value: Sendable>(
+    invalidating domains: Set<DataDomain> = [],
+    _ write: (AuthenticatedSession) async throws -> Value
+  ) async throws -> Value {
+    let result = await mutate(invalidating: domains) {
+      identity -> Result<Value, OnboardingError> in
+      do {
+        return .success(try await write(identity))
+      } catch OnboardingError.failed(let error) {
+        throw error
+      } catch let refusal as OnboardingError {
+        return .failure(refusal)
+      }
+    }
+
+    switch result {
+    case .done(let outcome):
+      return try outcome.get()
+    case .failed(let error):
+      throw OnboardingError.failed(error)
+    case .obsolete:
+      throw CancellationError()
+    }
   }
 }

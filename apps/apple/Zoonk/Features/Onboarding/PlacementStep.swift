@@ -314,6 +314,8 @@ struct PlacementStep: View {
           duration: shownAt.duration(to: .now))
         shown.answered += 1
         show(result.placement)
+      } catch is CancellationError {
+        // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch {
         failed = true
       }
@@ -334,6 +336,8 @@ struct PlacementStep: View {
       do {
         try await onboarding.finishPlacement(goalID: view.goal.id, fromScratch: fromScratch)
         onDone()
+      } catch is CancellationError {
+        // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch {
         failed = true
       }
@@ -389,6 +393,8 @@ struct LevelTestStep: View {
     do {
       try await onboarding.skipLevelTest(goalID: goalID)
       onDone()
+    } catch is CancellationError {
+      // The write is obsolete: the learner who asked is gone, so nothing shows.
     } catch {
       failed = true
     }

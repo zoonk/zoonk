@@ -84,6 +84,8 @@ struct CourseStartScreen: View {
       do {
         goalID = try await onboarding.startCourse(
           courseID: courseId, chapterID: chapterId, level: level.flatMap(LevelChoices.answer))
+      } catch is CancellationError {
+        // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch {
         self.error = GoalError.creating(error)
       }
