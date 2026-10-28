@@ -38,7 +38,8 @@ const runIds = { next: 1 };
 
 function createHost(kind: ProgramKind): Host {
   const { module, source } = SOURCES[kind];
-  // A data worker has an opaque origin; a Blob worker inherits the page's session access.
+  // A data URL gives the worker no origin, so learner code can't send the learner's cookies or
+  // read the page's data; a Blob URL would share the page's origin.
   const url = `data:text/javascript;charset=utf-8,${encodeURIComponent(source)}`;
   const worker = new Worker(url, { name: `zoonk-${kind}`, type: module ? "module" : "classic" });
 

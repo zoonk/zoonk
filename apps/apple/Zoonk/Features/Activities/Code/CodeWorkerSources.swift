@@ -1,8 +1,10 @@
 import Foundation
 
-/// Main's player sandbox (`packages/player/src/activities/_sandbox`), ported as-is: each worker
-/// runs learner code in a Web Worker created from a Blob, so a program can't touch the page and a
-/// runaway loop is stopped by terminating the worker. Before any learner code runs, each worker
+/// Main's player sandbox (`packages/player/src/activities/_sandbox`), ported: each worker runs
+/// learner code in a Web Worker created from a Blob, so a program can't touch the page and a
+/// runaway loop is stopped by terminating the worker. Main starts its workers from data URLs so
+/// they don't share the signed-in page's origin; this page has no session to share (a
+/// non-persistent store) and its CSP blocks the network. Before any learner code runs, each worker
 /// removes its network and storage globals. The host page keeps the worker, times each run out
 /// and turns its messages into output, like main's `sandbox-host.ts` and `run-program.ts`.
 ///

@@ -35,27 +35,6 @@ const emulateMedia: BrowserCommand<[Parameters<Page["emulateMedia"]>[0]]> = asyn
   await page.emulateMedia(media);
 };
 
-const HTTP_OK = 200;
-const HTTP_UNAUTHORIZED = 401;
-
-/** A cookie-protected JSON endpoint, like Main's session read, without an auth server or database. */
-const sandboxSession: BrowserCommand<["start" | "stop"]> = async ({ page }, action) => {
-  const url = new URL("/__sandbox-session.json", page.url()).href;
-
-  if (action === "stop") {
-    await page.context().clearCookies({ name: "sandbox-session" });
-    return url;
-  }
-
-  await page
-    .context()
-    .addCookies([
-      { httpOnly: true, name: "sandbox-session", sameSite: "Lax", url, value: "signed-in" },
-    ]);
-
-  return url;
-};
-
 /**
  * One touch event of a finger, `waitMs` after the one before when given. `at` (ms since the epoch)
  * is when the finger did it; without it, it's when the browser gets the event.
@@ -110,32 +89,7 @@ export default defineConfig({
       "streamdown",
     ],
   },
-  plugins: [
-    react(),
-    {
-      configureServer(server) {
-        // A real response lets every engine apply its own cookie and CORS rules.
-        server.middlewares.use((request, response, next) => {
-          if (request.url !== "/__sandbox-session.json") {
-            next();
-            return;
-          }
-
-          const cookie = request.headers.cookie ?? "";
-          const signedIn = cookie.includes("sandbox-session=signed-in");
-
-          response.writeHead(signedIn ? HTTP_OK : HTTP_UNAUTHORIZED, {
-            "Content-Type": "application/json",
-          });
-
-          response.end(
-            JSON.stringify(signedIn ? { token: "private-session-token" } : { error: "signed out" }),
-          );
-        });
-      },
-      name: "sandbox-session-fixture",
-    },
-  ],
+  plugins: [react()],
   resolve: {
     alias: { "next/image": nextImageShim, "web-haptics/react": webHapticsShim },
     tsconfigPaths: true,
@@ -151,7 +105,7 @@ export default defineConfig({
         test: {
           // The player's screens played in a real browser: what learners see and do, in any app.
           browser: {
-            commands: { emulateMedia, sandboxSession, touch },
+            commands: { emulateMedia, touch },
             enabled: true,
             headless: true,
             instances: [
