@@ -3179,6 +3179,35 @@
         }
       }
     },
+    "Earlier unfinished work · %@" : {
+      "comment" : "Lessons left from earlier days, with how many",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frühere offene Lektionen · %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecciones pendientes de días anteriores · %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leçons précédentes à terminer · %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pendências de dias anteriores · %@"
+          }
+        }
+      }
+    },
     "Enjoy your day off!" : {
       "comment" : "A rest day",
       "localizations" : {
@@ -5432,6 +5461,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Começar sessão"
+          }
+        }
+      }
+    },
+    "Start with these. Starting your session fits the plan to today's time." : {
+      "comment" : "Why the day that opens can differ from the one shown",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starte mit diesen Lektionen. Wenn du deine Lerneinheit startest, wird der Plan an die heutige Lernzeit angepasst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza por estas. Al iniciar la sesión, el plan se ajusta al tiempo que tienes hoy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commence par ces leçons. Le plan s’adapte au temps dont tu disposes aujourd’hui quand tu démarres ta séance."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comece por estas aulas. Ao iniciar sua sessão, o plano se ajusta ao tempo disponível hoje."
           }
         }
       }

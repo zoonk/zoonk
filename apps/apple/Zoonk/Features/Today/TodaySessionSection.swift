@@ -21,6 +21,10 @@ struct TodaySessionSection: View {
   private var session: StudyDay { view.session }
 
   var body: some View {
+    if !view.earlierWork.isEmpty {
+      TodayEarlierWorkSection(items: view.earlierWork)
+    }
+
     Section {
       if let freshStart {
         Text(freshStart)
@@ -643,5 +647,42 @@ struct NextRowBackground: View {
   var body: some View {
     Color(.secondarySystemGroupedBackground)
       .overlay(Color(.tertiarySystemFill))
+  }
+}
+
+/// Earlier unfinished lessons, in the plan's saved order, over a day not opened yet: Today shows
+/// the saved plan, and starting the session fits it to today's time, starting with these, so the
+/// day that opens can differ from the one shown. Open while the list is short.
+private struct TodayEarlierWorkSection: View {
+  @State private var isExpanded: Bool
+
+  let items: [TodayView.EarlierWork]
+
+  init(items: [TodayView.EarlierWork]) {
+    self.items = items
+    _isExpanded = State(initialValue: items.count <= 5)
+  }
+
+  var body: some View {
+    Section {
+      DisclosureGroup(isExpanded: $isExpanded) {
+        Text(
+          "Start with these. Starting your session fits the plan to today's time.",
+          tableName: "Today", comment: "Why the day that opens can differ from the one shown"
+        )
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
+
+        ForEach(Array(items.enumerated()), id: \.offset) { _, item in
+          Text(item.title)
+        }
+      } label: {
+        Text(
+          "Earlier unfinished work · \(items.count.formatted())", tableName: "Today",
+          comment: "Lessons left from earlier days, with how many"
+        )
+        .font(.body.weight(.medium))
+      }
+    }
   }
 }
