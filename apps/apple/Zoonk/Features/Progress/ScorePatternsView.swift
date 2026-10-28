@@ -6,7 +6,7 @@ struct ScorePatternsView: View {
 
   var body: some View {
     ProgressDetailLoadStateView(
-      state: progress.patternsState,
+      state: progress.patterns.state,
       emptyTitle: LocalizedStringResource(
         "No patterns yet",
         table: "Progress",
@@ -16,13 +16,11 @@ struct ScorePatternsView: View {
         table: "Progress",
         comment: "Guidance shown before the learner has score patterns"),
       systemImage: "chart.xyaxis.line",
-      retry: { await progress.loadPatterns(force: true) }
+      retry: { await progress.patterns.refresh() }
     ) { patterns in
       ScorePatternsContent(patterns: patterns)
     }
-    .refreshesProgress {
-      await progress.loadPatterns()
-    }
+    .loads(progress.patterns)
   }
 }
 

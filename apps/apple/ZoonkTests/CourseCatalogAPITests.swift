@@ -476,7 +476,7 @@ final class CourseCatalogAPITests: XCTestCase {
     do {
       _ = try await api.getCourse(id: Course.testFixture.id, token: nil)
       XCTFail("Expected not found")
-    } catch let error as CourseCatalogFailure {
+    } catch let error as APIError {
       XCTAssertEqual(error, .notFound)
     } catch {
       XCTFail("Unexpected error: \(error)")
@@ -495,7 +495,7 @@ final class CourseCatalogAPITests: XCTestCase {
     do {
       _ = try await api.listCourses(query: CourseCatalogQuery(language: "en"))
       XCTFail("Expected unavailable")
-    } catch let error as CourseCatalogFailure {
+    } catch let error as APIError {
       XCTAssertEqual(error, .unavailable)
     } catch {
       XCTFail("Unexpected error: \(error)")
@@ -509,7 +509,7 @@ final class CourseCatalogAPITests: XCTestCase {
     do {
       _ = try await api.listCourses(query: CourseCatalogQuery(language: "en"))
       XCTFail("Expected network failure")
-    } catch let error as CourseCatalogFailure {
+    } catch let error as APIError {
       XCTAssertEqual(error, .network)
     } catch {
       XCTFail("Unexpected error: \(error)")

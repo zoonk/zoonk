@@ -5,7 +5,7 @@ struct LevelProgressView: View {
 
   var body: some View {
     ProgressDetailLoadStateView(
-      state: progress.levelState,
+      state: progress.level.state,
       emptyTitle: LocalizedStringResource(
         "No level yet",
         table: "Progress",
@@ -15,13 +15,11 @@ struct LevelProgressView: View {
         table: "Progress",
         comment: "Guidance shown before the learner has a level"),
       systemImage: "brain.head.profile",
-      retry: { await progress.loadLevel(force: true) }
+      retry: { await progress.level.refresh() }
     ) { level in
       LevelProgressContent(level: level)
     }
-    .refreshesProgress {
-      await progress.loadLevel()
-    }
+    .loads(progress.level)
   }
 }
 

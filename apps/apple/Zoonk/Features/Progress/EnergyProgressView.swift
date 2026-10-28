@@ -5,7 +5,7 @@ struct EnergyProgressView: View {
 
   var body: some View {
     ProgressDetailLoadStateView(
-      state: progress.energyState,
+      state: progress.energy.state,
       emptyTitle: LocalizedStringResource(
         "No Energy yet",
         table: "Progress",
@@ -15,13 +15,11 @@ struct EnergyProgressView: View {
         table: "Progress",
         comment: "Guidance shown before the learner has Energy progress"),
       systemImage: "bolt.fill",
-      retry: { await progress.loadEnergy(force: true) }
+      retry: { await progress.energy.refresh() }
     ) { energy in
       EnergyProgressContent(energy: energy)
     }
-    .refreshesProgress {
-      await progress.loadEnergy()
-    }
+    .loads(progress.energy)
   }
 }
 

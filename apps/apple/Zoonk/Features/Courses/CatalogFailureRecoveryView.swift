@@ -10,7 +10,7 @@ struct CatalogFailureRecoveryView: View {
   @Environment(\.dismiss) private var dismiss
 
   let context: CatalogFailureContext
-  let failure: CourseCatalogFailure
+  let failure: APIError
   let retry: @MainActor () async -> Void
 
   var body: some View {

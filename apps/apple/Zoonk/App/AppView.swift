@@ -127,18 +127,17 @@ private struct AdaptiveNavigationTitle: ViewModifier {
 }
 
 #Preview {
-  let session = SessionStore.preview()
-  let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
+  let dependencies = AppDependencies(
+    clients: .live(baseURL: AppConfiguration.current.apiBaseURL),
+    session: .preview(),
+    privateImageLoader: .live(),
+    subscriptionStore: .live())
 
   AppView()
-    .environment(
-      CourseCatalogStore(
-        api: CourseCatalogAPI(clients: clients),
-        language: currentCourseCatalogLanguage(),
-        session: session)
-    )
-    .environment(MyCoursesStore(api: MyCoursesAPI(clients: clients), session: session))
-    .environment(ProgressStore(api: ProgressAPI(clients: clients), session: session))
-    .environment(session)
-    .environment(AppStoreSubscriptionStore.live())
+    .environment(dependencies.courseCatalogStore)
+    .environment(dependencies.learnerSummaryStore)
+    .environment(dependencies.myCoursesStore)
+    .environment(dependencies.progressStore)
+    .environment(dependencies.sessionStore)
+    .environment(dependencies.subscriptionStore)
 }

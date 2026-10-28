@@ -1,12 +1,6 @@
 import Foundation
 import OpenAPIRuntime
 
-enum ProgressAPIError: Error, Equatable {
-  case invalidResponse
-  case network
-  case unauthorized
-}
-
 protocol ProgressAPIClient {
   func getOverview(token: String) async throws -> ProgressOverview
   func getActivity(token: String) async throws -> ActivityProgress
@@ -24,145 +18,93 @@ struct ProgressAPI {
   }
 
   func getOverview(token: String) async throws -> ProgressOverview {
-    try await perform(token: token) { client in
+    try await clients.perform(token: token) { client in
       let output = try await client.getCurrentUserProgress(.init())
 
       switch output {
       case .ok(let response):
         return try makeProgressOverview(try response.body.json)
       case .unauthorized:
-        throw ProgressAPIError.unauthorized
+        throw APIError.unauthorized
       case .internalServerError, .undocumented:
-        throw ProgressAPIError.invalidResponse
+        throw APIError.unavailable
       }
     }
   }
 
   func getActivity(token: String) async throws -> ActivityProgress {
-    try await perform(token: token) { client in
+    try await clients.perform(token: token) { client in
       let output = try await client.getCurrentUserActivity(.init())
 
       switch output {
       case .ok(let response):
         return try makeActivityProgress(try response.body.json)
       case .unauthorized:
-        throw ProgressAPIError.unauthorized
+        throw APIError.unauthorized
       case .internalServerError, .undocumented:
-        throw ProgressAPIError.invalidResponse
+        throw APIError.unavailable
       }
     }
   }
 
   func getEnergy(token: String) async throws -> EnergyProgress? {
-    try await perform(token: token) { client in
+    try await clients.perform(token: token) { client in
       let output = try await client.getCurrentUserEnergy(.init())
 
       switch output {
       case .ok(let response):
         return try makeEnergyProgress(try response.body.json)
       case .unauthorized:
-        throw ProgressAPIError.unauthorized
+        throw APIError.unauthorized
       case .internalServerError, .undocumented:
-        throw ProgressAPIError.invalidResponse
+        throw APIError.unavailable
       }
     }
   }
 
   func getLevel(token: String) async throws -> LevelProgress? {
-    try await perform(token: token) { client in
+    try await clients.perform(token: token) { client in
       let output = try await client.getCurrentUserLevel(.init())
 
       switch output {
       case .ok(let response):
         return try makeLevelProgress(try response.body.json)
       case .unauthorized:
-        throw ProgressAPIError.unauthorized
+        throw APIError.unauthorized
       case .internalServerError, .undocumented:
-        throw ProgressAPIError.invalidResponse
+        throw APIError.unavailable
       }
     }
   }
 
   func getScore(token: String) async throws -> ScoreProgress? {
-    try await perform(token: token) { client in
+    try await clients.perform(token: token) { client in
       let output = try await client.getCurrentUserScore(.init())
 
       switch output {
       case .ok(let response):
         return try makeScoreProgress(try response.body.json)
       case .unauthorized:
-        throw ProgressAPIError.unauthorized
+        throw APIError.unauthorized
       case .internalServerError, .undocumented:
-        throw ProgressAPIError.invalidResponse
+        throw APIError.unavailable
       }
     }
   }
 
   func getScorePatterns(token: String) async throws -> ScorePatterns? {
-    try await perform(token: token) { client in
+    try await clients.perform(token: token) { client in
       let output = try await client.getCurrentUserScorePatterns(.init())
 
       switch output {
       case .ok(let response):
         return try makeScorePatterns(try response.body.json)
       case .unauthorized:
-        throw ProgressAPIError.unauthorized
+        throw APIError.unauthorized
       case .internalServerError, .undocumented:
-        throw ProgressAPIError.invalidResponse
+        throw APIError.unavailable
       }
     }
-  }
-
-  /// Keeps generated transport and decoding details behind the progress feature's stable recovery states.
-  private func perform<Output: Sendable>(
-    token: String,
-    operation: @Sendable (Client) async throws -> Output
-  ) async throws -> Output {
-    do {
-      return try await operation(clients.makeClient(token: token))
-    } catch {
-      if isRequestCancellation(error) {
-        throw CancellationError()
-      }
-
-      if let error = error as? ProgressAPIError {
-        throw error
-      }
-
-      if isNetworkError(error) {
-        throw ProgressAPIError.network
-      }
-
-      throw ProgressAPIError.invalidResponse
-    }
-  }
-
-  private func isRequestCancellation(_ error: Error) -> Bool {
-    if error is CancellationError {
-      return true
-    }
-
-    if let urlError = error as? URLError {
-      return urlError.code == .cancelled
-    }
-
-    if let clientError = error as? ClientError {
-      return isRequestCancellation(clientError.underlyingError)
-    }
-
-    return false
-  }
-
-  private func isNetworkError(_ error: Error) -> Bool {
-    if error is URLError {
-      return true
-    }
-
-    if let clientError = error as? ClientError {
-      return isNetworkError(clientError.underlyingError)
-    }
-
-    return false
   }
 }
 
@@ -432,7 +374,7 @@ private func makeScorePerformance(_ values: ScorePerformanceValues) -> ScorePerf
 
 private func makeProgressDate(_ rawValue: String) throws -> ProgressDate {
   guard let date = ProgressDate(rawValue) else {
-    throw ProgressAPIError.invalidResponse
+    throw APIError.unavailable
   }
 
   return date
@@ -446,7 +388,7 @@ where
   Destination.RawValue == String
 {
   guard let destination = Destination(rawValue: source.rawValue) else {
-    throw ProgressAPIError.invalidResponse
+    throw APIError.unavailable
   }
 
   return destination

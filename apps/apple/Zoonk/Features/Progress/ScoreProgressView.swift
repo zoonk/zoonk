@@ -6,7 +6,7 @@ struct ScoreProgressView: View {
 
   var body: some View {
     ProgressDetailLoadStateView(
-      state: progress.scoreState,
+      state: progress.score.state,
       emptyTitle: LocalizedStringResource(
         "No Score yet",
         table: "Progress",
@@ -16,13 +16,11 @@ struct ScoreProgressView: View {
         table: "Progress",
         comment: "Guidance shown before the learner has a Score"),
       systemImage: "target",
-      retry: { await progress.loadScore(force: true) }
+      retry: { await progress.score.refresh() }
     ) { score in
       ScoreProgressContent(score: score)
     }
-    .refreshesProgress {
-      await progress.loadScore()
-    }
+    .loads(progress.score)
   }
 }
 

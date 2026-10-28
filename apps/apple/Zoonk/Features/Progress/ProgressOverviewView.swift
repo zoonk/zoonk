@@ -27,14 +27,12 @@ struct ProgressOverviewView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(removing: horizontalSizeClass == .regular ? .title : nil)
     }
-    .refreshesProgress {
-      await progress.loadOverview()
-    }
+    .loads(progress.overview)
   }
 
   @ViewBuilder
   private var signedInView: some View {
-    switch progress.overviewState {
+    switch progress.overview.state {
     case .idle, .loading:
       ProgressOverviewLoadingView()
     case .loaded(let overview):
@@ -111,7 +109,7 @@ struct ProgressOverviewView: View {
     }
   }
 
-  private func progressFailureView(_ failure: ProgressFailure) -> some View {
+  private func progressFailureView(_ failure: APIError) -> some View {
     ProgressUnavailableView(
       title: progressFailureTitle(failure),
       description: Text(
@@ -120,18 +118,18 @@ struct ProgressOverviewView: View {
         comment: "Recovery guidance when progress cannot be loaded."),
       systemImage: failure == .network ? "wifi.exclamationmark" : "exclamationmark.triangle",
       retry: {
-        await progress.loadOverview(force: true)
+        await progress.overview.refresh()
       })
   }
 
-  private func progressFailureTitle(_ failure: ProgressFailure) -> Text {
+  private func progressFailureTitle(_ failure: APIError) -> Text {
     switch failure {
     case .network:
       Text(
         "You're offline",
         tableName: "Progress",
         comment: "Title shown when progress cannot load because the network is unavailable.")
-    case .unavailable:
+    case .notFound, .unauthorized, .unavailable:
       Text(
         "Progress is unavailable",
         tableName: "Progress",
@@ -583,6 +581,6 @@ private func overviewLearningTime(_ totalSeconds: Int) -> String {
           tableName: "Navigation",
           comment: "Navigation title for the learner's progress overview."))
   }
-  .environment(ProgressStore(api: ProgressAPI(clients: clients), session: session))
+  .environment(ProgressStore(api: ProgressAPI(clients: clients), cache: AppCache(session: session)))
   .environment(session)
 }

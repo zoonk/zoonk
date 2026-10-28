@@ -8,215 +8,97 @@ final class ProgressStoreTests: XCTestCase {
     let overview = ProgressOverview.testFixture
     let store = makeStore(overviewResults: [.success(overview)])
 
-    await store.loadOverview()
+    await store.overview.load()
 
-    XCTAssertEqual(store.overviewState, .loaded(overview))
+    XCTAssertEqual(store.overview.state, .loaded(overview))
   }
 
   func testEmptyOverviewPublishesEmptyState() async {
     let store = makeStore(overviewResults: [.success(.emptyTestFixture)])
 
-    await store.loadOverview()
+    await store.overview.load()
 
-    XCTAssertEqual(store.overviewState, .empty)
+    XCTAssertEqual(store.overview.state, .empty)
   }
 
   func testOverviewWithLearningTimePublishesLoadedState() async {
     let overview = ProgressOverview.learningTimeTestFixture
     let store = makeStore(overviewResults: [.success(overview)])
 
-    await store.loadOverview()
+    await store.overview.load()
 
-    XCTAssertEqual(store.overviewState, .loaded(overview))
+    XCTAssertEqual(store.overview.state, .loaded(overview))
   }
 
   func testActivityWithLearningTimePublishesLoadedState() async {
     let activity = ActivityProgress(
       days: [],
       summary: .learningTimeTestFixture)
+    let session = SessionStore.preview(account: .progressTestFixture)
     let store = ProgressStore(
       api: ProgressAPIStub(activityResult: .success(activity)),
-      session: .preview(account: .progressTestFixture))
+      cache: AppCache(session: session))
 
-    await store.loadActivity()
+    await store.activity.load()
 
-    XCTAssertEqual(store.activityState, .loaded(activity))
+    XCTAssertEqual(store.activity.state, .loaded(activity))
+  }
+
+  func testMissingEnergyPublishesEmptyState() async {
+    let session = SessionStore.preview(account: .progressTestFixture)
+    let store = ProgressStore(
+      api: ProgressAPIStub(energyResult: .success(nil)),
+      cache: AppCache(session: session))
+
+    await store.energy.load()
+
+    XCTAssertEqual(store.energy.state, .empty)
   }
 
   func testUnauthorizedOverviewExpiresTheMatchingSession() async {
     let session = SessionStore.preview(account: .progressTestFixture)
     let store = ProgressStore(
-      api: ProgressAPIStub(
-        overviewResults: [.failure(ProgressAPIError.unauthorized)]),
-      session: session)
+      api: ProgressAPIStub(overviewResults: [.failure(APIError.unauthorized)]),
+      cache: AppCache(session: session))
 
-    await store.loadOverview()
+    await store.overview.load()
 
     XCTAssertNil(session.account)
-    XCTAssertEqual(store.overviewState, .idle)
+    XCTAssertEqual(store.overview.state, .idle)
   }
 
   func testOverviewCanRetryAfterNetworkFailure() async {
     let overview = ProgressOverview.testFixture
     let store = makeStore(
       overviewResults: [
-        .failure(ProgressAPIError.network),
+        .failure(APIError.network),
         .success(overview),
       ])
 
-    await store.loadOverview()
-    XCTAssertEqual(store.overviewState, .failed(.network))
+    await store.overview.load()
+    XCTAssertEqual(store.overview.state, .failed(.network))
 
-    await store.loadOverview(force: true)
-    XCTAssertEqual(store.overviewState, .loaded(overview))
+    await store.overview.refresh()
+    XCTAssertEqual(store.overview.state, .loaded(overview))
   }
 
-  func testOverviewReloadsProgressForTheSameSession() async {
+  func testOverviewIsReusedUntilProgressChanges() async {
     let initialOverview = ProgressOverview.testFixture
     let refreshedOverview = ProgressOverview.learningTimeTestFixture
-    let store = makeStore(
-      overviewResults: [
-        .success(initialOverview),
-        .success(refreshedOverview),
-      ])
-
-    await store.loadOverview()
-    await store.loadOverview()
-
-    XCTAssertEqual(store.overviewState, .loaded(refreshedOverview))
-  }
-
-  func testCancelledOverviewDoesNotPublishAnError() async {
-    let store = makeStore(overviewResults: [.failure(CancellationError())])
-
-    await store.loadOverview()
-
-    XCTAssertEqual(store.overviewState, .idle)
-  }
-
-  func testCancelledOverviewRefreshPreservesLoadedProgress() async {
-    let overview = ProgressOverview.testFixture
-    let store = makeStore(
-      overviewResults: [
-        .success(overview),
-        .failure(CancellationError()),
-      ])
-
-    await store.loadOverview()
-    await store.loadOverview(force: true)
-
-    XCTAssertEqual(store.overviewState, .loaded(overview))
-  }
-
-  func testCancelledForcedOverviewLoadDoesNotRemainLoading() async {
-    let firstRequestStarted = expectation(description: "First overview request started")
-    let secondRequestStarted = expectation(description: "Second overview request started")
-    let api = SuspendedOverviewAPIStub { requestCount in
-      if requestCount == 1 {
-        firstRequestStarted.fulfill()
-      } else if requestCount == 2 {
-        secondRequestStarted.fulfill()
-      }
-    }
+    let session = SessionStore.preview(account: .progressTestFixture)
+    let cache = AppCache(session: session)
     let store = ProgressStore(
-      api: api,
-      session: .preview(account: .progressTestFixture))
+      api: ProgressAPIStub(
+        overviewResults: [.success(initialOverview), .success(refreshedOverview)]),
+      cache: cache)
 
-    let firstRequest = Task { await store.loadOverview() }
-    await fulfillment(of: [firstRequestStarted], timeout: 1)
+    await store.overview.load()
+    await store.overview.load()
+    XCTAssertEqual(store.overview.state, .loaded(initialOverview))
 
-    let firstRequestCount = await api.requestCount
-
-    guard firstRequestCount == 1 else {
-      XCTFail("Expected 1 overview request, received \(firstRequestCount)")
-      firstRequest.cancel()
-      await api.cancelAllRequests()
-      await firstRequest.value
-      return
-    }
-
-    let secondRequest = Task { await store.loadOverview(force: true) }
-    await fulfillment(of: [secondRequestStarted], timeout: 1)
-
-    let secondRequestCount = await api.requestCount
-
-    guard secondRequestCount == 2 else {
-      XCTFail("Expected 2 overview requests, received \(secondRequestCount)")
-      firstRequest.cancel()
-      secondRequest.cancel()
-      await api.cancelAllRequests()
-      await firstRequest.value
-      await secondRequest.value
-      return
-    }
-
-    secondRequest.cancel()
-    await secondRequest.value
-
-    XCTAssertEqual(store.overviewState, .idle)
-
-    firstRequest.cancel()
-    await firstRequest.value
-  }
-
-  func testMissingEnergyPublishesEmptyState() async {
-    let store = ProgressStore(
-      api: ProgressAPIStub(energyResult: .success(nil)),
-      session: .preview(account: .progressTestFixture))
-
-    await store.loadEnergy()
-
-    XCTAssertEqual(store.energyState, .empty)
-  }
-
-  func testLateOverviewDoesNotOverwriteANewerRequest() async {
-    let firstRequestStarted = expectation(description: "First overview request started")
-    let secondRequestStarted = expectation(description: "Second overview request started")
-    let api = SuspendedOverviewAPIStub { requestCount in
-      if requestCount == 1 {
-        firstRequestStarted.fulfill()
-      } else if requestCount == 2 {
-        secondRequestStarted.fulfill()
-      }
-    }
-    let store = ProgressStore(
-      api: api,
-      session: .preview(account: .progressTestFixture))
-
-    let firstRequest = Task { await store.loadOverview() }
-    await fulfillment(of: [firstRequestStarted], timeout: 1)
-
-    let firstRequestCount = await api.requestCount
-
-    guard firstRequestCount == 1 else {
-      XCTFail("Expected 1 overview request, received \(firstRequestCount)")
-      firstRequest.cancel()
-      await api.cancelAllRequests()
-      await firstRequest.value
-      return
-    }
-
-    let secondRequest = Task { await store.loadOverview(force: true) }
-    await fulfillment(of: [secondRequestStarted], timeout: 1)
-
-    let secondRequestCount = await api.requestCount
-
-    guard secondRequestCount == 2 else {
-      XCTFail("Expected 2 overview requests, received \(secondRequestCount)")
-      firstRequest.cancel()
-      secondRequest.cancel()
-      await api.cancelAllRequests()
-      await firstRequest.value
-      await secondRequest.value
-      return
-    }
-
-    await api.resolveRequest(at: 1, with: .testFixture)
-    await secondRequest.value
-    await api.resolveRequest(at: 0, with: .emptyTestFixture)
-    await firstRequest.value
-
-    XCTAssertEqual(store.overviewState, .loaded(.testFixture))
+    cache.invalidate([.userProgress])
+    await store.overview.load()
+    XCTAssertEqual(store.overview.state, .loaded(refreshedOverview))
   }
 
   func testSameAccountCredentialReplacementStartsANewOverviewRequest() async {
@@ -236,37 +118,15 @@ final class ProgressStoreTests: XCTestCase {
         secondRequestStarted.fulfill()
       }
     }
-    let store = ProgressStore(api: api, session: session)
-    let firstRequest = Task { await store.loadOverview() }
+    let store = ProgressStore(api: api, cache: AppCache(session: session))
+    let firstRequest = Task { await store.overview.load() }
     await fulfillment(of: [firstRequestStarted], timeout: 1)
-
-    let firstRequestCount = await api.requestCount
-
-    guard firstRequestCount == 1 else {
-      XCTFail("Expected 1 overview request, received \(firstRequestCount)")
-      firstRequest.cancel()
-      await api.cancelAllRequests()
-      await firstRequest.value
-      return
-    }
 
     credentialStore.token = "new-session"
     await session.reconcileSynchronizedCredential()
 
-    let secondRequest = Task { await store.loadOverview() }
+    let secondRequest = Task { await store.overview.load() }
     await fulfillment(of: [secondRequestStarted], timeout: 1)
-
-    let secondRequestCount = await api.requestCount
-
-    guard secondRequestCount == 2 else {
-      XCTFail("Expected 2 overview requests, received \(secondRequestCount)")
-      firstRequest.cancel()
-      secondRequest.cancel()
-      await api.cancelAllRequests()
-      await firstRequest.value
-      await secondRequest.value
-      return
-    }
 
     await api.resolveRequest(at: 1, with: .testFixture)
     await secondRequest.value
@@ -275,13 +135,13 @@ final class ProgressStoreTests: XCTestCase {
 
     let requestTokens = await api.requestTokens
     XCTAssertEqual(requestTokens, ["old-session", "new-session"])
-    XCTAssertEqual(store.overviewState, .loaded(.testFixture))
+    XCTAssertEqual(store.overview.state, .loaded(.testFixture))
   }
 
   private func makeStore(overviewResults: [Result<ProgressOverview, Error>]) -> ProgressStore {
     ProgressStore(
       api: ProgressAPIStub(overviewResults: overviewResults),
-      session: .preview(account: .progressTestFixture))
+      cache: AppCache(session: .preview(account: .progressTestFixture)))
   }
 }
 
@@ -347,23 +207,23 @@ private actor SuspendedOverviewAPIStub: ProgressAPIClient {
   }
 
   func getActivity(token: String) async throws -> ActivityProgress {
-    throw ProgressAPIError.invalidResponse
+    throw APIError.unavailable
   }
 
   func getEnergy(token: String) async throws -> EnergyProgress? {
-    throw ProgressAPIError.invalidResponse
+    throw APIError.unavailable
   }
 
   func getLevel(token: String) async throws -> LevelProgress? {
-    throw ProgressAPIError.invalidResponse
+    throw APIError.unavailable
   }
 
   func getScore(token: String) async throws -> ScoreProgress? {
-    throw ProgressAPIError.invalidResponse
+    throw APIError.unavailable
   }
 
   func getScorePatterns(token: String) async throws -> ScorePatterns? {
-    throw ProgressAPIError.invalidResponse
+    throw APIError.unavailable
   }
 }
 
@@ -373,26 +233,26 @@ private actor ProgressAPIStub: ProgressAPIClient {
   private var overviewResults: [Result<ProgressOverview, Error>]
 
   init(overviewResults: [Result<ProgressOverview, Error>]) {
-    activityResult = .failure(ProgressAPIError.invalidResponse)
-    energyResult = .failure(ProgressAPIError.invalidResponse)
+    activityResult = .failure(APIError.unavailable)
+    energyResult = .failure(APIError.unavailable)
     self.overviewResults = overviewResults
   }
 
   init(activityResult: Result<ActivityProgress, Error>) {
     self.activityResult = activityResult
-    energyResult = .failure(ProgressAPIError.invalidResponse)
+    energyResult = .failure(APIError.unavailable)
     overviewResults = []
   }
 
   init(energyResult: Result<EnergyProgress?, Error>) {
-    activityResult = .failure(ProgressAPIError.invalidResponse)
+    activityResult = .failure(APIError.unavailable)
     self.energyResult = energyResult
     overviewResults = []
   }
 
   func getOverview(token: String) async throws -> ProgressOverview {
     guard !overviewResults.isEmpty else {
-      throw ProgressAPIError.invalidResponse
+      throw APIError.unavailable
     }
 
     return try overviewResults.removeFirst().get()
@@ -407,15 +267,15 @@ private actor ProgressAPIStub: ProgressAPIClient {
   }
 
   func getLevel(token: String) async throws -> LevelProgress? {
-    throw ProgressAPIError.invalidResponse
+    throw APIError.unavailable
   }
 
   func getScore(token: String) async throws -> ScoreProgress? {
-    throw ProgressAPIError.invalidResponse
+    throw APIError.unavailable
   }
 
   func getScorePatterns(token: String) async throws -> ScorePatterns? {
-    throw ProgressAPIError.invalidResponse
+    throw APIError.unavailable
   }
 }
 

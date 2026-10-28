@@ -261,20 +261,6 @@ struct CatalogSearchResults: Codable, Equatable, Sendable {
   }
 }
 
-enum CourseCatalogFailure: Error, Codable, Equatable, Sendable {
-  case network
-  case unavailable
-  case notFound
-}
-
-enum CourseCatalogLoadState<Value: Codable & Equatable & Sendable>: Codable, Equatable, Sendable {
-  case idle
-  case loading
-  case loaded(Value)
-  case empty
-  case failed(CourseCatalogFailure)
-}
-
 struct CourseCatalogQuery: Equatable, Sendable {
   let category: CourseCategory?
   let cursor: String?

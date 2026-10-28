@@ -3,11 +3,8 @@
 
   @MainActor
   struct UITestConfiguration {
-    let courseCatalog: CourseCatalogStore
+    let dependencies: AppDependencies
     let initiallyPresentsAccount: Bool
-    let myCourses: MyCoursesStore
-    let progress: ProgressStore
-    let session: SessionStore
 
     static var current: UITestConfiguration? {
       let arguments = Set(ProcessInfo.processInfo.arguments)
@@ -18,22 +15,19 @@
 
       let environment = ProcessInfo.processInfo.environment
       let catalogSnapshot = courseCatalogSnapshot(from: environment)
-      let session = SessionStore.preview(
-        account: account(from: environment))
+      let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
 
       return UITestConfiguration(
-        courseCatalog: CourseCatalogStore(
-          api: courseCatalogAPI(snapshot: catalogSnapshot),
-          language: currentCourseCatalogLanguage(),
-          session: session),
-        initiallyPresentsAccount: arguments.contains("--ui-testing-account-sheet"),
-        myCourses: MyCoursesStore(
-          api: myCoursesAPI(snapshot: catalogSnapshot),
-          session: session),
-        progress: ProgressStore(
-          api: progressAPI(from: environment),
-          session: session),
-        session: session)
+        dependencies: AppDependencies(
+          clients: clients,
+          session: SessionStore.preview(account: account(from: environment)),
+          privateImageLoader: .live(),
+          subscriptionStore: .live(),
+          courseCatalogAPI: courseCatalogAPI(snapshot: catalogSnapshot),
+          learnerSummaryAPI: UITestLearnerSummaryAPI(),
+          myCoursesAPI: myCoursesAPI(snapshot: catalogSnapshot),
+          progressAPI: progressAPI(from: environment)),
+        initiallyPresentsAccount: arguments.contains("--ui-testing-account-sheet"))
     }
 
     /// Decodes fixture data supplied by the UI-test target so the Debug app can compose isolated state without owning concrete test users.
@@ -356,7 +350,7 @@
         let course = snapshot.courses.first(where: { $0.id == id }),
         course.organization != nil || token != nil
       else {
-        throw CourseCatalogFailure.notFound
+        throw APIError.notFound
       }
 
       return course
@@ -368,7 +362,7 @@
           $0.id == key.chapterID && $0.courseID == key.courseID
         })
       else {
-        throw CourseCatalogFailure.notFound
+        throw APIError.notFound
       }
 
       return chapter
@@ -525,6 +519,19 @@
     let score: ScoreProgress?
   }
 
+  /// Keeps UI tests off the network: the frame gets a summary that doesn't change during a run.
+  private struct UITestLearnerSummaryAPI: LearnerSummaryAPIClient {
+    func getSummary(token: String) async throws -> LearnerSummary {
+      LearnerSummary(
+        activeGoalID: nil,
+        identity: LearnerIdentity(isAnonymous: false, signedInAt: .now, userID: token),
+        nextChangeAt: .distantFuture,
+        readAt: .now,
+        tier: .free,
+        timeZone: nil)
+    }
+  }
+
   private enum UITestProgressFailure: String, Sendable {
     case activityUnauthorized = "activity-unauthorized"
     case overviewNetwork = "overview-network"
@@ -541,7 +548,7 @@
 
     func getOverview(token: String) async throws -> ProgressOverview {
       if failure == .overviewNetwork {
-        throw ProgressAPIError.network
+        throw APIError.network
       }
 
       return snapshot.overview
@@ -549,7 +556,7 @@
 
     func getActivity(token: String) async throws -> ActivityProgress {
       if failure == .activityUnauthorized {
-        throw ProgressAPIError.unauthorized
+        throw APIError.unauthorized
       }
 
       return snapshot.activity

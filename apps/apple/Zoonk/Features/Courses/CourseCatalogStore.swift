@@ -1,318 +1,147 @@
 import Foundation
 import Observation
 
-private struct CourseCatalogRequest<Value: Codable & Equatable & Sendable>: Sendable {
-  let isEmpty: @Sendable (Value) -> Bool
-  let load: @Sendable (any CourseCatalogAPIClient) async throws -> Value
-}
-
-private enum CourseCatalogResource: Hashable, Sendable {
-  case chapter(CatalogChapterKey)
-  case course(String)
-  case courses
-  case search
-}
-
-private struct CourseCatalogRequestIdentity: Sendable {
-  let resource: CourseCatalogResource
-  let revision: UUID
-}
-
+/// The public catalog: course lists by category, course and chapter pages, and search. Lists and
+/// search are the same for everyone; course and chapter pages show the reader's progress, so a
+/// session change drops them and finishing a lesson revalidates them.
 @MainActor
 @Observable
 final class CourseCatalogStore {
-  private(set) var coursesState: CourseCatalogLoadState<CourseCatalogPage> = .idle
-  private(set) var searchState: CourseCatalogLoadState<CatalogSearchResults> = .idle
+  /// Public content changes rarely; pull to refresh fetches it sooner.
+  private static let catalogMaxAge = Duration.seconds(60 * 60)
+
   private(set) var isLoadingMore = false
-  private(set) var loadMoreFailure: CourseCatalogFailure?
+  private(set) var loadMoreFailure: APIError?
+  private var search: CatalogSearch?
 
-  private let api: any CourseCatalogAPIClient
-  private let language: String
-  private let session: SessionStore
-  private var activeCourseQuery: CourseCatalogQuery?
-  private var activeRequests: Set<CourseCatalogResource> = []
-  private var activeSearchQuery: CatalogSearchQuery?
-  private var chapterStates: [CatalogChapterKey: CourseCatalogLoadState<ChapterDetail>] = [:]
-  private var courseStates: [String: CourseCatalogLoadState<CourseDetail>] = [:]
-  private var loadMoreRevision: UUID?
-  private var requestRevisions: [CourseCatalogResource: UUID] = [:]
-  private var sessionIdentity: AuthenticatedSession?
+  @ObservationIgnored private let api: any CourseCatalogAPIClient
+  @ObservationIgnored private let cache: AppCache
+  @ObservationIgnored private let language: String
+  @ObservationIgnored private var chapters: [CatalogChapterKey: Resource<ChapterDetail>] = [:]
+  @ObservationIgnored private var courseDetails: [String: Resource<CourseDetail>] = [:]
+  @ObservationIgnored private var pages: [CourseCategory?: Resource<CourseCatalogPage>] = [:]
 
-  init(
-    api: any CourseCatalogAPIClient,
-    language: String,
-    session: SessionStore
-  ) {
+  init(api: any CourseCatalogAPIClient, language: String, cache: AppCache) {
     self.api = api
+    self.cache = cache
     self.language = language
-    self.session = session
-    sessionIdentity = session.authenticatedSession
   }
 
-  var isLoadingCourses: Bool {
-    activeRequests.contains(.courses)
+  var searchState: LoadState<CatalogSearchResults> {
+    search?.results.state ?? .idle
   }
 
-  var isSearching: Bool {
-    activeRequests.contains(.search)
-  }
-
-  func loadCoursesIfNeeded(category: CourseCategory?) async {
-    let query = CourseCatalogQuery(category: category, language: language)
-
-    guard query != activeCourseQuery || needsPresentationLoad(coursesState) else {
-      return
+  /// The first page of a category's courses, with later pages appended by `loadMoreCourses`.
+  func courses(category: CourseCategory?) -> Resource<CourseCatalogPage> {
+    if let resource = pages[category] {
+      return resource
     }
 
-    await loadCourses(category: category, force: true)
+    let query = CourseCatalogQuery(category: category, language: language)
+    let resource: Resource<CourseCatalogPage> = cache.resource(
+      audience: .everyone,
+      maxAge: Self.catalogMaxAge,
+      isEmpty: \.courses.isEmpty
+    ) { [api] _ in
+      try await api.listCourses(query: query)
+    }
+    pages[category] = resource
+    return resource
   }
 
-  func loadCourses(category: CourseCategory?, force: Bool = false) async {
-    let query = CourseCatalogQuery(category: category, language: language)
-    let queryChanged = query != activeCourseQuery
+  func loadMoreCourses(category: CourseCategory?) async {
+    let resource = courses(category: category)
 
     guard
-      queryChanged
-        || canBeginRequest(resource: .courses, state: coursesState, force: force)
+      !isLoadingMore,
+      case .loaded(let page) = resource.state,
+      page.canLoadMore,
+      let cursor = page.nextCursor
     else {
       return
     }
 
-    activeCourseQuery = query
-    isLoadingMore = false
-    loadMoreRevision = nil
-    loadMoreFailure = nil
-
-    let requestIdentity = beginRequest(for: .courses)
-    let previousState: CourseCatalogLoadState<CourseCatalogPage> =
-      queryChanged ? .idle : coursesState
-    coursesState = loadingState(from: previousState)
-    let state = await load(
-      CourseCatalogRequest(
-        isEmpty: { $0.courses.isEmpty },
-        load: { api in try await api.listCourses(query: query) }))
-
-    guard isCurrent(requestIdentity), activeCourseQuery == query else {
-      return
-    }
-
-    coursesState = stateAfterRequest(state, previousState: previousState)
-    finishRequest(requestIdentity)
-  }
-
-  func loadMoreCourses(category: CourseCategory?, force: Bool = false) async {
-    guard
-      let activeCourseQuery,
-      activeCourseQuery.category == category,
-      case .loaded(let currentPage) = coursesState,
-      currentPage.canLoadMore,
-      let cursor = currentPage.nextCursor,
-      !isLoadingCourses,
-      !isLoadingMore || force,
-      let catalogRevision = requestRevisions[.courses]
-    else {
-      return
-    }
-
+    let revision = resource.revision
     isLoadingMore = true
     loadMoreFailure = nil
-    let paginationRevision = UUID()
-    loadMoreRevision = paginationRevision
-    let nextQuery = CourseCatalogQuery(
-      category: category,
-      cursor: cursor,
-      language: language)
+    defer { isLoadingMore = false }
 
     do {
-      let nextPage = try await api.listCourses(query: nextQuery)
+      let nextPage = try await api.listCourses(
+        query: CourseCatalogQuery(category: category, cursor: cursor, language: language))
 
-      guard
-        isCurrentPaginationRequest(
-          catalogRevision: catalogRevision,
-          paginationRevision: paginationRevision)
-      else {
+      guard resource.revision == revision else {
         return
       }
 
-      coursesState = .loaded(merge(currentPage: currentPage, nextPage: nextPage))
-      isLoadingMore = false
-      loadMoreRevision = nil
-    } catch is CancellationError {
-      guard
-        isCurrentPaginationRequest(
-          catalogRevision: catalogRevision,
-          paginationRevision: paginationRevision)
-      else {
-        return
-      }
-
-      isLoadingMore = false
-      loadMoreRevision = nil
-    } catch let failure as CourseCatalogFailure {
-      guard
-        isCurrentPaginationRequest(
-          catalogRevision: catalogRevision,
-          paginationRevision: paginationRevision)
-      else {
-        return
-      }
-
-      isLoadingMore = false
-      loadMoreRevision = nil
-      loadMoreFailure = failure
+      resource.update { merge(currentPage: $0, nextPage: nextPage) }
     } catch {
-      guard
-        isCurrentPaginationRequest(
-          catalogRevision: catalogRevision,
-          paginationRevision: paginationRevision)
-      else {
+      let error = apiError(from: error)
+
+      guard resource.revision == revision, !(error is CancellationError) else {
         return
       }
 
-      isLoadingMore = false
-      loadMoreRevision = nil
-      loadMoreFailure = .unavailable
+      loadMoreFailure = error as? APIError ?? .unavailable
     }
   }
 
-  func courseState(for id: String) -> CourseCatalogLoadState<CourseDetail> {
-    courseStates[id] ?? .idle
-  }
-
-  func loadCourseIfNeeded(id: String) async {
-    synchronizeSession()
-
-    guard needsPresentationLoad(courseState(for: id)) else {
-      return
+  func course(id: String) -> Resource<CourseDetail> {
+    if let resource = courseDetails[id] {
+      return resource
     }
 
-    await loadCourse(id: id, force: true)
+    let resource: Resource<CourseDetail> = cache.resource(
+      audience: .viewer,
+      domains: [.userProgress]
+    ) { [api] session in
+      let token = session?.bearerToken
+      async let course = api.getCourse(id: id, token: token)
+      async let chapters = api.listCourseChapters(courseID: id, token: token)
+      async let continuation = loadCatalogSupplement {
+        try await api.getCourseNextLesson(courseID: id, token: token)
+      }
+      async let progress = loadCatalogSupplement {
+        try await api.getCourseProgress(courseID: id, token: token)
+      }
+
+      return try await CourseDetail(
+        continuation: continuation,
+        course: course,
+        chapters: chapters,
+        progress: progress)
+    }
+    courseDetails[id] = resource
+    return resource
   }
 
-  func loadCourse(id: String, force: Bool = false) async {
-    synchronizeSession()
-    let authenticatedSession = session.authenticatedSession
-    let resource = CourseCatalogResource.course(id)
-    let previousState = courseState(for: id)
-
-    guard canBeginRequest(resource: resource, state: previousState, force: force) else {
-      return
-    }
-
-    let requestIdentity = beginRequest(for: resource)
-    courseStates[id] = loadingState(from: previousState)
-    let state = await load(
-      CourseCatalogRequest(
-        isEmpty: { _ in false },
-        load: { api in
-          let token = authenticatedSession?.bearerToken
-          async let course = api.getCourse(id: id, token: token)
-          async let chapters = api.listCourseChapters(courseID: id, token: token)
-          async let continuation = loadCatalogSupplement {
-            try await api.getCourseNextLesson(
-              courseID: id,
-              token: token)
-          }
-          async let progress = loadCatalogSupplement {
-            try await api.getCourseProgress(
-              courseID: id,
-              token: token)
-          }
-          let (loadedCourse, loadedChapters, loadedContinuation, loadedProgress) =
-            try await (course, chapters, continuation, progress)
-          return CourseDetail(
-            continuation: loadedContinuation,
-            course: loadedCourse,
-            chapters: loadedChapters,
-            progress: loadedProgress)
-        }))
-
-    guard isCurrent(requestIdentity), session.authenticatedSession == authenticatedSession else {
-      synchronizeSession()
-      return
-    }
-
-    courseStates[id] = stateAfterRequest(state, previousState: previousState)
-    finishRequest(requestIdentity)
-
-    if state == .failed(.notFound) {
-      dropChapterStates(inCourse: id)
-    }
-  }
-
-  func chapterState(for key: CatalogChapterKey) -> CourseCatalogLoadState<ChapterDetail> {
-    chapterStates[key] ?? .idle
-  }
-
-  func loadChapterIfNeeded(_ key: CatalogChapterKey) async {
-    synchronizeSession()
-
-    guard needsPresentationLoad(chapterState(for: key)) else {
-      return
-    }
-
-    await loadChapter(key, force: true)
-  }
-
-  /// Loads a chapter page in the context of the course it was opened from. A chapter that no longer
+  /// A chapter page in the context of the course it was opened from. A chapter that no longer
   /// exists, for example after a content reset, also refreshes its course so the course page stops
   /// listing it.
-  func loadChapter(_ key: CatalogChapterKey, force: Bool = false) async {
-    synchronizeSession()
-    let authenticatedSession = session.authenticatedSession
-    let resource = CourseCatalogResource.chapter(key)
-    let previousState = chapterState(for: key)
-
-    guard canBeginRequest(resource: resource, state: previousState, force: force) else {
-      return
+  func chapter(_ key: CatalogChapterKey) -> Resource<ChapterDetail> {
+    if let resource = chapters[key] {
+      return resource
     }
 
-    let requestIdentity = beginRequest(for: resource)
-    chapterStates[key] = loadingState(from: previousState)
-    let state = await load(
-      CourseCatalogRequest(
-        isEmpty: { _ in false },
-        load: { api in
-          let token = authenticatedSession?.bearerToken
-          async let chapter = loadCatalogSupplement {
-            try await api.getChapter(key, token: token)
-          }
-          async let lessons = api.listChapterLessons(key, token: token)
-          async let continuation = loadCatalogSupplement {
-            try await api.getChapterNextLesson(
-              key,
-              token: token)
-          }
-          async let progress = loadCatalogSupplement {
-            try await api.getChapterProgress(
-              chapterID: key.chapterID,
-              token: token)
-          }
-          let (loadedChapter, loadedLessons, loadedContinuation, loadedProgress) =
-            try await (chapter, lessons, continuation, progress)
-          return ChapterDetail(
-            chapter: loadedChapter,
-            continuation: loadedContinuation,
-            lessons: loadedLessons,
-            progress: loadedProgress)
-        }))
-
-    guard isCurrent(requestIdentity), session.authenticatedSession == authenticatedSession else {
-      synchronizeSession()
-      return
+    let resource: Resource<ChapterDetail> = cache.resource(
+      audience: .viewer,
+      domains: [.userProgress]
+    ) { [api, weak self] session in
+      do {
+        return try await loadChapterDetail(api: api, key: key, token: session?.bearerToken)
+      } catch APIError.notFound {
+        await self?.courseDetails[key.courseID]?.refresh()
+        throw APIError.notFound
+      }
     }
-
-    chapterStates[key] = stateAfterRequest(state, previousState: previousState)
-    finishRequest(requestIdentity)
-
-    if state == .failed(.notFound), courseStates[key.courseID] != nil {
-      await loadCourse(id: key.courseID, force: true)
-    }
+    chapters[key] = resource
+    return resource
   }
 
-  /// Invalidates the previous query before a debounced request starts, without discarding an unchanged search.
+  /// Forgets the previous query's results before a debounced search starts, keeping an unchanged
+  /// search.
   func prepareSearch(query: String) {
-    guard catalogText(query) != activeSearchQuery?.query else {
+    guard catalogText(query) != search?.query.query else {
       return
     }
 
@@ -320,211 +149,79 @@ final class CourseCatalogStore {
   }
 
   func searchCatalog(query: String, force: Bool = false) async {
-    let normalizedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
-
-    guard !normalizedQuery.isEmpty else {
+    guard let text = catalogText(query) else {
       clearSearch()
       return
     }
 
-    let query = CatalogSearchQuery(language: language, query: normalizedQuery)
-    let queryChanged = query != activeSearchQuery
+    let query = CatalogSearchQuery(language: language, query: text)
 
-    guard
-      queryChanged
-        || canBeginRequest(resource: .search, state: searchState, force: force)
-    else {
+    if search?.query != query {
+      search = CatalogSearch(
+        query: query,
+        results: cache.resource(audience: .everyone, isEmpty: \.isEmpty) { [api] _ in
+          try await api.searchCatalog(query: query)
+        })
+    }
+
+    guard let results = search?.results else {
       return
     }
 
-    activeSearchQuery = query
-    let requestIdentity = beginRequest(for: .search)
-    let previousState: CourseCatalogLoadState<CatalogSearchResults> =
-      queryChanged ? .idle : searchState
-    searchState = loadingState(from: previousState)
-    let state = await load(
-      CourseCatalogRequest(
-        isEmpty: \.isEmpty,
-        load: { api in try await api.searchCatalog(query: query) }))
-
-    guard isCurrent(requestIdentity), activeSearchQuery == query else {
-      return
+    if force {
+      await results.refresh()
+    } else {
+      await results.load()
     }
-
-    searchState = stateAfterRequest(state, previousState: previousState)
-    finishRequest(requestIdentity)
   }
 
   func clearSearch() {
-    activeSearchQuery = nil
-    activeRequests.remove(.search)
-    requestRevisions.removeValue(forKey: .search)
-    searchState = .idle
-  }
-
-  private func beginRequest(
-    for resource: CourseCatalogResource
-  ) -> CourseCatalogRequestIdentity {
-    let requestIdentity = CourseCatalogRequestIdentity(resource: resource, revision: UUID())
-    requestRevisions[resource] = requestIdentity.revision
-    activeRequests.insert(resource)
-    return requestIdentity
-  }
-
-  private func finishRequest(_ requestIdentity: CourseCatalogRequestIdentity) {
-    activeRequests.remove(requestIdentity.resource)
-  }
-
-  private func isCurrent(_ requestIdentity: CourseCatalogRequestIdentity) -> Bool {
-    isCurrent(resource: requestIdentity.resource, revision: requestIdentity.revision)
-  }
-
-  private func isCurrent(resource: CourseCatalogResource, revision: UUID) -> Bool {
-    requestRevisions[resource] == revision
-  }
-
-  private func isCurrentPaginationRequest(
-    catalogRevision: UUID,
-    paginationRevision: UUID
-  ) -> Bool {
-    isCurrent(resource: .courses, revision: catalogRevision)
-      && loadMoreRevision == paginationRevision
-  }
-
-  private func synchronizeSession() {
-    let currentSessionIdentity = session.authenticatedSession
-
-    guard currentSessionIdentity != sessionIdentity else {
-      return
-    }
-
-    sessionIdentity = currentSessionIdentity
-    requestRevisions = requestRevisions.filter { entry in
-      entry.key == .courses || entry.key == .search
-    }
-    activeRequests = Set(
-      activeRequests.filter { resource in
-        resource == .courses || resource == .search
-      })
-    chapterStates.removeAll()
-    courseStates.removeAll()
-  }
-
-  /// Forgets chapter pages opened from a course that no longer exists.
-  private func dropChapterStates(inCourse courseID: String) {
-    chapterStates = chapterStates.filter { $0.key.courseID != courseID }
-  }
-
-  private func load<Value>(
-    _ request: CourseCatalogRequest<Value>
-  ) async -> CourseCatalogLoadState<Value>? {
-    do {
-      let value = try await request.load(api)
-      return request.isEmpty(value) ? .empty : .loaded(value)
-    } catch is CancellationError {
-      return nil
-    } catch let failure as CourseCatalogFailure {
-      return .failed(failure)
-    } catch {
-      return .failed(.unavailable)
-    }
-  }
-
-  private func canBeginRequest<Value>(
-    resource: CourseCatalogResource,
-    state: CourseCatalogLoadState<Value>,
-    force: Bool
-  ) -> Bool {
-    force || (!activeRequests.contains(resource) && needsPresentationLoad(state))
-  }
-
-  private func needsPresentationLoad<Value>(
-    _ state: CourseCatalogLoadState<Value>
-  ) -> Bool {
-    switch state {
-    case .idle, .loading, .failed:
-      true
-    case .loaded, .empty:
-      false
-    }
-  }
-
-  private func loadingState<Value>(
-    from state: CourseCatalogLoadState<Value>
-  ) -> CourseCatalogLoadState<Value> {
-    switch state {
-    case .loaded, .empty:
-      state
-    case .idle, .loading, .failed:
-      .loading
-    }
-  }
-
-  private func stateAfterCancellation<Value>(
-    from state: CourseCatalogLoadState<Value>
-  ) -> CourseCatalogLoadState<Value> {
-    switch state {
-    case .empty, .failed, .loaded:
-      state
-    case .idle, .loading:
-      .idle
-    }
-  }
-
-  private func stateAfterRequest<Value>(
-    _ requestState: CourseCatalogLoadState<Value>?,
-    previousState: CourseCatalogLoadState<Value>
-  ) -> CourseCatalogLoadState<Value> {
-    guard let requestState else {
-      return stateAfterCancellation(from: previousState)
-    }
-
-    guard case .failed(let failure) = requestState, failure != .notFound else {
-      return requestState
-    }
-
-    switch previousState {
-    case .loaded, .empty:
-      return previousState
-    case .idle, .loading, .failed:
-      return requestState
-    }
+    search = nil
   }
 
   private func merge(
     currentPage: CourseCatalogPage,
     nextPage: CourseCatalogPage
   ) -> CourseCatalogPage {
+    var seenIDs = Set(currentPage.courses.map(\.id))
+
     return CourseCatalogPage(
-      courses: appendingUniqueCourses(
-        currentCourses: currentPage.courses,
-        candidates: nextPage.courses),
+      courses: currentPage.courses + nextPage.courses.filter { seenIDs.insert($0.id).inserted },
       hasMore: nextPage.hasMore,
       nextCursor: nextPage.nextCursor)
   }
-
-  private func appendingUniqueCourses(
-    currentCourses: [CourseSummary],
-    candidates: [CourseSummary]
-  ) -> [CourseSummary] {
-    guard let candidate = candidates.first else {
-      return currentCourses
-    }
-
-    let remainingCandidates = Array(candidates.dropFirst())
-
-    guard !currentCourses.contains(where: { $0.id == candidate.id }) else {
-      return appendingUniqueCourses(
-        currentCourses: currentCourses,
-        candidates: remainingCandidates)
-    }
-
-    return appendingUniqueCourses(
-      currentCourses: currentCourses + [candidate],
-      candidates: remainingCandidates)
-  }
 }
 
+/// The search that's on screen: only the latest query's results are kept.
+private struct CatalogSearch {
+  let query: CatalogSearchQuery
+  let results: Resource<CatalogSearchResults>
+}
+
+private func loadChapterDetail(
+  api: any CourseCatalogAPIClient,
+  key: CatalogChapterKey,
+  token: String?
+) async throws -> ChapterDetail {
+  async let chapter = loadCatalogSupplement {
+    try await api.getChapter(key, token: token)
+  }
+  async let lessons = api.listChapterLessons(key, token: token)
+  async let continuation = loadCatalogSupplement {
+    try await api.getChapterNextLesson(key, token: token)
+  }
+  async let progress = loadCatalogSupplement {
+    try await api.getChapterProgress(chapterID: key.chapterID, token: token)
+  }
+
+  return try await ChapterDetail(
+    chapter: chapter,
+    continuation: continuation,
+    lessons: lessons,
+    progress: progress)
+}
+
+/// Loads a part of a page the page can show without, so its failure doesn't fail the page.
 private func loadCatalogSupplement<Value: Sendable>(
   _ operation: @Sendable () async throws -> Value
 ) async throws -> Value? {

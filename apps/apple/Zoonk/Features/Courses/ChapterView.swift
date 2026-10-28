@@ -2,14 +2,13 @@ import SwiftUI
 
 struct ChapterView: View {
   @Environment(CourseCatalogStore.self) private var catalog
-  @Environment(SessionStore.self) private var session
   @State private var searchText = ""
 
   let chapter: ChapterReference
 
   var body: some View {
     Group {
-      switch catalog.chapterState(for: chapter.key) {
+      switch catalog.chapter(chapter.key).state {
       case .idle, .loading:
         ChapterLoadingView(chapter: chapter)
       case .loaded(let detail):
@@ -24,21 +23,12 @@ struct ChapterView: View {
           searchText: $searchText)
       case .failed(let failure):
         CatalogFailureRecoveryView(context: .chapter, failure: failure) {
-          await catalog.loadChapter(chapter.key, force: true)
+          await catalog.chapter(chapter.key).refresh()
         }
       }
     }
     .background(Color(uiColor: .systemBackground))
-    .task(
-      id: CatalogDetailTaskID(
-        resource: chapter.key,
-        session: session.authenticatedSession)
-    ) {
-      await catalog.loadChapterIfNeeded(chapter.key)
-    }
-    .refreshable {
-      await catalog.loadChapter(chapter.key, force: true)
-    }
+    .loads(catalog.chapter(chapter.key))
   }
 }
 

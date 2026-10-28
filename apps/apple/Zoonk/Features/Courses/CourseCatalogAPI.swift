@@ -26,7 +26,7 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
   }
 
   func listCourses(query: CourseCatalogQuery) async throws -> CourseCatalogPage {
-    try await perform { client in
+    try await clients.perform(token: nil) { client in
       let output = try await client.listCourses(
         .init(
           query: .init(
@@ -39,22 +39,22 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
       case .ok(let response):
         return makeCourseCatalogPage(try response.body.json)
       case .badRequest, .internalServerError, .undocumented:
-        throw CourseCatalogFailure.unavailable
+        throw APIError.unavailable
       }
     }
   }
 
   func getCourse(id: String, token: String?) async throws -> Course {
-    try await perform(token: token) { client in
+    try await clients.perform(token: token) { client in
       let output = try await client.getCourse(.init(path: .init(courseId: id)))
 
       switch output {
       case .ok(let response):
         return makeCourse(try response.body.json)
       case .notFound:
-        throw CourseCatalogFailure.notFound
+        throw APIError.notFound
       case .badRequest, .internalServerError, .undocumented:
-        throw CourseCatalogFailure.unavailable
+        throw APIError.unavailable
       }
     }
   }
@@ -62,7 +62,7 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
   /// Reads the chapter as the given course places it. A course that doesn't place the chapter is
   /// not found.
   func getChapter(_ key: CatalogChapterKey, token: String?) async throws -> CourseChapter {
-    try await perform(token: token) { client in
+    try await clients.perform(token: token) { client in
       let output = try await client.getChapter(
         .init(path: .init(chapterId: key.chapterID), query: .init(courseId: key.courseID)))
 
@@ -70,15 +70,15 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
       case .ok(let response):
         return makeCourseChapter(try response.body.json)
       case .notFound:
-        throw CourseCatalogFailure.notFound
+        throw APIError.notFound
       case .badRequest, .internalServerError, .undocumented:
-        throw CourseCatalogFailure.unavailable
+        throw APIError.unavailable
       }
     }
   }
 
   func listCourseChapters(courseID: String, token: String?) async throws -> [CourseChapter] {
-    try await perform(token: token) { client in
+    try await clients.perform(token: token) { client in
       let output = try await client.listCourseChapters(
         .init(path: .init(courseId: courseID)))
 
@@ -86,15 +86,15 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
       case .ok(let response):
         return try response.body.json.data.map(makeCourseChapter)
       case .notFound:
-        throw CourseCatalogFailure.notFound
+        throw APIError.notFound
       case .badRequest, .internalServerError, .undocumented:
-        throw CourseCatalogFailure.unavailable
+        throw APIError.unavailable
       }
     }
   }
 
   func listChapterLessons(_ key: CatalogChapterKey, token: String?) async throws -> [CourseLesson] {
-    try await perform(token: token) { client in
+    try await clients.perform(token: token) { client in
       let output = try await client.listChapterLessons(
         .init(path: .init(chapterId: key.chapterID), query: .init(courseId: key.courseID)))
 
@@ -102,9 +102,9 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
       case .ok(let response):
         return try response.body.json.data.map(makeCourseLesson)
       case .notFound:
-        throw CourseCatalogFailure.notFound
+        throw APIError.notFound
       case .badRequest, .internalServerError, .undocumented:
-        throw CourseCatalogFailure.unavailable
+        throw APIError.unavailable
       }
     }
   }
@@ -112,7 +112,7 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
   func getCourseNextLesson(courseID: String, token: String?) async throws
     -> CatalogContinuationTarget
   {
-    try await perform(token: token) { client in
+    try await clients.perform(token: token) { client in
       let output = try await client.getCourseNextLesson(
         .init(path: .init(courseId: courseID)))
 
@@ -120,9 +120,9 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
       case .ok(let response):
         return makeCatalogContinuationTarget(try response.body.json)
       case .notFound:
-        throw CourseCatalogFailure.notFound
+        throw APIError.notFound
       case .badRequest, .internalServerError, .undocumented:
-        throw CourseCatalogFailure.unavailable
+        throw APIError.unavailable
       }
     }
   }
@@ -130,7 +130,7 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
   func getChapterNextLesson(_ key: CatalogChapterKey, token: String?) async throws
     -> CatalogContinuationTarget
   {
-    try await perform(token: token) { client in
+    try await clients.perform(token: token) { client in
       let output = try await client.getChapterNextLesson(
         .init(path: .init(chapterId: key.chapterID), query: .init(courseId: key.courseID)))
 
@@ -138,15 +138,15 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
       case .ok(let response):
         return makeCatalogContinuationTarget(try response.body.json)
       case .notFound:
-        throw CourseCatalogFailure.notFound
+        throw APIError.notFound
       case .badRequest, .internalServerError, .undocumented:
-        throw CourseCatalogFailure.unavailable
+        throw APIError.unavailable
       }
     }
   }
 
   func getCourseProgress(courseID: String, token: String?) async throws -> CourseProgress {
-    try await perform(token: token) { client in
+    try await clients.perform(token: token) { client in
       let output = try await client.getCourseProgress(
         .init(path: .init(courseId: courseID)))
 
@@ -154,15 +154,15 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
       case .ok(let response):
         return makeCourseProgress(try response.body.json)
       case .notFound:
-        throw CourseCatalogFailure.notFound
+        throw APIError.notFound
       case .badRequest, .internalServerError, .undocumented:
-        throw CourseCatalogFailure.unavailable
+        throw APIError.unavailable
       }
     }
   }
 
   func getChapterProgress(chapterID: String, token: String?) async throws -> ChapterProgress {
-    try await perform(token: token) { client in
+    try await clients.perform(token: token) { client in
       let output = try await client.getChapterProgress(
         .init(path: .init(chapterId: chapterID)))
 
@@ -170,15 +170,15 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
       case .ok(let response):
         return makeChapterProgress(try response.body.json)
       case .notFound:
-        throw CourseCatalogFailure.notFound
+        throw APIError.notFound
       case .badRequest, .internalServerError, .undocumented:
-        throw CourseCatalogFailure.unavailable
+        throw APIError.unavailable
       }
     }
   }
 
   func searchCatalog(query: CatalogSearchQuery) async throws -> CatalogSearchResults {
-    try await perform { client in
+    try await clients.perform(token: nil) { client in
       let output = try await client.searchCatalog(
         .init(query: .init(language: query.language, query: query.query)))
 
@@ -186,61 +186,9 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
       case .ok(let response):
         return makeCatalogSearchResults(try response.body.json)
       case .badRequest, .internalServerError, .undocumented:
-        throw CourseCatalogFailure.unavailable
+        throw APIError.unavailable
       }
     }
-  }
-
-  /// Keeps generated transport failures behind stable recovery states while preserving task cancellation.
-  private func perform<Output: Sendable>(
-    token: String? = nil,
-    operation: @Sendable (Client) async throws -> Output
-  ) async throws -> Output {
-    do {
-      return try await operation(clients.makeClient(token: token))
-    } catch {
-      if isRequestCancellation(error) {
-        throw CancellationError()
-      }
-
-      if let failure = error as? CourseCatalogFailure {
-        throw failure
-      }
-
-      if isNetworkError(error) {
-        throw CourseCatalogFailure.network
-      }
-
-      throw CourseCatalogFailure.unavailable
-    }
-  }
-
-  private func isRequestCancellation(_ error: Error) -> Bool {
-    if error is CancellationError {
-      return true
-    }
-
-    if let urlError = error as? URLError {
-      return urlError.code == .cancelled
-    }
-
-    if let clientError = error as? ClientError {
-      return isRequestCancellation(clientError.underlyingError)
-    }
-
-    return false
-  }
-
-  private func isNetworkError(_ error: Error) -> Bool {
-    if error is URLError {
-      return true
-    }
-
-    if let clientError = error as? ClientError {
-      return isNetworkError(clientError.underlyingError)
-    }
-
-    return false
   }
 }
 

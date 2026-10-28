@@ -19,10 +19,6 @@ struct AllCoursesView: View {
         browseCatalog
       }
     }
-    .task(id: isSelected ? selectedCategory?.rawValue ?? "" : nil) {
-      guard isSelected else { return }
-      await catalog.loadCoursesIfNeeded(category: selectedCategory)
-    }
     .task(id: isSelected ? searchText : nil) {
       guard isSelected else { return }
       await updateSearchResults()
@@ -43,9 +39,7 @@ struct AllCoursesView: View {
       .frame(maxWidth: .infinity)
     }
     .scrollBounceBehavior(.basedOnSize)
-    .refreshable {
-      await catalog.loadCourses(category: selectedCategory, force: true)
-    }
+    .loads(catalog.courses(category: selectedCategory))
   }
 
   private func updateSearchResults() async {
@@ -71,7 +65,7 @@ struct AllCoursesView: View {
 
   @ViewBuilder
   private var catalogContent: some View {
-    switch catalog.coursesState {
+    switch catalog.courses(category: selectedCategory).state {
     case .idle, .loading:
       CourseCatalogLoadingGrid()
     case .loaded(let page):
@@ -80,7 +74,7 @@ struct AllCoursesView: View {
       CourseCatalogEmptyView(category: selectedCategory, onCreateCourse: onCreateCourse)
     case .failed(let failure):
       CatalogFailureRecoveryView(context: .catalog, failure: failure) {
-        await catalog.loadCourses(category: selectedCategory, force: true)
+        await catalog.courses(category: selectedCategory).refresh()
       }
     }
   }

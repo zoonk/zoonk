@@ -24,7 +24,20 @@ These instructions apply to the native iPhone and iPad app in this directory and
 - Extract stable, independently owned domains or sufficiently large features into local Swift packages when real module boundaries emerge.
 - Use Swift concurrency and value types by default. Keep observable state at the narrowest owning feature boundary and avoid introducing view models that only relay data without adding domain behavior.
 - Scope every asynchronous result and credential mutation to the full session identity that started it. Before publishing or deleting state, confirm that identity is still current and test meaningful request-order races.
-- Treat initial loading and refresh as different experiences. Deduplicate only in-flight work, preserve valid content during revalidation, and make authentication loss lead to a recoverable screen rather than stranded loading UI.
+- Treat initial loading and refresh as different experiences. Deduplicate only in-flight work, preserve valid content during revalidation, and make authentication loss lead to a recoverable screen rather than stranded loading UI. `Resource` (below) does all of this; don't reimplement it in a store.
+
+## Data loading and caching
+
+Every read the app shows goes through one pattern in `Zoonk/Data`, so screens are instant on return and the rules above hold everywhere:
+
+- `AppCache` is created once in `App/AppDependencies.swift`. Feature stores create their reads with `cache.resource(audience:domains:maxAge:isEmpty:fetch:)` and own the returned `Resource<Value>`; stores live for the app's lifetime and are injected with `.environment`, so data survives tab switches and navigation.
+- A `Resource` loads once, shows `.loading` only when nothing is cached, revalidates in the background when older than `maxAge` (5 minutes by default) or invalidated, shares one request among concurrent callers, keeps content when a refresh fails (except `.notFound`), signs out on `.unauthorized`, and drops a response whose session ended. Its `audience` decides what a session change does: `.everyone` (public, kept), `.viewer` (public but personalized, dropped) or `.signedIn` (the learner's own, idle while signed out, dropped).
+- A screen shows a resource with `.loads(store.thing)` (several: `.loads(a, b)`) and switches on `store.thing.state` (`LoadState`: `.idle`, `.loading`, `.loaded`, `.empty`, `.failed(APIError)`). That modifier loads on appear, revalidates stale data on returning to the foreground, adds pull to refresh, and counts the screen as viewing the resource. Retry buttons call `refresh()`. Never start requests in `onAppear` or a bare `.task`, and never keep a second copy of a resource's value in view state.
+- Keyed reads (a course by id) live in the store as a dictionary of resources created on first use, like `CourseCatalogStore.course(id:)`. Pagination appends with `resource.update` after checking `resource.revision` didn't change while the page loaded.
+- After a successful mutation, call `cache.invalidate([...])` with every `DataDomain` the write changed (the same tags main revalidates in `packages/core/src/cache/tags.ts`). Resources reading those domains refetch now if a screen shows them and on their next appearance otherwise; the learner summary reads every domain, so it always follows. When the mutation's response already carries the new value, `resource.update` shows it without a request, then invalidate the other domains it touched.
+- Feature APIs throw `APIError` and run generated calls through `APIClientFactory.perform(token:operation:)`, which maps transport failures and keeps cancellation. Generation progress streams from `APIClientFactory.generationEvents(id:token:)`, which resumes a dropped connection from the last event.
+- `LearnerSummaryStore` holds the frame's summary (`GET /me/summary`): read on launch and sign-in, on foreground after a minute, at its `nextChangeAt`, and after every mutation. Read frame state (goals, tier, today, level) from it instead of fetching it per screen.
+- Cover a new store's own logic with unit tests against an API stub; `ResourceTests` already covers loading, staleness, dedupe, session races and invalidation.
 
 ## Navigation and Presentation
 

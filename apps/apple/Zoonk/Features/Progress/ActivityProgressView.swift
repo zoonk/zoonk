@@ -5,7 +5,7 @@ struct ActivityProgressView: View {
 
   var body: some View {
     ProgressDetailLoadStateView(
-      state: progress.activityState,
+      state: progress.activity.state,
       emptyTitle: LocalizedStringResource(
         "No activity yet",
         table: "Progress",
@@ -15,13 +15,11 @@ struct ActivityProgressView: View {
         table: "Progress",
         comment: "Guidance shown before the learner has activity progress"),
       systemImage: "chart.bar.xaxis",
-      retry: { await progress.loadActivity(force: true) }
+      retry: { await progress.activity.refresh() }
     ) { activity in
       ActivityProgressContent(activity: activity)
     }
-    .refreshesProgress {
-      await progress.loadActivity()
-    }
+    .loads(progress.activity)
   }
 }
 

@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ProgressDetailLoadStateView<Value, Content>: View
 where Value: Equatable & Sendable, Content: View {
-  let state: ProgressLoadState<Value>
+  let state: LoadState<Value>
   let emptyTitle: LocalizedStringResource
   let emptyDescription: LocalizedStringResource
   let systemImage: String
@@ -264,7 +264,7 @@ private struct ProgressDetailUnavailableView: View {
 }
 
 private struct ProgressDetailFailureView: View {
-  let failure: ProgressFailure
+  let failure: APIError
   let retry: @MainActor () async -> Void
 
   var body: some View {
@@ -298,7 +298,7 @@ private struct ProgressDetailFailureView: View {
         "You're offline",
         tableName: "Progress",
         comment: "Title shown when progress cannot load without a network connection")
-    case .unavailable:
+    case .notFound, .unauthorized, .unavailable:
       Text(
         "Progress unavailable",
         tableName: "Progress",
@@ -313,7 +313,7 @@ private struct ProgressDetailFailureView: View {
         "Check your connection and try again.",
         tableName: "Progress",
         comment: "Recovery guidance for a progress network error")
-    case .unavailable:
+    case .notFound, .unauthorized, .unavailable:
       Text(
         "We couldn't load this progress right now. Try again in a moment.",
         tableName: "Progress",

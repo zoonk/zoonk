@@ -28,9 +28,11 @@ filter:
     - getCurrentUserProgress
     - getCurrentUserScore
     - getCurrentUserScorePatterns
+    - getCurrentUserSummary
     - listChapterLessons
     - listCourseChapters
     - listCourses
     - listCurrentUserCourses
     - searchCatalog
+    - streamGenerationEvents
     - updateCurrentUser

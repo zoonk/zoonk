@@ -296,7 +296,7 @@ final class ProgressAPITests: XCTestCase {
     do {
       _ = try await api.getOverview(token: "test-session")
       XCTFail("Expected an unauthorized error")
-    } catch let error as ProgressAPIError {
+    } catch let error as APIError {
       XCTAssertEqual(error, .unauthorized)
     } catch {
       XCTFail("Unexpected error: \(error)")
@@ -310,7 +310,7 @@ final class ProgressAPITests: XCTestCase {
     do {
       _ = try await api.getOverview(token: "test-session")
       XCTFail("Expected a network error")
-    } catch let error as ProgressAPIError {
+    } catch let error as APIError {
       XCTAssertEqual(error, .network)
     } catch {
       XCTFail("Unexpected error: \(error)")
@@ -365,8 +365,8 @@ final class ProgressAPITests: XCTestCase {
     do {
       _ = try await api.getActivity(token: "test-session")
       XCTFail("Expected an invalid response error")
-    } catch let error as ProgressAPIError {
-      XCTAssertEqual(error, .invalidResponse)
+    } catch let error as APIError {
+      XCTAssertEqual(error, .unavailable)
     } catch {
       XCTFail("Unexpected error: \(error)")
     }
@@ -383,8 +383,8 @@ final class ProgressAPITests: XCTestCase {
     do {
       _ = try await api.getOverview(token: "test-session")
       XCTFail("Expected an invalid response error")
-    } catch let error as ProgressAPIError {
-      XCTAssertEqual(error, .invalidResponse)
+    } catch let error as APIError {
+      XCTAssertEqual(error, .unavailable)
     } catch {
       XCTFail("Unexpected error: \(error)")
     }

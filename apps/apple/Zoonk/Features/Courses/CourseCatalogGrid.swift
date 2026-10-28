@@ -44,13 +44,13 @@ struct CourseCatalogGrid: View {
       .task(
         id: CourseCatalogPaginationTaskID(
           cursor: page.nextCursor,
-          isLoadingCourses: catalog.isLoadingCourses)
+          isRefreshing: catalog.courses(category: category).isRefreshing)
       ) {
-        guard !catalog.isLoadingCourses else {
+        guard !catalog.courses(category: category).isRefreshing else {
           return
         }
 
-        await catalog.loadMoreCourses(category: category, force: true)
+        await catalog.loadMoreCourses(category: category)
       }
     } else {
       CourseGridItem(
@@ -65,7 +65,7 @@ struct CourseCatalogGrid: View {
 
 private struct CourseCatalogPaginationTaskID: Equatable {
   let cursor: String?
-  let isLoadingCourses: Bool
+  let isRefreshing: Bool
 }
 
 struct CourseCatalogLoadingGrid: View {
@@ -278,7 +278,7 @@ struct CourseGridLoadMoreView: View {
 }
 
 private func courseGridLoadMoreFailure(
-  _ failure: CourseCatalogFailure?
+  _ failure: APIError?
 ) -> CourseGridLoadMoreFailure? {
   guard let failure else {
     return nil
