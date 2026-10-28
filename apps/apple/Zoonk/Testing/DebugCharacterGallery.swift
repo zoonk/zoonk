@@ -4,7 +4,7 @@
   /// Opens every character drawing and act over the app when `ZOONK_DEBUG_CHARACTERS` is set, the
   /// native side of main's playground page `/design/characters`, so the art can be compared with
   /// main's on a simulator in every mode. `ZOONK_DEBUG_CHARACTERS=ceremony` opens a milestone's
-  /// ceremony instead.
+  /// ceremony instead, and `=moments` a result's missions: one done, then all of them.
   struct DebugCharacterGallery: ViewModifier {
     private let mode = ProcessInfo.processInfo.environment["ZOONK_DEBUG_CHARACTERS"]
 
@@ -13,6 +13,8 @@
         content.fullScreenCover(isPresented: .constant(true)) {
           if mode == "ceremony" {
             CeremonyPreview()
+          } else if mode == "moments" {
+            MomentsPreview()
           } else {
             Gallery()
           }
@@ -169,6 +171,42 @@
         index += 1
       }
       .id(index)
+    }
+  }
+  /// A result's missions as a block's end shows them, one mission done and then the day's last.
+  private struct MomentsPreview: View {
+    @State private var allDone = false
+
+    private func result(allDone: Bool) -> DayResult? {
+      let json = """
+        {"ceremony": null, "reached": null, "missionMoment": {
+          "completed": ["review"], "fullMeal": {"bonus": 50, "paid": \(allDone)},
+          "missions": [
+            {"detail": null, "done": 1, "kind": "review", "minutes": 5, "opens": null,
+             "status": "done", "total": 1, "waitReason": null},
+            {"detail": null, "done": \(allDone ? 1 : 0), "kind": "somethingNew", "minutes": 10,
+             "opens": null, "status": "\(allDone ? "done" : "todo")", "total": 1,
+             "waitReason": null}]}}
+        """
+      return try? JSONDecoder().decode(DayResult.self, from: Data(json.utf8))
+    }
+
+    var body: some View {
+      NavigationStack {
+        List {
+          if let result = result(allDone: allDone) {
+            DayMomentSections(result: result)
+              .id(allDone)
+          }
+
+          Button {
+            allDone.toggle()
+          } label: {
+            Text(verbatim: allDone ? "One mission done" : "All missions done")
+          }
+        }
+        .navigationTitle(Text(verbatim: "Moments"))
+      }
     }
   }
 #endif

@@ -59,6 +59,9 @@ struct DayMomentSections: View {
   @Environment(LearnerSummaryStore.self) private var learner
 
   let result: DayResult
+  /// Whether the buddy acts out the missions now; a copy shown before the result's own screen
+  /// draws it still in the pose it starts from, so the act plays once.
+  var celebrates = true
 
   private var buddy: String {
     learner.buddyDisplayName
@@ -71,12 +74,21 @@ struct DayMomentSections: View {
           MissionRow(mission: mission, buddyName: buddy)
         }
       } header: {
-        if moment.fullMeal.paid {
-          Text("Today's missions done!", tableName: "Session", comment: "Every mission is done")
-        } else {
-          Text(
-            "\(moment.completed.count) missions done!", tableName: "Session",
-            comment: "Missions this result completed")
+        HStack(spacing: moment.fullMeal.paid ? 16 : 12) {
+          MissionsBuddy(
+            look: learner.summary.value?.buddy ?? BuddyLook(), isPayoff: moment.fullMeal.paid,
+            celebrates: celebrates
+          )
+          // Each result's missions are its own moment, even on a screen that stays.
+          .id(moment.completed)
+
+          if moment.fullMeal.paid {
+            Text("Today's missions done!", tableName: "Session", comment: "Every mission is done")
+          } else {
+            Text(
+              "\(moment.completed.count) missions done!", tableName: "Session",
+              comment: "Missions this result completed")
+          }
         }
       } footer: {
         if moment.fullMeal.paid {
@@ -146,5 +158,41 @@ struct DayMomentSections: View {
     return Text(
       "Right answers raise it. A day away lowers it a little.", tableName: "Session",
       comment: "What moves Energy")
+  }
+}
+
+/// The learner's buddy, glad about the missions (main's `MomentBuddy`): beside a mission done its
+/// face smiles a beat in, as the mission's check lands; when the day's missions are all done the
+/// whole buddy cheers two beats in, as the bonus lands, and violet sparks fly a beat later. It acts
+/// with its parts, once; drawn still where the moment doesn't play.
+private struct MissionsBuddy: View {
+  let look: BuddyLook
+  let isPayoff: Bool
+  let celebrates: Bool
+
+  var body: some View {
+    var studied = look
+    studied.studiedToday = true
+
+    return Group {
+      if isPayoff {
+        BuddyCharacter(
+          look: studied, expression: .happy,
+          reaction: celebrates ? ActReaction(act: .cheer, delay: 2 * .beat) : nil
+        )
+        .frame(width: 96, height: 96)
+        .background {
+          if celebrates {
+            Burst(delay: 3 * .beat)
+          }
+        }
+      } else {
+        BuddyCharacter(
+          look: studied, expression: .neutral, crop: .face,
+          reaction: celebrates ? ActReaction(act: .smile, delay: .beat) : nil
+        )
+        .frame(width: 48, height: 48)
+      }
+    }
   }
 }

@@ -110,7 +110,8 @@ private struct SessionContent: View {
               MomentSummary(moment: moment, title: nil)
             }
 
-            DayMomentSections(result: moment.day)
+            // The buddy acts once, on the next stop's screen.
+            DayMomentSections(result: moment.day, celebrates: false)
 
             Section {
               ProgressView()
