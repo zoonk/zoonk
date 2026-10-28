@@ -166,8 +166,8 @@ function datePhases(value: unknown) {
 }
 
 /**
- * The plan's items in the planner's order with a challenge closing each phase in `open`, after
- * that phase's last item: each item's position, and each new challenge's phase and position.
+ * A challenge closing each phase in `open`, right after that phase's last item: each new
+ * challenge's phase and position, and the items after it, each a place later.
  */
 function placeChallenges({
   items,
@@ -180,17 +180,17 @@ function placeChallenges({
     open.map((phase) => [items.findLast((item) => item.phase <= phase)?.id, phase]),
   );
 
-  const order = items.flatMap((item) =>
-    closing.has(item.id) ? [item, { phase: closing.get(item.id) ?? 0 }] : [item],
-  );
+  const placed = items.map((item, index) => {
+    const shift = items.slice(0, index).filter((earlier) => closing.has(earlier.id)).length;
+    return { ...item, position: item.position + shift };
+  });
 
   return {
-    bosses: order.flatMap((entry, position) =>
-      "id" in entry ? [] : [{ phase: entry.phase, position }],
-    ),
-    moved: order.flatMap((entry, position) =>
-      "id" in entry && entry.position !== position ? [{ id: entry.id, position }] : [],
-    ),
+    bosses: placed.flatMap((item) => {
+      const phase = closing.get(item.id);
+      return phase === undefined ? [] : [{ phase, position: item.position + 1 }];
+    }),
+    moved: placed.filter((item, index) => item.position !== items[index]?.position),
   };
 }
 
