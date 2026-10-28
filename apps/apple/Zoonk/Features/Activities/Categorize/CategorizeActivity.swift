@@ -86,12 +86,21 @@ private struct CategorizeCanvas: View {
         }
       }
 
-      LazyVGrid(
-        columns: [GridItem(.adaptive(minimum: groupWidth), spacing: 10, alignment: .top)],
-        alignment: .leading, spacing: 10
-      ) {
-        ForEach(fields.groups) { group in
-          groupPanel(group)
+      // The groups share the width when they fit side by side, as on main, and wrap otherwise.
+      ViewThatFits(in: .horizontal) {
+        HStack(alignment: .top, spacing: 10) {
+          ForEach(fields.groups) { group in
+            groupPanel(group)
+          }
+        }
+
+        LazyVGrid(
+          columns: [GridItem(.adaptive(minimum: groupWidth), spacing: 10, alignment: .top)],
+          alignment: .leading, spacing: 10
+        ) {
+          ForEach(fields.groups) { group in
+            groupPanel(group)
+          }
         }
       }
 
