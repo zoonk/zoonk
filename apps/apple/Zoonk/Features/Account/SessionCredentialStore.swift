@@ -16,7 +16,6 @@ struct SessionCredentialStore: SessionCredentialStoring {
   private let account = "session"
   private let service = "com.zoonk.authentication"
 
-  /// Removes the shared session credential so iCloud Keychain can propagate sign-out to the user's other Apple devices.
   func delete() throws {
     let status = SecItemDelete(matchQuery as CFDictionary)
 
@@ -25,7 +24,6 @@ struct SessionCredentialStore: SessionCredentialStoring {
     }
   }
 
-  /// Reads the opaque Zoonk bearer token from Keychain without exposing provider credentials to the application.
   func read() throws -> String? {
     var result: CFTypeRef?
     let status = SecItemCopyMatching(readQuery as CFDictionary, &result)
@@ -45,7 +43,7 @@ struct SessionCredentialStore: SessionCredentialStoring {
     return token
   }
 
-  /// Updates one synchronizable Keychain item so the same revocable Zoonk session can follow a user between supported Apple devices.
+  /// Synchronizable, so the session follows the learner between their Apple devices.
   func save(_ token: String) throws {
     let data = Data(token.utf8)
     let status = SecItemUpdate(
@@ -86,7 +84,6 @@ struct SessionCredentialStore: SessionCredentialStoring {
     }
   }
 
-  /// Inserts the credential only when no matching item exists, preserving a single source of truth in the user's Keychain.
   private func add(_ data: Data) throws {
     let query: [String: Any] = [
       kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlocked,
@@ -111,17 +108,14 @@ final class InMemorySessionCredentialStore: SessionCredentialStoring {
     self.token = token
   }
 
-  /// Keeps UI tests isolated from the simulator's real Keychain and from any iCloud account signed into the host.
   func delete() throws {
     token = nil
   }
 
-  /// Returns only the credential created during the current test process.
   func read() throws -> String? {
     token
   }
 
-  /// Stores a process-local credential so UI tests can exercise state transitions without affecting a real account.
   func save(_ token: String) throws {
     self.token = token
   }

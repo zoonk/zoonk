@@ -21,7 +21,7 @@ struct AppleAuthorizationButton: View {
     .disabled(isDisabled)
   }
 
-  /// Adds a nonce to every native authorization and requests personal details only during initial sign-in because Apple supplies them at most once.
+  /// Apple supplies personal details at most once, so only the initial sign-in asks for them.
   private func prepareRequest(_ request: ASAuthorizationAppleIDRequest) {
     do {
       let nonce = try AuthenticationNonce.make()
@@ -34,7 +34,6 @@ struct AppleAuthorizationButton: View {
     }
   }
 
-  /// Converts the system credential into the provider assertion shared by sign-in and account-deletion reauthorization without exposing AuthenticationServices to either screen.
   private func handleCompletion(_ result: Result<ASAuthorization, any Error>) {
     switch result {
     case .success(let authorization):

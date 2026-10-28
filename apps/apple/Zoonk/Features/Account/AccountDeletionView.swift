@@ -313,7 +313,6 @@ struct AccountDeletionView: View {
     }
   }
 
-  /// Keeps the completed deletion explicit while offering Apple's official account controls when the server could not confirm authorization revocation.
   private var manualAppleRevocationContent: some View {
     ContentUnavailableView {
       Label {
@@ -358,7 +357,7 @@ struct AccountDeletionView: View {
     email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
   }
 
-  /// Closes a deletion flow whose account was removed through synchronized credentials, without hiding the result of the deletion currently running on this device.
+  /// Never hides the result of the deletion running on this device.
   private func dismissStaleDeletion(accountId: String?) {
     guard accountId == nil, !session.isWorking, !isPerformingDeletion else {
       return
@@ -399,7 +398,6 @@ struct AccountDeletionView: View {
     }
   }
 
-  /// Explains that deleting product data cannot cancel billing owned by either mobile store.
   private func subscriptionDeletionMessage(for provider: StoreSubscriptionProvider) -> Text {
     switch provider {
     case .apple:
@@ -417,7 +415,6 @@ struct AccountDeletionView: View {
     }
   }
 
-  /// Keeps progress feedback inside the active deletion row so the form does not jump while a sensitive request is running.
   private func workingLabel(title: Text) -> some View {
     HStack {
       title
@@ -431,20 +428,17 @@ struct AccountDeletionView: View {
     }
   }
 
-  /// Retains the single-use Apple assertion only until the user confirms permanent deletion in the native destructive dialog.
   private func prepareAppleDeletion(_ credentials: AppleSignInCredentials) {
     pendingDeletion = .apple(credentials)
     isConfirmingDeletion = true
   }
 
-  /// Falls back to the account's fixed email whenever native Apple authorization is unavailable, while cancellation remains a no-op inside the system-button adapter.
   private func showEmailReauthentication() {
     session.clearFailure()
     pendingDeletion = nil
     phase = .emailReauthentication
   }
 
-  /// Selects the correct freshness proof, preserves local authentication on failure, and moves to a recovery or completion state from the typed result.
   private func performConfirmedDeletion() async {
     guard let pendingDeletion else {
       return
@@ -470,7 +464,6 @@ struct AccountDeletionView: View {
     self.pendingDeletion = nil
   }
 
-  /// Requests the initial or replacement proof without discarding a still-usable code when the mail request itself fails.
   private func sendEmailCode() async {
     guard
       session.account?.user.email.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
@@ -487,7 +480,6 @@ struct AccountDeletionView: View {
     hasSentCode = true
   }
 
-  /// Reduces service outcomes to the UI states that change what the user can do next.
   private func apply(_ result: AccountDeletionResult) {
     switch result {
     case .deleted:

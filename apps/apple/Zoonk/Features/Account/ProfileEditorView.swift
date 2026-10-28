@@ -9,7 +9,7 @@ struct ProfileEditorView: View {
 
   let account: CurrentAccount
   let isRequiredSetup: Bool
-  /// Opens account deletion; the required setup has no way out but finishing it.
+  /// Nil in the required setup, which has no way out but finishing it.
   let deleteAccount: (() -> Void)?
 
   init(account: CurrentAccount, isRequiredSetup: Bool, deleteAccount: (() -> Void)? = nil) {

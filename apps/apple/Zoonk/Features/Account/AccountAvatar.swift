@@ -62,7 +62,6 @@ struct AccountAvatar: View {
     }
   }
 
-  /// Uses the first visible character of the preferred display name while preserving email as a reliable fallback.
   private func getInitial(user: AccountUser) -> String {
     String(user.preferredName.prefix(1)).uppercased()
   }

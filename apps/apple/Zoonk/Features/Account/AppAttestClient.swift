@@ -2,20 +2,19 @@ import CryptoKit
 import DeviceCheck
 import Foundation
 
-/// The App Attest proof a request carries where a browser would carry BotID's: an assertion this install's attested key signed over the request and a fresh server challenge.
 struct AppAttestProof: Equatable, Sendable {
   let assertion: String
   let challenge: String
   let keyID: String
 }
 
-/// A request an assertion proves. The server rebuilds the same client data from the request it receives (`getAppAttestClientData` in `packages/auth/src/app-attest/app-attest-contract.ts`), so a proof made for one email or operation fails on another.
+/// Mirrors the server's `getAppAttestClientData` (`packages/auth/src/app-attest/app-attest-contract.ts`).
 enum AppAttestRequest: Equatable, Sendable {
   case guest
   case emailCode(email: String)
   case emailSession(email: String, code: String)
 
-  /// One value per line: the version, the challenge, the operation, then its fields exactly as the request body sends them.
+  /// The fields go exactly as the request body sends them.
   func clientData(challenge: String) -> String {
     let (operation, fields): (String, [String]) =
       switch self {
@@ -29,7 +28,8 @@ enum AppAttestRequest: Equatable, Sendable {
 }
 
 protocol AppAttestProving: Sendable {
-  /// Returns `nil` when the device can't attest (the simulator, some Macs) or attestation fails, so the request goes without proof and the server decides.
+  /// Nil when the device can't attest (the simulator, some Macs) or attestation fails: the request
+  /// goes without proof and the server decides.
   func proof(for request: AppAttestRequest) async -> AppAttestProof?
 }
 
@@ -40,7 +40,8 @@ protocol AppAttestService: Sendable {
   func generateAssertion(_ keyId: String, clientDataHash: Data) async throws -> Data
 }
 
-/// The server answers a key it won't register with `rejected` (a bad attestation or a spent challenge); anything else is worth retrying with the same attestation.
+/// The server answers a key it won't register with `rejected`; anything else is worth retrying with
+/// the same attestation.
 enum AppAttestAPIFailure: Error {
   case rejected
   case unavailable
@@ -95,13 +96,12 @@ struct AppAttestAPI: AppAttestAPIClient {
   }
 }
 
-/// Where this install's key is on its way to being registered, kept across launches so a step that failed is retried as Apple and the server need: the same challenge after Apple asks to retry, and the same attestation after an upload fails (Apple attests a key only once).
+/// Kept across launches because Apple attests a key only once: a retry reuses the challenge after
+/// Apple asks to retry, and the attestation after an upload fails.
 struct AppAttestKeyState: Codable, Equatable {
   enum Stage: Codable, Equatable {
     case generated
-    /// Apple was unavailable: retry with this key and this challenge's hash while the server still accepts it.
     case attestationPending(challenge: String, issuedAt: Date)
-    /// Apple attested the key; the server hasn't registered it yet.
     case attested(challenge: String, attestation: String)
     case registered
   }
@@ -110,9 +110,10 @@ struct AppAttestKeyState: Codable, Equatable {
   var stage: Stage
 }
 
-/// Attests one key per install with Apple and the server, then signs each request that needs bot proof over a fresh server challenge. The key's state lives in `UserDefaults` because the key itself never outlives the install: a reinstall clears both, and a restore from backup leaves a stale key that the first assertion replaces.
+/// The key's state lives in `UserDefaults`, not the Keychain, because the key never outlives the
+/// install: a reinstall clears both, and a restore from backup leaves a stale key that the first
+/// assertion replaces.
 actor AppAttestClient: AppAttestProving {
-  /// A step Apple or the server won't take with this key: the install starts over with a new one.
   private struct KeyRefused: Error {}
 
   private static let stateKey = "appAttest.keyState"
@@ -125,7 +126,6 @@ actor AppAttestClient: AppAttestProving {
   private let now: @Sendable () -> Date
   private var registration: Task<String, Error>?
 
-  /// Tests pass their own `defaultsSuite` and clock; the app keeps the state in the standard defaults.
   init(
     api: any AppAttestAPIClient,
     service: any AppAttestService = DeviceAppAttestService(),
@@ -165,7 +165,7 @@ actor AppAttestClient: AppAttestProving {
     }
   }
 
-  /// Shares one registration between concurrent requests, so an install never attests two keys at once.
+  /// Shared between concurrent requests, so an install never attests two keys at once.
   private func registeredKeyID() async throws -> String {
     if let state = storedState, state.stage == .registered {
       return state.keyID
@@ -182,7 +182,8 @@ actor AppAttestClient: AppAttestProving {
     return try await task.value
   }
 
-  /// Takes the key from wherever the last attempt left it. When Apple or the server refuses it for good, the install starts over with a new key within the same request.
+  /// When Apple or the server refuses the key for good, starts over with a new key within the same
+  /// request.
   private func register(startingOverOnce: Bool) async throws -> String {
     do {
       var state = try await storedOrNewState()
@@ -224,7 +225,8 @@ actor AppAttestClient: AppAttestProving {
     }
   }
 
-  /// Apple attests a key once: the attestation is kept until the server registers it. When Apple asks to retry later, the challenge is kept too, because the retry must sign the same hash.
+  /// Apple attests a key once: the attestation is kept until the server registers it. When Apple asks
+  /// to retry later, the challenge is kept too, because the retry must sign the same hash.
   private func attest(
     _ state: AppAttestKeyState,
     challenge: String,

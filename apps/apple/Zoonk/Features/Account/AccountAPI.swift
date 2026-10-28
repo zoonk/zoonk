@@ -27,7 +27,7 @@ protocol AccountAPIClient {
   ) async throws -> AccountDeletionResponse
   func getCurrentAccount(token: String) async throws -> CurrentAccount
   func sendEmailCode(email: String, token: String?) async throws
-  /// `guestToken` is the guest session being replaced, so the server moves the guest's plan and progress to the account.
+  /// The server moves `guestToken`'s plan and progress to the account.
   func signInWithApple(_ credentials: AppleSignInCredentials, guestToken: String?) async throws
     -> String
   func signInWithEmailCode(email: String, code: String, guestToken: String?) async throws -> String
@@ -95,7 +95,8 @@ struct AccountAPI {
     }
   }
 
-  /// Asks the existing mailer to send the same localized six-digit sign-in code used by the web application. An anonymous request can create an account, so it carries App Attest proof; an account's own bearer is proof enough.
+  /// An anonymous request can create an account, so it carries App Attest proof; an account's own
+  /// bearer is proof enough.
   func sendEmailCode(email: String, token: String?) async throws {
     let proof = token == nil ? await appAttest.proof(for: .emailCode(email: email)) : nil
     let output = try await perform(token: token) { client in
@@ -150,7 +151,7 @@ struct AccountAPI {
     }
   }
 
-  /// Starts a guest session, as main does when a visitor sends a goal or answers a public lesson. It needs the same bot proof as email sign-up.
+  /// Needs the same bot proof as email sign-up.
   func signInAsGuest() async throws -> String {
     let proof = await appAttest.proof(for: .guest)
     let output = try await perform { client in
@@ -173,7 +174,6 @@ struct AccountAPI {
     }
   }
 
-  /// Sends Apple's single-use code and signed identity assertion so the server owns token exchange, verification, and account linking.
   func signInWithApple(_ credentials: AppleSignInCredentials, guestToken: String?) async throws
     -> String
   {
@@ -268,7 +268,6 @@ struct AccountAPI {
     }
   }
 
-  /// Revokes the shared server-side bearer session before the native client clears its local authenticated state.
   func signOut(token: String) async throws {
     let output = try await perform(token: token) { client in
       try await client.deleteCurrentSession(.init())
@@ -282,7 +281,6 @@ struct AccountAPI {
     }
   }
 
-  /// Sends one atomic deletion request so the server owns any required Apple reauthorization, provider revocation, and permanent data cleanup.
   func deleteAccount(
     token: String,
     appleCredentials: AppleSignInCredentials? = nil,
@@ -313,7 +311,6 @@ struct AccountAPI {
     }
   }
 
-  /// Keeps generated transport and decoding details behind the account feature's stable recovery states.
   private func perform<Output: Sendable>(
     token: String? = nil,
     operation: @Sendable (Client) async throws -> Output
@@ -446,7 +443,6 @@ struct AccountAPI {
       user: user)
   }
 
-  /// Converts the public mutually exclusive deletion contract into its generated Swift case.
   private func makeAccountDeletionBody(
     appleCredentials: AppleSignInCredentials?,
     emailCredentials: EmailReauthenticationCredentials?

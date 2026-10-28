@@ -3,7 +3,6 @@ import UIKit
 
 private let googleButtonLogoSize: CGFloat = 20
 
-/// Uses Google's official multicolor mark and current button metrics while keeping the action text in Zoonk's native String Catalog so it follows the app language.
 struct GoogleAuthorizationButton: View {
   @Environment(\.colorScheme) private var colorScheme
   @State private var presentationContext = GoogleAuthenticationPresentationContext()
@@ -86,7 +85,7 @@ private final class GoogleAuthenticationPresentationContext {
   weak var viewController: UIViewController?
 }
 
-/// Captures a controller attached to this button's window so iPad multiwindow sign-in cannot open from another scene.
+/// Attached to this button's window, so iPad multiwindow sign-in can't open from another scene.
 private struct GoogleAuthenticationPresentationReader: UIViewControllerRepresentable {
   let presentationContext: GoogleAuthenticationPresentationContext
 

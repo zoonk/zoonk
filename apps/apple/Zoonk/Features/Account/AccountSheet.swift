@@ -16,8 +16,8 @@ private struct AccountDeletionDestination: Hashable {
 }
 
 struct AccountSheet: View {
-  /// Opened to log in or create an account (`.signIn`): a guest gets sign-in instead of the hub.
-  /// Any sign-in made in the sheet closes it, after the profile an account needs.
+  /// A guest gets sign-in instead of the hub. Any sign-in made in the sheet closes it once the
+  /// profile is set up.
   var signsIn = false
 
   @Environment(\.dismiss) private var dismiss
@@ -90,8 +90,6 @@ struct AccountSheet: View {
     .task {
       await session.reconcileSynchronizedCredential()
     }
-    // Signing in here (opened to sign in, a guest's "Create an account", or after logging out
-    // here) lands on the app once the account is set up, as main's sign-in does.
     .onChange(of: isSignedInForGood) { wasSignedIn, isSignedIn in
       if !wasSignedIn, isSignedIn {
         dismiss()
@@ -99,7 +97,6 @@ struct AccountSheet: View {
     }
   }
 
-  /// Signed in to an account whose profile is set up: what sign-in mode waits for.
   private var isSignedInForGood: Bool {
     guard case .signedIn(let account) = session.state else {
       return false
@@ -187,7 +184,7 @@ struct AccountSheet: View {
     }
   }
 
-  /// Returns to the current account overview after authentication or synchronized account changes, while leaving a local deletion result visible until the user dismisses it.
+  /// Leaves a local deletion result visible until the user dismisses it.
   private func reconcileNavigation(_ state: AccountSessionState) {
     switch state {
     case .signedIn:
@@ -206,16 +203,13 @@ struct AccountSheet: View {
 
 }
 
-/// The settings hub (main's `/settings`): whose account it is (its row opens the profile), the
-/// learner's own pages, then the plan and help, then the way out. A guest gets "Create an account"
-/// instead, since logging out would lose their plan.
+/// A guest gets "Create an account" instead of logging out, which would lose their plan.
 private struct SettingsHubView: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
   @Environment(SettingsStore.self) private var settings
   @State private var isHelpPresented = false
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-  /// Grows with the name and email beside it.
   @ScaledMetric(relativeTo: .body) private var avatarSize = 40.0
 
   let account: CurrentAccount
@@ -227,7 +221,6 @@ private struct SettingsHubView: View {
       if !isGuest {
         Section {
           NavigationLink(value: AccountDestination.profile) {
-            // Large text puts the avatar above the name, so neither squeezes the other.
             let layout =
               dynamicTypeSize.isAccessibilitySize
               ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
@@ -325,7 +318,7 @@ private struct SettingsHubView: View {
   }
 }
 
-/// Captures the signed-in identity and billing state in the navigation value so the deletion result can remain visible after the session is removed.
+/// Captured in the navigation value so the deletion result stays visible after the session is removed.
 private func makeDeletionDestination(_ account: CurrentAccount) -> AccountDeletionDestination {
   AccountDeletionDestination(
     email: account.user.email,
@@ -406,7 +399,6 @@ private struct AccountSubscriptionRow: View {
       comment: "Status for an active subscription")
   }
 
-  /// The row says "Plus" once subscribed, as main's; VoiceOver hears where it's managed.
   private func rowLabel(status: Text) -> some View {
     LabeledContent {
       if access.subscriptionAction != .subscribe {

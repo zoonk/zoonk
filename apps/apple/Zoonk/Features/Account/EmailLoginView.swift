@@ -144,7 +144,6 @@ struct EmailLoginView: View {
     normalizedCode.count == 6
   }
 
-  /// Sends a valid email from either the form button or the keyboard's Continue key while preserving the same disabled-state rules for both entry points.
   private func sendEmailCode() {
     guard isEmailValid, !session.isWorking else {
       return
@@ -155,7 +154,6 @@ struct EmailLoginView: View {
     }
   }
 
-  /// Verifies a complete code from either the form button or the keyboard's Go key so hardware and software keyboards behave consistently.
   private func signIn() {
     guard isCodeValid, !session.isWorking else {
       return
@@ -168,7 +166,6 @@ struct EmailLoginView: View {
     }
   }
 
-  /// Pops the nested email form after authentication so the account sheet can reveal profile setup or the signed-in account overview immediately.
   private func dismissAfterSignIn(_ state: AccountSessionState) {
     guard case .signedIn = state else {
       return
@@ -177,7 +174,6 @@ struct EmailLoginView: View {
     dismiss()
   }
 
-  /// Keeps progress feedback inside the action row so the form does not jump when a request starts.
   private func submitLabel(title: Text) -> some View {
     HStack {
       title

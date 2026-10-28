@@ -154,7 +154,6 @@ struct AccountFailureMessage: View {
     }
   }
 
-  /// Gives each recoverable state concise native copy while keeping raw provider and server errors out of the interface.
   @ViewBuilder
   private func message(for failure: AccountFailure) -> some View {
     switch failure {
