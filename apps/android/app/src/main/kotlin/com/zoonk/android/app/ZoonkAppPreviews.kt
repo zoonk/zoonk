@@ -28,7 +28,7 @@ import com.zoonk.android.ui.theme.ZoonkTheme
 )
 @Composable
 private fun ZoonkAppPreview() {
-    ZoonkTheme(dynamicColor = false) {
+    ZoonkTheme {
         ZoonkApp()
     }
 }

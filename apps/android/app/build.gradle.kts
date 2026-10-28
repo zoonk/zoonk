@@ -64,6 +64,22 @@ android {
 
     testOptions {
         animationsDisabled = true
+        unitTests.isIncludeAndroidResources = true
+        unitTests.all { test ->
+            // Robolectric reaches into the JDK's internals.
+            test.jvmArgs(
+                "--add-opens=java.base/java.lang=ALL-UNNAMED",
+                "--add-opens=java.base/java.util=ALL-UNNAMED",
+                "--add-opens=java.base/java.io=ALL-UNNAMED",
+                "--add-opens=java.base/java.net=ALL-UNNAMED",
+                "--add-opens=java.base/java.security=ALL-UNNAMED",
+                "--add-opens=java.base/java.text=ALL-UNNAMED",
+                "--add-opens=java.base/jdk.internal.access=ALL-UNNAMED",
+                "--add-opens=java.desktop/java.awt.font=ALL-UNNAMED",
+            )
+            // Review screenshots are written only on demand: `-Pzoonk.shots=<folder>`.
+            test.systemProperty("zoonk.shots", providers.gradleProperty("zoonk.shots").getOrElse(""))
+        }
     }
 }
 
@@ -89,6 +105,12 @@ dependencies {
 
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    testImplementation(composeBom)
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    testImplementation(libs.androidx.test.ext.junit)
+    testImplementation(libs.junit)
+    testImplementation(libs.robolectric)
 
     androidTestImplementation(composeBom)
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)

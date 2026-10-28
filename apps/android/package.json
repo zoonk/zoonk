@@ -3,8 +3,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "i18n:lint": "node scripts/i18n/check-catalogs.mts && eloqnt lint --strict",
     "i18n": "node scripts/i18n/translate.mts",
+    "i18n:lint": "node scripts/i18n/check-catalogs.mts && eloqnt lint --strict",
+    "palette": "node scripts/theme/generate-palette.mts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
