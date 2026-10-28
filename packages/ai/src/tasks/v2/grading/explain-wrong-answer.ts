@@ -10,10 +10,8 @@ import { getPromptLanguageName } from "../../_utils/prompt-language";
 import systemPrompt from "./explain-wrong-answer.prompt.md";
 
 /**
- * Made once per mistake and shared, so quality wins: in the eval (6 cases,
- * Sep 2026) Sol scored 9.63 at 2.2s p50, Luna 9.33 and Gemini 3.8 Flash 9.02.
- * On 8 cases (13 Oct 2026) Sol 9.69 at 2.8s p50, GPT-6.1 Sol 9.78 at 6.6s and
- * Gemini 4 Argon 9.63 at 4.1s: within noise, so the fastest stays.
+ * Made once per mistake and shared, so quality wins: Sol scored 9.69 at 2.8s p50, and slower models
+ * were within noise (13 Oct 2026).
  */
 const defaultModel = "openai/gpt-6-sol";
 const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.8-flash"] as const;
@@ -24,13 +22,10 @@ export type ExplainWrongAnswerSchema = z.infer<typeof schema>;
 
 export type ExplainWrongAnswerParams = {
   question: string;
-  /** A full correct answer: the sample answer or the first accepted answer. */
   correctAnswer: string;
   keyPoints?: string[];
-  /** The item's misconceptions, so the explanation names a known one when it fits. */
   misconceptions?: string[];
   answer: string;
-  /** The learner's language, used for the explanation. */
   language: string;
   model?: string;
   useFallback?: boolean;
@@ -42,12 +37,7 @@ function formatList(values: readonly string[] | undefined): string {
   return values && values.length > 0 ? values.map((value) => `- ${value}`).join("\n") : "none";
 }
 
-/**
- * Explains why a typed or spoken answer is wrong and what the right idea is.
- * The explanation is written for anyone who gives the same answer, because it
- * is stored by item and normalized answer and reused for the next learner who
- * makes the same mistake.
- */
+/** Written for anyone who gives the same answer: it's stored by item and normalized answer. */
 export async function explainWrongAnswer({
   analytics,
   answer,

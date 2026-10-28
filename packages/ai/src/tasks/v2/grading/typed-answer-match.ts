@@ -20,11 +20,8 @@ export type TypedAnswerMatch =
   | { kind: "none"; acceptedAnswer: null };
 
 /**
- * The comparison and reuse key for a typed answer. Case, spacing, quotes and
- * sentence punctuation never change what a learner meant, so "Paris." and
- * " paris" share one key. Accents stay because they change words in several
- * languages ("e" and "é" in Portuguese), and a decimal comma becomes a point so
- * "1,5" and "1.5" match.
+ * Accents stay because they change words in several languages ("e" and "é" in Portuguese), and a
+ * decimal comma becomes a point so "1,5" and "1.5" match.
  */
 export function normalizeTypedAnswer(text: string): string {
   return text
@@ -60,10 +57,7 @@ function toGraphemes(text: string): string[] {
   return Array.from(graphemes.segment(text), (segment) => segment.segment);
 }
 
-/**
- * Optimal string alignment distance: insertions, deletions, substitutions and
- * swaps of two neighboring letters ("teh" for "the") each count once.
- */
+/** Optimal string alignment distance: a swap of two neighboring letters counts once. */
 function getEditDistance(source: string, target: string): number {
   const from = toGraphemes(source);
   const to = toGraphemes(target);
@@ -96,10 +90,7 @@ function getEditDistance(source: string, target: string): number {
   return getCell(rows, from.length, to.length);
 }
 
-/**
- * Numbers never count as typos ("1985" and "1986" are different answers), so
- * only answers without digits get a spelling allowance.
- */
+/** Numbers never count as typos: "1985" and "1986" are different answers. */
 function isTypo(answer: string, accepted: string): boolean {
   if (DIGIT.test(answer) || DIGIT.test(accepted)) {
     return false;
@@ -117,7 +108,6 @@ function isTypo(answer: string, accepted: string): boolean {
   return allowed > 0 && getEditDistance(plainAnswer, plainAccepted) <= allowed;
 }
 
-/** A number rounded to the places the learner typed ("12" for "11,88%"): see `isRoundedAnswer`. */
 function isRounded(answer: string, accepted: string): boolean {
   const answerNumber = parseNumber(answer);
   const acceptedNumber = parseNumber(accepted);
@@ -141,11 +131,8 @@ function isExact(answer: string, accepted: string): boolean {
 }
 
 /**
- * Checks a typed answer against the accepted answers in code, so easy cases
- * never wait for a model: "exact" means the same answer written differently,
- * "typo" a spelling slip or missing accent the caller may accept with a note,
- * and "rounded" an accepted number rounded to the places the learner typed,
- * which the caller may accept when the question isn't practicing a language.
+ * "typo" is a slip the caller may accept with a note; "rounded" a number rounded to the places
+ * typed, which the caller may accept outside language practice.
  */
 export function matchTypedAnswer({
   acceptedAnswers,

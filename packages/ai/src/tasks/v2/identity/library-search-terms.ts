@@ -9,13 +9,8 @@ import { type LibraryIdentitySubject, formatIdentitySubject } from "./library-id
 import systemPrompt from "./library-search-terms.prompt.md";
 
 /**
- * From the library-search-terms eval (16 cases, 7 Oct 2026): Luna found 14 of 16 items at its
- * default reasoning and at minimal reasoning, answering in 2.2s (p50, 7.1s p95) instead of 3.3s
- * (12.7s p95). These calls sit on a new goal's path to its first question, so minimal it is.
- * Gemini 3.5 Flash Lite answered in 1.3s but found 6 of 9 Portuguese items against Luna's 8, and
- * Haiku 4.5 12 of 16; with no reasoning, Luna found 13. Claude Haiku 5.5 with thinking off found
- * 14 against Luna's 13 in the same run (7 Oct 2026), but at $0.17 per 1,000 runs against $0.12
- * and 7.7s p95 against 5.6s.
+ * Luna found as many items at minimal reasoning as at its default, in 2.2s p50 instead of 3.3s (7
+ * Oct 2026); these calls sit on a new goal's path to its first question.
  */
 const defaultModel = "openai/gpt-6-luna";
 const defaultReasoning: Reasoning = "minimal";
@@ -27,11 +22,10 @@ const schema = z.object({
 });
 /* oxlint-enable eslint/sort-keys */
 
-/** Each subject's terms, in the order of the subjects asked for; none for one the model left out. */
+/** In the order of the subjects asked for; none for one the model left out. */
 export type SearchTermsData = { subjects: { terms: string[] }[] };
 
 export type SearchTermsParams = {
-  /** The items to find, from one caller at one time, such as a chapter's lessons. */
   subjects: LibraryIdentitySubject[];
   model?: string;
   useFallback?: boolean;
@@ -64,10 +58,8 @@ function toSubjectTerms({
 }
 
 /**
- * Writes the search terms that find existing Library items before new ones are generated, for
- * every item a caller needs at once in one call, so the instructions are read once instead of
- * once per item. This step favors recall: the database filters by language and level, and the
- * reuse decision rejects anything that only looks similar.
+ * Favors recall: the database filters by language and level, and the reuse decision rejects
+ * anything that only looks similar.
  */
 export async function generateSearchTerms({
   analytics,

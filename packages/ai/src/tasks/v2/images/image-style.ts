@@ -1,23 +1,17 @@
 import { type CourseCategory } from "@zoonk/utils/categories";
 
 /**
- * The version of the style block, the palettes and the prompt layout, which every image stores: a
- * change that makes new images look different bumps it. Reuse matches a scene whatever style drew
- * it, so stored images are never drawn again on their own; redrawing an older style is a person's
- * call, and this version is how they find those images.
+ * Bump it when new images would look different. Stored images are never redrawn on their own:
+ * that's a person's call, and this version is how they find an older style's images.
  */
 export const IMAGE_STYLE_VERSION = 2;
 
-/**
- * A portrait picture, like main's lesson images: it fills a phone's screen
- * above the words, the way learners liked in story-like lessons.
- */
+/** Portrait, so it fills a phone's screen above the words. */
 export const IMAGE_SIZE = "1024x1280";
 
 /**
- * Two to four soft colors and one accent. Each subject keeps its own colors in
- * every image, so a physics course looks like one course. Hex values anchor
- * the names for the image model; the names do most of the work.
+ * Each subject keeps its colors in every image, so a course looks like one course. Hex values
+ * anchor the names for the image model; the names do most of the work.
  */
 export type ImagePalette = { key: string; colors: readonly string[]; accent: string };
 
@@ -98,7 +92,7 @@ function isPaletteKey(value: string): value is PaletteKey {
   return value in PALETTES;
 }
 
-/** The subject's palette, from the course's category; unknown or missing categories share one. */
+/** Unknown or missing categories share one. */
 export function getImagePalette(category: string | null | undefined): ImagePalette {
   const key = category && isPaletteKey(category) ? category : "general";
   return { key, ...PALETTES[key] };

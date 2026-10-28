@@ -32,9 +32,8 @@ function formatScene(scene: ImageScene): string {
 }
 
 /**
- * Only the scene's labels may appear, spelled exactly as given, because extra
- * or misspelled words are the most common flaw in generated images. Images
- * without labels forbid text outright, so one image serves every language.
+ * Extra or misspelled words are the most common flaw in generated images. Images without labels
+ * forbid text outright, so one image serves every language.
  */
 function formatText({ language, scene }: { language: string; scene: ImageScene }): string {
   if (scene.labels.length === 0) {
@@ -52,10 +51,6 @@ function formatText({ language, scene }: { language: string; scene: ImageScene }
   ].join("\n");
 }
 
-/**
- * A second attempt carries the check's findings, so the model fixes what
- * failed (most often text nobody asked for) instead of repeating it.
- */
 function formatCorrections(corrections: readonly string[]): string | null {
   if (corrections.length === 0) {
     return null;
@@ -65,19 +60,14 @@ function formatCorrections(corrections: readonly string[]): string | null {
   return `# Fix\n\nThe last drawing of this scene was rejected for:\n${problems.join("\n")}\nDraw it again without these problems.`;
 }
 
-/**
- * The part of an image prompt that changes per image: the scene and its text
- * rules. It is kept apart so a safety retry rewrites only this part and the
- * style never drifts.
- */
+/** Kept apart so a safety retry rewrites only this part and the style never drifts. */
 export function formatImageSceneInput({
   corrections = [],
   language,
   scene,
 }: {
-  /** What the check rejected in the previous drawing of this scene. */
   corrections?: readonly string[];
-  /** The labels' language. Ignored for scenes without labels. */
+  /** Ignored for scenes without labels. */
   language: string;
   scene: ImageScene;
 }): string {
@@ -90,17 +80,11 @@ export function formatImageSceneInput({
     .join("\n\n");
 }
 
-/**
- * Builds the image prompt from the fixed, versioned style block and a
- * structured scene. The style block never changes per request, so every image
- * gets the same rules; the palette comes from code, keyed by subject.
- */
 export function buildLessonImagePrompt({
   palette,
   sceneInput,
 }: {
   palette: ImagePalette;
-  /** The scene as `formatImageSceneInput` writes it. */
   sceneInput: string;
 }): string {
   return [
@@ -111,11 +95,7 @@ export function buildLessonImagePrompt({
   ].join("\n\n");
 }
 
-/**
- * Everything every image prompt shares: the style block and the composition
- * rules. Provenance hashes it, so any change to them shows as a new prompt
- * version on the images made after it.
- */
+/** Provenance hashes it, so any change shows as a new prompt version on later images. */
 export const LESSON_IMAGE_TEMPLATE = [styleBlock, JSON.stringify(LAYOUT_RULES), CANVAS_RULE].join(
   "\n",
 );

@@ -8,11 +8,7 @@ import { type Reasoning, buildProviderOptions } from "../../../provider-options"
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import systemPrompt from "./goal-specificity.prompt.md";
 
-/**
- * From the goal-specificity eval (16 goals, 7 Oct 2026): Claude Haiku 5.5 with thinking off got
- * all 16 at p50 1.7s and $0.08 per 1,000 runs; Luna got 14 (it called a private codebase general)
- * at p50 2.3s and $0.12.
- */
+/** Claude Haiku 5.5 got all 16 goal-specificity cases at 1.7s p50; Luna got 14 (7 Oct 2026). */
 const defaultModel = "anthropic/claude-haiku-5.5";
 const defaultReasoning: Reasoning = "none";
 const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.5-flash-lite"] as const;
@@ -27,7 +23,6 @@ export type GoalSpecificitySchema = z.infer<typeof schema>;
 
 export type GoalSpecificityParams = {
   goal: string;
-  /** The content language, as a language code. */
   language: string;
   model?: string;
   useFallback?: boolean;
@@ -39,11 +34,7 @@ function toGoalInput({ goal }: { goal: string }) {
   return { GOAL: goal };
 }
 
-/**
- * The private-course decision as an evaluation question, so evals can compare
- * Jev with the generation task on the same labels before any flow relies on it.
- * The split itself needs generation; only the yes-or-no part fits a classifier.
- */
+/** Only the yes-or-no part fits a classifier; the split itself needs generation. */
 export const goalSpecificityClassifier = {
   question: {
     criteria: {
@@ -56,11 +47,6 @@ export const goalSpecificityClassifier = {
   toInput: toGoalInput,
 };
 
-/**
- * Splits a goal into the part the shared Library can serve and the details
- * that stay with the learner, and decides when the whole request needs a
- * private course that is never indexed or reused.
- */
 export async function classifyGoalSpecificity({
   analytics,
   goal,

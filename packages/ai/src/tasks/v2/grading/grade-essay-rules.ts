@@ -9,30 +9,19 @@ import { findEssayQuote } from "./grade-essay-quote";
 /**
  * Official rubric facts, checked in Sep 2026:
  *
- * ENEM (INEP, "The Enem 2025 essay, participant's handbook"): five
- * competencies (C1 formal written norm, C2 understanding the prompt and the
- * dissertative-argumentative type with repertoire, C3 selecting and organizing
- * arguments, C4 cohesion, C5 an intervention proposal that respects human
- * rights), each 0 to 200 in steps of 40, total 0 to 1000. An essay scores 0
- * when it flees the theme, isn't dissertative-argumentative or has up to 7
- * handwritten lines ("insufficient text").
+ * ENEM: five competencies, each 0 to 200 in steps of 40. An essay scores 0 when it flees the theme,
+ * isn't dissertative-argumentative or has up to 7 handwritten lines.
  * https://download.inep.gov.br/publicacoes/institucionais/avaliacoes_e_exames_da_educacao_basica/a_redacao_no_enem_2025_cartilha_do_participante.pdf
  *
- * ENEM C5 (INEP evaluator training, Module 07, Competency V): the level is
- * the number of valid elements (action, agent, means or mode, effect or
- * purpose, detail) in the most complete proposal, so 5 elements are needed
- * for 200. Conditional proposals stop at 80, tangent essays at 40.
+ * ENEM C5: the level is the number of valid elements in the most complete proposal, so 200 needs
+ * all 5. Conditional proposals stop at 80, tangent essays at 40.
  * https://download.inep.gov.br/educacao_basica/enem/downloads/2020/Competencia_5.pdf
  *
- * AP (College Board, "Score Setting and Scoring"): free-response answers are
- * scored by AP Readers with each question's scoring guidelines, whose rows
- * award whole points for what they describe; readers score each row on its
- * own criteria. https://apcentral.collegeboard.org/courses/how-ap-develops-courses-and-exams/score-setting-and-scoring
+ * AP: each scoring guideline row awards whole points on its own criteria.
+ * https://apcentral.collegeboard.org/courses/how-ap-develops-courses-and-exams/score-setting-and-scoring
  *
- * OAB 2nd phase (FGV answer standards, 45th exam): the brief is worth 5.00 and
- * its items are grouped as addressing and parties, facts, legal grounds,
- * requests and closing. Section weights average the civil (0.30, 0.10, 2.90,
- * 1.50, 0.20) and tax (0.40, 0.10, 3.50, 0.80, 0.20) standards.
+ * OAB 2nd phase: the brief is worth 5.00; section weights average the civil and tax answer
+ * standards of the 45th exam.
  * https://oab.fgv.br/arq/648/131539_OAB%2045%20-%20PADR%C3%83O%20DE%20RESPOSTA%20-%20B002%20-%20DIREITO%20CIVIL%20-%20NOVO%20FORMATO.pdf
  * https://oab.fgv.br/arq/648/143315_OAB%2045%20-%20PADR%C3%83O%20DE%20RESPOSTA%20-%20B006%20-%20DIREITO%20TRIBUT%C3%81RIO%20-%20NOVO%20FORMATO.pdf
  */
@@ -51,9 +40,8 @@ const HUNDREDTHS = 100;
 const ENEM_ZERO_CRITERION_ID = "c2";
 
 /**
- * ENEM annuls texts of up to 7 handwritten lines; a line holds about 8 to 10
- * words, so fewer than 60 typed words can't reach 8 lines. Other rubrics only
- * skip texts too short to hold any answer.
+ * ENEM annuls texts of up to 7 handwritten lines, and fewer than 60 typed words can't reach 8.
+ * Other rubrics only skip texts too short to hold any answer.
  */
 const MIN_WORDS: Record<EssayRubric["kind"], number> = { ap: 20, custom: 20, enem: 60, oab: 20 };
 
@@ -104,10 +92,7 @@ function clamp({ max, value }: { max: number; value: number }): number {
   return Number.isFinite(value) ? Math.min(max, Math.max(0, value)) : 0;
 }
 
-/**
- * Splits the custom maximum in hundredths so the criteria add up to it
- * exactly: 10 points over 3 criteria become 3.34, 3.33 and 3.33.
- */
+/** In hundredths, so the criteria add up exactly: 10 points over 3 become 3.34, 3.33 and 3.33. */
 function splitCustomMaxScore({ count, maxScore }: { count: number; maxScore: number }): number[] {
   const hundredths = Math.round(maxScore * HUNDREDTHS);
   const base = Math.floor(hundredths / count);
@@ -137,7 +122,6 @@ function getCustomCriteria(rubric: Extract<EssayRubric, { kind: "custom" }>) {
   }));
 }
 
-/** AP scoring guideline rows keep their own points, in the item's order. */
 function getApCriteria(rubric: Extract<EssayRubric, { kind: "ap" }>) {
   if (rubric.criteria.length === 0 || rubric.criteria.some((criterion) => criterion.points <= 0)) {
     throw new Error("An AP rubric needs at least one row, each worth at least a point.");
@@ -319,10 +303,7 @@ function getGap(criterion: EssayCriterionGrade): number {
   return criterion.maxScore - criterion.score;
 }
 
-/**
- * Ties go to the earlier criterion, so the choice is stable for the same scores. With every point
- * scored there's nothing to work on: no next step, never one on a criterion at full marks.
- */
+/** Ties go to the earlier criterion; never a step on a criterion at full marks. */
 function getNextStep({
   criteria,
   output,

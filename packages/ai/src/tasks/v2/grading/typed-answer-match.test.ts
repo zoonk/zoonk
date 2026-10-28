@@ -25,7 +25,6 @@ describe(normalizeTypedAnswer, () => {
   });
 });
 
-/** A typed answer against one accepted answer, an 11.88% rise by default. */
 function match(answer: string, accepted = "11,88%") {
   return matchTypedAnswer({ acceptedAnswers: [accepted], answer });
 }

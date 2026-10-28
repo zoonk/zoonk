@@ -44,7 +44,6 @@ function criteriaOutput(ids: string[]) {
   return Object.fromEntries(ids.map((id) => [id, criterion]));
 }
 
-/** The JSON schema the call asked for, from the output spec handed to `generateText`. */
 async function requestedSchemaFields(): Promise<string[]> {
   const output = vi.mocked(generateText).mock.calls[0]?.[0].output;
   const format = await output?.responseFormat;

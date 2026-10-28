@@ -9,16 +9,8 @@ import systemPrompt from "./image-check.prompt.md";
 import { type ImageScene, describeImageScene } from "./image-scene-schema";
 
 /**
- * From the image-check eval (23 hand-labeled images, 27 Sep 2026, after
- * adding real cases where the drawing model named objects nobody asked for):
- * Luna and Gemini 3.8 Flash caught every failure and passed every good image;
- * Flash Lite let one image with unrequested labels through. On 25 images (7 Oct
- * 2026), Claude Haiku 5.5 with thinking off got every one right as Luna did, at
- * p50 1.9s against 3.1s (p95 2.8s against 5.8s) and $0.27 per 1,000 checks
- * against $0.40. On 28 images (8 Oct 2026, adding three drawings numbered by part whose markers
- * end on a part's edge or on something that belongs to it), Haiku listing problems before its
- * verdicts passed all 15 good images and caught 12 of 13 bad ones: it let through the microwave
- * drawn twice, which the earlier prompt caught while rejecting two of the numbered drawings.
+ * Claude Haiku 5.5 matched Luna on the image-check eval at 1.9s p50 against 3.1s (7 Oct 2026);
+ * listing problems first, it passed all 15 good images and caught 12 of 13 bad ones (8 Oct 2026).
  */
 const defaultModel = "anthropic/claude-haiku-5.5";
 const defaultReasoning: Reasoning = "none";
@@ -38,7 +30,6 @@ export type ImageCheckVerdict = z.infer<typeof schema> & { passed: boolean };
 type ImageCheckInput = {
   image: { data: Uint8Array; mediaType: string };
   scene: ImageScene;
-  /** The labels' language. */
   language: string;
 };
 
@@ -46,10 +37,7 @@ export type ImageCheckParams = ImageCheckInput & {
   analytics?: AiGenerationContext;
   model?: string;
   reasoning?: Reasoning;
-  /**
-   * The gateway tier (see `chooseServiceTier`): `flex` for the check of a picture already shown,
-   * which nobody waits on. Haiku answers at the standard tier through the gateway either way.
-   */
+  /** Haiku answers at the standard tier through the gateway either way. */
   serviceTier?: ServiceTier;
   useFallback?: boolean;
 };
@@ -64,10 +52,8 @@ function formatLabels({ language, scene }: Pick<ImageCheckInput, "language" | "s
 }
 
 /**
- * The check of a drawn image: does it show the scene, is it on style, and is any text short,
- * legible and spelled right in the lesson's language? An image passes only when all three hold.
- * Pictures are shown as soon as they're drawn and checked after, in the background: a failed one
- * is drawn again and replaced, and a screen whose redraws fail too goes without one.
+ * Pictures are shown as soon as they're drawn and checked after: a failed one is drawn again and
+ * replaced, and a screen whose redraws fail too goes without one.
  */
 export async function checkLessonImage({
   analytics,

@@ -22,7 +22,7 @@ import {
 /** The cutoff from the `library-identity-decision` eval's probabilities. */
 export const LIBRARY_IDENTITY_MIN_PROBABILITY = 0.6;
 
-/** The eval's runner-up, used when Jev errors, times out or can't fit the input. */
+/** The eval's runner-up. */
 const FALLBACK_EVALUATION_MODEL = "openai/gpt-6-luna";
 
 const REUSE_CRITERIA: Readonly<Record<LibraryIdentityKind, { false: string; true: string }>> = {
@@ -60,7 +60,6 @@ const REUSE_CRITERIA: Readonly<Record<LibraryIdentityKind, { false: string; true
   },
 };
 
-/** Each question reads the reuse rules of its own kind of item only, after the shared ones. */
 const DECISION_PROMPTS: Readonly<Record<LibraryIdentityKind, string>> = {
   chapter: [basePrompt, courseItemRules, chapterLessonRules].join("\n"),
   course: [basePrompt, courseRules].join("\n"),
@@ -73,21 +72,16 @@ const DECISION_PROMPTS: Readonly<Record<LibraryIdentityKind, string>> = {
 
 export type LibraryIdentityVerdict = {
   id: string;
-  /** P(the candidate can replace the request), as the model estimated it. */
   probability: number;
-  /** The model that answered, which is the fallback when Jev failed. */
+  /** The fallback when Jev failed. */
   model: string;
 };
 
-/** The field that holds the candidate at this position (from 0) in the state the model reads. */
 function toCandidateField(position: number): string {
   return `CANDIDATE_${position + 1}`;
 }
 
-/**
- * The yes-or-no reuse question about the candidate at one position, shared by production and
- * evals. Each question names its candidate, since the state holds every candidate of the request.
- */
+/** Each question names its candidate, since the state holds every candidate of the request. */
 export function getLibraryIdentityQuestion({
   kind,
   position,
@@ -103,13 +97,9 @@ export function getLibraryIdentityQuestion({
 }
 
 /**
- * Asks whether each candidate can replace the requested item, in one evaluation call: the state
- * holds the request and every candidate, and each candidate gets its own question, which Jev
- * answers independently. One call per request instead of one per candidate keeps a big plan's
- * thousands of verdicts under the gateway's request limit (a public-service exam's outlines asked
- * for about 14,000 in eight minutes, over the 3,000 a minute the team may send). Both sides are
- * data inside delimiters: titles and goals come from models and learners, and a line claiming
- * "same lesson" must not move a verdict. Returns each candidate's probability, in order.
+ * One call per request, not per candidate, keeps a big plan's verdicts under the gateway's request
+ * limit (an exam's outlines asked for 14,000 in eight minutes, over the 3,000 a minute allowed).
+ * Both sides are delimited data, so a line claiming "same lesson" can't move a verdict.
  */
 export async function evaluateLibraryIdentityCandidates({
   analytics,
@@ -156,11 +146,7 @@ export async function evaluateLibraryIdentityCandidates({
   return { ...run, probabilities };
 }
 
-/**
- * Picks the candidate most likely to replace the request, when one reaches the threshold, from
- * one evaluation of every candidate (see `evaluateLibraryIdentityCandidates`). `verdicts` keeps
- * each candidate's probability, for callers that reuse every candidate that fits.
- */
+/** `verdicts` keeps each candidate's probability, for callers that reuse every one that fits. */
 export async function decideLibraryIdentity({
   analytics,
   candidates,

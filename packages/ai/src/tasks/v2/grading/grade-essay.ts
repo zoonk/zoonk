@@ -17,25 +17,15 @@ import {
 import promptTemplate from "./grade-essay.prompt.md";
 
 /**
- * In the grade-essay eval (9 cases in Portuguese and English: ENEM essays at
- * four levels, an off-topic and a too-short one, Cebraspe, IELTS and an OAB
- * brief; Sep 2026), Flash, Sonnet and Opus put every total in its band and
- * the next step on the expected criterion. Luna and Sol scored the essay full
- * of norm errors one level too high (640 against 320 to 600). Flash was also
- * the fastest (8.9s p50) at about $9 per 1,000 essays; Opus costs $49 and
- * Sonnet takes 34s. On two AP free-response answers scored by rows with their
- * own points (a partial Biology answer and a History long essay with feedback
- * in Portuguese; 27 Sep), Flash put both totals in band and the next step on
- * the expected row.
+ * On the grade-essay eval, Flash, Sonnet and Opus put every total in its band while Luna and Sol
+ * scored an error-filled essay a level too high; Flash was the fastest and cheapest (Sep 2026).
  */
 const defaultModel = "google/gemini-3.8-flash";
 const fallbackModels = ["anthropic/claude-opus-5.5", "openai/gpt-6-sol"] as const;
 
 /**
- * The official rubrics this task knows. `ap` scores an AP free-response answer
- * the way AP scoring guidelines do: each row is worth its own whole points.
- * `custom` covers every other written answer (Cebraspe discursive items, school
- * essays, IELTS prompts): each criterion is worth the same share of `maxScore`.
+ * `ap`: each row is worth its own whole points. `custom`: every other written answer, each
+ * criterion worth the same share of `maxScore`.
  */
 export type EssayRubric =
   | { kind: "enem" }
@@ -43,7 +33,6 @@ export type EssayRubric =
   | { kind: "ap"; criteria: { criterion: string; description: string; points: number }[] }
   | { kind: "custom"; criteria: { criterion: string; description: string }[]; maxScore: number };
 
-/** The five elements INEP counts in an ENEM intervention proposal (competency 5). */
 export type EnemInterventionElements = {
   agent: boolean;
   action: boolean;
@@ -53,13 +42,10 @@ export type EnemInterventionElements = {
 };
 
 export type GradeEssayParams = {
-  /** The learner's language: every comment and next step is written in it. */
   language: string;
   rubric: EssayRubric;
-  /** The essay's theme or question, with its motivating texts or case. */
   prompt: string;
   essay: string;
-  /** What a full answer must cover, when the item has them (an answer standard). */
   keyPoints?: string[];
   model?: string;
   useFallback?: boolean;
@@ -68,9 +54,8 @@ export type GradeEssayParams = {
 };
 
 /**
- * An estimate for practice, never an official score. When `zeroReason` is
- * `tooShort` no model ran, so comments and the next step text are empty and
- * the app shows its own message.
+ * An estimate for practice, never an official score. With `zeroReason` `tooShort` no model ran, so
+ * comments and the next step are empty and the app shows its own message.
  */
 export type EssayGrade = {
   criteria: {
@@ -81,18 +66,15 @@ export type EssayGrade = {
     score: number;
     maxScore: number;
     comment: string;
-    /** An exact passage of the essay, or null when the model's quote wasn't found in it. */
+    /** Null when the model's quote wasn't found in the essay. */
     quote: string | null;
-    /** A better version of the passage, in the essay's language. Null at full marks. */
+    /** Null at full marks. */
     example: string | null;
   }[];
   total: { score: number; maxScore: number };
   /** The "Estimated" range shown instead of a single number. */
   range: { low: number; high: number };
-  /**
-   * Exactly one next step, on the criterion with the most points to gain; null when every
-   * criterion has full marks.
-   */
+  /** Null when every criterion has full marks. */
   nextStep: { criterionId: string; text: string } | null;
   enemInterventionElements: EnemInterventionElements | null;
   /** ENEM annulment cases. When set, every score and the total are 0. */
@@ -115,23 +97,18 @@ const interventionElementsSchema = z.object({
   means: z.boolean(),
 });
 
-/**
- * Criteria are keyed by id so a schema-following model can't skip or repeat
- * one, which an array allows.
- */
+/** Keyed by id, so a schema-following model can't skip or repeat one as it could in an array. */
 function buildCriteriaSchema(criteria: EssayCriterionDefinition[]) {
   return z.object({
     criteria: z.object(Object.fromEntries(criteria.map(({ id }) => [id, criterionOutputSchema]))),
   });
 }
 
-/** Only ENEM counts the intervention proposal's elements and annuls an essay for its content. */
 const enemOutputSchema = z.object({
   interventionElements: interventionElementsSchema.nullable(),
   zeroReason: z.enum(["offTopic", "notArgumentative"]).nullable(),
 });
 
-/** Every other rubric's answer leaves out the ENEM-only fields. */
 export type EssayModelOutput = z.infer<ReturnType<typeof buildCriteriaSchema>> &
   Partial<z.infer<typeof enemOutputSchema>>;
 
@@ -146,11 +123,6 @@ function buildOutputSchema({
   return rubric.kind === "enem" ? schema.extend(enemOutputSchema.shape) : schema;
 }
 
-/**
- * Each call reads the shared grading rules and only its own rubric, in place, so an OAB brief's
- * prompt never carries the ENEM competencies, and a rubric's change leaves the others' prompt
- * versions alone.
- */
 function getSystemPrompt(rubric: EssayRubric): string {
   return selectPromptVariants({
     template: promptTemplate,
@@ -198,14 +170,7 @@ ${essayBlock}
   `;
 }
 
-/**
- * Grades an essay with an official rubric (ENEM competencies, OAB brief
- * sections) or the caller's own criteria. The model scores and comments on
- * each criterion; code enforces the rubric's rules: allowed score steps, the
- * ENEM proposal elements capping competency 5, annulments, totals, the
- * estimated range, quotes that must exist in the essay and the one next step.
- * Texts too short to grade are settled without a model.
- */
+/** Code enforces the rubric's rules; texts too short to grade are settled without a model. */
 export async function gradeEssay(params: GradeEssayParams) {
   const { analytics, essay, model = defaultModel, reasoning, rubric, useFallback = true } = params;
   const criteria = getEssayCriteria(rubric);

@@ -34,7 +34,6 @@ const openAnswerParams = {
   question: "In your own words, what happens during photosynthesis?",
 };
 
-/** The fields of the JSON schema the last call asked for, from the output spec it was given. */
 async function requestedSchemaFields(): Promise<string[]> {
   const output = vi.mocked(generateText).mock.calls[0]?.[0].output as unknown as {
     responseFormat: Promise<{ schema: { properties: Record<string, unknown> } }>;

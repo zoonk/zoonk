@@ -207,7 +207,6 @@ describe(buildEssayGrade, () => {
   });
 
   it("has no next step when every criterion has full marks", () => {
-    // Pedro's answer got every point, and the next step still pointed at its first criterion.
     const grade = buildEssayGrade({
       essay: ESSAY,
       output: {

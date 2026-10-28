@@ -12,19 +12,15 @@ import {
 } from "./lesson-image-prompt";
 
 /**
- * Low quality is enough for flat scenes with lots of empty space, and medium
- * costs several times more per image. In the lesson-image eval (8 scenes,
- * Opus 5.5 vision judge, 26 Sep 2026) it scored 8.56 against gpt-image-2's
- * 8.04, at about $0.008 per image.
+ * Low quality is enough for flat scenes, and medium costs several times more. It scored 8.56 on
+ * the lesson-image eval against gpt-image-2's 8.04 (26 Sep 2026).
  */
 const defaultModel = "openai/gpt-image-2.5-flare";
 const DEFAULT_QUALITY: ImageGenerationQuality = "low";
 
 export type LessonImageParams = {
   scene: ImageScene;
-  /** What the check rejected in the previous drawing of this scene, for a second attempt. */
   corrections?: readonly string[];
-  /** The labels' language. */
   language: string;
   palette: ImagePalette;
   analytics?: AiGenerationContext;
@@ -35,9 +31,7 @@ export type LessonImageParams = {
 };
 
 /**
- * Draws one image from a structured scene with the fixed style block. The
- * prompt version names the style version, so stored images can be grouped by
- * the rules that drew them. Checking, storing and reuse happen in core.
+ * The prompt version names the style version, so images can be grouped by the rules that drew them.
  */
 export async function generateLessonImage({
   analytics,

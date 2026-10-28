@@ -12,7 +12,6 @@ const QUOTE_CHAR_PATTERNS: Record<string, string> = {
   "”": `["“”«»]`,
 };
 
-/** Escapes regex syntax and lets any quotation mark style match any other. */
 function toWordPattern(word: string): string {
   return word.replaceAll(
     /[$()*+./?[\\\]^{|}"'«»‘’“”]/gu,
@@ -20,19 +19,12 @@ function toWordPattern(word: string): string {
   );
 }
 
-/**
- * Models often wrap quotes in quotation marks or ellipses. Dropping edge
- * punctuation still leaves a passage that is in the essay.
- */
+/** Models often wrap quotes in quotation marks or ellipses. */
 function trimQuote(quote: string): string {
   return quote.replaceAll(/^[\s"'“”‘’«».…]+|[\s"'“”‘’«».…]+$/gu, "");
 }
 
-/**
- * Finds the model's quote in the essay ignoring case, spacing and the style
- * of quotation marks, and returns the essay's own text so the app can
- * highlight it. A quote that isn't in the essay is dropped rather than shown.
- */
+/** A quote that isn't in the essay is dropped rather than shown. */
 export function findEssayQuote({ essay, quote }: { essay: string; quote: string | null }) {
   const words = trimQuote(quote ?? "")
     .split(/\s+/u)

@@ -8,24 +8,18 @@ import { type ImageScene, imageSceneSchema, normalizeImageScene } from "./image-
 import systemPrompt from "./image-scene.prompt.md";
 
 /**
- * From the image-scene eval (8 cases, code checks then Astra judge, 26 Sep
- * 2026): Gemini 3.8 Flash 9.72, Luna 9.40 and Flash Lite 9.13, at $2.97,
- * $0.31 and $0.55 per 1,000 scenes. The scene decides whether the picture
- * teaches, and even Flash adds little next to the image itself ($7 per 1,000).
+ * Gemini 3.8 Flash scored highest on the image-scene eval (26 Sep 2026). The scene decides whether
+ * the picture teaches, and costs little next to the image itself.
  */
 const defaultModel = "google/gemini-3.8-flash";
 const fallbackModels = ["openai/gpt-6-luna", "google/gemini-3.5-flash-lite"] as const;
 
 export type ImageSceneInput = {
-  /** The lesson's language, for labels. */
   language: string;
-  /** False for language courses: the image carries no text. */
+  /** False for language courses. */
   textAllowed: boolean;
-  /** What the writer wants the picture to show. */
   request: string;
-  /** The words shown next to the picture, when there are any. */
   screenText?: string | null;
-  /** The lesson or chapter it belongs to, such as "Percentages › Discounts". */
   context?: string | null;
 };
 
@@ -46,13 +40,7 @@ function buildUserPrompt(input: ImageSceneInput): string {
   `;
 }
 
-/**
- * Turns a writer's image request into a structured scene: one focal object,
- * up to two supporting objects, their relation, any motion and at most three
- * short labels in the lesson's language. Code then enforces those limits and
- * removes every label where text isn't allowed, so the style never depends on
- * the model obeying.
- */
+/** Code enforces the scene's limits, so the style never depends on the model obeying. */
 export async function generateImageScene({
   analytics,
   model = defaultModel,
