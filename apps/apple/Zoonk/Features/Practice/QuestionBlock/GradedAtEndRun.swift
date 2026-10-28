@@ -95,7 +95,7 @@ struct GradedAtEndRun: View {
       }
 
       if question != nil {
-        HStack(spacing: 12) {
+        PracticeActionRow {
           PracticeSecondaryButton(
             title: LocalizedStringResource(
               "I don't know yet", table: "Practice", comment: "Answers a question as not known yet."

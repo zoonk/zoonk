@@ -261,7 +261,7 @@ struct ChallengeScreen: View {
         .font(.subheadline).foregroundStyle(.secondary)
       }
     } else if challenge.status == .ready || challenge.status == .started {
-      HStack(spacing: 12) {
+      PracticeActionRow {
         if challenge.canMove, movedChangeId == nil {
           PracticeSecondaryButton(
             title: LocalizedStringResource(

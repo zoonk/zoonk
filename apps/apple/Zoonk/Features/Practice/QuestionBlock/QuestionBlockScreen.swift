@@ -308,7 +308,7 @@ struct QuestionBlockView: View {
     let question = run.question
     let accepts = phase.acceptsAnswer
 
-    HStack(spacing: 12) {
+    PracticeActionRow {
       if run.drill?.kind == .noGuessing, accepts {
         PracticeSecondaryButton(
           title: LocalizedStringResource(

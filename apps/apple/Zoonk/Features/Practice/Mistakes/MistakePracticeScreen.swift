@@ -167,7 +167,7 @@ struct MistakePracticeScreen: View {
         PracticeSaveError { Task { await check(answer, timedOut: timedOut) } }
       }
 
-      HStack(spacing: 12) {
+      PracticeActionRow {
         PracticeSecondaryButton(
           title: step.entry.drill.kind == .noGuessing
             ? LocalizedStringResource(

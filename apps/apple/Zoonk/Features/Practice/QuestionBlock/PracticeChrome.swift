@@ -126,8 +126,34 @@ struct PracticeMainButton: View {
   }
 }
 
+/// A pinned bar's actions in one row: the secondary ones at their own width and the main one taking
+/// the rest, so a label like "I don't know yet" stays on one line; stacked at full width when they
+/// don't fit side by side (a narrow window, a large text size, a long translation).
+struct PracticeActionRow<Content: View>: View {
+  @ViewBuilder let content: Content
+
+  var body: some View {
+    ViewThatFits(in: .horizontal) {
+      HStack(spacing: 12) {
+        content
+      }
+      .environment(\.practiceActionsSideBySide, true)
+
+      VStack(spacing: 10) {
+        content
+      }
+    }
+  }
+}
+
+extension EnvironmentValues {
+  @Entry var practiceActionsSideBySide = false
+}
+
 /// A secondary action beside the main one ("I don't know yet", "I'm not sure").
 struct PracticeSecondaryButton: View {
+  @Environment(\.practiceActionsSideBySide) private var sideBySide
+
   let title: LocalizedStringResource
   var systemImage: String?
   var isDisabled = false
@@ -146,7 +172,7 @@ struct PracticeSecondaryButton: View {
           Text(title)
         }
       }
-      .frame(maxWidth: .infinity)
+      .frame(maxWidth: sideBySide ? nil : .infinity)
     }
     .buttonStyle(.glass)
     .controlSize(.large)
