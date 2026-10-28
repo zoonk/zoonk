@@ -35,10 +35,12 @@ struct SearchGroup: Equatable, Identifiable {
 }
 
 /// Main's palette groups in its order: the learner's actions, where they can go, their other goals,
-/// quick explanations, the plan's subjects and chapters (from the Plan's cached `syllabus`), then
-/// settings and help. A visitor gets the ways in instead.
+/// quick explanations, the plan's subjects and chapters (from the Plan's cached `syllabus`), the
+/// exam's finished mocks (from the exam page's cached `mocks`), then settings and help. A visitor
+/// gets the ways in instead.
 func searchGroups(
-  summary: LearnerSummary?, isSignedIn: Bool, syllabus: GoalSyllabus? = nil
+  summary: LearnerSummary?, isSignedIn: Bool, syllabus: GoalSyllabus? = nil,
+  mocks: [ExamMockSummary] = []
 ) -> [SearchGroup] {
   guard isSignedIn, let summary else {
     return [visitorPages, helpGroup]
@@ -50,6 +52,7 @@ func searchGroups(
     otherGoals(summary),
     explanations(summary),
     plan(syllabus),
+    finishedMocks(mocks),
     settingsGroup(isGuest: summary.identity.isAnonymous),
     helpGroup,
   ].filter { !$0.items.isEmpty }
@@ -224,6 +227,25 @@ private func explanations(_ summary: LearnerSummary) -> SearchGroup {
       SearchItem(
         id: "explanation-\(goal.id)", title: goal.title, systemImage: "lightbulb",
         action: .open(.explain(goalId: goal.id)))
+    },
+    isShownWithoutQuery: false)
+}
+
+/// The exam's finished mocks, newest first as the exam page lists them, each opening its result.
+private func finishedMocks(_ mocks: [ExamMockSummary]) -> SearchGroup {
+  SearchGroup(
+    id: "mocks",
+    title: String(
+      localized: "Mock exams", table: "Search", comment: "Search group of the finished mock exams"),
+    items: mocks.compactMap { mock in
+      mock.blockId.map { blockId in
+        SearchItem(
+          id: "mock-\(blockId)",
+          title: String(
+            localized: "Mock exam \(String(mock.number))", table: "Search",
+            comment: "A finished mock exam in search, by its number"),
+          systemImage: LearnKind.mock.systemImage, action: .open(.mock(blockId: blockId)))
+      }
     },
     isShownWithoutQuery: false)
 }

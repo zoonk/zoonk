@@ -9,6 +9,7 @@ struct SearchScreen: View {
   @Environment(AppRouter.self) private var router
   @Environment(BuddyStore.self) private var buddy
   @Environment(CourseCatalogStore.self) private var catalog
+  @Environment(ExamStore.self) private var exams
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(PlanStore.self) private var plans
   @Environment(SessionStore.self) private var session
@@ -110,14 +111,16 @@ struct SearchScreen: View {
   private var groups: [SearchGroup] {
     searchGroups(
       summary: learner.summary.value, isSignedIn: session.authenticatedSession != nil,
-      syllabus: syllabus?.value
+      syllabus: syllabus?.value, mocks: exam?.value?.mocks ?? []
     )
     .compactMap { group in
       guard let text else {
         return group.isShownWithoutQuery ? group : nil
       }
 
-      let items = group.items.filter { $0.matches(text) }
+      // A year of weekly mocks would bury the rest: main shows the six newest that match.
+      let matching = group.items.filter { $0.matches(text) }
+      let items = group.id == "mocks" ? Array(matching.prefix(6)) : matching
       return items.isEmpty ? nil : SearchGroup(id: group.id, title: group.title, items: items)
     }
   }
@@ -126,6 +129,18 @@ struct SearchScreen: View {
   /// for it only once, the first time a query needs it.
   private var syllabus: Resource<GoalSyllabus>? {
     learner.summary.value?.shownGoal.map { plans.syllabus(goalId: $0.id) }
+  }
+
+  /// The exam page's read, for an exam goal's finished mocks: searching asks for it once, as the
+  /// syllabus.
+  private var exam: Resource<ExamView>? {
+    guard learner.summary.value?.places.exam == true,
+      let goal = learner.summary.value?.shownGoal
+    else {
+      return nil
+    }
+
+    return exams.exam(goalId: goal.id)
   }
 
   private var catalogResults: CatalogSearchResults? {
@@ -149,7 +164,9 @@ struct SearchScreen: View {
 
     catalog.prepareSearch(query: query)
     let plan = syllabus
+    let exam = exam
     async let planLoaded: Void = { await plan?.load() }()
+    async let examLoaded: Void = { await exam?.load() }()
 
     do {
       try await Task.sleep(for: .milliseconds(250))
@@ -159,6 +176,7 @@ struct SearchScreen: View {
 
     await catalog.searchCatalog(query: query)
     await planLoaded
+    await examLoaded
   }
 
   private func perform(_ action: SearchItem.Action) {

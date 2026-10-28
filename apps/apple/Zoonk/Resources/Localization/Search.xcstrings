@@ -384,6 +384,64 @@
         }
       }
     },
+    "Mock exam %@" : {
+      "comment" : "A finished mock exam in search, by its number",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probeprüfung %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulacro de examen %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Examen blanc %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulado %@"
+          }
+        }
+      }
+    },
+    "Mock exams" : {
+      "comment" : "Search group of the finished mock exams",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probeprüfungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulacros de examen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Examens blancs"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulados"
+          }
+        }
+      }
+    },
     "My account" : {
       "comment" : "Search group of settings",
       "localizations" : {

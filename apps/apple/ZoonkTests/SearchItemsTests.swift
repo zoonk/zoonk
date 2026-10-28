@@ -63,6 +63,15 @@ final class SearchItemsTests: XCTestCase {
     XCTAssertEqual(buddy?.matches("buddy"), true)
   }
 
+  func testFinishedMocksOpenTheirResultsOnlyForAQuery() throws {
+    let mock = try JSONDecoder.zoonkTestMock()
+    let groups = searchGroups(summary: .searchFixture(), isSignedIn: true, mocks: [mock])
+    let mocks = groups.first { $0.id == "mocks" }
+
+    XCTAssertEqual(mocks?.items.map(\.action), [.open(.mock(blockId: "mock-1"))])
+    XCTAssertEqual(mocks?.isShownWithoutQuery, false)
+  }
+
   func testThePlansSubjectsAndChaptersOpenTheirPages() throws {
     let groups = searchGroups(
       summary: .searchFixture(), isSignedIn: true, syllabus: try .searchFixture(kind: "exam"))
@@ -158,6 +167,22 @@ extension GoalSyllabus {
           ],
           "topicCount": 2
         }
+        """#.utf8))
+  }
+}
+
+extension JSONDecoder {
+  /// A finished mock as the exam page lists it.
+  fileprivate static func zoonkTestMock() throws -> ExamMockSummary {
+    let decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .iso8601
+
+    return try decoder.decode(
+      ExamMockSummary.self,
+      from: Data(
+        #"""
+        {"blockId":"mock-1","correct":30,"examQuestions":90,"finishedAt":"2026-10-18T15:00:00Z",
+        "measure":0.6,"number":1,"purpose":"planned","scoring":"raw","shape":null,"total":45}
         """#.utf8))
   }
 }
