@@ -61,8 +61,21 @@ struct QuestionBlockScreen: View {
         token: identity.bearerToken, sessionId: sessionId, blockId: blockId)
 
       if detail.block.status == .pending {
-        try await practice.api.startStudyBlock(
-          token: identity.bearerToken, sessionId: sessionId, blockId: blockId)
+        let (sessionId, blockId) = (sessionId, blockId)
+        switch await practice.write(
+          .answered,
+          { identity in
+            try await practice.api.startStudyBlock(
+              token: identity.bearerToken, sessionId: sessionId, blockId: blockId)
+          })
+        {
+        case .done: break
+        case .refused, .failed:
+          load = .failed(.unavailable)
+          return
+        case .obsolete: return
+        }
+
         detail = try await practice.api.studyBlock(
           token: identity.bearerToken, sessionId: sessionId, blockId: blockId)
       }
@@ -73,7 +86,7 @@ struct QuestionBlockScreen: View {
         QuestionBlockRun(
           detail: detail,
           client: LiveQuestionBlockClient(
-            api: practice.api, token: identity.bearerToken, sessionId: sessionId, blockId: blockId))
+            practice: practice, sessionId: sessionId, blockId: blockId))
       )
     } catch let error as APIError {
       if error == .unauthorized { await session.expire(identity) }
@@ -115,12 +128,8 @@ struct QuestionBlockView: View {
     }
     .navigationTitle(Text(blockTitle))
     .onChange(of: phase) { _, phase in
-      switch phase {
-      case .feedback: practice.changed(.answered)
-      case .finished(let completion):
-        practice.changed(.finished)
+      if case .finished(let completion) = phase {
         onFinished?(completion)
-      default: break
       }
     }
     .onChange(of: run.needsRefresh) { _, needsRefresh in
@@ -361,14 +370,16 @@ struct QuestionBlockView: View {
       return
     }
 
-    guard let identity = session.authenticatedSession else { return }
-
-    do {
-      try await practice.api.stopSession(token: identity.bearerToken, sessionId: sessionId)
-      practice.changed(.finished)
-      dismiss()
-    } catch {
-      stopFailed = true
+    let sessionId = sessionId
+    switch await practice.write(
+      .finished,
+      { identity in
+        try await practice.api.stopSession(token: identity.bearerToken, sessionId: sessionId)
+      })
+    {
+    case .done: dismiss()
+    case .refused, .failed: stopFailed = true
+    case .obsolete: break
     }
   }
 }

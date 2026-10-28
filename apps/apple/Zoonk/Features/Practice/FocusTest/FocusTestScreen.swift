@@ -198,7 +198,7 @@ struct FocusTestScreen: View {
 
   /// Start asks for missing questions (the learner's tap) and asks the ones it has meanwhile.
   private func start(_ test: FocusTestQuestions) async {
-    guard !test.needsItems.isEmpty, let identity = session.authenticatedSession else {
+    guard !test.needsItems.isEmpty else {
       started = true
       return
     }
@@ -208,53 +208,72 @@ struct FocusTestScreen: View {
     started = !questions.isEmpty
     defer { isWriting = false }
 
-    do {
+    let goalId = goalId
+    let written = await practice.write(.answered) { identity in
       if case .generating(let generationId) = try await practice.api.writeFocusTest(
         token: identity.bearerToken, goalId: goalId)
       {
-        started = !questions.isEmpty
         try await practice.api.waitForQuestions(
           token: identity.bearerToken, generationId: generationId,
           readyStep: "focusTestQuestionsReady")
       }
+    }
 
+    switch written {
+    case .done:
       await read()
       started = true
       if case .loaded(let updated) = load, !updated.needsItems.isEmpty { writingEnded = true }
-    } catch {
+    case .refused(let refusal):
+      writingEnded = true
+      if questions.isEmpty { writeFailure = refusal }
+    case .failed(let error):
       writingEnded = true
       if questions.isEmpty { writeFailure = error }
+    case .obsolete:
+      break
     }
   }
 
   private func submit(_ answers: [PracticeChoiceAnswer]) async {
-    guard let identity = session.authenticatedSession else { return }
-
     isSubmitting = true
     submitFailed = false
     defer { isSubmitting = false }
 
-    do {
-      result = try await practice.api.submitFocusTest(
-        token: identity.bearerToken, goalId: goalId, answers: answers)
+    let goalId = goalId
+    switch await practice.write(
+      .planChanged,
+      { identity in
+        try await practice.api.submitFocusTest(
+          token: identity.bearerToken, goalId: goalId, answers: answers)
+      })
+    {
+    case .done(let graded):
       PracticeAnswerDraft.clear(key: draftKey)
-      practice.changed(.planChanged)
-    } catch {
+      result = graded
+    case .refused, .failed:
       submitFailed = true
+    case .obsolete:
+      break
     }
   }
 
   private func undo(_ changeId: String) async {
-    guard let identity = session.authenticatedSession else { return }
-
-    do {
-      try await practice.api.undoPlanChange(
-        token: identity.bearerToken, goalId: goalId, changeId: changeId)
+    let goalId = goalId
+    switch await practice.write(
+      .planChanged,
+      { identity in
+        try await practice.api.undoPlanChange(
+          token: identity.bearerToken, goalId: goalId, changeId: changeId)
+      })
+    {
+    case .done:
       undone = true
       undoFailed = false
-      practice.changed(.planChanged)
-    } catch {
+    case .refused, .failed:
       undoFailed = true
+    case .obsolete:
+      break
     }
   }
 }

@@ -55,15 +55,55 @@ final class PracticeStore {
     return pattern
   }
 
-  /// Revalidates what a practice write changed, the way core revalidates main's cache tags:
-  /// answers save and fix mistakes (the learner model) and count toward the day's progress;
-  /// finishes also move the day and the plan; plan changes replan the goal.
+  /// Revalidates what a practice write made elsewhere changed (the voice lane's challenge call
+  /// start), the way `write` does for practice's own writes.
   func changed(_ change: PracticeChange) {
-    switch change {
-    case .answered: cache.invalidate([.learnerModel, .userProgress])
-    case .finished: cache.invalidate([.goals, .learnerModel, .userProgress])
-    case .planChanged: cache.invalidate([.goals, .learnerModel])
-    case .patternDone: cache.invalidate([.learnerModel, .userProgress])
+    cache.invalidate(change.domains)
+  }
+
+  /// A practice write through the app's shared `AppCache.mutate`: it captures the session, signs
+  /// out on a 401, revalidates `change`'s domains, and returns `.obsolete` (never publish, never
+  /// navigate, never start the next write) when the learner or the screen is gone. Refusals the
+  /// screens name (`PracticeAPIError`: Plus, a conflict's code, a refused move) come back as values.
+  func write<Value: Sendable>(
+    _ change: PracticeChange, _ operation: @escaping (AuthenticatedSession) async throws -> Value
+  ) async -> PracticeWrite<Value> {
+    let result = await cache.mutate(invalidating: change.domains) { identity in
+      do {
+        return Result<Value, PracticeAPIError>.success(try await operation(identity))
+      } catch let refusal as PracticeAPIError {
+        return .failure(refusal)
+      }
+    }
+
+    switch result {
+    case .done(.success(let value)): return .done(value)
+    case .done(.failure(let refusal)): return .refused(refusal)
+    case .failed(let error): return .failed(error)
+    case .obsolete: return .obsolete
+    }
+  }
+
+}
+
+/// How a practice write ended.
+enum PracticeWrite<Value: Sendable>: Sendable {
+  case done(Value)
+  case failed(APIError)
+  /// The learner or the screen is gone: show nothing, navigate nowhere.
+  case obsolete
+  case refused(PracticeAPIError)
+}
+
+extension PracticeChange {
+  /// What core revalidates for each practice write: answers save and fix mistakes (the learner
+  /// model) and count toward the day; finishes also move the day and the plan; plan changes
+  /// replan the goal.
+  var domains: Set<DataDomain> {
+    switch self {
+    case .answered, .patternDone: [.learnerModel, .userProgress]
+    case .finished: [.goals, .learnerModel, .userProgress]
+    case .planChanged: [.goals, .learnerModel]
     }
   }
 }

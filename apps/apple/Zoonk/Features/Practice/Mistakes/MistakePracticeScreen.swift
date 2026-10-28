@@ -274,8 +274,7 @@ struct MistakePracticeScreen: View {
   /// Each answer comes with the run's earlier answers, so saving it counts the run so far. Its
   /// attempt id is kept for the question, so sending it again after a failure is recorded once.
   private func check(_ answer: PracticeAnswer, timedOut: Bool) async {
-    guard let step = state.step, state.acceptsAnswer, let identity = session.authenticatedSession
-    else { return }
+    guard let step = state.step, state.acceptsAnswer else { return }
 
     let limitMs = (step.entry.drill.timeLimitSeconds ?? 0) * 1000
     let durationMs = Int(Date.now.timeIntervalSince(shownAt) * 1000)
@@ -285,17 +284,26 @@ struct MistakePracticeScreen: View {
       attempt = (UUID().uuidString.lowercased(), state.index)
     }
 
-    do {
-      let grade = try await practice.api.answerMistake(
-        token: identity.bearerToken, mistakeId: step.entry.mistakeId, itemId: step.question.itemId,
-        answer: answer, durationMs: timedOut ? max(durationMs, limitMs) : durationMs,
-        attemptId: attempt?.id ?? UUID().uuidString.lowercased(), runAnswerIds: state.answerIds,
-        goalId: goalId)
+    let attemptId = attempt?.id ?? UUID().uuidString.lowercased()
+    let runAnswerIds = state.answerIds
+    let goalId = goalId
+
+    switch await practice.write(
+      .answered,
+      { identity in
+        try await practice.api.answerMistake(
+          token: identity.bearerToken, mistakeId: step.entry.mistakeId,
+          itemId: step.question.itemId,
+          answer: answer, durationMs: timedOut ? max(durationMs, limitMs) : durationMs,
+          attemptId: attemptId, runAnswerIds: runAnswerIds, goalId: goalId)
+      })
+    {
+    case .done(let grade):
       state.answered(grade, mistakeId: step.entry.mistakeId)
-      practice.changed(.answered)
-    } catch {
-      if case APIError.unauthorized = error { await session.expire(identity) }
+    case .refused, .failed:
       state.answerFailed()
+    case .obsolete:
+      break
     }
   }
 
@@ -317,16 +325,28 @@ struct MistakePracticeScreen: View {
   /// Counts the whole run once more at its end; a count that didn't get through still ends it,
   /// since each answer was counted as it came.
   private func finish() async {
-    guard !state.answerIds.isEmpty, let identity = session.authenticatedSession else {
+    guard !state.answerIds.isEmpty else {
       state.ended(nil)
       return
     }
 
-    let summary = try? await practice.api.finishMistakePractice(
-      token: identity.bearerToken, answerIds: state.answerIds, ended: true, goalId: goalId)
-    state.ended(summary)
-    practice.changed(.finished)
+    let answerIds = state.answerIds
+    let goalId = goalId
+
+    // A count that didn't get through still ends the run: each answer was counted as it came.
+    switch await practice.write(
+      .finished,
+      { identity in
+        try await practice.api.finishMistakePractice(
+          token: identity.bearerToken, answerIds: answerIds, ended: true, goalId: goalId)
+      })
+    {
+    case .done(let summary): state.ended(summary)
+    case .refused, .failed: state.ended(nil)
+    case .obsolete: break
+    }
   }
+
 }
 
 /// The end of a run: "Practice done", its right answers and Brain Power, the mistakes it fixed,

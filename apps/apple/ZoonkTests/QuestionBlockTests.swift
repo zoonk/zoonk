@@ -135,14 +135,13 @@ final class QuestionBlockRunTests: XCTestCase {
     XCTAssertTrue(run.needsRefresh)
   }
 
-  func testExpiredBearerFailsTheAnswerAndSaysSo() async {
-    let client = FakeQuestionBlockClient(answers: [.failure(APIError.unauthorized)])
+  func testAnAnswerForALearnerWhoIsGoneShowsNothing() async {
+    let client = FakeQuestionBlockClient(answers: [.failure(QuestionBlockWriteObsolete())])
     let run = QuestionBlockRun(detail: makeDetail(["a"]), client: client)
 
     await run.submit(.choice(0))
 
-    XCTAssertTrue(run.isUnauthorized)
-    XCTAssertEqual(run.state.phase, .answerFailed)
+    XCTAssertEqual(run.state.phase, .checking, "no grade, no failure, no retry for someone else")
   }
 
   func testFailedFinishOffersItAgain() async {

@@ -32,7 +32,12 @@ struct CheckpointScreen: View {
           PracticeLoadFailureView(error: error) { Task { await read() } }
         case .loaded(let loaded):
           if let state {
-            if loaded.checkpoint.status == .pending, let planItemId = loaded.checkpoint.planItemId {
+            if loaded.questions.isEmpty, !state.isResult {
+              // A language phase or final checkpoint is a live call, which asks no questions.
+              call
+            } else if loaded.checkpoint.status == .pending,
+              let planItemId = loaded.checkpoint.planItemId
+            {
               notStarted(planItemId: planItemId)
             } else if state.isResult {
               CheckpointResultView(load: loaded, state: state, showsReview: $showsReview) {
@@ -64,6 +69,27 @@ struct CheckpointScreen: View {
     }
 
     return CheckpointCopy.title(loaded.checkpoint)
+  }
+
+  /// The voice lane's call for a language checkpoint, opened straight from the session; until it's
+  /// wired, the checkpoint says it isn't ready here.
+  @ViewBuilder
+  private var call: some View {
+    if let checkpointCall = hooks.checkpointCall {
+      checkpointCall(blockId, sessionId)
+    } else {
+      ContentUnavailableView {
+        Label {
+          Text(title)
+        } icon: {
+          Image(systemName: "phone")
+        }
+      } description: {
+        Text(
+          "This challenge isn't ready yet.", tableName: "Practice",
+          comment: "A challenge that can't start on this device yet.")
+      }
+    }
   }
 
   private func notStarted(planItemId: String) -> some View {
@@ -177,30 +203,31 @@ struct CheckpointScreen: View {
 
   private func confirm() async {
     guard case .loaded(let loaded) = load, let question = state?.currentQuestion,
-      let answer = draft,
-      state?.isPending == false, state?.feedback == nil, let identity = session.authenticatedSession
+      let answer = draft, state?.isPending == false, state?.feedback == nil
     else { return }
 
     state?.confirm()
+    let durationMs = Int(Date.now.timeIntervalSince(shownAt) * 1000)
 
-    do {
-      let outcome = try await practice.api.answerStudy(
-        token: identity.bearerToken, sessionId: loaded.checkpoint.sessionId, blockId: blockId,
-        itemId: question.itemId, answer: answer,
-        durationMs: Int(Date.now.timeIntervalSince(shownAt) * 1000))
-
-      switch outcome {
-      case .answered(let feedback):
-        state?.answered(
-          answer, isCorrect: feedback.isCorrect, itemId: question.itemId,
-          reinforcementLessons: feedback.reinforcementLessons, transcript: feedback.transcript,
-          setId: question.set?.id)
-        practice.changed(.answered)
-      case .alreadyAnswered, .blockNotActive:
-        await read()
-      }
-    } catch {
+    switch await practice.write(
+      .answered,
+      { identity in
+        try await practice.api.answerStudy(
+          token: identity.bearerToken, sessionId: loaded.checkpoint.sessionId, blockId: blockId,
+          itemId: question.itemId, answer: answer, durationMs: durationMs)
+      })
+    {
+    case .done(.answered(let feedback)):
+      state?.answered(
+        answer, isCorrect: feedback.isCorrect, itemId: question.itemId,
+        reinforcementLessons: feedback.reinforcementLessons, transcript: feedback.transcript,
+        setId: question.set?.id)
+    case .done(.alreadyAnswered), .done(.blockNotActive):
+      await read()
+    case .refused, .failed:
       state?.failed(.answer)
+    case .obsolete:
+      break
     }
   }
 
@@ -215,19 +242,23 @@ struct CheckpointScreen: View {
   }
 
   private func finish() async {
-    guard case .loaded(let loaded) = load, let identity = session.authenticatedSession else {
-      return
-    }
+    guard case .loaded(let loaded) = load else { return }
 
     state?.finishing()
 
-    do {
-      let completion = try await practice.api.finishStudyBlock(
-        token: identity.bearerToken, sessionId: loaded.checkpoint.sessionId, blockId: blockId)
+    switch await practice.write(
+      .finished,
+      { identity in
+        try await practice.api.finishStudyBlock(
+          token: identity.bearerToken, sessionId: loaded.checkpoint.sessionId, blockId: blockId)
+      })
+    {
+    case .done(let completion):
       state?.finished(completion)
-      practice.changed(.finished)
-    } catch {
+    case .refused, .failed:
       state?.failed(.finish)
+    case .obsolete:
+      break
     }
   }
 

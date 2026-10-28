@@ -256,30 +256,32 @@ struct PatternScreen: View {
   }
 
   private func dismissTypos() async {
-    guard let identity = session.authenticatedSession else { return }
-    guard
-      (try? await practice.api.dismissPattern(token: identity.bearerToken, patternId: patternId))
-        != nil
-    else { return }
-    practice.changed(.patternDone)
+    _ = await practice.write(.patternDone) { identity in
+      try await practice.api.dismissPattern(token: identity.bearerToken, patternId: patternId)
+    }
   }
 
   private func save(_ pattern: Components.Schemas.MistakePattern) async {
-    guard let identity = session.authenticatedSession else { return }
-
     isSaving = true
     saveFailed = false
     defer { isSaving = false }
 
-    do {
-      let result = try await practice.api.practicePattern(
-        token: identity.bearerToken, patternId: patternId, answers: picks, requestId: requestId)
-      step = .result(result)
-      practice.changed(.patternDone)
-    } catch {
-      saveFailed = true
+    let answers = picks
+    let requestId = requestId
+
+    switch await practice.write(
+      .patternDone,
+      { identity in
+        try await practice.api.practicePattern(
+          token: identity.bearerToken, patternId: patternId, answers: answers, requestId: requestId)
+      })
+    {
+    case .done(let result): step = .result(result)
+    case .refused, .failed: saveFailed = true
+    case .obsolete: break
     }
   }
+
 }
 
 /// "We noticed a pattern", with the pattern as its title: how often it came up, the rule with one

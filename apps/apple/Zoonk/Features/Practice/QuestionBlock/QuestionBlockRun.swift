@@ -8,23 +8,45 @@ protocol QuestionBlockClient: Sendable {
   func finish() async throws -> Components.Schemas.StudyBlockCompletion
 }
 
-/// The live client for one block of one session, with the bearer that opened it.
+/// A write whose learner or screen is gone (signed out, another account, closed): the run shows
+/// nothing for it.
+struct QuestionBlockWriteObsolete: Error {}
+
+/// The live client for one block of one session. Its writes go through the app's shared
+/// mutation, which signs out on a 401 and drops results for a learner who's gone.
 struct LiveQuestionBlockClient: QuestionBlockClient {
-  let api: PracticeAPI
-  let token: String
+  let practice: PracticeStore
   let sessionId: String
   let blockId: String
 
   func answer(itemId: String, answer: PracticeAnswer, durationMs: Int) async throws
     -> StudyAnswerOutcome
   {
-    try await api.answerStudy(
-      token: token, sessionId: sessionId, blockId: blockId, itemId: itemId, answer: answer,
-      durationMs: durationMs)
+    let (practice, sessionId, blockId) = (practice, sessionId, blockId)
+    return try await Self.value(
+      await practice.write(.answered) { identity in
+        try await practice.api.answerStudy(
+          token: identity.bearerToken, sessionId: sessionId, blockId: blockId, itemId: itemId,
+          answer: answer, durationMs: durationMs)
+      })
   }
 
   func finish() async throws -> Components.Schemas.StudyBlockCompletion {
-    try await api.finishStudyBlock(token: token, sessionId: sessionId, blockId: blockId)
+    let (practice, sessionId, blockId) = (practice, sessionId, blockId)
+    return try await Self.value(
+      await practice.write(.finished) { identity in
+        try await practice.api.finishStudyBlock(
+          token: identity.bearerToken, sessionId: sessionId, blockId: blockId)
+      })
+  }
+
+  private static func value<Value>(_ write: PracticeWrite<Value>) throws -> Value {
+    switch write {
+    case .done(let value): return value
+    case .refused(let refusal): throw refusal
+    case .failed(let error): throw error
+    case .obsolete: throw QuestionBlockWriteObsolete()
+    }
   }
 }
 
@@ -45,8 +67,6 @@ final class QuestionBlockRun {
   /// Set when the block isn't active anymore (finished or skipped elsewhere): the host reads where
   /// the session stands.
   private(set) var needsRefresh = false
-  /// Set when the bearer expired mid-block.
-  private(set) var isUnauthorized = false
 
   private let client: any QuestionBlockClient
   private let now: () -> Date
@@ -95,9 +115,8 @@ final class QuestionBlockRun {
       case .blockNotActive:
         needsRefresh = true
       }
-    } catch APIError.unauthorized {
-      isUnauthorized = true
-      state.answerFailed()
+    } catch is QuestionBlockWriteObsolete {
+      return
     } catch {
       state.answerFailed()
     }
@@ -127,9 +146,8 @@ final class QuestionBlockRun {
 
     do {
       state.finished(try await client.finish())
-    } catch APIError.unauthorized {
-      isUnauthorized = true
-      state.finishFailed()
+    } catch is QuestionBlockWriteObsolete {
+      return
     } catch {
       state.finishFailed()
     }

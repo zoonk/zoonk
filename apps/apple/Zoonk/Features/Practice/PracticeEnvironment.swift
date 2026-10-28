@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// What changed after a practice answer or finish, for the app's shared data to read again
-/// (`PracticeStore.changed`).
+/// What a practice write changed, for the app's shared data to read again (`PracticeStore.write`).
 enum PracticeChange: Equatable, Sendable {
   /// An answer was saved: the mistakes count and the day's progress may have moved.
   case answered
@@ -46,6 +45,9 @@ final class PracticeHooks: Sendable {
   /// The voice lane's live call a language phase or final challenge plays instead of questions;
   /// nil shows the call's intro with its start unavailable.
   let challengeCall: (@MainActor @Sendable (_ planItemId: String) -> AnyView)?
+  /// The voice lane's call for a language checkpoint opened straight from the session (it asks no
+  /// questions); nil says the challenge isn't ready here.
+  let checkpointCall: (@MainActor @Sendable (_ blockId: String, _ sessionId: String?) -> AnyView)?
   /// The milestones lane's full-screen moment for a milestone a run earned, before its result;
   /// nil shows the result alone.
   let ceremony:
@@ -59,6 +61,7 @@ final class PracticeHooks: Sendable {
     navigate: @escaping @MainActor @Sendable (PracticeDestination) -> Void = { _ in },
     askButton: (@MainActor @Sendable (PracticeAskTarget) -> AnyView)? = nil,
     challengeCall: (@MainActor @Sendable (String) -> AnyView)? = nil,
+    checkpointCall: (@MainActor @Sendable (String, String?) -> AnyView)? = nil,
     ceremony: (
       @MainActor @Sendable (Components.Schemas.Milestone, @escaping @MainActor () -> Void) ->
         AnyView
@@ -67,6 +70,7 @@ final class PracticeHooks: Sendable {
     self.navigate = navigate
     self.askButton = askButton
     self.challengeCall = challengeCall
+    self.checkpointCall = checkpointCall
     self.ceremony = ceremony
   }
 

@@ -425,18 +425,22 @@ struct ChallengeScreen: View {
 
   /// Start plans today's session if needed and starts the block, then opens where it's played.
   /// Too few questions in the bank writes them first (the learner's tap), then starts with them.
+  /// A learner who left (the screen closed, signed out) gets nothing opened or started behind them.
   private func start(afterWriting: Bool) async {
-    guard let identity = session.authenticatedSession else { return }
-
     isStarting = true
     startProblem = nil
     defer { isStarting = false }
 
-    do {
-      let start = try await practice.api.startChallenge(
-        token: identity.bearerToken, planItemId: itemId, afterWriting: afterWriting)
+    let planItemId = itemId
+    let started = await practice.write(.answered) { identity in
+      try await practice.api.startChallenge(
+        token: identity.bearerToken, planItemId: planItemId, afterWriting: afterWriting)
+    }
+
+    switch started {
+    case .done(let start):
+      // Closed while the start was answered: nothing opens behind the learner.
       guard !Task.isCancelled else { return }
-      practice.changed(.answered)
       dismiss()
 
       switch start.kind {
@@ -444,67 +448,68 @@ struct ChallengeScreen: View {
         hooks.navigate(.checkpoint(blockId: start.blockId, sessionId: start.sessionId))
       case .mock: hooks.navigate(.mock(blockId: start.blockId, sessionId: start.sessionId))
       }
-    } catch PracticeAPIError.conflict(let code) where code == "QUESTIONS_NEEDED" && !afterWriting {
-      await writeThenStart(identity: identity)
-    } catch PracticeAPIError.plusRequired {
+    case .refused(.conflict(let code)) where code == "QUESTIONS_NEEDED" && !afterWriting:
+      await writeThenStart()
+    case .refused:
+      // Plus, today's study time or the day changed since the intro opened: read it again.
       await read()
-    } catch PracticeAPIError.dailyLimitReached {
-      await read()
-    } catch PracticeAPIError.conflict {
-      await read()
-    } catch {
-      startProblem = LocalizedStringResource(
-        "That didn't go through. Try again in a moment.", table: "Practice",
-        comment: "A challenge's start or move failed.")
+    case .failed:
+      startProblem = Self.notDone
+    case .obsolete:
+      break
     }
   }
 
-  private func writeThenStart(identity: AuthenticatedSession) async {
+  /// Writes the questions (the learner's tap), follows the run until it ends whether every call
+  /// succeeded or not, then starts with what was written.
+  private func writeThenStart() async {
     isWriting = true
     defer { isWriting = false }
 
-    do {
+    let planItemId = itemId
+    let written = await practice.write(.answered) { identity in
       if case .generating(let generationId) = try await practice.api.writeChallenge(
-        token: identity.bearerToken, planItemId: itemId)
+        token: identity.bearerToken, planItemId: planItemId)
       {
         try? await practice.api.waitForQuestions(
           token: identity.bearerToken, generationId: generationId,
           readyStep: "challengeQuestionsReady")
       }
-    } catch PracticeAPIError.plusRequired {
-      await read()
-      return
-    } catch {
-      startProblem = LocalizedStringResource(
-        "That didn't go through. Try again in a moment.", table: "Practice",
-        comment: "A challenge's start or move failed.")
-      return
     }
 
-    // Closed meanwhile: the questions stay written, and nothing starts behind the learner.
-    guard !Task.isCancelled else { return }
-
-    isWriting = false
-    await start(afterWriting: true)
+    switch written {
+    case .done:
+      guard !Task.isCancelled else { return }
+      isWriting = false
+      await start(afterWriting: true)
+    case .refused:
+      await read()
+    case .failed:
+      startProblem = Self.notDone
+    case .obsolete:
+      break
+    }
   }
 
   /// "Move to Monday": the challenge moves through the plan and this screen follows it to its
   /// new plan item, with the move's undo.
   private func move() async {
-    guard let identity = session.authenticatedSession else { return }
-
     isMoving = true
     moveProblem = nil
     defer { isMoving = false }
 
-    do {
-      let moved = try await practice.api.moveChallenge(
-        token: identity.bearerToken, planItemId: itemId)
-      currentPlanItemId = moved.planItemId ?? itemId
+    let planItemId = itemId
+    switch await practice.write(
+      .planChanged,
+      { identity in
+        try await practice.api.moveChallenge(token: identity.bearerToken, planItemId: planItemId)
+      })
+    {
+    case .done(let moved):
+      currentPlanItemId = moved.planItemId ?? planItemId
       movedChangeId = moved.changeId
-      practice.changed(.planChanged)
       await read()
-    } catch PracticeAPIError.invalid(let reason) {
+    case .refused(.invalid(let reason)):
       moveProblem =
         reason == "mockCollision"
         ? LocalizedStringResource(
@@ -515,30 +520,37 @@ struct ChallengeScreen: View {
           "Your plan can't make room for this challenge on Monday. It stays where it is.",
           table: "Practice",
           comment: "Moving a weekly challenge was refused: no room on Monday.")
-    } catch {
-      moveProblem = LocalizedStringResource(
-        "That didn't go through. Try again in a moment.", table: "Practice",
-        comment: "A challenge's start or move failed.")
+    case .refused, .failed:
+      moveProblem = Self.notDone
+    case .obsolete:
+      break
     }
   }
 
   private func undoMove(_ changeId: String) async {
-    guard let identity = session.authenticatedSession else { return }
-
     isMoving = true
     defer { isMoving = false }
 
-    do {
-      let undone = try await practice.api.undoChallengeMove(
-        token: identity.bearerToken, planItemId: itemId, changeId: changeId)
+    let movedItemId = itemId
+    switch await practice.write(
+      .planChanged,
+      { identity in
+        try await practice.api.undoChallengeMove(
+          token: identity.bearerToken, planItemId: movedItemId, changeId: changeId)
+      })
+    {
+    case .done(let undone):
       currentPlanItemId = undone.planItemId ?? planItemId
       movedChangeId = nil
-      practice.changed(.planChanged)
       await read()
-    } catch {
-      moveProblem = LocalizedStringResource(
-        "That didn't go through. Try again in a moment.", table: "Practice",
-        comment: "A challenge's start or move failed.")
+    case .refused, .failed:
+      moveProblem = Self.notDone
+    case .obsolete:
+      break
     }
   }
+
+  private static let notDone = LocalizedStringResource(
+    "That didn't go through. Try again in a moment.", table: "Practice",
+    comment: "A challenge's start or move failed.")
 }

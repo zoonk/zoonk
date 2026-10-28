@@ -198,71 +198,83 @@ struct TestOutScreen: View {
 
   /// The learner's tap writes the questions; the screen follows the run, then opens the test.
   private func write() async {
-    guard let identity = session.authenticatedSession, let goalId else { return }
+    guard let goalId else { return }
 
     isWriting = true
     writeFailure = nil
     defer { isWriting = false }
 
-    do {
-      switch try await practice.api.writeTestOut(
-        token: identity.bearerToken, goalId: goalId, chapterId: chapterId)
-      {
-      case .nothingToSkip:
-        load = .loaded(.nothingToSkip)
-        return
-      case .ready:
-        break
-      case .generating(let generationId):
-        try await practice.api.waitForQuestions(
-          token: identity.bearerToken, generationId: generationId,
-          readyStep: "testOutQuestionsReady")
-      }
+    let chapterId = chapterId
+    switch await practice.write(
+      .answered,
+      { identity -> PracticeGenerationStart in
+        let start = try await practice.api.writeTestOut(
+          token: identity.bearerToken, goalId: goalId, chapterId: chapterId)
 
-      await read()
-    } catch {
-      writeFailure = error
+        if case .generating(let generationId) = start {
+          try await practice.api.waitForQuestions(
+            token: identity.bearerToken, generationId: generationId,
+            readyStep: "testOutQuestionsReady")
+        }
+
+        return start
+      })
+    {
+    case .done(.nothingToSkip): load = .loaded(.nothingToSkip)
+    case .done: await read()
+    case .refused(let refusal): writeFailure = refusal
+    case .failed(let error): writeFailure = error
+    case .obsolete: break
     }
   }
 
   /// Graded answers are done with the device's draft and the test's id; ones that didn't go
   /// through keep both, so a retry sends the same test.
   private func submit(_ answers: [PracticeChoiceAnswer]) async {
-    guard let identity = session.authenticatedSession, let goalId else { return }
+    guard let goalId else { return }
 
     isSubmitting = true
     submitFailed = false
     defer { isSubmitting = false }
 
-    do {
-      if let graded = try await practice.api.submitTestOut(
-        token: identity.bearerToken, goalId: goalId, chapterId: chapterId, answers: answers,
-        requestId: PracticeAnswerDraft.requestId(key: draftKey))
-      {
-        PracticeAnswerDraft.clear(key: draftKey)
-        result = graded
-        practice.changed(.planChanged)
-      } else {
-        PracticeAnswerDraft.clear(key: draftKey)
-        load = .loaded(.nothingToSkip)
-      }
-    } catch {
+    let chapterId = chapterId
+    let requestId = PracticeAnswerDraft.requestId(key: draftKey)
+
+    switch await practice.write(
+      .planChanged,
+      { identity in
+        try await practice.api.submitTestOut(
+          token: identity.bearerToken, goalId: goalId, chapterId: chapterId, answers: answers,
+          requestId: requestId)
+      })
+    {
+    case .done(let graded):
+      PracticeAnswerDraft.clear(key: draftKey)
+      if let graded { result = graded } else { load = .loaded(.nothingToSkip) }
+    case .refused(.plusRequired):
+      load = .loaded(.plusRequired)
+    case .refused, .failed:
       submitFailed = true
+    case .obsolete:
+      break
     }
   }
 
   private func undoSkip(_ changeId: String) async {
-    guard let identity = session.authenticatedSession, let goalId else { return }
+    guard let goalId else { return }
 
     undo = .pending
 
-    do {
-      try await practice.api.undoPlanChange(
-        token: identity.bearerToken, goalId: goalId, changeId: changeId)
-      undo = .done
-      practice.changed(.planChanged)
-    } catch {
-      undo = .failed
+    switch await practice.write(
+      .planChanged,
+      { identity in
+        try await practice.api.undoPlanChange(
+          token: identity.bearerToken, goalId: goalId, changeId: changeId)
+      })
+    {
+    case .done: undo = .done
+    case .refused, .failed: undo = .failed
+    case .obsolete: break
     }
   }
 }

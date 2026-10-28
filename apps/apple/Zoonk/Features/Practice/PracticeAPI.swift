@@ -3,7 +3,7 @@ import OpenAPIRuntime
 
 /// A practice request the server refused for a reason the screen says (transport, sign-in and
 /// missing resources stay `APIError`).
-enum PracticeAPIError: Error, Equatable {
+enum PracticeAPIError: Error, Equatable, Sendable {
   case conflict(code: String?)
   case dailyLimitReached
   case invalid(code: String?)
