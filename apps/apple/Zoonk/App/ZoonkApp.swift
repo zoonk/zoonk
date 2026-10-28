@@ -67,6 +67,9 @@ struct ZoonkApp: App {
   var body: some Scene {
     WindowGroup {
       AppView()
+        #if DEBUG
+          .modifier(DebugLessonLaunch())
+        #endif
         .loads(learnerSummary.summary, refreshable: false)
         .task(id: learnerSummary.summary.value?.nextChangeAt) {
           await learnerSummary.refreshAtNextChange()
