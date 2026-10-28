@@ -3,6 +3,8 @@ import { type LibraryVisibility, prisma } from "@zoonk/db";
 import { isUuid } from "@zoonk/utils/uuid";
 import { cacheTag } from "next/cache";
 import { getLibraryLessonCacheTag, getMediaAssetCacheTag } from "../cache/tags";
+import { filterSkippedSteps } from "../language/activities/language-activities";
+import { loadSkippedActivities } from "../language/activities/skipped-activities";
 import { canViewLibraryRow } from "../library/_utils/library-visibility";
 import { toSummaryIdeas } from "../library/lessons/_utils/summary-ideas";
 import { CURRENT_STEPS } from "../library/lessons/lesson-versions";
@@ -164,12 +166,29 @@ export async function getLibraryLessonOutline({
 }
 
 /**
+ * The practice a language lesson leaves out because the learner's plan skips it (Plan settings):
+ * the same rule its completion counts by, so every app shows the screens the run expects.
+ */
+function loadLessonSkippedActivities({
+  lesson,
+  userId,
+}: {
+  lesson: PlayableLibraryLesson;
+  userId: string;
+}) {
+  return lesson.targetLanguage
+    ? loadSkippedActivities({ targetLanguage: lesson.targetLanguage, userId })
+    : Promise.resolve([]);
+}
+
+/**
  * Loads a Library lesson for the player: its screens in order with images, its skills and its home
  * chapter. The content is the same for every viewer and never includes provenance, so guests and
  * signed-in learners share one cached copy. A private lesson is only returned to its owner.
  * Screens go only to someone with a session, a guest's included: visitors get the outline, like
  * search engines on the public lesson page. A learner gets the screens their field or tool has a
- * version of in that version (see `withLearnerLessonVersions`). A lesson whose content isn't written
+ * version of in that version (see `withLearnerLessonVersions`), without the language practice their
+ * plan leaves out. A lesson whose content isn't written
  * yet returns its outline, so the page can wait for it. Private cached, so a link that prefetches
  * the lesson opens it at once.
  */
@@ -198,11 +217,16 @@ export async function getPlayableLibraryLesson({
   }
 
   if (cached.result.status === "ready" && session) {
+    const [lesson, skippedActivities] = await Promise.all([
+      withLearnerLessonVersions({ lesson: cached.result.lesson, userId: session.user.id }),
+      loadLessonSkippedActivities({ lesson: cached.result.lesson, userId: session.user.id }),
+    ]);
+
     return {
-      lesson: await withLearnerLessonVersions({
-        lesson: cached.result.lesson,
-        userId: session.user.id,
-      }),
+      lesson: {
+        ...lesson,
+        steps: filterSkippedSteps({ activities: skippedActivities, steps: lesson.steps }),
+      },
       status: "ready",
     };
   }

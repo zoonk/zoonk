@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { mockSession } from "../../_test-utils/mock-session";
 import { setupPlayableLesson } from "../../lesson-player/_test-utils/playable-lesson-setup";
 import { completeLibraryLesson } from "../../lesson-player/complete-library-lesson";
+import { getPlayableLibraryLesson } from "../../lesson-player/get-playable-library-lesson";
 import { startLibraryLesson } from "../../lesson-player/start-library-lesson";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
@@ -86,6 +87,25 @@ describe("skipping language activities", () => {
     });
 
     await expect(startAndComplete(lesson.id)).resolves.toMatchObject({ status: "completed" });
+  });
+
+  it("serves a language lesson without the screens its plan skips, as every app plays it", async () => {
+    const { goal, lesson, user } = await languageLessonSetup();
+    mockSession(user.id);
+
+    const kinds = async () => {
+      const played = await getPlayableLibraryLesson({ lessonId: lesson.id });
+      return played?.status === "ready" ? played.lesson.steps.map((step) => step.kind) : null;
+    };
+
+    await expect(kinds()).resolves.toStrictEqual(["explanation", "typedAnswer", "summary"]);
+
+    await changeGoalPlan({
+      goalId: goal.id,
+      input: { operations: [{ activities: ["writing"], kind: "skipActivities" }] },
+    });
+
+    await expect(kinds()).resolves.toStrictEqual(["explanation", "summary"]);
   });
 
   it("offers nothing to change without a goal for the language", async () => {

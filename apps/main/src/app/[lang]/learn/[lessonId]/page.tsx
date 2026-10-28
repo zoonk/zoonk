@@ -5,8 +5,6 @@ import { readLessonWritingRequest } from "@/lib/lessons/lesson-writing-href";
 import { type LessonRequest } from "@/lib/lessons/use-lesson-writing";
 import { FIRST_ANSWER_PARAM, ORIGIN_PARAM, readCatalogOrigin } from "@/lib/public/public-hrefs";
 import { getLessonSessionContext } from "@/lib/session/lesson-session-context";
-import { filterSkippedSteps } from "@zoonk/core/language/activities";
-import { getLanguageActivitySettings } from "@zoonk/core/language/activities/skipped";
 import { type PlayableLibraryLesson } from "@zoonk/core/lesson-player/contract";
 import {
   type PlayableLibraryLessonResult,
@@ -73,26 +71,6 @@ function readPlayerQuery(query: Awaited<Props["searchParams"]>) {
     firstAnswer: typeof firstAnswer === "string" ? firstAnswer : null,
     origin: readCatalogOrigin(query[ORIGIN_PARAM]),
     studySessionId: isUuid(sessionParam) ? sessionParam : null,
-  };
-}
-
-/**
- * A language lesson without the practice left out in Plan settings. Temporary writing skips
- * belong to the current player sitting and never change these preferences.
- */
-async function withLanguageActivities(lesson: PlayableLibraryLesson) {
-  const { targetLanguage } = lesson;
-  const settings = targetLanguage ? await getLanguageActivitySettings({ targetLanguage }) : null;
-
-  if (!settings) {
-    return { lesson };
-  }
-
-  return {
-    lesson: {
-      ...lesson,
-      steps: filterSkippedSteps({ activities: settings.skipped, steps: lesson.steps }),
-    },
   };
 }
 
@@ -217,7 +195,7 @@ async function renderLessonPlayer({ params, searchParams }: Props) {
   /** Sounds stay on until the learner turns them off in Appearance. */
   const soundsEnabled = profile?.soundsEnabled ?? true;
 
-  const played = result?.status === "ready" ? await withLanguageActivities(result.lesson) : null;
+  const played = result?.status === "ready" ? { lesson: result.lesson } : null;
 
   const [challengeTeam, routing, tutorSuggestions, waiting] = await Promise.all([
     getLessonChallengeTeam(played),
