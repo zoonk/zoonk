@@ -17,6 +17,7 @@ struct ZoonkApp: App {
   @State private var subscriptions: AppStoreSubscriptionStore
   @State private var today: TodayStore
   @State private var tutor: TutorStore
+  @State private var voice: VoiceServices
   private let cache: AppCache
   private let lessonPlayerAPI: LessonPlayerAPI
   private let lessonPlayerRoutes: LessonPlayerRoutes
@@ -56,6 +57,7 @@ struct ZoonkApp: App {
     _subscriptions = State(initialValue: dependencies.subscriptionStore)
     _today = State(initialValue: dependencies.todayStore)
     _tutor = State(initialValue: dependencies.tutorStore)
+    _voice = State(initialValue: dependencies.voice)
   }
 
   var body: some Scene {
@@ -85,11 +87,14 @@ struct ZoonkApp: App {
         .environment(subscriptions)
         .environment(today)
         .environment(tutor)
+        .environment(voice)
         .environment(\.privateImageLoader, privateImages)
         .environment(\.lessonTutor, .buddy)
         .environment(\.tutorPlaces, tutorPlaces)
         .environment(\.lessonPlayerAPI, lessonPlayerAPI)
         .environment(\.lessonCompletionHook, .invalidating(cache))
+        .environment(\.lessonAudio, .voice(voice))
+        .environment(\.spokenAnswerRecording, .voice)
         .onOpenURL { url in
           if !router.open(url: url) {
             session.handleGoogleSignInURL(url)

@@ -8,7 +8,8 @@ import OpenAPIURLSession
 /// #804 are released: https://github.com/apple/swift-openapi-generator/issues/796 and
 /// https://github.com/apple/swift-openapi-generator/issues/804.
 struct APIClientFactory {
-  private let serverURL: URL
+  /// The API's versioned root; files it serves to their owner live under it.
+  let serverURL: URL
   private let streamingTransport: any ClientTransport
   private let transport: any ClientTransport
 

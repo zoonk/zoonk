@@ -159,6 +159,7 @@ filter:
     - getPlanQuestionThread
     - getPlanTimeAdvice
     - getSkillOutline
+    - getSpeakingPaper
     - getStudyBlock
     - getStudySession
     - getStudySessionSummary

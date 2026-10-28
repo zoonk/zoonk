@@ -17,6 +17,7 @@ struct AppDependencies {
   let subscriptionStore: AppStoreSubscriptionStore
   let todayStore: TodayStore
   let tutorStore: TutorStore
+  let voice: VoiceServices
 
   static func live(configuration: AppConfiguration = .current) -> AppDependencies {
     let clients = APIClientFactory.live(baseURL: configuration.apiBaseURL)
@@ -72,5 +73,6 @@ struct AppDependencies {
     todayStore = TodayStore(api: studyAPI, cache: cache)
     self.subscriptionStore = subscriptionStore
     tutorStore = TutorStore(api: tutorAPI ?? TutorAPI(clients: clients), cache: cache)
+    voice = VoiceServices(clients: clients, cache: cache)
   }
 }
