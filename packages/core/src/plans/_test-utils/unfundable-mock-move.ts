@@ -29,7 +29,6 @@ const STRUCTURE = examStructureSchema.parse({
   subjects: [],
 });
 
-/** A saved weekday plan whose next Friday's half mock cannot fund a full mock on Monday. */
 export async function unfundableMockMoveFixture(userId: string) {
   const today = toUTCMidnight(new Date());
   const friday = addDays(today, (FRIDAY - today.getUTCDay() + DAYS_PER_WEEK) % DAYS_PER_WEEK);

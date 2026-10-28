@@ -18,16 +18,11 @@ const DAY_MS = 86_400_000;
 const PHASES = 4;
 const SKILLS_PER_PHASE = 3;
 
-/** The Plan as the web shows it (`GET /plan`'s view), for the signed-in learner. */
 export async function readPlanScreen() {
   const result = await getPlanTabView();
   return result.status === "ready" ? result.view.plan : null;
 }
 
-/**
- * The learner studied the plan's lessons at a third of their estimate, long ago enough that no one
- * else's pace reads it: the next session's refresh samples a faster pace from them.
- */
 export async function studyFaster({ planId, userId }: { planId: string; userId: string }) {
   const items = await prisma.planItem.findMany({
     where: { kind: "lesson", lessonId: { not: null }, planId },
@@ -45,7 +40,6 @@ export async function studyFaster({ planId, userId }: { planId: string; userId: 
   );
 }
 
-/** Saves the pace the learner's lessons sample as the plan's own. */
 async function saveSampledPace({
   lessonIds,
   planId,
@@ -64,13 +58,7 @@ async function saveSampledPace({
   });
 }
 
-/**
- * Pedro's plan: a goal about a week away (`days`), too soon for every phase at his time when the
- * plan was made, whose skills the graph sizes at one lesson each, while the Library wrote four for
- * each. Its date left its last phases out, and he studied every lesson it holds ahead of time, its
- * challenges still to win. `faster`: his plan holds the faster pace he studies at. Run at
- * `AHEAD_START`.
- */
+/** Run at `AHEAD_START`. */
 export async function aheadPlanFixture({
   dailyMinutes,
   days = 7,

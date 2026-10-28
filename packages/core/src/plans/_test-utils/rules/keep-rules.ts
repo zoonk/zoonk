@@ -3,17 +3,10 @@ import { addDays, daysBetween, fromIsoDate } from "../../planner/plan-calendar";
 import { type RuleContext, type RuleItem, type RulePlan, type RuleViolation } from "./rule-context";
 import { findFirstDue, getAreaOf, isTodoLesson, toDay } from "./rule-items";
 
-/** A written test starts in the plan's first week. */
 const FIRST_WEEK_DAYS = 7;
 
-/** A test this close is planned day by day, whose days all fall in the first week anyway. */
 const FAR_ENOUGH_DAYS = 14;
 
-/**
- * R12. An exam's written tests (an essay, a discursive test) are always in the plan, and a new
- * plan practices them from its first week when practice is weekly (the default) and the exam is
- * more than two weeks away. Areas the learner took out are left out.
- */
 export function checkWrittenTestsKept(context: RuleContext): RuleViolation[] {
   const { after, event, today } = context;
 
@@ -62,11 +55,6 @@ export function checkWrittenTestsKept(context: RuleContext): RuleViolation[] {
     });
 }
 
-/**
- * The skills the lessons the learner finished teach, whichever skill each one's item counts it for.
- * A language unit's rent lesson, counted for another skill, also taught asking the rent, which
- * booking a visit builds on.
- */
 function listStudiedSkills(plan: RulePlan): Set<string> {
   return new Set(
     plan.items.flatMap((item) =>
@@ -77,7 +65,6 @@ function listStudiedSkills(plan: RulePlan): Set<string> {
   );
 }
 
-/** A skill's lessons, and whether the learner began any of them or studied it in another's. */
 function readSkill({
   items,
   skillId,
@@ -95,11 +82,6 @@ function readSkill({
   };
 }
 
-/**
- * R16. What a skill builds on comes first: for two skills neither of which the learner began
- * (a lesson they finished teaches it, see `listStudiedSkills`), a prerequisite with lessons in the
- * plan has its first one due no later than the first lesson of the skill built on it.
- */
 export function checkPrerequisitesFirst(context: RuleContext): RuleViolation[] {
   const { after } = context;
   const { prerequisites } = after;

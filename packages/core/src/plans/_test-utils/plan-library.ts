@@ -11,21 +11,16 @@ import { type PlanGraph } from "../planner/plan-state";
 
 type SkillSpec = {
   area?: string;
-  /** The index of the skill this one builds on: the Library's prerequisite edge between them. */
+  /** Index of the skill this one builds on. */
   builds?: number;
-  /** Library lessons to create for the skill; 0 leaves it to a placeholder of `size` lessons. */
+  /** 0 leaves it to a placeholder of `size` lessons. */
   lessons: number;
-  /** The Library band the skill sits in (`Skill.level`). */
   level?: CourseLevel;
   phase?: number;
   size?: number;
   weight?: number;
 };
 
-/**
- * A Library chapter per phase with lessons for each skill, and the goal's graph pointing at them:
- * the shape the goal-driven workflow hands the planner.
- */
 export async function planLibraryFixture({
   phases = ["Basics"],
   skills,
@@ -99,7 +94,6 @@ export async function planLibraryFixture({
   return { chapters, graph, lessons, skills: created };
 }
 
-/** A goal with the empty plan goal creation makes, waiting for the planner. */
 export async function unplannedGoalFixture({
   settings = {},
   ...attrs

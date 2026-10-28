@@ -3,13 +3,10 @@ import { daysBetween } from "../../planner/plan-calendar";
 import { type RuleContext, type RuleItem, type RulePlan, type RuleViolation } from "./rule-context";
 import { getAreaOf, getRuleItemKey, isDueOn, isTodoLesson } from "./rule-items";
 
-/** A test this many days away or closer is planned day by day: a focus orders its review. */
 const REVIEW_DAYS = 7;
 
-/** What a focus asks more of: an area, or the part of one the learner named. */
 type FocusTarget = { area: string; name: string; skillIds: ReadonlySet<string> };
 
-/** A change that only says where to put more or less time (a focus, less of an area). */
 function isSteeringOnly(operations: readonly PlanOperation[]): boolean {
   return (
     operations.length > 0 &&
@@ -19,13 +16,11 @@ function isSteeringOnly(operations: readonly PlanOperation[]): boolean {
   );
 }
 
-/** A test days away: a focus orders its review day instead of its lessons (see `findReviewAhead`). */
 function hasReviewAhead({ after, today }: Pick<RuleContext, "after" | "today">): boolean {
   const { kind, targetDate } = after.goal;
   return kind === "exam" && targetDate !== null && daysBetween(today, targetDate) <= REVIEW_DAYS;
 }
 
-/** The steering change of a step, when the learner made one. */
 function getSteering(context: RuleContext): readonly PlanOperation[] | null {
   const { before, event } = context;
 
@@ -44,7 +39,6 @@ function listAreaSkills({ area, plan }: { area: string; plan: RulePlan }): Set<s
   );
 }
 
-/** Each area a focus names, or the part of it the change (or the plan) narrows it to. */
 function listFocusTargets({
   operations,
   plan,
@@ -75,23 +69,14 @@ function listReducedAreas(operations: readonly PlanOperation[]): string[] {
   );
 }
 
-/** Today's lessons still to do, by their identity, in the plan's order. */
 function listTodayLessons({ day, items }: { day: Date; items: readonly RuleItem[] }) {
   return items.filter((item) => isTodoLesson(item) && isDueOn({ day, item }));
 }
 
-/** The keys of some items, in order. */
 function toKeys(items: readonly RuleItem[]): string[] {
   return items.map((item) => getRuleItemKey(item));
 }
 
-/**
- * R4. A change of where to focus keeps today's session as the learner saw it: its lessons stay, in
- * their order, but those of the areas it gives less time to; lessons that come in are the focused
- * ones, after them. No lesson of an area the change doesn't name comes in. With "less" alone, the
- * time it frees today may go to the lessons next in the plan, after today's, as R2 lets unnamed
- * areas gain it; never to the reduced areas.
- */
 export function checkSteeringKeepsToday(context: RuleContext): RuleViolation[] {
   const operations = getSteering(context);
   const { after, before, today, todayShown } = context;

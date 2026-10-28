@@ -39,11 +39,6 @@ function sizeSkill({
     : { lessons, size: lessons };
 }
 
-/**
- * A goal `days` away whose skills each have `lessons` Library lessons (those in `standIns` none, so
- * the plan holds a stand-in of 4 for each), planned at the pace lessons estimate, with no one's
- * lessons read yet.
- */
 export async function pacedPlanFixture({
   dailyMinutes,
   days,
@@ -59,9 +54,7 @@ export async function pacedPlanFixture({
   days: number | null;
   lessons: number;
   skills: number;
-  /** The skills (by index) the Library hasn't written lessons for yet. */
   standIns?: readonly number[];
-  /** Four written lessons, with six of the skill's ten lessons still estimated. */
   partialStandIns?: readonly number[];
   own?: boolean;
   kind?: GoalKind;
@@ -98,10 +91,6 @@ export async function pacedPlanFixture({
   return { goal, library, plan, user };
 }
 
-/**
- * The learner took `seconds` on each of the plan's lessons, long ago enough that no one else's pace
- * reads it: the next session's refresh estimates from their own lessons.
- */
 export async function studyEveryLesson({
   planId,
   seconds,
@@ -127,7 +116,6 @@ export async function studyEveryLesson({
   );
 }
 
-/** The Library writes eight lessons for each of `skills`, in the chapter they're planned in. */
 export async function writeLessons({
   chapterId,
   estimatedMinutes,
@@ -161,7 +149,6 @@ export async function writeLessons({
   );
 }
 
-/** Today's proposals, answered "Not now", so Today brings up the change of the last day. */
 export async function declineProposals({ goalId, planId }: { goalId: string; planId: string }) {
   const proposals = await prisma.planChange.findMany({ where: { planId, status: "proposed" } });
 

@@ -14,7 +14,6 @@ const RIGHT = { selectedIndex: 0 };
 const WRONG = { selectedIndex: 1 };
 const citation = { passage: "Conteúdo programático", sourceId: "notice" };
 
-/** A notice with two subjects worth the same and a written test of its own. */
 function noticeStructure() {
   return {
     formats: [],
@@ -46,10 +45,6 @@ function noticeStructure() {
   };
 }
 
-/**
- * A learner whose plan has four skills in each of `areas`, with one multiple-choice question per
- * skill unless `withoutItems` names the area; an exam goal with the notice above when `exam`.
- */
 async function setup({
   areas = ["Law", "Math"],
   exam = false,
@@ -136,7 +131,6 @@ describe(getFocusTest, () => {
       status: "ready",
     });
 
-    // Each question names its subject as learners call it.
     const questions = await readQuestions(goal.id);
 
     expect(new Set(questions.map((question) => question.area))).toStrictEqual(
@@ -161,7 +155,6 @@ describe(getFocusTest, () => {
     const { goal, skills, user } = await setup();
     const [first, second] = await readQuestions(goal.id);
 
-    // Placement asked the first two Law skills' questions.
     await Promise.all(
       [first, second].map((question) =>
         attemptFixture({
@@ -216,7 +209,6 @@ describe(getFocusTest, () => {
         ),
     ]);
 
-    // Every skill has a two-option question; only Law's five-option ones are the exam's.
     const result = await getFocusTest({ goalId: goal.id });
 
     expect(result).toMatchObject({
@@ -232,7 +224,6 @@ describe(getFocusTest, () => {
     const { goal, skills } = await setup({ exam: true, withoutItems: "Math" });
     const before = await readQuestions(goal.id);
 
-    // The run writes the exam's own questions for every skill while the learner answers.
     const examBlueprintId = goal.examBlueprintId ?? "";
 
     await Promise.all(
@@ -326,7 +317,6 @@ describe(submitFocusTest, () => {
 
     await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(8);
 
-    // The test's 8 answers and their minute of answering count in the learner's day.
     await expect(
       prisma.dailyProgress.findFirstOrThrow({ where: { userId: user.id } }),
     ).resolves.toMatchObject({ correctAnswers: 4, incorrectAnswers: 4, timeSpentSeconds: 64 });
@@ -340,7 +330,6 @@ describe(submitFocusTest, () => {
     const { goal, user } = await setup();
     const questions = await readQuestions(goal.id);
 
-    // Its four right and four wrong answers add 0.4.
     await prisma.userProgress.create({
       data: { currentEnergy: 79.8, lastActiveAt: new Date(), userId: user.id },
     });

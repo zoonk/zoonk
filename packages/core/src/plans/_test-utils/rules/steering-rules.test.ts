@@ -8,7 +8,6 @@ const skills = [
   ruleSkill({ area: "Penal", skillId: "penal" }),
 ];
 
-/** A plan of these lessons; a skill's n-th lesson is the same lesson in every plan. */
 function plan(items: { day: number; skillId: string }[]) {
   return rulePlan({
     items: items.map((item, index) => {

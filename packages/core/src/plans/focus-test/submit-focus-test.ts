@@ -18,19 +18,15 @@ import { loadFocusTestShape } from "./_utils/load-focus-test";
 import { type FocusTestInput } from "./focus-test-contract";
 import { type FocusTestArea, chooseFocusAreas, scoreFocusTest } from "./focus-test-rules";
 
-/** What the focus test found and chose, in the learner's terms. */
 type FocusTestOutcome = ProgressCelebration & {
-  /** Each area asked about, in the plan's order: its answers right or not, and if it got the focus. */
   areas: {
     answers: boolean[];
     chosen: boolean;
     correct: number;
-    /** What learners call it: an exam subject's short name. */
     label: string;
     name: string;
     total: number;
   }[];
-  /** The plan change that set the focus, for its undo; null when the focus was already this. */
   changeId: string | null;
   focusAreas: string[];
 };
@@ -44,7 +40,6 @@ export type SubmitFocusTestResult =
 
 type GradedAnswer = { answer: ItemAnswerInput; area: string; isCorrect: boolean; item: ChoiceItem };
 
-/** The chance of guessing a question right: a coin flip for true or false, one option in n. */
 function getChance(item: ChoiceItem): number {
   return item.format === "trueFalse" ? 1 / 2 : 1 / Math.max(2, item.content.options.length);
 }
@@ -55,7 +50,6 @@ function firstAnswerPerItem(answers: readonly ItemAnswerInput[]): ItemAnswerInpu
   );
 }
 
-/** Each answer graded, with the area its question asks about; null when one isn't the test's. */
 async function gradeAnswers({
   answers,
   areas,
@@ -85,10 +79,7 @@ async function gradeAnswers({
   return graded.every((entry) => entry !== null) ? graded : null;
 }
 
-/**
- * Records every answer as diagnostic, so each is evidence for its skill. A skill asked more than
- * once records its answers one after another, so they never race on the same row.
- */
+/** Answers of one skill record one after another, so they never race on the same row. */
 async function recordAnswers({
   graded,
   timeZone,
@@ -123,12 +114,6 @@ async function recordAnswers({
   );
 }
 
-/**
- * Grades the focus test and gives the plan's depth to the areas it shows need it most: the weakest
- * of the areas worth most (`chooseFocusAreas`), each decided by at least three answers. The focus
- * is set through the plan's own change, which the learner can undo, and every other topic stays in
- * the plan. Every answer is recorded as diagnostic and must be one of the test's areas.
- */
 export async function submitFocusTest({
   goalId,
   input,

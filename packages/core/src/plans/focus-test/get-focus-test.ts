@@ -8,12 +8,7 @@ export type FocusTestResult =
   | { status: "unauthorized" }
   | { status: "unavailable" };
 
-/**
- * The focus test for one of the learner's goals: a few questions on each of the plan's areas
- * worth most, in the exam's format, so their answers choose where the plan's depth goes. Nothing
- * is stored until the learner submits the answers. `unavailable` when the plan has fewer than two
- * areas to choose between.
- */
+/** Stores nothing until the learner submits the answers. */
 export async function getFocusTest({ goalId }: { goalId: string }): Promise<FocusTestResult> {
   const owned = await findOwnedGoal(goalId);
 

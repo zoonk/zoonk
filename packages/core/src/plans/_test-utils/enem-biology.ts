@@ -7,7 +7,6 @@ import { getRequestProgressDateContext } from "../../progress/get-request-date-c
 import { type PlanGraph } from "../planner/plan-state";
 import { planLibraryFixture, unplannedGoalFixture } from "./plan-library";
 
-/** A Friday: Lucas plans for ENEM. */
 const TODAY = new Date("2026-10-09T00:00:00Z");
 const DAY_MS = 86_400_000;
 
@@ -44,10 +43,6 @@ function frequency({ level, topic }: { level: "high" | "low"; topic: string }) {
   };
 }
 
-/**
- * ENEM's biology as four topics: ecology and cells come up a lot, living things and water less.
- * Ecology builds on how living things work, which builds on cells.
- */
 const ENEM_BIOLOGY = {
   name: "ENEM",
   structure: {
@@ -79,14 +74,8 @@ function withTopics(graph: PlanGraph): PlanGraph {
   };
 }
 
-/** Lucas's daily time: a quarter hour. */
 const ENEM_DAILY_MINUTES = 15;
 
-/**
- * Lucas's ENEM biology goal, its plan not built yet: four skills of thirty lessons each (`size`),
- * three of each outlined, far more than his time covers by the exam. Living things build on
- * cells, ecology on living things.
- */
 export async function enemBiologyGoal({
   dailyMinutes = ENEM_DAILY_MINUTES,
   days,
@@ -95,7 +84,6 @@ export async function enemBiologyGoal({
 }: {
   dailyMinutes?: number;
   days: number;
-  /** The notice's edition, with its exam day. */
   edition?: object | null;
   size?: number;
 }) {

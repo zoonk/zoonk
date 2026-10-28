@@ -9,13 +9,8 @@ import { type PlanGraph, parsePlanSettings } from "../planner/plan-state";
 
 const PRIOR_DAY = new Date("2026-10-13T12:00:00Z");
 
-/** A date too close for the plan's 72 lessons at 12 minutes a day. */
 const AT_RISK_DATE = new Date("2026-10-30T00:00:00Z");
 
-/**
- * The actual previous-day Main fixture, including the planner's joined unwritten work. At risk,
- * the goal has a date the plan covered all of when it was last planned, which a missed day loses.
- */
 async function createPriorDayPlan({ atRisk }: { atRisk: boolean }) {
   const user = await userFixture();
 
@@ -49,7 +44,6 @@ async function createPriorDayPlan({ atRisk }: { atRisk: boolean }) {
     })),
   };
 
-  // A saved plan keeps the pace it was built with; unrelated learners must not resample it.
   const pace = { factor: 1, source: "typical" as const };
   const settings = parsePlanSettings({ pace, startDate: "2026-10-13" });
 
@@ -101,11 +95,6 @@ async function createPriorDayPlan({ atRisk }: { atRisk: boolean }) {
   return { built, goal, plan, user };
 }
 
-/**
- * A real saved plan whose missed day causes an exact, mandatory Oct 21 → 24 phase move. At risk
- * (`atRisk`), the missed day also puts the goal's date at risk, so Today asks the learner about it
- * (see `asksAboutAutomaticChange`).
- */
 export async function mandatoryPhasePlanFixture({ atRisk = false }: { atRisk?: boolean } = {}) {
   const fixture = await createPriorDayPlan({ atRisk });
 

@@ -154,8 +154,6 @@ describe("R24 every exam phase has mocks", () => {
   });
 
   it("rests once fewer than three study days are left, the mock the learner missed gone (ENEM seed 2060)", () => {
-    // The plan started on day 0 and held a mock on day 1, which the learner missed; on day 2 two
-    // study days are left, too few to place another, and anytime mocks remain.
     const after = rulePlan({
       goal: { kind: "exam", targetDate: ruleDay(4) },
       items: [ruleLesson({ day: 2, skillId: "texto" })],

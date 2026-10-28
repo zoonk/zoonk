@@ -6,7 +6,6 @@ function getPlanStart({ plan, today }: { plan: RulePlan; today: Date }): Date {
   return plan.settings.startDate ? fromIsoDate(plan.settings.startDate) : today;
 }
 
-/** R20. Day one always has a session: a new plan has something to do on its first day. */
 export function checkDayOneHasSession(context: RuleContext): RuleViolation[] {
   const { after, event, today } = context;
 
@@ -28,12 +27,6 @@ export function checkDayOneHasSession(context: RuleContext): RuleViolation[] {
       ];
 }
 
-/**
- * R22. Day one opens with what the learner doesn't know yet: when placement found gaps (or they
- * said they don't know an area), the first lesson of a new plan is in one of those areas, and no
- * lesson of an area they said they know comes before one of a notice area they didn't (areas
- * beyond the notice come last, after the known ones).
- */
 export function checkDayOneOpensWithGaps(context: RuleContext): RuleViolation[] {
   const { after, event, learner, today } = context;
   const gaps = new Set(learner?.gapAreas);
@@ -80,7 +73,6 @@ export function checkDayOneOpensWithGaps(context: RuleContext): RuleViolation[] 
     }));
 }
 
-/** Whether some mock of the plan is due between two days, both included. */
 function hasMockBetween({
   end,
   items,
@@ -99,13 +91,10 @@ function hasMockBetween({
   );
 }
 
-/** An exam plan with this many study days before the exam has a mock of its own (D3). */
 const MIN_MOCK_STUDY_DAYS = 3;
 
-/** A window this long always holds a week's mock day past the plan's first week. */
 const MOCK_WINDOW_DAYS = 14;
 
-/** The days from `start` to the day before `end` the learner studies on (the plan's first always). */
 function countStudyDays({ end, plan, start }: { end: Date; plan: RulePlan; start: Date }) {
   const minutesOn = (day: Date) =>
     plan.settings.weekdayMinutes?.[day.getUTCDay()] ?? plan.goal.dailyMinutes;
@@ -115,7 +104,6 @@ function countStudyDays({ end, plan, start }: { end: Date; plan: RulePlan; start
   ).length;
 }
 
-/** The phases before the exam spanning two weeks or more that have no mock inside them. */
 function listPhasesWithoutMock({
   plan,
   targetDate,
@@ -143,7 +131,6 @@ function listPhasesWithoutMock({
   });
 }
 
-/** An exam plan without a date, two weeks long or more, with no mock. */
 function lacksUndatedMock(plan: RulePlan): boolean {
   const [first, last] = [findFirstDue(plan.items), findLastDue(plan.items)];
 
@@ -155,15 +142,6 @@ function lacksUndatedMock(plan: RulePlan): boolean {
   return spans && !plan.items.some((item) => item.kind === "mock");
 }
 
-/**
- * R24. Every exam plan has mocks: one with at least three study days before the exam has a mock of
- * its own before it (shorter ones rely on the mocks a learner takes any time), each phase before
- * the exam spanning two weeks or more has one while it has days left (the final stretch included;
- * the phase after the exam of a plan that studies everything is exempt), and so does a plan
- * without a date once it spans two weeks. A phase that ended before today owes nothing more: a
- * mock the learner didn't take there may leave, and the phase they are in has its own. From the
- * exam's day on, no day is left before it: a mock the learner didn't take may leave.
- */
 export function checkMocksInEveryPhase(context: RuleContext): RuleViolation[] {
   const { after, today } = context;
   const { targetDate } = after.goal;
@@ -181,7 +159,6 @@ export function checkMocksInEveryPhase(context: RuleContext): RuleViolation[] {
   const start = getPlanStart({ plan: after, today });
   const beforeExam = addDays(targetDate, -1);
 
-  // The study days left to place a mock on: one the learner missed may leave once too few remain.
   const studyDays = countStudyDays({
     end: targetDate,
     plan: after,

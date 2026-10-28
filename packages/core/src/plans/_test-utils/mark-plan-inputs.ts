@@ -1,11 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
 
-/**
- * Marks the plan's inputs changed again and again until `signal` aborts, as other runs saving
- * lessons and questions for its skills do (`createLibraryLesson`, `createItems`), each in a
- * transaction of its own. Returns how many marks it made.
- */
 export async function markPlanInputsUntil({
   planId,
   signal,

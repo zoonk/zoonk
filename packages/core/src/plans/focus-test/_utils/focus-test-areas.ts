@@ -11,7 +11,6 @@ import { type FocusTestArea } from "../focus-test-rules";
 
 type AreaSkills = { name: string; skillIds: string[]; weight: number };
 
-/** The plan's areas in teaching order with their skills, the ones the learner took out left out. */
 function groupAreas({ graph, settings }: { graph: PlanGraph; settings: PlanSettings }) {
   const skipped = new Set(settings.skippedAreas);
 
@@ -29,14 +28,6 @@ function groupAreas({ graph, settings }: { graph: PlanGraph; settings: PlanSetti
   return [...areas.values()].filter((area) => area.name && !skipped.has(area.name));
 }
 
-/**
- * An exam's areas the test can ask about, each worth its subject's share of the exam split among
- * the subject's areas (or, for a notice that gives no subject its share, the weight the plan gives
- * the area's skills), and named as learners call its subject: only areas of the notice's subjects
- * (the plan's own extras, such as exam strategy, aren't on the exam) and never a written test's (a
- * discursive test has no questions to choose between). Null when the plan doesn't follow the
- * notice's subjects.
- */
 function getExamAreas({
   areas,
   structure,
@@ -88,11 +79,6 @@ function getExamAreas({
   });
 }
 
-/**
- * The plan's areas the focus test can ask about, in teaching order, each with its skills and what
- * it's worth to the goal: an exam's share of its questions and points (see `getExamAreas`), or the
- * weight of the area's skills for any other goal.
- */
 export function getFocusTestAreas({
   graph,
   settings,

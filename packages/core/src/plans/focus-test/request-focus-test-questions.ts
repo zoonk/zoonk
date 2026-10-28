@@ -8,18 +8,12 @@ import { type PlacementQuickFormat } from "../../learner/placement/placement-qui
 import { loadFocusTest, loadFocusTestShape } from "./_utils/load-focus-test";
 import { spreadAreaQuestions } from "./focus-test-rules";
 
-/**
- * `ready`: every area has its questions, so the test can start. `start`: the caller starts a run
- * writing `questionsPerSkill` questions in `format` for `skillIds`, whose analytics name the
- * learner, their goal and the client that asked. `refused`: the learner's AI help allowance
- * doesn't cover it now.
- */
+/** `start`: the caller starts the run that writes the questions. */
 export type FocusTestQuestionsRequest =
   | { status: "ready" }
   | {
       analytics: { distinctId: string; goalId: string; platform: AnalyticsPlatform | null };
       format: PlacementQuickFormat;
-      /** How many questions each of those skills needs: more for an area of few skills. */
       questionsPerSkill: number;
       skillIds: string[];
       status: "start";
@@ -29,12 +23,6 @@ export type FocusTestQuestionsRequest =
   | { status: "unauthorized" }
   | { status: "unavailable" };
 
-/**
- * Decides what asking for the focus test's questions does, when the learner taps to start it:
- * skills the test asks about without a question in its format get some written (shared with
- * placement, reviews and practice), claimed as small AI help first. Nothing is written when the
- * test already has every question.
- */
 export async function requestFocusTestQuestions({
   goalId,
 }: {
