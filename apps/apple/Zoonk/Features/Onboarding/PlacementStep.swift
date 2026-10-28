@@ -89,8 +89,13 @@ struct PlacementStep: View {
       } onSkip: {
         finish(fromScratch: true)
       }
+
+      if view.goal.kind == .exam {
+        PlacementMockOffer(goalId: view.goal.id)
+      }
     }
     .disabled(isSaving)
+    .modifier(PlacementMockLoading(goalId: view.goal.id, isExam: view.goal.kind == .exam))
   }
 
   /// The questions come from the goal's skill map, which may still be drawn right after the goal: the wait follows the goal's run, then reads again until they come.
