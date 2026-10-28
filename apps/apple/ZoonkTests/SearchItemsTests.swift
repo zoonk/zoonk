@@ -51,7 +51,8 @@ final class SearchItemsTests: XCTestCase {
   func testALearnerAsksTheBuddyFirst() {
     let fallback = searchFallback(question: "black holes", summary: .searchFixture())
 
-    XCTAssertEqual(fallback.items.map(\.action), [.select(.buddy), .open(.startGoal(goal: "black holes"))])
+    XCTAssertEqual(
+      fallback.items.map(\.action), [.select(.buddy), .open(.startGoal(goal: "black holes"))])
   }
 }
 

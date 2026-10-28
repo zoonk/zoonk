@@ -327,7 +327,9 @@ private final class SwitchingAccountAPI: AccountAPIClient, @unchecked Sendable {
         name: userID, username: userID))
   }
 
-  func signInWithEmailCode(email: String, code: String) async throws -> String {
+  func signInWithEmailCode(email: String, code: String, guestToken: String?) async throws
+    -> String
+  {
     "token-\(userID)"
   }
 
@@ -336,11 +338,15 @@ private final class SwitchingAccountAPI: AccountAPIClient, @unchecked Sendable {
     emailCredentials: EmailReauthenticationCredentials?
   ) async throws -> AccountDeletionResponse { throw APIError.unavailable }
   func sendEmailCode(email: String, token: String?) async throws {}
-  func signInWithApple(_ credentials: AppleSignInCredentials) async throws -> String {
+  func signInWithApple(_ credentials: AppleSignInCredentials, guestToken: String?) async throws
+    -> String
+  {
     throw APIError.unavailable
   }
   func signInAsGuest() async throws -> String { throw APIError.unavailable }
-  func signInWithGoogle(idToken: String) async throws -> String { throw APIError.unavailable }
+  func signInWithGoogle(idToken: String, guestToken: String?) async throws -> String {
+    throw APIError.unavailable
+  }
   func signOut(token: String) async throws {}
   func synchronizeAppleSubscription(token: String, signedTransaction: String) async throws
     -> AppleSubscriptionSynchronization
