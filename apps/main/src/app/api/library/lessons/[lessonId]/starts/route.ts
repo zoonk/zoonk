@@ -8,11 +8,8 @@ import { z } from "zod";
 const lessonIdSchema = z.uuid();
 
 /**
- * The web player's lesson start. Like today's lesson start, it runs as a plain HTTP request after
- * the player mounts: a Server Action response takes part in the React Flight protocol and could
- * replace a prefetched lesson while its route params still resolve. Same-origin only, since it
- * reads the session cookie; core claims the allowance and opens the run. Every business outcome
- * (started, slow down, a limit reached) is a 200 with the outcome, for the player to act on.
+ * A plain HTTP request, not a Server Action: an action's React Flight response could replace a
+ * prefetched lesson while its route params still resolve. Every business outcome is a 200.
  */
 export async function POST(
   request: Request,

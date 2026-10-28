@@ -5,7 +5,6 @@ import { getSitemapPageRowIds, isSitemapPage, warnIfSitemapPageIsFull } from "./
 
 type SitemapCourse = { brandSlug: string; courseSlug: string; language: string; updatedAt: Date };
 
-/** A page's courses (`getSitemapPage`), cached. */
 async function listSitemapCoursePage(page: number): Promise<SitemapCourse[]> {
   "use cache";
 

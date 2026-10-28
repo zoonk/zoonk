@@ -8,10 +8,6 @@ export function generateSitemaps() {
   return getSitemapPageIds("library-lessons").map((id) => ({ id }));
 }
 
-/**
- * One batch of shared Library lessons at their home placement, including
- * lessons whose content isn't written yet, with when each last changed.
- */
 export default async function sitemap(props: {
   id: Promise<string>;
 }): Promise<MetadataRoute.Sitemap> {

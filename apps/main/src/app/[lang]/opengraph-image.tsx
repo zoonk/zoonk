@@ -11,11 +11,7 @@ export const alt = "Zoonk";
 export const contentType = "image/png";
 export const size = { height: 630, width: 1200 };
 
-/**
- * Reuses the app icon as the social-card mark while swapping its colors for the
- * light-on-dark treatment established by the original static image. Cached, so the file read
- * doesn't keep the card from being generated at build time.
- */
+/** Cached, so the file read doesn't keep the card from being generated at build time. */
 async function getLogoDataUrl(): Promise<string> {
   "use cache";
 
@@ -28,16 +24,10 @@ async function getLogoDataUrl(): Promise<string> {
   return `data:image/svg+xml;base64,${Buffer.from(logo).toString("base64")}`;
 }
 
-/** One card per supported language, generated at build time. */
 export function generateStaticParams() {
   return routing.locales.map((language) => ({ lang: language }));
 }
 
-/**
- * Creates one static social card per route locale so unprefixed English pages
- * and explicitly localized pages describe Zoonk in the language being shared,
- * with the home page's promise and how Zoonk keeps it.
- */
 export default async function OpenGraphImage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
   const locale = isValidLocale(lang) ? lang : DEFAULT_LOCALE;

@@ -3,10 +3,7 @@
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import dynamic from "next/dynamic";
 
-/**
- * Each locale's catalogs in a script of their own, loaded only for the learner's locale: imported
- * statically, every locale's would load on every page.
- */
+/** Imported statically, every locale's catalogs would load on every page. */
 const PROVIDERS = {
   de: dynamic(() => import("./de").then((module) => module.LearnMessagesDe)),
   en: dynamic(() => import("./en").then((module) => module.LearnMessagesEn)),

@@ -3,9 +3,7 @@ import { readOwnFile, toOwnFileResponse } from "@zoonk/core/files/read-own";
 const STATUS = { notFound: 404, unauthorized: 401 } as const;
 
 /**
- * The web's copy of `GET /v1/files/{folder}/{ownerId}/{name}`: serves the signed-in learner one of
- * their own private files, such as a private course's picture in the lesson player. It's on main's
- * origin because an image request sends main's session cookie but no bearer token, and it only
+ * On main's origin because an image request sends main's session cookie but no bearer token. It only
  * reads, so it needs no same-origin check.
  */
 export async function GET(

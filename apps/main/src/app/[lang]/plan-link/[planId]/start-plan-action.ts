@@ -3,13 +3,8 @@
 import { planLinkStartInputSchema } from "@zoonk/core/plans/link-contract";
 import { startGoalFromPlanLink } from "@zoonk/core/plans/start-from-link";
 
-/** The plan started (the form then opens it), or what went wrong in one line. */
 export type StartPlanState = { error: "failed" | "refused" } | { started: true } | null;
 
-/**
- * Starts the learner's own plan from the link at their own daily time. Placement then adjusts it
- * to what they already know.
- */
 export async function startPlanAction(
   planId: string,
   _state: StartPlanState,

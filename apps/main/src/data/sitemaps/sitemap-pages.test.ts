@@ -6,7 +6,6 @@ function listedRows(count: number): { id: string }[] {
   return Array.from({ length: count }, () => ({ id: randomUUID() }));
 }
 
-/** Which page each of `listed` is on, reading every lessons sitemap page. */
 function getPageOfRows(listed: { id: string }[]): Map<string, number> {
   return new Map(
     getSitemapPageIds("library-lessons").flatMap((page) =>

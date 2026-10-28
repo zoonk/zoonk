@@ -12,17 +12,11 @@ import { EssayClient } from "./essay-client";
 
 type Props = PageProps<"/[lang]/essay/[blockId]">;
 
-/** An essay is one learner's own writing: nothing here is for search. */
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
   return { robots: { follow: false, index: false }, title: t("Writing practice") };
 }
 
-/**
- * The writing screen's own shape (its chrome with the rubric as its title, the texts first on a
- * phone and beside the column from `lg`, the instruction over the box filling the column), so
- * nothing moves when it arrives.
- */
 function EssaySkeleton() {
   return (
     <TaskSkeleton
@@ -69,7 +63,6 @@ async function EssayContent({ params }: Props) {
   );
 }
 
-/** A writing block of today's session: an exam essay graded by the official rubric. */
 export default function EssayPage(props: Props) {
   return (
     <Suspense fallback={<EssaySkeleton />}>

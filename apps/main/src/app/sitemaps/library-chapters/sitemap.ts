@@ -8,7 +8,6 @@ export function generateSitemaps() {
   return getSitemapPageIds("library-chapters").map((id) => ({ id }));
 }
 
-/** One batch of shared Library chapters at their home placement, with when each last changed. */
 export default async function sitemap(props: {
   id: Promise<string>;
 }): Promise<MetadataRoute.Sitemap> {

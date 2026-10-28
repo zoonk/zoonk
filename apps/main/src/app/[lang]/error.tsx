@@ -8,7 +8,6 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useEffect } from "react";
 
-/** A page that failed inside the app keeps the app's document and links home through the router. */
 export default function PageError({
   error,
   retry,

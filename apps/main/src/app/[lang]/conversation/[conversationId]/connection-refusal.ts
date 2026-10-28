@@ -4,7 +4,6 @@ import { getString, isJsonObject } from "@zoonk/utils/json";
 const periods = ["day", "month", "total"] as const;
 const tiers = ["free", "guest", "plus"] as const;
 
-/** Keeps operational pauses, ownership conflicts and the existing Plus lock distinct. */
 export function readConnectionRefusal(
   body: unknown,
 ): Exclude<ConversationConnection, { status: "ready" }> {

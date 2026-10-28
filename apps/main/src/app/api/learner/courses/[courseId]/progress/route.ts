@@ -8,14 +8,8 @@ import { z } from "zod";
 const idSchema = z.uuid();
 
 /**
- * The learner's own bits of a course's, a chapter's or a lesson's public page: whether a goal of
- * theirs follows the course ("Continue your plan" instead of "Build my plan") and whether they're
- * partway through the page's lesson (`?lesson=`: "Continue the lesson" instead of its first
- * question). Those pages are static, the same for everyone, so the browser asks for these after
- * the page shows, and only with a session; the page's visitor version stands until then.
- *
- * A same-origin read of the session cookie that writes nothing itself, so it needs no CSRF check.
- * Never cached: it's per learner and changes with their next answer.
+ * Public pages are static, so the browser asks for the learner's bits after the page shows. It only
+ * reads, so it needs no CSRF check, and it's never cached: it's per learner.
  */
 export async function GET(
   request: Request,

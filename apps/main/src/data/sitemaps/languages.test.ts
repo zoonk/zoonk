@@ -8,10 +8,6 @@ import { listSitemapLibraryChapters } from "./library-chapters";
 import { listSitemapLibraryLessons } from "./library-lessons";
 import { type SitemapResource, getSitemapPageIds } from "./sitemap-pages";
 
-/**
- * Read every sitemap page so excluded fixtures cannot appear to pass simply
- * because their IDs sort outside the final page in a shared test database.
- */
 async function listSitemapPages<T>({
   list,
   resource,

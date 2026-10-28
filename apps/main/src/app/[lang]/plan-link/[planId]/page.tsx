@@ -26,7 +26,6 @@ type Props = PageProps<"/[lang]/plan-link/[planId]">;
 
 const MINUTES_PER_HOUR = 60;
 
-/** Under an hour counts in minutes; from an hour on, in whole hours, since it's an estimate. */
 function approximateMinutes(hours: number): number {
   const minutes = Math.round(hours * MINUTES_PER_HOUR);
   return minutes < MINUTES_PER_HOUR ? minutes : Math.round(hours) * MINUTES_PER_HOUR;
@@ -98,7 +97,6 @@ async function PlanLinkBody({ params }: Props) {
 
           {session ? (
             <div className="mt-7 flex max-w-sm flex-col gap-3 sm:mt-9">
-              {/* The time presets are onboarding's own, with the learn catalog's words. */}
               <ClientMessagesProvider scope="learn">
                 <StartPlanForm action={startPlanAction.bind(null, planId)} />
               </ClientMessagesProvider>
@@ -117,8 +115,6 @@ async function PlanLinkBody({ params }: Props) {
           )}
         </div>
 
-        {/* The plan's phases as the course pages draw an outline: flat numbered rows, each with
-              what it reaches and its size, where the plan starts on a soft fill. */}
         <div className="lg:mt-3">
           <CatalogAsideBlock
             facts={t(
@@ -144,7 +140,6 @@ async function PlanLinkBody({ params }: Props) {
   );
 }
 
-/** Someone else's plan: its subject and shape, and a way to start your own from it. */
 export default function PlanLinkPage(props: Props) {
   return (
     <Suspense fallback={<PublicPageSkeleton />}>

@@ -2,12 +2,7 @@ import { type PlanChapterView } from "@zoonk/core/plans/view-contract";
 
 type ChapterRow = Pick<PlanChapterView, "chapterId" | "lessonsDone" | "lessonsTotal" | "title">;
 
-/**
- * A chapter as the plan shows it, since the test-out itself carries only questions: its title and
- * the lessons it still has on the plan, which a pass skips. A chapter whose lessons go deeper in a
- * later phase shows in each of them, so its lessons are counted across them. Null when the plan
- * doesn't have it.
- */
+/** A chapter whose lessons go deeper in a later phase shows in each of them, so its lessons are counted across them. */
 export function findPlanChapter({
   chapterId,
   phases,

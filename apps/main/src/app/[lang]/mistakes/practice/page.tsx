@@ -16,7 +16,6 @@ import { lang } from "next/root-params";
 import { Suspense } from "react";
 import { MistakePracticeClient } from "./practice-client";
 
-/** One learner's own mistakes: nothing here is for search. */
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
   return { robots: { follow: false, index: false }, title: t("Practice mistakes") };
@@ -24,15 +23,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 type Props = PageProps<"/[lang]/mistakes/practice">;
 
-/**
- * The run's full screen, around the run only: its placeholder, the sign-in screen and the
- * not-found answer bring their own `main`.
- */
 function PracticeMain({ children }: { children: React.ReactNode }) {
   return <main className="bg-background flex min-h-dvh flex-col">{children}</main>;
 }
 
-/** "Practice this skill" opens practice with `?skill=` and the skill's id; anything else is ignored. */
 function readSkillId(query: Awaited<Props["searchParams"]>): string | undefined {
   const skill = Array.isArray(query.skill) ? query.skill[0] : query.skill;
   const parsed = mistakePracticeInputSchema.shape.skillId.safeParse(skill);
@@ -50,7 +44,6 @@ async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
 
   const skillId = readSkillId(query);
 
-  // A signed-out learner (or one whose session ended) signs in again, like on every learner page.
   if (!session) {
     return (
       <AuthGateScreen
@@ -86,10 +79,6 @@ async function PracticeBody({ searchParams }: Pick<Props, "searchParams">) {
   );
 }
 
-/**
- * The run's shape: the header with its segments, the question in its column beside the aside's
- * place from `lg`, then the pinned action bar, as the run lays them out.
- */
 function PracticeSkeleton() {
   return (
     <TaskSkeleton aside menu progress title={<Skeleton className="h-4 w-32" />}>
@@ -101,10 +90,6 @@ function PracticeSkeleton() {
   );
 }
 
-/**
- * "Practice mistakes": a short run over a few open mistakes, each drilled by why it happened,
- * full screen like a lesson; "Practice this skill" runs it over one skill's mistakes.
- */
 export default function MistakePracticePage({ searchParams }: Props) {
   return (
     <MainLearnProvider>

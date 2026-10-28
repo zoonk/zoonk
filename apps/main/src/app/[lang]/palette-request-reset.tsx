@@ -4,12 +4,7 @@ import { dropPendingCommandPalette } from "@/app/[lang]/(app)/(catalog)/_compone
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 
-/**
- * Forgets a "Search" the learner chose before the palette streamed in once they move to another
- * page (the committed URL, as the palette itself resets on), so a palette arriving later never
- * opens on a page they left or came back to. Only a real change of page drops it: StrictMode's
- * extra effect run in development keeps the page it saw.
- */
+/** Only a real change of page drops the request: StrictMode's extra effect run in development keeps the page it saw. */
 export function PaletteRequestReset() {
   const pathname = usePathname();
   const searchParams = useSearchParams();

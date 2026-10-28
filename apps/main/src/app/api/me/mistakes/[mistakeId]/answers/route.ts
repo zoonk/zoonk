@@ -6,11 +6,6 @@ import { z } from "zod";
 
 const mistakeIdSchema = z.uuid();
 
-/**
- * Grades one "Practice mistakes" answer through the same core capability as
- * `POST /v1/me/mistakes/{mistakeId}/answers`: core records it, fixes the mistake when it sticks and
- * counts the run so far toward today, in one request per answer. Null when it couldn't be graded.
- */
 export const POST = appPostRoute<{ mistakeId: string }>(
   "mistakePracticeAnswerRoute",
   async (request, { mistakeId }): Promise<MistakePracticeFeedback> => {

@@ -15,16 +15,11 @@ import { ConversationClient } from "./conversation-client";
 
 type Props = PageProps<"/[lang]/conversation/[conversationId]">;
 
-/** A call is one learner's own: nothing here is for search. */
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
   return { robots: { follow: false, index: false }, title: t("Conversation") };
 }
 
-/**
- * The intro's own shape in the task chrome (close, the eyebrow, title and situation, who answers,
- * Start in the bar, and the goals beside them from `lg`), so nothing moves when it arrives.
- */
 function ConversationSkeleton() {
   return (
     <TaskSkeleton aside={<Skeleton className="h-32 w-full" />}>
@@ -71,12 +66,6 @@ async function ConversationContent({ params, searchParams }: Props) {
   );
 }
 
-/**
- * A live conversation, full screen like a lesson: a unit's practice call, a language goal's
- * checkpoint, a speaking mock or an exam's speaking task, from its intro to its feedback.
- * `?from=exam` leads back to the exam screen it was started from, and `?mock=` to the mock whose
- * speaking section it's a task of.
- */
 export default function ConversationPage(props: Props) {
   return (
     <Suspense fallback={<ConversationSkeleton />}>

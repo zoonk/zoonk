@@ -3,10 +3,6 @@ import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { BILLING_CURRENCIES, DEFAULT_CURRENCY } from "@zoonk/utils/currency";
 import { describe, expect, it } from "vitest";
 
-/**
- * The folders under `parent` (each a static route) and whether each one's page hands the shared
- * page its own folder's value, so a copied folder can't render another value.
- */
 function getRouteFolders(parent: string) {
   const directory = new URL(parent, import.meta.url);
 

@@ -1,7 +1,6 @@
 import { describe, expectTypeOf, it } from "vitest";
 import { type AppRoute, Link, type useRouter } from "./navigation";
 
-/** Compile representative calls without invoking a React hook in this unit test. */
 function assertRouterTypes(router: ReturnType<typeof useRouter>) {
   router.push("/courses");
   // @ts-expect-error -- This path is intentionally absent from the generated route types.

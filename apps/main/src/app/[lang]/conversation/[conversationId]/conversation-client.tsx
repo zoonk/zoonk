@@ -21,11 +21,6 @@ import {
   endConversationConnectionAction,
 } from "./conversation-actions";
 
-/**
- * Where a call leads: a checkpoint back to today's session, which opens the next block; practice
- * back to its unit; an exam task to the exam screen it was started from, or else to the speaking
- * practice page, where its "Next" opens the paper's next task; a speaking mock to the Plan.
- */
 function getHrefs({
   conversation,
   fromExam,
@@ -35,7 +30,6 @@ function getHrefs({
   fromExam: boolean;
   fromMock: string | null;
 }): ConversationHrefs {
-  // A mock's speaking task goes back to the mock, which opens its next task.
   if (fromMock) {
     return { exit: `/mock/${fromMock}`, next: `/mock/${fromMock}` };
   }
@@ -53,7 +47,6 @@ function getHrefs({
     return { exit: "/exam", next: "/exam", nextTask: (task) => `/exam?task=${task}` };
   }
 
-  // A language goal's exam-style tasks live on their own page, where "Next" opens the next one.
   if (conversation.examTask) {
     return { exit: "/speaking", next: "/speaking", nextTask: (task) => `/speaking?task=${task}` };
   }
@@ -61,12 +54,7 @@ function getHrefs({
   return { exit: "/plan", next: "/plan" };
 }
 
-/**
- * Wires the call screen to the app: opening the call, its goals, saving it, another try (a new
- * speaking mock, or the same exam task with a new card), and a milestone the call earned as its
- * full-screen moment. A mock's task goes straight back to the mock once saved: the mock shows no
- * feedback until it's over.
- */
+/** A mock's task goes straight back to the mock once saved: the mock shows no feedback until it's over. */
 export function ConversationClient({
   buddy,
   callAudio,
@@ -74,13 +62,10 @@ export function ConversationClient({
   fromExam,
   fromMock,
 }: {
-  /** The learner's buddy (`getLearnerBuddy`), for the result's missions and ceremony. */
   buddy: LearnBuddy;
-  /** A checkpoint's Start tap that created the call: it starts at once, with the tap's microphone. */
   callAudio?: TappedCallAudio;
   conversation: LanguageConversationView;
   fromExam: boolean;
-  /** The mock whose speaking section the call is a task of, which it leads back to. */
   fromMock: string | null;
 }) {
   const router = useRouter();
@@ -103,7 +88,6 @@ export function ConversationClient({
             },
           }
         : {}),
-      // A task of a whole paper (a mock's section) goes on with its section instead.
       ...(examTaskKey && goalId
         ? {
             startAgain: async () => {

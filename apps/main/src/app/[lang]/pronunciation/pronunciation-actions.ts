@@ -5,7 +5,6 @@ import { finishPronunciationRound } from "@zoonk/core/language/pronunciation/fin
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 
-/** Counts the round toward the learner's day: the same capability as `POST .../completions`. */
 export async function finishPronunciationRoundAction(
   roundId: string,
   input: { goalId: string; timeZone: string },

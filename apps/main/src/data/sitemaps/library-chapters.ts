@@ -3,11 +3,7 @@ import { prisma } from "@zoonk/db";
 import { getSitemapCourseWhere } from "./course-where";
 import { getSitemapPageRowIds, isSitemapPage, warnIfSitemapPageIsFull } from "./sitemap-pages";
 
-/**
- * A shared chapter is listed once, at its home placement (the course it was
- * made for), which is also its canonical URL. Chapters whose lessons aren't
- * written yet are public pages too.
- */
+/** A shared chapter is listed once, at its home placement, which is also its canonical URL. */
 async function getSitemapLibraryChapterWhere() {
   return { homeCourse: await getSitemapCourseWhere(), visibility: "public" as const };
 }
@@ -20,7 +16,6 @@ type SitemapChapter = {
   updatedAt: Date;
 };
 
-/** A page's chapters (`getSitemapPage`), cached. */
 async function listSitemapLibraryChapterPage(page: number): Promise<SitemapChapter[]> {
   "use cache";
 

@@ -13,10 +13,8 @@ const HREFS = { exit: "/today" };
 type Submission = Promise<EssayDraft | "limitReached" | null>;
 
 /**
- * The writing screen wired to grading, and Continue to finishing the block and the session. Every
- * draft still being graded (the learner skipped the rewrite meanwhile, or the screen stopped
- * waiting for it) is recorded before the block is finished, so the block counts it. A draft sent
- * again while its earlier send is still out joins that request instead of sending another.
+ * Every draft still being graded is recorded before the block is finished, so the block counts it.
+ * A draft sent again while its earlier send is out joins that request.
  */
 export function EssayClient({ essay }: { essay: EssayView }) {
   const navigation = useStudyNavigation(essay.sessionId);

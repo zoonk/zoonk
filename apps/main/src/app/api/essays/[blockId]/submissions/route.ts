@@ -2,12 +2,7 @@ import { appPostRoute, readJsonBody } from "@/lib/http/app-post-route";
 import { type EssayDraft, essaySubmissionInputSchema } from "@zoonk/core/exams/essays/contract";
 import { submitEssay } from "@zoonk/core/exams/essays/submit";
 
-/**
- * Grades a draft of the block's essay through the same core capability as
- * `POST /v1/essays/{blockId}/submissions`: the graded draft, "limitReached" when today's grades
- * ran out, or null when it couldn't be graded. Grading takes seconds, so it's a route rather than
- * a Server Action, which would hold up the screen's other requests until it's done.
- */
+/** A route, not a Server Action: grading takes seconds, and an action would hold up the screen's other requests. */
 export const POST = appPostRoute<{ blockId: string }>(
   "essaySubmissionRoute",
   async (request, { blockId }): Promise<EssayDraft | "limitReached" | null> => {

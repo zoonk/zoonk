@@ -13,10 +13,6 @@ import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useMemo } from "react";
 import { finishPronunciationRoundAction } from "./pronunciation-actions";
 
-/**
- * The review round, saved in the learner's timezone so it counts toward their day, with a
- * milestone it earned as its full-screen moment.
- */
 export function PronunciationClient({
   buddy,
   reviews,

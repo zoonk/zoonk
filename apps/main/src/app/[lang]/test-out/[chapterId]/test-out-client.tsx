@@ -16,15 +16,11 @@ import { submitTestOutAction } from "./test-out-actions";
 
 type TestOutPage = { chapterId: string; chapterTitle: string; closeHref: string; goalId: string };
 
-/** A start the API refused to run or couldn't be reached for: it says so at once, with a retry. */
 function notStartedRun(retry: () => void): GenerationRun {
   return { failure: "notStarted", retry, status: "failed", steps: {} };
 }
 
-/**
- * Names the test before submitting: cache invalidation re-renders this address, which must
- * find the saved receipt instead of redirecting away from the result it just earned.
- */
+/** Cache invalidation re-renders this address, which must find the saved result instead of redirecting away. */
 function showResultInAddress(requestId: string) {
   const query = new URLSearchParams(globalThis.location.search);
   query.delete(TEST_OUT_RUN_PARAM);
@@ -32,10 +28,6 @@ function showResultInAddress(requestId: string) {
   globalThis.history.replaceState(null, "", `?${query.toString()}`);
 }
 
-/**
- * The test, graded through core when the learner finishes, with a milestone as its moment; or a
- * test sent before (`recorded`), shown as it was recorded.
- */
 export function TestOutClient({
   buddy,
   lessonsLeft,
@@ -43,9 +35,7 @@ export function TestOutClient({
   recorded,
   test,
 }: {
-  /** The learner's buddy (`getLearnerBuddy`), for the result's Energy and ceremony. */
   buddy: LearnBuddy;
-  /** The chapter's lessons still on the plan, which a pass skips; null when the plan doesn't say. */
   lessonsLeft: number | null;
   page: TestOutPage;
   recorded: TestOutRecord | null;
@@ -74,10 +64,6 @@ export function TestOutClient({
   );
 }
 
-/**
- * Follows the run writing the questions, until the page shows the test. "Try again" after a failed
- * run asks for the questions once more.
- */
 function WritingTestOut({ generationId, page }: { generationId: string; page: TestOutPage }) {
   const router = useRouter();
   const target = { chapterId: page.chapterId, goalId: page.goalId };
@@ -109,11 +95,6 @@ function WritingTestOut({ generationId, page }: { generationId: string; page: Te
   );
 }
 
-/**
- * A test-out with no questions yet. Opened from "Take the test", it follows the run that tap
- * started; opened any other way, the learner's tap asks for the questions first. One a free exam
- * plan past its first week takes with Plus only (`plusRequired`) offers Plus instead.
- */
 export function TestOutPreparingClient({
   generationId,
   page,

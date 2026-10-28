@@ -4,7 +4,6 @@ import { describe, expect, it } from "vitest";
 import { listSitemapCourses } from "./courses";
 import { getSitemapPageIds } from "./sitemap-pages";
 
-/** Every page, so a fixture's page doesn't matter. */
 async function listAllSitemapCourses() {
   const pages = getSitemapPageIds("courses");
   const rows = await Promise.all(pages.map((page) => listSitemapCourses(page)));

@@ -1,4 +1,3 @@
-/** Course links identify the selected edition independently of the UI locale. */
 export function getCourseHref({
   brandSlug,
   courseSlug,

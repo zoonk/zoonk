@@ -10,7 +10,6 @@ import { listSitemapLibraryChapters } from "./library-chapters";
 import { listSitemapLibraryLessons } from "./library-lessons";
 import { type SitemapResource, getSitemapPageIds } from "./sitemap-pages";
 
-/** Every page, so a fixture's page doesn't matter. */
 async function listAllPages<Row>({
   list,
   resource,

@@ -20,11 +20,6 @@ import { PaletteRequestReset } from "./palette-request-reset";
 import { SignedInHintScript } from "./signed-in-hint-script";
 import "../globals.css";
 
-/**
- * Every page's App Shell (what a default `<Link>` prefetches) stays static: request-time content
- * behind Suspense comes with the link's own prefetch or the navigation, so a link in sight never
- * costs a server render for its shell.
- */
 export const ensureStatic = "shell";
 
 export const metadata: Metadata = {
@@ -32,11 +27,7 @@ export const metadata: Metadata = {
   title: { default: "Zoonk", template: "%s | Zoonk" },
 };
 
-/**
- * Cmd/Ctrl+K from anywhere, and what keeps a "Search" chosen before the palette loaded from opening
- * on another page. The reset comes first, so on a commit that both changes the page and mounts the
- * palette, it drops the old request before the palette can answer it.
- */
+/** The reset comes first, so a commit that changes the page and mounts the palette drops the old request first. */
 function AppCommandPaletteSlot() {
   return (
     <>
@@ -86,10 +77,6 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
   );
 }
 
-/**
- * Pre-render every supported language so the root parameter is available to
- * statically rendered pages without duplicating the locale list in the app.
- */
 export function generateStaticParams() {
   return routing.locales.map((language) => ({ lang: language }));
 }

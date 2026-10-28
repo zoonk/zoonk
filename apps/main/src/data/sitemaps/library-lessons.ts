@@ -5,11 +5,8 @@ import { getSitemapCourseWhere } from "./course-where";
 import { getSitemapPageRowIds, isSitemapPage, warnIfSitemapPageIsFull } from "./sitemap-pages";
 
 /**
- * A shared lesson is listed once, at its home placement, which is also its
- * canonical URL. Lessons whose content isn't written yet are listed too: their
- * page has the title, what it's about and where it fits, and "Start this
- * lesson" writes it. A skill's quick lesson isn't: no chapter lists it, it only
- * stands in for the skill's lessons in a plan that chose it.
+ * A shared lesson is listed once, at its home placement, which is also its canonical URL. A skill's
+ * quick lesson isn't listed: no chapter lists it.
  */
 async function getSitemapLibraryLessonWhere() {
   return {
@@ -28,7 +25,6 @@ type SitemapLesson = {
   updatedAt: Date;
 };
 
-/** A page's lessons (`getSitemapPage`), cached. */
 async function listSitemapLibraryLessonPage(page: number): Promise<SitemapLesson[]> {
   "use cache";
 

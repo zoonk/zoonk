@@ -4,10 +4,7 @@ import { chapterTestOutInputSchema } from "@zoonk/core/learner/test-out/contract
 import { submitChapterTestOut } from "@zoonk/core/learner/test-out/submit";
 import { type TestOutOutcome } from "@zoonk/learn/test-out";
 
-/**
- * Grades the test-out through core, which takes the chapter's lessons off the plan when it passes;
- * the same test sent again (`requestId`) gets what it recorded.
- */
+/** The same test sent again (`requestId`) gets what it recorded. */
 export async function submitTestOutAction(
   { chapterId, goalId }: { chapterId: string; goalId: string },
   input: unknown,

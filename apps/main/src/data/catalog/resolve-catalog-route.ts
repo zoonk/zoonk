@@ -18,7 +18,6 @@ type Missing = { kind: "notFound" } | { href: ReturnType<typeof getCourseHref>; 
 
 export type LibraryCourseRoute = {
   course: CourseWithDetails;
-  /** Whether search engines may index the course's pages: only once the catalog lists it. */
   isListed: boolean;
   kind: "library";
   outline: LibraryOutline;
@@ -36,10 +35,6 @@ type CourseRoute = { kind: "notFound" } | LibraryCourseRoute;
 type ChapterRoute = Missing | LibraryChapterRoute;
 type LessonRoute = Missing | LibraryLessonRoute;
 
-/**
- * Decides whether a public course URL shows the Library course page. Every
- * published course has one, even before its outline is written.
- */
 export async function resolveCourseRoute(params: CourseParams): Promise<CourseRoute> {
   const course = await getCourse(params);
 
@@ -56,16 +51,11 @@ export async function resolveCourseRoute(params: CourseParams): Promise<CourseRo
   return { course, isListed: isListedCourse(course), kind: "library", outline };
 }
 
-/**
- * A chapter or lesson URL whose course exists but whose chapter or lesson
- * doesn't (for example, an old URL from before the Library) moves permanently
- * to the course page, so old links and search results keep working.
- */
+/** Old links and search results to a missing chapter or lesson keep working. */
 function redirectToCourse(params: CourseParams): Missing {
   return { href: getCourseHref(params), kind: "redirect" };
 }
 
-/** Decides which page a public chapter URL shows, or where it moved. */
 export async function resolveChapterRoute(params: ChapterParams): Promise<ChapterRoute> {
   const courseRoute = await resolveCourseRoute(params);
 
@@ -86,7 +76,6 @@ export async function resolveChapterRoute(params: ChapterParams): Promise<Chapte
   return { ...courseRoute, ...found };
 }
 
-/** Decides which page a public lesson URL shows, or where it moved. */
 export async function resolveLessonRoute(params: LessonParams): Promise<LessonRoute> {
   const chapterRoute = await resolveChapterRoute(params);
 

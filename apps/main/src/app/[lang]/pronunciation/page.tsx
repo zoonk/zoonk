@@ -14,7 +14,6 @@ import { PronunciationClient } from "./pronunciation-client";
 
 type Props = PageProps<"/[lang]/pronunciation">;
 
-/** A learner's own mispronounced words: nothing here is for search. */
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
   return { robots: { follow: false, index: false }, title: t("Say it again") };
@@ -64,10 +63,6 @@ async function PronunciationContent({ searchParams }: Pick<Props, "searchParams"
   );
 }
 
-/**
- * "Say it again": the words a language learner mispronounced, back when they're due, one at a
- * time with their native sound, a slow version, the respelling and the tip.
- */
 export default function PronunciationPage(props: Props) {
   return (
     <Suspense fallback={<PronunciationSkeleton />}>

@@ -10,7 +10,7 @@ const RETURN_PAGE = new RegExp(
   "u",
 );
 
-/** The shared static shell cannot know its page; a native link sends that address as Referer. */
+/** The static shell can't know its page, but the browser sends it as Referer. */
 function getReferrerPath(request: NextRequest): string | null {
   const referrer = request.headers.get("referer");
 
@@ -27,12 +27,6 @@ function getReferrerPath(request: NextRequest): string | null {
   return getSafeAppRelativePath(`${url.pathname}${url.search}`);
 }
 
-/**
- * "Log in" goes straight to the sign-in form: this answers with central auth's login page before
- * anything renders, so there's no screen of its own between them. Sign-in comes back to `next`
- * (an app path), the same-origin page that sent a static link, or Today. A sign-in the callback
- * couldn't finish (`error=auth`) starts again with a word about it.
- */
 export async function GET(request: NextRequest, { params }: RouteContext<"/[lang]/login">) {
   const { lang } = await params;
   const locale = getSupportedLocaleFromLanguage(lang);

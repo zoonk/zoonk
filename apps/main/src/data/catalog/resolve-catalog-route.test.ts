@@ -21,7 +21,6 @@ async function publishedCourse() {
   return { course, courseHref: `/b/${org.slug}/c/${course.slug}`, org };
 }
 
-/** A course with one Library chapter holding one lesson, like the outline writer leaves it. */
 async function libraryCourse() {
   const { course, courseHref, org } = await publishedCourse();
 

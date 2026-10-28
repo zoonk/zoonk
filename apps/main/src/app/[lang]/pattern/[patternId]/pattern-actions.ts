@@ -7,10 +7,6 @@ import { type PatternPracticeResult } from "@zoonk/learn/language/pattern";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 
-/**
- * Saves a pattern's drill through core, which checks each answer, pays Brain Power and takes the
- * pattern off Today. The same capability as `POST /v1/mistake-patterns/{patternId}/practices`.
- */
 export async function practicePatternAction(
   patternId: string,
   input: { answers: string[]; requestId: string; timeZone: string },
@@ -33,7 +29,6 @@ export async function practicePatternAction(
   return data.status === "ready" ? data.result : null;
 }
 
-/** Takes a typos note off Today once read: the same capability as `POST .../dismissals`. */
 export async function dismissPatternAction(patternId: string): Promise<void> {
   const { error } = await safeAsync(() => dismissMistakePattern(patternId));
 

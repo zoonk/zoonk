@@ -12,12 +12,7 @@ const HTTP_UNAVAILABLE = 503;
 type LiveSessionContext =
   RouteContext<"/[lang]/conversation/[conversationId]/live-session/[connectionId]">;
 
-/**
- * A same-origin transport route for the browser's call, kept out of the public API: POST brokers
- * the SDK's WebRTC offer, DELETE ends the call when its tab closes (a keepalive request from
- * `pagehide`, which can't wait for a Server Action). Both are cookie-authenticated and refuse
- * cross-origin requests; the API owns admission, the session's configuration and ending it.
- */
+/** DELETE comes as a keepalive request from `pagehide`, which can't wait for a Server Action. */
 export async function POST(request: Request, context: LiveSessionContext) {
   if (!isSameOriginRequest(request.headers)) {
     return new Response(null, { status: 403 });
@@ -48,7 +43,6 @@ export async function POST(request: Request, context: LiveSessionContext) {
   });
 }
 
-/** Ends the call from a closing tab: the API hangs it up and charges only the time it ran. */
 export async function DELETE(request: Request, context: LiveSessionContext) {
   if (!isSameOriginRequest(request.headers)) {
     return new Response(null, { status: 403 });

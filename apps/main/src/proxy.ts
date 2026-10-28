@@ -17,36 +17,23 @@ const CATALOG_PATH = new RegExp(
 );
 
 /**
- * next-intl reads the saved language (`LOCALE_COOKIE`) to send unprefixed addresses to it, and
- * would also write it whenever a page opens in another language. Pages are static, so their
- * responses never set a cookie, and a link shared in another language mustn't change the saved
- * one: only a language switch saves it, in the browser (`rememberLocale`). The language is the only
- * cookie next-intl's middleware sets, so its cookie headers go: the response's and the one Next.js
- * applies to the request (`x-middleware-set-cookie`).
+ * next-intl's middleware would save the language whenever a page opens in another one; only
+ * `rememberLocale` may. It's the only cookie the middleware sets, so its cookie headers go.
  */
 function dropLocaleCookie(response: NextResponse) {
   response.headers.delete("set-cookie");
   response.headers.delete("x-middleware-set-cookie");
 }
 
-/** The pricing page once next-intl resolved its language: `/{locale}/pricing`. */
 const PRICING_PATH = new RegExp(`^/(?<locale>${SUPPORTED_LOCALES.join("|")})/pricing/?$`, "u");
 
-/**
- * A pricing page's currency variant asked for by its own address. Its page names `/pricing` as
- * canonical with its language alternates, so next-intl's alternates for the variant's address go.
- */
+/** The variant names `/pricing` as canonical with its own alternates, so next-intl's for its address go. */
 const PRICING_VARIANT_PATH = new RegExp(
   `^/(?:(?:${SUPPORTED_LOCALES.join("|")})/)?pricing/[^/]+/?$`,
   "u",
 );
 
-/**
- * Serves the pricing page in the visitor's currency (`getBillingCurrency`) at its one address:
- * a rewrite to the page's static variant for that currency (`pricing/<currency>`), so every
- * variant is cached for everyone billed in it and the response sets no cookie. The default
- * currency is `/pricing` itself. Null for any other page, and for a redirect next-intl decided.
- */
+/** A rewrite to a static variant per currency, so each is cached for everyone billed in it and no cookie is set. */
 function getPricingRewrite({
   request,
   response,
@@ -74,11 +61,7 @@ function getPricingRewrite({
   return NextResponse.rewrite(resolvedUrl, { headers });
 }
 
-/**
- * Course editions have their own slugs. UI-language variants of the same slug
- * are not translated editions, so next-intl's automatic alternates do not apply.
- * Once the language is settled, a course or category that doesn't exist gets a real 404.
- */
+/** UI-language variants of a course slug aren't translated editions, so next-intl's automatic alternates don't apply. */
 export default async function proxy(request: NextRequest) {
   if (request.nextUrl.pathname === "/v1" || request.nextUrl.pathname.startsWith("/v1/")) {
     return proxyApiRequest(request);
@@ -87,10 +70,7 @@ export default async function proxy(request: NextRequest) {
   const response = localizedMiddleware(request);
   dropLocaleCookie(response);
 
-  /**
-   * Resolve the home page's language before sending a session browser to Today, in one hop and
-   * before rendering. The cookie is only a routing hint; Today checks the session itself.
-   */
+  // The cookie is only a routing hint; Today checks the session itself.
   if (HOME_PATH.test(request.nextUrl.pathname) && hasSessionCookie(request.cookies)) {
     const resolvedUrl = new URL(
       response.headers.get("location") ??

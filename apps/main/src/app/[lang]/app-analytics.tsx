@@ -8,11 +8,7 @@ import { buildSharedEventProperties } from "@zoonk/core/analytics/shared-propert
 import { useMemo } from "react";
 import { PostHogIdentify } from "./posthog-identify";
 
-/**
- * Who analytics count the events for: a visitor (no session), or the learner or guest the summary
- * read, with their plan, username and goal. Null until the summary is read, or when it can't be:
- * analytics stay off rather than count someone as somebody else.
- */
+/** Null until the summary is read: analytics stay off rather than count someone as somebody else. */
 function getAnalyticsViewer({ learner, locale }: { learner: LearnerSummaryState; locale: string }) {
   if (learner.status === "visitor") {
     return {
@@ -44,10 +40,7 @@ function getAnalyticsViewer({ learner, locale }: { learner: LearnerSummaryState;
   };
 }
 
-/**
- * Analytics for every page, from the learner summary in the browser, so no page's render reads who
- * is looking. They stay off until the summary says who it is and that they allow them.
- */
+/** Reads the learner summary in the browser, so no page's render reads who is looking. */
 export function AppAnalytics({ locale }: { locale: string }) {
   const learner = useLearnerSummary();
   const viewer = useMemo(() => getAnalyticsViewer({ learner, locale }), [learner, locale]);

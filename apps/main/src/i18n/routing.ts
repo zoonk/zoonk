@@ -1,7 +1,6 @@
 import { DEFAULT_LOCALE, LOCALE_COOKIE, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { defineRouting } from "next-intl/routing";
 
-/** How long the language a learner picked is kept (seconds). */
 export const LOCALE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 export const routing = defineRouting({

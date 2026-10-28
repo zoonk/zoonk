@@ -4,22 +4,14 @@ import { BILLING_CURRENCIES, type PriceInfo } from "@zoonk/utils/currency";
 import { safeAsync } from "@zoonk/utils/error";
 import { PLUS_PLAN } from "@zoonk/utils/subscription";
 
-/**
- * Plus's prices in every currency a country is billed in, from one Stripe read shared by every
- * reader, so the pricing page's currency variants stay static. Provider errors escape, so an
- * outage is never kept as an empty table.
- */
+/** Provider errors escape, so an outage is never cached as an empty table. */
 async function getCachedPlusPriceTable(): Promise<StripePriceTable> {
   "use cache";
 
   return getStripePriceTable([PLUS_PLAN.lookupKey, PLUS_PLAN.annualLookupKey], BILLING_CURRENCIES);
 }
 
-/**
- * Plus's monthly and yearly prices in `currency`, read from Stripe so no page writes a price down.
- * A missing price comes back as null; so does every price while Stripe is unavailable (checkout
- * then shows them), and that fallback lives outside the cache, so a later render reads it again.
- */
+/** Null while Stripe is unavailable; that fallback lives outside the cache, so a later render reads it again. */
 export async function getPlusPrices(
   currency: string,
 ): Promise<{ monthlyPrice: PriceInfo | null; yearlyPrice: PriceInfo | null }> {

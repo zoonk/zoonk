@@ -56,10 +56,7 @@ export async function connectConversationAction({
   };
 }
 
-/**
- * Hangs the call up before the browser drops its peer, and says whether the server already had at
- * the call's deadline; an uncertain hangup stays retryable.
- */
+/** An uncertain hangup stays retryable. */
 export async function endConversationConnectionAction(
   conversationId: string,
   connectionId: string,
@@ -82,7 +79,6 @@ export async function endConversationConnectionAction(
   } as const;
 }
 
-/** Marks the call's goals from what was said so far; null when the check can't run. */
 export async function checkObjectivesAction(
   conversationId: string,
   input: unknown,
@@ -105,7 +101,6 @@ export async function checkObjectivesAction(
   return result?.success ? result.data.objectivesMet : null;
 }
 
-/** Saves only a server-closed call; the API owns close, feedback and rewards as one capability. */
 export async function completeConversationAction(
   conversationId: string,
   input: unknown,

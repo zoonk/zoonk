@@ -7,7 +7,6 @@ import {
   getLessonStaticParams,
 } from "./catalog-static-params";
 
-/** A unique language keeps each test's catalog apart from the courses other tests create. */
 function createTestLanguage() {
   return randomUUID().slice(0, 10);
 }

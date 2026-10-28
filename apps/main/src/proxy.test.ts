@@ -8,7 +8,6 @@ import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import proxy, { config } from "./proxy";
 
-/** Local adapter tests use a fake, unexpired provider token and never contact Vercel. */
 const oidcToken = `eyJhbGciOiJub25lIn0.${Buffer.from(JSON.stringify({ exp: 9_999_999_999 })).toString("base64url")}.test-signature`;
 
 describe("catalog locale routing", () => {
@@ -80,7 +79,6 @@ describe("catalog locale routing", () => {
   });
 });
 
-/** A brand course, published or not, and its public path. */
 async function createCourse({ isPublished }: { isPublished: boolean }) {
   const organization = await organizationFixture({ kind: "brand" });
   const course = await courseFixture({ isPublished, organizationId: organization.id });
@@ -114,7 +112,7 @@ describe("catalog pages that don't exist", () => {
       expect(response.headers.get("x-middleware-rewrite")).toBe(
         "https://www.zoonk.com/pt/catalog-not-found",
       );
-      // The 404 page reads the visitor's language from the header the locale middleware sets.
+
       expect(response.headers.get("x-middleware-request-x-next-intl-locale")).toBe("pt");
     }
   });

@@ -29,7 +29,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return { robots: { follow: false, index: false }, title: t("Test out of a chapter") };
 }
 
-/** The chapter as the plan shows it (its title and lessons left), since the test-out has none. */
 async function loadPlanChapter({ chapterId, goalId }: { chapterId: string; goalId: string }) {
   const result = await getGoalPlan(goalId);
 
@@ -40,10 +39,6 @@ async function loadPlanChapter({ chapterId, goalId }: { chapterId: string; goalI
   return findPlanChapter({ chapterId, phases: result.plan.phases });
 }
 
-/**
- * The result the address names (`?result=`) when the learner sent that test, so a reload, Back or
- * its link shows it again; otherwise the chapter's test.
- */
 async function loadTestOut({
   chapterId,
   goalId,
@@ -114,7 +109,6 @@ async function TestOutBody({ params, searchParams }: Props) {
     goalId: goal.id,
   };
 
-  // A test sent before shows its result as it was recorded, its undo while the skip can be undone.
   if (result.status === "recorded") {
     const { recorded } = result;
 
@@ -136,13 +130,10 @@ async function TestOutBody({ params, searchParams }: Props) {
     );
   }
 
-  // Past a free exam plan's first week the test comes with Plus: it says so instead of starting.
   if (result.status === "plusRequired") {
     return <TestOutPreparingClient generationId={null} page={page} plusRequired />;
   }
 
-  // Its questions are written on the learner's tap (on the chapter's page, or here), never on
-  // this page's load: a run started by the tap is followed here until the test opens.
   if (result.testOut.questions.length === 0) {
     const run = query[TEST_OUT_RUN_PARAM];
 
@@ -166,10 +157,6 @@ async function TestOutBody({ params, searchParams }: Props) {
   );
 }
 
-/**
- * The test's own shape (its chrome, a question and its options, and the aside from `lg`), so
- * nothing moves when it arrives.
- */
 function TestOutSkeleton() {
   return (
     <TaskSkeleton
@@ -199,7 +186,6 @@ function TestOutSkeleton() {
   );
 }
 
-/** A quick test that skips a chapter the learner already knows, full screen like every task. */
 export default function TestOutPage(props: Props) {
   return (
     <Suspense fallback={<TestOutSkeleton />}>

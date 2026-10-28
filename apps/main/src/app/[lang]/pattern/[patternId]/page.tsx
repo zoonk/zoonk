@@ -12,7 +12,6 @@ import { PatternClient } from "./pattern-client";
 
 type Props = PageProps<"/[lang]/pattern/[patternId]">;
 
-/** A pattern is one learner's own mistakes: nothing here is for search. */
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
   return { robots: { follow: false, index: false }, title: t("Mistake pattern") };
@@ -57,10 +56,6 @@ async function PatternContent({ params }: Props) {
   );
 }
 
-/**
- * "We noticed a pattern", full screen like a checkpoint: the rule behind a few recent mistakes,
- * then a three-minute drill, or the kind note when they were only typos.
- */
 export default function PatternPage(props: Props) {
   return (
     <Suspense fallback={<PatternSkeleton />}>

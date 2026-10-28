@@ -12,16 +12,11 @@ import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 
-/** The week of one learner: nothing here is for search. */
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
   return { robots: { follow: false, index: false }, title: t("Logbook") };
 }
 
-/**
- * The summary's own shape (its chrome with the step dots, the week's rings, title and numbers, and
- * the action in the bar), so nothing moves when it arrives.
- */
 function LogbookSkeleton() {
   return (
     <TaskSkeleton title={<Skeleton className="h-1 w-24 rounded-xs" />}>
@@ -69,7 +64,6 @@ async function LogbookContent() {
   );
 }
 
-/** The week's recap as a weekly summary. */
 export default function LogbookPage() {
   return (
     <Suspense fallback={<LogbookSkeleton />}>

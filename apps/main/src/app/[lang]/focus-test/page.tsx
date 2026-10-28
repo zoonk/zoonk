@@ -39,7 +39,6 @@ async function FocusTestBody({ searchParams }: Props) {
 
   const [result, buddy] = await Promise.all([getFocusTest({ goalId }), getLearnerBuddy()]);
 
-  // No focus to choose (a plan of one area) or not the learner's goal: the Plan holds the plan.
   if (result.status !== "ready") {
     redirect({ href: "/plan", locale });
     return null;
@@ -77,11 +76,6 @@ function FocusTestSkeleton() {
   );
 }
 
-/**
- * The focus test, full screen like every task: a few questions on each subject worth most, whose
- * answers choose where the plan's depth goes. Offered beside "Choose where to focus" when the
- * learner's time doesn't cover everything in depth.
- */
 export default function FocusTestPage(props: Props) {
   return (
     <Suspense fallback={<FocusTestSkeleton />}>

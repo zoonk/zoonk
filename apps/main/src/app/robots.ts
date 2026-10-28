@@ -9,9 +9,8 @@ function getSitemapUrls(resource: SitemapResource): string[] {
 }
 
 /**
- * Lists every sitemap page (`SITEMAP_PAGES`), since search engines only find the pages robots.txt
- * names. The lesson player is kept out of crawls: public lesson pages hold the indexable part, and
- * the player starts a lesson for a learner.
+ * Search engines only find the sitemap pages robots.txt names. The lesson player stays out of
+ * crawls: public lesson pages hold the indexable part.
  */
 export default function robots(): MetadataRoute.Robots {
   return {

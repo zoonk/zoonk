@@ -12,11 +12,6 @@ import { finishMistakePracticeAction } from "./practice-actions";
 
 type RunProps = ComponentProps<typeof MistakePracticeRun>;
 
-/**
- * "Practice mistakes" with main's actions: answers and the run's count land on the learner's
- * local day, the run is filed under the goal it practiced, the learner's buddy can be asked about
- * the question in view, and a milestone the run earned opens as its full-screen moment.
- */
 export function MistakePracticeClient({
   goalId,
   practice,
@@ -26,7 +21,6 @@ export function MistakePracticeClient({
   goalId: string;
   practice: RunProps["practice"];
   trueFalseLabels: RunProps["trueFalseLabels"];
-  /** Who asks and the buddy who answers (`getTutorViewer`). */
   tutor: TutorViewer;
 }) {
   const lessonHref = useLessonPlayerHref();

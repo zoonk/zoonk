@@ -1,10 +1,6 @@
 import { KEEP_TYPING_SCRIPT } from "@zoonk/learn/kept-typing-script";
 
-/**
- * The keeper of words typed before a field's code arrives (a slow device), in every page's
- * `<head>` so it listens before any field paints. The fields take the words once their code runs
- * (`useKeptTyping`).
- */
+/** In `<head>`, so it listens before any field paints. */
 export function KeepTypingScript() {
   return (
     <script

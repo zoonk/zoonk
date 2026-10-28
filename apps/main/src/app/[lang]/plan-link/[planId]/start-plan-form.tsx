@@ -11,10 +11,6 @@ import { type StartPlanState } from "./start-plan-action";
 
 const DEFAULT_MINUTES = 30;
 
-/**
- * The learner picks their own daily time, from the same presets onboarding asks it with; nothing
- * else of the owner's plan is theirs to copy. It renders inside the learn messages' scope.
- */
 export function StartPlanForm({
   action,
 }: {
@@ -24,7 +20,7 @@ export function StartPlanForm({
   const minutesId = useId();
 
   const router = useRouter();
-  // The timezone is read in the learner's browser when they submit; a started plan opens next.
+
   const [state, formAction, isPending] = useActionState(
     async (previous: StartPlanState, formData: FormData) => {
       formData.set("timeZone", getLocalTimeZone());

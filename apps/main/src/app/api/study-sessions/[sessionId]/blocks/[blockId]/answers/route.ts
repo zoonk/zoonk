@@ -6,11 +6,6 @@ import { z } from "zod";
 
 const idSchema = z.uuid();
 
-/**
- * One answer to a session question, such as a checkpoint duel's, through the same core capability
- * as `POST /v1/study-sessions/{sessionId}/blocks/{blockId}/answers`. A question answered already
- * says so, since core records each question of a block once.
- */
 export const POST = appPostRoute<{ blockId: string; sessionId: string }>(
   "studyAnswerRoute",
   async (request, { blockId, sessionId }): Promise<StudyAnswerOutcome> => {

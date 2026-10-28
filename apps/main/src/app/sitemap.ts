@@ -13,11 +13,6 @@ const LOCALIZED_PATHS = [
   ...COURSE_CATEGORIES.map((category) => `/courses/${category}`),
 ];
 
-/**
- * The home page, pricing and course discovery pages are translated (and course
- * lists filtered) by locale, so every supported locale is its own indexable page
- * rather than a duplicate shell.
- */
 function getLocalizedEntries(language: SupportedLocale): MetadataRoute.Sitemap {
   return LOCALIZED_PATHS.map((href) => ({ url: getLocalizedUrl({ href, language }) }));
 }

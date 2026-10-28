@@ -32,10 +32,8 @@ async function loadSiteMessages(locale: string): Promise<Messages> {
 }
 
 /**
- * A production build's catalogs never change, so each locale's merge is made once per server
- * instead of on every render: merging walks thousands of keys, and every page renders it, its
- * prefetches included. In development extraction rewrites the catalogs as code changes, so each
- * render merges them again.
+ * A production build's catalogs never change, so each locale is merged once per server. In
+ * development extraction rewrites the catalogs as code changes, so each render merges them again.
  */
 const merged = new Map<string, Promise<Messages>>();
 
@@ -52,20 +50,14 @@ function mergeOnce(key: string, load: () => Promise<Messages>): Promise<Messages
 
   const loading = load();
   merged.set(key, loading);
-  // A failed load isn't kept: the next render tries again.
   loading.catch(() => merged.delete(key));
   return loading;
 }
 
-/** Every catalog, for server components. App messages win a key collision unless still untranslated. */
 export function getAllMessages(locale: string): Promise<Messages> {
   return mergeOnce(`all:${locale}`, () => loadAllMessages(locale));
 }
 
-/**
- * What every page's client components can use: main's own messages and learn's site messages
- * (votes and the feedback form are everywhere, and goals start from public pages).
- */
 export function getSiteMessages(locale: string): Promise<Messages> {
   return mergeOnce(`site:${locale}`, () => loadSiteMessages(locale));
 }

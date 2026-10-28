@@ -10,7 +10,6 @@ import { type NextRequest } from "next/server";
 
 const AUTH_FAILED_STATUS = 401;
 
-/** HTML delivery stays in the app; translated text and safe query strings are escaped. */
 function escapeHtml(value: string): string {
   return value
     .replaceAll("&", "&amp;")
@@ -23,8 +22,6 @@ function escapeHtml(value: string): string {
 export async function GET(request: NextRequest) {
   const response = await verifyOneTimeTokenCallback(request);
 
-  // A finished sign-in's response holds main's session hint beside its session cookie
-  // (`@zoonk/auth/session-hint`); the page it lands on also tells the other tabs (`auth-change.ts`).
   if (response.status !== AUTH_FAILED_STATUS) {
     if (
       response.headers

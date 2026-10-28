@@ -7,7 +7,6 @@ import { headers } from "next/headers";
 import { Suspense } from "react";
 import "./globals.css";
 
-/** The locale the proxy resolved for this request (from the path, the saved choice or the browser). */
 const LOCALE_HEADER = "X-NEXT-INTL-LOCALE";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -15,7 +14,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return { robots: { follow: false, index: false }, title: t("Page not found") };
 }
 
-/** The message in the visitor's language, marked with it, since the document itself is prerendered. */
 async function LocalizedMessage() {
   const requestHeaders = await headers();
   const requested = requestHeaders.get(LOCALE_HEADER);
@@ -28,11 +26,7 @@ async function LocalizedMessage() {
   );
 }
 
-/**
- * URLs no route matches skip the app's layouts, so this page brings its own document: the same
- * message as the in-app 404, whose button goes home. It can't tell a visitor from a learner, so it
- * shows no bar (no logo, no account) rather than the wrong one.
- */
+/** It can't tell a visitor from a learner, so it shows no bar rather than the wrong one. */
 export default async function GlobalNotFound() {
   return (
     <html lang={routing.defaultLocale}>
