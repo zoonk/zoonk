@@ -7,6 +7,7 @@ struct ZoonkApp: App {
   @State private var goalContent: GoalContentStore
   @State private var learnerSummary: LearnerSummaryStore
   @State private var mindMaps: MindMapsStore
+  @State private var onboarding: OnboardingStore
   @State private var plan: PlanStore
   @State private var practice: PracticeStore
   @State private var progress: ProgressStore
@@ -43,6 +44,7 @@ struct ZoonkApp: App {
     lessonPlayerAPI = dependencies.lessonPlayerAPI
     _mindMaps = State(initialValue: dependencies.mindMapsStore)
     _plan = State(initialValue: dependencies.planStore)
+    _onboarding = State(initialValue: dependencies.onboardingStore)
     _practice = State(initialValue: dependencies.practiceStore)
     privateImages = dependencies.privateImageLoader
     _progress = State(initialValue: dependencies.progressStore)
@@ -76,6 +78,7 @@ struct ZoonkApp: App {
         .environment(learnerSummary)
         .environment(mindMaps)
         .environment(plan)
+        .environment(onboarding)
         .environment(practice)
         .environment(progress)
         .environment(router)

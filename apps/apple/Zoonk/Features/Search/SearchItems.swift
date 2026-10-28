@@ -55,7 +55,7 @@ func searchFallback(question: String, summary: LearnerSummary?) -> SearchGroup {
         localized: "Start a goal: “\(question)”", table: "Search",
         comment: "Starts a goal from what the learner typed in search"),
     systemImage: "target",
-    action: .open(.startGoal))
+    action: .open(.startGoal(goal: question)))
 
   guard let summary, canAskBuddy(summary) else {
     return SearchGroup(

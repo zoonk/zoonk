@@ -69,7 +69,7 @@ struct AllCoursesView: View {
     case .loaded(let page):
       CourseCatalogGrid(category: selectedCategory, page: page)
     case .empty:
-      CourseCatalogEmptyView(category: selectedCategory) { router.open(.startGoal) }
+      CourseCatalogEmptyView(category: selectedCategory) { router.open(.startGoal()) }
     case .failed(let failure):
       CatalogFailureRecoveryView(context: .catalog, failure: failure) {
         await catalog.courses(category: selectedCategory).refresh()

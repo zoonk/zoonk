@@ -110,7 +110,7 @@ private struct GoalSwitcher: View {
 
     if followed.isEmpty && explanations.isEmpty {
       Button {
-        router.open(.startGoal)
+        router.open(.startGoal())
       } label: {
         Label {
           startGoalTitle
@@ -154,7 +154,7 @@ private struct GoalSwitcher: View {
 
         Section {
           Button {
-            router.open(.startGoal)
+            router.open(.startGoal())
           } label: {
             Label {
               Text(

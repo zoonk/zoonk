@@ -7,6 +7,7 @@ struct AppDependencies {
   let learnerSummaryStore: LearnerSummaryStore
   let lessonPlayerAPI: LessonPlayerAPI
   let mindMapsStore: MindMapsStore
+  let onboardingStore: OnboardingStore
   let planStore: PlanStore
   let practiceStore: PracticeStore
   let privateImageLoader: PrivateImageLoader
@@ -60,6 +61,7 @@ struct AppDependencies {
     lessonPlayerAPI = LessonPlayerAPI(clients: clients)
     goalContentStore = GoalContentStore(api: GoalContentAPI(clients: clients), cache: cache)
     mindMapsStore = MindMapsStore(api: MindMapsAPI(clients: clients), cache: cache)
+    onboardingStore = OnboardingStore(clients: clients, cache: cache, session: session)
     planStore = PlanStore(api: PlanAPI(clients: clients), cache: cache)
     practiceStore = PracticeStore(api: PracticeAPI(clients: clients), cache: cache)
     self.privateImageLoader = privateImageLoader

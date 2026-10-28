@@ -84,7 +84,7 @@ private struct TodayStartGoal: View {
         comment: "What Today holds once there's a goal")
     } actions: {
       Button {
-        router.open(.startGoal)
+        router.open(.startGoal())
       } label: {
         Text("Start a goal", tableName: "Today", comment: "Opens the start of a new goal")
       }
@@ -114,7 +114,7 @@ private struct TodaySuggestedGoal: View {
       Text("Build a plan in 1 minute.", tableName: "Today", comment: "Suggested goal's promise")
     } actions: {
       Button {
-        router.open(.startGoal)
+        router.open(.startGoal())
       } label: {
         Text("Build my plan", tableName: "Today", comment: "Accepts the suggested goal")
       }

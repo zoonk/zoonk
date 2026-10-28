@@ -73,7 +73,7 @@ enum AppLink: Equatable {
     case (1, "pronunciation", _, _): return .route(.pronunciation(goalId: value("goal")))
     case (2, "conversation", let conversationId, _):
       return .route(.conversation(conversationId: conversationId))
-    case (1, "start", _, _): return .route(.startGoal)
+    case (1, "start", _, _): return .route(.startGoal(goal: value("goal")))
     case (3, "start", "course", let courseId):
       return .route(.courseStart(courseId: courseId, chapterId: value("chapter")))
     case (2, "start", let goalId, _): return .route(.goalSetup(goalId: goalId))

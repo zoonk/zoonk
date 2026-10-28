@@ -1,0 +1,464 @@
+import Foundation
+import OpenAPIRuntime
+
+typealias OnboardingDraft = Components.Schemas.OnboardingDraft
+typealias GoalOnboarding = Components.Schemas.Onboarding
+typealias OnboardingAnswer = Components.Schemas.OnboardingAnswerInput
+typealias GoalPlacement = Components.Schemas.Placement
+
+/// Why a goal couldn't start or a step couldn't save, in the terms main's onboarding explains.
+enum OnboardingError: Error, Equatable, Sendable {
+  /// Reading words hit a cap: small AI calls, or a guest's one goal (`USAGE_LIMIT_REACHED`).
+  case limit(OnboardingLimit)
+  /// Creating a goal hit the plan's goal limit (`GOAL_LIMIT_REACHED`).
+  case goalLimit(OnboardingLimit)
+  /// A guest once the day's AI budget all guests share is spent (`SIGN_UP_REQUIRED`).
+  case signUpRequired
+  /// Too many new goals at once (`SLOW_DOWN`).
+  case slowDown
+  case failed(APIError)
+}
+
+struct OnboardingLimit: Decodable, Equatable, Sendable {
+  let period: String
+  let resource: String
+  let tier: String
+
+  /// A guest's one goal and the free plan's active goals are lifted by an account or Plus, not by waiting.
+  var isGoalLimit: Bool { ["activeGoals", "goal"].contains(resource) }
+}
+
+/// What joining the instrument waitlist did (main's `WaitlistOutcome`).
+enum WaitlistOutcome: Equatable {
+  case joined
+  /// A visitor or guest: an account is how they're told when lessons are ready.
+  case signInRequired
+}
+
+struct OnboardingAPI: Sendable {
+  let clients: APIClientFactory
+
+  func understand(goal: String, token: String) async throws -> OnboardingDraft {
+    let output = try await perform(token: token) { client in
+      try await client.createGoalUnderstanding(
+        body: .json(
+          .init(
+            goal: goal,
+            language: Self.language,
+            timeZone: TimeZone.current.identifier)))
+    }
+
+    switch output {
+    case .created(let response):
+      return try response.body.json
+    case .accepted(let response):
+      return try response.body.json
+    case .code402(let response):
+      throw Self.error(try response.body.json)
+    case .forbidden(let response):
+      throw Self.error(try response.body.json)
+    case .tooManyRequests(let response):
+      throw Self.error(try response.body.json)
+    case .unauthorized:
+      throw OnboardingError.failed(.unauthorized)
+    case .badRequest, .internalServerError, .undocumented:
+      throw OnboardingError.failed(.unavailable)
+    }
+  }
+
+  func understanding(id: String, token: String) async throws -> OnboardingDraft {
+    let output = try await perform(token: token) { client in
+      try await client.getGoalUnderstanding(path: .init(understandingId: id))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try response.body.json
+    case .notFound:
+      throw OnboardingError.failed(.notFound)
+    case .unauthorized:
+      throw OnboardingError.failed(.unauthorized)
+    case .badRequest, .internalServerError, .undocumented:
+      throw OnboardingError.failed(.unavailable)
+    }
+  }
+
+  /// Starts reading a draft again after its run failed.
+  func readAgain(id: String, token: String) async throws -> OnboardingDraft {
+    let output = try await perform(token: token) { client in
+      try await client.createGoalUnderstandingGeneration(path: .init(understandingId: id))
+    }
+
+    switch output {
+    case .accepted(let response):
+      return try response.body.json
+    case .ok(let response):
+      return try response.body.json
+    case .code402(let response):
+      throw Self.error(try response.body.json)
+    case .forbidden(let response):
+      throw Self.error(try response.body.json)
+    case .tooManyRequests(let response):
+      throw Self.error(try response.body.json)
+    case .unauthorized:
+      throw OnboardingError.failed(.unauthorized)
+    default:
+      throw OnboardingError.failed(.unavailable)
+    }
+  }
+
+  /// Saves one fix on "Here's what I understood"; the server recomputes what depends on it.
+  func revise(
+    id: String,
+    edit: Components.Schemas.OnboardingDraftEdit,
+    token: String
+  ) async throws -> OnboardingDraft {
+    let output = try await perform(token: token) { client in
+      try await client.reviseGoalUnderstanding(
+        path: .init(understandingId: id), body: .json(edit))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try response.body.json
+    case .unauthorized:
+      throw OnboardingError.failed(.unauthorized)
+    case .notFound:
+      throw OnboardingError.failed(.notFound)
+    default:
+      throw OnboardingError.failed(.unavailable)
+    }
+  }
+
+  func createGoals(
+    _ input: Components.Schemas.GoalCreateInput,
+    token: String
+  ) async throws -> Components.Schemas.GoalCreateResponse {
+    let output = try await perform(token: token) { client in
+      try await client.createGoals(body: .json(input))
+    }
+
+    switch output {
+    case .created(let response):
+      return try response.body.json
+    case .forbidden(let response):
+      throw Self.error(try response.body.json)
+    case .tooManyRequests(let response):
+      throw Self.error(try response.body.json)
+    case .unauthorized:
+      throw OnboardingError.failed(.unauthorized)
+    default:
+      throw OnboardingError.failed(.unavailable)
+    }
+  }
+
+  func onboarding(goalID: String, token: String) async throws -> GoalOnboarding {
+    let output = try await clients.perform(token: token) { client in
+      try await client.getOnboarding(path: .init(goalId: goalID))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try response.body.json
+    case .notFound:
+      throw APIError.notFound
+    case .unauthorized:
+      throw APIError.unauthorized
+    default:
+      throw APIError.unavailable
+    }
+  }
+
+  func answer(
+    _ answer: OnboardingAnswer,
+    goalID: String,
+    token: String
+  ) async throws -> GoalOnboarding {
+    let output = try await perform(token: token) { client in
+      try await client.answerOnboardingQuestion(path: .init(goalId: goalID), body: .json(answer))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try response.body.json
+    case .unauthorized:
+      throw OnboardingError.failed(.unauthorized)
+    case .notFound:
+      throw OnboardingError.failed(.notFound)
+    default:
+      throw OnboardingError.failed(.unavailable)
+    }
+  }
+
+  /// Starts a goal's curriculum again after its run stopped; a run already going is joined.
+  func writeGoal(goalID: String, token: String) async throws -> String {
+    let output = try await perform(token: token) { client in
+      try await client.createGoalGeneration(path: .init(goalId: goalID))
+    }
+
+    switch output {
+    case .accepted(let response):
+      return try response.body.json.generationId
+    case .forbidden(let response):
+      throw Self.error(try response.body.json)
+    case .tooManyRequests(let response):
+      throw Self.error(try response.body.json)
+    case .unauthorized:
+      throw OnboardingError.failed(.unauthorized)
+    default:
+      throw OnboardingError.failed(.unavailable)
+    }
+  }
+
+  /// "Start over" archives what this onboarding created, so the next goal starts clean.
+  func archive(goalID: String, token: String) async throws {
+    let output = try await perform(token: token) { client in
+      try await client.updateGoal(
+        path: .init(goalId: goalID), body: .json(.init(status: .archived)))
+    }
+
+    switch output {
+    case .ok:
+      return
+    case .unauthorized:
+      throw OnboardingError.failed(.unauthorized)
+    default:
+      throw OnboardingError.failed(.unavailable)
+    }
+  }
+
+  func joinInstrumentWaitlist(instrument: String, token: String?) async throws -> WaitlistOutcome {
+    let output = try await perform(token: token) { client in
+      try await client.joinInstrumentWaitlist(
+        body: .json(.init(instrument: instrument, language: Self.language)))
+    }
+
+    switch output {
+    case .ok:
+      return .joined
+    case .unauthorized, .forbidden:
+      return .signInRequired
+    default:
+      throw OnboardingError.failed(.unavailable)
+    }
+  }
+
+  func placement(goalID: String, token: String) async throws -> GoalPlacement {
+    let output = try await perform(token: token) { client in
+      try await client.getGoalPlacement(
+        path: .init(goalId: goalID), query: .init(timeZone: TimeZone.current.identifier))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try response.body.json
+    case .unauthorized:
+      throw OnboardingError.failed(.unauthorized)
+    default:
+      throw OnboardingError.failed(.unavailable)
+    }
+  }
+
+  func answerPlacement(
+    _ input: Components.Schemas.PlacementAnswerInput,
+    goalID: String,
+    token: String
+  ) async throws -> Components.Schemas.PlacementAnswerResult {
+    let output = try await perform(token: token) { client in
+      try await client.createPlacementAnswer(path: .init(goalId: goalID), body: .json(input))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try response.body.json
+    case .unauthorized:
+      throw OnboardingError.failed(.unauthorized)
+    default:
+      throw OnboardingError.failed(.unavailable)
+    }
+  }
+
+  /// Ends placement: what was answered sets where each phase starts, or every phase starts at its beginning.
+  func completePlacement(goalID: String, fromScratch: Bool, token: String) async throws {
+    let output = try await perform(token: token) { client in
+      try await client.completeGoalPlacement(
+        path: .init(goalId: goalID),
+        body: .json(.init(fromScratch: fromScratch, timeZone: TimeZone.current.identifier)))
+    }
+
+    switch output {
+    case .ok:
+      return
+    case .unauthorized:
+      throw OnboardingError.failed(.unauthorized)
+    default:
+      throw OnboardingError.failed(.unavailable)
+    }
+  }
+
+  /// Ends a language goal's level test; skipped, the plan starts from the level the learner gave.
+  func finishLevelTest(goalID: String, token: String) async throws {
+    let output = try await perform(token: token) { client in
+      try await client.finishLanguageLevelTest(path: .init(goalId: goalID))
+    }
+
+    switch output {
+    case .ok:
+      return
+    case .unauthorized:
+      throw OnboardingError.failed(.unauthorized)
+    default:
+      throw OnboardingError.failed(.unavailable)
+    }
+  }
+
+  /// Writes the plan's first lessons ahead, so none waits when the learner gets there.
+  func prepareLessons(goalID: String, token: String) async throws {
+    let output = try await perform(token: token) { client in
+      try await client.createGoalLessonPreparation(path: .init(goalId: goalID))
+    }
+
+    switch output {
+    case .accepted:
+      return
+    case .unauthorized:
+      throw OnboardingError.failed(.unauthorized)
+    default:
+      throw OnboardingError.failed(.unavailable)
+    }
+  }
+
+  /// Starts a Library course (or one of its chapters) as the learner's goal, from the level they gave (nil for a quick test). The learner's goal already on the course starts nothing new.
+  func startCourse(
+    courseID: String,
+    chapterID: String?,
+    level: String?,
+    token: String
+  ) async throws -> String {
+    var body: [String: Any] = ["timeZone": TimeZone.current.identifier]
+
+    // A chapter's start doesn't ask the level: the plan starts at that chapter.
+    if let chapterID {
+      body["chapterId"] = chapterID
+    } else {
+      body["level"] = level ?? NSNull()
+    }
+    let input = try JSONDecoder().decode(
+      Components.Schemas.CourseGoalStartInput.self,
+      from: JSONSerialization.data(withJSONObject: body))
+    let output = try await perform(token: token) { client in
+      try await client.startCourseGoal(path: .init(courseId: courseID), body: .json(input))
+    }
+
+    switch output {
+    case .created(let response):
+      return try response.body.json.id
+    case .ok(let response):
+      return try response.body.json.id
+    case .forbidden(let response):
+      throw Self.error(try response.body.json)
+    case .tooManyRequests(let response):
+      throw Self.error(try response.body.json)
+    case .unauthorized:
+      throw OnboardingError.failed(.unauthorized)
+    case .notFound:
+      throw OnboardingError.failed(.notFound)
+    default:
+      throw OnboardingError.failed(.unavailable)
+    }
+  }
+
+  /// A shared plan's outline: only its subject and shape, never its owner's progress.
+  func planLink(id: String, token: String?) async throws -> Components.Schemas.PlanLink {
+    let output = try await clients.perform(token: token) { client in
+      try await client.getPlanLink(path: .init(planId: id))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try response.body.json
+    case .notFound:
+      throw APIError.notFound
+    default:
+      throw APIError.unavailable
+    }
+  }
+
+  /// Starts the learner's own plan from a shared one, at their own time a day. Returns the goal and whether it's new.
+  func startFromPlanLink(
+    id: String,
+    dailyMinutes: Int,
+    token: String
+  ) async throws -> (goalID: String, isNew: Bool) {
+    let output = try await perform(token: token) { client in
+      try await client.createGoalFromPlanLink(
+        path: .init(planId: id),
+        body: .json(.init(dailyMinutes: dailyMinutes, timeZone: TimeZone.current.identifier)))
+    }
+
+    switch output {
+    case .created(let response):
+      return (try response.body.json.id, true)
+    case .ok(let response):
+      return (try response.body.json.id, false)
+    case .forbidden(let response):
+      throw Self.error(try response.body.json)
+    case .tooManyRequests(let response):
+      throw Self.error(try response.body.json)
+    case .unauthorized:
+      throw OnboardingError.failed(.unauthorized)
+    default:
+      throw OnboardingError.failed(.unavailable)
+    }
+  }
+
+  /// The language main's onboarding writes titles and notes in: the app's interface language.
+  static var language: String {
+    Bundle.main.preferredLocalizations.first.map { String($0.prefix(2)) } ?? "en"
+  }
+
+  private func perform<Output: Sendable>(
+    token: String?,
+    operation: (Client) async throws -> Output
+  ) async throws -> Output {
+    do {
+      return try await clients.perform(token: token, operation: operation)
+    } catch let error as APIError {
+      throw OnboardingError.failed(error)
+    }
+  }
+
+  /// Reads the product codes a refusal carries; anything else is a plain failure.
+  static func error(_ payload: Components.Schemas._Error) -> OnboardingError {
+    switch payload.error.code {
+    case "SIGN_UP_REQUIRED":
+      return .signUpRequired
+    case "SLOW_DOWN":
+      return .slowDown
+    case "USAGE_LIMIT_REACHED":
+      return limit(from: payload.error.details, nested: true).map(OnboardingError.limit)
+        ?? .failed(.unavailable)
+    case "GOAL_LIMIT_REACHED":
+      return limit(from: payload.error.details, nested: false).map(OnboardingError.goalLimit)
+        ?? .failed(.unavailable)
+    default:
+      return .failed(.unavailable)
+    }
+  }
+
+  /// A cap's period, resource and tier: under `details.limit` for usage, as `details` itself for goals.
+  private static func limit(from details: OpenAPIValueContainer?, nested: Bool) -> OnboardingLimit?
+  {
+    struct Details: Decodable {
+      let limit: OnboardingLimit
+    }
+
+    guard let details, let data = try? JSONEncoder().encode(details) else {
+      return nil
+    }
+
+    return nested
+      ? try? JSONDecoder().decode(Details.self, from: data).limit
+      : try? JSONDecoder().decode(OnboardingLimit.self, from: data)
+  }
+}

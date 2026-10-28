@@ -41,7 +41,7 @@ final class SearchItemsTests: XCTestCase {
 
     let fallback = searchFallback(question: "black holes", summary: summary)
 
-    XCTAssertEqual(fallback.items.map(\.action), [.open(.startGoal)])
+    XCTAssertEqual(fallback.items.map(\.action), [.open(.startGoal(goal: "black holes"))])
     XCTAssertFalse(
       searchGroups(summary: summary, isSignedIn: true).contains { group in
         group.items.contains { $0.action == .select(.buddy) && $0.id == "ask-buddy" }
@@ -51,7 +51,7 @@ final class SearchItemsTests: XCTestCase {
   func testALearnerAsksTheBuddyFirst() {
     let fallback = searchFallback(question: "black holes", summary: .searchFixture())
 
-    XCTAssertEqual(fallback.items.map(\.action), [.select(.buddy), .open(.startGoal)])
+    XCTAssertEqual(fallback.items.map(\.action), [.select(.buddy), .open(.startGoal(goal: "black holes"))])
   }
 }
 
