@@ -1,9 +1,3 @@
-/**
- * Seeds Zoonk v2 with the plans the planner makes (see `seedV2`); with `--serve`, it writes persona
- * copies (see `seedV2PersonaCopy`) on request until stdin closes. For processes that can't load
- * core's server code: Prisma's seed command and Playwright run it as `pnpm seed:v2`, which sets the
- * app domain auth reads as core loads (the seed builds no URL). No model is called.
- */
 import { createInterface } from "node:readline";
 import { parseArgs } from "node:util";
 import { prisma } from "@zoonk/db";
@@ -61,12 +55,6 @@ async function copyPersona({
 
 type CopyRequest = Parameters<typeof copyPersona>[0] & { id: string };
 
-/**
- * Writes persona copies for as long as stdin stays open: a request a line (`copyPersona`'s
- * options and an `id`), answered by a line with the same `id` and the copy or the error. Playwright
- * workers keep one open, so a test's copy doesn't pay for starting this process again, which is
- * nearly all a copy costs.
- */
 async function serveCopies() {
   for await (const line of createInterface({ input: process.stdin })) {
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- The E2E fixture writes this exact request shape.

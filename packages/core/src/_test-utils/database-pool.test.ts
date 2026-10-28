@@ -18,7 +18,6 @@ describe(createDatabasePool, () => {
     try {
       expect(held).toHaveLength(pool.options.max);
 
-      /** Capture both outcomes immediately so a driver rejection is never unhandled. */
       const acquisition = pool.connect().then(
         (client) => {
           client.release();
@@ -51,7 +50,6 @@ describe(createDatabasePool, () => {
         clearTimeout(watchdog);
       }
     } finally {
-      /** A red baseline's waiter receives a released client and releases it in its handler. */
       held.forEach((client) => client.release());
       await pool.end();
     }

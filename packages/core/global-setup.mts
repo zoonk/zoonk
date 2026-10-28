@@ -3,7 +3,6 @@ import { createRequire } from "node:module";
 import setupTestDatabase from "../db/src/test-database";
 import { getTestRunEnvironment } from "../db/src/test-environment";
 
-/** The seed's Prisma pool belongs to this child and closes before the run database is dropped. */
 function seedRunLibrary(): void {
   const environment = getTestRunEnvironment();
   const expected = decodeURIComponent(new URL(environment.DATABASE_URL ?? "").pathname.slice(1));

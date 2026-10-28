@@ -5,7 +5,6 @@ import { redeemLiveCallSdp } from "../language/conversations/redeem-live-call-sd
 const ownedConversationIds = new Set<string>();
 const originatingConnectionIds = new Map<string, string>();
 
-/** Calls are admitted for everyone; the provider leaf is the shared test boundary. */
 export async function setupTestCalls() {
   await prisma.liveCallSetting.upsert({
     create: { admission: "all", freeDailyBudgetMicros: 150_000_000, id: "live" },
@@ -29,7 +28,6 @@ export async function reserveTestCall(conversationId: string) {
   return reserved;
 }
 
-/** Connect through both public capabilities, just as the real client does. */
 export async function connectTestCall(conversationId: string) {
   const reserved = await reserveTestCall(conversationId);
 
@@ -50,7 +48,6 @@ export async function connectTestCall(conversationId: string) {
   return reserved;
 }
 
-/** Uses the originating reservation returned to this test, never the product's latest connection. */
 export function testCallCompletionInput<T extends object>(conversationId: string, input: T) {
   const connectionId = originatingConnectionIds.get(conversationId);
 

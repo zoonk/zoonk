@@ -11,7 +11,6 @@ import { endLiveCall } from "../language/conversations/end-live-call";
 
 const runs = new Map<string, Promise<ConversationReviewOutcome>>();
 
-/** The API's review workflow, its steps run in order in this process (without step retries). */
 async function runReview(
   input: ConversationReviewInput,
   runId: string,
@@ -32,7 +31,6 @@ async function runReview(
   return settleConversationReview({ ...input, review, runId });
 }
 
-/** Review runs for core tests: the Workflow runtime lives in the API, whose own tests run it. */
 export const reviewRunsInline: ConversationReviewRuns = {
   failed: async (runId) => {
     const run = runs.get(runId);
@@ -48,7 +46,6 @@ export const reviewRunsInline: ConversationReviewRuns = {
   start: async (input) => {
     const runId = `wrun_${randomUUID()}`;
     const run = runReview(input, runId);
-    // Its failure reaches whoever waits for its outcome.
     run.catch(() => null);
     runs.set(runId, run);
     return runId;

@@ -6,7 +6,6 @@ process.env.PGAPPNAME = `zoonk-core-test:${process.pid}:${process.env.VITEST_POO
 
 vi.mock("server-only", () => ({}));
 
-// The edges every test replaces, declared once (see `src/_test-utils/test-boundaries.ts`).
 vi.mock("next/cache", () =>
   import("./src/_test-utils/test-boundaries").then((testBoundaries) => testBoundaries.nextCache),
 );
@@ -35,8 +34,7 @@ Object.entries(boundaries).forEach(([path, mocks]) => {
   vi.doMock(path, async (importOriginal) => ({ ...(await importOriginal<object>()), ...mocks }));
 });
 
-// Test files share workers: each starts as a fresh one would, and leaves no fake clock, stubbed
-// global or spy (`keepPaceOwn` spies on core's reads) behind for the next.
+// Test files share workers, so reset their boundaries and restore their globals between files.
 beforeAll(async () => {
   await resetBoundaries();
 });

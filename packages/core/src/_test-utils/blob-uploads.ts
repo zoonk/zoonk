@@ -13,17 +13,12 @@ function storedAt({ pathname, url }: { pathname: string; url: string }): PutBlob
   };
 }
 
-/** Vercel Blob keeps each upload at a URL of its own on a test host, or at `url` when given. */
 export function storeBlobUploads({ url }: { url?: string } = {}): void {
   vi.mocked(put).mockImplementation(async (pathname) =>
     storedAt({ pathname, url: url ?? `https://blob.test/${randomUUID()}-${pathname}` }),
   );
 }
 
-/**
- * The public store serves `file` at every URL, which code reads back with `fetch`. Returns that
- * `fetch`, to check what was read.
- */
 export function serveStoredFile(file: { data: Uint8Array; mediaType: string }) {
   const read = vi.fn(
     async (_url: string) =>

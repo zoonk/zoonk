@@ -2,14 +2,9 @@ import { type TransactionClient, prisma } from "@zoonk/db";
 import { expect, vi } from "vitest";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 
-/** The statement a learner write waits on while another holds the learner's lock (`lockLearner`). */
 export const LEARNER_LOCK = /FROM users WHERE id = \S+::uuid FOR NO KEY UPDATE/u;
 
-/**
- * Waits until `count` backends waiting on `holderPID` (directly or behind another waiter) run a statement that matches `statement`, so
- * a test sees where real contenders wait, never guessing when they got there. It keeps polling: a
- * waiter's reported text can still be its previous statement for a moment after it blocks.
- */
+/** PostgreSQL can briefly report a blocked waiter's previous statement, so keep polling. */
 export async function waitForBlockedStatement(
   holderPID: number,
   statement: RegExp,
@@ -36,11 +31,6 @@ export async function waitForBlockedStatement(
   );
 }
 
-/**
- * Holds the learner's lock in an open transaction, as a concurrent writer that marked first does,
- * until `release`. `beforeCommit` runs after the release, still inside the transaction, to take the
- * locks that writer takes next.
- */
 export function holdLearnerLock({
   beforeCommit,
   userId,

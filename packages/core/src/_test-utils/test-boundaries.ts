@@ -6,13 +6,6 @@ import { type shuffle } from "@zoonk/utils/shuffle";
 import { vi } from "vitest";
 import { type getRequestProgressDateContext } from "../progress/get-request-date-context";
 
-/**
- * What every core test replaces at the edge of the code under test (see `setup-tests.ts`): Next.js'
- * request APIs, which have no request here, the signed-in learner (`mockSession`), the request's
- * date (the real one unless a test sets it) and analytics, which never leaves a test. Test files
- * share workers, so a worker keeps one set of these functions for every file it runs, and each file
- * starts with them as a fresh worker would (`resetBoundaries`).
- */
 export const nextCache = {
   cacheTag: vi.fn(),
   // Outside a request, Next.js' `io()` resolves at once, as it does here.
@@ -36,7 +29,6 @@ const { shuffle: realShuffle } = await vi.importActual<{ shuffle: typeof shuffle
   "@zoonk/utils/shuffle",
 );
 
-/** The real grader, loaded on its first answer, so files that never grade don't load it. */
 async function gradeForReal(params: GradeTypedAnswerParams) {
   const actual = await vi.importActual<{ gradeTypedAnswer: typeof gradeTypedAnswer }>(
     "@zoonk/ai/tasks/v2/grading/grade-typed-answer",
@@ -45,15 +37,7 @@ async function gradeForReal(params: GradeTypedAnswerParams) {
   return actual.gradeTypedAnswer(params);
 }
 
-/**
- * The other edges, by module, each keeping its other exports: model calls (each AI task a test
- * reaches, which says what the model answers), Vercel Blob, PostHog, email, error reports,
- * Vercel's credentials and the web pages research fetches (undici's fetch). Two run for real
- * unless a test says otherwise, and a reset puts the real one back: randomness, and the
- * typed-answer grader, whose code settles accepted answers before any model. The logger stays
- * silent, as it is in tests, and a test can read what was logged. A new edge a test reaches goes
- * here: a file's own `vi.mock` gives it a worker of its own.
- */
+/** A file-local `vi.mock` requires its own worker; shared mocks belong here. */
 export const boundaries = {
   "@sentry/nextjs": { captureMessage: vi.fn() },
   "@vercel/blob": {
@@ -132,7 +116,6 @@ export const boundaries = {
   undici: { fetch: vi.fn() },
 };
 
-/** Puts every boundary back as a fresh worker has it, before a test file runs. */
 export async function resetBoundaries(): Promise<void> {
   const actualDateContext = await vi.importActual<{
     getRequestProgressDateContext: typeof getRequestProgressDateContext;

@@ -4,10 +4,7 @@ import { resolve } from "node:path";
 import { configDefaults, defineConfig } from "vitest/config";
 import { getTestRunEnvironment } from "../db/src/test-environment.ts";
 
-/**
- * Prompts load as their text, as the apps' raw-loader serves them, so a prompt's version here is
- * the one production records (stored readings and fixtures compare against it).
- */
+/** Match the apps' raw-loader so prompt versions agree with production. */
 const markdownAsText = {
   enforce: "pre" as const,
   name: "markdown-as-text",
@@ -22,13 +19,7 @@ const markdownAsText = {
  */
 const MAX_DATABASE_WORKERS = 6;
 
-/**
- * Test files that mock modules of their own (`vi.mock`, `vi.doMock`, `vi.unmock`): a mocked module
- * stays mocked in its worker, so these run in a fresh worker each. Every other file shares workers
- * and pays for loading core, Prisma and its compiled queries once per worker instead of once per
- * file, which took most of a database test's time; the edges every test replaces are declared once
- * in `setup-tests.ts`.
- */
+/** File-local module mocks persist in shared workers, so those files require isolation. */
 const OWN_MOCKS = globSync("src/**/*.test.ts", { cwd: import.meta.dirname }).filter((file) =>
   /\bvi\.(?:mock|doMock|unmock)\(/u.test(readFileSync(resolve(import.meta.dirname, file), "utf8")),
 );
@@ -56,8 +47,6 @@ export default defineConfig({
     env: { ...getTestRunEnvironment(), NEXT_PUBLIC_APP_DOMAIN: "localhost:9000" },
     environment: "node",
     globalSetup: ["./global-setup.mts"],
-    // Fewer cores than that (CI's runners have 4) get one worker each, so the database work they
-    // share isn't starved of CPU.
     maxWorkers: Math.min(MAX_DATABASE_WORKERS, availableParallelism()),
     projects: [
       {
@@ -88,8 +77,6 @@ export default defineConfig({
       },
     ],
     setupFiles: ["./setup-tests.ts"],
-    // Tests read and write the real database; on CI two suites share a 4-vCPU runner, where a test
-    // that takes a second locally takes four or five. A test that hangs still fails.
     testTimeout: 15_000,
   },
 });
