@@ -25,11 +25,6 @@ type RequestSpeechClipResult =
 
 const AUDIO_MIME_TYPE = "audio/mpeg";
 
-/**
- * Clips being voiced on this server, by reuse key, so a second request for the same words (a
- * double tap, two learners on the same passage) waits for the first instead of paying again.
- * Other servers rely on the reuse key's unique constraint.
- */
 const voicing = new Map<string, Promise<MediaAsset | null>>();
 
 function toSpeechClip(asset: MediaAsset): SpeechClip {
@@ -45,21 +40,12 @@ function findClip(reuseKey: string): Promise<MediaAsset | null> {
   return prisma.mediaAsset.findUnique({ where: { reuseKey } });
 }
 
-/**
- * Where a clip's file goes: the public Library folder for shared words, the learner's own folder in
- * the private store for their own words, which only they can read and which leaves with them.
- */
 function getUploadTarget({ language, ownerId }: { language: string; ownerId: string | null }) {
   return ownerId
     ? { access: "private" as const, fileName: `${getPrivateAudioFolder(ownerId)}${language}` }
     : { access: "public" as const, fileName: `library/audio/${language}` };
 }
 
-/**
- * Voices the text, uploads it (`getUploadTarget`) and stores it under its reuse key. A clip stored
- * while this request waited for its claim is used as is; when another server saves the same key
- * while this one voices it, its clip wins and this one's file is left unused.
- */
 async function voiceClip({
   language,
   ownerId,
@@ -68,7 +54,6 @@ async function voiceClip({
   userId,
 }: {
   language: string;
-  /** The learner whose own words these are; null for shared words. */
   ownerId: string | null;
   reuseKey: string;
   text: string;
@@ -137,14 +122,7 @@ function voiceClipOnce(input: Parameters<typeof voiceClip>[0]): Promise<MediaAss
   return started;
 }
 
-/**
- * A playable clip of `text` read aloud in `language`, for the signed-in learner or guest. Clips
- * are shared: the same words in the same language play the stored file, and only a new clip is
- * voiced (Gemini text-to-speech) and claimed as small AI help. A learner's own words (`personal`,
- * such as a call's better version of what they said) are their data: the clip is theirs alone, in
- * their private files. It's called from a learner's tap, never on render, because a new clip costs
- * a model call.
- */
+/** Requires a signed-in learner or guest. Call only after a learner action: a new clip spends AI help. */
 export async function requestSpeechClip(input: SpeechClipInput): Promise<RequestSpeechClipResult> {
   const session = await getSession();
 

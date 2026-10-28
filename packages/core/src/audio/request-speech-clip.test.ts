@@ -27,7 +27,6 @@ const VOICED = {
   },
 };
 
-/** A sentence no other test asks for, so each test owns its clip. */
 function uniqueSentence() {
   return `Questa è la frase numero ${randomUUID()}.`;
 }
@@ -148,7 +147,6 @@ describe(requestSpeechClip, () => {
     await expect(assistClaims(learner.id)).resolves.toBe(1);
   });
 
-  // A call's better version of what the learner said is their own sentence: their data.
   it("keeps a learner's own words in a private clip of theirs alone", async () => {
     vi.stubEnv("PRIVATE_BLOB_READ_WRITE_TOKEN", "private-store-token");
     const learner = await signIn();
@@ -176,8 +174,6 @@ describe(requestSpeechClip, () => {
       expect.objectContaining({ analytics: { contentScope: "personal", distinctId: learner.id } }),
     );
 
-    // Nobody else gets it: the same words as shared words, or as another learner's own, are
-    // voiced apart.
     const shared = await requestSpeechClip({ language: "it", text });
     const other = await signIn();
     const theirs = await requestSpeechClip({ language: "it", personal: true, text });
@@ -256,7 +252,6 @@ describe(requestSpeechClip, () => {
     const text = uniqueSentence();
     const reuseKey = getSpeechClipKey({ language: "it", text });
 
-    // Another server finishes the same clip while this one is still voicing it.
     vi.mocked(generateLanguageAudio).mockImplementationOnce(async () => {
       await mediaAssetFixture({
         kind: "audio",

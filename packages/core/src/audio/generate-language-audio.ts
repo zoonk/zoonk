@@ -9,7 +9,6 @@ import { type TTSVoice } from "@zoonk/utils/languages";
 import { toSlug } from "@zoonk/utils/string";
 import { uploadAudio } from "./upload-audio";
 
-/** Voices a word or sentence and uploads the clip; the result names the run that voiced it. */
 export async function generateLanguageAudio({
   language,
   model,

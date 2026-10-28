@@ -2,13 +2,9 @@ import { getBaseLanguage, isTTSSupportedLanguage } from "@zoonk/utils/languages"
 import { z } from "zod";
 import { languageCodeSchema } from "../library/steps/contract/content-schemas";
 
-/**
- * The longest text one clip reads: a level test's listening passage runs up to about 470
- * characters, and anything longer is better split into sentences the learner can replay.
- */
+/** Listening passages reach about 470 characters; longer text should be split for replay. */
 const SPEECH_CLIP_MAX_CHARACTERS = 600;
 
-/** The same words make the same clip: spacing and Unicode forms don't change what's said. */
 export function normalizeSpeechText(text: string): string {
   return text.normalize("NFC").replaceAll(/\s+/gu, " ").trim();
 }

@@ -3,12 +3,7 @@ import { normalizeSpeechText } from "./speech-clip-contract";
 
 const TEXT_HASH_LENGTH = 32;
 
-/**
- * The reuse key of a spoken clip: its language and a hash of the normalized text. Every learner who
- * hears the same words in the same language gets the same file, whatever voice or instructions
- * read it: changing them voices new words only, and re-voicing stored clips is a person's call.
- * A learner's own words (`ownerId`) make a key of theirs alone.
- */
+/** Voice changes apply only to new clips; re-voicing stored clips requires an explicit decision. */
 export function getSpeechClipKey({
   language,
   ownerId = null,

@@ -5,8 +5,6 @@ import { getSpeechClipKey } from "./speech-clip-key";
 vi.mock("@zoonk/ai/tasks/audio/prompt", () => ({ getLanguageAudioPrompt: vi.fn() }));
 
 describe(getSpeechClipKey, () => {
-  // A clip voiced before the voice's instructions changed is still played: re-voicing every
-  // stored clip is a person's call, never a deploy's.
   it("keys a clip by its language and words, whatever instructions the voice has now", () => {
     vi.mocked(getLanguageAudioPrompt).mockReturnValue({
       instructions: "Read it",
