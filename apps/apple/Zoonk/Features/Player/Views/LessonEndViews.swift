@@ -1,7 +1,8 @@
 import SwiftUI
 
 /// The quick moment at the end of a lesson: the title, the score and the Brain Power earned, when
-/// the idea comes back, the belt level it reached, then the way on.
+/// the idea comes back, the belt level it reached, then the way on. On a spread it's the leading
+/// page, and the way on stays on the trailing one, where Continue sat through the lesson.
 struct LessonCompletionView: View {
   let completion: LessonPlayerState.Completion
   let correct: Int
@@ -13,75 +14,21 @@ struct LessonCompletionView: View {
   let close: () -> Void
 
   var body: some View {
-    ScrollView {
-      VStack(alignment: .leading, spacing: 24) {
-        Group {
-          if completion.testedOut {
-            Text(
-              "You already knew this", tableName: "Player",
-              comment: "Title after \"I already know this\" passed every check")
-          } else {
-            Text("Lesson complete", tableName: "Player", comment: "Title at the end of a lesson")
-          }
-        }
-        .font(.largeTitle.weight(.bold))
-        .accessibilityAddTraits(.isHeader)
-
-        switch completion.status {
-        case .ready:
-          EmptyView()
-        case .saving:
-          ProgressView()
-        case .failed:
-          Text(
-            "We couldn't save this lesson. Try again in a moment. Nothing you did was lost.",
-            tableName: "Player",
-            comment: "Saving a finished lesson failed"
-          )
-          .foregroundStyle(.secondary)
-        case .saved:
-          if let summary = completion.summary {
-            readouts(summary)
-          }
-
-          if let guestEnding {
-            LessonGuestEndingView(ending: guestEnding)
-          }
-        }
+    PaneSplit {
+      page {
+        moment
       }
-      .frame(maxWidth: 680, alignment: .leading)
-      .frame(maxWidth: .infinity)
-      .scenePadding()
-    }
-    .safeAreaBar(edge: .bottom) {
-      Group {
-        switch completion.status {
-        case .ready:
-          Button(action: finish) {
-            Text(
-              "Finish", tableName: "Player",
-              comment: "Saves a lesson answered in an earlier sitting"
-            ).frame(maxWidth: .infinity)
-          }
-        case .failed:
-          Button(action: finish) {
-            Text("Try again", tableName: "Player", comment: "Tries saving the lesson again").frame(
-              maxWidth: .infinity)
-          }
-        case .saving, .saved:
-          Button(action: close) {
-            Text("Continue", tableName: "Player", comment: "Leaves the finished lesson").frame(
-              maxWidth: .infinity)
-          }
-          .disabled(completion.status == .saving)
-        }
+    } secondary: {
+      page {
+        guestEndingView
       }
-      .buttonStyle(.mainAction)
-      .controlSize(.large)
-      .keyboardShortcut(.defaultAction)
-      .frame(maxWidth: 680)
-      .frame(maxWidth: .infinity)
-      .scenePadding()
+      .safeAreaBar(edge: .bottom) { actionBar }
+    } single: {
+      page {
+        moment
+        guestEndingView
+      }
+      .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
     }
     .sensoryFeedback(.success, trigger: completion.status == .saved)
     .onChange(of: completion.status) { _, status in
@@ -89,6 +36,88 @@ struct LessonCompletionView: View {
         LessonSounds.shared.play(.finish)
       }
     }
+  }
+
+  private func page<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
+    ScrollView {
+      VStack(alignment: .leading, spacing: 24) {
+        content()
+      }
+      .frame(maxWidth: 680, alignment: .leading)
+      .frame(maxWidth: .infinity)
+      .scenePadding()
+    }
+  }
+
+  @ViewBuilder
+  private var moment: some View {
+    Group {
+      if completion.testedOut {
+        Text(
+          "You already knew this", tableName: "Player",
+          comment: "Title after \"I already know this\" passed every check")
+      } else {
+        Text("Lesson complete", tableName: "Player", comment: "Title at the end of a lesson")
+      }
+    }
+    .font(.largeTitle.weight(.bold))
+    .accessibilityAddTraits(.isHeader)
+
+    switch completion.status {
+    case .ready:
+      EmptyView()
+    case .saving:
+      ProgressView()
+    case .failed:
+      Text(
+        "We couldn't save this lesson. Try again in a moment. Nothing you did was lost.",
+        tableName: "Player",
+        comment: "Saving a finished lesson failed"
+      )
+      .foregroundStyle(.secondary)
+    case .saved:
+      if let summary = completion.summary {
+        readouts(summary)
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var guestEndingView: some View {
+    if completion.status == .saved, let guestEnding {
+      LessonGuestEndingView(ending: guestEnding)
+    }
+  }
+
+  private var actionBar: some View {
+    Group {
+      switch completion.status {
+      case .ready:
+        Button(action: finish) {
+          Text(
+            "Finish", tableName: "Player",
+            comment: "Saves a lesson answered in an earlier sitting"
+          ).frame(maxWidth: .infinity)
+        }
+      case .failed:
+        Button(action: finish) {
+          Text("Try again", tableName: "Player", comment: "Tries saving the lesson again").frame(
+            maxWidth: .infinity)
+        }
+      case .saving, .saved:
+        Button(action: close) {
+          Text("Continue", tableName: "Player", comment: "Leaves the finished lesson").frame(
+            maxWidth: .infinity)
+        }
+        .disabled(completion.status == .saving)
+      }
+    }
+    .buttonStyle(.mainAction)
+    .controlSize(.large)
+    .keyboardShortcut(.defaultAction)
+    .frame(maxWidth: 680)
+    .frame(maxWidth: .infinity)
+    .scenePadding()
   }
 
   private func readouts(_ summary: LessonCompletionSummary) -> some View {
