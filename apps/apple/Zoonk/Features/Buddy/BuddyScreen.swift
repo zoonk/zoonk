@@ -13,8 +13,7 @@ struct BuddyScreen: View {
     Group {
       switch store.status.state {
       case .idle, .loading:
-        ProgressView()
-          .frame(maxWidth: .infinity, maxHeight: .infinity)
+        loading
       case .failed:
         failure { await store.status.refresh() }
       case .loaded where summary.summary.value == nil:
@@ -23,8 +22,7 @@ struct BuddyScreen: View {
         if case .failed = summary.summary.state {
           failure { await summary.summary.refresh() }
         } else {
-          ProgressView()
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+          loading
         }
       case .loaded(let status):
         BuddyContent(
@@ -35,6 +33,13 @@ struct BuddyScreen: View {
       }
     }
     .loads(store.status, store.earlierQuestions, refreshable: false)
+  }
+
+  /// While the buddy's day loads or can't be read, the bar still names the buddy, as its tab does.
+  private var loading: some View {
+    ProgressView()
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .navigationTitle(Text(summary.buddyDisplayName))
   }
 
   private func failure(retry: @escaping () async -> Void) -> some View {
@@ -56,6 +61,7 @@ struct BuddyScreen: View {
       }
       .buttonStyle(.bordered)
     }
+    .navigationTitle(Text(summary.buddyDisplayName))
   }
 
   /// The selected goal the buddy tutors, unless it's archived or a quick explanation.
