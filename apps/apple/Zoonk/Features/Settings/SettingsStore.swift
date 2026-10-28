@@ -4,7 +4,7 @@ import Observation
 /// The settings pages' data for the signed-in learner: Preferences, Memory and the plan's
 /// allowance, each a cached resource. Saves are optimistic: the control moves at once and goes
 /// back, with "That didn't save", if the server refuses; a saved change invalidates what it touched
-/// so the summary and other screens follow.
+/// so the summary and other screens follow. A save whose learner left meanwhile changes nothing.
 @MainActor
 @Observable
 final class SettingsStore {
@@ -18,11 +18,30 @@ final class SettingsStore {
   let memory: Resource<LearnerMemory>
   let allowance: Resource<PlanAllowance>
 
-  /// A save that didn't go through, said once under the controls until the next save.
-  private(set) var saveFailed = false
-  /// The fact the learner last deleted, for the "Memory updated" notice and its undo.
-  private(set) var deletedFact: MemoryFact?
-  private(set) var undoStatus = UndoStatus.idle
+  /// What the settings pages say about the learner's last change, kept with the learner it's
+  /// about so the next learner never sees it.
+  private struct Notice {
+    var owner: AuthenticatedSession
+    /// A save that didn't go through, said once under the controls until the next save.
+    var saveFailed = false
+    /// The fact the learner last deleted, for the "Memory updated" notice and its undo.
+    var deletedFact: MemoryFact?
+    var undoStatus = UndoStatus.idle
+  }
+
+  private var notice: Notice?
+
+  var saveFailed: Bool {
+    currentNotice?.saveFailed ?? false
+  }
+
+  var deletedFact: MemoryFact? {
+    currentNotice?.deletedFact
+  }
+
+  var undoStatus: UndoStatus {
+    currentNotice?.undoStatus ?? .idle
+  }
 
   private let api: any SettingsAPIClient
   private let cache: AppCache
@@ -55,11 +74,18 @@ final class SettingsStore {
 
     preferences.update(update.applied)
 
-    let saved = await save([.learningProfile]) {
-      try await $0.updatePreferences(token: $1, update)
+    let result = await save([.learningProfile]) {
+      try await api.updatePreferences(token: $0.bearerToken, update)
     }
 
-    preferences.update { _ in saved ?? shown }
+    switch result {
+    case .done(let saved):
+      preferences.update { _ in saved }
+    case .failed:
+      preferences.update { _ in shown }
+    case .obsolete:
+      break
+    }
   }
 
   func setMemoryEnabled(_ enabled: Bool) async {
@@ -69,7 +95,9 @@ final class SettingsStore {
 
     memory.update { LearnerMemory(enabled: enabled, facts: $0.facts) }
 
-    if await save([.memory], { try await $0.setMemoryEnabled(token: $1, enabled) }) == nil {
+    if case .failed = await save(
+      [.memory], { try await api.setMemoryEnabled(token: $0.bearerToken, enabled) })
+    {
       memory.update { _ in shown }
     }
   }
@@ -81,11 +109,11 @@ final class SettingsStore {
 
     memory.update { $0.replacingFact(id: id) { $0.statement = statement } }
 
-    let saved = await save([.memory]) {
-      try await $0.updateMemoryFact(token: $1, factId: id, statement: statement)
+    let result = await save([.memory]) {
+      try await api.updateMemoryFact(token: $0.bearerToken, factId: id, statement: statement)
     }
 
-    if saved == nil {
+    if case .failed = result {
       memory.update { _ in shown }
     }
   }
@@ -97,12 +125,20 @@ final class SettingsStore {
 
     memory.update { LearnerMemory(enabled: $0.enabled, facts: $0.facts.filter { $0.id != id }) }
 
-    if let deleted = await save([.memory], { try await $0.deleteMemoryFact(token: $1, factId: id) })
-    {
-      deletedFact = deleted
-      undoStatus = .idle
-    } else {
+    let result = await save([.memory]) {
+      try await api.deleteMemoryFact(token: $0.bearerToken, factId: id)
+    }
+
+    switch result {
+    case .done(let deleted):
+      setNotice {
+        $0.deletedFact = deleted
+        $0.undoStatus = .idle
+      }
+    case .failed:
       memory.update { _ in shown }
+    case .obsolete:
+      break
     }
   }
 
@@ -113,25 +149,26 @@ final class SettingsStore {
       return
     }
 
-    let restored = await save([.memory]) {
-      try await $0.restoreMemoryFact(token: $1, factId: deleted.id)
+    let result = await cache.mutate(invalidating: [.memory]) {
+      try await api.restoreMemoryFact(token: $0.bearerToken, factId: deleted.id)
     }
 
-    guard let restored else {
-      saveFailed = false
-      undoStatus = .failed
-      return
+    switch result {
+    case .done(let restored):
+      let restoredIds = Set(restored.map(\.id))
+
+      memory.update { memory in
+        let facts = memory.facts.filter { !restoredIds.contains($0.id) } + restored
+        return LearnerMemory(
+          enabled: memory.enabled, facts: facts.sorted { $0.createdAt > $1.createdAt })
+      }
+
+      setNotice { $0.undoStatus = .undone }
+    case .failed:
+      setNotice { $0.undoStatus = .failed }
+    case .obsolete:
+      break
     }
-
-    let restoredIds = Set(restored.map(\.id))
-
-    memory.update { memory in
-      let facts = memory.facts.filter { !restoredIds.contains($0.id) } + restored
-      return LearnerMemory(
-        enabled: memory.enabled, facts: facts.sorted { $0.createdAt > $1.createdAt })
-    }
-
-    undoStatus = .undone
   }
 
   /// A purchase or restore changed the plan: the summary's tier and the allowance follow.
@@ -141,47 +178,47 @@ final class SettingsStore {
 
   /// Exports say their own failure beside their button, so they leave `saveFailed` alone.
   func exportMemory() async -> Data? {
-    await save([], reportsFailure: false) { try await $0.exportMemory(token: $1) }
+    await cache.mutate { try await api.exportMemory(token: $0.bearerToken) }.value
   }
 
   func exportAccountData() async -> Data? {
-    await save([], reportsFailure: false) { try await $0.exportAccountData(token: $1) }
+    await cache.mutate { try await api.exportAccountData(token: $0.bearerToken) }.value
   }
 
-  /// Runs a request for the current session and, once it succeeds, invalidates what it changed.
-  /// Nil when it failed or the session changed meanwhile; an expired session signs out.
+  private var currentNotice: Notice? {
+    notice?.owner == cache.session.authenticatedSession ? notice : nil
+  }
+
+  /// Changes the current learner's notice, starting a fresh one for a learner who had none.
+  private func setNotice(_ change: (inout Notice) -> Void) {
+    guard let owner = cache.session.authenticatedSession else {
+      return
+    }
+
+    var next = currentNotice ?? Notice(owner: owner)
+    change(&next)
+    notice = next
+  }
+
+  /// A save through `AppCache.mutate`, saying "That didn't save" when it failed for this learner.
   private func save<Value: Sendable>(
     _ changed: Set<DataDomain>,
-    reportsFailure: Bool = true,
-    _ request: (any SettingsAPIClient, String) async throws -> Value
-  ) async -> Value? {
-    guard let session = cache.session.authenticatedSession else {
-      return nil
+    _ write: (AuthenticatedSession) async throws -> Value
+  ) async -> MutationResult<Value> {
+    setNotice { $0.saveFailed = false }
+    let result = await cache.mutate(invalidating: changed, write)
+
+    if case .failed = result {
+      setNotice { $0.saveFailed = true }
     }
 
-    if reportsFailure {
-      saveFailed = false
-    }
+    return result
+  }
+}
 
-    do {
-      let value = try await request(api, session.bearerToken)
-
-      guard cache.session.authenticatedSession == session else {
-        return nil
-      }
-
-      cache.invalidate(changed)
-      return value
-    } catch APIError.unauthorized {
-      await cache.session.expire(session)
-      return nil
-    } catch {
-      if reportsFailure {
-        saveFailed = cache.session.authenticatedSession == session
-      }
-
-      return nil
-    }
+extension MutationResult {
+  fileprivate var value: Value? {
+    if case .done(let value) = self { value } else { nil }
   }
 }
 
