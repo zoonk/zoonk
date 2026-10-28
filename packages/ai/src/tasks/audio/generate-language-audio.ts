@@ -1,5 +1,6 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
+import { isBlockedTestCall } from "@zoonk/utils/blocked-test-call";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import {
   type TTSVoice,
@@ -9,7 +10,6 @@ import {
 } from "@zoonk/utils/languages";
 import { logError } from "@zoonk/utils/logger";
 import { segmentWords } from "@zoonk/utils/string";
-import { isBlockedTestCall } from "../../_utils/block-test-gateway-fetch";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { captureAiGeneration } from "../../provenance/ai-generation-sink";
 import { type TaskProvenance } from "../../provenance/task-provenance";

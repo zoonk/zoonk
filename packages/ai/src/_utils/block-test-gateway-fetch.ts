@@ -1,6 +1,5 @@
 import { GatewayInvalidRequestError, type GatewayProviderSettings } from "@ai-sdk/gateway";
-
-const BLOCKED_MESSAGE = "AI Gateway calls are disabled during tests.";
+import { BLOCKED_TEST_CALL } from "@zoonk/utils/blocked-test-call";
 
 /**
  * Tests can exercise real server routes or integration code, so missed mocks
@@ -9,13 +8,5 @@ const BLOCKED_MESSAGE = "AI Gateway calls are disabled during tests.";
  * non-retryable Gateway error to make the test kill switch fail immediately.
  */
 export const blockTestGatewayFetch: NonNullable<GatewayProviderSettings["fetch"]> = async () => {
-  throw new GatewayInvalidRequestError({ message: BLOCKED_MESSAGE });
+  throw new GatewayInvalidRequestError({ message: BLOCKED_TEST_CALL });
 };
-
-/**
- * Whether the test kill switch stopped a call. Every model behind the gateway is stopped the same
- * way, so a fallback to another one would only fail again: the error is final.
- */
-export function isBlockedTestCall(error: unknown): boolean {
-  return GatewayInvalidRequestError.isInstance(error) && error.message === BLOCKED_MESSAGE;
-}

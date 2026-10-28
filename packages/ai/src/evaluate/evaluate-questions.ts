@@ -1,6 +1,7 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
 import { Experimental_DecisionLanguageModel } from "@ai-sdk/provider-utils/experimental-decision";
+import { isBlockedTestCall } from "@zoonk/utils/blocked-test-call";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { getPromptVersion } from "@zoonk/utils/prompt-version";
@@ -10,7 +11,6 @@ import {
   type Experimental_DecisionResult,
   experimental_decide,
 } from "ai";
-import { isBlockedTestCall } from "../_utils/block-test-gateway-fetch";
 import { getModelFamily } from "../_utils/model-family";
 import { NO_PROMPT_TRAINING } from "../data-protection";
 import { zoonkGateway } from "../gateway";

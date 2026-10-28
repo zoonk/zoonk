@@ -6,6 +6,7 @@
     "./aggregation": "./src/aggregation.ts",
     "./apportion": "./src/apportion.ts",
     "./belt-level": "./src/belt-level.ts",
+    "./blocked-test-call": "./src/blocked-test-call.ts",
     "./buddy": "./src/buddy.ts",
     "./categories": "./src/categories.ts",
     "./cefr": "./src/cefr.ts",
