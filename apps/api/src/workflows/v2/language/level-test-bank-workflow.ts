@@ -13,7 +13,6 @@ export type LevelTestBankInput = { analytics?: ContentAnalytics; pair: LanguageP
 
 export type LevelTestBankResult = { status: "joined" | "ready" | "unfinished" | "written" };
 
-/** Polls past core's `STALE_CLAIM_MS`, so the wait ends with the bank written or the claim taken over. */
 const CLAIM_POLL = "10s";
 const MAX_CLAIM_POLLS = 72;
 

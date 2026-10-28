@@ -11,7 +11,6 @@ import { createGuest } from "./helpers/bearer";
 
 const RECORDING = { buffer: Buffer.from([1, 2, 3]), mimeType: "audio/webm", name: "answer.webm" };
 
-/** `assist` in core's limits. */
 const GUEST_DAILY_HELP = 40;
 
 async function createPrivateSpokenStep(ownerId: string) {
