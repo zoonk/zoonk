@@ -25,7 +25,7 @@ struct CourseCatalogSearchResultsView: View {
         CatalogFailureRecoveryView(context: .catalog, failure: failure, retry: retry)
       }
     }
-    .catalogReadableWidth(900)
+    .modifier(ReadableResults())
   }
 
   private func resultsList(_ results: CatalogSearchResults) -> some View {
@@ -114,5 +114,26 @@ private struct CatalogSearchResultRow: View {
       68
     }
     .accessibilityElement(children: .combine)
+  }
+}
+
+/// Keeps the results in a readable column on a wide screen, their background still filling the
+/// window. Partially folded, iPhone Duo reads them on the page before the fold instead of across
+/// it, the search field being on the bar beside the other.
+private struct ReadableResults: ViewModifier {
+  private static let column = 900.0
+  @State private var space = PaneSpace(width: 0)
+
+  func body(content: Content) -> some View {
+    let side = max((space.width - Self.column) / 2, 0)
+
+    content
+      .safeAreaPadding(.leading, space.fold == nil ? side : 0)
+      .safeAreaPadding(.trailing, space.fold.map { space.width - $0.lowerBound } ?? side)
+      .onGeometryChange(for: PaneSpace.self) {
+        PaneSpace($0)
+      } action: {
+        space = $0
+      }
   }
 }

@@ -49,6 +49,8 @@ struct ChapterView: View {
   }
 }
 
+/// Where there's room, the chapter and its way in lead and the rest follows, as two pages: where it
+/// sits in the course, its lessons, what it teaches and the way in again.
 private struct ChapterLandingList: View {
   let chapter: ChapterReference
   /// The chapter's course with its outline, once it's read.
@@ -56,104 +58,138 @@ private struct ChapterLandingList: View {
   let detail: ChapterDetail
 
   var body: some View {
-    let outline = course?.chapters.sorted { $0.position < $1.position } ?? []
-    let index = outline.firstIndex { $0.id == chapter.id }
-    let areas = course?.course.examplePlan?.chapterAreas
-    let hasLesson = !detail.lessons.isEmpty
-    // The course's first chapter, or one whose lessons aren't written yet, starts the course at
-    // the reader's level; any other starts the plan here.
-    let startsHere = hasLesson && (index ?? chapter.position ?? 0) > 0
-
-    List {
-      Section {
-        VStack(alignment: .leading, spacing: 12) {
-          Label {
-            Text(areas?[chapter.id].map { "\(chapter.courseTitle) · \($0)" } ?? chapter.courseTitle)
-          } icon: {
-            SubjectGlyph(subject: course?.course.subject)
-          }
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
-
-          Text(chapter.title)
-            .font(.largeTitle.bold())
-            .fixedSize(horizontal: false, vertical: true)
-            .accessibilityAddTraits(.isHeader)
-
-          if let description = catalogText(detail.chapter?.description ?? chapter.description) {
-            Text(description)
-              .font(.title3)
-              .foregroundStyle(.secondary)
-          }
-
-          PlanLine(startsHere: startsHere)
-
-          ChapterStart(
-            chapter: chapter, hasLesson: hasLesson, startsHere: startsHere,
-            tryLessonID: detail.tryLessonID
-          )
-          .padding(.top, 4)
-        }
-        .listRowBackground(Color.clear)
+    PaneSplit {
+      List {
+        header
       }
-
-      if let course, let index, outline.count > 1 {
-        ChapterStrip(areas: areas, course: course.course, index: index, outline: outline)
+    } secondary: {
+      List {
+        contents
       }
-
-      if hasLesson {
-        ChapterLessonsSection(
-          lessons: detail.lessons.sorted { $0.position < $1.position },
-          number: index.map { $0 + 1 }, total: outline.count)
-      }
-
-      if let objectives = detail.chapter?.objectives, !objectives.isEmpty {
-        Section {
-          ForEach(objectives, id: \.self) { CheckLine(text: $0) }
-        } header: {
-          Text(
-            "What you'll learn", tableName: "Courses", comment: "Header of what a chapter teaches")
-        }
-      }
-
-      Section {
-        VStack(alignment: .leading, spacing: 8) {
-          Group {
-            if startsHere {
-              Text(
-                "Your plan from this chapter", tableName: "Courses",
-                comment: "A chapter page's last call, when the plan starts there")
-            } else {
-              Text(
-                "Start today, at your level", tableName: "Courses",
-                comment: "A course page's last call")
-            }
-          }
-          .font(.title2.weight(.semibold))
-          .accessibilityAddTraits(.isHeader)
-
-          Group {
-            if startsHere {
-              Text(
-                "It follows the course from here, at your pace, with reviews before you forget.",
-                tableName: "Courses", comment: "Under a chapter page's last call")
-            } else {
-              Text(
-                "A few quick questions, then your plan and your first lesson.",
-                tableName: "Courses", comment: "Under a course page's last call")
-            }
-          }
-          .foregroundStyle(.secondary)
-
-          ChapterStart(
-            chapter: chapter, hasLesson: hasLesson, startsHere: startsHere, tryLessonID: nil
-          )
-          .padding(.top, 8)
-        }
-        .listRowBackground(Color.clear)
+    } single: {
+      List {
+        header
+        contents
       }
     }
-    .catalogReadableWidth()
+  }
+
+  private var outline: [CourseChapter] {
+    course?.chapters.sorted { $0.position < $1.position } ?? []
+  }
+
+  private var index: Int? {
+    outline.firstIndex { $0.id == chapter.id }
+  }
+
+  private var areas: [String: String]? {
+    course?.course.examplePlan?.chapterAreas
+  }
+
+  private var hasLesson: Bool {
+    !detail.lessons.isEmpty
+  }
+
+  /// The course's first chapter, or one whose lessons aren't written yet, starts the course at the
+  /// reader's level; any other starts the plan here.
+  private var startsHere: Bool {
+    hasLesson && (index ?? chapter.position ?? 0) > 0
+  }
+
+  /// The course it belongs to, the chapter and what it teaches, what Zoonk does with it and the way
+  /// to start.
+  private var header: some View {
+    Section {
+      VStack(alignment: .leading, spacing: 12) {
+        Label {
+          Text(areas?[chapter.id].map { "\(chapter.courseTitle) · \($0)" } ?? chapter.courseTitle)
+        } icon: {
+          SubjectGlyph(subject: course?.course.subject)
+        }
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
+
+        Text(chapter.title)
+          .font(.largeTitle.bold())
+          .fixedSize(horizontal: false, vertical: true)
+          .accessibilityAddTraits(.isHeader)
+
+        if let description = catalogText(detail.chapter?.description ?? chapter.description) {
+          Text(description)
+            .font(.title3)
+            .foregroundStyle(.secondary)
+        }
+
+        PlanLine(startsHere: startsHere)
+
+        ChapterStart(
+          chapter: chapter, hasLesson: hasLesson, startsHere: startsHere,
+          tryLessonID: detail.tryLessonID
+        )
+        .padding(.top, 4)
+      }
+      .listRowBackground(Color.clear)
+    }
+  }
+
+  /// Where the chapter sits in the course, its lessons, what it teaches and the way in again.
+  @ViewBuilder
+  private var contents: some View {
+    if let course, let index, outline.count > 1 {
+      ChapterStrip(areas: areas, course: course.course, index: index, outline: outline)
+    }
+
+    if hasLesson {
+      ChapterLessonsSection(
+        lessons: detail.lessons.sorted { $0.position < $1.position },
+        number: index.map { $0 + 1 }, total: outline.count)
+    }
+
+    if let objectives = detail.chapter?.objectives, !objectives.isEmpty {
+      Section {
+        ForEach(objectives, id: \.self) { CheckLine(text: $0) }
+      } header: {
+        Text(
+          "What you'll learn", tableName: "Courses", comment: "Header of what a chapter teaches")
+      }
+    }
+
+    Section {
+      VStack(alignment: .leading, spacing: 8) {
+        Group {
+          if startsHere {
+            Text(
+              "Your plan from this chapter", tableName: "Courses",
+              comment: "A chapter page's last call, when the plan starts there")
+          } else {
+            Text(
+              "Start today, at your level", tableName: "Courses",
+              comment: "A course page's last call")
+          }
+        }
+        .font(.title2.weight(.semibold))
+        .accessibilityAddTraits(.isHeader)
+
+        Group {
+          if startsHere {
+            Text(
+              "It follows the course from here, at your pace, with reviews before you forget.",
+              tableName: "Courses", comment: "Under a chapter page's last call")
+          } else {
+            Text(
+              "A few quick questions, then your plan and your first lesson.",
+              tableName: "Courses", comment: "Under a course page's last call")
+          }
+        }
+        .foregroundStyle(.secondary)
+
+        ChapterStart(
+          chapter: chapter, hasLesson: hasLesson, startsHere: startsHere, tryLessonID: nil
+        )
+        .padding(.top, 8)
+      }
+      .listRowBackground(Color.clear)
+    }
   }
 }
 

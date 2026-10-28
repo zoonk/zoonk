@@ -45,6 +45,8 @@ struct CourseView: View {
   }
 }
 
+/// Where there's room, the course and its example plan lead and what it covers follows, as two
+/// pages: who it's for, what it makes them able to do, the outline and the way in again.
 private struct CourseLandingList: View {
   @Environment(CourseCatalogStore.self) private var catalog
   @Environment(LearnerSummaryStore.self) private var learner
@@ -52,31 +54,56 @@ private struct CourseLandingList: View {
   let detail: CourseDetail
 
   var body: some View {
-    let example = detail.course.examplePlan
-    let follows = learner.summary.value?.followsCourse(detail.course.id) ?? false
-
-    List {
-      if let edition = detail.course.edition(in: catalog.language) {
-        EditionNotice(edition: edition)
+    PaneSplit {
+      List {
+        pitch
       }
-
-      CourseHeroSection(detail: detail, exam: example?.exam, follows: follows)
-
-      if let pace = example?.pace {
-        CoursePlanSections(
-          chapters: detail.chapters, estimate: pace.estimate, exam: example?.exam,
-          isExam: detail.course.isExam, minutes: pace.minutes)
+    } secondary: {
+      List {
+        contents
       }
-
-      CourseFitSections(landingPage: detail.course.landingPage)
-
-      CourseOutlineSections(
-        detail: detail, estimate: example?.pace?.estimate, exam: example?.exam,
-        lead: outlineLead, minutes: example?.pace?.minutes)
-
-      CourseClosingSection(courseID: detail.course.id, follows: follows)
+    } single: {
+      List {
+        pitch
+        contents
+      }
     }
-    .catalogReadableWidth()
+  }
+
+  /// The course, its ways in and its example plan.
+  @ViewBuilder
+  private var pitch: some View {
+    let example = detail.course.examplePlan
+
+    if let edition = detail.course.edition(in: catalog.language) {
+      EditionNotice(edition: edition)
+    }
+
+    CourseHeroSection(detail: detail, exam: example?.exam, follows: follows)
+
+    if let pace = example?.pace {
+      CoursePlanSections(
+        chapters: detail.chapters, estimate: pace.estimate, exam: example?.exam,
+        isExam: detail.course.isExam, minutes: pace.minutes)
+    }
+  }
+
+  /// Who the course is for, what it makes them able to do, its outline and the way in again.
+  @ViewBuilder
+  private var contents: some View {
+    let example = detail.course.examplePlan
+
+    CourseFitSections(landingPage: detail.course.landingPage)
+
+    CourseOutlineSections(
+      detail: detail, estimate: example?.pace?.estimate, exam: example?.exam,
+      lead: outlineLead, minutes: example?.pace?.minutes)
+
+    CourseClosingSection(courseID: detail.course.id, follows: follows)
+  }
+
+  private var follows: Bool {
+    learner.summary.value?.followsCourse(detail.course.id) ?? false
   }
 
   /// The course's description over the outline, when the hero led with its promise instead.
@@ -355,36 +382,5 @@ private struct CourseDetailEmptyView: View {
         tableName: "Courses",
         comment: "Guidance when a course request returns no content.")
     }
-  }
-}
-
-extension View {
-  /// Keeps a catalog page (a course's, a chapter's, search's results) in a readable column on a
-  /// wide screen, as main's pages keep their measure, while its background still fills the window.
-  /// Partially folded, iPhone Duo reads it on the page before the fold instead of across it.
-  func catalogReadableWidth(_ column: CGFloat = 720) -> some View {
-    modifier(CatalogReadableWidth(column: column))
-  }
-}
-
-private struct CatalogReadableWidth: ViewModifier {
-  @ScaledMetric private var column: CGFloat
-  @State private var space = PaneSpace(width: 0)
-
-  init(column: CGFloat) {
-    _column = ScaledMetric(wrappedValue: column, relativeTo: .body)
-  }
-
-  func body(content: Content) -> some View {
-    let side = max((space.width - column) / 2, 0)
-
-    content
-      .safeAreaPadding(.leading, space.fold == nil ? side : 0)
-      .safeAreaPadding(.trailing, space.fold.map { space.width - $0.lowerBound } ?? side)
-      .onGeometryChange(for: PaneSpace.self) {
-        PaneSpace($0)
-      } action: {
-        space = $0
-      }
   }
 }
