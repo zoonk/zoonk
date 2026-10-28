@@ -3,15 +3,21 @@ package com.zoonk.android.ui.richtext
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performFirstLinkClick
+import androidx.compose.ui.test.performKeyInput
+import androidx.compose.ui.test.pressKey
+import androidx.compose.ui.test.requestFocus
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Assert.assertEquals
@@ -151,4 +157,37 @@ class RichTextRenderingTest {
                 .single()
         assertTrue(text.getLinkAnnotations(0, text.length).isEmpty())
     }
+
+    @Test
+    fun letsTheKeyboardReachAWideTableWithoutMergingItsCells() {
+        compose.setContent { MaterialTheme { RichText(table, Modifier.width(320.dp)) } }
+
+        val container = compose.onNode(SemanticsMatcher.keyIsDefined(SemanticsProperties.Focused))
+        container.assert(SemanticsMatcher.keyNotDefined(SemanticsProperties.Text))
+
+        val cell = compose.onNodeWithText("Pünktlichkeit").fetchSemanticsNode().config[SemanticsProperties.CollectionItemInfo]
+        assertEquals(0, cell.rowIndex)
+        assertEquals(3, cell.columnIndex)
+
+        container.requestFocus()
+        container.assertIsFocused()
+        container.performKeyInput { pressKey(Key.DirectionRight) }
+        compose.waitForIdle()
+
+        assertTrue(scrollValue() > 0f)
+    }
+
+    @Test
+    fun leavesAFittingTableOutOfTheKeyboardOrder() {
+        compose.setContent { MaterialTheme { RichText("| Hora | Bicicletas |\n|---|---:|\n| 7h | 9 |") } }
+
+        compose.onNode(SemanticsMatcher.keyIsDefined(SemanticsProperties.Focused)).assertDoesNotExist()
+    }
+
+    private fun scrollValue() =
+        compose
+            .onNode(SemanticsMatcher.keyIsDefined(SemanticsProperties.HorizontalScrollAxisRange))
+            .fetchSemanticsNode()
+            .config[SemanticsProperties.HorizontalScrollAxisRange]
+            .value()
 }
