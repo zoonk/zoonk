@@ -157,7 +157,7 @@ struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: Vie
   var body: some View {
     PaneSplit {
       ScrollingPage(readableWidth: readableWidth, spacing: spacing, content: stimulus)
-        .safeAreaBar(edge: .top, content: header)
+        .pageHeader(header)
     } secondary: {
       ScrollingPage(readableWidth: readableWidth, spacing: spacing, content: response)
         .safeAreaBar(edge: .bottom, content: actions)
@@ -185,10 +185,23 @@ struct QuestionColumn<Header: View, Content: View, Actions: View>: View {
 
   var body: some View {
     ScrollingPage(readableWidth: readableWidth, spacing: spacing, content: content)
-      .safeAreaBar(edge: .top, content: header)
+      .pageHeader(header)
       .safeAreaBar(edge: .bottom) {
         actions().keepsOffFold()
       }
+  }
+}
+
+extension View {
+  /// Pins a page's header above it. A page without one gets no bar: a top bar around an empty
+  /// view takes the page's free height and pushes its content down out of sight.
+  @ViewBuilder
+  fileprivate func pageHeader<Header: View>(_ header: () -> Header) -> some View {
+    if Header.self == EmptyView.self {
+      self
+    } else {
+      safeAreaBar(edge: .top, content: header)
+    }
   }
 }
 
