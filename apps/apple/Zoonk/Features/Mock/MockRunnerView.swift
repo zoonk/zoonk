@@ -1,17 +1,11 @@
 import SwiftUI
 
-/// The running section, like the exam room: the clock in the toolbar, one question at a time with
-/// no feedback, Flag and Next at the thumb, and the answer sheet (an inspector beside the question
-/// on a wide screen, a sheet on a phone) to jump around and hand in. Where two pages fit, the
-/// question is a spread: its text or recording and the question on the leading page, the answers,
-/// Flag and Next on the trailing one. When the clock runs out, answers close and handing in waits
-/// for the learner.
+/// Like the exam room: one question at a time with no feedback.
 struct MockRunnerView: View {
   @Environment(\.horizontalSizeClass) private var sizeClass
-  /// The answer sheet beside the question: the learner's open panel, kept through folding and
-  /// unfolding iPhone Duo, and never turned into a sheet over the question when the screen narrows.
+  /// Kept through folding and unfolding iPhone Duo, and never turned into a sheet over the question
+  /// when the screen narrows.
   @State private var showsSheetBeside = false
-  /// The answer sheet over the question on a phone, only from a tap there.
   @State private var showsSheetOver = false
   @State private var confirmsHandIn = false
   @Bindable var run: MockRun
@@ -74,7 +68,6 @@ struct MockRunnerView: View {
     ) {
       answerSheet.presentationDetents([.medium, .large])
     }
-    // A sheet opened on the phone moves beside the question once there's room for it.
     .onChange(of: sizeClass) { _, size in
       if size != .compact, showsSheetOver {
         showsSheetOver = false
@@ -146,8 +139,6 @@ struct MockRunnerView: View {
   }
 }
 
-/// The question's subject and its place in the section, in one quiet line (two at the largest
-/// text sizes, so the subject isn't cut).
 private struct MockQuestionMeta: View {
   @Environment(\.dynamicTypeSize) private var typeSize
   let run: MockRun
@@ -176,7 +167,6 @@ private struct MockQuestionMeta: View {
     .accessibilityLabel(accessibilityPlace)
   }
 
-  /// The question's place among the section's questions, essays left out.
   private var sectionPlace: (number: Int, total: Int)? {
     let questions = run.questions.filter { $0.format != .essay }
     guard let index = questions.firstIndex(of: question) else { return nil }
@@ -202,9 +192,6 @@ private struct MockQuestionMeta: View {
   }
 }
 
-/// One question of the running section in the part a spread's page shows: what it's read with (its
-/// set's text or recording and the question, or an essay's prompt) or how it's answered (picks, a
-/// number, a word, or the box to write the essay in). In one column the stimulus draws it whole.
 private struct MockQuestionCard: View {
   enum Part {
     case stimulus
@@ -253,15 +240,14 @@ private struct MockQuestionCard: View {
     run.position > 0 ? run.questions[run.position - 1] : nil
   }
 
-  /// The exam plays each recording a set number of times and gives none back: the mock counts
-  /// them, so another device opens it with the same plays left.
+  /// The exam plays each recording a set number of times and gives none back, so the mock counts
+  /// plays across devices.
   private var served: ServedPlays? {
     guard let set = question.set, set.listening != nil else { return nil }
     let played = run.current?.plays.first { $0.setId == set.id }?.played ?? 0
     return ServedPlays(played: played) { [run] in await run.play(setId: set.id) }
   }
 
-  /// A recording's questions, to read before it plays.
   private var recordingQuestions: (prompts: [String], current: Int)? {
     guard let set = question.set, set.listening != nil else { return nil }
     let onRecording = run.questions.filter { $0.set?.id == set.id }
@@ -269,7 +255,6 @@ private struct MockQuestionCard: View {
   }
 }
 
-/// What an essay of a full mock's written part is about: its set's text, its context and the prompt.
 private struct MockEssayPrompt: View {
   let question: MockQuestion
 
@@ -285,8 +270,6 @@ private struct MockEssayPrompt: View {
   }
 }
 
-/// An essay of a full mock's written part, written on the section's clock: kept as the learner
-/// types, saved once they pause, with its word count.
 private struct MockEssayBox: View {
   let run: MockRun
   let view: MockView
@@ -327,8 +310,6 @@ private struct MockEssayBox: View {
   }
 }
 
-/// Flag the question to come back to it: orange while it's flagged. At the largest text sizes it
-/// keeps its mark only, so Next keeps its room.
 private struct FlagButton: View {
   @Environment(\.dynamicTypeSize) private var typeSize
   let run: MockRun
@@ -356,7 +337,6 @@ private struct FlagButton: View {
   }
 }
 
-/// How the section lets the learner move, when the notice limits it.
 private struct MovesNote: View {
   let moves: MockSectionMoves
 
@@ -384,7 +364,6 @@ private struct MovesNote: View {
 }
 
 extension View {
-  /// Where the exam times each question: its clock beside the question, moving on when it ends.
   fileprivate func itemClock(run: MockRun, question: MockQuestion) -> some View {
     modifier(ItemClock(run: run, question: question))
   }
@@ -428,7 +407,6 @@ private struct ItemClock: ViewModifier {
   }
 }
 
-/// What's still open in the section, for the hand-in's confirmation.
 @MainActor
 struct MockSectionCounts {
   var answered = 0
@@ -454,7 +432,6 @@ struct MockSectionCounts {
     }
   }
 
-  /// Blank and flagged questions (an essay left blank said apart), or that every one is answered.
   var leftOpen: String {
     var parts: [String] = []
 
@@ -490,8 +467,6 @@ struct MockSectionCounts {
   }
 }
 
-/// The answer sheet: every question of the section by number, answered, blank or flagged, to jump
-/// to any one the notice lets the learner open, and handing the section in.
 private struct MockAnswerSheet: View {
   let run: MockRun
   let view: MockView
@@ -594,14 +569,12 @@ private struct MockAnswerSheet: View {
   }
 }
 
-/// Words in a text, counted from the first one.
 enum EssayWords {
   static func count(_ text: String) -> Int {
     text.split(whereSeparator: \.isWhitespace).count
   }
 }
 
-/// A label style chosen at runtime.
 private struct AnyLabelStyle: LabelStyle {
   private let make: (Configuration) -> AnyView
 

@@ -1,14 +1,11 @@
 import SwiftUI
 
-/// The mock's words the runner, the result, the chooser and the exam page share.
 enum MockLabels {
-  /// "Mock exam 2".
   static func title(number: Int) -> String {
     String(
       localized: "Mock exam \(number)", table: "Mock", comment: "A mock exam's name, by its number")
   }
 
-  /// A mock sits a whole exam day or half of one, the day named when the exam has several.
   static func daySize(fullLength: Bool, day: Int?) -> String {
     switch (fullLength, day) {
     case (true, let day?):
@@ -26,8 +23,6 @@ enum MockLabels {
     }
   }
 
-  /// What a mock sat, beside its number: the subject, a day or half of one for one taken any time,
-  /// the starting point for one in onboarding; nil for the plan's own.
   static func shape(purpose: MockPurpose, shape: MockShape?) -> String? {
     if purpose == .placement {
       return String(
@@ -45,17 +40,14 @@ enum MockLabels {
     }
   }
 
-  /// A length as the clock gives it ("4h 30m").
   static func duration(minutes: Int) -> String {
     Duration.seconds(minutes * 60).formatted(.units(allowed: [.hours, .minutes], width: .narrow))
   }
 
-  /// A score with up to two decimals ("10.75"), as partial credit and penalties leave them.
   static func number(_ value: Double) -> String {
     value.formatted(.number.precision(.fractionLength(0...2)))
   }
 
-  /// An estimated range ("620–680").
   static func range(low: Double, high: Double) -> String {
     String(
       localized: "\(number(low.rounded()))–\(number(high.rounded()))", table: "Mock",
@@ -63,9 +55,7 @@ enum MockLabels {
   }
 }
 
-/// Where a mock's size comes from whenever it isn't the notice, so a number is never made up: the
-/// past edition its counts follow (linked to its source), or what the notice doesn't say and what
-/// the mock asks instead. Nothing when the notice states it all.
+/// Says where a mock's size comes from whenever it isn't the notice, so a number is never made up.
 struct MockSizeNote: View {
   let document: ExamDocument
   let minutes: Int

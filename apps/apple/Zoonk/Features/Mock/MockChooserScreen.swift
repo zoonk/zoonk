@@ -1,9 +1,5 @@
 import SwiftUI
 
-/// "Take a mock exam" for the active exam goal, whenever the learner wants: the full exam, half of
-/// it or one subject, each with its honest size and time, and Start. A bank short of the picked
-/// mock's questions has them written first while the page says so. Without Plus, the options show
-/// with what it takes. A mock left running is where the learner goes on.
 struct MockChooserScreen: View {
   @Environment(ExamStore.self) private var exam
   @Environment(LearnerSummaryStore.self) private var learner
@@ -66,9 +62,7 @@ private struct MockChooserContent: View {
   }
 }
 
-/// A diagnostic mock in onboarding, instead of the quick questions: the lengths it comes in with
-/// their real size and time, why it helps, and Start (or, without Plus, what it takes). Its answers
-/// set where the plan starts; stopping midway keeps them. Once started it runs right here.
+/// Its answers set where the plan starts; stopping midway keeps them.
 struct PlacementMockScreen: View {
   @Environment(ExamStore.self) private var exam
   @Environment(\.dismiss) private var dismiss
@@ -134,7 +128,6 @@ struct PlacementMockScreen: View {
   }
 }
 
-/// Why Start didn't open a mock, or what it's doing.
 private enum ChooserStatus: Equatable {
   case choosing
   case writing
@@ -147,8 +140,6 @@ private enum ChooserStatus: Equatable {
   case plusRequired
 }
 
-/// The options to pick from (the exam's days and halves, then each subject) or a placement mock's
-/// lengths, the picked one's size, and Start.
 private struct MockChooser: View {
   @Environment(ExamStore.self) private var exam
   @State private var picked: String?
@@ -162,7 +153,6 @@ private struct MockChooser: View {
   let onStarted: (String) -> Void
 
   private var isOpen: Bool { view.access == .open }
-  /// An exam of several days names each day's mocks by their day.
   private var severalDays: Bool { view.options.filter { $0.kind == .full }.count > 1 }
   private var pickedOption: MockOption? {
     view.options.first { $0.id == (picked ?? view.options.first?.id) }
@@ -438,7 +428,6 @@ private struct MockChooser: View {
     .accessibilityAddTraits(isPicked ? .isSelected : [])
   }
 
-  /// A mock's name as the learner picks it: a full exam day, half of it, or the subject.
   private func name(_ option: MockOption) -> String {
     if option.kind == .area {
       return option.areas.first ?? option.area
@@ -449,8 +438,6 @@ private struct MockChooser: View {
       fullLength: option.kind == .full, day: severalDays ? (option.day ?? 1) : nil)
   }
 
-  /// What a mock covers, honestly: the papers it covers when it leaves one out, a full mock's
-  /// written part, the day's subjects for an exam of several days, and an objective part only.
   private func optionDetail(_ option: MockOption) -> String {
     let covers = option.covers.map { $0.formatted(.list(type: .and)) }
     let subjects =
@@ -464,7 +451,6 @@ private struct MockChooser: View {
     return [covers, subjects, written, objective].compactMap { $0 }.joined(separator: " · ")
   }
 
-  /// How fine a starting point a diagnostic mock's length sets.
   private func precision(_ option: PlacementMockOption) -> String {
     if !option.coversAllAreas {
       return String(
@@ -534,7 +520,6 @@ private struct MockChooser: View {
   }
 }
 
-/// A finished mock as a row: its number and what it sat, its score, opening its result.
 struct MockSummaryRow: View {
   @Environment(AppRouter.self) private var router
   let mock: ExamMockSummary
@@ -568,7 +553,6 @@ struct MockSummaryRow: View {
       comment: "A mock that asked fewer questions than the exam")
   }
 
-  /// Its score as the exam scores it: an estimated score, a net score, or right answers.
   private var score: String {
     switch mock.scoring {
     case .irt:
@@ -585,9 +569,6 @@ struct MockSummaryRow: View {
   }
 }
 
-/// Onboarding's placement offers the whole exam as a diagnostic mock beside the quick questions:
-/// how long it can take, from its quick check to its longest, marked Plus without it. A mock left
-/// running is where the learner goes on.
 struct PlacementMockOffer: View {
   @Environment(ExamStore.self) private var exam
   @Environment(AppRouter.self) private var router
@@ -644,7 +625,6 @@ struct PlacementMockOffer: View {
   }
 }
 
-/// Reads an exam goal's mocks on the placement step, for its offer; other goals have none.
 struct PlacementMockLoading: ViewModifier {
   @Environment(ExamStore.self) private var exam
   let goalId: String

@@ -1,9 +1,7 @@
 import SwiftUI
 
-/// A started mock exam in real conditions, full screen like the exam room, to its result: its
-/// sections, clock, breaks and hand-in, then how it went. Its challenge introduces and starts the
-/// plan's weekly mock; one taken any time starts from the chooser. Swiping it away is off while
-/// it runs: ✕ leaves (the clock keeps running, as in the exam) once the answers are saved.
+/// Swiping it away is off while it runs: ✕ leaves once the answers are saved, and the clock keeps
+/// running, as in the exam.
 struct MockScreen: View {
   @Environment(ExamStore.self) private var exam
   @State private var run: MockRun?
@@ -25,7 +23,6 @@ struct MockScreen: View {
   }
 }
 
-/// The mock's step, as it stands on the server.
 private struct MockStage: View {
   @Environment(AppRouter.self) private var router
   @Environment(\.dismiss) private var dismiss
@@ -113,7 +110,6 @@ private struct MockStage: View {
   }
 }
 
-/// The section's time left, like the exam room's clock: in the toolbar while a section runs.
 struct MockClock: View {
   let deadline: Date
 
@@ -131,8 +127,6 @@ struct MockClock: View {
   }
 }
 
-/// Over the mock's actions: an answer that isn't stored, a step that didn't go through (saying
-/// the answers are saved only when they are), or a step taking longer than usual.
 struct MockStepStatus: View {
   let run: MockRun
 
@@ -185,7 +179,6 @@ struct MockStepStatus: View {
   }
 }
 
-/// The bar under a mock's step: what isn't saved, then its one action.
 struct MockActionBar<Actions: View>: View {
   let run: MockRun
   @ViewBuilder let actions: Actions
@@ -200,7 +193,6 @@ struct MockActionBar<Actions: View>: View {
   }
 }
 
-/// A step the mock's time sets: its mark, its title and a line, in the middle of the page.
 private struct MockStepCard: View {
   let systemImage: String
   let title: Text
@@ -258,7 +250,6 @@ private struct MockTimeUpView: View {
   }
 }
 
-/// Every section was handed in but grading didn't finish: one tap grades it now.
 private struct MockGradingView: View {
   let run: MockRun
 
@@ -288,8 +279,7 @@ private struct MockGradingView: View {
   }
 }
 
-/// A mock taken any time whose time ran out while the learner was away isn't scored: a new one
-/// starts from the chooser (the plan's starts again from its challenge).
+/// A mock taken any time whose time ran out while the learner was away isn't scored.
 private struct MockExpiredView: View {
   @Environment(AppRouter.self) private var router
   let view: MockView
@@ -323,8 +313,6 @@ private struct MockExpiredView: View {
   }
 }
 
-/// The break the notice gives between two sections: its time left big, the section that comes
-/// next, and starting it early. When the break ends the next section starts on its own.
 private struct MockBreakView: View {
   let run: MockRun
   let view: MockView
@@ -390,8 +378,6 @@ private struct MockBreakView: View {
   }
 }
 
-/// The speaking section: its paper's task cards are written once the learner starts it, then each
-/// task is a call with the examiner, back here after it, and the section is handed in.
 private struct MockSpeakingView: View {
   @State private var openTask: MockSpeaking.Task?
   @State private var confirmsHandIn = false
@@ -534,7 +520,6 @@ private struct MockSpeakingView: View {
 }
 
 extension View {
-  /// Closes the answers when the section's clock runs out.
   func deadline(_ deadline: Date, run: MockRun) -> some View {
     task(id: deadline) {
       let wait = deadline.timeIntervalSinceNow

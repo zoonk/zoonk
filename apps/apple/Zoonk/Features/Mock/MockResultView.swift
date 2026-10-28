@@ -1,9 +1,5 @@
 import SwiftUI
 
-/// The mock done, in the exam's own terms (a range where it's an estimate): the score with the
-/// answers it comes from and what it takes to pass, how each area went, what the mock showed, the
-/// essays of a full mock graded by the exam's rubric, the change it offers for the plan, and the
-/// questions to review. Review the mistakes, or go on.
 struct MockResultView: View {
   @Environment(AppRouter.self) private var router
   @Environment(\.dismiss) private var dismiss
@@ -113,8 +109,6 @@ struct MockResultView: View {
   }
 }
 
-/// The score big, with the exam and its areas under it, how it moved since the last one, the
-/// answers it comes from and what it takes to pass.
 private struct MockScoreSections: View {
   let view: MockView
   let result: MockResult
@@ -237,7 +231,6 @@ private struct MockScoreSections: View {
     }
   }
 
-  /// The score in the exam's own terms: an estimated range, a net score or right answers.
   private var score: (label: String, value: String) {
     if let irt = result.irt {
       return (
@@ -273,7 +266,6 @@ private struct MockScoreSections: View {
       .joined(separator: " · ")
   }
 
-  /// "+16 since the last one": only when there was one and it moved.
   private var delta: (text: String, up: Bool)? {
     guard let current = result.irt?.score ?? result.net?.net, let previous = result.previous,
       current != previous
@@ -296,7 +288,6 @@ private struct MockScoreSections: View {
       )
   }
 
-  /// The answers a score comes from, which a range or a net score alone doesn't say.
   private var counts: (right: Double, wrong: Double, partial: Int, blank: Int)? {
     if let net = result.net {
       return (Double(net.right), Double(net.wrong), net.partial, net.blank)
@@ -308,7 +299,6 @@ private struct MockScoreSections: View {
     )
   }
 
-  /// Where the real exam's scale and scoring stand beside the mock's right answers.
   private var scoreNote: String? {
     let notes = view.scoreNotes
     var lines: [String] = []
@@ -371,7 +361,6 @@ private struct MockScoreSections: View {
   }
 }
 
-/// How each area went: its right answers (or its estimated range) and its bar.
 private struct MockAreaSection: View {
   let result: MockResult
 
@@ -403,8 +392,6 @@ private struct MockAreaSection: View {
   }
 }
 
-/// What the mock showed: the slowest area against the exam's pace and the questions time ran out
-/// on, easy ones missed beside hard ones right (ENEM), and how unsure answers went (net scoring).
 private struct MockInsightsSection: View {
   let result: MockResult
 
@@ -498,7 +485,6 @@ private struct MockInsightsSection: View {
   }
 }
 
-/// A full mock's essay: its grade by the exam's rubric, grading on its way, or what's keeping it.
 private struct MockEssaySections: View {
   let run: MockRun
   let essay: MockEssay
@@ -573,7 +559,6 @@ private struct MockEssaySections: View {
   }
 }
 
-/// How the learner's preparation moved, as a share of the goal.
 private struct MockPreparationSection: View {
   let preparation: MockResult.Preparation
 
@@ -613,8 +598,6 @@ private struct MockPreparationRow: View {
   }
 }
 
-/// What the finished mock offers to change in the plan, as one change the learner applies or not:
-/// skip the lessons of the topics it showed they know, and give the area that went worst more time.
 private struct MockPlanSection: View {
   private enum Answer: Equatable {
     case declined
@@ -720,7 +703,7 @@ private struct MockPlanSection: View {
     }
   }
 
-  /// Applies the offers one after the other (both change the plan), each with what it came to.
+  /// One after the other: both change the plan.
   private func apply() async {
     applying = true
     defer { applying = false }
@@ -739,7 +722,6 @@ private struct MockPlanSection: View {
     }
   }
 
-  /// What the change came to, one line per offer; keeping the plan only when nothing applied.
   private var statusLines: [String] {
     let applied = answers.values.contains {
       if case .outcome(.applied) = $0 { return true }
@@ -786,7 +768,6 @@ private struct MockPlanSection: View {
   }
 }
 
-/// The questions to review: each with the learner's answer, the right one and why.
 private struct MockReviewSection: View {
   let items: [MockReviewItem]
 
@@ -849,7 +830,6 @@ private struct MockReviewSection: View {
   }
 }
 
-/// Where the mock's size comes from and what it leaves out of the real exam.
 private struct MockNotesSection: View {
   let view: MockView
 

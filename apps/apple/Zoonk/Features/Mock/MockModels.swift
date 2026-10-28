@@ -1,8 +1,7 @@
 import Foundation
 
-// The mock exam as the app reads it: the generated `MockExam`, `MockOptions` and `ExamMockSummary`
-// re-read into the fields the screens draw (`PracticeJSON.recode`), so the runner can change its
-// drafts and plays as the learner goes.
+// Re-read from the generated types (`PracticeJSON.recode`), so the runner can change its drafts and
+// plays as the learner goes.
 
 enum MockPurpose: String, Decodable, Sendable {
   case planned
@@ -10,7 +9,6 @@ enum MockPurpose: String, Decodable, Sendable {
   case placement
 }
 
-/// What a mock taken any time sits: a whole exam day, half of one, or one subject.
 struct MockShape: Hashable, Codable, Sendable {
   enum Kind: String, Codable, Sendable {
     case full
@@ -23,15 +21,13 @@ struct MockShape: Hashable, Codable, Sendable {
   var kind: Kind
 }
 
-/// A running mock's answer to one question: a pick, several, true or false, a number or text
-/// (`PracticeAnswer` encodes them in the API's shape). Nil leaves it blank.
 struct MockDraft: Hashable, Codable, Sendable {
   var answer: PracticeAnswer?
   var durationMs: Int
   var flagged: Bool
   var itemId: String
 
-  /// Whether it holds an answer: a pick, a number (zero too) or text the learner didn't clear.
+  /// A number counts even when it's zero.
   var isAnswered: Bool {
     switch answer {
     case nil, .dontKnow: false
@@ -45,8 +41,6 @@ struct MockDraft: Hashable, Codable, Sendable {
   }
 }
 
-/// One question of the running section. An essay (a full mock's written part) has no practice
-/// format, so it's read apart; every other question is a practice question with its number.
 struct MockQuestion: Identifiable, Hashable, Sendable, Decodable {
   enum Format: String, Decodable, Sendable {
     case multipleChoice
@@ -63,7 +57,7 @@ struct MockQuestion: Identifiable, Hashable, Sendable, Decodable {
   var number: Int
   var question: String
   var set: PracticeItemSet?
-  /// The practice question for every format but an essay.
+  /// Nil for an essay.
   var practice: PracticeQuestion?
 
   var id: String { itemId }
@@ -92,7 +86,6 @@ struct MockSection: Hashable, Decodable, Sendable {
     case upcoming
   }
 
-  /// How the notice lets the learner move through it (see `MockSectionMoves`).
   struct Navigation: Hashable, Decodable, Sendable {
     var answerChanges: Int?
     var forwardOnly: Bool
@@ -111,7 +104,6 @@ struct MockSection: Hashable, Decodable, Sendable {
   var tools: String?
 }
 
-/// The section on the clock: its questions (never their answers), deadline and saved drafts.
 struct MockCurrent: Hashable, Decodable, Sendable {
   enum Kind: String, Decodable, Sendable {
     case listening
@@ -199,7 +191,6 @@ struct MockResult: Hashable, Decodable, Sendable {
   var unansweredAtTimeout: Int
 }
 
-/// How sure and unsure answers went, where a wrong answer costs points.
 struct NetCalibration: Hashable, Decodable, Sendable {
   struct Count: Hashable, Decodable, Sendable {
     var answered: Int
@@ -217,7 +208,6 @@ struct NetCalibration: Hashable, Decodable, Sendable {
   var unsure: Count
 }
 
-/// A full mock's essay: graded right after hand-in, by the exam's rubric.
 struct MockEssay: Hashable, Decodable, Sendable, Identifiable {
   enum Status: String, Decodable, Sendable {
     case blank
@@ -235,7 +225,6 @@ struct MockEssay: Hashable, Decodable, Sendable, Identifiable {
   var id: String { itemId }
 }
 
-/// A question of the finished mock to review: what the learner answered and the right answer.
 struct MockReviewItem: Hashable, Decodable, Sendable, Identifiable {
   enum Outcome: String, Decodable, Sendable {
     case blank
@@ -256,7 +245,6 @@ struct MockReviewItem: Hashable, Decodable, Sendable, Identifiable {
   var id: String { itemId }
 }
 
-/// What the finished mock offers to change in the plan, applied only once the learner says so.
 struct MockAdapt: Hashable, Decodable, Sendable {
   struct Focus: Hashable, Decodable, Sendable {
     var area: String
@@ -273,7 +261,6 @@ struct MockAdapt: Hashable, Decodable, Sendable {
   var skip: Skip?
 }
 
-/// Where the scale and the notice's scoring rule stand beside the mock's right answers.
 struct MockScoreNotes: Hashable, Decodable, Sendable {
   struct Scale: Hashable, Decodable, Sendable {
     var max: Double
@@ -288,7 +275,6 @@ struct MockScoreNotes: Hashable, Decodable, Sendable {
   var scale: Scale?
 }
 
-/// A part of the real exam a mock leaves out, with why.
 struct MockLeftOut: Hashable, Decodable, Sendable {
   enum Part: String, Decodable, Sendable {
     case listening
@@ -304,7 +290,6 @@ struct MockLeftOut: Hashable, Decodable, Sendable {
   var part: Part
 }
 
-/// Where a mock's size comes from: said on the mock whenever it isn't the notice.
 struct MockSizeSource: Hashable, Decodable, Sendable {
   enum Source: String, Decodable, Sendable {
     case even
@@ -326,13 +311,11 @@ struct MockSizeSource: Hashable, Decodable, Sendable {
   var time: Source
 }
 
-/// What it takes to pass, in the notice's own words and language.
 struct PassMarks: Hashable, Decodable, Sendable {
   var language: String
   var texts: [String]
 }
 
-/// The running mock's speaking paper: each task a live call, opened in turn.
 struct MockSpeaking: Hashable, Decodable, Sendable {
   struct Task: Hashable, Decodable, Sendable, Identifiable {
     enum Status: String, Decodable, Sendable {
@@ -352,7 +335,6 @@ struct MockSpeaking: Hashable, Decodable, Sendable {
   var title: String
 }
 
-/// A mock exam by the id it opens by: before it starts, while it runs, and its result.
 struct MockView: Hashable, Decodable, Sendable {
   enum Status: String, Decodable, Sendable {
     case ready
@@ -423,13 +405,11 @@ struct MockView: Hashable, Decodable, Sendable {
   }
 }
 
-/// Whether the exam's own text is a notice (a public exam's) or an official guide.
 enum ExamDocument: String, Decodable, Sendable {
   case guide
   case notice
 }
 
-/// One mock the learner can take whenever they want, with its honest size and time.
 struct MockOption: Hashable, Decodable, Sendable, Identifiable {
   var area: String?
   var areas: [String]
@@ -442,13 +422,11 @@ struct MockOption: Hashable, Decodable, Sendable, Identifiable {
   var questions: Int
   var written: [String]
 
-  /// One option's key among the goal's, as the chooser and a short start name it.
   var id: String { [kind.rawValue, day.map(String.init) ?? "", area ?? ""].joined(separator: ":") }
 
   var shape: MockShape { MockShape(area: area, day: day, kind: kind) }
 }
 
-/// A diagnostic mock's length in onboarding, with its real size and how fine a start it sets.
 struct PlacementMockOption: Hashable, Decodable, Sendable, Identifiable {
   enum Length: String, Codable, Sendable {
     case short
@@ -466,7 +444,6 @@ struct PlacementMockOption: Hashable, Decodable, Sendable, Identifiable {
   var id: Length { length }
 }
 
-/// A finished mock in the exam's list, by the id its result opens by.
 struct ExamMockSummary: Hashable, Decodable, Sendable, Identifiable {
   var blockId: String?
   var correct: Double
@@ -482,7 +459,6 @@ struct ExamMockSummary: Hashable, Decodable, Sendable, Identifiable {
   var id: Int { number }
 }
 
-/// The goal's mocks to take any time, the one running, and the placement mock's lengths.
 struct MockOptions: Hashable, Decodable, Sendable {
   enum Access: String, Decodable, Sendable {
     case open
@@ -519,6 +495,5 @@ struct MockOptions: Hashable, Decodable, Sendable {
   var running: Running?
   var sizeSource: MockSizeSource
 
-  /// Whether there's anything to offer: a mock running, or one to take.
   var offersMock: Bool { running != nil || !options.isEmpty }
 }
