@@ -1,12 +1,15 @@
 import SwiftUI
 
-/// Like the exam room: one question at a time with no feedback.
+/// Like the exam room: one question at a time with no feedback. Where two pages fit it's a spread,
+/// and the open answer sheet takes the trailing page.
 struct MockRunnerView: View {
-  @Environment(\.horizontalSizeClass) private var sizeClass
-  /// Kept through folding and unfolding iPhone Duo, and never turned into a sheet over the question
-  /// when the screen narrows.
-  @State private var showsSheetBeside = false
-  @State private var showsSheetOver = false
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  /// Kept through folding and unfolding iPhone Duo.
+  @State private var showsAnswerSheet = false
+  /// Opened where the question is one column: only then a sheet, so closing iPhone Duo with it
+  /// beside the question never covers the question.
+  @State private var answerSheetInSheet = false
+  @State private var fitsTwoPages = false
   @State private var confirmsHandIn = false
   @Bindable var run: MockRun
   let view: MockView
@@ -15,36 +18,32 @@ struct MockRunnerView: View {
   var body: some View {
     Group {
       if let question = run.question {
-        QuestionSpread(readableWidth: 720, spacing: 16) {
-          EmptyView()
-        } stimulus: {
-          MockQuestionMeta(run: run, view: view, question: question)
-          MockQuestionCard(run: run, view: view, question: question, part: .stimulus)
-        } response: {
-          MockQuestionCard(run: run, view: view, question: question, part: .response)
-          MovesNote(moves: run.moves)
-        } actions: {
-          MockActionBar(run: run) {
-            FlagButton(run: run)
-            nextButton
-          }
-        }
-        // Outside the pages, which folding or unfolding draws again: the question's time and its
-        // own clock count once per question.
-        .id(question.id)
-        .onAppear { run.show(question.itemId) }
-        .itemClock(run: run, question: question)
+        pages(question)
+          // Outside the pages, which folding or unfolding draws again: the question's time and its
+          // own clock count once per question.
+          .id(question.id)
+          .onAppear { run.show(question.itemId) }
+          .itemClock(run: run, question: question)
       }
+    }
+    .onGeometryChange(for: Bool.self) {
+      [isAccessibilitySize = dynamicTypeSize.isAccessibilitySize] proxy in
+      !isAccessibilitySize && PaneSpace(proxy).panes(primaryShare: 0.5) != nil
+    } action: {
+      fitsTwoPages = $0
     }
     .navigationTitle(MockLabels.title(number: view.number))
     .toolbar {
       ToolbarItem(placement: .principal) { MockClock(deadline: current.deadline) }
       ToolbarItem(placement: .primaryAction) {
         Button {
-          if sizeClass == .compact {
-            showsSheetOver.toggle()
+          // Beside the question it closes the sheet too; elsewhere it opens it, including one left
+          // open beside the question before iPhone Duo closed.
+          if showsAnswerSheet, fitsTwoPages {
+            showsAnswerSheet = false
           } else {
-            showsSheetBeside.toggle()
+            showsAnswerSheet = true
+            answerSheetInSheet = !fitsTwoPages
           }
         } label: {
           Label {
@@ -56,23 +55,19 @@ struct MockRunnerView: View {
       }
     }
     .deadline(current.deadline, run: run)
-    .inspector(
-      isPresented: Binding(
-        get: { showsSheetBeside && sizeClass != .compact }, set: { showsSheetBeside = $0 })
-    ) {
-      answerSheet
-    }
     .sheet(
       isPresented: Binding(
-        get: { showsSheetOver && sizeClass == .compact }, set: { showsSheetOver = $0 })
+        get: { showsAnswerSheet && answerSheetInSheet },
+        set: { isShown in
+          // Only the learner closing the sheet closes it: one leaving for the pane stays open.
+          if !isShown, answerSheetInSheet { showsAnswerSheet = false }
+        })
     ) {
-      answerSheet.presentationDetents([.medium, .large])
+      answerSheet(isBeside: false).presentationDetents([.medium, .large])
     }
-    .onChange(of: sizeClass) { _, size in
-      if size != .compact, showsSheetOver {
-        showsSheetOver = false
-        showsSheetBeside = true
-      }
+    // A sheet opened in one column moves beside the question once two pages fit.
+    .onChange(of: fitsTwoPages) { _, fits in
+      if fits { answerSheetInSheet = false }
     }
     .alert(handInTitle, isPresented: $confirmsHandIn) {
       Button(role: .cancel) {
@@ -92,15 +87,68 @@ struct MockRunnerView: View {
     }
   }
 
-  private var answerSheet: some View {
-    MockAnswerSheet(run: run, view: view) {
-      showsSheetBeside = false
-      showsSheetOver = false
+  /// The question as a spread, or, with the answer sheet open where two pages fit, whole in one
+  /// column on the leading page beside the sheet. Side panels are panes, never inspectors: one
+  /// presented while iPhone Duo is folded misplaces the screen beside it.
+  @ViewBuilder
+  private func pages(_ question: MockQuestion) -> some View {
+    if showsAnswerSheet, fitsTwoPages {
+      PaneSplit(primaryShare: 0.5) {
+        QuestionColumn(readableWidth: 720, spacing: 16) {
+          EmptyView()
+        } content: {
+          questionParts(question)
+        } actions: {
+          actionBar
+        }
+        .environment(\.isPaneSplit, false)
+      } secondary: {
+        answerSheet(isBeside: true)
+      } single: {
+        spread(question)
+      }
+    } else {
+      spread(question)
+    }
+  }
+
+  private func spread(_ question: MockQuestion) -> some View {
+    QuestionSpread(readableWidth: 720, spacing: 16) {
+      EmptyView()
+    } stimulus: {
+      MockQuestionMeta(run: run, view: view, question: question)
+      MockQuestionCard(run: run, view: view, question: question, part: .stimulus)
+    } response: {
+      MockQuestionCard(run: run, view: view, question: question, part: .response)
+      MovesNote(moves: run.moves)
+    } actions: {
+      actionBar
+    }
+  }
+
+  @ViewBuilder
+  private func questionParts(_ question: MockQuestion) -> some View {
+    MockQuestionMeta(run: run, view: view, question: question)
+    MockQuestionCard(run: run, view: view, question: question, part: .stimulus)
+    MockQuestionCard(run: run, view: view, question: question, part: .response)
+    MovesNote(moves: run.moves)
+  }
+
+  private var actionBar: some View {
+    MockActionBar(run: run) {
+      FlagButton(run: run)
+      nextButton
+    }
+  }
+
+  private func answerSheet(isBeside: Bool) -> some View {
+    MockAnswerSheet(run: run, view: view, isBeside: isBeside) {
+      showsAnswerSheet = false
       confirmsHandIn = true
     } onPick: { position in
       run.go(to: position)
       // Over the question it opens, the sheet closes; beside it, it stays.
-      showsSheetOver = false
+      if !isBeside { showsAnswerSheet = false }
     }
   }
 
@@ -470,61 +518,78 @@ struct MockSectionCounts {
 private struct MockAnswerSheet: View {
   let run: MockRun
   let view: MockView
+  /// Beside the question as its trailing page rather than in a sheet.
+  let isBeside: Bool
   let onHandIn: () -> Void
   let onPick: (Int) -> Void
 
   var body: some View {
-    NavigationStack {
-      List {
+    if isBeside {
+      sheet
+    } else {
+      NavigationStack {
+        sheet
+          .navigationTitle(Text("Answer sheet", tableName: "Mock", comment: "The answer sheet"))
+          .navigationBarTitleDisplayMode(.inline)
+      }
+    }
+  }
+
+  private var sheet: some View {
+    List {
+      if isBeside {
+        Text("Answer sheet", tableName: "Mock", comment: "The answer sheet")
+          .font(.headline)
+          .accessibilityAddTraits(.isHeader)
+          .listRowBackground(Color.clear)
+      }
+
+      Section {
+        ForEach(Array(run.questions.enumerated()), id: \.element.id) { index, question in
+          row(question, at: index)
+        }
+      } header: {
+        Text("Questions", tableName: "Mock", comment: "The answer sheet's questions")
+      } footer: {
+        Text(
+          "No feedback until the end, like on exam day.", tableName: "Mock",
+          comment: "Under the answer sheet")
+      }
+
+      if view.sections.count > 1 {
         Section {
-          ForEach(Array(run.questions.enumerated()), id: \.element.id) { index, question in
-            row(question, at: index)
+          ForEach(view.sections, id: \.index) { section in
+            LabeledContent {
+              switch section.status {
+              case .done:
+                Text("Handed in", tableName: "Mock", comment: "A section handed in")
+              case .current, .upcoming:
+                Text(MockLabels.duration(minutes: section.minutes)).monospacedDigit()
+              }
+            } label: {
+              Text(
+                section.name
+                  ?? String(
+                    localized: "Section \(section.index + 1)", table: "Mock",
+                    comment: "A section without a name"))
+            }
+            .fontWeight(section.status == .current ? .semibold : .regular)
           }
         } header: {
-          Text("Questions", tableName: "Mock", comment: "The answer sheet's questions")
-        } footer: {
-          Text(
-            "No feedback until the end, like on exam day.", tableName: "Mock",
-            comment: "Under the answer sheet")
-        }
-
-        if view.sections.count > 1 {
-          Section {
-            ForEach(view.sections, id: \.index) { section in
-              LabeledContent {
-                switch section.status {
-                case .done:
-                  Text("Handed in", tableName: "Mock", comment: "A section handed in")
-                case .current, .upcoming:
-                  Text(MockLabels.duration(minutes: section.minutes)).monospacedDigit()
-                }
-              } label: {
-                Text(
-                  section.name
-                    ?? String(
-                      localized: "Section \(section.index + 1)", table: "Mock",
-                      comment: "A section without a name"))
-              }
-              .fontWeight(section.status == .current ? .semibold : .regular)
-            }
-          } header: {
-            Text("Sections", tableName: "Mock", comment: "The mock's sections")
-          }
+          Text("Sections", tableName: "Mock", comment: "The mock's sections")
         }
       }
-      .navigationTitle(Text("Answer sheet", tableName: "Mock", comment: "The answer sheet"))
-      .navigationBarTitleDisplayMode(.inline)
-      .safeAreaBar(edge: .bottom) {
-        Button(action: onHandIn) {
-          Text("Hand in", tableName: "Mock", comment: "Hands in from the answer sheet")
-            .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.bordered)
-        .controlSize(.large)
-        .disabled(run.pending || !run.moves.canAdvance && run.position == run.questions.count - 1)
-        .scenePadding(.horizontal)
-        .padding(.vertical, 10)
+    }
+    .safeAreaBar(edge: .bottom) {
+      Button(action: onHandIn) {
+        Text("Hand in", tableName: "Mock", comment: "Hands in from the answer sheet")
+          .frame(maxWidth: .infinity)
       }
+      .buttonStyle(.bordered)
+      .controlSize(.large)
+      .disabled(run.pending || !run.moves.canAdvance && run.position == run.questions.count - 1)
+      .scenePadding(.horizontal)
+      .padding(.vertical, 10)
     }
   }
 
