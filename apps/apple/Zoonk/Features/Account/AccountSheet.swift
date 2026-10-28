@@ -192,6 +192,9 @@ private struct SettingsHubView: View {
   @Environment(SessionStore.self) private var session
   @Environment(SettingsStore.self) private var settings
   @State private var isHelpPresented = false
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  /// Grows with the name and email beside it.
+  @ScaledMetric(relativeTo: .body) private var avatarSize = 40.0
 
   let account: CurrentAccount
   let manageAppStoreSubscription: () -> Void
@@ -202,8 +205,14 @@ private struct SettingsHubView: View {
       if !isGuest {
         Section {
           NavigationLink(value: AccountDestination.profile) {
-            HStack(spacing: 12) {
-              AccountAvatar(user: account.user, size: 40)
+            // Large text puts the avatar above the name, so neither squeezes the other.
+            let layout =
+              dynamicTypeSize.isAccessibilitySize
+              ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
+              : AnyLayout(HStackLayout(spacing: 12))
+
+            layout {
+              AccountAvatar(user: account.user, size: avatarSize)
                 .accessibilityHidden(true)
 
               VStack(alignment: .leading) {
