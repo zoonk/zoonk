@@ -34,7 +34,9 @@
           mindMapsAPI: UITestMindMapsAPI(environment: environment),
           progressAPI: progressAPI(from: environment),
           studyAPI: studyAPI(from: environment),
-          tutorAPI: buddyStatus(from: environment).map { _ in UITestTutorAPI() }),
+          tutorAPI: buddyStatus(from: environment).map { _ in
+            UITestTutorAPI(turns: Int(environment["ZOONK_UI_TEST_TUTOR_TURNS"] ?? "") ?? 0)
+          }),
         initiallyPresentsAccount: arguments.contains("--ui-testing-account-sheet"))
     }
 
@@ -349,10 +351,27 @@
 
   /// Every conversation starts empty. UI tests never ask, so nothing is answered.
   private struct UITestTutorAPI: TutorAPIClient {
+    /// How many answered questions each conversation holds (`ZOONK_UI_TEST_TUTOR_TURNS`), to
+    /// measure a long conversation; none by default.
+    let turns: Int
+
     func thread(_ scope: TutorScope, cursor: String?, token: String) async throws
       -> TutorThreadPage
     {
-      .empty
+      let start = Date(timeIntervalSince1970: 1_767_225_600)
+      let answer = String(
+        repeating: "An orbit is the **curved path** an object takes around a star or planet. ",
+        count: 6)
+
+      return TutorThreadPage(
+        turns: (0..<turns).map { index in
+          TutorTurn(
+            id: "turn-\(index)", question: "Question \(index + 1): what is an orbit?",
+            answer: answer, status: .completed,
+            createdAt: start.addingTimeInterval(Double(index) * 3600), about: .plan,
+            planChange: nil, toolOffer: nil)
+        },
+        hasMore: false, nextCursor: nil)
     }
 
     func ask(
