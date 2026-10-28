@@ -307,6 +307,9 @@ struct PracticeSecondaryButton: View {
       }
       .frame(maxWidth: sideBySide ? nil : .infinity)
     }
+    // Beside the main action it keeps its own width, so its label stays on one line; the row
+    // stacks instead when that doesn't fit.
+    .fixedSize(horizontal: sideBySide, vertical: false)
     .buttonStyle(.glass)
     .controlSize(.large)
     .disabled(isDisabled)
