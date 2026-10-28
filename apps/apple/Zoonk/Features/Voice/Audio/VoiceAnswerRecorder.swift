@@ -12,8 +12,6 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
 
   let grade: @MainActor (VoiceServices, VoiceRecording) async throws -> Grade
   let onGraded: @MainActor (Grade) -> Void
-  var onAccount: (() -> Void)?
-  var onPlus: (() -> Void)?
   /// Says "Tap and say it out loud" while idle; off where the screen already asks.
   var asksToSpeak = true
 
@@ -45,7 +43,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
   @ViewBuilder
   private var status: some View {
     if case .limit(let limit) = issue, !recorder.isRecording {
-      HelpLimitNotice(limit: limit, onAccount: onAccount, onPlus: onPlus)
+      HelpLimitNotice(limit: limit)
     } else if let hint {
       Text(hint)
         .font(.subheadline)

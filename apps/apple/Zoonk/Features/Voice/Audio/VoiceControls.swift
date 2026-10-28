@@ -17,10 +17,13 @@ struct RecordButton: View {
           HStack(spacing: 8) {
             Text("Stop", tableName: "Voice", comment: "Button that stops recording the learner")
             // The clock moves every second, so it stays out of the button's name.
-            Text(timerInterval: startedAt...startedAt.addingTimeInterval(VoiceRecorder.maxDuration))
-              .monospacedDigit()
-              .foregroundStyle(.secondary)
-              .accessibilityHidden(true)
+            Text(
+              timerInterval: startedAt...startedAt.addingTimeInterval(VoiceRecorder.maxDuration),
+              countsDown: false
+            )
+            .monospacedDigit()
+            .foregroundStyle(.secondary)
+            .accessibilityHidden(true)
           }
         } icon: {
           Image(systemName: "stop.fill")
@@ -66,10 +69,8 @@ struct LevelMeter: View {
 /// account, a free learner gets Plus; Plus and a short break just wait. Port of main's
 /// `HelpLimitNotice`.
 struct HelpLimitNotice: View {
+  @Environment(AppRouter.self) private var router
   let limit: HelpLimit
-  /// Opens the account sheet (create an account) or the subscription (See Plus).
-  var onAccount: (() -> Void)?
-  var onPlus: (() -> Void)?
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
@@ -77,18 +78,18 @@ struct HelpLimitNotice: View {
         .font(.subheadline)
         .foregroundStyle(.secondary)
 
-      if limit.needsAccount, let onAccount {
-        Button(action: onAccount) {
+      if limit.needsAccount {
+        Button {
+          router.present(.account)
+        } label: {
           Text(
             "Create a free account", tableName: "Voice",
             comment: "Button to sign up after a guest used the free help")
         }
         .buttonStyle(.bordered)
-      } else if limit.offersPlus, let onPlus {
-        Button(action: onPlus) {
-          Text("See Plus", tableName: "Voice", comment: "Button that opens the Plus subscription")
-        }
-        .buttonStyle(.bordered)
+      } else if limit.offersPlus {
+        SeePlusButton()
+          .buttonStyle(.bordered)
       }
     }
   }
