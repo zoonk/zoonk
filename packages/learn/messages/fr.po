@@ -1928,6 +1928,12 @@ msgctxt "ohcs3n"
 msgid "New try in your next session"
 msgstr "Nouvel essai à ta prochaine séance"
 
+#: src/conversation/tutor-composer.tsx
+#: src/conversation/tutor-conversation-content.tsx
+msgctxt "hxbNj_"
+msgid "Ask a question or request a change"
+msgstr "Pose une question ou demande une modification"
+
 #: src/conversation/tutor-conversation-content.tsx
 msgctxt "pSjxNB"
 msgid "Why am I studying this today?"
@@ -1962,11 +1968,6 @@ msgstr "Salut ! Je suis {name}, ton compagnon d’étude IA. Tu peux me poser to
 msgctxt "Dij_iT"
 msgid "Message {name}"
 msgstr "Message à {name}"
-
-#: src/conversation/tutor-conversation-content.tsx
-msgctxt "hxbNj_"
-msgid "Ask a question or request a change"
-msgstr "Pose une question ou demande une modification"
 
 #: src/conversation/tutor-feature-offers.tsx
 msgctxt "_b0lor"
