@@ -12,16 +12,13 @@ import { seedV2PersonaCopy } from "../seed/seed-v2";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { startStudyBlock } from "./start-study-block";
 
-/** Sunday after midnight in Maya's time zone, with the weekly challenge due today. */
 const NOW = new Date("2026-10-18T04:12:18Z");
 
-/** The Saturday before, late in Maya's evening: a lesson day the plan leaves time on. */
 const SATURDAY = new Date("2026-10-18T03:53:18Z");
 
 const REST_WEEKDAY = 2;
 const SESSION_INCLUDE = { blocks: { orderBy: { position: "asc" } } } as const;
 
-/** The persona's real planner-built week and an unstarted day opened through the learner's POST. */
 async function openPlannedDay(persona: "buddy" | "hugeGoal" = "hugeGoal") {
   const copyKey = crypto.randomUUID();
 
@@ -42,7 +39,6 @@ async function openPlannedDay(persona: "buddy" | "hugeGoal" = "hugeGoal") {
   const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
   const timeZone = goal.timezone ?? "UTC";
 
-  // Only the private copy's hand-built day is removed; the ordinary planner and Open replace it.
   await prisma.studySession.delete({ where: { id: seeded.id } });
   await createGoalPlan({ goalId, graph: parsePlanGraph(plan.graph) });
   const opened = await getTodayStudySession({ goalId, timeZone });
@@ -62,14 +58,12 @@ async function openPlannedDay(persona: "buddy" | "hugeGoal" = "hugeGoal") {
   return { before, goal, plan, timeZone, userId };
 }
 
-/** Sunday's day (`openPlannedDay`), which holds the weekly challenge. */
 async function openPlannedSunday(persona: "buddy" | "hugeGoal" = "hugeGoal") {
   const day = await openPlannedDay(persona);
   expect(day.before.blocks.some((block) => block.kind === "checkpoint")).toBe(true);
   return day;
 }
 
-/** The learner applies a proposal to rest on `REST_WEEKDAY`s, a day still ahead. */
 async function applyFutureRestDay({
   goalId,
   planId,
@@ -209,10 +203,6 @@ describe("a started day after a plan change", () => {
     vi.useRealTimers();
   });
 
-  // Maya started Saturday's session and gave Tuesdays a rest from her buddy's card: the rest of
-  // her day took five lessons the plan had from November to January, and the card said today's
-  // session followed the change. The rest of a started day takes what the plan gives today, as Open
-  // does, never the next lessons ahead.
   it("keeps the rest of the day for a future rest day, without lessons from later days", async () => {
     const { before, goal, plan, timeZone } = await openPlannedDay();
     const first = before.blocks[0];

@@ -47,10 +47,7 @@ function fixCandidate({
   ];
 }
 
-/**
- * The chapter or unit a pick names ("Finish Percentages", a call about a unit), from the library
- * when the plan's skills don't carry it, as a language goal's units don't.
- */
+/** Language unit titles may require the library because their plan skills do not carry them. */
 async function withChapterTitles(picks: readonly MissionPick[]): Promise<MissionPick[]> {
   const ids = [
     ...new Set(

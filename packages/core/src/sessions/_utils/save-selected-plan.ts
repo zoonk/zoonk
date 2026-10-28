@@ -52,7 +52,7 @@ export type PreparedSelectedPlanSave =
       proposals?: ProposalWrite | null;
     };
 
-/** The same selected plan's exact write and notice are prepared before taking any row locks. */
+/** Prepare before row locks; the write and notice must share the same selected plan. */
 export async function prepareSelectedPlanSave({
   selection,
   shown,
@@ -180,10 +180,6 @@ export async function saveSelectedPlan({
   return context.plan.version + 1;
 }
 
-/**
- * Whether a change the selected plan saves moves the phase dates itself: a waiting proposal to
- * move them no longer describes the plan, so saving it replaces that proposal.
- */
 function replacesPhaseDates(change: PlanChangeRecord | null): boolean {
   return (
     change !== null && (parsePlanChangePayload(change.payload).effect?.phaseEnds?.length ?? 0) > 0

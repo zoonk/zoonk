@@ -3,39 +3,24 @@ import { type BlockCheckpoint } from "../block-payload";
 
 type DayItem = Pick<PlanItem, "position" | "scheduledFor">;
 
-/** A challenge of the day, as the session has it. */
 type DayChallenge = Pick<BlockCheckpoint, "kind" | "rematch"> & {
   planItemId: string | null;
   planItemKey?: string | null;
 };
 
-/** Where the plan has a lesson of the day around its first duel (see `getChallengeSide`). */
 export type DuelMarks = {
-  /**
-   * The plan has it before a challenge the day asks (a phase's last lessons can share its
-   * challenge's day): it comes first even on a first duel's day (see `keepDuelLessons`).
-   */
+  /** Lessons the challenge tests must precede it even when sharing its scheduled day. */
   beforeChallenge?: boolean;
-  /**
-   * The plan has it after the day's first duel, due by today (the challenge leads its day, and the
-   * next lessons follow it there): it comes after the challenge (see `keepDuelLessons`).
-   */
+  /** Preserve lessons promised after the duel on its own day; later days still wait. */
   afterChallenge?: boolean;
 };
 
-/** A lesson of the day, as the session has it. */
 type DayLesson = DuelMarks & { planItemId: string | null; planItemKey?: string | null };
 
-/** A phase's challenge the learner hasn't played yet: not a rematch, not the week's. */
 function isFirstDuel(checkpoint: Pick<DayChallenge, "kind" | "rematch">): boolean {
   return checkpoint.kind !== "weekly" && !checkpoint.rematch;
 }
 
-/**
- * Where a lesson of a first duel's day stands to the day's last first duel (`challengeAt`, its
- * position in the plan): before it, or after it and due by today (the challenge leads the day the
- * plan gives it, and the next lessons follow it there); null for a later day's, which waits.
- */
 function getChallengeSide({
   challengeAt,
   item,
@@ -52,14 +37,7 @@ function getChallengeSide({
   return item.scheduledFor !== null && item.scheduledFor <= today ? "after" : null;
 }
 
-/**
- * The day's lessons, marked by where the plan has them around the day's last first duel (see
- * `getChallengeSide`): `beforeChallenge`, a phase's last lessons sharing its challenge's day, which
- * come first (held back as new lessons, they came after the challenge that tests them), and
- * `afterChallenge`, the ones the plan gives the challenge's day after it (held back, the chapter's
- * next lesson a learner was promised for that day left Today with the challenge alone). The plan's
- * saved items say where, never the chapter the learner is in now.
- */
+/** Use saved plan order, never the learner's currently open chapter, to place lessons around duels. */
 export function markLessonsAroundChallenges<TLesson extends DayLesson>({
   checkpoints,
   items,
@@ -99,13 +77,7 @@ export function markLessonsAroundChallenges<TLesson extends DayLesson>({
   });
 }
 
-/**
- * The new lessons a day takes. On a first duel's day, practice prepares for the challenge, so new
- * lessons wait, but the ones the plan has before it come first all the same (a challenge comes
- * after the lessons it tests, R40), and the ones it has after it on this day follow it (see
- * `markLessonsAroundChallenges`): only later days' wait. A rematch never holds them back: losing
- * a boss never locks the next phase.
- */
+/** Rematches never lock the next phase; first duels preserve lessons promised before/after them on the same day. */
 export function keepDuelLessons<TLesson extends DayLesson>({
   checkpoints,
   lessons,
@@ -118,7 +90,7 @@ export function keepDuelLessons<TLesson extends DayLesson>({
     : lessons;
 }
 
-/** The day's lessons, in plan order, before the day's first duel and after it (`afterChallenge`). */
+/** Preserves plan order within each side of the duel. */
 export function splitAtDuel<TLesson extends DuelMarks>(
   lessons: readonly TLesson[],
 ): { after: TLesson[]; before: TLesson[] } {

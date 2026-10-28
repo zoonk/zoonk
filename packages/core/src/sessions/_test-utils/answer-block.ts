@@ -2,11 +2,7 @@ import { answerStudyQuestion } from "../answer-study-question";
 import { type StudyAnswerResult } from "../contract";
 import { getStudyBlock } from "../get-study-block";
 
-/**
- * Answers every question of a block (its first `count` with one) with the same option, one after
- * another like a learner does, so Hyperdrive and the notebook see them in order. Option 0 is right
- * in the session fixtures.
- */
+/** Answers sequentially to preserve scoring order; option zero is correct in session fixtures. */
 export async function answerBlockInOrder({
   blockId,
   count,

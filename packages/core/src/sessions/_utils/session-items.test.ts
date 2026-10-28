@@ -106,17 +106,14 @@ function parseMath() {
   return item;
 }
 
-/** Numbers as questions and answers show them, without floating-point noise. */
 function shown(value: number): string {
   return String(Number(value.toFixed(4)));
 }
 
-/** An amount in reais as an English answer writes it. */
 function shownMoney(value: number): string {
   return formatMathAnswer({ language: "en", unit: "R$", value });
 }
 
-/** The price and the discount the question shows, and what the learner pays. */
 function readNumbers(question: string) {
   const [price = 0, discount = 0] = (question.match(/\d+(?:\.\d+)?/gu) ?? []).map(Number);
   return { discount, paid: price * (1 - discount / 100), price, saved: (price * discount) / 100 };

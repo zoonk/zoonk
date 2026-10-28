@@ -48,7 +48,7 @@ function readNextStop({
     : null;
 }
 
-/** Full entry data without Today's other cards, writes or invented IDs. */
+/** Read-only entry data; never creates session or block ids. */
 export async function getSessionPageView(
   input: TodayStudySessionInput & { blockId?: string },
 ): Promise<SessionPageViewResult> {

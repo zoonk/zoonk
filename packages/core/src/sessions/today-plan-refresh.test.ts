@@ -41,7 +41,6 @@ describe("building today's session from a plan with missed days", () => {
     vi.mocked(revalidateTag).mockClear();
     const finishDeferredWork = runDeferredWork();
 
-    // Opening Today on Thursday builds the day: Monday to Wednesday were missed.
     const result = await getTodayStudySession({ goalId: goal.id, timeZone: "UTC" });
     await finishDeferredWork();
 
@@ -50,8 +49,7 @@ describe("building today's session from a plan with missed days", () => {
     const changes = await prisma.planChange.findMany({ where: { planId: plan.id } });
     expect(changes).toMatchObject([{ kind: "missedDays" }]);
 
-    // Next.js throws when a render (or its prefetch) clears caches, even from `after()`, and the
-    // plan's tags only tag private reads that no server keeps, so nothing is cleared, then or later.
+    // Next.js forbids render-time tag invalidation, including work scheduled with after().
     expect(revalidateTag).not.toHaveBeenCalled();
   });
 });

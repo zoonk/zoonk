@@ -33,7 +33,6 @@ import { type SelectedDayPlan } from "./selected-day-plan";
 import { type SessionDayContext, loadSessionPlacement } from "./session-placement";
 import { type SessionPlanItem } from "./session-plan-item";
 
-/** The first day in a phase: nothing in it is done yet, and it isn't the plan's first phase. */
 function isNewPhase(items: readonly SessionPlanItem[]): boolean {
   const phase = items.find(
     (item) => LEARN_KINDS.has(item.kind) && item.status === "todo" && !isWritingItem(item),
@@ -50,7 +49,7 @@ function getPlanProgress(items: readonly SessionPlanItem[]): number {
   return items.filter((item) => item.status !== "todo").length / Math.max(1, items.length);
 }
 
-/** A question the checkpoint asks is answered there; answering it right fixes its mistake too. */
+/** Checkpoint questions must stay out of drills; a correct checkpoint answer fixes their mistake too. */
 function withoutCheckpointItems({
   checkpointItems,
   drills,
@@ -65,10 +64,7 @@ function withoutCheckpointItems({
 
 type BuildContext = SessionDayContext;
 
-/**
- * A language whose script isn't Latin opens a new learner's sessions with its alphabet lesson,
- * outside the plan, until they finish it, skip it or show they read the script.
- */
+/** A new script's alphabet is outside the plan and stays first until finished, skipped, or demonstrated known. */
 function toAlphabetLessons(alphabet: AlphabetIntro | null): PlannedLesson[] {
   if (!alphabet?.pending) {
     return [];
@@ -107,7 +103,6 @@ function getDayFreshStart({
   });
 }
 
-/** What the day's quick review reads (see `loadReviewCapsules`). */
 function toReviewInput({
   context: { goal, localDate, timeZone, userId },
   field,
@@ -139,11 +134,7 @@ function toReviewInput({
   };
 }
 
-/**
- * A day with nothing due and nothing else to study (no lesson, practice, drill or challenge) is
- * never empty: it reviews the learner's weakest studied topics instead, briefly, and says so
- * (`weakestReview`). A learner who studied nothing yet still has an empty day.
- */
+/** Weakest-topic review fills otherwise empty days, but cannot invent review material for a learner who studied nothing. */
 async function withWeakestReview({
   input,
   review,
@@ -160,7 +151,6 @@ async function withWeakestReview({
   return capsules.length > 0 ? { ...input, capsules, weakestReview: true } : input;
 }
 
-/** The test's whole topic scope, including topics a short schedule leaves out. */
 function getPlanTestSkillIds(plan: Awaited<ReturnType<typeof loadDayPlan>>): string[] {
   return getTestSkillIds({
     graph: plan.graph,
@@ -169,21 +159,12 @@ function getPlanTestSkillIds(plan: Awaited<ReturnType<typeof loadDayPlan>>): str
   });
 }
 
-/**
- * Loads everything the day's session is built from: the alphabet first for a new script, the
- * plan's next lessons, today's capsules, a mistake to fix, mixed practice (with a question on each
- * topic the learner was taken to know, whatever the plan teaches; see `loadPracticeClaims`), a
- * day's bosses or weekly checkpoint when due, and the day's shape (fresh start, practice share, the
- * learner's daily limit, what a free exam plan covers).
- */
+/** Loads day inputs without persisting a session; selected plans and supplied facts must remain the caller's chosen state. */
 export async function loadSessionBuildInput(
   context: BuildContext & {
-    /**
-     * The day is underway and keeps blocks it already holds: it isn't empty, so it never gets a
-     * review of the weakest topics (`withWeakestReview`).
-     */
+    /** A day retaining blocks is not empty and must not get a weakest-topic fallback review. */
     keepsBlocks?: boolean;
-    /** The lessons of the blocks the day keeps: the next lessons it may add start after them. */
+    /** Look ahead past retained lessons rather than letting them consume new-lesson slots. */
     keptLessonIds?: ReadonlySet<string>;
     selection?: SelectedDayPlan;
     dayPlan?: Awaited<ReturnType<typeof loadDayPlan>> | ReturnType<typeof loadDayPlan>;
@@ -209,8 +190,6 @@ export async function loadSessionBuildInput(
     plan,
   });
 
-  // Every topic of the test, the ones its days left out too: what a mock asks, and the full
-  // review a free plan gets on a mock's day.
   const testSkillIds = getPlanTestSkillIds(plan);
 
   const access = getExamPrepAccess({ examPrep: plan.examPrep, goal, timeZone, today: localDate });
@@ -265,8 +244,7 @@ export async function loadSessionBuildInput(
       today: localDate,
       userId,
     }),
-    // The exam's written answers are practiced whatever its days have room for: a class test's
-    // announced essay comes up even when its topic's lessons don't fit.
+    // Written exam tasks must remain practiced even when their topics' lessons do not fit before the test.
     loadSessionProduce({
       goal,
       planSettings: plan.settings,
@@ -295,8 +273,7 @@ export async function loadSessionBuildInput(
 
   const reserved = new Set([...drills.flatMap((drill) => drill.itemIds), ...checkpointItems]);
 
-  // A mock the learner's plan doesn't include (a free plan's) leaves its day to a full review of
-  // every topic of the test, the ones its days left out too.
+  // A Plus-only mock day gives free learners a full review of every test topic instead.
   const fullReview = weekly.plusRequired;
   const reviewDay = findPlannedReview({ items: plan.items, today: localDate });
   const isReviewDay = fullReview || reviewDay !== null;

@@ -27,11 +27,7 @@ import { loadSessionAnswers } from "./session-answers";
 import { type EmptyDay, type StudySessionView, toStudySessionView } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
 
-/**
- * Why a session with no blocks has none, when its day has study time: the plan still outlines the
- * lessons it waits for (its stand-ins, `isWritingItem`), which land in the day on their own, or it
- * has no new lesson left for the day, which no wait would change.
- */
+/** Distinguish an outline still arriving from exhausted work that no amount of waiting will add. */
 async function loadEmptyDay({
   dayMinutes,
   session,
@@ -56,11 +52,6 @@ async function loadEmptyDay({
   return coming > 0 ? "lessonsComing" : "nothingNew";
 }
 
-/**
- * Whether the day holds time for lessons still being outlined: it's the learner's day, not done,
- * with time left for a lesson, and its outlines are being written (`isDayAwaitingOutlines`); they
- * join its end once they land (`appendLandedLessons`).
- */
 async function loadLessonsComing({
   current,
   dayMinutes,
@@ -79,7 +70,6 @@ async function loadLessonsComing({
   return isDayAwaitingOutlines({ goal: session.goal, localDate: session.localDate });
 }
 
-/** The plan's settings: a day just planned carries them, else the request's saved plan. */
 function loadViewPlan({ fresh, session }: { fresh?: PlannedStudyDay; session: StudySessionRow }) {
   if (fresh) {
     return { settings: fresh.plan.settings };
@@ -114,7 +104,6 @@ async function loadSessionBasics({
   return { answers, dailyLimit, plan, viewer };
 }
 
-/** Loads what the session view model reads: answers, missions, the week, limits and access. */
 export async function loadStudySessionView({
   blueprint,
   initialDay,
@@ -123,12 +112,11 @@ export async function loadStudySessionView({
   userId,
   weekDate = storedSession.localDate,
 }: {
-  /** The session goal's exam blueprint when a GET already read it (see `loadNotice`). */
   blueprint?: ExamBlueprint | null;
   session: StudySessionRow;
   timeZone: string;
   userId: string;
-  /** Today shows the request's week while a session carried across midnight keeps its own day. */
+  /** Today may show the request's week while the carried session retains yesterday's local day. */
   weekDate?: Date;
   initialDay?: PlannedStudyDay;
 }): Promise<StudySessionView> {

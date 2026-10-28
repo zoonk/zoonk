@@ -7,18 +7,7 @@ import { type ProgressChange } from "./_utils/session-progress";
 import { type StudyBlockCompletion } from "./completion-contract";
 import { finishLessonBlock } from "./finish-study-block";
 
-/**
- * What a finished lesson means for the learner's plan and day, called by the lesson player's
- * completion right after it closes the lesson's ledger row (`contentIds.lessonId`): the lesson is
- * checked off in every plan that has it (a quick explanation's lesson finishes the explanation),
- * and when it is one of the day's session blocks (today's, or the session the learner is still in
- * from before midnight) the block is done, the day is settled (missions, the full meal, the
- * session's end, milestones) and the block's completion moment comes back, so the player shows it
- * without another request. Null for a lesson played outside the day's session, or replayed after
- * its block was done.
- *
- * Internal: the lesson player's completion derives `userId` from the session first.
- */
+/** Internal authenticated caller, after closing the lesson ledger; checks off all plans and returns session completion only for its unfinished block. */
 export async function settleFinishedLesson({
   blockId,
   energy,
@@ -35,7 +24,6 @@ export async function settleFinishedLesson({
   timeZone: string;
   userId: string;
 }): Promise<StudyBlockCompletion | null> {
-  // The plan shows the lesson checked off; a lesson with nothing left to check changes nothing.
   const languageGoals = await writeLearnerChange({ planInputs: true, userId }, async (tx) => {
     // Lock the items still to do: a test-out that takes one meanwhile is seen, not raced.
     const open = await tx.$queryRaw<{ id: string }[]>`

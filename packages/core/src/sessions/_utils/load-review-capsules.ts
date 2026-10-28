@@ -17,7 +17,7 @@ import {
 } from "../capsules";
 import { SESSION_ITEM_FORMATS } from "./session-items";
 
-/** When each question was last answered by the learner, or null when never. */
+/** Null means never answered. */
 export async function loadLastAnswers({
   itemIds,
   userId,
@@ -38,11 +38,7 @@ export async function loadLastAnswers({
   );
 }
 
-/**
- * The questions the learner answered right the last time they answered them. A review day asks
- * what they haven't seen and brings back only what they missed: one answered right is remembered,
- * so asking it again practices recognizing it, not recalling the idea.
- */
+/** Last-right questions must stay out of review days: repeating them tests recognition rather than recall. */
 export async function loadRightAnswers({
   itemIds,
   userId,
@@ -62,7 +58,6 @@ export async function loadRightAnswers({
   );
 }
 
-/** The review window: the end of the learner's day, or the exam's start in its final stretch. */
 type ReviewHorizon = {
   /** The start of the exam day in the final stretch, else null. */
   examStart: Date | null;
@@ -71,14 +66,13 @@ type ReviewHorizon = {
   until: Date;
 };
 
-/** Today's review window for a goal, reaching to the exam day in an exam's final stretch. */
+/** Final-stretch reviews may use the exam day as their horizon rather than today's end. */
 export function getReviewHorizon({
   finalStretchStart,
   goal,
   localDate,
   timeZone,
 }: {
-  /** See `getFinalStretchStart`. */
   finalStretchStart: Date | null;
   goal: Pick<Goal, "kind" | "targetDate">;
   /** The learner-local date, as a UTC-midnight label. */
@@ -99,19 +93,13 @@ export function getReviewHorizon({
   };
 }
 
-/**
- * Reviews run against the exam date: in the final stretch, a skill whose next review would come
- * before the exam is due already, so every skill fading below target by exam day gets one more
- * review first, most at risk on exam day first and under the same daily cap. Each one waits a day
- * after its last review, so the same skill doesn't come back twice in one day.
- */
+/** In the final stretch, review skills due before the exam early; still wait a local day between reviews of the same skill. */
 async function loadDueSkills({
   cap,
   horizon,
   skillIds,
   userId,
 }: {
-  /** How many skills the day reviews at most (see `getDailyReviewCap`). */
   cap: number;
   horizon: ReviewHorizon;
   skillIds: readonly string[];
@@ -140,10 +128,6 @@ function isReviewedSince(row: { lastReviewedAt: Date | null }, since: Date): boo
   return row.lastReviewedAt !== null && row.lastReviewedAt >= since;
 }
 
-/**
- * The studied skills least likely to be recalled by the end of the day, none reviewed today, at
- * most `cap`: what a day with nothing due reviews (see `weakest` in `loadReviewCapsules`).
- */
 async function loadWeakestSkills({
   cap,
   horizon,
@@ -170,15 +154,9 @@ async function loadWeakestSkills({
     .map((row) => row.skillId);
 }
 
-/** A lesson of the learner's plan, with the plan skill it's held for. */
 type PlanLesson = Pick<PlanItem, "skillId" | "status" | "titleSnapshot"> & { lessonId: string };
 
-/**
- * The lesson that taught each skill is its capsule: one the learner finished, else one in their
- * plan, else the first lesson that teaches it. Carla's review was named after a later module's
- * lesson she hadn't started, which taught the skill of the one she had. A plan skill whose lessons
- * teach finer skills of their own is taught by the lessons the plan holds for it.
- */
+/** Prefer a finished teaching lesson over a later unstarted lesson that happens to share the skill. */
 async function loadCapsuleSources({
   planLessons,
   skillIds,
@@ -225,10 +203,7 @@ async function loadCapsuleSources({
   });
 }
 
-/**
- * The voiced recording each capsule plays for its listening skills (see `loadReviewCapsules`): the
- * one heard longest ago (never heard first) on one of them, each recording in one capsule only.
- */
+/** Each recording may appear in only one capsule; unheard first, then least recently heard. */
 function pickCapsuleRecordings({
   groups,
   listeningSkillIds,
@@ -252,14 +227,7 @@ function pickCapsuleRecordings({
   }, []);
 }
 
-/**
- * Today's capsules for a goal: the skills FSRS says are due by the end of the learner's day (by
- * the exam in its final stretch), under the daily cap and most at risk first, grouped by the lesson that taught them, each with a
- * format and a few quick questions. Known topics to confirm (`confirmSkillIds`) come first,
- * within the same cap. A skill only recordings practice comes back with one whole voiced
- * recording on it, never a text question. A capsule with no question to ask stays sealed until the
- * item bank has one.
- */
+/** At most the daily review cap; listening skills require whole voiced recordings and unaskable capsules remain sealed. */
 export async function loadReviewCapsules({
   confirmSkillIds = [],
   dailyMinutes,
@@ -273,10 +241,7 @@ export async function loadReviewCapsules({
   userId,
   weakest = false,
 }: {
-  /**
-   * Known topics the review asks first, in place of practice (see `loadReviewsAndClaims`): only
-   * the ones it can ask (`skillIds`) count, within the daily cap.
-   */
+  /** Priority confirmations remain within skillIds and the normal daily cap. */
   confirmSkillIds?: readonly string[];
   dailyMinutes: number;
   /** The goal's exam: other exams' questions never come up in a review. */
@@ -284,17 +249,14 @@ export async function loadReviewCapsules({
   /** The goal's field: its questions come first, other fields' never. */
   field: string | null;
   horizon: ReviewHorizon;
-  /**
-   * Skills only recordings practice (`getListeningSkillIds`): a text question about a conversation
-   * tests reading, so their capsule plays a recording or stays sealed.
-   */
+  /** Listening-only capsules require recordings; text cannot substitute. */
   listeningSkillIds?: ReadonlySet<string>;
   netScoring: boolean;
-  /** The plan's lessons: what a capsule is named after, the ones the learner finished first. */
+  /** Prefer completed lessons when naming a capsule. */
   planLessons: readonly PlanLesson[];
   skillIds: readonly string[];
   userId: string;
-  /** Nothing is due: the capsules review the weakest studied skills instead (`loadWeakestSkills`). */
+  /** If nothing is due, select weakest studied skills instead. */
   weakest?: boolean;
 }): Promise<BlockCapsule[]> {
   const cap = getDailyReviewCap({ dailyMinutes });

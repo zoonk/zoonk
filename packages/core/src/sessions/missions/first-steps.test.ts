@@ -68,7 +68,6 @@ describe("First steps from real learner history", () => {
       learningEventFixture({ endedAt: earlier, kind: "lesson", userId: input.userId }),
       learningEventFixture({ endedAt: earlier, kind: "review", userId: input.userId }),
       mistakeFixture({ fixedAt: earlier, status: "fixed", userId: input.userId }),
-      // The last step, at 22:30 in São Paulo on Oct 13: already Oct 14 in UTC.
       prisma.lessonQuestion.create({
         data: {
           contextKind: "plan",
@@ -130,7 +129,6 @@ describe("First steps from real learner history", () => {
         kind: "pattern",
         language: "en",
         model: "test",
-        // Drilled again on October 15: the pattern keeps its latest practice.
         practicedAt: new Date("2026-10-15T15:00:00Z"),
         promptVersion: "test",
         runId: "test",
@@ -201,7 +199,6 @@ describe("First steps from real learner history", () => {
 
     expect(facts.firstSteps).toBeNull();
 
-    // On the day it was finished, the same history shows the finished list.
     const finishedDay = await loadDayMissionFacts({
       ...input,
       blocks,

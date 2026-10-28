@@ -15,13 +15,8 @@ import { readBlockPayload } from "./block-payload";
 
 type Details = Record<string, string>;
 
-/** Starting from nothing, so the first week's placement questions stay out of these days. */
 const NURSE: Details = { field: "nursing", level: "none", purpose: "work", role: "ICU nurse" };
 
-/**
- * A goal whose only lesson is done, with two general questions, a nursing one and a law one on its
- * skill: studied and not due (a practice day), or due (a review day).
- */
 async function fieldDay({ details, due }: { details: Details; due: Date }) {
   const user = await userFixture();
 
@@ -51,7 +46,6 @@ async function fieldDay({ details, due }: { details: Details; due: Date }) {
   return {
     goalId: goal.id,
     ids: {
-      // Questions of the same rank go in the order they were stored.
       general: [general, secondGeneral].map((item) => item?.id ?? "").toSorted(),
       law: law?.id,
       nursing: nursing?.id,

@@ -5,7 +5,7 @@ import { getStoredBlockWait } from "../block-wait";
 import { type BlockOutcome, EMPTY_OUTCOME, estimateBrainPower } from "../brain-power";
 import { type DayBlockView } from "../day-view";
 
-/** Planned work has no database ID; the stored block adds its real ID after persistence. */
+/** Planned blocks lack database ids until persistence. */
 export type DayBlockInput = Pick<
   StudySessionBlock,
   | "brainPower"
@@ -60,15 +60,12 @@ export function toDayBlockView({
   blockedTestOutChapters?: ReadonlySet<string>;
   /** The exam goal's skills its board asks a lot; empty for other goals. */
   oftenTestedSkillIds?: ReadonlySet<string>;
-  /** The goal's subject the block studies, by its short name; null without one. */
   subject?: string | null;
 }): DayBlockView {
   const payload = readBlockPayload(block);
   const itemIds = getBlockItemIds(payload);
   const teaches = block.kind === "learn" || block.kind === "practice" || block.kind === "produce";
 
-  // A challenge judged by right answers (a language call has no pass mark) that the bank held too
-  // few questions for asks its full ten once Start writes them (`getPlannedQuestions`).
   const { checkpoint } = payload;
 
   const waitsForQuestions =

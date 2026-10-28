@@ -165,7 +165,6 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
         );
 
         expect(sharedFacts.result).toStrictEqual(unsharedFacts.result);
-        // Reusing the day also skips the plan's single skill-survivor lookup.
         expect(unsharedFacts.statements - sharedFacts.statements).toBe(17);
 
         await expect(
@@ -194,7 +193,6 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
         const undone = await readDay();
         expect(undone.blocks).toStrictEqual(original.blocks);
         expect(undone.missions).toStrictEqual(original.missions);
-        // An unstarted day's refresh reads its day selection, as Open does (+2 measured statements).
         expect(measured.statements).toBeLessThanOrEqual(176);
       }),
   );
@@ -239,7 +237,6 @@ describe("a changed day's queue and missions share its post-commit plan facts", 
       expect(after.plannedMinutes).toBeLessThanOrEqual(12);
       expect(after.blocks.length).toBeGreaterThan(0);
       expect(after.blocks.length).toBeLessThan(before.blocks.length);
-      // One anchored lesson and a Buddy question still fit the smaller selected day.
       expect(after.missions).toStrictEqual(before.missions);
 
       expect(after.blocks.map((block) => block.position)).toStrictEqual(

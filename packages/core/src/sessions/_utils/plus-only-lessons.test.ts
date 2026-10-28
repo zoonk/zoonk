@@ -26,7 +26,7 @@ describe(loadExamPrepAccess, () => {
 
     const entered = Promise.withResolvers<null>();
     const request = Promise.withResolvers<null>();
-    /** The real DB stays in use; only Next's request boundary has no request in Vitest. */
+
     const boundary = vi.spyOn(nextCache, "io").mockImplementationOnce(async () => {
       entered.resolve(null);
       await request.promise;
@@ -52,8 +52,6 @@ describe(loadExamPrepAccess, () => {
 });
 
 describe(loadDayPlusLessons, () => {
-  // A day not opened yet reads the plan as it selects it, which may not be saved yet: its new
-  // lessons were left out of Today until the day was opened.
   it("lists the day's lessons a free plan holds for Plus, saved or not, but the ones begun", async () => {
     const [user, fresh, begun, done, later] = await Promise.all([
       userFixture(),

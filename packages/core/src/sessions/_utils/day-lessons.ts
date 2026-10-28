@@ -4,13 +4,9 @@ import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { type PlanGraph } from "../../plans/planner/plan-state";
 import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 
-/** Upcoming lessons the builder chooses from on a short day; it takes what fits. */
 const LESSON_LOOKAHEAD = 8;
 
-/**
- * Enough upcoming lessons to fill the day: a lesson for every few of its minutes, so a two-hour
- * day gets its whole study cycle (each subject's block) and not only its first eight lessons.
- */
+/** Scale lookahead with day length so long study days cannot stop at the fixed eight-lesson floor. */
 export function getLessonLookahead(dayMinutes: number): number {
   return Math.max(LESSON_LOOKAHEAD, Math.ceil(dayMinutes / DEFAULT_LESSON_MINUTES));
 }
@@ -18,10 +14,8 @@ export function getLessonLookahead(dayMinutes: number): number {
 type DayItem = Pick<PlanItem, "chapterId" | "lessonId" | "scheduledFor" | "skillId"> &
   Partial<Pick<PlanItem, "facts" | "lessons">>;
 
-/** The plan items a day's lessons come from. */
 export const LEARN_KINDS: ReadonlySet<PlanItem["kind"]> = new Set(["lesson", "chapter"]);
 
-/** A stand-in: lessons of a skill the Library hasn't outlined yet, with nothing to open now. */
 function isStandIn(item: DayItem): boolean {
   return item.lessonId === null && item.chapterId === null && item.skillId !== null;
 }
@@ -30,7 +24,7 @@ function isDue({ item, today }: { item: DayItem; today: Date }): boolean {
   return item.scheduledFor !== null && item.scheduledFor <= today;
 }
 
-/** The selected producer's actual consumed interval, including a long lesson that ends later. */
+/** Include every day of a producer's consumed interval, not only its first scheduled date. */
 function isAllocatedOn({ item, today }: { item: DayItem; today: Date }): boolean {
   if (item.scheduledFor === null || isDue({ item, today })) {
     return true;
@@ -41,7 +35,6 @@ function isAllocatedOn({ item, today }: { item: DayItem; today: Date }): boolean
   return facts?.days?.some(([day, , raw]) => day === date && raw > 0) === true;
 }
 
-/** The day's subjects in the order its plan reaches them, with the lessons it plans for each. */
 function getDayShares<TItem extends DayItem>({
   graph,
   items,
@@ -62,13 +55,7 @@ function getDayShares<TItem extends DayItem>({
     }, new Map<string | null, number>());
 }
 
-/**
- * An exam day's subjects with nothing written to study today: every lesson the day plans for them
- * is a stand-in and none of their next lessons is written. The day keeps their time for them, as
- * practice on their skills, instead of handing it to another subject (see `pickDayLessonItems`),
- * unless practice has nothing to ask any of them today (`idleSkillIds`): a listening subject
- * whose recordings aren't voiced yet leaves its time to the others.
- */
+/** Unwritten subjects retain time for practice unless their skills have no askable questions or voiced recordings. */
 function listHeldAreas<TItem extends DayItem>({
   graph,
   idleSkillIds,
@@ -93,12 +80,7 @@ function listHeldAreas<TItem extends DayItem>({
   );
 }
 
-/**
- * The plan's written lessons a day may open: a stand-in has nothing to open, and a lesson whose
- * skill builds on a stand-in's skill the plan has before it, with none of that skill's lessons
- * before it written, waits for it. Reaching past stand-ins, a language plan opened a lesson a year
- * away before the one it builds on was outlined.
- */
+/** An unwritten prerequisite must hold back later lessons instead of letting the day reach arbitrarily far ahead. */
 function listOpenLessons<TItem extends DayItem>({
   items,
   prerequisites,
@@ -124,18 +106,7 @@ function listOpenLessons<TItem extends DayItem>({
   });
 }
 
-/**
- * The lessons a day draws from, in plan order (see `listOpenLessons`). While lessons due by today are still being outlined (`awaitingOutlines`, see
- * `isDayAwaitingOutlines`), the day takes only the lessons due by today: the stand-ins' time stays
- * theirs, instead of later lessons filling it and the day changing under the learner once they
- * land. Otherwise an exam's day takes the ones due by today, then, for the time they leave (a
- * first day has no reviews yet), the next lessons of the same subjects, so the day keeps to its
- * study cycle's few subjects instead of starting tomorrow's. When one of its subjects has nothing
- * written to study (`listHeldAreas`), the others take only their own share (the next lessons of a
- * subject whose lessons today aren't written yet, up to what the day plans for it), and the held
- * subject's time goes to practice on it: Rafaela's day one was 27 linguistics lessons when IT's
- * weren't written. Other goals follow the plan's order, and a day with nothing due does too.
- */
+/** Preserve each exam subject's time; pending outlines must not let later lessons consume the time they will need. */
 function pickDayLessonItems<TItem extends DayItem>({
   awaitingOutlines,
   graph,
@@ -152,7 +123,6 @@ function pickDayLessonItems<TItem extends DayItem>({
   idleSkillIds?: ReadonlySet<string>;
   isExam: boolean;
   items: readonly TItem[];
-  /** What each skill builds on, by skill id. */
   prerequisites?: ReadonlyMap<string, readonly string[]>;
   today: Date;
 }): readonly TItem[] {
@@ -177,7 +147,6 @@ function pickDayLessonItems<TItem extends DayItem>({
     return [...due, ...later];
   }
 
-  // Each subject's own next lessons, up to what the day plans for it, in plan order.
   const room = new Map(
     [...shares].map(([area, share]) => [
       area,
@@ -195,11 +164,7 @@ function pickDayLessonItems<TItem extends DayItem>({
   return [...due, ...refills];
 }
 
-/**
- * The skills of an exam day's held subjects (`listHeldAreas`), which practice asks first so the
- * day's time for them stays theirs. None while the day's lessons are being outlined
- * (`awaitingOutlines`): the day holds that time for the lessons instead.
- */
+/** Hold time for pending lessons before allocating it to practice on their skills. */
 function listHeldSkillIds<TItem extends DayItem>({
   awaitingOutlines,
   graph,
@@ -229,10 +194,7 @@ function listHeldSkillIds<TItem extends DayItem>({
   );
 }
 
-/**
- * A day's lessons from its goal's plan (`pickDayLessonItems`), and the skills of its subjects with
- * nothing written yet, which practice asks first (`listHeldSkillIds`).
- */
+/** Returns lessons in plan order and held-subject skills for priority practice. */
 export function pickDayLessons<TItem extends DayItem & Pick<PlanItem, "kind" | "status">>({
   awaitingOutlines,
   goal,
@@ -241,7 +203,7 @@ export function pickDayLessons<TItem extends DayItem & Pick<PlanItem, "kind" | "
   plan,
 }: {
   awaitingOutlines: boolean;
-  /** A shown selected day takes its actual producer allocation, never a future lookahead refill. */
+  /** A shown day must retain its selected allocation instead of refilling from future work. */
   heldDay?: boolean;
   goal: Pick<Goal, "kind">;
   localDate: Date;

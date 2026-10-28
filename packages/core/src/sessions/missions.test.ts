@@ -9,7 +9,6 @@ describe(isFullMeal, () => {
     expect(isFullMeal([done, done, done])).toBe(true);
   });
 
-  // A day with fewer possible missions still earns the full bonus.
   it("pays the full bonus when one or two missions were possible", () => {
     expect(isFullMeal([done, done])).toBe(true);
     expect(getMissionBonus([done, done])).toBe(50);

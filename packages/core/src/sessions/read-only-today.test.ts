@@ -11,7 +11,6 @@ import { getLanguageTodayView } from "../view-models/language/get-language-today
 import { getTodayView } from "../view-models/today/get-today-view";
 import { SESSION_NOW, sessionGoalFixture } from "./_test-utils/session-goal";
 
-/** A page or prefetch must leave every learner-owned action and plan row unchanged. */
 async function readLearnerState({ goalId, userId }: { goalId: string; userId: string }) {
   const [goal, plan, changes, sessions, activity, progress] = await Promise.all([
     prisma.goal.findUniqueOrThrow({ where: { id: goalId } }),
@@ -32,10 +31,6 @@ async function readLearnerState({ goalId, userId }: { goalId: string; userId: st
   return { activity, changes, goal, plan, progress, sessions };
 }
 
-/**
- * A noticed pattern, `daysAgo` before now. With a drill, the day's missions can offer it
- * (`languageCandidates`); without one, only Today's card can.
- */
 function createPattern({
   daysAgo = 1,
   drill = true,
@@ -141,8 +136,6 @@ describe("Today reads without learner actions", () => {
     await expect(readLearnerState(input)).resolves.toStrictEqual(before);
   });
 
-  // The unopened day's missions exist only in Today's own read, so Today composes its card with
-  // them: the drill gets one entry, and the API's Today says so, without building the day twice.
   it.each([false, true])(
     "offers a pattern once beside the unopened day that picked its drill (earned elsewhere: %s)",
     async (earnedElsewhere) => {
@@ -167,14 +160,12 @@ describe("Today reads without learner actions", () => {
         throw new Error(`Expected Today, got ${result.status}`);
       }
 
-      // The day's missions offer the drill.
       expect(result.today.session.status).toBe("unstarted");
 
       expect(result.today.session.missions).toContainEqual(
         expect.objectContaining({ opens: { kind: "pattern", patternId: pattern.id } }),
       );
 
-      // An earned bonus replaces the missions' unfinished rows: the card stays the drill's entry.
       expect(result.today.pattern).toStrictEqual(
         earnedElsewhere ? { id: pattern.id, kind: "pattern", title: "Since and for" } : null,
       );

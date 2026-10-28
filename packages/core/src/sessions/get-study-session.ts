@@ -10,7 +10,7 @@ export type StudySessionResult =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/** One of the learner's study sessions with its blocks, missions and progress. */
+/** Requires ownership of the requested session. */
 export async function getStudySession({
   input,
   sessionId,

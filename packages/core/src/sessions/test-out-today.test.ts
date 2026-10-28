@@ -12,7 +12,7 @@ import { decidePlanChange } from "../plans/decide-plan-change";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { startStudyBlock } from "./start-study-block";
 
-/** A Monday in 2020, before the learning events other tests write, so their pace stays out. */
+/** Predates other tests' learning events so their pace cannot affect the fixture. */
 const MONDAY = new Date("2020-09-28T12:00:00Z");
 
 async function readToday(goalId: string) {
@@ -91,8 +91,6 @@ describe("a chapter test passed in the middle of a lesson", () => {
     expect(library.lessons.slice(3).map((lesson) => lesson.id)).toContain(next?.lessonId);
   });
 
-  // "The lessons are back in your plan", and in today's session too: the lesson the learner had
-  // open is open again, and the rest of the day is the one they had before the test.
   it("gives back the day it changed when the learner undoes it", async () => {
     const user = await userFixture();
     const library = await planLibraryFixture({ skills: [{ lessons: 3 }, { lessons: 3 }] });

@@ -23,7 +23,6 @@ import { stopStudySession } from "./stop-study-session";
 const MINUTE_MS = 60_000;
 const LESSON_SECONDS = 240;
 
-/** A day with capsules, a lesson and a mistake to fix. */
 async function setup() {
   const user = await userFixture();
   const fixture = await sessionGoalFixture({ lessons: 2, userId: user.id });
@@ -57,7 +56,6 @@ function sentEvents(name: string) {
     .filter((event) => event.name === name);
 }
 
-/** Time passes while the learner plays a block, so the block's minutes aren't zero. */
 function spendMinutes(minutes: number) {
   vi.setSystemTime(new Date(Date.now() + minutes * MINUTE_MS));
 }
@@ -99,7 +97,6 @@ describe("session outcomes sent from the server", () => {
     await finishStudyBlock({ blockId: learn?.id ?? "", input: {}, sessionId: session.id });
     await playQuestions({ blockId: practice?.id ?? "", sessionId: session.id });
 
-    // Finishing again or stopping a completed session sends nothing new.
     await finishStudyBlock({ blockId: practice?.id ?? "", input: {}, sessionId: session.id });
     await stopStudySession({ input: {}, sessionId: session.id });
     await flush();
@@ -135,7 +132,6 @@ describe("session outcomes sent from the server", () => {
       {
         distinctId: user.id,
         name: "Session Completed",
-        // The time the blocks took, which may differ from the plan's minutes the card counts.
         properties: {
           blocks_completed: 3,
           daily_goal_met: expect.any(Boolean),
@@ -161,8 +157,6 @@ describe("session outcomes sent from the server", () => {
       throw new Error("Expected today's session");
     }
 
-    // The card's "x of 45 min" counts the review's planned minutes; the week's day counts at
-    // least that, or the time it took (3 played, capped at twice its estimate) when that's more.
     const planned = review?.estimatedMinutes ?? 0;
     const played = Math.min(3, planned * 2);
 
@@ -173,7 +167,6 @@ describe("session outcomes sent from the server", () => {
       minutes: Math.max(planned, played),
     });
 
-    // The lesson opened when the learner stopped waits, with the rest of the day.
     expect(today.session.nextBlockId).toBe(learn?.id);
   });
 
@@ -192,7 +185,6 @@ describe("session outcomes sent from the server", () => {
       { distinctId: user.id, properties: { block_kind: "review", seconds: 120 } },
     ]);
 
-    // The rest of the session is still there to pick up, so it isn't completed.
     expect(sentEvents("Session Completed")).toStrictEqual([]);
   });
 
@@ -208,7 +200,6 @@ describe("session outcomes sent from the server", () => {
     const skipAll = () =>
       prisma.studySessionBlock.updateMany({ data: { status: "skipped" }, where: { sessionId } });
 
-    // Every block left behind finishes the session at the next stop.
     await skipAll();
     await stopStudySession({ input: {}, sessionId });
 

@@ -5,13 +5,9 @@ import { type BlockPayload } from "../block-payload";
 import { BRAIN_POWER_BONUS, getAnswersEnergyDelta } from "../brain-power";
 import { type SessionAnswer } from "./session-answers";
 
-/**
- * A full review's ledger kind: practice on every skill of the goal, on a day whose mock the
- * learner's plan doesn't include. Preparation counts it as their test in real conditions.
- */
+/** Full-review rows count as the real-conditions test replacing a mock excluded from the learner's plan. */
 export const FULL_REVIEW_LEDGER_KIND = "fullReview";
 
-/** One ledger row a finished block writes, before the shared fields are added. */
 export type BlockEvent = {
   brainPower: number;
   contentIds: Record<string, string>;
@@ -26,16 +22,15 @@ export type BlockEvent = {
 
 export type BlockEventContext = {
   answers: readonly SessionAnswer[];
-  /** Each answer's Brain Power, in the same order as `answers`. */
+  /** Must match answers order. */
   points: readonly number[];
-  /** The block's whole Brain Power; what the per-capsule split leaves goes to the last row. */
+  /** Any per-capsule remainder belongs on the last ledger row. */
   brainPower: number;
   block: StudySessionBlock;
   payload: BlockPayload;
   seconds: number;
 };
 
-/** Right and wrong answers, and the Energy they give by today's rules. */
 function countAnswers(answers: readonly SessionAnswer[]) {
   const correctAnswers = answers.filter((answer) => answer.isCorrect).length;
   const incorrectAnswers = answers.length - correctAnswers;
@@ -55,10 +50,8 @@ function getIds({ block, payload }: Pick<BlockEventContext, "block" | "payload">
   };
 }
 
-/** A placement answer's ledger kind: the first week's sessions open with a few of them. */
 const PLACEMENT_LEDGER_KIND = "placement";
 
-/** A review row's answers: their points, counts and whole seconds of the block's time. */
 function getReviewRow(context: BlockEventContext, own: readonly SessionAnswer[]) {
   const { answers, points } = context;
 
@@ -73,13 +66,7 @@ function getReviewRow(context: BlockEventContext, own: readonly SessionAnswer[])
   };
 }
 
-/**
- * Opened capsules each get a `review` row, so the ledger counts capsules (Retro glasses) and
- * reviews without reading content, and the block's placement answers get one, so their time counts
- * as studied. Each row carries its answers' points and a capsule its bonus; whatever the block
- * earned beyond that (mastery, caps) lands on the last row, as do the seconds the rows' shares
- * leave, so the rows add up to the block's time (59.5 + 59.5 rounded each read 120 of 119).
- */
+/** Split points and seconds without rounding each share upward; put remainders on the last row. */
 function getReviewEvents(context: BlockEventContext): BlockEvent[] {
   const { answers, block, payload } = context;
 
@@ -150,10 +137,6 @@ function getCheckpointEvent(context: BlockEventContext): BlockEvent {
   };
 }
 
-/**
- * What a practice block was, as the ledger keeps it: bonus practice, a full review (which counts
- * as the test in real conditions for a learner whose plan has no mocks), or mixed practice.
- */
 function getPracticeKind(payload: BlockEventContext["payload"]): string {
   if (payload.extra) {
     return "extraPractice";
@@ -162,7 +145,6 @@ function getPracticeKind(payload: BlockEventContext["payload"]): string {
   return payload.fullReview ? FULL_REVIEW_LEDGER_KIND : "practice";
 }
 
-/** The ledger rows for a finished question block: a review, practice or a checkpoint. */
 export function getBlockEvents(context: BlockEventContext): BlockEvent[] {
   if (context.block.kind === "review") {
     return getReviewEvents(context);

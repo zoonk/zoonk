@@ -24,7 +24,6 @@ type ExtraDay = Pick<StudySessionRow, "goal" | "goalId" | "localDate"> & {
   blocks: readonly DayBlockInput[];
 };
 
-/** The plan's "Too easy" or "Too hard" steering, which bonus practice follows too. */
 async function loadDifficultyBias(goalId: string | null): Promise<DifficultyBias> {
   const plan = goalId
     ? await prisma.plan.findUnique({ select: { settings: true }, where: { goalId } })
@@ -33,10 +32,7 @@ async function loadDifficultyBias(goalId: string | null): Promise<DifficultyBias
   return parsePlanSettings(plan?.settings).difficultyBias;
 }
 
-/**
- * A free exam plan past its first week on the session's day: its practice and new lessons come
- * with Plus, so no bonus block adds them.
- */
+/** Uses the session's saved local day, not the request's later date. */
 export async function isFreeWeekOver(session: ExtraDay): Promise<boolean> {
   if (!session.goal) {
     return false;
@@ -46,11 +42,7 @@ export async function isFreeWeekOver(session: ExtraDay): Promise<boolean> {
   return access.trialEnded;
 }
 
-/**
- * Bonus practice on the given skills with questions the session hasn't asked yet, scored like the
- * goal's exam. Its Brain Power is capped like every extra block. Null when none of the skills has
- * a question to practice.
- */
+/** Null without an askable question; never reuses questions already asked by the session. */
 export async function buildExtraPractice({
   areaId = null,
   minutes,
@@ -115,13 +107,10 @@ export async function buildExtraPractice({
   };
 }
 
-/** Plan items the next lessons come from: wide enough for a few lessons past any already done. */
 const EXTRA_LESSON_WINDOW = 6;
 
-/** A run of blocks more time adds, never empty. */
 export type ExtraBlocks = [PlannedBlock, ...PlannedBlock[]];
 
-/** Lessons finished today: more time never adds them again. */
 function getLessonsDoneToday(session: ExtraDay): Set<string> {
   return new Set(
     session.blocks.flatMap((block) =>
@@ -130,12 +119,7 @@ function getLessonsDoneToday(session: ExtraDay): Set<string> {
   );
 }
 
-/**
- * The plan's next lessons not finished today (a lesson skipped earlier included), in the plan's
- * order: about `minutes` of them (the last one may run past it), or the next one without
- * `minutes`. `planItemIds` narrows them to part of the plan, such as an area. A free exam plan past
- * its first week has none to give: new lessons come with Plus.
- */
+/** Preserves plan order and permits the last lesson to exceed minutes; no new lessons past the free exam week. */
 export async function buildExtraLessons({
   areaId = null,
   minutes = 0,
@@ -174,7 +158,6 @@ export async function buildExtraLessons({
       lessons.findIndex((other) => other.lessonId === lesson.lessonId) === index,
   );
 
-  // Each lesson joins while the ones before it take less than `minutes`; the first always does.
   const fitting = unique.filter(
     (_lesson, index) =>
       index === 0 ||
@@ -198,11 +181,7 @@ export async function buildExtraLessons({
   }));
 }
 
-/**
- * What more time would add: the plan's next lessons (about `minutes` of them), else, with every
- * lesson done, mixed practice on the goal's skills while the day has room for it. Why there's
- * nothing otherwise: the day's bonus practice is used up, or nothing is left to practice or learn.
- */
+/** Returns a reason when the daily bonus cap or available material prevents adding work. */
 export async function planExtraBlocks({
   minutes,
   session,
@@ -234,11 +213,7 @@ export async function planExtraBlocks({
   return practice ? { blocks: [practice] } : { reason: "nothingToStudy" };
 }
 
-/**
- * More time is offered only when it has something to add, so the button never leads to "nothing
- * more to practice", and with the lessons it adds, so the day can list them before the tap. The
- * check reads what the time would hold, only once the rules already allow it.
- */
+/** Offer more time only after checking it has actual work to add; expose those lessons before the tap. */
 export async function withExtraStudyCheck({
   extraTime,
   session,
@@ -273,12 +248,7 @@ export async function withExtraStudyCheck({
   return { ...extraTime, lessons };
 }
 
-/**
- * Serializes bonus blocks for one session: the queue stays locked while the caller checks
- * what's there and adds a block, so two taps at once (two areas, or "10 more minutes" twice) see
- * each other's block and never count past the daily cap. The callback gets the session with its
- * blocks read under the lock.
- */
+/** Keeps the queue locked through checks and append; the callback receives session state read under that lock. */
 export async function withSessionAppendLock<TResult>({
   plan,
   run,
@@ -309,10 +279,7 @@ export async function withSessionAppendLock<TResult>({
   });
 }
 
-/**
- * Adds bonus blocks at the end of the session, in order, and returns the first, where the learner
- * goes on. Call it inside `withSessionAppendLock`.
- */
+/** Call inside withSessionAppendLock; appends in order and returns the first new block. */
 export async function appendExtraBlocks({
   planned,
   session,

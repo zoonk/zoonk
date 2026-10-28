@@ -4,12 +4,7 @@ import { type PlannedCheckpoint } from "../session-builder";
 type DayAccess = { trialEnded: boolean };
 type DayBosses = Awaited<ReturnType<typeof loadSessionBosses>>;
 
-/**
- * Today's bosses (see `loadSessionBosses`): none once a free exam plan's first days are over, when
- * the session plays no challenge (see `buildSessionBlocks`). Loaded all the same, they held back
- * their questions from the day's quick review and practice: a free learner's known topic went
- * unasked.
- */
+/** Locked challenges must not reserve questions away from the free learner's review and practice. */
 export async function loadDayBosses({
   access,
   ...input
@@ -17,11 +12,7 @@ export async function loadDayBosses({
   return access.trialEnded ? { checkpoints: [], reinforcement: [] } : loadSessionBosses(input);
 }
 
-/**
- * The day's challenges: its bosses first, then its mock, which the plan funded beside them; a
- * weekly challenge waits for a day without a boss. None once a free exam plan's first days are over
- * (see `loadDayBosses`): its weekly challenge would hold back its questions the same way.
- */
+/** Mocks may share a funded day with bosses; weekly mixed challenges wait for a boss-free day. */
 export function listDayCheckpoints({
   access,
   boss,

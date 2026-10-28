@@ -10,7 +10,7 @@ import { type SelectedDayPlan } from "./selected-day-plan";
 import { isSelectedPlanCurrent } from "./selected-plan-current";
 import { type SessionDayContext } from "./session-placement";
 
-/** A duplicate open and an input race roll back their early marks, not just their domain rows. */
+/** Duplicate/stale opens must roll back their early marks as well as domain rows. */
 class StudyDayUnchangedError extends Error {
   override name = "StudyDayUnchangedError";
   readonly status: "exists" | "stale";
@@ -20,7 +20,7 @@ class StudyDayUnchangedError extends Error {
   }
 }
 
-/** The plan, its summary and notice, the day and bound block IDs commit as one writer. */
+/** Commits plan state, notice, session, and bound block ids atomically. */
 export async function persistStudyDay({
   context: day,
   planned,
@@ -62,8 +62,6 @@ export async function persistStudyDay({
 
       await saveSelectedPlan({ context: selection.context, prepared, tx });
 
-      // A day holding time for lessons still being outlined says so, for them to join it once they
-      // land (see `appendLandedLessons`).
       const planVersion = await loadDayPlanVersion({
         client: tx,
         goal: day.goal,

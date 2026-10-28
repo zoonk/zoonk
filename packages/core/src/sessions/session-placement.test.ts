@@ -25,10 +25,6 @@ const TIME_ZONE = "UTC";
 
 const DAY_MS = 86_400_000;
 
-/**
- * A goal set yesterday (placement ran in its onboarding) with one skill placement is unsure of:
- * one right pick so far.
- */
 async function setup({ details = {} }: { details?: object } = {}) {
   const user = await userFixture();
   const fixture = await learnerGoalFixture({ itemsPerSkill: 2, phases: [1], userId: user.id });
@@ -65,10 +61,6 @@ async function openPlacementBlock(goalId: string) {
   return { blockId: review.id, sessionId: session.id };
 }
 
-/**
- * A goal the planner built yesterday, whose one skill placement answered right once: its lessons
- * wait, and the first week's sessions still ask about it.
- */
 async function plannedSetup() {
   const user = await userFixture();
   const library = await planLibraryFixture({ skills: [{ lessons: 2 }, { lessons: 2 }] });
@@ -99,7 +91,6 @@ async function plannedSetup() {
   return { goal, placementItemId: asked.id, plan, skillId };
 }
 
-/** Whether the goal's session opens with a review block: placement questions (no capsules are due). */
 async function hasReviewBlock({ goal, user }: { goal: { id: string }; user: { id: string } }) {
   mockSession(user.id);
   const today = await getTodayStudySession({ goalId: goal.id, timeZone: TIME_ZONE });
@@ -108,10 +99,6 @@ async function hasReviewBlock({ goal, user }: { goal: { id: string }; user: { id
   return blocks.some((block) => block.kind === "review");
 }
 
-/**
- * Stops the clock where the test starts and says its day as a request would: the setup's
- * "yesterday" and the session's "today" stay a day apart, even when the test runs across midnight.
- */
 function mockClock() {
   vi.useFakeTimers({ toFake: ["Date"] });
   const now = new Date();
@@ -192,8 +179,6 @@ describe("placement in the first week's sessions", () => {
     });
   });
 
-  // A first-week review can hold only placement questions (no capsule is due yet): the time spent
-  // answering them is time studied, so the summary says it as Today and the week count it.
   it("counts the time spent on placement questions in the session's summary", async () => {
     const { goal, placementItemId } = await setup();
     const { blockId, sessionId } = await openPlacementBlock(goal.id);
@@ -218,8 +203,6 @@ describe("placement in the first week's sessions", () => {
     });
   });
 
-  // Its rows split the block's time: a capsule's answer and a placement answer in 119 seconds each
-  // rounded 59.5 up, so the summary said 2 minutes of a day Today counted as 1.
   it("splits a review's time between its capsules and placement without adding a second", async () => {
     const { goal, items, placementItemId } = await setup();
     const { blockId, sessionId } = await openPlacementBlock(goal.id);
@@ -374,8 +357,6 @@ describe("placement in the first week's sessions", () => {
     await expect(statuses()).resolves.toStrictEqual(["todo"]);
   });
 
-  // A placement question stays a test inside a session: its right answer frees the topic from its
-  // lessons, never from practice, and shows nothing preparation counts.
   it("reads a right placement answer in a session as a test's, never as practice", async () => {
     const { goal, placementItemId, skillId } = await plannedSetup();
 
@@ -405,8 +386,6 @@ describe("placement in the first week's sessions", () => {
     ).toMatchObject({ studiedSkills: 0 });
   });
 
-  // Pedro's quick review on the day before held a placement question: his right answer skipped
-  // lessons and rebuilt the rest of the day, his full review turned into a short practice.
   it("keeps the rest of the day as shown when a placement answer in it skips lessons", async () => {
     const { goal, placementItemId, plan, skillId } = await plannedSetup();
     const { blockId, sessionId } = await openPlacementBlock(goal.id);
@@ -447,7 +426,6 @@ describe("placement in the first week's sessions", () => {
         .map(() => "skipped"),
     );
 
-    // The plan keeps what the answer skipped, with its undo; the skipped rows say it on the day.
     const change = await prisma.planChange.findFirstOrThrow({
       where: { kind: "testedOut", plan: { goalId: goal.id } },
     });

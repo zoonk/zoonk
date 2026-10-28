@@ -7,7 +7,7 @@ import { scoreAnswers } from "./brain-power";
 
 type LessonAnswersScore = { brainPower: number; topHyperdrive: number };
 
-/** Every answer given so far in the learner's session; none without one or for someone else's. */
+/** Returns no answers without a session owned by userId. */
 export async function loadStudySessionAnswers({
   studySessionId,
   userId,
@@ -29,7 +29,6 @@ export async function loadStudySessionAnswers({
     : [];
 }
 
-/** The session's Hyperdrive streak before the lesson's first answer. */
 async function loadStreakBefore({
   answers,
   studySessionId,
@@ -55,12 +54,11 @@ async function loadStreakBefore({
   return scoreAnswers({ answers: earlier }).streak;
 }
 
-/** One sitting of a lesson: when it started and the session it was a block of, if any. */
 export type LessonSitting = { startedAt: Date; studySessionId: string | null };
 
 const ONE_SITTING: readonly LessonSitting[] = [{ startedAt: new Date(0), studySessionId: null }];
 
-/** Each question once, by its first answer: a question coming back is practice, not new points. */
+/** First answers only: repeated questions within a sitting must not earn new-question points. */
 function getFirstAnswers(answers: readonly AnswerRecord[]): AnswerRecord[] {
   return answers.filter(
     (answer, index) =>
@@ -70,7 +68,6 @@ function getFirstAnswers(answers: readonly AnswerRecord[]): AnswerRecord[] {
   );
 }
 
-/** The answers given in each sitting: from its start until the next one starts. */
 function splitBySitting<TAnswer extends AnswerRecord>({
   answers,
   sittings,
@@ -89,17 +86,7 @@ function splitBySitting<TAnswer extends AnswerRecord>({
   });
 }
 
-/**
- * Brain Power v2 for a lesson's answers: right answers on questions never answered right before
- * earn points times Hyperdrive (continuing the session's streak when the lesson is one of its
- * blocks), and replayed questions earn less each time. A lesson the learner came back to is scored
- * sitting by sitting (`sittings`, oldest first), so a streak from another day or session never
- * multiplies this one's answers. The lesson's completion adds the first-completion bonus
- * (`getOutcomeBonus`) once it knows whether this was a replay.
- *
- * Internal: the lesson player's completion calls it with the lesson's recorded answers, in the
- * order they were given, after deriving `userId` from the session.
- */
+/** Internal authenticated caller; pass answers and sittings oldest first so streaks cannot carry across days or sessions. */
 export async function scoreLessonAnswers({
   answers,
   sittings = ONE_SITTING,

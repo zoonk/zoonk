@@ -19,13 +19,7 @@ export type ExtraStudyBlockResult =
   | { status: "unauthorized" }
   | { reason: ExtraTimeReason; status: "unavailable" };
 
-/**
- * "Keep learning" after the day's session, or on a day the plan gives no time: the plan's next
- * lessons, about ten minutes of them, studied a day early (with every lesson done, a block of mixed
- * practice instead, at most twice a day). Offered only after the planned blocks are done, never
- * past the learner's daily limit. The result is the first block added, where the learner goes on.
- * A free exam plan past its first week has none: its practice and new lessons come with Plus.
- */
+/** Requires all planned blocks finished; returns the first added block and respects daily limits and free-exam gates. */
 export async function addExtraStudyBlock({
   sessionId,
 }: {

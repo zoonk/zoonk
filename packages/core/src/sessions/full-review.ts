@@ -1,9 +1,7 @@
-/** A day whose practice asks every one of the goal's skills (see `fullReviewSkillIds`). */
 export function isFullReviewDay(day: { fullReviewSkillIds?: readonly string[] | null }): boolean {
   return Boolean(day.fullReviewSkillIds?.length);
 }
 
-/** A full review asks every one of the goal's skills; one that misses some is only practice. */
 export function isFullReview({
   fullReviewSkillIds,
   skillIds,
@@ -17,13 +15,7 @@ export function isFullReview({
   );
 }
 
-/**
- * How many questions a full review's practice block takes to ask every skill the day's quick
- * review doesn't: the day's mistake drills (`drilled`), then practice's questions in the order it
- * asks them. Asking every topic is the day's point, so a short day doesn't cut it (Pedro's light
- * day asked 5 questions on 3 of his 11 topics). Zero when no skill is left or practice can't ask
- * them all.
- */
+/** Full reviews must cover every skill even on short days; returns zero when complete coverage is impossible. */
 export function countFullReviewQuestions({
   drilled,
   fullReviewSkillIds,

@@ -19,13 +19,8 @@ function noonOf(day: number): Date {
   return new Date(TODAY + day * MS_PER_DAY + 12 * 60 * 60 * 1000);
 }
 
-/** More topics taken as known than one day's practice has room for at 15 minutes a day. */
 const KNOWN_TOPICS = 10;
 
-/**
- * A learner whose placement answered topics right yesterday (taken as known, their lessons tested
- * out) with lessons of two others still to study.
- */
 async function knownTopicsLearner() {
   vi.setSystemTime(noonOf(-1));
 
@@ -88,7 +83,6 @@ async function knownTopicsLearner() {
   return { goal, known, user };
 }
 
-/** The known topics the day's practice asks, opening the day without answering any of it. */
 async function askedKnownTopics({ goalId, known }: { goalId: string; known: string[] }) {
   const today = await getTodayStudySession({ goalId, timeZone: "UTC" });
 
@@ -123,7 +117,6 @@ describe("known topics practice still has to confirm", () => {
     vi.setSystemTime(noonOf(0));
     const first = await askedKnownTopics({ goalId: goal.id, known });
 
-    // The learner skips practice, so nothing is confirmed.
     vi.setSystemTime(noonOf(1));
     const second = await askedKnownTopics({ goalId: goal.id, known });
 

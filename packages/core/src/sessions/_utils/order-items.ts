@@ -6,7 +6,6 @@ import { getShownOrder } from "./shown-order";
 
 type OrderContent = Extract<ReturnType<typeof parseItemContent>, { format: "order" }>["content"];
 
-/** An ordering question: steps the learner puts in their only right order. */
 export type OrderItem = Pick<Item, "id" | "language" | "skillId"> & {
   content: OrderContent;
   format: "order";
@@ -31,12 +30,10 @@ export function parseOrderItem(item: BankItem): OrderItem | null {
   }
 }
 
-/** The steps' order as the learner sees them (`getShownOrder`): never the right one. */
 function getStepOrder(item: OrderItem): number[] {
   return getShownOrder({ count: item.content.steps.length, seed: item.id });
 }
 
-/** An ordering question as the learner sees it: its steps shuffled, as `options`. */
 export function toOrderQuestion(item: OrderItem) {
   return {
     context: null,
@@ -59,10 +56,7 @@ function describeSteps({ item, steps }: { item: OrderItem; steps: readonly numbe
   return steps.map((index) => item.content.steps[index] ?? "?").join(" → ");
 }
 
-/**
- * Grades the order given, as indexes of the shown steps, against the only right one: every step
- * in its place. An answer of another shape is wrong.
- */
+/** Input order indexes refer to displayed steps; mismatched answer shapes count as wrong. */
 export function gradeOrder({ answer, item }: { answer: QuestionAnswer; item: OrderItem }) {
   const shown = getStepOrder(item);
   const steps = "order" in answer ? answer.order.map((index) => shown[index] ?? -1) : [];

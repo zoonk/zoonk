@@ -13,7 +13,6 @@ import { startStudyBlock } from "./start-study-block";
 
 const TIME_ZONE = "UTC";
 
-/** Today's one lesson, started as its session block and answered, ready to complete. */
 async function playLessonBlock({ energy }: { energy?: number } = {}) {
   const { lesson, skill, steps, user } = await setupPlayableLesson({
     steps: ["hook", "explanation", "check", "summary"],
@@ -57,7 +56,6 @@ async function playLessonBlock({ energy }: { energy?: number } = {}) {
   const complete = () =>
     completeLibraryLesson({ input: { runId, timeZone: TIME_ZONE }, lessonId: lesson.id });
 
-  /** The same lesson played again from the start once its block is done, its check answered. */
   const replay = async () => {
     const again = await startLibraryLesson({ input: { timeZone: TIME_ZONE }, lessonId: lesson.id });
     const replayRunId = again.status === "started" ? again.run.runId : "";
@@ -88,8 +86,6 @@ describe("a lesson played as a session block", () => {
 
     expect(outcome).toMatchObject({
       completion: {
-        // The lesson earns its own points; completing the day's only offered mission also pays
-        // the full completion bonus through the study block.
         brainPower: 2 + 10,
         studyBlock: {
           blockId: block?.id,

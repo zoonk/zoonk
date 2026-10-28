@@ -18,29 +18,20 @@ type StudyAnswerRecord = {
   blank: boolean;
   drill: BlockDrill | undefined;
   drilled: ReturnType<typeof applyDrillRules>;
-  /** The question's format: how much a right placement answer tells (see `meetsKnownBar`). */
   format: ItemFormat;
   graded: GradedSessionAnswer;
   input: StudyAnswerInput;
   item: SessionItem;
   /** A placement question of the goal's first week, rather than a learning question. */
   placement: boolean;
-  /**
-   * A miss on a topic the learner was taken to know and practice hadn't confirmed: its lessons
-   * come back (see `SkillClaim`).
-   */
+  /** A miss on an unconfirmed known claim restores its lessons. */
   relearn: boolean;
   session: StudySessionRow;
   sessionId: string;
   userId: string;
 };
 
-/**
- * Records the answer: as learning (memory, the notebook, a drilled mistake's fix), or as a
- * diagnostic placement answer, never a notebook entry, after which whatever placement is now sure
- * of skips what the plan no longer needs. A learning answer that misses a topic the plan skipped
- * as known puts its lessons back.
- */
+/** Placement answers skip notebook writes; learning misses on unconfirmed known topics restore their lessons. */
 export async function recordStudyAnswer({
   blank,
   block,
@@ -98,7 +89,6 @@ export async function recordStudyAnswer({
       userId,
     });
 
-    // A skip re-plans as it's announced, and a miss on a topic taken to know brings its lessons back.
     if (!changeId && !relearn && item.skillId) {
       refreshAfterPlacementAnswer({
         answeredAt: recorded.attempt.answeredAt,

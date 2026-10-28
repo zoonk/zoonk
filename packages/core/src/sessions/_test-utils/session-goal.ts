@@ -3,22 +3,17 @@ import { goalFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { studySessionPlanFixture } from "@zoonk/testing/fixtures/study-sessions";
 
-/** A Wednesday, so no session in these tests is a Monday fresh start by accident. */
+/** Avoid accidental Monday fresh-start rules in session fixtures. */
 export const SESSION_NOW = new Date("2026-09-30T12:00:00Z");
 export const SESSION_TODAY = new Date("2026-09-30T00:00:00Z");
 export const DAY_MS = 86_400_000;
 
-/** Due skills were last reviewed a few days ago, so reviewing today is a later-day recall. */
 const LAST_REVIEW_DAYS_AGO = 4;
 
 export function daysAgo(days: number): Date {
   return new Date(SESSION_NOW.getTime() - days * DAY_MS);
 }
 
-/**
- * A goal whose plan has one lesson per skill (each lesson teaching its skill, with a can-do line)
- * and `itemsPerSkill` choice questions per skill, all in phase 0 unless `extraItems` add more.
- */
 export async function sessionGoalFixture({
   goal,
   itemsPerSkill = 3,
@@ -32,8 +27,7 @@ export async function sessionGoalFixture({
 }) {
   const created = await goalFixture({
     dailyMinutes: 45,
-    // Placement ended with the learner starting from scratch, so sessions don't open with first-week
-    // placement questions unless a test asks. (Aging the goal instead would end a free exam trial.)
+    // Decline placement without aging the goal, which would also expire a free exam trial.
     details: { placementDeclined: true },
     timezone: "UTC",
     userId,
@@ -43,7 +37,6 @@ export async function sessionGoalFixture({
   return studySessionPlanFixture({ goal: created, itemsPerSkill, lessons });
 }
 
-/** A skill the learner studied earlier and FSRS says is due by `due`. */
 export function dueSkillFixture({
   due = daysAgo(1),
   skillId,
@@ -65,7 +58,7 @@ export function dueSkillFixture({
   });
 }
 
-/** Adds a checkpoint due on the fixture's day; explicit null represents an unscheduled one. */
+/** Omitted date uses the fixture's day; explicit null means unscheduled. */
 export function checkpointItemFixture({
   kind,
   phase = 0,
@@ -89,7 +82,6 @@ export function checkpointItemFixture({
   });
 }
 
-/** A Cebraspe-style exam: a wrong answer cancels a right one, so capsules and practice score net. */
 export const NET_SCORED_EXAM_STRUCTURE = {
   formats: [],
   mock: {
@@ -105,7 +97,6 @@ export const NET_SCORED_EXAM_STRUCTURE = {
   subjects: [],
 };
 
-/** A true-or-false statement's content, true or false as asked. */
 export function statementContent(isTrue: boolean) {
   return {
     context: null,

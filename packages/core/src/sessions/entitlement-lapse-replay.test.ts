@@ -26,7 +26,6 @@ describe("an entitlement replacement is settled once", () => {
       title: "Later eight-minute lesson",
     });
 
-    // It goes before the next phase's challenge, which moves a place later.
     await Promise.all([
       lessonSkillFixture({ lessonId: extra.id, skillId: day.skills.at(-1)!.id }),
       prisma.planItem.updateMany({

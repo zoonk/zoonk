@@ -32,8 +32,6 @@ const boss: PlannedCheckpoint = {
   title: "Phase 1 boss",
 };
 
-// The plan's saved day: a lesson before the challenge, the challenge leading the next lesson of
-// the chapter in progress, and tomorrow's lesson the day looks ahead to.
 const items = [
   { id: "before", position: 3, scheduledFor: TODAY },
   { id: "boss", position: 4, scheduledFor: TODAY },

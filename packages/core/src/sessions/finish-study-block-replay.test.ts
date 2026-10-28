@@ -12,7 +12,6 @@ import { answerStudyQuestion } from "./answer-study-question";
 import { type BlockPayload, toBlockPayload } from "./block-payload";
 import { finishStudyBlock } from "./finish-study-block";
 
-/** What a retry reaches: its level and Energy were the first finish's to celebrate. */
 const NOTHING = { energy: null, level: null };
 
 const BOSS: BlockPayload["checkpoint"] = {
@@ -24,13 +23,11 @@ const BOSS: BlockPayload["checkpoint"] = {
   timeLimitMinutes: null,
 };
 
-/** A day whose one mission is its practice: finishing that block completes it and pays the bonus. */
 const PRACTICE_MISSION = {
   picks: [{ anchor: { blockKind: "practice" }, kind: "practice", total: 1 }],
   version: 1,
 };
 
-/** A block answered and ready to finish, with a lesson after it so the day goes on (unless `last`). */
 async function setup(
   checkpoint: BlockPayload["checkpoint"],
   { last = false, missions }: { last?: boolean; missions?: typeof PRACTICE_MISSION } = {},
@@ -73,7 +70,6 @@ async function setup(
   return { block, finish, user };
 }
 
-/** Everything a finish pays or records for the learner. */
 async function readPaid({ block, user }: Awaited<ReturnType<typeof setup>>) {
   const [progress, saved, events, milestones] = await Promise.all([
     prisma.userProgress.findUniqueOrThrow({ where: { userId: user.id } }),
@@ -107,8 +103,6 @@ describe("finishing a block that already finished", () => {
     const paid = await readPaid(day);
     expect(paid.blockBrainPower).toBeGreaterThan(0);
 
-    // A retry after the first response was lost: the same moment, whose milestones (and their
-    // ceremony) were recorded the first time; the day's summary shows any the learner didn't see.
     const retried = await day.finish();
 
     expect(retried).toStrictEqual(
@@ -132,7 +126,6 @@ describe("finishing a block that already finished", () => {
       status: "ready",
     });
 
-    // The screen asked again (its first response was lost, or it was drawn again): the same moment.
     const retried = await day.finish();
 
     expect(retried).toStrictEqual(
@@ -171,8 +164,6 @@ describe("finishing a block that already finished", () => {
   it("says the belt level and the tenth of Energy it reached, with its ceremony", async () => {
     const day = await setup(null, { missions: PRACTICE_MISSION });
 
-    // Just short of the yellow belt and of 80% Energy: the block's answer and the day's bonus
-    // take the learner across both.
     const progress = { currentEnergy: 79.9, lastActiveAt: new Date(), totalBrainPower: 2490n };
 
     await prisma.userProgress.upsert({
@@ -189,7 +180,6 @@ describe("finishing a block that already finished", () => {
       status: "ready",
     });
 
-    // A retry after a lost response celebrates none of it again.
     await expect(day.finish()).resolves.toMatchObject({
       completion: { ceremony: null, reached: NOTHING },
     });
@@ -215,8 +205,6 @@ describe("finishing a block that already finished", () => {
     const day = await setup(null, { missions: PRACTICE_MISSION });
     const finishes = await Promise.all([day.finish(), day.finish()]);
 
-    // The finish that lost the race to settle the block may only say it's finished; every moment
-    // either one returns names the mission and the bonus the block paid.
     const moments = finishes.flatMap((finish) =>
       finish.status === "ready" ? [finish.completion] : [],
     );

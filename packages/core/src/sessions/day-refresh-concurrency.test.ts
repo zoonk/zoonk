@@ -13,7 +13,6 @@ import { getSessionPageView } from "./get-session-page-view";
 
 const NOW = new Date("2026-09-30T12:00:00Z");
 
-/** All blocks are done, but completion of the parent is still about to commit. */
 async function setupCompletionWindow() {
   const [user, library] = await Promise.all([
     userFixture(),
@@ -38,7 +37,7 @@ async function setupCompletionWindow() {
 
   const day = opened.session;
   const lessonIds = day.blocks.flatMap((block) => block.lessonId ?? []);
-  /** Own fixture rows isolate refresh semantics without playing unrelated lesson assessments. */
+
   await prisma.$transaction([
     prisma.studySessionBlock.updateMany({
       data: { completedAt: NOW, startedAt: NOW, status: "completed" },
@@ -84,7 +83,7 @@ async function waitForSessionWriter(holderPid: number) {
     .not.toHaveLength(0);
 }
 
-/** Commit completion only after the refresh has read the active parent and waits for its lock. */
+/** Hold completion until refresh waits on its lock, so the test covers a genuinely stale parent read. */
 async function completeDuringRefresh<T>({
   refresh,
   sessionId,
@@ -178,7 +177,7 @@ describe("day refresh races a completed parent with unchanged finished blocks", 
     expect(refreshed.blocks.filter((block) => block.status === "completed")).toStrictEqual(
       session.blocks,
     );
-    /** A historical ending remains when explicit added time opens the day again. */
+
     expect(refreshed.endedAt).toStrictEqual(NOW);
     expect(refreshed.status).toBe("active");
   });

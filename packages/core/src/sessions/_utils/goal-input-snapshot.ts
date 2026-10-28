@@ -1,7 +1,6 @@
 import { isDeepStrictEqual } from "node:util";
 import { type Goal } from "@zoonk/db";
 
-/** The goal fields that selection and the session builder consume, including their local-day basis. */
 function goalInputs(goal: Goal) {
   return {
     createdAt: goal.createdAt,
@@ -20,7 +19,7 @@ function goalInputs(goal: Goal) {
   };
 }
 
-/** A newer plan version cannot make an older caller's goal snapshot safe to commit. */
+/** A newer plan version cannot authorize committing against an older goal-input snapshot. */
 export function hasSameGoalInputs({
   current,
   planned,

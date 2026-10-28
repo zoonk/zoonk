@@ -2,15 +2,9 @@ import "server-only";
 import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { isDayAwaitingOutlines } from "./outlining-stand-ins";
 
-/** What a day still waiting on outlines records instead of its plan's version (see below). */
 export const AWAITING_OUTLINES_VERSION = 0;
 
-/**
- * The plan version a day records once built or refreshed: the plan's; or, while it holds time for
- * lessons still being outlined (`isDayAwaitingOutlines`), one older than any plan's, so the
- * learner's next Open or Continue checks it again until they land or nobody is writing them
- * anymore, and the day fills up then (`appendLandedLessons`).
- */
+/** Pending outlines use an older-than-real version so Open/Continue rechecks until new lessons land or writing stops. */
 export async function loadDayPlanVersion({
   client = prisma,
   goal,

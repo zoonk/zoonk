@@ -5,7 +5,7 @@ import {
   moveGoalTimeZoneInTransaction,
 } from "../../learner/follow-goal-time-zone";
 
-/** Zone following is a separate marked POST phase, before the request selects its one plan. */
+/** Follow the zone in a separate marked POST phase before selecting the request's plan. */
 export async function followOpenDayZone({
   goal,
   timeZone,

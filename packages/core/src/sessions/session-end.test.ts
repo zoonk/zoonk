@@ -28,7 +28,6 @@ import { settleFinishedLesson } from "./settle-finished-lesson";
 import { startStudyBlock } from "./start-study-block";
 import { stopStudySession } from "./stop-study-session";
 
-/** A new learner's day one: lessons only, with some Brain Power from before. */
 async function setup() {
   const user = await userFixture();
   const fixture = await sessionGoalFixture({ lessons: 3, userId: user.id });
@@ -75,7 +74,6 @@ describe("ending a session", () => {
       userId: user.id,
     });
 
-    // The day's only offered mission is done, so it earns the full completion bonus.
     expect(moment).toMatchObject({
       blockId: first?.id,
       brainPower: 90,
@@ -88,7 +86,6 @@ describe("ending a session", () => {
       prisma.planItem.findUniqueOrThrow({ where: { id: planItems[0]?.id } }),
     ).resolves.toMatchObject({ status: "done" });
 
-    // A lesson finished outside today's session still checks off its plan item.
     const elsewhere = await sessionGoalFixture({ lessons: 1, userId: user.id });
 
     await expect(
@@ -110,8 +107,6 @@ describe("ending a session", () => {
 
     await startStudyBlock({ blockId: first?.id ?? "", input: {}, sessionId: session.id });
 
-    // The lesson took two minutes, whatever the plan gave it; one played outside the session
-    // isn't the session's time.
     await Promise.all([
       learningEventFixture({
         brainPower: 40,
@@ -144,7 +139,6 @@ describe("ending a session", () => {
       where: { id: session.id },
     });
 
-    // Nothing is skipped: the session isn't over, only paused for today.
     expect(stored.status).toBe("active");
 
     expect(stored.blocks.map((block) => block.status)).toStrictEqual([
@@ -153,7 +147,6 @@ describe("ending a session", () => {
       "pending",
     ]);
 
-    // No reviews or fixes were possible; the completed lesson earns the full mission bonus.
     expect(stopped.summary).toMatchObject({
       belt: { after: { color: "yellow" }, before: { color: "white" }, colorChanged: true },
       brainPower: 90,
@@ -170,7 +163,6 @@ describe("ending a session", () => {
       prisma.learningEvent.findFirst({ where: { kind: "session", userId: user.id } }),
     ).resolves.toMatchObject({ endedAt: null });
 
-    // Today picks the session up where it stopped.
     const today = await getTodayStudySession({ goalId: session.goalId ?? "" });
     expect(today.status === "ready" && today.session.nextBlockId).toBe(second?.id);
 
@@ -179,7 +171,6 @@ describe("ending a session", () => {
     ).resolves.toMatchObject({ status: "ready" });
   });
 
-  // Pedro's summary said "Preparation 4%" while his Plan counted his lessons.
   it("says how a goal without an exam moved in its plan's lessons, from the session's start", async () => {
     const user = await userFixture();
     const fixture = await sessionGoalFixture({ lessons: 3, userId: user.id });
@@ -206,7 +197,6 @@ describe("ending a session", () => {
 
     await startStudyBlock({ blockId: first?.id ?? "", input: {}, sessionId });
 
-    // The block's lesson is finished: its plan item is done.
     await prisma.planItem.update({
       data: { completedAt: new Date(), status: "done" },
       where: { id: fixture.planItems[0]?.id ?? "" },
@@ -222,7 +212,6 @@ describe("ending a session", () => {
 
   it("keeps the summary as the session ended, and counts the day it was finished", async () => {
     const user = await userFixture();
-    // The exam is in three days, after the lesson's idea would come back.
     const targetDate = new Date(SESSION_TODAY.getTime() + 3 * DAY_MS);
 
     const { goal, lessons, plan, skills } = await sessionGoalFixture({
@@ -250,7 +239,6 @@ describe("ending a session", () => {
 
     const [first, ...rest] = today.session.blocks;
 
-    // The plan gives the lesson 8 minutes; it takes 2 min 50 s, recorded as the day's time too.
     await Promise.all([
       prisma.studySessionBlock.updateMany({
         data: { status: "skipped" },
@@ -281,7 +269,6 @@ describe("ending a session", () => {
       sessionId: today.session.id,
     });
 
-    // The idea is due after the exam, so no review before it asks it: the end screen names no day.
     expect(finished).toMatchObject({
       completion: { comesBackOn: null, sessionCompleted: true },
       status: "ready",
@@ -289,7 +276,6 @@ describe("ending a session", () => {
 
     const ended = await getStudySessionSummary({ input: {}, sessionId: today.session.id });
 
-    // A lesson played later moves Brain Power, Energy and skills; the summary keeps the session's.
     await Promise.all([
       prisma.userProgress.update({
         data: { currentEnergy: 90, totalBrainPower: { increment: 5000 } },
@@ -301,7 +287,7 @@ describe("ending a session", () => {
     const later = await getStudySessionSummary({ input: {}, sessionId: today.session.id });
 
     expect(ended.status === "ready" && ended.summary.belt).toBeTruthy();
-    // An exam reads its preparation, never its lessons.
+
     expect(ended.status === "ready" && ended.summary.progress).toStrictEqual({
       after: null,
       before: null,
@@ -309,8 +295,6 @@ describe("ending a session", () => {
 
     expect(later).toStrictEqual(ended);
 
-    // The time the session took is the time its lesson took, in its summary and its ledger row,
-    // in whole minutes as the week counts them.
     expect(ended.status === "ready" && ended.summary.minutes).toBe(2);
 
     await expect(
@@ -319,9 +303,6 @@ describe("ending a session", () => {
 
     const view = await getTodayStudySession({ goalId: goal.id });
 
-    // 45 minutes a day, done in less: finishing the session counts the day. Today says the time
-    // studied, the summary's 2 minutes: "11 min studied" beside a 3-minute summary and a week that
-    // grew by 2 counted the plan's minutes for the blocks done.
     expect(
       view.status === "ready" && view.session.week.days.find((day) => day.isToday),
     ).toMatchObject({ hitGoal: true, minutes: 2 });
@@ -331,10 +312,8 @@ describe("ending a session", () => {
     const { goal, session, skills, user } = await setup();
     const flush = runDeferredWork();
 
-    // Memory starts off until a learner without an adult's age answer turns it on.
     await learningProfileFixture({ memoryEnabled: true, userId: user.id });
 
-    // A week with answers on two days is enough for memory to read.
     await Promise.all(
       Array.from({ length: 14 }, (_, index) =>
         attemptFixture({
@@ -351,7 +330,6 @@ describe("ending a session", () => {
       provenance: { generatedAt: "", model: "test", promptVersion: "test", runId: "test" },
     } as unknown as Awaited<ReturnType<typeof findSessionPatterns>>);
 
-    // Two stops at once (a double tap) and one later: only the first runs memory and the rebalance.
     await Promise.all([
       stopStudySession({ input: {}, sessionId: session.id }),
       stopStudySession({ input: {}, sessionId: session.id }),
@@ -373,8 +351,6 @@ describe("ending a session", () => {
     );
   });
 
-  // Will had studied one lesson and wanted more: "10 more minutes" gave him practice, twice at
-  // most. His plan's next lessons aren't bonus: studied now, they're the plan done early.
   it("keeps learning with the plan's next lessons after the day's session, as often as asked", async () => {
     const { lessons, session } = await setup();
 
@@ -383,7 +359,6 @@ describe("ending a session", () => {
       status: "unavailable",
     });
 
-    // Stopping for today leaves the session to pick up, not finished.
     await stopStudySession({ input: {}, sessionId: session.id });
 
     await expect(addExtraStudyBlock({ sessionId: session.id })).resolves.toStrictEqual({
@@ -399,7 +374,6 @@ describe("ending a session", () => {
 
     await skipAll();
 
-    // A lesson skipped is still the plan's next: one tap adds about ten minutes of them, in order.
     await expect(addExtraStudyBlock({ sessionId: session.id })).resolves.toMatchObject({
       block: { extra: true, kind: "learn", lessonId: lessons[0]?.id, status: "pending" },
       status: "ready",
@@ -416,7 +390,6 @@ describe("ending a session", () => {
 
     expect(added.length).toBeGreaterThan(1);
 
-    // Past the two bonus practice blocks a day, the plan's lessons keep coming.
     await skipAll();
 
     await expect(addExtraStudyBlock({ sessionId: session.id })).resolves.toMatchObject({
@@ -508,7 +481,6 @@ describe(scoreLessonAnswers, () => {
       userId: user.id,
     });
 
-    // x1 then x2 on new questions; a wrong answer earns nothing and costs nothing.
     expect(newOnly).toStrictEqual({ brainPower: 2 + 4, topHyperdrive: 2 });
 
     const withReplay = await scoreLessonAnswers({
@@ -516,7 +488,6 @@ describe(scoreLessonAnswers, () => {
       userId: user.id,
     });
 
-    // The replayed question pays 1 and doesn't build Hyperdrive.
     expect(withReplay).toStrictEqual({ brainPower: 1 + 2, topHyperdrive: 1 });
   });
 });

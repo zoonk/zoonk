@@ -35,12 +35,6 @@ import { getStudySessionSummary } from "./get-study-session-summary";
 
 const TIME_ZONE = "UTC";
 
-/**
- * An exam goal started ten days ago, so a free plan's first week is over: its first lesson is done
- * and due for review, its next two are what missed days left to catch up, and four written lessons
- * follow: one still to do, one done and one begun during the free week, then a phase challenge.
- * The learner studied yesterday, so today isn't a fresh start after a break.
- */
 async function examPastFreeWeek({ plus = false }: { plus?: boolean } = {}) {
   const user = await userFixture();
 
@@ -86,7 +80,6 @@ async function examPastFreeWeek({ plus = false }: { plus?: boolean } = {}) {
       planId: fixture.plan.id,
     }),
     lessonRunFixture({ lessonId: begun.lesson.id, startedAt: daysAgo(8), userId: user.id }),
-    // Studied yesterday, so today is an ordinary day, not a return that leaves catching up out.
     dailyProgressFixtureMany([{ date: daysAgo(1), timeSpentSeconds: 1200, userId: user.id }]),
     plus &&
       prisma.subscription.create({
@@ -110,7 +103,6 @@ async function examPastFreeWeek({ plus = false }: { plus?: boolean } = {}) {
   };
 }
 
-/** Lays the plan's items out on today, so the plan has a pace to read. */
 function scheduleToday(planId: string) {
   return prisma.planItem.updateMany({ data: { scheduledFor: SESSION_TODAY }, where: { planId } });
 }
@@ -139,7 +131,6 @@ describe("a free exam plan past its first week", () => {
     vi.useRealTimers();
   });
 
-  // rafa3: Today said Plus opens new lessons, yet "Catch up today" added 205 of them to the day.
   it("offers no catch-up, and refuses one asked for, while Plus keeps it", async () => {
     const free = await examPastFreeWeek();
     const day = await openToday(free.goal.id);
@@ -167,14 +158,12 @@ describe("a free exam plan past its first week", () => {
 
     await expect(start(next.id)).resolves.toStrictEqual({ status: "plusRequired" });
 
-    // Refused before the allowance: nothing was counted or opened.
     await expect(
       prisma.learningEvent.count({
         where: { contentIds: { equals: next.id, path: ["lessonId"] } },
       }),
     ).resolves.toBe(0);
 
-    // A lesson done (a replay), one begun during the free week and one outside the plan.
     const outside = await playableLessonFixture();
 
     await expect(start(done.id)).resolves.toMatchObject({ status: "started" });
@@ -220,7 +209,6 @@ describe("a free exam plan past its first week", () => {
     });
   });
 
-  // The session's last screen said "Tomorrow: <next lesson>", a lesson the free plan no longer opens.
   it("ends the day without promising tomorrow's new lesson, while Plus keeps it", async () => {
     const free = await examPastFreeWeek();
     const day = await openToday(free.goal.id);
@@ -238,8 +226,6 @@ describe("a free exam plan past its first week", () => {
     });
   });
 
-  // Today's header said "199 lessons to catch up": lessons the free plan no longer opens. A plan
-  // only Plus moves has no pace to keep, and the free-week notice says why.
   it("reads no pace against the plan, while Plus keeps its lessons to catch up", async () => {
     const free = await examPastFreeWeek();
     await scheduleToday(free.plan.id);
@@ -265,9 +251,6 @@ describe("a free exam plan past its first week", () => {
     await expect(getGoalPlan(plus.goal.id)).resolves.toMatchObject({ plan: { status: behind } });
   });
 
-  // Ana's Today back after a week: "Today is lighter, about 11 min" and "2 activities so far ·
-  // more as you go", while the lessons her plan dated that day went unmentioned. Today lists them
-  // locked for Plus, as Plus learners see them open, both before and after she opens the day.
   it("lists the lessons the plan dates today that it holds for Plus, while Plus has none", async () => {
     const free = await examPastFreeWeek();
     await scheduleToday(free.plan.id);
@@ -280,7 +263,6 @@ describe("a free exam plan past its first week", () => {
 
     const day = await openToday(free.goal.id);
 
-    // The plan's lessons dated today still to do, but the one she began during the free week.
     const dated = await prisma.planItem.findMany({
       orderBy: { position: "asc" },
       where: {

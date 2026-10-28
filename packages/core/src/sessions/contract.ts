@@ -72,7 +72,6 @@ const numberAnswerSchema = z
   .strict()
   .meta({ id: "NumberAnswer" });
 
-/** A typed word or short answer is a few words; anything longer isn't one. */
 const MAX_TYPED_ANSWER_LENGTH = 500;
 
 const typedAnswerSchema = z
@@ -97,7 +96,6 @@ const orderAnswerSchema = z
   .strict()
   .meta({ id: "OrderAnswer" });
 
-/** One answer to one of a block's questions. */
 export const studyAnswerInputSchema = z
   .object({
     answer: z.union([
@@ -116,16 +114,12 @@ export const studyAnswerInputSchema = z
 
 export type StudyAnswerInput = z.infer<typeof studyAnswerInputSchema>;
 
-/** A learner's answer to a session question, in any of the formats sessions grade. */
 export type QuestionAnswer = StudyAnswerInput["answer"];
 
 type StudyAnswerFeedback = {
-  /**
-   * A statement left blank where a wrong answer cancels a right one: neither right nor a mistake,
-   * so it shows no error and stays out of the notebook.
-   */
+  /** Blank net-scored statements count as neither correct nor mistakes and never enter the notebook. */
   blank: boolean;
-  /** Checkpoints are duels without hints: the right answer and why wait until the duel ends. */
+  /** Checkpoints withhold answers and explanations until the duel ends. */
   correctAnswer: QuestionAnswer | null;
   explanation: string | null;
   hyperdrive: { level: number; streak: number };
@@ -135,12 +129,8 @@ type StudyAnswerFeedback = {
   pauseSuggested: boolean;
   /** Available reinforcement lessons for this checkpoint's misses; null for other blocks. */
   reinforcementLessons: number | null;
-  /** A wrong answer goes to the mistakes notebook on its own. */
   savedToNotebook: boolean;
-  /**
-   * A recording's transcript, once this answer completes its questions in the block (before, it
-   * would answer them); null otherwise.
-   */
+  /** Hidden until the recording's questions are complete, to avoid revealing their answers. */
   transcript: ListeningSetView["transcript"];
   /** In a trap drill, the trap the question set: the misconception a wrong answer carries. */
   trap: string | null;

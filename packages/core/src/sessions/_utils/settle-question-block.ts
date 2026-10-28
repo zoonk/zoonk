@@ -43,9 +43,7 @@ export type QuestionBlockSettlement = {
   capsulesOpened: number;
   checkpoint: CheckpointOutcome | null;
   correct: number;
-  /** Energy before and after the block's answers, to tell the tenth of Energy they reached. */
   energy: ProgressChange;
-  /** How long the block took, as the ledger and today's totals count it. */
   seconds: number;
   topHyperdrive: number;
   total: number;
@@ -58,7 +56,6 @@ export type SettleQuestionBlockResult =
   | { status: "noAnswers" }
   | { status: "unanswered" };
 
-/** Brain Power extra blocks already earned today, across the learner's sessions. */
 async function loadExtraEarnedToday(
   tx: TransactionClient,
   { localDate, userId }: { localDate: Date; userId: string },
@@ -89,7 +86,6 @@ type SettleInput = {
   userId: string;
 };
 
-/** Reads and scores the block's answers, continuing Hyperdrive from the session's earlier blocks. */
 export async function prepareQuestionBlock({
   block,
   session,
@@ -125,13 +121,12 @@ export async function prepareQuestionBlock({
   const answered = answeredIds.size;
   const itemIds = getBlockItemIds(payload);
 
-  // A checkpoint short of answers is judged on the questions it can still ask.
+  // Judge checkpoints against questions still askable, rather than deleted or unavailable questions.
   const questions =
     payload.checkpoint && answered < itemIds.length
       ? await countAskableQuestions({ answeredItemIds: answeredIds, itemIds })
       : itemIds.length;
 
-  // A checkpoint is answered in full, unless a boss's duel was decided before its last question.
   if (
     payload.checkpoint &&
     answered < questions &&
@@ -156,7 +151,6 @@ export async function prepareQuestionBlock({
   };
 }
 
-/** The capsules the block's answers opened. */
 export function countOpenedCapsules({
   own,
   payload,
@@ -166,10 +160,7 @@ export function countOpenedCapsules({
   ).length;
 }
 
-/**
- * Brain Power for the block with its bonuses. Mastery bonuses read the session's snapshot inside
- * the lock, so a skill's Solid or Mastered bonus is paid once even if two blocks finish together.
- */
+/** Read mastery rewards under the session lock so concurrent block completions cannot pay a skill twice. */
 async function getBlockBrainPower(
   tx: TransactionClient,
   {
@@ -218,13 +209,7 @@ async function getBlockBrainPower(
   return { brainPower, capsulesOpened: outcome.capsulesOpened };
 }
 
-/**
- * Scores a finished question block (capsules, practice or a checkpoint) and writes it: Brain Power
- * with Hyperdrive continuing from earlier blocks, bonuses for capsules, mastery and checkpoints,
- * Energy by today's rules, the ledger rows and today's totals, all under the learner's progress
- * lock. Extra practice after the day's session is capped. A block is only settled once, and only
- * then sends "Block Completed".
- */
+/** Settles a block once under the progress lock, caps extra practice rewards, and emits completion only after settlement. */
 export async function settleQuestionBlock(input: SettleInput): Promise<SettleQuestionBlockResult> {
   const prepared = await prepareQuestionBlock(input);
 
@@ -321,8 +306,7 @@ export async function settleQuestionBlock(input: SettleInput): Promise<SettleQue
         ),
       );
 
-      // A checkpoint won, a weekly challenge finished or a review day practiced checks its item off;
-      // a phase checkpoint lost moves to tomorrow, its new try.
+      // A lost phase checkpoint retries tomorrow; a finished weekly challenge does not.
       const done = checkpoint ? checkpoint.passed || checkpoint.kind === "weekly" : true;
 
       if (payload.planItemId) {

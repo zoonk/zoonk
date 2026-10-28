@@ -2,21 +2,13 @@ import { type ItemFormat } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { interleave } from "@zoonk/utils/interleave";
 
-/**
- * Time capsules are the review block: the key ideas of a finished lesson are sealed with an opening
- * date from FSRS, and on that day they open with a few quick questions in the format that fits.
- * Rapid-fire serves quick choice questions and math problems (with new numbers each time), match
- * pairs one matching question, and swipe serves true-or-false statements with net scoring for exams
- * where a wrong answer cancels a right one.
- */
+/** Swipe capsules use net scoring for exams where wrong answers cancel right ones. */
 export const CAPSULE_FORMATS = ["rapidFire", "matchPairs", "swipe"] as const;
 
 export type CapsuleFormat = (typeof CAPSULE_FORMATS)[number];
 
-/** "Answer 3 quick questions and the cards glow again." */
 const CAPSULE_QUESTIONS = 3;
 
-/** A skill due for review today, with the lesson that taught it (its capsule). */
 export type DueSkill = { lessonId: string | null; skillId: string; title: string };
 
 export type CapsuleGroup = {
@@ -26,7 +18,6 @@ export type CapsuleGroup = {
   title: string;
 };
 
-/** A question the capsule could ask, with when the learner last answered it. */
 export type CapsuleItemCandidate = {
   format: ItemFormat;
   id: string;
@@ -42,10 +33,7 @@ function getCapsuleKey(skill: DueSkill): string {
   return skill.lessonId ?? `skill:${skill.skillId}`;
 }
 
-/**
- * Groups today's due skills into capsules, one per lesson that taught them (a skill without a
- * lesson is its own capsule). Capsules keep the order of their most urgent skill.
- */
+/** Keep capsules in urgency order; a skill without a teaching lesson gets its own capsule. */
 export function groupIntoCapsules(skills: readonly DueSkill[]): CapsuleGroup[] {
   const keys = [...new Set(skills.map((skill) => getCapsuleKey(skill)))];
 
@@ -88,7 +76,6 @@ function isFormatFor({ format, item }: { format: CapsuleFormat; item: CapsuleIte
   return RAPID_FIRE_FORMATS.has(item.format);
 }
 
-/** Questions in the learner's field first, then never answered, then answered longest ago. */
 function byLeastRecent(a: CapsuleItemCandidate, b: CapsuleItemCandidate): number {
   return (
     Number(!a.inField) - Number(!b.inField) ||
@@ -96,10 +83,7 @@ function byLeastRecent(a: CapsuleItemCandidate, b: CapsuleItemCandidate): number
   );
 }
 
-/**
- * Picks a capsule's questions: one matching question for match pairs, otherwise up to three,
- * taking one per skill in turn so every idea in the capsule comes back.
- */
+/** Takes one question per skill in turn; matching capsules ask one item, other formats up to three. */
 export function pickCapsuleItems({
   candidates,
   format,
@@ -118,21 +102,13 @@ export function pickCapsuleItems({
     .map((item) => item.id);
 }
 
-/**
- * When a lesson's capsule opens: the first day FSRS says one of its ideas is due, right when the
- * learner would start to forget. Null until one of its skills has been answered.
- */
+/** Returns the earliest skill due date, or null until any skill has been answered. */
 export function getCapsuleOpening(skills: readonly { due: Date | null }[]): Date | null {
   const dues = skills.flatMap((skill) => (skill.due ? [skill.due.getTime()] : []));
   return dues.length > 0 ? new Date(Math.min(...dues)) : null;
 }
 
-/**
- * The day an idea comes back for review as the learner reads it: an idea already due comes back at
- * the next session (tomorrow), never on a day that passed. Null when that's on or after the goal's
- * date, where the plan ends: an exam's final stretch reviews only what would fade before the exam,
- * and an idea due after it doesn't. Days are UTC-midnight labels.
- */
+/** Accepts UTC-midnight day labels; past-due reviews move to tomorrow and reviews on/after the goal's date return null. */
 export function capReviewDay({
   day,
   targetDate,
@@ -146,7 +122,7 @@ export function capReviewDay({
   return !targetDate || next < targetDate ? next : null;
 }
 
-/** The capsules whose questions fit `maxQuestions`, most urgent first; at least the first one. */
+/** Always includes the first capsule even if it exceeds maxQuestions. */
 function takeCapsules<T extends { itemIds: readonly string[] }>({
   capsules,
   maxQuestions,
@@ -163,11 +139,7 @@ function takeCapsules<T extends { itemIds: readonly string[] }>({
   });
 }
 
-/**
- * The due capsules a review asks: as many as its share (`maxQuestions`) and the day's room for
- * questions (`room`, what its fixed work leaves) hold, the first one whatever the share, and none
- * when even the first doesn't fit the room: it waits for a day with time for it.
- */
+/** maxQuestions permits at least one capsule, but room is a hard limit that may exclude even the first. */
 export function takeReviewCapsules<T extends { itemIds: readonly string[] }>({
   capsules,
   maxQuestions = Number.POSITIVE_INFINITY,

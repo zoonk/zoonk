@@ -8,7 +8,6 @@ import { type Reached, reachedSchema } from "./reached";
 
 const LOGICAL_DATE_LENGTH = 10;
 
-/** A checkpoint's result with each question's right answer and why, now that the duel is over. */
 export type CheckpointResultView = CheckpointOutcome & {
   answers: {
     correctAnswer: QuestionAnswer;
@@ -19,26 +18,15 @@ export type CheckpointResultView = CheckpointOutcome & {
   }[];
 };
 
-/**
- * "This is easy? Take the chapter's test and skip the rest": offered once, right after the lesson
- * that made it a streak, for the chapter the lesson is planned in.
- */
+/** Offer once after the qualifying lesson streak, for that lesson's planned chapter. */
 export type TestOutOffer = {
   chapterId: string;
   chapterTitle: string;
   goalId: string;
-  /**
-   * The plan's lessons passing the test can skip: the chapter's still to do, and the ones elsewhere
-   * that teach only the same skills.
-   */
+  /** Includes pending lessons elsewhere that teach only the same skills. */
   lessonsLeft: number;
 };
 
-/**
- * The moment after a block: a check mark, the Brain Power earned (with the bonus for all offered
- * missions when it just paid), one more step on the session bar, when a lesson comes back as a capsule, the
- * missions, and any milestone earned (the end of the session shows at most one as a ceremony).
- */
 export type StudyBlockCompletion = {
   blockId: string;
   brainPower: number;
@@ -48,29 +36,19 @@ export type StudyBlockCompletion = {
   checkpoint: CheckpointResultView | null;
   /** For lessons: the day their capsule opens, right when memory would start to fade. */
   comesBackOn: Date | null;
-  /** The day's missions this block completed, so its moment names them. */
   completedMissions: Mission["kind"][];
   correct: number;
   fullMeal: { bonus: number; paid: boolean };
   milestones: Milestone[];
   missions: Mission[];
-  /**
-   * Swipe capsules for exams where a wrong answer cancels a right one (Cebraspe) show the net
-   * score: right minus wrong. Null for every other block.
-   */
+  /** Right minus wrong for net-scored swipe capsules; null for other blocks. */
   netScore: number | null;
   nextBlockId: string | null;
-  /**
-   * The belt level and the tenth of Energy the block took the learner to, to celebrate them; said
-   * by the request that settled it, so a retry reaches nothing again.
-   */
+  /** Only the settling request reports newly reached levels; retries report none. */
   reached: Reached;
   sessionBar: { completed: number; total: number };
   sessionCompleted: boolean;
-  /**
-   * After a lesson the learner breezed through, the second in a row of its chapter: its test,
-   * which skips the rest of the chapter. Null otherwise, and for every other block.
-   */
+  /** Null unless the lesson completes a qualifying streak and the chapter has lessons left to skip. */
   testOutOffer: TestOutOffer | null;
   topHyperdrive: number;
   total: number;
@@ -87,7 +65,6 @@ export const activityBrainPowerSchema = z
     description: "Brain Power earned by the activity itself, excluding the daily mission bonus.",
   });
 
-/** A learner's answer to a session question, in any of the formats sessions grade. */
 export const questionAnswerSchema = z
   .union([
     z.object({ selectedIndex: countSchema }),
@@ -219,10 +196,7 @@ const checkpointResultSchema = z.object({
   total: countSchema,
 });
 
-/**
- * The moment after a session block, the same for question blocks and lessons: the lesson
- * player's completion returns it for a lesson that was one of the day's blocks.
- */
+/** Lesson-player completion uses the same contract when the lesson belongs to a session block. */
 export const studyBlockCompletionSchema = z
   .object({
     blockId: idSchema,
@@ -292,7 +266,6 @@ export type StudyBlockCompletionView = z.infer<typeof studyBlockCompletionSchema
 
 export type MilestoneView = z.infer<typeof milestoneSchema>;
 
-/** A milestone as it goes over the wire: its instants in ISO. */
 export function serializeMilestone(milestone: Milestone): MilestoneView {
   return {
     earnedAt: milestone.earnedAt.toISOString(),
@@ -303,7 +276,7 @@ export function serializeMilestone(milestone: Milestone): MilestoneView {
   };
 }
 
-/** The completion as it goes over the wire: instants in ISO, learner-local days as dates. */
+/** Serializes instants as ISO timestamps and learner-local days as dates. */
 export function serializeStudyBlockCompletion(
   completion: StudyBlockCompletion,
 ): StudyBlockCompletionView {

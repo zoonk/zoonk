@@ -17,11 +17,7 @@ const capsuleSchema = z.object({
   title: z.string(),
 });
 
-/**
- * A targeted drill for one saved mistake: its question first, then a few more on its skill, played
- * the way its cause calls for (the lesson again first for a content gap, a time box for running out
- * of time). A drill without a kind is a plain retry.
- */
+/** A missing drill kind means a plain retry. */
 const drillSchema = z.object({
   itemIds: z.array(z.string()),
   kind: z.enum(MISTAKE_DRILL_KINDS).default("retry"),
@@ -42,10 +38,7 @@ const checkpointSchema = z.object({
   timeLimitMinutes: z.number().int().nullable(),
 });
 
-/**
- * What a block needs, as plain ids fixed when the session is built, so the same session always
- * asks the same questions. Missing fields read as empty.
- */
+/** Freeze question ids at build time so revisits ask the same questions. */
 const blockPayloadSchema = z.object({
   /** A chapter's "Practice now": the area it practices, so a second tap finds it. */
   areaId: z.string().nullable().default(null),
@@ -60,13 +53,9 @@ const blockPayloadSchema = z.object({
   drills: z.array(drillSchema).default([]),
   /** The retained locked calls whose freed time this once-only entitlement replacement filled. */
   entitlementReplacementFor: z.array(z.uuid()).default([]),
-  /** "10 more minutes" after the day's session: its Brain Power is capped. */
+  /** Extra study earns capped Brain Power. */
   extra: z.boolean().default(false),
-  /**
-   * Practice on every skill of the goal, weakest first, on a day whose mock the learner's plan
-   * doesn't include: it stands in for the mock as the test in real conditions preparation waits
-   * for (see `getPreparationValue`).
-   */
+  /** Stands in for a missing mock as preparation's test in real conditions. */
   fullReview: z.boolean().default(false),
   itemIds: z.array(z.string()).default([]),
   /** The paid completion's evidence survives retries without rescoring its answers. */
@@ -74,31 +63,18 @@ const blockPayloadSchema = z.object({
     .object({ bossWon: z.boolean(), brainPower: brainPowerRewardSchema })
     .nullable()
     .default(null),
-  /**
-   * What finishing the block did to the day's missions (the ones it completed, whether it paid the
-   * day's bonus), kept so finishing it again, after a lost response or from a screen drawn again,
-   * returns the same moment.
-   */
+  /** Retain the earned mission moment so retries and redraws return the same result. */
   missionResult: z
     .object({ completed: z.array(z.enum(MISSION_KINDS)), fullMealPaid: z.boolean() })
     .nullable()
     .default(null),
-  /**
-   * Practice for an exam where a wrong answer cancels a right one (Cebraspe): it's scored net and
-   * statements can be left blank, as in the exam. Swipe capsules are scored net on their own.
-   */
+  /** Wrong answers cancel right ones and blanks are allowed; swipe capsules score net separately. */
   netScored: z.boolean().default(false),
-  /**
-   * Placement questions for skills whose starting point isn't settled yet, asked first in the goal's
-   * first week: day 1 has a few minutes of placement, and the sessions carry the rest.
-   */
+  /** Unsettled placement questions lead the first week's sessions. */
   placementItemIds: z.array(z.string()).default([]),
   planItemId: z.string().nullable().default(null),
   planItemKey: z.string().nullable().default(null),
-  /**
-   * The plan's skill a lesson block stands for, kept with the block so its subject still shows
-   * when a re-plan removes its plan item while the lesson is on today's list.
-   */
+  /** Retain the subject when re-planning removes the original plan item. */
   planSkillId: z.string().nullable().default(null),
   /** Content's "Review" of the goal's fading and due skills, so a second tap finds it. */
   refresh: z.boolean().default(false),
@@ -116,10 +92,7 @@ const blockPayloadSchema = z.object({
     .nullable()
     .default(null),
   title: z.string().nullable().default(null),
-  /**
-   * A review of the learner's weakest studied topics, none of them due: a day with nothing due and
-   * nothing else to study gets it instead of staying empty.
-   */
+  /** Nothing is due; use weak studied topics rather than leaving the day empty. */
   weakest: z.boolean().default(false),
 });
 
@@ -130,15 +103,11 @@ export type BlockDrill = z.infer<typeof drillSchema>;
 
 const EMPTY_BLOCK_PAYLOAD: BlockPayload = blockPayloadSchema.parse({});
 
-/** Builds a payload from the fields a block uses; the rest stay empty. */
 export function toBlockPayload(fields: Partial<BlockPayload>): BlockPayload {
   return { ...EMPTY_BLOCK_PAYLOAD, ...fields };
 }
 
-/**
- * Reads a stored payload. The session wrote it, so a parse failure means corrupted data: it's
- * logged and the block reads as empty instead of breaking the learner's day.
- */
+/** Logs invalid stored payloads and returns an empty payload rather than interrupting the day. */
 export function readBlockPayload(
   block: Pick<StudySessionBlock, "payload"> & { id?: string },
 ): BlockPayload {
@@ -156,10 +125,6 @@ export function readBlockPayload(
   return parsed.data;
 }
 
-/**
- * Every question a block asks, in order: placement questions, capsules, then mistake drills, then
- * the rest.
- */
 export function getBlockItemIds(payload: BlockPayload): string[] {
   return [
     ...payload.placementItemIds,

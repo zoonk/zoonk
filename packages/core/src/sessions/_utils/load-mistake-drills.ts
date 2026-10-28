@@ -14,21 +14,11 @@ import { type BlockDrill } from "../block-payload";
 import { loadLastAnswers } from "./load-review-capsules";
 import { QUESTION_ITEM_FORMATS, hasTraps, parseSessionItem } from "./session-items";
 
-/** Open mistakes considered for today's drill, oldest first. */
 const MISTAKE_POOL = 50;
 
-/** One mistake a day makes the "fix a mistake" mission; the notebook holds the rest. */
 const DAILY_MISTAKE_DRILLS = 1;
 
-/**
- * Today's "fix a mistake": the oldest open mistake on the goal's skills from an earlier day, with
- * the drill its cause calls for (the same question first, then a few more on its skill), its kind,
- * the lesson a content gap goes over first and a timed drill's time box. A mistake in a lesson
- * whose screens teach a finer skill than the plan's is on the goal too: its drill asks the
- * questions of the goal skill the lesson is held for (`getSkillOwners`), where the bank has them.
- * A skill practiced only with recordings gets back only its missed recording question
- * (`listDrillableMistakes`).
- */
+/** Listening-only skills drill only their original missed recording question; finer lesson skills may use their owning goal skill's bank. */
 export async function loadMistakeDrills({
   examBlueprintId,
   field,
@@ -42,7 +32,6 @@ export async function loadMistakeDrills({
   examBlueprintId: string | null;
   /** The goal's field: its questions come first in a drill, other fields' never. */
   field: string | null;
-  /** The goal's skills practiced only with recordings (`getListeningSkillIds`). */
   listeningSkillIds: ReadonlySet<string>;
   skills: readonly Pick<GoalSkillNode, "id" | "memberSkillIds">[];
   timeZone: string;

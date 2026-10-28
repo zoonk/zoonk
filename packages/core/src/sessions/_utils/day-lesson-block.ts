@@ -5,10 +5,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isCurrentSession } from "./current-session";
 import { STUDY_SESSION_INCLUDE } from "./study-session-access";
 
-/**
- * The current day's block this lesson finishes. A persisted completion names its exact block,
- * so another block of the same lesson opened meanwhile cannot receive a retry's completion.
- */
+/** Replayed completions must use the persisted block id, never another block opened for the same lesson meanwhile. */
 export async function findDayLessonBlock({
   blockId,
   client = prisma,
@@ -22,7 +19,7 @@ export async function findDayLessonBlock({
   client?: Pick<TransactionClient, "studySessionBlock">;
   lessonId: string;
   now?: Date;
-  /** A block done before this run began was an earlier run's: a replay doesn't finish it again. */
+  /** Exclude blocks completed before this run began. */
   runStartedAt?: Date;
   timeZone: string;
   userId: string;

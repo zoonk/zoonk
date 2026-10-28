@@ -49,7 +49,6 @@ describe("stop and lesson writes", () => {
     const elsewhere = await sessionGoalFixture({ lessons: 1, userId: user.id });
     const lessonId = elsewhere.lessons[0]?.id ?? "";
 
-    // Outside today's session: only the plan changes, and it changes once.
     await expect(
       settleFinishedLesson({ lessonId, timeZone: "UTC", userId: user.id }),
     ).resolves.toBeNull();
@@ -70,7 +69,6 @@ describe("stop and lesson writes", () => {
     const held = Promise.withResolvers<number>();
     const release = Promise.withResolvers<null>();
 
-    // A test-out tests the item out in its own transaction, still open.
     const testOut = prisma.$transaction(async (tx) => {
       await tx.planItem.update({ data: { status: "testedOut" }, where: { id: itemId } });
       const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;

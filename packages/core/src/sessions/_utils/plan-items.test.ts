@@ -120,7 +120,7 @@ describe("completion reduces posted coverage without planning", () => {
       postedPlan({ lessonIds: [lesson.id], short: true, userId: user.id }),
       postedPlan({ lessonIds: [lesson.id], short: true, userId: user.id }),
     ]);
-    // Even duplicate held items for the same lesson may credit it only once per plan.
+
     await planItemFixture({ lessonId: lesson.id, planId: plans[0]!.plan.id, position: 1 });
 
     await prisma.$transaction(async (tx) => {
@@ -220,7 +220,6 @@ describe("completion reduces posted coverage without planning", () => {
     const held = Promise.withResolvers<number>();
     const released = Promise.withResolvers<null>();
 
-    // Like the seed, neither transaction marks the plan first.
     const firstDone = prisma.$transaction(async (tx) => {
       await completeLessonPlanItems(tx, { lessonId: first.id, now: NOW, userId: user.id });
       const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;

@@ -35,10 +35,6 @@ import { startStudyBlock } from "./start-study-block";
 
 const HOUR_MS = 3_600_000;
 
-/**
- * A learner who studied one skill, whose bank has two questions of its own and a passage with
- * three questions on it, written out of order.
- */
 async function passageFixture() {
   const user = await userFixture();
 
@@ -232,9 +228,6 @@ describe("question sets in practice", () => {
     ]);
   });
 
-  // A boss's duel ends once it's decided, won (his shield breaks) or lost (it can't break anymore),
-  // which can leave a recording's last question unasked: the duel is over, so what was said shows
-  // as it would after its last question.
   it.each([
     { optionIndex: 0, outcome: "won" },
     { optionIndex: 1, outcome: "lost" },
@@ -293,7 +286,6 @@ describe("question sets in practice", () => {
       const first = await answer(itemIds[0] ?? "");
       expect(first.status === "ready" && first.feedback.transcript).toBeNull();
 
-      // Two right of three win it; two misses leave too few to.
       const deciding = await answer(itemIds[1] ?? "");
 
       expect(deciding.status === "ready" && deciding.feedback.transcript).toContainEqual({
@@ -307,7 +299,6 @@ describe("question sets in practice", () => {
         decided.status === "ready" && decided.detail.questions[2]?.set?.listening?.transcript,
       ).toContainEqual({ speaker: "Tom", text: "Tuesday, no, sorry, Thursday the twelfth." });
 
-      // It settles as it was decided, on the duel's own pass mark.
       await expect(finishStudyBlock({ ...ref, input: {} })).resolves.toMatchObject({
         completion: { checkpoint: { passMark: 2, passed: optionIndex === 0, total: 2 } },
         status: "ready",
@@ -395,7 +386,6 @@ describe("question sets in practice", () => {
       userId: user.id,
     });
 
-    // One question of a recording can't stand for it: the whole recording is asked, in order.
     expect(practice.map((item) => item.itemId)).toStrictEqual([first.id, second.id]);
   });
 });

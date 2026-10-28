@@ -23,10 +23,6 @@ import { getStudySessionSummary } from "./get-study-session-summary";
 import { startStudyBlock } from "./start-study-block";
 import { stopStudySession } from "./stop-study-session";
 
-/**
- * A Cebraspe-style exam goal whose lesson is done, with two false statements on its skill and a
- * mistake on the first, so today's practice drills it: that question, then the other one.
- */
 async function netScoredPracticeDay() {
   const [user, blueprint] = await Promise.all([
     userFixture(),
@@ -88,7 +84,6 @@ describe("net-scored practice", () => {
       new Set([ids.blank, ids.wrong]),
     );
 
-    // The drilled statement left blank, and the other false one answered true (wrong).
     const feedback = await questions.reduce<Promise<Record<string, unknown>>>(
       async (previous, question) => {
         const answered = await previous;
@@ -107,7 +102,6 @@ describe("net-scored practice", () => {
       Promise.resolve({}),
     );
 
-    // A blank is neither right nor a mistake: it says so, and nothing goes to the notebook.
     expect(feedback[ids.blank ?? ""]).toMatchObject({
       feedback: { blank: true, isCorrect: false, savedToNotebook: false },
       status: "ready",
@@ -118,7 +112,6 @@ describe("net-scored practice", () => {
       status: "ready",
     });
 
-    // Opened again, the block still tells the blank from the wrong answer.
     const reopened = await getStudyBlock(ref);
     const answered = reopened.status === "ready" ? reopened.detail.questions : [];
 
@@ -132,13 +125,11 @@ describe("net-scored practice", () => {
       isCorrect: false,
     });
 
-    // The wrong answer costs a point; the blank costs nothing.
     await expect(finishStudyBlock({ ...ref, input: {} })).resolves.toMatchObject({
       completion: { correct: 0, netScore: -1, total: 2 },
       status: "ready",
     });
 
-    // The session's summary leads with the same net score.
     await expect(
       getStudySessionSummary({ input: {}, sessionId: ref.sessionId }),
     ).resolves.toMatchObject({ status: "ready", summary: { netScore: -1 } });
@@ -151,7 +142,6 @@ describe("net-scored practice", () => {
 
     expect(session?.blocks.some((block) => block.netScored)).toBe(true);
 
-    // The day stops before its net-scored practice: "Net score 0" would say nothing true.
     await stopStudySession({ input: {}, sessionId: session?.id ?? "" });
 
     await expect(

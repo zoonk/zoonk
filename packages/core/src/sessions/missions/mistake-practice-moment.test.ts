@@ -110,7 +110,6 @@ describe("notebook practice mission moments", () => {
       { kind: "fixMistake", status: "done" },
     ]);
 
-    // The session's first block captures a start state after the off-session mission completed.
     await expect(
       startStudyBlock({
         blockId: saved.blocks[0]!.id,

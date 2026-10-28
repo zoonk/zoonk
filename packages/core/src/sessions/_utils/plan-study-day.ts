@@ -16,7 +16,7 @@ export type PlannedStudyDay = {
   plannedMinutes: number;
 };
 
-/** Both preview and persistence select blocks from the same plan value; this never replans. */
+/** Uses the supplied selected plan; preview and persistence must never re-plan independently. */
 export async function planStudyDay(
   context: SessionDayContext & { selection: SelectedDayPlan },
 ): Promise<PlannedStudyDay> {

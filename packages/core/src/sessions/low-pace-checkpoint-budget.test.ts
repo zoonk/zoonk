@@ -76,8 +76,6 @@ describe("a low-pace course's fixed checkpoint budget", () => {
         throw new Error("Expected the course's scheduled boss");
       }
 
-      // The learner completed the phase and returned yesterday, so this checks the real
-      // checkpoint day without overdue lessons or a welcome-back reduction.
       await Promise.all([
         prisma.planItem.updateMany({
           data: { completedAt: START, status: "done" },

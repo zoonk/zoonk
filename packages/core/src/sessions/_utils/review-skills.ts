@@ -2,7 +2,6 @@ import { getFocusTargets } from "../../plans/planner/focus-targets";
 import { getSkillArea } from "../../plans/planner/graph-areas";
 import { type PlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 
-/** The skills the learner's focus names: the parts they named, or their areas whole. */
 export function getFocusedSkillIds({
   graph,
   settings,
@@ -19,7 +18,6 @@ export function getFocusedSkillIds({
   );
 }
 
-/** The skills of the areas the learner took out of the plan (`skipAreas`). */
 export function getSkippedSkillIds({
   graph,
   settings,
@@ -36,10 +34,7 @@ export function getSkippedSkillIds({
   );
 }
 
-/**
- * Every skill the test asks: the skill graph's, but for the areas the learner took out, and the
- * ones the plan's lessons teach, whether or not its days had room for them.
- */
+/** Includes plan skills even when the day's time cannot fit them; excludes learner-removed areas. */
 export function getTestSkillIds({
   graph,
   planSkillIds,

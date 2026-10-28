@@ -20,13 +20,7 @@ export type TargetedPracticeResult =
   | { status: "nothingToPractice" }
   | { reason: ExtraTimeReason; status: "unavailable" };
 
-/**
- * What a bonus block practices: a chapter's area (`areaId`), or the goal's fading and due skills
- * for Content's "Review" (`refresh`, no area). Either names the block, so a second tap finds the
- * same unfinished block; a refresh first opens a block of today's session that already asks about
- * these skills (today's reviews of them), before adding anything. When nothing is left to
- * practice, `planItemIds` are where its next lesson comes from (none: practice only).
- */
+/** Repeated taps reuse an unfinished block; planItemIds supply the next lesson only when no practice remains. */
 export type PracticeTarget = {
   planItemIds: string[] | null;
   skillIds: string[];
@@ -37,7 +31,6 @@ function isUnfinished(block: StudySessionRow["blocks"][number]) {
   return block.status === "pending" || block.status === "active";
 }
 
-/** An unfinished block of today's session that asks about any of these skills. */
 function findCoveringBlock({
   session,
   skillIds,
@@ -55,7 +48,6 @@ function findCoveringBlock({
   });
 }
 
-/** A second tap opens the target's unfinished block instead of adding another. */
 function findUnfinishedBlock({
   session,
   target,
@@ -118,7 +110,6 @@ async function addToLockedSession({
 
   const { areaId, planItemIds, refresh, skillIds, title } = target;
 
-  // Practice first; with nothing studied (or asked already today), the target's next lesson.
   const practice = await buildExtraPractice({
     areaId,
     minutes: extraTime.minutes,
@@ -145,13 +136,7 @@ async function addToLockedSession({
   };
 }
 
-/**
- * Adds a bonus block of practice on some of a goal's skills to today's session (a chapter's
- * "Practice now", Content's "Review" of fading and due skills). It can start before the day's
- * session is done, but it counts as extra time like "10 more minutes": at most two bonus blocks a
- * day, never past the learner's daily limit, and its Brain Power is capped. Two taps at once see each
- * other's block.
- */
+/** May precede session completion but obeys extra-time and reward caps; concurrent taps reuse the same target block. */
 export async function addTargetedPracticeBlock({
   goal,
   target,

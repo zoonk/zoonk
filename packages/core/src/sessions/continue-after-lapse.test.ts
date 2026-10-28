@@ -20,14 +20,13 @@ describe("the frame's explicit Continue after Plus lapses", () => {
     const day = await lapsedDayFixture();
     const summary = await getLearnerSummary();
 
-    // The summary names the free step replacing the locked call, as Today does; Continue saves it.
     expect(summary?.today).toMatchObject({
       blocksLeft: 1,
       next: { sessionId: day.sessionId, title: day.planItems.at(-1)?.titleSnapshot },
     });
 
     const before = await readLapsedDayState(day.user.id);
-    // Continue applies the same entitlement-only POST as opening Today.
+
     const continued = await openStudySession({
       input: { timeZone: "UTC" },
       sessionId: day.sessionId,

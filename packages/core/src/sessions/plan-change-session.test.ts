@@ -88,7 +88,6 @@ describe("today's session after a plan change", () => {
       learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
     ]);
 
-    // A lesson teaches skills finer than the plan's, which have no subject of their own.
     const finer = await skillFixture({ name: "A finer skill of the lesson" });
 
     await prisma.lessonSkill.updateMany({
@@ -103,8 +102,6 @@ describe("today's session after a plan change", () => {
 
     expect(learn?.subject).toBeTruthy();
 
-    // The learner started the lesson; a change (a subject starting past its basics) re-planned
-    // its item away while the lesson stays on today's list.
     const block = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: learn?.id } });
     const { planItemId } = block.payload as { planItemId: string };
     await prisma.studySessionBlock.update({ data: { status: "active" }, where: { id: block.id } });

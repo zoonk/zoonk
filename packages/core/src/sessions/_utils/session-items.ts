@@ -31,10 +31,7 @@ import { type QuestionAnswer, studyAnswerInputSchema } from "../contract";
 import { type MatchItem, gradeMatch, parseMatchItem, toMatchQuestion } from "./match-items";
 import { type OrderItem, gradeOrder, parseOrderItem, toOrderQuestion } from "./order-items";
 
-/**
- * Formats review capsules ask: quick choice questions, true-or-false statements, match pairs and
- * math problems, which come back with new numbers every time.
- */
+/** Review capsules draw fresh numeric values on each visit. */
 export const SESSION_ITEM_FORMATS = [
   "multipleChoice",
   "trueFalse",
@@ -49,18 +46,12 @@ export const QUESTION_ITEM_FORMATS = [
   "numeric",
 ] as const satisfies ItemFormat[];
 
-/** A short typed answer (a word, a number, a term): one with the wordings code accepts. */
 const SHORT_TYPED_ANSWER = {
   NOT: { content: { equals: [], path: ["acceptedAnswers"] } },
   format: "typed" as const,
 };
 
-/**
- * The questions practice asks: `QUESTION_ITEM_FORMATS`, ordering questions and, for a goal whose
- * learner may meet typed questions (`typed`: an exam that asks short answers, or a language),
- * short typed answers, graded by code first and by a model only on a miss. Typed explanations,
- * spoken answers and essays join sessions with the produce blocks.
- */
+/** Typed practice requires accepted wordings; explanations, speech, and essays belong to produce blocks. */
 export function getPracticeItemFilter({ typed }: { typed: boolean }) {
   return {
     OR: [
@@ -96,10 +87,6 @@ export function parseSessionItem(item: BankItem): SessionItem | null {
   }
 }
 
-/**
- * Whether a wrong answer is tagged with a misconception, which trap drills and bosses look for.
- * Every math problem names its common mistakes.
- */
 export function hasTraps(item: SessionItem): boolean {
   if (item.format === "numeric") {
     return true;
@@ -110,12 +97,11 @@ export function hasTraps(item: SessionItem): boolean {
   );
 }
 
-/** Each block that asks a math problem draws its own numbers, the same on every visit. */
+/** Seed per block so each visit shows the same numbers. */
 function serveInBlock({ blockId, item }: { blockId: string; item: MathItem }) {
   return serveMath({ item, seed: `${blockId}:${item.id}` });
 }
 
-/** What a session question shows only for other formats. */
 const NO_EXTRAS = { entry: null, left: null, right: null, select: null, unit: null };
 
 /** The question as the learner sees it in a block, never with its answer. */
@@ -171,10 +157,7 @@ function gradeChoice({
   };
 }
 
-/**
- * A typed answer graded by code alone: right when it's an accepted wording. Answering grades a
- * miss again with a model (`gradeTypedItemAnswer`); a checkpoint's results read the verdict here.
- */
+/** Checkpoint results use code verdicts; live typed submissions retry code misses with model grading. */
 function gradeTypedByCode({
   answer,
   item,
@@ -195,10 +178,7 @@ function gradeTypedByCode({
   };
 }
 
-/**
- * Grades an answer to a question of a block, a math problem against the numbers the block showed.
- * A shape meant for another format counts as wrong, like any wrong pick.
- */
+/** Grades against the block's displayed numbers; answer shapes for other formats count as wrong. */
 export function gradeSessionAnswer({
   answer,
   blockId,
@@ -229,10 +209,7 @@ export function gradeSessionAnswer({
   }
 }
 
-/**
- * An answer from an earlier session as text, for the time machine. Match and ordering answers have
- * no single text, and a math answer only reads as text when that serving had today's numbers.
- */
+/** Returns null for match/order answers and numeric servings whose numbers differ from today's. */
 export function describeEarlierAnswer({
   answer,
   blockId,
@@ -275,10 +252,7 @@ export function describeEarlierAnswer({
     : null;
 }
 
-/**
- * An answer as its attempt stored it, in the shape it was given: a math answer also keeps the
- * numbers it was asked with, which the answer shape doesn't carry.
- */
+/** Includes the numbers a math answer was asked with, which QuestionAnswer alone does not carry. */
 export function readRecordedAnswer(answer: unknown): QuestionAnswer | null {
   /** Correction evidence belongs to persistence, while the public answer remains strict. */
   const input = isJsonObject(answer)

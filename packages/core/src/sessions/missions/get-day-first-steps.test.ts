@@ -33,7 +33,6 @@ describe(getDayFirstSteps, () => {
     const goal = await goalFixture({ timezone: timeZone, userId: user.id });
     await planFixture({ goalId: goal.id });
 
-    // The October 13 session is still running at 00:20 on October 14 in São Paulo.
     const session = await studySessionFixture({
       createdAt: new Date("2026-10-12T00:00:00Z"),
       goalId: goal.id,
@@ -55,7 +54,6 @@ describe(getDayFirstSteps, () => {
       learningEventFixture({ endedAt: earlier, kind: "lesson", userId: user.id }),
       learningEventFixture({ endedAt: earlier, kind: "review", userId: user.id }),
       mistakeFixture({ fixedAt: earlier, status: "fixed", userId: user.id }),
-      // The last step at 00:10 on October 14 in São Paulo.
       prisma.lessonQuestion.create({
         data: {
           contextKind: "plan",
@@ -90,7 +88,6 @@ describe(getDayFirstSteps, () => {
       planItemFixture({ kind: "boss", planId: plan.id, position: 1 }),
     ]);
 
-    // A short day: its two missions are the review and the new lesson, not the challenge.
     const session = await studySessionFixture({
       goalId: goal.id,
       missions: {

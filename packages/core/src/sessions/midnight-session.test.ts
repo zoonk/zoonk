@@ -28,10 +28,6 @@ async function readToday(goalId: string) {
   return today.session;
 }
 
-/**
- * A learner who starts tonight's first lesson at 23:50, with a second lesson after it in the
- * session, then plays the first lesson's only question.
- */
 async function startLessonBeforeMidnight() {
   vi.setSystemTime(BEFORE_MIDNIGHT);
 
@@ -104,7 +100,6 @@ describe("a session the learner is in when midnight comes", () => {
       status: "completed",
     });
 
-    // Today keeps the session the learner is in, so "Continue" opens its next lesson.
     const today = await readToday(goal.id);
     const next = today.blocks.find((block) => block.id === today.nextBlockId);
 

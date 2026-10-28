@@ -19,14 +19,8 @@ import { getLightMinutes } from "./fresh-start";
 
 const DAILY_MINUTES = 20;
 
-/** An hour a day: a return's light day is about 25 minutes, less than twenty due skills take. */
 const RETURN_DAILY_MINUTES = 60;
 
-/**
- * A free exam plan ten days in, past its first week: new lessons and practice are Plus, reviews
- * stay free. Ten skills studied, one lesson each, three questions each, the last study yesterday,
- * so today is an ordinary day, not a return.
- */
 async function pastTrialFixture() {
   const user = await userFixture();
 
@@ -47,7 +41,6 @@ async function pastTrialFixture() {
   return { ...fixture, user };
 }
 
-/** Today's blocks for the learner, with their payloads and the view the apps read. */
 async function openToday({ goalId, userId }: { goalId: string; userId: string }) {
   mockSession(userId);
   const today = await getTodayStudySession({ goalId });
@@ -96,7 +89,6 @@ describe("a day nothing but reviews can fill", () => {
   it("is never empty: with nothing due, a short review of the weakest studied topics, said as such", async () => {
     const { goal, skills, user } = await pastTrialFixture();
 
-    // Nothing is due for days; the first skill fades fastest.
     await Promise.all(
       skills.map((skill, index) =>
         learnerSkillFixture({
@@ -148,8 +140,6 @@ describe("a day nothing but reviews can fill", () => {
     expect(blocks.some((block) => block.payload.weakest)).toBe(false);
   });
 
-  // Rafaela, free and back after 12 days, got a 52-minute review on a "lighter" day: reviews fill
-  // the learner's own time for the day, the light day's on a return, and never more.
   it("fills a return's light day with reviews only up to its minutes", async () => {
     const user = await userFixture();
 

@@ -1,18 +1,6 @@
 import { ENERGY_PER_CORRECT, ENERGY_PER_INCORRECT, ENERGY_PER_STATIC } from "../progress/energy";
 
-/**
- * Brain Power v2: points only come from learning. Right answers on new or
- * due material earn points, multiplied by Hyperdrive (right answers in a row). Repeating material
- * the learner already knows earns less and less, and a wrong answer costs nothing: it only resets
- * Hyperdrive. Bonuses reward learning actions that matter: finishing a lesson, opening capsules,
- * reaching Solid or Mastered, checkpoints, mocks and the full meal.
- */
-
-/**
- * `new`: a question the learner never got right before. `due`: a review of a skill FSRS says is due,
- * or a drill for a saved mistake. `repeat`: a question already answered right, on a skill that isn't
- * due, which is where farming would happen.
- */
+/** new means never answered right; due includes mistake drills; repeat means previously right and not due. */
 export type AnswerMaterial = "new" | "due" | "repeat";
 
 export type ScoredAnswer = {
@@ -22,7 +10,6 @@ export type ScoredAnswer = {
   priorRightAnswers: number;
 };
 
-/** Hyperdrive multiplies Brain Power by the right answers in a row, up to x5. */
 const HYPERDRIVE_CAP = 5;
 
 const POINTS_PER_RIGHT_ANSWER = 2;
@@ -44,13 +31,11 @@ export const BRAIN_POWER_BONUS = {
 /** After the day's session, extra practice earns at most this much Brain Power a day. */
 const EXTRA_PRACTICE_DAILY_CAP = 40;
 
-/** Estimates for session tiles: most answers right, Hyperdrive around x3 on average. */
 const EXPECTED_ACCURACY = 0.8;
 const EXPECTED_HYPERDRIVE = 3;
 
 export type CheckpointKind = "boss" | "finalBoss" | "weekly";
 
-/** What a finished block did beyond its answers. */
 export type BlockOutcome = {
   capsulesOpened: number;
   checkpoint: { kind: CheckpointKind; passed: boolean } | null;
@@ -71,10 +56,7 @@ function buildsHyperdrive(answer: Pick<ScoredAnswer, "material">): boolean {
   return answer.material !== "repeat";
 }
 
-/**
- * The streak after one more answer: new or due material builds it, any wrong answer resets it.
- * The lesson player shows Hyperdrive live with this same rule, so the server's score matches.
- */
+/** Only new/due right answers build the streak; any wrong answer resets it. */
 export function advanceHyperdrive({
   answer,
   streak,
@@ -89,7 +71,6 @@ export function advanceHyperdrive({
   return buildsHyperdrive(answer) ? streak + 1 : streak;
 }
 
-/** The multiplier a streak gives: x1 for a first right answer, one more per answer, up to the cap. */
 export function getHyperdriveLevel(streak: number): number {
   return Math.min(HYPERDRIVE_CAP, Math.max(1, streak));
 }
@@ -112,16 +93,11 @@ export type ScoredAnswers = {
   points: number[];
   /** The Hyperdrive streak after the last answer, carried into the next block of the session. */
   streak: number;
-  /** The highest multiplier reached ("Top Hyperdrive"). */
   topLevel: number;
-  /** The most right answers in a row that built Hyperdrive ("best streak"). */
   topStreak: number;
 };
 
-/**
- * Scores answers in the order they were given, continuing the session's Hyperdrive streak. Only
- * new or due material builds Hyperdrive, so repeating easy questions can't pump the multiplier.
- */
+/** Requires answer order and the prior block's streak; repeated easy questions cannot build Hyperdrive. */
 export function scoreAnswers({
   answers,
   streak = 0,
@@ -165,10 +141,7 @@ function getCheckpointBonus(checkpoint: BlockOutcome["checkpoint"]): number {
     : BRAIN_POWER_BONUS.phaseBoss;
 }
 
-/**
- * Bonuses for what a block achieved. A weekly Big Challenge pays for finishing it, since it
- * measures where the learner is; a boss pays only when won, and losing it costs nothing.
- */
+/** Weekly challenges pay for finishing; bosses pay only for winning and losing costs nothing. */
 export function getOutcomeBonus(outcome: BlockOutcome): number {
   return (
     (outcome.firstLessonCompletion ? BRAIN_POWER_BONUS.lessonFinished : 0) +
@@ -179,7 +152,7 @@ export function getOutcomeBonus(outcome: BlockOutcome): number {
   );
 }
 
-/** Extra practice after the day's session never earns more than the daily cap in total. */
+/** Applies the remaining daily cap across all extra-practice blocks. */
 export function capExtraPractice({
   earned,
   earnedToday,
@@ -190,10 +163,7 @@ export function capExtraPractice({
   return Math.max(0, Math.min(earned, EXTRA_PRACTICE_DAILY_CAP - earnedToday));
 }
 
-/**
- * What a session tile says a block is worth, before it's played: most answers right at an average
- * Hyperdrive, plus the bonus for finishing it (a won boss for a boss tile, "if you win").
- */
+/** Estimates assume most answers right and average Hyperdrive; boss tiles include the win bonus conditionally. */
 export function estimateBrainPower({
   outcome,
   questions,
@@ -210,10 +180,7 @@ export function estimateBrainPower({
 
 const ENERGY_DECIMALS = 100;
 
-/**
- * Energy keeps today's rules: it rises with right answers, dips a little with wrong
- * ones, and a block without questions still counts as a little study.
- */
+/** A block without questions still earns a small Energy increase. */
 export function getAnswersEnergyDelta({
   correct,
   incorrect,

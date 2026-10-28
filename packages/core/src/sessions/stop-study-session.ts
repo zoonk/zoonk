@@ -17,11 +17,7 @@ import {
 
 type StopContext = { session: StudySessionRow; timeZone: string; userId: string };
 
-/**
- * A block in progress keeps what was already done: answered questions are scored and a lesson
- * finished in the player counts. A lesson not finished yet and a duel left halfway stay open, so
- * they pick up where the learner left them.
- */
+/** Keep unfinished lessons and partial duels open; score only work already completed. */
 async function settleActiveBlocks({ session, timeZone, userId }: StopContext) {
   const active = session.blocks.filter((block) => block.status === "active");
 
@@ -34,7 +30,7 @@ async function settleActiveBlocks({ session, timeZone, userId }: StopContext) {
   );
 }
 
-/** Records the session's first stop, which Today shows; true only for the request that recorded it. */
+/** Returns true only to the request that records the first stop. */
 function markFirstStop({ sessionId, userId }: { sessionId: string; userId: string }) {
   return writeLearnerChange({ userId }, async (tx) => {
     const { count } = await tx.studySession.updateMany({
@@ -46,15 +42,7 @@ function markFirstStop({ sessionId, userId }: { sessionId: string; userId: strin
   });
 }
 
-/**
- * "Stop for today": whatever was done counts (partial days are days studied) and the summary says
- * what changed so far. Nothing is skipped: the rest of the session waits on Today, so the learner
- * can pick it up later the same day, and tomorrow's plan moves on without it. The session ends
- * only once its blocks are done. Memory reads the day now and the plan gets its weekly rebalance,
- * since the learner may not come back (once a session: the first stop records `stoppedAt`): a
- * session left stopped stays unfinished (its day counts as studied, not as its goal reached), and
- * the next day's session re-flows what it left undone.
- */
+/** Requires ownership; preserves unfinished work for resumption and schedules memory/rebalance only on the first stop. */
 export async function stopStudySession({
   input,
   sessionId,
@@ -74,8 +62,7 @@ export async function stopStudySession({
   await settleActiveBlocks({ session, timeZone, userId });
   const settled = await settleSessionDay({ sessionId: session.id, timeZone, userId });
 
-  // A session the stop finished already had memory read it and the plan rebalanced as it completed.
-  // Otherwise the first stop does it, once: stopping again (or a client looping) runs no model.
+  // Completion already schedules memory; repeated stops must not run another model.
   if (!settled.sessionCompleted && (await markFirstStop({ sessionId: session.id, userId }))) {
     scheduleMemoryAfterSession({ goalId: session.goalId, sessionId: session.id, timeZone, userId });
 

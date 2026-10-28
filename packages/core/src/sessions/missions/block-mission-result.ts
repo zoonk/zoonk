@@ -3,15 +3,9 @@ import { type TransactionClient } from "@zoonk/db";
 import { type BlockPayload, readBlockPayload } from "../block-payload";
 import { type MissionPick } from "./catalog";
 
-/** What finishing a session block did to the day's missions: the ones it completed and the bonus. */
 export type BlockMissionResult = NonNullable<BlockPayload["missionResult"]>;
 
-/**
- * The finished block's result: the one an earlier finish kept (read under the settlement's lock, so
- * a finish that overlaps it or comes after it says the same), or this settlement's, kept on the
- * block in the settlement's own transaction when it completed a mission or paid the bonus. Null
- * for a settlement no block finished.
- */
+/** Requires the settlement transaction and lock; replays the stored moment or saves this settlement's result once. */
 export async function keepBlockMissionResult(
   tx: TransactionClient,
   {

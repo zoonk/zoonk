@@ -24,11 +24,7 @@ import { getHyperdriveLevel, scoreAnswers } from "./brain-power";
 import { type StudyAnswerInput, type StudyAnswerResult } from "./contract";
 import { shouldSuggestPause } from "./pause-suggestion";
 
-/**
- * Whether an answer misses a topic the learner was taken to know without studying it (see
- * `loadSkillsToRelearn`), even one practice confirmed once: a first-week placement question on it
- * too, since one right answer may have skipped its lessons.
- */
+/** Placement misses can restore lessons skipped after a single correct answer, even when practice confirmed once. */
 async function isRelearnMiss({
   isCorrect,
   item,
@@ -86,10 +82,6 @@ async function loadAnswerReinforcement({
   return lessons.length;
 }
 
-/**
- * Grades an answer (`gradeSessionAnswer`). A typed answer code can't match goes to a model
- * (`gradeTypedItemAnswer`), whose feedback explains the verdict.
- */
 async function gradeStudyAnswer({
   answer,
   blockId,
@@ -124,17 +116,7 @@ async function gradeStudyAnswer({
   };
 }
 
-/**
- * Grades one answer to a question of the learner's session (a math problem against the numbers its
- * block showed, which the attempt keeps) and records it as learning: the FSRS review of its skill,
- * a notebook entry when wrong (a statement left blank where wrong answers cost a point is neither),
- * and a fix for the drilled mistake when right on a later day. A mistake's drill plays by its
- * rules: a timed drill's answer that takes the whole time box is wrong, and a trap drill names the
- * trap after the answer. The feedback carries the session's Hyperdrive and a pause suggestion when
- * accuracy drops sharply. A placement question of the goal's first week is a diagnostic answer
- * instead: no notebook entry, and whatever placement is now sure of skips what the plan no longer
- * needs, as a change the plan announces with an undo.
- */
+/** Requires an owned session; diagnostic placement avoids notebook entries, while blank net-scored statements are not mistakes. */
 export async function answerStudyQuestion({
   blockId,
   input,
@@ -157,7 +139,7 @@ export async function answerStudyQuestion({
     return { status: "blockNotActive" };
   }
 
-  // A mock is sat on the mock screen (`saveMockAnswer`), never answered as a study block.
+  // Mock answers belong to the mock screen's saveMockAnswer flow.
   if (payload.checkpoint?.mock || !getBlockItemIds(payload).includes(input.itemId)) {
     return { status: "invalidItem" };
   }

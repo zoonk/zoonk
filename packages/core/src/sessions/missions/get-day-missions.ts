@@ -10,7 +10,7 @@ import { type Mission } from "../missions";
 import { readMissionDocument } from "./catalog";
 import { asSavedMission, loadMissionDayViews } from "./mission-day-views";
 
-/** One reader for Today, the buddy, summaries and settlement. It never replaces a saved pick. */
+/** Read-only shared mission projection; never replaces a saved pick. */
 export async function getDayMissions({
   session: storedSession,
   displayBlocks,

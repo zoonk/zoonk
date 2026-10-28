@@ -8,10 +8,6 @@ import { loadGoalLessons } from "../../view-models/syllabus/_utils/load-goal-les
 import { getLessonShare } from "../../view-models/syllabus/lesson-share";
 import { type SessionSnapshot, type SessionState } from "./session-snapshot";
 
-/**
- * A goal's preparation, its progress when it's measured in lessons (see `loadGoalLessons`) and
- * each of its skills' state at one moment.
- */
 async function measureGoal({
   goalId,
   now,
@@ -38,7 +34,6 @@ async function measureGoal({
   };
 }
 
-/** The learner's Energy (decayed through inactive days) and Brain Power total right now. */
 export async function measureProgress({
   now,
   progress: providedProgress,
@@ -68,7 +63,6 @@ export async function measureProgress({
   return { brainPower: Number(progress.totalBrainPower), energy: currentEnergy };
 }
 
-/** Where the learner stands now on the session's goal: preparation, skills, Energy, Brain Power. */
 export async function measureSessionState({
   goalId,
   now,
@@ -88,7 +82,6 @@ export async function measureSessionState({
   return { ...goal, ...progress };
 }
 
-/** Where the learner stands as the session's first block starts. */
 export async function captureSessionSnapshot(
   input: Parameters<typeof measureSessionState>[0],
 ): Promise<SessionSnapshot> {

@@ -10,13 +10,7 @@ import { type SelectedDayPlan } from "./selected-day-plan";
 import { isSelectedPlanCurrent } from "./selected-plan-current";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
-/**
- * A day opened while it held time for lessons still being outlined (its plan version says so, see
- * `loadDayPlanVersion`): once they land, or nobody is writing them anymore, the learner's next Open
- * or Continue adds the new lessons to its end, up to the day's time, without moving anything they
- * were shown, as Today's "more as you go" said. A finished day stays as it is. Returns the day as
- * it is now.
- */
+/** Append only within the day's remaining time; preserve shown order and never change a finished day. */
 export async function appendLandedLessons({
   goal,
   session,

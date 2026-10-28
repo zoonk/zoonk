@@ -10,7 +10,7 @@ import { openStudyDay } from "../open-study-day";
 
 type TodayStudySessionResult = StudySessionResult | { status: "goalNotActive" };
 
-/** Test-only adapter for the explicit learner POST; Today and session reads never create IDs. */
+/** Test-only POST adapter; never use to model a read-only Today GET. */
 export async function getTodayStudySession(
   input: TodayStudySessionInput,
 ): Promise<TodayStudySessionResult> {
@@ -32,7 +32,6 @@ export async function getTodayStudySession(
     return owned;
   }
 
-  // A paused, completed or archived goal has no day to plan: nothing is built for it.
   if (owned.goal.status !== "active") {
     return { status: "goalNotActive" };
   }

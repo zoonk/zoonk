@@ -5,12 +5,7 @@ function getSubjects(
   return new Set(skillIds.flatMap((skillId) => skillSubjects.get(skillId) ?? []));
 }
 
-/**
- * The one subject a block studies: the one all its own skills share, else its plan item's skill's
- * (a lesson's own skills can be finer than the graph's), unless the lesson's chapter is tagged with
- * skills of several subjects, where the plan item's is a guess. Skills outside the goal's graph
- * don't count; nothing settled gives null.
- */
+/** Null when subjects conflict or cannot be established; ignore skills outside the goal graph. */
 export function getBlockSubject({
   chapterSkillIds = [],
   planItemSkillId,

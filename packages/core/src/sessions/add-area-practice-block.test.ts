@@ -16,7 +16,6 @@ import {
 import { addAreaPracticeBlock } from "./add-area-practice-block";
 import { readBlockPayload } from "./block-payload";
 
-/** A goal with two chapters (the areas) of two skills each, every skill studied a while ago. */
 async function setup() {
   const user = await userFixture();
   const fixture = await learnerGoalFixture({ itemsPerSkill: 2, phases: [2, 2], userId: user.id });
@@ -139,7 +138,6 @@ describe(addAreaPracticeBlock, () => {
 
     const [firstArea = "", secondArea = ""] = chapters.map((chapter) => chapter.id);
 
-    // One after the other: each bonus block goes at the end of the session.
     await addAreaPracticeBlock({ goalId: goal.id, input: { areaId: firstArea, timeZone: "UTC" } });
     await addAreaPracticeBlock({ goalId: goal.id, input: { areaId: secondArea, timeZone: "UTC" } });
 
@@ -164,7 +162,6 @@ describe(addAreaPracticeBlock, () => {
     const { goal, lessons } = await sessionGoalFixture({ lessons: 2, userId: user.id });
     mockSession(user.id);
 
-    // These lessons have no chapter yet, so their area is the plan's first phase.
     const result = await addAreaPracticeBlock({
       goalId: goal.id,
       input: { areaId: "phase:0", timeZone: "UTC" },
@@ -207,7 +204,6 @@ describe(addAreaPracticeBlock, () => {
 
     const fitted = await addAreaPracticeBlock({ goalId: goal.id, input });
 
-    // Three minutes are left: two questions instead of the area's four.
     expect(fitted).toMatchObject({ block: { estimatedMinutes: 3, questions: 2 }, status: "ready" });
 
     await prisma.dailyProgress.updateMany({

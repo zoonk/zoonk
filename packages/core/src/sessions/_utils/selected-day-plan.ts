@@ -84,10 +84,7 @@ function savedSelection({
   };
 }
 
-/**
- * Missing persisted checkpoints are a reconciliation; an automatic advisory layout is not. The
- * phase after an exam has none by design (see `listBossCandidates`).
- */
+/** The phase after an exam intentionally has no checkpoints. */
 function needsCheckpointReconciliation(context: PlanContext): boolean {
   if (!context.phases.some((phase) => phase.startDate !== null)) {
     return false;
@@ -130,7 +127,7 @@ function keepsShownLayout(context: PlanContext): boolean {
   return hasShownLayout && sameInputs && !needsCheckpointReconciliation(context);
 }
 
-/** Start and Continue select from fresh inputs before saving their queue. */
+/** Start and Continue must select fresh inputs before saving a queue. */
 export async function selectDayPlan({
   goal,
   now,
@@ -151,7 +148,6 @@ export async function selectDayPlan({
   return selectDayPlanFromContext({ context, now, useFreshSaved });
 }
 
-/** Queue writers select from one authorized context without loading it twice. */
 export async function selectDayPlanFromContext({
   context,
   now,
@@ -196,8 +192,7 @@ export async function selectDayPlanFromContext({
     isPlanUnchanged({ computed, context }) &&
     getEstimateChange({ computed, context }) === null;
 
-  // Day rollover alone is not permission to reselect teaching. Real changed inputs still rebuild.
-  // The refresh writer's finished-scope rule also applies when a read or Open selects its work.
+  // A day rollover alone cannot reselect teaching or add lessons after teaching finished.
   if (
     addsLessonsAfterLessonsDone({ computed, context }) ||
     unchanged ||
@@ -273,7 +268,7 @@ function canSkipBuild({
   return fresh !== null && left.length === 0;
 }
 
-/** Actual lessons the selected settling carried; the Plan never applies Today's quiet-day rule. */
+/** Plan displays retain catch-up lessons even on Today's quiet days. */
 export function getSelectedCatchUpItems({
   items,
   left,
@@ -289,7 +284,7 @@ export function getSelectedCatchUpItems({
   );
 }
 
-/** Screens replay the saved allocation, including earlier unfinished work, whatever its freshness. */
+/** Read-only replay of the saved allocation, including unfinished work regardless of freshness. */
 export async function readSavedDayPlan({
   goal,
   now,

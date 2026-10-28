@@ -1,10 +1,6 @@
 import { type MissionMomentView } from "../completion-contract";
 
-/**
- * Several activities' moments as one, in the order they happened: every mission they completed,
- * and the day as the one that paid its bonus left it (every mission was done by then), else as the
- * last one did. Null when none has one.
- */
+/** Accepts chronological moments; retains the bonus-paying day's state, or the latest state if none paid. */
 export function joinMissionMoments(
   moments: readonly (MissionMomentView | null)[],
 ): MissionMomentView | null {

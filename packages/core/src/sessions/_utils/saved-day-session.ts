@@ -4,12 +4,7 @@ import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { findCarriedOverSession } from "./current-session";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
-/**
- * The goal's day as Today opens it, without building it: the session from before midnight the
- * learner is still in, unless they already started the new day's, else
- * today's saved one; null while the day isn't built yet. A read: it never creates, refreshes or
- * settles anything.
- */
+/** Read-only; returns an unfinished pre-midnight session unless the learner already started today's, or null when unbuilt. */
 export async function findSavedDaySession({
   goalId,
   now,

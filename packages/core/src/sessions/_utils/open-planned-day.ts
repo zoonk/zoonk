@@ -14,7 +14,7 @@ export type OpenPlannedDay =
   | { created: boolean; initialDay?: PlannedStudyDay; session: StudySessionRow; status: "opened" }
   | { status: "empty" | "stale" | "preparing" };
 
-/** One selected resolution for the entire open; a conflict belongs to another HTTP request. */
+/** Select one resolution per request; a conflict must start a new HTTP request rather than silently reselecting. */
 export async function openPlannedDay(
   context: SessionDayContext & { keepEmpty?: boolean },
 ): Promise<OpenPlannedDay> {

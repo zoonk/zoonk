@@ -10,12 +10,12 @@ import { getNextBlockId, getSessionBar } from "./session-view";
 import { settleSessionDay } from "./settle-session-day";
 import { type StudySessionRow } from "./study-session-access";
 
-/** A duplicate abandonment rolls back the learner mark taken before its block transition. */
+/** Roll back the early learner mark if another request already abandoned this empty duel. */
 class EmptyCheckpointUnchangedError extends Error {
   override name = "EmptyCheckpointUnchangedError";
 }
 
-/** A started duel with nothing left to ask ends without judging or rewarding an empty attempt. */
+/** Empty attempts end neutrally, without a verdict or reward. */
 export async function finishEmptyCheckpoint({
   block,
   session,

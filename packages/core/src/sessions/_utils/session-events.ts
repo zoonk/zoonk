@@ -13,17 +13,14 @@ const SECONDS_PER_MINUTE = 60;
 
 type SessionRef = Pick<StudySessionRow, "goalId" | "id" | "userId">;
 
-/**
- * Session outcomes go out from the server after the response, with the learner's mode and goal
- * read from the database, so ad blockers can't hide them and the learner never waits on PostHog.
- */
+/** Server-side outcomes prevent ad blockers from hiding them; defer delivery until after the response. */
 function trackSessionEvent({ event, session }: { event: AnalyticsEvent; session: SessionRef }) {
   after(() =>
     trackLearnerEvents({ events: [event], goalId: session.goalId, userId: session.userId }),
   );
 }
 
-/** "Session Started" when the session's first block starts; later starts resume it. */
+/** Call on the first block start; later starts count as resumes. */
 export function trackSessionStarted(session: StudySessionRow): void {
   trackSessionEvent({
     event: {
@@ -38,7 +35,7 @@ export function trackSessionStarted(session: StudySessionRow): void {
   });
 }
 
-/** "Block Completed" once, when the block was marked done. */
+/** Call once after the block is marked done. */
 export function trackBlockCompleted({
   block,
   seconds,
@@ -62,7 +59,6 @@ export function trackBlockCompleted({
   });
 }
 
-/** Whether the session's minutes reached what the goal's plan gives its day, as Today shows it. */
 async function isDailyGoalMet({
   minutes,
   session,
@@ -88,13 +84,8 @@ async function isDailyGoalMet({
   return minutes >= dailyGoal;
 }
 
-/**
- * "Session Completed" once, when the session's last block finished; a session stopped for the day
- * isn't completed until it's resumed and finished. `session` is the row as it ended, with its
- * blocks' final states.
- */
+/** Pass the completed session with final block states; stopping for the day does not count as completion. */
 export function trackSessionCompleted(session: StudySessionRow): void {
-  // A failed lookup only loses the event, like a PostHog failure would.
   after(() =>
     safeAsync(async () => {
       const seconds = await sumSessionSeconds(prisma, {

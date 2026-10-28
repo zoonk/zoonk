@@ -49,12 +49,7 @@ export async function ensureStudySession(day: {
   });
 }
 
-/**
- * The goal whose Today offers what an activity outside the day's blocks completes: the one the
- * request names (a pronunciation round's, a notebook run's, a call's), else the one Today shows.
- * Only the learner's own active goal; for an activity in a language (a drill, a round, a call),
- * only a language goal learning it, as only those offer its missions (see `languageCandidates`).
- */
+/** Only active owned goals qualify; language activities credit only goals learning that language. */
 async function findActivityGoal({
   goalId,
   language,
@@ -74,16 +69,7 @@ async function findActivityGoal({
   return goal;
 }
 
-/**
- * Internal POST-only, for an activity outside the day's blocks (a drill, a call, a question to the
- * buddy, a lesson played from its chapter), before it records anything: Today plans a day nobody
- * opened yet again on every visit, so what the activity records would leave its missions with no
- * day to be credited to, and take the mission it did off Today. Saving the day of the goal whose
- * Today offers it (`findActivityGoal`) first, with the same writer as the explicit open, keeps the
- * missions Today showed. It writes no AI work, as a bare open doesn't. Best effort: no such goal,
- * a rest day, a used-up daily limit, a plan not ready yet or a failure (logged) leave the
- * activity as it was.
- */
+/** Internal POST-only; save the shown day's missions before recording off-session activity, logging failures without blocking it. */
 export async function saveDayBeforeActivity({
   goalId,
   language,
@@ -107,7 +93,7 @@ export async function saveDayBeforeActivity({
     const now = new Date();
     const zone = getAnswerTimeZone({ goal, timeZone });
 
-    // A saved day, or the one from before midnight the learner is still in, takes the credit.
+    // An unfinished pre-midnight session retains the activity credit.
     if (await findSavedDaySession({ goalId: goal.id, now, timeZone: zone, userId })) {
       return;
     }
@@ -119,8 +105,7 @@ export async function saveDayBeforeActivity({
       loadDailyTimeLimitStatus({ date: localDate, userId }),
     ]);
 
-    // A rest day, or one whose study time is used up, offers no missions and opens empty: each of
-    // the activity's requests (every answer of a round) would plan it again only to save nothing.
+    // Empty rest/limited days offer no missions, so repeated activity requests must not keep planning them.
     if (
       limit.reached ||
       getGoalDayMinutes({ date: localDate, goal, planSettings: plan?.settings }) === 0

@@ -81,7 +81,6 @@ export async function getDayFirstSteps({
         return step;
       }
 
-      // A block the day orders after others says so, as the mission for it would.
       const waitReason = getStoredBlockWait({ block, blocks: session.blocks });
 
       return {

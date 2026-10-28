@@ -67,7 +67,6 @@ describe("swipe capsules", () => {
     const detail = await getStudyBlock({ blockId: review?.id ?? "", sessionId: session?.id ?? "" });
     const questions = detail.status === "ready" ? detail.detail.questions : [];
 
-    // Swiping "true" on all three: two right and one wrong nets one.
     await questions.reduce(async (previous, question) => {
       await previous;
 
@@ -145,8 +144,6 @@ describe("swipe capsules", () => {
     const detail = await getStudyBlock({ blockId: block.id, sessionId: session.id });
     const questions = detail.status === "ready" ? detail.detail.questions : [];
 
-    // Every statement swiped "true" (two right, one wrong: net 1) and the pairs matched right,
-    // which counts as right but never in the net.
     await questions.reduce(async (previous, question) => {
       await previous;
 
@@ -207,7 +204,6 @@ describe("swipe capsules", () => {
     const detail = await getStudyBlock({ blockId: review?.id ?? "", sessionId: session?.id ?? "" });
     const questions = detail.status === "ready" ? detail.detail.questions : [];
 
-    // Both true statements swiped right, the false one left blank: the blank cancels nothing.
     await questions.reduce(async (previous, question) => {
       await previous;
 

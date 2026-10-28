@@ -18,7 +18,6 @@ import {
   sessionGoalFixture,
 } from "./_test-utils/session-goal";
 
-/** A learner with a goal whose first lesson is done: its skill is due and has a saved mistake. */
 async function setup() {
   const user = await userFixture();
   const fixture = await sessionGoalFixture({ userId: user.id });
@@ -45,7 +44,6 @@ async function setup() {
   return { ...fixture, user };
 }
 
-/** The skills in the review of an exam goal's session, when its exam is `examInDays` away. */
 async function examReviewTitles(examInDays: number) {
   const user = await userFixture();
 
@@ -56,7 +54,6 @@ async function examReviewTitles(examInDays: number) {
     userId: user.id,
   });
 
-  // The planner's final stretch: the last two weeks before the exam.
   const finalStretch = {
     endDate: toIsoDate(new Date(targetDate.getTime() - DAY_MS)),
     kind: "finalStretch",
@@ -191,7 +188,6 @@ describe(getTodayStudySession, () => {
     const user = await userFixture();
     const { goal } = await sessionGoalFixture({ lessons: 8, userId: user.id });
 
-    // They studied another goal days ago; this one is brand new.
     await dailyProgressFixtureMany([{ date: daysAgo(5), timeSpentSeconds: 900, userId: user.id }]);
     mockSession(user.id);
 
@@ -210,7 +206,6 @@ describe(getTodayStudySession, () => {
       userId: user.id,
     });
 
-    // Sunday first: Wednesday (today) is a rest day.
     await Promise.all([
       prisma.plan.update({
         data: { settings: { weekdayMinutes: [45, 45, 45, 0, 45, 45, 45] } },
@@ -248,7 +243,6 @@ describe(getTodayStudySession, () => {
       userId: user.id,
     });
 
-    // The plan starts today, a Wednesday, and the learner rests on Wednesdays.
     await prisma.plan.update({
       data: {
         settings: {
@@ -269,7 +263,6 @@ describe(getTodayStudySession, () => {
   it("counts only the days since the goal started in its first week", async () => {
     const user = await userFixture();
 
-    // Created today, a Wednesday: Monday and Tuesday weren't days to study for it.
     const { goal } = await sessionGoalFixture({
       goal: { createdAt: SESSION_NOW },
       userId: user.id,
@@ -286,7 +279,6 @@ describe(getTodayStudySession, () => {
 
     expect(studyDays).toBe(5);
 
-    // Days before the goal aren't rest days the learner chose: Today shows them apart.
     expect(days.slice(0, 2).map((day) => [day.goalMinutes, day.kind])).toStrictEqual([
       [0, "beforeStart"],
       [0, "beforeStart"],
@@ -299,8 +291,6 @@ describe(getTodayStudySession, () => {
   it("measures a day already past against what it asked, after the learner's time changes", async () => {
     const user = await userFixture();
 
-    // Ana studied 45 minutes on Monday, a 45-minute day, without ending its session. She then
-    // chose 3 hours a day: Monday's check turned into a partial pie measured against 3 hours.
     const { goal } = await sessionGoalFixture({ goal: { createdAt: daysAgo(7) }, userId: user.id });
 
     await Promise.all([
@@ -327,7 +317,6 @@ describe(getTodayStudySession, () => {
 
     expect(monday).toMatchObject({ goalMinutes: 45, hitGoal: true, minutes: 45 });
 
-    // Today and the days ahead ask the new time.
     expect(result.session.week.days.find((day) => day.isToday)?.goalMinutes).toBe(180);
   });
 

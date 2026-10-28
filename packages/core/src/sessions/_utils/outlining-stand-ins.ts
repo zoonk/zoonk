@@ -9,10 +9,8 @@ import {
 import { readSkillCourses } from "../../lookahead/plan-outline-needs";
 import { isExamSchedule } from "../../plans/planner/plan-queue";
 
-/** A course whose outline hasn't been written yet, or is being written now. */
 const OUTLINING: GenerationStatus[] = ["pending", "running"];
 
-/** A plan item waiting for its skill's lessons: a stand-in for lessons nobody outlined yet. */
 const STAND_IN = {
   chapterId: null,
   kind: "lesson",
@@ -24,13 +22,7 @@ function isStandIn(item: Pick<PlanItem, "chapterId" | "kind" | "lessonId" | "ski
   return item.kind === "lesson" && !item.lessonId && !item.chapterId && item.skillId !== null;
 }
 
-/**
- * Whether the plan's next item after the day starts in the day's time: a stand-in is due the day
- * its time ends, so one longer than what the day has left starts in it and is due on a later day.
- * Carla's first day showed 6 lessons of its hour, and the next skill's lessons joined it 45
- * seconds later without Today saying any were coming. A phase's challenge closes its day, and an
- * exam's study days each open with their own subject, so then the next item starts a new day.
- */
+/** A long stand-in may start today while its due date is later; detect its consumed interval. */
 async function loadNextStandIn({
   client,
   goal,
@@ -62,7 +54,6 @@ async function loadNextStandIn({
   return next && isStandIn(next) && last?.kind !== "boss" ? [next] : [];
 }
 
-/** The skills of the stand-ins that take the day's time: those due by it, and the next one. */
 async function loadDayStandInSkills({
   client,
   goal,
@@ -88,14 +79,7 @@ async function loadDayStandInSkills({
   return [...due, ...next].flatMap((item) => (item.skillId ? [item.skillId] : []));
 }
 
-/**
- * Whether the goal's day holds time for lessons still being outlined: a stand-in takes the day's
- * time (`loadDayStandInSkills`) and its course's outline is being written (or hasn't started
- * yet), so its lessons land within minutes and join the end of the day (`appendLandedLessons`),
- * which Today says. A stand-in whose course isn't being outlined (its next chapter waits for a
- * later preparation) holds nothing: the day fills as usual instead of waiting on lessons nobody is
- * writing.
- */
+/** A stand-in reserves time only while its course is actively awaiting an outline; never wait on content nobody is writing. */
 export async function isDayAwaitingOutlines({
   client = prisma,
   goal,
@@ -121,7 +105,6 @@ export async function isDayAwaitingOutlines({
 
   const courseOf = readSkillCourses({ graph: plan.graph, primaryCourseId: goal.primaryCourseId });
 
-  // A skill the graph doesn't name a course for is written in the goal's own course.
   const courseIds = [
     ...new Set(skillIds.flatMap((skillId) => courseOf.get(skillId) ?? goal.primaryCourseId ?? [])),
   ];

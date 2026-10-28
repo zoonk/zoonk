@@ -6,12 +6,7 @@ import { readBlockPayload } from "../block-payload";
 import { getBlockSubject } from "./block-subject";
 import { type DayBlockInput } from "./day-block-view";
 
-/**
- * Each block's subject by its short name, for Today's labels (see `getBlockSubject`). A lesson's
- * block falls back on the skill of its plan item: the one the block kept, or for blocks built
- * before it kept one, its plan item's while the item exists. Empty for goals with fewer than two
- * subjects.
- */
+/** Empty for single-subject goals; labels use the plan item's skill when lesson skills are finer. */
 export async function loadBlockSubjects({
   blocks,
   blueprint,
@@ -30,7 +25,6 @@ export async function loadBlockSubjects({
 
   const chapterIds = [...new Set(payloads.flatMap(({ payload }) => payload.chapterId ?? []))];
 
-  // The blocks' labels are read for the learner's screens, from the request's plan.
   const plan = goal ? await readSavedPlan(goal.userId, goal.id) : null;
   const blockItemIds = new Set(planItemIds);
 

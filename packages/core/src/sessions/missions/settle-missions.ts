@@ -28,7 +28,6 @@ import { isLinkedBlockMission, isLinkedCallMission } from "./linked-call-mission
 
 export type MissionCompletionSource = NonNullable<SessionSnapshot["fullMealSource"]>;
 
-/** The mission each activity outside the day's blocks does: the only one it can take credit for. */
 const ACTIVITY_MISSIONS: Readonly<Record<string, MissionKind>> = {
   buddyQuestion: "askBuddy",
   conversation: "call",
@@ -226,7 +225,7 @@ export async function settleMissions({
             })
           : null;
 
-      // A mock settles as it finishes its own session block: only that block can give it credit.
+      // Only the session block a mock actually completed may credit its mission.
       const linkedMock =
         source?.kind === "mockExam"
           ? await tx.mockExam.findFirst({
@@ -239,8 +238,7 @@ export async function settleMissions({
 
       const newlyDone = getNewlyDone({ document, missions });
 
-      // The activity claims the done missions of its own kind that no activity claimed yet: another
-      // activity settling first can mark them done, but never takes their credit.
+      // Settling another activity can mark a mission done without owning this activity's credit.
       const claimed =
         document?.picks.filter(
           (pick) =>

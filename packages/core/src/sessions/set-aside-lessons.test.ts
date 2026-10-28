@@ -22,7 +22,6 @@ describe("a lesson set aside after its drafts were held back", () => {
     const { goal, lessons } = await sessionGoalFixture({ userId: user.id });
     const [first, setAside, third] = lessons;
 
-    // A plan that still lists the lesson, like one built after it was set aside.
     await Promise.all([
       prisma.lesson.update({
         data: {

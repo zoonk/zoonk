@@ -2,11 +2,7 @@ import { type StudySessionBlock } from "@zoonk/db";
 import { type MissionPick } from "./catalog";
 import { getMissionBlocks } from "./mission-blocks";
 
-/**
- * Only the verified block an activity finished can give it credit for a block mission, and only
- * when that block crossed the mission's threshold. `finishedAt`, when the activity keeps its own
- * end, must be the block's completion time.
- */
+/** Credit requires the verified block that crossed the mission threshold; finishedAt must match its completion time. */
 export function isLinkedBlockMission({
   blockId,
   blocks,
@@ -30,8 +26,7 @@ export function isLinkedBlockMission({
     return false;
   }
 
-  // A completed broad anchor may already have been satisfied by a different block. Later work
-  // cannot claim it; a retry still uses the original block completion time.
+  // Later work cannot claim a broad anchor already satisfied by another block.
   const alreadyDone = matching.filter(
     (block) =>
       block.id !== linked.id &&

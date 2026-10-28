@@ -20,7 +20,6 @@ const checkpointRefShape = {
   rematch: z.boolean(),
 };
 
-/** Only a mock has an exam day and length; every mock records both when it is selected. */
 export const checkpointRefSchema = z.discriminatedUnion("mock", [
   z
     .object({ ...checkpointRefShape, mock: z.literal(true), mockIdentity: mockIdentitySchema })
@@ -164,14 +163,7 @@ export function resolveDayBlock<Block extends DayWork>({
   return { block, status: "resolved" };
 }
 
-/**
- * The language call next on the learner's saved day, by its block and session, while it hasn't
- * started. Its page opens it without writing anything and its own Start starts it, so Today can
- * link to it (and load it before the tap) instead of opening it with a request. Null for any other
- * next step (a duel, the week's challenge, a mock, a call that must wait for earlier work), on a day
- * not opened yet, whose steps have no ids, and once the call is under way: Continue resumes it with
- * a request, which also prepares the rest of the day again.
- */
+/** Read-only link for an unstarted saved language call; returns null when Continue must resume through a POST. */
 export function findNextCall({
   goalKind,
   session,

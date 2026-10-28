@@ -2,7 +2,7 @@ import "server-only";
 import { type StudySessionBlock, type TransactionClient } from "@zoonk/db";
 import { type BlockPayload, readBlockPayload } from "../block-payload";
 
-/** Accrued focus, including an older active block's start before clocks were recorded. */
+/** Includes legacy active-block start time when no focus clock was recorded. */
 export function getBlockElapsedMs({
   block,
   now,
@@ -30,10 +30,7 @@ export function pausedBlockTiming({
   };
 }
 
-/**
- * Starts and completions own the learner's progress lock before changing clocks. Lock every
- * affected block in id order before any session, matching queue restoration's block order.
- */
+/** Caller holds the progress lock; acquire blocks in id order before any session locks. */
 export async function lockStudyBlockClocks({
   blockId,
   tx,
@@ -54,7 +51,7 @@ export async function lockStudyBlockClocks({
   return blocks.map((block) => block.id);
 }
 
-/** Opening one block pauses all other active blocks without discarding their answers or time. */
+/** Pausing preserves answers and accrued focus time. */
 export async function pauseOtherStudyBlocks({
   blockId,
   lockedIds,

@@ -4,13 +4,7 @@ import { after } from "next/server";
 import { trackLessonCanDos } from "../../language/units/can-do-events";
 import { readPlanSummary, reduceCompletedSummary } from "../../plans/_utils/plan-summary";
 
-/**
- * Reduces each plan's posted summary by the lessons it just checked off. Only a lesson can change
- * one (see `reduceCompletedSummary`), so checking off anything else reads nothing. The read locks
- * the plans: writers that marked plan inputs already hold those locks, and a caller that didn't
- * (the seed finishing a day's lessons at once) then reduces after the other completion instead of
- * overwriting its credit.
- */
+/** Lock each plan before reducing its summary, including callers that did not mark plan inputs first. */
 async function reduceCompletedPlans(
   tx: TransactionClient,
   {
@@ -50,10 +44,7 @@ async function reduceCompletedPlans(
   );
 }
 
-/**
- * Checks a plan item off once what it asks for is done. Only the learner's own todo items move, so
- * an item tested out or done earlier keeps its status and date.
- */
+/** Only owned todo items change; tested-out and completed items keep their status and date. */
 export async function completePlanItem(
   tx: TransactionClient,
   { now, planItemId, userId }: { now: Date; planItemId: string; userId: string },
@@ -67,10 +58,7 @@ export async function completePlanItem(
   await reduceCompletedPlans(tx, { checked, userId });
 }
 
-/**
- * A phase checkpoint lost today is tried again tomorrow, as its result says: its item moves to the
- * day after `localDate`, so the plan run after the loss lays the rematch there.
- */
+/** A lost phase challenge retries on the local day after localDate, not later the same day. */
 export async function moveLostCheckpoint(
   tx: TransactionClient,
   { localDate, planItemId, userId }: { localDate: Date; planItemId: string; userId: string },
@@ -81,14 +69,9 @@ export async function moveLostCheckpoint(
   });
 }
 
-/** A language goal whose plan just checked a lesson off: its unit may reach its "I can" checks. */
 export type CheckedLanguageGoal = { id: string };
 
-/**
- * A lesson finished checks off every one of the learner's plan items for it, in any goal: the
- * lesson is shared, so learning it once counts wherever it's planned. Returns the language goals
- * among them, for `scheduleLessonCanDos` once the transaction commits.
- */
+/** Completes all owned plan occurrences of the lesson; scheduleLessonCanDos must run after commit for returned language goals. */
 export async function completeLessonPlanItems(
   tx: TransactionClient,
   { lessonId, now, userId }: { lessonId: string; now: Date; userId: string },
@@ -111,10 +94,7 @@ export async function completeLessonPlanItems(
   });
 }
 
-/**
- * Analytics hears the "I can" checks a finished lesson reached after the response. Call it once
- * the transaction that checked the lesson off has committed, so the check reads its plan items.
- */
+/** Call after the completion transaction commits so the checks see its plan items. */
 export function scheduleLessonCanDos({
   goals,
   lessonId,

@@ -1,13 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { getReached } from "./reached";
 
-/** Energy that stays put, so a test reads only the level. */
 const SAME_ENERGY = { after: 50, before: 50 };
 
-/** Brain Power that stays put, so a test reads only the tenth of Energy. */
 const SAME_BRAIN_POWER = { after: 10, before: 10 };
 
-/** The tenth of Energy an Energy change reached, its Brain Power unchanged. */
 function energyOf(energy: { after: number; before: number }) {
   return getReached({ brainPower: SAME_BRAIN_POWER, energy }).energy;
 }

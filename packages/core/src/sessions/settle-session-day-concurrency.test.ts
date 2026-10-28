@@ -12,7 +12,7 @@ describe("Completion follows the current session queue", () => {
     const user = await userFixture();
 
     const session = await studySessionFixture({
-      // Isolate completion's rollback from the first persistence of the day's missions.
+      // Pre-save missions so this test isolates completion rollback from first-time mission persistence.
       missions: { picks: [], version: 1 },
       startedAt: new Date(),
       status: "active",

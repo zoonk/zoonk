@@ -29,7 +29,6 @@ function setToday(isoDate: string) {
   });
 }
 
-/** An exam of three subjects in a study cycle, two months away (2020, so others' pace stays out). */
 async function examGoal(userId: string, dailyMinutes = 30) {
   const library = await planLibraryFixture({
     skills: [
@@ -53,7 +52,6 @@ async function examGoal(userId: string, dailyMinutes = 30) {
   return { goal, plan };
 }
 
-/** A learn goal without a date, at 15 minutes a day. */
 async function learnGoal(userId: string) {
   const library = await planLibraryFixture({ skills: [{ lessons: 12 }, { lessons: 12 }] });
 
@@ -69,10 +67,8 @@ async function learnGoal(userId: string) {
   return { goal, plan };
 }
 
-/** The keys Today's falling-behind card read from a search: a change saves only facts now. */
 const SEARCHED_KEYS = ["dailyMinutes", "fittingDate", "fullDepth", "maximumShare"];
 
-/** The saved `behind` keeps what the missed days did, and no searched time or date to offer. */
 function expectOnlyFacts(payload: unknown) {
   const saved = isJsonObject(payload) && isJsonObject(payload.behind) ? payload.behind : null;
 
@@ -83,7 +79,6 @@ function expectOnlyFacts(payload: unknown) {
   }
 }
 
-/** The time that covers the goal, as the learner's Find works it out (see `findPlanTimeToCover`). */
 async function findTime(goalId: string) {
   const result = await findPlanTimeToCover({ goalId, input: {} });
   return result.status === "ready" && result.time.ready ? result.time : null;
@@ -118,7 +113,6 @@ function lessonIds(day: Day): string[] {
   );
 }
 
-/** The learner finishes the day's first lessons, as finishing them in the player does. */
 async function finishLessons({ count, day, planId }: { count: number; day: Day; planId: string }) {
   const finished = day.blocks.filter((block) => block.kind === "learn").slice(0, count);
 
@@ -139,7 +133,6 @@ async function finishLessons({ count, day, planId }: { count: number; day: Day; 
     .flatMap((block) => block.lessonId ?? []);
 }
 
-/** The plan's lessons still to do, in any order: nothing an earlier day left is dropped. */
 async function todoLessons(planId: string) {
   const items = await prisma.planItem.findMany({
     where: { kind: "lesson", lessonId: { not: null }, planId, status: "todo" },
@@ -148,7 +141,6 @@ async function todoLessons(planId: string) {
   return items.flatMap((item) => item.lessonId ?? []).toSorted((a, b) => a.localeCompare(b));
 }
 
-/** Today's session and its view, opened as the learner does. */
 async function openTodayView(goalId: string) {
   const day = await openToday(goalId);
   const view = await getTodayStudySession({ goalId, timeZone: "UTC" });
@@ -160,7 +152,6 @@ async function openTodayView(goalId: string) {
   return { day, view: view.session };
 }
 
-/** A goal due on Friday the next week, whose 12 minutes a day cover it with room to spare. */
 async function datedGoal(userId: string) {
   const library = await planLibraryFixture({ skills: [{ lessons: 4 }, { lessons: 4 }] });
 
@@ -251,8 +242,6 @@ describe("work an earlier day left", () => {
     setToday("2020-09-30");
     const wednesday = await openToday(goal.id);
 
-    // Two days of lessons don't fit in one: the day takes what fits, oldest first, and the day
-    // keeps its size.
     const due = await dueOn("2020-09-30");
 
     expect(due).toStrictEqual(missed.slice(0, due.length));
@@ -260,7 +249,6 @@ describe("work an earlier day left", () => {
     expect(wednesday.plannedMinutes).toBeLessThanOrEqual(goal.dailyMinutes + 5);
     await expect(todoLessons(plan.id)).resolves.toStrictEqual(todo);
 
-    // What Wednesday didn't fit is Thursday's start.
     const rest = missed.slice(due.length);
     const thursday = await dueOn("2020-10-01");
     expect(thursday.slice(0, rest.length)).toStrictEqual(rest);
@@ -297,7 +285,6 @@ describe("work an earlier day left", () => {
     const examLeft = await finishLessons({ count: 1, day: examMonday, planId: exam.plan.id });
     const learnTodo = await todoLessons(learn.plan.id);
 
-    // The learn goal's day was studied in full.
     await finishLessons({
       count: lessonIds(learnMonday).length,
       day: learnMonday,
@@ -311,7 +298,6 @@ describe("work an earlier day left", () => {
 
     expect(lessonIds(examTuesday).slice(0, examLeft.length)).toStrictEqual(examLeft);
 
-    // Nothing was left on the learn goal, so its plan didn't move.
     const learnAfter = await prisma.plan.findUniqueOrThrow({ where: { id: learn.plan.id } });
     expect(learnAfter.version).toBe(learnPlan.version);
     const learnLeft = await todoLessons(learn.plan.id);
@@ -338,7 +324,6 @@ describe("falling behind", () => {
       coveredShare: 1,
     });
 
-    // Away until the Thursday before the date: two days left for all of it.
     setToday("2020-10-07");
     const result = await getTodayStudySession({ goalId: goal.id, timeZone: "UTC" });
     expect(result.status).toBe("ready");
@@ -357,7 +342,6 @@ describe("falling behind", () => {
     expect(behind?.coveredAfter ?? 1).toBeLessThan(1);
     expectOnlyFacts(change?.payload);
 
-    // The time that covers it all again is the learner's to find, from Today's link to the editor.
     const found = await findTime(goal.id);
     expect(found?.recommendedMinutes ?? 0).toBeGreaterThan(goal.dailyMinutes);
   });
@@ -367,7 +351,6 @@ describe("falling behind", () => {
     const { goal, plan } = await datedGoal(user.id);
     await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
 
-    // Away until the day before the date: one day of 12 minutes for 24 minutes of lessons.
     setToday("2020-10-08");
     const result = await getTodayStudySession({ goalId: goal.id, timeZone: "UTC" });
     expect(result.status).toBe("ready");
@@ -379,7 +362,6 @@ describe("falling behind", () => {
     expect.soft(behind).toMatchObject({ coveredBefore: 1, measure: "goal" });
     expect.soft(behind?.coveredAfter ?? 1).toBeLessThan(1);
 
-    // The plan the settling saved says what the one day holds.
     const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     expect.soft(saved.coveredShare ?? 1).toBeLessThan(1);
   });
@@ -402,7 +384,6 @@ describe("falling behind", () => {
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
     await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
 
-    // Away until two days before the date: only more than 4 hours a day covers it all now.
     setToday("2020-10-07");
     await getTodayStudySession({ goalId: goal.id, timeZone: "UTC" });
 
@@ -416,16 +397,12 @@ describe("falling behind", () => {
     expect(behind?.coveredAfter ?? 1).toBeLessThan(behind?.coveredBefore ?? 0);
     expectOnlyFacts(change.payload);
 
-    // Find works it out exactly when the learner asks: the time a day that covers it all, and the
-    // date their own time covers it all by, which "Move your date" applies.
     const found = await findTime(goal.id);
 
     expect(found?.recommendedMinutes).toBeGreaterThan(240);
     expect(found?.fittingDate).toMatch(/^\d{4}-\d{2}-\d{2}$/u);
     expect((found?.fittingDate ?? "") > "2020-10-09").toBe(true);
 
-    // A change saved before Today said only facts kept the time and date a search found to offer
-    // (Rafaela's card said "about 54%" while her Plan said "about 55%"): reading it drops them.
     const payload = isJsonObject(change.payload) ? change.payload : {};
 
     await prisma.planChange.update({
@@ -448,7 +425,6 @@ describe("falling behind", () => {
       .findUniqueOrThrow({ where: { id: goal.id } })
       .then((saved) => loadTodayPlanChange({ goal: saved, now: new Date(), timeZone: "UTC" }));
 
-    // What the missed days did stays as the settle said it, and nothing searched.
     expect(today?.behind).toStrictEqual(behind);
   });
 
@@ -479,7 +455,6 @@ describe("catching up", () => {
     const user = await learner();
     const { goal, plan } = await examGoal(user.id);
 
-    // Monday opened and not studied, Tuesday missed: Wednesday can't fit both days.
     await openToday(goal.id);
     setToday("2020-09-30");
 
@@ -498,7 +473,6 @@ describe("catching up", () => {
       lessons: left.carriedItemIds.length,
     });
 
-    // Reading the day again settles nothing new: what didn't fit comes first tomorrow.
     await expect(refreshGoalPlan({ goalId: goal.id })).resolves.toStrictEqual({
       status: "unchanged",
     });
@@ -507,14 +481,12 @@ describe("catching up", () => {
       prisma.planChange.count({ where: { kind: "missedDays", planId: plan.id } }),
     ).resolves.toBe(1);
 
-    // The day opens with them, and the rest don't fit in its normal time.
     expect(catchUp?.blockIds).toStrictEqual(
       wednesday.blocks.filter((block) => block.kind === "learn").map((block) => block.id),
     );
 
     expect(catchUp?.later.lessons).toBeGreaterThan(0);
 
-    // They take about one more day's time, so the day offers them.
     expect(catchUp?.later.offered).toBe(true);
     expect(catchUp?.later.minutes).toBeLessThanOrEqual(goal.dailyMinutes * 1.25);
 
@@ -527,7 +499,6 @@ describe("catching up", () => {
       catchUpToday({ input: { timeZone: "UTC" }, sessionId: wednesday.id }),
     ).resolves.toStrictEqual({ status: "nothingToCatchUp" });
 
-    // Done with everything earlier days left: back on pace.
     await prisma.planItem.updateMany({
       data: { status: "done" },
       where: { id: { in: left.carriedItemIds } },
@@ -549,8 +520,6 @@ describe("catching up", () => {
 
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
-    // Monday opened and not studied, then Tuesday missed: their lessons and the stand-in after
-    // them are what earlier days left (Wednesday is an ordinary day, which says so).
     await openToday(goal.id);
     setToday("2020-09-30");
 
@@ -595,7 +564,6 @@ describe("coming back", () => {
     const user = await learner();
     const { goal } = await examGoal(user.id);
 
-    // Rafaela set up her goal on Monday, opened Today and left without studying.
     await openToday(goal.id);
 
     setToday("2020-10-02");
@@ -605,11 +573,9 @@ describe("coming back", () => {
     expect(day.plannedMinutes).toBeLessThanOrEqual(getLightMinutes(goal.dailyMinutes));
     expect(day.blocks.some((block) => block.kind === "learn")).toBe(true);
 
-    // The light day carries no backlog: nothing offers to add the days she missed.
     expect(view.freshStart).toBe("welcomeBack");
     expect(view.catchUp).toBeNull();
 
-    // The plan still says honestly how much those days left.
     await expect(readStatus(goal.id)).resolves.toMatchObject({ kind: "behind" });
   });
 
@@ -623,7 +589,6 @@ describe("coming back", () => {
       ],
     });
 
-    // Long Mondays and Tuesdays, a short Wednesday (weekdays from Sunday).
     const { goal } = await unplannedGoalFixture({
       dailyMinutes: 30,
       kind: "exam",
@@ -635,8 +600,6 @@ describe("coming back", () => {
 
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
-    // Monday opened and not studied, Tuesday missed: Wednesday is an ordinary day, and what its 15
-    // minutes can't hold of the two long days takes far more than her usual 30.
     await openToday(goal.id);
     setToday("2020-09-30");
     const { day, view } = await openTodayView(goal.id);

@@ -2,12 +2,7 @@ import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
-/**
- * Serializes changes to a session's queue. Block transitions take their block before the session,
- * so queue writers use that order too, after the caller locks the learner row. Reload everything
- * after waiting, including the session's status.
- * Call this before writing the plan or goal the queue follows.
- */
+/** Call after locking the learner but before writing plan/goal changes; reload state after waiting for block-then-session locks. */
 export async function lockSessionQueue({
   sessionId,
   tx,

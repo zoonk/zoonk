@@ -2,13 +2,9 @@ import "server-only";
 import { type StudySessionStatus, prisma } from "@zoonk/db";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 
-/** A day that ended keeps what happened in it; days still running or ahead move on. */
+/** Ended days retain their history; only running or future days follow changes. */
 const OPEN_SESSION_STATUSES: StudySessionStatus[] = ["planned", "active"];
 
-/**
- * The lessons some plan items teach: a lesson item's own, and a chapter item's chapter lessons,
- * since a day takes the chapter's next lesson for it.
- */
 async function loadItemLessonIds(planItemIds: readonly string[]): Promise<string[]> {
   const items = await prisma.planItem.findMany({
     select: { chapterId: true, lessonId: true },
@@ -33,13 +29,7 @@ async function loadItemLessonIds(planItemIds: readonly string[]): Promise<string
   ];
 }
 
-/**
- * A test-out or placement settled some lessons: the one the learner has open on an open day is
- * skipped, so Today goes on with the next stop instead of restarting a lesson they just showed
- * they know. The ones not started leave with the rest of the day's not-started part, which follows
- * the plan (see `followPlanToday`), or, when the day keeps what it showed (`notStarted`), on their
- * own.
- */
+/** Skips tested-out lessons in open sessions; notStarted also removes pending blocks without rebuilding the rest. */
 export async function skipTestedOutBlocks({
   goalId,
   notStarted = false,
@@ -60,7 +50,7 @@ export async function skipTestedOutBlocks({
   }
 
   await writeLearnerChange({ userId: goal.userId }, async (tx) => {
-    /** Bulk transitions use the queue's block order rather than the UPDATE scan order. */
+    // Match queue writers' block-lock order rather than relying on UPDATE scan order.
     const blocks = await tx.$queryRaw<{ id: string }[]>`
       SELECT block.id FROM study_session_blocks AS block
       JOIN study_sessions AS session ON session.id = block.session_id

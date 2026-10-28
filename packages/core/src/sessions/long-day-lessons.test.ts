@@ -40,7 +40,6 @@ describe("a long study day", () => {
       block.kind === "learn" ? [block.lessonId] : [],
     );
 
-    // Each lesson is a few minutes: two hours, less reviews and practice, hold well over eight.
     expect(learnLessons.length).toBeGreaterThan(8);
 
     expect(learnLessons).toStrictEqual(
@@ -74,8 +73,6 @@ describe("a long study day", () => {
     const today = result.session.week.days.find((day) => day.isToday);
     const share = getLearningShare({ phaseKind: "learn", practiceBias: "balanced" });
 
-    // The plan has more lessons than the day holds, so lessons fill their share of it: a walk with
-    // no lessons written showed 4 hours of a 24-hour day, all the lessons there were.
     expect(lessonMinutes).toBe(MAX_DAILY_MINUTES * share);
     expect(today?.goalMinutes).toBe(MAX_DAILY_MINUTES);
   });

@@ -10,7 +10,6 @@ import { findTestOutOffer } from "./_utils/test-out-offer";
 
 const MINUTE_MS = 60_000;
 
-/** A chapter of five lessons teaching one skill, planned in order for a learner's goal. */
 async function setup() {
   const [user, chapter, skill] = await Promise.all([
     userFixture(),
@@ -40,10 +39,6 @@ async function setup() {
   return { chapter, goal, items, lessons, user };
 }
 
-/**
- * Finishes a lesson in order: its plan item is done and the ledger has its first completion,
- * with every answer right or with a mistake.
- */
 async function finish({
   index,
   setup: { items, lessons, user },
@@ -91,7 +86,6 @@ describe(findTestOutOffer, () => {
       lessonsLeft: 3,
     });
 
-    // Not after every easy lesson that follows: one offer, not nagging.
     await finish({ index: 2, setup: lessonSetup });
     await expect(offerAfter({ index: 2, setup: lessonSetup })).resolves.toBeNull();
   });

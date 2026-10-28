@@ -1,9 +1,5 @@
 import { type ItemSetPick } from "../../library/items/item-sets";
 
-/**
- * Practice questions as they're asked: a set's questions (a passage, a case, a chart or a
- * recording they share) together, any other question alone.
- */
 function groupPracticeUnits<T extends { setId?: string | null }>(practice: readonly T[]): T[][] {
   return practice.reduce<T[][]>((units, item) => {
     const last = units.at(-1);
@@ -18,11 +14,7 @@ function groupPracticeUnits<T extends { setId?: string | null }>(practice: reado
   }, []);
 }
 
-/**
- * The practice questions that fit `room`, in order. A set is asked whole or not at all: one that
- * doesn't fit is left for another day and the questions after it take its place, since half a
- * passage's questions would test the passage, not the skills.
- */
+/** Never split a stimulus set; skip an oversized set and let later fitting questions take its place. */
 export function takePracticeQuestions<T extends { setId?: string | null }>({
   practice,
   room,
@@ -39,11 +31,7 @@ export function takePracticeQuestions<T extends { setId?: string | null }>({
   }, []);
 }
 
-/**
- * The sets practice asks on a skill's turn, as units it orders with the skill's other questions:
- * those whose first skill in practice's order is this one, so a set spanning skills comes once. A
- * set has no field or difficulty of its own.
- */
+/** A set spanning skills belongs to its first ordered skill only, preventing duplicate playback. */
 export function toSetUnits({
   isOne,
   listeningSkillIds,
@@ -51,11 +39,7 @@ export function toSetUnits({
   sets,
   skillId,
 }: {
-  /**
-   * One question confirms the skill today (a topic the learner was taken to know), so its sets
-   * wait. A listening skill's recordings are its only questions, so its first one, asked whole,
-   * confirms it.
-   */
+  /** Single-question confirmations exclude sets except indivisible listening recordings. */
   isOne: boolean;
   listeningSkillIds: ReadonlySet<string>;
   ordered: readonly string[];
@@ -83,10 +67,7 @@ export function toSetUnits({
     }));
 }
 
-/**
- * The sets practice can ask: a set is asked whole, so it waits while any of its questions is held
- * back (`isAsked`), and a text set never asks a skill only recordings practice.
- */
+/** Ask sets whole only when none of their questions are held back; text sets exclude recording-only skills. */
 export function listAskedSets({
   isAsked,
   listeningSkillIds,

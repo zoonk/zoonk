@@ -23,7 +23,6 @@ export async function readSavedDayView({
   userId,
   weekDate,
 }: {
-  /** The session goal's exam blueprint when the GET already read it (see `loadNotice`). */
   blueprint?: ExamBlueprint | null;
   session: StudySessionRow;
   timeZone: string;

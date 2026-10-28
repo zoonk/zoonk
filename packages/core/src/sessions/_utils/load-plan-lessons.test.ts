@@ -5,7 +5,6 @@ import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
 import { loadLessonsForSkills, loadUpcomingLessons } from "./load-plan-lessons";
 
-/** A skill and two lessons of it, written one at a time with the higher id first. */
 async function skillWithLessons(name: string) {
   const [lower = "", higher = ""] = [randomUUID(), randomUUID()].toSorted((a, b) =>
     a.localeCompare(b),
@@ -23,8 +22,6 @@ describe(loadLessonsForSkills, () => {
     freezeClock();
     const { higher, lower, skill } = await skillWithLessons("Balance chemical equations");
 
-    // Linked at one instant in reverse id order, as the lessons were written: a read in storage
-    // order returns the lower id second.
     await lessonSkillFixture({ lessonId: higher, skillId: skill.id });
     await lessonSkillFixture({ lessonId: lower, skillId: skill.id });
 
@@ -37,7 +34,6 @@ describe(loadLessonsForSkills, () => {
     freezeClock();
     const { higher, lower, skill } = await skillWithLessons("Name organic compounds");
 
-    // The earlier link decides, whatever the ids say.
     await lessonSkillFixture({ lessonId: higher, skillId: skill.id });
     vi.setSystemTime(Date.now() + 1000);
     await lessonSkillFixture({ lessonId: lower, skillId: skill.id });
@@ -49,8 +45,6 @@ describe(loadLessonsForSkills, () => {
 });
 
 describe(loadUpcomingLessons, () => {
-  // A day of many short lessons filled the lessons it looks ahead to with the ones it already held,
-  // so the lessons that landed for it found no place and the day stayed short.
   it("looks ahead past the lessons the day keeps", async () => {
     const lessons = await Promise.all(
       Array.from({ length: 10 }, (_, index) =>
@@ -69,7 +63,6 @@ describe(loadUpcomingLessons, () => {
       titleSnapshot: lesson.title,
     }));
 
-    // A 30-minute day looks ahead to 8 lessons: the 8 it keeps would have been all of them.
     const upcoming = await loadUpcomingLessons({
       dayMinutes: 30,
       items,

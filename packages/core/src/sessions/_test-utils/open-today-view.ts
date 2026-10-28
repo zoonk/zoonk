@@ -5,7 +5,7 @@ import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { getTodayView } from "../../view-models/today/get-today-view";
 import { openStudyDay } from "../open-study-day";
 
-/** Tests that play persisted work explicitly open it; a Today GET never creates its IDs. */
+/** Tests must open the day explicitly: Today GETs never create persisted ids. */
 export async function openTodayView(input: { goalId: string; timeZone?: string }) {
   const goal = await prisma.goal.findUniqueOrThrow({ where: { id: input.goalId } });
   const timeZone = getAnswerTimeZone({ goal, timeZone: input.timeZone });

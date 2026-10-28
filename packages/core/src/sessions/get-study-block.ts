@@ -30,13 +30,12 @@ import { type BlockPayload, getBlockItemIds, readBlockPayload } from "./block-pa
 import { type StudyBlockQuestion, type TimeMachine } from "./study-block-question";
 
 type StudyBlockDetail = {
-  /** Verdicts of asked checkpoint questions, including questions whose content was removed. */
+  /** Includes verdicts whose question content was removed. */
   answeredQuestions?: { isCorrect: boolean; itemId: string }[];
   block: StudyBlockView;
-  /** Checkpoints are duels without hints, explanations or the tutor until they end. */
+  /** Checkpoints withhold hints, explanations, and the tutor until completion. */
   hints: boolean;
   questions: StudyBlockQuestion[];
-  /** The words the goal's true-or-false statements are answered with, by its exam. */
   trueFalseLabels: TrueFalseLabels;
 };
 
@@ -93,11 +92,7 @@ async function loadTimeMachines({
   );
 }
 
-/**
- * A started checkpoint the bank shortened (a question removed since it started) as it can still be
- * played: the questions it shows and their pass mark (`getAskablePassMark`), as its own screen and
- * settlement read them. One waiting for its questions keeps its planned size.
- */
+/** Started checkpoints shrink to remaining askable questions; unopened ones retain their planned size. */
 function toAskableBlock({
   block,
   payload,
@@ -118,11 +113,7 @@ function toAskableBlock({
   };
 }
 
-/**
- * A question block with its questions, never their answers: capsules with their time machine
- * lines, mistake drills, practice and checkpoint questions, and which ones were answered already
- * so the block resumes where the learner left it. Lesson blocks are played in the lesson player.
- */
+/** Requires ownership; returns questions and prior-answer identities without revealing correct answers. */
 export async function getStudyBlock({
   blockId,
   sessionId,
@@ -139,7 +130,7 @@ export async function getStudyBlock({
   return { detail: await loadStudyBlock(owned), status: "ready" };
 }
 
-/** Hydrates an authorized block snapshot while its caller reads other metadata from that same row. */
+/** Caller must supply the authorized block snapshot. */
 export async function loadStudyBlock(
   owned: Extract<OwnedStudyBlock, { status: "ready" }>,
 ): Promise<StudyBlockDetail> {
@@ -204,8 +195,7 @@ export async function loadStudyBlock(
     ),
   );
 
-  // A boss's duel decided before its last question, won or lost, is over: what's left of it is
-  // never asked.
+  // A decided duel ends even when some questions remain unasked.
   const questionCount = payload.checkpoint
     ? getCheckpointQuestionCount({
         answeredItemIds: answered.keys(),
@@ -215,7 +205,7 @@ export async function loadStudyBlock(
 
   const duelOver = isBlockDuelDecided({ answers, payload, questions: questionCount });
 
-  // A recording's transcript shows once every one of its questions in the block is answered.
+  // Showing a recording's transcript before its questions end would reveal answers.
   const isSetAnswered = (setId: string | null) =>
     duelOver || rows.filter((row) => row.setId === setId).every((row) => answered.has(row.id));
 
@@ -262,7 +252,7 @@ export async function loadStudyBlock(
     }),
     hints: owned.block.kind !== "checkpoint",
     questions,
-    // Before the notice's blueprint is linked, the formats a first pass over it read.
+    // Before blueprint linking, the notice's first-pass formats remain authoritative.
     trueFalseLabels: getTrueFalseLabels(
       structure ?? readNoticeFormats(owned.session.goal?.details),
     ),

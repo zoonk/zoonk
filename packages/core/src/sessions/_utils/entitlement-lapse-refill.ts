@@ -23,7 +23,7 @@ class RefillInputsChangedError extends Error {
   override name = "RefillInputsChangedError";
 }
 
-/** Shared by preview and Open. Only an entitlement lapse may refill a shown day. */
+/** Only an entitlement lapse may refill an already-shown day; preview and Open must share the plan. */
 export async function planEntitlementLapseRefill({
   goal,
   phaseChallengesRequired,
@@ -119,7 +119,7 @@ export async function planEntitlementLapseRefill({
   };
 }
 
-/** Only the learner's POST appends the previewed free work, once even when Opens race. */
+/** Learner POST only; concurrent Opens append the previewed work once. */
 export async function persistEntitlementLapseRefill({
   goal,
   session,

@@ -25,7 +25,6 @@ describe(scoreAnswers, () => {
   it("multiplies each right answer by the Hyperdrive reached, up to x5", () => {
     const result = scoreAnswers({ answers: Array.from({ length: 7 }, () => right()) });
 
-    // 2 points times x1, x2, x3, x4, x5, x5, x5
     expect(result).toStrictEqual({
       brainPower: 50,
       points: [2, 4, 6, 8, 10, 10, 10],

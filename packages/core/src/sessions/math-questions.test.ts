@@ -32,12 +32,10 @@ function mathItemFixture(skillId: string) {
   return itemFixture({ content: MATH_CONTENT, format: "numeric", skillId });
 }
 
-/** Numbers as questions and answers show them, without floating-point noise. */
 function shown(value: number): string {
   return String(Number(value.toFixed(4)));
 }
 
-/** The price and the discount a question shows, what the learner pays and what they save. */
 function readNumbers(question: string) {
   const [price = 0, discount = 0] = (question.match(/\d+(?:\.\d+)?/gu) ?? []).map(Number);
   return { discount, paid: price * (1 - discount / 100), price, saved: (price * discount) / 100 };
@@ -53,7 +51,6 @@ async function loadQuestions({ blockId, sessionId }: { blockId: string; sessionI
   return detail.detail.questions;
 }
 
-/** A learner whose only due skill is reviewed with one math problem. */
 async function mathReviewDay() {
   const user = await userFixture();
 
@@ -84,7 +81,6 @@ async function mathReviewDay() {
   return { goal, item, review, session, skillId, user };
 }
 
-/** A block of another day's session that reviews the skill with the same problem. */
 function laterReviewBlock({
   itemId,
   position,
@@ -192,7 +188,6 @@ describe("math problems in sessions", () => {
 
     const fresh = later.find((laterQuestion) => laterQuestion?.question !== asked);
 
-    // An answer given with other numbers says nothing about today's, so only its result shows.
     expect(fresh?.timeMachine).toMatchObject({ answer: null, isCorrect: true });
   });
 
@@ -299,7 +294,6 @@ describe("math problems in sessions", () => {
         .flatMap((skill) => [0, 1, 2].map(() => mathItemFixture(skill.id))),
     ]);
 
-    // The boss takes the third lesson's old place, so it's added once that lesson moved.
     await checkpointItemFixture({ kind: "boss", planId: fixture.plan.id, position: 2 });
 
     mockSession(user.id);
@@ -330,7 +324,6 @@ describe("math problems in sessions", () => {
       return [...results, result];
     }, Promise.resolve([]));
 
-    // A duel without hints: no right answer or steps until it ends.
     expect(answers[0]).toMatchObject({
       feedback: { correctAnswer: null, isCorrect: true, workedSteps: [] },
     });

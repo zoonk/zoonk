@@ -21,7 +21,6 @@ import { type SelectedDayPlan } from "./selected-day-plan";
 import { type SessionDayContext } from "./session-placement";
 import { type SessionPlanItem } from "./session-plan-item";
 
-/** Whether the goal had a day before this one: day one starts nothing over. */
 async function hasEarlierDay({ goalId, today }: { goalId: string; today: Date }) {
   const earlier = await prisma.studySession.findFirst({
     select: { id: true },
@@ -41,7 +40,6 @@ async function loadLastStudyDate({ today, userId }: { today: Date; userId: strin
   return day?.date ?? null;
 }
 
-/** The plan's first day, or the goal's set-up day in the learner's time zone without one. */
 function getPlanStart({
   goal,
   settings,
@@ -55,13 +53,7 @@ function getPlanStart({
   return startDate ? fromIsoDate(startDate) : getDateInTimeZone({ date: goal.createdAt, timeZone });
 }
 
-/**
- * What a day's session is built from: the goal's plan and its skills, but those of an area the
- * learner took out (out by choice: nothing asks them, even one a test-out left a row of in the
- * plan), what each skill builds on, the exam's structure, and the learner's day. The listening
- * skills with no voiced recording to ask today (`idleSkillIds`) leave their subject's time to the
- * others.
- */
+/** Excludes learner-removed areas; idle listening skills release their allocation to other subjects. */
 export async function loadDayPlan({
   blueprint,
   goal,
@@ -94,7 +86,6 @@ export async function loadDayPlan({
         : loadListeningSkillIds(goal.id),
     ]);
 
-  // The day's mock fits the day: a class test's short mock takes the time the learner gives it.
   const dayMinutes = getGoalDayMinutes({ date: localDate, goal, planSettings: plan?.settings });
   const items: SessionPlanItem[] = plan?.items ?? [];
   const graph = parsePlanGraph(plan?.graph);
@@ -114,14 +105,12 @@ export async function loadDayPlan({
 
   return {
     dayMinutes,
-    /** What exam prep the learner's plan (Plus, free or guest) covers. */
     examPrep: getExamPrepAccess(tier),
     finalStretchStart: getFinalStretchStart(parsePlanPhases(plan?.phases)),
     goalPlan,
     graph,
     idleSkillIds,
     isFirstDay: !hadEarlierDay,
-    /** Each plan item's skills, by its id: what a phase's lessons study (`getBossSkillIds`). */
     itemSkillIds: new Map(goalPlan.items.map((item) => [item.id, item.skillIds])),
     items,
     lastStudyDate,
@@ -133,8 +122,7 @@ export async function loadDayPlan({
     settings: plan?.settings ?? null,
     skills,
     structure,
-    // Weekly challenges ask single questions, so an exam's listening skills, practiced only with
-    // recordings, aren't theirs (a boss plays a listening phase's recordings, a review one of them).
+    // Mixed weekly challenges cannot ask listening-only skills without their recordings.
     textSkillIds: skills.flatMap((skill) => (listeningSkillIds.has(skill.id) ? [] : [skill.id])),
     tier,
   };

@@ -16,14 +16,7 @@ function isSource(
   return value?.id === source.id && value.kind === source.kind;
 }
 
-/**
- * What an activity outside the day's blocks (a notebook practice, a pattern drill, a pronunciation
- * round, a call, a question to the buddy) did to the day's missions, for the end of its screen:
- * the missions it completed, the day's missions as they stand, and whether it paid the bonus.
- * Read from what settlement recorded (`completedBy`, `fullMealSource`), so a retry of the same
- * activity says the same. Null when it completed none, and, read again at `now` (a screen that
- * shows it on every visit), once that day is no longer the learner's.
- */
+/** Replays persisted off-session mission credit; returns null without credit or when now is outside the learner's day. */
 export async function loadMissionMoment({
   now,
   source,
@@ -35,8 +28,6 @@ export async function loadMissionMoment({
   timeZone: string;
   userId: string;
 }): Promise<MissionMomentView | null> {
-  // The session the activity paid the day's bonus in, when it did; otherwise the latest one whose
-  // missions it completed.
   const paying = await prisma.studySession.findFirst({
     include: STUDY_SESSION_INCLUDE,
     orderBy: [{ localDate: "desc" }, { createdAt: "desc" }],

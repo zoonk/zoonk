@@ -11,7 +11,6 @@ import { getTodayStudySession } from "./_test-utils/open-today";
 
 const NOW = new Date("2026-09-30T12:00:00Z");
 
-/** A learner whose plan studies two subjects, planned and signed in, before Today opens. */
 async function setup() {
   const user = await userFixture();
 
@@ -38,7 +37,6 @@ async function setup() {
   return { goal, library };
 }
 
-/** The lessons of the plan's items for a skill. */
 async function loadItemLessonIds({ goalId, skillId }: { goalId: string; skillId?: string }) {
   const items = await prisma.planItem.findMany({
     select: { lessonId: true },
@@ -48,7 +46,6 @@ async function loadItemLessonIds({ goalId, skillId }: { goalId: string; skillId?
   return items.flatMap((item) => item.lessonId ?? []);
 }
 
-/** Gives lessons one skill of their own that the goal's graph doesn't have. */
 async function teachSkillOutsideGraph(lessonIds: string[]) {
   const outside = await skillFixture({ name: "A skill outside the graph" });
 
@@ -82,9 +79,6 @@ describe("a lesson's subject on today's list", () => {
     const { goal, library } = await setup();
     const [physics, math] = library.skills;
 
-    // A chapter tagged with a physics skill and a math one holds a probability lesson; the plan
-    // files it under the physics skill (Ana's "Espaço amostral em duas etapas" read Natural
-    // Sciences).
     const lessonIds = await loadItemLessonIds({ goalId: goal.id, skillId: physics?.id });
 
     await prisma.lessonSkill.updateMany({
@@ -105,8 +99,6 @@ describe("a lesson's subject on today's list", () => {
     const [chapter] = library.chapters;
     const lessonIds = await loadItemLessonIds({ goalId: goal.id, skillId: physics?.id });
 
-    // Ana's "Ideia central em textos multimodais": its own skill isn't in her graph, and its chapter
-    // was tagged with skills of three subjects; the plan filed it under the math one.
     await Promise.all([
       teachSkillOutsideGraph(lessonIds),
       chapterSkillFixture({ chapterId: chapter?.id ?? "", skillId: physics?.id ?? "" }),

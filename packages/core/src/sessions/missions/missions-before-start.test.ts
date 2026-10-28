@@ -38,7 +38,6 @@ import { readMissionDocument } from "./catalog";
 
 const TIME_ZONE = "UTC";
 
-/** The missions Today shows for the goal's day, which nobody opened yet, in order. */
 async function readShownMissions(goalId: string) {
   const result = await getTodayView({ goalId, timeZone: TIME_ZONE });
 
@@ -50,13 +49,11 @@ async function readShownMissions(goalId: string) {
   return result.today.session.missions.map((mission) => mission.kind);
 }
 
-/** The missions of each day saved for the goal. */
 async function readSavedMissions(goalId: string) {
   const days = await prisma.studySession.findMany({ where: { goalId } });
   return days.map((day) => readMissionDocument(day.missions)?.picks.map((pick) => pick.kind));
 }
 
-/** A pattern noticed yesterday, with a one-question drill the day's missions can offer. */
 function patternFixture({ goalId, userId }: { goalId: string; userId: string }) {
   return prisma.mistakePattern.create({
     data: {
@@ -90,7 +87,6 @@ function drillInput() {
   return { answers: ["for"], requestId: crypto.randomUUID(), timeZone: TIME_ZONE };
 }
 
-/** A word due for review, which the grader then hears said right once. */
 async function dueWordFixture(userId: string) {
   const organization = await aiOrganizationFixture();
 
@@ -110,7 +106,6 @@ async function dueWordFixture(userId: string) {
   return pronunciationReviewFixture({ userId, wordId: word.id });
 }
 
-/** A pronunciation round's answer, for the goal it names. */
 function answerWord({
   goalId,
   reviewId,
@@ -155,7 +150,6 @@ describe("an activity done from Today before the learner starts the day", () => 
 
     await expect(readSavedMissions(goal.id)).resolves.toStrictEqual([shown]);
 
-    // The same drill sent again says the same; drilling the pattern again completes nothing more.
     await expect(practiceMistakePattern({ input, patternId: pattern.id })).resolves.toStrictEqual(
       drilled,
     );
@@ -171,7 +165,6 @@ describe("an activity done from Today before the learner starts the day", () => 
     const { goal, user } = await languageGoalFixture();
     mockSession(user.id);
 
-    // The goal keeps the zone Start sends, so Start doesn't move it while the drill saves the day.
     await prisma.goal.update({ data: { timezone: TIME_ZONE }, where: { id: goal.id } });
 
     const pattern = await patternFixture({ goalId: goal.id, userId: user.id });
@@ -338,7 +331,6 @@ describe("an activity done from Today before the learner starts the day", () => 
     await expect(readSavedMissions(goal.id)).resolves.toStrictEqual([shown]);
   });
 
-  // Today offers a pattern on any goal learning its language, whichever goal noticed it.
   it.each(["paused", "removed"] as const)(
     "credits a drill to the goal whose Today offered it when the goal that noticed it is %s",
     async (noticedGoal) => {
@@ -375,7 +367,6 @@ describe("an activity done from Today before the learner starts the day", () => 
     const { user } = round;
     const newer = await languageGoalFixture({ userId: user.id });
 
-    // The round's goal is the one the learner picked; another goal of the language changed later.
     await Promise.all([
       prisma.goal.update({
         data: { timezone: TIME_ZONE, updatedAt: new Date(SESSION_NOW.getTime() - 1000) },
@@ -386,7 +377,6 @@ describe("an activity done from Today before the learner starts the day", () => 
         where: { id: newer.goal.id },
       }),
       learningProfileFixture({ activeGoalId: round.goal.id, userId: user.id }),
-      // Two weeks of study retire the first steps, so Today offers the day's own missions.
       dailyProgressFixtureMany(
         Array.from({ length: 14 }, (_, index) => ({
           date: new Date(SESSION_TODAY.getTime() - (index + 1) * MS_PER_DAY),
@@ -485,17 +475,15 @@ describe("an activity on a day that offers no missions", () => {
     vi.useRealTimers();
   });
 
-  // Each answer of a round or a notebook practice asks again: none of them may re-plan the day.
   it.each(["a rest day", "a used-up daily limit"] as const)(
     "saves nothing and never runs the planner on %s",
     async (day) => {
       const user = await userFixture();
       const { goal, plan, skills } = await sessionGoalFixture({ userId: user.id });
-      // SESSION_NOW is a Wednesday, the fourth of the week's minutes.
+
       const weekdayMinutes =
         day === "a rest day" ? [45, 45, 45, 0, 45, 45, 45] : [45, 45, 45, 45, 45, 45, 45];
 
-      // With its skill graph, the plan would be selected afresh (`computePlan`) to open the day.
       await prisma.plan.update({
         data: {
           graph: {
@@ -565,7 +553,6 @@ describe("a tap on one of Today's missions", () => {
     mockSession(user.id);
     await saveDayForMission({ goalId: goal.id, timeZone: TIME_ZONE });
 
-    // Another mission tapped on the saved day doesn't plan it again.
     const planner = vi.spyOn(planning, "computePlan");
     await saveDayForMission({ goalId: goal.id, timeZone: TIME_ZONE });
 

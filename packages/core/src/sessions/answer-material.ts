@@ -1,6 +1,5 @@
 import { type AnswerMaterial, type ScoredAnswer } from "./brain-power";
 
-/** One answer, identified by the question it answered: a bank item or a lesson step. */
 export type AnswerRecord = {
   answeredAt: Date;
   id: string;
@@ -27,11 +26,7 @@ function getMaterial({
   return priorRightAnswers > 0 ? "repeat" : "new";
 }
 
-/**
- * Tells Brain Power what each answer was worth learning-wise. Capsule and mistake-drill questions
- * are due by definition. Otherwise a question the learner never got right before is new, and one
- * they already got right is an easy repeat, with how many times, so repeats pay less each time.
- */
+/** Capsule/drill questions count as due; prior correct answers reduce rewards for non-due repeats. */
 export function classifyAnswers<TAnswer extends AnswerRecord>({
   answers,
   dueItemIds,

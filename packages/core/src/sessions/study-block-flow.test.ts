@@ -45,7 +45,6 @@ async function setup() {
   return { ...fixture, mistake, session: result.session, user };
 }
 
-/** What the lesson player's completion paid for the lesson in these tests. */
 const LESSON_POWER = 30;
 
 async function playReview({ blockId, sessionId }: { blockId: string; sessionId: string }) {
@@ -164,7 +163,7 @@ describe("study session blocks", () => {
     const blocksPower = stored.blocks.reduce((sum, block) => sum + block.brainPower, 0);
 
     expect(blocksPower).toBeGreaterThan(LESSON_POWER);
-    // Lesson Brain Power is added by the lesson's own completion; the session adds the rest.
+
     expect(Number(progress.totalBrainPower)).toBe(
       blocksPower - LESSON_POWER + BRAIN_POWER_BONUS.fullMeal,
     );
@@ -200,7 +199,6 @@ describe("study session blocks", () => {
       finishStudyBlock({ blockId, input: {}, sessionId: session.id }),
     ]);
 
-    // The later finish lost the race to settle it, or read it settled and got its moment again.
     expect([
       ["blockFinished", "ready"],
       ["ready", "ready"],
@@ -242,7 +240,6 @@ describe("study session blocks", () => {
       isCorrect: true,
     });
 
-    // The last answer before today was wrong: its text helps once the learner answers again.
     await answerEarlier(3, 1);
 
     await expect(readTimeMachine()).resolves.toStrictEqual({

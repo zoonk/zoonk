@@ -55,7 +55,6 @@ describe("session lesson focus settlement", () => {
       userId: user.id,
     });
 
-    // The bound lesson's moment again, not the later run's evidence.
     await expect(completeLibraryLesson(input)).resolves.toMatchObject({
       completion: {
         studyBlock: { brainPower: first.completion.studyBlock?.brainPower, correct: 0, total: 0 },
@@ -130,7 +129,7 @@ describe("session lesson focus settlement", () => {
     );
 
     try {
-      // Holding the plan item blocks automatic settlement after each run has published its time.
+      // Holding the plan item blocks settlement after each run publishes its time.
       await expect
         .poll(
           () =>

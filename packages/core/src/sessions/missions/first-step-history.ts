@@ -22,7 +22,7 @@ type HistoryRow = {
 
 const RETIRE_AFTER_STUDY_DAYS = 14;
 
-/** Account-wide history is one scoped projection; content deletion never erases a finished step. */
+/** Account-wide projection; content deletion must not erase completed first steps. */
 export async function loadFirstStepHistory(userId: string) {
   const [row] = await prisma.$queryRaw<HistoryRow[]>`
     WITH first_session AS (

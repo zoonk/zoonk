@@ -3,12 +3,7 @@ import { prisma } from "@zoonk/db";
 import { ITEM_SET_INCLUDE, toItemSetView } from "../../library/items/item-sets";
 import { type ListeningSetView } from "../../library/listening/listening-set-view";
 
-/**
- * A recording's transcript once the answer just given completes its questions in the block, or
- * decides a boss's duel, won or lost (`duelOver`), which ends it with any left unasked: before, the
- * script would answer them; after, it shows what was misheard. Null for a question on its own, a text's or a
- * chart's set, and a recording with questions still to answer.
- */
+/** Hide the transcript until all recording questions are answered or a duel ends; return null for non-recording sets. */
 export async function loadAnsweredTranscript({
   blockItemIds,
   duelOver,

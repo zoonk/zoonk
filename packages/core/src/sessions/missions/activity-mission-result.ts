@@ -2,10 +2,7 @@ import "server-only";
 import { loadMissionMoment } from "./mission-moment";
 import { type MissionCompletionSource } from "./settle-missions";
 
-/**
- * Keep an off-session activity's own result (including its earned Brain Power) unchanged.
- * Mission rewards belong only to the separately persisted mission moment, never to activity points.
- */
+/** Preserve activity points; mission rewards belong only to their separate persisted moment. */
 export async function withActivityMissionMoment<Result extends object>({
   result,
   source,

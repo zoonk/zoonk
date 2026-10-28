@@ -11,10 +11,6 @@ const MASTERY_RANK: Readonly<Record<MasteryState, number>> = {
 
 const rewardSchema = z.enum(["solid", "mastered"]);
 
-/**
- * Where the learner stands at one moment: Brain Power, Energy, preparation, a goal measured in
- * lessons' progress (null for an exam) and skill states.
- */
 const sessionStateSchema = z.object({
   brainPower: z.number(),
   energy: z.number(),
@@ -25,12 +21,7 @@ const sessionStateSchema = z.object({
 
 export type SessionState = z.infer<typeof sessionStateSchema>;
 
-/**
- * Where the learner stood when the session's first block started, so its end can say what
- * changed: Brain Power (belt stripes), Energy, preparation and each goal skill's state. It also
- * remembers which skills already earned their Solid or Mastered bonus this session, so a skill
- * that wobbles and recovers is never paid twice.
- */
+/** Retain paid mastery bonuses so a skill that declines and recovers is never rewarded twice in a session. */
 const sessionSnapshotSchema = sessionStateSchema.extend({
   fullMealReward: brainPowerRewardSchema.optional(),
   fullMealSource: z.object({ id: z.string(), kind: z.string() }).optional(),
@@ -51,7 +42,6 @@ export function readSessionSnapshot(value: unknown): SessionSnapshot | null {
   return parsed.success ? parsed.data : null;
 }
 
-/** Where the learner stood when the session ended (its `endSnapshot`), if it ended. */
 export function readSessionEnd(value: unknown): SessionState | null {
   const parsed = sessionStateSchema.safeParse(value);
   return parsed.success ? parsed.data : null;
@@ -77,10 +67,7 @@ function isRewardDue({
   return reached && rose && !alreadyPaid;
 }
 
-/**
- * Skills that reached Solid or Mastered during the session and haven't earned that bonus yet.
- * A skill that jumps straight to Mastered earns the Mastered bonus only.
- */
+/** A skill jumping straight to Mastered earns only the Mastered bonus; exclude bonuses already paid this session. */
 export function getMasteryRewards({
   current,
   snapshot,
@@ -101,7 +88,6 @@ export function getMasteryRewards({
   return { mastered: due("mastered"), solid: due("solid") };
 }
 
-/** The snapshot after paying mastery bonuses, so later blocks don't pay them again. */
 export function withPaidRewards({
   rewards,
   snapshot,
@@ -119,7 +105,6 @@ export function withPaidRewards({
   };
 }
 
-/** Skills whose state rose during the session, the biggest moves first. */
 export function getMovedSkills({
   current,
   snapshot,

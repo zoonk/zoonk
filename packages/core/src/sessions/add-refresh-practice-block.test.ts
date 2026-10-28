@@ -11,7 +11,6 @@ import { SESSION_NOW, daysAgo } from "./_test-utils/session-goal";
 import { addRefreshPracticeBlock } from "./add-refresh-practice-block";
 import { readBlockPayload } from "./block-payload";
 
-/** A goal of four skills: the first two studied long ago and fading, the others fresh. */
 async function setup() {
   const user = await userFixture();
   const fixture = await learnerGoalFixture({ itemsPerSkill: 2, phases: [2, 2], userId: user.id });
@@ -89,7 +88,6 @@ describe(addRefreshPracticeBlock, () => {
     const { goal, skills } = await setup();
     const input = { timeZone: "UTC" };
 
-    // Today's session is built on the first read; finish it so nothing in it is left to open.
     const today = await addRefreshPracticeBlock({ goalId: goal.id, input });
     const sessionId = today.status === "ready" ? today.sessionId : "";
 
@@ -128,7 +126,6 @@ describe(addRefreshPracticeBlock, () => {
     const input = { timeZone: "UTC" };
     const dueLater = skills[2]?.id ?? "";
 
-    // Nothing fading; one fresh skill comes due this evening (still today in UTC).
     await prisma.learnerSkill.updateMany({
       data: { due: daysAgo(-10), lastReviewedAt: SESSION_NOW, stability: 30 },
       where: { userId: user.id },
@@ -139,11 +136,9 @@ describe(addRefreshPracticeBlock, () => {
       where: { skillId: dueLater, userId: user.id },
     });
 
-    // Today's session is done, so the practice can't be today's reviews block.
     const today = await getTodayStudySession({ goalId: goal.id, timeZone: "UTC" });
     const sessionId = today.status === "ready" ? today.session.id : "";
 
-    // A question today's session hasn't asked yet, so the bonus practice has one to ask.
     await Promise.all([
       prisma.studySessionBlock.updateMany({ data: { status: "completed" }, where: { sessionId } }),
       itemFixture({ content: choiceItemContent(), skillId: dueLater }),

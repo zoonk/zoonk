@@ -17,19 +17,11 @@ import { type SelectedDayPlan, selectDayPlan, selectDayPlanFromContext } from ".
 import { isSelectedPlanCurrent } from "./selected-plan-current";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
-/**
- * What became of a day's session when its plan changed. `notBuilt`: there's no session yet, so the
- * day is built from the new plan when the learner opens it. `rebuilt`: the part of the day not
- * started yet changed to follow the new plan. `same`: the new plan gives the part not started yet
- * the same blocks, so the day stays as it was without anything to say about it. `kept`: nothing
- * in it could change (every block started or done and no time left, or the learner started a block
- * meanwhile), so the change shows from the next study day.
- */
+/** kept means changes begin next study day; same preserves today's equivalent queue without a notice. */
 export type DaySessionRefresh = "kept" | "notBuilt" | "rebuilt" | "same";
 
 type DaySession = { goal: Goal; session: StudySessionRow; timeZone: string };
 
-/** The blocks a learner's change keeps: those they started or finished. */
 function getKeptBlocks(blocks: readonly StudySessionBlock[]): StudySessionBlock[] {
   return blocks.filter((block) => block.status !== "pending" || readBlockPayload(block).extra);
 }
@@ -42,10 +34,7 @@ function getKeptMinutes(blocks: readonly StudySessionBlock[]): number {
   return sumMinutes(blocks.map((block) => ({ estimatedMinutes: block.estimatedMinutes ?? 0 })));
 }
 
-/**
- * Practice's share of a day underway as it opened (see `SessionBuildInput.openedPractice`): a day
- * nobody started is built again whole, with practice's share of the day it then has.
- */
+/** Preserve opened practice's share only after study begins; unstarted days rebuild whole. */
 function getOpenedPractice({
   kept,
   session,
@@ -64,7 +53,6 @@ function getOpenedPractice({
   return { dayMinutes: session.plannedMinutes, minutes: practice.estimatedMinutes };
 }
 
-/** The day's build without what the kept blocks already hold: their lessons, questions and kinds. */
 function withoutKept({
   input,
   kept,
@@ -106,11 +94,7 @@ function withoutKept({
   };
 }
 
-/**
- * The new blocks and the exact plan facts they were built from. With the day's `selection`, the
- * rest of the day takes what the plan gives today, as Open does (see `pickDayLessons`); without
- * it, the plan's next lessons fill the day's time.
- */
+/** Supply today's selection to preserve its allocation; omitting it fills from the plan's next lessons. */
 async function planRestOfDayWithPlan({
   day,
   kept,
@@ -130,7 +114,6 @@ async function planRestOfDayWithPlan({
     userId: session.userId,
   };
 
-  /** Share the queue's plan with its missions without a second read or a loading waterfall. */
   const dayPlan = loadDayPlan({ ...context, selection });
   const keptLessonIds = new Set(kept.flatMap((block) => (block.lessonId ? [block.lessonId] : [])));
 
@@ -155,7 +138,7 @@ async function planRestOfDayWithPlan({
   };
 }
 
-/** The new blocks for the rest of the day, never a second block of a kind the day keeps. */
+/** Excludes a second block of any kind already kept by the day. */
 export async function planRestOfDay(input: {
   selection?: SelectedDayPlan;
   day: DaySession;
@@ -181,13 +164,7 @@ export function hasSameBlocks({
   );
 }
 
-/**
- * Replaces the day's blocks not kept with the new plan's, after the kept ones, under the session's
- * lock: the session keeps its id, so a screen showing it still reaches it. When a block was started
- * meanwhile, the day stays as it was. Only an actual queue change records the plan version. The
- * append lock marks the plan before it reads the queue and commits that mark even when the content
- * is unchanged.
- */
+/** Preserve the session id and started work; a concurrent block start leaves the queue unchanged. */
 async function replaceNotStartedBlocks({
   day,
   selection: selected,
@@ -208,9 +185,7 @@ async function replaceNotStartedBlocks({
     userId: session.userId,
   };
 
-  // The day follows the same selected allocation as Open: an unstarted one is built again whole,
-  // and a started one's rest takes what the plan gives today. Filled with the plan's next lessons,
-  // Maya's started Saturday took five lessons from November to January for a rest day on Tuesdays.
+  // A rest day must not fill from future lessons outside its selected allocation.
   const selection = selected ?? (await selectDayPlan(context)) ?? undefined;
 
   const planVersion = await loadDayPlanVersion({
@@ -324,7 +299,6 @@ async function replaceNotStartedBlocks({
         })),
       });
 
-      // A finished day the change gives more to do opens again, as "10 more minutes" does.
       const reopens = locked.status === "completed" && planned.length > 0;
 
       await transaction.studySession.update({
@@ -343,12 +317,7 @@ async function replaceNotStartedBlocks({
   });
 }
 
-/**
- * The learner changed their plan (their own controls, an Apply on a proposal, an undo): the part
- * of today's session they haven't started follows the new plan right away, and time the change
- * adds to a day already done is added to it. What they started or finished stays, and the session
- * keeps its id. Call it after the change is saved: the day is built from the goal as it is now.
- */
+/** Call after saving a plan change; preserves started work and the session id, reopening completed days when time is added. */
 export async function followPlanChangeToday({
   goalId,
   localDate,

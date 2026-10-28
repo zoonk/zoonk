@@ -12,13 +12,9 @@ import { NO_PRACTICE_CLAIMS, type PracticeClaims } from "./practice-claims";
 import { listAskedSets, takePracticeQuestions, toSetUnits } from "./practice-sets";
 import { getPracticeItemFilter } from "./session-items";
 
-/** Practice rotates through the weakest skills; this many questions is plenty for any day. */
 const PRACTICE_POOL = 30;
 
-/**
- * A question answered this recently (placement, a lesson's check, yesterday evening's practice)
- * would test what's still in short-term memory, so practice waits a day before asking it again.
- */
+/** Recent answers test short-term recognition, so wait a full day before repeating them in practice. */
 const RECENTLY_ANSWERED_MS = MS_PER_DAY;
 
 type PracticeCandidate = Pick<
@@ -26,13 +22,8 @@ type PracticeCandidate = Pick<
   "difficulty" | "examBlueprintId" | "field" | "id" | "skillId"
 > & { lastAnsweredAt: Date | null };
 
-/** What practice takes in one turn of a skill: a question, or a set's questions together. */
 type PracticeUnit = PracticeCandidate & { questions: PracticeItem[] };
 
-/**
- * "Too easy" asks for the hardest questions first and "Too hard" for the easiest; a question
- * without a difficulty counts as medium. Standard keeps the order the rest of the rules give.
- */
 function compareDifficulty({
   a,
   b,
@@ -50,10 +41,6 @@ function compareDifficulty({
   return difficultyBias === "harder" ? -gap : gap;
 }
 
-/**
- * The exam's own questions first, then questions set in the learner's field, then the difficulty
- * the learner steered toward, then never-answered ones, then those answered longest ago.
- */
 function comparePractice({
   a,
   b,
@@ -90,10 +77,6 @@ function comparePractice({
   return (a.lastAnsweredAt?.getTime() ?? 0) - (b.lastAnsweredAt?.getTime() ?? 0);
 }
 
-/**
- * A review day's order: questions never answered before the missed ones it brings back, then the
- * usual order (see `comparePractice`).
- */
 function compareDayPractice({
   a,
   b,
@@ -107,7 +90,6 @@ function compareDayPractice({
   return unseenFirst || comparePractice({ a, b, ...rules });
 }
 
-/** A focused skill's questions in two turns of a round, so it gets two to every other skill's one. */
 function withFocusTurns<T>({
   focusSkillIds,
   items,
@@ -124,13 +106,6 @@ function withFocusTurns<T>({
   return [items.filter((_, index) => index % 2 === 0), items.filter((_, index) => index % 2 === 1)];
 }
 
-/**
- * The order practice takes a goal's skills in, one question of each in turn: a held subject's
- * (`firstSkillIds`), then the ones the learner focused on, then what they were taken to know on topics the exam asks most or the class test
- * announces, then the weakest first (lowest chance of recall), and last what they were taken to
- * know on other topics, so a short block cuts that first. Topics taken as known go least recently
- * asked first, so a day too short for all of them leaves the ones it asked for later.
- */
 function orderPracticeSkills({
   claims,
   firstSkillIds,
@@ -145,7 +120,7 @@ function orderPracticeSkills({
   const isFirst = (skillId: string) => Number(firstSkillIds.has(skillId));
   const isFocused = (skillId: string) => Number(focusSkillIds.has(skillId));
 
-  // Only topics to confirm take turns by it: studied skills go weakest first.
+  // Rotate claims awaiting confirmation; studied skills must remain ordered by recall risk.
   const getLastAsked = (skillId: string) =>
     claims.first.has(skillId) || claims.last.has(skillId)
       ? (claims.lastAsked.get(skillId) ?? 0)
@@ -171,10 +146,7 @@ function orderPracticeSkills({
     .map((row) => row.skillId);
 }
 
-/**
- * The listening skills practice has nothing to ask today: no voiced recording on them that wasn't
- * answered in the last day. Their subject's time goes to the other subjects (see `pickDayLessons`).
- */
+/** Listening-only skills without a voiced recording not heard in the last day release their reserved subject time. */
 export async function loadIdleListeningSkillIds({
   examBlueprintId,
   listeningSkillIds,
@@ -209,14 +181,7 @@ export async function loadIdleListeningSkillIds({
   );
 }
 
-/**
- * Mixed practice for a goal: questions on skills the learner has studied, one skill after another
- * in turn with the weakest first (lowest chance of recall), in the exam's own format when the goal
- * has one, never one they answered in the last day. The last questions land on stronger skills, so
- * the block ends with a win. A topic the learner was taken to know gets one question until practice
- * confirms it (see `orderPracticeSkills`). A review day asks new questions first and brings back
- * only the ones the learner missed.
- */
+/** Never repeats an answer from the last day; review days prioritize unseen questions and repeat only misses. */
 export async function loadPracticeItems({
   claims = NO_PRACTICE_CLAIMS,
   difficultyBias,
@@ -233,45 +198,25 @@ export async function loadPracticeItems({
   typed,
   userId,
 }: {
-  /**
-   * The skills the learner was taken to know that practice still has to confirm (see
-   * `loadPracticeClaims`), asked whether or not the plan teaches them.
-   */
+  /** Include unconfirmed claims even when their lessons are absent from the plan. */
   claims?: PracticeClaims;
-  /** The plan's "Too easy" or "Too hard" steering. */
   difficultyBias: DifficultyBias;
-  /**
-   * Every skill of the goal, not only the ones studied: a full review asks every topic of the
-   * test, the ones never studied first, as the weakest.
-   */
+  /** Include every goal topic, even unstudied ones, in full reviews. */
   everySkill?: boolean;
-  /**
-   * The skills of a day's subject with nothing written to study yet (`listHeldAreas`): its time
-   * goes to their questions, asked first, studied or not.
-   */
+  /** Reserve priority practice for subjects whose written lessons are not ready. */
   firstSkillIds?: ReadonlySet<string>;
-  /**
-   * Skills the learner asked to focus on, on a review day: they open the practice and get two
-   * questions to every other skill's one.
-   */
+  /** Focused topics get two questions per other topic's one on review days. */
   focusSkillIds?: ReadonlySet<string>;
   examBlueprintId: string | null;
   excludeItemIds: ReadonlySet<string>;
   /** The goal's field (work and career goals): its questions come first, other fields' never. */
   field: string | null;
-  /**
-   * Skills only recordings practice (`getListeningSkillIds`): a text question or a text set about
-   * a conversation tests reading, so they get a voiced recording's questions or wait.
-   */
+  /** Text passages cannot substitute for listening; use voiced recordings or wait. */
   listeningSkillIds?: ReadonlySet<string>;
   now: Date;
-  /**
-   * A review day (the day before a test, a free plan's mock day): questions the learner answered
-   * right last time don't come back, and the ones never answered come before the missed ones.
-   */
+  /** Prefer unseen questions and repeat only previously missed ones. */
   repeatOnlyMissed?: boolean;
   skillIds: readonly string[];
-  /** Short typed answers join the goal's practice (`practicesShortAnswers`). */
   typed: boolean;
   userId: string;
 }): Promise<PracticeItem[]> {
@@ -331,9 +276,7 @@ export async function loadPracticeItems({
 
   const askedSets = listAskedSets({ isAsked, listeningSkillIds, sets });
 
-  // One question confirms what the learner was taken to know, or brings its lessons back, so a
-  // set waits, except a listening skill's recording (see `toSetUnits`); a full review asks it like
-  // every other topic.
+  // Unconfirmed claims need one question, not a whole set; listening recordings are indivisible.
   const perSkill = ordered.map((skillId) => {
     const isOne = claimed.has(skillId) && !everySkill;
 

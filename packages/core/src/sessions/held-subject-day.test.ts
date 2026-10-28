@@ -10,16 +10,10 @@ import { loadSessionBuildInput } from "./_utils/load-build-inputs";
 
 const TOMORROW = new Date(SESSION_TODAY.getTime() + DAY_MS);
 
-/** A skill of the plan's graph in a subject. */
 function graphSkill(area: string, skillId: string | undefined) {
   return { area, lessons: 6, name: area, phase: 0, skillId: skillId ?? "", weight: 4 };
 }
 
-/**
- * Rafaela's Câmara day one: the plan gives linguistics two written lessons today and IT its first
- * lessons, which the Library hasn't written yet (a stand-in holds their place); linguistics has
- * more lessons written for tomorrow. Placement wrote questions on every skill.
- */
 async function camaraDayOne({ held = "TI" }: { held?: string } = {}) {
   const user = await userFixture();
   const exam = held === "Listening" ? await listeningExamFixture() : null;
@@ -108,8 +102,6 @@ describe("an exam day whose subject has nothing written yet", () => {
     vi.useRealTimers();
   });
 
-  // Rafaela's day one was 27 linguistics lessons: IT's lessons weren't written, and the day gave
-  // its time to more of the subject it had.
   it("keeps that subject's time for its questions instead of more of another subject", async () => {
     const { input, later, ti } = await camaraDayOne();
     const laterIds = new Set(later.map((lesson) => lesson.id));
@@ -118,8 +110,6 @@ describe("an exam day whose subject has nothing written yet", () => {
     expect(input.practice[0]?.skillId).toBe(ti?.id);
   });
 
-  // An exam's listening skills are practiced only with recordings: with none voiced yet, holding
-  // the listening subject's time would leave it to practice that asks nothing.
   it("gives a listening subject's time to the others while none of its recordings is voiced", async () => {
     const { input, later, ti } = await camaraDayOne({ held: "Listening" });
     const laterIds = new Set(later.map((lesson) => lesson.id));

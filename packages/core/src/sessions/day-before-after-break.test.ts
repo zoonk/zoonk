@@ -13,12 +13,10 @@ import { getTodayStudySession } from "./_test-utils/open-today";
 import { readBlockPayload } from "./block-payload";
 import { getStudySessionSummary } from "./get-study-session-summary";
 
-/** A Friday: Pedro plans for his cell biology test a week away. */
 const TODAY = new Date("2026-10-02T00:00:00Z");
 const DAY_MS = 86_400_000;
 const TEST_IN_DAYS = 7;
 
-/** More topics than a light day's few questions reach: Pedro's notes had 11. */
 const TOPICS = 8;
 
 function day(offset: number): Date {
@@ -47,11 +45,6 @@ async function openToday(goalId: string) {
   return today.session;
 }
 
-/**
- * Pedro's class test a week away, read from his notes (a private blueprint), on the free plan at 25
- * minutes a day: he studies day one, skips the next five days and comes back the day before, a
- * welcome back.
- */
 async function comeBackTheDayBefore() {
   const user = await userFixture();
 
@@ -91,7 +84,6 @@ async function comeBackTheDayBefore() {
   mockSession(user.id);
   await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
-  // Day one: he studies its first lesson.
   const first = await openToday(goal.id);
   const studied = first.blocks.find((block) => block.kind === "learn");
 
@@ -136,15 +128,11 @@ describe("a class test's day before after skipped days", () => {
 
     expect(new Set(readBlockPayload(reviewBlock).skillIds)).toStrictEqual(new Set(skillIds));
 
-    // Nothing comes back tomorrow: it's the test. The eve has no next days to take what he
-    // skipped, so the welcome back still says what's left, but 15 lessons take more than about
-    // one more day of his 25 minutes: no "+45 min" on top of the review.
     expect(session.examTomorrow).toBe(true);
     expect(session.catchUp?.later.lessons).toBeGreaterThan(0);
     expect(session.catchUp?.later.minutes).toBeGreaterThan(25 * 1.25);
     expect(session.catchUp?.later.offered).toBe(false);
 
-    // The session's end shows no lesson for tomorrow, the test's day.
     const summary = await getStudySessionSummary({
       input: { timeZone: "UTC" },
       sessionId: session.id,

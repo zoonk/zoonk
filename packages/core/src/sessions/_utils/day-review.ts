@@ -1,7 +1,7 @@
 import { getItemKey } from "../../plans/planner/plan-items";
 import { type SessionPlanItem } from "./session-plan-item";
 
-/** A due selected review is present before Open assigns its persisted row ID. */
+/** Planned reviews can be due before Open assigns a persisted id. */
 export function findPlannedReview({
   items,
   today,

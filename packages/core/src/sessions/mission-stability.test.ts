@@ -94,7 +94,6 @@ describe("stored daily missions", () => {
     const due = await getPronunciationReviews({ goalId: input.goal.id });
     expect(due.status === "ready" ? due.reviews.words.length : 0).toBe(1);
 
-    // Skipping every word writes no answer or completion; returning only reads the saved day.
     vi.setSystemTime(new Date("2026-10-13T10:01:00Z"));
     const after = await getTodayStudySession({ goalId: input.goal.id, timeZone: "UTC" });
     const stored = await prisma.studySession.findUniqueOrThrow({ where: { id: first.session.id } });

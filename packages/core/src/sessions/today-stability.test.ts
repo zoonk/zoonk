@@ -33,11 +33,6 @@ async function readToday(goalId: string) {
   return result.session;
 }
 
-/**
- * A learner whose first day holds a skill the Library hasn't outlined yet (a stand-in) between a
- * written skill and one written for later, as Carla's and Lucas's first days did while their
- * courses were still being outlined.
- */
 async function setupDayWithStandIn({
   dailyMinutes = 45,
   outlineStatus = "running",
@@ -67,10 +62,6 @@ async function setupDayWithStandIn({
   return { course, goal, library };
 }
 
-/**
- * The waiting skill's lessons land in the Library (`count`, as many as its stand-in planned unless
- * the outline wrote more) and the system re-plans the goals using it.
- */
 async function landWaitingLessons({
   count = LANDING,
   courseId,
@@ -129,9 +120,6 @@ describe("today's session the learner was shown", () => {
     vi.useRealTimers();
   });
 
-  // Lucas's Today listed languages, mathematics, the essay and strategy; when lessons landed, the
-  // day he hadn't started yet was rebuilt as languages and the essay, with no plan change. Carla's
-  // Today said 7 lessons and her session opened with 15: the rest landed in between.
   it("holds the place of lessons still being outlined, says they're on the way, and keeps every block it showed when they land", async () => {
     const { course, goal, library } = await setupDayWithStandIn();
     const before = await readToday(goal.id);
@@ -140,7 +128,6 @@ describe("today's session the learner was shown", () => {
       where: { lessonId: { not: null }, plan: { goalId: goal.id } },
     });
 
-    // Canonical long-lesson portions may consume today before the saved start label.
     const allocated = dueToday.filter(
       (item) =>
         (item.scheduledFor !== null && item.scheduledFor <= TODAY) ||
@@ -160,7 +147,6 @@ describe("today's session the learner was shown", () => {
       ["2026-10-01", 5, 2.5],
     ]);
 
-    // The day keeps their place instead of filling it with later lessons, and says more are coming.
     expect(learnLessonIds(before).length).toBeGreaterThan(0);
     expect(learnLessonIds(before).filter((id) => !due.has(id))).toStrictEqual([]);
     expect(before.lessonsComing).toBe(true);
@@ -178,8 +164,6 @@ describe("today's session the learner was shown", () => {
     expect(after.minutes.planned).toBeLessThanOrEqual(goal.dailyMinutes);
   });
 
-  // Carla's Today said 6 lessons of her hour, with no word of more: the next skill's stand-in
-  // was longer than what the day had left, so it was due the next day though it started that day.
   it("says more lessons are on the way when the stand-in starting in the day is due a day later", async () => {
     const { goal } = await setupDayWithStandIn({ standInSize: 20 });
 
@@ -194,8 +178,6 @@ describe("today's session the learner was shown", () => {
     expect(today.lessonsComing).toBe(true);
   });
 
-  // A stand-in nobody is outlining (its next chapter waits for a later preparation) would hold
-  // the day's time for lessons that never come.
   it("fills the day as usual when no one is outlining the lessons it waits for", async () => {
     const { goal, library } = await setupDayWithStandIn({ outlineStatus: "completed" });
     const later = new Set(library.lessons.slice(2).map((lesson) => lesson.id));
@@ -212,8 +194,6 @@ describe("today's session the learner was shown", () => {
     expect(learnLessonIds(today).some((id) => later.has(id) && !due.has(id))).toBe(true);
   });
 
-  // Helena's first day held time for a skill whose outline ended without writing its lessons:
-  // the day said more was on the way and stayed short for good.
   it("fills the rest of the day once the outline it waited for ends without its lessons", async () => {
     const { course, goal } = await setupDayWithStandIn();
     const before = await readToday(goal.id);
@@ -232,8 +212,6 @@ describe("today's session the learner was shown", () => {
     expect(after.blocks.length).toBeGreaterThan(before.blocks.length);
   });
 
-  // Lucas's landed lessons were planned on the day he had already been shown, beyond its time, so
-  // the next day would have opened by "catching up" on lessons he never saw.
   it("plans what the shown day can't hold on later days, not as work the day left", async () => {
     const { course, goal, library } = await setupDayWithStandIn();
     await readToday(goal.id);

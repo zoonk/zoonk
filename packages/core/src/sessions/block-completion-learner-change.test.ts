@@ -73,7 +73,7 @@ async function setup(kind: CompletionKind) {
     startedAt: new Date(Date.now() - 60_000),
     status: "active",
   });
-  // Keep the day open, so its separate session completion cannot hide this block's gap.
+
   const later = await studySessionBlockFixture({
     kind: "practice",
     position: 1,

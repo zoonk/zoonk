@@ -281,7 +281,7 @@ describe("checkpoint answer recording", () => {
       const held = Promise.allSettled([holding]);
       void holding.catch(ready.reject);
       const holderPid = await ready.promise;
-      // More foreign waiters than the expected two prevents an unscoped poll passing early.
+      // More foreign waiters than the expected two exposes an accidentally unscoped poll.
       const foreignName = `checkpoint-foreign:${item.id}`;
 
       const foreign = Promise.allSettled(
@@ -356,8 +356,6 @@ describe("checkpoint answer recording", () => {
         .flatMap((result) => (result.status === "fulfilled" ? [result.value] : []))
         .toSorted((first, second) => first.status.localeCompare(second.status));
 
-      // A checkpoint acknowledges the later submission with the stored verdict; any other block
-      // says it was answered already, whichever tab got there first.
       expect(outcomes).toMatchObject(
         kind === "checkpoint" ? [answered, answered] : [{ status: "alreadyAnswered" }, answered],
       );

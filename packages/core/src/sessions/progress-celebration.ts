@@ -1,15 +1,9 @@
 import { type MilestoneView, milestoneSchema } from "./completion-contract";
 import { type Reached, reachedSchema } from "./reached";
 
-/**
- * What a learner's work is celebrated with on its own result, the same everywhere they earn Brain
- * Power or Energy (a notebook practice, a drill, a round, a call, a test, a lesson on its own): the
- * belt level and the tenth of Energy it reached, and the one milestone not shown yet, as its
- * full-screen moment before the result.
- */
+/** Off-session results share one ceremony and newly reached belt/Energy levels. */
 export type ProgressCelebration = { ceremony: MilestoneView | null; reached: Reached };
 
-/** `ProgressCelebration`'s fields, for a result's schema to extend. */
 export const progressCelebrationShape = {
   ceremony: milestoneSchema
     .nullable()

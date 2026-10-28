@@ -89,7 +89,6 @@ describe("a selected plan reaches the day exactly once", () => {
     const fixture = await setup();
     const before = await saved(fixture.plan.id);
     assertFresh(before, fixture.user.id);
-    // Calls through to the real pure producer: count builds, never replace persistence or results.
     const builds = vi.spyOn(producer, "buildPlan");
     const preview = await countDatabaseStatements(() => getSessionPageView(fixture.input));
     expect(preview.writes).toBe(0);

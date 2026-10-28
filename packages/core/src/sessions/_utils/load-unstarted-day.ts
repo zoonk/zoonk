@@ -19,7 +19,7 @@ import { type SelectedDayPlan, getSelectedCatchUpItems } from "./selected-day-pl
 import { type SessionDayContext } from "./session-placement";
 import { getSessionBar } from "./session-view";
 
-/** A rest day stays a rest day before and after its explicit Open, even while lessons are unwritten. */
+/** Pending lessons must not turn a rest day into an awaiting-content day. */
 function getEmptyDay({
   dayMinutes,
   selection,
@@ -38,7 +38,7 @@ function getEmptyDay({
     : "nothingNew";
 }
 
-/** The unopened day carries all display data, but no fabricated session or block IDs. */
+/** Read-only display data; never invents session or block ids. */
 export async function loadUnstartedDayView({
   context,
   day,

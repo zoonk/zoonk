@@ -14,7 +14,6 @@ export type RefreshPracticeResult =
   | TargetedPracticeResult
   | { status: "goalNotActive" | "notFound" | "unauthorized" };
 
-/** The learner's first moment of tomorrow, so "due today" means due before the day ends. */
 function getEndOfToday({ goal, timeZone }: { goal: Goal; timeZone?: string }): Date {
   const zone = getAnswerTimeZone({ goal, timeZone });
   const today = getDateInTimeZone({ date: new Date(), timeZone: zone });
@@ -22,7 +21,6 @@ function getEndOfToday({ goal, timeZone }: { goal: Goal; timeZone?: string }): D
   return getStartOfLocalDay({ localDate: new Date(today.getTime() + MS_PER_DAY), timeZone: zone });
 }
 
-/** The goal's studied skills that are fading or come due before the learner's day ends. */
 async function loadReviewSkillIds({ goal, timeZone }: { goal: Goal; timeZone?: string }) {
   const skillIds = await loadGoalSkillIds(goal.id);
   const now = new Date();
@@ -41,12 +39,7 @@ async function loadReviewSkillIds({ goal, timeZone }: { goal: Goal; timeZone?: s
     .map((row) => row.skillId);
 }
 
-/**
- * "Review" on Content: practice on the goal's skills that are fading or due today, added to
- * today's session as a bonus block and counted as extra time like any bonus block. When today's
- * session already asks about them (its reviews), that block opens instead. It's also how refresh
- * goals bring back what the learner knew. Nothing fading or due, nothing to do.
- */
+/** Reuses today's covering review block before adding capped extra practice; returns nothing when no skill needs review. */
 export async function addRefreshPracticeBlock({
   goalId,
   input,

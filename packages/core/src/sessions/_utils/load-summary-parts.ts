@@ -12,7 +12,6 @@ import { loadExamPrepAccess } from "./plus-only-lessons";
 import { type SessionAnswer, getDueItemIds } from "./session-answers";
 import { type StudySessionRow } from "./study-session-access";
 
-/** "9 cards come back on Friday": the session's skills by the day they're next due. */
 const COMES_BACK_DAYS = 2;
 
 export type SkillMove = { from: MasteryState; name: string; skillId: string; to: MasteryState };
@@ -63,7 +62,7 @@ export async function loadComesBack({
     }));
 }
 
-/** Each lesson finished in the session, sealed as a capsule with its opening date. */
+/** Returns learner-local opening date labels for completed lessons. */
 export async function loadSealedCapsules({
   session,
   timeZone,
@@ -91,10 +90,6 @@ export async function loadSealedCapsules({
   );
 }
 
-/**
- * What the buddy ate this session: new ideas (cards that left New), reviews (capsule answers) and
- * fixes (mistakes fixed since the session started).
- */
 export async function loadBuddyMeal({
   answers,
   newIdeas,
@@ -121,12 +116,7 @@ export async function loadBuddyMeal({
   };
 }
 
-/**
- * "Tomorrow: Linear functions": the next lesson the plan has for the goal, by the title Today and
- * the session show for it from its lesson row. None the day
- * before the goal's exam: tomorrow is the exam. None either when tomorrow is past a free exam
- * plan's first week, whose new lessons come with Plus.
- */
+/** Returns no next lesson on the exam eve or once tomorrow's free exam coverage ends. */
 export async function loadTomorrow({
   session,
 }: {

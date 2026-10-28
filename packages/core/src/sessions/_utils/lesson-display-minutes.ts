@@ -1,7 +1,7 @@
 import "server-only";
 import { type StudySessionBlock, type TransactionClient, prisma } from "@zoonk/db";
 
-/** Current lesson durations for display; the persisted blocks retain their planned budget. */
+/** Display durations may change; persisted blocks must retain their original planned budget. */
 export async function withLessonDisplayMinutes<
   Block extends Pick<StudySessionBlock, "kind" | "lessonId" | "estimatedMinutes">,
 >({

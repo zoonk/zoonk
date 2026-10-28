@@ -53,7 +53,7 @@ function getNextPosition(
   );
 }
 
-/** The same day numbers before and after persistence, without inventing a session row. */
+/** Accepts planned and persisted days without creating a session row. */
 export function toDayViewFields({
   answers,
   current,
@@ -76,8 +76,6 @@ export function toDayViewFields({
 > {
   const streak = scoreAnswers({ answers }).streak;
 
-  // A free exam plan past its first week adds no new lessons: an empty day has nothing new for
-  // it, never lessons on the way.
   const empty = examAccess.trialEnded && emptyDay ? "nothingNew" : emptyDay;
   const minutesDone = Math.round(getSessionMinutesDone(session.blocks));
   const { days } = week;
@@ -111,7 +109,6 @@ export function toDayViewFields({
     },
     goalId: session.goalId,
     hyperdrive: { level: getHyperdriveLevel(streak), streak },
-    // A free exam plan past its first week adds no new lessons: none are coming.
     lessonsComing: lessonsComing && session.blocks.length > 0 && !examAccess.trialEnded,
     localDate: session.localDate,
     minutes: { dailyGoal: dayMinutes, done: minutesDone, planned: session.plannedMinutes },

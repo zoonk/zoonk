@@ -31,12 +31,9 @@ const START = "2020-09-28";
 const ORIGINAL_MOCK = "2020-10-09";
 const BOSS_DAY = "2020-10-16";
 const COEVENT_DAY = "2020-10-19";
-/** The mock's own week with the exam on Nov 9, and its Monday after, the first challenge's day. */
 const MOCK_WEEK = "2020-10-05";
 const SHARED_DAY = "2020-10-12";
-/** The end of the plan's first week, which an automatic run keeps as saved. */
 const WEEK_END = new Date("2020-10-04");
-/** The first phase's challenge: the first study day after its last lessons, on the 6th. */
 const FIRST_BOSS_DAY = "2020-10-07";
 
 const STRUCTURE = examStructureSchema.parse({
@@ -112,17 +109,13 @@ async function setup({
   return { goal, library, plan, selected, user };
 }
 
-/** What this week holds still to do: the days an automatic run keeps as saved. */
 function thisWeek(items: PlanItem[]) {
   return items
     .filter((item) => item.status === "todo" && item.scheduledFor && item.scheduledFor <= WEEK_END)
     .map(({ id, kind, scheduledFor }) => ({ id, kind, scheduledFor }));
 }
 
-/**
- * Moves the week's mock as the learner can (R43): a normal re-plan keeps this week as saved and
- * carries the mock's exam day and the time this week set aside for it.
- */
+/** Use the learner move path; automatic re-planning must retain this week's saved mock funding. */
 async function moveMock({
   fixture,
   to,
@@ -161,7 +154,6 @@ async function moveMock({
   return saved;
 }
 
-/** The ledger, plan checkoff and daily totals a real first lesson completion writes. */
 async function finishTeaching({
   items,
   userId,
@@ -252,10 +244,6 @@ describe("funded mock sessions reserve all their fixed work", () => {
     vi.useRealTimers();
   });
 
-  // The learner won the first challenge with two lessons done ahead, and the next phase's first six
-  // too, at the pace lessons estimate: the session's refresh plans again from tomorrow (the pace's
-  // source became their own) and fills the room their progress freed (P1 diagnosis: three lessons
-  // of the same skill). It never takes a faster pace, and it says what it added.
   it("brings lessons back only as the learner's own progress frees room, and records it", async () => {
     const fixture = await setup({ withBoss: true });
     await moveMock({ fixture, to: BOSS_DAY });
@@ -280,7 +268,6 @@ describe("funded mock sessions reserve all their fixed work", () => {
     const before = await readItems();
     const beforeIds = new Set(before.map((item) => item.id));
 
-    // Every lesson the learner saw stays, as the same lesson: none removed, replaced or set aside.
     const keptLessons = (items: PlanItem[]) =>
       items
         .filter(
@@ -297,7 +284,6 @@ describe("funded mock sessions reserve all their fixed work", () => {
       throw new Error("Expected the real first phase challenge");
     }
 
-    // The challenge runs on top of its day, so finishing it on time frees none of the lessons'.
     const next = before.filter((item) => item.kind === "lesson" && item.phase === 1).slice(0, 6);
 
     await finishTeaching({
@@ -354,9 +340,6 @@ describe("funded mock sessions reserve all their fixed work", () => {
     expect(openedPace?.factor).toBeGreaterThanOrEqual(pace?.factor ?? 0);
   });
 
-  // Moved to Monday in its own week, the mock shares the day the first phase's challenge was saved
-  // on: the challenge stays there (a run never places one on the week it keeps), the day asks for
-  // both, Today shows both before Open as Open saves them, and both start.
   it("funds and can start the real 15-minute boss before the 165-minute moved mock", async () => {
     const fixture = await setup({ targetDate: "2020-11-09", withBoss: true });
     const { goal, plan } = fixture;
@@ -506,10 +489,6 @@ describe("funded mock sessions reserve all their fixed work", () => {
     });
   });
 
-  // A learner who moved the week's mock onto a day, then left the first two phases' challenges: the
-  // run carries them past the day the learner moved the mock onto, to the next study day, whose 30
-  // minutes they take inside it (R45). The mock keeps its day and funding, and a lesson that no
-  // longer fits by the date leaves only with a change that names it.
   it("carries overdue challenges past the mock's day, keeping the mock and naming any lesson it leaves", async () => {
     const fixture = await setup({ withBoss: true });
     const original = await moveMock({ fixture, to: BOSS_DAY });
@@ -537,7 +516,6 @@ describe("funded mock sessions reserve all their fixed work", () => {
       throw new Error("Expected the first boss day");
     }
 
-    // The first phase's challenge leads its day's lessons, its time on top of theirs.
     expect(skipped.today.session.blocks.map((block) => block.planItemId)).toStrictEqual([
       original.items.find((item) => item.kind === "boss" && item.phase === 0)?.id,
       ...original.items

@@ -3,12 +3,7 @@ import { prisma } from "@zoonk/db";
 import { type BlockCapsule } from "../block-payload";
 import { loadRightAnswers } from "./load-review-capsules";
 
-/**
- * A mistake's own question belongs to its drill, where fixing it counts for the mission, and a
- * checkpoint's questions stay unseen until the duel, so capsules leave both out, with a review
- * day's questions answered right last time. A capsule left without questions is covered by the
- * drill, checkpoint or practice on its skill.
- */
+/** Reserve mistakes' own questions for drills and checkpoints' unseen questions for the duel. */
 function withoutLeftOutItems({
   capsules,
   leftOut,
@@ -21,10 +16,7 @@ function withoutLeftOutItems({
     .filter((capsule) => capsule.itemIds.length > 0);
 }
 
-/**
- * The questions left out with their recording: a recording plays whole or not at all, so one of
- * its questions left out (see `withoutLeftOutItems`) takes the others in the capsules with it.
- */
+/** Recordings play whole, so excluding one question must exclude its recording siblings. */
 async function withRecordingSiblings({
   itemIds,
   leftOut,
@@ -49,10 +41,7 @@ async function withRecordingSiblings({
   ]);
 }
 
-/**
- * Today's capsules without the questions other blocks hold (see `withoutLeftOutItems`); a review
- * day's, like its practice, never ask again what was answered right last time.
- */
+/** Review days must not repeat questions answered right on the previous review day. */
 export async function loadDayCapsules({
   capsules,
   isReviewDay,

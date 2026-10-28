@@ -28,28 +28,17 @@ const FIRST_DAY = Date.UTC(2026, 8, 30);
 /** A life plays a lesson a day for `DAYS` days, slow under a broad run's load. */
 const LIFE_TIMEOUT_MS = 60_000;
 
-/** Noon of the life's nth day. */
 function noonOf(day: number): Date {
   return new Date(FIRST_DAY + day * MS_PER_DAY + 12 * 60 * 60 * 1000);
 }
 
-/** The life's day an instant falls on. */
 function dayOf(date: Date): number {
   return Math.floor((date.getTime() - FIRST_DAY) / MS_PER_DAY);
 }
 
-/**
- * Where a lesson's answers land: production's outlines tag each chapter with the plan's skill it
- * teaches, and its lessons teach finer skills of their own (`finer`); some lessons link the plan's
- * skill itself (`plan`).
- */
+/** finer models production's lesson-level skills; plan links answers directly to the plan skill. */
 type LessonSkills = "finer" | "plan";
 
-/**
- * Three plan skills of three lessons each, outlined as production writes them: a chapter tagged
- * with each plan skill holds its lessons, each lesson has a check on the skill it teaches, and the
- * bank's questions are on the plan's skills.
- */
 async function outlinedLibrary(lessonSkills: LessonSkills) {
   const library = await planLibraryFixture({
     skills: [{ lessons: 3 }, { lessons: 3 }, { lessons: 3 }],
@@ -107,14 +96,12 @@ async function outlinedLibrary(lessonSkills: LessonSkills) {
   return { ...library, checks: new Map(checks) };
 }
 
-/** Moves a lesson onto a finer skill of its own, as lesson writing links it. */
 async function finerSkillOf(lessonId: string): Promise<string> {
   const finer = await skillFixture({ name: `Finer skill of ${lessonId}` });
   await prisma.lessonSkill.updateMany({ data: { skillId: finer.id }, where: { lessonId } });
   return finer.id;
 }
 
-/** The skills a session block asks: its practice's, or its review capsules'. */
 function getAskedSkillIds(block: Pick<StudySessionBlock, "id" | "payload">): string[] {
   const payload = readBlockPayload(block);
   return [...payload.skillIds, ...payload.capsules.flatMap((capsule) => capsule.skillIds)];
@@ -123,18 +110,11 @@ function getAskedSkillIds(block: Pick<StudySessionBlock, "id" | "payload">): str
 type FinishedLesson = {
   day: number;
   lessonId: string;
-  /** What the end screen said: the day the lesson's topic comes back, as a life day. */
   nextReviewDay: number | null;
   planSkillId: string;
-  /** What the check's result said when it was answered. */
   screenReviewDay: number | null;
 };
 
-/**
- * A learner who plays every lesson Today gives them through the lesson player, for a few days, and
- * never answers the reviews or practice. Each day reads as its blocks: a lesson by its place in
- * the library, a review or practice by the plan skills it asks.
- */
 async function liveDays(lessonSkills: LessonSkills) {
   vi.setSystemTime(noonOf(0));
 
@@ -198,10 +178,7 @@ async function liveDays(lessonSkills: LessonSkills) {
   return { asked, days, finished, library, userId: user.id };
 }
 
-/**
- * Each life is lived once per run and shared by the tests that read it: a life is several days of
- * lessons played through the player, the slowest part of this file.
- */
+/** Share each multi-day run across assertions to avoid replaying its expensive lesson flow. */
 const lives = new Map<LessonSkills, ReturnType<typeof liveDays>>();
 
 function liveDaysOnce(lessonSkills: LessonSkills): ReturnType<typeof liveDays> {
@@ -223,7 +200,6 @@ async function openDay(goalId: string) {
   });
 }
 
-/** Plays a lesson block: starts it, answers its check right and finishes it. */
 async function playLesson({
   blockId,
   lessonId,
@@ -288,7 +264,6 @@ describe("a lesson whose answers land on finer skills than the plan's", () => {
       const finer = await liveDaysOnce("finer");
       const plan = await liveDaysOnce("plan");
 
-      // Day zero taught only G1; G2 starts on day one, so its review isn't due yet.
       expect(finer.days[0]).toStrictEqual(["L1", "L2", "L3"]);
       expect(plan.days[0]).toStrictEqual(["L1", "L2", "L3"]);
 
@@ -304,7 +279,6 @@ describe("a lesson whose answers land on finer skills than the plan's", () => {
         ),
       ).toStrictEqual(new Set([plan.library.skills[0]?.id]));
 
-      // Practice follows once the bank's questions on it weren't asked the day before.
       expect(finer.days[1]?.[0]).toMatch(/^review\[G1\]$/u);
       expect(finer.days.flat().some((block) => block.startsWith("practice[G"))).toBe(true);
       expect(finer.days).toStrictEqual(plan.days);
@@ -324,7 +298,6 @@ describe("a lesson whose answers land on finer skills than the plan's", () => {
         promised.map((lesson) => lesson.nextReviewDay),
       );
 
-      // The ones promised a day the life reaches: each comes back that day.
       const reached = promised.filter((lesson) => (lesson.nextReviewDay ?? DAYS) < DAYS);
 
       expect(reached.length).toBeGreaterThan(0);

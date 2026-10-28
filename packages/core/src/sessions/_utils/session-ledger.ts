@@ -12,10 +12,7 @@ function sessionRowWhere({ sessionId, userId }: { sessionId: string; userId: str
   };
 }
 
-/**
- * A session's ledger row is written when it starts, with `endedAt` null until it ends, so admin
- * completion rates count sessions that were started and never finished.
- */
+/** Record at start with endedAt unset so completion rates include abandoned sessions. */
 export function recordSessionStart(
   tx: TransactionClient,
   { now, session, timeZone }: { now: Date; session: StudySessionRow; timeZone: string },
@@ -32,7 +29,6 @@ export function recordSessionStart(
   });
 }
 
-/** Adds session-level Brain Power (the full meal) to the session's ledger row. */
 export async function addSessionBrainPower(
   tx: TransactionClient,
   { brainPower, sessionId, userId }: { brainPower: number; sessionId: string; userId: string },
@@ -43,11 +39,7 @@ export async function addSessionBrainPower(
   });
 }
 
-/**
- * The time a session took: the seconds its lessons and question blocks recorded as each finished,
- * which today's totals add up too, so the session's end, its ledger row and the learner's stats say
- * one number (Pedro's end said the plan's 31 minutes for 8 minutes of study).
- */
+/** Use recorded block seconds so session totals, ledger entries, and learner stats agree. */
 export async function sumSessionSeconds(
   client: Pick<TransactionClient, "learningEvent">,
   { sessionId, userId }: { sessionId: string; userId: string },
@@ -64,11 +56,7 @@ export async function sumSessionSeconds(
   return _sum.seconds ?? 0;
 }
 
-/**
- * Closes the session's ledger row with its totals and the time it took, dated when it ended. It
- * keeps the Brain Power the row already holds (the full meal); ending a session twice keeps the
- * first ending.
- */
+/** Closes with recorded totals while preserving existing Brain Power; duplicate endings keep the first ending. */
 export async function recordSessionEnd(
   tx: TransactionClient,
   {

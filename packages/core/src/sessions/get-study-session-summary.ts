@@ -37,15 +37,9 @@ const SECONDS_PER_MINUTE = 60;
 
 type Change<TValue> = { after: TValue; before: TValue };
 
-/**
- * The end of a session says what changed, not "lesson complete": time, questions and accuracy,
- * Brain Power (full meal included), the best Hyperdrive, Energy, belt stripes, preparation, the
- * skills that moved and the new cards, mistakes saved, when things come back, the capsules sealed,
- * what the buddy ate, tomorrow's lesson and at most one ceremony.
- */
 type StudySessionSummary = {
   accuracy: number | null;
-  /** The most right answers in a row on new or due material (Hyperdrive's streak). */
+  /** Only new or due material builds this streak. */
   bestStreak: number;
   belt: (Change<BeltLevelResult> & { colorChanged: boolean; stripesGained: number }) | null;
   brainPower: number;
@@ -55,25 +49,19 @@ type StudySessionSummary = {
   correct: number;
   energy: Change<number> | null;
   extraTime: ExtraTime;
-  /** Every block is done or skipped. False right after "Stop for today", while the rest waits. */
+  /** False after Stop for today while unfinished blocks remain. */
   finished: boolean;
   fullMeal: boolean;
-  /** The time the session's lessons and questions took, as the learner's stats count it. */
+  /** Actual recorded time, consistent with learner stats. */
   minutes: number;
   missions: Mission[];
   mistakesSaved: number;
-  /**
-   * Right minus wrong on the session's net-scored questions (Cebraspe practice and swipe
-   * capsules); null for a session without them.
-   */
+  /** Right minus wrong for net-scored questions only; null when none exist. */
   netScore: number | null;
   newCards: { description: string; name: string; skillId: string }[];
   buddyAte: { fixes: number; newIdeas: number; reviews: number };
   preparation: Change<number | null>;
-  /**
-   * A goal measured in lessons (not an exam): the share of its plan's lessons studied or known,
-   * as the Plan reads it. Null for an exam.
-   */
+  /** Share of plan lessons studied or known; null for exam goals. */
   progress: Change<number | null>;
   questions: number;
   sessionId: string;
@@ -101,10 +89,7 @@ function getBeltChange(before: number, after: number): StudySessionSummary["belt
   };
 }
 
-/**
- * Where the learner stands for the summary: as the session ended once it's complete, so playing
- * a lesson later doesn't change what the session did, else now (a session stopped for today).
- */
+/** Completed summaries use saved end state; stopped sessions use current state. */
 async function measureSummaryState({
   session,
   timeZone,
@@ -119,7 +104,7 @@ async function measureSummaryState({
   return end ?? measureSessionState({ goalId: session.goalId, now: new Date(), timeZone, userId });
 }
 
-/** The end-of-session summary. */
+/** Requires ownership; completed sessions replay saved end state while stopped sessions reflect current progress. */
 export async function getStudySessionSummary({
   input,
   sessionId,
@@ -133,8 +118,7 @@ export async function getStudySessionSummary({
     return owned;
   }
 
-  // Where the learner stands right now (a session stopped for today): read at request time,
-  // never in a prerender.
+  // A stopped session's current state must be measured at request time, outside prerendering.
   await io();
 
   const { session, userId } = owned;

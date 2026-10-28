@@ -37,7 +37,7 @@ function toPlannedLesson({
   };
 }
 
-/** Resolves selected lesson rows; deleted, set-aside and unoutlined lessons have nothing to teach. */
+/** Deleted, set-aside, and unoutlined lessons are omitted. */
 export async function loadPlanLessons({
   items,
 }: {
@@ -54,7 +54,7 @@ export async function loadPlanLessons({
   });
 }
 
-/** Lessons that teach skills, for reinforcement before a boss rematch: one per skill, in order. */
+/** At most one lesson per skill, preserving supplied skill order. */
 export async function loadLessonsForSkills({
   limit,
   skillIds,
@@ -80,10 +80,7 @@ export async function loadLessonsForSkills({
   return unique.slice(0, limit).map((lesson) => toPlannedLesson({ item: null, lesson }));
 }
 
-/**
- * The upcoming lessons the builder chooses from (see `getLessonLookahead`), after the lessons the
- * day keeps: those would take the places of the ones that come next.
- */
+/** Look ahead after keptLessonIds so retained work cannot consume the window for newly landed lessons. */
 export function loadUpcomingLessons({
   dayMinutes,
   items,

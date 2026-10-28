@@ -4,19 +4,14 @@ import { type Allowance } from "../../entitlements/contract";
 import { addDays } from "../../plans/planner/plan-calendar";
 
 export type ExamPrepAccess = {
-  /** Mock exams (an exam goal's weekly Big Challenge) are part of the learner's plan. */
   includesMockExams: boolean;
-  /** A free exam plan past its first days: new lessons, practice and mocks offer Plus instead. */
+  /** New lessons, practice, and mocks require Plus once the free exam days end. */
   trialEnded: boolean;
 };
 
 type AccessGoal = Pick<Goal, "createdAt" | "kind">;
 
-/**
- * The last day a free exam plan covers: its first `studyDays`, counted from the day the goal
- * started in the learner's time zone. Null when the plan covers all of it, or for a goal that isn't
- * an exam.
- */
+/** Local-day boundary; null for non-exam goals or plans with unlimited study days. */
 export function getFreeWeekEnd({
   examPrep,
   goal,
@@ -34,11 +29,7 @@ export function getFreeWeekEnd({
   return addDays(startedOn, examPrep.studyDays - 1);
 }
 
-/**
- * What exam prep the learner's plan covers today. The free plan covers the diagnostic, the plan
- * and its first days, without mock exams; reviews and fixing mistakes are never locked. Goals
- * that aren't exams are unaffected.
- */
+/** Reviews and fixing mistakes remain unlocked after free exam days end. */
 export function getExamPrepAccess({
   examPrep,
   goal,

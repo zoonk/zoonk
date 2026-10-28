@@ -51,7 +51,6 @@ const boss: PlannedCheckpoint = {
   title: "Phase 2 boss",
 };
 
-/** Each block's kind and whether it's scored net. */
 function getScoring(input: SessionBuildInput) {
   return buildSessionBlocks(input).blocks.map((block) => [block.kind, block.payload.netScored]);
 }
@@ -82,7 +81,6 @@ const baseInput: SessionBuildInput = {
   reviewPlanItemId: null,
 };
 
-/** The day's practice block's payload, where a full review is marked. */
 function getFullReview(input: SessionBuildInput) {
   return buildSessionBlocks(input).blocks.find((block) => block.kind === "practice")?.payload;
 }
@@ -171,8 +169,6 @@ describe(buildSessionBlocks, () => {
     });
   });
 
-  // A phase's last lessons can share its challenge's day: they come first, and only the lessons
-  // past the challenge wait. Held back too, they came after the challenge that tests them (R40).
   it("gives the lessons its plan has before a challenge on its day first, and waits on the rest", () => {
     const { blocks } = buildSessionBlocks({
       ...baseInput,
@@ -188,9 +184,6 @@ describe(buildSessionBlocks, () => {
     ]);
   });
 
-  // A challenge leads the day after the lessons it tests, and the plan's next lessons follow it
-  // there: the chapter's next lesson a learner was promised for that day left Today with the
-  // challenge alone. Lessons of later days still wait.
   it("follows a first duel with the lessons its plan has after it on its day", () => {
     const { blocks } = buildSessionBlocks({
       ...baseInput,
@@ -242,8 +235,6 @@ describe(buildSessionBlocks, () => {
     expect(blocks[1]?.payload.itemIds).toHaveLength(12);
   });
 
-  // Pedro's Thursday: the class test's short mock is Plus, so his 30 minutes were a 1-minute
-  // review and 5 minutes of practice. The day is a full review on every skill instead.
   it("gives a day whose mock the learner's plan doesn't include to a full review of every skill", () => {
     const pool = Array.from({ length: 30 }, (_, index) => ({
       itemId: `p${index}`,
@@ -268,8 +259,6 @@ describe(buildSessionBlocks, () => {
     expect(new Set(review?.skillIds)).toStrictEqual(new Set(skills));
   });
 
-  // Pedro's day before (round 9): the quick review took the last questions of the plant cell
-  // skill, so practice asked every other skill and the day read as plain practice.
   it("counts the skills the day's quick review asks toward its full review", () => {
     const { blocks } = buildSessionBlocks({
       ...baseInput,
@@ -295,7 +284,6 @@ describe(buildSessionBlocks, () => {
   describe("a full review on a day with little time", () => {
     const skills = Array.from({ length: 11 }, (_, index) => `t${index}`);
 
-    // Every skill in turn, as practice orders a full review's questions.
     const pool = Array.from({ length: 33 }, (_, index) => ({
       itemId: `t-q${index}`,
       skillId: `t${index % 11}`,
@@ -310,8 +298,6 @@ describe(buildSessionBlocks, () => {
       practice: pool,
     };
 
-    // Pedro skipped five days and came back on his class test's eve: the welcome back made the day
-    // 10 minutes, 5 questions on 3 of his 11 topics, and the day read as plain practice.
     it("keeps the day before's full review whole on a welcome back", () => {
       const review = getFullReview({ ...fullReviewDay, freshStart: "welcomeBack" });
 
@@ -439,7 +425,6 @@ describe(buildSessionBlocks, () => {
         (block) => block.kind === "practice",
       )?.payload.itemIds;
 
-    // Room for four questions: the passage's four with the first one wouldn't fit.
     expect(getAsked(6)).toStrictEqual(["p0", "p1", "p2"]);
 
     expect(getAsked(9)).toStrictEqual(["p0", ...passage.map((item) => item.itemId), "p1"]);

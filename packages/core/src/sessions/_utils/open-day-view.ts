@@ -19,7 +19,7 @@ function needsMissionSettlement(session: StudySessionRow, view: StudySessionView
   return newProgress === true || (view.fullMeal.ready && !view.fullMeal.earned);
 }
 
-/** Recover mission progress only on the learner's POST, with no tag-expiry response rerender. */
+/** Learner POST only; avoid tag expiry that would rerender away the current task state. */
 export async function loadOpenedDayView({
   initialDay,
   session,

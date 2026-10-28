@@ -6,10 +6,8 @@ import { CAPSULE_LEDGER_KIND } from "../../milestones/award-milestones";
 import { type TestOutOffer } from "../completion-contract";
 import { readFinishedLessonId } from "./lesson-block";
 
-/** Lessons of one chapter in a row with every answer right before its test-out is offered. */
 const OFFER_STREAK = 2;
 
-/** A lesson is breezed through with at least this many answers, all of them right. */
 const MIN_LESSON_ANSWERS = 3;
 
 /** Fewer lessons to skip than this aren't worth a test: the learner just finishes them. */
@@ -21,11 +19,7 @@ function isBreezedThrough(finish: LessonFinish): boolean {
   return finish.incorrect === 0 && finish.correct >= MIN_LESSON_ANSWERS;
 }
 
-/**
- * Whether the lesson just finished makes the streak: the chapter's lessons in the order the
- * learner first finished them end with this one and exactly `OFFER_STREAK` breezed through in a
- * row. Exactly, so the offer comes once, not after every easy lesson that follows.
- */
+/** Offer exactly once at the streak threshold, rather than after every later easy lesson. */
 function completesStreak({
   finishes,
   lessonId,
@@ -41,7 +35,6 @@ function completesStreak({
   return finishes.length - 1 - lastMiss === OFFER_STREAK;
 }
 
-/** Each lesson's first finish (a replay is a review), in the order the learner finished them. */
 async function loadFirstFinishes({
   lessonIds,
   userId,
@@ -76,11 +69,7 @@ async function loadFirstFinishes({
   );
 }
 
-/**
- * The test-out to offer after a lesson finished as one of today's blocks: when the learner got
- * every answer right in the chapter's lessons twice in a row, the chapter has lessons left, and its
- * test can ask about what the chapter teaches. Null otherwise, which is almost always.
- */
+/** Returns a chapter test-out only after consecutive perfect first completions and when askable lessons remain. */
 export async function findTestOutOffer({
   goalId,
   lessonId,

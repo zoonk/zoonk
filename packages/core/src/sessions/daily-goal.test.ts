@@ -10,7 +10,6 @@ import {
 
 const WEDNESDAY = new Date("2026-09-30T00:00:00Z");
 
-/** A plan of `minutes` a day that rests on Sundays. */
 function restsOnSundays(minutes: number) {
   return (date: Date): PlanDay =>
     date.getUTCDay() === 0
@@ -74,7 +73,6 @@ describe(getWeekDays, () => {
 
     expect(week[1]).toMatchObject({ goalMinutes: 21, hitGoal: true, minutes: 17, studied: true });
 
-    // A rest day has no goal to reach, even with a session finished on it.
     expect(week.at(-1)).toMatchObject({ goalMinutes: 0, hitGoal: false, studied: true });
   });
 });
@@ -104,12 +102,10 @@ describe(getWeekDayKind, () => {
       }),
     ).toBe("deadline");
 
-    // Without any goal, nothing was ever planned.
     expect(getWeekDayKind({ date: WEDNESDAY, goalMinutes: 0, goals: [] })).toBe("beforeStart");
   });
 });
 
-/** The minutes of a 45-minute plan that rests on Sundays. */
 function studyMinutes(date: Date): number {
   return restsOnSundays(45)(date).goalMinutes;
 }
@@ -120,12 +116,10 @@ describe(getNextStudyDate, () => {
       day("2026-10-01"),
     );
 
-    // Saturday's next study day is Monday: Sunday rests.
     expect(getNextStudyDate({ getMinutes: studyMinutes, today: day("2026-10-03") })).toStrictEqual(
       day("2026-10-05"),
     );
 
-    // Studying one weekday only, the next study day is a week away.
     const wednesdays = (date: Date) => (date.getUTCDay() === WEDNESDAY.getUTCDay() ? 30 : 0);
 
     expect(getNextStudyDate({ getMinutes: wednesdays, today: WEDNESDAY })).toStrictEqual(
@@ -174,7 +168,6 @@ describe(getSessionMinutesDone, () => {
     const oneMinuteLater = new Date("2026-10-06T12:01:00Z");
 
     const blocks = [
-      // Four quick lessons planned at 8 minutes each: the day is 32 minutes along, not 4.
       ...Array.from({ length: 4 }, () => ({
         completedAt: oneMinuteLater,
         estimatedMinutes: 8,

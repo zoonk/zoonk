@@ -83,7 +83,6 @@ const FRACTION = {
   question: thirdsQuestion,
 };
 
-/** Today's practice block holding the given questions, started, for a learner of their skill. */
 async function practiceBlock(
   items: { content: object; format: "multipleChoice" | "numeric" | "order" | "typed" }[],
 ) {
@@ -121,11 +120,6 @@ async function practiceBlock(
   return { itemIds: created.map((item) => item.id), questions: detail.detail.questions, ref, user };
 }
 
-/**
- * The questions of today's practice for a learner of `goal` who studied its one skill, whose
- * questions in the bank are `items`. They start from nothing, so the first week's placement
- * questions stay out of the day; a practice block needs two questions at least.
- */
 async function todayPractice({
   goal,
   items,
@@ -178,8 +172,6 @@ describe("exam answer formats in practice", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(SESSION_NOW);
-    // A test that needs the grader's model gives its verdict: tests check when it's asked and that
-    // its verdict counts.
     vi.mocked(gradeTypedAnswer).mockReset();
   });
 
@@ -242,7 +234,6 @@ describe("exam answer formats in practice", () => {
 
     expect(oneMissed).toMatchObject({ feedback: { isCorrect: false, savedToNotebook: true } });
 
-    // A miss explains what went wrong: the right option left out, not the one already right.
     expect(["4 doses of 1 g.", "Below the 4 g limit."]).toContain(
       oneMissed.status === "ready" ? oneMissed.feedback.explanation : null,
     );
@@ -371,10 +362,6 @@ describe("exam answer formats in practice", () => {
     expect(itemIds).not.toContain(explanation?.id);
   });
 
-  /*
-   * A hobby biology course asked the learner to write what Iara's cell diagram was missing:
-   * learners would rather pick, so only an exam that asks written answers brings them to practice.
-   */
   it("never practices typed answers for a goal whose exam asks none", async () => {
     const { created, itemIds } = await todayPractice({
       items: [

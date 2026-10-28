@@ -8,12 +8,7 @@ import { findFrequentSkillIds } from "../../plans/planner/topic-weights";
 import { readBlockPayload } from "../block-payload";
 import { loadReviewCapsules } from "./load-review-capsules";
 
-/**
- * The skills the learner was taken to know (one right test answer, a test-out) that practice still
- * has to confirm. `first`: topics the exam asks most or the class test announces, and any that
- * waited about a week (`DUE_AFTER_DAYS`), which always get their question. `last`: the others, as
- * time allows. Each in turn by when a session last asked it (`lastAsked`, see `loadLastAsked`).
- */
+/** first must receive questions even on short days; last is optional. Rotate claims by lastAsked rather than studying order. */
 export type PracticeClaims = {
   first: ReadonlySet<string>;
   last: ReadonlySet<string>;
@@ -21,14 +16,10 @@ export type PracticeClaims = {
   lastAsked: ReadonlyMap<string, number>;
 };
 
-/**
- * A topic taken as known joins practice about a week after: from then on it's asked first, so it
- * gets a question within its first two weeks however little the exam asks it.
- */
+/** Promote aging unconfirmed claims so low-weight topics cannot wait indefinitely. */
 const DUE_AFTER_DAYS = 7;
 const DAY_MS = 86_400_000;
 
-/** How far back sessions count as having asked a topic: the two weeks it has to come up in. */
 const ASKED_WINDOW_DAYS = 14;
 
 export const NO_PRACTICE_CLAIMS: PracticeClaims = {
@@ -37,12 +28,7 @@ export const NO_PRACTICE_CLAIMS: PracticeClaims = {
   lastAsked: new Map(),
 };
 
-/**
- * When the goal's sessions of the last two weeks before today last asked each skill, in practice
- * or a review. Topics to confirm take turns by it: a learner who skips practice would otherwise get
- * the same ones every day while the rest wait. Today's own session doesn't count, so building it
- * again the same day asks the same ones.
- */
+/** Exclude today's own session so rebuilding today cannot rotate a different question into its queue. */
 async function loadLastAsked({
   goalId,
   today,
@@ -72,11 +58,7 @@ async function loadLastAsked({
   return new Map(asked.map(([skillId, day]) => [skillId, day.getTime()]));
 }
 
-/**
- * What a goal's practice confirms (see `PracticeClaims`). One right answer frees a topic from its
- * lessons, never from practice: Pedro answered "Organelles", which his teacher said comes up a lot,
- * right once, and his plan never asked it again before the test.
- */
+/** A skipped lesson never removes the obligation to confirm its skill in practice. */
 export async function loadPracticeClaims({
   goal,
   graph,
@@ -125,12 +107,7 @@ export async function loadPracticeClaims({
   };
 }
 
-/**
- * Today's capsules (see `loadReviewCapsules`) and what practice confirms (see
- * `loadPracticeClaims`). A free exam plan past its first week has no practice (it's Plus), so its
- * quick review asks the known topics due first, within its usual size: on a free OAB plan, a topic
- * placement took as known came up nowhere for two weeks.
- */
+/** When practice is Plus-gated, the normal-size free review must still confirm due claims. */
 export async function loadReviewsAndClaims({
   claims: claimsInput,
   practiceLocked,

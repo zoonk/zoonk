@@ -10,21 +10,10 @@ import { type CatchUpView } from "./session-view";
 
 const LEARN_KINDS: PlanItem["kind"][] = ["lesson", "chapter"];
 
-/**
- * Catching up today is offered while it takes about one more day of the learner's daily time: a
- * quarter over still counts. Past that the next days take it on their own (they open with it): a
- * free learner was offered "+712 min", and tapping it made a 207-block day.
- */
+/** Bound optional catch-up to roughly one extra study day so returning learners do not create enormous queues. */
 const CATCH_UP_DAY_SHARE = 1.25;
 
-/**
- * The lessons earlier days left that the learner hasn't done yet: what the plan's last new-day
- * settling carried first (see `refreshGoalPlan`), still to do. Empty when the learner is on pace,
- * and after a goal came back from a pause: the paused days' lessons come first in a plan made again
- * from that day (see `computeResumedPlan`), and a break is never falling behind. A stand-in for
- * lessons not outlined yet isn't one: no day can hold it, so counting it said "5 lessons to catch
- * up" over Carla's 4.
- */
+/** Excludes unoutlined stand-ins and resumed-pause work: returning from a pause is not falling behind. */
 export async function loadCatchUpItems(goalId: string | null): Promise<PlanItem[]> {
   if (!goalId) {
     return [];
@@ -56,7 +45,6 @@ export async function loadCatchUpItems(goalId: string | null): Promise<PlanItem[
   });
 }
 
-/** Whether a day's block is one of the lessons earlier days left. */
 export function isCatchingUp({
   block,
   items,
@@ -76,10 +64,6 @@ export function isCatchingUp({
   );
 }
 
-/**
- * The lessons earlier days left that a day doesn't hold yet, as the day would take them: what
- * "catch up today" adds.
- */
 export async function loadLaterCatchUp({
   blocks,
   goalId,
@@ -98,17 +82,10 @@ export async function loadLaterCatchUp({
   return { items, lessons: later.length > 0 ? await loadPlanLessons({ items: later }) : [] };
 }
 
-/** Whether adding what's left to catch up to today takes about one more day's time at most. */
 function fitsInADay({ dailyMinutes, minutes }: { dailyMinutes: number; minutes: number }) {
   return minutes > 0 && minutes <= dailyMinutes * CATCH_UP_DAY_SHARE;
 }
 
-/**
- * Whether the day says nothing about catching up: a fresh start carries no backlog (a welcome
- * back's lighter day, a new phase or week: its lessons are just the next ones), except on the day
- * before an exam, which has no next days to take them, and a free exam plan past its first week
- * has no new lessons to catch up on.
- */
 function isQuietDay({
   examTomorrow,
   freshStart,
@@ -121,7 +98,7 @@ function isQuietDay({
   return trialEnded || (freshStart !== null && !examTomorrow);
 }
 
-/** Where catching up stands on a day (see `CatchUpView`); null when the learner is on pace. */
+/** Returns null when the learner is on pace. */
 export async function loadCatchUpView({
   blocks,
   dailyMinutes,
@@ -132,7 +109,7 @@ export async function loadCatchUpView({
   trialEnded,
 }: {
   blocks: readonly DayBlockInput[];
-  /** The learner's daily time for the goal: what "about one more day" measures. */
+  /** Use the goal's daily minutes to size the extra catch-up day. */
   dailyMinutes: number;
   examTomorrow: boolean;
   freshStart: StudyFreshStart | null;
@@ -166,7 +143,7 @@ export async function loadCatchUpView({
   };
 }
 
-/** A stale preview uses the selected work before its missed-day notice has been persisted. */
+/** Stale previews use selected work before persistence records its missed-day notice. */
 async function loadSelectedCatchUp({
   blocks,
   items,

@@ -30,10 +30,7 @@ type StartedStudyBlock = Pick<
   "id" | "kind" | "lessonId" | "startedAt" | "status"
 >;
 
-/**
- * `questionsNeeded`: a checkpoint the bank holds too few questions for; once they're written
- * (`requestChallengeQuestions`), starting it again asks them.
- */
+/** On questionsNeeded, requestChallengeQuestions must finish before retrying Start. */
 export type StartStudyBlockResult =
   | { block: StartedStudyBlock; status: "ready" }
   | { status: "blockFinished" }
@@ -60,11 +57,7 @@ function isRunningBlock(block: StudySessionBlock): boolean {
   return block.status === "active" && Boolean(timing ? timing.activeAt : block.startedAt);
 }
 
-/**
- * The first block to start opens the session: it records where the learner stands (so the end
- * can say what changed), writes the session's ledger row and sends "Session Started". Later
- * starts leave all three alone.
- */
+/** Only the first block start may capture start state, open the ledger, and emit Session Started. */
 async function openSession({
   now,
   session,
@@ -98,12 +91,7 @@ async function openSession({
   return opened;
 }
 
-/**
- * Starts (or resumes) one block of the learner's session. The learner's daily limit is checked
- * before anything new starts; a finished block can't start again, and a checkpoint planned before
- * the bank held enough questions for it picks them first (`fillCheckpointQuestions`), with all
- * ten, or what was written once the learner waited for the run writing them (`afterWriting`).
- */
+/** Requires ownership; checks the daily limit before new work and fills checkpoint questions before starting. */
 export async function startStudyBlock({
   blockId,
   input,

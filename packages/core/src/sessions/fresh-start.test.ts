@@ -55,7 +55,6 @@ describe(getFreshStart, () => {
       }),
     ).toBeNull();
 
-    // Set up on Monday and not studied yet: two days in, nothing to come back from.
     expect(
       getFreshStart({
         isFirstDay: false,
@@ -68,7 +67,6 @@ describe(getFreshStart, () => {
   });
 
   it("welcomes back a learner who set the goal up days ago and hasn't studied since", () => {
-    // Rafaela set up her goal on Monday, opened Today and left; she's back on Thursday.
     expect(
       getFreshStart({
         isFirstDay: false,
@@ -79,7 +77,6 @@ describe(getFreshStart, () => {
       }),
     ).toBe("welcomeBack");
 
-    // The same when she never opened Today before: the goal's first session isn't its first day.
     expect(
       getFreshStart({
         isFirstDay: true,
@@ -92,7 +89,6 @@ describe(getFreshStart, () => {
   });
 
   it("counts the days away from the goal's start when the last study day was before it", () => {
-    // Studied another goal last month, started this one on Monday: Wednesday is its third day.
     expect(
       getFreshStart({
         isFirstDay: false,

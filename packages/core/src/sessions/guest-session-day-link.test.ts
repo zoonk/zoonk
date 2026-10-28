@@ -141,7 +141,7 @@ describe("session day settlement during guest linking", () => {
     const permit = Promise.withResolvers<null>();
     const completeBlockMoment = blockCompletion.completeBlockMoment;
 
-    /** Gate only orchestration after block commit; the wrapper calls the real day settlement. */
+    // Gate after block commit while retaining real day settlement.
     const gatedMoment = vi
       .spyOn(blockCompletion, "completeBlockMoment")
       .mockImplementation(async (input) => {
@@ -185,10 +185,10 @@ describe("session day settlement during guest linking", () => {
       ]);
 
       try {
-        /** Linking owns the guest before waiting for destination progress, but hasn't moved its answers. */
+        // Linking holds guest ownership but has not moved answers while waiting on account progress.
         const linkPid = await waitForBlocked(accountPid);
         permit.resolve(null);
-        /** The completed checkpoint reaches full-meal settlement and waits for guest ownership. */
+        // Force settlement to wait on guest ownership before releasing the link.
         await waitForBlocked(linkPid);
       } finally {
         linkRelease.resolve(null);
@@ -204,7 +204,6 @@ describe("session day settlement during guest linking", () => {
       gatedMoment.mockRestore();
     }
 
-    // Settling the day locks the guest first, and finds no guest anymore.
     await expect(finished).resolves.toMatchObject([
       { reason: { message: "Cannot lock a missing learner" }, status: "rejected" },
     ]);
@@ -217,7 +216,6 @@ describe("session day settlement during guest linking", () => {
     expect(paidBlock.brainPower).toBeGreaterThan(0);
     expect(transferred.totalBrainPower).toBe(BigInt(paidBlock.brainPower));
 
-    /** The linked account's prior learning puts the remaining full meal across orange/young. */
     const before = await prisma.userProgress.update({
       data: { totalBrainPower: 7475n },
       where: { userId: account.userId },
@@ -237,7 +235,6 @@ describe("session day settlement during guest linking", () => {
 
     mockSession(account.userId);
 
-    // Try again on the linked account gets the block's moment with the full meal it now pays, once.
     await expect(finish()).resolves.toMatchObject({
       completion: {
         blockId: block.id,
@@ -248,7 +245,6 @@ describe("session day settlement during guest linking", () => {
       status: "ready",
     });
 
-    // Finishing it again says the same: the block paid the full meal, and nothing is paid twice.
     await expect(finish()).resolves.toMatchObject({
       completion: {
         blockId: block.id,
@@ -287,7 +283,6 @@ describe("session day settlement during guest linking", () => {
       { brainPowerEarned: paidBlock.brainPower + BRAIN_POWER_BONUS.fullMeal, correctAnswers: 1 },
     ]);
 
-    // The block keeps what it did to the day's missions, for its moment; its paid evidence stays.
     await expect(
       prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
     ).resolves.toStrictEqual({
@@ -316,7 +311,6 @@ describe("session day settlement during guest linking", () => {
       const { block, planItemId, session } = await readyToFinish(guest.guestId, kind);
       mockGuestSession(guest.guestId);
 
-      /** A boss crosses orange itself; the weekly challenge reaches it with the full meal. */
       await prisma.userProgress.update({
         data: {
           totalBrainPower:
@@ -328,7 +322,6 @@ describe("session day settlement during guest linking", () => {
       const finish = () =>
         finishStudyBlock({ blockId: block.id, input: { timeZone: "UTC" }, sessionId: session.id });
 
-      /** Simulate a failed milestone write after the real reward and day transactions commit. */
       const failedAward = vi
         .spyOn(milestoneAwards, "awardMilestones")
         .mockRejectedValueOnce(new Error("Milestone write interrupted"));
@@ -347,13 +340,12 @@ describe("session day settlement during guest linking", () => {
         prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
       ).resolves.toMatchObject({ fullMealAt: expect.any(Date), status: "completed" });
 
-      /** Later learning must not replace the interval whose milestone write failed. */
+      // Later learning must not replace the reward interval whose milestone write failed.
       const later = await prisma.userProgress.update({
         data: { totalBrainPower: { increment: 10_000 } },
         where: { userId: guest.guestId },
       });
 
-      // Try again gets the block's moment with the milestones the interrupted write owed it, once.
       const retried = await finish();
       const again = await finish();
       const milestones = await prisma.milestone.findMany({ where: { userId: guest.guestId } });
@@ -367,7 +359,6 @@ describe("session day settlement during guest linking", () => {
         expected.toSorted(),
       );
 
-      // The interrupted finish had paid the full meal: the retry's moment still says so.
       expect(retried).toMatchObject({
         completion: {
           blockId: block.id,

@@ -7,7 +7,6 @@ import { mockSession } from "../_test-utils/mock-session";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { SESSION_NOW, sessionGoalFixture } from "./_test-utils/session-goal";
 
-/** More stand-ins than the lessons a session looks ahead at. */
 const STAND_INS = 12;
 
 describe("stand-ins for lessons the Library hasn't outlined yet", () => {
@@ -28,7 +27,6 @@ describe("stand-ins for lessons the Library hasn't outlined yet", () => {
       userId: user.id,
     });
 
-    // A language plan keeps each situation's size: what the course hasn't outlined waits ahead.
     await prisma.planItem.update({
       data: { position: STAND_INS },
       where: { id: planItems[0]?.id },

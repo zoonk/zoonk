@@ -21,7 +21,6 @@ import { finishStudyBlock } from "./finish-study-block";
 import { startStudyBlock } from "./start-study-block";
 import { stopStudySession } from "./stop-study-session";
 
-/** Observe real refresh calls; only Next's request-lifetime boundary is held by the test. */
 function holdDeferredWork() {
   const work: Parameters<typeof after>[0][] = [];
   vi.mocked(after).mockImplementation((task) => work.push(task));

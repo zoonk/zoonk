@@ -43,10 +43,7 @@ type OwnedBlock = {
   userId: string;
 };
 
-/**
- * A question block's settlement, made now or read back: one settled before (a retry) has no
- * Energy change, since what it reached was this block's to celebrate when it was settled.
- */
+/** Replayed settlements have no Energy delta because only their first finish celebrates it. */
 type SettledQuestionBlock =
   | {
       settlement: Omit<QuestionBlockSettlement, "energy" | "seconds"> & {
@@ -56,11 +53,7 @@ type SettledQuestionBlock =
     }
   | { status: "blockFinished" };
 
-/**
- * A mock's block is finished by its mock, so what finishing it does to the day's missions (the
- * mock's mission, the bonus when it was the last) is the mock's to say on its result, on every read
- * of it that day (see `loadMockMissionMoment`). Other blocks say it in their own completion.
- */
+/** Mock results own their mission moment; other blocks return it through their own completion. */
 async function findMissionSource(
   block: StudySessionBlock,
 ): Promise<MissionCompletionSource | undefined> {
@@ -76,7 +69,6 @@ async function findMissionSource(
   return mock ? { id: mock.id, kind: "mockExam" } : undefined;
 }
 
-/** Now the duel is over: each question's right answer and why, the traps included. */
 async function toCheckpointResult({
   blockId,
   checkpoint,
@@ -127,10 +119,7 @@ async function toCheckpointResult({
   return { ...checkpoint, answers };
 }
 
-/**
- * A block settled before, read back for a retry whose first response was lost: its answers scored
- * the same way and the Brain Power its settlement paid and kept. Nothing is written or paid again.
- */
+/** Read-only replay of stored rewards; must not write or pay them again. */
 async function readSettledQuestionBlock(owned: OwnedBlock): Promise<SettledQuestionBlock> {
   const prepared = await prepareQuestionBlock(owned);
   const reward = readBlockPayload(owned.block).milestoneReward;
@@ -155,11 +144,7 @@ async function readSettledQuestionBlock(owned: OwnedBlock): Promise<SettledQuest
   };
 }
 
-/**
- * Scores and settles the block, then builds its moment. A block settled before (a retry after the
- * response was lost, or after a later stage failed) is read back instead: the same moment, with the
- * day's settlement and milestone writes resumed and nothing paid twice.
- */
+/** Retries replay the stored moment and resume unfinished day/milestone settlement without paying twice. */
 async function finishQuestionBlock(
   owned: OwnedBlock & { source?: MissionCompletionSource },
 ): Promise<FinishStudyBlockResult> {
@@ -183,8 +168,7 @@ async function finishQuestionBlock(
     answer.itemId ? [answer.itemId] : [],
   );
 
-  // Only statements (swipe capsules, net-scored practice) count in the net; a matching question in
-  // the same review is right or wrong on its own.
+  // Matching questions in a net-scored review still grade independently of its statements.
   const netItemIds = new Set(getNetScoredItemIds([owned.block]));
   const answeredNetItemIds = answeredItemIds.filter((itemId) => netItemIds.has(itemId));
 
@@ -230,12 +214,7 @@ async function finishQuestionBlock(
   return { completion, status: "ready" };
 }
 
-/**
- * Finishes a learn block once its lesson was finished: the lesson's own completion already paid
- * its Brain Power and Energy (`energy`, when that completion is this request), so the block
- * records it, checks the lesson off in the plan and settles the day. The lesson's time is the
- * block's. Finishing it again returns the same moment.
- */
+/** Requires the lesson already completed; records its existing reward and time without paying again, including on retries. */
 export async function finishLessonBlock({
   energy = null,
   ...owned
@@ -299,10 +278,7 @@ export async function finishLessonBlock({
   return { completion, status: "ready" };
 }
 
-/**
- * Finishes one block of the learner's session and returns its completion moment. Question blocks
- * are scored here; learn blocks finish once their lesson was finished in the lesson player.
- */
+/** Requires an owned session; learn blocks can finish only after lesson-player completion. */
 export async function finishStudyBlock({
   blockId,
   input,

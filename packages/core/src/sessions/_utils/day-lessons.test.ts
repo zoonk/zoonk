@@ -43,7 +43,6 @@ const items = [
   item("cf-2", "principles", TOMORROW),
 ];
 
-/** A day's lessons and held skills from its goal's plan. */
 function pickDay({
   awaitingOutlines = false,
   graph: dayGraph = graph,
@@ -69,7 +68,6 @@ function pickDay({
   });
 }
 
-/** The day's pick when nothing due today is being outlined. */
 function pick(input: { isExam: boolean; items: readonly Item[]; today: Date }) {
   return pickDay(input).learnItems;
 }
@@ -131,8 +129,6 @@ describe(pickDayLessons, () => {
   });
 
   it("never reaches a lesson whose skill builds on a stand-in it passes", () => {
-    // A language plan reached past every stand-in to a lesson a year away, before the one it
-    // builds on was outlined.
     const waiting = [{ ...item("en-0", "english", TODAY), lessonId: null }, ...items];
 
     const picked = pickDay({
@@ -142,7 +138,6 @@ describe(pickDayLessons, () => {
       today: TODAY,
     }).learnItems;
 
-    // The first principles lesson waits for English; the second comes after English's lesson.
     expect(picked.map((entry) => entry.id)).toStrictEqual(["pt-1", "en-1", "pt-2", "cf-2"]);
   });
 
@@ -155,7 +150,6 @@ describe(pickDayLessons, () => {
   });
 });
 
-/** Rafaela's Câmara day one: linguistics written, IT's lessons not written yet. */
 const camara = {
   phases: [],
   skills: [
@@ -176,8 +170,6 @@ function standIn(id: string, skillId: string, scheduledFor: Date) {
 }
 
 describe("an exam day whose subjects aren't all written yet", () => {
-  // Her day one was 27 linguistics lessons: IT's had nothing to open, and the day filled with
-  // more of the subject it had.
   it("keeps a subject with nothing written its own time, never another subject's", () => {
     const day = [
       standIn("ti-1", "ti", TODAY),
@@ -194,8 +186,6 @@ describe("an exam day whose subjects aren't all written yet", () => {
     ).toStrictEqual(new Set(["ti"]));
   });
 
-  // An exam's listening skills are practiced only with recordings: while none is voiced, the
-  // listening subject's time would go to practice that asks nothing.
   it("gives a held subject's time to the others when practice has nothing to ask it", () => {
     const day = [
       standIn("ti-1", "ti", TODAY),

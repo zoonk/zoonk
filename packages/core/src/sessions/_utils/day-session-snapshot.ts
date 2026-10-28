@@ -25,12 +25,7 @@ const snapshotBlockSchema = z.object({
   status: z.enum(StudyBlockStatus),
 });
 
-/**
- * Today's session as the learner had it right before a plan change they can undo: its blocks in
- * order with what each holds and how far it got, its minutes and its status. The undo gives it
- * back (see `restoreDaySession`). Built again from the plan instead, the day Ana got back had other
- * lessons and no mistakes practice.
- */
+/** Undo must preserve the exact saved day's rows, order, and missions rather than rebuilding another day. */
 export const daySessionSnapshotSchema = z.object({
   blocks: z.array(snapshotBlockSchema),
   id: z.string(),
@@ -45,7 +40,7 @@ type SnapshotBlock = DaySessionSnapshot["blocks"][number];
 
 type Day = { goalId: string; localDate: Date; userId: string };
 
-/** The day's session as a snapshot keeps it (see `DaySessionSnapshot`); null before it's built. */
+/** Null before the day's session exists. */
 export async function captureDaySession({
   goalId,
   localDate,
@@ -83,15 +78,10 @@ function sumMinutes(blocks: readonly Pick<StudySessionBlock, "estimatedMinutes">
   return blocks.reduce((sum, block) => sum + (block.estimatedMinutes ?? 0), 0);
 }
 
-/** The plan item a challenge block plays. */
 function getChallengeItemId(block: Pick<StudySessionBlock, "id" | "payload">): string | null {
   return readBlockPayload(block).planItemId;
 }
 
-/**
- * Whether what a block of the snapshot holds is already in blocks the learner started since the
- * change: the same lesson, the day's one practice, review or essay, or the same challenge.
- */
 function isHeldBy({
   block,
   since,
@@ -109,10 +99,7 @@ function isHeldBy({
   );
 }
 
-/**
- * Where the blocks that come back go: their own places, as the learner saw them, unless a block
- * the learner started since took one; then after the day's last block, in their order.
- */
+/** Restore shown positions unless intervening started work occupies them; append those returning blocks in order. */
 function placeBlocks({
   back,
   staying,
@@ -130,7 +117,7 @@ function placeBlocks({
   return back.map((block, index) => ({ ...block, position: first + index }));
 }
 
-/** A day keeps intervening study; without any, it keeps the status it had before the change. */
+/** Preserve intervening study; otherwise restore the original day status. */
 function getRestoredStatus({
   blocks,
   current,
@@ -147,12 +134,6 @@ function getRestoredStatus({
   return status === "completed" && open ? "active" : status;
 }
 
-/**
- * What giving the day back changes, from its blocks now and the snapshot: the change's blocks not
- * started leave; the learner's started since stay (`since`); the snapshot's blocks not started come
- * back in their places (`back`), but those a block started since already holds (`dropped`); and a
- * block the change skipped is as it was again (`unskipped`).
- */
 function planRestore({
   blocks,
   snapshot,
@@ -200,7 +181,7 @@ function planRestore({
         return [];
       }
 
-      // A block the learner began after the snapshot keeps that work when its skip is undone.
+      // Undoing a skip must preserve work started after the snapshot.
       let status = shown.status;
 
       if (block.completedAt) {
@@ -236,15 +217,7 @@ export async function lockDaySession({
     : null;
 }
 
-/**
- * Gives back today's session as the snapshot has it, for an undo: the blocks the change replaced
- * come back as the same rows in their places, so the day is the one the learner had, its missions
- * included, and a screen showing one of them still reaches it. A block the change skipped (a
- * test-out's) is as it was again. What the learner did since stays: a block they started or
- * finished keeps its progress, and a block coming back that it already holds stays out. The caller
- * holds `lockDaySession` in the same transaction as the plan restore. Returns whether a day now
- * without open blocks needs the normal completion settlement after commit.
- */
+/** Caller must hold lockDaySession in the plan-restore transaction. Preserves intervening study and returns whether completion needs settlement after commit. */
 export async function restoreDaySession({
   session,
   snapshot,
@@ -273,7 +246,7 @@ export async function restoreDaySession({
     data: back.map((block) => ({ ...block, sessionId: session.id, status: "pending" as const })),
   });
 
-  // The restored goal and plan are visible only through this transaction until it commits.
+  // Restored goal and plan values are visible only through the transaction until commit.
   const goal = await tx.goal.findUniqueOrThrow({ where: { id: session.goalId ?? "" } });
   const planVersion = await loadDayPlanVersion({ client: tx, goal, localDate: session.localDate });
   const blocks = await tx.studySessionBlock.findMany({ where: { sessionId: session.id } });

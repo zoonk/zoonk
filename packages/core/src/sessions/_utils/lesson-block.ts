@@ -19,12 +19,11 @@ import { type StudySessionRow } from "./study-session-access";
 
 const lessonIdsSchema = z.object({ lessonId: z.string() });
 
-/** A completed block's retry must roll back the marks taken before checking it. */
+/** Replaying a completed block must roll back its early learner mark. */
 class LessonBlockUnchangedError extends Error {
   override name = "LessonBlockUnchangedError";
 }
 
-/** The lesson a ledger row finished, from its plain content ids. */
 export function readFinishedLessonId(contentIds: unknown): string | null {
   return lessonIdsSchema.safeParse(contentIds).data?.lessonId ?? null;
 }
@@ -48,11 +47,7 @@ async function getAcceptedLessonIds(block: StudySessionBlock): Promise<string[]>
   return rows.map((row) => row.lessonId);
 }
 
-/**
- * The lesson finish a learn block waits for. The lesson player writes a `lesson` ledger row with
- * `contentIds.lessonId` when a lesson ends (a replay may be a `review` row); a block for a chapter
- * whose lesson was written just in time accepts any of that chapter's lessons.
- */
+/** Accepts completed lesson and replay rows; chapter placeholders accept any lesson in that chapter. */
 export async function findLessonFinish({
   block,
   session,
@@ -81,7 +76,7 @@ export async function findLessonFinish({
             contentIds: { equals: lessonId, path: ["lessonId"] },
           })),
         },
-        // Capsule rows also name their lesson; they are reviews of it, not the lesson itself.
+        // Capsule reviews name their lesson but do not complete a lesson run.
         { OR: [{ lessonKind: null }, { lessonKind: { not: CAPSULE_LEDGER_KIND } }] },
       ],
       endedAt: { gte: since },
@@ -101,7 +96,7 @@ export async function findLessonFinish({
     },
   });
 
-  // Focused completions bind their exact block atomically; an unrelated replay cannot finish it.
+  // A bound completion must not be reassigned to a different replay of the same lesson.
   if (bound) {
     return bound;
   }
@@ -113,11 +108,7 @@ export async function findLessonFinish({
   );
 }
 
-/**
- * Marks a learn block done with the Brain Power its lesson earned (already added to the learner's
- * totals by the lesson's own completion) and checks the lesson off in every plan that has it.
- * Returns false when the block was already done.
- */
+/** Returns false when already done; lesson rewards were paid by its completion and must not be added again. */
 export async function markLessonBlockDone({
   block,
   brainPower,
@@ -172,11 +163,7 @@ export async function markLessonBlockDone({
   return true;
 }
 
-/**
- * The learner-local day the lesson's capsule opens: the first of the skills it comes back with
- * (`loadLessonReviewSkillIds`) FSRS says is due, never after the goal's date (see
- * `capReviewDay`), as a UTC-midnight date label.
- */
+/** Returns a learner-local UTC-midnight label, never later than the goal's date. */
 export async function getLessonComesBack({
   lessonId,
   targetDate,
@@ -184,7 +171,6 @@ export async function getLessonComesBack({
   userId,
 }: {
   lessonId: string | null;
-  /** The goal's date, when it has one. */
   targetDate: Date | null;
   timeZone: string;
   userId: string;

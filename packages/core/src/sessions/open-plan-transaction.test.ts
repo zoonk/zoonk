@@ -84,7 +84,7 @@ async function setup() {
   return { goal, plan, user };
 }
 
-/** Observe real transaction callbacks and pure builds; never substitute persistence or its results. */
+/** Observes real transactions so the test can detect builds performed while locks are held. */
 function observeTransactionBuilds() {
   const state = { depth: 0 };
   const insideBuilds: producer.BuildPlanInput[] = [];
@@ -188,9 +188,6 @@ describe("opening a real-size selected plan", () => {
     ).resolves.toStrictEqual(before);
   });
 
-  // Away from 09-30 to 12-20: 1440 minutes of lessons left, and the twelve days of an hour left to
-  // the date hold about a quarter of them. Settled, the plan carries them all, dating what the days
-  // can't hold with the last of it, so it must not say they fit.
   it("tells a learner back from weeks away that the date is at risk, and the plan says it", async () => {
     const fixture = await setup();
     const input = { goalId: fixture.goal.id, shownDate: "2026-12-20", timeZone: "UTC" };

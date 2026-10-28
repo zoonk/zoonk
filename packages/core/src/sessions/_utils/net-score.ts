@@ -3,22 +3,17 @@ import { type StudySessionBlock, prisma } from "@zoonk/db";
 import { type BlockPayload, getBlockItemIds, readBlockPayload } from "../block-payload";
 import { readRecordedAnswer } from "./session-items";
 
-/** A statement left blank ("I don't know") in a net-scored capsule or practice. */
 function isBlankAnswer(answer: unknown): boolean {
   const recorded = readRecordedAnswer(answer);
   return recorded !== null && "dontKnow" in recorded;
 }
 
-/** Whether a block's question is scored net: in net-scored practice, or in a swipe capsule. */
 function isNetScoredItem({ itemId, payload }: { itemId: string; payload: BlockPayload }): boolean {
   const capsule = payload.capsules.find((candidate) => candidate.itemIds.includes(itemId));
   return capsule ? capsule.format === "swipe" : payload.netScored;
 }
 
-/**
- * An answer that leaves a net-scored statement blank: neither right nor a mistake, since leaving
- * it blank is how the exam is played when a wrong answer cancels a right one.
- */
+/** Blank net-scored statements are neither right nor mistakes. */
 export function isLeftBlank({
   answer,
   itemId,
@@ -31,11 +26,7 @@ export function isLeftBlank({
   return isBlankAnswer(answer) && isNetScoredItem({ itemId, payload });
 }
 
-/**
- * Cebraspe scoring for swipe capsules and net-scored practice: each wrong answer cancels a right
- * one, and a statement left blank counts for neither, which is why leaving it blank is offered.
- * Null when none of the statements was answered: a net of 0 would read as a result.
- */
+/** Blank statements count for neither side; null means no statements answered, rather than a measured zero. */
 export async function getNetScore({
   itemIds,
   sessionId,
@@ -60,7 +51,6 @@ export async function getNetScore({
   return right - (attempts.length - right - blank.length);
 }
 
-/** The questions of a session scored net: net-scored practice and swipe capsules. */
 export function getNetScoredItemIds(blocks: readonly StudySessionBlock[]): string[] {
   return blocks.flatMap((block) => {
     const payload = readBlockPayload(block);

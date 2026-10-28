@@ -35,10 +35,7 @@ export function getDueItemIds(blocks: readonly StudySessionBlock[]): Set<string>
   );
 }
 
-/**
- * Every answer given in a session, lessons included, in order and classified for Brain Power: due,
- * new, or a repeat of something already answered right.
- */
+/** Includes lesson answers in order, classified as due, new, or previously answered correctly for Brain Power. */
 export async function loadSessionAnswers({
   blocks,
   sessionId,
@@ -72,7 +69,6 @@ export async function loadSessionAnswers({
   return classifyAnswers({ answers, dueItemIds: getDueItemIds(blocks), history });
 }
 
-/** The answers that belong to one question block of the session. */
 export function getBlockAnswers({
   answers,
   block,

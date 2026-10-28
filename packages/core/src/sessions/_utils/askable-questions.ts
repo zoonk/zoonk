@@ -3,11 +3,7 @@ import { prisma } from "@zoonk/db";
 import { getCheckpointQuestionCount } from "../../checkpoints/_utils/checkpoint-answer-evidence";
 import { parseSessionItem } from "./session-items";
 
-/**
- * The questions a block can still ask: its items the bank still holds, as its screen shows them
- * (`getStudyBlock`). One removed since it started (a picture that failed its checks) is never
- * asked, so a checkpoint is answered in full, or decided, without it (`getAskablePassMark`).
- */
+/** Includes previously answered ids; removed bank content cannot hold a checkpoint open forever. */
 export async function countAskableQuestions({
   answeredItemIds = [],
   itemIds,

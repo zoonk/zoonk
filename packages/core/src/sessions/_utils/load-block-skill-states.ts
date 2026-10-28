@@ -1,7 +1,6 @@
 import { type MasteryState, prisma } from "@zoonk/db";
 import { type SessionAnswer } from "./session-answers";
 
-/** Current mastery of the answered topics, for the block's once-only mastery reward. */
 export async function loadBlockSkillStates({
   answers,
   userId,

@@ -131,7 +131,7 @@ function fillSlots({
     : fillSlots({ chosen: [...chosen, next], count, facts, ranked });
 }
 
-/** Stable daily picks: remember, new, then distinctive work, onboarding, pressing needs or rotation. */
+/** Deterministic daily picks prioritize reviews and new learning before distinctive work and rotation. */
 export function pickMissions(facts: DayMissionFacts): MissionPick[] {
   if (!facts.available || facts.plannedMinutes <= 0) {
     return [];
@@ -155,7 +155,7 @@ export function pickMissions(facts: DayMissionFacts): MissionPick[] {
   );
 
   const filled = fillSlots({ chosen: primary, count, facts, ranked });
-  // Even a short day with no fitting session pick can have one small outside mission.
+  // A short day may still offer one small off-session mission when no session pick fits.
   const selected =
     filled.length > 0
       ? filled

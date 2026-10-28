@@ -10,10 +10,7 @@ export type DailyTimeLimitStatus = {
   usedMinutes: number;
 };
 
-/**
- * How much of today's study time is left under the learner's daily limit, counted on their local
- * day. Sessions and lessons check it before starting something new.
- */
+/** Requires sign-in; counts used time by the learner's local day before starting new activity. */
 export async function getDailyTimeLimitStatus(): Promise<DailyTimeLimitStatus | null> {
   const session = await getSession();
 

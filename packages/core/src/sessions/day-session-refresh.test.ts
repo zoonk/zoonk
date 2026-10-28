@@ -29,10 +29,6 @@ async function readToday(goalId: string) {
   return result.session;
 }
 
-/**
- * A learner whose plan has one written skill and one still waiting for its lessons (a stand-in),
- * so today's first session is shorter than their day until the second skill's lessons land.
- */
 async function setupWaitingSkill() {
   const user = await userFixture();
 
@@ -57,7 +53,6 @@ async function setupWaitingSkill() {
   return { goal, library, user };
 }
 
-/** The waiting skill's lessons land in the Library and the system re-plans the goals using it. */
 async function landWaitingLessons(library: Awaited<ReturnType<typeof planLibraryFixture>>) {
   const [chapter] = library.chapters;
   const skillId = library.skills[1]?.id ?? "";
@@ -176,8 +171,6 @@ describe("today's session when the plan changes", () => {
     await expect(prisma.studySession.count({ where: { goalId: goal.id } })).resolves.toBe(1);
   });
 
-  // Marcos added field topics to a later part of his plan: the card said today's session followed
-  // the change, though today stayed exactly as it was.
   it("says nothing about today's session when a change leaves it as it was", async () => {
     const { goal } = await setupWaitingSkill();
     const before = await readToday(goal.id);

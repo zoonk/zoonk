@@ -10,7 +10,6 @@ type FirstStep = {
   kind: FirstStepKind;
   opens?: MissionOpens;
   status: "done" | "today" | "available" | "later";
-  /** Why the block it opens can't start yet, as a mission's `waitReason` says. */
   waitReason?: "challenge" | "lessons";
   when?:
     | { kind: "challenge" | "essay"; date?: string }
@@ -18,20 +17,16 @@ type FirstStep = {
 };
 
 export type FirstSteps = {
-  /**
-   * The learner-local day ("YYYY-MM-DD") the last step was done, while it's still that day: the
-   * finished list says so, then retires the next day.
-   */
+  /** Learner-local YYYY-MM-DD of the final step; keep the finished list only through that day. */
   completedOn?: string;
   done: number;
   steps: FirstStep[];
   total: number;
 };
 
-/** When each step was first done, from the learner's history; one never done has no date. */
+/** Missing dates mean the step has never been completed. */
 type DoneAt = Partial<Record<FirstStepKind, Date>>;
 
-/** The learner-local day the list's last step was first done, as "YYYY-MM-DD". */
 function getCompletedOn({
   doneAt,
   kinds,
@@ -51,7 +46,6 @@ function getCompletedOn({
   return toIsoDate(getDateInTimeZone({ date: last, timeZone }));
 }
 
-/** A UTC-midnight day label as "YYYY-MM-DD". */
 function toIsoDate(day: Date): string {
   return day.toISOString().slice(0, "YYYY-MM-DD".length);
 }
@@ -184,7 +178,6 @@ export async function loadFirstSteps({
     return { done, steps, total: steps.length };
   }
 
-  // Finished: the list stays, all checked, through the day its last step was done, then retires.
   const completedOn = getCompletedOn({ doneAt: history.doneAt, kinds, timeZone });
   const today = toIsoDate(getDateInTimeZone({ date: now, timeZone }));
 

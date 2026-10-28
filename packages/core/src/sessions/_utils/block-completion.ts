@@ -23,12 +23,7 @@ type BlockResult = Pick<
   | "total"
 >;
 
-/**
- * Settles the day after a block finished (full meal, session completion), awards milestones from
- * the Brain Power crossed and a boss won, and builds the block's completion moment. The level and
- * the tenth of Energy it reached are said by the request that settled its answers, as its
- * ceremony is: a retry returns the same missions without celebrating them again.
- */
+/** Retries replay missions without celebrating the same answer rewards again. */
 export async function completeBlockMoment({
   blockId,
   brainPowerBefore,
@@ -41,17 +36,12 @@ export async function completeBlockMoment({
   userId,
 }: {
   blockId: string;
-  /** The learner's Brain Power total before this block's points, to find belts crossed. */
   brainPowerBefore: number;
-  /**
-   * Energy before and after the block's answers when this request settled them, to tell the tenth
-   * they reached; null when it reads back a block an earlier request settled.
-   */
+  /** Null when an earlier request already settled the answers. */
   energy: ProgressChange | null;
   payload: BlockPayload;
   result: BlockResult;
   sessionId: string;
-  /** The activity that finished the block, when its own screen says what it did to the missions. */
   source?: MissionCompletionSource;
   timeZone: string;
   userId: string;
@@ -64,7 +54,7 @@ export async function completeBlockMoment({
   const bossWon =
     result.checkpoint && result.checkpoint.kind !== "weekly" && result.checkpoint.passed;
 
-  // A settled block keeps the reward it paid, so a retry awards from the same evidence.
+  // Retries must award milestones from the original paid reward evidence.
   const reward = payload.milestoneReward ?? {
     bossWon: Boolean(bossWon),
     brainPower: { after: brainPowerBefore + result.brainPower, before: brainPowerBefore },

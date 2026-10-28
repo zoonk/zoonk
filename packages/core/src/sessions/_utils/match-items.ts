@@ -29,12 +29,11 @@ export function parseMatchItem(item: BankItem): MatchItem | null {
   }
 }
 
-/** The right column's order as the learner sees it (`getShownOrder`). */
 function getRightOrder(item: MatchItem): number[] {
   return getShownOrder({ count: item.content.pairs.length, seed: item.id });
 }
 
-/** A matching question as the learner sees it: the right column shuffled, never its answer. */
+/** Shuffles the right column and omits the correct pairing. */
 export function toMatchQuestion(item: MatchItem) {
   const pairs = item.content.pairs;
 
@@ -59,7 +58,7 @@ function describePairs({ item, rights }: { item: MatchItem; rights: readonly num
     .join("; ");
 }
 
-/** Grades matches against the order the learner saw; an answer of another shape is wrong. */
+/** Grade indexes against the displayed column order; mismatched answer shapes count as wrong. */
 export function gradeMatch({ answer, item }: { answer: QuestionAnswer; item: MatchItem }) {
   const order = getRightOrder(item);
   const picks = "matches" in answer ? answer.matches.map((shown) => order[shown] ?? -1) : [];

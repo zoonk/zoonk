@@ -7,7 +7,6 @@ import { type DailyTimeLimitStatus } from "../get-daily-time-limit";
 
 const SECONDS_PER_MINUTE = 60;
 
-/** How much of a day's study time is left under a daily limit (none without a limit). */
 function toDailyTimeLimitStatus({
   limitMinutes,
   timeSpentSeconds,
@@ -26,11 +25,7 @@ function toDailyTimeLimitStatus({
   return { limitMinutes, reached: remainingMinutes === 0, remainingMinutes, usedMinutes };
 }
 
-/**
- * How much of one learner-local day's study time is left under the learner's daily limit.
- *
- * Internal: public capabilities derive `userId` from the signed-in learner.
- */
+/** Internal: derive userId from the signed-in learner; reads fresh permission state. */
 export async function loadDailyTimeLimitStatus({
   date,
   userId,
@@ -56,13 +51,7 @@ export async function loadDailyTimeLimitStatus({
   });
 }
 
-/**
- * Whether a page's learner has used up that day's study time. The limit comes from the request's
- * learning-profile fact, and the day's progress is read only under a limit. Starting something
- * new reads both afresh (`loadDailyTimeLimitStatus`).
- *
- * Internal GET fact: public capabilities derive `userId` from the signed-in learner.
- */
+/** GET fact after authorization; starts must use fresh loadDailyTimeLimitStatus instead. */
 export async function readDailyTimeLimitReached({
   date,
   userId,
@@ -84,12 +73,7 @@ export async function readDailyTimeLimitReached({
     .reached;
 }
 
-/**
- * The day's time under the learner's limit as a page shows it, from the request's profile and day
- * facts. Starting something new reads both afresh (`loadDailyTimeLimitStatus`).
- *
- * Internal GET fact: public capabilities derive `userId` from the signed-in learner.
- */
+/** GET fact after authorization; starts must use fresh loadDailyTimeLimitStatus instead. */
 export async function readDailyTimeLimitStatus({
   date,
   userId,

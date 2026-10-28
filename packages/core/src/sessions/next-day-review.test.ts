@@ -11,14 +11,9 @@ import { SESSION_NOW, daysAgo, sessionGoalFixture } from "./_test-utils/session-
 
 const RIGHT = { durationMs: 12_000, isCorrect: true };
 
-/**
- * A learner who studied the plan's first lesson yesterday, answering its questions right while
- * learning the skill it teaches, and opens today's session.
- */
 async function studiedYesterday({
   before,
 }: {
-  /** What else the plan holds before the learner opens today (it may add to the plan). */
   before?: (fixture: Awaited<ReturnType<typeof sessionGoalFixture>>) => Promise<unknown>;
 } = {}) {
   const user = await userFixture();
@@ -76,8 +71,6 @@ describe("a new learner's second day", () => {
   });
 
   it("names the review after the lesson the learner studied, never a later one on the same skill", async () => {
-    // Carla's review opened with "Agrupamento por necessidade", a lesson of a module she hadn't
-    // started that teaches the skill of the lesson she studied, written before it.
     const later = await libraryLessonFixture({ title: "Grouping by need" });
 
     const { first, lessons } = await studiedYesterday({

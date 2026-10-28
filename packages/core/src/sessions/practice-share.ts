@@ -1,7 +1,4 @@
-/**
- * Mixed practice stays small while the basics are learned, then grows with the plan, and most of
- * all in the month and week before an exam, when practicing in the exam's format pays the most.
- */
+/** Prioritize learning basics early and exam-format practice near the exam. */
 const BASICS_SHARE_OF_PLAN = 0.15;
 const EARLY_PRACTICE_SHARE = 0.1;
 const BASE_PRACTICE_SHARE = 0.2;
@@ -11,7 +8,6 @@ const EXAM_MONTH_BOOST = 0.2;
 const EXAM_WEEK_DAYS = 7;
 const MAX_PRACTICE_SHARE = 0.6;
 
-/** The share of a session's learning time that goes to mixed practice. */
 export function getPracticeShare({
   daysToExam,
   planProgress,

@@ -21,7 +21,6 @@ import { answerStudyQuestion } from "./answer-study-question";
 import { readBlockPayload } from "./block-payload";
 import { getStudyBlock } from "./get-study-block";
 
-/** An active practice block of today's session asking one mistake's drill, in any payload shape. */
 async function drillBlockFixture(drill: Record<string, unknown>) {
   const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
 
@@ -48,7 +47,6 @@ async function drillBlockFixture(drill: Record<string, unknown>) {
   return { block, item, mistake, session };
 }
 
-/** A practice block of today's session as it's saved, with the payload given. */
 function practiceBlock(payload: StudySessionBlock["payload"]): StudySessionBlock {
   const now = new Date();
 
@@ -71,8 +69,6 @@ function practiceBlock(payload: StudySessionBlock["payload"]): StudySessionBlock
 }
 
 describe(toStudyBlockView, () => {
-  // Past a free exam plan's first week the day's only practice is fixing mistakes, and Today
-  // called it "Mixed practice", the practice the free plan no longer has.
   it("says a practice block that only fixes mistakes is that, and a mixed one isn't", () => {
     const drills = [
       { itemIds: [crypto.randomUUID()], kind: "retry", mistakeId: crypto.randomUUID() },
@@ -152,8 +148,6 @@ describe("mistake drills in today's session", () => {
   });
 
   it("drills a lesson's mistake on a finer skill with the questions of the plan's skill it's held for", async () => {
-    // Production's outlines hold a lesson for the plan's skill while its screens teach a finer
-    // skill of their own, where a wrong answer is saved; the bank's questions are on the plan's.
     const user = await userFixture();
 
     const [fixture, planSkill] = await Promise.all([

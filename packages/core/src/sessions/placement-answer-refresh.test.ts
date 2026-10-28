@@ -21,7 +21,6 @@ vi.mock("../plans/refresh-goal-plan", async (importOriginal) => {
 const TIME_ZONE = "UTC";
 const DAY_MS = 86_400_000;
 
-/** A true statement the item bank accepts: answered true, it's right. */
 const TRUE_STATEMENT = {
   context: null,
   isTrue: true,
@@ -30,10 +29,6 @@ const TRUE_STATEMENT = {
   statement: "The rule holds here.",
 };
 
-/**
- * A goal the planner built yesterday, with nothing answered yet: the first week's session asks a
- * placement question on one of its skills, in `format`.
- */
 async function setup(format: "multipleChoice" | "trueFalse") {
   const user = await userFixture();
   const library = await planLibraryFixture({ skills: [{ lessons: 2 }, { lessons: 2 }] });
@@ -78,7 +73,6 @@ async function setup(format: "multipleChoice" | "trueFalse") {
   return { blockId: review.id, goal, itemId: itemId ?? "", sessionId: session.id };
 }
 
-/** The plan refreshes an answer left for after its response, once the learner has it. */
 async function runAfterResponse() {
   const tasks = vi.mocked(after).mock.calls.map(([task]) => task);
   vi.mocked(after).mockClear();
@@ -94,8 +88,6 @@ describe("a placement answer in a first-week session", () => {
     vi.mocked(refreshGoalPlan).mockClear();
   });
 
-  // A miss makes the topic a gap, which a plan short on time keeps first: the plan follows it, but
-  // only once the learner has the answer's feedback.
   it("plans again after the response when it changes what the plan reads of its skill", async () => {
     const { blockId, itemId, sessionId } = await setup("multipleChoice");
 
@@ -112,8 +104,6 @@ describe("a placement answer in a first-week session", () => {
     expect(replans()).toHaveLength(1);
   });
 
-  // One right true-or-false answer is right by luck half the time: the skill stays to confirm, so
-  // the plan reads it as before and nothing plans again.
   it("leaves the plan as it is when it tells the plan nothing new", async () => {
     const { blockId, itemId, sessionId } = await setup("trueFalse");
 

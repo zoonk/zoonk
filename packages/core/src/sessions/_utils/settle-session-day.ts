@@ -31,10 +31,7 @@ class SessionCompletionUnchangedError extends Error {
   }
 }
 
-/**
- * Keeps where the learner stood as the session ended, so its summary says what that session
- * changed, not what later lessons did.
- */
+/** Preserve session-end state so later lessons cannot change its summary. */
 async function keepSessionEnd(
   tx: TransactionClient,
   { end, sessionId }: { end: SessionState; sessionId: string },
@@ -42,12 +39,7 @@ async function keepSessionEnd(
   await tx.studySession.update({ data: { endSnapshot: end }, where: { id: sessionId } });
 }
 
-/**
- * A session whose blocks are all done or skipped is complete: its ledger row closes, the plan
- * re-flows what the day left undone, "Session Completed" goes out the first time and memory reads
- * the session after the response (unless an earlier stop had it read already). When two blocks finish at once, only the request that completed
- * it does this.
- */
+/** Completes only when no work remains; concurrent block finishes may close the session only once. */
 async function completeIfFinished({
   answers,
   session,
@@ -74,8 +66,7 @@ async function completeIfFinished({
       SELECT id FROM study_sessions WHERE id = ${session.id}::uuid FOR NO KEY UPDATE
     `;
 
-      // Queue writers take this row before inserting/restoring blocks. A separate read after the
-      // lock sees work committed while completion waited, unlike the session read above.
+      // Reload after the queue lock to include work committed while completion waited.
       const openBlocks = await tx.studySessionBlock.count({
         where: { sessionId: session.id, status: { in: ["active", "pending"] } },
       });
@@ -129,8 +120,7 @@ async function completeIfFinished({
     trackSessionCompleted({ ...session, ...completed.session });
   }
 
-  // Memory and the rebalance read a session once, when it first ended or was first stopped: what
-  // came after is in the week the next session's read measures.
+  // Memory reads once at the first stop or end; later work belongs to the next session's reading.
   if (!completed.session.endedAt && !completed.session.stoppedAt) {
     scheduleMemoryAfterSession({ goalId: session.goalId, sessionId: session.id, timeZone, userId });
   }
@@ -149,17 +139,13 @@ async function completeIfFinished({
 type SettledSessionDay = {
   fullMealPaid: boolean;
   fullMealReward: BrainPowerReward | null;
-  /** What the finished block did to the missions: the ones it completed and the bonus it paid. */
   missionResult: BlockMissionResult;
   missions: Mission[];
   session: StudySessionRow;
   sessionCompleted: boolean;
 };
 
-/**
- * What happens after any block of the session finishes: the missions are checked (a full meal pays
- * +50 once a day) and the session completes when nothing is left.
- */
+/** Settles missions and completes the session when nothing remains; the full-meal reward pays once per day. */
 export async function settleSessionDay({
   blockId,
   rewardMissions = true,
@@ -168,7 +154,6 @@ export async function settleSessionDay({
   timeZone,
   userId,
 }: {
-  /** The block whose finish settles the day, which keeps what it did to the missions. */
   blockId?: string;
   /** Ending an unasked challenge closes the session without paying a completion reward. */
   rewardMissions?: boolean;
@@ -185,8 +170,7 @@ export async function settleSessionDay({
 
   const [answers, settled] = await Promise.all([
     loadSessionAnswers({ blocks: session.blocks, sessionId, userId }),
-    // No tag expiry: in a Server Action it draws the page again, which would swap the block's
-    // moment (the missions it completed) for the next step. The screen refreshes when it closes.
+    // Server Action tag expiry would replace the block's earned-mission moment before its screen closes.
     rewardMissions
       ? settleMissions({ blockId, revalidation: "skip", sessionId, source, timeZone, userId })
       : getDayMissions({ session, timeZone }).then((missions) => ({

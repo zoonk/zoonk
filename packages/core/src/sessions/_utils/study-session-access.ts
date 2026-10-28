@@ -15,10 +15,7 @@ export const STUDY_SESSION_INCLUDE = {
   goal: true,
 } as const;
 
-/**
- * Resolves one of the signed-in learner's study sessions. Another learner's session is "not
- * found", so session ids never reveal whether a session exists.
- */
+/** Requires sign-in and ownership; other learners' session ids return not-found without revealing existence. */
 export async function findOwnedStudySession(sessionId: string): Promise<OwnedStudySession> {
   const session = await getSession();
 
@@ -43,7 +40,7 @@ export type OwnedStudyBlock =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/** Resolves one block of one of the signed-in learner's sessions. */
+/** Requires sign-in and ownership of both the session and its block. */
 export async function findOwnedStudyBlock({
   blockId,
   sessionId,

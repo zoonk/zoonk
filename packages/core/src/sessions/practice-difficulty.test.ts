@@ -14,13 +14,8 @@ import {
 } from "./_test-utils/session-goal";
 import { readBlockPayload } from "./block-payload";
 
-/** Item difficulty on the IRT-style scale real answers refine: easy, medium and hard. */
 const DIFFICULTIES = { easy: -1, hard: 1, medium: 0 } as const;
 
-/**
- * A goal whose only lesson is done, its skill studied and not due, with an easy, a medium and a
- * hard question on it, and the plan steered with `difficultyBias`: today is all mixed practice.
- */
 async function practiceDay(difficultyBias: DifficultyBias, targetDate: Date | null = null) {
   const user = await userFixture();
 

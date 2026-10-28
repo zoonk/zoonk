@@ -11,10 +11,6 @@ import {
 } from "./_test-utils/session-goal";
 import { loadSessionBuildInput } from "./_utils/load-build-inputs";
 
-/**
- * An IELTS learner whose placement tested out a speaking skill (its stand-in), who then took
- * Speaking out of their plan. Every skill is studied and due.
- */
 async function speakingTakenOut() {
   const user = await userFixture();
 
@@ -87,7 +83,6 @@ describe("a subject the learner took out of their plan", () => {
     vi.useRealTimers();
   });
 
-  // Out by choice: practice never asks it, and a miss on it never brings its lessons back.
   it("asks none of its skills, even one placement tested out", async () => {
     const { goal, speaking, user } = await speakingTakenOut();
 

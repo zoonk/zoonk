@@ -24,15 +24,7 @@ class SessionAnswerUnchangedError extends Error {
   }
 }
 
-/**
- * A session accepts one verdict per question, even from two tabs at once: a checkpoint acknowledges
- * a repeat with the verdict it stored, and any other block says it was answered already. Lock
- * before checking and inserting, in the same plans-before-owner-before-block-before-session order.
- * Overdue checkpoints can share an item, so the session lock also serializes their session/item
- * claim. Attempt, memory, and notebook writes commit together before either submission returns.
- * Models and plan changes stay outside these locks; analytics and cache invalidation run only
- * after commit.
- */
+/** Atomically accepts one verdict per session question, serializing duplicate tabs; run models and effects outside its locks. */
 export async function recordSessionAttempt({
   blockId,
   input,

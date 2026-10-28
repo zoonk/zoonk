@@ -12,7 +12,6 @@ import { getBlockTitle, getMissionMinutes } from "./mission-time";
 
 export type MissionDay = { blocks: readonly DayBlockInput[]; localDate: Date; userId: string };
 
-/** The picks done outside the day's blocks, which count what the learner did today. */
 const DAY_PROGRESS_KINDS: readonly MissionPick["kind"][] = [
   "askBuddy",
   "call",
@@ -40,10 +39,6 @@ type DayProgressRow = {
   usage: number;
 };
 
-/**
- * What the day's picks count, in one statement: only the counts some pick needs are read, the rest
- * stay zero.
- */
 async function loadDayProgress({
   client,
   picks,
@@ -204,7 +199,6 @@ function toMission({
   const block = blocks.find((candidate) => candidate.status !== "completed");
   const opens = getMissionOpens({ block, pick, session });
   const waitReason = block ? getStoredBlockWait({ block, blocks: session.blocks }) : null;
-  // The block still to do names the mission's next step ("Simple interest"), not the build's first.
   const title = block ? getBlockTitle(block) : null;
   const detail = title ? { ...pick.detail, title } : pick.detail;
   const minutes = getMissionMinutes({ blocks, done, kind: pick.kind, total: pick.total });
