@@ -157,35 +157,54 @@ extension StudyMission {
   }
 }
 
-/// One of the day's missions, the same wherever missions are listed (Today, the buddy's day): its
-/// mark, what it asks, what it still asks or waits for, and how far it is. A mission still to do
-/// that opens somewhere is a button calling `open`; a done or waiting one is one quiet row.
+/// One of the day's missions, the same wherever missions are listed (Today, the buddy's day), as
+/// main's row: the mark of the work it asks for (the buddy's face for a question to it), what it
+/// asks, then how far it is, what it still asks or waits for and about how long. One that opens a
+/// block of the day wears the day's mission target, and one still to do that opens somewhere is a
+/// button with a chevron calling `open`; a done or waiting one is one quiet row.
 struct MissionRow: View {
+  @Environment(LearnerSummaryStore.self) private var learner
+
   let mission: StudyMission
   let buddyName: String
   var open: (() -> Void)?
 
+  private var waits: Bool { mission.waitReason != nil }
+
+  private var opensSomewhere: Bool {
+    open != nil && !mission.isDone && !waits && mission.opens != nil
+  }
+
   var body: some View {
     let row = HStack(alignment: .firstTextBaseline, spacing: 12) {
-      StatusMark(status: mission.isDone ? .done : .todo)
+      mark
+        .frame(minWidth: 20)
 
       VStack(alignment: .leading, spacing: 2) {
         Text(mission.name(buddy: buddyName))
-          .foregroundStyle(mission.isDone ? .secondary : .primary)
+          .foregroundStyle(mission.isDone || waits ? .secondary : .primary)
 
-        if !mission.isDone, let step = mission.step {
-          Text(step)
+        if !mission.isDone, !detail.isEmpty {
+          Text(verbatim: detail.joined(separator: " · "))
             .font(.footnote)
+            .monospacedDigit()
             .foregroundStyle(.secondary)
         }
       }
 
       Spacer(minLength: 8)
 
-      if !mission.isDone, mission.total > 1 {
-        Text(verbatim: "\(mission.done)/\(mission.total)")
-          .font(.footnote.monospacedDigit())
-          .foregroundStyle(.secondary)
+      if !mission.isDone, !waits, mission.opens?.kind == "block" {
+        Image(systemName: "target")
+          .foregroundStyle(.brain)
+          .accessibilityHidden(true)
+      }
+
+      if opensSomewhere {
+        Image(systemName: "chevron.right")
+          .font(.footnote.weight(.semibold))
+          .foregroundStyle(.tertiary)
+          .accessibilityHidden(true)
       }
     }
     .accessibilityElement(children: .combine)
@@ -193,13 +212,75 @@ struct MissionRow: View {
       mission.isDone ? Text("Done", tableName: "Today", comment: "A mission that's done") : Text("")
     )
 
-    if let open, !mission.isDone, mission.waitReason == nil, mission.opens != nil {
+    if let open, opensSomewhere {
       Button(action: open) {
         row
       }
       .tint(.primary)
     } else {
       row
+    }
+  }
+
+  @ViewBuilder
+  private var mark: some View {
+    if mission.isDone {
+      StatusMark(status: .done)
+    } else if mission.kind == .askBuddy {
+      let buddy = learner.summary.value?.buddy ?? BuddyLook()
+      BuddyFace(kind: buddy.kind, glasses: buddy.glasses)
+    } else {
+      KindMark(kind: mission.kind.learnKind)
+    }
+  }
+
+  /// "1/3 · From your mistakes notebook · ~5 min": how far, what it still asks, and how long.
+  private var detail: [String] {
+    var parts: [String] = []
+
+    if mission.total > 1 {
+      parts.append("\(mission.done)/\(mission.total)")
+    }
+
+    if let step = mission.step {
+      parts.append(step)
+    }
+
+    if let minutes = mission.minutes, minutes > 0 {
+      let duration = studyDuration(minutes: max(1, Int(minutes.rounded())))
+      // Work outside the day's blocks takes about this long; a block's minutes are its own.
+      parts.append(
+        mission.kind.isEstimated
+          ? String(
+            localized: "~\(duration)", table: "Today",
+            comment: "About how long a mission outside the day's blocks takes, as in ~5 min")
+          : duration)
+    }
+
+    return parts
+  }
+}
+
+extension StudyMission.Kind {
+  /// The work the mission asks for, as Today's queue marks it (main's `MISSION_MARKS`).
+  var learnKind: LearnKind {
+    switch self {
+    case .call: .conversation
+    case .challenge, .weeklyChallenge: .challenge
+    case .essay: .essay
+    case .finishChapter, .somethingNew, .askBuddy: .lesson
+    case .fixMistake, .pattern: .mistakes
+    case .mock: .mock
+    case .practice, .weakSpot: .practice
+    case .pronunciation, .review: .review
+    }
+  }
+
+  /// Done outside the day's blocks, so its minutes are an estimate (main's `ESTIMATED_KINDS`).
+  var isEstimated: Bool {
+    switch self {
+    case .askBuddy, .call, .fixMistake, .pattern, .pronunciation: true
+    default: false
     }
   }
 }

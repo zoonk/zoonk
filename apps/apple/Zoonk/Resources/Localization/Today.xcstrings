@@ -2098,6 +2098,35 @@
         }
       }
     },
+    "~%@" : {
+      "comment" : "About how long a mission outside the day's blocks takes, as in ~5 min",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ca. %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        }
+      }
+    },
     "~%lld days left" : {
       "comment" : "Days left",
       "localizations" : {
