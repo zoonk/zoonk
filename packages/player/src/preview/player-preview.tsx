@@ -59,6 +59,7 @@ function previewAdapters(lesson: PlayableLibraryLesson): LessonPlayerAdapters {
           checked: true,
           correctAnswer: null,
           corrections: [],
+          expected: null,
           feedback: null,
           isCorrect: true,
           keyPoints: null,

@@ -9,6 +9,7 @@ export function fromLocalGrade(graded: GradedStepAnswer): LessonStepResult {
     checked: true,
     correctAnswer: graded.correctAnswer,
     corrections: [],
+    expected: graded.expected,
     feedback: graded.feedback,
     heard: null,
     isCorrect: graded.isCorrect,
@@ -44,6 +45,7 @@ export function fromSpokenGrade({
     checked: true,
     correctAnswer: grade.isCorrect ? null : target,
     corrections: [],
+    expected: null,
     feedback: grade.explanation,
     heard: {
       transcript: grade.transcript,
@@ -82,6 +84,7 @@ export function revealGuess({
     checked: true,
     correctAnswer: picked.isCorrect ? null : (right?.text ?? null),
     corrections: [],
+    expected: null,
     feedback: step.content.reveal,
     heard: null,
     isCorrect: picked.isCorrect,

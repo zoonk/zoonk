@@ -17,6 +17,7 @@ export function toCheckResult({
     checked: verdict.checked,
     correctAnswer: verdict.correctAnswer,
     corrections: verdict.corrections,
+    expected: verdict.expected,
     feedback: verdict.feedback,
     isCorrect: verdict.isCorrect,
     keyPoints: verdict.keyPoints,

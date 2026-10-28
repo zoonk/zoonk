@@ -7,6 +7,7 @@ function fromSampleAnswer(sampleAnswer: string): LessonStepResult {
     checked: false,
     correctAnswer: sampleAnswer,
     corrections: [],
+    expected: null,
     feedback: null,
     heard: null,
     isCorrect: false,

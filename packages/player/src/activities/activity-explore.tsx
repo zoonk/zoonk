@@ -1,5 +1,6 @@
 "use client";
 
+import { getActivityExpected } from "@zoonk/core/library/activities/expected";
 import {
   type ActivityStepContent,
   type ExploreActivityContent,
@@ -9,7 +10,6 @@ import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { Suspense } from "react";
 import { ActivityCanvasSkeleton } from "./_components/activity-canvas";
 import { ActivityDataNote } from "./_components/activity-data-note";
-import { getActivityExpected } from "./_utils/activity-expected";
 import { activityRenderers } from "./activity-registry";
 
 function toCanvasContent(content: ExploreActivityContent): ActivityStepContent {

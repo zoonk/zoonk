@@ -1,6 +1,6 @@
-import { activityContentSchema } from "@zoonk/core/library/activities/templates";
 import { describe, expect, it } from "vitest";
 import { getActivityExpected } from "./activity-expected";
+import { activityContentSchema } from "./activity-templates";
 
 const numberLine = {
   check: {

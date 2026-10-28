@@ -146,6 +146,7 @@ describe("lesson screens", () => {
           checked: false,
           correctAnswer: "Because it maps chances.",
           corrections: [],
+          expected: null,
           feedback: null,
           isCorrect: false,
           keyPoints: null,
@@ -186,6 +187,7 @@ describe("lesson screens", () => {
           checked: true,
           correctAnswer: null,
           corrections: [],
+          expected: null,
           feedback: null,
           isCorrect: true,
           keyPoints: null,
@@ -222,6 +224,7 @@ describe("lesson screens", () => {
           checked: true,
           correctAnswer: RIGHT_TYPED,
           corrections: [{ right: "It shows", wrong: "It show" }],
+          expected: null,
           feedback: "Every idea is there; with “it” the verb is “shows”.",
           isCorrect: false,
           keyPoints: [
@@ -266,6 +269,7 @@ describe("lesson screens", () => {
           checked: true,
           correctAnswer: null,
           corrections: [],
+          expected: null,
           feedback,
           isCorrect: true,
           keyPoints: [

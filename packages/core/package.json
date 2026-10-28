@@ -217,6 +217,7 @@
     "./library/activities/combination-grid": "./src/library/activities/templates/combination-grid.ts",
     "./library/activities/console-values": "./src/library/activities/programs/console-values.ts",
     "./library/activities/excerpt-passages": "./src/library/activities/excerpt-passages.ts",
+    "./library/activities/expected": "./src/library/activities/activity-expected.ts",
     "./library/activities/expected-answer": "./src/library/activities/activity-expected-answer.ts",
     "./library/activities/expression/evaluate": "./src/library/activities/expression/evaluate-expression.ts",
     "./library/activities/expression/parse": "./src/library/activities/expression/parse-expression.ts",

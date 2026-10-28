@@ -259,6 +259,7 @@ describe("picture loss during a lesson", () => {
               checked: true,
               correctAnswer: null,
               corrections: [],
+              expected: null,
               feedback: null,
               isCorrect: true,
               keyPoints: [],

@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { gradeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
 import { prisma } from "@zoonk/db";
+import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { languageLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
@@ -157,6 +158,64 @@ describe(checkLessonStep, () => {
     expect(outcome.status === "checked" && outcome.result.nextReviewAt).toBe(
       learnerSkill.due?.toISOString(),
     );
+  });
+
+  it("gives an activity's correct end state with its verdict, so the canvas draws it beside the answer", async () => {
+    const { run, steps } = await setupRun({
+      steps: [{ content: activityContentFixtures.labeledDiagram, kind: "activity" }],
+    });
+
+    const outcome = await check({
+      answer: {
+        answer: { kind: "assignment", pairs: { "1": "Left atrium", "2": "Right atrium" } },
+        kind: "activity",
+      },
+      runId: run.id,
+      stepId: stepOfKind(steps, "activity").id,
+    });
+
+    expect(outcome).toMatchObject({
+      result: {
+        expected: {
+          answer: {
+            kind: "assignment",
+            pairs: {
+              "1": "Right atrium",
+              "2": "Left atrium",
+              "3": "Right ventricle",
+              "4": "Left ventricle",
+              "5": "Aorta",
+            },
+          },
+          kind: "interaction",
+        },
+        isCorrect: false,
+      },
+      status: "checked",
+    });
+  });
+
+  it("gives a numeric activity's answer as its expected value, and no end state for other screens", async () => {
+    const { run, steps } = await setupRun({ steps: ["activity", "check"] });
+
+    const [activity, choice] = await Promise.all([
+      check({
+        answer: { answer: { kind: "numeric", value: 5 }, kind: "activity" },
+        runId: run.id,
+        stepId: stepOfKind(steps, "activity").id,
+      }),
+      check({
+        answer: { kind: "check", optionId: "likely" },
+        runId: run.id,
+        stepId: stepOfKind(steps, "check").id,
+      }),
+    ]);
+
+    expect(activity).toMatchObject({
+      result: { expected: { kind: "numeric", value: 5 }, isCorrect: true },
+    });
+
+    expect(choice).toMatchObject({ result: { expected: null, isCorrect: true } });
   });
 
   it("records answers of a run started from a session with that session", async () => {

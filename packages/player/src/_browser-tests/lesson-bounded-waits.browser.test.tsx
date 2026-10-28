@@ -32,6 +32,7 @@ describe("bounded waits", () => {
           checked: true,
           correctAnswer: null,
           corrections: [],
+          expected: null,
           feedback: null,
           isCorrect: true,
           keyPoints: null,

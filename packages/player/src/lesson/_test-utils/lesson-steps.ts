@@ -121,6 +121,7 @@ export function stepResult(isCorrect: boolean): LessonStepResult {
     checked: true,
     correctAnswer: isCorrect ? null : "Right",
     corrections: [],
+    expected: null,
     feedback: isCorrect ? "Because it is." : "That's the trap.",
     heard: null,
     isCorrect,

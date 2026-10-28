@@ -47,6 +47,7 @@ describe(gradeStepAnswer, () => {
     ).toStrictEqual({
       answerText: "The electron's exact path",
       correctAnswer: "Where the electron is most likely to be found",
+      expected: null,
       feedback: "There is no exact path to show: the electron doesn't follow one.",
       isCorrect: false,
     });
@@ -94,6 +95,7 @@ describe(gradeStepAnswer, () => {
     expect(wrong).toStrictEqual({
       answerText: "4 °C",
       correctAnswer: "5 °C",
+      expected: { kind: "numeric", value: 5 },
       feedback: "−3 + 8 = 5, so it's 5 °C at noon.",
       isCorrect: false,
     });
@@ -166,6 +168,7 @@ describe(gradeStepAnswer, () => {
     ).toStrictEqual({
       answerText: "An orbit",
       correctAnswer: "A cloud",
+      expected: null,
       feedback: "That's the old planet picture.",
       isCorrect: false,
     });
@@ -192,6 +195,7 @@ describe(gradeStepAnswer, () => {
       answerText:
         "Ask the AI to check if the difference is real → A gap this small shows up by chance all the time. One more week will tell us. → Launch B for everyone",
       correctAnswer: null,
+      expected: null,
       feedback: "Version B went to everyone: 3.1% → 3.7%, or 19% more purchases per visit.",
       isCorrect: true,
     });

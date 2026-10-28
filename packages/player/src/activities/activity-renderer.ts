@@ -1,5 +1,5 @@
 import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schema";
-import { type ActivityExpectedAnswer } from "@zoonk/core/library/activities/expected-answer";
+import { type ActivityExpected } from "@zoonk/core/library/activities/expected-answer";
 import {
   type ActivityContentFor,
   type ActivityStepContent,
@@ -8,11 +8,6 @@ import {
 import { type ComponentType } from "react";
 
 export type ActivityPhase = "answering" | "checked" | "explore";
-
-export type ActivityExpected =
-  | { kind: "choice"; optionId: string }
-  | { kind: "interaction"; answer: ActivityExpectedAnswer }
-  | { kind: "numeric"; value: number };
 
 type ActivityRendererSharedProps = {
   /** Controlled by the player reducer; renderers must not own a second answer state. */

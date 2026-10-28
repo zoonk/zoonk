@@ -7,9 +7,9 @@ import { matchTypedAnswer } from "@zoonk/ai/tasks/v2/grading/typed-answer-match"
 import { gradeChallengePath } from "../../library/challenges/challenge-run";
 import { matchSpokenAnswer } from "../../library/language/spoken-answer-match";
 import { type LessonStepAnswer, type PlayableLibraryStep } from "../contract";
-import { gradeStepAnswer } from "../grade-step-answer";
+import { type GradedStepAnswer, gradeStepAnswer } from "../grade-step-answer";
 
-export type LessonAnswerVerdict = {
+export type LessonAnswerVerdict = Pick<GradedStepAnswer, "expected"> & {
   answerText: string | null;
   /** False means not checked, never an incorrect verdict; show the sample answer. */
   checked: boolean;
@@ -61,6 +61,7 @@ function gradeTypedByCode({
     checked: isCorrect,
     correctAnswer: isCorrect ? null : content.sampleAnswer,
     corrections: [],
+    expected: null,
     feedback: null,
     isCorrect,
     keyPoints: null,
@@ -102,6 +103,7 @@ async function gradeTypedStep({
     checked: true,
     correctAnswer: data.isCorrect ? null : content.sampleAnswer,
     corrections: data.corrections,
+    expected: null,
     feedback: data.feedback,
     isCorrect: data.isCorrect,
     keyPoints: data.keyPoints,
@@ -129,6 +131,7 @@ function gradeSpokenFallback({ answer, step }: OpenAnswerGrade): LessonAnswerVer
     checked: true,
     correctAnswer: match.isCorrect ? null : content.targetText,
     corrections: match.isCorrect ? [] : [{ right: content.targetText, wrong: answer.text }],
+    expected: null,
     feedback: null,
     isCorrect: match.isCorrect,
     keyPoints: null,

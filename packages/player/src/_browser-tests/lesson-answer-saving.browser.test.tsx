@@ -65,6 +65,7 @@ describe("saving answers", () => {
         checked: true,
         correctAnswer: RIGHT_OPTION,
         corrections: [],
+        expected: null,
         feedback: null,
         isCorrect: false,
         keyPoints: null,

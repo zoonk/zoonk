@@ -2,6 +2,7 @@ import { type CourseLevel } from "@zoonk/db";
 import { z } from "zod";
 import { answerDurationSchema, answerTimeZoneSchema } from "../learner/contract";
 import { activityAnswerSchema } from "../library/activities/activity-answer-schema";
+import { activityExpectedSchema } from "../library/activities/activity-expected-answer";
 import { type MaterialCitation } from "../library/sources/material-question-contract";
 import { type SourceCitation } from "../library/sources/source-citation";
 import { type StepContentByKind } from "../library/steps/contract/step-contract";
@@ -237,6 +238,12 @@ export const lessonStepCheckResultSchema = z
       .meta({
         description:
           "A typed answer in a language course: each form mistake (a wrong word, gender, number, tense or agreement), which keeps the answer from being right even when every key point is met. A sentence typed instead of said that misses: one correction, the sentence as typed and as it reads. Empty otherwise.",
+      }),
+    expected: activityExpectedSchema
+      .nullable()
+      .meta({
+        description:
+          "An activity's correct answer, computed by the code that graded it, to draw next to the learner's answer: the right option, the number or the canvas's end state. Null for other screens, and for an activity whose template computes none",
       }),
     feedback: z
       .string()

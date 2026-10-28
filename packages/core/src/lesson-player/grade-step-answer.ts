@@ -1,6 +1,8 @@
 import { exactFractionDigitsFor } from "@zoonk/utils/localized-number";
 import { formatMathAnswer } from "@zoonk/utils/math-answer";
 import { checkActivityAnswer } from "../library/activities/activity-answers";
+import { getActivityExpected } from "../library/activities/activity-expected";
+import { type ActivityExpected } from "../library/activities/activity-expected-answer";
 import { gradeChallengePath } from "../library/challenges/challenge-run";
 import { type SelectedAnswer } from "../player/contracts/_utils/selected-answer-schema";
 import { checkStepAnswer } from "../player/contracts/check-step-answer";
@@ -17,6 +19,8 @@ export type GradedStepAnswer = {
   answerText: string | null;
   /** The right answer as text when the learner missed it. */
   correctAnswer: string | null;
+  /** An activity's correct end state, drawn next to the learner's answer; null for other screens. */
+  expected: ActivityExpected | null;
   feedback: string | null;
   isCorrect: boolean;
 };
@@ -39,6 +43,7 @@ function gradeCheck({
   return {
     answerText: option.text,
     correctAnswer: option.isCorrect ? null : (correct?.text ?? null),
+    expected: null,
     feedback: option.reason,
     isCorrect: option.isCorrect,
   };
@@ -65,6 +70,7 @@ function gradeActivityChoice({
   return {
     answerText: option.text,
     correctAnswer: option.isCorrect ? null : (correct?.text ?? null),
+    expected: getActivityExpected(step.content),
     feedback: option.reason,
     isCorrect: option.isCorrect,
   };
@@ -111,6 +117,7 @@ function gradeActivity({
         ? exact(answer.answer.value)
         : null,
     correctAnswer: isCorrect ? null : expected,
+    expected: getActivityExpected(step.content),
     feedback: check.explanation,
     isCorrect,
   };
@@ -129,6 +136,7 @@ function gradeChallenge({
   return {
     answerText: result.steps.map((item) => item.choice.text).join(" → "),
     correctAnswer: null,
+    expected: null,
     feedback: result.ending.outcome,
     isCorrect: result.isCorrect,
   };
@@ -195,6 +203,7 @@ function gradeExercise({
   return {
     answerText: describeExerciseAnswer({ answer, exercise: step.exercise }),
     correctAnswer: result.isCorrect ? null : result.correctAnswer,
+    expected: null,
     feedback: result.feedback,
     isCorrect: result.isCorrect,
   };

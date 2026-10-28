@@ -50,6 +50,7 @@ export function localAdapters(lesson: PlayableLibraryLesson): LessonPlayerAdapte
           checked: true,
           correctAnswer: graded.correctAnswer,
           corrections: [],
+          expected: graded.expected,
           feedback: graded.feedback,
           isCorrect: graded.isCorrect,
           keyPoints: null,

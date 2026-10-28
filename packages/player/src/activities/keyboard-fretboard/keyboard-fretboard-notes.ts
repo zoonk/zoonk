@@ -1,4 +1,5 @@
 import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schema";
+import { type ActivityExpected } from "@zoonk/core/library/activities/expected-answer";
 import {
   type ChordQuality,
   chordPitchClasses,
@@ -16,7 +17,7 @@ import {
   spellChord,
 } from "../_utils/music-notes";
 import { type SoundEvent, oneByOne, together } from "../_utils/sound-events";
-import { type ActivityExpected, type ActivityPhase } from "../activity-renderer";
+import { type ActivityPhase } from "../activity-renderer";
 
 const OCTAVE = 12;
 

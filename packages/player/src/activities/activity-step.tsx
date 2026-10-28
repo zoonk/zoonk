@@ -1,5 +1,6 @@
 "use client";
 
+import { getActivityExpected } from "@zoonk/core/library/activities/expected";
 import { useIsMounted } from "@zoonk/ui/hooks/is-mounted";
 import { Suspense, useId } from "react";
 import { InteractiveStepLayout } from "../components/step-layouts";
@@ -10,7 +11,6 @@ import { ActivityChoiceCheck } from "./_components/activity-choice-check";
 import { ActivityDataNote } from "./_components/activity-data-note";
 import { ActivityFeedback } from "./_components/activity-feedback";
 import { ActivityNumericCheck } from "./_components/activity-numeric-check";
-import { getActivityExpected } from "./_utils/activity-expected";
 import { activityRenderers } from "./activity-registry";
 import { type ActivityStepProps } from "./activity-renderer";
 
