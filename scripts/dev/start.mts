@@ -78,6 +78,8 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
       NEXT_PUBLIC_API_URL: apiUrl,
       // Vercel's name for a run on this machine (as in `vercel dev`), so production builds keep local sign-in and mail.
       VERCEL_ENV: "development",
+      // Each service stops with this process however it ends; see `stop-with-launcher.mts`.
+      ZOONK_DEV_LAUNCHER_PID: String(process.pid),
       ZOONK_DEV_PROJECT: projectName,
     },
   });

@@ -40,7 +40,7 @@ We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm
 - `pnpm dev` to start every app through Portless. Routes include the clone name, such as `http://main.zoonk.localhost:1355`, and linked worktrees also receive a branch prefix
 - `pnpm dev:lan` when testing from a phone or another device on the same trusted network. It prints the `.local` Main URL to open on that device, such as `http://main.zoonk.local:1356`
 - `pnpm dev:direct` to bypass Portless and use the original fixed localhost ports
-- `pnpm dev:prune` to let Portless remove orphaned servers left by crashed sessions. Stop active development stacks from the terminal where they are running
+- `pnpm dev:prune` to let Portless remove orphaned servers left by crashed sessions. A stack's services stop by themselves within seconds of its `pnpm dev` or `pnpm start` ending, even when that process is force-killed
 - `pnpm build` to create a production build
 - `pnpm start` to build every app and serve the production builds at the same Portless URLs as `pnpm dev`, with local sign-in and the mailbox working the same way. Stop the checkout's `pnpm dev` first, since both use the same routes
 - `pnpm lint` to run linting

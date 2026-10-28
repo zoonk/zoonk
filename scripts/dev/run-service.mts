@@ -14,9 +14,15 @@ if (!serviceName) {
 const currentDirectory = process.cwd();
 const lanMode = process.argv.includes("--lan") || process.env.PORTLESS_LAN === "1";
 
+/** `pnpm dev` and `pnpm start` pass their own process; a service started on its own is launched by this script. */
+const launcherPid = process.env.ZOONK_DEV_LAUNCHER_PID ?? String(process.pid);
+const stopWithLauncher = `--import=${import.meta.resolve("./stop-with-launcher.mts")}`;
+
 const environment = {
   ...process.env,
   ...getPortlessEnvironment({ homeDirectory: homedir(), lanMode }),
+  NODE_OPTIONS: [process.env.NODE_OPTIONS, stopWithLauncher].filter(Boolean).join(" "),
+  ZOONK_DEV_LAUNCHER_PID: launcherPid,
 };
 
 const pnpmCommand = getPnpmCommand(environment);
