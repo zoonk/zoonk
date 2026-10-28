@@ -15,10 +15,6 @@ import { BuddyGlassesPicker } from "./buddy-glasses-picker";
 import { type BuddyGlassesProgress } from "./buddy-status-view";
 import { type LearnBuddy } from "./use-buddy-name";
 
-/**
- * Every pair of glasses, opened from the buddy's menu: the earned ones go on with one tap and the
- * rest say how they're earned and how far along the learner is.
- */
 export function BuddyGlassesSheet({
   buddy,
   failed,
@@ -28,7 +24,6 @@ export function BuddyGlassesSheet({
   open,
 }: {
   buddy: LearnBuddy;
-  /** The last pair picked didn't save, so the buddy kept the one before. */
   failed: boolean;
   glasses: BuddyGlassesProgress[];
   onOpenChange: (open: boolean) => void;

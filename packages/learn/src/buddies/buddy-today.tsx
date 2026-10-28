@@ -26,14 +26,8 @@ import { type LearnBuddy } from "./use-buddy-name";
 
 const PERCENT = 100;
 
-/** What the line shows for a value it doesn't have yet. */
 const DASH = "–";
 
-/**
- * The buddy's day in a sheet: Energy with its history, the missions and a new learner's first
- * steps, how the buddy grows. Asking the buddy something from its own sheet closes the sheet onto
- * the composer below it, where the question is typed.
- */
 function BuddyTodaySheet({
   asked,
   buddy,
@@ -45,7 +39,6 @@ function BuddyTodaySheet({
   open,
   status,
 }: {
-  /** The sheet closed to ask the buddy: focus stays on the composer instead of going back. */
   asked: boolean;
   buddy: LearnBuddy;
   energyHref: string;
@@ -117,7 +110,6 @@ function BuddyTodaySheet({
   );
 }
 
-/** "1 of 3 missions", or "Missions" before the day has them: the status's name for screen readers. */
 function useMissionsLabel(status: BuddyStatusView): string {
   const t = useExtracted();
   const today = status.today;
@@ -134,7 +126,6 @@ function useMissionsLabel(status: BuddyStatusView): string {
   );
 }
 
-/** A value the status doesn't have yet: a quiet dash, "Not yet" for screen readers. */
 function NotYet() {
   const t = useExtracted();
 
@@ -148,13 +139,6 @@ function NotYet() {
   );
 }
 
-/**
- * The buddy's day as one quiet line beside its name: Energy (an amber bolt and its share) and
- * today's missions (the tab's ring, small, and "1/3"), both in the mono face. A tap opens the day
- * in a sheet: Energy with its history a tap further, the missions with their checks, a new
- * learner's first steps, how the buddy grows. Where the day sits beside the conversation
- * (`BuddyDay`), `className` hides it.
- */
 export function BuddyToday({
   buddy,
   className,
@@ -163,7 +147,6 @@ export function BuddyToday({
   name,
   status,
 }: {
-  /** The buddy as drawn, whose face marks a question to it. */
   buddy: LearnBuddy;
   className?: string;
   energyHref: string;

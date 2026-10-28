@@ -62,10 +62,6 @@ export type {
 
 const TutorContentContext = createContext<TutorConversationContent | null>(null);
 
-/**
- * What the host's conversation, placed as the buddy screen's child, needs from the buddy: its name
- * and face, its hello, the composer's words, the first suggestions and the plan change card.
- */
 export function useBuddyTutor(): TutorConversationContent {
   const content = use(TutorContentContext);
 
@@ -76,32 +72,15 @@ export function useBuddyTutor(): TutorConversationContent {
   return content;
 }
 
-/**
- * Where the buddy tab leads: Energy over time, what the buddy remembers and the week's summary.
- * Statistics open from the account menu and the level in the top bar.
- */
-export type BuddyScreenHrefs = BuddyDayHrefs & {
-  /** The learner's questions from an earlier version of their courses, when they have any. */
-  earlierQuestions?: string;
-};
+export type BuddyScreenHrefs = BuddyDayHrefs & { earlierQuestions?: string };
 
-/**
- * How the buddy tab saves: the buddy (kind, name and glasses), resolving to whether it was saved,
- * and the learner's answer to a plan change the buddy proposed in the conversation. Today's
- * missions open where they're done (`missionLinks`).
- */
 type BuddyScreenActions = {
   decidePlanChange: DecideTutorPlanChange;
   missionLinks: MissionLinks;
   saveBuddy: (buddy: AppearanceBuddy) => Promise<boolean>;
-  /** How the app tools the buddy offers in the conversation open. */
   tools: TutorToolActions;
 };
 
-/**
- * A pending choice shows at once, reconciled against the latest server profile so a retained
- * page follows edits from Preferences. Only the latest save can report a failure.
- */
 function useBuddyChanges({
   initial,
   saveBuddy,
@@ -132,10 +111,7 @@ function useBuddyChanges({
   return { current, failed, save };
 }
 
-/**
- * With a mouse or trackpad, the tab opens ready to type: the conversation's field takes focus. On
- * a phone it waits for a tap, so the keyboard doesn't cover the conversation.
- */
+/** Only with a fine pointer: on a phone, focus would raise the keyboard over the conversation. */
 function useFocusComposerOnPointer() {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -148,7 +124,6 @@ function useFocusComposerOnPointer() {
   return ref;
 }
 
-/** What's done now and then with the buddy: change it, its glasses and the week's summary. */
 function BuddyMenu({
   buddy,
   glassesCount,
@@ -209,9 +184,6 @@ function BuddyMenu({
   );
 }
 
-/**
- * The default buddy gently offers choosing a look and name under its hello.
- */
 function PickBuddyButton({ onPick }: { onPick: () => void }) {
   const t = useExtracted();
 
@@ -223,11 +195,7 @@ function PickBuddyButton({ onPick }: { onPick: () => void }) {
   );
 }
 
-/**
- * The buddy's face at the top of its tab, reacting to the conversation: it glances at what the
- * learner sends and smiles when its answer comes in. Only while it's awake: asleep it naps on, and
- * glowing it's already beaming, with its eyes shut, so a smile would swap its face away.
- */
+/** Only while awake: asleep it naps on, and glowing it's already beaming, so a smile would swap its face away. */
 function useChatFace(buddy: LearnBuddy) {
   const face = useRef<ActorHandle<BuddyActName>>(null);
   const awake = getBuddyEnergyState(buddy.energy, { studiedToday: buddy.studiedToday }) === "awake";
@@ -247,15 +215,6 @@ function useGlassesCount(status: BuddyStatusView): string {
   return t("{earned} of {total}", { earned: String(earned), total: String(status.glasses.length) });
 }
 
-/**
- * The buddy tab: the learner's conversation with their buddy, their tutor for the goal. The buddy
- * sits on one compact row on top (its face, name and stage, and the rest behind its "…"); the
- * conversation takes the screen, its suggestions and composer always within reach. On a phone or
- * a tablet the buddy's day is one quiet line of Energy and missions that opens its sheet; on a
- * wide screen it sits beside the conversation instead (`BuddyDay`), which keeps a comfortable
- * line length. The default buddy's hello offers choosing a buddy.
- * The host places the conversation as its child, which reads the buddy with `useBuddyTutor`.
- */
 export function BuddyScreen({
   actions,
   children,
@@ -265,7 +224,6 @@ export function BuddyScreen({
   status,
 }: {
   actions: BuddyScreenActions;
-  /** The conversation, which reads what it needs from `useBuddyTutor`. */
   children: React.ReactNode;
   hrefs: BuddyScreenHrefs;
   memoryCount?: number;
@@ -295,7 +253,6 @@ export function BuddyScreen({
   const name = content.identity.name;
   const glassesCount = useGlassesCount(status);
 
-  // Here, asking the buddy something is the composer on this page, not a link to it.
   const missionLinks: MissionLinks = {
     ...actions.missionLinks,
     askBuddy: () => columnRef.current?.querySelector("textarea")?.focus(),
@@ -323,7 +280,6 @@ export function BuddyScreen({
           status={status}
         />
       }
-      // Under 72rem the day is a tap away in its sheet (`BuddyToday`), not under the conversation.
       asideClassName="hidden"
       asideLabel={t("{buddy} today", { buddy: name })}
       className="flex-1"

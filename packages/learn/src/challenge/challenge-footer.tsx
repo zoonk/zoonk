@@ -23,10 +23,6 @@ import { useChallengeScreen } from "./challenge-context";
 import { MoveFailed } from "./challenge-move-failed";
 import { ChallengeCallPlusNotice, SeePlusAction } from "./challenge-plus-lock";
 
-/**
- * Where the challenge stands when it can't start yet, as one quiet line in the action bar, where
- * Start will be, on the column's left edge like every line there.
- */
 function StatusLine({ children, icon }: { children: React.ReactNode; icon: React.ReactNode }) {
   return (
     <p className="text-muted-foreground flex min-h-11 items-start gap-2 py-3 text-sm">
@@ -36,15 +32,10 @@ function StatusLine({ children, icon }: { children: React.ReactNode; icon: React
   );
 }
 
-/** A count in a sentence keeps the sentence's face, with figures that line up. */
 function renderNumber(chunks: React.ReactNode) {
   return <span className="tabular-nums">{chunks}</span>;
 }
 
-/**
- * Before its day: how far away it is ("Opens in 6 days"), since the card above already says which
- * day. A phase's checkpoint also opens once its lessons are done.
- */
 function OpensLine() {
   const t = useExtracted();
   const { challenge } = useChallengeScreen();
@@ -66,11 +57,6 @@ function OpensLine() {
   return <StatusLine icon={icon}>{t("Opens after this phase's lessons")}</StatusLine>;
 }
 
-/**
- * Due, but today's session was planned without it: the next one has it. A checkpoint with nothing
- * known to have nothing to ask yet (zero questions, not an unknown count, call or mock) can't
- * promise that: before its day it says when it opens, and from its day that it isn't ready.
- */
 function WaitingLine() {
   const t = useExtracted();
   const { challenge } = useChallengeScreen();
@@ -115,8 +101,6 @@ function StartButton() {
   const routes = useLearnRoutes();
   const { challenge, move, start, writing } = useChallengeScreen();
 
-  // Its questions need writing and the learner's AI help doesn't cover them now: say why, with
-  // the one thing to do.
   if (writing?.kind === "refused") {
     return <HelpLimitNotice limit={writing.limit} linkComponent={LearnLink} routes={routes} />;
   }
@@ -140,22 +124,12 @@ function StartButton() {
   );
 }
 
-/**
- * Whether the screen offers Move to Monday: while the challenge can move, until the plan refuses
- * the move. A refusal is a fact about the plan that nothing on this screen changes, so the screen
- * doesn't offer the move again. A move that just didn't go through (`move.failed`) keeps it, for
- * the retry its line asks for.
- */
+/** A refusal is a fact about the plan this screen can't change, so the move isn't offered again; a failed move keeps it for the retry. */
 function useMovable(): boolean {
   const { challenge, move } = useChallengeScreen();
   return challenge.canMove && !move.refusal;
 }
 
-/**
- * Move to Monday, before the week's challenge starts and while it can move (`useMovable`): the
- * second option beside Start, and past today's study time, where moving is what keeps it, the main
- * action (`main`), which Enter presses.
- */
 function MoveToMondayButton({ className, main = false }: { className?: string; main?: boolean }) {
   const t = useExtracted();
   const { move, start } = useChallengeScreen();
@@ -190,7 +164,6 @@ function MoveToMondayButton({ className, main = false }: { className?: string; m
   );
 }
 
-/** Its block, running or finished, opens on its own screen. */
 function ResumeButton() {
   const t = useExtracted();
   const { start } = useChallengeScreen();
@@ -204,7 +177,6 @@ function ResumeButton() {
   );
 }
 
-/** A finished block's result opens without resuming its clock. */
 function OpenLink({ children }: { children: React.ReactNode }) {
   const { hrefs } = useChallengeScreen();
 
@@ -215,11 +187,6 @@ function OpenLink({ children }: { children: React.ReactNode }) {
   ) : null;
 }
 
-/**
- * What Plus unlocks here, said once beside "See Plus": a mock, a language goal's call (the same
- * call Plus learners get, which the plan doesn't wait for), or a free exam plan's phase challenge
- * once its first week is over.
- */
 function PlusRequiredNotice() {
   const t = useExtracted();
   const { challenge } = useChallengeScreen();
@@ -239,7 +206,6 @@ function PlusRequiredNotice() {
   return <FreeWeekOverNotice cta={false} />;
 }
 
-/** A challenge the learner's plan leaves to Plus: what Plus unlocks, and "See Plus" for Start. */
 function PlusRequiredFooter() {
   return (
     <>
@@ -249,7 +215,6 @@ function PlusRequiredFooter() {
   );
 }
 
-/** Today's saved order puts other work first: the day's lessons, or the challenge before it. */
 function WaitReasonLine({ reason }: { reason: "challenge" | "lessons" }) {
   return (
     <StatusLine icon={<CalendarClockIcon className="size-4" />}>
@@ -258,12 +223,7 @@ function WaitReasonLine({ reason }: { reason: "challenge" | "lessons" }) {
   );
 }
 
-/**
- * The week's challenge past today's study time doesn't come back on its own: the next study day
- * re-plans without it (RULES R24). So, while it can move (`movable`), it says how to keep it, with
- * Move to Monday as the way on. When it can't move, or once the plan refused the move, it says only
- * that today's study time is used up, promising nothing.
- */
+/** Past today's study time the week's challenge doesn't come back on its own: the next study day re-plans without it (RULES R24). */
 function WeeklyUsedUpLine({ movable }: { movable: boolean }) {
   const t = useExtracted();
 
@@ -276,17 +236,6 @@ function WeeklyUsedUpLine({ movable }: { movable: boolean }) {
   );
 }
 
-/**
- * What the footer says about the challenge today, and nothing more: the line saying where it
- * stands, and what the learner can do. A Start or Continue refused because Plus lapsed since the
- * intro opened shows the lock right away, while the host reloads the challenge. One that today's
- * saved order puts after other work (`waitReason`, the rule Start applies) says what comes first,
- * as the day's row does, instead of offering a Start that refuses. Today's study time used up
- * (`dailyLimitReached`, as the page read it) puts the way back to Today in Start's place: a phase
- * challenge says when it's back; the week's challenge says how to keep it, with Move to Monday as
- * the main action, since moving it isn't study, until the plan refuses the move. A move that just
- * didn't go through keeps Move to Monday, for the retry its line asks for.
- */
 function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } {
   const t = useExtracted();
   const { challenge, hrefs, start } = useChallengeScreen();
@@ -357,14 +306,7 @@ function useStatusFooter(): { actions: React.ReactNode; line: React.ReactNode } 
   }
 }
 
-/**
- * The challenge's pinned action bar: Start, with Move to Monday beside it, or where it stands, with
- * Move to Monday under it while it can still wait for Monday and the plan hasn't refused the move
- * (the bar's width on a phone, its label's from `lg`, like every action there). Where it stands is
- * one polite region that stays in the bar, out of the layout while it's empty, so the line that
- * replaces a refused Start ("In your next session", "After today's lessons", today's study time
- * used up) is read out whole without moving focus.
- */
+/** Where it stands is one polite region that stays in the bar while empty, so the line that replaces a refused Start is read out. */
 export function ChallengeFooter() {
   const { challenge } = useChallengeScreen();
   const movable = useMovable();

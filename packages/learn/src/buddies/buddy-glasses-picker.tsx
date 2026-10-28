@@ -12,10 +12,6 @@ import { CHOICE_CARD_PICKED_CLASS } from "../onboarding/choice-styles";
 import { BuddyGlassesHowToEarn, BuddyGlassesName } from "./buddy-labels";
 import { type BuddyLook } from "./buddy-picker";
 
-/**
- * One pair as the picker shows it. A pair earned by counting (mission days, reviews) brings how far
- * the learner is; a pair earned once only says how.
- */
 export type BuddyGlassesOption = {
   current?: number;
   earned: boolean;
@@ -23,16 +19,13 @@ export type BuddyGlassesOption = {
   target?: number;
 };
 
-/** Pairs earned by counting (7 days with every mission done, 50 reviews) show how far along the learner is. */
 const COUNTED_GLASSES = new Set<BuddyGlasses>(["catEye", "retro"]);
 
-/** A buddy option as a card, picked as every pick is: the line in the text color on its tint. */
 const OPTION_CLASS = cn(
   "border-border has-focus-visible:ring-ring/50 flex min-h-16 cursor-pointer items-center gap-3 rounded-xl border p-2 pr-3 has-focus-visible:ring-[3px] has-data-disabled:cursor-default",
   CHOICE_CARD_PICKED_CLASS,
 );
 
-/** "2 of 7 days", "38 of 50 reviews": how far a counted pair is. */
 function CountLine({
   current,
   glasses,
@@ -52,7 +45,6 @@ function CountLine({
     : t("{current} of {target} reviews", { current: String(current), target: String(target) });
 }
 
-/** A locked pair says how it's earned, and a counted one how far along the learner is. */
 function LockedDetail({ option }: { option: BuddyGlassesOption }) {
   const { current, glasses, target } = option;
 
@@ -81,11 +73,6 @@ function LockedDetail({ option }: { option: BuddyGlassesOption }) {
   );
 }
 
-/**
- * Every pair of glasses, one per row: the earned ones go on when picked, the rest say how they're
- * earned and how far the learner is. Nothing is random and nothing is sold. Preferences' editor
- * and the buddy tab's glasses sheet share it.
- */
 export function BuddyGlassesPicker({
   kind,
   look,

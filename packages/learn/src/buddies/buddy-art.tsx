@@ -4,11 +4,6 @@ import { type ActorHandle, type BuddyActName, BuddyActor } from "@zoonk/ui/compo
 import { cn } from "@zoonk/ui/lib/utils";
 import { type LearnBuddy, resolveLearnBuddy } from "./use-buddy-name";
 
-/**
- * The learner's buddy as art (the buddy tab's header), sized by `className`, in its Energy's face.
- * Without a profile, core's default buddy appears. It holds still unless its screen makes it act
- * (`ref.play`), as when its answer comes in. It's decorative: the words beside it say who it is.
- */
 export function BuddyArt({
   buddy: learnerBuddy,
   className,

@@ -21,10 +21,6 @@ import { IntroHeading, useEyebrow, usePrizeFact, useQuestionsFact } from "./chal
 import { useChallengeWhen } from "./challenge-labels";
 import { ChallengeTopics, DuelBriefing, useTopicsTitle } from "./challenge-topics";
 
-/**
- * What the Trickster asks: mixed questions from the phase, or, for a phase practiced through
- * recordings (an exam's Listening), questions on recordings played as strictly as in the exam.
- */
 function useTricksterDetail(): string {
   const t = useExtracted();
   const { challenge } = useChallengeScreen();
@@ -43,11 +39,6 @@ function useTricksterDetail(): string {
   return t("Mixed questions from this phase, with no hints.");
 }
 
-/**
- * The phase's checkpoint: the Trickster, how many questions and how many right to win. Before its
- * day, a phase with nothing to ask yet says neither (never "0 questions · 0 right to win"): the
- * footer says when it opens.
- */
 function TricksterIntro() {
   const t = useExtracted();
   const { challenge } = useChallengeScreen();
@@ -82,10 +73,6 @@ function TricksterIntro() {
   );
 }
 
-/**
- * A phase checkpoint already won: how it went, never the rules of a duel already played. The
- * footer opens the full result when its block is there.
- */
 function WonIntro() {
   const t = useExtracted();
   const { challenge } = useChallengeScreen();
@@ -116,7 +103,6 @@ function WonIntro() {
   );
 }
 
-/** The week's challenge outside exams: questions from the week. */
 function WeeklyIntro() {
   const t = useExtracted();
   const { challenge } = useChallengeScreen();
@@ -124,7 +110,6 @@ function WeeklyIntro() {
   const questions = useQuestionsFact();
   const prize = usePrizeFact();
 
-  // Its day is the footer's to say before it opens; a time of its own is said up top.
   return (
     <StepCard>
       <IntroHeading
@@ -145,18 +130,12 @@ function WeeklyIntro() {
   );
 }
 
-/** Each task with its count, in the notice's words: "2 × short discursive answers · 1 × legal brief". */
 function describeTasks(tasks: ChallengeView["written"][number]["tasks"]): string {
   return tasks
     .map((task) => (task.count === null ? task.description : `${task.count} × ${task.description}`))
     .join(" · ");
 }
 
-/**
- * A mock with several sections lists them, as flat rows; one section names it in the title.
- * A written part (a discursive test, a legal brief) lists what the notice asks: written in the
- * mock and graded after hand-in, or, while the exam has no essay for it yet, in essay practice.
- */
 function MockSections() {
   const t = useExtracted();
   const duration = useFormatDuration();
@@ -214,7 +193,6 @@ function MockSections() {
   );
 }
 
-/** Where a wrong answer costs points, when leaving a question blank pays, from the notice. */
 function PenaltyRule() {
   const t = useExtracted();
   const formatShare = useFormatShare();
@@ -235,10 +213,6 @@ function PenaltyRule() {
   );
 }
 
-/**
- * The week's mock: when it is (with the real exam's start time), its size and about how long it
- * takes (half an exam day before the final stretch), and the one rule that changes how to take it.
- */
 function MockIntro() {
   const t = useExtracted();
   const daySize = useMockDaySizeLabel();
@@ -247,10 +221,9 @@ function MockIntro() {
   const when = useChallengeWhen(challenge);
   const questions = useQuestionsFact();
   const [section] = challenge.sections;
-  // Half an exam day leaves the day's written part for the full mocks: the day's name ("Linguagens,
-  // Ciências Humanas e redação") would say it's asked.
   const objectiveOnly = challenge.leftOut.some((part) => part.part === "writtenInFull");
-  // One section names the mock's area; a day with a written part is the whole exam day.
+
+  // Half a day isn't named by its day ("… e redação"), which would say its written part is asked.
   const area =
     challenge.sections.length === 1 && challenge.written.length === 0 && !objectiveOnly
       ? section?.name
@@ -267,17 +240,14 @@ function MockIntro() {
       <TaskMeta
         facts={[
           challenge.questions !== null && challenge.questions > 0 && questions(challenge.questions),
-          // The time on its clock, the same the plan saves for it and the real exam gives.
           challenge.minutes !== null && duration(challenge.minutes),
           !challenge.fullLength && daySize({ fullLength: false }),
           objectiveOnly && t("Objective part only"),
         ]}
       />
 
-      {/* Under the facts on a phone, beside the intro from `lg`: rendered once. */}
       <TaskAsideContent className="flex w-full flex-col items-start gap-5">
         <MockSections />
-        {/* Written parts are listed with the sections; the rest of what it leaves out, here. */}
         <MockLeftOutNote
           leftOut={challenge.leftOut.filter(
             (part) => part.part !== "written" && part.part !== "writtenInFull",
@@ -303,12 +273,7 @@ function MockIntro() {
   );
 }
 
-/**
- * The intro's aside from `lg`: what a duel asks and its rule, or a mock's sections and rule, which
- * the intro places there (`TaskAsideContent`), under the topics' name or the mock's exam. The
- * challenge's own name already heads the intro, so it only names the aside for screen readers.
- * Every intro has one, so the route's skeleton draws it before knowing which challenge it is.
- */
+/** Every intro has one, so the route's skeleton draws it before knowing which challenge it is. */
 export function useChallengeIntroAside(): TaskFrameAside {
   const t = useExtracted();
   const { challenge } = useChallengeScreen();
@@ -323,7 +288,6 @@ export function useChallengeIntroAside(): TaskFrameAside {
   return { label: title ?? name, title };
 }
 
-/** A challenge said plainly: the Trickster's checkpoint, the week's challenge or its mock. */
 export function ChallengeIntro() {
   const { challenge } = useChallengeScreen();
 
@@ -337,7 +301,6 @@ export function ChallengeIntro() {
 
   const won = challenge.status === "done";
 
-  // A language goal's phase checkpoint is the unit's call; any phase checkpoint is done once won.
   if (challenge.call) {
     return won ? <WonCallIntro /> : <CallIntro call={challenge.call} />;
   }

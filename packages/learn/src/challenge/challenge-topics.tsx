@@ -14,10 +14,8 @@ import { PageSectionTitle } from "../_components/page";
 import { TaskAsideContent } from "../_components/task-layout";
 import { useChallengeScreen } from "./challenge-context";
 
-/** A row of what a duel asks: a subject with its topics, or one topic of a goal of one subject. */
 type TopicRow = { subject: string | null; topics: string[] };
 
-/** The topics as rows: one per subject with its topics, in plan order, else one per topic. */
 function getTopicRows(topics: readonly ChallengeTopic[]): TopicRow[] {
   const bySubject = Map.groupBy(topics, (topic) => topic.subject);
 
@@ -30,11 +28,6 @@ function getTopicRows(topics: readonly ChallengeTopic[]): TopicRow[] {
   });
 }
 
-/**
- * What a duel's topics are called: what the Trickster will ask (or asked, once beaten), or the
- * week's topics. Null for a mock, which lists its sections, and while none are known (the week's
- * challenge before its day).
- */
 export function useTopicsTitle(): string | null {
   const t = useExtracted();
   const { challenge } = useChallengeScreen();
@@ -50,12 +43,6 @@ export function useTopicsTitle(): string | null {
   return challenge.status === "done" ? t("What he asked") : t("What he'll ask");
 }
 
-/**
- * What the duel asks about, so the learner can see it coming: each subject with how many of its
- * topics and their first names under it, or each topic where the goal has one subject. Nothing
- * when it isn't known yet. From `lg` the aside's header names it (`useChallengeIntroAside`), so
- * its own label is for screen readers.
- */
 export function ChallengeTopics() {
   const t = useExtracted();
   const format = useFormatter();
@@ -93,11 +80,6 @@ export function ChallengeTopics() {
   );
 }
 
-/**
- * What a duel asks about and its one rule: under the facts on a phone, beside the intro from `lg`,
- * rendered once. While its topics aren't known (the week's challenge before its day), the rule
- * stays under the facts at every size: alone at the top of the aside it would read as a stray line.
- */
 export function DuelBriefing({ rule }: { rule: string }) {
   const hasTopics = useTopicsTitle() !== null;
 

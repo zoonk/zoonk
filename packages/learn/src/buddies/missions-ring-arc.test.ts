@@ -6,7 +6,6 @@ const CENTER = RING_VIEW_BOX / 2;
 const ARC_PATH =
   /^M (?<startX>\S+) (?<startY>\S+) A \S+ \S+ 0 (?<largeArc>[01]) 1 (?<endX>\S+) (?<endY>\S+)$/u;
 
-/** Where an arc starts and ends, and whether SVG draws it the long way round between them. */
 function readArc(path: string) {
   const arc = ARC_PATH.exec(path)?.groups ?? {};
 

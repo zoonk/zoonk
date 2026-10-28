@@ -12,11 +12,6 @@ import { ChecklistRow, ChecklistRows } from "../language/checklist-rows";
 import { useChallengeScreen } from "./challenge-context";
 import { IntroHeading, useEyebrow, usePrizeFact } from "./challenge-intro-parts";
 
-/**
- * The call's goals as its own intro lists them, under the facts on a phone and beside the intro
- * from `lg`, where the aside's header names them (`useChallengeIntroAside`). Nothing while the
- * unit's call isn't written.
- */
 function CallGoals({ call }: { call: ChallengeCall }) {
   const t = useExtracted();
 
@@ -43,11 +38,6 @@ function CallGoals({ call }: { call: ChallengeCall }) {
   );
 }
 
-/**
- * A language goal's phase checkpoint: the unit's call, never the Trickster's duel. How long it
- * talks and at what level, then, once the unit's call is written, its name, how many goals it has
- * and how many of them win it, with the prize last, and the goals themselves.
- */
 export function CallIntro({ call }: { call: ChallengeCall }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -78,7 +68,6 @@ export function CallIntro({ call }: { call: ChallengeCall }) {
   );
 }
 
-/** A unit's call already won: how many of its goals got across, never the call's rules again. */
 export function WonCallIntro() {
   const t = useExtracted();
   const { challenge } = useChallengeScreen();

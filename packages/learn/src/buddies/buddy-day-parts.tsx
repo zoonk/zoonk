@@ -12,7 +12,6 @@ import { type BuddyStatusView } from "./buddy-status-view";
 
 const PERCENT = 100;
 
-/** "Grows to Young at Orange belt": the next stage and the belt that brings it. */
 export function useGrowthLine(status: BuddyStatusView): string {
   const t = useExtracted();
   const beltName = useBeltName();
@@ -34,7 +33,6 @@ export function useGrowthLine(status: BuddyStatusView): string {
   return stages[next.stage];
 }
 
-/** One line on how Energy moves today: napping, studied already, or not yet. */
 function useEnergyLine({ name, status }: { name: string; status: BuddyStatusView }) {
   const t = useExtracted();
 
@@ -47,10 +45,6 @@ function useEnergyLine({ name, status }: { name: string; status: BuddyStatusView
     : t("Studying today keeps Energy up.");
 }
 
-/**
- * Before the learner has learned anything, Energy has nothing to say yet: no empty meter, just
- * when it starts.
- */
 function EnergyStarts() {
   const t = useExtracted();
 
@@ -64,18 +58,12 @@ function EnergyStarts() {
   );
 }
 
-/**
- * Energy is the buddy's: its name with its share in the mono face, an amber meter and one line,
- * the whole of it opening Energy's history. The day's sheet and the conversation's aside both lead
- * with it.
- */
 export function BuddyEnergy({
   className,
   href,
   name,
   status,
 }: {
-  /** Its place in the column, such as pulling its hover room onto the aside's top edge. */
   className?: string;
   href: string;
   name: string;

@@ -6,13 +6,6 @@ import { useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
 import { useChallengeScreen } from "./challenge-context";
 
-/**
- * A move or its undo that didn't go through. A mock the plan can't make room for on Monday says
- * so, with the day and its real length; one onto a day that already has a weekly challenge or mock
- * says that, and a weekly challenge the plan can't put on Monday says that. Each stays where it is, and the line
- * says so instead of asking for another try or another day: Monday is this screen's only move, and
- * Undo's only day is the one it came from.
- */
 export function MoveFailed() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();

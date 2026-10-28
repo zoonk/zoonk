@@ -7,14 +7,9 @@ import { BuddyStageName } from "./buddy-labels";
 import { type BuddyStatusView } from "./buddy-status-view";
 import { type LearnBuddy } from "./use-buddy-name";
 
-/**
- * The buddy tab's column: a conversation's measure (45rem) on the page's left edge, where every
- * title starts, never stretched across a wide screen, and as tall as the screen so the composer
- * sits at its bottom (the page's bottom padding is the composer's own).
- */
+/** `-mb-12` takes back the page's bottom padding, since the composer has its own. */
 export const BUDDY_COLUMN_CLASS = "-mb-12 flex w-full max-w-form flex-1 flex-col gap-5 lg:-mb-16";
 
-/** "Your study buddy · Baby": what the buddy is, and its stage. */
 function BuddyLine({ stage }: { stage: BuddyStatusView["stage"] }) {
   const t = useExtracted();
 
@@ -27,11 +22,6 @@ function BuddyLine({ stage }: { stage: BuddyStatusView["stage"] }) {
   );
 }
 
-/**
- * The buddy on one compact row at the top of its tab: its face, its name (the page's heading) and
- * what it is, with the row's controls at its end (`children`). `faceRef` makes the buddy act, as
- * when its answer comes in.
- */
 export function BuddyHeader({
   buddy,
   children,

@@ -4,10 +4,8 @@ import { type BuddyGlasses, type BuddyKind, type BuddyStage } from "@zoonk/utils
 import { useExtracted } from "next-intl";
 import { type LearnBuddy, useBuddyName } from "./use-buddy-name";
 
-/** Every buddy in the order learners meet them. */
 export const BUDDY_KINDS: BuddyKind[] = ["zu", "noodle", "beep", "otto"];
 
-/** Round comes with the buddy; the rest follow the order they're usually earned. */
 export const BUDDY_GLASSES: BuddyGlasses[] = [
   "round",
   "star",
@@ -17,10 +15,6 @@ export const BUDDY_GLASSES: BuddyGlasses[] = [
   "monocle",
 ];
 
-/**
- * What the buddy's tab is called: the buddy's own name or its custom name. Links back to
- * that tab say it the same way.
- */
 export function BuddyTabName({ buddy }: { buddy: Pick<LearnBuddy, "kind" | "name"> | null }) {
   return useBuddyName(buddy);
 }
@@ -78,10 +72,6 @@ export function BuddyGlassesName({ glasses }: { glasses: BuddyGlasses }) {
   }
 }
 
-/**
- * What the buddy wears, as a phrase that stands on its own after its stage ("Baby · Round
- * glasses"), where the pair's bare name (`BuddyGlassesName`, the picker's) would say nothing.
- */
 export function BuddyGlassesWorn({ glasses }: { glasses: BuddyGlasses }) {
   const t = useExtracted();
 
@@ -103,7 +93,6 @@ export function BuddyGlassesWorn({ glasses }: { glasses: BuddyGlasses }) {
   }
 }
 
-/** Every pair says upfront how it's earned: nothing is random and nothing is sold. */
 export function BuddyGlassesHowToEarn({ glasses }: { glasses: BuddyGlasses }) {
   const t = useExtracted();
 

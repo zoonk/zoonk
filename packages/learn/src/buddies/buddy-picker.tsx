@@ -14,15 +14,12 @@ import { useKeptTyping } from "../use-kept-typing";
 import { BUDDY_KINDS, BuddyTagline } from "./buddy-labels";
 import { useBuddyName } from "./use-buddy-name";
 
-/** Custom names stay short so they fit wherever the buddy is named. */
 const BUDDY_NAME_MAX_LENGTH = 24;
 
 export type BuddyChoice = { glasses: BuddyGlasses; kind: BuddyKind; name: string };
 
-/** How a buddy looks right now: it grows with the belt and glows with Energy. */
 export type BuddyLook = { beltColor: BeltColor; energy: number | null; studiedToday?: boolean };
 
-/** A buddy option as a card, picked as every pick is: the line in the text color on its tint. */
 const OPTION_CLASS = cn(
   "border-border has-focus-visible:ring-ring/50 relative flex cursor-pointer flex-col items-center gap-1 rounded-xl border p-3 pt-4 text-center has-focus-visible:ring-[3px]",
   CHOICE_CARD_PICKED_CLASS,
@@ -59,10 +56,7 @@ function BuddyOption({
   );
 }
 
-/**
- * Choosing a buddy: Zu, Noodle, Beep or Otto, and a name. Onboarding and Preferences share it.
- * An empty name keeps the buddy's own name in each language.
- */
+/** An empty name keeps the buddy's own name in each language. */
 export function BuddyPicker({
   choice,
   look,
@@ -75,7 +69,6 @@ export function BuddyPicker({
   const t = useExtracted();
   const nameId = useId();
 
-  // A name typed before the step's code arrived is the buddy's name.
   const keptName = useKeptTyping((name) => onChange({ ...choice, name }));
   const defaultName = useBuddyName({ kind: choice.kind, name: null });
 

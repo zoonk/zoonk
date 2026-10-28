@@ -25,10 +25,6 @@ import { useChallengeStart } from "./use-challenge-start";
 
 export type { ChallengeActions, ChallengeWriting } from "./challenge-context";
 
-/**
- * The questions Start asked for, being written: the run's progress in place of the intro, and the
- * challenge starts by itself once they're in (the host starts it again).
- */
 function ChallengeWritingScreen({ run }: { run: GenerationRun }) {
   const t = useExtracted();
   const { hrefs } = useChallengeScreen();
@@ -45,7 +41,6 @@ function ChallengeWritingScreen({ run }: { run: GenerationRun }) {
   );
 }
 
-/** The intro in the task's chrome, its aside from `lg`, and the challenge's actions in the bar. */
 function ChallengeIntroScreen() {
   const { hrefs } = useChallengeScreen();
   const aside = useChallengeIntroAside();
@@ -57,13 +52,6 @@ function ChallengeIntroScreen() {
   );
 }
 
-/**
- * A phase's checkpoint (the Trickster) or the week's challenge (an exam's mock), before its day
- * and on it: what it asks and what it's worth, then, on its day, one button that starts it. One
- * whose questions aren't in the shared bank yet has them written as it starts (`writing`). The
- * week's challenge can move to Monday before it starts. The host supplies the challenge, how to
- * reach the server and where to go.
- */
 export function ChallengeScreen({
   actions,
   challenge,
@@ -75,15 +63,7 @@ export function ChallengeScreen({
   actions: ChallengeActions;
   challenge: ChallengeView;
   hrefs: ChallengeHrefs;
-  /**
-   * The plan change that just moved it here, whose undo takes it back, with what it did to the
-   * plan.
-   */
   moved: { changeId: string; effect: PlanChangeView["effect"] | null } | null;
-  /**
-   * The host is reading the page again after a refused Start: Start stays busy until the page says
-   * where the challenge stands, so it never shows ready only to refuse again.
-   */
   rereading?: boolean;
   writing?: ChallengeWriting | null;
 }) {

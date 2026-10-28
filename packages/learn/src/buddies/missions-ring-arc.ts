@@ -18,11 +18,7 @@ function toPoint(degrees: number) {
   return `${x.toFixed(POINT_DIGITS)} ${y.toFixed(POINT_DIGITS)}`;
 }
 
-/**
- * One mission's arc of the ring, clockwise from the top with a gap between missions. A lone
- * mission's arc spans more than half the ring, so it sets SVG's large-arc flag: without it, the
- * arc between the same two ends is drawn the short way, as a dash across the gap.
- */
+/** An arc over half the ring needs SVG's large-arc flag, or it's drawn the short way, as a dash across the gap. */
 export function getArcPath({ index, total }: { index: number; total: number }): string {
   const span = FULL_TURN / total;
   const start = START_DEGREES + index * span + GAP_DEGREES / 2;

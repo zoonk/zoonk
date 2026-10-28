@@ -16,7 +16,6 @@ import { useLocalGoalExample } from "../onboarding/entry/use-local-goal-example"
 import { BUDDY_COLUMN_CLASS, BuddyHeader } from "./buddy-header";
 import { type BuddyStatusView, toLearnBuddy } from "./buddy-status-view";
 
-/** Goals to start with one tap, in the interface language: the same examples onboarding shows. */
 function useGoalExamples(): string[] {
   const t = useExtracted();
   const { exam, language } = useLocalGoalExample();
@@ -31,10 +30,6 @@ function useGoalExamples(): string[] {
   ];
 }
 
-/**
- * Example goals as small chips right above the field, as the conversation's suggestions are: a
- * tap fills the field so it can still be edited before sending.
- */
 function GoalChips({ examples, onPick }: { examples: string[]; onPick: (goal: string) => void }) {
   const t = useExtracted();
 
@@ -55,12 +50,6 @@ function GoalChips({ examples, onPick }: { examples: string[]; onPick: (goal: st
   );
 }
 
-/**
- * The buddy tab before there's a goal to tutor: instead of a dead end, the buddy says what it does
- * with one and takes it right here, in the goal field the home page and onboarding use, with their
- * "Build my plan". It opens onboarding with the same words (`onSend`), so the learner never types
- * them twice. An example fills the field for the learner to edit first.
- */
 export function BuddyGoalStart({
   draft = "",
   earlierQuestionsHref,
@@ -68,7 +57,6 @@ export function BuddyGoalStart({
   status,
 }: {
   draft?: string;
-  /** The learner's questions from an earlier version of their courses, when they have any. */
   earlierQuestionsHref?: string;
   onSend: (goal: string) => void;
   status: BuddyStatusView;

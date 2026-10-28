@@ -20,13 +20,8 @@ import { BuddyEnergy, useGrowthLine } from "./buddy-day-parts";
 import { type BuddyStatusView } from "./buddy-status-view";
 import { type LearnBuddy } from "./use-buddy-name";
 
-/**
- * Where the buddy's day leads: Energy over time, what the buddy remembers and the week's summary.
- * Statistics open from the account menu and the level in the top bar.
- */
 export type BuddyDayHrefs = { energy: string; logbook: string; memory: string };
 
-/** "2/6": the glasses earned of all of them, in the mono face; screen readers hear "2 of 6". */
 function GlassesCount({ status }: { status: BuddyStatusView }) {
   const t = useExtracted();
   const earned = String(status.glasses.filter((item) => item.earned).length);
@@ -40,10 +35,6 @@ function GlassesCount({ status }: { status: BuddyStatusView }) {
   );
 }
 
-/**
- * The buddy itself, under its name: how it grows, what it remembers, its glasses and the week's
- * summary, including while the learner uses the default buddy.
- */
 function BuddyRows({
   hrefs,
   memoryCount,
@@ -98,11 +89,6 @@ function BuddyRows({
   );
 }
 
-/**
- * The buddy's day beside the conversation on a wide screen, where there's room to keep it in
- * sight instead of a tap away: Energy, today's missions and a new learner's first steps, then the
- * buddy (how it grows, what it remembers, its glasses, the week's summary).
- */
 export function BuddyDay({
   buddy,
   hrefs,
@@ -112,7 +98,6 @@ export function BuddyDay({
   onGlasses,
   status,
 }: {
-  /** The buddy as drawn, whose face marks a question to it. */
   buddy: LearnBuddy;
   hrefs: BuddyDayHrefs;
   memoryCount?: number;
@@ -123,7 +108,6 @@ export function BuddyDay({
 }) {
   return (
     <>
-      {/* Its label on the aside's first line, level with the buddy's name beside it. */}
       <BuddyEnergy className="-my-2" href={hrefs.energy} name={name} status={status} />
       <MissionsCard
         brainPower={status.belt.totalBrainPower}
@@ -144,10 +128,6 @@ export function BuddyDay({
   );
 }
 
-/**
- * The buddy's day while the tab loads, in `BuddyDay`'s shape: Energy and today's missions under
- * their own labels, and the buddy's block; the numbers and the buddy's name wait as bars.
- */
 export function BuddyDaySkeleton() {
   const t = useExtracted();
 
