@@ -16,10 +16,6 @@ import { describe, expect, it } from "vitest";
 import { COURSE_LIST_CACHE_TAG } from "../cache/tags";
 import { LIST_COURSES_LIMIT, listCourses, listCoursesPage } from "./list-courses";
 
-/**
- * A unique language isolates each catalog query from courses created by other
- * integration tests while still exercising the real language filter.
- */
 function createTestLanguage() {
   return randomUUID().slice(0, 10);
 }
@@ -52,7 +48,6 @@ describe(listCourses, () => {
     const language = createTestLanguage();
     const organization = await organizationFixture({ kind: "brand" });
 
-    // A shared course a guest's goal made: published with its outline, its details still to come.
     const [listed] = await Promise.all([
       courseFixture({ isPublished: true, language, organizationId: organization.id }),
       courseFixture({

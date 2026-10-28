@@ -4,7 +4,6 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { cacheTag } from "next/cache";
 import { COURSE_LIST_CACHE_TAG, getCourseCacheTag } from "../cache/tags";
 
-/** Tagged with the catalog too, so an edition that becomes listed later joins the others. */
 async function getCachedCourseEditions(courseId: string) {
   "use cache";
   cacheTag(getCourseCacheTag(courseId), COURSE_LIST_CACHE_TAG);
@@ -47,11 +46,7 @@ async function getCachedCourseEditions(courseId: string) {
   );
 }
 
-/**
- * Lists the listed editions of a course (`getListedCourseWhere`) in every language, itself
- * included. Editions have their own slugs, so public pages link them as language alternates
- * (hreflang) instead of translating one URL.
- */
+/** Includes the requested course; each language edition has its own slug. */
 export async function listPublishedCourseEditions({ courseId }: { courseId: string }) {
   if (!isUuid(courseId)) {
     return [];

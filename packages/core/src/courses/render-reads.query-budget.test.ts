@@ -127,7 +127,6 @@ describe("public catalog render read budgets", () => {
       "exam days": 4,
       lesson: 2,
       "lesson home": 4,
-      // The courses, their brands, their first categories (each card's subject) and their totals.
       list: 4,
       outline: 5,
     };

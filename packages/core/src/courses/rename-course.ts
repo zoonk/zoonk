@@ -11,20 +11,12 @@ type RenameCourseResult =
   | { slug: string; status: "renamed"; title: string }
   | { status: "forbidden" | "invalidSlug" | "notFound" | "slugTaken" | "unauthorized" };
 
-/**
- * An unchanged stored slug stays byte for byte, including older values that may predate today's
- * slug rules; a new one goes through the shared slug function.
- */
+/** Preserve unchanged stored slugs byte for byte, including values predating the current rules. */
 function getUpdatedSlug({ currentSlug, submitted }: { currentSlug: string; submitted: string }) {
   return submitted === currentSlug ? currentSlug : toSlug(submitted);
 }
 
-/**
- * Renames a course on an admin's request, keeping its title, its search title and its address in
- * sync while the admin picks the slug. The catalog's pages are cached by address, so the rename
- * expires the old address and the new one (a page cached as missing there) along with the course
- * and the catalog's lists.
- */
+/** Requires an admin session and expires both the old and new route, including cached misses. */
 export async function renameCourseForAdmin({
   courseId,
   slug: submittedSlug,

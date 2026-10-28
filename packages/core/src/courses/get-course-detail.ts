@@ -4,11 +4,6 @@ import { getCoursePlanExample } from "../catalog/course-plan-example";
 import { getCourseById } from "./get-course-by-id";
 import { listPublishedCourseEditions } from "./list-published-course-editions";
 
-/**
- * Canonical course detail, with its public exam days when it is a published exam course, and a
- * catalog course's example plan and editions in every language (itself included), which its page
- * shows; a learner's private course has neither.
- */
 export async function getCourseDetail({ courseId }: { courseId: string }) {
   const [course, exam] = await Promise.all([
     getCourseById({ courseId }),

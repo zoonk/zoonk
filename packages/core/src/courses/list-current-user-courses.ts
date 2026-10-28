@@ -8,7 +8,6 @@ import { getOwnPrivateCourseWhere } from "./_utils/own-private-course";
 type CourseActivity = { courseId: string; lastActivityAt: Date };
 type StartedChapter = { chapterId: string; lastActivityAt: Date };
 
-/** The courses the learner's goals are built on, active or not, as of the goal's last change. */
 async function listGoalCourses(userId: string): Promise<CourseActivity[]> {
   const goals = await prisma.goal.findMany({
     select: { primaryCourseId: true, updatedAt: true },
@@ -31,11 +30,6 @@ function toCourseActivity({
   return courseId ? [{ courseId, lastActivityAt: started.lastActivityAt }] : [];
 }
 
-/**
- * The courses the learner started lessons in. Each lesson run names the lesson's home chapter,
- * which lives in its home course. The ledger is read on its own and the chapters looked up
- * afterwards, so learner rows are never joined with content.
- */
 async function listStartedCourses(userId: string): Promise<CourseActivity[]> {
   const rows = await prisma.$queryRaw<StartedChapter[]>`
     SELECT content_ids->>'chapterId' AS "chapterId", max(started_at) AS "lastActivityAt"
@@ -65,7 +59,6 @@ function byLatestActivity(first: CourseActivity, second: CourseActivity) {
   );
 }
 
-/** Course ids from most to least recent activity, each once. */
 async function listRecentCourseIds(userId: string): Promise<string[]> {
   const [goalCourses, startedCourses] = await Promise.all([
     listGoalCourses(userId),
@@ -93,11 +86,6 @@ function getQueryWhere(query?: string) {
   };
 }
 
-/**
- * The learner's courses: the ones their goals are built on and the ones they started lessons in,
- * most recent activity first. Only published brand courses and the learner's own private courses
- * are listed.
- */
 async function findCurrentUserCourses({ query, userId }: { query?: string; userId: string }) {
   const courseIds = await listRecentCourseIds(userId);
 
@@ -121,20 +109,13 @@ async function findCurrentUserCourses({ query, userId }: { query?: string; userI
   return courseIds.flatMap((courseId) => coursesById.get(courseId) ?? []);
 }
 
-/**
- * Every course of the authenticated learner, most recent activity first, optionally filtered by
- * title or description; null when signed out.
- */
+/** Returns null without a session; courses are ordered by most recent activity. */
 export async function listCurrentUserCourses({ query }: { query?: string } = {}) {
   const session = await getSession();
   return session ? findCurrentUserCourses({ query: query?.trim(), userId: session.user.id }) : null;
 }
 
-/**
- * Returns one page of the authenticated learner's courses, optionally filtered by title or
- * description, with an explicit continuation signal. A null result represents an unauthenticated
- * request, allowing the API adapter to emit 401 without moving authorization outside Core.
- */
+/** Returns null for unauthenticated callers. */
 export async function listCurrentUserCoursesPage({
   limit,
   offset = 0,

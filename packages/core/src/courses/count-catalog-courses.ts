@@ -4,11 +4,7 @@ import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { cacheTag } from "next/cache";
 import { COURSE_LIST_CACHE_TAG } from "../cache/tags";
 
-/**
- * How many courses the catalog lists in one language (`listCourses`), in all and in each
- * category, every category included. A course can sit in several categories, so the total is
- * counted on its own rather than added up.
- */
+/** Courses can have multiple categories, so their total must not be the sum of category counts. */
 export async function countCatalogCourses({ language }: { language: string }) {
   "use cache";
   cacheTag(COURSE_LIST_CACHE_TAG);

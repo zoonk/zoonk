@@ -17,7 +17,6 @@ function hoursAgo(hours: number) {
 
 type CourseAttrs = NonNullable<Parameters<typeof courseFixture>[0]>;
 
-/** A course with one chapter written for it; a published brand course unless attrs say otherwise. */
 async function courseWithChapterFixture(attrs: CourseAttrs = {}) {
   const organization = await organizationFixture({ kind: "brand" });
 
@@ -31,7 +30,6 @@ async function courseWithChapterFixture(attrs: CourseAttrs = {}) {
   return { chapter, course };
 }
 
-/** A lesson the learner started in a chapter, as the lesson player records it in the ledger. */
 function startedLessonFixture({
   chapterId,
   startedAt,

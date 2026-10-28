@@ -6,7 +6,6 @@ import { listPublishedCourseEditions } from "./list-published-course-editions";
 
 describe(listPublishedCourseEditions, () => {
   it("lists every listed edition in the course's family, itself included", async () => {
-    // An unpublished edition and one whose page details aren't written yet stay out.
     const [org, family] = await Promise.all([
       organizationFixture({ kind: "brand" }),
       prisma.courseFamily.create({ data: {} }),

@@ -9,7 +9,6 @@ import { countCatalogCourses } from "./count-catalog-courses";
 
 describe(countCatalogCourses, () => {
   it("counts the listed courses of one language, in all and per category", async () => {
-    // A unique language keeps other tests' courses out of the counts.
     const [language, otherLanguage] = [randomUUID().slice(0, 10), randomUUID().slice(0, 10)];
 
     const [brand, school] = await Promise.all([
@@ -28,7 +27,6 @@ describe(countCatalogCourses, () => {
         courseFixture({ ...listed, organizationId: school.id }),
         courseFixture({ ...listed, language: otherLanguage }),
       ]),
-      // Listed without a category yet: in the total only.
       courseFixture(listed),
     ]);
 

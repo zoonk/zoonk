@@ -5,7 +5,7 @@ type CourseOutlineTotals = { estimatedMinutes: number; lessonCount: number };
 
 const NO_LESSONS: CourseOutlineTotals = { estimatedMinutes: 0, lessonCount: 0 };
 
-/** Only shared chapters and lessons count: the catalog is cached for every viewer. */
+/** Shared catalog caches must never count private content. */
 async function findOutlineTotals(courseIds: string[]) {
   const rows = await prisma.$queryRaw<(CourseOutlineTotals & { courseId: string })[]>`
     SELECT
@@ -22,11 +22,7 @@ async function findOutlineTotals(courseIds: string[]) {
   return new Map(rows.map(({ courseId, ...totals }) => [courseId, totals]));
 }
 
-/**
- * Adds to each course the lessons its outline places and their estimated minutes added up, the
- * numbers its page states ("37 short lessons · about 2 hr"), for a whole catalog page in one
- * grouped query. An outline whose lessons aren't written yet has none.
- */
+/** Unwritten outlines contribute zero lessons and minutes. */
 export async function withOutlineTotals<Course extends { id: string }>(
   courses: Course[],
 ): Promise<(Course & CourseOutlineTotals)[]> {

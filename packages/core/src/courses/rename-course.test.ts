@@ -45,8 +45,6 @@ describe(renameCourseForAdmin, () => {
     ).resolves.toMatchObject({ slug: course.slug, title: course.title });
   });
 
-  // The catalog's pages are cached by address: the old one must stop naming the course and the new
-  // one, maybe cached as missing, must find it, at once.
   it("saves the title, its search title and the slug, and expires both addresses and the course", async () => {
     const [{ course, organization }, admin] = await Promise.all([
       brandCourse(),

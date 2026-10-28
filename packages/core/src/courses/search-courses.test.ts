@@ -106,13 +106,11 @@ describe(searchCourses, () => {
     const enIds = enResult.map((course) => course.id);
     const ptIds = ptResult.map((course) => course.id);
 
-    // Both results contain courses from all languages
     expect(enIds).toContain(enCourse.id);
     expect(enIds).toContain(ptCourse.id);
     expect(ptIds).toContain(enCourse.id);
     expect(ptIds).toContain(ptCourse.id);
 
-    // User's language appears first
     expect(enResult[0]?.language).toBe("en");
     expect(ptResult[0]?.language).toBe("pt");
   });

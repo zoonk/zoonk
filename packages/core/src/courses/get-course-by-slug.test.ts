@@ -21,12 +21,7 @@ import { renameCourseForAdmin } from "./rename-course";
 type CacheEntry = { result: Promise<unknown>; tags: Set<string> };
 type CachedRead = (...args: unknown[]) => Promise<unknown>;
 
-/**
- * Vitest doesn't compile cache directives. Use the installed Next compiler and replace only its
- * request/cache platform: one request's private entries, the app's shared entries and tag expiry.
- * All course queries and mutations still reach PostgreSQL. This checks our capability's cache
- * boundary and dependencies; the app's instant-navigation E2E checks actual Next prefetching.
- */
+/** Vitest does not compile cache directives, so use Next's compiler with a cache stand-in. */
 function courseCachePlatform(code: string) {
   const sharedEntries = new Map<string, CacheEntry>();
   const requestEntries = new Map<string, CacheEntry>();
@@ -182,8 +177,6 @@ describe(getCourse, () => {
     expect(result).toBeNull();
   });
 
-  // A course page is the same for everyone and never reads a session, so a learner's private
-  // course has none, even under a brand.
   it("returns null when the course is private", async () => {
     const organization = await organizationFixture({ kind: "brand" });
 
@@ -314,7 +307,6 @@ describe("the complete course route cache", () => {
     const first = await platform.getCourse(params);
     expect(first?.id).toBe(course.id);
 
-    // A write whose tags don't reach this app shows once the default lifetime revalidates it.
     await prisma.course.update({
       data: { categories: { create: { category: "languages" } }, title: "Updated elsewhere" },
       where: { id: course.id },
@@ -336,7 +328,6 @@ describe("the complete course route cache", () => {
     expect(edited?.title).toBe("Updated elsewhere");
     expect(edited?.categories.map((item) => item.category)).toStrictEqual(["languages"]);
 
-    // A rename expires the old route's tag: its address stops naming the course at once.
     await prisma.course.update({
       data: { slug: `${course.slug}-renamed` },
       where: { id: course.id },
