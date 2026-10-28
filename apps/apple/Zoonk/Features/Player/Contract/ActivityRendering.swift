@@ -70,10 +70,6 @@ struct ActivityRendererRegistry: Sendable {
     renderers[template]
   }
 
-  func adding(_ additions: [ActivityRenderer]) -> ActivityRendererRegistry {
-    ActivityRendererRegistry(Array(renderers.values) + additions)
-  }
-
   static let empty = ActivityRendererRegistry([])
 }
 

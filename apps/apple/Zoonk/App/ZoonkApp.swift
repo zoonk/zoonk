@@ -117,9 +117,7 @@ struct ZoonkApp: App {
         .environment(\.lessonPlayer, lessonPlayer)
         .environment(\.lessonAudio, .voice(voice))
         .environment(\.spokenAnswerRecording, .voice)
-        .environment(
-          \.activityRenderers, ActivityRendererRegistry.app.adding(CodeActivityRenderers.all)
-        )
+        .environment(\.activityRenderers, .app)
         .onOpenURL { url in
           if !router.open(url: url) {
             session.handleGoogleSignInURL(url)

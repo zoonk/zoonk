@@ -24,5 +24,5 @@ extension ActivityRendererRegistry {
       .sourceComparison,
       .stepSolver,
       .timeline,
-    ] + ChartsActivities.renderers)
+    ] + ChartsActivities.renderers + CodeActivityRenderers.all)
 }
