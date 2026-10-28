@@ -87,8 +87,7 @@ struct TutorComposerBar: View {
           } label: {
             Text(suggestion.label)
           }
-          .buttonStyle(.bordered)
-          .buttonBorderShape(.capsule)
+          .buttonStyle(.suggestionChip)
           .disabled(!conversation.canAsk)
         }
       }

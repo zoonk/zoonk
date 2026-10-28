@@ -47,8 +47,7 @@ struct BuddyGoalStart: View {
               Button(example) {
                 goal = example
               }
-              .buttonStyle(.bordered)
-              .buttonBorderShape(.capsule)
+              .buttonStyle(.suggestionChip)
             }
           }
         }
