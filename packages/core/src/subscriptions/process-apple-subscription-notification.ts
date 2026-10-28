@@ -1,7 +1,8 @@
 import { prisma } from "@zoonk/db";
 import { getAppleSubscriptionProduct } from "./apple-products";
 import { getAppleSubscriptionFromNotification } from "./apple-store";
-import { findAppleSubscription, reconcileAppleSubscription } from "./reconcile-apple-subscription";
+import { reconcileAppleSubscription } from "./reconcile-apple-subscription";
+import { findStoreSubscription } from "./reconcile-store-subscription";
 
 /**
  * Existing chains keep their established owner. First delivery may create a row only for the
@@ -47,7 +48,10 @@ export async function processAppleSubscriptionNotification({
     return null;
   }
 
-  const existing = await findAppleSubscription(verifiedSubscription.originalTransactionId);
+  const existing = await findStoreSubscription({
+    provider: "apple",
+    providerSubscriptionId: verifiedSubscription.originalTransactionId,
+  });
 
   const referenceId = await getNotificationReferenceId({
     accountToken: verifiedSubscription.accountToken,

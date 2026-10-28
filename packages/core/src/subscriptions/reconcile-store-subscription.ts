@@ -1,0 +1,133 @@
+import { type Subscription, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
+import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
+import { getUserSubscriptionCacheTag } from "../cache/tags";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
+
+type StoreProvider = "apple" | "google";
+
+/** One store's view of a subscription chain at `providerSignedAt`, owned by `referenceId`. */
+export type StoreSubscriptionSnapshot = {
+  billingInterval: "month" | "year";
+  cancelAt: Date | null;
+  cancelAtPeriodEnd: boolean;
+  canceledAt: Date | null;
+  endedAt: Date | null;
+  periodEnd: Date;
+  periodStart: Date;
+  plan: "plus";
+  provider: StoreProvider;
+  providerEnvironment: string;
+  providerEventId: string | null;
+  providerProductId: string;
+  providerSignedAt: Date;
+  providerSubscriptionId: string;
+  providerTransactionId: string | null;
+  referenceId: string;
+  status: "active" | "canceled";
+};
+
+/** The store chain is already linked to another Zoonk account. */
+export class StoreSubscriptionConflictError extends Error {
+  constructor() {
+    super("Store subscription belongs to another account");
+    this.name = "StoreSubscriptionConflictError";
+  }
+}
+
+/**
+ * Stores retry notifications and can deliver them out of order, so only a strictly newer
+ * snapshot may replace the stored one.
+ */
+function isStaleSnapshot({
+  existing,
+  snapshot,
+}: {
+  existing: Subscription;
+  snapshot: StoreSubscriptionSnapshot;
+}) {
+  if (snapshot.providerEventId && existing.providerEventId === snapshot.providerEventId) {
+    return true;
+  }
+
+  return Boolean(
+    existing.providerSignedAt && existing.providerSignedAt >= snapshot.providerSignedAt,
+  );
+}
+
+/** A snapshot and its entitlement/input markers commit together, including first delivery. */
+function writeSnapshot(snapshot: StoreSubscriptionSnapshot) {
+  const data = { ...snapshot, userId: snapshot.referenceId };
+
+  return writeLearnerChange({ planInputs: true, userId: snapshot.referenceId }, async (tx) => {
+    const existing = await tx.subscription.findUnique({
+      where: {
+        provider_providerSubscriptionId: {
+          provider: snapshot.provider,
+          providerSubscriptionId: snapshot.providerSubscriptionId,
+        },
+      },
+    });
+
+    if (!existing) {
+      return tx.subscription.create({ data });
+    }
+
+    if (existing.referenceId !== snapshot.referenceId) {
+      throw new StoreSubscriptionConflictError();
+    }
+
+    if (isStaleSnapshot({ existing, snapshot })) {
+      return unchanged(existing);
+    }
+
+    /** Preserve the signed-date predicate even when an older external writer races this one. */
+    const { count } = await tx.subscription.updateMany({
+      data,
+      where: {
+        OR: [{ providerSignedAt: null }, { providerSignedAt: { lt: snapshot.providerSignedAt } }],
+        id: existing.id,
+      },
+    });
+
+    const current = await tx.subscription.findUniqueOrThrow({ where: { id: existing.id } });
+    return count === 0 ? unchanged(current) : current;
+  });
+}
+
+export function findStoreSubscription({
+  provider,
+  providerSubscriptionId,
+}: {
+  provider: StoreProvider;
+  providerSubscriptionId: string;
+}) {
+  return prisma.subscription.findUnique({
+    where: { provider_providerSubscriptionId: { provider, providerSubscriptionId } },
+  });
+}
+
+/** Persists one ordered store snapshot and expires every cached entitlement derived from it. */
+export async function reconcileStoreSubscription(snapshot: StoreSubscriptionSnapshot) {
+  const subscription = await writeSnapshot(snapshot).catch((error: unknown) => {
+    if (!isPrismaUniqueConstraintError(error)) {
+      throw error;
+    }
+
+    /** A different account can race the provider-chain key: retry after the losing tx rolled back. */
+    return writeSnapshot(snapshot);
+  });
+
+  revalidateCacheTags([getUserSubscriptionCacheTag(snapshot.referenceId)]);
+  return subscription;
+}
+
+/** Whether a reconciled store row grants access right now (stores bound access by its period). */
+export function isActiveStoreSubscription(subscription: Subscription) {
+  return Boolean(
+    subscription.status &&
+    ["active", "trialing"].includes(subscription.status) &&
+    subscription.endedAt === null &&
+    subscription.periodEnd &&
+    subscription.periodEnd > new Date(),
+  );
+}

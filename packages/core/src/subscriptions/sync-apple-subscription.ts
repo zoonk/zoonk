@@ -1,10 +1,10 @@
-import { type Subscription } from "@zoonk/db";
 import { getSession } from "../users/get-session";
 import { getAppleSubscriptionProduct } from "./apple-products";
 import { getAppleSubscriptionFromTransaction } from "./apple-store";
 import { AppleStoreError } from "./apple-store-error";
 import { AppleSubscriptionError } from "./apple-subscription-error";
 import { reconcileAppleSubscription } from "./reconcile-apple-subscription";
+import { isActiveStoreSubscription } from "./reconcile-store-subscription";
 
 function getSyncError(error: unknown) {
   if (!(error instanceof AppleStoreError)) {
@@ -12,17 +12,6 @@ function getSyncError(error: unknown) {
   }
 
   return new AppleSubscriptionError(error.reason, { cause: error });
-}
-
-function isActiveAppleSubscription(subscription: Subscription) {
-  return Boolean(
-    subscription.provider === "apple" &&
-    subscription.status &&
-    ["active", "trialing"].includes(subscription.status) &&
-    subscription.endedAt === null &&
-    subscription.periodEnd &&
-    subscription.periodEnd > new Date(),
-  );
 }
 
 /**
@@ -59,7 +48,7 @@ export async function syncCurrentUserAppleSubscription({
       verifiedSubscription,
     });
 
-    return { isActive: isActiveAppleSubscription(subscription), subscription };
+    return { isActive: isActiveStoreSubscription(subscription), subscription };
   } catch (error) {
     throw getSyncError(error);
   }
