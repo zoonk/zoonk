@@ -4,8 +4,9 @@ extension View {
   /// Loads the resources a screen shows the way every screen should: cached data at once, a
   /// request only when nothing is cached or it's stale (on appear and on returning to the
   /// foreground), pull to refresh, and a revalidation when a mutation invalidates it while it's
-  /// on screen. Frame data that isn't a screen's content passes `refreshable: false`, so pull to
-  /// refresh stays with the screens.
+  /// on screen. A failed request isn't asked again as the screen redraws, only by those. Frame
+  /// data that isn't a screen's content passes `refreshable: false`, so pull to refresh stays
+  /// with the screens.
   func loads(_ resources: any CachedResource..., refreshable: Bool = true) -> some View {
     modifier(ResourceLoading(resources: resources, refreshable: refreshable))
   }
@@ -57,7 +58,7 @@ private struct ResourceLoading: ViewModifier {
           }
         }
 
-        await forEach(resources) { await $0.load() }
+        await forEach(resources) { await $0.show() }
         await untilCancelled()
       }
       .onChange(of: scenePhase) { _, scenePhase in

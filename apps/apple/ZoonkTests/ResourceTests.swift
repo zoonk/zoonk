@@ -123,6 +123,59 @@ final class ResourceTests: XCTestCase {
     XCTAssertEqual(requests.count, 3)
   }
 
+  /// A screen that redraws as its request fails (a spinner, then the error) shows its resource
+  /// again each time (`loads(_:)` restarts its task): a failure that persists, such as a 5xx or a
+  /// response the app can't decode, must not fetch in a loop. It stays until a retry or pull to
+  /// refresh, the app's return to the foreground, or an invalidation asks again.
+  func testAFailureStaysUntilSomethingAsksAgain() async {
+    let cache = AppCache(session: .preview(account: .resourceTestAccount))
+    let requests = Requests(results: Array(repeating: .failure(APIError.unavailable), count: 20))
+    let resource: Resource<Int> = cache.resource(
+      audience: .signedIn, domains: [.userProgress], fetch: requests.fetch)
+    resource.beginViewing()
+
+    for _ in 0..<5 {
+      await resource.show()
+    }
+    XCTAssertEqual(resource.state, .failed(.unavailable))
+    XCTAssertEqual(requests.count, 1)
+
+    // Try again, or pull to refresh.
+    await resource.refresh()
+    await resource.show()
+    XCTAssertEqual(requests.count, 2)
+
+    // The app returns to the foreground.
+    await resource.load()
+    await resource.show()
+    XCTAssertEqual(requests.count, 3)
+
+    // A mutation changes what it reads.
+    cache.invalidate([.userProgress])
+    await requests.waitForCount(4)
+    await resource.show()
+    await resource.show()
+    XCTAssertEqual(requests.count, 4)
+    XCTAssertEqual(resource.state, .failed(.unavailable))
+  }
+
+  /// A failed revalidation keeps the content on screen, and a redraw doesn't ask again either.
+  func testAFailedRevalidationIsntRetriedOnARedraw() async {
+    let clock = TestClock()
+    let requests = Requests(
+      results: [.success(1)] + Array(repeating: .failure(APIError.unavailable), count: 10))
+    let resource = makeResource(requests: requests, clock: clock)
+    await resource.load()
+
+    clock.advance(by: AppCache.defaultMaxAge + .seconds(1))
+    for _ in 0..<3 {
+      await resource.show()
+    }
+
+    XCTAssertEqual(resource.state, .loaded(1))
+    XCTAssertEqual(requests.count, 2)
+  }
+
   func testDataThatNoLongerExistsReplacesTheContent() async {
     let requests = Requests(results: [.success(1), .failure(APIError.notFound)])
     let resource = makeResource(requests: requests)

@@ -7,6 +7,7 @@ protocol CachedResource: AnyObject, Sendable {
   var audience: ResourceAudience { get }
   var domains: Set<DataDomain> { get }
   func load() async
+  func show() async
   func refresh() async
   func invalidate()
   func followSession()
@@ -44,6 +45,10 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
   @ObservationIgnored private let now: () -> ContinuousClock.Instant
   @ObservationIgnored private let session: SessionStore
   @ObservationIgnored private var isInvalidated = false
+  /// The last request failed and nothing has asked again since. A screen redrawn over the error,
+  /// or over the content a failed refresh kept, doesn't fetch again on its own, so a failure that
+  /// persists (a 5xx, a response the app can't decode) can't loop.
+  @ObservationIgnored private var hasSettledOnFailure = false
   @ObservationIgnored private var loadedAt: ContinuousClock.Instant?
   @ObservationIgnored private var owner: AuthenticatedSession?
   @ObservationIgnored private var request: (id: Int, task: Task<Void, Never>)?
@@ -104,6 +109,19 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
     await run()
   }
 
+  /// What a screen showing the resource asks for (`loads(_:)`): `load()`, except that after a
+  /// failed request it waits for a retry, pull to refresh, the app's return to the foreground or
+  /// an invalidation instead of asking again each time the screen redraws.
+  func show() async {
+    followSession()
+
+    guard !hasSettledOnFailure else {
+      return
+    }
+
+    await load()
+  }
+
   /// Fetches again now while keeping what's shown, as pull to refresh and retry do.
   func refresh() async {
     followSession()
@@ -115,13 +133,14 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
     await run()
   }
 
-  /// Marks the value out of date after a mutation changed it. A screen showing it revalidates now;
-  /// otherwise it revalidates the next time a screen loads it. A response already on its way may
-  /// predate the mutation, so it's discarded.
+  /// Marks the value out of date after a mutation changed it. A screen showing it revalidates now,
+  /// a failed load included; otherwise it revalidates the next time a screen loads it. A response
+  /// already on its way may predate the mutation, so it's discarded.
   func invalidate() {
     isInvalidated = true
+    hasSettledOnFailure = false
 
-    guard request != nil || storedState.hasContent else {
+    guard request != nil || storedState != .idle else {
       return
     }
 
@@ -159,6 +178,7 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
     storedState = .idle
     loadedAt = nil
     isInvalidated = false
+    hasSettledOnFailure = false
     revision += 1
   }
 
@@ -192,6 +212,7 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
     requestCount += 1
     let id = requestCount
     let owner = owner
+    hasSettledOnFailure = false
 
     if storedState.hasContent {
       isRefreshing = true
@@ -251,6 +272,8 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
 
       return
     }
+
+    hasSettledOnFailure = true
 
     switch error as? APIError ?? .unavailable {
     case .unauthorized:
