@@ -2467,64 +2467,6 @@
         }
       }
     },
-    "Sign in to continue" : {
-      "comment" : "The session ended",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Melde dich an, um weiterzumachen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inicia sesión para continuar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connecte-toi pour continuer"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entre para continuar"
-          }
-        }
-      }
-    },
-    "Sign in to keep learning." : {
-      "comment" : "The session ended",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Melde dich an, um weiterzulernen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inicia sesión para seguir aprendiendo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connecte-toi pour continuer à apprendre."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entre para continuar aprendendo."
-          }
-        }
-      }
-    },
     "Skills practiced" : {
       "comment" : "Above the skills a challenge trains",
       "localizations" : {

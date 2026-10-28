@@ -287,14 +287,8 @@ struct StudyAPI: StudyAPIClient {
   }
 
   func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome {
-    // The player owns how a writing request answers (refusals included); a 401 is the session's.
-    let outcome = await LessonPlayerAPI(clients: clients).writeLesson(id: lessonID, token: token)
-
-    if outcome == .refused(.unauthorized) {
-      throw APIError.unauthorized
-    }
-
-    return outcome
+    // The player owns how a writing request answers (refusals included; a 401 throws).
+    try await LessonPlayerAPI(clients: clients).writeLesson(id: lessonID, token: token)
   }
 
   func prepareSession(token: String, sessionID: String) async throws {

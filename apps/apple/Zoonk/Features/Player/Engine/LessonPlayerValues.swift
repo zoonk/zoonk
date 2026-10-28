@@ -96,7 +96,6 @@ enum LessonRunRefusal: Hashable, Sendable, Error {
   /// A free exam plan past its first week opens this new lesson with Plus only.
   case plusRequired
   case slowDown(retryAfterSeconds: Int)
-  case unauthorized
 }
 
 /// What a finished lesson earned, as the server counted it.

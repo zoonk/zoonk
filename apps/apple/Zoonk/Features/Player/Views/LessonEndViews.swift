@@ -184,8 +184,6 @@ struct LessonUnavailableView: View {
       backButton
     case .limitReached(tier: .guest, _):
       SignUpButton()
-    case .unauthorized:
-      SignUpButton()
     case .limitReached(tier: .plus, _), .notFound:
       backButton
     }
@@ -227,8 +225,6 @@ struct LessonUnavailableView: View {
       LocalizedStringResource(
         "That's a lot of learning today", table: "Player",
         comment: "A Plus learner reached the day's limit")
-    case .unauthorized:
-      LocalizedStringResource("Sign in to continue", table: "Player", comment: "The session ended")
     case .notFound:
       LocalizedStringResource(
         "Lesson not available", table: "Player", comment: "The lesson doesn't exist anymore")
@@ -265,9 +261,6 @@ struct LessonUnavailableView: View {
       LocalizedStringResource(
         "You've reached today's limit. New lessons open again tomorrow.", table: "Player",
         comment: "A Plus learner reached the day's limit")
-    case .unauthorized:
-      LocalizedStringResource(
-        "Sign in to keep learning.", table: "Player", comment: "The session ended")
     case .notFound:
       LocalizedStringResource(
         "This lesson isn't available anymore.", table: "Player",
@@ -277,7 +270,7 @@ struct LessonUnavailableView: View {
 
   private var symbol: String {
     switch refusal {
-    case .failed, .notFound, .unauthorized: "exclamationmark.circle"
+    case .failed, .notFound: "exclamationmark.circle"
     case .slowDown, .limitReached(.plus, _): "hourglass"
     case .plusRequired, .limitReached(.free, _): "lock.fill"
     case .limitReached(.guest, _): "person.crop.circle.badge.plus"
