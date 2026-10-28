@@ -95,6 +95,8 @@ private struct BuddyContent: View {
   @State private var isWearing = false
   @State private var goalDraft = ""
   @State private var faceCue: ActCue<BuddyAct>?
+  /// Where the phone's day sheet sends the learner, opened once the sheet is gone.
+  @State private var placeAfterDay: TutorPlace?
 
   private var name: String {
     buddyName(kind: status.buddy.kind, name: status.buddy.name)
@@ -138,7 +140,7 @@ private struct BuddyContent: View {
       .inspector(isPresented: isDayShown(when: .regular)) {
         dayView(showsTitle: true)
       }
-      .sheet(isPresented: isDayShown(when: .compact)) {
+      .sheet(isPresented: isDayShown(when: .compact), onDismiss: openPlaceAfterDay) {
         let day = dayView(showsTitle: false)
 
         NavigationStack {
@@ -155,6 +157,14 @@ private struct BuddyContent: View {
             }
         }
         .presentationDetents([.medium, .large])
+        // A phone's day is a sheet: it gives way to the place it opens (a mission, what the
+        // buddy remembers, the week), which would otherwise open under it.
+        .environment(
+          \.tutorPlaces,
+          TutorPlaces { place in
+            placeAfterDay = place
+            isDayShown = false
+          })
       }
       .sheet(isPresented: $isEditing) {
         BuddyEditor(
@@ -215,6 +225,13 @@ private struct BuddyContent: View {
 
         isWearing = true
       }, showsTitle: showsTitle)
+  }
+
+  private func openPlaceAfterDay() {
+    if let place = placeAfterDay {
+      placeAfterDay = nil
+      places.open(place)
+    }
   }
 
   /// The day shown in the presentation that fits the width: a column or a sheet.
