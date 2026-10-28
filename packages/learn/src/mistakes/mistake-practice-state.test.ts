@@ -50,7 +50,6 @@ function graded(answerId: string, fixed = false) {
   };
 }
 
-/** The run's end as core counts it, reaching nothing new by itself. */
 const SUMMARY: MistakePracticeSummary = {
   brainPower: 20,
   ceremony: null,

@@ -17,15 +17,12 @@ import { MissionListRow } from "./mission-list";
 import { MissionMark } from "./mission-mark";
 import { MissionTrack } from "./mission-track";
 
-/** What the work did to the day's missions, as its end shows it. */
 type MissionMomentFacts = {
-  /** The missions the work completed. */
   completed: readonly Mission["kind"][];
   fullMeal: { bonus: number; paid: boolean };
   missions: readonly Mission[];
 };
 
-/** The missions this work completed, as they're listed. */
 function getJustDone({
   completed,
   missions,
@@ -35,21 +32,14 @@ function getJustDone({
   );
 }
 
-/** It completed one of the day's missions, or paid the day's bonus: the work's end says so. */
 function hasMissionMoment(facts: MissionMomentFacts): boolean {
   return getJustDone(facts).length > 0 || facts.fullMeal.paid;
 }
 
-/** The day's last mission, with the bonus paid: the day's payoff, the loudest version. */
 function isPayoff({ fullMeal, missions }: MissionMomentFacts): boolean {
   return fullMeal.paid && missions.every((mission) => mission.status === "done");
 }
 
-/**
- * When what the work reached after its missions (a level, Energy) starts moving: the beat after
- * the missions' last one, so one thing moves at a time. The missions' checks land on the first
- * beat; the day's payoff adds the bonus on the second and its burst on the third.
- */
 export function getAfterMissionsDelay(facts: MissionMomentFacts | null): number {
   if (!facts || !hasMissionMoment(facts)) {
     return BEAT_MS;
@@ -58,7 +48,6 @@ export function getAfterMissionsDelay(facts: MissionMomentFacts | null): number 
   return isPayoff(facts) ? 3 * BEAT_MS : 2 * BEAT_MS;
 }
 
-/** A mission's check landing, the moment it turns done; the next ones a stagger apart. */
 function StampedMark({ celebrate, order }: { celebrate: boolean; order: number }) {
   return (
     <span
@@ -71,12 +60,6 @@ function StampedMark({ celebrate, order }: { celebrate: boolean; order: number }
   );
 }
 
-/**
- * The learner's buddy, glad about the missions. Beside a mission done, its face smiles as the
- * mission's check lands. When the day's missions are all done, the whole buddy cheers as the bonus
- * lands, its body stretching up as the burst flies. Acting with its parts, never as one block (the
- * `zoonk-motion` skill); a revisit draws it still, smiling or cheering. Decorative.
- */
 function MomentBuddy({ buddy, whole }: { buddy: LearnBuddy | null; whole: boolean }) {
   const resolved = resolveLearnBuddy(buddy);
 
@@ -97,12 +80,6 @@ function MomentBuddy({ buddy, whole }: { buddy: LearnBuddy | null; whole: boolea
   );
 }
 
-/**
- * The day's bonus this work paid, as every Brain Power earned reads (`BrainPowerReadout`): "+50" a
- * violet readout with "Brain Power" beside it. It lands whole on its beat (its words never wait
- * alone for their number) and counts up, then one burst of violet sparks flies from it, the day's
- * rarest beat. Screen readers hear it once, in the moment's status.
- */
 function PaidBonus({ celebrate, points }: { celebrate: boolean; points: number }) {
   return (
     <span
@@ -120,31 +97,13 @@ function PaidBonus({ celebrate, points }: { celebrate: boolean; points: number }
   );
 }
 
-/**
- * The end of the work that completed some of the day's missions (a block of the day, a notebook
- * practice, a pattern drill, a pronunciation round, a call, a question to the buddy), as its own
- * moment, on the same violet track Today shows: "Mission done!" with the buddy glad beside it and
- * what's left for the bonus ("1 more for +50 Brain Power"), then the day's missions by name, the
- * ones this work completed landing their checks ("Just done") as their part of the track fills,
- * and the rest saying where they're done. When it was the last one and the work paid the bonus,
- * the moment is the day's: "Today's missions done!", the whole buddy cheering as "+50" counts up
- * in violet, then one burst. Nothing when the work completed none.
- */
 export function MissionMoment({
   buddy,
   buddyName,
   completed,
   fullMeal,
   missions,
-}: MissionMomentFacts & {
-  /** The learner's buddy, where the screen knows it: it's glad about the missions with them. */
-  buddy?: LearnBuddy | null;
-  /**
-   * The buddy's name, where the screen knows only that (its own conversation, its face already
-   * beside its words), so a question to it is named.
-   */
-  buddyName?: string;
-}) {
+}: MissionMomentFacts & { buddy?: LearnBuddy | null; buddyName?: string }) {
   const t = useExtracted();
   const format = useFormatter();
   const titleId = useId();

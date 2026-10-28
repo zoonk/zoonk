@@ -5,16 +5,11 @@ import { tabStorage } from "../_utils/device-storage";
 
 const STORAGE_PREFIX = "zoonk:listening-played:";
 
-/**
- * Where a recording's plays stand: how many its play limit counted, whether one is under way (it
- * started and hasn't reached its end), and practice's one restart after an interruption: `given`
- * while the learner hasn't played it again, `used` once they did.
- */
 type PlaysState = { played: number; playing: boolean; restart: "given" | "none" | "used" };
 
 const NO_PLAYS: PlaysState = { played: 0, playing: false, restart: "none" };
 
-/** Plays in this tab, the same object while nothing changes (`useSyncExternalStore` needs that). */
+/** `useSyncExternalStore` needs the same object while nothing changes. */
 const states = new Map<string, PlaysState>();
 const listeners = new Set<() => void>();
 
@@ -55,7 +50,6 @@ function update(playsKey: string, change: (state: PlaysState) => PlaysState) {
   }
 }
 
-/** The sound started: the play counts, and a given restart is spent. */
 function startPlay(state: PlaysState): PlaysState {
   return {
     played: state.played + 1,
@@ -68,10 +62,6 @@ function endPlay(state: PlaysState): PlaysState {
   return state.playing ? { ...state, playing: false } : state;
 }
 
-/**
- * A play cut off before its end. Practice (`restartOnce`) gives it back once, so a technical problem
- * never costs the learner a set; a mock counts it, as the exam does.
- */
 function interruptPlay({
   restartOnce,
   state,
@@ -90,14 +80,7 @@ function interruptPlay({
   return { ...state, playing: false };
 }
 
-/**
- * How many times a recording was played in one asking (`playsKey`), for its play limit: the same
- * across the set's questions and after a reload of the tab (exam fidelity, not security: the file
- * is public). A play under way when the recording mounts was cut off (the page reloaded, or the
- * learner left mid-play), like a play that stops before its end (`onInterrupted`). In practice
- * (`restartOnce`) the first such play is given back (`restarted` until it's played again); in a
- * mock every play counts. Zero on the server.
- */
+/** Exam fidelity, not security: the file is public. A play under way as the recording mounts was cut off. */
 export function useListeningPlays({
   playsKey,
   restartOnce,

@@ -12,12 +12,6 @@ import { type DayStep } from "../session/session-types";
 
 type MissionKind = BuddyMission["kind"];
 
-/**
- * What each mission wears while it's to do, the one map from a mission (or a first step, which
- * shares its kinds) to its mark: the dot of the kind of work it asks for, as Today's queue marks
- * that work, or a character's face where the mission is the character's (the Trickster's duel,
- * a question to the buddy). A mission added without its mark fails the type check.
- */
 const MISSION_MARKS = {
   askBuddy: "buddy",
   call: "conversation",
@@ -35,10 +29,8 @@ const MISSION_MARKS = {
   weeklyChallenge: "challenge",
 } as const satisfies Readonly<Record<MissionKind, LearnKind | "buddy" | "trickster">>;
 
-/** A row's mark sits in its 16px leading column; the Trickster's horns reach past it. */
 const FACE_SIZES = { buddy: "size-4", done: "size-3.5", trickster: "-m-1 size-5" } as const;
 
-/** The learner's buddy's face (the default buddy's before one is chosen). Decorative. */
 export function BuddyFace({ buddy, className }: { buddy: LearnBuddy | null; className?: string }) {
   const face = resolveLearnBuddy(buddy);
 
@@ -55,13 +47,6 @@ export function BuddyFace({ buddy, className }: { buddy: LearnBuddy | null; clas
   );
 }
 
-/**
- * A mission's mark, the same in the missions card (on Today and in the buddy's day) and among the
- * first steps: its kind's icon (or its character's face) while it's to do, and the done mark every
- * list shares once done. On Today, a mission that opens one of the day's blocks wears that block's
- * mark (`block`), so practice that only fixes mistakes looks the same in both lists. Decorative:
- * the words beside it name the mission and its state.
- */
 export function MissionMark({
   block,
   buddy,
@@ -69,7 +54,6 @@ export function MissionMark({
   kind,
 }: {
   block?: DayStep;
-  /** The learner's buddy, whose face marks a question to it. */
   buddy: LearnBuddy | null;
   done: boolean;
   kind: MissionKind;

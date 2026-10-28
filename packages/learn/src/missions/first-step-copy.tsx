@@ -6,10 +6,6 @@ import { type LearnBuddy, useBuddyName } from "../buddies/use-buddy-name";
 import { useFormatPlanDate } from "../plan/plan-date-text";
 import { WaitLine, renderSentenceNumber } from "./mission-copy";
 
-/**
- * "Finish your first lesson": a first step by its name, each the first real use of something the
- * learner's plan has. The steps a mission already names ("Practice a pattern") keep its words.
- */
 export function useFirstStepName(buddy: LearnBuddy | null) {
   const t = useExtracted("missions");
   const buddyName = useBuddyName(buddy);
@@ -40,7 +36,6 @@ export function useFirstStepName(buddy: LearnBuddy | null) {
   };
 }
 
-/** When a first step that can't be done yet comes ("With your first challenge, Oct 19"). */
 function FirstStepWhen({ when }: { when: NonNullable<FirstStep["when"]> }) {
   const t = useExtracted();
   const formatPlanDate = useFormatPlanDate();
@@ -74,10 +69,6 @@ function FirstStepWhen({ when }: { when: NonNullable<FirstStep["when"]> }) {
   }
 }
 
-/**
- * Where a first step stands, under its name: one of today's missions, there to do any time, what
- * its block waits for, or when it comes. A step done says nothing more: its check does.
- */
 export function FirstStepDetailLine({ step }: { step: FirstStep }) {
   const t = useExtracted();
 

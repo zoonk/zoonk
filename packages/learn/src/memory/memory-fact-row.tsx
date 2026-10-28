@@ -22,10 +22,7 @@ import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { MemoryFactSource } from "./memory-labels";
 
-/**
- * Core's limit for one fact (`MAX_MEMORY_STATEMENT_LENGTH`). The contract module loads the database
- * enums, which can't ship to the browser, so the field repeats it and the server still checks.
- */
+/** Core's `MAX_MEMORY_STATEMENT_LENGTH`, repeated: its module loads database enums, which can't ship to the browser. */
 const MAX_STATEMENT_LENGTH = 160;
 
 function EditFactDialog({
@@ -88,7 +85,6 @@ function EditFactDialog({
   );
 }
 
-/** One fact, where it came from, and a menu to correct or delete it. */
 export function MemoryFactRow({
   fact,
   onDelete,

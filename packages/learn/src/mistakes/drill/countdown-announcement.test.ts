@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getAnnouncedSeconds } from "./countdown-announcement";
 
-/** What the clock says as it ticks from `from` seconds left down to 1. */
 function announceFrom(from: number): (number | null)[] {
   const said: (number | null)[] = [];
 

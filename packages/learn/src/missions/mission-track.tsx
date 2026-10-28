@@ -5,20 +5,14 @@ import { cn } from "@zoonk/ui/lib/utils";
 
 type TrackMission = Pick<Mission, "done" | "kind" | "total">;
 
-/** How far a mission is, from 0 to 1, for its segment of the day's track. */
 function getFill(mission: Pick<Mission, "done" | "total">): number {
   return mission.total > 0 ? Math.min(1, mission.done / mission.total) : 0;
 }
 
-/** The furthest missions first, so the track fills from its start in whatever order they're listed. */
 function byFurthest(fills: number[]): number[] {
   return fills.toSorted((first, second) => second - first);
 }
 
-/**
- * A segment that moved fills from where it was: its fill starts at that share of its own length
- * (`--fill-from`), on its turn after `delay`, the ones that moved a stagger apart.
- */
 function getFillMotion({
   delay,
   fill,
@@ -33,14 +27,6 @@ function getFillMotion({
   return { "--fill-from": was / fill, animationDelay: `${delay + order * STAGGER_MS}ms` };
 }
 
-/**
- * The day's missions as one track in Brain Power's violet, drawn as a meter's parts (6px, 2px
- * apart), a segment per mission filled as far as it is ("1 of 3 fixed" fills a third), the
- * furthest first: "1 of 2" fills the first segment even
- * when the mission done is listed last. Given where the missions stood before (`from`), the
- * segments that moved fill from there to now after `delay`: the one animation missions have, right
- * after the action that moved them. Decorative: the words beside it say the same.
- */
 export function MissionTrack({
   className,
   delay = 0,

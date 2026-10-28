@@ -22,7 +22,6 @@ import { MistakeStimulus } from "./mistake-stimulus";
 import { type MistakeEntry } from "./mistakes-notebook";
 import { useCauseLabel } from "./use-cause-label";
 
-/** Each cause has its own mark, the same one its drill's note shows. */
 const CAUSE_ICON: Readonly<Record<NonNullable<MistakeEntry["cause"]> | "unsorted", LucideIcon>> = {
   gap: LightbulbIcon,
   guess: HandIcon,
@@ -32,10 +31,6 @@ const CAUSE_ICON: Readonly<Record<NonNullable<MistakeEntry["cause"]> | "unsorted
   unsorted: CircleDashedIcon,
 };
 
-/**
- * Why a mistake happened, as its mark and a quiet label ("Fell for a trap"): the line over a
- * notebook entry.
- */
 function MistakeCauseLabel({
   cause,
   fixed = false,
@@ -55,7 +50,6 @@ function MistakeCauseLabel({
   );
 }
 
-/** "Oct 8" for this year's days, with the year for older ones. */
 function useEntryDate() {
   const format = useFormatter();
 
@@ -67,11 +61,6 @@ function useEntryDate() {
     });
 }
 
-/**
- * One answer as the player draws it once checked: the learner's in a red ring ("Your answer"), the
- * right one in a blue ring ("Correct"), the words in the text color. Named before its words for
- * screen readers. The notebook and a unit's mistakes draw them the same way.
- */
 export function MistakeAnswer({
   children,
   kind,
@@ -107,14 +96,8 @@ export function MistakeAnswer({
   );
 }
 
-/** Where an entry's actions go: practicing its skill's mistakes, and the lesson that teaches it. */
 type MistakeEntryLinks = { lesson: string | null; practiceSkill: string | null };
 
-/**
- * An entry's actions, from where lessons open (the lesson's id is appended) and where practice
- * runs (`?skill=` with a skill's id practices just its mistakes): its skill's practice when it's
- * ready, and its lesson.
- */
 export function getMistakeEntryLinks({
   hrefs,
   mistake,
@@ -130,10 +113,6 @@ export function getMistakeEntryLinks({
   };
 }
 
-/**
- * What to do about a mistake: practice its skill's mistakes (only when it's ready), and go back to
- * the lesson that teaches it.
- */
 function MistakeEntryActions({
   links,
   availableTomorrow,
@@ -177,12 +156,6 @@ function MistakeEntryActions({
   );
 }
 
-/**
- * One notebook entry: why it happened (its mark and a quiet label) and when, the question, what
- * the learner answered against the right answer, and why, then what to do about it (`links`). A
- * fixed one says when it was fixed. A statement's answers are saved as "true" or "false" and read
- * in the goal's exam's words.
- */
 export function MistakeEntryCard({
   continued = false,
   links,
@@ -203,7 +176,6 @@ export function MistakeEntryCard({
 
   return (
     <li
-      // As wide as the question was in the lesson (its column), however wide the inbox grows.
       className="border-border lg:max-w-column flex flex-col gap-3 border-t py-4 text-sm first:border-t-0 first:pt-1"
       data-slot="mistake-entry"
       data-status={mistake.status}

@@ -26,11 +26,6 @@ function Comparison({ comparison }: { comparison: NonNullable<Outline["compariso
   );
 }
 
-/**
- * A mind map in words, for screen readers and as the map itself when its picture is missing: the
- * title and central idea, the numbered branches with their explanation and points, the comparison
- * and the summary line.
- */
 export function MindMapOutline({ className, outline }: { className?: string; outline: Outline }) {
   const t = useExtracted();
 

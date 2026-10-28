@@ -4,7 +4,6 @@ import { useExtracted } from "next-intl";
 
 type MistakeCauseKey = "gap" | "guess" | "misread" | "time" | "trap" | "unsorted";
 
-/** Why a mistake happened, in plain words. Each cause gets its own kind of practice. */
 export function useCauseLabel() {
   const t = useExtracted();
 

@@ -13,16 +13,11 @@ import { BrainIcon, CheckIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 import { renderSentenceNumber } from "./mission-copy";
 
-/**
- * The day's reward, "+50 Brain Power", in its own violet: what the missions are for. It lights up
- * as a solid chip once earned. A tap says what Brain Power is and how much the learner has.
- */
 export function BrainPowerReward({
   brainPower,
   earned,
   points,
 }: {
-  /** The learner's Brain Power so far; null where it isn't known. */
   brainPower: number | null;
   earned: boolean;
   points: number;

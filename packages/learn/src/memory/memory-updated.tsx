@@ -15,13 +15,11 @@ type UndoStatus = "failed" | "idle" | "undone";
 
 type MemoryFactSummary = Pick<MemoryFactView, "id" | "statement">;
 
-/** What the notice reads of a change, so a chat's streamed changes show it as well as the API's. */
 type MemoryChangeSummary = Pick<MemoryChange, "action"> & {
   fact: MemoryFactSummary | null;
   previous: MemoryFactSummary | null;
 };
 
-/** What an undo sends back: the fact each change added and the one it replaced or removed. */
 function toMemoryChangeReferences(changes: MemoryChangeSummary[]): MemoryChangeReference[] {
   return changes.map((change) => ({
     factId: change.fact?.id ?? null,
@@ -54,12 +52,7 @@ function UndoResult({ status }: { status: UndoStatus }) {
   return <span className="text-destructive-text">{t("Couldn't undo. It changed since.")}</span>;
 }
 
-/**
- * "Memory updated", with what changed and an undo, shown right where a chat, a session or the
- * Memory screen changed what Zoonk remembers: one quiet line with its glyph, the undo inline, so a
- * note about the conversation doesn't read as another card in it. `onUndo` sends the changes back
- * and says whether they were undone.
- */
+/** `onUndo` resolves to whether the changes were undone. */
 export function MemoryUpdated({
   changes,
   className,

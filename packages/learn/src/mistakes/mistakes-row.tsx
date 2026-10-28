@@ -26,7 +26,6 @@ function MistakesRowDescription({ availability }: { availability: MistakeAvailab
   return ready > 0 ? t("Redo what you got wrong") : t("Today's mistakes return tomorrow");
 }
 
-/** The mistakes notebook as a row of a list, with how many are left to fix at its end; nothing at zero. */
 export function MistakesRow({
   availability,
   href,

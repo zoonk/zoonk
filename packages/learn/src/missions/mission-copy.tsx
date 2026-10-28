@@ -14,11 +14,7 @@ type MissionOpens = NonNullable<MissionView["opens"]>;
 type MissionKind = Mission["kind"];
 type MissionDetail = Mission["detail"];
 
-/**
- * "Review", "Finish Percentages", "Take on the Trickster": a mission by its name, the same on
- * Today's chips and in the buddy's list. Names are verbs where they ask for something ("Write the
- * essay"), so their own namespace keeps "Practice" apart from the noun elsewhere.
- */
+/** Its own namespace keeps the verb "Practice" apart from the noun elsewhere. */
 export function useMissionName(buddy: Pick<LearnBuddy, "kind" | "name"> | null) {
   const t = useExtracted("missions");
   const buddyName = useBuddyName(buddy);
@@ -70,9 +66,7 @@ export function useMissionName(buddy: Pick<LearnBuddy, "kind" | "name"> | null) 
   };
 }
 
-/** What a mission or step is, by its state, for screen readers after its name. */
 type MissionState = {
-  /** On the buddy's own tab, asking it is its composer right there. */
   asks: boolean;
   done: boolean;
   kind: MissionKind;
@@ -80,7 +74,6 @@ type MissionState = {
   waitReason?: Mission["waitReason"];
 };
 
-/** ", go to today's review": where opening a mission still to do goes, for screen readers. */
 function useOpensLabel(buddy: LearnBuddy | null) {
   const t = useExtracted();
   const buddyName = useBuddyName(buddy);
@@ -106,7 +99,6 @@ function useOpensLabel(buddy: LearnBuddy | null) {
         return mock(opens);
       case "essay":
         return t(", go to today's essay");
-      // A weak spot is today's practice of its area, which its name already says.
       case "practice":
       case "weakSpot":
         return t(", go to today's practice");
@@ -126,11 +118,6 @@ function useOpensLabel(buddy: LearnBuddy | null) {
   };
 }
 
-/**
- * Said after a mission's (or a first step's) name, for screen readers: that it's done, why it
- * can't open yet, or where opening it goes ("Review, go to today's review"). Nothing for one with
- * nowhere to open.
- */
 export function useMissionStateLabel(buddy: LearnBuddy | null) {
   const t = useExtracted();
   const opensLabel = useOpensLabel(buddy);
@@ -152,18 +139,13 @@ export function useMissionStateLabel(buddy: LearnBuddy | null) {
   };
 }
 
-/**
- * A number or a date inside a sentence ("With your first challenge, Oct 19", "You have 3,340"): in
- * the sentence's face with tabular figures, as every number in a sentence reads. Messages still
- * mark it `<mono>`.
- */
+/** Messages mark it `<mono>`, but a number in a sentence keeps the sentence's face. */
 export function renderSentenceNumber(chunks: React.ReactNode) {
   return <span className="tabular-nums">{chunks}</span>;
 }
 
 type WaitReason = NonNullable<Mission["waitReason"]>;
 
-/** What a challenge waits for before it can open, as its row in the day says. */
 function useWaitLine() {
   const t = useExtracted();
 
@@ -175,7 +157,6 @@ export function WaitLine({ reason }: { reason: WaitReason }) {
   return useWaitLine()(reason);
 }
 
-/** Work outside the day's blocks has an estimate ("~3 min"); a block has its planned minutes. */
 const ESTIMATED_KINDS: ReadonlySet<MissionKind> = new Set([
   "askBuddy",
   "call",
@@ -184,7 +165,6 @@ const ESTIMATED_KINDS: ReadonlySet<MissionKind> = new Set([
   "pronunciation",
 ]);
 
-/** Where a mission done outside the day's blocks is done, in words. */
 function useOutsideStep() {
   const t = useExtracted();
 
@@ -221,7 +201,6 @@ function useOutsideStep() {
   };
 }
 
-/** A chapter's next lesson, and how many more it asks after that one. */
 function useChapterStep() {
   const t = useExtracted();
 
@@ -248,10 +227,6 @@ function useChapterStep() {
   };
 }
 
-/**
- * What a mission still asks, in words: what its block waits for, the block it opens by its queue
- * name (a chapter's next lesson and how many after it), or the place it's done.
- */
 function useMissionStep() {
   const t = useExtracted();
   const waitLine = useWaitLine();
@@ -279,7 +254,6 @@ function useMissionStep() {
       return detail.title;
     }
 
-    // A weekly challenge or mock block is named after the mission itself: no second name.
     if (block && kind !== "weeklyChallenge" && kind !== "mock") {
       return blockTitle(block);
     }
@@ -296,7 +270,6 @@ function useMissionStep() {
   };
 }
 
-/** "5 min" for a block, "~3 min" for work outside the day's blocks, in the mono face. */
 function MissionMinutes({ kind, minutes }: { kind?: MissionKind; minutes: number }) {
   const formatDuration = useFormatDuration();
   const estimate = kind === undefined || ESTIMATED_KINDS.has(kind);
@@ -308,15 +281,6 @@ function MissionMinutes({ kind, minutes }: { kind?: MissionKind; minutes: number
   );
 }
 
-/**
- * What a mission still asks, under its name: how far a multi-step one is ("1/3"), the block it
- * opens (a chapter's next lesson, and how many after it) or where it's done, and about how long it
- * takes. A challenge that has to wait says what for. One line: in a narrow column (the missions
- * card in the aside) the block's name gives way to an ellipsis, so the count and the minutes stay
- * in sight and a row never runs to five lines; the queue beside it names the block in full. On
- * Today, the block it opens (`block`) is named as the day's queue names it: "Practice mistakes"
- * there was a bare "Practice" here.
- */
 export function MissionStepLine({ block, mission }: { block?: DayStep; mission: MissionView }) {
   const step = useMissionStep()(mission, block);
   const minutes = mission.minutes ?? 0;

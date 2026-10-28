@@ -19,10 +19,8 @@ import { MissionListRow, ProgressCount } from "./mission-list";
 import { BuddyFace, MissionMark } from "./mission-mark";
 import { MissionTrack } from "./mission-track";
 
-/** A day's missions and the full meal they add up to: a saved day's, or one not opened yet. */
 export type MissionsDay = Pick<BuddyToday, "fullMeal"> & { missions: readonly MissionView[] };
 
-/** "2 left · ~8 min": how many missions are left and about how long they take, in the mono face. */
 function MissionsStatus({
   missions,
   points,
@@ -48,12 +46,6 @@ function MissionsStatus({
   return <FactSegments facts={minutes > 0 ? [count, `~${formatDuration(minutes)}`] : [count]} />;
 }
 
-/**
- * A mission in the card: its mark, its name, what it still asks and about how long (the next
- * block's name, or where it's done), and its count when it takes more than one step. One to do
- * opens where it's done; one done shows its check, its name muted; a challenge that waits says
- * what for and opens nothing yet.
- */
 function MissionRow({
   block,
   buddy,
@@ -90,7 +82,6 @@ function MissionRow({
   );
 }
 
-/** The violet target when a mission opens one of the day's blocks: the mark that block wears there. */
 function MissionRowEnd({ mission }: { mission: MissionView }) {
   if (mission.opens?.kind !== "block" || mission.waitReason) {
     return null;
@@ -99,7 +90,6 @@ function MissionRowEnd({ mission }: { mission: MissionView }) {
   return <TargetIcon aria-hidden="true" className="text-brain size-3.5" />;
 }
 
-/** A finished day's missions, or a bonus another goal already earned, as one line on a panel. */
 function MissionsLine({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <Surface
@@ -111,19 +101,6 @@ function MissionsLine({ children, className }: { children: React.ReactNode; clas
   );
 }
 
-/**
- * Today's missions, the same on Today and in the buddy's day: the buddy offers them, the header
- * says how many are left and about how long they take, the reward ("+50 Brain Power") sits beside
- * them in its violet, the day's track fills as they're done, and each mission opens where it's done
- * and says what it still asks. Once every mission is done the reward lights up; on Today
- * (`collapseWhenDone`) the card then folds to one line and gives the room back to the day. When
- * another goal already earned today's bonus it says so in one quiet line, since nothing is at
- * stake. A day without missions shows nothing; before today's session exists the buddy's day says
- * when they start. `rowsInQueue`: where the card follows Today's queue (under 72rem) and every
- * mission only opens one of its blocks, it keeps its header and track and leaves the rows to the
- * queue, whose violet marks name those blocks, so no block is listed twice. `blockOf`: on Today,
- * the day's block a mission opens, which its row then marks and names as the queue does.
- */
 export function MissionsCard({
   blockOf,
   brainPower,
@@ -142,7 +119,6 @@ export function MissionsCard({
   collapseWhenDone?: boolean;
   links: MissionLinks;
   rowsInQueue?: boolean;
-  /** In the buddy's own day its face is already there: the card leaves it out. */
   showBuddy?: boolean;
   today: MissionsDay | null;
 }) {
@@ -212,7 +188,6 @@ export function MissionsCard({
           <h2 className="text-sm leading-snug font-semibold wrap-break-word" id={titleId}>
             {won ? t("Missions done") : t("Today's missions")}
           </h2>
-          {/* A long word wraps rather than running under the reward beside it. */}
           <p className="text-muted-foreground text-xs leading-snug wrap-break-word tabular-nums">
             <MissionsStatus missions={missions} points={points} />
             <span className="sr-only">

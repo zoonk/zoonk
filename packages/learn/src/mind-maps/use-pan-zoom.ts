@@ -16,7 +16,6 @@ import {
 /** A wheel notch of about 100 zooms by about a fifth. */
 const WHEEL_ZOOM_SPEED = 0.002;
 
-/** An arrow key moves a zoomed picture this far. */
 const ARROW_STEP = 80;
 
 type Pinch = { distance: number; middle: Point; view: PanZoom };
@@ -36,20 +35,12 @@ function middle(a: Point, b: Point): Point {
   return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
 }
 
-/** A pointer's spot measured from the frame's middle, as the zoom math expects. */
 function fromCenter({ element, point }: { element: HTMLElement; point: Point }): Point {
   const box = element.getBoundingClientRect();
   return { x: point.x - box.left - box.width / 2, y: point.y - box.top - box.height / 2 };
 }
 
-/**
- * Zooming and moving a picture inside its frame by every means a device has: pinching and
- * dragging with fingers, the wheel or a trackpad pinch and dragging with a mouse, a double tap,
- * the keyboard (+, -, 0 and the arrows) and the host's buttons. The frame takes over touch
- * gestures (`touch-none`), so the page itself never zooms.
- */
 export function usePanZoom({ active }: { active: boolean }) {
-  // The frame mounts only while the viewer is open, so its observers follow the element itself.
   const [element, setElement] = useState<HTMLDivElement | null>(null);
   const [frame, setFrame] = useState<Frame>({ height: 0, width: 0 });
   const [view, setView] = useState<PanZoom>(FIT);
@@ -188,7 +179,6 @@ export function usePanZoom({ active }: { active: boolean }) {
     }
   });
 
-  // The keys work wherever focus is while the viewer is open, its buttons included.
   useEffect(() => {
     if (!active) {
       return;

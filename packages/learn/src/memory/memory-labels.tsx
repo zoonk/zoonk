@@ -26,7 +26,6 @@ export function MemoryCategoryName({ category }: { category: MemoryCategory }) {
   }
 }
 
-/** Where a fact came from, so the learner can tell what they said from what was noticed. */
 function useFactSourceName(fact: MemoryFactView): string {
   const t = useExtracted();
 
@@ -48,7 +47,6 @@ function useFactSourceName(fact: MemoryFactView): string {
   }
 }
 
-/** Where a fact came from, then the day, in the mono face as every date reads ("Oct 11"). */
 export function MemoryFactSource({ fact }: { fact: MemoryFactView }) {
   const format = useFormatter();
   const source = useFactSourceName(fact);

@@ -14,20 +14,12 @@ import {
 const MS_PER_SECOND = 1000;
 const NOT_SURE: ChoiceAnswer = { dontKnow: true };
 
-/**
- * How the host grades and counts a run. Each answer comes with the run's earlier answers, so saving
- * it counts the run so far and a run left halfway still counts; `finish` counts the whole run once
- * more at the end or when the learner stops, and says what it earned.
- */
+/** Each answer carries the run's earlier ones, so a run left halfway still counts; `finish` counts it once more at the end. */
 export type MistakePracticeActions = {
   answer: (answer: MistakePracticeAnswer) => Promise<MistakePracticeFeedback>;
   finish: (run: { answerIds: string[] }) => Promise<MistakePracticeSummary | null>;
 };
 
-/**
- * Runs "Practice mistakes": each mistake's drill question by question, graded on the server, with
- * the run counted toward today as each answer is saved and once more when it ends.
- */
 export function useMistakePractice({
   actions,
   practice,
@@ -39,7 +31,6 @@ export function useMistakePractice({
   const { steps } = state;
   const step = steps[state.index];
   const shownAt = useRef(0);
-  // The id the question on screen is saved under, however often its answer is sent.
   const attempt = useRef<{ id: string; index: number } | null>(null);
 
   useEffect(() => {
@@ -76,8 +67,6 @@ export function useMistakePractice({
       attempt.current = { id: crypto.randomUUID(), index: state.index };
     }
 
-    // A request that didn't get through (the network dropped) reads as not saved, with the answer
-    // kept to check again, never as a Check that spins forever.
     const feedback = await actions
       .answer({
         answer,

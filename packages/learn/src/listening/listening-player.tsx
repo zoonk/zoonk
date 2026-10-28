@@ -14,7 +14,6 @@ const SECONDS_PER_MINUTE = 60;
 
 type Status = "failed" | "idle" | "loading" | "playing";
 
-/** "1:05" from milliseconds, the way a recording's length is read. */
 function formatClock(ms: number): string {
   const seconds = Math.max(0, Math.round(ms / MS_PER_SECOND));
   const rest = seconds % SECONDS_PER_MINUTE;
@@ -54,12 +53,8 @@ function usePlaysNote({
 }
 
 /**
- * A listening exam's recording, played the way the exam plays it: `plays` times (once or twice),
- * each time from the start to the end, with no pause or seeking, and nothing to play after the
- * last one. A play counts once the sound starts (`onPlayed`), so a recording that fails to load
- * can be tried again without losing one; the parent keeps `played` so it survives a reload. A play
- * that stops before its end (the system paused it, the file stopped loading) is `onInterrupted`;
- * `restarted` says the parent gave it back. `plays` null is review: play, pause and replay freely.
+ * `plays` null is review: play, pause and replay freely. A play counts once its sound starts, so a
+ * recording that fails to load loses none.
  */
 export function ListeningPlayer({
   durationMs,

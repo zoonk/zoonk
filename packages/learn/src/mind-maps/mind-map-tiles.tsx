@@ -17,7 +17,6 @@ import { useMindMapRequest } from "./use-mind-map-request";
 
 const TILE_CLASS = "aspect-square w-full rounded-option";
 
-/** The chapter's number and name under its tile. */
 function TileCaption({ mindMap }: { mindMap: GoalMindMapView }) {
   const t = useExtracted();
 
@@ -33,7 +32,6 @@ function TileCaption({ mindMap }: { mindMap: GoalMindMapView }) {
   );
 }
 
-/** A drawn map: its thumbnail opens it full screen. */
 function MapPictureTile({ mindMap }: { mindMap: GoalMindMapView }) {
   const t = useExtracted();
   const [open, setOpen] = useState(false);
@@ -79,7 +77,6 @@ function MapPictureTile({ mindMap }: { mindMap: GoalMindMapView }) {
   );
 }
 
-/** A map without a picture (its text check failed twice): its chapter's page shows it in words. */
 function MapInWordsTile({ href, mindMap }: { href: string; mindMap: GoalMindMapView }) {
   const t = useExtracted();
 
@@ -104,10 +101,6 @@ function MapInWordsTile({ href, mindMap }: { href: string; mindMap: GoalMindMapV
   );
 }
 
-/**
- * A chapter without its map yet: the tap that makes it, its wait, or why it didn't come. While the
- * learner's maps are at their plan's cap (`capped`), the page says so once and the tap waits.
- */
 function MapRequestTile({
   actions,
   capped,
@@ -128,8 +121,6 @@ function MapRequestTile({
 
   const isFailure = shown === "failed" || shown === "unreachable";
   const isGenerating = shown === "generating";
-  // A cap reached (or a guest asked to create an account) keeps the button in sight, disabled,
-  // with the notice's one thing to do under the tile; a short break keeps it working.
   const isCapped = capped || (limit !== null && limit.status !== "slowDown");
 
   return (

@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { FIT, MAX_SCALE, clampPanZoom, panBy, zoomAt } from "./pan-zoom";
 
-/** A phone's viewer: a 390-wide frame, so the square picture fits at 390 by 390. */
 const frame = { height: 700, width: 390 };
 
 describe(zoomAt, () => {
@@ -9,8 +8,6 @@ describe(zoomAt, () => {
     const point = { x: 100, y: 0 };
     const view = zoomAt({ frame, point, scale: 2, view: FIT });
 
-    // The spot was 100 right of the middle on the fitted picture; at twice the size it's 200 in,
-    // so the picture moves 100 the other way to keep it under the fingers.
     expect(view).toStrictEqual({ scale: 2, x: -100, y: 0 });
   });
 
@@ -24,8 +21,6 @@ describe(panBy, () => {
   it("moves a zoomed picture until its edge meets the frame's", () => {
     const zoomed = { scale: 3, x: 0, y: 0 };
 
-    // At three times, the picture is 1170 square: 390 each way in a 390-wide frame, 235 each way in
-    // a 700-tall one.
     expect(panBy({ delta: { x: 1000, y: -1000 }, frame, view: zoomed })).toStrictEqual({
       scale: 3,
       x: 390,

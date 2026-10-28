@@ -10,11 +10,9 @@ import { formatClock } from "../../_utils/clock";
 import { useTimeLeft } from "../../_utils/use-time-left";
 import { WARNING_SECONDS, getAnnouncedSeconds } from "./countdown-announcement";
 
-/** Often enough for the bar to slide smoothly. */
 const TICK_MS = 250;
 const MS_PER_SECOND = 1000;
 
-/** What screen readers hear: the seconds left at a few marks (see `getAnnouncedSeconds`), then "Time's up". */
 function useCountdownAnnouncement(secondsLeft: number): string {
   const t = useExtracted();
   const [announced, setAnnounced] = useState<number | null>(null);
@@ -33,10 +31,7 @@ function useCountdownAnnouncement(secondsLeft: number): string {
     : t("{seconds, plural, one {# second left} other {# seconds left}}", { seconds: next });
 }
 
-/**
- * A timed drill's clock for one question: the seconds left and a bar that empties. Key it by the
- * question, so each one gets the whole time. With reduced motion the bar steps instead of sliding.
- */
+/** Key it by the question, so each one gets the whole time. */
 export function DrillCountdown({ onTimeUp, seconds }: { onTimeUp: () => void; seconds: number }) {
   const t = useExtracted();
   const deadline = useMountTime().getTime() + seconds * MS_PER_SECOND;

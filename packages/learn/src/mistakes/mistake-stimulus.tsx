@@ -2,7 +2,6 @@ import { type MistakeSnapshot } from "@zoonk/core/mistakes/snapshot";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemSupport } from "../questions/item-text";
 
-/** The material the saved question depended on, even after the bank item changes or disappears. */
 export function MistakeStimulus({
   continued = false,
   snapshot,

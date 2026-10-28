@@ -21,7 +21,6 @@ import { useDrillLine } from "./use-drill-line";
 
 type DrillLesson = NonNullable<Drill["lesson"]>;
 
-/** Each drill's rule has its own mark, so the note reads at a glance. */
 const DRILL_ICON: Readonly<Record<Drill["kind"], LucideIcon>> = {
   noGuessing: HandIcon,
   readCarefully: EyeIcon,
@@ -31,7 +30,6 @@ const DRILL_ICON: Readonly<Record<Drill["kind"], LucideIcon>> = {
   timed: TimerIcon,
 };
 
-/** The whole lesson a tap away in a new tab, so the drill waits where it is. */
 function LessonLink({
   className,
   lesson,
@@ -65,11 +63,6 @@ function StartButton({ onStart }: { onStart: () => void }) {
   return <EnterButton onClick={onStart}>{t("Start the questions")}</EnterButton>;
 }
 
-/**
- * A content gap's idea, back before its questions, on a screen of its own: the lesson's name as the
- * title with what the drill is for under it, its ideas as one flat numbered list, the whole lesson
- * a tap away, and one button (or Enter) to start at the end of the column.
- */
 function IdeaScreen({
   drill,
   lesson,
@@ -117,14 +110,6 @@ function IdeaScreen({
   );
 }
 
-/**
- * How a mistake's drill works, as a note above its first question: its rule with its own mark,
- * and the learner's last answer when the host has it. A content gap without ideas to show links
- * its lesson instead. "Try it again" alone says nothing a question doesn't, so a plain retry only
- * shows with the last answer. The rule is for answering, so once the question is graded
- * (`answered`) only the last answer and the lesson stay: "There's a trap in here" beside a blank
- * answer would claim a trap nobody looked for.
- */
 function DrillNote({
   answered,
   drill,
@@ -167,11 +152,6 @@ function DrillNote({
   );
 }
 
-/**
- * How a mistake's drill works, said before its first question, with the learner's last answer when
- * the host has it. A content gap's drill shows the idea first; with `onStart` it is a screen of its
- * own, and its button (or Enter) starts the questions.
- */
 export function DrillIntro({
   answered = false,
   drill,
@@ -179,10 +159,6 @@ export function DrillIntro({
   lessonHref,
   onStart,
 }: {
-  /**
-   * The drill's rule has done its job: the question below is graded, or a gap's idea said how the
-   * drill goes on its own screen.
-   */
   answered?: boolean;
   drill: Drill;
   lastAnswer?: string | null;

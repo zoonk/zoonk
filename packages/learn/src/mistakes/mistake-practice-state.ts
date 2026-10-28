@@ -8,25 +8,16 @@ import { isIdeaFirst, isReadFirst } from "./drill/drill-types";
 
 export type PracticeEntry = Extract<MistakePracticeResult, { status: "ready" }>["practice"][number];
 
-/**
- * One practice answer: which mistake, which question, the answer and how long it took. Its
- * `attemptId` is the question's in this run, kept when the answer is checked again after a request
- * that didn't get through, so the server records one answer per question.
- */
+/** `attemptId` stays the same when an answer is sent again, so the server records one answer per question. */
 export type MistakePracticeAnswer = {
   answer: ChoiceAnswer;
   attemptId: string;
   durationMs: number;
   itemId: string;
   mistakeId: string;
-  /** The run's earlier answers, so the answer counts the run toward today as it goes. */
   runAnswerIds: string[];
 };
 
-/**
- * The grade of one answer, the trap a trap drill names, the answer's id the run counts, and what
- * counting the run with it reached (a level, a tenth of Energy), for the run's end to celebrate.
- */
 export type MistakePracticeFeedback =
   | (ChoiceFeedback & {
       answerId: string;
@@ -38,13 +29,11 @@ export type MistakePracticeFeedback =
     })
   | null;
 
-/** What the run earned: its Brain Power, right answers and the time it added to today. */
 export type MistakePracticeSummary = Extract<
   FinishMistakePracticeResult,
   { status: "ready" }
 >["result"];
 
-/** One question of the run, with the mistake it drills. */
 export type PracticeStep = {
   entry: PracticeEntry;
   firstOfEntry: boolean;
@@ -54,10 +43,6 @@ export type PracticeStep = {
 type Graded = NonNullable<MistakePracticeFeedback>;
 type PracticeVerdict = "read" | "right" | "wrong";
 
-/**
- * Where the run is: a gap's idea before its questions, a misread's question before its answers,
- * answering, waiting for the grade, reading it, saving the run, or done.
- */
 type PracticePhase =
   | { kind: "idea" }
   | { kind: "reading" }
@@ -68,13 +53,7 @@ type PracticePhase =
   | { kind: "ending" }
   | { kind: "ended"; summary: MistakePracticeSummary | null };
 
-/**
- * The run keeps the questions it started with: grading or counting an answer refreshes the page,
- * and a fixed mistake leaves the server's practice, but not the run in progress. `verdicts` holds
- * each answered question's grade, in order, for the header's segments. `reached` adds up what each
- * count of the run reached (every answer counts the run so far, and its end once more), so its end
- * celebrates the whole run, not only its last count.
- */
+/** Keeps the questions it started with: an answer refreshes the page, and a fixed mistake leaves the server's practice, not the run. */
 type PracticeState = {
   answerIds: string[];
   fixedIds: string[];
@@ -102,10 +81,6 @@ function toPracticeSteps(practice: readonly PracticeEntry[]): PracticeStep[] {
   );
 }
 
-/**
- * How a question opens: a content gap's first question waits behind its idea, and a misread's
- * questions show their answers only once read.
- */
 function getOpeningPhase(step: PracticeStep | undefined): PracticePhase {
   if (!step) {
     return { kind: "ending" };
@@ -189,7 +164,6 @@ function answered(state: PracticeState, action: Extract<PracticeAction, { type: 
   };
 }
 
-/** The run's steps, one question at a time, ending once every question is answered or it's ended. */
 export function practiceReducer(state: PracticeState, action: PracticeAction): PracticeState {
   switch (action.type) {
     case "start":
@@ -230,11 +204,6 @@ export function practiceReducer(state: PracticeState, action: PracticeAction): P
   }
 }
 
-/**
- * Each question of the run as a segment of its header: blue once answered right, red once
- * answered wrong or the time runs out, neutral for an explicit "I'm not sure", the one in view,
- * then the ones ahead.
- */
 export function getPracticeSegments(state: PracticeState): TaskSegment[] {
   return state.steps.map((_, index) => {
     const verdict = state.verdicts[index];
@@ -247,15 +216,11 @@ export function getPracticeSegments(state: PracticeState): TaskSegment[] {
   });
 }
 
-/** Spaces and line breaks as one space, so a text reads the same however it was joined. */
 function squashSpaces(text: string): string {
   return text.replaceAll(/\s+/gu, " ").trim();
 }
 
-/**
- * Whether the question in view is the one the mistake was made on. The notebook keeps a lesson's
- * question with its context before it, and a bank question as it's asked.
- */
+/** The notebook saves a lesson's question with its context before it, and a bank question as it's asked. */
 export function isMistakeQuestion(step: PracticeStep): boolean {
   const saved = squashSpaces(step.entry.snapshot.question);
   const { context, question } = step.question;

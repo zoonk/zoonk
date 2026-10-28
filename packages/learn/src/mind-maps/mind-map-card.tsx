@@ -24,11 +24,6 @@ import { type MindMapShown, useMindMapRequest } from "./use-mind-map-request";
 
 const THUMBNAIL_WIDTH = 640;
 
-/**
- * The picture as one button that opens it full screen, with full screen and download under it.
- * Screen readers hear the picture's short alt as the button's name and the whole map in words as
- * its description.
- */
 function MindMapPicture({
   image,
   outline,
@@ -87,7 +82,6 @@ function MindMapPicture({
 
 const STATE_TEXT_CLASS = "text-muted-foreground text-sm text-pretty";
 
-/** What the card says while the map is made, after a failure, or before it's asked for. */
 function useStateCopy(shown: MindMapShown) {
   const t = useExtracted();
 
@@ -122,7 +116,6 @@ function useStateCopy(shown: MindMapShown) {
   };
 }
 
-/** A map not drawn yet: what it is and the one tap that makes it, or that it's being made. */
 function MindMapRequestCard({
   actions,
   cap,
@@ -143,8 +136,6 @@ function MindMapRequestCard({
 
   const copy = useStateCopy(shown);
   const isFailure = shown === "failed" || shown === "unreachable";
-  // A cap reached (or a guest asked to create an account) keeps the button in sight, disabled,
-  // with the notice's one thing to do under it; a short break keeps it working.
   const isCapped = limit !== null && limit.status !== "slowDown";
 
   return (
@@ -186,11 +177,6 @@ function MindMapRequestCard({
   );
 }
 
-/**
- * A finished chapter's mind map in its summary: the picture (opening full screen, with a download),
- * or, when its picture failed its text check, the map in words; before it exists, the one tap that
- * makes it and its wait. Nothing for a chapter the learner hasn't finished.
- */
 export function MindMapCard({
   actions,
   cap = null,
@@ -198,7 +184,6 @@ export function MindMapCard({
   mindMap,
 }: {
   actions: MindMapActions;
-  /** The cap of the learner's plan their maps already reached: the button waits with its notice. */
   cap?: MindMapLimit | null;
   chapterTitle: string;
   mindMap: ChapterMindMapView;

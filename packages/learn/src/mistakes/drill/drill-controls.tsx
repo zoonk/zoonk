@@ -6,10 +6,6 @@ import { EyeIcon, HelpCircleIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { EnterButton } from "../../_components/enter-button";
 
-/**
- * A misread is drilled by reading first: the answers stay hidden until the learner has read the
- * whole question and taps this (or presses Enter).
- */
 export function ShowAnswersButton({ onReveal }: { onReveal: () => void }) {
   const t = useExtracted();
 
@@ -23,10 +19,6 @@ export function ShowAnswersButton({ onReveal }: { onReveal: () => void }) {
   );
 }
 
-/**
- * The honest way out of a guess: saying so. It counts as a miss that comes back, never as a lucky
- * guess. Placement questions label it "I don't know yet".
- */
 export function NotSureButton({
   disabled,
   label,

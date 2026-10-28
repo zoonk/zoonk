@@ -13,11 +13,6 @@ import { type MissionLinks, useMissionOpen } from "./mission-links";
 import { MissionListRow, ProgressCount } from "./mission-list";
 import { MissionMark } from "./mission-mark";
 
-/**
- * One first step: done (the done mark, its name muted), one of today's missions or there to do
- * any time (its mission's mark, opening where it's done, or saying what its block waits for), or
- * not yet (a faint dot, its name muted, and when it comes).
- */
 function FirstStepRow({
   buddy,
   links,
@@ -59,14 +54,6 @@ function FirstStepRow({
   );
 }
 
-/**
- * A new learner's first steps, under the day's missions in the buddy's day: the first real use of
- * each thing their plan has, done ones checked (even when done before the list showed), one of
- * them among today's missions, the rest open any time or saying when they come. Private and
- * quiet: no reward of its own and nothing on Today. On the day the last step is done the list
- * stays, every step checked, and says so; from the next day, or after the first two weeks, core
- * sends none.
- */
 export function FirstStepsSection({
   buddy,
   firstSteps,

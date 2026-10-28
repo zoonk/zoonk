@@ -3,10 +3,6 @@ import { type useMistakePractice } from "./use-mistake-practice";
 
 type Run = ReturnType<typeof useMistakePractice>;
 
-/**
- * The practice's question in view as the buddy is asked about it; none on a gap's idea screen,
- * while the run saves or is done, and while a timed drill's clock runs.
- */
 export function getPracticeTutorItem({
   state,
   step,

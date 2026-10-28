@@ -4,10 +4,6 @@ import { HandIcon, TimerOffIcon, TriangleAlertIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type Drill } from "./drill-types";
 
-/**
- * What a drill adds after an answer: time running out, an honest "I'm not sure" in a no-guessing
- * drill, and the trap a trap drill names.
- */
 export function DrillAnswerNotes({
   drill,
   notSure,

@@ -13,10 +13,6 @@ import { PendingMoment } from "../session/pending-moment";
 import { TaskMainLink } from "../shell/task-frame";
 import { type MistakePracticeSummary } from "./mistake-practice-state";
 
-/**
- * The one way out, pinned at the bottom like every task's main action (or Enter), in the bar's
- * row: full width on a phone, as wide as its label from `lg`.
- */
 function BackBar({ backHref }: { backHref: string }) {
   const t = useExtracted();
 
@@ -29,10 +25,6 @@ function BackBar({ backHref }: { backHref: string }) {
   );
 }
 
-/**
- * What the run did, as every task's end says it: its right answers and the Brain Power it earned
- * as readouts (never "+0"), and the mistakes it fixed on the quiet line under them.
- */
 function PracticeEarned({
   fixed,
   summary,
@@ -54,7 +46,6 @@ function PracticeEarned({
   );
 }
 
-/** Nothing is due for practice yet: mistakes come back from the day after they're made. */
 export function NothingToPractice({ backHref }: { backHref: string }) {
   const t = useExtracted();
 
@@ -76,14 +67,6 @@ export function NothingToPractice({ backHref }: { backHref: string }) {
   );
 }
 
-/**
- * The end of a run, at the last question or stopped early, straight on the page under the run's
- * header, as every task's end reads: "Practice done", what it earned (right answers, Brain Power,
- * the mistakes it fixed), what it did to the day (its missions, the level and the tenth of Energy
- * the whole run reached), each part 24px from the next, and back to the notebook from the pinned
- * bar. A run with a miss, or one that counted nothing, says the rest come back, so a hard day
- * reads as "not yet". A milestone it earned opens first, on its own.
- */
 export function PracticeDone({
   backHref,
   buddy,
@@ -93,10 +76,8 @@ export function PracticeDone({
   summary,
 }: {
   backHref: string;
-  /** The learner's buddy, who cheers when the run completes one of the day's missions. */
   buddy?: LearnBuddy | null;
   fixed: number;
-  /** What every count of the run reached, its end's included. */
   reached: Reached;
   renderCeremony?: MomentCeremony;
   summary: MistakePracticeSummary | null;
@@ -128,7 +109,6 @@ export function PracticeDone({
   );
 }
 
-/** The run's answers being counted toward today: its end, already titled, waiting for them. */
 export function PracticeSaving() {
   const t = useExtracted();
 

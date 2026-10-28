@@ -22,7 +22,6 @@ import { usePanZoom } from "./use-pan-zoom";
 
 const PERCENT = 100;
 
-/** The download link, also used beside the picture on a chapter's page. */
 export function MindMapDownloadLink({
   className,
   image,
@@ -31,7 +30,6 @@ export function MindMapDownloadLink({
 }: {
   className?: string;
   image: MindMapImage;
-  /** Shown beside the icon; icon-only when absent, with the label for screen readers. */
   label?: string;
   title: string;
 }) {
@@ -97,7 +95,6 @@ function ZoomFrame({
   zoom,
 }: {
   alt: string;
-  /** The map in words, when there is one, as the picture's description. */
   descriptionId: string | undefined;
   image: MindMapImage;
   zoom: ReturnType<typeof usePanZoom>;
@@ -137,13 +134,6 @@ function ZoomFrame({
   );
 }
 
-/**
- * A mind map full screen, to read its small print: pinch or scroll to zoom, drag to move, a double
- * tap to zoom in or back out, the keyboard too, and buttons for every one of those. The bar closes
- * it (Escape too) and saves the picture. From 72rem the map in words sits beside the picture,
- * behind a hairline, to read along. Screen readers hear the picture's short alt and the whole map
- * in words as its description, once: the outline beside it is for the eyes.
- */
 export function MindMapViewer({
   image,
   onOpenChange,
@@ -154,9 +144,7 @@ export function MindMapViewer({
   image: MindMapImage;
   onOpenChange: (open: boolean) => void;
   open: boolean;
-  /** The map in words; null when only the picture is at hand. */
   outline: Outline | null;
-  /** The chapter's title, the viewer's own. */
   title: string;
 }) {
   const t = useExtracted();
@@ -168,7 +156,6 @@ export function MindMapViewer({
   return (
     <Dialog
       onOpenChange={(isOpen) => {
-        // Every opening starts fitted.
         if (!isOpen) {
           zoom.fit();
         }

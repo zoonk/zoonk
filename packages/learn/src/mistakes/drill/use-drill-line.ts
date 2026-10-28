@@ -3,7 +3,6 @@
 import { useExtracted } from "next-intl";
 import { type Drill, isIdeaFirst } from "./drill-types";
 
-/** Each cause gets its own practice, said in one line before its questions. */
 export function useDrillLine() {
   const t = useExtracted();
 

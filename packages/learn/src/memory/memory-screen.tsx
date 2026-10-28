@@ -28,7 +28,6 @@ import { MemoryFactRow } from "./memory-fact-row";
 import { type MemoryCategory, MemoryCategoryName } from "./memory-labels";
 import { MemoryUpdated } from "./memory-updated";
 
-/** How the Memory screen reaches the server. Each resolves to whether it worked. */
 export type MemoryActions = {
   deleteFact: (factId: string) => Promise<MemoryChange | null>;
   exportMemory: () => Promise<MemoryExport | null>;
@@ -39,7 +38,6 @@ export type MemoryActions = {
 
 type FactEdit = { id: string; statement: string | null };
 
-/** A null statement removes the fact; anything else rewrites it. */
 function applyFactEdit(facts: MemoryFactView[], edit: FactEdit): MemoryFactView[] {
   if (edit.statement === null) {
     return facts.filter((fact) => fact.id !== edit.id);
@@ -49,7 +47,6 @@ function applyFactEdit(facts: MemoryFactView[], edit: FactEdit): MemoryFactView[
   return facts.map((fact) => (fact.id === edit.id ? { ...fact, statement } : fact));
 }
 
-/** The order the Memory screen lists categories in: what they aim for first, then who they are. */
 const CATEGORY_ORDER: MemoryCategory[] = [
   "goals",
   "background",
@@ -66,7 +63,6 @@ function groupByCategory(facts: MemoryFactView[]) {
   })).filter((group) => group.facts.length > 0);
 }
 
-/** What the switch does, said where it's turned on or off. */
 function MemorySwitchDescription({ enabled }: { enabled: boolean }) {
   const t = useExtracted();
 
@@ -96,10 +92,6 @@ function MemorySwitch({
   );
 }
 
-/**
- * "Download my memory" as a row, the way the profile's "Download my data" is: what it is, and a
- * small Download at the row's end that says when the file is being prepared.
- */
 function MemoryExportRow({ exportMemory }: Pick<MemoryActions, "exportMemory">) {
   const t = useExtracted();
   const [isPending, startTransition] = useTransition();
@@ -177,10 +169,6 @@ function useMemoryScreen({ actions, memory }: { actions: MemoryActions; memory: 
   };
 }
 
-/**
- * Everything Zoonk remembers, grouped by category, with where each fact came from. The learner can
- * correct or delete any fact (with undo), turn memory on or off and download it.
- */
 export function MemoryScreen({ actions, memory }: { actions: MemoryActions; memory: MemoryView }) {
   const t = useExtracted();
   const screen = useMemoryScreen({ actions, memory });

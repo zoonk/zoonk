@@ -29,15 +29,12 @@ import { MapTile } from "./mind-map-tiles";
 export type { MindMapLimit } from "../_components/help-limit-notice";
 export type { MindMapActions, MindMapRequestOutcome } from "./mind-map-actions";
 
-/** Where the page leads: back to the Plan, a chapter's page, and Today to keep studying. */
 export type MindMapsHrefs = { back: string; chapter: (chapterId: string) => string; today: string };
 
-/** The plan's next chapter, whose map comes once the learner finishes it, with its lessons left. */
 export type NextMindMap = { chapterId: string; lessonsLeft: number; title: string };
 
 type MapGroup = { key: string; maps: GoalMindMapView[]; name: string | null };
 
-/** The maps under their subjects, in the order the plan first reaches each subject. */
 function groupBySubject(chapters: readonly GoalMindMapView[]): MapGroup[] {
   const groups = Map.groupBy(chapters, (chapter) => chapter.subject?.key ?? "");
 
@@ -86,10 +83,6 @@ function MapSection({
   );
 }
 
-/**
- * Before any chapter is finished: how maps come and the way to the first one, the plan's next
- * chapter with its lessons left ("Continue" opens it); without one in sight, back to studying.
- */
 function EmptyMaps({ hrefs, next }: { hrefs: MindMapsHrefs; next: NextMindMap | null }) {
   const t = useExtracted();
 
@@ -119,13 +112,6 @@ function EmptyMaps({ hrefs, next }: { hrefs: MindMapsHrefs; next: NextMindMap | 
   );
 }
 
-/**
- * A goal's mind maps, for reviewing what the learner studied: every chapter they finished under its
- * subject, a gallery as wide as the page allows, each map's thumbnail opening it full screen, and a
- * tap to make the ones that don't exist yet. While their maps are at their plan's cap (`cap`), the taps stay in sight and wait, and the
- * page says so once, with the one thing to do. Before any chapter is finished, it says how maps
- * come and which chapter's map comes first.
- */
 export function MindMapsScreen({
   actions,
   cap = null,
@@ -137,7 +123,6 @@ export function MindMapsScreen({
   cap?: MindMapLimit | null;
   hrefs: MindMapsHrefs;
   mindMaps: GoalMindMapsView;
-  /** The plan's next chapter, named while no map exists yet; null when there's none to open. */
   next?: NextMindMap | null;
 }) {
   const t = useExtracted();

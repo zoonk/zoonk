@@ -40,11 +40,6 @@ import { NotebookAvailabilityText } from "./notebook-availability-text";
 type Notebook = Extract<CurrentUserMistakes, { status: "ready" }>;
 export type MistakeEntry = Notebook["mistakes"][number];
 
-/**
- * Where the notebook lives (its pages are query parameters on it), back to Today, where
- * practice runs (`?skill=` with a skill's id practices just its mistakes), where a lesson opens
- * (its id is appended) and a noticed pattern's page (the pattern id is appended).
- */
 type MistakesHrefs = {
   back: string;
   lesson: string;
@@ -53,7 +48,6 @@ type MistakesHrefs = {
   practice: string;
 };
 
-/** The notebook's page, read from the query by the host. */
 type MistakesFilters = { nextOffset: number | null; status: "fixed" | "open" };
 
 function buildNotebookHref({
@@ -78,19 +72,13 @@ function groupBySkill(mistakes: readonly MistakeEntry[]) {
   return [...Map.groupBy(mistakes, (mistake) => mistake.skill?.id ?? "none").values()];
 }
 
-/** A skill's group, by its skill (or "none" for the questions without one). */
 function getGroupKey(group: readonly MistakeEntry[]): string {
   return group[0]?.skill?.id ?? "none";
 }
 
-/** From `lg` the notebook is an inbox, its list beside the selected skill's mistakes. */
+/** Tailwind's `lg`. */
 const INBOX_QUERY = "(min-width: 64rem)";
 
-/**
- * The notebook at a glance: its name as the title, how many are left to fix and fixed in one
- * mono line, and beside them from `md` the one thing to do about them, practicing them (Enter
- * opens it).
- */
 function NotebookHero({
   goalTitle,
   hrefs,
@@ -140,7 +128,6 @@ function NotebookHero({
 const TAB_CLASS =
   "focus-visible:ring-ring/50 hit-area relative flex h-8 items-center gap-1.5 rounded-md px-2.5 text-[0.8125rem] font-medium outline-none transition-colors focus-visible:ring-[3px] aria-[current=page]:bg-muted aria-[current=page]:text-foreground text-muted-foreground hover:text-foreground hover:bg-muted/70";
 
-/** "To fix 3 · Fixed 1": the notebook's two lists, side by side, the one shown current. */
 function NotebookTabs({
   counts,
   notebookHref,
@@ -177,14 +164,6 @@ function NotebookTabs({
   );
 }
 
-/**
- * The mistakes by skill: on a phone a list whose rows open in place to their mistakes; from `lg`
- * an inbox, the skills on the left (the selected one highlighted) and its mistakes on the right,
- * each with the question, what the learner answered against the right answer, and why. One list
- * drawn both ways: each skill's mistakes follow its row, and from `lg` the grid puts the shown one
- * in the right column. Every row is a mistake, so a row wears no kind's dot; in "Fixed" each one
- * wears the done mark, as every finished thing does.
- */
 function MistakesInbox({
   groups,
   hrefs,
@@ -198,16 +177,10 @@ function MistakesInbox({
   const keys = groups.map((group) => getGroupKey(group));
   const [picked, setPicked] = useState<string | null>(keys[0] ?? null);
 
-  // The inbox stays mounted when the list changes (the other tab, the next page): a skill picked
-  // in one list that isn't in the new one gives way to the new list's first skill. On a phone a
-  // learner who closed every row keeps them closed.
   const selected = picked === null || keys.includes(picked) ? picked : (keys[0] ?? null);
 
-  // The inbox's rows: one per skill, then the rest of the column under them. The selected skill's
-  // hairlines turn transparent from `lg`, as `divided-rows` does around a list's highlighted row.
   const rowsStyle: CSSPropertiesWithVariables = { "--skills": groups.length };
 
-  // On a phone a row opens and closes its mistakes; in the inbox it only selects.
   const select = (key: string) =>
     setPicked(selected === key && !globalThis.matchMedia(INBOX_QUERY).matches ? null : key);
 
@@ -276,7 +249,6 @@ function MistakesInbox({
   );
 }
 
-/** An empty list names what is missing and where entries come from, without promising immediate practice. */
 function EmptyNotebook({ showingFixed }: { showingFixed: boolean }) {
   const t = useExtracted();
 
@@ -289,11 +261,6 @@ function EmptyNotebook({ showingFixed }: { showingFixed: boolean }) {
   );
 }
 
-/**
- * The mistakes notebook: its name, how many are left to fix and fixed, and one "Practice mistakes"
- * button that drills them by cause; then the two lists ("To fix", "Fixed") and the mistakes by
- * skill, an inbox from `lg`. For a language goal, the pattern noticed in them is one tap away.
- */
 export function MistakesNotebook({
   filters,
   goalTitle = null,
@@ -302,7 +269,6 @@ export function MistakesNotebook({
   pattern,
 }: {
   filters: MistakesFilters;
-  /** The goal the notebook is for, over its title. */
   goalTitle?: string | null;
   hrefs: MistakesHrefs;
   notebook: Notebook;

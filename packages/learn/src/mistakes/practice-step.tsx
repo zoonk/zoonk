@@ -36,7 +36,6 @@ import { type useMistakePractice } from "./use-mistake-practice";
 
 type Run = ReturnType<typeof useMistakePractice>;
 
-/** The options an answer picks: one, several, or none for another shape. */
 function getPicks(answer: ChoiceAnswer | null): number[] {
   if (!answer) {
     return [];
@@ -49,7 +48,6 @@ function getPicks(answer: ChoiceAnswer | null): number[] {
   return "selectedIndexes" in answer ? answer.selectedIndexes : [];
 }
 
-/** What a graded choice question marks: the right options, and the learner's picks. */
 function getChoiceResult({
   answer,
   feedback,
@@ -60,7 +58,6 @@ function getChoiceResult({
   return { correct: getPicks(feedback.correctAnswer), picked: getPicks(answer) };
 }
 
-/** What a graded statement marks: its right answer, and the learner's ("not sure" included). */
 function getTrueFalseResult({
   answer,
   feedback,
@@ -76,10 +73,6 @@ function getTrueFalseResult({
   };
 }
 
-/**
- * The step's actions in the run's pinned bar: "Show the answers" while a misread is read; Check
- * the picked answer (or Enter) with the honest way out beside it; Continue once graded.
- */
 export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
   const t = useExtracted();
   const { phase } = run.state;
@@ -116,10 +109,6 @@ export function PracticeStepActions({ run, step }: { run: Run; step: Step }) {
   );
 }
 
-/**
- * The grade on the quiet feedback panel, said as the session says it: right or wrong, why, the
- * drill's notes (time running out, an honest "not sure", the trap) and, last, a fixed mistake.
- */
 function PracticeFeedback({
   feedback,
   notSure,
@@ -157,10 +146,6 @@ function PracticeFeedback({
   );
 }
 
-/**
- * The question's picture, chart or context, then the question itself, unless its statement sits
- * on its own card (`withTitle`).
- */
 function QuestionLead({
   graded,
   question,
@@ -178,12 +163,6 @@ function QuestionLead({
   );
 }
 
-/**
- * One question of the run, played by its drill: the idea first for a content gap, the question
- * before its answers for a misread, a clock for a timed drill, "I'm not sure" when guessing is the
- * habit, and the trap named after the answer in a trap drill. Its options and feedback are the
- * session's; its actions sit in the run's pinned bar (`PracticeStepActions`).
- */
 export function PracticeStepView({
   lessonHref,
   run,
@@ -199,7 +178,6 @@ export function PracticeStepView({
   const { phase } = run.state;
   const { drill } = step.entry;
   const { question } = step;
-  // A recording's plays count in this run, as practice: a mistake retried another time starts over.
   const runId = useMemo(() => crypto.randomUUID(), []);
 
   // The earlier answer belongs to the mistake's own question; next to another one it misleads.
@@ -220,10 +198,6 @@ export function PracticeStepView({
   const disabled = phase.kind === "checking";
   const ideaFirst = isIdeaFirst(drill);
 
-  // Drills say how they work above their first question, and a misread above each one, since each
-  // waits behind "Show the answers"; a gap's idea said it on its own screen, so its questions only
-  // recall the earlier answer, on the question it was given to. The note is how to answer, so it
-  // sits right above the question at every size, as in a session's block.
   const showsNote = ideaFirst ? lastAnswer !== null : step.firstOfEntry || isReadFirst(drill);
 
   return (

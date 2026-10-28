@@ -33,17 +33,11 @@ export type { MistakePracticeFeedback, MistakePracticeSummary } from "./mistake-
 
 type Run = ReturnType<typeof useMistakePractice>;
 
-/** The close's glyph sits on the column's edge, as in every task's header. */
 const CLOSE_CLASS = cn(
   buttonVariants({ size: "icon", variant: "ghost" }),
   TASK_HEADER_ICON_CLASS.start,
 );
 
-/**
- * Ends the run early: what was answered counts, like a partial day. Before any answer, and once
- * the run is over, there's nothing to count, so it just goes back. Leaving loses nothing, so
- * Escape presses it, as it closes a session's block and the lesson player.
- */
 function EndButton({ backHref, run }: { backHref: string; run: Run }) {
   const t = useExtracted();
   const linkRef = useEscapeClick<HTMLAnchorElement>();
@@ -80,10 +74,7 @@ function EndButton({ backHref, run }: { backHref: string; run: Run }) {
   );
 }
 
-/**
- * The question's "…" menu to report a problem. A timed drill's clock never waits on a menu, so
- * there it shows once the question is answered.
- */
+/** A timed drill's clock never waits on a menu, so there it shows once the question is answered. */
 function QuestionMenu({ run }: { run: Run }) {
   const t = useExtracted();
   const { phase } = run.state;
@@ -109,7 +100,6 @@ function QuestionMenu({ run }: { run: Run }) {
   );
 }
 
-/** The run's body for where it is: a question with its pinned actions, saving, or done. */
 function PracticeBody({
   askButton,
   backHref,
@@ -119,7 +109,6 @@ function PracticeBody({
   run,
   trueFalseLabels,
 }: {
-  /** "Ask {buddy}" beside the main action, when the host has a tutor. */
   askButton: React.ReactNode;
   backHref: string;
   buddy?: LearnBuddy | null;
@@ -162,7 +151,6 @@ function PracticeBody({
         />
       </TaskBody>
 
-      {/* A gap's idea screen has its own Start. */}
       {phase.kind !== "idea" && (
         <TaskActionBar>
           {phase.kind === "answerFailed" && (
@@ -177,15 +165,6 @@ function PracticeBody({
   );
 }
 
-/**
- * "Practice mistakes": a short run over a few open mistakes, each drilled the way its cause calls
- * for, with the answer and why after every question. It plays like a session block: the same
- * header with one segment per question, the same options and feedback, and Check then Continue
- * pinned at the bottom. A mistake answered right on a later day is fixed, and the run counts
- * toward today like any practice, stopped early included. How the drill goes sits above its
- * question at every size; from `lg` the learner's buddy (`tutor`) sits beside the question, at
- * the foot of the aside, to ask about the question in view.
- */
 export function MistakePracticeRun({
   actions,
   backHref,
@@ -198,16 +177,11 @@ export function MistakePracticeRun({
 }: {
   actions: MistakePracticeActions;
   backHref: string;
-  /** The learner's buddy, who cheers when the run completes one of the day's missions. */
   buddy?: LearnBuddy | null;
-  /** Where a content gap's lesson opens; without it the drill shows only the lesson's summary. */
   lessonHref: LessonHref | null;
   practice: PracticeEntry[];
-  /** The full-screen moment for a milestone the run earned (a new belt, new glasses). */
   renderCeremony?: MomentCeremony;
-  /** The words the goal's true-or-false questions are answered with, by its exam. */
   trueFalseLabels: TrueFalseLabels;
-  /** The learner's buddy for the question in view, from the host; none plays without it. */
   tutor?: QuestionTutor | null;
 }) {
   const t = useExtracted();
@@ -215,8 +189,6 @@ export function MistakePracticeRun({
   const { phase } = run.state;
   usePreloadMath(practice);
 
-  // The buddy is beside a question, never beside the run's end, where the aside stays empty so the
-  // column keeps its place.
   const asideRoot = tutor ? getTaskAsideRootProps() : null;
   const asking = phase.kind !== "ending" && phase.kind !== "ended" && run.step !== null;
 

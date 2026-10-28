@@ -10,17 +10,11 @@ import { ItemLine } from "../questions/item-text";
 import { ListeningPlayer } from "./listening-player";
 import { useListeningPlays } from "./use-listening-plays";
 
-/** The recording's questions in the order it answers them, and the one on screen (from 0). */
 export type ListeningQuestions = { current: number; prompts: string[] };
 
-/**
- * A mock's own count of the recording's plays, kept on the server so another tab or device can't
- * play it again (`played`), and what counts a play as it starts (`record`): false when the mock
- * had none left (another page used the last one), which stops the recording.
- */
+/** `record` resolves false when the mock had no play left (another page used the last one). */
 export type ServedPlays = { played: number; record: () => Promise<boolean> };
 
-/** A button that shows or hides what follows it, the way the recording's lists fold. */
 function Fold({
   children,
   label,
@@ -57,11 +51,6 @@ function Fold({
   );
 }
 
-/**
- * Who said what, in order, once the recording's questions are answered: folded under a button, so
- * the last answer's feedback stays in view. A speaker's name shows where their turn starts, so a
- * talk's paragraphs read as one speaker's.
- */
 function ListeningTranscript({
   transcript,
 }: {
@@ -89,11 +78,6 @@ function ListeningTranscript({
   );
 }
 
-/**
- * Every question on the recording, so the learner reads them before it plays, as the exam lets
- * them: open until the first play, then folded so the question on screen stays in view. Questions
- * only, never their options.
- */
 function ListeningQuestionList({
   onToggle,
   open,
@@ -133,16 +117,6 @@ function ListeningQuestionList({
   );
 }
 
-/**
- * The recording a set's questions are about, above each of them: the exam part it stands for, the
- * player with the exam's play limit (kept across the set's questions), the set's questions to read
- * before it plays (`questions`), and, once they're answered, free replays and the transcript on
- * request.
- * Mounted once for the whole set, it keeps playing while the learner answers along, as in the
- * exam. In practice, a play cut off before its end comes back once (`practice`). A mock keeps
- * its plays on the server too (`served`): the recording opens with the most plays either knows
- * of. Nothing shows while the set isn't voiced.
- */
 export function ListeningStimulus({
   playsKey,
   practice = false,
@@ -150,15 +124,7 @@ export function ListeningStimulus({
   served = null,
   set,
 }: {
-  /**
-   * Where this asking of the recording keeps its plays (the block or mock it's asked in, with the
-   * set): the same recording asked again elsewhere starts with every play.
-   */
   playsKey: string;
-  /**
-   * Practice gives back a play cut off by a reload, a dropped connection or the app going to the
-   * background, once; a mock (the default) counts every play, as the exam does.
-   */
   practice?: boolean;
   questions?: ListeningQuestions | null;
   served?: ServedPlays | null;
@@ -170,9 +136,6 @@ export function ListeningStimulus({
 
   const answered = set.transcript !== null;
 
-  // The questions list is open until a play starts, and again when practice gives a cut-off play
-  // back. Once the recording was heard it stays folded, after a reload too, so the question on
-  // screen stays in view, unless the learner opens or closes it themselves (until the next play).
   const [toggled, setToggled] = useState<boolean | null>(null);
   // A play the mock refused remounts the player, which stops its sound.
   const [refused, setRefused] = useState(0);
