@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { type apple, type getApplePublicKey } from "better-auth/social-providers";
 import { SignJWT, exportPKCS8, generateKeyPair } from "jose";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
@@ -27,6 +28,16 @@ async function createIdentityToken({
     .sign(signingKeys.privateKey);
 }
 
+const NATIVE_NONCE = "native-nonce";
+
+/** What Authentication Services and the Android app put in Apple's request: the raw nonce's SHA-256, in hex. */
+const HASHED_NONCE = createHash("sha256").update(NATIVE_NONCE).digest("hex");
+
+const CLIENTS = [
+  { clientIdentifier: "com.zoonk.dev", otherClientIdentifier: "com.zoonk.web" },
+  { clientIdentifier: "com.zoonk.web", otherClientIdentifier: "com.zoonk.dev" },
+];
+
 describe("Native Apple identity token verification", () => {
   beforeAll(async () => {
     vi.stubEnv("APPLE_APP_BUNDLE_IDENTIFIER", "com.zoonk.dev");
@@ -41,28 +52,62 @@ describe("Native Apple identity token verification", () => {
     vi.unstubAllEnvs();
   });
 
-  it("verifies a signed native token using the built-in provider's issuer", async () => {
-    const { verifyNativeAppleIdentityToken } = await import("./apple-token");
-    const token = await createIdentityToken();
+  it.each(CLIENTS)(
+    "verifies a token for $clientIdentifier with the raw nonce whose hash it carries",
+    async ({ clientIdentifier }) => {
+      const { verifyNativeAppleIdentityToken } = await import("./apple-token");
+      const token = await createIdentityToken({ audience: clientIdentifier, nonce: HASHED_NONCE });
 
-    await expect(
-      verifyNativeAppleIdentityToken({ nonce: "native-nonce", token }),
-    ).resolves.toStrictEqual({
-      issuer: "https://appleid.apple.com",
-      subject: "apple-token-test-subject",
-    });
-  });
+      await expect(
+        verifyNativeAppleIdentityToken({ clientIdentifier, nonce: NATIVE_NONCE, token }),
+      ).resolves.toStrictEqual({
+        issuer: "https://appleid.apple.com",
+        subject: "apple-token-test-subject",
+      });
+    },
+  );
 
-  it.each([
-    { issuer: "https://another-provider.example" },
-    { audience: "com.zoonk.web" },
-    { nonce: "another-nonce" },
-  ])("rejects a token with mismatched claims: %j", async (claims) => {
-    const { verifyNativeAppleIdentityToken } = await import("./apple-token");
-    const token = await createIdentityToken(claims);
+  it.each(CLIENTS)(
+    "rejects a token for $clientIdentifier with the nonce claim sent back as the nonce",
+    async ({ clientIdentifier }) => {
+      const { verifyNativeAppleIdentityToken } = await import("./apple-token");
+      const token = await createIdentityToken({ audience: clientIdentifier, nonce: HASHED_NONCE });
 
-    await expect(
-      verifyNativeAppleIdentityToken({ nonce: "native-nonce", token }),
-    ).rejects.toMatchObject({ reason: "invalidCredential" });
-  });
+      await expect(
+        verifyNativeAppleIdentityToken({ clientIdentifier, nonce: HASHED_NONCE, token }),
+      ).rejects.toMatchObject({ reason: "invalidCredential" });
+    },
+  );
+
+  it.each(CLIENTS)(
+    "rejects a token for $otherClientIdentifier when the request names $clientIdentifier",
+    async ({ clientIdentifier, otherClientIdentifier }) => {
+      const { verifyNativeAppleIdentityToken } = await import("./apple-token");
+
+      const token = await createIdentityToken({
+        audience: otherClientIdentifier,
+        nonce: HASHED_NONCE,
+      });
+
+      await expect(
+        verifyNativeAppleIdentityToken({ clientIdentifier, nonce: NATIVE_NONCE, token }),
+      ).rejects.toMatchObject({ reason: "invalidCredential" });
+    },
+  );
+
+  it.each([{ issuer: "https://another-provider.example" }, { nonce: "another-nonce" }])(
+    "rejects a token with mismatched claims: %j",
+    async (claims) => {
+      const { verifyNativeAppleIdentityToken } = await import("./apple-token");
+      const token = await createIdentityToken({ nonce: HASHED_NONCE, ...claims });
+
+      await expect(
+        verifyNativeAppleIdentityToken({
+          clientIdentifier: "com.zoonk.dev",
+          nonce: NATIVE_NONCE,
+          token,
+        }),
+      ).rejects.toMatchObject({ reason: "invalidCredential" });
+    },
+  );
 });

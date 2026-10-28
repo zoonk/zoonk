@@ -1,6 +1,6 @@
 import { getApplePublicKey } from "better-auth/social-providers";
 import { decodeProtectedHeader, jwtVerify } from "jose";
-import { getAppleConfiguration, getAppleIdentityTokenIssuer } from "./apple";
+import { getAppleIdentityTokenIssuer } from "./apple";
 import { AppleAuthorizationError } from "./apple-rest";
 
 const HEX_RADIX = 16;
@@ -32,14 +32,10 @@ async function getAvailableApplePublicKey(keyIdentifier: string) {
   }
 }
 
-/** Authentication Services hashes the raw nonce, and Better Auth's Apple verifier accepts both forms. */
+/** Only the raw nonce passes, so an intercepted token's claim sent back as the nonce fails. */
 async function nonceMatches({ claim, nonce }: { claim: unknown; nonce: string }) {
   if (typeof claim !== "string") {
     return false;
-  }
-
-  if (claim === nonce) {
-    return true;
   }
 
   const encodedNonce = new TextEncoder().encode(nonce);
@@ -53,16 +49,17 @@ async function nonceMatches({ claim, nonce }: { claim: unknown; nonce: string })
 }
 
 export async function verifyNativeAppleIdentityToken({
+  clientIdentifier,
   nonce,
   token,
 }: {
+  clientIdentifier: string;
   nonce?: string;
   token: string;
 }) {
-  const configuration = getAppleConfiguration();
   const issuer = getAppleIdentityTokenIssuer();
 
-  if (!configuration || !issuer) {
+  if (!issuer) {
     throw new AppleAuthorizationError("configuration");
   }
 
@@ -76,12 +73,7 @@ export async function verifyNativeAppleIdentityToken({
     const { payload } = await jwtVerify(
       token,
       await getAvailableApplePublicKey(protectedHeader.kid),
-      {
-        algorithms: ["RS256"],
-        audience: configuration.appBundleIdentifier,
-        issuer,
-        maxTokenAge: "1h",
-      },
+      { algorithms: ["RS256"], audience: clientIdentifier, issuer, maxTokenAge: "1h" },
     );
 
     const validNonce = nonce ? await nonceMatches({ claim: payload.nonce, nonce }) : true;

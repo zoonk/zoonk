@@ -33,9 +33,10 @@ vi.mock("./get-session", () => ({ getSession: mocks.getSession }));
 
 const appleCredentials = {
   authorizationCode: "single-use-code",
+  client: "app",
   idToken: "apple-id-token",
   nonce: "raw-nonce",
-};
+} as const;
 
 const emailCredentials = { email: "learner@example.com", otp: "123456" };
 

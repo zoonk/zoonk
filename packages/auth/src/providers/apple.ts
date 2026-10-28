@@ -80,6 +80,12 @@ export async function getAppleClientSecret({
   return token;
 }
 
+/**
+ * The web flow signs in through Apple's redirect, never with an ID token, so
+ * the public social endpoint refuses Apple ID tokens: otherwise an identity
+ * token intercepted on its way to the Android app would sign in there without
+ * the raw nonce (Better Auth checks a nonce only when the request sends one).
+ */
 export const appleProvider = appleSigningConfiguration
   ? {
       apple: {
@@ -88,6 +94,7 @@ export const appleProvider = appleSigningConfiguration
           clientIdentifier: appleSigningConfiguration.clientId,
           configuration: appleSigningConfiguration,
         }),
+        disableIdTokenSignIn: true,
         mapProfileToUser: mapAppleProfileToUser,
       },
     }
@@ -99,13 +106,17 @@ export function getAppleIdentityTokenIssuer() {
   return configuredAppleProvider?.idToken.issuer;
 }
 
-/** The public provider omits the bundle audience, so Better Auth's social endpoint accepts only the web Services ID. */
+/** Accepts both audiences (the iOS bundle id and the Android Services ID); runs only after Zoonk verified the token's client and raw nonce. */
 export function getNativeAppleProvider() {
   if (!appleConfiguration || !appleProvider.apple) {
     return {};
   }
 
   return {
-    apple: { ...appleProvider.apple, appBundleIdentifier: appleConfiguration.appBundleIdentifier },
+    apple: {
+      ...appleProvider.apple,
+      audience: [appleConfiguration.appBundleIdentifier, appleConfiguration.clientId],
+      disableIdTokenSignIn: false,
+    },
   };
 }

@@ -23380,13 +23380,23 @@
             "type": "string",
             "minLength": 1
           },
+          "client": {
+            "default": "app",
+            "description": "Which Apple client issued the credentials: `app` for the iOS app's native sign-in, `web` for Apple's authorize page opened with Zoonk's Services ID, as the Android app does",
+            "type": "string",
+            "enum": [
+              "app",
+              "web"
+            ]
+          },
           "idToken": {
             "type": "string",
             "minLength": 1
           },
           "nonce": {
             "type": "string",
-            "minLength": 1
+            "minLength": 1,
+            "description": "The raw nonce the client made. Apple's identity token carries its SHA-256, in hex, as the `nonce` claim"
           },
           "user": {
             "type": "object",

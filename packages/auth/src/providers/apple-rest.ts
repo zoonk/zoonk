@@ -94,16 +94,19 @@ async function getAppleFailure(response: Response): Promise<AppleAuthorizationEr
   );
 }
 
-/** Native requests omit redirect_uri and use the bundle identifier as client_id and the client-secret subject. */
+/** iOS codes use the bundle identifier and no redirect_uri; authorize-page codes use the Services ID and the redirect_uri they were issued for. */
 export async function exchangeNativeAppleAuthorizationCode({
   authorizationCode,
+  clientIdentifier,
   dependencies = liveDependencies,
+  redirectURI,
 }: {
   authorizationCode: string;
+  clientIdentifier: string;
   dependencies?: AppleRESTDependencies;
+  redirectURI?: string;
 }): Promise<AppleAuthorization> {
   const configuration = requireAppleConfiguration(dependencies.configuration);
-  const clientIdentifier = configuration.appBundleIdentifier;
   const clientSecret = await dependencies.getClientSecret({ clientIdentifier, configuration });
 
   const body = new URLSearchParams({
@@ -111,6 +114,7 @@ export async function exchangeNativeAppleAuthorizationCode({
     client_secret: clientSecret,
     code: authorizationCode,
     grant_type: "authorization_code",
+    ...(redirectURI ? { redirect_uri: redirectURI } : {}),
   });
 
   const response = await requestApple({ body, dependencies, url: APPLE_TOKEN_URL });

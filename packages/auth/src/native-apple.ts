@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { getAppleClient } from "./native-apple-client";
 import { type NativeAppleCredentials } from "./native-apple-contract";
 import { type NativeAppleSession, isNativeAppleSession } from "./native-apple-response";
 import {
@@ -9,10 +10,8 @@ import {
   signInWithExistingAppleAccount,
   signInWithNativeAppleAccount,
 } from "./native-apple-session";
-import { getAppleConfiguration } from "./providers/apple";
 import {
   type AppleAuthorization,
-  AppleAuthorizationError,
   exchangeNativeAppleAuthorizationCode,
   revokeAppleToken,
 } from "./providers/apple-rest";
@@ -36,16 +35,6 @@ type VerifiedAppleAuthorization = {
   issuer: string;
   subject: string;
 };
-
-function getNativeClientIdentifier() {
-  const configuration = getAppleConfiguration();
-
-  if (!configuration) {
-    throw new AppleAuthorizationError("configuration");
-  }
-
-  return configuration.appBundleIdentifier;
-}
 
 async function getExactAppleAccount({ subject }: { subject: string }) {
   return prisma.account.findUnique({
@@ -143,19 +132,23 @@ async function throwAfterSessionCleanup({
 async function exchangeVerifiedAuthorization(
   credentials: NativeAppleCredentials,
 ): Promise<VerifiedAppleAuthorization> {
-  const clientIdentifier = getNativeClientIdentifier();
+  const { clientIdentifier, redirectURI } = getAppleClient(credentials.client);
 
   const originalIdentity = await verifyNativeAppleIdentityToken({
+    clientIdentifier,
     nonce: credentials.nonce,
     token: credentials.idToken,
   });
 
   const authorization = await exchangeNativeAppleAuthorizationCode({
     authorizationCode: credentials.authorizationCode,
+    clientIdentifier,
+    redirectURI,
   });
 
   try {
     const exchangedIdentity = await verifyNativeAppleIdentityToken({
+      clientIdentifier,
       token: authorization.idToken,
     });
 
