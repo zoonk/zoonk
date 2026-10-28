@@ -63,6 +63,7 @@ Every read the app shows goes through one pattern in `Zoonk/Data`, so screens ar
 
 ## Verification
 
+- CI and local builds use the same Xcode; when the local Xcode changes, update `DEVELOPER_DIR` in `.github/workflows/apple.yml` (the image's Xcode list is in its runner-images readme).
 - For app code changes, build the iOS target. For UI or adaptive-layout changes, inspect the affected iPhone, iPhone Duo and iPad destinations because one binary can render differently across size classes, displays and multitasking widths. Documentation-only edits need document validation, not a simulator run.
 - Prefer UI tests for user flows and unit tests for non-trivial pure domain logic. Do not test SwiftUI implementation details or static catalog contents.
 - When changing asynchronous observable stores, cover the affected success, authentication-expiry, transient-failure, and request-order transitions directly; UI tests alone may miss state-machine races.
