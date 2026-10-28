@@ -3,7 +3,9 @@ import { type listCatalogChapterLessons } from "@zoonk/core/catalog/chapter-less
 import { type listCatalogCourseChapters } from "@zoonk/core/catalog/course-chapters";
 import { type searchCatalog } from "@zoonk/core/catalog/search";
 import { type getCourseDetail } from "@zoonk/core/courses/get-detail";
+import { parseCourseLandingPageContent } from "@zoonk/core/courses/landing-page";
 import { type listCourses } from "@zoonk/core/courses/list";
+import { getLanguageFlagCode } from "@zoonk/utils/language-flags";
 import { toApiImageUrl } from "./file-urls";
 
 type CatalogSearch = Awaited<ReturnType<typeof searchCatalog>>;
@@ -53,23 +55,39 @@ export function toCourseSummary(
   };
 }
 
-/** A catalog course: its summary and what its outline holds, its lessons and their minutes. */
+/** The flag a language course shows instead of its picture, as main's course mark draws it. */
+function toLanguageFlag(targetLanguage: string | null) {
+  return targetLanguage ? getLanguageFlagCode(targetLanguage) : null;
+}
+
+/**
+ * A catalog course: its summary, what its outline holds (its lessons and their minutes), its
+ * subject (the first category, which the list selects alone) and, for a language course, the
+ * language it teaches and its flag.
+ */
 export function toCatalogCourse(course: CourseSummary) {
   return {
     ...toCourseSummary(course),
     estimatedMinutes: course.estimatedMinutes,
+    languageFlag: toLanguageFlag(course.targetLanguage),
     lessonCount: course.lessonCount,
+    subject: course.categories[0]?.category ?? null,
+    targetLanguage: course.targetLanguage,
   };
 }
 
 /**
  * Serializes the complete course metadata resource while excluding
  * persistence-only fields. The generation fields follow the course outline,
- * which a course without one is still waiting for.
+ * which a course without one is still waiting for. Categories come oldest first,
+ * so the first is the course's subject, as its pages color it; the landing copy
+ * is null until the course's details are written.
  */
 export function toCourseResource(course: CourseResource) {
   return {
-    categories: course.categories.map((category) => category.category),
+    categories: course.categories
+      .toSorted((one, other) => one.createdAt.getTime() - other.createdAt.getTime())
+      .map((category) => category.category),
     description: course.description,
     exam: course.exam,
     format: course.format,
@@ -77,7 +95,9 @@ export function toCourseResource(course: CourseResource) {
     generationStatus: course.outlineStatus ?? "pending",
     id: course.id,
     imageUrl: course.imageUrl && toApiImageUrl(course.imageUrl),
+    landingPage: parseCourseLandingPageContent(course.landingPage),
     language: course.language,
+    languageFlag: toLanguageFlag(course.targetLanguage),
     organization: toCourseOrganization(course.organization),
     slug: course.slug,
     targetLanguage: course.targetLanguage,
@@ -96,6 +116,7 @@ function toChapterFields(chapter: ChapterFields) {
     generationStatus: chapter.outlineStatus,
     id: chapter.id,
     language: chapter.language,
+    objectives: chapter.objectives,
     slug: chapter.slug,
     title: chapter.title,
   };
@@ -115,11 +136,22 @@ export function toChapterResource({
 }
 
 /**
- * Serializes a chapter inside a course collection with its visible lesson
- * count.
+ * Serializes a chapter inside a course collection with its visible lessons'
+ * outline (titles and minutes, as the course's page lists them) and their count.
  */
 export function toCourseChapter(placement: CourseChapter) {
-  return { ...toChapterResource(placement), lessonCount: placement.chapter.lessons.length };
+  const { lessons } = placement.chapter;
+
+  return {
+    ...toChapterResource(placement),
+    lessonCount: lessons.length,
+    lessons: lessons.map((lesson) => ({
+      estimatedMinutes: lesson.estimatedMinutes,
+      id: lesson.id,
+      slug: lesson.slug,
+      title: lesson.title,
+    })),
+  };
 }
 
 /**
@@ -131,6 +163,7 @@ export function toChapterLessons({ chapterId, courseId, lessons }: ChapterLesson
     chapterId,
     courseId,
     description: lesson.description,
+    estimatedMinutes: lesson.estimatedMinutes,
     generationId: lesson.contentRunId,
     generationStatus: lesson.contentStatus,
     id: lesson.id,

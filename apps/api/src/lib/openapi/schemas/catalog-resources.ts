@@ -58,9 +58,21 @@ export const nullableOrganizationSummarySchema = organizationSummarySchema
     description: "Null for a learner's private course, which has no organization or public page",
   });
 
+const courseLandingPageSchema = z
+  .object({
+    audience: z.array(z.string()).meta({ description: "Who the course is for, one line each" }),
+    outcomes: z
+      .array(z.string())
+      .meta({ description: "What the course makes someone able to do, first steps first" }),
+    valueProposition: z.string().meta({ description: "The course's promise in one sentence" }),
+  })
+  .meta({ id: "CourseLandingPage" });
+
 export const courseResourceSchema = z
   .object({
-    categories: z.array(z.enum(COURSE_CATEGORIES)),
+    categories: z
+      .array(z.enum(COURSE_CATEGORIES))
+      .meta({ description: "Oldest first: the first is the course's subject, its pages' color" }),
     description: z.string().nullable(),
     exam: courseExamDaysSchema
       .nullable()
@@ -78,7 +90,17 @@ export const courseResourceSchema = z
     }),
     id: z.uuid(),
     imageUrl: z.string().nullable(),
+    landingPage: courseLandingPageSchema
+      .nullable()
+      .meta({ description: "The course page's copy; null until the course's details are written" }),
     language: z.string(),
+    languageFlag: z
+      .string()
+      .nullable()
+      .meta({
+        description:
+          "A language course's flag: a country's two-letter code, or a region's (`es-ct`, `gb-wls`, `arab`), as flag-icons names them; null for other courses",
+      }),
     organization: nullableOrganizationSummarySchema,
     slug: z.string(),
     targetLanguage: z.string().nullable(),
@@ -100,6 +122,9 @@ export const chapterResourceSchema = z
     id: z.uuid(),
     language: z.string(),
     level: z.enum(CourseLevel).meta({ description: "Level band the course places the chapter in" }),
+    objectives: z
+      .array(z.string())
+      .meta({ description: "What the chapter teaches, one line each" }),
     position: z
       .number()
       .int()
@@ -111,7 +136,21 @@ export const chapterResourceSchema = z
   .meta({ id: "ChapterResource" });
 
 const courseChapterSchema = chapterResourceSchema
-  .extend({ lessonCount: z.number().int().min(0) })
+  .extend({
+    lessonCount: z.number().int().min(0),
+    lessons: z
+      .array(
+        z.object({
+          estimatedMinutes: z.int().nonnegative(),
+          id: z.uuid(),
+          slug: z.string(),
+          title: z.string(),
+        }),
+      )
+      .meta({
+        description: "The chapter's visible lessons in order, as its course's outline lists them",
+      }),
+  })
   .meta({ id: "CourseChapter" });
 
 const lessonResourceSchema = z
@@ -119,6 +158,7 @@ const lessonResourceSchema = z
     chapterId: z.uuid(),
     courseId: z.uuid(),
     description: z.string().nullable(),
+    estimatedMinutes: z.int().nonnegative().meta({ description: "How long the lesson takes" }),
     generationId: z.string().nullable().meta({ description: "Run writing the lesson's content" }),
     generationStatus: generationStatusSchema.meta({
       description: "Whether the lesson's content is written",

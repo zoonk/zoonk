@@ -35,6 +35,13 @@ export const courseResultSchema = z
     id: z.uuid().meta({ description: "Course ID" }),
     imageUrl: z.string().nullable().meta({ description: "Cover image URL" }),
     language: z.string().meta({ description: "Language code" }),
+    languageFlag: z
+      .string()
+      .nullable()
+      .meta({
+        description:
+          "A language course's flag: a country's two-letter code, or a region's (`es-ct`, `gb-wls`, `arab`), as flag-icons names them; null for other courses",
+      }),
     lessonCount: z
       .int()
       .nonnegative()
@@ -43,6 +50,17 @@ export const courseResultSchema = z
       }),
     organization: organizationSummarySchema,
     slug: z.string().meta({ description: "URL slug" }),
+    subject: z
+      .enum(COURSE_CATEGORIES)
+      .nullable()
+      .meta({
+        description:
+          "The course's first category, which its pages take their color from; null for a course in none",
+      }),
+    targetLanguage: z
+      .string()
+      .nullable()
+      .meta({ description: "The language a language course teaches; null for other courses" }),
     title: z.string().meta({ description: "Course title" }),
   })
   .meta({ id: "CourseResult" });

@@ -28564,6 +28564,11 @@
             "type": "string",
             "description": "Language code"
           },
+          "languageFlag": {
+            "nullable": true,
+            "description": "A language course's flag: a country's two-letter code, or a region's (`es-ct`, `gb-wls`, `arab`), as flag-icons names them; null for other courses",
+            "type": "string"
+          },
           "lessonCount": {
             "type": "integer",
             "minimum": 0,
@@ -28577,6 +28582,34 @@
             "type": "string",
             "description": "URL slug"
           },
+          "subject": {
+            "nullable": true,
+            "description": "The course's first category, which its pages take their color from; null for a course in none",
+            "type": "string",
+            "enum": [
+              "arts",
+              "business",
+              "communication",
+              "culture",
+              "economics",
+              "engineering",
+              "exams",
+              "geography",
+              "health",
+              "history",
+              "languages",
+              "law",
+              "math",
+              "science",
+              "society",
+              "tech"
+            ]
+          },
+          "targetLanguage": {
+            "nullable": true,
+            "description": "The language a language course teaches; null for other courses",
+            "type": "string"
+          },
           "title": {
             "type": "string",
             "description": "Course title"
@@ -28588,9 +28621,12 @@
           "id",
           "imageUrl",
           "language",
+          "languageFlag",
           "lessonCount",
           "organization",
           "slug",
+          "subject",
+          "targetLanguage",
           "title"
         ],
         "additionalProperties": false
@@ -28800,6 +28836,13 @@
             ],
             "description": "Level band the course places the chapter in"
           },
+          "objectives": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "What the chapter teaches, one line each"
+          },
           "position": {
             "type": "integer",
             "minimum": 0,
@@ -28821,6 +28864,7 @@
           "id",
           "language",
           "level",
+          "objectives",
           "position",
           "slug",
           "title"
@@ -28858,6 +28902,12 @@
           "description": {
             "nullable": true,
             "type": "string"
+          },
+          "estimatedMinutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "How long the lesson takes"
           },
           "generationId": {
             "nullable": true,
@@ -28900,6 +28950,7 @@
           "chapterId",
           "courseId",
           "description",
+          "estimatedMinutes",
           "generationId",
           "generationStatus",
           "id",
@@ -28935,7 +28986,8 @@
                 "society",
                 "tech"
               ]
-            }
+            },
+            "description": "Oldest first: the first is the course's subject, its pages' color"
           },
           "description": {
             "nullable": true,
@@ -28987,7 +29039,21 @@
             "nullable": true,
             "type": "string"
           },
+          "landingPage": {
+            "nullable": true,
+            "description": "The course page's copy; null until the course's details are written",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CourseLandingPage"
+              }
+            ]
+          },
           "language": {
+            "type": "string"
+          },
+          "languageFlag": {
+            "nullable": true,
+            "description": "A language course's flag: a country's two-letter code, or a region's (`es-ct`, `gb-wls`, `arab`), as flag-icons names them; null for other courses",
             "type": "string"
           },
           "organization": {
@@ -29019,7 +29085,9 @@
           "generationStatus",
           "id",
           "imageUrl",
+          "landingPage",
           "language",
+          "languageFlag",
           "organization",
           "slug",
           "targetLanguage",
@@ -29051,6 +29119,35 @@
           "days",
           "estimated",
           "timeZone"
+        ],
+        "additionalProperties": false
+      },
+      "CourseLandingPage": {
+        "type": "object",
+        "properties": {
+          "audience": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Who the course is for, one line each"
+          },
+          "outcomes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "What the course makes someone able to do, first steps first"
+          },
+          "valueProposition": {
+            "type": "string",
+            "description": "The course's promise in one sentence"
+          }
+        },
+        "required": [
+          "audience",
+          "outcomes",
+          "valueProposition"
         ],
         "additionalProperties": false
       },
@@ -29114,6 +29211,13 @@
             ],
             "description": "Level band the course places the chapter in"
           },
+          "objectives": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "What the chapter teaches, one line each"
+          },
           "position": {
             "type": "integer",
             "minimum": 0,
@@ -29130,6 +29234,38 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991
+          },
+          "lessons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "estimatedMinutes": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "slug": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "estimatedMinutes",
+                "id",
+                "slug",
+                "title"
+              ],
+              "additionalProperties": false
+            },
+            "description": "The chapter's visible lessons in order, as its course's outline lists them"
           }
         },
         "required": [
@@ -29140,10 +29276,12 @@
           "id",
           "language",
           "level",
+          "objectives",
           "position",
           "slug",
           "title",
-          "lessonCount"
+          "lessonCount",
+          "lessons"
         ],
         "additionalProperties": false
       },

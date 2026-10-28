@@ -222,7 +222,18 @@ test.describe("Catalog resource API", () => {
     const chaptersBody = await chaptersResponse.json();
 
     expect(chaptersBody.data).toHaveLength(2);
-    expect(chaptersBody.data[1]).toMatchObject({ courseId: course.id, id: chapter.id });
+
+    expect(chaptersBody.data[1]).toMatchObject({
+      courseId: course.id,
+      id: chapter.id,
+      lessons: lessons[1]!.map((item) => ({
+        estimatedMinutes: item.estimatedMinutes,
+        id: item.id,
+        slug: item.slug,
+        title: item.title,
+      })),
+      objectives: chapter.objectives,
+    });
 
     await expect(chapterResponse.json()).resolves.toMatchObject({
       courseId: course.id,
@@ -236,6 +247,7 @@ test.describe("Catalog resource API", () => {
     expect(lessonsBody.data[1]).toMatchObject({
       chapterId: chapter.id,
       courseId: course.id,
+      estimatedMinutes: lesson.estimatedMinutes,
       id: lesson.id,
     });
 
