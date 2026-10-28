@@ -9,12 +9,12 @@ import { emptyDaySchema, examTomorrowSchema, lessonsComingSchema } from "./day-l
 import { listeningTranscriptSchema } from "./item-set";
 import { studyBlockSchema } from "./study-block";
 import { studyBlockQuestionSchema } from "./study-block-question";
+import { weeklyStudyTimeSchema } from "./weekly-study-time";
 
 export { studyBlockSchema } from "./study-block";
 
 const EXAMPLE_FUNDED_DAILY_MINUTES = 14.875;
 const EXAMPLE_DAILY_MINUTES = 15;
-const EXAMPLE_WEEKLY_MINUTES = 105;
 
 export const logicalDateSchema = z.iso.date().meta({ description: "Learner-local calendar date" });
 const idSchema = z.uuid();
@@ -172,24 +172,7 @@ export const studySessionResponseSchema = z
           .int()
           .min(0)
           .meta({ description: "Days of the week with a time goal" }),
-        time: z.object({
-          studiedMinutes: z
-            .number()
-            .int()
-            .min(0)
-            .meta({
-              description:
-                "Actual recorded study seconds this week, summed before rounding down to minutes",
-            }),
-          targetMinutes: z
-            .number()
-            .min(0)
-            .meta({
-              description:
-                "The learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
-              examples: [EXAMPLE_WEEKLY_MINUTES],
-            }),
-        }),
+        time: weeklyStudyTimeSchema,
       })
       .meta({
         description:

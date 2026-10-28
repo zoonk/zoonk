@@ -70159,6 +70159,29 @@
             ],
             "additionalProperties": false
           },
+          "weekTime": {
+            "type": "object",
+            "properties": {
+              "studiedMinutes": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Actual recorded study seconds this week, summed before rounding down to minutes"
+              },
+              "targetMinutes": {
+                "type": "number",
+                "minimum": 0,
+                "description": "The learner's shared weekly time budget across active goals, including past session targets. Exact minutes may be fractional; format them as a human duration for display.",
+                "example": 105
+              }
+            },
+            "required": [
+              "studiedMinutes",
+              "targetMinutes"
+            ],
+            "additionalProperties": false,
+            "description": "This week's study time against the learner's weekly budget, in the goal's week: the same numbers as Today's `week.time`"
+          },
           "writtenPractice": {
             "nullable": true,
             "description": "When the exam's written tests (an essay, a discursive test) are practiced, which the learner chooses; the total practice stays the same. Null for plans without written tests and for a test days away",
@@ -70196,6 +70219,7 @@
           "steering",
           "tools",
           "week",
+          "weekTime",
           "writtenPractice"
         ],
         "additionalProperties": false

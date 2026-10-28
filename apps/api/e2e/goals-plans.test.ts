@@ -298,7 +298,11 @@ test.describe("Goals and plans API", () => {
       schema: planResponseSchema,
     });
 
-    expect(before).toMatchObject({ ready: true, schedule: { dailyMinutes: 12 } });
+    expect(before).toMatchObject({
+      ready: true,
+      schedule: { dailyMinutes: 12 },
+      weekTime: { studiedMinutes: 0 },
+    });
     // This legacy fixture has no saved advice; a read never computes it.
     expect(before.feasibility).toBeNull();
 

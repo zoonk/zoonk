@@ -12,6 +12,7 @@ import { learnerGoalFixture } from "../learner/_test-utils/learner-goal";
 import { getStudySession } from "../sessions/get-study-session";
 import { getPlanTabView } from "../view-models/plan/get-plan-view";
 import { getTodayView } from "../view-models/today/get-today-view";
+import { getGoalWeekTime } from "./get-goal-week-time";
 
 const MONDAY = new Date("2026-10-12T00:00:00Z");
 const TUESDAY = new Date("2026-10-13T00:00:00Z");
@@ -58,14 +59,20 @@ describe("weekly study time", () => {
 
     mockSession(user.id);
 
-    const [planView, sessionView] = await Promise.all([
+    const [planView, goalWeekTime, sessionView] = await Promise.all([
       getPlanTabView(),
+      getGoalWeekTime(goal.id),
       getStudySession({ input: {}, sessionId: session.id }),
     ]);
 
     expect(planView).toMatchObject({
       status: "ready",
       view: { weekTime: { studiedMinutes: 61, targetMinutes: 365 } },
+    });
+
+    expect(goalWeekTime).toStrictEqual({
+      status: "ready",
+      weekTime: { studiedMinutes: 61, targetMinutes: 365 },
     });
 
     expect(sessionView).toMatchObject({

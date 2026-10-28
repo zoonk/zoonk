@@ -1,12 +1,9 @@
 import "server-only";
 import { type GoalKind } from "@zoonk/db";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { getGoalPlan } from "../../plans/get-goal-plan";
 import { type PlanView } from "../../plans/plan-view-contract";
-import { loadStudyWeek } from "../../progress/_utils/load-study-week";
+import { getGoalWeekTime } from "../../progress/get-goal-week-time";
 import { type WeeklyStudyTime } from "../../progress/weekly-study-time-contract";
-import { getSession } from "../../users/get-session";
 import { resolveViewGoal } from "../_utils/resolve-view-goal";
 import { isCourseSetupLeft } from "../onboarding/onboarding-steps";
 
@@ -28,14 +25,10 @@ export type PlanTabViewResult =
 export async function getPlanTabView(input: { goalId?: string } = {}): Promise<PlanTabViewResult> {
   "use cache: private";
 
-  const [resolved, session] = await Promise.all([resolveViewGoal(input.goalId), getSession()]);
+  const resolved = await resolveViewGoal(input.goalId);
 
   if (resolved.status !== "ready") {
     return resolved;
-  }
-
-  if (!session) {
-    return { status: "unauthorized" };
   }
 
   const { goal } = resolved;
@@ -44,16 +37,14 @@ export async function getPlanTabView(input: { goalId?: string } = {}): Promise<P
     return { status: "preparing" };
   }
 
-  const [result, week] = await Promise.all([
-    getGoalPlan(goal.id),
-    loadStudyWeek({
-      localDate: getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) }),
-      userId: session.user.id,
-    }),
-  ]);
+  const [result, week] = await Promise.all([getGoalPlan(goal.id), getGoalWeekTime(goal.id)]);
 
   if (result.status !== "ready") {
     return result;
+  }
+
+  if (week.status !== "ready") {
+    return week;
   }
 
   return {
@@ -61,7 +52,7 @@ export async function getPlanTabView(input: { goalId?: string } = {}): Promise<P
     view: {
       goal: { id: goal.id, kind: goal.kind, title: goal.title },
       plan: result.plan,
-      weekTime: week.time,
+      weekTime: week.weekTime,
     },
   };
 }
