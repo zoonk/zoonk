@@ -3,10 +3,11 @@ import { resolve } from "node:path";
 import { getSessionCookieName } from "@zoonk/auth/cookies";
 import { createOpenAPIDocument } from "../src/lib/openapi/create-document";
 
-const SWIFT_OPENAPI_ARTIFACT_PATH = resolve(
-  import.meta.dirname,
-  "../../apple/ZoonkAPI/Sources/ZoonkAPI/openapi.json",
-);
+/** The native clients generate their API code from these copies of the contract. */
+const OPENAPI_ARTIFACT_PATHS = [
+  resolve(import.meta.dirname, "../../apple/ZoonkAPI/Sources/ZoonkAPI/openapi.json"),
+  resolve(import.meta.dirname, "../../android/api/openapi.json"),
+];
 
 function serializeOpenAPIDocument() {
   const document = createOpenAPIDocument({
@@ -17,11 +18,11 @@ function serializeOpenAPIDocument() {
   return `${JSON.stringify(document, null, 2)}\n`;
 }
 
-async function checkOpenAPIArtifact(expected: string) {
-  const current = await readFile(SWIFT_OPENAPI_ARTIFACT_PATH, "utf8").catch(() => null);
+async function checkOpenAPIArtifact(path: string, expected: string) {
+  const current = await readFile(path, "utf8").catch(() => null);
 
   if (current !== expected) {
-    throw new Error("OpenAPI artifact is stale. Run pnpm openapi:generate.");
+    throw new Error(`OpenAPI artifact ${path} is stale. Run pnpm openapi:generate.`);
   }
 }
 
@@ -29,11 +30,11 @@ async function main() {
   const document = serializeOpenAPIDocument();
 
   if (process.argv.includes("--check")) {
-    await checkOpenAPIArtifact(document);
+    await Promise.all(OPENAPI_ARTIFACT_PATHS.map((path) => checkOpenAPIArtifact(path, document)));
     return;
   }
 
-  await writeFile(SWIFT_OPENAPI_ARTIFACT_PATH, document);
+  await Promise.all(OPENAPI_ARTIFACT_PATHS.map((path) => writeFile(path, document)));
 }
 
 await main();

@@ -1,0 +1,80 @@
+package com.zoonk.api
+
+import com.zoonk.api.apis.AccountApi
+import com.zoonk.api.apis.ChaptersApi
+import com.zoonk.api.apis.ContentGenerationApi
+import com.zoonk.api.apis.CoursesApi
+import com.zoonk.api.apis.ExamsApi
+import com.zoonk.api.apis.FeedbackApi
+import com.zoonk.api.apis.FilesApi
+import com.zoonk.api.apis.GoalsApi
+import com.zoonk.api.apis.HealthApi
+import com.zoonk.api.apis.LanguageApi
+import com.zoonk.api.apis.LearnerApi
+import com.zoonk.api.apis.LessonsApi
+import com.zoonk.api.apis.LibraryCoursesApi
+import com.zoonk.api.apis.LibraryLessonsApi
+import com.zoonk.api.apis.MemoryApi
+import com.zoonk.api.apis.MilestonesApi
+import com.zoonk.api.apis.MistakesApi
+import com.zoonk.api.apis.OnboardingApi
+import com.zoonk.api.apis.PlansApi
+import com.zoonk.api.apis.ProgressApi
+import com.zoonk.api.apis.SessionsApi
+import com.zoonk.api.apis.SourcesApi
+import com.zoonk.api.apis.StudySessionsApi
+import com.zoonk.api.apis.SubscriptionsApi
+import com.zoonk.api.apis.UsersApi
+import com.zoonk.api.apis.WorkflowsApi
+import okhttp3.HttpUrl
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import retrofit2.create
+
+/**
+ * The generated API services, one per contract tag, sending every request through [client]. Each
+ * service is created on first use.
+ *
+ * @param baseUrl the API's versioned root, ending in `/v1/`.
+ */
+class ApiServices(
+    baseUrl: HttpUrl,
+    client: OkHttpClient,
+) {
+    private val retrofit =
+        Retrofit
+            .Builder()
+            .baseUrl(baseUrl)
+            .client(client)
+            .addConverterFactory(ApiJson.asConverterFactory("application/json".toMediaType()))
+            .build()
+
+    val account: AccountApi by lazy { retrofit.create() }
+    val chapters: ChaptersApi by lazy { retrofit.create() }
+    val contentGeneration: ContentGenerationApi by lazy { retrofit.create() }
+    val courses: CoursesApi by lazy { retrofit.create() }
+    val exams: ExamsApi by lazy { retrofit.create() }
+    val feedback: FeedbackApi by lazy { retrofit.create() }
+    val files: FilesApi by lazy { retrofit.create() }
+    val goals: GoalsApi by lazy { retrofit.create() }
+    val health: HealthApi by lazy { retrofit.create() }
+    val language: LanguageApi by lazy { retrofit.create() }
+    val learner: LearnerApi by lazy { retrofit.create() }
+    val lessons: LessonsApi by lazy { retrofit.create() }
+    val libraryCourses: LibraryCoursesApi by lazy { retrofit.create() }
+    val libraryLessons: LibraryLessonsApi by lazy { retrofit.create() }
+    val memory: MemoryApi by lazy { retrofit.create() }
+    val milestones: MilestonesApi by lazy { retrofit.create() }
+    val mistakes: MistakesApi by lazy { retrofit.create() }
+    val onboarding: OnboardingApi by lazy { retrofit.create() }
+    val plans: PlansApi by lazy { retrofit.create() }
+    val progress: ProgressApi by lazy { retrofit.create() }
+    val sessions: SessionsApi by lazy { retrofit.create() }
+    val sources: SourcesApi by lazy { retrofit.create() }
+    val studySessions: StudySessionsApi by lazy { retrofit.create() }
+    val subscriptions: SubscriptionsApi by lazy { retrofit.create() }
+    val users: UsersApi by lazy { retrofit.create() }
+    val workflows: WorkflowsApi by lazy { retrofit.create() }
+}

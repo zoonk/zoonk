@@ -3,17 +3,18 @@ plugins {
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.kotlin.jvm) apply false
     alias(libs.plugins.kotlin.serialization) apply false
+    alias(libs.plugins.openapi.generator) apply false
     alias(libs.plugins.spotless)
 }
 
 spotless {
     kotlin {
-        target("app/src/**/*.kt", "lint-checks/src/**/*.kt")
+        target("app/src/**/*.kt", "api/src/**/*.kt", "lint-checks/src/**/*.kt")
         ktlint()
     }
 
     kotlinGradle {
-        target("*.gradle.kts", "app/*.gradle.kts", "lint-checks/*.gradle.kts")
+        target("*.gradle.kts", "app/*.gradle.kts", "api/*.gradle.kts", "lint-checks/*.gradle.kts")
         ktlint()
     }
 
