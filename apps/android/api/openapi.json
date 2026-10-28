@@ -1661,6 +1661,90 @@
         }
       }
     },
+    "/checkpoints/{blockId}/language-call": {
+      "get": {
+        "description": "Where a language goal's checkpoint call stands as its screen opens, read without making or writing anything: the call already made (finished or not), its intro (title, character, situation and goals, and whether today's study time already refuses Start), the unit's call not written yet, earlier work of the session first, Plus required, or `notLanguage` for a checkpoint of another goal. The learner's Start (`POST /v1/language-conversations` with `kind: \"checkpoint\"`) makes the call.",
+        "operationId": "getLanguageCheckpointCall",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Get a language checkpoint's call",
+        "tags": [
+          "Language"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "blockId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "The checkpoint's study session block ID"
+            },
+            "required": true,
+            "description": "The checkpoint's study session block ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Where the call stands",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LanguageCheckpointCall"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/checkpoints/{blockId}/moves": {
       "post": {
         "description": "\"Move to Monday\": the week's Big Challenge (a mock or a mixed challenge) that hasn't started moves to the next Monday through the plan, and today's block steps aside. The plan change can be undone.",
@@ -3326,7 +3410,7 @@
     },
     "/goals/{goalId}/exam-moves": {
       "post": {
-        "description": "\"Pass an exam\" inside a language goal: when the goal's reason names a language certificate (IELTS, TOEFL, DELE, Celpe-Bras…), it moves to an exam goal for it with the same language, details and schedule; research and the curriculum start, and the language goal is archived.",
+        "description": "\"Pass an exam\" inside a language goal: when the goal's reason names a language certificate (IELTS, TOEFL, DELE, Celpe-Bras…), it moves to an exam goal for it with the same language, details and schedule; research and the curriculum start, and the language goal is archived. Answering the reason question in onboarding (`POST /goals/{goalId}/onboarding/answers`) already does this, so onboarding never needs this call.",
         "operationId": "moveLanguageGoalToExam",
         "security": [
           {
@@ -3355,6 +3439,80 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "The goal had already moved: its exam goal, with nothing started again",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "generations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "generationId": {
+                            "type": "string"
+                          },
+                          "goalId": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "curriculum",
+                              "explanation"
+                            ],
+                            "description": "curriculum: skill graph, plan and outlines for learn, exam and language goals; explanation: the quick explanation of an explain question"
+                          }
+                        },
+                        "required": [
+                          "generationId",
+                          "goalId",
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "What is being written for each new goal: stream GET /generations/{generationId}/events for live progress"
+                    },
+                    "research": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "goalId": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "researchId": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "goalId",
+                          "researchId"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "Research started for exam and learn goals: poll GET /research/{researchId}"
+                    },
+                    "goal": {
+                      "$ref": "#/components/schemas/Goal"
+                    }
+                  },
+                  "required": [
+                    "generations",
+                    "research",
+                    "goal"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
           "201": {
             "description": "The new exam goal",
             "content": {
@@ -3451,16 +3609,6 @@
           },
           "404": {
             "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "The exam goal couldn't be created",
             "content": {
               "application/json": {
                 "schema": {
@@ -11877,7 +12025,87 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppleSubscriptionResponse"
+                  "$ref": "#/components/schemas/StoreSubscriptionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/me/subscriptions/google": {
+      "post": {
+        "description": "The app sets the learner's user id as the purchase's obfuscatedAccountId; a purchase made for another account, or replacing one that belongs to another account, is refused, and one made in the Play Store, which names no account, becomes the learner's. Zoonk acknowledges the purchase, so the app doesn't.",
+        "operationId": "createGooglePlaySubscription",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Reconcile a Google Play subscription",
+        "tags": [
+          "Subscriptions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GooglePlaySubscriptionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Current account state after durable Google Play reconciliation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StoreSubscriptionResponse"
                 }
               }
             }
@@ -11949,6 +12177,62 @@
           },
           "400": {
             "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/google/notifications": {
+      "post": {
+        "description": "Pub/Sub push endpoint, authenticated by the Google-signed OIDC token in the Authorization header.",
+        "operationId": "createGooglePlayNotification",
+        "security": [],
+        "summary": "Receive a Google Play Real-time Developer Notification",
+        "tags": [
+          "Subscriptions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GooglePlayNotification"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Notification reconciled or acknowledged"
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
             "content": {
               "application/json": {
                 "schema": {
@@ -19937,7 +20221,7 @@
     },
     "/goals/{goalId}/onboarding/answers": {
       "post": {
-        "description": "Saves one onboarding answer and returns the screens still ahead. Skippable questions take null and are never asked again. The schedule re-plans, splits the day's time between goals typed together and starts writing the lessons and outlines the first days now hold, as `POST /goals/{goalId}/lesson-preparations` does. The buddy goes to the learner's profile.",
+        "description": "Saves one onboarding answer and returns the screens still ahead. Skippable questions take null and are never asked again. The schedule re-plans, splits the day's time between goals typed together and starts writing the lessons and outlines the first days now hold, as `POST /goals/{goalId}/lesson-preparations` does. The buddy goes to the learner's profile. A language goal whose reason names a language certificate (IELTS, DELE, Celpe-Bras…) moves to an exam goal for it, whose research and curriculum start: the response is then that goal's onboarding (`goal.id` changes), and the next answers go to it.",
         "operationId": "answerOnboardingQuestion",
         "security": [
           {
@@ -23096,13 +23380,23 @@
             "type": "string",
             "minLength": 1
           },
+          "client": {
+            "default": "app",
+            "description": "Which Apple client issued the credentials: `app` for the iOS app's native sign-in, `web` for Apple's authorize page opened with Zoonk's Services ID, as the Android app does",
+            "type": "string",
+            "enum": [
+              "app",
+              "web"
+            ]
+          },
           "idToken": {
             "type": "string",
             "minLength": 1
           },
           "nonce": {
             "type": "string",
-            "minLength": 1
+            "minLength": 1,
+            "description": "The raw nonce the client made. Apple's identity token carries its SHA-256, in hex, as the `nonce` claim"
           },
           "user": {
             "type": "object",
@@ -25054,6 +25348,21 @@
         ],
         "additionalProperties": false
       },
+      "GooglePlaySubscriptionRequest": {
+        "type": "object",
+        "properties": {
+          "purchaseToken": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4096,
+            "description": "The purchase token Play Billing returned for the subscription"
+          }
+        },
+        "required": [
+          "purchaseToken"
+        ],
+        "additionalProperties": false
+      },
       "AppleSubscriptionNotification": {
         "type": "object",
         "properties": {
@@ -25067,6 +25376,34 @@
           "signedPayload"
         ],
         "additionalProperties": false
+      },
+      "GooglePlayNotification": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100000,
+                "description": "Base64-encoded Real-time Developer Notification"
+              },
+              "messageId": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            },
+            "required": [
+              "data",
+              "messageId"
+            ]
+          }
+        },
+        "required": [
+          "message"
+        ]
       },
       "AreaPracticeInput": {
         "type": "object",
@@ -31639,6 +31976,671 @@
         ],
         "description": "How true-or-false statements are answered for the goal's exam. `rightWrong`: the exam's notice names the answers right or wrong, as Cebraspe's Certo or Errado. `trueFalse`: every other goal"
       },
+      "LanguageCheckpointCall": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/LanguageCheckpointCallReady"
+          },
+          {
+            "$ref": "#/components/schemas/LanguageCheckpointCallIntro"
+          },
+          {
+            "$ref": "#/components/schemas/LanguageCheckpointCallPreparing"
+          },
+          {
+            "$ref": "#/components/schemas/LanguageCheckpointCallEarlierFirst"
+          },
+          {
+            "$ref": "#/components/schemas/LanguageCheckpointCallPlusRequired"
+          },
+          {
+            "$ref": "#/components/schemas/LanguageCheckpointCallNotLanguage"
+          }
+        ],
+        "type": "object",
+        "discriminator": {
+          "propertyName": "status",
+          "mapping": {
+            "ready": "#/components/schemas/LanguageCheckpointCallReady",
+            "notStarted": "#/components/schemas/LanguageCheckpointCallIntro",
+            "preparing": "#/components/schemas/LanguageCheckpointCallPreparing",
+            "earlierFirst": "#/components/schemas/LanguageCheckpointCallEarlierFirst",
+            "plusRequired": "#/components/schemas/LanguageCheckpointCallPlusRequired",
+            "notLanguage": "#/components/schemas/LanguageCheckpointCallNotLanguage"
+          }
+        }
+      },
+      "LanguageCheckpointCallReady": {
+        "type": "object",
+        "properties": {
+          "conversationId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready"
+            ]
+          }
+        },
+        "required": [
+          "conversationId",
+          "status"
+        ],
+        "additionalProperties": false,
+        "description": "The call exists, finished or not: open it (`GET /v1/language-conversations/{conversationId}`)"
+      },
+      "LanguageCheckpointCallIntro": {
+        "type": "object",
+        "properties": {
+          "dailyLimitReached": {
+            "type": "boolean",
+            "description": "Today's study time is used up, so Start would refuse this call until tomorrow: say so on the intro before any tap"
+          },
+          "intro": {
+            "$ref": "#/components/schemas/LanguageConversationIntro"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "notStarted"
+            ]
+          }
+        },
+        "required": [
+          "dailyLimitReached",
+          "intro",
+          "status"
+        ],
+        "additionalProperties": false,
+        "description": "The call isn't made yet: show its intro, and Start makes it (`POST /v1/language-conversations` with `kind: \"checkpoint\"`)"
+      },
+      "LanguageConversationIntro": {
+        "type": "object",
+        "properties": {
+          "character": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "place": {
+                "type": "string"
+              },
+              "role": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "place",
+              "role"
+            ],
+            "additionalProperties": false
+          },
+          "exam": {
+            "nullable": true,
+            "description": "The exam a speaking mock follows; null for other calls",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SpeakingMockExam"
+              }
+            ]
+          },
+          "examTask": {
+            "nullable": true,
+            "description": "The exam task an `examSpeaking` call practices; null for other calls",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ExamSpeakingTask"
+              }
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "practice",
+              "checkpoint",
+              "speakingMock",
+              "examSpeaking"
+            ]
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "A1",
+              "A2",
+              "B1",
+              "B2",
+              "C1",
+              "C2"
+            ]
+          },
+          "minutes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "objectives": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "description": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "met": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "description",
+                "label",
+                "met"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "situation": {
+            "type": "string"
+          },
+          "targetLanguage": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "character",
+          "exam",
+          "examTask",
+          "kind",
+          "level",
+          "minutes",
+          "objectives",
+          "situation",
+          "targetLanguage",
+          "title"
+        ],
+        "additionalProperties": false
+      },
+      "SpeakingMockExam": {
+        "type": "string",
+        "enum": [
+          "ielts",
+          "toefl"
+        ]
+      },
+      "ExamSpeakingTask": {
+        "type": "object",
+        "properties": {
+          "exam": {
+            "$ref": "#/components/schemas/SpeakingExam"
+          },
+          "language": {
+            "type": "string",
+            "description": "The exam's language: es, fr, de or en"
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "A1",
+              "A2",
+              "B1",
+              "B2",
+              "C1",
+              "C2"
+            ]
+          },
+          "paper": {
+            "type": "string",
+            "description": "The speaking paper's official name"
+          },
+          "source": {
+            "type": "string",
+            "description": "The exam owner's page the format comes from"
+          },
+          "title": {
+            "type": "string",
+            "description": "The exam and level: DELE B2, B2 First"
+          },
+          "card": {
+            "$ref": "#/components/schemas/SpeakingCard"
+          },
+          "criteria": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SpeakingCriterion"
+            }
+          },
+          "cues": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "atSeconds": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "say": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "atSeconds",
+                "say"
+              ],
+              "additionalProperties": false
+            },
+            "description": "What to tell the voice model (as a context append) when the call has run this long, as an examiner keeps time"
+          },
+          "nextTask": {
+            "nullable": true,
+            "description": "The paper's next task's key, to open it after this one; null for the last",
+            "type": "string"
+          },
+          "number": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "The task's place in its paper, from 1"
+          },
+          "sectionId": {
+            "nullable": true,
+            "description": "The whole paper this task belongs to; null for a single task",
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "task": {
+            "$ref": "#/components/schemas/SpeakingTask"
+          },
+          "taskCount": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "exam",
+          "language",
+          "level",
+          "paper",
+          "source",
+          "title",
+          "card",
+          "criteria",
+          "cues",
+          "nextTask",
+          "number",
+          "sectionId",
+          "task",
+          "taskCount"
+        ],
+        "additionalProperties": false
+      },
+      "SpeakingExam": {
+        "type": "string",
+        "enum": [
+          "dele",
+          "delf",
+          "goethe",
+          "cambridge"
+        ],
+        "description": "DELE, DELF or DALF, the Goethe-Zertifikat, or Cambridge English"
+      },
+      "SpeakingCard": {
+        "type": "object",
+        "properties": {
+          "instructions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "In the exam's language"
+          },
+          "photos": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "alt": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "alt",
+                "url"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "prompts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Points to cover, questions, proposals or slides, in the exam's language"
+          },
+          "summary": {
+            "type": "string",
+            "description": "What the candidate does, in the learner's language"
+          },
+          "table": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "columns": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "rows": {
+                "type": "array",
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "columns",
+              "rows",
+              "title"
+            ],
+            "additionalProperties": false
+          },
+          "text": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "body": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "body",
+              "title"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "instructions",
+          "photos",
+          "prompts",
+          "summary",
+          "table",
+          "text"
+        ],
+        "additionalProperties": false
+      },
+      "SpeakingCriterion": {
+        "type": "object",
+        "properties": {
+          "display": {
+            "type": "string",
+            "enum": [
+              "band",
+              "letter",
+              "points"
+            ],
+            "description": "A band number, a letter (A best), or the points the band gives"
+          },
+          "halfBands": {
+            "type": "boolean"
+          },
+          "key": {
+            "type": "string"
+          },
+          "levelBand": {
+            "nullable": true,
+            "description": "The band the scale writes for the exam's level, when it names one",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "levelMark": {
+            "type": "number",
+            "description": "The band from which an estimate reaches the exam's level: `levelBand`, or 60% of the scale where the exam passes from 60% (Goethe)"
+          },
+          "maxBand": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "name": {
+            "type": "string",
+            "description": "The official name, in the exam's language"
+          },
+          "points": {
+            "nullable": true,
+            "description": "The points each band gives on this task's line; null when none",
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "sound": {
+            "type": "boolean",
+            "description": "How the candidate sounds, graded for intelligibility, never accent"
+          },
+          "voiceOnly": {
+            "type": "boolean",
+            "description": "Only the candidate's voice shows it, so typed replies aren't rated on it"
+          }
+        },
+        "required": [
+          "display",
+          "halfBands",
+          "key",
+          "levelBand",
+          "levelMark",
+          "maxBand",
+          "name",
+          "points",
+          "sound",
+          "voiceOnly"
+        ],
+        "additionalProperties": false
+      },
+      "SpeakingTask": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "The task's key in its paper: `t1`, `p2`"
+          },
+          "minutes": {
+            "type": "object",
+            "properties": {
+              "max": {
+                "type": "number"
+              },
+              "min": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "max",
+              "min"
+            ],
+            "additionalProperties": false,
+            "description": "The task's official speaking time"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "monologue",
+              "interaction",
+              "monologueThenInteraction",
+              "rolePlay"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "description": "The official name, in the exam's language"
+          },
+          "options": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "How many cards the exam offers to choose from"
+          },
+          "prepMinutes": {
+            "type": "number",
+            "description": "The preparation the exam gives it, or its share; 0 for none"
+          },
+          "prepShared": {
+            "nullable": true,
+            "description": "The exam's preparation when several tasks share it (DELE B2: 20 minutes for Tasks 1 and 2); `prepMinutes` is then this task's share. Null when it's the task's own",
+            "type": "object",
+            "properties": {
+              "minutes": {
+                "type": "number"
+              },
+              "tasks": {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "description": "The numbers of the tasks it covers, from 1"
+              }
+            },
+            "required": [
+              "minutes",
+              "tasks"
+            ],
+            "additionalProperties": false
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "examiner",
+              "partner"
+            ],
+            "description": "Whom the AI plays: the examiner, or the other candidate"
+          },
+          "stimulus": {
+            "type": "string",
+            "enum": [
+              "topic",
+              "photos",
+              "text",
+              "data"
+            ]
+          }
+        },
+        "required": [
+          "key",
+          "minutes",
+          "mode",
+          "name",
+          "options",
+          "prepMinutes",
+          "prepShared",
+          "role",
+          "stimulus"
+        ],
+        "additionalProperties": false
+      },
+      "LanguageCheckpointCallPreparing": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "preparing"
+            ]
+          },
+          "unitTitle": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "unitTitle"
+        ],
+        "additionalProperties": false,
+        "description": "The unit's call isn't written yet: Start writes and makes it (`POST /v1/language-conversations`)"
+      },
+      "LanguageCheckpointCallEarlierFirst": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "enum": [
+              "challenge",
+              "lessons"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "earlierFirst"
+            ]
+          }
+        },
+        "required": [
+          "reason",
+          "status"
+        ],
+        "additionalProperties": false,
+        "description": "Earlier lessons or an earlier phase challenge of the session come first: go back to Today"
+      },
+      "LanguageCheckpointCallPlusRequired": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "plusRequired"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "additionalProperties": false,
+        "description": "The learner's plan leaves phase challenges to Plus: show the challenge's intro (`GET /v1/challenges/{planItemId}`), locked, with what Plus unlocks"
+      },
+      "LanguageCheckpointCallNotLanguage": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "notLanguage"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "additionalProperties": false,
+        "description": "Not a language goal's call (another goal's checkpoint, or a weekly challenge): the block plays as a checkpoint (`GET /v1/checkpoints/{blockId}`)"
+      },
       "CheckpointMove": {
         "type": "object",
         "properties": {
@@ -33649,16 +34651,6 @@
         ],
         "additionalProperties": false
       },
-      "SpeakingExam": {
-        "type": "string",
-        "enum": [
-          "dele",
-          "delf",
-          "goethe",
-          "cambridge"
-        ],
-        "description": "DELE, DELF or DALF, the Goethe-Zertifikat, or Cambridge English"
-      },
       "SpeakingPaperTask": {
         "type": "object",
         "properties": {
@@ -33820,13 +34812,6 @@
           "lastTry"
         ],
         "additionalProperties": false
-      },
-      "SpeakingMockExam": {
-        "type": "string",
-        "enum": [
-          "ielts",
-          "toefl"
-        ]
       },
       "PlanChangeResult": {
         "type": "object",
@@ -36756,384 +37741,6 @@
           "targetLanguage",
           "title",
           "unit"
-        ],
-        "additionalProperties": false
-      },
-      "ExamSpeakingTask": {
-        "type": "object",
-        "properties": {
-          "exam": {
-            "$ref": "#/components/schemas/SpeakingExam"
-          },
-          "language": {
-            "type": "string",
-            "description": "The exam's language: es, fr, de or en"
-          },
-          "level": {
-            "type": "string",
-            "enum": [
-              "A1",
-              "A2",
-              "B1",
-              "B2",
-              "C1",
-              "C2"
-            ]
-          },
-          "paper": {
-            "type": "string",
-            "description": "The speaking paper's official name"
-          },
-          "source": {
-            "type": "string",
-            "description": "The exam owner's page the format comes from"
-          },
-          "title": {
-            "type": "string",
-            "description": "The exam and level: DELE B2, B2 First"
-          },
-          "card": {
-            "$ref": "#/components/schemas/SpeakingCard"
-          },
-          "criteria": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/SpeakingCriterion"
-            }
-          },
-          "cues": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "atSeconds": {
-                  "type": "integer",
-                  "minimum": -9007199254740991,
-                  "maximum": 9007199254740991
-                },
-                "say": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "atSeconds",
-                "say"
-              ],
-              "additionalProperties": false
-            },
-            "description": "What to tell the voice model (as a context append) when the call has run this long, as an examiner keeps time"
-          },
-          "nextTask": {
-            "nullable": true,
-            "description": "The paper's next task's key, to open it after this one; null for the last",
-            "type": "string"
-          },
-          "number": {
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991,
-            "description": "The task's place in its paper, from 1"
-          },
-          "sectionId": {
-            "nullable": true,
-            "description": "The whole paper this task belongs to; null for a single task",
-            "type": "string",
-            "format": "uuid",
-            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-          },
-          "task": {
-            "$ref": "#/components/schemas/SpeakingTask"
-          },
-          "taskCount": {
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991
-          }
-        },
-        "required": [
-          "exam",
-          "language",
-          "level",
-          "paper",
-          "source",
-          "title",
-          "card",
-          "criteria",
-          "cues",
-          "nextTask",
-          "number",
-          "sectionId",
-          "task",
-          "taskCount"
-        ],
-        "additionalProperties": false
-      },
-      "SpeakingCard": {
-        "type": "object",
-        "properties": {
-          "instructions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "In the exam's language"
-          },
-          "photos": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "alt": {
-                  "type": "string"
-                },
-                "url": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "alt",
-                "url"
-              ],
-              "additionalProperties": false
-            }
-          },
-          "prompts": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Points to cover, questions, proposals or slides, in the exam's language"
-          },
-          "summary": {
-            "type": "string",
-            "description": "What the candidate does, in the learner's language"
-          },
-          "table": {
-            "nullable": true,
-            "type": "object",
-            "properties": {
-              "columns": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
-              },
-              "rows": {
-                "type": "array",
-                "items": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              },
-              "title": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "columns",
-              "rows",
-              "title"
-            ],
-            "additionalProperties": false
-          },
-          "text": {
-            "nullable": true,
-            "type": "object",
-            "properties": {
-              "body": {
-                "type": "string"
-              },
-              "title": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "body",
-              "title"
-            ],
-            "additionalProperties": false
-          }
-        },
-        "required": [
-          "instructions",
-          "photos",
-          "prompts",
-          "summary",
-          "table",
-          "text"
-        ],
-        "additionalProperties": false
-      },
-      "SpeakingCriterion": {
-        "type": "object",
-        "properties": {
-          "display": {
-            "type": "string",
-            "enum": [
-              "band",
-              "letter",
-              "points"
-            ],
-            "description": "A band number, a letter (A best), or the points the band gives"
-          },
-          "halfBands": {
-            "type": "boolean"
-          },
-          "key": {
-            "type": "string"
-          },
-          "levelBand": {
-            "nullable": true,
-            "description": "The band the scale writes for the exam's level, when it names one",
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991
-          },
-          "levelMark": {
-            "type": "number",
-            "description": "The band from which an estimate reaches the exam's level: `levelBand`, or 60% of the scale where the exam passes from 60% (Goethe)"
-          },
-          "maxBand": {
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991
-          },
-          "name": {
-            "type": "string",
-            "description": "The official name, in the exam's language"
-          },
-          "points": {
-            "nullable": true,
-            "description": "The points each band gives on this task's line; null when none",
-            "type": "array",
-            "items": {
-              "type": "number"
-            }
-          },
-          "sound": {
-            "type": "boolean",
-            "description": "How the candidate sounds, graded for intelligibility, never accent"
-          },
-          "voiceOnly": {
-            "type": "boolean",
-            "description": "Only the candidate's voice shows it, so typed replies aren't rated on it"
-          }
-        },
-        "required": [
-          "display",
-          "halfBands",
-          "key",
-          "levelBand",
-          "levelMark",
-          "maxBand",
-          "name",
-          "points",
-          "sound",
-          "voiceOnly"
-        ],
-        "additionalProperties": false
-      },
-      "SpeakingTask": {
-        "type": "object",
-        "properties": {
-          "key": {
-            "type": "string",
-            "description": "The task's key in its paper: `t1`, `p2`"
-          },
-          "minutes": {
-            "type": "object",
-            "properties": {
-              "max": {
-                "type": "number"
-              },
-              "min": {
-                "type": "number"
-              }
-            },
-            "required": [
-              "max",
-              "min"
-            ],
-            "additionalProperties": false,
-            "description": "The task's official speaking time"
-          },
-          "mode": {
-            "type": "string",
-            "enum": [
-              "monologue",
-              "interaction",
-              "monologueThenInteraction",
-              "rolePlay"
-            ]
-          },
-          "name": {
-            "type": "string",
-            "description": "The official name, in the exam's language"
-          },
-          "options": {
-            "type": "integer",
-            "minimum": -9007199254740991,
-            "maximum": 9007199254740991,
-            "description": "How many cards the exam offers to choose from"
-          },
-          "prepMinutes": {
-            "type": "number",
-            "description": "The preparation the exam gives it, or its share; 0 for none"
-          },
-          "prepShared": {
-            "nullable": true,
-            "description": "The exam's preparation when several tasks share it (DELE B2: 20 minutes for Tasks 1 and 2); `prepMinutes` is then this task's share. Null when it's the task's own",
-            "type": "object",
-            "properties": {
-              "minutes": {
-                "type": "number"
-              },
-              "tasks": {
-                "type": "array",
-                "items": {
-                  "type": "integer",
-                  "minimum": -9007199254740991,
-                  "maximum": 9007199254740991
-                },
-                "description": "The numbers of the tasks it covers, from 1"
-              }
-            },
-            "required": [
-              "minutes",
-              "tasks"
-            ],
-            "additionalProperties": false
-          },
-          "role": {
-            "type": "string",
-            "enum": [
-              "examiner",
-              "partner"
-            ],
-            "description": "Whom the AI plays: the examiner, or the other candidate"
-          },
-          "stimulus": {
-            "type": "string",
-            "enum": [
-              "topic",
-              "photos",
-              "text",
-              "data"
-            ]
-          }
-        },
-        "required": [
-          "key",
-          "minutes",
-          "mode",
-          "name",
-          "options",
-          "prepMinutes",
-          "prepShared",
-          "role",
-          "stimulus"
         ],
         "additionalProperties": false
       },
@@ -53890,6 +54497,29 @@
                 "type": "integer",
                 "minimum": -9007199254740991,
                 "maximum": 9007199254740991
+              },
+              "minTolerance": {
+                "nullable": true,
+                "description": "How far a `numeric` answer may always be from the right one on this template, when the check's own tolerance is tighter (a guess on a slider can't land closer than its steps): right within either. Null when the template has none",
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "absolute",
+                      "relative"
+                    ]
+                  },
+                  "value": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "kind",
+                  "value"
+                ],
+                "additionalProperties": false
               }
             },
             "required": [
@@ -53900,7 +54530,8 @@
               "content",
               "image",
               "imagePending",
-              "kind"
+              "kind",
+              "minTolerance"
             ],
             "additionalProperties": false
           },
@@ -68443,6 +69074,15 @@
             },
             "description": "A typed answer in a language course: each form mistake (a wrong word, gender, number, tense or agreement), which keeps the answer from being right even when every key point is met. A sentence typed instead of said that misses: one correction, the sentence as typed and as it reads. Empty otherwise."
           },
+          "expected": {
+            "nullable": true,
+            "description": "An activity's correct answer, computed by the code that graded it, to draw next to the learner's answer: the right option, the number or the canvas's end state. Null for other screens, and for an activity whose template computes none",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/ActivityExpected"
+              }
+            ]
+          },
           "feedback": {
             "nullable": true,
             "description": "Why: the chosen option's reason, the grader's feedback or the check's explanation",
@@ -68500,6 +69140,7 @@
           "checked",
           "correctAnswer",
           "corrections",
+          "expected",
           "feedback",
           "isCorrect",
           "keyPoints",
@@ -68507,6 +69148,538 @@
           "savedMistake",
           "score",
           "spelling"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpected": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ActivityExpectedChoice"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedInteraction"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedNumeric"
+          }
+        ],
+        "type": "object",
+        "discriminator": {
+          "propertyName": "kind",
+          "mapping": {
+            "choice": "#/components/schemas/ActivityExpectedChoice",
+            "interaction": "#/components/schemas/ActivityExpectedInteraction",
+            "numeric": "#/components/schemas/ActivityExpectedNumeric"
+          }
+        }
+      },
+      "ActivityExpectedChoice": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "choice"
+            ]
+          },
+          "optionId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "optionId"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedInteraction": {
+        "type": "object",
+        "properties": {
+          "answer": {
+            "$ref": "#/components/schemas/ActivityExpectedAnswer"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "interaction"
+            ]
+          }
+        },
+        "required": [
+          "answer",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedAnswer": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ActivityExpectedAssignment"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedCurveShift"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedFormula"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedGrid"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedLinks"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedMolecule"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedOrder"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedOutput"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedPitchClasses"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedRegex"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedRhythm"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedRows"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityExpectedSelection"
+          }
+        ],
+        "type": "object",
+        "discriminator": {
+          "propertyName": "kind",
+          "mapping": {
+            "assignment": "#/components/schemas/ActivityExpectedAssignment",
+            "curveShift": "#/components/schemas/ActivityExpectedCurveShift",
+            "formula": "#/components/schemas/ActivityExpectedFormula",
+            "grid": "#/components/schemas/ActivityExpectedGrid",
+            "links": "#/components/schemas/ActivityExpectedLinks",
+            "molecule": "#/components/schemas/ActivityExpectedMolecule",
+            "order": "#/components/schemas/ActivityExpectedOrder",
+            "output": "#/components/schemas/ActivityExpectedOutput",
+            "pitchClasses": "#/components/schemas/ActivityExpectedPitchClasses",
+            "regex": "#/components/schemas/ActivityExpectedRegex",
+            "rhythm": "#/components/schemas/ActivityExpectedRhythm",
+            "rows": "#/components/schemas/ActivityExpectedRows",
+            "selection": "#/components/schemas/ActivityExpectedSelection"
+          }
+        }
+      },
+      "ActivityExpectedAssignment": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "assignment"
+            ]
+          },
+          "pairs": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "What goes in each slot the canvas names (a numbered part, a blank, an item), by its key"
+          }
+        },
+        "required": [
+          "kind",
+          "pairs"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedCurveShift": {
+        "type": "object",
+        "properties": {
+          "curve": {
+            "type": "string",
+            "description": "The id of the line that moves"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "down",
+              "left",
+              "right",
+              "up"
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "curveShift"
+            ]
+          }
+        },
+        "required": [
+          "curve",
+          "direction",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedFormula": {
+        "type": "object",
+        "properties": {
+          "examples": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "inputs": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "number"
+                  },
+                  "description": "Each variable's value"
+                },
+                "output": {
+                  "type": "number",
+                  "description": "What the formula gives for those inputs"
+                }
+              },
+              "required": [
+                "inputs",
+                "output"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Inputs a right formula turns into these outputs"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "formula"
+            ]
+          },
+          "tolerance": {
+            "type": "object",
+            "properties": {
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "absolute",
+                  "relative"
+                ]
+              },
+              "value": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "kind",
+              "value"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "examples",
+          "kind",
+          "tolerance"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedGrid": {
+        "type": "object",
+        "properties": {
+          "cells": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "grid"
+            ]
+          }
+        },
+        "required": [
+          "cells",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedLinks": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "links"
+            ]
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "from": {
+                  "type": "string"
+                },
+                "to": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "from",
+                "to"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "kind",
+          "links"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedMolecule": {
+        "type": "object",
+        "properties": {
+          "elements": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "number"
+            },
+            "description": "How many atoms of each element the molecule has"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "molecule"
+            ]
+          }
+        },
+        "required": [
+          "elements",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedOrder": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Every item's id, in order"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "order"
+            ]
+          }
+        },
+        "required": [
+          "ids",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedOutput": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "output"
+            ]
+          },
+          "output": {
+            "type": "string",
+            "description": "What the program prints"
+          }
+        },
+        "required": [
+          "kind",
+          "output"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedPitchClasses": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "pitchClasses"
+            ]
+          },
+          "pitchClasses": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "The notes to play, as pitch classes from 0 (C) to 11 (B)"
+          }
+        },
+        "required": [
+          "kind",
+          "pitchClasses"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedRegex": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "regex"
+            ]
+          },
+          "shouldMatch": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "shouldNotMatch": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "kind",
+          "shouldMatch",
+          "shouldNotMatch"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedRhythm": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "rhythm"
+            ]
+          },
+          "tapTimesMs": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "When each tap falls"
+          },
+          "toleranceMs": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "kind",
+          "tapTimesMs",
+          "toleranceMs"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedRows": {
+        "type": "object",
+        "properties": {
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "rows"
+            ]
+          },
+          "orderMatters": {
+            "type": "boolean"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "string",
+                    "nullable": true,
+                    "enum": [
+                      null
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "required": [
+          "columns",
+          "kind",
+          "orderMatters",
+          "rows"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedSelection": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The ids to select, in any order"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "selection"
+            ]
+          }
+        },
+        "required": [
+          "ids",
+          "kind"
+        ],
+        "additionalProperties": false
+      },
+      "ActivityExpectedNumeric": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "numeric"
+            ]
+          },
+          "value": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "kind",
+          "value"
         ],
         "additionalProperties": false
       },
@@ -70614,7 +71787,7 @@
         ],
         "additionalProperties": false
       },
-      "AppleSubscriptionResponse": {
+      "StoreSubscriptionResponse": {
         "type": "object",
         "properties": {
           "currentAccount": {
@@ -70622,7 +71795,7 @@
           },
           "isActive": {
             "type": "boolean",
-            "description": "Whether the reconciled App Store subscription currently grants access"
+            "description": "Whether the reconciled store subscription currently grants access"
           }
         },
         "required": [
@@ -71553,6 +72726,17 @@
             "type": "boolean",
             "description": "A short lesson before a boss rematch"
           },
+          "screen": {
+            "type": "string",
+            "enum": [
+              "session",
+              "lesson",
+              "challenge",
+              "essay",
+              "unknown"
+            ],
+            "description": "Where a tap on the block opens it. `session`: the session screen, which plays questions and shows the wait of a lesson not written yet (or not picked yet). `lesson`: the lesson player, since its lesson is written. `challenge`: its own screen (a checkpoint or a mock), on its intro while it hasn't started. `essay`: the writing screen. `unknown`: a lesson block whose lesson this response didn't check (a block's questions read on their own): ask for its lesson's readiness (`GET /v1/library/lessons/{lessonId}/readiness`) before opening it"
+          },
           "status": {
             "type": "string",
             "enum": [
@@ -71610,6 +72794,7 @@
           "questions",
           "refresh",
           "reinforcement",
+          "screen",
           "status",
           "subject",
           "title",
@@ -86075,6 +87260,17 @@
                   "type": "boolean",
                   "description": "A short lesson before a boss rematch"
                 },
+                "screen": {
+                  "type": "string",
+                  "enum": [
+                    "session",
+                    "lesson",
+                    "challenge",
+                    "essay",
+                    "unknown"
+                  ],
+                  "description": "Where a tap on the block opens it. `session`: the session screen, which plays questions and shows the wait of a lesson not written yet (or not picked yet). `lesson`: the lesson player, since its lesson is written. `challenge`: its own screen (a checkpoint or a mock), on its intro while it hasn't started. `essay`: the writing screen. `unknown`: a lesson block whose lesson this response didn't check (a block's questions read on their own): ask for its lesson's readiness (`GET /v1/library/lessons/{lessonId}/readiness`) before opening it"
+                },
                 "status": {
                   "type": "string",
                   "enum": [
@@ -86131,6 +87327,7 @@
                 "questions",
                 "refresh",
                 "reinforcement",
+                "screen",
                 "status",
                 "subject",
                 "title",
