@@ -1,25 +1,20 @@
 import Foundation
 
-/// A day opened by the learner's tap (`POST /v1/goals/{goalId}/study-sessions`): the saved session,
-/// and the block the tap named, resolved to the same work, when there was one.
 struct OpenedStudyDay: Decodable, Equatable, Sendable {
   let session: StudyDay
   let sessionId: String
   let target: StudyBlock?
 }
 
-/// What starting a block said: started, or why it can't start now.
 enum BlockStart: Equatable, Sendable {
   case started
-  /// The block finished meanwhile (on another device): read the day again.
+  /// Finished meanwhile on another device: read the day again.
   case finished
-  /// Today's study time is used up.
   case dailyLimitReached
-  /// A phase's challenge waits for earlier work in the session.
   case earlierFirst
 }
 
-/// How the app reads and moves the learner's day. Every write here starts only from a tap.
+/// Every write here starts only from a tap.
 protocol StudyAPIClient: Sendable {
   func getToday(token: String, timeZone: String) async throws -> TodayContent
   func openDay(
@@ -33,18 +28,15 @@ protocol StudyAPIClient: Sendable {
   func getSession(token: String, sessionID: String) async throws -> StudyDay
   func getSummary(token: String, sessionID: String) async throws -> SessionSummary
   func lessonStatus(token: String, lessonID: String) async throws -> String
-  /// Gets a lesson written now; only on the learner's tap, since it runs AI.
+  /// Only on the learner's tap, since it runs AI.
   func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome
-  /// Gets the session's lessons picked and written in the background, for a step whose lesson the
-  /// plan hasn't picked yet.
   func prepareSession(token: String, sessionID: String) async throws
   func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws
   func markMilestoneShown(token: String, milestoneID: String) async throws
   func getWeeklyRecap(token: String, goalID: String?) async throws -> WeeklyRecap
 }
 
-/// The step a tap names in a day not opened yet: the day's next one as the screen showed it, or one
-/// the learner picked. A tap that only opens the day (to add time or catch up) names none.
+/// A tap that only opens the day (to add time or catch up) names none.
 enum DayTarget: Encodable, Equatable, Sendable {
   case next(DayBlockRef)
   case ref(DayBlockRef)
@@ -290,7 +282,6 @@ struct StudyAPI: StudyAPIClient {
   }
 
   func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome {
-    // The player owns how a writing request answers (refusals included; a 401 throws).
     try await LessonPlayerAPI(clients: clients).writeLesson(id: lessonID, token: token)
   }
 

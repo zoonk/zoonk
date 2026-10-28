@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// Today, the screen learners open every day, with one job: start or continue today's session.
-/// It owns every state main's Today has: a visitor or a learner without a goal starts one here, a
-/// goal whose plan is being built waits, a paused goal says so, and otherwise the day.
+/// One job: start or continue today's session.
 struct TodayScreen: View {
   @Environment(SessionStore.self) private var session
   @Environment(TodayStore.self) private var store
@@ -65,9 +63,6 @@ struct TodayScreen: View {
   }
 }
 
-/// A visitor or a learner without a goal starts one right here, under Today's own title (S5b's
-/// inline `GoalStartEntry`, as main's start form): an unfinished quick explanation first, then the
-/// box with its examples.
 private struct TodayStartGoal: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
@@ -108,8 +103,6 @@ private struct TodayStartGoal: View {
   }
 }
 
-/// A learner back from before goals existed: their last course is offered first, and either answer
-/// moves them on.
 private struct TodaySuggestedGoal: View {
   @Environment(AppRouter.self) private var router
   @Environment(TodayStore.self) private var store
@@ -172,7 +165,6 @@ private struct TodaySuggestedGoal: View {
       Text("Welcome back", tableName: "Today", comment: "Greets a learner back with no goal"))
   }
 
-  /// Either answer closes the suggestion; accepting opens the start flow with its title in the box.
   private func answer(accepted: Bool) {
     answering = accepted
     failed = false
@@ -193,9 +185,8 @@ private struct TodaySuggestedGoal: View {
   }
 }
 
-/// A goal whose plan is being built after onboarding: Today waits and reads itself again. A goal
-/// left halfway through its questions has no plan coming until they're answered, so Today says
-/// what's missing and leads back to them instead.
+/// A goal left halfway through its questions has no plan coming until they're answered, so Today
+/// says what's missing and leads back to them.
 private struct TodayPreparing: View {
   @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
@@ -255,9 +246,7 @@ private struct TodayPreparing: View {
   }
 }
 
-/// A paused or finished goal: nothing is planned for it today. A paused goal comes back with one
-/// tap (saying first when resuming moves lessons the pause left behind); a new goal is the other
-/// way on. A finished one offers a new goal.
+/// Resuming a paused goal says first when it moves lessons the pause left behind.
 private struct TodayGoalPaused: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
@@ -365,8 +354,7 @@ private struct TodayGoalPaused: View {
     }
   }
 
-  /// Saved, the goal's resume invalidates the learner's goals, so Today reads its day again; the
-  /// button stays busy until the day replaces this screen.
+  /// The button stays busy until the day replaces this screen.
   private func resume(_ goal: LearnerGoal) {
     resumeTask?.cancel()
     resumeTask = Task {
@@ -387,7 +375,6 @@ private struct TodayGoalPaused: View {
   }
 }
 
-/// Reads what resuming would move, only for a paused goal.
 private struct ResumePreviewLoading: ViewModifier {
   @Environment(PlanStore.self) private var plans
 

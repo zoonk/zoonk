@@ -1,8 +1,5 @@
 import SwiftUI
 
-/// Today's session: why the day is lighter, how far along it is, its blocks as a queue with the
-/// next one highlighted, what the day is when there's nothing to start, and the day's one main
-/// action under it.
 struct TodaySessionSection: View {
   @Environment(AppRouter.self) private var router
 
@@ -59,9 +56,8 @@ struct TodaySessionSection: View {
     }
   }
 
-  /// Why today is lighter, kindly and briefly; nil on an ordinary day. It belongs to the session
-  /// it explains, so it goes once the learner starts, and a day with nothing to start says its own
-  /// words instead.
+  /// It belongs to the session it explains, so it goes once the learner starts, and a day with
+  /// nothing to start says its own words instead.
   private var freshStart: String? {
     let state = session.state
     guard !view.studiedToday, !session.isStarted, session.dailyLimit?.reached != true,
@@ -95,9 +91,7 @@ struct TodaySessionSection: View {
     }
   }
 
-  /// Why a study day is lighter than the learner's time: it saves some for a mock exam longer than
-  /// their day. A return after a break already says the day is lighter, so it only names the mock;
-  /// a mock the learner's plan doesn't include wears the Plus mark.
+  /// A return after a break already says the day is lighter, so it only names the mock.
   @ViewBuilder
   private var mockFunding: some View {
     if let funding = view.mockFunding, session.state != .done, session.state != .rest,
@@ -213,15 +207,11 @@ struct TodaySessionSection: View {
     }
   }
 
-  /// Whether a mission still to do opens this block: doing it moves the day's missions.
   private func countsTowardMission(_ block: StudyBlock) -> Bool {
     !session.fullMeal.earned
       && session.missions.contains { !$0.isDone && $0.waitReason == nil && $0.opens(block) }
   }
 
-  /// The day's main action: Start or Continue while there's a block to go on with, "Keep learning"
-  /// with the plan's next lessons once it's done or on a rest day, the summary once it's done,
-  /// practice on a day with nothing new, the Plan once the goal's date came with lessons left.
   private var action: TodayMainAction? {
     let state = session.state
 
@@ -257,7 +247,6 @@ struct TodaySessionSection: View {
   }
 }
 
-/// The day's main action as one full-width button, saying when it couldn't open the step.
 struct TodayMainAction: View {
   enum Kind {
     case continueSession
@@ -320,7 +309,6 @@ struct TodayMainAction: View {
   }
 }
 
-/// The day's segments, each as long as its block, with the time still to go.
 private struct DayProgressRow: View {
   let session: StudyDay
 
@@ -345,15 +333,12 @@ private struct DayProgressRow: View {
   }
 }
 
-/// One block of the day: its mark, its name with what it's part of under it, and its minutes. A
-/// finished one is one quiet line: the done mark and its name.
 struct BlockRow: View {
   let block: StudyBlock
   let view: TodayView?
   let isNext: Bool
   let countsTowardMission: Bool
   var isBusy = false
-  /// What the block holds, under its name: the session's next stop says it, Today's queue doesn't.
   var showsDetail = false
 
   var body: some View {
@@ -447,7 +432,6 @@ struct BlockRow: View {
   }
 }
 
-/// A lesson the plan dates today that the learner's plan holds for Plus, after the day's blocks.
 private struct PlusLessonRow: View {
   @Environment(AppRouter.self) private var router
 
@@ -472,7 +456,6 @@ private struct PlusLessonRow: View {
   }
 }
 
-/// Done blocks or the day's later ones folded into one row that opens them.
 private struct FoldRow: View {
   @Binding var isOpen: Bool
   let isDone: Bool
@@ -515,9 +498,6 @@ private struct FoldRow: View {
   }
 }
 
-/// What the day is when there's nothing to start, in one line under the queue: done, a rest day,
-/// the study time used up, nothing new, the goal's date that came with lessons left, or lessons
-/// still being written.
 private struct TodayDayStatus: View {
   let view: TodayView
   private let sentence: String
@@ -622,7 +602,6 @@ private struct TodayDayStatus: View {
     .font(.subheadline)
   }
 
-  /// When the learner's study time is back: tomorrow, the next study day by name, or next session.
   private static func seeYou(_ week: StudyWeek) -> String {
     guard let next = week.nextStudyDate.flatMap(studyDate),
       let today = (week.days.first(where: \.isToday)?.date).flatMap(studyDate)
@@ -640,9 +619,8 @@ private struct TodayDayStatus: View {
   }
 }
 
-/// The day's next row, highlighted as main's muted row: a system fill over the row's own background,
-/// so it reads on dark rows (where a fill alone shows the black page through it) and grows with
-/// Increase Contrast.
+/// A system fill over the row's own background, so it reads on dark rows (where a fill alone shows
+/// the black page through it) and grows with Increase Contrast.
 struct NextRowBackground: View {
   var body: some View {
     Color(.secondarySystemGroupedBackground)
@@ -650,9 +628,8 @@ struct NextRowBackground: View {
   }
 }
 
-/// Earlier unfinished lessons, in the plan's saved order, over a day not opened yet: Today shows
-/// the saved plan, and starting the session fits it to today's time, starting with these, so the
-/// day that opens can differ from the one shown. Open while the list is short.
+/// Today shows the saved plan, and starting the session fits it to today's time, so the day that
+/// opens can differ from the one shown.
 private struct TodayEarlierWorkSection: View {
   @State private var isExpanded: Bool
 

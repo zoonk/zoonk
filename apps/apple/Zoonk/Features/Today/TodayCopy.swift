@@ -1,7 +1,6 @@
 import Foundation
 
-// Names and lines for the day's blocks and missions, as main says them (`use-block-copy.ts`,
-// `mission-copy.tsx`, `plan-status-label.tsx`), shared by Today and the session screen.
+// Mirrors main's `use-block-copy.ts`, `mission-copy.tsx` and `plan-status-label.tsx`.
 
 extension StudyBlock {
   /// A review's questions come in capsules, except the first week's warm-up, which is placement's
@@ -10,7 +9,6 @@ extension StudyBlock {
     kind == .review && !capsules.isEmpty
   }
 
-  /// The phase a phase's challenge closes, by name; nil for other blocks and a weekly challenge.
   var challengePhase: String? {
     guard let checkpoint, !checkpoint.isWeekly else {
       return nil
@@ -19,7 +17,6 @@ extension StudyBlock {
     return title
   }
 
-  /// The block's name: the lesson's title for lessons, what the block is for the rest.
   var displayTitle: String {
     if let checkpoint {
       if checkpoint.isWeekly {
@@ -73,7 +70,6 @@ extension StudyBlock {
     }
   }
 
-  /// What's inside the block, in a few words; nil when its name says it.
   var detail: String? {
     if hasCapsules && weakest {
       return String(
@@ -135,7 +131,6 @@ extension StudyBlock {
       localized: "\(questions) questions", table: "Today", comment: "A practice block's questions")
   }
 
-  /// What a row still to do says under its name: what it's part of, or what its challenge waits for.
   func label(isCatchingUp: Bool) -> String? {
     if let waitReason {
       let phase = challengePhase
@@ -186,7 +181,6 @@ extension StudyBlock {
 }
 
 extension TodayView.PlanStatus {
-  /// Where the plan stands, in a few words ("Keeping pace", "2 days ahead").
   var text: String {
     switch kind {
     case "ahead":
@@ -213,7 +207,6 @@ extension TodayView.PlanStatus {
   }
 }
 
-/// Minutes as main writes them: "6 min", "1 hr", "1 hr 43 min".
 func studyDuration(minutes: Int) -> String {
   let style = Measurement<UnitDuration>.FormatStyle(width: .abbreviated)
   let hours = minutes / 60
@@ -228,14 +221,12 @@ func studyDuration(minutes: Int) -> String {
   return rest == 0 ? hourPart : "\(hourPart) \(minutePart)"
 }
 
-/// A learner-local calendar date (`YYYY-MM-DD`) as a date at its midnight in UTC, to format with a
-/// UTC calendar so it never shifts a day.
+/// Midnight in UTC, to format with a UTC calendar so it never shifts a day.
 func studyDate(_ localDate: String) -> Date? {
   try? Date(localDate, strategy: .iso8601.year().month().day())
 }
 
 extension FormatStyle where Self == Date.FormatStyle {
-  /// A learner-local date's style: formatted in UTC, where `studyDate(_:)` puts it.
   static var studyDay: Date.FormatStyle {
     var style = Date.FormatStyle(timeZone: TimeZone(identifier: "UTC") ?? .gmt)
     style.calendar.timeZone = TimeZone(identifier: "UTC") ?? .gmt

@@ -1,8 +1,5 @@
 import SwiftUI
 
-/// The learner's day on Today: under the title, the day's line (the date, the days left, where the
-/// plan stands); the session as a queue with the next block highlighted and one main action; what
-/// else the day offers; then the missions, the week and practice to do any time.
 struct TodayDayView: View {
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(\.isCoveredByTask) private var isCovered
@@ -12,7 +9,6 @@ struct TodayDayView: View {
 
   let view: TodayView
 
-  /// The tap in flight, so its control shows it's working and no second tap starts another.
   @State private var busy: Tap?
   @State private var failed: Tap?
   @State private var tapTask: Task<Void, Never>?
@@ -25,8 +21,6 @@ struct TodayDayView: View {
   }
 
   var body: some View {
-    // Where there's room, main's aside (72rem on the web) sits beside the day: the missions, the
-    // week, the notices and practice. On the open iPhone Duo the two meet at the fold.
     PaneSplit(primaryShare: 0.55) {
       List {
         day
@@ -58,7 +52,6 @@ struct TodayDayView: View {
     }
   }
 
-  /// The day itself: its session and action, the plan's next lessons, and what else it offers.
   @ViewBuilder
   private var day: some View {
     TodaySessionSection(view: view, busy: busy, failed: failed, open: open)
@@ -77,7 +70,6 @@ struct TodayDayView: View {
       })
   }
 
-  /// The one insight and a plan change waiting for the learner's say.
   @ViewBuilder
   private var notices: some View {
     if let insight = view.insight {
@@ -93,7 +85,6 @@ struct TodayDayView: View {
     }
   }
 
-  /// The day's missions and the week.
   @ViewBuilder
   private var aside: some View {
     if !view.session.missions.isEmpty {
@@ -108,8 +99,6 @@ struct TodayDayView: View {
     }
   }
 
-  /// The quiet line under Today's title: the date, the days left, the exam's own day and where the
-  /// plan stands.
   private var dayLine: Text {
     var parts: [String] = []
 
@@ -144,7 +133,6 @@ struct TodayDayView: View {
     return Text(parts.joined(separator: " · "))
   }
 
-  /// Opens a step of the day where it plays; a step that couldn't open reads the day again.
   private func open(_ block: StudyBlock, next: Bool) {
     let tap: Tap = next ? .main : .block(block.position)
 
@@ -153,8 +141,8 @@ struct TodayDayView: View {
     }
   }
 
-  /// Runs a tap's write for the learner who made it; a tap whose screen went (another day, another
-  /// tab) or whose learner left is cancelled and opens nothing.
+  /// A tap whose screen went (another day, another tab) or whose learner left is cancelled and opens
+  /// nothing.
   private func run(_ tap: Tap, _ action: @escaping () async -> MutationResult<StudyDestination>) {
     guard busy == nil else {
       return
@@ -196,7 +184,6 @@ struct TodayDayView: View {
     }
   }
 
-  /// Reads Today again when the learner's day ends, so midnight draws the new day.
   private func refreshAtDayEnd() async {
     let end = Date(timeIntervalSince1970: Double(view.session.dayEndsAt) / 1_000)
 
@@ -209,8 +196,7 @@ struct TodayDayView: View {
     await store.today.refresh()
   }
 
-  /// Reads Today again while a lesson of the day is written, for a few minutes at most, and not
-  /// while a task covers Today.
+  /// For a few minutes at most, and not while a task covers Today.
   private func pollWhileWriting() async {
     guard view.isWaitingForLessons, !isCovered else {
       return
@@ -229,9 +215,8 @@ struct TodayDayView: View {
 }
 
 extension AppRouter {
-  /// Opens one of today's blocks by its id, from a mission or a link to it, as its row on Today
-  /// does. A block Today doesn't list as one to do now shows Today as it stands; one that couldn't
-  /// open leaves the learner where they tapped, as main's `openBlock`.
+  /// A block Today doesn't list as one to do now shows Today as it stands; one that couldn't open
+  /// leaves the learner where they tapped.
   static func openingTodayBlocks(today: TodayStore, sessions: StudySessionStore) -> BlockOpener {
     { blockID, router in
       Task {
@@ -247,10 +232,8 @@ extension AppRouter {
     }
   }
 
-  /// Shows a step the learner's tap opened on the session screen: a question block plays there,
-  /// and anything else opens its own screen over it, so closing that screen goes on with the day.
-  /// A step opened from Today comes in as one transition, with the session under it out of sight
-  /// until the step closes.
+  /// Anything but a question block opens its own screen over the session, so closing it goes on with
+  /// the day.
   func openStudy(_ destination: StudyDestination, sessions: StudySessionStore) {
     if case .questionBlock(_, let blockID) = destination {
       sessions.play(blockID: blockID)
@@ -273,7 +256,7 @@ extension AppRouter {
 }
 
 extension StudyDestination {
-  /// The screen of its own a step opens over the session; nil for what the session shows itself.
+  /// Nil for what the session shows itself.
   fileprivate var step: AppRoute? {
     switch self {
     case .challenge(let planItemID, let sessionID):

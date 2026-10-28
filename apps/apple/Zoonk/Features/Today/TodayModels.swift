@@ -1,25 +1,18 @@
 import Foundation
 
-/// What Today shows for the learner's active goal: the day, or one of the states before there is
-/// one (no goal yet, its plan being built, a paused goal).
 enum TodayContent: Equatable, Sendable {
   case day(TodayView)
-  /// No active goal: Today starts one, offering a goal from the learner's last course first.
   case noGoal(suggestedGoal: SuggestedGoal?)
-  /// The goal's plan is being built after onboarding: Today waits and asks again.
   case preparing(goalID: String, title: String)
   /// The goal is paused, completed or archived.
   case goalNotActive
 }
 
-/// A goal Today offers a learner without one, from the course they were taking before goals.
 struct SuggestedGoal: Decodable, Equatable, Sendable {
   let id: String
   let title: String
 }
 
-/// Today for a goal (`GET /v1/today`): the goal, where its plan stands, the day, and what Today
-/// shows beside it.
 struct TodayView: Decodable, Equatable, Sendable {
   struct Goal: Decodable, Equatable, Sendable {
     enum Kind: String, Decodable, Sendable {
@@ -36,12 +29,9 @@ struct TodayView: Decodable, Equatable, Sendable {
     let title: String
   }
 
-  /// Where the goal stands, in its one measure: an exam's preparation with what it gained this
-  /// week, any other goal's lessons studied or known of its plan's.
   struct Progress: Decodable, Equatable, Sendable {
     struct Lessons: Decodable, Equatable, Sendable {
       let done: Int
-      /// The plan's lessons today's session still holds.
       let today: Int
       let total: Int
     }
@@ -60,7 +50,6 @@ struct TodayView: Decodable, Equatable, Sendable {
     let lessons: Int?
   }
 
-  /// The exam's own days, said in the date line.
   struct ExamMoment: Decodable, Equatable, Sendable {
     let examName: String
     let stage: String
@@ -70,20 +59,17 @@ struct TodayView: Decodable, Equatable, Sendable {
     let mockDate: String
   }
 
-  /// A plan change the learner has a say in.
   struct PlanChange: Decodable, Equatable, Sendable {
     let id: String
     let reason: String?
     let status: String
   }
 
-  /// A language goal's pattern noticed in recent mistakes.
   struct Pattern: Decodable, Equatable, Sendable {
     let id: String
     let title: String
   }
 
-  /// The week's challenge or mock exam ahead.
   struct WeeklyChallenge: Decodable, Equatable, Sendable {
     let access: String
     let date: String?
@@ -102,10 +88,9 @@ struct TodayView: Decodable, Equatable, Sendable {
   let earlierWork: [EarlierWork]
   let exam: ExamMoment?
   let goal: Goal
-  /// At most one insight from recent sessions, until it's answered (the Buddy's card answers it).
+  /// At most one, until it's answered.
   let insight: MemoryInsight?
-  /// Where each lesson of the day's learn blocks stands: `ready`, `generating`, `notStarted`,
-  /// `failed`.
+  /// `ready`, `generating`, `notStarted` or `failed`, by lesson.
   let lessonStatus: [String: String]
   let mockFunding: MockFunding?
   let pattern: Pattern?
@@ -115,12 +100,11 @@ struct TodayView: Decodable, Equatable, Sendable {
   let studiedToday: Bool
   let weeklyChallenge: WeeklyChallenge?
 
-  /// Whether a block's lesson is being written right now.
   func isBeingWritten(_ block: StudyBlock) -> Bool {
     block.kind == .learn && block.lessonId.map { lessonStatus[$0] == "generating" } == true
   }
 
-  /// Whether a learn block's lesson is ready to play; nil when Today holds no state for it.
+  /// Nil when Today holds no state for it.
   func isLessonReady(_ block: StudyBlock) -> Bool? {
     guard let lessonId = block.lessonId, let status = lessonStatus[lessonId] else {
       return nil
@@ -129,8 +113,7 @@ struct TodayView: Decodable, Equatable, Sendable {
     return status == "ready"
   }
 
-  /// The plan's next lessons "Keep learning" adds, on a day with nothing left to start (main's
-  /// `useUpNextLessons`).
+  /// Mirrors main's `useUpNextLessons`.
   var upNextLessons: [StudyDay.ExtraTime.Lesson] {
     let state = session.state
 
@@ -141,13 +124,11 @@ struct TodayView: Decodable, Equatable, Sendable {
     return session.extraTime.lessons
   }
 
-  /// The goal's date came with lessons left and today has nothing planned: the Plan is the way on.
   var isPastDate: Bool {
     let state = session.state
     return progress?.status?.kind == "pastDate" && (state == .rest || state == .ahead)
   }
 
-  /// Whether Today waits for lessons to be written, so it reads itself again meanwhile.
   var isWaitingForLessons: Bool {
     let beingWritten = session.blocks.contains {
       ($0.status == .pending || $0.status == .active) && isBeingWritten($0)
@@ -157,7 +138,6 @@ struct TodayView: Decodable, Equatable, Sendable {
   }
 }
 
-/// The API's error body, for the codes Today and the session act on.
 struct APIProblem: Decodable, Sendable {
   struct Body: Decodable, Sendable {
     let code: String
@@ -166,7 +146,6 @@ struct APIProblem: Decodable, Sendable {
   let error: Body
 }
 
-/// Today's error bodies that carry what to show instead of the day.
 struct TodayProblem: Decodable, Sendable {
   struct Body: Decodable, Sendable {
     struct Details: Decodable, Sendable {

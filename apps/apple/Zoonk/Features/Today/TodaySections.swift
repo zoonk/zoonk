@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// "Up next in your plan" under a day with nothing left to start: the lessons "Keep learning"
-/// adds, the first opening them. Being done for the day, or resting, never hides what comes next.
+/// Being done for the day, or resting, never hides what comes next.
 struct TodayUpNextSection: View {
   let view: TodayView
   let isBusy: Bool
@@ -43,9 +42,7 @@ struct TodayUpNextSection: View {
   }
 }
 
-/// What else the day offers: practice on a day with nothing new, more time once it's done or on a
-/// rest day, the lessons left to catch up while it's underway, and the week's challenge and the
-/// buddy's quiz on a day with nothing new. Nothing beside "Keep learning" or past the goal's date.
+/// Nothing beside "Keep learning" or past the goal's date.
 struct TodayMoreSection: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
@@ -143,7 +140,6 @@ struct TodayMoreSection: View {
   }
 }
 
-/// The week's challenge or mock exam ahead: its intro shows what it asks, before its day too.
 struct TodayChallengeRow: View {
   @Environment(AppRouter.self) private var router
 
@@ -180,7 +176,7 @@ struct TodayChallengeRow: View {
   }
 }
 
-/// A plan change waiting for the learner's say; the Plan shows it and decides it.
+/// The Plan shows and decides it.
 struct TodayPlanChangeSection: View {
   @Environment(AppRouter.self) private var router
 
@@ -209,11 +205,8 @@ struct TodayPlanChangeSection: View {
   }
 }
 
-/// Today's missions: how many are left and their Brain Power, then each one, opening where it's
-/// done. Once they're all done the card folds to one line; when another goal already earned the
-/// day's Brain Power, it says so in one line. Beside the day each mission keeps its row; under the
-/// queue, when every mission only opens one of its blocks, the card leaves the rows to the queue,
-/// whose marks name those blocks, so no block is listed twice.
+/// Under the queue, when every mission only opens one of its blocks, the card leaves the rows to the
+/// queue, whose marks name those blocks, so no block is listed twice.
 struct TodayMissionsSection: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
@@ -295,8 +288,6 @@ struct TodayMissionsSection: View {
     .foregroundStyle(.brain)
   }
 
-  /// Every mission still to do only opens one of the day's blocks, with nothing to wait for and no
-  /// count of its own: the queue already lists each one, marked.
   private var onlyOpensBlocks: Bool {
     missions.allSatisfy { mission in
       mission.isDone
@@ -308,8 +299,7 @@ struct TodayMissionsSection: View {
     Int(missions.reduce(0) { $0 + ($1.minutes ?? 0) }.rounded())
   }
 
-  /// Opens where the mission is done: a block of the day, or a place of its own, whose activity
-  /// saves the day itself on its first answer (core's `saveDayBeforeActivity`).
+  /// A place of its own saves the day itself on its first answer (core's `saveDayBeforeActivity`).
   private func go(_ mission: StudyMission) {
     guard let opens = mission.opens else {
       return
@@ -346,8 +336,6 @@ struct TodayMissionsSection: View {
   }
 }
 
-/// The learner's week: each day's study against its goal, and the week's time; the week's
-/// challenge under it.
 struct TodayWeekSection: View {
   let view: TodayView
 
@@ -399,9 +387,8 @@ struct TodayWeekSection: View {
   }
 }
 
-/// The week's challenge under its days: its name over its day, questions and time, opening its
-/// intro. A mock the learner's plan doesn't include (it comes with Plus) leaves its day to a full
-/// review of every topic; one the plan adds only once the day opens has nothing to open yet.
+/// A mock the learner's plan doesn't include leaves its day to a full review of every topic; one the
+/// plan adds only once the day opens has nothing to open yet.
 private struct WeekChallengeRow: View {
   @Environment(AppRouter.self) private var router
 
@@ -453,7 +440,6 @@ private struct WeekChallengeRow: View {
     }
   }
 
-  /// "Sunday · 10 questions · 15 min".
   private var facts: String {
     var parts = [day]
 
@@ -472,7 +458,6 @@ private struct WeekChallengeRow: View {
   }
 }
 
-/// One day of the week: reached, studied, today, planned or a rest day, with its letter.
 private struct WeekDayMark: View {
   let day: StudyWeek.Day
   let localDate: String
@@ -550,17 +535,12 @@ private struct WeekDayMark: View {
   }
 }
 
-/// Where the goal stands, beside the day on a tablet or wider (main's TodayPreparation; a phone
-/// leaves it to the Plan), in its one measure as the Plan says it: an exam's preparation with its
-/// gain this week, another goal's lessons with today's still to do ringed, a language's level. A
-/// plan with subjects lists the first few on the same scale. The whole card opens the Plan.
 struct TodayProgressSection: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var plans
 
   let view: TodayView
 
-  /// Subjects in sight beside the session; the Plan has every one.
   private let shownSubjects = 5
 
   var body: some View {
@@ -654,8 +634,6 @@ struct TodayProgressSection: View {
     }
   }
 
-  /// The plan's lessons in the order they count: studied in blue, known muted, today's still to do
-  /// ringed, then the rest.
   private func parts(_ lessons: TodayView.Progress.Lessons, known: Int) -> [MeterParts.Part] {
     let known = min(lessons.done, known)
     let today = min(lessons.today, max(0, lessons.total - lessons.done))
@@ -669,8 +647,7 @@ struct TodayProgressSection: View {
     ].filter { $0.weight > 0 }
   }
 
-  /// "+4 this week": what the preparation gained since the week began, blue when it rose; nothing
-  /// in a week without a whole point either way.
+  /// Nothing in a week without a whole point either way.
   private func weekGain(_ gain: Double) -> Text? {
     let points = Int((gain * 100).rounded())
 
@@ -694,8 +671,6 @@ struct TodayProgressSection: View {
   }
 }
 
-/// Practice the learner can do any time: the mistakes notebook, a noticed pattern, a mock exam or
-/// speaking tasks.
 struct TodayPracticeSection: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner

@@ -1,8 +1,5 @@
 import SwiftUI
 
-/// A day of study as Today and the session screen read it (`StudySession` and `UnstartedStudyDay`
-/// in the API): a saved day with its ids, or a day the learner hasn't opened yet, shown as it will
-/// open. Only the fields the app draws are decoded.
 struct StudyDay: Decodable, Equatable, Sendable {
   enum Status: String, Decodable, Sendable {
     case active
@@ -11,14 +8,11 @@ struct StudyDay: Decodable, Equatable, Sendable {
     case unstarted
   }
 
-  /// Why a study day has no blocks: its lessons are still being outlined, or the plan has nothing
-  /// new for it.
   enum EmptyDay: String, Decodable, Sendable {
     case lessonsComing
     case nothingNew
   }
 
-  /// Why the day starts lighter: a return after a break, a new week or a new phase.
   enum FreshStart: String, Decodable, Sendable {
     case newPhase
     case newWeek
@@ -34,12 +28,9 @@ struct StudyDay: Decodable, Equatable, Sendable {
 
     let later: Later
     let lessonsLeft: Int
-    /// The day's blocks that catch up on earlier days.
     let positions: [Int]
   }
 
-  /// The learner's own daily time limit; only whether it's reached matters here (a learner without
-  /// a limit has none to count down).
   struct DailyLimit: Decodable, Equatable, Sendable {
     let reached: Bool
   }
@@ -81,7 +72,7 @@ struct StudyDay: Decodable, Equatable, Sendable {
   let catchUp: CatchUp?
   let current: Bool
   let dailyLimit: DailyLimit?
-  /// When the learner's day ends, in milliseconds since the epoch.
+  /// Epoch milliseconds.
   let dayEndsAt: Int
   let emptyDay: EmptyDay?
   let examAccess: ExamAccess
@@ -100,12 +91,10 @@ struct StudyDay: Decodable, Equatable, Sendable {
   let status: Status
   let week: StudyWeek
 
-  /// The block to go on with; nil once the day's blocks are done.
   var nextBlock: StudyBlock? {
     blocks.first { $0.position == nextPosition }
   }
 
-  /// Minutes still to go in the day's blocks.
   var minutesLeft: Int {
     blocks.filter { !$0.isFinished }.reduce(0) { $0 + $1.estimatedMinutes }
   }
@@ -114,8 +103,6 @@ struct StudyDay: Decodable, Equatable, Sendable {
     blocks.contains { $0.status != .pending }
   }
 
-  /// The day as segments, each as long as its block: done ones blue, the next one ringed, the rest
-  /// ahead in their kind's color, softly (a lesson's is the track).
   var meterParts: [MeterParts.Part] {
     blocks.map { block in
       let weight = Double(max(block.estimatedMinutes, 1))
@@ -134,9 +121,7 @@ struct StudyDay: Decodable, Equatable, Sendable {
     }
   }
 
-  /// Where the day stands, for its main action and status line (main's `getDayState`): a block to go
-  /// on with, its blocks done, the study time used up, nothing new, a rest day, or lessons still
-  /// being outlined.
+  /// Mirrors main's `getDayState`.
   var state: DayState {
     let empty = blocks.isEmpty
     let limitReached = dailyLimit?.reached == true
@@ -172,7 +157,6 @@ enum DayState: Equatable, Sendable {
   case waiting
 }
 
-/// One block of a study day: a lesson, a review, practice, writing or a challenge.
 struct StudyBlock: Decodable, Equatable, Sendable {
   enum Kind: String, Codable, Sendable {
     case checkpoint
@@ -189,7 +173,6 @@ struct StudyBlock: Decodable, Equatable, Sendable {
     case skipped
   }
 
-  /// What a phase's challenge waits for before it opens.
   enum WaitReason: String, Decodable, Sendable {
     case challenge
     case lessons
@@ -218,7 +201,6 @@ struct StudyBlock: Decodable, Equatable, Sendable {
   /// The saved block's id; nil on a day not opened yet.
   let id: String?
   let areaId: String?
-  /// Brain Power the block earned so far.
   let brainPower: Int
   let canDo: String?
   let canTestOut: Bool
@@ -248,7 +230,7 @@ struct StudyBlock: Decodable, Equatable, Sendable {
     status == .completed || status == .skipped
   }
 
-  /// The block's kind as every list marks it (main's `getBlockKind`).
+  /// Mirrors main's `getBlockKind`.
   var learnKind: LearnKind {
     if checkpoint?.mock == true {
       return .mock
@@ -271,13 +253,11 @@ struct StudyBlock: Decodable, Equatable, Sendable {
     }
   }
 
-  /// Questions play on the session screen; lessons, challenges and writing on their own.
   var isQuestionBlock: Bool {
     kind == .review || kind == .practice
   }
 }
 
-/// The learner's week: each day's study against its goal, and the week's time.
 struct StudyWeek: Decodable, Equatable, Sendable {
   struct Day: Decodable, Equatable, Sendable {
     let date: String
@@ -299,8 +279,7 @@ struct StudyWeek: Decodable, Equatable, Sendable {
   let time: Time
 }
 
-/// The work a block is, to name it in a day not opened yet (core's `DayBlockRef`): opening the day
-/// with it resolves only to that same work.
+/// Core's `DayBlockRef`: opening the day with it resolves only to that same work.
 struct DayBlockRef: Encodable, Equatable, Sendable {
   struct Flags: Encodable, Equatable, Sendable {
     let extra: Bool
@@ -378,8 +357,7 @@ struct DayBlockRef: Encodable, Equatable, Sendable {
   }
 }
 
-/// Reads a generated API value as one of the app's own models (or the other way round) through
-/// its JSON, so features decode only the fields they draw from the API's large generated types.
+/// Through JSON, so features decode only the fields they draw from the API's large generated types.
 enum StudyJSON {
   static func recode<Value: Decodable>(_ value: some Encodable, as type: Value.Type = Value.self)
     throws -> Value
