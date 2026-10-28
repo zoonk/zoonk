@@ -89,10 +89,18 @@ enum LessonGrading {
       let isCorrect = isNumericAnswerRight(
         value, expected: expected, tolerance: tolerance, template: content.template)
 
+      // One precision for both, as main's verdict shows them.
+      let digits = exactFractionDigitsFor(expected: expected, tolerance: tolerance, value: value)
+      let format = { (number: Double) in
+        let text = formatLocalizedNumber(
+          number, fractionDigits: digits, locale: .current, grouping: true)
+        return unit.map { "\(text) \($0)" } ?? text
+      }
+
       return LocalGrade(
         isCorrect: isCorrect,
-        answerText: formatNumber(value, unit: unit),
-        correctAnswer: isCorrect ? nil : formatNumber(expected, unit: unit),
+        answerText: format(value),
+        correctAnswer: isCorrect ? nil : format(expected),
         feedback: explanation)
     case .interaction(let explanation):
       guard let gradeInteraction else {
@@ -174,11 +182,6 @@ enum LessonGrading {
   private static func numberText(_ value: Double) -> String {
     let text = "\(value)"
     return text.hasSuffix(".0") ? String(text.dropLast(2)) : text
-  }
-
-  private static func formatNumber(_ value: Double, unit: String?) -> String {
-    let number = value.formatted(.number.precision(.fractionLength(0...6)))
-    return unit.map { "\(number) \($0)" } ?? number
   }
 
   // MARK: - Language exercises

@@ -78,10 +78,13 @@ struct ActivityStepView: View {
         isChecked: context.result != nil,
         isLocked: context.isLocked
       ) { context.select(.activity(.choice(optionId: $0))) }
-    case .numeric(let question, _, _, let unit, _, _, _):
+    case .numeric(let question, let expected, let tolerance, let unit, _, _, _):
       LessonRichText(question)
         .font(.headline)
-      NumericAnswerField(value: answer?.number, unit: unit, isLocked: context.isLocked) { number in
+      NumericAnswerField(
+        value: answer?.number, expected: expected, tolerance: tolerance, unit: unit,
+        isLocked: context.isLocked
+      ) { number in
         context.select(number.map { .activity(.numeric($0)) })
       }
     case .interaction:
@@ -97,6 +100,8 @@ private struct NumericAnswerField: View {
   @State private var typed: String?
 
   let value: Double?
+  let expected: Double
+  let tolerance: ActivityCheck.Tolerance
   let unit: String?
   let isLocked: Bool
   let onChange: (Double?) -> Void
@@ -124,8 +129,14 @@ private struct NumericAnswerField: View {
     }
   }
 
+  /// A number the canvas set, at the answer's precision rather than its raw reading.
   private var shown: String {
-    value?.formatted(.number.grouping(.never).locale(locale)) ?? ""
+    value.map {
+      formatLocalizedNumber(
+        $0,
+        fractionDigits: exactFractionDigitsFor(expected: expected, tolerance: tolerance, value: $0),
+        locale: locale)
+    } ?? ""
   }
 
   private func type(_ text: String) {

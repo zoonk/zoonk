@@ -681,6 +681,72 @@ final class LocalizedNumberTests: XCTestCase {
     XCTAssertEqual(parseLocalizedNumber("12\u{202F}345,5", locale: german), 12345.5)
   }
 
+  // Mirrors main's `localized-number.test.ts`.
+  func testShowsFewerDecimalsAsNumbersGrowAndKeepsTinyValuesReadable() {
+    XCTAssertEqual(
+      [3869.68, -130.52, 5.25, 0.125, 0.000075, 0].map(fractionDigitsFor), [0, 1, 2, 3, 7, 3])
+
+    let english = Locale(identifier: "en_US")
+    XCTAssertEqual(
+      formatLocalizedNumber(0.000075, fractionDigits: fractionDigitsFor(0.000075), locale: english),
+      "0.000075")
+    XCTAssertEqual(
+      formatLocalizedNumber(
+        1e-10, fractionDigits: fractionDigitsFor(1e-10), locale: Locale(identifier: "pt_BR")),
+      "0,0000000001")
+  }
+
+  func testOnePrecisionKeepsAMissApartFromTheAnswer() {
+    let english = Locale(identifier: "en_US")
+    let absolute = ActivityCheck.Tolerance(kind: .absolute, value: 0.0001)
+    let closer = exactFractionDigitsFor(expected: 0.125, tolerance: absolute, value: 0.1254)
+
+    XCTAssertEqual(formatLocalizedNumber(0.1254, fractionDigits: closer, locale: english), "0.1254")
+    XCTAssertEqual(
+      formatLocalizedNumber(0.1254, fractionDigits: closer, locale: Locale(identifier: "pt_BR")),
+      "0,1254")
+
+    let cases: [(expected: Double, tolerance: ActivityCheck.Tolerance, value: Double)] = [
+      (0.125, .init(kind: .relative, value: 0.0008), 0.1254),
+      (0, .init(kind: .relative, value: 0.01), 0.0004),
+      (52, .init(kind: .absolute, value: 0), 52.0004),
+      (-0.125, absolute, -0.1254),
+      (0.125, absolute, 0.1246),
+    ]
+
+    for (expected, tolerance, value) in cases {
+      let digits = exactFractionDigitsFor(expected: expected, tolerance: tolerance, value: value)
+      XCTAssertNotEqual(
+        formatLocalizedNumber(value, fractionDigits: digits, locale: english),
+        formatLocalizedNumber(expected, fractionDigits: digits, locale: english))
+    }
+  }
+
+  func testAComputedValueShowsAtTheAnswersPrecisionNotItsFloatNoise() {
+    let english = Locale(identifier: "en_US")
+    let fine = ActivityCheck.Tolerance(kind: .absolute, value: 0.00001)
+
+    XCTAssertEqual(
+      formatLocalizedNumber(
+        0.12543, fractionDigits: exactFractionDigitsFor(expected: 0.12543, tolerance: fine),
+        locale: english), "0.12543")
+    XCTAssertEqual(
+      formatLocalizedNumber(
+        0.12543 + .ulpOfOne,
+        fractionDigits: exactFractionDigitsFor(
+          expected: 0.12543, tolerance: fine, value: 0.12543 + .ulpOfOne), locale: english),
+      "0.12543")
+
+    // A canvas's raw reading (charts lane, Oct 2026): 72.475746 against 72.5 ± 0.5.
+    let reading = exactFractionDigitsFor(
+      expected: 72.5, tolerance: .init(kind: .absolute, value: 0.5), value: 72.475746)
+    XCTAssertEqual(
+      formatLocalizedNumber(
+        72.475746, fractionDigits: reading, locale: Locale(identifier: "pt_BR")),
+      "72,48")
+    XCTAssertEqual(formatLocalizedNumber(-2.5, fractionDigits: 2, locale: english), "\u{2212}2.5")
+  }
+
   func testAnythingButOnePlainNumberIsNoAnswer() {
     let english = Locale(identifier: "en_US")
 
