@@ -90,61 +90,63 @@ private struct ChapterDetailList: View {
   let showInformation: () -> Void
 
   var body: some View {
-    VStack(spacing: 0) {
-      if !showsSearchResultsOnly {
-        detailHeader
+    // The header scrolls with the list, so large text on a short screen never squeezes it.
+    List {
+      Section {
+        if !showsSearchResultsOnly {
+          detailHeader
+        }
+
+        CatalogCurriculumHeader(
+          title: Text(
+            "Lessons",
+            tableName: "Courses",
+            comment: "Heading above the ordered lesson list on a chapter screen."))
       }
+      .listRowInsets(EdgeInsets())
+      .listRowSeparator(.hidden)
 
-      CatalogCurriculumHeader(
-        title: Text(
-          "Lessons",
-          tableName: "Courses",
-          comment: "Heading above the ordered lesson list on a chapter screen."))
-
-      List {
-        if filteredLessons.isEmpty {
-          emptyLessonsView
-            .listRowSeparator(.hidden)
-        } else {
-          ForEach(filteredLessons) { lesson in
-            Button {
-              router.open(.lesson(lessonId: lesson.id))
-            } label: {
-              CatalogNumberedRow(
-                description: lesson.displayDescription(),
-                imageURL: nil,
-                number: lesson.position + 1,
-                systemImage: "book.pages",
-                title: lesson.displayTitle()
-              )
-            }
-            .foregroundStyle(.primary)
-            .listRowInsets(
-              EdgeInsets(
-                top: CatalogDetailLayout.curriculumRowVerticalInset(
-                  for: horizontalSizeClass),
-                leading: 0,
-                bottom: CatalogDetailLayout.curriculumRowVerticalInset(
-                  for: horizontalSizeClass),
-                trailing: 0))
+      if filteredLessons.isEmpty {
+        emptyLessonsView
+          .listRowSeparator(.hidden)
+      } else {
+        ForEach(filteredLessons) { lesson in
+          Button {
+            router.open(.lesson(lessonId: lesson.id))
+          } label: {
+            CatalogNumberedRow(
+              description: lesson.displayDescription(),
+              imageURL: nil,
+              number: lesson.position + 1,
+              systemImage: "book.pages",
+              title: lesson.displayTitle()
+            )
           }
+          .foregroundStyle(.primary)
+          .listRowInsets(
+            EdgeInsets(
+              top: CatalogDetailLayout.curriculumRowVerticalInset(
+                for: horizontalSizeClass),
+              leading: 0,
+              bottom: CatalogDetailLayout.curriculumRowVerticalInset(
+                for: horizontalSizeClass),
+              trailing: 0))
         }
       }
-      .listStyle(.plain)
-      .scrollContentBackground(.hidden)
-      .contentMargins(
-        .horizontal,
-        CatalogDetailLayout.horizontalInset(for: horizontalSizeClass),
-        for: .scrollContent)
     }
+    .listStyle(.plain)
+    .scrollContentBackground(.hidden)
+    .contentMargins(
+      .horizontal,
+      CatalogDetailLayout.horizontalInset(for: horizontalSizeClass),
+      for: .scrollContent
+    )
     .frame(maxWidth: 900)
     .frame(maxWidth: .infinity)
   }
 
   private var detailHeader: some View {
-    let horizontalInset = CatalogDetailLayout.horizontalInset(for: horizontalSizeClass)
-
-    return VStack(alignment: .leading, spacing: 16) {
+    VStack(alignment: .leading, spacing: 16) {
       CatalogDetailHeader(
         configuration: CatalogDetailHeaderConfiguration(
           imageURL: chapter.imageURL,
@@ -168,7 +170,6 @@ private struct ChapterDetailList: View {
         showFeedback: showFeedback)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
-    .padding(.horizontal, horizontalInset)
     .padding(.top, 16)
     .padding(.bottom, 12)
   }
@@ -247,76 +248,36 @@ private struct ChapterInformationView: View {
   }
 }
 
+/// The page as soon as it opens: what the tapped row already said about it, then a spinner where
+/// its list loads. Never a skeleton.
 private struct ChapterLoadingView: View {
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
   let chapter: ChapterReference
 
   var body: some View {
     VStack(spacing: 0) {
-      VStack(alignment: .leading, spacing: 16) {
-        CatalogDetailHeader(
-          configuration: CatalogDetailHeaderConfiguration(
-            imageURL: chapter.imageURL,
-            description: chapter.description,
-            systemImage: "rectangle.stack.fill",
-            title: chapter.position.map { "\(($0 + 1).formatted()). \(chapter.title)" }
-              ?? chapter.title))
-
-        HStack(spacing: 8) {
-          Text(verbatim: "Start")
-            .frame(maxWidth: horizontalSizeClass == .regular ? 260 : .infinity)
-            .frame(minHeight: 44)
-          Image(systemName: "ellipsis")
-            .frame(width: 44, height: 44)
-        }
-        .padding(
-          .leading,
-          CatalogDetailLayout.actionLeadingInset(
-            for: horizontalSizeClass,
-            dynamicTypeSize: dynamicTypeSize))
-      }
+      CatalogDetailHeader(
+        configuration: CatalogDetailHeaderConfiguration(
+          imageURL: chapter.imageURL,
+          description: chapter.description,
+          systemImage: "rectangle.stack.fill",
+          title: chapter.position.map { "\(($0 + 1).formatted()). \(chapter.title)" }
+            ?? chapter.title)
+      )
       .padding(.horizontal, CatalogDetailLayout.horizontalInset(for: horizontalSizeClass))
       .padding(.top, 16)
       .padding(.bottom, 12)
 
-      CatalogCurriculumHeader(title: Text(verbatim: "Lessons"))
-
-      List {
-        ForEach(0..<5, id: \.self) { index in
-          CatalogNumberedRow(
-            description: "A short lesson description",
-            imageURL: nil,
-            number: index + 1,
-            symbolTint: .secondary,
-            systemImage: "lightbulb",
-            title: "Lesson title"
-          )
-          .listRowInsets(
-            EdgeInsets(
-              top: CatalogDetailLayout.curriculumRowVerticalInset(
-                for: horizontalSizeClass),
-              leading: 0,
-              bottom: CatalogDetailLayout.curriculumRowVerticalInset(
-                for: horizontalSizeClass),
-              trailing: 0))
-        }
-      }
-      .listStyle(.plain)
-      .contentMargins(
-        .horizontal,
-        CatalogDetailLayout.horizontalInset(for: horizontalSizeClass),
-        for: .scrollContent)
+      ProgressView()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .accessibilityLabel(
+          Text(
+            "Loading chapter",
+            tableName: "Courses",
+            comment: "Accessibility status while a chapter loads."))
     }
     .frame(maxWidth: 900)
     .frame(maxWidth: .infinity)
-    .redacted(reason: .placeholder)
-    .accessibilityElement(children: .ignore)
-    .accessibilityLabel(
-      Text(
-        "Loading chapter",
-        tableName: "Courses",
-        comment: "Accessibility status while a chapter loads."))
   }
 }

@@ -68,28 +68,15 @@ private struct CourseCatalogPaginationTaskID: Equatable {
   let isRefreshing: Bool
 }
 
+/// The catalog's first load: a spinner, never a skeleton. Later visits show the cached courses.
 struct CourseCatalogLoadingGrid: View {
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-
   var body: some View {
-    LazyVGrid(columns: layout.columns, alignment: .leading, spacing: 14) {
-      ForEach(0..<8, id: \.self) { _ in
-        CourseCatalogLoadingItem(artworkSize: layout.artworkSize)
-      }
-    }
-    .accessibilityElement(children: .ignore)
-    .accessibilityLabel(
-      Text(
-        "Loading courses",
-        tableName: "Courses",
-        comment: "Accessibility status while the course catalog loads."))
-  }
-
-  private var layout: CourseGridLayout {
-    CourseGridLayout(
-      dynamicTypeSize: dynamicTypeSize,
-      horizontalSizeClass: horizontalSizeClass)
+    ProgressView()
+      .frame(maxWidth: .infinity, minHeight: 240)
+      .accessibilityLabel(
+        Text(
+          "Loading courses", tableName: "Courses",
+          comment: "Accessibility status while the course catalog loads."))
   }
 }
 
