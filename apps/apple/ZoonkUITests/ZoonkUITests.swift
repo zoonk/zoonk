@@ -121,7 +121,7 @@ final class ZoonkUITests: XCTestCase {
     continueAfterFailure = false
 
     let app = makeApp()
-    app.launch()
+    launch(app)
 
     let accountButton = app.navigationBars.buttons["Log in"].firstMatch
     XCTAssertTrue(
@@ -144,7 +144,7 @@ final class ZoonkUITests: XCTestCase {
     continueAfterFailure = false
 
     let app = makeApp()
-    app.launch()
+    launch(app)
 
     let navigationBar = app.navigationBars["Today"]
     let logInButton = navigationBar.buttons["Log in"]
@@ -159,7 +159,7 @@ final class ZoonkUITests: XCTestCase {
     continueAfterFailure = false
 
     let app = makeApp()
-    app.launch()
+    launch(app)
     app.navigationBars.buttons["Log in"].firstMatch.tap()
 
     let appleButton = app.buttons["Continue with Apple"]
@@ -181,7 +181,7 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp()
     app.launchEnvironment["ZOONK_API_BASE_URL"] = "http://127.0.0.1:1"
-    app.launch()
+    launch(app)
 
     let accountButton = app.navigationBars.buttons["Log in"].firstMatch
     XCTAssertTrue(
@@ -221,7 +221,7 @@ final class ZoonkUITests: XCTestCase {
     continueAfterFailure = false
 
     let app = makeApp(for: .requiredSetup)
-    app.launch()
+    launch(app)
 
     let setupNavigationBar = app.navigationBars["Finish setup"]
     XCTAssertTrue(
@@ -251,7 +251,7 @@ final class ZoonkUITests: XCTestCase {
     addTeardownBlock {
       app.terminate()
     }
-    app.launch()
+    launch(app)
     openAccount(in: app)
 
     let subscription = app.buttons["Subscription"]
@@ -285,7 +285,7 @@ final class ZoonkUITests: XCTestCase {
     continueAfterFailure = false
 
     let app = makeApp(for: .appleSubscription)
-    app.launch()
+    launch(app)
     openAccount(in: app)
 
     let subscription = app.buttons["Subscription"]
@@ -299,7 +299,7 @@ final class ZoonkUITests: XCTestCase {
     continueAfterFailure = false
 
     let app = makeApp(for: .googleSubscription)
-    app.launch()
+    launch(app)
     openAccount(in: app)
 
     let subscription = app.buttons["Subscription"]
@@ -323,7 +323,7 @@ final class ZoonkUITests: XCTestCase {
     continueAfterFailure = false
 
     let app = makeApp(for: .googleSubscription)
-    app.launch()
+    launch(app)
 
     let accountButton = app.buttons["Account"]
     XCTAssertTrue(
@@ -367,7 +367,7 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp(for: .googleSubscription)
     app.launchEnvironment["ZOONK_API_BASE_URL"] = "http://127.0.0.1:1"
-    app.launch()
+    launch(app)
 
     let accountButton = app.buttons["Account"]
     XCTAssertTrue(
@@ -393,7 +393,7 @@ final class ZoonkUITests: XCTestCase {
     continueAfterFailure = false
 
     let app = makeApp(for: .progress)
-    app.launch()
+    launch(app)
 
     let tabs = [
       (tabTitle: "Today", screenTitle: "Today"),
@@ -443,7 +443,7 @@ final class ZoonkUITests: XCTestCase {
     continueAfterFailure = false
 
     let app = makeApp(for: .catalog)
-    app.launch()
+    launch(app)
 
     openCatalog(in: app)
 
@@ -540,7 +540,7 @@ final class ZoonkUITests: XCTestCase {
     continueAfterFailure = false
 
     let app = makeApp(for: .catalog)
-    app.launch()
+    launch(app)
     openCatalog(in: app)
     let searchField = app.searchFields["Search all courses"]
     XCTAssertTrue(searchField.waitForExistence(timeout: 5))
@@ -572,7 +572,7 @@ final class ZoonkUITests: XCTestCase {
     continueAfterFailure = false
 
     let app = makeApp(for: .catalog)
-    app.launch()
+    launch(app)
     openCatalog(in: app)
 
     let searchField = app.searchFields["Search all courses"]
@@ -600,7 +600,7 @@ final class ZoonkUITests: XCTestCase {
     continueAfterFailure = false
 
     let emptyApp = makeApp(for: .progressEmpty)
-    emptyApp.launch()
+    launch(emptyApp)
     openStatistics(in: emptyApp)
     XCTAssertTrue(
       emptyApp.staticTexts["Start learning to track your progress"].waitForExistence(timeout: 5),
@@ -609,7 +609,7 @@ final class ZoonkUITests: XCTestCase {
     emptyApp.terminate()
 
     let failedApp = makeApp(for: .progressActivityFailure)
-    failedApp.launch()
+    launch(failedApp)
     openStatistics(in: failedApp)
     XCTAssertTrue(
       failedApp.staticTexts["You're offline"].waitForExistence(timeout: 5),
@@ -622,7 +622,7 @@ final class ZoonkUITests: XCTestCase {
     continueAfterFailure = false
 
     let app = makeApp(for: .progressActivityUnauthorized)
-    app.launch()
+    launch(app)
     openStatistics(in: app)
 
     XCTAssertTrue(
@@ -636,7 +636,7 @@ final class ZoonkUITests: XCTestCase {
     continueAfterFailure = false
 
     let app = makeApp(for: .progress)
-    app.launch()
+    launch(app)
     openStatistics(in: app)
     XCTAssertTrue(
       statTile("Study days", in: app).waitForExistence(timeout: 5),
@@ -675,7 +675,7 @@ final class ZoonkUITests: XCTestCase {
     continueAfterFailure = false
 
     let app = makeApp(for: .progress)
-    app.launch()
+    launch(app)
     openStatistics(in: app)
 
     let calendar = app.descendants(matching: .any)["Activity by day"]
@@ -695,6 +695,19 @@ final class ZoonkUITests: XCTestCase {
     app.buttons.matching(
       NSPredicate(format: "label == %@ OR label BEGINSWITH %@", name, "\(name),")
     ).firstMatch
+  }
+
+  /// Launches the app and, when it couldn't read a fixture this target passed, stops the test once
+  /// with the reason the app shows instead of crashing.
+  @MainActor
+  private func launch(_ app: XCUIApplication) {
+    app.launch()
+
+    let fixtureFailure = app.staticTexts["ui-test-fixture-failure"]
+    if fixtureFailure.exists {
+      continueAfterFailure = false
+      XCTFail(fixtureFailure.label)
+    }
   }
 
   /// Creates one isolated app process from scenario data owned by the UI-test target rather than the distributable app.

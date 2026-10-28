@@ -24,12 +24,16 @@ struct ZoonkApp: App {
   private let initialSheet: AppSheet?
   private let lessonPlayer: LessonPlayerDependencies
   private let privateImages: PrivateImageLoader
+  #if DEBUG
+    private let uiTestFixtureFailure: String?
+  #endif
 
   init() {
     #if DEBUG
       let configuration = UITestConfiguration.current
       let dependencies = configuration?.dependencies ?? .live()
       let initiallyPresentsAccount = configuration?.initiallyPresentsAccount ?? false
+      uiTestFixtureFailure = configuration?.fixtureFailure
     #else
       let dependencies = AppDependencies.live()
       let initiallyPresentsAccount = false
@@ -62,6 +66,9 @@ struct ZoonkApp: App {
   var body: some Scene {
     WindowGroup {
       AppWindow(initialSheet: initialSheet, today: today, sessions: studySession)
+        #if DEBUG
+          .modifier(UITestFixtureFailureCover(failure: uiTestFixtureFailure))
+        #endif
         .loads(learnerSummary.summary, refreshable: false)
         .task(id: learnerSummary.summary.value?.nextChangeAt) {
           await learnerSummary.refreshAtNextChange()

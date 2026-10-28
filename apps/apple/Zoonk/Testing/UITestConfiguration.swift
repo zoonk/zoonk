@@ -5,6 +5,9 @@
   struct UITestConfiguration {
     let dependencies: AppDependencies
     let initiallyPresentsAccount: Bool
+    /// Why a fixture the UI test passed couldn't be read. The app shows it instead of crashing, so
+    /// the test that launched it fails once, with the reason.
+    var fixtureFailure: String?
 
     static var current: UITestConfiguration? {
       let arguments = Set(ProcessInfo.processInfo.arguments)
@@ -19,105 +22,75 @@
         }
       }
 
-      let catalogSnapshot = courseCatalogSnapshot(from: environment)
       let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
+
+      do {
+        return try fixtures(clients: clients, arguments: arguments, environment: environment)
+      } catch {
+        return UITestConfiguration(
+          dependencies: AppDependencies(
+            clients: clients, session: .preview(), privateImageLoader: .live(),
+            subscriptionStore: .live()),
+          initiallyPresentsAccount: false, fixtureFailure: String(describing: error))
+      }
+    }
+
+    private static func fixtures(
+      clients: APIClientFactory, arguments: Set<String>, environment: [String: String]
+    ) throws -> UITestConfiguration {
+      let fixtures = UITestFixtures(environment: environment)
+      let catalogSnapshot = try fixtures.decode(
+        UITestCourseCatalogSnapshot.self, "ZOONK_UI_TEST_CATALOG")
+      // The summary as `GET /v1/me/summary` returns it, so the fixture follows the API's contract.
+      let summary = try fixtures.decode(
+        Components.Schemas.LearnerSummary.self, "ZOONK_UI_TEST_SUMMARY")
+      // The buddy's day as `GET /v1/me/buddy` returns it. With it, the buddy and its
+      // conversations answer from fixtures instead of the network.
+      let buddyStatus = try fixtures.decode(BuddyStatus.self, "ZOONK_UI_TEST_BUDDY")
 
       return UITestConfiguration(
         dependencies: AppDependencies(
           clients: clients,
-          session: SessionStore.preview(account: account(from: environment)),
+          session: SessionStore.preview(
+            account: try fixtures.decode(CurrentAccount.self, "ZOONK_UI_TEST_ACCOUNT")),
           privateImageLoader: .live(),
           subscriptionStore: .live(),
-          buddyAPI: buddyStatus(from: environment).map(UITestBuddyAPI.init),
+          buddyAPI: buddyStatus.map(UITestBuddyAPI.init),
           courseCatalogAPI: courseCatalogAPI(snapshot: catalogSnapshot),
-          learnerSummaryAPI: UITestLearnerSummaryAPI(summary: learnerSummary(from: environment)),
+          learnerSummaryAPI: UITestLearnerSummaryAPI(summary: summary.map(makeLearnerSummary)),
           mindMapsAPI: UITestMindMapsAPI(environment: environment),
-          progressAPI: progressAPI(from: environment),
-          studyAPI: studyAPI(from: environment),
-          tutorAPI: buddyStatus(from: environment).map { _ in
+          progressAPI: try progressAPI(from: fixtures),
+          studyAPI: try studyAPI(from: fixtures),
+          tutorAPI: buddyStatus.map { _ in
             UITestTutorAPI(turns: Int(environment["ZOONK_UI_TEST_TUTOR_TURNS"] ?? "") ?? 0)
           }),
         initiallyPresentsAccount: arguments.contains("--ui-testing-account-sheet"))
     }
 
-    /// Decodes fixture data supplied by the UI-test target so the Debug app can compose isolated state without owning concrete test users.
-    private static func account(from environment: [String: String]) -> CurrentAccount? {
-      guard let accountJSON = environment["ZOONK_UI_TEST_ACCOUNT"] else {
-        return nil
-      }
-
-      do {
-        return try JSONDecoder().decode(CurrentAccount.self, from: Data(accountJSON.utf8))
-      } catch {
-        preconditionFailure("ZOONK_UI_TEST_ACCOUNT must contain a valid CurrentAccount payload")
-      }
-    }
-
-    /// The summary as `GET /v1/me/summary` returns it, so the fixture follows the API's contract.
-    private static func learnerSummary(from environment: [String: String]) -> LearnerSummary? {
-      guard let summaryJSON = environment["ZOONK_UI_TEST_SUMMARY"] else {
-        return nil
-      }
-
-      do {
-        return makeLearnerSummary(
-          try JSONDecoder().decode(
-            Components.Schemas.LearnerSummary.self, from: Data(summaryJSON.utf8)))
-      } catch {
-        preconditionFailure("ZOONK_UI_TEST_SUMMARY must contain a valid learner summary")
-      }
-    }
-
-    /// The buddy's day as `GET /v1/me/buddy` returns it. With it, the buddy and its conversations
-    /// answer from fixtures instead of the network.
-    private static func buddyStatus(from environment: [String: String]) -> BuddyStatus? {
-      guard let buddyJSON = environment["ZOONK_UI_TEST_BUDDY"] else {
-        return nil
-      }
-
-      do {
-        return try JSONDecoder().decode(BuddyStatus.self, from: Data(buddyJSON.utf8))
-      } catch {
-        preconditionFailure("ZOONK_UI_TEST_BUDDY must contain a valid buddy status")
-      }
-    }
-
-    private static func progressAPI(from environment: [String: String]) -> any ProgressAPIClient {
-      guard let progressJSON = environment["ZOONK_UI_TEST_PROGRESS"] else {
+    private static func progressAPI(from fixtures: UITestFixtures) throws -> any ProgressAPIClient {
+      guard
+        let snapshot = try fixtures.decode(UITestProgressSnapshot.self, "ZOONK_UI_TEST_PROGRESS")
+      else {
         let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
         return ProgressAPI(clients: clients)
       }
 
-      do {
-        let snapshot = try JSONDecoder().decode(
-          UITestProgressSnapshot.self,
-          from: Data(progressJSON.utf8))
-        return UITestProgressAPI(
-          failure: environment["ZOONK_UI_TEST_PROGRESS_FAILURE"]
-            .flatMap(UITestProgressFailure.init(rawValue:)),
-          snapshot: snapshot)
-      } catch {
-        preconditionFailure("ZOONK_UI_TEST_PROGRESS must contain a valid progress snapshot")
-      }
+      return UITestProgressAPI(
+        failure: fixtures.environment["ZOONK_UI_TEST_PROGRESS_FAILURE"]
+          .flatMap(UITestProgressFailure.init(rawValue:)),
+        snapshot: snapshot)
     }
 
     /// Today and its session's summary as the API returns them, for days no test learner is on (a
     /// rest day, a milestone's ceremony); without a Today, the app reads the API.
-    private static func studyAPI(from environment: [String: String]) -> (any StudyAPIClient)? {
-      guard let todayJSON = environment["ZOONK_UI_TEST_TODAY"] else {
+    private static func studyAPI(from fixtures: UITestFixtures) throws -> (any StudyAPIClient)? {
+      guard let today = try fixtures.decode(TodayView.self, "ZOONK_UI_TEST_TODAY") else {
         return nil
       }
 
-      do {
-        return UITestStudyAPI(
-          summary: try environment["ZOONK_UI_TEST_SESSION_SUMMARY"].map {
-            try JSONDecoder().decode(SessionSummary.self, from: Data($0.utf8))
-          },
-          today: try JSONDecoder().decode(TodayView.self, from: Data(todayJSON.utf8)))
-      } catch {
-        preconditionFailure(
-          "ZOONK_UI_TEST_TODAY and ZOONK_UI_TEST_SESSION_SUMMARY must contain valid payloads")
-      }
+      return UITestStudyAPI(
+        summary: try fixtures.decode(SessionSummary.self, "ZOONK_UI_TEST_SESSION_SUMMARY"),
+        today: today)
     }
 
     private static func courseCatalogAPI(
@@ -130,20 +103,29 @@
 
       return UITestCourseCatalogAPI(snapshot: snapshot)
     }
+  }
 
-    private static func courseCatalogSnapshot(
-      from environment: [String: String]
-    ) -> UITestCourseCatalogSnapshot? {
-      guard let catalogJSON = environment["ZOONK_UI_TEST_CATALOG"] else {
+  /// The JSON fixtures a UI test passes in the launch environment.
+  private struct UITestFixtures {
+    struct Failure: Error, CustomStringConvertible {
+      let key: String
+      let error: Error
+
+      var description: String { "\(key) couldn't be decoded: \(error)" }
+    }
+
+    let environment: [String: String]
+
+    /// The fixture under `key`, or nil when the test didn't pass one.
+    func decode<Value: Decodable>(_ type: Value.Type, _ key: String) throws -> Value? {
+      guard let json = environment[key] else {
         return nil
       }
 
       do {
-        return try JSONDecoder().decode(
-          UITestCourseCatalogSnapshot.self,
-          from: Data(catalogJSON.utf8))
+        return try JSONDecoder().decode(type, from: Data(json.utf8))
       } catch {
-        preconditionFailure("ZOONK_UI_TEST_CATALOG must contain a valid catalog snapshot")
+        throw Failure(key: key, error: error)
       }
     }
   }
