@@ -1,11 +1,41 @@
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { onboardingDraftFixture } from "@zoonk/testing/fixtures/onboarding-drafts";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
+import { insertGoalWithPlan } from "../goals/_utils/create-goal-records";
 import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
 import { moveLanguageGoalToExam } from "./move-language-goal";
+import type * as GoalRecords from "../goals/_utils/create-goal-records";
+
+// A write that fails partway (a dropped connection) can't be made with the real database: a test
+// makes the exam goal's insert fail once, after the language goal was archived.
+vi.mock("../goals/_utils/create-goal-records", async (importOriginal) => {
+  const actual = await importOriginal<typeof GoalRecords>();
+  return { ...actual, insertGoalWithPlan: vi.fn(actual.insertGoalWithPlan) };
+});
+
+const IELTS_REASON = { question: "reason", reason: "vou fazer o IELTS em março" } as const;
+
+/** A learner's English goal typed in onboarding, so it carries the draft's id like every such goal. */
+async function languageGoalInOnboarding() {
+  const user = await userFixture();
+  const draft = await onboardingDraftFixture({ userId: user.id });
+
+  const goal = await goalFixture({
+    dailyMinutes: 15,
+    details: { onboardingId: draft.id },
+    kind: "language",
+    prompt: "Aprender inglês",
+    targetLanguage: "en",
+    userId: user.id,
+  });
+
+  mockSession(user.id);
+  return { draft, goal, user };
+}
 
 describe(moveLanguageGoalToExam, () => {
   it("moves a language goal whose reason names a certificate to an exam goal", async () => {
@@ -137,5 +167,23 @@ describe("onboarding's reason answer", () => {
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
       status: "active",
     });
+  });
+
+  it("leaves the language goal as it was when the exam goal can't be written", async () => {
+    const { goal, user } = await languageGoalInOnboarding();
+    vi.mocked(insertGoalWithPlan).mockRejectedValueOnce(new Error("Connection lost"));
+
+    await expect(
+      answerOnboardingQuestion({ goalId: goal.id, input: IELTS_REASON }),
+    ).rejects.toThrow("Connection lost");
+
+    await expect(prisma.goal.findMany({ where: { userId: user.id } })).resolves.toMatchObject([
+      { id: goal.id, status: "active" },
+    ]);
+
+    // Sent again, the reason moves it.
+    await expect(
+      answerOnboardingQuestion({ goalId: goal.id, input: IELTS_REASON }),
+    ).resolves.toMatchObject({ movedTo: { title: "IELTS" } });
   });
 });

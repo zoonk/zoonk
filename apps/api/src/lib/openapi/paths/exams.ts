@@ -100,7 +100,6 @@ export const examPaths = {
           description: "The new exam goal",
         },
         ...commonErrors,
-        "409": { ...conflictResponse, description: "The exam goal couldn't be created" },
         "422": {
           ...unprocessableEntityResponse,
           description: "Not a language goal whose reason names an exam",

@@ -1,65 +1,112 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { randomUUID } from "node:crypto";
+import { type Goal, type TransactionClient, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
-import { createGoals } from "../goals/create-goals";
+import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
+import { getGoalsCacheTag, getLearningProfileCacheTag } from "../cache/tags";
+import { insertGoalWithPlan, setActiveGoal } from "../goals/_utils/create-goal-records";
+import { loadGoalViews } from "../goals/_utils/goal-view";
 import { type GoalView } from "../goals/goal-contract";
-import { findOwnedGoal } from "../learner/_utils/owned-goal";
+import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { toIsoDate } from "../plans/planner/plan-calendar";
+import { getSession } from "../users/get-session";
 import { detectLanguageExam } from "./language-exam";
 
 export type MoveLanguageGoalResult =
   | { goal: GoalView; status: "moved" }
-  | { status: "noExam" | "notFound" | "refused" | "unauthorized" };
+  | { status: "noExam" | "notFound" | "unauthorized" };
 
-export async function moveLanguageGoalToExam(goalId: string): Promise<MoveLanguageGoalResult> {
-  const owned = await findOwnedGoal(goalId);
+type MoveOutcome = { goalId: string; status: "moved" } | { status: "noExam" | "notFound" };
 
-  if (owned.status !== "ready") {
-    return owned;
-  }
-
-  const { goal } = owned;
-
-  if (goal.status !== "active") {
-    return { status: "notFound" };
-  }
-
+async function replaceWithExamGoal({
+  examName,
+  goal,
+  targetLanguage,
+  tx,
+}: {
+  examName: string;
+  goal: Goal;
+  targetLanguage: string;
+  tx: TransactionClient;
+}): Promise<string> {
   const details = isJsonObject(goal.details) ? goal.details : {};
-  const reason = typeof details.reason === "string" ? details.reason : "";
-  const examName = goal.kind === "language" ? detectLanguageExam(reason) : null;
+  const id = randomUUID();
 
-  if (!examName || !goal.targetLanguage) {
-    return { status: "noExam" };
+  await tx.goal.update({ data: { status: "archived" }, where: { id: goal.id } });
+
+  await insertGoalWithPlan(tx, {
+    dailyMinutes: goal.dailyMinutes,
+    draft: {
+      details: { ...details, examName, examTarget: "score", movedFromGoalId: goal.id },
+      kind: "exam",
+      language: goal.language,
+      prompt: goal.prompt,
+      targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : undefined,
+      targetLanguage,
+      title: examName,
+    },
+    id,
+    input: { studyTime: goal.studyTime ?? undefined, timeZone: goal.timezone ?? undefined },
+    testedLanguage: null,
+    userId: goal.userId,
+  });
+
+  await setActiveGoal(tx, { activeGoalId: id, userId: goal.userId });
+  return id;
+}
+
+/**
+ * One learner write, so a failure partway leaves the language goal active and two requests take
+ * turns. Only an active goal moves, so moving again can't make unlimited exam goals.
+ */
+export async function moveLanguageGoalToExam(goalId: string): Promise<MoveLanguageGoalResult> {
+  const session = await getSession();
+
+  if (!session) {
+    return { status: "unauthorized" };
   }
 
-  await prisma.goal.update({ data: { status: "archived" }, where: { id: goal.id } });
+  const userId = session.user.id;
 
-  const created = await createGoals(
-    {
-      dailyMinutes: goal.dailyMinutes,
-      goals: [
-        {
-          details: { ...details, examName, examTarget: "score", movedFromGoalId: goal.id },
-          kind: "exam",
-          language: goal.language,
-          prompt: goal.prompt,
-          targetDate: goal.targetDate ? toIsoDate(goal.targetDate) : undefined,
-          targetLanguage: goal.targetLanguage,
-          title: examName,
-        },
-      ],
-      studyTime: goal.studyTime ?? undefined,
-      timeZone: goal.timezone ?? undefined,
+  const outcome = await writeLearnerChange<MoveOutcome>(
+    { planInputs: true, userId },
+    async (tx) => {
+      const goal = await tx.goal.findFirst({ where: { id: goalId, userId } });
+
+      if (goal?.status !== "active") {
+        return unchanged({ status: "notFound" });
+      }
+
+      const details = isJsonObject(goal.details) ? goal.details : {};
+      const reason = typeof details.reason === "string" ? details.reason : "";
+      const examName = goal.kind === "language" ? detectLanguageExam(reason) : null;
+
+      const { targetLanguage } = goal;
+
+      if (!examName || !targetLanguage) {
+        return unchanged({ status: "noExam" });
+      }
+
+      const replacementId = await replaceWithExamGoal({ examName, goal, targetLanguage, tx });
+      return { goalId: replacementId, status: "moved" };
     },
-    { replacesGoalId: goal.id },
   );
 
-  const [exam] = created.status === "created" ? created.goals : [];
-
-  if (!exam) {
-    await prisma.goal.update({ data: { status: goal.status }, where: { id: goal.id } });
-    return { status: "refused" };
+  if (!("goalId" in outcome)) {
+    return outcome;
   }
 
-  return { goal: exam, status: "moved" };
+  revalidateCacheTags([getGoalsCacheTag(userId), getLearningProfileCacheTag(userId)]);
+
+  const [exam, profile] = await Promise.all([
+    prisma.goal.findUniqueOrThrow({ where: { id: outcome.goalId } }),
+    prisma.userLearningProfile.findUnique({ select: { activeGoalId: true }, where: { userId } }),
+  ]);
+
+  const [goal] = await loadGoalViews({
+    activeGoalId: profile?.activeGoalId ?? null,
+    goals: [exam],
+  });
+
+  return goal ? { goal, status: outcome.status } : { status: "notFound" };
 }

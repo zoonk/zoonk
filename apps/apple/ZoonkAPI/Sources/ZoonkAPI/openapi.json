@@ -3543,16 +3543,6 @@
               }
             }
           },
-          "409": {
-            "description": "The exam goal couldn't be created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "422": {
             "description": "Not a language goal whose reason names an exam",
             "content": {

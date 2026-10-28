@@ -1,4 +1,3 @@
-import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { examError } from "@/lib/exam-errors";
 import { startGoalWork } from "@/lib/goal-content";
@@ -9,14 +8,8 @@ import { NextResponse } from "next/server";
 
 const CREATED = 201;
 
-function refuseMove(status: "noExam" | "notFound" | "refused" | "unauthorized") {
-  if (status === "noExam") {
-    return examError({ status: "notExam" });
-  }
-
-  return status === "refused"
-    ? errors.conflict("The exam goal couldn't be created")
-    : examError({ status });
+function refuseMove(status: "noExam" | "notFound" | "unauthorized") {
+  return examError({ status: status === "noExam" ? "notExam" : status });
 }
 
 async function postExamMove(
