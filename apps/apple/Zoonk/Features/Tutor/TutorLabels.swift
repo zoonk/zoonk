@@ -1,20 +1,5 @@
 import SwiftUI
 
-/// The buddy's name: the learner's own name for it, or each buddy's playful name in the
-/// interface language (Noodle is Cuca in Portuguese), as the style guides keep them.
-func buddyName(kind: BuddyKind, name: String?) -> String {
-  if let name, !name.isEmpty {
-    return name
-  }
-
-  return switch kind {
-  case .zu: String(localized: "Zu", table: "Buddy", comment: "The alien buddy's own name")
-  case .noodle: String(localized: "Noodle", table: "Buddy", comment: "The brain buddy's own name")
-  case .beep: String(localized: "Beep", table: "Buddy", comment: "The robot buddy's own name")
-  case .otto: String(localized: "Otto", table: "Buddy", comment: "The octopus buddy's own name")
-  }
-}
-
 extension LearnerSummary {
   /// The learner's buddy by name, the one who answers in every conversation.
   var buddyDisplayName: String {

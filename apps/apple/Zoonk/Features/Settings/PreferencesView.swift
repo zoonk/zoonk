@@ -111,7 +111,7 @@ struct PreferencesView: View {
     .loads(settings.preferences)
     .sheet(isPresented: $isEditingBuddy) {
       if let preferences = settings.preferences.value {
-        BuddyEditor(preferences: preferences) { choice in
+        SettingsBuddyEditor(preferences: preferences) { choice in
           Task {
             await settings.updatePreferences(.buddy(choice))
           }
@@ -165,7 +165,7 @@ struct SettingsSaveError: View {
 
 /// Changing the buddy, its name and its glasses: earned pairs can be picked, and the rest say how
 /// they're earned.
-private struct BuddyEditor: View {
+private struct SettingsBuddyEditor: View {
   @Environment(\.dismiss) private var dismiss
   @State private var choice: BuddyChoice
   @State private var name: String

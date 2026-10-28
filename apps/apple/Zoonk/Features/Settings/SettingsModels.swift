@@ -1,31 +1,5 @@
 import Foundation
 
-/// Every buddy in the order learners meet them.
-enum BuddyKind: String, CaseIterable, Sendable {
-  case zu
-  case noodle
-  case beep
-  case otto
-}
-
-/// Round comes with the buddy; the rest in the order they're usually earned.
-enum BuddyGlasses: String, CaseIterable, Sendable {
-  case round
-  case star
-  case aviator
-  case catEye
-  case retro
-  case monocle
-}
-
-/// The buddy the learner picked: kind, an optional own name and glasses. Growth and glow come from
-/// the belt and Energy, so only these are saved.
-struct BuddyChoice: Equatable, Sendable {
-  var kind: BuddyKind
-  var name: String?
-  var glasses: BuddyGlasses
-}
-
 /// Preferences' part of the learning profile.
 struct LearningPreferences: Equatable, Sendable {
   var buddy: BuddyChoice
