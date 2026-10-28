@@ -5,7 +5,7 @@ import { ITEM_IMAGE_INCLUDE } from "../../library/items/item-image";
 import { loadExamStructure } from "../../sessions/_utils/exam-structure";
 import { type QuestionView, parseChoiceItem, toQuestionView } from "../_utils/choice-items";
 import { findOwnedGoal } from "../_utils/owned-goal";
-import { readSavedPlan } from "../facts/saved-plan";
+import { type SavedPlan, readSavedPlan } from "../facts/saved-plan";
 import { pickPlacementItem } from "../placement/placement-item-choice";
 import { countSkippableItems, getChapterSkills, loadSkillItems } from "./_utils/chapter-items";
 import { isTestOutPlusOnly } from "./_utils/test-out-access";
@@ -85,13 +85,16 @@ function interleave(picks: readonly { itemIds: string[] }[]): string[] {
 export async function loadChapterTestOut({
   chapterId,
   goal,
+  savedPlan,
   userId,
 }: {
   chapterId: string;
   goal: Pick<Goal, "createdAt" | "examBlueprintId" | "id" | "kind" | "timezone">;
+  /** Only GET callers supply request facts; generation preconditions read the plan fresh. */
+  savedPlan?: Promise<SavedPlan | null>;
   userId: string;
 }): Promise<Exclude<ChapterTestOutResult, { status: "unauthorized" }>> {
-  const plan = await loadTestOutPlan(goal.id, { goal, source: readSavedPlan(userId, goal.id) });
+  const plan = await loadTestOutPlan(goal.id, { goal, source: savedPlan });
   const chapterSkills = getChapterSkills({ chapterId, plan });
 
   if (chapterSkills.length === 0) {
@@ -179,5 +182,10 @@ export async function getChapterTestOut({
     return owned;
   }
 
-  return loadChapterTestOut({ chapterId, goal: owned.goal, userId: owned.userId });
+  return loadChapterTestOut({
+    chapterId,
+    goal: owned.goal,
+    savedPlan: readSavedPlan(owned.userId, goalId),
+    userId: owned.userId,
+  });
 }
