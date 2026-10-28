@@ -726,9 +726,12 @@ private struct MockPlanSection: View {
     defer { applying = false }
 
     for offer in open {
-      switch await exam.write(invalidating: [.goals, .learnerModel]) { api, token in
-        try await api.adaptPlan(token: token, blockId: run.mock.value?.blockId ?? "", offer: offer)
-      } {
+      let blockId = run.mock.value?.blockId ?? ""
+      let result = await exam.write(invalidating: [.goals, .learnerModel]) { api, token in
+        try await api.adaptPlan(token: token, blockId: blockId, offer: offer)
+      }
+
+      switch result {
       case .done(let outcome): answers[offer] = .outcome(outcome)
       case .failed: answers[offer] = .failed
       case .obsolete: return
