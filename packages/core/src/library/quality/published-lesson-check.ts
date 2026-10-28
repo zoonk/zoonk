@@ -6,7 +6,11 @@ import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLibraryLessonCacheTag } from "../../cache/tags";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { type HeldBackDraft } from "../generation/held-back-drafts";
-import { moveOnWithoutLesson, refreshPlansWithoutLesson } from "../generation/hold-back-lesson";
+import {
+  moveOnWithoutLesson,
+  readHeldPlanIds,
+  refreshPlansWithoutLesson,
+} from "../generation/hold-back-lesson";
 import {
   type CheckedVersion,
   type GateResult,
@@ -292,15 +296,23 @@ export async function setAsidePublishedLesson({
   lessonId: string;
   version: number;
 }): Promise<boolean> {
-  const { data: userIds, error } = await safeAsync(() =>
+  const holdKey = `${lessonId}:published:${version}`;
+
+  const { data: heldBack, error } = await safeAsync(() =>
     writePlanInputs(async (tx) => {
       const existing = await tx.step.findFirst({
-        select: { version: true },
-        where: { lesson: { contentStatus: "completed" }, lessonId, ...CURRENT_STEPS },
+        select: { lesson: { select: { contentStatus: true, setAsideAt: true } }, version: true },
+        where: { lessonId, ...CURRENT_STEPS },
       });
 
       if (existing?.version !== version) {
         return null;
+      }
+
+      if (existing.lesson.contentStatus !== "completed") {
+        return existing.lesson.setAsideAt
+          ? { changed: false, planIds: await readHeldPlanIds(tx, holdKey) }
+          : null;
       }
 
       await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
@@ -315,7 +327,7 @@ export async function setAsidePublishedLesson({
         where: { id: lessonId },
       });
 
-      return moveOnWithoutLesson(tx, lessonId);
+      return { changed: true, planIds: await moveOnWithoutLesson(tx, lessonId, holdKey) };
     }),
   );
 
@@ -327,16 +339,16 @@ export async function setAsidePublishedLesson({
     throw error;
   }
 
-  if (!userIds) {
+  if (!heldBack) {
     return false;
   }
 
-  await refreshPlansWithoutLesson(lessonId);
+  const userIds = await refreshPlansWithoutLesson(heldBack.planIds);
 
   revalidateCacheTags([
     getLibraryLessonCacheTag(lessonId),
     ...userIds.map((userId) => getGoalsCacheTag(userId)),
   ]);
 
-  return true;
+  return heldBack.changed;
 }

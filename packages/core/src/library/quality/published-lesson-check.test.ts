@@ -13,6 +13,7 @@ import { learnerSourceFixture, sourceFixture } from "@zoonk/testing/fixtures/sou
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { holdLearnerLock, waitForBlockedStatement } from "../../_test-utils/learner-lock";
+import * as refresh from "../../plans/refresh-goal-plan";
 import { writeLessonContent } from "../lessons/write-lesson-content";
 import { PAGE_BREAK, PDF_CONTENT_TYPE, PPTX_CONTENT_TYPE } from "../sources/source-contract";
 import { temperatureSpec, writtenTemperatureLesson } from "./_test-utils/written-lessons";
@@ -534,6 +535,30 @@ async function setAsideScope() {
 }
 
 describe("set-aside selection admission", () => {
+  it("retries plan refreshes after the published hold-back was already saved", async () => {
+    const { lesson } = await setAsideScope();
+
+    const renew = vi
+      .spyOn(refresh, "refreshGoalPlan")
+      .mockRejectedValueOnce(new Error("Refresh interrupted"));
+
+    try {
+      await expect(setAsidePublishedLesson({ lessonId: lesson.id, version: 1 })).rejects.toThrow(
+        "Refresh interrupted",
+      );
+
+      const calls = renew.mock.calls.length;
+
+      await expect(setAsidePublishedLesson({ lessonId: lesson.id, version: 1 })).resolves.toBe(
+        false,
+      );
+
+      expect(renew).toHaveBeenCalledTimes(calls * 2);
+    } finally {
+      renew.mockRestore();
+    }
+  });
+
   it("marks dependent plans and each owner once, and leaves rejected and repeated calls unchanged", async () => {
     const { lesson, plans } = await setAsideScope();
     await expect(setAsidePublishedLesson({ lessonId: lesson.id, version: 7 })).resolves.toBe(false);

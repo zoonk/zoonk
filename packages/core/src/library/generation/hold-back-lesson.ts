@@ -18,6 +18,7 @@ const OPEN_SESSION_STATUSES: StudySessionStatus[] = ["planned", "active"];
  * work beyond the first draft and its fix passes): its first held-back draft sets it aside.
  */
 const PRIVATE_LESSON_DRAFTS = 1;
+const PLAN_REFRESH_BATCH_SIZE = 4;
 
 /** A superseded claim must roll back plan/learner admission as well as the attempted draft. */
 class LessonClaimLostError extends Error {
@@ -33,16 +34,43 @@ function countSavedLessons(item: { lessonId: string | null; lessons?: number | n
  * Takes a set-aside lesson out of what learners have ahead: its todo plan items are skipped and
  * open session blocks for it are skipped, so Today goes to the next stop instead of waiting on a
  * lesson nothing will write. Other lessons that teach its skills stay in the plans. Returns the
- * learners whose plans changed.
+ * plan IDs whose todo work changed.
  */
 export async function moveOnWithoutLesson(
   tx: TransactionClient,
   lessonId: string,
+  holdKey: string,
 ): Promise<string[]> {
   const items = await tx.planItem.findMany({
-    include: { plan: { include: { goal: true, items: true } } },
+    select: { id: true, planId: true, titleSnapshot: true },
     where: { lessonId, status: "todo" },
   });
+
+  const planIds = [...new Set(items.map((item) => item.planId))];
+
+  const plans = await tx.plan.findMany({
+    select: {
+      graph: true,
+      id: true,
+      items: {
+        select: {
+          chapterId: true,
+          id: true,
+          kind: true,
+          lessonId: true,
+          lessons: true,
+          phase: true,
+          scheduledFor: true,
+          skillId: true,
+          status: true,
+          titleSnapshot: true,
+        },
+      },
+    },
+    where: { id: { in: planIds } },
+  });
+
+  const planById = new Map(plans.map((plan) => [plan.id, plan]));
 
   /** Queue changes lock blocks before plan items; use the same order to avoid a cycle. */
   const blocks = await tx.$queryRaw<{ id: string }[]>`
@@ -71,7 +99,7 @@ export async function moveOnWithoutLesson(
 
   await Promise.all(
     [...Map.groupBy(items, (item) => item.planId)].map(async ([planId, removed]) => {
-      const plan = removed.at(0)?.plan;
+      const plan = planById.get(planId);
       const before = plan?.items ?? [];
       const ids = new Set(removed.map((item) => item.id));
 
@@ -88,7 +116,7 @@ export async function moveOnWithoutLesson(
       await tx.planChange.create({
         data: {
           kind: "estimateUpdated",
-          payload: toPlanChangePayload({ effect, source: "system" }),
+          payload: toPlanChangePayload({ effect, lessonHoldKey: holdKey, source: "system" }),
           planId,
           reason: "An unplayable lesson was set aside.",
           status: "applied",
@@ -97,13 +125,53 @@ export async function moveOnWithoutLesson(
     }),
   );
 
-  return [...new Set(items.map((item) => item.plan.goal.userId))];
+  return planIds;
+}
+
+/** The committed loss records retain exactly the plans changed by this quality hold. */
+export async function readHeldPlanIds(tx: TransactionClient, holdKey: string): Promise<string[]> {
+  const losses = await tx.planChange.findMany({
+    select: { planId: true },
+    where: { kind: "estimateUpdated", payload: { equals: holdKey, path: ["lessonHoldKey"] } },
+  });
+
+  return [...new Set(losses.map((loss) => loss.planId))];
 }
 
 /** The quality write removes unplayable blocks immediately; its response also waits for the saved plan. */
-export async function refreshPlansWithoutLesson(lessonId: string): Promise<void> {
-  const plans = await prisma.plan.findMany({ where: { items: { some: { lessonId } } } });
-  await Promise.all(plans.map((plan) => refreshGoalPlan({ goalId: plan.goalId })));
+export async function refreshPlansWithoutLesson(planIds: readonly string[]): Promise<string[]> {
+  const plans = await prisma.plan.findMany({
+    select: { goal: { select: { userId: true } }, goalId: true },
+    where: { id: { in: [...planIds] } },
+  });
+
+  const failures: Error[] = [];
+
+  for (let offset = 0; offset < plans.length; offset += PLAN_REFRESH_BATCH_SIZE) {
+    // Bound planning work while letting every affected plan refresh before a failed batch retries.
+    // oxlint-disable-next-line no-await-in-loop
+    const results = await Promise.allSettled(
+      plans
+        .slice(offset, offset + PLAN_REFRESH_BATCH_SIZE)
+        .map((plan) => refreshGoalPlan({ goalId: plan.goalId })),
+    );
+
+    for (const result of results) {
+      if (result.status === "rejected") {
+        failures.push(
+          result.reason instanceof Error ? result.reason : new Error(String(result.reason)),
+        );
+      }
+    }
+  }
+
+  const [failure] = failures;
+
+  if (failure) {
+    throw failure;
+  }
+
+  return [...new Set(plans.map((plan) => plan.goal.userId))];
 }
 
 /**
@@ -124,25 +192,39 @@ export async function holdBackLessonDraft({
   problems: HeldBackDraft["problems"];
   workflowRunId: string;
 }): Promise<{ setAside: boolean } | null> {
+  const holdKey = `${lessonId}:${workflowRunId}`;
+
   const { data: heldBack, error } = await safeAsync(() =>
     writePlanInputs(async (tx) => {
       const lesson = await tx.lesson.findFirst({
-        select: { heldBackDrafts: true, ownerId: true },
-        where: { contentRunId: workflowRunId, contentStatus: "running", id: lessonId },
+        select: { contentStatus: true, heldBackDrafts: true, ownerId: true, setAsideAt: true },
+        where: { contentRunId: workflowRunId, id: lessonId },
       });
 
       if (!lesson) {
         return null;
       }
 
+      const previous = parseHeldBackDrafts(lesson.heldBackDrafts);
+
+      if (lesson.contentStatus !== "running") {
+        const saved = previous.find((draft) => draft.runId === workflowRunId);
+
+        return lesson.setAsideAt && saved
+          ? { planIds: await readHeldPlanIds(tx, holdKey), setAside: true }
+          : null;
+      }
+
       const now = new Date();
       const draft = { heldBackAt: now.toISOString(), model, problems, runId: workflowRunId };
-      const drafts = [...parseHeldBackDrafts(lesson.heldBackDrafts), draft];
+      const drafts = [...previous, draft];
 
       const setAside =
         drafts.length >= (lesson.ownerId ? PRIVATE_LESSON_DRAFTS : MAX_LESSON_DRAFTS);
 
       await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
+
+      const planIds = setAside ? await moveOnWithoutLesson(tx, lessonId, holdKey) : [];
 
       const { count } = await tx.lesson.updateMany({
         data: {
@@ -157,8 +239,7 @@ export async function holdBackLessonDraft({
         throw new LessonClaimLostError();
       }
 
-      const userIds = setAside ? await moveOnWithoutLesson(tx, lessonId) : [];
-      return { setAside, userIds };
+      return { planIds, setAside };
     }),
   );
 
@@ -174,13 +255,11 @@ export async function holdBackLessonDraft({
     return null;
   }
 
-  if (heldBack.setAside) {
-    await refreshPlansWithoutLesson(lessonId);
-  }
+  const userIds = heldBack.setAside ? await refreshPlansWithoutLesson(heldBack.planIds) : [];
 
   revalidateCacheTags([
     getLibraryLessonCacheTag(lessonId),
-    ...heldBack.userIds.map((userId) => getGoalsCacheTag(userId)),
+    ...userIds.map((userId) => getGoalsCacheTag(userId)),
   ]);
 
   return { setAside: heldBack.setAside };

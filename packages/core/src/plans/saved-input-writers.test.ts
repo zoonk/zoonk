@@ -10,6 +10,7 @@ import { submitChapterTestOut } from "../learner/test-out/submit-chapter-test-ou
 import { holdBackLessonDraft } from "../library/generation/hold-back-lesson";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
+import * as refresh from "./refresh-goal-plan";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
 
@@ -47,7 +48,10 @@ describe("saved input writers", () => {
     vi.setSystemTime(NOW);
   });
 
-  afterEach(() => vi.useRealTimers());
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
 
   it("saves course-weight reconciliation before research returns", async () => {
     const citation = { passage: "Weights", sourceId: "notice" };
@@ -120,6 +124,37 @@ describe("saved input writers", () => {
     const saved = await read();
     expect(saved.inputsKey).not.toBe(before.inputsKey);
     expect(saved.summary).toMatchObject({ basis: { layoutInputVersion: saved.inputVersion } });
+  });
+
+  it("retries a saved hold-back whose plan refresh failed", async () => {
+    const { library, user } = await setup();
+    const lesson = library.lessons[0]!;
+    const workflowRunId = randomUUID();
+
+    await prisma.lesson.update({
+      data: { contentRunId: workflowRunId, contentStatus: "running", ownerId: user.id },
+      where: { id: lesson.id },
+    });
+
+    const renew = vi
+      .spyOn(refresh, "refreshGoalPlan")
+      .mockRejectedValueOnce(new Error("Refresh interrupted"));
+
+    const input = {
+      lessonId: lesson.id,
+      model: "test/fixture",
+      problems: [{ problem: "Wrong answer", screen: 0 }],
+      workflowRunId,
+    };
+
+    await expect(holdBackLessonDraft(input)).rejects.toThrow("Refresh interrupted");
+
+    await expect(
+      prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
+    ).resolves.toMatchObject({ setAsideAt: expect.any(Date) });
+
+    await expect(holdBackLessonDraft(input)).resolves.toStrictEqual({ setAside: true });
+    expect(renew).toHaveBeenCalledTimes(2);
   });
 
   it("names a held-back lesson's loss and updates its saved summary", async () => {
