@@ -129,11 +129,13 @@ struct StatsCalendar: View {
       if fits {
         grid
       } else {
+        // Capped rather than fixed, here and on the grid, so a narrower width (a fold, a rotation,
+        // a smaller window) can still reach the measurement the widths come from.
         ScrollView(.horizontal) {
           grid
         }
         .defaultScrollAnchor(.trailing)
-        .frame(width: wholeWeeksWidth)
+        .frame(maxWidth: wholeWeeksWidth)
         .frame(maxWidth: .infinity, alignment: .trailing)
       }
 
@@ -191,7 +193,8 @@ struct StatsCalendar: View {
         context.draw(label, at: CGPoint(x: x, y: 0), anchor: isLast ? .topTrailing : .topLeading)
       }
     }
-    .frame(width: gridWidth(step: step), height: headerHeight + 7 * cell + 6 * gap + ringInset)
+    .frame(idealWidth: gridWidth(step: step), maxWidth: gridWidth(step: step))
+    .frame(height: headerHeight + 7 * cell + 6 * gap + ringInset)
     .contentShape(.rect)
     .gesture(SpatialTapGesture().onEnded { pick(at: $0.location) })
     .onContinuousHover { phase in
