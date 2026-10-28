@@ -18,16 +18,14 @@ if (process.env.NODE_ENV === "production") {
 }
 
 /**
- * PostHog loads once the page has, so its SDK never delays the first paint. Session replay starts
- * only once we know the learner is an adult (see PostHogIdentify), so nobody under 18, and nobody
- * who hasn't told us their age, is ever recorded.
+ * Session replay starts only once we know the learner is an adult (`PostHogIdentify`), so nobody
+ * under 18, or who hasn't told us their age, is ever recorded.
  */
 void loadPostHog();
 
-/** The root layout registers the properties every event carries, so events wait for them. */
 waitForSharedProperties();
 
-/** Before any page's first write, so leaving a page reads what it changed (`RefreshStalePages`). */
+/** Before any page's first write. */
 noteAppWritesSent();
 
 export function onRouterTransitionStart(url: string, navigationType: RouterTransitionType) {
