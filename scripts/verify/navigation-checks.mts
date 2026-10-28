@@ -82,11 +82,19 @@ export function judgeNavigation(navigation: NavigationMeasurement): Finding[] {
       check: "tap response",
       value: navigation.responseMs,
     }),
-    ...budgetFinding({
-      budget: BUDGETS.tapContentMs,
-      check: "tap content",
-      value: navigation.contentMs,
-    }),
+    ...(navigation.contentMs === null
+      ? [
+          {
+            check: "tap content",
+            level: "warn" as const,
+            message: "not measured: no complete destination content frame was recorded",
+          },
+        ]
+      : budgetFinding({
+          budget: BUDGETS.tapContentMs,
+          check: "tap content",
+          value: navigation.contentMs,
+        })),
     ...budgetFinding({
       budget: BUDGETS.navigationCommitMs,
       check: "navigation",

@@ -21,7 +21,7 @@ const navigation: NavigationMeasurement = {
   blankSeenMs: null,
   commitMs: 40,
   console: [],
-  contentMs: null,
+  contentMs: 400,
   flashes: 0,
   fullLoad: false,
   linkFound: true,
@@ -44,6 +44,11 @@ function judged(overrides: Partial<NavigationMeasurement>): string[] {
 }
 
 describe("judging a navigation", () => {
+  it("reports content that never appeared after the URL committed", () => {
+    assert.deepEqual(judged({ contentMs: null, skeletonSeenMs: 200 }), ["warn tap content"]);
+    assert.deepEqual(judged({ contentMs: null, production: false }), []);
+  });
+
   it("passes a prefetched page that appears at once", () => {
     assert.deepEqual(judgeNavigation(navigation), []);
   });

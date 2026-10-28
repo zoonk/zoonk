@@ -205,7 +205,15 @@ function speedFindings(load: LoadMeasurement): Finding[] {
           },
         ]
       : blankFindings(load.blankSeenMs)),
-    ...budgetFinding({ budget: BUDGETS.lcpMs, check: "content", value: load.contentMs }),
+    ...(load.contentMs === null
+      ? [
+          {
+            check: "content",
+            level: "warn" as const,
+            message: "not measured: no complete content frame was recorded",
+          },
+        ]
+      : budgetFinding({ budget: BUDGETS.lcpMs, check: "content", value: load.contentMs })),
     ...budgetFinding({ budget: BUDGETS.lcpMs, check: "LCP", value: load.lcpMs }),
     ...budgetFinding({ budget: BUDGETS.fcpMs, check: "FCP", value: load.fcpMs }),
     ...budgetFinding({

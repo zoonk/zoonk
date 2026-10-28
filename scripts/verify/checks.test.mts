@@ -34,7 +34,7 @@ function load(overrides: Partial<LoadMeasurement> = {}): LoadMeasurement {
     blankSeenMs: null,
     blockingMs: 120,
     console: [],
-    contentMs: null,
+    contentMs: 400,
     fcpMs: 300,
     flashes: 0,
     lastPaintMs: 400,
@@ -88,6 +88,11 @@ describe("what a page's requests were for", () => {
 });
 
 describe("judging a page load", () => {
+  it("reports content that never appeared instead of passing its missing timing", () => {
+    assert.ok(checks(load({ contentMs: null, skeletonSeenMs: 200 })).includes("warn content"));
+    assert.ok(!checks(load({ contentMs: null, production: false })).includes("warn content"));
+  });
+
   it("passes a quiet, fast page", () => {
     assert.deepEqual(checks(load()), []);
   });
