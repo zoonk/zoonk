@@ -211,15 +211,15 @@ struct TodayPlanChangeSection: View {
 
 /// Today's missions: how many are left and their Brain Power, then each one, opening where it's
 /// done. Once they're all done the card folds to one line; when another goal already earned the
-/// day's Brain Power, it says so in one line. `rowsInQueue`: where the card follows the queue and
-/// every mission only opens one of its blocks, it leaves the rows to the queue, whose marks name
-/// those blocks, so no block is listed twice.
+/// day's Brain Power, it says so in one line. Beside the day each mission keeps its row; under the
+/// queue, when every mission only opens one of its blocks, the card leaves the rows to the queue,
+/// whose marks name those blocks, so no block is listed twice.
 struct TodayMissionsSection: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(\.isPaneSplit) private var isBesideTheDay
 
   let view: TodayView
-  let rowsInQueue: Bool
   let open: (StudyBlock, Bool) -> Void
 
   private var missions: [StudyMission] { view.session.missions }
@@ -272,7 +272,7 @@ struct TodayMissionsSection: View {
         }
         .listRowSeparator(.hidden, edges: .bottom)
 
-        if !(rowsInQueue && onlyOpensBlocks) {
+        if isBesideTheDay || !onlyOpensBlocks {
           ForEach(Array(missions.enumerated()), id: \.offset) { _, mission in
             MissionRow(mission: mission, buddyName: learner.buddyDisplayName) {
               go(mission)

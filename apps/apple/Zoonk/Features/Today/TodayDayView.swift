@@ -24,44 +24,28 @@ struct TodayDayView: View {
     case main
   }
 
-  /// Whether Today has room for main's aside (72rem on the web): the missions, the week, the
-  /// notices and practice in a column beside the day. Measured on Today's own width, so a sidebar,
-  /// split view, a compact window or the iPhone Duo keeps one column.
-  @State private var isWide = false
-
-  /// The width from which the day and the aside both keep a comfortable column.
-  private static let wideWidth = 900.0
-
   var body: some View {
-    Group {
-      if isWide {
-        HStack(alignment: .top, spacing: 0) {
-          List {
-            day
-          }
-
-          List {
-            aside
-            notices
-            TodayPracticeSection(view: view)
-          }
-          .containerRelativeFrame(.horizontal) { width, _ in width * 0.4 }
-        }
-      } else {
-        List {
-          day
-          notices
-          aside
-          TodayPracticeSection(view: view)
-        }
+    // Where there's room, main's aside (72rem on the web) sits beside the day: the missions, the
+    // week, the notices and practice. On the open iPhone Duo the two meet at the fold.
+    PaneSplit(primaryShare: 0.55) {
+      List {
+        day
+      }
+    } secondary: {
+      List {
+        aside
+        notices
+        TodayPracticeSection(view: view)
+      }
+    } single: {
+      List {
+        day
+        notices
+        aside
+        TodayPracticeSection(view: view)
       }
     }
     .listStyle(.insetGrouped)
-    .onGeometryChange(for: Bool.self) {
-      $0.size.width >= Self.wideWidth
-    } action: {
-      isWide = $0
-    }
     .navigationSubtitle(dayLine)
     .task(id: view.session.localDate) {
       await refreshAtDayEnd()
@@ -113,8 +97,7 @@ struct TodayDayView: View {
   @ViewBuilder
   private var aside: some View {
     if !view.session.missions.isEmpty {
-      // Beside the day, each mission keeps its row; under it, the queue marks the blocks.
-      TodayMissionsSection(view: view, rowsInQueue: !isWide, open: open)
+      TodayMissionsSection(view: view, open: open)
     }
 
     TodayWeekSection(view: view)
