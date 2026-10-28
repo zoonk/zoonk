@@ -3,10 +3,6 @@ import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { getPrivateBlobStore } from "@zoonk/utils/private-blob-store";
 
-/**
- * Uploads an image: shared pictures to the public store, which the CDN serves to anyone, and a
- * private course's pictures to the private store, which only its owner reads through the file route.
- */
 export async function uploadImage({
   access = "public",
   addRandomSuffix = true,

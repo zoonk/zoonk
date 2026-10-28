@@ -37,11 +37,7 @@ async function readPublicImage(url: string): Promise<StoredImage> {
   };
 }
 
-/**
- * Reads a stored picture back, for a check that runs after it was shown: a shared picture from the
- * public store by its URL, a private one (a private course's or a learner's) from the private store
- * with its credentials. Throws when it can't be read, so the check's step retries.
- */
+/** Throws on unreadable files so the workflow step retries. */
 export async function readStoredImage({ url }: { url: string }): Promise<StoredImage> {
   const pathname = getPrivateBlobPathname(url);
   return pathname ? readPrivateImage(pathname) : readPublicImage(url);
