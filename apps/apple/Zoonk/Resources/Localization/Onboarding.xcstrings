@@ -1749,7 +1749,7 @@
       }
     },
     "Cancel" : {
-      "comment" : "Stops changing the typed words\nStops fixing an understood fact",
+      "comment" : "Closes the box for pasted material\nStops changing the typed words\nStops fixing an understood fact",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4273,35 +4273,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nível que você quer alcançar"
-          }
-        }
-      }
-    },
-    "Link" : {
-      "comment" : "Title of the sheet to paste a link",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Link"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enlace"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lien"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Link"
           }
         }
       }
@@ -7039,7 +7010,7 @@
       }
     },
     "Study your own material" : {
-      "comment" : "Header over the learner's own material",
+      "comment" : "Title of the way a guest gets an account to add material",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -10669,6 +10640,35 @@
         }
       }
     },
+    "Your material" : {
+      "comment" : "Header over the material attached to a goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Material"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu material"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton contenu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu material"
+          }
+        }
+      }
+    },
     "Your mock exam is waiting" : {
       "comment" : "A placement mock left running",
       "localizations" : {
@@ -11105,7 +11105,7 @@
       }
     },
     "Your text" : {
-      "comment" : "Pasted material without a title\nTitle of the sheet to paste text",
+      "comment" : "Pasted material without a title",
       "localizations" : {
         "de" : {
           "stringUnit" : {

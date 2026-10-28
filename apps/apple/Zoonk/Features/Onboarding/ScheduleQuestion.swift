@@ -286,7 +286,7 @@ struct ScheduleQuestion: View {
           findLine
         }
 
-        if isExam {
+        if isExam, short || studiesEverything(share) {
           Toggle(isOn: $fullCourse) {
             Text(
               "Study everything, even after the exam", tableName: "Onboarding",

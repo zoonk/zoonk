@@ -20,6 +20,8 @@ struct GoalMaterialSections: View {
   @State private var pasting: Pasting?
   @State private var isAdding = false
   @State private var error: LocalizedStringResource?
+  /// A guest or visitor tapped the paperclip: how to get an account shows.
+  @State private var showsSignUp = false
 
   private enum Pasting: Identifiable {
     case text
@@ -80,15 +82,25 @@ struct GoalMaterialSections: View {
             }
           }
         } label: {
-          Label {
-            Text(
-              "Add your material", tableName: "Onboarding",
-              comment: "Opens the ways to add a file, text or a link to a goal")
-          } icon: {
-            Image(systemName: "paperclip")
-          }
+          paperclipLabel
         }
         .disabled(isAdding)
+        .fileImporter(isPresented: $isImporting, allowedContentTypes: Self.readableTypes) {
+          result in
+          if case .success(let file) = result {
+            add { try await attach(file) }
+          }
+        }
+
+        if let pasting {
+          PasteMaterialRow(isLink: pasting == .link, isAdding: isAdding) { value in
+            add {
+              try await onboarding.attach(pasting == .link ? .link(value) : .text(value))
+            }
+          } onCancel: {
+            self.pasting = nil
+          }
+        }
 
         if isAdding {
           HStack(spacing: 8) {
@@ -104,8 +116,14 @@ struct GoalMaterialSections: View {
           Text(error)
             .foregroundStyle(.destructive)
         }
-      } else {
+      } else if showsSignUp {
         VStack(alignment: .leading, spacing: 8) {
+          Text(
+            "Study your own material", tableName: "Onboarding",
+            comment: "Title of the way a guest gets an account to add material"
+          )
+          .font(.headline)
+
           Text(
             "Create a free account to add a PDF, a photo of your notes or any text to your goal.",
             tableName: "Onboarding", comment: "Why a guest can't add material yet"
@@ -120,28 +138,24 @@ struct GoalMaterialSections: View {
               comment: "Opens sign-up to add material")
           }
         }
+      } else {
+        Button {
+          showsSignUp = true
+        } label: {
+          paperclipLabel
+        }
       }
     } header: {
-      Text(
-        "Study your own material", tableName: "Onboarding",
-        comment: "Header over the learner's own material")
+      if !material.isEmpty {
+        Text(
+          "Your material", tableName: "Onboarding",
+          comment: "Header over the material attached to a goal")
+      }
     } footer: {
       if canAttach, material.isEmpty {
         Text(
           "Your plan and lessons will use it.", tableName: "Onboarding",
           comment: "Under the way to add material")
-      }
-    }
-    .fileImporter(isPresented: $isImporting, allowedContentTypes: Self.readableTypes) { result in
-      if case .success(let file) = result {
-        add { try await attach(file) }
-      }
-    }
-    .sheet(item: $pasting) { kind in
-      PasteMaterialSheet(isLink: kind == .link) { value in
-        add {
-          try await onboarding.attach(kind == .link ? .link(value) : .text(value))
-        }
       }
     }
 
@@ -184,6 +198,16 @@ struct GoalMaterialSections: View {
     }
   }
 
+  private var paperclipLabel: some View {
+    Label {
+      Text(
+        "Add your material", tableName: "Onboarding",
+        comment: "Opens the ways to add a file, text or a link to a goal")
+    } icon: {
+      Image(systemName: "paperclip")
+    }
+  }
+
   /// Guests and visitors add material once they have an account.
   private var canAttach: Bool {
     learner.summary.value.map { !$0.identity.isAnonymous } ?? false
@@ -217,6 +241,7 @@ struct GoalMaterialSections: View {
       do {
         let source = try await attach()
         material = material.filter { $0.id != source.id } + [source]
+        pasting = nil
       } catch is CancellationError {
         // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch {
@@ -259,18 +284,19 @@ struct GoalMaterialSections: View {
   }
 }
 
-/// Pasting the syllabus, notes or a chapter, or a link to an article, a class page or a PDF.
-private struct PasteMaterialSheet: View {
+/// Pasting the syllabus, notes or a chapter, or a link to an article, a class page or a PDF, in place under the paperclip.
+private struct PasteMaterialRow: View {
   let isLink: Bool
+  let isAdding: Bool
   let onAdd: (String) -> Void
+  let onCancel: () -> Void
 
-  @Environment(\.dismiss) private var dismiss
   @State private var value = ""
   @FocusState private var isFocused: Bool
 
   var body: some View {
-    NavigationStack {
-      Form {
+    VStack(alignment: .leading, spacing: 12) {
+      Group {
         if isLink {
           TextField(text: $value) {
             Text(
@@ -281,7 +307,6 @@ private struct PasteMaterialSheet: View {
           .textContentType(.URL)
           .textInputAutocapitalization(.never)
           .autocorrectionDisabled()
-          .focused($isFocused)
           .onSubmit(add)
         } else {
           TextField(text: $value, axis: .vertical) {
@@ -289,35 +314,28 @@ private struct PasteMaterialSheet: View {
               "Paste the syllabus, your notes or a chapter", tableName: "Onboarding",
               comment: "Placeholder of the box for pasted material")
           }
-          .lineLimit(6...20)
-          .focused($isFocused)
+          .lineLimit(3...12)
         }
       }
-      .navigationTitle(
-        isLink
-          ? Text("Link", tableName: "Onboarding", comment: "Title of the sheet to paste a link")
-          : Text("Your text", tableName: "Onboarding", comment: "Title of the sheet to paste text")
-      )
-      .navigationBarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .cancellationAction) {
-          Button(role: .cancel) {
-            dismiss()
-          }
-        }
+      .focused($isFocused)
 
-        ToolbarItem(placement: .confirmationAction) {
-          Button(action: add) {
-            isLink
-              ? Text("Add link", tableName: "Onboarding", comment: "Adds the pasted link")
-              : Text("Add text", tableName: "Onboarding", comment: "Adds the pasted text")
-          }
-          .disabled(trimmed.isEmpty)
+      HStack {
+        Button(action: add) {
+          isLink
+            ? Text("Add link", tableName: "Onboarding", comment: "Adds the pasted link")
+            : Text("Add text", tableName: "Onboarding", comment: "Adds the pasted text")
         }
+        .buttonStyle(.borderedProminent)
+        .disabled(trimmed.isEmpty || isAdding)
+
+        Button(role: .cancel, action: onCancel) {
+          Text("Cancel", tableName: "Onboarding", comment: "Closes the box for pasted material")
+        }
+        .buttonStyle(.bordered)
       }
-      .onAppear { isFocused = true }
+      .controlSize(.small)
     }
-    .presentationDetents([.medium, .large])
+    .onAppear { isFocused = true }
   }
 
   private var trimmed: String {
@@ -330,7 +348,6 @@ private struct PasteMaterialSheet: View {
     }
 
     onAdd(trimmed)
-    dismiss()
   }
 }
 
@@ -472,17 +489,24 @@ struct MaterialQuestionsView: View {
   }
 
   /// "Notes.pdf, page 4", "Deck.pptx, slide 2", or just the title.
+  /// Pasted text has no title, so it's named as its chip is.
   private func label(_ citation: MaterialAnswer.Citation) -> String {
+    let title =
+      citation.title.isEmpty
+      ? String(
+        localized: "Your text", table: "Onboarding", comment: "Pasted material without a title")
+      : citation.title
+
     guard let page = citation.page else {
-      return citation.title
+      return title
     }
 
     return citation.unit == "slide"
       ? String(
-        localized: "\(citation.title), slide \(String(page))", table: "Onboarding",
+        localized: "\(title), slide \(String(page))", table: "Onboarding",
         comment: "Where an answer came from: a deck's slide")
       : String(
-        localized: "\(citation.title), page \(String(page))", table: "Onboarding",
+        localized: "\(title), page \(String(page))", table: "Onboarding",
         comment: "Where an answer came from: a document's page")
   }
 
