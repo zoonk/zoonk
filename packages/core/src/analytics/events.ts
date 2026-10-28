@@ -3,10 +3,10 @@ import { type MissionKind } from "../sessions/missions/catalog";
 import { type AnalyticsGoalKind, type SharedEventProperties } from "./shared-properties";
 
 /** Vercel Web Analytics rejects nested property values. */
-
 type EventPropertyValue = boolean | number | string | null | undefined;
 type NoProperties = Record<string, never>;
 
+/** Event properties must not reuse shared property names: they would overwrite them. */
 type EventCatalog<
   Catalog extends Record<
     string,
