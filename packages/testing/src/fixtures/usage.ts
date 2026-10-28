@@ -31,10 +31,9 @@ export async function resetGuestSpend() {
 }
 
 /**
- * Clears live calls a past run left open: each E2E run has its own workflow store, so their
- * deadline runs stopped with that run's server, and an open free call keeps counting against the
- * day's shared free bucket by the clock (`claimFreeCallSpend` in core) until later runs' free calls
- * are refused.
+ * Clears live calls a past run left open: E2E servers never resume a past server's runs, so their
+ * deadline runs never end them, and an open free call keeps counting against the day's shared free
+ * bucket by the clock (`claimFreeCallSpend` in core) until later runs' free calls are refused.
  */
 export async function clearLeftOpenLiveCalls() {
   await prisma.liveCallConnection.deleteMany({ where: { state: { not: "ended" } } });

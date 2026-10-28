@@ -17,9 +17,10 @@ function isInWorkflowStep(): boolean {
 /**
  * @public The API's E2E alias replaces the gateway's test kill switch with this one. E2E has no
  * model, and the runs a test's request starts don't need one: a model call inside a workflow step
- * never answers, so its run stays in progress, as while a model writes, instead of failing and
- * retrying in the server log. A call anywhere else (a request, `after()`) still fails at once, as
- * an outage would, so tests can rely on that and an unexpected call shows.
+ * never answers, so its run stays in progress, as it does while a model writes, instead of failing
+ * and retrying in the server log. A call anywhere else (a request, `after()`) still fails at once,
+ * as an outage would, so tests can rely on that and an unexpected one shows. A request that waits
+ * for a run's result (a call's completion after the learner spoke) waits with it.
  */
 export const blockTestGatewayFetch: typeof failGatewayCall = async (...args) =>
   isInWorkflowStep() ? NO_ANSWER : failGatewayCall(...args);

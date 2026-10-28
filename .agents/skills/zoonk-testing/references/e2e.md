@@ -8,7 +8,7 @@ Use the owning app's existing Playwright fixtures and `apps/<app>/e2e/` tests. E
 - Use Playwright's auto-waiting and assertions for the actual state: a saved indicator, validation message, enabled action, changed URL, or persisted record. Arbitrary sleeps and `networkidle` do not prove readiness.
 - Visibility does not prove an element is stable or receives pointer events. Investigate overlays, animations, stale elements, and product behavior before considering forced interactions. Do not use `force: true` as the standard fix for a flaky click.
 - `page.route()` intercepts browser requests, not downstream calls made on the server. Exercise real validation for server-action error cases or control the narrow external boundary through an existing test harness.
-- E2E has no model. A model call inside a workflow run never answers, so the run stays in progress as while a model writes; a call a request makes fails at once, as an outage would. Write what a run would have written with a fixture instead of waiting for the run, and rely on the outage only for a request's own call.
+- E2E has no model. A model call inside a workflow run never answers, so the run stays in progress as it does while a model writes, and a request that waits for its result waits with it (a call's completion after the learner spoke); a call a request makes itself fails at once, as an outage would. Write what a run would have written with a fixture instead of waiting for the run, and rely on the outage only for a request's own call.
 
 ```typescript
 await page.getByRole("button", { name: "Save" }).click();

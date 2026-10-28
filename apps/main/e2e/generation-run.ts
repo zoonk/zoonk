@@ -28,3 +28,34 @@ export async function followRun({
     route.fulfill({ json: { id: runId, status: "running" }, status: 200 }),
   );
 }
+
+const ANY_RUN_EVENTS = "**/v1/generations/*/events**";
+const ANY_RUN_STATUS = /\/v1\/generations\/[^/]+$/u;
+
+/**
+ * Stands in for the API saying every run the page follows stopped: E2E runs wait on a model that
+ * never answers, and the server's own calls to the API are out of `page.route`'s reach. Returns
+ * what lifts it.
+ */
+export async function stopRuns({ entityId, page }: { entityId?: string; page: Page }) {
+  const stopped: StreamEvent = {
+    entityId,
+    reason: "aiGenerationFailed",
+    status: "error",
+    step: "workflowError",
+  };
+
+  await page.route(ANY_RUN_EVENTS, (route) =>
+    route.fulfill({
+      body: `data: ${JSON.stringify(stopped)}\n\n`,
+      contentType: "text/event-stream",
+      status: 200,
+    }),
+  );
+
+  await page.route(ANY_RUN_STATUS, (route) =>
+    route.fulfill({ json: { status: "failed" }, status: 200 }),
+  );
+
+  return () => Promise.all([page.unroute(ANY_RUN_EVENTS), page.unroute(ANY_RUN_STATUS)]);
+}

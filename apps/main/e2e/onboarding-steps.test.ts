@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { expect, test } from "./fixtures";
-import { followRun } from "./generation-run";
+import { followRun, stopRuns } from "./generation-run";
 import { ANSWERED, mapGoalSkills } from "./onboarding-fixtures";
 
 /**
@@ -188,19 +188,8 @@ test.describe("When a wait can't go on", () => {
     const nextQuestion = page.getByRole("heading", { name: "Is there a date you're aiming for?" });
     await expect(nextQuestion).toBeVisible();
 
-    // The API accepts the learner's retry. Stand in for the new run's failure at the browser's
-    // stream boundary: server-side API calls are reachable and page.route cannot intercept them.
-    await page.route("**/v1/generations/*/events**", (route) =>
-      route.fulfill({
-        body: `data: ${JSON.stringify({ entityId: goal.id, reason: "aiGenerationFailed", status: "error", step: "workflowError" })}\n\n`,
-        contentType: "text/event-stream",
-        status: 200,
-      }),
-    );
-
-    await page.route(/\/v1\/generations\/[^/]+$/u, (route) =>
-      route.fulfill({ json: { status: "failed" }, status: 200 }),
-    );
+    // The API accepts the learner's retry, and the new run stops.
+    await stopRuns({ entityId: goal.id, page });
 
     await notice.getByRole("button", { name: "Try again" }).click();
 
