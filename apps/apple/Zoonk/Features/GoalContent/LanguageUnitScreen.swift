@@ -10,7 +10,8 @@ struct LanguageUnit: Decodable, Equatable, Sendable {
       let role: String
     }
 
-    let character: Character
+    /// Nil while the unit has no character of its own yet.
+    let character: Character?
     let defaultMinutes: Int
     let minutes: [Int]
     let paused: Bool
@@ -402,9 +403,11 @@ private struct UnitPracticeCallSection: View {
         "Practice a conversation", tableName: "Plan", comment: "Section of the unit's practice call"
       )
     } footer: {
-      Text(
-        "with \(conversation.character.name) · \(conversation.character.role)", tableName: "Plan",
-        comment: "Who the practice call is with: the character's name and role")
+      if let character = conversation.character {
+        Text(
+          "with \(character.name) · \(character.role)", tableName: "Plan",
+          comment: "Who the practice call is with: the character's name and role")
+      }
     }
   }
 
