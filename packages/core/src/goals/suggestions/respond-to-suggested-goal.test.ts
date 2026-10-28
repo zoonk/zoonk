@@ -9,7 +9,6 @@ import { respondToSuggestedGoal } from "./respond-to-suggested-goal";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-/** A learner with two courses from before goals existed, the most recent one first. */
 async function setup() {
   const user = await userFixture();
   const now = Date.now();
@@ -80,8 +79,6 @@ describe(respondToSuggestedGoal, () => {
     await expect(getCurrentSuggestedGoal()).resolves.toBeNull();
   });
 
-  // Marcos accepted "Continue Spanish?" and got onboarding for the typed words "Spanish", which
-  // could plan him a different course than the one he was taking.
   it("points to the course the learner was taking while anyone can still start it", async () => {
     const user = await userFixture();
 
@@ -116,7 +113,6 @@ describe(respondToSuggestedGoal, () => {
       suggestedGoal: { courseId: spanish.id, id: current.id, status: "accepted", title: "Spanish" },
     });
 
-    // A course nobody can start anymore opens onboarding with its title instead.
     await expect(getCurrentSuggestedGoal()).resolves.toMatchObject({
       courseId: null,
       id: unpublished.id,

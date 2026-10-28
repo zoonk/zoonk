@@ -14,7 +14,6 @@ export type GoalResult =
   | { goal: GoalView; status: "ready" }
   | { status: "notFound" | "unauthorized" };
 
-/** One of the learner's goals with a short summary of its plan. */
 export async function getGoal(goalId: string): Promise<GoalResult> {
   "use cache: private";
 
@@ -32,7 +31,6 @@ export async function getGoal(goalId: string): Promise<GoalResult> {
 
   const profile = await readLearningProfile(owned.userId);
   const fallbackGoal = profile?.activeGoalId ? null : await readActiveGoal(owned.userId);
-  /** This view only compares the stored selection to its already-owned goal. */
   const activeGoalId = profile?.activeGoalId ?? fallbackGoal?.id ?? null;
   const [goal] = await loadGoalViews({ activeGoalId, goals: [owned.goal] });
 

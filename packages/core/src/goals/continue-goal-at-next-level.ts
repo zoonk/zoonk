@@ -16,10 +16,6 @@ export type NextLevelResult =
   | { goal: GoalView; status: "created" }
   | { status: "noNextLevel" | "notFinished" | "notFound" | "refused" | "unauthorized" };
 
-/**
- * What the learner knows after finishing a level, in onboarding's own-level answer: the overview
- * gives the basics, and each level after it the one before the next.
- */
 const OWN_LEVEL_BEFORE: Record<CourseLevel, string> = {
   advanced: "advanced",
   beginner: "basic",
@@ -27,7 +23,6 @@ const OWN_LEVEL_BEFORE: Record<CourseLevel, string> = {
   overview: "none",
 };
 
-/** Onboarding's bookkeeping stays with the finished goal: the next one has nothing to ask. */
 const ONBOARDING_FIELDS = new Set(["answered", "onboardingId"]);
 
 function buildNextDetails({ goal, level }: { goal: Goal; level: CourseLevel }) {
@@ -39,12 +34,10 @@ function buildNextDetails({ goal, level }: { goal: Goal; level: CourseLevel }) {
     continuesFromGoalId: goal.id,
     courseLevel: level,
     level: OWN_LEVEL_BEFORE[level],
-    // An overview is the big picture; going on to a level means going in depth.
     purpose: details.purpose === "overview" ? "deep" : (details.purpose ?? "deep"),
   };
 }
 
-/** The finished plan's study days carry over; every day when it had no weekly shape. */
 async function loadStudyDays(goalId: string): Promise<number[] | undefined> {
   const plan = await prisma.plan.findUnique({ select: { settings: true }, where: { goalId } });
   const minutes = parsePlanSettings(plan?.settings).weekdayMinutes;
@@ -52,14 +45,6 @@ async function loadStudyDays(goalId: string): Promise<number[] | undefined> {
   return minutes?.flatMap((dayMinutes, weekday) => (dayMinutes > 0 ? [weekday] : []));
 }
 
-/**
- * "Continue at Beginner" once a plan is done: the finished goal is completed and a new goal takes
- * its place for the next level of the same course, with the learner's time, study days and what
- * onboarding understood, so its curriculum and plan are written without asking again. It takes the
- * finished goal's place, so it isn't another goal against the plan's limits, and a goal goes on to
- * its next level once, so continuing again can't make unlimited goals. The finished goal comes
- * back if the new one can't be created.
- */
 export async function continueGoalAtNextLevel(goalId: string): Promise<NextLevelResult> {
   const owned = await findOwnedGoal(goalId);
 
@@ -106,7 +91,6 @@ export async function continueGoalAtNextLevel(goalId: string): Promise<NextLevel
     loadStudyDays(goalId),
   ]);
 
-  // Only learn goals climb a course's levels; exams and languages have their own ladders.
   if (goal.kind !== "learn" || !course?.nextLevel) {
     return { status: "noNextLevel" };
   }

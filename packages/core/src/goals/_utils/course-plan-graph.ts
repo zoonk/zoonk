@@ -6,9 +6,7 @@ import { getChapterAreaFromEvidence } from "./chapter-area-evidence";
 const LEVEL_ORDER = Object.values(CourseLevel);
 
 /**
- * A course plan's phases are its level bands, named in the course's language: phase names are
- * stored with the plan like the ones a skill graph writes, so they're content, not interface copy
- * (the same words the course page's levels use).
+ * Stored with the plan like the names a skill graph writes, so they're content, not interface copy.
  */
 const LEVEL_PHASE_NAMES: Readonly<Record<SupportedLocale, Record<CourseLevel, string>>> = {
   de: {
@@ -45,17 +43,13 @@ const LEVEL_PHASE_NAMES: Readonly<Record<SupportedLocale, Record<CourseLevel, st
 
 type OutlineSkill = { id: string; name: string };
 
-/** One chapter of a course's outline, as the plan reads it. */
 export type CourseOutlineChapter = {
-  /** The area's name captured when this course chapter was published, if known. */
   area?: string | null;
   chapterId: string;
   level: CourseLevel;
-  /** The chapter's plannable lessons in order (a challenge included), each with its skills. */
   lessons: OutlineSkill[][];
   lessonIds: string[];
   position: number;
-  /** The skill-graph skills a course outline tagged the chapter with. */
   tags: OutlineSkill[];
 };
 
@@ -63,7 +57,6 @@ function compareChapters(a: CourseOutlineChapter, b: CourseOutlineChapter): numb
   return LEVEL_ORDER.indexOf(a.level) - LEVEL_ORDER.indexOf(b.level) || a.position - b.position;
 }
 
-/** The chapters the plan covers: all of them, or from the chapter the learner started at. */
 function sliceFromChapter({
   chapters,
   startChapterId,
@@ -78,7 +71,6 @@ function sliceFromChapter({
   return start === -1 ? [] : chapters.slice(start);
 }
 
-/** Tags only one chapter of the course carries: planning one takes just that chapter's lessons. */
 function findOwnTags(chapters: readonly CourseOutlineChapter[]): Set<string> {
   const counts = Map.groupBy(
     chapters.flatMap((chapter) => [...new Set(chapter.tags.map((tag) => tag.id))]),
@@ -88,7 +80,6 @@ function findOwnTags(chapters: readonly CourseOutlineChapter[]): Set<string> {
   return new Set([...counts].flatMap(([id, found]) => (found.length === 1 ? [id] : [])));
 }
 
-/** How many of the plan's lessons teach each skill, which sizes the skill in the graph. */
 function countSkillLessons(chapters: readonly CourseOutlineChapter[]): Map<string, number> {
   const taught = chapters.flatMap((chapter) =>
     chapter.lessons.flatMap((skills) => [...new Set(skills.map((skill) => skill.id))]),
@@ -97,13 +88,6 @@ function countSkillLessons(chapters: readonly CourseOutlineChapter[]): Map<strin
   return new Map([...Map.groupBy(taught, (id) => id)].map(([id, found]) => [id, found.length]));
 }
 
-/**
- * A chapter's skills in the order the planner should meet them: each lesson's own skills, so its
- * lessons come in chapter order, then a tag no other chapter carries, which brings the lesson
- * with no skill of its own (the chapter's challenge) in at the chapter's end. A tag several
- * chapters share would pull their lessons together, so those chapters are planned lesson by
- * lesson.
- */
 function toChapterSkills({
   chapter,
   lessonCounts,
@@ -124,7 +108,6 @@ function toChapterSkills({
   return [...lessonSkills, ...tags];
 }
 
-/** The one curriculum order and level mapping used by the graph and its written lessons. */
 export function getCoursePlanOutline({
   chapters,
   startChapterId,
@@ -148,14 +131,6 @@ export function getCoursePlanOutline({
   return { chapters: planned, lessonCounts, levels, ownTags };
 }
 
-/**
- * The plan graph of a goal started from a Library course: the course's outline in its own order,
- * so the plan teaches the course the way its page shows it. Each outlined level band is a phase
- * (a checkpoint closes it and placement looks for a start in each); skills come chapter by
- * chapter, a skill taught in several chapters where it first appears, sized by its lessons in the
- * plan. Skills take their lessons only from this course, and the course names their area. A
- * chapter start leaves out the chapters before it: the learner chose where to begin.
- */
 export function toCoursePlanGraph({
   chapters,
   course,

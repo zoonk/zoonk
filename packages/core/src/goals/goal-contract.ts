@@ -8,7 +8,6 @@ import { DAYS_PER_WEEK } from "../plans/planner/plan-state";
 const MAX_TITLE_LENGTH = 120;
 const MAX_PROMPT_LENGTH = 2000;
 const MAX_GOALS_AT_ONCE = 3;
-/** Files or notes attached to a typed goal; more is better added from the goal later. */
 const MAX_GOAL_SOURCES = 5;
 const MAX_LANGUAGE_LENGTH = 10;
 const STUDY_TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/u;
@@ -83,10 +82,6 @@ export const goalDraftSchema = z
   })
   .meta({ id: "GoalDraft" });
 
-/**
- * One or more goals from onboarding. "ENEM and English" becomes two goals that share the daily
- * minutes, the first as the main one, unless a goal sets its own minutes.
- */
 export const goalCreateInputSchema = z
   .object({
     dailyMinutes: dailyMinutesSchema.meta({
@@ -111,7 +106,6 @@ export const goalCreateInputSchema = z
 export type GoalCreateInput = z.infer<typeof goalCreateInputSchema>;
 export type GoalDraft = z.infer<typeof goalDraftSchema>;
 
-/** Every field is optional, so each screen sends only what changed. */
 export const goalUpdateInputSchema = z
   .object({
     dailyMinutes: dailyMinutesSchema.optional(),
@@ -147,7 +141,6 @@ export const goalUpdateInputSchema = z
 
 export type GoalUpdateInput = z.infer<typeof goalUpdateInputSchema>;
 
-/** A goal as every screen and the API show it. */
 export type GoalView = {
   createdAt: string;
   dailyMinutes: number;
@@ -162,7 +155,6 @@ export type GoalView = {
     ready: boolean;
     currentPhase: number | null;
     endDate: string | null;
-    /** Lessons studied, as the Plan's phases count them (`countLessonProgress`). */
     lessonsDone: number;
     /** Every lesson the plan teaches but those tested out. */
     lessonsTotal: number;

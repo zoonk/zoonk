@@ -1,17 +1,7 @@
 import { isJsonObject } from "@zoonk/utils/json";
 
-/**
- * A goal started from a Library course's page (or one of its chapters), in the goal's details:
- * the chapter it starts at, and the time a day the course's page had picked (`dailyMinutes`),
- * which onboarding's time question opens on; absent when the start came without one.
- */
 export type CourseStart = { chapterId: string | null; dailyMinutes?: number };
 
-/**
- * The course start a goal records: onboarding asks nothing the course already answers, and a
- * chapter start also skips the level and placement, since the learner chose where to begin.
- * Null for goals typed or started any other way.
- */
 export function readCourseStart(details: Record<string, unknown>): CourseStart | null {
   const start = details.courseStart;
 

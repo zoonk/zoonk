@@ -1,6 +1,5 @@
 import { type CourseOutlineChapter } from "./course-plan-graph";
 
-/** Missing or mixed tags cannot become consensus; published areas remain authoritative. */
 export function getChapterAreaFromEvidence({
   chapter,
   skillAreas,

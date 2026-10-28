@@ -16,10 +16,6 @@ import { findActiveGoalId, loadGoalViews } from "./_utils/goal-view";
 import { splitDailyBudget } from "./daily-budget";
 import { type GoalCreateInput, type GoalDraft, type GoalView } from "./goal-contract";
 
-/**
- * Why one goal wasn't created: the plan's goal limits, too many requests at once, or a guest asked
- * to create an account.
- */
 export type GoalRefusal = { decision: RefusedUsage; index: number };
 
 export type GoalCreateResult =
@@ -28,7 +24,6 @@ export type GoalCreateResult =
   | { status: "invalidReference" }
   | { status: "unauthorized" };
 
-/** Exams and courses a goal points at must exist, and a private one must be the learner's. */
 async function hasValidReferences({ goals, userId }: { goals: GoalDraft[]; userId: string }) {
   const blueprintIds = [...new Set(goals.flatMap((goal) => goal.examBlueprintId ?? []))];
   const courseIds = [...new Set(goals.flatMap((goal) => goal.primaryCourseId ?? []))];
@@ -45,10 +40,6 @@ async function hasValidReferences({ goals, userId }: { goals: GoalDraft[]; userI
   return blueprints === blueprintIds.length && courses === courseIds.length;
 }
 
-/**
- * The language each exam the exam goals point at tests, by blueprint, as its notice says ("en" for
- * IELTS or PTE Academic). Exams whose notice names none aren't in it.
- */
 async function loadTestedLanguages(goals: GoalDraft[]): Promise<Map<string, string>> {
   const ids = [
     ...new Set(goals.flatMap((goal) => (goal.kind === "exam" && goal.examBlueprintId) || [])),
@@ -71,7 +62,6 @@ async function loadTestedLanguages(goals: GoalDraft[]): Promise<Map<string, stri
   );
 }
 
-/** Goals without their own minutes share the day's time; the first of them is the main one. */
 function assignDailyMinutes(input: GoalCreateInput): number[] {
   const shared = input.goals.filter((goal) => goal.dailyMinutes === undefined).length;
   const split = splitDailyBudget({ budget: input.dailyMinutes, count: shared });
@@ -85,10 +75,6 @@ function assignDailyMinutes(input: GoalCreateInput): number[] {
   });
 }
 
-/**
- * A quick question doesn't take over the tabs: the goal the learner follows stays, and the
- * explanation only becomes the active goal when there's none.
- */
 async function chooseActiveGoalId({
   input,
   mainId,
@@ -105,15 +91,10 @@ async function chooseActiveGoalId({
   return (await findActiveGoalId(userId)) ?? mainId;
 }
 
-/** A goal that replaced it only counts when the replaced goal is the learner's own. */
 async function isOwnGoal({ goalId, userId }: { goalId?: string; userId: string }) {
   return goalId ? (await prisma.goal.count({ where: { id: goalId, userId } })) > 0 : false;
 }
 
-/**
- * Refuses a new goal's date outside the supported range (see `assertTargetDates`), counted from the
- * learner's own today, before anything is claimed or created.
- */
 function assertNewGoalDates(input: GoalCreateInput): void {
   const timeZone = getAnswerTimeZone({ goal: null, timeZone: input.timeZone });
 
@@ -128,13 +109,8 @@ function assertNewGoalDates(input: GoalCreateInput): void {
 }
 
 /**
- * Creates the learner's goals from onboarding with an empty plan the planner fills. Each goal is
- * claimed against the learner's plan first (free learners follow one active goal), and the ones
- * allowed are created even when a later one isn't. The first new goal becomes the one the tabs
- * show: it's the main goal, whose session comes first. A goal that replaces one of the learner's
- * (`replacesGoalId`: a language goal moving to its exam, a finished level going on to the next)
- * isn't another goal, so it claims nothing; its callers let a goal be replaced only once, so a
- * replacement can't repeat into unlimited new goals.
+ * A replacement (`replacesGoalId`) claims no slot, so callers must let a goal be replaced only
+ * once.
  */
 export async function createGoals(
   input: GoalCreateInput,
@@ -149,7 +125,6 @@ export async function createGoals(
   const userId = session.user.id;
   const replacing = await isOwnGoal({ goalId: replacesGoalId, userId });
 
-  // Only an owned replacement carries an accepted date; every other request creates a new goal.
   if (!replacing) {
     assertNewGoalDates(input);
   }
@@ -171,7 +146,6 @@ export async function createGoals(
       const decision = replacing
         ? ({ status: "allowed" } as const)
         : await claimUsage({
-            // An explanation always asks a model: to classify and find the question, if not write it.
             generated: draft.kind === "explain",
             kind: draft.kind === "explain" ? "explanation" : "goal",
             targetId: id,

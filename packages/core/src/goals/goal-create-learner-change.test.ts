@@ -131,7 +131,7 @@ describe("new goal plan marks", () => {
   it("a real creation constraint failure rolls back the early marker", async () => {
     const day = await setup();
     const before = await versions(day);
-    // Reusing this test-owned id produces the actual uniqueness failure, not a persistence mock.
+
     await expect(
       createGoal({
         dailyMinutes: 20,

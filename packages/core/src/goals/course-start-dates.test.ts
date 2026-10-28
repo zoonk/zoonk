@@ -18,13 +18,8 @@ import { startCourseGoal } from "./start-course-goal";
 const NOW = new Date("2020-09-28T12:00:00Z");
 const EXAM_DATE = "2020-10-11";
 
-/** An undated plan holds the whole course: the beginner chapter's 12 lessons and one per later band. */
 const COURSE_LESSONS = 14;
 
-/**
- * A course outlined in every band of its path to mastery, so a whole-course start plans from it:
- * its beginner chapter's lessons, and a chapter with a lesson in each later band.
- */
 async function courseLibrary() {
   const [course, library, user] = await Promise.all([
     courseFixture({ isPublished: true, title: "Robotics", visibility: "public" }),
@@ -81,8 +76,6 @@ async function examCourse(
     data: {
       examBlueprintId: blueprint.id,
       generatedAt: NOW,
-      // A skill of the exam no chapter teaches yet: the course's own outline isn't the plan, so
-      // the goal's first run writes it.
       graph: untaught
         ? {
             ...fixture.library.graph,
@@ -109,7 +102,6 @@ async function examCourse(
   return { ...fixture, blueprint };
 }
 
-/** The exam's stored graph, as the goal's first run plans a deferred start from it. */
 async function examCourseGraph(examBlueprintId: string) {
   const stored = await prisma.examSkillGraph.findUnique({ where: { examBlueprintId } });
   return stored ? parsePlanGraph(stored.graph) : null;
@@ -231,7 +223,6 @@ describe("course-start deadlines", () => {
     expect(saved.settings.noticeDate).toBe(EXAM_DATE);
     await expect(readSteps(goalId)).resolves.toContain("targetDate");
 
-    // The date question leads with the exam's own day, the one the course's page counts down to.
     await expect(getOnboarding({ goalId })).resolves.toMatchObject({
       onboarding: { examDays: { days: [EXAM_DATE], estimated: false } },
     });
@@ -252,7 +243,6 @@ describe("course-start deadlines", () => {
     const { blueprint, course } = await examCourse({}, { deferred: true });
     const result = await startCourseGoal({ courseId: course.id, input: { level: "none" } });
 
-    // Before the goal's first run writes its plan, the goal already counts down to the exam.
     expect(result).toMatchObject({
       goal: { examBlueprintId: blueprint.id, kind: "exam", targetDate: EXAM_DATE },
       status: "created",
@@ -270,7 +260,6 @@ describe("course-start deadlines", () => {
 
     await expect(readSteps(goalId)).resolves.toContain("targetDate");
 
-    // The notice's day, not the learner's: a revised notice read before they saw the plan moves it.
     await prisma.examBlueprint.update({
       data: { edition: edition("2020-10-18") },
       where: { id: blueprint.id },
@@ -422,7 +411,6 @@ describe("course-start deadlines", () => {
   });
 
   it("asks for a date when the exam's next day is past what a plan reaches", async () => {
-    // Ten years of plan from NOW reach 2030-09-26: a later notice day can't be the plan's date.
     const far = "2030-10-13";
 
     const { course } = await examCourse({

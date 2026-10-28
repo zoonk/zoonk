@@ -42,10 +42,6 @@ async function setup({ plus = false } = {}) {
   return { goal, plan, user };
 }
 
-/**
- * Usage claims take the user row, while creation takes plans first. This real plan lock lets both
- * claims finish before either creation proceeds, without replacing any persistence behavior.
- */
 async function holdPlan(planId: string) {
   const ready = Promise.withResolvers<TransactionClient>();
   const release = Promise.withResolvers<null>();
@@ -128,7 +124,6 @@ describe("onboarding recounts active goals under the creation lock", () => {
       prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: day.user.id } }),
     ).resolves.toMatchObject({ activeGoalId: created[0]?.id });
 
-    // Two claims, one creation and one profile switch; the refused creator's marker rolls back.
     await expect(versions(day)).resolves.toStrictEqual({ inputVersion: before.inputVersion + 2 });
   });
 
@@ -141,7 +136,6 @@ describe("onboarding recounts active goals under the creation lock", () => {
 
     try {
       await waitForClaims(day.user.id, 1);
-      // D owns resumeGoal; this controlled writer exercises its canonical plan→user lock seam.
       await markLearnerChanged(holding.tx, { planInputs: true, userId: day.user.id });
 
       await expect(

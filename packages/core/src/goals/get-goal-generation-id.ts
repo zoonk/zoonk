@@ -7,11 +7,7 @@ export type GoalGenerationIdResult =
   | { generationId: string | null; status: "ready" }
   | { status: "notFound" | "unauthorized" };
 
-/**
- * The run writing the signed-in learner's goal's curriculum (or quick explanation), for a wait that
- * opened without it: one column of their own goal, never the goal's whole view. `generationId` is
- * null until a run is saved on the goal. Uncached: a wait asks for it again until it's there.
- */
+/** Uncached: a wait polls it until a run is saved on the goal. */
 export async function getGoalGenerationId({
   goalId,
 }: {

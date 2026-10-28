@@ -35,7 +35,7 @@ export type GoalUpdateResult =
   | { limit: AllowanceLimit; status: "limitReached" }
   | { status: "notFound" | "unauthorized" };
 
-/** Plain notes for logs and admin; the apps say these changes from their operations. */
+/** For logs and admin only; the apps word these changes from their operations. */
 const SETTINGS_NOTE = "Changed by the learner in the goal's settings.";
 const RESUMED_NOTE = "The goal started again after a pause.";
 
@@ -103,10 +103,6 @@ async function saveMetadataInTransaction(
   };
 }
 
-/**
- * A goal back from a pause keeps its plan, or starts it again from today when the pause left
- * lessons behind (see `computeResumedPlan`): the paused days aren't missed days.
- */
 async function resumePlan(
   context: PlanContext,
   extraWrites: (tx: TransactionClient) => Promise<unknown>,
@@ -146,7 +142,6 @@ async function updatePlan({ goal, input }: { goal: Goal; input: GoalUpdateInput 
       writes.metadata = await saveMetadataInTransaction(tx, { goal, input, userId: goal.userId });
     };
 
-    // Checked against the plan's own today and date, before anything is planned or saved.
     if (context) {
       assertTargetDates({
         latestOnly: true,
@@ -194,11 +189,6 @@ async function updatePlan({ goal, input }: { goal: Goal; input: GoalUpdateInput 
   });
 }
 
-/**
- * Updates a goal from its settings or the goal switcher: title and details, the learner's time,
- * study days and date (which re-plan from today, with an undo), and pausing, resuming, archiving
- * or completing it. Resuming counts against the learner's active goals.
- */
 export async function updateGoal({
   goalId,
   input,

@@ -2,10 +2,6 @@ import "server-only";
 import { type Course, prisma } from "@zoonk/db";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 
-/**
- * A public exam course's own question bank identifies its blueprint when the exam graph opens
- * with another subject's course. Multiple exams using the same shared skills are ambiguous.
- */
 async function findQuestionBankExam(course: Pick<Course, "format" | "id" | "language">) {
   if (course.format !== "exam") {
     return null;
@@ -51,7 +47,7 @@ async function findQuestionBankExam(course: Pick<Course, "format" | "id" | "lang
     : null;
 }
 
-/** A course's stored public exam, linked by its curriculum or question bank, never by its title. */
+/** Linked by its curriculum or question bank, never by its title. */
 export async function loadCourseExam(courseId: string) {
   const stored = await prisma.examSkillGraph.findFirst({
     include: { examBlueprint: true },
@@ -72,7 +68,6 @@ export async function loadCourseExam(courseId: string) {
     return null;
   }
 
-  // The umbrella's primary link and each named subject's graph link express the same curriculum.
   const named = await prisma.examSkillGraph.findMany({
     include: { examBlueprint: true },
     take: 2,

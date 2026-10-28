@@ -14,13 +14,9 @@ import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { loadCatchUpItems } from "../sessions/_utils/catch-up";
 import { updateGoal } from "./update-goal";
 
-/**
- * A Monday in 2020, before the learning events other tests write: estimates read everyone's recent
- * pace, and this keeps it out of the dates these tests expect.
- */
+/** Before other tests' learning events, so their pace never changes these plans. */
 const MONDAY = new Date("2020-09-28T12:00:00Z");
 
-/** The signed-in learner's shown goal, with a plan row the planner hasn't filled. */
 async function signedInGoal() {
   const user = await userFixture();
 
@@ -36,7 +32,6 @@ async function signedInGoal() {
   return { goal, plan, user };
 }
 
-/** The same goal with the planner's plan, for updates that re-plan it. */
 async function setup() {
   const [signedIn, library] = await Promise.all([
     signedInGoal(),
@@ -220,9 +215,6 @@ describe(updateGoal, () => {
     expect(first.scheduledFor?.toISOString().slice(0, 10)).toBe("2020-10-06");
   });
 
-  // Marcos paused by mistake and resumed a minute later: planned again from today, his second
-  // phase lost three lessons and five days without a word. A pause that left nothing behind keeps
-  // the plan he saw.
   it("keeps the plan as the learner saw it when the pause left nothing behind", async () => {
     const { goal, plan, user } = await keptEndPlanFixture();
     await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
@@ -243,8 +235,6 @@ describe(updateGoal, () => {
     });
   });
 
-  // Marcos came back after four paused days: the plan put their lessons first, then his Plan said
-  // "Behind: do first the 2 lessons left behind". Paused days aren't missed days.
   it("puts the paused days' lessons first without calling the learner behind", async () => {
     const { goal, plan, user } = await keptEndPlanFixture();
     await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });

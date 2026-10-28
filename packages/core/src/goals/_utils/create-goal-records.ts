@@ -9,7 +9,6 @@ import { DAYS_PER_WEEK } from "../../plans/planner/plan-state";
 import { type GoalCreateInput, type GoalDraft } from "../goal-contract";
 import { findActiveGoalLimit } from "./goal-status";
 
-/** Study days become a weekly shape with rest days at zero; every day needs no shape. */
 function getWeekdayMinutes({
   dailyMinutes,
   studyDays,
@@ -27,10 +26,8 @@ function getWeekdayMinutes({
 }
 
 /**
- * Creates one goal and its empty plan. An exam goal learns the language its notice says the exam
- * tests (`testedLanguage`), else the one onboarding read, else the one a certificate's name gives.
- * Recounts active goals after taking the same plan→user lock as resume: a usage claim that passed
- * earlier cannot promise the slot is still free. Explanations and owned replacements take no slot.
+ * Recounts active goals under the plan→user lock: a usage claim that passed earlier can't promise
+ * the slot is still free.
  */
 export async function createGoal({
   dailyMinutes,
@@ -93,7 +90,6 @@ export async function createGoal({
   });
 }
 
-/** The goal creator owns this profile transition; it does not delegate acting identity to an app. */
 export async function selectCreatedGoal({
   activeGoalId,
   userId,

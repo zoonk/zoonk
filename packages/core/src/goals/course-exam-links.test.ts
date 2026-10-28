@@ -26,7 +26,6 @@ describe("explicit course exam links", () => {
     await itemFixture({ examBlueprintId: other.id, skillId: fixture.skills[0]!.id });
     await itemFixture({ examBlueprintId: fixture.blueprint.id, skillId: fixture.skills[0]!.id });
 
-    // The umbrella is deliberately unnamed by the graph, like the existing Portuguese ENEM.
     const subject = await courseFixture({ isPublished: true, visibility: "public" });
 
     await prisma.examSkillGraph.update({

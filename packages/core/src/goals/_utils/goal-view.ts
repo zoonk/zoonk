@@ -14,7 +14,6 @@ import {
 
 type PlanRow = { goalId: string; id: string; phases: unknown; settings: unknown };
 
-/** The weekdays with study time, from the plan's weekly shape; every day without one. */
 function getStudyDays({ dailyMinutes, settings }: { dailyMinutes: number; settings: unknown }) {
   const { weekdayMinutes } = parsePlanSettings(settings);
 
@@ -23,10 +22,6 @@ function getStudyDays({ dailyMinutes, settings }: { dailyMinutes: number; settin
   );
 }
 
-/**
- * Whether each learner's plans require their phase challenges, checked once per learner: a free
- * language plan shows the Plus call, but progress never depends on its locked challenge.
- */
 async function loadChallengeRequirements(facts: readonly PlanPhaseFacts[]) {
   const languageOwners = [
     ...new Set(facts.filter((plan) => plan.goalKind === "language").map((plan) => plan.userId)),
@@ -42,11 +37,6 @@ async function loadChallengeRequirements(facts: readonly PlanPhaseFacts[]) {
   return new Map(required);
 }
 
-/**
- * `findCurrentPhase` for many plans at once, in SQL: each plan's earliest phase with work left (a
- * lesson, written or not, or its challenge), or its last phase once everything is done. Null for a
- * plan without items.
- */
 export async function loadCurrentPhases(
   plans: readonly Pick<PlanRow, "id">[],
 ): Promise<Map<string, number | null>> {
@@ -70,7 +60,6 @@ export async function loadCurrentPhases(
   );
 }
 
-/** Lessons, the current phase and the last date, per plan. */
 async function loadPlanProgress(plans: readonly PlanRow[]) {
   const planIds = plans.map((plan) => plan.id);
 
@@ -139,7 +128,6 @@ function toGoalView({
   };
 }
 
-/** Builds the views of a learner's goals with a short summary of each plan. */
 export async function loadGoalViews({
   activeGoalId,
   goals,
@@ -164,11 +152,6 @@ export async function loadGoalViews({
   );
 }
 
-/**
- * The goal every tab shows (Today, Plan, Progress, Content, Mistakes, the map) and the goal
- * switcher leads with: the one the learner picked, or their first active goal while none is
- * picked yet. Null for a learner without an active goal.
- */
 export async function findActiveGoalId(userId: string): Promise<string | null> {
   const profile = await prisma.userLearningProfile.findUnique({
     select: { activeGoalId: true },

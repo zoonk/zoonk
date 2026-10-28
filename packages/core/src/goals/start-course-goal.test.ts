@@ -23,20 +23,10 @@ import { getOnboarding } from "../view-models/onboarding/get-onboarding";
 import { isResearchedCourseStart } from "./goal-research";
 import { findCourseGoalStart, hasCourseGoal, startCourseGoal } from "./start-course-goal";
 
-/**
- * A Monday in 2020, before the learning events other tests write: estimates read everyone's recent
- * pace, and this keeps it out of the dates these tests expect.
- */
+/** Before other tests' learning events, so their pace never changes these plans. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 
-type ChapterSpec = {
-  level: CourseLevel;
-  /** Each lesson's skills by name; an empty list is a lesson with none (a chapter's challenge). */
-  lessons: string[][];
-  /** Skill-graph skills an outline tagged the chapter with. */
-  tags?: string[];
-  title: string;
-};
+type ChapterSpec = { level: CourseLevel; lessons: string[][]; tags?: string[]; title: string };
 
 async function createChapter({
   courseId,
@@ -78,11 +68,6 @@ async function createChapter({
   return chapter;
 }
 
-/**
- * A published course outlined in two bands so far: Overview with two chapters (the first closes
- * with a challenge through the skill only it is tagged with) and Beginner with one. Its
- * intermediate and advanced bands aren't written yet.
- */
 const PARTIAL_ROBOTICS_OUTLINE: ChapterSpec[] = [
   {
     lessons: [["Sensors"], ["Motors"], []],
@@ -94,14 +79,12 @@ const PARTIAL_ROBOTICS_OUTLINE: ChapterSpec[] = [
   { lessons: [["Kinematics"]], level: "beginner", title: "Moving an arm" },
 ];
 
-/** The same course with every band of its path to mastery written. */
 const ROBOTICS_OUTLINE: ChapterSpec[] = [
   ...PARTIAL_ROBOTICS_OUTLINE,
   { lessons: [["Path planning"]], level: "intermediate", title: "Planning a route" },
   { lessons: [["Robot learning"]], level: "advanced", title: "Robots that learn" },
 ];
 
-/** A published course nobody outlined: enough wherever the outline is never read. */
 function publicCourse(attrs: Parameters<typeof courseFixture>[0] = {}) {
   return courseFixture({ isPublished: true, title: "Robotics", visibility: "public", ...attrs });
 }
@@ -212,8 +195,6 @@ describe(startCourseGoal, () => {
     });
   });
 
-  // Sam left "How much do you already know?" and still had a plan with lessons being written: the
-  // start page asks the level before anything exists, and Start brings it along.
   it("takes the level the start page asked, so onboarding goes on without asking it again", async () => {
     const [{ course }, user] = await Promise.all([outlinedCourse(), userFixture()]);
     mockSession(user.id);
@@ -273,8 +254,6 @@ describe(startCourseGoal, () => {
     ]);
   });
 
-  // A chapter start is the learner's own choice of where to begin, so it plans from the chapters
-  // the course has even while later bands are still unwritten.
   it("starts the plan at a chapter, leaving the chapters before it out", async () => {
     const [{ chapters, course }, user] = await Promise.all([
       outlinedCourse({}, PARTIAL_ROBOTICS_OUTLINE),
@@ -299,7 +278,6 @@ describe(startCourseGoal, () => {
 
     const goalId = result.status === "created" ? result.goal.id : "";
 
-    // The time question opens on the time the course's page had, not one from the goal's size.
     await expect(getOnboarding({ goalId })).resolves.toMatchObject({
       onboarding: { examDays: null, recommendedMinutes: 30 },
     });
@@ -332,8 +310,6 @@ describe(startCourseGoal, () => {
     await expect(prisma.goal.count({ where: { userId: user.id } })).resolves.toBe(1);
   });
 
-  // Asking a returning learner's level again on the start page would be for nothing: the page
-  // finds their goal on the course first and sends them back to it.
   it("finds the learner's own goal on the course for its start page, and nobody else's", async () => {
     const [{ course }, user, other] = await Promise.all([
       outlinedCourse(),
@@ -355,8 +331,6 @@ describe(startCourseGoal, () => {
     await expect(findCourseGoalStart(course.id)).resolves.toBeNull();
   });
 
-  // The course's public page says "Continue your plan" from one read: the learner's own active
-  // goal on the course, never someone else's, a finished one or a question's.
   it("tells the course's page whether the learner's own active goal follows the course", async () => {
     const [course, user, other] = await Promise.all([publicCourse(), userFixture(), userFixture()]);
 
@@ -436,7 +410,6 @@ describe(startCourseGoal, () => {
       prisma.planItem.count({ where: { plan: { goal: { primaryCourseId: course.id } } } }),
     ).resolves.toBe(0);
 
-    // The run writes its curriculum into the course, for the course's own audience.
     await expect(
       loadGoalCurriculumInputs(result.status === "created" ? result.goal.id : ""),
     ).resolves.toMatchObject({
@@ -445,8 +418,6 @@ describe(startCourseGoal, () => {
     });
   });
 
-  // The second learner on a course one goal outlined only in part got a plan of the bands that
-  // existed, so the levels the first learner skipped never reached them.
   it("leaves a later learner's plan to the goal's own graph while the course misses a level", async () => {
     const [{ course }, user] = await Promise.all([
       outlinedCourse({}, PARTIAL_ROBOTICS_OUTLINE),
@@ -471,8 +442,6 @@ describe(startCourseGoal, () => {
     });
   });
 
-  // A band whose chapters teach nothing yet made a phase of its own: a checkpoint with nothing to
-  // check.
   it("makes phases only of the bands that teach something", async () => {
     const [{ chapters, course }, user] = await Promise.all([
       outlinedCourse({}, [
@@ -509,8 +478,6 @@ describe(startCourseGoal, () => {
     },
   );
 
-  // A chapter is placed before its lessons are saved: one whose lessons never landed doesn't teach
-  // its part of the band.
   it("leaves the plan to the goal's run while a chapter's lessons haven't landed", async () => {
     const [{ course }, user] = await Promise.all([
       outlinedCourse({}, [
@@ -527,8 +494,6 @@ describe(startCourseGoal, () => {
     expect(result).toMatchObject({ goal: { plan: { ready: false } }, status: "created" });
   });
 
-  // An exam course's stored exam names what the course spans: an outline that teaches only part of
-  // it gave the learner a plan with the rest of the exam missing.
   it.each([
     ["teaches every skill its exam gives it", ["Sensors", "Kinematics"], "course", true],
     [
@@ -537,10 +502,7 @@ describe(startCourseGoal, () => {
       "course",
       false,
     ],
-    // A graph of one course often names no course: its skills are still this course's to teach.
     ["misses a skill its exam names for no course", ["Sensors", "Path planning"], "none", false],
-    // An exam course its graph names nowhere is the whole exam (pt ENEM's gives every skill to a
-    // subject course): the whole graph is what it spans.
     ["teaches the whole exam its graph gives other courses", ["Sensors"], "other", true],
     [
       "misses a skill of the whole exam its graph gives other courses",

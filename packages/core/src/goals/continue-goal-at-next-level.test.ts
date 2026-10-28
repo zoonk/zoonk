@@ -93,7 +93,6 @@ describe(continueGoalAtNextLevel, () => {
     expect(finished.status).toBe("completed");
     expect(profile.activeGoalId).toBe(next?.id);
 
-    // A goal goes on to its next level once: asking again makes no other goal.
     await expect(continueGoalAtNextLevel(goal.id)).resolves.toStrictEqual({
       status: "noNextLevel",
     });

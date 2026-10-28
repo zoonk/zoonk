@@ -3,10 +3,6 @@ import { type GoalKind, prisma, sql } from "@zoonk/db";
 import { PHASE_WORK_KINDS } from "../../plans/_utils/phase-states";
 import { parsePlanPhases } from "../../plans/planner/plan-state";
 
-/**
- * What `findCurrentPhase` reads from a plan's items, counted in SQL: the earliest phase with work
- * left, with and without the phase challenges, and whether the plan has any items.
- */
 export type PlanPhaseFacts = {
   firstTodoPhase: number | null;
   firstTodoPhaseBesideChallenges: number | null;
@@ -21,10 +17,6 @@ export type PlanPhaseFacts = {
 const WORK_KINDS = [...PHASE_WORK_KINDS];
 const LESSON_WORK_KINDS = WORK_KINDS.filter((kind) => kind !== "boss");
 
-/**
- * The phase facts of some plans (by id) or of every plan of a learner's goals they haven't
- * archived (by learner), in one statement.
- */
 export async function loadPlanPhaseFacts(
   scope: { planIds: readonly string[] } | { userId: string },
 ): Promise<PlanPhaseFacts[]> {
@@ -55,11 +47,6 @@ export async function loadPlanPhaseFacts(
     WHERE ${where}`;
 }
 
-/**
- * `findCurrentPhase` from the facts: the earliest phase with work left (its challenge only when
- * the learner's plan requires it), or the last phase once everything is done. Null for a plan
- * without items.
- */
 export function getCurrentPhaseFromFacts({
   facts,
   phaseChallengesRequired,

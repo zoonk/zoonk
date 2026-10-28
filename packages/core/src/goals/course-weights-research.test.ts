@@ -110,7 +110,6 @@ describe(findCourseWeightsLookup, () => {
       { name: "Redação", weight: 2 },
     ]);
 
-    // The learner's other answers stay, and the same course isn't looked up again.
     expect(saved.details).toMatchObject({ followUps: [], institution: "UFMG" });
     await expect(findCourseWeightsLookup({ goalId: goal.id, year: YEAR })).resolves.toBeNull();
   });
@@ -170,7 +169,6 @@ describe(copyStoredCourseWeights, () => {
 
     await prisma.user.delete({ where: { id: first.userId } });
 
-    // Spelled their own way: the same course at the same institution.
     const next = await enemGoal({ institution: "ufmg", targetCourse: "medicina" }, examBlueprintId);
 
     await expect(

@@ -10,10 +10,7 @@ import { getGoal } from "./get-goal";
 import { type GoalDraft } from "./goal-contract";
 import { listCurrentUserGoals } from "./list-current-user-goals";
 
-/**
- * A Monday in 2020, before the learning events other tests write: estimates read everyone's recent
- * pace, and this keeps it out of the dates these tests expect.
- */
+/** Before other tests' learning events, so their pace never changes these plans. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 
 function draft(attrs: Partial<GoalDraft> = {}): GoalDraft {
@@ -135,7 +132,6 @@ describe(createGoals, () => {
         name: "PTE Academic",
         structure: { formats: [], mock: null, rules: [], subjects: [], testedLanguage },
       }),
-      // Read before notices said which language they test: the certificate's name still does.
       examBlueprintFixture({ name: "IELTS Academic" }),
     ]);
 
@@ -285,7 +281,6 @@ describe(listCurrentUserGoals, () => {
       })),
     });
 
-    // Days 1 and 2 are stand-ins for lessons not outlined yet; day 3 is the short mock.
     await Promise.all(
       [0, 0, 1, 1].map((phase, position) =>
         planItemFixture({ phase, planId: plan.id, position, skillId: null }),
@@ -297,9 +292,6 @@ describe(listCurrentUserGoals, () => {
     await expect(getGoal(goal.id)).resolves.toMatchObject({ goal: { plan: { currentPhase: 0 } } });
   });
 
-  // Pedro's plan gave a lesson of the second phase before the first phase's last lesson and its
-  // challenge: read from the next thing to do, he was in the second phase, and back in the first
-  // once a change planned that lesson first.
   it("is in the earliest phase with work left, though a later phase's lesson comes first", async () => {
     const user = await useLearner();
     const goal = await goalFixture({ userId: user.id });
@@ -324,9 +316,6 @@ describe(listCurrentUserGoals, () => {
     await expect(getGoal(goal.id)).resolves.toMatchObject({ goal: { plan: { currentPhase: 0 } } });
   });
 
-  // The goal list counted every lesson not left to do as done, so lessons set aside after missed
-  // days read as studied. It counts as the Plan's phases do: lessons studied, of every lesson
-  // the plan teaches (a stand-in's saved size) but the ones tested out.
   it("counts the plan's lessons as the Journey does, never a lesson set aside as done", async () => {
     const user = await useLearner();
     const [goal, skill] = await Promise.all([goalFixture({ userId: user.id }), skillFixture()]);

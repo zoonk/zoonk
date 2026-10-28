@@ -11,13 +11,11 @@ import { examStructureSchema } from "../library/exams/blueprint-contract";
 import { type CourseWeights, readCourseWeightSubjects } from "../plans/planner/course-weights";
 import { refreshGoalPlan } from "../plans/refresh-goal-plan";
 
-/** What research needs to look up how a course weighs the exam's parts, once a year for everyone. */
 export type CourseWeightsLookup = {
   course: string;
   exam: string;
   examBlueprintId: string;
   institution: string;
-  /** Shares one lookup between every learner aiming at the same course of the same exam. */
   key: string;
   subjects: string[];
   year: number;
@@ -27,7 +25,6 @@ function readText(value: unknown): string | null {
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
 
-/** Whether the goal's details already say what the lookup found (or didn't) for this course. */
 function isLookedUp({
   course,
   details,
@@ -46,14 +43,7 @@ function isLookedUp({
   );
 }
 
-/**
- * The lookup an entrance exam goal needs for its course's weights: the course and institution the
- * learner named (Medicina, UFMG), the parts of the exam's shared notice and the year. Null when the
- * goal names no course or no institution (weights differ by institution, and a guess isn't a
- * weight), has no shared notice with parts, or already has them for that course and institution.
- *
- * This is a workflow bridge: the goal comes from the research run that linked its notice.
- */
+/** Workflow bridge: the goal comes from the research run that linked its notice. */
 export async function findCourseWeightsLookup({
   goalId,
   year,
@@ -95,12 +85,7 @@ export async function findCourseWeightsLookup({
   };
 }
 
-/**
- * Copies the Library's weights onto the goal's details (`courseWeights`), under the course and
- * institution the learner named, so the planner weighs the exam's parts by them (see
- * `weighGraphByCourse`) and the same course isn't looked up for the goal again. Only that key is
- * written, so answers the learner gives meanwhile are never overwritten.
- */
+/** Writes only `courseWeights`, so answers the learner gives meanwhile are never overwritten. */
 async function copyToGoal({
   goalId,
   lookup,
@@ -149,13 +134,7 @@ async function copyToGoal({
   }
 }
 
-/**
- * Gives the goal the weights another learner's research already looked up this year for the same
- * course at the same institution, found or not, so they aren't looked up again. False when the
- * Library has none yet.
- *
- * This is a workflow bridge: the lookup comes from `findCourseWeightsLookup`.
- */
+/** Workflow bridge: the lookup comes from `findCourseWeightsLookup`. */
 export async function copyStoredCourseWeights({
   goalId,
   lookup,
@@ -182,13 +161,8 @@ export async function copyStoredCourseWeights({
 }
 
 /**
- * Stores what this year's lookup found for the parts it was given, in their order, or that it
- * found nothing, as the Library's weights for the course at the institution: shared by every
- * learner aiming there, with no link to the learner whose research looked them up, so they stay
- * when that learner goes. Then the goal gets them. A lookup that ran twice at once keeps the first
- * answer, and both goals get that one.
- *
- * This is a workflow bridge: the lookup comes from `findCourseWeightsLookup`.
+ * Workflow bridge: the lookup comes from `findCourseWeightsLookup`. Two lookups at once keep the
+ * first answer.
  */
 export async function recordCourseWeights({
   finding,

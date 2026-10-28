@@ -3,11 +3,8 @@ import { prisma } from "@zoonk/db";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 
 /**
- * Remembers the run writing a goal's curriculum (or its quick explanation), so onboarding and the
- * explanation's wait can follow it live and pick it up again after a reload. Called when the run
- * starts, so the goal's screens have it before they open, and again by the run itself. Only the
- * workflow that acquired the run token clears an earlier failure: an HTTP receipt can arrive
- * after that workflow failed, or belong to a run joining it. A goal deleted meanwhile is left alone.
+ * Only the workflow that acquired the run token clears an earlier failure: an HTTP receipt can
+ * arrive after it failed.
  */
 export async function recordGoalGeneration({
   clearFailure = true,
@@ -58,11 +55,6 @@ export async function recordGoalGeneration({
   );
 }
 
-/**
- * Records that the goal's run gave up building its plan, so placement and the plan stop waiting
- * and offer to start it again. A plan that already has skills keeps working without it (a rebuild
- * that failed leaves the plan it had).
- */
 export async function recordGoalBuildFailure(goalId: string): Promise<void> {
   const goal = await prisma.goal.findUnique({
     include: { plan: { select: { id: true } } },

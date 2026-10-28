@@ -4,10 +4,6 @@ import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-view
 import { type AllowanceLimit } from "../../entitlements/contract";
 import { getActiveGoalLimit } from "../../entitlements/limits";
 
-/**
- * Resuming a goal counts against the plan's active goals like a new one: free learners follow one
- * goal at a time, so they pause another first.
- */
 export async function findActiveGoalLimit({
   db = prisma,
   goalId,
@@ -33,10 +29,6 @@ export async function findActiveGoalLimit({
     : null;
 }
 
-/**
- * When the goal the tabs show is archived or completed, the tabs move to the most recent goal still
- * active, or to none.
- */
 export async function moveActiveGoalAway({
   goalId,
   status,

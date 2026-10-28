@@ -195,7 +195,6 @@ describe("background goal plan marks", () => {
   it("marks today's kept-session stamp once while queue attempts mark freshness", async () => {
     const { goal, plan, user } = await setup();
 
-    // Nothing is left to study, so following the plan keeps today's finished session as it is.
     await prisma.planItem.updateMany({ data: { status: "done" }, where: { planId: plan.id } });
     const context = await loadPlanContext({ goal, timeZone: "UTC" });
 

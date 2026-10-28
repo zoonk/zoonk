@@ -13,9 +13,7 @@ export type SuggestedGoalAnswerResult =
   | { status: "alreadyAnswered" | "notFound" | "unauthorized" };
 
 /**
- * The learner's answer to a suggested goal on Today. Accepting only records the answer: the apps
- * then open the course's start (or onboarding with its title, once nobody can start the course),
- * where the goal is really made. Each suggestion is answered once.
+ * Accepting only records the answer: the apps then open the course's start, where the goal is made.
  */
 export async function respondToSuggestedGoal({
   input,

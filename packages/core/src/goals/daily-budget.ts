@@ -2,14 +2,8 @@ import { MIN_DAILY_MINUTES } from "../plans/daily-minutes";
 
 const MINUTES_STEP = 5;
 
-/** The main goal gets twice the share of each other goal. */
 const MAIN_GOAL_WEIGHT = 2;
 
-/**
- * Splits one day's time between goals that share it ("ENEM and English"): the first goal is the
- * main one and gets twice each other goal's share. Other goals round down to 5 minutes, and the
- * main goal takes the rest, so the total stays the learner's time.
- */
 export function splitDailyBudget({ budget, count }: { budget: number; count: number }): number[] {
   if (count <= 1) {
     return count === 1 ? [budget] : [];
