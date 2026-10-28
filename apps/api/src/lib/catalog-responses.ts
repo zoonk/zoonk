@@ -90,6 +90,7 @@ export function toCourseResource(course: CourseResource) {
       .map((category) => category.category),
     description: course.description,
     exam: course.exam,
+    examplePlan: course.examplePlan,
     format: course.format,
     generationId: course.outlineRunId,
     generationStatus: course.outlineStatus ?? "pending",

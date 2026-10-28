@@ -13,6 +13,7 @@
     "./chart": "./src/chart.ts",
     "./contribution-calendar": "./src/contribution-calendar.ts",
     "./brain-power": "./src/brain-power.ts",
+    "./calendar-day": "./src/calendar-day.ts",
     "./date": "./src/date.ts",
     "./cookies": "./src/cookies.ts",
     "./currency": "./src/currency.ts",

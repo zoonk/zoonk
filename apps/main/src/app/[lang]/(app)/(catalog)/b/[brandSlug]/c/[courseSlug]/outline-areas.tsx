@@ -1,6 +1,6 @@
 import { findEstimateArea, getAreaStudyText } from "@/components/catalog/area-study";
-import { type DatedEstimate } from "@/components/catalog/plan-estimate";
 import { type LibraryOutline } from "@/data/catalog/resolve-catalog-route";
+import { type DatedEstimate } from "@zoonk/core/catalog/course-plan-example-contract";
 import { RouteZone } from "@zoonk/learn/route-line";
 import { getExtracted } from "next-intl/server";
 import {

@@ -1,5 +1,5 @@
-import { addIsoDays, daysBetweenIsoDays, getIsoDay } from "@/lib/public/calendar-day";
 import { getCourseExamDaysByRoute } from "@zoonk/core/catalog/course-exam-days-by-route";
+import { addIsoDays, daysBetweenIsoDays, getIsoDay } from "@zoonk/utils/calendar-day";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { logError } from "@zoonk/utils/logger";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";

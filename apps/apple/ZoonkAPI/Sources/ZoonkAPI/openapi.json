@@ -29002,6 +29002,15 @@
               }
             ]
           },
+          "examplePlan": {
+            "nullable": true,
+            "description": "The course page's example plan, Monday to Friday from scratch: a quarter hour a day to the course's end, or half an hour a day to an exam course's next sitting; null for a learner's private course",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CoursePlanExample"
+              }
+            ]
+          },
           "format": {
             "type": "string",
             "enum": [
@@ -29080,6 +29089,7 @@
           "categories",
           "description",
           "exam",
+          "examplePlan",
           "format",
           "generationId",
           "generationStatus",
@@ -29119,6 +29129,607 @@
           "days",
           "estimated",
           "timeZone"
+        ],
+        "additionalProperties": false
+      },
+      "CoursePlanExample": {
+        "type": "object",
+        "properties": {
+          "exam": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "days": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "date",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                }
+              },
+              "daysLeft": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "estimated": {
+                "type": "boolean"
+              },
+              "timeZone": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "days",
+              "daysLeft",
+              "estimated",
+              "timeZone"
+            ],
+            "additionalProperties": false
+          },
+          "pace": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "estimate": {
+                "$ref": "#/components/schemas/CoursePlanEstimate"
+              },
+              "minutes": {
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "estimate",
+              "minutes"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "exam",
+          "pace"
+        ],
+        "additionalProperties": false
+      },
+      "CoursePlanEstimate": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "chapters": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "chapterId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "endWeek": {
+                      "nullable": true,
+                      "description": "Week when the actual teaching interval of the chapter's planned written or quick work ends. Null means no covered work or an unknown completion date for unwritten aggregate work; week and workKinds distinguish these cases.",
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "week": {
+                      "nullable": true,
+                      "description": "First scheduled week of chapter-linked original, quick, or unwritten lesson work; null when none is planned.",
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "workKinds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "original",
+                          "quick",
+                          "unwritten"
+                        ]
+                      },
+                      "description": "Kinds of actually planned chapter-linked lesson work. Original means published outline refs; quick means their skill's written quick replacement; unwritten means covered skill lessons still to be written. Does not imply every chapter concept or original lesson fits."
+                    }
+                  },
+                  "required": [
+                    "chapterId",
+                    "endWeek",
+                    "week",
+                    "workKinds"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "endDate": {
+                "nullable": true,
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              },
+              "firstDay": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "chapterId": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "dayMinutes": {
+                      "type": "number",
+                      "minimum": 0,
+                      "description": "Actual scheduled study minutes for this lesson on the first date, including its allocated practice. A long lesson can continue on later dates; this is distinct from its whole estimatedMinutes."
+                    },
+                    "estimatedMinutes": {
+                      "type": "number",
+                      "minimum": 0,
+                      "exclusiveMinimum": true,
+                      "description": "Sampled duration of the whole authored lesson."
+                    },
+                    "lessonId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "chapterId",
+                    "dayMinutes",
+                    "estimatedMinutes",
+                    "lessonId",
+                    "title"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "numbers": {
+                "$ref": "#/components/schemas/PlanNumbers"
+              },
+              "publishedContent": {
+                "type": "object",
+                "properties": {
+                  "lessons": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "minutes": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "lessons",
+                  "minutes"
+                ],
+                "additionalProperties": false,
+                "description": "Unique original published outline lessons and raw authored minutes; excludes sampled pace, quick replacements, unwritten work, practice and milestones. Not the scheduled workload or the whole exam curriculum."
+              },
+              "weeks": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "workload": {
+                "type": "object",
+                "properties": {
+                  "checkpointMinutes": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Actual scheduled non-mock milestones and banked mock minutes, including milestone excess."
+                  },
+                  "lessonMinutes": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Written lessons in the schedule at its sampled pace, including quick replacements."
+                  },
+                  "practiceMinutes": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Scheduled practice and review in addition to lessons."
+                  },
+                  "unwrittenLessonMinutes": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Scheduled curriculum still to be written as the learner approaches it."
+                  }
+                },
+                "required": [
+                  "checkpointMinutes",
+                  "lessonMinutes",
+                  "practiceMinutes",
+                  "unwrittenLessonMinutes"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "chapters",
+              "endDate",
+              "firstDay",
+              "numbers",
+              "publishedContent",
+              "weeks",
+              "workload"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "areas": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "area": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "fitting": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "plannedMinutes": {
+                      "type": "number",
+                      "minimum": 0,
+                      "description": "Covered lesson minutes, including quick lessons and unwritten curriculum, excluding practice and checkpoints. Shared outline lesson time is divided equally across its distinct published chapter areas."
+                    },
+                    "quickLessons": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991,
+                      "description": "Written quick lessons planned instead of full outline lessons; not included in fitting."
+                    },
+                    "total": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "unwrittenMinutes": {
+                      "type": "number",
+                      "minimum": 0,
+                      "description": "Covered lesson minutes still to be written, including missing quick versions."
+                    }
+                  },
+                  "required": [
+                    "area",
+                    "fitting",
+                    "plannedMinutes",
+                    "quickLessons",
+                    "total",
+                    "unwrittenMinutes"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "chapters": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "chapterId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "endWeek": {
+                      "nullable": true,
+                      "description": "Week when the actual teaching interval of the chapter's planned written or quick work ends. Null means no covered work or an unknown completion date for unwritten aggregate work; week and workKinds distinguish these cases.",
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "week": {
+                      "nullable": true,
+                      "description": "First scheduled week of chapter-linked original, quick, or unwritten lesson work; null when none is planned.",
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    },
+                    "workKinds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "original",
+                          "quick",
+                          "unwritten"
+                        ]
+                      },
+                      "description": "Kinds of actually planned chapter-linked lesson work. Original means published outline refs; quick means their skill's written quick replacement; unwritten means covered skill lessons still to be written. Does not imply every chapter concept or original lesson fits."
+                    },
+                    "area": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "lessonsInPlan": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "studyOrder": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "chapterId",
+                    "endWeek",
+                    "week",
+                    "workKinds",
+                    "area",
+                    "lessonsInPlan",
+                    "studyOrder"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "fittingLessons": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "numbers": {
+                "$ref": "#/components/schemas/PlanNumbers"
+              },
+              "publishedContent": {
+                "type": "object",
+                "properties": {
+                  "lessons": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "minutes": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "lessons",
+                  "minutes"
+                ],
+                "additionalProperties": false,
+                "description": "Unique original published outline lessons and raw authored minutes; excludes sampled pace, quick replacements, unwritten work, practice and milestones. Not the scheduled workload or the whole exam curriculum."
+              },
+              "workload": {
+                "type": "object",
+                "properties": {
+                  "checkpointMinutes": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Actual scheduled non-mock milestones and banked mock minutes, including milestone excess."
+                  },
+                  "lessonMinutes": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Written lessons in the schedule at its sampled pace, including quick replacements."
+                  },
+                  "practiceMinutes": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Scheduled practice and review in addition to lessons."
+                  },
+                  "unwrittenLessonMinutes": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Scheduled curriculum still to be written as the learner approaches it."
+                  }
+                },
+                "required": [
+                  "checkpointMinutes",
+                  "lessonMinutes",
+                  "practiceMinutes",
+                  "unwrittenLessonMinutes"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "areas",
+              "chapters",
+              "fittingLessons",
+              "numbers",
+              "publishedContent",
+              "workload"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "PlanNumbers": {
+        "type": "object",
+        "properties": {
+          "afterDeadlineMinutes": {
+            "nullable": true,
+            "description": "Remaining scheduled work on or after targetDate; null without a date.",
+            "type": "number",
+            "minimum": 0
+          },
+          "availableBeforeDeadlineMinutes": {
+            "nullable": true,
+            "description": "Actual allocated minutes from fromDate until targetDate, exclusive: weekday and light-week calendar, first-day rule, exam rest, mock funding and non-mock milestone excess. Null without a date.",
+            "type": "number",
+            "minimum": 0
+          },
+          "beforeDeadlineMinutes": {
+            "nullable": true,
+            "description": "Remaining scheduled work strictly before targetDate; null without a date.",
+            "type": "number",
+            "minimum": 0
+          },
+          "context": {
+            "type": "object",
+            "properties": {
+              "dailyMinutes": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "fromDate": {
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              },
+              "fullCourse": {
+                "type": "boolean"
+              },
+              "ownLevel": {
+                "nullable": true,
+                "description": "Public estimates start from none; actual plans retain the learner's stated level and progress.",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/OwnLevel"
+                  }
+                ]
+              },
+              "paceFactor": {
+                "type": "number",
+                "minimum": 0,
+                "exclusiveMinimum": true
+              },
+              "targetDate": {
+                "nullable": true,
+                "type": "string",
+                "format": "date",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+              },
+              "weekdayMinutes": {
+                "minItems": 7,
+                "maxItems": 7,
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 9007199254740991
+                },
+                "description": "Sunday first. Selected study days and distinct weekend time, before light weeks."
+              }
+            },
+            "required": [
+              "dailyMinutes",
+              "fromDate",
+              "fullCourse",
+              "ownLevel",
+              "paceFactor",
+              "targetDate",
+              "weekdayMinutes"
+            ],
+            "additionalProperties": false
+          },
+          "coverage": {
+            "nullable": true,
+            "description": "What the plan covers by the date, the share it saves: each measured skill's lesson time the plan lays out before the deadline, over what its chosen requirement needs. Exam uses questions/points for notice subjects taught by selected graph skills; absent graph subjects and learner-excluded areas are not measured. Goal uses skill weights. Not a share of original published lesson IDs or a claim that every exam subject is represented.",
+            "type": "object",
+            "properties": {
+              "basis": {
+                "type": "string",
+                "enum": [
+                  "selected"
+                ]
+              },
+              "coveredShare": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "measure": {
+                "type": "string",
+                "enum": [
+                  "exam",
+                  "goal"
+                ]
+              },
+              "scope": {
+                "type": "string",
+                "enum": [
+                  "selectedCurriculum"
+                ]
+              }
+            },
+            "required": [
+              "basis",
+              "coveredShare",
+              "measure",
+              "scope"
+            ],
+            "additionalProperties": false
+          },
+          "milestoneExtraMinutesBeforeDeadline": {
+            "nullable": true,
+            "description": "The portion of availableBeforeDeadlineMinutes added by actual non-mock milestones exceeding their daily allocation; mocks stay banked.",
+            "type": "number",
+            "minimum": 0
+          },
+          "scheduledMinutes": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Sum of the four rounded workload categories for remaining scheduled work from fromDate, including after-date work."
+          },
+          "studyDaysBeforeDeadline": {
+            "nullable": true,
+            "description": "Days with actual allocated study time before targetDate, including funded events and milestone excess; null without a date.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "workload": {
+            "type": "object",
+            "properties": {
+              "checkpointMinutes": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Actual scheduled non-mock milestones and banked mock minutes, including milestone excess."
+              },
+              "lessonMinutes": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Written lessons in the schedule at its sampled pace, including quick replacements."
+              },
+              "practiceMinutes": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Scheduled practice and review in addition to lessons."
+              },
+              "unwrittenLessonMinutes": {
+                "type": "number",
+                "minimum": 0,
+                "description": "Scheduled curriculum still to be written as the learner approaches it."
+              }
+            },
+            "required": [
+              "checkpointMinutes",
+              "lessonMinutes",
+              "practiceMinutes",
+              "unwrittenLessonMinutes"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "afterDeadlineMinutes",
+          "availableBeforeDeadlineMinutes",
+          "beforeDeadlineMinutes",
+          "context",
+          "coverage",
+          "milestoneExtraMinutesBeforeDeadline",
+          "scheduledMinutes",
+          "studyDaysBeforeDeadline",
+          "workload"
         ],
         "additionalProperties": false
       },
@@ -31478,544 +32089,6 @@
         "required": [
           "courseIds",
           "failed"
-        ],
-        "additionalProperties": false
-      },
-      "CoursePlanEstimate": {
-        "anyOf": [
-          {
-            "type": "object",
-            "properties": {
-              "chapters": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "chapterId": {
-                      "type": "string",
-                      "format": "uuid",
-                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                    },
-                    "endWeek": {
-                      "nullable": true,
-                      "description": "Week when the actual teaching interval of the chapter's planned written or quick work ends. Null means no covered work or an unknown completion date for unwritten aggregate work; week and workKinds distinguish these cases.",
-                      "type": "integer",
-                      "minimum": 1,
-                      "maximum": 9007199254740991
-                    },
-                    "week": {
-                      "nullable": true,
-                      "description": "First scheduled week of chapter-linked original, quick, or unwritten lesson work; null when none is planned.",
-                      "type": "integer",
-                      "minimum": 1,
-                      "maximum": 9007199254740991
-                    },
-                    "workKinds": {
-                      "type": "array",
-                      "items": {
-                        "type": "string",
-                        "enum": [
-                          "original",
-                          "quick",
-                          "unwritten"
-                        ]
-                      },
-                      "description": "Kinds of actually planned chapter-linked lesson work. Original means published outline refs; quick means their skill's written quick replacement; unwritten means covered skill lessons still to be written. Does not imply every chapter concept or original lesson fits."
-                    }
-                  },
-                  "required": [
-                    "chapterId",
-                    "endWeek",
-                    "week",
-                    "workKinds"
-                  ],
-                  "additionalProperties": false
-                }
-              },
-              "endDate": {
-                "nullable": true,
-                "type": "string",
-                "format": "date",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              },
-              "firstDay": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "chapterId": {
-                      "nullable": true,
-                      "type": "string",
-                      "format": "uuid",
-                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                    },
-                    "dayMinutes": {
-                      "type": "number",
-                      "minimum": 0,
-                      "description": "Actual scheduled study minutes for this lesson on the first date, including its allocated practice. A long lesson can continue on later dates; this is distinct from its whole estimatedMinutes."
-                    },
-                    "estimatedMinutes": {
-                      "type": "number",
-                      "minimum": 0,
-                      "exclusiveMinimum": true,
-                      "description": "Sampled duration of the whole authored lesson."
-                    },
-                    "lessonId": {
-                      "type": "string",
-                      "format": "uuid",
-                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                    },
-                    "title": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "chapterId",
-                    "dayMinutes",
-                    "estimatedMinutes",
-                    "lessonId",
-                    "title"
-                  ],
-                  "additionalProperties": false
-                }
-              },
-              "numbers": {
-                "$ref": "#/components/schemas/PlanNumbers"
-              },
-              "publishedContent": {
-                "type": "object",
-                "properties": {
-                  "lessons": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991
-                  },
-                  "minutes": {
-                    "type": "number",
-                    "minimum": 0
-                  }
-                },
-                "required": [
-                  "lessons",
-                  "minutes"
-                ],
-                "additionalProperties": false,
-                "description": "Unique original published outline lessons and raw authored minutes; excludes sampled pace, quick replacements, unwritten work, practice and milestones. Not the scheduled workload or the whole exam curriculum."
-              },
-              "weeks": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              },
-              "workload": {
-                "type": "object",
-                "properties": {
-                  "checkpointMinutes": {
-                    "type": "number",
-                    "minimum": 0,
-                    "description": "Actual scheduled non-mock milestones and banked mock minutes, including milestone excess."
-                  },
-                  "lessonMinutes": {
-                    "type": "number",
-                    "minimum": 0,
-                    "description": "Written lessons in the schedule at its sampled pace, including quick replacements."
-                  },
-                  "practiceMinutes": {
-                    "type": "number",
-                    "minimum": 0,
-                    "description": "Scheduled practice and review in addition to lessons."
-                  },
-                  "unwrittenLessonMinutes": {
-                    "type": "number",
-                    "minimum": 0,
-                    "description": "Scheduled curriculum still to be written as the learner approaches it."
-                  }
-                },
-                "required": [
-                  "checkpointMinutes",
-                  "lessonMinutes",
-                  "practiceMinutes",
-                  "unwrittenLessonMinutes"
-                ],
-                "additionalProperties": false
-              }
-            },
-            "required": [
-              "chapters",
-              "endDate",
-              "firstDay",
-              "numbers",
-              "publishedContent",
-              "weeks",
-              "workload"
-            ],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "areas": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "area": {
-                      "nullable": true,
-                      "type": "string"
-                    },
-                    "fitting": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991
-                    },
-                    "plannedMinutes": {
-                      "type": "number",
-                      "minimum": 0,
-                      "description": "Covered lesson minutes, including quick lessons and unwritten curriculum, excluding practice and checkpoints. Shared outline lesson time is divided equally across its distinct published chapter areas."
-                    },
-                    "quickLessons": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991,
-                      "description": "Written quick lessons planned instead of full outline lessons; not included in fitting."
-                    },
-                    "total": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991
-                    },
-                    "unwrittenMinutes": {
-                      "type": "number",
-                      "minimum": 0,
-                      "description": "Covered lesson minutes still to be written, including missing quick versions."
-                    }
-                  },
-                  "required": [
-                    "area",
-                    "fitting",
-                    "plannedMinutes",
-                    "quickLessons",
-                    "total",
-                    "unwrittenMinutes"
-                  ],
-                  "additionalProperties": false
-                }
-              },
-              "chapters": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "chapterId": {
-                      "type": "string",
-                      "format": "uuid",
-                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                    },
-                    "endWeek": {
-                      "nullable": true,
-                      "description": "Week when the actual teaching interval of the chapter's planned written or quick work ends. Null means no covered work or an unknown completion date for unwritten aggregate work; week and workKinds distinguish these cases.",
-                      "type": "integer",
-                      "minimum": 1,
-                      "maximum": 9007199254740991
-                    },
-                    "week": {
-                      "nullable": true,
-                      "description": "First scheduled week of chapter-linked original, quick, or unwritten lesson work; null when none is planned.",
-                      "type": "integer",
-                      "minimum": 1,
-                      "maximum": 9007199254740991
-                    },
-                    "workKinds": {
-                      "type": "array",
-                      "items": {
-                        "type": "string",
-                        "enum": [
-                          "original",
-                          "quick",
-                          "unwritten"
-                        ]
-                      },
-                      "description": "Kinds of actually planned chapter-linked lesson work. Original means published outline refs; quick means their skill's written quick replacement; unwritten means covered skill lessons still to be written. Does not imply every chapter concept or original lesson fits."
-                    },
-                    "area": {
-                      "nullable": true,
-                      "type": "string"
-                    },
-                    "lessonsInPlan": {
-                      "type": "integer",
-                      "minimum": 0,
-                      "maximum": 9007199254740991
-                    },
-                    "studyOrder": {
-                      "type": "integer",
-                      "minimum": 1,
-                      "maximum": 9007199254740991
-                    }
-                  },
-                  "required": [
-                    "chapterId",
-                    "endWeek",
-                    "week",
-                    "workKinds",
-                    "area",
-                    "lessonsInPlan",
-                    "studyOrder"
-                  ],
-                  "additionalProperties": false
-                }
-              },
-              "fittingLessons": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              },
-              "numbers": {
-                "$ref": "#/components/schemas/PlanNumbers"
-              },
-              "publishedContent": {
-                "type": "object",
-                "properties": {
-                  "lessons": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991
-                  },
-                  "minutes": {
-                    "type": "number",
-                    "minimum": 0
-                  }
-                },
-                "required": [
-                  "lessons",
-                  "minutes"
-                ],
-                "additionalProperties": false,
-                "description": "Unique original published outline lessons and raw authored minutes; excludes sampled pace, quick replacements, unwritten work, practice and milestones. Not the scheduled workload or the whole exam curriculum."
-              },
-              "workload": {
-                "type": "object",
-                "properties": {
-                  "checkpointMinutes": {
-                    "type": "number",
-                    "minimum": 0,
-                    "description": "Actual scheduled non-mock milestones and banked mock minutes, including milestone excess."
-                  },
-                  "lessonMinutes": {
-                    "type": "number",
-                    "minimum": 0,
-                    "description": "Written lessons in the schedule at its sampled pace, including quick replacements."
-                  },
-                  "practiceMinutes": {
-                    "type": "number",
-                    "minimum": 0,
-                    "description": "Scheduled practice and review in addition to lessons."
-                  },
-                  "unwrittenLessonMinutes": {
-                    "type": "number",
-                    "minimum": 0,
-                    "description": "Scheduled curriculum still to be written as the learner approaches it."
-                  }
-                },
-                "required": [
-                  "checkpointMinutes",
-                  "lessonMinutes",
-                  "practiceMinutes",
-                  "unwrittenLessonMinutes"
-                ],
-                "additionalProperties": false
-              }
-            },
-            "required": [
-              "areas",
-              "chapters",
-              "fittingLessons",
-              "numbers",
-              "publishedContent",
-              "workload"
-            ],
-            "additionalProperties": false
-          }
-        ]
-      },
-      "PlanNumbers": {
-        "type": "object",
-        "properties": {
-          "afterDeadlineMinutes": {
-            "nullable": true,
-            "description": "Remaining scheduled work on or after targetDate; null without a date.",
-            "type": "number",
-            "minimum": 0
-          },
-          "availableBeforeDeadlineMinutes": {
-            "nullable": true,
-            "description": "Actual allocated minutes from fromDate until targetDate, exclusive: weekday and light-week calendar, first-day rule, exam rest, mock funding and non-mock milestone excess. Null without a date.",
-            "type": "number",
-            "minimum": 0
-          },
-          "beforeDeadlineMinutes": {
-            "nullable": true,
-            "description": "Remaining scheduled work strictly before targetDate; null without a date.",
-            "type": "number",
-            "minimum": 0
-          },
-          "context": {
-            "type": "object",
-            "properties": {
-              "dailyMinutes": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              },
-              "fromDate": {
-                "type": "string",
-                "format": "date",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              },
-              "fullCourse": {
-                "type": "boolean"
-              },
-              "ownLevel": {
-                "nullable": true,
-                "description": "Public estimates start from none; actual plans retain the learner's stated level and progress.",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/OwnLevel"
-                  }
-                ]
-              },
-              "paceFactor": {
-                "type": "number",
-                "minimum": 0,
-                "exclusiveMinimum": true
-              },
-              "targetDate": {
-                "nullable": true,
-                "type": "string",
-                "format": "date",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              },
-              "weekdayMinutes": {
-                "minItems": 7,
-                "maxItems": 7,
-                "type": "array",
-                "items": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "maximum": 9007199254740991
-                },
-                "description": "Sunday first. Selected study days and distinct weekend time, before light weeks."
-              }
-            },
-            "required": [
-              "dailyMinutes",
-              "fromDate",
-              "fullCourse",
-              "ownLevel",
-              "paceFactor",
-              "targetDate",
-              "weekdayMinutes"
-            ],
-            "additionalProperties": false
-          },
-          "coverage": {
-            "nullable": true,
-            "description": "What the plan covers by the date, the share it saves: each measured skill's lesson time the plan lays out before the deadline, over what its chosen requirement needs. Exam uses questions/points for notice subjects taught by selected graph skills; absent graph subjects and learner-excluded areas are not measured. Goal uses skill weights. Not a share of original published lesson IDs or a claim that every exam subject is represented.",
-            "type": "object",
-            "properties": {
-              "basis": {
-                "type": "string",
-                "enum": [
-                  "selected"
-                ]
-              },
-              "coveredShare": {
-                "type": "number",
-                "minimum": 0,
-                "maximum": 1
-              },
-              "measure": {
-                "type": "string",
-                "enum": [
-                  "exam",
-                  "goal"
-                ]
-              },
-              "scope": {
-                "type": "string",
-                "enum": [
-                  "selectedCurriculum"
-                ]
-              }
-            },
-            "required": [
-              "basis",
-              "coveredShare",
-              "measure",
-              "scope"
-            ],
-            "additionalProperties": false
-          },
-          "milestoneExtraMinutesBeforeDeadline": {
-            "nullable": true,
-            "description": "The portion of availableBeforeDeadlineMinutes added by actual non-mock milestones exceeding their daily allocation; mocks stay banked.",
-            "type": "number",
-            "minimum": 0
-          },
-          "scheduledMinutes": {
-            "type": "number",
-            "minimum": 0,
-            "description": "Sum of the four rounded workload categories for remaining scheduled work from fromDate, including after-date work."
-          },
-          "studyDaysBeforeDeadline": {
-            "nullable": true,
-            "description": "Days with actual allocated study time before targetDate, including funded events and milestone excess; null without a date.",
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "workload": {
-            "type": "object",
-            "properties": {
-              "checkpointMinutes": {
-                "type": "number",
-                "minimum": 0,
-                "description": "Actual scheduled non-mock milestones and banked mock minutes, including milestone excess."
-              },
-              "lessonMinutes": {
-                "type": "number",
-                "minimum": 0,
-                "description": "Written lessons in the schedule at its sampled pace, including quick replacements."
-              },
-              "practiceMinutes": {
-                "type": "number",
-                "minimum": 0,
-                "description": "Scheduled practice and review in addition to lessons."
-              },
-              "unwrittenLessonMinutes": {
-                "type": "number",
-                "minimum": 0,
-                "description": "Scheduled curriculum still to be written as the learner approaches it."
-              }
-            },
-            "required": [
-              "checkpointMinutes",
-              "lessonMinutes",
-              "practiceMinutes",
-              "unwrittenLessonMinutes"
-            ],
-            "additionalProperties": false
-          }
-        },
-        "required": [
-          "afterDeadlineMinutes",
-          "availableBeforeDeadlineMinutes",
-          "beforeDeadlineMinutes",
-          "context",
-          "coverage",
-          "milestoneExtraMinutesBeforeDeadline",
-          "scheduledMinutes",
-          "studyDaysBeforeDeadline",
-          "workload"
         ],
         "additionalProperties": false
       },

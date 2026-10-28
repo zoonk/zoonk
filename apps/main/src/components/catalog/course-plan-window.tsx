@@ -1,6 +1,13 @@
 import { DayList, type DayListStep } from "@/components/public/day-list";
 import { NUMERIC_CLASS } from "@/components/public/landing-styles";
 import { getMinutesFormatter, getTotalDurationFormatter } from "@/lib/public/public-labels";
+import {
+  type CoursePlanExample,
+  type DatedEstimate,
+  type UndatedEstimate,
+  getStudyMinutes,
+  isDatedEstimate,
+} from "@zoonk/core/catalog/course-plan-example-contract";
 import { BigQuantity } from "@zoonk/learn/big-quantity";
 import { RouteTitle } from "@zoonk/learn/route-line";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
@@ -8,13 +15,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { FlagIcon } from "lucide-react";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { type ReactNode } from "react";
-import { type CoursePlanExample } from "./course-plan";
-import {
-  type DatedEstimate,
-  type UndatedEstimate,
-  getStudyMinutes,
-  isDatedEstimate,
-} from "./plan-estimate";
 import { PlanWorkload } from "./plan-workload";
 
 /** Today's rows the window lists before folding the rest into one line. */

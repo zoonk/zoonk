@@ -7,7 +7,6 @@ import {
 } from "@/components/catalog/catalog-hero";
 import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
 import { ChapterStrip } from "@/components/catalog/chapter-strip";
-import { getExamChapterAreas } from "@/components/catalog/course-plan";
 import { CourseProgressScope } from "@/components/catalog/course-progress";
 import { TryLesson, getTryLessonId, pickTryLesson } from "@/components/catalog/try-lesson";
 import { CheckMark } from "@/components/public/check-mark";
@@ -23,6 +22,7 @@ import { getLocalizedUrl } from "@/lib/metadata/localized-url";
 import { getChapterUrls } from "@/lib/public/public-canonical";
 import { getChapterHref, getLessonHref } from "@/lib/public/public-hrefs";
 import { breadcrumbJsonLd, lessonListJsonLd } from "@/lib/public/structured-data";
+import { getExamChapterAreas } from "@zoonk/core/catalog/course-plan-example";
 import { ContentFeedbackMenu } from "@zoonk/learn/feedback/content-menu";
 import { Page, PageSection } from "@zoonk/learn/page";
 import { SubjectGlyph, getSubject } from "@zoonk/learn/subject-label";

@@ -1,13 +1,17 @@
 import "server-only";
-import { daysBetweenIsoDays, getIsoDay } from "@/lib/public/calendar-day";
-import { getCourseCacheTag, getCourseCurriculumCacheTag } from "@zoonk/core/cache-tags";
-import { estimateCoursePlan } from "@zoonk/core/catalog/course-estimate";
-import { getCourseExamDays } from "@zoonk/core/catalog/course-exam-days";
 import { type Course } from "@zoonk/db";
+import { daysBetweenIsoDays, getIsoDay } from "@zoonk/utils/calendar-day";
 import { logError } from "@zoonk/utils/logger";
 import { cacheTag } from "next/cache";
 import { unstable_rethrow } from "next/navigation";
-import { type PaceEstimate, hasStudyToShow, isDatedEstimate } from "./plan-estimate";
+import { getCourseCacheTag, getCourseCurriculumCacheTag } from "../cache/tags";
+import { estimateCoursePlan } from "./course-estimate";
+import { getCourseExamDays } from "./course-exam-days";
+import {
+  type CoursePlanExample,
+  hasStudyToShow,
+  isDatedEstimate,
+} from "./course-plan-example-contract";
 
 /** The example plan studies Monday to Friday: the planner numbers weekdays from Sunday, 0. */
 const WEEKDAYS = 5;
@@ -17,13 +21,6 @@ const QUARTER_HOUR = 15;
 
 const DEFAULT_COURSE_PACE = QUARTER_HOUR;
 const DEFAULT_EXAM_PACE = 30;
-
-/** The selected public example and its exam's days. */
-export type CoursePlanExample = {
-  /** An exam course's next sitting, its days from today on, counted in the exam's time zone. */
-  exam: { days: string[]; daysLeft: number; estimated: boolean; timeZone: string } | null;
-  pace: PaceEstimate | null;
-};
 
 const ISO_DAY_LENGTH = 10;
 const ISO_HOUR_LENGTH = 13;

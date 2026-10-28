@@ -8,7 +8,6 @@ import {
 import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
 import { CourseExamEyebrow } from "@/components/catalog/course-exam-eyebrow";
 import { CourseMark } from "@/components/catalog/course-mark";
-import { type CoursePlanExample, getCoursePlanExample } from "@/components/catalog/course-plan";
 import { CoursePlanWindow } from "@/components/catalog/course-plan-window";
 import { CourseGoalSwitch, CourseProgressScope } from "@/components/catalog/course-progress";
 import { CourseSubjectLabel } from "@/components/catalog/course-subject-label";
@@ -28,6 +27,8 @@ import { getLibraryOutlineStats } from "@/lib/public/library-outline";
 import { getCourseUrl } from "@/lib/public/public-canonical";
 import { getIsoDayFormatter, getLevelLabels } from "@/lib/public/public-labels";
 import { breadcrumbJsonLd, courseJsonLd } from "@/lib/public/structured-data";
+import { getCoursePlanExample } from "@zoonk/core/catalog/course-plan-example";
+import { type CoursePlanExample } from "@zoonk/core/catalog/course-plan-example-contract";
 import { parseCourseLandingPageContent } from "@zoonk/core/courses/landing-page";
 import { listPublishedCourseEditions } from "@zoonk/core/courses/published-editions";
 import { ContentFeedbackMenu } from "@zoonk/learn/feedback/content-menu";

@@ -1,6 +1,6 @@
 import { getTotalDurationFormatter } from "@/lib/public/public-labels";
+import { type DatedEstimate } from "@zoonk/core/catalog/course-plan-example-contract";
 import { getExtracted } from "next-intl/server";
-import { type DatedEstimate } from "./plan-estimate";
 
 /** One exam area in a plan against the exam's date, at one time a day. */
 export type EstimateArea = DatedEstimate["areas"][number];

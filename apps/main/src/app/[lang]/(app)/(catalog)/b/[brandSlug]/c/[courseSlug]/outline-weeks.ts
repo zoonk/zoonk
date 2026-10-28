@@ -1,4 +1,4 @@
-import { type PaceEstimate } from "@/components/catalog/plan-estimate";
+import { type PaceEstimate } from "@zoonk/core/catalog/course-plan-example-contract";
 import { getExtracted } from "next-intl/server";
 
 /** One chapter's place in a pace's plan, as core's estimate gives it (both kinds of plan). */

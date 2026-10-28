@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { type DatedEstimate, type UndatedEstimate, hasStudyToShow } from "./plan-estimate";
+import {
+  type DatedEstimate,
+  type UndatedEstimate,
+  hasStudyToShow,
+} from "./course-plan-example-contract";
 
 const WORKLOAD = {
   checkpointMinutes: 0,

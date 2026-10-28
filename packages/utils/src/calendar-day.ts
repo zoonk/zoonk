@@ -1,5 +1,5 @@
-import { MS_PER_DAY } from "@zoonk/utils/date";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { MS_PER_DAY } from "./date";
+import { getDateInTimeZone } from "./time-zone";
 
 /** The calendar day an instant falls on in one time zone, as "YYYY-MM-DD". */
 export function getIsoDay({ now, timeZone }: { now: Date; timeZone: string }): string {

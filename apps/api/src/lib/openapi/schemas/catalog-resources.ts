@@ -1,4 +1,5 @@
 import { courseExamDaysSchema } from "@zoonk/core/catalog/course-exam-days-contract";
+import { coursePlanExampleSchema } from "@zoonk/core/catalog/course-plan-example-contract";
 import { CourseFormat, CourseLevel } from "@zoonk/db";
 import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { z } from "zod";
@@ -79,6 +80,12 @@ export const courseResourceSchema = z
       .meta({
         description:
           "Upcoming exam days, matching a default course start; null for non-exam, private or unknown exam courses. Estimated when the next edition's notice is not stored",
+      }),
+    examplePlan: coursePlanExampleSchema
+      .nullable()
+      .meta({
+        description:
+          "The course page's example plan, Monday to Friday from scratch: a quarter hour a day to the course's end, or half an hour a day to an exam course's next sitting; null for a learner's private course",
       }),
     format: z.enum(CourseFormat),
     generationId: z

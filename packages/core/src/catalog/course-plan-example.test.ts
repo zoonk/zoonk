@@ -1,11 +1,11 @@
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { courseBandsFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { buildPlan } from "../../../../../packages/core/src/plans/planner/build-plan";
-import { getCoursePlanExample } from "./course-plan";
+import { buildPlan } from "../plans/planner/build-plan";
+import { getCoursePlanExample } from "./course-plan-example";
 
 // Count real producer entries on a fresh public course, without replacing persistence or planning.
-vi.mock("../../../../../packages/core/src/plans/planner/build-plan", { spy: true });
+vi.mock("../plans/planner/build-plan", { spy: true });
 
 describe("the public example selects one pace", () => {
   beforeEach(() => {

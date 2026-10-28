@@ -1,28 +1,28 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import { readFileSync } from "node:fs";
 import { runInNewContext } from "node:vm";
-import * as calendarDay from "@/lib/public/calendar-day";
-import * as cacheTags from "@zoonk/core/cache-tags";
-import {
-  getCourseCacheTag,
-  getCourseCurriculumCacheTag,
-  getExamBlueprintCacheTag,
-} from "@zoonk/core/cache-tags";
-import * as estimate from "@zoonk/core/catalog/course-estimate";
-import * as examDays from "@zoonk/core/catalog/course-exam-days";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { courseBandsFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
+import * as calendarDay from "@zoonk/utils/calendar-day";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import * as logger from "@zoonk/utils/logger";
 import { cacheTag } from "next/cache";
 import { loadBindings, transform } from "next/dist/build/swc";
 import * as navigation from "next/navigation";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { buildPlan } from "../../../../../packages/core/src/plans/planner/build-plan";
-import { type getCoursePlanExample } from "./course-plan";
-import * as planEstimate from "./plan-estimate";
+import * as cacheTags from "../cache/tags";
+import {
+  getCourseCacheTag,
+  getCourseCurriculumCacheTag,
+  getExamBlueprintCacheTag,
+} from "../cache/tags";
+import { buildPlan } from "../plans/planner/build-plan";
+import * as estimate from "./course-estimate";
+import * as examDays from "./course-exam-days";
+import { type getCoursePlanExample } from "./course-plan-example";
+import * as planExample from "./course-plan-example-contract";
 
 type CachedRead = (...args: unknown[]) => Promise<unknown>;
 type CacheEntry = { revalidateAt: number; result: Promise<unknown>; tags: Set<string> };
@@ -32,9 +32,9 @@ const DEFAULT_REVALIDATE_MS = 15 * 60 * 1000;
 
 type GetCoursePlanExample = typeof getCoursePlanExample;
 
-vi.mock("../../../../../packages/core/src/plans/planner/build-plan", { spy: true });
+vi.mock("../plans/planner/build-plan", { spy: true });
 
-const SOURCE = new URL("course-plan.ts", import.meta.url).pathname;
+const SOURCE = new URL("course-plan-example.ts", import.meta.url).pathname;
 
 /**
  * Vitest doesn't compile cache directives, so the module is compiled with the installed Next
@@ -74,11 +74,11 @@ function cachePlatform(code: string) {
   });
 
   const imports: Record<string, unknown> = {
-    "./plan-estimate": planEstimate,
-    "@/lib/public/calendar-day": calendarDay,
-    "@zoonk/core/cache-tags": cacheTags,
-    "@zoonk/core/catalog/course-estimate": estimate,
-    "@zoonk/core/catalog/course-exam-days": examDays,
+    "../cache/tags": cacheTags,
+    "./course-estimate": estimate,
+    "./course-exam-days": examDays,
+    "./course-plan-example-contract": planExample,
+    "@zoonk/utils/calendar-day": calendarDay,
     "@zoonk/utils/logger": logger,
     "next/cache": { cacheTag },
     "next/navigation": navigation,
@@ -96,7 +96,7 @@ function cachePlatform(code: string) {
     module: { exports: compiled },
     require: (name: string) => {
       if (!(name in imports)) {
-        throw new Error(`Unexpected course-plan dependency: ${name}`);
+        throw new Error(`Unexpected course-plan-example dependency: ${name}`);
       }
 
       return imports[name];
@@ -193,7 +193,7 @@ describe("the course page's example plan cache", () => {
       module: { type: "commonjs" },
       serverActions: {
         cacheKinds: ["default", "private", "remote"],
-        hashSalt: "course-plan-test",
+        hashSalt: "course-plan-example-test",
         isDevelopment: false,
         isReactServerLayer: true,
         useCacheEnabled: true,

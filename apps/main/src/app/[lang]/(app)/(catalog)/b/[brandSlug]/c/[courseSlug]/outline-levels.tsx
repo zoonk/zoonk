@@ -1,4 +1,4 @@
-import { type UndatedEstimate } from "@/components/catalog/plan-estimate";
+import { type UndatedEstimate } from "@zoonk/core/catalog/course-plan-example-contract";
 import { RouteZone } from "@zoonk/learn/route-line";
 import { getExtracted } from "next-intl/server";
 import {

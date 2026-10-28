@@ -1,4 +1,5 @@
-import { type CoursePlanEstimate } from "@zoonk/core/catalog/course-estimate-contract";
+import { z } from "zod";
+import { type CoursePlanEstimate, coursePlanEstimateSchema } from "./course-estimate-contract";
 
 /** A course's plan at one time a day, as core plans it from scratch. */
 export type PaceEstimate = { estimate: CoursePlanEstimate; minutes: number };
@@ -36,3 +37,24 @@ function getPlannedMinutes(estimate: DatedEstimate): number {
 export function hasStudyToShow(estimate: CoursePlanEstimate): boolean {
   return isDatedEstimate(estimate) ? getPlannedMinutes(estimate) > 0 : estimate.weeks > 0;
 }
+
+/**
+ * A course page's example plan: an exam course's next sitting, its days from today on, counted in
+ * the exam's time zone; and the plan at the example's time a day (to the course's end, or against
+ * the exam's first day), null when there's no plan with study to show.
+ */
+export const coursePlanExampleSchema = z
+  .object({
+    exam: z
+      .object({
+        days: z.array(z.iso.date()).min(1),
+        daysLeft: z.int().nonnegative(),
+        estimated: z.boolean(),
+        timeZone: z.string(),
+      })
+      .nullable(),
+    pace: z.object({ estimate: coursePlanEstimateSchema, minutes: z.int().positive() }).nullable(),
+  })
+  .meta({ id: "CoursePlanExample" });
+
+export type CoursePlanExample = z.infer<typeof coursePlanExampleSchema>;

@@ -1,4 +1,3 @@
-import { type PaceEstimate, isDatedEstimate } from "@/components/catalog/plan-estimate";
 import { type LibraryOutline } from "@/data/catalog/resolve-catalog-route";
 import { getLibraryOutlineStats } from "@/lib/public/library-outline";
 import {
@@ -6,6 +5,10 @@ import {
   getMinutesFormatter,
   getTotalDurationLabel,
 } from "@/lib/public/public-labels";
+import {
+  type PaceEstimate,
+  isDatedEstimate,
+} from "@zoonk/core/catalog/course-plan-example-contract";
 import { RouteStop, RouteTitle } from "@zoonk/learn/route-line";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
