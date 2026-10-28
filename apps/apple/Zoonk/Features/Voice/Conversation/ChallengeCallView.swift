@@ -118,23 +118,113 @@ extension ChallengeCallView {
   }
 }
 
+/// Mirrors main's checkpoint page: a language goal's call shows its intro before Start makes it.
 struct CheckpointCallView: View {
+  @Environment(VoiceServices.self) private var voice
+  @Environment(AppRouter.self) private var router
+  @Environment(\.dismiss) private var dismiss
+
   let blockId: String
 
   var body: some View {
-    ContentUnavailableView {
-      Label {
-        Text("The unit's call", tableName: "Voice", comment: "A language checkpoint's call")
-      } icon: {
-        Image(systemName: "phone")
+    let call = voice.checkpointCall(blockId: blockId)
+
+    content(call)
+      .loads(call)
+      .onChange(of: call.value, initial: true) { _, value in
+        switch value {
+        case .ready(let made)?:
+          dismiss()
+          router.open(.conversation(conversationId: made.conversationId))
+        case .earlierFirst?:
+          router.showRoot(of: .today)
+        default:
+          break
+        }
       }
-    } description: {
-      Text(
-        "A live call where you get your point across. Speak or type.", tableName: "Voice",
-        comment: "What a language checkpoint's call is")
-    } actions: {
-      ChallengeCallView(blockId: blockId)
+  }
+
+  @ViewBuilder
+  private func content(_ call: Resource<LanguageCheckpointCall>) -> some View {
+    switch call.state {
+    case .loaded(.notStarted(let preview)):
+      ConversationIntro(intro: CallIntro(preview.intro)) {
+        if preview.dailyLimitReached {
+          StudyTimeUsedUp()
+        } else {
+          ChallengeCallView(blockId: blockId)
+        }
+      }
+    case .loaded(.preparing(let preparing)):
+      ContentUnavailableView {
+        Label(preparing.unitTitle, systemImage: "phone")
+      } description: {
+        Text(
+          "This challenge is a short call about the unit. It's written for your speaking level first, which takes up to half a minute.",
+          tableName: "Voice", comment: "A language checkpoint's call that isn't written yet")
+      } actions: {
+        ChallengeCallView(blockId: blockId)
+      }
+    case .loaded(.plusRequired):
+      PlusNotice(
+        description: Text(
+          "Challenge calls come with Plus. Your plan keeps going without them.",
+          tableName: "Voice", comment: "A checkpoint call or exam speaking task needs Plus")
+      )
+      .scenePadding()
+    case .empty, .failed(.notFound), .loaded(.notLanguage):
+      ContentUnavailableView {
+        Label {
+          Text(
+            "This call isn't here", tableName: "Voice", comment: "A conversation that doesn't exist"
+          )
+        } icon: {
+          Image(systemName: "phone.badge.waveform")
+        }
+      }
+    case .failed(let error) where error != .unauthorized:
+      ContentUnavailableView {
+        Label {
+          Text("The call didn't load", tableName: "Voice", comment: "Loading a conversation failed")
+        } icon: {
+          Image(systemName: "wifi.exclamationmark")
+        }
+      } actions: {
+        Button {
+          Task { await call.refresh() }
+        } label: {
+          Text("Try again", tableName: "Voice", comment: "Button to retry loading")
+        }
+        .buttonStyle(.bordered)
+      }
+    default:
+      ProgressView()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+  }
+}
+
+/// Start would refuse the call until the learner's next session.
+private struct StudyTimeUsedUp: View {
+  @Environment(AppRouter.self) private var router
+
+  var body: some View {
+    Text(
+      "You've reached today's study time. It'll be in your next session.", tableName: "Voice",
+      comment: "A checkpoint call that today's study time no longer has room for"
+    )
+    .font(.footnote)
+    .foregroundStyle(.secondary)
+    .frame(maxWidth: .infinity, alignment: .leading)
+
+    Button {
+      router.showRoot(of: .today)
+    } label: {
+      Text("Back to Today", tableName: "Voice", comment: "Leaves a call for Today")
+        .frame(maxWidth: .infinity)
+    }
+    .buttonStyle(.mainAction)
+    .controlSize(.large)
   }
 }
 

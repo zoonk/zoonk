@@ -14,7 +14,7 @@ struct ConversationLiveView: View {
   var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 20) {
-        CharacterRow(conversation: conversation, isTalking: call.isCharacterTalking)
+        CharacterRow(intro: CallIntro(conversation), isTalking: call.isCharacterTalking)
 
         if !showsAside, conversation.speakingTask == nil {
           CallGoals(conversation: conversation, met: call.metLabels)

@@ -1,26 +1,73 @@
 import SwiftUI
 
-/// A call the learner's plan leaves to Plus shows the same intro, locked.
-struct ConversationIntro: View {
-  let conversation: LanguageConversation
-  let isLocked: Bool
-  let onStart: () -> Void
+/// What a call's intro shows: from the call, or from a checkpoint's read before the call is made.
+struct CallIntro {
+  struct Character {
+    let name: String
+    let place: String
+    let role: String
+  }
+
+  struct Objective {
+    let description: String
+    let label: String
+  }
+
+  let character: Character
+  let level: String
+  let minutes: Int
+  let objectives: [Objective]
+  let situation: String
+  let speakingTask: Components.Schemas.ExamSpeakingTask?
+  let targetLanguage: String
+  let title: String
+
+  init(_ conversation: LanguageConversation) {
+    let character = conversation.character
+    self.character = Character(name: character.name, place: character.place, role: character.role)
+    level = conversation.level.rawValue
+    minutes = conversation.minutes
+    objectives = conversation.objectives.map {
+      Objective(description: $0.description, label: $0.label)
+    }
+    situation = conversation.situation
+    speakingTask = conversation.speakingTask
+    targetLanguage = conversation.targetLanguage
+    title = conversation.title
+  }
+
+  init(_ intro: Components.Schemas.LanguageConversationIntro) {
+    let character = intro.character
+    self.character = Character(name: character.name, place: character.place, role: character.role)
+    level = intro.level.rawValue
+    minutes = intro.minutes
+    objectives = intro.objectives.map { Objective(description: $0.description, label: $0.label) }
+    situation = intro.situation
+    speakingTask = intro.examTask?.value1
+    targetLanguage = intro.targetLanguage
+    title = intro.title
+  }
+}
+
+struct ConversationIntro<Footer: View>: View {
+  let intro: CallIntro
+  @ViewBuilder let footer: Footer
 
   var body: some View {
     List {
       Section {
         VStack(alignment: .leading, spacing: 8) {
           Text(
-            "\(Duration.seconds(conversation.minutes * 60).formatted(.units(allowed: [.minutes], width: .wide))) · Level \(conversation.level.rawValue)",
+            "\(Duration.seconds(intro.minutes * 60).formatted(.units(allowed: [.minutes], width: .wide))) · Level \(intro.level)",
             tableName: "Voice", comment: "A call's length and level, over its title"
           )
           .font(.caption.monospaced())
           .foregroundStyle(.tertiary)
 
-          Text(conversation.speakingTask?.task.name ?? conversation.title)
+          Text(intro.speakingTask?.task.name ?? intro.title)
             .font(.title2.weight(.semibold))
 
-          Text(conversation.speakingTask?.card.summary ?? conversation.situation)
+          Text(intro.speakingTask?.card.summary ?? intro.situation)
             .foregroundStyle(.secondary)
         }
         .listRowBackground(Color.clear)
@@ -28,17 +75,17 @@ struct ConversationIntro: View {
       }
 
       Section {
-        CharacterRow(conversation: conversation, isTalking: false)
+        CharacterRow(intro: intro, isTalking: false)
       }
 
-      if let examTask = conversation.speakingTask {
+      if let examTask = intro.speakingTask {
         ExamTaskCard(task: examTask)
       } else {
         Section {
-          ForEach(conversation.objectives, id: \.label) { objective in
+          ForEach(intro.objectives, id: \.label) { objective in
             VStack(alignment: .leading, spacing: 2) {
               Text(objective.label)
-                .typesettingLanguage(.init(identifier: conversation.targetLanguage))
+                .typesettingLanguage(.init(identifier: intro.targetLanguage))
               Text(objective.description)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
@@ -60,30 +107,7 @@ struct ConversationIntro: View {
     }
     .safeAreaBar(edge: .bottom) {
       VStack(spacing: 12) {
-        if isLocked {
-          PlusNotice(
-            description: Text(
-              "Challenge calls come with Plus. Your plan keeps going without them.",
-              tableName: "Voice", comment: "A checkpoint call or exam speaking task needs Plus"),
-            showsSeePlus: false)
-
-          SeePlusButton()
-            .frame(maxWidth: .infinity)
-            .buttonStyle(.mainAction)
-            .controlSize(.large)
-        } else {
-          Button(action: onStart) {
-            Label {
-              Text("Start the call", tableName: "Voice", comment: "Starts a live call")
-            } icon: {
-              Image(systemName: "phone.fill")
-            }
-            .frame(maxWidth: .infinity)
-          }
-          .buttonStyle(.mainAction)
-          .controlSize(.large)
-          .keyboardShortcut(.defaultAction)
-        }
+        footer
       }
       .scenePadding()
       .keepsOffFold()
@@ -91,12 +115,45 @@ struct ConversationIntro: View {
   }
 }
 
+/// A call the learner's plan leaves to Plus shows the same intro, locked.
+struct CallStartFooter: View {
+  let isLocked: Bool
+  let onStart: () -> Void
+
+  var body: some View {
+    if isLocked {
+      PlusNotice(
+        description: Text(
+          "Challenge calls come with Plus. Your plan keeps going without them.",
+          tableName: "Voice", comment: "A checkpoint call or exam speaking task needs Plus"),
+        showsSeePlus: false)
+
+      SeePlusButton()
+        .frame(maxWidth: .infinity)
+        .buttonStyle(.mainAction)
+        .controlSize(.large)
+    } else {
+      Button(action: onStart) {
+        Label {
+          Text("Start the call", tableName: "Voice", comment: "Starts a live call")
+        } icon: {
+          Image(systemName: "phone.fill")
+        }
+        .frame(maxWidth: .infinity)
+      }
+      .buttonStyle(.mainAction)
+      .controlSize(.large)
+      .keyboardShortcut(.defaultAction)
+    }
+  }
+}
+
 struct CharacterRow: View {
-  let conversation: LanguageConversation
+  let intro: CallIntro
   let isTalking: Bool
 
   var body: some View {
-    let character = conversation.character
+    let character = intro.character
 
     HStack(spacing: 12) {
       Text(character.name.prefix(1).uppercased())
@@ -113,7 +170,7 @@ struct CharacterRow: View {
           .font(.headline)
 
         Group {
-          if let role = conversation.speakingTask?.task.role {
+          if let role = intro.speakingTask?.task.role {
             switch role {
             case .examiner:
               Text("Examiner", tableName: "Voice", comment: "Whom the AI plays in an exam task")

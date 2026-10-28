@@ -381,35 +381,6 @@
         }
       }
     },
-    "A live call where you get your point across. Speak or type." : {
-      "comment" : "What a language checkpoint's call is",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ein Live-Gespräch, in dem du dich verständlich machst. Sprich oder tippe."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Una llamada en directo para expresar lo que quieres decir. Habla o escribe."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un appel en direct pour te faire comprendre. Parle ou écris."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Uma conversa ao vivo para você se expressar. Fale ou digite."
-          }
-        }
-      }
-    },
     "A star for finishing, one for getting everything across and one without Help." : {
       "comment" : "How a call's stars are earned",
       "localizations" : {
@@ -580,6 +551,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Voltar"
+          }
+        }
+      }
+    },
+    "Back to Today" : {
+      "comment" : "Leaves a call for Today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zurück zu Heute"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a Hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retour à Aujourd’hui"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voltar para Hoje"
           }
         }
       }
@@ -3995,35 +3995,6 @@
         }
       }
     },
-    "The unit's call" : {
-      "comment" : "A language checkpoint's call",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das Gespräch des Kapitels"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La llamada de la unidad"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "L’appel de l’unité"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A conversa do módulo"
-          }
-        }
-      }
-    },
     "The words didn't load" : {
       "comment" : "Loading the pronunciation round failed",
       "localizations" : {
@@ -4107,6 +4078,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Esta conversa não existe"
+          }
+        }
+      }
+    },
+    "This challenge is a short call about the unit. It's written for your speaking level first, which takes up to half a minute." : {
+      "comment" : "A language checkpoint's call that isn't written yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Herausforderung ist ein kurzes Gespräch über die Einheit. Es wird zuerst auf dein Sprachniveau zugeschnitten. Das dauert höchstens eine halbe Minute."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este desafío es una llamada breve sobre la unidad. Primero se prepara según tu nivel de expresión oral, lo que puede tardar hasta medio minuto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce défi est un court échange oral sur l’unité. Il est d’abord préparé selon ton niveau d’expression orale, ce qui prend jusqu’à 30 s."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este desafio é uma conversa curta sobre o módulo. Primeiro, ela é criada para o seu nível de conversação, o que leva até meio minuto."
           }
         }
       }
@@ -4925,6 +4925,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você já aprendeu essa palavra. Ela não vai aparecer de novo."
+          }
+        }
+      }
+    },
+    "You've reached today's study time. It'll be in your next session." : {
+      "comment" : "A checkpoint call that today's study time no longer has room for",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast deine heutige Lernzeit erreicht. Das Gespräch kommt in deiner nächsten Lerneinheit."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has llegado al límite de tiempo de estudio de hoy. Lo harás en tu próxima sesión."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as atteint la durée d’étude prévue pour aujourd’hui. Ce défi sera dans ta prochaine séance."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você chegou ao limite do tempo de estudo de hoje. Isso fica para a próxima sessão."
           }
         }
       }

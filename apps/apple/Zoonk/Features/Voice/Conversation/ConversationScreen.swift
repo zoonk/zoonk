@@ -196,10 +196,14 @@ private struct LiveCallRun: View {
   @ViewBuilder
   private func runView(_ call: LiveCall) -> some View {
     if conversation.locked || call.failure == .plusRequired {
-      ConversationIntro(conversation: conversation, isLocked: true) {}
+      ConversationIntro(intro: CallIntro(conversation)) {
+        CallStartFooter(isLocked: true) {}
+      }
     } else if call.phase == .idle {
-      ConversationIntro(conversation: conversation, isLocked: false) {
-        Task { await call.start() }
+      ConversationIntro(intro: CallIntro(conversation)) {
+        CallStartFooter(isLocked: false) {
+          Task { await call.start() }
+        }
       }
     } else if saving == .ended || saving == .takenOver {
       CallProblemView(problem: .saveEnded(takenOver: saving == .takenOver)) { action in
