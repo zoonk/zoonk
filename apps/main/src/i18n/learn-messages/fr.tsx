@@ -1,5 +1,3 @@
-"use client";
-
 import learn from "@zoonk/learn/messages/fr.po";
 import player from "@zoonk/player/messages/fr.po";
 import { NextIntlClientProvider } from "next-intl";
