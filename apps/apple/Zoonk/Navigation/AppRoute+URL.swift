@@ -60,7 +60,9 @@ enum AppLink: Equatable {
     case (2, "mistakes", "practice", _): return .route(.mistakePractice(skillId: value("skill")))
     case (2, "pattern", let patternId, _): return .route(.pattern(patternId: patternId))
     case (2, "test-out", let chapterId, _): return .route(.testOut(chapterId: chapterId))
-    case (1, "focus-test", _, _): return .route(.focusTest(goalId: value("goal")))
+    case (1, "focus-test", _, _):
+      // The screen tests one goal; main's link names it unless it's the one in the switcher.
+      return value("goal").map { .route(.focusTest(goalId: $0)) }
     case (2, "challenge", let planItemId, _):
       return .route(.challenge(planItemId: planItemId, sessionId: session))
     case (2, "checkpoint", let blockId, _):

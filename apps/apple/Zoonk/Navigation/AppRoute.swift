@@ -25,7 +25,7 @@ enum AppRoute: Hashable, Identifiable {
   case mistakePractice(skillId: String? = nil)
   case pattern(patternId: String)
   case testOut(chapterId: String)
-  case focusTest(goalId: String? = nil)
+  case focusTest(goalId: String)
   case challenge(planItemId: String, sessionId: String? = nil)
   case checkpoint(blockId: String, sessionId: String? = nil)
   case essay(blockId: String)
