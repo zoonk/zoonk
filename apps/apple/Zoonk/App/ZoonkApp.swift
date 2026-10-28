@@ -66,9 +66,17 @@ struct ZoonkApp: App {
     _voice = State(initialValue: dependencies.voice)
   }
 
+  @ViewBuilder private var rootView: some View {
+    #if DEBUG
+      if CodeActivityFixture.enabled { CodeActivityFixture() } else { AppView() }
+    #else
+      AppView()
+    #endif
+  }
+
   var body: some Scene {
     WindowGroup {
-      AppView()
+      rootView
         #if DEBUG
           .modifier(DebugLessonLaunch())
           // Inside the environment below, so the gallery's screens get the app's renderers.
@@ -109,7 +117,9 @@ struct ZoonkApp: App {
         .environment(\.lessonPlayer, lessonPlayer)
         .environment(\.lessonAudio, .voice(voice))
         .environment(\.spokenAnswerRecording, .voice)
-        .environment(\.activityRenderers, .app)
+        .environment(
+          \.activityRenderers, ActivityRendererRegistry.app.adding(CodeActivityRenderers.all)
+        )
         .onOpenURL { url in
           if !router.open(url: url) {
             session.handleGoogleSignInURL(url)
