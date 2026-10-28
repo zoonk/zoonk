@@ -1,31 +1,7 @@
-import { prisma } from "@zoonk/db";
 import { getAppleSubscriptionProduct } from "./apple-products";
 import { getAppleSubscriptionFromNotification } from "./apple-store";
 import { reconcileAppleSubscription } from "./reconcile-apple-subscription";
-import { findStoreSubscription } from "./reconcile-store-subscription";
-
-/**
- * Existing chains keep their established owner. First delivery may create a row only for the
- * signed appAccountToken of a user who still exists.
- */
-async function getNotificationReferenceId({
-  accountToken,
-  existingReferenceId,
-}: {
-  accountToken: string | null;
-  existingReferenceId: string | null;
-}) {
-  if (existingReferenceId) {
-    return existingReferenceId;
-  }
-
-  if (!accountToken) {
-    return null;
-  }
-
-  const user = await prisma.user.findUnique({ where: { id: accountToken } });
-  return user?.id ?? null;
-}
+import { findNotificationOwner, findStoreSubscription } from "./reconcile-store-subscription";
 
 /**
  * Reconciles signed server notifications so renewals, refunds, grace periods, and revocations
@@ -53,8 +29,8 @@ export async function processAppleSubscriptionNotification({
     providerSubscriptionId: verifiedSubscription.originalTransactionId,
   });
 
-  const referenceId = await getNotificationReferenceId({
-    accountToken: verifiedSubscription.accountToken,
+  const referenceId = await findNotificationOwner({
+    accountId: verifiedSubscription.accountToken,
     existingReferenceId: existing?.referenceId ?? null,
   });
 

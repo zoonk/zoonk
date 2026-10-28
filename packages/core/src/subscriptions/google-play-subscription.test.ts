@@ -84,6 +84,8 @@ function makePurchase({
 
 /** What Google answers: every purchase it knows by token, and what Zoonk sent it. */
 const google = {
+  /** Another request acknowledged the purchase a moment earlier, so Google refuses this one. */
+  acknowledgedConcurrently: false,
   acknowledgements: [] as { body: unknown; productId: string; purchaseToken: string }[],
   purchases: new Map<string, Record<string, unknown>>(),
   reads: [] as string[],
@@ -138,7 +140,7 @@ async function googleFetch(input: RequestInfo | URL, init?: RequestInit) {
       acknowledgementState: "ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED",
     });
 
-    return new Response(null, { status: 200 });
+    return new Response(null, { status: google.acknowledgedConcurrently ? 409 : 200 });
   }
 
   throw new Error(`Unexpected request to ${url.href}`);
@@ -210,6 +212,7 @@ async function hasPlus(userId: string) {
 describe("Google Play subscriptions", () => {
   beforeEach(() => {
     google.acknowledgements = [];
+    google.acknowledgedConcurrently = false;
     google.purchases.clear();
     google.reads = [];
     vi.stubEnv("GOOGLE_PLAY_SERVICE_ACCOUNT_KEY", SERVICE_ACCOUNT_KEY);
@@ -296,14 +299,29 @@ describe("Google Play subscriptions", () => {
       expect(google.acknowledgements).toStrictEqual([]);
     });
 
+    it("links a purchase made in the Play Store, which names no account, to the signed-in learner", async () => {
+      const user = await userFixture();
+      const purchaseToken = makePurchaseToken();
+      setPurchase(purchaseToken, {});
+      mockSession(user.id);
+
+      await expect(syncCurrentUserGooglePlaySubscription({ purchaseToken })).resolves.toStrictEqual(
+        { isActive: true },
+      );
+
+      expect(google.acknowledgements).toStrictEqual([
+        { body: {}, productId: "plus", purchaseToken },
+      ]);
+
+      await expect(hasPlus(user.id)).resolves.toBe(true);
+    });
+
     it("keeps a purchase token with the account that claimed it first", async () => {
       const [firstUser, secondUser] = await Promise.all([userFixture(), userFixture()]);
       const purchaseToken = makePurchaseToken();
-      setPurchase(purchaseToken, { accountId: firstUser.id });
+      setPurchase(purchaseToken, {});
       mockSession(firstUser.id);
       await syncCurrentUserGooglePlaySubscription({ purchaseToken });
-
-      setPurchase(purchaseToken, { accountId: secondUser.id, acknowledged: true });
       mockSession(secondUser.id);
 
       await expect(syncCurrentUserGooglePlaySubscription({ purchaseToken })).rejects.toMatchObject({
@@ -315,6 +333,23 @@ describe("Google Play subscriptions", () => {
       });
 
       await expect(hasPlus(secondUser.id)).resolves.toBe(false);
+    });
+
+    it("links a purchase the notification acknowledged a moment earlier", async () => {
+      const user = await userFixture();
+      const purchaseToken = makePurchaseToken();
+      setPurchase(purchaseToken, { accountId: user.id });
+      google.acknowledgedConcurrently = true;
+      mockSession(user.id);
+
+      await expect(syncCurrentUserGooglePlaySubscription({ purchaseToken })).resolves.toStrictEqual(
+        { isActive: true },
+      );
+
+      await expect(findGoogleSubscription(purchaseToken)).resolves.toMatchObject({
+        referenceId: user.id,
+        status: "active",
+      });
     });
 
     it.each([

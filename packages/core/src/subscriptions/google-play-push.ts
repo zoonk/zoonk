@@ -36,7 +36,8 @@ export async function verifyGooglePlayPush({
       throw new GooglePlayError("unauthorized");
     }
   } catch (error) {
-    if (error instanceof errors.JOSEError) {
+    /** Google's signing keys not loading in time is an outage, not a forged push. */
+    if (error instanceof errors.JOSEError && !(error instanceof errors.JWKSTimeout)) {
       throw new GooglePlayError("unauthorized", { cause: error });
     }
 

@@ -4,6 +4,7 @@ import {
   isPrismaUniqueConstraintError,
   prisma,
 } from "@zoonk/db";
+import { z } from "zod";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { getUserSubscriptionCacheTag } from "../cache/tags";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
@@ -146,6 +147,29 @@ export function findStoreSubscription({
   return prisma.subscription.findUnique({
     where: { provider_providerSubscriptionId: { provider, providerSubscriptionId } },
   });
+}
+
+/**
+ * Who a notification's chain belongs to: a known chain keeps its owner, and a first delivery may
+ * create a row only for the account the store names, while that user still exists.
+ */
+export async function findNotificationOwner({
+  accountId,
+  existingReferenceId,
+}: {
+  accountId: string | null;
+  existingReferenceId: string | null;
+}) {
+  if (existingReferenceId) {
+    return existingReferenceId;
+  }
+
+  if (!accountId || !z.uuid().safeParse(accountId).success) {
+    return null;
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: accountId } });
+  return user?.id ?? null;
 }
 
 /** Persists one ordered store snapshot and expires every cached entitlement derived from it. */

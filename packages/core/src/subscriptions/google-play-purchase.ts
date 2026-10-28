@@ -8,11 +8,11 @@ export type VerifiedGooglePlaySubscription = {
   canceledAt: Date | null;
   environment: "production" | "test";
   expiryTime: Date;
-  /** The purchase has no account id of its own: a resubscription from the Play Store. */
-  hasOwnAccountId: boolean;
   isAcknowledged: boolean;
   isActive: boolean;
   isAutoRenewEnabled: boolean;
+  /** A resubscription from the Play Store, which carries no account id of its own. */
+  isResubscription: boolean;
   linkedPurchaseToken: string | null;
   orderId: string | null;
   productId: string;
@@ -71,25 +71,17 @@ const PENDING_STATES = new Set([
   "SUBSCRIPTION_STATE_PENDING_PURCHASE_CANCELED",
 ]);
 
-/** Account ids are Zoonk user ids; anything else can't name an account. */
-function getAccountId(value: string | undefined) {
-  const result = z.uuid().safeParse(value);
-  return result.success ? result.data.toLowerCase() : null;
-}
-
 /**
  * The account the app set at purchase. A resubscription from the Play Store has none of its own,
  * so it names the account of the purchase that expired before it.
  */
-function getPurchaseAccount(purchase: SubscriptionPurchase) {
-  const ownAccountId = purchase.externalAccountIdentifiers?.obfuscatedExternalAccountId;
-  const expiredIdentifiers = purchase.outOfAppPurchaseContext?.expiredExternalAccountIdentifiers;
+function getAccountId(purchase: SubscriptionPurchase) {
+  const accountId =
+    purchase.externalAccountIdentifiers?.obfuscatedExternalAccountId ??
+    purchase.outOfAppPurchaseContext?.expiredExternalAccountIdentifiers
+      ?.obfuscatedExternalAccountId;
 
-  return {
-    accountId:
-      getAccountId(ownAccountId) ?? getAccountId(expiredIdentifiers?.obfuscatedExternalAccountId),
-    hasOwnAccountId: Boolean(ownAccountId),
-  };
+  return accountId?.toLowerCase() ?? null;
 }
 
 function getCanceledAt({
@@ -143,7 +135,7 @@ export function createVerifiedGooglePlaySubscription({
   const isAutoRenewEnabled = lineItem.autoRenewingPlan?.autoRenewEnabled ?? false;
 
   return {
-    ...getPurchaseAccount(purchase),
+    accountId: getAccountId(purchase),
     basePlanId: lineItem.offerDetails?.basePlanId ?? null,
     canceledAt: getCanceledAt({
       isCancelingAtPeriodEnd: isActive && !isAutoRenewEnabled,
@@ -155,6 +147,7 @@ export function createVerifiedGooglePlaySubscription({
     isAcknowledged: purchase.acknowledgementState === "ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED",
     isActive,
     isAutoRenewEnabled,
+    isResubscription: Boolean(purchase.outOfAppPurchaseContext),
     linkedPurchaseToken: purchase.linkedPurchaseToken ?? null,
     orderId: lineItem.latestSuccessfulOrderId ?? null,
     productId: lineItem.productId,

@@ -109,10 +109,17 @@ async function callAndroidPublisher(path: string, body?: unknown) {
   const token = await getAccessToken();
   const headers = { authorization: `Bearer ${token}`, "content-type": "application/json" };
 
-  return fetchFromGoogle(
+  const response = await fetchFromGoogle(
     `${ANDROID_PUBLISHER_URL}/${path}`,
     body === undefined ? { headers } : { body: JSON.stringify(body), headers, method: "POST" },
   );
+
+  /** A revoked or rotated key invalidates the cached token: the next call signs in again. */
+  if (response.status === HTTP_UNAUTHORIZED) {
+    cachedAccessToken = null;
+  }
+
+  return response;
 }
 
 /** The service account was refused: it lacks access in Play Console, or its key was revoked. */

@@ -1,4 +1,5 @@
-import { acknowledgeGooglePlaySubscription } from "./google-play-api";
+import { safeAsync } from "@zoonk/utils/error";
+import { acknowledgeGooglePlaySubscription, getGooglePlaySubscription } from "./google-play-api";
 import { GooglePlayError } from "./google-play-error";
 import { type GooglePlaySubscriptionProduct } from "./google-play-products";
 import { type VerifiedGooglePlaySubscription } from "./google-play-purchase";
@@ -50,19 +51,40 @@ function getGooglePlaySubscriptionSnapshot({
 }
 
 /**
+ * The app's POST and the purchase notification arrive together, so both may acknowledge one
+ * purchase; when Google refuses the second, the purchase is already acknowledged. A resubscription
+ * from the Play Store gets its owner's account id, which its later resubscriptions then carry.
+ */
+async function acknowledge({ purchase, referenceId }: ReconcileGooglePlaySubscriptionInput) {
+  const { error } = await safeAsync(() =>
+    acknowledgeGooglePlaySubscription({
+      accountId: purchase.isResubscription ? referenceId : undefined,
+      productId: purchase.productId,
+      purchaseToken: purchase.purchaseToken,
+    }),
+  );
+
+  if (!error) {
+    return;
+  }
+
+  const current = await getGooglePlaySubscription(purchase.purchaseToken);
+
+  if (!current?.isAcknowledged) {
+    throw error;
+  }
+}
+
+/**
  * Acknowledges a granted purchase before saving it, so a saved notification never hides an
  * acknowledgement that failed: a retry reads the purchase again and acknowledges what's left.
  * A purchase token never moves between accounts.
  */
 export async function reconcileGooglePlaySubscription(input: ReconcileGooglePlaySubscriptionInput) {
-  const { purchase, referenceId } = input;
+  const { purchase } = input;
 
   if (purchase.isActive && !purchase.isAcknowledged) {
-    await acknowledgeGooglePlaySubscription({
-      accountId: purchase.hasOwnAccountId ? undefined : referenceId,
-      productId: purchase.productId,
-      purchaseToken: purchase.purchaseToken,
-    });
+    await acknowledge(input);
   }
 
   try {

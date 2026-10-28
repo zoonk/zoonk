@@ -1,10 +1,9 @@
-import { prisma } from "@zoonk/db";
 import { z } from "zod";
 import { GOOGLE_PLAY_PACKAGE_NAME, getGooglePlaySubscription } from "./google-play-api";
 import { getGooglePlaySubscriptionProduct } from "./google-play-products";
 import { verifyGooglePlayPush } from "./google-play-push";
 import { reconcileGooglePlaySubscription } from "./reconcile-google-play-subscription";
-import { findStoreSubscription } from "./reconcile-store-subscription";
+import { findNotificationOwner, findStoreSubscription } from "./reconcile-store-subscription";
 
 const PRODUCT_TYPE_SUBSCRIPTION = 1;
 
@@ -39,26 +38,6 @@ function getNotifiedPurchaseToken(data: string) {
   } catch {
     return null;
   }
-}
-
-/** A known chain keeps its owner; a first delivery may create a row only for an existing user. */
-async function getReferenceId({
-  accountId,
-  existingReferenceId,
-}: {
-  accountId: string | null;
-  existingReferenceId: string | null;
-}) {
-  if (existingReferenceId) {
-    return existingReferenceId;
-  }
-
-  if (!accountId) {
-    return null;
-  }
-
-  const user = await prisma.user.findUnique({ where: { id: accountId } });
-  return user?.id ?? null;
 }
 
 /**
@@ -100,7 +79,7 @@ export async function processGooglePlayNotification({
     return null;
   }
 
-  const referenceId = await getReferenceId({
+  const referenceId = await findNotificationOwner({
     accountId: purchase.accountId,
     existingReferenceId: existing?.referenceId ?? null,
   });

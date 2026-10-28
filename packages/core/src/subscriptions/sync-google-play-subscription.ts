@@ -7,7 +7,7 @@ import { isActiveStoreSubscription } from "./reconcile-store-subscription";
 
 /**
  * Derives ownership from the authenticated session and requires the account id the app set at
- * purchase (`obfuscatedAccountId`) to match before granting cross-platform access.
+ * purchase (`obfuscatedAccountId`), when the purchase has one, to match before granting access.
  */
 export async function syncCurrentUserGooglePlaySubscription({
   purchaseToken,
@@ -26,7 +26,8 @@ export async function syncCurrentUserGooglePlaySubscription({
     return { isActive: false };
   }
 
-  if (purchase.accountId !== session.user.id.toLowerCase()) {
+  /** A purchase made in the Play Store (a promo code) names no account: it's the learner's on this device. */
+  if (purchase.accountId && purchase.accountId !== session.user.id.toLowerCase()) {
     throw new GooglePlayError("accountMismatch");
   }
 

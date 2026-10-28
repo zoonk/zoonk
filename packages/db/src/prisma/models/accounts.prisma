@@ -212,7 +212,7 @@ model Subscription {
   providerProductId      String?              @map("provider_product_id")
   /// Issuing environment retained to distinguish production purchases from TestFlight sandbox, local Xcode and Play license-tester transactions.
   providerEnvironment    String?              @map("provider_environment")
-  /// Provider-signed event time used to reject delayed notifications and concurrent stale updates.
+  /// When the store state was signed (Apple) or read from the store (Google), used to reject delayed notifications and concurrent stale updates.
   providerSignedAt       DateTime?            @map("provider_signed_at")
   /// Provider event ID retained for notification traceability and exact replay recognition without storing the signed payload.
   providerEventId        String?              @map("provider_event_id")

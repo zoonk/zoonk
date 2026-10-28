@@ -35,7 +35,7 @@ export const subscriptionPaths = {
   "/me/subscriptions/google": {
     post: {
       description:
-        "The app sets the learner's user id as the purchase's obfuscatedAccountId; a purchase made for another account is refused. Zoonk acknowledges the purchase, so the app doesn't.",
+        "The app sets the learner's user id as the purchase's obfuscatedAccountId; a purchase made for another account is refused, and one made in the Play Store, which names no account, becomes the learner's. Zoonk acknowledges the purchase, so the app doesn't.",
       operationId: "createGooglePlaySubscription",
       requestBody: {
         content: { "application/json": { schema: googlePlaySubscriptionRequestSchema } },
