@@ -29,6 +29,9 @@ protocol StudyAPIClient: Sendable {
     async throws -> BlockStart
   func addExtraBlock(token: String, sessionID: String) async throws -> StudyBlock
   func catchUp(token: String, sessionID: String, timeZone: String) async throws
+  func stop(token: String, sessionID: String, timeZone: String) async throws
+  func getSession(token: String, sessionID: String) async throws -> StudyDay
+  func getSummary(token: String, sessionID: String) async throws -> SessionSummary
   func lessonStatus(token: String, lessonID: String) async throws -> String
   func answerInsight(token: String, insightID: String, accepted: Bool) async throws
 }
@@ -189,6 +192,53 @@ struct StudyAPI: StudyAPIClient {
         return
       case .unauthorized:
         throw APIError.unauthorized
+      default:
+        throw APIError.unavailable
+      }
+    }
+  }
+
+  func stop(token: String, sessionID: String, timeZone: String) async throws {
+    let body = TimeZoneBody(timeZone: timeZone)
+
+    try await clients.perform(token: token) { client in
+      switch try await client.createStudySessionStop(
+        path: .init(sessionId: sessionID), body: .json(try StudyJSON.recode(body)))
+      {
+      case .ok:
+        return
+      case .unauthorized:
+        throw APIError.unauthorized
+      default:
+        throw APIError.unavailable
+      }
+    }
+  }
+
+  func getSession(token: String, sessionID: String) async throws -> StudyDay {
+    try await clients.perform(token: token) { client in
+      switch try await client.getStudySession(path: .init(sessionId: sessionID)) {
+      case .ok(let response):
+        return try StudyJSON.recode(try response.body.json)
+      case .unauthorized:
+        throw APIError.unauthorized
+      case .notFound:
+        throw APIError.notFound
+      default:
+        throw APIError.unavailable
+      }
+    }
+  }
+
+  func getSummary(token: String, sessionID: String) async throws -> SessionSummary {
+    try await clients.perform(token: token) { client in
+      switch try await client.getStudySessionSummary(path: .init(sessionId: sessionID)) {
+      case .ok(let response):
+        return try StudyJSON.recode(try response.body.json)
+      case .unauthorized:
+        throw APIError.unauthorized
+      case .notFound:
+        throw APIError.notFound
       default:
         throw APIError.unavailable
       }

@@ -242,6 +242,15 @@ private actor StudyAPIStub: StudyAPIClient {
   }
 
   func catchUp(token: String, sessionID: String, timeZone: String) async throws {}
+  func stop(token: String, sessionID: String, timeZone: String) async throws {}
+
+  func getSession(token: String, sessionID: String) async throws -> StudyDay {
+    throw APIError.unavailable
+  }
+
+  func getSummary(token: String, sessionID: String) async throws -> SessionSummary {
+    throw APIError.unavailable
+  }
 
   func lessonStatus(token: String, lessonID: String) async throws -> String { "ready" }
   func answerInsight(token: String, insightID: String, accepted: Bool) async throws {}

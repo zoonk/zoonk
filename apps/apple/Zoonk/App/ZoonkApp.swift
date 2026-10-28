@@ -12,6 +12,7 @@ struct ZoonkApp: App {
   @State private var router: AppRouter
   @State private var session: SessionStore
   @State private var settings: SettingsStore
+  @State private var studySession: StudySessionStore
   @State private var subscriptions: AppStoreSubscriptionStore
   @State private var today: TodayStore
   private let cache: AppCache
@@ -46,6 +47,7 @@ struct ZoonkApp: App {
     practiceHooks = .routed(by: router)
     _session = State(initialValue: dependencies.sessionStore)
     _settings = State(initialValue: dependencies.settingsStore)
+    _studySession = State(initialValue: dependencies.studySessionStore)
     _subscriptions = State(initialValue: dependencies.subscriptionStore)
     _today = State(initialValue: dependencies.todayStore)
   }
@@ -72,6 +74,7 @@ struct ZoonkApp: App {
         .environment(\.practiceHooks, practiceHooks)
         .environment(session)
         .environment(settings)
+        .environment(studySession)
         .environment(subscriptions)
         .environment(today)
         .environment(\.privateImageLoader, privateImages)

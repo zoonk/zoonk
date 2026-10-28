@@ -62,6 +62,7 @@ struct AppView: View {
     .environment(dependencies.progressStore)
     .environment(dependencies.sessionStore)
     .environment(dependencies.settingsStore)
+    .environment(dependencies.studySessionStore)
     .environment(dependencies.subscriptionStore)
     .environment(dependencies.todayStore)
     .environment(AppRouter())

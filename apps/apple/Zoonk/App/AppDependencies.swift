@@ -12,6 +12,7 @@ struct AppDependencies {
   let progressStore: ProgressStore
   let sessionStore: SessionStore
   let settingsStore: SettingsStore
+  let studySessionStore: StudySessionStore
   let subscriptionStore: AppStoreSubscriptionStore
   let todayStore: TodayStore
 
@@ -62,6 +63,7 @@ struct AppDependencies {
     sessionStore = session
     settingsStore = SettingsStore(api: settingsAPI ?? SettingsAPI(clients: clients), cache: cache)
     let studyAPI = studyAPI ?? StudyAPI(clients: clients)
+    studySessionStore = StudySessionStore(api: studyAPI, cache: cache)
     todayStore = TodayStore(api: studyAPI, cache: cache)
     self.subscriptionStore = subscriptionStore
   }
