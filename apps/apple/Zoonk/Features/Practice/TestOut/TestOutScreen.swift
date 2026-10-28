@@ -68,7 +68,7 @@ struct TestOutScreen: View {
         PracticeCloseButton { dismiss() }
       }
     }
-    .task(id: "\(session.authenticatedSession?.accountID ?? ""):\(goalId ?? "")") { await read() }
+    .task(id: "\(session.authenticatedSession?.bearerToken ?? ""):\(goalId ?? "")") { await read() }
   }
 
   private func preparing(failure: (any Error)?) -> some View {

@@ -4,17 +4,7 @@ import Observation
 /// A bearer token belongs to one account, so the token is the identity: a restored session is the
 /// same before and after `GET /me` names its account.
 struct AuthenticatedSession: Hashable, Sendable {
-  /// Nil while the stored token is being validated at launch.
-  let accountID: String?
   let bearerToken: String
-
-  static func == (lhs: Self, rhs: Self) -> Bool {
-    lhs.bearerToken == rhs.bearerToken
-  }
-
-  func hash(into hasher: inout Hasher) {
-    hasher.combine(bearerToken)
-  }
 }
 
 @MainActor
@@ -72,15 +62,15 @@ final class SessionStore {
   }
 
   var authenticatedSession: AuthenticatedSession? {
-    if let account, let token {
-      return AuthenticatedSession(accountID: account.user.id, bearerToken: token)
+    if account != nil, let token {
+      return AuthenticatedSession(bearerToken: token)
     }
 
     guard state == .restoring, let restoringToken else {
       return nil
     }
 
-    return AuthenticatedSession(accountID: nil, bearerToken: restoringToken)
+    return AuthenticatedSession(bearerToken: restoringToken)
   }
 
   /// Only when memory and the Keychain still hold that session, so a late response never deletes a
@@ -358,7 +348,7 @@ final class SessionStore {
       return .accountMismatch
     }
 
-    let authenticatedSession = AuthenticatedSession(accountID: account.user.id, bearerToken: token)
+    let authenticatedSession = AuthenticatedSession(bearerToken: token)
     accountRefreshRevision = UUID()
     let synchronizationRevision = accountRefreshRevision
 

@@ -47,7 +47,7 @@ struct MistakePracticeScreen: View {
     }
     .task(
       id:
-        "\(session.authenticatedSession?.accountID ?? ""):\(summary.summary.value != nil):\(goalId ?? "")"
+        "\(session.authenticatedSession?.bearerToken ?? ""):\(summary.summary.value != nil):\(goalId ?? "")"
     ) {
       await read()
     }

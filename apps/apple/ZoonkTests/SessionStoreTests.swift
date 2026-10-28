@@ -911,7 +911,7 @@ final class SessionStoreTests: XCTestCase {
 
     XCTAssertEqual(credentialStore.token, "account-b-session")
     XCTAssertEqual(credentialStore.deleteCallCount, 0)
-    XCTAssertEqual(session.authenticatedSession?.accountID, "account-b")
+    XCTAssertEqual(session.account?.user.id, "account-b")
     XCTAssertEqual(session.authenticatedSession?.bearerToken, "account-b-session")
   }
 
