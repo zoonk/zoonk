@@ -10,6 +10,7 @@ struct SearchScreen: View {
   @Environment(BuddyStore.self) private var buddy
   @Environment(CourseCatalogStore.self) private var catalog
   @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(PlanStore.self) private var plans
   @Environment(SessionStore.self) private var session
   @State private var query = ""
   @State private var isFeedbackPresented = false
@@ -106,15 +107,24 @@ struct SearchScreen: View {
   }
 
   private var groups: [SearchGroup] {
-    searchGroups(summary: learner.summary.value, isSignedIn: session.authenticatedSession != nil)
-      .compactMap { group in
-        guard let text else {
-          return group.isShownWithoutQuery ? group : nil
-        }
-
-        let items = group.items.filter { $0.title.localizedStandardContains(text) }
-        return items.isEmpty ? nil : SearchGroup(id: group.id, title: group.title, items: items)
+    searchGroups(
+      summary: learner.summary.value, isSignedIn: session.authenticatedSession != nil,
+      syllabus: syllabus?.value
+    )
+    .compactMap { group in
+      guard let text else {
+        return group.isShownWithoutQuery ? group : nil
       }
+
+      let items = group.items.filter { $0.title.localizedStandardContains(text) }
+      return items.isEmpty ? nil : SearchGroup(id: group.id, title: group.title, items: items)
+    }
+  }
+
+  /// The Plan's own syllabus for the goal on screen: searching reads it from the cache and asks
+  /// for it only once, the first time a query needs it.
+  private var syllabus: Resource<GoalSyllabus>? {
+    learner.summary.value?.shownGoal.map { plans.syllabus(goalId: $0.id) }
   }
 
   private var catalogResults: CatalogSearchResults? {
@@ -137,6 +147,8 @@ struct SearchScreen: View {
     }
 
     catalog.prepareSearch(query: query)
+    let plan = syllabus
+    async let planLoaded: Void = { await plan?.load() }()
 
     do {
       try await Task.sleep(for: .milliseconds(250))
@@ -145,6 +157,7 @@ struct SearchScreen: View {
     }
 
     await catalog.searchCatalog(query: query)
+    await planLoaded
   }
 
   private func perform(_ action: SearchItem.Action) {

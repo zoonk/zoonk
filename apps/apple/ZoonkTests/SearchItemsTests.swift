@@ -54,6 +54,30 @@ final class SearchItemsTests: XCTestCase {
     XCTAssertEqual(
       fallback.items.map(\.action), [.ask("black holes"), .open(.startGoal(goal: "black holes"))])
   }
+  func testThePlansSubjectsAndChaptersOpenTheirPages() throws {
+    let groups = searchGroups(
+      summary: .searchFixture(), isSignedIn: true, syllabus: try .searchFixture(kind: "exam"))
+
+    XCTAssertEqual(
+      groups.first { $0.id == "plan" }?.items.map(\.action),
+      [
+        .open(.subject(subjectKey: "math")), .open(.subject(subjectKey: "physics")),
+        .open(.chapter(chapterId: "fractions")),
+      ],
+      "Subjects with their own page, then chapters that exist; a far topic has no page yet")
+  }
+
+  func testALanguageGoalsChaptersOpenAsUnits() throws {
+    let groups = searchGroups(
+      summary: .searchFixture(), isSignedIn: true, syllabus: try .searchFixture(kind: "language"))
+
+    XCTAssertEqual(
+      groups.first { $0.id == "plan" }?.items.map(\.action),
+      [
+        .open(.subject(subjectKey: "math")), .open(.subject(subjectKey: "physics")),
+        .open(.languageUnit(chapterId: "fractions")),
+      ])
+  }
 }
 
 extension LearnerSummary {
@@ -84,5 +108,47 @@ extension LearnerGoal {
   fileprivate static func searchFixture(id: String, kind: Kind = .learn) -> LearnerGoal {
     LearnerGoal(
       dailyMinutes: 20, id: id, kind: kind, status: .active, targetDate: nil, title: id.capitalized)
+  }
+}
+
+extension GoalSyllabus {
+  /// Two subjects, the first with a chapter that exists and a far topic without a page yet.
+  fileprivate static func searchFixture(kind: String) throws -> GoalSyllabus {
+    try JSONDecoder().decode(
+      GoalSyllabus.self,
+      from: Data(
+        #"""
+        {
+          "fromMaterial": false,
+          "goal": { "kind": "\#(kind)" },
+          "kind": "notice",
+          "lessons": { "done": 0, "known": 0, "total": 2 },
+          "subjects": [
+            {
+              "chapters": [
+                {
+                  "chapterId": "fractions", "far": false, "known": false, "lessonsDone": 0,
+                  "lessonsTotal": 2, "nextDate": null, "position": 0, "skillId": null,
+                  "state": "upcoming", "title": "Fractions", "writing": false
+                },
+                {
+                  "chapterId": null, "far": true, "known": false, "lessonsDone": 0,
+                  "lessonsTotal": 0, "nextDate": null, "position": 1, "skillId": "ratios",
+                  "state": "upcoming", "title": "Ratios", "writing": false
+                }
+              ],
+              "key": "math", "lessonsDone": 0, "lessonsKnown": 0, "lessonsTotal": 2,
+              "name": "Math", "nextDate": null, "notPlannedReason": null, "preparation": null,
+              "questions": null, "source": "notice"
+            },
+            {
+              "chapters": [], "key": "physics", "lessonsDone": 0, "lessonsKnown": 0,
+              "lessonsTotal": 0, "name": "Physics", "nextDate": null, "notPlannedReason": null,
+              "preparation": null, "questions": null, "source": "notice"
+            }
+          ],
+          "topicCount": 2
+        }
+        """#.utf8))
   }
 }

@@ -29,8 +29,11 @@ struct SearchGroup: Equatable, Identifiable {
 }
 
 /// Main's palette groups in its order: the learner's actions, where they can go, their other goals,
-/// quick explanations, then settings and help. A visitor gets the ways in instead.
-func searchGroups(summary: LearnerSummary?, isSignedIn: Bool) -> [SearchGroup] {
+/// quick explanations, the plan's subjects and chapters (from the Plan's cached `syllabus`), then
+/// settings and help. A visitor gets the ways in instead.
+func searchGroups(
+  summary: LearnerSummary?, isSignedIn: Bool, syllabus: GoalSyllabus? = nil
+) -> [SearchGroup] {
   guard isSignedIn, let summary else {
     return [visitorPages, helpGroup]
   }
@@ -40,6 +43,7 @@ func searchGroups(summary: LearnerSummary?, isSignedIn: Bool) -> [SearchGroup] {
     places(summary),
     otherGoals(summary),
     explanations(summary),
+    plan(syllabus),
     settingsGroup(isGuest: summary.identity.isAnonymous),
     helpGroup,
   ].filter { !$0.items.isEmpty }
@@ -213,6 +217,40 @@ private func explanations(_ summary: LearnerSummary) -> SearchGroup {
         id: "explanation-\(goal.id)", title: goal.title, systemImage: "lightbulb",
         action: .open(.explain(goalId: goal.id)))
     },
+    isShownWithoutQuery: false)
+}
+
+/// The shown goal's subjects (where they have their own page) and chapters, found by name.
+private func plan(_ syllabus: GoalSyllabus?) -> SearchGroup {
+  guard let syllabus else {
+    return SearchGroup(id: "plan", title: "", items: [])
+  }
+
+  let isLanguage = syllabus.goal.kind == "language"
+
+  let subjects =
+    syllabus.hasSubjectPages
+    ? syllabus.subjects.map { subject in
+      SearchItem(
+        id: "subject-\(subject.key)", title: subject.name, systemImage: "square.grid.2x2",
+        action: .open(.subject(subjectKey: subject.key)))
+    } : []
+
+  let chapters = syllabus.subjects.flatMap(\.chapters).compactMap { chapter -> SearchItem? in
+    chapter.chapterId.map { chapterId in
+      SearchItem(
+        id: "chapter-\(chapterId)", title: chapter.title, systemImage: "rectangle.stack",
+        action: .open(
+          isLanguage ? .languageUnit(chapterId: chapterId) : .chapter(chapterId: chapterId)))
+    }
+  }
+
+  return SearchGroup(
+    id: "plan",
+    title: String(
+      localized: "Your plan", table: "Search",
+      comment: "Search group of the plan's subjects and chapters"),
+    items: subjects + chapters,
     isShownWithoutQuery: false)
 }
 
