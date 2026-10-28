@@ -235,7 +235,12 @@ struct BuddyGlassesPicker: View {
     let counted = option.glasses == .catEye || option.glasses == .retro
 
     VStack(alignment: .leading, spacing: 6) {
-      Label {
+      // The lock sits right by its words, as main's does, not in a list row's icon column.
+      HStack(alignment: .firstTextBaseline, spacing: 4) {
+        Image(systemName: "lock.fill")
+          .imageScale(.small)
+          .accessibilityHidden(true)
+
         if counted, option.glasses == .catEye {
           Text(
             "\(option.current) of \(option.target) days with every mission done",
@@ -247,9 +252,6 @@ struct BuddyGlassesPicker: View {
         } else {
           option.glasses.howToEarn
         }
-      } icon: {
-        Image(systemName: "lock.fill")
-          .imageScale(.small)
       }
       .font(.subheadline)
       .foregroundStyle(.secondary)
