@@ -251,11 +251,8 @@ private struct StepSolverWork: View {
           .frame(height: barHeight)
           .containerRelativeFrame(.horizontal) { width, _ in width * 0.6 * share }
 
-        Text(
-          step.value.formatted(.number.precision(.fractionLength(0...4)))
-            + (step.unit.map { " \($0)" } ?? "")
-        )
-        .font(.subheadline.weight(.semibold).monospacedDigit())
+        Text(ActivityNumberFormat.format(step.value, unit: step.unit))
+          .font(.subheadline.weight(.semibold).monospacedDigit())
       }
       .accessibilityHidden(true)
 

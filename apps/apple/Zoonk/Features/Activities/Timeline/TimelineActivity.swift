@@ -312,7 +312,9 @@ private struct TimelineAxis: View {
       for tick in TimelineScale.ticks(start: fields.start, end: fields.end) {
         context.draw(
           Text(formatYear(tick)).font(.caption2.monospacedDigit()).foregroundStyle(.secondary),
-          at: CGPoint(x: x(tick), y: 0), anchor: .top)
+          at: CGPoint(x: x(tick), y: 0),
+          anchor: x(tick) < size.width * 0.15
+            ? .topLeading : x(tick) > size.width * 0.85 ? .topTrailing : .top)
       }
 
       for (index, mark) in sorted.enumerated() {

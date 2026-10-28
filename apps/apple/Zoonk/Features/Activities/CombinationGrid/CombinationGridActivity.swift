@@ -87,7 +87,6 @@ private struct CombinationGridCanvas: View {
       Text(fields.columns.label)
         .font(.caption)
         .foregroundStyle(.secondary)
-        .padding(.leading, cellSize + 6)
 
       Grid(horizontalSpacing: 6, verticalSpacing: 6) {
         GridRow {
@@ -96,7 +95,7 @@ private struct CombinationGridCanvas: View {
             .foregroundStyle(.secondary)
             .lineLimit(2)
             .minimumScaleFactor(0.7)
-            .frame(width: cellSize)
+            .frame(maxWidth: .infinity)
           ForEach(Array(columns.enumerated()), id: \.offset) { _, value in
             header(value)
           }
@@ -120,7 +119,9 @@ private struct CombinationGridCanvas: View {
   private func header(_ value: String) -> some View {
     Text(value)
       .font(.headline.monospacedDigit())
-      .frame(minWidth: cellSize, minHeight: cellSize * 0.6)
+      .lineLimit(1)
+      .minimumScaleFactor(0.5)
+      .frame(maxWidth: .infinity, minHeight: cellSize * 0.6)
       .accessibilityHidden(true)
   }
 
@@ -141,6 +142,8 @@ private struct CombinationGridCanvas: View {
     } label: {
       VStack(spacing: 2) {
         Text(value ?? (isChecked && isReadOnly ? right[index] : " "))
+          .lineLimit(1)
+          .minimumScaleFactor(0.5)
           .font(.body.weight(.semibold).monospacedDigit())
         if isChecked, !isReadOnly, mark == .wrong {
           Text(right[index])
@@ -157,8 +160,7 @@ private struct CombinationGridCanvas: View {
       }
       .frame(maxWidth: .infinity, minHeight: cellSize)
     }
-    .buttonStyle(ActivityTileStyle(mark: mark))
-    .frame(minWidth: cellSize)
+    .buttonStyle(ActivityTileStyle(mark: mark, isCompact: true))
     .disabled(isLocked)
     .accessibilityLabel(
       value.map {

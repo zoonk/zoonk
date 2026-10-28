@@ -30,31 +30,50 @@ enum ActivityTileMark: Hashable, Sendable {
 /// any text size, and its verdict shows as a mark as well as a color.
 struct ActivityTileStyle: ButtonStyle {
   let mark: ActivityTileMark
+  /// A grid's square: its value centered, the verdict's mark in a corner, little padding.
+  var isCompact = false
 
   func makeBody(configuration: Configuration) -> some View {
-    HStack(alignment: .firstTextBaseline, spacing: 8) {
-      configuration.label
-        .frame(maxWidth: .infinity, alignment: .leading)
-
-      if let symbol = mark.symbol {
-        Image(systemName: symbol)
-          .fontWeight(.semibold)
-          .accessibilityHidden(true)
+    content(configuration)
+      .font(.subheadline.weight(mark == .selected || mark == .wrong ? .semibold : .regular))
+      .foregroundStyle(foreground)
+      .padding(.horizontal, isCompact ? 4 : 12)
+      .padding(.vertical, isCompact ? 6 : 10)
+      .frame(minHeight: 44)
+      .background(background, in: .rect(cornerRadius: 12))
+      .overlay {
+        RoundedRectangle(cornerRadius: 12)
+          .strokeBorder(stroke, lineWidth: mark == .plain || mark == .dimmed ? 1 : 2)
       }
+      .opacity(configuration.isPressed ? 0.75 : mark == .dimmed ? 0.6 : 1)
+      .contentShape(.rect(cornerRadius: 12))
+  }
+
+  @ViewBuilder
+  private func content(_ configuration: Configuration) -> some View {
+    if isCompact {
+      configuration.label
+        .frame(maxWidth: .infinity)
+        .overlay(alignment: .topTrailing) {
+          if let symbol = mark.symbol {
+            Image(systemName: symbol)
+              .font(.caption2.weight(.bold))
+              .accessibilityHidden(true)
+          }
+        }
+    } else {
+      HStack(alignment: .firstTextBaseline, spacing: 8) {
+        configuration.label
+          .frame(maxWidth: .infinity, alignment: .leading)
+
+        if let symbol = mark.symbol {
+          Image(systemName: symbol)
+            .fontWeight(.semibold)
+            .accessibilityHidden(true)
+        }
+      }
+      .multilineTextAlignment(.leading)
     }
-    .font(.subheadline.weight(mark == .selected || mark == .wrong ? .semibold : .regular))
-    .foregroundStyle(foreground)
-    .multilineTextAlignment(.leading)
-    .padding(.horizontal, 12)
-    .padding(.vertical, 10)
-    .frame(minHeight: 44)
-    .background(background, in: .rect(cornerRadius: 12))
-    .overlay {
-      RoundedRectangle(cornerRadius: 12)
-        .strokeBorder(stroke, lineWidth: mark == .plain || mark == .dimmed ? 1 : 2)
-    }
-    .opacity(configuration.isPressed ? 0.75 : mark == .dimmed ? 0.6 : 1)
-    .contentShape(.rect(cornerRadius: 12))
   }
 
   private var foreground: Color {

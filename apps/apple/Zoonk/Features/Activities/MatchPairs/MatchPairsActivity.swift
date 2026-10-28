@@ -301,9 +301,10 @@ private struct MatchCardStyle: ButtonStyle {
         .font(.subheadline)
         .foregroundStyle(.secondary)
         .multilineTextAlignment(.leading)
-        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
+        .frame(minHeight: 44)
         .overlay {
           RoundedRectangle(cornerRadius: 12)
             .strokeBorder(Color(.separator), style: StrokeStyle(lineWidth: 1, dash: [4, 3]))
