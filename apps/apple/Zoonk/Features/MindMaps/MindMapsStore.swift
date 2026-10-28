@@ -75,20 +75,21 @@ enum MindMapRequestFailure: Equatable, Sendable {
 @MainActor
 @Observable
 final class MindMapsStore {
-  private static let pollInterval = Duration.seconds(4)
-
   /// Chapters whose map a tap is making right now.
   private(set) var requesting: Set<String> = []
   private(set) var failures: [String: MindMapRequestFailure] = [:]
+  @ObservationIgnored private var following: Set<String> = []
 
-  @ObservationIgnored private let api: MindMapsAPI
+  @ObservationIgnored private let api: any MindMapsAPIClient
   @ObservationIgnored private let cache: AppCache
+  @ObservationIgnored private let pollInterval: Duration
   @ObservationIgnored private var lists: [String: Resource<GoalMindMaps>] = [:]
   @ObservationIgnored private var maps: [String: Resource<ChapterMindMap>] = [:]
 
-  init(api: MindMapsAPI, cache: AppCache) {
+  init(api: any MindMapsAPIClient, cache: AppCache, pollInterval: Duration = .seconds(4)) {
     self.api = api
     self.cache = cache
+    self.pollInterval = pollInterval
   }
 
   func list(goalId: String) -> Resource<GoalMindMaps> {
@@ -134,9 +135,10 @@ final class MindMapsStore {
     return map
   }
 
-  /// Makes the chapter's map from the learner's tap and follows it until it's drawn.
+  /// Makes the chapter's map from the learner's tap. The list then says it's being drawn, and its
+  /// tile follows it (`follow`).
   func create(goalId: String, chapterId: String) async {
-    guard let session = cache.session.authenticatedSession, !requesting.contains(chapterId) else {
+    guard !requesting.contains(chapterId) else {
       return
     }
 
@@ -144,24 +146,59 @@ final class MindMapsStore {
     failures[chapterId] = nil
     defer { requesting.remove(chapterId) }
 
-    do {
-      try await api.create(token: session.bearerToken, goalId: goalId, chapterId: chapterId)
-      await refresh(goalId: goalId, chapterId: chapterId)
+    let api = api
+    let started = await cache.mutate { identity in
+      try await api.create(token: identity.bearerToken, goalId: goalId, chapterId: chapterId)
+    }
 
-      while try await api.status(token: session.bearerToken, goalId: goalId, chapterId: chapterId)
-        == .generating
-      {
-        try await Task.sleep(for: Self.pollInterval)
-      }
-    } catch MindMapRequestFailure.limit {
+    switch started {
+    case .done(true):
+      await refresh(goalId: goalId, chapterId: chapterId)
+    case .done(false):
       failures[chapterId] = .limit
-    } catch APIError.unauthorized {
-      await cache.session.expire(session)
-      return
-    } catch is CancellationError {
-      return
-    } catch {
+    case .failed:
       failures[chapterId] = .unreachable
+    case .obsolete:
+      break
+    }
+  }
+
+  /// Follows a map being drawn, whether a tap asked for it or it was already on its way: reads its
+  /// status every few seconds (only reads, never asks for it again), through a dropped connection,
+  /// and reads the list and the map again once it's drawn or failed. The server fails a drawing
+  /// that stalls, so it ends; leaving the screen or signing out ends it sooner.
+  func follow(goalId: String, chapterId: String) async {
+    guard !following.contains(chapterId), let session = cache.session.authenticatedSession else {
+      return
+    }
+
+    following.insert(chapterId)
+    defer { following.remove(chapterId) }
+
+    while cache.session.authenticatedSession == session {
+      do {
+        let status = try await api.status(
+          token: session.bearerToken, goalId: goalId, chapterId: chapterId)
+
+        guard status == .generating else {
+          break
+        }
+      } catch APIError.network, APIError.unavailable {
+        // Read again on the next beat.
+      } catch {
+        // Cancelled, or an answer reading again won't change: the list says where it stands.
+        break
+      }
+
+      do {
+        try await Task.sleep(for: pollInterval)
+      } catch {
+        return
+      }
+    }
+
+    guard !Task.isCancelled, cache.session.authenticatedSession == session else {
+      return
     }
 
     await refresh(goalId: goalId, chapterId: chapterId)
@@ -174,7 +211,18 @@ final class MindMapsStore {
   }
 }
 
-struct MindMapsAPI: Sendable {
+/// The mind maps' reads and the tap that makes one. `MindMapsAPI` calls the API; a Debug fixture
+/// stands in for it (`Testing/`).
+protocol MindMapsAPIClient: Sendable {
+  func list(token: String, goalId: String) async throws -> GoalMindMaps
+  func map(token: String, goalId: String, chapterId: String) async throws -> ChapterMindMap
+  func status(token: String, goalId: String, chapterId: String) async throws
+    -> ChapterMindMap.Status
+  /// Asks for the chapter's map; false when the learner's plan reached its maps for now.
+  func create(token: String, goalId: String, chapterId: String) async throws -> Bool
+}
+
+struct MindMapsAPI: MindMapsAPIClient {
   let clients: APIClientFactory
 
   func list(token: String, goalId: String) async throws -> GoalMindMaps {
@@ -216,23 +264,17 @@ struct MindMapsAPI: Sendable {
   }
 
   /// Asks for the chapter's map. A cap of the learner's plan refuses it.
-  func create(token: String, goalId: String, chapterId: String) async throws {
-    let outcome: MindMapRequestFailure? = try await clients.perform(token: token) { client in
+  func create(token: String, goalId: String, chapterId: String) async throws -> Bool {
+    try await clients.perform(token: token) { client in
       switch try await client.createChapterMindMapGeneration(
         path: .init(goalId: goalId, chapterId: chapterId))
       {
-      case .ok, .accepted: return nil
-      case .code402, .forbidden, .tooManyRequests: return .limit
+      case .ok, .accepted: return true
+      case .code402, .forbidden, .tooManyRequests: return false
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
       default: throw APIError.unavailable
       }
     }
-
-    if let outcome {
-      throw outcome
-    }
   }
 }
-
-extension MindMapRequestFailure: Error {}

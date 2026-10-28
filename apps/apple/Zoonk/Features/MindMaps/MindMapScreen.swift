@@ -119,16 +119,31 @@ private struct MindMapOutlineView: View {
           Text(branch.explanation)
 
           ForEach(branch.points, id: \.self) { point in
-            Label(point, systemImage: "circle.fill")
-              .labelStyle(.titleAndIcon)
-              .imageScale(.small)
-              .font(.subheadline)
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
+              Image(systemName: "circle.fill")
+                .font(.system(.caption2))
+                .imageScale(.small)
+                .foregroundStyle(.tertiary)
+                .accessibilityHidden(true)
+              Text(point)
+            }
+            .font(.subheadline)
           }
         } header: {
           Text(branch.title)
         }
       }
     }
+  }
+}
+
+/// A scroll view that tells when it lays out, so its picture fits the space it finally has.
+final class FittingScrollView: UIScrollView {
+  var onLayout: ((UIScrollView) -> Void)?
+
+  override func layoutSubviews() {
+    super.layoutSubviews()
+    onLayout?(self)
   }
 }
 
@@ -181,8 +196,8 @@ private struct ZoomableRemoteImage: View {
 private struct ZoomableImage: UIViewRepresentable {
   let image: UIImage
 
-  func makeUIView(context: Context) -> UIScrollView {
-    let scrollView = UIScrollView()
+  func makeUIView(context: Context) -> FittingScrollView {
+    let scrollView = FittingScrollView()
     scrollView.delegate = context.coordinator
     scrollView.showsHorizontalScrollIndicator = false
     scrollView.showsVerticalScrollIndicator = false
@@ -194,6 +209,12 @@ private struct ZoomableImage: UIViewRepresentable {
     scrollView.addSubview(imageView)
     context.coordinator.imageView = imageView
 
+    // The size is only known once the view lays out, and it changes with rotation, unfolding and
+    // window resizing.
+    scrollView.onLayout = { [weak coordinator = context.coordinator] scrollView in
+      coordinator?.fit(in: scrollView)
+    }
+
     let doubleTap = UITapGestureRecognizer(
       target: context.coordinator, action: #selector(Coordinator.toggleZoom(_:)))
     doubleTap.numberOfTapsRequired = 2
@@ -201,8 +222,14 @@ private struct ZoomableImage: UIViewRepresentable {
     return scrollView
   }
 
-  func updateUIView(_ scrollView: UIScrollView, context: Context) {
-    context.coordinator.fit(in: scrollView)
+  /// A ready map's picture may be redrawn once; the new one fits the space again.
+  func updateUIView(_ scrollView: FittingScrollView, context: Context) {
+    guard let imageView = context.coordinator.imageView, imageView.image !== image else {
+      return
+    }
+
+    imageView.image = image
+    context.coordinator.refit(in: scrollView)
   }
 
   func makeCoordinator() -> Coordinator {
@@ -220,6 +247,12 @@ private struct ZoomableImage: UIViewRepresentable {
 
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
       center(in: scrollView)
+    }
+
+    /// Fits a new picture, whatever the learner's zoom on the last one.
+    func refit(in scrollView: UIScrollView) {
+      fittedSize = .zero
+      fit(in: scrollView)
     }
 
     /// Fits the picture to the space the first time and whenever the space changes (rotation,

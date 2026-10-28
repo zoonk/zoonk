@@ -8,12 +8,17 @@
 
     static var current: UITestConfiguration? {
       let arguments = Set(ProcessInfo.processInfo.arguments)
+      let environment = ProcessInfo.processInfo.environment
 
       guard arguments.contains("--ui-testing") else {
-        return nil
+        // A Debug run against the live API can draw mind maps from a fixture, so the maps can be
+        // checked without paying to generate one.
+        return UITestMindMapsAPI(environment: environment).map { mindMaps in
+          UITestConfiguration(
+            dependencies: .live(mindMapsAPI: mindMaps), initiallyPresentsAccount: false)
+        }
       }
 
-      let environment = ProcessInfo.processInfo.environment
       let catalogSnapshot = courseCatalogSnapshot(from: environment)
       let clients = APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL)
 
@@ -26,6 +31,7 @@
           buddyAPI: buddyStatus(from: environment).map(UITestBuddyAPI.init),
           courseCatalogAPI: courseCatalogAPI(snapshot: catalogSnapshot),
           learnerSummaryAPI: UITestLearnerSummaryAPI(summary: learnerSummary(from: environment)),
+          mindMapsAPI: UITestMindMapsAPI(environment: environment),
           progressAPI: progressAPI(from: environment),
           studyAPI: studyAPI(from: environment),
           tutorAPI: buddyStatus(from: environment).map { _ in UITestTutorAPI() }),

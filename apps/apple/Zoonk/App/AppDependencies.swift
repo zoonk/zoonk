@@ -22,7 +22,9 @@ struct AppDependencies {
   let tutorStore: TutorStore
   let voice: VoiceServices
 
-  static func live(configuration: AppConfiguration = .current) -> AppDependencies {
+  static func live(
+    configuration: AppConfiguration = .current, mindMapsAPI: (any MindMapsAPIClient)? = nil
+  ) -> AppDependencies {
     let clients = APIClientFactory.live(baseURL: configuration.apiBaseURL)
     let sessionStore = SessionStore(
       api: AccountAPI(clients: clients),
@@ -33,7 +35,8 @@ struct AppDependencies {
       clients: clients,
       session: sessionStore,
       privateImageLoader: .live(configuration: configuration),
-      subscriptionStore: .live())
+      subscriptionStore: .live(),
+      mindMapsAPI: mindMapsAPI)
   }
 
   /// Builds every data store on one cache, so mutations and session changes reach all of them.
@@ -45,6 +48,7 @@ struct AppDependencies {
     buddyAPI: (any BuddyAPIClient)? = nil,
     courseCatalogAPI: (any CourseCatalogAPIClient)? = nil,
     learnerSummaryAPI: (any LearnerSummaryAPIClient)? = nil,
+    mindMapsAPI: (any MindMapsAPIClient)? = nil,
     progressAPI: (any ProgressAPIClient)? = nil,
     settingsAPI: (any SettingsAPIClient)? = nil,
     studyAPI: (any StudyAPIClient)? = nil,
@@ -64,7 +68,8 @@ struct AppDependencies {
       cache: cache)
     lessonPlayer = LessonPlayerDependencies(api: LessonPlayerAPI(clients: clients), cache: cache)
     goalContentStore = GoalContentStore(api: GoalContentAPI(clients: clients), cache: cache)
-    mindMapsStore = MindMapsStore(api: MindMapsAPI(clients: clients), cache: cache)
+    mindMapsStore = MindMapsStore(
+      api: mindMapsAPI ?? MindMapsAPI(clients: clients), cache: cache)
     onboardingStore = OnboardingStore(clients: clients, cache: cache, session: session)
     planStore = PlanStore(api: PlanAPI(clients: clients), cache: cache)
     practiceStore = PracticeStore(api: PracticeAPI(clients: clients), cache: cache)

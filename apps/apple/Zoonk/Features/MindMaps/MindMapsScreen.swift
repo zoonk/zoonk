@@ -3,7 +3,10 @@ import SwiftUI
 /// The goal's mind maps: one tile per chapter the learner finished, its map's picture opening full
 /// screen, or the tap that makes it. Without one yet, the chapter to finish next.
 struct MindMapsScreen: View {
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(LearnerSummaryStore.self) private var learner
+  /// Tiles grow with the text, so large text gets fewer, wider columns.
+  @ScaledMetric(relativeTo: .body) private var tileWidth = 160.0
   @Environment(MindMapsStore.self) private var store
 
   var body: some View {
@@ -25,24 +28,34 @@ struct MindMapsScreen: View {
     case .loaded(let maps):
       ScrollView {
         VStack(alignment: .leading, spacing: 12) {
-          HStack(alignment: .firstTextBaseline) {
-            Text(
-              "Chapters you finished", tableName: "MindMaps",
-              comment: "Heading of the chapters with mind maps"
-            )
-            .font(.headline)
+          // Side by side, or one over the other at accessibility text sizes.
+          (dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))
+            : AnyLayout(HStackLayout(alignment: .firstTextBaseline))) {
+              Text(
+                "Chapters you finished", tableName: "MindMaps",
+                comment: "Heading of the chapters with mind maps"
+              )
+              .font(.headline)
 
-            Spacer()
+              if !dynamicTypeSize.isAccessibilitySize {
+                Spacer()
+              }
 
-            Text(
-              "\(maps.chapters.count) chapters", tableName: "MindMaps",
-              comment: "How many chapters have mind maps"
-            )
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
-          }
+              Text(
+                "\(maps.chapters.count) chapters", tableName: "MindMaps",
+                comment: "How many chapters have mind maps"
+              )
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
+            }
 
-          LazyVGrid(columns: [GridItem(.adaptive(minimum: 160), spacing: 16)], spacing: 16) {
+          // One tile a row at accessibility text sizes, where a scaled tile is wider than a phone.
+          LazyVGrid(
+            columns: dynamicTypeSize.isAccessibilitySize
+              ? [GridItem(.flexible())] : [GridItem(.adaptive(minimum: tileWidth), spacing: 16)],
+            spacing: 16
+          ) {
             ForEach(maps.chapters) { map in
               MindMapTile(goalId: goal.id, map: map)
             }
@@ -102,12 +115,12 @@ private struct MindMapTile: View {
       Button {
         router.open(.mindMap(chapterId: map.chapterId))
       } label: {
-        picture
+        // Every tile keeps the picture's shape, drawn or not, so the grid's rows line up.
+        Color(.secondarySystemBackground)
           .aspectRatio(4 / 3, contentMode: .fit)
-          .frame(maxWidth: .infinity)
-          .background(
-            Color(.secondarySystemBackground), in: .rect(cornerRadius: 12, style: .continuous)
-          )
+          .overlay {
+            picture
+          }
           .clipShape(.rect(cornerRadius: 12, style: .continuous))
       }
       .buttonStyle(.plain)
@@ -157,6 +170,12 @@ private struct MindMapTile: View {
         }
         .buttonStyle(.bordered)
         .controlSize(.small)
+      }
+    }
+    // A map already being drawn when the page opened is followed (read only) until it's done.
+    .task(id: map.status) {
+      if map.status == .generating {
+        await store.follow(goalId: goalId, chapterId: map.chapterId)
       }
     }
   }
