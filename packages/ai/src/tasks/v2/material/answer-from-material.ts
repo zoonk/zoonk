@@ -9,9 +9,8 @@ import { getPromptLanguageName } from "../../_utils/prompt-language";
 import systemPrompt from "./answer-from-material.prompt.md";
 
 /**
- * From the answer-from-material eval (5 questions in Portuguese and English, code scoring, 27 Sep
- * 2026): Luna and Gemini 3.5 Flash Lite both scored 10.0, answering from the right slide and
- * saying when the material doesn't cover a question; Luna is the cheaper at $0.12 per 1,000.
+ * Luna and Flash Lite both scored 10.0 on the answer-from-material eval; Luna is cheaper (27 Sep
+ * 2026).
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.5-flash-lite", "anthropic/claude-haiku-5.5"] as const;
@@ -20,12 +19,7 @@ const schema = z.object({ answer: z.string(), found: z.boolean(), refs: z.array(
 
 export type MaterialAnswer = z.infer<typeof schema>;
 
-export type AnswerFromMaterialInput = {
-  language: string;
-  /** The pages most related to the question, tagged with their references. */
-  material: string;
-  question: string;
-};
+export type AnswerFromMaterialInput = { language: string; material: string; question: string };
 
 export type AnswerFromMaterialParams = AnswerFromMaterialInput & {
   analytics?: AiGenerationContext;
@@ -34,10 +28,7 @@ export type AnswerFromMaterialParams = AnswerFromMaterialInput & {
   useFallback?: boolean;
 };
 
-/**
- * Answers a learner's question about their own class material from its pages, with the pages it
- * used, or says the material doesn't cover it instead of answering from general knowledge.
- */
+/** Says when the material doesn't cover a question instead of answering from general knowledge. */
 export async function answerFromMaterial({
   analytics,
   language,

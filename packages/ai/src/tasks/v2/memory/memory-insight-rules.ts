@@ -13,7 +13,7 @@ export const memoryInsightOutputSchema = z.object({
   kind: z.enum(["none", ...MEMORY_INSIGHT_KINDS]),
   lessonFocus: z.string().nullable(),
   message: z.string().nullable(),
-  /** The 1-based number of a skill from the input list, for a plan change. */
+  /** 1-based, from the input list. */
   skill: z.number().int().nullable(),
   studyTime: z.string().nullable(),
 });
@@ -28,7 +28,7 @@ export type MemoryInsight =
 type InsightContext = {
   kinds: readonly MemoryInsightKindName[];
   skillCount: number;
-  /** The learner's current study time, so suggesting the same one is dropped. */
+  /** So suggesting the same study time is dropped. */
   studyTime: string | null;
 };
 
@@ -63,11 +63,7 @@ function toScheduleIdea({
   return { kind: "scheduleIdea", message, studyTime };
 }
 
-/**
- * Checks a model's insight against what code knows, and returns null when it can't be shown: no
- * insight, a kind that isn't allowed today, an empty or overlong message, a skill that isn't in the
- * list, or a study time that isn't a real time or is the learner's current one.
- */
+/** Null when the insight can't be shown. */
 export function toMemoryInsight({
   context,
   output,

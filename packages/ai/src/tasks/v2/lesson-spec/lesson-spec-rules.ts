@@ -1,9 +1,6 @@
 import { type CourseLevel } from "../curriculum/_utils/course-levels";
 
-/**
- * What each planned screen does. Writers map them to step kinds: `application`
- * becomes a check (or an activity) set in a realistic situation.
- */
+/** `application` becomes a check (or an activity) set in a realistic situation. */
 export const LESSON_SCREEN_KINDS = [
   "hook",
   "explanation",
@@ -21,15 +18,11 @@ export const SUPPORT_MODES = ["explanationFirst", "questionFirst"] as const;
 export type SupportMode = (typeof SUPPORT_MODES)[number];
 
 export type LessonSpecSkill = {
-  /** One thing the learner can do, as an action ("Calculate a percent change"). */
   name: string;
-  /** The canonical topic name, used as a lesson title when a split gives this skill its own lesson. */
+  /** The lesson's title when a split gives this skill its own lesson. */
   topic: string;
-  /** The idea in one sentence: the front of the skill's study card. */
   description: string;
-  /** A concrete example in one line: the back of the skill's study card. */
   example: string;
-  /** Where the skill shows up in real life, in one line. */
   useCase: string;
   /** Hard skills get a worked example before the learner tries alone. */
   hard: boolean;
@@ -39,19 +32,15 @@ export type LessonScreen = {
   kind: LessonScreenKind;
   /** Indexes into the lesson's `skills`. */
   skills: number[];
-  /** What the screen does, for the writer. */
   brief: string;
-  /** A picture that teaches (diagram, before and after, labeled scene), or null. */
   visual: string | null;
-  /** Activity template id from the catalog, only on activity screens. */
+  /** Only on activity screens. */
   activityTemplate: string | null;
 };
 
 export type LessonSpec = {
   title: string;
-  /** One line on what the lesson covers and why it's useful. */
   description: string;
-  /** What the learner can do afterwards, shown on session tiles. */
   canDo: string;
   supportMode: SupportMode;
   skills: LessonSpecSkill[];
@@ -115,7 +104,6 @@ function isPracticeScreen(kind: LessonScreenKind): boolean {
   return PRACTICE_KINDS.has(kind);
 }
 
-/** Estimated minutes from the screen plan, so the size rules never depend on a model's guess. */
 export function estimateLessonMinutes(kinds: readonly LessonScreenKind[]): number {
   const seconds = kinds.reduce((total, kind) => total + SCREEN_SECONDS[kind], 0);
   return Math.max(LESSON_SIZE.minMinutes, Math.round(seconds / SECONDS_PER_MINUTE));
@@ -134,7 +122,6 @@ export function getMaxLessonMinutes({
     : LESSON_SIZE.maxMinutes;
 }
 
-/** Whether a lesson is small enough to keep as one lesson. */
 export function fitsLesson({ level, spec }: { level: CourseLevel; spec: LessonSpec }): boolean {
   return (
     spec.skills.length <= LESSON_SIZE.maxSkills &&
@@ -143,7 +130,6 @@ export function fitsLesson({ level, spec }: { level: CourseLevel; spec: LessonSp
   );
 }
 
-/** Support mode implied by the first screen after the hook. */
 export function getSupportModeFromScreens(screens: readonly LessonScreen[]): SupportMode {
   const first = screens.find((screen) => screen.kind !== "hook");
   return first && isPracticeScreen(first.kind) ? "questionFirst" : "explanationFirst";
@@ -262,12 +248,7 @@ function getSkillIssues(spec: LessonSpec): LessonSpecIssue[] {
   ];
 }
 
-/**
- * The size and shape rules every lesson spec must pass before a writer uses
- * it: 1 to 3 skills, 5 to 12 screens, 2 to 5 minutes, a hook first, a check
- * every 2 or 3 screens, one application at the end, and a worked example for
- * each hard skill. An empty list means the spec passes.
- */
+/** An empty list means the spec passes. */
 export function getLessonSpecIssues({
   level,
   spec,

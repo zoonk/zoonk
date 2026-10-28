@@ -17,10 +17,7 @@ import {
 } from "./listening-set-schema";
 import taskPrompt from "./write-listening-set.prompt.md";
 
-/**
- * The item writer's model (`generate-items`), whose eval chose it for right keys and exam realism;
- * a listening set is the same work around a script.
- */
+/** The item writer's model, whose eval chose it for right keys and exam realism. */
 const defaultModel = "openai/gpt-6-sol";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
 
@@ -29,47 +26,30 @@ const MAX_COUNT = 10;
 const DEFAULT_OPTION_COUNT = 3;
 
 export type WriteListeningSetParams = {
-  /** The exam's name, such as "IELTS" or "DELE B2"; null for a school exam's English listening. */
+  /** Null for a school exam's listening. */
   exam: string | null;
-  /**
-   * The part of the exam's listening paper, in the notice's words: "Part 1: a conversation between
-   * two people in an everyday social context; form completion, no more than two words".
-   */
+  /** The part of the exam's listening paper, in the notice's words. */
   task: string;
-  /** The language the recording and its questions are in, such as "en" or "es". */
   scriptLanguage: string;
-  /** The learner's language, for the reasons and misconceptions. */
   language: string;
-  /**
-   * The level the questions test, as the exam names it ("B2", "band 6", "N3"); null for the level
-   * the exam itself tests (an exam named for one level, or the middle of one that spans several).
-   */
+  /** As the exam names it ("band 6"); null for the level the exam itself tests. */
   level: string | null;
   count: number;
   formats: readonly ListeningQuestionFormat[];
-  /** Options per multiple-choice question, as the exam prints them. */
   optionCount?: number | null;
-  /**
-   * The accents the exam's recordings use ("British English", "Australian English"); empty for
-   * the writer to use those it knows the exam's recordings have, as the notice rarely lists them.
-   */
+  /** Empty for the writer to use those it knows the exam has: notices rarely list them. */
   accents: readonly string[];
-  /** How many times the exam plays the recording. */
   plays: 1 | 2;
-  /**
-   * The exam's listening skills the set practices (its listening area's skills); each question
-   * names the one it tests. At least one.
-   */
+  /** At least one; each question names the one it tests. */
   skills: readonly { description: string; name: string }[];
   model?: string;
-  /** The gateway tier it answers at (see `ServiceTier`); the standard one when unset. */
   serviceTier?: ServiceTier;
   useFallback?: boolean;
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
 };
 
-/** The formats asked for, in the writer's order; multiple choice when none is a listening format. */
+/** Multiple choice when none is a listening format. */
 function getFormats(formats: readonly ListeningQuestionFormat[]) {
   const [first = "multipleChoice", ...rest] = LISTENING_QUESTION_FORMATS.filter((format) =>
     formats.includes(format),
@@ -83,7 +63,6 @@ function getScriptLanguageName(language: string): string {
   return getLanguageName({ targetLanguage: getBaseLanguage(language), userLanguage: "en" });
 }
 
-/** The accents asked for, or null when the writer picks the exam's own. */
 function getAccents({ accents }: WriteListeningSetParams) {
   const [first, ...rest] = accents;
   return first ? ([first, ...rest] as const) : null;
@@ -140,14 +119,8 @@ function buildSystemPrompt(formats: readonly ListeningQuestionFormat[]): string 
 }
 
 /**
- * Writes one listening set for a part of an exam's listening paper: the script of the recording
- * (its speakers, each with an accent the exam uses, and their turns) and the questions on it, each
- * with the words of the script that answer it. Shared Library content: the input holds the exam,
- * its task and a level, never a learner's words. Code repairs what it can (stage directions, em
- * dashes, question order) and writes the set once more when flaws it can't repair remain
- * (`findListeningSetProblems`); the set comes back with any that are still there, so the caller
- * stores only clean sets. Callers run the item checks in `@zoonk/core` on each question and voice
- * the script before learners hear it.
+ * Shared Library content: the input never holds a learner's words. The set comes back with any
+ * flaws still there, so the caller stores only clean sets.
  */
 export async function writeListeningSet(params: WriteListeningSetParams) {
   const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;

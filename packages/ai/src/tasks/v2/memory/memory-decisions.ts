@@ -25,14 +25,10 @@ export type MemoryGateProbabilities = {
 
 export type MemoryGateVerdict = {
   decision: "keep" | "notLasting" | "sensitive";
-  /** Whether a kept fact is sensitive, so it can be stored with that flag. */
   sensitive: boolean;
 };
 
-/**
- * Turns the gate's three probabilities into one verdict: a sensitive fact stays only when the
- * learner clearly asked to keep it.
- */
+/** A sensitive fact stays only when the learner clearly asked to keep it. */
 export function decideMemoryGate(probabilities: MemoryGateProbabilities): MemoryGateVerdict {
   const sensitive = probabilities.sensitive >= SENSITIVE_AT;
 
@@ -58,9 +54,8 @@ export type MemoryFactIntent = "forget" | "remember";
 const LABEL_PATTERN = /^(?<action>replace|remove)_(?<position>\d+)$/u;
 
 /**
- * The choice labels for one new fact against `existingCount` related facts. Labels only name
- * positions; the facts themselves stay in the untrusted state, so learner text never becomes part
- * of the trusted question.
+ * Labels only name positions; the facts stay in the untrusted state, so learner text never becomes
+ * part of the trusted question.
  */
 export function getMemoryReconcileLabels(existingCount: number): Record<string, string> {
   const positions = Array.from({ length: existingCount }, (_, index) => index + 1);
@@ -150,10 +145,6 @@ function applyIntent({
   return action.action === "add" ? { action: "ignore" } : action;
 }
 
-/**
- * Turns the model's choice into an action. A replace or remove needs a clear majority when the
- * model reports a distribution, and an unknown label falls back to the safe action.
- */
 export function decideMemoryReconcile({
   choice,
   existingCount,

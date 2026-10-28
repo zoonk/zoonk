@@ -12,13 +12,8 @@ import {
 } from "../lesson-spec/lesson-spec-rules";
 import { getWrittenKinds } from "./written-lesson-schema";
 
-/**
- * An activity template the spec picked, as core describes it: what it teaches
- * and the JSON schema its content must follow.
- */
 type LessonActivityTemplate = { id: string; description: string; schema: string };
 
-/** Everything a writer, a fixer or a checker needs to know about the lesson being written. */
 export type LessonWritingContext = {
   language: string;
   level: CourseLevel;
@@ -26,33 +21,18 @@ export type LessonWritingContext = {
   chapterTitle: string;
   spec: LessonSpec;
   activityTemplates: LessonActivityTemplate[];
-  /** The chapter's other lessons, so this one doesn't reuse their examples, numbers or questions. */
   chapterLessons?: ChapterLesson[];
-  /** The pages of the learner's own material the lesson is built from, tagged with references. */
   material?: string;
-  /**
-   * Excerpts of the public documents the lesson's facts come from (a law, an exam notice, a
-   * product's documentation), tagged with references, for lessons of goals built from sources.
-   */
   sources?: string;
-  /**
-   * The exams the learners who study this shared lesson prepare for, so it's written and reviewed
-   * at their depth and in their questions' style for their candidates, without naming them.
-   */
   exams?: LessonExam[];
-  /** A lesson that sets up a tool on the learner's device ("Set up Python on Windows"). */
   setup?: boolean;
-  /**
-   * The exams of the lesson's learners ask short written answers, so a check or the application may
-   * be a typed answer (`getWrittenKinds`); every other lesson asks only what learners pick.
-   */
+  /** Otherwise the lesson asks only what learners pick (`getWrittenKinds`). */
   shortAnswers?: boolean;
 };
 
-/** A problem found by code or by the reviewer. `screen` is a 0-based index, or null for the whole lesson. */
+/** `screen` is a 0-based index, or null for the whole lesson. */
 export type LessonProblem = { screen: number | null; problem: string };
 
-/** Problems as the fix pass and a new draft read them, one per line with its screen number. */
 export function formatLessonProblems(problems: readonly LessonProblem[]): string {
   return problems
     .map((problem) =>
@@ -121,7 +101,6 @@ function getToday(): string {
   return new Date().toISOString().slice(0, "yyyy-mm-dd".length);
 }
 
-/** The lesson plan as the writer, the fix pass and the checker read it. */
 export function formatLessonPlan(context: LessonWritingContext): string {
   const { spec } = context;
 

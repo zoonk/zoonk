@@ -50,7 +50,6 @@ function rawScreen(kind: string, skills: number[], activityTemplate: string | nu
   return { activityTemplate, brief: kind, kind, skills, visual: null };
 }
 
-/** A lesson on one skill whose screens are planned in the given kinds. */
 function oneSkillLesson({ kinds, title }: { kinds: string[]; title: string }) {
   return {
     canDo: "Read a thermometer",

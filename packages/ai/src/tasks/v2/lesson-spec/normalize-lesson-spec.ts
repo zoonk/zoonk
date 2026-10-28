@@ -9,7 +9,7 @@ import {
   getSupportModeFromScreens,
 } from "./lesson-spec-rules";
 
-/** A screen as the model writes it: skills are numbered from 1 in the order the lesson lists them. */
+/** Skills are numbered from 1 in the order the lesson lists them. */
 type RawLessonScreen = {
   activityTemplate: string | null;
   brief: string;
@@ -27,7 +27,6 @@ export type RawLessonSpec = {
   title: string;
 };
 
-/** A skill's texts are a study card's lines and a lesson's title: plain lines (`toPlainLine`). */
 function cleanSkill(skill: LessonSpecSkill): LessonSpecSkill {
   const name = toPlainLine(skill.name);
 
@@ -41,10 +40,7 @@ function cleanSkill(skill: LessonSpecSkill): LessonSpecSkill {
   };
 }
 
-/**
- * The screen's skill numbers as indexes, without unknown or repeated ones. In a lesson of one
- * skill, a screen past the hook that names none is about that skill.
- */
+/** In a lesson of one skill, a screen past the hook that names none is about that skill. */
 function toSkillIndexes({
   kind,
   numbers,
@@ -61,15 +57,11 @@ function toSkillIndexes({
   return indexes.length === 0 && kind !== "hook" && skillCount === 1 ? [0] : [...new Set(indexes)];
 }
 
-/** The template ids the catalog has, and those an explanation screen can show to explore. */
 type TemplateSets = { exploreIds: ReadonlySet<string>; templateIds: ReadonlySet<string> };
 
 /**
- * An activity only stays when the spec names a template the catalog has, since
- * the writer can't build anything else. Otherwise the screen keeps its brief
- * and becomes a regular check, so the learner still uses the idea there. An
- * explanation keeps a template only when it can be explored; otherwise it stays
- * an explanation without one.
+ * The writer can only build catalog templates, so an activity naming another becomes a regular
+ * check with its brief.
  */
 function normalizeActivity({
   exploreIds,
@@ -107,13 +99,6 @@ function normalizeScreen({
   };
 }
 
-/**
- * Turns the model's lesson into a stored spec: what learners read as plain lines
- * (`toPlainLine`: no em dashes or Markdown), skill numbers turned into indexes
- * (unknown ones dropped; a one-skill lesson's screen that names none is about
- * its skill), activities limited to the catalog, explored templates to those
- * that can be, and minutes and the support mode computed from the screen plan.
- */
 export function normalizeLessonSpec({
   exploreIds,
   raw,

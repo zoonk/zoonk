@@ -25,12 +25,11 @@ const STAGE_DIRECTIONS = /\[[^\]]*\]|\([^)]*\)/gu;
 const EMPHASIS_MARKS = /[*_]+/gu;
 const SPACES = /\s+/gu;
 
-/** What a set must look like, from the task that asked for it. */
 export type ListeningSetRequest = {
   count: number;
   formats: readonly ListeningQuestionFormat[];
   optionCount: number | null;
-  /** How many skills the call listed; a question's `skill` is one of them, from 1. */
+  /** A question's `skill` is one of them, from 1. */
   skillCount: number;
 };
 
@@ -65,12 +64,11 @@ function mergeTurns(turns: readonly ListeningTurn[]): ListeningTurn[] {
   return merged;
 }
 
-/** The whole script as one normalized string, the way evidence and answers are looked up in it. */
 function getScriptText(turns: readonly ListeningTurn[]): string {
   return normalizeTypedAnswer(turns.map((turn) => turn.text).join(" "));
 }
 
-/** Where a question's evidence is heard in the script, or -1 when the script doesn't say it. */
+/** -1 when the script doesn't say it. */
 function findEvidence(script: string, question: ListeningQuestion): number {
   const evidence = normalizeTypedAnswer(question.evidence);
   return evidence ? script.indexOf(evidence) : -1;
@@ -89,7 +87,6 @@ function sortByEvidence(
   return questions.toSorted((a, b) => position(a) - position(b));
 }
 
-/** What a question's right answer says: a typed answer's accepted words, a right option's text. */
 function getAnswerTexts(question: ListeningQuestion): string[] {
   if (question.format === "typed") {
     return [question.sampleAnswer, ...question.acceptedAnswers];
@@ -130,13 +127,6 @@ function toKnownSkill(skill: number, request: ListeningSetRequest): number {
   return skill >= 1 && skill <= request.skillCount ? skill : 1;
 }
 
-/**
- * Repairs in code what code can repair, before any check: stage directions and em dashes leave the
- * spoken lines, empty lines go, one speaker's consecutive lines in a conversation become one turn
- * (a talk keeps its paragraphs), speakers who never speak leave, the questions follow the order
- * their answers are heard, as every exam asks them, cut to the count asked for, a skill number
- * outside the list becomes the first skill, and a title that says an answer goes.
- */
 export function repairListeningSet(set: ListeningSet, request: ListeningSetRequest): ListeningSet {
   const turns = mergeTurns(
     set.turns
@@ -220,10 +210,8 @@ function findRepeatedEvidence(questions: readonly ListeningQuestion[]): string[]
 }
 
 /**
- * The flaws of a repaired set code can see and can't repair: the script's speakers and length,
- * placeholders and Markdown in what's said, the question count, evidence that isn't heard word for
- * word, and typed answers nobody says. The task drafts again when there are any; the pipeline and
- * the eval scorer read the same list. Each question's own checks (options, keys) run in core.
+ * The task drafts again when there are any; the pipeline and the eval scorer read the same list.
+ * Each question's own checks run in core.
  */
 export function findListeningSetProblems(
   set: ListeningSet,

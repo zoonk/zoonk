@@ -15,7 +15,6 @@ const MAX_SUMMARY_IDEAS = 5;
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the kind comes first, then the setup, then the answers. */
 
-/** A chart or a timeline the app draws from data, when the screen is about one; or null. */
 const visual = lessonVisualSchema.nullable();
 
 const hookGuessScreen = z.object({
@@ -41,14 +40,11 @@ const explanationScreen = z.object({
   kind: z.literal("explanation"),
   title: z.string(),
   text: z.string(),
-  /** What a one-sentence example from the learner's own life should connect to, or null. */
+  /** What a one-sentence example from the learner's own life should connect to. */
   exampleLineIdea: z.string().nullable(),
   image: imageRequestSchema,
   visual,
-  /**
-   * The template the plan asks the screen to show to explore, nothing asked: `content` is its
-   * `{ fields, data }` as JSON text, which code validates like an activity's. Null otherwise.
-   */
+  /** `content` is `{ fields, data }` as JSON text, which code validates like an activity's. */
   explore: z.object({ template: z.string(), content: z.string() }).nullable(),
 });
 
@@ -75,7 +71,6 @@ const checkScreen = z.object({
         text: z.string(),
         isCorrect: z.boolean(),
         reason: z.string(),
-        /** For telling separate things apart by how they look: the option's own picture, or null. */
         picture: imageRequestSchema,
       }),
     )
@@ -86,8 +81,7 @@ const checkScreen = z.object({
 });
 
 /**
- * A calculation as data, the same shape as a numeric item: code recomputes the
- * answer, turns each common mistake into a wrong option and stores the problem
+ * Code recomputes the answer, turns each common mistake into a wrong option and stores the problem
  * as an item, so reviews can use new numbers.
  */
 const mathCheckScreen = z.object({
@@ -109,11 +103,7 @@ const typedAnswerScreen = z.object({
   visual,
 });
 
-/**
- * An activity from the catalog. `content` is the activity as JSON text
- * (`{ prompt, fields, check, data }`), since each template has its own fields
- * and code validates them against the template's schema.
- */
+/** `content` is JSON text, since each template has its own fields that code validates. */
 const activityScreen = z.object({
   kind: z.literal("activity"),
   template: z.string(),
@@ -121,10 +111,8 @@ const activityScreen = z.object({
 });
 
 /**
- * The sentence of an earlier reading screen (a hook's text, an explanation or a worked example)
- * that decides a question's right answer: that screen's number and the sentence copied exactly,
- * so the app can mark it beside a wrong answer; or null. Code drops one whose quote isn't on that
- * screen. Only the lesson writer and its fix pass write it: a variant sees one screen alone.
+ * The earlier screen's sentence that decides the right answer, copied exactly so the app can mark
+ * it beside a wrong answer. Code drops a quote that isn't on that screen.
  */
 const basis = z.object({ screen: z.number().int(), quote: z.string() }).nullable();
 
@@ -157,7 +145,6 @@ export const writtenScreenSchema = z.union([
   activityScreen,
 ]);
 
-/** A lesson as the writer returns it: one screen per planned screen, then the summary card. */
 export const writtenLessonSchema = z.object({
   screens: z.array(writtenScreenSchema),
   summary: z.array(z.string()).min(1).max(MAX_SUMMARY_IDEAS),
@@ -167,11 +154,6 @@ export type WrittenScreen = z.infer<typeof writtenScreenSchema>;
 export type WrittenScreenKind = WrittenScreen["kind"];
 export type WrittenLesson = z.infer<typeof writtenLessonSchema>;
 
-/**
- * What each planned screen may be written as. A check or the application is
- * multiple choice or a calculation as data; activities only go where the spec
- * put them.
- */
 const WRITTEN_KINDS_BY_SCREEN: Readonly<Record<LessonScreenKind, readonly WrittenScreenKind[]>> = {
   activity: ["activity"],
   application: ["check", "mathCheck"],
@@ -182,9 +164,8 @@ const WRITTEN_KINDS_BY_SCREEN: Readonly<Record<LessonScreenKind, readonly Writte
 };
 
 /**
- * What a planned screen may be written as. Learners would rather pick than think up and type an
- * answer, so a typed answer is a last resort: only a lesson whose learners' exams ask short
- * written answers (`shortAnswers`) may write a check or the application as one.
+ * Learners would rather pick than type an answer, so a check or the application is typed only for
+ * exams that ask short written answers (`shortAnswers`).
  */
 export function getWrittenKinds({
   kind,

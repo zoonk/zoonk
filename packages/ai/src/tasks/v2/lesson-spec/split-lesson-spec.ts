@@ -11,7 +11,6 @@ import {
   getSupportModeFromScreens,
 } from "./lesson-spec-rules";
 
-/** One skill with the screens that teach and check it, between the hook and the application. */
 type SkillSegment = { screens: LessonScreen[]; skill: number };
 
 /** Every lesson made by a split gets its own hook and application. */
@@ -60,7 +59,6 @@ function canFormGroup({
   );
 }
 
-/** A way to cut the first skills into lessons, with its smallest lesson's screen count. */
 type Grouping = { groups: SkillSegment[][]; smallest: number };
 
 /** Fewer lessons first; then the one whose smallest lesson is biggest, so no lesson ends up tiny. */
@@ -71,11 +69,7 @@ function isBetterGrouping(candidate: Grouping, current: Grouping): boolean {
   );
 }
 
-/**
- * Cuts skills, in teaching order, into the fewest lessons that fit, and among
- * those picks the most even cut. Each prefix keeps only its best cut, which is
- * enough because a worse prefix can never lead to a better whole.
- */
+/** Each prefix keeps only its best cut: a worse prefix can never lead to a better whole. */
 function groupSegments({
   level,
   segments,
@@ -143,11 +137,7 @@ function createFrameScreen({
   return { activityTemplate: null, brief, kind, skills, visual: null };
 }
 
-/**
- * The first lesson keeps the original hook and the last keeps the original
- * application. The others open with a real situation and close by applying
- * their skills to where they show up in real life.
- */
+/** The first lesson keeps the original hook and the last the original application. */
 function getFrame({
   isFirst,
   isLast,
@@ -230,13 +220,8 @@ function buildPart({
 }
 
 /**
- * The split rule: a lesson that doesn't fit (more than 3 skills, more than 12
- * screens or more than 5 minutes) becomes as few lessons as fit, cut at skill
- * boundaries in teaching order and as even in size as possible.
- * A skill is never cut in half, because a lesson's identity is its skills:
- * one skill too big for a lesson stays whole and fails the size check instead.
- * Each new lesson gets a hook, its skills' screens and one application, and is
- * named after its skills' topics.
+ * A skill is never cut in half, because a lesson's identity is its skills: one skill too big for a
+ * lesson stays whole and fails the size check instead.
  */
 export function splitLessonSpec({
   language,

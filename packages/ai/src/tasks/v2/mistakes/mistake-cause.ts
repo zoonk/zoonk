@@ -8,9 +8,7 @@ import { getPromptLanguageName } from "../../_utils/prompt-language";
 import systemPrompt from "./mistake-cause.prompt.md";
 
 /**
- * From the mistake-cause eval (23 wrong answers, 7 Oct 2026): Claude Haiku 5.5 with thinking off
- * named all 23 causes at p50 1.4s and $0.05 per 1,000 runs; Luna named 21 (it took a trap and a
- * misread unit for gaps) at p50 2.4s and $0.09.
+ * Claude Haiku 5.5 named all 23 causes on the mistake-cause eval at 1.4s p50; Luna 21 (7 Oct 2026).
  */
 const defaultModel = "anthropic/claude-haiku-5.5";
 const defaultReasoning: Reasoning = "none";
@@ -31,10 +29,9 @@ export type MistakeCauseInput = {
   correctAnswer: string;
   language: string;
   learnerAnswer: string;
-  /** The misconception tag or reason of the option the learner chose; empty when there is none. */
+  /** Of the option the learner chose; empty when there is none. */
   misconception: string;
   question: string;
-  /** The learner's recent answers on the same skill, such as "3 of 5 right". */
   recentAccuracy: string;
 };
 
@@ -64,10 +61,6 @@ function toFields({
   };
 }
 
-/**
- * The same rules as an evaluation-model question, so the eval can compare Jev and other
- * evaluation models with the generation model on the same labels before production moves over.
- */
 export const mistakeCauseClassifier = {
   instructions: systemPrompt,
   labels: {
@@ -79,8 +72,7 @@ export const mistakeCauseClassifier = {
 };
 
 /**
- * Names the cause of a wrong answer when its pattern is ambiguous: a learner with mixed results on
- * the skill, where only the answer itself tells a content gap from a misreading or a trap.
+ * For mixed results on the skill, where only the answer tells a gap from a misreading or a trap.
  */
 export async function classifyMistakeCause({
   analytics,

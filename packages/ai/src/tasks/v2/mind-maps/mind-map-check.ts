@@ -9,11 +9,9 @@ import { type MindMapStructure, listMindMapTexts } from "./mind-map-schema";
 import { compareMindMapText } from "./mind-map-text";
 
 /**
- * Tried on seven maps with known mistakes (7 Oct 2026): Haiku 5.5 with thinking off read every
- * misspelling ("altenpada", "mudia") and sketch caption back as written, in about 7 seconds for
- * $0.001; Gemini 3.8 Flash and Luna read them too, at 14 and 22 seconds. It reads a 1024-pixel map
- * for about $0.0004. The check runs after the map is shown, so it asks for flex, which applies when
- * a fallback answers (Anthropic has no flex tier through the gateway).
+ * Haiku 5.5 read every planted misspelling back as written in about 7 seconds, half Gemini 3.8
+ * Flash's time (7 Oct 2026). The check runs after the map is shown, so it asks for flex, which
+ * applies when a fallback answers: Anthropic has no flex tier through the gateway.
  */
 const defaultModel = "anthropic/claude-haiku-5.5";
 const defaultReasoning: Reasoning = "none";
@@ -25,13 +23,12 @@ const schema = z.object({ lines: z.array(z.string()) });
 const MAX_LISTED_WORDS = 12;
 
 type MindMapCheckVerdict = {
-  /** Words of the map the picture seems to leave out. */
   missing: string[];
   passed: boolean;
-  /** What went wrong, quoting the words, for the next drawing's corrections. */
+  /** Quoting the words, for the next drawing's corrections. */
   problems: string[];
   transcript: string[];
-  /** Words on the picture that aren't the map's: misspelled, garbled or extra. */
+  /** Misspelled, garbled or extra. */
   unknown: string[];
 };
 
@@ -67,10 +64,8 @@ function describeProblems({
 }
 
 /**
- * The check after a mind map's picture is shown: a vision model reads every word on it as
- * written, and the words are compared with the map's text in code, accents included. It fails
- * only on a serious problem (several wrong words, or a part left out), and then the problems
- * quote the words, so the next drawing can fix them.
+ * A vision model reads every word as written and code compares them with the map's text. It fails
+ * only on a serious problem (several wrong words, or a part left out).
  */
 export async function checkMindMapImage({
   analytics,

@@ -21,11 +21,8 @@ import {
 } from "./written-lesson-schema";
 
 /**
- * From the lesson-fix eval (lessons with code and reviewer problems): on 26 Sep 2026 Sol and
- * Gemini 3.8 Flash fixed every one, Sol at $15 per 1,000 fixes and 7s p50, Gemini at $28 and 9s;
- * on 9 Oct Luna fixed all 4 cases too, at $0.84 per 1,000 and 8s p50. A fix rewrites a few
- * flagged screens, so the cheapest model that fixes them all leads. Gemini isn't a fallback: it
- * rejects the screens' schema as too large.
+ * A fix rewrites a few flagged screens, so the cheapest model that fixes them all leads: Luna fixed
+ * every case (9 Oct 2026). Gemini rejects the screens' schema as too large, so it's no fallback.
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["openai/gpt-6-sol", "anthropic/claude-opus-5.5"] as const;
@@ -41,7 +38,6 @@ export type FixLessonDraftParams = LessonWritingContext & {
   lesson: WrittenLesson;
   problems: LessonProblem[];
   model?: string;
-  /** The gateway tier it answers at (see `ServiceTier`); the standard one when unset. */
   serviceTier?: ServiceTier;
   useFallback?: boolean;
   reasoning?: Reasoning;
@@ -53,11 +49,7 @@ function formatLesson(lesson: WrittenLesson): string {
   return JSON.stringify({ screens, summary: lesson.summary }, null, 1);
 }
 
-/**
- * Puts the fixed screens in place of the old ones. A fix may fill a planned
- * screen the draft left out, but never adds one the plan doesn't have, and
- * extra screens beyond the plan are dropped.
- */
+/** A fix may fill a planned screen the draft left out, but never adds one the plan doesn't have. */
 function applyLessonFixes({
   fixes,
   lesson,
@@ -84,12 +76,7 @@ function applyLessonFixes({
   };
 }
 
-/**
- * The fix pass: rewrites only the screens the lesson checks flagged, keeping
- * the rest untouched, and returns the whole fixed lesson with the indexes of
- * the screens it changed, so callers can re-check the lesson and record which
- * run wrote each screen.
- */
+/** Returns the indexes of the screens it changed, so callers can record which run wrote each. */
 export async function fixLessonDraft(params: FixLessonDraftParams) {
   const {
     analytics,
@@ -102,7 +89,6 @@ export async function fixLessonDraft(params: FixLessonDraftParams) {
 
   const providerOptions = buildProviderOptions({ fallbackModels, model, serviceTier, useFallback });
 
-  // A lesson whose learners' exams ask no short written answers never reads about typed answers.
   const systemPrompt = selectPromptVariants({
     template: fixPrompt,
     variants: { shortAnswers: Boolean(params.shortAnswers) },

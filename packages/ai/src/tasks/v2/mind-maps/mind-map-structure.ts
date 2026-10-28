@@ -12,17 +12,14 @@ import {
 import systemPrompt from "./mind-map-structure.prompt.md";
 
 /**
- * Tried on four chapters (7 Oct 2026, two in Portuguese, one in English, one UX): Haiku 5.5 kept
- * closer to what the lessons say (their own examples and numbers) than Gemini 3.8 Flash, which
- * once wrote a fact no lesson had, at about $0.002 a map against $0.009, in 9 to 13 seconds.
+ * Haiku 5.5 kept closer to what the lessons say than Gemini 3.8 Flash, which once wrote a fact no
+ * lesson had, at a fifth of the cost (7 Oct 2026).
  */
 const defaultModel = "anthropic/claude-haiku-5.5";
 const fallbackModels = ["google/gemini-3.8-flash", "openai/gpt-6-luna"] as const;
 
-/** One lesson of the chapter as the map reads it: what it teaches, in its own words. */
 export type MindMapLesson = {
   canDo: string | null;
-  /** Its explanation and worked-example screens, titled when they have a title. */
   screens: { text: string; title: string | null }[];
   summary: string[];
   title: string;
@@ -70,11 +67,8 @@ function buildUserPrompt(chapter: MindMapChapter): string {
 }
 
 /**
- * Writes a chapter's mind map as text from what its lessons teach: the title in the middle, the
- * central idea, the branches with their explanation, points and a sketch to draw, an optional
- * comparison and a summary line. The picture is drawn from it (`generateMindMapImage`) and it is
- * the map itself for screen readers and when a picture fails its check. Throws when the answer
- * isn't a usable map, so the caller's retry writes it again.
+ * It's the map itself for screen readers and when a picture fails its check. Throws when the
+ * answer isn't a usable map, so the caller's retry writes it again.
  */
 export async function generateMindMapStructure({
   analytics,

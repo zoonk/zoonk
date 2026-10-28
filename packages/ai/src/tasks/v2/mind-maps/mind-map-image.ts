@@ -13,12 +13,8 @@ import {
 import { type MindMapStructure } from "./mind-map-schema";
 
 /**
- * Main's image settings for lesson pictures and icons: GPT Image 2.5 Flare at low quality, square,
- * as webp. On the eval's four maps (three in Portuguese, 7 Oct 2026) it lettered every word right
- * on 9 of 9 pictures, in 11 to 14 seconds for about $0.01 a map. Medium cost $0.017 for the same
- * result; Sunburst matched it at the same price but took 17 to 19 seconds; Nano Banana 2.1 cost
- * $0.05 at 2K and wrote a word on a sketch, and dropped a branch at 1K. Sunburst is the first
- * fallback (`buildImageProviderOptions`): it letters Portuguese as well at the same price.
+ * Flare at low quality lettered every word right on 9 of 9 maps for about $0.01 (7 Oct 2026);
+ * medium cost more for the same, and Sunburst, the first fallback, matched it but took longer.
  */
 const defaultModel = "openai/gpt-image-2.5-flare";
 const DEFAULT_QUALITY: ImageGenerationQuality = "low";
@@ -28,9 +24,7 @@ const IMAGE_SIZE = "1024x1024";
 
 export type MindMapImageParams = {
   structure: MindMapStructure;
-  /** The map's language, for its fixed headings. */
   language: string;
-  /** What the text check found wrong in the last picture of this map, for a second attempt. */
   corrections?: readonly string[];
   analytics?: AiGenerationContext;
   model?: string;
@@ -39,10 +33,6 @@ export type MindMapImageParams = {
   useFallback?: boolean;
 };
 
-/**
- * Draws a chapter's mind map from its structure in the fixed mind-map style, every text lettered
- * as written. Checking the text, storing and redrawing happen in core.
- */
 export async function generateMindMapImage({
   analytics,
   corrections,

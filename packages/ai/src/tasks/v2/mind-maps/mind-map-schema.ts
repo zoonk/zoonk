@@ -25,15 +25,9 @@ export const mindMapStructureSchema = z.object({
   title: z.string(),
 });
 
-/**
- * A chapter's mind map as text, in the chapter's language: the words in the middle (`title`), the
- * idea tying the branches together, 3 to 6 branches (each with a one-sentence explanation, up to
- * three points and an English description of a small sketch, never lettered), an optional table
- * comparing 2 to 5 things and a one-line summary.
- */
+/** Each branch's sketch is described in English and never lettered. */
 export type MindMapStructure = z.infer<typeof mindMapStructureSchema>;
 
-/** The two fixed headings lettered on every map, in the map's language. */
 type MindMapHeadings = { centralIdea: string; summary: string };
 
 const HEADINGS: Readonly<Record<string, MindMapHeadings>> = {
@@ -44,12 +38,12 @@ const HEADINGS: Readonly<Record<string, MindMapHeadings>> = {
   pt: { centralIdea: "Ideia central", summary: "Resumo" },
 };
 
-/** The map's headings in its language; English for a language the app doesn't speak. */
+/** English for a language the app doesn't speak. */
 export function getMindMapHeadings(language: string): MindMapHeadings {
   return HEADINGS[language] ?? { centralIdea: "Central idea", summary: "Summary" };
 }
 
-/** Collapses runs of spaces and swaps em dashes for commas, which the map never letters. */
+/** The map never letters em dashes. */
 function cleanText(text: string): string {
   return text
     .replaceAll(/\s*[—–]\s*/gu, ", ")
@@ -80,11 +74,7 @@ function normalizeComparison(
   return title && columns.length >= MIN_COLUMNS ? { columns, title } : null;
 }
 
-/**
- * Trims every text, keeps at most six branches with up to three points each and drops a
- * comparison with fewer than two things. Null when what's left isn't a map (fewer than three
- * branches, or no title, central idea or summary), so the caller writes it again.
- */
+/** Null when what's left isn't a map, so the caller writes it again. */
 export function normalizeMindMapStructure(raw: MindMapStructure): MindMapStructure | null {
   const branches = raw.branches
     .map((branch) => ({
@@ -111,11 +101,7 @@ export function normalizeMindMapStructure(raw: MindMapStructure): MindMapStructu
   return isComplete ? structure : null;
 }
 
-/**
- * Every text the picture letters, in reading order: the headings, the title, the central idea,
- * each numbered branch with its explanation and points, the comparison and the summary line. The
- * text check compares a picture's words against these.
- */
+/** In reading order; the text check compares a picture's words against these. */
 export function listMindMapTexts({
   language,
   structure,

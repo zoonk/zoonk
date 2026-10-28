@@ -26,13 +26,8 @@ import quickLessonPrompt from "./quick-lesson.prompt.md";
 import { splitLessonSpec } from "./split-lesson-spec";
 
 /**
- * From the lesson-spec eval (6 cases, code checks then Astra judge, 26 Sep
- * 2026): Sol 9.08, Opus 8.66 and Gemini 3.8 Flash 8.44, at $23, $100 and $17
- * per 1,000 runs. Sol leads on quality at close to the lowest cost. On 27 Sep, once plans put
- * one new term per screen, applied checks and hooks whose answer shows at once, Sol scored 9.21 on
- * five cases (9.41 before), and lessons written from those plans scored 8.85 (8.24 before).
- * The two cheapest, on 8 cases (7 Oct 2026): Claude Haiku 5.5 8.80 and Luna 8.65 against Sol's
- * 9.22, at $6 and $2 per 1,000 runs against $44.
+ * Sol leads the lesson-spec eval at close to the lowest cost; Haiku and Luna scored lower (7 Oct
+ * 2026).
  */
 const defaultModel = "openai/gpt-6-sol";
 const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
@@ -65,10 +60,6 @@ const lessonSchema = z.object({
 
 const schema = z.object({ lessons: z.array(lessonSchema) });
 
-/**
- * One activity template from the player's catalog, with when it helps, and whether an explanation
- * screen can show it to explore.
- */
 type ActivityTemplateOption = { id: string; description: string; explore: boolean };
 
 export type LessonSpecParams = {
@@ -79,53 +70,31 @@ export type LessonSpecParams = {
   lessonTitle: string;
   lessonDescription: string;
   lessonCanDo?: string;
-  /** The skills the outline gave this lesson, as a starting point. */
   skills?: string[];
-  /** The chapter's other lessons, so this one stays in its own scope and adds something new. */
   chapterLessons?: ChapterLesson[];
   activityTemplates: ActivityTemplateOption[];
-  /** The pages of the learner's own material this lesson is built from, tagged with references. */
   material?: string;
-  /** Excerpts of the public documents the lesson's facts come from, tagged with references. */
   sources?: string;
-  /**
-   * The exams the learners who study this shared lesson prepare for, so it's planned at their
-   * depth and in their questions' style for their candidates, without naming them.
-   */
   exams?: LessonExam[];
-  /** A lesson that sets up a tool on the learner's device ("Set up Python on Windows"). */
   setup?: boolean;
-  /**
-   * The exams of the lesson's learners ask short written answers, so a check may ask for one in
-   * their format; every other lesson plans only checks learners answer by picking.
-   */
+  /** Otherwise the lesson plans only checks learners answer by picking. */
   shortAnswers?: boolean;
-  /**
-   * A skill's quick lesson ("Quick lesson"): one short lesson summing up the skill's core ideas with
-   * one worked example, for a learner who takes a short version of a base. It's never split.
-   */
+  /** One short lesson summing up a skill's core ideas, which is never split. */
   quick?: boolean;
   model?: string;
-  /** The gateway tier it answers at (see `ServiceTier`); the standard one when unset. */
   serviceTier?: ServiceTier;
   useFallback?: boolean;
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
 };
 
-/** Usually one lesson; several when the planned lesson didn't fit and was split (never a quick one). */
+/** Several when the planned lesson didn't fit and was split; a quick one never is. */
 type LessonSpecResult = { lessons: LessonSpec[] };
 
 function formatList(items: readonly string[]): string {
   return items.length === 0 ? "none" : items.map((item) => `\n- ${item}`).join("");
 }
 
-/**
- * The rules, keeping in place only the variants this lesson is (planned for exams, from the
- * learner's material or official sources, a setup lesson, for learners whose exams ask short
- * written answers), then a quick lesson's rules last. A lesson never reads the others' rules, so its prompt
- * (and version) never carries them, and a variant's lesson reads its rules where they always were.
- */
 function buildSystemPrompt(params: LessonSpecParams): string {
   const prompt = selectPromptVariants({
     template: systemPrompt,
@@ -165,7 +134,6 @@ ${formatLocalContext(params.language)}
 ${formatLessonDocuments({ material: params.material, sources: params.sources })}  `;
 }
 
-/** One call planning the lesson, normalized and split. */
 async function planLesson(params: LessonSpecParams) {
   const { analytics, model = defaultModel, reasoning, serviceTier, useFallback = true } = params;
   const instructions = buildSystemPrompt(params);
@@ -210,9 +178,7 @@ async function planLesson(params: LessonSpecParams) {
 }
 
 /**
- * The shape rules a new plan can meet: a hook first, a check every 2 or 3 screens, one application
- * last, and every skill taught, practiced and, when hard, worked through. Sizes are the split
- * rule's, which keeps a skill too big for one lesson whole on purpose.
+ * Sizes are left to the split rule, which keeps a skill too big for one lesson whole on purpose.
  */
 const REPLAN_ISSUES: ReadonlySet<LessonSpecIssue["code"]> = new Set([
   "application",
@@ -231,15 +197,8 @@ function countShapeIssues({ data, level }: { data: LessonSpecResult; level: Cour
 }
 
 /**
- * Plans one lesson before it's written: its 1 to 3 skills, a screen plan of
- * 5 to 12 screens (hook, the idea in small steps, a check every 2 or 3 screens,
- * a worked example for hard skills and one application), where an activity or
- * a picture teaches, and whether it opens with the explanation or a question.
- * A lesson that doesn't fit comes back as several lessons: the model splits it
- * when it can, and the split rule enforces the size limits in code. A plan
- * that breaks a shape rule (`getLessonSpecIssues`, such as four teaching
- * screens in a row) is planned once more, and the plan with fewer broken rules
- * is kept (`draftAgainWhenFlawed`).
+ * A lesson that doesn't fit comes back as several. A plan that breaks a shape rule is planned once
+ * more, and the one with fewer broken rules is kept.
  */
 export function generateLessonSpec(params: LessonSpecParams) {
   return draftAgainWhenFlawed({

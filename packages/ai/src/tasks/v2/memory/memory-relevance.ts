@@ -4,10 +4,7 @@ import { evaluateQuestions } from "../../../evaluate/evaluate-questions";
 import { type MemoryFactText, formatMemoryFact } from "./memory-facts";
 import instructions from "./memory-relevance.prompt.md";
 
-/**
- * The runner-up from the memory-relevance eval (83% against Jev's 100%; Flash Lite was as accurate
- * but timed out), used when Jev errors, times out or can't fit the input.
- */
+/** The memory-relevance eval's runner-up (83% against Jev's 100%; Flash Lite timed out). */
 const FALLBACK_EVALUATION_MODEL = "anthropic/claude-haiku-5.5";
 
 /** A fact that doesn't fit only costs a few tokens of context, so the cutoff sits at even odds. */
@@ -15,7 +12,6 @@ const RELEVANT_AT = 0.5;
 
 export type MemoryRelevanceInput = { fact: MemoryFactText; need: string };
 
-/** The relevance question for any evaluation model, so the eval and production ask the same thing. */
 export const memoryRelevanceClassifier = {
   question: {
     criteria: {
@@ -46,9 +42,8 @@ async function getRelevance<FACT extends MemoryFactText>({
 }
 
 /**
- * Keeps the facts a task would use, most relevant first, at most `limit`. Each fact is judged on
- * its own so one verdict reads only one fact, and the calls run together because Jev answers in a
- * fraction of a second.
+ * Each fact is judged on its own so one verdict reads only one fact; the calls run together since
+ * Jev answers in a fraction of a second.
  */
 export async function selectRelevantMemoryFacts<FACT extends MemoryFactText>({
   facts,

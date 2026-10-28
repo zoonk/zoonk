@@ -10,19 +10,16 @@ import {
 import { type MemoryFactText, formatMemoryFact, formatMemoryFactList } from "./memory-facts";
 import instructions from "./memory-reconcile.prompt.md";
 
-/** The runner-up from the memory-reconcile eval, used when Jev errors, times out or can't fit the input. */
+/** The memory-reconcile eval's runner-up. */
 const FALLBACK_EVALUATION_MODEL = "openai/gpt-6-luna";
 
 export type MemoryReconcileInput = {
   fact: MemoryFactText & { intent: MemoryFactIntent };
-  /** Related facts memory holds, in the order the labels number them. */
+  /** In the order the labels number them. */
   existing: readonly MemoryFactText[];
 };
 
-/**
- * The reconcile question for any evaluation model. Its labels depend on how many related facts
- * there are, so the eval and production build them the same way from the input.
- */
+/** Its labels depend on how many related facts there are, so the eval builds them the same way. */
 export const memoryReconcileClassifier = {
   getLabels: ({ existing }: MemoryReconcileInput) => getMemoryReconcileLabels(existing.length),
   instructions,
@@ -39,9 +36,8 @@ type MemoryReconcileRun = EvaluationRunDetails & {
 };
 
 /**
- * Decides whether a new fact is added, ignored as a duplicate, replaces an existing fact or
- * removes one: "Wants Law" replaces "Wants Medicine" instead of sitting next to it. With no
- * related facts there is nothing to compare, so no model is called.
+ * "Wants Law" replaces "Wants Medicine" instead of sitting next to it. With no related facts there
+ * is nothing to compare, so no model is called.
  */
 export async function reconcileMemoryFact(
   input: MemoryReconcileInput,

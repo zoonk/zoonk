@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-/** The database's `MemoryCategory` values; this package doesn't depend on the database. */
+/** The database's `MemoryCategory` values: this package doesn't depend on the database. */
 const MEMORY_CATEGORIES = [
   "goals",
   "background",
@@ -14,17 +14,14 @@ export const memoryCategorySchema = z.enum(MEMORY_CATEGORIES);
 
 export type MemoryFactCategory = z.infer<typeof memoryCategorySchema>;
 
-/** What a model reads about one fact: never ids, which a model could echo or be tricked into picking. */
+/** Never ids, which a model could echo or be tricked into picking. */
 export type MemoryFactText = { category: MemoryFactCategory; statement: string };
 
 export function formatMemoryFact(fact: MemoryFactText): string {
   return `[${fact.category}] ${fact.statement}`;
 }
 
-/**
- * Numbers facts from 1 so decisions can point at one ("replace_2") without the model ever seeing a
- * database id.
- */
+/** Decisions point at a fact by number ("replace_2"), so the model never sees a database id. */
 export function formatMemoryFactList(facts: readonly MemoryFactText[]): string {
   if (facts.length === 0) {
     return "none";

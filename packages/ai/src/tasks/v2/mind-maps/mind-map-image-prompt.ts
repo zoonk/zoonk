@@ -1,18 +1,12 @@
 import { type MindMapStructure, getMindMapHeadings } from "./mind-map-schema";
 
-/**
- * The version of the mind-map style and prompt layout. Every map stores it, so a change that makes
- * new maps look different bumps it. Version 2 moved from warm paper to a plain white background.
- */
+/** Every map stores it: bump it when new maps would look different. */
 export const MIND_MAP_STYLE_VERSION = 2;
 
 /** One color per branch, in order, the same on every map. */
 const BRANCH_COLORS = ["purple", "orange", "blue", "green", "golden yellow", "pink"] as const;
 
-/**
- * The fixed look of every map: a neat colored-marker study sheet on a clean white background. Kept
- * apart from a map's content so its art direction never drifts between maps.
- */
+/** Kept apart from a map's content so its art direction never drifts between maps. */
 export const MIND_MAP_IMAGE_TEMPLATE = `A hand-drawn mind map filling the whole square image edge to edge on a plain pure white background (#FFFFFF: no paper texture, tint, shadow, desk, frame or border), like a neat student's colored-marker study sheet. Friendly sketch style: dark navy hand-lettered text that is crisp, large and easy to read, soft colors, small colored-pencil sketches, plenty of white space between parts. No photo, no 3D, no clutter.
 
 {{CONTENT}}
@@ -44,10 +38,6 @@ function describeComparison(comparison: MindMapStructure["comparison"]): string 
   return `\nBELOW THE BRANCHES: a wide rounded table with the heading "${comparison.title}" on a dark navy tab, ${comparison.columns.length} columns split by dashed lines. Each column has its name as a colored heading and its bullets:\n${columns}\n`;
 }
 
-/**
- * A map's own part of the picture prompt: where each text goes and the exact words to letter,
- * plus what the text check found in the last picture, so a second one fixes it.
- */
 export function formatMindMapImageContent({
   corrections = [],
   language,

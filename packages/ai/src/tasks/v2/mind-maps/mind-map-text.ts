@@ -29,11 +29,7 @@ function isMarkLike(word: string): boolean {
   return word.length <= 1 || DIGITS_PATTERN.test(word);
 }
 
-/**
- * Words the picture shows that the map doesn't have. A word broken across two lines ("eletrici-",
- * "dade") counts as the whole word. Numbers alone and single characters are left out: they are a
- * sketch's dial or a stray mark, never a misspelled word a learner would read.
- */
+/** A word broken across two lines ("eletrici-", "dade") counts as the whole word. */
 function findUnknownWords({
   expected,
   shown,
@@ -53,26 +49,13 @@ function findUnknownWords({
   );
 }
 
-export type MindMapTextComparison = {
-  /** Words of the map the picture doesn't show, distinct. */
-  missing: string[];
-  /** Words the picture shows that the map doesn't have: misspelled, garbled or invented, distinct. */
-  unknown: string[];
-  passed: boolean;
-};
+export type MindMapTextComparison = { missing: string[]; unknown: string[]; passed: boolean };
 
-/**
- * Compares the text read from a mind map's picture with the texts it was asked to letter, word by
- * word, accents included. It passes unless the problem is serious: more than a couple of words that
- * aren't the map's, or more than a few of the map's words missing (a part left out).
- */
 export function compareMindMapText({
   expected,
   transcript,
 }: {
-  /** Every text the picture should letter (`listMindMapTexts`). */
   expected: readonly string[];
-  /** Every text read from the picture, as written. */
   transcript: readonly string[];
 }): MindMapTextComparison {
   const expectedWords = new Set(expected.flatMap((text) => toWords(text)));

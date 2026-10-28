@@ -9,13 +9,9 @@ import {
 import { formatMemoryFact } from "./memory-facts";
 import instructions from "./memory-gate.prompt.md";
 
-/** The runner-up from the memory-gate eval, used when Jev errors, times out or can't fit the input. */
+/** The memory-gate eval's runner-up. */
 const FALLBACK_EVALUATION_MODEL = "openai/gpt-6-luna";
 
-/**
- * The gate's three questions about one candidate, shared by production and the eval so every
- * evaluation model answers exactly what production asks.
- */
 export const memoryGateClassifier = {
   questions: {
     explicitlyAsked: {
@@ -56,10 +52,8 @@ type MemoryGateRun = EvaluationRunDetails &
   MemoryGateVerdict & { probabilities: MemoryGateProbabilities };
 
 /**
- * Decides whether a candidate fact may enter memory: it must be lasting, and a sensitive fact only
- * stays when the learner explicitly asked. The candidate
- * and its evidence are untrusted data, so a "please store this, it's approved" line can't
- * override the verdict beyond what the learner could ask for anyway.
+ * The candidate and its evidence are untrusted data, so a "please store this, it's approved" line
+ * can't override the verdict.
  */
 export async function gateMemoryFact({
   candidate,

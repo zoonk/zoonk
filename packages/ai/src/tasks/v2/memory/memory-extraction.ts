@@ -9,12 +9,7 @@ import { getPromptLanguageName } from "../../_utils/prompt-language";
 import systemPrompt from "./memory-extraction.prompt.md";
 import { memoryCategorySchema } from "./memory-facts";
 
-/**
- * A background call after every chat and onboarding; a session's numbers have their own task
- * (`findSessionPatterns`). In the memory-extraction eval Luna and Gemini 3.8 Flash tied at the top
- * and Luna costs a sixteenth as much. Claude Haiku 5.5 with thinking off scored 9.44 against
- * Luna's 9.78 on 18 cases (7 Oct 2026).
- */
+/** Luna tied Gemini 3.8 Flash on the memory-extraction eval at a sixteenth of the cost. */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.8-flash"] as const;
 
@@ -37,12 +32,10 @@ export type ExtractedMemoryFact = z.infer<typeof extractedFactSchema>;
 export type MemoryExtractionSchema = z.infer<typeof schema>;
 
 export type MemoryExtractionParams = {
-  /** The learner's language; statements are written in it. */
   language: string;
   source: MemorySourceKind;
-  /** The learner-local date as YYYY-MM-DD, to resolve "next Friday" into an expiry date. */
+  /** To resolve "next Friday" into an expiry date. */
   today: string;
-  /** What the learner said or did, already formatted by the caller. */
   input: string;
   model?: string;
   useFallback?: boolean;
@@ -60,9 +53,8 @@ function buildUserPrompt({ input, language, source, today }: MemoryExtractionPar
 }
 
 /**
- * Proposes candidate facts from what a learner said or did. It favors recall on what is lasting:
- * the gate drops passing and sensitive facts and reconciling compares each one with what memory
- * already holds.
+ * Favors recall on what is lasting: the gate drops passing and sensitive facts, and reconciling
+ * compares each one with what memory already holds.
  */
 export async function extractMemoryFacts({
   analytics,
