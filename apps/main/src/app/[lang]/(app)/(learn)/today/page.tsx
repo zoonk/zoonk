@@ -19,10 +19,11 @@ import { getExtracted, getLocale } from "next-intl/server";
 import { cookies } from "next/headers";
 import { Suspense } from "react";
 import { LearnNotFound } from "../_components/learn-not-found";
-import { SuggestedGoalClient, TodayClient, TodayPreparingClient } from "./today-client";
+import { SuggestedGoalClient, TodayClient } from "./today-client";
 import { TodayGoalPaused } from "./today-goal-paused";
 import { getLocalDay } from "./today-local-day";
 import { TodayOnboardingLeft, isOnboardingLeft } from "./today-onboarding-left";
+import { TodayPreparingClient } from "./today-preparing-client";
 import { loadTodayScreen } from "./today-view";
 
 export async function generateMetadata(): Promise<Metadata> {

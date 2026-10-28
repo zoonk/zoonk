@@ -4,10 +4,8 @@ import {
   changePlanAction,
   chooseExamOptionAction,
 } from "@/app/[lang]/(app)/(learn)/plan/journey-actions";
-import { retryGenerationAction } from "@/app/[lang]/(app)/(onboarding)/start/onboarding-actions";
 import { UploadRequestClient } from "@/components/learn/upload-request-client";
 import { useRouter } from "@/i18n/navigation";
-import { readGoalGenerationId } from "@/lib/goals/read-goal-generation-id";
 import { useAnswerSuggestedGoal } from "@/lib/goals/use-answer-suggested-goal";
 import { useFollowTimeZone } from "@/lib/goals/use-follow-time-zone";
 import { toStudyDayDate } from "@/lib/learn/tab-missions";
@@ -19,7 +17,6 @@ import { answerMemoryInsightAction } from "@/lib/session/study-session-actions";
 import { useDayTaps } from "@/lib/session/use-day-taps";
 import { getSessionHref, useMissionLinks } from "@/lib/session/use-study-navigation";
 import { useStartTestOut } from "@/lib/test-out/use-start-test-out";
-import { useWorkflowRun } from "@/lib/workflow/use-workflow-run";
 import { type SuggestedGoalView } from "@zoonk/core/goals/suggestions/contract";
 import { type GoalUploadRequest } from "@zoonk/core/library/sources/upload-request";
 import { type DayBlockRef, findNextCall } from "@zoonk/core/sessions/day-block";
@@ -29,7 +26,6 @@ import { MockEntryRow } from "@zoonk/learn/mock/entry";
 import { type DayStep } from "@zoonk/learn/session/types";
 import { type TodayHostNotices, TodayScreen } from "@zoonk/learn/today";
 import { TodayChangeNotice } from "@zoonk/learn/today/change-notice";
-import { TodayPreparing } from "@zoonk/learn/today/preparing";
 import { SuggestedGoalOffer } from "@zoonk/learn/today/suggested-goal";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { type TodayScreenData } from "./today-view";
@@ -243,24 +239,6 @@ export function TodayClient({
       today={today}
     />
   );
-}
-
-/**
- * The wait while the goal's plan is built: it follows the goal's run live and reads Today again
- * once the plan is ready. "Try again" starts the run again only when the learner taps it.
- */
-export function TodayPreparingClient({ goalId, goalTitle }: { goalId: string; goalTitle: string }) {
-  const router = useRouter();
-
-  const run = useWorkflowRun({
-    generationId: null,
-    kind: "firstLesson",
-    onReady: () => router.refresh(),
-    readGenerationId: () => readGoalGenerationId(goalId),
-    restart: () => retryGenerationAction(goalId),
-  });
-
-  return <TodayPreparing goalTitle={goalTitle} onRefresh={() => router.refresh()} run={run} />;
 }
 
 /** A learner without a goal who was taking a course before goals existed: it's offered first. */
