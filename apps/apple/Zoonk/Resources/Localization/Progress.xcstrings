@@ -680,35 +680,6 @@
         }
       }
     },
-    "At a glance" : {
-      "comment" : "Heading above the learner's progress summary cards.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Auf einen Blick"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "De un vistazo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "En un coup d’œil"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Visão geral"
-          }
-        }
-      }
-    },
     "Average Energy" : {
       "comment" : "Label for the learner's average recorded Energy",
       "localizations" : {
@@ -1963,7 +1934,7 @@
       }
     },
     "Learning days" : {
-      "comment" : "Label for the learner's lifetime count of days with learning activity.\nLabel for the number of days on which the learner studied",
+      "comment" : "Label for the number of days on which the learner studied",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3035,35 +3006,6 @@
         }
       }
     },
-    "See what you've accomplished and where you're building momentum." : {
-      "comment" : "Description above the learner's progress summary cards.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sieh, was du erreicht hast und wo du gerade richtig vorankommst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mira lo que has logrado y dónde estás avanzando."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Découvre ce que tu as accompli et les domaines où tu progresses."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Veja o que você já conquistou e onde está ganhando ritmo."
-          }
-        }
-      }
-    },
     "Sign in" : {
       "comment" : "Action that opens account sign-in from the Progress tab.",
       "localizations" : {
@@ -3205,6 +3147,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Melhor dia da semana"
+          }
+        }
+      }
+    },
+    "Study days" : {
+      "comment" : "Label for the learner's lifetime count of days with learning activity.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lerntage"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Días de estudio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jours d’étude"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dias de estudo"
           }
         }
       }

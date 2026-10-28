@@ -163,31 +163,13 @@ private struct ProgressOverviewContent: View {
 
   var body: some View {
     ScrollView {
-      VStack(alignment: .leading, spacing: 20) {
-        VStack(alignment: .leading, spacing: 4) {
-          Text(
-            "At a glance",
-            tableName: "Progress",
-            comment: "Heading above the learner's progress summary cards."
-          )
-          .font(.title2.bold())
-
-          Text(
-            "See what you've accomplished and where you're building momentum.",
-            tableName: "Progress",
-            comment: "Description above the learner's progress summary cards."
-          )
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
-        }
-
-        LazyVGrid(columns: columns, alignment: .leading, spacing: 16) {
-          activityCard
-          scoreCard
-          patternsCard
-          levelCard
-          energyCard
-        }
+      // Main's order: the level, Energy, study days and Score, then when the learner does best.
+      LazyVGrid(columns: columns, alignment: .leading, spacing: 16) {
+        levelCard
+        energyCard
+        activityCard
+        scoreCard
+        patternsCard
       }
       .frame(maxWidth: 1_040, alignment: .leading)
       .padding(.horizontal)
@@ -199,19 +181,19 @@ private struct ProgressOverviewContent: View {
   private var activityCard: some View {
     ProgressOverviewCard(destination: .activity) {
       ProgressOverviewMetric(
-        value: overview.activity.totalLessonCompletions.formatted(),
+        value: overview.activity.learningDays.formatted(),
         label: Text(
-          "Lessons completed",
+          "Study days",
           tableName: "Progress",
-          comment: "Label for the learner's lifetime completed lesson count."))
+          comment: "Label for the learner's lifetime count of days with learning activity."))
 
       ProgressOverviewSupportingMetrics {
         ProgressOverviewSupportingMetric(
-          value: overview.activity.learningDays.formatted(),
+          value: overview.activity.totalLessonCompletions.formatted(),
           label: Text(
-            "Learning days",
+            "Lessons completed",
             tableName: "Progress",
-            comment: "Label for the learner's lifetime count of days with learning activity."))
+            comment: "Label for the learner's lifetime completed lesson count."))
         ProgressOverviewSupportingMetric(
           value: overviewLearningTime(overview.activity.totalLearningSeconds),
           label: Text(
