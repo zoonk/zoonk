@@ -10,10 +10,6 @@ import { getShortPlanPracticeNeed } from "./short-plan-practice";
 
 const citation = { passage: "…", sourceId: "notice" };
 
-/**
- * A language certificate whose Listening area's skills are practiced only with recordings, with a
- * second Reading skill so its area could take a text set, and a "select all" format.
- */
 async function listeningCertificate() {
   const [fixture, detail] = await Promise.all([
     listeningGoalFixture(),

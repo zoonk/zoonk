@@ -12,15 +12,10 @@ import { refreshGoalPlan } from "../plans/refresh-goal-plan";
 import { type PlanOutlineNeed, findSkillOutlineNeed, readSkillCourses } from "./plan-outline-needs";
 import { type SkillOutline } from "./skill-outline-contract";
 
-/**
- * A course outline that has held its course this long stopped (a run that writes a band takes a
- * minute or two, ten under a burst of them): its topics can be asked for again.
- */
 const WRITING_STALE_AFTER_MS = 900_000;
 
 type OwnedSkillOutline<TResult> = TResult | { status: "notFound" } | { status: "unauthorized" };
 
-/** The Library course the plan takes the skill's lessons from; null when the plan has no such skill. */
 async function findSkillCourse({ goalId, skillId }: { goalId: string; skillId: string }) {
   const plan = await prisma.plan.findUnique({
     select: { goal: { select: { primaryCourseId: true } }, graph: true },
@@ -49,10 +44,6 @@ function getStaleBefore(now: Date): Date {
   return new Date(now.getTime() - WRITING_STALE_AFTER_MS);
 }
 
-/**
- * Its outline is being written (`running`), or was asked for and the run started for it hasn't
- * taken the course yet (`pending`), lately: a claim this old stopped.
- */
 function isBeingOutlined({ course, now }: { course: SkillCourse; now: Date }): boolean {
   return (
     (course.outlineStatus === "pending" || course.outlineStatus === "running") &&
@@ -60,11 +51,6 @@ function isBeingOutlined({ course, now }: { course: SkillCourse; now: Date }): b
   );
 }
 
-/**
- * Marks the course's outline as asked for (`pending`, which the run's claim takes), so the topic
- * reads as being written from the tap on rather than once the run gets to the course, seconds
- * later. A run outlining the course keeps it; one that stopped is replaced.
- */
 async function markOutlineAsked({ course, now }: { course: SkillCourse; now: Date }) {
   await prisma.course.updateMany({
     data: { outlineStatus: "pending", updatedAt: now },
@@ -79,10 +65,6 @@ async function markOutlineAsked({ course, now }: { course: SkillCourse; now: Dat
   });
 }
 
-/**
- * The course's chapters with lessons that teach the skill (tagged with it, or with a lesson that
- * teaches it), in the course's order: as `findUntaughtSkills` counts a skill taught.
- */
 async function listSkillChapters({
   course,
   skillId,
@@ -109,7 +91,6 @@ async function listSkillChapters({
     },
   });
 
-  // A course's bands in order, each band's chapters by position.
   const compare = (first: (typeof chapters)[number], second: (typeof chapters)[number]) => {
     const [a] = first.courses;
     const [b] = second.courses;
@@ -126,12 +107,7 @@ async function listSkillChapters({
     .map((chapter) => ({ chapterId: chapter.id, title: chapter.title }));
 }
 
-/**
- * A topic of the learner's plan as its lesson plan stands: its chapters once its course outlined
- * them (`ready`), its course's outline being written (`writing`), or nothing written yet
- * (`available`), which the learner can ask for now or the plan writes as it gets close. A skill
- * outside the goal's plan isn't found.
- */
+/** Returns notFound for a skill outside the learner's plan; writing may be another learner's shared outline run. */
 export async function getSkillOutline({
   goalId,
   skillId,
@@ -161,14 +137,7 @@ export async function getSkillOutline({
   return { outline: { chapters, status }, status: "ready" };
 }
 
-/**
- * `ready`: the topic's chapters exist (the plan takes them now). `writing`: its course's outline
- * is being written, by this learner's earlier tap or anyone else's. `start`: the caller starts the
- * outline of the topic's band (`need`), the chapter teaching `skillId` first; the use is counted
- * and the course marked as asked for, so it reads as being written until the run ends.
- * `refused`: the learner's lesson plans for now are used up. `unavailable`: the plan has nothing
- * left to write for the skill (it was studied, settled or left out).
- */
+/** On start, generate need's band with skillId's chapter first; usage and the pending course mark are already saved. */
 export type SkillOutlineRequest =
   | { status: "ready" }
   | { status: "unavailable" }
@@ -181,12 +150,7 @@ export type SkillOutlineRequest =
     }
   | { decision: RefusedUsage; status: "refused" };
 
-/**
- * What tapping "See the lessons" on a far topic does, never a screen view: lessons that exist or
- * are being written cost nothing and start nothing; otherwise the topic's lesson plan counts
- * toward the learner's lesson plans (once per topic, so asking again after a failed run is free)
- * and the caller starts the outline of its band, which every later learner of the course shares.
- */
+/** Learner action only; existing/running outlines are free and each new topic is claimed once across retries. */
 export async function requestSkillOutline({
   goalId,
   skillId,
@@ -219,8 +183,6 @@ export async function requestSkillOutline({
   }
 
   if (found.status === "taught") {
-    // Its course teaches it already, in whole or in part (another learner's outline): its chapters
-    // show now, the plan takes their lessons, and writes the rest as it gets close.
     await refreshGoalPlan({ goalId });
     return { status: "ready" };
   }

@@ -16,7 +16,6 @@ const ESSAY_CONTENT = {
   sampleOutline: "Claim and reasoning.",
 };
 
-/** An exam goal with four skills: three in its first phase (weights 1, 5, 3) and one later. */
 async function examGoal({ name }: { name: string }) {
   const [user, blueprint, skills] = await Promise.all([
     userFixture(),

@@ -136,7 +136,6 @@ describe(listPlanOutlineNeeds, () => {
       skillFixture({ level: "intermediate" }),
     ]);
 
-    // A topic the learner asked their buddy to add: the planner learns it from the goal's course.
     const plan = await planFixture({
       goalId: goal.id,
       graph: {
@@ -214,15 +213,12 @@ describe(listPlanOutlineNeeds, () => {
       ["intermediate", false],
     ]);
 
-    // Its outlines are written for that exam's candidates, without naming it, and their reuse
-    // decisions read the exam, never the learner's title for the goal.
     expect(need?.scope.exams?.map((exam) => exam.name)).toStrictEqual([
       "OAB Exame de Ordem, 1ª fase",
     ]);
 
     expect(need?.scope.generalGoal).toBe("OAB Exame de Ordem, 1ª fase");
 
-    // Each skill keeps its subject, so a chapter of its outline keeps to one.
     expect(need?.bands[0]?.skills.map((ref) => ref.area)).toStrictEqual(["Ética Profissional"]);
   });
 
@@ -334,7 +330,6 @@ describe(listPlanSkillIdsWithin, () => {
   });
 });
 
-/** A plan item standing in for a skill's lessons not written yet. */
 function standInItem(skillId: string) {
   return {
     chapterId: null,
@@ -346,8 +341,6 @@ function standInItem(skillId: string) {
 }
 
 describe(listTaughtStandInSkills, () => {
-  // Maya's "More lessons" sheet listed the chapters above it: her stand-ins were skills chapters
-  // already teach, one only through a lesson of another skill's chapter.
   it("lists the stand-ins' skills a chapter of their course already teaches", async () => {
     const user = await userFixture();
 

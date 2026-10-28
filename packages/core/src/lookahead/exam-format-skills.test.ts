@@ -12,7 +12,6 @@ const citation = { passage: "…", sourceId: "notice" };
 
 const INTEGER = { kind: "integer", places: null } as const;
 
-/** JEE Advanced's formats: one right option, one or more right options, and integer answers. */
 const JEE_FORMATS = [
   { citation, description: "One correct option.", kind: "multipleChoice", options: 4 },
   {
@@ -32,7 +31,6 @@ const MATH_CONTENT = {
   question: discountQuestion,
 };
 
-/** An exam goal on JEE's formats with four first-phase skills (weights 1, 5, 3, 2) and one later. */
 async function jeeGoal() {
   const [user, blueprint, skills] = await Promise.all([
     userFixture(),
@@ -74,13 +72,11 @@ describe(pickExamFormatSkills, () => {
     const [first, second, third, fourth] = skills;
 
     await Promise.all([
-      // The second skill has the exam's one-pick questions, never its several-picks ones.
       itemFixture({
         content: choiceItemContent(),
         examBlueprintId: blueprint.id,
         skillId: second?.id ?? "",
       }),
-      // The first skill has its several-picks questions already.
       itemFixture({
         content: { ...choiceItemContent(), select: "all" },
         examBlueprintId: blueprint.id,
@@ -106,9 +102,7 @@ describe(pickExamFormatSkills, () => {
     const [first, second, third, fourth] = skills;
 
     await Promise.all([
-      // The item writer found no problem with one number for its answer in the second skill.
       prisma.skill.update({ data: { isQuantitative: false }, where: { id: second?.id } }),
-      // The first skill has a lesson's math problem; the fourth has the exam's own already.
       itemFixture({ content: MATH_CONTENT, format: "numeric", skillId: first?.id ?? "" }),
       itemFixture({
         content: { ...MATH_CONTENT, entry: INTEGER },

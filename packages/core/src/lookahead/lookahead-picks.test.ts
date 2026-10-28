@@ -12,7 +12,6 @@ import { pickPlanStartToWrite, pickSpeculativeLessons } from "./speculative-less
 
 const CITATION = { passage: "Cinco alternativas.", sourceId: "source" };
 
-/** A Cebraspe notice: every objective item is an assertion judged right or wrong. */
 const CEBRASPE_STRUCTURE = {
   formats: [
     {
@@ -45,7 +44,6 @@ const ENEM_STRUCTURE = {
   subjects: [],
 };
 
-/** A multiple-choice question with `count` options, the first one right. */
 function choiceContent(count: number) {
   return {
     options: Array.from({ length: count }, (_, index) => ({
@@ -94,7 +92,6 @@ async function planWithLessons({
 }: {
   details?: object;
   phases: number[];
-  /** The plan's lessons are the learner's own, from a course only they read (their material). */
   personal?: boolean;
   written?: number[];
 }) {
@@ -158,8 +155,6 @@ describe(pickSpeculativeLessons, () => {
       written: [0],
     });
 
-    // Without a level, the second guess is the next phase. The first lesson is already written
-    // (found in the Library), so the next two are guessed instead.
     await expect(
       pickSpeculativeLessons({ count: 4, goalId, ownLevel: null }),
     ).resolves.toStrictEqual([
@@ -177,8 +172,6 @@ describe(pickSpeculativeLessons, () => {
   });
 
   it("leaves the learner's own lessons for after placement, which may test them out", async () => {
-    // A class test's lessons from the learner's notes: nobody else reads them, so a lesson
-    // placement tests out would be written for nothing.
     const during = await planWithLessons({ personal: true, phases: [0, 0, 0] });
 
     await expect(
@@ -243,8 +236,6 @@ describe(pickPlacementItemSkills, () => {
 
     const { quickFormat, skills: picked } = await pickPlacementItemSkills({ goalId: goal.id });
 
-    // Three evenly spaced skills of the first phase's seven; the second phase has only two, and one
-    // of them already has a question.
     expect(quickFormat).toBe("multipleChoice");
 
     expect(picked.map((skill) => skill.id)).toStrictEqual([
@@ -275,7 +266,6 @@ describe(pickPlacementItemSkills, () => {
       skillIds: [second.id, answered.id, first.id, second.id],
     });
 
-    // In the order the run picked them, once each, and never a skill that already has questions.
     expect(picked.map((skill) => skill.id)).toStrictEqual([second.id, first.id]);
   });
 
@@ -296,11 +286,6 @@ describe(pickPlacementItemSkills, () => {
     ]);
   });
 
-  /*
-   * A hobby biology course asked the learner to write what Iara's cell diagram was missing:
-   * learners would rather pick, so placement confirms a right pick with more quick questions,
-   * written with it, and only a language goal gets a typed confirmation.
-   */
   it("confirms a right pick with more quick questions, and only a language goal in writing", async () => {
     const [user, shortAnswers, cebraspe, skill] = await Promise.all([
       userFixture(),
@@ -322,7 +307,6 @@ describe(pickPlacementItemSkills, () => {
       ),
     );
 
-    // Two right picks, or three right statements, are as sure as a right typed answer.
     expect(
       picks.map((pick) => [pick.quickFormat, pick.confirmingCount, pick.skills[0]?.needsTyped]),
     ).toStrictEqual([
@@ -438,8 +422,6 @@ describe(pickPlacementItemSkills, () => {
 
     const { quickFormat, skills } = await pickPlacementItemSkills({ goalId: goal.id, skillIds });
 
-    // Written before the notice was read, the general questions don't count for its placement:
-    // the exam's own true/false ones are written.
     expect(quickFormat).toBe("trueFalse");
     expect(skills.map((skill) => skill.id)).toStrictEqual([withChoice, withTrueFalse, bare]);
 
@@ -477,7 +459,6 @@ describe(pickPlacementItemSkills, () => {
     expect(skills.map((skill) => skill.id)).toStrictEqual([otherExams, fields, general]);
     expect(skills.every((skill) => skill.exam?.blueprintId === blueprint.id)).toBe(true);
 
-    // Once written, the exam's questions are shared: the next learner of the exam needs none.
     const [nextLearner] = await Promise.all([
       userFixture(),
       ...skills.flatMap((skill) => [
@@ -523,8 +504,6 @@ describe(pickPlacementItemSkills, () => {
       ].map((attrs) => itemFixture({ ...attrs, examBlueprintId: blueprint.id })),
     );
 
-    // Placement only asks ENEM questions with ENEM's five options, so the old four-option ones
-    // can't stand for the skill: it gets five-option ones, and keeps its typed confirmation.
     await expect(pickPlacementItemSkills({ goalId: goal.id, skillIds })).resolves.toMatchObject({
       quickFormat: "multipleChoice",
       skills: [{ id: fourOptions, needsTyped: false }],
@@ -615,7 +594,6 @@ describe(pickPlacementItemSkills, () => {
       itemFixture({ skillId: withGeneralChoice }),
     ]);
 
-    // A test-out asks general multiple choice too, so only the skill without any gets questions.
     await expect(
       pickPlacementItemSkills({ formats: ["multipleChoice"], goalId: goal.id, skillIds }),
     ).resolves.toMatchObject({
@@ -632,7 +610,6 @@ describe(pickPlacementItemSkills, () => {
 
     const [short = "", enough = ""] = skillIds;
 
-    // A chapter of one skill asks it several times: one question isn't enough for four.
     await Promise.all([
       itemFixture({ skillId: short }),
       ...Array.from({ length: 4 }, () => itemFixture({ skillId: enough })),
@@ -681,8 +658,6 @@ describe(pickPlacementItemSkills, () => {
     ]);
   });
 
-  // Sofia's ethics mock asked placement's case again (a lawyer with six cases in another state)
-  // under another name: the question she had answered was left out of the situations to avoid.
   it("keeps the situations of questions the learner answered, first, when only unanswered ones count", async () => {
     const { blueprint, goal, skillIds } = await examGoalWithSkills({
       count: 1,

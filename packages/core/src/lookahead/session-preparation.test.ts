@@ -32,7 +32,6 @@ function today() {
   return getDateInTimeZone({ date: new Date(), timeZone: TIME_ZONE });
 }
 
-/** Two chapters of one course band: the learner studies the first; the second has no specs yet. */
 async function courseWithTwoChapters() {
   const [course, first, second] = await Promise.all([
     courseFixture(),
@@ -64,10 +63,6 @@ async function courseWithTwoChapters() {
   return { nextChapterLesson, studied };
 }
 
-/**
- * How many lessons a learner gets written ahead on a day of six lessons with four planned tomorrow,
- * and whether today's come in session order.
- */
 async function prepareSixLessonDay(userId: string) {
   const goal = await goalFixture({ userId });
 
@@ -104,8 +99,6 @@ async function prepareSixLessonDay(userId: string) {
 }
 
 describe(getSessionPreparationAccess, () => {
-  // Past a free exam plan's first week its new lessons, practice and challenges come with Plus,
-  // yet each session POST still wrote lessons and outlines ahead for it.
   it("prepares nothing for a free exam plan past its first week, while Plus keeps preparing", async () => {
     const [free, plus] = await Promise.all([userFixture(), userFixture()]);
 
@@ -164,7 +157,6 @@ describe(getSessionPreparationAccess, () => {
       userId: owner.id,
     });
 
-    // A session that ended still prepares the next one.
     await expect(getSessionPreparationAccess({ sessionId: ended.id })).resolves.toMatchObject({
       status: "ready",
     });
@@ -200,8 +192,6 @@ describe(getSessionPreparationAccess, () => {
       libraryLessonFixture(),
     ]);
 
-    // The block they just opened starts before its preparation reads the session: the lesson
-    // after it is the one to write while they study.
     await Promise.all([
       studySessionBlockFixture({
         lessonId: done.id,
@@ -229,7 +219,6 @@ describe(getSessionPreparationAccess, () => {
   });
 });
 
-/** A plan for the goal with one unwritten lesson tomorrow. */
 async function planTomorrowLesson(goalId: string) {
   const [plan, lesson] = await Promise.all([planFixture({ goalId }), libraryLessonFixture()]);
 
@@ -298,11 +287,8 @@ describe(listSessionPreparation, () => {
       userId: user.id,
     });
 
-    // Today's are minutes away; tomorrow's first is written in the background. Each lesson plans
-    // its chapter's specs when it's written, so no spec is written for a chapter nobody reached.
     expect(result).toMatchObject({ laterLessonIds: [tomorrow.id], lessonIds: [studied.id] });
 
-    // The written one too: the learner's field and tool versions are made from written lessons.
     expect(result.plannedLessonIds).toStrictEqual([studied.id, written.id, tomorrow.id]);
   });
 
@@ -315,7 +301,6 @@ describe(listSessionPreparation, () => {
       data: { plan: "plus", provider: "zoonk", referenceId: plus.id, status: "active" },
     });
 
-    // The lesson the learner is in and the next ones of today, and tomorrow's first ones.
     await expect(prepareSixLessonDay(free.id)).resolves.toStrictEqual({
       later: 1,
       today: 3,
@@ -345,7 +330,6 @@ describe(listSessionPreparation, () => {
         studySessionBlockFixture({
           kind: "learn",
           lessonId: lesson.id,
-          // The session plays `playing`, then `next`, then `later`, whatever order they were added in.
           position: [0, 2, 1][index],
           sessionId: session.id,
           status: index === 0 ? "active" : "pending",
@@ -369,7 +353,6 @@ describe(listSessionPreparation, () => {
       libraryLessonFixture(),
     ]);
 
-    // Today's session filled its time with tomorrow's lesson, which is being played now.
     await Promise.all([
       studySessionBlockFixture({
         kind: "learn",
@@ -404,7 +387,6 @@ describe(listSessionPreparation, () => {
   it("drafts again a planned lesson its checks held back while it has drafts left", async () => {
     const user = await userFixture();
 
-    // A Plus subscriber gets three of the next study day's lessons written ahead.
     await prisma.subscription.create({
       data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
     });
@@ -439,7 +421,6 @@ describe(listSessionPreparation, () => {
       userId: user.id,
     });
 
-    // A run that just stopped is retried when the learner opens the lesson; a set-aside one never.
     expect(result.laterLessonIds).toStrictEqual([heldBack.id]);
   });
 
@@ -460,7 +441,6 @@ describe(listSessionPreparation, () => {
       [nurseGoal, analystGoal, plainGoal].map((goal) => planTomorrowLesson(goal.id)),
     );
 
-    // Learning without installing the spreadsheet gets hands-on screens as examples.
     await prisma.plan.update({
       data: { settings: { tools: [{ choice: "none", name: "Excel" }] } },
       where: { goalId: analystGoal.id },
@@ -522,7 +502,6 @@ describe(listSessionPreparation, () => {
       }),
     ]);
 
-    // No session yet: today's first lessons, in plan order, as many as a free learner gets ahead.
     await expect(
       listSessionPreparation({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id }),
     ).resolves.toMatchObject({

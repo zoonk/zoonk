@@ -13,7 +13,6 @@ import {
 import { markPlanInputsUntil } from "../plans/_test-utils/mark-plan-inputs";
 import { pickPlanStartToWrite } from "./speculative-lessons";
 
-/** A waiting goal whose skill's band landed: its lessons, which the saved plan doesn't have yet. */
 async function landedBand() {
   const skill = await skillFixture();
   const { goal, plan } = await waitingGoal(skill);
@@ -35,9 +34,6 @@ describe("lessons picked and started while a plan's band lands", () => {
     vi.useRealTimers();
   });
 
-  // The band a learner waits on landed, but the run planning it in their plan still waits its turn
-  // behind their own onboarding (placement and question banks keep marking the plan): the first
-  // lesson to write is the band's, picked from the plan worked out now, never the stand-in saved.
   it("picks the band's first lesson while the learner's onboarding keeps changing the plan", async () => {
     const { goal, lessonIds, plan } = await landedBand();
     const stop = new AbortController();

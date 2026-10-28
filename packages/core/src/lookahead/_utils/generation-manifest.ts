@@ -11,7 +11,6 @@ import { isPlacementAhead } from "../../view-models/onboarding/onboarding-steps"
 
 type GenerationTarget = { contentVersion: string; lessonId: string; sourceItemIds: string[] };
 
-/** A bounded durable step result, passed by value to the children it admits. */
 export type PlanGenerationManifest = {
   basis: {
     goalUpdatedAt: string;
@@ -26,11 +25,7 @@ export type PlanGenerationManifest = {
 
 type ManifestRequest = { goalId: string; lessonIds: readonly string[] };
 
-/**
- * Reads the saved selection, replacing only its still-todo stand-ins with the Library lessons
- * they now name. The canonical lesson resolver keeps course/tool/visibility rules in one place.
- * No new selection or calendar is computed, including while an outline's plan save is waiting.
- */
+/** Resolves saved stand-ins only; never computes a new selection or calendar while writes are pending. */
 async function readManifestAtToken({
   goalId,
   lessonIds,
@@ -117,19 +112,13 @@ async function readManifestAtToken({
   };
 }
 
-/**
- * The manifest read from one token (see `readManifestAtToken`). Other runs' content writes (an
- * outline band, placement's questions, a shared lesson's save) mark the plan at any moment, so
- * one landing mid-read reads everything again, once, from the new token; a plan still changing
- * then throws for the caller's step to retry.
- */
+/** Re-reads once after a changed token; a second conflict throws so the workflow step retries. */
 export function readGenerationManifest(
   request: ManifestRequest,
 ): Promise<PlanGenerationManifest | null> {
   return withPlanRetry(() => readManifestAtToken(request));
 }
 
-/** A single statement verifies a queued batch's membership, content, placement and input epoch. */
 export async function readCurrentGenerationTargets({
   lessonIds,
   manifest,

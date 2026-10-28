@@ -35,25 +35,19 @@ import { getItemAudienceFilter } from "../library/items/item-field";
 import { loadSkillPrerequisites } from "../library/skills/skill-prerequisites";
 import { parsePlanGraph, parsePlanSettings } from "../plans/planner/plan-state";
 
-/** An exam goal's questions look like the exam's own: its name, format and option count. */
 type PlacementItemExam = {
-  /** Null while the goal knows only its notice's formats, before the blueprint is linked. */
+  /** Null until the exam blueprint is linked. */
   blueprintId: string | null;
   name: string;
-  /** Options per multiple-choice question, such as 5 for ENEM; null when the notice doesn't say. */
+  /** Null when the notice does not specify an option count. */
   optionCount: number | null;
-  /**
-   * Real questions from the exam's quoted past papers, for a writer to match in difficulty and
-   * steps (`listPastQuestionExamples`); absent where a picker doesn't load them.
-   */
+  /** Quoted past-paper examples; omitted when the picker does not load them. */
   pastQuestions?: string[];
-  /** How the exam's questions look and score, in the notice's words. */
   style: string;
 };
 
 export type PlacementItemSkill = {
   description: string;
-  /** The goal's exam, so its questions probe the skill the way the exam asks it. */
   exam: PlacementItemExam | null;
   id: string;
   language: string;
@@ -63,19 +57,13 @@ export type PlacementItemSkill = {
   ownerId: string | null;
   /** The language a language goal's skill practices ("en"); its questions are in it. */
   targetLanguage: string | null;
-  /**
-   * How the skill's questions in the bank open (their context or question), so new ones put the
-   * skill in other situations: a learner who met a case in placement doesn't meet it again in a
-   * mock under other names.
-   */
+  /** Avoid these question openings so new cases do not repeat old situations under different names. */
   usedSituations: string[];
 };
 
-/** The situations passed to a writer: enough to steer it away from them, few enough to read. */
 const MAX_USED_SITUATIONS = 8;
 const MAX_SITUATION_LENGTH = 200;
 
-/** How a question opens: its context, else its question or statement, on one line. */
 function getItemSituation(content: unknown): string | null {
   const fields = isJsonObject(content) ? content : {};
 
@@ -86,11 +74,7 @@ function getItemSituation(content: unknown): string | null {
   return text ? text.replaceAll(/\s+/gu, " ").trim().slice(0, MAX_SITUATION_LENGTH) : null;
 }
 
-/**
- * The situations of a skill's questions, the learner's own first: a mock for Sofia's ethics put
- * placement's case (a lawyer with six cases in another state) back under another name, since the
- * questions she had answered were the ones left out. The rest follow newest first.
- */
+/** Prioritize already-answered situations so mocks cannot recreate a case the learner saw in placement. */
 function getUsedSituations(items: readonly SkillItem[]): string[] {
   const ordered = [
     ...items.filter((item) => isAnswered(item)),
@@ -101,7 +85,6 @@ function getUsedSituations(items: readonly SkillItem[]): string[] {
   return [...new Set(situations)].slice(0, MAX_USED_SITUATIONS);
 }
 
-/** How the exam's questions look and score, in the notice's words, for an item writer. */
 function toExamStyle({
   formats,
   scoring,
@@ -125,7 +108,6 @@ function toOptionCount(formats: NoticeFormats["formats"]): number | null {
   return formats.find((format) => format.kind === "multipleChoice")?.options ?? null;
 }
 
-/** How the goal's exam asks its questions, for an item writer to follow. */
 export function toItemExam(blueprint: ExamBlueprint): PlacementItemExam {
   const { structure } = readBlueprintContent(blueprint);
   const formats = getExamFormats(structure);
@@ -138,10 +120,6 @@ export function toItemExam(blueprint: ExamBlueprint): PlacementItemExam {
   };
 }
 
-/**
- * The goal's exam as a first pass over its new notice read it (`readNoticeFormats`): its formats
- * only, under the goal's own name for it, until the notice's blueprint is linked.
- */
 function toNoticeItemExam({ formats, name }: { formats: NoticeFormats; name: string }) {
   const examFormats = getExamFormats(formats);
 
@@ -153,11 +131,6 @@ function toNoticeItemExam({ formats, name }: { formats: NoticeFormats; name: str
   };
 }
 
-/**
- * The exam a goal's placement questions follow, and how its questions look: the linked notice's
- * blueprint, or the formats a first pass over a notice still being read found; neither for a goal
- * that isn't an exam or knows nothing of its exam's questions yet.
- */
 function getGoalItemExam(
   goal: Pick<Goal, "details" | "kind" | "title"> & { examBlueprint: ExamBlueprint | null },
 ): { exam: PlacementItemExam | null; formats: NoticeFormats | null } {
@@ -177,11 +150,6 @@ type PickingGoal = Pick<Goal, "details"> & {
   plan: { graph: unknown; settings: unknown } | null;
 };
 
-/**
- * The picks from the goal's plan, or the ones the run picked from its skill graph; none of
- * placement's own (`forPlacement`) for a learner who skipped placement (`isPlacementSkipped`),
- * and never a skill only recordings practice (`listeningSkillIds`).
- */
 async function readPickedSkillIds({
   forPlacement,
   goal,
@@ -214,19 +182,13 @@ async function readPickedSkillIds({
   });
 }
 
-/**
- * The formats a run writes for placement: a quick one to ask a skill, and a language goal's typed
- * confirmation (`confirmsInWriting`).
- */
 export type PlacementItemFormat = PlacementQuickFormat | "typed";
 
-/** A picked skill, and whether it still needs a language goal's typed confirmation. */
 export type PlacementItemPick = PlacementItemSkill & { needsTyped: boolean };
 
 export type PlacementItemPicks = {
   /** The quick questions each picked skill gets beyond the first (`getConfirmingCount`). */
   confirmingCount: number;
-  /** How the goal's placement asks quickly: its questions are written in this format. */
   quickFormat: PlacementQuickFormat;
   skills: PlacementItemPick[];
 };
@@ -235,7 +197,6 @@ function isQuickFormat(format: PlacementItemFormat): format is PlacementQuickFor
   return format !== "typed";
 }
 
-/** A question of the skill, with the goal's learner's answer to it when they gave one. */
 type SkillItem = { attempts: { id: string }[]; content: unknown; format: ItemFormat };
 
 type SkillRow = Omit<PlacementItemSkill, "exam" | "usedSituations"> & { items: SkillItem[] };
@@ -244,13 +205,7 @@ function isAnswered(item: SkillItem): boolean {
   return item.attempts.length > 0;
 }
 
-/**
- * A picked skill that still needs placement's questions, or null when this goal's placement can
- * already ask it in the goal's quick format. A question that won't be asked counts as missing
- * (`fits`): an exam goal's in another choice format or with another number of options, such as an
- * old four-option question for ENEM's five. A language goal's typed confirmation comes along when
- * it's missing.
- */
+/** Questions incompatible with the goal's current format or option count do not satisfy coverage. */
 function toPick({
   exam,
   exceptAnswered,
@@ -292,14 +247,7 @@ function toPick({
   };
 }
 
-/**
- * The questions that cover a skill for this run. Placement for an exam goal asks its exam's own
- * questions (see `preferExamItems`), so only those count: a skill with only general ones gets the
- * exam's written once, shared by every later learner of that exam. Other goals, and a run that
- * narrows `formats` (a test-out's multiple choice, which asks general questions too), count
- * general ones and the exam's; never another exam's or a field's, nor a set's questions, which are
- * asked only with their stimulus.
- */
+/** Never count another exam's, a field's, or a stimulus set's questions as standalone coverage. */
 function getCoveringItemFilter({
   blueprintId,
   exam,
@@ -314,21 +262,7 @@ function getCoveringItemFilter({
     : getItemAudienceFilter({ examBlueprintId: blueprintId });
 }
 
-/**
- * The goal's skills placement is most likely to ask about that have no question it can ask yet: a
- * few in every area of every phase (`pickPlacementItemSkillIds`), so placement can start while the
- * rest of the curriculum is being written. A run that picked them from the skill graph passes them
- * (`skillIds`), while the plan is saved. Questions are shared, so a skill is skipped when it has
- * `quickNeeded` in the goal's quick format (`getPlacementQuickFormat`) that cover it
- * (`getCoveringItemFilter`).
- * So a Cebraspe goal whose notice was read after its first questions were written gets true/false
- * ones for its exam on the next call. An exam goal's questions follow the exam's style; `formats`
- * narrows what's written, such as a test-out's multiple choice only, and a focus test, which
- * never asks a question again, counts only the ones the goal's learner hasn't answered
- * (`exceptAnswered`).
- *
- * This is a workflow bridge: the goal id comes from the goal the public boundary created.
- */
+/** Workflow bridge: goalId must come from the authenticated boundary. formats narrows generation; exceptAnswered excludes seen questions from coverage. */
 export async function pickPlacementItemSkills({
   exceptAnswered = false,
   forPlacement = false,
@@ -339,19 +273,11 @@ export async function pickPlacementItemSkills({
 }: {
   /** Questions the goal's learner already answered don't count: they won't be asked again. */
   exceptAnswered?: boolean;
-  /**
-   * Placement's own questions (day 1's, the plan's picks): none for a learner who skipped
-   * placement (`isPlacementSkipped`), whom placement never asks. A test-out, a mock or practice
-   * writes its questions either way.
-   */
+  /** Only placement respects an explicit placement skip; tests and practice may still request questions. */
   forPlacement?: boolean;
   formats?: readonly PlacementItemFormat[];
   goalId: string;
-  /**
-   * How many quick questions a skill needs before it's skipped: one for placement (and its
-   * confirming ones, `getConfirmingCount`), more for a chapter's test-out, which asks a chapter of
-   * few skills each of them several times.
-   */
+  /** Required quick-question count before skipping a covered skill; excludes confirming questions. */
   quickNeeded?: number;
   skillIds?: string[];
 }): Promise<PlacementItemPicks> {
@@ -368,7 +294,6 @@ export async function pickPlacementItemSkills({
     where: { id: goalId },
   });
 
-  // A listening area's skills get recordings, never text questions (`getListeningSkillIds`).
   const listeningSkillIds = goal
     ? getListeningSkillIds({ exam: toListeningExam(goal), graph: parsePlanGraph(goal.plan?.graph) })
     : new Set<string>();
@@ -379,9 +304,6 @@ export async function pickPlacementItemSkills({
   const { exam, formats: structure } = goal ? getGoalItemExam(goal) : { exam: null, formats: null };
   const choice = exam ? getExamChoiceFormat(structure) : null;
 
-  // Placement asks only questions in its exam's choice format (`loadPlacementItems`); a caller
-  // that narrows the formats, such as a test-out, asks the rest too, but never a question with
-  // another number of options than the exam's.
   const fits = (item: SkillItem) =>
     formats ? fitsExamOptions({ choice, item }) : fitsExamChoice({ choice, item });
 
@@ -433,11 +355,7 @@ export async function pickPlacementItemSkills({
   return { confirmingCount, quickFormat, skills: picks };
 }
 
-/**
- * Placement's questions for the goal's plan are written (the ones that failed won't come), so
- * placement stops waiting for missing ones: those skills are left to lessons and reviews, and a
- * goal with none at all goes on without placement.
- */
+/** Ends waiting even for failed question writes; uncovered topics are left to lessons and reviews. */
 export async function recordPlacementPrepared(goalId: string): Promise<void> {
   await prisma.plan.updateMany({ data: { placementPreparedAt: new Date() }, where: { goalId } });
 }

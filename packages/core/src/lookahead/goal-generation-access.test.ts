@@ -48,7 +48,6 @@ describe(getGoalGenerationAccess, () => {
       status: "limitReached",
     });
 
-    // Retrying a run without new research only redoes what's missing, so it isn't counted.
     await expect(getGoalGenerationAccess({ goalId: goal.id })).resolves.toMatchObject({
       status: "ready",
     });

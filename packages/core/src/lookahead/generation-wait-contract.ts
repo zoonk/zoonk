@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-/** A wait longer than this is a page left open, not a wait anyone sat through. */
 const MAX_WAIT_MS = 600_000;
 
 export const generationWaitInputSchema = z

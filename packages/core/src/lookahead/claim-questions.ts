@@ -11,17 +11,11 @@ import { parsePlanGraph } from "../plans/planner/plan-state";
 import { getTestSkillIds } from "../sessions/_utils/review-skills";
 import { pickPlacementItemSkills } from "./placement-item-skills";
 
-/** A few questions confirm a topic, or find the gap, over the next days' practice. */
 const QUESTIONS_PER_TOPIC = 3;
 
-/** At most this many topics get questions per preparation: the next ones get theirs at the next. */
 const MAX_TOPICS_PER_RUN = 6;
 
-/**
- * `ready`: every topic the learner was taken to know has a question practice can ask. `start`:
- * the caller writes `questionsPerSkill` questions in `format` for `skillIds`, which join the shared
- * bank. `refused`: the learner's AI help allowance doesn't cover it now.
- */
+/** On start, the caller must write questionsPerSkill in format for each skillId. */
 export type ClaimQuestionsRequest =
   | { status: "ready" }
   | {
@@ -35,14 +29,7 @@ export type ClaimQuestionsRequest =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/**
- * Decides whether getting a learner's session ready also writes questions for topics they were
- * taken to know (one right answer, a test-out) that practice has none left to ask: one right answer
- * frees a topic from its lessons, never from practice (see `SkillClaim`), and a topic practice
- * can't ask would stay unconfirmed. Only a few topics a run, a few questions each, in the exam's
- * quick format and its shared bank, so later learners reuse them; claimed as small AI help first.
- * Only the POSTs that build or move a session along ask for it, never a page view.
- */
+/** Session POSTs only; claims AI help before writing questions needed to confirm unstudied claims. */
 export async function requestClaimQuestions({
   goalId,
 }: {

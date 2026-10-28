@@ -8,33 +8,20 @@ import { getSkillArea } from "../plans/planner/graph-areas";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { type PlacementItemSkill, toItemExam } from "./placement-item-skills";
 
-/** A few questions to start: the goal's essay block asks one every few days. */
 const FREE_RESPONSE_SKILLS = 3;
 
-/**
- * The written questions a class test's material can announce: an explanation (a dissertativa) or
- * a short written answer, such as a table of organelles to complete.
- */
 const CLASS_TEST_WRITTEN_KINDS: ReadonlySet<string> = new Set(["essay", "shortAnswer"]);
 
-/** Shorter words ("of", "the", "and") say nothing about what a question is about. */
 const MIN_MATCH_WORD_LENGTH = 4;
 
 type GraphSkill = ReturnType<typeof parsePlanGraph>["skills"][number];
 
 type ExamStructure = ReturnType<typeof readBlueprintContent>["structure"];
 
-/** A skill to write a written question for, and the question's form when the exam names one. */
 type WrittenPick = { skill: GraphSkill; style: string | null };
 
-/** An area named for a written part of the exam (a discursive test, an essay or a legal brief, by its Portuguese name), in graphs older than kinds. */
 const WRITTEN_AREA_NAME = /discursiv|reda[cç][aã]o|pe[cç]a t[eé]cnica/iu;
 
-/**
- * The plan's skills an exam's written test practices: an AP goal's first phase (its free-response
- * questions span the course), or the skills of the areas named for the exam's written parts (a
- * Cebraspe discursive test, ENEM's essay). Empty for exams answered only in objective questions.
- */
 function findWrittenSkills({
   blueprint,
   goal,
@@ -77,11 +64,6 @@ function toWords(text: string): Set<string> {
   );
 }
 
-/**
- * The skill an announced question is about: the one whose name shares the most words with it
- * ("an essay on osmosis" is the membrane transport skill that names osmosis), the most
- * weighted on a tie.
- */
 function findQuestionSkill({
   description,
   skills,
@@ -100,12 +82,6 @@ function findQuestionSkill({
     ?.skill;
 }
 
-/**
- * A class test read from the learner's own material: each written question the material
- * announces ("there will be an essay on osmosis", a table of organelles to complete) is
- * practiced on the skill it's about, in that question's own form, so the days before the test
- * rehearse the questions the teacher said would come, not only multiple choice.
- */
 function findClassTestQuestions({
   graph,
   structure,
@@ -121,7 +97,6 @@ function findClassTestQuestions({
     });
 }
 
-/** The written questions to write: a class test's announced ones, or the exam's written test. */
 function pickWritten({
   blueprint,
   goal,
@@ -142,17 +117,7 @@ function pickWritten({
     .map((skill) => ({ skill, style: null }));
 }
 
-/**
- * The skills an exam goal gets essay questions for, so its essay block practices the exam's
- * written answers graded by their rubric: an AP goal's first-phase skills (College Board doesn't
- * allow reusing its questions, so they're written new, with scoring guidelines whose rows carry
- * their own points), the skills of an exam's written test (a discursive test, the OAB's legal brief)
- * in the notice's own tasks, or a class test's announced written questions, each in its own form.
- * The most weighted skills first, skipping skills that already have one for this exam (questions
- * are shared). Empty for other goals.
- *
- * This is a workflow bridge: the goal id comes from the goal the public boundary created.
- */
+/** Workflow bridge: goalId must come from the authenticated public boundary; never reuse restricted AP past questions. */
 export async function pickFreeResponseSkills({
   goalId,
 }: {
@@ -200,7 +165,6 @@ export async function pickFreeResponseSkills({
     .slice(0, FREE_RESPONSE_SKILLS)
     .map((skill) => {
       const style = picks.find((pick) => pick.skill.skillId === skill.id)?.style;
-      // None of these skills has a written question yet (`items: { none }` above).
       return { ...skill, exam: style ? { ...exam, style } : exam, usedSituations: [] };
     });
 }

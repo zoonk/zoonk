@@ -3,13 +3,7 @@ import { trackLearnerEvents } from "../analytics/track-learner-event";
 import { getSession } from "../users/get-session";
 import { type GenerationWaitInput } from "./generation-wait-contract";
 
-/**
- * Records one wait for content (Generation Waited, in milliseconds) on the server, so ad blockers
- * can't hide it. Clients report it when the content they waited for is ready, measured from the
- * first waiting screen; the targets are the first lesson of a new goal within placement's time
- * and a p95 under 2 seconds for every lesson after that. A client that doesn't say its platform
- * is recognized from the request.
- */
+/** Clients report milliseconds from the first waiting screen when content becomes ready; platform defaults to the current request. */
 export async function recordGenerationWait(
   input: GenerationWaitInput,
 ): Promise<{ status: "recorded" | "unauthorized" }> {

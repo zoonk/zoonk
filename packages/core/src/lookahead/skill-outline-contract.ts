@@ -9,10 +9,6 @@ const skillOutlineChapterSchema = z
   })
   .meta({ id: "SkillOutlineChapter" });
 
-/**
- * A topic of the plan beyond the weeks its lessons are written for ahead: its chapters once its
- * course outlined them, or whether they're being written or can be asked for now.
- */
 export const skillOutlineSchema = z
   .object({
     chapters: z

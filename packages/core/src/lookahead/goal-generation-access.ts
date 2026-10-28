@@ -11,14 +11,7 @@ export type GoalGenerationAccess =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/**
- * Whether the signed-in learner may (re)start what one of their goals needs written: its
- * curriculum, or its explanation for an explain question. The runs themselves are idempotent, so
- * starting again after a failure only redoes what is missing. Another learner's goal is not found.
- * Starting it again with a newer research run (`withResearch`) once the plan is built reconciles
- * the plan with what that research read, which asks models again, so it counts as small AI help:
- * repeating it can't run models without limit.
- */
+/** Requires ownership; retries reuse missing work, but withResearch after a built plan claims new AI help. */
 export async function getGoalGenerationAccess({
   goalId,
   withResearch = false,
@@ -42,7 +35,6 @@ export async function getGoalGenerationAccess({
     return { goal, status: "ready" };
   }
 
-  // The plan is built once its skill graph is written; before, the run builds it the first time.
   const built = await prisma.plan.count({ where: { generatedAt: { not: null }, goalId } });
 
   if (built === 0) {

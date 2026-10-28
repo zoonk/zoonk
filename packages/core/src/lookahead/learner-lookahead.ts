@@ -4,23 +4,12 @@ import { findActiveSubscription } from "../auth/subscription";
 import { type EntitlementTier } from "../entitlements/contract";
 import { OUTLINE_AHEAD_DAYS } from "./outline-ahead";
 
-/**
- * How much is written before a learner gets there. Content is written once and shared, but what
- * nobody reaches is paid for anyway, so Plus subscribers get more written ahead than free learners,
- * and guests (who may never come back) the least. A learner never waits on a lesson because of
- * it: today's next lessons are always written while the current one is studied.
- */
 export type LearnerLookahead = {
   /** Unwritten lessons of today's session written after the one the learner is in. */
   lessonsAhead: number;
   /** First lessons of the next study day, written in the background at the flex tier. */
   nextDayLessons: number;
-  /**
-   * Days of the plan whose courses get their level bands outlined when the plan is built; later
-   * bands are outlined as the plan gets close to them, two weeks ahead (`OUTLINE_AHEAD_DAYS`). Plus
-   * outlines no further than free: the Library shares every outline with later learners, and a
-   * whole plan outlined up front paid for bands that changed or abandoned plans never reached.
-   */
+  /** Limit upfront outlines because abandoned or changed plans may never use later bands. */
   outlineDays: number;
   /** First lessons of the likeliest starting phases written while placement runs. */
   speculativeLessons: number;
@@ -46,11 +35,7 @@ export function getLookahead(tier: EntitlementTier): LearnerLookahead {
   return LOOKAHEAD[tier];
 }
 
-/**
- * The learner's plan for sizing what's written ahead: a guest, a free learner or a Plus subscriber.
- *
- * This is a workflow bridge: the user is the owner of the goal the workflow works for.
- */
+/** Workflow bridge: userId must be the owner of the workflow's authorized goal. */
 export async function getLearnerTier(userId: string): Promise<EntitlementTier> {
   const [user, subscription] = await Promise.all([
     prisma.user.findUnique({ select: { isAnonymous: true }, where: { id: userId } }),
@@ -64,11 +49,7 @@ export async function getLearnerTier(userId: string): Promise<EntitlementTier> {
   return subscription ? "plus" : "free";
 }
 
-/**
- * How far ahead content is written for the learner of a goal.
- *
- * This is a workflow bridge: the goal id comes from the goal the public boundary created.
- */
+/** Workflow bridge: goalId must come from the authenticated public boundary. */
 export async function getGoalLookahead(goalId: string): Promise<LearnerLookahead> {
   const goal = await prisma.goal.findUnique({ select: { userId: true }, where: { id: goalId } });
   return getLookahead(goal ? await getLearnerTier(goal.userId) : "guest");

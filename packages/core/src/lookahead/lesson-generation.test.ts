@@ -65,7 +65,6 @@ describe(getLessonGenerationStates, () => {
       { heldBackDrafts: 3, setAside: true, status: "failed" },
     ]);
 
-    // A lesson that no longer exists is left out.
     expect(states.size).toBe(lessons.length);
   });
 });
@@ -191,7 +190,6 @@ describe(requestLessonGeneration, () => {
       status: "start",
     });
 
-    // Asking again, or starting it once written, never counts it twice.
     await requestLessonGeneration({ lessonId: lesson.id });
 
     await expect(

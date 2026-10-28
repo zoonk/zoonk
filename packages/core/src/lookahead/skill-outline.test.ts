@@ -20,10 +20,6 @@ import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { addDays } from "../plans/planner/plan-calendar";
 import { getSkillOutline, requestSkillOutline } from "./skill-outline";
 
-/**
- * A learner's plan whose topics are all months away: stand-ins for skills of one course, the first
- * `beginner` ones in one band and an `intermediate` one in another.
- */
 async function farPlan({ beginner = 2, isAnonymous = false } = {}) {
   const user = await userFixture();
 
@@ -72,7 +68,6 @@ async function farPlan({ beginner = 2, isAnonymous = false } = {}) {
   return { course, goal, later, skills, user };
 }
 
-/** The run a tap started ended: until then, the course's other topics read as being written. */
 function endOutlineRun(courseId: string) {
   return prisma.course.update({ data: { outlineStatus: "completed" }, where: { id: courseId } });
 }
@@ -99,11 +94,9 @@ describe(requestSkillOutline, () => {
       status: "start",
     });
 
-    // The topic's band only: the intermediate topic waits for its own.
     const bands = request.status === "start" ? request.need.bands : [];
     expect(bands.flatMap((band) => band.skills.map((skill) => skill.id))).not.toContain(later.id);
 
-    // Asking again for the same topic (a run that failed, a second tap) never counts twice.
     await requestSkillOutline({ goalId: goal.id, skillId: first?.id ?? "" });
     await expect(countOutlineUses(user.id)).resolves.toBe(1);
   });
@@ -122,7 +115,6 @@ describe(requestSkillOutline, () => {
       status: "ready",
     });
 
-    // A run that never came (its start failed) stops holding the topic once the wait is stale.
     await prisma.course.update({
       data: { updatedAt: new Date(Date.now() - 60 * 60 * 1000) },
       where: { id: course.id },
@@ -149,7 +141,6 @@ describe(requestSkillOutline, () => {
       getSkillOutline({ goalId: goal.id, skillId: first?.id ?? "" }),
     ).resolves.toStrictEqual({ outline: { chapters: [], status: "writing" }, status: "ready" });
 
-    // Another learner's outline wrote the topic's chapter since.
     const [chapter, lesson] = await Promise.all([
       libraryChapterFixture({ title: "Means and medians" }),
       libraryLessonFixture(),

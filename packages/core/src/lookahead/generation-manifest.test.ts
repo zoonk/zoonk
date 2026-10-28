@@ -23,7 +23,6 @@ import { buildPlan } from "../plans/planner/build-plan";
 import { readGenerationManifest } from "./_utils/generation-manifest";
 import { admitPlanLessons, createPlanGenerationManifest } from "./speculative-lessons";
 
-// Count actual planning and changed-target revalidation without replacing either implementation.
 vi.mock("../plans/planner/build-plan", { spy: true });
 vi.mock("./_utils/generation-manifest", { spy: true });
 
@@ -45,7 +44,6 @@ async function manifestFixture() {
   return { ...fixture, lessonIds, manifest, user };
 }
 
-/** A goal planned before its skill was outlined, with the lessons that outline then landed. */
 async function outlinedWaitingGoal() {
   const skill = await skillFixture();
   const { goal, plan } = await waitingGoal(skill);
@@ -53,11 +51,6 @@ async function outlinedWaitingGoal() {
   return { goal, lessonIds, plan };
 }
 
-/**
- * Another run's content write marks the plan (as saving a shared lesson or question does) while
- * the manifest reads the lessons its stand-ins now name: after the manifest's token, before its
- * re-check. Only the order is the test's; the write and the read are real.
- */
 function markPlanWhileRead({ every = false, planId }: { every?: boolean; planId: string }) {
   const load = plannerLessons.loadGoalPlannerLessons;
   const spy = vi.spyOn(plannerLessons, "loadGoalPlannerLessons");
@@ -214,8 +207,6 @@ describe("parent-issued generation manifests", () => {
     const { goal, lessonIds } = await outlinedWaitingGoal();
     const failure = new Error("The Library is unavailable");
 
-    // A read failing mid-manifest can't be produced safely with the real database: any error other
-    // than a plan conflict stands in for it.
     const reads = vi.spyOn(plannerLessons, "loadGoalPlannerLessons").mockRejectedValueOnce(failure);
 
     await expect(createPlanGenerationManifest({ goalId: goal.id, lessonIds })).rejects.toBe(

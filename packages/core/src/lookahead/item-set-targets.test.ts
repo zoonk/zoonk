@@ -14,12 +14,10 @@ import { pickItemSetTargets } from "./item-set-targets";
 
 const citation = { passage: "…", sourceId: "notice" };
 
-/** A Cebraspe statement as the bank stores it. */
 function trueFalseContent(statement: string) {
   return { context: null, isTrue: true, misconception: null, reason: "Por quê.", statement };
 }
 
-/** Cebraspe's format: statements judged right or wrong. */
 const STATEMENTS = {
   citation,
   description: "Itens certo ou errado.",
@@ -27,10 +25,6 @@ const STATEMENTS = {
   options: null,
 };
 
-/**
- * An exam goal whose first phase has three areas: Reading (weights 5, 3, 1, 4), Law (2, 1) and
- * Math (a lone skill), with a later phase that never gets a set.
- */
 async function examGoal() {
   const [user, blueprint, skills] = await Promise.all([
     userFixture(),
@@ -133,7 +127,6 @@ describe(pickItemSetTargets, () => {
         format: "trueFalse",
         skillId: skills[4]?.id ?? "",
       }),
-      // Written for the app, not copied from a paper: never shown as a past question.
       itemFixture({
         content: trueFalseContent("Uma questão original."),
         examBlueprintId: blueprint.id,

@@ -9,7 +9,7 @@ export type ViewerLesson =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/** The lesson, when the signed-in learner (or guest) may see it: shared, or their own private one. */
+/** Requires a learner or guest session; private lessons are visible only to their owner. */
 export async function findViewerLesson(lessonId: string): Promise<ViewerLesson> {
   const session = await getSession();
 

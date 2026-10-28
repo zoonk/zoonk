@@ -6,7 +6,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getShortPlanPracticeNeed } from "./short-plan-practice";
 
-/** Wednesday morning, with the class test on Friday. */
 const NOW = new Date("2026-10-07T12:00:00Z");
 
 async function classTest({ daily, targetDate }: { daily: number; targetDate: string }) {
@@ -52,7 +51,6 @@ describe(getShortPlanPracticeNeed, () => {
   it("sizes a class test's questions to its days, shared among its skills", async () => {
     const { goal, skills } = await classTest({ daily: 30, targetDate: "2026-10-09" });
 
-    // Two days of 30 minutes: 40 questions' worth, at most eight a skill.
     await expect(getShortPlanPracticeNeed(goal.id)).resolves.toStrictEqual({
       questionsPerSkill: 8,
       skillIds: skills.map((skill) => skill.id),
@@ -89,7 +87,6 @@ describe(getShortPlanPracticeNeed, () => {
     await expect(getShortPlanPracticeNeed(goal.id)).resolves.toBeNull();
   });
 
-  // A handout's every heading is a skill of its own now: a long one passes a public exam's count.
   it("sizes the questions of a test from the learner's own material, however many topics it has", async () => {
     const { goal } = await classTest({ daily: 30, targetDate: "2026-10-09" });
     const skills = await Promise.all(Array.from({ length: 16 }, () => skillFixture()));

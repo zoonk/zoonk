@@ -6,10 +6,6 @@ import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { requestClaimQuestions } from "./claim-questions";
 
-/**
- * Pedro's topics after placement: Nucleus answered right with its only question, Viruses answered
- * right with another question still unasked, and Osmosis never answered.
- */
 async function setup() {
   const user = await userFixture();
 
@@ -80,7 +76,6 @@ describe(requestClaimQuestions, () => {
       status: "start",
     });
 
-    // Once its questions are written, there's nothing more to ask for.
     await itemFixture({ content: choiceItemContent(), skillId: nucleus.id });
 
     await expect(requestClaimQuestions({ goalId: goal.id })).resolves.toStrictEqual({

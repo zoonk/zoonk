@@ -7,7 +7,6 @@ import {
 } from "../library/generation/lesson-generation-state";
 import { findViewerLesson } from "./_utils/viewer-lesson";
 
-/** Something ready to do instead of waiting: the next written lesson of the plan, or due reviews. */
 type ReadyAlternative =
   | { kind: "lesson"; lessonId: string; title: string }
   | { dueSkills: number; kind: "review" };
@@ -60,13 +59,7 @@ async function findReadyAlternative({
   return dueSkills > 0 ? { dueSkills, kind: "review" } : null;
 }
 
-/**
- * What the lesson page shows while a lesson isn't written yet ("never a dead end"): whether a run
- * is writing it and which one, so the page streams its live progress, or nothing is, so the
- * page asks for it; and a ready alternative from the learner's plan (the
- * next written lesson, or reviews that are due) instead of a spinner. Uncached: the page polls it
- * while it waits.
- */
+/** Uncached polling read; missing generationId means the page must request generation after a learner action. */
 export async function getLessonWaitingState({
   lessonId,
 }: {
@@ -78,7 +71,7 @@ export async function getLessonWaitingState({
     return viewer;
   }
 
-  // Live, like the run it follows: what's due now is read at request time, never in a prerender.
+  // Next's io boundary keeps live request time out of prerendering.
   await io();
 
   const state = await getLessonGenerationState(lessonId);

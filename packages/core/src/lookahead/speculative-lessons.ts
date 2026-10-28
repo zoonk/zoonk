@@ -18,16 +18,8 @@ export type { PlanGenerationManifest } from "./_utils/generation-manifest";
 
 type PlannedLesson = { lessonId: string; phase: number };
 
-/** A lesson the plan has to do, in plan order: `null` for a stand-in, whose lessons aren't outlined. */
 type PlanLesson = { lessonId: string | null; phase: number };
 
-/**
- * The plan's lessons not done yet, in plan order, from the plan worked out from what it plans
- * from now (see `planGoalForPick`): lessons the Library outlined since the plan was saved take
- * their stand-ins' places whatever run outlined them, and what placement settled is out, even
- * while the run saving them still waits its turn. A plan that stays as saved (not built yet, or
- * holding lessons for the learner's OK) is read as saved; a paused goal has none to write.
- */
 async function loadPlanLessons(goalId: string): Promise<PlanLesson[]> {
   const { plan, status } = await planGoalForPick(goalId);
 
@@ -50,12 +42,7 @@ async function loadPlanLessons(goalId: string): Promise<PlanLesson[]> {
   });
 }
 
-/**
- * The plan's lessons that may be written ahead now, in plan order. A wrong guess costs little
- * when the lesson is shared: the next learner reads it. A lesson only this learner reads (a course
- * from their own material) waits while placement is still ahead, since placement may test it out
- * and nobody would ever open it. A lesson set aside is never written.
- */
+/** Do not speculate on private lessons before placement: a skipped lesson would be paid for and never reused. */
 async function toWritableLessons({
   goalId,
   lessons,
@@ -86,12 +73,6 @@ async function toWritableLessons({
   });
 }
 
-/**
- * The phases a learner most likely starts in while placement is still running: the first one
- * (placement often finds gaps early) and the one where their own level points in the plan. A
- * learner starting from nothing skips placement and surely starts at the beginning, so the first
- * phase is the only guess; one with no level given guesses the phase right after it too.
- */
 function pickLikelyStartPhases({
   lessons,
   ownLevel,
@@ -117,16 +98,7 @@ function pickLikelyStartPhases({
   return second === undefined ? [first] : [first, second];
 }
 
-/**
- * The first lessons of the likeliest starting phases that aren't written yet, for speculative
- * generation during onboarding: `count` in all (more for Plus subscribers, `getLookahead`), split
- * between the guesses, one list per guess in plan order. The first lesson of each list is where the learner starts if that guess is right.
- * A wrong guess costs little: the lessons go into the shared Library for the next learner. The
- * learner's own lessons wait for placement (see `toWritableLessons`). Picks from the plan worked
- * out from what it plans from now (see `loadPlanLessons`).
- *
- * This is a workflow bridge: the goal id comes from the goal the public boundary created.
- */
+/** Workflow bridge: authorize goalId first; returns plan-ordered lists per likely start, totaling at most count. */
 export async function pickSpeculativeLessons({
   count,
   goalId,
@@ -140,7 +112,6 @@ export async function pickSpeculativeLessons({
   const phases = pickLikelyStartPhases({ lessons, ownLevel });
   const perPhase = Math.ceil(count / Math.max(phases.length, 1));
 
-  // Lessons already written (found in the Library) need nothing: the next ones are guessed instead.
   const guesses = phases.map((phase) =>
     lessons
       .filter((lesson) => lesson.phase === phase && lesson.status !== "completed")
@@ -151,14 +122,7 @@ export async function pickSpeculativeLessons({
   return guesses.filter((guess) => guess.length > 0);
 }
 
-/**
- * The plan's first lesson, to write the moment the plan starts there while placement moves the
- * start: null while it can wait (the learner's own lesson, with placement still ahead, which may
- * test it out; see `toWritableLessons`), or when the plan has no lesson to write first, in the plan
- * worked out from what it plans from now (see `loadPlanLessons`).
- *
- * This is a workflow bridge: the goal id comes from the goal the public boundary created.
- */
+/** Workflow bridge: authorize goalId first; null when private content must await placement or no first lesson needs writing. */
 export async function pickPlanStartToWrite(goalId: string): Promise<string | null> {
   const lessons = await loadPlanLessons(goalId);
   const [first] = lessons;
@@ -169,12 +133,7 @@ export async function pickPlanStartToWrite(goalId: string): Promise<string | nul
     : null;
 }
 
-/**
- * A parent's admitted batch, persisted as its durable step result. The saved selection is the
- * source of truth; newly outlined lessons may fill its still-todo stand-ins before a save lands.
- *
- * This is a workflow bridge: the goal id comes from the goal the public boundary created.
- */
+/** Workflow bridge: authorize goalId first; save the admitted batch as the durable step result before starting children. */
 export async function createPlanGenerationManifest({
   goalId,
   lessonIds,
@@ -185,10 +144,7 @@ export async function createPlanGenerationManifest({
   return readGenerationManifest({ goalId, lessonIds });
 }
 
-/**
- * Checks a child's manifest in one statement. Only changed targets re-read their saved source;
- * a changed epoch never enters the planner to ask membership.
- */
+/** A changed epoch revalidates saved membership without running the planner. */
 export async function admitPlanLessons({
   goalId,
   lessonIds,

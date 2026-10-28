@@ -13,18 +13,14 @@ import { getSkillArea } from "../plans/planner/graph-areas";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { type PlacementItemSkill, toItemExam } from "./placement-item-skills";
 
-/** A few sets to start, on the areas the first days study most: mocks write more as they need. */
 const SET_AREAS = 2;
 
-/** The skills one set's questions test: a passage asks two or three things well. */
 const SKILLS_PER_SET = 3;
 
-/** One set to write: a stimulus and its questions on an area's skills, in the exam's quick format. */
 export type ItemSetTarget = {
   format: PlacementQuickFormat;
   /** Two or three skills of one area, each with the goal's exam and how its questions look. */
   skills: PlacementItemSkill[];
-  /** The titles of the sets the exam already has, so a new one is about something else. */
   usedTitles: string[];
 };
 
@@ -32,13 +28,7 @@ function readTitle(content: unknown): string | null {
   return isJsonObject(content) && typeof content.title === "string" ? content.title : null;
 }
 
-/**
- * The sets an exam goal starts with: one for each of the first phase's most weighted areas that
- * has no set for its exam yet (sets are shared), on that area's most weighted skills, asked in the
- * exam's quick format (Cebraspe's statements, ENEM's options). Empty for other goals.
- *
- * This is a workflow bridge: the goal id comes from the goal the public boundary created.
- */
+/** Workflow bridge: goalId must come from the authenticated public boundary; non-exam goals return no targets. */
 export async function pickItemSetTargets({ goalId }: { goalId: string }): Promise<ItemSetTarget[]> {
   const goal = await prisma.goal.findUnique({
     select: {
@@ -59,7 +49,7 @@ export async function pickItemSetTargets({ goalId }: { goalId: string }): Promis
   const graph = parsePlanGraph(goal?.plan?.graph);
   const firstPhase = Math.min(...graph.skills.map((skill) => skill.phase));
 
-  // A listening area's sets are recordings (r14-listening's), never a text about a conversation.
+  // Listening skills need recordings rather than text passages about conversations.
   const listening = goal ? getListeningSkillIds({ exam: toListeningExam(goal), graph }) : new Set();
 
   const firstSkills = graph.skills.filter(
@@ -106,7 +96,6 @@ export async function pickItemSetTargets({ goalId }: { goalId: string }): Promis
     }))
     .filter((target) => target.skills.length >= 2);
 
-  // The exam's real questions, its area's own first, set how hard the set's questions are.
   return Promise.all(
     targets.map(async (target) => {
       const pastQuestions = await listPastQuestionExamples({

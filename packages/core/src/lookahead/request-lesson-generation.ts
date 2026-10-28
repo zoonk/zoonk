@@ -8,14 +8,7 @@ import { getLessonGenerationState } from "../library/generation/lesson-generatio
 import { isLessonPlusOnly } from "../sessions/_utils/plus-only-lessons";
 import { findViewerLesson } from "./_utils/viewer-lesson";
 
-/**
- * `ready`: play it. `generating`: follow `generationId`'s stream (a run already writing it).
- * `start`: the caller starts a run with these inputs, whose analytics name the learner, their goal
- * and the client that asked. `refused`: the learner's allowance doesn't
- * cover writing a new lesson now. `setAside`: its last allowed draft was held back, so nothing
- * writes it again; plans moved on without it. `plusRequired`: a free exam plan past its first week
- * holds this new lesson of its plan for Plus, so nothing writes it for them.
- */
+/** generating follows the existing stream; start requires a caller-started run. setAside must never restart generation. */
 export type LessonGenerationRequest =
   | { status: "ready" }
   | { generationId: string; status: "generating" }
@@ -44,14 +37,7 @@ async function getActiveGoal(userId: string) {
   return profile?.activeGoal ?? null;
 }
 
-/**
- * Decides what asking for a lesson's content does. A lesson already written plays; one being
- * written is followed, so two requests never pay twice. Asking to write one counts as the lesson
- * start it leads to (starting it later counts nothing more), so the allowance and fair use are
- * enforced before any AI work and no guest or account can write a whole plan by asking for each
- * lesson; lessons the plan writes ahead for its sessions never ask here. A lesson the quality gate
- * held back is drafted again while it has drafts left.
- */
+/** Claims the later lesson start before AI work; starting after generation must not consume allowance again. */
 export async function requestLessonGeneration({
   lessonId,
 }: {
@@ -81,7 +67,7 @@ export async function requestLessonGeneration({
     return { generationId: state.runId, status: "generating" };
   }
 
-  // Before the allowance: asking for a lesson nothing will write never costs a lesson start.
+  // A lesson no run will write must not consume a lesson allowance.
   if (state.status === "failed" && state.setAside) {
     return { status: "setAside" };
   }

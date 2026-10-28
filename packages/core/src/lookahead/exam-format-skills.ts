@@ -11,10 +11,8 @@ import { parsePlanGraph } from "../plans/planner/plan-state";
 import { type ExamAnswerFormat, listExamAnswerFormats } from "./exam-answer-formats";
 import { type PlacementItemSkill, toItemExam } from "./placement-item-skills";
 
-/** A few skills per format to start: mocks write the rest as they need them. */
 const EXAM_FORMAT_SKILLS = 3;
 
-/** Whether stored item content is in the answer format: its picks, or its answer box. */
 function isInAnswerFormat({
   answerFormat,
   content,
@@ -43,10 +41,6 @@ type SkillRow = {
   targetLanguage: string | null;
 };
 
-/**
- * Whether a skill can be asked in the format and has no such question for the exam yet. Any
- * skill takes several picks, and a typed number unless the item writer found it takes none.
- */
 function needsAnswerFormat({
   answerFormat,
   blueprintId,
@@ -67,11 +61,6 @@ function needsAnswerFormat({
   return !written && (answerFormat.format === "multipleChoice" || takesNumericAnswers(skill));
 }
 
-/**
- * Whether a skill is known to take the format, so it goes before untried ones: any skill takes
- * several picks; a typed number once the bank has a math problem on it (a lesson's calculation)
- * or the item writer stored one.
- */
 function isKnownInFormat({
   answerFormat,
   skill,
@@ -86,14 +75,7 @@ function isKnownInFormat({
   );
 }
 
-/**
- * The skills an exam goal gets questions for in each answer format its notice states beyond one
- * quick pick (several picks, a typed number), so practice and mocks ask the exam's own formats:
- * the first phase's most weighted skills that can take the format and have none in it for this
- * exam yet (questions are shared), the ones known to take it first. Empty for other goals and for exams asked in quick picks only.
- *
- * This is a workflow bridge: the goal id comes from the goal the public boundary created.
- */
+/** Workflow bridge: goalId must come from the goal created by the authenticated public boundary. */
 export async function pickExamFormatSkills({
   goalId,
 }: {
@@ -161,7 +143,6 @@ export async function pickExamFormatSkills({
       .map(({ items: _items, ...skill }) => ({ answerFormat, skill })),
   );
 
-  // The exam's real questions, the skill's own first, set how hard its new ones are.
   return Promise.all(
     picks.map(async ({ answerFormat, skill }) => {
       const pastQuestions = await listPastQuestionExamples({
