@@ -40,9 +40,18 @@ private struct LessonPlayerContent: View {
 
   var body: some View {
     NavigationStack {
-      content
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar { toolbar }
+      VerticalToolbarReader { hasVerticalBar in
+        content
+          .safeAreaBar(edge: .top) {
+            // A vertical bar (iPhone Duo) has no room for the progress bar, so it tops the screen.
+            if hasVerticalBar, let progress {
+              progressBar(progress)
+                .scenePadding(.horizontal)
+            }
+          }
+          .navigationBarTitleDisplayMode(.inline)
+          .toolbar { toolbar(hasVerticalBar: hasVerticalBar) }
+      }
     }
     .confirmationDialog(
       Text(
@@ -138,7 +147,7 @@ private struct LessonPlayerContent: View {
   }
 
   @ToolbarContentBuilder
-  private var toolbar: some ToolbarContent {
+  private func toolbar(hasVerticalBar: Bool) -> some ToolbarContent {
     ToolbarItem(placement: .cancellationAction) {
       Button {
         if hasUnsentAnswer {
@@ -156,12 +165,10 @@ private struct LessonPlayerContent: View {
       .keyboardShortcut(.cancelAction)
     }
 
-    if let state = store.state, store.screen == .playing, state.phase != .completed {
+    if !hasVerticalBar, let progress {
       ToolbarItem(placement: .principal) {
-        ProgressView(value: state.progress)
+        progressBar(progress)
           .frame(minWidth: 120, idealWidth: 240)
-          .accessibilityLabel(
-            Text("Lesson progress", tableName: "Player", comment: "Progress bar of the lesson"))
       }
     }
 
@@ -180,6 +187,26 @@ private struct LessonPlayerContent: View {
     }
   }
 
+  /// How far the learner is, while a lesson plays.
+  private var progress: Double? {
+    guard let state = store.state, store.screen == .playing, state.phase != .completed else {
+      return nil
+    }
+
+    if case .refused = state.run {
+      return nil
+    }
+
+    return state.progress
+  }
+
+  private func progressBar(_ value: Double) -> some View {
+    ProgressView(value: value)
+      .tint(.success)
+      .accessibilityLabel(
+        Text("Lesson progress", tableName: "Player", comment: "Progress bar of the lesson"))
+  }
+
   /// Words on the screen stay protected until their check saves; every other answer is already kept.
   private var hasUnsentAnswer: Bool {
     guard let state = store.state, state.phase == .playing || state.phase == .checking,
@@ -189,5 +216,29 @@ private struct LessonPlayerContent: View {
     }
 
     return !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+  }
+}
+
+/// Whether the system shows the toolbar as a vertical bar beside the content (iPhone Duo).
+private struct VerticalToolbarReader<Content: View>: View {
+  @ViewBuilder let content: (Bool) -> Content
+
+  var body: some View {
+    if #available(iOS 27.1, *) {
+      VerticalEdgeReader(content: content)
+    } else {
+      content(false)
+    }
+  }
+}
+
+@available(iOS 27.1, *)
+private struct VerticalEdgeReader<Content: View>: View {
+  @Environment(\.toolbarVerticalEdge) private var edge
+
+  let content: (Bool) -> Content
+
+  var body: some View {
+    content(edge != nil)
   }
 }
