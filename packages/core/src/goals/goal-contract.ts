@@ -1,4 +1,5 @@
 import { GoalKind } from "@zoonk/db";
+import { LANGUAGE_CODE_PATTERN } from "@zoonk/utils/languages";
 import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../plans/daily-minutes";
@@ -9,11 +10,10 @@ const MAX_PROMPT_LENGTH = 2000;
 const MAX_GOALS_AT_ONCE = 3;
 /** Files or notes attached to a typed goal; more is better added from the goal later. */
 const MAX_GOAL_SOURCES = 5;
-const MIN_LANGUAGE_LENGTH = 2;
 const MAX_LANGUAGE_LENGTH = 10;
 const STUDY_TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/u;
 
-const languageSchema = z.string().min(MIN_LANGUAGE_LENGTH).max(MAX_LANGUAGE_LENGTH);
+const languageSchema = z.string().max(MAX_LANGUAGE_LENGTH).regex(LANGUAGE_CODE_PATTERN);
 
 export const dailyMinutesSchema = z
   .int()

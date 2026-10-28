@@ -24827,8 +24827,8 @@
           },
           "language": {
             "type": "string",
-            "minLength": 2,
             "maxLength": 10,
+            "pattern": "^[a-zA-Z]{2,3}(?:-[a-zA-Z]{4})?(?:-(?:[a-zA-Z]{2}|\\d{3}))?$",
             "description": "The language the learner studies in"
           },
           "primaryCourseId": {
@@ -24851,8 +24851,8 @@
           "targetLanguage": {
             "description": "The language being learned",
             "type": "string",
-            "minLength": 2,
-            "maxLength": 10
+            "maxLength": 10,
+            "pattern": "^[a-zA-Z]{2,3}(?:-[a-zA-Z]{4})?(?:-(?:[a-zA-Z]{2}|\\d{3}))?$"
           },
           "title": {
             "type": "string",
@@ -81710,8 +81710,8 @@
           },
           "language": {
             "type": "string",
-            "minLength": 2,
             "maxLength": 10,
+            "pattern": "^[a-zA-Z]{2,3}(?:-[a-zA-Z]{4})?(?:-(?:[a-zA-Z]{2}|\\d{3}))?$",
             "description": "The language the learner studies in"
           },
           "primaryCourseId": {
@@ -81734,8 +81734,8 @@
           "targetLanguage": {
             "description": "The language being learned",
             "type": "string",
-            "minLength": 2,
-            "maxLength": 10
+            "maxLength": 10,
+            "pattern": "^[a-zA-Z]{2,3}(?:-[a-zA-Z]{4})?(?:-(?:[a-zA-Z]{2}|\\d{3}))?$"
           },
           "title": {
             "type": "string",

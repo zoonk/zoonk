@@ -182,6 +182,13 @@ const NON_LATIN_SCRIPT_LANGUAGES = new Set([
   "zh",
 ]);
 
+/**
+ * A language code as goals store it: a language, then an optional script and region ("pt",
+ * "pt-BR", "zh-Hant", "es-419"). `Intl` reads every code it matches, so a language's name can be
+ * shown for any stored code; a made-up or underscored one ("x1a2b3c4d", "pt_BR") would throw there.
+ */
+export const LANGUAGE_CODE_PATTERN = /^[a-zA-Z]{2,3}(?:-[a-zA-Z]{4})?(?:-(?:[a-zA-Z]{2}|\d{3}))?$/u;
+
 /** The language of a tag without its region: "pt" for "pt-BR" or "PT_br". */
 export function getBaseLanguage(language: string): string {
   return language.toLowerCase().split(/[-_]/u)[0] ?? "";

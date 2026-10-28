@@ -1,3 +1,5 @@
+import { LANGUAGE_CODE_PATTERN } from "@zoonk/utils/languages";
+
 const MIN_DAILY_MINUTES = 5;
 /** A whole day, as core's `MAX_DAILY_MINUTES` bounds it: core depends on this package. */
 const MAX_DAILY_MINUTES = 1440;
@@ -9,7 +11,6 @@ const MIN_YEAR = 1900;
 const MAX_YEAR = 2200;
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/u;
 const STUDY_TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/u;
-const LANGUAGE_CODE_PATTERN = /^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})?$/u;
 
 type GoalUnderstandingRoute = "explain" | "goals" | "instrument" | "unclear" | "unsafe";
 type UnderstoodGoalKind = "exam" | "language" | "learn";

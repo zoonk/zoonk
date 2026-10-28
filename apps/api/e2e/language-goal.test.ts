@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { randomInt, randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { languageConversationSetupSchema } from "@zoonk/core/language/conversations/contract";
 import { getAlphabetIdentityKey } from "@zoonk/core/library/language/alphabet-identity";
@@ -454,8 +454,10 @@ test.describe("Language goal API", () => {
       goalFixture({ userId: user.id }),
     ]);
 
-    // A pair no other test writes: the learner language is a made-up code.
-    const pair = { language: `x${randomUUID().slice(0, 8)}`, targetLanguage: "en" };
+    // A pair no other test writes: the learner language is a made-up code shaped like a real one.
+    const letters = Array.from({ length: 5 }, () => String.fromCodePoint(97 + randomInt(26)));
+    const language = `${letters.slice(0, 3).join("")}-${letters.slice(3).join("").toUpperCase()}`;
+    const pair = { language, targetLanguage: "en" };
     await prisma.goal.update({ data: pair, where: { id: newPair.id } });
 
     const path = `/v1/goals/${newPair.id}/language-level-test`;
