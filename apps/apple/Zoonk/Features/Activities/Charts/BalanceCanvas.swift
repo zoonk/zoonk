@@ -287,7 +287,8 @@ private struct BalanceScale: View {
           Text(verbatim: unknown)
             .font(.subheadline.weight(.bold).italic())
             .foregroundStyle(.white)
-            .frame(width: 30, height: 38)
+            .padding(.horizontal, 6)
+            .frame(minWidth: 30, minHeight: 38)
             .background(Color.purple, in: .rect(cornerRadius: 8, style: .continuous))
         }
 
