@@ -7,7 +7,7 @@ final class PronunciationRoundTests: XCTestCase {
   private let recording = VoiceRecording(audio: Data([1]), durationMs: 800)
 
   func testAWordSaidRightThenTheRoundCountsOnce() async {
-    let server = Server(grades: [.success(.fixture(isCorrect: true))])
+    let server = Server(grades: [.graded(.fixture(isCorrect: true))])
     let round = PronunciationRound(words: [.fixture("a")], actions: server.actions)
 
     await round.record(recording)
@@ -21,7 +21,7 @@ final class PronunciationRoundTests: XCTestCase {
 
   func testTryingAgainStartsTheWordOver() async {
     let server = Server(grades: [
-      .success(.fixture(isCorrect: false)), .success(.fixture(isCorrect: true)),
+      .graded(.fixture(isCorrect: false)), .graded(.fixture(isCorrect: true)),
     ])
     let round = PronunciationRound(words: [.fixture("a")], actions: server.actions)
 
@@ -49,11 +49,7 @@ final class PronunciationRoundTests: XCTestCase {
   }
 
   func testARecordingWithoutWordsOrALimitKeepsTheWord() async {
-    let server = Server(grades: [
-      .failure(VoiceRefusal(status: 422, code: "NO_SPEECH", details: nil)),
-      .failure(VoiceRefusal(status: 403, code: "SIGN_UP_REQUIRED", details: nil)),
-      .failure(APIError.network),
-    ])
+    let server = Server(grades: [.noSpeech, .limit(.signUpRequired), .failed, .obsolete])
     let round = PronunciationRound(words: [.fixture("a")], actions: server.actions)
 
     await round.record(recording)
@@ -64,11 +60,15 @@ final class PronunciationRoundTests: XCTestCase {
 
     await round.record(recording)
     XCTAssertEqual(round.step, .word(index: 0, state: .ready(.failed)))
+
+    // A grade for a learner who's gone changes nothing.
+    await round.record(recording)
+    XCTAssertEqual(round.step, .word(index: 0, state: .ready(.failed)))
     XCTAssertEqual(round.outcomes, [:])
   }
 
   func testAFailedFinishCanBeRetried() async {
-    let server = Server(grades: [.success(.fixture(isCorrect: true))], finishFails: 1)
+    let server = Server(grades: [.graded(.fixture(isCorrect: true))], finishFails: 1)
     let round = PronunciationRound(words: [.fixture("a")], actions: server.actions)
 
     await round.record(recording)
@@ -88,12 +88,12 @@ final class PronunciationRoundTests: XCTestCase {
 
 @MainActor
 private final class Server {
-  private var grades: [Result<PronunciationRound.Grade, any Error>]
+  private var grades: [GradeOutcome<PronunciationRound.Grade>]
   private var finishFails: Int
   private(set) var answered: [String] = []
   private(set) var finished: [String] = []
 
-  init(grades: [Result<PronunciationRound.Grade, any Error>], finishFails: Int = 0) {
+  init(grades: [GradeOutcome<PronunciationRound.Grade>], finishFails: Int = 0) {
     self.grades = grades
     self.finishFails = finishFails
   }
@@ -102,17 +102,17 @@ private final class Server {
     PronunciationRound.Actions(
       answer: { reviewId, _, _ in
         self.answered.append(reviewId)
-        return try self.grades.removeFirst().get()
+        return self.grades.removeFirst()
       },
       finish: { roundId in
         self.finished.append(roundId)
 
         if self.finishFails > 0 {
           self.finishFails -= 1
-          throw APIError.network
+          return .failed(.network)
         }
 
-        return .fixture
+        return .done(.fixture)
       })
   }
 }

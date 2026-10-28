@@ -10,7 +10,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
   @State private var checking = false
   @State private var issue: Issue?
 
-  let grade: @MainActor (VoiceServices, VoiceRecording) async throws -> Grade
+  let grade: @MainActor (VoiceServices, VoiceRecording) async -> GradeOutcome<Grade>
   let onGraded: @MainActor (Grade) -> Void
   /// Says "Tap and say it out loud" while idle; off where the screen already asks.
   var asksToSpeak = true
@@ -94,16 +94,17 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
     checking = true
     defer { checking = false }
 
-    do {
-      onGraded(try await grade(voice, recording))
-    } catch is CancellationError {
-      return
-    } catch let refusal as VoiceRefusal where refusal.isNoSpeech {
+    switch await grade(voice, recording) {
+    case .graded(let value):
+      onGraded(value)
+    case .noSpeech:
       issue = .noSpeech
-    } catch let refusal as VoiceRefusal {
-      issue = refusal.limit.map(Issue.limit) ?? .failed
-    } catch {
+    case .limit(let limit):
+      issue = .limit(limit)
+    case .failed:
       issue = .failed
+    case .obsolete:
+      break
     }
   }
 }
@@ -115,25 +116,19 @@ extension VoiceServices {
     stepId: String,
     studySessionId: String?,
     recording: VoiceRecording
-  ) async throws -> Components.Schemas.SpokenAnswerGrade {
-    let api = api
-    let grade = try await perform { token in
+  ) async -> GradeOutcome<Components.Schemas.SpokenAnswerGrade> {
+    await grade(invalidating: [.learnerModel]) { [api] token in
       try await api.answerSpokenStep(
         stepId: stepId, studySessionId: studySessionId, recording: recording, token: token)
     }
-
-    cache.invalidate([.learnerModel])
-    return grade
   }
 
   /// Grades the level test's sentence said out loud; the test's next step comes with it.
   func gradeLevelTestSentence(
     goalId: String,
     recording: VoiceRecording
-  ) async throws -> Components.Schemas.LanguageLevelTestSpokenResult {
-    let api = api
-
-    return try await perform { token in
+  ) async -> GradeOutcome<Components.Schemas.LanguageLevelTestSpokenResult> {
+    await grade { [api] token in
       try await api.answerLevelTestOutLoud(goalId: goalId, recording: recording, token: token)
     }
   }

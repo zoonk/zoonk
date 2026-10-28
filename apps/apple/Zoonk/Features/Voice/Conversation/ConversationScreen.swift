@@ -260,22 +260,24 @@ private struct LiveCallRun: View {
     let completionInput = input
     let api = voice.liveCalls
     let conversationId = conversation.id
-    let completion =
-      (try? await voice.perform { token in
-        await api.complete(conversationId: conversationId, input: completionInput, token: token)
-      }) ?? .failed
+    let completion = await voice.cache.mutate { identity in
+      try await api.complete(
+        conversationId: conversationId, input: completionInput, token: identity.bearerToken)
+    }
 
     switch completion {
-    case .completed:
+    case .done(.completed):
       // Brain Power, missions, today's time, the unit's or exam's standing, and call time.
       voice.cache.invalidate([.userProgress, .goals, .learnerModel, .allowance])
       await onSaved()
-    case .ended:
+    case .done(.ended):
       saving = .ended
-    case .takenOver:
+    case .done(.takenOver):
       saving = .takenOver
-    case .failed:
+    case .done(.failed), .failed:
       saving = .failed
+    case .obsolete:
+      break
     }
   }
 }

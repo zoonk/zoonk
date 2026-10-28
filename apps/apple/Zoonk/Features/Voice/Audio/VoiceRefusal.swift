@@ -91,3 +91,20 @@ func voiceRefusal(status: Int, error: Components.Schemas._Error?) -> VoiceRefusa
     code: error?.error.code ?? "",
     details: error?.error.details)
 }
+
+/// A write the API did, or refused with a reason the screen explains (no words heard, a limit,
+/// Plus). Transport failures stay errors, which `AppCache.mutate` reads.
+enum Refusable<Value: Sendable>: Sendable {
+  case done(Value)
+  case refused(VoiceRefusal)
+}
+
+/// How grading a recording came out, in the terms a recorder explains.
+enum GradeOutcome<Value: Sendable>: Sendable {
+  case graded(Value)
+  case noSpeech
+  case limit(HelpLimit)
+  case failed
+  /// The learner who recorded it is gone or the screen closed: show nothing.
+  case obsolete
+}

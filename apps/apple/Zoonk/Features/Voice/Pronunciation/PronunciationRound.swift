@@ -39,8 +39,10 @@ final class PronunciationRound {
 
   struct Actions {
     let answer:
-      @MainActor (_ reviewId: String, _ roundId: String, VoiceRecording) async throws -> Grade
-    let finish: @MainActor (_ roundId: String) async throws -> Result
+      @MainActor (_ reviewId: String, _ roundId: String, VoiceRecording) async -> GradeOutcome<
+        Grade
+      >
+    let finish: @MainActor (_ roundId: String) async -> MutationResult<Result>
   }
 
   let words: [Word]
@@ -84,19 +86,19 @@ final class PronunciationRound {
     isPending = true
     defer { isPending = false }
 
-    do {
-      let grade = try await actions.answer(word.id, roundId, recording)
+    switch await actions.answer(word.id, roundId, recording) {
+    case .graded(let grade):
       answered += 1
       outcomes[index] = grade.isCorrect ? .right : .wrong
       step = .word(index: index, state: .graded(grade))
-    } catch is CancellationError {
-      return
-    } catch let refusal as VoiceRefusal where refusal.isNoSpeech {
+    case .noSpeech:
       step = .word(index: index, state: .ready(.noSpeech))
-    } catch let refusal as VoiceRefusal {
-      step = .word(index: index, state: .ready(refusal.limit.map(Notice.limit) ?? .failed))
-    } catch {
+    case .limit(let limit):
+      step = .word(index: index, state: .ready(.limit(limit)))
+    case .failed:
       step = .word(index: index, state: .ready(.failed))
+    case .obsolete:
+      break
     }
   }
 
@@ -139,12 +141,13 @@ final class PronunciationRound {
     finishFailed = false
     defer { isPending = false }
 
-    do {
-      step = .result(try await actions.finish(roundId))
-    } catch is CancellationError {
-      return
-    } catch {
+    switch await actions.finish(roundId) {
+    case .done(let result):
+      step = .result(result)
+    case .failed:
       finishFailed = true
+    case .obsolete:
+      break
     }
   }
 }

@@ -85,27 +85,27 @@ struct LiveCallAPI: Sendable {
   func start(
     _ input: Components.Schemas.LanguageConversationStartInput,
     token: String
-  ) async throws -> String {
+  ) async throws -> Refusable<String> {
     try await clients.perform(token: token) { client in
       switch try await client.startLanguageConversation(body: .json(input)) {
       case .created(let response):
-        return try response.body.json.conversationId
+        return .done(try response.body.json.conversationId)
       case .unauthorized:
         throw APIError.unauthorized
       case .notFound:
         throw APIError.notFound
       case .code402(let response):
-        throw voiceRefusal(status: 402, error: try? response.body.json)
+        return .refused(voiceRefusal(status: 402, error: try? response.body.json))
       case .forbidden(let response):
-        throw voiceRefusal(status: 403, error: try? response.body.json)
+        return .refused(voiceRefusal(status: 403, error: try? response.body.json))
       case .conflict(let response):
-        throw voiceRefusal(status: 409, error: try? response.body.json)
+        return .refused(voiceRefusal(status: 409, error: try? response.body.json))
       case .unprocessableContent(let response):
-        throw voiceRefusal(status: 422, error: try? response.body.json)
+        return .refused(voiceRefusal(status: 422, error: try? response.body.json))
       case .tooManyRequests(let response):
-        throw voiceRefusal(status: 429, error: try? response.body.json)
+        return .refused(voiceRefusal(status: 429, error: try? response.body.json))
       case .serviceUnavailable(let response):
-        throw voiceRefusal(status: 503, error: try? response.body.json)
+        return .refused(voiceRefusal(status: 503, error: try? response.body.json))
       case .badRequest, .internalServerError, .undocumented:
         throw APIError.unavailable
       }
@@ -128,35 +128,33 @@ struct LiveCallAPI: Sendable {
   }
 
   /// Reserves the call; `takeover` ends the learner's other open call first.
-  func connect(conversationId: String, takeover: Bool, token: String) async -> CallReservation {
-    do {
-      return try await clients.perform(token: token) { client in
-        let output = try await client.connectLanguageConversation(
-          path: .init(conversationId: conversationId), body: .json(.init(takeover: takeover)))
+  func connect(conversationId: String, takeover: Bool, token: String) async throws
+    -> CallReservation
+  {
+    try await clients.perform(token: token) { client in
+      let output = try await client.connectLanguageConversation(
+        path: .init(conversationId: conversationId), body: .json(.init(takeover: takeover)))
 
-        switch output {
-        case .created(let response):
-          return .ready(try response.body.json)
-        case .unauthorized:
-          throw APIError.unauthorized
-        case .code402(let response):
-          return CallReservation(refusal: voiceRefusal(status: 402, error: try? response.body.json))
-        case .forbidden(let response):
-          return CallReservation(refusal: voiceRefusal(status: 403, error: try? response.body.json))
-        case .conflict(let response):
-          return CallReservation(refusal: voiceRefusal(status: 409, error: try? response.body.json))
-        case .tooManyRequests(let response):
-          return CallReservation(refusal: voiceRefusal(status: 429, error: try? response.body.json))
-        case .serviceUnavailable(let response):
-          return CallReservation(refusal: voiceRefusal(status: 503, error: try? response.body.json))
-        case .unprocessableContent(let response):
-          return CallReservation(refusal: voiceRefusal(status: 422, error: try? response.body.json))
-        case .badRequest, .notFound, .internalServerError, .undocumented:
-          return .failed
-        }
+      switch output {
+      case .created(let response):
+        return .ready(try response.body.json)
+      case .unauthorized:
+        throw APIError.unauthorized
+      case .code402(let response):
+        return CallReservation(refusal: voiceRefusal(status: 402, error: try? response.body.json))
+      case .forbidden(let response):
+        return CallReservation(refusal: voiceRefusal(status: 403, error: try? response.body.json))
+      case .conflict(let response):
+        return CallReservation(refusal: voiceRefusal(status: 409, error: try? response.body.json))
+      case .tooManyRequests(let response):
+        return CallReservation(refusal: voiceRefusal(status: 429, error: try? response.body.json))
+      case .serviceUnavailable(let response):
+        return CallReservation(refusal: voiceRefusal(status: 503, error: try? response.body.json))
+      case .unprocessableContent(let response):
+        return CallReservation(refusal: voiceRefusal(status: 422, error: try? response.body.json))
+      case .badRequest, .notFound, .internalServerError, .undocumented:
+        return .failed
       }
-    } catch {
-      return .failed
     }
   }
 
@@ -187,23 +185,19 @@ struct LiveCallAPI: Sendable {
 
   /// Has the server hang the connection up. `endedAtDeadline` when the server already had at the
   /// call's deadline; nil while it couldn't confirm, so asking again sends a new request.
-  func end(conversationId: String, connectionId: String, token: String) async -> Bool? {
-    do {
-      return try await clients.perform(token: token) { client in
-        let output = try await client.endLanguageConversationConnection(
-          path: .init(conversationId: conversationId, connectionId: connectionId))
+  func end(conversationId: String, connectionId: String, token: String) async throws -> Bool? {
+    try await clients.perform(token: token) { client in
+      let output = try await client.endLanguageConversationConnection(
+        path: .init(conversationId: conversationId, connectionId: connectionId))
 
-        switch output {
-        case .ok(let response):
-          return try response.body.json.endReason == .deadline
-        case .unauthorized:
-          throw APIError.unauthorized
-        default:
-          return nil
-        }
+      switch output {
+      case .ok(let response):
+        return try response.body.json.endReason == .deadline
+      case .unauthorized:
+        throw APIError.unauthorized
+      default:
+        return nil
       }
-    } catch {
-      return nil
     }
   }
 
@@ -212,8 +206,8 @@ struct LiveCallAPI: Sendable {
     conversationId: String,
     turns: [ConversationTurn],
     token: String
-  ) async -> [String]? {
-    try? await clients.perform(token: token) { client in
+  ) async throws -> [String]? {
+    try await clients.perform(token: token) { client in
       let output = try await client.checkLanguageConversationObjectives(
         path: .init(conversationId: conversationId), body: .json(.init(turns: turns)))
 
@@ -230,31 +224,27 @@ struct LiveCallAPI: Sendable {
     conversationId: String,
     input: Components.Schemas.LanguageConversationCompletionInput,
     token: String
-  ) async -> CallCompletion {
-    do {
-      return try await clients.perform(token: token) { client in
-        let output = try await client.completeLanguageConversation(
-          path: .init(conversationId: conversationId), body: .json(input))
+  ) async throws -> CallCompletion {
+    try await clients.perform(token: token) { client in
+      let output = try await client.completeLanguageConversation(
+        path: .init(conversationId: conversationId), body: .json(input))
 
-        switch output {
-        case .ok(let response):
-          return .completed(try response.body.json)
-        case .unauthorized:
-          throw APIError.unauthorized
-        case .conflict(let response):
-          let code = (try? response.body.json)?.error.code
+      switch output {
+      case .ok(let response):
+        return .completed(try response.body.json)
+      case .unauthorized:
+        throw APIError.unauthorized
+      case .conflict(let response):
+        let code = (try? response.body.json)?.error.code
 
-          if code == "CALL_TAKEN_OVER" {
-            return .takenOver
-          }
-
-          return code == "CONVERSATION_ENDED" ? .ended : .failed
-        default:
-          return .failed
+        if code == "CALL_TAKEN_OVER" {
+          return .takenOver
         }
+
+        return code == "CONVERSATION_ENDED" ? .ended : .failed
+      default:
+        return .failed
       }
-    } catch {
-      return .failed
     }
   }
 }

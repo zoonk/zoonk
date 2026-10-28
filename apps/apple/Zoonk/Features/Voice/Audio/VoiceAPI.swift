@@ -20,7 +20,7 @@ struct VoiceAPI: Sendable {
     studySessionId: String?,
     recording: VoiceRecording,
     token: String
-  ) async throws -> Components.Schemas.SpokenAnswerGrade {
+  ) async throws -> Refusable<Components.Schemas.SpokenAnswerGrade> {
     try await clients.perform(token: token) { client in
       var parts: [Components.Schemas.SpokenAnswerRequest] = [
         .durationMs(.init(payload: .init(body: HTTPBody(String(recording.durationMs))))),
@@ -37,19 +37,19 @@ struct VoiceAPI: Sendable {
 
       switch output {
       case .ok(let response):
-        return try response.body.json
+        return .done(try response.body.json)
       case .unauthorized:
         throw APIError.unauthorized
       case .notFound:
         throw APIError.notFound
       case .code402(let response):
-        throw voiceRefusal(status: 402, error: try? response.body.json)
+        return .refused(voiceRefusal(status: 402, error: try? response.body.json))
       case .forbidden(let response):
-        throw voiceRefusal(status: 403, error: try? response.body.json)
+        return .refused(voiceRefusal(status: 403, error: try? response.body.json))
       case .unprocessableContent(let response):
-        throw voiceRefusal(status: 422, error: try? response.body.json)
+        return .refused(voiceRefusal(status: 422, error: try? response.body.json))
       case .tooManyRequests(let response):
-        throw voiceRefusal(status: 429, error: try? response.body.json)
+        return .refused(voiceRefusal(status: 429, error: try? response.body.json))
       case .badRequest, .internalServerError, .undocumented:
         throw APIError.unavailable
       }
@@ -63,7 +63,7 @@ struct VoiceAPI: Sendable {
     roundId: String,
     recording: VoiceRecording,
     token: String
-  ) async throws -> Components.Schemas.PronunciationAnswerGrade {
+  ) async throws -> Refusable<Components.Schemas.PronunciationAnswerGrade> {
     try await clients.perform(token: token) { client in
       let parts: [Components.Schemas.PronunciationAnswerRequest] = [
         .durationMs(.init(payload: .init(body: HTTPBody(String(recording.durationMs))))),
@@ -78,19 +78,19 @@ struct VoiceAPI: Sendable {
 
       switch output {
       case .ok(let response):
-        return try response.body.json
+        return .done(try response.body.json)
       case .unauthorized:
         throw APIError.unauthorized
       case .notFound:
         throw APIError.notFound
       case .code402(let response):
-        throw voiceRefusal(status: 402, error: try? response.body.json)
+        return .refused(voiceRefusal(status: 402, error: try? response.body.json))
       case .forbidden(let response):
-        throw voiceRefusal(status: 403, error: try? response.body.json)
+        return .refused(voiceRefusal(status: 403, error: try? response.body.json))
       case .unprocessableContent(let response):
-        throw voiceRefusal(status: 422, error: try? response.body.json)
+        return .refused(voiceRefusal(status: 422, error: try? response.body.json))
       case .tooManyRequests(let response):
-        throw voiceRefusal(status: 429, error: try? response.body.json)
+        return .refused(voiceRefusal(status: 429, error: try? response.body.json))
       case .badRequest, .internalServerError, .undocumented:
         throw APIError.unavailable
       }
@@ -102,7 +102,7 @@ struct VoiceAPI: Sendable {
     goalId: String,
     recording: VoiceRecording,
     token: String
-  ) async throws -> Components.Schemas.LanguageLevelTestSpokenResult {
+  ) async throws -> Refusable<Components.Schemas.LanguageLevelTestSpokenResult> {
     try await clients.perform(token: token) { client in
       let parts: [Components.Schemas.LanguageLevelTestSpokenAnswerRequest] = [
         .audio(.init(payload: .init(body: HTTPBody(recording.audio)), filename: "sentence.m4a"))
@@ -113,21 +113,21 @@ struct VoiceAPI: Sendable {
 
       switch output {
       case .ok(let response):
-        return try response.body.json
+        return .done(try response.body.json)
       case .unauthorized:
         throw APIError.unauthorized
       case .notFound:
         throw APIError.notFound
       case .code402(let response):
-        throw voiceRefusal(status: 402, error: try? response.body.json)
+        return .refused(voiceRefusal(status: 402, error: try? response.body.json))
       case .forbidden(let response):
-        throw voiceRefusal(status: 403, error: try? response.body.json)
+        return .refused(voiceRefusal(status: 403, error: try? response.body.json))
       case .conflict(let response):
-        throw voiceRefusal(status: 409, error: try? response.body.json)
+        return .refused(voiceRefusal(status: 409, error: try? response.body.json))
       case .unprocessableContent(let response):
-        throw voiceRefusal(status: 422, error: try? response.body.json)
+        return .refused(voiceRefusal(status: 422, error: try? response.body.json))
       case .tooManyRequests(let response):
-        throw voiceRefusal(status: 429, error: try? response.body.json)
+        return .refused(voiceRefusal(status: 429, error: try? response.body.json))
       case .badRequest, .internalServerError, .undocumented:
         throw APIError.unavailable
       }

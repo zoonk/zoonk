@@ -568,39 +568,55 @@ extension LiveCallClient {
   {
     LiveCallClient(
       connect: { takeover in
-        let reservation =
-          (try? await voice.perform { token in
-            await api.connect(conversationId: conversationId, takeover: takeover, token: token)
-          }) ?? .failed
-
-        if case .ready = reservation {
-          // The call holds the plan's call time from now.
-          voice.cache.invalidate([.allowance])
+        // The call holds the plan's call time from its reservation.
+        let reservation = await voice.cache.mutate(invalidating: [.allowance]) { identity in
+          try await api.connect(
+            conversationId: conversationId, takeover: takeover, token: identity.bearerToken)
         }
 
-        return reservation
+        guard case .done(let answer) = reservation else {
+          return .failed
+        }
+
+        return answer
       },
       redeem: { connectionId, offer in
-        try await voice.perform { token in
+        let answer = await voice.cache.mutate { identity in
           try await api.redeemSdp(
-            conversationId: conversationId, connectionId: connectionId, offer: offer, token: token)
+            conversationId: conversationId, connectionId: connectionId, offer: offer,
+            token: identity.bearerToken)
         }
+
+        guard case .done(let sdp) = answer else {
+          throw APIError.unavailable
+        }
+
+        return sdp
       },
       end: { connectionId in
-        let ended = try? await voice.perform { token in
-          await api.end(conversationId: conversationId, connectionId: connectionId, token: token)
+        let ended = await voice.cache.mutate(invalidating: [.allowance]) { identity in
+          try await api.end(
+            conversationId: conversationId, connectionId: connectionId,
+            token: identity.bearerToken)
         }
 
-        if ended != nil {
-          voice.cache.invalidate([.allowance])
+        guard case .done(let atDeadline) = ended else {
+          return nil
         }
 
-        return ended ?? nil
+        return atDeadline
       },
       checkObjectives: { turns in
-        (try? await voice.perform { token in
-          await api.checkObjectives(conversationId: conversationId, turns: turns, token: token)
-        }) ?? nil
+        let met = await voice.cache.mutate { identity in
+          try await api.checkObjectives(
+            conversationId: conversationId, turns: turns, token: identity.bearerToken)
+        }
+
+        guard case .done(let labels) = met else {
+          return nil
+        }
+
+        return labels
       },
       makeTransport: { WebRTCLiveCallTransport() },
       requestMicrophone: { await AVAudioApplication.requestRecordPermission() })

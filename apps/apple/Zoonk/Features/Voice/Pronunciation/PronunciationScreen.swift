@@ -119,24 +119,19 @@ private struct PronunciationRoundView: View {
 
     return PronunciationRound.Actions(
       answer: { reviewId, roundId, recording in
-        let grade = try await voice.perform { [api = voice.api] token in
+        // The word's next review moves.
+        await voice.grade(invalidating: [.learnerModel]) { [api = voice.api] token in
           try await api.answerPronunciation(
             reviewId: reviewId, goalId: goalId, roundId: roundId, recording: recording,
             token: token)
         }
-
-        // The word's next review moved.
-        voice.cache.invalidate([.learnerModel])
-        return grade
       },
       finish: { roundId in
-        let result = try await voice.perform { [api = voice.api] token in
-          try await api.completePronunciationRound(roundId: roundId, goalId: goalId, token: token)
-        }
-
         // Brain Power, today's time and missions.
-        voice.cache.invalidate([.userProgress])
-        return result
+        await voice.cache.mutate(invalidating: [.userProgress]) { [api = voice.api] identity in
+          try await api.completePronunciationRound(
+            roundId: roundId, goalId: goalId, token: identity.bearerToken)
+        }
       })
   }
 

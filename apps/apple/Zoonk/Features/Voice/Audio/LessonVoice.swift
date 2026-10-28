@@ -31,7 +31,7 @@ private struct SpokenStepRecorder: View {
     if !context.isLocked {
       VoiceAnswerRecorder(
         grade: { voice, recording in
-          try await voice.gradeSpokenStep(
+          await voice.gradeSpokenStep(
             stepId: context.stepId, studySessionId: nil, recording: recording)
         },
         onGraded: { grade in

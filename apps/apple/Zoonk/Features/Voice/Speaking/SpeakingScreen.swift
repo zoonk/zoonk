@@ -304,20 +304,21 @@ private struct SpeakingPaperView: View {
     startFailure = nil
     defer { startingTask = nil }
 
-    do {
-      let id = try await voice.startConversation(
-        .case4(.init(goalId: goalId, kind: .examSpeaking, task: task)))
+    switch await voice.startConversation(
+      .case4(.init(goalId: goalId, kind: .examSpeaking, task: task)))
+    {
+    case .done(.done(let id)):
       router.open(.conversation(conversationId: id))
-    } catch let refusal as VoiceRefusal {
+    case .done(.refused(let refusal)):
       if case .limit(let limit) = CallReservation(refusal: refusal) {
         startFailure = .limit(limit)
       } else {
         startFailure = .failed
       }
-    } catch is CancellationError {
-      return
-    } catch {
+    case .failed:
       startFailure = .failed
+    case .obsolete:
+      break
     }
   }
 }
@@ -326,8 +327,9 @@ extension VoiceServices {
   /// Creates a conversation the learner tapped to start.
   func startConversation(
     _ input: Components.Schemas.LanguageConversationStartInput
-  ) async throws -> String {
-    let api = liveCalls
-    return try await perform { token in try await api.start(input, token: token) }
+  ) async -> MutationResult<Refusable<String>> {
+    await cache.mutate { [liveCalls] identity in
+      try await liveCalls.start(input, token: identity.bearerToken)
+    }
   }
 }

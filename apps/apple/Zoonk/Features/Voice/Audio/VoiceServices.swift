@@ -24,28 +24,26 @@ final class VoiceServices {
       api: api, session: cache.session, files: VoiceFileCache(apiURL: clients.serverURL))
   }
 
-  /// Runs a learner's request under the session that started it. A result that arrives after
-  /// that session ended is dropped (`CancellationError`), and an expired session signs out.
-  func perform<Value: Sendable>(
-    _ request: @Sendable (String) async throws -> Value
-  ) async throws -> Value {
-    let session = cache.session
-
-    guard let owner = session.authenticatedSession else {
-      throw APIError.unauthorized
-    }
-
-    do {
-      let value = try await request(owner.bearerToken)
-
-      guard session.authenticatedSession == owner else {
-        throw CancellationError()
+  /// Grades a recording for the current learner through `AppCache.mutate`; what was heard
+  /// changes `domains` only once it's graded.
+  func grade<Value: Sendable>(
+    invalidating domains: Set<DataDomain> = [],
+    _ request: (String) async throws -> Refusable<Value>
+  ) async -> GradeOutcome<Value> {
+    switch await cache.mutate({ try await request($0.bearerToken) }) {
+    case .done(.done(let value)):
+      cache.invalidate(domains)
+      return .graded(value)
+    case .done(.refused(let refusal)):
+      if refusal.isNoSpeech {
+        return .noSpeech
       }
 
-      return value
-    } catch APIError.unauthorized {
-      await session.expire(owner)
-      throw APIError.unauthorized
+      return refusal.limit.map(GradeOutcome.limit) ?? .failed
+    case .failed:
+      return .failed
+    case .obsolete:
+      return .obsolete
     }
   }
 

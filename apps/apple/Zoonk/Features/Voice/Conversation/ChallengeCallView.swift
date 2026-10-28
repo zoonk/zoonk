@@ -53,23 +53,39 @@ struct ChallengeCallView: View {
     didFail = false
     defer { isStarting = false }
 
-    do {
-      let api = practice.api
-      let started = try await voice.perform { token in
-        try await api.startChallenge(token: token, planItemId: planItemId, afterWriting: false)
-      }
+    let api = practice.api
+    let started = await voice.cache.mutate { identity in
+      try await api.startChallenge(
+        token: identity.bearerToken, planItemId: planItemId, afterWriting: false)
+    }
 
-      practice.changed(.answered)
+    guard case .done(let start) = started else {
+      didFail = started.isFailure
+      return
+    }
 
-      let id = try await voice.startConversation(
-        .case2(.init(blockId: started.blockId, kind: .checkpoint)))
+    practice.changed(.answered)
+
+    switch await voice.startConversation(.case2(.init(blockId: start.blockId, kind: .checkpoint))) {
+    case .done(.done(let id)):
       // The call takes the challenge's place, as starting a duel opens its checkpoint.
       dismiss()
       router.open(.conversation(conversationId: id))
-    } catch is CancellationError {
-      return
-    } catch {
+    case .done(.refused), .failed:
       didFail = true
+    case .obsolete:
+      break
     }
+  }
+}
+
+extension MutationResult {
+  /// The write failed for the learner still here; an obsolete one says nothing.
+  fileprivate var isFailure: Bool {
+    if case .failed = self {
+      return true
+    }
+
+    return false
   }
 }
