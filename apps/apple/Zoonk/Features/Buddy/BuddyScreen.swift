@@ -135,7 +135,12 @@ private struct BuddyContent: View {
         .presentationDetents([.medium, .large])
       }
       .sheet(isPresented: $isEditing) {
-        BuddyEditor(status: status)
+        BuddyEditor(
+          choice: status.choice,
+          availableGlasses: status.glasses.filter(\.earned).compactMap {
+            BuddyGlasses(rawValue: $0.glasses.rawValue)
+          },
+          save: { choice in Task { await store.save(choice) } })
       }
       .sheet(isPresented: $isWearing) {
         BuddyGlassesPicker(status: status)
@@ -210,6 +215,15 @@ private struct BuddyContent: View {
         "Hi! I'm \(name), your AI study buddy. Ask me anything about what you're studying, or tell me what you'd like to change in your plan.",
         tableName: "Buddy",
         comment: "The buddy's hello at the top of its conversation; the argument is its name")
+
+      if store.saveFailed {
+        Text(
+          "We couldn't save your buddy. Try again.", tableName: "Buddy",
+          comment: "Saving the buddy failed"
+        )
+        .font(.footnote)
+        .foregroundStyle(.destructive)
+      }
 
       if !status.buddy.picked {
         Button {

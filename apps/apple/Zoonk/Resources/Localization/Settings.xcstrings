@@ -1,41 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ · %@" : {
-      "comment" : "The buddy's growth stage and glasses, as in “Baby · Round glasses”\nWhere a remembered fact came from and its day, as in “From a chat · Oct 11”",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ · %2$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@"
-          }
-        }
-      }
-    },
     "%@ %@" : {
       "comment" : "A deleted fact, struck through after “Memory updated:”",
       "localizations" : {
@@ -96,6 +61,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ por dia"
+          }
+        }
+      }
+    },
+    "%@ · %@" : {
+      "comment" : "The buddy's growth stage and glasses, as in “Baby · Round glasses”\nWhere a remembered fact came from and its day, as in “From a chat · Oct 11”",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %2$@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %2$@"
           }
         }
       }
@@ -299,64 +299,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bip"
-          }
-        }
-      }
-    },
-    "Brain with legs" : {
-      "comment" : "Short description of the buddy Noodle",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gehirn mit Beinen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cerebro con patas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un cerveau sur pattes"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Um cérebro com pernas"
-          }
-        }
-      }
-    },
-    "Buddy" : {
-      "comment" : "Picker of the four buddies",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kumpel"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Compañero"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Compagnon"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Parceiro"
           }
         }
       }
@@ -647,35 +589,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não foi possível desfazer. Isso mudou desde então."
-          }
-        }
-      }
-    },
-    "Curious alien" : {
-      "comment" : "Short description of the buddy Zu",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Neugieriges Alien"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alienígena curioso"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Un extraterrestre curieux"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Um alienígena curioso"
           }
         }
       }
@@ -1057,35 +970,6 @@
         }
       }
     },
-    "Glasses" : {
-      "comment" : "Picker of the buddy's glasses",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Brille"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gafas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lunettes"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Óculos"
-          }
-        }
-      }
-    },
     "Goals" : {
       "comment" : "Memory category: goals",
       "localizations" : {
@@ -1111,35 +995,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Metas"
-          }
-        }
-      }
-    },
-    "Know-it-all octopus" : {
-      "comment" : "Short description of the buddy Otto",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Besserwisser-Krake"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pulpo sabelotodo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Poulpe incollable"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Polvo sabe-tudo"
           }
         }
       }
@@ -1343,35 +1198,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Monóculo"
-          }
-        }
-      }
-    },
-    "Name" : {
-      "comment" : "Field for the buddy's own name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Name"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nombre"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nom"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nome"
           }
         }
       }
@@ -1985,35 +1811,6 @@
         }
       }
     },
-    "Tidy robot" : {
-      "comment" : "Short description of the buddy Beep",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ordentlicher Roboter"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Robot ordenado"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Robot bien ordonné"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Robô organizado"
-          }
-        }
-      }
-    },
     "Try again" : {
       "comment" : "Retries loading a settings page",
       "localizations" : {
@@ -2334,7 +2131,7 @@
       }
     },
     "Your buddy" : {
-      "comment" : "Preferences section about the buddy\nTitle of the buddy editor",
+      "comment" : "Preferences section about the buddy",
       "localizations" : {
         "de" : {
           "stringUnit" : {

@@ -111,7 +111,8 @@ struct PreferencesView: View {
     .loads(settings.preferences)
     .sheet(isPresented: $isEditingBuddy) {
       if let preferences = settings.preferences.value {
-        SettingsBuddyEditor(preferences: preferences) { choice in
+        BuddyEditor(choice: preferences.buddy, availableGlasses: preferences.availableGlasses) {
+          choice in
           Task {
             await settings.updatePreferences(.buddy(choice))
           }
@@ -159,114 +160,6 @@ struct SettingsSaveError: View {
         Image(systemName: "exclamationmark.circle")
       }
       .foregroundStyle(.destructive)
-    }
-  }
-}
-
-/// Changing the buddy, its name and its glasses: earned pairs can be picked, and the rest say how
-/// they're earned.
-private struct SettingsBuddyEditor: View {
-  @Environment(\.dismiss) private var dismiss
-  @State private var choice: BuddyChoice
-  @State private var name: String
-
-  let availableGlasses: [BuddyGlasses]
-  let save: (BuddyChoice) -> Void
-
-  init(preferences: LearningPreferences, save: @escaping (BuddyChoice) -> Void) {
-    _choice = State(initialValue: preferences.buddy)
-    _name = State(initialValue: preferences.buddy.name ?? "")
-    availableGlasses = preferences.availableGlasses
-    self.save = save
-  }
-
-  var body: some View {
-    NavigationStack {
-      Form {
-        Picker(selection: $choice.kind) {
-          ForEach(BuddyKind.allCases, id: \.self) { kind in
-            VStack(alignment: .leading) {
-              Text(kind.name)
-              kind.tagline
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            }
-            .tag(kind)
-          }
-        } label: {
-          Text("Buddy", tableName: "Settings", comment: "Picker of the four buddies")
-        }
-        .pickerStyle(.inline)
-
-        Section {
-          TextField(text: $name, prompt: Text(choice.kind.name)) {
-            Text("Name", tableName: "Settings", comment: "Field for the buddy's own name")
-          }
-          .textInputAutocapitalization(.words)
-        } header: {
-          Text("Name", tableName: "Settings", comment: "Field for the buddy's own name")
-        }
-
-        Section {
-          ForEach(BuddyGlasses.allCases, id: \.self) { glasses in
-            let isEarned = availableGlasses.contains(glasses)
-
-            Button {
-              choice.glasses = glasses
-            } label: {
-              HStack {
-                VStack(alignment: .leading) {
-                  glasses.name
-                    .foregroundStyle(isEarned ? .primary : .secondary)
-
-                  if !isEarned {
-                    glasses.howToEarn
-                      .font(.subheadline)
-                      .foregroundStyle(.secondary)
-                  }
-                }
-
-                Spacer()
-
-                if choice.glasses == glasses {
-                  Image(systemName: "checkmark")
-                    .fontWeight(.semibold)
-                    .accessibilityHidden(true)
-                } else if !isEarned {
-                  Image(systemName: "lock")
-                    .foregroundStyle(.secondary)
-                    .accessibilityHidden(true)
-                }
-              }
-            }
-            .disabled(!isEarned)
-            .accessibilityAddTraits(choice.glasses == glasses ? .isSelected : [])
-          }
-        } header: {
-          Text("Glasses", tableName: "Settings", comment: "Picker of the buddy's glasses")
-        }
-      }
-      .navigationTitle(
-        Text("Your buddy", tableName: "Settings", comment: "Title of the buddy editor")
-      )
-      .toolbarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .cancellationAction) {
-          Button(role: .cancel) {
-            dismiss()
-          }
-        }
-
-        ToolbarItem(placement: .confirmationAction) {
-          Button(role: .confirm) {
-            let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-            save(
-              BuddyChoice(
-                kind: choice.kind, name: trimmed.isEmpty ? nil : trimmed, glasses: choice.glasses))
-            dismiss()
-          }
-        }
-      }
     }
   }
 }

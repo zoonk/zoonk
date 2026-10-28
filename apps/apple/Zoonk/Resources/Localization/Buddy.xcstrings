@@ -1,41 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ · ~%lld min" : {
-      "comment" : "How many missions today and about how long they take; the first argument is the count",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · ca. %2$lld Min."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ · ~%2$lld min"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · ~%2$lld min"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · ~%2$lld min"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · ~%2$lld min"
-          }
-        }
-      }
-    },
     "%@ today" : {
       "comment" : "Title of the buddy's day; the argument is its name",
       "localizations" : {
@@ -90,6 +55,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ tirou uma soneca. Aprender qualquer coisa já ajuda a acordar."
+          }
+        }
+      }
+    },
+    "%@ · ~%lld min" : {
+      "comment" : "How many missions today and about how long they take; the first argument is the count",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · ca. %2$lld Min."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · ~%2$lld min"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · ~%2$lld min"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · ~%2$lld min"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · ~%2$lld min"
           }
         }
       }
@@ -614,7 +614,7 @@
       }
     },
     "Choose your buddy" : {
-      "comment" : "Opens choosing a buddy and its name\nTitle of choosing a buddy",
+      "comment" : "Opens choosing a buddy and its name",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1692,35 +1692,6 @@
         }
       }
     },
-    "Pass the bac" : {
-      "comment" : "An example goal: France's school-leaving exam",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das bac bestehen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aprobar el bac"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réussir le bac"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Passar no bac"
-          }
-        }
-      }
-    },
     "Pass the ENEM" : {
       "comment" : "An example goal: Brazil's national exam",
       "localizations" : {
@@ -1804,6 +1775,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Passar no SAT"
+          }
+        }
+      }
+    },
+    "Pass the bac" : {
+      "comment" : "An example goal: France's school-leaving exam",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das bac bestehen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprobar el bac"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réussir le bac"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passar no bac"
           }
         }
       }
@@ -2621,7 +2621,7 @@
       }
     },
     "Your buddy" : {
-      "comment" : "Title of the Buddy tab",
+      "comment" : "Title of the Buddy tab\nTitle of the buddy editor",
       "localizations" : {
         "de" : {
           "stringUnit" : {

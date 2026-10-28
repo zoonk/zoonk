@@ -81,6 +81,11 @@ extension Components.Schemas.GlassesProgress.GlassesPayload {
 }
 
 extension BuddyStatus {
+  /// The buddy as the editor and Preferences know it.
+  var choice: BuddyChoice {
+    BuddyChoice(kind: buddy.kind, name: buddy.name, glasses: buddy.glasses)
+  }
+
   /// "Grows to Young at Orange Belt": the next stage and the belt that brings it.
   var growthLine: Text {
     guard let next = nextStage, let belt = ProgressBelt(rawValue: next.belt) else {

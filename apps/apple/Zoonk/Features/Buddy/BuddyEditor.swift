@@ -1,27 +1,32 @@
 import SwiftUI
 
-/// Choosing a buddy (Zu, Noodle, Beep or Otto) and a name. An empty name keeps the buddy's own
-/// name in each language. It saves on Done; the buddy changes at once.
+/// Choosing the buddy (Zu, Noodle, Beep or Otto), its name and the glasses it wears, as main's
+/// "Your buddy": earned pairs can be picked and the rest say how they're earned. An empty name
+/// keeps the buddy's own name in each language. The Buddy tab and Preferences share it; each saves
+/// the choice its own way.
 struct BuddyEditor: View {
   @Environment(\.dismiss) private var dismiss
-  @Environment(BuddyStore.self) private var store
 
-  let status: BuddyStatus
+  let availableGlasses: [BuddyGlasses]
+  let save: (BuddyChoice) -> Void
 
-  @State private var kind: BuddyKind
+  @State private var choice: BuddyChoice
   @State private var name: String
 
-  init(status: BuddyStatus) {
-    self.status = status
-    _kind = State(initialValue: status.buddy.kind)
-    _name = State(initialValue: status.buddy.name ?? "")
+  init(
+    choice: BuddyChoice, availableGlasses: [BuddyGlasses], save: @escaping (BuddyChoice) -> Void
+  ) {
+    self.availableGlasses = availableGlasses
+    self.save = save
+    _choice = State(initialValue: choice)
+    _name = State(initialValue: choice.name ?? "")
   }
 
   var body: some View {
     NavigationStack {
       Form {
         Section {
-          Picker(selection: $kind) {
+          Picker(selection: $choice.kind) {
             ForEach(buddyKinds, id: \.self) { kind in
               Label {
                 VStack(alignment: .leading) {
@@ -31,7 +36,7 @@ struct BuddyEditor: View {
                     .foregroundStyle(.secondary)
                 }
               } icon: {
-                BuddyFace(kind: kind)
+                BuddyFace(kind: kind, glasses: choice.glasses)
               }
               .tag(kind)
             }
@@ -43,7 +48,7 @@ struct BuddyEditor: View {
         }
 
         Section {
-          TextField(text: $name, prompt: Text(buddyName(kind: kind, name: nil))) {
+          TextField(text: $name, prompt: Text(buddyName(kind: choice.kind, name: nil))) {
             Text("Name", tableName: "Buddy", comment: "The buddy's custom name")
           }
           .textInputAutocapitalization(.words)
@@ -58,16 +63,16 @@ struct BuddyEditor: View {
           Text("Name", tableName: "Buddy", comment: "The buddy's custom name")
         }
 
-        if store.saveFailed {
-          Text(
-            "We couldn't save your buddy. Try again.", tableName: "Buddy",
-            comment: "Saving the buddy failed"
-          )
-          .foregroundStyle(.destructive)
+        Section {
+          ForEach(BuddyGlasses.allCases, id: \.self) { glasses in
+            glassesRow(glasses)
+          }
+        } header: {
+          Text("Glasses", tableName: "Buddy", comment: "Opens the buddy's glasses")
         }
       }
       .navigationTitle(
-        Text("Choose your buddy", tableName: "Buddy", comment: "Title of choosing a buddy")
+        Text("Your buddy", tableName: "Buddy", comment: "Title of the buddy editor")
       )
       .navigationBarTitleDisplayMode(.inline)
       .toolbar {
@@ -80,14 +85,51 @@ struct BuddyEditor: View {
         ToolbarItem(placement: .confirmationAction) {
           Button(role: .confirm) {
             let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-            let choice = BuddyChoice(
-              kind: kind, name: trimmed.isEmpty ? nil : trimmed, glasses: status.buddy.glasses)
+            save(
+              BuddyChoice(
+                kind: choice.kind, name: trimmed.isEmpty ? nil : trimmed, glasses: choice.glasses))
             dismiss()
-            Task { await store.save(choice) }
           }
         }
       }
     }
+  }
+
+  private func glassesRow(_ glasses: BuddyGlasses) -> some View {
+    let isEarned = availableGlasses.contains(glasses)
+    let isWorn = choice.glasses == glasses
+
+    return Button {
+      choice.glasses = glasses
+    } label: {
+      HStack {
+        VStack(alignment: .leading) {
+          glasses.name
+            .foregroundStyle(isEarned ? .primary : .secondary)
+
+          if !isEarned {
+            glasses.howToEarn
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
+          }
+        }
+
+        Spacer()
+
+        if isWorn {
+          Image(systemName: "checkmark")
+            .fontWeight(.semibold)
+            .accessibilityHidden(true)
+        } else if !isEarned {
+          Image(systemName: "lock")
+            .foregroundStyle(.secondary)
+            .accessibilityHidden(true)
+        }
+      }
+    }
+    .foregroundStyle(.primary)
+    .disabled(!isEarned)
+    .accessibilityAddTraits(isWorn ? .isSelected : [])
   }
 }
 
