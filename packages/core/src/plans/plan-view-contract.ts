@@ -5,6 +5,7 @@ import { type ExamDocument } from "../exams/exam-document";
 import { type LanguageActivityType } from "../language/activities/language-activities";
 import { type OwnLevel } from "../learner/placement/placement-steps";
 import { type PlanStatus } from "../preparation/plan-status";
+import { type WeeklyStudyTime } from "../progress/weekly-study-time-contract";
 import { type MockFundingView } from "./mock-funding-contract";
 import { type PlanNumbers } from "./numbers-contract";
 import { type LearnerPlanOperation, type PlanOperation } from "./plan-contract";
@@ -476,6 +477,8 @@ export type PlanView = {
   /** "You'll use": the tools the plan's chapters use, essential first. Empty when none do. */
   tools: PlanToolView[];
   week: { days: PlanDayView[]; endDate: string; startDate: string };
+  /** This week's study time against the learner's shared weekly budget: Today's week time. */
+  weekTime: WeeklyStudyTime;
   /**
    * When the exam's written tests are practiced, which the learner chooses. Null for plans without
    * written tests and plans for a test days away.

@@ -10,7 +10,6 @@ import { type OwnLevelChange } from "@zoonk/core/plans/own-level-contract";
 import { TOOL_CHOICES, TOOL_SYSTEMS } from "@zoonk/core/plans/tools-contract";
 import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { writtenPracticeSchema } from "@zoonk/core/plans/written-practice-contract";
-import { type WeeklyStudyTime } from "@zoonk/core/progress/weekly-study-time-contract";
 import { GoalKind } from "@zoonk/db";
 import { z } from "zod";
 import { noSittingSchema, noticeDaySchema } from "./notice-dates";
@@ -217,7 +216,7 @@ export const planResponseSchema = z
           "When the exam's written tests (an essay, a discursive test) are practiced, which the learner chooses; the total practice stays the same. Null for plans without written tests and for a test days away",
       }),
   })
-  .meta({ id: "Plan" }) satisfies z.ZodType<PlanView & { weekTime: WeeklyStudyTime }>;
+  .meta({ id: "Plan" }) satisfies z.ZodType<PlanView>;
 
 export const ownLevelChangeSchema = z
   .object({

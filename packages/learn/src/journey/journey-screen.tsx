@@ -1,7 +1,6 @@
 "use client";
 
 import { type PlanView } from "@zoonk/core/plans/view-contract";
-import { type WeeklyStudyTime } from "@zoonk/core/progress/weekly-study-time-contract";
 import { type StudyNextView } from "@zoonk/core/view-models/map/contract";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { GenerationTimelineDescription } from "@zoonk/ui/components/generation-timeline";
@@ -41,7 +40,6 @@ import { NextOnPath } from "./next-on-path";
 import { PlanHeader } from "./plan-header";
 import { PlanRoadmap } from "./plan-roadmap";
 import { MoreSection, PathSection, PhasesSheet } from "./plan-sections";
-import { WeeklyStudyTimeProvider } from "./weekly-study-time-context";
 
 export type { PlanActions, PlanChangeOutcome, PlanTutor } from "../plan/plan-context";
 export type { JourneyStanding } from "./journey-hero";
@@ -330,7 +328,6 @@ export function JourneyScreen({
   standing,
   syllabus = null,
   tutor,
-  weekTime,
 }: {
   actions: PlanActions;
   /** A language whose script isn't Latin: its alphabet lesson, first on the path. */
@@ -358,8 +355,6 @@ export function JourneyScreen({
   syllabus?: SyllabusView | null;
   /** The buddy's conversation, for questions about the plan and changes in the learner's words. */
   tutor?: PlanTutor;
-  /** Actual minutes studied and the shared weekly time target, already calculated by core. */
-  weekTime: WeeklyStudyTime;
 }) {
   usePoll({
     active: isPhaseBeingWritten(plan),
@@ -369,22 +364,20 @@ export function JourneyScreen({
   });
 
   return (
-    <WeeklyStudyTimeProvider value={weekTime}>
-      <PlanScreenProvider
-        value={{ actions, focusTestHref: links.focusTest, goal, openFocus, plan, shareHref, tutor }}
-      >
-        <PlanSheetHosts openFullCourse={openFullCourse}>
-          <JourneyBody
-            alphabet={alphabet}
-            goalStatus={goalStatus}
-            links={links}
-            next={next}
-            openAdjust={openAdjust}
-            standing={standing}
-            syllabus={syllabus}
-          />
-        </PlanSheetHosts>
-      </PlanScreenProvider>
-    </WeeklyStudyTimeProvider>
+    <PlanScreenProvider
+      value={{ actions, focusTestHref: links.focusTest, goal, openFocus, plan, shareHref, tutor }}
+    >
+      <PlanSheetHosts openFullCourse={openFullCourse}>
+        <JourneyBody
+          alphabet={alphabet}
+          goalStatus={goalStatus}
+          links={links}
+          next={next}
+          openAdjust={openAdjust}
+          standing={standing}
+          syllabus={syllabus}
+        />
+      </PlanSheetHosts>
+    </PlanScreenProvider>
   );
 }

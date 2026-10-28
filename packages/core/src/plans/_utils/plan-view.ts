@@ -9,13 +9,14 @@ import { getExamDocument } from "../../exams/exam-document";
 import { getOwnLevel } from "../../learner/placement/placement-contract";
 import { listTaughtStandInSkills } from "../../lookahead/plan-outline-needs";
 import { getMinutesPerItem, getPlanStatus } from "../../preparation/plan-status";
+import { loadStudyWeek } from "../../progress/_utils/load-study-week";
 import { getExamPrepAccess, getFreeWeekEnd } from "../../sessions/_utils/exam-access";
 import { loadTodayLearnBlocks } from "../../view-models/_utils/today-lesson-order";
 import { getNoticeWaitState } from "../notice-wait";
 import { type PlanView } from "../plan-view-contract";
 import { getSkillArea } from "../planner/graph-areas";
-import { addDays, getPlanCalendar, getStartOfWeek, toIsoDate } from "../planner/plan-calendar";
-import { DAYS_PER_WEEK, type PlanGraph, type PlanSettings } from "../planner/plan-state";
+import { getPlanCalendar, toIsoDate } from "../planner/plan-calendar";
+import { type PlanGraph, type PlanSettings } from "../planner/plan-state";
 import { foldChangeAreas } from "./fold-part-areas";
 import { loadPlanReadProjection } from "./load-plan-read";
 import { loadGraphPartAreas } from "./part-areas";
@@ -96,22 +97,6 @@ async function loadChapterTitles(chapterIds: string[]): Promise<Map<string, stri
   return new Map(chapters.map((chapter) => [chapter.id, chapter.title]));
 }
 
-/** The days this week the learner studied, so a day left empty by re-planning reads honestly. */
-async function loadStudiedDates({ today, userId }: { today: Date; userId: string }) {
-  const start = getStartOfWeek(today);
-
-  const days = await prisma.dailyProgress.findMany({
-    select: { date: true },
-    where: {
-      date: { gte: start, lt: addDays(start, DAYS_PER_WEEK) },
-      timeSpentSeconds: { gt: 0 },
-      userId,
-    },
-  });
-
-  return new Set(days.map((day) => toIsoDate(day.date)));
-}
-
 /** Where the plan stands (see `getPlanStatus`), from its items and the plan's estimate. */
 function readPlanStatus({
   phaseChallengesRequired,
@@ -190,7 +175,7 @@ export async function buildPlanView({
     chapterTitles,
     course,
     tools,
-    studiedDates,
+    studyWeek,
     dateKind,
     noticeDates,
     catchUp,
@@ -210,7 +195,7 @@ export async function buildPlanView({
     loadChapterTitles(chapterIds),
     loadPlanCourse({ goal, items }),
     loadPlanTools({ currentPhase, goal, items }),
-    loadStudiedDates({ today: context.today, userId: goal.userId }),
+    loadStudyWeek({ localDate: context.today, userId: goal.userId }),
     loadGoalDateKind(goal),
     loadNoticeDates({
       goal,
@@ -232,6 +217,11 @@ export async function buildPlanView({
     courseTitle: course?.title ?? null,
     skills: state.graph.skills,
   });
+
+  // The days studied this week, so a day left empty by re-planning reads honestly.
+  const studiedDates = new Set(
+    studyWeek.days.filter((day) => day.studied).map((day) => toIsoDate(day.date)),
+  );
 
   const calendar = getPlanCalendar({ dailyMinutes: goal.dailyMinutes, settings: state.settings });
   const fullCourse = goal.kind === "exam" && state.settings.fullCourse;
@@ -307,6 +297,7 @@ export async function buildPlanView({
     },
     tools: toPlanToolViews({ settings: state.settings, tools }),
     ...buildPlanTimingView({ access, calendar, context, skillAreas, studiedDates }),
+    weekTime: studyWeek.time,
     writtenPractice: getWrittenPracticeView({ goal, graph: state.graph, settings: state.settings }),
   };
 }

@@ -475,7 +475,6 @@
     "./progress/get-current-user": "./src/progress/get-current-user-progress.ts",
     "./progress/get-energy-data": "./src/progress/get-energy-data.ts",
     "./progress/get-energy-level": "./src/progress/get-energy-level.ts",
-    "./progress/get-goal-week-time": "./src/progress/get-goal-week-time.ts",
     "./progress/get-learning-activity": "./src/progress/get-learning-activity.ts",
     "./progress/get-score-history": "./src/progress/get-score-history.ts",
     "./progress/get-score-patterns": "./src/progress/get-score-patterns.ts",

@@ -16,7 +16,7 @@ describe("supporting plan render read budgets", () => {
     };
 
     const counts = await countDatabaseStatements<unknown>(readers[name]);
-    const budgets = { "course start": 10, link: 5, plan: 14 };
+    const budgets = { "course start": 10, link: 5, plan: 17 };
     assertReadBudget(counts, budgets[name]);
 
     expect(counts.result).toMatchObject(

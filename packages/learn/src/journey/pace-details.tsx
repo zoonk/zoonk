@@ -12,7 +12,6 @@ import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "../plan/plan-context";
 import { usePaceFixText } from "../plan/plan-notice";
 import { type PlanStatus, usePlanStatusText } from "../plan/plan-status-label";
-import { useWeeklyStudyTime } from "./weekly-study-time-context";
 
 type PlanDay = PlanView["week"]["days"][number];
 
@@ -69,7 +68,7 @@ function useDayStatus() {
 function useWeekTime(): string | null {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
-  const { studiedMinutes, targetMinutes } = useWeeklyStudyTime();
+  const { studiedMinutes, targetMinutes } = usePlanScreen().plan.weekTime;
 
   if (targetMinutes === 0) {
     return null;

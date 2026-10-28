@@ -133,7 +133,7 @@ async function JourneyContent() {
     );
   }
 
-  const { goal, plan, weekTime } = result.view;
+  const { goal, plan } = result.view;
 
   const goalStatus = getGoalStatus(activeGoal);
 
@@ -191,7 +191,6 @@ async function JourneyContent() {
         locale: getSupportedLocaleFromLanguage(locale),
       })}
       syllabus={syllabus.status === "ready" ? syllabus.syllabus : null}
-      weekTime={weekTime}
     />
   );
 }
