@@ -13,6 +13,7 @@ struct SearchScreen: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(PlanStore.self) private var plans
   @Environment(SessionStore.self) private var session
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @State private var query = ""
   @State private var isFeedbackPresented = false
 
@@ -73,9 +74,12 @@ struct SearchScreen: View {
       }
     }
     .navigationTitle(Text(AppTab.search.title))
-    // Always under the title: on a phone the tab bar doesn't turn the search tab into a field.
+    // On a phone the tab bar doesn't turn the search tab into a field, so it stays under the
+    // title; wider windows keep the system's place in the bar, which leaves the tabs reachable.
     .searchable(
-      text: $query, placement: .navigationBarDrawer(displayMode: .always),
+      text: $query,
+      placement: horizontalSizeClass == .compact
+        ? .navigationBarDrawer(displayMode: .always) : .automatic,
       prompt: Text(
         "Search or ask…", tableName: "Search",
         comment: "Placeholder of the search field that also asks the buddy or starts a goal")
