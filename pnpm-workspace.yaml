@@ -63,7 +63,7 @@ catalog:
   undici: 8.12.2
   vite: 8.3.3
   vitest: 5.0.3
-  zod: 4.6.5
+  zod: 4.6.7
 
 minimumReleaseAge: 0
 
@@ -80,5 +80,7 @@ overrides:
   mysql2@<=3.23.0: ^3.23.1
   # Audit remediation (Workflow SDK): nanoid 5.1.16 covers integer overflow and negative-size loops.
   nanoid@>=4.0.0 <5.1.16: ^5.1.16
+  # Audit remediation (Workflow SDK pins zod ~4.5.4, up to its latest release): 4.6.6 stops oversized constrained collections from exhausting memory.
+  zod@>=4.5.0 <4.6.6: ^4.6.7
   # Audit remediation (@tailwindcss/typography pins 6.0.10): 7.1.6 parses flat selectors in linear time; 7.0's only break is safe insertion during iteration.
   postcss-selector-parser@<7.1.6: ^7.1.6
