@@ -1,10 +1,6 @@
 import SwiftUI
 
-/// A milestone's full-screen moment, shown once over the result that earned it: the buddy on its
-/// stage, a title and one line on what earned it, and one button; new glasses can go on the buddy
-/// right away, or not now. It marks itself as shown when it appears, so it never repeats; the buddy
-/// acts it out once, and only changes its face with Reduce Motion. On a spread the buddy has the
-/// leading page and the words and buttons the trailing one.
+/// Marks itself as shown when it appears, so it never repeats.
 struct MilestoneCeremony: View {
   @Environment(BuddyStore.self) private var buddyStore
   @Environment(LearnerSummaryStore.self) private var learner
@@ -103,7 +99,6 @@ struct MilestoneCeremony: View {
     learner.buddyDisplayName
   }
 
-  /// The glasses a glasses milestone earned, which the learner can put on the buddy right away.
   private var newGlasses: BuddyGlasses? {
     milestone.kind == "glasses" ? BuddyGlasses(rawValue: milestone.key) : nil
   }
@@ -188,11 +183,8 @@ struct MilestoneCeremony: View {
   }
 }
 
-/// The ceremony's picture (main's `CeremonyArt`): the buddy large on its stage, a disc in the new
-/// belt's color (soft, and the quiet fill for a stage, glasses, or a white or black belt that would
-/// vanish), wearing what changed. For a belt or a stage, both grown from Brain Power, violet sparks
-/// burst from behind it and it cheers with its whole body a beat in; new glasses come from other
-/// achievements, so it shows them off, proud, without a burst. Decorative: the title says it.
+/// Sparks burst only for a belt or a stage, both grown from Brain Power; new glasses come from other
+/// achievements, so the buddy shows them off without a burst.
 struct MilestoneStage: View {
   @Environment(\.colorScheme) private var colorScheme
   @Environment(\.horizontalSizeClass) private var sizeClass
@@ -200,7 +192,6 @@ struct MilestoneStage: View {
   let milestone: Milestone
   let buddy: BuddyLook
 
-  /// Sparks fly from behind the buddy past the disc's edge, so they show around it.
   private static let sparks: [Burst.Spark] = [
     .init(size: 13, x: -128, y: -50), .init(size: 10, x: -68, y: -118),
     .init(size: 14, x: 18, y: -136), .init(size: 10, x: 98, y: -96),
@@ -214,7 +205,6 @@ struct MilestoneStage: View {
 
   private var isGlasses: Bool { milestone.kind == "glasses" }
 
-  /// The buddy wearing what changed: the new belt, the stage it grew to, or the new glasses.
   private var look: BuddyLook {
     var look = buddy
 
@@ -260,8 +250,7 @@ struct MilestoneStage: View {
 }
 
 extension View {
-  /// Opens a result's milestone ceremony full screen, once per milestone wherever it shows (a
-  /// block's moment, the summary, a call's or a round's result), and marks it shown.
+  /// Opens once per milestone wherever it shows, and marks it shown.
   func milestoneCeremony(_ milestone: Milestone?) -> some View {
     modifier(MilestoneCeremonyPresenter(milestone: milestone))
   }

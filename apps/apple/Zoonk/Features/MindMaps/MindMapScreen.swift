@@ -1,8 +1,6 @@
 import SwiftUI
 import UIKit
 
-/// A chapter's mind map full screen: its picture to pinch, double-tap and drag (the system's zoom),
-/// or its outline in words when it has no picture. Closing returns to where it opened.
 struct MindMapScreen: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(LearnerSummaryStore.self) private var learner
@@ -98,7 +96,6 @@ struct MindMapScreen: View {
   }
 }
 
-/// The map in words: its central idea, then each branch with its points.
 private struct MindMapOutlineView: View {
   let outline: ChapterMindMap.Outline
 
@@ -137,7 +134,6 @@ private struct MindMapOutlineView: View {
   }
 }
 
-/// A scroll view that tells when it lays out, so its picture fits the space it finally has.
 final class FittingScrollView: UIScrollView {
   var onLayout: ((UIScrollView) -> Void)?
 
@@ -147,8 +143,6 @@ final class FittingScrollView: UIScrollView {
   }
 }
 
-/// A picture the system zooms: pinch, double-tap and drag in a `UIScrollView`, fitted to the screen
-/// at first. VoiceOver reads the map's title.
 private struct ZoomableRemoteImage: View {
   @State private var image: UIImage?
   @State private var failed = false
@@ -249,14 +243,12 @@ private struct ZoomableImage: UIViewRepresentable {
       center(in: scrollView)
     }
 
-    /// Fits a new picture, whatever the learner's zoom on the last one.
     func refit(in scrollView: UIScrollView) {
       fittedSize = .zero
       fit(in: scrollView)
     }
 
-    /// Fits the picture to the space the first time and whenever the space changes (rotation,
-    /// unfolding, a resized window), keeping the learner's zoom otherwise.
+    /// Keeps the learner's zoom unless the space changed.
     func fit(in scrollView: UIScrollView) {
       guard let imageView, let image = imageView.image, scrollView.bounds.size != fittedSize,
         scrollView.bounds.width > 0, image.size.width > 0

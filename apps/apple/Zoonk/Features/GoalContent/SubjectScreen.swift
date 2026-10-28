@@ -1,8 +1,5 @@
 import SwiftUI
 
-/// A subject (an exam's) or module (another goal's) of the plan, read from the Plan's syllabus:
-/// how far the learner is, "Continue" into its next chapter, and its chapters in order with the
-/// next one marked. A subject outside the plan says so.
 struct SubjectScreen: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(PlanStore.self) private var plans
@@ -72,8 +69,6 @@ private struct SubjectContent: View {
   let subject: SyllabusSubject
 
   var body: some View {
-    // Where there's room, the subject and its chapters lead, and how far the learner is in it and
-    // its topics follow, as main's aside.
     PaneSplit(primaryShare: 0.55) {
       List {
         header
@@ -137,7 +132,6 @@ private struct SubjectContent: View {
     }
   }
 
-  /// Where the learner stands in the subject.
   private var numbers: some View {
     Section {
       if isExam, let preparation = subject.preparation {
@@ -290,8 +284,6 @@ private struct SubjectChapterRow: View {
   }
 }
 
-/// The notice's topics, as its own outline (grouped by its headings), each with where the learner
-/// stands and opening to the chapters that teach it.
 private struct SubjectTopicsSection: View {
   let goal: LearnerGoal
   let subject: SyllabusSubject

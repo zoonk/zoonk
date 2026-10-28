@@ -1,10 +1,5 @@
 import SwiftUI
 
-/// What a learner's work did to their day, the same on every result that earns Brain Power or
-/// Energy (a block, a call, a pronunciation round): the missions it completed with the day's bonus
-/// when it paid it, the belt level it reached and the tenth of Energy it reached, and the milestone
-/// whose ceremony opens the result (main's `DayMoment`). Read from any completion that carries
-/// `missionMoment`, `reached` and `ceremony`.
 struct DayResult: Decodable, Equatable, Sendable {
   struct MissionMoment: Decodable, Equatable, Sendable {
     struct FullMeal: Decodable, Equatable, Sendable {
@@ -38,7 +33,6 @@ struct DayResult: Decodable, Equatable, Sendable {
     self.reached = reached
   }
 
-  /// A completion read through the generated client (a call, a round), as its day moment.
   init?(_ completion: some Encodable) {
     guard let result = try? StudyJSON.recode(completion, as: DayResult.self) else {
       return nil
@@ -52,15 +46,11 @@ struct DayResult: Decodable, Equatable, Sendable {
   }
 }
 
-/// The day's part of a result, as sections under the result's own: the missions it completed (all
-/// the day's, those just done marked), the bonus once every mission is done, then a new belt level
-/// and a new tenth of Energy. Nothing when it did none of that.
 struct DayMomentSections: View {
   @Environment(LearnerSummaryStore.self) private var learner
 
   let result: DayResult
-  /// Whether the buddy acts out the missions now; a copy shown before the result's own screen
-  /// draws it still in the pose it starts from, so the act plays once.
+  /// False for a copy shown before the result's own screen, so the act plays once.
   var celebrates = true
 
   private var buddy: String {
@@ -142,7 +132,6 @@ struct DayMomentSections: View {
     }
   }
 
-  /// What the Energy means: the buddy glowing from 80%, as bright as it gets at 100%.
   private func energyLine(_ energy: Int) -> Text {
     if energy >= 100 {
       return Text(
@@ -161,10 +150,6 @@ struct DayMomentSections: View {
   }
 }
 
-/// The learner's buddy, glad about the missions (main's `MomentBuddy`): beside a mission done its
-/// face smiles a beat in, as the mission's check lands; when the day's missions are all done the
-/// whole buddy cheers two beats in, as the bonus lands, and violet sparks fly a beat later. It acts
-/// with its parts, once; drawn still where the moment doesn't play.
 private struct MissionsBuddy: View {
   let look: BuddyLook
   let isPayoff: Bool

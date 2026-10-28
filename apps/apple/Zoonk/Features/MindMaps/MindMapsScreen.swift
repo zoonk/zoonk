@@ -1,11 +1,8 @@
 import SwiftUI
 
-/// The goal's mind maps: one tile per chapter the learner finished, its map's picture opening full
-/// screen, or the tap that makes it. Without one yet, the chapter to finish next.
 struct MindMapsScreen: View {
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(LearnerSummaryStore.self) private var learner
-  /// Tiles grow with the text, so large text gets fewer, wider columns.
   @ScaledMetric(relativeTo: .body) private var tileWidth = 160.0
   @Environment(MindMapsStore.self) private var store
   @State private var gridSpace = PaneSpace(width: 0)
@@ -23,9 +20,6 @@ struct MindMapsScreen: View {
     }
   }
 
-  /// One tile a row at accessibility text sizes, where a scaled tile is wider than a phone; as many
-  /// as fit otherwise, the same number on each side of iPhone Duo's fold while it's partially
-  /// folded.
   private var columns: [GridItem] {
     if dynamicTypeSize.isAccessibilitySize {
       return [GridItem(.flexible())]
@@ -44,7 +38,6 @@ struct MindMapsScreen: View {
     case .loaded(let maps):
       ScrollView {
         VStack(alignment: .leading, spacing: 12) {
-          // Side by side, or one over the other at accessibility text sizes.
           (dynamicTypeSize.isAccessibilitySize
             ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))
             : AnyLayout(HStackLayout(alignment: .firstTextBaseline))) {
@@ -115,8 +108,6 @@ struct MindMapsScreen: View {
   }
 }
 
-/// A chapter's map as a tile: its picture opening full screen once drawn, else "Create", the
-/// drawing in progress, or "Try again".
 private struct MindMapTile: View {
   @Environment(AppRouter.self) private var router
   @Environment(MindMapsStore.self) private var store
@@ -131,7 +122,6 @@ private struct MindMapTile: View {
       Button {
         router.open(.mindMap(chapterId: map.chapterId))
       } label: {
-        // Every tile keeps the picture's shape, drawn or not, so the grid's rows line up.
         Color(.secondarySystemBackground)
           .aspectRatio(4 / 3, contentMode: .fit)
           .overlay {
@@ -188,7 +178,7 @@ private struct MindMapTile: View {
         .controlSize(.small)
       }
     }
-    // A map already being drawn when the page opened is followed (read only) until it's done.
+    // Read only: a map already being drawn when the page opened is followed until it's done.
     .task(id: map.status) {
       if map.status == .generating {
         await store.follow(goalId: goalId, chapterId: map.chapterId)

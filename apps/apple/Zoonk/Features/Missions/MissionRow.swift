@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// A mission of the day: what it asks, how far it is, and what a tap on it opens.
 struct StudyMission: Decodable, Equatable, Sendable {
   enum Kind: String, Decodable, Sendable {
     case askBuddy
@@ -27,8 +26,7 @@ struct StudyMission: Decodable, Equatable, Sendable {
     let title: String?
   }
 
-  /// What a tap on the mission opens: a block of the day (by id, or by its place on a day not
-  /// opened yet) or a place of its own.
+  /// A block by id, or by its place on a day not opened yet.
   struct Opens: Decodable, Equatable, Sendable {
     struct Ref: Decodable, Equatable, Sendable {
       let position: Int
@@ -53,7 +51,6 @@ struct StudyMission: Decodable, Equatable, Sendable {
 
   var isDone: Bool { status == "done" }
 
-  /// Whether the mission opens this block of the day.
   func opens(_ block: StudyBlock) -> Bool {
     guard let opens, opens.kind == "block" else {
       return false
@@ -68,7 +65,6 @@ struct StudyMission: Decodable, Equatable, Sendable {
 }
 
 extension StudyMission {
-  /// A mission another feature read through the generated client, such as the buddy's day.
   init?(_ mission: Components.Schemas.StudyMission) {
     guard let mission = try? StudyJSON.recode(mission, as: StudyMission.self) else {
       return nil
@@ -79,7 +75,6 @@ extension StudyMission {
 }
 
 extension StudyMission {
-  /// What the mission asks, by name.
   func name(buddy: String) -> String {
     switch kind {
     case .review:
@@ -123,7 +118,6 @@ extension StudyMission {
     }
   }
 
-  /// What the mission still asks, in words: what it waits for, or where it's done.
   var step: String? {
     switch waitReason {
     case .lessons:
@@ -157,11 +151,6 @@ extension StudyMission {
   }
 }
 
-/// One of the day's missions, the same wherever missions are listed (Today, the buddy's day), as
-/// main's row: the mark of the work it asks for (the buddy's face for a question to it), what it
-/// asks, then how far it is, what it still asks or waits for and about how long. One that opens a
-/// block of the day wears the day's mission target, and one still to do that opens somewhere is a
-/// button with a chevron calling `open`; a done or waiting one is one quiet row.
 struct MissionRow: View {
   @Environment(LearnerSummaryStore.self) private var learner
 
@@ -234,7 +223,6 @@ struct MissionRow: View {
     }
   }
 
-  /// "1/3 · From your mistakes notebook · ~5 min": how far, what it still asks, and how long.
   private var detail: [String] {
     var parts: [String] = []
 
@@ -248,7 +236,6 @@ struct MissionRow: View {
 
     if let minutes = mission.minutes, minutes > 0 {
       let duration = studyDuration(minutes: max(1, Int(minutes.rounded())))
-      // Work outside the day's blocks takes about this long; a block's minutes are its own.
       parts.append(
         mission.kind.isEstimated
           ? String(
@@ -262,7 +249,7 @@ struct MissionRow: View {
 }
 
 extension StudyMission.Kind {
-  /// The work the mission asks for, as Today's queue marks it (main's `MISSION_MARKS`).
+  /// Mirrors main's `MISSION_MARKS`.
   var learnKind: LearnKind {
     switch self {
     case .call: .conversation
@@ -276,7 +263,7 @@ extension StudyMission.Kind {
     }
   }
 
-  /// Done outside the day's blocks, so its minutes are an estimate (main's `ESTIMATED_KINDS`).
+  /// Mirrors main's `ESTIMATED_KINDS`: done outside the day's blocks, so its minutes are an estimate.
   var isEstimated: Bool {
     switch self {
     case .askBuddy, .call, .fixMistake, .pattern, .pronunciation: true

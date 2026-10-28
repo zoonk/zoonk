@@ -1,9 +1,5 @@
 import SwiftUI
 
-/// A chapter of the learner's plan: its subject and number, how much it holds and how far the
-/// learner is, "Continue" into the next lesson, its lessons in order (the next one marked), a test
-/// that skips a chapter they may already know, its practice when it has mistakes, and for
-/// reference its mind map, its skills and the summaries its lessons left.
 struct ChapterScreen: View {
   @Environment(GoalContentStore.self) private var store
   @Environment(LearnerSummaryStore.self) private var learner
@@ -73,8 +69,6 @@ private struct ChapterContent: View {
   let chapter: GoalChapter
 
   var body: some View {
-    // Where there's room, the chapter and its lessons lead and main's aside follows: its practice
-    // and what it leaves for reference.
     PaneSplit(primaryShare: 0.55) {
       List {
         header
@@ -239,7 +233,6 @@ private struct ChapterContent: View {
       "Chapter \(chapter.chapter.position)", tableName: "Plan", comment: "A chapter's number")
   }
 
-  /// "11 lessons · 40 min · 33% done".
   private func facts(done: Int) -> Text {
     let lessons = chapter.lessons
     let minutes = lessons.reduce(0) { $0 + $1.minutes }
@@ -285,7 +278,6 @@ private struct ChapterContent: View {
   }
 }
 
-/// A lesson in a chapter or unit: its mark (done, up next, coming up), its title and minutes.
 struct LessonRow: View {
   let lesson: GoalChapter.Lesson
 
@@ -328,8 +320,6 @@ struct LessonRow: View {
   }
 }
 
-/// "For reference": the chapter's mind map once it's done, then, folded, its skills with their
-/// state and the summaries its lessons left.
 private struct ChapterReferenceSection: View {
   @Environment(AppRouter.self) private var router
 

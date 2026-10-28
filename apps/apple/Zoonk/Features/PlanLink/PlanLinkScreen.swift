@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// A plan someone shared (`/plan-link/[planId]`, also opened as a universal link): its subject and phases, never its owner or their progress, and "Start from this plan" at the learner's own time a day. The owner is sent to their own Plan.
+/// Never shows its owner or their progress. The owner is sent to their own Plan.
 struct PlanLinkScreen: View {
   let planId: String
 
@@ -181,7 +181,7 @@ struct PlanLinkScreen: View {
           router.showRoot(of: .plan)
         }
       } catch is CancellationError {
-        // The write is obsolete: the learner who asked is gone, so nothing shows.
+        // The learner who asked is gone, so nothing shows.
       } catch OnboardingError.goalLimit, OnboardingError.signUpRequired, OnboardingError.slowDown {
         error = GoalError(
           message: LocalizedStringResource(

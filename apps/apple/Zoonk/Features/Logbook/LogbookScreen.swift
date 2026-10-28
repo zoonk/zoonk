@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The learner's last week (`GET /v1/me/weekly-recap`), as the logbook draws it.
 struct WeeklyRecap: Decodable, Equatable, Sendable {
   struct Week: Decodable, Equatable, Sendable {
     let daysStudied: [String]
@@ -48,8 +47,6 @@ struct WeeklyRecap: Decodable, Equatable, Sendable {
   let weekStart: String
 }
 
-/// The weekly recap as a full-screen task: the week's days and numbers, the skill that grew the
-/// most, what the learner learned, and what the plan does next week.
 struct LogbookScreen: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(AppRouter.self) private var router
@@ -117,8 +114,6 @@ struct LogbookScreen: View {
   }
 
   private func content(_ recap: WeeklyRecap) -> some View {
-    // Where there's room, the week at a glance leads, and what changed in it and the way on
-    // follow.
     PaneSplit {
       List {
         week(recap)
@@ -135,7 +130,6 @@ struct LogbookScreen: View {
     }
   }
 
-  /// The week: its headline, its days and its numbers.
   @ViewBuilder
   private func week(_ recap: WeeklyRecap) -> some View {
     Section {
@@ -183,7 +177,6 @@ struct LogbookScreen: View {
 
   }
 
-  /// What changed: the biggest turnaround, what was learned, next week's focus and the way on.
   @ViewBuilder
   private func changes(_ recap: WeeklyRecap) -> some View {
     if let turnaround = recap.turnaround {
@@ -302,7 +295,6 @@ struct LogbookScreen: View {
   }
 }
 
-/// The week's seven days, each marked studied or not.
 private struct WeekRings: View {
   let recap: WeeklyRecap
 

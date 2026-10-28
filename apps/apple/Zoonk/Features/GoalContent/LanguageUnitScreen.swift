@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// A language goal's unit (`GET /language-units/{chapterId}`): what it teaches, its lessons with
-/// the next one, its grammar tips and words, a test that skips it, and the unit's mistakes.
 struct LanguageUnit: Decodable, Equatable, Sendable {
-  /// The unit's practice call with a character, in a length the learner picks.
   struct Conversation: Decodable, Equatable, Sendable {
     struct Character: Decodable, Equatable, Sendable {
       let name: String
@@ -15,7 +12,6 @@ struct LanguageUnit: Decodable, Equatable, Sendable {
     let defaultMinutes: Int
     let minutes: [Int]
     let paused: Bool
-    /// Lengths that come with Plus.
     let plusMinutes: [Int]
   }
 
@@ -144,8 +140,6 @@ private struct LanguageUnitContent: View {
   let unit: LanguageUnit
 
   var body: some View {
-    // Where there's room, the unit and its lessons lead and main's aside follows: its practice
-    // call, grammar tips, words, test and mistakes.
     PaneSplit(primaryShare: 0.55) {
       List {
         unitAndLessons
@@ -337,8 +331,6 @@ private struct LanguageUnitContent: View {
   }
 }
 
-/// "Practice a conversation": a call with the unit's character, in a length the learner picks
-/// (longer ones come with Plus). The call itself is the conversation screen's.
 private struct UnitPracticeCallSection: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
@@ -433,7 +425,7 @@ private struct UnitPracticeCallSection: View {
     }
   }
 
-  /// Writes the call's card and opens it, only from the learner's tap.
+  /// Only from the learner's tap: it writes the call's card.
   private func start(minutes: Int) async {
     guard
       let input: Components.Schemas.LanguageConversationStartInput = try? PracticeJSON.recode(

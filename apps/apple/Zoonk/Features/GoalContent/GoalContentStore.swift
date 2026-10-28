@@ -1,9 +1,6 @@
 import Foundation
 import Observation
 
-/// A chapter of the learner's plan (`GET /goals/{goalId}/chapters/{chapterId}`): its lessons with
-/// the next one, its mistakes, whether a test can skip it, its skills and the summaries its lessons
-/// left.
 struct GoalChapter: Decodable, Equatable, Sendable {
   struct Chapter: Decodable, Equatable, Sendable {
     struct Subject: Decodable, Equatable, Sendable {
@@ -75,9 +72,7 @@ struct GoalChapter: Decodable, Equatable, Sendable {
   let testOut: TestOut
 }
 
-/// Where a chapter's "Practice" goes: a bonus block added to today's session, opened at once.
 enum AreaPracticeOutcome: Equatable, Sendable {
-  /// Today's bonus practice is used up; tomorrow's session picks the chapter up.
   case dailyCap
   case nothingToPractice
   case opened(AppRoute)
@@ -94,8 +89,6 @@ private struct AreaPracticeBlock: Decodable {
   let sessionId: String
 }
 
-/// The goal's content pages: chapters as cached resources by goal and chapter, and the chapter's
-/// practice. Subjects read the Plan's syllabus.
 @MainActor
 @Observable
 final class GoalContentStore {
@@ -154,8 +147,6 @@ final class GoalContentStore {
     return unit
   }
 
-  /// Adds a bonus block on the chapter's skills to today's session; nil when it didn't work. The
-  /// day changed, so Today and the summary follow.
   func practice(goalId: String, areaId: String) async -> AreaPracticeOutcome? {
     guard let session = cache.session.authenticatedSession else {
       return nil
