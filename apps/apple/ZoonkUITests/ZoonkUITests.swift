@@ -401,7 +401,7 @@ final class ZoonkUITests: XCTestCase {
     let tabs = [
       (tabTitle: "Today", screenTitle: "Today"),
       (tabTitle: "Plan", screenTitle: "Plan"),
-      (tabTitle: "Zu", screenTitle: "Buddy"),
+      (tabTitle: "Zu", screenTitle: "Zu"),
       (tabTitle: "Search", screenTitle: "Search"),
     ]
 
@@ -933,6 +933,7 @@ final class ZoonkUITests: XCTestCase {
 
     if scenario.accountJSON != nil {
       app.launchEnvironment["ZOONK_UI_TEST_SUMMARY"] = learnerSummaryUITestJSON
+      app.launchEnvironment["ZOONK_UI_TEST_BUDDY"] = buddyStatusUITestJSON
     }
 
     if let progressFailure = scenario.progressFailure {

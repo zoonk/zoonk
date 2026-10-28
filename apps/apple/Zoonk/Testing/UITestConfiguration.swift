@@ -23,9 +23,11 @@
           session: SessionStore.preview(account: account(from: environment)),
           privateImageLoader: .live(),
           subscriptionStore: .live(),
+          buddyAPI: buddyStatus(from: environment).map(UITestBuddyAPI.init),
           courseCatalogAPI: courseCatalogAPI(snapshot: catalogSnapshot),
           learnerSummaryAPI: UITestLearnerSummaryAPI(summary: learnerSummary(from: environment)),
-          progressAPI: progressAPI(from: environment)),
+          progressAPI: progressAPI(from: environment),
+          tutorAPI: buddyStatus(from: environment).map { _ in UITestTutorAPI() }),
         initiallyPresentsAccount: arguments.contains("--ui-testing-account-sheet"))
     }
 
@@ -54,6 +56,20 @@
             Components.Schemas.LearnerSummary.self, from: Data(summaryJSON.utf8)))
       } catch {
         preconditionFailure("ZOONK_UI_TEST_SUMMARY must contain a valid learner summary")
+      }
+    }
+
+    /// The buddy's day as `GET /v1/me/buddy` returns it. With it, the buddy and its conversations
+    /// answer from fixtures instead of the network.
+    private static func buddyStatus(from environment: [String: String]) -> BuddyStatus? {
+      guard let buddyJSON = environment["ZOONK_UI_TEST_BUDDY"] else {
+        return nil
+      }
+
+      do {
+        return try JSONDecoder().decode(BuddyStatus.self, from: Data(buddyJSON.utf8))
+      } catch {
+        preconditionFailure("ZOONK_UI_TEST_BUDDY must contain a valid buddy status")
       }
     }
 
@@ -286,6 +302,56 @@
     }
 
     func switchGoal(token: String, goalID: String) async throws {}
+  }
+
+  /// The buddy's day from the fixture; earlier questions are empty and nothing is saved.
+  private struct UITestBuddyAPI: BuddyAPIClient {
+    let status: BuddyStatus
+
+    func status(timeZone: String, token: String) async throws -> BuddyStatus {
+      status
+    }
+
+    func save(_ buddy: BuddyChoice, token: String) async throws {}
+
+    func earlierQuestions(cursor: String?, token: String) async throws -> EarlierQuestionsPage {
+      EarlierQuestionsPage(questions: [], nextCursor: nil)
+    }
+
+    func answer(insightId: String, accepted: Bool, token: String) async throws {}
+  }
+
+  /// Every conversation starts empty. UI tests never ask, so nothing is answered.
+  private struct UITestTutorAPI: TutorAPIClient {
+    func thread(_ scope: TutorScope, cursor: String?, token: String) async throws
+      -> TutorThreadPage
+    {
+      .empty
+    }
+
+    func ask(
+      _ scope: TutorScope, question: String, suggestion: String?, requestId: String, token: String
+    ) async throws -> TutorAskedQuestion {
+      throw TutorFailure.failed
+    }
+
+    func answer(questionId: String, token: String) -> AsyncThrowingStream<TutorAnswerEvent, Error> {
+      AsyncThrowingStream { $0.finish(throwing: TutorFailure.failed) }
+    }
+
+    func question(id: String, token: String) async throws -> TutorTurn {
+      throw APIError.notFound
+    }
+
+    func decidePlanChange(
+      goalId: String, changeId: String, decision: TutorPlanChangeDecision, token: String
+    ) async throws -> Components.Schemas.PlanChange {
+      throw APIError.unavailable
+    }
+
+    func undoMemoryChanges(_ changes: [TutorMemoryChange], token: String) async throws {
+      throw APIError.unavailable
+    }
   }
 
   private enum UITestProgressFailure: String, Sendable {
