@@ -50,139 +50,163 @@ struct SessionSummaryView: View {
   }
 
   private func content(_ summary: SessionSummary) -> some View {
-    List {
-      Section {
-        VStack(alignment: .leading, spacing: 4) {
-          SummaryBuddy(
-            look: learner.summary.value?.buddy ?? BuddyLook(),
-            visit: "\(sessionID):\(summary.brainPower)")
-
-          title(summary)
-            .font(.largeTitle.bold())
-            .accessibilityAddTraits(.isHeader)
-
-          Text(time(summary))
-            .foregroundStyle(.secondary)
-        }
-        .listRowBackground(Color.clear)
+    // Where there's room, what the day came to leads, and what moved, tomorrow and the way on
+    // follow.
+    PaneSplit {
+      List {
+        dayResult(summary)
       }
-
-      Section {
-        Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 4) {
-          GridRow {
-            stat(
-              Text("Right", tableName: "Session", comment: "Questions answered right"),
-              value: summary.questions > 0 ? "\(summary.correct)/\(summary.questions)" : "–")
-            stat(
-              Text("Brain Power", tableName: "Session", comment: "Brain Power earned"),
-              value: "+\(summary.brainPower)", color: .brain)
-            stat(
-              Text("Best streak", tableName: "Session", comment: "Most right in a row"),
-              value: "\(summary.bestStreak)")
-          }
-        }
+    } secondary: {
+      List {
+        onward(summary)
       }
-
-      if !summary.missions.isEmpty {
-        Section {
-          ForEach(Array(summary.missions.enumerated()), id: \.offset) { _, mission in
-            MissionRow(mission: mission, buddyName: buddyName)
-          }
-        } header: {
-          Text("Today's missions", tableName: "Session", comment: "The missions' header")
-        } footer: {
-          if summary.fullMeal {
-            Text("All done. +50 Brain Power.", tableName: "Session", comment: "Missions done")
-          }
-        }
+    } single: {
+      List {
+        dayResult(summary)
+        onward(summary)
       }
+    }
+  }
 
-      if let belt = summary.belt {
-        Section {
-          Label {
-            Text(
-              "\(beltName(belt.after.color) ?? belt.after.color), level \(belt.after.level)",
-              tableName: "Session", comment: "The belt and level reached")
-          } icon: {
-            // The belt's own color, ringed so a white belt shows on a light row.
-            Circle()
-              .fill(ProgressBelt(rawValue: belt.after.color)?.color ?? .secondary)
-              .strokeBorder(.secondary.opacity(0.35), lineWidth: 1)
-              .frame(width: beltDotSize, height: beltDotSize)
-          }
-        }
-      }
+  /// The day's result: its numbers, its missions and a new belt.
+  @ViewBuilder
+  private func dayResult(_ summary: SessionSummary) -> some View {
+    Section {
+      VStack(alignment: .leading, spacing: 4) {
+        SummaryBuddy(
+          look: learner.summary.value?.buddy ?? BuddyLook(),
+          visit: "\(sessionID):\(summary.brainPower)")
 
-      if !summary.skillsMoved.isEmpty {
-        Section {
-          ForEach(summary.skillsMoved, id: \.skillId) { skill in
-            Text(skill.name)
-          }
-        } header: {
-          Text("Skills that rose", tableName: "Session", comment: "Skills that moved up")
-        }
-      }
+        title(summary)
+          .font(.largeTitle.bold())
+          .accessibilityAddTraits(.isHeader)
 
-      if let tomorrow = summary.tomorrow {
-        Section {
-          Label {
-            Text(tomorrow.title)
-          } icon: {
-            KindMark(kind: .lesson)
-          }
-        } header: {
-          Text("Tomorrow", tableName: "Session", comment: "Tomorrow's lesson")
-        }
-      }
-
-      Section {
-        VStack(spacing: 12) {
-          Button {
-            router.dismissTask()
-          } label: {
-            Text("Finish", tableName: "Session", comment: "Closes the summary")
-              .frame(maxWidth: .infinity)
-          }
-          .buttonStyle(.mainAction)
-          .controlSize(.large)
-
-          if summary.finished && summary.extraTime.available {
-            Button {
-              keepLearning()
-            } label: {
-              HStack {
-                if isAddingTime {
-                  ProgressView()
-                }
-
-                if summary.extraTime.lessons.isEmpty {
-                  Text(
-                    "Study \(summary.extraTime.minutes) more minutes", tableName: "Session",
-                    comment: "Adds practice once the day is done")
-                } else {
-                  Text("Keep learning", tableName: "Session", comment: "Adds the next lessons")
-                }
-              }
-              .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.bordered)
-            .controlSize(.large)
-            .disabled(isAddingTime)
-          }
-
-          if failed {
-            Text(
-              "We couldn't open the next step. Try again.", tableName: "Session",
-              comment: "Adding time failed"
-            )
-            .font(.footnote)
-            .foregroundStyle(.destructive)
-          }
-        }
+        Text(time(summary))
+          .foregroundStyle(.secondary)
       }
       .listRowBackground(Color.clear)
-      .listRowInsets(EdgeInsets())
     }
+
+    Section {
+      Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 4) {
+        GridRow {
+          stat(
+            Text("Right", tableName: "Session", comment: "Questions answered right"),
+            value: summary.questions > 0 ? "\(summary.correct)/\(summary.questions)" : "–")
+          stat(
+            Text("Brain Power", tableName: "Session", comment: "Brain Power earned"),
+            value: "+\(summary.brainPower)", color: .brain)
+          stat(
+            Text("Best streak", tableName: "Session", comment: "Most right in a row"),
+            value: "\(summary.bestStreak)")
+        }
+      }
+    }
+
+    if !summary.missions.isEmpty {
+      Section {
+        ForEach(Array(summary.missions.enumerated()), id: \.offset) { _, mission in
+          MissionRow(mission: mission, buddyName: buddyName)
+        }
+      } header: {
+        Text("Today's missions", tableName: "Session", comment: "The missions' header")
+      } footer: {
+        if summary.fullMeal {
+          Text("All done. +50 Brain Power.", tableName: "Session", comment: "Missions done")
+        }
+      }
+    }
+
+    if let belt = summary.belt {
+      Section {
+        Label {
+          Text(
+            "\(beltName(belt.after.color) ?? belt.after.color), level \(belt.after.level)",
+            tableName: "Session", comment: "The belt and level reached")
+        } icon: {
+          // The belt's own color, ringed so a white belt shows on a light row.
+          Circle()
+            .fill(ProgressBelt(rawValue: belt.after.color)?.color ?? .secondary)
+            .strokeBorder(.secondary.opacity(0.35), lineWidth: 1)
+            .frame(width: beltDotSize, height: beltDotSize)
+        }
+      }
+    }
+
+  }
+
+  /// The skills that rose, tomorrow's lesson and the ways on.
+  @ViewBuilder
+  private func onward(_ summary: SessionSummary) -> some View {
+    if !summary.skillsMoved.isEmpty {
+      Section {
+        ForEach(summary.skillsMoved, id: \.skillId) { skill in
+          Text(skill.name)
+        }
+      } header: {
+        Text("Skills that rose", tableName: "Session", comment: "Skills that moved up")
+      }
+    }
+
+    if let tomorrow = summary.tomorrow {
+      Section {
+        Label {
+          Text(tomorrow.title)
+        } icon: {
+          KindMark(kind: .lesson)
+        }
+      } header: {
+        Text("Tomorrow", tableName: "Session", comment: "Tomorrow's lesson")
+      }
+    }
+
+    Section {
+      VStack(spacing: 12) {
+        Button {
+          router.dismissTask()
+        } label: {
+          Text("Finish", tableName: "Session", comment: "Closes the summary")
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.mainAction)
+        .controlSize(.large)
+
+        if summary.finished && summary.extraTime.available {
+          Button {
+            keepLearning()
+          } label: {
+            HStack {
+              if isAddingTime {
+                ProgressView()
+              }
+
+              if summary.extraTime.lessons.isEmpty {
+                Text(
+                  "Study \(summary.extraTime.minutes) more minutes", tableName: "Session",
+                  comment: "Adds practice once the day is done")
+              } else {
+                Text("Keep learning", tableName: "Session", comment: "Adds the next lessons")
+              }
+            }
+            .frame(maxWidth: .infinity)
+          }
+          .buttonStyle(.bordered)
+          .controlSize(.large)
+          .disabled(isAddingTime)
+        }
+
+        if failed {
+          Text(
+            "We couldn't open the next step. Try again.", tableName: "Session",
+            comment: "Adding time failed"
+          )
+          .font(.footnote)
+          .foregroundStyle(.destructive)
+        }
+      }
+    }
+    .listRowBackground(Color.clear)
+    .listRowInsets(EdgeInsets())
   }
 
   private var buddyName: String {

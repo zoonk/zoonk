@@ -117,119 +117,143 @@ struct LogbookScreen: View {
   }
 
   private func content(_ recap: WeeklyRecap) -> some View {
-    List {
-      Section {
-        VStack(alignment: .leading, spacing: 6) {
-          Text(eyebrow(recap))
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
-
-          title
-            .font(.largeTitle.bold())
-            .accessibilityAddTraits(.isHeader)
-
-          if let gain = gain(recap) {
-            Text(gain)
-              .foregroundStyle(.success)
-          }
-        }
-        .listRowBackground(Color.clear)
-
-        WeekRings(recap: recap)
+    // Where there's room, the week at a glance leads, and what changed in it and the way on
+    // follow.
+    PaneSplit {
+      List {
+        week(recap)
       }
-
-      Section {
-        LabeledContent {
-          Text(studyDuration(minutes: recap.week.minutes))
-            .monospacedDigit()
-        } label: {
-          Label {
-            Text("Time", tableName: "Session", comment: "The week's study time")
-          } icon: {
-            Image(systemName: "clock")
-          }
-        }
-
-        LabeledContent {
-          Text(recap.week.questions, format: .number)
-        } label: {
-          Label {
-            Text("Questions", tableName: "Session", comment: "The week's questions")
-          } icon: {
-            Image(systemName: "checklist")
-          }
-        }
+    } secondary: {
+      List {
+        changes(recap)
       }
-
-      if let turnaround = recap.turnaround {
-        Section {
-          VStack(alignment: .leading, spacing: 4) {
-            Text(turnaround.name)
-              .font(.headline)
-
-            Text(
-              "\(turnaround.from.formatted(.percent.precision(.fractionLength(0)))) → \(turnaround.to.formatted(.percent.precision(.fractionLength(0)))) right answers",
-              tableName: "Session", comment: "A skill's right answers at the week's start and end"
-            )
-            .monospacedDigit()
-            .foregroundStyle(.secondary)
-          }
-        } header: {
-          Text("The biggest turnaround", tableName: "Session", comment: "The skill that grew most")
-        }
+    } single: {
+      List {
+        week(recap)
+        changes(recap)
       }
+    }
+  }
 
-      Section {
-        LabeledContent {
-          Text(recap.buddyAte.newIdeas, format: .number)
-        } label: {
-          Text("New ideas", tableName: "Session", comment: "New ideas learned this week")
-        }
+  /// The week: its headline, its days and its numbers.
+  @ViewBuilder
+  private func week(_ recap: WeeklyRecap) -> some View {
+    Section {
+      VStack(alignment: .leading, spacing: 6) {
+        Text(eyebrow(recap))
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
 
-        LabeledContent {
-          Text(recap.buddyAte.reviews, format: .number)
-        } label: {
-          Text("Reviews", tableName: "Session", comment: "Reviews done this week")
-        }
+        title
+          .font(.largeTitle.bold())
+          .accessibilityAddTraits(.isHeader)
 
-        LabeledContent {
-          Text(recap.buddyAte.fixes, format: .number)
-        } label: {
-          Text("Mistakes fixed", tableName: "Session", comment: "Mistakes fixed this week")
+        if let gain = gain(recap) {
+          Text(gain)
+            .foregroundStyle(.success)
         }
-
-        if !recap.badges.isEmpty {
-          LabeledContent {
-            Text(recap.badges.count, format: .number)
-          } label: {
-            Text("Trap hunter badges", tableName: "Session", comment: "Badges earned this week")
-          }
-        }
-      } header: {
-        Text("What you learned", tableName: "Session", comment: "The week's learning")
-      }
-
-      if let next = recap.nextFocus {
-        Section {
-          Text(next.title)
-        } header: {
-          Text("Next week", tableName: "Session", comment: "The plan's next week")
-        }
-      }
-
-      Section {
-        Button {
-          router.showRoot(of: .today)
-        } label: {
-          Text("Let's go", tableName: "Session", comment: "Closes the recap and opens Today")
-            .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.mainAction)
-        .controlSize(.large)
       }
       .listRowBackground(Color.clear)
-      .listRowInsets(EdgeInsets())
+
+      WeekRings(recap: recap)
     }
+
+    Section {
+      LabeledContent {
+        Text(studyDuration(minutes: recap.week.minutes))
+          .monospacedDigit()
+      } label: {
+        Label {
+          Text("Time", tableName: "Session", comment: "The week's study time")
+        } icon: {
+          Image(systemName: "clock")
+        }
+      }
+
+      LabeledContent {
+        Text(recap.week.questions, format: .number)
+      } label: {
+        Label {
+          Text("Questions", tableName: "Session", comment: "The week's questions")
+        } icon: {
+          Image(systemName: "checklist")
+        }
+      }
+    }
+
+  }
+
+  /// What changed: the biggest turnaround, what was learned, next week's focus and the way on.
+  @ViewBuilder
+  private func changes(_ recap: WeeklyRecap) -> some View {
+    if let turnaround = recap.turnaround {
+      Section {
+        VStack(alignment: .leading, spacing: 4) {
+          Text(turnaround.name)
+            .font(.headline)
+
+          Text(
+            "\(turnaround.from.formatted(.percent.precision(.fractionLength(0)))) → \(turnaround.to.formatted(.percent.precision(.fractionLength(0)))) right answers",
+            tableName: "Session", comment: "A skill's right answers at the week's start and end"
+          )
+          .monospacedDigit()
+          .foregroundStyle(.secondary)
+        }
+      } header: {
+        Text("The biggest turnaround", tableName: "Session", comment: "The skill that grew most")
+      }
+    }
+
+    Section {
+      LabeledContent {
+        Text(recap.buddyAte.newIdeas, format: .number)
+      } label: {
+        Text("New ideas", tableName: "Session", comment: "New ideas learned this week")
+      }
+
+      LabeledContent {
+        Text(recap.buddyAte.reviews, format: .number)
+      } label: {
+        Text("Reviews", tableName: "Session", comment: "Reviews done this week")
+      }
+
+      LabeledContent {
+        Text(recap.buddyAte.fixes, format: .number)
+      } label: {
+        Text("Mistakes fixed", tableName: "Session", comment: "Mistakes fixed this week")
+      }
+
+      if !recap.badges.isEmpty {
+        LabeledContent {
+          Text(recap.badges.count, format: .number)
+        } label: {
+          Text("Trap hunter badges", tableName: "Session", comment: "Badges earned this week")
+        }
+      }
+    } header: {
+      Text("What you learned", tableName: "Session", comment: "The week's learning")
+    }
+
+    if let next = recap.nextFocus {
+      Section {
+        Text(next.title)
+      } header: {
+        Text("Next week", tableName: "Session", comment: "The plan's next week")
+      }
+    }
+
+    Section {
+      Button {
+        router.showRoot(of: .today)
+      } label: {
+        Text("Let's go", tableName: "Session", comment: "Closes the recap and opens Today")
+          .frame(maxWidth: .infinity)
+      }
+      .buttonStyle(.mainAction)
+      .controlSize(.large)
+    }
+    .listRowBackground(Color.clear)
+    .listRowInsets(EdgeInsets())
   }
 
   private var title: Text {

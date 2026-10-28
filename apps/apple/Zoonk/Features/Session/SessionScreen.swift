@@ -157,86 +157,23 @@ private struct NextStopView: View {
   private var next: StudyBlock? { day.nextBlock }
 
   var body: some View {
-    List {
-      if let moment {
-        Section {
-          MomentSummary(moment: moment, title: title(of: moment))
-        }
-
-        DayMomentSections(result: moment.day)
+    // Where there's room, what the last block earned and where the day stands lead, and what's
+    // next with the way on follows, by the right thumb.
+    PaneSplit {
+      List {
+        daySoFar
       }
-
-      Section {
-        VStack(alignment: .leading, spacing: 8) {
-          Text(
-            "\(day.blocks.filter(\.isFinished).count) of \(day.blocks.count) done",
-            tableName: "Session", comment: "How far the day's session is"
-          )
-          .font(.subheadline.monospacedDigit())
-          .foregroundStyle(.secondary)
-
-          MeterParts(parts: day.meterParts)
-        }
+    } secondary: {
+      List {
+        upNext
+        actions
       }
-
-      if let next {
-        Section {
-          BlockRow(
-            block: next, view: nil, isNext: true, countsTowardMission: false, showsDetail: true)
-
-          if let lessonLine {
-            lessonLine
-          }
-        } header: {
-          Text("Up next", tableName: "Session", comment: "The session's next block")
-        }
-
-        if case .refused(let refusal) = writing {
-          Section {
-            LessonUnavailableView(refusal: refusal) {
-              open(next)
-            }
-          }
-        }
+    } single: {
+      List {
+        daySoFar
+        upNext
+        actions
       }
-
-      Section {
-        VStack(spacing: 12) {
-          if let alternative, isLessonWorkRunning || isLessonUnavailable {
-            mainButton(alternativeTitle(alternative), block: alternative)
-          } else if let next, !isLessonUnavailable {
-            mainButton(continueTitle, block: next)
-              .disabled(isLessonWorkRunning)
-          }
-
-          Button {
-            stop()
-          } label: {
-            HStack {
-              if isStopping {
-                ProgressView()
-              }
-
-              Text("Stop for today", tableName: "Session", comment: "Ends the session for today")
-            }
-            .frame(maxWidth: .infinity)
-          }
-          .buttonStyle(.bordered)
-          .controlSize(.large)
-          .disabled(isStopping || isOpening)
-
-          if failed {
-            Text(
-              "We couldn't open the next step. Try again.", tableName: "Session",
-              comment: "Opening or stopping failed"
-            )
-            .font(.footnote)
-            .foregroundStyle(.destructive)
-          }
-        }
-      }
-      .listRowBackground(Color.clear)
-      .listRowInsets(EdgeInsets())
     }
     .task(id: FollowedLesson(lessonID: next?.lessonId, writing: writing)) {
       await followLesson()
@@ -244,6 +181,95 @@ private struct NextStopView: View {
     .onDisappear {
       action?.cancel()
     }
+  }
+
+  /// What the last block earned (the day's missions with it) and where the day stands.
+  @ViewBuilder
+  private var daySoFar: some View {
+    if let moment {
+      Section {
+        MomentSummary(moment: moment, title: title(of: moment))
+      }
+
+      DayMomentSections(result: moment.day)
+    }
+
+    Section {
+      VStack(alignment: .leading, spacing: 8) {
+        Text(
+          "\(day.blocks.filter(\.isFinished).count) of \(day.blocks.count) done",
+          tableName: "Session", comment: "How far the day's session is"
+        )
+        .font(.subheadline.monospacedDigit())
+        .foregroundStyle(.secondary)
+
+        MeterParts(parts: day.meterParts)
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var upNext: some View {
+    if let next {
+      Section {
+        BlockRow(
+          block: next, view: nil, isNext: true, countsTowardMission: false, showsDetail: true)
+
+        if let lessonLine {
+          lessonLine
+        }
+      } header: {
+        Text("Up next", tableName: "Session", comment: "The session's next block")
+      }
+
+      if case .refused(let refusal) = writing {
+        Section {
+          LessonUnavailableView(refusal: refusal) {
+            open(next)
+          }
+        }
+      }
+    }
+  }
+
+  private var actions: some View {
+    Section {
+      VStack(spacing: 12) {
+        if let alternative, isLessonWorkRunning || isLessonUnavailable {
+          mainButton(alternativeTitle(alternative), block: alternative)
+        } else if let next, !isLessonUnavailable {
+          mainButton(continueTitle, block: next)
+            .disabled(isLessonWorkRunning)
+        }
+
+        Button {
+          stop()
+        } label: {
+          HStack {
+            if isStopping {
+              ProgressView()
+            }
+
+            Text("Stop for today", tableName: "Session", comment: "Ends the session for today")
+          }
+          .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.large)
+        .disabled(isStopping || isOpening)
+
+        if failed {
+          Text(
+            "We couldn't open the next step. Try again.", tableName: "Session",
+            comment: "Opening or stopping failed"
+          )
+          .font(.footnote)
+          .foregroundStyle(.destructive)
+        }
+      }
+    }
+    .listRowBackground(Color.clear)
+    .listRowInsets(EdgeInsets())
   }
 
   /// The finished block's name, as the day lists it.
