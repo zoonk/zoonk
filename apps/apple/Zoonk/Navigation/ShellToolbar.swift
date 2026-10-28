@@ -210,6 +210,7 @@ private struct GoalSwitcher: View {
             Image(systemName: "chevron.down")
               .imageScale(.small)
               .foregroundStyle(.secondary)
+              .accessibilityHidden(true)
           }
           .fontWeight(.semibold)
         }
