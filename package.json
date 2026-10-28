@@ -54,6 +54,7 @@
   },
   "devDependencies": {
     "@eloqnt/cli": "catalog:",
+    "@next/playwright": "catalog:",
     "@playwright/test": "catalog:",
     "@types/node": "catalog:",
     "@zoonk/tsconfig": "workspace:*",

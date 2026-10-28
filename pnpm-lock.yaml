@@ -194,6 +194,9 @@ catalogs:
     '@next/mdx':
       specifier: 16.4.3
       version: 16.4.3
+    '@next/playwright':
+      specifier: 16.4.3
+      version: 16.4.3
     '@next/third-parties':
       specifier: 16.4.3
       version: 16.4.3
@@ -308,6 +311,9 @@ importers:
       '@eloqnt/cli':
         specifier: 'catalog:'
         version: 0.6.33(@swc/helpers@0.5.23)
+      '@next/playwright':
+        specifier: 'catalog:'
+        version: 16.4.3(@playwright/test@1.63.0)
       '@playwright/test':
         specifier: 'catalog:'
         version: 1.63.0
@@ -2940,6 +2946,14 @@ packages:
       '@mdx-js/loader':
         optional: true
       '@mdx-js/react':
+        optional: true
+
+  '@next/playwright@16.4.3':
+    resolution: {integrity: sha512-UH0bkck8lDFE0EJLX8NMoxSBi/2LZ0z8nNZnCy+qsZgL+PrR6NgCe+mzT/VcnA/75gxCjNPwpHVDiDz6GtkUVw==}
+    peerDependencies:
+      '@playwright/test': '>=1.0.0'
+    peerDependenciesMeta:
+      '@playwright/test':
         optional: true
 
   '@next/swc-darwin-arm64@16.4.3':
@@ -10515,6 +10529,10 @@ snapshots:
     optionalDependencies:
       '@mdx-js/loader': 3.1.1(supports-color@10.2.2)(webpack@5.111.1(@swc/core@1.15.3(@swc/helpers@0.5.23))(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.29)(sharp@0.35.5(@types/node@24.19.1)))
       '@mdx-js/react': 3.1.1(@types/react@19.3.0)(react@19.3.0)
+
+  '@next/playwright@16.4.3(@playwright/test@1.63.0)':
+    optionalDependencies:
+      '@playwright/test': 1.63.0
 
   '@next/swc-darwin-arm64@16.4.3':
     optional: true
