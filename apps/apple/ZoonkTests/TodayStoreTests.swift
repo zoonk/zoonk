@@ -34,6 +34,25 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(starts, [], "a question block's own screen starts it")
   }
 
+  /// A practice in the day's saved session only opens: nothing is written, so Today isn't read
+  /// again (its own screen starts it).
+  func testAPracticeInASavedSessionOpensWithoutReadingTodayAgain() async throws {
+    let view = try today(
+      session: day(
+        blocks: [block(position: 0, kind: "practice", id: "b1")], nextPosition: 0, id: "s1"))
+    let api = StudyAPIStub(today: .day(view))
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
+
+    let destination = await store.open(view.session.blocks[0], next: false, in: view).destination
+    await store.today.load()
+
+    XCTAssertEqual(destination, .questionBlock(sessionID: "s1", blockID: "b1"))
+    XCTAssertEqual(store.sessionID, "s1")
+    let reads = await api.todayReads
+    XCTAssertEqual(reads, 1)
+  }
+
   func testReadyLessonStartsInThePlayer() async throws {
     let api = StudyAPIStub()
     let store = TodayStore(api: api, cache: signedInCache())
@@ -337,6 +356,7 @@ private actor StudyAPIStub: StudyAPIClient {
   private(set) var startedBlocks: [String] = []
   private(set) var writtenLessons: [String] = []
   private(set) var preparedSessions: [String] = []
+  private(set) var todayReads = 0
 
   init(
     opened: OpenedStudyDay? = nil, start: BlockStart = .started, startError: APIError? = nil,
@@ -367,7 +387,10 @@ private actor StudyAPIStub: StudyAPIClient {
     heldOpening = nil
   }
 
-  func getToday(token: String, timeZone: String) async throws -> TodayContent { today }
+  func getToday(token: String, timeZone: String) async throws -> TodayContent {
+    todayReads += 1
+    return today
+  }
 
   func openDay(
     token: String, goalID: String, shownDate: String, timeZone: String, target: DayTarget?

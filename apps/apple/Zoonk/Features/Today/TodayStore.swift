@@ -112,7 +112,11 @@ final class TodayStore {
   func open(_ block: StudyBlock, next: Bool, in view: TodayView) async -> MutationResult<
     StudyDestination
   > {
-    await openStep(for: OpenedSession.Day(view)) { token in
+    if let opened = openQuestions(block, sessionID: view.session.id, day: OpenedSession.Day(view)) {
+      return opened
+    }
+
+    return await openStep(for: OpenedSession.Day(view)) { token in
       let (sessionID, saved) = try await self.savedBlock(block, next: next, in: view, token: token)
       let destination = try await self.start(
         saved, sessionID: sessionID, lessonReady: view.isLessonReady(block), token: token)
@@ -137,7 +141,12 @@ final class TodayStore {
 
   /// Opens a block of a saved session the learner picked on the session screen, where it plays.
   func open(_ block: StudyBlock, sessionID: String) async -> MutationResult<StudyDestination> {
-    await openStep(for: day.map(OpenedSession.Day.init)) { token in
+    if let opened = openQuestions(block, sessionID: sessionID, day: day.map(OpenedSession.Day.init))
+    {
+      return opened
+    }
+
+    return await openStep(for: day.map(OpenedSession.Day.init)) { token in
       (sessionID, try await self.start(block, sessionID: sessionID, lessonReady: nil, token: token))
     }
   }
@@ -178,6 +187,24 @@ final class TodayStore {
 
   /// Runs a tap that opens a step for the session that made it: a learner who left meanwhile gets
   /// nothing (`obsolete`), and one whose step couldn't open sees Today read again.
+  /// A review or practice in a saved session opens on its own screen, which starts it: the tap
+  /// writes nothing, so nothing is invalidated and Today isn't read again.
+  private func openQuestions(_ block: StudyBlock, sessionID: String?, day: OpenedSession.Day?)
+    -> MutationResult<StudyDestination>?
+  {
+    guard let sessionID, let blockID = block.id, block.kind == .review || block.kind == .practice,
+      let owner = cache.session.authenticatedSession
+    else {
+      return nil
+    }
+
+    if let day {
+      opened = OpenedSession(owner: owner, day: day, sessionID: sessionID)
+    }
+
+    return .done(.questionBlock(sessionID: sessionID, blockID: blockID))
+  }
+
   private func openStep(
     for day: OpenedSession.Day?,
     _ open: (_ token: String) async throws -> (sessionID: String, destination: StudyDestination)
