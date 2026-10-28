@@ -168,6 +168,40 @@ test.describe("Goals and plans API", () => {
     await apiContext.dispose();
   });
 
+  test("refuses weekly moves before next Monday through changes and previews", async () => {
+    const { apiContext, user } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "move-date",
+    });
+
+    const { goal, plan } = await createPlannedGoal(user.id);
+    const day = new Date().toISOString().slice(0, 10);
+    const data = { operations: [{ from: day, kind: "moveWeeklyEvent", to: day }], timeZone: "UTC" };
+    const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+
+    await Promise.all(
+      ["changes", "change-previews"].map(async (endpoint) => {
+        const response = await apiContext.post(`/v1/goals/${goal.id}/plan/${endpoint}`, { data });
+        expect(response.status()).toBe(422);
+
+        expect(await response.json()).toMatchObject({
+          error: {
+            code: "PLAN_CHANGE_INVALID",
+            details: { reason: "moveBeforeNextMonday" },
+            message: "Pick a day on or after next Monday to move a weekly challenge or mock exam.",
+          },
+        });
+      }),
+    );
+
+    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toStrictEqual(
+      before,
+    );
+
+    await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(0);
+    await apiContext.dispose();
+  });
+
   test("refuses a newly supplied past date without creating a goal or plan", async () => {
     const { apiContext, user } = await createAuthenticatedApiContext({
       baseURL,

@@ -94,7 +94,13 @@ type NotDone = "notDone";
 export async function moveChallengeAction(
   { page, planItemId }: { page: ChallengePage; planItemId: unknown },
   timeZone: unknown,
-): Promise<NotDone | { mockCollision: true } | { noRoom: true } | { unfundedMove: UnfundedMove }> {
+): Promise<
+  | NotDone
+  | { moveBeforeNextMonday: true }
+  | { mockCollision: true }
+  | { noRoom: true }
+  | { unfundedMove: UnfundedMove }
+> {
   const id = planItemIdSchema.safeParse(planItemId);
   const input = studySessionTimeZoneInputSchema.safeParse({ timeZone });
   const locale = localeSchema.safeParse(page.locale).data ?? DEFAULT_LOCALE;
@@ -104,6 +110,10 @@ export async function moveChallengeAction(
   }
 
   const result = await moveChallenge({ input: input.data, planItemId: id.data });
+
+  if (result.status === "invalid" && result.error === "moveBeforeNextMonday") {
+    return { moveBeforeNextMonday: true };
+  }
 
   if (result.status === "invalid" && result.unfundedMove) {
     return { unfundedMove: result.unfundedMove };

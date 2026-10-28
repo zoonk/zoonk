@@ -25,7 +25,12 @@ import { type ChallengeStartState } from "./use-challenge-start";
  */
 export type ChallengeActions = {
   move: () => Promise<
-    "failed" | "moved" | { mockCollision: true } | { noRoom: true } | { unfundedMove: UnfundedMove }
+    | "failed"
+    | "moved"
+    | { moveBeforeNextMonday: true }
+    | { mockCollision: true }
+    | { noRoom: true }
+    | { unfundedMove: UnfundedMove }
   >;
   start: () => Promise<
     | Extract<StartChallengeResult, { status: "earlierFirst" }>

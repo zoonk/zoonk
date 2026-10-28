@@ -12,6 +12,7 @@ export type PlanOperationError =
   | "badMove"
   | "baseChoiceClosed"
   | "mockCollision"
+  | "moveBeforeNextMonday"
   | "noStudyDays"
   | "notExam"
   | "nothingLeft"

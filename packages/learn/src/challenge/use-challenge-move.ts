@@ -6,6 +6,7 @@ import { type ChallengeActions } from "./challenge-context";
 
 /** Why the plan refused a move, for the screen to say. */
 type MoveRefusal =
+  | { kind: "moveBeforeNextMonday" }
   | { kind: "mockCollision" }
   | { kind: "noRoom" }
   | { kind: "unfundedMove"; unfundedMove: UnfundedMove };
@@ -47,6 +48,8 @@ export function useChallengeMove(actions: ChallengeActions): ChallengeMoveState 
 
       if ("unfundedMove" in outcome) {
         setRefusal({ kind: "unfundedMove", unfundedMove: outcome.unfundedMove });
+      } else if ("moveBeforeNextMonday" in outcome) {
+        setRefusal({ kind: "moveBeforeNextMonday" });
       } else {
         setRefusal({ kind: "noRoom" in outcome ? "noRoom" : "mockCollision" });
       }

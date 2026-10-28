@@ -19,6 +19,16 @@ export function MoveFailed() {
   const formatDuration = useFormatDuration();
   const { move } = useChallengeScreen();
 
+  if (move.refusal?.kind === "moveBeforeNextMonday") {
+    return (
+      <p className="text-destructive-text text-sm text-pretty" role="alert">
+        {t(
+          "A weekly challenge or mock exam can move only to a day on or after next Monday. It stays where it is.",
+        )}
+      </p>
+    );
+  }
+
   if (move.refusal?.kind === "mockCollision") {
     return (
       <p className="text-destructive-text text-sm text-pretty" role="alert">

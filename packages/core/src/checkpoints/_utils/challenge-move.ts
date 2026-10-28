@@ -13,6 +13,7 @@ import {
 import { type PlanEffect } from "../../plans/planner/plan-effect";
 import { type PlanChangeRefusal } from "../../plans/planner/plan-operations";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
+import { isWeeklyMoveDateAllowed } from "../../plans/planner/weekly-move-date";
 import { readBlockPayload } from "../../sessions/block-payload";
 import { type StudySessionTimeZoneInput } from "../../sessions/contract";
 import { isWeeklyChallengeItem } from "./load-weekly-challenge";
@@ -122,6 +123,7 @@ export function canMoveToMonday(input: Parameters<typeof getMovableDay>[0]): boo
 
   return (
     monday !== null &&
+    isWeeklyMoveDateAllowed({ to: fromIsoDate(monday), today: input.today }) &&
     rules.mondayOpen &&
     !rules.heldDays.includes(monday) &&
     !rules.movedTo.includes(monday)

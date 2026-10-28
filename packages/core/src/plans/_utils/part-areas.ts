@@ -3,8 +3,10 @@ import { loadPartAreas } from "../../exams/choices/load-exam-choices";
 import { type PlanOperation } from "../plan-contract";
 import { isAreaOperation } from "../planner/area-operations";
 import { getSkillArea } from "../planner/graph-areas";
+import { fromIsoDate } from "../planner/plan-calendar";
 import { type PlanOperationError, applyPlanOperations } from "../planner/plan-operations";
 import { type PlanGraph, type PlanState } from "../planner/plan-state";
+import { isWeeklyMoveDateAllowed } from "../planner/weekly-move-date";
 import { hasWeeklyEventCollision } from "./missing-weekly-move";
 import { type PlanContext } from "./plan-context";
 import { readPlanSummary } from "./plan-summary";
@@ -83,6 +85,16 @@ export async function applyChangeOperations({
   operations: readonly PlanOperation[];
 }): Promise<{ error: PlanOperationError } | { operations: PlanOperation[]; state: PlanState }> {
   const withParts = await loadOperationsWithParts({ context, operations });
+
+  if (
+    operations.some(
+      (operation) =>
+        operation.kind === "moveWeeklyEvent" &&
+        !isWeeklyMoveDateAllowed({ to: fromIsoDate(operation.to), today: context.today }),
+    )
+  ) {
+    return { error: "moveBeforeNextMonday" };
+  }
 
   // A move to a day that already has the week's event is refused, before it can drop either.
   if (

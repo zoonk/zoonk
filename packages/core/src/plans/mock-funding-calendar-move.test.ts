@@ -148,6 +148,31 @@ describe("mock funding through exported calendar and challenge moves", () => {
 
   afterEach(() => vi.useRealTimers());
 
+  it("refuses a mock moved within this week for its date rather than its funding", async () => {
+    const { goal, plan } = await setup();
+    vi.setSystemTime(new Date("2020-10-05T12:00:00Z"));
+    const saved = await readSaved(plan.id);
+
+    await prisma.plan.update({
+      data: { settings: { ...saved.settings, weekdayMinutes: [0, 30, 30, 30, 30, 30, 30] } },
+      where: { id: plan.id },
+    });
+
+    const before = await readSaved(plan.id);
+
+    await expect(
+      changeGoalPlan({
+        goalId: goal.id,
+        input: {
+          operations: [{ from: ORIGINAL_MOCK, kind: "moveWeeklyEvent", to: "2020-10-10" }],
+          timeZone: "UTC",
+        },
+      }),
+    ).resolves.toStrictEqual({ error: "moveBeforeNextMonday", status: "invalid" });
+
+    await expect(readSaved(plan.id)).resolves.toStrictEqual(before);
+  });
+
   it("keeps all 75 past banked minutes when adding Sundays automatically moves Friday's mock", async () => {
     const { goal, plan } = await setup();
     const before = await readSaved(plan.id);

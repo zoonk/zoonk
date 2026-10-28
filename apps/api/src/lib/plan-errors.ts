@@ -20,6 +20,8 @@ const OPERATION_MESSAGES = {
   baseChoiceClosed:
     "That prerequisite isn't open to that choice: one whose core the learner studied can only be studied in depth",
   mockCollision: "That day already has a weekly challenge or mock exam. Pick another day.",
+  moveBeforeNextMonday:
+    "Pick a day on or after next Monday to move a weekly challenge or mock exam.",
   noStudyDays: "A plan needs at least one study day",
   notExam: "Only an exam's plan goes on after its date: other goals study everything without one",
   nothingLeft: "A plan can't skip every area",

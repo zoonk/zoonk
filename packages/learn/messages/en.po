@@ -1486,6 +1486,11 @@ msgid "{day} · {time}"
 msgstr "{day} · {time}"
 
 #: src/challenge/challenge-move-failed.tsx
+msgctxt "TZAiL0"
+msgid "A weekly challenge or mock exam can move only to a day on or after next Monday. It stays where it is."
+msgstr "A weekly challenge or mock exam can move only to a day on or after next Monday. It stays where it is."
+
+#: src/challenge/challenge-move-failed.tsx
 msgctxt "UAOKVX"
 msgid "That day already has a weekly challenge or mock exam, so this one stays where it is."
 msgstr "That day already has a weekly challenge or mock exam, so this one stays where it is."
