@@ -34,11 +34,7 @@ import {
 import { isUuid } from "@zoonk/utils/uuid";
 import { getGoalLimitReason } from "./goal-limit-reason";
 
-/**
- * Onboarding's Server Actions. Each parses its untrusted input with the schema the public API
- * uses, then calls the same core capability as the matching API route; core owns sessions,
- * ownership and limits. Failures become outcomes the screens can say, never thrown errors.
- */
+/** Failures become outcomes the screens can say, never thrown errors. */
 
 export async function createOnboardingGoalsAction(input: unknown): Promise<CreateGoalsOutcome> {
   const parsed = goalCreateInputSchema.safeParse(input);
@@ -89,8 +85,7 @@ export async function answerOnboardingAction(
 
   const currentGoalId = moved?.status === "moved" ? moved.goal.id : goalId;
 
-  // The time a day re-plans the first days: the lessons and outlines they now hold start being
-  // written, so Today doesn't wait on them after the plan's reveal.
+  // The time a day re-plans the first days, so their lessons start being written before Today needs them.
   if (result.status === "saved" && parsed.data.question === "schedule") {
     prepareGoalLessons(currentGoalId);
   }
@@ -108,7 +103,6 @@ type PlacementState = Extract<
   { status: "ready" }
 >["placement"];
 
-/** The skill map or the questions placement needs next are still being made: ask again soon. */
 const NOT_READY = new Set<PlacementState["status"]>(["preparing", "waitingForQuestions"]);
 
 function toPlacementOutcome({
@@ -204,8 +198,7 @@ export async function finishPlacementAction({
     return false;
   }
 
-  // Day 1 opens the plan's first lesson minutes from now: it's written from here, guests' too,
-  // and the lessons after it start too, so none waits when the learner gets there.
+  // Day 1 opens the first lesson minutes from now, so it and the next ones start being written here.
   if (result.firstLessonId) {
     writeLessonAhead(result.firstLessonId);
   }
@@ -215,7 +208,6 @@ export async function finishPlacementAction({
   return true;
 }
 
-/** The plan with the goal's structure, the plan reveal's two reads. */
 export async function getPlanAction(goalId: string): Promise<PlanOutcome> {
   if (!isUuid(goalId)) {
     return { status: "failed" };
@@ -250,7 +242,6 @@ export async function joinWaitlistAction(input: unknown): Promise<WaitlistOutcom
   return "failed";
 }
 
-/** "Start over" archives what this onboarding created, so the next goal starts clean. */
 export async function startOverAction(goalIds: unknown): Promise<void> {
   const ids = Array.isArray(goalIds)
     ? goalIds.filter((id): id is string => typeof id === "string" && isUuid(id))
@@ -259,11 +250,6 @@ export async function startOverAction(goalIds: unknown): Promise<void> {
   await Promise.all(ids.map((goalId) => updateGoal({ goalId, input: { status: "archived" } })));
 }
 
-/**
- * Starts the goal's curriculum again after its run failed or never started, when the learner
- * taps to try again. Only the learner's own goal counts. The new run's id, or null when it
- * couldn't start, so the screen says so at once.
- */
 export async function retryGenerationAction(goalId: string): Promise<string | null> {
   if (!isUuid(goalId)) {
     return null;
@@ -279,10 +265,6 @@ export async function retryGenerationAction(goalId: string): Promise<string | nu
   return start?.generationId ?? null;
 }
 
-/**
- * A diagnostic mock for placement: how long its lengths take, whether the learner's plan includes
- * it, and the goal's own once started.
- */
 export async function getPlacementMockAction(goalId: string): Promise<PlacementMockOutcome> {
   const result = isUuid(goalId) ? await getMockOptions({ goalId }) : null;
   const view = result?.status === "ready" ? result.view : null;
@@ -302,7 +284,6 @@ export async function getPlacementMockAction(goalId: string): Promise<PlacementM
   };
 }
 
-/** Stops the placement mock now: the questions answered set where the plan starts. */
 export async function stopPlacementMockAction(mockId: string, timeZone: string): Promise<boolean> {
   const input = mockTimeZoneInputSchema.safeParse({ timeZone });
 

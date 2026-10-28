@@ -2,7 +2,6 @@ import { MIN_PATTERN_ANSWERS } from "@zoonk/core/progress/score-performance";
 import { describe, expect, it } from "vitest";
 import { getPatternVerdict } from "./pattern-verdict";
 
-/** A group of answers at a score, with as many answers as asked (the minimum by default). */
 function group({
   score,
   totalAnswers = MIN_PATTERN_ANSWERS,

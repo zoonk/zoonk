@@ -11,15 +11,11 @@ import { STAT_PAGE_TILES_CLASS, StatsLine } from "../_components/stats-tiles";
 
 const PERCENT = 100;
 
-/** How far into the current level the learner is, as a share of the level's Brain Power. */
 function getLevelShare(level: BeltLevelDetails): number {
   return level.isMaxLevel ? 1 : level.progressInLevel / level.bpPerLevel;
 }
 
-/**
- * How far the next level is, as a thin bar in Brain Power's violet: the level counts Brain Power,
- * and a belt's own color (yellow, white) barely shows against the track.
- */
+/** Brain Power's violet: a belt's own color (yellow, white) barely shows against the track. */
 function LevelBar({ level }: { level: BeltLevelDetails }) {
   return (
     <span aria-hidden="true" className="bg-surface-3 mt-1 flex h-1 overflow-hidden rounded-[2px]">
@@ -31,14 +27,9 @@ function LevelBar({ level }: { level: BeltLevelDetails }) {
   );
 }
 
-/** A value there isn't: past the last level, nothing is left to earn. */
 const DASH = "–";
 
-/**
- * How much more Brain Power the next level takes, its bar showing how far into this one the
- * learner is; at the last level, that it's reached. After a belt's tenth level the next one is the
- * next belt's first, so the tile names that belt instead of an eleventh level.
- */
+/** After a belt's tenth level the next is the next belt's first, so the tile names that belt. */
 async function NextLevelTile({ level }: { level: BeltLevelDetails }) {
   const t = await getExtracted();
   const format = await getFormatter();
@@ -70,7 +61,6 @@ async function NextLevelTile({ level }: { level: BeltLevelDetails }) {
       value={
         <>
           {formatWholeNumber({ format, value: level.bpToNextLevel })}{" "}
-          {/* What the number counts, quiet beside it, as the tile beside it names Brain Power. */}
           <span className="text-muted-foreground font-sans text-xs font-normal tracking-normal">
             {t("Brain Power")}
           </span>
@@ -80,10 +70,6 @@ async function NextLevelTile({ level }: { level: BeltLevelDetails }) {
   );
 }
 
-/**
- * Level's three numbers: the level in its belt, the Brain Power behind it, and how much more the
- * next level takes.
- */
 export async function LevelTiles({ level }: { level: BeltLevelDetails }) {
   const t = await getExtracted();
   const format = await getFormatter();
@@ -109,7 +95,6 @@ export async function LevelTiles({ level }: { level: BeltLevelDetails }) {
   );
 }
 
-/** One line under the belts: how Brain Power grows. */
 export async function LevelLine() {
   const t = await getExtracted();
 

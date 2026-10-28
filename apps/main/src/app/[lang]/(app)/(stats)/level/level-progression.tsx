@@ -13,15 +13,12 @@ import { BeltRack } from "./belt-rack";
 const BELT_PROGRESSION_TITLE_ID = "belt-progression-title";
 const PERCENT = 100;
 
-/** Belts light enough for dark stitching; the darker ones get light stitching. */
 const LIGHT_BELTS = new Set<BeltColor>(["white", "yellow", "orange", "green"]);
 
-/** A number inside the belt's sentences ("Level 2 of 10", "at 7,500 Brain Power"), firmer. */
 function renderNumber(chunks: React.ReactNode) {
   return <span className="text-foreground font-medium tabular-nums">{chunks}</span>;
 }
 
-/** The belt's two rows of stitching, dashed across one piece of it. */
 function Stitching({ className }: { className: string }) {
   return (
     <>
@@ -31,11 +28,6 @@ function Stitching({ className }: { className: string }) {
   );
 }
 
-/**
- * One stripe on the rank bar: white tape once its level is reached, the next one an empty slot
- * filling with Brain Power's violet (`share` of the level), the rest empty slots. Tape and slots sit
- * inside the bar alike, so the bar frames every stripe instead of the tape reaching the panel.
- */
 function RankStripe({ isReached, share }: { isReached: boolean; share?: number }) {
   return (
     <span className="flex h-8 w-full py-[2.5px] md:h-11">
@@ -43,7 +35,6 @@ function RankStripe({ isReached, share }: { isReached: boolean; share?: number }
         className={cn(
           "relative flex-1 overflow-hidden rounded-[1px]",
           isReached && "bg-white",
-          // A dark inside keeps a slot reading as empty on Black's red bar.
           !isReached && "bg-black/50 ring-1 ring-inset",
           !isReached && (share === undefined ? "ring-white/15" : "ring-white/35"),
         )}
@@ -59,12 +50,7 @@ function RankStripe({ isReached, share }: { isReached: boolean; share?: number }
   );
 }
 
-/**
- * The learner's belt as an object, a close-up of its end: the band in its color with two rows of
- * stitching, and the dark rank bar where each level reached is a stripe of white tape, numbered
- * under the bar. Black's bar is red, as on a real black belt. It starts at the panel's edge, as if
- * the rest of the belt ran past it. Decorative: the words above it name the belt and level.
- */
+/** Decorative: the words above it name the belt and level. */
 function BeltDrawing({
   belt,
   className,
@@ -77,8 +63,6 @@ function BeltDrawing({
   share?: number;
 }) {
   const band = cn(
-    // White would vanish into a light panel and Black into a dark one without an edge. It runs
-    // along the belt and around its end, never across the panel's edge, where the belt runs on.
     "relative h-8 border-y border-transparent md:h-11",
     belt.bgClass,
     belt.key === "white" && "border-foreground/40",
@@ -128,10 +112,6 @@ function BeltDrawing({
   );
 }
 
-/**
- * What the next belt takes: its name and the Brain Power where it starts, and how much more that
- * is; on Black, that every belt is earned.
- */
 async function NextBelt({
   className,
   level,
@@ -178,10 +158,6 @@ async function NextBelt({
   );
 }
 
-/**
- * The learner's belt drawn as a belt, its stripes counting the levels reached, beside what the next
- * belt takes; under it, every belt on a rack.
- */
 export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevelDetails }) {
   const t = await getExtracted();
   const beltColors = await getBeltColors();
@@ -250,7 +226,6 @@ export async function LevelProgression({ currentBelt }: { currentBelt: BeltLevel
   );
 }
 
-/** The belt section at its size while its labels load. */
 export function LevelProgressionSkeleton() {
   return (
     <div className="flex flex-col gap-4">

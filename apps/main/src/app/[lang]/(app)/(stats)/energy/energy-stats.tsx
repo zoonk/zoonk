@@ -8,13 +8,8 @@ import { STAT_PAGE_TILES_CLASS, StatsLine } from "../_components/stats-tiles";
 
 const PERCENT = 100;
 
-/** A value the history doesn't have yet. */
 const DASH = "–";
 
-/**
- * Energy's three numbers: its value now (in whole percents, as the buddy shows it), its average
- * over the learner's history and the days it was full.
- */
 export async function EnergyTiles({
   currentEnergy,
   insights,
@@ -59,7 +54,6 @@ export async function EnergyTiles({
   );
 }
 
-/** One line under the year: how Energy moves, and what never does. */
 export async function EnergyLine() {
   const t = await getExtracted();
 

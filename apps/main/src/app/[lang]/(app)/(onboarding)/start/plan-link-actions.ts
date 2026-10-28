@@ -7,12 +7,6 @@ import { type CreateGoalsOutcome } from "@zoonk/learn/onboarding/actions";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getGoalLimitReason } from "./goal-limit-reason";
 
-/**
- * Onboarding opened from someone's plan link: the learner's answers (their time, days and date)
- * start their own goal from that plan's structure instead of a new plan. The same capability as
- * `POST /v1/plan-links/{planId}/goals`. A new goal's run then writes ahead what its plan needs
- * (placement's questions, the first lessons); the plan exists, so nothing waits for research.
- */
 export async function createGoalsFromPlanLinkAction(
   planId: string,
   input: unknown,

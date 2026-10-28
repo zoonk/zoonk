@@ -14,13 +14,9 @@ import { getTimePeriodNames } from "./pattern-names";
 const PERCENT = 100;
 
 type PatternRowView = {
-  /** The group's best, when it stands out from the others that count. */
   best: boolean;
-  /** A part of the day's hours ("6 AM–12 PM"), quiet beside its name. */
   hours?: string;
-  /** The row's name's id, which names the row for screen readers. */
   id: string;
-  /** Its answers, in the mono face. */
   meta: string;
   name: string;
   pattern: ScorePerformance;
@@ -31,10 +27,7 @@ function getBarWidth(score: number): string {
   return `${Math.min(PERCENT, Math.max(0, score))}%`;
 }
 
-/**
- * The bar's tone: the best blue, the others that count a lighter blue, and a group with too few
- * answers to count gray, so a lucky answer never reads as a result.
- */
+/** A group with too few answers to count is gray, so a lucky answer never reads as a result. */
 function getBarClass({ best, pattern }: Pick<PatternRowView, "best" | "pattern">): string {
   if (pattern.totalAnswers < MIN_PATTERN_ANSWERS) {
     return "bg-foreground/20";
@@ -43,11 +36,7 @@ function getBarClass({ best, pattern }: Pick<PatternRowView, "best" | "pattern">
   return best ? "bg-success" : "bg-success/45";
 }
 
-/**
- * One day or part of the day as a row: its name (a part of the day with its hours beside it) over
- * its answers, its share of right answers as a bar on a 0–100 scale, and the share in the mono
- * face. One without answers stays muted instead of reading as 0%.
- */
+/** One without answers stays muted instead of reading as 0%. */
 async function PatternRow({ row }: { row: PatternRowView }) {
   const format = await getFormatter();
   const hasAnswers = row.pattern.totalAnswers > 0;
@@ -130,7 +119,6 @@ function PatternSection({
   );
 }
 
-/** Every day of the week as a row, Sunday first, the best one (when one stands out) in blue. */
 export async function WeekPatterns({
   best,
   patterns,
@@ -154,9 +142,6 @@ export async function WeekPatterns({
   return <PatternSection id="week-patterns" rows={rows} title={t("Throughout the week")} />;
 }
 
-/**
- * The four parts of the day as rows, with their hours, the best one (when one stands out) in blue.
- */
 export async function DayPatterns({
   best,
   patterns,

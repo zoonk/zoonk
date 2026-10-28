@@ -4,7 +4,6 @@ import { Suspense } from "react";
 import { StatsPage } from "../_components/stats-page";
 import { PatternsContent, PatternsContentSkeleton } from "./patterns-content";
 
-/** Names the learner's complete fixed-window performance patterns. */
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
@@ -14,7 +13,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-/** When the learner answers best: the days of the week and the parts of the day, under Statistics. */
 export default async function PatternsPage() {
   const t = await getExtracted();
 

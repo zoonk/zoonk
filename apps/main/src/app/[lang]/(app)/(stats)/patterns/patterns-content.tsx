@@ -22,7 +22,6 @@ import {
   getPatternsSummary,
 } from "./pattern-summary";
 
-/** A value the patterns can't name yet. */
 const DASH = "–";
 
 const PERCENT = 100;
@@ -31,7 +30,6 @@ type Verdict = PatternVerdict<
   ScorePatternsData["weekdays"][number] | ScorePatternsData["times"][number]
 >;
 
-/** Under a best day's or time's name: its share and answers, how close they all are, or why not yet. */
 async function getVerdictDetail(verdict: Verdict): Promise<string> {
   const t = await getExtracted();
   const format = await getFormatter();
@@ -46,7 +44,6 @@ async function getVerdictDetail(verdict: Verdict): Promise<string> {
     return t("Not enough answers yet");
   }
 
-  // Whole percents, as the rows under the tiles say the same share.
   return t("{score} · {count, plural, one {# answer} other {# answers}}", {
     count: verdict.best.totalAnswers,
     score: format.number(verdict.best.score / PERCENT, {
@@ -56,15 +53,10 @@ async function getVerdictDetail(verdict: Verdict): Promise<string> {
   });
 }
 
-/** A name on a tile reads in the text face; numbers keep the mono one. */
 function TileName({ children }: { children: string | null }) {
   return children ? <span className="font-sans first-letter:uppercase">{children}</span> : DASH;
 }
 
-/**
- * The patterns' three numbers: the best day and the best part of the day (named only when one
- * stands out, `getPatternVerdict`), and the answers they come from.
- */
 async function PatternTiles({ patterns }: { patterns: ScorePatternsData }) {
   const t = await getExtracted();
   const format = await getFormatter();
@@ -102,11 +94,6 @@ async function PatternTiles({ patterns }: { patterns: ScorePatternsData }) {
   );
 }
 
-/**
- * Patterns: the best day and time on tiles, every day of the week and part of the day as rows on
- * one scale (side by side on a wide screen), and the honest lines: a group needs enough answers
- * to count, and a few points apart is no pattern.
- */
 export async function PatternsContent() {
   const [resource, session] = await Promise.all([
     loadOptionalData(getCurrentUserScorePatterns),
@@ -141,7 +128,6 @@ export async function PatternsContent() {
   );
 }
 
-/** The patterns at their size while they load: the tiles, the week and the day, the line. */
 export function PatternsContentSkeleton() {
   return (
     <ProgressContent aria-hidden="true">

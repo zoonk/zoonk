@@ -12,7 +12,6 @@ import { FreePlanSummary } from "./free-plan-summary";
 import { StripeCheckoutConfirming } from "./stripe-checkout-confirming";
 import { StripeCheckoutReturn } from "./stripe-checkout-return";
 
-/** Whom the offer speaks to: someone without a session starts free or logs in, a guest logs in. */
 function getOfferViewer({ hasAccount, hasSession }: { hasAccount: boolean; hasSession: boolean }) {
   if (!hasSession) {
     return "visitor";
@@ -21,11 +20,6 @@ function getOfferViewer({ hasAccount, hasSession }: { hasAccount: boolean; hasSe
   return hasAccount ? "free" : "guest";
 }
 
-/**
- * Subscribers see their plan: what it includes, when it renews and where to manage it. Everyone
- * else sees the offer under its plain title, as its sibling settings pages open, with the action
- * their account allows.
- */
 export async function SubscriptionPlans({
   searchParams,
 }: {
@@ -64,7 +58,6 @@ export async function SubscriptionPlans({
     <Page>
       <PageHeader>
         <PageHeaderContent>
-          {/* Under the section's title from a tablet up, the offer's name is a step smaller. */}
           <PageTitle className="md:text-xl md:leading-tight">
             {t("Subscribe to Zoonk Plus")}
           </PageTitle>

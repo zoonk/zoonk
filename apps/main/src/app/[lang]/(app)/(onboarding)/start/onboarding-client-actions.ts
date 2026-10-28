@@ -32,10 +32,8 @@ import { createGoalsFromPlanLinkAction } from "./plan-link-actions";
 import { WEB_UNDERSTANDING_ACTIONS } from "./understanding-client-actions";
 
 /**
- * Onboarding's actions for the web: the app's Server Actions, which call the same core
- * capabilities as the public API. A visitor becomes a guest before their goal is read, so the
- * goal, placement and plan are theirs and move to their account when they sign up. Material goes
- * through the uploads API from the browser, since files go straight to storage.
+ * A visitor becomes a guest before their goal is read, so what follows is theirs and moves to their
+ * account. Material goes through the uploads API from the browser: files go straight to storage.
  */
 export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
   answer: ({ goalId, input }) => answerOnboardingAction(goalId, input),
@@ -89,10 +87,6 @@ export const WEB_ONBOARDING_ROUTES: OnboardingRoutes = {
   today: "/today",
 };
 
-/**
- * Onboarding opened from someone's plan link (`/start?plan=`): the same steps, and the goal starts
- * from that plan's structure instead of a new plan.
- */
 export function getPlanLinkOnboardingActions(planId: string): OnboardingActions {
   return {
     ...WEB_ONBOARDING_ACTIONS,

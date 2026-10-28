@@ -9,12 +9,10 @@ import {
 import { PageSection, PageSectionHeader, PageSectionTitle } from "@zoonk/learn/page";
 import { getExtracted } from "next-intl/server";
 
-/** The counts in a sentence, in the mono face as every count reads. */
 function renderCount(chunks: React.ReactNode) {
   return <span className="font-mono tabular-nums">{chunks}</span>;
 }
 
-/** A free learner sees their own plan and actual message allowance before the Plus offer. */
 export async function FreePlanSummary({ allowance }: { allowance: Allowance }) {
   const t = await getExtracted();
   const messages = allowance.items.find((item) => item.kind === "tutorMessage");

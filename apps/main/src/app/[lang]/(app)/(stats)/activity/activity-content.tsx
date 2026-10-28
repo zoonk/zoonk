@@ -7,11 +7,7 @@ import { StatTilesSkeleton } from "../_components/stats-tiles";
 import { ActivityChart, ActivityChartSkeleton } from "./activity-chart";
 import { ActivityTiles } from "./activity-stats";
 
-/**
- * Activity: its three numbers (study days, lessons and time) and the past 12 months that light the
- * study days. Any learning day counts: a day of only reviews or practice too. Visitors are asked to
- * log in and learners without a learning day to start.
- */
+/** Any learning day counts, a day of only reviews or practice too. */
 export async function ActivityContent() {
   const [activity, session] = await Promise.all([getLearningActivity(), getSession()]);
 
@@ -27,7 +23,6 @@ export async function ActivityContent() {
   );
 }
 
-/** Activity at its size while its days load: the tiles and the year. */
 export function ActivityContentSkeleton() {
   return (
     <ProgressContent>

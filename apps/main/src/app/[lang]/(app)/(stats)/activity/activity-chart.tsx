@@ -29,7 +29,7 @@ import { getActivityCalendarIntensity } from "./_utils/activity-calendar-intensi
 
 const ACTIVITY_CHART_TITLE_ID = "activity-chart-title";
 
-/** Blue means studied, as everywhere in the app: the more finished that day, the fuller. */
+/** Blue means studied, as everywhere in the app. */
 const INTENSITY_CLASSES = [
   "bg-surface-3",
   "bg-success/25",
@@ -50,10 +50,6 @@ type ActivityCalendarWeek = {
   periodLabel: string | null;
 };
 
-/**
- * Adds the display-only label and intensity to one stored activity day before
- * rendering, keeping the calendar composition free of metric calculations.
- */
 function getActivityCalendarDay({
   accessibleLabel,
   day,
@@ -78,10 +74,6 @@ function getActivityCalendarDay({
   };
 }
 
-/**
- * Prepares one visual week with a stable key and optional month label so the
- * JSX only needs to describe the generic contribution-calendar composition.
- */
 function getActivityCalendarWeek({
   monthFormatter,
   week,
@@ -98,19 +90,10 @@ function getActivityCalendarWeek({
   };
 }
 
-/**
- * Composes one learning-activity square with its caller-owned detail text.
- * Keeping this domain layer separate lets the shared UI component remain
- * reusable for metrics other than completed lessons.
- */
 function ActivityCalendarSquare({ day }: { day: ActivityCalendarDay }) {
   return <ContributionCalendarDay className={day.intensityClass} index={day.index} />;
 }
 
-/**
- * Renders one calendar column after its dates and optional month label have
- * been prepared, avoiding nested domain logic inside the main chart markup.
- */
 function ActivityCalendarWeekColumn({ week }: { week: ActivityCalendarWeek }) {
   return (
     <ContributionCalendarWeek>
@@ -124,7 +107,6 @@ function ActivityCalendarWeekColumn({ week }: { week: ActivityCalendarWeek }) {
   );
 }
 
-/** "Less ■■■■■ More": the shades from no study to the busiest day. */
 async function ActivityLegend() {
   const t = await getExtracted();
 
@@ -139,12 +121,7 @@ async function ActivityLegend() {
   );
 }
 
-/**
- * The learning days of the past 12 months, lit by how much was finished each day, by the same
- * definition as the study days beside it, with the key to its shades on its title row. Dates use
- * the same date-only UTC convention as DailyProgress so a learner's stored local calendar date
- * never shifts while it is formatted.
- */
+/** Dates use DailyProgress's date-only UTC convention, so a stored local date never shifts as it's formatted. */
 export async function ActivityChart({ days }: { days: LearningActivityDay[] }) {
   const t = await getExtracted();
   const locale = await getLocale();
@@ -204,10 +181,6 @@ export async function ActivityChart({ days }: { days: LearningActivityDay[] }) {
   );
 }
 
-/**
- * The calendar at its size while the year's days stream: its title row with the key, the grid and
- * the readout's line, so the page below it stays still.
- */
 export function ActivityChartSkeleton() {
   return (
     <ContributionCalendar aria-hidden="true">

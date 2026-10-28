@@ -3,12 +3,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { type BeltColor } from "@zoonk/utils/belt-level";
 import { getExtracted } from "next-intl/server";
 
-/**
- * A belt on the rack in its color: tied (knot and tails) once the learner reached it, folded while
- * it's still ahead. White on a light page and Black on a dark one get an outline drawn behind the
- * belt, so it traces the belt's shape without crossing the knot; Black stays black there, as in the
- * drawing.
- */
 function RackBelt({ color, isTied }: { color: BeltColor; isTied: boolean }) {
   const shapes = isTied ? (
     <>
@@ -47,10 +41,6 @@ function RackBelt({ color, isTied }: { color: BeltColor; isTied: boolean }) {
   );
 }
 
-/**
- * Every belt in its own color, tied once reached and folded while ahead, the learner's framed, each
- * named from a tablet up (on a phone the first and last are named under the rack).
- */
 export async function BeltRack({
   beltColors,
   currentIndex,
@@ -64,7 +54,6 @@ export async function BeltRack({
   const firstBelt = beltColors[0];
   const lastBelt = beltColors.at(-1);
 
-  // Under its belt a name is its color alone: the section already says they're belts.
   const shortName = (color: BeltColor) =>
     t(
       "{color, select, white {White} yellow {Yellow} orange {Orange} green {Green} blue {Blue} purple {Purple} brown {Brown} red {Red} gray {Gray} black {Black} other {Belt}}",

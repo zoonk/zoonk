@@ -6,10 +6,6 @@ import { BookOpenCheckIcon, CalendarCheckIcon, ClockIcon } from "lucide-react";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { STAT_PAGE_TILES_CLASS } from "../_components/stats-tiles";
 
-/**
- * Activity's three numbers: the study days (the days the calendar lights), the lessons finished
- * and the time it all took.
- */
 export async function ActivityTiles({
   activity,
 }: {

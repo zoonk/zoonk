@@ -10,17 +10,10 @@ import { useExtracted } from "next-intl";
 import { useEffect, useState } from "react";
 import { hasPlusSubscriptionAction } from "./subscription-status-action";
 
-/** Stripe's webhook usually saves the subscription within seconds of the return. */
 const CONFIRMATION_POLL_MS = 3000;
-/** After this long, the page says it's taking longer and offers to check again. */
 const CONFIRMATION_TIMEOUT_MS = 45_000;
 
-/**
- * Back from Stripe before its webhook saved the subscription: the page says it's confirming and
- * asks whether the subscription is saved until it is, then reads itself, and the plan replaces
- * this. After a while it says it's still confirming, with a way to check again, never
- * the offer they just paid for.
- */
+/** Never the offer they just paid for, even after the timeout. */
 function ConfirmationAttempt({ restart }: { restart: () => void }) {
   const t = useExtracted();
   const router = useRouter();
@@ -79,7 +72,7 @@ function ConfirmationAttempt({ restart }: { restart: () => void }) {
   );
 }
 
-/** A new check has its own deadline and cancels any response belonging to the previous attempt. */
+/** A new check cancels any response belonging to the previous attempt. */
 export function StripeCheckoutConfirming() {
   const [round, setRound] = useState(0);
   return <ConfirmationAttempt key={round} restart={() => setRound((current) => current + 1)} />;

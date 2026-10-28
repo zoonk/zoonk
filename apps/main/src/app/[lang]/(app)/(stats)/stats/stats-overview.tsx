@@ -29,28 +29,20 @@ import { PatternsLinkRow, PatternsOverview, ScoreTrend } from "./overview-detail
 
 const PERCENT = 100;
 
-/** Four tiles a row from `sm`, two on phones. */
 const TILES_CLASS = "gap-2 sm:grid-cols-4";
 
-/**
- * A tile opens its stat's page: the whole tile is the link (its number carries it, stretched over
- * the tile), hovered as a row is.
- */
 const TILE_LINK_CLASS =
   "focus-visible:ring-ring/50 rounded-sm outline-none after:absolute after:inset-0 after:rounded-option focus-visible:after:ring-[3px] focus-visible:after:ring-ring/50";
 
 const TILE_CLASS = "hover:bg-muted/40 relative transition-colors";
 
-/** Score and Patterns side by side from `lg`, stacked on a tablet; phones get one row instead. */
 const DETAILS_CLASS =
   "hidden gap-8 md:grid lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)] lg:gap-10";
 
-/** Counts inside a tile's line, in the mono face as every count reads. */
 function renderCount(chunks: React.ReactNode) {
   return <span className="font-mono tabular-nums">{chunks}</span>;
 }
 
-/** A tile's number as the link to its stat's page, named with the tile's label and number. */
 function TileLink<Href extends string>({
   href,
   label,
@@ -67,7 +59,6 @@ function TileLink<Href extends string>({
   );
 }
 
-/** The belt's level, with the belt's name under it, opening the belt and what's ahead. */
 async function LevelTile({ level }: { level: BeltLevelDetails }) {
   const t = await getExtracted();
   const belt = await getBeltLabel({ color: level.color });
@@ -84,7 +75,6 @@ async function LevelTile({ level }: { level: BeltLevelDetails }) {
   );
 }
 
-/** Energy now, with its average under it, opening its year. */
 async function EnergyTile({ energy }: { energy: Pick<EnergyData, "currentEnergy" | "insights"> }) {
   const t = await getExtracted();
   const format = await getFormatter();
@@ -113,7 +103,6 @@ async function EnergyTile({ energy }: { energy: Pick<EnergyData, "currentEnergy"
   );
 }
 
-/** Study days, with the lessons and the time behind them, opening the year of them. */
 async function StudyDaysTile({
   activity,
 }: {
@@ -148,7 +137,6 @@ async function StudyDaysTile({
   );
 }
 
-/** Right answers over 90 days, with the answers behind them, opening their weekly trend. */
 async function ScoreTile({ progress }: { progress: CurrentUserProgress }) {
   const t = await getExtracted();
   const format = await getFormatter();
@@ -162,8 +150,7 @@ async function ScoreTile({ progress }: { progress: CurrentUserProgress }) {
       className={TILE_CLASS}
       detail={
         score
-          ? // "128/183 right", as the Score page's tile counts them.
-            t.rich(
+          ? t.rich(
               "{correct, plural, =0 {<mono>#/{total}</mono> right} one {<mono>#/{total}</mono> right} other {<mono>#/{total}</mono> right}}",
               {
                 correct: score.correctAnswers,
@@ -181,12 +168,6 @@ async function ScoreTile({ progress }: { progress: CurrentUserProgress }) {
   );
 }
 
-/**
- * Statistics at a glance, as a dashboard on a wide screen: four numbers on tiles (the level,
- * Energy, study days and right answers, each opening its page), the past 12 months of study across
- * the page, then Score's trend beside the best day and time (one row on a phone). Visitors and
- * learners who haven't studied yet get the same empty state as every stats page.
- */
 export async function StatsOverview() {
   const locale = await getLocale();
 
@@ -226,10 +207,6 @@ export async function StatsOverview() {
   );
 }
 
-/**
- * The overview at its size: the tiles, the calendar, then Score and Patterns under their own
- * titles (one row on a phone).
- */
 export async function StatsOverviewSkeleton() {
   const t = await getExtracted();
 

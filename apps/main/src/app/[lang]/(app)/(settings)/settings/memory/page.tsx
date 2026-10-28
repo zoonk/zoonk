@@ -28,7 +28,6 @@ async function MemoryContent() {
   );
 }
 
-/** The memory switch's row, then a group of facts under its label. */
 function MemorySkeleton() {
   return (
     <div className="flex flex-col gap-7">
@@ -48,7 +47,6 @@ export default async function MemoryPage() {
     <Page>
       <SectionPageHeader title={t("Memory")} />
 
-      {/* What memory is for, at every size: the switch and the facts follow from it. */}
       <p className="text-muted-foreground -mt-4 text-sm text-pretty md:mt-0">
         {t("What Zoonk remembers to give you examples and plans that fit your life.")}
       </p>

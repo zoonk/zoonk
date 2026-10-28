@@ -19,10 +19,6 @@ function SubscriptionSkeleton() {
   );
 }
 
-/**
- * Plus inside the app: subscribers see their plan and how to manage it, signed-in learners can
- * subscribe, guests log in first, and visitors log in or start free.
- */
 export default function Subscription({ searchParams }: PageProps<"/[lang]/subscription">) {
   return (
     <Suspense fallback={<SubscriptionSkeleton />}>

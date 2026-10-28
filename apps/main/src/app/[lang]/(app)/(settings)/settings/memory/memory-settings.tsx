@@ -13,7 +13,6 @@ import {
 
 type MemoryChangeKind = "deleted" | "updated";
 
-/** Counts what learners change in their memory, to see which facts they correct or remove. */
 function trackFactChange({
   change,
   factId,
@@ -33,7 +32,6 @@ function trackFactChange({
   }
 }
 
-/** The Memory screen with main's actions. */
 export function MemorySettings({ memory }: { memory: MemoryView }) {
   const actions: MemoryActions = {
     deleteFact: async (factId) => {

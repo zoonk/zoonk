@@ -8,10 +8,7 @@ import {
   startUnderstandingAction,
 } from "./understanding-actions";
 
-/**
- * Reading a typed goal from the web, on its own so the home page's goal box loads only this when
- * a visitor sends a goal. A visitor becomes a guest first, so the draft is theirs.
- */
+/** On its own, so the home page's goal box loads only this when a visitor sends a goal. */
 export const WEB_UNDERSTANDING_ACTIONS: UnderstandingActions = {
   get: getUnderstandingAction,
   retry: retryUnderstandingAction,

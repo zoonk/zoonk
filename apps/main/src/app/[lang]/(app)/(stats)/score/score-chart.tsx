@@ -7,18 +7,12 @@ type ScoreTrendDataPoint = ScorePerformance & { date: Date; label: string };
 
 export type SerializedScoreDataPoint = ScorePerformance & { date: string; label: string };
 
-/**
- * Serializes the fixed weekly Score trend at the server boundary so the client
- * chart receives only the small, JSON-safe dataset it needs. Score shows its plot at every width,
- * the overview only where it shows its trend (`media`).
- */
 export function ScoreChart({
   dataPoints,
   media,
   performance,
 }: {
   dataPoints: ScoreTrendDataPoint[];
-  /** Where the page shows the plot; elsewhere its code never loads. Every width without one. */
   media?: string;
   performance: ScorePerformance;
 }) {
@@ -38,7 +32,6 @@ export function ScoreChart({
   );
 }
 
-/** Reserves the weekly chart's plot height while the rolling data streams. */
 export function ScoreChartSkeleton() {
   return <Skeleton aria-hidden="true" className="h-55 w-full rounded-lg" />;
 }

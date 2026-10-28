@@ -5,11 +5,7 @@ import { GOAL_PARAM } from "@/lib/public/public-hrefs";
 import { type OnboardingNavigation } from "@zoonk/learn/onboarding/actions";
 import { DRAFT_PARAM, START_AGAIN_PARAM } from "./start-params";
 
-/**
- * Puts the draft in the address without a navigation: the screen already shows it, and a refresh
- * reads it back. Other parameters, such as the plan link it started from, stay; the typed goal
- * and "start over" marker don't, since the draft holds the words now.
- */
+/** Without a navigation: the screen already shows the draft, and a refresh reads it back. */
 function replaceDraftParam(draftId: string | null) {
   const url = new URL(globalThis.location.href);
 
@@ -25,7 +21,6 @@ function replaceDraftParam(draftId: string | null) {
   globalThis.history.replaceState(null, "", url);
 }
 
-/** Onboarding's page changes through the app's locale-aware router. */
 export function useOnboardingNavigation(): OnboardingNavigation {
   const router = useRouter();
 

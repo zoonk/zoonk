@@ -37,10 +37,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return { robots: { follow: false, index: false }, title: t("Your plan") };
 }
 
-/**
- * Someone without a session (a guest whose session ended, another device): the page keeps a
- * header saying what it is, and the way in under it, back to these questions.
- */
 async function StepsGate({ goalId }: { goalId: string }) {
   const t = await getExtracted();
 
@@ -93,7 +89,7 @@ async function StepsContent({ params }: Props) {
     redirect({ href: `/explain/${goalId}`, locale: lang });
   }
 
-  // The reveal is only used on the plan screen. A planner failure must not block earlier answers.
+  // A planner failure must not block the earlier answers.
   const [plan, syllabus] =
     (result.onboarding.steps[0] ?? "plan") === "plan"
       ? await Promise.all([getGoalPlan(goalId), getSyllabusView({ goalId })])
@@ -121,10 +117,6 @@ async function StepsContent({ params }: Props) {
   );
 }
 
-/**
- * The rest of onboarding for a goal the learner just created, ending with its plan, as a page of
- * the app's frame.
- */
 export default function OnboardingStepsPage(props: Props) {
   return (
     <Suspense

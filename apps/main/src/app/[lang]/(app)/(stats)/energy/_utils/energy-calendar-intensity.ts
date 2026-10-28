@@ -3,11 +3,7 @@ import { MAX_ENERGY } from "@zoonk/core/progress/energy";
 const ENERGY_INTENSITY_STEP = 25;
 const MAXIMUM_ENERGY_INTENSITY = 5;
 
-/**
- * Energy has an absolute 0% to 100% meaning, so fixed 25-point bands preserve
- * the same color meaning for every learner while the strongest band remains
- * exclusive to maximum Energy.
- */
+/** Energy's 0–100% is absolute, so its bands are fixed for every learner; the strongest is full Energy alone. */
 export function getEnergyCalendarIntensity(energy: number | null): number {
   if (energy === null || energy <= 0) {
     return 0;

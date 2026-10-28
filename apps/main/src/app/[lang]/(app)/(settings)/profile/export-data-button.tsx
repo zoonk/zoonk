@@ -11,11 +11,6 @@ import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { exportAccountDataAction } from "./export-data-action";
 
-/**
- * "Download my data" as a row of the profile's "Your data": everything Zoonk keeps about the learner
- * (profile, goals, plans, progress, answers, memory and feedback) in one file, with a small
- * Download at the row's end that says when the file is being prepared.
- */
 export function ExportDataButton() {
   const t = useExtracted();
   const [isPending, startTransition] = useTransition();

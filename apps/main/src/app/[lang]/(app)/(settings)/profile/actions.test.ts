@@ -4,7 +4,6 @@ import { profileFormAction } from "./actions";
 
 vi.mock("@zoonk/core/users/current", () => ({ updateCurrentUser: vi.fn() }));
 
-/** Creates the valid browser form payload shared by profile action examples. */
 function createProfileFormData(): FormData {
   const formData = new FormData();
   formData.set("name", "Updated learner");

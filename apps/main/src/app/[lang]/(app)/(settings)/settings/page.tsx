@@ -27,7 +27,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("Settings") };
 }
 
-/** Whose settings these are, and the way to their profile: an account's name and email. */
 async function AccountRow() {
   const session = await getSession();
 
@@ -83,7 +82,6 @@ async function SettingsHubContent() {
   );
 }
 
-/** The hub's rows at their size: the account, then the two groups of pages. */
 function SettingsHubSkeleton() {
   return (
     <div className="flex flex-col gap-6">
@@ -94,21 +92,12 @@ function SettingsHubSkeleton() {
   );
 }
 
-/**
- * From a tablet up the settings pages are tabs under the section's title, so the hub shows the
- * first of them: the profile for an account, Preferences for anyone else.
- */
 async function FirstSettingsPage() {
   const session = await getSession();
   return session && !session.user.isAnonymous ? <ProfilePage /> : <AppearancePage />;
 }
 
-/**
- * The settings hub: whose account it is (its row opens the profile), then the settings pages in
- * lists (the learner's own, then the plan and help, then the way out), each opening its page.
- * Settings open here from the account menu. From a tablet up the tabs list the pages and the first
- * one shows under them; the server can't tell the screen's width, so both render and CSS shows one.
- */
+/** The server can't tell the screen's width, so the hub and the first page both render and CSS shows one. */
 export default async function SettingsPage() {
   const t = await getExtracted();
 

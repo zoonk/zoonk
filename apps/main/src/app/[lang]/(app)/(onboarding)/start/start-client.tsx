@@ -24,19 +24,13 @@ export function StartClient({
   needsAccount,
   planId,
 }: {
-  /** An account can attach material; guests and visitors are asked to create one. */
   canAttach: boolean;
   defaultGoal: string;
-  /** Under a host page's title (Today without a goal), as that page's section. */
   embedded?: boolean;
-  /** A goal limit the learner already reached, said before they type. */
   goalLimit: GoalLimitReason | null;
-  /** The host page's top over the flow when `embedded`, such as Today's title. */
   header?: React.ReactNode;
   initialDraft: OnboardingDraftView | null;
-  /** A guest whose one goal is taken: only an account adds another. */
   needsAccount: boolean;
-  /** Someone's plan link this onboarding started from, if any. */
   planId: string | null;
 }) {
   const navigation = useOnboardingNavigation();

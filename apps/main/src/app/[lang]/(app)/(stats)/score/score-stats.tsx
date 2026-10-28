@@ -6,13 +6,8 @@ import { CalendarRangeIcon, CheckIcon, TargetIcon } from "lucide-react";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { STAT_PAGE_TILES_CLASS, StatsLine } from "../_components/stats-tiles";
 
-/** The days Score counts back from today. */
 const SCORE_WINDOW_DAYS = 90;
 
-/**
- * Score's three numbers: the share of right answers, the answers behind it (so the percentage is
- * read with its volume) and the window they come from.
- */
 export async function ScoreTiles({ performance }: { performance: ScorePerformance }) {
   const t = await getExtracted();
   const format = await getFormatter();
@@ -50,7 +45,6 @@ export async function ScoreTiles({ performance }: { performance: ScorePerformanc
   );
 }
 
-/** One line under the trend: every answer counts the same. */
 export async function ScoreLine() {
   const t = await getExtracted();
 

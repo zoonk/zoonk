@@ -10,7 +10,6 @@ import { StatTilesSkeleton } from "../_components/stats-tiles";
 import { ScoreChart, ScoreChartSkeleton } from "./score-chart";
 import { ScoreLine, ScoreTiles } from "./score-stats";
 
-/** Score: its three numbers, its weekly trend and one line on what moves it. */
 export async function ScoreContent() {
   const locale = await getLocale();
 
@@ -32,7 +31,6 @@ export async function ScoreContent() {
   );
 }
 
-/** Score at its size while its answers load: the tiles, the trend and the line. */
 export function ScoreContentSkeleton() {
   return (
     <ProgressContent>

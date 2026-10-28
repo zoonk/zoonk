@@ -32,7 +32,6 @@ import { OVERVIEW_CHART_MEDIA } from "./overview-chart-media";
 
 const PERCENT = 100;
 
-/** Score's weekly trend on a wide screen, under its window and its number. */
 export async function ScoreTrend({
   history,
 }: {
@@ -67,7 +66,6 @@ export async function ScoreTrend({
   );
 }
 
-/** "69–73%": the range the counted days span, in whole percents. */
 async function getWeekSpread(patterns: ScorePatternsData): Promise<string | null> {
   const t = await getExtracted();
   const format = await getFormatter();
@@ -86,7 +84,6 @@ async function getWeekSpread(patterns: ScorePatternsData): Promise<string | null
   });
 }
 
-/** One row of the patterns: what it is, and its answer on the right with its share, if any. */
 function PatternsRow({
   label,
   score,
@@ -109,7 +106,6 @@ function PatternsRow({
   );
 }
 
-/** The best group's share in whole percents, when one stands out. */
 async function getBestScore(verdict: { best?: { score: number }; kind: string }) {
   const format = await getFormatter();
 
@@ -118,10 +114,6 @@ async function getBestScore(verdict: { best?: { score: number }; kind: string })
     : null;
 }
 
-/**
- * The best day and time on a wide screen, as rows (named only when one stands out), the range of
- * the week, and the honest lines under them, with the way to the full patterns.
- */
 export async function PatternsOverview({ patterns }: { patterns: ScorePatternsData | null }) {
   const t = await getExtracted();
   const summary = patterns ? getPatternsSummary(patterns) : null;
@@ -157,7 +149,6 @@ export async function PatternsOverview({ patterns }: { patterns: ScorePatternsDa
   );
 }
 
-/** On a phone, the patterns as one row: the best day and time, opening the full patterns. */
 export async function PatternsLinkRow({ patterns }: { patterns: ScorePatternsData | null }) {
   const t = await getExtracted();
   const summary = patterns ? getPatternsSummary(patterns) : null;

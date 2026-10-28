@@ -35,15 +35,12 @@ async function StartContent({ searchParams }: PageProps<"/[lang]/start">) {
     readParam(query[DRAFT_PARAM]),
   );
 
-  // Once goals were created from the draft, its onboarding goes on at the goal.
   if (draft?.goalId) {
     redirect({ href: `/start/${draft.goalId}`, locale: language });
   }
 
   const plan = readParam(query[PLAN_PARAM]);
 
-  // Someone who landed here without a session goes back to the home page they came from, and logs
-  // in from the bar under `lg`, where the sidebar's way in isn't.
   return (
     <OnboardingPage
       backHref={hasSession ? "/today" : "/"}
@@ -64,14 +61,7 @@ async function StartContent({ searchParams }: PageProps<"/[lang]/start">) {
   );
 }
 
-/**
- * Onboarding starts here, as a page of the app's frame: the goal in the learner's own words,
- * understood and confirmed. The goal being confirmed stays in the address (`?draft=`), so a refresh
- * shows the same screen. Links send visitors here with `?goal=` filled in; it only fills the box,
- * since reading a goal starts from the learner's own tap. A guest whose one goal is taken is asked
- * to create an account first; a learner whose plan can't start another goal is told up front, with
- * the box open for questions.
- */
+/** `?goal=` only fills the box: reading a goal starts from the learner's own tap. */
 export default function StartPage(props: PageProps<"/[lang]/start">) {
   // The skeleton follows the address (a goal on its way shows the wait's shape), which the
   // prerendered page doesn't know: there it's the first screen's.

@@ -24,7 +24,6 @@ import { useActionState, useId } from "react";
 import { useFormStatus } from "react-dom";
 import { profileFormAction } from "./actions";
 
-/** Under the username: the rule, then whether a new one is free as soon as it's checked. */
 function UsernameHint({ status, username }: { status: UsernameStatusType; username: string }) {
   const t = useExtracted();
 
@@ -56,7 +55,6 @@ function UsernameHint({ status, username }: { status: UsernameStatusType; userna
   );
 }
 
-/** Save, small, at the end of the fields; busy while the profile is on its way. */
 function SaveButton({ disabled }: { disabled: boolean }) {
   const t = useExtracted();
   const { pending } = useFormStatus();
@@ -69,7 +67,6 @@ function SaveButton({ disabled }: { disabled: boolean }) {
   );
 }
 
-/** Why the last save didn't go through, over the button; "Saved." shows there for a moment. */
 function SaveError({ state }: { state: typeof initialState }) {
   const t = useExtracted();
 
@@ -92,11 +89,6 @@ type FormStatus = "error" | "idle" | "success" | "usernameTaken";
 
 const initialState = { name: "", status: "idle" as FormStatus, username: "" };
 
-/**
- * The learner's name and username as two rows of the account's list, each name with what it is
- * on the left and its field on the right (under it on a phone), the username's rule (and whether a
- * new one is free) under its name, then Save at the list's end.
- */
 export function ProfileForm({
   defaultName,
   defaultUsername,

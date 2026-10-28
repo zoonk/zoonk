@@ -30,11 +30,7 @@ import { getEnergyCalendarIntensity } from "./_utils/energy-calendar-intensity";
 
 const ENERGY_HISTORY_TITLE_ID = "energy-history-title";
 
-/**
- * Energy's steps, its amber softened at every step: most days sit in the upper steps, and at full
- * strength they made the calendar the loudest thing on a neutral page. With more contrast the
- * token itself deepens, so the steps stay apart.
- */
+/** Softened: most days sit in the upper steps, and at full strength the calendar was the loudest thing on the page. */
 const ENERGY_INTENSITY_CLASSES = [
   "bg-surface-3",
   "bg-energy/15",
@@ -52,10 +48,6 @@ type EnergyCalendarDay = EnergyDay & {
 
 type EnergyCalendarWeek = { days: EnergyCalendarDay[]; key: string; periodLabel: string | null };
 
-/**
- * Adds Energy's readout sentence, intensity and place in the days' order before the generic
- * contribution-calendar primitives render the day.
- */
 function getEnergyCalendarDay({
   accessibleLabel,
   day,
@@ -72,10 +64,6 @@ function getEnergyCalendarDay({
   return { ...day, accessibleLabel, index, intensityClass };
 }
 
-/**
- * Prepares one Energy week with an optional month label so the main JSX remains
- * a direct composition of the reusable calendar building blocks.
- */
 function getEnergyCalendarWeek({
   monthFormatter,
   week,
@@ -92,12 +80,10 @@ function getEnergyCalendarWeek({
   };
 }
 
-/** One Energy square in its shade; the calendar reads its sentence out when it is picked. */
 function EnergyCalendarSquare({ day }: { day: EnergyCalendarDay }) {
   return <ContributionCalendarDay className={day.intensityClass} index={day.index} />;
 }
 
-/** Renders one seven-day Energy column and its optional month label. */
 function EnergyCalendarWeekColumn({ week }: { week: EnergyCalendarWeek }) {
   return (
     <ContributionCalendarWeek>
@@ -111,7 +97,6 @@ function EnergyCalendarWeekColumn({ week }: { week: EnergyCalendarWeek }) {
   );
 }
 
-/** "Low ■■■■■■ High": the shades from no Energy to full. */
 async function EnergyLegend() {
   const t = await getExtracted();
 
@@ -126,11 +111,7 @@ async function EnergyLegend() {
   );
 }
 
-/**
- * Energy over the past 12 months in its amber, the key to its shades on the title row. Energy
- * dates use the same date-only UTC convention as DailyProgress, keeping learner-local calendar
- * dates stable while labels are localized.
- */
+/** Dates use DailyProgress's date-only UTC convention, so a stored local date never shifts as it's formatted. */
 export async function EnergyChart({ days }: { days: EnergyDay[] }) {
   const t = await getExtracted();
   const format = await getFormatter();
@@ -196,10 +177,6 @@ export async function EnergyChart({ days }: { days: EnergyDay[] }) {
   );
 }
 
-/**
- * The calendar at its size while Energy's history streams: its title row with the key, the grid
- * and the readout's line.
- */
 export function EnergyChartSkeleton() {
   return (
     <ContributionCalendar aria-hidden="true">

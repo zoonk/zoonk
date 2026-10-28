@@ -15,7 +15,6 @@ import {
 } from "../_components/progress-line-chart";
 import { type SerializedScoreDataPoint } from "./score-chart";
 
-/** Score's weekly trend drawn with Recharts: the line, and each week's detail under the pointer. */
 export function ScoreChartPlot({ dataPoints }: { dataPoints: SerializedScoreDataPoint[] }) {
   const t = useExtracted();
   const format = useFormatter();

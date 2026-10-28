@@ -26,16 +26,11 @@ import { type DeleteAccountResult, deleteAccountAction } from "./delete-account-
 
 const DELETE_ACCOUNT_ID = "delete-account";
 
-/** The row's small way to delete: see-through with a red line and red words, never a red slab. */
 const DELETE_BUTTON_CLASS = cn(
   buttonVariants({ size: "sm", variant: "outline" }),
   "text-destructive-text border-destructive/40 hover:bg-destructive/10 hover:text-destructive-text",
 );
 
-/**
- * The session is gone with the account, so the browser forgets it and starts fresh at home, which
- * says the account was deleted.
- */
 async function leaveDeletedAccount() {
   await forgetDeletedSession();
   rememberAccountDeleted();
@@ -67,12 +62,6 @@ function DeleteAccountOutcome({ result }: { result: DeleteAccountResult | null }
   return null;
 }
 
-/**
- * Deleting the account as one row: what it removes for good as its description, and a small red
- * "Delete…" that asks once more before doing it. Afterwards the learner is signed out and back on
- * the home page, which confirms the account was deleted. It deletes only the account the page
- * shows (`userId`).
- */
 export function DeleteAccountSection({ userId }: { userId: string }) {
   const t = useExtracted();
   const [isPending, startTransition] = useTransition();
@@ -88,8 +77,6 @@ export function DeleteAccountSection({ userId }: { userId: string }) {
         return;
       }
 
-      // Another account signed in since the page showed this one (in another tab): nothing was
-      // deleted, and the page reloads for whoever is signed in now.
       if (outcome === "otherAccount") {
         globalThis.location.reload();
         return;

@@ -5,7 +5,6 @@ import { StatsPage } from "../_components/stats-page";
 import { ScoreChartPreload } from "./score-chart-preload";
 import { ScoreContent, ScoreContentSkeleton } from "./score-content";
 
-/** Describes the fixed Score window consistently in browser and social metadata. */
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
 
@@ -15,7 +14,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-/** The rolling Score: its accuracy, weekly trend and one line, under Statistics. */
 export default async function ScorePage() {
   const t = await getExtracted();
 

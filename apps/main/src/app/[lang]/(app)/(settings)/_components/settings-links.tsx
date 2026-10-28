@@ -14,10 +14,6 @@ import {
 import { PlusMark } from "@zoonk/learn/plus-lock";
 import { useExtracted } from "next-intl";
 
-/**
- * Which settings pages apply: the profile to an account; the way out to an account, and the plan
- * beside "Subscription" when it's Plus.
- */
 export type SettingsPagesShown = { plus: boolean; showLogout: boolean; showProfile: boolean };
 
 type SettingsPage = SectionNavItem<string>;
@@ -30,10 +26,6 @@ function toPage(
   return { label, trail, url: getMenu(key).url };
 }
 
-/**
- * The settings pages in two groups: the learner's own (the profile, `withProfile`, where the hub
- * doesn't open it from the account's own row), then the plan and help.
- */
 function useSettingsPages({
   plus,
   showProfile,
@@ -55,11 +47,6 @@ function useSettingsPages({
   return { label: t("Settings"), plan, yours };
 }
 
-/**
- * The settings pages as tabs under the section's title from a tablet up, the current one marked;
- * the hub shows the first one (the profile for an account), marked there. The way out is in the
- * account menu at the sidebar's end.
- */
 export function SettingsNavLinks(shown: SettingsPagesShown) {
   const { label, plan, yours } = useSettingsPages({ ...shown, withProfile: true });
   const first = getMenu(shown.showProfile ? "profile" : "appearance").url;
@@ -73,7 +60,6 @@ export function SettingsNavLinks(shown: SettingsPagesShown) {
   );
 }
 
-/** One group of the hub's rows: each page by its name, with its mark (Plus) when it has one. */
 function SettingsGroup({ items }: { items: SettingsPage[] }) {
   return (
     <ListGroup>
@@ -93,7 +79,6 @@ function SettingsGroup({ items }: { items: SettingsPage[] }) {
   );
 }
 
-/** "Log out" as the hub's last row: the account's way out, an action in red, so no chevron. */
 function LogoutGroup() {
   const t = useExtracted();
 
@@ -108,11 +93,6 @@ function LogoutGroup() {
   );
 }
 
-/**
- * The settings hub's rows, flat on the page: the learner's own pages (the profile opens from the
- * account's row above them), then the plan and help, then the way out, each group apart from the
- * next.
- */
 export function SettingsHubLists({
   memoryCount,
   preferencesSummary,

@@ -5,10 +5,6 @@ import { type PatternVerdict, getPatternVerdict } from "./_utils/pattern-verdict
 import { getScoreWeekdayLabel } from "./_utils/weekday";
 import { getTimePeriodNames } from "./pattern-names";
 
-/**
- * What the patterns honestly say on each side: the best day and the best part of the day when one
- * stands out (`getPatternVerdict`), and why small samples never count.
- */
 export function getPatternsSummary(patterns: ScorePatternsData) {
   return {
     days: getPatternVerdict({ patterns: patterns.weekdays, strongest: patterns.strongestWeekday }),
@@ -18,7 +14,6 @@ export function getPatternsSummary(patterns: ScorePatternsData) {
 
 type PatternsSummary = ReturnType<typeof getPatternsSummary>;
 
-/** The best day's name ("Thursday"), "Any day" when they're even, or null before one can count. */
 export async function getBestDayName(
   verdict: PatternVerdict<ScorePatternsData["weekdays"][number]>,
 ): Promise<string | null> {
@@ -34,7 +29,6 @@ export async function getBestDayName(
     : null;
 }
 
-/** The best part of the day's name ("Evening"), "Any time" when they're even, or null before one can count. */
 export async function getBestTimeName(
   verdict: PatternVerdict<ScorePatternsData["times"][number]>,
 ): Promise<string | null> {
@@ -48,10 +42,6 @@ export async function getBestTimeName(
   return verdict.kind === "best" ? (names.at(verdict.best.period) ?? null) : null;
 }
 
-/**
- * The honest lines under the patterns: that the days (or the parts of the day) are too close to
- * name a best, and how many answers a group needs to count.
- */
 export async function PatternsNote({ summary }: { summary: PatternsSummary }) {
   const t = await getExtracted();
   const { days, times } = summary;

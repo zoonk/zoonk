@@ -21,7 +21,6 @@ export async function generateMetadata(): Promise<Metadata> {
 const ACCOUNT_ID = "account";
 const YOUR_DATA_ID = "your-data";
 
-/** The account's name and username, its data and deleting it, each under its own label. */
 async function ProfileContent() {
   const t = await getExtracted();
   const session = await getSession();
@@ -50,7 +49,6 @@ async function ProfileContent() {
   );
 }
 
-/** A section's own label over its rows while the account loads. */
 function SectionSkeleton({ children, label }: { children: React.ReactNode; label: string }) {
   return (
     <PageSection>
@@ -62,11 +60,6 @@ function SectionSkeleton({ children, label }: { children: React.ReactNode; label
   );
 }
 
-/**
- * The profile's three sections as they load, drawn with their own rows and words, the fields and
- * buttons as bars of their sizes, so nothing moves when the account arrives (the fields go under
- * their names on a phone).
- */
 async function ProfileSkeleton() {
   const t = await getExtracted();
 
@@ -86,7 +79,6 @@ async function ProfileSkeleton() {
               <Skeleton className="h-11 w-full rounded-lg" />
             </SettingRow>
           </ListGroup>
-          {/* Save, where the form keeps it: under a hairline, at the list's end. */}
           <div className="flex justify-end border-t pt-5">
             <Skeleton className="h-7.5 w-13 rounded-md" />
           </div>
@@ -120,10 +112,6 @@ async function ProfileSkeleton() {
   );
 }
 
-/**
- * The profile: the account's name and username as rows with their fields, the learner's data to
- * download, and deleting the account, each a row with its control at its end.
- */
 export default async function ProfilePage() {
   const t = await getExtracted();
 

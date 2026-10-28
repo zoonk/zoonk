@@ -8,7 +8,6 @@ import { StatTilesSkeleton } from "../_components/stats-tiles";
 import { LevelProgression, LevelProgressionSkeleton } from "./level-progression";
 import { LevelLine, LevelTiles } from "./level-stats";
 
-/** Level: its three numbers, every belt as a path, and one line on how Brain Power grows. */
 export async function LevelContent() {
   const [currentBelt, session] = await Promise.all([getBeltLevel(), getSession()]);
 
@@ -25,7 +24,6 @@ export async function LevelContent() {
   );
 }
 
-/** Level at its size while its numbers load: the tiles, the belts and the line. */
 export function LevelContentSkeleton() {
   return (
     <ProgressContent>

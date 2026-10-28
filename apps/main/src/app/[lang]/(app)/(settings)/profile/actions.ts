@@ -8,7 +8,6 @@ import { logError } from "@zoonk/utils/logger";
 
 type ProfileFormStatus = "error" | "idle" | "success" | "usernameTaken";
 
-/** Saves the learner's name and username; a username taken meanwhile says so. */
 export async function profileFormAction(_prevState: unknown, formData: FormData) {
   const name = parseFormField(formData, "name");
   const username = parseFormField(formData, "username");

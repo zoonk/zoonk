@@ -7,10 +7,7 @@ import { Loader2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 
-/**
- * Opens Stripe's cancellation page, where the subscriber confirms it. Plus stays until the end of
- * the period they paid for. The auth client loads on the tap, so the page doesn't ship it up front.
- */
+/** The auth client loads on the tap, so the page doesn't ship it up front. */
 export function CancelPlusButton() {
   const t = useExtracted();
   const [state, setState] = useState<"error" | "idle" | "loading">("idle");

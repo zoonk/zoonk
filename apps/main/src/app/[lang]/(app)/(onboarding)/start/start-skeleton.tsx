@@ -11,10 +11,6 @@ import { getSentGoal } from "@zoonk/learn/onboarding/understanding-start";
 import { useSearchParams } from "next/navigation";
 import { DRAFT_PARAM } from "./start-params";
 
-/**
- * `/start` while it loads, in the shape of the screen that comes: the wait for a goal the address
- * carries (`?draft=`, where a goal box sends it), the first screen otherwise.
- */
 export function StartSkeleton() {
   const searchParams = useSearchParams();
   const learner = useLearnerSummary();

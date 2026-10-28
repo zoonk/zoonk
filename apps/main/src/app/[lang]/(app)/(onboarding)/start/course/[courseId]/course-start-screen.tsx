@@ -30,22 +30,15 @@ import { useState } from "react";
 type StartTarget = {
   chapter: { id: string; title: string } | null;
   course: { id: string; title: string };
-  /** The time a day the course's page showed, which the plan starts with; null for the default. */
   dailyMinutes: number | null;
 };
 
-/** A chapter the plan will teach, in the course's order. */
 type PlanChapter = { id: string; lessons: number; title: string };
 
-/** Enough of the plan's chapters to see where it goes, without listing a whole course. */
 const PREVIEW_CHAPTERS = 4;
 
 const PLAN_PREVIEW_ID = "course-start-plan";
 
-/**
- * What a chapter's plan will teach, from that chapter on: the chapter and lesson counts and its
- * first chapters.
- */
 function PlanPreview({ chapters }: { chapters: PlanChapter[] }) {
   const t = useExtracted();
   const lessons = chapters.reduce((total, chapter) => total + chapter.lessons, 0);
@@ -106,7 +99,6 @@ function StartHeading({
     );
   }
 
-  // A whole course asks where the learner stands before anything is created.
   if (asksLevel) {
     return (
       <OnboardingHeading>
@@ -129,12 +121,7 @@ function StartHeading({
   );
 }
 
-/**
- * The start button as a form the server answers when there's no JavaScript; with it, the tap
- * starts the course here and moves on, or says why it couldn't. A whole course's start waits for
- * the learner's level (`children` asks it); without JavaScript it starts without one, and
- * onboarding asks it.
- */
+/** Without JavaScript the form starts a whole course without a level, and onboarding asks it. */
 function CourseStartForm({
   children,
   chapter,
@@ -146,7 +133,6 @@ function CourseStartForm({
 }: StartTarget & {
   children: React.ReactNode;
   initialFailure: CourseStartFailure | null;
-  /** The level picked on a whole course's start; undefined when a chapter's start doesn't ask. */
   level?: LevelChoice | null;
   note: React.ReactNode;
 }) {
@@ -161,8 +147,6 @@ function CourseStartForm({
   });
 
   const startHere = () => (level ? startWithLevel(toLevelAnswer(level)) : start());
-  // Only an account, Plus or a paused goal lets it go on: that's what the page offers, with
-  // nothing to answer.
   const blocked = isStartBlocked(failure);
 
   return (
@@ -223,7 +207,6 @@ function CourseStartForm({
   );
 }
 
-/** A whole course's start: the learner's level first, and Start creates the goal with it. */
 function CourseLevelStart({
   course,
   dailyMinutes,
@@ -249,14 +232,7 @@ function CourseLevelStart({
   );
 }
 
-/**
- * A course's start page, where every start of a whole course goes (its page's button, "Build my
- * plan", "I want to learn this in depth"), a link or a visitor without JavaScript lands: the
- * learner's level, or for a chapter what the plan will follow, and one button. The button starts
- * the course from the tap (as a guest when there's no session). Opening or leaving the page
- * creates nothing. A goal limit only an account, Plus or a paused goal lifts is said up front, with
- * what lifts it in place of the button.
- */
+/** Opening or leaving the page creates nothing; only the button's tap starts the course. */
 export function CourseStartScreen({
   chapter,
   chapters,
@@ -267,7 +243,6 @@ export function CourseStartScreen({
 }: StartTarget & {
   chapters: PlanChapter[];
   initialFailure: CourseStartFailure | null;
-  /** Under the button: free to start, said only to visitors and guests (see `NoAccountNote`). */
   note: React.ReactNode;
 }) {
   return (

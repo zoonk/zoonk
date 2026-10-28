@@ -17,11 +17,7 @@ export async function getLevelTestAction(goalId: string): Promise<LanguageLevelT
   return result.status === "ready" ? result.test : null;
 }
 
-/**
- * Starts writing the pair's questions in the API's workflow when nothing is writing them (the
- * test says `preparing` with no `startedAt`): the learner's tap to begin or try again, never
- * showing the test. False when it couldn't start, so the screen offers to try again.
- */
+/** Only from the learner's tap to begin or try again, never from showing the test. */
 export async function startLevelTestBankAction(goalId: string): Promise<boolean> {
   if (!isUuid(goalId)) {
     return false;
@@ -34,7 +30,6 @@ export async function startLevelTestBankAction(goalId: string): Promise<boolean>
   return response.ok;
 }
 
-/** One answer; the input is untrusted, so it's parsed with the API's schema. */
 export async function answerLevelTestAction(
   goalId: string,
   input: unknown,
@@ -49,7 +44,6 @@ export async function answerLevelTestAction(
   return result.status === "ready" ? result.test : null;
 }
 
-/** The sentence out loud, sent as a form with the recording. */
 export async function speakLevelTestAction(
   goalId: string,
   form: FormData,
@@ -72,7 +66,6 @@ export async function speakLevelTestAction(
   return result.status === "ready" ? result.test : null;
 }
 
-/** Ends the test: the answers so far set each skill's level. */
 export async function finishLevelTestAction(goalId: string): Promise<boolean> {
   const result = await finishLanguageLevelTest(goalId);
   return result.status === "ready";

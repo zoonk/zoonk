@@ -51,7 +51,6 @@ function readParam(value: string | string[] | undefined): string | null {
   return typeof value === "string" && value ? value : null;
 }
 
-/** Why the page's form came back without starting, said again on the page. */
 function toFailure(error: string | null): CourseStartFailure | null {
   if (!error) {
     return null;
@@ -60,7 +59,6 @@ function toFailure(error: string | null): CourseStartFailure | null {
   return isLimitReason(error) ? { reason: error, status: "limitReached" } : { status: "failed" };
 }
 
-/** A course anyone may start: published, or the learner's own private one. */
 async function loadStartableCourse(courseId: string) {
   const course = isUuid(courseId) ? await getLibraryCourse({ courseId }) : null;
   return course && (course.isPublished || course.visibility === "private") ? course : null;
@@ -77,19 +75,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-/** A goal limit the learner already reached, said up front instead of after their answers. */
 function toLimitFailure(limit: AllowanceLimit | null): CourseStartFailure | null {
   return limit
     ? { reason: getGoalLimitReason({ limit, status: "limitReached" }), status: "limitReached" }
     : null;
 }
 
-/**
- * What the start page shows this browser: the course, the learner's goal already on it and the goal
- * limit they reached. Kept for the browser, so the page opens from its prefetch: both learner facts
- * are only said up front, like a seat map, and starting checks them again (an existing goal is
- * opened, a limit reached meanwhile is said).
- */
+/** Kept for the browser so the page opens from its prefetch; starting checks both learner facts again. */
 async function loadCourseStart(courseId: string) {
   "use cache: private";
 
@@ -155,7 +147,6 @@ async function CourseStartContent({ params, searchParams }: Props) {
     );
   }
 
-  // Their goal on this course already: back to it, without asking their level again.
   if (existing) {
     redirect({
       href: existing.inOnboarding ? `/start/${existing.goalId}` : "/today",
@@ -198,7 +189,6 @@ async function CourseStartContent({ params, searchParams }: Props) {
   );
 }
 
-/** The start's shape while it loads: the course over the question, the levels, and Start. */
 function CourseStartSkeleton() {
   return (
     <OnboardingPage backHref="/courses">
@@ -223,12 +213,7 @@ function CourseStartSkeleton() {
   );
 }
 
-/**
- * Where every start of a whole course leads (asking the learner's level first), a visitor without
- * JavaScript lands, and a shareable way to start a course or one of its chapters (`?chapter=`), as
- * a page of the app's frame: the page only asks and shows its start button, since links are
- * followed by crawlers too. The button starts the goal.
- */
+/** The page only asks and shows its start button: crawlers follow links too. */
 export default function CourseStartPage(props: Props) {
   return (
     <Suspense fallback={<CourseStartSkeleton />}>

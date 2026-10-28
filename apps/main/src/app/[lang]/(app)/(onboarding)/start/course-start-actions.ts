@@ -18,22 +18,11 @@ import { getLocale } from "next-intl/server";
 import { COURSE_START_ERROR_PARAM } from "./course/course-start-params";
 import { getGoalLimitReason } from "./goal-limit-reason";
 
-/**
- * Where starting a course leads: the goal's remaining onboarding (`steps`), or the learner's day
- * when it's their goal on that course already and onboarding is behind them. `signInRequired`
- * only happens without a session, which the button makes first.
- */
 export type CourseStartOutcome =
   | { goalId: string; next: "steps" | "today"; status: "started" }
   | { reason: GoalLimitReason; status: "limitReached" }
   | { status: "failed" | "signInRequired" };
 
-/**
- * Starts a Library course (or one of its chapters) as the learner's goal: the same capability as
- * `POST /v1/courses/{courseId}/goals`, with the level the start page asked (null for a quick
- * test). A new goal's run then writes ahead what its plan needs (an exam course nobody stored an
- * exam for has its notice read first); a run that couldn't start shows on the steps with a retry. The learner's goal already on the course starts nothing new.
- */
 export async function startCourseAction({
   chapterId,
   courseId,
@@ -43,7 +32,6 @@ export async function startCourseAction({
 }: {
   chapterId?: string | null;
   courseId: string;
-  /** The time a day the course's example plan showed; the default plan's otherwise. */
   dailyMinutes?: number | null;
   level?: OnboardingOwnLevel | null;
   timeZone?: string;
@@ -82,13 +70,11 @@ export async function startCourseAction({
   }
 }
 
-/** A field of the start page's form, when it's there. */
 function readField(formData: FormData, name: string): string | null {
   const value = formData.get(name);
   return typeof value === "string" && value ? value : null;
 }
 
-/** Where the start page's form goes after its start, when there's no JavaScript to show it. */
 function getFormDestination({
   outcome,
   startHref,
@@ -112,11 +98,7 @@ function getFormDestination({
   }
 }
 
-/**
- * The start page's form without JavaScript: a visitor with a session starts the course and goes
- * on; one without is asked to log in first, since a guest is made in the browser. A refusal or a
- * failure brings them back to the page, which says why.
- */
+/** Without JavaScript, someone without a session is asked to log in first: a guest is made in the browser. */
 export async function startCourseFormAction(formData: FormData): Promise<void> {
   const courseId = readField(formData, "courseId") ?? "";
   const chapterId = readField(formData, CHAPTER_PARAM);

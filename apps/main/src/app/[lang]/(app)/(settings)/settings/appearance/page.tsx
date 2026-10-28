@@ -18,10 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-/**
- * The learning profile is Preferences' view; the belt and Energy only draw the buddy. Every
- * setting but the language is saved on the profile, so visitors only get the language.
- */
+/** Every setting but the language is saved on the profile, so visitors only get the language. */
 async function AppearanceContent() {
   const [profile, buddy] = await Promise.all([getLearningProfile(), getLearnerBuddy()]);
 
@@ -43,7 +40,6 @@ async function AppearanceContent() {
   );
 }
 
-/** A section's own label over its rows' place while Preferences loads. */
 function SectionSkeleton({ className, label }: { className: string; label: string }) {
   return (
     <PageSection>
@@ -55,7 +51,6 @@ function SectionSkeleton({ className, label }: { className: string; label: strin
   );
 }
 
-/** The buddy's row, the lessons' two rows and the language's row, under their labels. */
 async function AppearanceSkeleton() {
   const t = await getExtracted();
 
@@ -68,10 +63,7 @@ async function AppearanceSkeleton() {
   );
 }
 
-/**
- * Preferences (at `/settings/appearance`, its address from before): the buddy, the lessons' sounds
- * and daily limit, and the app's language. Light and dark follow the device.
- */
+/** Preferences keeps `/settings/appearance`, its earlier address. */
 export default async function AppearancePage() {
   const t = await getExtracted();
 

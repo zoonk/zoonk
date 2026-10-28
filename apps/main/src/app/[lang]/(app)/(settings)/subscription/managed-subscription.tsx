@@ -7,10 +7,7 @@ import { getExtracted } from "next-intl/server";
 const APPLE_SUBSCRIPTION_MANAGEMENT_URL = "https://apps.apple.com/account/subscriptions";
 const GOOGLE_SUBSCRIPTION_MANAGEMENT_URL = "https://play.google.com/store/account/subscriptions";
 
-/**
- * Managing a subscription bought in the App Store or Google Play, or set up by Zoonk: web plan
- * controls can't change it, so this says where to go instead.
- */
+/** Web plan controls can't change a store or Zoonk-managed subscription. */
 export async function ManagedSubscription({
   provider,
 }: {
@@ -65,10 +62,6 @@ export async function ManagedSubscription({
   );
 }
 
-/**
- * Store-backed subscriptions need a real handoff target, while Zoonk-managed
- * subscriptions should stay inside the product and go straight to support.
- */
 function getManagedSubscriptionAction({
   provider,
 }: {
@@ -85,10 +78,6 @@ function getManagedSubscriptionAction({
   return null;
 }
 
-/**
- * Only store-managed subscriptions need an external manage label. Zoonk-managed
- * subscriptions skip that action and send the user straight to support.
- */
 function getManagedSubscriptionActionLabel({
   appleLabel,
   googleLabel,
@@ -109,10 +98,6 @@ function getManagedSubscriptionActionLabel({
   return null;
 }
 
-/**
- * The billing page needs provider-specific copy so users immediately understand
- * why web plan controls are hidden and what they should do next.
- */
 function getManagedSubscriptionDescription({
   appleDescription,
   googleDescription,

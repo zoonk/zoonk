@@ -16,13 +16,11 @@ export function StepsClient(props: {
   initialPlan: RevealedPlan | null;
   isGuest: boolean;
   onboarding: OnboardingView;
-  /** The plan's Server Actions; the advice the learner asks for is read from the API here. */
   planActions: Omit<PlanActions, "adviseOnBases" | "findTimeToCover">;
 }) {
   const navigation = useOnboardingNavigation();
   const goalId = props.onboarding.goal.id;
 
-  // The curriculum is written while the learner answers; the waiting screens follow it live.
   const generation = useWorkflowRun({
     generationId: props.onboarding.generationId,
     kind: "placement",

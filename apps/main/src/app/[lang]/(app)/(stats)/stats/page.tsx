@@ -15,10 +15,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-/**
- * The statistics section's overview: every stat with its number, each one tap from its page. It
- * opens from the account menu and the level beside the avatar.
- */
 export default async function StatisticsPage() {
   const t = await getExtracted();
 

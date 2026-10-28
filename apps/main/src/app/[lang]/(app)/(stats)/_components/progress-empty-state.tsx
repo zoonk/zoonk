@@ -12,17 +12,11 @@ import {
 import { getExtracted } from "next-intl/server";
 import { ProgressContent } from "./progress-content";
 
-/**
- * Visitors get the gate every page that needs an account shows (log in and come back to this
- * page, or start free); learners with nothing to count yet are asked to start learning, with the
- * way to today's lessons as the state's one action.
- */
 export async function ProgressEmptyState({
   isAuthenticated,
   next,
 }: {
   isAuthenticated: boolean;
-  /** The stats page it stands in, to come back to after logging in. */
   next: string;
 }) {
   const t = await getExtracted();

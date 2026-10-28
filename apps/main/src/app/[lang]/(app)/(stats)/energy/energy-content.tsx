@@ -9,10 +9,6 @@ import { StatTilesSkeleton } from "../_components/stats-tiles";
 import { EnergyChart, EnergyChartSkeleton } from "./energy-chart";
 import { EnergyLine, EnergyTiles } from "./energy-stats";
 
-/**
- * Energy: its three numbers (now, its average and the days at full), the past 12 months in its
- * amber, and one line on how it moves, from the first thing learned.
- */
 export async function EnergyContent() {
   const [data, session] = await Promise.all([loadOptionalData(getEnergyData), getSession()]);
 
@@ -29,7 +25,6 @@ export async function EnergyContent() {
   );
 }
 
-/** Energy at its size while its history loads: the tiles, the year and the line. */
 export function EnergyContentSkeleton() {
   return (
     <ProgressContent>

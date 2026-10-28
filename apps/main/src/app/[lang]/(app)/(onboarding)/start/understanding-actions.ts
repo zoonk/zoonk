@@ -18,20 +18,14 @@ import { logError } from "@zoonk/utils/logger";
 import { isUuid } from "@zoonk/utils/uuid";
 import { z } from "zod";
 
-/**
- * Reading a typed goal: the draft is saved here through core, then its run starts on the API as
- * the learner, and the answer is awaited so a start that failed is shown with a retry. Every read
- * and fix goes through the same core capabilities as `/v1/goal-understandings`.
- */
+/** The run's start is awaited, so a start that failed is shown with a retry. */
 
 const TOO_MANY_REQUESTS = 429;
 
-/** A guest asked to create an account once the day's AI budget all guests share is spent. */
 const signUpRequiredSchema = z.object({
   error: z.object({ code: z.literal(LESSON_PLAYER_ERROR_CODES.signUpRequired) }),
 });
 
-/** A plan's cap the API refused the run for (`USAGE_LIMIT_REACHED` with `details.limit`). */
 const limitSchema = z.object({
   error: z.object({
     details: z.object({
@@ -44,13 +38,8 @@ const limitSchema = z.object({
   }),
 });
 
-/** The goal limits only an account lifts, as opposed to the day's small AI calls. */
 const GOAL_LIMITS = new Set(["activeGoals", "goal"]);
 
-/**
- * Which cap refused reading the words: a guest's one goal, or the small AI calls of the day or the
- * month.
- */
 function toLimitOutcome(limit: {
   period: "day" | "month" | "total";
   resource: string;
@@ -61,7 +50,7 @@ function toLimitOutcome(limit: {
     : { period: limit.period, status: "limitReached", tier: limit.tier };
 }
 
-/** When the API's slow-down answer can't be read, a minute is what it asks for. */
+/** When the API's slow-down answer can't be read. */
 const DEFAULT_RETRY_AFTER_SECONDS = 60;
 
 const slowDownSchema = z.object({
@@ -145,7 +134,6 @@ export async function getUnderstandingAction(draftId: string): Promise<Onboardin
   return result.status === "ready" ? result.draft : null;
 }
 
-/** Starts reading a draft again, after its run failed or couldn't start. */
 export async function retryUnderstandingAction(
   draftId: string,
 ): Promise<StartUnderstandingOutcome> {

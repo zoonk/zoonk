@@ -1,9 +1,6 @@
 const ACTIVITY_INTENSITY_LEVELS = 4;
 
-/**
- * Activity uses relative bands so a learner can distinguish their quieter and
- * busier study days even when their own activity counts are still small.
- */
+/** Relative bands, so a learner tells quieter from busier days even while their counts are small. */
 export function getActivityCalendarIntensity({
   activitiesCompleted,
   maximumActivitiesCompleted,

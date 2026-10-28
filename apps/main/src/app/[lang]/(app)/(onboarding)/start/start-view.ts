@@ -7,7 +7,6 @@ import { isUuid } from "@zoonk/utils/uuid";
 import { cacheTag } from "next/cache";
 import { getGoalLimitReason } from "./goal-limit-reason";
 
-/** The draft when it's the learner's own; anyone else's, or none, starts fresh. */
 async function loadDraft(draftId: string | null): Promise<OnboardingDraftView | null> {
   if (!draftId || !isUuid(draftId)) {
     return null;
@@ -17,14 +16,7 @@ async function loadDraft(draftId: string | null): Promise<OnboardingDraftView | 
   return result.status === "ready" ? result.draft : null;
 }
 
-/**
- * What the start form needs, wherever it shows (`/start`, or Today for a learner without a goal):
- * whether there's a session and it can attach material (an account), the draft to show again, and
- * the goal limit already reached, if any. A guest whose one goal is taken needs an account first.
- * Kept for the learner's browser, so the page opens from its prefetch: the limit is only said up
- * front, like a seat map, and creating a goal checks it again and says so when it was reached
- * meanwhile.
- */
+/** Kept for the learner's browser so the page opens from its prefetch; creating a goal checks the limit again. */
 export async function loadStartView(draftId: string | null) {
   "use cache: private";
 
