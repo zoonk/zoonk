@@ -642,15 +642,20 @@ final class LessonPlayerSavingTests: XCTestCase {
         of: "\"basis\": null,",
         with:
           #""basis": null, "image": {"alt": "A flower", "prompt": "Flower", "parts": ["ovary"]},"#)
+    let plain = check(id: "plain")
+      .replacingOccurrences(of: "\"imagePending\": false", with: "\"imagePending\": true")
     let openedAt = Date.now.addingTimeInterval(-10 * 60)
     var state = LessonPlayerState(
-      lessonId: "lesson", steps: [try step(textHook), try step(numbered), try step(summary)])
+      lessonId: "lesson",
+      steps: [try step(textHook), try step(numbered), try step(plain), try step(summary)])
     let question = try XCTUnwrap(state.steps["numbered"])
 
     XCTAssertTrue(state.isWaitingForPicture(question, openedAt: .now), "the check waits for it")
     XCTAssertFalse(state.isWaitingForPicture(question, openedAt: openedAt), "until its wait ends")
 
     state.leaveOutLostPictures(openedAt: openedAt)
-    XCTAssertEqual(state.queue, ["hook", "summary"])
+    XCTAssertEqual(state.queue, ["hook", "plain", "summary"])
+    XCTAssertEqual(
+      state.steps["plain"]?.imagePending, false, "a screen whose wait ended stops showing one")
   }
 }

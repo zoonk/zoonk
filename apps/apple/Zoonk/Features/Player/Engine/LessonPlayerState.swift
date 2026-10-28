@@ -511,9 +511,17 @@ struct LessonPlayerState: Hashable, Sendable {
     step.isAnswerable && step.isWaitingForPicture(openedAt: openedAt, now: now)
   }
 
-  /// Once a numbered picture's wait ends without it, its question is left out: without the
-  /// picture nobody can tell which number is which (main's `getLostNumberedScreens`).
+  /// Once a picture's wait is over it isn't coming in this run: its screen stops waiting (a read
+  /// at the edge of the wait can still say it's pending), and a question about a numbered picture
+  /// that never came is left out, since nobody can tell which number is which (main's
+  /// `getLostNumberedScreens`).
   mutating func leaveOutLostPictures(openedAt: Date, now: Date = .now) {
+    for step in steps.values where step.imagePending {
+      if !step.isWaitingForPicture(openedAt: openedAt, now: now) {
+        steps[step.id] = step.withoutPendingPictures
+      }
+    }
+
     let lost = steps.values.filter { step in
       step.asksNumberedPicture && step.image == nil
         && !step.isWaitingForPicture(openedAt: openedAt, now: now)

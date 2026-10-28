@@ -138,6 +138,14 @@ extension LessonStep {
       pictureWaitStartedAt: pictureWaitStartedAt, content: content)
   }
 
+  /// The same screen no longer waiting for a picture.
+  var withoutPendingPictures: LessonStep {
+    LessonStep(
+      id: id, position: position, skillId: skillId, citation: citation, image: image,
+      imagePending: false, optionPictures: optionPictures,
+      pictureWaitStartedAt: pictureWaitStartedAt, content: content)
+  }
+
   /// A missing picture may still arrive: five minutes from when the screen was written, or from
   /// when the lesson opened for a screen that doesn't say.
   func isWaitingForPicture(openedAt: Date, now: Date = .now) -> Bool {
