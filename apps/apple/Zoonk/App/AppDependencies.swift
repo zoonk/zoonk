@@ -66,7 +66,12 @@ struct AppDependencies {
     learnerSummaryStore = LearnerSummaryStore(
       api: learnerSummaryAPI ?? LearnerSummaryAPI(clients: clients),
       cache: cache)
-    lessonPlayer = LessonPlayerDependencies(api: LessonPlayerAPI(clients: clients), cache: cache)
+    let settingsStore = SettingsStore(
+      api: settingsAPI ?? SettingsAPI(clients: clients), cache: cache)
+    self.settingsStore = settingsStore
+    lessonPlayer = LessonPlayerDependencies(
+      api: LessonPlayerAPI(clients: clients), cache: cache,
+      preferences: settingsStore.preferences)
     goalContentStore = GoalContentStore(api: GoalContentAPI(clients: clients), cache: cache)
     mindMapsStore = MindMapsStore(
       api: mindMapsAPI ?? MindMapsAPI(clients: clients), cache: cache)
@@ -78,7 +83,6 @@ struct AppDependencies {
       api: progressAPI ?? ProgressAPI(clients: clients),
       cache: cache)
     sessionStore = session
-    settingsStore = SettingsStore(api: settingsAPI ?? SettingsAPI(clients: clients), cache: cache)
     let studyAPI = studyAPI ?? StudyAPI(clients: clients)
     studySessionStore = StudySessionStore(api: studyAPI, cache: cache)
     todayStore = TodayStore(api: studyAPI, cache: cache)

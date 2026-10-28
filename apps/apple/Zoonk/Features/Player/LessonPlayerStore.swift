@@ -62,6 +62,8 @@ final class LessonPlayerStore {
 
   private let api: LessonPlayerAPI
   private let cache: AppCache
+  private let preferences: Resource<LearningPreferences>
+  private let lessonResource: Resource<LessonLoad>
   private var session: SessionStore { cache.session }
   private let choices: LessonTodayChoices
   private var identity: AuthenticatedSession?
@@ -73,12 +75,16 @@ final class LessonPlayerStore {
 
   init(
     lessonId: String, studySessionId: String?, api: LessonPlayerAPI, cache: AppCache,
+    preferences: Resource<LearningPreferences>,
+    lessonResource: Resource<LessonLoad>,
     choices: LessonTodayChoices = .standard
   ) {
     self.lessonId = lessonId
     self.studySessionId = studySessionId
     self.api = api
     self.cache = cache
+    self.preferences = preferences
+    self.lessonResource = lessonResource
     self.choices = choices
     cantTalkToday = choices.isChosenToday(.cantTalk)
   }
@@ -110,14 +116,32 @@ final class LessonPlayerStore {
 
   /// Reads the lesson, then starts (or resumes) its run. An unwritten lesson waits for the learner's
   /// tap, since writing it runs AI.
-  func load() async {
+  func load(refresh: Bool = false) async {
     let identity = session.authenticatedSession
     self.identity = identity
     screen = .loading
 
     do {
-      let load = try await api.getLesson(id: lessonId, token: identity?.bearerToken)
+      let revision = lessonResource.revision
+      if refresh {
+        await lessonResource.refresh()
+      } else {
+        await lessonResource.load()
+      }
       guard isCurrent(identity) else { return }
+      // A failed refresh keeps the cached outline. Don't treat it as a new response and
+      // restart the generation-status loop after the server said the lesson was ready.
+      guard !refresh || lessonResource.revision != revision else {
+        screen = .failed
+        return
+      }
+
+      guard let load = lessonResource.value else {
+        if case .failed(let error) = lessonResource.state {
+          throw error
+        }
+        return
+      }
 
       switch load {
       case .sessionRequired(let outline):
@@ -145,7 +169,8 @@ final class LessonPlayerStore {
 
     let api = api
     let studySessionId = studySessionId
-    async let sounds = api.getSoundsEnabled(token: token)
+    let preferences = preferences
+    async let sounds: Void = preferences.load()
     async let team =
       lesson.steps.contains { $0.kind == .challenge }
       ? api.getChallengeTeam(lessonId: lesson.id, token: token) : []
@@ -154,7 +179,7 @@ final class LessonPlayerStore {
       try await api.startLesson(id: lesson.id, studySessionId: studySessionId, token: token)
     }
 
-    let (soundsEnabled, challengeTeam) = await (sounds, team)
+    let (_, challengeTeam) = await (sounds, team)
     guard isCurrent(identity) else { return }
 
     let run: Result<LessonRunStart, LessonRunRefusal>
@@ -185,7 +210,7 @@ final class LessonPlayerStore {
 
     self.lesson = lesson
     self.state = state
-    self.soundsEnabled = soundsEnabled
+    soundsEnabled = preferences.value?.soundsEnabled ?? true
     self.challengeTeam = challengeTeam
     openedAt = .now
     screen = .playing
@@ -267,7 +292,7 @@ final class LessonPlayerStore {
 
     switch status {
     case .generating: screen = .waiting(outline, .writing)
-    case .ready: await load()
+    case .ready: await load(refresh: true)
     case .failed: screen = .waiting(outline, .failed)
     case .notStarted, nil: screen = .waiting(outline, .notStarted)
     }
@@ -297,7 +322,7 @@ final class LessonPlayerStore {
     }
 
     switch outcome {
-    case .ready: await load()
+    case .ready: await load(refresh: true)
     case .writing: await followWriting(outline, identity: identity)
     case .setAside: screen = .waiting(outline, .setAside)
     case .refused(let refusal): screen = .waiting(outline, .refused(refusal))
@@ -314,7 +339,7 @@ final class LessonPlayerStore {
 
       switch status {
       case .ready:
-        await load()
+        await load(refresh: true)
         return
       case .failed:
         screen = .waiting(outline, .failed)

@@ -2,9 +2,31 @@ import SwiftUI
 
 /// What the player needs from the app: its API and the app's cache, whose shared write rule
 /// keeps every answer and completion with the session that made it.
-struct LessonPlayerDependencies {
+@MainActor
+final class LessonPlayerDependencies {
   let api: LessonPlayerAPI
   let cache: AppCache
+  let preferences: Resource<LearningPreferences>
+  private var lessons: [String: Resource<LessonLoad>] = [:]
+
+  init(api: LessonPlayerAPI, cache: AppCache, preferences: Resource<LearningPreferences>) {
+    self.api = api
+    self.cache = cache
+    self.preferences = preferences
+  }
+
+  func lesson(id: String) -> Resource<LessonLoad> {
+    if let lesson = lessons[id] {
+      return lesson
+    }
+
+    let api = api
+    let lesson = cache.resource(audience: .viewer) { session in
+      try await api.getLesson(id: id, token: session?.bearerToken)
+    }
+    lessons[id] = lesson
+    return lesson
+  }
 }
 
 extension EnvironmentValues {
@@ -24,7 +46,8 @@ struct LessonPlayerScreen: View {
     if let player {
       LessonPlayerContent(
         store: LessonPlayerStore(
-          lessonId: lessonId, studySessionId: sessionId, api: player.api, cache: player.cache)
+          lessonId: lessonId, studySessionId: sessionId, api: player.api, cache: player.cache,
+          preferences: player.preferences, lessonResource: player.lesson(id: lessonId))
       )
       .id(lessonId)
     }

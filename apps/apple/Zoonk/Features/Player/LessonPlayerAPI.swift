@@ -397,19 +397,6 @@ struct LessonPlayerAPI: Sendable {
     return line
   }
 
-  /// Lesson sounds stay on until the learner turns them off.
-  func getSoundsEnabled(token: String) async -> Bool {
-    let output = try? await clients.perform(token: token) {
-      try await $0.getCurrentUserLearningProfile()
-    }
-
-    guard case .ok(let response) = output, let profile = try? response.body.json else {
-      return true
-    }
-
-    return profile.profile.soundsEnabled
-  }
-
   // MARK: - Helpers
 
   /// Reads a refused allowance or AI claim: `USAGE_LIMIT_REACHED` with `details.limit`,
