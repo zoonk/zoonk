@@ -546,6 +546,150 @@ private struct WeekDayMark: View {
   }
 }
 
+/// Where the goal stands, beside the day on a tablet or wider (main's TodayPreparation; a phone
+/// leaves it to the Plan), in its one measure as the Plan says it: an exam's preparation with its
+/// gain this week, another goal's lessons with today's still to do ringed, a language's level. A
+/// plan with subjects lists the first few on the same scale. The whole card opens the Plan.
+struct TodayProgressSection: View {
+  @Environment(AppRouter.self) private var router
+  @Environment(PlanStore.self) private var plans
+
+  let view: TodayView
+
+  /// Subjects in sight beside the session; the Plan has every one.
+  private let shownSubjects = 5
+
+  var body: some View {
+    if view.goal.kind == .language {
+      let standing = plans.languageStanding(goalId: view.goal.id)
+
+      card(
+        title: Text("Level", tableName: "Today", comment: "Title of a language goal's level card"),
+        value: standing.value?.levelText, detail: standing.value?.leadingSkill.map { Text($0) }
+      ) {
+        EmptyView()
+      }
+      .loads(standing, refreshable: false)
+    } else if let progress = view.progress {
+      let syllabus = plans.syllabus(goalId: view.goal.id)
+      let subjects = (syllabus.value?.hasSubjectPages == true ? syllabus.value?.subjects : nil)?
+        .filter { $0.notPlannedReason == nil }.prefix(shownSubjects)
+
+      Group {
+        if progress.measure == "preparation" {
+          card(
+            title: Text(
+              "Preparation", tableName: "Today", comment: "Title of an exam's preparation card"),
+            value: progress.value.formatted(.percent.precision(.fractionLength(0))),
+            detail: weekGain(progress.weekGain ?? 0)
+          ) {
+            subjectRows(subjects, isExam: true)
+          }
+        } else if let lessons = progress.lessons {
+          card(
+            title: Text(
+              "Progress", tableName: "Today", comment: "Title of the goal's progress card"),
+            value: progress.value.formatted(.percent.precision(.fractionLength(0...2))),
+            detail: Text(
+              "\(lessons.done) of \(lessons.total) lessons", tableName: "Today",
+              comment: "Lessons studied or known of the plan's lessons")
+          ) {
+            if lessons.total > 0 {
+              MeterParts(parts: parts(lessons, known: syllabus.value?.lessons.known ?? 0))
+                .frame(height: 6)
+                .accessibilityHidden(true)
+            }
+
+            subjectRows(subjects, isExam: false)
+          }
+        }
+      }
+      .loads(syllabus, refreshable: false)
+    }
+  }
+
+  private func card(
+    title: Text, value: String?, detail: Text?, @ViewBuilder content: () -> some View
+  ) -> some View {
+    Section {
+      Button {
+        router.select(.plan)
+      } label: {
+        VStack(alignment: .leading, spacing: 10) {
+          VStack(alignment: .leading, spacing: 2) {
+            if let value {
+              Text(value)
+                .font(.title.weight(.semibold))
+                .monospacedDigit()
+            }
+
+            if let detail {
+              detail
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            }
+          }
+
+          content()
+
+          Label {
+            Text("See your plan", tableName: "Today", comment: "Opens the Plan")
+          } icon: {
+            Image(systemName: "chevron.right")
+          }
+          .labelStyle(.titleOnly)
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .contentShape(.rect)
+      }
+      .tint(.primary)
+    } header: {
+      title
+    }
+  }
+
+  /// The plan's lessons in the order they count: studied in blue, known muted, today's still to do
+  /// ringed, then the rest.
+  private func parts(_ lessons: TodayView.Progress.Lessons, known: Int) -> [MeterParts.Part] {
+    let known = min(lessons.done, known)
+    let today = min(lessons.today, max(0, lessons.total - lessons.done))
+    let rest = max(0, lessons.total - lessons.done - today)
+
+    return [
+      MeterParts.Part(weight: Double(lessons.done - known), fill: .color(.success)),
+      MeterParts.Part(weight: Double(known), fill: .color(.secondary)),
+      MeterParts.Part(weight: Double(today), fill: .current),
+      MeterParts.Part(weight: Double(rest), fill: .track),
+    ].filter { $0.weight > 0 }
+  }
+
+  /// "+4 this week": what the preparation gained since the week began, blue when it rose; nothing
+  /// in a week without a whole point either way.
+  private func weekGain(_ gain: Double) -> Text? {
+    let points = Int((gain * 100).rounded())
+
+    if points == 0 {
+      return nil
+    }
+
+    return points > 0
+      ? Text("+\(points) this week", tableName: "Today", comment: "Preparation gained this week")
+        .foregroundStyle(.success)
+      : Text("\(points) this week", tableName: "Today", comment: "Preparation lost this week")
+  }
+
+  @ViewBuilder
+  private func subjectRows(_ subjects: ArraySlice<SyllabusSubject>?, isExam: Bool) -> some View {
+    if let subjects {
+      ForEach(subjects) { subject in
+        SyllabusSubjectRow(subject: subject, isExam: isExam)
+      }
+    }
+  }
+}
+
 /// Practice the learner can do any time: the mistakes notebook, a noticed pattern, a mock exam or
 /// speaking tasks.
 struct TodayPracticeSection: View {

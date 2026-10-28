@@ -36,9 +36,21 @@ struct TodayView: Decodable, Equatable, Sendable {
     let title: String
   }
 
-  /// Where the plan stands in the goal's one measure.
+  /// Where the goal stands, in its one measure: an exam's preparation with what it gained this
+  /// week, any other goal's lessons studied or known of its plan's.
   struct Progress: Decodable, Equatable, Sendable {
+    struct Lessons: Decodable, Equatable, Sendable {
+      let done: Int
+      /// The plan's lessons today's session still holds.
+      let today: Int
+      let total: Int
+    }
+
+    let lessons: Lessons?
+    let measure: String
     let status: PlanStatus?
+    let value: Double
+    let weekGain: Double?
   }
 
   struct PlanStatus: Decodable, Equatable, Sendable {

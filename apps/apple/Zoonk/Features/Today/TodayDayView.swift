@@ -4,6 +4,7 @@ import SwiftUI
 /// plan stands); the session as a queue with the next block highlighted and one main action; what
 /// else the day offers; then the missions, the week and practice to do any time.
 struct TodayDayView: View {
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(\.isCoveredByTask) private var isCovered
   @Environment(AppRouter.self) private var router
   @Environment(StudySessionStore.self) private var sessions
@@ -117,6 +118,11 @@ struct TodayDayView: View {
     }
 
     TodayWeekSection(view: view)
+
+    // A phone leaves where the goal stands to the Plan.
+    if horizontalSizeClass == .regular {
+      TodayProgressSection(view: view)
+    }
   }
 
   /// The quiet line under Today's title: the date, the days left, the exam's own day and where the
