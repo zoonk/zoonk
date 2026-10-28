@@ -1,10 +1,5 @@
 import { getActiveGoalLimit, getExamPrepAccess, getUsageRule } from "./limits";
 
-/**
- * What the free plan includes, read from the same rules the allowance enforces, so the pricing
- * page and paywalls can't promise more or less than a learner gets. Guests can try a few lessons
- * before creating an account. Call time stays out: plans only say that Plus has higher call limits.
- */
 export function getFreePlanLimits() {
   const lessons = getUsageRule({ kind: "lessonStart", tier: "free" });
 

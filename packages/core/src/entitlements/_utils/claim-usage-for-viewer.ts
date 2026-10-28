@@ -8,16 +8,7 @@ import { refreshLiveCallViewer } from "./live-call-viewer";
 import { LiveCallReservationRefusedError, reserveLiveCall } from "./reserve-live-call";
 import { lockUsageForViewer } from "./usage-lock";
 
-/**
- * Counts and records one use in a transaction that holds a per-learner lock, so two tabs starting
- * lessons at once can't both take the last one. A target the learner already used returns allowed
- * without counting again: restarting a lesson or retrying a request is free. A guest's use that
- * costs AI also takes its estimated cost from the daily budget all guests share, and once that's
- * spent asks the guest to create a free account (`signUpRequired`). A live call's connection
- * (`seconds`) holds up to that much of the plan's call time (today's and this month's) and
- * returns what it holds. A use it records marks the learner, which it does before taking the usage
- * lock (plans, then learners, then everything else, in every writer).
- */
+/** Retries of a used target are free; claims acquire the learner's lock before the usage lock. */
 export async function claimUsageForViewer({
   generated,
   kind,
@@ -46,12 +37,10 @@ export async function claimUsageForViewer({
       viewer,
     });
 
-    // A retried target or a refusal records nothing, so it rolls back its marks.
     return claim.recorded ? claim.decision : unchanged(claim.decision);
   });
 }
 
-/** One atomic minute, money and free-day claim for a live call's connection, under the lock. */
 export async function claimLiveCallUsageForViewer(input: {
   conversationId: string;
   now: Date;

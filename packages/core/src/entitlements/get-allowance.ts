@@ -13,18 +13,12 @@ function countKinds(rows: readonly { kind: UsageKind }[]): Map<UsageKind, number
   );
 }
 
-/** Live call time held or used, in seconds, as the call caps count it (see `sumCallSeconds`). */
 function sumCallTime(rows: readonly { kind: UsageKind; seconds: number }[]): number {
   return rows
     .filter((row) => row.kind === "conversation")
     .reduce((sum, row) => sum + row.seconds, 0);
 }
 
-/**
- * Everything the allowance shows in three reads: all-time counts by kind (and how many lessons
- * were written new), this month's records (today's are among them), and the active goals. Claims
- * count with `countUsage`, in their own transaction.
- */
 async function countAllowanceUsage({
   now,
   userId,
@@ -66,11 +60,7 @@ async function countAllowanceUsage({
   };
 }
 
-/**
- * Shows the learner or guest their plan and what they used: new lessons today and this month,
- * tutor messages, uploads, conversations and the call time used today and this month, goals, and
- * when the counts start over.
- */
+/** Returns null without a session. */
 export async function getAllowance(): Promise<Allowance | null> {
   "use cache: private";
 

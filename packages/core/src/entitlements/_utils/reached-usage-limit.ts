@@ -5,11 +5,7 @@ import { type AllowanceLimit, type EntitlementTier } from "../contract";
 import { evaluateUsage } from "./evaluate-usage";
 import { countUsage } from "./usage-counts";
 
-/**
- * The plan's cap on one kind of usage that the learner already reached, judged by the same rules
- * as a claim without counting a use; null while there's room. Uncached: it decides whether new
- * work starts.
- */
+/** Fresh permission check without consuming usage; returns null while capacity remains. */
 export async function findReachedUsageLimit({
   kind,
   tier,

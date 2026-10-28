@@ -22,7 +22,7 @@ import { getUsagePeriodStarts } from "./usage-periods";
 
 const MS_PER_SECOND = 1000;
 
-/** Refusals after a minute claim must roll back the entire reservation, including free-day writes. */
+/** Must escape the transaction so a refused reservation rolls back its minute and free-day claims. */
 export class LiveCallReservationRefusedError extends Error {
   readonly result: LiveCallRefusal;
   constructor(result: LiveCallRefusal) {
@@ -58,11 +58,6 @@ async function requestedCallSeconds({
     : length;
 }
 
-/**
- * A learner has at most one connection that isn't ended. A reservation never blocks: it's ended
- * (refunded) here. A creation in flight waits, and a live call refuses the new one; Connect hangs
- * those up first when it may, so reaching them here means another request got in between.
- */
 async function clearOpenConnection({
   conversationId,
   now,
@@ -102,10 +97,6 @@ async function clearOpenConnection({
     : { status: "previousConnectionClosing" };
 }
 
-/**
- * The learner's own call cost this month, open calls counted by their exposure, plus this
- * reservation, must fit the plan's monthly call budget.
- */
 async function fitsMonthlyBudget({
   now,
   reservedMicros,
@@ -142,12 +133,7 @@ async function newConnectionId(transaction: TransactionClient): Promise<string> 
   return row.id;
 }
 
-/**
- * Holds what's left of the learner's call time for one connection (its own usage record), with
- * its cost reserved: the learner's monthly call budget, and on the free plan the day's shared
- * bucket. Its deadline is the reservation plus what it holds, with no grace. Callers hold the
- * learner's lock.
- */
+/** Caller must hold the learner's lock; reserves call time and spend atomically. */
 export async function reserveLiveCall({
   conversationId,
   now,

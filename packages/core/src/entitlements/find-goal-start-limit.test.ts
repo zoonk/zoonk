@@ -6,8 +6,6 @@ import { describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { findGoalStartLimit } from "./find-goal-start-limit";
 
-// Pedro, on the free plan, typed a second goal and only learned after the AI read it that it
-// couldn't start: the limit is known before anything is typed, so the page can say it up front.
 describe(findGoalStartLimit, () => {
   it("says a free learner following a goal can't start another, while quick questions don't count", async () => {
     const user = await userFixture();

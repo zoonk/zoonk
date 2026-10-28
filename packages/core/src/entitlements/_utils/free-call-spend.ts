@@ -1,10 +1,7 @@
 import { type TransactionClient, sql } from "@zoonk/db";
 import { getCallExposureMicros } from "../../language/conversations/_utils/live-call-money";
 
-/**
- * Takes the UTC day's shared bucket: free reservations and the offers that make them `starting`
- * take turns on it, so none reads another's reservation as expired while that one is moving on.
- */
+/** Reservations, transitions, and settlements must share this UTC-day lock. */
 export async function lockFreeCallDay({
   day,
   transaction,
@@ -24,11 +21,6 @@ export async function lockFreeCallDay({
   return bucket?.spentMicros ?? 0;
 }
 
-/**
- * What the day's open free calls may cost beyond what they posted: a call whose hangup keeps
- * failing adds its overrun by the clock, and a reservation past its connect window takes back
- * what it posted. Only calls in progress are open, so the sum stays small.
- */
 async function openOverrunMicros({
   day,
   now,
@@ -49,12 +41,7 @@ async function openOverrunMicros({
   );
 }
 
-/**
- * Takes a free call's reservation from the UTC day's shared bucket, or refuses it when the day's
- * posted cost and its open calls' overrun leave no room. The bucket is locked first
- * (`lockFreeCallDay`), so free learners starting at once take turns and a settlement posting to it
- * waits.
- */
+/** Locks the shared UTC-day bucket before checking and claiming spend. */
 export async function claimFreeCallSpend({
   budgetMicros,
   costMicros,

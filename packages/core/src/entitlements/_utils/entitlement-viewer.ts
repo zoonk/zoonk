@@ -6,7 +6,7 @@ import { type EntitlementTier } from "../contract";
 
 export type EntitlementViewer = { isGuest: boolean; tier: EntitlementTier; userId: string };
 
-/** Derives the plan from the session and a fresh subscription check, never from the caller. */
+/** Uses a fresh subscription check; callers cannot select the viewer. */
 export async function getEntitlementViewer(): Promise<EntitlementViewer | null> {
   const session = await getSession();
 
@@ -25,11 +25,7 @@ export async function getEntitlementViewer(): Promise<EntitlementViewer | null> 
   return { isGuest: false, tier, userId };
 }
 
-/**
- * The viewer a page shows, from the request's subscription fact (`readActiveSubscription`), so a
- * render reads the subscription once. Writes and workflow starts use `getEntitlementViewer`, which
- * checks it fresh.
- */
+/** Display reads only; writes and workflow starts must use the fresh getEntitlementViewer check. */
 export async function readEntitlementViewer(): Promise<EntitlementViewer | null> {
   const session = await getSession();
 

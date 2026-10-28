@@ -6,13 +6,8 @@ import { evaluateUsage, getCallHold, getCallTimeLeft } from "./evaluate-usage";
 import { claimGuestSpend } from "./guest-spend-budget";
 import { countUsage } from "./usage-counts";
 
-/** A claim's decision, and whether it wrote: an unchanged claim rolls back its learner marks. */
 type UsageClaim = { decision: UsageDecision; recorded: boolean };
 
-/**
- * Shares the entitlement claim with atomic live-call reservation, never a separate commit. Says
- * whether it wrote, so a retried target or a refusal can roll back the learner's marks.
- */
 export async function claimUsageInTransaction({
   generated,
   kind,

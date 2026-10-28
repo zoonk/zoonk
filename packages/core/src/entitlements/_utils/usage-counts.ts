@@ -7,15 +7,15 @@ export type UsageCounts = {
   generatedTotal: number;
   lastUsedAt: Date | null;
   month: number;
-  /** Live call time held or used this month, in seconds. */
+  /** Includes held reservations as well as used seconds. */
   secondsThisMonth: number;
-  /** Live call time held or used today, in seconds. */
+  /** Includes held reservations as well as used seconds. */
   secondsToday: number;
   spentTodayMicros: number;
   total: number;
 };
 
-/** Live call time held or used today and this month, in seconds, as the call caps count it. */
+/** Counts held reservations as well as used seconds. */
 export async function sumCallSeconds({
   client,
   now,
@@ -42,7 +42,6 @@ export async function sumCallSeconds({
   return { thisMonth: thisMonth._sum.seconds ?? 0, today: today._sum.seconds ?? 0 };
 }
 
-/** Reads everything one claim needs to be judged: counts per period, spend today and last use. */
 export async function countUsage({
   client,
   kind,
@@ -80,7 +79,6 @@ export async function countUsage({
         select: { createdAt: true },
         where: ofKind,
       }),
-      // Quick explanations are goals too, but they don't take one of the plan's active goals.
       kind === "goal"
         ? client.goal.count({ where: { kind: { not: "explain" }, status: "active", userId } })
         : 0,

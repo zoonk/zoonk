@@ -17,7 +17,7 @@ describe(findReachedUsageLimit, () => {
 
     const entered = Promise.withResolvers<null>();
     const request = Promise.withResolvers<null>();
-    /** The real DB stays in use; only Next's request boundary has no request in Vitest. */
+
     const boundary = vi.spyOn(nextCache, "io").mockImplementationOnce(async () => {
       entered.resolve(null);
       await request.promise;

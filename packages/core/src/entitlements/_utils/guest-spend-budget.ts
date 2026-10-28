@@ -3,12 +3,10 @@ import { type TransactionClient, sql } from "@zoonk/db";
 import { GUEST_DAILY_SPEND_BUDGET_MICROS } from "../limits";
 import { getUsagePeriodStarts } from "./usage-periods";
 
-/** Past this share of the day's budget, Sentry hears about it, once. */
 const ALERT_SHARE = 0.8;
 
 const ALERT_MICROS = Math.floor(GUEST_DAILY_SPEND_BUDGET_MICROS * ALERT_SHARE);
 
-/** Whether this use took the day's spend from below the alert line to at or above it. */
 function crossesGuestAlert({
   costMicros,
   spentMicros,
@@ -19,12 +17,6 @@ function crossesGuestAlert({
   return spentMicros >= ALERT_MICROS && spentMicros - costMicros < ALERT_MICROS;
 }
 
-/**
- * Takes one use's estimated cost from today's budget that all guests share, in one statement: it
- * creates the day's row or adds to it only while the total stays within the budget, holding the
- * row's lock, so concurrent guests can't pass the budget together and a row cleared meanwhile is
- * created again instead of refusing. The one use that crosses 80% of it tells Sentry.
- */
 export async function claimGuestSpend({
   costMicros,
   now,

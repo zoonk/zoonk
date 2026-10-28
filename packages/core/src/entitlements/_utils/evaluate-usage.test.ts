@@ -96,7 +96,6 @@ describe(evaluateUsage, () => {
   });
 });
 
-/** What a call of `seconds` holds, with this much of the plan's call time used. */
 function hold({
   seconds = 120,
   tier,
@@ -114,7 +113,6 @@ function hold({
   });
 }
 
-/** What's left of Plus's call time, with this much of the month's used and none of today's. */
 function plusLeft(usedThisMonth: number) {
   return getCallTimeLeft({ kind: "conversation", tier: "plus", usedThisMonth, usedToday: 0 });
 }
@@ -145,7 +143,6 @@ describe(getCallHold, () => {
       shortenedBy: "month",
     });
 
-    // The free plan's month is a fraction of Plus's.
     expect(hold({ tier: "free", usedThisMonth: 210 })).toStrictEqual({
       heldSeconds: 90,
       shortenedBy: "month",
@@ -196,7 +193,6 @@ describe("the plan's call time", () => {
   });
 
   it("names the month when both run out, since tomorrow brings no calls back", () => {
-    // On the 1st, today's calls are the month's too: the day's cap is further past than the month's.
     expect(
       [
         { secondsThisMonth: 300, secondsToday: 120 },
@@ -217,8 +213,6 @@ describe("the plan's call time", () => {
   it("keeps a month of Plus's calls within $6 even if every call is a minute long", () => {
     const monthSeconds = getUsageRule({ kind: "conversation", tier: "plus" }).monthSeconds ?? 0;
 
-    // A one-minute call: its minute, the 10 seconds past its end before the app hangs up, and its
-    // checks.
     const oneMinuteCall = getEstimatedCostMicros({
       generated: false,
       kind: "conversation",

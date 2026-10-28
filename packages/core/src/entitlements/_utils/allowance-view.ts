@@ -56,7 +56,6 @@ function toAllowanceItem({
   return { ...item, remaining: getRemaining({ item, usage }) };
 }
 
-/** Builds what the learner sees about their plan from the same rules claims are judged by. */
 export function toAllowance({
   counts,
   now,

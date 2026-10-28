@@ -1,9 +1,6 @@
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 
-/**
- * UTC calendar days and months, so every region counts the same bucket and a learner can't gain
- * usage by changing their timezone.
- */
+/** Use UTC so changing a learner's time zone cannot reset their usage budget. */
 export function getUsagePeriodStarts(now: Date) {
   return {
     day: toUTCMidnight(now),
@@ -11,7 +8,6 @@ export function getUsagePeriodStarts(now: Date) {
   };
 }
 
-/** When the daily and monthly counts start over. */
 export function getUsageResets(now: Date) {
   const starts = getUsagePeriodStarts(now);
 

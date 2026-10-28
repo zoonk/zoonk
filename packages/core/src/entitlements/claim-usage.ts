@@ -7,14 +7,7 @@ import { claimUsageForViewer } from "./_utils/claim-usage-for-viewer";
 import { getEntitlementViewer } from "./_utils/entitlement-viewer";
 import { type UsageDecision } from "./contract";
 
-/**
- * Claims one metered action for the learner or guest in the session before it happens: starting a
- * new lesson (`generated` when its content must be written first), a quick explanation, a new goal,
- * a tutor message, an upload or an AI conversation. Call it right before the work starts and act
- * on the decision; `targetId` is the lesson, explanation, goal, message, upload or conversation.
- * A live call passes the most it may run (`seconds`): the claim holds that much of the day's call
- * time, or what's left of it, and says how much it holds.
- */
+/** Claim immediately before work and obey the decision; targetId makes retries free. Calls may hold fewer seconds than requested. */
 export async function claimUsage({
   generated = false,
   kind,
@@ -48,11 +41,7 @@ export async function claimUsage({
   return decision;
 }
 
-/**
- * Claims one small AI call for the learner or guest in the session, right before it runs:
- * understanding a goal, an answer's explanation, grading a typed or spoken answer, an example line
- * or a plan edit. Guests get a day's worth, accounts fair use.
- */
+/** Claim immediately before starting a small AI call. */
 export function claimAssist(): Promise<UsageDecision> {
   return claimUsage({ kind: "assist", targetId: randomUUID() });
 }

@@ -2,7 +2,6 @@ import { type TransactionClient, sql } from "@zoonk/db";
 
 const USAGE_LOCK_NAMESPACE = 51_873;
 
-/** All minute claims, connection transitions and refunds serialize on the same learner. */
 export async function lockUsageForViewer({
   transaction,
   userId,

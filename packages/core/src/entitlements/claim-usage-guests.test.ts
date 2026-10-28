@@ -89,7 +89,6 @@ describe("guest usage", () => {
 
     await Promise.all(used.map((records) => usageRecordsFixture(records)));
 
-    // The goal weighs the most, and still fits in the guest's day after every other use.
     await expect(claimUsage({ kind: "goal", targetId: randomUUID() })).resolves.toStrictEqual({
       status: "allowed",
     });
@@ -103,7 +102,6 @@ describe("guest usage", () => {
       claimUsage({ generated: true, kind: "mindMap", targetId: chapterId }),
     ).resolves.toStrictEqual({ status: "allowed" });
 
-    // Asking again for the same chapter's map, after a failed run, doesn't count twice.
     await expect(
       claimUsage({ generated: true, kind: "mindMap", targetId: chapterId }),
     ).resolves.toStrictEqual({ status: "allowed" });
@@ -122,7 +120,6 @@ describe("guest usage", () => {
   ] as const)(
     "caps a guest's $kind at $day a day and $month a month",
     async ({ day, kind, month }) => {
-      // Mid-month, so the month's earlier days are this month's.
       vi.setSystemTime(new Date(Date.UTC(2300 + Math.floor(Math.random() * 1000), 0, 15, 12)));
       const now = new Date();
       const guest = await useGuest();
@@ -163,11 +160,9 @@ describe("guest usage", () => {
       signUpRequired,
     );
 
-    // A lesson that's already written costs no AI, so it never needs the budget.
     await expect(startLesson({ generated: false })).resolves.toStrictEqual({ status: "allowed" });
     await expect(prisma.usageRecord.count({ where: { userId: guest.id } })).resolves.toBe(1);
 
-    // An account made a minute ago never shares the guests' budget: only its own caps apply.
     const account = await userFixture();
     mockSession(account.id);
 
@@ -198,7 +193,6 @@ describe("guest usage", () => {
       status: "signUpRequired",
     });
 
-    // Signing up moves the guest's usage to the new account (auth's guest link, tested there).
     const account = await userFixture();
 
     await prisma.usageRecord.updateMany({
@@ -212,7 +206,6 @@ describe("guest usage", () => {
       status: "allowed",
     });
 
-    // The guest's help counts toward the account's own day: 100 small helps for a free account.
     await usageRecordsFixture({
       count: 79,
       createdAt: new Date(),
@@ -233,7 +226,6 @@ describe("guest usage", () => {
     await claimUsage({ kind: "goal", targetId: randomUUID() });
     await claimUsage({ kind: "assist", targetId: randomUUID() });
 
-    // A new explanation's $0.02, a goal's $1.80 and a small help's $0.005.
     await expect(
       prisma.guestSpendDay.findUnique({ where: { day: today() } }),
     ).resolves.toMatchObject({ spentMicros: 1_825_000 });
@@ -244,7 +236,6 @@ describe("guest usage", () => {
     const now = new Date();
     const claiming = new AbortController();
 
-    // E2E runs clear the day's row before every test, while other workers' guests claim from it.
     const clear = (async () => {
       while (!claiming.signal.aborted) {
         // oxlint-disable-next-line no-await-in-loop -- Each clear waits for the one before.

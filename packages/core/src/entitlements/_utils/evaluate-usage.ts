@@ -22,7 +22,6 @@ type UsageClaim = {
 
 type LimitCheck = Omit<AllowanceLimit, "tier"> & { used: number };
 
-/** Lists the plan's hard caps for this use, in the order a learner would best understand them. */
 function getLimitChecks({ counts, generated, kind, tier }: UsageClaim): LimitCheck[] {
   const rule = getUsageRule({ kind, tier });
   const activeGoalLimit = kind === "goal" ? getActiveGoalLimit(tier) : null;
@@ -59,17 +58,11 @@ function getLimitChecks({ counts, generated, kind, tier }: UsageClaim): LimitChe
   return checks.filter((check): check is LimitCheck => check !== false);
 }
 
-/** Which of the plan's call time caps a call reaches: today's or this month's. */
 export type CallTimePeriod = "day" | "month";
 
-/** The plan's call time cap that runs out first, and how many seconds it has left. */
 export type CallTimeLeft = { limit: number; period: CallTimePeriod; seconds: number };
 
-/**
- * What's left of the plan's call time: today's or this month's, whichever runs out first. Once the
- * month's is used, it's the one that counts whatever's left today, since tomorrow brings none back.
- * Null for uses without a time cap.
- */
+/** Null means uncapped; an exhausted monthly cap takes precedence because tomorrow cannot reset it. */
 export function getCallTimeLeft({
   kind,
   tier,
@@ -100,10 +93,7 @@ export function getCallTimeLeft({
   return day;
 }
 
-/**
- * The seconds a live call may hold: what it asks for, or what's left of the plan's call time when
- * that's less, with the cap that shortens it. Uses without a time cap hold what they ask.
- */
+/** Uncapped uses hold all requested seconds; capped calls may hold less. */
 export function getCallHold({ left, seconds }: { left: CallTimeLeft | null; seconds: number }): {
   heldSeconds: number;
   shortenedBy: CallTimePeriod | null;
@@ -115,7 +105,6 @@ export function getCallHold({ left, seconds }: { left: CallTimeLeft | null; seco
   return { heldSeconds: Math.max(0, left.seconds), shortenedBy: left.period };
 }
 
-/** The plan's call time is used once less than a short call is left, today or this month. */
 function findCallTimeLimit({ counts, kind, tier }: UsageClaim): AllowanceLimit | null {
   const left = getCallTimeLeft({
     kind,
@@ -158,7 +147,6 @@ function findReachedLimit(claim: UsageClaim): AllowanceLimit | null {
   return null;
 }
 
-/** Above the fair-use threshold, each new use waits a few minutes after the previous one. */
 function getFairUseWaitSeconds({ counts, kind, now, tier }: UsageClaim): number | null {
   const { fairUseDay } = getUsageRule({ kind, tier });
 
@@ -172,10 +160,6 @@ function getFairUseWaitSeconds({ counts, kind, now, tier }: UsageClaim): number 
   return waitSeconds > 0 ? waitSeconds : null;
 }
 
-/**
- * Judges one new use against the learner's plan: hard caps, the plan's call time and the daily AI
- * budget block, while fair use only slows unusual volume down.
- */
 export function evaluateUsage(claim: UsageClaim): UsageDecision {
   const limit = findReachedLimit(claim);
 

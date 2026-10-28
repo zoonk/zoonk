@@ -38,7 +38,6 @@ describe("usage claims under the learner's lock", () => {
   it("marks before the usage lock, so it waits behind a writer that marked first", async () => {
     const user = await learner();
 
-    // The other writer follows the global order too: the learner's lock, then the usage lock.
     const writer = holdLearnerLock({
       beforeCommit: (tx) => lockUsageForViewer({ transaction: tx, userId: user.id }),
       userId: user.id,
@@ -53,7 +52,6 @@ describe("usage claims under the learner's lock", () => {
       writer.release();
     }
 
-    // A claim holding the usage lock while waiting for the learner's would deadlock with it here.
     const outcomes = await Promise.allSettled([writer.done, claim]);
     expect(outcomes.map((outcome) => outcome.status)).toStrictEqual(["fulfilled", "fulfilled"]);
     await expect(claim).resolves.toMatchObject({ status: "allowed" });

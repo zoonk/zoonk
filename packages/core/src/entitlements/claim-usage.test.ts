@@ -8,7 +8,6 @@ import { mockSession } from "../_test-utils/mock-session";
 import { claimUsage } from "./claim-usage";
 import { getDailySpendBudgetMicros, getEstimatedCostMicros } from "./limits";
 
-/** Mid-month and mid-day, so seeded usage lands in the periods the test means. */
 const NOW = new Date("2026-09-15T12:00:00Z");
 const EARLIER_THIS_MONTH = new Date("2026-09-03T09:00:00Z");
 const MINUTE_MS = 60_000;
@@ -34,7 +33,6 @@ function makeMindMap() {
   return claimUsage({ generated: true, kind: "mindMap", targetId: randomUUID() });
 }
 
-/** Every metered kind a free learner can use, with its caps (calls are capped by time instead). */
 const FREE_CAPS = [
   { day: 100, kind: "assist", month: 500 },
   { day: 5, kind: "explanation", month: 20 },
@@ -148,11 +146,7 @@ describe(claimUsage, () => {
       prisma.usageRecord.findUniqueOrThrow({
         where: { userUsageTarget: { kind: "conversation", targetId, userId: user.id } },
       }),
-    ).resolves.toMatchObject({
-      // Two minutes at $0.05 a minute, and $0.01 for the call's checks.
-      costMicros: 110_000,
-      seconds: 120,
-    });
+    ).resolves.toMatchObject({ costMicros: 110_000, seconds: 120 });
   });
 
   it("gives Plus 20 minutes of calls a day: the last call runs what's left, then calls wait for tomorrow", async () => {
@@ -187,7 +181,6 @@ describe(claimUsage, () => {
   it("caps a month of Plus's calls too: the last call runs what's left, then calls wait for next month", async () => {
     const user = await useLearner({ plus: true });
 
-    // 85 minutes on earlier days this month: two of the month's minutes are left.
     await usageRecordsFixture({
       count: 5,
       createdAt: EARLIER_THIS_MONTH,
@@ -200,7 +193,6 @@ describe(claimUsage, () => {
       claimUsage({ kind: "conversation", seconds: 300, targetId: randomUUID() }),
     ).resolves.toStrictEqual({ heldSeconds: 120, shortenedBy: "month", status: "allowed" });
 
-    // Tomorrow brings no call time back: the month's is used.
     vi.setSystemTime(new Date(NOW.getTime() + 24 * 60 * MINUTE_MS));
 
     await expect(
@@ -210,7 +202,6 @@ describe(claimUsage, () => {
       status: "limitReached",
     });
 
-    // A second before the month ends, still none; on the 1st, by the server's clock, it's back.
     vi.setSystemTime(new Date("2026-09-30T23:59:59Z"));
 
     await expect(
@@ -227,7 +218,6 @@ describe(claimUsage, () => {
   it("gives the free plan a much smaller month of calls than Plus", async () => {
     const user = await useLearner();
 
-    // 4 minutes on earlier days this month leave one: a minute-long call fits, nothing after it.
     await usageRecordsFixture({
       count: 1,
       createdAt: EARLIER_THIS_MONTH,
