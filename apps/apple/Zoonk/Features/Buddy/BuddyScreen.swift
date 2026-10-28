@@ -102,12 +102,13 @@ private struct BuddyContent: View {
       )
       .toolbar {
         ToolbarItem(placement: .topBarTrailing) {
-          dayButton
-        }
-
-        ToolbarItem(placement: .topBarTrailing) {
           menu
         }
+      }
+      // Energy and today's missions stay in sight under the title, as main's line beside the
+      // buddy's name does, while the conversation scrolls under them.
+      .safeAreaBar(edge: .top) {
+        dayLine
       }
       // A wide screen keeps the day in a column beside the conversation; a phone opens it in a
       // sheet, with its title in the sheet's bar.
@@ -262,33 +263,53 @@ private struct BuddyContent: View {
     ]
   }
 
-  /// The buddy's day as one quiet control: Energy and today's missions; it shows the day.
-  private var dayButton: some View {
+  /// The buddy's day as one quiet line: Energy and today's missions. It shows the whole day, in a
+  /// sheet on a phone and beside the conversation on a wide screen.
+  private var dayLine: some View {
     Button {
       isDayShown.toggle()
     } label: {
-      HStack(spacing: 8) {
-        HStack(spacing: 2) {
-          Image(systemName: "bolt.fill")
-            .foregroundStyle(.energy)
+      HStack(spacing: 16) {
+        Label {
           Text(
             status.energy.current.map {
               ($0 / 100).formatted(.percent.precision(.fractionLength(0)))
             } ?? "–")
+        } icon: {
+          Image(systemName: "bolt.fill")
+            .foregroundStyle(.energy)
         }
 
         if let today = status.today, !today.missions.isEmpty {
-          HStack(spacing: 2) {
-            Image(systemName: "target")
+          Label {
             Text(
               verbatim:
                 "\(today.missions.filter { $0.status == .done }.count)/\(today.missions.count)")
+          } icon: {
+            Image(systemName: "target")
           }
         }
+
+        Spacer(minLength: 0)
+
+        Image(systemName: "chevron.right")
+          .font(.footnote.weight(.semibold))
+          .foregroundStyle(.tertiary)
       }
+      .labelStyle(.titleAndIcon)
       .font(.subheadline.monospacedDigit())
+      .foregroundStyle(.secondary)
+      .contentShape(.rect)
     }
+    .buttonStyle(.plain)
     .accessibilityLabel(dayLabel)
+    .accessibilityHint(
+      Text(
+        "Shows \(name)'s day", tableName: "Buddy",
+        comment: "VoiceOver hint of the buddy's day line; the argument is the buddy's name")
+    )
+    .scenePadding(.horizontal)
+    .padding(.vertical, 8)
   }
 
   private var dayLabel: Text {

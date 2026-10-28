@@ -31,9 +31,11 @@ struct BuddyDayView: View {
       if let today = status.today, !today.missions.isEmpty {
         Section {
           ForEach(Array(today.missions.enumerated()), id: \.offset) { _, mission in
-            BuddyMissionRow(mission: mission, buddyName: name) {
-              if let opens = mission.opens?.value1 {
-                places.open(.mission(opens))
+            if let row = StudyMission(mission) {
+              MissionRow(mission: row, buddyName: name) {
+                if let opens = mission.opens?.value1 {
+                  places.open(.mission(opens))
+                }
               }
             }
           }
@@ -174,54 +176,5 @@ struct BuddyDayView: View {
         }
       }
     }
-  }
-}
-
-/// One of the day's missions: its mark, what it asks and how far it is. A tap opens where it's
-/// done.
-struct BuddyMissionRow: View {
-  let mission: Components.Schemas.StudyMission
-  let buddyName: String
-  let open: () -> Void
-
-  /// The block it still asks ("Why doesn't the electron fall?") and about how long it takes.
-  private var stepLine: String? {
-    let minutes = mission.minutes.map {
-      String(
-        localized: "\(Int($0.rounded())) min", table: "Buddy",
-        comment: "About how long a mission takes")
-    }
-    let parts = [mission.detail?.value1.title, minutes].compactMap(\.self)
-    return parts.isEmpty ? nil : parts.joined(separator: " · ")
-  }
-
-  var body: some View {
-    let done = mission.status == .done
-
-    Button(action: open) {
-      Label {
-        LabeledContent {
-          if !done, mission.total > 1 {
-            Text(verbatim: "\(mission.done)/\(mission.total)")
-              .monospacedDigit()
-          }
-        } label: {
-          mission.name(buddy: buddyName)
-            .foregroundStyle(done ? .secondary : .primary)
-
-          if !done, let line = stepLine {
-            Text(line)
-          }
-        }
-      } icon: {
-        Image(systemName: done ? "checkmark.circle.fill" : "circle")
-          .foregroundStyle(done ? AnyShapeStyle(.success) : AnyShapeStyle(.tertiary))
-      }
-    }
-    .foregroundStyle(.primary)
-    .disabled(done || mission.opens == nil)
-    .accessibilityValue(
-      done
-        ? Text("Done", tableName: "Buddy", comment: "VoiceOver: a mission that's done") : Text(""))
   }
 }

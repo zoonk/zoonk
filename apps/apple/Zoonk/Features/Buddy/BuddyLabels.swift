@@ -123,60 +123,6 @@ extension BuddyStatus {
   }
 }
 
-extension Components.Schemas.StudyMission {
-  /// What the mission asks, as main's missions name it.
-  func name(buddy: String) -> Text {
-    switch kind {
-    case .review:
-      Text("Review", tableName: "Buddy", comment: "A mission: today's review")
-    case .somethingNew:
-      Text("Do a new lesson", tableName: "Buddy", comment: "A mission: a new lesson")
-    case .finishChapter:
-      if let chapter = detail?.value1.chapterTitle {
-        Text(
-          "Finish “\(chapter)”", tableName: "Buddy",
-          comment: "A mission: finish a chapter; the argument is its title")
-      } else {
-        Text("Finish the chapter", tableName: "Buddy", comment: "A mission: finish a chapter")
-      }
-    case .challenge:
-      detail?.value1.rematch == true
-        ? Text(
-          "Rematch the Trickster", tableName: "Buddy", comment: "A mission: a challenge lost before"
-        )
-        : Text("Take on the Trickster", tableName: "Buddy", comment: "A mission: a phase challenge")
-    case .weeklyChallenge:
-      Text("Weekly challenge", tableName: "Buddy", comment: "A mission: the weekly challenge")
-    case .mock:
-      Text("Take the mock", tableName: "Buddy", comment: "A mission: a mock exam")
-    case .essay:
-      Text("Practice writing", tableName: "Buddy", comment: "A mission: an essay")
-    case .practice, .weakSpot:
-      if let area = detail?.value1.areaTitle {
-        Text(
-          "Practice \(area)", tableName: "Buddy",
-          comment: "A mission: practice an area; the argument is the area")
-      } else {
-        Text("Practice", tableName: "Buddy", comment: "A mission: practice")
-      }
-    case .fixMistake:
-      Text(
-        "Fix \(total) mistakes", tableName: "Buddy",
-        comment: "A mission: fix mistakes from the notebook")
-    case .pattern:
-      Text("Practice a pattern", tableName: "Buddy", comment: "A mission: a mistake pattern")
-    case .pronunciation:
-      Text("Pronunciation", tableName: "Buddy", comment: "A mission: pronunciation practice")
-    case .call:
-      Text("Have a call", tableName: "Buddy", comment: "A mission: a speaking call")
-    case .askBuddy:
-      Text(
-        "Ask \(buddy) something", tableName: "Buddy",
-        comment: "A mission: ask the buddy; the argument is its name")
-    }
-  }
-}
-
 extension BuddyChoice {
   /// The learner's own name for the buddy, else the buddy's name in the app's language (each
   /// language has its own playful one, kept in the style guides' glossaries).

@@ -94,35 +94,6 @@
         }
       }
     },
-    "%lld min" : {
-      "comment" : "About how long a mission takes",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld Min."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld min"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld min"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld min"
-          }
-        }
-      }
-    },
     "%lld missions" : {
       "comment" : "How many missions today",
       "localizations" : {
@@ -410,35 +381,6 @@
         }
       }
     },
-    "Ask %@ something" : {
-      "comment" : "A mission: ask the buddy; the argument is its name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stell %@ eine Frage"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pregúntale algo a %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pose une question à %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pergunte algo para %@"
-          }
-        }
-      }
-    },
     "Ask a question or request a change" : {
       "comment" : "Placeholder of the buddy's composer: it answers and changes the plan",
       "localizations" : {
@@ -522,35 +464,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bebê"
-          }
-        }
-      }
-    },
-    "Beep" : {
-      "comment" : "The robot buddy's own name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Piep"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bip"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bip"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bip"
           }
         }
       }
@@ -787,64 +700,6 @@
         }
       }
     },
-    "Do a new lesson" : {
-      "comment" : "A mission: a new lesson",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eine neue Lektion machen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completa una lección nueva"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Faire une nouvelle leçon"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fazer uma aula nova"
-          }
-        }
-      }
-    },
-    "Done" : {
-      "comment" : "VoiceOver: a mission that's done",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erledigt"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completada"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terminé"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Concluída"
-          }
-        }
-      }
-    },
     "Earlier questions" : {
       "comment" : "Opens questions asked before the courses were rewritten\nTitle of the earlier questions page",
       "localizations" : {
@@ -1054,35 +909,6 @@
         }
       }
     },
-    "Finish “%@”" : {
-      "comment" : "A mission: finish a chapter; the argument is its title",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "„%@“ abschließen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completa «%@»"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terminer « %@ »"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Concluir “%@”"
-          }
-        }
-      }
-    },
     "Finish 50 reviews" : {
       "comment" : "How the retro glasses are earned",
       "localizations" : {
@@ -1141,35 +967,6 @@
         }
       }
     },
-    "Finish the chapter" : {
-      "comment" : "A mission: finish a chapter",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das Kapitel abschließen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completa el capítulo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terminer le chapitre"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Concluir o capítulo"
-          }
-        }
-      }
-    },
     "Finish your first weekly challenge" : {
       "comment" : "How the aviator glasses are earned",
       "localizations" : {
@@ -1195,101 +992,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Concluir seu primeiro desafio semanal"
-          }
-        }
-      }
-    },
-    "Fix %lld mistakes" : {
-      "comment" : "A mission: fix mistakes from the notebook",
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Einen Fehler korrigieren"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld Fehler korrigieren"
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Fix a mistake"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Fix %lld mistakes"
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Corrige un error"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Corrige %lld errores"
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Corrige une erreur"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Corrige %lld erreurs"
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Corrigir um erro"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Corrigir %lld erros"
-                }
-              }
-            }
           }
         }
       }
@@ -1522,35 +1224,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vira jovem em %@"
-          }
-        }
-      }
-    },
-    "Have a call" : {
-      "comment" : "A mission: a speaking call",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ein Gespräch führen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Haz una llamada"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Faire un appel"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fazer uma conversa"
           }
         }
       }
@@ -1874,35 +1547,6 @@
         }
       }
     },
-    "Noodle" : {
-      "comment" : "The brain buddy's own name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Grips"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Coco"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Caboche"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cuca"
-          }
-        }
-      }
-    },
     "Not now" : {
       "comment" : "Declines a schedule idea",
       "localizations" : {
@@ -2015,35 +1659,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Perguntas anteriores"
-          }
-        }
-      }
-    },
-    "Otto" : {
-      "comment" : "The octopus buddy's own name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Otto"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oto"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Octave"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oto"
           }
         }
       }
@@ -2222,180 +1837,6 @@
         }
       }
     },
-    "Practice" : {
-      "comment" : "A mission: practice",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Üben"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Practica"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "S’entraîner"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Praticar"
-          }
-        }
-      }
-    },
-    "Practice %@" : {
-      "comment" : "A mission: practice an area; the argument is the area",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ üben"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Practica %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Travailler %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Praticar %@"
-          }
-        }
-      }
-    },
-    "Practice a pattern" : {
-      "comment" : "A mission: a mistake pattern",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ein Muster üben"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Practica un patrón"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Travailler un schéma d’erreur"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Praticar um padrão"
-          }
-        }
-      }
-    },
-    "Practice writing" : {
-      "comment" : "A mission: an essay",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Schreiben üben"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Practica la redacción"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "S’entraîner à rédiger"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Praticar redação"
-          }
-        }
-      }
-    },
-    "Pronunciation" : {
-      "comment" : "A mission: pronunciation practice",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aussprache"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pronunciación"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prononciation"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pronúncia"
-          }
-        }
-      }
-    },
-    "Rematch the Trickster" : {
-      "comment" : "A mission: a challenge lost before",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Den Trickser erneut herausfordern"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vuelve a enfrentarte al Tramposo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prendre sa revanche sur le Farceur"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enfrentar o Pegadinha de novo"
-          }
-        }
-      }
-    },
     "Retro" : {
       "comment" : "A pair of the buddy's glasses",
       "localizations" : {
@@ -2425,35 +1866,6 @@
         }
       }
     },
-    "Review" : {
-      "comment" : "A mission: today's review",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wiederholen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Repasa"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réviser"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Revisar"
-          }
-        }
-      }
-    },
     "Round" : {
       "comment" : "A pair of the buddy's glasses",
       "localizations" : {
@@ -2479,6 +1891,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Redondo"
+          }
+        }
+      }
+    },
+    "Shows %@'s day" : {
+      "comment" : "VoiceOver hint of the buddy's day line; the argument is the buddy's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeigt den Tag von %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muestra el día de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiche la journée de %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostra o dia de %@"
           }
         }
       }
@@ -2624,64 +2065,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Estudar hoje mantém a Energia alta."
-          }
-        }
-      }
-    },
-    "Take on the Trickster" : {
-      "comment" : "A mission: a phase challenge",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Den Trickser herausfordern"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enfréntate al Tramposo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Relever le défi du Farceur"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enfrentar o Pegadinha"
-          }
-        }
-      }
-    },
-    "Take the mock" : {
-      "comment" : "A mission: a mock exam",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die Probeprüfung ablegen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Haz el simulacro"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Passer l’examen blanc"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fazer o simulado"
           }
         }
       }
@@ -2885,35 +2268,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não foi possível salvar seu parceiro. Tente novamente."
-          }
-        }
-      }
-    },
-    "Weekly challenge" : {
-      "comment" : "A mission: the weekly challenge",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wöchentliche Herausforderung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Desafío semanal"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Défi hebdomadaire"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Desafio semanal"
           }
         }
       }
@@ -3436,35 +2790,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seu tempo de estudo continua o mesmo."
-          }
-        }
-      }
-    },
-    "Zu" : {
-      "comment" : "The alien buddy's own name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zu"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zu"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zu"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zu"
           }
         }
       }
