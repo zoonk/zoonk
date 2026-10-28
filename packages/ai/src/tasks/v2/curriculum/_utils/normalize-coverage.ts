@@ -19,23 +19,17 @@ type RawMissingSkill = {
 export type MissingSkill = {
   name: string;
   description: string;
-  /** How much of the exam depends on it, from 1 to 5; null outside exams. */
+  /** 1 to 5; null outside exams. */
   examWeight: number | null;
-  /** Keys of skills already in the graph that come right before it. */
   prerequisites: string[];
-  /** The syllabus line it comes from, quoted from the reference. */
   syllabusLine: string;
-  /** Title of the reference that contains the line. */
   reference: string;
-  /** With an exam's notice: the subject it belongs to and the notice topics it teaches. */
   area: string | null;
   topics: string[];
 };
 
-/** A skill of an exam's graph moved into its notice subject, with the notice topics it teaches. */
 export type SkillPlacement = { area: string; key: string; topics: string[] };
 
-/** A skill already in an exam's graph whose weight the references show is off, and its new one. */
 export type ExamWeightChange = { examWeight: number; key: string };
 
 type GraphSkill = {
@@ -69,10 +63,6 @@ function findReference({
   return references.find((reference) => reference.comparableText.includes(quote))?.title ?? null;
 }
 
-/**
- * Where a missing skill's quote comes from: a reference that contains it, or, with an exam's
- * notice, the notice itself when the quote is one of its topics (by id or in its words).
- */
 function findSource({
   outline,
   references,
@@ -96,7 +86,6 @@ function findSource({
   return topic ? { line: topic, reference: outline.name } : null;
 }
 
-/** A missing skill's place in an exam's notice; none without one. */
 function toPlace({ outline, skill }: { outline?: ExamOutline; skill: RawMissingSkill }) {
   if (!outline) {
     return { area: null, topics: [] };
@@ -106,12 +95,8 @@ function toPlace({ outline, skill }: { outline?: ExamOutline; skill: RawMissingS
 }
 
 /**
- * Keeps only gaps the references really show: each missing skill must quote a
- * line found in a reference or, for an exam, one of its notice's topics (a quote
- * the model made up is dropped), must not repeat a skill already in the graph,
- * and may only point at prerequisites the graph has. Its name and description read
- * as plain lines (`toPlainLine`). An exam's new skills keep their weight, from 1 to
- * 5, and their place in the notice, word for word.
+ * A missing skill must quote a line found in a reference or, for an exam, one of its notice's
+ * topics, so a quote the model made up is dropped.
  */
 export function normalizeCoverage({
   exam,
@@ -160,10 +145,6 @@ export function normalizeCoverage({
   return found.filter((_, index) => names.indexOf(names[index] ?? "") === index);
 }
 
-/**
- * Keeps the weight changes an exam's graph can take: one per skill the graph has, from 1 to 5,
- * and only where the weight really changes. Other goals aren't weighted, so they get none.
- */
 export function normalizeExamWeights({
   changes,
   exam,
@@ -203,10 +184,8 @@ function isSamePlace({ placement, skill }: { placement: SkillPlacement; skill: G
 }
 
 /**
- * Where the skills whose area names one of the notice's subjects another way go: a graph written
- * before the notice was read named Sofia's ethics subject "Professional Ethics", the notice's short
- * name for "Statute of the Legal Profession and of the OAB… and Code of Ethics and Discipline of the OAB", and every
- * screen that reads the plan by the notice's subjects showed it outside her plan.
+ * A graph written before the notice was read can name a subject another way ("Professional
+ * Ethics" for the OAB's), which showed it outside the plan on every screen that reads subjects.
  */
 function placeNamedSkills({
   graphSkills,
@@ -231,12 +210,6 @@ function placeNamedSkills({
   });
 }
 
-/**
- * The placements an exam's graph can take: one per skill it has, in the notice's own subjects and
- * topics (see `placeInExam`), and only where the skill really moves; a skill the check left where
- * it was moves to the subject its area names (see `placeNamedSkills`). Without a notice there are
- * none.
- */
 export function normalizePlacements({
   graphSkills,
   outline,

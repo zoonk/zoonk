@@ -1,37 +1,24 @@
 import { namesMatchAcrossSpellings } from "@zoonk/utils/name-words";
 import { normalizeString } from "@zoonk/utils/string";
 
-/** One subject of an exam's notice, as the curriculum maps skills onto it. */
 type ExamSubject = {
-  /**
-   * The choice it's an option of, when candidates take only one of several subjects (ENEM's
-   * foreign language: English or Spanish); null or absent otherwise. A learner studies the one
-   * they pick, so no other skill builds on an option's.
-   */
+  /** For one of several subjects candidates pick from: no other skill builds on an option's. */
   choiceGroup?: string | null;
   name: string;
   /**
-   * What learners call it when the notice's name is long ("Professional Ethics" for "Statute of the
-   * Legal Profession and of the OAB… and Code of Ethics and Discipline of the OAB"): a graph area by that name is this
-   * subject.
+   * What learners call a long-named subject ("Professional Ethics"): an area by it is this subject.
    */
   shortName?: string | null;
-  /** The part of the exam the notice puts it in, such as "Basic knowledge (P1)". */
   group: string | null;
   questions: number | null;
-  /** Its share of the final score, from 0 to 1. */
+  /** Share of the final score, 0 to 1. */
   weight: number | null;
-  /** Every item of its syllabus, in the notice's words and order. */
+  /** In the notice's words and order. */
   topics: string[];
 };
 
-/**
- * What the curriculum reads of an exam's blueprint: its subjects with their topics, what the
- * notice says about its format, scoring and rules, and how often the board asks each topic.
- */
 export type ExamOutline = {
   name: string;
-  /** The notice's format, scoring and rules, one line each. */
   notes: string[];
   subjects: ExamSubject[];
   topicFrequency: { level: string; subject: string; topic: string }[];
@@ -40,7 +27,6 @@ export type ExamOutline = {
 const PERCENT = 100;
 const TOPIC_ID_PATTERN = /^S(?<subject>\d+)\.(?<topic>\d+)$/u;
 
-/** A topic's id in the prompts: its subject's number and its own, such as "S2.5". */
 function toTopicId({ subject, topic }: { subject: number; topic: number }): string {
   return `S${subject + 1}.${topic + 1}`;
 }
@@ -64,10 +50,6 @@ function describeSubject({ index, subject }: { index: number; subject: ExamSubje
   return [heading, ...topics].join("\n");
 }
 
-/**
- * The exam as the skill graph and the coverage check read it: each subject numbered with its group,
- * question count or weight, and every topic of its syllabus under an id ("S2.5") that skills cite.
- */
 export function formatExamOutline(outline: ExamOutline): string {
   const subjects = outline.subjects.map((subject, index) => describeSubject({ index, subject }));
 
@@ -89,7 +71,6 @@ export function formatExamOutline(outline: ExamOutline): string {
 
 type TopicRef = { subject: number; topic: string };
 
-/** A topic a model cited, by its id or, failing that, by its words in one of the subjects. */
 function findTopic({ outline, value }: { outline: ExamOutline; value: string }): TopicRef | null {
   const match = TOPIC_ID_PATTERN.exec(value.trim())?.groups;
 
@@ -107,11 +88,6 @@ function findTopic({ outline, value }: { outline: ExamOutline; value: string }):
   }, null);
 }
 
-/**
- * The subject a name stands for: the same words as its name or its short name, a subject the name
- * is part of or contains, or else the one subject it names in another language's spelling (a
- * Spanish notice's subject written in Portuguese).
- */
 function findSubjectByName({ name, outline }: { name: string; outline: ExamOutline }) {
   const wanted = normalizeString(name);
 
@@ -149,7 +125,6 @@ function findSubjectByName({ name, outline }: { name: string; outline: ExamOutli
   return respelled.length === 1 ? (respelled[0] ?? -1) : -1;
 }
 
-/** The subject most of the topics belong to; the earliest one on a tie. */
 function findMainSubject(refs: readonly TopicRef[]): number {
   const counts = refs.reduce(
     (total, ref) => total.set(ref.subject, (total.get(ref.subject) ?? 0) + 1),
@@ -163,11 +138,7 @@ function findMainSubject(refs: readonly TopicRef[]): number {
   );
 }
 
-/**
- * Whether a skill of `area` may build on a skill of `prerequisiteArea`: never on an option of a
- * choice (see `choiceGroup`) unless it's a skill of that same option, since a learner may take
- * another option and never study it.
- */
+/** Never on another option of a choice: a learner may take that one and never study it. */
 export function canBuildOn({
   area,
   outline,
@@ -185,11 +156,8 @@ export function canBuildOn({
 }
 
 /**
- * A skill's place in an exam's notice from what a model wrote: its area becomes the notice's
- * subject, word for word, and its topics the notice's own topics of that subject, so the syllabus
- * reads skills by plain equality. The subject is the one most of its cited topics belong to, or the
- * one its area names. An area the notice doesn't have (the essay, answer strategy) stays as
- * written, with no topics.
+ * Word for word, so the syllabus reads skills by plain equality. An area the notice doesn't have
+ * (answer strategy) stays as written, with no topics.
  */
 export function placeInExam({
   area,
@@ -216,12 +184,10 @@ export function placeInExam({
 
 const TOPIC_NUMBER_PATTERN = /^(?<number>\d+(?:\.\d+)*)[.)]?\s/u;
 
-/** The number a syllabus gives a topic ("5.7" in "5.7 Use of commas"). */
 function getTopicNumber(topic: string): string | null {
   return TOPIC_NUMBER_PATTERN.exec(topic)?.groups?.number ?? null;
 }
 
-/** Whether a topic is one of the numbered sub-items of another ("5.7" of "5"). */
 function isSubTopic({ parent, topic }: { parent: string; topic: string }): boolean {
   const parentNumber = getTopicNumber(parent);
   const number = getTopicNumber(topic);
@@ -230,10 +196,7 @@ function isSubTopic({ parent, topic }: { parent: string; topic: string }): boole
 }
 
 /**
- * The notice's topics no skill covers, by subject and in the notice's order: what the coverage
- * check fills before a plan is built, so the plan teaches the whole syllabus. An item split into
- * numbered sub-items ("5", then "5.1" to "5.8") is taught through them, so only the sub-items are
- * listed.
+ * An item split into numbered sub-items is taught through them, so only the sub-items are listed.
  */
 export function findUncoveredTopics({
   outline,
@@ -256,12 +219,10 @@ export function findUncoveredTopics({
   });
 }
 
-/** Whether a value is a topic's id in `formatExamOutline`, such as "S2.5". */
 export function isTopicId(value: string): boolean {
   return TOPIC_ID_PATTERN.test(value.trim());
 }
 
-/** A topic's id in `formatExamOutline`, for prompts that name what's missing. */
 export function getTopicId({
   outline,
   subject,
@@ -277,12 +238,11 @@ export function getTopicId({
   return topicIndex === -1 ? null : toTopicId({ subject: subjectIndex, topic: topicIndex });
 }
 
-/** How a notice names a test answered in writing, in Portuguese: a discursive test, an essay, a legal brief. */
+/** How a Portuguese notice names a test answered in writing: discursive, essay, legal brief. */
 const WRITTEN_TEST = /discursiv|reda[cç][aã]o|pe[cç]a t[eé]cnica/iu;
 
 /**
- * Whether a notice subject is the exam's written test (its discursive test, in its own group):
- * every candidate sits it and it's scored apart, so a plan short on time keeps its skills whole.
+ * Every candidate sits it and it's scored apart, so a plan short on time keeps its skills whole.
  */
 export function isWrittenTestSubject(subject: Pick<ExamSubject, "group" | "name">): boolean {
   return WRITTEN_TEST.test(`${subject.name} ${subject.group ?? ""}`);

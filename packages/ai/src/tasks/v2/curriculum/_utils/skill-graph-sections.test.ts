@@ -68,7 +68,6 @@ describe(toSectionCalls, () => {
       ["S5", "S7"],
     ]);
 
-    // Every section is written exactly once.
     expect(calls.flat().toSorted((a, b) => a.subject.localeCompare(b.subject))).toStrictEqual(
       sections.toSorted((a, b) => a.subject.localeCompare(b.subject)),
     );

@@ -65,7 +65,6 @@ describe(normalizeCourseOutline, () => {
   });
 
   it("takes em dashes and Markdown marks out of what learners read, and drops unfinished titles", () => {
-    // Câmara and OAB chapters, Oct 2026: "what AI can — and can't — conclude".
     const outline = normalizeCourseOutline({
       level: "beginner",
       raw: {

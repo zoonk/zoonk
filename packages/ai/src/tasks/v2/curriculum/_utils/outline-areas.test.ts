@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { findMixedAreaChapters, splitMixedAreaChapters } from "./outline-areas";
 
-/** Ana's ENEM skills, by the subject each sits in. */
 const skills = [
   { area: "Ciências da Natureza", key: "measures", name: "Interpretar medidas e unidades físicas" },
   { area: "Matemática", key: "chances", name: "Calcular probabilidades simples" },
@@ -20,7 +19,6 @@ function lesson(title: string, lessonSkills: string[]) {
   };
 }
 
-/** The 17:51 outline's chapter: measurement lessons, then probability lessons the model named with the math skill. */
 const measuresAndChances = {
   description: "Medidas, incertezas e chances.",
   lessons: [
@@ -96,7 +94,6 @@ describe(splitMixedAreaChapters, () => {
   });
 
   it("keeps a mixed chapter whole when its lessons don't say which area each teaches", () => {
-    // Ana's 21:08 chapter: graphs, multimodal texts and waves, with no lesson naming a tagged skill.
     const panels = {
       ...measuresAndChances,
       lessons: [
@@ -107,7 +104,6 @@ describe(splitMixedAreaChapters, () => {
       title: "Painéis visuais e representações de ondas",
     };
 
-    // A lesson naming skills of two areas can't go to one part either.
     const both = {
       ...measuresAndChances,
       lessons: [

@@ -1,10 +1,6 @@
 type GraphNode = { key: string; phase: number; prerequisites: string[] };
 
-/**
- * Drops each prerequisite edge that would close a cycle, walking skills in the
- * order the model listed them, so the first path wins and every skill can
- * still be scheduled after its prerequisites.
- */
+/** Walks skills in the order the model listed them, so the first path wins. */
 export function removeCycles<T extends GraphNode>(nodes: readonly T[]): T[] {
   const byKey = new Map(nodes.map((node) => [node.key, node]));
   const state = new Map<string, "visiting" | "done">();
@@ -38,11 +34,7 @@ export function removeCycles<T extends GraphNode>(nodes: readonly T[]): T[] {
   return nodes.map((node) => ({ ...node, prerequisites: kept.get(node.key) ?? [] }));
 }
 
-/**
- * Moves a skill to a later phase when one of its prerequisites sits in a later
- * phase, so no phase asks for something the learner hasn't reached yet.
- * Expects a graph without cycles.
- */
+/** Expects a graph without cycles. */
 export function pushPhasesAfterPrerequisites<T extends GraphNode>(nodes: readonly T[]): T[] {
   const byKey = new Map(nodes.map((node) => [node.key, node]));
   const phases = new Map<string, number>();
@@ -68,11 +60,7 @@ export function pushPhasesAfterPrerequisites<T extends GraphNode>(nodes: readonl
   return nodes.map((node) => ({ ...node, phase: getPhase(node.key) }));
 }
 
-/**
- * Orders skills by phase and keeps the model's order inside a phase, pulling
- * each prerequisite in front of the skills that need it. Expects a graph
- * without cycles whose prerequisites never sit in a later phase.
- */
+/** Expects a graph without cycles whose prerequisites never sit in a later phase. */
 export function sortSkillsTopologically<T extends GraphNode>(nodes: readonly T[]): T[] {
   const byKey = new Map(nodes.map((node) => [node.key, node]));
   const emitted = new Set<string>();

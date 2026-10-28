@@ -5,7 +5,6 @@ import { LESSON_SIZE, getMaxLessonMinutes } from "../../lesson-spec/lesson-spec-
 import { type CourseLevel } from "./course-levels";
 import { type OutlineAreaSkill, splitMixedAreaChapters } from "./outline-areas";
 
-/** Tool names are short generic names; a chapter rarely needs more than a few. */
 const MAX_CHAPTER_TOOLS = 4;
 
 type RawOutlineTool = { essential: boolean; name: string };
@@ -31,47 +30,33 @@ export type RawCourseOutline = {
 
 type OutlineLesson = {
   title: string;
-  /** One line on what the lesson covers and why it's useful. */
   description: string;
-  /** What the learner can do afterwards, shown on session tiles. */
   canDo: string;
   estimatedMinutes: number;
-  /** The skills the lesson teaches, as actions. Its identity in the Library. */
+  /** Its identity in the Library. */
   skills: string[];
 };
 
 type OutlineChapter = {
   title: string;
   description: string;
-  /** What the learner can do after the chapter. */
   objectives: string[];
-  /** Keys of the required skills this chapter teaches. */
   skillKeys: string[];
-  /**
-   * What the learner uses on their own device for this chapter, such as "Python": `essential`
-   * when practicing the chapter needs it. Empty for chapters that need nothing.
-   */
+  /** `essential` when practicing the chapter needs it. */
   tools: RawOutlineTool[];
   lessons: OutlineLesson[];
 };
 
-export type CourseOutline = {
-  chapters: OutlineChapter[];
-  /** Required skills no chapter claims to teach, for the caller to handle. */
-  uncoveredSkillKeys: string[];
-};
+export type CourseOutline = { chapters: OutlineChapter[]; uncoveredSkillKeys: string[] };
 
 /**
- * Outline text shows as plain lines (titles, descriptions, objectives), read as plain words
- * (`toPlainLine`), and a text a writer left unfinished ("[Insert title]", "TODO") counts as none,
- * so an unfinished title drops its lesson or chapter like an empty one.
+ * An unfinished text ("[Insert title]", "TODO") counts as none, so it drops its lesson or chapter.
  */
 function cleanText(text: string): string {
   const plain = toPlainLine(text);
   return findPlaceholderText(plain).length > 0 ? "" : plain;
 }
 
-/** Trims, drops empty entries and keeps the first of entries that only differ in case or accents. */
 function cleanList(items: readonly string[]): string[] {
   const trimmed = items.map((item) => cleanText(item)).filter(Boolean);
   const keys = trimmed.map((item) => normalizeString(item));
@@ -79,10 +64,6 @@ function cleanList(items: readonly string[]): string[] {
   return trimmed.filter((_, index) => keys.indexOf(keys[index] ?? "") === index);
 }
 
-/**
- * Trims names, drops empty ones and keeps one entry per tool (differing only in case or accents),
- * essential when any of its entries is.
- */
 function cleanTools(tools: readonly RawOutlineTool[]): RawOutlineTool[] {
   const named = tools
     .map((tool) => ({ ...tool, key: normalizeString(tool.name), name: tool.name.trim() }))
@@ -119,15 +100,7 @@ function normalizeLesson({
   };
 }
 
-/**
- * Cleans the model's outline for storage: trimmed text without em dashes or
- * Markdown marks, no empty or unfinished lessons or
- * chapters, lesson minutes inside the lesson size rules, one entry per tool,
- * and chapter skill keys limited to the required skills. A chapter that mixes the areas of
- * `skillAreas` splits into one per area where its lessons say which they teach
- * (`splitMixedAreaChapters`). Required skills no chapter teaches are reported instead of silently
- * lost.
- */
+/** Required skills no chapter teaches are reported instead of silently lost. */
 export function normalizeCourseOutline({
   level,
   raw,
@@ -137,7 +110,6 @@ export function normalizeCourseOutline({
   level: CourseLevel;
   raw: RawCourseOutline;
   requiredSkillKeys: readonly string[];
-  /** The required skills with the area each sits in, for an exam's outline. */
   skillAreas?: readonly OutlineAreaSkill[];
 }): CourseOutline {
   const required = new Set(requiredSkillKeys);

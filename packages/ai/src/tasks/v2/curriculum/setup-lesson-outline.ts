@@ -10,10 +10,8 @@ import { LESSON_SIZE } from "../lesson-spec/lesson-spec-rules";
 import systemPrompt from "./setup-lesson-outline.prompt.md";
 
 /**
- * One outline serves every learner who sets up this tool on this device, and the learner waits
- * for it after picking "I'll set it up", so a fast, cheap model writes it. In the
- * setup-lesson-outline eval (5 tools and devices in English, Portuguese and Spanish, code checks,
- * 27 Sep 2026) Luna met every rule at 4.0s p50 and $0.24 per 1,000.
+ * The learner waits after picking "I'll set it up": Luna met every rule on the setup-lesson-outline
+ * eval at 4.0s p50 (27 Sep 2026).
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.8-flash", "anthropic/claude-haiku-5.5"] as const;
@@ -30,9 +28,8 @@ type SetupLessonOutline = z.infer<typeof schema>;
 
 export type SetupLessonOutlineParams = {
   language: string;
-  /** The tool as a course outline named it, such as "Spreadsheet (Google Sheets or Excel)". */
   tool: string;
-  /** The learner's device: windows, macos, linux, chromebook, or phone for a phone and no computer. */
+  /** windows, macos, linux, chromebook, or phone for a phone and no computer. */
   system: string;
   model?: string;
   useFallback?: boolean;
@@ -62,11 +59,6 @@ function normalizeOutline(raw: SetupLessonOutline): SetupLessonOutline {
   };
 }
 
-/**
- * Writes the outline of the short lesson that sets up a tool on the learner's device ("Set up
- * Python on Windows"): its title, description, can-do line, minutes and skill, in the learner's
- * language. The lesson pipeline writes the lesson itself from it, like any outlined lesson.
- */
 export async function generateSetupLessonOutline(params: SetupLessonOutlineParams) {
   const { analytics, model = defaultModel, reasoning, useFallback = true } = params;
   const userPrompt = buildUserPrompt(params);

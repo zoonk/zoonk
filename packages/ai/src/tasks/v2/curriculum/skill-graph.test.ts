@@ -24,8 +24,6 @@ vi.mock("./skill-graph.prompt.md", () => ({
   ].join("\n"),
 }));
 
-// Every part of a graph is a paid model call; the test answers them to check how the graph is put
-// together.
 vi.mock("ai", async (importOriginal) => ({
   ...(await importOriginal<typeof Ai>()),
   generateText: vi.fn(),
@@ -90,7 +88,6 @@ const WHOLE_GRAPH = {
   skills: writeSections("WRITE:\n- S1 Português").skills,
 };
 
-/** The instructions and prompt of every model call so far. */
 function sentPrompts() {
   return vi
     .mocked(generateText)
@@ -164,7 +161,6 @@ describe(generateSkillGraph, () => {
     expect(new Set(data.skills.map((skill) => skill.key)).size).toBe(4);
     expect(process?.prerequisites).toStrictEqual([constitution?.key]);
 
-    // One provenance for the whole graph, with every call's usage.
     expect(provenance.usage.outputTokens).toBe(2500);
 
     // Every call reads the same exam instructions, so the calls share a cached prefix, and the graph

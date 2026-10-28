@@ -33,29 +33,21 @@ export type RawSkillGraph = {
 };
 
 type SkillGraphSkill = {
-  /** Unique inside the graph; prerequisites point at it. */
   key: string;
-  /** One thing the learner can do, as an action. */
   name: string;
-  /** The idea in one sentence. */
   description: string;
-  /** Key of the course that teaches it. */
   course: string;
-  /**
-   * The part of the path it belongs to: an exam's subject as its notice names it, a learn goal's
-   * module, or a language goal's course.
-   */
+  /** An exam's subject as its notice names it, a learn goal's module, or a language's course. */
   area: string;
-  /** For an exam with a notice: the notice's topics it teaches, in the notice's words. */
+  /** In the notice's words. */
   topics: string[];
   level: CourseLevel;
-  /** Phase number, starting at 1. */
+  /** Starts at 1. */
   phase: number;
-  /** Keys of the skills learned right before it. */
   prerequisites: string[];
   /** How many 3-minute lessons it takes. */
   estimatedLessons: number;
-  /** How much the exam depends on it, from 1 to 5, or null outside exams. */
+  /** 1 to 5, or null outside exams. */
   examWeight: number | null;
   /**
    * The skill turns what the learner studied into the goal's result (a career change's portfolio
@@ -68,7 +60,6 @@ type SkillGraphCourse = { key: string; title: string; levels: CourseLevel[] };
 
 type SkillGraphPhase = {
   title: string;
-  /** What the learner can do at the end of the phase. */
   milestone: string;
   /** Study time at no particular pace, so the planner can turn it into dates. */
   estimatedHours: number;
@@ -94,12 +85,7 @@ function toKey(value: string): string {
   return value.trim().toLowerCase();
 }
 
-/**
- * Keeps the first skill for each key and each name, a name written with other articles or in
- * another word order included (`toSkillNameKey`). A later duplicate is dropped, its prerequisites
- * and topics join the survivor and its key becomes an alias, so edges that pointed at it still
- * resolve.
- */
+/** A dropped duplicate's key becomes an alias, so edges that pointed at it still resolve. */
 function dedupeSkills(skills: readonly RawSkillGraphSkill[]) {
   const survivors = new Map<string, RawSkillGraphSkill>();
   const aliases = new Map<string, string>();
@@ -150,10 +136,6 @@ function sortLevels(levels: Iterable<CourseLevel>): CourseLevel[] {
   return COURSE_LEVELS.filter((level) => present.has(level));
 }
 
-/**
- * Courses keep the model's order and only the ones with skills. A course lists
- * every level band its skills sit in, even when the model forgot one.
- */
 export function normalizeCourses({
   courses,
   skills,
@@ -180,7 +162,6 @@ export function toHours(lessons: number): number {
   return Math.round(((lessons * STUDY_MINUTES_PER_LESSON) / MINUTES_PER_HOUR) * 10) / 10;
 }
 
-/** Removes phases left without skills and renumbers the rest from 1. */
 export function normalizePhases({
   phases,
   skills,
@@ -208,10 +189,7 @@ export function normalizePhases({
   };
 }
 
-/**
- * An exam's skill takes its subject and topics from the notice, word for word; any other skill
- * keeps the area the model wrote, or its course's title when it wrote none.
- */
+/** An exam's skill takes its subject and topics from the notice, word for word. */
 function toArea({
   courseTitle,
   outline,
@@ -230,7 +208,6 @@ function toArea({
   return placeInExam({ area, outline, topics: skill.topics });
 }
 
-/** Whether a skill practices an exam's written test, which a plan short on time keeps whole. */
 function isWrittenTestSkill({ area, outline }: { area: string; outline?: ExamOutline }): boolean {
   const subject = outline?.subjects.find((item) => item.name === area);
   return Boolean(subject && isWrittenTestSubject(subject));
@@ -271,8 +248,7 @@ function toGraphSkill({
 }
 
 /**
- * Drops prerequisites on an option of the exam's choices from skills outside that option (see
- * `canBuildOn`): a learner who picks another option never studies it, so nothing may wait for it.
+ * A learner who picks another option never studies this one, so nothing outside it may wait for it.
  */
 function dropChoicePrerequisites({
   outline,
@@ -295,7 +271,6 @@ function dropChoicePrerequisites({
   }));
 }
 
-/** The model answered with a graph that has no course, phase or skill: nothing to plan from. */
 export class EmptySkillGraphError extends Error {
   constructor() {
     super("A skill graph needs at least one course, one phase and one skill.");
@@ -303,16 +278,6 @@ export class EmptySkillGraphError extends Error {
   }
 }
 
-/**
- * Turns the model's graph into one the planner can trust: duplicate skills
- * merged (the same name in other words' order too), what learners read as plain
- * lines (`toPlainLine`: no em dashes or Markdown), prerequisites that point
- * nowhere or close a cycle dropped, every skill in a phase no earlier than its
- * prerequisites, skills ordered so prerequisites come first, empty phases and
- * courses removed, each phase's size given in hours of study rather than dates,
- * and an exam's skills placed in its notice's subjects and topics, word for word,
- * with nothing waiting for an option of a choice but that option's own skills.
- */
 export function normalizeSkillGraph(
   raw: RawSkillGraph,
   outline?: ExamOutline,

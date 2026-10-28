@@ -22,33 +22,24 @@ import { readStreamedChapter } from "./_utils/streamed-chapter";
 import template from "./course-outline.prompt.md";
 
 /**
- * From the course-outline eval (6 cases, Astra judge, 26 Sep 2026): Opus 8.72,
- * Sol 8.70 and Gemini 3.8 Flash 7.87, at $207, $71 and $19 per 1,000 runs.
- * Sol ties Opus at a third of the cost; Flash left out pillars of broad bands. The two cheapest, on
- * 8 cases (7 Oct 2026): Luna 8.91 and Claude Haiku 5.5 8.69 against Sol's 9.05, at $2 and $5 per
- * 1,000 runs against $61; Luna's overviews left out foundations (GDP and unemployment in
- * economics, quantization and tunneling in quantum physics).
+ * Sol tied Opus on the course-outline eval at a third of the cost (26 Sep 2026); Luna's cheaper
+ * overviews left out foundations (7 Oct 2026).
  */
 const defaultModel = "openai/gpt-6-sol";
 const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
 
 const schema = z.object({ chapters: z.array(chapterSchema) });
 
-/** A skill from a goal's skill graph that this course level must teach. */
 type RequiredSkill = {
   key: string;
   name: string;
   description: string;
-  /** With `MATERIAL`: the lessons the learner's plan gives it, which the outline keeps to. */
+  /** With `MATERIAL`, the outline keeps to the plan's lessons for it. */
   lessons?: number;
-  /** For an exam's outline: the subject it sits in, which its chapter keeps to. */
+  /** An exam's subject, which its chapter keeps to. */
   area?: string | null;
 };
 
-/**
- * A skill the band already teaches in `chapters`, whose next chapter the outline writes, of about
- * `lessons` lessons.
- */
 type ExtendSkill = RequiredSkill & {
   chapters: { lessons: string[]; title: string }[];
   lessons: number;
@@ -59,36 +50,21 @@ export type CourseOutlineParams = {
   courseTitle: string;
   level: CourseLevel;
   requiredSkills?: RequiredSkill[];
-  /** Skills the band teaches in part: only their next chapters are written. */
   extendSkills?: ExtendSkill[];
-  /** Chapter titles already in the course's other level bands, so this band doesn't repeat them. */
   otherLevelChapters?: string[];
-  /** Skills of this band that other chapters of this course already teach, so none is taught twice. */
   taughtElsewhere?: string[];
-  /**
-   * The learners who need the required and extended skills prepare for an exam answered without
-   * tools of their own: those skills are taught as the exam asks them, in chapters without tools.
-   */
+  /** For an exam answered without tools: the skills are taught as it asks them, without tools. */
   withoutTools?: boolean;
-  /**
-   * The exam the learners who need the required and extended skills prepare for: their chapters
-   * are written at its depth and in its style for its candidates, without naming it.
-   */
   exams?: LessonExam[];
-  /**
-   * A private course built from one learner's own class material: that material, page by page,
-   * which the outline teaches exactly instead of the whole band.
-   */
+  /** A private course's class material, which the outline teaches exactly instead of the band. */
   material?: string;
   model?: string;
-  /** The gateway tier it answers at (see `ServiceTier`); the standard one when unset. */
   serviceTier?: ServiceTier;
   useFallback?: boolean;
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
 };
 
-/** A skill's key, with its area in brackets when it has one: `algebra [Mathematics]`. */
 function formatSkillKey(skill: RequiredSkill): string {
   return skill.area ? `${skill.key} [${skill.area}]` : skill.key;
 }
@@ -120,26 +96,18 @@ function formatTitles(titles: readonly string[]): string {
   return titles.length === 0 ? "none" : titles.map((title) => `\n- ${title}`).join("");
 }
 
-/** The required and continued skills with an area (an exam's subject), which chapters keep to. */
 function toSkillAreas(params: CourseOutlineParams): OutlineAreaSkill[] {
   return [...(params.requiredSkills ?? []), ...(params.extendSkills ?? [])].filter(
     (skill) => skill.area,
   );
 }
 
-/** What code found in an earlier draft, for the next one to avoid. */
 function formatMixedAreaChapters(mixed: readonly MixedAreaChapter[]): string {
   return mixed
     .map((chapter) => `\n- "${chapter.title}" mixes ${chapter.areas.join(", ")}`)
     .join("");
 }
 
-/**
- * Which of the instructions' variant sections a call reads: the rules for an exam's skills only
- * when the outline is written for an exam, one area per chapter only when its skills have areas, a
- * learner's material only for their private course, and continuing skills only when it continues
- * some.
- */
 function toPromptVariants(params: CourseOutlineParams) {
   const exams = Boolean(params.exams?.length);
   const withoutTools = Boolean(params.withoutTools);
@@ -154,16 +122,10 @@ function toPromptVariants(params: CourseOutlineParams) {
   };
 }
 
-/** The instructions; a second draft for mixing areas (`redraft`) also reads how to fix it. */
 function buildSystemPrompt(params: CourseOutlineParams, redraft = false): string {
   return selectPromptVariants({ template, variants: { ...toPromptVariants(params), redraft } });
 }
 
-/**
- * The band's inputs. `WITHOUT_TOOLS` and `EXAMS` only for an outline written for an exam, and
- * `EXTEND_SKILLS` only when some instruction it reads mentions it, so no call reads a "no" or a
- * "none" for something it can't have.
- */
 function formatBandInputs(params: CourseOutlineParams): string {
   const variants = toPromptVariants(params);
 
@@ -184,10 +146,6 @@ function formatBandInputs(params: CourseOutlineParams): string {
     .join("\n");
 }
 
-/**
- * The call's input. A second draft of an outline whose chapters mixed areas also gets
- * `MIXED_AREA_CHAPTERS`, the chapters to write again.
- */
 function buildUserPrompt(
   params: CourseOutlineParams,
   mixed: readonly MixedAreaChapter[] = [],
@@ -200,13 +158,6 @@ ${params.material ? `\n${formatUntrustedInput({ MATERIAL: params.material })}` :
   `;
 }
 
-/**
- * Writes the outline of one level band of a shared course: its chapters with
- * objectives and the tools they use, and every lesson's title, one-line
- * description, can-do line, estimated minutes and skills. Outlines come first
- * and cost little; lesson content is generated later, when a learner gets
- * close to it.
- */
 export async function generateCourseOutline(params: CourseOutlineParams) {
   const drafts: OutlineDraft[] = [];
 
@@ -224,7 +175,7 @@ export async function generateCourseOutline(params: CourseOutlineParams) {
   return {
     data: kept.data,
     provenance: kept.provenance,
-    /** A draft written again for mixing areas, so its spend is counted too. */
+    /** So a draft written again for mixing areas counts in the spend too. */
     setAside: drafts
       .filter((draft) => draft !== kept)
       .map(({ provenance, usage }) => ({ model: provenance.model, usage })),
@@ -236,12 +187,10 @@ export async function generateCourseOutline(params: CourseOutlineParams) {
 
 type OutlineDraft = Awaited<ReturnType<typeof draftOutline>>;
 
-/** One call for the whole outline, cleaned, with the chapters that still mix areas. */
 async function draftOutline({
   mixed,
   params,
 }: {
-  /** Chapters an earlier draft mixed areas in, to write again. */
   mixed: readonly MixedAreaChapter[];
   params: CourseOutlineParams;
 }) {
@@ -292,7 +241,6 @@ function toRequiredSkillKeys(params: CourseOutlineParams): string[] {
 
 type OutlineChapter = CourseOutline["chapters"][number];
 
-/** What rows saved while the outline streams record about the run, before it ends. */
 type StreamedChapterProvenance = {
   generatedAt: string;
   model: string;
@@ -301,20 +249,14 @@ type StreamedChapterProvenance = {
 };
 
 type StreamedChapter = {
-  /** The finished chapters before it, in outline order. */
   before: OutlineChapter[];
   chapter: OutlineChapter;
   provenance: StreamedChapterProvenance;
 };
 
 /**
- * The same outline as `generateCourseOutline`, streamed for a band a learner is waiting on: the
- * first chapter `isEarlyChapter` accepts goes to `saveEarlyChapter` as soon as it's complete,
- * while the model still writes the rest, so its lessons can be saved and written early. `early`
- * is what that returned, or null when no chapter was accepted before the outline ended. The
- * chapter's provenance names the requested model; the finished provenance says whether a
- * fallback answered. Chapters that mix areas are split where their lessons allow but never
- * written again: the learner is waiting, and the early chapter is already saved.
+ * The early chapter's provenance names the requested model; the finished one says whether a
+ * fallback answered. Chapters that mix areas are never written again: the learner is waiting.
  */
 export async function streamCourseOutline<T>({
   isEarlyChapter,

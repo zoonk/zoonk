@@ -229,8 +229,6 @@ describe("an exam's notice", () => {
     expect(normalizePlacements({ graphSkills: skills, placements: result })).toStrictEqual([]);
   });
 
-  // A graph written before the notice was read keeps the names learners use, such as the OAB's
-  // "Professional Ethics": the check moves them to the notice's subject even when it places nothing.
   it("moves skills whose area is a subject's short name to that subject", () => {
     const ethics = {
       group: null,

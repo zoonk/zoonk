@@ -21,24 +21,8 @@ import { type ExamOutline, formatExamOutline } from "./exam-outline";
 import { buildSkillGraphSystemPrompt } from "./skill-graph-system-prompt";
 
 /**
- * From the skill-graph eval (6 cases, Astra judge, 26 Sep 2026): Opus 8.38,
- * Sol 8.29 and Gemini 3.8 Flash 7.57, at $236, $72 and $13 per 1,000 runs.
- * Sol is within the margin of Opus at under a third of the cost and faster;
- * Flash missed whole areas on huge goals, so it's only the last fallback.
- * Every model under-sized big goals, so the prompt gained size calibration;
- * Sol then scored 8.47 with honest totals (quantum physics from zero: 363 h).
- * Exam graphs put school subjects in the beginner band, so adults and students
- * finishing school opened on elementary chapters; with the level bands and the
- * schooling floor, Sol put ENEM and Polícia Federal Portuguese at intermediate
- * with no elementary skills (27 Sep: 7.9 and 8.3 on those two cases).
- * Graphs chained a subject's topics in textbook order (an ENEM put ecology behind tissues and the
- * classification of living beings), and a plan short on time pays for every prerequisite of a
- * topic it keeps; with hard dependencies only, Sol's ENEM sciences graph gave ecology none, kept
- * equations before stoichiometry and kept heat and electricity off mechanics (9 Oct: 7.9).
- * Phases were titled for what they teach (the judge flagged 16 of 16 cases; UX's last phase was
- * its area's name), so an open phase repeated a chapter's name over it. Titled for the learner's
- * stage, with no first person or gendered word, 4 cases kept one or two such titles and none
- * repeated a skill or area (13 Oct: 8.73 against 8.66).
+ * Sol scored within Opus's margin on the skill-graph eval at under a third of the cost (26 Sep
+ * 2026); Flash missed whole areas on huge goals, so it's only the last fallback.
  */
 const defaultModel = "openai/gpt-6-sol";
 const fallbackModels = ["anthropic/claude-opus-5.5", "google/gemini-3.8-flash"] as const;
@@ -72,7 +56,6 @@ const schema = z.object({
   skills: z.array(skillSchema),
 });
 
-/** A big exam's frame: its courses and phases, and the section each subject is written in. */
 const frameSchema = z.object({
   courses: z.array(courseSchema),
   phases: z.array(phaseSchema),
@@ -88,7 +71,6 @@ const frameSchema = z.object({
   ),
 });
 
-/** The skills of a few of a big exam's sections. */
 const sectionSchema = z.object({ skills: z.array(skillSchema) });
 
 type GraphFrame = z.infer<typeof frameSchema>;
@@ -96,41 +78,27 @@ type GraphFrame = z.infer<typeof frameSchema>;
 export type SkillGraphParams = {
   language: string;
   /**
-   * The goal: in the learner's words for their own private course, else its general form (see
-   * `toScopedGraphPrompt` in core), since a shared graph's skills and phases serve other learners.
+   * The learner's words only for their own private course; a shared graph gets the goal's general
+   * form (`toScopedGraphPrompt` in core), since it serves other learners.
    */
   goal: string;
   goalKind: "learn" | "exam" | "language";
-  /** Why a learn goal: an overview, depth, work, a career change or a refresh. */
   purpose?: "overview" | "deep" | "work" | "careerChange" | "refresh";
-  /** Where the learner says they are before placement. */
   ownLevel?: "none" | "basic" | "intermediate" | "advanced";
-  /** Anything else the learner said: role, tasks, tools, reason, date, their material. */
   context?: string;
-  /**
-   * The exam's notice: its subjects with every topic, its notes on format and scoring, and how
-   * often the board asks each topic. The graph's areas and topics are its own, word for word.
-   */
+  /** The graph's areas and topics are the notice's own, word for word. */
   examBlueprint?: ExamOutline;
-  /** The language being learned, for language goals. */
   targetLanguage?: string;
-  /** Whether `context` holds the learner's own material, page by page, which the graph teaches. */
   hasMaterial?: boolean;
-  /**
-   * For a test from the learner's own material days away: the most lessons its days hold. The
-   * graph is sized by the material up to it, a skill for each of the material's topics, before
-   * the learner picks a daily time.
-   */
+  /** For a test from the learner's own material days away: the most lessons its days hold. */
   lessonBudget?: number | null;
   model?: string;
-  /** The gateway tier it answers at (see `ServiceTier`); the standard one when unset. */
   serviceTier?: ServiceTier;
   useFallback?: boolean;
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
 };
 
-/** What one call of a graph writes: all of it, a big exam's frame, or some of its sections. */
 type GraphPart =
   | { kind: "frame" }
   | { frame: GraphFrame; kind: "skills"; sections: readonly GraphFrameSection[] }
@@ -141,7 +109,6 @@ function formatFrameSection(section: GraphFrameSection): string {
   return `- ${subject}${section.area}: course ${section.course}, phases ${section.phases.join(", ")}, about ${section.skills} skills and ${section.estimatedLessons} lessons`;
 }
 
-/** The frame the skills calls follow, and the sections one of them writes. */
 function formatSkillsPart({
   frame,
   sections,
@@ -166,10 +133,7 @@ function formatSkillsPart({
   ].join("\n");
 }
 
-/**
- * The part of an exam's graph a call writes, after everything every call of the graph shares, so
- * the shared beginning can be cached.
- */
+/** Goes after everything every call of the graph shares, so the shared beginning is cached. */
 function formatPart(part: GraphPart): string {
   if (part.kind === "skills") {
     return `SECTION: skills\n${formatSkillsPart(part)}`;
@@ -184,10 +148,6 @@ function formatTargetLanguage(params: SkillGraphParams): string {
     : "none";
 }
 
-/**
- * The goal's inputs, each only for the goals whose instructions read it (`PURPOSE` for a learn
- * goal, `EXAM_BLUEPRINT` for an exam), so no call reads a "none" for something it can't have.
- */
 function formatGoalInputs(params: SkillGraphParams): string {
   const exam = params.goalKind === "exam";
   const blueprint = params.examBlueprint ? `\n${formatExamOutline(params.examBlueprint)}` : "none";
@@ -221,7 +181,6 @@ function buildUserPrompt({ params, part }: { params: SkillGraphParams; part: Gra
   return `\n${parts.join("\n\n")}\n  `;
 }
 
-/** Writes one part of the graph in one call. */
 async function writePart<TOutput>({
   params,
   part,
@@ -255,7 +214,6 @@ async function writePart<TOutput>({
   return { output: result.output, provenance, systemPrompt, usage: result.usage, userPrompt };
 }
 
-/** The whole graph in one call. */
 async function generateWholeGraph(params: SkillGraphParams) {
   const whole = await writePart({ params, part: { kind: "whole" }, partSchema: schema });
 
@@ -268,7 +226,6 @@ async function generateWholeGraph(params: SkillGraphParams) {
   };
 }
 
-/** A graph written whole, written once more when code finds it flawed; the better one is kept. */
 function generateCheckedWholeGraph(params: SkillGraphParams) {
   return draftAgainWhenFlawed({
     countProblems: ({ data }) => findRedraftProblems({ data, params }).length,
@@ -294,13 +251,8 @@ async function writeSkills({
 }
 
 /**
- * A big exam's graph, written in sections at once: one call writes the frame (courses, phases and
- * each subject's phases and size), then a few calls write the skills of a few subjects each, so
- * the graph takes about as long as its largest part instead of all of its output in a row (a
- * public-service exam's 13,500 tokens took three minutes in one call at the standard tier).
- * The parts join into one graph: a skill that builds on another section's subject names that
- * subject's topic, which becomes the skill that teaches it (`joinSections`). A section code finds
- * flawed is written once more (`redraftFlawedSections`).
+ * Written in sections at once, so it takes about as long as its largest part (a public-service
+ * exam's 13,500 tokens took three minutes in one call).
  */
 async function generateSectionedGraph(params: SkillGraphParams) {
   // The calls are one job, so they share a trace unless the caller's job already has one.
@@ -347,17 +299,8 @@ async function generateSectionedGraph(params: SkillGraphParams) {
 }
 
 /**
- * Turns a goal into its skill graph: the skills it needs with their
- * prerequisites, the Library courses and level bands that teach them, and
- * the phases the learner goes through, each sized in hours of study rather
- * than dates. Huge goals span several courses; exam goals follow and weight
- * the blueprint when one is given, each skill in one of its subjects with the
- * topics it teaches, in the notice's words. Code repairs what it can (see
- * `normalizeSkillGraph`) and reports it in `repaired`. A graph code still finds
- * flawed is written once more, and the one with fewer problems is kept
- * (`draftAgainWhenFlawed`); a big exam's graph is written in sections at once
- * (`generateSectionedGraph`), so only its flawed sections are written again,
- * and a whole new graph only for a flaw in its phases.
+ * Code repairs what it can and reports it in `repaired`. A graph it still finds flawed is written
+ * once more; a big exam's only in its flawed sections, unless the flaw is in its phases.
  */
 export function generateSkillGraph(params: SkillGraphParams) {
   if (!shouldWriteInSections(params)) {
@@ -371,7 +314,6 @@ export function generateSkillGraph(params: SkillGraphParams) {
   });
 }
 
-/** Whether a graph failed because the model answered with nothing to plan from. */
 export function isEmptySkillGraphError(error: unknown): boolean {
   return error instanceof EmptySkillGraphError;
 }

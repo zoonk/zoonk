@@ -4,14 +4,13 @@ import { type RawSkillGraph, type SkillGraph, normalizeSkillGraph } from "./norm
 import { type SkillGraphProblem, findSkillGraphProblems } from "./skill-graph-checks";
 import { getSectionCall, joinSections } from "./skill-graph-sections";
 
-/** What a graph's checks and normalization read of its goal. */
 type DraftParams = {
   examBlueprint?: ExamOutline;
   goalKind: "learn" | "exam" | "language";
   lessonBudget?: number | null;
 };
 
-/** What normalization repairs in what a model wrote, which evals still report as its flaws. */
+/** Normalization repairs these, but evals still report them as the model's flaws. */
 const REPAIRED_CODES: ReadonlySet<SkillGraphProblem["code"]> = new Set([
   "cycle",
   "emDash",
@@ -19,11 +18,7 @@ const REPAIRED_CODES: ReadonlySet<SkillGraphProblem["code"]> = new Set([
   "nearDuplicate",
 ]);
 
-/**
- * A written graph, normalized, with what code repaired in it (`repaired`): a loop it broke, a
- * skill written twice it merged, em dashes and Markdown it took out. The graph is never failed for
- * those, but evals report them, so the instructions still improve.
- */
+/** The graph is never failed for what code repaired (`repaired`), but evals report it. */
 export function normalizeDraft({ params, raw }: { params: DraftParams; raw: RawSkillGraph }) {
   const repaired = findSkillGraphProblems({ exam: false, phases: raw.phases, skills: raw.skills });
 
@@ -36,22 +31,14 @@ export function normalizeDraft({ params, raw }: { params: DraftParams; raw: RawS
 type GraphDraft = ReturnType<typeof normalizeDraft>;
 
 /**
- * Problems code finds that a new draft isn't worth: a skill beyond the notice that opens a subject
- * is the planner's to rank after the notice's (coverage may still place it in the notice), and a
- * phase titled like what it teaches would cost a whole new graph for one name (over a chapter of
- * that name, the plan names the phase by its place). Evals still count both.
+ * Not worth a new draft: the planner ranks a skill beyond the notice after the notice's, and one
+ * phase's name would cost a whole new graph. Evals still count both.
  */
 const KEPT_CODES: ReadonlySet<SkillGraphProblem["code"]> = new Set([
   "offNoticeFirst",
   "repeatedPhaseName",
 ]);
 
-/**
- * What code finds in a normalized graph that only a model can fix (`findSkillGraphProblems`): a
- * chain too deep or in a textbook's order, unfinished text, or Markdown no repair could take out.
- * Normalization already broke loops, merged skills written twice and took em dashes and Markdown
- * out, and some problems aren't worth a new draft (`KEPT_CODES`).
- */
 export function findRedraftProblems({
   data,
   params,
@@ -68,10 +55,8 @@ export function findRedraftProblems({
 
 type GraphFrame = Pick<RawSkillGraph, "courses" | "phases">;
 
-/** A call that wrote some of a big exam's sections. */
 type SkillsCall = { output: { skills: RawSkillGraph["skills"] } };
 
-/** The frame and its sections' skills as one normalized graph. */
 function joinDraft({
   frame,
   params,
@@ -91,10 +76,8 @@ function joinDraft({
 }
 
 /**
- * Writes again, once, only the sections that hold a problem code finds (a subject chained in a
- * textbook's order, a skill left unfinished), since one subject's call costs a fraction of the
- * whole graph: `rewrite` writes the call at that index again. Each new call is kept when the graph
- * has fewer problems with it. Returns the graph kept and every call written again, for its cost.
+ * Only flawed sections are written again, once, since one subject's call costs a fraction of the
+ * graph. A new call is kept only when the graph has fewer problems with it.
  */
 export async function redraftFlawedSections<TCall extends SkillsCall>({
   frame,

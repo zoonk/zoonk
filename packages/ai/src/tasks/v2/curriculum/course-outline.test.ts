@@ -31,7 +31,6 @@ const EXTEND_SKILL = {
   name: "Describe the center",
 };
 
-/** An ENEM band whose skills sit in two of its subjects. */
 const SUBJECT_BAND: CourseOutlineParams = {
   ...BAND,
   exams: [{ name: "ENEM", style: "Multiple choice." }],
@@ -61,7 +60,6 @@ const usage: LanguageModelUsage = {
   totalTokens: 1500,
 };
 
-/** The model's answer, as `generateText` returns it. */
 function answer(output: unknown) {
   const step = {
     model: { modelId: MODEL, provider: "gateway" },
@@ -73,7 +71,6 @@ function answer(output: unknown) {
   return { finalStep: step, output, steps: [step], usage };
 }
 
-/** A chapter whose lessons teach these skills, one lesson per list. */
 function outlineChapter({
   lessonSkills,
   skillKeys,
@@ -103,7 +100,6 @@ function toText(value: unknown): string {
   return typeof value === "string" ? value : "";
 }
 
-/** The inputs the instructions refer to, such as `REQUIRED_SKILLS`. */
 function findMentionedInputs(instructions: string): string[] {
   return [...new Set(instructions.match(/`[A-Z][A-Z_]+`/gu))].map((name) =>
     name.replaceAll("`", ""),
@@ -114,7 +110,6 @@ function isSent({ name, prompt }: { name: string; prompt: string }): boolean {
   return prompt.includes(`${name}:`) || prompt.includes(`name="${name}"`);
 }
 
-/** What the outline's one call read; the model never answers, since only the prompt matters here. */
 async function sendOutline(params: CourseOutlineParams) {
   vi.mocked(generateText).mockRejectedValue(new Error("Only the prompt is checked"));
   await expect(generateCourseOutline(params)).rejects.toThrow("Only the prompt is checked");

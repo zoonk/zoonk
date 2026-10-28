@@ -11,13 +11,9 @@ import {
 } from "./order-skill-graph";
 import { toNameWords } from "./skill-graph-checks";
 
-/**
- * Letters of a word compared, so a word's plural or other ending reads the same ("chart" and
- * "charts", "analysis" and "analyses").
- */
+/** So a word's plural or other ending reads the same ("analysis" and "analyses"). */
 const STEM_LENGTH = 5;
 
-/** Short words that never say what a skill acts on, beyond the articles names never count. */
 const LINKING_WORDS = new Set([
   "ao",
   "aos",
@@ -39,23 +35,19 @@ const LINKING_WORDS = new Set([
 
 type NamedSkill = { area: string; key: string; name: string };
 
-/** What a skill's name acts on: its words after the action that opens it, as stems. */
 function toObjectStems(name: string): Set<string> {
   const [, ...object] = toNameWords(name).filter((word) => !LINKING_WORDS.has(word));
   return new Set(object.map((word) => word.slice(0, STEM_LENGTH)));
 }
 
-/** Whether two names act on the same thing: half or more of the shorter one's object is shared. */
 function sharesObject(first: ReadonlySet<string>, second: ReadonlySet<string>): boolean {
   const shared = [...first].filter((stem) => second.has(stem)).length;
   return shared > 0 && shared * 2 >= Math.min(first.size, second.size);
 }
 
 /**
- * For each skill, the earlier skills of its area that may be it in other words ("Read and compare
- * data in charts and tables" and "Interpret charts and tables"), which one reuse decision
- * judges: only names that act on the same thing are asked about, so an ENEM graph of 135 skills
- * asks about 46 of them. A skill with none isn't listed.
+ * Only names that act on the same thing go to the reuse decision, so an ENEM graph of 135 skills
+ * asks about 46 of them.
  */
 export function findTwinCandidates<TSkill extends NamedSkill>(
   skills: readonly TSkill[],
@@ -72,7 +64,6 @@ export function findTwinCandidates<TSkill extends NamedSkill>(
   });
 }
 
-/** The skill a twin's key ends at, following twins of twins. */
 function findSurvivor({ key, twins }: { key: string; twins: ReadonlyMap<string, string> }): string {
   const next = twins.get(key);
   return next && next !== key ? findSurvivor({ key: next, twins }) : key;
@@ -80,7 +71,6 @@ function findSurvivor({ key, twins }: { key: string; twins: ReadonlyMap<string, 
 
 type GraphSkill = SkillGraph["skills"][number];
 
-/** Whether `key` needs `target` before it, through its prerequisites and theirs. */
 function needs({
   byKey,
   key,
@@ -103,10 +93,6 @@ function needs({
   );
 }
 
-/**
- * Each skill with its own edges, an edge to a twin pointing to the skill it repeats; a twin's
- * edges are what each surviving skill may take from its twins.
- */
 function redirectEdges({
   graph,
   twins,
@@ -135,11 +121,8 @@ function redirectEdges({
 }
 
 /**
- * The graph with each twin merged into the skill it repeats (`twins` maps a twin's key to an
- * earlier skill's), the way `normalizeSkillGraph` merges a skill written twice: the earlier skill
- * keeps its place, name, size and edges, takes the twin's topics and outcome and the twin's
- * prerequisites that don't need it first, and every edge to the twin points to it. Phases, courses
- * and hours are counted again.
+ * The earlier skill keeps its place, name, size and edges, and takes the twin's topics, outcome and
+ * the prerequisites that don't need it first.
  */
 export function mergeSkillTwins({
   graph,

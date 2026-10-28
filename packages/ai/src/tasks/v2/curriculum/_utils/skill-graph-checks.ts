@@ -1,7 +1,6 @@
 import { normalizeString } from "@zoonk/utils/string";
 import { findWritingFlaws } from "@zoonk/utils/text-flaws";
 
-/** What the checks read of a graph's skill: a written graph's, or one a plan stores. */
 export type CheckedGraphSkill = {
   area: string;
   description: string;
@@ -9,7 +8,7 @@ export type CheckedGraphSkill = {
   name: string;
   phase: number;
   prerequisites: readonly string[];
-  /** The notice's topics the skill teaches, in its words; empty outside exams and beyond them. */
+  /** Empty outside exams and beyond their notice. */
   topics: readonly string[];
 };
 
@@ -25,25 +24,21 @@ type SkillGraphProblemCode =
   | "textbookChain";
 
 /**
- * One thing code finds wrong in a graph. `keys` are the skills it's about, so a graph written in
- * sections can write again only the sections that hold them; a problem in the phases has none.
+ * `keys` let a graph written in sections write again only the sections that hold them; a problem
+ * in the phases has none.
  */
 export type SkillGraphProblem = { code: SkillGraphProblemCode; keys: string[]; problem: string };
 
-/**
- * The longest prerequisite chain a learner can follow before a skill. A physics path from zero
- * builds about ten deep (arithmetic to the wave function); deeper means invented dependencies.
- */
+/** A physics path from zero builds about ten deep; deeper means invented dependencies. */
 const MAX_CHAIN = 12;
 
 /**
- * An exam subject whose one chain runs through more than this share of its skills follows a
- * textbook's order instead of hard dependencies, and a plan short on time pays for every link.
+ * A subject chained through more of its skills follows a textbook's order instead of hard
+ * dependencies, and a plan short on time pays for every link.
  */
 const MAX_CHAINED_SHARE = 0.75;
 const MIN_CHAINED_SUBJECT = 6;
 
-/** Words that never tell two skill names apart. */
 const NAME_STOPWORDS = new Set([
   "a",
   "an",
@@ -92,7 +87,6 @@ const NAME_STOPWORDS = new Set([
   "y",
 ]);
 
-/** A skill name's words in order, without case, accents, punctuation, articles or prepositions. */
 export function toNameWords(name: string): string[] {
   return normalizeString(name)
     .replaceAll(/[^\p{L}\p{N}\s]/gu, " ")
@@ -101,8 +95,7 @@ export function toNameWords(name: string): string[] {
 }
 
 /**
- * A skill name's identity inside one graph: its words in any order (`toNameWords`), so "Calcular
- * os juros compostos" and "Calcular juros compostos" are one skill written twice.
+ * Words in any order: "Calcular os juros compostos" and "Calcular juros compostos" are one skill.
  */
 export function toSkillNameKey(name: string): string {
   return [...new Set(toNameWords(name))].toSorted().join(" ");
@@ -110,7 +103,6 @@ export function toSkillNameKey(name: string): string {
 
 type Graph = ReadonlyMap<string, CheckedGraphSkill>;
 
-/** Each prerequisite edge that closes a cycle, as the names along it. */
 function findCycles(graph: Graph): SkillGraphProblem[] {
   const state = new Map<string, "visiting" | "done">();
 
@@ -143,10 +135,7 @@ function findCycles(graph: Graph): SkillGraphProblem[] {
   return [...graph.keys()].flatMap((key) => (state.has(key) ? [] : visit(key, [])));
 }
 
-/**
- * The longest chain of prerequisites ending at each skill, counted in skills, along edges `follows`
- * keeps. An edge that closes a cycle is skipped, so cycles are only reported once.
- */
+/** An edge that closes a cycle is skipped, so cycles are only reported once. */
 function measureChains({
   follows,
   graph,
@@ -183,7 +172,6 @@ function measureChains({
   return depths;
 }
 
-/** The skills of the longest chain ending at `key`, last first, following its deepest prerequisite. */
 function traceChain({
   depths,
   graph,
@@ -217,7 +205,6 @@ function findDeepChains(graph: Graph): SkillGraphProblem[] {
     : [];
 }
 
-/** An exam subject chained from its first skill to its last, the way a textbook orders it. */
 function findTextbookChains(graph: Graph): SkillGraphProblem[] {
   const depths = measureChains({
     follows: (skill, prerequisite) => skill.area === prerequisite.area,
@@ -242,9 +229,8 @@ function findTextbookChains(graph: Graph): SkillGraphProblem[] {
 }
 
 /**
- * A subject the notice lists topics for that opens on a skill beyond them: the plan would teach
- * what the exam doesn't ask before what it does (the Câmara's IT opened on 26 lessons of records
- * formats in October 2026).
+ * The plan would teach what the exam doesn't ask before what it does (the Câmara's IT opened on 26
+ * lessons of records formats, Oct 2026).
  */
 function findOffNoticeFirst(skills: readonly CheckedGraphSkill[]): SkillGraphProblem[] {
   return [...Map.groupBy(skills, (skill) => skill.area).entries()].flatMap(([area, inArea]) => {
@@ -282,10 +268,8 @@ function findNearDuplicates(skills: readonly CheckedGraphSkill[]): SkillGraphPro
 type GraphPhase = { milestone: string; title: string };
 
 /**
- * A phase titled like an earlier phase, a skill or an area, compared by their words
- * (`toSkillNameKey`). A phase's title names its stage of the path; the learner sees what it
- * teaches under it, so a title that names one of those shows the same name twice (Marcos's
- * "Alugando um apartamento" over the unit of that name, Oct 2026).
+ * The learner sees what a phase teaches under its title, so a title naming a skill or an area
+ * shows the same name twice.
  */
 function findRepeatedPhaseNames({
   phases,
@@ -316,7 +300,6 @@ function findRepeatedPhaseNames({
   });
 }
 
-/** Em dashes, unfinished text and Markdown in the names, descriptions and phases learners read. */
 function findWritingProblems({
   phases,
   skills,
@@ -344,13 +327,7 @@ function findWritingProblems({
   );
 }
 
-/**
- * What code can verify in a skill graph, in the order skills are taught: no prerequisite loops,
- * no chain deeper than a learner can follow, no exam subject chained in a textbook's order, no
- * exam subject opening beyond its notice, no skill written twice under other words, no phase
- * titled like another phase or like what it teaches, and no em dash, unfinished text or Markdown
- * in what learners read. `exam` is whether the graph follows an exam's notice.
- */
+/** `exam` is whether the graph follows an exam's notice. */
 export function findSkillGraphProblems({
   exam,
   phases,

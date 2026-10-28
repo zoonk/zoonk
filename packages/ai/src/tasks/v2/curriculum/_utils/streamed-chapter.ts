@@ -11,7 +11,6 @@ type CleanInput = {
   skillAreas?: readonly OutlineAreaSkill[];
 };
 
-/** A streamed chapter cleaned the way the whole outline is: none, or more than one once split. */
 function cleanChapter({ chapter, ...input }: CleanInput & { chapter: unknown }): OutlineChapter[] {
   const parsed = chapterSchema.safeParse(chapter);
 
@@ -22,11 +21,7 @@ function cleanChapter({ chapter, ...input }: CleanInput & { chapter: unknown }):
   return normalizeCourseOutline({ ...input, raw: { chapters: [parsed.data] } }).chapters;
 }
 
-/**
- * The first chapter of an outline still being written that `isWanted` accepts, once it's complete
- * (the model started the chapter after it), cleaned the way the whole outline is, with the complete
- * chapters before it, so it's where it will be in the finished outline. Null until then.
- */
+/** A chapter is complete once the model starts the next one. Null until then. */
 export function readStreamedChapter({
   chapters = [],
   isWanted,

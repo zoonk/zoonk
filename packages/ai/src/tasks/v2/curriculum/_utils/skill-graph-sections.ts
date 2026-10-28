@@ -1,32 +1,25 @@
 import { type ExamOutline, isTopicId } from "../exam-outline";
 import { type RawSkillGraph } from "./normalize-skill-graph";
 
-/** An exam whose notice has this many subjects or more writes its graph in sections. */
 const MIN_SECTIONED_SUBJECTS = 4;
 
 /**
- * At most this many calls write a big exam's skills at once, after its frame: enough that the
- * largest takes a fraction of the whole graph's time, few enough that the notice each one reads
- * again stays a small part of the cost.
+ * Enough that the largest call takes a fraction of the graph's time, few enough that the notice
+ * each one reads again stays a small part of the cost.
  */
 const MAX_SECTION_CALLS = 6;
 
-/** One section of a big exam's frame: a notice subject (`S3`) or an area beyond them (`""`). */
+/** A notice subject (`S3`), or `""` for an area beyond them. */
 export type GraphFrameSection = {
   area: string;
   course: string;
   estimatedLessons: number;
   phases: number[];
-  /** How many skills it gets, at the whole graph's granularity. */
   skills: number;
   subject: string;
 };
 
-/**
- * Whether a graph is written in sections: an exam read from a notice with several subjects, whose
- * skills split cleanly by subject. A test sized to a lesson budget is written whole, so its sizes
- * add up to the budget.
- */
+/** A test sized to a lesson budget is written whole, so its sizes add up to the budget. */
 export function shouldWriteInSections(params: {
   examBlueprint?: ExamOutline;
   lessonBudget?: number | null;
@@ -38,7 +31,6 @@ export function shouldWriteInSections(params: {
 
 type SectionCall = { sections: GraphFrameSection[]; skills: number };
 
-/** The call with the fewest skills so far: the next biggest section goes there. */
 function findLightest(calls: readonly SectionCall[]): number {
   return calls.reduce(
     (lightest, call, index) => (call.skills < (calls[lightest]?.skills ?? 0) ? index : lightest),
@@ -47,9 +39,7 @@ function findLightest(calls: readonly SectionCall[]): number {
 }
 
 /**
- * The sections each call writes, with about as many skills each, since a call takes as long as
- * the skills it writes: the biggest sections are dealt first, each to the call with the fewest
- * skills so far. Each call keeps its sections in the frame's order.
+ * A call takes as long as the skills it writes, so the biggest sections go first to the lightest.
  */
 export function toSectionCalls(sections: readonly GraphFrameSection[]): GraphFrameSection[][] {
   const count = Math.min(MAX_SECTION_CALLS, sections.length);
@@ -78,7 +68,6 @@ export function toSectionCalls(sections: readonly GraphFrameSection[]): GraphFra
 
 type RawSkill = RawSkillGraph["skills"][number];
 
-/** The first skill, in its call's order and calls in order, that teaches each topic id. */
 function findTopicTeachers(skills: readonly RawSkill[]): Map<string, string> {
   return new Map(
     skills
@@ -87,17 +76,14 @@ function findTopicTeachers(skills: readonly RawSkill[]): Map<string, string> {
   );
 }
 
-/** The call (from 0) that wrote a skill of a joined graph, read from the key `joinSections` gave it. */
 export function getSectionCall(key: string): number | null {
   const call = /^s(?<call>\d+)-/u.exec(key)?.groups?.call;
   return call ? Number(call) - 1 : null;
 }
 
 /**
- * The skills of every call as one list, with keys no other call can have (calls write at the same
- * time and may each name a skill `interpret-texts`). A call's prerequisites name its own skills, or
- * a topic id of another call's subject (`S2.4`), which becomes the first skill that teaches that
- * topic: that's how a subject builds on another's foundations.
+ * Calls write at once and may name the same key, so keys are made unique. A prerequisite naming
+ * another call's topic id (`S2.4`) becomes the first skill that teaches that topic.
  */
 export function joinSections(calls: readonly (readonly RawSkill[])[]): RawSkill[] {
   const keyed = calls.flatMap((skills, index) =>

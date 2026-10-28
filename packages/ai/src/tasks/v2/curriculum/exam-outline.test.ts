@@ -121,8 +121,6 @@ const OAB: ExamOutline = {
 };
 
 describe(placeInExam, () => {
-  // Sofia's graph called the notice's ethics subject by its short name, and her plan showed the
-  // heaviest subject of the exam as outside the plan.
   it("places an area named as learners call a subject in that subject", () => {
     expect(placeInExam({ area: "Ética Profissional", outline: OAB, topics: [] })).toStrictEqual({
       area: OAB.subjects[0]?.name,
@@ -135,8 +133,6 @@ describe(placeInExam, () => {
     });
   });
 
-  // DELE B2's notice is in Spanish; a graph written for a Portuguese speaker spelled one subject in
-  // Portuguese, which then read as outside the notice.
   it("places an area written in another language's spelling of a subject in that subject", () => {
     const dele: ExamOutline = {
       name: "DELE B2",

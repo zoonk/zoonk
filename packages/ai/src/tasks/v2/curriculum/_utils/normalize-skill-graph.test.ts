@@ -43,7 +43,6 @@ function rawGraph(
   };
 }
 
-/** An option of ENEM's foreign-language choice, as the exam outline lists it. */
 function choiceOption(name: string, topic: string) {
   return {
     choiceGroup: "Língua Estrangeira",

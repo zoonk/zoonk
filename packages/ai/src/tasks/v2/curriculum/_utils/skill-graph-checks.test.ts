@@ -23,7 +23,6 @@ function codes(skills: CheckedGraphSkill[], exam = true) {
   return findSkillGraphProblems({ exam, phases, skills }).map((problem) => problem.code);
 }
 
-/** What the checks find in phases with these titles. */
 function phaseProblems(titles: string[], skills: CheckedGraphSkill[]) {
   return findSkillGraphProblems({
     exam: false,
@@ -76,7 +75,6 @@ describe(findSkillGraphProblems, () => {
   });
 
   it("finds a skill beyond the notice that opens a subject the notice lists topics for", () => {
-    // Câmara, Oct 2026: a records-formats skill with no notice topic opened IT for 26 lessons.
     expect(
       codes([
         skill({ key: "formatos", name: "Distinguir formatos de registros digitais" }),
@@ -117,7 +115,6 @@ describe(findSkillGraphProblems, () => {
       skill({ area: "Inglês", key: "banco", name: "Abrir uma conta no banco", phase: 2 }),
     ];
 
-    // Marcos's plan, Oct 2026: a phase named like the situation it teaches.
     expect(phaseProblems(["Chegando ao Canadá", "alugar o Apartamento!"], skills)).toStrictEqual([
       {
         code: "repeatedPhaseName",

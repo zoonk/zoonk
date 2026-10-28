@@ -21,8 +21,6 @@ describe(fitLessonBudget, () => {
     expect(fitLessonBudget({ budget: null, skills })).toStrictEqual(skills);
   });
 
-  // Pedro's six headings came back as one skill of one lesson: every topic of the material gets a
-  // lesson of its own, whatever the budget.
   it("gives a skill at least a lesson for each topic of the material it teaches", () => {
     const topics = ["S1.1", "S1.2", "S1.3", "S1.4", "S1.5", "S1.6"];
 
