@@ -1,8 +1,7 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
@@ -61,8 +60,20 @@ export async function createUnstartedDay() {
     userId: user.id,
   });
 
-  const [plan, questions] = await Promise.all([
-    planFixture({ goalId: goal.id, phases: [{ name: "Basics" }, { name: "Practice" }] }),
+  const [, questions] = await Promise.all([
+    planFixture({
+      goalId: goal.id,
+      items: lessons.map((lesson, index) => ({
+        lessonId: lesson.id,
+        skillId: skills[index]?.id ?? null,
+        titleSnapshot: lesson.title,
+        ...(index === 0 && {
+          completedAt: daysAgo(FIRST_LESSON_DONE_DAYS_AGO),
+          status: "done" as const,
+        }),
+      })),
+      phases: [{ name: "Basics" }, { name: "Practice" }],
+    }),
     Promise.all(
       skills.map((skill, index) =>
         Promise.all(
@@ -80,27 +91,10 @@ export async function createUnstartedDay() {
     ),
   ]);
 
-  const planItems = await Promise.all(
-    lessons.map((lesson, position) =>
-      planItemFixture({
-        kind: "lesson",
-        lessonId: lesson.id,
-        phase: 0,
-        planId: plan.id,
-        position,
-        titleSnapshot: lesson.title,
-      }),
-    ),
-  );
-
   const [firstSkill] = skills;
   const [firstQuestion] = questions[0] ?? [];
 
   await Promise.all([
-    prisma.planItem.update({
-      data: { completedAt: daysAgo(FIRST_LESSON_DONE_DAYS_AGO), status: "done" },
-      where: { id: planItems[0]?.id },
-    }),
     learnerSkillFixture({
       difficulty: 5,
       due: daysAgo(1),

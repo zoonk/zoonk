@@ -76,8 +76,6 @@ export async function createExamGoal(userId: string) {
     userId,
   });
 
-  const plan = await planFixture({ goalId: goal.id, phases: [{ name: "Basics" }] });
-
   await Promise.all([
     ...Array.from({ length: MOCK_QUESTIONS }, () =>
       itemFixture({
@@ -87,21 +85,17 @@ export async function createExamGoal(userId: string) {
       }),
     ),
     lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
-    planItemFixture({
-      kind: "lesson",
-      lessonId: lesson.id,
-      phase: 0,
-      planId: plan.id,
-      position: 0,
-      titleSnapshot: lesson.title,
-    }),
-    planItemFixture({
-      kind: "mock",
-      phase: 0,
-      planId: plan.id,
-      position: 1,
-      scheduledFor: new Date(`${isoDayFromToday(0)}T00:00:00.000Z`),
-      titleSnapshot: "Mock",
+    planFixture({
+      goalId: goal.id,
+      items: [
+        { lessonId: lesson.id, skillId: skill.id, titleSnapshot: lesson.title },
+        {
+          kind: "mock",
+          scheduledFor: new Date(`${isoDayFromToday(0)}T00:00:00.000Z`),
+          titleSnapshot: "Mock",
+        },
+      ],
+      phases: [{ name: "Basics" }],
     }),
   ]);
 

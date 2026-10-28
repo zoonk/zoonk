@@ -2,8 +2,9 @@ import { randomUUID } from "node:crypto";
 import { type Page, expect } from "@playwright/test";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import {
   studySessionBlockFixture,
@@ -37,17 +38,35 @@ const CHECKPOINT_MINUTES = 9;
  * The plan has a second phase after it.
  */
 export async function createCheckpointLearner() {
-  const [{ goal, user }, skills] = await Promise.all([
+  const [{ goal, user }, skills, lessons] = await Promise.all([
     createGoalLearner(),
     Promise.all(SKILL_NAMES.map((name) => skillFixture({ name: `${name} ${randomUUID()}` }))),
+    Promise.all(SKILL_NAMES.map((name) => libraryLessonFixture({ title: name }))),
   ]);
 
+  // The phase's lessons are done, so its boss is next.
   const plan = await planFixture({
     goalId: goal.id,
+    items: [
+      ...lessons.map((lesson, index) => ({
+        completedAt: new Date(),
+        lessonId: lesson.id,
+        skillId: skills[index]?.id ?? null,
+        status: "done" as const,
+        titleSnapshot: lesson.title,
+      })),
+      { kind: "boss" as const, titleSnapshot: BOSS_TITLE },
+    ],
     phases: [{ name: "Basics" }, { name: "Practice" }],
   });
 
-  const [items, boss, session] = await Promise.all([
+  const boss = plan.items.at(-1);
+
+  if (!boss) {
+    throw new Error("Expected the phase's boss");
+  }
+
+  const [items, session] = await Promise.all([
     Promise.all(
       skills.flatMap((skill, skillIndex) =>
         Array.from({ length: QUESTIONS_PER_SKILL }, (_, index) =>
@@ -58,14 +77,10 @@ export async function createCheckpointLearner() {
         ),
       ),
     ),
-    planItemFixture({
-      kind: "boss",
-      phase: 0,
-      planId: plan.id,
-      position: 0,
-      titleSnapshot: BOSS_TITLE,
-    }),
-    studySessionFixture({ goalId: goal.id, userId: user.id }),
+    studySessionFixture({ goalId: goal.id, planVersion: plan.version, userId: user.id }),
+    ...lessons.map((lesson, index) =>
+      lessonSkillFixture({ lessonId: lesson.id, skillId: skills[index]?.id ?? "" }),
+    ),
   ]);
 
   const block = await studySessionBlockFixture({

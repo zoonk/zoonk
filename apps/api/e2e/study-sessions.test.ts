@@ -124,8 +124,6 @@ async function createGoal(userId: string) {
     ]),
   ]);
 
-  const plan = await planFixture({ goalId: goal.id });
-
   const [items] = await Promise.all([
     Promise.all(
       skills.flatMap((skill) =>
@@ -137,16 +135,15 @@ async function createGoal(userId: string) {
     ...lessons.map((lesson, index) =>
       lessonSkillFixture({ lessonId: lesson.id, skillId: skills[index]?.id ?? "" }),
     ),
-    ...lessons.map((lesson, position) =>
-      planItemFixture({
-        kind: "lesson",
+    planFixture({
+      goalId: goal.id,
+      items: lessons.map((lesson, position) => ({
         lessonId: lesson.id,
-        planId: plan.id,
-        position,
-        status: position === 0 ? "done" : "todo",
+        skillId: skills[position]?.id ?? null,
+        status: position === 0 ? ("done" as const) : ("todo" as const),
         titleSnapshot: lesson.title,
-      }),
-    ),
+      })),
+    }),
   ]);
 
   await Promise.all([

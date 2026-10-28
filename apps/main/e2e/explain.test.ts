@@ -2,8 +2,15 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import {
+  goalFixture,
+  planFixture,
+  planItemFixture,
+  plannedSkills,
+} from "@zoonk/testing/fixtures/goals";
+import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { type Page, expect, test } from "./fixtures";
 import { expectHydrated } from "./hydration";
 import { asPersona } from "./learn-personas";
@@ -74,7 +81,12 @@ test.describe("Quick explanations", () => {
       playableLessonFixture({ steps: ["explanation", "explanation", "check", "summary"] }),
     ]);
 
-    const plan = await planFixture({ goalId: goal.id });
+    const [plan, skill] = await Promise.all([
+      planFixture({ goalId: goal.id }),
+      skillFixture({ name: "Why the sky is blue" }),
+    ]);
+
+    await lessonSkillFixture({ lessonId: played.lesson.id, skillId: skill.id });
 
     const events = [
       { entityId: goal.id, status: "started", step: "classifyQuestion" },
@@ -91,12 +103,19 @@ test.describe("Quick explanations", () => {
     await page.route(
       `**/v1/generations/${runId}/events**`,
       async (route) => {
-        await planItemFixture({
-          kind: "lesson",
-          lessonId: played.lesson.id,
-          planId: plan.id,
-          titleSnapshot: "Why the sky is blue",
-        });
+        await Promise.all([
+          prisma.plan.update({
+            data: { graph: { skills: plannedSkills([skill]) } },
+            where: { id: plan.id },
+          }),
+          planItemFixture({
+            kind: "lesson",
+            lessonId: played.lesson.id,
+            planId: plan.id,
+            skillId: skill.id,
+            titleSnapshot: "Why the sky is blue",
+          }),
+        ]);
 
         saved.resolve(null);
 

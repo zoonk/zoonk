@@ -2,7 +2,12 @@ import { randomUUID } from "node:crypto";
 import { type MistakeCause } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import {
+  goalFixture,
+  layOutPlanFixture,
+  planFixture,
+  planItemFixture,
+} from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
@@ -46,7 +51,13 @@ async function createCauseDrill({
     }),
     itemFixture({ content: choiceItemContent(drillQuestion(cause, "extra")), skillId: skill.id }),
     lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
-    planItemFixture({ lessonId: lesson.id, planId, position: index, titleSnapshot: lesson.title }),
+    planItemFixture({
+      lessonId: lesson.id,
+      planId,
+      position: index,
+      skillId: skill.id,
+      titleSnapshot: lesson.title,
+    }),
   ]);
 
   // Each cause is a minute newer than the one before, so practice drills them in the order given.
@@ -80,5 +91,6 @@ export async function createMistakeLearner({ causes }: { causes: MistakeCause[] 
     learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
   ]);
 
+  await layOutPlanFixture(plan.id);
   return { drills, goal, user };
 }

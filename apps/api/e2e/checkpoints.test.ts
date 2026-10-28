@@ -4,8 +4,11 @@ import { languageConversationViewSchema } from "@zoonk/core/language/conversatio
 import { studyBlockCompletionSchema } from "@zoonk/core/sessions/completion-contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
-import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import {
+  languageGoalFixture,
+  reachLanguageCheckpointFixture,
+} from "@zoonk/testing/fixtures/language";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
@@ -38,9 +41,12 @@ function addQuestions({ count, skillId }: { count: number; skillId: string }) {
  * skills holding `questionsPerSkill` questions each.
  */
 async function createGoalAtBoss(userId: string, questionsPerSkill = QUESTIONS_PER_SKILL) {
-  const [goal, skills, lessons] = await Promise.all([
+  const [goal, [skills, next], lessons] = await Promise.all([
     goalFixture({ dailyMinutes: 30, timezone: "UTC", userId }),
-    Promise.all(SKILL_NAMES.map((name) => skillFixture({ name }))),
+    Promise.all([
+      Promise.all(SKILL_NAMES.map((name) => skillFixture({ name }))),
+      skillFixture({ name: "Percent change" }),
+    ]),
     Promise.all([
       libraryLessonFixture({ title: "Discounts" }),
       libraryLessonFixture({ title: "Ratios" }),
@@ -48,37 +54,37 @@ async function createGoalAtBoss(userId: string, questionsPerSkill = QUESTIONS_PE
     ]),
   ]);
 
-  const plan = await planFixture({
-    goalId: goal.id,
-    phases: [{ name: "Basics" }, { name: "Mix" }],
-  });
+  const lessonSkills = [...skills, next];
 
   await Promise.all([
     ...skills.flatMap((skill) => addQuestions({ count: questionsPerSkill, skillId: skill.id })),
-    ...skills.map((skill, index) =>
+    ...lessonSkills.map((skill, index) =>
       lessonSkillFixture({ lessonId: lessons[index]?.id ?? "", skillId: skill.id }),
     ),
-    ...lessons.map((lesson, position) => {
-      const firstPhase = position < SKILL_NAMES.length;
+    planFixture({
+      goalId: goal.id,
+      items: [
+        ...lessons.map((lesson, position) => {
+          const firstPhase = position < SKILL_NAMES.length;
 
-      return planItemFixture({
-        kind: "lesson",
-        lessonId: lesson.id,
-        phase: firstPhase ? 0 : 1,
-        planId: plan.id,
-        position: firstPhase ? position : position + 1,
-        status: firstPhase ? "done" : "todo",
-        titleSnapshot: lesson.title,
-      });
-    }),
-    planItemFixture({
-      kind: "boss",
-      phase: 0,
-      planId: plan.id,
-      position: SKILL_NAMES.length,
-      // C2 requires the saved due day; completed teaching does not unlock an undated boss.
-      scheduledFor: getDateInTimeZone({ date: new Date(), timeZone: "UTC" }),
-      titleSnapshot: "Boss",
+          return {
+            lessonId: lesson.id,
+            phase: firstPhase ? 0 : 1,
+            position: firstPhase ? position : position + 1,
+            skillId: lessonSkills[position]?.id ?? null,
+            status: firstPhase ? ("done" as const) : ("todo" as const),
+            titleSnapshot: lesson.title,
+          };
+        }),
+        {
+          kind: "boss" as const,
+          position: SKILL_NAMES.length,
+          // C2 requires the saved due day; completed teaching does not unlock an undated boss.
+          scheduledFor: getDateInTimeZone({ date: new Date(), timeZone: "UTC" }),
+          titleSnapshot: "Boss",
+        },
+      ],
+      phases: [{ name: "Basics" }, { name: "Mix" }],
     }),
   ]);
 
@@ -87,33 +93,15 @@ async function createGoalAtBoss(userId: string, questionsPerSkill = QUESTIONS_PE
 
 /** A Plus learner's language unit reached with its phase challenge's call already written. */
 async function createLanguageBoss(userId: string) {
-  const { arriving, goal, plan, renting } = await languageGoalFixture({ userId });
-
-  await Promise.all([
-    prisma.goal.update({ data: { timezone: "UTC" }, where: { id: goal.id } }),
-    prisma.planItem.updateMany({ data: { status: "done" }, where: { planId: plan.id } }),
-    prisma.plan.update({
-      data: {
-        phases: [{ name: arriving.title }, { name: renting.title }, { name: "The next unit" }],
-      },
-      where: { id: plan.id },
-    }),
-    planItemFixture({ kind: "lesson", phase: 2, planId: plan.id, position: 11, status: "done" }),
+  const [fixture] = await Promise.all([
+    languageGoalFixture({ userId }),
     prisma.subscription.create({
       data: { id: randomUUID(), plan: "plus", referenceId: userId, status: "active" },
     }),
   ]);
 
-  // C2 requires the saved due day for the call as well as completed teaching.
-  const boss = await planItemFixture({
-    kind: "boss",
-    phase: 1,
-    planId: plan.id,
-    position: 10,
-    scheduledFor: getDateInTimeZone({ date: new Date(), timeZone: "UTC" }),
-  });
-
-  return { boss, goal };
+  const { checkpoint } = await reachLanguageCheckpointFixture(fixture);
+  return { boss: checkpoint, goal: fixture.goal };
 }
 
 test.describe("Checkpoints API", () => {

@@ -1,5 +1,4 @@
 import { prisma } from "@zoonk/db";
-import { planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import {
   studySessionBlockFixture,
@@ -34,12 +33,9 @@ async function createB1Learner() {
  * at A2, so the checkpoint's call isn't written.
  */
 async function createUnwrittenCheckpoint() {
-  const { goal, plan, renting, user } = await createB1Learner();
-
-  const [boss, session] = await Promise.all([
-    planItemFixture({ kind: "boss", phase: 1, planId: plan.id, position: 10 }),
-    studySessionFixture({ goalId: goal.id, userId: user.id }),
-  ]);
+  const { checkpoints, goal, renting, user } = await createB1Learner();
+  const [, boss] = checkpoints;
+  const session = await studySessionFixture({ goalId: goal.id, userId: user.id });
 
   const block = await studySessionBlockFixture({
     kind: "checkpoint",
@@ -52,7 +48,7 @@ async function createUnwrittenCheckpoint() {
         rematch: false,
         timeLimitMinutes: null,
       },
-      planItemId: boss.id,
+      planItemId: boss?.id,
     },
     sessionId: session.id,
   });

@@ -1,5 +1,10 @@
 import { randomUUID } from "node:crypto";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import {
+  goalFixture,
+  planFixture,
+  planItemFixture,
+  plannedSkills,
+} from "@zoonk/testing/fixtures/goals";
 import {
   choiceItemContent,
   itemFixture,
@@ -39,14 +44,6 @@ export async function createMappedGoal(userId: string) {
 export async function mapGoalSkills({ goalId }: { goalId: string }) {
   const id = randomUUID().slice(0, SHORT_ID_LENGTH);
 
-  const plan = await planFixture({
-    goalId,
-    phases: SKILLS_PER_PHASE.map((_, index) => ({
-      name: `Stage ${index + 1} ${id}`,
-      summary: "Test",
-    })),
-  });
-
   const total = SKILLS_PER_PHASE.reduce((sum, count) => sum + count, 0);
 
   const skills = await Promise.all(
@@ -56,6 +53,17 @@ export async function mapGoalSkills({ goalId }: { goalId: string }) {
   const phaseOf = SKILLS_PER_PHASE.flatMap((count, phase) =>
     Array.from({ length: count }, () => phase),
   );
+
+  const plan = await planFixture({
+    goalId,
+    graph: {
+      skills: plannedSkills(skills.map((skill, index) => ({ ...skill, phase: phaseOf[index] }))),
+    },
+    phases: SKILLS_PER_PHASE.map((_, index) => ({
+      name: `Stage ${index + 1} ${id}`,
+      summary: "Test",
+    })),
+  });
 
   await Promise.all([
     ...skills

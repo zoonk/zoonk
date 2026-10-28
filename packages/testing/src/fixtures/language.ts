@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { toUTCMidnight } from "@zoonk/utils/date";
 import { normalizeString } from "@zoonk/utils/string";
 import { fixtureProvenance } from "./_utils/fixture-attrs";
 import { courseFixture } from "./courses";
@@ -12,7 +13,8 @@ import {
 } from "./goals";
 import { courseChapterFixture, libraryChapterFixture } from "./library-chapters";
 import { chapterLessonFixture, lessonSkillFixture, libraryLessonFixture } from "./library-lessons";
-import { skillsFixture } from "./skills";
+import { playableLessonFixture } from "./playable-lessons";
+import { skillFixture, skillsFixture } from "./skills";
 import { userFixture } from "./users";
 
 /** Linda on Queen Street: a unit's call at A2, stored so starting a call needs no model. */
@@ -156,7 +158,7 @@ export async function languageGoalFixture({ userId }: { userId?: string } = {}) 
     ),
   );
 
-  const { bosses: checkpoints } = await layOutPlanFixture(plan.id);
+  const laidOut = await layOutPlanFixture(plan.id);
 
   await prisma.conversationScenario.create({
     data: {
@@ -169,7 +171,76 @@ export async function languageGoalFixture({ userId }: { userId?: string } = {}) 
     },
   });
 
-  return { arriving, checkpoints, course, goal, items, lessons, plan, renting, skills, user };
+  return {
+    arriving,
+    checkpoints: laidOut.bosses,
+    course,
+    goal,
+    items,
+    lessons,
+    plan: laidOut.plan,
+    renting,
+    skills,
+    user,
+  };
+}
+
+/**
+ * Takes a language goal (see `languageGoalFixture`) to its renting unit's checkpoint, due today in
+ * UTC: every lesson and the arriving unit's checkpoint done, then a next unit with one written
+ * lesson, done unless `nextLessonTodo`.
+ */
+export async function reachLanguageCheckpointFixture({
+  checkpoints,
+  goal,
+  nextLessonTodo = false,
+  plan,
+}: Pick<Awaited<ReturnType<typeof languageGoalFixture>>, "checkpoints" | "goal" | "plan"> & {
+  nextLessonTodo?: boolean;
+}) {
+  const checkpoint = checkpoints[1];
+
+  if (!checkpoint) {
+    throw new Error("Expected the renting unit's checkpoint");
+  }
+
+  const [skill, next] = await Promise.all([
+    skillFixture({ language: "pt", name: `Next unit ${randomUUID()}` }),
+    playableLessonFixture({ lesson: { title: "The next unit's lesson" }, steps: ["check"] }),
+  ]);
+
+  const phases = Array.isArray(plan.phases) ? plan.phases : [];
+
+  await Promise.all([
+    lessonSkillFixture({ lessonId: next.lesson.id, skillId: skill.id }),
+    prisma.goal.update({ data: { timezone: "UTC" }, where: { id: goal.id } }),
+    prisma.planItem.updateMany({
+      data: { status: "done" },
+      where: { id: { not: checkpoint.id }, planId: plan.id },
+    }),
+    prisma.planItem.update({
+      data: { scheduledFor: toUTCMidnight(new Date()) },
+      where: { id: checkpoint.id },
+    }),
+    prisma.plan.update({
+      data: { phases: [...phases, { name: "The next unit" }] },
+      where: { id: plan.id },
+    }),
+  ]);
+
+  const nextItem = await planItemFixture({
+    kind: "lesson",
+    lessonId: next.lesson.id,
+    phase: 2,
+    planId: plan.id,
+    position: 11,
+    skillId: skill.id,
+    status: nextLessonTodo ? "todo" : "done",
+    titleSnapshot: next.lesson.title,
+  });
+
+  await layOutPlanFixture(plan.id);
+  return { checkpoint, nextItem, nextLesson: next.lesson };
 }
 
 /** The first letters of a few scripts, for alphabet lessons tests read without a model. */

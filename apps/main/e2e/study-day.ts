@@ -5,6 +5,7 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { type E2EUser, createE2EUser } from "@zoonk/e2e/fixtures/users";
 import {
   goalFixture,
+  layOutPlanFixture,
   planChangeFixture,
   planFixture,
   planItemFixture,
@@ -110,15 +111,15 @@ export async function createStudyDay({
     userId: user.id,
   });
 
-  const plan = await planFixture({ goalId: goal.id });
-
-  const [planItem, session] = await Promise.all([
-    planItemFixture({
-      kind: "lesson",
-      lessonId: lesson.id,
-      planId: plan.id,
-      position: 0,
-      titleSnapshot: lesson.title,
+  const [
+    {
+      items: [planItem],
+    },
+    session,
+  ] = await Promise.all([
+    planFixture({
+      goalId: goal.id,
+      items: [{ lessonId: lesson.id, skillId: discounts.id, titleSnapshot: lesson.title }],
     }),
     studySessionFixture({ goalId: goal.id, plannedMinutes: 7, userId: user.id }),
     learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
@@ -160,7 +161,7 @@ export async function createStudyDay({
       estimatedMinutes: 3,
       kind: "learn",
       lessonId: lesson.id,
-      payload: { planItemId: planItem.id, skillIds: [discounts.id], title: lesson.title },
+      payload: { planItemId: planItem?.id, skillIds: [discounts.id], title: lesson.title },
       position: 1,
       sessionId: session.id,
     }),
@@ -181,35 +182,49 @@ export async function createStudyDay({
  * minutes each that today's time didn't fit, first on tomorrow's plan. Returns them in plan order.
  */
 export async function carryLessons({ count, goalId }: { count: number; goalId: string }) {
-  const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
-
-  const lessons = await Promise.all(
-    Array.from({ length: count }, (_, index) =>
-      playableLessonFixture({
-        lesson: { estimatedMinutes: 3, title: `Missed lesson ${index + 1}` },
-        steps: ["check"],
-      }),
+  const [plan, skill, lessons] = await Promise.all([
+    prisma.plan.findUniqueOrThrow({ where: { goalId } }),
+    skillFixture({ name: `Missed lessons ${randomUUID()}` }),
+    Promise.all(
+      Array.from({ length: count }, (_, index) =>
+        playableLessonFixture({
+          lesson: { estimatedMinutes: 3, title: `Missed lesson ${index + 1}` },
+          steps: ["check"],
+        }),
+      ),
     ),
-  );
+  ]);
+
+  // They go before the phase's challenge, after today's lesson.
+  await prisma.planItem.updateMany({
+    data: { position: { increment: count } },
+    where: { kind: "boss", planId: plan.id },
+  });
 
   const items = await Promise.all(
-    lessons.map(({ lesson }, index) =>
-      planItemFixture({
+    lessons.map(async ({ lesson }, index) => {
+      await lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id });
+
+      return planItemFixture({
         kind: "lesson",
         lessonId: lesson.id,
         planId: plan.id,
         position: index + 1,
         scheduledFor: new Date(toUTCMidnight(new Date()).getTime() + MS_PER_DAY),
+        skillId: skill.id,
         titleSnapshot: lesson.title,
-      }),
-    ),
+      });
+    }),
   );
 
-  await planChangeFixture({
-    kind: "missedDays",
-    payload: { carriedItemIds: items.map((item) => item.id), days: 1, source: "system" },
-    planId: plan.id,
-  });
+  await Promise.all([
+    planChangeFixture({
+      kind: "missedDays",
+      payload: { carriedItemIds: items.map((item) => item.id), days: 1, source: "system" },
+      planId: plan.id,
+    }),
+    layOutPlanFixture(plan.id),
+  ]);
 
   return lessons.map(({ lesson }) => lesson);
 }

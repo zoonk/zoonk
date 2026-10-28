@@ -56,11 +56,9 @@ async function createExamGoal(userId: string) {
     libraryLessonFixture({ canDo: "You'll work out a discount", title: "Discounts" }),
   ]);
 
-  const plan = await planFixture({ goalId: goal.id });
-
-  await Promise.all([
+  const [plan] = await Promise.all([
+    planFixture({ goalId: goal.id, items: [{ lessonId: lesson.id, skillId: skill.id }] }),
     lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
-    planItemFixture({ kind: "lesson", lessonId: lesson.id, planId: plan.id, position: 0 }),
     learningProfileFixture({ activeGoalId: goal.id, userId }),
   ]);
 
@@ -258,7 +256,7 @@ test.describe("Today API", () => {
       planItemFixture({
         kind: "mock",
         planId: plan.id,
-        position: 1,
+        position: plan.items.length + 1,
         scheduledFor: new Date(mockDate),
         titleSnapshot: "Full mock",
       }),

@@ -1,9 +1,10 @@
 import { type Browser } from "@playwright/test";
 import { prisma } from "@zoonk/db";
-import { planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { planFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
-import { chapterLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { chapterLessonFixture, lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { createGoalLearner } from "./checkpoint-fixtures";
 import { type Page, expect, test } from "./fixtures";
@@ -96,35 +97,35 @@ async function answerSpokenByTyping(page: Page) {
 async function createChapterLearner(browser: Browser) {
   const { goal, user } = await createGoalLearner();
 
-  const [plan, chapter, first, second] = await Promise.all([
-    planFixture({ goalId: goal.id }),
+  const [chapter, skill, first, second] = await Promise.all([
     libraryChapterFixture({ title: "Inside the atom" }),
+    skillFixture({ name: "Atoms" }),
     playableLessonFixture({ lesson: { title: "An almost empty atom" }, steps: ["explanation"] }),
     playableLessonFixture({ lesson: { title: "Why the electron doesn't fall" }, steps: ["check"] }),
   ]);
 
   const nextWeek = new Date(Date.now() + 7 * MS_PER_DAY);
+  const lessons = [first.lesson, second.lesson];
 
-  const [firstItem] = await Promise.all([
-    planItemFixture({
-      chapterId: chapter.id,
-      lessonId: first.lesson.id,
-      planId: plan.id,
-      position: 0,
-      scheduledFor: nextWeek,
+  const [
+    {
+      items: [firstItem],
+    },
+  ] = await Promise.all([
+    planFixture({
+      goalId: goal.id,
+      items: lessons.map((lesson) => ({
+        chapterId: chapter.id,
+        lessonId: lesson.id,
+        scheduledFor: nextWeek,
+        skillId: skill.id,
+      })),
     }),
-    planItemFixture({
-      chapterId: chapter.id,
-      lessonId: second.lesson.id,
-      planId: plan.id,
-      position: 1,
-      scheduledFor: nextWeek,
-    }),
-    chapterLessonFixture({ chapterId: chapter.id, lessonId: first.lesson.id, position: 0 }),
-    chapterLessonFixture({ chapterId: chapter.id, lessonId: second.lesson.id, position: 1 }),
-    ...[first, second].map(({ lesson }) =>
+    ...lessons.flatMap((lesson, position) => [
+      chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position }),
+      lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
       prisma.lesson.update({ data: { homeChapterId: chapter.id }, where: { id: lesson.id } }),
-    ),
+    ]),
   ]);
 
   const context = await browser.newContext({ storageState: user.storageState });
@@ -143,7 +144,13 @@ async function createChapterLearner(browser: Browser) {
     ),
   );
 
-  return { chapterId: chapter.id, context, first: first.lesson, firstItemId: firstItem.id, page };
+  return {
+    chapterId: chapter.id,
+    context,
+    first: first.lesson,
+    firstItemId: firstItem?.id ?? "",
+    page,
+  };
 }
 
 test.describe("Library lesson player", () => {
