@@ -20,48 +20,107 @@ struct LessonOptionList: View {
   let isLocked: Bool
   /// A guess is never wrong: a missed pick keeps its plain look.
   var isGuess = false
+  /// Picture options are still being drawn: a missing picture shows its placeholder.
+  var picturesPending = false
   let select: (String) -> Void
 
-  var body: some View {
-    VStack(spacing: 10) {
-      ForEach(Array(options.enumerated()), id: \.element.id) { index, option in
-        Button {
-          select(option.id)
-        } label: {
-          HStack(alignment: .firstTextBaseline, spacing: 12) {
-            VStack(alignment: .leading, spacing: 8) {
-              if let picture = option.picture {
-                LessonPictureView(image: picture, description: nil, isPending: false)
-                  .accessibilityHidden(true)
-              }
+  /// Options with pictures sit in a grid, a picture over each one's words, as on main.
+  private var isPictureGrid: Bool {
+    options.contains { $0.pictureAlt != nil }
+  }
 
-              LessonRichText(option.text)
-              if let detail = option.detail {
-                Text(detail)
-                  .font(.subheadline)
-                  .foregroundStyle(.secondary)
-              }
-              if option.picture == nil, let pictureAlt = option.pictureAlt {
-                Text(pictureAlt)
-                  .font(.footnote)
-                  .foregroundStyle(.secondary)
-              }
-            }
-            Spacer(minLength: 0)
-            // Decorative: the option's value says the verdict. A checkmark inside a button would
-            // also make VoiceOver call the right option "selected".
-            if let symbol = mark(option).symbol {
-              Image(systemName: symbol)
-                .accessibilityHidden(true)
-            }
-          }
-        }
-        .buttonStyle(LessonOptionStyle(mark: mark(option)))
-        .disabled(isLocked)
-        .modifier(NumberShortcut(index: index))
-        .accessibilityAddTraits(option.id == selectedId ? .isSelected : [])
-        .accessibilityValue(verdictValue(option))
+  var body: some View {
+    if isPictureGrid {
+      LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 10)], spacing: 10) {
+        buttons
       }
+    } else {
+      VStack(spacing: 10) {
+        buttons
+      }
+    }
+  }
+
+  private var buttons: some View {
+    ForEach(Array(options.enumerated()), id: \.element.id) { index, option in
+      Button {
+        select(option.id)
+      } label: {
+        if isPictureGrid {
+          pictureLabel(option)
+        } else {
+          rowLabel(option)
+        }
+      }
+      .buttonStyle(LessonOptionStyle(mark: mark(option)))
+      .disabled(isLocked)
+      .modifier(NumberShortcut(index: index))
+      .accessibilityAddTraits(option.id == selectedId ? .isSelected : [])
+      .accessibilityValue(verdictValue(option))
+    }
+  }
+
+  private func rowLabel(_ option: LessonOption) -> some View {
+    HStack(alignment: .firstTextBaseline, spacing: 12) {
+      VStack(alignment: .leading, spacing: 2) {
+        LessonRichText(option.text)
+
+        if let detail = option.detail {
+          Text(detail)
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+        }
+      }
+
+      Spacer(minLength: 0)
+      verdictSymbol(option)
+    }
+  }
+
+  /// The option's picture, a placeholder while it's drawn, or its description when it can't be.
+  private func pictureLabel(_ option: LessonOption) -> some View {
+    VStack(spacing: 8) {
+      Group {
+        if let picture = option.picture {
+          LessonPictureView(image: picture, description: nil, isPending: false)
+        } else if picturesPending {
+          Image(systemName: "photo")
+            .font(.title2)
+            .foregroundStyle(.secondary)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .aspectRatio(4 / 5, contentMode: .fit)
+            .background(.fill.tertiary, in: .rect(cornerRadius: 12))
+            .accessibilityLabel(
+              Text(
+                "Drawing the picture…", tableName: "Player",
+                comment: "While a screen's picture is drawn"))
+        } else {
+          Text(option.pictureAlt ?? "")
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .aspectRatio(4 / 5, contentMode: .fit)
+            .padding(12)
+            .background(.fill.tertiary, in: .rect(cornerRadius: 12))
+        }
+      }
+
+      HStack(alignment: .firstTextBaseline) {
+        LessonRichText(option.text)
+          .multilineTextAlignment(.center)
+          .frame(maxWidth: .infinity)
+        verdictSymbol(option)
+      }
+    }
+  }
+
+  /// Decorative: the option's value says the verdict. A checkmark inside a button would also make
+  /// VoiceOver call the right option "selected".
+  @ViewBuilder
+  private func verdictSymbol(_ option: LessonOption) -> some View {
+    if let symbol = mark(option).symbol {
+      Image(systemName: symbol)
+        .accessibilityHidden(true)
     }
   }
 

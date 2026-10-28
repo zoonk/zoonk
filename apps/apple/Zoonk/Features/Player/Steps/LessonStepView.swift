@@ -189,7 +189,8 @@ private struct CheckStepView: View {
       },
       selectedId: context.answer.flatMap { if case .check(let id) = $0 { id } else { nil } },
       isChecked: context.result != nil,
-      isLocked: context.isLocked
+      isLocked: context.isLocked,
+      picturesPending: step.imagePending
     ) { context.select(.check(optionId: $0)) }
   }
 }
