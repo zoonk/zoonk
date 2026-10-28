@@ -7,6 +7,7 @@ struct CourseStartScreen: View {
 
   @Environment(CourseCatalogStore.self) private var catalog
   @Environment(OnboardingStore.self) private var onboarding
+  @Environment(SessionStore.self) private var session
   @State private var level: String?
   @State private var isStarting = false
   @State private var error: GoalError?
@@ -64,6 +65,11 @@ struct CourseStartScreen: View {
             : Text(
               "Build my plan", tableName: "Onboarding",
               comment: "Starts a course as the learner's goal"),
+          note: session.authenticatedSession == nil
+            ? Text(
+              "Start free, no account needed.", tableName: "Onboarding",
+              comment: "Under a course's Build my plan for a visitor")
+            : nil,
           onContinue: start)
       }
     }

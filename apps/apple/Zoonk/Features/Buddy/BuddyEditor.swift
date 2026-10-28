@@ -25,43 +25,7 @@ struct BuddyEditor: View {
   var body: some View {
     NavigationStack {
       Form {
-        Section {
-          Picker(selection: $choice.kind) {
-            ForEach(buddyKinds, id: \.self) { kind in
-              Label {
-                VStack(alignment: .leading) {
-                  Text(buddyName(kind: kind, name: nil))
-                  kind.tagline
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                }
-              } icon: {
-                BuddyFace(kind: kind, glasses: choice.glasses)
-              }
-              .tag(kind)
-            }
-          } label: {
-            Text("Buddy", tableName: "Buddy", comment: "Choosing which buddy")
-          }
-          .pickerStyle(.inline)
-          .labelsHidden()
-        }
-
-        Section {
-          TextField(text: $name, prompt: Text(buddyName(kind: choice.kind, name: nil))) {
-            Text("Name", tableName: "Buddy", comment: "The buddy's custom name")
-          }
-          .textInputAutocapitalization(.words)
-          .autocorrectionDisabled()
-          .onChange(of: name) { _, newName in
-            // Custom names stay short so they fit wherever the buddy is named.
-            if newName.count > 24 {
-              name = String(newName.prefix(24))
-            }
-          }
-        } header: {
-          Text("Name", tableName: "Buddy", comment: "The buddy's custom name")
-        }
+        BuddyPickerSections(kind: $choice.kind, name: $name, glasses: choice.glasses)
 
         Section {
           ForEach(BuddyGlasses.allCases, id: \.self) { glasses in
@@ -130,6 +94,54 @@ struct BuddyEditor: View {
     .foregroundStyle(.primary)
     .disabled(!isEarned)
     .accessibilityAddTraits(isWorn ? .isSelected : [])
+  }
+}
+
+/// Which buddy and its name, as main's `BuddyPicker`: onboarding's buddy step and the buddy editor
+/// share it. An empty name keeps the buddy's own name in each language.
+struct BuddyPickerSections: View {
+  @Binding var kind: BuddyKind
+  @Binding var name: String
+  var glasses: BuddyGlasses = .round
+
+  var body: some View {
+    Section {
+      Picker(selection: $kind) {
+        ForEach(buddyKinds, id: \.self) { kind in
+          Label {
+            VStack(alignment: .leading) {
+              Text(buddyName(kind: kind, name: nil))
+              kind.tagline
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+            }
+          } icon: {
+            BuddyFace(kind: kind, glasses: glasses)
+          }
+          .tag(kind)
+        }
+      } label: {
+        Text("Buddy", tableName: "Buddy", comment: "Choosing which buddy")
+      }
+      .pickerStyle(.inline)
+      .labelsHidden()
+    }
+
+    Section {
+      TextField(text: $name, prompt: Text(buddyName(kind: kind, name: nil))) {
+        Text("Name", tableName: "Buddy", comment: "The buddy's custom name")
+      }
+      .textInputAutocapitalization(.words)
+      .autocorrectionDisabled()
+      .onChange(of: name) { _, newName in
+        // Custom names stay short so they fit wherever the buddy is named.
+        if newName.count > 24 {
+          name = String(newName.prefix(24))
+        }
+      }
+    } header: {
+      Text("Name", tableName: "Buddy", comment: "The buddy's custom name")
+    }
   }
 }
 

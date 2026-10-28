@@ -112,6 +112,8 @@ struct StepButtons: View {
   var canSkip = true
   var continueLabel: Text?
   var skipLabel: Text?
+  /// A line under the buttons, such as what starting needs.
+  var note: Text?
   let onContinue: () -> Void
   var onSkip: (() -> Void)?
 
@@ -140,6 +142,12 @@ struct StepButtons: View {
       .controlSize(.large)
       .listRowInsets(EdgeInsets())
       .listRowBackground(Color.clear)
+    } footer: {
+      if let note {
+        note
+          .frame(maxWidth: .infinity)
+          .multilineTextAlignment(.center)
+      }
     }
   }
 }
@@ -815,7 +823,7 @@ private struct SubjectsLevelQuestion: View {
 private struct BuddyQuestion: View {
   let onAnswer: ([String: Any]) -> Void
 
-  @State private var kind = "zu"
+  @State private var kind: BuddyKind = .zu
   @State private var name = ""
 
   var body: some View {
@@ -824,33 +832,10 @@ private struct BuddyQuestion: View {
       description: Text(
         "Your buddy grows as you learn.", tableName: "Onboarding", comment: "Under the buddy step"))
 
-    ChoiceRows(
-      choices: [
-        .init(
-          value: "zu", label: Text("Zu", tableName: "Onboarding", comment: "A buddy's own name")),
-        .init(
-          value: "noodle",
-          label: Text("Noodle", tableName: "Onboarding", comment: "A buddy's own name: the brain")),
-        .init(
-          value: "beep",
-          label: Text("Beep", tableName: "Onboarding", comment: "A buddy's own name: the robot")),
-        .init(
-          value: "otto", label: Text("Otto", tableName: "Onboarding", comment: "A buddy's own name")
-        ),
-      ],
-      picked: kind
-    ) { kind = $0 }
-
-    Section {
-      LabeledField(
-        label: Text("Name", tableName: "Onboarding", comment: "Box for the buddy's own name"),
-        prompt: Text(
-          "Optional", tableName: "Onboarding", comment: "Says the buddy's name can be left empty"),
-        text: $name)
-    }
+    BuddyPickerSections(kind: $kind, name: $name)
 
     StepButtons {
-      onAnswer(["buddy": ["kind": kind, "name": value(name)], "question": "buddy"])
+      onAnswer(["buddy": ["kind": kind.rawValue, "name": value(name)], "question": "buddy"])
     }
   }
 }
