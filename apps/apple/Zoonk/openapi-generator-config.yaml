@@ -18,6 +18,7 @@ filter:
     - createFeedback
     - createFocusTestGeneration
     - createGoogleSession
+    - createGuestSession
     - createMistakePracticeAnswer
     - createMistakePracticeCompletion
     - createStudyAnswer

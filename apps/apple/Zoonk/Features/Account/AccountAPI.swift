@@ -29,6 +29,7 @@ protocol AccountAPIClient {
   func sendEmailCode(email: String, token: String?) async throws
   func signInWithApple(_ credentials: AppleSignInCredentials) async throws -> String
   func signInWithEmailCode(email: String, code: String) async throws -> String
+  func signInAsGuest() async throws -> String
   func signInWithGoogle(idToken: String) async throws -> String
   func signOut(token: String) async throws
   func synchronizeAppleSubscription(
@@ -94,7 +95,7 @@ struct AccountAPI {
 
   /// Asks the existing mailer to send the same localized six-digit sign-in code used by the web application. An anonymous request can create an account, so it carries App Attest proof; an account's own bearer is proof enough.
   func sendEmailCode(email: String, token: String?) async throws {
-    let proof = token == nil ? await appAttest.proof() : nil
+    let proof = token == nil ? await appAttest.proof(for: .emailCode(email: email)) : nil
     let output = try await perform(token: token) { client in
       try await client.createEmailSignInCode(
         .init(
@@ -121,7 +122,7 @@ struct AccountAPI {
   }
 
   func signInWithEmailCode(email: String, code: String) async throws -> String {
-    let proof = await appAttest.proof()
+    let proof = await appAttest.proof(for: .emailSession(email: email, code: code))
     let output = try await perform { client in
       try await client.createEmailCodeSession(
         .init(
@@ -142,6 +143,29 @@ struct AccountAPI {
     case .tooManyRequests:
       throw AccountAPIError.rateLimited
     case .internalServerError, .undocumented:
+      throw AccountAPIError.invalidResponse
+    }
+  }
+
+  /// Starts a guest session, as main does when a visitor sends a goal or answers a public lesson. It needs the same bot proof as email sign-up.
+  func signInAsGuest() async throws -> String {
+    let proof = await appAttest.proof(for: .guest)
+    let output = try await perform { client in
+      try await client.createGuestSession(
+        headers: .init(
+          xAppAttestAssertion: proof?.assertion,
+          xAppAttestChallenge: proof?.challenge,
+          xAppAttestKeyId: proof?.keyID))
+    }
+
+    switch output {
+    case .created(let response):
+      return try response.body.json.token
+    case .forbidden(let response):
+      throw getAPIError(statusCode: 403, payload: try response.body.json)
+    case .tooManyRequests:
+      throw AccountAPIError.rateLimited
+    case .conflict, .internalServerError, .undocumented:
       throw AccountAPIError.invalidResponse
     }
   }

@@ -1170,6 +1170,10 @@ extension AccountAPIClient {
     throw AccountAPIError.invalidResponse
   }
 
+  func signInAsGuest() async throws -> String {
+    throw AccountAPIError.invalidResponse
+  }
+
   func updateProfile(token: String, name: String, username: String) async throws -> CurrentAccount {
     throw AccountAPIError.invalidResponse
   }

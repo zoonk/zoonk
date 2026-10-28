@@ -227,6 +227,23 @@ final class SessionStore {
     }
   }
 
+  /// Lets a visitor start without an account: the guest session is kept like any other, and signing up later moves the guest's progress to the account.
+  func continueAsGuest() async -> Bool {
+    markInteractiveOperationStarted()
+    let workingRevision = startWorkingOperation()
+    failure = nil
+    defer { finishWorkingOperation(workingRevision) }
+
+    do {
+      let token = try await api.signInAsGuest()
+      try await completeSignIn(token: token)
+      return true
+    } catch {
+      failure = getFailure(error)
+      return false
+    }
+  }
+
   /// Sends Apple's native credential to the API and stores only the Zoonk session returned after server verification.
   func signInWithApple(_ credentials: AppleSignInCredentials) async {
     markInteractiveOperationStarted()
