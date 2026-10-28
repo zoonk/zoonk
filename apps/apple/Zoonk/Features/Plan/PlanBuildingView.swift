@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// The Plan while the goal's run builds its plan, as main's: the run's progress as it happens,
-/// phase by phase from its event stream, turning into the Plan on its own once the plan is saved.
-/// A goal with questions left continues its setup; a run that failed or never started offers
-/// "Try again", which starts it again only from the learner's tap.
+/// "Try again" starts the run again only from the learner's tap.
 struct PlanBuildingView: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
@@ -71,7 +68,6 @@ struct PlanBuildingView: View {
     }
   }
 
-  /// Follows the run building the plan; reads the plan again once it's saved.
   private func follow() async {
     guard let session = store.cache.session.authenticatedSession else {
       return
@@ -134,9 +130,7 @@ struct PlanBuildingView: View {
   }
 }
 
-/// A plan-building run as its phases (main's curriculum kind): reading the goal, reading the
-/// learner's material (only when the run does), mapping the skills, and fitting the plan into the
-/// learner's days. It's done once the plan is saved, while outlines and first lessons go on.
+/// Done once the plan is saved, while outlines and first lessons go on.
 struct PlanBuildingRun {
   enum Status: Equatable {
     case failed

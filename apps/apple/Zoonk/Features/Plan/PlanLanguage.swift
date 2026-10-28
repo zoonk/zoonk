@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// A language skill's name: "Reading", "Speaking".
 func languageSkillName(_ skill: String) -> String {
   switch skill {
   case "reading": String(localized: "Reading", table: "Plan", comment: "A language skill")
@@ -11,8 +10,7 @@ func languageSkillName(_ skill: String) -> String {
 }
 
 extension LanguageStanding {
-  /// "Speaking leads": the skill ahead of the others, or that they're even; nil before the first
-  /// levels or when two lead together.
+  /// Nil before the first levels or when two lead together.
   var leadingSkill: String? {
     let sorted = levels.sorted { $0.score > $1.score }
 
@@ -34,7 +32,6 @@ extension LanguageStanding {
         comment: "The language skill ahead of the others")
   }
 
-  /// "A2+ → B1+": the level now and the one the goal aims for.
   var levelText: String {
     let now =
       level
@@ -43,7 +40,6 @@ extension LanguageStanding {
   }
 }
 
-/// "Your level": each skill's level.
 struct LanguageLevelSheet: View {
   let standing: LanguageStanding
 
@@ -79,8 +75,6 @@ struct LanguageLevelSheet: View {
   }
 }
 
-/// The alphabet lesson of a script that isn't Latin, first on the path and open as practice
-/// anytime. While it still opens the learner's sessions, they can say they already read the script.
 struct PlanAlphabetRow: View {
   @Environment(PlanStore.self) private var store
   @State private var failed = false

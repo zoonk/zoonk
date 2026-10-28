@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// A goal without subjects of its own (a language's units, one course's plan): its path.
 struct PlanPathSection: View {
   @Environment(PlanStore.self) private var store
 
@@ -37,10 +36,6 @@ struct PlanPathSection: View {
   }
 }
 
-/// The path as rows: each phase with its mark, its lessons done and when it ends, the goal last
-/// (a phase after the exam follows it). The phase holding the next chapter is open, else the
-/// current one; a phase that is only its own chapter (a language's unit) opens that page, and one
-/// of several opens in place to them and its challenge.
 struct PlanPathRows: View {
   let context: PlanContext
 
@@ -119,7 +114,6 @@ private struct PlanPhaseRow: View {
     }
   }
 
-  /// The challenge that closes the phase, and lessons still being written for it.
   @ViewBuilder
   private var events: some View {
     if let checkpoint = phase.checkpoint {
@@ -214,9 +208,6 @@ private struct PlanPhaseRow: View {
     }
   }
 
-  /// Under the name, why the phase reads as it does: one the plan holds nothing of, one moved past
-  /// with work set aside, or the current one, closed while the next chapter is in a later phase,
-  /// saying when its lessons continue or when its challenge comes.
   private var meta: Text? {
     switch phase.state {
     case .leftOut:
@@ -279,8 +270,6 @@ private struct PlanPhaseRow: View {
     }
   }
 
-  /// "until Feb 5", or "until ~Feb" for a learning phase ahead, whose end is an estimate. Nothing
-  /// for a phase done or set aside, nor for the last one, whose end the goal's row says.
   private var until: Text? {
     guard let endDate = phase.endDate, phase.state == .current || phase.state == .upcoming,
       !(isLast && phase.kind != .afterExam)
@@ -300,8 +289,6 @@ private struct PlanPhaseRow: View {
   }
 }
 
-/// A chapter on the path: its mark, its title and lessons done, opening its page. Lessons still
-/// being written have no page yet; far ones are an outline the learner can ask for.
 private struct PlanChapterRow: View {
   @Environment(AppRouter.self) private var router
   @Environment(\.planSheetOpen) private var sheetOpen
@@ -432,7 +419,6 @@ private struct PlanChapterRow: View {
   }
 }
 
-/// The challenge that closes a phase: won, or when it comes; it opens its intro.
 private struct PlanCheckpointRow: View {
   let checkpoint: PlanPhase.Checkpoint
   let today: String
@@ -470,8 +456,6 @@ private struct PlanCheckpointRow: View {
   }
 }
 
-/// The goal's structure: an exam's subjects with their preparation, a plan's modules with their
-/// lessons studied or known; each opens its page.
 struct PlanSyllabusSection: View {
   let goalKind: LearnerGoal.Kind
   let syllabus: GoalSyllabus
@@ -519,8 +503,6 @@ struct PlanSyllabusSection: View {
   }
 }
 
-/// A subject's name over a bar of its preparation (a module's lessons), with its share at the end.
-/// One the plan leaves out says so.
 struct SyllabusSubjectRow: View {
   let subject: SyllabusSubject
   let isExam: Bool

@@ -1,13 +1,7 @@
 import SwiftUI
 
-/// "Adjust your plan": everything that reshapes it, as main's editor. The goal's date, the time a
-/// day (with what it covers, the time that covers everything when the learner asks, and moving the
-/// date), the study days, an exam's choices, where to focus, the prerequisites, what a language plan
-/// practices, when written tests are practiced, how the lessons feel, and the tools it uses. Each
-/// change re-plans from today and saves at once: fewer minutes or a closed day apply right away,
-/// this week included, and the top of the sheet says what the latest change did (its new end,
-/// whether today's session follows it) with Undo while it's the plan's latest change. Opened at a
-/// setting the Plan lists, it scrolls there.
+/// Each change re-plans from today and saves at once: fewer minutes or a closed day apply right
+/// away, this week included.
 struct AdjustPlanSheet: View {
   enum Section: Hashable, Identifiable {
     case date
@@ -90,8 +84,6 @@ struct AdjustPlanSheet: View {
     .presentationDetents([.medium, .large])
   }
 
-  // MARK: Sections
-
   private var daysSection: some View {
     let weekdayMinutes = plan.schedule.weekdayMinutes
     let studyCount = weekdayMinutes.filter { $0 > 0 }.count
@@ -135,8 +127,7 @@ struct AdjustPlanSheet: View {
     weekendChoice ?? (plan.schedule.shape.weekend != nil)
   }
 
-  /// Saturday and Sunday's own time: switched on, the weekend picks its time; switched off, it goes
-  /// back to the weekdays' time. Only for a week studied on weekdays and on the weekend.
+  /// Only for a week studied on weekdays and on the weekend.
   private var weekendSection: some View {
     let shape = plan.schedule.shape
     let current = shape.weekend ?? shape.weekdays
@@ -195,8 +186,7 @@ struct AdjustPlanSheet: View {
   private static let mondayFirst = [1, 2, 3, 4, 5, 6, 0]
 }
 
-/// The latest change at the top of an editor: what it did (its sentence, its new end, whether
-/// today's session follows it), with Undo while it's the plan's latest; or that it changed nothing.
+/// Undo shows only while the change is the plan's latest.
 struct PlanEditorLatestSection: View {
   let editor: PlanEditor
   let plan: GoalPlan
@@ -244,7 +234,6 @@ struct PlanEditorLatestSection: View {
     }
   }
 
-  /// Whether today's session follows the change or it starts on the next study day.
   private func appliedLine(_ change: AppliedPlanChange) -> Text {
     switch change.todaySession {
     case "changed":
@@ -261,7 +250,6 @@ struct PlanEditorLatestSection: View {
   }
 }
 
-/// "Ends Nov 12 instead of Nov 13.": what a change does to the plan's end.
 func planEffectText(_ effect: PlanEffect?, plan: GoalPlan) -> String? {
   guard let after = effect?.endDateAfter, let before = effect?.endDateBefore, after != before else {
     return nil

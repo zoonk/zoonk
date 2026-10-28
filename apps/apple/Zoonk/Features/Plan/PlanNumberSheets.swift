@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// "Your preparation" (an exam's, by subject) or "Your progress" (another goal's lessons).
 struct PlanStandingSheet: View {
   @Environment(PlanStore.self) private var store
 
@@ -86,9 +85,6 @@ struct PlanStandingSheet: View {
   }
 }
 
-/// "Your pace": how the learner keeps up with their plan. Their pace in a few words, the small fix
-/// when they're behind (or adjusting the plan when it no longer fits), this week's days as rings
-/// with the time studied, and last week's recap. A paused goal has no pace to keep.
 struct PlanPaceSheet: View {
   let context: PlanContext
   let adjust: () -> Void
@@ -172,8 +168,7 @@ struct PlanPaceSheet: View {
   }
 }
 
-/// The plan's week as a row of rings, each filled by how much of its day's plan is done: today's
-/// track darker, a study day missed dashed (never red), a rest day faint.
+/// A study day missed is dashed, never red.
 private struct PlanWeekRings: View {
   @ScaledMetric(relativeTo: .body) private var ringSize = 28.0
 

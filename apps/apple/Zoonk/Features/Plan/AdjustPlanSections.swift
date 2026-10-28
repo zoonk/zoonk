@@ -1,8 +1,5 @@
 import SwiftUI
 
-/// The editor's settings past the schedule, each only where the plan has it: an exam's choices,
-/// where to focus, the prerequisites, what a language plan practices, when written tests are
-/// practiced, how the lessons feel, the tools it uses, and anything else in the learner's words.
 struct AdjustPlanSections: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
@@ -66,7 +63,6 @@ struct AdjustPlanSections: View {
   }
 }
 
-/// "Language: which one will you take?": until the learner picks, the plan leaves the group out.
 private struct PlanExamChoiceSection: View {
   let editor: PlanEditor
   let goal: LearnerGoal
@@ -122,8 +118,7 @@ private struct PlanExamChoiceSection: View {
   }
 }
 
-/// "Where to focus": the focus test first (its answers choose), or the subjects picked here, which
-/// come first and get more depth. Only when the learner's time doesn't cover everything in depth.
+/// Only when the learner's time doesn't cover everything in depth.
 private struct PlanFocusSection: View {
   @Environment(AppRouter.self) private var router
   @State private var picked: Set<String>?
@@ -197,7 +192,6 @@ private struct PlanFocusSection: View {
   }
 }
 
-/// What a language plan practices: each activity can be left out of its lessons.
 private struct PlanActivitiesSection: View {
   let editor: PlanEditor
   let plan: GoalPlan
@@ -251,8 +245,6 @@ private struct PlanActivitiesSection: View {
   private static let activities = ["vocabulary", "listening", "writing", "speaking"]
 }
 
-/// When an exam's written tests are practiced: every week (recommended), every other week, or
-/// only in the final weeks.
 private struct PlanWrittenPracticeSection: View {
   let editor: PlanEditor
   let written: GoalPlan.WrittenPractice
@@ -320,8 +312,8 @@ private struct PlanWrittenPracticeSection: View {
   }
 }
 
-/// "How is it going?": too easy, too hard, more practice or more explanation, once the learner
-/// studied a lesson of the plan. Tapping an active one again goes back to the default.
+/// Once the learner studied a lesson of the plan. Tapping an active one again goes back to the
+/// default.
 private struct PlanSteeringSection: View {
   let editor: PlanEditor
   let steering: GoalPlan.Steering
@@ -404,7 +396,6 @@ private struct PlanSteeringSection: View {
   }
 }
 
-/// "You'll use": the tools the plan's chapters use, essential first, with the learner's answer.
 /// Tools only later phases use are listed under "More later" instead of asked now.
 private struct PlanToolsSection: View {
   @State private var choosing: GoalPlan.Tool?
@@ -479,8 +470,6 @@ private struct PlanToolsSection: View {
   }
 }
 
-/// "How will you use it?": the learner has the tool, a short setup lesson comes first (on their
-/// device), or they learn with examples.
 private struct PlanToolChoiceSheet: View {
   @Environment(\.dismiss) private var dismiss
   @State private var choice: ToolChoice
@@ -608,7 +597,6 @@ private struct PlanToolChoiceSheet: View {
   }
 }
 
-/// A device's name: "Windows", "macOS", "Phone only".
 func planSystemName(_ system: String) -> String {
   switch system {
   case "windows": String(localized: "Windows", table: "Plan", comment: "A device's system")

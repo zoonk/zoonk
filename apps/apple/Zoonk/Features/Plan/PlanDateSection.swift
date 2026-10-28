@@ -1,17 +1,10 @@
 import SwiftUI
 
-/// The goal's date (an exam's, or a deadline), which the learner can change any time, saved as one
-/// change that re-plans from today. A goal without one can set one; a month the learner named stays
-/// a month until they pick its day. When the plan counts down to another day than the exam's notice
-/// gives, that day is one tap away. A goal that isn't an exam can drop its deadline to study
-/// everything at its own pace, which says what it changes first; an exam keeps its date and goes on
-/// after it with "Study everything, even after the exam" instead.
+/// A month the learner named stays a month until they pick its day. Dropping a deadline says what it
+/// changes first; an exam keeps its date and offers "Study everything, even after the exam" instead.
 struct PlanDateSection: View {
-  /// The picker shows for a goal without a day once the learner asks for it.
   @State private var isPicking = false
-  /// The day the learner picked: Save offers it until it's saved.
   @State private var picked: Date?
-  /// The day just saved, until the plan reads it back.
   @State private var saved: Date?
 
   let editor: PlanEditor
@@ -112,7 +105,6 @@ struct PlanDateSection: View {
       : Text("Deadline", tableName: "Plan", comment: "Setting: the goal's deadline")
   }
 
-  /// "The exam notice says January 10, 2027.", or its likely day while the notice isn't out.
   private func noticeDayText(_ noticeDay: GoalPlan.Schedule.NoticeDay) -> Text {
     let date = PlanDate.date(noticeDay.date).map(Self.longDate) ?? noticeDay.date
 
@@ -133,7 +125,7 @@ struct PlanDateSection: View {
       comment: "A language certificate's day its official calendar gives")
   }
 
-  /// A deadline the learner sets or moves; true once saved.
+  /// True once saved.
   @discardableResult
   private func save(_ isoDate: String) async -> Bool {
     let date = PlanDate.date(isoDate).map(Self.longDate) ?? isoDate
@@ -179,8 +171,7 @@ struct PlanDateSection: View {
     date.formatted(Date.FormatStyle(date: .long, time: .omitted, timeZone: .gmt))
   }
 
-  /// From tomorrow (a plan counts down to a day still ahead) to ten years after today, core's
-  /// `getTargetDateBounds`.
+  /// Core's `getTargetDateBounds`.
   private static func bounds(today: String) -> ClosedRange<Date> {
     let start = PlanDate.date(today) ?? .now
     let day: TimeInterval = 24 * 60 * 60

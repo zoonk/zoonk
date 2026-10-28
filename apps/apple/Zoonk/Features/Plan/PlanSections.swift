@@ -33,7 +33,6 @@ extension PlanPhase {
     }
   }
 
-  /// A phase's length on the road: its days, else its hours.
   var weight: Double {
     guard let startDate, let endDate else {
       return 1
@@ -43,17 +42,11 @@ extension PlanPhase {
   }
 }
 
-/// "45 min", "1 hr, 30 min": minutes as the system says a duration.
 func planDurationText(minutes: Double) -> String {
   Duration.seconds(minutes * 60).formatted(
     .units(allowed: [.hours, .minutes], width: .abbreviated, maximumUnitCount: 2))
 }
 
-// MARK: - Roadmap
-
-/// The phases in time: a meter of parts (each as long as its days, done ones blue, the current one
-/// ringed) and where the learner is under it. With a structure on the page, it opens every phase
-/// with its chapters; otherwise the path below names them.
 struct PlanRoadmapSection: View {
   @Environment(AppRouter.self) private var router
   @State private var pendingRoute: AppRoute?
@@ -175,10 +168,6 @@ private struct RoadmapCompact: View {
   }
 }
 
-// MARK: - Numbers
-
-/// The two numbers that answer "will I make it?": where the learner stands (an exam's preparation,
-/// another goal's lessons) and the pace against the plan, each opening what's behind it.
 struct PlanNumbersSection: View {
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(AppRouter.self) private var router
@@ -196,7 +185,6 @@ struct PlanNumbersSection: View {
     var id: Self { self }
   }
 
-  /// What a sheet's row asked for, done once the sheet is closed.
   private enum Then {
     case adjust
     case open(AppRoute)
@@ -206,7 +194,6 @@ struct PlanNumbersSection: View {
     let standing = standingNumber
 
     Section {
-      // Side by side, or one over the other at accessibility text sizes.
       let layout =
         dynamicTypeSize.isAccessibilitySize
         ? AnyLayout(VStackLayout(alignment: .leading, spacing: 16))
@@ -288,7 +275,6 @@ struct PlanNumbersSection: View {
     }
   }
 
-  /// An exam's preparation with its gain this week; another goal's lessons studied or known.
   private var standingNumber: PlanNumber? {
     if context.goal.kind == .exam {
       guard let preparation = store.standing(goalId: context.goal.id).value?.preparation else {
@@ -341,8 +327,7 @@ struct PlanNumbersSection: View {
         table: "Plan", comment: "Lessons studied or known of the plan's lessons"))
   }
 
-  /// The pace in a word, with what it means. A paused goal has no pace to keep; a plan without a
-  /// pace (a free exam plan past its first week) shows none.
+  /// A plan without a pace (a free exam plan past its first week) shows none.
   private var paceNumber: PlanNumber? {
     guard let status = context.plan.status else {
       return nil
@@ -419,7 +404,6 @@ private struct PlanNumber {
   var detailIsGain = false
 }
 
-/// The pace in a few words: "Keeping pace", "3 days ahead", "2 lessons to catch up".
 func planStatusText(_ status: GoalPlan.Status) -> String {
   switch status.kind {
   case .ahead:
@@ -452,7 +436,6 @@ func planStatusText(_ status: GoalPlan.Status) -> String {
   }
 }
 
-/// The small fix under the pace: what keeps the plan going, and whether it's adjusting the plan.
 func planPaceFix(_ plan: GoalPlan, isExam: Bool) -> (text: String, adjust: Bool)? {
   guard let status = plan.status else {
     return nil
@@ -503,10 +486,6 @@ func planPaceFix(_ plan: GoalPlan, isExam: Bool) -> (text: String, adjust: Bool)
   }
 }
 
-// MARK: - Next on the path
-
-/// What comes next on the way to the goal, rows the learner can act on: an exam's next mock (any
-/// other goal's next chapter), the next challenge that closes a phase, and the goal with its date.
 struct NextOnPathSection: View {
   @Environment(AppRouter.self) private var router
 
@@ -628,8 +607,6 @@ struct NextOnPathSection: View {
   }
 }
 
-/// The end of the plan's road: the goal's date (an estimated day with "~", a named month), or when
-/// a plan without one ends at this pace; an exam without a date says it's to be confirmed.
 func planFinishText(_ context: PlanContext) -> Text? {
   let plan = context.plan
   let schedule = plan.schedule
@@ -647,10 +624,6 @@ func planFinishText(_ context: PlanContext) -> Text? {
   return plan.estimate.endDate.map { Text(verbatim: "~\(PlanDate.text($0, today: plan.today))") }
 }
 
-// MARK: - More
-
-/// Where the Plan leads that the sidebar lists: the exam's page and the mind maps. Where the tabs
-/// don't list them (a bottom or a vertical tab bar), they close the page.
 struct PlanMoreSection: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(\.tabBarPlacement) private var tabBarPlacement
@@ -688,10 +661,6 @@ struct PlanMoreSection: View {
   }
 }
 
-// MARK: - Settings
-
-/// The plan's settings at a glance: the goal's date, the time a day and the study days; a tap opens
-/// "Adjust plan" at it.
 struct PlanSettingsSection: View {
   let context: PlanContext
 
@@ -742,7 +711,6 @@ struct PlanSettingsSection: View {
   }
 }
 
-/// "Mon – Sat", "Every day" or "Mon, Wed, Fri": the plan's study days, from Monday.
 func studyDaysText(_ weekdayMinutes: [Int]) -> String {
   let mondayFirst = [1, 2, 3, 4, 5, 6, 0]
   let days = mondayFirst.filter { weekdayMinutes.indices.contains($0) && weekdayMinutes[$0] > 0 }
@@ -766,7 +734,6 @@ func studyDaysText(_ weekdayMinutes: [Int]) -> String {
   return days.map { symbols[$0] }.formatted(.list(type: .and, width: .narrow))
 }
 
-/// "Done" in a sheet's bar.
 struct PlanSheetDoneButton: View {
   @Environment(\.dismiss) private var dismiss
 

@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// A change that says what it does before the learner chooses it, as dropping a deadline and
-/// studying everything after an exam do: asking works out what it changes in the plan while the
-/// control waits, then an alert says it and confirms the change.
+/// Says what the change does before the learner chooses it.
 struct PreviewedPlanChange<Control: View>: View {
   @Environment(PlanStore.self) private var store
   @State private var isPreviewing = false
@@ -17,7 +15,6 @@ struct PreviewedPlanChange<Control: View>: View {
   let what: String
   /// What the Plan says once the change is saved.
   let sentence: String
-  /// The control that asks, told whether the plan is still working it out.
   @ViewBuilder let control: (_ isPreviewing: Bool, _ ask: @escaping () -> Void) -> Control
 
   private struct Preview: Identifiable {

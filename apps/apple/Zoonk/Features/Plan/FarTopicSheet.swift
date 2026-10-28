@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// A topic of the plan whose lessons aren't written yet (the plan writes them two weeks ahead):
-/// "See the lessons" writes its lesson plan now, from the learner's tap, and shows its chapters
-/// once they're in, each opening its page. The plan is read again when they land.
+/// "See the lessons" writes the topic's lesson plan now, from the learner's tap.
 struct FarTopicSheet: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(\.planSheetOpen) private var sheetOpen
@@ -130,7 +128,6 @@ struct FarTopicSheet: View {
     }
   }
 
-  /// Reads the outline again every few seconds while it's written; once it's in, the plan follows.
   private func follow(_ outline: Resource<SkillOutline>) async {
     while !Task.isCancelled {
       try? await Task.sleep(for: .seconds(4))

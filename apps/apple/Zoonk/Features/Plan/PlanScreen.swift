@@ -1,10 +1,5 @@
 import SwiftUI
 
-/// The Plan tab: where the learner is on the way to the goal every tab shows. Under the title, the
-/// phases in time, the two numbers that answer "will I make it?", the one thing the Plan wants the
-/// learner to know or decide, then the goal's structure (an exam's subjects, a plan's modules) or
-/// its path, what comes next on it and the plan's settings. On a regular width the numbers, the
-/// slot, what's next and the settings sit in a column beside the rest, as main's aside.
 struct PlanScreen: View {
   @Environment(LearnerSummaryStore.self) private var learner
 
@@ -31,7 +26,6 @@ private struct GoalPlanView: View {
     let standing = store.standing(goalId: goal.id)
 
     Group {
-      // A language goal stands on its level and may start with its alphabet.
       if goal.kind == .language {
         content(plan: plan)
           .loads(
@@ -81,8 +75,6 @@ private struct GoalPlanView: View {
     }
   }
 
-  /// "27 days left": how far the goal's date is (the goal switcher beside the title names the goal).
-  /// A day the plan only estimates reads "~398 days left". Nil without a date ahead.
   private func subtitle(_ plan: GoalPlan?) -> Text? {
     guard let plan, let targetDate = plan.schedule.targetDate, targetDate >= plan.today else {
       return nil
@@ -106,7 +98,6 @@ private struct GoalPlanView: View {
   }
 }
 
-/// The plan's sections, in one list, or in two panes where there's room for both.
 private struct PlanContent: View {
   @Environment(PlanStore.self) private var store
   @State private var adjusting: AdjustPlanSheet.Section?
@@ -160,7 +151,6 @@ private struct PlanContent: View {
   }
 }
 
-/// What the Plan's sections share: the goal, its plan, and opening "Adjust plan" at a setting.
 struct PlanContext {
   let goal: LearnerGoal
   let plan: GoalPlan
@@ -169,12 +159,10 @@ struct PlanContext {
   var isPaused: Bool { goal.status == .paused }
 }
 
-/// "Adjust plan" and the "…" under the title, as main has them beside it.
 private struct PlanHeaderRow: View {
   let context: PlanContext
 
   var body: some View {
-    // Both buttons take the taller one's height, as a pair of controls should.
     HStack {
       Button {
         context.adjust(.top)

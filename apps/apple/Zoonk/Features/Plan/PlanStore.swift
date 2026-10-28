@@ -1,14 +1,9 @@
 import Foundation
 import Observation
 
-/// The Plan's data for each goal, kept for the app's life so the tab is instant on return. The plan
-/// is expensive to read (the server re-plans it), so once read it's only read again when the cheap
-/// `getPlanChangedSince` says it changed, or on a new day; the syllabus, which search reads too, and
-/// the learner's standing are ordinary cached reads.
 @MainActor
 @Observable
 final class PlanStore {
-  /// How long a shown plan goes without asking whether it changed; mutations ask sooner.
   static let planCheckAge = Duration.seconds(30)
   /// Device clocks run a little apart from the server's: asking from a minute earlier never misses
   /// a change (an extra read at worst).
@@ -58,56 +53,47 @@ final class PlanStore {
     return plan
   }
 
-  /// The goal's subjects or modules, shared with search.
   func syllabus(goalId: String) -> Resource<GoalSyllabus> {
     resource(&syllabi, goalId) { api, token in try await api.syllabus(token: token, goalId: goalId)
     }
   }
 
-  /// Where the learner stands: an exam's preparation, by subject.
   func standing(goalId: String) -> Resource<GoalStanding> {
     resource(&standings, goalId) { api, token in
       try await api.standing(token: token, goalId: goalId)
     }
   }
 
-  /// A language goal's level across skills.
   func languageStanding(goalId: String) -> Resource<LanguageStanding> {
     resource(&languageStandings, goalId) { api, token in
       try await api.languageStanding(token: token, goalId: goalId)
     }
   }
 
-  /// A language goal's alphabet lesson, for a script that isn't Latin.
   func languageUnits(goalId: String) -> Resource<LanguageUnitsOverview> {
     resource(&languageUnitLists, goalId) { api, token in
       try await api.languageUnits(token: token, goalId: goalId)
     }
   }
 
-  /// What to study next once the plan is over; read only then.
   func studyNext(goalId: String) -> Resource<StudyNext> {
     resource(&studyNexts, goalId) { api, token in
       try await api.studyNext(token: token, goalId: goalId)
     }
   }
 
-  /// Whether resuming the paused goal changes its plan; read only while it's paused.
   func resumeChangesPlan(goalId: String) -> Resource<Bool> {
     resource(&resumePreviews, goalId, domains: [.goals]) { api, token in
       try await api.resumeChangesPlan(token: token, goalId: goalId)
     }
   }
 
-  /// A far topic's outline, read when the learner opens it.
   func outline(goalId: String, skillId: String) -> Resource<SkillOutline> {
     resource(&outlines, "\(goalId):\(skillId)", domains: [.goals]) { api, token in
       try await api.outline(token: token, goalId: goalId, skillId: skillId)
     }
   }
 
-  /// Pauses, resumes or archives the goal. Goals change, so the summary (the switcher, the tabs),
-  /// Today and the plan follow.
   func setStatus(_ status: GoalStatusChange, goalId: String) async
     -> MutationResult<GoalStatusOutcome>
   {
@@ -118,7 +104,6 @@ final class PlanStore {
     }
   }
 
-  /// Starts the next level of the plan's course; the Plan then follows its plan being built.
   func continueAtNextLevel(goalId: String) async -> MutationResult<Bool> {
     await write { api, token in
       try await api.continueAtNextLevel(token: token, goalId: goalId)
@@ -127,7 +112,6 @@ final class PlanStore {
     }
   }
 
-  /// "I can already read it": the alphabet lesson leaves the sessions.
   func skipAlphabet(goalId: String) async -> MutationResult<Bool> {
     await write { api, token in
       try await api.skipAlphabet(token: token, goalId: goalId)
@@ -136,16 +120,13 @@ final class PlanStore {
     }
   }
 
-  /// Saves edits to the goal's plan, as the exam page's "Use this date" does. `PlanEditor` says
-  /// what a change did and undoes it; this only saves it.
+  /// Only saves: `PlanEditor` says what a change did and undoes it.
   func change(goalId: String, edits: [PlanEdit]) async -> MutationResult<PlanChangeOutcome> {
     await change { api, token in
       try await api.change(token: token, goalId: goalId, edits: edits)
     }
   }
 
-  /// Saves a change, or a choice that answers like one: the goal revalidates once it's applied,
-  /// or once it undid the latest change by setting it back.
   func change(
     _ request: (any PlanAPIClient, String) async throws -> PlanChangeOutcome
   ) async -> MutationResult<PlanChangeOutcome> {
@@ -157,10 +138,7 @@ final class PlanStore {
     }
   }
 
-  /// Runs one of the Plan's writes for the session that asked for it (see `AppCache.mutate`).
-  /// When `changed` says it changed the plan, everything reading the goal revalidates, as main
-  /// revalidates its goal tags. So does a write that failed, since one that timed out may have
-  /// landed: the plan's read asks whether it changed.
+  /// A failed write revalidates the goal too, since one that timed out may have landed.
   func write<Result: Sendable>(
     _ request: (any PlanAPIClient, String) async throws -> Result,
     changed: (Result) -> Bool
@@ -184,7 +162,6 @@ final class PlanStore {
     return result
   }
 
-  /// A keyed read of the learner's own data, created on first use and kept for the app's life.
   private func resource<Value: Equatable & Sendable>(
     _ resources: inout [String: Resource<Value>],
     _ key: String,
@@ -209,8 +186,8 @@ final class PlanStore {
     return resource
   }
 
-  /// Reads the plan again only when it changed since the one shown was read: the server re-plans
-  /// on every read. A new day changes it without a write, so it's read again then too.
+  /// Only when it changed since the one shown was read: the server re-plans on every read. A new day
+  /// changes it without a write, so it's read again then too.
   private func readPlan(goalId: String, token: String) async throws -> PlanRead {
     if let shown = plans[goalId]?.value, calendar.isDate(shown.readAt, inSameDayAs: now()),
       try await !api.planChanged(token: token, goalId: goalId, since: shown.readAt)

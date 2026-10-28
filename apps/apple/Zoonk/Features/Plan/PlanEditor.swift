@@ -1,26 +1,18 @@
 import Foundation
 import Observation
 
-/// One place that changes the plan ("Adjust plan", a sheet, the Plan's slot): it saves one change at
-/// a time, says what the latest one did, and undoes it while it's still the plan's latest. Each
-/// saved change re-plans from today, so the plan, Today and the summary revalidate.
 @MainActor
 @Observable
 final class PlanEditor {
-  /// What the latest change came to, shown until the next one.
   enum Latest: Equatable {
-    /// Saved: what it did, in the sentence the control that made it says.
     case applied(AppliedPlanChange, sentence: String)
-    /// The API refused it, such as a date the plan can't reach.
     case invalid
     case undone
-    /// Nothing changed: the plan already works that way.
     case unchanged
   }
 
   private(set) var latest: Latest?
   private(set) var isSaving = false
-  /// The latest request didn't reach the server.
   var failed = false
 
   private let goalId: String
@@ -31,7 +23,6 @@ final class PlanEditor {
     self.store = store
   }
 
-  /// Saves edits from "Adjust plan" or a sheet.
   @discardableResult
   func change(_ edits: [PlanEdit], sentence: String) async -> Bool {
     let goalId = goalId
@@ -40,7 +31,6 @@ final class PlanEditor {
     }
   }
 
-  /// Saves any of the plan's choices (an exam option, a tool), which answer like a change.
   @discardableResult
   func apply(
     sentence: String,
@@ -74,7 +64,6 @@ final class PlanEditor {
     return false
   }
 
-  /// Undoes the latest change; the plan goes back as it was.
   func undo() async {
     guard !isSaving, case .applied(let change, _) = latest, change.canUndo else {
       return

@@ -1,8 +1,6 @@
 import Foundation
 
-/// A goal's plan at every zoom level (`GET /goals/{goalId}/plan`), with what the Plan tab draws:
-/// its phases in time with their chapters, this week day by day, the pace, the schedule the
-/// learner set and its estimate. Recoded from the API's payload; every date is a calendar day.
+/// Every date is a calendar day.
 struct GoalPlan: Decodable, Equatable, Sendable {
   struct Access: Decodable, Equatable, Sendable {
     /// A free exam plan past its first week: new lessons, challenges and mocks come with Plus.
@@ -42,7 +40,6 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     let fullCourseEndDate: String?
   }
 
-  /// A part of an exam where the learner takes one option of several (ENEM's foreign language).
   struct ExamChoice: Decodable, Hashable, Identifiable, Sendable {
     struct Option: Decodable, Equatable, Hashable, Sendable {
       let name: String
@@ -57,7 +54,6 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     var id: String { group }
   }
 
-  /// What the learner's time covers by the goal's date.
   struct Feasibility: Decodable, Equatable, Sendable {
     let coreFits: Bool
     let coveredShare: Double
@@ -69,14 +65,12 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     let timeCovers: Bool
   }
 
-  /// The lessons the learner's own time fits that the plan doesn't hold, ready to apply.
   struct FitOffer: Decodable, Equatable, Sendable {
     let canApply: Bool
     let fits: Bool
     let operations: [JSONValue]
   }
 
-  /// Prerequisites to study before the topics that build on them, each with how deep.
   struct Bases: Decodable, Equatable, Sendable {
     struct Item: Decodable, Equatable, Identifiable, Sendable {
       struct Minutes: Decodable, Equatable, Sendable {
@@ -109,7 +103,6 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     let skippedActivities: [String]
   }
 
-  /// A tool the plan's chapters use, with the learner's answer.
   struct Tool: Decodable, Equatable, Identifiable, Sendable {
     /// `have`, `setup` or `none`; nil until the learner answers.
     let choice: String?
@@ -121,7 +114,6 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     var id: String { name }
   }
 
-  /// When an exam's written tests are practiced.
   struct WrittenPractice: Decodable, Equatable, Sendable {
     /// `weekly`, `biweekly` or `finalWeeks`.
     let cadence: String
@@ -135,8 +127,6 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     case usual
   }
 
-  /// The plan's own sums of the time it schedules, as the course's page and the time question
-  /// read them.
   struct Numbers: Decodable, Equatable, Sendable {
     struct Context: Decodable, Equatable, Sendable {
       let targetDate: String?
@@ -167,9 +157,8 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     /// Minutes for each weekday, Sunday first; 0 is a rest day.
     let weekdayMinutes: [Int]
 
-    /// The week as the editor asks it (core's `getWeekShape`): a study weekday's time (the most
-    /// common, so one shorter day doesn't count as the week's), and the weekend's own time when
-    /// the week studies on both and the weekend's differs.
+    /// Mirrors core's `getWeekShape`: a study weekday's time is the most common, so one shorter day
+    /// doesn't count as the week's.
     var shape: WeekShape {
       let minutes = { (day: Int) in weekdayMinutes.indices.contains(day) ? weekdayMinutes[day] : 0 }
       let weekdayDays = [1, 2, 3, 4, 5].filter { minutes($0) > 0 }
@@ -183,7 +172,7 @@ struct GoalPlan: Decodable, Equatable, Sendable {
         weekend: canDiffer && weekend != weekdays ? weekend : nil, weekendDays: weekendDays)
     }
 
-    /// The most common of these times, the longer one on a tie.
+    /// The longer one on a tie.
     private static func common(_ minutes: [Int]) -> Int? {
       minutes.max { first, second in
         let firstCount = minutes.count { $0 == first }
@@ -193,24 +182,20 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     }
   }
 
-  /// The plan's week split into weekdays (Monday to Friday) and the weekend, Sunday counted 0.
+  /// Sunday counted 0.
   struct WeekShape: Equatable {
-    /// The week studies on weekdays and on the weekend, so the weekend can take its own time.
     let canDiffer: Bool
     let weekdayDays: [Int]
-    /// A study weekday's time.
     let weekdays: Int
     /// The weekend's own time, or nil when it takes the weekdays' time.
     let weekend: Int?
     let weekendDays: [Int]
 
-    /// The time a day back on the plan takes: its part of the week's.
     func minutes(for weekday: Int) -> Int {
       [0, 6].contains(weekday) ? weekend ?? weekdays : weekdays
     }
   }
 
-  /// The learner's pace against the plan.
   struct Status: Decodable, Equatable, Sendable {
     enum Kind: String, Decodable, Sendable {
       case ahead
@@ -244,7 +229,6 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   let bases: Bases?
   let course: Course?
 
-  /// The Library course the plan picks some chapters of, whose page shows all of it.
   var partialCourse: Course? {
     guard let course, !course.brandSlug.isEmpty, course.planChapterCount > 0,
       course.planChapterCount < course.chapterCount
@@ -276,7 +260,6 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   let weekTime: WeekTime
   let writtenPractice: WrittenPractice?
 
-  /// The learner's today as the plan wrote its days.
   var today: String {
     week.days.first { $0.state == .today }?.date ?? week.startDate
   }
@@ -287,7 +270,6 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     phases.filter { $0.kind != .afterExam && $0.state != .leftOut }
   }
 
-  /// The chapter holding the plan's next lesson, wherever it is on the path.
   var nextChapter: PlanChapter? {
     phases.lazy.flatMap(\.chapters).first { $0.state == .current }
   }
@@ -311,7 +293,6 @@ struct PlanPhase: Decodable, Equatable, Identifiable, Sendable {
     case upcoming
   }
 
-  /// The challenge that closes the phase.
   struct Checkpoint: Decodable, Equatable, Sendable {
     enum State: String, Decodable, Sendable {
       case done
@@ -351,7 +332,6 @@ struct PlanPhase: Decodable, Equatable, Identifiable, Sendable {
 
   var id: Int { index }
 
-  /// How far into the phase its lessons are: a done one is full.
   var lessonShare: Double {
     if state == .done {
       return 1
@@ -376,7 +356,6 @@ struct PlanChapter: Decodable, Equatable, Identifiable, Sendable {
   let far: Bool
   let lessonsDone: Int
   let lessonsTotal: Int
-  /// The day the chapter's next lesson is planned for.
   let nextDate: String?
   let skillId: String?
   let state: State
@@ -406,7 +385,6 @@ struct PlanWeekDay: Decodable, Equatable, Identifiable, Sendable {
 
   var id: String { date }
 
-  /// How much of the day's plan is done, as its ring's arc.
   var share: Double {
     if state == .done {
       return 1
@@ -421,7 +399,6 @@ struct PlanWeekDay: Decodable, Equatable, Identifiable, Sendable {
   }
 }
 
-/// How deep a prerequisite is studied.
 enum BaseChoice: String, Codable, Sendable {
   case deep
   case essential
@@ -429,7 +406,6 @@ enum BaseChoice: String, Codable, Sendable {
   case skip
 }
 
-/// What to study once the plan is over: the next level of its course and the courses it drew from.
 struct StudyNext: Decodable, Equatable, Sendable {
   struct NextLevel: Decodable, Equatable, Sendable {
     let level: String
@@ -447,7 +423,6 @@ struct StudyNext: Decodable, Equatable, Sendable {
   let related: [Course]
 }
 
-/// A language goal's level across skills (`GET /goals/{goalId}/language-progress`).
 struct LanguageStanding: Decodable, Equatable, Sendable {
   struct Level: Decodable, Equatable, Sendable {
     let label: String
@@ -465,9 +440,8 @@ struct LanguageStanding: Decodable, Equatable, Sendable {
   let target: Target?
 }
 
-/// A language goal's units and its alphabet lesson (`GET /goals/{goalId}/language-units`).
 struct LanguageUnitsOverview: Decodable, Equatable, Sendable {
-  /// A script that isn't Latin: its alphabet lesson, first in the sessions while `pending`.
+  /// First in the sessions while `pending`.
   struct Alphabet: Decodable, Equatable, Sendable {
     let lessonId: String
     let minutes: Int
@@ -492,14 +466,13 @@ struct SkillOutline: Decodable, Equatable, Sendable {
   let chapters: [Chapter]
 }
 
-/// A plan read with when it was read, so returning to the Plan asks the cheap
-/// `getPlanChangedSince` before reading the expensive plan again.
+/// Returning to the Plan asks the cheap `getPlanChangedSince` before reading the expensive plan
+/// again.
 struct PlanRead: Equatable, Sendable {
   let plan: GoalPlan
   let readAt: Date
 }
 
-/// The goal's subjects or modules (`GET /goals/{goalId}/syllabus`); it also feeds search.
 struct GoalSyllabus: Decodable, Equatable, Sendable {
   struct Goal: Decodable, Equatable, Sendable {
     let kind: String
@@ -519,7 +492,6 @@ struct GoalSyllabus: Decodable, Equatable, Sendable {
   let subjects: [SyllabusSubject]
   let topicCount: Int
 
-  /// Whether the structure is worth its own section: an exam's subjects, or at least two modules.
   var hasSubjectPages: Bool {
     goal.kind == "exam" ? !subjects.isEmpty : subjects.count >= 2
   }
@@ -542,13 +514,11 @@ struct SyllabusSubject: Decodable, Equatable, Identifiable, Sendable {
     var id: String { chapterId ?? skillId ?? "\(position)" }
   }
 
-  /// An exam subject's first answers to unseen questions, once it has enough to count.
   struct Mastery: Decodable, Equatable, Sendable {
     let answered: Int
     let correct: Int
   }
 
-  /// A topic as the notice lists it, with where the learner stands on it.
   struct Topic: Decodable, Equatable, Identifiable, Sendable {
     let chapters: [Chapter]
     /// `high` reads "Appears a lot".
@@ -580,13 +550,11 @@ struct SyllabusSubject: Decodable, Equatable, Identifiable, Sendable {
 
   var id: String { key }
 
-  /// A module's lessons studied or known, as its bar measures them.
   var lessonShare: Double {
     lessonsTotal > 0 ? Double(lessonsDone + lessonsKnown) / Double(lessonsTotal) : 0
   }
 }
 
-/// Where the learner stands on an exam or learn goal (`GET /goals/{goalId}/progress`).
 struct GoalStanding: Decodable, Equatable, Sendable {
   struct Preparation: Decodable, Equatable, Sendable {
     struct Area: Decodable, Equatable, Identifiable, Sendable {
@@ -606,8 +574,7 @@ struct GoalStanding: Decodable, Equatable, Sendable {
   let preparation: Preparation?
 }
 
-/// "2027-11-14": a calendar day, as the plan writes its days. Read and shown in UTC so the day
-/// never moves with the device's zone.
+/// Read and shown in UTC, so the day never moves with the device's zone.
 enum PlanDate {
   private static let calendar: Calendar = {
     var calendar = Calendar(identifier: .gregorian)
@@ -633,7 +600,6 @@ enum PlanDate {
     return calendar.dateComponents([.day], from: start, to: end).day ?? 0
   }
 
-  /// "Nov 14", with the year when it isn't `today`'s; "November 2027" for a month.
   static func text(_ isoDate: String, today: String, month: Bool = false) -> String {
     guard let date = date(isoDate) else {
       return isoDate
@@ -654,7 +620,6 @@ enum PlanDate {
     return date.formatted(style)
   }
 
-  /// "Nov", with the year when it isn't `today`'s: an estimate known to the month.
   static func monthText(_ isoDate: String, today: String) -> String {
     guard let date = date(isoDate) else {
       return isoDate
@@ -664,13 +629,12 @@ enum PlanDate {
     return date.formatted(isoDate.prefix(4) == today.prefix(4) ? style : style.year())
   }
 
-  /// A day picked in a GMT calendar as "2027-11-14".
+  /// For a day picked in a GMT calendar.
   static func isoDate(_ date: Date) -> String {
     let parts = calendar.dateComponents([.year, .month, .day], from: date)
     return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
   }
 
-  /// "March 3, 2027", or "March 2027" for a month: a goal's date inside a sentence.
   static func longText(_ isoDate: String, month: Bool = false) -> String {
     guard let date = date(isoDate) else {
       return isoDate
@@ -680,7 +644,6 @@ enum PlanDate {
     return date.formatted(month ? style.month(.wide).year() : style.month(.wide).day().year())
   }
 
-  /// "Mon": a day's short weekday.
   static func weekday(_ isoDate: String) -> String {
     date(isoDate)?.formatted(Date.FormatStyle(timeZone: .gmt).weekday(.abbreviated)) ?? ""
   }

@@ -1,26 +1,23 @@
 import Foundation
 
-/// What changing a goal's status came to; resuming can hit the free plan's one active goal.
+/// Resuming can hit the free plan's one active goal.
 enum GoalStatusOutcome: Equatable, Sendable {
   case failed
   case limitReached
   case saved
 }
 
-/// The goal statuses the Plan's "…" sets.
 enum GoalStatusChange: String, Sendable {
   case active
   case archived
   case paused
 }
 
-/// Asking for a far topic's outline: a run is writing it, or the learner's plan reached its limit.
 enum OutlineRequest: Equatable, Sendable {
   case limit
   case started
 }
 
-/// The Plan's reads and writes. `PlanAPI` calls the API; tests use a stub.
 protocol PlanAPIClient: Sendable {
   func plan(token: String, goalId: String) async throws -> GoalPlan
   func planChanged(token: String, goalId: String, since: Date) async throws -> Bool
@@ -56,7 +53,6 @@ private struct PlanChangeRequest: Encodable {
   let timeZone: String
 }
 
-/// A change's answer, as the plan's changes and choices give it.
 struct PlanChangeResult: Decodable {
   let change: AppliedPlanChange?
   let status: String
@@ -113,8 +109,7 @@ struct PlanAPI: PlanAPIClient {
     }
   }
 
-  /// Whether the plan changed since `since` (lessons written, studied, re-planned): the cheap
-  /// question asked before reading the plan again.
+  /// The cheap question asked before reading the plan again.
   func planChanged(token: String, goalId: String, since: Date) async throws -> Bool {
     try await clients.perform(token: token) { client in
       switch try await client.getPlanChangedSince(
@@ -172,7 +167,6 @@ struct PlanAPI: PlanAPIClient {
     }
   }
 
-  /// What to study next once the plan is over, from the goal's map.
   func studyNext(token: String, goalId: String) async throws -> StudyNext? {
     try await clients.perform(token: token) { client in
       switch try await client.getGoalMap(path: .init(goalId: goalId)) {
@@ -186,7 +180,6 @@ struct PlanAPI: PlanAPIClient {
     }
   }
 
-  /// Whether resuming the paused goal changes its plan, asked before Resume.
   func resumeChangesPlan(token: String, goalId: String) async throws -> Bool {
     try await clients.perform(token: token) { client in
       switch try await client.previewGoalResume(path: .init(goalId: goalId)) {
@@ -229,7 +222,7 @@ struct PlanAPI: PlanAPIClient {
     }
   }
 
-  /// What a change would do, without saving it.
+  /// Doesn't save the change.
   func preview(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanEffect? {
     let (body, json) = try changeBody(edits)
 
@@ -299,7 +292,7 @@ struct PlanAPI: PlanAPIClient {
     }
   }
 
-  /// Plans the goal at each daily time to find the one that covers it: only when the learner asks.
+  /// Only when the learner asks: it plans the goal at each daily time.
   func timeToCover(token: String, goalId: String) async throws -> PlanTimeToCover {
     try await clients.perform(token: token) { client in
       switch try await client.findPlanTimeToCover(path: .init(goalId: goalId), body: .json(.init()))
@@ -323,7 +316,6 @@ struct PlanAPI: PlanAPIClient {
     }
   }
 
-  /// Starts the next level of the plan's course; the goal's plan is built again.
   func continueAtNextLevel(token: String, goalId: String) async throws -> Bool {
     try await clients.perform(token: token) { client in
       switch try await client.continueGoalAtNextLevel(path: .init(goalId: goalId)) {
@@ -336,7 +328,6 @@ struct PlanAPI: PlanAPIClient {
     }
   }
 
-  /// "I can already read it": the alphabet lesson stops opening the sessions.
   func skipAlphabet(token: String, goalId: String) async throws -> Bool {
     try await clients.perform(token: token) { client in
       switch try await client.skipAlphabetIntro(path: .init(goalId: goalId)) {
@@ -349,7 +340,6 @@ struct PlanAPI: PlanAPIClient {
     }
   }
 
-  /// The run building the goal's plan; nil when there's none.
   func goalGenerationId(token: String, goalId: String) async throws -> String? {
     try await clients.perform(token: token) { client in
       switch try await client.getGoalGeneration(path: .init(goalId: goalId)) {
@@ -361,7 +351,7 @@ struct PlanAPI: PlanAPIClient {
     }
   }
 
-  /// "Try again": starts the goal's run again, only from the learner's tap.
+  /// Only from the learner's tap.
   func restartGeneration(token: String, goalId: String) async throws -> String? {
     try await clients.perform(token: token) { client in
       switch try await client.createGoalGeneration(path: .init(goalId: goalId)) {
@@ -388,7 +378,7 @@ struct PlanAPI: PlanAPIClient {
     }
   }
 
-  /// Outlines a far topic's lessons, from the learner's tap.
+  /// Only from the learner's tap.
   func createOutline(token: String, goalId: String, skillId: String) async throws -> OutlineRequest
   {
     try await clients.perform(token: token) { client in

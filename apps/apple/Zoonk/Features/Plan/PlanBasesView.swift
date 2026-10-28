@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// "Prerequisites": how to study each topic the goal builds on, in depth, the essentials, one quick
-/// lesson, or skipped. The app recommends a choice only when the learner asks; picking one for all
-/// applies it to every prerequisite not studied yet. Before saving, the sheet says what the choices
-/// change, and studied prerequisites stay studied.
+/// The app recommends a choice only when the learner asks. Studied prerequisites stay studied.
 struct PlanBasesView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(PlanStore.self) private var store
@@ -228,7 +225,6 @@ struct PlanBasesView: View {
     }
   }
 
-  /// What the picked choices would change, asked again whenever they change.
   private func preview(_ changed: [GoalPlan.Bases.Item]) async {
     guard !changed.isEmpty else {
       effect = nil
@@ -268,7 +264,6 @@ struct PlanBasesView: View {
   }
 }
 
-/// "3 prerequisites · 2 hr": how many there are and the time they take as chosen.
 func planBasesSummary(_ bases: GoalPlan.Bases) -> String {
   let minutes = bases.items.filter { !$0.studied }.reduce(0) { sum, item in
     switch item.choice {

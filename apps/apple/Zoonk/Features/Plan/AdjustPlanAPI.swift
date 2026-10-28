@@ -1,6 +1,5 @@
 import Foundation
 
-/// A change the learner makes to their plan, in the API's operation shape.
 enum PlanEdit: Encodable, Equatable, Sendable {
   case dailyMinutes(Int)
   /// The subjects to focus on: they come first and get more depth.
@@ -14,9 +13,7 @@ enum PlanEdit: Encodable, Equatable, Sendable {
   case fullCourse(Bool)
   /// `moreExplanation`, `balanced` or `morePractice`.
   case practiceBias(String)
-  /// A language plan's activities brought back into its lessons.
   case restoreActivities([String])
-  /// A language plan's activities left out of its lessons.
   case skipActivities([String])
   /// A new date, or nil for none: a goal that isn't an exam studies everything at its own pace.
   case targetDate(String?)
@@ -105,7 +102,6 @@ enum PlanEdit: Encodable, Equatable, Sendable {
   }
 }
 
-/// What a change does to the plan: its end, and the lessons it brings in or leaves out.
 struct PlanEffect: Decodable, Equatable, Sendable {
   let endDateAfter: String?
   let endDateBefore: String?
@@ -113,7 +109,6 @@ struct PlanEffect: Decodable, Equatable, Sendable {
   let lessonsRemoved: Int
 }
 
-/// A change the plan made: what it did, and whether today's session follows it.
 struct AppliedPlanChange: Decodable, Equatable, Identifiable, Sendable {
   let canUndo: Bool
   let effect: PlanEffect?
@@ -124,18 +119,14 @@ struct AppliedPlanChange: Decodable, Equatable, Identifiable, Sendable {
   let todaySession: String?
 }
 
-/// What saving a change came to: applied, or not saved because it wouldn't change anything.
 enum PlanChangeOutcome: Equatable, Sendable {
   case applied(AppliedPlanChange)
-  /// The API refused it (a date out of range, a choice that no longer fits).
   case invalid
   case unchanged
-  /// It set back by hand what the latest change set, which undoes that change instead: the plan is
-  /// back as it was (core's `undoSetBack`).
+  /// It set back by hand what the latest change set, so core undid that change (`undoSetBack`).
   case undone
 }
 
-/// "Find the time that covers everything": the time a day that covers the goal by its date.
 struct PlanTimeToCover: Decodable, Equatable, Sendable {
   let coreMinutes: Int?
   let fittingDate: String?
@@ -144,13 +135,11 @@ struct PlanTimeToCover: Decodable, Equatable, Sendable {
   let targetDate: String?
 }
 
-/// How the app recommends studying the prerequisites, asked for by the learner.
 struct PlanBasesAdvice: Decodable, Equatable, Sendable {
   let ready: Bool
   let recommended: BaseChoice?
 }
 
-/// A tool's answer: the learner has it, a setup lesson comes first, or examples only.
 enum ToolChoice: String, Sendable {
   case have
   case none

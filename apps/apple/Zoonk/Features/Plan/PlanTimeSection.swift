@@ -1,10 +1,7 @@
 import SwiftUI
 
-/// The time a day, as onboarding asks it, with what the chosen time covers right under it, so each
-/// change shows its effect: the whole goal, or what it leaves lighter. Then "Find the time that
-/// covers everything", which plans the goal at each daily time only when the learner asks, moving a
-/// goal's date to the day the time covers it, and an exam's "Study everything, even after the
-/// exam", which says what it changes first.
+/// "Find the time that covers everything" plans the goal at each daily time only when the learner
+/// asks.
 struct PlanTimeSection: View {
   @Environment(PlanStore.self) private var store
   @State private var found: Found?
@@ -16,7 +13,6 @@ struct PlanTimeSection: View {
   /// The weekend has its own time: the time a day changes the weekdays alone.
   let weekendOn: Bool
 
-  /// What Find answered.
   private enum Found: Equatable {
     case building
     case failed
@@ -234,12 +230,10 @@ struct PlanTimeSection: View {
         comment: "Says the plan stops studying everything"))
   }
 
-  /// The times onboarding offers, with the learner's own among them.
   static let timeChoices = [10, 15, 20, 30, 45, 60, 90, 120, 180]
 }
 
-/// What the learner's own time covers by the date, exactly as their plan has it; nil when it
-/// covers everything in depth.
+/// Nil when it covers everything in depth.
 func planCoverageText(_ plan: GoalPlan) -> String? {
   guard let feasibility = plan.feasibility, feasibility.deadline != nil, !feasibility.fits else {
     return nil

@@ -1,9 +1,6 @@
 import SwiftUI
 
-/// What the Plan's slot can say, the most pressing first (main's order): the goal is paused, each
-/// exam choice still to make, the date came with lessons left, once the plan is finished what to
-/// study next (after what the learner's time fits), the plan no longer fits, the learner is behind,
-/// what their time fits or what it covers, and a free exam plan's week is over.
+/// The most pressing first, in main's order.
 enum PlanSlotItem: Hashable {
   case behind(String)
   case choice(GoalPlan.ExamChoice)
@@ -63,8 +60,7 @@ enum PlanSlotItem: Hashable {
   }
 }
 
-/// The Plan's one slot for what it wants the learner to know or decide, one thing at a time:
-/// "Not now" moves on to the next for as long as the app runs.
+/// One thing at a time: "Not now" moves on to the next for as long as the app runs.
 struct PlanSuggestionSection: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
@@ -265,14 +261,11 @@ struct PlanSuggestionSection: View {
         localized: "Your plan is updated.", table: "Plan", comment: "An offer applied"))
   }
 
-  /// Saves from the slot; the plan, Today and the summary follow.
   private var planEditor: PlanEditor {
     PlanEditor(goalId: context.goal.id, store: store)
   }
 }
 
-/// A paused goal, first, with the way back: nothing is planned until the learner resumes it. When
-/// resuming changes the plan (the pause left lessons behind), it says so before Resume.
 private struct PlanPausedSlot: View {
   @Environment(PlanStore.self) private var store
   @State private var isResuming = false
@@ -324,8 +317,6 @@ private struct PlanPausedSlot: View {
   }
 }
 
-/// Once every lesson is studied or tested out: the plan is finished, and what to study next is the
-/// next level of the same course in one tap, and the other courses the plan drew from.
 private struct PlanFinishedSlot: View {
   @Environment(PlanStore.self) private var store
   @State private var failed = false
@@ -363,7 +354,6 @@ private struct PlanFinishedSlot: View {
           .disabled(isStarting)
         }
 
-        // TODO(S10): open each course's catalog page once the shell has a route for one.
         ForEach(value.related) { course in
           Label(course.title, systemImage: "books.vertical")
             .font(.subheadline)
@@ -393,7 +383,6 @@ private struct PlanFinishedSlot: View {
   }
 }
 
-/// A course level's name: "Beginner", "Advanced".
 func planLevelName(_ level: String) -> String {
   switch level {
   case "overview": String(localized: "Overview", table: "Plan", comment: "A course level")
