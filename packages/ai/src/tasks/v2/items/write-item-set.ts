@@ -15,7 +15,6 @@ import { GENERATED_ITEM_SCHEMAS, type GeneratedItem } from "./item-schemas";
 import { formatPastQuestions } from "./past-question-lines";
 import taskPrompt from "./write-item-set.prompt.md";
 
-/** The item writer's model and fallback: a set's questions follow the same rules as the bank's. */
 const defaultModel = "openai/gpt-6-sol";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
 
@@ -23,25 +22,21 @@ const DEFAULT_OPTION_COUNT = 4;
 const MIN_QUESTIONS = 2;
 const MAX_QUESTIONS = 5;
 
-/** How a set's questions are asked: options to choose, or statements judged right or wrong. */
 export type ItemSetFormat = "multipleChoice" | "trueFalse";
 
-/** What a set's stimulus is: a passage, a case to analyze, or data the app draws. */
 const ITEM_SET_KINDS = ["text", "case", "chart"] as const;
 
 type ItemSetSkill = { name: string; description: string; level: CourseLevel };
 
 export type WriteItemSetParams = {
-  /** Two to four skills of one subject the set's questions test. */
+  /** Two to four skills of one subject. */
   skills: ItemSetSkill[];
   format: ItemSetFormat;
   questionCount: number;
   language: string;
   examFormat?: ItemExamFormat | null;
-  /** Titles of the sets these skills already have, so a new one is about something else. */
   usedTitles?: readonly string[];
   model?: string;
-  /** The gateway tier it answers at (see `ServiceTier`); the standard one when unset. */
   serviceTier?: ServiceTier;
   useFallback?: boolean;
   reasoning?: Reasoning;
@@ -78,10 +73,6 @@ export type WrittenItemSet = z.infer<ReturnType<typeof buildSchema>>;
 
 export type WrittenSetQuestion = WrittenItemSet["questions"][number];
 
-/**
- * A set's question as the item bank stores it: without its skill number (the item's skill) or
- * its evidence (code's check), with no support text, chart or picture of its own.
- */
 export function toSetItem(question: WrittenSetQuestion): GeneratedItem {
   const { evidence: _evidence, skill: _skill, ...item } = question;
 
@@ -106,7 +97,6 @@ function buildUserPrompt(params: WriteItemSetParams): string {
   const { examFormat, format, language, skills } = params;
   const questionCount = Math.min(Math.max(params.questionCount, MIN_QUESTIONS), MAX_QUESTIONS);
 
-  // Each line only when something the call reads refers to it.
   const optionCount =
     format === "multipleChoice"
       ? `\n    OPTION_COUNT: ${examFormat?.optionCount ?? DEFAULT_OPTION_COUNT}`
@@ -130,10 +120,8 @@ ${formatSkills(skills)}
 }
 
 /**
- * Writes one question set: a stimulus (an original passage, a case, or a chart's data) and several
- * questions on it, each testing one of the skills, in the exam's quick format. Shared Library
- * content: the prompt holds the exam and the skills, never a learner's words. Callers run the
- * set's checks and the item checks in `@zoonk/core` before storing.
+ * Shared Library content: the prompt never holds a learner's words. Callers run the set's checks
+ * and the item checks in `@zoonk/core` before storing.
  */
 export async function writeItemSet(params: WriteItemSetParams) {
   const {

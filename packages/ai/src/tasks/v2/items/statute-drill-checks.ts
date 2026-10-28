@@ -13,9 +13,8 @@ const NEGATION_CONTEXT_WORDS = 3;
 const MIN_NEGATION_CONTEXT_WORDS = 4;
 
 /**
- * A set where one answer is right more than 3 times as often as the other can
- * be passed by always giving that answer, so its surplus drills are dropped,
- * keeping at least one.
+ * A set where one answer is right more than 3 times as often as the other can be passed by always
+ * giving it, so surplus drills are dropped.
  */
 const MAX_MAJORITY_RATIO = 3;
 
@@ -23,7 +22,6 @@ type Problem = string | false;
 type CheckedDrill = { drill: StatuteDrill; problems: string[] };
 type DrillOf<FORMAT extends StatuteDrill["format"]> = Extract<StatuteDrill, { format: FORMAT }>;
 
-/** Case, accents, spacing and punctuation never change which words a passage has. */
 function toWords(text: string): string[] {
   return normalizeString(text.replaceAll(NON_WORD_PATTERN, " ")).split(" ").filter(Boolean);
 }
@@ -32,11 +30,6 @@ function containsWords(text: readonly string[], passage: readonly string[]): boo
   return passage.length > 0 && ` ${text.join(" ")} `.includes(` ${passage.join(" ")} `);
 }
 
-/**
- * Whether `target` has the words around the negation at `index` in `source`
- * without the negation itself: "sera obrigado a" where the source says "nao
- * sera obrigado a".
- */
 function dropsNegationAt({
   index,
   source,
@@ -176,14 +169,7 @@ function balanceTrueFalse(checked: readonly CheckedDrill[]): CheckedDrill[] {
   return checked.map((entry) => (surplus.has(entry) ? { ...entry, problems: [problem] } : entry));
 }
 
-/**
- * The statute rules a drill must meet, which a schema can't express: it cites
- * one of the given articles, a fill-in-the-blank passage filled with its answer
- * is the article's own text, a false statement isn't the text itself, a true
- * one doesn't negate it, no statement repeats, and true and false answers are
- * roughly balanced. Returns the passing drills, with each reference spelled as
- * the caller gave it, and the dropped ones with their problems.
- */
+/** Each passing drill's reference is spelled as the caller gave it. */
 export function checkStatuteDrills({
   articles,
   drills,

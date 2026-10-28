@@ -14,29 +14,18 @@ import typedQuestionRules from "./item-rules/typed-question.prompt.md";
 import typedSpokenRules from "./item-rules/typed-spoken.prompt.md";
 import { GENERATED_ITEM_SCHEMAS, type ItemFormat } from "./item-schemas";
 
-/** What a call writes, which decides the rules it reads. */
 export type ItemRulesScope = {
-  /** The formats the call writes. */
   formats: readonly ItemFormat[];
-  /** Whether the questions are set in a field of work (`FIELD`). */
   field: boolean;
-  /** Whether the skills practice a language (`TARGET_LANGUAGE`): a language goal's questions. */
   languageGoal: boolean;
-  /** Whether a numeric answer box takes less than any number (`ENTRY`): whole, n decimals, a fraction. */
   numericEntry?: boolean;
-  /**
-   * Whether the questions show their own chart or picture; by default when their formats can. A
-   * set's questions share the set's stimulus instead.
-   */
+  /** By default when their formats can. A set's questions share the set's stimulus instead. */
   pictures?: boolean;
-  /** Whether multiple choice asks the learner to pick several options (`SELECT`), not one. */
   severalPicks?: boolean;
 };
 
-/** How a typed question and its key points are written, shared with lessons' typed screens. */
 const typedRules = typedSpokenRules.replace("{{TYPED_QUESTION}}\n", () => typedQuestionRules);
 
-/** Each format's rules, in the order every writer reads them; typed and spoken share theirs. */
 const FORMAT_RULES: readonly { formats: readonly ItemFormat[]; rules: string }[] = [
   { formats: ["multipleChoice"], rules: multipleChoiceRules },
   { formats: ["trueFalse"], rules: trueFalseRules },
@@ -47,13 +36,11 @@ const FORMAT_RULES: readonly { formats: readonly ItemFormat[]; rules: string }[]
   { formats: ["numeric"], rules: numericRules },
 ];
 
-/** A language goal's clauses inside two rules every writer reads. */
 const LANGUAGE_GOAL_EXCEPTION =
   ', except the language practiced in a language goal (see "Language goals")';
 
 const LANGUAGE_GOAL_CHECK = " (in a language goal, the practiced language is in `TARGET_LANGUAGE`)";
 
-/** Whether a format's items can show a chart, a timeline or a picture: its schema has them. */
 function showsPictures(format: ItemFormat): boolean {
   return "image" in GENERATED_ITEM_SCHEMAS[format].shape;
 }
@@ -74,13 +61,6 @@ function pictureRulesFor({
     .join("");
 }
 
-/**
- * The rules every item writer shares (what makes a good question, exam style, text and tables, the
- * formats and the final check), with only the parts this call uses: its formats' rules, pictures
- * only for formats that show them, the field rule only for a field's questions, the language
- * goal's rules only for a language goal's, and how answers are given (several picks, a numeric
- * answer box) only when the exam asks that way. A rule still changes in one place for every writer.
- */
 function buildItemRules({
   field,
   formats,
@@ -105,7 +85,6 @@ function buildItemRules({
   });
 }
 
-/** Every item writer's prompt: its own role and goal, then the shared rules for what it writes. */
 export function withItemRules(taskPrompt: string, scope: ItemRulesScope): string {
   return `${taskPrompt}\n${buildItemRules(scope)}`;
 }

@@ -1,8 +1,6 @@
 /**
- * The fields practice can be set in, as shareable keys: a learner's own words ("ICU nurse at a
- * hospital in Recife") become one of these, so every nurse shares the same nursing questions and
- * nothing personal reaches shared content. Keys are English slugs, the same in every language,
- * since items and versions are already stored per language.
+ * A learner's own words become one of these, so nothing personal reaches shared content. English
+ * slugs in every language, since items are already stored per language.
  */
 export const WORK_FIELDS = [
   "accounting",

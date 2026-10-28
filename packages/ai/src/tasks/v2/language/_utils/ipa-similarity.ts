@@ -45,7 +45,7 @@ function getDistance(from: readonly string[], to: readonly string[]): number {
   return previous[to.length] ?? Math.max(from.length, to.length);
 }
 
-/** How alike two IPA spellings sound, from 0 (nothing shared) to 1 (the same sounds). */
+/** 0 for nothing shared, 1 for the same sounds. */
 export function getIpaSimilarity(left: string, right: string): number {
   const from = toSounds(left);
   const to = toSounds(right);
@@ -53,9 +53,7 @@ export function getIpaSimilarity(left: string, right: string): number {
 }
 
 /**
- * Whether sounds written in IPA are closer to a word's own pronunciation than to the English
- * reading of the same spelling: "ˈtaɪmi" is one sound away from the English "taɪm", so it isn't
- * Brazilian Portuguese "ˈtʃimi".
+ * "ˈtaɪmi" is one sound away from the English "taɪm", so it isn't Brazilian Portuguese "ˈtʃimi".
  */
 export function isCloserToNative({
   englishIpa,

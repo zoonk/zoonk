@@ -2,7 +2,7 @@ import { z } from "zod";
 import { imageRequestSchema } from "../images/image-request-schema";
 import { lessonVisualSchema } from "../visuals/visual-schema";
 
-/** Item formats, matching the `ItemFormat` database enum. */
+/** Matches the `ItemFormat` database enum. */
 const ITEM_FORMATS = [
   "multipleChoice",
   "trueFalse",
@@ -28,11 +28,7 @@ const MAX_ORDER_STEPS = 7;
 /** An AP scoring guideline's row is worth up to 6 points (a long essay's evidence row is 3 or 4). */
 const MAX_RUBRIC_ROW_POINTS = 6;
 
-/**
- * One row of an essay's rubric. `points` is the row's worth when the exam's scoring guidelines give
- * each row its own whole points (AP free-response: thesis 1, evidence and commentary 4), and null
- * when the exam's rubric doesn't.
- */
+/** `points` is null when the exam's rubric doesn't give each row its own whole points. */
 const essayRubricRowSchema = z.object({
   criterion: z.string(),
   description: z.string(),
@@ -42,9 +38,8 @@ const essayRubricRowSchema = z.object({
 const difficulty = z.enum(["easy", "medium", "hard"]);
 
 /**
- * How many options a multiple-choice question asks the learner to pick: one, an exact number
- * ("choose two", with exactly that many right) or every right one ("select all that apply", one
- * or more right). The exam's format sets it for the call that writes the question.
+ * One, an exact number ("choose two", with exactly that many right) or every right one ("select
+ * all that apply"). The exam's format sets it.
  */
 export const optionSelectSchema = z.union([
   z.number().int().min(1).max(MAX_OPTIONS),
@@ -54,11 +49,8 @@ export const optionSelectSchema = z.union([
 export type OptionSelect = z.infer<typeof optionSelectSchema>;
 
 /**
- * How a typed number is entered, as the exam's answer grid or box takes it: any number, graded by
- * its tolerance (`number`); a whole number (`integer`, JEE Main's integer answers); a number given
- * to `places` decimal places (`decimals`, JEE Advanced's "correct to two decimal places"); or a
- * fraction or a decimal (`fraction`, the SAT's student-produced answers). The exam's format sets it
- * for the call that writes the question.
+ * As the exam's answer box takes it: `number` is graded by its tolerance, `decimals` to `places`
+ * decimal places, and `fraction` takes a fraction or a decimal (the SAT's).
  */
 export const numericEntrySchema = z.object({
   kind: z.enum(["number", "integer", "decimals", "fraction"]),
@@ -67,7 +59,6 @@ export const numericEntrySchema = z.object({
 
 export type NumericEntry = z.infer<typeof numericEntrySchema>;
 
-/** A chart or timeline the app draws next to the question, when the question reads one; or null. */
 const visual = lessonVisualSchema.nullable();
 
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the situation and question come before the answers. */
@@ -76,7 +67,6 @@ const multipleChoiceItem = z.object({
   difficulty,
   context: z.string().nullable(),
   visual,
-  /** The picture a question is about (a diagram, a map), drawn and checked before it is stored. */
   image: imageRequestSchema,
   question: z.string(),
   options: z
@@ -91,9 +81,8 @@ const multipleChoiceItem = z.object({
     .min(MIN_OPTIONS)
     .max(MAX_OPTIONS),
   /**
-   * The options keep the order they're written in: a fixed set whose order means something (True,
-   * False, Not given; "1 only, 2 only, both, neither"; a quantity comparison's four answers).
-   * Every other question's options are shuffled once when stored.
+   * For a set whose order means something (True, False, Not given). Every other question's options
+   * are shuffled once when stored.
    */
   fixedOrder: z.boolean(),
 });
@@ -103,7 +92,6 @@ const trueFalseItem = z.object({
   difficulty,
   context: z.string().nullable(),
   visual,
-  /** The picture a question is about (a diagram, a map), drawn and checked before it is stored. */
   image: imageRequestSchema,
   statement: z.string(),
   isTrue: z.boolean(),
@@ -124,7 +112,6 @@ const typedItem = z.object({
   format: z.literal("typed"),
   ...openAnswerSetup,
   visual,
-  /** The picture a question is about (a diagram, a map), drawn and checked before it is stored. */
   image: imageRequestSchema,
   ...openAnswerFields,
 });
@@ -165,9 +152,8 @@ const orderItem = z.object({
 });
 
 /**
- * A math problem as data: the question names its variables in braces, code
- * recomputes the solution from the expression, and new values within each
- * range give fresh practice without new writing.
+ * Code recomputes the solution from the expression, and new values within each range give fresh
+ * practice without new writing.
  */
 const mathProblem = z.object({
   variables: z.array(
@@ -197,10 +183,7 @@ const numericItem = z.object({
   context: z.string().nullable(),
   question: z.string(),
   math: mathProblem,
-  /**
-   * Other answers that are right too, as expressions over the same variables, for a question with
-   * more than one ("one possible value of x": the other root). Empty for most questions.
-   */
+  /** For a question with more than one right answer ("one possible value of x"). */
   otherSolutions: z.array(z.string()),
 });
 /* oxlint-enable eslint/sort-keys */

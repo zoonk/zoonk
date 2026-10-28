@@ -8,9 +8,8 @@ export function isLiveCallAvailable(): boolean {
 }
 
 /**
- * Live calls go to OpenAI directly, not through AI Gateway: the Gateway serves GPT-Live only as a
- * browser WebSocket it can't end or measure from the server, while OpenAI's own API lets our
- * server create the browser's WebRTC session with its instructions and hang it up at the deadline.
+ * Not through AI Gateway: it serves GPT-Live only as a browser WebSocket the server can't end or
+ * measure, while OpenAI's API lets the server create the WebRTC session and hang it up on time.
  */
 export function getLiveCallModel() {
   return directOpenAI.experimental_realtime("gpt-live-1");

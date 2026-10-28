@@ -47,7 +47,6 @@ const params = {
   law: { shortName: "CF/88", title: "Constituição Federal", url: null },
 } satisfies Omit<StatuteDrillParams, "style">;
 
-/** Every property name in a JSON schema, at any depth. */
 function propertyNames(schema: unknown): string[] {
   if (Array.isArray(schema)) {
     return schema.flatMap((item) => propertyNames(item));

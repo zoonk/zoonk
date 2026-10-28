@@ -1,6 +1,5 @@
 import { type ItemExamFormat } from "./generate-items";
 
-/** The `PAST_QUESTIONS` lines, one past question per line, or nothing when there are none. */
 export function formatPastQuestions(examFormat: ItemExamFormat | null | undefined): string {
   const questions = examFormat?.pastQuestions ?? [];
 

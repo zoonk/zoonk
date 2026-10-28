@@ -5,11 +5,6 @@ const MAX_OBJECTIVES = 4;
 const MIN_HINTS = 3;
 const MAX_HINTS = 5;
 
-/**
- * What a live call needs, whether it's a unit's role play or an exam's speaking mock: the goal,
- * who the learner talks to, private notes for the voice model, the objectives, the first line and
- * phrases to lean on.
- */
 /* oxlint-disable eslint/sort-keys -- Structured output follows schema property order: the character's facts come before the lines and hints that use them. */
 export const scenarioSchema = z.object({
   title: z.string(),

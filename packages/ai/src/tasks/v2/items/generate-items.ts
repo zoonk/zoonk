@@ -20,13 +20,8 @@ import {
 import { formatPastQuestions } from "./past-question-lines";
 
 /**
- * From the generate-items eval (8 cases, Sep 2026): Sol scored 9.05 at $16 per
- * 1,000 runs, Opus 5.5 9.25 at $58 and Gemini 3.8 Flash 8.25 with wrong keys
- * and a medical error, so it is not a fallback. Field practice (nursing and law
- * cases, 27 Sep 2026): Sol 9.2, right keys, set in the field without needing it.
- * Essay rubric points (27 Sep 2026): Sol wrote an AP Biology free-response
- * question with a whole point per requirement (8.35) and ENEM's five
- * competencies with no points of their own (9.04).
+ * Sol scored close to Opus on the generate-items eval at a quarter of the cost; Flash wrote wrong
+ * keys and a medical error, so it isn't a fallback (Sep 2026).
  */
 const defaultModel = "openai/gpt-6-sol";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
@@ -35,33 +30,20 @@ const DEFAULT_COUNT = 4;
 const MAX_COUNT = 10;
 const DEFAULT_OPTION_COUNT = 4;
 
-/**
- * The part of an exam blueprint an item writer needs: its name and how its
- * questions look and score, such as "Cebraspe: one assertion judged right or
- * wrong, a wrong answer cancels a right one".
- */
 export type ItemExamFormat = {
   name: string;
   style: string;
-  /** Options per multiple-choice question, such as 5 for ENEM and 4 for the SAT. */
   optionCount?: number | null;
-  /** How many options a multiple-choice question asks to pick: JEE Advanced's "one or more". */
   select?: OptionSelect | null;
-  /** How a numeric answer is typed: the SAT's grid-ins, JEE Main's integers. */
   entry?: NumericEntry | null;
-  /**
-   * A few real questions from the exam's past papers (allowed to be quoted), as printed: what new
-   * questions match in difficulty, length and steps, never copy. Empty or absent without any.
-   */
+  /** Real questions allowed to be quoted, which new ones match in difficulty but never copy. */
   pastQuestions?: readonly string[] | null;
 };
 
-/** Whether the exam asks to pick several options, not one (`SELECT`). */
 function picksSeveral(examFormat: ItemExamFormat | null | undefined): boolean {
   return Boolean(examFormat?.select) && examFormat?.select !== 1;
 }
 
-/** The `ENTRY` line's value for an answer box that takes less than any number, or null. */
 function describeEntry(entry: NumericEntry | null | undefined): string | null {
   if (!entry || entry.kind === "number") {
     return null;
@@ -76,11 +58,10 @@ export type GenerateItemsParams = {
   level: CourseLevel;
   language: string;
   count?: number;
-  /** The learner's work ("nursing"), so practice is set in it. Null for general items. */
+  /** Null for general items. */
   field?: string | null;
   examFormat?: ItemExamFormat | null;
   model?: string;
-  /** The gateway tier it answers at (see `ServiceTier`); the standard one when unset. */
   serviceTier?: ServiceTier;
   useFallback?: boolean;
   reasoning?: Reasoning;
@@ -91,7 +72,6 @@ function buildUserPrompt(params: GenerateItemsParams): string {
   const { examFormat, field, format, skill } = params;
   const count = Math.min(params.count ?? DEFAULT_COUNT, MAX_COUNT);
 
-  // Only multiple-choice questions have options, and only a field's questions are set in it.
   const optionCount =
     format === "multipleChoice"
       ? `\n    OPTION_COUNT: ${examFormat?.optionCount ?? DEFAULT_OPTION_COUNT}`
@@ -121,12 +101,7 @@ ${formatLocalContext(params.language)}
   `;
 }
 
-/**
- * Writes practice and exam items for one skill in one format: a reason and a
- * misconception for every wrong option, key points for typed and spoken
- * answers, and math problems as data so code can recompute answers and make
- * new numbers. Callers run the item checks in `@zoonk/core` before storing.
- */
+/** Callers run the item checks in `@zoonk/core` before storing. */
 export async function generateItems(params: GenerateItemsParams) {
   const {
     analytics,

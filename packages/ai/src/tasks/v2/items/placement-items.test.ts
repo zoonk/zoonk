@@ -50,7 +50,6 @@ const responseFormatSchema = z.object({
   }),
 });
 
-/** The fields the model writes per skill, from the JSON schema it was given. */
 async function writtenSkillFields(): Promise<string[]> {
   const format = await vi.mocked(generateText).mock.calls[0]?.[0].output?.responseFormat;
   return Object.keys(responseFormatSchema.parse(format).schema.properties.skills.items.properties);

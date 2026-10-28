@@ -17,59 +17,44 @@ import typedCheck from "./placement-items-typed-check.prompt.md";
 import taskPrompt from "./placement-items.prompt.md";
 
 /**
- * The same writer as `generate-items`, whose eval chose Sol for correct keys and exam realism. On
- * the placement-items eval (3 cases of three skills, 30 Sep 2026) Sol scored 8.40 (ENEM 8.38,
- * Cebraspe true/false 8.73, SAT 8.08) with every key right, where single-skill writing of the
- * same skills scores 9.3–9.8. The judge's caps apply to the whole set: a typed question repeating
- * its skill's quick one, three false Cebraspe assertions and a duplicated accepted answer (the
- * prompt now rules these out), and one wrong distractor reason. The two cheapest, on 4 cases
- * (7 Oct 2026): Luna 7.96 and Claude Haiku 5.5 7.46 (one set failed) against Sol's 8.90, at $2 and
- * $2.50 per 1,000 runs against $40. On all 10 cases (13 Oct 2026): Sol 8.93 and 8.92 in two runs at
- * 48 s p50; GPT-6.1 Sol 9.09, within that noise, at 95 s p50, which the learner waiting on the
- * first batch would feel; Gemini 4 Argon 8.18 (correctness 7.4: wrong keys and legal slips).
+ * Sol wrote every key right on the placement-items eval; Luna and Haiku scored lower, and GPT-6.1
+ * Sol was within noise at twice the wait (13 Oct 2026).
  */
 const defaultModel = "openai/gpt-6-sol";
 const fallbackModels = ["anthropic/claude-opus-5.5"] as const;
 
 const DEFAULT_OPTION_COUNT = 4;
 
-/** The goal's clause for the typed questions that confirm a right quick answer. */
 const TYPED_GOAL = " and exactly `TYPED_COUNT` in the `typed` format";
 
-/** How placement asks quickly: one right option, or one assertion judged right or wrong. */
 type QuickItemFormat = "multipleChoice" | "trueFalse";
 
 type PlacementItemsSkill = {
   name: string;
   description: string;
   level: CourseLevel;
-  /**
-   * The situations the skill's questions in the bank already use (their opening words), so the
-   * new ones put the skill in others: a mock never asks the same case twice under new names.
-   */
+  /** So the new questions use other situations: a mock never asks the same case under new names. */
   usedSituations?: readonly string[];
 };
 
 export type PlacementItemsParams = {
   skills: PlacementItemsSkill[];
   quickFormat: QuickItemFormat;
-  /** Quick questions per skill. */
   quickCount: number;
-  /** Typed questions per skill, which confirm a right quick answer; 0 for quick questions only. */
+  /** They confirm a right quick answer; 0 for quick questions only. */
   typedCount: number;
   language: string;
-  /** The language a language goal's skills practice ("en"); its questions are in it. */
+  /** A language goal's questions are written in it. */
   targetLanguage?: string | null;
   examFormat?: ItemExamFormat | null;
   model?: string;
-  /** The gateway tier it answers at (see `ServiceTier`); the standard one when unset. */
   serviceTier?: ServiceTier;
   useFallback?: boolean;
   reasoning?: Reasoning;
   analytics?: AiGenerationContext;
 };
 
-/** One skill's questions, in the order of the skills asked for; empty when the model left it out. */
+/** In the order of the skills asked for; empty when the model left one out. */
 export type PlacementSkillItems = { quick: GeneratedItem[]; typed: GeneratedItem[] };
 
 type WrittenSkill = { skill: number; quick: GeneratedItem[]; typed?: GeneratedItem[] };
@@ -89,11 +74,6 @@ function formatSkills(skills: readonly PlacementItemsSkill[]): string {
     .join("\n");
 }
 
-/**
- * The writer's own rules, with the typed questions' only when it writes them (a language goal's
- * placement confirmations; every other call asks quick questions alone) and the true/false
- * balance only for true/false questions.
- */
 function buildTaskPrompt({ quickFormat, typedCount }: PlacementItemsParams): string {
   const writesTyped = typedCount > 0;
 
@@ -120,7 +100,6 @@ function buildSystemPrompt(params: PlacementItemsParams): string {
 function buildUserPrompt(params: PlacementItemsParams): string {
   const { examFormat, language, quickFormat, targetLanguage, typedCount } = params;
 
-  // Each line only when something the call reads refers to it.
   const typedLine = typedCount > 0 ? `\n    TYPED_COUNT: ${typedCount}` : "";
 
   const optionCount =
@@ -160,13 +139,8 @@ function buildSchema({ quickFormat, typedCount }: PlacementItemsParams) {
 /* oxlint-enable eslint/sort-keys */
 
 /**
- * Writes the bank's questions for several skills in one call: quick ones (multiple choice, or
- * the exam's true/false judgments) to ask each skill and to confirm a right answer, and, for a
- * language goal's placement, typed ones to confirm it. Mocks, focus tests and test-outs ask for
- * quick ones alone.
- * One call per few skills repeats the shared instructions far less than one call per skill and
- * format; a few skills per call keep each wait short, since output is written token by token.
- * Callers run the item checks in `@zoonk/core` before storing.
+ * A few skills per call repeat the shared instructions far less than one call per skill, and keep
+ * each wait short. Callers run the item checks in `@zoonk/core` before storing.
  */
 export async function generatePlacementItems(params: PlacementItemsParams) {
   const {

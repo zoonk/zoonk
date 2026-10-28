@@ -11,47 +11,32 @@ import { GENERATED_ITEM_SCHEMAS, type GeneratedItem } from "./item-schemas";
 import { checkStatuteDrills } from "./statute-drill-checks";
 import rulesTemplate from "./statute-drills.prompt.md";
 
-/**
- * From the statute-drills eval (CF/88 art. 5 Cebraspe and GDPR art. 33 mix,
- * Sep 2026): Luna scored 9.65 at $1.23 per 1,000 runs, Sol 9.19 at $23 with a
- * wrong key, Gemini 3.5 Flash Lite 8.77 at $3.26, Gemini 3.8 Flash 8.62 and
- * Sonnet 5 8.08 with a wrong key. After the prompt said what makes a statement
- * false, Luna scored 9.42 on those two cases plus an FGV one.
- */
+/** Luna scored highest on the statute-drills eval at a twentieth of Sol's cost (Sep 2026). */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["openai/gpt-6-sol", "google/gemini-3.5-flash-lite"] as const;
 
 const MIN_COUNT = 1;
 const MAX_COUNT = 20;
 
-/** Options in every statute multiple-choice drill, as FGV writes them; callers pass it to the item checks. */
+/** As FGV writes them; callers pass it to the item checks. */
 export const STATUTE_DRILL_OPTION_COUNT = 4;
 
 type StatuteDrillFormat = "trueFalse" | "typed" | "multipleChoice";
 
-/**
- * The exam board's format: Cebraspe judges statements right or wrong, FGV
- * asks multiple choice on the literal text, and generic mixes both, with
- * fill-in-the-blank passages when the exam asks short written answers.
- */
+/** Cebraspe judges statements right or wrong, FGV asks multiple choice, and generic mixes both. */
 type StatuteDrillStyle = "cebraspe" | "fgv" | "generic";
 
-/** One article (or paragraph, or item) and its official text as published. */
 export type StatuteArticle = { reference: string; text: string };
 
 export type StatuteDrillParams = {
-  /** The learner's language, for reasons and misconceptions. Drills keep the law's own wording. */
+  /** For reasons and misconceptions; drills keep the law's own wording. */
   language: string;
-  /** The law being drilled. `url` points to the official text, for the "read the law" link. */
   law: { title: string; shortName: string; url: string | null };
   articles: StatuteArticle[];
   style: StatuteDrillStyle;
-  /**
-   * The exam asks short written answers, so the generic style mixes in fill-in-the-blank passages
-   * (typed); otherwise its drills are only ones learners answer by picking, which practice asks.
-   */
+  /** For an exam that asks short written answers; otherwise drills are only answered by picking. */
   fillInTheBlank?: boolean;
-  /** Drills wanted, from 1 to 20. */
+  /** 1 to 20. */
   count: number;
   model?: string;
   useFallback?: boolean;
@@ -59,7 +44,6 @@ export type StatuteDrillParams = {
   analytics?: AiGenerationContext;
 };
 
-/** An item in one of the drill formats, plus the reference of the article it drills. */
 export type StatuteDrill = Extract<GeneratedItem, { format: StatuteDrillFormat }> & {
   reference: string;
 };
@@ -68,9 +52,8 @@ export type StatuteDrill = Extract<GeneratedItem, { format: StatuteDrillFormat }
 const reference = z.string();
 
 /**
- * A drill asks about the law's own words, so it has no chart or picture: without them, every
- * style's schema is small enough for each provider's structured output (Gemini rejected the
- * generic style's three formats with their pictures, 9 Oct 2026).
+ * Without pictures, every style's schema is small enough for each provider's structured output
+ * (Gemini rejected the generic style's with them, 9 Oct 2026).
  */
 const NO_PICTURES = { image: true, visual: true } as const;
 
@@ -117,13 +100,8 @@ ${formatUntrustedInput(texts)}
 }
 
 /**
- * Turns statute text (lei seca) into drills on its letter, the way exam
- * boards test it: true statements that repeat the text, false ones that
- * change exactly one element, and, for exams that ask short written answers,
- * fill-in-the-blank passages, whose rules no other call reads. The statute's
- * text is passed as data. Only drills that pass the statute checks are
- * returned; `dropped` keeps the others with their problems so callers can log
- * them. Callers still run the item checks in `@zoonk/core` before storing.
+ * `dropped` keeps the drills that failed the statute checks, with their problems. Callers still run
+ * the item checks in `@zoonk/core` before storing.
  */
 export async function generateStatuteDrills(params: StatuteDrillParams) {
   const {
@@ -143,7 +121,6 @@ export async function generateStatuteDrills(params: StatuteDrillParams) {
   });
 
   const userPrompt = buildUserPrompt(params);
-  // Fill-in-the-blank passages only where the exam asks short written answers.
   const drillSchema = fillInTheBlank ? STYLE_SCHEMAS.genericWithBlanks : STYLE_SCHEMAS[style];
   const schema = z.object({ drills: z.array(drillSchema) });
   const providerOptions = buildProviderOptions({ fallbackModels, model, useFallback });
