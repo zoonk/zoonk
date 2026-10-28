@@ -2,11 +2,6 @@ import { type PlanBasesView } from "../plan-view-contract";
 import { type PlanBases, getBaseChoices } from "../planner/plan-bases";
 import { type PlanSettings } from "../planner/plan-state";
 
-/**
- * The plan's bases as the learner chooses how to study them: the ones still to choose for, each
- * with the learner's choice and what each choice takes (in whole minutes), and how many the
- * learner already showed they know. Null when the plan has none.
- */
 export function toPlanBasesView({
   bases,
   settings,

@@ -11,16 +11,12 @@ import { isUndoableChange, parsePlanChangePayload } from "./plan-change-payload"
 import { type PlanContext } from "./plan-context";
 import { isCurrentPlanPreview } from "./plan-preview-basis";
 
-/** Changes stay on the plan for two weeks; proposals stay until the learner answers. */
 const RECENT_CHANGE_DAYS = 14;
 const MAX_CHANGES = 10;
 
 /**
- * The app says changes from these sources itself, from their kind, operations and effect (a
- * rebalance after a session is "preparation"); other sources wrote a sentence for the learner. A
- * change read from the learner's words ("planEdit", the buddy's or the plan page's) is said from
- * what it does, never from the model's summary of what they asked, which can claim more than the
- * change does ("Sundays stay free" while the plan keeps its Sunday mocks).
+ * The app words changes from these sources itself: a model's summary of the learner's words can
+ * claim more than the change does.
  */
 const LEARNER_FACING_SOURCES = new Set([
   "learner",
@@ -30,10 +26,6 @@ const LEARNER_FACING_SOURCES = new Set([
   "system",
 ]);
 
-/**
- * Edits and test-outs can be undone while the plan is exactly as they left it. Any later change
- * (another edit, missed days re-flowing) ends the undo, so an undo never reverts something else.
- */
 export function canUndoChange({
   change,
   planVersion,
@@ -46,7 +38,6 @@ export function canUndoChange({
   );
 }
 
-/** The plan's goal as a change's view reads it: what its exam's documents are. */
 export const changeGoalSelect = { kind: true, targetLanguage: true, timezone: true } as const;
 
 export async function toPlanChangeView({
@@ -90,7 +81,6 @@ export async function toPlanChangeView({
     lessonsSkipped: payload.lessonsSkipped ?? 0,
     officialDate: payload.officialDate,
     operations: payload.operations,
-    // A change without a sentence of its own (an exam notice's, say) is said by the app.
     reason: LEARNER_FACING_SOURCES.has(payload.source) || !change.reason ? null : change.reason,
     seen: payload.seenAt !== null,
     source: payload.source,
@@ -99,7 +89,6 @@ export async function toPlanChangeView({
   };
 }
 
-/** Proposals waiting for the learner's OK, then the changes of the last two weeks, newest first. */
 export async function loadPlanChangeViews({
   context,
   goal,

@@ -10,7 +10,6 @@ import {
 
 type PartAreas = ReadonlyMap<string, string>;
 
-/** The name an area goes by among the ones listed with it: its whole's, when that's listed too. */
 function toShownArea({
   area,
   listed,
@@ -28,7 +27,6 @@ function foldNames({ names, partAreas }: { names: string[]; partAreas: PartAreas
   return names.filter((area) => toShownArea({ area, listed: names, partAreas }) === area);
 }
 
-/** One entry per area as shown: a part's entry merges into its whole's when the whole has one. */
 function foldEntries<T extends { area: string }>({
   entries,
   merge,
@@ -61,7 +59,6 @@ function earlier(first: string | null, second: string | null): string | null {
   return first < second ? first : second;
 }
 
-/** A subject ends when its last part does, with the lessons its parts gain together. */
 function mergeEnds(whole: AreaEnd, part: AreaEnd): AreaEnd {
   const gained = (whole.lessonsGained ?? 0) + (part.lessonsGained ?? 0);
 
@@ -73,7 +70,6 @@ function mergeEnds(whole: AreaEnd, part: AreaEnd): AreaEnd {
   };
 }
 
-/** A subject starts when its first part does. */
 const mergeStarts = (whole: AreaStart, part: AreaStart): AreaStart => ({
   after: earlier(whole.after, part.after),
   area: whole.area,
@@ -121,12 +117,6 @@ function foldEffect({
   };
 }
 
-/**
- * A change as learners see its areas: an area that's part of another (the foreign language an ENEM
- * candidate takes, inside the languages area; see `findPartAreas`) goes by that area's name
- * wherever both are named, its lines merged into that area's (the later end, the earlier start,
- * the lessons and topics together), as the syllabus shows it. A part named alone keeps its name.
- */
 export function foldChangeAreas<
   T extends { effect: PlanEffect | null; operations: PlanOperation[] },
 >({ change, partAreas }: { change: T; partAreas: PartAreas }): T {

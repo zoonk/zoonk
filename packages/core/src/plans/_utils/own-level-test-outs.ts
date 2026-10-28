@@ -2,14 +2,8 @@ import { type GoalPlan } from "../../learner/_utils/goal-skill-graph";
 import { type OwnLevel, START_POSITIONS } from "../../learner/placement/placement-steps";
 import { type OwnLevelTestOut } from "../own-level-contract";
 
-/** A few chapters to test out of is an offer; a long list would feel like homework. */
 const MAX_TEST_OUTS = 5;
 
-/**
- * The chapters a higher level says the learner may already know: those that start in the part
- * of the plan the level covers (a quarter for basic, half for intermediate, three quarters for
- * advanced) and still have lessons to do, in plan order.
- */
 export function findLevelTestOuts({
   level,
   plan,

@@ -4,9 +4,8 @@ import { type AnalyticsPlatform } from "../../analytics/shared-properties";
 import { trackLearnerEvents } from "../../analytics/track-learner-event";
 
 /**
- * "Plan Created", sent from the server when a goal's plan is built for the first time, so the
- * onboarding funnel counts it even when the page that asked for it was closed. Quick
- * explanations have a plan item too, but they aren't plans the learner made.
+ * Sent from the server, so the onboarding funnel counts it even when the page that asked was
+ * closed.
  */
 export async function trackPlanCreated({
   estimateHours,

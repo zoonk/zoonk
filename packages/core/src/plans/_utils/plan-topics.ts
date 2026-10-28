@@ -9,19 +9,12 @@ import { type AddedSkill } from "../plan-contract";
 import { toIsoDate } from "../planner/plan-calendar";
 import { type PlanContext } from "./plan-context";
 
-/**
- * A topic the learner adds is about a chapter's worth of lessons: what the Library's next chapter
- * writes for it, and the fewest a skill keeps a stand-in for. A language goal's plan shares its
- * lessons among its situations (`sizeLanguageGraph`), the new ones included.
- */
 const TOPIC_LESSONS = 8;
 
 const DEFAULT_TOPIC_LEVEL: CourseLevel = "beginner";
 
-/** A skill the learner hasn't started, with the day its first lesson is planned. */
 type UnstartedSkill = { scheduledFor: Date | null; skillId: string };
 
-/** The skills the learner hasn't started, in the plan's order: what it teaches next. */
 function listUnstartedSkills(context: PlanContext): UnstartedSkill[] {
   const started = new Set(
     context.items.flatMap((item) => (item.skillId && item.status !== "todo" ? [item.skillId] : [])),
@@ -39,11 +32,6 @@ function listUnstartedSkills(context: PlanContext): UnstartedSkill[] {
   }));
 }
 
-/**
- * The skill the topics come before when the learner said when they start ("logo", "next week"):
- * the first one not started whose lessons begin on that day or later, so the topics are what the
- * plan teaches next from then on. Null when the plan starts nothing new from that day.
- */
 function findTimedAnchor({
   startDate,
   unstarted,
@@ -57,15 +45,6 @@ function findTimedAnchor({
   );
 }
 
-/**
- * The skill each added topic comes before. From the day the learner said they start, all of them
- * come next (`findTimedAnchor`): Carla asked to start her school's portfolio project "logo" and
- * it came seven weeks later. Otherwise the topics spread through the skills the learner hasn't
- * started, each after an even share of them, so they come in among what the plan teaches instead
- * of all ahead of it (Marcos got 19 field lessons before his interview basics), and never ahead
- * of the skill the learner starts next while another is left. Null puts a topic at the start of
- * the plan's first phase, when every skill has started.
- */
 function findAnchorSkillIds({
   context,
   count,
@@ -86,11 +65,6 @@ function findAnchorSkillIds({
   });
 }
 
-/**
- * Where an added topic's skill lives: the shared Library, in the language of the goal's course,
- * so it resolves to the skill every learner who needs it shares. Only what the learner's own
- * material teaches is private, and a topic they ask for in words isn't that.
- */
 async function loadTopicScope(goal: PlanContext["goal"]): Promise<CurriculumScope> {
   const course = goal.primaryCourseId
     ? await prisma.course.findUnique({
@@ -107,14 +81,11 @@ async function loadTopicScope(goal: PlanContext["goal"]): Promise<CurriculumScop
   };
 }
 
-/** A topic the learner asked for, with the shared skill name it's added under. */
 type NamedTopic = PlanEditTopic & { skill: TopicSkillName };
 
 /**
- * The topics named as shared Library skills (see `nameTopicSkills`): the learner's words, which can
- * name their teacher, school or test, go to that one call and never to the shared skill, its search
- * or its lessons. A topic the call couldn't name isn't added. Returns the call's provenance, which
- * the skills it creates keep.
+ * The learner's words can name their teacher, school or test, so they go only to this call, never
+ * to the shared skill, its search or its lessons.
  */
 async function nameTopics({
   context,
@@ -147,10 +118,6 @@ async function nameTopics({
   return { provenance: toProvenanceData(named.provenance), topics: withSkills };
 }
 
-/**
- * The Library level of the skills the topics come before, so each is written at the learner's
- * level where it comes in.
- */
 async function loadAnchorLevels(skillIds: readonly (string | null)[]) {
   const skills = await prisma.skill.findMany({
     select: { id: true, level: true },
@@ -164,21 +131,13 @@ async function loadAnchorLevels(skillIds: readonly (string | null)[]) {
   );
 }
 
-/**
- * The skills for the topics a learner asked their plan to add (SQL for a data analyst's English,
- * a portfolio project), each named as a shared skill first (see `nameTopics`), then found in the
- * Library or created there under that name, so other learners' lessons on them are shared: each a
- * chapter's worth of lessons under its area, from the day the learner said (`startDate`) or spread
- * through what they haven't started (see `findAnchorSkillIds`). The planner adds them as stand-ins
- * and the Library outlines them as they come up.
- */
 export async function toTopicSkills({
   context,
   startDate,
   topics,
 }: {
   context: PlanContext;
-  /** The day the learner said the topics start (YYYY-MM-DD); null spreads them. */
+  /** YYYY-MM-DD; null spreads the topics through what the learner hasn't started. */
   startDate: string | null;
   topics: readonly PlanEditTopic[];
 }): Promise<AddedSkill[]> {

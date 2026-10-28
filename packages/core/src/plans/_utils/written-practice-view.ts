@@ -6,19 +6,10 @@ import { isShortExam } from "../planner/short-exam-plan";
 import { getEffectiveCadence, getFinalWeeksStart } from "../planner/written-cadence";
 import { type WrittenPractice } from "../written-practice-contract";
 
-/**
- * The plan's first day; a plan the planner hasn't run on since it was created (a seeded one) began
- * the day its goal was created.
- */
 function getPlanStart({ createdAt, settings }: { createdAt: Date; settings: PlanSettings }) {
   return settings.startDate ? fromIsoDate(settings.startDate) : fromIsoDate(toIsoDate(createdAt));
 }
 
-/**
- * When the plan's written tests are practiced, as the learner chooses it (see `WRITTEN_CADENCES`):
- * the cadence that applies, their names, and the first day of the final weeks when that choice
- * applies. Null without written tests, and for a test days away, whose few days need them all.
- */
 export function getWrittenPracticeView({
   goal,
   graph,

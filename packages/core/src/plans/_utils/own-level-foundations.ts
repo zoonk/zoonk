@@ -5,14 +5,8 @@ import { loadPrerequisiteGaps } from "../../memory/insights/_utils/prerequisite-
 import { type PlanOperation } from "../plan-contract";
 import { type PlanContext } from "./plan-context";
 
-/** The plan's entry points whose missing foundations a lower level brings in, in plan order. */
 const MAX_ENTRY_SKILLS = 5;
 
-/**
- * The foundations a lower level needs: the missing, not yet learned prerequisites (from the shared
- * skill graph) of the skills the plan starts from, each right before the skill it prepares for.
- * Empty when the plan already starts from them.
- */
 export async function findFoundationOperations({
   context,
   plan,

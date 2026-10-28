@@ -17,7 +17,6 @@ export function getPlanPreviewBasis(context: PreviewContext) {
   };
 }
 
-/** A quote is actionable only for the saved plan, local day and zone it was computed from. */
 export function isCurrentPlanPreview({
   basis,
   context,

@@ -3,11 +3,6 @@ import { type ExistingPlanItem } from "../planner/plan-items";
 
 const LEARN_KINDS: ReadonlySet<ExistingPlanItem["kind"]> = new Set(["chapter", "lesson"]);
 
-/**
- * The learner's own day each finished lesson of the plan was done, by item id: the day it was
- * taught, early or late, whatever day the plan had it on (see `BuildPlanInput.finishedOn`). A
- * lesson done before its time was saved has none.
- */
 export function listFinishedDays({
   items,
   timeZone,

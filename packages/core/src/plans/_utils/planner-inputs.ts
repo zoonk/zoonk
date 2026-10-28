@@ -15,10 +15,6 @@ import { loadExamFacts } from "./planner-exam-facts";
 import { loadGoalPlannerLessons } from "./planner-lessons";
 import { loadStrongAreas } from "./strong-areas";
 
-/**
- * Plans may point at a skill merged into another since; the learner's state and the lessons live
- * on the survivor. Duplicates that merged into one skill keep their first place.
- */
 export async function resolveMergedSkills(graph: PlanGraph): Promise<PlanGraph> {
   const survivorOf = await loadSkillSurvivors(graph.skills.map((skill) => skill.skillId));
   const skills = graph.skills.map((skill) => ({ ...skill, skillId: survivorOf(skill.skillId) }));
@@ -40,7 +36,6 @@ export async function resolveMergedSkills(graph: PlanGraph): Promise<PlanGraph> 
   };
 }
 
-/** The Library band the skill graph put each skill in (see `PlanBase`). */
 async function loadSkillBands(skillIds: string[]): Promise<Map<string, CourseLevel>> {
   const skills = await prisma.skill.findMany({
     orderBy: { id: "asc" },
@@ -53,7 +48,6 @@ async function loadSkillBands(skillIds: string[]): Promise<Map<string, CourseLev
   );
 }
 
-/** For exam priority: each skill's state and how much of it will be remembered on the exam day. */
 async function loadReadiness({
   skillIds,
   targetDate,
@@ -89,10 +83,6 @@ async function loadReadiness({
   );
 }
 
-/**
- * Reads what the planner needs from the Library and the learner model for one goal's graph. A plan
- * the learner made harder also needs the areas they're doing well in, which it starts past.
- */
 export async function loadPlannerInputs({
   difficultyBias,
   examChoices = [],
@@ -103,9 +93,7 @@ export async function loadPlannerInputs({
   userId,
 }: {
   difficultyBias: DifficultyBias;
-  /** The options the learner picked of their exam's choices (`PlanSettings.examChoices`). */
   examChoices?: readonly ExamChoice[];
-  /** Where the learner focuses: their own answers take those skills as known twice. */
   focus?: Pick<PlanSettings, "focusAreas" | "focusParts">;
   goal: Pick<Goal, "details" | "examBlueprintId" | "id" | "kind" | "primaryCourseId">;
   graph: PlanGraph;
@@ -128,14 +116,9 @@ export async function loadPlannerInputs({
       skillIds,
       userId,
     }),
-    // An exam tells its bases by how often it asks topics; other goals, by band (see `PlanBase`).
     isExam ? new Map<string, CourseLevel>() : loadSkillBands(skillIds),
   ]);
 
-  // A test's miss is a gap, and so is a topic the learner was taken to know (or passed over by
-  // choice) that practice then missed: its lessons come back first (see `SkillClaim`).
-  // What the learner showed they know, as the syllabus says it (see `listKnownSkills`). A skill
-  // they passed over by choice has no lessons in the plan either way, so it never waits for time.
   const { answeredWrong, claims, known: knownSkillIds } = evidence;
   const missedSkillIds = listClaimed({ claim: "gap", claims });
 

@@ -20,24 +20,12 @@ import { getPlanPreviewBasis } from "./plan-preview-basis";
 import { type ComputedPlan, type PlanTagRevalidation, revalidatePlanTags } from "./replan";
 import { getBuiltChange } from "./seen-effect";
 
-/**
- * How a learner's change planned the plan it saved (see `getChangePlanning`), from its own state:
- * moving the phase dates is planned the same way, to compare.
- */
 type ChangePlanning = {
   bringBackSetAside: boolean;
   state: PlanState;
   todayExceptAreas: readonly string[] | null;
 };
 
-/**
- * The plan with its phase dates moved, when keeping the dates the learner saw (`computed`, see
- * `keepPhaseEnds`) leaves lessons out by the goal's date that moving them fits in: the lessons
- * written since took more or less time than planned, and the days a phase no longer needs can't
- * go to the phases after it. Also when keeping them holds a challenge on a day without room for it
- * (see `listStrainedEnds`) and moving them gives it another day. Null when keeping them costs
- * nothing, so the dates simply stay.
- */
 async function findMovedPhaseDates({
   computed,
   context,
@@ -72,12 +60,6 @@ async function findMovedPhaseDates({
     : null;
 }
 
-/**
- * What moving the phase dates does: the lessons it fits in by the goal's date, and the phases, each
- * from the end the plan this run saves shows. Named from the ends before the run, a proposal moved
- * an ended phase's end its settling had already moved to its carried lessons, so the next run read
- * it as not starting from the ends the learner sees and withdrew it (career 1160).
- */
 function getMovedDatesEffect({
   computed,
   moved,
@@ -96,7 +78,6 @@ function getMovedDatesEffect({
   };
 }
 
-/** Whether a proposal's moves start from these phase ends, the ones the learner still sees. */
 function startsFromEnds({
   effect,
   phases,
@@ -131,12 +112,6 @@ async function loadPhaseDatesChanges(
   }));
 }
 
-/**
- * Withdraws Today's proposal to move the phase dates when the plan a refresh finds unchanged no
- * longer needs it (see `mayCostToKeepPhaseDates`): that refresh doesn't weigh the proposal again,
- * so an on-track learner kept reading that lessons came out longer than planned (walk, Lucas).
- * Without a build, only quotes that no longer start at the saved dates retire.
- */
 export async function withdrawUnneededPhaseDatesProposal({
   computed,
   context,
@@ -150,7 +125,6 @@ export async function withdrawUnneededPhaseDatesProposal({
     return;
   }
 
-  // With no new inputs, only a quote that no longer starts at the saved dates is obsolete.
   const earlier = await loadPhaseDatesChanges(context.plan.id);
 
   const waiting = earlier.filter(
@@ -177,16 +151,6 @@ export async function withdrawUnneededPhaseDatesProposal({
   }
 }
 
-/**
- * Keeps Today's proposal to move the phase dates true to the plan as a system refresh leaves it
- * (with the dates the learner saw, see `keepPhaseEnds`): when keeping them leaves lessons out by
- * the goal's date that moving them fits in, Today asks, with what moves (Apply, or "Keep mine");
- * otherwise a proposal still waiting no longer applies and is withdrawn. A learner who kept their
- * dates isn't asked again while those are the dates they see, the ones this run saves (a missed
- * day's settling may move one: career 1160 waited a run for its card), unless keeping them now
- * costs what the card they answered didn't name (see `isKeptOver`). A learner's change asks again
- * right away (see `askPhaseDatesAfterChange`).
- */
 export async function preparePhaseDatesProposal({
   computed,
   context,
@@ -196,10 +160,8 @@ export async function preparePhaseDatesProposal({
 }: {
   computed: ComputedPlan;
   context: PlanContext;
-  /** How `computed` was planned: moving the dates is planned the same way, to compare. */
   mode: PlanningMode;
   pace: "sampled" | "saved";
-  /** How a learner's change planned `computed`, right after it (see `askPhaseDatesAfterChange`). */
   planning?: ChangePlanning;
 }): Promise<((tx: TransactionClient) => Promise<void>) | null> {
   const moved = await findMovedPhaseDates({ computed, context, mode, pace, planning });

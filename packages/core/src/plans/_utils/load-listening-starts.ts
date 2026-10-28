@@ -14,7 +14,6 @@ import {
 } from "./level-listening-starts";
 import { parsePlanChangePayload } from "./plan-change-payload";
 
-/** The areas whose start the learner already chose in the plan (`setAreaStart`), either way. */
 async function listChosenStartAreas(
   planId: string,
   tx: TransactionClient = prisma,
@@ -37,10 +36,6 @@ async function listChosenStartAreas(
   );
 }
 
-/**
- * `pickListeningPastBasicsAreas` for a plan, reading the exam's listening skills and the starts
- * the learner chose only when their word could start one past the basics.
- */
 export async function listListeningPastBasicsAreas({
   goal,
   graph,
@@ -65,7 +60,6 @@ export async function listListeningPastBasicsAreas({
   return pickListeningPastBasicsAreas({ chosen, goal, graph, listening });
 }
 
-/** The skills among these the learner ever answered wrong or said they don't know yet. */
 async function listMissedSkillIds({
   skillIds,
   userId,
@@ -84,10 +78,6 @@ async function listMissedSkillIds({
   return new Set(missed.flatMap((attempt) => attempt.skillId ?? []));
 }
 
-/**
- * `pickPlacementListeningAreas` for a goal whose placement took `knownSkillIds` as known among its
- * text skills (`skills`), leaving out the areas already past their basics.
- */
 export async function listPlacementListeningAreas({
   goalId,
   knownSkillIds,

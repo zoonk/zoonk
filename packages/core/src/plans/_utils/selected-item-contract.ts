@@ -4,7 +4,6 @@ import { type SelectedItemFacts } from "../planner/selected-item-facts";
 
 const minutesSchema = z.number().nonnegative();
 
-/** Stored facts of the actual selected item; an item no build wrote has none and needs a fresh build. */
 export const selectedItemFactsSchema = z
   .object({
     boss: z
@@ -38,7 +37,6 @@ export function readSelectedItemFacts(value: unknown): SavedItemFacts | null {
   return parsed.success ? parsed.data : null;
 }
 
-/** A write cannot publish an item without the same build's complete, validated facts. */
 export function withSelectedItemFacts({
   facts,
   items,

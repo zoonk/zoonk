@@ -4,13 +4,8 @@ import { type DayBeforePlan } from "../../exams/view/exam-view-contract";
 import { parsePlanPhases, parsePlanSettings } from "../planner/plan-state";
 import { type ShortPlanDay, getShortPlanDay, getShortPlanShape } from "./short-plan-view";
 
-/** Today in a short plan, with the day its short mock is scheduled (null without one). */
 export type ShortPlanToday = ShortPlanDay & { mockDate: Date | null };
 
-/**
- * The day before, from today's place in a short plan; the light review for any other plan. Its
- * short mock is a mock exam, which comes with Plus: without it, the day is the review alone.
- */
 export function getDayBeforePlan({
   includesMockExams,
   shortPlan,
@@ -20,7 +15,6 @@ export function getDayBeforePlan({
   shortPlan: ShortPlanToday | null;
   today: Date;
 }): DayBeforePlan {
-  // A plan without mocks gives the mock's day to a full review of every topic.
   if (shortPlan?.focus === "mockAndReview") {
     return includesMockExams ? "mock" : "review";
   }
@@ -39,19 +33,13 @@ type ShortPlanSource = {
   settings: unknown;
 };
 
-/**
- * Which day of a short plan today is, what it's for and when its short mock is: "Day 1 of 3: map
- * and gaps". Null for any plan that isn't a test days away, and outside its days.
- */
 export async function loadShortPlanDay({
   goal,
   source,
   today,
 }: {
   goal: Pick<Goal, "id" | "kind" | "targetDate">;
-  /** A stale read uses its actual in-memory selection, not the older stored calendar. */
   source?: ShortPlanSource;
-  /** The learner-local date, as a UTC-midnight label. */
   today: Date;
 }): Promise<ShortPlanToday | null> {
   if (goal.kind !== "exam" || !goal.targetDate) {

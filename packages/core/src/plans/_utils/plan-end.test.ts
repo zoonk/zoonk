@@ -25,7 +25,6 @@ function lesson(status: PlanItem["status"]): Item {
   };
 }
 
-/** A stand-in for `lessons` of a skill's lessons not written yet. */
 function standIn(status: PlanItem["status"], lessons: number): Item {
   return {
     chapterId: null,
@@ -38,12 +37,10 @@ function standIn(status: PlanItem["status"], lessons: number): Item {
   };
 }
 
-/** A phase's challenge, to win or won, on `day`. */
 function challenge(status: PlanItem["status"], day = "2026-10-12") {
   return { kind: "boss" as const, scheduledFor: new Date(`${day}T00:00:00Z`), status };
 }
 
-/** A review still to do on `day`. */
 function review(day: string) {
   return {
     kind: "review" as const,
@@ -82,8 +79,6 @@ describe(isPlanFinished, () => {
     ).toBe(true);
   });
 
-  // Rafaela's plan reached its date with the lessons missed days set aside: they're still hers to
-  // study, so it never celebrates them as finished.
   it("isn't finished with lessons set aside by its date", () => {
     expect(
       isPlanFinished({
@@ -149,9 +144,6 @@ describe(isPlanFinished, () => {
     ).toBe(true);
   });
 
-  // Pedro's plan read "Finished" and "Continue at Beginner" beside "0 of 4 phases done": a phase
-  // is done with its challenge, and he hadn't won any. A challenge missed carries to the next day,
-  // so one past its day still counts, after the date too.
   it("isn't finished while a phase's challenge is left to win", () => {
     const won = [lesson("done"), challenge("done")];
     const left = [lesson("done"), challenge("done"), challenge("todo", "2026-10-11")];
@@ -192,7 +184,6 @@ describe(countChallengesLeft, () => {
       }),
     ).toBe(0);
 
-    // A lesson set aside by the date is still to study: the plan is past its date first.
     expect(
       countChallengesLeft({
         goalKind: "learn",
@@ -202,7 +193,6 @@ describe(countChallengesLeft, () => {
       }),
     ).toBe(0);
 
-    // A mock still ahead is part of what's left: the challenges aren't all that's left.
     expect(
       countChallengesLeft({
         goalKind: "exam",
@@ -254,7 +244,6 @@ describe(isDateReached, () => {
   });
 });
 
-/** A plan item of `kind` in `status`, on no day. */
 function item(kind: PlanItem["kind"], status: PlanItem["status"]) {
   return { kind, scheduledFor: null, status };
 }
@@ -294,7 +283,6 @@ describe(isPlanOver, () => {
     ).toBe(true);
   });
 
-  // A finished plan's last phase read as current: a review the date left behind still counted.
   it("is over by the same rule as finished: a review the date left behind doesn't count", () => {
     const items = [lesson("done"), review("2026-10-11")];
 

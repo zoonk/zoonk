@@ -7,10 +7,7 @@ import { loadPaceSamples } from "./pace-samples";
 
 const DAY_MS = 86_400_000;
 
-/**
- * A day far from other tests' lessons: shared samples read the month before `now`, so they see
- * this test's lessons alone.
- */
+/** Shared samples read the month before `now`, so a far-off day sees this test's lessons alone. */
 function isolatedNow(): Date {
   return new Date(Date.UTC(2091, 0, 1) + Math.floor(Math.random() * 100_000) * DAY_MS);
 }
@@ -27,14 +24,12 @@ describe(loadPaceSamples, () => {
     ]);
 
     await Promise.all([
-      // Another learner still here took the plan's lesson in 4 minutes...
       learningEventFixture({
         contentIds: { lessonId: lesson.id },
         endedAt: yesterday,
         seconds: 240,
         userId: other.id,
       }),
-      // ...and one who left took 8.
       prisma.anonymousLessonPace.create({
         data: { lessonId: lesson.id, localDate: yesterday, seconds: 480 },
       }),

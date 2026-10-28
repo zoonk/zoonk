@@ -29,25 +29,13 @@ import { getAskedAreas, getChangePlanning } from "./steered-areas";
 type Provenance = NonNullable<PlanChangeRecord["provenance"]>;
 
 export type AppliedChange =
-  | {
-      changeId: string;
-      /** Proposals still waiting that this change replaced (see `replaceWaitingProposals`). */
-      replaced?: string[];
-      status: "applied" | "proposed";
-    }
+  | { changeId: string; replaced?: string[]; status: "applied" | "proposed" }
   | PlanChangeRefusal;
 
-/** The plan would stay as it is (see `computeChange`): nothing is offered. */
 type UnchangedPlan = { status: "unchanged" };
 
-/**
- * Why a focus would leave the plan as it is: the subjects it asks more of (see `getAskedAreas`)
- * already have every lesson in the plan (`alreadyIn`), or they already start as early as what they
- * build on allows and more of them doesn't fit (`cantMove`).
- */
 export type UnchangedFocusReason = "alreadyIn" | "cantMove";
 
-/** Whether every skill these areas focus on (their parts, when named) has all its lessons in. */
 function hasEveryLesson({
   areas,
   computed,
@@ -62,19 +50,13 @@ function hasEveryLesson({
   return targets.every((target) => [...target.skillIds].every((id) => !dropped.has(id)));
 }
 
-/** A plan is ready once its graph has skills; before that, a change only updates the settings. */
 export function isPlanReady(context: Pick<PlanContext, "state">): boolean {
   return context.state.graph.skills.length > 0;
 }
 
 type ChangeRequest = {
   context: PlanContext;
-  /** Other writes that must land with the change, such as ending the plan setup task it is. */
   extraWrites?: (tx: TransactionClient) => Promise<unknown>;
-  /**
-   * The learner made the change in their own request, so today's session follows it now (see
-   * `followPlanToday`). Changes the system applies reach a day not started the next time it's read.
-   */
   followToday?: boolean;
   operations: readonly PlanOperation[];
   provenance?: Provenance | null;
@@ -82,7 +64,6 @@ type ChangeRequest = {
   source: PlanChangeSource;
 };
 
-/** Saves a computed edit and records it with the state its undo restores. */
 async function commitEdit({
   change: { bringsBackSetAside, computed, effect },
   context,
@@ -135,7 +116,6 @@ async function commitEdit({
   return { changeId: changeId ?? "", replaced, status: "applied" };
 }
 
-/** Saves settings without laying out a plan, answering proposals about the same choices. */
 async function savePlanState({
   context,
   operations,
@@ -165,7 +145,6 @@ async function savePlanState({
   });
 }
 
-/** A change's operations applied to the plan's state and planned, or why they can't be. */
 async function computeRequest({
   context,
   operations,
@@ -193,11 +172,7 @@ async function computeRequest({
     state: result.state,
   });
 
-  // A stale or inconsistent source day must not save a move with no challenge at its destination.
-  // The caller would otherwise report success, skip today's block and lose its confirmation/Undo.
   if (hasMissingWeeklyMove({ items: change.computed.built.items, operations })) {
-    // A mock the plan can't fund there (see `fundMocks`) or place before the goal's date is refused
-    // with why; a weekly challenge that can't go there is a bad move.
     const unfundedMove = findUnfundedMove({
       items: context.items,
       operations,
@@ -209,9 +184,6 @@ async function computeRequest({
       : { error: "badMove", status: "invalid" };
   }
 
-  // How to study bases, when it moves no lesson, is kept for later runs and changes nothing now: a
-  // quick lesson for a base whose core the learner studied re-planned the day and let cell theory
-  // go for work missed days had set aside.
   if (change.unchanged && operations.every((operation) => operation.kind === "setBaseChoices")) {
     await savePlanState({ context, operations, source, state: result.state });
     revalidatePlanTags(context.goal.userId);
@@ -221,10 +193,6 @@ async function computeRequest({
   return { change, status: "computed" };
 }
 
-/**
- * Applies a change right away and re-plans from today, recording it with the state an undo
- * restores. Learners' own changes go through here; so do proposals small enough to need no OK.
- */
 export async function applyChangeNow(
   request: ChangeRequest,
 ): Promise<AppliedChange | { status: "saved" }> {
@@ -237,15 +205,6 @@ export async function applyChangeNow(
   return commitEdit({ ...request, change: computed.change });
 }
 
-/**
- * Applies the learner's choice of where to focus, or of areas to give less time, like
- * `applyChangeNow`, except when it wouldn't do what it asks: a focus that would leave the plan as
- * it is, or a change that would do the opposite in the plan the learner sees (see
- * `ComputedChange.contradicts`), isn't saved, and the learner is told nothing moved, and why,
- * instead of seeing a change that does nothing or ends what they wanted less of sooner. Less of an
- * area that keeps every lesson because everything fits is saved, its card saying so, for when time
- * gets short.
- */
 export async function applySteeringNow(
   request: ChangeRequest,
 ): Promise<
@@ -271,10 +230,6 @@ export async function applySteeringNow(
   return commitEdit({ ...request, change });
 }
 
-/**
- * The exam day the notice officially sets, when a change moves the goal's date off it: the change
- * says so, and the learner keeps their own date only by applying it knowing that.
- */
 async function findOfficialDate({
   context,
   operations,
@@ -297,22 +252,12 @@ async function findOfficialDate({
   });
 }
 
-/** What a change the exam's notice brings keeps with it (see `followNotice`). */
 export type NoticeChange = {
-  /** The edition its graph was read from (see `getNoticeEdition`). */
   edition: string | null;
   graph: PlanGraph | null;
   noticeId: string | null;
 };
 
-/**
- * A change someone other than the learner suggests (the plan-edit AI, memory, a rebalance): never
- * offered when it would leave the plan as it is, applied at once when it moves at most a lesson and
- * the end date by a day, otherwise stored as a proposal with its effect, waiting for the learner's
- * OK. With `approval: "always"` (the buddy, in the conversation, and the exam's notice) even a
- * small change waits for the learner's tap, and so does one that moves an exam off the day its
- * notice sets, which keeps that day with it to say.
- */
 export async function proposeChange({
   approval = "whenLarge",
   context,

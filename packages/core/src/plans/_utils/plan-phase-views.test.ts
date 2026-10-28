@@ -36,12 +36,10 @@ function chapterLesson(position: number, chapterId: string, status: "done" | "to
   return { ...lesson(position, 0), chapterId, status };
 }
 
-/** A lesson standing in for its skill's lessons, not written yet, on `day`. */
 function standIn(position: number, day: string): ExistingPlanItem {
   return { ...lesson(position, 0), scheduledFor: new Date(`${day}T00:00:00.000Z`) };
 }
 
-/** A phase's challenge on `day`. */
 function boss(position: number, phaseIndex: number, status: "done" | "todo", day = "2026-10-16") {
   return {
     ...lesson(position, phaseIndex),
@@ -141,7 +139,6 @@ describe(buildPhaseViews, () => {
   });
 
   it("names no row after the goal's own course, which says nothing the goal doesn't", () => {
-    // Walk: every phase of Maya's plan had a row named "Quantum physics from scratch", her goal.
     const [view] = buildPhaseViews({
       chapterTitles: new Map(),
       currentPhase: 0,
@@ -164,10 +161,6 @@ describe(buildPhaseViews, () => {
     ]);
   });
 
-  /*
-   * Walk: with a deadline, Maya's plan studies every phase's core first and the depth after it, in
-   * the last phase's time, and that phase listed five of the first phase's chapters again.
-   */
   it("marks a later phase's rows that go deeper into an earlier phase's topics", () => {
     const views = buildPhaseViews({
       chapterTitles: new Map([
@@ -234,9 +227,6 @@ describe(buildPhaseViews, () => {
     ]);
   });
 
-  // Pedro's Today opened "Where a share's price comes from", of his second phase, while the
-  // Plan marked a chapter of the first: Up next is the chapter of the lesson Today opens, in
-  // whichever phase, and the first phase stays the current one while it has work left.
   it("marks the chapter of the lesson Today opens next, even in the next phase", () => {
     const views = buildPhaseViews({
       chapterTitles: new Map([
@@ -287,7 +277,6 @@ describe(buildPhaseViews, () => {
 
 const done = (item: ExistingPlanItem): ExistingPlanItem => ({ ...item, status: "done" });
 
-/** When each phase's challenge comes, every lesson done and each challenge on its own day. */
 function challengeTimings({ days, today }: { days: string[]; today: Date }) {
   return buildPhaseViews({
     chapterTitles: new Map(),
@@ -304,10 +293,6 @@ function challengeTimings({ days, today }: { days: string[]; today: Date }) {
   }).map((phaseView) => phaseView.checkpoint?.when);
 }
 
-/*
- * The phases read "finished" as the plan's number and status do (code review of the finished
- * round): the same lessons, the same challenges, and the same rule for a date's past reviews.
- */
 describe("phases of a finished plan", () => {
   const TODAY = new Date("2026-10-13T00:00:00.000Z");
 
@@ -333,7 +318,6 @@ describe("phases of a finished plan", () => {
       ["done", 1, 1],
     ]);
 
-    // With a date, missed days set it aside: it's still the learner's to study.
     expect(view(new Date("2026-10-20T00:00:00.000Z"))).toStrictEqual([
       ["unfinished", 1, 2],
       ["done", 1, 1],
@@ -390,14 +374,9 @@ describe("phases of a finished plan", () => {
       }).map((phaseView) => phaseView.checkpoint?.when);
 
     expect(when(true)).toStrictEqual(["nextSession", "date"]);
-    // Past a free exam plan's first week, sessions hold no challenges: Plus does.
     expect(when(false)).toStrictEqual(["date", "date"]);
   });
 
-  /*
-   * Completing lessons early keeps future challenges on their saved days. A session duels each
-   * whose day came; away a few days, every overdue challenge says it comes in the next session.
-   */
   it("says when each challenge comes, as sessions offer them", () => {
     const days = ["2026-10-16", "2026-10-18", "2026-10-21"];
 
@@ -409,14 +388,12 @@ describe("phases of a finished plan", () => {
       "date",
     ]);
 
-    // Two saved days came: both are due, while the third retains its future date.
     expect(challengeTimings({ days, today: new Date("2026-10-18T00:00:00.000Z") })).toStrictEqual([
       "nextSession",
       "nextSession",
       "date",
     ]);
 
-    // Every day gone: the next session has them all, none reads a day in the past.
     expect(challengeTimings({ days, today: new Date("2026-10-25T00:00:00.000Z") })).toStrictEqual([
       "nextSession",
       "nextSession",
@@ -424,8 +401,6 @@ describe("phases of a finished plan", () => {
     ]);
   });
 
-  // On its saved day, the Plan names the challenge sessions reach after an unwritten lesson was
-  // skipped; completed lessons do not bring the following challenge ahead of its saved day.
   it("names the challenge sessions reach, after lessons the Library couldn't write", () => {
     const unwritten: ExistingPlanItem = { ...lesson(0, 0), status: "skipped" };
 
@@ -461,26 +436,19 @@ describe("phases of a finished plan", () => {
   });
 });
 
-/** A lesson of the first phase that missed days set aside. */
 function setAsideLesson(position: number, chapterId: string): ExistingPlanItem {
   return { ...chapterLesson(position, chapterId, "todo"), status: "skipped" };
 }
 
-/** A lesson of the first phase placement tested out. */
 function testedOutLesson(position: number): ExistingPlanItem {
   return { ...chapterLesson(position, "ch-known", "todo"), status: "testedOut" };
 }
 
-/** A lesson of the second phase, still to study. */
 function nextPhaseLesson(position: number): ExistingPlanItem {
   return { ...chapterLesson(position, "ch-next", "todo"), phase: 1 };
 }
 
-// Rafaela did one lesson of her Câmara plan's first phase and was away for 30 days: the days she
-// missed set its other lessons aside, and the Plan showed the phase with a check, "done", while
-// she'd studied one lesson. The plan moves on to the earliest phase with work left all the same.
 describe("a phase the plan moved past before the learner finished it", () => {
-  // Missed days set lessons aside only in a plan with a deadline, such as her exam's day.
   const examDate = new Date("2026-12-01T00:00:00.000Z");
 
   it("stays unfinished, saying the lessons studied of the ones the plan gave it", () => {
@@ -515,7 +483,6 @@ describe("a phase the plan moved past before the learner finished it", () => {
       { lessonsDone: 0, lessonsTotal: 1, state: "current" },
     ]);
 
-    // Its chapters with lessons set aside aren't done either; the one tested out is.
     expect(views[0]?.chapters.map(({ state, title }) => [title, state])).toStrictEqual([
       ["Spelling", "upcoming"],
       ["Agreement", "upcoming"],
@@ -539,8 +506,6 @@ describe("a phase the plan moved past before the learner finished it", () => {
     expect(views.map((view) => view.state)).toStrictEqual(["done", "current"]);
   });
 
-  // Placement settles the topics it tests out before their lessons are written; topics set aside
-  // weren't settled, and never read as ones the learner already knows.
   it("names only the topics tested out as known, not the ones set aside", () => {
     const items = [
       { ...lesson(0, 0), status: "testedOut" as const, titleSnapshot: "Read a chart" },
@@ -572,9 +537,6 @@ describe("a phase the plan moved past before the learner finished it", () => {
 });
 
 describe("a phase's topics not written yet", () => {
-  // Far topics read "Lessons on the way" for months: the row says what the plan knows instead,
-  // the lessons the plan teaches them (3 of the first skill's 12 fit, and the second's quick
-  // lesson), never their skills' whole size.
   it("say the lessons the plan teaches them, when they start and the topic to ask for them by", () => {
     const [view] = buildPhaseViews({
       chapterTitles: new Map(),
@@ -612,8 +574,6 @@ describe("a phase's topics not written yet", () => {
     ]);
   });
 
-  // A plan saved before it stored its stand-ins' sizes doesn't know them: the row says no count
-  // rather than a false one.
   it("say no count for topics of a plan saved before it stored how many lessons it teaches them", () => {
     const [view] = buildPhaseViews({
       chapterTitles: new Map(),
@@ -651,9 +611,6 @@ describe("a phase's topics not written yet", () => {
     ).toStrictEqual([[true, false, null]]);
   });
 
-  // Maya's "More lessons" row opened a sheet listing the chapters above it: its first topic was a
-  // skill chapters already teach, whose next chapter the plan writes as she gets close. Asking for
-  // it early only read those chapters back.
   it("offer no topic a chapter already teaches, and still say what the plan knows about it", () => {
     const [view] = buildPhaseViews({
       chapterTitles: new Map(),
@@ -738,9 +695,6 @@ describe(findCurrentPhase, () => {
     expect(findCurrentPhase({ items, phaseCount: 2 })).toBe(0);
   });
 
-  // Pedro's plan gave a lesson of the second phase before the last lessons and the challenge of the
-  // first: read from the next thing to do, his Plan said he was in the second phase, and went
-  // back to the first once a change planned those lessons first.
   it("is the earliest phase with work left, though a later phase's lesson comes first", () => {
     const checkpoint = { ...lesson(3, 0), kind: "boss" as const, skillId: null };
 

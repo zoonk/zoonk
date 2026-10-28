@@ -22,7 +22,7 @@ export type OwnedPlan =
   | { context: PlanContext; status: "ready" }
   | { status: "notFound" | "unauthorized" };
 
-/** The signed-in learner's plan for a goal; another learner's goal is "not found". */
+/** The signed-in learner's plan; another learner's goal reads as not found. */
 export async function findOwnedPlan({
   goalId,
   timeZone,
@@ -43,17 +43,11 @@ export async function findOwnedPlan({
     : { status: "notFound" };
 }
 
-/**
- * The signed-in learner's plan for a cached read (`"use cache: private"`): the plan's views share
- * ownership, the learner's date (the goal's timezone, then the request's), the context and the
- * invalidation tags, so a plan write reaches every one of them.
- */
 export async function loadOwnedPlanContext(
   goalId: string,
 ): Promise<
   { context: PlanContext; now: Date; status: "ready" } | { status: "notFound" | "unauthorized" }
 > {
-  // The request's date doesn't depend on the goal: it's read alongside it.
   const [owned, { currentInstant, timeZone }] = await Promise.all([
     findOwnedGoal(goalId),
     getRequestProgressDateContext(),
@@ -84,7 +78,6 @@ export async function loadOwnedPlanContext(
   return { context, now: currentInstant, status: "ready" };
 }
 
-/** A change as the learner sees it right after it happened. */
 export async function loadPlanChangeView(changeId: string): Promise<PlanChangeView> {
   const change = await prisma.planChange.findUniqueOrThrow({
     include: {

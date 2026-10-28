@@ -4,7 +4,6 @@ import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { PlanConflictError } from "../plan-conflict";
 import { type PlanContext } from "./plan-context";
 
-/** Proposal bookkeeping locks its basis without claiming that planning inputs changed. */
 export async function writePlanMetadata<T>({
   context,
   write,

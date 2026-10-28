@@ -3,7 +3,7 @@ import { type ExistingPlanItem } from "../planner/plan-items";
 import { type PlanReadItem } from "./plan-read-projection";
 import { buildWeekView } from "./plan-week-view";
 
-/** Wednesday, Sep 23, 2026: Monday and Tuesday are behind, the rest of the week ahead. */
+/** A Wednesday: Monday and Tuesday are behind, the rest of the week ahead. */
 const TODAY = new Date("2026-09-23T00:00:00Z");
 const MONDAY = new Date("2026-09-21T00:00:00Z");
 
@@ -92,8 +92,6 @@ describe(buildWeekView, () => {
     expect(days.slice(0, 2).map((day) => day.state)).toStrictEqual(["missed", "done"]);
   });
 
-  // Missed days set lessons aside on the days they were due: nothing is left to do on Monday, but
-  // the learner never studied it, so its dot isn't done. Tuesday's lesson was tested out: done.
   it("never counts a past day whose lessons were set aside as done", () => {
     const { days } = buildWeek({
       items: [

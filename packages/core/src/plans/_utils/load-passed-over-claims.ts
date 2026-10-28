@@ -7,19 +7,12 @@ import { parsePlanGraph, parsePlanSettings } from "../planner/plan-state";
 import { toPassedOverClaims } from "./passed-over-claims";
 import { parsePlanChangePayload } from "./plan-change-payload";
 
-/**
- * The skills of a goal the learner passed over by choice (see `listPassedOver`) as claims to
- * confirm from the day of the choice: the applied change that made it, or the plan's first day
- * for a choice made while setting it up. Like a test-out, a choice frees a topic from its lessons,
- * never from practice: practice asks it within two weeks, and a miss brings its lessons back.
- */
 export async function loadPassedOverClaims({
   goalId,
   known,
   skillIds,
 }: {
   goalId: string;
-  /** The saved plan a GET already read, so it isn't read again. */
   known?: Pick<Plan, "createdAt" | "graph" | "id" | "settings"> | null;
   skillIds: ReadonlySet<string>;
 }): Promise<ClaimEvent[]> {
@@ -38,7 +31,6 @@ export async function loadPassedOverClaims({
     return [];
   }
 
-  // A GET's known plan reads the Library's rows from the shared caches.
   const prerequisites = await readSkillPrerequisiteMap(
     graph.skills.map((skill) => skill.skillId),
     known === undefined ? prisma : "shared",

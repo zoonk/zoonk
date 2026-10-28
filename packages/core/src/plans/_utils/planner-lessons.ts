@@ -19,13 +19,6 @@ import { withCourseLessonOrder } from "./course-lesson-order";
 import { goalUsesTools } from "./plan-tools";
 import { type SkillCourses, getSkillCourses, pickSkillPlaces } from "./skill-courses";
 
-/**
- * The Library lessons that teach the plan's skills, in course order (level band, chapter, then
- * lesson), so a skill taught in several chapters meets them in the course's order. A skill with
- * courses only takes lessons its courses' chapters hold, planned in one of those chapters.
- * Private lessons count only for their owner, so one learner's private course never shows up in
- * another's plan.
- */
 async function loadLessons({
   skillCourses,
   skillIds,
@@ -35,7 +28,6 @@ async function loadLessons({
   skillCourses: SkillCourses;
   skillIds: string[];
   userId: string | null;
-  /** False for an exam answered without tools: lessons only chapters that need one hold stay out. */
   withToolChapters: boolean;
 }): Promise<PlannerLesson[]> {
   const rows = await prisma.lessonSkill.findMany({
@@ -68,8 +60,6 @@ async function loadLessons({
       skillId: true,
     },
     where: {
-      // A lesson set aside after its last held-back draft can't be taught: plans leave it out. A
-      // skill's quick lesson isn't one of its lessons: plans place it only where a learner chose it.
       lesson: { ...libraryRowsVisibleTo(userId), NOT: QUICK_LESSON_KEY_WHERE, setAsideAt: null },
       skillId: { in: skillIds },
     },
@@ -80,7 +70,6 @@ async function loadLessons({
       ? row.lesson.chapters
       : row.lesson.chapters.filter((entry) => !needsTool(entry.chapter.tools));
 
-    // A lesson only chapters that need a tool hold isn't planned without them.
     if (places.length === 0 && row.lesson.chapters.length > 0) {
       return [];
     }
@@ -135,12 +124,6 @@ async function loadLessons({
     }));
 }
 
-/**
- * The Library lessons a plan turns these skills into: the lessons that teach each one, and the
- * lessons of the chapters a course outline tagged with it (a graph skill that spans several
- * lessons), in course order, every band included: the level a learner states only leaves its
- * easier bands to confirm, and placement answers of a skill's own test them out.
- */
 export async function loadSkillLessons({
   goal,
   skillCourses = new Map(),
@@ -148,7 +131,6 @@ export async function loadSkillLessons({
   userId,
 }: {
   goal: Pick<Goal, "examBlueprintId" | "kind">;
-  /** The courses the goal learns its skills in; skills left out take lessons from any course. */
   skillCourses?: SkillCourses;
   skillIds: string[];
   userId: string | null;
@@ -169,12 +151,6 @@ export async function loadSkillLessons({
   return mergePlannerLessons({ chapterTaught, taught });
 }
 
-/**
- * A skill the graph lists no course for (a prerequisite a change added, a setup skill, a plan made
- * before its courses were known) learns from the goal's own course when that course teaches it, so
- * its lessons don't come from every subject sharing the skill ("Ohm's law" from a Physics, an
- * Electricity and an ENEM course in one plan). Skills that course doesn't teach take any course.
- */
 async function withGoalCourse({
   primaryCourseId,
   skillCourses,
@@ -219,10 +195,6 @@ async function withGoalCourse({
   ]);
 }
 
-/**
- * The Library lessons a goal's plan turns its graph into, from the courses it learns each skill in:
- * the lessons the planner plans and its stand-ins count against.
- */
 export async function loadGoalPlannerLessons({
   courseChapters,
   goal,
@@ -246,7 +218,6 @@ export async function loadGoalPlannerLessons({
   const lessons = await loadSkillLessons({ goal, skillCourses, skillIds, userId });
   const start = readCourseStart(isJsonObject(goal.details) ? goal.details : {});
 
-  /** Skill-graph curricula keep their own phases until they plan from a settled course outline. */
   const source = graph.courseOutline;
 
   const originalSkills = graph.skills.filter((skill) =>

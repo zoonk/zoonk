@@ -18,7 +18,6 @@ class NoticeUnchangedError extends Error {
   }
 }
 
-/** Stored notices retain their acknowledgment behavior; duplicate taps roll the early mark back. */
 export async function acknowledgeStoredNotice({
   changeId,
   userId,

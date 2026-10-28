@@ -16,29 +16,16 @@ import { type ExamSubjectShare } from "../planner/selected-coverage";
 import { getAreaShares, getExamSubjectShares } from "./exam-subject-shares";
 
 type ExamFacts = {
-  /**
-   * What the questions a class test's own material announces ask, as its formats describe them
-   * and as the passages they quote say (see `listAnnouncedQuestions`): a plan short on time keeps
-   * the lessons on them. Empty for a public notice, whose formats say how the exam asks, not about
-   * what.
-   */
   announcements: string[];
-  /** Each area's share of the exam, when the notice states most subjects' (`getAreaShares`). */
   areaShares: Map<string, number> | null;
-  /** The notice's subjects the plan teaches, with their share of the exam; null without them. */
   examSubjects: ExamSubjectShare[] | null;
-  /** The final stretch's mock: the real exam day, its written test included. */
   fullMockMinutes: number;
-  /** The weekly mock on regular weeks: half the exam's first day. */
-  /** Each exam day's mock clock, in the order the plan's mocks take turns (see `MockClock`). */
   mockClocks: MockClock[];
   mockMinutes: number;
   shortMockMinutes: number | null;
-  /** How often the exam asks its notice's topics, where its past papers or a lookup say. */
   topicLevels: TopicLevel[];
 };
 
-/** What the planner reads of an exam's blueprint. */
 type NoticeBlueprint = Pick<ExamBlueprint, "edition" | "ownerId" | "structure" | "topicFrequency">;
 
 function readNoticeBlueprint(goal: Pick<Goal, "examBlueprintId">) {
@@ -50,17 +37,6 @@ function readNoticeBlueprint(goal: Pick<Goal, "examBlueprintId">) {
     : null;
 }
 
-/**
- * What the exam's notice tells the planner. How long its mocks take: the weekly mock, the first
- * exam day's sections at the real pace with half of each on regular weeks and the whole day, its
- * written test included, in the final stretch, as the exam module plans it; and for a class test read from the learner's own material (a private blueprint), its short
- * mock at full length, which rehearses it the day before when the test is days away. What each
- * of its subjects is worth, so the plan's time and its coverage follow the exam's points, and how
- * often it asks each topic, so a plan short on time leaves out the ones asked least (see
- * `weighGraphByTopicFrequency`), and the parts its subjects' topics are grouped in, each of which a
- * plan short on time keeps (see `rankCores`); and for a class test, the questions its material
- * announces, whose lessons a plan short on time keeps (see `findAnnouncedLessonIds`).
- */
 async function loadNoticeFacts({
   blueprint: known,
   choices,
@@ -76,7 +52,6 @@ async function loadNoticeFacts({
 
   const stored = examStructureSchema.safeParse(blueprint?.structure).data;
 
-  // The exam as the learner takes it: only the options they picked of its choices count.
   const parsed = stored ? toChosenStructure({ choices, structure: stored }) : null;
   const ownerId = blueprint?.ownerId ?? null;
   const noticeQuestions = examEditionSchema.safeParse(blueprint?.edition).data?.questionCount;
@@ -99,18 +74,12 @@ async function loadNoticeFacts({
   };
 }
 
-/**
- * What a goal's exam tells the planner (see `loadNoticeFacts`), counting only the options the
- * learner picked of its choices (`choices`, the plan's `examChoices`; none picked by default); a
- * goal that isn't an exam has none.
- */
 export function loadExamFacts({
   blueprint,
   choices = [],
   goal,
   graph,
 }: {
-  /** The exam's blueprint a GET already read (`readExamBlueprint`), so it isn't read again. */
   blueprint?: NoticeBlueprint | null;
   choices?: readonly ExamChoice[];
   goal: Pick<Goal, "examBlueprintId" | "kind">;

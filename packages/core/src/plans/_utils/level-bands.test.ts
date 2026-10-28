@@ -39,8 +39,6 @@ describe(keepPastBasicsBands, () => {
       lesson("civil-level", "intermediate", "civil"),
     ];
 
-    // A skill taught only in the easier band keeps it, and the areas past their basics are the
-    // only ones that lose any: a plan never loses a skill's lessons.
     expect(
       keepPastBasicsBands({ graph, lessons, pastBasicsAreas: ["Constitutional"] }).map(
         (kept) => kept.lessonId,

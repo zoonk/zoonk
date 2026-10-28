@@ -48,29 +48,18 @@ const planSnapshotSchema = z.object({
   todaySession: daySessionSnapshotSchema.nullable(),
 });
 
-/**
- * The plan as the learner had it right before a change they can undo (an edit, or a test-out's
- * skipped lessons): its state, phases, numbers and items, each with its day and status, and
- * today's session (see `DaySessionSnapshot`). The undo puts it back as it was. Planned again from
- * the state before instead, an undo moved every phase end the plan had kept and hundreds of
- * lessons a day or two, and gave back a plan the learner never had.
- */
 export type PlanSnapshot = {
   coveredShare: number | null;
   estimateHours: number | null;
-  /** What the plan was planned from, which the undo gives back with it (see `getPlanInputsKey`). */
   inputsKey: string | null;
   items: ContextPlanItem[];
   phases: PlanPhase[];
   sourceSkillIds: string[];
   state: PlanState;
-  /** The plan's summary when it described the plan (see `readPlanSummary`). */
   summary: PlanSummary | null;
-  /** Today's session when the change was made; null when it wasn't built yet. */
   todaySession: DaySessionSnapshot | null;
 };
 
-/** The plan in a context, with today's session, as a snapshot stores it (see `PlanSnapshot`). */
 function toPlanSnapshot({
   context,
   todaySession,
@@ -105,11 +94,7 @@ function toPlanSnapshot({
   };
 }
 
-/**
- * Keeps the plan in a context, with today's session as the learner has it, for the undo of the
- * change being saved with it (see `PlanSnapshot`). Call it in the change's transaction, before
- * today's session follows the change.
- */
+/** Call it in the change's transaction, before today's session follows the change. */
 export async function savePlanSnapshot({
   changeId,
   context,
@@ -131,7 +116,6 @@ export async function savePlanSnapshot({
   });
 }
 
-/** A stored snapshot, or null when it isn't one. */
 export function parsePlanSnapshot(value: unknown): PlanSnapshot | null {
   const parsed = planSnapshotSchema.safeParse(value);
 
@@ -158,7 +142,6 @@ export function parsePlanSnapshot(value: unknown): PlanSnapshot | null {
   };
 }
 
-/** The lessons each skill's stand-in taught in a snapshot, which its items keep. */
 export function getSnapshotStandInLessons(snapshot: PlanSnapshot): Map<string, number> {
   return new Map(
     snapshot.items.flatMap((item) =>

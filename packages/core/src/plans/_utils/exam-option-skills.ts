@@ -19,7 +19,6 @@ function listAreas(graph: PlanGraph): string[] {
   return [...new Set(graph.skills.map((skill) => getSkillArea({ graph, skill })))];
 }
 
-/** The options the learner picked of the exam's choices, by the notice's names. */
 function listPickedOptions({
   choices,
   structure,
@@ -30,11 +29,6 @@ function listPickedOptions({
   return choices.flatMap((choice) => findChoiceOption({ choice, structure })?.name ?? []);
 }
 
-/**
- * The picked options' skills from the exam's shared graph for a plan whose graph has none of them:
- * one built before the exam's graph had its options (ENEM's languages, read later). A plan whose
- * graph has every picked option is returned as it is, without reading the shared graph.
- */
 async function addPickedFromSharedGraph({
   choices,
   examBlueprintId,
@@ -68,14 +62,6 @@ async function addPickedFromSharedGraph({
   return addSharedOptionSkills({ areas, graph, shared });
 }
 
-/**
- * The graph a plan studies from: only the options the learner takes of their exam's choices (the
- * language of ENEM's or the Rio Branco exam's choice, an elective). The skills of every other
- * option, and of a choice not picked yet, are set aside with the plan (see `setAsideOptionSkills`),
- * so the plan, practice, placement, mocks and the syllabus never teach or count them; a new pick
- * brings its option's skills back in their place, from the exam's shared graph when the plan never
- * had them. A goal without an exam notice keeps its whole graph.
- */
 export async function chooseExamOptionSkills({
   choices,
   goal,

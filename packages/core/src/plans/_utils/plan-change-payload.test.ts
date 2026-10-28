@@ -3,7 +3,6 @@ import { parsePlanChangePayload } from "./plan-change-payload";
 
 describe(parsePlanChangePayload, () => {
   it("reads a falling-behind change saved with the time and date a search found, keeping its facts", () => {
-    // A missedDays change saved before falling behind kept only facts.
     const saved = {
       behind: {
         canFocus: true,

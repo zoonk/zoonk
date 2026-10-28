@@ -6,20 +6,10 @@ import { getSkillArea } from "../planner/graph-areas";
 import { type PlanGraph } from "../planner/plan-state";
 import { type ExamSubjectShare } from "../planner/selected-coverage";
 
-/** At least half the subjects a plan teaches need a stated share before shares split its time. */
 const MIN_STATED_SHARE = 1 / 2;
 
-type SubjectShare = ExamSubjectShare & {
-  /** The notice (or its latest edition) gives the share; false for an average stand-in. */
-  stated: boolean;
-};
+type SubjectShare = ExamSubjectShare & { stated: boolean };
 
-/**
- * The notice's subjects the plan teaches, each with the plan's areas it gathers (matched as the
- * syllabus matches them) and its share of the exam: the notice's weight or share of questions. A
- * subject the notice gives neither, such as ENEM's essay next to its four 45-question areas,
- * counts as much as an average subject. Null when the plan doesn't follow the notice's subjects.
- */
 export function getExamSubjectShares({
   graph,
   structure,
@@ -32,13 +22,6 @@ export function getExamSubjectShares({
   );
 }
 
-/**
- * Each of the plan's areas' share of the exam, when the notice (or its latest edition) states
- * the share of at least half the subjects the plan teaches (ENEM's four 45-question areas, the OAB's
- * counts): a subject's share split evenly among its areas, a subject without one (ENEM's essay)
- * counting as an average one. Null otherwise: the skill graph's weights then say what each is
- * worth.
- */
 export function getAreaShares({
   graph,
   structure,

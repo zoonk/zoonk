@@ -26,7 +26,6 @@ function examStructure(kind: "multipleChoice" | "practical") {
   };
 }
 
-/** A chapter of the course with two lessons, the first tagged with the skill itself. */
 async function chapterOf({
   courseId,
   position,
@@ -78,7 +77,6 @@ describe(loadSkillLessons, () => {
         title: "Series and parallel circuits",
         tools: [],
       }),
-      // A shared course teaches professionals too: tracing a schematic across sheets in an editor.
       chapterOf({
         courseId: course.id,
         position: 1,
@@ -120,7 +118,6 @@ describe(loadSkillLessons, () => {
   });
 });
 
-/** A course chapter in one band, teaching the skill through one lesson. */
 async function bandChapterOf({
   courseId,
   level,
@@ -149,8 +146,6 @@ async function bandChapterOf({
 }
 
 describe(loadGoalPlannerLessons, () => {
-  // Lessons come from every band of a skill's course: the level a learner states is a claim that
-  // leaves its easier bands to confirm, and only placement answers of the skill's own test them out.
   it("plans every band of a skill's course, the easier ones too", async () => {
     const [user, course, skill] = await Promise.all([
       userFixture(),

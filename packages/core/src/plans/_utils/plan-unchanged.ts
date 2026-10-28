@@ -22,7 +22,6 @@ function toDay(date: Date | null): string | null {
   return date ? toIsoDate(date) : null;
 }
 
-/** The same items in the same order, each on the same day and in the same phase. */
 export function hasSameItems({
   after,
   before,
@@ -45,17 +44,14 @@ export function hasSameItems({
   );
 }
 
-/** The stored items, keyed as a planning run keys them. */
 function toKeyedItems(context: PlanContext) {
   return context.items.map((item) => ({ ...item, key: getItemKey(item) }));
 }
 
-/** Each item's work and where it stands, in any order. */
 function listWork(items: readonly Pick<PlannedItem, "key" | "status">[]): string[] {
   return items.map((item) => `${item.key}:${item.status}`).toSorted();
 }
 
-/** A fresh bank or changed day budget changes real work, even when every logical item stays. */
 function hasSameWorkload({ computed, context }: { computed: ComputedPlan; context: PlanContext }) {
   const minutes = new Map(computed.built.items.map((item) => [item.key, item.minutes]));
 
@@ -73,11 +69,8 @@ function hasSameWorkload({ computed, context }: { computed: ComputedPlan; contex
 }
 
 /**
- * A planning run that changes nothing: the same graph, settings (pace included) and goal dates,
- * and the same work to do. Its days aren't compared: the same work planned again can land on
- * other days (an exam's study cycle starts over where a run re-plans from), and moving what the
- * learner was shown when nothing changed is churn. Saving it would also bump the plan's version,
- * which turns a learner's open plan editor or a buddy's plan change into a conflict.
+ * Days aren't compared: the same work planned again can land on other days, and moving what the
+ * learner saw when nothing changed is churn.
  */
 export function isPlanUnchanged({
   computed,
@@ -90,8 +83,6 @@ export function isPlanUnchanged({
 
   return (
     getGoalUpdate({ context, state }) === null &&
-    // The lessons each build counted are saved with a plan the run writes, never a reason to write
-    // one: a recount alone that wrote the plan laid out its days again (R32).
     isDeepStrictEqual(
       withoutPlannedLessons(state.graph),
       withoutPlannedLessons(context.state.graph),

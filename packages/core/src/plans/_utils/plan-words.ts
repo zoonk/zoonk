@@ -9,12 +9,6 @@ import { toTopicSkills } from "./plan-topics";
 
 type PlanEdit = Awaited<ReturnType<typeof interpretPlanEdit>>;
 
-/**
- * The planner's operations for the changes the words asked for: topics to add become the Library
- * skills that teach them (`toTopicSkills`), from the day the learner said or spread through what
- * comes next, and a focus on a one-subject plan's only area takes the topics the words name
- * (`withTopicPart`).
- */
 async function toPlanOperations({
   context,
   edit,
@@ -49,12 +43,6 @@ async function toPlanOperations({
   );
 }
 
-/**
- * Reads a learner's plain words about their plan ("less on weekends", "focus on math", "add SQL")
- * into the changes the plan's controls make, with one sentence saying what changes. What memory
- * holds about the learner's goals and routine fills in what the words leave open ("less on my
- * late days").
- */
 export async function interpretPlanWords({
   context,
   text,

@@ -6,7 +6,6 @@ import { type SkillAreas } from "./plan-phase-views";
 import { type PlanReadContext } from "./plan-read-projection";
 import { buildFundedMocksView, buildWeekView } from "./plan-week-view";
 
-/** The saved calendar and mock ledger behind both the week's days and announced funded events. */
 export function buildPlanTimingView({
   access,
   calendar,

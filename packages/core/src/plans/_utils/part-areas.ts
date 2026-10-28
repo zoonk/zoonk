@@ -11,7 +11,6 @@ import { hasWeeklyEventCollision } from "./missing-weekly-move";
 import { type PlanContext } from "./plan-context";
 import { readPlanSummary } from "./plan-summary";
 
-/** The plan's areas that are part of another for learners (see `findPartAreas`), by its graph. */
 export function loadGraphPartAreas({
   examBlueprintId,
   graph,
@@ -23,11 +22,6 @@ export function loadGraphPartAreas({
   return loadPartAreas({ areas, examBlueprintId });
 }
 
-/**
- * A change that names an area (focus, less time, skip, bring back, where it starts) names the areas
- * that are part of it too (see `findPartAreas`): focusing ENEM's languages area focuses the foreign
- * language the learner takes, which learners only see inside it.
- */
 function withPartAreas({
   operations,
   partAreas,
@@ -48,7 +42,6 @@ function withPartAreas({
   });
 }
 
-/** `withPartAreas` for a change to the plan in `context`, reading the exam's subjects only when it names areas. */
 async function loadOperationsWithParts({
   context,
   operations,
@@ -68,19 +61,12 @@ async function loadOperationsWithParts({
   return withPartAreas({ operations, partAreas });
 }
 
-/**
- * A change's operations applied to the plan's state in `context`, the one way every change, preview,
- * proposal and accepted proposal applies them: an area they name brings the areas that are part of
- * it (see `withPartAreas`). The operations come back with those parts, to plan the change with; the
- * change keeps the learner's words, which name only the area they see.
- */
 export async function applyChangeOperations({
   context,
   noticeGraph = null,
   operations,
 }: {
   context: Pick<PlanContext, "goal" | "items" | "plan" | "state" | "today">;
-  /** The graph a `followNotice` operation follows (see `applyPlanOperations`). */
   noticeGraph?: PlanGraph | null;
   operations: readonly PlanOperation[];
 }): Promise<{ error: PlanOperationError } | { operations: PlanOperation[]; state: PlanState }> {
@@ -96,7 +82,6 @@ export async function applyChangeOperations({
     return { error: "moveBeforeNextMonday" };
   }
 
-  // A move to a day that already has the week's event is refused, before it can drop either.
   if (
     hasWeeklyEventCollision({
       items: context.items,
@@ -122,11 +107,6 @@ export async function applyChangeOperations({
   return "error" in result ? result : { operations: withParts, state: result.state };
 }
 
-/**
- * Whether a change chooses a way to study a base the saved plan's bases list doesn't open for it
- * (see `getOpenChoices`): a quick lesson for a base whose core the learner studied changes nothing.
- * The list is the saved summary's, the one the bases sheet and the API show.
- */
 function hasClosedBaseChoice({
   context,
   operations,

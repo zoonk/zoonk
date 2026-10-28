@@ -6,11 +6,6 @@ import { getMissedMockRescueDays } from "../planner/mock-rescue-input";
 import { type PlannedItem, getItemKey } from "../planner/plan-items";
 import { type PlannerLesson } from "../planner/plan-units";
 
-/**
- * Every field of a planning run's input, as the key reads it: `true` when it's part of what the
- * plan is planned from, or why it's left out: it says how the run was made, which the plan the run
- * saved already holds. A new field doesn't compile here until it says which.
- */
 const KEYED_FIELDS = {
   announcements: true,
   answeredWrongSkillIds: true,
@@ -59,7 +54,6 @@ const PLANNED_FIELDS = new Set(
   Object.entries(KEYED_FIELDS).flatMap(([field, keyed]) => (keyed === true ? [field] : [])),
 );
 
-/** An automatic run compares its actual inputs before derived output can look like new input. */
 export function shouldSkipPlanBuild({
   input,
   savedKey,
@@ -78,7 +72,6 @@ export function shouldSkipPlanBuild({
   );
 }
 
-/** Sorts keys as text, whatever they are. */
 function compareText(a: unknown, b: unknown): number {
   const [left, right] = [String(a), String(b)];
 
@@ -97,10 +90,6 @@ function isSet(value: unknown): value is ReadonlySet<unknown> {
   return value instanceof Set;
 }
 
-/**
- * A value as JSON that says the same thing the same way: maps and sets as sorted entries, object
- * fields sorted and dates as text, so the same inputs always give the same key.
- */
 function toStable(value: unknown): unknown {
   if (isMap(value)) {
     return [...value]
@@ -132,12 +121,6 @@ function toStable(value: unknown): unknown {
   return value;
 }
 
-/**
- * The Library's lessons as the key reads them: by id, each without the chapter it's planned in. An
- * outline that also places a lesson written before in its new chapter can give the lesson that
- * chapter and move it in the course order, which is no news for the plan: read in order with its
- * chapter, a career plan's day-one landing read as more than lessons written for its stand-in.
- */
 function toKeyedLessons(lessons: readonly PlannerLesson[]) {
   return lessons
     .map(({ chapterId, skillIds, ...lesson }) => ({
@@ -148,23 +131,15 @@ function toKeyedLessons(lessons: readonly PlannerLesson[]) {
     .toSorted((a, b) => compareText(a.lessonId, b.lessonId));
 }
 
-/** The hash of a value as JSON that says the same thing the same way (see `toStable`). */
 function hashKeyed(value: unknown): string {
   return createHash("sha256")
     .update(JSON.stringify(toStable(value)))
     .digest("hex");
 }
 
-/**
- * A planning run's input as every key reads it: the graph without the lessons the last build
- * counted, the Library's lessons by id without their chapter, what the bank holds for the bosses,
- * and the settings without the checkpoints' overflow the build derived, which no run reads.
- */
 function readKeyedInput(input: BuildPlanInput) {
   return {
     ...input,
-    // What the bank holds for the bosses; the skills the Library says lessons teach are in the
-    // lessons, and the kept items' in their progress.
     bossFacts: input.bossFacts && {
       bank: input.bossFacts.bank,
       listeningSkillIds: input.bossFacts.listeningSkillIds,
@@ -176,20 +151,11 @@ function readKeyedInput(input: BuildPlanInput) {
   };
 }
 
-/**
- * What a planning run plans from, which a later run reads the same way when nothing new happened:
- * what the planner reads (see `KEYED_FIELDS`: the goal's time and date, the graph, the settings and
- * pace, the Library's lessons, what the learner showed they know or missed, the bases) and the
- * learner's progress (the plan's items no longer to do, with their status). A system refresh whose
- * key matches the saved plan's has nothing to plan again (see `refreshGoalPlan`): planned again
- * another way, the same inputs moved 600 items of an OAB plan made that morning.
- */
 export function getPlanInputsKey({
   input,
   items,
 }: {
   input: BuildPlanInput;
-  /** The plan's items as the run saves them, which the next run reads. */
   items: readonly Pick<PlannedItem, "key" | "status">[];
 }): string {
   const planned = Object.fromEntries(
@@ -206,13 +172,6 @@ export function getPlanInputsKey({
   return hashKeyed({ planned, progress, ...(rescueDays.length > 0 && { rescueDays }) });
 }
 
-/**
- * Whether an automatic run's only news is lessons the Library wrote for the plan's stand-ins: its
- * input without them (see `findLanding`) is the one the plan was saved from (`savedKey`), with the
- * same progress. Such a run keeps every other item as the plan has it (see `landedOnly`). The
- * lessons of skills the plan holds lessons of count when the input without them is the saved one
- * too: they were written since, not left out by the plan's cut (see `heldSkillsLand`).
- */
 export function readLanding({
   input,
   savedKey,

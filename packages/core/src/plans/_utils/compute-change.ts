@@ -30,11 +30,6 @@ import {
   getUnnamedAreaLessons,
 } from "./steered-areas";
 
-/**
- * Operations that only choose and arrange the plan's lessons: when no lesson moves, they change
- * nothing (an area with no foundations to start past, a light week after the plan ends, a quick
- * lesson for a base whose core the learner studied).
- */
 const ARRANGING_OPERATIONS: ReadonlySet<PlanOperation["kind"]> = new Set([
   "addLightWeek",
   "focusAreas",
@@ -46,16 +41,6 @@ const ARRANGING_OPERATIONS: ReadonlySet<PlanOperation["kind"]> = new Set([
   "skipAreas",
 ]);
 
-/**
- * A change that would leave the learner's plan as it is: the goal's dates and time, the graph and
- * every lesson on the same day, and nothing else it sets (a light week after the plan ends); for a
- * focus, the areas it asks more of (see `getAskedAreas`) would neither start earlier nor get more
- * of their lessons (see `hasFocusGain`): they already come as early as what they build on allows,
- * however the time they now share moves an area focused before. It isn't offered, so a learner is
- * never told something changed when nothing did. `requested` is the state the
- * operations asked for; `baseline` is the plan re-planned the same way without them, so lessons
- * the Library outlined since the plan was saved never make a change look like it does something.
- */
 function hasNoEffect({
   baseline,
   computed,
@@ -69,7 +54,6 @@ function hasNoEffect({
   context: PlanContext;
   operations: readonly PlanOperation[];
   requested: PlanState;
-  /** A day of practice on every topic lies ahead, which a focus orders (see `findReviewAhead`). */
   reviewsAhead: boolean;
 }): boolean {
   const onlyArranges =
@@ -87,9 +71,6 @@ function hasNoEffect({
     (operation) => operation.kind === "focusAreas" || operation.kind === "reduceAreas",
   );
 
-  // A focus is asked for an area to come first or get more of it, and less of an area for it to
-  // get less or come later: anything less isn't one. A review day ahead puts a new focus's topics
-  // first, so that focus does something.
   if (keepsGoal && steers) {
     const items = { after: computed.built.items, before: baseline.built.items };
 
@@ -123,11 +104,6 @@ function getEventWeekday(plan: ComputedPlan): number {
   });
 }
 
-/**
- * The day the week's mocks or challenges move to when a change to the learner's days moves them
- * (a rest day on the day they were on), so the card says where they go, not only that a day is
- * free. Null when they stay, or the plan has none ahead.
- */
 function getWeeklyEventMove({
   baseline,
   computed,
@@ -147,18 +123,6 @@ function getWeeklyEventMove({
   return { after, before, kind: hasMocks ? "mock" : "challenge" };
 }
 
-/**
- * What a change does to the plan the learner sees (`shown`): the lessons it adds or removes, the
- * ones it leaves out whole by name, the notice topics it brings in or leaves out, when the topics
- * the learner adds start, when the plan ends before and after (as each build lays it out), and for
- * a focus, when each focused area starts against the day the plan they see has it, so "first" is
- * never promised where what it builds on still comes before, nor "physics keeps its basics" where
- * its topics leave the plan, and the review day ahead its topics open: a class test's day before
- * has no lessons to move, only its questions. Read against the plan re-planned without the change,
- * a topic an earlier run already left out was said to "leave" (Lucas's "Origin and evolution", out
- * of his plan before his change). The day the next mock moves to is said too, unless the week's
- * mock day moves (`weeklyEvents` says it).
- */
 function getChangeEffect({
   baseline,
   computed,
@@ -170,9 +134,7 @@ function getChangeEffect({
   baseline: ComputedPlan;
   computed: ComputedPlan;
   operations: readonly PlanOperation[];
-  /** The next review day ahead, which a focus opens with its topics (see `findReviewAhead`). */
   reviewDate: string | null;
-  /** The plan's items as saved: what the learner sees now. */
   shown: PlanContext["items"];
   today: Date;
 }): PlanEffect {
@@ -217,12 +179,6 @@ function getChangeEffect({
   };
 }
 
-/**
- * The first day ahead that gives its time to practice on every topic, which puts the plan's focus
- * first, for a test days away (a class test): a review day, or a mock's day when the learner's
- * plan has no mocks (a free plan's full review). A plan with weeks to go changes its lessons with a
- * focus, so its reviews weeks ahead say nothing about it. Null when none lies ahead.
- */
 async function findReviewAhead({
   computed,
   context,
@@ -257,17 +213,6 @@ async function findReviewAhead({
   return days.length > 0 ? toIsoDate(new Date(Math.min(...days))) : null;
 }
 
-/**
- * The plan a change makes and the plan re-planned the same way without it. A change of where to
- * focus moves time between areas and keeps the phase end dates the learner sees (see
- * `keepPhaseEnds`): with them planned again as the lessons fall, missed days pushed every phase
- * later, and a focus on the portfolio ended it a day later, while "less English" on a plan of
- * English alone pulled its end two months earlier. Moving the phase dates (Today's proposal)
- * starts from the plan that keeps them and moves what the proposal said it would (see
- * `planPhaseDatesMove`). Bringing in the lessons the learner's time fits (`fitLessons`) starts
- * from the plan as they see it. A change made only of base choices is planned both bringing back
- * work set aside for time and leaving it out (see `pickSetAsidePlans`).
- */
 async function planWithAndWithout({
   context,
   baseline: suppliedBaseline,
@@ -278,8 +223,6 @@ async function planWithAndWithout({
   bringsBackSetAside: boolean;
   computed: ComputedPlan;
 }> {
-  // Planned as the system run that proposed it (this week as the learner sees it), so the dates
-  // it moves to are the ones the proposal said.
   if (operations.some((operation) => operation.kind === "fitPhaseDates")) {
     const baseline = suppliedBaseline ?? (await computePlan({ context, mode: "automatic" }));
 
@@ -294,10 +237,6 @@ async function planWithAndWithout({
     return { baseline, bringsBackSetAside: false, computed };
   }
 
-  // What the learner's time fits is what planning again, as a change of theirs plans it, brings
-  // into the plan they see: against the plan re-planned the same way, it would change nothing. At
-  // the saved pace, as every change: sampled again, other learners' lessons between the offer and
-  // Apply changed what Apply added (23 lessons offered, 7 added).
   if (operations.some((operation) => operation.kind === "fitLessons")) {
     const planning = getChangePlanning(operations);
 
@@ -309,8 +248,6 @@ async function planWithAndWithout({
     return { baseline, bringsBackSetAside: planning.bringBackSetAside, computed };
   }
 
-  // Both bring back work set aside for time where it fits (or both leave it out), so the change's
-  // effect is its own.
   const request = { ...getChangePlanning(operations), context };
 
   const plan = async (planning: typeof request) => {
@@ -334,11 +271,6 @@ async function planWithAndWithout({
   return pickSetAsidePlans({ brought, kept, shown: context.items });
 }
 
-/**
- * Plans a change from today next to the plan re-planned the same way without it, so what the
- * learner is told it does (and whether it does anything) is the change's own doing, not lessons
- * the Library outlined or days that passed since the plan was saved (see `planWithAndWithout`).
- */
 export async function computeChange({
   baseline,
   context,
@@ -347,7 +279,6 @@ export async function computeChange({
 }: {
   context: PlanContext;
   operations: readonly PlanOperation[];
-  /** The writer's saved allocation, reused when quoting its waiting proposals. */
   baseline?: ComputedPlan;
   state: PlanState;
 }): Promise<ComputedChange> {
@@ -381,7 +312,6 @@ export async function computeChange({
         shown: context.items,
         today: context.today,
       }),
-      // The kept ends the change moved anyway: a challenge never comes before its lessons.
       ...(computed.effect.phaseEnds && { phaseEnds: computed.effect.phaseEnds }),
       ...(operations.some((operation) => operation.kind === "fitPhaseDates") &&
         getPhaseDatesEffect({

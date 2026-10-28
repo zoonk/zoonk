@@ -12,12 +12,6 @@ import { loadPlanAtToken } from "./plan-token";
 import { ensureQuickBaseLessons } from "./quick-bases";
 import { type ComputedPlan, computePlan } from "./replan";
 
-/**
- * A plan the learner hasn't seen yet starts on the app's recommendation for its bases: every lesson
- * when the time covers everything, a quick lesson for each when the date is close and the time
- * short, else their core. The state to plan again with those choices, or null when they're the
- * ones it has; from then on the choices are the learner's, and recommendations are only shown.
- */
 function withRecommendedBases(computed: ComputedPlan): ComputedPlan["state"] | null {
   const choices = toRecommendedBaseChoices(computed.bases);
 
@@ -26,11 +20,6 @@ function withRecommendedBases(computed: ComputedPlan): ComputedPlan["state"] | n
     : { ...computed.state, settings: { ...computed.state.settings, baseChoices: choices } };
 }
 
-/**
- * The plan on the recommendation for its bases (see `withRecommendedBases`), creating nothing: a
- * quick lesson the Library doesn't have yet plans as its stand-in (see `loadQuickBaseLessons`), for
- * the run to create it after saving the plan, then plan again with it (see `createGoalPlan`).
- */
 export async function planOnRecommendedBases({
   computed,
   context,
@@ -42,7 +31,6 @@ export async function planOnRecommendedBases({
   return state ? computePlan({ context, mode: "forced", state }) : computed;
 }
 
-/** The plan on the recommendation for its bases, its quick lessons created first. */
 async function startOnRecommendedBases({
   computed,
   context,
@@ -60,7 +48,6 @@ async function startOnRecommendedBases({
   return computePlan({ context, mode: "forced", state });
 }
 
-/** Whether the learner ever chose how to study the plan's bases themselves. */
 async function hasChosenBases(planId: string): Promise<boolean> {
   const chosen = await prisma.planChange.findFirst({
     select: { id: true },
@@ -73,13 +60,6 @@ async function hasChosenBases(planId: string): Promise<boolean> {
   return chosen !== null;
 }
 
-/**
- * Onboarding's last answer (the learner's time) settles the new plan: it studies everything after
- * its exam when the learner chose that there (`fullCourse`, exams only), a language exam's
- * listening starts past the basics the learner's own word covers (`listListeningPastBasicsAreas`),
- * and its bases follow the app's recommendation for that time unless the learner already chose
- * them. Writes nothing when the plan already is so.
- */
 export async function settleNewPlan({
   fullCourse,
   goalId,

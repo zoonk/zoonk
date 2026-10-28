@@ -17,7 +17,6 @@ export type ContextPlanItem = ExistingPlanItem & {
   minutes?: number | null;
 };
 
-/** Everything a planning run starts from: the goal, its plan and items, and the learner's today. */
 export type PlanContext = {
   goal: Goal;
   items: ContextPlanItem[];
@@ -56,7 +55,6 @@ const itemSelect = {
   titleSnapshot: true,
 } as const;
 
-/** What an undo restores and a change edits: the goal's time, the graph and the settings. */
 function getPlanState({
   goal,
   plan,
@@ -78,10 +76,6 @@ export function getStateTargetDate(state: PlanState): Date | null {
   return state.goal.targetDate ? fromIsoDate(state.goal.targetDate) : null;
 }
 
-/**
- * Loads a goal's plan for a planning run, with "today" in the learner's timezone: the request's,
- * then the goal's, then UTC. Null when the goal has no plan yet.
- */
 export async function loadPlanContext({
   goal,
   now = new Date(),

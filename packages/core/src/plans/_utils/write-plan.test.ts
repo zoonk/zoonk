@@ -102,7 +102,6 @@ describe("plan writes", () => {
     expect(after.inputsKey).toBe("same-inputs");
     expect(after.inputVersion).toBe(before.inputVersion + 1);
 
-    // The layout stays byte for byte, at its version.
     const layout = ({ phases, settings, summary, version }: typeof after) => ({
       phases,
       settings,
@@ -112,7 +111,6 @@ describe("plan writes", () => {
 
     expect(layout(after)).toStrictEqual(layout(before));
 
-    // A plan another write moved since keeps its own key, never a silent overwrite.
     await expect(
       savePlanInputsKey({ context, graph: context.state.graph, inputsKey: "stale-inputs" }),
     ).rejects.toBeInstanceOf(PlanConflictError);
@@ -120,8 +118,6 @@ describe("plan writes", () => {
     await expect(readPlan()).resolves.toMatchObject({ inputsKey: "same-inputs" });
   });
 
-  // A content write finds the plans it changes by their sources: a waiting quote's own sources must
-  // be among them, or a write to one would leave the quote's numbers current over stale content.
   it("keeps a waiting quote's sources among the plan's, and only while it waits", async () => {
     const { loadContext, readPlan } = await setup();
     const { id: planId } = await readPlan();

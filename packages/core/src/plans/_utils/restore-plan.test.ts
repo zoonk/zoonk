@@ -69,8 +69,6 @@ describe(restorePlan, () => {
       savePlanSnapshot({ changeId: change.id, context: before, tx }),
     );
 
-    // Since the change: a newer layout, an input writer marked the plan, and the learner finished a
-    // lesson.
     const lesson = before.items.find((item) => item.kind === "lesson" && item.status === "todo");
 
     await prisma.$transaction(async (tx) => {
@@ -110,8 +108,6 @@ describe(restorePlan, () => {
     ).resolves.toStrictEqual({ status: "done" });
   });
 
-  // The change took a lesson the plan counted short out of the plan; the learner then finished it
-  // through another goal. The undo brings its item back done, and the summary counts it whole.
   it("counts a lesson the undo brings back finished elsewhere as covered", async () => {
     const [user, library] = await Promise.all([
       userFixture(),
@@ -142,7 +138,6 @@ describe(restorePlan, () => {
       throw new Error("Expected a written lesson in the plan");
     }
 
-    // The plan as if it counted that lesson none of its time by the date.
     const summary = planSummarySchema.parse(stored.summary);
     const coverage = summary.selected.coverage;
 

@@ -6,10 +6,9 @@ import { toPlanChangePayload } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
 import { type ComputedPlan, type PlanChangeRecord } from "./replan";
 
-/** Plain notes for logs and admin; the apps say these changes from their kind and numbers. */
+/** For logs and admin only; the apps word these changes from their kind and numbers. */
 const LEFT_WORK_NOTE = "Lessons earlier days left come first; the rest of the plan moved forward.";
 
-/** The earlier days that left work: the days it was due, or the last study day for the rest. */
 function countLeftDays({ context, left }: { context: PlanContext; left: PlanContext["items"] }) {
   const overdue = left.filter((item) => item.scheduledFor && item.scheduledFor < context.today);
   const days = new Set(overdue.map((item) => item.scheduledFor?.getTime())).size;
@@ -17,7 +16,6 @@ function countLeftDays({ context, left }: { context: PlanContext; left: PlanCont
   return Math.max(1, days);
 }
 
-/** The mandatory notice saved by any POST that settles the same selected day's plan. */
 export function getSettledPlanChange({
   context,
   computed,

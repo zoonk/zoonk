@@ -1,7 +1,6 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 
-/** What a content write changes, as plans read it: lessons, chapters, skills, blueprints, courses. */
 export type PlanInputRoots = {
   blueprintIds?: readonly string[];
   chapterIds?: readonly string[];
@@ -10,12 +9,6 @@ export type PlanInputRoots = {
   skillIds?: readonly string[];
 };
 
-/**
- * The lessons and skills a write reaches plans through: the given lessons and the lessons of the
- * given chapters, then the given skills, the skills merged into them, the skills those lessons
- * teach, and the tags of the chapters holding them or given. A plan may have registered only a
- * lesson's chapter tag, so the tags count as much as the skills the lesson teaches.
- */
 export async function loadPlanInputSources(
   tx: TransactionClient,
   { chapterIds = [], lessonIds = [], skillIds = [] }: PlanInputRoots,
@@ -26,7 +19,6 @@ export async function loadPlanInputSources(
       : [];
 
   const allLessonIds = [...new Set([...lessonIds, ...placed.map(({ lessonId }) => lessonId)])];
-  // A write of skills alone (a merge, which holds its locks meanwhile) skips reads that find nothing.
   const hasLessons = allLessonIds.length > 0;
 
   const [skills, lessonSkills, tags] = await Promise.all([

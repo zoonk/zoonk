@@ -6,10 +6,8 @@ import { PACE_LESSON_LIMIT, loadPaceSamples } from "./pace-samples";
 import { type PlanContext } from "./plan-context";
 
 /**
- * The saved pace, or one sampled from the learner's progress now (a session's refresh), never
- * faster than the saved one: a run the learner didn't ask for adds no lesson because they studied
- * faster (a plan of 45 lessons held 48 once its learner won the first challenge). A slower pace is
- * taken, and the lessons it leaves out are named (see `getEstimateChange`).
+ * Never faster than the saved pace: a run the learner didn't ask for adds no lesson because they
+ * studied faster.
  */
 async function choosePlanPace({
   lessons,
@@ -39,7 +37,6 @@ async function choosePlanPace({
   return saved && sampled.factor < saved.factor ? saved : sampled;
 }
 
-/** The settings a run plans with: its pace, the short mock's length, and its start day. */
 export async function choosePlanSettings({
   context,
   inputs,

@@ -15,8 +15,6 @@ async function setup() {
   return { context, goal, plan };
 }
 
-// Planned in the queue's order instead, the first open of Today after the day's settling moved
-// lessons a day later and left the last ones out by the goal's date.
 describe(loadPlanCarryOver, () => {
   it("carries again what the day's settling carried, on every later run that day", async () => {
     const { context, plan } = await setup();
@@ -39,8 +37,6 @@ describe(loadPlanCarryOver, () => {
     });
   });
 
-  // A later run that day without the steering laid the plan out in the queue's order: an OAB
-  // plan's first landing after a focus moved 589 items of other skills.
   it("carries the steering of the day's last change on every later run that day", async () => {
     const { context, plan } = await setup();
 
@@ -123,9 +119,6 @@ describe(loadPlanCarryOver, () => {
     });
   });
 
-  // The day's first open set ENEM work aside, then the learner asked for more explanation in
-  // practice, which brought it back. Carried again by the next automatic run that day, the settled
-  // work was set aside once more, without a card, and 227 items moved.
   it("carries nothing the day's settling carried once a change after it laid the plan out", async () => {
     const { context, plan } = await setup();
 
@@ -150,12 +143,9 @@ describe(loadPlanCarryOver, () => {
   });
 });
 
-// A day the plan gives to reviews is studied once its review is done: read as missed, the next
-// day's settling could move the phase ends the learner saw (R6, r13-sim's run25 question).
 describe(wasLastDayStudied, () => {
   const yesterday = new Date("2026-10-12T00:00:00Z");
 
-  /** Yesterday's review, as the plan the run read holds it. */
   const review = {
     chapterId: null,
     completedAt: null,

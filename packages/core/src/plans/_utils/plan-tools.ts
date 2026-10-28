@@ -6,21 +6,15 @@ import { type PlanToolView } from "../plan-view-contract";
 import { type PlanGraph, type PlanSettings } from "../planner/plan-state";
 import { type PlanReadContext } from "./plan-read-projection";
 
-/**
- * A tool the plan's chapters use: essential when any of them needs it, the chapters that use it
- * in plan order, and whether only private chapters name it (a company's own tool, say).
- */
 export type PlanTool = {
   chapterIds: string[];
   essential: boolean;
   isPrivate: boolean;
   key: string;
-  /** No chapter of the phase the learner is in uses it yet: the card lists it under "More later". */
   later: boolean;
   name: string;
 };
 
-/** Chapters the learner tested out of or skipped no longer need their tools. */
 const LEFT_OUT: ReadonlySet<PlanItemStatus> = new Set(["skipped", "testedOut"]);
 
 function getPlanChapters(items: PlanReadContext["items"]) {
@@ -37,13 +31,6 @@ function getPlanChapters(items: PlanReadContext["items"]) {
   return { chapterIds: [...phaseByChapter.keys()], phaseByChapter };
 }
 
-/**
- * Whether a goal practices with tools of their own, from its kind and its exam's stored structure
- * (`ExamBlueprint.structure`, null without a blueprint). An exam is answered on paper or on
- * screen, so a shared course's chapters that practice with a spreadsheet, a data tool or a
- * schematic editor (for learners at work) teach beyond what it asks: its plan leaves out the
- * chapters that need one and asks about no tool, unless the exam itself is a practical one.
- */
 export function usesTools({
   examStructure,
   kind,
@@ -59,10 +46,8 @@ export function usesTools({
   return formats.some((format) => format.kind === "practical");
 }
 
-/** Whether the learner's goal practices with tools of their own (see `usesTools`). */
 export async function goalUsesTools(
   goal: Pick<Goal, "examBlueprintId" | "kind">,
-  /** The exam's blueprint a GET already read (`readExamBlueprint`), so it isn't read again. */
   known?: Pick<ExamBlueprint, "structure"> | null,
 ): Promise<boolean> {
   if (goal.kind !== "exam" || !goal.examBlueprintId) {
@@ -80,17 +65,11 @@ export async function goalUsesTools(
   return usesTools({ examStructure: blueprint?.structure, kind: goal.kind });
 }
 
-/**
- * The tools of the plan's chapters, one entry per tool: the ones the learner's current phase uses
- * first (essential ones first), then the ones later phases use, in the order the plan reaches them.
- * None for an exam that isn't practical (see `goalUsesTools`).
- */
 export async function loadPlanTools({
   currentPhase,
   goal,
   items,
 }: {
-  /** The phase the learner is in (see `findCurrentPhase`). */
   currentPhase: number | null;
   goal: Pick<Goal, "examBlueprintId" | "kind">;
   items: PlanReadContext["items"];
@@ -137,7 +116,6 @@ export async function loadPlanTools({
   );
 }
 
-/** The "You'll use" card: each tool with what the learner chose for it, if anything yet. */
 export function toPlanToolViews({
   settings,
   tools,
@@ -158,10 +136,6 @@ export function toPlanToolViews({
   });
 }
 
-/**
- * The first skill, in teaching order, that the tool's chapters teach: a setup lesson goes right
- * before it. Null when the graph has none of them, which puts the lesson at the plan's start.
- */
 export async function findToolAnchorSkill({
   chapterIds,
   graph,

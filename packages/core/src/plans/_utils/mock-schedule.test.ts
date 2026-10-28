@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getMockSchedule } from "./mock-schedule";
 
-/** A Monday. */
 const TODAY = new Date("2026-10-12T00:00:00Z");
 
 function mock(date: string, status: "done" | "skipped" | "todo" = "todo") {
@@ -34,7 +33,6 @@ describe(getMockSchedule, () => {
   });
 
   it("keeps the weekday alone when the weeks between mocks change", () => {
-    // Every three weeks, then weekly in the final stretch.
     expect(
       getMockSchedule({
         items: [mock("2026-10-18"), mock("2026-11-08"), mock("2026-11-15"), mock("2026-11-22")],

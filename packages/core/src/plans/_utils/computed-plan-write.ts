@@ -5,7 +5,6 @@ import { type PlanWrite } from "./write-plan";
 
 const MINUTES_PER_HOUR = 60;
 
-/** The same selected build's items and owned, versioned facts are committed atomically. */
 export function toComputedPlanWrite({ computed }: { computed: ComputedPlan }): PlanWrite {
   const { built, selected } = computed;
 

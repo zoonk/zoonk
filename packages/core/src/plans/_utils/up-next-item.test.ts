@@ -6,8 +6,6 @@ function lesson(id: string, status: "done" | "todo" = "todo"): UpNextCandidate {
 }
 
 describe(findUpNextItem, () => {
-  // Pedro's Today opened a lesson of his plan's second phase while the Plan marked a chapter of
-  // the first, the next one in plan order: every screen now reads the lesson Today opens.
   it("is the plan item of the lesson today's session opens next, though the plan teaches another first", () => {
     const items = [lesson("first"), lesson("ahead")];
 

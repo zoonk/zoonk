@@ -11,8 +11,6 @@ import { describe, expect, it } from "vitest";
 import { loadUndoneTestOuts } from "./undone-test-outs";
 
 describe(loadUndoneTestOuts, () => {
-  // Undone, a class test's skipped organelles came back, and a plan short on time cut them first
-  // again as known, ahead of cell theory the learner had missed.
   it("dates the skills of each undone test-out from the test-out, and no applied one's", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
@@ -26,7 +24,6 @@ describe(loadUndoneTestOuts, () => {
       libraryLessonFixture(),
     ]);
 
-    // The undone item is a lesson: every skill it teaches counts, as far as the caller asks.
     await Promise.all([
       lessonSkillFixture({ lessonId: lesson.id, skillId: membrane.id }),
       lessonSkillFixture({ lessonId: lesson.id, skillId: unasked.id }),

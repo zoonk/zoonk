@@ -5,7 +5,6 @@ import {
 } from "../../goals/_utils/course-plan-graph";
 import { type PlannerLesson } from "../planner/plan-units";
 
-/** A course's written curriculum keeps its chapter order and levels even when skills recur. */
 export function withCourseLessonOrder({
   chapters,
   lessons,

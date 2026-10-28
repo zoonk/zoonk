@@ -23,14 +23,8 @@ const isTodo = (status: PlanItemStatus) => getWorkProgress(status) === "todo";
 const isTestedOut = (item: Pick<PlanReadItem, "status">) =>
   getWorkProgress(item.status) === "testedOut";
 
-/** Each skill's area: the course a stand-in for its lessons is shown under. */
 export type SkillAreas = ReadonlyMap<string, string | null>;
 
-/**
- * Each skill's area to show its stand-ins under (see `getWritingTitle`). The goal's own course (a
- * learn goal's, a language) says nothing the goal doesn't, so its skills have none and apps say
- * "More lessons": every phase of Maya's plan had a row named after her goal.
- */
 export function getSkillAreas({
   courseTitle,
   skills,
@@ -43,14 +37,12 @@ export function getSkillAreas({
   );
 }
 
-/** A stand-in for a skill whose lessons the Library hasn't outlined yet. */
 export function isWritingItem(
   item: Pick<PlanReadItem, "chapterId" | "kind" | "lessonId">,
 ): boolean {
   return item.kind === "lesson" && item.lessonId === null && item.chapterId === null;
 }
 
-/** The learner-facing title of a stand-in: its skill's course, never the skill's raw name. */
 export function getWritingTitle({
   item,
   skillAreas,
@@ -61,10 +53,6 @@ export function getWritingTitle({
   return (item.skillId && skillAreas.get(item.skillId)) || "";
 }
 
-/**
- * A stand-in placement settled (the skill was tested out before its lessons were written) isn't
- * being written: it groups apart from the stand-ins still waiting for their lessons.
- */
 function getGroupKey({ item, skillAreas }: { item: PlanReadItem; skillAreas: SkillAreas }) {
   if (item.chapterId) {
     return item.chapterId;
@@ -78,10 +66,6 @@ function getGroupKey({ item, skillAreas }: { item: PlanReadItem; skillAreas: Ski
   return isTestedOut(item) ? `settled:${title}` : `writing:${title}`;
 }
 
-/**
- * The skills a row of settled stand-ins stands for, by name in plan order: placement tested them
- * out before their lessons were written, so the row names them rather than their course.
- */
 function getSettledSkills(inGroup: readonly PlanReadItem[]): string[] {
   const [first] = inGroup;
 
@@ -108,13 +92,6 @@ function getChapterTitle({
   return isWritingItem(item) ? getWritingTitle({ item, skillAreas }) : item.titleSnapshot;
 }
 
-/**
- * A phase chapter by chapter, in plan order: lessons done of the total, and which one the learner
- * is in: the one holding the lesson up next (`findUpNextItem`), in whichever phase, as on Today and
- * the map. Skills whose lessons aren't outlined yet group under their course as one `writing` row
- * until their chapters exist; the ones placement tested out before then are one finished row of
- * their own.
- */
 function buildChapters({
   chapterTitles,
   isEarlier,
@@ -128,10 +105,8 @@ function buildChapters({
   upNextItemId,
 }: {
   chapterTitles: ReadonlyMap<string, string>;
-  /** The skill belongs to an earlier phase than this one (see `PlanChapterView.deeper`). */
   isEarlier: (skillId: string | null) => boolean;
   lessons: readonly PlanReadItem[];
-  /** How many lessons each item is (`countItemLessons`): a stand-in, the ones the plan teaches. */
   lessonsOf: (item: PlanReadItem) => number;
   outlinedUntil: string | null;
   skillAreas: SkillAreas;
@@ -155,8 +130,7 @@ function buildChapters({
 
     const todo = inGroup.filter((item) => isTodo(item.status));
     const writing = isWritingItem(first) && todo.length > 0;
-    // A saved session can teach a lesson before its plan date. The chapter is already being
-    // studied today, without moving the plan's dates or its challenge timing.
+
     const nextDate = getEarliestDate(
       todo.map((item) =>
         today && todayItemKeys.has(getPlanReadItemKey(item))
@@ -197,7 +171,6 @@ function buildChapters({
 
   const currentKey = next ? getGroupKey({ item: next, skillAreas }) : null;
 
-  /** A chapter finished ahead of the current one (lessons often interleave) still reads as done. */
   return groups.map(({ key, ...group }) => {
     if (group.lessonsDone === group.lessonsTotal) {
       return { ...group, state: "done" as const };
@@ -207,13 +180,11 @@ function buildChapters({
   });
 }
 
-/** The earliest day the items are scheduled; null when none is. */
 function getEarliestDate(items: readonly PlanReadItem[]): string | null {
   const dates = items.flatMap((item) => (item.scheduledFor ? [toIsoDate(item.scheduledFor)] : []));
   return dates.toSorted()[0] ?? null;
 }
 
-/** The phase's mock exams: how many, and the day of the next one still to take. */
 function buildMocks(items: readonly PlanReadItem[]): PlanPhaseView["mocks"] {
   const mocks = items.filter((item) => item.kind === "mock");
 
@@ -226,10 +197,6 @@ function buildMocks(items: readonly PlanReadItem[]): PlanPhaseView["mocks"] {
   return { count: mocks.length, nextDate: next ?? null };
 }
 
-/**
- * A phase's size in minutes: the planner's, or, for a phase saved without it, its share of the
- * plan's estimate by lessons, so no phase reads as zero hours.
- */
 function getPhaseMinutes({
   estimateMinutes,
   index,
@@ -251,11 +218,6 @@ function getPhaseMinutes({
   return (estimateMinutes * inPhase) / lessons.length;
 }
 
-/**
- * Every phase with its dates, size, progress, chapters and the checkpoint that closes it. Apps open
- * the current phase chapter by chapter and keep the others to one line until asked, so the screen
- * stays calm however big the goal is.
- */
 export function buildPhaseViews({
   phaseChallengesRequired = true,
   challengesOpen = true,
@@ -277,35 +239,24 @@ export function buildPhaseViews({
   upNextItemId,
 }: {
   phaseChallengesRequired?: boolean;
-  /** Sessions offer phase challenges: not a free exam plan past its first week, where Plus does. */
   challengesOpen?: boolean;
   chapterTitles: ReadonlyMap<string, string>;
   currentPhase: number | null;
-  /** The whole plan's estimate, for phases saved without their own minutes. */
   estimateMinutes?: number | null;
   goalKind: Goal["kind"];
   items: readonly PlanReadItem[];
-  /** How far ahead the plan writes lessons (`getOutlinedUntil`): topics after it open early. */
   outlinedUntil?: string | null;
   phases: readonly PlanPhase[];
-  /** A test days away: its phases say which of its days they cover. */
   shortPlan?: ShortPlanShape | null;
   skillAreas: SkillAreas;
-  /** Each skill's phase in the graph: a learn phase's rows of earlier phases' skills go deeper. */
   skillPhases?: ReadonlyMap<string, number>;
-  /** An exam the learner goes on studying after (see `isPlanFinished`). */
   studiesPastTarget?: boolean;
   targetDate?: Date | null;
-  /** Stand-in skills chapters already teach (`listTaughtStandInSkills`): none to ask for early. */
   taughtSkillIds?: ReadonlySet<string>;
-  /** The learner's day, for mocks past the date and when each challenge comes. */
   today?: Date | null;
-  /** Unfinished lessons in today's saved session, even when their plan dates are later. */
   todayItemKeys?: ReadonlySet<string>;
-  /** The plan item of the lesson up next (`findUpNextItem`): its chapter is the current one. */
   upNextItemId: string | null;
 }): PlanPhaseView[] {
-  // The phases count the lessons the plan's number and "finished" count (see `isInLessonScope`).
   const deadline = hasPlanDeadline({ studiesPastTarget, targetDate });
   const items = withinLessonScope({ deadline, items: planItems });
 
@@ -320,7 +271,6 @@ export function buildPhaseViews({
     today,
   });
 
-  // Sessions reach a challenge from every lesson before it, so its timing is read from all of them.
   const timings =
     challengesOpen && today
       ? getBossTimings({

@@ -10,7 +10,6 @@ function roundPlanMinutes(minutes: number): number {
 
 type ScheduledWork = Pick<BuiltPlan, "items" | "lessonRawMinutes">;
 
-/** One workload decomposition for public estimates and the learner's actual/prospective build. */
 export function getPlanWorkload({
   built,
   fromDate,
@@ -65,7 +64,6 @@ export function getPlanWorkload({
   };
 }
 
-/** Uses the same daily allocation as Plan and Today; authored content does not define time. */
 export function getPlanNumbers({
   built,
   coverage,
@@ -93,8 +91,6 @@ export function getPlanNumbers({
             return sum;
           }
 
-          // A joined stand-in starts before the exam but can teach after it. Its actual day
-          // portions split that time; events and rows without portions keep their dates.
           const portions = built.lessonDayMinutes.get(item.key);
 
           if (portions) {

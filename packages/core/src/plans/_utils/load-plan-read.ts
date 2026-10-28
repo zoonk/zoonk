@@ -4,7 +4,6 @@ import { selectLeftWork } from "./left-work";
 import { type PlanContext } from "./plan-context";
 import { readPlanSummary } from "./plan-summary";
 
-/** Saved items and their summary are the only authority for a screen or prefetch. */
 export async function loadPlanReadProjection({ context }: { context: PlanContext; now: Date }) {
   const catchUp = await loadCatchUpItems(context.goal.id);
 

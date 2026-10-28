@@ -10,10 +10,8 @@ import { loadPlanMemory } from "./plan-memory";
 import { endPlanSetupTask, endPlanSetupTaskWith } from "./plan-setup-tasks";
 import { loadPlanAtToken } from "./plan-token";
 
-/** Memory proposed it; the change shows the model's sentence saying what changed and why. */
 const ROUTINE_SOURCE = "memory";
 
-/** The routine's operations, or none when the model found nothing in memory to fit. */
 async function readRoutine(context: PlanContext) {
   const memory = await loadPlanMemory({
     goal: context.goal,
@@ -26,7 +24,6 @@ async function readRoutine(context: PlanContext) {
 
   const { analytics, dailyMinutes, language, today, weekdayMinutes } = toPlanEditInput(context);
 
-  // Days off, lighter days and dated light weeks: all a routine may change on a new plan.
   const { data, provenance } = await fitPlanToRoutineFacts({
     analytics,
     dailyMinutes,
@@ -42,13 +39,8 @@ async function readRoutine(context: PlanContext) {
 }
 
 /**
- * Fits a new plan's week to what the learner told the app about their routine ("Sundays are for
- * family"): only days off, lighter days and dated light weeks, applied with the sentence saying
- * why and an undo. Nothing happens without such facts, for explanations, or once the learner
- * shaped their week themselves. It's the plan's `routine` setup task (see `runPlanSetupTask`):
- * the change ends the task in its own transaction, so a retry after the fit (a light week leaves
- * the week's minutes as they were) never fits the plan twice. A failed model call throws and
- * leaves the task owed.
+ * Runs once: the change ends the task in its own transaction. A failed model call throws and leaves
+ * the task owed.
  */
 export async function fitPlanToRoutine(goalId: string): Promise<void> {
   const task = { goalId, task: "routine" as const };
@@ -78,7 +70,6 @@ export async function fitPlanToRoutine(goalId: string): Promise<void> {
         })
       : null;
 
-  // Nothing to fit, or nothing the fit committed: the task ends on its own.
   if (applied?.status !== "applied") {
     await endPlanSetupTask(task);
   }

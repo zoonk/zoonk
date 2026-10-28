@@ -63,7 +63,6 @@ describe(loadTodayPlanChange, () => {
       }),
     ]);
 
-    // A change read from the learner's words is said from what it does, not the model's words.
     await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toMatchObject({
       id: newest.id,
       operations: [{ kind: "setDailyMinutes", minutes: 20 }],
@@ -84,7 +83,6 @@ describe(loadTodayPlanChange, () => {
       measure: "goal",
     };
 
-    // Saved before Today said only facts, the change also kept a searched time to offer.
     const behind = { ...facts, dailyMinutes: 45, fullDepth: true };
 
     await planChangeFixture({
@@ -111,9 +109,6 @@ describe(loadTodayPlanChange, () => {
     expect(change?.behind).toStrictEqual(facts);
   });
 
-  // Lucas's Today, the day after his date: the settling that set aside what the date left said "11
-  // topics no longer fit by your date" over phase ends moved into the past. Today's day line says
-  // the date came and how the plan keeps going (status `pastDate`).
   it("leaves a settling made once the goal's date came to the day line", async () => {
     const user = await userFixture();
 
@@ -151,7 +146,6 @@ describe(loadTodayPlanChange, () => {
 
     await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toBeNull();
 
-    // Before its date the same settling puts the date at risk, which the learner answers.
     const ahead = await prisma.goal.update({
       data: { targetDate: new Date("2026-10-20T00:00:00Z") },
       where: { id: goal.id },
@@ -162,9 +156,6 @@ describe(loadTodayPlanChange, () => {
     });
   });
 
-  // Missed days' lessons moved forward and a pause are the plan doing its job, even when they move
-  // topics: the Plan lists them, and Today asks nothing (Will couldn't tell whether "Your plan
-  // changed" with a dozen topics asked him to do anything).
   it.each(["missedDays", "resumed"] as const)(
     "keeps a %s change quiet, even one that moves topics in or out of the plan",
     async (kind) => {
@@ -268,7 +259,6 @@ describe(loadTodayPlanChange, () => {
         planId: plan.id,
         status: "applied",
       }),
-      // The learner's own edit, a closer estimate and an older change say nothing new.
       planChangeFixture({
         createdAt: hoursAgo(2),
         kind: "edited",
@@ -297,7 +287,6 @@ describe(loadTodayPlanChange, () => {
       kind: "missedDays",
     });
 
-    // The learner's answer takes it off Today.
     await prisma.planChange.update({
       data: { payload: { behind, days: 1, seenAt: hoursAgo(1).toISOString(), source: "system" } },
       where: { id: atRisk.id },
@@ -306,8 +295,6 @@ describe(loadTodayPlanChange, () => {
     await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toBeNull();
   });
 
-  // The test-out's own result says what it skipped, with its Undo; a question missed in practice
-  // brings a topic back on its own. Neither asks anything of the learner on Today.
   it.each(["relearn", "testedOut"] as const)(
     "keeps a %s change quiet: the learner's answers made it",
     async (kind) => {

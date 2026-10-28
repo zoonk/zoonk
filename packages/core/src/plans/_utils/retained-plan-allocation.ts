@@ -6,12 +6,6 @@ import { summarizeSelectedPlan } from "../planner/selected-plan-summary";
 import { type PlanContext } from "./plan-context";
 import { readSelectedItemFacts } from "./selected-item-contract";
 
-/**
- * Summarize the unchanged layout the learner actually keeps, never the candidate's shifted
- * lesson intervals. Its fixed calendar/settings are unchanged; its stored item facts own the
- * raw portions, dates and minutes. A layout with items no build wrote (a test-out's stand-in) has
- * no such facts and stays explicitly stale.
- */
 export function retainPlanAllocation({
   built,
   context,
@@ -40,9 +34,6 @@ export function retainPlanAllocation({
       return [];
     }
 
-    // A one-day lesson's facts don't say whether its day held its time; the same work planned
-    // again does. Work earlier days left that the days before the deadline can't hold is dated with
-    // the last of it and takes none (see `placeCarriedWork`), so its day holds none of it either.
     const timed = item.status !== "todo" || built.lessonRawMinutes.has(key);
 
     const days: [string, number, number][] =
@@ -81,7 +72,6 @@ export function retainPlanAllocation({
   };
 }
 
-/** The retained schedule's fresh summary reuses the same loaded input and never builds a plan. */
 export function summarizeRetainedPlan({
   built,
   context,

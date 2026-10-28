@@ -12,24 +12,12 @@ import { parsePlanChangePayload } from "./plan-change-payload";
 import { changeGoalSelect, toPlanChangeView } from "./plan-change-view";
 import { isDateReached } from "./plan-end";
 
-/** An automatic change is news for a day; after that it's simply how the plan is. */
 export const RECENT_CHANGE_MS = 24 * 60 * 60 * 1000;
 
-/**
- * The newest saved proposals Today considers for a current, actionable quote.
- */
 const MAX_PROPOSALS = 3;
 
-/**
- * The plan change Today shows: a proposal waiting for an OK, or falling behind that puts the date
- * at risk, which waits for the learner's choice (see `asksAboutAutomaticChange`).
- */
 export type TodayPlanChangeView = PlanChangeView;
 
-/**
- * The newest proposals waiting for an OK, and the newest unseen automatic change of the last day
- * Today asks about, which it carries when no proposal is worth offering.
- */
 async function findTodayChanges({
   dateReached,
   now,
@@ -72,10 +60,6 @@ async function findTodayChanges({
   return { automatic: automatic ?? null, proposals: offered };
 }
 
-/**
- * The change Today carries, with its effect: the newest proposal that still changes something (see
- * `isCurrentPlanPreview`), else the newest unseen automatic change of the last day.
- */
 async function pickTodayChange({
   dateReached,
   now,
@@ -107,11 +91,6 @@ async function pickTodayChange({
   );
 }
 
-/**
- * The one plan change Today carries, so the learner can answer it where they are: OK or not now
- * for a proposal, and their choice when falling behind puts the date at risk. Null when there's
- * nothing to ask.
- */
 export async function loadTodayPlanChange({
   goal,
   now,
@@ -120,7 +99,6 @@ export async function loadTodayPlanChange({
 }: {
   goal: Goal;
   now: Date;
-  /** Leaves out a waiting proposal to move the phase dates, which the day's Open replaces. */
   skipPhaseDates?: boolean;
   timeZone?: string | null;
 }): Promise<TodayPlanChangeView | null> {

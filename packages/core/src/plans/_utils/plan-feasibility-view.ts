@@ -3,21 +3,15 @@ import { fromIsoDate, toIsoDate } from "../planner/plan-calendar";
 import { type PlanFeasibility } from "../planner/plan-feasibility";
 import { type SelectedCoverage } from "./selected-summary-contract";
 
-/** What fits in the plan the Plan shows (see `readShownFeasibility`). */
 export type ShownFeasibility = Pick<
   PlanFeasibility,
   "coreFits" | "coveredShare" | "deadline" | "deepensMostAsked" | "fits" | "measure" | "timeCovers"
 >;
 
-/** Shares go out as whole percentages' worth, so the screens never show "14.7%". */
 export function roundShare(share: number): number {
   return Math.round(share * 100) / 100;
 }
 
-/**
- * The selected allocation's coverage and the build's remaining feasibility facts, saved together
- * so the change and subsequent reads agree. A plan that covers everything as it shows has enough time.
- */
 export function readShownFeasibility({
   coverage,
   feasibility,
@@ -40,11 +34,6 @@ export function readShownFeasibility({
   };
 }
 
-/**
- * What the learner's own time covers by the goal's date, as the plan view says it: exact, read
- * from their plan. What other daily times or dates would do is never worked out for a read: the
- * learner asks for it (see `findPlanTimeToCover`).
- */
 export function toFeasibilityView(
   feasibility: ShownFeasibility,
 ): NonNullable<PlanView["feasibility"]> {

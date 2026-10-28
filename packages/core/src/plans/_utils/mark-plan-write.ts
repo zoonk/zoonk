@@ -3,7 +3,6 @@ import { type TransactionClient } from "@zoonk/db";
 import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
 import { type PlanContext } from "./plan-context";
 
-/** The expected input version after this transaction's first, shared plan mark. */
 export async function markPlanWrite(
   tx: TransactionClient,
   plan: PlanContext["plan"],

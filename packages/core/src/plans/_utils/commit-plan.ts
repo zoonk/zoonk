@@ -15,7 +15,6 @@ import {
 } from "./replan";
 import { writePlan } from "./write-plan";
 
-/** Publish the prepared layout, advice and proposals under one optimistic learner lock. */
 export async function commitPlan({
   change,
   computed,
@@ -30,9 +29,7 @@ export async function commitPlan({
   change: PlanChangeRecord | null;
   computed: ComputedPlan;
   context: PlanContext;
-  /** Other writes that must land with the plan, such as marking a change applied or undone. */
   extraWrites?: (tx: TransactionClient) => Promise<unknown>;
-  /** A change already recorded that this commit applies and the learner can undo: an accepted proposal. */
   restorable?: string | null;
   phaseDates?: Pick<Parameters<typeof preparePhaseDatesProposal>[0], "mode" | "pace" | "planning">;
   revalidation?: PlanTagRevalidation;

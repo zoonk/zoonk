@@ -12,11 +12,6 @@ import { type PlanContext } from "./plan-context";
 import { revalidatePlanTags } from "./replan";
 import { canRestore, loadPlanSnapshot, restorePlan } from "./restore-plan";
 
-/**
- * Whether a proposal waiting now changes something the given-back one changes too (see
- * `replacesProposal`): the newer question wins, as when it was proposed, so the learner never
- * answers two that contradict ("30 minutes a day", then "an hour a day").
- */
 async function isAskedAgain({
   change,
   tx,
@@ -42,13 +37,6 @@ async function isAskedAgain({
   });
 }
 
-/**
- * What the change becomes once undone: an applied proposal waits for the learner's answer again,
- * as it did before Apply, with nothing left to restore until it applies again, unless a newer
- * suggestion asks about the same thing (`replaced`, see `isAskedAgain`); any other change is
- * `undone`. Ana undid Today's rest-day suggestion and it was gone until she reloaded, though
- * nothing she chose had changed (Gmail's and Linear's undo give the prompt back too).
- */
 async function toUndone({ change, tx }: { change: PlanChange; tx: TransactionClient }) {
   const payload = parsePlanChangePayload(change.payload);
 
@@ -72,15 +60,6 @@ async function toUndone({ change, tx }: { change: PlanChange; tx: TransactionCli
   };
 }
 
-/**
- * Puts the plan back as it was right before an edit or a test-out (see `PlanSnapshot`): every item
- * on its day with its status, and the phase ends, state and numbers it had. What the learner
- * finished since stays done. A test-out's skipped lessons are todo again where they were, and the
- * skills it only assumed known are forgotten: put back by planning again, they landed as todo rows
- * on day one beside a plan laid out without them. Today's session comes back as it was too (see
- * `restoreDaySession`); on another day, or for a day built after the change, it follows the plan.
- * An applied proposal waits for an answer again (see `toUndone`).
- */
 export async function undoChange({
   change,
   context,

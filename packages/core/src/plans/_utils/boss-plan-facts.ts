@@ -10,12 +10,6 @@ import { type PlanGraph } from "../planner/plan-state";
 import { type PlannerLesson } from "../planner/plan-units";
 import { type BossPlanFacts } from "../planner/planned-bosses";
 
-/**
- * What a planning run's bosses ask (see `BossPlanFacts`), read before it plans: the skills the
- * Library says every lesson and chapter the run can place teaches, their survivors, and the question
- * bank on them as the learner (`userId`; null for a public estimate, which reads no answers) meets
- * it. A language goal's bosses are live calls: no bank to read.
- */
 export async function loadBossPlanFacts({
   chapterIds,
   examBlueprintId,
@@ -60,11 +54,6 @@ export async function loadBossPlanFacts({
   };
 }
 
-/**
- * What a planning run's bosses ask (see `loadBossPlanFacts`): from the lessons the run can place
- * and the plan's kept items, which the session reads (a done lesson the graph no longer has), with
- * the listening skills of the graph this run plans, not the one the plan saved before it.
- */
 export async function loadRunBossFacts({
   context: { goal, items },
   graph,

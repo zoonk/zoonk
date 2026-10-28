@@ -9,10 +9,8 @@ import {
   isShortExam,
 } from "../planner/short-exam-plan";
 
-/** A short plan's first day, its study days and a class test's short mock, from its settings. */
 export type ShortPlanShape = { days: number; planStart: Date; shortMockMinutes: number | null };
 
-/** Today in a short plan: "Day 1 of 3: map and gaps". */
 export type ShortPlanDay = { day: number; days: number; focus: ShortExamFocus };
 
 const SHORT_PHASE_KINDS = new Set<PlanPhase["kind"]>(["finalStretch", "gaps", "practice"]);
@@ -21,10 +19,6 @@ function isShortPhaseKind(kind: PlanPhase["kind"]): kind is ShortExamPhaseKind {
   return SHORT_PHASE_KINDS.has(kind);
 }
 
-/**
- * The shape of an exam plan days away, from the same rule the planner splits its days by; null
- * for any other plan.
- */
 export function getShortPlanShape({
   goal,
   settings,
@@ -49,7 +43,6 @@ export function getShortPlanShape({
   };
 }
 
-/** The days a phase of a short plan covers, counted from its first day, and what they're for. */
 export function toShortPhaseView({
   phase,
   shape,
@@ -68,14 +61,8 @@ export function toShortPhaseView({
   };
 }
 
-type ShortPlanToday = {
-  phases: readonly PlanPhase[];
-  shape: ShortPlanShape | null;
-  /** The learner-local date, as a UTC-midnight label. */
-  today: Date;
-};
+type ShortPlanToday = { phases: readonly PlanPhase[]; shape: ShortPlanShape | null; today: Date };
 
-/** Today's day of a short plan, its phase and what it's for; null outside its days. */
 function findToday({ phases, shape, today }: ShortPlanToday) {
   if (!shape) {
     return null;
@@ -93,25 +80,15 @@ function findToday({ phases, shape, today }: ShortPlanToday) {
   return view ? { day, days: shape.days, focus: view.focus, index } : null;
 }
 
-/** Which day of a short plan today is and what it's for; null outside its days. */
 export function getShortPlanDay(input: ShortPlanToday): ShortPlanDay | null {
   const found = findToday(input);
   return found ? { day: found.day, days: found.days, focus: found.focus } : null;
 }
 
-/**
- * The phase a short plan is in, read from the calendar too: a test days away is planned day by
- * day, so today's day is in progress even when placement already tested out its lessons (the
- * next thing to do then sits on a later day). A learner behind stays on the day of their next
- * thing to do. Null when today is outside its days or the plan isn't short.
- */
 export function findShortPlanPhase({
   progressPhase,
   ...input
-}: ShortPlanToday & {
-  /** The phase of the next thing to do (`findCurrentPhase`). */
-  progressPhase: number | null;
-}): number | null {
+}: ShortPlanToday & { progressPhase: number | null }): number | null {
   const todayPhase = findToday(input)?.index ?? null;
 
   if (todayPhase === null || progressPhase === null) {
@@ -121,7 +98,6 @@ export function findShortPlanPhase({
   return Math.min(todayPhase, progressPhase);
 }
 
-/** A short plan's days and the day of its short mock, as the plan scheduled it. */
 export function toShortPlanView({
   items,
   shape,

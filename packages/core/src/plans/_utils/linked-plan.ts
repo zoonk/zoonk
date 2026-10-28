@@ -4,7 +4,7 @@ import { SETUP_SKILL_KEY_PREFIX } from "@zoonk/utils/identity-key";
 import { type PlanLinkOutline } from "../plan-link-contract";
 import { type PlanGraph } from "../planner/plan-state";
 
-/** A shared plan's graph and the goal fields a link may show: never the owner's own answers. */
+/** Never the owner's own answers: a link shows only these fields. */
 export async function loadLinkedPlan(planId: string) {
   return prisma.plan.findUnique({
     select: {
@@ -28,7 +28,6 @@ export async function loadLinkedPlan(planId: string) {
 
 type LinkedPlan = NonNullable<Awaited<ReturnType<typeof loadLinkedPlan>>>;
 
-/** A private course or exam is the owner's; only public courses and exams name the subject. */
 export function getLinkSubject(goal: LinkedPlan["goal"]): PlanLinkOutline["subject"] {
   if (goal.examBlueprint?.visibility === "public") {
     return { description: null, title: goal.examBlueprint.name };
@@ -41,16 +40,10 @@ export function getLinkSubject(goal: LinkedPlan["goal"]): PlanLinkOutline["subje
     : null;
 }
 
-/**
- * A link shares only what's public: skills of private courses and the owner's setup lessons stay
- * with their owner, and phases left without skills (named for the owner's own goal) are dropped,
- * renumbering the rest.
- */
 export async function keepPublicGraph(graph: PlanGraph): Promise<PlanGraph> {
   const publicSkills = await prisma.skill.findMany({
     select: { id: true },
     where: {
-      // A setup lesson comes from the owner's answer on the tools card, not from the subject.
       NOT: { identityKey: { startsWith: SETUP_SKILL_KEY_PREFIX } },
       id: { in: graph.skills.map((skill) => skill.skillId) },
       visibility: "public",

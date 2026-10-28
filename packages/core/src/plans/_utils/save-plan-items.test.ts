@@ -7,9 +7,6 @@ import { describe, expect, it } from "vitest";
 import { savePlanItems } from "./save-plan-items";
 
 describe(savePlanItems, () => {
-  // Lessons outlined for a skill can make a chapter's lesson shared with another skill count for
-  // it instead. Saved under the skill it counted for before, a career plan's case study looked like
-  // it had left the plan with nothing said, though its lessons were there.
   it("saves the skill a kept lesson counts for now", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
@@ -47,8 +44,6 @@ describe(savePlanItems, () => {
     });
   });
 
-  // Missed days left no time for a lesson an earlier day held: the settling sets it aside instead
-  // of deleting it, and a lesson finished meanwhile stays finished.
   it("sets aside a lesson still to do the run sets aside, never one already finished", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
@@ -101,8 +96,6 @@ describe(savePlanItems, () => {
     expect(saved.map((item) => item.status)).toStrictEqual(["skipped", "done"]);
   });
 
-  // A lesson the learner finished while the plan was being computed can't be deleted. Left out of
-  // the run, it stayed past every other row, and the plan's next save failed on a taken position.
   it("keeps every position in order when a lesson the run leaves out was finished meanwhile", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
@@ -151,8 +144,6 @@ describe(savePlanItems, () => {
     ]);
   });
 
-  // A plan an earlier save left with a row past the others still saves, and the row comes back in
-  // order.
   it("saves a plan holding a row left past the others", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });
@@ -191,8 +182,6 @@ describe(savePlanItems, () => {
     ]);
   });
 
-  // An exam plan holds about a thousand items and a refresh moves few of them. Rewriting every row
-  // twice per save held the learner's lock for as long as the save took, so only changed rows go.
   it("writes only the rows a save changes", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ userId: user.id });

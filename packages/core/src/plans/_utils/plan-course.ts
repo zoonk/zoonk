@@ -6,16 +6,11 @@ const LEVEL_ORDER = Object.values(CourseLevel);
 
 type CourseItem = Pick<PlanItem, "chapterId" | "kind" | "lessonId" | "status">;
 
-/**
- * The level after the plan's highest one, even before the course has chapters there: the Library
- * outlines a level when someone needs it. Null at the top, or before the plan uses the course.
- */
 function getNextLevel(levels: readonly PlanCourseLevel[]): CourseLevel | null {
   const highest = levels.findLastIndex((level) => level.inPlan);
   return highest === -1 ? null : (levels[highest + 1]?.level ?? null);
 }
 
-/** The chapters a plan teaches: its items' chapters, and a lesson item's home chapter without one. */
 async function loadPlanChapterIds(
   items: readonly Pick<PlanItem, "chapterId" | "lessonId">[],
 ): Promise<Set<string>> {
@@ -37,11 +32,6 @@ async function loadPlanChapterIds(
   ]);
 }
 
-/**
- * The course a goal's plan is built from (the goal's main course): its size, how much of it the
- * plan uses and its levels with the plan's marked. Null when the goal has no course yet or it's
- * gone. A private course has no levels and no public page.
- */
 export async function loadPlanCourse({
   goal,
   items,

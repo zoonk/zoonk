@@ -4,17 +4,10 @@ import { getSkillArea } from "../planner/graph-areas";
 import { type PlanGraph } from "../planner/plan-state";
 import { type PlannerLesson } from "../planner/plan-units";
 
-/** Answers an area needs before it can count as going well: enough that one lucky lesson doesn't. */
 const MIN_AREA_ANSWERS = 6;
 
-/** The share of right answers that makes an area go well: nearly everything. */
 const STRONG_ACCURACY = 0.85;
 
-/**
- * The areas of a goal the learner is doing well in: enough answers on their skills, or in the
- * lessons that teach them, and nearly all of them right. A plan made harder starts past these
- * areas' foundations.
- */
 export async function loadStrongAreas({
   graph,
   lessons,
@@ -28,7 +21,6 @@ export async function loadStrongAreas({
     graph.skills.map((skill) => [skill.skillId, getSkillArea({ graph, skill })]),
   );
 
-  // A lesson's answers land on the finer skills it teaches; each counts for its plan skill's area.
   const lessonArea = new Map(
     lessons.flatMap((lesson) => {
       const area = lesson.skillIds.map((skillId) => areaOf.get(skillId)).find(Boolean);

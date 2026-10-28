@@ -4,7 +4,6 @@ import { type ExistingPlanItem } from "../planner/plan-items";
 
 const DAYS_PER_WEEK = 7;
 
-/** The plan's mocks still to take, from today, each day once, in order. */
 function listMockDaysAhead({
   items,
   today,
@@ -24,14 +23,12 @@ function listMockDaysAhead({
   return [...new Set(days)].toSorted((a, b) => a - b).map((time) => new Date(time));
 }
 
-/** The one weekday every day falls on (Sunday 0); null when they don't share one, or for one day. */
 function getSharedWeekday(days: readonly Date[]): number | null {
   const weekdays = new Set(days.map((day) => day.getUTCDay()));
   const [weekday] = weekdays;
   return days.length > 1 && weekdays.size === 1 && weekday !== undefined ? weekday : null;
 }
 
-/** The weeks from each day to the next, when it's always the same whole number of them. */
 function getSharedWeeks(days: readonly Date[]): number | null {
   const gaps = new Set(days.slice(1).map((day, index) => daysBetween(days[index] ?? day, day)));
   const [gap] = gaps;
@@ -41,11 +38,6 @@ function getSharedWeeks(days: readonly Date[]): number | null {
     : null;
 }
 
-/**
- * When the plan's mock exams still to take fall, from their scheduled days: how many, the next
- * one's day, and only the pattern the days really keep (one weekday, a fixed number of weeks
- * apart). Null without a mock ahead.
- */
 export function getMockSchedule({
   items,
   today,

@@ -137,8 +137,6 @@ describe("proposal effects on Today", () => {
 
     const goalBefore = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
 
-    // Superseded by C2's next-study-day rule: every run moves this end, so the optional proposal
-    // moves nothing more and isn't offered; the refresh's change records the move instead.
     await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toBeNull();
 
     await expect(
@@ -160,12 +158,9 @@ describe("proposal effects on Today", () => {
       where: { kind: "estimateUpdated", planId: plan.id, status: "applied" },
     });
 
-    // The refresh moved the end on its own: its change says so, and Today asks nothing.
     await expect(loadTodayPlanChange({ goal, now: NOW })).resolves.toBeNull();
 
     expect(parsePlanChangePayload(change.payload).effect?.phaseEnds).toStrictEqual([
-      // The challenge's day became a rest day: the phase's last lessons take the day after it, and
-      // the challenge comes the first study day after them.
       {
         after: toIsoDate(addDays(endDay, 2)),
         before: end,

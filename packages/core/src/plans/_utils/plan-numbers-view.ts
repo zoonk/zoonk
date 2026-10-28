@@ -11,7 +11,6 @@ import { readPlanSummary } from "./plan-summary";
 import { type ComputedPlan } from "./replan";
 import { readSelectedItemFacts } from "./selected-item-contract";
 
-/** The actual pure build's numbers, also reused for a prospective onboarding schedule. */
 export async function buildPlanNumbersView({
   computed,
   context,
@@ -19,7 +18,6 @@ export async function buildPlanNumbersView({
 }: {
   computed: ComputedPlan;
   context: PlanReadContext;
-  /** What the plan covers: the Plan's is what the plan it shows covers (see `readShownFeasibility`). */
   coverage?: Pick<ShownFeasibility, "coveredShare" | "measure">;
 }): Promise<PlanNumbers> {
   const { pace, state } = computed;
@@ -65,7 +63,6 @@ export async function buildPlanNumbersView({
   });
 }
 
-/** Recount saved portions for the current day; no Library reads and no producer. */
 export function buildSavedPlanNumbersView(context: PlanReadContext): PlanNumbers {
   const { state, goal, today } = context;
 

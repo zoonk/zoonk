@@ -2,7 +2,6 @@ import "server-only";
 import { type ExistingPlanItem, getItemKey } from "../planner/plan-items";
 import { type PlanContext } from "./plan-context";
 
-/** Read-only selection: unsaved items cannot be passed as persisted mutation preconditions. */
 export type PlanReadItem = Omit<ExistingPlanItem, "id"> & {
   facts?: unknown;
   id: string | null;

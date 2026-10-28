@@ -4,7 +4,6 @@ import { toIsoDate } from "../planner/plan-calendar";
 import { type PlanReadItem, getPlanReadItemKey } from "./plan-read-projection";
 import { isWorkFinished } from "./work-progress";
 
-/** The checkpoint that closes the phase, the Trickster's, when it has one. */
 export function buildCheckpoint({
   locked = false,
   items,
@@ -12,7 +11,6 @@ export function buildCheckpoint({
 }: {
   locked?: boolean;
   items: readonly PlanReadItem[];
-  /** When each challenge still to win comes (`getBossTimings`); empty where sessions hold none. */
   timings: ReadonlyMap<string, BossTiming>;
 }): PlanPhaseCheckpointView | null {
   const boss = items.find((item) => item.kind === "boss");

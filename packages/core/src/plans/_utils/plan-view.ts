@@ -65,7 +65,6 @@ function buildAreas({
   }));
 }
 
-/** Free exam plans cover the first week and no mocks; Plus covers everything. */
 async function getAccess(context: PlanReadContext): Promise<PlanView["access"]> {
   if (context.goal.kind !== "exam") {
     return { freeUntil: null, freeWeekOver: false, mocksRequirePlus: false };
@@ -97,7 +96,6 @@ async function loadChapterTitles(chapterIds: string[]): Promise<Map<string, stri
   return new Map(chapters.map((chapter) => [chapter.id, chapter.title]));
 }
 
-/** Where the plan stands (see `getPlanStatus`), from its items and the plan's estimate. */
 function readPlanStatus({
   phaseChallengesRequired,
   catchUp,
@@ -129,13 +127,6 @@ function readPlanStatus({
   });
 }
 
-/**
- * The plan view model: every phase with its chapters and checkpoint, this week day
- * by day, the status and estimate, what fits in the learner's time, the areas they can focus on
- * or skip, the tools its chapters use, the exam's choices with the learner's picks, recent changes
- * with proposals waiting for an OK, and the notice's exam day when the plan counts down to another,
- * for the learner to take with one tap.
- */
 type PlanViewInput = { context: PlanContext; now: Date };
 
 export async function buildPlanView({
@@ -218,7 +209,6 @@ export async function buildPlanView({
     skills: state.graph.skills,
   });
 
-  // The days studied this week, so a day left empty by re-planning reads honestly.
   const studiedDates = new Set(
     studyWeek.days.filter((day) => day.studied).map((day) => toIsoDate(day.date)),
   );

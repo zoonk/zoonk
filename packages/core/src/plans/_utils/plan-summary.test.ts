@@ -10,7 +10,6 @@ import { type SelectedCoverage } from "./selected-summary-contract";
 
 const plan = { id: "plan-a", userId: "learner-a", version: 7 };
 
-/** Two skills; `shared` teaches both, `straddling` runs past the deadline, `after` is past it. */
 const coverage: SelectedCoverage = {
   basis: "selected",
   coreFits: true,
@@ -142,7 +141,6 @@ describe(reduceCompletedSummary, () => {
       ["after"],
     );
 
-    // The basis stays: a completion doesn't make another plan version.
     expect(reduced?.basis).toStrictEqual(summary.basis);
     expect(reduced?.selected.requirement).toStrictEqual(summary.selected.requirement);
   });

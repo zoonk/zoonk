@@ -12,7 +12,6 @@ import { DAYS_PER_WEEK } from "../planner/plan-state";
 import { getMockSchedule } from "./mock-schedule";
 import { type PlanReadContext } from "./plan-read-projection";
 
-/** The plan's days and dates as the learner set them, and the mock exams ahead. */
 export function buildScheduleView({
   calendar,
   context,

@@ -9,28 +9,19 @@ import { type PlanSummary, reduceCompletedSummary } from "./plan-summary";
 import { getGoalUpdate } from "./plan-unchanged";
 import { type SavedPlanItem, savePlanItems } from "./save-plan-items";
 
-/** What a commit writes on a plan: its state, phases and numbers, and its items in order. */
 export type PlanWrite = {
   coveredShare: number | null;
   estimateHours: number | null;
-  /** What the plan was planned from (see `getPlanInputsKey`); null when that isn't known. */
   inputsKey: string | null;
   items: readonly SavedPlanItem[];
   phases: PlanPhase[];
   previews?: { id: string; payload: StoredPlanChangePayload }[];
-  /** The lessons each skill's stand-in teaches (see `savePlanItems`). */
   standInLessons: ReadonlyMap<string, number>;
   state: PlanState;
   sourceSkillIds: readonly string[];
   summary?: PlanSummary | null;
 };
 
-/**
- * Counts what the write's new lesson items were saved done with: a lesson the learner finished
- * elsewhere (another goal, the Library) is done from when it ended (see `savePlanItems`), which the
- * summary the write posted read as still to do. Only a lesson it counted short changes what it
- * covers (see `reduceCompletedSummary`), so there's nothing to read while none of them is new.
- */
 async function creditFinishedNewLessons({
   context,
   plan,
@@ -71,16 +62,10 @@ async function creditFinishedNewLessons({
   }
 }
 
-/** A value as the JSON a `jsonb` column stores, or SQL null. */
 function toJsonb(value: unknown) {
   return value === null || value === undefined ? null : JSON.stringify(value);
 }
 
-/**
- * Writes a plan inside a transaction: its state, phases and numbers, the goal's time settings and
- * its items (see `savePlanItems`). The plan's version guards against a concurrent run. Every write
- * ends the undo of the plan's earlier changes (see `canUndoChange`), so their snapshots go.
- */
 export async function writePlan({
   context,
   plan,
@@ -90,9 +75,6 @@ export async function writePlan({
   plan: PlanWrite;
   tx: TransactionClient;
 }): Promise<void> {
-  // The skills a waiting proposal's quote read stay sources with the build's own (see
-  // `resolvePlanInputDependents`): a content write to one of them still marks the plan, so the
-  // quote can't outlive what it was quoted from. Read in the compare-and-set, so it costs nothing.
   const count = await tx.$executeRaw`
     UPDATE plans SET
       covered_share = ${plan.coveredShare},
@@ -150,14 +132,7 @@ export async function writePlan({
   await saveProposalPreviews({ previews: plan.previews, tx });
 }
 
-/**
- * Keeps the key of what a run planned from (see `getPlanInputsKey`) on a plan it left as it was
- * (see `isPlanUnchanged`): a later refresh with the same inputs has nothing new to plan. The graph
- * goes with it, with the lessons that run counted for each skill (`withPlannedLessons`), so a
- * skill's core never lags the key: the Library can grow past what a plan short on time keeps. The
- * version stays, so a learner's open plan editor isn't in conflict, and a plan another run saved
- * since keeps its own key.
- */
+/** Keeps the plan's version, so a learner's open plan editor isn't in conflict. */
 export async function savePlanInputsKey({
   context,
   graph,
@@ -195,7 +170,6 @@ export async function savePlanInputsKey({
   });
 }
 
-/** Persist the prepared survivor quotes through one write path. */
 export async function saveProposalPreviews({
   tx,
   previews = [],

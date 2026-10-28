@@ -5,11 +5,6 @@ import { getSkillArea } from "../planner/graph-areas";
 import { type PlanGraph } from "../planner/plan-state";
 import { type PlannerLesson } from "../planner/plan-units";
 
-/**
- * The Library band a learner's own level starts at: someone who studied the subject before
- * starts at its intermediate chapters, someone who knows it well at its advanced ones. Null when
- * every band is theirs.
- */
 export function getLevelFloor(level: OwnLevel | null): CourseLevel | null {
   if (level === "intermediate" || level === "advanced") {
     return level;
@@ -22,12 +17,6 @@ function isBelow({ band, floor }: { band: CourseLevel | null | undefined; floor:
   return band !== null && band !== undefined && getBandRank(band) < getBandRank(floor);
 }
 
-/**
- * Leaves out the lessons of a band below the learner's level when every skill they teach is also
- * taught at that level or above: a skill the Library teaches in a beginner and an intermediate
- * chapter takes only the intermediate one for someone who studied it before. A skill taught only
- * in an easier band keeps those lessons, so no skill loses its lessons.
- */
 function keepLevelBands<TLesson extends Pick<PlannerLesson, "band" | "skillIds">>({
   floor,
   lessons,
@@ -52,14 +41,8 @@ function keepLevelBands<TLesson extends Pick<PlannerLesson, "band" | "skillIds">
   );
 }
 
-/** The band an area the learner said they're past the basics of starts at. */
 const PAST_BASICS_FLOOR: CourseLevel = "intermediate";
 
-/**
- * The lessons of the areas the learner said they're past the basics of keep only their higher
- * bands where a skill is also taught there (`keepLevelBands`); other areas' lessons stay as they
- * are, and so do a skill's the learner then missed a question on (`keepSkillIds`).
- */
 export function keepPastBasicsBands({
   graph,
   keepSkillIds = new Set(),

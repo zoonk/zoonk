@@ -4,7 +4,6 @@ import { type ExistingPlanItem } from "../planner/plan-items";
 import { parsePlanSettings } from "../planner/plan-state";
 import { getPlanInputsKey, readLanding } from "./plan-inputs-key";
 
-/** A Monday. */
 const TODAY = new Date("2026-10-12T00:00:00Z");
 
 const lessons = ["fractions", "ratios"].flatMap((skillId) =>
@@ -17,7 +16,6 @@ const lessons = ["fractions", "ratios"].flatMap((skillId) =>
   })),
 );
 
-/** Every field a run reads, so a field added to the input has to be added here too. */
 const input: Required<BuildPlanInput> = {
   announcements: ["Essay on ratios"],
   answeredWrongSkillIds: new Set(["ratios"]),
@@ -85,7 +83,6 @@ const input: Required<BuildPlanInput> = {
   topicLevels: [{ level: "high", subject: "Math", topic: "Ratios" }],
 };
 
-/** What only says how a run was made, which the plan it saved already holds. */
 const RUN_FIELDS = new Set([
   "bossMinutes",
   "bringBackSetAside",
@@ -108,8 +105,6 @@ const item = { key: "lesson:fractions-0" };
 const key = getPlanInputsKey({ input, items: [] });
 
 describe(getPlanInputsKey, () => {
-  // A plan saved before still reads as unchanged. Those saved before every challenge took its time
-  // inside its day (a run now starts from the times the plan saved) plan once more.
   it("keeps the bytes of the keys plans were saved with", () => {
     expect(getPlanInputsKey({ input, items: [{ ...item, status: "done" }] })).toBe(
       "11c82c39f3b7681bff1d31e6cecd00d96e2fb6c769c988bc52071052eb132012",
@@ -137,7 +132,6 @@ describe(getPlanInputsKey, () => {
     expect(keys[2]).not.toBe(keys[0]);
   });
 
-  // The first exam day's clock sizes `mockMinutes`; the second day's mocks are sized by their own.
   it("changes when an exam day's mock clock does, the first day's unchanged", () => {
     const clocks = [
       { day: 1, fullMinutes: 300, minutes: 150 },
@@ -154,8 +148,6 @@ describe(getPlanInputsKey, () => {
     expect(after).not.toBe(before);
   });
 
-  // The day a lesson was finished is fixed once it's done: a new day reads the same key, and the
-  // learner's day moving (another time zone) dates it again.
   it("reads the day each finished lesson was done, the same whatever day the run plans", () => {
     const nextDay = new Date(TODAY.getTime() + 86_400_000);
     const moved = new Map([["item-fractions-0", nextDay]]);
@@ -176,8 +168,6 @@ describe(getPlanInputsKey, () => {
     expect(changed).toBe(!RUN_FIELDS.has(field));
   });
 
-  // A run reads the counts the build before it saved and saves its own, so a key that read them
-  // missed on the next refresh whenever a change moved them, and nothing new was planned again.
   it("leaves out the lessons the last build counted for each skill", () => {
     const counted = {
       ...input,
@@ -195,8 +185,6 @@ describe(getPlanInputsKey, () => {
     expect(getPlanInputsKey({ input, items: [{ ...item, status: "done" }] })).not.toBe(key);
   });
 
-  // An outline that also places a lesson written before in its new chapter can give the lesson that
-  // chapter and move it in the course order: a career plan's day-one landing read as more news.
   it("reads a lesson's chapter and its place in the course order as no news", () => {
     const [first, second, ...rest] = lessons;
 
@@ -224,7 +212,6 @@ describe(readLanding, () => {
     titleSnapshot: "Ratios",
   };
 
-  /** A plan saved before the Library wrote the ratios lessons: ratios is a stand-in. */
   const saved: BuildPlanInput = {
     goal: { dailyMinutes: 30, kind: "learn", targetDate: null },
     graph: input.graph,
@@ -242,7 +229,6 @@ describe(readLanding, () => {
   const savedKey = getPlanInputsKey({ input: saved, items: [] });
   const landed = { ...saved, lessons };
 
-  /** A plan that holds the first ratios lesson, and a stand-in for the rest of the skill. */
   const held: BuildPlanInput = {
     ...saved,
     graph: {
@@ -287,7 +273,6 @@ describe(readLanding, () => {
     });
   });
 
-  // An OAB plan's day-one landing read lessons its cut left out as written since.
   it("never reads a lesson the plan was saved without, but knew, as written since", () => {
     const heldKey = getPlanInputsKey({ input: { ...held, lessons }, items: [] });
 

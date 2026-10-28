@@ -16,7 +16,6 @@ function sortIds(ids: readonly string[]): string[] {
   return ids.toSorted((a, b) => a.localeCompare(b));
 }
 
-/** Links each lesson to the skill one at a time, in this order, so the rows are stored in it. */
 async function linkInOrder({
   lessonIds,
   skillId,
@@ -42,8 +41,6 @@ describe(loadSkillLessons, () => {
       ),
     ]);
 
-    // Written one at a time, the higher id first: the lessons and their links to the skill are
-    // both stored in reverse id order.
     const byId = sortIds([randomUUID(), randomUUID()]);
 
     const places = byId
@@ -59,7 +56,6 @@ describe(loadSkillLessons, () => {
       });
     }
 
-    // Each lesson is the first of its own chapter, and no course places either chapter: they tie.
     await Promise.all(places.map((place) => chapterLessonFixture({ ...place, position: 0 })));
 
     await linkInOrder({ lessonIds: byId.toReversed(), skillId: skill.id });
@@ -87,7 +83,6 @@ describe(loadSkillLessons, () => {
       ),
     );
 
-    // The larger id comes first in the chapter: the position decides, not the id.
     const [first, second] = sortIds(lessons.map((lesson) => lesson.id)).toReversed();
 
     await Promise.all([

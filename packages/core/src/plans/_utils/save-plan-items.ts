@@ -5,16 +5,11 @@ import { type ExistingPlanItem, type PlannedItem } from "../planner/plan-items";
 import { readSelectedItemFacts } from "./selected-item-contract";
 import { isStandIn } from "./stand-in-lessons";
 
-/** An item as a plan saves it: `id` is kept for existing items and items restored by Undo. */
 export type SavedPlanItem = Omit<PlannedItem, "key" | "minutes"> & {
   facts?: PlanItem["facts"];
   minutes?: number | null;
 };
 
-/**
- * When the plan's learner first finished each of these lessons, from their own ledger rows, with
- * the rule `listFinishedLessonIds` uses for a finished lesson.
- */
 async function findLessonFinishes({
   lessonIds,
   planId,
@@ -43,26 +38,9 @@ async function findLessonFinishes({
 }
 
 /**
- * Writes a planning run's items in place. Todo items that left the plan are deleted; kept items get
- * their new position, phase, date and the skill they count for (a shared chapter's lesson can count
- * for another skill once that skill's lessons are outlined) without touching their status, so a
- * lesson finished while the plan was being computed stays finished, but a todo item the run sets
- * aside (`skipped`, see `setAsideLeftWork`) and a set-aside one a learner's change plans again
- * (see `BuildPlanInput.bringBackSetAside`); new items are created, with their original ids when
- * Undo restores them so the day's block payloads still reach them. One statement per step. A
- * stand-in keeps the lessons the plan teaches in its place (`standInLessons`), which every screen
- * counts it as. A new lesson item the learner already finished, such as a guest's lesson from a
- * public page before "Build my plan" made the goal, is done from when it ended, as finishing it
- * checks it off in every plan that has it (`completeLessonPlanItems`).
- *
- * Only rows the run changes are written: an exam plan holds about a thousand items and a refresh
- * moves few of them, and rewriting each one twice per save kept the learner locked for longer than
- * the save needs. Postgres compares each row as it stands when written, so a row changed after the
- * plan was read is still judged by its saved values. A row that moves goes out of the way first,
- * past both the old and the new positions, so no row ever takes a position another still holds
- * (Postgres checks the plan's unique positions row by row). A row the run left out that can't be
- * deleted, such as a lesson finished meanwhile, then follows the plan's items, so positions stay
- * in order for the next save.
+ * Kept items keep their status, so a lesson finished while the plan was computed stays finished. A
+ * moving row goes past both its old and new positions first: Postgres checks the plan's unique
+ * positions row by row.
  */
 export async function savePlanItems({
   existing,
@@ -74,7 +52,6 @@ export async function savePlanItems({
   existing: readonly ExistingPlanItem[];
   items: readonly SavedPlanItem[];
   planId: string;
-  /** The lessons each skill's stand-in teaches after cuts and base choices. */
   standInLessons: ReadonlyMap<string, number>;
   tx: TransactionClient;
 }): Promise<void> {

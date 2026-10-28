@@ -3,12 +3,6 @@ import { prisma } from "@zoonk/db";
 import { type ClaimEvent } from "../../learner/_utils/skill-claims";
 import { parsePlanChangePayload } from "./plan-change-payload";
 
-/**
- * The skills of a goal's test-outs the learner undid, from the moment of each test-out: they asked
- * to study them, so the answers before it no longer show they know them (see `ClaimEvent`). Undone,
- * a class test's skipped organelles came back, and a plan short on time cut them first again as
- * known, ahead of cell theory the learner had missed.
- */
 export async function loadUndoneTestOuts({
   goalId,
   skillIds,

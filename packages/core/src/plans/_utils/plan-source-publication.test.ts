@@ -7,7 +7,6 @@ import { lockSourceRoots } from "./plan-source-publication";
 
 type Roots = Parameters<typeof lockSourceRoots>[1];
 
-/** Holds a content write's source locks open until `release`, as a writer between its locks and commit. */
 function holdSourceRoots(roots: Roots) {
   const held = Promise.withResolvers<number>();
   const released = Promise.withResolvers<null>();
@@ -75,7 +74,6 @@ describe(lockSourceRoots, () => {
     );
 
     try {
-      // The writer waits on the skill, so it already holds the lesson.
       await waitForBlockedStatement(readerPid, /FROM skills/u);
 
       await expect(
@@ -88,7 +86,6 @@ describe(lockSourceRoots, () => {
   });
 });
 
-/** A reader holding a share lock on one skill, as a plan's source barrier does while it reads. */
 function holdSkillShare(skillId: string) {
   const held = Promise.withResolvers<number>();
   const released = Promise.withResolvers<null>();

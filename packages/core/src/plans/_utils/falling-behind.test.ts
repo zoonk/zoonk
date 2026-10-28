@@ -35,7 +35,7 @@ describe(getFallingBehind, () => {
   it("says what the missed days did at the learner's time, without planning other daily times or dates", () => {
     const source = input();
     const feasibility = getPlanFeasibility({ input: source, planned: buildPlan(source) });
-    // Observe the real lazy getters: each one plans the goal again at other daily times or dates.
+
     const searches = (
       [
         "alternative",

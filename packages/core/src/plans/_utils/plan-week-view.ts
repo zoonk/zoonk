@@ -16,7 +16,6 @@ import { isWorkFinished } from "./work-progress";
 
 type ItemAccess = { freeUntil: string | null; mocksRequirePlus: boolean };
 
-/** Free exam plans stop at their first week, and mock exams need Plus. */
 function requiresPlus({ access, item }: { access: ItemAccess; item: PlanReadItem }): boolean {
   if (item.kind === "mock" && access.mocksRequirePlus) {
     return true;
@@ -54,12 +53,6 @@ function toPlanItemView({
   };
 }
 
-/**
- * Only study makes a past day done: its scheduled items finished (`isWorkFinished`: studied or
- * tested out, never set aside after missed days), or, with nothing scheduled on it, time spent
- * studying. Days before the goal started and past days with nothing scheduled (missed work
- * re-flows to later days) stay neutral, as rest, never done or missed.
- */
 function getDayState({
   date,
   items,
@@ -69,7 +62,6 @@ function getDayState({
 }: {
   date: Date;
   items: readonly PlanItemView[];
-  /** The day's planned minutes: none on rest days and on days before the goal started. */
   minutes: number;
   studied: boolean;
   today: Date;
@@ -93,7 +85,6 @@ function getDayState({
   return items.every((item) => isWorkFinished(item.status)) ? "done" : "missed";
 }
 
-/** This week, Monday to Sunday: each day's minutes, what it focuses on, and the week's checkpoint. */
 export function buildWeekView({
   access,
   calendar,
@@ -108,15 +99,11 @@ export function buildWeekView({
 }: {
   access: ItemAccess;
   calendar: StudyCalendar;
-  /** The exam's day rules; null for goals that aren't exams. */
   exam: ExamDayRules | null;
   items: readonly PlanReadItem[];
-  /** The time the days' checkpoints take past them (`PlanSettings.checkpointOverflow`). */
   overflow?: PlanSettings["checkpointOverflow"];
   skillAreas: SkillAreas;
-  /** The learner-local day the goal started; earlier days were never days to study for it. */
   startDate: Date;
-  /** This week's days (ISO dates) the learner studied on. */
   studiedDates: ReadonlySet<string>;
   targetDate: Date | null;
   today: Date;
@@ -153,7 +140,6 @@ export function buildWeekView({
   return { days, endDate: toIsoDate(getEndOfWeek(today)), startDate: toIsoDate(start) };
 }
 
-/** Announce funded events by their persisted IDs, never by a speculative planner preview. */
 export function buildFundedMocksView({
   access,
   funding,

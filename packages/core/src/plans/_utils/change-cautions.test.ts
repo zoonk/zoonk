@@ -37,7 +37,6 @@ describe(findChangeCautions, () => {
       }),
     ).resolves.toStrictEqual([]);
 
-    // Already ending early, a change that doesn't end it earlier costs nothing new.
     await expect(
       findChangeCautions({
         effect: effect({ after: "2026-12-01", before: "2026-11-20" }),

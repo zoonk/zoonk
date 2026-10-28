@@ -13,7 +13,6 @@ const dailyNeedSchema = z.union([
     .strict(),
 ]);
 
-/** A lesson the plan holds and counts less than whole by the deadline (see `shortLessons`). */
 const shortLessonSchema = z
   .object({
     countedRaw: minutesSchema,
@@ -23,10 +22,6 @@ const shortLessonSchema = z
   })
   .strict();
 
-/**
- * One of the plan's bases as the layout studied it: what it is (its area, name and the skills it's
- * needed for, see `PlanBase`), whether the learner knows it, each way's minutes and the choice.
- */
 const baseChoiceSchema = z.enum(["deep", "essential", "quick", "skip"]);
 
 const baseSchema = z.object({
@@ -45,7 +40,6 @@ const baseSchema = z.object({
   studied: z.boolean(),
 });
 
-/** What the selected plan covers of the chosen requirement by the deadline (see `getCoverage`). */
 const coverageSchema = z.object({
   basis: z.literal("selected"),
   coreFits: z.boolean(),
@@ -53,11 +47,6 @@ const coverageSchema = z.object({
   deadline: z.iso.date(),
   fits: z.boolean(),
   measure: z.enum(["exam", "goal"]),
-  /**
-   * The requirement's lessons the plan holds and counts less than whole by the deadline (one
-   * running past it, or after it), each once with the skills it counts for: finishing one of
-   * them is the only completion that changes what the plan covers.
-   */
   shortLessons: z.array(shortLessonSchema),
   skills: z.array(
     z.object({
@@ -68,15 +57,9 @@ const coverageSchema = z.object({
       worth: minutesSchema,
     }),
   ),
-  /** The goal's date the plan was measured against: another date makes these numbers past. */
   targetDate: z.iso.date(),
 });
 
-/**
- * Facts from the one selected build; no alternative plan or unselected fit claim is stored. They
- * describe the stored plan as its layout posted them: coverage reductions follow completions that
- * change it (see `reduceCompletedSummary`), the rest stays as of that layout.
- */
 export const selectedSummarySchema = z
   .object({
     bases: z
@@ -88,10 +71,6 @@ export const selectedSummarySchema = z
       .nullable(),
     coverage: coverageSchema.nullable(),
     endDate: z.iso.date().nullable(),
-    /**
-     * About what the work left asks, as this layout's own days read it: the daily time it needs by
-     * the deadline and when it would all be done. Estimates, never an exact plan.
-     */
     forecast: z
       .object({
         basis: z.literal("estimated"),
@@ -107,11 +86,6 @@ export const selectedSummarySchema = z
         ]),
       })
       .strict(),
-    /**
-     * Whether keeping the phase dates the learner saw may cost them something (see
-     * `mayCostToKeepPhaseDates`), and what of the layout says so (`structureKey`): a card the
-     * learner resolved stays resolved until that changes.
-     */
     phaseDates: z.object({ structureKey: z.string().nullable(), trigger: z.boolean() }).strict(),
     requirement: z.object({
       doneRaw: minutesSchema,

@@ -4,16 +4,14 @@ import { lessonPacesSql } from "@zoonk/db/anonymous-records";
 import { addDays } from "../planner/plan-calendar";
 import { type PaceSample } from "../planner/plan-pace";
 
-/** Recent lessons are enough to know how long lessons take; older ones don't change the average. */
 const RECENT_DAYS = 30;
-/** Enough upcoming lessons to choose a course pace without scanning its entire outline. */
 export const PACE_LESSON_LIMIT = 500;
 const SAMPLE_LIMIT = 5000;
 const OWN_LIMIT = 200;
 
 /**
- * Durations far from a lesson's estimate are a tab left open or a skipped lesson, not a pace. The
- * bounds are seconds per estimated minute: a fifth of it, up to four times it.
+ * Seconds per estimated minute: outside a fifth to four times the estimate is a tab left open or a
+ * skipped lesson.
  */
 const MIN_SECONDS_PER_MINUTE = 12;
 const MAX_SECONDS_PER_MINUTE = 240;
@@ -24,7 +22,6 @@ function toSample(row: SampleRow | undefined): PaceSample | null {
   return row && row.ratio !== null ? { count: row.count, ratio: row.ratio } : null;
 }
 
-/** How long the learner took on their last finished lessons, against the lessons' estimates. */
 async function loadOwnSample(userId: string): Promise<PaceSample | null> {
   const rows = await prisma.$queryRaw<SampleRow[]>`
     SELECT count(*)::int AS count, sum(e.seconds)::float / nullif(sum(l.estimated_minutes * 60), 0) AS ratio
@@ -43,10 +40,6 @@ async function loadOwnSample(userId: string): Promise<PaceSample | null> {
   return toSample(rows[0]);
 }
 
-/**
- * Other learners' pace on the plan's lessons and everyone's pace on any lesson (deleted learners'
- * included), from the last month of finished lessons, in one pass over the ledger's date index.
- */
 async function loadSharedSamples({
   lessonIds,
   now,
@@ -93,7 +86,6 @@ async function loadSharedSamples({
   };
 }
 
-/** Everything the pace choice reads: the learner's own lessons, others' on the plan, everyone's. */
 export async function loadPaceSamples({
   lessonIds,
   now,

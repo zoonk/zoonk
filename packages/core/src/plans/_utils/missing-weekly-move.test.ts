@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { fromIsoDate } from "../planner/plan-calendar";
 import { hasWeeklyEventCollision } from "./missing-weekly-move";
 
-/** A weekly mock the plan keeps on a day. */
 function mockOn(date: string) {
   return { kind: "mock" as const, scheduledFor: fromIsoDate(date), status: "todo" as const };
 }
@@ -11,7 +10,6 @@ function move(from: string, to: string) {
   return { from, kind: "moveWeeklyEvent" as const, to };
 }
 
-// Two weekly events never share a day (R43): the planner kept one and dropped the others' credits.
 describe(hasWeeklyEventCollision, () => {
   it("refuses a move onto a day that holds a weekly event", () => {
     expect(

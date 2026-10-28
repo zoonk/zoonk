@@ -42,50 +42,28 @@ import { summarizeRetainedPlan } from "./retained-plan-allocation";
 import { type SelectedSummary } from "./selected-summary-contract";
 
 export type ComputedPlan = {
-  /** The plan's bases with what the app recommends for them (see `findPlanBases`). */
   bases: PlanBases;
   built: BuiltPlan;
-  /** What re-planning does to the stored plan: a system run records it as its change. */
   effect: PlanEffect;
   feasibility: PlanFeasibility;
-  /**
-   * What the run planned from, with the progress the plan it saves holds (see `getPlanInputsKey`):
-   * a later system refresh with the same key has nothing new to plan.
-   */
   inputsKey: string;
   itemFacts: ReadonlyMap<string, SelectedItemFacts>;
   pace: Pace;
-  /** The lessons each skill's stand-in plans in this run (see `getStandInLessons`). */
   standInLessons: Map<string, number>;
-  /** The state the plan was built from, with merged skills resolved and the pace and start set. */
   state: PlanState;
   selected: SelectedSummary;
-  /** Fresh facts measured against the actual unchanged saved allocation, not candidate dates. */
   summarizeRetained: () => SelectedSummary | null;
 };
 
 export type ComputedChange = {
   baseline: ComputedPlan;
-  /**
-   * The plan brings work set aside for time back to compete (see `pickSetAsidePlans`): moving the
-   * phase dates right after the change is planned the same way (see `askPhaseDatesAfterChange`).
-   */
   bringsBackSetAside: boolean;
   computed: ComputedPlan;
-  /**
-   * More or less of some areas would do the opposite of what it asks in the plan the learner sees
-   * (see `contradictsSteering`): neither offered nor applied when the learner asks for it.
-   */
   contradicts: boolean;
   effect: PlanEffect;
-  /**
-   * The plan would stay as it is (see `hasNoEffect`), or the change `contradicts`: nothing to offer
-   * or apply.
-   */
   unchanged: boolean;
 };
 
-/** What a planning run records for the learner to see; system runs may record nothing. */
 export type PlanChangeRecord = {
   kind: PlanChangeKind;
   payload: StoredPlanChangePayload;
@@ -94,13 +72,8 @@ export type PlanChangeRecord = {
   status: PlanChangeStatus;
 };
 
-/** Whether a writer expires screen data immediately or lets its caller do it. */
 export type PlanTagRevalidation = "now" | "skip";
 
-/**
- * The time each challenge took as the plan last saved it, which a run starts from (see
- * `settlePlannedBosses`): read again from the start, every run built its plan twice.
- */
 function listSavedBossMinutes(items: PlanContext["items"]): BossMinutes {
   return new Map(
     items.flatMap((item) =>
@@ -112,49 +85,23 @@ function listSavedBossMinutes(items: PlanContext["items"]): BossMinutes {
 }
 
 type ComputePlanRequest = {
-  /** Reuse this request's settling facts; mutation callers load fresh facts by default. */
   carrySnapshot?: PlanCarrySnapshot;
-  /** A learner's change: work set aside for time comes back where it fits (see `buildPlan`). */
   bringBackSetAside?: boolean;
   context: PlanContext;
-  /**
-   * Keep the saved phase end dates (an automatic run's default, and a system change's); false plans
-   * them as the lessons fall, as a learner's change does, or to compare.
-   */
   keepPhaseDates?: boolean;
   mode: PlanningMode;
-  /** The kept ends moving the phase dates puts on other days, by phase (see `planPhaseDatesMove`). */
   movedEnds?: ReadonlyMap<number, string>;
   now?: Date;
   pace?: "sampled" | "saved";
-  /** Phases whose shown end isn't kept: a missed day's settling lets it go (see `computeSettledPlan`). */
   releasedPhases?: ReadonlySet<number>;
-  /**
-   * A new day's settling: work earlier days left that no longer fits is set aside, never deleted
-   * (see `setAsideLeftWork`).
-   */
   setAsideLeftWork?: boolean;
   state?: PlanState;
-  /**
-   * For a focus planned from today: the areas it gives less time to. Today's other lessons stay
-   * first, as the learner sees them (see `CarryOver`).
-   */
   todayExceptAreas?: readonly string[] | null;
-  /** Preview and Start both hold the current day's allocation before its session exists. */
   todayShown?: boolean;
-  /** Time-advice candidates scale the saved calendar before applying the learner's overrides. */
   studyScheduleAt?: StudyScheduleAt;
 };
 
-/**
- * Plans a goal from a state without saving anything: what the plan would be and what changes.
- * A plan keeps the pace it was saved with (`saved`), so a read, the time question and a change the
- * learner makes all say the same numbers however others' lessons went in between; only learning
- * moves them, when a session ends (`sampled`: other learners' recent lessons and the learner's
- * own). A plan with no pace saved yet samples one. An automatic run keeps the phase end dates the
- * learner saw (see `keepPhaseEnds`), and so does a forced one the learner didn't ask for, such as a
- * new day settling what earlier days left (`keepPhaseDates`); a learner's change re-plans them.
- */
+/** Plans a goal from a state without saving anything. */
 export function computePlan(
   input: ComputePlanRequest & { skipUnchangedInputs: true },
 ): Promise<ComputedPlan | null>;
@@ -174,7 +121,6 @@ export async function computePlan({
   todayShown: shownToday,
   ...options
 }: ComputePlanRequest & { skipUnchangedInputs?: boolean }): Promise<ComputedPlan | null> {
-  // The plan studies only the options the learner takes of their exam's choices.
   const resolved = await resolveMergedSkills(
     await chooseExamOptionSkills({
       choices: state.settings.examChoices,
@@ -186,9 +132,6 @@ export async function computePlan({
   const targetDate = getStateTargetDate(state);
   const userId = context.goal.userId;
 
-  // Re-planning from today settles what earlier days left first, and so does every later run that
-  // day, with the steering of the day's change of focus (see `CarryOver`); an automatic run keeps a
-  // day the learner was shown as it is (see `putLandedLessons`).
   const [{ areaShares, examSubjects, topicLevels, ...loaded }, carryOver, todayShown, quick] =
     await Promise.all([
       loadPlannerInputs({
@@ -212,7 +155,6 @@ export async function computePlan({
       loadQuickBaseLessons(state.settings),
     ]);
 
-  // A language goal plans the lessons that reach the level the learner aims for.
   const graph = sizeLanguageGraph({
     details: context.goal.details,
     graph: resolved,
@@ -220,8 +162,6 @@ export async function computePlan({
     settledSkillIds: getSettledSkillIds({ ...loaded, items: context.items }),
   });
 
-  // The areas the learner said they're past the basics of take their higher bands, but a basic
-  // they then missed a question on.
   const inputs = {
     ...loaded,
     lessons: keepPastBasicsBands({
@@ -235,7 +175,6 @@ export async function computePlan({
   const bossFacts = loadRunBossFacts({ context, graph, lessons: inputs.lessons, quick });
   const settings = await choosePlanSettings({ context, inputs, now, paceSource, state });
 
-  // The planner studies each base as the learner chose (see `chooseBases`).
   const { advise, input } = chooseBases({
     ...inputs,
     bossFacts: await bossFacts,
@@ -276,14 +215,11 @@ export async function computePlan({
     topicLevels,
   });
 
-  // Compare the inputs before the producer can change its own funding. Its output
-  // is not news: rebuilding identical inputs moved a saved boss and deleted a funded mock.
+  // Compare the inputs before the producer changes its own funding: its output isn't news.
   if (shouldSkipPlanBuild({ input, savedKey: context.plan.inputsKey, skipUnchangedInputs })) {
     return null;
   }
 
-  // A run whose only news is lessons written for the plan's stand-ins keeps every other item as the
-  // plan has it (see `landedOnly`).
   const landing = readLanding({ input, savedKey: context.plan.inputsKey });
 
   const builtInput = { ...input, ...landing };
@@ -324,21 +260,12 @@ export async function computePlan({
     pace: settings.pace,
     selected: summarizeSelectedPlan({ built, examSubjects, input: builtInput }),
     standInLessons,
-    // The mocks this build funds are saved with it, so Today reads the same days (see `fundMocks`).
     state: { ...state, graph: saved, settings: savedSettings },
     summarizeRetained: () =>
       summarizeRetainedPlan({ built, context, examSubjects, input: builtInput }),
   };
 }
 
-/**
- * Saves a computed plan and the change the learner sees, in one transaction. The plan's version
- * guards against a concurrent run; the goal's time settings follow the state. Today's session
- * follows a change the learner made (`followPlanToday`); one the system made reaches a day not
- * started yet the next time the learner opens it. A change the learner can undo keeps the plan as
- * it was before it (see `PlanSnapshot`), which the undo puts back.
- */
-/** Plans and goals read these tags; preparation and placement read the learner model's. */
 export function revalidatePlanTags(userId: string) {
   revalidateCacheTags([getGoalsCacheTag(userId), getLearnerModelCacheTag(userId)]);
 }

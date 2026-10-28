@@ -6,11 +6,6 @@ import { type PlanOperation } from "../plan-contract";
 import { addDays, fromIsoDate, toIsoDate } from "../planner/plan-calendar";
 import { type PlanEffect } from "../planner/plan-effect";
 
-/**
- * What a proposed change costs the learner that they should hear before they apply it: an exam
- * subject with questions left out of the plan, or a plan that would end weeks before its date
- * with nothing planned in between.
- */
 export type PlanChangeCaution =
   | { area: string; kind: "leavesOutExamSubject"; questions: number }
   | { endDate: string; kind: "endsBeforeDate"; targetDate: string };
@@ -20,13 +15,8 @@ type CautionGoal = Pick<
   "createdAt" | "details" | "examBlueprintId" | "id" | "kind" | "targetDate" | "timezone"
 >;
 
-/** A plan that ends this many days before its date or less still uses its time. */
 const EARLY_END_DAYS = 7;
 
-/**
- * The exam subjects with questions that the change leaves out, by the counts the plan weighs them
- * by: the notice's, or the latest edition's when it gives none.
- */
 async function findLeftOutSubjects({
   goal,
   operations,
@@ -55,7 +45,6 @@ async function findLeftOutSubjects({
   });
 }
 
-/** The plan would end more than a week before its date, earlier than it does now. */
 function findEarlyEnd({
   effect,
   targetDate,
@@ -74,10 +63,6 @@ function findEarlyEnd({
   return endDate < latestEarlyEnd ? [{ endDate, kind: "endsBeforeDate", targetDate }] : [];
 }
 
-/**
- * What a change proposed to the learner costs them, for whoever offers it to say before they
- * apply it: never left for the learner to find out on their plan.
- */
 export async function findChangeCautions({
   effect,
   goal,

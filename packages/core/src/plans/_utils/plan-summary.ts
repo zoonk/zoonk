@@ -10,15 +10,10 @@ import {
   selectedSummarySchema,
 } from "./selected-summary-contract";
 
-/** Floating-point sums of minutes must not read a covered skill as short. */
 const EPSILON = 1e-6;
 
 const PLAN_SUMMARY_SCHEMA_VERSION = 3;
 
-/**
- * The stored plan a summary describes: its owner, plan and version, which make it valid, and the
- * input version and study day its layout committed at, which only say what its numbers are as of.
- */
 const planSummaryBasisSchema = z
   .object({
     layoutInputVersion: z.int().nonnegative(),
@@ -30,7 +25,6 @@ const planSummaryBasisSchema = z
   })
   .strict();
 
-/** The facts of the one selected build a layout posts with the plan it saves (see `readPlanSummary`). */
 export const planSummarySchema = z
   .object({
     advice: z.object({
@@ -61,9 +55,8 @@ export const planSummarySchema = z
 export type PlanSummary = z.infer<typeof planSummarySchema>;
 
 /**
- * The stored plan's summary when it describes that plan: the version it was posted with is the
- * plan's, for its owner. It describes the plan whatever happened since (studying, a new day), never
- * a reason to build again. Null for any other value, which reads as pending, never as a plan with no work.
+ * Null when the stored summary doesn't describe this plan: read it as pending, never as a plan with
+ * no work.
  */
 export function readPlanSummary({
   plan,
@@ -87,11 +80,6 @@ export function readPlanSummary({
     : null;
 }
 
-/**
- * The summary a layout write posts with the plan it saves: `context` is the write's, already
- * marked, so its input version is the one the write commits at, and the write makes the next
- * version (see `writePlan`).
- */
 export function toPlanSummary({
   context,
   selected,
@@ -109,10 +97,7 @@ export function toPlanSummary({
   };
 }
 
-/**
- * What finishing items does to a stored summary (see `reduceCompletedSummary`).
- * @public A lesson's completion writes what it says.
- */
+/** @public A lesson's completion writes what it says. */
 export type SummaryReduction =
   | { kind: "unchanged" }
   | { kind: "pending" }
@@ -120,10 +105,6 @@ export type SummaryReduction =
 
 type CompletedItem = { lessonId: string | null };
 
-/**
- * The coverage with these short lessons counted whole: each adds what it lacked to every skill it
- * counts for, and the share and whether it all fits follow, as `getCoverage` reads them.
- */
 function creditShortLessons({
   coverage,
   credited,
@@ -169,14 +150,6 @@ function creditShortLessons({
   };
 }
 
-/**
- * What finishing these items of the plan (done, or tested out) does to its stored summary: only a
- * lesson the plan counted less than whole by the deadline changes what it covers (one running past
- * the deadline, or after it), counted whole now for every skill it teaches, once however many
- * times it's reported. Other completions were counted already, so the summary stays as it is. The
- * requirement's sizes and the forecasts stay as of the layout. Without a summary that describes the
- * plan there's nothing to reduce: it reads as pending until the next layout.
- */
 export function reduceCompletedSummary({
   completed,
   summary,
@@ -208,11 +181,6 @@ export function reduceCompletedSummary({
   };
 }
 
-/**
- * The summary an undo puts back with the plan it restores: the snapshot's, for the version the
- * restore commits, with what the learner finished since counted (see `reduceCompletedSummary`).
- * Null for a snapshot without one that describes its plan, which reads as pending.
- */
 export function reduceRestoredSummary({
   completed,
   planVersion,
@@ -232,7 +200,6 @@ export function reduceRestoredSummary({
   return reduction.kind === "reduced" ? reduction.summary : restored;
 }
 
-/** One basis for saved-plan summary writes and reads. */
 export function getPlanSummaryBasis(
   context: Pick<PlanContext, "goal" | "plan" | "timeZone" | "today">,
 ): PlanSummary["basis"] {
@@ -246,7 +213,6 @@ export function getPlanSummaryBasis(
   };
 }
 
-/** Replay only the saved plan's summary for this local planning day and zone. */
 export function readFreshPlanSummary({
   basis,
   value,

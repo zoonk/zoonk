@@ -17,7 +17,6 @@ import { type ComputedPlan } from "./replan";
 import { retainPlanAllocation } from "./retained-plan-allocation";
 import { type PlanWrite } from "./write-plan";
 
-/** The context a successful write will publish, used for quotes against that exact allocation. */
 function getComputedPlanContext({
   computed,
   context,
@@ -46,7 +45,6 @@ function getComputedPlanContext({
   };
 }
 
-/** Materialize lazy advice and waiting quotes before taking the learner lock. */
 async function prepareReadModel({
   computed,
   context,
@@ -144,7 +142,6 @@ async function prepareProposalPreviews({
   );
 }
 
-/** A full layout and its materialized screen facts enter the same transaction. */
 export async function preparePlanWrite(input: {
   computed: ComputedPlan;
   context: PlanContext;
@@ -153,7 +150,6 @@ export async function preparePlanWrite(input: {
   return { ...toComputedPlanWrite(input), ...(await prepareReadModel(input)) };
 }
 
-/** Keep the shown allocation while refreshing its advice and quotes for new inputs. */
 export async function prepareRetainedPlanWrite({
   computed,
   context,

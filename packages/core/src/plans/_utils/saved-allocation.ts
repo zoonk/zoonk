@@ -2,7 +2,6 @@ import { toIsoDate } from "../planner/plan-calendar";
 import { type PlanReadItem } from "./plan-read-projection";
 import { readSelectedItemFacts } from "./selected-item-contract";
 
-/** Project the saved allocation; a multi-day item owns only its saved minutes on that day. */
 export function projectSavedAllocationOn({
   date,
   item,

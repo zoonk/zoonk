@@ -92,8 +92,6 @@ describe(getAreaShares, () => {
     );
   });
 
-  // Sofia's plan named the OAB's ethics subject by its short name: left without its 8 questions'
-  // share, "less Philosophy" cut ethics lessons too.
   it("gives an area named by a subject's short name that subject's share", () => {
     const oab: ExamStructure = {
       formats: [],

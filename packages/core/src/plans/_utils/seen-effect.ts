@@ -5,7 +5,6 @@ import { type ComputedPlan } from "./replan";
 
 type CountedItem = { lessonId: string | null; lessons?: number | null; skillId: string | null };
 
-/** The lessons of each of a plan's stand-ins that fit before its deadline. */
 function fitStandIns(plan: ComputedPlan): Map<string, number> {
   return getFittedStandInLessons({
     skillMinutes: plan.built.skillMinutes,
@@ -13,12 +12,6 @@ function fitStandIns(plan: ComputedPlan): Map<string, number> {
   });
 }
 
-/**
- * How many lessons each side's lesson items are: one for a lesson; a stand-in in the plan the
- * learner sees as many as it was saved with (else as many as fit in `fallback`, the plan planned
- * again as it was), and in the new plan the part of it that fits, so a skill a change only starts
- * counts the lessons it brings in, not all of them.
- */
 export function getLessonCounters({
   computed,
   fallback,
@@ -35,7 +28,6 @@ export function getLessonCounters({
   };
 }
 
-/** The graph of both plans, so a skill only one of them has still names its topics. */
 function joinGraphs({ computed, fallback }: { computed: ComputedPlan; fallback: ComputedPlan }) {
   const { graph } = computed.state;
   const own = new Set(graph.skills.map((skill) => skill.skillId));
@@ -49,12 +41,6 @@ function joinGraphs({ computed, fallback }: { computed: ComputedPlan; fallback: 
   } satisfies PlanGraph;
 }
 
-/**
- * What a planning run (`computed`) changes in the plan the learner sees (`shown`, as saved), as
- * every card reads it (see `getSeenChange`). Read against a plan planned again instead, a topic an
- * earlier run had already left out was said to "leave" (Lucas's "Origin and evolution", out of his
- * plan before his change). `fallback` sizes the stand-ins saved without a size.
- */
 export function getSeenEffect({
   computed,
   fallback = computed,
@@ -72,15 +58,10 @@ export function getSeenEffect({
   });
 }
 
-/** Sizes a stand-in as `sizes` say, a lesson as one. */
 function sizeBy(sizes: ReadonlyMap<string, number>) {
   return (item: CountedItem) => (item.lessonId ? 1 : (sizes.get(item.skillId ?? "") ?? 1));
 }
 
-/**
- * What a plan (`after`) would change in the one a run saves (`before`), each side's stand-ins sized
- * as its save stores them, so a proposal's card says what applying it records against that save.
- */
 export function getBuiltChange({
   after,
   before,

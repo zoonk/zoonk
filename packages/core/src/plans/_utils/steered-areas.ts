@@ -7,12 +7,6 @@ import { type PlanContext } from "./plan-context";
 import { type ComputedPlan } from "./replan";
 import { getLessonCounters } from "./seen-effect";
 
-/**
- * For a change of where to focus alone (more of some areas, less of others), the areas whose
- * lessons today plans again: the ones it gives less time to. Today's other lessons stay first, as
- * the learner sees them, and what the change gives more time to comes in after them (see
- * `CarryOver`). Null for any other change, which plans today again from scratch.
- */
 function getSteeredAreas(operations: readonly PlanOperation[]): string[] | null {
   const steers = operations.every(
     (operation) => operation.kind === "focusAreas" || operation.kind === "reduceAreas",
@@ -23,13 +17,6 @@ function getSteeredAreas(operations: readonly PlanOperation[]): string[] | null 
     : null;
 }
 
-/**
- * The areas whose lessons today plans again after a change (see `CarryOver`): the ones a change of
- * focus gives less time to (see `getSteeredAreas`), and none for a change that only adds topics,
- * whose lessons come after today's, from the day its card says. Planned again from scratch, Pedro's
- * added topic swapped today's lesson for the earlier phase's, and his Plan went back a phase.
- * Null for any other change, which plans today again from scratch.
- */
 export function getTodayExceptAreas(operations: readonly PlanOperation[]): string[] | null {
   const adds =
     operations.length > 0 && operations.every((operation) => operation.kind === "addSkills");
@@ -37,18 +24,6 @@ export function getTodayExceptAreas(operations: readonly PlanOperation[]): strin
   return adds ? [] : getSteeredAreas(operations);
 }
 
-/**
- * How a learner's change (but moving the phase dates) is planned: from today, with work set aside
- * for time back where it fits (on a change made only of base choices, only when that costs no topic
- * the plan holds, see `pickSetAsidePlans`), and a change of focus keeping the phase ends the
- * learner sees and today's other lessons (see `getTodayExceptAreas`). Moving the phase dates right
- * after it is planned the same way, to compare (see `askPhaseDatesAfterChange`): planned with
- * today's time open again, it fitted a phase's lessons before its challenge, so Today didn't ask
- * while the plan the change saved held two of them after it (career 2107).
- * A weekly-event move alone plans as the system does (R43): this week stays as saved, the shown
- * phase ends stay, and work set aside stays out, since moving an event isn't permission to change
- * the phase dates or bring unrelated work back.
- */
 export function getChangePlanning(operations: readonly PlanOperation[]) {
   const movesWeeklyOnly =
     operations.length > 0 && operations.every((operation) => operation.kind === "moveWeeklyEvent");
@@ -61,17 +36,14 @@ export function getChangePlanning(operations: readonly PlanOperation[]) {
   };
 }
 
-/** The areas a change focuses on, as the learner named them. */
 function listFocusedAreas(operations: readonly PlanOperation[]): string[] {
   return operations.flatMap((operation) =>
     operation.kind === "focusAreas" ? operation.areas : [],
   );
 }
 
-/** Areas a change steers, by the name the learner sees, and the one each skill counts for. */
 type SteeredFocus = { areaOf: (skillId: string) => string | null; areas: string[] };
 
-/** The focus on these areas, or the part of one the learner named, as the computed plan reads it. */
 function readFocus({
   areas,
   computed,
@@ -85,10 +57,6 @@ function readFocus({
   return { areaOf: getTargetOf(targets), areas: targets.map((target) => target.name) };
 }
 
-/**
- * What the change's focus asks for: each area it names, or the part of one the learner named, as
- * the computed plan reads them.
- */
 export function getChangeFocus({
   computed,
   operations,
@@ -99,7 +67,6 @@ export function getChangeFocus({
   return readFocus({ areas: listFocusedAreas(operations), computed });
 }
 
-/** The areas a change gives less time to, as the computed plan reads them. */
 export function getReducedAreas({
   computed,
   operations,
@@ -121,14 +88,6 @@ export function getReducedAreas({
   };
 }
 
-/**
- * When each area a change gives more or less time to (a focus, or less of an area) has its last
- * lesson, against the plan the learner sees: the focused ones whose end moves (see
- * `getAreaEnds`), and every one it gives less time to that moves or keeps all of it (see
- * `getReducedEnds`), each with the lessons it gains or loses: short on time, Ana's "more Linguagens"
- * brought 96 of its lessons in and ended it in October instead of August, and her card said only
- * that it ended later.
- */
 export function getSteeredEnds({
   baseline,
   computed,
@@ -161,10 +120,6 @@ export function getSteeredEnds({
   ];
 }
 
-/**
- * The lessons still to do of the skills `belongs` picks, as `lessonsOf` counts each item, and the
- * day the last of them is due.
- */
 function readSteered<
   TItem extends { kind: string; scheduledFor: Date | null; skillId: string | null; status: string },
 >({
@@ -190,16 +145,8 @@ function readSteered<
   };
 }
 
-/** An area a change doesn't name may move by rounding: at most this many lessons still to do (D5). */
 const ROUNDING_LESSONS = 2;
 
-/**
- * For a change of where to focus alone (more time for some areas, less for others): each area it
- * doesn't name whose lessons still to do move by more than rounding, with how many it has in the
- * plan the learner sees and with the change, so the card says it. The time a focus or "less"
- * moves goes to other areas too when the named ones can't take it: "more ethics, less strategy"
- * gave criminal procedure four lessons the card never named.
- */
 export function getUnnamedAreaLessons({
   baseline,
   computed,
@@ -234,14 +181,6 @@ export function getUnnamedAreaLessons({
   });
 }
 
-/**
- * The areas a focus asks more of, which the plan holds it to: the ones it adds to the areas
- * `focused` before when it adds any, since an area focused before shares its depth with the ones
- * added beside it; else every area it focuses. Judged on every focused area, Ana's "math and
- * natural sciences", with math focused, read "Nothing changed" while natural sciences alone gained
- * 10 lessons, and Sofia's "more Ethics" from a mock, beside Civil Law, was applied for moving Civil
- * Law while Ethics gained nothing.
- */
 export function getAskedAreas({
   focused,
   operations,
@@ -255,7 +194,6 @@ export function getAskedAreas({
   return added.length > 0 ? added : areas;
 }
 
-/** The focus a change asks for (see `getAskedAreas`), as the computed plan reads it. */
 export function getAskedFocus({
   baseline,
   computed,
@@ -269,16 +207,6 @@ export function getAskedFocus({
   return readFocus({ areas: getAskedAreas({ focused, operations }), computed });
 }
 
-/**
- * Whether a change of focus alone (more time for some areas, less for others) would do the
- * opposite in the plan the learner sees: an area they focus on left with fewer lessons than they
- * see now, or with as many done later, or one they want less of with more lessons, or as many
- * done sooner. Planned again from today, a plan can differ from the one an earlier run saved
- * (Rafaela's "more Legislative Process, less Linguistics" left the first with fewer lessons and
- * the second with more): such a change isn't offered. With a review day ahead (a test days away),
- * a focus orders that review instead, so its lessons say nothing. An area added to the focus may
- * take from one focused before (see `getAskedFocus`); the card names what that one leaves out.
- */
 export function contradictsSteering({
   baseline,
   computed,
@@ -304,7 +232,6 @@ export function contradictsSteering({
   const focus = getAskedFocus({ baseline, computed, operations });
   const reduced = getReducedAreas({ computed, operations });
 
-  // Below zero: the change gives the area less (fewer lessons, or as many done later).
   const compare = (belongs: (skillId: string) => boolean) => {
     const after = readSteered({ belongs, items: computed.built.items, lessonsOf: lessonsAfter });
     const before = readSteered({ belongs, items: shown, lessonsOf: lessonsBefore });

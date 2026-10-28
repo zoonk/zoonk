@@ -14,7 +14,6 @@ type PathInput = Pick<
   | "taughtSkillIds"
 > & { challengesOpen: boolean; context: PlanReadContext; todayBlocks: readonly TodayLearnBlock[] };
 
-/** The path keeps locked challenges visible while its phase progress counts accessible work. */
 export function buildPlanPath({ context, todayBlocks, ...input }: PathInput) {
   const { goal, items, phases, state } = context;
 
