@@ -1,13 +1,15 @@
 import SwiftUI
 
-/// Placement while the first lessons are made (main's `PlacementStep`): adaptive questions from the goal's skill map, with "I don't know yet" welcome and no score. It ends when every area has a starting point, when nothing more can be asked today, or whenever the learner stops; "Skip and start from the basics" skips it. While the skill map or the next questions are being written, it waits for them.
+/// Placement while the first lessons are made (main's `PlacementStep`): adaptive questions from the goal's skill map, with "I don't know yet" welcome and no score. It ends when every area has a starting point, when nothing more can be asked today, or whenever the learner stops; "Skip and start from the basics" skips it. While the skill map or the next questions are being written, it waits for them. An exam also offers the whole exam as a mock instead, whose answers set the starting point; stopping it midway keeps them.
 struct PlacementStep: View {
   let view: GoalOnboarding
   let subject: String
   let onDone: () -> Void
 
+  @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
   @State private var phase = Phase.loading
+  @State private var mockOffer: PlacementMock.Offer?
   @State private var shownAt = ContinuousClock.now
   @State private var isSaving = false
   @State private var failed = false
@@ -20,6 +22,10 @@ struct PlacementStep: View {
     case waiting
     case question(PracticeQuestion, labels: PracticeTrueFalseLabels)
     case done(forToday: Bool)
+    /// The whole exam was taken as a mock instead, and it set the starting point.
+    case doneFromMock
+    /// The placement mock was left running: go on with it, or stop here.
+    case mockRunning(String)
     case unavailable
   }
 
@@ -54,6 +60,45 @@ struct PlacementStep: View {
             : Text(
               "It gets more accurate every day.", tableName: "Onboarding",
               comment: "Under placement ended"))
+      case .doneFromMock:
+        outcome(
+          title: Text(
+            "Your mock exam set your starting point", tableName: "Onboarding",
+            comment: "Placement ended with a mock exam"),
+          description: Text(
+            "Based on your \(shown.answered) answers. It gets more accurate every day.",
+            tableName: "Onboarding", comment: "Under placement ended with a mock exam"))
+      case .mockRunning(let mockID):
+        Form {
+          StepHeader(
+            title: Text(
+              "Your mock exam is waiting", tableName: "Onboarding",
+              comment: "A placement mock left running"),
+            description: Text(
+              "Go on where you left it, or stop now: your plan starts from the questions you answered.",
+              tableName: "Onboarding", comment: "Under a placement mock left running"))
+
+          if failed {
+            Section {
+              Text(
+                "That didn't save. Try again.", tableName: "Onboarding",
+                comment: "A change couldn't be saved"
+              )
+              .foregroundStyle(.destructive)
+            }
+          }
+
+          StepButtons(
+            canSkip: !isSaving,
+            continueLabel: Text(
+              "Continue the mock exam", tableName: "Onboarding",
+              comment: "Opens a placement mock left running"),
+            skipLabel: Text(
+              "Stop and see my plan", tableName: "Onboarding",
+              comment: "Stops a placement mock; its answers set the starting point"),
+            onContinue: { router.open(.mock(blockId: mockID)) },
+            onSkip: { stopMock(mockID) })
+        }
       case .unavailable:
         outcome(
           title: Text(
@@ -65,6 +110,63 @@ struct PlacementStep: View {
       }
     }
     .task { await resume() }
+    .onChange(of: isMockOpen) { _, isOpen in
+      // Back from the mock: it may have set the starting point, or still be running.
+      if !isOpen {
+        phase = .loading
+        Task { await resume() }
+      }
+    }
+  }
+
+  private var isMockOpen: Bool {
+    router.tasks.contains { route in
+      switch route {
+      case .placementMock, .mock: true
+      default: false
+      }
+    }
+  }
+
+  /// The whole exam as a mock, beside the quick questions: how long it can take, from its quick check to its longest. Without Plus it's marked Plus and opens to what Plus unlocks.
+  private func mockRow(_ offer: PlacementMock.Offer) -> some View {
+    Section {
+      Button {
+        router.open(.placementMock(goalId: view.goal.id))
+      } label: {
+        HStack {
+          VStack(alignment: .leading, spacing: 2) {
+            Text("Or take a mock exam", tableName: "Onboarding", comment: "Offers a placement mock")
+              .foregroundStyle(.primary)
+            Text(mockLength(offer))
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
+          }
+
+          Spacer()
+
+          if offer.requiresPlus {
+            PlusMark()
+          }
+        }
+      }
+    }
+  }
+
+  private func mockLength(_ offer: PlacementMock.Offer) -> String {
+    let format = Duration.UnitsFormatStyle(allowedUnits: [.hours, .minutes], width: .abbreviated)
+    let longest = Duration.seconds(offer.longestMinutes * 60).formatted(format)
+
+    guard offer.shortestMinutes != offer.longestMinutes else {
+      return String(
+        localized: "In the exam's format, about \(longest).", table: "Onboarding",
+        comment: "How long a placement mock takes")
+    }
+
+    let shortest = Duration.seconds(offer.shortestMinutes * 60).formatted(format)
+    return String(
+      localized: "In the exam's format, from \(shortest) to \(longest). You pick how long.",
+      table: "Onboarding", comment: "How long a placement mock can take, shortest to longest")
   }
 
   private var intro: some View {
@@ -81,6 +183,10 @@ struct PlacementStep: View {
           : Text(
             "A few quick questions about the \(view.examSubjects.count) areas, so your plan skips what you already know. There's no score, and “I don't know yet” is a fine answer.",
             tableName: "Onboarding", comment: "What placement is for an exam with several areas"))
+
+      if let mockOffer {
+        mockRow(mockOffer)
+      }
 
       StepButtons(
         continueLabel: Text(
@@ -163,7 +269,20 @@ struct PlacementStep: View {
       return
     }
 
-    guard let placement = try? await onboarding.placement(goalID: view.goal.id) else {
+    let goalID = view.goal.id
+    let isExam = view.goal.kind == .exam
+    async let placementRead = try? onboarding.placement(goalID: goalID)
+    async let mockRead = isExam ? try? onboarding.placementMock(goalID: goalID) : nil
+    let (read, mock) = await (placementRead, mockRead)
+    mockOffer = mock?.offer
+
+    if let mockID = mock?.mockID {
+      shown.answered = max(shown.answered, read?.answered ?? 0)
+      phase = mock?.status == .running ? .mockRunning(mockID) : .doneFromMock
+      return
+    }
+
+    guard let placement = read else {
       phase = .intro
       return
     }
@@ -258,6 +377,28 @@ struct PlacementStep: View {
           duration: shownAt.duration(to: .now))
         shown.answered += 1
         show(result.placement)
+      } catch is CancellationError {
+        // The write is obsolete: the learner who asked is gone, so nothing shows.
+      } catch {
+        failed = true
+      }
+    }
+  }
+
+  private func stopMock(_ mockID: String) {
+    guard !isSaving else {
+      return
+    }
+
+    isSaving = true
+    failed = false
+
+    Task {
+      defer { isSaving = false }
+
+      do {
+        try await onboarding.stopPlacementMock(id: mockID, goalID: view.goal.id)
+        onDone()
       } catch is CancellationError {
         // The write is obsolete: the learner who asked is gone, so nothing shows.
       } catch {
