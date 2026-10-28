@@ -13,6 +13,7 @@ struct AppDependencies {
   let sessionStore: SessionStore
   let settingsStore: SettingsStore
   let subscriptionStore: AppStoreSubscriptionStore
+  let todayStore: TodayStore
 
   static func live(configuration: AppConfiguration = .current) -> AppDependencies {
     let clients = APIClientFactory.live(baseURL: configuration.apiBaseURL)
@@ -37,7 +38,8 @@ struct AppDependencies {
     courseCatalogAPI: (any CourseCatalogAPIClient)? = nil,
     learnerSummaryAPI: (any LearnerSummaryAPIClient)? = nil,
     progressAPI: (any ProgressAPIClient)? = nil,
-    settingsAPI: (any SettingsAPIClient)? = nil
+    settingsAPI: (any SettingsAPIClient)? = nil,
+    studyAPI: (any StudyAPIClient)? = nil
   ) {
     let cache = AppCache(session: session)
     self.cache = cache
@@ -59,6 +61,8 @@ struct AppDependencies {
       cache: cache)
     sessionStore = session
     settingsStore = SettingsStore(api: settingsAPI ?? SettingsAPI(clients: clients), cache: cache)
+    let studyAPI = studyAPI ?? StudyAPI(clients: clients)
+    todayStore = TodayStore(api: studyAPI, cache: cache)
     self.subscriptionStore = subscriptionStore
   }
 }
