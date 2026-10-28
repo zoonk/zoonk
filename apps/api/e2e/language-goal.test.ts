@@ -75,17 +75,21 @@ test.describe("Language goal API", () => {
   test("requires authentication", async () => {
     const apiContext = await request.newContext({ baseURL });
 
-    const [progress, conversation, pattern] = await Promise.all([
+    const [progress, conversation, pattern, notebookPattern] = await Promise.all([
       apiContext.get(`/v1/goals/${randomUUID()}/language-progress`),
       apiContext.post("/v1/language-conversations", {
         data: { chapterId: randomUUID(), kind: "practice", minutes: 2 },
       }),
       apiContext.get(`/v1/mistake-patterns/${randomUUID()}`),
+      apiContext.get(`/v1/goals/${randomUUID()}/mistake-pattern`),
     ]);
 
-    expect([progress.status(), conversation.status(), pattern.status()]).toStrictEqual([
-      401, 401, 401,
-    ]);
+    expect([
+      progress.status(),
+      conversation.status(),
+      pattern.status(),
+      notebookPattern.status(),
+    ]).toStrictEqual([401, 401, 401, 401]);
 
     await apiContext.dispose();
   });
@@ -545,6 +549,13 @@ test.describe("Language goal API", () => {
       },
     });
 
+    // The mistakes notebook offers it beside the goal's mistakes.
+    const offered = await apiContext.get(`/v1/goals/${goal.id}/mistake-pattern`);
+
+    expect(await offered.json()).toStrictEqual({
+      pattern: { id: pattern.id, kind: "pattern", title: "since e for" },
+    });
+
     const view = await apiContext.get(`/v1/mistake-patterns/${pattern.id}`);
 
     expect(await view.json()).toMatchObject({
@@ -571,6 +582,14 @@ test.describe("Language goal API", () => {
 
     const dismissed = await apiContext.post(`/v1/mistake-patterns/${pattern.id}/dismissals`);
     expect(dismissed.status()).toBe(204);
+
+    const afterDismissal = await apiContext.get(`/v1/goals/${goal.id}/mistake-pattern`);
+    expect(await afterDismissal.json()).toStrictEqual({ pattern: null });
+
+    // Every other goal has no pattern to offer, rather than an error.
+    const otherGoal = await goalFixture({ userId: user.id });
+    const other = await apiContext.get(`/v1/goals/${otherGoal.id}/mistake-pattern`);
+    expect(await other.json()).toStrictEqual({ pattern: null });
 
     await apiContext.dispose();
   });

@@ -1,5 +1,6 @@
 import { languageLevelTestViewSchema } from "@zoonk/core/language/level-test/contract";
 import { spokenAnswerFieldsSchema } from "@zoonk/core/library/language/spoken-answer-contract";
+import { noticedPatternSchema } from "@zoonk/core/view-models/language/contract";
 import { LiveCallEndReason } from "@zoonk/db/live-call-enums";
 import { MAX_CEFR_SCORE } from "@zoonk/utils/cefr";
 import { z } from "zod";
@@ -127,3 +128,15 @@ export const languageLevelTestGenerationSchema = z
       }),
   })
   .meta({ id: "LanguageLevelTestGeneration" });
+
+/** The pattern the mistakes notebook offers for a goal. */
+export const goalMistakePatternSchema = z
+  .object({
+    pattern: noticedPatternSchema
+      .nullable()
+      .meta({
+        description:
+          "A language goal's pattern noticed in recent mistakes, not practiced or dismissed yet; open it with GET /v1/mistake-patterns/{patternId}. Null for any other goal, and when one of the day's missions already opens it",
+      }),
+  })
+  .meta({ id: "GoalMistakePattern" });

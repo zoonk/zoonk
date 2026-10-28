@@ -15,6 +15,7 @@ import {
   languageUnitsViewSchema,
 } from "@zoonk/core/view-models/language/contract";
 import {
+  goalMistakePatternSchema,
   languageLevelTestGenerationSchema,
   languageLevelTestResultSchema,
   languageLevelTestSpokenResultSchema,
@@ -198,6 +199,20 @@ export const languageGoalPaths = {
         ...readErrors,
       },
       summary: "Say the level test's sentence",
+    },
+  },
+  "/goals/{goalId}/mistake-pattern": {
+    get: {
+      ...common,
+      description:
+        "The pattern the mistakes notebook offers beside a goal's mistakes: a language goal's pattern noticed in recent mistakes, not practiced or dismissed yet, or null for any other goal.",
+      operationId: "getGoalMistakePattern",
+      requestParams: { path: goalPathParamsSchema },
+      responses: {
+        "200": jsonResponse(goalMistakePatternSchema, "The notebook's pattern"),
+        ...readErrors,
+      },
+      summary: "Get the notebook's mistake pattern",
     },
   },
   "/language-units/{chapterId}": {
