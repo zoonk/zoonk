@@ -9,6 +9,8 @@ struct GenerationWait: Equatable, Sendable {
     case curriculum
     /// Writing a quick explanation of a question.
     case explanation
+    /// Writing a language pair's level test questions, for its first learner.
+    case levelTestBank
   }
 
   enum PhaseState: Equatable, Sendable {
@@ -114,6 +116,9 @@ struct GenerationWait: Equatable, Sendable {
     case (.explanation, "writeExplanation"): .phase("write")
     case (.explanation, "explanationReady"): .done
     case (.explanation, "joinRunningExplanation"): .join
+    case (.levelTestBank, "writeLevelTestBank"), (.levelTestBank, "joinLevelTestBank"):
+      .phase("bank")
+    case (.levelTestBank, "levelTestBankReady"): .done
     default: nil
     }
   }
@@ -183,6 +188,15 @@ struct GenerationWait: Equatable, Sendable {
             comment: "A step of the wait while a quick explanation is written"),
           isOptional: false),
       ]
+    case .levelTestBank:
+      [
+        Phase(
+          id: "bank",
+          label: LocalizedStringResource(
+            "Writing the level test questions", table: "Onboarding",
+            comment: "The step of the wait while a language's level test questions are written"),
+          isOptional: false)
+      ]
     }
   }
 }
@@ -196,18 +210,20 @@ enum GenerationFailure: Equatable, Sendable {
 }
 
 /// The wait while a run works: its phases as a checklist, with the one going now marked by a spinner. Follows the run's event stream, and a run it hands over to, then `readResult` reads what it made. It never gives up silently: no run, a lost stream or a stopped run each say so, with the way out. Without a run yet (the words were just sent), the first phase shows as going.
-struct GenerationWaitView<Leading: View>: View {
+struct GenerationWaitView<Leading: View, Trailing: View>: View {
   let title: LocalizedStringResource
   let description: LocalizedStringResource
   let generationID: String?
   let kind: GenerationWait.Kind
   /// Asks for the run's id while the caller doesn't have it: a run saves it a few seconds after it starts.
   var readGenerationID: (() async -> String?)?
-  /// Starts the run again after it stopped or never started (a POST the learner's tap makes), returning the new run's id. Without it, a stopped run is the caller's to read.
-  var restart: (() async throws -> String)?
+  /// Starts the run again after it stopped or never started (a POST the learner's tap makes), returning the new run's id, or nil when there's nothing left to write. Without it, a stopped run is the caller's to read.
+  var restart: (() async throws -> String?)?
   /// Reads what the run made once it says it's done; false while it isn't there, which shows as lost updates.
   let readResult: () async -> Bool
   @ViewBuilder let leading: () -> Leading
+  /// What's under the wait, such as a way to skip it.
+  @ViewBuilder let trailing: () -> Trailing
 
   @Environment(OnboardingStore.self) private var onboarding
   @State private var wait: GenerationWait?
@@ -260,6 +276,8 @@ struct GenerationWaitView<Leading: View>: View {
           failure: failure, isActing: isRestarting,
           act: failure == .connection || restart != nil ? { retry(failure) } : nil)
       }
+
+      trailing()
     }
     .task(id: Following(id: runID, connection: connection)) {
       failure = nil
@@ -371,7 +389,13 @@ struct GenerationWaitView<Leading: View>: View {
       defer { isRestarting = false }
 
       do {
-        followedID = try await restart()
+        guard let id = try await restart() else {
+          self.failure = nil
+          await read()
+          return
+        }
+
+        followedID = id
         connection += 1
       } catch is CancellationError {
         // The write is obsolete: the learner who asked is gone, so nothing shows.
@@ -382,6 +406,24 @@ struct GenerationWaitView<Leading: View>: View {
   }
 }
 
+extension GenerationWaitView where Trailing == EmptyView {
+  init(
+    title: LocalizedStringResource,
+    description: LocalizedStringResource,
+    generationID: String?,
+    kind: GenerationWait.Kind,
+    readGenerationID: (() async -> String?)? = nil,
+    restart: (() async throws -> String?)? = nil,
+    readResult: @escaping () async -> Bool,
+    @ViewBuilder leading: @escaping () -> Leading
+  ) {
+    self.init(
+      title: title, description: description, generationID: generationID, kind: kind,
+      readGenerationID: readGenerationID, restart: restart, readResult: readResult,
+      leading: leading, trailing: { EmptyView() })
+  }
+}
+
 extension GenerationWaitView where Leading == EmptyView {
   init(
     title: LocalizedStringResource,
@@ -389,13 +431,31 @@ extension GenerationWaitView where Leading == EmptyView {
     generationID: String?,
     kind: GenerationWait.Kind,
     readGenerationID: (() async -> String?)? = nil,
-    restart: (() async throws -> String)? = nil,
+    restart: (() async throws -> String?)? = nil,
+    readResult: @escaping () async -> Bool,
+    @ViewBuilder trailing: @escaping () -> Trailing
+  ) {
+    self.init(
+      title: title, description: description, generationID: generationID, kind: kind,
+      readGenerationID: readGenerationID, restart: restart, readResult: readResult,
+      leading: { EmptyView() }, trailing: trailing)
+  }
+}
+
+extension GenerationWaitView where Leading == EmptyView, Trailing == EmptyView {
+  init(
+    title: LocalizedStringResource,
+    description: LocalizedStringResource,
+    generationID: String?,
+    kind: GenerationWait.Kind,
+    readGenerationID: (() async -> String?)? = nil,
+    restart: (() async throws -> String?)? = nil,
     readResult: @escaping () async -> Bool
   ) {
     self.init(
       title: title, description: description, generationID: generationID, kind: kind,
       readGenerationID: readGenerationID, restart: restart, readResult: readResult,
-      leading: { EmptyView() })
+      leading: { EmptyView() }, trailing: { EmptyView() })
   }
 }
 

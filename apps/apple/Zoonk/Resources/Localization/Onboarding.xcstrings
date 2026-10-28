@@ -735,6 +735,35 @@
         }
       }
     },
+    "About three minutes of reading, listening and one sentence out loud, so your plan starts at your level." : {
+      "comment" : "What the level test is",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwa drei Minuten Lesen, Hören und ein Satz laut gesprochen – damit dein Plan auf deinem Niveau beginnt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unos tres minutos de lectura, escucha y una frase en voz alta para que tu plan empiece a tu nivel."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Environ trois minutes de lecture, d’écoute et une phrase à dire à voix haute pour que ton plan parte de ton niveau."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerca de três minutos de leitura, escuta e uma frase em voz alta para seu plano começar no seu nível."
+          }
+        }
+      }
+    },
     "Adapts to your answers, about %@" : {
       "comment" : "Level choice detail; the time a quick test takes",
       "localizations" : {
@@ -909,6 +938,35 @@
         }
       }
     },
+    "Based on the test. It gets more accurate every week." : {
+      "comment" : "Under the level test's result",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Basierend auf dem Test. Jede Woche wird die Einschätzung genauer."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se basa en la prueba. Cada semana es más precisa."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Basé sur le test. Il devient plus précis chaque semaine."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com base no teste. O resultado fica mais preciso a cada semana."
+          }
+        }
+      }
+    },
     "Beep" : {
       "comment" : "A buddy's own name: the robot",
       "localizations" : {
@@ -939,7 +997,7 @@
       }
     },
     "Build my plan" : {
-      "comment" : "Sends the typed goal to start building a plan\nStarts a course as the learner's goal",
+      "comment" : "Ends the level test to build the plan\nSends the typed goal to start building a plan\nStarts a course as the learner's goal",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2185,6 +2243,35 @@
         }
       }
     },
+    "Getting the message ready. The first time can take a few seconds." : {
+      "comment" : "While a listening question's message loads",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Nachricht wird vorbereitet. Beim ersten Mal kann es ein paar Sekunden dauern."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando el mensaje. La primera vez puede tardar unos segundos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation du message. La première fois, cela peut prendre quelques secondes."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando a mensagem. Na primeira vez, pode levar alguns segundos."
+          }
+        }
+      }
+    },
     "Getting your questions ready" : {
       "comment" : "Title while placement questions are written",
       "localizations" : {
@@ -2384,6 +2471,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Quanto tempo você pode estudar por dia?"
+          }
+        }
+      }
+    },
+    "I didn't understand the audio" : {
+      "comment" : "Answers a listening question of the level test without guessing",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich habe die Audioaufnahme nicht verstanden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No he entendido el audio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je n’ai pas compris l’audio"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não entendi o áudio"
           }
         }
       }
@@ -2997,6 +3113,35 @@
         }
       }
     },
+    "Listening" : {
+      "comment" : "A language skill",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hören"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escucha"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Écoute"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escuta"
+          }
+        }
+      }
+    },
     "Looks right" : {
       "comment" : "Confirms what was understood and creates the goals",
       "localizations" : {
@@ -3283,6 +3428,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nome"
+          }
+        }
+      }
+    },
+    "New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it." : {
+      "comment" : "The level test of a language with another alphabet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ist dir das Alphabet neu? Überspring den Test. Deine erste Lerneinheit beginnt mit einer kurzen Lektion zum Lesen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿No conoces su alfabeto? Sáltate la prueba. Tu primera sesión empieza con una breve lección para aprender a leerlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu ne connais pas encore son alphabet ? Passe le test. Ta première séance commence par une courte leçon pour apprendre à le lire."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ainda não conhece o alfabeto? Pule o teste. Sua primeira sessão começa com uma aula rápida de leitura."
           }
         }
       }
@@ -3983,6 +4157,64 @@
         }
       }
     },
+    "Play the message" : {
+      "comment" : "Plays a listening question's message",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nachricht abspielen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reproducir el mensaje"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Écouter le message"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reproduzir a mensagem"
+          }
+        }
+      }
+    },
+    "Play the message again" : {
+      "comment" : "Plays a listening question's message again",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nachricht noch einmal abspielen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reproducir el mensaje otra vez"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réécouter le message"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reproduzir a mensagem novamente"
+          }
+        }
+      }
+    },
     "Position" : {
       "comment" : "Box for the position an exam is for\nRow with the position an exam is for",
       "localizations" : {
@@ -4008,6 +4240,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cargo"
+          }
+        }
+      }
+    },
+    "Preparing your level test" : {
+      "comment" : "Title while a language's level test questions are written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Einstufungstest wird vorbereitet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando tu prueba de nivel"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation de ton test de niveau"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando seu teste de nível"
           }
         }
       }
@@ -4095,6 +4356,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Leia de novo"
+          }
+        }
+      }
+    },
+    "Reading" : {
+      "comment" : "A language skill",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lesen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lectura"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecture"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leitura"
           }
         }
       }
@@ -4476,6 +4766,35 @@
         }
       }
     },
+    "Say it out loud" : {
+      "comment" : "Title of the level test's sentence",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprich den Satz laut aus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Di la frase en voz alta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dis-le à voix haute"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fale em voz alta"
+          }
+        }
+      }
+    },
     "See my plan" : {
       "comment" : "Ends placement and shows the plan",
       "localizations" : {
@@ -4650,6 +4969,35 @@
         }
       }
     },
+    "Skip this part" : {
+      "comment" : "Skips the level test's sentence",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diesen Teil überspringen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saltar esta parte"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passer cette partie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pular esta parte"
+          }
+        }
+      }
+    },
     "Something else" : {
       "comment" : "Purpose choice",
       "localizations" : {
@@ -4766,8 +5114,37 @@
         }
       }
     },
+    "Speaking" : {
+      "comment" : "A language skill",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprechen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expresión oral"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expression orale"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversação"
+          }
+        }
+      }
+    },
     "Start" : {
-      "comment" : "Opens Today with the plan's first day\nStarts placement's questions",
+      "comment" : "Opens Today with the plan's first day\nStarts placement's questions\nStarts the level test",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5149,6 +5526,35 @@
         }
       }
     },
+    "That didn't work. Try again in a moment." : {
+      "comment" : "Starting or skipping the level test failed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das hat nicht geklappt. Versuch es gleich noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No ha funcionado. Vuelve a intentarlo dentro de un momento."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ça n’a pas marché. Réessaie dans un instant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não deu certo. Tente novamente daqui a pouco."
+          }
+        }
+      }
+    },
     "That's enough questions for today" : {
       "comment" : "Placement ended for the day",
       "localizations" : {
@@ -5174,6 +5580,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Chega de perguntas por hoje"
+          }
+        }
+      }
+    },
+    "The %@ test is new in your language, so its questions are being written now. It usually takes a minute or two, and only this once." : {
+      "comment" : "Why the level test waits: the language's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Test für %@ ist neu, deshalb werden die Fragen gerade erstellt. Das dauert meist ein bis zwei Minuten und ist nur beim ersten Mal nötig."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La prueba de %@ es nueva en tu idioma, así que estamos preparando sus preguntas. Suele tardar uno o dos minutos y solo tendrás que esperar esta vez."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le test en %@ est nouveau, alors ses questions sont en cours de préparation. Cela prend généralement une ou deux minutes, et seulement cette fois."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O teste de %@ é novo no seu idioma, então as perguntas estão sendo criadas agora. Isso costuma levar um ou dois minutos, só desta vez."
+          }
+        }
+      }
+    },
+    "The audio didn't play. Here's what it says:" : {
+      "comment" : "Over a listening question's text when its audio failed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Audioaufnahme wurde nicht abgespielt. Hier ist der Text:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido reproducir el audio. Esto es lo que dice:"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’audio n’a pas été lu. Voici ce qu’il dit :"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O áudio não foi reproduzido. Veja o que ele diz:"
           }
         }
       }
@@ -5928,6 +6392,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Usar no trabalho"
+          }
+        }
+      }
+    },
+    "Use the app in %@" : {
+      "comment" : "Opens the app's settings to switch its language: the language's own name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die App auf %@ verwenden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar la app en %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utiliser l’app en %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar o app em %@"
           }
         }
       }
@@ -6976,6 +7469,35 @@
         }
       }
     },
+    "Writing" : {
+      "comment" : "A language skill",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schreiben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expresión escrita"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Écriture"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escrita"
+          }
+        }
+      }
+    },
     "Writing about 5 short screens" : {
       "comment" : "A step of the wait while a quick explanation is written",
       "localizations" : {
@@ -7005,6 +7527,35 @@
         }
       }
     },
+    "Writing the level test questions" : {
+      "comment" : "The step of the wait while a language's level test questions are written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Fragen für den Einstufungstest werden erstellt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando las preguntas de la prueba de nivel"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation des questions du test de niveau"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criando as perguntas do teste de nível"
+          }
+        }
+      }
+    },
     "You can change all of this later." : {
       "comment" : "Under an understood goal",
       "localizations" : {
@@ -7030,6 +7581,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você pode mudar tudo isso depois."
+          }
+        }
+      }
+    },
+    "You got a voice message. Listen and answer." : {
+      "comment" : "Next to a listening question's play button",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast eine Sprachnachricht erhalten. Hör sie dir an und antworte."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has recibido un mensaje de voz. Escúchalo y responde."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as reçu un message vocal. Écoute-le et réponds."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você recebeu uma mensagem de voz. Escute e responda."
           }
         }
       }
@@ -7587,6 +8167,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nas primeiras sessões, a gente vai fazer algumas dessas perguntas."
+          }
+        }
+      }
+    },
+    "Your level today" : {
+      "comment" : "Title after the level test",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein heutiges Level"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu nivel de hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton niveau aujourd’hui"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu nível hoje"
           }
         }
       }

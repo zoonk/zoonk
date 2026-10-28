@@ -8,7 +8,6 @@ struct PlacementStep: View {
 
   @Environment(OnboardingStore.self) private var onboarding
   @State private var phase = Phase.loading
-  @State private var draft: PracticeAnswer?
   @State private var shownAt = ContinuousClock.now
   @State private var isSaving = false
   @State private var failed = false
@@ -34,7 +33,12 @@ struct PlacementStep: View {
       case .waiting:
         waiting
       case .question(let question, let labels):
-        questionScreen(question, labels: labels)
+        PlacementQuestionScreen(
+          subject: subject, number: shown.answered + 1, progress: shown.spent, question: question,
+          labels: labels, isSaving: isSaving, failed: failed,
+          onAnswer: { submit($0, to: question) }, onStop: { finish(fromScratch: false) }
+        )
+        .id(question.itemId)
       case .done(let forToday):
         outcome(
           title: forToday
@@ -139,65 +143,6 @@ struct PlacementStep: View {
     .task { await waitForQuestions() }
   }
 
-  private func questionScreen(_ question: PracticeQuestion, labels: PracticeTrueFalseLabels)
-    -> some View
-  {
-    PracticeTaskLayout {
-      VStack(alignment: .leading, spacing: 4) {
-        Text(subject)
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
-        Text(
-          "Question \(shown.answered + 1)", tableName: "Onboarding",
-          comment: "Which placement question this is"
-        )
-        .font(.subheadline.weight(.semibold))
-      }
-
-      ProgressView(value: shown.spent)
-        .tint(.success)
-        .accessibilityHidden(true)
-
-      PracticeQuestionView(question: question, labels: labels, draft: $draft) { answer in
-        submit(answer, to: question)
-      }
-
-      if failed {
-        Text(
-          "That didn't save. Try again.", tableName: "Onboarding",
-          comment: "A change couldn't be saved"
-        )
-        .foregroundStyle(.destructive)
-      }
-    } actions: {
-      PracticeMainButton(
-        title: LocalizedStringResource(
-          "Confirm", table: "Onboarding", comment: "Sends a placement answer"),
-        isBusy: isSaving, isDisabled: draft == nil || isSaving
-      ) {
-        if let draft {
-          submit(draft, to: question)
-        }
-      }
-
-      PracticeSecondaryButton(
-        title: LocalizedStringResource(
-          "I don't know yet", table: "Onboarding",
-          comment: "Answers a placement question without guessing"),
-        systemImage: "questionmark.circle", isDisabled: isSaving
-      ) {
-        submit(.dontKnow, to: question)
-      }
-
-      Button {
-        finish(fromScratch: false)
-      } label: {
-        Text("Stop here and see my plan", tableName: "Onboarding", comment: "Ends placement early")
-      }
-      .disabled(isSaving)
-    }
-  }
-
   private func outcome(title: Text, description: Text) -> some View {
     Form {
       StepHeader(title: title, description: description)
@@ -284,7 +229,6 @@ struct PlacementStep: View {
         return
       }
 
-      draft = nil
       shownAt = .now
       phase = .question(
         question, labels: placement.trueFalseLabels == .rightWrong ? .rightWrong : .trueFalse)
@@ -345,58 +289,98 @@ struct PlacementStep: View {
   }
 }
 
-/// A language goal's placement is its level test (main's `LanguageLevelTestStep`). The app doesn't run the test's reading, listening and spoken questions yet, so it offers main's other way on: skipping it, which keeps the level the learner gave.
-struct LevelTestStep: View {
-  let goalID: String
-  let targetLanguage: String
-  let onDone: () -> Void
+/// A placement-style question (main's `PlacementQuestionScreen`): which question it is over the bar, what it plays or shows first (`media`), the question, then Confirm, "I don't know yet" and stopping to see the plan. Placement and the level test ask this way; a new question gets a fresh view (`.id`), so nothing picked carries over.
+struct PlacementQuestionScreen<Media: View>: View {
+  var subject: String?
+  let number: Int
+  /// How far along it is, from 0 to 1.
+  let progress: Double
+  let question: PracticeQuestion
+  var labels = PracticeTrueFalseLabels.trueFalse
+  var dontKnowLabel = LocalizedStringResource(
+    "I don't know yet", table: "Onboarding",
+    comment: "Answers a placement question without guessing")
+  let isSaving: Bool
+  let failed: Bool
+  let onAnswer: (PracticeAnswer) -> Void
+  let onStop: () -> Void
+  @ViewBuilder var media: () -> Media
 
-  @Environment(OnboardingStore.self) private var onboarding
-  @State private var isSkipping = false
-  @State private var failed = false
+  @State private var draft: PracticeAnswer?
 
   var body: some View {
-    Form {
-      StepHeader(
-        title: Text(
-          "Let's see your level in \(Locale.current.localizedString(forLanguageCode: targetLanguage) ?? targetLanguage)",
-          tableName: "Onboarding", comment: "Title of a language goal's level test"),
-        description: Text(
-          "Your plan starts from the level you gave, and your first sessions fine-tune it.",
-          tableName: "Onboarding", comment: "What skipping the level test does"))
+    PracticeTaskLayout {
+      VStack(alignment: .leading, spacing: 4) {
+        if let subject {
+          Text(subject)
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+        }
+
+        Text(
+          "Question \(number)", tableName: "Onboarding",
+          comment: "Which placement question this is"
+        )
+        .font(.subheadline.weight(.semibold))
+      }
+
+      ProgressView(value: progress)
+        .tint(.success)
+        .accessibilityHidden(true)
+
+      media()
+
+      PracticeQuestionView(question: question, labels: labels, draft: $draft) { answer in
+        onAnswer(answer)
+      }
 
       if failed {
-        Section {
-          Text(
-            "That didn't save. Try again.", tableName: "Onboarding",
-            comment: "A change couldn't be saved"
-          )
-          .foregroundStyle(.destructive)
+        Text(
+          "That didn't save. Try again.", tableName: "Onboarding",
+          comment: "A change couldn't be saved"
+        )
+        .foregroundStyle(.destructive)
+      }
+    } actions: {
+      PracticeMainButton(
+        title: LocalizedStringResource(
+          "Confirm", table: "Onboarding", comment: "Sends a placement answer"),
+        isBusy: isSaving, isDisabled: draft == nil || isSaving
+      ) {
+        if let draft {
+          onAnswer(draft)
         }
       }
 
-      StepButtons(
-        canContinue: !isSkipping,
-        continueLabel: Text(
-          "Skip the test", tableName: "Onboarding", comment: "Skips a language goal's level test")
+      PracticeSecondaryButton(
+        title: dontKnowLabel, systemImage: "questionmark.circle", isDisabled: isSaving
       ) {
-        Task { await skip() }
+        onAnswer(.dontKnow)
       }
+
+      Button(action: onStop) {
+        Text("Stop here and see my plan", tableName: "Onboarding", comment: "Ends placement early")
+      }
+      .disabled(isSaving)
     }
   }
+}
 
-  private func skip() async {
-    isSkipping = true
-    failed = false
-    defer { isSkipping = false }
-
-    do {
-      try await onboarding.skipLevelTest(goalID: goalID)
-      onDone()
-    } catch is CancellationError {
-      // The write is obsolete: the learner who asked is gone, so nothing shows.
-    } catch {
-      failed = true
-    }
+extension PlacementQuestionScreen where Media == EmptyView {
+  init(
+    subject: String?,
+    number: Int,
+    progress: Double,
+    question: PracticeQuestion,
+    labels: PracticeTrueFalseLabels,
+    isSaving: Bool,
+    failed: Bool,
+    onAnswer: @escaping (PracticeAnswer) -> Void,
+    onStop: @escaping () -> Void
+  ) {
+    self.init(
+      subject: subject, number: number, progress: progress, question: question, labels: labels,
+      isSaving: isSaving, failed: failed, onAnswer: onAnswer, onStop: onStop, media: { EmptyView() }
+    )
   }
 }

@@ -56,6 +56,20 @@ final class GenerationWaitTests: XCTestCase {
     XCTAssertTrue(wait.isDone)
   }
 
+  func testALevelTestJoiningAnotherLearnersRunWaitsInPlaceUntilItsQuestionsAreWritten() {
+    var wait = GenerationWait(kind: .levelTestBank)
+
+    wait.apply(GenerationEvent(entityID: "run-2", status: "started", step: "joinLevelTestBank"))
+
+    XCTAssertNil(wait.joinedGenerationID, "The same run reports the pair's writer")
+    XCTAssertEqual(wait.visiblePhases.map(\.state), [.working])
+    XCTAssertFalse(wait.isDone)
+
+    wait.apply(GenerationEvent(status: "completed", step: "levelTestBankReady"))
+
+    XCTAssertTrue(wait.isDone)
+  }
+
   func testTheFirstPhaseGoesBeforeAnyEvent() {
     XCTAssertEqual(
       GenerationWait(kind: .curriculum).started.visiblePhases.map(\.state),

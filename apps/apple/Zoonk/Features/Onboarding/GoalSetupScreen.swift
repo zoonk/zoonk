@@ -291,7 +291,9 @@ private struct StepScreen: View {
     switch step {
     case .placement:
       if view.goal.kind == .language, let targetLanguage = view.goal.targetLanguage {
-        LevelTestStep(goalID: view.goal.id, targetLanguage: targetLanguage, onDone: onPlacementDone)
+        LevelTestStep(
+          goalID: view.goal.id, language: view.goal.language, targetLanguage: targetLanguage,
+          onDone: onPlacementDone)
       } else {
         PlacementStep(view: view, subject: subject, onDone: onPlacementDone)
       }

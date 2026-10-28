@@ -21,6 +21,60 @@ enum OnboardingError: Error, Equatable, Sendable {
   case failed(APIError)
 }
 
+/// A language goal's level test (`GET /goals/{goalId}/language-level-test`): its questions still
+/// being written for the language pair, or its next step with the level of each skill so far.
+struct LevelTest: Decodable, Equatable, Sendable {
+  enum Status: String, Decodable, Sendable {
+    case preparing
+    case ready
+  }
+
+  enum Skill: String, Decodable, Sendable {
+    case reading
+    case listening
+    case speaking
+    case writing
+  }
+
+  struct Level: Decodable, Equatable, Identifiable, Sendable {
+    /// "B1": the level on the A1 to C2 scale.
+    let label: String
+    /// From 0 to 5, A1 to C2.
+    let score: Double
+    let skill: Skill
+
+    var id: Skill { skill }
+  }
+
+  struct Question: Decodable, Equatable, Sendable {
+    let id: String
+    let options: [String]
+    /// The text a reading question shows, or the message a listening one plays.
+    let passage: String
+    let question: String
+    let skill: Skill
+  }
+
+  struct Sentence: Decodable, Equatable, Sendable {
+    let sentence: String
+    let translation: String
+  }
+
+  struct Next: Decodable, Equatable, Sendable {
+    let kind: String
+    let question: Question?
+    let speaking: Sentence?
+  }
+
+  let status: Status
+  /// Set while a run writes the pair's questions.
+  let startedAt: String?
+  let answered: Int?
+  let total: Int?
+  let levels: [Level]?
+  let next: Next?
+}
+
 /// A run's status (`GET /generations/{id}`), as a wait reads it once the stream ends.
 enum GenerationStatus: Sendable {
   case working
@@ -321,6 +375,66 @@ struct OnboardingAPI: Sendable {
       return
     case .unauthorized:
       throw APIError.unauthorized
+    default:
+      throw APIError.unavailable
+    }
+  }
+
+  /// The level test's next step; read-only, so it never starts writing questions.
+  func levelTest(goalID: String, token: String) async throws -> LevelTest {
+    let output = try await clients.perform(token: token) { client in
+      try await client.getLanguageLevelTest(path: .init(goalId: goalID))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try PracticeJSON.recode(try response.body.json)
+    case .unauthorized:
+      throw APIError.unauthorized
+    case .notFound:
+      throw APIError.notFound
+    default:
+      throw APIError.unavailable
+    }
+  }
+
+  /// Asks for the language pair's questions when nothing writes them, or joins the run that does;
+  /// nil when they're written.
+  func prepareLevelTest(goalID: String, token: String) async throws -> String? {
+    let output = try await clients.perform(token: token) { client in
+      try await client.createLanguageLevelTestGeneration(path: .init(goalId: goalID))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try response.body.json.generationId
+    case .accepted(let response):
+      return try response.body.json.generationId
+    case .unauthorized:
+      throw APIError.unauthorized
+    case .notFound:
+      throw APIError.notFound
+    default:
+      throw APIError.unavailable
+    }
+  }
+
+  func answerLevelTest(
+    _ input: Components.Schemas.LanguageLevelTestAnswerInput,
+    goalID: String,
+    token: String
+  ) async throws -> LevelTest {
+    let output = try await clients.perform(token: token) { client in
+      try await client.answerLanguageLevelTest(path: .init(goalId: goalID), body: .json(input))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try PracticeJSON.recode(try response.body.json)
+    case .unauthorized:
+      throw APIError.unauthorized
+    case .notFound:
+      throw APIError.notFound
     default:
       throw APIError.unavailable
     }

@@ -285,8 +285,38 @@ final class OnboardingStore {
     }
   }
 
-  /// Skips a language goal's level test: the plan starts from the level the learner gave.
-  func skipLevelTest(goalID: String) async throws {
+  func levelTest(goalID: String) async throws -> LevelTest {
+    guard let token = session.authenticatedSession?.bearerToken else {
+      throw CancellationError()
+    }
+
+    return try await api.levelTest(goalID: goalID, token: token)
+  }
+
+  /// The learner's tap asks for the pair's questions; the run writing them, or nil once they're written.
+  func prepareLevelTest(goalID: String) async throws -> String? {
+    try await cache.onboardingWrite { [api] identity in
+      try await api.prepareLevelTest(goalID: goalID, token: identity.bearerToken)
+    }
+  }
+
+  func answerLevelTest(
+    goalID: String,
+    questionID: String,
+    answerIndex: Int?,
+    duration: Duration
+  ) async throws -> LevelTest {
+    let input = Components.Schemas.LanguageLevelTestAnswerInput(
+      answerIndex: answerIndex,
+      durationMs: Int(duration.components.seconds * 1000), questionId: questionID)
+
+    return try await cache.onboardingWrite { [api] identity in
+      try await api.answerLevelTest(input, goalID: goalID, token: identity.bearerToken)
+    }
+  }
+
+  /// Ends a language goal's level test with its answers, or skips it: the plan starts from the level the learner gave.
+  func finishLevelTest(goalID: String) async throws {
     try await cache.onboardingWrite(invalidating: [.goals, .learnerModel, .learningProfile]) {
       [api] identity in
       try await api.finishLevelTest(goalID: goalID, token: identity.bearerToken)

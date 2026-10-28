@@ -321,10 +321,10 @@ private struct UnderstandingWaitView: View {
         comment: "Shown while a typed goal is read"),
       generationID: generationID,
       kind: .understanding,
-      readResult: readResult
-    ) {
-      TypedGoalSection(goal: goal)
-    }
+      readResult: readResult,
+      leading: {
+        TypedGoalSection(goal: goal)
+      })
   }
 }
 
