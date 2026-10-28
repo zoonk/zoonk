@@ -9,6 +9,8 @@ extension ActivityRendererRegistry {
       .beforeAfter,
       .categorize,
       .causeEffectChain,
+      .codeRunner,
+      .codeTracer,
       .combinationGrid,
       .decisionTree,
       .dialogueSimulator,
@@ -22,7 +24,8 @@ extension ActivityRendererRegistry {
       .processOrder,
       .rhythmTapper,
       .sourceComparison,
+      .sqlPlayground,
       .stepSolver,
       .timeline,
-    ] + ChartsActivities.renderers + CodeActivityRenderers.all)
+    ] + ChartsActivities.renderers)
 }

@@ -1,148 +1,116 @@
 import Foundation
 import WebKit
 
-struct CodeProgramResult: Equatable, Sendable {
-  enum Stop: Sendable { case done, error, timeout, tooMuchOutput, unavailable, cancelled }
-  var output = ""
-  var errorOutput = ""
-  var message: String?
-  var stop: Stop = .done
+/// The languages a code activity runs, with main's runtime names, file names and time limits
+/// (core's `PROGRAM_TIME_LIMIT_MS`).
+enum CodeLanguage: String, Decodable, Sendable {
+  case javascript, python
+
+  var runtimeName: String {
+    switch self {
+    case .javascript: "JavaScript"
+    case .python: "Python"
+    }
+  }
+
+  var defaultFileName: String {
+    switch self {
+    case .javascript: "main.js"
+    case .python: "main.py"
+    }
+  }
+
+  var timeLimitSeconds: Int {
+    switch self {
+    case .javascript: 3
+    case .python: 5
+    }
+  }
 }
 
-/// A fresh nonpersistent page and worker per run. No app session or host objects enter it.
+/// How a run ended and what it printed, as main's `ProgramRun`.
+struct CodeProgramRun: Equatable, Sendable {
+  enum Stop: String, Sendable {
+    case done, error, timeout, tooMuchOutput, unavailable
+  }
+
+  var stop: Stop
+  var output = ""
+  /// What the program wrote to stderr, like `console.error` or warnings.
+  var errorOutput = ""
+  /// The error the run stopped on, and the line of the learner's program it points to.
+  var error: String?
+  var errorLine: Int?
+}
+
+/// Runs a learner's program on the device, never on our servers: a page no one sees hosts main's
+/// sandbox (`CodeWorkerSources`). Python keeps one warm worker, so Pyodide loads once per activity;
+/// JavaScript gets a new worker per run. Closing the runner, or dropping it, releases the page and
+/// everything in it.
 @MainActor
-final class CodeProgramRunner: NSObject, WKScriptMessageHandler, WKNavigationDelegate {
-  private var webView: WKWebView?
-  private var continuation: CheckedContinuation<CodeProgramResult, Never>?
-  private var deadline: Task<Void, Never>?
-  private var result = CodeProgramResult()
-  private var code = ""
-  private var language = ""
-  private var runID = UUID()
+final class CodeProgramRunner {
+  /// Nothing a page does is saved on the device; sharing one store lets a later activity reuse
+  /// what an earlier one cached.
+  private static let dataStore = WKWebsiteDataStore.nonPersistent()
 
-  func run(code: String, language: String) async -> CodeProgramResult {
-    cancel()
-    let id = UUID()
-    runID = id
-    self.code = code
+  private let language: CodeLanguage
+  private var page: Task<WebPage, any Error>?
+
+  init(language: CodeLanguage) {
     self.language = language
-    result = CodeProgramResult()
-    return await withTaskCancellationHandler {
-      await withCheckedContinuation { continuation in
-        self.continuation = continuation
-        if Task.isCancelled {
-          finish(.cancelled)
-          return
-        }
-        let configuration = WKWebViewConfiguration()
-        configuration.websiteDataStore = .nonPersistent()
-        configuration.userContentController.add(self, name: "runner")
-        let page = WKWebView(frame: .zero, configuration: configuration)
-        page.navigationDelegate = self
-        webView = page
-        let source = language == "python" ? CodeWorkerSources.python : CodeWorkerSources.javascript
-        let encoded = String(data: try! JSONEncoder().encode(source), encoding: .utf8)!
-        // Blob workers inherit CSP. Runtime downloads are restricted to the pinned Pyodide path;
-        // worker globals are locked after initialization, before learner code receives control.
-        let runtime = language == "python" ? "https://cdn.jsdelivr.net/pyodide/v314.0.7/full/" : ""
-        page.loadHTMLString(
-          """
-          <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: \(runtime); worker-src blob:; connect-src \(runtime.isEmpty ? "'none'" : runtime);">
-          <script>
-          const worker = new Worker(URL.createObjectURL(new Blob([\(encoded)], {type:'text/javascript'})), {type:'module'});
-          worker.onmessage = e => window.webkit.messageHandlers.runner.postMessage(e.data);
-          worker.onerror = e => window.webkit.messageHandlers.runner.postMessage({type:'loadError',message:e.message});
-          function stopWorker() { worker.terminate(); }
-          function runCode(code) { worker.postMessage({id:1,code}); }
-          </script>
-          """, baseURL: nil)
-        armDeadline(seconds: 60, stop: .unavailable)
-      }
-    } onCancel: {
-      Task { @MainActor [weak self] in if self?.runID == id { self?.cancel() } }
+  }
+
+  /// Loads the runtime before the first run, so Run doesn't wait for Pyodide. False when it
+  /// didn't load, like when offline.
+  func warmUp() async -> Bool {
+    (try? await call("return await warmUp()")) as? Bool ?? false
+  }
+
+  func run(_ code: String) async -> CodeProgramRun {
+    guard
+      let result = try? await call("return await run(code)", arguments: ["code": code])
+        as? [String: Any]
+    else {
+      return CodeProgramRun(stop: .unavailable)
+    }
+
+    return CodeProgramRun(
+      stop: (result["stop"] as? String).flatMap(CodeProgramRun.Stop.init) ?? .unavailable,
+      output: result["output"] as? String ?? "",
+      errorOutput: result["errorOutput"] as? String ?? "",
+      error: result["message"] as? String,
+      errorLine: result["line"] as? Int)
+  }
+
+  func close() {
+    page?.cancel()
+    page = nil
+  }
+
+  private func call(_ body: String, arguments: [String: Any] = [:]) async throws -> Any? {
+    do {
+      return try await loadedPage().callJavaScript(body, arguments: arguments)
+    } catch {
+      // A page that didn't load, or whose process ended, starts over on the next call.
+      page = nil
+      throw error
     }
   }
 
-  func cancel() { finish(.cancelled) }
-
-  func userContentController(
-    _ userContentController: WKUserContentController, didReceive message: WKScriptMessage
-  ) {
-    guard message.webView === webView, continuation != nil else { return }
-    guard let body = message.body as? [String: Any], let type = body["type"] as? String else {
-      return
+  private func loadedPage() async throws -> WebPage {
+    if let page {
+      return try await page.value
     }
-    if type == "ready" {
-      armDeadline(seconds: language == "python" ? 5 : 3, stop: .timeout)
-      webView?.callAsyncJavaScript(
-        "runCode(code)", arguments: ["code": code], in: nil, in: .page, completionHandler: nil)
-    } else if let event = Self.parseMessage(body) {
-      switch event {
-      case .output(let stream, let text):
-        let remaining = max(0, 10_000 - result.output.utf16.count - result.errorOutput.utf16.count)
-        if stream == "stderr" {
-          result.errorOutput += String(decoding: text.utf16.prefix(remaining), as: UTF16.self)
-        } else {
-          result.output += String(decoding: text.utf16.prefix(remaining), as: UTF16.self)
-        }
-        if text.utf16.count > remaining { finish(.tooMuchOutput) }
-      case .end(let stop, let message):
-        result.message = message
-        finish(stop)
-      }
+
+    let html = CodeWorkerSources.page(language)
+    let loading = Task {
+      var configuration = WebPage.Configuration()
+      configuration.websiteDataStore = Self.dataStore
+      let page = WebPage(configuration: configuration)
+      for try await _ in page.load(html: html) {}
+      return page
     }
-  }
-
-  enum Event: Equatable {
-    case output(String, String)
-    case end(CodeProgramResult.Stop, String?)
-  }
-
-  nonisolated static func parseMessage(_ body: [String: Any]) -> Event? {
-    switch body["type"] as? String {
-    case "output":
-      guard let stream = body["stream"] as? String, ["stdout", "stderr"].contains(stream),
-        let text = body["text"] as? String
-      else { return nil }
-      return .output(stream, text)
-    case "done": return .end(.done, nil)
-    case "error": return .end(.error, body["message"] as? String)
-    case "loadError": return .end(.unavailable, body["message"] as? String)
-    default: return nil
-    }
-  }
-
-  private func armDeadline(seconds: UInt64, stop: CodeProgramResult.Stop) {
-    deadline?.cancel()
-    deadline = Task { [weak self] in
-      do { try await Task.sleep(for: .seconds(seconds)) } catch { return }
-      self?.finish(stop)
-    }
-  }
-
-  private func finish(_ stop: CodeProgramResult.Stop) {
-    deadline?.cancel()
-    deadline = nil
-    let page = webView
-    page?.evaluateJavaScript("stopWorker()") { [page] _, _ in page?.stopLoading() }
-    page?.configuration.userContentController.removeScriptMessageHandler(forName: "runner")
-    page?.navigationDelegate = nil
-    webView = nil
-    result.stop = stop
-    let pending = continuation
-    continuation = nil
-    pending?.resume(returning: result)
-  }
-
-  func webView(
-    _ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!,
-    withError error: any Error
-  ) {
-    guard webView === self.webView else { return }
-    finish(.unavailable)
-  }
-  func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
-    guard webView === self.webView else { return }
-    finish(.unavailable)
+    page = loading
+    return try await loading.value
   }
 }

@@ -1,37 +1,219 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "A program that works" : {
-      "comment" : "Reference solution after grading",
+    "%@ →" : {
+      "comment" : "A variable's value before it changed",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein funktionierendes Programm"
+            "value" : "%@ →"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un programa que funciona"
+            "value" : "%@ →"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un programme qui fonctionne"
+            "value" : "%@ →"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um programa que funciona"
+            "value" : "%@ →"
+          }
+        }
+      }
+    },
+    "%@ didn't load. Check your connection and try again." : {
+      "comment" : "A code runtime (Python) failed to download",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ konnte nicht geladen werden. Prüfe deine Verbindung und versuche es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido cargar %@. Comprueba tu conexión y vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de charger %@. Vérifie ta connexion et réessaie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível carregar %@. Confira sua conexão e tente de novo."
+          }
+        }
+      }
+    },
+    "%@, missing from your result" : {
+      "comment" : "VoiceOver: an expected row the learner's result doesn't have",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, fehlt in deinem Ergebnis"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, no aparece en tu resultado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, absent de ton résultat"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, ausente no seu resultado"
+          }
+        }
+      }
+    },
+    "%@, not expected" : {
+      "comment" : "VoiceOver: a result row the answer shouldn't have",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, nicht erwartet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, no se esperaba"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, inattendu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, não esperado"
+          }
+        }
+      }
+    },
+    "%lld rows" : {
+      "comment" : "How many rows a SQL table has",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Zeile"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Zeilen"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld row"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld rows"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld fila"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld filas"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld ligne"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lignes"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld linha"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld linhas"
+                }
+              }
+            }
           }
         }
       }
     },
     "A query that works" : {
-      "comment" : "Verified reference SQL query",
+      "comment" : "The lesson's own query, after the check",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -59,37 +241,8 @@
         }
       }
     },
-    "Back" : {
-      "comment" : "Previous trace step",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zurück"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Atrás"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Précédent"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voltar"
-          }
-        }
-      }
-    },
     "Before the first line" : {
-      "comment" : "Trace has not executed yet",
+      "comment" : "A code trace before any line ran",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -117,37 +270,66 @@
         }
       }
     },
-    "Expected output" : {
-      "comment" : "Output the program should print",
+    "Doesn't match the expected output" : {
+      "comment" : "VoiceOver: the program printed something else",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erwartete Ausgabe"
+            "value" : "Stimmt nicht mit der erwarteten Ausgabe überein"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salida esperada"
+            "value" : "No coincide con el resultado esperado"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sortie attendue"
+            "value" : "Ne correspond pas au résultat attendu"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Saída esperada"
+            "value" : "Não corresponde à saída esperada"
+          }
+        }
+      }
+    },
+    "Expected" : {
+      "comment" : "The output a program should print",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erwartet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esperado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Attendu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esperado"
           }
         }
       }
     },
     "Expected result" : {
-      "comment" : "Reference query result",
+      "comment" : "Rows a query should return",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -175,8 +357,95 @@
         }
       }
     },
+    "Expected result, in this order" : {
+      "comment" : "Rows a query should return, in order",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erwartetes Ergebnis in dieser Reihenfolge"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resultado esperado, en este orden"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Résultat attendu, dans cet ordre"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resultado esperado, nesta ordem"
+          }
+        }
+      }
+    },
+    "Getting %@ ready. This takes a few seconds the first time." : {
+      "comment" : "A code runtime (Python) is downloading",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ wird vorbereitet. Beim ersten Mal dauert das ein paar Sekunden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando %@. La primera vez puede tardar unos segundos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation de %@. La première fois, cela prend quelques secondes."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparando %@. Isso leva alguns segundos na primeira vez."
+          }
+        }
+      }
+    },
+    "Line %@ is yours" : {
+      "comment" : "The one line of a program the learner edits",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeile %@ gehört dir"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La línea %@ es tuya"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La ligne %@ est à toi"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A linha %@ é sua"
+          }
+        }
+      }
+    },
     "Line %lld, yours to edit" : {
-      "comment" : "Editable code line",
+      "comment" : "VoiceOver: a line of a program the learner edits",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -204,8 +473,188 @@
         }
       }
     },
+    "Line %lld: %@" : {
+      "comment" : "A program's error and the line it happened on",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeile %1$lld: %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Line %1$lld: %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Línea %1$lld: %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ligne %1$lld : %2$@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Linha %1$lld: %2$@"
+          }
+        }
+      }
+    },
+    "Lines %@ are yours" : {
+      "comment" : "The lines of a program the learner edits, like “2 and 3”",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Zeilen %@ gehören dir"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las líneas %@ son tuyas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les lignes %@ sont à toi"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As linhas %@ são suas"
+          }
+        }
+      }
+    },
+    "Matches the expected output" : {
+      "comment" : "VoiceOver: the program printed what it should",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stimmt mit der erwarteten Ausgabe überein"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coincide con el resultado esperado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Correspond au résultat attendu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Corresponde à saída esperada"
+          }
+        }
+      }
+    },
+    "Not quite" : {
+      "comment" : "Before the feedback for a likely mistake",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht ganz"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No del todo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas tout à fait"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quase"
+          }
+        }
+      }
+    },
+    "not set" : {
+      "comment" : "A variable before a program sets it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "nicht gesetzt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sin definir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "non définie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "não definido"
+          }
+        }
+      }
+    },
+    "Nothing printed" : {
+      "comment" : "A program ran without printing",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es wurde nichts ausgegeben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha mostrado nada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rien n’a été affiché"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada foi exibido"
+          }
+        }
+      }
+    },
     "Output" : {
-      "comment" : "Program standard output",
+      "comment" : "What an explored program printed",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -233,37 +682,66 @@
         }
       }
     },
-    "Reset" : {
-      "comment" : "Restore the starter code",
+    "Predict first. Then step forward to see what happens." : {
+      "comment" : "Before a prediction in a code trace",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zurücksetzen"
+            "value" : "Gib zuerst deine Vorhersage ab. Gehe dann einen Schritt weiter, um zu sehen, was passiert."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Restablecer"
+            "value" : "Primero, haz una predicción. Después, avanza para ver qué ocurre."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réinitialiser"
+            "value" : "Fais d’abord une prédiction, puis avance étape par étape pour voir ce qui se passe."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redefinir"
+            "value" : "Faça uma previsão primeiro. Depois, avance para ver o que acontece."
+          }
+        }
+      }
+    },
+    "Query" : {
+      "comment" : "Label of an explored SQL editor",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abfrage"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consulta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Requête"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consulta"
           }
         }
       }
     },
     "Run" : {
-      "comment" : "Execute SQL query\nRun the learner's program",
+      "comment" : "Run a program or query",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -291,66 +769,153 @@
         }
       }
     },
-    "Running…" : {
+    "Run again" : {
+      "comment" : "Run a program or query again",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erneut ausführen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a ejecutar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Relancer"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Executar de novo"
+          }
+        }
+      }
+    },
+    "Run the code to see it" : {
+      "comment" : "Before a program's first run",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Führe den Code aus, um das Ergebnis zu sehen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ejecuta el código para verlo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exécute le code pour voir le résultat"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Execute o código para ver o resultado"
+          }
+        }
+      }
+    },
+    "Running" : {
       "comment" : "A program or query is running",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wird ausgeführt…"
+            "value" : "Wird ausgeführt"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En ejecución…"
+            "value" : "En ejecución"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En cours…"
+            "value" : "Exécution en cours"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Executando…"
+            "value" : "Executando"
           }
         }
       }
     },
-    "SQLite unavailable" : {
-      "comment" : "SQLite could not open an in-memory database",
+    "SQL words, tables and columns" : {
+      "comment" : "VoiceOver: buttons that type SQL",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SQLite nicht verfügbar"
+            "value" : "SQL-Begriffe, Tabellen und Spalten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SQLite no está disponible"
+            "value" : "Palabras, tablas y columnas de SQL"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SQLite indisponible"
+            "value" : "Mots SQL, tables et colonnes"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SQLite indisponível"
+            "value" : "Palavras, tabelas e colunas SQL"
+          }
+        }
+      }
+    },
+    "Start over with the original code" : {
+      "comment" : "Undo the learner's edits to a program",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit dem ursprünglichen Code von vorn beginnen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar de nuevo con el código original"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recommencer avec le code d’origine"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recomeçar com o código original"
           }
         }
       }
     },
     "Step %lld of %lld" : {
-      "comment" : "Trace position",
+      "comment" : "Where a code trace is",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -384,8 +949,72 @@
         }
       }
     },
+    "Step %lld of %lld. Line %lld ran." : {
+      "comment" : "VoiceOver: where a code trace is after a step",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schritt %1$lld von %2$lld. Zeile %3$lld wurde ausgeführt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Step %1$lld of %2$lld. Line %3$lld ran."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paso %1$lld de %2$lld. Se ha ejecutado la línea %3$lld."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Étape %1$lld sur %2$lld. La ligne %3$lld a été exécutée."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passo %1$lld de %2$lld. A linha %3$lld foi executada."
+          }
+        }
+      }
+    },
+    "Step back" : {
+      "comment" : "Go back one step in a code trace",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einen Schritt zurück"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retroceder un paso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reculer d’une étape"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voltar um passo"
+          }
+        }
+      }
+    },
     "Step forward" : {
-      "comment" : "Execute the next traced line",
+      "comment" : "Run the next line of a code trace",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -413,153 +1042,639 @@
         }
       }
     },
-    "The program printed too much and was stopped." : {
-      "comment" : "Output limit exceeded",
+    "Step forward to run the next line." : {
+      "comment" : "Under a code trace",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Programm hat zu viel ausgegeben und wurde gestoppt."
+            "value" : "Gehe einen Schritt weiter, um die nächste Zeile auszuführen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El programa imprimió demasiado y se detuvo."
+            "value" : "Avanza para ejecutar la siguiente línea."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le programme a trop affiché et a été arrêté."
+            "value" : "Avance d’une étape pour exécuter la ligne suivante."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O programa exibiu conteúdo demais e foi interrompido."
+            "value" : "Avance para executar a próxima linha."
           }
         }
       }
     },
-    "The program took too long and was stopped." : {
-      "comment" : "Program execution timeout",
+    "Step forward to see if you're right." : {
+      "comment" : "After a prediction in a code trace",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Programm hat zu lange gebraucht und wurde gestoppt."
+            "value" : "Gehe einen Schritt weiter, um zu sehen, ob du richtig liegst."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El programa tardó demasiado y se detuvo."
+            "value" : "Avanza para comprobar si has acertado."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le programme a mis trop de temps et a été arrêté."
+            "value" : "Avance d’une étape pour voir si tu as raison."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O programa demorou demais e foi interrompido."
+            "value" : "Avance para ver se você acertou."
           }
         }
       }
     },
-    "The query returned too much data. Add a filter or LIMIT and try again." : {
-      "comment" : "SQLite output exceeded the display budget; LIMIT is a SQL keyword",
+    "Stopped after %lld seconds. Is there a loop that never ends?" : {
+      "comment" : "A program ran out of time",
       "localizations" : {
         "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die Abfrage hat zu viele Daten zurückgegeben. Füge einen Filter oder LIMIT hinzu und versuche es erneut."
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Nach %lld Sekunde gestoppt. Gibt es eine Endlosschleife?"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Nach %lld Sekunden gestoppt. Gibt es eine Endlosschleife?"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Stopped after %lld second. Is there a loop that never ends?"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Stopped after %lld seconds. Is there a loop that never ends?"
+                }
+              }
+            }
           }
         },
         "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La consulta ha devuelto demasiados datos. Añade un filtro o LIMIT y vuelve a intentarlo."
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Se ha detenido después de %lld segundo. ¿Hay un bucle que no termina?"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Se ha detenido después de %lld segundos. ¿Hay un bucle que no termina?"
+                }
+              }
+            }
           }
         },
         "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "La requête a renvoyé trop de données. Ajoute un filtre ou une clause LIMIT, puis réessaie."
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Arrêt après %lld seconde. Y a-t-il une boucle sans fin ?"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Arrêt après %lld secondes. Y a-t-il une boucle sans fin ?"
+                }
+              }
+            }
           }
         },
         "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A consulta retornou dados demais. Adicione um filtro ou LIMIT e tente novamente."
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "A execução parou depois de %lld segundo. Será que há um loop que nunca termina?"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "A execução parou depois de %lld segundos. Será que há um loop que nunca termina?"
+                }
+              }
+            }
           }
         }
       }
     },
-    "The runtime didn't load. Check your connection and try again." : {
-      "comment" : "Runtime loading failed",
+    "Stopped because it printed too much. Is there a loop that never ends?" : {
+      "comment" : "A program printed past the output limit",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Laufzeitumgebung wurde nicht geladen. Überprüfe deine Verbindung und versuche es noch einmal."
+            "value" : "Gestoppt, weil zu viel ausgegeben wurde. Gibt es eine Endlosschleife?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido cargar el entorno de ejecución. Comprueba tu conexión e inténtalo de nuevo."
+            "value" : "Se ha detenido porque ha mostrado demasiados datos. ¿Hay un bucle que no termina?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’environnement d’exécution ne s’est pas chargé. Vérifie ta connexion et réessaie."
+            "value" : "Arrêt : le programme a affiché trop de texte. Y a-t-il une boucle sans fin ?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível carregar o ambiente de execução. Confira sua conexão e tente novamente."
+            "value" : "A execução parou porque exibiu informação demais. Será que há um loop que nunca termina?"
           }
         }
       }
     },
-    "Too many result rows" : {
-      "comment" : "The query exceeded the result row limit",
+    "Table %@" : {
+      "comment" : "VoiceOver: one of a lesson's SQL tables",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zu viele Ergebniszeilen"
+            "value" : "Tabelle %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Demasiadas filas en los resultados"
+            "value" : "Tabla %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trop de lignes de résultat"
+            "value" : "Table %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Muitas linhas no resultado"
+            "value" : "Tabela %@"
+          }
+        }
+      }
+    },
+    "That's the whole run." : {
+      "comment" : "At the end of an explored code trace",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das war der ganze Ablauf."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eso es todo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C’est la fin de l’exécution."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Essa foi toda a execução."
+          }
+        }
+      }
+    },
+    "That's the whole run. Check your predictions when you're ready." : {
+      "comment" : "At the end of a code trace, before the check",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das war der ganze Ablauf. Prüfe deine Vorhersagen, wenn du bereit bist."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eso es todo. Comprueba tus predicciones cuando quieras."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C’est la fin de l’exécution. Vérifie tes prédictions quand tu es prêt."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Essa foi toda a execução. Confira suas previsões quando quiser."
+          }
+        }
+      }
+    },
+    "The query ran but didn't return a table. Use SELECT to get rows." : {
+      "comment" : "A SQL statement that returned no table",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Abfrage wurde ausgeführt, hat aber keine Tabelle zurückgegeben. Verwende SELECT, um Zeilen abzurufen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La consulta se ha ejecutado, pero no ha devuelto ninguna tabla. Usa SELECT para obtener filas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La requête a été exécutée, mais n’a renvoyé aucune table. Utilise SELECT pour obtenir des lignes."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A consulta foi executada, mas não retornou uma tabela. Use SELECT para obter linhas."
+          }
+        }
+      }
+    },
+    "The query returned too many rows. Add a filter or LIMIT and try again." : {
+      "comment" : "A SQL query returned more rows than the app shows; LIMIT is a SQL keyword",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Abfrage hat zu viele Zeilen zurückgegeben. Füge einen Filter oder LIMIT hinzu und versuche es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La consulta ha devuelto demasiadas filas. Añade un filtro o LIMIT y vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La requête a renvoyé trop de lignes. Ajoute un filtre ou LIMIT, puis réessaie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A consulta retornou linhas demais. Adicione um filtro ou LIMIT e tente de novo."
+          }
+        }
+      }
+    },
+    "The query took more than %lld seconds and was stopped." : {
+      "comment" : "A SQL query ran out of time",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Die Abfrage dauerte länger als %lld Sekunde und wurde gestoppt."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Die Abfrage dauerte länger als %lld Sekunden und wurde gestoppt."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "The query took more than %lld second and was stopped."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "The query took more than %lld seconds and was stopped."
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "La consulta ha tardado más de %lld segundo y se ha detenido."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "La consulta ha tardado más de %lld segundos y se ha detenido."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "La requête a dépassé %lld seconde et a été arrêtée."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "La requête a dépassé %lld secondes et a été arrêtée."
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "A consulta levou mais de %lld segundo e foi interrompida."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "A consulta levou mais de %lld segundos e foi interrompida."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Try again" : {
+      "comment" : "Load a code runtime again",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erneut versuchen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a intentarlo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réessayer"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tentar de novo"
+          }
+        }
+      }
+    },
+    "Variables" : {
+      "comment" : "VoiceOver: a code trace's watched variables",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Variablen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Variables"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Variables"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Variáveis"
+          }
+        }
+      }
+    },
+    "You changed the code. Run it again to see the new output." : {
+      "comment" : "Under the output of a program the learner edited since running it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast den Code geändert. Führe ihn erneut aus, um die neue Ausgabe zu sehen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has cambiado el código. Vuelve a ejecutarlo para ver el nuevo resultado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as modifié le code. Exécute-le à nouveau pour voir le nouveau résultat."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você mudou o código. Execute de novo para ver a nova saída."
+          }
+        }
+      }
+    },
+    "You changed the query. Run it again to see the new result." : {
+      "comment" : "Under the result of a query the learner edited since running it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast die Abfrage geändert. Führe sie erneut aus, um das neue Ergebnis zu sehen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has cambiado la consulta. Vuelve a ejecutarla para ver el nuevo resultado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as modifié la requête. Exécute-la à nouveau pour voir le nouveau résultat."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você mudou a consulta. Execute de novo para ver o novo resultado."
+          }
+        }
+      }
+    },
+    "You said %@, and it was." : {
+      "comment" : "A right prediction in a code trace",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast %@ gesagt, und das war richtig."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has dicho %@, y era correcto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as dit %@, et c’était bien ça."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você disse %@, e era isso mesmo."
+          }
+        }
+      }
+    },
+    "You said %@; it was %@." : {
+      "comment" : "A wrong prediction in a code trace, then the traced value",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast %1$@ gesagt; richtig war %2$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "You said %1$@; it was %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has dicho %1$@; el valor era %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as dit %1$@ ; la valeur était %2$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você disse %1$@; o valor era %2$@."
+          }
+        }
+      }
+    },
+    "Your output" : {
+      "comment" : "What the learner's program printed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Ausgabe"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu resultado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton résultat"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua saída"
           }
         }
       }
     },
     "Your query" : {
-      "comment" : "SQL editor label",
+      "comment" : "Label of the learner's SQL editor",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -583,6 +1698,159 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sua consulta"
+          }
+        }
+      }
+    },
+    "Your result" : {
+      "comment" : "VoiceOver: the rows a query returned",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Ergebnis"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu resultado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton résultat"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu resultado"
+          }
+        }
+      }
+    },
+    "Your result has no rows" : {
+      "comment" : "A query returned no rows",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Ergebnis enthält keine Zeilen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu resultado no tiene filas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton résultat ne contient aucune ligne"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu resultado não tem linhas"
+          }
+        }
+      }
+    },
+    "Your result: %lld rows" : {
+      "comment" : "How many rows a query returned",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Dein Ergebnis: %lld Zeile"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Dein Ergebnis: %lld Zeilen"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Your result: %lld row"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Your result: %lld rows"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tu resultado: %lld fila"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tu resultado: %lld filas"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Ton résultat : %lld ligne"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Ton résultat : %lld lignes"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Seu resultado: %lld linha"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Seu resultado: %lld linhas"
+                }
+              }
+            }
           }
         }
       }
