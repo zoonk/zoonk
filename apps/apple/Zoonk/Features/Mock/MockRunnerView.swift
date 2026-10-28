@@ -178,13 +178,14 @@ private struct MockQuestionMeta: View {
 
 /// One question of the running section in the part a spread's page shows: what it's read with (its
 /// set's text or recording and the question, or an essay's prompt) or how it's answered (picks, a
-/// number, a word, or the box to write the essay in).
+/// number, a word, or the box to write the essay in). In one column the stimulus draws it whole.
 private struct MockQuestionCard: View {
   enum Part {
     case stimulus
     case response
   }
 
+  @Environment(\.isPaneSplit) private var isPaneSplit
   let run: MockRun
   let view: MockView
   let question: MockQuestion
@@ -206,9 +207,18 @@ private struct MockQuestionCard: View {
       case .response: asked.response
       }
     } else {
-      switch part {
-      case .stimulus: MockEssayPrompt(question: question)
-      case .response: MockEssayBox(run: run, view: view, question: question, isLocked: isLocked)
+      switch (part, isPaneSplit) {
+      case (.stimulus, true):
+        MockEssayPrompt(question: question)
+      case (.stimulus, false):
+        VStack(alignment: .leading, spacing: 12) {
+          MockEssayPrompt(question: question)
+          MockEssayBox(run: run, view: view, question: question, isLocked: isLocked)
+        }
+      case (.response, true):
+        MockEssayBox(run: run, view: view, question: question, isLocked: isLocked)
+      case (.response, false):
+        EmptyView()
       }
     }
   }

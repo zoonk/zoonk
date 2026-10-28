@@ -7,7 +7,8 @@ import SwiftUI
 ///
 /// A spread draws it in two parts: `stimulus`, everything up to the question, on the leading page,
 /// and `response`, the answer control, on the trailing page. There a statement's card moves to the
-/// leading page too, and its answers stay on the trailing one.
+/// leading page too, and its answers stay on the trailing one. In one column `stimulus` draws the
+/// question whole and `response` draws nothing, so it's spaced as a phone has always shown it.
 struct PracticeQuestionView: View {
   enum Part {
     case whole
@@ -64,7 +65,7 @@ struct PracticeQuestionView: View {
   var response: Self { drawing(.response) }
 
   var body: some View {
-    switch part {
+    switch drawn {
     case .whole:
       VStack(alignment: .leading, spacing: 16) {
         stimulusContent
@@ -79,6 +80,17 @@ struct PracticeQuestionView: View {
       }
     case .response:
       responseContent
+    case nil:
+      EmptyView()
+    }
+  }
+
+  /// The part this place draws: both parts are one whole question outside a spread.
+  private var drawn: Part? {
+    switch part {
+    case .whole: .whole
+    case .stimulus: isPaneSplit ? .stimulus : .whole
+    case .response: isPaneSplit ? .response : nil
     }
   }
 
@@ -88,11 +100,11 @@ struct PracticeQuestionView: View {
 
   /// A spread reads a statement on its leading page, beside its answers.
   private var statementLeads: Bool {
-    part != .whole && isPaneSplit && question.format == .trueFalse && !hidesAnswers
+    drawn != .whole && question.format == .trueFalse && !hidesAnswers
   }
 
   private var showsStatementCard: Bool {
-    part == .stimulus && statementLeads
+    drawn == .stimulus && statementLeads
   }
 
   private var hasStimulus: Bool {

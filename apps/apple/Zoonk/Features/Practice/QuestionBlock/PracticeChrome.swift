@@ -168,6 +168,8 @@ struct QuestionSpread<Header: View, Stimulus: View, Response: View, Actions: Vie
       } actions: {
         actions()
       }
+      // So a question drawn in two parts draws itself whole, even inside another split's pane.
+      .environment(\.isPaneSplit, false)
     }
   }
 }
