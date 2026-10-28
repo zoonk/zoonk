@@ -27,7 +27,10 @@ struct PracticeItemResult: Equatable {
 
 /// The answer control for a question's format. It hands the host the answer as it's made
 /// (`draft`, nil until complete) for the host's Check, and a typed answer straight away when
-/// Return sends it (`onSubmit`). Give it `.id(question.id)` so every question starts fresh.
+/// Return sends it (`onSubmit`). It shows the answer the draft holds, so the control drawn again
+/// (folding or unfolding iPhone Duo, going back to a question) keeps it; only work that isn't an
+/// answer yet, like a pair half matched, stays with the control. Give it `.id(question.id)` so
+/// every question starts fresh.
 struct PracticeItemView: View {
   let question: PracticeQuestion
   let labels: PracticeTrueFalseLabels
@@ -76,7 +79,8 @@ struct ChoiceItemView: View {
   let result: PracticeItemResult?
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
-  @State private var picks: [Int] = []
+  /// Picks short of what the question asks for, which aren't an answer yet.
+  @State private var incomplete: [Int]?
 
   var body: some View {
     let correct = result?.correctAnswer?.picks ?? []
@@ -106,16 +110,20 @@ struct ChoiceItemView: View {
     result?.optionMark(isRightAnswer: correct.contains(index), isPicked: picked.contains(index))
   }
 
+  private var picks: [Int] {
+    incomplete ?? draft?.picks ?? []
+  }
+
   private func pick(_ index: Int) {
     if select.isMulti {
-      picks = picks.contains(index) ? picks.filter { $0 != index } : picks + [index]
-      draft = select.isComplete(picks) ? .choices(picks) : nil
+      let next = picks.contains(index) ? picks.filter { $0 != index } : picks + [index]
+      let complete = select.isComplete(next)
+      incomplete = complete ? nil : next
+      draft = complete ? .choices(next) : nil
       return
     }
 
-    let cleared = picks.first == index
-    picks = cleared ? [] : [index]
-    draft = cleared ? nil : .choice(index)
+    draft = picks.first == index ? nil : .choice(index)
   }
 }
 
@@ -153,14 +161,13 @@ struct TrueFalseItemView: View {
   let result: PracticeItemResult?
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
-  @State private var picked: PracticeAnswer?
   @State private var offset: CGFloat = 0
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   private static let swipeThreshold: CGFloat = 90
 
   var body: some View {
-    let shownPick = result?.answer ?? picked
+    let shownPick = result?.answer ?? draft
     let answers: [PracticeAnswer] =
       allowsBlank
       ? [.trueFalse(false), .dontKnow, .trueFalse(true)] : [.trueFalse(false), .trueFalse(true)]
@@ -222,8 +229,7 @@ struct TrueFalseItemView: View {
 
   /// A tap toggles its pick; a swipe keeps its side picked.
   private func pick(_ answer: PracticeAnswer, toggles: Bool) {
-    picked = toggles && picked == answer ? nil : answer
-    draft = picked
+    draft = toggles && draft == answer ? nil : answer
   }
 }
 
@@ -279,11 +285,12 @@ struct MatchPairsItemView: View {
   let right: [String]
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
-  @State private var matches: [Int?] = []
+  /// Pairs made while some are still open, which aren't an answer yet.
+  @State private var incomplete: [Int?]?
   @State private var selected: Int?
 
   var body: some View {
-    let current = matches.count == left.count ? matches : Array(repeating: nil, count: left.count)
+    let current = matches
 
     HStack(alignment: .top, spacing: 12) {
       VStack(spacing: 8) {
@@ -327,9 +334,17 @@ struct MatchPairsItemView: View {
       comment: "VoiceOver value of a right-column entry already matched with a left entry.")
   }
 
+  /// Each left entry's match: the draft's once every one is matched.
+  private var matches: [Int?] {
+    if let incomplete, incomplete.count == left.count { return incomplete }
+    if case .matches(let matched) = draft, matched.count == left.count { return matched }
+    return Array(repeating: nil, count: left.count)
+  }
+
   private func update(_ next: [Int?]) {
-    matches = next
-    draft = next.allSatisfy { $0 != nil } ? .matches(next.compactMap(\.self)) : nil
+    let complete = next.allSatisfy { $0 != nil }
+    incomplete = complete ? nil : next
+    draft = complete ? .matches(next.compactMap(\.self)) : nil
   }
 
   private func pickLeft(_ index: Int, current: [Int?]) {
@@ -383,7 +398,8 @@ struct OrderItemView: View {
   let result: PracticeItemResult?
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
-  @State private var order: [Int] = []
+  /// Steps placed while some are still out, which aren't an answer yet.
+  @State private var incomplete: [Int]?
 
   var body: some View {
     let placed: [Int] = if case .order(let given) = result?.answer { given } else { order }
@@ -426,16 +442,25 @@ struct OrderItemView: View {
     return placed.firstIndex(of: index) == correctOrder.firstIndex(of: index) ? .right : .wrong
   }
 
+  private var order: [Int] {
+    if let incomplete { return incomplete }
+    if case .order(let given) = draft { return given }
+    return []
+  }
+
   private func tap(_ index: Int) {
-    order = order.contains(index) ? order.filter { $0 != index } : order + [index]
-    draft = order.count == steps.count ? .order(order) : nil
+    let next = order.contains(index) ? order.filter { $0 != index } : order + [index]
+    let complete = next.count == steps.count
+    incomplete = complete ? nil : next
+    draft = complete ? .order(next) : nil
   }
 }
 
 // MARK: - Numeric and typed
 
 /// A math problem's field: a number with a decimal comma or point (either works in any language)
-/// next to its unit; Return sends it. A box that takes less than any number says so under it.
+/// next to its unit; Return sends it. A box that takes less than any number says so under it. What
+/// the learner typed shows as typed; drawn again, the field shows the draft's number.
 struct NumericItemView: View {
   let entry: PracticeNumericEntry?
   let unit: PracticeNumericUnit?
@@ -443,7 +468,7 @@ struct NumericItemView: View {
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
   let onSubmit: (PracticeAnswer) -> Void
-  @State private var text = ""
+  @State private var typed: String?
   @State private var isInvalid = false
   @FocusState private var isFocused: Bool
 
@@ -457,17 +482,13 @@ struct NumericItemView: View {
         TextField(
           String(
             localized: "Your answer", table: "Practice", comment: "Placeholder of an answer field."),
-          text: $text
+          text: Binding(get: { typed ?? NumericEntryParser.text(for: draft) }, set: type)
         )
         .font(.title3.monospacedDigit())
         .keyboardType(entry?.kind == .fraction ? .numbersAndPunctuation : .decimalPad)
         .submitLabel(.done)
         .focused($isFocused)
         .disabled(isLocked)
-        .onChange(of: text) { _, value in
-          isInvalid = false
-          draft = NumericEntryParser.parse(value, entry: entry).map(PracticeAnswer.number)
-        }
         .onSubmit(submit)
 
         if let unit, unit.position == .suffix {
@@ -495,8 +516,15 @@ struct NumericItemView: View {
     .onAppear { isFocused = !isLocked }
   }
 
+  private func type(_ text: String) {
+    typed = text
+    isInvalid = false
+    draft = NumericEntryParser.parse(text, entry: entry).map(PracticeAnswer.number)
+  }
+
+  /// Sends the draft's number, which is what the field reads.
   private func submit() {
-    guard let value = NumericEntryParser.parse(text, entry: entry) else {
+    guard case .number(let value) = draft else {
       isInvalid = true
       return
     }
@@ -543,13 +571,14 @@ struct NumericItemView: View {
   }
 }
 
-/// A short typed answer (a word, a number, a term); Return sends it.
+/// A short typed answer (a word, a number, a term); Return sends it. What the learner typed shows
+/// as typed; drawn again, the field shows the draft's text.
 struct TypedItemView: View {
   let mark: AnswerOptionResult?
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
   let onSubmit: (PracticeAnswer) -> Void
-  @State private var text = ""
+  @State private var typed: String?
   @FocusState private var isFocused: Bool
 
   var body: some View {
@@ -557,7 +586,7 @@ struct TypedItemView: View {
       TextField(
         String(
           localized: "Your answer", table: "Practice", comment: "Placeholder of an answer field."),
-        text: $text
+        text: Binding(get: { typed ?? shown }, set: type)
       )
       .font(.title3)
       .textInputAutocapitalization(.never)
@@ -565,13 +594,8 @@ struct TypedItemView: View {
       .submitLabel(.done)
       .focused($isFocused)
       .disabled(isLocked)
-      .onChange(of: text) { _, value in
-        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
-        draft = trimmed.isEmpty ? nil : .text(trimmed)
-      }
       .onSubmit {
-        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        if !trimmed.isEmpty { onSubmit(.text(trimmed)) }
+        if case .text(let text) = draft { onSubmit(.text(text)) }
       }
 
       if let mark {
@@ -582,6 +606,17 @@ struct TypedItemView: View {
     }
     .modifier(AnswerFieldStyle(mark: mark))
     .onAppear { isFocused = !isLocked }
+  }
+
+  private var shown: String {
+    if case .text(let text) = draft { return text }
+    return ""
+  }
+
+  private func type(_ text: String) {
+    typed = text
+    let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+    draft = trimmed.isEmpty ? nil : .text(trimmed)
   }
 }
 
@@ -605,6 +640,14 @@ private struct AnswerFieldStyle: ViewModifier {
 /// The number an answer box takes from what the learner typed: a fraction box takes "2/3" or a
 /// decimal, an integer box only a whole number, every other box a number with a comma or a point.
 enum NumericEntryParser {
+  /// A draft's number as the field shows it in the learner's language: no grouping, and every digit
+  /// a typed number can have, so it reads back as the same number.
+  static func text(for draft: PracticeAnswer?, locale: Locale = .autoupdatingCurrent) -> String {
+    guard case .number(let value) = draft else { return "" }
+    return value.formatted(
+      .number.grouping(.never).precision(.significantDigits(1...15)).locale(locale))
+  }
+
   static func parse(_ text: String, entry: PracticeNumericEntry?) -> Double? {
     let trimmed = text.trimmingCharacters(in: .whitespaces)
 

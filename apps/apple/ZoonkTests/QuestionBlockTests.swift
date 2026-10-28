@@ -230,6 +230,24 @@ final class PracticeModelTests: XCTestCase {
     XCTAssertNil(NumericEntryParser.parse("2.5", entry: .init(kind: .integer, places: nil)))
     XCTAssertNil(NumericEntryParser.parse("abc", entry: nil))
   }
+
+  func testNumericDraftShowsAsTextThatReadsBackTheSameNumber() {
+    let typed = [2.5, 1234.5, 12, 0.1, -7.25, 0.000123456789, 3.14159265358979, 1_000_000_000]
+
+    for identifier in ["en_US", "pt_BR", "de_DE"] {
+      let locale = Locale(identifier: identifier)
+
+      for number in typed {
+        let text = NumericEntryParser.text(for: .number(number), locale: locale)
+        XCTAssertEqual(NumericEntryParser.parse(text, entry: nil), number, "\(identifier): \(text)")
+      }
+    }
+
+    XCTAssertEqual(
+      NumericEntryParser.text(for: .number(1234.5), locale: Locale(identifier: "pt_BR")), "1234,5")
+    XCTAssertEqual(NumericEntryParser.text(for: nil), "")
+    XCTAssertEqual(NumericEntryParser.text(for: .dontKnow), "")
+  }
 }
 
 // MARK: - Fixtures

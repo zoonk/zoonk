@@ -220,11 +220,55 @@ struct PracticeVisualView: View {
 
 // MARK: - Recording
 
-/// Plays already used per asking of a recording (`playsKey`), kept while the app runs, so moving
-/// between a set's questions keeps the exam's play limit.
+/// The recording playing now, kept apart from the view that plays it: folding or unfolding iPhone
+/// Duo draws that view again, and a play that doesn't pause mustn't stop for it. It stops once no
+/// view shows the recording anymore, as when the learner leaves its questions.
 @MainActor
-private enum ListeningPlays {
-  static var used: [String: Int] = [:]
+@Observable
+private final class ListeningPlayback {
+  static let shared = ListeningPlayback()
+
+  /// Plays already used per asking of a recording (`playsKey`), kept while the app runs, so moving
+  /// between a set's questions keeps the exam's play limit.
+  var used: [String: Int] = [:]
+  /// The recording playing, by where it's asked.
+  private(set) var playing: String?
+  @ObservationIgnored private var player: AVPlayer?
+  @ObservationIgnored private var shown: [String: Int] = [:]
+
+  func play(_ url: URL, key: String) -> AVPlayerItem {
+    try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
+    let item = AVPlayerItem(url: url)
+    let next = AVPlayer(playerItem: item)
+    player?.pause()
+    player = next
+    playing = key
+    next.play()
+    return item
+  }
+
+  func ended(_ item: AVPlayerItem?) {
+    if let item, item == player?.currentItem { stop() }
+  }
+
+  func stop() {
+    player?.pause()
+    player = nil
+    playing = nil
+  }
+
+  func show(_ key: String) {
+    shown[key, default: 0] += 1
+  }
+
+  /// A view drawn again appears as the old one goes, so this waits a turn before stopping.
+  func hide(_ key: String) {
+    shown[key, default: 1] -= 1
+
+    Task {
+      if shown[key, default: 0] <= 0, playing == key { stop() }
+    }
+  }
 }
 
 /// A recording's plays as a mock counts them on the server: the ones used, and counting one more
@@ -243,8 +287,6 @@ private struct ListeningPlayerView: View {
   let questions: (prompts: [String], current: Int)?
   let transcript: [PracticeTranscriptLine]?
   let served: ServedPlays?
-  @State private var player: AVPlayer?
-  @State private var isPlaying = false
   @State private var played = 0
   @State private var failed = false
   @State private var showsQuestions: Bool?
@@ -253,6 +295,7 @@ private struct ListeningPlayerView: View {
   var body: some View {
     let answered = transcript != nil
     let playsLeft = max(listening.plays - played, 0)
+    let isPlaying = playback.playing == playsKey
 
     VStack(alignment: .leading, spacing: 12) {
       if let title = listening.title {
@@ -263,7 +306,7 @@ private struct ListeningPlayerView: View {
         ItemText(task).font(.callout)
       }
 
-      Text(rule(answered: answered, playsLeft: playsLeft))
+      Text(rule(answered: answered, playsLeft: playsLeft, isPlaying: isPlaying))
         .font(.footnote)
         .foregroundStyle(.secondary)
 
@@ -333,27 +376,31 @@ private struct ListeningPlayerView: View {
         }
       }
     }
-    .onAppear { played = max(served?.played ?? 0, ListeningPlays.used[playsKey] ?? 0) }
-    .onChange(of: served?.played) { _, count in played = max(played, count ?? 0) }
-    .onDisappear {
-      player?.pause()
-      player = nil
+    .onAppear {
+      played = max(served?.played ?? 0, playback.used[playsKey] ?? 0)
+      playback.show(playsKey)
     }
+    // The next question on another recording: this one's play ends with its questions.
+    .onChange(of: playsKey) { previous, key in
+      playback.hide(previous)
+      playback.show(key)
+      played = max(served?.played ?? 0, playback.used[key] ?? 0)
+    }
+    .onChange(of: served?.played) { _, count in played = max(played, count ?? 0) }
+    .onDisappear { playback.hide(playsKey) }
     .onReceive(NotificationCenter.default.publisher(for: AVPlayerItem.didPlayToEndTimeNotification))
     {
-      notification in
-      guard let item = notification.object as? AVPlayerItem, item == player?.currentItem else {
-        return
-      }
-      isPlaying = false
+      playback.ended($0.object as? AVPlayerItem)
     }
   }
+
+  private var playback: ListeningPlayback { .shared }
 
   private var questionsExpanded: Binding<Bool> {
     Binding(get: { showsQuestions ?? (played == 0) }, set: { showsQuestions = $0 })
   }
 
-  private func rule(answered: Bool, playsLeft: Int) -> LocalizedStringResource {
+  private func rule(answered: Bool, playsLeft: Int, isPlaying: Bool) -> LocalizedStringResource {
     if answered {
       return LocalizedStringResource(
         "Listen again as often as you like.", table: "Practice",
@@ -389,20 +436,15 @@ private struct ListeningPlayerView: View {
     guard let audio = listening.audio, let url = URL(string: audio.url) else { return }
 
     failed = false
-    try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
-    let item = AVPlayerItem(url: url)
-    let next = AVPlayer(playerItem: item)
-    player = next
-    isPlaying = true
+    let key = playsKey
+    let item = playback.play(url, key: key)
     played += 1
-    ListeningPlays.used[playsKey] = played
-    next.play()
+    playback.used[key] = played
 
     if let served {
       Task { @MainActor in
         guard await !served.record() else { return }
-        next.pause()
-        isPlaying = false
+        if playback.playing == key { playback.stop() }
         played = listening.plays
       }
     }
@@ -411,7 +453,7 @@ private struct ListeningPlayerView: View {
       for await status in item.publisher(for: \.status).values where status != .unknown {
         if status == .failed {
           failed = true
-          isPlaying = false
+          if playback.playing == key { playback.stop() }
         }
         break
       }
