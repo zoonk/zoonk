@@ -23,9 +23,71 @@ extension PracticeHooks {
           router.present(.subscription)
         }
       },
+      askButton: { target in
+        // The target says whether the answer was missed, not whether it was checked yet.
+        AnyView(
+          TutorAskButton(
+            scope: .item(
+              itemId: target.itemId, blockId: nil, answered: target.missed, missed: target.missed),
+            quote: target.question))
+      },
       ceremony: { milestone, onClose in
         AnyView(MilestoneCeremony(milestone: Milestone(milestone), onClose: onClose))
       })
+  }
+}
+
+extension TutorPlaces {
+  /// Where the buddy sends the learner: an account or Plus when a limit asks for one, the app
+  /// places its answers offer, and the Buddy tab's links.
+  static func routed(by router: AppRouter) -> TutorPlaces {
+    TutorPlaces { place in
+      switch place {
+      case .account, .memory:
+        router.present(.account)
+      case .subscription:
+        router.present(.subscription)
+      case .startGoal:
+        router.open(.startGoal)
+      case .chapterTest(let chapterId):
+        router.open(.testOut(chapterId: chapterId))
+      case .chooseFocus:
+        router.select(.plan)
+      case .languageUnit(let chapterId):
+        router.open(.languageUnit(chapterId: chapterId))
+      case .mockChooser:
+        router.open(.mockChooser)
+      case .subject(let subjectKey):
+        router.open(.subject(subjectKey: subjectKey))
+      case .mistakes:
+        router.open(.mistakes)
+      case .pronunciation(let goalId):
+        router.open(.pronunciation(goalId: goalId))
+      case .statistics, .energy:
+        router.open(.statistics)
+      case .logbook:
+        router.open(.logbook)
+      case .earlierQuestions:
+        router.open(.earlierQuestions)
+      case .mission(let opens):
+        switch opens {
+        case .case1, .case7:
+          router.open(.session)
+        case .case2:
+          router.open(.mistakePractice())
+        case .case3(let pattern):
+          router.open(.pattern(patternId: pattern.patternId))
+        case .case4:
+          router.open(.pronunciation())
+        case .case5(let call):
+          router.open(.languageUnit(chapterId: call.chapterId))
+        case .case6:
+          router.select(.buddy)
+        case .case8:
+          router.open(.mockChooser)
+        }
+      }
+    }
   }
 }
 

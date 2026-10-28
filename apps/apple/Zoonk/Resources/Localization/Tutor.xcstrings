@@ -1,0 +1,3928 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "“%@”" : {
+      "comment" : "The goal the learner said, quoted",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„%@“"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "«%@»"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "« %@ »"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@”"
+          }
+        }
+      }
+    },
+    "%lld mistakes to fix, with practice that brings each one back." : {
+      "comment" : "What the mistakes notebook holds",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Fehler, den du mit Übungen wieder aufgreifst."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Fehler, die du mit Übungen wieder aufgreifst."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld mistake to fix, with practice that brings it back."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld mistakes to fix, with practice that brings each one back."
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld error por corregir; practicar te ayudará a recordarlo."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld errores por corregir; practicar te ayudará a recordarlos."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld erreur à corriger, que des exercices te feront revoir."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld erreurs à corriger, que des exercices te feront revoir."
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld erro para corrigir, com exercícios que fazem você lembrar dele."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld erros para corrigir, com exercícios que fazem você lembrar de cada um."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "1 week" : {
+      "comment" : "A plan change that lasts one week",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 Woche"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 semana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 semaine"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 semana"
+          }
+        }
+      }
+    },
+    "A newer suggestion replaced this one." : {
+      "comment" : "A newer plan change replaced this one",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein neuerer Vorschlag hat diesen ersetzt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una sugerencia más reciente ha sustituido a esta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une nouvelle suggestion a remplacé celle-ci."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uma sugestão mais recente substituiu esta."
+          }
+        }
+      }
+    },
+    "A short call out loud with %@, %@." : {
+      "comment" : "The buddy offers a practice call; the arguments are who the learner talks to",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein kurzes Gespräch mit %1$@ und %2$@ zum Lautsprechen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "A short call out loud with %1$@, %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una breve conversación en voz alta con %1$@, %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un bref échange à l’oral avec %1$@, %2$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uma conversa rápida em voz alta com %1$@, %2$@."
+          }
+        }
+      }
+    },
+    "A short call out loud, at your level." : {
+      "comment" : "The buddy offers a practice call",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein kurzes Gespräch zum Lautsprechen, passend zu deinem Level."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una breve conversación en voz alta, a tu nivel."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un bref échange à l’oral, à ton niveau."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uma conversa rápida em voz alta, no seu nível."
+          }
+        }
+      }
+    },
+    "About “%@”" : {
+      "comment" : "The practice question the panel is about",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu „%@“"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre «%@»"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À propos de « %@ »"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre “%@”"
+          }
+        }
+      }
+    },
+    "About this chapter" : {
+      "comment" : "Above a question to the buddy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu diesem Kapitel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre este capítulo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À propos de ce chapitre"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre este capítulo"
+          }
+        }
+      }
+    },
+    "About this lesson" : {
+      "comment" : "Above a question to the buddy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu dieser Lektion"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre esta lección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À propos de cette leçon"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre esta aula"
+          }
+        }
+      }
+    },
+    "About this mock exam" : {
+      "comment" : "Above a question to the buddy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu dieser Probeprüfung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre este simulacro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À propos de cet examen blanc"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre este simulado"
+          }
+        }
+      }
+    },
+    "About this part" : {
+      "comment" : "Above a question to the buddy: one lesson screen",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu diesem Teil"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre esta parte"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À propos de cette partie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre esta parte"
+          }
+        }
+      }
+    },
+    "About this question" : {
+      "comment" : "Above a question to the buddy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu dieser Frage"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre esta pregunta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À propos de cette question"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre esta questão"
+          }
+        }
+      }
+    },
+    "About this subject" : {
+      "comment" : "Above a question to the buddy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu diesem Fach"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre esta asignatura"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À propos de cette matière"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre esta matéria"
+          }
+        }
+      }
+    },
+    "About your answer" : {
+      "comment" : "Above a question to the buddy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu deiner Antwort"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre tu respuesta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À propos de ta réponse"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre sua resposta"
+          }
+        }
+      }
+    },
+    "About your answer to “%@”" : {
+      "comment" : "The checked practice question the panel is about",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu deiner Antwort auf „%@“"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre tu respuesta a «%@»"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À propos de ta réponse à « %@ »"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre sua resposta a “%@”"
+          }
+        }
+      }
+    },
+    "About your plan" : {
+      "comment" : "Above a question to the buddy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zu deinem Plan"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre tu plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À propos de ton plan"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sobre seu plano"
+          }
+        }
+      }
+    },
+    "and %lld more" : {
+      "comment" : "More memory changes after the first one",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "und %lld weitere"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "y %lld más"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "et %lld de plus"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e mais %lld"
+          }
+        }
+      }
+    },
+    "Apply" : {
+      "comment" : "Applies a plan change the buddy proposed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Übernehmen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aplicar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appliquer"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aplicar"
+          }
+        }
+      }
+    },
+    "Ask %@" : {
+      "comment" : "Opens the buddy's panel; the argument is the buddy's name\nTitle of the buddy's panel; the argument is the buddy's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar a %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demander à %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar para %@"
+          }
+        }
+      }
+    },
+    "Ask %@ about this chapter" : {
+      "comment" : "Ask button for VoiceOver; the argument is the buddy's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag %@ zu diesem Kapitel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar a %@ sobre este capítulo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demander à %@ à propos de ce chapitre"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar para %@ sobre este capítulo"
+          }
+        }
+      }
+    },
+    "Ask %@ about this mock exam" : {
+      "comment" : "Ask button for VoiceOver; the argument is the buddy's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag %@ zu dieser Probeprüfung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar a %@ sobre este simulacro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demander à %@ à propos de cet examen blanc"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar para %@ sobre este simulado"
+          }
+        }
+      }
+    },
+    "Ask %@ about this question" : {
+      "comment" : "Ask button for VoiceOver; the argument is the buddy's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag %@ zu dieser Frage"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar a %@ sobre esta pregunta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demander à %@ à propos de cette question"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar para %@ sobre esta questão"
+          }
+        }
+      }
+    },
+    "Ask %@ about this screen" : {
+      "comment" : "Ask button for VoiceOver; the argument is the buddy's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag %@ zu diesem Bildschirm"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar a %@ sobre esta pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demander à %@ à propos de cet écran"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar para %@ sobre esta tela"
+          }
+        }
+      }
+    },
+    "Ask %@ about this subject" : {
+      "comment" : "Ask button for VoiceOver; the argument is the buddy's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag %@ zu diesem Fach"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar a %@ sobre esta asignatura"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demander à %@ à propos de cette matière"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar para %@ sobre esta matéria"
+          }
+        }
+      }
+    },
+    "Ask %@ about your answer" : {
+      "comment" : "Ask button for VoiceOver; the argument is the buddy's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag %@ zu deiner Antwort"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar a %@ sobre tu respuesta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demander à %@ à propos de ta réponse"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar para %@ sobre sua resposta"
+          }
+        }
+      }
+    },
+    "Ask %@ about your plan" : {
+      "comment" : "Ask button for VoiceOver; the argument is the buddy's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag %@ zu deinem Plan"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar a %@ sobre tu plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demander à %@ à propos de ton plan"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar para %@ sobre seu plano"
+          }
+        }
+      }
+    },
+    "Ask about the lesson content…" : {
+      "comment" : "Placeholder of the buddy's composer in a lesson",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag zum Inhalt der Lektion…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar sobre el contenido de la lección…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pose une question sur le contenu de la leçon…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar sobre o conteúdo da aula…"
+          }
+        }
+      }
+    },
+    "Ask about this chapter…" : {
+      "comment" : "Placeholder of the buddy's composer",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag zu diesem Kapitel…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar sobre este capítulo…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pose une question sur ce chapitre…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar sobre este capítulo…"
+          }
+        }
+      }
+    },
+    "Ask about this mock exam…" : {
+      "comment" : "Placeholder of the buddy's composer",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag zu dieser Probeprüfung…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar sobre este simulacro…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pose une question sur cet examen blanc…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar sobre este simulado…"
+          }
+        }
+      }
+    },
+    "Ask about this question" : {
+      "comment" : "What the buddy's panel is about: a practice question",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag zu dieser Frage"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar sobre esta pregunta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poser une question sur cet exercice"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar sobre esta questão"
+          }
+        }
+      }
+    },
+    "Ask about this question…" : {
+      "comment" : "Placeholder of the buddy's composer",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag zu dieser Frage…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar sobre esta pregunta…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pose une question sur cet exercice…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar sobre esta questão…"
+          }
+        }
+      }
+    },
+    "Ask about this screen" : {
+      "comment" : "What the buddy's panel is about: the lesson screen in view",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag zu diesem Bildschirm"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar sobre esta pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poser une question sur cet écran"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar sobre esta tela"
+          }
+        }
+      }
+    },
+    "Ask about this subject…" : {
+      "comment" : "Placeholder of the buddy's composer",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag zu diesem Fach…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar sobre esta asignatura…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pose une question sur cette matière…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar sobre esta matéria…"
+          }
+        }
+      }
+    },
+    "Ask about your answer" : {
+      "comment" : "What the buddy's panel is about: a checked practice question",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag zu deiner Antwort"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar sobre tu respuesta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poser une question sur ta réponse"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar sobre sua resposta"
+          }
+        }
+      }
+    },
+    "Ask about your answer…" : {
+      "comment" : "Placeholder of the buddy's composer",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag zu deiner Antwort…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar sobre tu respuesta…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pose une question sur ta réponse…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar sobre sua resposta…"
+          }
+        }
+      }
+    },
+    "Ask about your plan…" : {
+      "comment" : "Placeholder of the buddy's composer",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag zu deinem Plan…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar sobre tu plan…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pose une question sur ton plan…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar sobre seu plano…"
+          }
+        }
+      }
+    },
+    "Ask questions about this chapter" : {
+      "comment" : "What the buddy's panel is about",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stell Fragen zu diesem Kapitel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hacer preguntas sobre este capítulo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poser des questions sur ce chapitre"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fazer perguntas sobre este capítulo"
+          }
+        }
+      }
+    },
+    "Ask questions about this lesson" : {
+      "comment" : "What the buddy's panel is about",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stell Fragen zu dieser Lektion"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hacer preguntas sobre esta lección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poser des questions sur cette leçon"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fazer perguntas sobre esta aula"
+          }
+        }
+      }
+    },
+    "Ask questions about this mock exam" : {
+      "comment" : "What the buddy's panel is about",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stell Fragen zu dieser Probeprüfung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hacer preguntas sobre este simulacro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poser des questions sur cet examen blanc"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fazer perguntas sobre este simulado"
+          }
+        }
+      }
+    },
+    "Ask questions about this subject" : {
+      "comment" : "What the buddy's panel is about",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stell Fragen zu diesem Fach"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hacer preguntas sobre esta asignatura"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poser des questions sur cette matière"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fazer perguntas sobre esta matéria"
+          }
+        }
+      }
+    },
+    "Ask questions about your plan" : {
+      "comment" : "What the buddy's panel is about",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stell Fragen zu deinem Plan"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hacer preguntas sobre tu plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poser des questions sur ton plan"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fazer perguntas sobre seu plano"
+          }
+        }
+      }
+    },
+    "Available with Plus" : {
+      "comment" : "VoiceOver: a feature that comes with Plus",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit Plus verfügbar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disponible con Plus"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disponible avec Plus"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disponível no Plus"
+          }
+        }
+      }
+    },
+    "Change to your plan" : {
+      "comment" : "Title of a plan change the buddy proposed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Änderung an deinem Plan"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambio en tu plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modification de ton plan"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mudança no seu plano"
+          }
+        }
+      }
+    },
+    "Change undone" : {
+      "comment" : "A memory change was undone",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Änderung rückgängig gemacht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambio deshecho"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modification annulée"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mudança desfeita"
+          }
+        }
+      }
+    },
+    "Check again" : {
+      "comment" : "Reads an answer being written elsewhere again",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erneut prüfen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a comprobar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérifier à nouveau"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conferir de novo"
+          }
+        }
+      }
+    },
+    "Choose" : {
+      "comment" : "Opens choosing a mock exam\nOpens choosing the plan's focus",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auswählen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elegir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisir"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolher"
+          }
+        }
+      }
+    },
+    "Choose where to focus" : {
+      "comment" : "The buddy offers choosing the plan's focus",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähle aus, worauf du dich konzentrieren möchtest"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige en qué centrarte"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisis où te concentrer"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolher onde focar"
+          }
+        }
+      }
+    },
+    "Couldn't load earlier messages. Try again." : {
+      "comment" : "Earlier messages of the conversation couldn't be read",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ältere Nachrichten konnten nicht geladen werden. Versuch es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se han podido cargar los mensajes anteriores. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de charger les anciens messages. Réessaie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível carregar as mensagens anteriores. Tente novamente."
+          }
+        }
+      }
+    },
+    "Couldn't undo. It changed since." : {
+      "comment" : "Undoing a memory change failed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das ließ sich nicht rückgängig machen. Inzwischen hat es sich geändert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido deshacer. Ha cambiado desde entonces."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d’annuler. Ça a changé depuis."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível desfazer. Isso mudou desde então."
+          }
+        }
+      }
+    },
+    "Create a free account" : {
+      "comment" : "Opens sign-up from the buddy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kostenloses Konto erstellen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crear una cuenta gratis"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Créer un compte gratuit"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criar uma conta grátis"
+          }
+        }
+      }
+    },
+    "Create a free account to start the conversation." : {
+      "comment" : "Guests and visitors can't talk to the buddy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erstelle ein kostenloses Konto, um das Gespräch zu starten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea una cuenta gratis para iniciar la conversación."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crée un compte gratuit pour commencer la conversation."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crie uma conta grátis para começar a conversa."
+          }
+        }
+      }
+    },
+    "Create your free account to continue." : {
+      "comment" : "A guest's help is used up",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erstelle dein kostenloses Konto, um fortzufahren."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea tu cuenta gratis para continuar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crée ton compte gratuit pour continuer."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crie sua conta grátis para continuar."
+          }
+        }
+      }
+    },
+    "Does my plan cover all of it?" : {
+      "comment" : "A question to the buddy about a subject, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deckt mein Plan alles ab?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Mi plan lo cubre todo?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mon plan couvre-t-il tout ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meu plano cobre tudo isso?"
+          }
+        }
+      }
+    },
+    "Energy, level, right answers and when you study best." : {
+      "comment" : "What the statistics show",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Energie, Level, richtige Antworten und wann du am besten lernst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Energía, nivel, respuestas correctas y cuándo estudias mejor."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Énergie, niveau, bonnes réponses et moments où tu étudies le mieux."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Energia, nível, respostas certas e quando você estuda melhor."
+          }
+        }
+      }
+    },
+    "Essay practice with grading comes with Plus." : {
+      "comment" : "Why a free learner can't practice essays",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aufsatzübungen mit Bewertung gibt es mit Plus."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus incluye práctica de redacción con corrección."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’entraînement à la rédaction avec correction est inclus avec Plus."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A prática de redação com correção faz parte do Plus."
+          }
+        }
+      }
+    },
+    "Get answer" : {
+      "comment" : "Asks the buddy for an answer that wasn't written yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Antwort anzeigen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtener respuesta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtenir une réponse"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver resposta"
+          }
+        }
+      }
+    },
+    "It's in your plan from your next study day. Today's session stays as it is." : {
+      "comment" : "A plan change was applied",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ab deinem nächsten Lerntag ist es in deinem Plan. Die heutige Lerneinheit bleibt unverändert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Está en tu plan a partir del próximo día de estudio. La sesión de hoy se mantiene igual."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C’est prévu dans ton plan à partir de ta prochaine journée d’étude. La séance d’aujourd’hui ne change pas."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Está no seu plano a partir do próximo dia de estudo. A sessão de hoje continua como está."
+          }
+        }
+      }
+    },
+    "It's in your plan, and today's session follows it." : {
+      "comment" : "A plan change was applied",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es ist in deinem Plan, und die heutige Lerneinheit richtet sich danach."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Está en tu plan y la sesión de hoy ya lo incluye."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C’est prévu dans ton plan, et la séance d’aujourd’hui le suit."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Está no seu plano, e a sessão de hoje já segue essa mudança."
+          }
+        }
+      }
+    },
+    "Load earlier messages" : {
+      "comment" : "Shows the conversation's earlier messages",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ältere Nachrichten laden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cargar mensajes anteriores"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Charger les anciens messages"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carregar mensagens anteriores"
+          }
+        }
+      }
+    },
+    "Loading the conversation…" : {
+      "comment" : "The buddy's conversation is loading",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gespräch wird geladen…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cargando la conversación…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chargement de la conversation…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carregando a conversa…"
+          }
+        }
+      }
+    },
+    "Logbook" : {
+      "comment" : "The buddy offers the week's logbook",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logbuch"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuaderno de bitácora"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Journal de bord"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diário de bordo"
+          }
+        }
+      }
+    },
+    "Manage" : {
+      "comment" : "Opens the learner's subscription",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verwalten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestionar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gérer"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gerenciar"
+          }
+        }
+      }
+    },
+    "Memory" : {
+      "comment" : "The buddy offers what it remembers",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erinnerungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memoria"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mémoire"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memória"
+          }
+        }
+      }
+    },
+    "Memory updated: %@" : {
+      "comment" : "What the buddy now remembers; the argument is the fact",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erinnerung aktualisiert: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memoria actualizada: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mémoire mise à jour : %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memória atualizada: %@"
+          }
+        }
+      }
+    },
+    "Message %@" : {
+      "comment" : "The buddy's composer for VoiceOver; the argument is the buddy's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nachricht an %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mensaje para %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Message à %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mensagem para %@"
+          }
+        }
+      }
+    },
+    "Mission done" : {
+      "comment" : "Asking the buddy completed one of the day's missions",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mission abgeschlossen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Misión completada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mission accomplie"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missão concluída"
+          }
+        }
+      }
+    },
+    "Mistakes notebook" : {
+      "comment" : "The buddy offers the mistakes notebook",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fehlerheft"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuaderno de errores"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carnet d’erreurs"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caderno de erros"
+          }
+        }
+      }
+    },
+    "Mock exams come with Plus: whenever you want, and every week in your plan." : {
+      "comment" : "Why a free learner can't take a mock exam",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probeprüfungen gibt es mit Plus: wann immer du willst und jede Woche in deinem Plan."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus incluye simulacros cuando quieras y cada semana en tu plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les examens blancs sont inclus avec Plus : quand tu veux et chaque semaine dans ton plan."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os simulados fazem parte do Plus: quando você quiser e toda semana no seu plano."
+          }
+        }
+      }
+    },
+    "No answer available." : {
+      "comment" : "A buddy answer that has no text",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Antwort verfügbar."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay ninguna respuesta disponible."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune réponse disponible."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhuma resposta disponível."
+          }
+        }
+      }
+    },
+    "Not applied. Your plan stays as it was." : {
+      "comment" : "A plan change was declined",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht übernommen. Dein Plan bleibt unverändert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha aplicado. Tu plan sigue igual."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modification non appliquée. Ton plan reste inchangé."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi aplicado. Seu plano continua como estava."
+          }
+        }
+      }
+    },
+    "Not now" : {
+      "comment" : "Declines a plan change the buddy proposed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht jetzt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ahora no"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas maintenant"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agora não"
+          }
+        }
+      }
+    },
+    "Open" : {
+      "comment" : "Opens the app place the buddy offered",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffnen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir"
+          }
+        }
+      }
+    },
+    "Pass it to skip up to %lld lessons you already know." : {
+      "comment" : "What passing a chapter's test does",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Bestehe den Test, um die Lektion zu überspringen, die du schon kennst."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Bestehe den Test, um bis zu %lld Lektionen zu überspringen, die du schon kennst."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Pass it to skip %lld lesson you already know."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Pass it to skip up to %lld lessons you already know."
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Si apruebas, podrás omitir %lld lección que ya conoces."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Si apruebas, podrás omitir hasta %lld lecciones que ya conoces."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Réussis le test pour ignorer %lld leçon que tu connais déjà."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Réussis le test pour ignorer jusqu’à %lld leçons que tu connais déjà."
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Passe na prova para pular %lld aula que você já conhece."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Passe na prova para pular até %lld aulas que você já conhece."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Pick the subjects that get more depth, or take a short test that picks them." : {
+      "comment" : "What choosing the plan's focus does",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähle die Themen aus, die du vertiefen möchtest, oder mach einen kurzen Test, der sie auswählt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige las asignaturas que quieres estudiar más a fondo o haz una prueba breve para seleccionarlas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisis les matières à approfondir ou passe un court test pour les sélectionner."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolha as matérias que quer estudar a fundo ou faça um teste rápido para escolher por você."
+          }
+        }
+      }
+    },
+    "Plus" : {
+      "comment" : "Marks a feature that comes with Plus\nThe buddy offers the subscription",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus"
+          }
+        }
+      }
+    },
+    "Practice" : {
+      "comment" : "Opens a unit's practice call\nOpens pronunciation practice",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Üben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Practicar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "S’entraîner"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Praticar"
+          }
+        }
+      }
+    },
+    "Practiced every other week in your plan, each draft graded." : {
+      "comment" : "How often an exam's essay is practiced",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In deinem Plan wird alle zwei Wochen geübt und jeder Entwurf bewertet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Practicas cada dos semanas según tu plan y se corrige cada borrador."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une rédaction est prévue une semaine sur deux dans ton plan, et chaque brouillon est corrigé."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prática a cada duas semanas no seu plano, com correção de cada rascunho."
+          }
+        }
+      }
+    },
+    "Practiced every week in your plan, each draft graded." : {
+      "comment" : "How often an exam's essay is practiced",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In deinem Plan wird jede Woche geübt und jeder Entwurf bewertet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Practicas cada semana según tu plan y se corrige cada borrador."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une rédaction est prévue chaque semaine dans ton plan, et chaque brouillon est corrigé."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prática toda semana no seu plano, com correção de cada rascunho."
+          }
+        }
+      }
+    },
+    "Practiced in the final weeks before the exam, each draft graded." : {
+      "comment" : "How often an exam's essay is practiced",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In den letzten Wochen vor der Prüfung wird geübt und jeder Entwurf bewertet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Practicas durante las últimas semanas antes del examen y se corrige cada borrador."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une rédaction est prévue dans les dernières semaines avant l’examen, et chaque brouillon est corrigé."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prática nas últimas semanas antes da prova, com correção de cada rascunho."
+          }
+        }
+      }
+    },
+    "Say %lld words again" : {
+      "comment" : "The buddy offers pronunciation practice",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Wort noch einmal sagen"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Wörter noch einmal sagen"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Say %lld word again"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Say %lld words again"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Repite %lld palabra"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Repite %lld palabras"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Répéter %lld mot"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Répéter %lld mots"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Repita %lld palavra"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Repita %lld palavras"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "See Plus" : {
+      "comment" : "Opens the subscription\nOpens the subscription from a limit",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus ansehen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver Plus"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Découvrir Plus"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conhecer o Plus"
+          }
+        }
+      }
+    },
+    "See, correct or delete what your buddy remembers about you." : {
+      "comment" : "What the memory settings do",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sieh dir an, was dein Kumpel über dich gespeichert hat, und ändere oder lösche es."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consulta, corrige o elimina lo que tu compañero recuerda sobre ti."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consulte, corrige ou supprime ce que ton compagnon retient de toi."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Veja, corrija ou apague o que seu parceiro lembra sobre você."
+          }
+        }
+      }
+    },
+    "Send" : {
+      "comment" : "Sends the question to the buddy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Senden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Envoyer"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar"
+          }
+        }
+      }
+    },
+    "Sign in" : {
+      "comment" : "Opens sign-in after the session expired",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anmelden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iniciar sesión"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se connecter"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entrar"
+          }
+        }
+      }
+    },
+    "Something went wrong. Try again." : {
+      "comment" : "A question or answer failed\nThe buddy's conversation couldn't be read",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etwas ist schiefgelaufen. Versuch es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algo ha ido mal. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un problème est survenu. Réessaie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algo deu errado. Tente novamente."
+          }
+        }
+      }
+    },
+    "Start" : {
+      "comment" : "Starts the goal the buddy offered",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar"
+          }
+        }
+      }
+    },
+    "Start a new goal" : {
+      "comment" : "The buddy offers starting a goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein neues Ziel starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar un objetivo nuevo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer un nouvel objectif"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar uma nova meta"
+          }
+        }
+      }
+    },
+    "Statistics" : {
+      "comment" : "The buddy offers the statistics",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Statistiken"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estadísticas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Statistiques"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estatísticas"
+          }
+        }
+      }
+    },
+    "Subscribe to ask questions" : {
+      "comment" : "A free learner's question needs Plus",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abonniere Plus, um Fragen zu stellen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suscríbete para hacer preguntas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abonne-toi pour poser des questions"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assine para fazer perguntas"
+          }
+        }
+      }
+    },
+    "Suggestions" : {
+      "comment" : "Questions to the buddy sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorschläge"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sugerencias"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestions"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sugestões"
+          }
+        }
+      }
+    },
+    "Take a mock exam" : {
+      "comment" : "The buddy offers a mock exam",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probeprüfung machen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hacer un simulacro de examen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passer un examen blanc"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fazer um simulado"
+          }
+        }
+      }
+    },
+    "Take a short break, then ask again." : {
+      "comment" : "Fair use asks for a pause before the next question",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mach eine kurze Pause und frag dann noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descansa un momento y vuelve a preguntar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fais une courte pause, puis pose ta question à nouveau."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faça uma pausa rápida e pergunte de novo."
+          }
+        }
+      }
+    },
+    "Take the test" : {
+      "comment" : "Opens a chapter's test-out",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test machen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hacer la prueba"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passer le test"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fazer o teste"
+          }
+        }
+      }
+    },
+    "Test: %@" : {
+      "comment" : "The buddy offers a chapter's test-out; the argument is the chapter",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prueba: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Test : %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teste: %@"
+          }
+        }
+      }
+    },
+    "The free plan follows one goal at a time: pause your current goal from its menu, or follow more than one with Plus." : {
+      "comment" : "Why a free learner can't start another goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit dem Free-Tarif kannst du immer nur ein Ziel verfolgen: Pausiere dein aktuelles Ziel über das Menü oder verfolge mit Plus mehrere Ziele."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El plan gratis te permite seguir un objetivo a la vez: pon en pausa el objetivo actual desde su menú o sigue varios con Plus."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec la formule gratuite, tu ne peux suivre qu’un objectif à la fois : mets ton objectif actuel en pause depuis son menu ou suis-en plusieurs avec Plus."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No plano Grátis, você acompanha uma meta por vez: pause a meta atual pelo menu dela ou acompanhe mais de uma com o Plus."
+          }
+        }
+      }
+    },
+    "Thinking…" : {
+      "comment" : "The buddy is writing its answer",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Denke nach…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pensando…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réflexion…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pensando…"
+          }
+        }
+      }
+    },
+    "This lesson is no longer available." : {
+      "comment" : "What the question was about no longer exists",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Lektion ist nicht mehr verfügbar."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta lección ya no está disponible."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette leçon n’est plus disponible."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta aula não está mais disponível."
+          }
+        }
+      }
+    },
+    "This one wasn't answered." : {
+      "comment" : "A question the learner's limit stopped",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Frage wurde nicht beantwortet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta pregunta se ha quedado sin responder."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette question est restée sans réponse."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta pergunta ficou sem resposta."
+          }
+        }
+      }
+    },
+    "Today" : {
+      "comment" : "The day of the messages below",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aujourd’hui"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoje"
+          }
+        }
+      }
+    },
+    "Today's missions: %lld of %lld" : {
+      "comment" : "The day's missions done, after asking the buddy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missionen heute: %1$lld von %2$lld"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Today's missions: %1$lld of %2$lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Misiones de hoy: %1$lld de %2$lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missions du jour : %1$lld sur %2$lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missões de hoje: %1$lld de %2$lld"
+          }
+        }
+      }
+    },
+    "Try again" : {
+      "comment" : "Asks the buddy again after a failure\nReads the buddy's conversation again",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erneut versuchen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a intentarlo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réessayer"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tentar novamente"
+          }
+        }
+      }
+    },
+    "Undo" : {
+      "comment" : "Undoes a plan change the learner applied\nUndoes what the buddy remembered",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rückgängig"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deshacer"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annuler"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desfazer"
+          }
+        }
+      }
+    },
+    "Undone. Your plan is back as it was." : {
+      "comment" : "A plan change was undone",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rückgängig gemacht. Dein Plan ist wieder wie zuvor."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deshecho. Tu plan ha vuelto a estar como antes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C’est annulé. Ton plan est revenu comme avant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desfeito. Seu plano voltou a ser como era."
+          }
+        }
+      }
+    },
+    "Walk me through this answer" : {
+      "comment" : "A question to the buddy about a checked answer, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erklär mir diese Antwort Schritt für Schritt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explícame paso a paso esta respuesta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explique-moi cette réponse étape par étape"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Me explica esta resposta passo a passo"
+          }
+        }
+      }
+    },
+    "We couldn't finish this answer." : {
+      "comment" : "A buddy answer failed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten diese Antwort nicht fertigstellen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hemos podido completar esta respuesta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas pu terminer cette réponse."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível concluir esta resposta."
+          }
+        }
+      }
+    },
+    "We couldn't save your answer. Try again." : {
+      "comment" : "Answering a plan change the buddy proposed failed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten deine Antwort nicht speichern. Versuch es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hemos podido guardar tu respuesta. Vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas pu enregistrer ta réponse. Réessaie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível salvar sua resposta. Tente novamente."
+          }
+        }
+      }
+    },
+    "We couldn't send this question. Try again." : {
+      "comment" : "The question wasn't accepted",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten diese Frage nicht senden. Versuch es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hemos podido enviar esta pregunta. Vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas pu envoyer cette question. Réessaie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível enviar esta pergunta. Tente novamente."
+          }
+        }
+      }
+    },
+    "We couldn't send your last question. Try again." : {
+      "comment" : "Sending a question to the buddy failed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten deine letzte Frage nicht senden. Versuch es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hemos podido enviar tu última pregunta. Vuelve a intentarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas pu envoyer ta dernière question. Réessaie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível enviar sua última pergunta. Tente novamente."
+          }
+        }
+      }
+    },
+    "What comes next?" : {
+      "comment" : "A question to the buddy about the plan, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was kommt als Nächstes?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué viene después?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qu’est-ce qui vient ensuite ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que vem a seguir?"
+          }
+        }
+      }
+    },
+    "What idea is this question about?" : {
+      "comment" : "A question to the buddy about a practice question, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um welche Idee geht es in dieser Frage?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué idea plantea esta pregunta?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sur quelle idée porte cette question ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Que ideia esta pergunta aborda?"
+          }
+        }
+      }
+    },
+    "What is this question asking?" : {
+      "comment" : "A question to the buddy about a practice question, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was wird in dieser Frage gefragt?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué me pide esta pregunta?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Que demande cette question ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que esta pergunta está pedindo?"
+          }
+        }
+      }
+    },
+    "What Plus includes and its price." : {
+      "comment" : "What the subscription page shows",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was Plus beinhaltet und was es kostet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qué incluye Plus y cuánto cuesta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce qui est inclus dans Plus et son prix."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que o Plus inclui e quanto custa."
+          }
+        }
+      }
+    },
+    "What should I practice first?" : {
+      "comment" : "A question to the buddy about a mock exam, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was sollte ich zuerst üben?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué debería practicar primero?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Que devrais-je travailler en premier ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que devo praticar primeiro?"
+          }
+        }
+      }
+    },
+    "What will I be able to do after this chapter?" : {
+      "comment" : "A question to the buddy, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was werde ich nach diesem Kapitel können?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué sabré hacer después de este capítulo?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Que saurai-je faire après ce chapitre ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que vou conseguir fazer depois deste capítulo?"
+          }
+        }
+      }
+    },
+    "What you did this week next to the last, and what comes next." : {
+      "comment" : "What the logbook shows",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was du diese Woche und in der letzten Woche gemacht hast und was als Nächstes kommt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que hiciste esta semana y la anterior, y lo que viene después."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que tu as fait cette semaine et la précédente, et la suite."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que você fez nesta semana e na anterior, e o que vem a seguir."
+          }
+        }
+      }
+    },
+    "What's left to study here?" : {
+      "comment" : "A question to the buddy about a subject, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was muss ich hier noch lernen?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué me queda por estudiar aquí?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qu’est-ce qu’il me reste à étudier ici ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que ainda falta estudar aqui?"
+          }
+        }
+      }
+    },
+    "Why am I studying this today?" : {
+      "comment" : "A question to the buddy, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warum lerne ich das heute?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Por qué estudio esto hoy?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pourquoi est-ce que j’étudie ça aujourd’hui ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por que estou estudando isso hoje?"
+          }
+        }
+      }
+    },
+    "Why did I miss these questions?" : {
+      "comment" : "A question to the buddy about a mock exam, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warum habe ich diese Fragen falsch beantwortet?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Por qué he fallado estas preguntas?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pourquoi est-ce que je me suis trompé à ces questions ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por que errei estas perguntas?"
+          }
+        }
+      }
+    },
+    "Yesterday" : {
+      "comment" : "The day of the messages below",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestern"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayer"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ontem"
+          }
+        }
+      }
+    },
+    "You: %@" : {
+      "comment" : "VoiceOver: the learner's question to the buddy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tú: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toi : %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você: %@"
+          }
+        }
+      }
+    },
+    "You've used the free help you can get without an account. Create a free account to keep going." : {
+      "comment" : "A guest's help is used up",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast die kostenlose Hilfe ohne Konto aufgebraucht. Erstelle ein kostenloses Konto, um weiterzumachen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has agotado la ayuda gratuita disponible sin cuenta. Crea una cuenta gratuita para seguir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as utilisé toute l’aide gratuite disponible sans compte. Crée un compte gratuit pour continuer."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você já usou toda a ajuda grátis disponível sem uma conta. Crie uma conta grátis para continuar."
+          }
+        }
+      }
+    },
+    "You've used this month's help. It comes back next month, or get Plus to keep going now." : {
+      "comment" : "A free learner's help for the month is used up",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast die Hilfe für diesen Monat aufgebraucht. Nächsten Monat ist sie wieder verfügbar. Mit Plus kannst du sofort weitermachen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has agotado la ayuda de este mes. Volverá el mes que viene, o puedes conseguir Plus para seguir ahora."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as utilisé toute l’aide de ce mois-ci. Elle revient le mois prochain. Passe à Plus pour continuer dès maintenant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você já usou toda a ajuda deste mês. Ela volta no mês que vem, ou assine o Plus para continuar agora."
+          }
+        }
+      }
+    },
+    "You've used today's free help. Create a free account to keep going." : {
+      "comment" : "A guest's help for the day is used up",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast die kostenlose Hilfe für heute aufgebraucht. Erstelle ein kostenloses Konto, um weiterzumachen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has agotado la ayuda gratuita de hoy. Crea una cuenta gratuita para seguir."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as utilisé toute l’aide gratuite du jour. Crée un compte gratuit pour continuer."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você já usou toda a ajuda grátis de hoje. Crie uma conta grátis para continuar."
+          }
+        }
+      }
+    },
+    "You've used today's help. It comes back tomorrow, or get Plus to keep going now." : {
+      "comment" : "A free learner's help for the day is used up",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast die Hilfe für heute aufgebraucht. Morgen ist sie wieder verfügbar. Mit Plus kannst du sofort weitermachen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has agotado la ayuda de hoy. Volverá mañana, o puedes conseguir Plus para seguir ahora."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as utilisé toute l’aide du jour. Elle revient demain. Passe à Plus pour continuer dès maintenant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você já usou toda a ajuda de hoje. Ela volta amanhã, ou assine o Plus para continuar agora."
+          }
+        }
+      }
+    },
+    "You've used today's help. It comes back tomorrow." : {
+      "comment" : "A Plus learner's help for the day is used up",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast die Hilfe für heute aufgebraucht. Morgen ist sie wieder verfügbar."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has agotado la ayuda de hoy. Volverá mañana."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as utilisé toute l’aide du jour. Elle revient demain."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você já usou toda a ajuda de hoje. Ela volta amanhã."
+          }
+        }
+      }
+    },
+    "Your plan and its billing." : {
+      "comment" : "What the subscription page shows a subscriber",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Tarif und deine Abrechnung."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan y su facturación."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan et sa facturation."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano e a cobrança."
+          }
+        }
+      }
+    },
+    "Your plan follows it from now on." : {
+      "comment" : "A plan change was applied",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan richtet sich ab jetzt danach."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A partir de ahora, tu plan seguirá este cambio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan suivra ce changement à partir de maintenant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano seguirá essa mudança a partir de agora."
+          }
+        }
+      }
+    },
+    "Your session expired. Sign in again." : {
+      "comment" : "The session ended while asking",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Sitzung ist abgelaufen. Melde dich erneut an."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu sesión ha caducado. Inicia sesión de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta session a expiré. Reconnecte-toi."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua sessão expirou. Entre novamente."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

@@ -1,5 +1,6 @@
 @MainActor
 struct AppDependencies {
+  let buddyStore: BuddyStore
   let cache: AppCache
   let courseCatalogStore: CourseCatalogStore
   let goalContentStore: GoalContentStore
@@ -15,6 +16,7 @@ struct AppDependencies {
   let studySessionStore: StudySessionStore
   let subscriptionStore: AppStoreSubscriptionStore
   let todayStore: TodayStore
+  let tutorStore: TutorStore
 
   static func live(configuration: AppConfiguration = .current) -> AppDependencies {
     let clients = APIClientFactory.live(baseURL: configuration.apiBaseURL)
@@ -36,14 +38,17 @@ struct AppDependencies {
     session: SessionStore,
     privateImageLoader: PrivateImageLoader,
     subscriptionStore: AppStoreSubscriptionStore,
+    buddyAPI: (any BuddyAPIClient)? = nil,
     courseCatalogAPI: (any CourseCatalogAPIClient)? = nil,
     learnerSummaryAPI: (any LearnerSummaryAPIClient)? = nil,
     progressAPI: (any ProgressAPIClient)? = nil,
     settingsAPI: (any SettingsAPIClient)? = nil,
-    studyAPI: (any StudyAPIClient)? = nil
+    studyAPI: (any StudyAPIClient)? = nil,
+    tutorAPI: (any TutorAPIClient)? = nil
   ) {
     let cache = AppCache(session: session)
     self.cache = cache
+    buddyStore = BuddyStore(api: buddyAPI ?? BuddyAPI(clients: clients), cache: cache)
     courseCatalogStore = CourseCatalogStore(
       api: courseCatalogAPI ?? CourseCatalogAPI(clients: clients),
       language: currentCourseCatalogLanguage(),
@@ -66,5 +71,6 @@ struct AppDependencies {
     studySessionStore = StudySessionStore(api: studyAPI, cache: cache)
     todayStore = TodayStore(api: studyAPI, cache: cache)
     self.subscriptionStore = subscriptionStore
+    tutorStore = TutorStore(api: tutorAPI ?? TutorAPI(clients: clients), cache: cache)
   }
 }
