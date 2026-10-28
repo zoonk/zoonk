@@ -7871,6 +7871,81 @@
         }
       }
     },
+    "/library/lessons/{lessonId}/fit": {
+      "get": {
+        "description": "Where a public lesson fits, for the end of a guest's lesson: \"Part of Quantum physics\", its chapter and the lesson's place in it, and the course's size. \"Build my plan\" starts that course from `course.startChapterId` (POST /courses/{courseId}/goals), or onboarding with the course's title when the lesson is in no public course. The same for everyone.",
+        "operationId": "getLibraryLessonFit",
+        "security": [
+          {},
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Get where a Library lesson fits",
+        "tags": [
+          "Library lessons"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lessonId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Lesson ID"
+            },
+            "required": true,
+            "description": "Lesson ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Where the lesson fits",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonFit"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not a public lesson in a chapter",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/library/lessons/{lessonId}/starts": {
       "post": {
         "description": "Starts a run of the lesson for the learner or guest. A new lesson counts toward the allowance once; restarting it is free, and a second start within half an hour resumes the same run with its `answers`, so the app opens the lesson where the learner left off. A refused start is `SLOW_DOWN` (429, try again after `Retry-After`) or `USAGE_LIMIT_REACHED` with `details.limit`: 403 asks a guest to sign up, 402 a free learner to upgrade, 429 Plus to come back later. A new lesson of a free exam plan past its first week (shown with `plusRequired` on its chapter) answers 402 `PLUS_REQUIRED`: Plus opens the rest of the plan, while lessons done or begun, lessons outside the plan, reviews and mistakes stay open.",
@@ -53523,6 +53598,47 @@
                   "activity"
                 ]
               },
+              "optionPictures": {
+                "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "alt": {
+                      "type": "string"
+                    },
+                    "height": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                      "description": "The image's media asset, to vote on the image itself"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "width": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "alt",
+                    "height",
+                    "id",
+                    "url",
+                    "width"
+                  ],
+                  "additionalProperties": false
+                }
+              },
               "pictureWaitStartedAt": {
                 "description": "Original screen-generation time in epoch milliseconds. Missing pictures may arrive for five minutes from this time; reopening does not restart the wait",
                 "type": "integer",
@@ -54182,6 +54298,47 @@
                   "challenge"
                 ]
               },
+              "optionPictures": {
+                "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "alt": {
+                      "type": "string"
+                    },
+                    "height": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                      "description": "The image's media asset, to vote on the image itself"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "width": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "alt",
+                    "height",
+                    "id",
+                    "url",
+                    "width"
+                  ],
+                  "additionalProperties": false
+                }
+              },
               "pictureWaitStartedAt": {
                 "description": "Original screen-generation time in epoch milliseconds. Missing pictures may arrive for five minutes from this time; reopening does not restart the wait",
                 "type": "integer",
@@ -54638,6 +54795,47 @@
                 "enum": [
                   "check"
                 ]
+              },
+              "optionPictures": {
+                "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "alt": {
+                      "type": "string"
+                    },
+                    "height": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                      "description": "The image's media asset, to vote on the image itself"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "width": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "alt",
+                    "height",
+                    "id",
+                    "url",
+                    "width"
+                  ],
+                  "additionalProperties": false
+                }
               },
               "pictureWaitStartedAt": {
                 "description": "Original screen-generation time in epoch milliseconds. Missing pictures may arrive for five minutes from this time; reopening does not restart the wait",
@@ -59742,6 +59940,47 @@
                   "explanation"
                 ]
               },
+              "optionPictures": {
+                "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "alt": {
+                      "type": "string"
+                    },
+                    "height": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                      "description": "The image's media asset, to vote on the image itself"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "width": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "alt",
+                    "height",
+                    "id",
+                    "url",
+                    "width"
+                  ],
+                  "additionalProperties": false
+                }
+              },
               "pictureWaitStartedAt": {
                 "description": "Original screen-generation time in epoch milliseconds. Missing pictures may arrive for five minutes from this time; reopening does not restart the wait",
                 "type": "integer",
@@ -60362,6 +60601,47 @@
                   "hook"
                 ]
               },
+              "optionPictures": {
+                "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "alt": {
+                      "type": "string"
+                    },
+                    "height": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                      "description": "The image's media asset, to vote on the image itself"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "width": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "alt",
+                    "height",
+                    "id",
+                    "url",
+                    "width"
+                  ],
+                  "additionalProperties": false
+                }
+              },
               "pictureWaitStartedAt": {
                 "description": "Original screen-generation time in epoch milliseconds. Missing pictures may arrive for five minutes from this time; reopening does not restart the wait",
                 "type": "integer",
@@ -60579,6 +60859,47 @@
                 "enum": [
                   "spokenAnswer"
                 ]
+              },
+              "optionPictures": {
+                "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "alt": {
+                      "type": "string"
+                    },
+                    "height": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                      "description": "The image's media asset, to vote on the image itself"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "width": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "alt",
+                    "height",
+                    "id",
+                    "url",
+                    "width"
+                  ],
+                  "additionalProperties": false
+                }
               },
               "pictureWaitStartedAt": {
                 "description": "Original screen-generation time in epoch milliseconds. Missing pictures may arrive for five minutes from this time; reopening does not restart the wait",
@@ -61422,6 +61743,47 @@
                   "summary"
                 ]
               },
+              "optionPictures": {
+                "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "alt": {
+                      "type": "string"
+                    },
+                    "height": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                      "description": "The image's media asset, to vote on the image itself"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "width": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "alt",
+                    "height",
+                    "id",
+                    "url",
+                    "width"
+                  ],
+                  "additionalProperties": false
+                }
+              },
               "pictureWaitStartedAt": {
                 "description": "Original screen-generation time in epoch milliseconds. Missing pictures may arrive for five minutes from this time; reopening does not restart the wait",
                 "type": "integer",
@@ -61818,6 +62180,47 @@
                 "enum": [
                   "typedAnswer"
                 ]
+              },
+              "optionPictures": {
+                "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "alt": {
+                      "type": "string"
+                    },
+                    "height": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                      "description": "The image's media asset, to vote on the image itself"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "width": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "alt",
+                    "height",
+                    "id",
+                    "url",
+                    "width"
+                  ],
+                  "additionalProperties": false
+                }
               },
               "pictureWaitStartedAt": {
                 "description": "Original screen-generation time in epoch milliseconds. Missing pictures may arrive for five minutes from this time; reopening does not restart the wait",
@@ -62228,6 +62631,47 @@
                 "enum": [
                   "workedExample"
                 ]
+              },
+              "optionPictures": {
+                "description": "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "properties": {
+                    "alt": {
+                      "type": "string"
+                    },
+                    "height": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                      "description": "The image's media asset, to vote on the image itself"
+                    },
+                    "url": {
+                      "type": "string"
+                    },
+                    "width": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "alt",
+                    "height",
+                    "id",
+                    "url",
+                    "width"
+                  ],
+                  "additionalProperties": false
+                }
               },
               "pictureWaitStartedAt": {
                 "description": "Original screen-generation time in epoch milliseconds. Missing pictures may arrive for five minutes from this time; reopening does not restart the wait",
@@ -63568,6 +64012,89 @@
             "additionalProperties": false
           }
         ]
+      },
+      "LessonFit": {
+        "type": "object",
+        "properties": {
+          "chapter": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "lessonCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "lessonNumber": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "The lesson's place in its chapter, from 1"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "lessonCount",
+              "lessonNumber",
+              "title"
+            ],
+            "additionalProperties": false
+          },
+          "course": {
+            "nullable": true,
+            "description": "The public course the chapter is part of; null outside one",
+            "type": "object",
+            "properties": {
+              "chapterCount": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "minutes": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Every lesson of the course, in minutes"
+              },
+              "startChapterId": {
+                "nullable": true,
+                "description": "Where \"Build my plan\" starts the course: this lesson's chapter, or null for the course's beginning (POST /courses/{courseId}/goals with it)",
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "chapterCount",
+              "id",
+              "minutes",
+              "startChapterId",
+              "title"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "chapter",
+          "course"
+        ],
+        "additionalProperties": false,
+        "description": "Where a public lesson fits, for the end of a guest's lesson: its chapter and place in it, and the course \"Build my plan\" starts"
       },
       "LibraryLessonRun": {
         "type": "object",

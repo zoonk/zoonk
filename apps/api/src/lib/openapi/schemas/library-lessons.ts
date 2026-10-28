@@ -2,6 +2,7 @@ import { type TeachingStepKind } from "@zoonk/core/lesson-player/contract";
 import { lessonTutorSuggestionSchema } from "@zoonk/core/lesson-questions/contract";
 import { stepContentSchemas } from "@zoonk/core/library/steps/contract";
 import { EXERCISE_KINDS } from "@zoonk/core/player/contracts/exercise-content";
+import { type LessonFit } from "@zoonk/core/view-models/onboarding/get-lesson-fit";
 import { CourseLevel } from "@zoonk/db";
 import { z } from "zod";
 import { serializedStepSchema } from "./language-exercise";
@@ -15,14 +16,15 @@ const stepBaseShape = {
     .meta({ description: "The skill the screen teaches or checks, when it has its own" }),
 };
 
-const stepImageSchema = z
-  .object({
-    alt: z.string(),
-    height: z.int().nullable(),
-    id: z.uuid().meta({ description: "The image's media asset, to vote on the image itself" }),
-    url: z.string(),
-    width: z.int().nullable(),
-  })
+const stepImageObjectSchema = z.object({
+  alt: z.string(),
+  height: z.int().nullable(),
+  id: z.uuid().meta({ description: "The image's media asset, to vote on the image itself" }),
+  url: z.string(),
+  width: z.int().nullable(),
+});
+
+const stepImageSchema = stepImageObjectSchema
   .nullable()
   .meta({ description: "The screen's image and its text alternative" });
 
@@ -66,6 +68,13 @@ function teachingStepSchema<TKind extends TeachingStepKind>(kind: TKind) {
           "The screen asks for a picture that is still being drawn (the lesson was written moments ago): read the lesson again in a few seconds for `image`",
       }),
     kind: z.literal(kind),
+    optionPictures: z
+      .record(z.string(), stepImageObjectSchema)
+      .optional()
+      .meta({
+        description:
+          "A question whose options are pictures: each drawn picture by option id. An option without one (still being drawn, or taken out of use) shows its `picture.alt`",
+      }),
     pictureWaitStartedAt: z
       .number()
       .int()
@@ -159,3 +168,37 @@ export const playableLibraryLessonResponseSchema = z
       }),
   ])
   .meta({ id: "PlayableLibraryLessonResponse" });
+
+export const lessonFitSchema = z
+  .object({
+    chapter: z.object({
+      id: z.uuid(),
+      lessonCount: z.int().min(0),
+      lessonNumber: z
+        .int()
+        .min(0)
+        .meta({ description: "The lesson's place in its chapter, from 1" }),
+      title: z.string(),
+    }),
+    course: z
+      .object({
+        chapterCount: z.int().min(0),
+        id: z.uuid(),
+        minutes: z.int().min(0).meta({ description: "Every lesson of the course, in minutes" }),
+        startChapterId: z
+          .uuid()
+          .nullable()
+          .meta({
+            description:
+              "Where \"Build my plan\" starts the course: this lesson's chapter, or null for the course's beginning (POST /courses/{courseId}/goals with it)",
+          }),
+        title: z.string(),
+      })
+      .nullable()
+      .meta({ description: "The public course the chapter is part of; null outside one" }),
+  })
+  .meta({
+    description:
+      'Where a public lesson fits, for the end of a guest\'s lesson: its chapter and place in it, and the course "Build my plan" starts',
+    id: "LessonFit",
+  }) satisfies z.ZodType<LessonFit>;

@@ -9,7 +9,7 @@ import {
   libraryLessonStartInputSchema,
 } from "@zoonk/core/lesson-player/contract";
 import { challengeTeamSchema } from "@zoonk/core/library/challenges/team";
-import { playableLibraryLessonResponseSchema } from "../schemas/library-lessons";
+import { lessonFitSchema, playableLibraryLessonResponseSchema } from "../schemas/library-lessons";
 import { lessonPathParamsSchema } from "../schemas/paths";
 import {
   conflictResponse,
@@ -87,6 +87,25 @@ export const libraryLessonPaths = {
       },
       security: AUTHENTICATED_SECURITY,
       summary: "Finish a Library lesson",
+      tags: ["Library lessons"],
+    },
+  },
+  "/library/lessons/{lessonId}/fit": {
+    get: {
+      description:
+        "Where a public lesson fits, for the end of a guest's lesson: \"Part of Quantum physics\", its chapter and the lesson's place in it, and the course's size. \"Build my plan\" starts that course from `course.startChapterId` (POST /courses/{courseId}/goals), or onboarding with the course's title when the lesson is in no public course. The same for everyone.",
+      operationId: "getLibraryLessonFit",
+      requestParams: { path: lessonPathParamsSchema },
+      responses: {
+        "200": {
+          content: { "application/json": { schema: lessonFitSchema } },
+          description: "Where the lesson fits",
+        },
+        "400": validationErrorResponse,
+        "404": { ...notFoundResponse, description: "Not a public lesson in a chapter" },
+      },
+      security: OPTIONAL_AUTHENTICATION_SECURITY,
+      summary: "Get where a Library lesson fits",
       tags: ["Library lessons"],
     },
   },
