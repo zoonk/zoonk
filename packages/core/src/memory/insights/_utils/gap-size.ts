@@ -1,9 +1,7 @@
 import { type PlannerLesson } from "../../../plans/planner/plan-units";
 
-/** Up to this many lessons fill a gap themselves; past it, the gap is a chapter's worth. */
 export const FEW_LESSONS = 4;
 
-/** A chain with no chapter to stand in for it keeps its nearest skills, so a proposal stays readable. */
 const MAX_CHAIN_SKILLS = 8;
 
 export type PrerequisiteEdge = { prerequisiteId: string; skillId: string };
@@ -18,7 +16,6 @@ function groupPrerequisites(edges: readonly PrerequisiteEdge[]): Map<string, str
   );
 }
 
-/** How many steps up the chain each skill sits from the root, by the shortest way. */
 function getDistances({
   depth,
   distances,
@@ -49,7 +46,6 @@ function getDistances({
   });
 }
 
-/** Adds a skill after everything it rests on; a cycle in the graph is skipped, not followed. */
 function visit({
   kept,
   order,
@@ -78,11 +74,6 @@ function visit({
   return [...withPrerequisites, skillId];
 }
 
-/**
- * The skills a gap under `rootId` takes, in an order a plan can teach them: everything a skill
- * rests on comes before it, the root last. The edges hold only unlearned skills the plan doesn't
- * teach. A long chain keeps the skills nearest the root.
- */
 export function orderPrerequisiteChain({
   edges,
   rootId,
@@ -109,11 +100,6 @@ export function orderPrerequisiteChain({
   return [...visit({ kept, order: [], path: new Set(), prerequisitesOf, skillId: rootId })];
 }
 
-/**
- * What adding these skills brings into a plan, the way the planner expands them: every Library
- * lesson that teaches one of them and isn't in the plan already, plus one placeholder lesson for a
- * skill the Library has no lessons for yet. `perSkill` is each skill's size for the plan's graph.
- */
 export function countGapLessons({
   lessons,
   plannedLessonIds,
@@ -140,12 +126,10 @@ export function countGapLessons({
   };
 }
 
-/** More lessons than a few: the prerequisite's chapter fills the gap instead of its chain. */
 export function isChapterSized(lessons: number): boolean {
   return lessons > FEW_LESSONS;
 }
 
-/** The chapter a skill is taught in: that of its first lesson, in the order the plan would teach them. */
 export function findSkillChapterId({
   lessons,
   skillId,

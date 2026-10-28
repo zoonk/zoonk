@@ -6,12 +6,11 @@ import { loadGoalSkillIds } from "../../../learner/_utils/goal-skill-graph";
 import { readMistakeSnapshot } from "../../../mistakes/mistake-snapshot";
 import { type RecentActivity } from "./activity-signals";
 
-/** A week shows a routine and a recurring difficulty without mixing in how the learner was a month ago. */
 const WINDOW_DAYS = 7;
 
 /**
- * Seconds studied per day. A session row sums its own blocks, so a day counts either its sessions
- * or its separate activities, whichever is larger, never both.
+ * A session row already sums its own blocks, so a day counts its sessions or its activities,
+ * whichever is larger.
  */
 function toStudyDays(
   events: readonly { kind: string; localDate: Date; seconds: number }[],
@@ -28,10 +27,6 @@ function toStudyDays(
   });
 }
 
-/**
- * A learner's last week of answers, mistakes and study time. Answers from every goal count toward
- * time-of-day and session patterns, but only skills of this goal can become a plan change.
- */
 export async function loadRecentActivity({
   goal,
   now,

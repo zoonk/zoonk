@@ -11,10 +11,7 @@ export type MemoryFactDeleteResult =
   | { change: Extract<MemoryChange, { action: "removed" }>; status: "deleted" }
   | { status: "notFound" | "unauthorized" };
 
-/**
- * Deletes one of the learner's facts together with the facts it replaced. Zoonk stops using it
- * right away; the learner can undo for 30 days, after which it's purged for good.
- */
+/** Also deletes the facts it replaced. The learner can undo it for 30 days. */
 export async function deleteMemoryFact(factId: string): Promise<MemoryFactDeleteResult> {
   const session = await getSession();
 

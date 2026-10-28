@@ -12,7 +12,6 @@ function edge(skillId: string, prerequisiteId: string) {
 
 describe(orderPrerequisiteChain, () => {
   it("puts everything a skill rests on before it, the root last", () => {
-    // percent rests on fractions and decimals; decimals rest on fractions too.
     const edges = [
       edge("percent", "fractions"),
       edge("percent", "decimals"),

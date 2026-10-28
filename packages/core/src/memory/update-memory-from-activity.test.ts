@@ -220,8 +220,6 @@ describe(updateMemoryFromActivity, () => {
   it("reads who the learner is from their goal and follow-up answers, never the goal's time or schedule", async () => {
     const user = await userFixture();
 
-    // The time a day, the hour and the days are settings of this goal (30 minutes for an exam,
-    // 10 for a language): memory would carry them into every other goal.
     const goal = await goalFixture({
       dailyMinutes: 45,
       details: {

@@ -16,12 +16,6 @@ function uniqueSkills(skills: readonly SkillRow[]): SkillRow[] {
   );
 }
 
-/**
- * The skills a chapter would add to a plan, in chapter order: the skills a course outline tagged
- * the chapter with (each brings the whole chapter), then the skills its lessons teach. Skills the
- * plan already teaches (`excludedIds`), merged skills and skills the learner has started are left
- * out. Private chapters and lessons count only for their owner.
- */
 export async function loadChapterGapSkills({
   chapterIds,
   excludedIds,

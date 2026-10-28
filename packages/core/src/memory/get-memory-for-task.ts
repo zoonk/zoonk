@@ -14,21 +14,17 @@ import { searchMemoryFactIds } from "./_utils/search-memory-facts";
 
 type AiGenerationContext = MemorySearchTermsParams["analytics"];
 
-/** A task never loads a learner's whole memory: about ten facts at most. */
 const FACT_LIMIT = 10;
 
-/** The relevance check sees up to twice what the task gets, so it can still drop near misses. */
 const CANDIDATE_FACTOR = 2;
 
 export type MemoryFactForTask = Pick<MemoryFact, "category" | "id" | "statement">;
 
 type MemoryTaskRequest = {
   userId: string;
-  /** Only what the task needs: the planner reads goals and routine, example lines background and preferences. */
   categories: readonly MemoryCategory[];
-  /** The learner's language, which their facts are written in. */
   language: string;
-  /** What the task is about to do, such as "Examples for a lesson on discounts". */
+  /** Such as "Examples for a lesson on discounts". */
   need?: string;
   /** Sensitive facts only reach tasks that help with them, such as the tutor. */
   includeSensitive?: boolean;
@@ -59,11 +55,6 @@ function findRecentFacts({ limit, scope }: { limit: number; scope: FactScope }) 
   });
 }
 
-/**
- * The agentic search the Library uses: a fast model writes search terms, Postgres finds matching
- * facts, and a classifier keeps the ones the task would use. The most recent facts join the
- * candidates when the search finds few, since a fact can matter without sharing a word.
- */
 async function searchRelevantFacts({
   analytics,
   language,
@@ -128,14 +119,8 @@ async function selectFacts({
 }
 
 /**
- * The facts one AI task may read about a learner: only the categories it asks for, nothing when
- * memory is off, and never more than ten. When those categories hold
- * more than that and the task says what it needs, an agentic search picks the relevant facts;
- * otherwise the most recent ones come back. Returned facts are marked as used, so stale ones can
- * be reviewed.
- *
- * This is a bridge for tasks and workflows: `userId` comes from the public capability or workflow
- * that a session started, never from a client.
+ * Marks the returned facts used. `userId` must come from the capability or workflow a session
+ * started, never from a client.
  */
 export async function getMemoryForTask(request: MemoryTaskRequest): Promise<MemoryFactForTask[]> {
   const facts = await findMemoryForTask(request);
@@ -149,10 +134,7 @@ export async function getMemoryForTask(request: MemoryTaskRequest): Promise<Memo
   return facts;
 }
 
-/**
- * The same facts as `getMemoryForTask`, without marking them used: for a task that reads memory
- * while it still decides whether it needs it, and marks only what it uses (`markMemoryFactsUsed`).
- */
+/** `getMemoryForTask` without marking the facts used, for a task that marks only what it uses. */
 export async function findMemoryForTask({
   analytics,
   categories,

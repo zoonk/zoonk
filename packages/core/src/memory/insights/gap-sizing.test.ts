@@ -38,10 +38,6 @@ const PROVENANCE = {
 const MESSAGE =
   "Fractions keep tripping you up in percentage questions. A few short lessons on fractions first should help.";
 
-/**
- * A learner whose plan teaches two skills and who keeps missing the second one: the weak skill
- * whose missing prerequisites a plan-change insight fills.
- */
 async function setup() {
   const [user, library] = await Promise.all([
     userFixture(),
@@ -92,10 +88,6 @@ async function setup() {
   return { goal, plan, user, weak };
 }
 
-/**
- * Skills that each rest on the next one, the first a direct prerequisite of `before`: the
- * unlearned chain a gap walks up.
- */
 async function chainFixture({ before, names }: { before: Skill; names: string[] }) {
   const skills = await Promise.all(names.map((name) => skillFixture({ name })));
 
@@ -111,7 +103,6 @@ async function chainFixture({ before, names }: { before: Skill; names: string[] 
   return skills;
 }
 
-/** A Library chapter whose lessons each teach one of these skills, in this order. */
 async function chapterFixture({ skills, title }: { skills: Skill[]; title: string }) {
   const chapter = await libraryChapterFixture({ title });
 
@@ -135,7 +126,6 @@ async function chapterFixture({ skills, title }: { skills: Skill[]; title: strin
   return { chapter, lessons };
 }
 
-/** The session ends and memory reads it after the response, which the test waits for. */
 async function runAfterSession({ goalId, userId }: { goalId: string; userId: string }) {
   const settle = runDeferredWork();
   scheduleMemoryAfterSession({ goalId, sessionId: null, timeZone: "UTC", userId });
@@ -199,7 +189,6 @@ describe("gap sizing for plan-change insights", () => {
 
     expect(insight.payload).toMatchObject({ skillId: asPercentages?.id });
 
-    // Nothing bigger than a lesson changes the plan before the learner's OK.
     await expect(loadPlanSkillIds(goal.id)).resolves.not.toContain(asPercentages?.id);
 
     mockSession(user.id);
@@ -218,7 +207,6 @@ describe("gap sizing for plan-change insights", () => {
     const skillIds = await loadPlanSkillIds(goal.id);
     const added = [basics?.id, equivalent?.id, asPercentages?.id, weak.id];
 
-    // Prerequisites first, right before the skill they prepare for.
     expect(skillIds.filter((id) => added.includes(id))).toStrictEqual(added);
     expect(skillIds.indexOf(weak.id) - skillIds.indexOf(basics?.id ?? "")).toBe(3);
   });
@@ -331,7 +319,6 @@ describe("gap sizing for plan-change insights", () => {
 
     await runAfterSession({ goalId: goal.id, userId: user.id });
 
-    // The walk reaches one level past a few lessons: enough to know it's more than a few.
     expect(generateMemoryInsight).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         skills: [
@@ -416,7 +403,6 @@ describe("gap sizing for plan-change insights", () => {
       loadPlanLessonIds(goal.id),
     ]);
 
-    // The chapter is the unit: the chain's ancestors outside it wait for a later insight.
     expect(skillIds).toStrictEqual(expect.arrayContaining([basics.id, comparing.id]));
     expect(skillIds).not.toContain(ancestors[0]?.id);
     expect(skillIds).not.toContain(known.id);

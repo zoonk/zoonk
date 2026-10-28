@@ -8,10 +8,8 @@ import {
 import { z } from "zod";
 import { type PlanEffect } from "../plans/planner/plan-effect";
 
-/** A fact is one short line; the Memory screen and every task read it whole. */
 export const MAX_MEMORY_STATEMENT_LENGTH = 160;
 
-/** One chat message or session can change a few facts; an undo never covers more. */
 const MAX_UNDO_CHANGES = 10;
 
 export const memoryCategorySchema = z
@@ -23,7 +21,6 @@ export const memoryCategorySchema = z
 
 const MEMORY_SOURCE_KINDS = ["onboarding", "chat", "session"] as const;
 
-/** Where a fact came from, with the goal, conversation or study session it points to. */
 export const memorySourceSchema = z
   .object({
     id: z.string().nullable().meta({ description: "The goal, conversation or study session id" }),
@@ -60,8 +57,8 @@ export const memorySettingsUpdateSchema = z
 export type MemorySettingsUpdateInput = z.infer<typeof memorySettingsUpdateSchema>;
 
 /**
- * An absent id reads as null: generated native clients (swift-openapi-generator) leave out a
- * required key whose value is null, so a deletion's undo would arrive without `factId`.
+ * swift-openapi-generator clients leave out a required key whose value is null, so an absent id
+ * reads as null.
  */
 const memoryChangeReferenceSchema = z
   .object({
@@ -80,7 +77,6 @@ const memoryChangeReferenceSchema = z
 
 export type MemoryChangeReference = z.infer<typeof memoryChangeReferenceSchema>;
 
-/** The changes a "Memory updated" notice or a delete showed, sent back to undo them together. */
 export const memoryUndoInputSchema = z
   .object({ changes: z.array(memoryChangeReferenceSchema).min(1).max(MAX_UNDO_CHANGES) })
   .strict()
@@ -109,7 +105,6 @@ export const memoryInsightAnswerSchema = z
 
 export type MemoryInsightAnswerInput = z.infer<typeof memoryInsightAnswerSchema>;
 
-/** One fact as every screen and the API show it. */
 export type MemoryFactView = {
   id: string;
   category: MemoryCategory;
@@ -123,19 +118,13 @@ export type MemoryFactView = {
   updatedAt: Date;
 };
 
-/** The Memory screen: the switch, on until the learner turns it off, and every active fact. */
 export type MemoryView = { enabled: boolean; facts: MemoryFactView[] };
 
-/**
- * What one write did, shown as "Memory updated" with undo. `fact` is what memory holds now and
- * `previous` what it replaced or removed.
- */
 export type MemoryChange =
   | { action: "added"; fact: MemoryFactView; previous: null }
   | { action: "removed"; fact: null; previous: MemoryFactView }
   | { action: "replaced"; fact: MemoryFactView; previous: MemoryFactView };
 
-/** Everything a learner's memory holds, for an export with their account data. */
 export type MemoryExport = {
   exportedAt: Date;
   enabled: boolean;
@@ -154,26 +143,19 @@ export type MemoryExport = {
   }[];
 };
 
-/** An insight on Today: a tip, a plan change offer or a schedule idea. */
 export type MemoryInsightView = {
   id: string;
   goalId: string | null;
   kind: MemoryInsightKind;
   message: string;
   status: MemoryInsightStatus;
-  /**
-   * For a plan change, the plan change behind it: `applied` when its one lesson is already in the
-   * plan (accepting keeps it, dismissing undoes it), `proposed` while a bigger gap (a few lessons or
-   * a chapter) waits for the learner's OK. `effect` says how many lessons it adds and how it moves
-   * the end date.
-   */
   planChange: {
     canApply: boolean;
     effect: PlanEffect | null;
     id: string;
     status: "applied" | "proposed";
   } | null;
-  /** The suggested study time, such as "20:00", for a schedule idea. */
+  /** Such as "20:00", for a schedule idea. */
   studyTime: string | null;
   createdAt: Date;
 };

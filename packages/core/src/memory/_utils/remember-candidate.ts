@@ -22,11 +22,6 @@ export type CandidateContext = {
   userId: string;
 };
 
-/**
- * A fact to remember must pass the gate: lasting, and not sensitive unless the learner explicitly
- * asked. A fact to forget stores nothing, so it skips the gate. Returns null when the fact stays
- * out, or whether a kept fact is sensitive.
- */
 async function passGate(candidate: MemoryCandidate): Promise<{ sensitive: boolean } | null> {
   if (candidate.intent === "forget") {
     return { sensitive: false };
@@ -36,10 +31,6 @@ async function passGate(candidate: MemoryCandidate): Promise<{ sensitive: boolea
   return verdict.decision === "keep" ? { sensitive: verdict.sensitive } : null;
 }
 
-/**
- * Code catches exact repeats before a model looks; with nothing related there's nothing to
- * compare, so the fact is added (or, to forget, ignored).
- */
 async function decide({
   candidate,
   related,
@@ -102,11 +93,6 @@ async function applyDecision({
     : null;
 }
 
-/**
- * Takes one candidate through the gate, compares it with related facts and applies the decision:
- * "I switched to Law" replaces "Wants Medicine" instead of sitting next to it. Returns what
- * changed, or null when memory stays the same.
- */
 export async function rememberCandidate({
   candidate,
   context,

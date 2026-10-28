@@ -8,7 +8,6 @@ import { getSession } from "../users/get-session";
 import { currentFactsWhere, toMemoryFactView } from "./_utils/memory-fact-view";
 import { type MemoryView } from "./memory-contract";
 
-/** The Memory screen: the memory switch and every fact Zoonk keeps about the learner, newest first. */
 export async function getCurrentUserMemory(): Promise<MemoryView | null> {
   "use cache: private";
 

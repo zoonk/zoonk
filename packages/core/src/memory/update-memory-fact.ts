@@ -10,10 +10,8 @@ import { forgetExampleLines } from "./_utils/forget-example-lines";
 import { toMemoryFactView } from "./_utils/memory-fact-view";
 import { type MemoryFactUpdateInput, type MemoryFactView } from "./memory-contract";
 
-/** A fact the learner wrote or corrected is what they said, so it's as certain as a fact can be. */
 const LEARNER_CONFIDENCE = 1;
 
-/** Whether the fact already reads as this correction would leave it. */
 function isSameCorrection({
   fact,
   input,
@@ -33,12 +31,7 @@ export type MemoryFactUpdateResult =
   | { fact: MemoryFactView; status: "updated" }
   | { status: "notFound" | "unauthorized" };
 
-/**
- * Saves the learner's correction of one fact in place, so the old wording isn't kept anywhere, not
- * even in an example line written from it.
- * The fact becomes something the learner said, and a new wording is checked for sensitive details
- * after the response.
- */
+/** Saves in place, so the old wording isn't kept anywhere. */
 export async function updateMemoryFact({
   factId,
   input,
@@ -59,7 +52,6 @@ export async function updateMemoryFact({
   const userId = session.user.id;
 
   const saved = await writeLearnerChange({ userId }, async (tx) => {
-    // Read under the learner's lock: a concurrent save or delete of this fact finished first.
     const existing = await tx.memoryFact.findFirst({
       where: { id: factId, status: "active", userId },
     });
@@ -68,7 +60,6 @@ export async function updateMemoryFact({
       return unchanged(null);
     }
 
-    // The same correction saved again leaves the fact and its example lines alone.
     if (isSameCorrection({ fact: existing, input })) {
       return unchanged({ changed: false, fact: existing });
     }

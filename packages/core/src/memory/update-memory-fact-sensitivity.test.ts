@@ -12,7 +12,6 @@ const SENSITIVE = "Has diabetes";
 
 type Gate = Awaited<ReturnType<typeof gateMemoryFact>>;
 
-/** The gate calls a wording sensitive when it's the health detail above. */
 function mockGate() {
   vi.mocked(gateMemoryFact).mockImplementation(
     async ({ candidate }) =>
@@ -21,7 +20,6 @@ function mockGate() {
   );
 }
 
-/** Each deferred check, in the order the corrections scheduled them. */
 function deferredChecks() {
   return vi.mocked(after).mock.calls.map(([task]) => task as () => Promise<void>);
 }
@@ -53,7 +51,6 @@ describe("sensitivity of a corrected fact", () => {
 
     const [checkSensitive, checkLatest] = deferredChecks();
 
-    // The newer wording's check finishes first; the older one lands after it.
     await checkLatest?.();
     await checkSensitive?.();
 
@@ -84,7 +81,6 @@ describe("sensitivity of a corrected fact", () => {
       prisma.memoryFact.findUniqueOrThrow({ where: { id: fact.id } }),
     ).resolves.toMatchObject({ sensitive: false, statement: SENSITIVE });
 
-    // A failed check is logged, not surfaced.
     expect(logError).toHaveBeenCalledOnce();
   });
 });

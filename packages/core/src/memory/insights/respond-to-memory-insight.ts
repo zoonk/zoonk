@@ -19,7 +19,6 @@ export type MemoryInsightAnswerResult =
 
 type Answer = MemoryInsightAnswerInput["status"];
 
-/** Accepting a schedule idea moves the goal's study time to the suggested one. */
 async function moveStudyTime({
   transaction,
   goalId,
@@ -37,10 +36,6 @@ async function moveStudyTime({
   });
 }
 
-/**
- * What the answer means for the plan change: an applied lesson stays when accepted and is undone
- * when dismissed; a proposal is applied or declined. Null when there's nothing to do.
- */
 function getPlanDecision({
   answer,
   payload,
@@ -56,9 +51,8 @@ function getPlanDecision({
 }
 
 /**
- * Applies what the answer means before it's recorded. The plan is the source of truth: when its
- * change already moved on (undone or decided from the plan screen), the planner refuses and the
- * answer is still recorded. Only a failure stops it, so the learner can answer again.
+ * The plan is the source of truth: when its change already moved on, the planner refuses and the
+ * answer is still recorded.
  */
 async function applyAnswer({
   answer,
@@ -78,11 +72,6 @@ async function applyAnswer({
   }
 }
 
-/**
- * The learner's answer to an insight on Today: accepting applies what it suggests (a new study
- * time, or keeping or adding a lesson), dismissing closes it (undoing or declining a lesson). Each
- * insight is answered once.
- */
 export async function respondToMemoryInsight({
   input,
   insightId,

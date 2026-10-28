@@ -11,21 +11,12 @@ import { hasEnoughActivity, loadGoalActivity } from "./insights/_utils/goal-acti
 import { updateMemoryFromActivity } from "./update-memory-from-activity";
 
 type AfterSessionRequest = {
-  /** The session's goal; the learner's active goal is checked for a session without one. */
   goalId: string | null;
-  /** The study session that just ended, kept as the source of facts noticed from it. */
   sessionId: string | null;
   timeZone: string;
   userId: string;
 };
 
-/**
- * What memory does after each study session: it notices lasting patterns in the week's answers
- * (such as "Mixes up fractions and percentages" or "Studies after 8 pm") and runs the daily insight
- * check, which proposes at most one tip, plan change or schedule idea a day. Both read the same
- * measured week, both are skipped while memory is off, and neither runs a model on too little
- * activity.
- */
 async function runMemoryAfterSession(request: AfterSessionRequest): Promise<void> {
   const { sessionId, timeZone, userId } = request;
 
@@ -65,11 +56,8 @@ async function runMemoryAfterSession(request: AfterSessionRequest): Promise<void
 }
 
 /**
- * Runs `runMemoryAfterSession` after the response of the request that ended a study session;
- * nobody waits for it. A failure is logged, and the next session tries again.
- *
- * This is a bridge for the session flow: `userId` comes from the capability that finished the
- * session for the signed-in learner.
+ * Never throws: it runs after the response and logs a failure. `userId` must come from the
+ * capability that finished the session for the signed-in learner.
  */
 export function scheduleMemoryAfterSession(request: AfterSessionRequest): void {
   after(async () => {

@@ -29,10 +29,6 @@ const PROVENANCE = {
 const MESSAGE =
   "You get percentages right until fractions show up. A 3-minute lesson on turning fractions into percentages should help.";
 
-/**
- * A learner whose plan teaches two skills, who keeps missing the second one, and a prerequisite of
- * it the plan doesn't teach: the lesson a plan-change insight can add.
- */
 async function setup() {
   const [user, library, prerequisite] = await Promise.all([
     userFixture(),
@@ -88,7 +84,6 @@ function planSkillIds(planId: string) {
     .then((items) => items.map((item) => item.skillId));
 }
 
-/** The session ends and memory reads it after the response, which the test waits for. */
 async function endSession({ goalId, userId }: { goalId: string; userId: string }) {
   const settle = runDeferredWork();
   scheduleMemoryAfterSession({ goalId, sessionId: null, timeZone: "UTC", userId });

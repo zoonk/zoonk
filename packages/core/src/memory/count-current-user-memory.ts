@@ -6,7 +6,6 @@ import { getRequestInstant } from "../learner/facts/request-instant";
 import { getSession } from "../users/get-session";
 import { currentFactsWhere } from "./_utils/memory-fact-view";
 
-/** How many current facts the learner's Memory screen lists, including while memory is off. */
 export async function countCurrentUserMemory(): Promise<number | null> {
   "use cache: private";
 

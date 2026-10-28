@@ -11,19 +11,12 @@ import { undoMemoryChanges } from "./undo-memory-changes";
 import { updateMemoryFact } from "./update-memory-fact";
 import { updateMemorySettings } from "./update-memory-settings";
 
-/**
- * Example lines quote what a learner shared ("At the pharmacy where you work…"), so a line must not
- * outlive the fact it could quote: deleting, correcting, replacing or taking back a fact, or turning
- * memory off, lets go of the learner's lines, and never anyone else's.
- */
-
 async function useLearner() {
   const user = await userFixture();
   mockSession(user.id);
   return user;
 }
 
-/** A line Zoonk wrote for the learner from their facts, on a lesson's explanation. */
 async function writeLine(
   userId: string,
   text = "At the pharmacy where you work, 25% off saves R$ 10.",

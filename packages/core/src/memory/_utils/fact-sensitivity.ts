@@ -34,11 +34,6 @@ async function checkSensitivity(fact: MemoryFact): Promise<void> {
   }
 }
 
-/**
- * A learner can write anything into a fact they correct, health or beliefs included. The fact
- * stays, since they wrote it, but its sensitive flag follows the new wording, so tasks that don't
- * help with such facts stop reading it. The same gate new facts pass checks it after the response.
- */
 export function scheduleSensitivityCheck(fact: MemoryFact): void {
   after(() => checkSensitivity(fact));
 }

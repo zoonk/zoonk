@@ -28,17 +28,12 @@ type MemoryUpdateSource =
 export type MemoryUpdateRequest = {
   userId: string;
   source: MemoryUpdateSource;
-  /** The learner's timezone, to date facts like "my exam is next Friday". */
   timeZone?: string | null;
   goalId?: string | null;
 };
 
 type ExtractionInput = { input: string; language: string; source: MemorySource };
 
-/**
- * What a model proposes to remember: lasting facts from what the learner said (onboarding, a
- * chat), or learning patterns from a session's numbers, which have their own task.
- */
 async function proposeFacts({
   analytics,
   extraction,
@@ -113,15 +108,7 @@ async function rememberInOrder({
   return changes;
 }
 
-/**
- * Learns from what the learner said or did: after onboarding, a chat or a study session, a cheap
- * model proposes lasting facts, a classifier drops passing and sensitive ones, and each survivor is
- * compared with related facts to be added, replace one, remove one or be ignored. Returns what
- * changed, so a chat can show "Memory updated" with undo. Nothing is learned while memory is off.
- *
- * This is a bridge for chats and workflows: `userId` comes from the public capability or workflow
- * that a session started, never from a client.
- */
+/** `userId` must come from the capability or workflow a session started, never from a client. */
 export async function updateMemoryFromActivity(
   request: MemoryUpdateRequest,
 ): Promise<MemoryChange[]> {
@@ -166,10 +153,7 @@ export async function updateMemoryFromActivity(
   return changes;
 }
 
-/**
- * Runs `updateMemoryFromActivity` after the response is sent, for onboarding and sessions where
- * nobody waits for the result. A failure is logged and memory stays as it was.
- */
+/** Never throws: it runs after the response and logs a failure. */
 export function scheduleMemoryUpdate(request: MemoryUpdateRequest): void {
   after(async () => {
     const { error } = await safeAsync(() => updateMemoryFromActivity(request));

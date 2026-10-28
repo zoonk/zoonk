@@ -16,18 +16,14 @@ import { type InsightPlanChange, proposeInsightGap } from "./insight-plan-change
 import { type InsightPayload } from "./insight-view";
 import { type PrerequisiteGap } from "./prerequisite-gaps";
 
-/** The coach reads what shapes a study tip or plan: goals, routine, learning and preferences. */
 const INSIGHT_FACT_CATEGORIES = ["goals", "routine", "learning", "preferences"] as const;
 
-/** A week of past insights, so the coach doesn't say the same thing twice. */
 const RECENT_INSIGHT_DAYS = 7;
 
-/** A plan change is offered only when there is a gap the plan could fill. */
 function getKinds(activity: GoalActivity): MemoryInsightKindName[] {
   return activity.gaps.length > 0 ? ["tip", "planChange", "scheduleIdea"] : ["tip", "scheduleIdea"];
 }
 
-/** What the coach reads about a gap: the prerequisite, what it prepares for and its real size. */
 function toInsightSkill(gap: PrerequisiteGap): MemoryInsightSkill {
   return {
     chapter: gap.chapter?.title ?? null,
@@ -67,7 +63,6 @@ function toPayload({
   return {};
 }
 
-/** Claims the learner's day before any model runs, so two sessions ending together pay for one call. */
 async function claimDay({
   activity,
   inputHash,
@@ -112,7 +107,6 @@ async function loadCoachContext({ activity, userId }: { activity: GoalActivity; 
   return { facts, recent };
 }
 
-/** Fills a plan change's gap through the planner; without it, the insight isn't shown. */
 async function applyProposal({
   activity,
   proposal,
@@ -170,14 +164,6 @@ async function proposeInsight({
   return { ...(await applyProposal({ activity, proposal, provenance })), provenance };
 }
 
-/**
- * The daily insight check: at most one per learner and local day, skipped without a model call
- * when the week has too few answers or nothing changed since the last check. It claims the day
- * first, asks the coach for one insight (a plan change goes to the planner right away: one lesson
- * applies with an undo, anything bigger waits for the learner's OK), and keeps the row even when
- * the coach had nothing to say, so the day's call is spent once. A failed call releases the day
- * for the next session.
- */
 export async function checkDailyInsight({
   activity,
   userId,

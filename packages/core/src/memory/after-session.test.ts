@@ -39,7 +39,6 @@ function mockInsight(output: Partial<MemoryInsightOutput>) {
   } as Awaited<ReturnType<typeof generateMemoryInsight>>);
 }
 
-/** An adult with a goal on one skill and answers over the last `days` days. */
 async function learnerWithAnswers({
   answersPerDay,
   days,
@@ -82,7 +81,6 @@ async function learnerWithAnswers({
   return { goal, skill, user };
 }
 
-/** A session ends: memory reads it after the response, which the test waits for. */
 async function endSession(request: Parameters<typeof scheduleMemoryAfterSession>[0]) {
   const settle = runDeferredWork();
   scheduleMemoryAfterSession(request);
@@ -133,7 +131,6 @@ describe(scheduleMemoryAfterSession, () => {
         goal: "ENEM 2026",
         kinds: ["tip", "scheduleIdea"],
         language: "en",
-        // The plan already teaches Percentages and it has no prerequisite to add.
         skills: [],
         studyTime: "07:00",
       }),
@@ -143,7 +140,6 @@ describe(scheduleMemoryAfterSession, () => {
 
     await endSessionFor({ goalId: goal.id, userId: user.id });
 
-    // The second session the same day spends no call.
     expect(generateMemoryInsight).not.toHaveBeenCalled();
     await expect(findInsights(user.id)).resolves.toHaveLength(1);
   });

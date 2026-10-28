@@ -9,18 +9,12 @@ import { getSession } from "../../users/get-session";
 import { type MemoryInsightQuery, type MemoryInsightView } from "../memory-contract";
 import { toMemoryInsightView } from "./_utils/insight-view";
 
-/** An insight comes from the last session, so it's shown until the learner answers or it's two days old. */
 const SHOWN_FOR_DAYS = 2;
 
 export type CurrentMemoryInsightResult =
   | { insight: MemoryInsightView | null; status: "ready" }
   | { status: "unauthorized" };
 
-/**
- * The insight Today shows ("From your recent answers"): the newest one, for this goal or for no
- * goal in particular, until the learner answers it. An older insight never comes back once a newer
- * one was answered, and nothing shows while memory is off.
- */
 export async function getCurrentMemoryInsight(
   input: MemoryInsightQuery,
 ): Promise<CurrentMemoryInsightResult> {

@@ -25,7 +25,6 @@ const TOTAL_PAIRS = 20;
 /** Eight transactions leave room in the ten-connection pool for post-commit queries. */
 const CONCURRENT_PAIRS = 4;
 
-/** Observe the real waiting lock, rather than guessing when a write reached the learner row. */
 async function waitForBlockedBy(holderPID: number): Promise<void> {
   await vi.waitFor(async () => {
     const [row] = await prisma.$queryRaw<{ blocked: boolean }[]>`
@@ -150,7 +149,6 @@ describe(updateMemorySettings, () => {
     await updateMemorySettings({ enabled: true });
     await expect(getCurrentUserMemory()).resolves.toMatchObject({ enabled: true });
 
-    // Turning on what's already on changes nothing.
     await expect(updateMemorySettings({ enabled: true })).resolves.toStrictEqual({
       enabled: true,
       status: "updated",
@@ -258,7 +256,6 @@ describe(updateMemoryFact, () => {
 
     await updateMemoryFact({ factId: fact.id, input: { category: "preferences" } });
 
-    // Saving the same correction again changes nothing.
     await expect(
       updateMemoryFact({
         factId: fact.id,
@@ -332,8 +329,6 @@ describe("memory and answer transaction lock order", () => {
         learningProfileFixture({ userId: user.id }),
       ]);
 
-      // Each batch asks for the other value: its first save changes it, the rest find it already
-      // so and roll their marks back, all still taking the learner's lock first.
       const saveMemory = (batch: number) =>
         kind === "settings"
           ? updateMemorySettings({ enabled: batch % 2 === 1 })
@@ -371,8 +366,6 @@ describe("memory and answer transaction lock order", () => {
           await Promise.allSettled(writes);
         }
       }
-
-      // One per answer, and one per batch of memory saves.
 
       await expect(
         prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
@@ -490,7 +483,6 @@ describe(undoMemoryChanges, () => {
 
     await expect(
       undoMemoryChanges({
-        // Undone newest first, so the valid change is applied before the other one fails.
         changes: [
           { factId: alreadyDeleted.id, previousFactId: null },
           { factId: added.id, previousFactId: null },

@@ -9,7 +9,6 @@ import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learne
 import { type MemorySource } from "../memory-contract";
 import { forgetExampleLines } from "./forget-example-lines";
 
-/** A replaced fact's history is short; this bounds the walk if rows were ever edited by hand. */
 const MAX_HISTORY_DEPTH = 50;
 
 export type NewMemoryFact = {
@@ -52,12 +51,7 @@ export async function addMemoryFact({
   );
 }
 
-/**
- * Stores the new fact and marks the old one as replaced by it, in one transaction, and lets go of
- * the example lines that could quote the old one. Returns null, writing nothing, when the old fact
- * stopped being active meanwhile (another update got there first), so two runs never replace the
- * same fact twice.
- */
+/** Returns null, writing nothing, when another update already replaced or removed the old fact. */
 export async function replaceMemoryFact({
   fact,
   previousId,
@@ -92,11 +86,6 @@ export async function replaceMemoryFact({
   });
 }
 
-/**
- * The facts a fact replaced, and the ones those replaced, with the status they're in now. Deleting
- * a fact deletes this history too: a learner who deletes "Wants Law" doesn't expect Zoonk to keep
- * the "Wants Medicine" it replaced.
- */
 export async function findHistoryIds({
   factId,
   status,
@@ -123,11 +112,6 @@ export async function findHistoryIds({
   return walk([factId], 0);
 }
 
-/**
- * Deletes an active fact, its history and the example lines that could quote it. Deleted facts stay
- * 30 days so the learner can undo, then `purgeMemoryFacts` removes them for good. Returns null when
- * the fact isn't the learner's active fact.
- */
 export async function removeMemoryFact({
   factId,
   userId,
@@ -161,10 +145,6 @@ export async function removeMemoryFact({
   });
 }
 
-/**
- * Brings back a fact deleted by `removeMemoryFact`, with the history deleted together with it.
- * Returns null when the fact isn't a deleted fact of this learner.
- */
 export async function restoreRemovedMemoryFact({
   factId,
   transaction,

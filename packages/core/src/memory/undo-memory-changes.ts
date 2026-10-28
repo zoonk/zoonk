@@ -13,7 +13,6 @@ import {
   type MemoryUndoInput,
 } from "./memory-contract";
 
-/** What undoing one change did: the fact it took back and the fact it brought back. */
 type UndoneChange = { removedFactId: string | null; restored: MemoryFact | null };
 
 export type MemoryUndoResult =
@@ -28,7 +27,6 @@ class MemoryUndoConflictError extends Error {
   }
 }
 
-/** An added fact taken back goes with the example lines that could quote it. */
 async function takeBackAddedFact({
   factId,
   transaction,
@@ -50,7 +48,6 @@ async function takeBackAddedFact({
   await forgetExampleLines({ client: transaction, userId });
 }
 
-/** The replaced fact comes back only if it's still the one this fact replaced. */
 async function restoreReplacedFact({
   factId,
   previousFactId,
@@ -133,7 +130,6 @@ async function undoInOrder({
 }): Promise<UndoneChange[]> {
   const undone: UndoneChange[] = [];
 
-  // Later changes may build on earlier ones, so they're undone newest first, one at a time.
   for (const change of changes.toReversed()) {
     // eslint-disable-next-line no-await-in-loop -- Each undo reads the state the previous one left.
     undone.push(await undoChange({ change, transaction, userId }));
@@ -142,11 +138,7 @@ async function undoInOrder({
   return undone;
 }
 
-/**
- * Undoes what a "Memory updated" notice or a delete showed: an added fact is taken back, a replaced
- * fact comes back in place of the new one, and a deleted fact comes back with its history. All
- * changes are undone together or none are, when one of them was already undone or changed since.
- */
+/** All or nothing: when one change was already undone or changed since, none are undone. */
 export async function undoMemoryChanges(input: MemoryUndoInput): Promise<MemoryUndoResult> {
   const session = await getSession();
 

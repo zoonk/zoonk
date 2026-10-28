@@ -20,7 +20,6 @@ function utcDay(date: Date): Date {
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 }
 
-/** An adult, whose memory is on until they turn it off; a minor's starts off. */
 async function learnerWithGoal() {
   const user = await userFixture();
 

@@ -11,7 +11,6 @@ const MINUTE_MS = 60_000;
 const PERCENTAGES = { id: "skill-percentages", name: "Percentages" };
 const FRACTIONS = { id: "skill-fractions", name: "Fractions" };
 
-/** One session of answers on a day, one minute apart, right or wrong in order. */
 function session({
   day,
   hour,

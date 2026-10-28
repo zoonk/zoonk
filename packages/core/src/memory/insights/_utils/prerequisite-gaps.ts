@@ -13,17 +13,10 @@ import {
 import { type PrerequisiteGraph, loadUnlearnedPrerequisites } from "./prerequisite-chain";
 import { loadChapterGapSkills } from "./prerequisite-chapters";
 
-/** Enough gaps for the coach to pick the one the mistakes point at. */
 const MAX_GAPS = 5;
 
-/** A skill a gap adds, with the lessons it brings as its size in the plan's graph. */
 type GapSkill = ActivitySkill & { lessons: number };
 
-/**
- * A missing prerequisite of a skill the learner struggles with, and what filling it takes: the
- * unlearned chain it rests on (one lesson or a few), or its chapter when that chain is a chapter's
- * worth. `skills` are in teaching order and `lessons` counts what the plan would add.
- */
 export type PrerequisiteGap = {
   beforeSkill: ActivitySkill;
   chapter: { id: string; title: string } | null;
@@ -36,7 +29,6 @@ type GapRoot = Pick<PrerequisiteGap, "beforeSkill" | "skill">;
 
 type PlanFootprint = { lessonIds: Set<string>; skillIds: string[] };
 
-/** What the plan already teaches: its graph's skills and every skill and lesson it has items for. */
 async function loadPlanFootprint({
   goalId,
   goalSkills,
@@ -57,7 +49,6 @@ async function loadPlanFootprint({
   };
 }
 
-/** The direct missing prerequisites, weakest skill first, each once. */
 function findRoots({
   graph,
   weakSkills,
@@ -106,11 +97,6 @@ function toGap({
   };
 }
 
-/**
- * Swaps a gap that's a chapter's worth for its prerequisite's chapter: that chapter's skills the
- * plan doesn't teach and the learner hasn't started, in chapter order. A prerequisite without a
- * chapter keeps its chain.
- */
 async function toChapterGaps({
   footprint,
   gaps,
@@ -166,17 +152,10 @@ async function toChapterGaps({
       skills: chapter.skills,
     });
 
-    // A chapter the plan already holds every lesson of adds nothing; the chain still does.
     return chapterGap.lessons > 0 ? chapterGap : gap;
   });
 }
 
-/**
- * The gaps a plan-change insight can fill for the skills a learner struggles with. Each missing
- * prerequisite is sized from its unlearned chain in the skill graph: one lesson, a few lessons, or,
- * when the chain is a chapter's worth, the chapter that teaches the prerequisite. Only gaps that
- * would add something to the plan are offered.
- */
 export async function loadPrerequisiteGaps({
   goal,
   goalSkills,

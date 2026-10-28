@@ -1,10 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 
-/**
- * Records when tasks last read these facts, so stale ones can be reviewed. A raw update keeps
- * `updated_at` for changes to the fact itself; Prisma would move it on every read.
- */
+/** Raw SQL, since Prisma's `@updatedAt` would move `updated_at` on every read. */
 export async function markMemoryFactsUsed({
   ids,
   now,

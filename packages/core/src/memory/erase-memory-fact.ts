@@ -13,10 +13,8 @@ export type MemoryFactEraseResult =
   | { status: "forbidden" | "notFound" | "unauthorized" };
 
 /**
- * Erases one learner fact for a support request, together with the older facts it replaced and the
- * example lines that could quote them. The learner's own delete keeps facts 30 days for undo; a
- * support request to delete personal data is final, so the rows are removed now. Only admins may
- * do this.
+ * Admins only. Unlike the learner's delete, it can't be undone: the fact, the facts it replaced and
+ * their example lines go now.
  */
 export async function eraseMemoryFactForSupport(factId: string): Promise<MemoryFactEraseResult> {
   const access = await getAdminAccess();

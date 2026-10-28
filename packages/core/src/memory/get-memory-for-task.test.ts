@@ -25,7 +25,6 @@ async function learnerWithFacts(facts: { category: MemoryCategory; statement: st
   return { facts: created, user };
 }
 
-/** Enough facts in one category that a task can't read them all. */
 function notes({ category, count }: { category: MemoryCategory; count: number }) {
   return Array.from({ length: count }, (_, index) => ({
     category,
@@ -76,7 +75,6 @@ describe(getMemoryForTask, () => {
       new Set([facts[0]?.id, facts[1]?.id]),
     );
 
-    // Reading a fact isn't changing it.
     expect(Object.fromEntries(used.map((fact) => [fact.id, fact.updatedAt]))).toStrictEqual(
       Object.fromEntries(facts.slice(0, 2).map((fact) => [fact.id, fact.updatedAt])),
     );
