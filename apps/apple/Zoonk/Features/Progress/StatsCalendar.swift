@@ -155,16 +155,18 @@ struct StatsCalendar: View {
   }
 
   private var legend: some View {
+    // At the largest text sizes the words keep whole and the squares give way.
     HStack(spacing: 4) {
-      low
+      low.fixedSize()
 
       ForEach(shades.indices, id: \.self) { index in
         RoundedRectangle(cornerRadius: 2, style: .continuous)
           .fill(shades[index])
-          .frame(width: swatchSize, height: swatchSize)
+          .aspectRatio(1, contentMode: .fit)
+          .frame(maxWidth: swatchSize)
       }
 
-      high
+      high.fixedSize()
     }
     .font(.caption2)
     .foregroundStyle(.secondary)
