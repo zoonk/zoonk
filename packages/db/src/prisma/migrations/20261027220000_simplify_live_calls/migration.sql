@@ -69,4 +69,3 @@ CREATE INDEX "live_call_connections_user_id_state_idx" ON "live_call_connections
 
 -- CreateIndex
 CREATE INDEX "live_call_connections_free_spend_day_state_idx" ON "live_call_connections"("free_spend_day", "state");
-
