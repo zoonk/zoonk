@@ -38,9 +38,10 @@ struct StudyDay: Decodable, Equatable, Sendable {
     let positions: [Int]
   }
 
+  /// The learner's own daily time limit; only whether it's reached matters here (a learner without
+  /// a limit has none to count down).
   struct DailyLimit: Decodable, Equatable, Sendable {
     let reached: Bool
-    let remainingMinutes: Int
   }
 
   struct ExamAccess: Decodable, Equatable, Sendable {
