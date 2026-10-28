@@ -12,6 +12,7 @@ import SwiftUI
 /// doing (a canvas, a recording, a field) carries through a fold, an unfold or a rotation.
 struct LessonStageView: View {
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
   let store: LessonPlayerStore
   let state: LessonPlayerState
@@ -28,9 +29,17 @@ struct LessonStageView: View {
     return result.isCorrect
   }
 
-  /// The spread's pages, or nil for one column, which accessibility text sizes always get.
+  /// The spread's pages, or nil for one column, which accessibility text sizes always get. While
+  /// Ask's inspector sits beside the lesson (regular widths; a sheet covers it on compact ones), the
+  /// screen shows whole in one column, so the learner sees what they're asking about.
   private func pages(_ proxy: GeometryProxy) -> PaneSpace.Panes? {
-    dynamicTypeSize.isAccessibilitySize ? nil : PaneSpace(proxy).panes(primaryShare: 0.5)
+    guard !dynamicTypeSize.isAccessibilitySize,
+      !(store.isAsking && horizontalSizeClass == .regular)
+    else {
+      return nil
+    }
+
+    return PaneSpace(proxy).panes(primaryShare: 0.5)
   }
 
   var body: some View {
