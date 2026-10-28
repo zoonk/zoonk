@@ -1,6 +1,5 @@
 import Foundation
 
-/// The exam screen for an exam goal (`GET /goals/{goalId}/exam`), re-read into the fields it draws.
 struct ExamView: Hashable, Decodable, Sendable {
   enum Stage: String, Decodable, Sendable {
     case preparing
@@ -77,13 +76,11 @@ struct ExamView: Hashable, Decodable, Sendable {
     var estimated: Bool
   }
 
-  /// An exam held several times a year with no sitting in the learner's month: the closest ones.
   struct NoSitting: Hashable, Decodable, Sendable {
     var closest: [String]
     var month: String
   }
 
-  /// IELTS and TOEFL iBT: the exam whose speaking test runs as a live call.
   enum SpeakingMock: String, Decodable, Sendable {
     case ielts
     case toefl
@@ -182,6 +179,5 @@ struct ExamView: Hashable, Decodable, Sendable {
   var stage: Stage
   var tools: [String]
 
-  /// Whether "How did it go?" is open: from the first exam day on.
   var takesResult: Bool { stage == .examDay || stage == .afterExam }
 }

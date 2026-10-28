@@ -1,8 +1,6 @@
 import Foundation
 import Observation
 
-/// The exam page, the goal's mocks, a mock by its id and an essay block, as cached resources, and
-/// their writes through the cache's mutation (scoped to the learner who started them).
 @MainActor
 @Observable
 final class ExamStore {
@@ -18,8 +16,6 @@ final class ExamStore {
     self.cache = cache
   }
 
-  /// The exam page of the goal: it follows the plan (goals), the mocks and the result (learner
-  /// model) and a switch of the active goal (learning profile).
   func exam(goalId: String) -> Resource<ExamView> {
     if let exam = exams[goalId] {
       return exam
@@ -37,7 +33,6 @@ final class ExamStore {
     return exam
   }
 
-  /// The goal's mocks to take any time; Plus changes what they offer.
   func mockOptions(goalId: String) -> Resource<MockOptions> {
     if let list = options[goalId] {
       return list
@@ -55,8 +50,8 @@ final class ExamStore {
     return list
   }
 
-  /// A mock by the id it opens by. It changes only by the learner's steps in it, which read it
-  /// again themselves, so no other write revalidates it.
+  /// It changes only by the learner's steps in it, which read it again themselves, so no other
+  /// write revalidates it.
   func mock(blockId: String) -> Resource<MockView> {
     if let mock = mocks[blockId] {
       return mock
@@ -87,7 +82,6 @@ final class ExamStore {
     return essay
   }
 
-  /// Runs one write for the current learner and revalidates what it changed.
   func write<Value: Sendable>(
     invalidating domains: Set<DataDomain> = [],
     _ operation: @escaping (ExamAPI, String) async throws -> Value
@@ -97,10 +91,8 @@ final class ExamStore {
     }
   }
 
-  /// Starts the picked mock (a learner's tap): when the bank is short of its questions they're
-  /// written first (`onWriting` says so while a run writes them), then it starts with the ones
-  /// there are. A mock that can ask only part of its questions comes back `short` for the learner
-  /// to start it knowingly (`acceptFewer`).
+  /// Only from a learner's tap. A mock that can ask only part of its questions comes back `short`
+  /// for the learner to start it knowingly (`acceptFewer`).
   func startMock(
     goalId: String, choice: MockChoice, acceptFewer: Bool,
     onWriting: @escaping @MainActor () -> Void

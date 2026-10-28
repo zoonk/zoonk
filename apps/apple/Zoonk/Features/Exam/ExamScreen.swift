@@ -1,10 +1,7 @@
 import Charts
 import SwiftUI
 
-/// "About the exam" for the active exam goal: when it is and its main action (a mock exam any
-/// time), the moment it's in (final stretch, day before, exam day), "How did it go?" after it, its
-/// mocks (running, next, taken), how they went, the exam day by day or what's on it, its speaking
-/// and how the score works. How ready the learner is lives on the Plan, so it isn't repeated.
+/// How ready the learner is lives on the Plan, so it isn't repeated here.
 struct ExamScreen: View {
   @Environment(ExamStore.self) private var store
   @Environment(LearnerSummaryStore.self) private var learner
@@ -71,8 +68,6 @@ private struct ExamList: View {
   let options: MockOptions?
 
   var body: some View {
-    // Where there's room, the exam and where the learner stands lead; its mocks and how it works
-    // follow. The hero and the mocks are on nearly every exam, so neither pane stands empty.
     PaneSplit(primaryShare: 0.55) {
       List {
         moment
@@ -98,7 +93,6 @@ private struct ExamList: View {
     .navigationTitle(exam.examName)
   }
 
-  /// The exam at a glance, the moment it's in and, after it, how it went.
   @ViewBuilder
   private var moment: some View {
     ExamHero(exam: exam, options: options)
@@ -109,7 +103,6 @@ private struct ExamList: View {
     }
   }
 
-  /// The exam day by day, or the areas on it.
   @ViewBuilder
   private var whatsOnIt: some View {
     if !exam.format.isEmpty {
@@ -120,11 +113,6 @@ private struct ExamList: View {
   }
 }
 
-// MARK: Hero
-
-/// The exam at a glance: "Exam · 34 days left", its days and start time, the page's main action
-/// (a mock exam any time), the notice's day when the plan counts down to another, and where the
-/// date comes from.
 private struct ExamHero: View {
   @Environment(\.dynamicTypeSize) private var typeSize
   @Environment(AppRouter.self) private var router
@@ -163,7 +151,6 @@ private struct ExamHero: View {
                 Text("Take a mock exam", tableName: "Exam", comment: "Opens the mock chooser")
               }
             } icon: {
-              // At the largest text sizes the words keep the button's width.
               if !typeSize.isAccessibilitySize {
                 Image(systemName: "timer")
               }
@@ -220,7 +207,6 @@ private struct ExamHero: View {
     noSittingSection
   }
 
-  /// No sitting in the learner's month: the closest ones, each one tap away.
   @ViewBuilder
   private var noSittingSection: some View {
     if exam.noticeDay == nil, let noSitting = exam.noSitting, let month = studyDate(noSitting.month)
@@ -280,7 +266,6 @@ private struct ExamHero: View {
       : Text("Exam · \(days) days left", tableName: "Exam", comment: "Days left to the exam")
   }
 
-  /// The exam's days as one fact, its start time once when every day shares it.
   private var facts: [String] {
     let dates = exam.days.compactMap { day in studyDate(day.date).map { (day, $0) } }
 
@@ -317,7 +302,6 @@ private struct ExamHero: View {
     return facts
   }
 
-  /// Where the date shown comes from when it isn't the notice's own day.
   private var dateNote: String? {
     guard !exam.days.isEmpty else { return nil }
     let notice = exam.examDocument == .notice
@@ -344,7 +328,6 @@ private struct ExamHero: View {
         table: "Exam", comment: "Estimated days, before the calendar")
   }
 
-  /// "13:30" as the learner's clock says it.
   private func timeOfDay(_ text: String) -> String? {
     let parts = text.split(separator: ":").compactMap { Int($0) }
     guard parts.count >= 2,
@@ -372,10 +355,7 @@ private struct ExamHero: View {
   }
 }
 
-// MARK: Moment
-
-/// The exam's moment: the final stretch, the light day before with what to have ready, and the
-/// exam day. Calm, and never a promise.
+/// Calm, and never a promise.
 private struct ExamMomentSection: View {
   let exam: ExamView
 
@@ -514,10 +494,7 @@ private struct ExamMomentSection: View {
   }
 }
 
-// MARK: Result
-
-/// "How did it go?": the official result, whenever it comes out. The score is optional and so is
-/// knowing whether they passed; either is enough.
+/// The score is optional and so is knowing whether they passed; either is enough.
 private struct ExamResultSection: View {
   private enum Passed: Hashable {
     case yes
@@ -534,8 +511,6 @@ private struct ExamResultSection: View {
   @State private var failed = false
   let exam: ExamView
 
-  /// The exam's own scale: SAT, AP or TOEFL as those exams report them, IRT points for ENEM-style
-  /// exams, plain points otherwise.
   private var scale: String {
     exam.scoring.scale?.rawValue ?? (exam.scoring.method == .irt ? "irt" : "points")
   }
@@ -647,9 +622,6 @@ private struct ExamResultSection: View {
   }
 }
 
-// MARK: Mocks
-
-/// The mocks: the one running, the plan's next one and the ones taken, with what Plus unlocks.
 private struct ExamMocksSection: View {
   @Environment(AppRouter.self) private var router
   let exam: ExamView
@@ -734,9 +706,6 @@ private struct ExamMocksSection: View {
   }
 }
 
-/// How the mocks went over time: the latest mock's score with its change since the first and the
-/// subject that went best, each mock's score as a line, and each subject's latest share with its
-/// change since its first mock once two mocks asked it.
 private struct ExamProgressSection: View {
   let exam: ExamView
 
@@ -834,7 +803,7 @@ private struct ExamProgressSection: View {
     }
   }
 
-  /// The latest mock of the exam (a subject's own leads only when there's no other).
+  /// A subject's own mock leads only when there's no other.
   private func latestMock(_ progress: ExamView.Progress) -> ExamView.Progress.Point? {
     progress.mocks.last { $0.shape?.kind != .area } ?? progress.mocks.last
   }
@@ -861,7 +830,7 @@ private struct ExamProgressSection: View {
     return "\(score)\n\(since)"
   }
 
-  /// The subject whose latest mock went best: none with one subject or a tie at the top.
+  /// None with one subject or a tie at the top.
   private func bestArea(_ progress: ExamView.Progress) -> (name: String, percent: Int)? {
     let latest = progress.subjects.compactMap { subject in
       subject.percents.last.map { (name: subject.name, percent: $0) }
@@ -903,9 +872,6 @@ private struct ExamProgressSection: View {
   }
 }
 
-// MARK: About the exam
-
-/// The exam day by day as its notice sets it out: each part with its questions.
 private struct ExamFormatSection: View {
   let exam: ExamView
 
@@ -947,7 +913,6 @@ private struct ExamFormatSection: View {
   }
 }
 
-/// What's on the exam: its subjects with their weight, and the topics past exams asked most.
 private struct ExamMapSection: View {
   let map: ExamView.Map
 
@@ -990,8 +955,6 @@ private struct ExamMapSection: View {
   }
 }
 
-/// The exam's speaking: DELE, DELF, Goethe and Cambridge practice their paper task by task in the
-/// Speaking place; IELTS and TOEFL goals take the speaking mock, a short test with an examiner.
 private struct ExamSpeakingSection: View {
   @Environment(LearnerSummaryStore.self) private var learner
   let exam: ExamView
@@ -1013,8 +976,7 @@ private struct ExamSpeakingSection: View {
   }
 }
 
-/// The speaking mock of the exam the goal prepares for: a short test with an examiner, then an
-/// estimated band per criterion. Start opens its call (a learner's tap writes it if it isn't yet).
+/// Start opens its call; a learner's tap writes it if it isn't written yet.
 private struct SpeakingMockSection: View {
   private enum Failure: Equatable {
     case limit(CallLimit)
@@ -1134,8 +1096,6 @@ private struct SpeakingMockSection: View {
   }
 }
 
-/// How the score works: the notice's rule and what to do about it, the scale it reports on, what
-/// it takes to pass, and how sure and unsure answers went in the learner's mocks.
 private struct ExamScoringSection: View {
   let exam: ExamView
 
@@ -1218,7 +1178,6 @@ private struct ExamScoringSection: View {
     }
   }
 
-  /// How the notice scores it, and what to do about it; only when the notice says.
   private var scoringRule: (title: String, rule: String)? {
     let penalty = exam.scoring.wrongPenalty
 

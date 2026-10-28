@@ -1,7 +1,5 @@
 import Foundation
 
-/// What starting a mock any time came to: it runs (started now or already), its questions must be
-/// written first, it can ask only part of them now (`short`), or why it couldn't start.
 enum MockStartOutcome: Equatable, Sendable {
   enum Limit: String, Decodable, Sendable {
     case day
@@ -14,11 +12,9 @@ enum MockStartOutcome: Equatable, Sendable {
   case short(examQuestions: Int, limit: Limit?, minutes: Int, questions: Int)
   case notEnoughQuestions
   case plusRequired
-  /// Writing its questions was refused for now (going too fast, or the plan's fair use).
   case refused(HelpLimit)
 }
 
-/// Getting a mock's questions ready: they're in the bank, or a run is writing them.
 enum MockQuestionsStart: Equatable, Sendable {
   case ready
   case preparing
@@ -26,21 +22,17 @@ enum MockQuestionsStart: Equatable, Sendable {
   case refused(HelpLimit)
 }
 
-/// A step of a running mock (handing a section in, ending it): the next section, the result, or
-/// its time ran out while the learner was away.
 enum MockStepOutcome: String, Decodable, Sendable {
   case next
   case finished
   case expired
 }
 
-/// The learner's yes to one of the finished mock's offers.
 enum MockPlanOffer: String, Encodable, Sendable {
   case skip
   case focus
 }
 
-/// What that yes did: applied (with the lessons a skip took off), or why nothing moved.
 enum MockPlanOfferOutcome: Equatable, Sendable {
   enum Reason: String, Decodable, Sendable {
     case alreadyIn
@@ -51,13 +43,11 @@ enum MockPlanOfferOutcome: Equatable, Sendable {
   case unchanged(Reason?)
 }
 
-/// Grading a draft came to its grade, or today's grades ran out.
 enum EssaySubmission: Equatable, Sendable {
   case graded(EssayGrade)
   case limitReached
 }
 
-/// "How did it go?": the official result on the exam's scale, whether the learner passed, or both.
 struct ExamResultInput: Encodable, Equatable, Sendable {
   var maxScore: Double?
   var passed: Bool?
@@ -65,7 +55,6 @@ struct ExamResultInput: Encodable, Equatable, Sendable {
   var score: Double?
 }
 
-/// The exam, its mocks and the essay blocks, on the app's shared client.
 struct ExamAPI {
   let clients: APIClientFactory
 
@@ -73,8 +62,6 @@ struct ExamAPI {
 
   /// A shape's keys are required but nullable.
   private static let shapeNulls = ["shape.area", "shape.day"]
-
-  // MARK: Exam
 
   func exam(token: String, goalId: String) async throws -> ExamView? {
     try await clients.perform(token: token) { client in
@@ -107,8 +94,6 @@ struct ExamAPI {
       }
     }
   }
-
-  // MARK: Mocks to take any time
 
   func mockOptions(token: String, goalId: String) async throws -> MockOptions? {
     try await clients.perform(token: token) { client in
@@ -158,7 +143,7 @@ struct ExamAPI {
     }
   }
 
-  /// Asks for the picked mock's questions (a learner's tap only: a run may write them).
+  /// Only from a learner's tap: a run may write the questions.
   func requestMockQuestions(token: String, goalId: String, choice: MockChoice) async throws
     -> MockQuestionsStart
   {
@@ -193,8 +178,8 @@ struct ExamAPI {
     }
   }
 
-  /// A write the server answers after a request's usual wait: grading essays is a model call
-  /// each (10 to 25 seconds), which main waits up to 90 seconds for (120 for a mock's few).
+  /// Grading is a model call per essay (10 to 25 seconds), which main waits up to 90 seconds for
+  /// (120 for a mock's few).
   private func performLong<Output: Sendable>(
     token: String, operation: (Client) async throws -> Output
   ) async throws -> Output {
@@ -205,14 +190,13 @@ struct ExamAPI {
     }
   }
 
-  /// A refusal said in main's help-limit words; one without a limit is a failure.
+  /// A refusal without a help limit is a failure.
   private func refused(_ refusal: VoiceRefusal) throws -> MockQuestionsStart {
     guard let limit = refusal.limit else { throw APIError.unavailable }
     return .refused(limit)
   }
 
-  /// Follows the run writing the mock's questions (started by the learner's tap) until they're
-  /// ready; a step that errors, or a stream that ends without it, fails the wait.
+  /// A step that errors, or a stream that ends before the questions are ready, fails the wait.
   func waitForQuestions(token: String, generationId: String) async throws {
     for try await event in clients.generationEvents(id: generationId, token: token) {
       if event.step == "mockQuestionsReady", event.status == "completed" { return }
@@ -221,8 +205,6 @@ struct ExamAPI {
 
     throw APIError.unavailable
   }
-
-  // MARK: A mock
 
   func mock(token: String, blockId: String) async throws -> MockView? {
     try await clients.perform(token: token) { client in
@@ -235,7 +217,7 @@ struct ExamAPI {
     }
   }
 
-  /// Saves a draft: true once stored, false when refused (its time ran out, a locked answer).
+  /// False when refused: its time ran out, or the answer is locked.
   func saveAnswer(token: String, blockId: String, draft: MockDraft) async throws -> Bool {
     let body: Components.Schemas.MockAnswerInput = try PracticeJSON.recode(MockAnswerRequest(draft))
 
@@ -293,7 +275,7 @@ struct ExamAPI {
     }
   }
 
-  /// Counts a recording's play as it starts: its plays now, or nil when none were left.
+  /// Nil when no plays were left.
   func recordPlay(token: String, blockId: String, setId: String) async throws -> Int? {
     try await clients.perform(token: token) { client in
       switch try await client.recordMockPlay(
@@ -307,7 +289,7 @@ struct ExamAPI {
     }
   }
 
-  /// Starts the running speaking section: its paper's task cards are written now (a tap only).
+  /// Only from a tap: its paper's task cards are written now.
   func startSpeaking(token: String, blockId: String) async throws -> Bool {
     try await clients.perform(token: token) { client in
       switch try await client.startMockSpeaking(path: .init(blockId: blockId)) {
@@ -319,8 +301,7 @@ struct ExamAPI {
     }
   }
 
-  /// Grades the finished mock's essays: true when every one is graded, false when today's essay
-  /// grades ran out first.
+  /// False when today's essay grades ran out first.
   func gradeEssays(token: String, blockId: String) async throws -> Bool {
     try await performLong(token: token) { client in
       switch try await client.gradeMockEssays(
@@ -352,8 +333,6 @@ struct ExamAPI {
     }
   }
 
-  // MARK: Essays
-
   func essay(token: String, blockId: String) async throws -> EssayView? {
     try await clients.perform(token: token) { client in
       switch try await client.getEssay(
@@ -367,8 +346,8 @@ struct ExamAPI {
     }
   }
 
-  /// Grades a draft by the rubric (a learner's tap only); a resend under the same `attemptId`
-  /// joins the first one, so it's graded once.
+  /// Only from a learner's tap. A resend under the same `attemptId` joins the first one, so it's
+  /// graded once.
   func submitEssay(
     token: String, blockId: String, attemptId: String, text: String, durationMs: Int
   ) async throws -> EssaySubmission {
@@ -388,7 +367,6 @@ struct ExamAPI {
   }
 }
 
-/// The mock Start asks for: one of the goal's options, or a diagnostic mock in a length.
 enum MockChoice: Hashable, Sendable {
   case practice(MockShape)
   case placement(PlacementMockOption.Length)
