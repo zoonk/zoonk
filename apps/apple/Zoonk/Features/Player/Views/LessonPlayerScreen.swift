@@ -294,26 +294,13 @@ private struct LessonPlayerContent: View {
   }
 }
 
-/// Whether the system shows the toolbar as a vertical bar beside the content (iPhone Duo).
+/// Whether the system shows the toolbar as a vertical bar beside the content (iPhone Duo), read
+/// inside the lesson's own navigation stack, whose bar it is.
 private struct VerticalToolbarReader<Content: View>: View {
+  @Environment(\.isToolbarVertical) private var isToolbarVertical
   @ViewBuilder let content: (Bool) -> Content
 
   var body: some View {
-    if #available(iOS 27.1, *) {
-      VerticalEdgeReader(content: content)
-    } else {
-      content(false)
-    }
-  }
-}
-
-@available(iOS 27.1, *)
-private struct VerticalEdgeReader<Content: View>: View {
-  @Environment(\.toolbarVerticalEdge) private var edge
-
-  let content: (Bool) -> Content
-
-  var body: some View {
-    content(edge != nil)
+    content(isToolbarVertical)
   }
 }
