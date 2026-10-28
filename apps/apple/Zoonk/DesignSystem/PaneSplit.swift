@@ -1,14 +1,14 @@
 import SwiftUI
 
 /// Two related panes side by side where each gets a phone-width column, and one column everywhere
-/// else. On the open iPhone Duo each pane is about an iPhone wide; partially folded like a book,
-/// the panes meet exactly at the fold, which stays clear. iPad, multitasking and iPhone landscape
-/// follow the same width rule, never a device check.
+/// else. On the open iPhone Duo each pane is about an iPhone wide and they meet at the hinge, flat
+/// or partially folded like a book, so folding moves nothing and the fold stays clear. iPad,
+/// multitasking and iPhone landscape follow the same width rule, never a device check.
 ///
 /// Switching between one column and two recreates the panes' views, so what the learner made
 /// (answers, drafts, selection, open panels) lives in a store or in state above the split.
 struct PaneSplit<Primary: View, Secondary: View, Single: View>: View {
-  /// The primary pane's share of the width where there's no active fold.
+  /// The primary pane's share of the width where there's no hinge.
   let primaryShare: CGFloat
   let primary: Primary
   let secondary: Secondary
@@ -44,8 +44,8 @@ struct PaneSplit<Primary: View, Secondary: View, Single: View>: View {
               .frame(width: panes.primary)
               .frame(maxHeight: .infinity, alignment: .top)
 
-            // The fold is the secondary pane's safe area, like the camera's: its background runs
-            // through the crease while its content and bars stay clear of it.
+            // The hinge is the secondary pane's safe area, like the camera's: its background runs
+            // through it while its content and bars stay clear of it.
             secondary
               .safeAreaPadding(.leading, panes.gap)
               .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -60,8 +60,7 @@ struct PaneSplit<Primary: View, Secondary: View, Single: View>: View {
   }
 }
 
-/// The room a view has to split in two: its width and, while iPhone Duo is partially folded like a
-/// book, where the fold crosses it.
+/// The room a view has to split in two: its width and where iPhone Duo's hinge crosses it.
 struct PaneSpace: Equatable {
   /// A phone-width column. Every iPhone layout already works at this width at every standard text
   /// size, and accessibility sizes get one column, so it doesn't grow with the text.
@@ -70,37 +69,45 @@ struct PaneSpace: Equatable {
   struct Panes: Equatable {
     /// The primary pane's width; the secondary takes what's left after the gap.
     var primary: CGFloat
-    /// The fold's width, which the secondary pane keeps its content out of; zero where there's none.
+    /// The hinge's width, which the secondary pane keeps its content out of; zero where there's none.
     var gap: CGFloat
   }
 
   var width: CGFloat
-  /// The fold, from edge to edge of its margins, in the view's own leading-to-trailing coordinates.
-  /// Only while it runs vertically through the view: flat, the fold is inactive.
+  /// Where the hinge runs vertically through the view, from edge to edge of its margins, in the
+  /// view's own leading-to-trailing coordinates, flat or folded. Lists beside it drop their own
+  /// margins there, so panes meet at it and keep its width as their gutter.
+  var hinge: ClosedRange<CGFloat>?
+  /// The hinge while iPhone Duo is partially folded like a book: nothing may sit in it then.
   var fold: ClosedRange<CGFloat>?
 
-  init(width: CGFloat, fold: ClosedRange<CGFloat>? = nil) {
+  init(width: CGFloat, fold: ClosedRange<CGFloat>? = nil, hinge: ClosedRange<CGFloat>? = nil) {
     self.width = width
     self.fold = fold
+    self.hinge = hinge ?? fold
   }
 
   init(_ proxy: GeometryProxy) {
     width = proxy.size.width
 
-    // Reserved regions arrive in iOS 27.1; before it there's no fold. Frames come mirrored for
+    // Reserved regions arrive in iOS 27.1; before it there's no hinge. Frames come mirrored for
     // right-to-left layouts, so they line up with the stacks they position.
     if #available(iOS 27.1, *) {
-      fold =
+      let region =
         proxy
-        .reservedRegions(kind: .division)
-        .map(\.frame)
-        .first { $0.height > $0.width && $0.minX > 0 && $0.maxX < proxy.size.width }
-        .map { $0.minX...$0.maxX }
+        .reservedRegions(kind: .division, options: .includeInactive)
+        .first {
+          $0.frame.height > $0.frame.width && $0.frame.minX > 0
+            && $0.frame.maxX < proxy.size.width
+        }
+
+      hinge = region.map { $0.frame.minX...$0.frame.maxX }
+      fold = region?.isActive == true ? hinge : nil
     }
   }
 
-  /// Whether to split is decided on the flat shares, so folding never collapses the panes (the
-  /// trailing one narrows beside iPhone Duo's vertical bar); where they meet follows the fold.
+  /// Whether to split is decided on the shares, so the hinge never collapses the panes (the trailing
+  /// one narrows beside iPhone Duo's vertical bar); where there's a hinge, they meet at it.
   func panes(primaryShare: CGFloat) -> Panes? {
     // A hundredth of a point of slack, so a share like 1 - 0.55 doesn't miss the minimum by a
     // floating-point rounding error.
@@ -108,11 +115,11 @@ struct PaneSpace: Equatable {
       return nil
     }
 
-    guard let fold else {
+    guard let hinge else {
       return Panes(primary: width * primaryShare, gap: 0)
     }
 
-    return Panes(primary: fold.lowerBound, gap: fold.upperBound - fold.lowerBound)
+    return Panes(primary: hinge.lowerBound, gap: hinge.upperBound - hinge.lowerBound)
   }
 }
 

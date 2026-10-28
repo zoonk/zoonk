@@ -15,6 +15,13 @@ final class PaneSpaceTests: XCTestCase {
     XCTAssertEqual(panes, PaneSpace.Panes(primary: 455, gap: 40))
   }
 
+  func testFlatOnTheDuoThePanesStillMeetAtTheHinge() {
+    let space = PaneSpace(width: 867, hinge: 455.5...495.5)
+
+    XCTAssertEqual(space.panes(primaryShare: 0.55), PaneSpace.Panes(primary: 455.5, gap: 40))
+    XCTAssertNil(space.columnsAroundFold(minimum: 240, spacing: 24))
+  }
+
   func testAnEvenSplitNeedsAPhoneWidthForEachPane() {
     XCTAssertNil(PaneSpace(width: 719).panes(primaryShare: 0.5))
     XCTAssertEqual(
