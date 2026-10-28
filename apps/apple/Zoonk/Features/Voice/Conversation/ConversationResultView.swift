@@ -84,7 +84,9 @@ struct ConversationResultView: View {
       .listRowBackground(Color.clear)
       .listRowSeparator(.hidden)
 
-      if conversation.speakingTask == nil, conversation.mockExam == nil {
+      if conversation.speakingTask == nil, conversation.mockExam == nil,
+        !conversation.objectives.isEmpty
+      {
         LabeledContent {
           Text(
             "\(conversation.objectives.filter(\.met).count) of \(conversation.objectives.count)",
@@ -96,17 +98,20 @@ struct ConversationResultView: View {
         }
       }
 
-      LabeledContent {
-        Text(result.brainPower, format: .number)
-          .monospacedDigit()
-          .foregroundStyle(.brain)
-      } label: {
-        Label {
-          Text("Brain Power", tableName: "Voice", comment: "Points earned label")
-        } icon: {
-          Image(systemName: "brain.head.profile")
+      // Never "0": a call that earned nothing doesn't list it, as on main.
+      if result.brainPower > 0 {
+        LabeledContent {
+          Text(result.brainPower, format: .number.sign(strategy: .always()))
+            .monospacedDigit()
             .foregroundStyle(.brain)
-            .accessibilityHidden(true)
+        } label: {
+          Label {
+            Text("Brain Power", tableName: "Voice", comment: "Points earned label")
+          } icon: {
+            Image(systemName: "brain.head.profile")
+              .foregroundStyle(.brain)
+              .accessibilityHidden(true)
+          }
         }
       }
     } footer: {
