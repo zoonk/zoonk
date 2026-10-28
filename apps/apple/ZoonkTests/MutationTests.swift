@@ -57,6 +57,79 @@ final class MutationTests: XCTestCase {
 
     XCTAssertTrue(result.isObsolete)
   }
+  func testACancelledTaskWhoseWriteStillReturnsIsObsoleteAndInvalidatesNothing() async {
+    let cache = AppCache(session: .preview(account: .mutationTestAccount))
+    let requests = Counter()
+    let memory: Resource<Int> = cache.resource(audience: .signedIn, domains: [.memory]) { _ in
+      requests.count += 1
+      return requests.count
+    }
+    await memory.load()
+    let gate = WriteGate()
+
+    let task = Task {
+      await cache.mutate(invalidating: [.memory]) { _ in
+        await gate.wait()
+        return 1
+      }
+    }
+    await gate.waitUntilStarted()
+    task.cancel()
+    gate.open()
+    let result = await task.value
+    await memory.load()
+
+    XCTAssertTrue(result.isObsolete)
+    XCTAssertEqual(
+      memory.state, .loaded(1), "A cancelled write changes nothing it would invalidate")
+  }
+
+  func testACancelledTaskWhoseWriteFailsIsObsoleteNotAFailure() async {
+    let cache = AppCache(session: .preview(account: .mutationTestAccount))
+    let gate = WriteGate()
+
+    let task = Task {
+      await cache.mutate { _ -> Int in
+        await gate.wait()
+        throw APIError.network
+      }
+    }
+    await gate.waitUntilStarted()
+    task.cancel()
+    gate.open()
+
+    let result = await task.value
+    XCTAssertTrue(result.isObsolete)
+  }
+}
+
+/// Holds a write until the test opens it, the way a slow request does. Not cancellation-aware, so
+/// a write keeps running after its task is cancelled, as a URL request that's already sent does.
+@MainActor
+private final class WriteGate {
+  private var started: CheckedContinuation<Void, Never>?
+  private var isStarted = false
+  private var waiting: CheckedContinuation<Void, Never>?
+
+  func wait() async {
+    isStarted = true
+    started?.resume()
+    started = nil
+    await withCheckedContinuation { waiting = $0 }
+  }
+
+  func waitUntilStarted() async {
+    guard !isStarted else {
+      return
+    }
+
+    await withCheckedContinuation { started = $0 }
+  }
+
+  func open() {
+    waiting?.resume()
+    waiting = nil
+  }
 }
 
 @MainActor

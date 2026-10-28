@@ -15,18 +15,20 @@ extension AppCache {
   /// identity's token, signs that identity out on `unauthorized`, and once the write succeeds
   /// invalidates `domains`, the data it changed. A result for an identity that's no longer current
   /// comes back `.obsolete`, so it's never published or rolled back onto another learner's data.
+  /// So does a write whose task was cancelled (its screen closed): it neither invalidates nor signs
+  /// out. Callers still own their action task and cancel it when its screen goes away.
   func mutate<Value: Sendable>(
     invalidating domains: Set<DataDomain> = [],
     _ write: (AuthenticatedSession) async throws -> Value
   ) async -> MutationResult<Value> {
-    guard let identity = session.authenticatedSession else {
+    guard !Task.isCancelled, let identity = session.authenticatedSession else {
       return .obsolete
     }
 
     do {
       let value = try await write(identity)
 
-      guard session.authenticatedSession == identity else {
+      guard !Task.isCancelled, session.authenticatedSession == identity else {
         return .obsolete
       }
 
@@ -34,6 +36,10 @@ extension AppCache {
       return .done(value)
     } catch {
       let error = apiError(from: error)
+
+      guard !Task.isCancelled else {
+        return .obsolete
+      }
 
       if error as? APIError == .unauthorized {
         await session.expire(identity)
