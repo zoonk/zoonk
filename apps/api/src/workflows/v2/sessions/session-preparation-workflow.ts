@@ -4,6 +4,7 @@ import { type SessionPreparation } from "@zoonk/core/lookahead/session-preparati
 import { getWorkflowMetadata, sleep } from "workflow";
 import { start } from "workflow/api";
 import { type ContentAnalytics } from "../_shared/content-analytics";
+import { type PlanStepOutcome, retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken } from "../_shared/run-token";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
@@ -103,7 +104,9 @@ async function preparePersonalLayer({
  * band. It holds the learner's preparation token
  * only while it lists and starts, a second or two, so a session starting right after another
  * preparation is never skipped: a request while one lists is left to it, since it lists the same
- * lessons. Null when another preparation holds the token.
+ * lessons. Null when another preparation holds the token. A plan other runs kept marking while
+ * its lessons were read (the goal's outline bands and lesson saves, minutes after it was made) is
+ * a conflict: the token is let go, and the run lists again after a durable wait.
  */
 async function startLessonWork({
   analytics,
@@ -111,11 +114,11 @@ async function startLessonWork({
 }: {
   analytics: ContentAnalytics;
   input: SessionPreparationInput;
-}): Promise<SessionPreparation | null> {
+}): Promise<PlanStepOutcome<SessionPreparation | null>> {
   using claim = await claimRunToken(`session-prep:${input.userId}`);
 
   if (claim.conflict) {
-    return null;
+    return { conflict: false, value: null };
   }
 
   const [preparation, extensions, outlines, soon, firstSkillId] = await Promise.all([
@@ -129,11 +132,16 @@ async function startLessonWork({
   const { forExam, laterLessonIds, lessonIds } = preparation;
   const soonCourseIds = new Set(soon);
 
-  const planManifest = await createSessionGenerationManifestStep({
+  const manifest = await createSessionGenerationManifestStep({
     goalId: input.goalId,
     lessonIds: [...lessonIds, ...laterLessonIds],
   });
 
+  if (manifest.conflict) {
+    return manifest;
+  }
+
+  const planManifest = manifest.value;
   const admitted = new Set(planManifest?.targets.map((target) => target.lessonId));
 
   await Promise.all([
@@ -162,7 +170,7 @@ async function startLessonWork({
     ),
   ]);
 
-  return preparation;
+  return { conflict: false, value: preparation };
 }
 
 /**
@@ -323,7 +331,7 @@ export async function sessionPreparationWorkflow(
   "use workflow";
 
   const analytics = { distinctId: input.userId, goalId: input.goalId, platform: input.platform };
-  const preparation = await startLessonWork({ analytics, input });
+  const preparation = await retryPlanConflicts(startLessonWork, { analytics, input });
 
   if (!preparation) {
     return { status: "alreadyRunning" };
