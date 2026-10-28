@@ -480,8 +480,12 @@ describe("language checkpoint calls", () => {
     mockSession(stranger.id);
 
     await expect(openLanguageCheckpointCall(block.id)).resolves.toStrictEqual({
-      status: "notLanguage",
+      status: "notFound",
     });
+
+    await expect(
+      startLanguageConversation({ blockId: block.id, kind: "checkpoint" }),
+    ).resolves.toStrictEqual({ status: "notFound" });
   });
 });
 

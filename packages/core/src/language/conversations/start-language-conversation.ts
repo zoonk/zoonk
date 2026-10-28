@@ -92,9 +92,14 @@ async function startPractice({
 
 async function loadAccessibleCheckpoint({ blockId, userId }: { blockId: string; userId: string }) {
   const checkpoint = await findLanguageCheckpointBlock({ blockId, userId });
-  const targetLanguage = checkpoint?.goal.targetLanguage;
 
-  if (!checkpoint || !targetLanguage) {
+  if (checkpoint.status !== "ready") {
+    return checkpoint;
+  }
+
+  const { targetLanguage } = checkpoint.goal;
+
+  if (!targetLanguage) {
     return { status: "notLanguage" as const };
   }
 

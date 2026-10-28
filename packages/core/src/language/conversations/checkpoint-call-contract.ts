@@ -74,7 +74,7 @@ export const languageCheckpointCallSchema = z
       .object({ status: z.literal("notLanguage") })
       .meta({
         description:
-          "Not a language goal's call: the block plays as a checkpoint (`GET /v1/checkpoints/{blockId}`)",
+          "Not a language goal's call (another goal's checkpoint, or a weekly challenge): the block plays as a checkpoint (`GET /v1/checkpoints/{blockId}`)",
         id: "LanguageCheckpointCallNotLanguage",
       }),
   ])

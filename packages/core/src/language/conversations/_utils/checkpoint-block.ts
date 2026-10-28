@@ -46,26 +46,27 @@ export async function findLanguageCheckpointBlock({
 }: {
   blockId: string;
   userId: string;
-}): Promise<{ goal: Goal; unit: LanguageUnit } | null> {
+}): Promise<
+  { goal: Goal; status: "ready"; unit: LanguageUnit } | { status: "notFound" | "notLanguage" }
+> {
   const block = await prisma.studySessionBlock.findFirst({
     include: { session: { include: { goal: true } } },
     where: { id: blockId, kind: "checkpoint", session: { userId } },
   });
 
-  const goal = block?.session.goal;
-
-  if (!block || goal?.kind !== "language") {
-    return null;
+  if (!block) {
+    return { status: "notFound" };
   }
 
+  const goal = block.session.goal;
   const payload = readBlockPayload(block);
 
-  if (payload.checkpoint?.kind === "weekly") {
-    return null;
+  if (goal?.kind !== "language" || payload.checkpoint?.kind === "weekly") {
+    return { status: "notLanguage" };
   }
 
   const unit = await findCheckpointUnit({ goal, planItemId: payload.planItemId });
-  return unit ? { goal, unit } : null;
+  return unit ? { goal, status: "ready", unit } : { status: "notLanguage" };
 }
 
 export function toCheckpointScenarioUnit({
