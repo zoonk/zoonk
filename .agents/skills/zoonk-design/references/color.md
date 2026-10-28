@@ -40,7 +40,7 @@ Everything else is neutral: titles, body and labels, panels and rows, tabs, navi
 ## Contrast
 
 - Neutral text is AA (4.5:1) on every surface it sits on, in every mode.
-- Colored words sit near 4.5:1 on the page in the regular theme and a little under on their own tints; marks may sit under 3:1. That's the owner's choice for a soft theme, and why color is never the only cue. With more contrast asked for, every color is strict (7:1 and up).
+- Colored words sit near 4.5:1 on the page in the regular theme and a little under on their own tints; marks may sit under 3:1. That keeps the theme soft, and it's why color is never the only cue. With more contrast asked for, every color is strict (7:1 and up).
 - The design system's color page measures every token in every mode; check new pairs there instead of copying ratios into documents.
 - With more contrast asked for, a field's line is already the text color at rest, so focus shows by thickness: a band at least 2px wide whose pixels change by 3:1 or more (WCAG 2.4.13), such as the app's 3px field ring.
 
@@ -50,7 +50,7 @@ Apple and Android take the same meanings, not the web's values: each meaning use
 
 ## Sources
 
-- Owner's decisions, October 2026: soft colors, no green, pink errors, strict contrast only under `prefers-contrast: more`, the sidebar unchanged, a few louder moments.
+- Zoonk's palette: soft colors, no green, pink errors, strict contrast only under `prefers-contrast: more`, a neutral sidebar, a few louder moments.
 - Dieter Rams and Dietrich Lubs's Braun ET66: a quiet body where color marks only the keys with a different job ([Core77](https://www.core77.com/posts/24935/braun-re-issuing-classic-et66-calculator-24935)).
 - Linear, "Behind the latest design refresh" (2026): navigation "should recede"; "Don't compete for attention you haven't earned" ([article](https://linear.app/now/behind-the-latest-design-refresh)).
 - Vercel Geist: gray by default for text, icons, fills, borders and dividers; Background 2 used sparingly ([Geist colors](https://vercel.com/geist/colors)).

@@ -141,10 +141,7 @@ Reduce Motion: system controls and symbol effects adapt on their own. A celebrat
 
 ### iPhone Duo
 
-- **Owner decision (2026-10-28):** Apple's foldable on iOS 27.1 reads like an open wallet when open. Use two panes either side of the fold, with content and controls off the hinge, as the best launch apps do; don't make it an iPad or a stretched iPhone.
-- Keep regular iPhone and iPad layouts great through the same size-class/geometry-driven SwiftUI code, with no device checks. Preserve the learner's state when the Duo folds or unfolds mid-task.
-
-Per-screen two-pane layouts: see each feature's notes below as they land
+Open, the Duo reads like an open wallet: two panes either side of the fold, with content and controls off the hinge, rather than an iPad layout or a stretched iPhone. Folding or unfolding keeps the learner's place.
 
 ## Pitfalls
 

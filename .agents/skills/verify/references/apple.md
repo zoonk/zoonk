@@ -50,7 +50,7 @@ Repeat the same navigation loop ten times and compare footprint, leak count and 
 
 ## CPU and hangs
 
-- **Idle:** with nothing driving the app, read its CPU time before and after 30 seconds: `ps -o time= -p $PID`. An idle screen stays near 0% (Zoonk's tabs measured 0.13% on 2026-10-28); a timer, an animation or a polling loop shows up here.
+- **Idle:** with nothing driving the app, read its CPU time before and after 30 seconds: `ps -o time= -p $PID`. An idle screen stays near 0% (Zoonk's tabs measured 0.13%); a timer, an animation or a polling loop shows up here.
 - **Profile and hangs:**
 
   ```sh
