@@ -205,10 +205,9 @@ struct PlanAPI: PlanAPIClient {
   }
 
   func change(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanChangeOutcome {
-    let body: Components.Schemas.PlanChangeInput = try PracticeJSON.recode(
-      PlanChangeRequest(operations: edits, timeZone: timeZone))
+    let (body, json) = try changeBody(edits)
 
-    return try await clients.perform(token: token) { client in
+    return try await clients.perform(token: token, body: json) { client in
       switch try await client.createPlanChange(path: .init(goalId: goalId), body: .json(body)) {
       case .ok(let response): return try Self.outcome(PracticeJSON.recode(try response.body.json))
       case .unprocessableContent: return .invalid
@@ -221,10 +220,9 @@ struct PlanAPI: PlanAPIClient {
 
   /// What a change would do, without saving it.
   func preview(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanEffect? {
-    let body: Components.Schemas.PlanChangeInput = try PracticeJSON.recode(
-      PlanChangeRequest(operations: edits, timeZone: timeZone))
+    let (body, json) = try changeBody(edits)
 
-    return try await clients.perform(token: token) { client in
+    return try await clients.perform(token: token, body: json) { client in
       switch try await client.previewPlanChange(path: .init(goalId: goalId), body: .json(body)) {
       case .ok(let response):
         let preview: PlanChangePreview = try PracticeJSON.recode(try response.body.json)
@@ -391,6 +389,14 @@ struct PlanAPI: PlanAPIClient {
       default: throw APIError.unavailable
       }
     }
+  }
+
+  /// A change's body, sent as its own JSON: the generated types drop a `null` date, which is how a
+  /// change clears it.
+  private func changeBody(_ edits: [PlanEdit]) throws -> (Components.Schemas.PlanChangeInput, Data)
+  {
+    let json = try JSONEncoder().encode(PlanChangeRequest(operations: edits, timeZone: timeZone))
+    return (try JSONDecoder().decode(Components.Schemas.PlanChangeInput.self, from: json), json)
   }
 
   private static func outcome(_ result: PlanChangeResult) -> PlanChangeOutcome {

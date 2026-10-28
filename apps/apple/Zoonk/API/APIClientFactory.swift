@@ -40,9 +40,12 @@ struct APIClientFactory {
   }
 
   /// Captures the token in an immutable middleware while every generated client reuses the same transport.
-  /// `sendingNull` names body keys sent as an explicit `null` when the generated body leaves them out.
-  func makeClient(token: String? = nil, sendingNull keys: [String] = []) -> Client {
-    makeClient(token: token, transport: transport, sendingNull: keys)
+  /// `sendingNull` names body keys sent as an explicit `null` when the generated body leaves them out;
+  /// `body` replaces the generated body with JSON the generated types can't encode.
+  func makeClient(token: String? = nil, sendingNull keys: [String] = [], body: Data? = nil)
+    -> Client
+  {
+    makeClient(token: token, transport: transport, sendingNull: keys, body: body)
   }
 
   /// A client for long-lived responses such as Server-Sent Events, or a write the server takes
@@ -52,14 +55,16 @@ struct APIClientFactory {
   }
 
   private func makeClient(
-    token: String?, transport: any ClientTransport, sendingNull keys: [String] = []
+    token: String?, transport: any ClientTransport, sendingNull keys: [String] = [],
+    body: Data? = nil
   ) -> Client {
     Client(
       serverURL: serverURL,
       configuration: .init(dateTranscoder: .iso8601WithFractionalSeconds),
       transport: transport,
       middlewares: [APIRequestMiddleware(token: token)]
-        + (keys.isEmpty ? [] : [ExplicitNullMiddleware(keys: keys)]))
+        + (keys.isEmpty ? [] : [ExplicitNullMiddleware(keys: keys)])
+        + (body.map { [JSONBodyMiddleware(body: $0)] } ?? []))
   }
 
   private static func sessionConfiguration() -> URLSessionConfiguration {

@@ -117,6 +117,28 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertEqual(editor.latest, .applied(.stub, sentence: "Daily time changed."))
   }
 
+  func testFailedChangeAsksWhetherThePlanChangedAnyway() async {
+    let api = PlanAPIStub()
+    let store = makeStore(api: api)
+    let plan = store.plan(goalId: "goal")
+    await plan.load()
+
+    await api.setChangeError(APIError.network)
+    await PlanEditor(goalId: "goal", store: store).change([.dailyMinutes(20)], sentence: "")
+    await plan.load()
+
+    let calls = await api.calls
+    XCTAssertEqual(calls.changed, 1)
+  }
+
+  func testClearingTheDateSendsAnExplicitNull() throws {
+    let json = try JSONEncoder().encode(PlanEdit.targetDate(nil))
+    let object = try JSONSerialization.jsonObject(with: json) as? [String: Any]
+
+    XCTAssertEqual(object?["kind"] as? String, "setTargetDate")
+    XCTAssertTrue(object?["targetDate"] is NSNull)
+  }
+
   func testUndoThePlanMovedPastFlagsIt() async {
     let api = PlanAPIStub()
     let editor = PlanEditor(goalId: "goal", store: makeStore(api: api))
@@ -263,7 +285,7 @@ extension GoalPlan {
         "access": { "freeWeekOver": false, "mocksRequirePlus": false },
         "areas": [], "bases": null, "course": null, "end": null,
         "estimate": { "endDate": null, "fullCourseEndDate": null },
-        "examChoices": [], "feasibility": null, "fitOffer": null, "goalId": "goal",
+        "examChoices": [], "examDocument": "notice", "feasibility": null, "fitOffer": null, "goalId": "goal",
         "phases": [], "planId": "\(planId)", "ready": true,
         "schedule": {
           "dailyMinutes": 30, "fullCourse": false, "studyDays": 7, "targetDate": null,

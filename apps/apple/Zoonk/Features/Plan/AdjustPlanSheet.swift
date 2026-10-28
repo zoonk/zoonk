@@ -37,7 +37,7 @@ struct AdjustPlanSheet: View {
         Form {
           PlanEditorLatestSection(editor: editor, plan: plan)
 
-          dateSection
+          PlanDateSection(editor: editor, goal: goal, plan: plan)
             .id(Section.date)
 
           PlanTimeSection(editor: editor, goal: goal, plan: plan)
@@ -84,52 +84,6 @@ struct AdjustPlanSheet: View {
   }
 
   // MARK: Sections
-
-  private var dateSection: some View {
-    SwiftUI.Section {
-      if let targetDate = plan.schedule.targetDate, let date = PlanDate.date(targetDate) {
-        DatePicker(
-          selection: Binding(
-            get: { date },
-            set: { picked in
-              let isoDate = PlanDate.isoDate(picked)
-
-              guard isoDate != targetDate else {
-                return
-              }
-
-              Task {
-                await editor.change(
-                  [.targetDate(isoDate)],
-                  sentence: String(
-                    localized:
-                      "Date moved to \(picked.formatted(Date.FormatStyle(date: .long, time: .omitted, timeZone: .gmt))).",
-                    table: "Plan", comment: "Says the goal's date moved"))
-              }
-            }),
-          in: (PlanDate.date(plan.today) ?? .now)...,
-          displayedComponents: .date
-        ) {
-          dateLabel
-        }
-        .environment(\.timeZone, .gmt)
-      } else {
-        LabeledContent {
-          goal.kind == .exam
-            ? Text("To be confirmed", tableName: "Plan", comment: "An exam's date not known yet")
-            : Text("No date", tableName: "Plan", comment: "A goal without a date")
-        } label: {
-          dateLabel
-        }
-      }
-    }
-  }
-
-  private var dateLabel: Text {
-    goal.kind == .exam
-      ? Text("Exam date", tableName: "Plan", comment: "Setting: the exam's date")
-      : Text("Goal date", tableName: "Plan", comment: "Setting: the goal's date")
-  }
 
   private var daysSection: some View {
     let weekdayMinutes = plan.schedule.weekdayMinutes

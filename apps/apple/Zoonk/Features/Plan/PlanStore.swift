@@ -138,7 +138,8 @@ final class PlanStore {
 
   /// Runs one of the Plan's writes for the session that asked for it (see `AppCache.mutate`).
   /// When `changed` says it changed the plan, everything reading the goal revalidates, as main
-  /// revalidates its goal tags.
+  /// revalidates its goal tags. So does a write that failed, since one that timed out may have
+  /// landed: the plan's read asks whether it changed.
   func write<Result: Sendable>(
     _ request: (any PlanAPIClient, String) async throws -> Result,
     changed: (Result) -> Bool
@@ -148,7 +149,14 @@ final class PlanStore {
       try await request(api, identity.bearerToken)
     }
 
-    if case .done(let value) = result, changed(value) {
+    let revalidates =
+      switch result {
+      case .done(let value): changed(value)
+      case .failed: true
+      case .obsolete: false
+      }
+
+    if revalidates {
       cache.invalidate([.goals, .learnerModel])
     }
 

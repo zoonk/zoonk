@@ -50,8 +50,36 @@ struct ExplicitNullMiddleware: ClientMiddleware {
       object = Self.settingNull(at: key.split(separator: ".").map(String.init), in: object)
     }
 
-    return try await next(
-      request, HTTPBody(try JSONSerialization.data(withJSONObject: object)), baseURL)
+    let (request, newBody) = request.sending(try JSONSerialization.data(withJSONObject: object))
+    return try await next(request, newBody, baseURL)
+  }
+}
+
+/// Sends `body` as the request's JSON instead of the generated client's encoding, for a body the
+/// generated types can't say, such as a plan change clearing its date with a nested `null`.
+struct JSONBodyMiddleware: ClientMiddleware {
+  let body: Data
+
+  func intercept(
+    _ request: HTTPRequest,
+    body _: HTTPBody?,
+    baseURL: URL,
+    operationID: String,
+    next:
+      @concurrent @Sendable (HTTPRequest, HTTPBody?, URL) async throws -> (HTTPResponse, HTTPBody?)
+  ) async throws -> (HTTPResponse, HTTPBody?) {
+    let (request, body) = request.sending(body)
+    return try await next(request, body, baseURL)
+  }
+}
+
+extension HTTPRequest {
+  /// The request carrying `body` in place of its own: the generated client already announced its
+  /// own body's length, and a longer body cut short reaches the server as broken JSON.
+  fileprivate func sending(_ body: Data) -> (HTTPRequest, HTTPBody) {
+    var request = self
+    request.headerFields[.contentLength] = String(body.count)
+    return (request, HTTPBody(body))
   }
 
   private static func settingNull(at path: [String], in object: [String: Any]) -> [String: Any] {

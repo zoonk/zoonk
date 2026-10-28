@@ -127,8 +127,16 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   }
 
   struct Schedule: Decodable, Equatable, Sendable {
+    /// The exam's day its notice gives, when the plan counts down to another.
+    struct NoticeDay: Decodable, Equatable, Sendable {
+      let date: String
+      /// The likely day, while the edition's notice isn't out.
+      let estimated: Bool
+    }
+
     let dailyMinutes: Int
     let fullCourse: Bool
+    let noticeDay: NoticeDay?
     let studyDays: Int
     let targetDate: String?
     let targetDateEstimated: Bool
@@ -174,6 +182,8 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   let end: End?
   let estimate: Estimate
   let examChoices: [ExamChoice]
+  /// `notice` for an exam a public notice announces, `guide` for a language certificate's.
+  let examDocument: String
   let feasibility: Feasibility?
   let fitOffer: FitOffer?
   let goalId: String

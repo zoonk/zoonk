@@ -425,6 +425,35 @@
         }
       }
     },
+    "%@ for now. Pick the day when you know it." : {
+      "comment" : "A month the learner named stands until they pick the day",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ erst einmal. Wähle den Tag aus, wenn du ihn weißt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De momento, %@. Elige el día cuando lo sepas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ pour l’instant. Choisis le jour quand tu le connaîtras."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ por enquanto. Escolha o dia quando souber."
+          }
+        }
+      }
+    },
     "%@ is paused" : {
       "comment" : "Title of the Plan's notice for a paused goal",
       "localizations" : {
@@ -4472,6 +4501,35 @@
         }
       }
     },
+    "Date set to %@." : {
+      "comment" : "Says the goal's date",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datum festgelegt auf %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fecha fijada para %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date fixée au %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Data definida para %@."
+          }
+        }
+      }
+    },
     "Date to be confirmed" : {
       "comment" : "An exam whose day isn't known yet",
       "localizations" : {
@@ -4497,6 +4555,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Data a confirmar"
+          }
+        }
+      }
+    },
+    "Deadline" : {
+      "comment" : "Setting: the goal's deadline",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zieldatum"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fecha límite"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date limite"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prazo"
           }
         }
       }
@@ -4828,6 +4915,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A cada duas semanas"
+          }
+        }
+      }
+    },
+    "Every part of your goal, at your own pace, with no end date." : {
+      "comment" : "What dropping the deadline does",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Teile deines Ziels, in deinem Tempo und ohne Enddatum."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todo lo que incluye tu objetivo, a tu ritmo y sin fecha de finalización."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chaque partie de ton objectif, à ton rythme, sans date de fin."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada parte da sua meta, no seu ritmo e sem data para terminar."
           }
         }
       }
@@ -7152,6 +7268,35 @@
         }
       }
     },
+    "No deadline: you study everything at your own pace." : {
+      "comment" : "A goal without a deadline",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kein Zieldatum: Du lernst alles in deinem Tempo."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin fecha límite: estudias todo a tu ritmo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sans date limite, tu étudies tout à ton rythme."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sem prazo: você estuda tudo no seu ritmo."
+          }
+        }
+      }
+    },
     "No install" : {
       "comment" : "Tool choice",
       "localizations" : {
@@ -8603,7 +8748,7 @@
       }
     },
     "Save" : {
-      "comment" : "Saves the tool choice",
+      "comment" : "Saves the goal's date\nSaves the tool choice",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9096,7 +9241,7 @@
       }
     },
     "Study everything" : {
-      "comment" : "Confirms studying everything\nTitle asking to study everything",
+      "comment" : "Drops the goal's deadline\nTitle asking to drop the deadline, and its button\nTitle asking to study everything, and its button",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -9439,6 +9584,93 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Chegou o dia"
+          }
+        }
+      }
+    },
+    "The exam notice says %@." : {
+      "comment" : "The exam's day its notice gives",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In der Bekanntmachung steht %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La convocatoria del examen indica %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’avis de l’examen indique le %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O edital da prova indica %@."
+          }
+        }
+      }
+    },
+    "The exam's likely date is now %@." : {
+      "comment" : "The exam's likely day while its notice isn't out",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der voraussichtliche Prüfungstermin ist jetzt %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La fecha probable del examen ahora es %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La date probable de l’examen est désormais le %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A data provável da prova agora é %@."
+          }
+        }
+      }
+    },
+    "The exam's official calendar says %@." : {
+      "comment" : "A language certificate's day its official calendar gives",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Im offiziellen Prüfungskalender steht %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El calendario oficial del examen indica %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le calendrier officiel de l’examen indique le %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O calendário oficial da prova indica %@."
           }
         }
       }
@@ -10141,6 +10373,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A seguir"
+          }
+        }
+      }
+    },
+    "Use this date" : {
+      "comment" : "Takes the notice's day as the date",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Datum verwenden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar esta fecha"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utiliser cette date"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar esta data"
           }
         }
       }
@@ -10967,6 +11228,35 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "Your deadline of %@ comes off your plan. You can set one again anytime." : {
+      "comment" : "Says the goal's deadline was dropped",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Zieldatum %@ wird aus deinem Plan entfernt. Du kannst jederzeit wieder eins festlegen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La fecha límite del %@ se elimina de tu plan. Puedes volver a añadirla cuando quieras."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La date limite du %@ est retirée de ton plan. Tu peux en définir une à nouveau quand tu veux."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O prazo de %@ foi removido do seu plano. Você pode definir outro quando quiser."
           }
         }
       }

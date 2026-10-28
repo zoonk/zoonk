@@ -16,10 +16,11 @@ extension APIClientFactory {
   func perform<Output: Sendable>(
     token: String?,
     sendingNull keys: [String] = [],
+    body: Data? = nil,
     operation: (Client) async throws -> Output
   ) async throws -> Output {
     do {
-      return try await operation(makeClient(token: token, sendingNull: keys))
+      return try await operation(makeClient(token: token, sendingNull: keys, body: body))
     } catch {
       throw apiError(from: error)
     }

@@ -9,7 +9,6 @@ struct PlanTimeSection: View {
   @Environment(PlanStore.self) private var store
   @State private var found: Found?
   @State private var isFinding = false
-  @State private var fullCourseEffect: FullCourseEffect?
 
   let editor: PlanEditor
   let goal: LearnerGoal
@@ -20,12 +19,6 @@ struct PlanTimeSection: View {
     case building
     case failed
     case time(PlanTimeToCover)
-  }
-
-  private struct FullCourseEffect: Identifiable {
-    let effect: PlanEffect?
-
-    var id: Int { 0 }
   }
 
   var body: some View {
@@ -71,52 +64,51 @@ struct PlanTimeSection: View {
       }
 
       if goal.kind == .exam, plan.feasibility?.deadline != nil {
-        Toggle(
-          isOn: Binding(
-            get: { plan.schedule.fullCourse },
-            set: { on in Task { await askFullCourse(on) } })
-        ) {
-          Text(
-            "Study everything, even after the exam", tableName: "Plan",
-            comment: "Setting: keep studying every topic after the exam")
-        }
-        .tint(.success)
+        fullCourseToggle
       }
     } footer: {
       Text(
         "Your plan changes from today. Less time spreads your lessons over more days.",
         tableName: "Plan", comment: "Explains what changing the time a day does")
     }
-    .alert(
-      Text("Study everything", tableName: "Plan", comment: "Title asking to study everything"),
-      isPresented: Binding(
-        get: { fullCourseEffect != nil }, set: { if !$0 { fullCourseEffect = nil } }),
-      presenting: fullCourseEffect
-    ) { _ in
-      Button {
-        Task {
-          await editor.change(
-            [.fullCourse(true)],
-            sentence: String(
-              localized: "Your plan studies everything, even after the exam.", table: "Plan",
-              comment: "Says the plan now studies everything"))
-        }
-      } label: {
-        Text("Study everything", tableName: "Plan", comment: "Confirms studying everything")
-      }
+  }
 
-      Button(role: .cancel) {
-      } label: {
-        Text("Cancel", tableName: "Plan", comment: "Cancels a change")
-      }
-    } message: { preview in
-      let what = String(
+  /// Turning it on says what it changes first; turning it off applies at once.
+  private var fullCourseToggle: some View {
+    PreviewedPlanChange(
+      editor: editor, plan: plan, edits: [.fullCourse(true)],
+      title: Text(
+        "Study everything", tableName: "Plan",
+        comment: "Title asking to study everything, and its button"),
+      what: String(
         localized: "Every topic, even after the exam, at your own pace.", table: "Plan",
-        comment: "What studying everything does")
+        comment: "What studying everything does"),
+      sentence: String(
+        localized: "Your plan studies everything, even after the exam.", table: "Plan",
+        comment: "Says the plan now studies everything")
+    ) { isPreviewing, ask in
+      Toggle(
+        isOn: Binding(
+          get: { plan.schedule.fullCourse },
+          set: { on in
+            if on {
+              ask()
+            } else {
+              Task { await stopFullCourse() }
+            }
+          })
+      ) {
+        HStack {
+          Text(
+            "Study everything, even after the exam", tableName: "Plan",
+            comment: "Setting: keep studying every topic after the exam")
 
-      Text(
-        verbatim: [what, planEffectText(preview.effect, plan: plan)].compactMap(\.self).joined(
-          separator: " "))
+          if isPreviewing {
+            ProgressView()
+          }
+        }
+      }
+      .tint(.success)
     }
   }
 
@@ -227,29 +219,12 @@ struct PlanTimeSection: View {
     }
   }
 
-  /// Turning it on says what it changes first; turning it off applies at once.
-  private func askFullCourse(_ on: Bool) async {
-    guard on else {
-      await editor.change(
-        [.fullCourse(false)],
-        sentence: String(
-          localized: "What doesn't fit by the exam is left out of your plan.", table: "Plan",
-          comment: "Says the plan stops studying everything"))
-      return
-    }
-
-    let goalId = goal.id
-    let effect = await store.write { api, token in
-      try await api.preview(token: token, goalId: goalId, edits: [.fullCourse(true)])
-    } changed: { _ in
-      false
-    }
-
-    switch effect {
-    case .done(let effect): fullCourseEffect = FullCourseEffect(effect: effect)
-    case .failed: fullCourseEffect = FullCourseEffect(effect: nil)
-    case .obsolete: break
-    }
+  private func stopFullCourse() async {
+    await editor.change(
+      [.fullCourse(false)],
+      sentence: String(
+        localized: "What doesn't fit by the exam is left out of your plan.", table: "Plan",
+        comment: "Says the plan stops studying everything"))
   }
 
   /// The times onboarding offers, with the learner's own among them.

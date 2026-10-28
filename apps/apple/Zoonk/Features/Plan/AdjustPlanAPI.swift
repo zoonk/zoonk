@@ -18,14 +18,18 @@ enum PlanEdit: Encodable, Equatable, Sendable {
   case restoreActivities([String])
   /// A language plan's activities left out of its lessons.
   case skipActivities([String])
-  case targetDate(String)
+  /// A new date, or nil for none: a goal that isn't an exam studies everything at its own pace.
+  case targetDate(String?)
   /// Minutes for some weekdays (Sunday 0); 0 makes them rest days.
   case weekdayMinutes(Int, weekdays: [Int])
   /// `weekly`, `biweekly` or `finalWeeks`.
   case writtenCadence(String)
 
+  /// Two edits are the same when they send the same operation.
   static func == (lhs: PlanEdit, rhs: PlanEdit) -> Bool {
-    (try? JSONEncoder().encode(lhs)) == (try? JSONEncoder().encode(rhs))
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = .sortedKeys
+    return (try? encoder.encode(lhs)) == (try? encoder.encode(rhs))
   }
 
   private enum CodingKeys: String, CodingKey {
@@ -82,7 +86,12 @@ enum PlanEdit: Encodable, Equatable, Sendable {
       try container.encode(activities, forKey: .activities)
     case .targetDate(let date):
       try container.encode("setTargetDate", forKey: .kind)
-      try container.encode(date, forKey: .targetDate)
+
+      if let date {
+        try container.encode(date, forKey: .targetDate)
+      } else {
+        try container.encodeNil(forKey: .targetDate)
+      }
     case .weekdayMinutes(let minutes, let weekdays):
       try container.encode("setWeekdayMinutes", forKey: .kind)
       try container.encode(minutes, forKey: .minutes)
