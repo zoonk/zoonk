@@ -129,5 +129,8 @@ struct PresentedTask: View {
       .fullScreenCover(item: router.task(at: depth + 1)) { next in
         PresentedTask(route: next, depth: depth + 1)
       }
+      .sheet(item: router.sheet(presentedBy: depth + 1)) { sheet in
+        AppSheetView(sheet: sheet)
+      }
   }
 }

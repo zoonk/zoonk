@@ -62,7 +62,7 @@ struct AppTabView: View {
     .fullScreenCover(item: router.task(at: 0)) { route in
       PresentedTask(route: route, depth: 0)
     }
-    .sheet(item: $router.sheet) { sheet in
+    .sheet(item: router.sheet(presentedBy: 0)) { sheet in
       AppSheetView(sheet: sheet)
     }
     .onChange(of: session.account?.user.id) { previous, current in
@@ -141,7 +141,7 @@ private struct TabRoot: View {
   }
 }
 
-private struct AppSheetView: View {
+struct AppSheetView: View {
   @Environment(SessionStore.self) private var session
 
   let sheet: AppSheet

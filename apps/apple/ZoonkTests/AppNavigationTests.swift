@@ -93,4 +93,22 @@ final class AppNavigationTests: XCTestCase {
     XCTAssertEqual(removed.selectedTab, .today)
     XCTAssertEqual(removed.path(for: .today).wrappedValue.count, 0)
   }
+
+  @MainActor
+  func testTheAppSheetShowsOnTheTopmostLayer() {
+    let router = AppRouter()
+    router.open(.session)
+    router.open(.lesson(lessonId: "l1", sessionId: "s1"))
+    router.present(.subscription)
+
+    XCTAssertNil(router.sheet(presentedBy: 0).wrappedValue)
+    XCTAssertNil(router.sheet(presentedBy: 1).wrappedValue)
+    XCTAssertEqual(router.sheet(presentedBy: 2).wrappedValue, .subscription)
+
+    router.sheet(presentedBy: 1).wrappedValue = nil
+    XCTAssertEqual(router.sheet, .subscription, "A covered layer can't dismiss the sheet")
+
+    router.sheet(presentedBy: 2).wrappedValue = nil
+    XCTAssertNil(router.sheet)
+  }
 }

@@ -45,6 +45,20 @@ final class AppRouter {
       })
   }
 
+  /// The app sheet as one presentation layer sees it: the tabs are layer 0 and each task the next.
+  /// Only the topmost layer shows it, since a view already covered by a task can't present.
+  func sheet(presentedBy layer: Int) -> Binding<AppSheet?> {
+    Binding(
+      get: { layer == self.tasks.count ? self.sheet : nil },
+      set: { sheet in
+        guard layer == self.tasks.count else {
+          return
+        }
+
+        self.sheet = sheet
+      })
+  }
+
   func select(_ tab: AppTab) {
     selectedTab = tab
   }
