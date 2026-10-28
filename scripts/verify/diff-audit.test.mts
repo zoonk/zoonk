@@ -113,4 +113,24 @@ describe("questioning a diff", () => {
 
     assert.deepEqual(names([migration]), ["Migration 1,2"]);
   });
+
+  it("asks about every added comment but leaves tool directives to their own rule", () => {
+    const lines = [
+      "/** Loads the goal. */",
+      "const goal = await getGoal(); // the learner's goal",
+      "{/* Header */}",
+      "/* oxlint-disable no-console -- This CLI prints. */",
+      "// @ts-expect-error -- The library's types miss this overload.",
+      'const url = "https://zoonk.com";',
+    ];
+
+    assert.deepEqual(names([file("apps/main/src/goal.tsx", lines)]), [
+      "Rule or test turned off 5",
+      "Comment 1,2,3",
+    ]);
+
+    assert.deepEqual(names([file("apps/apple/Zoonk/Goal.swift", ["// MARK: - Goal"])]), [
+      "Comment 1",
+    ]);
+  });
 });

@@ -153,4 +153,13 @@ export const ENGINEERING_RULES: Rule[] = [
     question: "Debug output or a note to finish later: remove it or do it now.",
     role: "engineering",
   },
+  {
+    files: /^(?!.*generated).*\.(?:mts|tsx?|swift|kts?|prisma)$/u,
+    // Tool directives (lint, type and formatter suppressions) answer to "Rule or test turned off".
+    line: /^\s*(?:\/\/|\/\*|\{\/\*)(?!\s*(?:oxlint-|eslint-|@ts-|oxfmt-|prettier-|swiftlint:))|\S\s+\/\/\s/u,
+    name: "Comment",
+    question:
+      "Does it say what the code can't: a constraint from something we can't change, a product rule the code would look wrong without, or a contract callers rely on? Otherwise delete it, or rename, extract or simplify until the code says it (root `AGENTS.md`, Comments).",
+    role: "engineering",
+  },
 ];

@@ -3,7 +3,7 @@
 ## Principles
 
 - **KISS:** Choose the simplest complete solution that satisfies the product requirements. Avoid over-engineering, speculative infrastructure, and workarounds when an equivalent direct approach works.
-- **Simplify instead of patching:** A bug, failing test, review finding, or roadblock invites a patch: a guard, retry, setting, fallback, second code path, or test harness. Each one feels necessary in the moment, and they pile up. Before adding one, find the root cause, check what the code and its dependencies already do, and ask what the simplest version of this part would be if you built it today; often the fix is to delete or reshape code, not to add to it. Add compatibility code only for data and clients that exist in production. When an approach changes, remove what the earlier attempt added. Before finishing, reread your diff and cut whatever you can't justify by a concrete failure it prevents. Comments explain why the current code exists, not its history.
+- **Simplify instead of patching:** A bug, failing test, review finding, or roadblock invites a patch: a guard, retry, setting, fallback, second code path, or test harness. Each one feels necessary in the moment, and they pile up. Before adding one, find the root cause, check what the code and its dependencies already do, and ask what the simplest version of this part would be if you built it today; often the fix is to delete or reshape code, not to add to it. Add compatibility code only for data and clients that exist in production. When an approach changes, remove what the earlier attempt added. Before finishing, reread your diff and cut whatever you can't justify by a concrete failure it prevents.
 - **DRY:** Keep a single source of truth for behavior that must stay consistent, including repeated UI patterns and runtime schemas used by documentation. Extract for real shared rules or known extensions; a small number of callers is not a reason to leave competing implementations.
 - **SOLID:** Keep functions and modules focused, composable, and responsible for one concern. Use clear boundaries and dependencies; apply these principles without adding unnecessary class hierarchies, interfaces, or abstraction layers. Prefer functional composition and immutable transformations.
 - Think from first principles. Preserve intended behavior, question assumptions and existing patterns, and choose maintainable designs without expanding the requested scope.
@@ -13,6 +13,19 @@
 - Write engineering work in US English: code, identifiers, comments, docs, commit messages, and examples in them. Use other languages only where the content is about that language or its learners: translation catalogs, language guides, test inputs and fixtures, eval cases, and AI prompt variants written for a language.
 - Preserve unrelated formatting; `oxfmt` owns formatting. Do not hard-wrap Markdown prose.
 - Make the best decision that will elevate all three: the user experience (UX), developer experience (DX), and agent experience (AX) always, without breaking anything.
+
+## Comments
+
+Code says what it does; a comment earns its place only by saying what the code can't. Every comment is one more thing to keep true, and agents add them to match the code around them, so the bar is high and the default is none.
+
+- Keep a comment only for:
+  - behavior forced by something we can't change (a library, framework, platform, browser, vendor API, protocol, or law), with the issue or doc link when one exists;
+  - a product rule the code can't express, where the code would look wrong, or get "fixed", without it;
+  - a contract an exported API's callers rely on that its name and types don't give, such as what it throws, authorizes, or guarantees;
+  - tool directives: license headers, lint suppressions with `-- reason`, `@ts-expect-error` with a reason, `@public`, formatter ignores, and translator comments.
+- Delete everything else: what the next lines do, a name or type restated in words, doc comments on every function, constant, prop, or field, section banners and `// MARK:`, history ("now", "previously", "no longer"), commented-out code, and test steps the test's name already says.
+- When our own code needs a comment to be understood, change the code instead: rename, extract a named function or constant, use a type, or simplify. A comment justifying a workaround in our own code is a sign to fix the workaround.
+- A kept comment is one or two short sentences about why, not what.
 
 ## Scope and completion
 
