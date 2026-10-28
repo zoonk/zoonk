@@ -2137,7 +2137,7 @@
       }
     },
     "Loading progress" : {
-      "comment" : "Accessibility label for a loading progress detail screen\nAccessibility status while the progress overview loads.",
+      "comment" : "Accessibility label for a loading progress detail screen",
       "localizations" : {
         "de" : {
           "stringUnit" : {

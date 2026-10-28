@@ -12,7 +12,7 @@ where Value: Equatable & Sendable, Content: View {
   var body: some View {
     switch state {
     case .idle, .loading:
-      ProgressDetailLoadingView(systemImage: systemImage)
+      ProgressDetailLoadingView()
     case .loaded(let value):
       content(value)
     case .empty:
@@ -208,44 +208,15 @@ struct ProgressDetailNoChartData: View {
   }
 }
 
+/// A stat page's first load: a spinner, never a skeleton.
 private struct ProgressDetailLoadingView: View {
-  let systemImage: String
-
   var body: some View {
-    ProgressDetailPage {
-      ProgressDetailHero(
-        title: Text(verbatim: "Loading"),
-        value: Text(verbatim: "88%"),
-        description: Text(verbatim: "Your progress will appear here."),
-        systemImage: systemImage,
-        tint: .secondary)
-
-      ProgressDetailSection(title: Text(verbatim: "Progress over time")) {
-        RoundedRectangle(cornerRadius: 12, style: .continuous)
-          .fill(.quaternary)
-          .frame(height: 220)
-      }
-
-      ProgressDetailMetricGrid {
-        ProgressDetailMetric(
-          label: Text(verbatim: "Progress"),
-          value: Text(verbatim: "88"),
-          systemImage: "chart.bar",
-          tint: .secondary)
-        ProgressDetailMetric(
-          label: Text(verbatim: "Learning"),
-          value: Text(verbatim: "24"),
-          systemImage: "book.closed",
-          tint: .secondary)
-      }
-    }
-    .redacted(reason: .placeholder)
-    .accessibilityElement(children: .ignore)
-    .accessibilityLabel(
-      Text(
-        "Loading progress",
-        tableName: "Progress",
-        comment: "Accessibility label for a loading progress detail screen"))
+    ProgressView()
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .accessibilityLabel(
+        Text(
+          "Loading progress", tableName: "Progress",
+          comment: "Accessibility label for a loading progress detail screen"))
   }
 }
 

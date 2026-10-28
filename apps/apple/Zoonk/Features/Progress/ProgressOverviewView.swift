@@ -157,9 +157,16 @@ struct ProgressOverviewView: View {
 private struct ProgressOverviewContent: View {
   let overview: ProgressOverview
 
-  private let columns = [
-    GridItem(.adaptive(minimum: 280, maximum: 420), spacing: 16, alignment: .top)
-  ]
+  /// Grows with the text, so large text gets one card a row instead of breaking its words.
+  @ScaledMetric(relativeTo: .body) private var minimumColumnWidth = 280.0
+
+  private var columns: [GridItem] {
+    [
+      GridItem(
+        .adaptive(minimum: minimumColumnWidth, maximum: max(minimumColumnWidth, 420)), spacing: 16,
+        alignment: .top)
+    ]
+  }
 
   var body: some View {
     ScrollView {
@@ -465,48 +472,15 @@ private struct ProgressOverviewMissingMetric: View {
   }
 }
 
+/// Statistics' first load: a spinner, never a skeleton. Later visits show the cached numbers.
 private struct ProgressOverviewLoadingView: View {
-  private let columns = [
-    GridItem(.adaptive(minimum: 280, maximum: 420), spacing: 16, alignment: .top)
-  ]
-
   var body: some View {
-    ScrollView {
-      LazyVGrid(columns: columns, alignment: .leading, spacing: 16) {
-        ForEach(ProgressDestination.allCases) { destination in
-          VStack(alignment: .leading, spacing: 16) {
-            Label {
-              Text(destination.title)
-            } icon: {
-              Image(systemName: destination.systemImage)
-            }
-            .font(.headline)
-
-            Text("88%")
-              .font(.title.bold())
-            Text("Progress summary")
-              .font(.subheadline)
-          }
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .padding(20)
-          .background(
-            Color(uiColor: .secondarySystemGroupedBackground),
-            in: RoundedRectangle(cornerRadius: 20, style: .continuous)
-          )
-          .redacted(reason: .placeholder)
-          .accessibilityHidden(true)
-        }
-      }
-      .frame(maxWidth: 1_040, alignment: .leading)
-      .padding(.horizontal)
-      .padding(.vertical, 20)
-      .frame(maxWidth: .infinity)
-    }
-    .accessibilityLabel(
-      Text(
-        "Loading progress",
-        tableName: "Progress",
-        comment: "Accessibility status while the progress overview loads."))
+    ProgressView()
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .accessibilityLabel(
+        Text(
+          "Loading progress", tableName: "Progress",
+          comment: "Accessibility label for a loading progress detail screen"))
   }
 }
 
