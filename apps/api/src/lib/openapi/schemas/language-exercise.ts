@@ -1,4 +1,4 @@
-import { exerciseContentSchema } from "@zoonk/core/player/contracts/exercise-content";
+import { exerciseContentWith } from "@zoonk/core/player/contracts/exercise-content";
 import { z } from "zod";
 
 const wordBankOptionSchema = z.object({
@@ -36,7 +36,7 @@ const translationOptionSchema = z.object({
   word: z.string(),
 });
 
-const serializedStepResourceSchema = z.object({
+const serializedStepResourceShape = {
   fillBlankOptions: z.array(wordBankOptionSchema),
   id: z.uuid(),
   matchColumnsRightItems: z.array(z.string()),
@@ -47,10 +47,7 @@ const serializedStepResourceSchema = z.object({
   vocabularyOptions: z.array(serializedWordSchema),
   word: serializedWordSchema.nullable(),
   wordBankOptions: z.array(wordBankOptionSchema),
-});
+};
 
 /** A language exercise with the words and sentences its screen needs. */
-export const serializedStepSchema = z.intersection(
-  serializedStepResourceSchema,
-  exerciseContentSchema,
-);
+export const serializedStepSchema = exerciseContentWith(serializedStepResourceShape);

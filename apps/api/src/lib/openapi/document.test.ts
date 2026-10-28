@@ -220,6 +220,13 @@ describe("OpenAPI document", () => {
     expect(focusTest.items).not.toHaveProperty("allOf");
   });
 
+  it("never intersects closed objects in a lesson's screens, which strict clients can't decode", () => {
+    const schemas = createOpenAPIDocument({ cookieName: "token", openapi: "3.0.3" }).components
+      ?.schemas;
+
+    expect(JSON.stringify(schemas?.PlayableLibraryStep)).not.toContain('"allOf"');
+  });
+
   it("owns its authentication schemes without publishing Better Auth internals", () => {
     const document = documentContractSchema.parse(openAPIDocument);
 
