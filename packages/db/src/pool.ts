@@ -47,7 +47,7 @@ function logQueries(pool: Pool, file: string) {
 
     const query: Run = (...args) => {
       const sql = sqlOf(args[0]);
-      const at = Date.now();
+      const at = performance.timeOrigin + performance.now();
       const started = performance.now();
 
       const write = (value: unknown) =>
