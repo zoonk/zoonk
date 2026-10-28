@@ -14,10 +14,8 @@ import { LibraryLessonPage } from "./library-lesson-page";
 
 type Props = PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;
 
-/** Fully static like its course's page; the build writes the first lesson of those chapters. */
 export const ensureStatic = "navigation";
 
-/** No placeholder to paint first, like its course's page. */
 export const instant = false;
 
 export async function generateStaticParams({ params }: { params: { lang: string } }) {
@@ -39,10 +37,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return getLibraryLessonMetadata({ locale: lang, params: routeParams, route });
 }
 
-/**
- * A lesson that no longer exists in a course that does moves permanently to
- * the course page, a real permanent redirect like the chapter page's.
- */
 export default async function LessonPage({ params }: Props) {
   const { lang, ...routeParams } = await params;
   const locale = getSupportedLocaleFromLanguage(lang);

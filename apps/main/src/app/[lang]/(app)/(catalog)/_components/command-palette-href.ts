@@ -1,7 +1,6 @@
 import { getGoalStartHref } from "@/lib/public/public-hrefs";
 import { type PaletteItem } from "./command-palette-items";
 
-/** Navigation options are links, so Next.js owns their URL-specific prefetch and activation. */
 export function getPaletteItemHref(item: PaletteItem) {
   if (item.kind === "navigation") {
     return item.url;

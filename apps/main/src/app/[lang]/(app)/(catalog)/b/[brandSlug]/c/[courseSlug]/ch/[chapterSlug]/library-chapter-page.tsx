@@ -34,11 +34,6 @@ import { ChapterLessons } from "./chapter-lessons";
 
 type Params = { brandSlug: string; courseSlug: string };
 
-/**
- * The chapter's way in: "Build my plan", whose start page shows the plan from this chapter on
- * (`startChapterId`) or, for the course's first chapter or one whose lessons aren't written yet,
- * asks the visitor's level for the whole course.
- */
 async function ChapterStart({
   className,
   courseId,
@@ -68,7 +63,6 @@ async function ChapterStart({
   );
 }
 
-/** What the chapter teaches, under its own title beside its lessons. */
 async function ChapterObjectives({
   chapterId,
   objectives,
@@ -104,11 +98,6 @@ async function ChapterObjectives({
   );
 }
 
-/**
- * The page's last word, where it ends, after a hairline: the plan this chapter starts (or, for a
- * chapter whose start is the course's own, the course's at the visitor's level) and the one way in
- * again.
- */
 async function ChapterClosing({
   chapterId,
   courseId,
@@ -145,17 +134,6 @@ async function ChapterClosing({
   );
 }
 
-/**
- * A Library chapter's page in the catalog, inside the app's frame like its course's, for a visitor
- * from a search on its topic: the bar back to the course, then the course it belongs to, what the
- * chapter teaches, what Zoonk does with it in one line and the one way to start, beside a question
- * from one of its lessons to try (from `xl`, as on the course's page; under it before); where it
- * sits in the course and the chapters after it; its lessons, one tap each, beside what it teaches;
- * and the plan it starts, with the way in again. "Build my plan"
- * opens the course's start page with the plan from this chapter on, except for the course's first
- * chapter, which asks the visitor's level like the course's own page, and a chapter whose lessons
- * aren't written yet, which starts the course.
- */
 export async function LibraryChapterPage({
   locale,
   params,

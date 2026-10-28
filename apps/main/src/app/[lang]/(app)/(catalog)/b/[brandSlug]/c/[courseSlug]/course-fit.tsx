@@ -6,10 +6,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowRightIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 
-/**
- * What the course makes someone able to do, each after a tick, its first steps first. The details
- * step writes a few short lines (`PAGE_LISTS` in `@zoonk/ai`), so they all show.
- */
+/** The details step writes only a few short lines (`PAGE_LISTS` in `@zoonk/ai`), so they all show. */
 function OutcomeList({ outcomes }: { outcomes: string[] }) {
   return (
     <ul className="flex flex-col gap-3">
@@ -25,20 +22,12 @@ function OutcomeList({ outcomes }: { outcomes: string[] }) {
   );
 }
 
-/**
- * Whether the course fits the visitor, in the course's own words, read as where they start and
- * where they get to: who it's for, then what it makes them able to do, side by side from `lg` (an
- * arrow from one to the other), a stop of the course's route named by the first. Flat on the page,
- * no panel: it's about the course, while the question above is a piece of the product. Nothing
- * when the course has neither.
- */
 export async function CourseFit({
   className,
   content,
   courseId,
 }: {
   className?: string;
-  /** The course's landing copy, as the details step writes it; null before it's written. */
   content: CourseLandingPageContent | null;
   courseId: string;
 }) {

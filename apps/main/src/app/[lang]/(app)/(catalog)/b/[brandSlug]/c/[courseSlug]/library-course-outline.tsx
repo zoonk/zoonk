@@ -19,15 +19,8 @@ import { OutlineLevel } from "./outline-levels";
 
 type Params = { brandSlug: string; courseSlug: string };
 
-/**
- * The selected example the outline marks, and the exam's first day as the page writes it.
- */
 export type OutlinePlan = { examDate: string | null; pace: PaceEstimate | null };
 
-/**
- * What the selected example comes to over the outline: to the course's end from scratch, or to
- * the exam's day.
- */
 async function OutlinePlanLine({
   examDate,
   pace,
@@ -53,18 +46,7 @@ async function OutlinePlanLine({
   );
 }
 
-/**
- * Everything the course covers, a stop of its route after the page has said what it is and how it
- * becomes a plan: its size in one quiet line beside its title (chapters, then lessons and their
- * total time once they're written), its description, then its levels, zones the route runs
- * through, each folded to its name and first chapters, the first one open with its chapters as
- * stations.
- * With the example plan (`plan`), each chapter says its week in it, and an exam course read
- * against its date groups its chapters by the exam's areas, each
- * saying how much of it fits. Every chapter and lesson title stays in the page's HTML once for
- * search engines, and each opens its own page. A course whose outline isn't written yet invites
- * the visitor to build their plan, which writes it for them.
- */
+/** Every chapter and lesson title stays in the page's HTML once, for search engines. */
 export async function LibraryCourseOutline({
   className,
   courseId,

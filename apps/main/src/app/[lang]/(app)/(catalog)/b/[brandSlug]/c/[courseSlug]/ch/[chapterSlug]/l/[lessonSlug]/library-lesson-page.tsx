@@ -24,15 +24,7 @@ import { LessonPlanDay } from "./lesson-plan-day";
 
 type Params = { brandSlug: string; courseSlug: string };
 
-/**
- * A Library lesson's page in the catalog, the same for visitors and search engines, inside the
- * app's frame like its course and chapter: the bar back to the chapter, then the course it belongs
- * to, the title, why it matters in one line and the first screen right on the page as the only
- * next step, then what it teaches, folded away; beside it from 72rem its chapter's lessons with
- * this one marked (folded under the question before that). Under the lesson, one day of its
- * course's plan with this lesson in it and a quieter way to build that plan. Only this public
- * part is in the HTML; every other screen loads in the player after the first answer.
- */
+/** Only this public part is in the HTML; every other screen loads in the player after the first answer. */
 export async function LibraryLessonPage({
   lesson,
   locale,

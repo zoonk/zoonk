@@ -14,28 +14,17 @@ import { LibraryCoursePage } from "./library-course-page";
 
 type Props = PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]">;
 
-/**
- * The same for everyone and fully static: the build writes the most popular courses' pages, any
- * other is written on its first request, and each is kept until its content's tags expire it or the
- * default cache lifetime revalidates it. The learner's own bits are read in the browser.
- */
+/** The same for everyone; the learner's own bits are read in the browser. */
 export const ensureStatic = "navigation";
 
-/**
- * The page reads its address outside any boundary, so it has no placeholder to paint first: its
- * words are in the page from the first paint. The catalog's links to it prefetch it whole, and a
- * navigation that wasn't prefetched waits for the static page.
- */
+/** The page reads its address outside any boundary, so it has no placeholder to paint first. */
 export const instant = false;
 
 export async function generateStaticParams({ params }: { params: { lang: string } }) {
   return getCourseStaticParams(params.lang);
 }
 
-/**
- * Editions in other languages have their own slugs, so each one is listed as
- * an explicit language alternate of the others.
- */
+/** Editions in other languages have their own slugs, so each is listed as an explicit alternate. */
 async function getEditionAlternates(courseId: string): Promise<Record<string, string>> {
   const editions = await listPublishedCourseEditions({ courseId });
 

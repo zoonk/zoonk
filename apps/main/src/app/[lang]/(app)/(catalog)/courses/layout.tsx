@@ -13,7 +13,6 @@ import { CategoryNav } from "./category-nav";
 
 export const ensureStatic = "navigation";
 
-/** The categories with how many courses each has, in the reader's language like the courses. */
 async function CategoryNavWithData() {
   const categories = await getCategories();
   const locale = await getLocale();
@@ -34,10 +33,6 @@ async function CategoryNavWithData() {
 
 const CATALOG_GOAL_ID = "catalog-goal";
 
-/**
- * The goal box under the catalog's title, for anyone whose goal no course covers (a job, a move, an
- * exam): it starts a plan from their own words, as the home page's does.
- */
 async function CatalogGoalBox() {
   const locale = getSupportedLocaleFromLanguage(await lang());
   const example = await getGoalExample();
@@ -53,15 +48,6 @@ async function CatalogGoalBox() {
   );
 }
 
-/**
- * Explore courses, the catalog's hub, in the app's frame for everyone: under `lg` its own bar on
- * top (the way back and the account, or a visitor's way in), then the large title and its one
- * line, then the categories, which stay put while the courses beside them (under them on phones
- * and tablets) change: a row of chips kept in reach under the bar (`--catalog-bar`, its height),
- * and from `lg` a column on the left of the courses, where the sidebar has the way back and the
- * account. From `lg` the hub fills the room beside the sidebar and its grid gains columns as the
- * room grows. A course's own pages have their own bar, back to here.
- */
 export default async function CoursesLayout({ children }: LayoutProps<"/[lang]/courses">) {
   const t = await getExtracted();
   const categoryTitles = await getCategoryTitles();

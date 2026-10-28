@@ -16,7 +16,6 @@ import { AccountDropdownItem } from "./account-dropdown-item";
 import { SearchDropdownItem } from "./search-dropdown-item";
 import { UserAvatar } from "./user-avatar";
 
-/** Whose account the menu is: the photo or initial, the name and the email. Nothing for a guest. */
 function AccountIdentity({ account }: { account: LearnerSummary["account"] }) {
   return (
     <>
@@ -34,7 +33,6 @@ function AccountIdentity({ account }: { account: LearnerSummary["account"] }) {
   );
 }
 
-/** One of the menu's pages: its icon, then its name and any mark (`children`). */
 function MenuPageItem({
   children,
   page,
@@ -52,11 +50,7 @@ function MenuPageItem({
   );
 }
 
-/**
- * The plan's page: an account's Subscription, marked "Plus" when that's its plan (as the settings
- * hub marks it), where it subscribes or manages the plan; a guest has no account to subscribe with
- * yet, so Pricing says what one would cost.
- */
+/** A guest has no account to subscribe with yet, so Pricing says what one would cost. */
 function PlanItem({ isAccount, plus }: { isAccount: boolean; plus: boolean }) {
   const t = useExtracted();
 
@@ -80,15 +74,7 @@ function getAccountStatus(learner: LearnerSummaryState) {
   return learner.summary.identity.isAnonymous ? "guest" : "account";
 }
 
-/**
- * The account menu: whose account it is, then its pages (settings, the plan and help), then one
- * way in or out. Statistics live in the sidebar and the tabs' top bar instead, and so does search,
- * except on a bar with no search field of its own, where the menu leads with it (`includeSearch`,
- * the same palette Cmd/Ctrl+K opens). A guest's session isn't an account yet, so it has no name to
- * show, sees Pricing for the plan, and is offered an account instead of signing out (which would
- * lose the plan). It opens under the top bar's avatar, at its end, and above the sidebar's account
- * row, from its start (`align`, `side`).
- */
+/** A guest is offered an account instead of signing out, which would lose their plan. */
 export function UserDropdownMenu({
   align = "end",
   includeSearch = false,

@@ -10,16 +10,8 @@ import {
 } from "./outline-chapter-row";
 import { type ChapterWeeks, getChapterWeeksFormatter } from "./outline-weeks";
 
-/** How many chapter names a level's summary mentions before it's opened. */
 const CHAPTERS_NAMED = 3;
 
-/**
- * A level of the course (Overview, Beginner…), a zone of its route, folded to one row: its name,
- * its first chapters and how many there are, with the weeks it takes in the selected example;
- * open, its chapters as stations with their lessons and their weeks, numbered across the whole
- * course, a long level's first few in sight. The first chapters' names leave the row once it's
- * open, where its rows name them.
- */
 export async function OutlineLevel({
   band,
   estimate,
@@ -44,10 +36,6 @@ export async function OutlineLevel({
   const weeksText = await getChapterWeeksFormatter();
   const weeksForChapter = (row: ChapterWeeks | undefined) => (row ? weeksText(row) : null);
 
-  /**
-   * The weeks the level takes at one pace, after its chapter count: "weeks 2–15", or one week,
-   * from its first chapter's first week to its last chapter's last.
-   */
   const spanText = () => {
     const rows = band.chapters
       .map((chapter) => weeks.get(chapter.id))

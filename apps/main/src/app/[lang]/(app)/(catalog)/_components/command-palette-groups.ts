@@ -24,16 +24,7 @@ import { type PaletteSearchResults } from "./search-courses-action";
 
 const MAX_MOCK_RESULTS = 6;
 
-/**
- * Palette groups are assembled in a hook because translated labels must be read with
- * `t("literal")` at the render boundary, not passed through a translation helper or stored
- * outside the component.
- *
- * Without a query the palette is short: a learner's actions, their places and their other goals
- * (a visitor's pages, account and help). A query searches everything else too (account, help,
- * quick explanations, the learner's own plan, then the catalog) and always ends with what to do
- * with the words themselves: ask the buddy, or start a goal.
- */
+/** A hook, because translated labels must be read with `t("literal")` at the render boundary. */
 export function usePaletteGroups({
   isLoggedIn,
   learner,
@@ -168,10 +159,6 @@ export function usePaletteGroups({
   return [...placeSearched({ groups, searched }), ...(fallback ? [fallback] : [])];
 }
 
-/**
- * The plan's and the catalog's matches come after the learner's own actions and places, before
- * their account and help.
- */
 function placeSearched({
   groups,
   searched,
@@ -188,11 +175,6 @@ function placeSearched({
   return [...groups.slice(0, firstGeneral), ...searched, ...groups.slice(firstGeneral)];
 }
 
-/**
- * What a query can always do, last: ask the buddy about it (the buddy's tab, with the question
- * waiting in its composer) when the buddy tutors the active goal, then start a goal from it. Null
- * without a query.
- */
 function useFallbackGroup({
   learner,
   query,

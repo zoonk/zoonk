@@ -18,10 +18,6 @@ import {
 
 type PaletteRoute = AppRoute<ReturnType<typeof getMenu>["url"]>;
 
-/**
- * What a compact row shows: its icon and name, and maybe a chip right after the name ("full, half
- * or one subject") and at its end a quiet line ("Porcentagem e descontos · 5 min") or a count.
- */
 type PaletteRow = {
   chip?: string;
   count?: number;
@@ -42,22 +38,14 @@ type GoalPaletteItem = PaletteRow & { goalId: string; kind: "goal" };
 
 type ExplanationPaletteItem = PaletteRow & { goalId: string; kind: "explanation" };
 
-/** "Continue today's session": opens the day's next block, as Today's own button does. */
 type ContinuePaletteItem = PaletteRow & { kind: "continue"; sessionId: string };
 
-/**
- * "Ask Buddy: “…”": the buddy's tab with the question in its composer, waiting for the learner to
- * send it (`question`, empty to just open the conversation).
- */
 type AskPaletteItem = PaletteRow & { kind: "ask"; question: string };
 
-/** "Start a new goal: “…”": onboarding with what the learner typed as the goal. */
 type StartGoalPaletteItem = PaletteRow & { kind: "startGoal"; prompt: string };
 
-/** A subject of the learner's own plan, opening its page. */
 type SubjectPaletteItem = PaletteRow & { kind: "subject"; subjectKey: string };
 
-/** A chapter of the learner's own plan (a unit, for a language goal), opening its page. */
 type PlanChapterPaletteItem = PaletteRow & {
   chapterId: string;
   kind: "planChapter";
@@ -99,11 +87,6 @@ export type PaletteItem =
 
 export type PaletteGroup = { id: string; items: PaletteItem[]; label: string };
 
-/**
- * Navigation entries need both display text and a searchable value. Creating them in one place
- * keeps the label shown to learners in sync with the text used by the palette filter; `keywords`
- * lets a row named otherwise be found by what it is (the buddy's own name, found by "buddy").
- */
 export function createNavigationPaletteItem({
   id,
   keywords,
@@ -127,15 +110,10 @@ export function createNavigationPaletteItem({
   };
 }
 
-/**
- * Logout behaves like the other account actions visually, but it must run the
- * auth side effect instead of navigating to an application route.
- */
 export function createLogoutPaletteItem({ label }: { label: string }): LogoutPaletteItem {
   return { icon: LogOutIcon, id: "logout", kind: "logout", label, searchValue: label };
 }
 
-/** "Send feedback" opens the feedback form over the current page instead of navigating away. */
 export function createFeedbackPaletteItem({ label }: { label: string }): FeedbackPaletteItem {
   return {
     icon: MessageSquareIcon,
@@ -146,10 +124,6 @@ export function createFeedbackPaletteItem({ label }: { label: string }): Feedbac
   };
 }
 
-/**
- * Switching goals saves the learner's choice instead of navigating: every learning tab reads the
- * active goal, so the tab on screen re-renders with it.
- */
 export function createGoalPaletteItem({
   goalId,
   label,
@@ -167,7 +141,6 @@ export function createGoalPaletteItem({
   };
 }
 
-/** A quick explanation opens itself: search is where one read to the end is found again. */
 export function createExplanationPaletteItem({
   goalId,
   title,
@@ -257,7 +230,7 @@ export function createSubjectPaletteItem(subject: {
   };
 }
 
-/** A chapter says its subject at its end: two subjects can have chapters of the same name. */
+/** Two subjects can have chapters of the same name. */
 export function createPlanChapterPaletteItem(chapter: {
   chapterId: string;
   subject: string;
@@ -293,10 +266,6 @@ export function createMockPaletteItem({
   };
 }
 
-/**
- * Course search can match on title or description, so both fields need to stay
- * in the item's search value while its row keeps the compact title layout.
- */
 export function createCoursePaletteItem(course: CourseSearchResult): CoursePaletteItem {
   return {
     course,
@@ -307,10 +276,7 @@ export function createCoursePaletteItem(course: CourseSearchResult): CoursePalet
   };
 }
 
-/**
- * Chapter titles are often reused across courses, so the search value includes
- * the parent course context and description while the row shows its title and course.
- */
+/** Chapter titles are often reused across courses, so the search value includes the parent course. */
 export function createChapterPaletteItem(chapter: ChapterSearchResult): ChapterPaletteItem {
   return {
     chapter,
@@ -323,11 +289,6 @@ export function createChapterPaletteItem(chapter: ChapterSearchResult): ChapterP
   };
 }
 
-/**
- * Base UI's Autocomplete owns keyboard movement while this helper preserves the
- * previous matching behavior: normalize accents, ignore case, and hide groups
- * once none of their items match the query.
- */
 export function getVisiblePaletteGroups({
   groups,
   query,
@@ -345,21 +306,12 @@ export function getVisiblePaletteGroups({
     .filter((group) => group.items.length > 0);
 }
 
-/**
- * Autocomplete uses this string for item matching and form values; keeping it
- * separate from the visual label allows course and chapter descriptions to
- * remain searchable without flattening the rendered option. A command's detail also describes
- * its destination: searching the next block's name must keep Continue available.
- */
+/** A command's detail describes its destination: searching the next block's name must keep Continue available. */
 export function getPaletteItemSearchValue(item: PaletteItem) {
   return [item.searchValue, "meta" in item ? item.meta : undefined].filter(Boolean).join(" ");
 }
 
-/**
- * Palette matching needs to be accent-insensitive because learners may search
- * localized titles without entering the exact diacritics stored in the catalog.
- * The learner's own plan is searched on the server the same way.
- */
+/** Accent-insensitive, as the server searches the learner's own plan. */
 export function matchesPaletteSearch({ query, value }: { query: string; value: string }) {
   const normalizedQuery = normalizePaletteSearchText(query.trim());
 
@@ -370,10 +322,6 @@ export function matchesPaletteSearch({ query, value }: { query: string; value: s
   return normalizePaletteSearchText(value).includes(normalizedQuery);
 }
 
-/**
- * Search text is normalized in one helper so every palette item kind follows
- * the same case and accent handling.
- */
 function normalizePaletteSearchText(value: string) {
   return normalizeString(value);
 }

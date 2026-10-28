@@ -11,11 +11,6 @@ import { getExtracted } from "next-intl/server";
 
 type Params = { brandSlug: string; courseSlug: string };
 
-/**
- * Everything past the first question waits one tap away, still in the HTML: what the lesson
- * teaches (its summary, one idea a line) and, under 72rem, the rest of its chapter. Wider screens
- * list the chapter beside the lesson instead (`LessonChapterAside`).
- */
 export async function LessonMore({
   ideas,
   params,
@@ -32,8 +27,6 @@ export async function LessonMore({
   const durationLabel = await getTotalDurationLabel(chapterMinutes);
 
   return (
-    // From 72rem the chapter is beside the lesson, so without ideas nothing is left to take room.
-    // Hairlines above and below make the folds read as rows to open, alone or two.
     <div className={cn("mt-16 border-y sm:mt-20", ideas.length === 0 && "min-[72rem]:hidden")}>
       {ideas.length > 0 && (
         <PublicDisclosure

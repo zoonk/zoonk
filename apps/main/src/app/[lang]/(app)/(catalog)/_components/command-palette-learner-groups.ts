@@ -16,14 +16,7 @@ import {
   createNavigationPaletteItem,
 } from "./command-palette-items";
 
-/**
- * What the app's frame adds to the palette for anyone with a session: their goals (switched from
- * the keyboard, saved by the host's action as the goal switcher saves them) and quick explanations
- * (newest first, each opening itself); the active goal's places as the sidebar lists them; today's
- * next block, for "Continue"; and whether the buddy can take a question (`canAskBuddy`: the active
- * goal is one it tutors), with its own name when the learner gave it one. Until the learner is
- * read the buddy is `null`: its row waits for its name, as its tab does.
- */
+/** Until the learner is read the buddy is `null`: its row waits for its name, as its tab does. */
 export type LearnerPalette = {
   activeGoalId: string | null;
   buddy: Pick<LearnBuddy, "kind" | "name"> | null;
@@ -35,11 +28,7 @@ export type LearnerPalette = {
   today: LearnerSummary["today"];
 };
 
-/**
- * A browser whose session hint says it holds a session, before its learner is read (or when the
- * read failed): the places every learner has, as the frame's sidebar lists them then, with no
- * counts, goals or next block yet. Never a visitor's way in.
- */
+/** For a browser whose session hint says it holds a session, before its learner is read: never a visitor's way in. */
 export const UNREAD_LEARNER_PALETTE: LearnerPalette = {
   activeGoalId: null,
   buddy: null,
@@ -51,15 +40,10 @@ export const UNREAD_LEARNER_PALETTE: LearnerPalette = {
   today: null,
 };
 
-/** Rows a learner only has in some cases are left out as `false` or `null` while listed. */
 function isPaletteItem(item: PaletteItem | false | null): item is PaletteItem {
   return Boolean(item);
 }
 
-/**
- * Continue today's session, with its next block's name and minutes: the lesson's title when it
- * has one, otherwise the minutes alone.
- */
 function useContinueItem(today: LearnerSummary["today"]): PaletteItem | null {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -78,12 +62,6 @@ function useContinueItem(today: LearnerSummary["today"]): PaletteItem | null {
   });
 }
 
-/**
- * The learner's actions first (continue the day, take a mock exam, practice their mistakes, ask
- * the buddy), then where they can go (the tabs in their order and the goal's places, as the
- * sidebar lists them), then their other goals. A query also finds a new goal, the catalog and the
- * quick explanations. Null outside the app (a visitor).
- */
 export function useLearnerPaletteGroups({
   learner,
   searching,
@@ -120,7 +98,6 @@ export function useLearnerPaletteGroups({
         label: t("Practice your mistakes"),
         menu: getMenu("mistakesPractice"),
       }),
-    // A query asks with its own words, in the last group.
     !searching &&
       learner.canAskBuddy &&
       createAskPaletteItem({ label: t("Ask {buddy}…", { buddy }), question: "" }),

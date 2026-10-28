@@ -5,7 +5,6 @@ function group(...ids: string[]) {
   return { items: ids.map((id) => ({ id })) };
 }
 
-/** "settings" before the learner was read: the places every learner has. */
 const UNREAD = [group("settings", "appearance", "language")];
 
 describe("the palette's rows through its highlighted one", () => {

@@ -4,10 +4,6 @@ import { getTotalDurationLabel } from "@/lib/public/public-labels";
 import { PageSection } from "@zoonk/learn/page";
 import { getExtracted } from "next-intl/server";
 
-/**
- * The chapter's lessons, what a visitor came to learn: where the chapter sits in its course, how
- * many lessons and how long, then the lessons as a stretch of the course's route, one tap each.
- */
 export async function ChapterLessons({
   params,
   route,

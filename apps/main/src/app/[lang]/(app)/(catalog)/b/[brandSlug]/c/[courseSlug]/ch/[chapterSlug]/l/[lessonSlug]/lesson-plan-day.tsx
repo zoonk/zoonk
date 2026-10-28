@@ -8,10 +8,8 @@ import { getMinutesFormatter } from "@/lib/public/public-labels";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 
-/** How many of the chapter's lessons the example day holds. */
 const DAY_LESSONS = 3;
 
-/** Where a lesson of the day stands against this one: done before it, this one, next after it. */
 function getStepState({
   index,
   position,
@@ -26,10 +24,6 @@ function getStepState({
   return position === index ? "current" : "ahead";
 }
 
-/**
- * The chapter's lessons around this one, as many as a day holds: the one before it done, this one
- * under way and the ones after it next (the first lesson starts the day, the last one ends it).
- */
 function getDaySteps({
   chapter,
   lessonId,
@@ -54,13 +48,6 @@ function getDaySteps({
   });
 }
 
-/**
- * Under the lesson, what it is in a plan: one day of the course's plan with this lesson in it, as
- * Today lists it, flat on the page, between its chapter's lessons before and after it (an example,
- * said so over it and under it), then a quieter "Build my plan" than the first screen above, which stays the
- * page's main action. The plan starts at this lesson's chapter, as the end of the lesson does,
- * unless it's the course's first.
- */
 export async function LessonPlanDay({
   className,
   route,

@@ -6,14 +6,11 @@ import { getSyllabusView } from "@zoonk/core/view-models/syllabus/get";
 import { normalizeString } from "@zoonk/utils/string";
 import { matchesPaletteSearch } from "./command-palette-items";
 
-/** A few of each, so the plan's matches lead without pushing the catalog's out of sight. */
 const MAX_PLAN_SUBJECTS = 4;
 const MAX_PLAN_CHAPTERS = 6;
 
-/** Short queries match titles only; descriptions become useful from five characters onward. */
 const MIN_DESCRIPTION_QUERY_LENGTH = 5;
 
-/** Keep the core search's order within each rank while narrowing short palette queries. */
 function rankCatalogResults<Result extends { title: string }>({
   query,
   results,
@@ -38,11 +35,7 @@ function rankCatalogResults<Result extends { title: string }>({
   return [...titleMatches, ...descriptionMatches];
 }
 
-/**
- * The active goal's subjects and chapters matching the query, from the Plan's own syllabus (the
- * page's cached read). Nothing for a visitor, or a goal without one; a chapter whose lessons are
- * still being written has no page yet.
- */
+/** A chapter whose lessons are still being written has no page yet. */
 async function searchPlan(query: string) {
   const result = await getSyllabusView();
 
@@ -72,10 +65,7 @@ async function searchPlan(query: string) {
   return { chapters: matchingChapters, subjects: matchingSubjects };
 }
 
-/**
- * Recent completed mocks use the exam page's authenticated history and result destinations.
- * The client localizes their names before matching; no English query is assumed here.
- */
+/** The client localizes mock names before matching; no English query is assumed here. */
 async function searchMocks(query: string) {
   if (!query.trim()) {
     return [];
@@ -96,11 +86,6 @@ export type PaletteSearchResults = {
   plan: Awaited<ReturnType<typeof searchPlan>>;
 };
 
-/**
- * The command palette's search, in one round-trip: the learner's own plan (its subjects and
- * chapters), finished mocks and the public catalog's courses and chapters. Core owns the reads;
- * this boundary ranks the palette's matches and keeps a plan chapter from appearing twice.
- */
 export async function searchPaletteAction(params: {
   language: string;
   query: string;

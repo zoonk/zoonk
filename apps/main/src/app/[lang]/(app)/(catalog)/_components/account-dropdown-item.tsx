@@ -6,10 +6,6 @@ import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { LogInIcon, LogOutIcon, UserPlusIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 
-/**
- * The menu's way in or out: visitors log in, guests create the account that keeps their plan (or
- * log in to the one they already have), and accounts log out.
- */
 export function AccountDropdownItem({ status }: { status: "account" | "guest" | "visitor" }) {
   const t = useExtracted();
   const locale = useLocale();

@@ -6,11 +6,7 @@ import { getPublicLibraryLesson } from "@zoonk/core/library/lessons/public";
 import { getContentLocale } from "@zoonk/utils/locale";
 import { type Metadata } from "next";
 
-/**
- * Lesson titles and one-liners are written in the course's language. Only the
- * page in that language is indexed, once the catalog lists its course, and a reused lesson's
- * canonical URL is its home placement.
- */
+/** Only the course's language is indexed, once the catalog lists it; a reused lesson's canonical URL is its home placement. */
 export async function getLibraryLessonMetadata({
   locale,
   params,

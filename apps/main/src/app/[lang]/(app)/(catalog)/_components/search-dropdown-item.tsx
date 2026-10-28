@@ -18,10 +18,6 @@ function useShortcutLabel() {
   return isApple ? "⌘K" : "Ctrl K";
 }
 
-/**
- * "Search or ask…" opens the app's command palette, the same one Cmd/Ctrl+K and the search fields
- * open, and shows the shortcut where there's a keyboard.
- */
 export function SearchDropdownItem() {
   const t = useExtracted();
   const shortcut = useShortcutLabel();

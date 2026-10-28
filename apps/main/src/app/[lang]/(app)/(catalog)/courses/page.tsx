@@ -20,7 +20,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-/** Every course in the learner's language, under the catalog's title and chips (its layout). */
 export default async function Courses() {
   const locale = await getLocale();
   const subjectNames = await getCategoryNames();

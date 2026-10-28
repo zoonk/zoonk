@@ -30,15 +30,10 @@ import {
 
 const MINUTES_PER_HOUR = 60;
 
-/**
- * A course's cell, the whole of it one link: under `lg` a row (its mark beside its words), from
- * `lg` a column (its mark over them), its numbers at the foot so a row of cells lines theirs up.
- * It fills softly on hover and takes the focus ring inside its edges, which the grid's frame clips.
- */
+/** The focus ring sits inside its edges, which the grid's frame clips. */
 const COURSE_LINK_CLASS =
   "hover:bg-muted/60 focus-visible:ring-ring/50 relative flex h-full min-w-0 items-start gap-3.5 px-4 py-4 transition-colors outline-none focus-visible:ring-[3px] focus-visible:ring-inset sm:px-5 lg:flex-col lg:gap-4 lg:py-5 motion-reduce:transition-none";
 
-/** How long a course takes, from its lessons' estimates, as its own page says it ("~2 hr"). */
 function useDurationLabel(totalMinutes: number) {
   const formatDuration = useFormatDuration();
   const duration = getTotalDuration(totalMinutes);
@@ -50,12 +45,6 @@ function useDurationLabel(totalMinutes: number) {
   return `~${formatDuration(duration.hours * MINUTES_PER_HOUR)}`;
 }
 
-/**
- * The course in numbers, in mono under its words: "37 lessons · ~2 hr", the numbers its page
- * states. A course whose lessons aren't written yet has no numbers to show. On a card it sits at
- * the bottom, so the cards of a row line theirs up; a narrow card balances it over two lines
- * rather than leaving "hr" alone on the second.
- */
 function CourseMeta({ course }: { course: CourseWithOrg }) {
   const t = useExtracted();
   const duration = useDurationLabel(course.estimatedMinutes);
@@ -74,11 +63,6 @@ function CourseMeta({ course }: { course: CourseWithOrg }) {
   );
 }
 
-/**
- * A course: its mark, its subject on its soft label (only where the page isn't that subject's
- * already: a category's own page names it in its title), its title, the first sentence of what it
- * is and its numbers.
- */
 function CourseItem({
   category,
   course,
@@ -147,7 +131,6 @@ export function CourseListClient({
   initialCourses: CourseWithOrg[];
   language: string;
   limit: number;
-  /** Each subject's name in the reader's language, for its label. */
   subjectNames: Readonly<Record<string, string>>;
 }) {
   const t = useExtracted();

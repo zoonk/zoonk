@@ -4,7 +4,6 @@ import { getMenu } from "@/lib/menu";
 import { useExtracted } from "next-intl";
 import { createNavigationPaletteItem } from "./command-palette-items";
 
-/** Settings destinations share keywords so a learner can find the section or a specific page. */
 export function useSettingsPaletteItems(isLoggedIn: boolean) {
   const t = useExtracted();
   const keywords = t("Settings");

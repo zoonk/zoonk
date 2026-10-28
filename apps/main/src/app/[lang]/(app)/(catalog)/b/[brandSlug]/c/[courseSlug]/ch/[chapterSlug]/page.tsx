@@ -17,20 +17,15 @@ import { LibraryChapterPage } from "./library-chapter-page";
 
 type Props = PageProps<"/[lang]/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]">;
 
-/** Fully static like its course's page; the build writes each popular course's first chapter. */
 export const ensureStatic = "navigation";
 
-/** No placeholder to paint first, like its course's page. */
 export const instant = false;
 
 export async function generateStaticParams({ params }: { params: { lang: string } }) {
   return getChapterStaticParams(params.lang);
 }
 
-/**
- * Chapter copy is written in the course's language; only the page in that language is indexed,
- * once the catalog lists the course, and a reused chapter's canonical URL is its home course.
- */
+/** Only the course's language is indexed, once the catalog lists it; a reused chapter's canonical URL is its home course. */
 async function getLibraryChapterMetadata({
   locale,
   params,
@@ -77,12 +72,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return getLibraryChapterMetadata({ locale: lang, params: routeParams, route });
 }
 
-/**
- * A chapter that no longer exists in a course that does moves permanently to
- * the course page. The page is static and written whole before it's served, so
- * the move is a real permanent redirect, and a missing course is the catalog's
- * not-found page from the first paint.
- */
+/** Static and written whole before it's served, so a move is a real permanent redirect. */
 export default async function ChapterPage({ params }: Props) {
   const { lang, ...routeParams } = await params;
   const locale = getSupportedLocaleFromLanguage(lang);

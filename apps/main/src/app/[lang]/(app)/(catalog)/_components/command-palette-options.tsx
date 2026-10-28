@@ -17,10 +17,7 @@ import {
   type PaletteItem,
 } from "./command-palette-items";
 
-/**
- * Groups are rendered with Base UI's collection primitive so the active option
- * order used by keyboard navigation matches the visible grouped list.
- */
+/** Base UI's collection primitive keeps keyboard order matching the visible grouped list. */
 export function PaletteResultGroup({
   group,
   onSelectItem,
@@ -40,10 +37,7 @@ export function PaletteResultGroup({
   );
 }
 
-/**
- * Each option delegates selection to Autocomplete.Item so pointer clicks and
- * Enter-key activation follow Base UI's combobox behavior on desktop and iOS.
- */
+/** Autocomplete.Item, so clicks and Enter follow Base UI's combobox behavior on desktop and iOS. */
 function PaletteOption({
   item,
   onSelectItem,
@@ -97,10 +91,6 @@ function isCurrentDestination(destination: string | null): boolean {
   );
 }
 
-/**
- * Catalog results share the command row rhythm: a course has the library's mark, as the Plan's
- * related courses do, and a chapter a book with its course as context.
- */
 function PaletteOptionContent({ item }: { item: PaletteItem }) {
   if (item.kind === "course") {
     return <CatalogOptionContent icon={LibraryIcon} title={item.course.title} />;
@@ -119,10 +109,6 @@ function PaletteOptionContent({ item }: { item: PaletteItem }) {
   return <SimpleOptionContent item={item} />;
 }
 
-/**
- * A compact row: its icon and name, a chip right after the name ("full, half or one subject",
- * from `sm`), and at its end a quiet line ("Porcentagem e descontos · 5 min") or a count.
- */
 function SimpleOptionContent({
   item,
 }: {

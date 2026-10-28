@@ -15,20 +15,14 @@ export type OutlineChapter = OutlineBand["chapters"][number];
 /** A no-break space keeps each dot at the end of a line, never at the start of the next. */
 export const OUTLINE_SEPARATOR = " · ";
 
-/** The chapters a long list shows before the rest wait one tap away. */
 const CHAPTERS_SHOWN = 6;
 
-/** A list only a little longer shows whole: a fold that hides two chapters saves nothing. */
+/** A fold that hides two chapters saves nothing. */
 const CHAPTERS_FOLDED_FROM = CHAPTERS_SHOWN + 3;
 
 /*
- * A row's targets stay inside the row and never overlap, so a tap opens what it lands on, and each
- * is at least 44px each way while its focus ring stays around its words. The chapter's title
- * reaches up through the row's top padding (`py-4`) and down to its lessons' line (`mt-1.5`). A
- * chapter's only lesson stands alone on its line rather than in a run of links, so it takes a
- * target of its own, reaching down through its row's bottom padding (`pb-5.5`). Links in a run stay
- * in the text's own line height. No hairlines: each row is a station on the route, its mark on the
- * title's line (the row's padding and half the title's 22px line).
+ * Targets stay inside the row, never overlap and are at least 44px each way: the title reaches
+ * through the row's padding (`py-4`, `mt-1.5`), and a lone lesson through its row's bottom (`pb-5.5`).
  */
 const ROW_CLASS = "relative flex gap-4 py-4";
 const LONE_LESSON_ROW_CLASS = "pb-5.5";
@@ -43,10 +37,8 @@ const LESSON_LINK_CLASS =
 const LONE_LESSON_LINK_CLASS =
   "relative inline-block before:absolute before:inset-x-0 before:top-0 before:-bottom-5.5 before:min-w-11";
 
-/** A chapter's place in the plan beside its title: quiet, in the mono face. */
 const MARK_CLASS = cn(NUMERIC_CLASS, "text-muted-foreground flex-none text-xs leading-5.5");
 
-/** A chapter's lessons in one line, one link each, a lone lesson on a target of its own. */
 function ChapterLessonLinks({
   chapter,
   params,
@@ -74,11 +66,7 @@ function ChapterLessonLinks({
   );
 }
 
-/**
- * A level's or an area's chapters (`rows`, each an `OutlineChapterRow`): a long list shows its
- * first few and the rest one tap away, so a level of seventy chapters doesn't push the rest of the
- * page seventy rows down. Every row stays in the page's HTML, for search engines.
- */
+/** Every row stays in the page's HTML, for search engines. */
 export async function OutlineChapterList({ rows }: { rows: ReactNode[] }) {
   const t = await getExtracted();
 
@@ -105,11 +93,7 @@ export async function OutlineChapterList({ rows }: { rows: ReactNode[] }) {
   );
 }
 
-/**
- * A chapter in the outline, a station on the course's route: its number, its title (a heading
- * under the section's, since a level's or an area's name is the zone's label, not a heading), its
- * place in the example plan when there is one (`mark`), and its lessons in one line, one link each.
- */
+/** Its title is a heading under the section's: a level's or an area's name is the zone's label, not a heading. */
 export function OutlineChapterRow({
   chapter,
   mark,

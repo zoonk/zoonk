@@ -6,13 +6,6 @@ import { getTotalDurationLabel } from "@/lib/public/public-labels";
 import { getSubject } from "@zoonk/learn/subject-label";
 import { getExtracted } from "next-intl/server";
 
-/**
- * Beside the lesson from 72rem, the chapter it belongs to, as the chapter's page lists it: where it
- * sits in the course, how many lessons and how long, in one quiet line, its name (opening the
- * chapter), then its lessons as a stretch of the course's route with this one on an ink ring, in
- * the course's subject color (the aside sits outside the page's column, so it names it again).
- * Narrower screens fold the same rows under the question instead (`LessonMore`).
- */
 export async function LessonChapterAside({
   params,
   route,

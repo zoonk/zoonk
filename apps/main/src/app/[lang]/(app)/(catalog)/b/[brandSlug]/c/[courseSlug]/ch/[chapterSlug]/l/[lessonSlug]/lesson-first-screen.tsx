@@ -11,7 +11,6 @@ import { type PublicLibraryLesson } from "@zoonk/core/library/lessons/public";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 
-/** The first screen sits right on the page, as the player shows it, with no panel around it. */
 function FirstScreenSection({ children }: { children: ReactNode }) {
   return <section className="mt-8 sm:mt-10">{children}</section>;
 }
@@ -43,13 +42,6 @@ async function ChoiceScreen({
   );
 }
 
-/**
- * The lesson's first screen, live on the public page as its only next step. A question takes any
- * answer to open the player and a text opener gets a start button under it. Any other first screen
- * gets the start button alone, and a lesson that isn't written yet starts with one tap, which
- * opens it while it's written. Each way in carries the lesson's page (`origin`), which closing the
- * lesson returns to.
- */
 export async function LessonFirstScreen({
   lessonId,
   minutes,

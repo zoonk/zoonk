@@ -5,10 +5,6 @@ import { useExtracted } from "next-intl";
 import { LearnerAvatar } from "./user-avatar";
 import { UserDropdownMenu } from "./user-dropdown-menu";
 
-/**
- * The account menu, with the app's search first on a bar that has no search field of its own
- * (`includeSearch`): a 28px avatar that's still a 44px target.
- */
 export function UserAvatarMenu({ includeSearch = false }: { includeSearch?: boolean }) {
   const t = useExtracted();
 

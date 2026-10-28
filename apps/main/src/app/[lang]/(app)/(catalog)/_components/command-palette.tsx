@@ -37,10 +37,7 @@ const EMPTY_SEARCH_RESULTS: PaletteSearchResults = {
   plan: { chapters: [], subjects: [] },
 };
 
-/**
- * Opens the day's next block from the palette, as Today's Continue does: the palette has closed by
- * then, so a block that couldn't be opened says so in a toast.
- */
+/** The palette has closed by then, so a block that couldn't be opened says so in a toast. */
 function useContinueFromPalette() {
   const t = useExtracted();
   const go = useGoToStudyDestination();
@@ -62,22 +59,11 @@ function useContinueFromPalette() {
   };
 }
 
-/**
- * Cmd/Ctrl+K search, commands and questions, the app's one search: the shortcut, the search field
- * (the sidebar's, the phone's under the top bar) and the account menu's "Search" open it. Anyone
- * with a session gets their actions, places and other goals (`learner`), and can ask the buddy
- * whatever they type; a visitor gets the public pages.
- */
 type CommandPaletteProps = { isLoggedIn: boolean; learner?: LearnerPalette };
 
 /**
- * Who the palette is for while it's open, and its rows. One opened before the learner was read
- * lists the places every learner has. When the learner arrives, their rows show at once if they
- * all land below the highlighted row (`highlighted`, its index in the whole list), such as their
- * account pages under Settings. The palette keeps its highlight by index, so rows their summary
- * adds at or above it (the next block, a question for the buddy) would move it from under their
- * Enter: those wait until they type or open it again. Anyone else's palette (a visitor's, another
- * learner's) shows at once.
+ * The palette keeps its highlight by index, so learner rows that would land at or above it wait until
+ * the learner types or opens it again; otherwise Enter would open something else.
  */
 function useShownPalette({
   highlighted,
@@ -140,7 +126,6 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
       onSearch: handleSearch,
     });
 
-  /** The search fields and the account menu's "Search" open this palette too. */
   useEffect(() => listenForCommandPaletteOpen(open), [open]);
 
   const [highlighted, setHighlighted] = useState(-1);
@@ -180,10 +165,7 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
     runPaletteItem(item);
   }
 
-  /**
-   * The dialog may close from Escape, Cancel or an outside press. The search hook owns
-   * query/result reset, so close events should go through that single path.
-   */
+  /** The search hook owns the query and results reset, so every close goes through it. */
   function handleDialogOpenChange(nextOpen: boolean) {
     if (!nextOpen) {
       closePalette();
@@ -229,7 +211,6 @@ function Palette({ isLoggedIn, learner }: CommandPaletteProps) {
   );
 }
 
-/** The keys the palette answers to, where there's a keyboard. */
 function PaletteFooter() {
   const t = useExtracted();
 

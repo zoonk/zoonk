@@ -48,13 +48,8 @@ import { LibraryCourseOutline } from "./library-course-outline";
 type Params = { brandSlug: string; courseSlug: string };
 type Course = LibraryCourseRoute["course"];
 
-/** The room between the route's stops, inside each one, so the line runs on unbroken. */
 const STOP_CLASS = "pb-16 sm:pb-24";
 
-/**
- * Points visitors reading in another language to this course's edition in theirs, on a panel over
- * the first screen's band.
- */
 async function EditionNotice({ courseId, locale }: { courseId: string; locale: SupportedLocale }) {
   const t = await getExtracted();
   const editions = await listPublishedCourseEditions({ courseId });
@@ -83,11 +78,6 @@ async function EditionNotice({ courseId, locale }: { courseId: string; locale: S
   );
 }
 
-/**
- * The course: its mark, its subject (and an exam course's next sitting) over its name, the first
- * station of its route, what it makes someone able to do, what Zoonk does with it in one line and
- * the ways in.
- */
 function CourseHero({
   course,
   exam,
@@ -134,12 +124,6 @@ function CourseHero({
   );
 }
 
-/**
- * The first screen, the route's first stop: the course and its ways in, beside the course's own
- * first question to try (off the line, beside the title from `xl`), so the page teaches before it
- * explains, with the example plan as the next stop; without a question, the plan takes its place
- * beside the course.
- */
 function CourseFirstScreen({
   hero,
   plan,
@@ -161,14 +145,12 @@ function CourseFirstScreen({
   );
 }
 
-/** The course's chapters by id, for the plan's rows to say which chapter a lesson is from. */
 function getChapterTitles(outline: LibraryOutline): Map<string, string> {
   return new Map(
     outline.levels.flatMap((band) => band.chapters.map((chapter) => [chapter.id, chapter.title])),
   );
 }
 
-/** The course's first lessons in order, with their chapters and their numbers there. */
 function getTryCandidates(outline: LibraryOutline): TryLessonCandidate[] {
   return outline.levels.flatMap((band) =>
     band.chapters.flatMap((chapter) =>
@@ -181,11 +163,6 @@ function getTryCandidates(outline: LibraryOutline): TryLessonCandidate[] {
   );
 }
 
-/**
- * The page's last word, where its route ends: the one way in again. A learner whose goal already
- * follows the course is past the start, so the end says so above "Continue your plan" instead of
- * promising them the first questions again.
- */
 async function CourseClosing({ courseId, pace }: { courseId: string; pace: number | null }) {
   const t = await getExtracted();
   const titleId = `course-closing-${courseId}`;
@@ -213,19 +190,6 @@ async function CourseClosing({ courseId, pace }: { courseId: string; pace: numbe
   );
 }
 
-/**
- * A course's page in the catalog, inside the app's frame like Explore courses, written for a
- * visitor from a search who doesn't know Zoonk: the bar back to the catalog; the course and its
- * ways in, beside the course's own first question, answerable right there, so the page starts
- * teaching before it explains anything; its example plan, which a time a day turns into weeks to
- * the end (or, for an exam course, into the lessons that fit by the exam), from core's planner,
- * beside the course instead when there's no question to try; who it's for and what it makes them
- * able to do; the full outline, every chapter and lesson in the HTML, each chapter marked with its
- * place in the plan at the example's pace; and the way in again. The plan is cached for the hour,
- * so the page's prefetch carries it whole.
- * "Build my plan" opens the course's start page, which asks their level and starts the plan on
- * their tap there.
- */
 export async function LibraryCoursePage({
   locale,
   params,

@@ -14,14 +14,8 @@ import { getChapterWeeksFormatter, getChapterWorkFormatter } from "./outline-wee
 
 type ChapterRow = DatedEstimate["chapters"][number];
 
-/** Each chapter's row in the selected example. */
 type AreaRows = ReadonlyMap<string, ChapterRow>;
 
-/**
- * The area's chapters in the order the selected example studies them: what
- * fits, by the planner's study order, then what's left out, in the course's order (core numbers
- * those after the rest).
- */
 function orderByStudy({ chapters, rows }: { chapters: OutlineChapter[]; rows: AreaRows }) {
   const order = (chapter: OutlineChapter) =>
     rows.get(chapter.id)?.studyOrder ?? Number.POSITIVE_INFINITY;
@@ -29,11 +23,7 @@ function orderByStudy({ chapters, rows }: { chapters: OutlineChapter[]; rows: Ar
   return chapters.toSorted((first, second) => order(first) - order(second));
 }
 
-/**
- * How an area fares in the selected example: its study time, then how many of its
- * lessons fit, its quick lessons and, when some fit and some don't, its chapters left out (a
- * whole area left out says so in its time). No bar: a share of time would read as coverage.
- */
+/** No bar: a share of time would read as coverage. */
 async function AreaFit({
   area,
   chapters,
@@ -74,10 +64,6 @@ async function AreaFit({
   );
 }
 
-/**
- * An area's chapters as rows, each with its week in the selected example, how much of it
- * fits, or that it's left out.
- */
 async function AreaChapters({
   chapters,
   numbers,
@@ -94,10 +80,7 @@ async function AreaChapters({
   const weeksText = await getChapterWeeksFormatter();
   const workText = await getChapterWorkFormatter();
 
-  /**
-   * A chapter's mark at one pace: its weeks, with how many of its own lessons fit when not all do,
-   * or what it's studied through when none does; "Left out" only when the plan holds no work of it.
-   */
+  /** "Left out" only when the plan holds no work of it. */
   const markText = (chapter: OutlineChapter) => {
     const row = rows.get(chapter.id);
     const span = row ? weeksText(row) : null;
@@ -133,14 +116,7 @@ async function AreaChapters({
   );
 }
 
-/**
- * The outline by the exam's areas, for an exam course read against its date: each area a zone of
- * the course's route, folded to its name and how much of it fits, its chapters in the plan's order when opened (they're long,
- * and the summaries already say what a visitor came to compare). Areas follow core's estimate; a
- * chapter it can't place in an area yet (never a guessed one) isn't listed here, since a group of
- * "chapters in no exam area" is our data's gap, not the exam's structure. An exam with one area
- * lists its chapters right away.
- */
+/** A chapter core can't place in an area yet isn't listed: "chapters in no exam area" is our data's gap, not the exam's. */
 export async function AreaOutline({
   estimate,
   outline,
@@ -162,7 +138,6 @@ export async function AreaOutline({
 
   const shared = { numbers, params, rows };
 
-  // One area (or none placed yet) lists every chapter at once.
   if (order.length <= 1) {
     return (
       <div className="flex flex-col gap-2">
