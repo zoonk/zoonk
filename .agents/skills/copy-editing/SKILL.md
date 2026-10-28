@@ -1,8 +1,8 @@
 ---
 name: copy-editing
-description: "When the user wants to edit, review, or improve existing marketing copy, or refresh outdated content. Also use when the user mentions 'edit this copy,' 'review my copy,' 'copy feedback,' 'proofread,' 'polish this,' 'make this better,' 'copy sweep,' 'tighten this up,' 'this reads awkwardly,' 'clean up this text,' 'too wordy,' 'sharpen the messaging,' 'refresh this content,' 'update this page,' 'this content is outdated,' or 'content audit,' 'this sounds like AI,' 'AI slop,' 'de-slop this,' or 'make it sound human.' Use this when the user already has copy and wants it improved or refreshed rather than rewritten from scratch. Every edit removes AI tells such as 'it's not X, it's Y' reveals, 'no X, no Y, no Z' lists, and sentences that trail into extra comma clauses. For writing new copy, see copywriting."
+description: "When the user wants to edit, review, or improve existing marketing copy, or refresh outdated content. Also use when the user mentions 'edit this copy,' 'review my copy,' 'copy feedback,' 'proofread,' 'polish this,' 'make this better,' 'copy sweep,' 'tighten this up,' 'this reads awkwardly,' 'clean up this text,' 'too wordy,' 'sharpen the messaging,' 'refresh this content,' 'update this page,' 'this content is outdated,' or 'content audit,' 'this sounds like AI,' 'AI slop,' 'de-slop this,' or 'make it sound human.' Use this when the user already has copy and wants it improved or refreshed rather than rewritten from scratch. Every edit removes AI tells such as 'it's not X, it's Y' reveals, 'no X, no Y, no Z' lists, and sentences that trail into extra comma clauses. A request to fix one line gets a point edit that changes only that line. For writing new copy, see copywriting."
 metadata:
-  version: 2.1.0
+  version: 2.2.1
 ---
 
 # Copy Editing
@@ -22,6 +22,8 @@ Good copy editing improves what's already there. Each pass focuses on one dimens
 - Multiple focused passes beat one unfocused review
 - Each edit should have a clear reason
 - Preserve the author's voice while improving clarity
+
+**Pick the mode before editing.** Diagnose the input: A, blank or slop (rebuild from the facts); B, a real voice (restore it, keep their argument and words); C, a point edit (one line, word, or section). **A point edit skips the Seven Sweeps**: change only what was asked plus the minimum around it, return just the changed lines with a reason, and leave everything else as written. Run the full sweeps for A and B. See [references/checklist.md](references/checklist.md#pick-the-edit-mode).
 
 ---
 
@@ -104,7 +106,7 @@ For every statement, ask "Okay, so what?" If the copy doesn't answer that questi
 
 ❌ "Our platform uses AI-powered analytics"
 _So what?_
-✅ "Our AI-powered analytics surface insights you'd miss manually—so you can make better decisions in half the time"
+✅ "Our AI-powered analytics surface insights you'd miss manually, so you can make better decisions in half the time"
 
 **Common So What failures:**
 
@@ -486,7 +488,7 @@ This iterative process ensures each edit doesn't create new problems while respe
 ## References
 
 - [Plain English Alternatives](references/plain-english-alternatives.md): Replace complex words with simpler alternatives
-- [Content Refresh](references/content-refresh.md): Full checklist, refresh vs. rewrite matrix, and cadence guide
+- [Content Refresh](references/content-refresh.md): SERP gap analysis, full checklist, refresh vs. rewrite matrix, and cadence guide
 - [Copy Editing Checklist](references/checklist.md): Full QA checklist across all seven sweeps plus the AI-tell check
 
 ---
@@ -495,7 +497,7 @@ This iterative process ensures each edit doesn't create new problems while respe
 
 Copy editing isn't just for new content. Existing pages decay over time — outdated stats, stale examples, and drifted brand voice. Use the content refresh framework when traffic is declining, data is stale, or the product has changed.
 
-**For the full refresh checklist, refresh vs. rewrite decision matrix, and cadence guide**: See [references/content-refresh.md](references/content-refresh.md)
+**For the SERP gap analysis, full refresh checklist, refresh vs. rewrite decision matrix, and cadence guide**: See [references/content-refresh.md](references/content-refresh.md)
 
 ---
 
