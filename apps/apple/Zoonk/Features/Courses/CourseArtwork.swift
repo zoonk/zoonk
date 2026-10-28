@@ -83,7 +83,6 @@ private enum ArtworkPhase {
   case loading
 }
 
-/// Loads a private picture with the learner's session, and shows the fallback when signed out.
 private struct PrivateArtworkImage<Content: View>: View {
   @State private var phase = ArtworkPhase.loading
 

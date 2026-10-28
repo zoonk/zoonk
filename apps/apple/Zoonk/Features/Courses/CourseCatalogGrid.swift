@@ -1,9 +1,5 @@
 import SwiftUI
 
-/// The chosen category's courses inside the catalog's list: one row each on a narrow screen, and
-/// on a wide one as many columns as fit, so a wider screen shows more courses instead of wider
-/// rows (main's grid from `lg`). Partially folded, iPhone Duo gets the same number of columns on
-/// each side of the fold, so no course sits in the crease. The last course loads the next page.
 struct CourseCatalogGrid: View {
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -81,8 +77,6 @@ struct CourseCatalogGrid: View {
     }
   }
 
-  /// A row is the list's own link, chevron included; a column is a plain link of its own, its
-  /// whole cell the target, as main's grid draws it.
   @ViewBuilder
   private func link(_ course: CourseSummary, isColumn: Bool) -> some View {
     let destination = CourseDestination.course(CourseReference(course))
@@ -104,9 +98,6 @@ private struct CourseCatalogPaginationTaskID: Equatable {
   let isRefreshing: Bool
 }
 
-/// A course: its mark, its subject (where the page isn't that subject's already), its title, the
-/// first sentence of what it is and its numbers. In a row the mark sits beside the words; in a
-/// column over them, the numbers at the foot.
 private struct CourseCell: View {
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 

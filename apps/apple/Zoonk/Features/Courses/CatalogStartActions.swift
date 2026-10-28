@@ -1,8 +1,5 @@
 import SwiftUI
 
-/// A course's or a chapter's way in (main's `CourseStart`): "Build my plan", whose start screen
-/// asks the learner's level first and creates nothing until they start, and "Try a lesson" beside
-/// it when the page has a written lesson to try. A visitor reads that it's free (`note`).
 struct CatalogStartActions: View {
   @Environment(AppRouter.self) private var router
   @Environment(SessionStore.self) private var session
@@ -10,11 +7,9 @@ struct CatalogStartActions: View {
   let courseID: String
   /// The chapter a chapter page starts the plan from; nil for the whole course.
   var chapterID: String?
-  /// A goal of the learner's follows the course: "Continue your plan" leads back to Today.
   var continues = false
   let tryLessonID: String?
-  /// What starting takes, under the buttons; nil for the visitor's "Start free, no account
-  /// needed.", which nobody with a session reads.
+  /// Nil shows the visitor's "Start free, no account needed."
   var note: Text?
 
   var body: some View {
@@ -84,7 +79,6 @@ struct CatalogStartActions: View {
   }
 }
 
-/// A course's or a chapter's "…" in the bar, with its feedback (main's `ContentFeedbackMenu`).
 struct CatalogOptionsMenu: ToolbarContent {
   let label: LocalizedStringResource
   let showFeedback: () -> Void

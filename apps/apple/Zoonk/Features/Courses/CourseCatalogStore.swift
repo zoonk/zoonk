@@ -1,8 +1,6 @@
 import Foundation
 import Observation
 
-/// The public catalog: course lists by category, course and chapter pages, and search, the same
-/// for everyone, so they survive a session change.
 @MainActor
 @Observable
 final class CourseCatalogStore {
@@ -15,14 +13,11 @@ final class CourseCatalogStore {
 
   @ObservationIgnored private let api: any CourseCatalogAPIClient
   @ObservationIgnored private let cache: AppCache
-  /// The catalog's language, the reader's when Zoonk has courses in it.
   @ObservationIgnored let language: String
   @ObservationIgnored private var chapters: [CatalogChapterKey: Resource<ChapterDetail>] = [:]
   @ObservationIgnored private var courseDetails: [String: Resource<CourseDetail>] = [:]
   @ObservationIgnored private var pages: [CourseCategory?: Resource<CourseCatalogPage>] = [:]
 
-  /// How many courses the catalog has in all and in each category, so it lists only the
-  /// categories that have some.
   @ObservationIgnored let categoryCounts: Resource<CourseCategoryCounts>
 
   init(api: any CourseCatalogAPIClient, language: String, cache: AppCache) {
@@ -38,7 +33,6 @@ final class CourseCatalogStore {
     search?.results.state ?? .idle
   }
 
-  /// The first page of a category's courses, with later pages appended by `loadMoreCourses`.
   func courses(category: CourseCategory?) -> Resource<CourseCatalogPage> {
     if let resource = pages[category] {
       return resource
@@ -121,9 +115,7 @@ final class CourseCatalogStore {
     return resource
   }
 
-  /// A chapter page in the context of the course it was opened from. A chapter that no longer
-  /// exists, for example after a content reset, also refreshes its course so the course page stops
-  /// listing it.
+  /// A chapter that no longer exists also refreshes its course, so the course page stops listing it.
   func chapter(_ key: CatalogChapterKey) -> Resource<ChapterDetail> {
     if let resource = chapters[key] {
       return resource
@@ -144,8 +136,6 @@ final class CourseCatalogStore {
     return resource
   }
 
-  /// Forgets the previous query's results before a debounced search starts, keeping an unchanged
-  /// search.
   func prepareSearch(query: String) {
     guard catalogText(query) != search?.query.query else {
       return
@@ -198,7 +188,6 @@ final class CourseCatalogStore {
   }
 }
 
-/// The search that's on screen: only the latest query's results are kept.
 private struct CatalogSearch {
   let query: CatalogSearchQuery
   let results: Resource<CatalogSearchResults>
@@ -216,7 +205,7 @@ private func loadChapterDetail(
   return try await ChapterDetail(chapter: chapter, lessons: lessons)
 }
 
-/// Loads a part of a page the page can show without, so its failure doesn't fail the page.
+/// Its failure doesn't fail the page.
 private func loadCatalogSupplement<Value: Sendable>(
   _ operation: @Sendable () async throws -> Value
 ) async throws -> Value? {

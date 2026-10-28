@@ -1,10 +1,5 @@
 import SwiftUI
 
-/// A chapter's page in the catalog (main's `LibraryChapterPage`), for someone who landed on its
-/// topic: the course it belongs to, what the chapter teaches, what Zoonk does with it and the way
-/// to start; where it sits in the course and the chapters after it; its lessons, one tap each; what
-/// it teaches; and the plan it starts, with the way in again. It reads its course too, which a
-/// course page opening it has already.
 struct ChapterView: View {
   @Environment(CourseCatalogStore.self) private var catalog
   @State private var isFeedbackPresented = false
@@ -49,11 +44,8 @@ struct ChapterView: View {
   }
 }
 
-/// Where there's room, the chapter and its way in lead and the rest follows, as two pages: where it
-/// sits in the course, its lessons, what it teaches and the way in again.
 private struct ChapterLandingList: View {
   let chapter: ChapterReference
-  /// The chapter's course with its outline, once it's read.
   let course: CourseDetail?
   let detail: ChapterDetail
 
@@ -91,13 +83,11 @@ private struct ChapterLandingList: View {
   }
 
   /// The course's first chapter, or one whose lessons aren't written yet, starts the course at the
-  /// reader's level; any other starts the plan here.
+  /// reader's level.
   private var startsHere: Bool {
     hasLesson && (index ?? chapter.position ?? 0) > 0
   }
 
-  /// The course it belongs to, the chapter and what it teaches, what Zoonk does with it and the way
-  /// to start.
   private var header: some View {
     Section {
       VStack(alignment: .leading, spacing: 12) {
@@ -132,7 +122,6 @@ private struct ChapterLandingList: View {
     }
   }
 
-  /// Where the chapter sits in the course, its lessons, what it teaches and the way in again.
   @ViewBuilder
   private var contents: some View {
     if let course, let index, outline.count > 1 {
@@ -193,8 +182,6 @@ private struct ChapterLandingList: View {
   }
 }
 
-/// The chapter's way in: "Build my plan" from this chapter (`startsHere`), or the course's at the
-/// reader's level; a chapter whose lessons aren't written yet says its start writes them.
 private struct ChapterStart: View {
   let chapter: ChapterReference
   let hasLesson: Bool
@@ -213,14 +200,9 @@ private struct ChapterStart: View {
   }
 }
 
-/// Where the chapter sits in its course (main's `ChapterStrip`): the course's levels (an exam
-/// course's areas) as a meter, each as long as its chapters, this chapter's in ink, "Chapter 12 of
-/// 77 · Beginner" under it (in an exam area, its place there), then this chapter and the next
-/// ones, one tap each.
 private struct ChapterStrip: View {
   private static let next = 3
 
-  /// An exam course's chapters by the exam's area, which group them in place of the levels.
   let areas: [String: String]?
   let course: Course
   let index: Int
@@ -271,14 +253,12 @@ private struct ChapterStrip: View {
     }
   }
 
-  /// A run of the meter: a level's chapters, or an exam area's.
   private struct Group {
     let chapters: [CourseChapter]
     let id: String
     let label: String
   }
 
-  /// The levels, or the exam's areas in the order the outline first reaches each.
   private var stripGroups: [Group] {
     guard let areas else {
       return courseLevelBands(outline).map {
@@ -304,8 +284,6 @@ private struct ChapterStrip: View {
   }
 }
 
-/// The chapter's lessons in order, one tap each, with how long each takes; the header says where
-/// the chapter sits, how many lessons it has and how long they take.
 private struct ChapterLessonsSection: View {
   @Environment(AppRouter.self) private var router
 
@@ -342,7 +320,6 @@ private struct ChapterLessonsSection: View {
     }
   }
 
-  /// "Chapter 1 of 12 · 5 short lessons · 32 min".
   private var facts: String {
     let lessonsText = String(
       localized: "\(lessons.count) short lessons", table: "Courses",

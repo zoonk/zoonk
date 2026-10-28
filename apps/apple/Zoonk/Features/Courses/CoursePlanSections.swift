@@ -1,8 +1,5 @@
 import SwiftUI
 
-/// The course's example plan (main's `CoursePlanWindow`): its result at one time a day (the weeks
-/// to its end and when that is, or what fits by the exam), its first day and what fills that time,
-/// with a caption saying it's an example.
 struct CoursePlanSections: View {
   let chapters: [CourseChapter]
   let estimate: CoursePlanEstimate
@@ -25,8 +22,6 @@ struct CoursePlanSections: View {
       Text("Example plan", tableName: "Courses", comment: "Header of a course's example plan")
     }
 
-    // What fills the time follows the headline; the first day, when there's one, comes after it
-    // with the caption, as main's one column reads.
     if case .toEnd(_, _, let firstDay) = estimate.reach, !firstDay.isEmpty {
       PlanWorkloadSection(estimate: estimate, isExam: isExam, showsCaption: false)
       PlanFirstDay(chapters: chapters, lessons: firstDay)
@@ -36,7 +31,6 @@ struct CoursePlanSections: View {
   }
 }
 
-/// The caption under the example plan.
 private struct PlanCaption: View {
   var body: some View {
     Text(
@@ -45,8 +39,6 @@ private struct PlanCaption: View {
   }
 }
 
-/// A readout over a plan: its number large, the words around it smaller and muted, as main's
-/// `BigQuantity` draws a public page's number.
 private func planReadout(_ text: AttributedString, number: String) -> AttributedString {
   var readout = text
   readout.font = .title3.weight(.medium)
@@ -60,8 +52,6 @@ private func planReadout(_ text: AttributedString, number: String) -> Attributed
   return readout
 }
 
-/// The course to its end: the weeks it takes from scratch, and the month it ends for someone
-/// starting today, past a few weeks.
 private struct UndatedHeadline: View {
   /// A plan ending within this many days names no month: its weeks already say when.
   private static let nearDays = 42
@@ -117,9 +107,7 @@ private struct UndatedHeadline: View {
   }
 }
 
-/// An exam course against the exam's day: the time it studies by then, what that time holds and
-/// whether all of it fits. Never how much: that share depends on the learner's level and time,
-/// which onboarding asks.
+/// Never how much fits: that share depends on the learner's level and time, which onboarding asks.
 private struct DatedHeadline: View {
   let areas: [CoursePlanEstimate.Area]
   let date: String
@@ -196,8 +184,6 @@ private struct DatedHeadline: View {
   }
 }
 
-/// The plan's first day as Today lists it: its first few lessons, each the part of it the day
-/// holds, and the rest folded into one line.
 private struct PlanFirstDay: View {
   private static let shown = 3
 
@@ -248,9 +234,6 @@ private struct PlanFirstDay: View {
   }
 }
 
-/// What fills the plan's days at one time a day (main's `PlanWorkload`): the whole of it, a meter
-/// of its parts, each as long as its time, then each part after its kind's mark. A part with no
-/// time isn't listed.
 private struct PlanWorkloadSection: View {
   let estimate: CoursePlanEstimate
   let isExam: Bool

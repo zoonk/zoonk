@@ -1,9 +1,5 @@
 import SwiftUI
 
-/// The course catalog (main's `/courses`), opened from the goal switcher's "Explore courses": its
-/// title (the chosen category's on a category) and one line on what it's for, the goal box for
-/// anyone whose goal no course covers, the categories that have courses, and the courses, each
-/// opening its page. Search covers courses and their chapters.
 struct CatalogScreen: View {
   @State private var searchText = ""
   @State private var category: CourseCategory?

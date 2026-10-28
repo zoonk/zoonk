@@ -98,8 +98,7 @@ struct CourseLevelBand: Equatable, Identifiable {
   var id: CourseLevel { level }
 }
 
-/// Groups a course's chapters into level bands from overview to advanced, like the course outline
-/// on the web. Chapters keep their order, and empty bands are left out.
+/// Chapters keep their order, and empty bands are left out.
 func courseLevelBands(_ chapters: [CourseChapter]) -> [CourseLevelBand] {
   CourseLevel.allCases.compactMap { level in
     let bandChapters = chapters.filter { $0.level == level }

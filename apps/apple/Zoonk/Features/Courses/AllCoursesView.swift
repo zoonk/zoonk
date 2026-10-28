@@ -2,8 +2,8 @@ import SwiftUI
 
 struct AllCoursesView: View {
   @Environment(CourseCatalogStore.self) private var catalog
-  /// Partially folded, iPhone Duo keeps the box and the categories under the title, on the page
-  /// before the fold, while the courses take both pages. Nil, the list's own margin, elsewhere.
+  /// Partially folded, iPhone Duo keeps the box and the categories on the page before the fold;
+  /// nil elsewhere.
   @State private var leadingPageMargin: CGFloat?
 
   @Binding var category: CourseCategory?
@@ -24,8 +24,6 @@ struct AllCoursesView: View {
     }
   }
 
-  /// The goal box, the categories and the courses in one list, so the box keeps its native field
-  /// and the courses scroll under it.
   private var browseCatalog: some View {
     List {
       GoalStartEntry(isBoxOnly: true)
@@ -77,9 +75,8 @@ struct AllCoursesView: View {
   }
 }
 
-/// The categories that have courses in the reader's language, in its alphabetical order: an empty
-/// one would only lead to "Start a goal", which the box above already offers. The open one stays
-/// listed, so the row always says where it is.
+/// An empty category would only lead to "Start a goal", which the box above already offers. The
+/// open one stays listed, so the row always says where it is.
 func populatedCategories(
   counts: CourseCategoryCounts, open: CourseCategory?, locale: Locale = .current
 ) -> [CourseCategory] {
@@ -88,7 +85,6 @@ func populatedCategories(
   }
 }
 
-/// The chosen category's courses: one row each, or on a wide screen as many columns as fit.
 private struct CatalogCourses: View {
   @Environment(CourseCatalogStore.self) private var catalog
   @Environment(AppRouter.self) private var router

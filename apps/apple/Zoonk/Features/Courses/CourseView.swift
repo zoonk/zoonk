@@ -1,9 +1,5 @@
 import SwiftUI
 
-/// A course's page in the catalog (main's `LibraryCoursePage`), written for someone who doesn't
-/// know Zoonk yet: the course and its ways in, its example plan, who it's for and what it makes
-/// them able to do, the full outline with each chapter's place in that plan, and the way in again.
-/// The Plan's "See the full course" and Search open it too.
 struct CourseView: View {
   @Environment(CourseCatalogStore.self) private var catalog
   @State private var isFeedbackPresented = false
@@ -45,8 +41,6 @@ struct CourseView: View {
   }
 }
 
-/// Where there's room, the course and its example plan lead and what it covers follows, as two
-/// pages: who it's for, what it makes them able to do, the outline and the way in again.
 private struct CourseLandingList: View {
   @Environment(CourseCatalogStore.self) private var catalog
   @Environment(LearnerSummaryStore.self) private var learner
@@ -70,7 +64,6 @@ private struct CourseLandingList: View {
     }
   }
 
-  /// The course, its ways in and its example plan.
   @ViewBuilder
   private var pitch: some View {
     let example = detail.course.examplePlan
@@ -88,7 +81,6 @@ private struct CourseLandingList: View {
     }
   }
 
-  /// Who the course is for, what it makes them able to do, its outline and the way in again.
   @ViewBuilder
   private var contents: some View {
     let example = detail.course.examplePlan
@@ -106,15 +98,14 @@ private struct CourseLandingList: View {
     learner.summary.value?.followsCourse(detail.course.id) ?? false
   }
 
-  /// The course's description over the outline, when the hero led with its promise instead.
   private var outlineLead: String? {
     detail.course.landingPage == nil ? nil : catalogText(detail.course.description)
   }
 }
 
 extension LearnerSummary {
-  /// Whether one of the learner's goals follows the course: its page offers "Continue your plan"
-  /// then, since starting it again would only lead back to that goal.
+  /// Its page offers "Continue your plan" then, since starting it again would only lead back to
+  /// that goal.
   func followsCourse(_ courseID: String) -> Bool {
     goals.contains { goal in
       goal.courseID == courseID && goal.status == .active && goal.kind != .explain
@@ -122,7 +113,6 @@ extension LearnerSummary {
   }
 }
 
-/// Points a reader to the course's edition in their language, over a page written in another.
 private struct EditionNotice: View {
   let edition: CourseEdition
 
@@ -143,8 +133,6 @@ private struct EditionNotice: View {
   }
 }
 
-/// The course: its mark, its subject (and an exam course's next sitting) over its name, what it
-/// makes someone able to do, what Zoonk does with it in one line and the ways in.
 private struct CourseHeroSection: View {
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
@@ -196,15 +184,12 @@ private struct CourseHeroSection: View {
     }
   }
 
-  /// The page's promise in the course's own words, or its description before they're written.
   private var promise: String? {
     catalogText(detail.course.landingPage?.valueProposition)
       ?? catalogText(detail.course.description)
   }
 }
 
-/// An exam course's next sitting, "Exam on Nov 8 and Nov 15 · 26 days left"; "Exam around…" while
-/// its days are estimated from past editions.
 private struct CourseExamEyebrow: View {
   let exam: CoursePlanExample.Exam
 
@@ -244,8 +229,7 @@ private struct CourseExamEyebrow: View {
   }
 }
 
-/// A calendar day as core sends it ("2026-11-08") written as its day and month, "Nov 8", read at
-/// UTC midnight so no time zone moves it to another day.
+/// Read at UTC midnight, so no time zone moves it to another day.
 func catalogDay(_ isoDate: String) -> String? {
   let style = Date.ISO8601FormatStyle(timeZone: .gmt).year().month().day()
 
@@ -258,8 +242,6 @@ func catalogDay(_ isoDate: String) -> String? {
   return date.formatted(format)
 }
 
-/// What Zoonk does with the page's course, in one line: a plan that starts at the reader's level,
-/// or at the page's chapter (`startsHere`), and fits their schedule, after the Plan's map.
 struct PlanLine: View {
   let startsHere: Bool
 
@@ -282,8 +264,6 @@ struct PlanLine: View {
   }
 }
 
-/// Whether the course fits the reader, in its own words: who it's for, then what it makes them
-/// able to do. Nothing before the course's details are written.
 private struct CourseFitSections: View {
   let landingPage: CourseLandingPage?
 
@@ -312,7 +292,6 @@ private struct CourseFitSections: View {
   }
 }
 
-/// A line after a tick: what a course or a chapter makes someone able to do.
 struct CheckLine: View {
   let text: String
 
@@ -326,8 +305,6 @@ struct CheckLine: View {
   }
 }
 
-/// The page's last word: the one way in again. A learner whose goal follows the course is past
-/// the start, so it says so above "Continue your plan" instead of promising the first questions.
 private struct CourseClosingSection: View {
   let courseID: String
   let follows: Bool

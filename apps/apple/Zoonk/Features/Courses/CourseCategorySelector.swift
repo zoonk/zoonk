@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// The catalog's categories, one tap to filter it (main's `CategoryNav`): "All", then the
-/// categories that have courses, each after its subject's glyph, in a row that scrolls sideways.
 struct CourseCategorySelector: View {
   @Environment(\.accessibilityReduceMotion) private var accessibilityReduceMotion
   let categories: [CourseCategory]

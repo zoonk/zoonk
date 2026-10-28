@@ -1,11 +1,5 @@
 import SwiftUI
 
-/// Everything the course covers (main's `LibraryCourseOutline`): its size beside its title, the
-/// example plan's line, its description, then its levels, each folded to its name and first
-/// chapters, the first open, its chapters numbered across the course with their lessons and their
-/// week in the example plan. An exam course read against its date groups its chapters by the
-/// exam's areas instead. A course whose outline isn't written yet invites the reader to build
-/// their plan, which writes it for them.
 struct CourseOutlineSections: View {
   let detail: CourseDetail
   let estimate: CoursePlanEstimate?
@@ -76,7 +70,6 @@ struct CourseOutlineSections: View {
     }
   }
 
-  /// "12 chapters · 80 short lessons · ~9 hr", the lessons once they're written.
   private func sizeText(_ chapters: [CourseChapter]) -> String? {
     guard !chapters.isEmpty else {
       return nil
@@ -99,10 +92,7 @@ struct CourseOutlineSections: View {
   }
 }
 
-/// A level of the course (Overview, Beginner…), folded to its name, its first chapters and how
-/// many there are, with the weeks it takes in the example plan; open, its chapters as rows.
 private struct CourseLevelOutline: View {
-  /// How many chapter names a folded level mentions.
   private static let named = 3
 
   let band: CourseLevelBand
@@ -145,7 +135,6 @@ private struct CourseLevelOutline: View {
     }
   }
 
-  /// "12 chapters · weeks 2–15": the level's size and its weeks in the example plan.
   private var aside: String {
     let count = String(
       localized: "\(band.chapters.count) chapters", table: "Courses",
@@ -171,9 +160,7 @@ private struct CourseLevelOutline: View {
   }
 }
 
-/// An exam course's chapters by the exam's areas, as its plan against the exam's date reads them:
-/// each area folded to its name and how much of it fits, its chapters in the plan's order. A
-/// chapter the estimate can't place in an area yet isn't listed.
+/// A chapter the estimate can't place in an area yet isn't listed.
 private struct CourseAreaOutline: View {
   let areas: [CoursePlanEstimate.Area]
   let chapters: [CourseChapter]
@@ -224,7 +211,6 @@ private struct CourseAreaOutline: View {
     }
   }
 
-  /// The area's chapters in the order the plan studies them, what's left out last.
   private func areaRows(chapters: [CourseChapter]) -> some View {
     let ordered = chapters.sorted {
       (places[$0.id]?.studyOrder ?? .max) < (places[$1.id]?.studyOrder ?? .max)
@@ -233,8 +219,6 @@ private struct CourseAreaOutline: View {
     return OutlineChapterRows(chapters: ordered, course: course, mark: mark)
   }
 
-  /// A chapter's weeks, with how many of its lessons fit when not all do, or what it's studied
-  /// through when none does; "Left out" only when the plan holds nothing of it.
   private func mark(_ chapter: CourseChapter) -> String? {
     guard let place = places[chapter.id], let weeks = weekText(place) else {
       return String(
@@ -256,7 +240,6 @@ private struct CourseAreaOutline: View {
     return [weeks, detail].compactMap(\.self).joined(separator: " · ")
   }
 
-  /// How an area fares: its study time, how many of its lessons fit, and its chapters left out.
   private func areaFit(name: String?, chapters: [CourseChapter]) -> String {
     let area = areas.first { $0.name == name }
     let leftOut = chapters.filter { places[$0.id]?.week == nil }.count
@@ -315,7 +298,6 @@ private struct CourseAreaOutline: View {
   }
 }
 
-/// What a chapter none of whose own lessons fit is studied through.
 private func workText(_ kinds: Set<CoursePlanEstimate.WorkKind>) -> String? {
   switch (kinds.contains(.quick), kinds.contains(.unwritten)) {
   case (true, true):
@@ -335,7 +317,6 @@ private func workText(_ kinds: Set<CoursePlanEstimate.WorkKind>) -> String? {
   }
 }
 
-/// The week a chapter starts in the example plan, "Week 18"; nil when the plan holds none of it.
 /// The weeks a chapter starts only ever go up, while ranges would read as out of order.
 private func weekText(_ place: CoursePlanEstimate.ChapterPlace) -> String? {
   place.week.map {
@@ -344,7 +325,6 @@ private func weekText(_ place: CoursePlanEstimate.ChapterPlace) -> String? {
   }
 }
 
-/// A level's or an area's chapters, a long list showing its first few with the rest one tap away.
 private struct OutlineChapterRows: View {
   private static let shown = 6
   /// A list only a little longer shows whole: a fold that hides two chapters saves nothing.
@@ -382,8 +362,6 @@ private struct OutlineChapterRows: View {
   }
 }
 
-/// A chapter in the outline: its number across the course, its title, its place in the example
-/// plan, and its lessons in one line.
 private struct OutlineChapterRow: View {
   let chapter: CourseChapter
   let mark: String?

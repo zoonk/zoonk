@@ -74,8 +74,7 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
     }
   }
 
-  /// Reads the chapter as the given course places it. A course that doesn't place the chapter is
-  /// not found.
+  /// A course that doesn't place the chapter is not found.
   func getChapter(_ key: CatalogChapterKey) async throws -> CourseChapter {
     try await clients.perform(token: nil) { client in
       let output = try await client.getChapter(
@@ -371,7 +370,6 @@ private func makeCoursePlanExample(
     })
 }
 
-/// The estimate's two shapes: to the course's end, or against a date by the exam's areas.
 private func makeCoursePlanEstimate(
   _ payload: Components.Schemas.CoursePlanEstimate
 ) -> CoursePlanEstimate? {

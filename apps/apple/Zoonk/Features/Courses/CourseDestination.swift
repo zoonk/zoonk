@@ -32,8 +32,6 @@ struct CourseReference: Hashable {
     title = course.title
   }
 
-  /// A course known only by its id and title, such as the one a plan is built from; its page
-  /// reads the rest.
   init(id: String, title: String) {
     description = nil
     self.id = id
@@ -49,9 +47,8 @@ struct CourseReference: Hashable {
   }
 }
 
-/// A chapter opened from one course. The course context comes from where the learner came from,
-/// because a shared chapter belongs to several courses and has a position in each. Chapters have no
-/// artwork of their own, so the course's icon stands in when the course is known.
+/// A shared chapter belongs to several courses and has a position in each, so the course comes from
+/// where the learner came from.
 struct ChapterReference: Hashable {
   let courseID: String
   let courseTitle: String
@@ -89,8 +86,7 @@ struct ChapterReference: Hashable {
     title = result.title
   }
 
-  /// Refreshes the chapter's own details while keeping the course it was opened from. The loaded
-  /// position only applies when the chapter was loaded in that same course.
+  /// The loaded position only applies when the chapter was loaded in that same course.
   init(_ source: (reference: ChapterReference, chapter: CourseChapter)) {
     courseID = source.reference.courseID
     courseTitle = source.reference.courseTitle
@@ -106,7 +102,6 @@ struct ChapterReference: Hashable {
 }
 
 extension View {
-  /// The catalog's course and chapter pages, pushed on the stack that shows them.
   func catalogDestinations() -> some View {
     navigationDestination(for: CourseDestination.self) { destination in
       Group {

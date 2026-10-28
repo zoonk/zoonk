@@ -19,9 +19,8 @@ enum CourseCategory: String, CaseIterable, Codable, Equatable, Sendable {
   case tech
 }
 
-/// Where the server is in writing a course's chapter outline or a chapter's lesson outline. After a
-/// content reset, a course can be listed before its chapters exist, and a chapter before its
-/// lessons. Pending outlines are written when the first learner starts them.
+/// After a content reset, a course can be listed before its chapters exist, and a chapter before
+/// its lessons. Pending outlines are written when the first learner starts them.
 enum CatalogGenerationStatus: String, Codable, Equatable, Sendable {
   case completed
   case failed
@@ -29,7 +28,6 @@ enum CatalogGenerationStatus: String, Codable, Equatable, Sendable {
   case running
 }
 
-/// The level band a course places a chapter in, from overview to advanced.
 enum CourseLevel: String, CaseIterable, Codable, Equatable, Sendable {
   case overview
   case beginner
@@ -44,10 +42,8 @@ struct CourseOrganization: Codable, Equatable, Identifiable, Sendable {
   let slug: String
 }
 
-/// A course in the catalog's list: what its cell shows, its mark, subject, words and numbers.
 struct CourseSummary: Codable, Equatable, Identifiable, Sendable {
   let description: String?
-  /// Every lesson of its outline added up, as its page states its length.
   let estimatedMinutes: Int
   let id: String
   let imageURL: URL?
@@ -62,8 +58,7 @@ struct CourseSummary: Codable, Equatable, Identifiable, Sendable {
   let title: String
 }
 
-/// A course's details. A learner's own private course has no organization and is only readable with
-/// their session.
+/// A learner's own private course has no organization and is only readable with their session.
 struct Course: Codable, Equatable, Identifiable, Sendable {
   /// Oldest first: the first is the course's subject.
   let categories: [CourseCategory]
@@ -88,23 +83,21 @@ struct Course: Codable, Equatable, Identifiable, Sendable {
   var subject: CourseCategory? { categories.first }
 }
 
-/// The same course written in one language.
 struct CourseEdition: Codable, Equatable, Identifiable, Sendable {
   let id: String
   let language: String
   let title: String
 }
 
-/// A course page's own words: its promise, who it's for and what it makes them able to do.
 struct CourseLandingPage: Codable, Equatable, Sendable {
   let audience: [String]
   let outcomes: [String]
   let valueProposition: String
 }
 
-/// A chapter as one course places it. Chapters can be shared by several courses, so `courseID`,
-/// `level` and `position` describe the course the chapter was listed or fetched in, not its only
-/// parent. `position` counts from 0 across the course's whole outline.
+/// Chapters can be shared by several courses, so `courseID`, `level` and `position` describe the
+/// course the chapter was listed or fetched in, not its only parent. `position` counts from 0 across
+/// the course's whole outline.
 struct CourseChapter: Codable, Equatable, Identifiable, Sendable {
   let courseID: String
   let description: String
@@ -115,22 +108,20 @@ struct CourseChapter: Codable, Equatable, Identifiable, Sendable {
   /// The chapter's lessons as its course's outline lists them; empty when read on its own.
   let lessons: [CourseOutlineLesson]
   let level: CourseLevel
-  /// What the chapter teaches, one line each.
   let objectives: [String]
   let position: Int
   let slug: String
   let title: String
 }
 
-/// A lesson in a course's outline: its title and how long it takes.
 struct CourseOutlineLesson: Codable, Equatable, Identifiable, Sendable {
   let estimatedMinutes: Int
   let id: String
   let title: String
 }
 
-/// A lesson as one chapter lists it. Lessons can be shared by several chapters, so `chapterID`,
-/// `courseID` and `position` describe the listing, not the lesson's only parent.
+/// Lessons can be shared by several chapters, so `chapterID`, `courseID` and `position` describe the
+/// listing, not the lesson's only parent.
 struct CourseLesson: Codable, Equatable, Identifiable, Sendable {
   let chapterID: String
   let courseID: String
@@ -149,14 +140,12 @@ struct CourseLesson: Codable, Equatable, Identifiable, Sendable {
   }
 }
 
-/// Identifies a chapter page by the course it was opened from, since a shared chapter shows a
-/// different position and course in each course.
+/// A shared chapter shows a different position and course in each course.
 struct CatalogChapterKey: Hashable, Sendable {
   let chapterID: String
   let courseID: String
 }
 
-/// How many listed courses the catalog has in all and in each category, in one language.
 struct CourseCategoryCounts: Equatable, Sendable {
   let counts: [CourseCategory: Int]
   let total: Int
@@ -172,8 +161,6 @@ struct CourseCatalogPage: Codable, Equatable, Sendable {
   }
 }
 
-/// A course page: the course and its chapters, with the lesson "Try a lesson" opens, the first
-/// written one of its first chapter, when there's one.
 struct CourseDetail: Codable, Equatable, Sendable {
   let course: Course
   let chapters: [CourseChapter]
@@ -184,13 +171,12 @@ struct ChapterDetail: Codable, Equatable, Sendable {
   let chapter: CourseChapter?
   let lessons: [CourseLesson]
 
-  /// The chapter's first written lesson, which "Try a lesson" opens.
   var tryLessonID: String? {
     firstWrittenLessonID(lessons)
   }
 }
 
-/// The first lesson whose content is written: trying it costs nothing and opens at once.
+/// Trying a written lesson costs nothing and opens at once.
 func firstWrittenLessonID(_ lessons: [CourseLesson]) -> String? {
   lessons.first(where: \.isWritten)?.id
 }
