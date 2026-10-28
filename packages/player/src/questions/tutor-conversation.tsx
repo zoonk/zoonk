@@ -2,6 +2,7 @@
 
 import { type MissionMomentView } from "@zoonk/core/sessions/completion-contract";
 import { type TutorCards } from "@zoonk/learn/tutor-cards";
+import { TUTOR_COMPOSER_FRAME_CLASS } from "@zoonk/learn/tutor-composer";
 import { type TutorIdentity, TutorMessage } from "@zoonk/learn/tutor-identity";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -9,7 +10,7 @@ import { useExtracted } from "next-intl";
 import { useEffect, useMemo, useRef } from "react";
 import { useReducedMotion } from "../activities/_utils/use-reduced-motion";
 import { type LessonTutorConfig } from "../lesson/tutor/lesson-tutor-context";
-import { PAGE_COMPOSER_FRAME_CLASS, QuestionComposer } from "./lesson-question-composer";
+import { QuestionComposer } from "./lesson-question-composer";
 import {
   QuestionErrorAction,
   QuestionLimitNotice,
@@ -103,7 +104,7 @@ function SignUpPrompt() {
   const { linkComponent: Link, loginHref } = useLessonQuestionNavigation();
 
   return (
-    <div className={cn(PAGE_COMPOSER_FRAME_CLASS, "flex items-center gap-3 py-2 pr-2 pl-3.5")}>
+    <div className={cn(TUTOR_COMPOSER_FRAME_CLASS, "flex items-center gap-3 py-2 pr-2 pl-3.5")}>
       <p className="text-muted-foreground flex-1 text-sm">
         {t("Create a free account to start the conversation.")}
       </p>

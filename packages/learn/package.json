@@ -148,6 +148,7 @@
     "./today/shell": "./src/today/today-shell.tsx",
     "./today/suggested-goal": "./src/today/today-suggested-goal.tsx",
     "./tutor-cards": "./src/conversation/tutor-cards.tsx",
+    "./tutor-composer": "./src/conversation/tutor-composer.tsx",
     "./mission-moment": "./src/missions/mission-moment.tsx",
     "./missions-ring": "./src/buddies/missions-ring.tsx",
     "./tutor-identity": "./src/conversation/tutor-identity.tsx",

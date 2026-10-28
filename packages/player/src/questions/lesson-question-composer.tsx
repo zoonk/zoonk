@@ -2,6 +2,7 @@
 
 import { MAX_LESSON_QUESTION_LENGTH } from "@zoonk/core/lesson-questions/contract";
 import { type HelpLimit } from "@zoonk/learn/help-limit";
+import { TUTOR_COMPOSER_FRAME_CLASS } from "@zoonk/learn/tutor-composer";
 import {
   InputGroup,
   InputGroupAddon,
@@ -59,9 +60,6 @@ function SubmitIcon({
 
 const CREATE_NAVIGATION_ERROR_KINDS = new Set(["authentication", "subscription", "unavailable"]);
 
-/** The page composer's panel, which the sign-up prompt in its place shares. */
-export const PAGE_COMPOSER_FRAME_CLASS = "bg-card ring-input rounded-[0.875rem] ring-1 ring-inset";
-
 /**
  * Where the learner writes: one growing line on a panel with a square send button. On a page (the
  * buddy's conversation) it's a little larger; in a drawer or a lesson's aside (`compact`) it's 44px,
@@ -84,7 +82,7 @@ const FRAME_CLASS: Record<ComposerVariant, string> = {
     FOCUS_CLASS,
   ),
   page: cn(
-    PAGE_COMPOSER_FRAME_CLASS,
+    TUTOR_COMPOSER_FRAME_CLASS,
     "items-end rounded-[0.875rem]! border-transparent",
     FOCUS_CLASS,
   ),
@@ -93,7 +91,7 @@ const FRAME_CLASS: Record<ComposerVariant, string> = {
 /** The panel the limit sits on in the composer's place, the composer's own. */
 const LIMIT_FRAME_CLASS: Record<ComposerVariant, string> = {
   compact: "bg-card ring-input rounded-option ring-1 ring-inset",
-  page: PAGE_COMPOSER_FRAME_CLASS,
+  page: TUTOR_COMPOSER_FRAME_CLASS,
 };
 
 /**

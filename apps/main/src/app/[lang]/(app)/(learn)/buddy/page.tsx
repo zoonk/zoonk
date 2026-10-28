@@ -10,6 +10,7 @@ import { countOpenGoalMistakes } from "@zoonk/core/mistakes/count-goal";
 import { getSession } from "@zoonk/core/users/session";
 import { BUDDY_COLUMN_CLASS, BuddyDaySkeleton } from "@zoonk/learn/buddy";
 import { PageWithAside } from "@zoonk/learn/shell";
+import { TutorComposerSkeleton } from "@zoonk/learn/tutor-composer";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
@@ -68,12 +69,14 @@ async function hasOpenMistake(goalId: string): Promise<boolean> {
 }
 
 async function BuddyContent() {
-  const [readAt, result, goal, session, earlierQuestions] = await Promise.all([
+  // The memory count doesn't need the goal, so it's read with the rest of the first batch.
+  const [readAt, result, goal, session, earlierQuestions, memoryCount] = await Promise.all([
     getReadAt(),
     getBuddyStatus({}),
     findTutoredGoal(),
     getSession(),
     hasEarlierQuestions(),
+    countCurrentUserMemory(),
   ]);
 
   // Someone without a session may have goals in their account: they log in and come back here.
@@ -96,10 +99,9 @@ async function BuddyContent() {
 
   const canAsk = !session.user.isAnonymous;
 
-  const [hasMistake, thread, memoryCount] = await Promise.all([
+  const [hasMistake, thread] = await Promise.all([
     hasOpenMistake(goal.id),
     loadThread({ canAsk, goalId: goal.id }),
-    countCurrentUserMemory(),
   ]);
 
   return (
@@ -144,7 +146,7 @@ function BuddySkeleton({ dayLabel }: { dayLabel: string }) {
         </div>
         <div className="mt-auto flex flex-col gap-2.5 pt-6 pb-3 lg:pb-6">
           <Skeleton className="h-6.5 w-4/5 rounded-md" />
-          <Skeleton className="h-12 w-full rounded-xl" />
+          <TutorComposerSkeleton />
         </div>
       </div>
     </PageWithAside>
