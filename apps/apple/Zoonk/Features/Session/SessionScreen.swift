@@ -159,19 +159,14 @@ private struct NextStopView: View {
           .font(.subheadline.monospacedDigit())
           .foregroundStyle(.secondary)
 
-          MeterParts(
-            parts: day.blocks.map { block in
-              MeterParts.Part(
-                weight: Double(max(block.estimatedMinutes, 1)),
-                fill: block.isFinished
-                  ? .color(.success) : block.position == day.nextPosition ? .current : .track)
-            })
+          MeterParts(parts: day.meterParts)
         }
       }
 
       if let next {
         Section {
-          BlockRow(block: next, view: nil, isNext: true, countsTowardMission: false)
+          BlockRow(
+            block: next, view: nil, isNext: true, countsTowardMission: false, showsDetail: true)
 
           if isWaitingForLesson {
             Label {

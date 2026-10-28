@@ -134,7 +134,6 @@ struct LogbookScreen: View {
           }
         }
         .listRowBackground(Color.clear)
-        .listRowInsets(EdgeInsets())
 
         WeekRings(recap: recap)
       }

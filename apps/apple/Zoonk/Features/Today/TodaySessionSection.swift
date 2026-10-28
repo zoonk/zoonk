@@ -115,6 +115,8 @@ struct TodaySessionSection: View {
 
     if let next {
       blockButton(next, isNext: true)
+        .listRowSeparator(
+          next.canTestOut && next.chapterId != nil ? .hidden : .automatic, edges: .bottom)
 
       if next.canTestOut, let chapterID = next.chapterId {
         Button {
@@ -128,6 +130,7 @@ struct TodaySessionSection: View {
           .foregroundStyle(.secondary)
         }
         .listRowBackground(Color(.tertiarySystemFill))
+        .listRowSeparator(.hidden, edges: .top)
       }
     }
 
@@ -301,27 +304,13 @@ private struct DayProgressRow: View {
         .foregroundStyle(.secondary)
       }
 
-      MeterParts(parts: session.blocks.map(part))
+      MeterParts(parts: session.meterParts)
     }
     .accessibilityElement(children: .ignore)
     .accessibilityLabel(
       Text(
         "\(session.blocks.filter(\.isFinished).count) of \(session.blocks.count) done",
         tableName: "Today", comment: "How far the day's session is"))
-  }
-
-  private func part(_ block: StudyBlock) -> MeterParts.Part {
-    let weight = Double(max(block.estimatedMinutes, 1))
-
-    if block.isFinished {
-      return MeterParts.Part(weight: weight, fill: .color(.success))
-    }
-
-    if block.position == session.nextPosition {
-      return MeterParts.Part(weight: weight, fill: .current)
-    }
-
-    return MeterParts.Part(weight: weight, fill: .track)
   }
 }
 
@@ -333,6 +322,8 @@ struct BlockRow: View {
   let isNext: Bool
   let countsTowardMission: Bool
   var isBusy = false
+  /// What the block holds, under its name: the session's next stop says it, Today's queue doesn't.
+  var showsDetail = false
 
   var body: some View {
     HStack(alignment: .firstTextBaseline, spacing: 12) {
@@ -402,7 +393,7 @@ struct BlockRow: View {
       lines.append(label)
     }
 
-    if block.weakest || block.fullReview || isNext, let detail = block.detail {
+    if block.weakest || block.fullReview || showsDetail, let detail = block.detail {
       lines.append(detail)
     }
 

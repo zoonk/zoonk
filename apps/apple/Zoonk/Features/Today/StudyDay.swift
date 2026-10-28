@@ -1,4 +1,4 @@
-import Foundation
+import SwiftUI
 
 /// A day of study as Today and the session screen read it (`StudySession` and `UnstartedStudyDay`
 /// in the API): a saved day with its ids, or a day the learner hasn't opened yet, shown as it will
@@ -111,6 +111,26 @@ struct StudyDay: Decodable, Equatable, Sendable {
 
   var isStarted: Bool {
     blocks.contains { $0.status != .pending }
+  }
+
+  /// The day as segments, each as long as its block: done ones blue, the next one ringed, the rest
+  /// ahead in their kind's color, softly (a lesson's is the track).
+  var meterParts: [MeterParts.Part] {
+    blocks.map { block in
+      let weight = Double(max(block.estimatedMinutes, 1))
+
+      if block.isFinished {
+        return MeterParts.Part(weight: weight, fill: .color(.success))
+      }
+
+      if block.position == nextPosition {
+        return MeterParts.Part(weight: weight, fill: .current)
+      }
+
+      let kind = block.learnKind
+      return MeterParts.Part(
+        weight: weight, fill: kind == .lesson ? .track : .color(kind.color.opacity(0.35)))
+    }
   }
 
   /// Where the day stands, for its main action and status line (main's `getDayState`): a block to go
@@ -253,72 +273,6 @@ struct StudyBlock: Decodable, Equatable, Sendable {
   /// Questions play on the session screen; lessons, challenges and writing on their own.
   var isQuestionBlock: Bool {
     kind == .review || kind == .practice
-  }
-}
-
-/// A mission of the day: what it asks, how far it is, and what a tap on it opens.
-struct StudyMission: Decodable, Equatable, Sendable {
-  enum Kind: String, Decodable, Sendable {
-    case askBuddy
-    case call
-    case challenge
-    case essay
-    case finishChapter
-    case fixMistake
-    case mock
-    case pattern
-    case practice
-    case pronunciation
-    case review
-    case somethingNew
-    case weakSpot
-    case weeklyChallenge
-  }
-
-  struct Detail: Decodable, Equatable, Sendable {
-    let areaTitle: String?
-    let chapterTitle: String?
-    let patternTitle: String?
-    let rematch: Bool?
-    let title: String?
-  }
-
-  /// What a tap on the mission opens: a block of the day (by id, or by its place on a day not
-  /// opened yet) or a place of its own.
-  struct Opens: Decodable, Equatable, Sendable {
-    struct Ref: Decodable, Equatable, Sendable {
-      let position: Int
-    }
-
-    let kind: String
-    let blockId: String?
-    let chapterId: String?
-    let patternId: String?
-    let ref: Ref?
-  }
-
-  let detail: Detail?
-  let done: Int
-  let kind: Kind
-  let minutes: Double?
-  let opens: Opens?
-  let status: String
-  let total: Int
-  let waitReason: StudyBlock.WaitReason?
-
-  var isDone: Bool { status == "done" }
-
-  /// Whether the mission opens this block of the day.
-  func opens(_ block: StudyBlock) -> Bool {
-    guard let opens, opens.kind == "block" else {
-      return false
-    }
-
-    if let blockId = opens.blockId {
-      return blockId == block.id
-    }
-
-    return opens.ref?.position == block.position
   }
 }
 

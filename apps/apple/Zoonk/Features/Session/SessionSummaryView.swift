@@ -6,6 +6,7 @@ import SwiftUI
 /// learning" adds the plan's next lessons when there's time for them.
 struct SessionSummaryView: View {
   @Environment(\.dismiss) private var dismiss
+  @Environment(LearnerSummaryStore.self) private var learner
   @Environment(AppRouter.self) private var router
   @Environment(StudySessionStore.self) private var store
   @Environment(TodayStore.self) private var today
@@ -68,7 +69,6 @@ struct SessionSummaryView: View {
             .foregroundStyle(.secondary)
         }
         .listRowBackground(Color.clear)
-        .listRowInsets(EdgeInsets())
       }
 
       Section {
@@ -90,12 +90,7 @@ struct SessionSummaryView: View {
       if !summary.missions.isEmpty {
         Section {
           ForEach(Array(summary.missions.enumerated()), id: \.offset) { _, mission in
-            HStack(alignment: .firstTextBaseline, spacing: 12) {
-              StatusMark(status: mission.isDone ? .done : .todo)
-              Text(mission.name(buddy: "Zu"))
-                .foregroundStyle(mission.isDone ? .secondary : .primary)
-            }
-            .accessibilityElement(children: .combine)
+            MissionRow(mission: mission, buddyName: buddyName)
           }
         } header: {
           Text("Today's missions", tableName: "Session", comment: "The missions' header")
@@ -188,6 +183,10 @@ struct SessionSummaryView: View {
       .listRowBackground(Color.clear)
       .listRowInsets(EdgeInsets())
     }
+  }
+
+  private var buddyName: String {
+    learner.summary.value?.buddyName ?? "Zu"
   }
 
   private func title(_ summary: SessionSummary) -> Text {

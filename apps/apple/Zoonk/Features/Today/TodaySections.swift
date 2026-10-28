@@ -324,9 +324,12 @@ struct TodayMissionsSection: View {
             MeterParts.Part(fill: $0.isDone ? .color(.brain) : .color(.brain.opacity(0.18)))
           })
       }
+      .listRowSeparator(.hidden, edges: .bottom)
 
       ForEach(Array(missions.enumerated()), id: \.offset) { _, mission in
-        missionRow(mission)
+        MissionRow(mission: mission, buddyName: learner.summary.value?.buddyName ?? "Zu") {
+          go(mission)
+        }
       }
     } header: {
       won
@@ -337,44 +340,6 @@ struct TodayMissionsSection: View {
 
   private func minutesLeft(_ missions: [StudyMission]) -> Int {
     Int(missions.reduce(0) { $0 + ($1.minutes ?? 0) }.rounded())
-  }
-
-  @ViewBuilder
-  private func missionRow(_ mission: StudyMission) -> some View {
-    let row = HStack(alignment: .firstTextBaseline, spacing: 12) {
-      StatusMark(status: mission.isDone ? .done : .todo)
-
-      VStack(alignment: .leading, spacing: 2) {
-        Text(mission.name(buddy: learner.summary.value?.buddyName ?? "Zu"))
-          .foregroundStyle(mission.isDone ? .secondary : .primary)
-
-        if !mission.isDone, let step = mission.step {
-          Text(step)
-            .font(.footnote)
-            .foregroundStyle(.secondary)
-        }
-      }
-
-      Spacer(minLength: 8)
-
-      if mission.total > 1 {
-        Text("\(mission.done)/\(mission.total)")
-          .font(.footnote.monospacedDigit())
-          .foregroundStyle(.secondary)
-      }
-    }
-    .accessibilityElement(children: .combine)
-
-    if mission.isDone || mission.waitReason != nil || mission.opens == nil {
-      row
-    } else {
-      Button {
-        go(mission)
-      } label: {
-        row
-      }
-      .tint(.primary)
-    }
   }
 
   /// Opens where the mission is done: a block of the day, or a place of its own, whose activity
@@ -418,6 +383,19 @@ struct TodayWeekSection: View {
 
   private var week: StudyWeek { view.session.week }
 
+  private var title: some View {
+    Text("This week", tableName: "Today", comment: "The week's header")
+  }
+
+  private var numbers: some View {
+    Text(
+      "\(week.daysHitGoal) of \(week.studyDays) days · \(studyDuration(minutes: week.time.studiedMinutes)) / \(studyDuration(minutes: Int(week.time.targetMinutes)))",
+      tableName: "Today", comment: "Days the goal was reached and the week's time"
+    )
+    .monospacedDigit()
+    .lineLimit(1)
+  }
+
   var body: some View {
     Section {
       HStack {
@@ -432,14 +410,17 @@ struct TodayWeekSection: View {
         TodayChallengeRow(view: view)
       }
     } header: {
-      HStack {
-        Text("This week", tableName: "Today", comment: "The week's header")
-        Spacer()
-        Text(
-          "\(week.daysHitGoal) of \(week.studyDays) days · \(studyDuration(minutes: week.time.studiedMinutes)) / \(studyDuration(minutes: Int(week.time.targetMinutes)))",
-          tableName: "Today", comment: "Days the goal was reached and the week's time"
-        )
-        .monospacedDigit()
+      ViewThatFits(in: .horizontal) {
+        HStack {
+          title
+          Spacer()
+          numbers
+        }
+
+        VStack(alignment: .leading, spacing: 2) {
+          title
+          numbers
+        }
       }
     }
   }

@@ -185,85 +185,6 @@ extension StudyBlock {
   }
 }
 
-extension StudyMission {
-  /// What the mission asks, by name.
-  func name(buddy: String) -> String {
-    switch kind {
-    case .review:
-      String(localized: "Review", table: "Today", comment: "Mission: do the day's review")
-    case .somethingNew:
-      String(localized: "Do a new lesson", table: "Today", comment: "Mission: a new lesson")
-    case .finishChapter:
-      detail?.chapterTitle.map {
-        String(localized: "Finish “\($0)”", table: "Today", comment: "Mission: finish a chapter")
-      }
-        ?? String(localized: "Finish the chapter", table: "Today", comment: "Mission")
-    case .challenge:
-      detail?.rematch == true
-        ? String(
-          localized: "Rematch the Trickster", table: "Today", comment: "Mission: a rematch")
-        : String(
-          localized: "Take on the Trickster", table: "Today", comment: "Mission: a phase challenge")
-    case .weeklyChallenge:
-      String(localized: "Weekly challenge", table: "Today", comment: "The week's challenge block")
-    case .mock:
-      String(localized: "Take the mock", table: "Today", comment: "Mission: a mock exam")
-    case .essay:
-      String(localized: "Practice writing", table: "Today", comment: "Mission: an essay")
-    case .practice:
-      String(localized: "Practice", table: "Today", comment: "Mission: practice")
-    case .fixMistake:
-      String(localized: "Fix \(total) mistakes", table: "Today", comment: "Mission: fix mistakes")
-    case .pattern:
-      String(localized: "Practice a pattern", table: "Today", comment: "Mission: a pattern")
-    case .pronunciation:
-      String(localized: "Pronunciation", table: "Today", comment: "Mission: pronunciation")
-    case .call:
-      String(localized: "Have a call", table: "Today", comment: "Mission: a practice call")
-    case .askBuddy:
-      String(
-        localized: "Ask \(buddy) something", table: "Today", comment: "Mission: ask the buddy")
-    case .weakSpot:
-      detail?.areaTitle.map {
-        String(localized: "Practice \($0)", table: "Today", comment: "Mission: practice an area")
-      } ?? String(localized: "Practice", table: "Today", comment: "Mission: practice")
-    }
-  }
-
-  /// What the mission still asks, in words: what it waits for, or where it's done.
-  var step: String? {
-    switch waitReason {
-    case .lessons:
-      return String(localized: "After today's lessons", table: "Today", comment: "Mission waits")
-    case .challenge:
-      return String(
-        localized: "After the challenge before it", table: "Today", comment: "Mission waits")
-    case nil:
-      break
-    }
-
-    switch kind {
-    case .fixMistake:
-      return String(
-        localized: "From your mistakes notebook", table: "Today", comment: "Where a mission is done"
-      )
-    case .pattern:
-      return detail?.patternTitle
-    case .pronunciation:
-      return String(localized: "Due today", table: "Today", comment: "Pronunciation mission")
-    case .call:
-      return detail?.chapterTitle.map {
-        String(localized: "Quick call · \($0)", table: "Today", comment: "A call mission's unit")
-      } ?? String(localized: "A quick call", table: "Today", comment: "A call mission")
-    case .askBuddy:
-      return String(
-        localized: "Anything about today's lessons", table: "Today", comment: "Ask buddy mission")
-    default:
-      return detail?.title
-    }
-  }
-}
-
 extension TodayView.PlanStatus {
   /// Where the plan stands, in a few words ("Keeping pace", "2 days ahead").
   var text: String {
@@ -292,10 +213,19 @@ extension TodayView.PlanStatus {
   }
 }
 
-/// Minutes as main writes them: "6 min", "1 hr 43 min".
+/// Minutes as main writes them: "6 min", "1 hr", "1 hr 43 min".
 func studyDuration(minutes: Int) -> String {
-  Duration.seconds(minutes * 60).formatted(
-    .units(allowed: [.hours, .minutes], width: .abbreviated, maximumUnitCount: 2))
+  let style = Measurement<UnitDuration>.FormatStyle(width: .abbreviated)
+  let hours = minutes / 60
+  let rest = minutes % 60
+  let minutePart = Measurement(value: Double(rest), unit: UnitDuration.minutes).formatted(style)
+
+  guard hours > 0 else {
+    return minutePart
+  }
+
+  let hourPart = Measurement(value: Double(hours), unit: UnitDuration.hours).formatted(style)
+  return rest == 0 ? hourPart : "\(hourPart) \(minutePart)"
 }
 
 /// A learner-local calendar date (`YYYY-MM-DD`) as a date at its midnight in UTC, to format with a
