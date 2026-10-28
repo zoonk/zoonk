@@ -63,7 +63,8 @@ struct CourseCatalogGrid: View {
     }
   }
 
-  /// A row is the list's own link, chevron included; a column is a plain link of its own.
+  /// A row is the list's own link, chevron included; a column is a plain link of its own, its
+  /// whole cell the target, as main's grid draws it.
   @ViewBuilder
   private func link(_ course: CourseSummary, isColumn: Bool) -> some View {
     let destination = CourseDestination.course(CourseReference(course))
@@ -73,6 +74,7 @@ struct CourseCatalogGrid: View {
     if isColumn {
       NavigationLink(value: destination) { cell }
         .buttonStyle(.plain)
+        .navigationLinkIndicatorVisibility(.hidden)
     } else {
       NavigationLink(value: destination) { cell }
     }
@@ -143,6 +145,7 @@ private struct CourseCell: View {
       .frame(maxWidth: .infinity, alignment: .leading)
     }
     .contentShape(.rect)
+    .accessibilityElement(children: .combine)
   }
 
   private var title: some View {
@@ -150,6 +153,8 @@ private struct CourseCell: View {
       .font(.body.weight(.semibold))
       .foregroundStyle(.primary)
       .fixedSize(horizontal: false, vertical: true)
+      // VoiceOver names the course before its flag and subject, which a column draws over it.
+      .accessibilitySortPriority(1)
   }
 
   @ViewBuilder
