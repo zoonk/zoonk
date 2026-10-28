@@ -71,6 +71,8 @@ struct ZoonkApp: App {
       AppView()
         #if DEBUG
           .modifier(DebugLessonLaunch())
+          // Inside the environment below, so the gallery's screens get the app's renderers.
+          .modifier(ActivityGalleryLaunch())
         #endif
         .loads(learnerSummary.summary, refreshable: false)
         .task(id: learnerSummary.summary.value?.nextChangeAt) {
