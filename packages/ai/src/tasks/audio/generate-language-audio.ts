@@ -9,6 +9,7 @@ import {
 } from "@zoonk/utils/languages";
 import { logError } from "@zoonk/utils/logger";
 import { segmentWords } from "@zoonk/utils/string";
+import { isBlockedTestCall } from "../../_utils/block-test-gateway-fetch";
 import { type AiGenerationContext } from "../../provenance/ai-generation-event";
 import { captureAiGeneration } from "../../provenance/ai-generation-sink";
 import { type TaskProvenance } from "../../provenance/task-provenance";
@@ -259,6 +260,10 @@ async function generateWithFallback({
   try {
     return await generateWithModel({ ...input, model });
   } catch (error) {
+    if (isBlockedTestCall(error)) {
+      throw error;
+    }
+
     if (remainingModels.length > 0) {
       return generateWithFallback({ ...input, models: remainingModels });
     }

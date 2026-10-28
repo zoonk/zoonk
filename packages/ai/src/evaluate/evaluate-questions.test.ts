@@ -1,5 +1,6 @@
 import { experimental_decide } from "ai";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { blockTestGatewayFetch } from "../_utils/block-test-gateway-fetch";
 import { evaluateQuestions } from "./evaluate-questions";
 import { EvaluationTimeoutError } from "./evaluation-timeout";
 import type * as Ai from "ai";
@@ -44,6 +45,17 @@ describe(evaluateQuestions, () => {
     // A workflow step never retries an AbortError; a timeout is retried once the provider recovers.
     expect(thrown).toBeInstanceOf(EvaluationTimeoutError);
     expect(experimental_decide).toHaveBeenCalledTimes(2);
+  });
+
+  it("doesn't rerun a call the test kill switch blocked on the fallback, which it blocks too", async () => {
+    const blocked = await blockTestGatewayFetch("https://ai-gateway.test").catch(
+      (error: unknown) => error,
+    );
+
+    vi.mocked(experimental_decide).mockRejectedValue(blocked);
+
+    await expect(evaluateQuestions(evaluation)).rejects.toBe(blocked);
+    expect(experimental_decide).toHaveBeenCalledOnce();
   });
 
   it("keeps any other failure as the provider reported it", async () => {

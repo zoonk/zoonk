@@ -10,6 +10,7 @@ import {
   type Experimental_DecisionResult,
   experimental_decide,
 } from "ai";
+import { isBlockedTestCall } from "../_utils/block-test-gateway-fetch";
 import { getModelFamily } from "../_utils/model-family";
 import { NO_PROMPT_TRAINING } from "../data-protection";
 import { zoonkGateway } from "../gateway";
@@ -235,7 +236,10 @@ export async function evaluateQuestions<const QUESTIONS extends EvaluationQuesti
 
   const primary = await safeAsync(() => runModel({ model: primaryModel, questions, state }));
 
-  if (primary.error && (!fallbackModel || fallbackModel === primaryModel)) {
+  if (
+    primary.error &&
+    (!fallbackModel || fallbackModel === primaryModel || isBlockedTestCall(primary.error))
+  ) {
     throw primary.error;
   }
 

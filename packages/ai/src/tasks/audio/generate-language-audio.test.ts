@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { blockTestGatewayFetch } from "../../_utils/block-test-gateway-fetch";
 import { type convertWavToMp3 } from "./convert-wav-to-mp3";
 import { generateLanguageAudio } from "./generate-language-audio";
 import { type generateSpeechWithProvider } from "./speech-provider";
@@ -248,6 +249,19 @@ describe(generateLanguageAudio, () => {
     expect(result.data?.provenance).toStrictEqual(
       expect.objectContaining({ model: MAI_VOICE, requestedModel: FLASH }),
     );
+  });
+
+  it("stops at a call the test kill switch blocked, since every model is behind it", async () => {
+    const blocked = await blockTestGatewayFetch("https://ai-gateway.test").catch(
+      (error: unknown) => error,
+    );
+
+    generateSpeechWithProviderMock.mockRejectedValue(blocked);
+
+    const result = await generateLanguageAudio({ language: "es", text: "Hola, ¿qué tal?" });
+
+    expect(result.error).toBe(blocked);
+    expect(requestedModels()).toStrictEqual([FLASH]);
   });
 
   it("keeps a language MAI-Voice doesn't speak on Gemini", async () => {
