@@ -29,7 +29,6 @@ export type ExplainQuestionResult = {
   status: "failed" | "joined" | "missing" | "ready" | "reused";
 };
 
-/** One more try when the first explanation fails its checks; a fast model makes it cheap. */
 const MAX_WRITES = 2;
 
 type WriteContext = Parameters<typeof writeExplanationStep>[0];
@@ -42,10 +41,6 @@ function writeChecked(context: WriteContext) {
   });
 }
 
-/**
- * Saves a new explanation for the learner to read, then starts drawing its pictures in the
- * background, like a lesson's. A guest's explanation gets none.
- */
 async function saveAndDraw({
   goal,
   ownerId,
@@ -75,10 +70,6 @@ async function saveAndDraw({
 
 type GoFurtherCourse = Awaited<ReturnType<typeof findGoFurtherCourseStep>>;
 
-/**
- * Links the subject's Overview course to the goal and its explanation for "Want to go further?",
- * outlining its overview band in the background when the course is new.
- */
 async function linkGoFurther({
   course,
   goal,
@@ -107,9 +98,8 @@ async function linkGoFurther({
 }
 
 /**
- * An explanation a guest asked first has no course to go further, since a guest's question never
- * makes one: the next learner's run finds it from the explanation it wrote meanwhile, for them and
- * everyone after. Nothing when that writing failed.
+ * A guest's question never makes a course to go further, so the next learner's run finds it from
+ * the draft it wrote meanwhile, for everyone after.
  */
 async function completeGoFurther({
   goal,
@@ -156,25 +146,11 @@ async function finish(result: ExplainQuestionResult): Promise<ExplainQuestionRes
   return result;
 }
 
-/**
- * Answers an explain question as a quick explanation: about five short screens and one check,
- * then "Now you know" and "Want to go further?" into the subject's Overview course with related
- * questions. A general question is a shared skill, so a question someone already asked in other
- * words is answered at once with the same explanation; a personal one is written only for the
- * asker. A new explanation's pictures are drawn in the background, like a lesson's, and the
- * Overview course is outlined in the background when it doesn't exist yet; a guest's question
- * gets neither, so it costs no more than its share of the guests' daily budget.
- *
- * The wait is only what reading needs: the explanation is written while the identity search runs,
- * and `writeExplanation` completes once it's saved and can be read. The course to go further is
- * found meanwhile and linked after it, and `explanationReady` ends the run.
- */
 export async function explainQuestionWorkflow({
   goalId,
   platform,
 }: {
   goalId: string;
-  /** The client whose request started the run, for analytics. */
   platform?: AnalyticsPlatform | null;
 }): Promise<ExplainQuestionResult> {
   "use workflow";
@@ -182,8 +158,6 @@ export async function explainQuestionWorkflow({
   const { workflowRunId } = getWorkflowMetadata();
   const { conflict } = await claimRunToken(`explain:${goalId}`);
 
-  // Whoever follows this run's id (an API client that just asked for it) moves to the run
-  // answering the question, like a goal's run that joins another.
   if (conflict) {
     await explainProgressStep({
       entityId: conflict.runId,
@@ -205,11 +179,10 @@ export async function explainQuestionWorkflow({
   const context = { analytics: { distinctId: goal.userId, goalId, platform }, workflowRunId };
   const ownerId = (await classifyQuestionStep({ goal })) ? null : goal.userId;
 
-  // Written while the identity search looks for the same question asked before: the explanation
-  // doesn't depend on it, and a reused one only discards a fast model's run (about $0.0007).
+  // Written while the identity search runs: discarding a fast model's draft when an earlier
+  // explanation is reused costs less than the wait.
   const writing = writeChecked({ ...context, goal, ownerId });
-  // Handled at once, so a write that fails before it's awaited can't crash the run as an
-  // unhandled rejection; awaiting it below still throws.
+  // A write that fails before it's awaited would otherwise crash the run as an unhandled rejection.
   void writing.catch(() => null);
 
   const skill = await resolveQuestionSkillStep({ ...context, goal, ownerId });
@@ -226,7 +199,6 @@ export async function explainQuestionWorkflow({
 
     const reused = await finish({ goalId, lessonId: skill.existingLessonId, status: "reused" });
 
-    // Once the learner is reading, like a new explanation's course.
     if (!goFurther.courseId && !goal.isGuest) {
       await completeGoFurther({ goal, lessonId: skill.existingLessonId, writing });
     }
@@ -246,10 +218,8 @@ export async function explainQuestionWorkflow({
     return finish({ goalId, lessonId: null, status: "failed" });
   }
 
-  // The learner reads as soon as it's saved; the course to go further is found meanwhile.
   const [saved, course] = await Promise.all([
     saveAndDraw({ ...context, goal, ownerId, skill, written }),
-    // A guest's question is answered without extra work: no pictures, no new course to go further.
     goal.isGuest
       ? null
       : findGoFurtherCourseStep({

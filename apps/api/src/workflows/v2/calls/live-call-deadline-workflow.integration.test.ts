@@ -6,7 +6,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getRun, start } from "workflow/api";
 import { liveCallDeadlineWorkflow } from "./live-call-deadline-workflow";
 
-/** Only the paid provider leaf is replaced; the compiled steps run real core and PostgreSQL. */
 vi.mock("@zoonk/ai/tasks/v2/language/live-call-session", () => ({
   createLiveCallSession: vi.fn(),
   hangUpLiveCallSession: vi.fn(),
@@ -16,7 +15,6 @@ vi.mock("@zoonk/ai/tasks/v2/language/live-call-session", () => ({
 const HELD_SECONDS = 60;
 const HOUR_MS = 3_600_000;
 
-/** A Plus learner's live connection, as the SDP step leaves it, whose deadline is an hour away. */
 async function liveConnection() {
   const user = await userFixture();
   const startedAt = new Date();

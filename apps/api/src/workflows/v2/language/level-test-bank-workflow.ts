@@ -9,31 +9,16 @@ import {
   writeLevelTestBankStep,
 } from "./steps/level-test-bank-steps";
 
-export type LevelTestBankInput = {
-  /** The learner whose goal or request started it, for analytics; the bank is shared. */
-  analytics?: ContentAnalytics;
-  pair: LanguagePair;
-};
+export type LevelTestBankInput = { analytics?: ContentAnalytics; pair: LanguagePair };
 
 export type LevelTestBankResult = { status: "joined" | "ready" | "unfinished" | "written" };
 
-/**
- * Another run holds the pair's claim (a run of this workflow that started before this one's hook,
- * or one that went quiet): asking again every few seconds sees the bank land, or takes the claim
- * over once it's stale (eleven minutes, `STALE_CLAIM_MS` in core), so this wait outlasts it.
- */
+/** Polls past core's `STALE_CLAIM_MS`, so the wait ends with the bank written or the claim taken over. */
 const CLAIM_POLL = "10s";
 const MAX_CLAIM_POLLS = 72;
 
 const DONE = new Set(["ready", "written"]);
 
-/**
- * Writes a language pair's three-minute level test ahead, so its learners find the questions
- * ready: started as soon as a language goal's pair is known (when onboarding understands the
- * goal, when the goal's curriculum starts, or when the level test asks for it because nothing is
- * writing it). One run per pair: a second start joins it. The bank is shared by the pair's
- * learners and written once, so a run that finds it written ends at once.
- */
 export async function levelTestBankWorkflow(
   input: LevelTestBankInput,
 ): Promise<LevelTestBankResult> {

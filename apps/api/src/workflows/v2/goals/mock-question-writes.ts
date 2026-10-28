@@ -9,7 +9,6 @@ import { type PlacementItemsWritten, preparePlacementItems } from "./placement-i
 import { prepareExamFormatItemsStep } from "./steps/exam-format-items-step";
 import { loadMockWritingSkillsStep } from "./steps/mock-question-steps";
 
-/** A skill's write counts as written when it stored a question, as failed when its step failed. */
 function countItemWrites(results: readonly PromiseSettledResult<number>[]): PlacementItemsWritten {
   return {
     failed: results.filter((result) => result.status === "rejected").length,
@@ -17,7 +16,6 @@ function countItemWrites(results: readonly PromiseSettledResult<number>[]): Plac
   };
 }
 
-/** The quick writes' counts, added up. */
 function sumWritten(results: readonly PlacementItemsWritten[]): PlacementItemsWritten {
   return results.reduce(
     (total, result) => ({
@@ -28,14 +26,6 @@ function sumWritten(results: readonly PlacementItemsWritten[]): PlacementItemsWr
   );
 }
 
-/**
- * Writes what mocks are short of, every format at once (see `MockQuestionWrites`), only what each
- * skill lacks: the exam's one-pick questions with placement's quick writer, a few skills per
- * call, and each other format (several picks, a number typed in) with the item writer, one call
- * per skill, each a step of its own so one failing never holds up the others. They join the
- * exam's shared bank. A learner waits on a mock starting now; `later` is for questions written
- * ahead, at the flex tier.
- */
 export async function writeMockQuestions({
   analytics,
   goalId,
@@ -101,11 +91,6 @@ export async function writeMockQuestions({
   };
 }
 
-/**
- * Writes and voices a recording for each listening part of the goal's exam that has none
- * (`listListeningPartsToPrepare`), every part at once, while the learner waits on the mock. They
- * join the exam's shared recordings. Returns how many were voiced.
- */
 export async function prepareMockRecordings({
   analytics,
   goalId,

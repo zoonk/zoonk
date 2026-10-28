@@ -10,10 +10,6 @@ const outline =
 
 const spec = recordedOutput<Awaited<ReturnType<typeof generateLessonSpec>>["data"]>("lesson-spec");
 
-/**
- * The recorded lesson with its outline's skill links, as curriculum resolution creates it before
- * writing. The spec renamed that skill, so publishing must retain attribution through the fallback.
- */
 export async function recordedLessonFixture(attrs?: Parameters<typeof libraryLessonFixture>[0]) {
   const planned = outline.chapters
     .flatMap((chapter) => chapter.lessons)

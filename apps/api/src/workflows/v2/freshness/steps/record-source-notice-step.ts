@@ -4,10 +4,6 @@ import { recordSourceChangeNotice } from "@zoonk/core/library/sources/notices";
 import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../../research/_utils/research-analytics";
 
-/**
- * Writes the one line learners of a changed law or product see on Today. A
- * change that only moved lines around has no excerpt and gets no notice.
- */
 export async function recordSourceNoticeStep({
   analytics,
   change,

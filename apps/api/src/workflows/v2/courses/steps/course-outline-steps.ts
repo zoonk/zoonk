@@ -47,15 +47,6 @@ type OutlineContext = {
   workflowRunId: string;
 };
 
-/**
- * Decides what a band still needs. Skills the course already teaches (in any band) are planned from
- * its lessons; a band whose skills are all taught needs nothing, even when it has no chapters here.
- * For a goal answered without tools (an exam), chapters that need one don't count as teaching.
- * Another course's lessons never count: a course on the same subject shares its chapters and
- * lessons through identity search when the outline asks for them. A band requested without skills
- * is written whole when the course doesn't have it yet. A skill the band teaches in part (`extend`)
- * gets its next chapter while the course still has fewer of its lessons than the goal needs.
- */
 export async function planOutlineBandStep({
   band,
   courseId,
@@ -80,7 +71,6 @@ export async function planOutlineBandStep({
 
   const extended = extensions.filter((extension) => extension.level === band.level);
 
-  // A band asked for without skills (an Overview course for "Want to go further?") is written whole once.
   const wantsWholeBand =
     band.skills.length === 0 && !band.extend?.length && context.nextPosition === 0;
 
@@ -104,7 +94,6 @@ export async function planOutlineBandStep({
   };
 }
 
-/** Claims the course's outline; a claim left by a run that stopped is taken over. */
 export async function claimCourseOutlineStep(input: { courseId: string; workflowRunId: string }) {
   "use step";
 
@@ -130,7 +119,6 @@ export async function finishCourseOutlineStep(input: {
   await finishCourseOutline(input);
 }
 
-/** A learner waits on the band teaching their first lesson; a background band is days away. */
 function getBandWait({ background, waited }: { background?: boolean; waited: boolean }): CallWait {
   if (waited) {
     return "learner";
@@ -139,14 +127,6 @@ function getBandWait({ background, waited }: { background?: boolean; waited: boo
   return background ? "later" : "soon";
 }
 
-/**
- * Writes one level band's outline: chapters with objectives, and every lesson's title and skills.
- * The band teaching the skill of a waiting learner's first lesson is, unless it continues chapters
- * the band already has, streamed, so the chapter teaching that skill is saved before the rest is
- * written; an exam's or a language's band a learner waits on runs at the priority tier, since its
- * course is very likely reused (`chooseServiceTier`). A band the plan gets to in days
- * (`background`) is written at the flex tier.
- */
 export async function writeOutlineBandStep({
   background,
   waitedSkillId,
@@ -208,11 +188,6 @@ export async function saveOutlineChapterStep({
   );
 }
 
-/**
- * Moves each continuation right after the last chapter of the skill it continues, so the course
- * keeps its teaching order (in math, what builds on a topic stays after it). Chapters written for
- * skills the band lacked stay where they were added.
- */
 export async function placeContinuationsStep({
   chapterIds,
   chapters,
@@ -236,10 +211,6 @@ export async function placeContinuationsStep({
   await placeContinuations({ courseId, level: plan.level, moves });
 }
 
-/**
- * The goals waiting on these skills (any learner's), and the goals re-planned from the band's first
- * chapter, which plan the whole band now (see `listGoalsWaitingOnSkills`).
- */
 export async function listWaitingGoalsStep(input: {
   goalIds: string[];
   skillIds: string[];
@@ -249,11 +220,6 @@ export async function listWaitingGoalsStep(input: {
   return listGoalsWaitingOnSkills(input);
 }
 
-/**
- * One goal waiting on the band plans its real lessons instead of stand-ins (see
- * `replanWaitingGoal`). A plan that kept changing meanwhile comes back as a conflict, for the run
- * to plan it again later, each goal on its own (see `retryPlanConflicts`).
- */
 export async function replanWaitingGoalStep(goalId: string): Promise<PlanStepOutcome<null>> {
   "use step";
 
@@ -263,11 +229,6 @@ export async function replanWaitingGoalStep(goalId: string): Promise<PlanStepOut
   });
 }
 
-/**
- * Goals still couldn't take the band's lessons once their steps' retries ran out: the band stays
- * written and the plans usable, on stand-ins until their next refresh, so the failure is only
- * said, loudly, with the ids to find it by.
- */
 export async function logReplanFailureStep(failure: {
   courseId: string;
   error: string;

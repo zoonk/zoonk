@@ -24,12 +24,11 @@ import {
 
 export type BandOutline = {
   chapters: OutlineChapter[];
-  /** The waited chapter, saved while the rest was written; `chapters` holds the rest. */
+  /** Saved while the rest was written, so it's not in `chapters`. */
   early: EarlyOutlineChapter | null;
   provenance: OutlineProvenance;
 };
 
-/** The band's chapters without the first one teaching the waited skill, which was saved early. */
 function withoutWaitedChapter({
   chapters,
   waitedKey,
@@ -41,11 +40,6 @@ function withoutWaitedChapter({
   return chapters.filter((_, index) => index !== waited);
 }
 
-/**
- * Saves the chapter that teaches the waited skill the moment it's complete, where it goes among
- * the band's chapters, and re-plans the goals waiting on its skills, so the learner's first lesson
- * starts while the model still writes the rest of the band.
- */
 async function streamWaitedBand({
   input,
   serviceTier,
@@ -84,7 +78,6 @@ async function streamWaitedBand({
           .map((skill) => skill.id),
       });
 
-      // A goal whose re-plan failed here plans the whole band with the others once it's written.
       const goalIds = [...replanned.goalIds, ...replanned.failedGoalIds];
 
       return { chapterId: saved.chapterId, goalIds, position };
@@ -105,17 +98,12 @@ async function streamWaitedBand({
   };
 }
 
-/**
- * The band a learner waits on streams: see `streamWaitedBand`. An attempt after one that saved
- * the waited chapter and then failed keeps that chapter and writes the rest around it.
- */
 export async function writeWaitedBand({
   input,
   serviceTier,
   waitedKey,
 }: {
   input: BandInput;
-  /** The tier the learner's wait gets (`chooseServiceTier`). */
   serviceTier?: ServiceTier;
   waitedKey: string;
 }): Promise<BandOutline> {

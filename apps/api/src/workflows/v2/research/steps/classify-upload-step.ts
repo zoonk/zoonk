@@ -6,7 +6,6 @@ import { loadSourceDocuments } from "@zoonk/core/library/sources/load-documents"
 import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 
-/** Reads the upload's first pages and asks whether its publisher made it public. */
 export async function classifyUploadStep({
   analytics,
   sourceId,

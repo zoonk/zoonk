@@ -26,24 +26,13 @@ import {
 
 export type CourseOutlineInput = {
   courseId: string;
-  /** The level bands the goal needs, in the order the learner reaches them. */
   bands: CourseBandNeed[];
   scope: CurriculumScope;
   analytics?: ContentAnalytics;
-  /**
-   * The skill of the plan's first lesson a learner is waiting on: the chapter that teaches it is
-   * saved as soon as the model finishes it, before the rest of its band.
-   */
   waitedSkillId?: string;
-  /** The plan gets to these bands in days, not minutes: they're written at the flex tier. */
   background?: boolean;
-  /** How many times this request already waited for another run of the same course. */
   attempt?: number;
-  /**
-   * A guest's goal asked for these bands: the course's background work (its page details) waits
-   * for a learner with an account, so a guest's goal stays within its share of the guests' daily
-   * budget.
-   */
+  /** A guest's goal leaves the course's background work to a learner with an account, for the guests' daily budget. */
   forGuest?: boolean;
 };
 
@@ -51,19 +40,13 @@ export type CourseOutlineResult =
   | { status: "busy" | "joined" }
   | { bandsWritten: number; chapterIds: string[]; status: "written" };
 
-/**
- * How many times a request waits its turn behind other runs of the same course. Each turn waits
- * for a whole run (a minute or two), so a request still missing bands after this many is stuck,
- * not busy, and fails visibly instead.
- */
+/** Each turn waits for a whole run, so a request still missing bands after this many is stuck, not busy. */
 const MAX_OUTLINE_TURNS = 10;
-/** A run saving the course's other bands holds it for a minute or two; this run waits for it. */
 const BUSY_WAIT = "15s";
 const MAX_CLAIM_TRIES = 20;
 
 type RunContext = Omit<CourseOutlineInput, "attempt" | "bands"> & { workflowRunId: string };
 
-/** Where the band's other chapters go: in order, around the waited chapter saved early. */
 function toPosition({
   early,
   index,
@@ -78,10 +61,8 @@ function toPosition({
 }
 
 /**
- * Goals waiting on the band's skills re-plan with its lessons, each in a step of its own. A goal
- * still failing once its step's retries run out leaves the band written, not failed: the goal
- * keeps a usable plan on stand-ins, which its next refresh replaces, so it's logged and recorded
- * instead.
+ * A goal that still fails to re-plan leaves the band written, not failed: its plan stays usable on
+ * stand-ins until its next refresh.
  */
 async function replanWaitingGoals({
   context,
@@ -128,12 +109,6 @@ async function replanWaitingGoals({
   }
 }
 
-/**
- * Writes one band: the outline, then every chapter in parallel steps, then re-plans waiting goals.
- * The skills the band continues are the new chapters' skills too, so their stand-ins shrink. In a
- * band a learner waits on, the chapter teaching their first lesson's skill was saved while the rest
- * was written, and the goals re-planned from it then re-plan with the whole band.
- */
 async function writeBand({ context, plan }: { context: RunContext; plan: BandPlan }) {
   const { chapters, early, provenance } = await writeOutlineBandStep({ ...context, plan });
   const skills = [...plan.skills, ...plan.extensions.map((extension) => extension.skill)];
@@ -168,10 +143,6 @@ async function writeBand({ context, plan }: { context: RunContext; plan: BandPla
     : chapterIds;
 }
 
-/**
- * Every band at once: each was planned up front from what the course had (`planBands`), with its
- * own level's positions, so none reads another's chapters. Chapter ids come back in band order.
- */
 async function writeBands({
   bands,
   context,
@@ -183,7 +154,6 @@ async function writeBands({
   return written.flat();
 }
 
-/** Writes the bands under the course's claim, which ends completed or, when a band fails, failed. */
 async function writeClaimedBands({
   bands,
   context,
@@ -208,11 +178,6 @@ async function writeClaimedBands({
   }
 }
 
-/**
- * What a shared course gets in the background once a run ends: its page details. Level bands no
- * goal needs are never written ahead: a band is outlined when a learner's plan gets close to it. A
- * run for a guest's goal leaves the details to the next run for a learner with an account.
- */
 async function startSharedCourseWork(input: CourseOutlineInput): Promise<void> {
   if (input.scope.ownerId || input.forGuest) {
     return;
@@ -221,13 +186,6 @@ async function startSharedCourseWork(input: CourseOutlineInput): Promise<void> {
   await startCourseDetailsRun({ analytics: input.analytics, courseId: input.courseId });
 }
 
-/**
- * Another run had the course while this request's bands were still missing: the request goes
- * again once that run ends, as many times as the course stays taken (several learners starting it
- * at once), since dropping it would leave a learner's band unwritten. A request still missing
- * bands after `MAX_OUTLINE_TURNS` fails, so its run shows as failed; the plan's stand-ins ask for
- * those bands again when sessions get close to them.
- */
 async function takeNextTurn({
   attempt,
   input,
@@ -247,7 +205,6 @@ async function takeNextTurn({
   return { status };
 }
 
-/** Each level's band, planned from what the course has; one per level (see `joinLevelBands`). */
 async function planBands({
   context,
   needs,
@@ -264,19 +221,6 @@ async function planBands({
   return plans.filter((plan) => plan !== null);
 }
 
-/**
- * Writes what a goal needs of one Library course's outline: for each level band, all at once, the
- * chapters with their objectives and every lesson's title, description,
- * can-do line and skills. Outlines come before lessons, which wait until a learner gets close;
- * bands the plan gets to in days (`background`) are written at the flex tier. A band another
- * course already teaches is skipped, and a band that exists but misses some of the goal's skills
- * gains only the chapters that teach them, or the next chapter of a skill it teaches in part
- * (`extend`), while a plan still stands in for the rest of it. As each band lands, every goal
- * waiting on its skills re-plans with the real lessons. One run per course at a time: a second
- * request waits for the first, then writes whatever is still missing, taking as many turns as it
- * takes (`takeNextTurn`). A shared course then gets
- * its page details in the background; level bands no goal needs are never written ahead.
- */
 export async function courseOutlineWorkflow(
   input: CourseOutlineInput,
 ): Promise<CourseOutlineResult> {
@@ -289,8 +233,6 @@ export async function courseOutlineWorkflow(
   const context: RunContext = { ...input, workflowRunId };
 
   if (conflict) {
-    // However the run writing this course ends (one that stalled is stopped), the next check reads
-    // the database.
     await joinRun(conflict);
 
     const missing = await planBands({ context, needs: input.bands });
@@ -312,13 +254,6 @@ export async function courseOutlineWorkflow(
   return outlined.value;
 }
 
-/**
- * A shared course's icon needs only its title, not its outline: it's drawn while the outline is
- * written, in a run of its own (see `courseIconWorkflow`), so the plan shows the subject's icon from
- * the learner's first look and the outline never waits for the picture. A guest's run leaves it to
- * the next learner with an account, like the rest of the course's background work; a failure
- * leaves it to the details that run after the outline.
- */
 async function startIconEarly(context: RunContext): Promise<void> {
   if (context.scope.ownerId || context.forGuest) {
     return;
@@ -354,7 +289,6 @@ async function writeOutline({
     return takeNextTurn({ attempt: input.attempt ?? 0, input, status: "busy" });
   }
 
-  // Another run may have saved some of these bands while this run waited for the course.
   const bands = claim.waited ? await planBands({ context, needs: input.bands }) : plans;
   const chapterIds = await writeClaimedBands({ bands, context });
   await startSharedCourseWork(input);

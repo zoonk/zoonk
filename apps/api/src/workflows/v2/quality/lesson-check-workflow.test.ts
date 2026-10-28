@@ -17,8 +17,8 @@ import { type LessonCheckInput, lessonCheckWorkflow } from "./lesson-check-workf
 import { citePublishedLessonStep } from "./steps/lesson-check-steps";
 import type * as CheckSteps from "./steps/lesson-check-steps";
 
-// A step fails for good only once the runtime's retries ran out, which needs the runtime: a test
-// makes the citing step end that way.
+// A step fails for good only after the runtime's retries, which needs the runtime, so the test
+// fails the citing step itself.
 vi.mock("./steps/lesson-check-steps", async (importOriginal) => ({
   ...(await importOriginal<typeof CheckSteps>()),
   citePublishedLessonStep: vi.fn(),
@@ -29,7 +29,6 @@ type RecordedDraft = Awaited<ReturnType<typeof writeLessonDraft>>["data"];
 const [recordedSpec] = recordedOutput<{ lessons: object[] }>("lesson-spec").lessons;
 const recordedDraft = recordedOutput<RecordedDraft>("lesson-draft");
 
-/** What the reviewer finds wrong on the recorded draft's screen 2. */
 const wrong = taskResult({
   issues: [
     {
@@ -51,10 +50,6 @@ const fixedDraft: RecordedDraft = {
   ),
 };
 
-/**
- * A lesson of a learner's plan, published from its recorded spec by the real write path (its code
- * checks passed), with the input the content workflow starts its checks with.
- */
 async function publishedLesson() {
   const workflowRunId = randomUUID();
 
@@ -98,8 +93,6 @@ describe(lessonCheckWorkflow, () => {
     );
   });
 
-  // That the reviewer reads the version at flex and leaves it as it is, is core's
-  // (`checkPublishedLesson`); the run settles a pass with nothing to draw.
   it("leaves a version its reviewer passes as it is, even when citing it keeps failing: citations are extra", async () => {
     const { input } = await publishedLesson();
     vi.mocked(checkLessonQuality).mockResolvedValue(taskResult({ issues: [] }));
@@ -160,8 +153,6 @@ describe(lessonCheckWorkflow, () => {
       status: "setAside",
     });
 
-    // The published version counts as the first draft: two fresh ones follow, the last by a writer
-    // of another family, each told what held the earlier ones back.
     const drafts = vi
       .mocked(writeLessonDraft)
       .mock.calls.slice(-2)
@@ -176,7 +167,6 @@ describe(lessonCheckWorkflow, () => {
       prisma.step.findMany({ where: { lessonId: lesson.id } }),
     ]);
 
-    // Plans move on; learners playing the version they opened finish it.
     expect(stored).toMatchObject({ contentStatus: "failed", setAsideAt: expect.any(Date) });
     expect(planItem.status).toBe("skipped");
     expect(steps.every((step) => step.version === 1 && step.retiredAt === null)).toBe(true);

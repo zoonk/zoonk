@@ -18,15 +18,12 @@ import {
 } from "./steps/lesson-check-steps";
 
 export type LessonCheckInput = {
-  /** The learner and goal the lesson was made for, so the checks' cost adds up with it. */
   analytics?: ContentAnalytics;
-  /** Made for an exam goal, which makes it very likely read again (a stronger reviewer). */
   forExam?: boolean;
   lessonId: string;
   plan: LessonCheckPlan;
 };
 
-/** How a published version's checks ended (`setAside`: taken out of play, see below). */
 export type LessonCheckStatus = PublishedLessonOutcome["status"] | "setAside";
 
 export type LessonCheckResult = { cited: number; status: LessonCheckStatus };
@@ -48,10 +45,6 @@ async function redraft({
   return { drafts: outcome.status === "heldBack" ? [...drafts, outcome.draft] : drafts, outcome };
 }
 
-/**
- * Fresh drafts in place of a published version no fix put right, while the lesson has drafts left
- * (the fixed version counts as its first): each is told what held the earlier ones back.
- */
 function redraftUntilPublished({
   context,
   first,
@@ -68,13 +61,6 @@ function redraftUntilPublished({
   });
 }
 
-/**
- * What follows a published version's check. A version no fix put right gets fresh drafts; the
- * first that passes is published as the next version, and the lesson's pictures follow it (the
- * ones the replaced version had for the same screens are kept). When every draft is held back, a
- * version with something wrong in it is taken out of play (learners playing it finish it, and plans
- * move on), while one that only had something to improve stays.
- */
 export async function settlePublishedLesson({
   context,
   outcome,
@@ -108,13 +94,6 @@ export async function settlePublishedLesson({
   return settled.status;
 }
 
-/**
- * The model checks of a lesson version just published, which learners already play: nobody waits
- * on them, so they run here, at the flex tier. The reasoning check reads the version (when the
- * lesson's policy asks for one) and a problem it finds is fixed in a new version; a lesson written
- * from documents gets its citations meanwhile. Learners playing the version a fix replaces finish
- * it, and the next open gets the fixed one.
- */
 export async function lessonCheckWorkflow({
   plan,
   ...input
@@ -124,8 +103,7 @@ export async function lessonCheckWorkflow({
   const { workflowRunId } = getWorkflowMetadata();
   const context: CheckContext = { ...input, workflowRunId };
 
-  // Citations are extra: once their step's retries run out, the version goes without them and
-  // the reviewer's finding is still settled.
+  // Citations are extra: the version goes without them once their step gives up.
   const [cited, outcome] = await Promise.all([
     plan.cite ? citePublishedLessonStep({ ...context, plan }).catch(() => 0) : 0,
     plan.review

@@ -14,25 +14,20 @@ import {
   readPlanOpeningStep,
 } from "./steps/goal-lookahead-steps";
 
-/** The first outline band takes about a minute; placement runs meanwhile. */
 const OUTLINE_POLL = "5s";
 const MAX_OUTLINE_POLLS = 48;
-/** How long the plan's start is followed after the first lessons start: placement and the last bands. */
 const FOLLOW_POLLS = 60;
 
 type PlanOpening = (string | null)[];
 
-/** Where the saved plan started at the last look (`undefined` before the first), and what started. */
+/** `saved` is undefined before the first look. */
 type Followed = { saved: string | null | undefined; started: string[] };
 
 function hasFirstLesson(opening: PlanOpening): boolean {
   return typeof opening[0] === "string";
 }
 
-/**
- * A chapter found in the Library can land before the band the learner reaches first, so one real
- * lesson isn't enough: every lesson of the opening must be.
- */
+/** A Library chapter can land before the band the learner reaches first, so one real lesson isn't enough. */
 function isOpeningOutlined(opening: PlanOpening): boolean {
   return opening.length > 0 && opening.every((lessonId) => lessonId !== null);
 }
@@ -64,11 +59,6 @@ function toWriter({
   return { analytics: context.analytics, forExam: inputs.goal.kind === "exam" };
 }
 
-/**
- * Starts writing the lessons the saved plan still has the learner do, and
- * returns them: `learner` for the plan's first lesson, which the learner opens the moment
- * placement ends; the others are minutes away.
- */
 async function writeLessons({
   goalId,
   lessonIds,
@@ -98,15 +88,6 @@ async function writeLessons({
   return admitted;
 }
 
-/**
- * While placement runs, the first lessons of the two likeliest starting phases start generating,
- * so the first lesson is ready when placement ends: two for a free learner, four for a Plus
- * subscriber (`getLookahead`), whose sessions run longer, and only the first for a guest. The
- * plan's first lesson starts the moment its band lands, since the learner opens it next: the few
- * screens after placement take less time than writing it. The rest follow once the whole opening
- * is outlined, the first lesson of the other guessed phase first, since placement may start the
- * learner there.
- */
 export async function startLikelyLessons({
   context,
   inputs,
@@ -154,17 +135,6 @@ export async function startLikelyLessons({
   return [...first, ...started];
 }
 
-/**
- * The plan's start still moves after its first lessons start: placement moves the learner past
- * what they know, and each band that lands re-plans with its real lessons. For a few minutes, the
- * plan's first lesson is written the moment the start moves to one nobody started, so it's ready
- * when the learner opens it; one already written ends its run at once. The learner's own lesson
- * waits until placement ends (`pickPlanStartToWrite`). Each look reads where the saved plan
- * starts, and only a start that moved is picked again, from the plan brought up to date: a plan
- * still waiting for a band's lessons never sends the writer to the lesson before them. A guest's
- * start isn't followed: their one lesson written ahead is the first guess, and a start placement
- * moved is written when placement ends, as their one new lesson.
- */
 export async function followPlanStart({
   context,
   inputs,

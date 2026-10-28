@@ -4,12 +4,6 @@ import { reviewLessonLaterStep } from "./steps/later-review-steps";
 
 export type LaterReviewResult = { replaced: string[]; reviewed: number; setAside: string[] };
 
-/**
- * The later check of lessons made ahead of time: each lesson gets the lesson quality check at the
- * flex tier, from a reasoning model of another family than the writer. A lesson it finds something
- * wrong in gets a fresh draft, checked in full, published as its next version (learners playing
- * the current one finish it); when no draft passes, the lesson is taken out of play.
- */
 export async function laterReviewWorkflow({
   lessonIds,
 }: {

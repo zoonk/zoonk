@@ -11,12 +11,10 @@ import { getRun } from "workflow/api";
 import { type BuiltCurriculum } from "../goal-curriculum";
 import { type GoalStreamStep } from "./goal-progress-step";
 
-/** A stored plan's curriculum as a build's: its graph run wrote it, with no new usage. */
 function toBuiltCurriculum({
   generatedAt,
   stored,
 }: {
-  /** When the plan made from it counts as written: a reused graph's plan is written now. */
   generatedAt?: string;
   stored: PlanSkillGraph;
 }): BuiltCurriculum {
@@ -37,19 +35,11 @@ function toBuiltCurriculum({
   };
 }
 
-/** When a run started, or null for an id that was never a run (seeded content, a test's). */
 async function readRunStart(runId: string): Promise<Date | null> {
   const run = getRun(runId);
   return (await run.exists) ? run.createdAt : null;
 }
 
-/**
- * The curriculum a goal's stored plan stands for, when research `researchId` started after the
- * plan was built (research restarted, as after a run that failed or stalled): the run that built
- * the plan reconciled it with research that ended before, so this reading would reach nothing.
- * Null otherwise, or when the goal has no plan or the research never ran. A run that can't be
- * read right now throws, so the runtime retries the step.
- */
 export async function loadStoredCurriculumStep({
   goalId,
   researchId,
@@ -71,12 +61,6 @@ export async function loadStoredCurriculumStep({
   return toBuiltCurriculum({ stored });
 }
 
-/**
- * The curriculum another learner's goal built for the same exam notice, when one fits this goal
- * (`findReusableCurriculum`): it stands for this goal's skill graph, whose Library skills and
- * courses it already names, and its main course becomes this goal's. Its plan counts as written
- * now, so placement waits for the questions still being written. Null when none fits.
- */
 export async function reuseCurriculumStep({
   inputs,
   scope,

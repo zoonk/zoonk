@@ -5,11 +5,6 @@ import {
 } from "@zoonk/core/library/sources/stored";
 import { withAiRetry } from "../../_shared/ai-retry";
 
-/**
- * The official sources another learner's research already stored for the same law, product or
- * subject and still valid, so this goal reuses them instead of searching the web again. Empty
- * when none fits.
- */
 export async function findStoredSourcesStep({
   plan,
   topic,
@@ -24,7 +19,6 @@ export async function findStoredSourcesStep({
       country: plan.country,
       language: plan.language,
       name: plan.name,
-      // Only an exam has an organizer in its plan (its board); a law, product or subject has none.
       publisher: null,
       searchTerms: plan.searchTerms,
       topic,

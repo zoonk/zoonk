@@ -20,11 +20,6 @@ export async function endReviewedCallStep(connectionId: string) {
   await safeAsync(() => endLiveCall({ connectionId, reason: "completion" }));
 }
 
-/**
- * A model failure throws, so the step's retries try again before the call ends without feedback. A
- * call the test kill switch stopped would fail every retry the same way, so it ends without
- * feedback at once.
- */
 export async function reviewCallStep(input: ConversationReviewInput & { runId: string }) {
   "use step";
   const { data, error } = await safeAsync(() => reviewConversationCall(input));

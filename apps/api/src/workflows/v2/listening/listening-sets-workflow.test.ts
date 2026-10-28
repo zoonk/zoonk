@@ -27,7 +27,6 @@ function provenance() {
   };
 }
 
-/** A clean set for the part asked, so each part's script (and its reuse key) is its own. */
 function writtenSet(task: string): ListeningSet {
   return {
     questions: [
@@ -62,7 +61,6 @@ async function examGoal(exam: Awaited<ReturnType<typeof listeningExamFixture>>) 
 }
 
 describe(listeningSetsWorkflow, () => {
-  // Writing, voicing and storing a recording are paid external services: their results are faked.
   beforeEach(() => {
     vi.mocked(put).mockImplementation(
       async (pathname) => ({ url: `https://blob.test/${randomUUID()}-${pathname}` }) as never,

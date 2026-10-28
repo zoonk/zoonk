@@ -8,10 +8,9 @@ import { toSourceUrl } from "@zoonk/core/library/sources/fetch";
 import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 
-/** Copies of documents that couldn't be downloaded: the prompt asks for 3 at most. */
+/** The prompt asks for 3 at most. */
 const MAX_COPIES = 3;
 
-/** Official documents first, each public address once. */
 function selectDocuments(documents: FoundSourceDocument[]): FoundSourceDocument[] {
   const withUrls = documents.flatMap((document) => {
     const url = toSourceUrl(document.url);
@@ -29,10 +28,7 @@ function getSite(url: string): string {
   return new URL(url).hostname.replace(/^www\./u, "");
 }
 
-/**
- * Copies only from sites that let the app download them: never an unreadable site again, nor
- * another of its addresses (vunesp.com.br's pages and documento.vunesp.com.br's files both refuse).
- */
+/** A site that refuses downloads refuses them on its other addresses too (vunesp.com.br and documento.vunesp.com.br). */
 function selectCopies({
   documents,
   unreadable,
@@ -52,13 +48,7 @@ function selectCopies({
     .slice(0, MAX_COPIES);
 }
 
-/**
- * Searches official domains first for the current notice, law or
- * documentation, or a subject's reference syllabi. The search tool is the
- * eval's pick (see the `find-official-sources` eval); the step keeps only
- * public addresses. Given documents that couldn't be downloaded (`unreadable`),
- * it searches for copies of them on other sites instead.
- */
+/** The search tool is the `find-official-sources` eval's pick. */
 export async function findSourcesStep({
   analytics,
   plan,

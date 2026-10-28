@@ -4,21 +4,12 @@ import { type ExamIdentity, buildExamIdentityKey } from "@zoonk/core/library/exa
 import { withAiRetry } from "../../_shared/ai-retry";
 
 type ExamBlueprintLookup = {
-  /** The identity research saves under: the stored exam's when another name matched it. */
   identity: ExamIdentity;
-  /** The key research claims, so two learners never research the same exam at once. */
   identityKey: string;
   blueprintId: string | null;
-  /** False when the stored edition's exam has passed, so a new notice is looked for. */
   isCurrent: boolean;
 };
 
-/**
- * Finds the exam's canonical blueprint: its exact key first, then shared
- * blueprints of the same country whose names match, confirmed one by one by
- * an evaluation model. The first learner for an exam triggers research;
- * everyone after reads the stored result.
- */
 export async function findExamBlueprintStep({
   identity,
   searchTerms,

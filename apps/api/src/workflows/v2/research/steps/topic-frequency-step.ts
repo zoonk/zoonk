@@ -6,16 +6,7 @@ import {
 import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 
-/**
- * For a notice whose documents don't say how often the exam asks its topics (ENEM's contents),
- * how often its past papers asked each one, looked up once and stored on the blueprint: a plan
- * short on time leaves out the topics asked least first. One search per subject, side by side: a
- * lookup of every subject at once rated the first ones and left ENEM's sciences out. What the
- * searches found is stored even when one fails, and the failure throws, so the runtime retries the
- * step, which looks up only the subjects still missing (`recordTopicFrequency`). The frequency only
- * adds to the notice, so research goes on when the retries run out, and the next learner's
- * research asks for the rest.
- */
+/** One search per subject: a lookup of every subject at once rated the first ones and left the rest out. */
 export async function lookUpTopicFrequencyStep({
   analytics,
   examBlueprintId,

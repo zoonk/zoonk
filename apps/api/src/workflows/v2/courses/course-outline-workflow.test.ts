@@ -50,7 +50,6 @@ const scope = {
 
 const TIMEOUT = 60_000;
 
-/** A learner whose plan stands in for these skills of the recorded graph until the outline lands. */
 async function planWaitingGoal(idsByKey: Record<string, string>) {
   const user = await userFixture();
   const goal = await goalFixture({ userId: user.id });
@@ -67,7 +66,6 @@ async function planWaitingGoal(idsByKey: Record<string, string>) {
   return goal;
 }
 
-/** A learner whose plan stands in for the recorded graph's skills until the outline lands. */
 async function waitingGoal() {
   const skills = await Promise.all(
     recordedGraph.skills.map((skill) =>
@@ -91,10 +89,6 @@ async function waitingGoal() {
   return { bandSkills, goal, idsByKey };
 }
 
-/**
- * Marks the plan's inputs changed again and again until `signal` aborts, as other runs saving
- * lessons for its skills do. Returns how many marks it made.
- */
 async function markPlanUntil({
   planId,
   signal,
@@ -110,10 +104,6 @@ async function markPlanUntil({
   return 1 + (await markPlanUntil({ planId, signal }));
 }
 
-/**
- * The outline model answers with the recorded outline's first chapter only, for tests that read
- * what the model was asked rather than what saving a whole band writes.
- */
 function outlineOneChapter() {
   const oneChapter = { ...recordedOutline, chapters: recordedOutline.chapters.slice(0, 1) };
 
@@ -128,7 +118,6 @@ function lessonItems(goalId: string) {
   });
 }
 
-/** An outline chapter of three interview lessons, each with a skill of its own. */
 function interviewChapter(title: string, skillKeys: string[]) {
   return {
     description: `${title}.`,
@@ -148,14 +137,12 @@ function interviewChapter(title: string, skillKeys: string[]) {
   };
 }
 
-/** A new band a learner waits on, whose first chapter an earlier attempt saved, then failed. */
 async function writeAfterEarlyAttempt(firstStatus: "completed" | "failed") {
   const [{ bandSkills }, course] = await Promise.all([
     waitingGoal(),
     courseFixture({ outlineStatus: "running", title: "Immunology" }),
   ]);
 
-  // An earlier attempt of this step saved the band's first chapter, then failed.
   const first = await libraryChapterFixture({ level: "overview", outlineStatus: firstStatus });
 
   await courseChapterFixture({
@@ -243,9 +230,6 @@ describe(courseOutlineWorkflow, () => {
       expect(items.length).toBeGreaterThan(0);
       expect(items.every((item) => item.lessonId !== null)).toBe(true);
 
-      // The icon is drawn by a run of its own as the outline starts, so the plan shows it from the
-      // start and the outline never waits for the picture; the page details follow, and level
-      // bands no goal needs are never written ahead.
       expect(vi.mocked(start).mock.calls).toStrictEqual([
         [courseIconWorkflow, [{ analytics: undefined, courseId: course.id }]],
         [
@@ -257,10 +241,6 @@ describe(courseOutlineWorkflow, () => {
     },
   );
 
-  // Other runs keep saving lessons one waiting learner's plan is planned from while the band
-  // lands: that plan can't be saved from what it read, and once its step gives up the band stays
-  // written, the other learner takes its lessons, and the one still on stand-ins is said, with
-  // its goal, and counted as a generation that failed.
   it(
     "keeps a band written when a waiting goal can't take its lessons, and says which",
     { timeout: TIMEOUT },
@@ -378,8 +358,6 @@ describe(courseOutlineWorkflow, () => {
 
       const half = Math.ceil(bandSkills.length / 2);
 
-      // The first band's outline lands only once the second band's started: one after the other,
-      // the second would never start.
       const secondStarted = new Promise<boolean>((resolve) => {
         vi.mocked(generateCourseOutline).mockImplementation(async (params) => {
           resolve(params.level === "beginner");
@@ -436,7 +414,6 @@ describe(courseOutlineWorkflow, () => {
         waitedSkillId: bandSkills[0]?.id,
       });
 
-      // Only the band the learner waits on pays for priority; the next one is minutes away.
       expect(vi.mocked(streamCourseOutline).mock.calls[0]?.[0].serviceTier).toBe("priority");
       expect(vi.mocked(generateCourseOutline).mock.calls[0]?.[0].serviceTier).toBeUndefined();
     },
@@ -459,7 +436,6 @@ describe(courseOutlineWorkflow, () => {
       ) => {
         const result = await replay(params);
 
-        // The model is still writing the rest of the band here.
         const [placements, items] = await Promise.all([
           prisma.courseChapter.count({ where: { courseId: course.id } }),
           lessonItems(goal.id),
@@ -545,8 +521,6 @@ describe(courseOutlineWorkflow, () => {
     },
   );
 
-  // Saving a chapter runs identity search over the shared test database's Library, which takes
-  // seconds while other suites load it, like every other chapter-saving test here.
   describe(writeOutlineBandStep, { timeout: TIMEOUT }, () => {
     it("keeps the first chapter an earlier attempt finished, and writes the rest of the band after it", async () => {
       const { band, first } = await writeAfterEarlyAttempt("completed");
@@ -596,7 +570,6 @@ describe(courseOutlineWorkflow, () => {
         prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
       ).resolves.toMatchObject({ outlineRunId: "test-run-id", outlineStatus: "failed" });
 
-      // Building the learner's plan counted "Plan Created" before this run.
       expect(trackServerEvent).toHaveBeenLastCalledWith(
         expect.objectContaining({
           distinctId: goal.userId,
@@ -606,8 +579,6 @@ describe(courseOutlineWorkflow, () => {
         }),
       );
 
-      // The goal keeps its stand-ins, and a shared course gets no page details from a failed run
-      // (only the icon its outline started with).
       const items = await lessonItems(goal.id);
 
       expect(items.length).toBeGreaterThan(0);
@@ -736,7 +707,6 @@ describe(courseOutlineWorkflow, () => {
 
       expect(call?.[0].taughtElsewhere).toStrictEqual([elsewhere?.name]);
 
-      // Another subject's lesson for a shared skill doesn't count: this course still teaches it.
       expect(call?.[0].requiredSkills?.map((skill) => skill.key)).toStrictEqual(
         [inOtherSubject, ...rest].map((skill) => skill?.key),
       );
@@ -810,7 +780,6 @@ describe(courseOutlineWorkflow, () => {
         .mocked(generateCourseOutline)
         .mock.calls.map(([params]) => params.requiredSkills?.map((skill) => skill.area));
 
-      // An exam's chapters keep to one subject; other goals' areas don't bind their chapters.
       expect(exam).toStrictEqual(skills.map(() => "Matemática"));
       expect(shared).toStrictEqual(skills.map(() => null));
     },
@@ -831,7 +800,6 @@ describe(courseOutlineWorkflow, () => {
         status: Promise.resolve("running"),
       } as never);
 
-      // While this run waits, the other run saves an overview chapter and lets the course go.
       vi.mocked(sleep).mockImplementationOnce(async () => {
         await courseChapterFixture({
           chapterId: savedChapter.id,
@@ -942,7 +910,6 @@ describe(courseOutlineWorkflow, () => {
       const [{ bandSkills }, course] = await Promise.all([
         waitingGoal(),
         courseFixture({ title: "Immunology" }),
-        // A Library skill every search finds, so each of the chapter's skills asks for a decision.
         skillFixture({ name: `Antigen recognition ${token}` }),
       ]);
 
@@ -951,7 +918,6 @@ describe(courseOutlineWorkflow, () => {
           taskResult({ subjects: subjects.map(() => ({ terms: [token] })) }) as never,
       );
 
-      // The decision model runs out of time once, as it did for 9 of 22 runs in a burst of onboardings.
       vi.mocked(decideLibraryIdentity).mockRejectedValueOnce(
         new EvaluationTimeoutError("typesafe-ai/jev didn't answer within 10000 ms."),
       );
@@ -974,7 +940,6 @@ describe(courseOutlineWorkflow, () => {
           workflowRunId: "outline-run",
         });
 
-      // The step is retried a minute later instead of failing the band for good.
       await expect(save()).rejects.toMatchObject({ name: "RetryableError", retryAfter: "1m" });
 
       const saved = await save();
@@ -985,7 +950,6 @@ describe(courseOutlineWorkflow, () => {
         prisma.chapter.findUniqueOrThrow({ where: { id: saved.chapterId } }),
       ]);
 
-      // One chapter, each of its lessons and its challenge once, all of them placed.
       expect(placements.map((placement) => placement.chapterId)).toStrictEqual([saved.chapterId]);
       expect(homeLessons).toHaveLength(chapter.lessons.length + 1);
       expect(saved.lessonIds.toSorted()).toStrictEqual(homeLessons.map((row) => row.id).toSorted());
@@ -1023,7 +987,6 @@ describe(courseOutlineWorkflow, () => {
 
     expect(generateCourseOutline).not.toHaveBeenCalled();
 
-    // The course may still lack its page details; that run finds what's missing.
     expect(start).toHaveBeenCalledWith(
       courseDetailsWorkflow,
       [{ analytics: undefined, courseId: course.id }],
@@ -1077,7 +1040,6 @@ describe(courseOutlineWorkflow, () => {
         }),
       ]);
 
-      // The plan keeps the graph's twelve lessons: two written and a stand-in for ten.
       const goal = await goalFixture({
         kind: "language",
         language: "pt",
@@ -1110,7 +1072,6 @@ describe(courseOutlineWorkflow, () => {
 
       const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
 
-      // The model repeats the existing chapter, then writes two new ones and an unrelated chapter.
       vi.mocked(generateCourseOutline).mockResolvedValue(
         outlineResult({
           chapters: [
@@ -1146,7 +1107,6 @@ describe(courseOutlineWorkflow, () => {
         where: { courseId: course.id },
       });
 
-      // The continuation goes right after the skill's chapter, before what builds on it.
       expect(
         placements.map((placement) => [placement.position, placement.chapter.title]),
       ).toStrictEqual([
@@ -1155,8 +1115,6 @@ describe(courseOutlineWorkflow, () => {
         [2, "Vida no trabalho"],
       ]);
 
-      // The goal re-planned: the new chapter's lessons follow the skill's earlier ones and replace
-      // part of the stand-in, which still plans the rest.
       const items = await lessonItems(goal.id);
 
       const lessons = await prisma.lesson.findMany({
@@ -1179,9 +1137,6 @@ describe(courseOutlineWorkflow, () => {
     },
   );
 
-  // Lucas's session preparation asked for one ENEM course's "intermediate" band twice in one run (a
-  // skill's next chapter and another skill's first ones): both bands placed their chapters from
-  // the same position, and the run failed on the course's unique chapter places.
   it(
     "writes a level a run lists twice as one band, so its chapters never claim the same place",
     { timeout: TIMEOUT },
@@ -1216,8 +1171,6 @@ describe(courseOutlineWorkflow, () => {
         name: skill.name,
       });
 
-      // Each outline call writes its own chapters, so two calls for one level would place
-      // different chapters in the same places.
       vi.mocked(generateCourseOutline)
         .mockResolvedValueOnce(
           outlineResult({
@@ -1289,8 +1242,6 @@ describe(courseOutlineWorkflow, () => {
       data: { chapterId: chapter.id, lessonId: lesson.id, position: 0 },
     });
 
-    // A server restart left the run that held the course saying it's running, an hour after its
-    // last step started. Cancelling it frees the course's token.
     const cancel = vi.fn(() => {
       mockHookConflict(null);
       return Promise.resolve();
@@ -1339,8 +1290,6 @@ describe(courseOutlineWorkflow, () => {
     expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [{ ...input, attempt: 1 }]);
   });
 
-  // Three learners started the same course at once, each needing a different band: the third
-  // request found another run on the course a second time and gave up, so its band never came.
   it("keeps its turn while its bands are still missing, however many runs held the course before it", async () => {
     const [course, skill] = await Promise.all([courseFixture(), skillFixture()]);
     mockHookConflict({ returnValue: Promise.resolve({ status: "written" }), runId: "other-run" });
@@ -1397,7 +1346,6 @@ describe(courseOutlineWorkflow, () => {
 
     await expect(
       courseOutlineWorkflow({
-        // Far past any number of turns a busy course needs.
         attempt: 1000,
         bands: [
           {

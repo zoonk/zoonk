@@ -2,12 +2,6 @@ import { trackSystemEvent } from "@zoonk/core/analytics/server";
 import { trackLearnerEvents } from "@zoonk/core/analytics/track-learner-event";
 import { type ContentAnalytics } from "./content-analytics";
 
-/**
- * "Generation Failed" for a run that gave up on content: counted for the learner whose request
- * started it, with their goal and client, or under the system's id for runs no learner started
- * (sweeps and the background work they start), which never create a person in PostHog. `task`
- * names the run.
- */
 export async function trackGenerationFailedStep({
   analytics,
   contentKind,

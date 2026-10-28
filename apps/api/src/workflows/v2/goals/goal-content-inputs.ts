@@ -8,34 +8,17 @@ import { goalProgressStep } from "./steps/goal-progress-step";
 
 const RESEARCH_POLL = "3s";
 
-/**
- * How long a goal's curriculum waits for its research, in polls. Research reads a new exam's
- * notice in a minute or two, so an exam's plan checks for five minutes after it's built (then less
- * often, see `LATE_RESEARCH_POLL`) to be reconciled with the notice, and a class test waits five
- * minutes for the learner's material before its graph. A learn goal's research only adds what the
- * coverage check reads (reference syllabi, a law's text, a product's docs) or the learner's
- * material, usually within a minute of the learner's answers, so it waits up to two.
- */
+/** Research reads a new exam's notice in a minute or two, and a learn goal's references within one. */
 const MAX_RESEARCH_POLLS: Partial<Record<GoalKind, number>> = { exam: 100, learn: 40 };
 
-/**
- * Purpose, role and level change the skill graph, so a goal typed in onboarding waits for them:
- * usually a few seconds, since they're the first screens. A learner who leaves onboarding gets
- * the curriculum from what they typed after three minutes.
- */
+/** Purpose, role and level change the skill graph, so the curriculum waits for the learner's answers. */
 const ANSWERS_POLL = "3s";
 const MAX_ANSWERS_POLLS = 60;
 
-/**
- * Reconciling an exam's plan with its notice blocks nothing the learner waits on, so once the
- * usual wait runs out it keeps checking research every half minute for up to half an hour more:
- * reading a long notice can take far longer when the model is slow (on 2026-09-30 the SAT's
- * reading timed out at the gateway three times, five minutes each, before its step retried).
- */
+/** Reconciling blocks nothing the learner waits on, so it keeps checking on slow research longer. */
 const LATE_RESEARCH_POLL = "30s";
 const MAX_LATE_RESEARCH_POLLS = 60;
 
-/** Whether research is still running once the wait ran out. */
 function waitForResearch({
   poll = RESEARCH_POLL,
   researchId,
@@ -62,12 +45,6 @@ function waitForAnswers(goalId: string): Promise<GoalCurriculumInputs | null> {
   });
 }
 
-/**
- * Only an exam's plan is built before research reads what it found (see `waitForGraphInputs`):
- * a goal built from the learner's material waits for research first, and a learn goal's coverage
- * check waits for its references. Such a plan waits for research's reading of the notice from the
- * moment it's saved (see `startNoticeWait`).
- */
 export function isBuiltBeforeResearch({
   inputs,
   researchId,
@@ -78,17 +55,12 @@ export function isBuiltBeforeResearch({
   return Boolean(researchId) && inputs.goal.kind === "exam" && !inputs.hasMaterial;
 }
 
-/**
- * The goal as research left it: read once research ends, or once the goal's kind stops waiting
- * for it, with what research linked (an exam's blueprint, references, the learner's material).
- */
 export async function loadResearchedInputs({
   inputs,
   late = false,
   researchId,
 }: {
   inputs: GoalCurriculumInputs;
-  /** Nothing waits on the result (reconciliation): keep waiting for slow research, less often. */
   late?: boolean;
   researchId: string;
 }): Promise<GoalCurriculumInputs | null> {
@@ -102,7 +74,6 @@ export async function loadResearchedInputs({
   return loadGoalCurriculumStep(inputs.goal.id);
 }
 
-/** Waits for research to read the learner's material, saying so for an exam. */
 async function waitForReading({
   inputs,
   researchId,
@@ -126,17 +97,6 @@ async function waitForReading({
   return researched;
 }
 
-/**
- * What a goal's curriculum is built from, once it's ready to read, starting from the goal as the
- * run first read it. The learner's answers to the questions that shape the graph come first.
- * Then, for a goal built from the learner's own material, the research started with the goal,
- * which reads it: the material is the curriculum, and it replaces a blueprint the goal was
- * created with (a class test from the teacher's slides, not the exam of the same name). An exam's
- * graph doesn't wait for research: it's written from the blueprint the goal has, or from the exam
- * as onboarding understood it (its name, year and what the learner said), and the plan is
- * reconciled with a new notice once research reads it (`reconcileResearch`). A goal whose plan
- * exists waits for nothing, since nothing is built for it.
- */
 export async function waitForGraphInputs({
   initial,
   researchId,
@@ -153,13 +113,6 @@ export async function waitForGraphInputs({
   return waitForReading({ inputs, researchId });
 }
 
-/**
- * The references the coverage check reads while the graph is written. A learn goal's research
- * finds them (reference syllabi, a law's text, a product's docs), so they're read once research
- * ends; research usually ends first, and then nothing waits. A goal built from its material read
- * research before its graph, and an exam's plan is checked against what research read once the
- * plan is built, so neither waits here.
- */
 export async function loadGoalReferences({
   inputs,
   researchId,

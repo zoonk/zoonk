@@ -15,10 +15,8 @@ type UnderstandingStreamStep = GoalUnderstandingStepName | typeof WORKFLOW_ERROR
 
 type ReadWords = Awaited<ReturnType<typeof readGoalWords>>;
 
-/** Writes one progress event of a draft's run to its stream. */
 export const understandingProgressStep = progressStep<UnderstandingStreamStep>;
 
-/** Keeps this run on its draft, so a refresh follows it, and reads what the learner typed. */
 export async function recordUnderstandingRunStep(input: {
   draftId: string;
   runId: string;
@@ -29,7 +27,6 @@ export async function recordUnderstandingRunStep(input: {
   return loadUnderstandingDraft(input.draftId);
 }
 
-/** The model reads the words while the unsafe-intent classifier checks them. */
 export async function readGoalStep(draft: UnderstandingRunDraft): Promise<ReadWords> {
   "use step";
 
@@ -39,7 +36,6 @@ export async function readGoalStep(draft: UnderstandingRunDraft): Promise<ReadWo
   return await withAiRetry(() => readGoalWords(draft));
 }
 
-/** Reads the named exam's dates and puts the card on the draft; returns its language goals. */
 export async function completeUnderstandingStep(input: {
   draft: UnderstandingRunDraft;
   read: ReadWords;

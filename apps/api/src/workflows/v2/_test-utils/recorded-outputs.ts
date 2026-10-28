@@ -1,12 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { readFileSync } from "node:fs";
 
-/**
- * Model outputs recorded from one real run of a small goal ("Understand how vaccines train the
- * immune system", 27 Sep 2026): the goal's specificity, its skill graph, the overview band's
- * outline, the first lesson's spec and the writer's draft for it. Workflow tests replay them
- * instead of calling models.
- */
 function readRecorded(name: string): unknown {
   return JSON.parse(
     readFileSync(new URL(`../goals/_test-fixtures/${name}.json`, import.meta.url), "utf8"),
@@ -20,7 +14,6 @@ export function recordedOutput<T>(
   return readRecorded(`vaccines-${name}`) as T;
 }
 
-/** What every task returns next to its data, for mocked task results. */
 export function taskResult<T>(data: T, model = "openai/gpt-6-sol") {
   return {
     data,
@@ -51,18 +44,12 @@ export function taskResult<T>(data: T, model = "openai/gpt-6-sol") {
   };
 }
 
-/** `taskResult` for the course outline, which also returns the drafts it wrote again: none here. */
 export function outlineResult<T>(data: T) {
   return { ...taskResult(data), setAside: [] };
 }
 
 type StreamedOutline<Chapter> = { chapters: readonly Chapter[] };
 
-/**
- * Replays a streamed outline the way `streamCourseOutline` delivers it: the first chapter
- * `isEarlyChapter` accepts goes to `saveEarlyChapter` with the chapters before it, before the
- * outline ends, and what that returned comes back as `early`.
- */
 export function replayStreamedOutline<Chapter>(outline: StreamedOutline<Chapter>) {
   return async ({
     isEarlyChapter,

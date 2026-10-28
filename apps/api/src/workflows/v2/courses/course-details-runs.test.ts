@@ -2,14 +2,10 @@ import { describe, expect, it, vi } from "vitest";
 import { getWorld } from "workflow/runtime";
 import { listInFlightCourseDetails } from "./course-details-runs";
 
-// The operational run store is external; Prisma remains real in the owning core recovery tests.
 vi.mock("workflow/runtime", () => ({ getWorld: vi.fn() }));
 
 function mockRunList(list: ReturnType<typeof vi.fn>) {
-  vi.mocked(getWorld).mockResolvedValue(
-    // Only runs.list is used at this external boundary.
-    { runs: { list } } as never,
-  );
+  vi.mocked(getWorld).mockResolvedValue({ runs: { list } } as never);
 }
 
 describe(listInFlightCourseDetails, () => {

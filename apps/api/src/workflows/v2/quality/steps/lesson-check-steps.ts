@@ -19,10 +19,6 @@ type CheckStepInput = {
   workflowRunId: string;
 };
 
-/**
- * The reasoning check of a version learners already play, at flex, and one fix pass published as
- * the next version when it finds something (see `checkPublishedLesson`).
- */
 export async function checkPublishedLessonStep(
   input: CheckStepInput & { plan: LessonCheckPlan },
 ): Promise<PublishedLessonOutcome> {
@@ -31,7 +27,6 @@ export async function checkPublishedLessonStep(
   return withAiRetry(() => checkPublishedLesson(input));
 }
 
-/** A fresh draft in place of a published version no fix put right (see `redraftPublishedLesson`). */
 export async function redraftPublishedLessonStep(
   input: CheckStepInput & { heldBackDrafts: HeldBackDraft[]; version: number },
 ): Promise<PublishedLessonOutcome> {
@@ -42,7 +37,6 @@ export async function redraftPublishedLessonStep(
 
 redraftPublishedLessonStep.maxRetries = 1;
 
-/** Citations for a version written from documents, after it's published. */
 export async function citePublishedLessonStep(
   input: CheckStepInput & { plan: Pick<LessonCheckPlan, "lesson" | "version"> },
 ): Promise<number> {
@@ -51,7 +45,6 @@ export async function citePublishedLessonStep(
   return withAiRetry(() => citePublishedLesson(input));
 }
 
-/** Takes a lesson whose live version is wrong and that no draft could replace out of play. */
 export async function setAsidePublishedLessonStep(input: {
   lessonId: string;
   version: number;
@@ -61,7 +54,6 @@ export async function setAsidePublishedLessonStep(input: {
   return setAsidePublishedLesson(input);
 }
 
-/** Whose pictures a lesson's new version gets (see `getImageScope`). */
 export async function readLessonImageScopeStep(lessonId: string): Promise<ImageScope> {
   "use step";
 

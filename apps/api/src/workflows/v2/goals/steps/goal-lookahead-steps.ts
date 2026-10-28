@@ -27,12 +27,6 @@ type OwnLevel = Parameters<typeof pickSpeculativeLessons>[0]["ownLevel"];
 
 type CourseProvenance = Parameters<typeof findOrCreateGoalCourse>[0]["provenance"];
 
-/**
- * The Library course behind each course the skill graph names, found through identity search or
- * created, by the graph's course key. Courses come in the order the learner reaches them, and the
- * first becomes the goal's main course. It needs only the graph, so it runs while the skills are
- * found, and the plan knows each skill's course from the start.
- */
 export async function findGoalCoursesStep({
   analytics,
   courses,
@@ -44,7 +38,6 @@ export async function findGoalCoursesStep({
   analytics?: ContentAnalytics;
   courses: { key: string; title: string }[];
   goal: { id: string; kind: GoalKind };
-  /** The skill graph run that named the courses. */
   provenance: CourseProvenance;
   scope: CurriculumScope;
   workflowRunId: string;
@@ -79,13 +72,9 @@ export async function findGoalCoursesStep({
   return Object.fromEntries(found);
 }
 
-/** The plan's first lessons, which the learner opens first and speculative work writes ahead. */
 const OPENING_LESSONS = 4;
 
-/**
- * The lessons of the plan's opening in order, `null` for a stand-in: until the outline of the
- * band that teaches a skill lands, its item stands in for the skill.
- */
+/** `null` is a stand-in for a skill whose band isn't outlined yet. */
 export async function readPlanOpeningStep(goalId: string): Promise<(string | null)[]> {
   "use step";
 
@@ -99,7 +88,6 @@ export async function readPlanOpeningStep(goalId: string): Promise<(string | nul
   return opening.map((item) => item.lessonId);
 }
 
-/** The skill of the plan's first lesson: the band that teaches it is the one the learner waits on. */
 export async function readPlanFirstSkillStep(goalId: string): Promise<string | null> {
   "use step";
 
@@ -112,7 +100,6 @@ export async function readPlanFirstSkillStep(goalId: string): Promise<string | n
   return first?.skillId ?? null;
 }
 
-/** The plan's first lesson when it may be written now (see `pickPlanStartToWrite`). */
 export async function pickPlanStartToWriteStep(goalId: string): Promise<string | null> {
   "use step";
 
@@ -129,13 +116,6 @@ export async function pickSpeculativeLessonsStep(input: {
   return pickSpeculativeLessons(input);
 }
 
-/**
- * The lessons of `lessonIds` to start writing now: one the learner finished, or placement tested
- * out, since it was picked is left out. The admitted targets carry the same versioned token to
- * their child runs; they never compute the plan merely to ask membership. A plan other runs kept
- * marking while it was read comes back as a conflict, for the run to read it again after a durable
- * wait (see `retryPlanConflicts`).
- */
 export async function createGoalGenerationManifestStep(input: {
   goalId: string;
   lessonIds: string[];
@@ -145,10 +125,6 @@ export async function createGoalGenerationManifestStep(input: {
   return catchPlanConflict(() => createPlanGenerationManifest(input));
 }
 
-/**
- * The outlines a plan's stand-ins scheduled within `days` of today still need, by course and level
- * band.
- */
 export async function listPlanOutlineNeedsStep(input: {
   days: number;
   goalId: string;
@@ -158,7 +134,6 @@ export async function listPlanOutlineNeedsStep(input: {
   return listPlanOutlineNeeds(input);
 }
 
-/** The courses whose stand-ins the plan schedules within `days` of today (see the core function). */
 export async function listSoonStandInCourseIdsStep(input: {
   days: number;
   goalId: string;
@@ -168,14 +143,12 @@ export async function listSoonStandInCourseIdsStep(input: {
   return listSoonStandInCourseIds(input);
 }
 
-/** How far ahead content is written for the goal's learner: a guest, a free learner or Plus. */
 export async function readGoalLookaheadStep(goalId: string): Promise<LearnerLookahead> {
   "use step";
 
   return getGoalLookahead(goalId);
 }
 
-/** The skills the goal's plan gets to within `days` of today. */
 export async function listPlanSkillIdsWithinStep(input: {
   days: number;
   goalId: string;

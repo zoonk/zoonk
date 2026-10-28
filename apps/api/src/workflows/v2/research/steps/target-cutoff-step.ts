@@ -3,13 +3,6 @@ import { findTargetCutoffLookup, recordTargetCutoff } from "@zoonk/core/exams/cu
 import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 
-/**
- * For an exam goal aiming at a target with a published cut-off (medicine at UFMG through SISU, a
- * civil service exam's position), the last cut-off with its source, looked up once a year and shared by every
- * learner aiming there: the learner sees where the bar was next to their own goal. A failure
- * throws, so the runtime retries the step; it only adds a reference, so research goes on when the
- * retries run out, and the next research run tries again.
- */
 export async function lookUpTargetCutoffStep({
   analytics,
   goalId,

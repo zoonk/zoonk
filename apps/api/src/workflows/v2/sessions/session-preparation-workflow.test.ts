@@ -20,10 +20,9 @@ import * as preparationSteps from "./steps/session-preparation-steps";
 vi.mock("../../../../../../packages/core/src/plans/planner/build-plan", { spy: true });
 
 const TODAY = new Date("2026-09-30T00:00:00Z");
-/** How many times the durable runtime retries a step that throws (`maxRetries`' default). */
+/** The workflow runtime's default `maxRetries`. */
 const STEP_RETRIES = 3;
 
-/** A learner whose session today has one unwritten lesson their plan schedules. */
 async function sessionWithLesson() {
   const user = await userFixture();
 
@@ -92,14 +91,9 @@ describe("session preparation records admission for its children", () => {
   it("starts the session's lessons once other runs' writes stop moving the plan, letting the token go meanwhile", async () => {
     const { goal, lesson, plan, user } = await sessionWithLesson();
 
-    // Minutes after the goal was made, its later bands aren't outlined: the plan still stands in
-    // for their skills, which the read resolves against what the Library outlined so far.
     const skill = await skillFixture();
     await planItemFixture({ planId: plan.id, skillId: skill.id });
 
-    // Other runs (the goal's outline bands, its lesson saves) mark the plan while the session's
-    // targets are read, between every read's token and its check, until the run waits. A few
-    // write at once, so a mark lands within each read.
     const createManifest = preparationSteps.createSessionGenerationManifestStep;
     const burst = { over: false, started: false };
     let marks: Promise<unknown> = Promise.resolve();
@@ -111,8 +105,6 @@ describe("session preparation records admission for its children", () => {
       }
     };
 
-    // The durable runtime runs a step that threw again at once, up to its retries; this inline
-    // run does the same, so the burst outlasts every retry that doesn't wait.
     const createAsTheRuntimeDoes = async (
       input: Parameters<typeof createManifest>[0],
       attempt = 0,
@@ -139,9 +131,6 @@ describe("session preparation records admission for its children", () => {
         return createAsTheRuntimeDoes(input);
       });
 
-    // The tokens held now: a hook holds its token until it's disposed. Whether the learner's
-    // preparation token was held when the run waited says whether a session the learner starts
-    // meanwhile prepares, instead of being left to this run.
     const held = new Set<string>();
     const heldWhileWaiting: boolean[] = [];
 

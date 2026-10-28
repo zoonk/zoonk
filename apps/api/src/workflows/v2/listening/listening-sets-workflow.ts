@@ -8,27 +8,15 @@ import {
 } from "./steps/listening-sets-steps";
 
 export type ListeningSetsInput = {
-  /** The learner whose goal started it, for analytics; the recordings are shared. */
   analytics?: ContentAnalytics;
   goalId: string;
-  /**
-   * The learner whose next practice needs a new recording (from their session, never the client),
-   * so parts where they heard every set get one too; unset for the goal's setup.
-   */
+  /** From the learner's session, never the client. */
   userId?: string;
   wait: CallWait;
 };
 
 export type ListeningSetsResult = { status: "joined" | "none" | "prepared"; voiced: number };
 
-/**
- * Makes a recording ready for each part of the goal's exam that needs one
- * (`listListeningPartsToPrepare`): a listening set written for the part (its script and the
- * questions on it, shared by every learner of the exam) and its voicing, every part at once.
- * Started with the goal's content at the flex tier, so the first learner of an exam pays for one
- * recording per part and every later one finds them made, and when a learner's session starts
- * and they heard every recording of a part. One run per goal: a second start joins it.
- */
 export async function listeningSetsWorkflow(
   input: ListeningSetsInput,
 ): Promise<ListeningSetsResult> {

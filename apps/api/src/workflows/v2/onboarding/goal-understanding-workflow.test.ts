@@ -93,7 +93,6 @@ describe(goalUnderstandingWorkflow, () => {
       { entityId: draft.id, status: "completed", step: "understandingReady" },
     ]);
 
-    // A learn goal has no level test to write.
     expect(start).not.toHaveBeenCalled();
   });
 

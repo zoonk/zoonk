@@ -45,7 +45,6 @@ function bankFrom(passage: string): Written {
   };
 }
 
-/** A language pair no other test uses: the learner language is a made-up code. */
 function freshPair() {
   return { language: `x${crypto.randomUUID().slice(0, 8)}`, targetLanguage: "ja" };
 }
@@ -84,7 +83,6 @@ describe(levelTestBankWorkflow, () => {
       "levelTestBankReady:completed",
     ]);
 
-    // A later start finds the questions written and ends at once.
     await expect(levelTestBankWorkflow({ pair })).resolves.toStrictEqual({ status: "ready" });
     expect(generateLevelTestBank).toHaveBeenCalledOnce();
   });
@@ -106,7 +104,6 @@ describe(levelTestBankWorkflow, () => {
   it("waits for another writer's questions instead of writing them twice", async () => {
     const pair = freshPair();
 
-    // A run that started before this workflow existed holds a live claim on the pair.
     await prisma.languageLevelTest.create({
       data: {
         ...pair,

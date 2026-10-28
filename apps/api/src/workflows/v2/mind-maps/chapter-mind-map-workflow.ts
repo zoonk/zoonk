@@ -14,11 +14,6 @@ export type ChapterMindMapResult = { hasImage: boolean };
 
 type MindMapRun = Parameters<typeof checkMindMapStep>[0];
 
-/**
- * The text check after the map is shown: a picture with a serious mistake is drawn again with what
- * the check found and replaces it at once; when the new one fails too, the map keeps only its
- * outline. A learner who has the old picture open keeps it.
- */
 async function checkShownMindMap(run: MindMapRun): Promise<ChapterMindMapResult> {
   const first = await checkMindMapStep(run);
 
@@ -37,12 +32,6 @@ async function checkShownMindMap(run: MindMapRun): Promise<ChapterMindMapResult>
   return { hasImage: false };
 }
 
-/**
- * Makes a chapter's mind map after a learner who finished the chapter asked for it (the request
- * claimed it): its text from what the lessons teach, then its picture, shown as soon as it's drawn.
- * Its words are checked afterwards (`checkShownMindMap`), so nobody waits for the check. A run that
- * fails before the map is shown marks it failed, so the learner can ask again.
- */
 export async function chapterMindMapWorkflow({
   analytics,
   chapterId,

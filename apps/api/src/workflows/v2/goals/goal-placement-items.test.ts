@@ -32,7 +32,6 @@ import { pickPlacementBatchesStep, writePlacementBatchStep } from "./steps/place
 
 const CITATION = { passage: "Conforme o edital.", sourceId: "notice" };
 
-/** Polícia Federal's notice as research reads it: assertions judged right or wrong. */
 const CEBRASPE_STRUCTURE = {
   formats: [
     { citation: CITATION, description: "Itens Certo ou Errado.", kind: "trueFalse", options: null },
@@ -42,7 +41,6 @@ const CEBRASPE_STRUCTURE = {
   subjects: [],
 };
 
-/** A multiple-choice notice that doesn't say how many options, so the writer's two-option fakes pass. */
 const MULTIPLE_CHOICE_STRUCTURE = {
   formats: [
     {
@@ -101,7 +99,6 @@ const TYPED_ITEM: GeneratedItem = {
   visual: null,
 };
 
-/** What the writer returns: the questions it was asked for, for every skill in the call. */
 function writtenFor(params: PlacementItemsParams) {
   return taskResult({
     skills: params.skills.map(() => ({
@@ -143,7 +140,6 @@ function calledSkillCounts() {
 
 const context = { analytics: { distinctId: "learner" }, workflowRunId: "goal-run" };
 
-/** A skill graph whose every skill is a course of its own, so placement picks each one. */
 function oneCoursePerSkill(keys: string[]): GoalSkillGraph {
   return {
     courses: keys.map((key) => ({ key, levels: ["beginner"], title: `Course ${key}` })),
@@ -193,7 +189,6 @@ describe(prepareGraphPlacement, () => {
     const { goal, skillIds } = await goalWithSkills({ count: 3 });
     const keys = skillIds.map((_, index) => `skill-${index}`);
 
-    // Only the skills' ids: their courses and prerequisites may still be on their way.
     await prepareGraphPlacement({
       context,
       everySkill: false,
@@ -216,7 +211,6 @@ describe(prepareGraphPlacement, () => {
       },
     ]);
 
-    // Its wait opens here; the run writes the questions, so nothing was written yet.
     expect(generatePlacementItems).not.toHaveBeenCalled();
 
     expect(getStreamedEvents()).toStrictEqual([
@@ -230,7 +224,6 @@ describe(placementItemsWorkflow, () => {
     vi.mocked(generatePlacementItems).mockReset();
     vi.mocked(generatePlacementItems).mockImplementation(async (params) => writtenFor(params));
 
-    // A picture's scene is looked up in the Library first: its search terms find nothing here.
     vi.mocked(generateSearchTerms).mockImplementation(
       async ({ subjects }) =>
         ({ data: { subjects: subjects.map(() => ({ terms: [] })) } }) as never,
@@ -278,7 +271,6 @@ describe(placementItemsWorkflow, () => {
       where: { format: "multipleChoice", skillId: { in: skillIds } },
     });
 
-    // The question is stored with its picture before any model looked at it; the check follows.
     expect(item.mediaAssetId).toStrictEqual(expect.any(String));
     expect(checkLessonImage).not.toHaveBeenCalled();
 
@@ -297,8 +289,6 @@ describe(placementItemsWorkflow, () => {
       placementItemsWorkflow({ analytics: context.analytics, goalId: goal.id, skillIds }),
     ).resolves.toStrictEqual({ failed: 0, status: "written", written: 7 });
 
-    // Seven skills in four calls instead of fourteen, at the standard tier: a learn goal's
-    // questions may serve one learner, so its first question gets no premium either.
     expect(calledSkillCounts()).toStrictEqual([1, 2, 2, 2]);
 
     expect(vi.mocked(generatePlacementItems).mock.calls[0]?.[0]).toMatchObject({
@@ -315,7 +305,6 @@ describe(placementItemsWorkflow, () => {
     await expect(countItems({ format: "multipleChoice", skillIds })).resolves.toBe(14);
     await expect(countItems({ format: "typed", skillIds })).resolves.toBe(0);
 
-    // Placement stops waiting for questions that didn't come once they're all written.
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
     ).resolves.toMatchObject({ placementPreparedAt: expect.any(Date) });
@@ -323,8 +312,6 @@ describe(placementItemsWorkflow, () => {
     expect(trackServerEvent).not.toHaveBeenCalled();
   });
 
-  // Carla chose "Nothing": she starts from nothing, so placement asks her nothing, yet its run wrote
-  // nine calls of questions for her.
   it("writes no placement questions for a learner who skipped placement, and still writes a test-out's", async () => {
     const { goal, skillIds } = await goalWithSkills({ count: 3 });
 
@@ -336,12 +323,10 @@ describe(placementItemsWorkflow, () => {
 
     expect(generatePlacementItems).not.toHaveBeenCalled();
 
-    // Placement doesn't wait for questions it won't ask.
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
     ).resolves.toMatchObject({ placementPreparedAt: expect.any(Date) });
 
-    // A chapter's test-out is the learner's own choice, whatever they said about placement.
     await preparePlacementItems({
       ...context,
       formats: ["multipleChoice"],
@@ -355,7 +340,6 @@ describe(placementItemsWorkflow, () => {
   it("writes no placement questions for a learner who chose where to start in the catalog", async () => {
     const { goal, skillIds } = await goalWithSkills({ count: 2 });
 
-    // Onboarding skips placement for a learner who starts at a chapter they chose.
     await prisma.goal.update({
       data: { details: { courseStart: { chapterId: randomUUID() }, level: "basic" } },
       where: { id: goal.id },
@@ -369,7 +353,7 @@ describe(placementItemsWorkflow, () => {
   });
 
   it("then starts a class test's practice, sized to its days, and nothing for a longer plan", async () => {
-    // The clock stops where the test starts: the test stays two days away, run across midnight too.
+    // A test run across midnight still stays two days away.
     vi.useFakeTimers({ toFake: ["Date"] });
 
     onTestFinished(() => {
@@ -435,7 +419,6 @@ describe(placementItemsWorkflow, () => {
 
     const { sleep } = await import("workflow");
 
-    // Research's first pass read the notice's formats; its blueprint is linked two polls later.
     await prisma.goal.update({
       data: {
         details: { noticeFormats: MULTIPLE_CHOICE_STRUCTURE.formats },
@@ -494,12 +477,8 @@ describe(placementItemsWorkflow, () => {
 
     const request = { ...context, goalId: goal.id, skillIds: [...skillIds, failing.id] };
 
-    // Once its retries ran out, the failing call's two skills are left to lessons and reviews; the
-    // other call's skill is written.
     await expect(preparePlacementItems(request)).resolves.toStrictEqual({ failed: 2, written: 1 });
 
-    // Each call is made once here: a call that fails fails its own step, which the runtime retries
-    // alone, right away, while the others' questions are already stored.
     expect(calledSkillCounts()).toStrictEqual([1, 2]);
 
     const { batches, quickFormat } = await pickPlacementBatchesStep({
@@ -515,7 +494,6 @@ describe(placementItemsWorkflow, () => {
   it("writes an exam's true/false questions under its blueprint once research has read its notice", async () => {
     const { goal, skillIds } = await goalWithSkills({ count: 2, kind: "exam" });
 
-    // Before the notice is read, placement's questions are general multiple choice.
     await preparePlacementItems({ ...context, forPlacement: true, goalId: goal.id, skillIds });
 
     const blueprint = await examBlueprintFixture({
@@ -531,8 +509,6 @@ describe(placementItemsWorkflow, () => {
       preparePlacementItems({ ...context, forPlacement: true, goalId: goal.id, skillIds }),
     ).resolves.toStrictEqual({ failed: 0, written: 2 });
 
-    // The exam's own true/false questions, since placement asks an exam its questions over the
-    // general ones written before: three a skill, as a guess passes a statement half the time.
     expect(vi.mocked(generatePlacementItems).mock.calls).toStrictEqual([
       [
         expect.objectContaining({
@@ -545,8 +521,6 @@ describe(placementItemsWorkflow, () => {
       [expect.objectContaining({ quickCount: 3, quickFormat: "trueFalse", typedCount: 0 })],
     ]);
 
-    // The exam's bank is very likely asked again: the first question the learner waits on is
-    // written at the priority tier, the next ones, asked minutes later, at the standard one.
     expect(
       vi.mocked(generatePlacementItems).mock.calls.map(([params]) => params.serviceTier),
     ).toStrictEqual(["priority", undefined]);
@@ -559,7 +533,6 @@ describe(placementItemsWorkflow, () => {
       Array.from({ length: 6 }, () => "trueFalse"),
     );
 
-    // A later call finds them.
     vi.mocked(generatePlacementItems).mockClear();
     await preparePlacementItems({ ...context, forPlacement: true, goalId: goal.id, skillIds });
     expect(generatePlacementItems).not.toHaveBeenCalled();
@@ -568,7 +541,6 @@ describe(placementItemsWorkflow, () => {
   it("writes a new exam's first questions in the formats a first pass over its notice read", async () => {
     const { goal, skillIds } = await goalWithSkills({ count: 2, kind: "exam" });
 
-    // Research is still reading the notice: the goal knows only its formats.
     await prisma.goal.update({
       data: { details: { noticeFormats: CEBRASPE_STRUCTURE.formats } },
       where: { id: goal.id },
@@ -583,15 +555,12 @@ describe(placementItemsWorkflow, () => {
       }),
     ).resolves.toMatchObject({ failed: 0, written: 2 });
 
-    // Statements judged right or wrong, as the exam asks, never general multiple choice, and at
-    // the priority tier: an exam's questions are very likely asked again.
     expect(vi.mocked(generatePlacementItems).mock.calls[0]?.[0]).toMatchObject({
       examFormat: { blueprintId: null, style: expect.stringContaining("Itens Certo ou Errado.") },
       quickFormat: "trueFalse",
       serviceTier: "priority",
     });
 
-    // Three statements a skill: a guess passes one half the time.
     await expect(countItems({ format: "multipleChoice", skillIds })).resolves.toBe(0);
     await expect(countItems({ format: "trueFalse", skillIds })).resolves.toBe(6);
   });
@@ -609,7 +578,6 @@ describe(placementItemsWorkflow, () => {
       }),
     ).resolves.toMatchObject({ written: 1 });
 
-    // Two minutes of polls, then the general format rather than no placement at all.
     expect(sleep).toHaveBeenCalledTimes(39);
 
     expect(vi.mocked(generatePlacementItems).mock.calls[0]?.[0]).toMatchObject({
@@ -630,7 +598,6 @@ describe(placementItemsWorkflow, () => {
     await prisma.goal.update({ data: { examBlueprintId: blueprint.id }, where: { id: goal.id } });
     vi.mocked(generatePlacementItems).mockClear();
 
-    // The general questions written before the notice don't count: the exam's own are written.
     await expect(
       preparePlacementItems({ ...context, goalId: goal.id, skillIds }),
     ).resolves.toStrictEqual({ failed: 0, written: 2 });
@@ -640,7 +607,6 @@ describe(placementItemsWorkflow, () => {
       [expect.objectContaining({ examFormat: expect.objectContaining({ name: "ENEM" }) })],
     ]);
 
-    // Once per exam: a later call, like the next learner of the exam, writes nothing.
     vi.mocked(generatePlacementItems).mockClear();
     await preparePlacementItems({ ...context, goalId: goal.id, skillIds });
     expect(generatePlacementItems).not.toHaveBeenCalled();

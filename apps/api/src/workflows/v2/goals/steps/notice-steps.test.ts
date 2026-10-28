@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { claimNoticeLandingStep, endNoticeWaitStep, startNoticeWaitStep } from "./notice-steps";
 
-/** No plan's goal has this id: the database refuses it, as it refuses a write it can't take. */
 const UNWRITABLE_GOAL_ID = "not-a-goal-id";
 
 describe("notice wait steps", () => {

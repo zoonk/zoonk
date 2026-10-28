@@ -18,11 +18,6 @@ export type FreshnessRunResult =
 
 type ScheduledCheck = Extract<FreshnessCheck, { status: "scheduled" }>;
 
-/**
- * After the stored edition's exam, the next notice is searched for on the board's official
- * domains; a notice found that the blueprint wasn't read from is read (see `readExamBlueprint`),
- * and the goals whose date isn't its new exam day get that day as a change to apply.
- */
 async function searchNextNotice({
   analytics,
   examBlueprintId,
@@ -48,12 +43,6 @@ async function searchNextNotice({
   await readExamBlueprint({ analytics, background: true, identity, isNew: false, sourceIds });
 }
 
-/**
- * Runs a model only when the check found something: the notice is newer than
- * the blueprint (read it and update only what changed, with a notice for
- * learners), a law or product page changed (write the notice), or the stored
- * edition passed while learners prepare for the next (search for its notice).
- */
 async function applyChanges({
   analytics,
   check,
@@ -84,14 +73,6 @@ async function applyChanges({
   }
 }
 
-/**
- * One freshness check of an exam or source: a fetch and a hash compare, which also stores when
- * the next check is due (daily while registration is open and in the last 14 days, weekly
- * otherwise, and at "valid until" for laws and software), or stops the checks when nobody studies
- * it. Once the stored edition's exam has passed, learners preparing for the next edition get a
- * weekly search for its notice instead, so "we'll tell you when the notice is out" holds. The daily sweep starts it for every check that is due, and admin
- * starts it for "Check now".
- */
 export async function freshnessWorkflow(target: FreshnessTarget): Promise<FreshnessRunResult> {
   "use workflow";
 

@@ -89,7 +89,6 @@ describe(sourceVisibilityWorkflow, () => {
       sourceVisibilityWorkflow({ ownerId: user.id, sourceId: source.id }),
     ).resolves.toStrictEqual({ merged: false, sourceId: source.id, status: "shared" });
 
-    // Only the title and publisher are searched, never the document's text.
     expect(vi.mocked(findOfficialSources).mock.calls[0]?.[0].plan.queries).toStrictEqual([
       `${NOTICE_TITLE} Cebraspe`,
     ]);

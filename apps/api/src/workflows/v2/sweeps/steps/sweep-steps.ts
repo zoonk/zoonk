@@ -56,14 +56,12 @@ export async function countOpenReviewFlagsStep(): Promise<number> {
   return countOpenReviewFlags();
 }
 
-/** Screens a fixed version replaced more than a day ago: nobody plays them anymore. */
 export async function deleteRetiredStepsStep(): Promise<number> {
   "use step";
 
   return deleteRetiredSteps();
 }
 
-/** Sign-in codes and other auth verifications that expired more than a day ago. */
 export async function purgeExpiredVerificationsStep(): Promise<number> {
   "use step";
 

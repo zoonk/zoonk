@@ -10,12 +10,6 @@ import {
   settleReviewStep,
 } from "./steps/conversation-review-steps";
 
-/**
- * Finishes a completed call once: claims its review (a replay of this run keeps its claim), hangs
- * the call up, reviews the transcript (kept on the call, so a retried or new settle doesn't grade
- * it again) and settles the call. A review that keeps failing settles the call without feedback,
- * with the goals marked during it.
- */
 export async function conversationReviewWorkflow(
   input: ConversationReviewInput,
 ): Promise<ConversationReviewOutcome> {

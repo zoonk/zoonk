@@ -71,8 +71,6 @@ describe(laterReviewWorkflow, () => {
       laterReviewWorkflow({ lessonIds: [failing.id, passing.id, unreviewable.id] }),
     ).resolves.toStrictEqual({ replaced: [failing.id], reviewed: 2, setAside: [] });
 
-    // One check per lesson at the flex tier, against the model that wrote it, then the fresh
-    // draft's own check before it's published.
     expect(checkLessonQuality).toHaveBeenCalledTimes(3);
 
     expect(
@@ -99,7 +97,6 @@ describe(laterReviewWorkflow, () => {
       prisma.step.findMany({ where: { lessonId: failing.id } }),
     ]);
 
-    // It stays playable the whole time: learners on the old version finish it.
     expect(replaced.contentStatus).toBe("completed");
     expect(kept.contentStatus).toBe("completed");
 
@@ -126,7 +123,6 @@ describe(laterReviewWorkflow, () => {
       setAside: [lesson.id],
     });
 
-    // The version that failed counts as the first draft: two fresh ones follow.
     expect(writeLessonDraft).toHaveBeenCalledTimes(2);
 
     const [stored, steps] = await Promise.all([

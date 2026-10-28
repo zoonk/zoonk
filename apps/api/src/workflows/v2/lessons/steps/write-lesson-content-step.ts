@@ -15,19 +15,11 @@ import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { type LessonStreamStep } from "./lesson-progress-step";
 
-/**
- * `published`: the lesson passed its code checks and can be played; `check` is what its model
- * checks read after publishing (null for language lessons and challenges, which have none).
- * `heldBack`: it failed them twice and its claim ended as failed; `redraft` says whether it has
- * drafts left, so this run drafts it again at once. `notWritten`: this run lost its claim or the
- * lesson has no spec.
- */
 export type LessonWriteOutcome =
   | { check: LessonCheckPlan | null; imageScope: ImageScope; status: "published" }
   | { redraft: boolean; status: "heldBack" }
   | { status: "notWritten" };
 
-/** Whose pictures a published lesson gets: shared, a private course's, or none (a guest's own). */
 export type ImageScope = "personal" | "shared" | null;
 
 type WriteResult = Exclude<LessonWriteOutcome, { status: "heldBack" }> | { status: "heldBack" };
@@ -37,7 +29,6 @@ type WriteInput = {
   forExam?: boolean;
   forceReview?: boolean;
   lessonId: string;
-  /** When a learner reaches the lesson (see `LessonContentInput`). */
   wait?: CallWait;
   workflowRunId: string;
 };
@@ -49,11 +40,6 @@ type LessonTarget = {
   targetLanguage: string | null;
 };
 
-/**
- * A lesson's pictures are drawn after it's published: shared ones for a Library lesson, its
- * owner's for a private course's. A guest's own lesson gets none, so a guest's goal never costs
- * more than its share of the guests' daily budget.
- */
 export function getImageScope(lesson: Pick<LessonTarget, "owner" | "ownerId">): ImageScope {
   if (lesson.owner?.isAnonymous) {
     return null;
@@ -62,7 +48,6 @@ export function getImageScope(lesson: Pick<LessonTarget, "owner" | "ownerId">): 
   return lesson.ownerId ? "personal" : "shared";
 }
 
-/** The pictures a published lesson gets: none for a language lesson or a challenge (see `write`). */
 function getPublishedImageScope(lesson: LessonTarget): ImageScope {
   return lesson.targetLanguage || parseChallengeLessonSpec(lesson.spec)
     ? null
@@ -73,10 +58,6 @@ function toOutcome(status: string): WriteResult {
   return status === "heldBack" ? { status: "heldBack" } : { status: "notWritten" };
 }
 
-/**
- * Language lessons are written per language pair and have no pictures; a chapter's challenge is
- * written by the case writer, also without pictures; everything else uses the lesson writer.
- */
 async function write({
   input,
   lesson,
@@ -122,13 +103,6 @@ async function write({
     : toOutcome(result.status);
 }
 
-/**
- * Writes the lesson's screens for the run that holds its content claim: the writer drafts them,
- * the code checks read them, one fix pass repairs what failed, and the lesson is published in one
- * transaction, so a learner waiting on it never waits on a model check: those follow publishing
- * (the returned `check`, see `lessonCheckWorkflow`). A draft still held back says whether the
- * lesson has drafts left. A rate limit is retried after a minute.
- */
 export async function writeLessonContentStep(input: WriteInput): Promise<LessonWriteOutcome> {
   "use step";
 
@@ -148,9 +122,8 @@ export async function writeLessonContentStep(input: WriteInput): Promise<LessonW
     return { status: "notWritten" };
   }
 
-  // The runtime runs a step's body again when its result was lost after the body ended (an
-  // invocation that timed out, a stream write that failed): a lesson this run already published
-  // is published, not written again. The model checks that attempt planned are lost with it.
+  // The runtime runs a step's body again when its result was lost after the body ended, so a lesson
+  // this run already published isn't written again.
   if (lesson.contentStatus === "completed" && lesson.contentRunId === input.workflowRunId) {
     return { check: null, imageScope: getPublishedImageScope(lesson), status: "published" };
   }

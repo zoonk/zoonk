@@ -6,7 +6,6 @@ type StepStream<T extends string> = {
   [Symbol.asyncDispose]: () => Promise<void>;
 };
 
-/** Writes an SSE event to the workflow stream. */
 async function writeSSE(
   writer: WritableStreamDefaultWriter<string>,
   data: Record<string, unknown>,
@@ -14,25 +13,7 @@ async function writeSSE(
   await writer.write(`data: ${JSON.stringify(data)}\n\n`);
 }
 
-/**
- * Creates a stream writer for emitting SSE status events from within a step.
- *
- * Acquires the workflow stream writer once. The lock is released automatically
- * when the enclosing scope exits via `await using` — on return, throw, or
- * early return.
- *
- * Usage:
- * ```ts
- * async function myStep() {
- *   "use step";
- *   await using stream = createStepStream<MyStepName>();
- *   await stream.status({ step: "myStep", status: "started" });
- *   // ... do work ...
- *   await stream.status({ step: "myStep", status: "completed" });
- *   // writer.releaseLock() called automatically here
- * }
- * ```
- */
+/** Hold it with `await using`: that releases the stream's writer lock when the step ends. */
 export function createStepStream<T extends string>(): StepStream<T> {
   const writer = getWritable<string>().getWriter();
 
@@ -47,11 +28,7 @@ export function createStepStream<T extends string>(): StepStream<T> {
   };
 }
 
-/**
- * Writes one progress event to the run's stream. Workflow code can't touch streams, so events the
- * workflow itself decides on (joined, ready, failed) go through this step; a workflow names its
- * steps with `progressStep<TheirNames>`.
- */
+/** Workflow code can't touch streams, so events the workflow itself decides on go through this step. */
 export async function progressStep<T extends string>(message: StepStreamMessage<T>): Promise<void> {
   "use step";
 

@@ -24,10 +24,6 @@ export type ResearchContext<TPlan extends ExamResearchPlan | SourceResearchPlan>
 
 type SourceTopic = "exam" | ResearchSourceTopic;
 
-/**
- * Stores each document in a step of its own that's retried alone (`storeSourceStep`) and keeps
- * the readable ones; `unreadable` are those that still failed or stored no text.
- */
 async function storeDocuments({
   analytics,
   documents,
@@ -57,12 +53,7 @@ async function storeDocuments({
   return { stored, unreadable };
 }
 
-/**
- * Copies, on other sites, of an exam's documents that couldn't be read, when the notice is one of
- * them: Vunesp's sites answer every download with 403, so TJ-SP's research read only the court's
- * news page and stored the essay as the whole exam. A search for copies that fails leaves research
- * with what it read.
- */
+/** Some boards' sites refuse every download (Vunesp's answer 403), so copies are read from other sites. */
 async function storeCopies({
   analytics,
   plan,
@@ -110,13 +101,6 @@ async function storeCopies({
   return copies.stored;
 }
 
-/**
- * Searches official domains first and stores what it finds, each document in a step of its own
- * that's retried alone; one that still fails is left out, and when that leaves an exam without
- * its notice, copies of what couldn't be read are searched on other sites and read after it
- * (`storeCopies`). Only official documents count for an exam: without one, research asks for an
- * upload.
- */
 export async function findAndStoreSources({
   analytics,
   personalPlan = false,
@@ -125,7 +109,6 @@ export async function findAndStoreSources({
   topic,
 }: {
   analytics: ResearchAnalytics;
-  /** The plan was made from the learner's own words, so the search that reads it is theirs. */
   personalPlan?: boolean;
   plan: ExamResearchPlan | SourceResearchPlan;
   requireOfficial: boolean;
@@ -151,16 +134,9 @@ export async function findAndStoreSources({
 
   const sourceIds = [...stored, ...copies].map((source) => source.sourceId);
 
-  // A copy can be the Library's same document as one already read.
   return [...new Set(sourceIds)];
 }
 
-/**
- * The Library's still-valid copies first: another learner's research for the same law, product
- * or subject is reused, and only a topic nobody researched yet is searched. A subject no
- * university course or official curriculum teaches leaves the plan without queries: nothing to
- * search.
- */
 async function findTopicSources({
   analytics,
   personalPlan,
@@ -181,18 +157,12 @@ async function findTopicSources({
   return findAndStoreSources({ analytics, personalPlan, plan, requireOfficial: false, topic });
 }
 
-/** Reference syllabi only add to a curriculum the goal gets anyway, so their absence asks nothing. */
 function toNothingFound(topic: ResearchSourceTopic): ResearchResult {
   return topic === "syllabus"
     ? { examBlueprintId: null, sourceIds: [], status: "ready" }
     : { reason: "noOfficialSource", status: "needsUpload" };
 }
 
-/**
- * Links a goal to the sources it's built from: a law's current text or a product's docs, which
- * change, or the reference syllabi of a big learn goal, which the coverage check reads. The
- * learner's uploads, when they gave some, are read instead of searching.
- */
 export async function researchSources({
   analytics,
   goal,
@@ -211,8 +181,7 @@ export async function researchSources({
 
   await linkGoalToSourcesStep({ goalId: goal.id, sourceIds });
 
-  // Uploads never change and syllabi are reused for a year, so only a law's or a product's
-  // sources research found keep being checked.
+  // Uploads never change and syllabi are reused for a year.
   if (uploads.length === 0 && topic !== "syllabus") {
     await scheduleFreshnessChecksStep(
       sourceIds.map((sourceId) => ({ kind: "source" as const, sourceId })),

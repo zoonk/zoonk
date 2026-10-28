@@ -18,20 +18,14 @@ import { flaggedContentWorkflow } from "../review-flags/flagged-content-workflow
 import { dailySweepsWorkflow } from "./daily-sweeps-workflow";
 
 const DAY_MS = 86_400_000;
-/** Enough learners for real answers to replace a question's generated difficulty. */
 const LEARNERS_TO_RECALIBRATE = 20;
 
-/** A sign-in code that expired at `expiresAt`, as Better Auth stores it. */
 function verificationFixture(expiresAt: Date) {
   return prisma.verification.create({
     data: { expiresAt, identifier: `sign-in-otp-${randomUUID()}@zoonk.test`, value: "123456:0" },
   });
 }
 
-/**
- * A generated "medium" question every learner answered wrong: one learner today, the rest learners
- * who since deleted their accounts, whose first answers count too.
- */
 async function missedQuestionFixture() {
   const [skill, learner] = await Promise.all([skillFixture(), userFixture()]);
   const item = await itemFixture({ difficulty: 0, skillId: skill.id });
@@ -50,16 +44,14 @@ async function missedQuestionFixture() {
 }
 
 describe(dailySweepsWorkflow, () => {
-  // What each sweep deletes, keeps or recalibrates is core's (each sweep's own test); this run
-  // shows they all run and what each one counts.
   it("checks due exams and sources, deletes inactive guests, purges old memory and evaluation runs, recalibrates questions, starts the later check of lessons made ahead, deletes lesson versions replaced days ago and sign-in codes expired days ago", async () => {
     const now = Date.now();
 
     const [guest, learner, exam] = await Promise.all([
       userFixture(),
       userFixture(),
-      // Due just before tomorrow's sweep: the sweep takes the latest due first, so other tests'
-      // due exams in the shared database can't push this one out of its batch.
+      // The sweep takes the latest due first, so other tests' due exams can't push this one out of
+      // its batch.
       examBlueprintFixture({ nextCheckAt: new Date(now + DAY_MS - 60_000) }),
     ]);
 
@@ -69,13 +61,11 @@ describe(dailySweepsWorkflow, () => {
     });
 
     const [lesson, oldCode, expiredCode] = await Promise.all([
-      // Published today and in the one-in-five sample, which lesson ids land in by their last digits.
+      // Ids ending this way land in the later review's one-in-five sample.
       libraryLessonFixture({
         contentStatus: "completed",
         id: `${randomUUID().slice(0, -8)}0000000a`,
       }),
-      // A sign-in code that expired two days ago goes; one that just expired stays, so its
-      // learner hears it expired.
       verificationFixture(new Date(now - 2 * DAY_MS)),
       verificationFixture(new Date(now - 60_000)),
       memoryFactFixture({
@@ -85,7 +75,6 @@ describe(dailySweepsWorkflow, () => {
       }),
       missedQuestionFixture(),
       evaluationRunFixture({ createdAt: new Date(now - 31 * DAY_MS) }),
-      // A screen a fixed version replaced two days ago: nobody plays it anymore.
       libraryLessonFixture({ contentStatus: "completed" }).then((replacedIn) =>
         libraryStepFixture({
           lessonId: replacedIn.id,
@@ -104,7 +93,6 @@ describe(dailySweepsWorkflow, () => {
     expect(result.retiredStepsDeleted).toBeGreaterThanOrEqual(1);
     expect(result.verificationsPurged).toBeGreaterThanOrEqual(1);
 
-    // Purging sign-in codes has no test of its own.
     await expect(
       Promise.all([
         prisma.verification.findUnique({ where: { id: oldCode.id } }),
@@ -118,7 +106,6 @@ describe(dailySweepsWorkflow, () => {
 
     expect(result.freshnessChecks).toBeGreaterThanOrEqual(1);
 
-    // The shared test database holds other tests' lessons, so only this one's presence is checked.
     const reviewed = getStartMock()
       .mock.calls.filter(([workflow]) => workflow === laterReviewWorkflow)
       .flatMap(([, args]) => (args as [{ lessonIds: string[] }])[0].lessonIds);
@@ -151,18 +138,17 @@ describe(dailySweepsWorkflow, () => {
 
     await expect(dailySweepsWorkflow()).resolves.toMatchObject({ flaggedContentStarted: true });
 
-    // Only what the sweep started: the rewrite itself reads the open flags when it runs.
     expect(start).toHaveBeenCalledWith(flaggedContentWorkflow, [{}]);
   });
 
   it("counts a sweep that failed as nothing and still runs the others", async () => {
     const [exam] = await Promise.all([
-      // Due just before tomorrow's sweep, so other tests' due exams can't push it out of its batch.
+      // The sweep takes the latest due first, so other tests' due exams can't push this one out of
+      // its batch.
       examBlueprintFixture({ nextCheckAt: new Date(Date.now() + DAY_MS - 60_000) }),
       evaluationRunFixture({ createdAt: new Date(Date.now() - 31 * DAY_MS) }),
     ]);
 
-    // The queue is down for the freshness checks: that sweep fails.
     getStartMock().mockImplementation(async (workflow) => {
       if (workflow === freshnessWorkflow) {
         throw new Error("Queue unavailable");

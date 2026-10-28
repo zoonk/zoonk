@@ -6,7 +6,6 @@ import { createCourseIconStep, writeCourseDetailsStep } from "./steps/course-det
 export type CourseDetailsInput = {
   analytics?: ContentAnalytics;
   courseId: string;
-  /** Admin copy rewrites never generate images or incur image costs. */
   copyOnly?: boolean;
 };
 
@@ -15,12 +14,6 @@ export type CourseDetailsResult = {
   iconUrl: string | null;
 };
 
-/**
- * Fills a shared course's public page once its outline exists, in the background: the
- * description, the landing copy and the categories (one model call, only for what's missing),
- * then the course's icon, which it still gets when the details failed. One run per course at a
- * time; a second one waits for the first and fills only what the first left missing.
- */
 export async function courseDetailsWorkflow(
   input: CourseDetailsInput,
 ): Promise<CourseDetailsResult> {
@@ -29,7 +22,6 @@ export async function courseDetailsWorkflow(
   const { workflowRunId } = getWorkflowMetadata();
   const { conflict } = await claimRunToken(`course-details:${input.courseId}`);
 
-  // However the run filling this course's details ends, this run fills whatever is still missing.
   if (conflict) {
     await joinRun(conflict);
   }
@@ -54,10 +46,8 @@ export async function courseDetailsWorkflow(
 }
 
 /**
- * A shared course's icon on its own, started as its outline begins so the plan shows the subject's
- * icon from the learner's first look. It's a run of its own, not a step of the outline's: a run
- * moves on only once the steps it runs together are done, so an icon drawn beside the outline held
- * the outline back for the minute the picture took. A failure leaves it to the course's details.
+ * A run of its own, not a step of the outline's: a run moves on only once the steps it runs
+ * together are done, so the picture would hold the outline back.
  */
 export async function courseIconWorkflow(input: CourseDetailsInput): Promise<string | null> {
   "use workflow";

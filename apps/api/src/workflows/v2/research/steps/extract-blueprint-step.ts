@@ -34,19 +34,13 @@ import { type ResearchAnalytics } from "../_utils/research-analytics";
 
 export type BlueprintReading = {
   content: BlueprintContent;
-  /** Facts extracted, and those both checks kept. */
   facts: { extracted: number; kept: number };
-  /**
-   * What the check of a shared exam's reading found it left out (`findReadingProblems`); null for
-   * a learner's own material, which isn't checked, and when the check itself failed.
-   */
   problems: ReadingProblem[] | null;
   provenance: { generatedAt: string; model: string; promptVersion: string; runId: string };
   reusePolicy: { policy: ReusePolicy; sourceId: string } | null;
   usable: boolean;
 };
 
-/** The subjects the reading listed, as its check reads them, in the reading's order. */
 function toReadSubjects(extraction: BlueprintExtraction) {
   return extraction.subjects.map((subject) => ({
     name: subject.name,
@@ -54,11 +48,6 @@ function toReadSubjects(extraction: BlueprintExtraction) {
   }));
 }
 
-/**
- * The check of a shared exam's reading (`checkExamReading`), beside the citation checks, so it
- * never adds to the reading's wait. A check that fails leaves the reading unchecked (null): it's
- * used as it is.
- */
 async function checkReading({
   analytics,
   documents,
@@ -90,11 +79,6 @@ async function checkReading({
   return data?.data ?? null;
 }
 
-/**
- * The reading's pass marks in the app's languages (`translatePassMarks`), beside the checks, so it
- * never adds to the reading's wait. A translation that fails leaves the notice's own words, which
- * screens say the language of.
- */
 async function translateReadPassMarks({
   analytics,
   exam,
@@ -125,16 +109,7 @@ async function translateReadPassMarks({
   return { texts, translations: data?.data.translations ?? {} };
 }
 
-/**
- * Reads an exam's documents into a blueprint and checks every fact twice:
- * code confirms its passage is in the document, then a second model confirms
- * the fact says no more than its passage. Only facts that pass both are kept,
- * each detail on its own (a subject stays when its question count doesn't).
- * A shared exam's reading is also checked for what it left out, at the same
- * time (`problems`), and its pass marks are translated into the app's
- * languages; `corrections` tells an admin's reading again what the stored one left out.
- * The first document is the notice whose hash the blueprint records.
- */
+/** The first document is the notice whose hash the blueprint records. */
 export async function extractBlueprintStep({
   analytics,
   background,
@@ -144,12 +119,9 @@ export async function extractBlueprintStep({
   sourceIds,
 }: {
   analytics: ResearchAnalytics;
-  /** Nobody waits on the reading (a freshness check), so it's read at the flex tier. */
   background: boolean;
-  /** What the check of an earlier reading of the same documents found it left out. */
   corrections?: ReadingProblem[];
   exam: string;
-  /** The reading becomes a shared blueprint, which must read as an exam (`isUsableBlueprint`). */
   shared: boolean;
   sourceIds: string[];
 }): Promise<BlueprintReading> {
@@ -162,7 +134,6 @@ export async function extractBlueprintStep({
     throw new FatalError("None of the research sources exist anymore.");
   }
 
-  // An exam's published notice serves every learner of that exam; a learner's own upload, them.
   const serviceTier = chooseServiceTier({
     reuse: documents.every((document) => document.url) ? "bounded" : "personal",
     wait: background ? "later" : "learner",
@@ -216,8 +187,6 @@ export async function extractBlueprintStep({
     structure: withPassMarkTranslations({ structure: checked.structure, ...passMarks }),
   };
 
-  // A learner's own notes read as their headings: "4) Organelles (ALWAYS ON THE TEST!!)" is "Organelles",
-  // which comes up a lot.
   const content = shared
     ? read
     : toMaterialContent({ content: read, documents: extractionDocuments });

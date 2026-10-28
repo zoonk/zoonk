@@ -12,7 +12,6 @@ function cleanupConnections(userId: string) {
   });
 }
 
-/** Existing request-context harness, with a real Better Auth session and test-owned learner. */
 export async function authenticatedCallFixture(role: "user" | "admin" = "user") {
   const user = await userFixture({ role });
   const fixture = await languageGoalFixture({ userId: user.id });

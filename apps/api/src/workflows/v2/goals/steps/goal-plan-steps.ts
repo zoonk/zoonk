@@ -16,12 +16,10 @@ type GraphPlanInput = {
   goalId: string;
   graph: GoalSkillGraph;
   idsByKey: Record<string, string>;
-  /** The client that started the run, for "Plan Created". */
   platform: AnalyticsPlatform | null;
   provenance: GraphProvenance;
 };
 
-/** What `createGoalPlan` builds the plan from, out of a step's input. */
 function toGraphPlan({
   courseIdsByKey,
   goalId,
@@ -44,14 +42,6 @@ function toGraphPlan({
   };
 }
 
-/**
- * Builds the plan from the graph at the learner's daily minutes: phases with dates, and one stand-in
- * per skill until the outlines give it lessons. Each skill's lessons come only from the Library
- * course found for its graph course. Placement can start as soon as this is saved. Returns the
- * setup a new plan owes, which the run does one step per task (`runPlanSetupTaskStep`). A plan
- * whose inputs kept changing while it was worked out (other runs saving its lessons and questions)
- * comes back as a conflict, for the run to build it again later (see `retryPlanConflicts`).
- */
 export async function createGoalPlanStep(
   input: GraphPlanInput,
 ): Promise<PlanStepOutcome<PlanSetupTask[]>> {
@@ -63,13 +53,6 @@ export async function createGoalPlanStep(
   });
 }
 
-/**
- * The plan built again from the graph, following the exam's notice read while the reveal waited:
- * its day becomes the plan's. False when the reveal stopped waiting before the plan could be saved
- * (see `isNoticeLandingExpiredError`): the learner may have seen the plan, so the reading waits on
- * Today instead. A plan that kept changing comes back as a conflict, like any plan (see
- * `createGoalPlanStep`).
- */
 export async function followNoticeStep(input: GraphPlanInput): Promise<PlanStepOutcome<boolean>> {
   "use step";
 
@@ -92,10 +75,6 @@ export async function followNoticeStep(input: GraphPlanInput): Promise<PlanStepO
   });
 }
 
-/**
- * One setup task the new plan owes (see `runPlanSetupTask`), done once. A failure throws, so the
- * runtime retries it; the routine's fit is a model call, retried after a minute when rate limited.
- */
 export async function runPlanSetupTaskStep(input: {
   goalId: string;
   task: PlanSetupTask;
@@ -105,7 +84,6 @@ export async function runPlanSetupTaskStep(input: {
   await withAiRetry(() => runPlanSetupTask(input));
 }
 
-/** The setup the goal's plan still owes, in the order it runs. */
 export async function listPlanSetupTasksStep(goalId: string): Promise<PlanSetupTask[]> {
   "use step";
 

@@ -14,18 +14,15 @@ import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content
 import { isRunActive } from "../../_shared/run-activity";
 import { type LessonStreamStep } from "./lesson-progress-step";
 
-/** `waiting`: another live run is planning this lesson; check again shortly. */
 export type LessonSpecOutcome = "missing" | "ready" | "waiting";
 
 type SpecInput = {
   analytics?: ContentAnalytics;
   lessonId: string;
-  /** When a learner reaches the lesson (see `LessonContentInput`). */
   wait?: CallWait;
   workflowRunId: string;
 };
 
-/** A spec claim held by a run that stopped is released, so this run can plan the lesson. */
 async function claimSpec({ lessonId, workflowRunId }: SpecInput) {
   const claim = await claimLibraryGeneration({ id: lessonId, target: "lessonSpec", workflowRunId });
 
@@ -63,8 +60,6 @@ async function planLesson({
 
   const context = toContentAnalytics({ analytics, scope: inputs.scope, workflowRunId });
 
-  // Exams its learners prepare for, its language or other learners' goals make a shared lesson
-  // very likely reused.
   const reuse = await loadLessonReuse({
     forExam: (inputs.prompt.exams?.length ?? 0) > 0,
     lessonId,
@@ -79,7 +74,6 @@ async function planLesson({
     }),
   );
 
-  // Pictures that would only decorate go before the writer asks for them, so none is drawn.
   const specs = await Promise.all(
     data.lessons.map((spec) => keepTeachingPictures({ analytics: context, spec })),
   );
@@ -97,12 +91,6 @@ async function planLesson({
   return saved.status === "saved" ? "ready" : "missing";
 }
 
-/**
- * Makes sure a lesson has its spec: 1 to 3 skills, the screen plan and where an activity or a
- * picture teaches (a planned picture that would only decorate is dropped before it's drawn).
- * Specs are usually written a chapter ahead, so most lessons skip this; one that another run is
- * planning right now is waited for instead of planned twice.
- */
 export async function writeLessonSpecStep(input: SpecInput): Promise<LessonSpecOutcome> {
   "use step";
 

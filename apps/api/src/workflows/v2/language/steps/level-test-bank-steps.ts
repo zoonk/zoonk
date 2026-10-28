@@ -11,14 +11,8 @@ export type LanguagePair = { language: string; targetLanguage: string };
 
 type WriteStatus = Awaited<ReturnType<typeof writeLevelTestBank>>["status"];
 
-/** Writes one progress event of a level test bank run to its stream. */
 export const levelTestBankProgressStep = progressStep<LevelTestBankStreamStep>;
 
-/**
- * Writes the pair's level test when nobody has (each level in its own call, a minute or two in
- * all), or says it's `ready` or that another run is writing it (`running`). A run that went quiet
- * lost its claim, so asking again later takes it over. A rate limit is retried after a minute.
- */
 export async function writeLevelTestBankStep({
   analytics,
   pair,

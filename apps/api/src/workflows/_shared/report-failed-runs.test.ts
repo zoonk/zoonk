@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { type RunFailedHookParams, registerLifecycleHooks } from "workflow/api";
 import { registerFailedRunReports } from "./report-failed-runs";
 
-// Sentry is an external service: the test only checks what reaches it.
 vi.mock("@sentry/nextjs", () => ({ captureException: vi.fn(), flush: vi.fn() }));
 
 const WORKFLOW_NAME = "workflow//./src/workflows/v2/research/research-workflow//researchWorkflow";
@@ -18,10 +17,6 @@ function failedRun(cause: unknown): RunFailedHookParams {
   };
 }
 
-/**
- * Registers the reports, as the app does at startup, and returns what the runtime would call: it
- * calls the handlers only when it records a run's failure, which needs the workflow runtime.
- */
 function registerReports() {
   registerFailedRunReports();
 

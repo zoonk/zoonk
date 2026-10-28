@@ -93,13 +93,8 @@ async function explainGoal(question: string) {
   return { goal, user };
 }
 
-/** How long a test waits for work running side by side, which a busy test database slows down. */
 const SIDE_BY_SIDE = { timeout: 4000 };
 
-/**
- * Waits until the learner can read the goal's explanation: it's on the goal's plan and the stream
- * said writing is done.
- */
 async function waitUntilReadable(goalId: string): Promise<void> {
   await vi.waitFor(async () => {
     const items = await prisma.planItem.count({
@@ -123,7 +118,6 @@ function mockGenerality(isGeneral: boolean) {
 }
 
 describe(explainQuestionWorkflow, () => {
-  // Shared courses live in the AI organization, which a fresh test database doesn't have.
   beforeAll(async () => {
     await aiOrganizationFixture();
   });
@@ -171,7 +165,6 @@ describe(explainQuestionWorkflow, () => {
       visibility: "public",
     });
 
-    // Named by the explanation's neutral title, never the asker's own words.
     expect(lesson.skills[0]?.skill.name).toBe("What “the market is up 2%” means");
     expect(stored.plan?.items).toMatchObject([{ kind: "lesson", lessonId: lesson.id }]);
     expect(stored.primaryCourse).toMatchObject({ title: courseTitle, visibility: "public" });
@@ -191,8 +184,6 @@ describe(explainQuestionWorkflow, () => {
       (event) => `${String(event.step)}:${String(event.status)}`,
     );
 
-    // After the question is read, the search and the writing run side by side. Writing completes
-    // once the explanation can be read; the run is ready once its course to go further is linked.
     expect(events.slice(0, 2)).toStrictEqual([
       "classifyQuestion:started",
       "classifyQuestion:completed",
@@ -225,8 +216,6 @@ describe(explainQuestionWorkflow, () => {
       );
     });
 
-    // The question's identity search only finishes once the writing has begun: waiting for the
-    // search before writing would never get there.
     vi.mocked(generateSearchTerms).mockImplementation(async ({ subjects }) => {
       await (subjects.some((subject) => subject.kind === "skill") ? writing.promise : null);
 
@@ -250,8 +239,6 @@ describe(explainQuestionWorkflow, () => {
       taskResult(explanation(courseTitle), "openai/gpt-6-luna"),
     );
 
-    // The course is only found once the learner can read the explanation: finding the course
-    // first would never get there.
     vi.mocked(generateSearchTerms).mockImplementation(async ({ subjects }) => {
       await (subjects.some((subject) => subject.kind === "course")
         ? waitUntilReadable(goal.id)
@@ -291,7 +278,6 @@ describe(explainQuestionWorkflow, () => {
       status: "reused",
     });
 
-    // Written while the search looked, and discarded once it found the first one.
     expect(generateQuickExplanation).toHaveBeenCalledOnce();
 
     const taught = await prisma.lessonSkill.findFirstOrThrow({
@@ -368,7 +354,6 @@ describe(explainQuestionWorkflow, () => {
 
     const written = await explainQuestionWorkflow({ goalId: first.goal.id });
 
-    // The discarded write fails before the search is done: the run still answers.
     vi.mocked(generateQuickExplanation).mockRejectedValueOnce(new Error("Provider unavailable"));
 
     await expect(explainQuestionWorkflow({ goalId: second.goal.id })).resolves.toStrictEqual({
@@ -395,7 +380,6 @@ describe(explainQuestionWorkflow, () => {
       prisma.lesson.findUniqueOrThrow({ where: { id: result.lessonId ?? "" } }),
     ).resolves.toMatchObject({ ownerId: user.id, visibility: "private" });
 
-    // Only its shared course to go further is looked up across the Library, never the question.
     expect(generateSearchTerms).not.toHaveBeenCalledWith(
       expect.objectContaining({ subjects: [expect.objectContaining({ kind: "skill" })] }),
     );
@@ -516,7 +500,6 @@ describe(explainQuestionWorkflow, () => {
 
     vi.clearAllMocks();
 
-    // Started again, such as by a client asking for the goal's generation once more.
     await expect(explainQuestionWorkflow({ goalId: goal.id })).resolves.toStrictEqual({
       goalId: goal.id,
       lessonId: null,
@@ -533,7 +516,6 @@ describe(explainQuestionWorkflow, () => {
   it("leaves a question another run is answering to that run", async () => {
     const { goal } = await explainGoal(`why do prices rise? ${crypto.randomUUID()}`);
 
-    // The run answering it saved itself on the goal when it started.
     await prisma.goal.update({ data: { generationRunId: "owner-run" }, where: { id: goal.id } });
     mockHookConflict({ returnValue: Promise.resolve(null), runId: "owner-run" });
 
@@ -545,12 +527,10 @@ describe(explainQuestionWorkflow, () => {
 
     expect(classifyQuestionGenerality).not.toHaveBeenCalled();
 
-    // A client following this run's id is pointed at the run doing the work.
     expect(getStreamedEvents()).toStrictEqual([
       { entityId: "owner-run", status: "started", step: "joinRunningExplanation" },
     ]);
 
-    // The goal keeps pointing at the run doing the work, which its waiting screen follows.
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
       generationRunId: "owner-run",
     });

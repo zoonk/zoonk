@@ -15,7 +15,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { TEST_IMAGE, imageProvenance, passedCheck, sceneFor } from "./_test-utils/image-results";
 import { lessonImagesWorkflow } from "./lesson-images-workflow";
 
-/** Stored pictures are read back from Vercel Blob for their check: the test store serves one. */
 function serveStoredPictures() {
   vi.stubGlobal(
     "fetch",
@@ -27,7 +26,6 @@ function explanation(prompt: string) {
   return { image: { alt: "A picture", prompt }, text: "One idea on this screen." };
 }
 
-/** Screens in a row that each ask for a picture. */
 function markedScreens({ lessonId, prompts }: { lessonId: string; prompts: string[] }) {
   return Promise.all(
     prompts.map((prompt, index) =>
@@ -44,10 +42,6 @@ function lessonPictures(lessonId: string) {
   });
 }
 
-/**
- * Models and Vercel Blob are the external boundaries. Identity search, the
- * blank-frame check, asset rows and links run for real.
- */
 describe(lessonImagesWorkflow, () => {
   beforeEach(() => {
     vi.mocked(generateSearchTerms).mockImplementation(
@@ -83,7 +77,6 @@ describe(lessonImagesWorkflow, () => {
     const [rejectedPrompt, passedPrompt] = [`globe ${randomUUID()}`, `compass ${randomUUID()}`];
     await markedScreens({ lessonId: lesson.id, prompts: [rejectedPrompt, passedPrompt] });
 
-    // The stored globe fails its check; its redraw passes.
     vi.mocked(checkLessonImage).mockImplementation(async ({ scene }) =>
       scene.focalObject.includes(rejectedPrompt) &&
       vi.mocked(checkLessonImage).mock.calls.filter(([params]) => params.scene === scene).length ===
@@ -104,7 +97,6 @@ describe(lessonImagesWorkflow, () => {
       where: { lessonId: lesson.id },
     });
 
-    // Both pictures were linked before any check ran; each was checked at flex once linked.
     expect(checkLessonImage).toHaveBeenCalledTimes(3);
 
     expect(
@@ -115,7 +107,6 @@ describe(lessonImagesWorkflow, () => {
       expect.objectContaining({ corrections: ["wrong object"] }),
     );
 
-    // The globe's screen keeps its asset, which now holds the redraw: the third file stored.
     const redraw = await vi.mocked(uploadImage).mock.results[2]?.value;
 
     expect(uploadImage).toHaveBeenCalledTimes(3);
@@ -167,7 +158,6 @@ describe(lessonImagesWorkflow, () => {
     const lesson = await libraryLessonFixture();
     const drawing = randomUUID();
 
-    // Each option's own scene, new to the store, so nothing is reused.
     const content = {
       ...pictureCheckContent,
       options: pictureCheckContent.options.map((option) => ({
@@ -198,7 +188,6 @@ describe(lessonImagesWorkflow, () => {
     expect(new Set(pictures.map((picture) => picture.mediaAssetId)).size).toBe(3);
     expect(checkLessonImage).toHaveBeenCalledTimes(3);
 
-    // The question has no picture of its own; the next run finds nothing left to draw.
     await expect(prisma.step.findUnique({ where: { id: step.id } })).resolves.toMatchObject({
       mediaAssetId: null,
     });

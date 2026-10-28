@@ -66,7 +66,6 @@ type SkillGraph = Awaited<ReturnType<typeof generateSkillGraph>>["data"];
 type CourseOutline = Awaited<ReturnType<typeof generateCourseOutline>>["data"];
 type Specificity = Awaited<ReturnType<typeof classifyGoalSpecificity>>["data"];
 
-/** A written graph as the graph task returns it, with nothing code repaired. */
 function graphResult(graph: SkillGraph) {
   return { ...taskResult(graph), repaired: [] };
 }
@@ -74,9 +73,8 @@ function graphResult(graph: SkillGraph) {
 const recordedGraph = recordedOutput<SkillGraph>("skill-graph");
 
 /**
- * The recorded graph with skill and course names only this test uses. Skills and courses are
- * shared Library rows found by name, so without this a test would reuse the skills, courses and
- * outlined lessons an earlier run left in the test database.
+ * Skills and courses are shared Library rows found by name, so names only this test uses keep it
+ * from reusing what an earlier run left in the test database.
  */
 function isolatedGraph(): SkillGraph {
   const token = crypto.randomUUID().slice(0, 8);
@@ -93,24 +91,22 @@ function isolatedGraph(): SkillGraph {
 
 const recordedOutline = recordedOutput<CourseOutline>("course-outline");
 
-/** The part of a stored plan graph that says which course each skill's lessons come from. */
 const planCoursesSchema = z.object({
   skills: z.array(z.object({ courseIds: z.array(z.string()), skillId: z.string() })),
 });
 
 const recordedSpecificity = recordedOutput<Specificity>("goal-specificity");
-/** Past the five minutes a landing reading holds the reveal's wait (see `claimNoticeLanding`). */
+/** Past the five minutes a landing reading holds the reveal's wait. */
 const LANDING_RAN_OUT_MS = 10 * 60 * 1000;
 
 const TIMEOUT = 60_000;
-/** How many times the durable runtime retries a step that throws (`maxRetries`' default). */
+/** The workflow runtime's default `maxRetries`. */
 const STEP_RETRIES = 3;
 
-/** The Library skills a stored plan teaches, in its order. */
 function planSkillIdsOf(plan: { graph: unknown }): string[] {
   return planCoursesSchema.parse(plan.graph).skills.map((skill) => skill.skillId);
 }
-/** How long the research in a test runs at most before ending on its own. */
+
 const RESEARCH_LIMIT_MS = 3000;
 
 const placementItem = {
@@ -164,13 +160,11 @@ const freeResponseItem = {
 
 const ITEMS_BY_FORMAT: Partial<Record<ItemFormat, GeneratedItem>> = { essay: freeResponseItem };
 
-/** Field practice asks multiple choice, AP a free response; each call gets its own. */
 function placementItemsFor({ format }: { format: ItemFormat }) {
   const items: GeneratedItem[] = [ITEMS_BY_FORMAT[format] ?? placementItem];
   return taskResult({ items });
 }
 
-/** A Cebraspe-style assertion, judged right or wrong. */
 const trueFalsePlacementItem = {
   context: null,
   difficulty: "medium" as const,
@@ -183,7 +177,6 @@ const trueFalsePlacementItem = {
   visual: null,
 };
 
-/** Placement's writer: the quick questions asked in the asked format and, when asked, a typed one. */
 function placementBatchFor(params: PlacementItemsParams) {
   const quick = params.quickFormat === "trueFalse" ? trueFalsePlacementItem : placementItem;
 
@@ -195,7 +188,6 @@ function placementBatchFor(params: PlacementItemsParams) {
   });
 }
 
-/** A learner who knows the basics, so placement asks them questions and its run writes them. */
 async function newGoal(attrs: Partial<Parameters<typeof goalFixture>[0]> = {}) {
   const user = await userFixture();
 
@@ -214,10 +206,6 @@ async function newGoal(attrs: Partial<Parameters<typeof goalFixture>[0]> = {}) {
   return { goal, user };
 }
 
-/**
- * What every test's `start` does: placement's questions are a run of their own, which runs inline
- * here, as the runtime would in the background, so tests see what it writes. Other runs only start.
- */
 async function runPlacementInline(workflow: unknown, args: unknown[]) {
   if (workflow === placementItemsWorkflow) {
     await placementItemsWorkflow(...(args as Parameters<typeof placementItemsWorkflow>));
@@ -226,7 +214,6 @@ async function runPlacementInline(workflow: unknown, args: unknown[]) {
   return { runId: "started-run" } as Awaited<ReturnType<typeof start>>;
 }
 
-/** An ordering hook calls through to the real writers; no clock, database or result is replaced. */
 async function withCommittedPlanBeforePlacement<T>(run: () => Promise<T>): Promise<T> {
   const committed = new Set<string>();
   const createPlan = planSteps.createGoalPlanStep;
@@ -259,7 +246,6 @@ async function withCommittedPlanBeforePlacement<T>(run: () => Promise<T>): Promi
   }
 }
 
-/** Whether the run streamed that this goal is ready: what it writes ahead of the learner is in. */
 function isGoalReady(goalId: string): boolean {
   return getStreamedEvents().some(
     (event) =>
@@ -267,7 +253,6 @@ function isGoalReady(goalId: string): boolean {
   );
 }
 
-/** Runs the course outline a goal starts inline too, as the runtime would in the background. */
 function runOutlinesInline() {
   getStartMock().mockImplementation(async (workflow, args) => {
     if (workflow === courseOutlineWorkflow) {
@@ -281,7 +266,6 @@ function runOutlinesInline() {
 const DAY_MS = 24 * 60 * 60 * 1000;
 const citation = { passage: "", sourceId: "notice" };
 
-/** A notice's structure with one subject and its topics, as research reads it. */
 function examStructure(topics: string[]) {
   return {
     formats: [{ citation, description: "Multiple choice", kind: "multipleChoice", options: null }],
@@ -291,10 +275,6 @@ function examStructure(topics: string[]) {
   };
 }
 
-/**
- * Research is still running when the goal's run first asks about it: it does `work` then (links
- * what it read) and ends, so the run finds it done once that work is saved.
- */
 function researchEndsWhenAsked(work: () => Promise<void>) {
   const ended: { current: Promise<void> | null } = { current: null };
 
@@ -308,12 +288,10 @@ function researchEndsWhenAsked(work: () => Promise<void>) {
   });
 }
 
-/** The ISO date `days` from today. */
 function inDays(days: number): string {
   return new Date(Date.now() + days * DAY_MS).toISOString().slice(0, 10);
 }
 
-/** A notice's edition with one exam day. */
 function examDayEdition(date: string) {
   return {
     check: null,
@@ -327,12 +305,10 @@ function examDayEdition(date: string) {
   };
 }
 
-/** The exam weight each skill of a stored plan graph carries. */
 const planWeightsSchema = z.object({
   skills: z.array(z.object({ skillId: z.string(), weight: z.number().nullable() })),
 });
 
-/** The graph with its first skill teaching one topic of the notice's subject. */
 function withTopic({ graph, topic }: { graph: SkillGraph; topic: string }): SkillGraph {
   return {
     ...graph,
@@ -349,7 +325,6 @@ const planPlacesSchema = z.object({
 });
 
 describe(goalContentWorkflow, () => {
-  // Shared courses live in the AI organization, which a fresh test database doesn't have.
   beforeAll(async () => {
     await aiOrganizationFixture();
   });
@@ -386,8 +361,6 @@ describe(goalContentWorkflow, () => {
 
     vi.mocked(decideLibraryIdentity).mockResolvedValue({ match: null, verdicts: [] });
 
-    // Research's check finds nothing missing unless a test says what it finds: no test inherits
-    // what the one before it found.
     vi.mocked(checkCoverage).mockResolvedValue(
       taskResult({ examWeights: [], missing: [], placements: [] }, "google/gemini-3.8-flash"),
     );
@@ -417,13 +390,10 @@ describe(goalContentWorkflow, () => {
         visibility: "public",
       });
 
-      // The run is saved on its goal, so onboarding can follow it live.
       expect(stored.generationRunId).toStrictEqual(expect.any(String));
 
       expect(plan.phases).toHaveLength(graph.phases.length);
 
-      // Each skill's lessons come from the Library course its graph course became, never another
-      // subject's course that happens to teach the same shared skill.
       const { skills } = planCoursesSchema.parse(plan.graph);
 
       expect(skills.map((skill) => skill.courseIds)).toStrictEqual(
@@ -434,8 +404,6 @@ describe(goalContentWorkflow, () => {
       expect(items.every((item) => item.skillId !== null && item.lessonId === null)).toBe(true);
       expect(questions).toBeGreaterThan(0);
 
-      // The learner waits on the graph, the band their plan's first lesson is in and placement's
-      // questions: those are written first, at the standard tier (never priority).
       expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
         expect.objectContaining({
           analytics: { distinctId: goal.userId, goalId: goal.id, platform: "web" },
@@ -444,7 +412,6 @@ describe(goalContentWorkflow, () => {
         }),
       ]);
 
-      // The plan counts for the client whose request started the run.
       expect(trackServerEvent).toHaveBeenCalledWith(
         expect.objectContaining({
           distinctId: goal.userId,
@@ -491,7 +458,6 @@ describe(goalContentWorkflow, () => {
         "goalReady:completed",
       ]);
 
-      // Placement's bank writes must follow the initial commit so they cannot invalidate it.
       expect(events.indexOf("preparePlacement:started")).toBeGreaterThan(
         events.indexOf("createPlan:completed"),
       );
@@ -500,7 +466,6 @@ describe(goalContentWorkflow, () => {
         expect.objectContaining({ goalId: goal.id, skillIds: expect.any(Array) }),
       ]);
 
-      // Placement stops waiting for questions that didn't come once they're all written.
       expect(plan.placementPreparedAt).toBeInstanceOf(Date);
       expect(plan.buildFailedAt).toBeNull();
     },
@@ -522,7 +487,6 @@ describe(goalContentWorkflow, () => {
 
       await goalContentWorkflow({ goalId: goal.id });
 
-      // Placement starts with every skill saved, after its own initial plan commit is safe.
       const saved = await countSkills();
 
       expect(saved).toBeGreaterThan(0);
@@ -547,7 +511,6 @@ describe(goalContentWorkflow, () => {
         status: "error",
       });
 
-      // Placement and the plan stop waiting for a plan that won't come, and offer to try again.
       await expect(
         prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
       ).resolves.toMatchObject({ buildFailedAt: expect.any(Date) });
@@ -586,7 +549,6 @@ describe(goalContentWorkflow, () => {
         prisma.planItem.count({ where: { kind: "lesson", plan: { goalId: goal.id } } }),
       ).resolves.toBe(graph.skills.length);
 
-      // The failures are counted, not hidden: placement stops waiting and goes on without them.
       await expect(
         prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
       ).resolves.toMatchObject({ buildFailedAt: null, placementPreparedAt: expect.any(Date) });
@@ -619,8 +581,6 @@ describe(goalContentWorkflow, () => {
     },
   );
 
-  // Other learners' plans reuse a shared graph's skills and phases: a learner's role ("teacher") once
-  // named a shared skill "Relate teaching experience to UX work".
   it(
     "builds a shared graph from the goal's general form, never the learner's own words",
     { timeout: TIMEOUT },
@@ -662,7 +622,6 @@ describe(goalContentWorkflow, () => {
       const overloaded = new Error("The provider is overloaded");
       vi.mocked(fitPlanToRoutineFacts).mockRejectedValue(overloaded);
 
-      // Fitting the routine fails for good on this run, and the goal is built without it.
       await expect(goalContentWorkflow({ goalId: goal.id })).resolves.toMatchObject({
         status: "built",
       });
@@ -674,7 +633,6 @@ describe(goalContentWorkflow, () => {
 
       await expect(setupOf()).resolves.toStrictEqual(["routine"]);
 
-      // Its step throws, so the runtime retries it.
       await expect(runPlanSetupTaskStep({ goalId: goal.id, task: "routine" })).rejects.toBe(
         overloaded,
       );
@@ -718,9 +676,6 @@ describe(goalContentWorkflow, () => {
 
       const result = await goalContentWorkflow({ goalId: goal.id });
 
-      // A free learner starting from nothing skips placement: two lessons of the one phase they
-      // start, the first one as a wait the learner sees, the next minutes away; a Plus subscriber
-      // gets four.
       expect(result.speculativeLessonIds).toHaveLength(2);
 
       const analytics = { distinctId: user.id, goalId: goal.id };
@@ -760,7 +715,6 @@ describe(goalContentWorkflow, () => {
       const [phase] = graph.phases;
       const [course] = graph.courses;
 
-      // A second course the plan gets to only after weeks of the first one's lessons.
       vi.mocked(generateSkillGraph).mockResolvedValue(
         graphResult({
           ...graph,
@@ -800,7 +754,6 @@ describe(goalContentWorkflow, () => {
         },
       });
 
-      // The later course is weeks away: its outline waits for the preparations that get close.
       expect(laterFirst.scheduledFor?.getTime()).toBeGreaterThan(Date.now() + 14 * DAY_MS);
 
       const outlined = getStartMock().mock.calls.flatMap(([workflow, args]) =>
@@ -820,8 +773,6 @@ describe(goalContentWorkflow, () => {
       const { goal, user } = await newGoal();
       const lesson = await libraryLessonFixture({ level: "overview" });
 
-      // No outline runs: only the first lesson's band lands, the rest of the opening stays
-      // stand-ins for skills. Each start notes how many polls the run had waited by then.
       const pollsBeforeStart: number[] = [];
 
       getStartMock().mockImplementation(async (workflow, args) => {
@@ -845,7 +796,6 @@ describe(goalContentWorkflow, () => {
 
       expect(result.speculativeLessonIds).toStrictEqual([lesson.id]);
 
-      // It starts on the poll after its band lands, not once the opening's wait runs out.
       expect(pollsBeforeStart).toStrictEqual([1]);
 
       expect(start).toHaveBeenCalledWith(lessonContentWorkflow, [
@@ -871,7 +821,6 @@ describe(goalContentWorkflow, () => {
       const { goal } = await newGoal({ details: { level: "basic", purpose: "overview" } });
       const [phase] = graph.phases;
 
-      // Two phases: placement may start a learner who knows the basics in either one.
       vi.mocked(generateSkillGraph).mockResolvedValue(
         graphResult({
           ...graph,
@@ -912,9 +861,6 @@ describe(goalContentWorkflow, () => {
       const { goal, user } = await newGoal();
       runOutlinesInline();
 
-      // Other runs (a band's lessons, placement's questions) save while the first lesson's
-      // targets are read, marking the plan between every read's token and its check, until the
-      // run waits. A few write at once, so a mark lands within each read.
       const createManifest = lookaheadSteps.createGoalGenerationManifestStep;
       const burst = { over: false, started: false };
       let marks: Promise<unknown> = Promise.resolve();
@@ -926,8 +872,6 @@ describe(goalContentWorkflow, () => {
         }
       };
 
-      // The durable runtime runs a step that threw again at once, up to its retries; this inline
-      // run does the same, so the burst outlasts every retry that doesn't wait.
       const createAsTheRuntimeDoes = async (
         input: Parameters<typeof createManifest>[0],
         attempt = 0,
@@ -987,8 +931,6 @@ describe(goalContentWorkflow, () => {
       runOutlinesInline();
       const startInline = getStartMock().getMockImplementation();
 
-      // The opening's second lesson is still a stand-in when the first lesson starts, so the run
-      // looks at the opening again before it picks the likeliest lessons; that band lands by then.
       const standIns: { id: string; lessonId: string }[] = [];
       const landed: string[] = [];
       let openedStandIn = false;
@@ -1012,8 +954,6 @@ describe(goalContentWorkflow, () => {
         return startInline ? startInline(workflow, args) : runPlacementInline(workflow, args);
       });
 
-      // Placement tests the learner out of the opening while the run follows the plan's start: at
-      // its first wait once the goal is ready, however often it looked at the opening before.
       let testedOut = false;
 
       vi.mocked(sleep).mockImplementation(async () => {
@@ -1041,10 +981,8 @@ describe(goalContentWorkflow, () => {
           where: { kind: "lesson", plan: { goalId: goal.id } },
         });
 
-        /**
-         * Placement settles whole skills. A partial skill left todo can differ from the
-         * computed start when another Library write wins the refresh's save.
-         */
+        // A partial skill left todo can differ from the computed start when another Library write
+        // wins the refresh's save.
         await prisma.$transaction(async (tx) => {
           await markPlanInputsChanged(tx, { userIds: [user.id] });
 
@@ -1095,7 +1033,6 @@ describe(goalContentWorkflow, () => {
     const [phase] = graph.phases;
     await prisma.user.update({ data: { isAnonymous: true }, where: { id: user.id } });
 
-    // Two phases a guest who knows the basics may start in: still only the first is written.
     vi.mocked(generateSkillGraph).mockResolvedValue(
       graphResult({
         ...graph,
@@ -1113,7 +1050,6 @@ describe(goalContentWorkflow, () => {
       where: { kind: "lesson", plan: { goalId: goal.id }, status: "todo" },
     });
 
-    // The lesson a guest opens the moment onboarding ends is ready by then; nothing else is.
     expect(result).toMatchObject({ speculativeLessonIds: [first.lessonId], status: "built" });
 
     expect(
@@ -1125,12 +1061,10 @@ describe(goalContentWorkflow, () => {
       ],
     ]);
 
-    // A guest's outlines leave the courses' background work to a learner with an account.
     expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
       expect.objectContaining({ forGuest: true }),
     ]);
 
-    // The outlines ran and gave the plan its lessons, yet didn't start the courses' page details.
     await expect(
       prisma.planItem.count({ where: { lessonId: { not: null }, plan: { goalId: goal.id } } }),
     ).resolves.toBeGreaterThan(0);
@@ -1152,7 +1086,6 @@ describe(goalContentWorkflow, () => {
         visibility: "public",
       });
 
-      // The model split the goal across two courses; the learner started one.
       vi.mocked(generateSkillGraph).mockResolvedValue(
         graphResult({
           ...graph,
@@ -1183,7 +1116,6 @@ describe(goalContentWorkflow, () => {
       expect(skills.length).toBeGreaterThan(0);
       expect(skills.map((skill) => skill.courseIds)).toStrictEqual(skills.map(() => [course.id]));
 
-      // No other course was found or created for it, and the course is shared as it was.
       await expect(
         prisma.course.count({
           where: {
@@ -1237,7 +1169,6 @@ describe(goalContentWorkflow, () => {
         where: { goalId: goal.id },
       });
 
-      // Scheduled today: within every learner's outline window.
       await Promise.all(
         skills.map((skill, position) =>
           planItemFixture({
@@ -1255,7 +1186,6 @@ describe(goalContentWorkflow, () => {
 
       expect(generateSkillGraph).not.toHaveBeenCalled();
 
-      // The plan's stand-ins get their course's band outlined, the learner's first skill first.
       expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
         expect.objectContaining({
           bands: [expect.objectContaining({ level: "beginner" })],
@@ -1275,7 +1205,6 @@ describe(goalContentWorkflow, () => {
 
       expect(getStreamedEvents().at(-1)).toMatchObject({ status: "completed", step: "goalReady" });
 
-      // Starting it again finds the work done.
       vi.mocked(generateItems).mockClear();
       vi.mocked(generatePlacementItems).mockClear();
 
@@ -1360,7 +1289,6 @@ describe(goalContentWorkflow, () => {
         status: "built",
       });
 
-      // A language pair's graph is the same for every learner of it.
       expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].serviceTier).toBe("priority");
 
       expect(start).toHaveBeenCalledWith(levelTestBankWorkflow, [
@@ -1446,11 +1374,8 @@ describe(goalContentWorkflow, () => {
         goalKind: "exam",
       });
 
-      // A class test's graph is the learner's own, so it never takes the priority tier.
       expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].serviceTier).toBeUndefined();
 
-      // The graph was checked against the material once; the material is the curriculum, so the
-      // plan isn't reconciled with research again.
       expect(checkCoverage).toHaveBeenCalledExactlyOnceWith(
         expect.objectContaining({
           goalKind: "exam",
@@ -1458,12 +1383,10 @@ describe(goalContentWorkflow, () => {
         }),
       );
 
-      // Placement probes each skill the way the exam asks it.
       await expect(
         prisma.item.count({ where: { examBlueprintId: blueprint.id } }),
       ).resolves.toBeGreaterThan(0);
 
-      // The wait says what it's waiting for.
       const events = getStreamedEvents().map(
         (event) => `${String(event.step)}:${String(event.status)}`,
       );
@@ -1480,7 +1403,6 @@ describe(goalContentWorkflow, () => {
     "builds an exam's graph at once when onboarding already found its current blueprint, whatever instructions read it",
     { timeout: TIMEOUT },
     async () => {
-      // Read by instructions older than today's: the notice is read once and shared.
       const blueprint = await examBlueprintFixture({
         examDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
         name: "Immunology board exam",
@@ -1489,7 +1411,6 @@ describe(goalContentWorkflow, () => {
 
       const { goal } = await newGoal({ examBlueprintId: blueprint.id, kind: "exam" });
 
-      // Research is still running: it would only link the same blueprint again.
       vi.mocked(getRun).mockReturnValue({
         exists: Promise.resolve(true),
         status: Promise.resolve("running"),
@@ -1497,7 +1418,6 @@ describe(goalContentWorkflow, () => {
 
       await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
 
-      // Every later learner of the notice reuses the graph the learner watches being built.
       expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0]).toMatchObject({
         examBlueprint: expect.objectContaining({ name: "Immunology board exam" }),
         serviceTier: "priority",
@@ -1505,7 +1425,6 @@ describe(goalContentWorkflow, () => {
 
       expect(getStreamedEvents().some((event) => event.step === "readExamNotice")).toBe(false);
 
-      // Research never read anything the graph didn't: nothing to reconcile.
       expect(checkCoverage).not.toHaveBeenCalled();
     },
   );
@@ -1519,7 +1438,6 @@ describe(goalContentWorkflow, () => {
         name: "Immunology board exam",
       });
 
-      // The graph instructions that changed since wrote: still the exam's.
       const written = graphResult(graph);
 
       vi.mocked(generateSkillGraph).mockResolvedValue({
@@ -1530,8 +1448,6 @@ describe(goalContentWorkflow, () => {
       const earlier = await newGoal({ examBlueprintId: blueprint.id, kind: "exam" });
       await goalContentWorkflow({ goalId: earlier.goal.id });
 
-      // The exam's graph is written for the exam, not for its first learner: not their level, and
-      // not the general form a model wrote from their words.
       expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0]).toMatchObject({
         context: undefined,
         goal: "Immunology board exam",
@@ -1543,7 +1459,6 @@ describe(goalContentWorkflow, () => {
         prisma.plan.findUniqueOrThrow({ where: { goalId: earlier.goal.id } }),
       ]);
 
-      // The exam's first learner leaves: their goal and plan go, the exam's graph stays.
       await prisma.user.delete({ where: { id: earlierGoal.userId } });
 
       const [later, otherLevel] = await Promise.all([
@@ -1563,8 +1478,6 @@ describe(goalContentWorkflow, () => {
         status: "built",
       });
 
-      // No graph, no identity search: the Library already has its skills and courses, and
-      // placement's questions for them.
       expect(generateSkillGraph).not.toHaveBeenCalled();
       expect(generateSearchTerms).not.toHaveBeenCalled();
       expect(generatePlacementItems).not.toHaveBeenCalled();
@@ -1577,14 +1490,10 @@ describe(goalContentWorkflow, () => {
       expect(planSkillIdsOf(laterPlan)).toStrictEqual(planSkillIdsOf(earlierPlan));
       expect(laterGoal.primaryCourseId).toBe(earlierGoal.primaryCourseId);
 
-      // Its plan counts as written now, so placement waits for questions still being written.
       expect(laterPlan.generatedAt?.getTime()).toBeGreaterThan(
         earlierPlan.generatedAt?.getTime() ?? 0,
       );
 
-      // A learner who gave another level plans from it too, on the same Library skills and courses
-      // (so the same outlines): their level decides where they start (placement, the plan's level
-      // floor), not which graph or outlines are written.
       await goalContentWorkflow({ goalId: otherLevel.goal.id });
 
       const [otherLevelGoal, otherLevelPlan] = await Promise.all([
@@ -1615,7 +1524,6 @@ describe(goalContentWorkflow, () => {
         return graphResult(graph);
       });
 
-      // Research finds no official notice for a new exam.
       researchEndsWhenAsked(async () => {
         order.push("research ended");
 
@@ -1631,10 +1539,6 @@ describe(goalContentWorkflow, () => {
 
       expect(order).toStrictEqual(["graph", "research ended"]);
 
-      // The exam reaches the graph as onboarding understood it, and nothing else the learner said.
-      // An exam's graph is shared with its later learners, so the learner waiting on it gets the
-      // priority tier even before its notice is found (Rafaela's first question waited 94 s on the
-      // graph).
       const [params] = vi.mocked(generateSkillGraph).mock.calls[0] ?? [];
 
       expect(params).toMatchObject({
@@ -1648,7 +1552,6 @@ describe(goalContentWorkflow, () => {
 
       expect(getStreamedEvents().some((event) => event.step === "readExamNotice")).toBe(false);
 
-      // Nothing new to check the plan against: it stays as it was built.
       expect(checkCoverage).not.toHaveBeenCalled();
 
       expect(
@@ -1695,8 +1598,6 @@ describe(goalContentWorkflow, () => {
 
       vi.mocked(generateSkillGraph).mockResolvedValue(graphResult(weighted));
 
-      // The notice's subject is the graph's course, under its own name: the check places the first
-      // skill on the topic it teaches, and adds a skill for the topic none does.
       vi.mocked(checkCoverage).mockResolvedValue(
         taskResult(
           {
@@ -1712,7 +1613,6 @@ describe(goalContentWorkflow, () => {
                 syllabusLine: "Antibody structure",
                 topics: ["Antibody structure"],
               },
-              // The check wrote the same skill again in other words.
               {
                 area: "Immunology",
                 description: "The chains an antibody is made of and where it binds the antigen.",
@@ -1730,7 +1630,6 @@ describe(goalContentWorkflow, () => {
         ),
       );
 
-      // The reuse decision finds the twin is the skill added just before it.
       vi.mocked(decideLibraryIdentity).mockImplementation(async ({ candidates, subject }) => ({
         match:
           subject.item.title === twin && candidates[0]
@@ -1742,8 +1641,6 @@ describe(goalContentWorkflow, () => {
       const testedOut: string[] = [];
       const preparedAt: (Date | null)[] = [];
 
-      // While placement runs, it tests the learner out of the plan's first items; then research
-      // links the notice it read.
       researchEndsWhenAsked(async () => {
         const opening = await prisma.planItem.findMany({
           orderBy: { position: "asc" },
@@ -1769,7 +1666,6 @@ describe(goalContentWorkflow, () => {
 
       await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
 
-      // The graph didn't wait for the notice; the plan was checked against it once research read it.
       expect(vi.mocked(generateSkillGraph).mock.calls[0]?.[0].examBlueprint).toBeUndefined();
 
       expect(checkCoverage).toHaveBeenCalledExactlyOnceWith(
@@ -1797,7 +1693,6 @@ describe(goalContentWorkflow, () => {
         prisma.planItem.findMany({ where: { plan: { goalId: goal.id } } }),
       ]);
 
-      // The twin merged into the skill it repeats before either reached the Library.
       expect(decideLibraryIdentity).toHaveBeenCalledWith(
         expect.objectContaining({
           candidates: [
@@ -1809,14 +1704,11 @@ describe(goalContentWorkflow, () => {
 
       await expect(prisma.skill.count({ where: { name: twin } })).resolves.toBe(0);
 
-      // The missing topic opens its subject, as the notice lists it first, with its weight; the
-      // weight the notice showed was off moved, and every other skill kept its own.
       const { skills } = planWeightsSchema.parse(plan.graph);
 
       expect(skills).toHaveLength(weighted.skills.length + 1);
       expect(skills[0]).toStrictEqual({ skillId: added.id, weight: 5 });
 
-      // The plan reads the notice's subject and topics, word for word.
       expect(planPlacesSchema.parse(plan.graph).skills.slice(0, 2)).toStrictEqual([
         { area: "Immunology", topics: ["Antibody structure"] },
         { area: "Immunology", topics: ["Vaccines"] },
@@ -1830,7 +1722,6 @@ describe(goalContentWorkflow, () => {
           .every((skill) => skill.weight === 3),
       ).toBe(true);
 
-      // A stand-in for the new skill; what placement tested out stays tested out.
       expect(items.find((item) => item.skillId === added.id)).toMatchObject({
         lessonId: null,
         status: "todo",
@@ -1840,8 +1731,6 @@ describe(goalContentWorkflow, () => {
         items.filter((item) => testedOut.includes(item.id)).map((item) => item.status),
       ).toStrictEqual(["testedOut", "testedOut"]);
 
-      // The notice's exam day is what the plan counts down to now. The reading landed while the
-      // reveal waited for it, so it's simply the plan: nothing to answer, nothing left waiting.
       expect(stored.targetDate?.toISOString().slice(0, 10)).toBe(examDay);
       expect(plan.noticeWaitUntil).toBeNull();
 
@@ -1849,7 +1738,6 @@ describe(goalContentWorkflow, () => {
         prisma.planChange.count({ where: { plan: { goalId: goal.id }, status: "proposed" } }),
       ).resolves.toBe(0);
 
-      // The new stand-in's band is outlined, for a learner with an account.
       expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [
         expect.objectContaining({
           bands: expect.arrayContaining([
@@ -1861,8 +1749,6 @@ describe(goalContentWorkflow, () => {
         }),
       ]);
 
-      // Placement's pick among the new skills gets its questions in the exam's format, without
-      // placement's wait opening again or its questions being recorded as written again.
       await expect(
         prisma.item.count({ where: { examBlueprintId: blueprint.id, skillId: added.id } }),
       ).resolves.toBeGreaterThan(0);
@@ -1935,8 +1821,6 @@ describe(goalContentWorkflow, () => {
 
       const waited: (Date | null)[] = [];
 
-      // The reveal waited for the notice while research read it, then the wait ran out and the
-      // learner saw the plan before research linked the notice.
       researchEndsWhenAsked(async () => {
         const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
         waited.push(plan.noticeWaitUntil);
@@ -1952,9 +1836,6 @@ describe(goalContentWorkflow, () => {
         });
       });
 
-      // The work written ahead of the learner (placement's questions, the bank's items) marks the
-      // plan while the reading is first proposed, so that proposal loses to it, as a landing
-      // mid-read can at any moment.
       const proposeNotice = noticeSteps.proposeNoticeChangeStep;
       const firstProposal = { underWay: true };
 
@@ -1974,8 +1855,6 @@ describe(goalContentWorkflow, () => {
         }
       };
 
-      // The durable runtime runs a step that lost to the plan again, up to its retries; this inline
-      // run does the same, so the reading is proposed from the plan as it is then.
       const proposeAsTheRuntimeDoes = async (
         input: Parameters<typeof proposeNotice>[0],
         attempt = 0,
@@ -1991,7 +1870,6 @@ describe(goalContentWorkflow, () => {
         }
       };
 
-      // Every proposal the spy started, so none outlives the test.
       const proposals: Promise<void>[] = [];
 
       const proposal = vi
@@ -2005,8 +1883,6 @@ describe(goalContentWorkflow, () => {
       try {
         await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
       } finally {
-        // A run that failed first ends the marks, and what the spy started settles before it's
-        // restored; the run's own error still propagates.
         firstProposal.underWay = false;
         await Promise.allSettled(proposals);
         proposal.mockRestore();
@@ -2022,7 +1898,6 @@ describe(goalContentWorkflow, () => {
         prisma.planChange.findMany({ where: { plan: { goalId: goal.id } } }),
       ]);
 
-      // Nothing the learner saw changed: the plan and its date wait for their tap.
       expect(
         planWeightsSchema.parse(plan.graph).skills.map((skill) => skill.skillId),
       ).not.toContain(added.id);
@@ -2074,8 +1949,6 @@ describe(goalContentWorkflow, () => {
 
       const missed = `Describe how antibodies are built ${crypto.randomUUID().slice(0, 8)}`;
       const waits: (Date | null)[] = [];
-      // Research links the notice it read with a minute of the reveal's wait left: well before a
-      // landing's own hold ends, and still ahead of a slow runner reaching the landing.
       const landedWait = new Date(Date.now() + 60_000);
 
       vi.mocked(generateSkillGraph).mockResolvedValue(graphResult(graph));
@@ -2119,8 +1992,6 @@ describe(goalContentWorkflow, () => {
 
       await goalContentWorkflow({ goalId: goal.id, researchId: "research-run" });
 
-      // The landing moved the reveal's wait past that minute before the check ran, so a check
-      // that takes longer still finds the reveal waiting.
       expect(waits[0]?.getTime()).toBeGreaterThan(landedWait.getTime());
 
       const [plan, stored, added, proposals] = await Promise.all([
@@ -2130,7 +2001,6 @@ describe(goalContentWorkflow, () => {
         prisma.planChange.count({ where: { plan: { goalId: goal.id }, status: "proposed" } }),
       ]);
 
-      // The reading is simply the plan: its skill and its exam day, with nothing to answer.
       expect(planWeightsSchema.parse(plan.graph).skills.map((skill) => skill.skillId)).toContain(
         added.id,
       );
@@ -2138,15 +2008,11 @@ describe(goalContentWorkflow, () => {
       expect(stored.targetDate?.toISOString().slice(0, 10)).toBe(examDay);
       expect(proposals).toBe(0);
 
-      // The plan stopped waiting, and remembers when: that notice is the plan's own, not news.
       expect(plan.noticeWaitUntil).toBeNull();
       expect(plan.noticeWaitEndedAt).toBeInstanceOf(Date);
     },
   );
 
-  // The reading landed while the reveal waited, but saving what it adds took the plan past the
-  // five minutes that landing held the wait: the learner may have seen the plan by then, so it stays
-  // as it was, and the reading waits on Today as a change to apply.
   it(
     "proposes a reading the reveal stopped waiting for while the plan was built again with it",
     { timeout: TIMEOUT },
@@ -2187,7 +2053,6 @@ describe(goalContentWorkflow, () => {
 
       const searchTerms = vi.mocked(generateSearchTerms).getMockImplementation();
 
-      // Finding the Library's twin of the skill the reading adds takes ten minutes.
       vi.mocked(generateSearchTerms).mockImplementation(async (input) => {
         if (input.subjects.some((subject) => subject.item.title === missed)) {
           vi.setSystemTime(Date.now() + LANDING_RAN_OUT_MS);
@@ -2245,7 +2110,6 @@ describe(goalContentWorkflow, () => {
         kind: "exam",
       });
 
-      // While the reveal waits, research reads a corrected notice that moves the exam a week.
       researchEndsWhenAsked(async () => {
         await prisma.examBlueprint.update({
           data: { edition: examDayEdition(moved), examDate: new Date(`${moved}T00:00:00.000Z`) },
@@ -2261,7 +2125,6 @@ describe(goalContentWorkflow, () => {
         prisma.planChange.count({ where: { plan: { goalId: goal.id }, status: "proposed" } }),
       ]);
 
-      // The plan took its date from the notice before the learner saw it: it simply follows it.
       expect(stored.targetDate?.toISOString().slice(0, 10)).toBe(moved);
       expect(proposals).toBe(0);
       expect(plan.noticeWaitUntil).toBeNull();
@@ -2283,8 +2146,6 @@ describe(goalContentWorkflow, () => {
         structure: examStructure(["Antibody structure", "Vaccines"]),
       });
 
-      // Research links the notice it read while the reveal waits; checking the plan against it
-      // keeps failing until its retries run out.
       researchEndsWhenAsked(async () => {
         await prisma.goal.update({
           data: { examBlueprintId: blueprint.id },
@@ -2315,7 +2176,6 @@ describe(goalContentWorkflow, () => {
         prisma.planItem.count({ where: { kind: "lesson", plan: { goalId: goal.id } } }),
       ]);
 
-      // The plan the learner has stays ready and stops waiting for the reading.
       expect(lessons).toBeGreaterThan(0);
       expect(plan.noticeWaitUntil).toBeNull();
 
@@ -2342,7 +2202,6 @@ describe(goalContentWorkflow, () => {
         structure: examStructure(["Antibody structure", "Vaccines"]),
       });
 
-      // The first build's research failed: the plan was built from the exam as understood.
       vi.mocked(generateSkillGraph).mockResolvedValue(graphResult(graph));
       await goalContentWorkflow({ goalId: goal.id });
 
@@ -2370,7 +2229,6 @@ describe(goalContentWorkflow, () => {
         ),
       );
 
-      // Research started again later read the notice; the learner tried again from their screen.
       await prisma.goal.update({ data: { examBlueprintId: blueprint.id }, where: { id: goal.id } });
 
       vi.mocked(getRun).mockImplementation(
@@ -2391,7 +2249,6 @@ describe(goalContentWorkflow, () => {
         prisma.planChange.findMany({ where: { plan: { goalId: goal.id } } }),
       ]);
 
-      // The plan the learner has stays as it is: what the notice adds waits for their tap.
       expect(plan.graph).toStrictEqual(before.graph);
       expect(changes).toHaveLength(1);
       expect(changes[0]).toMatchObject({ kind: "edited", status: "proposed" });
@@ -2403,7 +2260,6 @@ describe(goalContentWorkflow, () => {
         source: "notice",
       });
 
-      // Every skill the plan had keeps its place in the proposed graph.
       const proposed = planWeightsSchema.parse(
         z.object({ noticeGraph: z.unknown() }).parse(changes[0]?.payload).noticeGraph,
       );
@@ -2444,7 +2300,6 @@ describe(goalContentWorkflow, () => {
         taskResult({ examWeights: [], missing: [], placements: [] }, "google/gemini-3.8-flash"),
       );
 
-      // Research outlasts the usual five minutes of polls, then links the notice it read.
       const usualPolls = 100;
       const polls = { count: 0 };
 
@@ -2483,7 +2338,6 @@ describe(goalContentWorkflow, () => {
       const { goal } = await newGoal({ examBlueprintId: blueprint.id, kind: "exam" });
       const order: string[] = [];
 
-      // The graph covers last edition's only topic, so the plan needs no check until the new one.
       vi.mocked(generateSkillGraph).mockImplementation(async () => {
         order.push("graph");
         return graphResult(withTopic({ graph, topic: "Vaccines" }));
@@ -2493,7 +2347,6 @@ describe(goalContentWorkflow, () => {
         taskResult({ examWeights: [], missing: [], placements: [] }, "google/gemini-3.8-flash"),
       );
 
-      // This year's notice added a topic.
       researchEndsWhenAsked(async () => {
         order.push("research ended");
 
@@ -2567,8 +2420,6 @@ describe(goalContentWorkflow, () => {
   it("takes over a build a restart left half done, instead of joining it forever", async () => {
     const { goal } = await newGoal();
 
-    // The run building the goal went to sleep for 3 seconds an hour ago and never woke up: a
-    // server restart lost it. Cancelling it frees the goal's token.
     const cancel = vi.fn(() => {
       mockHookConflict(null);
       return Promise.resolve();
@@ -2615,7 +2466,6 @@ describe(goalContentWorkflow, () => {
       status: "joined",
     });
 
-    // A joining run leaves the goal on the run already writing it.
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
       generationRunId: null,
     });
@@ -2741,8 +2591,6 @@ describe(goalContentWorkflow, () => {
         status: Promise.resolve("running"),
       } as never);
 
-      // Research ends only after the graph is written, or after a few seconds for a graph that
-      // waits for it, so the order shows which one waited.
       vi.mocked(sleep).mockImplementationOnce(async () => {
         await Promise.race([graphWritten, setTimeout(RESEARCH_LIMIT_MS)]);
         events.push("research ended");
@@ -2785,7 +2633,6 @@ describe(goalContentWorkflow, () => {
       const { goal } = await newGoal({ kind: "exam" });
       await goalContentWorkflow({ goalId: goal.id });
 
-      // Research read the learner's upload into the exam's blueprint after the plan was built.
       const blueprint = await examBlueprintFixture({ name: "Immunology board exam" });
 
       await prisma.goal.update({ data: { examBlueprintId: blueprint.id }, where: { id: goal.id } });
@@ -2807,7 +2654,6 @@ describe(goalContentWorkflow, () => {
         examBlueprint: expect.objectContaining({ name: "Immunology board exam" }),
       });
 
-      // Placement is behind the learner, so nothing is written ahead for it.
       expect(generateItems).not.toHaveBeenCalled();
       expect(generatePlacementItems).not.toHaveBeenCalled();
 
@@ -2827,7 +2673,6 @@ describe(goalContentWorkflow, () => {
 
       vi.mocked(classifyWorkField).mockResolvedValue(taskResult({ field: "nursing" as const }));
 
-      // Each real call is its own run; items of one run on one skill are stored once.
       vi.mocked(generateItems).mockImplementation(async (params) => placementItemsFor(params));
 
       await goalContentWorkflow({ goalId: goal.id });

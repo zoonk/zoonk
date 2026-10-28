@@ -18,10 +18,6 @@ export async function listFlaggedContentStep(input: {
   return listFlaggedContent(input);
 }
 
-/**
- * Writes one changed article's drills again from its new text, in the board style of their
- * format, and puts them in place of the flagged ones.
- */
 export async function rewriteFlaggedDrillsStep({
   group,
   workflowRunId,
@@ -36,7 +32,6 @@ export async function rewriteFlaggedDrillsStep({
       analytics: { contentScope: "shared", traceId: workflowRunId },
       articles: [group.article],
       count: group.itemIds.length,
-      // A flagged fill-in-the-blank is written again as one, in place.
       fillInTheBlank: group.format === "typed",
       language: group.language,
       law: group.law,

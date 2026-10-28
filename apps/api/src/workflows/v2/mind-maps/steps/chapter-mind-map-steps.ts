@@ -12,7 +12,6 @@ import { safeAsync } from "@zoonk/utils/error";
 import { FatalError } from "workflow";
 import { withAiRetry } from "../../_shared/ai-retry";
 
-/** Writes the map's text; a retry keeps text a failed attempt already saved. */
 export async function writeMindMapStructureStep(input: {
   analytics: MindMapAnalytics;
   chapterId: string;
@@ -22,12 +21,7 @@ export async function writeMindMapStructureStep(input: {
   await withAiRetry(() => writeChapterMindMapStructure(input));
 }
 
-/**
- * Draws the picture and shows the map, apart from the text, so a failed drawing never rewrites it;
- * with the check's corrections it draws the picture again and replaces it. The picture is paid for
- * once it's drawn: when storing it fails (Blob retries on its own first), the step doesn't run
- * again to draw another, and the run fails so the learner can ask again.
- */
+/** A drawn picture is paid for, so a failed store fails the run instead of retrying to draw another. */
 export async function drawMindMapStep(input: {
   analytics: MindMapAnalytics;
   chapterId: string;
@@ -48,7 +42,6 @@ export async function drawMindMapStep(input: {
   }
 }
 
-/** Reads the shown picture's words back and compares them with the map's, after it's shown. */
 export async function checkMindMapStep(input: {
   analytics: MindMapAnalytics;
   chapterId: string;

@@ -7,14 +7,6 @@ import {
 import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 
-/**
- * For an entrance exam goal that names its course and institution (Medicina at UFMG), how that
- * course weighs each part of the exam there, looked up once a year and shared by every learner
- * aiming there: a goal whose course another learner's research already looked up this year gets
- * those weights with no call. The plan gives the parts the course counts more their share of the
- * time. A failure throws, so the runtime retries the step; the weights only add to the plan, so
- * research goes on when the retries run out, and the goal's next research run tries again.
- */
 export async function lookUpCourseWeightsStep({
   analytics,
   goalId,

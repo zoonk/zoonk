@@ -18,32 +18,22 @@ import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content
 
 export type OutlineProvenance = Awaited<ReturnType<typeof generateCourseOutline>>["provenance"];
 
-/**
- * A level band this run writes: the goal skills the course doesn't teach yet, the skills it teaches
- * in part, and where new chapters go.
- */
 export type BandPlan = {
   courseTitle: string;
   level: CourseBandNeed["level"];
-  /** The band has no chapters yet, so its whole outline is written for every learner. */
   isNewBand: boolean;
-  /** A private course built from the learner's own class material: that material, which it follows. */
   material: string | null;
   nextPosition: number;
   otherChapterTitles: string[];
   skills: GoalSkillRef[];
-  /** Skills the band teaches in part, each getting its next chapter in this run. */
   extensions: ExtensionPlan[];
-  /** The band's skills other chapters of this course already teach: the outline mustn't repeat them. */
   taughtElsewhere: string[];
-  /** The goal is an exam answered without tools: its skills go in chapters without tools. */
   withoutTools: boolean;
 };
 
 /**
- * The next chapters of skills the band teaches in part: one per skill a run, under a title the
- * course doesn't have yet, since the same title in the same course is the same chapter and its
- * lessons would never be written.
+ * A continuation needs a title the course doesn't have: the same title in a course is the same
+ * chapter, whose lessons would never be written.
  */
 function pickContinuations({
   chapters,
@@ -59,11 +49,6 @@ function pickContinuations({
     .slice(0, plan.extensions.length);
 }
 
-/**
- * A band that already has chapters only gains the chapters that teach the missing skills, and the
- * next chapter of each skill it teaches in part; the rest of a new outline would repeat what the
- * band covers.
- */
 export function pickChapters({
   outline,
   plan,
@@ -91,7 +76,6 @@ export function pickChapters({
   );
 }
 
-/** What writing a band's outline reads: the run's context and the band's plan. */
 export type BandInput = {
   analytics?: ContentAnalytics;
   courseId: string;
@@ -100,10 +84,6 @@ export type BandInput = {
   workflowRunId: string;
 };
 
-/**
- * The outline writer's input for a band, the same whether it's streamed or not. An exam's skills
- * carry their subject, so each chapter keeps to one.
- */
 export function toOutlineParams({
   analytics,
   plan,
@@ -129,8 +109,7 @@ export function toOutlineParams({
     material: plan.material ?? undefined,
     model: getScopeModel(scope),
     otherLevelChapters: plan.otherChapterTitles,
-    // A private course from the learner's material teaches each skill in the lessons the goal's
-    // graph planned: a test days away is sized to what fits before it.
+    // A course from the learner's material is sized to what fits before their test.
     requiredSkills: plan.skills.map(({ area, description, key, lessons, name }) => ({
       area: forExam ? area : null,
       description,

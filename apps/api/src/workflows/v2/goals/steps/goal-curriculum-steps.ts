@@ -41,7 +41,6 @@ export async function loadGoalCurriculumStep(goalId: string): Promise<GoalCurric
   return loadGoalCurriculumInputs(goalId);
 }
 
-/** A private course for the goal's learner: lessons from their own material, or too specific to share. */
 function toPrivateScope(goal: GoalCurriculumInputs["goal"]): CurriculumScope {
   return {
     generalGoal: null,
@@ -51,10 +50,6 @@ function toPrivateScope(goal: GoalCurriculumInputs["goal"]): CurriculumScope {
   };
 }
 
-/**
- * A goal whose material linked after its scope was decided (an upload while the learner answered
- * onboarding) gets the private course that material always gets: it reaches the graph's context.
- */
 export function keepMaterialPrivate({
   inputs,
   scope,
@@ -65,12 +60,6 @@ export function keepMaterialPrivate({
   return inputs.hasMaterial && !scope.ownerId ? toPrivateScope(inputs.goal) : scope;
 }
 
-/**
- * Decides who the curriculum is for. A goal too specific to share, or built from the learner's own
- * material, gets a private course; for the rest, only the general part of the goal ever reaches
- * shared content. Language goals are always shared: a language pair is the same for everyone. A
- * goal started from a course is for that course's audience.
- */
 export async function decideGoalScopeStep({
   analytics,
   inputs,
@@ -81,7 +70,6 @@ export async function decideGoalScopeStep({
   const { goal, startedCourse } = inputs;
   const shared = { language: goal.language, ownerId: null, targetLanguage: goal.targetLanguage };
 
-  // An exam course's chapters are written for the exam its goal prepares for, as a typed exam's.
   if (startedCourse) {
     const scope = getStartedCourseScope({ course: startedCourse, goal });
     return inputs.exams.length > 0 ? { ...scope, exams: inputs.exams } : scope;
@@ -91,7 +79,7 @@ export async function decideGoalScopeStep({
     return { ...shared, generalGoal: goal.title };
   }
 
-  // Lessons built from the learner's own material teach from it and cite it: never shared.
+  // Lessons from the learner's own material cite it, so they're never shared.
   if (inputs.hasMaterial) {
     return toPrivateScope(goal);
   }
@@ -108,19 +96,13 @@ export async function decideGoalScopeStep({
     return toPrivateScope(goal);
   }
 
-  // An exam's shared content is written for the exam, never for the general form a model wrote from
-  // the learner's words, which can carry their target ("750 points for medicine").
+  // A model's general form of the learner's words can still carry their target ("750 points for
+  // medicine"), so an exam's shared content is written for the exam.
   const generalGoal = inputs.examIdentity ?? data.generalGoal ?? goal.title;
 
   return { ...shared, exams: inputs.exams, generalGoal };
 }
 
-/**
- * The learner watches the graph being built, so an exam's or a language's graph, which later
- * learners of the same notice or language reuse, runs at the priority tier (`chooseServiceTier`).
- * A new exam's graph is an exam's before research finds its notice too: Rafaela's first placement
- * question waited 94 s on hers at the standard tier.
- */
 function getGraphTier({
   goalKind,
   scope,
@@ -140,10 +122,6 @@ function getGraphTier({
   return chooseServiceTier({ reuse, wait: "learner" });
 }
 
-/**
- * A private course's graph comes from the cheaper model; when that model returns a graph that
- * can't be used (no course or phase), the default model writes it instead of failing the goal.
- */
 async function generateGraph({
   analytics,
   prompt,
@@ -178,11 +156,6 @@ async function generateGraph({
   throw cheaper.error;
 }
 
-/**
- * The goal's skill graph: the skills it needs with their prerequisites, the courses and level
- * bands that teach them, and its phases. A shared curriculum's graph reads only the goal's general
- * form and fixed choices (`toScopedGraphPrompt`), never the learner's own words.
- */
 export async function buildSkillGraphStep({
   analytics,
   inputs,
@@ -210,14 +183,6 @@ export async function buildSkillGraphStep({
   return { graph: data, provenance };
 }
 
-/**
- * Adds the skills the goal's reference syllabi (an exam notice, a syllabus the learner uploaded,
- * the ones research found) expect and the graph missed. An exam's skills are weighed against
- * them too: the new ones get their weight, and the ones the notice shows are off get theirs
- * corrected. With an exam's notice, every skill is placed in its subjects and topics and every
- * topic gets a skill (see `applyGraphCoverage`). `changed` says whether the graph gained a skill,
- * a weight moved or a skill moved in the notice.
- */
 export async function checkGraphCoverageStep({
   analytics,
   graph,
@@ -227,7 +192,6 @@ export async function checkGraphCoverageStep({
   workflowRunId,
 }: RunScope & {
   graph: GoalSkillGraph;
-  /** The goal, its language and its exam's notice, read as the skill graph read them. */
   inputs: Pick<
     GoalCurriculumInputs,
     "examIdentity" | "goal" | "graphPrompt" | "hasMaterial" | "sharedContext" | "startedCourse"
@@ -263,7 +227,6 @@ export async function checkGraphCoverageStep({
   return applyGraphCoverage({ coverage: coverage.data, graph, outline });
 }
 
-/** A slice of the graph's skills in the Library; retried slices find the skills they created. */
 export async function saveGoalSkillsStep({
   analytics,
   provenance,
@@ -296,10 +259,6 @@ export async function linkSkillPrerequisitesStep(input: {
   await linkGoalSkillPrerequisites(input);
 }
 
-/**
- * Keeps a graph this goal's run wrote as its exam's shared graph, when the goal's graph is the
- * exam's (`saveExamSkillGraph`): the first written for the exam, which only this run completes.
- */
 export async function saveExamSkillGraphStep({
   courseIdsByKey,
   graph,

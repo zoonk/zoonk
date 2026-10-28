@@ -43,7 +43,6 @@ const failedMapCheck = {
   provenance: imageProvenance,
 };
 
-/** The check reads the stored picture back by its URL, which the Blob mock makes up. */
 function serveStoredPictures() {
   vi.stubGlobal(
     "fetch",
@@ -51,7 +50,6 @@ function serveStoredPictures() {
   );
 }
 
-/** A chapter with a written lesson whose map a learner's request just claimed. */
 async function claimedChapter() {
   const [chapter, lesson] = await Promise.all([
     libraryChapterFixture({ title: "Cells" }),
@@ -98,7 +96,6 @@ describe(chapterMindMapWorkflow, () => {
   it("shows the map as soon as its picture is drawn, then checks its words", async () => {
     const chapter = await claimedChapter();
 
-    // The check reads the stored picture after learners can already see it.
     vi.mocked(checkMindMapImage).mockImplementation(async ({ image }) => {
       await expect(
         prisma.chapterMindMap.findUniqueOrThrow({ where: { chapterId: chapter.id } }),
@@ -142,7 +139,6 @@ describe(chapterMindMapWorkflow, () => {
       hasImage: true,
     });
 
-    // The second drawing is told what the check found, and its picture replaced the first.
     expect(vi.mocked(generateMindMapImage).mock.calls[1]?.[0]).toMatchObject({
       corrections: failedMapCheck.data.problems,
     });
@@ -183,7 +179,6 @@ describe(chapterMindMapWorkflow, () => {
       "The image model is down.",
     );
 
-    // The text written before the failure stays, so asking again only draws the picture.
     await expect(
       prisma.chapterMindMap.findUniqueOrThrow({ where: { chapterId: chapter.id } }),
     ).resolves.toMatchObject({ status: "failed", structure });
@@ -199,7 +194,6 @@ describe(chapterMindMapWorkflow, () => {
 
     const run = chapterMindMapWorkflow({ chapterId: chapter.id });
 
-    // A fatal error: the workflow doesn't run the step again, so the picture is drawn once.
     await expect(run).rejects.toBeInstanceOf(FatalError);
     expect(generateMindMapImage).toHaveBeenCalledOnce();
 

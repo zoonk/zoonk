@@ -10,12 +10,10 @@ type CourseDetailsContext = {
   workflowRunId: string;
 };
 
-/** Shared courses only: their details are shared content, whoever's goal caused them. */
 function toSharedAnalytics({ analytics, workflowRunId }: CourseDetailsContext) {
   return toContentAnalytics({ analytics, scope: { ownerId: null }, workflowRunId });
 }
 
-/** The description, landing copy and categories the course's page still lacks. */
 export async function writeCourseDetailsStep(
   context: CourseDetailsContext,
 ): Promise<"skipped" | "written"> {
@@ -30,7 +28,6 @@ export async function writeCourseDetailsStep(
   );
 }
 
-/** The course's icon, unless it has one or shows a flag instead. */
 export async function createCourseIconStep(context: CourseDetailsContext): Promise<string | null> {
   "use step";
 

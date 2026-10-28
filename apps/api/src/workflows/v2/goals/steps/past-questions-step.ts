@@ -17,11 +17,7 @@ export async function listPastQuestionPapersStep(goalId: string): Promise<PastPa
   return listPastQuestionPapers({ goalId });
 }
 
-/**
- * Copies real questions from one past paper whose organizer allows it (Enem, Brazilian boards),
- * each on the skill it tests and citing the paper. The paper's text is read inside the step, so
- * it never goes into the run's history, and code checks every quoted part against it.
- */
+/** The paper's text is read inside the step so it never goes into the run's history. */
 export async function importPastQuestionsStep({
   analytics,
   target,

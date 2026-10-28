@@ -5,11 +5,6 @@ import { type GoalRunContext } from "./goal-run-context";
 import { placementItemsWorkflow } from "./placement-items-workflow";
 import { goalProgressStep } from "./steps/goal-progress-step";
 
-/**
- * Starts the run that writes placement's questions for the picked skills (the plan's own picks
- * when none are given), without waiting for it: placement asks each question as soon as it's
- * stored, and the goal's run goes on to the outlines and the first lessons meanwhile.
- */
 async function startPlacementItems({
   context,
   goalId,
@@ -26,12 +21,6 @@ async function startPlacementItems({
   ]);
 }
 
-/**
- * Placement's questions for the plan's picks from the skill graph, started once every skill is
- * saved (`skillIds`), without waiting for the goal's courses to be found or prerequisites linked:
- * placement asks each question as soon as it's written and the plan exists, in its own order. Its
- * wait opens while the skills are saved.
- */
 export async function prepareGraphPlacement({
   context,
   everySkill,
@@ -43,17 +32,12 @@ export async function prepareGraphPlacement({
   waitsForNotice,
 }: {
   context: GoalRunContext;
-  /** A test from the learner's own material: placement asks every topic, so all get questions. */
   everySkill: boolean;
   goalId: string;
   graph: GoalSkillGraph;
-  /** The subjects the learner knows well: placement takes their basics as known. */
   knownAreas: readonly string[];
-  /** The learner's own level, where placement starts asking in each subject. */
   ownLevel: Parameters<typeof pickPlacementGraphSkillIds>[0]["ownLevel"];
-  /** The skills' Library ids by graph key, once every skill is saved. */
   skillIds: Promise<Record<string, string>>;
-  /** Research is reading the exam's new notice: the questions wait for its formats. */
   waitsForNotice: boolean;
 }) {
   await goalProgressStep({ entityId: goalId, status: "started", step: "preparePlacement" });
@@ -68,7 +52,6 @@ export async function prepareGraphPlacement({
   });
 }
 
-/** Placement's questions for a plan that came with the goal, from the plan's own picks. */
 export async function preparePlanPlacement({
   context,
   goalId,

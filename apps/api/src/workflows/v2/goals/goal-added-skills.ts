@@ -4,7 +4,6 @@ import { type GoalRunContext } from "./goal-run-context";
 import { linkSkillPrerequisitesStep, saveGoalSkillsStep } from "./steps/goal-curriculum-steps";
 import { mergeSkillTwinsStep } from "./steps/skill-twins-step";
 
-/** The skills the check added to the saved graph: those with no Library id yet. */
 function listAddedKeys({
   curriculum,
   graph,
@@ -17,11 +16,7 @@ function listAddedKeys({
   );
 }
 
-/**
- * The checked graph with the skills the check added twice in other words merged, before they're
- * saved: identity search finds twins of the skills already saved, but two new siblings would each
- * become a skill (see `mergeSkillTwinsStep`).
- */
+/** Identity search finds twins of saved skills, but two new siblings would each become a skill. */
 export async function mergeAddedTwins({
   context,
   curriculum,
@@ -38,7 +33,6 @@ export async function mergeAddedTwins({
   return newKeys.length > 1 ? mergeSkillTwinsStep({ ...context, graph, newKeys, scope }) : graph;
 }
 
-/** The skills the check added, saved to the Library in slices, with their prerequisites linked. */
 export async function saveAddedSkills({
   context,
   curriculum,

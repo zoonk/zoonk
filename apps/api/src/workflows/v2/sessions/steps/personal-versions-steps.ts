@@ -18,11 +18,6 @@ export async function listLearnerVersionTargetsStep(input: {
   return listLearnerVersionTargets(input);
 }
 
-/**
- * Writes one hands-on screen in the learner's tool, or as examples for a learner who installs
- * nothing. Shared by every learner with the same tool; a draft that fails its checks leaves the
- * shared screen in place.
- */
 export async function prepareToolVersionStep({
   analytics,
   target,
@@ -46,10 +41,6 @@ export async function prepareToolVersionStep({
   return result.status;
 }
 
-/**
- * Writes a chapter's work case set in the learner's field, shared by everyone in that field. A
- * case that fails its checks leaves the general case in place.
- */
 export async function prepareFieldChallengeStep({
   analytics,
   target,

@@ -5,11 +5,6 @@ import {
 import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchGoal } from "./load-research-goal-step";
 
-/**
- * Exam goals are already known to depend on an exam's notice, and language
- * goals never do (choosing an exam in a language moves to the exam goal), so
- * only the other goals ask the classifier.
- */
 export async function detectChangingFactsStep({
   goal,
 }: {

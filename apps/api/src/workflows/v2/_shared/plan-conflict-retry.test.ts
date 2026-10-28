@@ -4,7 +4,6 @@ import { sleep } from "workflow";
 import { catchPlanConflict } from "./plan-conflict-outcome";
 import { type PlanStepOutcome, retryPlanConflicts } from "./plan-conflict-retry";
 
-/** A step that loses to other writes of the plan `conflicts` times, then saves `value`. */
 function stepSavingAfter<T>(conflicts: number, value: T) {
   const runs = { count: 0 };
 
@@ -23,7 +22,6 @@ describe(retryPlanConflicts, () => {
     expect(sleep).not.toHaveBeenCalled();
   });
 
-  // Other runs saving the plan's lessons and questions come in bursts: each wait is longer.
   it("runs the step again after a longer durable wait each time the plan kept changing", async () => {
     const step = stepSavingAfter(2, "planned");
 

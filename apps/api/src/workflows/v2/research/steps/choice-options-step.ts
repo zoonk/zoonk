@@ -6,13 +6,6 @@ import {
 import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 
-/**
- * For a notice that says its questions are multiple choice without how many options (the Enem's
- * page says "180 objective questions"), how many its latest edition had, looked up once and stored
- * on the blueprint: questions for the exam are written and picked with that many, so ENEM's never
- * have four. A failure throws, so the runtime retries the step; the count only adds to the notice,
- * so research goes on when the retries run out, and the next learner's research tries again.
- */
 export async function lookUpChoiceOptionsStep({
   analytics,
   examBlueprintId,

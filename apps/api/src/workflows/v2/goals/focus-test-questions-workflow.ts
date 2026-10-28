@@ -9,22 +9,12 @@ import { type QuestionWritingResult, runQuestionWriting } from "./question-writi
 
 export type FocusTestQuestionsInput = {
   analytics?: ContentAnalytics;
-  /** The exam's quick format, the one the test asks in. */
   format: "multipleChoice" | "trueFalse";
   goalId: string;
-  /** How many questions each of them needs: more for an area of few skills. */
   questionsPerSkill: number;
-  /** The skills the test asks about that lack their questions. */
   skillIds: string[];
 };
 
-/**
- * Writes the questions a goal's focus test still needs, when the learner starts it, while the test
- * asks the ones that exist: questions in the exam's quick format for every skill it asks about
- * short of its share of questions the learner hasn't answered, all at once (they join the shared
- * item bank, so placement, reviews and practice use them too). One run per goal: a second start
- * joins it. It fails only when no question could be written.
- */
 export async function focusTestQuestionsWorkflow(
   input: FocusTestQuestionsInput,
 ): Promise<QuestionWritingResult> {

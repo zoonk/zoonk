@@ -27,7 +27,6 @@ const details = {
   },
 };
 
-/** A shared course right after its first band landed: chapters, nothing for its page yet. */
 async function outlinedCourse(attrs?: Parameters<typeof courseFixture>[0]) {
   const [course, chapter] = await Promise.all([
     courseFixture({ isPublished: true, outlineStatus: "completed", title: "Immunology", ...attrs }),
@@ -48,8 +47,8 @@ describe(courseDetailsWorkflow, () => {
   beforeEach(() => {
     vi.mocked(uploadImage).mockResolvedValue({ data: ICON_URL, error: null });
 
-    // Current copy, as a real run writes it: copy from an older prompt is what the admin batch
-    // (run by other files on the same database) claims and clears.
+    // Copy from an older prompt is what the admin batch, run by other files on this database,
+    // claims and clears.
     vi.mocked(generateCourseDetails).mockResolvedValue({
       data: details,
       provenance: {
@@ -168,7 +167,7 @@ describe(courseDetailsWorkflow, () => {
     const { course } = await outlinedCourse();
     const failedRun = Promise.reject(new Error("The model is down"));
 
-    // Handled by the workflow when it awaits the run; this only keeps Node from flagging it first.
+    // Keeps Node from flagging the rejection before the workflow awaits the run.
     failedRun.catch(() => null);
     mockHookConflict({ returnValue: failedRun, runId: "owner-run" });
 

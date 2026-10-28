@@ -8,7 +8,6 @@ import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics, toPlanAnalytics } from "../_utils/research-analytics";
 import { type ResearchGoal } from "./load-research-goal-step";
 
-/** Names the canonical exam (its name and role) and where its organizer publishes. */
 export async function planExamResearchStep({
   analytics,
   goal,
@@ -29,7 +28,6 @@ export async function planExamResearchStep({
   return data;
 }
 
-/** Names the canonical law, product or subject and where it's published. */
 export async function planSourceResearchStep({
   analytics,
   goal,

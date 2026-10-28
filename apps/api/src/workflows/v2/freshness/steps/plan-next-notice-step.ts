@@ -3,10 +3,6 @@ import { type ExamIdentity } from "@zoonk/core/library/exams/identity";
 import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../../research/_utils/research-analytics";
 
-/**
- * Where to look for an exam's next notice: the queries and official domains research would use for
- * a learner preparing for it, from the stored exam's identity (no learner's words).
- */
 export async function planNextNoticeStep({
   analytics,
   identity,

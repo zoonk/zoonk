@@ -28,7 +28,6 @@ import { readNoticeAgainWorkflow } from "./read-notice-again-workflow";
 
 const DAY_MS = 86_400_000;
 
-/** A model call's result around its data, as the tasks return it. */
 const TASK = {
   provenance: {
     costUsd: 0,
@@ -46,7 +45,6 @@ const TASK = {
   userPrompt: "",
 };
 
-/** A reading as `extractExamBlueprint` returns it, without the formats' own read beside it. */
 const READING = { ...TASK, formatsProvenance: null };
 
 const PROVENANCE = {
@@ -60,7 +58,6 @@ const OLD_DATE_LINE = "Aplicação das provas objetivas e da prova discursiva 22
 const NEW_DATE_LINE = "Aplicação das provas objetivas e da prova discursiva 29/11/2026";
 const NEXT_EDITION_LINE = "Aplicação das provas objetivas e da prova discursiva 21/11/2027";
 
-/** The search's plan for the next notice: what a learner's research would plan for the exam. */
 const NEXT_NOTICE_PLAN: ExamResearchPlan = {
   board: "Cebraspe",
   classTest: false,
@@ -82,7 +79,6 @@ async function readRecordedExtraction(): Promise<BlueprintExtraction> {
   return JSON.parse(await readFixture("tcdf-2026-extraction.json")) as BlueprintExtraction;
 }
 
-/** The board's site, served from memory: the recorded notice, with the exam day as the test wants it. */
 function serveNotice(notice: string) {
   vi.mocked(fetch).mockImplementation(
     async () => new PageResponse(notice, { headers: { "content-type": "text/plain" } }),
@@ -110,10 +106,6 @@ function withExamDate({
   };
 }
 
-/**
- * An exam with one active learner, read from the recorded notice with every fact kept. An
- * `erratum` ends the stored notice with a line its reading missed.
- */
 async function examWithLearner({ erratum }: { erratum?: string } = {}) {
   const [notice, extraction] = await Promise.all([
     readFixture("tcdf-2026-notice.txt"),
@@ -145,7 +137,6 @@ async function examWithLearner({ erratum }: { erratum?: string } = {}) {
     supportedIds: facts.map((fact) => fact.id),
   });
 
-  // Research stores a shared reading with its check, which found nothing left out.
   const check = { checkedAt: new Date().toISOString(), problems: [] };
 
   const saved = await saveExamBlueprint({
@@ -168,7 +159,6 @@ async function examWithLearner({ erratum }: { erratum?: string } = {}) {
   return { blueprint: saved.blueprint, extraction, notice, source };
 }
 
-/** A law stored as its page read today, which one active learner's research relies on. */
 async function lawWithLearner(text: string) {
   serveNotice(text);
 
@@ -196,7 +186,6 @@ async function lawWithLearner(text: string) {
 
 describe(freshnessWorkflow, () => {
   beforeEach(() => {
-    // No stored copy of a notice exists under another address: every document is fetched.
     vi.mocked(generateSearchTerms).mockImplementation(
       async ({ subjects }) =>
         ({
@@ -207,7 +196,6 @@ describe(freshnessWorkflow, () => {
 
     vi.mocked(decideLibraryIdentity).mockResolvedValue({ match: null, verdicts: [] });
 
-    // Readings leave nothing out unless a test says so.
     vi.mocked(checkExamReading).mockResolvedValue({
       ...TASK,
       data: { missingSubjects: [], statedCounts: [] },
@@ -276,7 +264,6 @@ describe(freshnessWorkflow, () => {
     expect(stored.examDate).toStrictEqual(new Date("2026-11-29T00:00:00.000Z"));
     expect(stored.structure).toStrictEqual(blueprint.structure);
 
-    // Nobody waits on a freshness check: it reads at the flex tier, about half the price.
     expect(vi.mocked(extractExamBlueprint).mock.calls[0]?.[0].serviceTier).toBe("flex");
 
     expect(notices).toMatchObject([
@@ -297,7 +284,6 @@ describe(freshnessWorkflow, () => {
     const extended = "Período de solicitação de inscrição prorrogado até 24/9/2026";
     serveNotice(`${notice}\n${OLD_DATE_LINE}\n${extended}`);
 
-    // Another learner prepares for the same exam with a date of their own.
     const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
 
     const goal = await goalFixture({
@@ -348,7 +334,6 @@ describe(freshnessWorkflow, () => {
     expect(stored.examDate).toStrictEqual(new Date("2026-11-22T00:00:00.000Z"));
     expect(stored.registrationEndsAt).toStrictEqual(new Date("2026-09-24T00:00:00.000Z"));
 
-    // Only the exam's own days reach learners' dates: nothing reaches this learner's Today.
     expect(changes).toBe(0);
     expect(kept.targetDate).toStrictEqual(new Date("2026-11-29T00:00:00.000Z"));
   });
@@ -357,7 +342,6 @@ describe(freshnessWorkflow, () => {
     const { blueprint, extraction, notice } = await examWithLearner();
     const nextUrl = `https://cdn.cebraspe.org.br/concursos/tc_df_27_analista/${randomUUID()}.txt`;
 
-    // The 2026 exam is behind; a learner's plan counts down to the estimated 2027 one.
     await prisma.examBlueprint.update({
       data: { examDate: new Date(Date.now() - 30 * DAY_MS) },
       where: { id: blueprint.id },
@@ -433,7 +417,6 @@ describe(freshnessWorkflow, () => {
 
     expect(stored.examDate).toStrictEqual(new Date("2027-11-21T00:00:00.000Z"));
 
-    // The learner's date waits for their tap; the change carries the notice's own sentence.
     expect(kept.targetDate).toStrictEqual(new Date("2027-11-28T00:00:00.000Z"));
 
     expect(proposals).toMatchObject([
@@ -450,8 +433,6 @@ describe(freshnessWorkflow, () => {
   it("doesn't read the stored notice again when the search finds it with nothing new, whatever instructions read it", async () => {
     const { blueprint, source } = await examWithLearner();
 
-    // The stored reading's instructions (`PROVENANCE`) are older than today's: only a changed
-    // document is read again.
     await prisma.examBlueprint.update({
       data: { examDate: new Date(Date.now() - 30 * DAY_MS) },
       where: { id: blueprint.id },
@@ -494,10 +475,7 @@ describe(freshnessWorkflow, () => {
     expect(extractExamBlueprint).not.toHaveBeenCalled();
   });
 
-  // Nothing reads a settled notice again on its own; an admin can, deliberately.
   it("reads an exam's stored notice again on an admin's request, though nothing changed", async () => {
-    // The notice ends with an erratum that moved the exam a week, which its first reading missed:
-    // reading it again cites that line.
     const { blueprint, extraction } = await examWithLearner({ erratum: NEW_DATE_LINE });
 
     vi.mocked(extractExamBlueprint).mockResolvedValue({
@@ -517,8 +495,6 @@ describe(freshnessWorkflow, () => {
       userPrompt: "",
     });
 
-    // A check finds the same document: the reading stands, without a model, and the check
-    // reports when the next one is due.
     const check = await freshnessWorkflow({ examBlueprintId: blueprint.id, kind: "exam" });
     const checked = await prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } });
 
@@ -529,7 +505,6 @@ describe(freshnessWorkflow, () => {
 
     expect(extractExamBlueprint).not.toHaveBeenCalled();
 
-    // The reading again is told what the stored reading's check found it left out.
     const leftOut = { kind: "countsOffTotal" as const, sum: 79, total: 80 };
     const edition = examEditionSchema.parse(checked.edition);
 
@@ -560,7 +535,6 @@ describe(freshnessWorkflow, () => {
     );
   });
 
-  // The check's own stopping rules are core's (`checkFreshness`); the run ends with them.
   it("stops when nobody studies the exam anymore", async () => {
     const blueprint = await examBlueprintFixture();
 
@@ -619,7 +593,6 @@ describe(freshnessWorkflow, () => {
       prisma.sourceChangeNotice.count({ where: { sourceId: source.id } }),
     ]);
 
-    // The new page was stored; only nothing learners would notice changed.
     expect(stored.contentHash).not.toBe(source.contentHash);
     expect(notices).toBe(0);
   });

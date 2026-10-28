@@ -9,7 +9,6 @@ import {
 } from "@zoonk/core/lookahead/speculative-lessons";
 import { isRunActive } from "../../_shared/run-activity";
 
-/** `setAside`: every draft the lesson gets was held back, so nothing writes it again. */
 export type LessonContentClaim =
   | { status: "claimed" | "completed" | "missing" | "setAside" }
   | { runId: string; status: "running" };
@@ -23,11 +22,6 @@ async function readOwner(lessonId: string): Promise<string | null> {
   return state?.status === "generating" ? state.runId : null;
 }
 
-/**
- * Claims a lesson's content for this run before any AI work starts. A claim held by a run that is
- * no longer running is released and taken over, so a crashed run never blocks a lesson; a live
- * owner is reported so this run can follow it. A lesson set aside is never claimed again.
- */
 export async function claimLessonContentStep(input: {
   lessonId: string;
   workflowRunId: string;
@@ -70,7 +64,6 @@ export async function claimLessonContentStep(input: {
   return { runId: (await readOwner(input.lessonId)) ?? "", status: "running" };
 }
 
-/** A queued plan lesson is checked again before this run takes any token or generation claim. */
 export async function admitLessonContentStep(input: {
   goalId?: string;
   lessonId: string;
@@ -78,7 +71,6 @@ export async function admitLessonContentStep(input: {
 }): Promise<boolean> {
   "use step";
 
-  // Library work without a goal still uses the same per-lesson claim below.
   if (!input.goalId) {
     return true;
   }

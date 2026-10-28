@@ -42,7 +42,6 @@ function streamedSteps() {
   return getStreamedEvents().map((event) => `${String(event.step)}:${String(event.status)}`);
 }
 
-/** A goal whose challenge asks two skills: one with no questions, one that holds two. */
 async function challengeSkills() {
   const user = await userFixture();
 
@@ -65,8 +64,6 @@ describe(challengeQuestionsWorkflow, () => {
     vi.mocked(generatePlacementItems).mockReset();
   });
 
-  // A write decided before another run filled a skill must not write it again: nothing past the
-  // challenge's size.
   it("writes what a skill lacks, skipping one that holds its share by now, in the background", async () => {
     const { empty, goal, held } = await challengeSkills();
 
@@ -126,8 +123,6 @@ describe(challengeQuestionsWorkflow, () => {
     ]);
   });
 
-  // The session's preparation writing them ahead and the learner's tap on Start, or two learners
-  // reaching the same phase, write them once.
   it("joins the run already writing the same skills' questions", async () => {
     mockHookConflict({ returnValue: Promise.resolve(null), runId: "writing-run" });
 

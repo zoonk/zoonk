@@ -36,7 +36,6 @@ import { lessonCheckWorkflow } from "../quality/lesson-check-workflow";
 import { lessonContentWorkflow } from "./lesson-content-workflow";
 import { writeLessonContentStep } from "./steps/write-lesson-content-step";
 
-// The child admission guard calls through the real producer if anything still reaches it.
 vi.mock("../../../../../../packages/core/src/plans/planner/build-plan", { spy: true });
 
 type RecordedSpec = Awaited<ReturnType<typeof generateLessonSpec>>["data"];
@@ -62,7 +61,6 @@ async function outlinedLesson(attrs: Parameters<typeof libraryLessonFixture>[0] 
 async function plannedLesson() {
   const [lesson, user] = await Promise.all([outlinedLesson(), userFixture()]);
   const goal = await goalFixture({ userId: user.id });
-  // An outline can have todo lessons before the initial full plan is ready.
   const plan = await planFixture({ goalId: goal.id, phases: [] });
   const item = await planItemFixture({ lessonId: lesson.id, planId: plan.id });
   return { goal, item, lesson };
@@ -76,8 +74,6 @@ function runOwner({ active }: { active: boolean }) {
 }
 
 describe(lessonContentWorkflow, () => {
-  // Model calls replay a real spec and draft recorded for the same lesson. The picture check keeps
-  // every planned picture, as the recorded spec planned.
   beforeEach(() => {
     vi.mocked(generateLessonSpec).mockResolvedValue(taskResult(recordedSpec));
     vi.mocked(keepTeachingPictures).mockImplementation(async ({ spec }) => spec);
@@ -200,7 +196,6 @@ describe(lessonContentWorkflow, () => {
   it("plans and writes a lesson, streams its progress and starts its pictures and model checks in the background", async () => {
     const lesson = await outlinedLesson();
 
-    // An exam's lesson always gets the reasoning check (after publishing).
     await expect(
       lessonContentWorkflow({
         analytics: { distinctId: "learner" },
@@ -246,7 +241,6 @@ describe(lessonContentWorkflow, () => {
       { analytics: { contentScope: "shared", distinctId: "learner" }, lessonId: lesson.id },
     ]);
 
-    // The reviewer reads the published lesson in the background: the learner never waits on it.
     expect(checkLessonQuality).not.toHaveBeenCalled();
 
     expect(start).toHaveBeenCalledWith(lessonCheckWorkflow, [
@@ -303,8 +297,6 @@ describe(lessonContentWorkflow, () => {
     await lessonContentWorkflow({ lessonId: lesson.id });
     vi.mocked(writeLessonDraft).mockClear();
 
-    // The runtime runs a step's body again when its result was lost after the body ended (an
-    // invocation that timed out, a stream write that failed): the lesson is this run's already.
     await expect(
       writeLessonContentStep({ lessonId: lesson.id, workflowRunId: "test-run-id" }),
     ).resolves.toStrictEqual({ check: null, imageScope: "shared", status: "published" });
@@ -446,13 +438,11 @@ describe(lessonContentWorkflow, () => {
       prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
     ).resolves.toMatchObject({ contentStatus: "failed", specStatus: "completed" });
 
-    // A rewrite no learner asked for (a later check or a changed source) counts under the system.
     expect(trackSystemEvent).toHaveBeenCalledExactlyOnceWith({
       name: "Generation Failed",
       properties: { content_kind: "lesson", model: null, task: "lesson-content" },
     });
 
-    // A learner waiting on it hears it failed, so their screen offers to try again.
     expect(getStreamedEvents().at(-1)).toMatchObject({
       reason: "aiGenerationFailed",
       status: "error",
@@ -489,8 +479,6 @@ describe(lessonContentWorkflow, () => {
       { analytics: { contentScope: "personal", distinctId: user.id }, lessonId: lesson.id },
     ]);
 
-    // Luna plans it, the shared writer writes it, and no reviewer reads it: only reusable lessons
-    // get model checks.
     expect(vi.mocked(generateLessonSpec).mock.calls[0]?.[0].model).toBe("openai/gpt-6-luna");
     expect(vi.mocked(writeLessonDraft).mock.calls[0]?.[0].model).toBeUndefined();
     expect(start).not.toHaveBeenCalledWith(lessonCheckWorkflow, expect.anything());
@@ -531,7 +519,6 @@ describe(lessonContentWorkflow, () => {
   it("writes a chapter's challenge with the case writer, without a spec step or pictures", async () => {
     const chapter = await libraryChapterFixture();
 
-    // Chapter challenges are cases, so they legitimately have no notebook skill links.
     const lesson = await libraryLessonFixture({
       homeChapterId: chapter.id,
       spec: {

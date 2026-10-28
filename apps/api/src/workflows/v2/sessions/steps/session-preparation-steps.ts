@@ -20,11 +20,6 @@ export async function listSessionPreparationStep(input: {
   return listSessionPreparation(input);
 }
 
-/**
- * The immutable admitted batch is saved in the parent's durable step log before children start. A
- * plan other runs kept marking while it was read comes back as a conflict, for the run to prepare
- * again after a durable wait (see `retryPlanConflicts`).
- */
 export async function createSessionGenerationManifestStep(input: {
   goalId: string;
   lessonIds: string[];
@@ -34,7 +29,6 @@ export async function createSessionGenerationManifestStep(input: {
   return catchPlanConflict(() => createPlanGenerationManifest(input));
 }
 
-/** How many of these lessons are still being written: not written yet, and not given up on. */
 export async function countLessonsBeingWrittenStep(lessonIds: string[]): Promise<number> {
   "use step";
 

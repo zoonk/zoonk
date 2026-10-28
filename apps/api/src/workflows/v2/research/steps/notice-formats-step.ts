@@ -7,11 +7,8 @@ import { logError } from "@zoonk/utils/logger";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 
 /**
- * A first pass over a new exam's notice, beside its reading: only its question formats, read in
- * seconds while the whole notice takes minutes, kept on the goal so placement's first questions
- * follow the exam (Cebraspe's statements judged right or wrong, FGV's four options) instead of
- * waiting minutes for the notice or asking in another format. A pass that fails leaves placement
- * to the reading.
+ * Reads only the question formats, in seconds, so placement's first questions follow the exam
+ * instead of waiting minutes for the whole notice.
  */
 export async function recordNoticeFormatsStep({
   analytics,
@@ -20,7 +17,6 @@ export async function recordNoticeFormatsStep({
   sourceIds,
 }: {
   analytics: ResearchAnalytics;
-  /** The exam's name and role, as the reading names it. */
   exam: string;
   goalId: string;
   sourceIds: string[];
@@ -29,11 +25,10 @@ export async function recordNoticeFormatsStep({
 
   const documents = await loadSourceDocuments(sourceIds);
 
-  // The notice serves every learner of the exam, and the learner waits for placement on it.
   const serviceTier = chooseServiceTier({ reuse: "bounded", wait: "learner" });
 
-  // One try (the AI SDK's own retries included): the reading beside it reads the formats too,
-  // with its step's retries, and retries here would only hold research's end.
+  // Not retried: the reading beside it reads the formats too, and retries would only hold
+  // research's end.
   const { data, error } = await safeAsync(() =>
     extractQuestionFormats({ analytics, documents, exam, serviceTier }),
   );

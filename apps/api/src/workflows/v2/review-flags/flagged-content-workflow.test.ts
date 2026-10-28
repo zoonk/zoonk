@@ -45,7 +45,6 @@ function drillResult() {
   } as unknown as Awaited<ReturnType<typeof generateStatuteDrills>>;
 }
 
-/** The law's page changed after its drills and lessons were written: every one of them is flagged. */
 async function flagLawChange(sourceId: string): Promise<string[]> {
   const notice = await recordSourceChangeNotice({
     contentHash: "new",
@@ -168,7 +167,6 @@ describe(flaggedContentWorkflow, () => {
 
     expect(rewrittenFlag.status).toBe("rewritten");
 
-    // The next sweep takes the open flag again; until then the drill stays as it was.
     expect(failedFlag.status).toBe("open");
     expect(failedDrill.content).toStrictEqual(failed?.content);
     expect(start).not.toHaveBeenCalled();

@@ -11,10 +11,6 @@ import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
 import { startPictureChecks } from "../../images/start-picture-checks";
 
-/**
- * The shareable field a work or career-change goal's practice is set in, sorted from the
- * learner's role answers once and kept on the goal. Null for other goals.
- */
 async function resolveGoalFieldStep({
   analytics,
   goalId,
@@ -31,10 +27,7 @@ async function resolveGoalFieldStep({
   );
 }
 
-/**
- * The goal's field, or null when sorting it failed this time: field practice is extra, so a
- * failure never fails the run, and the next preparation tries again.
- */
+/** Null when sorting failed: field practice is extra, and the next preparation tries again. */
 export async function readGoalField(input: {
   analytics?: ContentAnalytics;
   goalId: string;
@@ -62,11 +55,6 @@ export async function listLessonFieldItemTargetsStep(input: {
   return listLessonFieldItemTargets(input);
 }
 
-/**
- * Writes a few multiple-choice questions for one skill set in a field's everyday work ("nursing"):
- * the skill is the same, only the situations change. They join the shared item bank under the
- * field, so every learner in that field gets them in practice and reviews, before general ones.
- */
 export async function prepareFieldItemsStep({
   analytics,
   target,

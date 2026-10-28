@@ -26,10 +26,7 @@ import { lookUpTopicFrequencyStep } from "./steps/topic-frequency-step";
 
 export type ResearchInput = {
   goalId: string;
-  /**
-   * Uploads the learner gave after research asked for the notice; read instead of searching. When
-   * absent or empty, the material the learner uploaded with the goal.
-   */
+  /** When absent or empty, research reads the material the learner uploaded with the goal. */
   sourceIds?: string[];
 };
 
@@ -46,12 +43,7 @@ async function finishExam({
 }): Promise<ResearchResult> {
   await linkGoalToBlueprintStep({ examBlueprintId, goalId: goal.id });
 
-  // A shared exam's notice keeps being checked while anyone studies it, and gets its subjects'
-  // counts, its questions' options and how often its topics are asked from past editions when it
-  // says none; a private one is an upload. An entrance exam goal also gets how its course weighs
-  // the exam's parts, and a goal aiming at a course or a position its target's last cut-off. The
-  // lookups only add to the notice and the plan: one whose retries ran out is left to the next
-  // research, and this one ends with the notice.
+  // The lookups only add to the notice and the plan, so one that fails is left to the next research.
   if (isShared) {
     await Promise.all([
       Promise.allSettled([
@@ -68,11 +60,6 @@ async function finishExam({
   return { examBlueprintId, sourceIds: [], status: "ready" };
 }
 
-/**
- * Another learner's run is researching this exam: wait for it instead of paying twice. Null when
- * it ended without a result (it failed, or stalled and was stopped): this run researches the exam
- * itself instead of failing with it.
- */
 async function joinRunningResearch({
   context,
   identity,
@@ -105,8 +92,8 @@ async function joinRunningResearch({
 async function researchExam(context: ResearchContext<ExamResearchPlan>): Promise<ResearchResult> {
   const { analytics, goal, plan, uploads } = context;
 
-  // A teacher's test is described only by the class's material: never searched, never shared, and
-  // never the public notice onboarding matched by its name ("Biology test").
+  // A teacher's test is only the class's material, never the public notice onboarding matched by
+  // its name ("Biology test").
   if (plan.classTest) {
     await unlinkGoalFromSharedExamStep(goal.id);
   }
@@ -154,8 +141,8 @@ async function researchExam(context: ResearchContext<ExamResearchPlan>): Promise
           topic: "exam",
         });
 
-  // A reading of the learner's uploads is theirs, even when the exam it describes is shared: it
-  // counts as personal, so its calls never reach providers that train on prompts.
+  // A reading of the learner's uploads is theirs, even when the exam is shared, so its calls never
+  // reach providers that train on prompts.
   const reading = {
     analytics: uploads.length > 0 ? { ...analytics, contentScope: "personal" as const } : analytics,
     background: false,
@@ -165,8 +152,6 @@ async function researchExam(context: ResearchContext<ExamResearchPlan>): Promise
     sourceIds,
   };
 
-  // A new exam's notice takes minutes to read, while the learner's placement waits on how its
-  // questions look: a first pass reads only that, beside the reading.
   const [saved] =
     sourceIds.length > 0
       ? await Promise.all([
@@ -195,7 +180,6 @@ async function researchExam(context: ResearchContext<ExamResearchPlan>): Promise
   return finishExam({ analytics, examBlueprintId, goal, isShared });
 }
 
-/** Research for one goal: its topic, the plan for it, and the exam or the sources it reads. */
 async function research({
   goal,
   input,
@@ -212,8 +196,6 @@ async function research({
   }
 
   const analytics = toResearchAnalytics({ goal, runId });
-  // No uploads to answer an ask with (the API starts research with an empty list) means the
-  // material the learner gave with the goal.
   const uploads = input.sourceIds?.length ? input.sourceIds : goal.uploadIds;
 
   if (topic === "exam") {
@@ -225,24 +207,11 @@ async function research({
   return researchSources({ analytics, goal, plan, topic, uploads });
 }
 
-/**
- * Builds a goal from dated sources when it depends on facts that change: an
- * exam's notice, a law, a product's documentation; and checks a big learn goal
- * against reference syllabi. It reuses the canonical blueprint or the stored
- * sources when they exist, runs once per exam when several learners start
- * together, searches official domains first, keeps only facts that match
- * their passages, and asks the learner to upload the notice instead of
- * guessing an exam's structure. Plan and Today show that ask until the learner
- * answers it; an upload that answers it rebuilds the goal's curriculum from it.
- * The goal remembers its run, so asking again follows it instead of paying again.
- */
 export async function researchWorkflow(input: ResearchInput): Promise<ResearchResult> {
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
 
-  // Research without uploads runs once per goal at a time: a second start waits for the first,
-  // and researches the goal itself when the first ends without a result.
   if (!input.sourceIds?.length) {
     const { conflict } = await claimRunToken(`research-goal:${input.goalId}`);
     const joined = conflict ? researchResultSchema.safeParse(await joinRun(conflict)) : null;
@@ -263,7 +232,6 @@ export async function researchWorkflow(input: ResearchInput): Promise<ResearchRe
 
   await recordResearchOutcomeStep({ goalId: goal.id, result });
 
-  // The plan was built before the learner's upload gave research what it asked for.
   if (input.sourceIds?.length && result.status === "ready") {
     await start(goalContentWorkflow, [{ goalId: goal.id, rebuild: true }]);
   }

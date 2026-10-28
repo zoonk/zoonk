@@ -10,7 +10,6 @@ import { withAiRetry } from "../../_shared/ai-retry";
 
 export type ImageAnalytics = Parameters<typeof createStepImage>[0]["analytics"];
 
-/** Reads the lesson right before drawing, so a retry never draws a screen that already has a picture. */
 export async function listLessonImageStepsStep(lessonId: string): Promise<string[]> {
   "use step";
 
@@ -30,7 +29,6 @@ export async function createStepImageStep({
   return withAiRetry(() => createStepImage({ analytics, stepId }));
 }
 
-/** Reads the lesson right before drawing, so a retry never draws an option that has its picture. */
 export async function listLessonOptionPicturesStep(
   lessonId: string,
 ): Promise<OptionPictureTarget[]> {

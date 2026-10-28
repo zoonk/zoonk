@@ -15,7 +15,6 @@ import {
   recalibrateItemDifficultiesStep,
 } from "./steps/sweep-steps";
 
-/** Guests are deleted a batch at a time; past this many batches the next day continues. */
 const MAX_GUEST_BATCHES = 20;
 
 export type DailySweepsResult = {
@@ -30,12 +29,10 @@ export type DailySweepsResult = {
   verificationsPurged: number;
 };
 
-/** A sweep that failed counts as having done nothing; the next day runs it again. */
 function countOf(result: PromiseSettledResult<number>): number {
   return result.status === "fulfilled" ? result.value : 0;
 }
 
-/** One check per exam or source due before the next sweep; each check stores when the next is due. */
 async function checkFreshness(): Promise<number> {
   const targets = await listDueFreshnessTargetsStep();
   await Promise.all(targets.map((target) => start(freshnessWorkflow, [target])));
@@ -56,7 +53,6 @@ async function deleteGuests(): Promise<number> {
   return total;
 }
 
-/** Content built on a source that changed since gets rewritten, a bounded batch a day. */
 async function rewriteFlaggedContent(): Promise<boolean> {
   const open = await countOpenReviewFlagsStep();
 
@@ -68,7 +64,6 @@ async function rewriteFlaggedContent(): Promise<boolean> {
   return true;
 }
 
-/** A sample of the lessons made ahead of time in the last day gets its later check. */
 async function startLaterReviews(): Promise<number> {
   const lessonIds = await listLessonsForLaterReviewStep();
 
@@ -79,19 +74,9 @@ async function startLaterReviews(): Promise<number> {
   return lessonIds.length;
 }
 
-/**
- * The daily sweeps, each one query wide, started by Vercel Cron: check every exam and source
- * whose freshness check is due, delete guests inactive for 30 days (with everything they
- * created), purge memory facts deleted or expired more than 30 days ago and evaluation runs older
- * than 30 days, recalibrate the difficulty of questions answered that day, start the later check
- * of lessons made ahead of time, rewrite what was built on a source that changed, delete the
- * screens of lesson versions replaced more than a day ago and the sign-in codes that expired more
- * than a day ago.
- */
 export async function dailySweepsWorkflow(): Promise<DailySweepsResult> {
   "use workflow";
 
-  // Each sweep stands alone: one failing doesn't keep the others from running.
   const [checks, guests, facts, runs, items, reviews, flagged, retired, verifications] =
     await Promise.allSettled([
       checkFreshness(),

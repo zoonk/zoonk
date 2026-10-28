@@ -46,7 +46,6 @@ import { storeSourceStep } from "./steps/store-sources-step";
 import { lookUpSubjectQuestionsStep } from "./steps/subject-questions-step";
 import { lookUpTopicFrequencyStep } from "./steps/topic-frequency-step";
 
-/** The run holding a token, as a joining run reads it: how it ended, or that it's still going. */
 function otherRun(status: "completed" | "failed" | "running") {
   const cancel = vi.fn(() => Promise.resolve());
 
@@ -78,12 +77,10 @@ const TASK_RESULT = {
   userPrompt: "",
 };
 
-/** A reading as `extractExamBlueprint` returns it, without the formats' own read beside it. */
 const READING_RESULT = { ...TASK_RESULT, formatsProvenance: null };
 
 type RecordedSearch = Awaited<ReturnType<typeof findOfficialSources>>["data"];
 
-/** The address a page was fetched from: research asks with a string, undici takes any request. */
 function requestedUrl(input: Parameters<typeof fetch>[0]): string {
   if (typeof input === "string") {
     return input;
@@ -100,11 +97,7 @@ async function readJsonFixture<T>(name: string): Promise<T> {
   return JSON.parse(await readFixture(name)) as T;
 }
 
-/**
- * Replays the recorded plan, search and extraction for TCDF 2026. The exam's
- * name gets a unique suffix so tests sharing the database never share a
- * blueprint, and the search's addresses are made unique for the same reason.
- */
+/** Unique exam names and addresses keep tests sharing the database from sharing a blueprint. */
 async function replayTcdfResearch() {
   const [plan, search, extraction, notice] = await Promise.all([
     readJsonFixture<ExamResearchPlan>("tcdf-2026-plan.json"),
@@ -130,7 +123,6 @@ async function replayTcdfResearch() {
 
   vi.mocked(extractExamBlueprint).mockResolvedValue({ ...READING_RESULT, data: extraction });
 
-  // The first pass finds the notice's formats, and one the notice doesn't state.
   vi.mocked(extractQuestionFormats).mockResolvedValue({
     ...TASK_RESULT,
     data: [
@@ -151,8 +143,6 @@ async function replayTcdfResearch() {
     ],
   });
 
-  // The notice PDF is served as its recorded text; the other pages as pages built with
-  // JavaScript, which store no more than a line.
   vi.mocked(fetch).mockImplementation(async (input) => {
     const url = requestedUrl(input);
 
@@ -171,7 +161,6 @@ function supportAll() {
   }));
 }
 
-/** Search finds only a blog's summary of the notice: nothing research can read the exam from. */
 function findNothingOfficial() {
   vi.mocked(findOfficialSources).mockResolvedValue({
     ...TASK_RESULT,
@@ -209,7 +198,6 @@ describe(researchWorkflow, () => {
     supportAll();
     vi.mocked(decideExamIdentity).mockResolvedValue(null);
 
-    // No stored copy of the notice exists under another address: every document is fetched.
     vi.mocked(generateSearchTerms).mockImplementation(
       async ({ subjects }) =>
         ({
@@ -220,13 +208,11 @@ describe(researchWorkflow, () => {
 
     vi.mocked(decideLibraryIdentity).mockResolvedValue({ match: null, verdicts: [] });
 
-    // Readings leave nothing out unless a test says so.
     vi.mocked(checkExamReading).mockResolvedValue({
       ...TASK_RESULT,
       data: { missingSubjects: [], statedCounts: [] },
     });
 
-    // No source gives the subjects' counts or the options unless a test says one does.
     vi.mocked(findSubjectQuestions).mockResolvedValue({
       ...TASK_RESULT,
       data: { edition: null, questions: [], source: null, status: "unknown" },
@@ -274,8 +260,6 @@ describe(researchWorkflow, () => {
     expect(result).toMatchObject({ sourceIds: [], status: "ready" });
     expect(detectChangingFacts).not.toHaveBeenCalled();
 
-    // The plan read only the exam's name and target, which every learner of it shares, and so does
-    // the search that reads the plan.
     expect(vi.mocked(generateExamResearchPlan).mock.calls[0]?.[0].analytics).toMatchObject({
       contentScope: "shared",
     });
@@ -284,7 +268,6 @@ describe(researchWorkflow, () => {
       contentScope: "shared",
     });
 
-    // The notice itself was read, so no copy of it is searched.
     expect(findOfficialSources).toHaveBeenCalledOnce();
 
     const blueprint = await prisma.examBlueprint.findUniqueOrThrow({
@@ -299,8 +282,6 @@ describe(researchWorkflow, () => {
 
     expect(result).toMatchObject({ examBlueprintId: blueprint.id });
 
-    // A learner's plan waits on reading a published notice every learner of the exam reuses, so
-    // it and its check run at the priority tier; the check reads its claims in batches at once.
     expect(vi.mocked(extractExamBlueprint).mock.calls[0]?.[0].serviceTier).toBe("priority");
 
     const checkCalls = vi.mocked(checkCitedFacts).mock.calls.map(([input]) => input);
@@ -326,8 +307,6 @@ describe(researchWorkflow, () => {
 
     expect(structure.subjects[0]?.topics).toStrictEqual(extraction.subjects[0]?.topics);
 
-    // A first pass read its formats beside the reading, for placement's first questions: only
-    // the ones whose passage is in the notice.
     expect(vi.mocked(extractQuestionFormats).mock.calls[0]?.[0]).toMatchObject({
       exam: `${plan.name}, ${plan.role}`,
       serviceTier: "priority",
@@ -345,11 +324,9 @@ describe(researchWorkflow, () => {
       examBlueprintId: blueprint.id,
     });
 
-    // The notice is checked from the next daily sweep on.
     expect(blueprint.nextCheckAt).not.toBeNull();
   });
 
-  // DELE's pass mark showed in Spanish in a Portuguese screen.
   it("translates the notice's pass marks into the app's languages beside its checks", async () => {
     const { goal } = await examGoal();
     const { extraction, plan } = await replayTcdfResearch();
@@ -462,7 +439,6 @@ describe(researchWorkflow, () => {
       .mocked(findTopicFrequency)
       .mock.calls.map(([input]) => input.subjects.map((subject) => subject.name));
 
-    // Each subject with several topics is looked up on its own: the others aren't worth ranking.
     expect(asked).toStrictEqual(
       extraction.subjects
         .filter((subject) => subject.topics.length >= 4)
@@ -488,14 +464,13 @@ describe(researchWorkflow, () => {
     vi.mocked(findSubjectQuestions).mockRejectedValue(searchFailed);
     vi.mocked(findTopicFrequency).mockRejectedValue(searchFailed);
 
-    // The lookups only add to the notice: research ends ready once their retries ran out.
     const result = await researchWorkflow({ goalId: goal.id });
     expect(result).toMatchObject({ status: "ready" });
 
     const examBlueprintId = result.status === "ready" ? (result.examBlueprintId ?? "") : "";
     const lookup = { analytics: { contentScope: "shared" as const }, examBlueprintId };
 
-    // A step that catches its own failure is never retried, so each one throws it.
+    // A step that catches its own failure is never retried.
     await expect(lookUpSubjectQuestionsStep(lookup)).rejects.toBe(searchFailed);
     await expect(lookUpTopicFrequencyStep(lookup)).rejects.toBe(searchFailed);
   });
@@ -531,7 +506,6 @@ describe(researchWorkflow, () => {
     const result = await researchWorkflow({ goalId: goal.id });
     const examBlueprintId = result.status === "ready" ? (result.examBlueprintId ?? "") : "";
 
-    // The step's retry asks only for the subject it missed, which answers this time.
     vi.mocked(findTopicFrequency).mockClear();
     vi.mocked(findTopicFrequency).mockResolvedValue({ ...TASK_RESULT, data: { subjects: [] } });
 
@@ -583,7 +557,6 @@ describe(researchWorkflow, () => {
 
     expect(result).toMatchObject({ examBlueprintId: expect.any(String), status: "ready" });
 
-    // Only documents a model can read were read, the notice first, whose hash the blueprint keeps.
     const [reading] = vi.mocked(extractExamBlueprint).mock.calls.map(([input]) => input);
     const texts = reading?.documents.map((document) => document.text?.length ?? 0) ?? [];
 
@@ -619,8 +592,6 @@ describe(researchWorkflow, () => {
       throw new Error("The recorded search has no notice.");
     }
 
-    // IELTS Academic's search (10 Oct 2026) listed two band descriptors before the section pages,
-    // and the Reading page, the fifth readable document, alone stated its 40 questions.
     const pages = [
       "Writing band descriptors",
       "Speaking band descriptors",
@@ -664,10 +635,6 @@ describe(researchWorkflow, () => {
     expect(pages.every((page) => texts.some((text) => text.includes(page.url)))).toBe(true);
   });
 
-  /*
-   * TJ-SP's research (10 Oct 2026): every vunesp.com.br address answered 403, so it read only the
-   * court's news page, which names the objective test's size but none of its subjects.
-   */
   it("reads a copy from another site when the notice's own site refuses the download", async () => {
     const { goal } = await examGoal();
     const { extraction, plan } = await replayTcdfResearch();
@@ -677,7 +644,6 @@ describe(researchWorkflow, () => {
       readFixture("tcdf-2026-notice.txt"),
     ]);
 
-    // The reading quotes the notice's copy, the second document read.
     const fromCopy = JSON.parse(
       JSON.stringify(extraction).replaceAll('"document":1', '"document":2'),
     ) as BlueprintExtraction;
@@ -705,7 +671,6 @@ describe(researchWorkflow, () => {
       url: `${url}?test=${suffix}`,
     });
 
-    // Another of the refusing site's addresses would refuse too; the exam site's copy reads.
     const blockedCopy = copy("https://arquivos.cdn.cebraspe.org.br/edital-tcdf.pdf");
     const readableCopy = copy("https://www.examsite.com.br/editais/tcdf-2026.pdf");
 
@@ -736,7 +701,6 @@ describe(researchWorkflow, () => {
 
     expect(result).toMatchObject({ examBlueprintId: expect.any(String), status: "ready" });
 
-    // The second search knows what couldn't be read, and is the exam's like the first.
     const searches = vi.mocked(findOfficialSources).mock.calls.map(([input]) => input);
 
     expect(searches).toHaveLength(2);
@@ -747,7 +711,6 @@ describe(researchWorkflow, () => {
       vi.mocked(fetch).mock.calls.some(([input]) => requestedUrl(input).includes("arquivos.cdn")),
     ).toBe(false);
 
-    // The court's page is read first, as the official document, and the notice's copy after it.
     const [reading] = vi.mocked(extractExamBlueprint).mock.calls.map(([input]) => input);
     const urls = reading?.documents.map((document) => document.url) ?? [];
 
@@ -787,7 +750,6 @@ describe(researchWorkflow, () => {
     const { goal } = await examGoal();
     const { plan } = await replayTcdfResearch();
 
-    // Read by instructions older than today's: the notice is read once and shared.
     const blueprint = await examBlueprintFixture({
       examDate: new Date(Date.now() + 30 * 86_400_000),
       identityKey: buildExamIdentityKey({ name: plan.name, ownerId: null, role: plan.role }),
@@ -827,7 +789,6 @@ describe(researchWorkflow, () => {
       status: "ready",
     });
 
-    // The check reads beside the citation checks, at the reading's tier.
     expect(vi.mocked(checkExamReading).mock.calls[0]?.[0]).toMatchObject({
       serviceTier: "priority",
       total: extraction.mock?.totalQuestions ?? extraction.edition.questionCount,
@@ -859,7 +820,6 @@ describe(researchWorkflow, () => {
     const [first, second] = await Promise.all([examGoal(), examGoal()]);
     const { plan } = await replayTcdfResearch();
 
-    // Both learners named the position, each in their own words.
     await prisma.goal.updateMany({
       data: { details: { targetPosition: "auditor de controle externo" } },
       where: { id: { in: [first.goal.id, second.goal.id] } },
@@ -916,7 +876,6 @@ describe(researchWorkflow, () => {
       weight: null,
     });
 
-    // Both learners named the course and the institution, each in their own words.
     await Promise.all([
       prisma.goal.update({
         data: { details: { institution: "UnB", targetCourse: "Direito" } },
@@ -1020,7 +979,6 @@ describe(researchWorkflow, () => {
       source: { url: "https://example.com/provas" },
     });
 
-    // Found once: the next learner's research doesn't look it up again.
     const next = await examGoal();
     await researchWorkflow({ goalId: next.goal.id });
     expect(findChoiceOptions).toHaveBeenCalledOnce();
@@ -1075,7 +1033,6 @@ describe(researchWorkflow, () => {
     await replayTcdfResearch();
     otherRun("failed");
 
-    // Its result is never read: the run reads how it ended first.
     mockHookConflict(
       { returnValue: new Promise(() => {}), runId: "other-learner" },
       { tokens: /^research:/u },
@@ -1091,7 +1048,6 @@ describe(researchWorkflow, () => {
     await replayTcdfResearch();
     const { cancel } = otherRun("running");
 
-    // A server restart lost the earlier run in the middle of a step, an hour ago.
     mockLastRunEvent("first-request", {
       createdAt: new Date(Date.now() - 60 * 60 * 1000),
       eventType: "step_started",
@@ -1120,8 +1076,6 @@ describe(researchWorkflow, () => {
 
     expect(extractExamBlueprint).not.toHaveBeenCalled();
 
-    // The ask stays on the goal, so Plan and Today show it until the learner answers, and the run
-    // is remembered on it, so asking again follows it.
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
       examBlueprintId: null,
       researchRunId: expect.any(String),
@@ -1149,7 +1103,6 @@ describe(researchWorkflow, () => {
       status: "ready",
     });
 
-    // The exam passed, so research looked for a new notice before settling for the last one.
     expect(findOfficialSources).toHaveBeenCalledOnce();
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
@@ -1170,7 +1123,6 @@ describe(researchWorkflow, () => {
       role: plan.role,
     });
 
-    // The only notice online is the one of the edition that already happened.
     vi.mocked(extractExamBlueprint).mockResolvedValue({
       ...READING_RESULT,
       data: {
@@ -1199,8 +1151,6 @@ describe(researchWorkflow, () => {
     const { goal } = await examGoal();
     const { extraction, plan } = await replayTcdfResearch();
 
-    // Like the real check on this notice: a subject's passage names it, but its questions,
-    // weight or a description written by the model may come from elsewhere or say more.
     vi.mocked(checkCitedFacts).mockImplementation(async ({ facts }) => ({
       ...TASK_RESULT,
       data: {
@@ -1227,7 +1177,6 @@ describe(researchWorkflow, () => {
       extraction.subjects.map((subject) => subject.name),
     );
 
-    // Topics are checked by code: the one the model merged from two items isn't in the notice.
     expect(structure.subjects.flatMap((subject) => subject.topics)).not.toContain(
       "Lei de Acesso à Informação e LGPD",
     );
@@ -1275,7 +1224,6 @@ describe(researchWorkflow, () => {
     const { goal } = await examGoal();
     const { plan } = await replayTcdfResearch();
 
-    // Onboarding matched the test's name ("Biology test") to a public notice of that name.
     const notice = await examBlueprintFixture({ language: "pt", name: "Prova de Biologia" });
 
     await prisma.goal.update({ data: { examBlueprintId: notice.id }, where: { id: goal.id } });
@@ -1293,7 +1241,6 @@ describe(researchWorkflow, () => {
     expect(findOfficialSources).not.toHaveBeenCalled();
     expect(extractExamBlueprint).not.toHaveBeenCalled();
 
-    // Plan and Today ask for the class's material instead of following a public notice.
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
       examBlueprintId: null,
       researchUploadReason: "classMaterial",
@@ -1304,7 +1251,6 @@ describe(researchWorkflow, () => {
     const { goal } = await examGoal();
     const { extraction, plan } = await replayTcdfResearch();
 
-    // What the BNCC gives for a school subject: subjects and topics, nothing about an exam.
     vi.mocked(extractExamBlueprint).mockResolvedValue({
       ...READING_RESULT,
       data: {
@@ -1327,7 +1273,6 @@ describe(researchWorkflow, () => {
       status: "needsUpload",
     });
 
-    // Nothing is planned from it: the goal asks for the notice instead.
     expect(start).not.toHaveBeenCalled();
 
     await expect(
@@ -1374,18 +1319,15 @@ describe(researchWorkflow, () => {
 
     await learnerSourceFixture({ goalId: goal.id, sourceId: notes.id, userId: user.id });
 
-    // The web app starts research with no upload to answer: an empty list, not a missing one.
     const result = await researchWorkflow({ goalId: goal.id, sourceIds: [] });
 
     expect(result).toMatchObject({ status: "ready" });
     expect(findOfficialSources).not.toHaveBeenCalled();
 
-    // The plan read the learner's own words, so it never reaches providers that train on prompts.
     expect(vi.mocked(generateExamResearchPlan).mock.calls[0]?.[0].analytics).toMatchObject({
       contentScope: "personal",
     });
 
-    // The learner's own notes serve only them: no premium for the reading they wait on.
     expect(vi.mocked(extractExamBlueprint).mock.calls[0]?.[0].serviceTier).toBeUndefined();
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
@@ -1397,8 +1339,6 @@ describe(researchWorkflow, () => {
     const { goal } = await examGoal();
     await replayTcdfResearch();
 
-    // A goal from the learner's own material, with nothing uploaded yet: the plan read what they
-    // wrote, and the search reads the plan.
     await prisma.goal.update({
       data: { details: { materialIntent: "exam" } },
       where: { id: goal.id },
@@ -1435,7 +1375,6 @@ describe(researchWorkflow, () => {
 
     await learnerSourceFixture({ goalId: goal.id, sourceId: upload.id, userId: user.id });
 
-    // The material uploaded with the goal is read without being passed again.
     const result = await researchWorkflow({ goalId: goal.id });
 
     expect(result).toMatchObject({ status: "ready" });
@@ -1456,7 +1395,6 @@ describe(researchWorkflow, () => {
         },
       }),
     ).resolves.toMatchObject({
-      // A private upload never changes, so it's never checked for freshness.
       nextCheckAt: null,
       ownerId: user.id,
       sourceId: upload.id,
@@ -1562,7 +1500,6 @@ describe("research for goals that aren't exams", () => {
     for (const { source } of links) {
       expect(source.structure).toMatchObject({ topic: "syllabus" });
       expect(source.validUntil?.getTime()).toBeGreaterThan(Date.now() + 360 * DAY_MS);
-      // Syllabi are reused for a year and never checked for freshness.
       expect(source.nextCheckAt).toBeNull();
     }
   });
@@ -1632,7 +1569,6 @@ describe("research for goals that aren't exams", () => {
       },
     });
 
-    // Only the stored law text passes the reuse decision.
     vi.mocked(decideLibraryIdentity).mockImplementation(async ({ candidates }) => {
       const verdicts = candidates.map((candidate) => ({
         id: candidate.id,
@@ -1655,7 +1591,6 @@ describe("research for goals that aren't exams", () => {
       prisma.learnerSource.findFirst({ where: { goalId: goal.id, sourceId: stored.id } }),
     ).resolves.toMatchObject({ origin: "research" });
 
-    // The law is checked again from the next daily sweep on.
     await expect(
       prisma.source.findUniqueOrThrow({ where: { id: stored.id } }),
     ).resolves.toMatchObject({ nextCheckAt: expect.any(Date) });

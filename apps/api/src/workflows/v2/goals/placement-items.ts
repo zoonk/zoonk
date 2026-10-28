@@ -8,7 +8,6 @@ import {
   writePlacementBatchStep,
 } from "./steps/placement-items-steps";
 
-/** Skills placement can ask now that their questions are stored, and skills that got nothing. */
 export type PlacementItemsWritten = { failed: number; written: number };
 
 function getBatchWait({ index, later }: { index: number; later: boolean }): CallWait {
@@ -19,7 +18,6 @@ function getBatchWait({ index, later }: { index: number; later: boolean }): Call
   return index === 0 ? "learner" : "soon";
 }
 
-/** A batch counts its skills placement can ask; one whose step failed for good counts every skill as failed. */
 function countWritten({
   batches,
   results,
@@ -38,18 +36,6 @@ function countWritten({
   );
 }
 
-/**
- * Writes placement's questions for the skills the run picked from the skill graph once they're in
- * the Library (`skillIds`), or for the plan's picks when the plan came with the goal (or its exam's
- * blueprint came after its first questions): a quick question in the goal's quick format and the
- * ones that confirm a right answer (more quick ones, or a language goal's typed one) for each skill
- * that has none placement can ask, a few skills per model call, each call a step of its own, all
- * at once, so one failing never holds up the others and the runtime retries it alone
- * (`writePlacementBatchStep`). Each call's questions are stored as soon as it's done, so placement
- * can ask them while the others are written. What still fails is counted, not thrown:
- * placement stops waiting for it. A chapter's test-out asks a few multiple-choice questions only,
- * so it passes that format (`formats`) and how many (`quickCount`).
- */
 export async function preparePlacementItems(
   request: PlacementItemsRequest,
 ): Promise<PlacementItemsWritten> {
@@ -73,12 +59,6 @@ export async function preparePlacementItems(
   return countWritten({ batches, results });
 }
 
-/**
- * During placement's first week (`isGoalInPlacementWeek`), the questions of the plan's picks that
- * have none, for the next days' sessions to ask: a subject the plan gained after day 1's placement
- * (the notice's English and IT, applied after Rafaela's placement) is placed too. Picks with their
- * questions are skipped, so most preparations write nothing.
- */
 export async function preparePlacementWeekItems({
   analytics,
   goalId,

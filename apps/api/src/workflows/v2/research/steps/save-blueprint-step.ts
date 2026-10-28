@@ -12,7 +12,6 @@ import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 import { type BlueprintReading } from "./extract-blueprint-step";
 
-/** Changed sections as the notice model reads them: old and new values, without citations. */
 function formatChanges(changes: { after: unknown; before: unknown; field: string }[]): string {
   return JSON.stringify(changes, null, 2);
 }
@@ -26,7 +25,6 @@ async function writeNotice({
   identity: ExamIdentity;
   reading: BlueprintReading;
 }): Promise<BlueprintNotice | null> {
-  // A notice read again after its exam (the next one isn't out) tells learners nothing to act on.
   if (isPastEdition({ content: reading.content })) {
     return null;
   }
@@ -49,10 +47,8 @@ async function writeNotice({
   return { message: data.message, provenance };
 }
 
-/** What the check of the stored reading found. */
 type ReadingCheckInput = Omit<ReadingCheck, "checkedAt">;
 
-/** The reading with its check on its edition, when it was checked. */
 function withCheck({
   check,
   reading,
@@ -72,12 +68,6 @@ function withCheck({
   return { ...reading, content: { ...reading.content, edition } };
 }
 
-/**
- * Stores the blueprint, or updates only what changed on the existing one. A
- * change also gets its one-line notice for the exam's learners, written only
- * when something actually changed. A shared exam's reading is stored with its
- * check (`check`), which an admin's reading again is told.
- */
 export async function saveBlueprintStep({
   analytics,
   check,
@@ -93,7 +83,6 @@ export async function saveBlueprintStep({
 }): Promise<{
   created: boolean;
   examBlueprintId: string;
-  /** The reading moved the exam's own days, which the exam's learners get as a change to apply. */
   movesExamDays: boolean;
   noticeId: string | null;
 }> {

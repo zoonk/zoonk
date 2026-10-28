@@ -4,11 +4,7 @@ import { claimRunToken } from "../_shared/run-token";
 
 export type QuestionWritingResult = { status: "failed" | "joined" | "written" };
 
-/**
- * A run that writes the questions a test, mock or challenge still needs into the shared bank, while
- * the learner is asked the ones that exist: one run per `token` (a second start joins it, and its
- * stream names the run to follow), and it fails only when `write` could write nothing.
- */
+/** One run per `token`: a second start joins it. Fails only when `write` could write nothing. */
 export async function runQuestionWriting<TStep extends string>({
   steps,
   token,

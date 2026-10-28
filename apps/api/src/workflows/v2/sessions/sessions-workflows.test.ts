@@ -37,12 +37,10 @@ import { sessionPreparationWorkflow } from "./session-preparation-workflow";
 
 const TIME_ZONE = "UTC";
 
-/** A skill of a plan's graph, in its first phase. */
 function graphSkill(area: string, skillId: string) {
   return { area, lessons: 1, name: skillId, phase: 0, skillId };
 }
 
-/** The model writes each skill's quick questions as asked, and no typed one. */
 function writePlacementQuestions() {
   vi.mocked(generatePlacementItems).mockImplementation(async (params) =>
     taskResult({
@@ -71,10 +69,6 @@ function writePlacementQuestions() {
   );
 }
 
-/**
- * An ICU nurse who installs nothing, with a lesson teaching a skill and the chapter's challenge in
- * today's session, both written. Models answer with a question, a tool version and a case.
- */
 async function nurseWithWrittenLessons() {
   const user = await userFixture();
   const today = getDateInTimeZone({ date: new Date(), timeZone: TIME_ZONE });
@@ -162,7 +156,6 @@ async function nurseWithWrittenLessons() {
   return { challenge, goal, skill, taught, user };
 }
 
-/** The personal versions and field questions stored for the nurse's two lessons. */
 async function personalLayer({
   challenge,
   skill,
@@ -180,8 +173,7 @@ async function personalLayer({
 }
 
 describe(sessionPreparationWorkflow, () => {
-  // The clock stops where each test starts: the session it sets up today is the one the preparation
-  // reads, even when the test runs across midnight.
+  // A test running across midnight still reads the session it set up today.
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
   });
@@ -203,7 +195,6 @@ describe(sessionPreparationWorkflow, () => {
       libraryLessonFixture(),
     ]);
 
-    // Today's block comes from its plan item, which admits it to the parent's manifest.
     await Promise.all([
       studySessionBlockFixture({ lessonId: todayLesson.id, position: 0, sessionId: session.id }),
       studySessionBlockFixture({ lessonId: written.id, position: 1, sessionId: session.id }),
@@ -236,8 +227,6 @@ describe(sessionPreparationWorkflow, () => {
 
     const analytics = { distinctId: user.id, goalId: goal.id, platform: "ios" };
 
-    // Today's next lesson is minutes away, so it's written at the standard tier; tomorrow's is
-    // hours away, so it's written at the flex tier, about half the price.
     expect(start).toHaveBeenCalledWith(lessonContentWorkflow, [
       {
         analytics,
@@ -299,7 +288,6 @@ describe(sessionPreparationWorkflow, () => {
     const nurse = await nurseWithWrittenLessons();
     const { goal, taught, user } = nurse;
 
-    // Today's first lesson isn't written yet: its run finishes while the preparation waits.
     await prisma.lesson.update({
       data: { contentStatus: "pending" },
       where: { id: taught.lesson.id },
@@ -332,7 +320,6 @@ describe(sessionPreparationWorkflow, () => {
       where: { id: taught.lesson.id },
     });
 
-    // Only the personal layer's token is taken: another preparation is writing it.
     vi.mocked(createHook).mockImplementation(
       (options) =>
         ({
@@ -403,7 +390,6 @@ describe(sessionPreparationWorkflow, () => {
       },
     });
 
-    // The plan stands in for the skill in three days; one due in a month waits for a later session.
     const [later] = await Promise.all([
       skillFixture(),
       planItemFixture({
@@ -434,10 +420,6 @@ describe(sessionPreparationWorkflow, () => {
     expect(JSON.stringify(vi.mocked(start).mock.calls)).not.toContain(later.id);
   });
 
-  // Lucas's first day held time for subjects whose lessons weren't outlined yet: their outlines,
-  // started at the flex tier, landed minutes after he started his day. Carla's first chapter was
-  // outlined by her session's preparation, which didn't say she was waiting on it, so it wasn't
-  // saved before the rest of its band: her Today waited for all of it.
   it("outlines today's stand-in as the band the learner waits on, at the standard tier", async () => {
     const user = await userFixture();
     const today = getDateInTimeZone({ date: new Date(), timeZone: TIME_ZONE });
@@ -517,8 +499,6 @@ describe(sessionPreparationWorkflow, () => {
         },
       });
 
-      // The course teaches the skill in one lesson; the plan stands in for the other eleven: today's
-      // time waits on their chapter, so only tomorrow's is written at the flex tier.
       await Promise.all([
         courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
         prisma.chapterSkill.create({ data: { chapterId: chapter.id, skillId: skill.id } }),
@@ -555,7 +535,6 @@ describe(sessionPreparationWorkflow, () => {
             },
           ],
           courseId: course.id,
-          // A shared course's outline sees the goal's title, never the learner's own prompt.
           scope: {
             exams: [],
             generalGoal: goal.title,
@@ -575,7 +554,6 @@ describe(sessionPreparationWorkflow, () => {
       prisma.subscription.create({
         data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
       }),
-      // The arriving unit is done, its call too, so the renting unit's is the next.
       prisma.planItem.updateMany({
         data: { status: "done" },
         where: {
@@ -598,8 +576,6 @@ describe(sessionPreparationWorkflow, () => {
     );
   });
 
-  // One right answer frees a topic from its lessons, never from practice: Pedro's nucleus topic had only
-  // the placement question he answered, so practice could never confirm it.
   it("writes a few questions for a topic the learner was taken to know that practice can't ask", async () => {
     const user = await userFixture();
 
@@ -633,8 +609,6 @@ describe(sessionPreparationWorkflow, () => {
     ).resolves.toBe(3);
   });
 
-  // Rafaela's placement ran on the plan built before the notice was read; the notice's English and
-  // IT came after it, with no placement question, so her first week never placed her in them.
   it("writes the placement questions a subject the plan gained after placement lacks, in placement's first week only", async () => {
     const user = await userFixture();
 
@@ -655,7 +629,6 @@ describe(sessionPreparationWorkflow, () => {
           ],
         },
       }),
-      // Day 1's placement wrote Portuguese its question and the one that confirms a right pick.
       itemFixture({ skillId: reading.id }),
       itemFixture({ skillId: reading.id }),
     ]);
@@ -664,7 +637,6 @@ describe(sessionPreparationWorkflow, () => {
 
     await sessionPreparationWorkflow({ goalId: goal.id, timeZone: TIME_ZONE, userId: user.id });
 
-    // Nobody waits: the next days' sessions ask it, so it's written at the flex tier.
     expect(generatePlacementItems).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         serviceTier: "flex",
@@ -672,10 +644,8 @@ describe(sessionPreparationWorkflow, () => {
       }),
     );
 
-    // Its question and the one that confirms a right pick.
     await expect(prisma.item.count({ where: { skillId: english.id } })).resolves.toBe(2);
 
-    // Past placement's first week, lessons and reviews place the learner instead.
     vi.mocked(generatePlacementItems).mockClear();
 
     await Promise.all([

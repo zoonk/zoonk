@@ -26,10 +26,6 @@ const recordedDraft = recordedOutput<RecordedDraft>("lesson-draft");
 const SOL = "openai/gpt-6-sol";
 const OPUS = "anthropic/claude-opus-5.5";
 
-/**
- * A draft its code checks hold back: filler on screen 2, which the fix pass (replaying the draft)
- * leaves as it was.
- */
 const heldBack: RecordedDraft = {
   ...recordedDraft,
   screens: recordedDraft.screens.map((screen, index) =>
@@ -39,7 +35,6 @@ const heldBack: RecordedDraft = {
   ),
 };
 
-/** The writer's drafts in order: held back ones, then the recorded draft once they run out. */
 function mockDrafts(held: number) {
   Array.from({ length: held }).forEach(() =>
     vi
@@ -48,7 +43,6 @@ function mockDrafts(held: number) {
   );
 }
 
-/** A lesson of a learner's plan, its spec already written (reasoning check on, as for exams). */
 async function plannedLesson(attrs: Parameters<typeof recordedLessonFixture>[0] = {}) {
   const [chapter, user] = await Promise.all([
     libraryChapterFixture({ title: "How vaccines train the immune system" }),
@@ -81,8 +75,6 @@ function writeSteps() {
 }
 
 describe("lesson content redrafts", () => {
-  // Model calls replay a real spec and draft recorded for the same lesson; the writer's model
-  // choice for a last draft runs for real. The picture check keeps every planned picture.
   beforeEach(() => {
     vi.mocked(generateLessonSpec).mockResolvedValue(taskResult(recordedSpec));
     vi.mocked(keepTeachingPictures).mockImplementation(async ({ spec }) => spec);
@@ -106,7 +98,6 @@ describe("lesson content redrafts", () => {
 
     expect(writeLessonDraft).toHaveBeenCalledTimes(2);
 
-    // The reviewer reads the published lesson in the background, never on the way to it.
     expect(checkLessonQuality).not.toHaveBeenCalled();
 
     expect(vi.mocked(writeLessonDraft).mock.calls[1]?.[0]).toMatchObject({
@@ -158,7 +149,6 @@ describe("lesson content redrafts", () => {
       status: "heldBack",
     });
 
-    // Two cheap fix passes on the failing screen instead of another full draft.
     expect(writeLessonDraft).toHaveBeenCalledOnce();
     expect(fixLessonDraft).toHaveBeenCalledTimes(2);
 

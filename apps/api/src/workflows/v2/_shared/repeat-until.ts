@@ -12,13 +12,8 @@ async function runAgain<T>({
 }
 
 /**
- * Runs `run` one time after another, up to `times` times, until `done` accepts a result, calling
- * `wait` between runs; returns that result, or the last one. Each run gets the result before it.
- *
- * Workflow code repeats through this instead of a helper that calls itself: the Workflow DevKit's
- * graph extraction loses its cycle guard inside helpers with
- * a block body, so a self-calling helper that a workflow reaches overflows the stack, and the
- * build's manifest ships without any workflow graph.
+ * Workflow code repeats through this instead of a self-calling helper: the Workflow DevKit's graph
+ * extraction overflows the stack on one, and the build ships without any workflow graph.
  */
 export function repeatUntil<T>({
   done,

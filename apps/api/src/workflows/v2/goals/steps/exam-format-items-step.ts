@@ -20,13 +20,6 @@ export async function pickExamFormatSkillsStep(goalId: string): Promise<ExamForm
   return pickExamFormatSkills({ goalId });
 }
 
-/**
- * Writes a skill's questions in one of its exam's own answer formats (JEE Advanced's "one or more
- * correct options", the SAT's grid-ins, JEE Main's integer answers), checked and stored with how
- * they're answered. They join the shared bank under the exam, for every learner of that exam.
- * Nobody waits on them unless `wait` says so: practice and mocks ask them in the days ahead, and
- * a mock starting now writes the `count` it's short of while the learner waits.
- */
 export async function prepareExamFormatItemsStep({
   analytics,
   count = EXAM_FORMAT_ITEMS_PER_SKILL,
@@ -54,7 +47,6 @@ export async function prepareExamFormatItemsStep({
       format,
       language: skill.language,
       level: skill.level ?? "intermediate",
-      // The questions join the exam's shared bank, so a learner waiting on them gets priority.
       serviceTier: chooseServiceTier({
         reuse: getContentReuse({
           forExam: skill.exam !== null,
@@ -80,7 +72,7 @@ export async function prepareExamFormatItemsStep({
     skillId: skill.id,
   });
 
-  // The writer returns no numbers for a skill that has none to work out, so it isn't asked again.
+  // A skill with nothing to work out gets no numeric questions, so it's recorded and not asked again.
   await Promise.all([
     startPictureChecks({ analytics: context, assetIds: unchecked }),
     format === "numeric"

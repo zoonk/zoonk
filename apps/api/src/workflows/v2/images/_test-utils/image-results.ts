@@ -1,6 +1,6 @@
 import { type ImageScene } from "@zoonk/ai/tasks/v2/images/scene-schema";
 
-/** A 16x12 WebP with shapes, so the blank-frame check and file storage run for real. */
+/** Has shapes, so the blank-frame check runs for real. */
 export const TEST_IMAGE = new Uint8Array(
   Buffer.from(
     "UklGRogAAABXRUJQVlA4IHwAAACQAgCdASoQAAwAAUAmJbACdDBIyIT3QBnLPA4RAAD+93CMR3dn3SJPZUu7fZw0AxFnilKdKiIcuDDTD/Y9/+Z/6lYW1UFu4BVa9V2LgqxJHX6e42lH7eO2M9AHLK06ebWDHxVLNdkn58gdZeZlXJ4m51P8/zwZxJfCAAAA",
@@ -24,7 +24,6 @@ export const passedCheck = {
   data: { matchesScene: true, onStyle: true, passed: true, problems: [], textCorrect: true },
 };
 
-/** A different scene for every request, so each image gets its own reuse key. */
 export function sceneFor(request: string): ImageScene {
   return {
     focalObject: `a drawing of ${request}`,

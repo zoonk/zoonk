@@ -14,12 +14,6 @@ export async function pickItemSetTargetsStep(goalId: string): Promise<ItemSetTar
   return pickItemSetTargets({ goalId });
 }
 
-/**
- * Writes one question set for an exam (an original passage, case or chart, and questions on an
- * area's skills that each need it), checks it and stores it in the shared bank under the exam, for
- * every learner of that exam. Nobody waits on it: practice and mocks ask it in the days ahead.
- * Returns whether a set was stored; one that fails its checks is left out.
- */
 export async function prepareItemSetStep({
   analytics,
   target,

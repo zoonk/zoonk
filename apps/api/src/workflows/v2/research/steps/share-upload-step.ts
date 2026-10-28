@@ -5,14 +5,9 @@ import { withAiRetry } from "../../_shared/ai-retry";
 import { type ResearchAnalytics } from "../_utils/research-analytics";
 import { isSameDocumentTitle } from "../_utils/title-match";
 
-/** No country is known for an upload, so the search isn't narrowed to one. */
 const ANY_COUNTRY = "ZZ";
 
-/**
- * A search for the document's title on its publisher's site confirms the
- * classifier. Only the title and publisher are searched, never the file's
- * content, and nothing is searched for uploads the classifier kept private.
- */
+/** Only the title and publisher are searched, never the file's content. */
 export async function confirmPublicDocumentStep({
   analytics,
   decision,
@@ -46,7 +41,6 @@ export async function confirmPublicDocumentStep({
   return match ? { url: match.url } : null;
 }
 
-/** Shares the confirmed upload, or merges it into the copy another learner shared first. */
 export async function shareUploadStep({
   decision,
   sourceId,

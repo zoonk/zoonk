@@ -1,6 +1,5 @@
 import { removeAccents } from "@zoonk/utils/string";
 
-/** Words this short ("of", "in", "to") appear in every title. */
 const MIN_WORD_LENGTH = 3;
 const MIN_SHARED_WORDS = 0.6;
 const WORD_PATTERN = /[\p{L}\p{N}]+/gu;
@@ -10,11 +9,7 @@ function toWords(title: string): Set<string> {
   return new Set(words.filter((word) => word.length >= MIN_WORD_LENGTH));
 }
 
-/**
- * Whether a search result is the same document as an upload: most words of the
- * shorter title appear in the other. Titles on a publisher's page and on the
- * document's cover rarely match exactly.
- */
+/** Titles on a publisher's page and on the document's cover rarely match exactly. */
 export function isSameDocumentTitle({
   found,
   uploaded,

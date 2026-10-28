@@ -19,11 +19,6 @@ export async function loadStatuteDrillTargetsStep(goalId: string): Promise<Statu
   return loadStatuteDrillTargets(goalId);
 }
 
-/**
- * Writes drills on the letter of one law, in the board's style (Cebraspe's right or wrong, FGV's
- * options), each citing its article and linked to the official text. They join the item bank, so
- * practice, capsules and mocks use them.
- */
 export async function prepareStatuteDrillsStep({
   analytics,
   target,

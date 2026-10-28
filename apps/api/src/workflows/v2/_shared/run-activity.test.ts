@@ -12,7 +12,6 @@ function runningRun() {
   } as unknown as ReturnType<typeof getRun>);
 }
 
-/** The server process started this long ago. */
 function serverStartedAgo(ms: number) {
   vi.spyOn(process, "uptime").mockReturnValue(ms / 1000);
 }
@@ -21,7 +20,6 @@ describe("run activity", () => {
   beforeEach(() => {
     runningRun();
 
-    // A step started five minutes ago and nothing since: still working, unless the server died.
     mockLastRunEvent("run-1", {
       createdAt: new Date(Date.now() - 5 * MINUTE_MS),
       eventType: "step_started",

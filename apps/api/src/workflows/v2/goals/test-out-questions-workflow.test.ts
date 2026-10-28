@@ -72,7 +72,6 @@ describe(testOutQuestionsWorkflow, () => {
       token: `test-out-questions:${goal.id}:chapter-id`,
     });
 
-    // One call, for the skill that had none, in the only format a test-out asks.
     expect(generatePlacementItems).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         quickCount: 3,
@@ -99,7 +98,6 @@ describe(testOutQuestionsWorkflow, () => {
       taskResult({ skills: [{ quick: [writtenItem], typed: [] }] }),
     );
 
-    // A chapter of one skill asks it six times: its one question isn't enough.
     await testOutQuestionsWorkflow({
       chapterId: "chapter-id",
       goalId: goal.id,

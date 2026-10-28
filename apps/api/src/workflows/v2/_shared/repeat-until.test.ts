@@ -1,7 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { repeatUntil } from "./repeat-until";
 
-/** A run that returns the next of these results each time it's called. */
 function counter(results: number[]) {
   const run = vi.fn(async () => results[run.mock.calls.length - 1] ?? 0);
   return run;

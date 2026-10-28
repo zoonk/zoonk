@@ -4,7 +4,7 @@ import { RetryableError } from "workflow";
 
 const TOO_MANY_REQUESTS = 429;
 
-/** Providers answer 429 when they rate limit; the AI SDK can wrap it in its own retry error. */
+/** The AI SDK can wrap a provider's 429 in its own retry error. */
 function isRateLimited(error: unknown): boolean {
   if (!isJsonObject(error)) {
     return false;
@@ -13,11 +13,6 @@ function isRateLimited(error: unknown): boolean {
   return error.statusCode === TOO_MANY_REQUESTS || isRateLimited(error.lastError);
 }
 
-/**
- * Runs AI work inside a step. A rate limit or a call past its deadline is retried after a minute
- * instead of at once, so a busy provider gets time to recover and a burst of outlines finishes
- * instead of failing; every other error keeps the step's default retries.
- */
 export async function withAiRetry<T>(run: () => Promise<T>): Promise<T> {
   try {
     return await run();

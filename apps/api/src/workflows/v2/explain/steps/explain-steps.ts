@@ -28,10 +28,6 @@ type ExplanationProvenance = Awaited<ReturnType<typeof generateQuickExplanation>
 
 type RunScope = { analytics?: ContentAnalytics; workflowRunId: string };
 
-/**
- * The question's skill and the explanation someone already asked for, or the identity key a new
- * question skill is created under once its explanation is written.
- */
 export type QuestionSkill =
   | { existingLessonId: string | null; kind: "existing"; skillId: string }
   | { identityKey: string; kind: "new" };
@@ -42,10 +38,6 @@ export async function loadExplainGoalStep(goalId: string): Promise<ExplainGoal |
   return loadExplainGoal(goalId);
 }
 
-/**
- * Whether the explanation would be the same for anyone who asks. Only a confident "general" is
- * shared: a personal answer shown to strangers is worse than writing one more explanation.
- */
 export async function classifyQuestionStep({ goal }: { goal: ExplainGoal }): Promise<boolean> {
   "use step";
 
@@ -64,11 +56,6 @@ export async function classifyQuestionStep({ goal }: { goal: ExplainGoal }): Pro
   return isGeneral;
 }
 
-/**
- * The question as a Library skill: a general question finds the same question asked in other
- * words through identity search, and with it the explanation already written for it. A personal
- * question gets a skill of its own that nobody else ever sees.
- */
 export async function resolveQuestionSkillStep({
   analytics,
   goal,
@@ -118,12 +105,6 @@ async function findQuestionSkill({
   return { identityKey: resolution.identityKey, kind: "new" };
 }
 
-/**
- * Writes the quick explanation on a fast model (the first screen should show in about 20 seconds)
- * and checks it: 4 to 6 screens, one right answer, a reason on every option and screens that pass
- * the step contract. The problems say what failed. Writing is reported done once the explanation
- * is saved and can be read (`saveExplanationStep`).
- */
 export async function writeExplanationStep({
   analytics,
   goal,
@@ -166,8 +147,7 @@ async function createQuestionSkill({
   provenance: ExplanationProvenance;
   scope: { language: string; ownerId: string | null };
 }): Promise<string> {
-  // A shared explanation's skill is named by its neutral title, never the asker's own words; a
-  // private one keeps their question.
+  // A shared skill never carries the asker's own words.
   const created = await createSkill({
     ...scope,
     description: explanation.title,
@@ -183,11 +163,8 @@ async function createQuestionSkill({
 }
 
 /**
- * Stores the explanation as an overview lesson teaching the question skill and points the goal at
- * it, with its related questions, so the learner can read it at once; writing is done from here.
- * "Want to go further?" is linked afterwards (`linkGoFurtherCourseStep`). A new question skill is
- * created here, with the explanation's provenance, so a question nobody answered never leaves a
- * skill without its explanation behind.
+ * A new question skill is created here, not when it's resolved, so a question nobody answered
+ * never leaves a skill without its explanation behind.
  */
 export async function saveExplanationStep({
   explanation,
@@ -244,17 +221,12 @@ export async function saveExplanationStep({
   return { ...saved, skillId };
 }
 
-/**
- * The subject's Overview course for "Want to go further?": the shared course with that title, or
- * a new one whose overview band is outlined in the background.
- */
 export async function findGoFurtherCourseStep({
   language,
   provenance,
   title,
 }: {
   language: string;
-  /** The explanation run that named the course. */
   provenance: ExplanationProvenance;
   title: string;
 }): Promise<{ courseId: string; created: boolean } | null> {
@@ -292,7 +264,6 @@ export async function linkGoFurtherCourseStep(
   await linkGoFurtherCourse(input);
 }
 
-/** The Overview course and related questions the explanation was first given, for its reuse. */
 export async function findExplanationGoFurtherStep(lessonId: string) {
   "use step";
 

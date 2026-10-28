@@ -25,31 +25,18 @@ import { type LessonSpecOutcome, writeLessonSpecStep } from "./steps/write-lesso
 
 export type LessonContentInput = {
   lessonId: string;
-  /** The plan that picked this lesson; cost attribution alone does not require plan membership. */
+  /** Only for a plan's lesson: cost attribution alone goes in `analytics`. */
   planGoalId?: string;
-  /** The parent-issued selection/content/placement token, persisted before this child starts. */
   planManifest?: PlanGenerationManifest | null;
-  /** The learner and goal the lesson is being made for, so its cost adds up per learner. */
   analytics?: ContentAnalytics;
-  /** Made for an exam goal, so the reasoning check always runs (after publishing). */
   forExam?: boolean;
-  /** A rewrite after a later check failed: the reasoning check always runs. */
   forceReview?: boolean;
-  /**
-   * When a learner reaches the lesson: `learner` when they're about to open it, `soon` (the
-   * default) within minutes, `later` in hours (the next study day's). Its spec and writing run at
-   * the tier `chooseServiceTier` gives that wait and who reads the lesson: `flex` later, `priority`
-   * when a learner waits on an exam's or a language's shared lesson, the standard tier otherwise.
-   */
   wait?: CallWait;
 };
 
-/** How analytics names this run's work when it fails. */
 const LESSON_TASK = "lesson-content";
 
-/** Specs take about 20 seconds; another run planning this lesson is checked on this often. */
 const WAIT_INTERVAL = "5s";
-/** Three minutes of checks: past that, the other run is treated as stuck and this one gives up. */
 const MAX_WAITS = 36;
 
 async function finish({ lessonId, status }: LessonContentResult): Promise<LessonContentResult> {
@@ -67,10 +54,6 @@ async function finish({ lessonId, status }: LessonContentResult): Promise<Lesson
   return { lessonId, status };
 }
 
-/**
- * Another request is already writing this lesson: this run follows it and ends with its result,
- * so whichever run a client streams from, it sees the lesson get ready.
- */
 async function joinRunningLesson({
   lessonId,
   run,
@@ -84,7 +67,6 @@ async function joinRunningLesson({
   return finish(joined.success ? joined.data : { lessonId, status: "missing" });
 }
 
-/** A run outside this lesson's hook holds the claim, such as an explanation saving it: wait for it. */
 async function waitForOwner(lessonId: string) {
   const status = await repeatUntil({
     done: (current) => current !== "generating",
@@ -113,7 +95,6 @@ function planWhenFree({
   });
 }
 
-/** Takes the lesson's claim back after its checks held a draft back, then drafts it again. */
 async function redraft({
   input,
   workflowRunId,
@@ -130,12 +111,6 @@ async function redraft({
   return writeLessonContentStep({ ...input, workflowRunId });
 }
 
-/**
- * Writes the lesson, and drafts it again at once while its checks hold drafts back and it has
- * drafts left (core picks each draft's writer and tells it what held the earlier ones back), so a
- * learner waiting on the lesson gets it from this same run. After the last one, core sets the
- * lesson aside and plans move on without it.
- */
 function writeUntilPublished({
   input,
   workflowRunId,
@@ -153,7 +128,6 @@ function writeUntilPublished({
   });
 }
 
-/** Plans the lesson if it has no spec yet, then writes it. Failures end this run's claims. */
 async function planAndWrite({
   input,
   workflowRunId,
@@ -181,7 +155,6 @@ async function planAndWrite({
 
     return outcome;
   } catch (error) {
-    // The waiting screens hear it failed at once, so the learner can try again.
     await Promise.all([
       failLessonContentStep(claim),
       trackGenerationFailedStep(failed),
@@ -197,17 +170,6 @@ async function planAndWrite({
   }
 }
 
-/**
- * Makes one lesson playable on demand: it claims the lesson's content (one run per lesson; a
- * second request joins the first and streams the same result), writes the spec when the chapter
- * ahead didn't already, writes the screens and publishes them once the code checks pass. Pictures
- * and the model checks follow in the background (`lessonImagesWorkflow`, `lessonCheckWorkflow`), so
- * a learner waiting on the lesson never waits on them; a check that finds a problem publishes a
- * fixed version. A draft the code checks hold back is drafted again in this run while the lesson
- * has drafts left; a lesson set aside isn't written again.
- * Progress goes to the run's stream, so the waiting screen shows live steps; rate limits retry
- * after a minute, and a run that fails frees the lesson for the next one.
- */
 export async function lessonContentWorkflow(
   input: LessonContentInput,
 ): Promise<LessonContentResult> {
@@ -252,8 +214,7 @@ export async function lessonContentWorkflow(
     return finish({ lessonId, status: outcome.status === "heldBack" ? "heldBack" : "missing" });
   }
 
-  // The lesson plays without its pictures and before its model checks, so the waiting screens open
-  // it before they're started.
+  // The lesson plays without its pictures and model checks, so the waiting screens open it first.
   const ready = await finish({ lessonId, status: "ready" });
 
   if (outcome.imageScope) {

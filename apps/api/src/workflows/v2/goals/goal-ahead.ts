@@ -23,10 +23,6 @@ import { listMockPrepWritesStep } from "./steps/mock-question-steps";
 import { importPastQuestionsStep, listPastQuestionPapersStep } from "./steps/past-questions-step";
 import { loadStatuteDrillTargetsStep, prepareStatuteDrillsStep } from "./steps/statute-drills-step";
 
-/**
- * A work or career-change goal's first phase gets practice set in the learner's field while
- * placement runs, reusing questions other learners in that field already have. Guests don't.
- */
 async function prepareFieldItems({
   context,
   inputs,
@@ -45,11 +41,6 @@ async function prepareFieldItems({
   await Promise.allSettled(targets.map((target) => prepareFieldItemsStep({ ...context, target })));
 }
 
-/**
- * An exam answered partly in writing gets original written questions for its essay block: an AP
- * goal's first skills, graded by rows with their own points like AP's scoring guidelines, or the
- * skills of an exam's written test (a discursive test, the OAB's legal brief). Guests don't.
- */
 async function prepareFreeResponseItems({
   context,
   inputs,
@@ -64,11 +55,6 @@ async function prepareFreeResponseItems({
   );
 }
 
-/**
- * An exam that asks more than one quick pick (JEE Advanced's "one or more correct options", the
- * SAT's grid-ins) gets questions in those formats for its first skills, so practice asks them the
- * exam's way from the first days. Guests don't.
- */
 async function prepareExamFormatItems({
   context,
   inputs,
@@ -80,11 +66,6 @@ async function prepareExamFormatItems({
   await Promise.allSettled(picks.map((pick) => prepareExamFormatItemsStep({ ...context, pick })));
 }
 
-/**
- * An exam goal gets a few question sets (a passage, a case or a chart with several questions on
- * it, as exams group them) on the areas its first days study most, shared with every learner of
- * the exam. Guests don't.
- */
 async function prepareItemSets({
   context,
   inputs,
@@ -96,7 +77,6 @@ async function prepareItemSets({
   await Promise.allSettled(targets.map((target) => prepareItemSetStep({ ...context, target })));
 }
 
-/** Public-service exams drill the letter of the laws among their sources, article by article. */
 async function prepareStatuteDrills({
   context,
   goalId,
@@ -111,10 +91,6 @@ async function prepareStatuteDrills({
   );
 }
 
-/**
- * An exam whose organizer allows quoting past questions with the source (Enem, Brazilian boards)
- * gets real questions from its past papers, once per paper for every learner of that exam.
- */
 async function preparePastQuestions({
   context,
   goalId,
@@ -126,10 +102,6 @@ async function preparePastQuestions({
   await Promise.allSettled(papers.map((target) => importPastQuestionsStep({ ...context, target })));
 }
 
-/**
- * The alphabet lesson is extra: when it can't be written, the goal is still ready and its sessions
- * start with the plan, and the pair's next learner tries again.
- */
 async function prepareAlphabetLesson({
   context,
   goal,
@@ -140,11 +112,6 @@ async function prepareAlphabetLesson({
   await Promise.allSettled([prepareAlphabetLessonStep({ ...context, goal })]);
 }
 
-/**
- * A language goal's level test needs its pair's questions: their run starts with the curriculum
- * (onboarding usually started it already, and a second start joins it). It's a run of its own,
- * so a failure there never fails the goal, and the level test can start it again.
- */
 export async function startPairLevelTest({
   context,
   goal,
@@ -166,11 +133,6 @@ export async function startPairLevelTest({
   ]);
 }
 
-/**
- * A language certificate's listening parts each get a recording (a written, voiced set) at the
- * flex tier, in a run of its own: an exam's first learner pays for them, every later one finds
- * them made, and a failure never fails the goal. Guests don't start it.
- */
 async function prepareListeningSets({
   context,
   inputs,
@@ -189,12 +151,6 @@ async function prepareListeningSets({
   ]);
 }
 
-/**
- * The exam's first learner's goal gets its full mocks' questions the shared bank still lacks, in
- * the notice's mix of formats, once the exam's own formats, question sets and past questions are
- * in (`listMockPrepWrites`): their first full mock starts without waiting, and the exam's later
- * learners find them made. At the flex tier, so a failure never fails the goal. Guests don't.
- */
 async function prepareMockQuestions({
   context,
   inputs,
@@ -215,14 +171,7 @@ async function prepareMockQuestions({
   ]);
 }
 
-/**
- * What the learner reaches after placement, written ahead while it runs: the first lessons of
- * the two likeliest starting phases, questions in the learner's field, AP free responses, an
- * exam's own answer formats and question sets, a public exam's statute drills and past
- * questions, then its first full mocks' questions, a language certificate's listening recordings
- * and a non-Latin script's alphabet lesson. A rebuilt goal's learner is past placement, so only a first build writes the learner's
- * own work.
- */
+/** A rebuilt goal's learner is past placement, so only a first build writes their own work. */
 export function prepareAhead({
   context,
   inputs,

@@ -7,10 +7,8 @@ export type SourceVisibilityResult =
   | { merged: boolean; sourceId: string; status: "shared" };
 
 /**
- * Decides whether a new upload is a public document, such as an exam notice
- * or a law, that other learners can share. A classifier reads its first pages
- * and a search for its title on the publisher's site confirms it; without both
- * it stays private to its owner, as the privacy policy promises.
+ * An upload stays private to its owner unless the classifier and a search for its title on the
+ * publisher's site both say it's public, as the privacy policy promises.
  */
 export async function sourceVisibilityWorkflow(input: {
   ownerId: string;
@@ -20,7 +18,6 @@ export async function sourceVisibilityWorkflow(input: {
 
   const { workflowRunId } = getWorkflowMetadata();
 
-  // The upload is the learner's own until it's confirmed public.
   const analytics = {
     contentScope: "personal" as const,
     distinctId: input.ownerId,

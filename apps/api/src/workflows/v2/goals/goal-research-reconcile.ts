@@ -25,9 +25,7 @@ type Reference = GoalCurriculumInputs["references"][number];
 
 type ReconcileInput = {
   context: GoalRunContext;
-  /** What the first build wrote: the graph the plan came from, its skills' and courses' ids. */
   curriculum: BuiltCurriculum;
-  /** The goal as its graph read it. */
   inputs: GoalCurriculumInputs;
   researchId?: string | null;
   scope: CurriculumScope;
@@ -37,10 +35,6 @@ function isKnownReference({ known, reference }: { known: Reference[]; reference:
   return known.some((item) => item.title === reference.title && item.text === reference.text);
 }
 
-/**
- * What research gave the goal that its graph didn't read: the exam's blueprint when the goal
- * gained one or research changed it, and the references research linked.
- */
 function listResearchedReferences({
   after,
   before,
@@ -58,10 +52,6 @@ function listResearchedReferences({
   return isNewBlueprint ? [blueprint, ...linked] : linked;
 }
 
-/**
- * The exam's shared graph follows what the notice's reading checked this run's graph against: the
- * first written for the exam keeps the skills it adds (`saveExamSkillGraphStep`).
- */
 function keepExamGraph({
   curriculum,
   graph,
@@ -85,25 +75,20 @@ function keepExamGraph({
   });
 }
 
-/** The plan stops waiting; once the step's retries run out, the wait runs out by itself. */
+/** Once the step gives up, the wait runs out by itself. */
 function endNoticeWait(goalId: string): Promise<unknown> {
   return endNoticeWaitStep(goalId).catch(() => null);
 }
 
 /**
- * Whether the reading still lands before the learner saw the plan; once the step's retries run
- * out, it counts as missed, so the reading is proposed instead of changing a plan they may have seen.
+ * A step that gives up counts as missed, so the reading is proposed instead of changing a plan the
+ * learner may have seen.
  */
 function claimNoticeLanding(goalId: string): Promise<boolean> {
   return claimNoticeLandingStep(goalId).catch(() => false);
 }
 
-/**
- * The plan again, from today and keeping past work (what placement tested out stays tested out),
- * following the notice: its exam day becomes the target of a goal without a date of its own, or
- * replaces one the plan took from the notice before. Then the reveal stops waiting. False when it
- * had stopped waiting before the plan could be saved (see `followNoticeStep`): nothing changed.
- */
+/** False when the reveal stopped waiting before the plan could be saved: nothing changed. */
 async function followNotice({
   context,
   curriculum,
@@ -126,16 +111,10 @@ async function followNotice({
     provenance: curriculum.provenance,
   });
 
-  // The reveal waited for this plan; what it needs next doesn't hold the learner.
   await endNoticeWait(goalId);
   return landed;
 }
 
-/**
- * The graph research's reading wrote, its added skills already in the Library, with the notice's
- * exam day: it waits on Today for the learner's Apply or "Keep mine". The exam's graph is the
- * exam's either way.
- */
 async function proposeSavedReading({
   curriculum,
   graph,
@@ -160,11 +139,8 @@ async function proposeSavedReading({
 }
 
 /**
- * The plan again from the reconciled graph, following the notice (`followNotice`), then what it
- * needs next: outlines for its new stand-ins, and placement's questions for its picks, now that
- * the exam's format is known. When the reveal stopped waiting before the plan could be saved, the
- * reading waits on Today instead, as one that lands after the learner saw the plan (see
- * `proposeSavedReading`). Returns whether the plan followed the notice.
+ * Returns whether the plan followed the notice; when the reveal stopped waiting first, the reading
+ * waits on Today instead.
  */
 async function replan({
   context,
@@ -204,11 +180,6 @@ async function replan({
   return true;
 }
 
-/**
- * What research's reading changes once the learner saw the plan: the skills it adds go to the
- * Library, and the graph it wrote, with the notice's exam day, waits on Today for the learner's
- * Apply or "Keep mine".
- */
 async function proposeReading({
   context,
   curriculum,
@@ -241,8 +212,7 @@ async function reconcile({
 
   const goalId = inputs.goal.id;
 
-  // A reading that lands while the reveal waits is part of the plan: the reveal keeps waiting
-  // while the plan is checked against it and built again with it.
+  // A reading that lands while the reveal waits becomes part of the plan.
   const landed = await claimNoticeLanding(goalId);
 
   const references = listResearchedReferences({ after: researched, before: inputs });
@@ -318,24 +288,8 @@ async function reconcile({
 }
 
 /**
- * An exam's plan is built from the goal as understood, before research reads a new notice, so
- * the learner's first placement question never waits for it; the plan then waits for that reading
- * (started when the plan is saved, see `buildCurriculum`), and the reveal says it's reading the
- * notice. Once research ends (or half
- * an hour or so runs out), the plan is reconciled with what it read, beside the work written ahead
- * for the learner: the graph is checked against the notice the goal gained or research changed
- * (and any reference research linked), which adds the skills the notice expects and the graph
- * missed, with their exam weight, and corrects the weights its areas and topic frequency show are
- * off. Nothing is removed: a skill the notice doesn't test stays, at weight 1 when the check says
- * so. A reading that lands while the reveal still waits becomes part of the plan: the reveal keeps
- * waiting while the plan is checked against it and built again, and the plan simply follows the
- * notice's exam day, even when the graph doesn't change (see `followNotice`). One that lands after
- * the learner saw the plan never changes it silently: it waits on Today as one change to apply,
- * with the notice's exam day (see `proposeNoticeChange`). A notice day that isn't the date the
- * learner gave is proposed the same way. Research that ends without a notice
- * leaves the plan as it is, and so does a failure here, once its steps' retries run out: the plan
- * stays usable, so the failure is logged and recorded rather than failing the run; either way the
- * plan stops waiting. It reports no progress: every wait of the learner's ended with the plan.
+ * A reading that lands after the learner saw the plan never changes it silently: it waits on Today
+ * as one change to apply. A failure here leaves the plan usable, so it's logged, not thrown.
  */
 export async function reconcileResearch({ researchId, ...input }: ReconcileInput): Promise<void> {
   if (!researchId || !isBuiltBeforeResearch({ inputs: input.inputs, researchId })) {
@@ -365,13 +319,6 @@ export async function reconcileResearch({ researchId, ...input }: ReconcileInput
   }
 }
 
-/**
- * Research that started after the plan was built (it restarted, as after a run that failed or
- * stalled) still reaches the plan: once it ends, the notice it read is checked against the plan's
- * graph, rebuilt from the stored plan (`curriculum`), and what it adds waits on Today as one
- * change to apply, with the notice's exam day, like a reading that lands after the reveal (see
- * `reconcileResearch`). A notice that adds nothing still proposes its day when it isn't the goal's.
- */
 export async function reconcileStoredPlan({
   context,
   curriculum,

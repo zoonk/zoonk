@@ -11,7 +11,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
 import { conversationReviewWorkflow } from "./conversation-review-workflow";
 
-/** Only the provider and the review models are replaced; the steps run real core and PostgreSQL. */
 vi.mock("@zoonk/ai/tasks/v2/language/live-call-session", () => ({
   createLiveCallSession: vi.fn(),
   hangUpLiveCallSession: vi.fn(),
@@ -26,7 +25,6 @@ vi.mock("@zoonk/ai/tasks/v2/language/conversation-objectives", () => ({
   checkConversationObjectives: vi.fn(),
 }));
 
-/** The signed-in learner of the completion request. */
 vi.mock("@zoonk/core/users/session", () => ({ getSession: vi.fn() }));
 
 const PROVENANCE = {
@@ -62,7 +60,6 @@ function modelAnswer<T>(data: T) {
   };
 }
 
-/** A learner's practice call that connected and is still live. */
 async function liveCall() {
   const user = await userFixture();
   const startedAt = new Date();

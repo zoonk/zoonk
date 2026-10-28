@@ -11,14 +11,6 @@ export type ShortPlanPracticeInput = {
 
 export type ShortPlanPracticeResult = { status: "joined" | "written" };
 
-/**
- * Writes the practice a test days away needs once placement's questions are in: a class test on
- * Friday spends its days practicing (all of them when placement tested its lessons out) and on
- * its short mock, so each skill gets a bank sized to the days' time (see
- * `getShortPlanPracticeNeed`). Skills that already have that many are left as they are. A run of
- * its own, after placement's, so placement never waits on it. One run per goal: a second start
- * joins it.
- */
 export async function shortPlanPracticeWorkflow(
   input: ShortPlanPracticeInput,
 ): Promise<ShortPlanPracticeResult> {
