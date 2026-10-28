@@ -1,6 +1,5 @@
 import { prisma } from "@zoonk/db";
 
-/** An open run of a lesson, as the start leaves it, for tests that answer or finish one. */
 export function lessonRunFixture({
   endedAt = null,
   lessonId,

@@ -11,7 +11,6 @@ import { startLibraryLesson } from "../start-library-lesson";
 
 const TIME_ZONE = "UTC";
 
-/** Two plan skills the lesson's finer-grained answer does not directly train. */
 async function owedReviewsFixture() {
   const setup = await setupPlayableLesson({ steps: ["check"] });
 
@@ -75,7 +74,6 @@ describe("atomic plan-skill reviews on lesson completion", () => {
     const firstApplied = Promise.withResolvers<null>();
     const calls = { count: 0 };
 
-    // Inject only the interruption: the first skill still executes its real database update.
     const fault = vi
       .spyOn(skillUpdates, "applyAnswerToLearnerSkill")
       .mockImplementation(async (...args) => {
@@ -118,7 +116,6 @@ describe("atomic plan-skill reviews on lesson completion", () => {
     ]);
 
     expect(run.endedAt).not.toBeNull();
-    // The lesson finished today's only block, saved when it started: the day's bonus pays once too.
     expect(Number(progress.totalBrainPower)).toBe(run.brainPower + BRAIN_POWER_BONUS.fullMeal);
     expect(day.lessonsCompleted).toBe(1);
   });

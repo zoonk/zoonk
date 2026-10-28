@@ -40,14 +40,9 @@ import {
 } from "./contract";
 import { isAnswerableStep } from "./lesson-run";
 
-/**
- * The first answer, the question coming back at the end of the lesson and one retried request.
- * More answers to one screen in one run come from a client looping or the lesson open in another
- * tab: they're graded by code and not recorded.
- */
+/** Allow the first answer, an end-of-lesson retry, and one retried request; extra answers must not record more study. */
 const MAX_ANSWERS_PER_STEP_IN_RUN = 3;
 
-/** How long a screen should take to answer, so a slow answer rates Hard instead of Good. */
 const EXPECTED_ANSWER_MS: Partial<Record<StepKind, number>> = {
   activity: 45_000,
   challenge: 300_000,
@@ -74,18 +69,12 @@ async function countRunAnswers({
   return prisma.attempt.count({ where: { answeredAt: { gte: startedAt }, stepId, userId } });
 }
 
-/**
- * The kind of screen the learner actually answered: a spoken screen swapped for its listening
- * exercise ("I can't talk now") counts as listening, for the notebook and the listening level.
- */
+/** The typed/listening fallback trains the modality actually used, not the original spoken screen. */
 function getAnsweredKind({ answer, kind }: { answer: LessonStepAnswer; kind: StepKind }): StepKind {
   return kind === "spokenAnswer" && answer.kind === "listening" ? "listening" : kind;
 }
 
-/**
- * Grades the answer. Only a recorded typed answer asks a model, within the day's model-graded
- * answers to the screen; past those, or past the run's cap, code grades it.
- */
+/** Model grading is allowed only for answers that can still be recorded and remain under the daily cap. */
 async function gradeRunAnswer({
   answer,
   isRecorded,
@@ -103,13 +92,6 @@ async function gradeRunAnswer({
 
 type PlayableStepRow = NonNullable<Awaited<ReturnType<typeof findPlayableStepRow>>>;
 
-/**
- * Records a graded answer as learning, once under its id, with its language evidence in the same
- * transaction, and says what it saved and when its idea comes back. It's recorded as answered when
- * it arrived (`receivedAt`), and not at all once its run finished, nor when an answer to the screen
- * that arrived after it was recorded first: a grade the screen stopped waiting for doesn't count
- * after the answer the learner checked again, and one that's saved first stays the first answer.
- */
 async function recordCheck({
   attemptId,
   comesBack,
@@ -144,8 +126,7 @@ async function recordCheck({
   const outcome = await recordAnswerOnce({
     answer: {
       answer: input.answer,
-      // When it arrived, not when its grade was saved: answers to a screen keep the order they
-      // were sent in, however long each one's grade took.
+      // Preserve arrival order even when grades finish out of order.
       answeredAt: receivedAt,
       attemptId,
       graded: {
@@ -209,7 +190,6 @@ async function recordCheck({
         };
   }
 
-  // Sent twice at once: the other request recorded it, with its own grade.
   if (outcome.status === "saved") {
     const result = await checkSaved({
       ...comesBack,
@@ -244,18 +224,7 @@ async function recordCheck({
   };
 }
 
-/**
- * Grades one answer to a lesson screen on the server and records it as learning: the attempt on
- * the learner's day, the review of the skill it trains and, when wrong, an entry in the mistakes
- * notebook. Checks, activities and language exercises use the code the player ran; typed answers
- * use the grader (not counted as small AI help: grading must stay right, and the plan's lesson
- * caps bound it), or code alone past a few graded answers to the screen a day, where an answer
- * code doesn't recognize is shown as not checked and isn't recorded. Answers count toward an open
- * run of the screen's lesson, and toward its session when the run was started from one; one
- * finished while the answer was graded isn't recorded. A screen answered more often than a run
- * allows is graded by code and not recorded. An answer sent with its `attemptId` is recorded once,
- * and sent again it gets what it saved.
- */
+/** Requires an open lesson run; reuse attemptId to replay its saved verdict. Over-cap or unrecognized code-only answers are not recorded. */
 export async function checkLessonStep({
   input,
   stepId,
@@ -263,7 +232,7 @@ export async function checkLessonStep({
   input: LessonStepCheckInput;
   stepId: string;
 }): Promise<LessonStepCheckOutcome> {
-  // When the answer arrived: a later answer to the screen recorded before it is newer (`recordCheck`).
+  // Capture arrival before authentication or grading can reorder concurrent answers.
   const receivedAt = new Date();
   const session = await getSession();
 
@@ -295,12 +264,11 @@ export async function checkLessonStep({
 
   const saved = attemptId ? await findSavedAttempt({ attemptId, userId }) : null;
 
-  // An answer saved before its run finished still gets what it saved when it's sent again.
+  // Saved answers remain replayable after their run ends.
   if (run.endedAt && !saved) {
     return { status: "runEnded" };
   }
 
-  // An answer sent again is graded by code alone: it was graded and recorded the first time.
   const isRecorded =
     !saved &&
     (await countRunAnswers({ startedAt: run.startedAt, stepId: row.id, userId })) <

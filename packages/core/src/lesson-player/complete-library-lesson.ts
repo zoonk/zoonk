@@ -44,16 +44,12 @@ export type LibraryLessonCompletionOutcome =
 type CompletionRun = {
   lessonId: string;
   run: LearningEvent;
-  /** The skills whose next review the completion announces. */
   skillIds: string[];
   timeZone: string;
   userId: string;
 };
 
-/**
- * A finished run keeps its outcome in the ledger, so repeating a completion (a retry, or a second
- * tab) returns the same result without counting anything twice.
- */
+/** Retries must use the saved outcome without counting the run twice. */
 async function readFinishedRun({
   run,
   skillIds,
@@ -76,11 +72,7 @@ async function readFinishedRun({
   };
 }
 
-/**
- * Closes the run and adds it to the learner's totals in one transaction. The learner's progress
- * lock serializes completions, and only an open run can close, so a run counts once. A replay is a
- * `review` in the ledger and doesn't add to the lessons completed that day.
- */
+/** Replays are reviews in the ledger and must not increment lessons completed. */
 async function finishRun({
   answerPoints,
   answeredCount,
@@ -203,19 +195,7 @@ async function finishRun({
   });
 }
 
-/**
- * The run's sittings (see `loadProgressRuns`) and the lesson as the learner played it: the
- * version they opened, which a check may have replaced since (`findOpenedVersion`).
- */
-/**
- * Finishes a run of a Library lesson for the learner or guest in the session. The server
- * re-validates it from the answers it graded: every screen that takes an answer was answered in
- * this run or in an earlier sitting the learner left unfinished (see `loadProgressRuns`), or "I
- * know this" got every check right. A question whose numbered picture came too late for this run
- * is optional (`getLatePictureStepIds`). Then the ledger row closes, and Brain Power,
- * Energy and the day's totals are added. Completing the same run again returns the same result;
- * only the completion that closed the run counts as "Lesson Completed".
- */
+/** Requires all answerable screens completed or a valid skip; late numbered-picture screens are optional. Retries return the saved outcome without recounting. */
 export async function completeLibraryLesson({
   input,
   lessonId,
@@ -261,8 +241,6 @@ export async function completeLibraryLesson({
     return { status: "invalid" };
   }
 
-  // A quick explanation never comes back in a review (reviews come with a study plan's sessions,
-  // which explanations aren't part of), so its completion announces none.
   const [skillIds, timeZone] = await Promise.all([
     isOwnExplanation(lesson)
       ? []

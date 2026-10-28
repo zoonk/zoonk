@@ -27,15 +27,10 @@ import { startLibraryLesson } from "./start-library-lesson";
 
 const TIME_ZONE = "UTC";
 
-/**
- * Brain Power v2: 2 points per right answer on a new question times Hyperdrive (x1, then x2 in a
- * row), a replayed question 1, and 10 for finishing a lesson the first time.
- */
 const MISSED_THEN_RIGHT = 2 + 10;
 const BOTH_RIGHT = 2 + 4 + 10;
 const REPLAYED_BOTH_RIGHT = 1 + 1;
 
-/** Two right answers earlier in the session: the lesson's answers continue at x3 and x4. */
 const BOTH_RIGHT_IN_SESSION = 2 * 3 + 2 * 4 + 10;
 const LESSON = ["hook", "explanation", "check", "typedAnswer", "summary"] as const;
 const RIGHT_TYPED = "It shows where the electron is likely to be";
@@ -282,7 +277,6 @@ describe(completeLibraryLesson, () => {
       value: { kind: "typedAnswer", text: RIGHT_TYPED },
     });
 
-    // Yesterday's right answer doesn't multiply today's: x1 in each sitting.
     await expect(complete({ lessonId: setup.lesson.id, runId })).resolves.toMatchObject({
       completion: { brainPower: 2 + 2 + 10, correctCount: 2, incorrectCount: 0 },
       status: "completed",
@@ -359,7 +353,6 @@ describe(completeLibraryLesson, () => {
   it("celebrates the belt and the tenth of Energy a lesson on its own reaches", async () => {
     const { lesson, runId, user } = await playLesson();
 
-    // Just short of the yellow belt and of 80% Energy.
     const progress = { currentEnergy: 79.95, lastActiveAt: new Date(), totalBrainPower: 2499n };
 
     await prisma.userProgress.upsert({
@@ -489,7 +482,6 @@ describe(completeLibraryLesson, () => {
       status: "completed",
     });
 
-    // The answer still reaches the learner's memory of the skill.
     await expect(
       prisma.learnerSkill.findFirst({ where: { skillId: setup.skill.id, userId: setup.user.id } }),
     ).resolves.toMatchObject({ due: expect.any(Date) });
@@ -498,8 +490,6 @@ describe(completeLibraryLesson, () => {
   it("reviews the plan's skill its lesson is held for once, from every screen, and says when it comes back", async () => {
     freezeClock();
 
-    // Production's outlines hold a lesson for the plan's skill while its screens teach a finer
-    // skill of their own, where each answer lands; reviews and practice ask the plan's skill.
     const setup = await setupPlayableLesson({
       steps: Array.from({ length: 8 }, () => "check" as const),
     });
@@ -613,7 +603,6 @@ describe(completeLibraryLesson, () => {
       prisma.userLearningProfile.findUniqueOrThrow({ where: { userId: setup.user.id } }),
     ]);
 
-    // Another learner who asked the same question still has theirs to read.
     expect(goals).toStrictEqual(
       expect.arrayContaining([
         { id: explanation.id, status: "completed" },
@@ -635,7 +624,6 @@ describe(completeLibraryLesson, () => {
       value: { kind: "check", optionId: "likely" },
     });
 
-    // A background check publishes a fixed version while the learner is on the next screen.
     const opened = await prisma.step.findMany({
       orderBy: { position: "asc" },
       where: { lessonId: setup.lesson.id },
@@ -657,7 +645,6 @@ describe(completeLibraryLesson, () => {
 
     expect(fixed).toBe(2);
 
-    // The learner keeps answering the screens they opened, and their run completes.
     await expect(
       answer({
         runId,
@@ -671,7 +658,6 @@ describe(completeLibraryLesson, () => {
       status: "completed",
     });
 
-    // Opening the lesson again plays the fixed version.
     const reopened = await getPlayableLibraryLesson({ lessonId: setup.lesson.id });
     const openedIds = new Set(opened.map((step) => step.id));
 

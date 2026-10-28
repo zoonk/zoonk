@@ -10,17 +10,12 @@ import {
   shouldOmitNumberedPicture,
 } from "../picture-policy";
 
-/** What a screen's pictures are read from: its linked files and when it was written. */
 type PictureRow = {
   generatedAt: Date;
   mediaAsset: MediaAsset | null;
   optionPictures?: (StepOptionPicture & { mediaAsset: MediaAsset })[];
 };
 
-/**
- * The image file is linked through the step; its alt text comes from the step's picture request
- * (its `image`, or a labeled diagram's picture).
- */
 export function getStepImage({
   content,
   kind,
@@ -45,10 +40,6 @@ export function getStepImage({
   };
 }
 
-/**
- * The drawn pictures of a question whose options are pictures, by option id, each with its
- * option's description as its alt text. Options asking for no picture have none.
- */
 export function getOptionPictures({
   content,
   kind,
@@ -82,12 +73,7 @@ export function getOptionPictures({
   );
 }
 
-/**
- * A screen whose answer key is a numbered picture's (a labeled diagram, "which number is the
- * left ventricle?") can't be played once that picture is gone, taken out of use after its check
- * rejected it, or never drawn: the screen is left out, and an explanation shows its words without
- * the diagram to explore. While the picture is on its way, the screen waits for it.
- */
+/** Questions keyed by numbered pictures cannot play without them; explanations may retain their text. */
 function withoutLostNumberedPicture<TContent extends object>({
   content,
   image,
@@ -110,12 +96,7 @@ function withoutLostNumberedPicture<TContent extends object>({
     : content;
 }
 
-/**
- * A screen's pictures: its own and its options' as drawn, whether the player still waits on one
- * (a picture the screen asks for, not drawn yet, on a screen written moments ago; past that, one
- * that never came stays out), and its content, null when it asks about a numbered picture it no
- * longer has.
- */
+/** Null content marks an unavailable numbered-picture question; pending means a recently requested picture is still expected. */
 export function getScreenPictures<TContent extends object>({
   content,
   kind,
@@ -146,12 +127,7 @@ export function getScreenPictures<TContent extends object>({
   };
 }
 
-/**
- * The screens a run may finish without: questions the player left out because their numbered
- * picture was missing, whose picture came too late for the run (see `isPictureLateForRun`). A
- * screen's picture availability is recorded separately from unrelated edits. Historical links
- * with no recorded arrival time stay required.
- */
+/** Arrival times distinguish late pictures from unrelated edits; historical links without arrival times remain required. */
 export function getLatePictureStepIds({
   rows,
   runStartedAt,

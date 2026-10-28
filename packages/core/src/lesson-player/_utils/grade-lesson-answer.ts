@@ -9,13 +9,9 @@ import { matchSpokenAnswer } from "../../library/language/spoken-answer-match";
 import { type LessonStepAnswer, type PlayableLibraryStep } from "../contract";
 import { gradeStepAnswer } from "../grade-step-answer";
 
-/** A graded answer with what the learner sees about it and what the notebook keeps. */
 export type LessonAnswerVerdict = {
   answerText: string | null;
-  /**
-   * False for a written answer code couldn't recognize while no model graded it: it isn't marked
-   * wrong, and the sample answer shows what was expected.
-   */
+  /** False means not checked, never an incorrect verdict; show the sample answer. */
   checked: boolean;
   correctAnswer: string | null;
   /** A language course's typed answer: each form mistake, named so it isn't read as a missing idea. */
@@ -34,7 +30,7 @@ type OpenAnswerGrade = {
   answer: LessonStepAnswer;
   lesson: LessonLanguage;
   step: PlayableLibraryStep;
-  /** False past the day's model-graded answers to the screen: code then grades a typed answer. */
+  /** Disable once the daily per-screen model-grading cap is reached. */
   useModel: boolean;
   userId: string;
 };
@@ -45,12 +41,7 @@ function withContext(context: string | undefined, question: string): string {
 
 type TypedContent = Extract<PlayableLibraryStep, { kind: "typedAnswer" }>["content"];
 
-/**
- * A written answer graded without a model: an accepted answer (or, outside a language course, a
- * typo of one or an accepted number rounded to the places typed) is right. Anything else isn't
- * checked rather than wrong, since a paraphrase can be right too, and the sample answer shows what
- * was expected.
- */
+/** Unrecognized paraphrases remain unchecked rather than wrong when no model grades them. */
 function gradeTypedByCode({
   answer,
   content,
@@ -78,12 +69,6 @@ function gradeTypedByCode({
   };
 }
 
-/**
- * A written answer: code settles the accepted answers and a fast model grades the rest by the idea
- * the question checks, with each key point for partial credit and feedback in the learner's
- * language. In a language course, a spelling that changes a word is a mistake; a typo that doesn't
- * is right, with the spelling shown.
- */
 async function gradeTypedStep({
   answer,
   lesson,
@@ -125,12 +110,7 @@ async function gradeTypedStep({
   };
 }
 
-/**
- * The typed fallback of a spoken answer: the learner writes what they would say, compared word by
- * word with the target sentence by the same code that grades a recording, so no model runs. A miss
- * shows as one correction, the sentence as typed and as it reads, the way a written language
- * answer shows its form mistakes.
- */
+/** Typed speech fallback uses the same word-by-word code as recording grading; no model runs. */
 function gradeSpokenFallback({ answer, step }: OpenAnswerGrade): LessonAnswerVerdict | null {
   if (step.kind !== "spokenAnswer" || answer.kind !== "spokenAnswer") {
     return null;
@@ -157,7 +137,6 @@ function gradeSpokenFallback({ answer, step }: OpenAnswerGrade): LessonAnswerVer
   };
 }
 
-/** A challenge keeps its share of good decisions; other code-graded answers have no partial credit. */
 function getChallengeScore({ answer, step }: OpenAnswerGrade): number | null {
   if (step.kind !== "challenge" || answer.kind !== "challenge") {
     return null;
@@ -166,11 +145,7 @@ function getChallengeScore({ answer, step }: OpenAnswerGrade): number | null {
   return gradeChallengePath(step.content, answer.choiceIds)?.score ?? null;
 }
 
-/**
- * Grades one answer on the server: typed and spoken answers with the grader, everything else with
- * the same code the player runs (a spoken screen answered as its listening exercise included).
- * Returns null when the answer doesn't fit the screen.
- */
+/** Returns null when the answer does not fit the screen; typed answers may call a model. */
 export async function gradeLessonAnswer(
   input: OpenAnswerGrade,
 ): Promise<LessonAnswerVerdict | null> {

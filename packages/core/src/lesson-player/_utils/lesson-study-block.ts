@@ -8,19 +8,11 @@ import { NOTHING_REACHED } from "../../sessions/reached";
 import { settleFinishedLesson } from "../../sessions/settle-finished-lesson";
 import { type LibraryLessonCompletion } from "../contract";
 
-/** The run's own outcome; what it reached and the session block's moment are added once it's closed. */
 export type RunCompletion = Omit<LibraryLessonCompletion, "ceremony" | "reached" | "studyBlock">;
 
-/** The Brain Power and Energy before and after a run, when this request closed it. */
 export type LessonProgress = { brainPower: ProgressChange; energy: ProgressChange };
 
-/**
- * A finished lesson checks off its plan items and, when it was one of today's session blocks,
- * completes the block and settles the day; its moment rides along so the player needs no other
- * request, and celebrates what the lesson reached. A lesson played on its own celebrates it on its
- * completion instead (the level, the tenth of Energy, the milestone not shown yet). Repeating a
- * completion returns the moment again.
- */
+/** Repeated completions return the same moment; standalone lessons celebrate on completion instead. */
 export async function withStudyBlock({
   completion,
   lessonId,
@@ -31,7 +23,7 @@ export async function withStudyBlock({
 }: {
   completion: RunCompletion;
   lessonId: string;
-  /** What the run added, when this request closed it: its moment can celebrate it. */
+  /** Supply only when this request closed the run. */
   progress?: LessonProgress;
   runId: string;
   timeZone: string;

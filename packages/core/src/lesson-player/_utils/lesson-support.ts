@@ -4,16 +4,12 @@ import { getString } from "@zoonk/utils/json";
 import { CURRENT_STEPS } from "../../library/lessons/lesson-versions";
 import { type LessonSupport } from "../contract";
 
-/** A sitting keeps the opening order it started with, even after its first answer trains a skill. */
+/** Preserve the run's opening order even after its first answer trains the skill. */
 export function getRunLessonSupport(run: Pick<LearningEvent, "contentIds">): LessonSupport | null {
   const support = getString(run.contentIds, "support");
   return support === "explanationFirst" || support === "questionFirst" ? support : null;
 }
 
-/**
- * The skills a lesson opens with: the skill of its first screen after the hook that has one, or
- * all its skills when no screen says.
- */
 async function loadOpeningSkillIds({
   client,
   lessonId,
@@ -33,11 +29,7 @@ async function loadOpeningSkillIds({
   return opening?.skillId ? [opening.skillId] : lessonSkills.map((row) => row.skillId);
 }
 
-/**
- * How a lesson opens for one learner. A skill they never answered starts with its explanation; a
- * skill they already answered (placement, a test-out, lessons or reviews) starts with a question,
- * so they use what they know before being told. Lessons without skills keep their own order.
- */
+/** Skills never answered open explanation-first; lessons without skills retain their own order. */
 export async function loadLessonSupport({
   client = prisma,
   lessonId,

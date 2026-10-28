@@ -7,16 +7,7 @@ import { getSession } from "../users/get-session";
 import { getOptionPictures, getStepImage } from "./_utils/screen-pictures";
 import { type LessonPicture } from "./contract";
 
-/**
- * The pictures a lesson's screens and their picture options have so far, read fresh from the
- * database: they're drawn by a
- * workflow in another app right after the lesson opens, so a cached lesson in this app doesn't
- * have them yet. The player asks for them while a screen's picture is pending
- * (`imagePending`), for the lesson it already plays, naming the screens still waiting
- * (`stepIds`), so each ask carries only the pictures it's missing. Like the lesson's screens,
- * they go only to someone with a session (a guest's included) who can see the lesson. Empty
- * otherwise.
- */
+/** Fresh read for stepIds only; returns empty unless a learner or guest session can see the lesson. */
 export async function getLessonPictures({
   lessonId,
   stepIds,

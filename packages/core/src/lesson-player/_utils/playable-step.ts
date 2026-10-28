@@ -27,13 +27,8 @@ import {
 import { getScreenPictures } from "./screen-pictures";
 import { getStepCitation, markExplanationsNotInMaterial } from "./step-citation";
 
-/**
- * A stored step with what the player needs to show it: its image and the learner's material or
- * the public source it cites.
- */
 export type PlayableStepRow = Step & {
   mediaAsset: MediaAsset | null;
-  /** The pictures of a question whose options are pictures; read with the lesson's screens. */
   optionPictures?: (StepOptionPicture & { mediaAsset: MediaAsset })[];
   source: Pick<
     Source,
@@ -41,7 +36,6 @@ export type PlayableStepRow = Step & {
   > | null;
 };
 
-/** The lesson's language pair: today's exercise resources plus each word's note and sound tip. */
 export type LessonPairResources = ExerciseResources & {
   wordHints: ReadonlyMap<string, PlayableWordHints>;
 };
@@ -58,7 +52,6 @@ const TEACHING_KINDS = new Set<StepKind>([
   "workedExample",
 ]);
 
-/** Exercises that show a word or sentence from the lesson's language pair and can't play without it. */
 const WORD_EXERCISE_KINDS = new Set<StepKind>(["translation", "vocabulary"]);
 const SENTENCE_EXERCISE_KINDS = new Set<StepKind>(["listening", "reading"]);
 
@@ -102,7 +95,6 @@ function buildTeachingStep<TKind extends TeachingStepKind>(
   };
 }
 
-/** A "say it out loud" screen, with its sentence as a listening exercise for "I can't talk now". */
 function buildSpokenAnswerStep({
   listening,
   row,
@@ -114,7 +106,6 @@ function buildSpokenAnswerStep({
   return step && { ...step, listening: listening.get(row.id) ?? null };
 }
 
-/** One case per kind keeps each screen's content typed to its kind. */
 function toTeachingStep({
   kind,
   listening,
@@ -156,13 +147,6 @@ type ExerciseText = {
   word: ExerciseResources["lessonWords"][number] | null;
 };
 
-/**
- * An exercise that shows its own answer tests nothing: a word to pick for a meaning that names it
- * ("rent" for "rent", a cognate or an English word for English readers), a sentence to build from
- * itself, or one to hear without a recording. In the learner's own language a word whose
- * definition names it teaches nothing either, so its card goes too. Lessons written before their
- * writer knew this still play without those screens.
- */
 function showsOwnAnswer({ kind, sameLanguage, sentence, word }: ExerciseText): boolean {
   const namesItself = word
     ? definitionNamesWord({ definition: word.translation, word: word.word })
@@ -193,10 +177,6 @@ function showsOwnAnswer({ kind, sameLanguage, sentence, word }: ExerciseText): b
 
 type ExerciseRow = PlayableStepRow & { kind: ExerciseKind };
 
-/**
- * Word and sentence exercises read their text and translation from the lesson's pair links, so
- * one without its link can't be shown, and one that shows its own answer isn't.
- */
 function toExerciseInput({
   resources,
   row,
@@ -226,7 +206,6 @@ function toExerciseInput({
   ];
 }
 
-/** Language exercises play through today's serializer, with the lesson's pair as their word bank. */
 function toExerciseSteps({
   resources,
   rows,
@@ -268,11 +247,6 @@ function toExerciseSteps({
   );
 }
 
-/**
- * Each spoken sentence of the lesson as a listening exercise (hear it, build it from the word
- * bank), so a learner who can't talk now still practices it. Screens without a sentence of the
- * lesson have none.
- */
 function toListeningFallbacks({
   resources,
   rows,
@@ -305,11 +279,7 @@ function toListeningFallbacks({
   return new Map(serialized.map((exercise) => [exercise.id, exercise]));
 }
 
-/**
- * Turns stored steps into the screens the player shows, in order, leaving out any that can't be
- * served. The read, the check and the completion all use this, so they always agree on which
- * screens a lesson has.
- */
+/** Omits unservable screens; reads, checks, and completion must share this selection. */
 export function toPlayableSteps({
   resources,
   rows,

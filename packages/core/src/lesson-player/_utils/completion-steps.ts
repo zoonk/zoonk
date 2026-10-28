@@ -5,7 +5,7 @@ import { loadSkippedActivities } from "../../language/activities/skipped-activit
 import { loadPlayableSteps } from "./load-playable-steps";
 import { getLatePictureStepIds } from "./screen-pictures";
 
-/** Keep the choice atomically with completion, without inventing a graded attempt or review. */
+/** Completion skips must commit atomically without inventing graded attempts or reviews. */
 export async function recordSkippedWritingSteps({
   run,
   skippedWritingStepIds,
@@ -30,7 +30,7 @@ export async function recordSkippedWritingSteps({
   });
 }
 
-/** Permanent Plan preferences and temporary writing skips remain distinct. Skips add no verdict. */
+/** Temporary writing skips are not permanent Plan preferences and add no verdict. */
 export async function loadCompletionSteps({
   lesson,
   runStartedAt,

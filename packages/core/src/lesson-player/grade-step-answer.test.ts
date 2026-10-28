@@ -91,7 +91,6 @@ describe(gradeStepAnswer, () => {
 
     expect(right).toMatchObject({ correctAnswer: null, isCorrect: true });
 
-    // A unit follows its number after a non-breaking space, so "4 °C" never wraps between them.
     expect(wrong).toStrictEqual({
       answerText: "4 °C",
       correctAnswer: "5 °C",

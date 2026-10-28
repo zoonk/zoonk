@@ -14,10 +14,6 @@ import {
   type TeachingStepKind,
 } from "../contract";
 
-/**
- * A screen with its version's content. A field or tool version changes the example, so the
- * original's picture no longer fits; a version that doesn't parse leaves the shared screen.
- */
 function withContent<TKind extends TeachingStepKind>({
   step,
   version,
@@ -29,7 +25,6 @@ function withContent<TKind extends TeachingStepKind>({
   return parsed.success ? { ...step, content: parsed.data, image: null } : step;
 }
 
-/** The screens that have field or tool versions; every other one stays shared. */
 type VersionedStep =
   | PlayableTeachingStepOf<"challenge">
   | PlayableTeachingStepOf<"check">
@@ -71,12 +66,7 @@ function toSeenStep({
   }
 }
 
-/**
- * The shared lesson as this learner sees it: screens with a version in their field or tool (a
- * chapter challenge set in their work, a hands-on screen in the tool they use or without
- * installing anything) show that version, and every other screen stays the shared one. A version
- * that isn't made yet never blocks the lesson.
- */
+/** Missing learner versions never block the shared lesson. */
 export async function withLearnerLessonVersions({
   lesson,
   userId,

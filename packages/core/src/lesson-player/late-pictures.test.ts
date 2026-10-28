@@ -17,11 +17,6 @@ function minutesFromNow(minutes: number): Date {
   return new Date(NOW.getTime() + minutes * MINUTE_MS);
 }
 
-/**
- * A lesson with a question to answer, then one keyed to a numbered picture written `writtenAgo`
- * minutes before now, which nothing has drawn yet; its learner's run starts now with the first one
- * answered.
- */
 async function runWithNumberedQuestion({ writtenAgo }: { writtenAgo: number }) {
   const setup = await setupPlayableLesson({
     steps: ["check", { content: numberedCheckContent, kind: "check" }],
@@ -51,7 +46,6 @@ async function runWithNumberedQuestion({ writtenAgo }: { writtenAgo: number }) {
     stepId: first?.id ?? "",
   });
 
-  /** Its picture is drawn, `minutes` from now. */
   async function drawPicture(minutes: number) {
     const asset = await mediaAssetFixture({ height: 1024, width: 1024 });
 

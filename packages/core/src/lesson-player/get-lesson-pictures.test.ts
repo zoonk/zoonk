@@ -31,7 +31,6 @@ const check = {
   question: "Which caption fits the picture?",
 };
 
-/** A lesson written moments ago whose question's picture the workflow hasn't drawn yet. */
 async function lessonWithPendingPicture() {
   const { lesson, steps } = await playableLessonFixture({
     steps: [{ content: check, kind: "check" }],
@@ -182,7 +181,6 @@ describe(getLessonPictures, () => {
 
     const replayed = await getPlayableLibraryLesson({ lessonId: lesson.id });
 
-    // Two options still wait for theirs.
     expect(replayed?.status === "ready" && replayed.lesson.steps[0]).toMatchObject({
       imagePending: true,
       optionPictures: { gothic: expect.objectContaining({ id: asset.id }) },
@@ -203,7 +201,6 @@ describe(getLessonPictures, () => {
       ],
     });
 
-    // Moments after the lesson was written, every screen waits for its numbered picture.
     const fresh = await getPlayableLibraryLesson({ lessonId: lesson.id });
     expect(fresh?.status === "ready" && fresh.lesson.steps).toHaveLength(3);
 
@@ -215,8 +212,6 @@ describe(getLessonPictures, () => {
     const played = await getPlayableLibraryLesson({ lessonId: lesson.id });
     const served = played?.status === "ready" ? played.lesson.steps : [];
 
-    // Without the numbers nobody can tell which part is which: the questions are left out, and
-    // the explanation teaches with its words alone.
     expect(served.map((step) => step.id)).toStrictEqual([steps[1]?.id]);
     expect(served[0]).toMatchObject({ content: { text: "The heart has four chambers." } });
     expect(served[0]?.kind === "explanation" && served[0].content.explore).toBeUndefined();

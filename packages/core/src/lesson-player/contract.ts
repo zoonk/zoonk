@@ -11,19 +11,15 @@ import { studyBlockCompletionSchema } from "../sessions/completion-contract";
 import { progressCelebrationShape } from "../sessions/progress-celebration";
 import { lessonRunIdSchema } from "./_utils/lesson-run-id";
 
-/** Typed and spoken answers are a few sentences; the grader and the shared explanations share it. */
 export const MAX_TYPED_ANSWER_LENGTH = 1000;
 
 const MAX_OPTION_ID_LENGTH = 40;
-/** A challenge path is 2 to 4 decisions; a little room keeps a malformed path a 422, not a 400. */
+/** Leave room for malformed paths to reach semantic validation (422) instead of transport rejection (400). */
 const MAX_CHALLENGE_PICKS = 10;
 
 const typedTextSchema = z.string().trim().min(1).max(MAX_TYPED_ANSWER_LENGTH);
 
-/**
- * What the learner answered on one lesson screen. A hook's guess never counts, so it has no
- * answer; `spokenAnswer` here is the typed fallback of a spoken answer.
- */
+/** Hooks never record answers; spokenAnswer here is the typed speech fallback. */
 export const lessonStepAnswerSchema = z
   .discriminatedUnion("kind", [
     z.object({ kind: z.literal("check"), optionId: z.string().min(1).max(MAX_OPTION_ID_LENGTH) }),
@@ -85,7 +81,6 @@ export const libraryLessonStartInputSchema = z
 
 export type LibraryLessonStartInput = z.infer<typeof libraryLessonStartInputSchema>;
 
-/** Screens that teach and check an idea. Everything else is a language exercise. */
 export type TeachingStepKind =
   | "activity"
   | "challenge"
@@ -97,13 +92,9 @@ export type TeachingStepKind =
   | "typedAnswer"
   | "workedExample";
 
-/** Language exercises play through the exercise components with their word banks and options. */
 type LanguageExerciseKind = SerializedStep["kind"];
 
-/**
- * A step's image, with its size so the page reserves its space before it loads. `id` is its media
- * asset, so a vote on the image reaches the image rather than the screen.
- */
+/** id identifies the media asset, not the step, so picture votes reach the image. */
 export type PlayableStepImage = {
   alt: string;
   height: number | null;
@@ -112,29 +103,11 @@ export type PlayableStepImage = {
   width: number | null;
 };
 
-/**
- * A screen's picture drawn after the lesson was read, for the player to show as it arrives: the
- * screen's own, or with `optionId` one of its options'.
- */
+/** optionId identifies an option picture; omitted means the screen's main picture. */
 export type LessonPicture = { image: PlayableStepImage; optionId?: string; stepId: string };
 
-type PlayableStepBase = {
-  id: string;
-  position: number;
-  /** The skill this screen teaches or checks, so answers update the right memory. */
-  skillId: string | null;
-};
+type PlayableStepBase = { id: string; position: number; skillId: string | null };
 
-/**
- * Where a screen comes from: a page of the learner's own material ("Class 5, slide 4") for lessons
- * built from it, or a public document its facts come from (a law, an exam notice), shown as a
- * dated "Sources" chip.
- */
-/**
- * Where a screen came from: a page of the learner's own material, a public source, or, for an
- * explanation in a lesson built from the learner's material that no page of it supports,
- * `notInMaterial`, so the learner knows it goes beyond their slides.
- */
 export type LessonStepCitation =
   | (MaterialCitation & { kind: "material" })
   | (SourceCitation & { kind: "source" })
@@ -144,26 +117,16 @@ export type PlayableTeachingStepOf<TKind extends TeachingStepKind> = PlayableSte
   citation: LessonStepCitation | null;
   content: StepContentByKind[TKind];
   image: PlayableStepImage | null;
-  /**
-   * The screen asks for a picture that is still being drawn: the lesson was written moments ago.
-   * The player waits on it (`getLessonPictures`) instead of showing the screen without it.
-   */
+  /** Wait for getLessonPictures while a requested screen picture is still being drawn. */
   imagePending: boolean;
   /** Original screen-generation time in epoch milliseconds; reopening does not restart its wait. */
   pictureWaitStartedAt?: number;
   kind: TKind;
-  /**
-   * The pictures of a question whose options are pictures, by option id. An option without one
-   * (still being drawn, or taken out of use) shows its description.
-   */
+  /** Missing option pictures must fall back to their descriptions. */
   optionPictures?: Readonly<Record<string, PlayableStepImage>>;
 };
 
-/**
- * A "say it out loud" screen. `listening` is the same sentence as a listening exercise (hear it,
- * build it from a word bank), swapped in when the learner can't talk now; null when the screen
- * has no sentence of the lesson behind it.
- */
+/** Null listening means this screen has no sentence-backed fallback. */
 export type PlayableSpokenAnswerStep = PlayableTeachingStepOf<"spokenAnswer"> & {
   listening: SerializedStep | null;
 };
@@ -174,10 +137,8 @@ export type PlayableTeachingStep =
   | PlayableSpokenAnswerStep
   | { [TKind in OtherTeachingStepKind]: PlayableTeachingStepOf<TKind> }[OtherTeachingStepKind];
 
-/** What a word screen adds for this language pair: a false friend or usage trap, and a sound tip. */
 export type PlayableWordHints = { note: string | null; pronunciationTip: string | null };
 
-/** A language exercise in the shape today's exercise components render and today's code checks. */
 export type PlayableLanguageStep = PlayableStepBase & {
   exercise: SerializedStep;
   kind: LanguageExerciseKind;
@@ -187,10 +148,6 @@ export type PlayableLanguageStep = PlayableStepBase & {
 
 export type PlayableLibraryStep = PlayableLanguageStep | PlayableTeachingStep;
 
-/**
- * A Library lesson as the player needs it: public content only, the same for every viewer, with
- * image URLs resolved.
- */
 export type PlayableLibraryLesson = {
   canDo: string | null;
   chapter: { id: string; title: string } | null;
@@ -201,19 +158,11 @@ export type PlayableLibraryLesson = {
   level: CourseLevel;
   skills: { id: string; name: string }[];
   steps: PlayableLibraryStep[];
-  /**
-   * The summary card, each idea in one sentence: saved to Content and, once the lesson is done, one
-   * tap away in its menu.
-   */
   summaryIdeas: string[];
   targetLanguage: string | null;
   title: string;
 };
 
-/**
- * How the lesson opens for this learner: new skills start with the explanation, partly known ones
- * with a question first (the explanation follows and "Explain first" stays available).
- */
 const lessonSupportSchema = z
   .enum(["explanationFirst", "questionFirst"])
   .meta({
@@ -224,7 +173,7 @@ const lessonSupportSchema = z
 
 export type LessonSupport = z.infer<typeof lessonSupportSchema>;
 
-/** One answer the lesson already has, in the order the learner gave them. */
+/** Answers are ordered by arrival. */
 const lessonRunAnswerSchema = z.object({
   answeredAt: z.iso
     .datetime()
@@ -233,7 +182,6 @@ const lessonRunAnswerSchema = z.object({
   stepId: z.uuid(),
 });
 
-/** One started run of a lesson. Answers and the completion refer to it. */
 export const libraryLessonRunSchema = z
   .object({
     answers: z
@@ -332,8 +280,7 @@ export type LessonStepCheckResult = z.infer<typeof lessonStepCheckResultSchema>;
 
 export const libraryLessonCompletionSchema = z
   .object({
-    // A lesson played on its own celebrates on its completion; one of today's blocks celebrates in
-    // its moment (`studyBlock`), so these reach nothing then.
+    // Session lessons celebrate in studyBlock's moment, so completion itself reaches nothing.
     ...progressCelebrationShape,
     brainPower: z.int(),
     correctCount: z.int().min(0),

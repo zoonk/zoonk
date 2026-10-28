@@ -5,20 +5,12 @@ import { CURRENT_STEPS } from "../../library/lessons/lesson-versions";
 import { citedSourceSelect } from "../../library/sources/source-citation";
 import { withLearnerVersionRows } from "../../library/variants/learner-versions";
 
-/**
- * What `toPlayableStep` reads: the step's image file, its options' pictures and the learner's
- * material or public source it cites.
- */
 export const playableStepInclude = {
   mediaAsset: true,
   optionPictures: { include: { mediaAsset: true } },
   source: { select: { ...citedSourceSelect, kind: true, mimeType: true, visibility: true } },
 };
 
-/**
- * The plan item of the learner's own quick explanation a lesson answers, if it answers one. A
- * lesson read with it has `planItems` non-empty only then (see `isOwnExplanation`).
- */
 function ownExplanationItems(userId: string) {
   return {
     select: { id: true },
@@ -27,12 +19,10 @@ function ownExplanationItems(userId: string) {
   };
 }
 
-/** Whether a lesson read with `ownExplanationItems` answers one of the learner's quick explanations. */
 export function isOwnExplanation(lesson: { planItems: readonly unknown[] }): boolean {
   return lesson.planItems.length > 0;
 }
 
-/** A lesson the learner may start: visible to them, with its content written. */
 export function findStartableLesson({ lessonId, userId }: { lessonId: string; userId: string }) {
   return prisma.lesson.findFirst({
     select: {
@@ -51,12 +41,7 @@ export function findStartableLesson({ lessonId, userId }: { lessonId: string; us
   });
 }
 
-/**
- * A lesson the learner may play and its screens as they see them: a screen in their field or tool
- * shows that version. Without `version`, the lesson as it opens now (published, its current
- * screens). With a `version` the learner opened before a check published a fix (see
- * `findOpenedVersion`), that version's screens, whether or not it's still the current one.
- */
+/** An explicit version serves its original screens even after replacement; null uses the current published version. */
 export async function findPlayableLessonRow({
   lessonId,
   userId,
@@ -89,13 +74,7 @@ export async function findPlayableLessonRow({
     : null;
 }
 
-/**
- * The version of a lesson the learner is playing: a check can publish a fixed version while they
- * play (or take the lesson out of play), and they finish the one they opened. It's the version of
- * the screens they name (`stepIds`), or else of their latest answer to the lesson since `since`.
- * Completed runs bound that answer at `until`, so a later run cannot choose their version.
- * Null when they haven't answered yet: they play the lesson as it opens now.
- */
+/** Completed runs must bound answers with until; otherwise a later run can select the wrong version. */
 export async function findOpenedVersion({
   lessonId,
   since,
@@ -126,12 +105,7 @@ export async function findOpenedVersion({
   return opened?.version ?? null;
 }
 
-/**
- * One screen of a lesson the learner may see, as they see it, with what grading it needs from its
- * lesson. A screen of a version replaced since the learner opened it (a check published a fix, or
- * the lesson was taken out of play to be written again) is still found: they finish the version
- * they opened. Answers still need an open run, which only starts on a published lesson.
- */
+/** Includes replaced screens for already-open runs; recording still requires an open run of a published lesson. */
 export async function findPlayableStepRow({ stepId, userId }: { stepId: string; userId: string }) {
   const row = await prisma.step.findFirst({
     include: {
@@ -142,7 +116,6 @@ export async function findPlayableStepRow({ stepId, userId }: { stepId: string; 
           language: true,
           level: true,
           planItems: ownExplanationItems(userId),
-          // The lesson's first skill stands in for a screen without its own (`getAnswerSkillId`).
           skills: {
             orderBy: [{ createdAt: "asc" }, { skillId: "asc" }],
             select: { skillId: true },
@@ -162,12 +135,7 @@ export async function findPlayableStepRow({ stepId, userId }: { stepId: string; 
   return seen ?? row;
 }
 
-/**
- * The skill an answer trains: the screen's own skill, or else the lesson's first (a lesson teaches
- * its few skills together), so a check the writer didn't tag still reaches the learner's memory,
- * and a miss on it lands in the mistakes notebook under a skill it can be practiced by, as the
- * lesson's feedback says. Without a skill the notebook couldn't list it.
- */
+/** Untagged screens train the lesson's first skill, so misses remain schedulable in the notebook. */
 export function getAnswerSkillId({
   lessonSkillIds,
   stepSkillId,

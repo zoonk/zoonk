@@ -19,7 +19,6 @@ describe(getLessonProgress, () => {
     await Promise.all([
       lessonRunFixture({ lessonId: lesson.id, startedAt: firstSitting, userId: user.id }),
       lessonRunFixture({ lessonId: lesson.id, startedAt: secondSitting, userId: user.id }),
-      // Before the lesson was first left unfinished: another time the learner played it.
       attemptFixture({
         answeredAt: new Date(firstSitting.getTime() - 1000),
         stepId: typed.id,

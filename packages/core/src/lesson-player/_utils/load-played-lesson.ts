@@ -3,13 +3,13 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { findOpenedVersion, findPlayableLessonRow } from "./lesson-rows";
 import { loadProgressRuns } from "./lesson-runs";
 
-/** Completed runs retain skips even when a retry omits them or the lesson is rewritten. */
+/** Closed runs retain their saved skips even when a retry omits them. */
 function readSkippedWritingStepIds(run: LearningEvent): string[] {
   const ids = isJsonObject(run.contentIds) ? run.contentIds.skippedWritingStepIds : null;
   return Array.isArray(ids) ? ids.filter((id): id is string => typeof id === "string") : [];
 }
 
-/** Skipped writing also names the opened version when no recorded answer establishes it. */
+/** Skipped writing can identify the opened version when no recorded answer does. */
 export async function loadPlayedLesson({
   lessonId,
   run,

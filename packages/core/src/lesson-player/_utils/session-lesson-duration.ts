@@ -6,7 +6,7 @@ import { getBlockElapsedMs, pausedBlockTiming } from "../../sessions/_utils/bloc
 import { findDayLessonBlock } from "../../sessions/_utils/day-lesson-block";
 import { readBlockPayload } from "../../sessions/block-payload";
 
-/** Called under the learner's progress lock; a session lesson shares its block's focused clock. */
+/** Caller must hold the learner's progress lock; session lessons share the block's focused clock. */
 export async function getLessonCompletionSeconds({
   lessonId,
   now,
@@ -29,7 +29,7 @@ export async function getLessonCompletionSeconds({
   }
 
   const block = found ? await tx.studySessionBlock.findUnique({ where: { id: found.id } }) : null;
-  /** An earlier sitting closed after its block was paid cannot charge the same study again. */
+  /** An earlier sitting must not charge study time its block already paid. */
   if (
     block?.completedAt &&
     run.startedAt <= block.completedAt &&

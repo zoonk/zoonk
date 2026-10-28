@@ -5,13 +5,7 @@ import { getSession } from "../users/get-session";
 import { getRunLessonSupport, loadLessonSupport } from "./_utils/lesson-support";
 import { type LessonSupport } from "./contract";
 
-/**
- * How a lesson opens for the learner or guest in the session (`LessonSupport`), read with the
- * page so the first screens are in the right order before the run starts. The lesson's content is
- * shared by everyone, so this per-learner order travels next to it. Null without a session or for
- * a lesson without skills: the lesson plays in its own order. Private cached, so a prefetched
- * lesson opens with it.
- */
+/** Null without a session or lesson skills; keep this learner-specific order separate from shared content. */
 export async function getLessonSupport({
   lessonId,
 }: {

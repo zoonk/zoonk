@@ -1,7 +1,7 @@
 import { type StepKind } from "@zoonk/db";
 import { getStepImageRequest } from "../library/media/_utils/step-image-request";
 
-/** Pictures may arrive for five minutes after their screen was written, including retries. */
+/** Include generation retries within the five-minute picture wait. */
 const PICTURE_WAIT_MS = 300_000;
 
 export function isPicturePending({ now, startedAt }: { now: number; startedAt: number }): boolean {
@@ -10,12 +10,11 @@ export function isPicturePending({ now, startedAt }: { now: number; startedAt: n
 
 type ScreenContent = { content: unknown; kind: StepKind };
 
-/** A question keyed to the numbers of its picture ("which number is the ovary?"). */
 function asksNumberedPicture({ content, kind }: ScreenContent): boolean {
   return kind !== "explanation" && Boolean(getStepImageRequest({ content, kind })?.parts);
 }
 
-/** Only questions keyed to numbers in a missing picture must be omitted; reading keeps its words. */
+/** Only numbered-picture questions are omitted; explanations retain their text. */
 export function shouldOmitNumberedPicture({
   content,
   imageAvailable,
@@ -25,13 +24,7 @@ export function shouldOmitNumberedPicture({
   return !imageAvailable && !imagePending && asksNumberedPicture({ content, kind });
 }
 
-/**
- * A question keyed to a numbered picture is part of a run when its picture was there for the
- * player: when the run started, or within its wait. The player leaves it out once its wait ends
- * without it, so a picture that comes later makes it optional in that run, and never brings it back
- * after the learner finished; the next run asks it. `pictureAt` is when this screen gained its
- * current image link, even when that image was drawn earlier and reused.
- */
+/** pictureAt is this screen's link-arrival time, not asset generation time; images arriving after the run's wait remain optional. */
 export function isPictureLateForRun({
   content,
   kind,

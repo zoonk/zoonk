@@ -10,10 +10,6 @@ function toLessonProperties({ lessonId, run }: { lessonId: string; run: LessonRu
   return { goal_id: run.goalId, lessonKind: run.lessonKind ?? "library", lesson_id: lessonId };
 }
 
-/**
- * "Lesson Started" for a new run, plus "Guest Lesson Started" when a guest opened it, which counts
- * as an arrival. Sent after the response, so opening a lesson never waits on PostHog.
- */
 export function trackLessonStarted({
   isGuest,
   lessonId,
@@ -35,7 +31,6 @@ export function trackLessonStarted({
   after(() => trackLearnerEvents({ events, goalId: run.goalId, userId: run.userId }));
 }
 
-/** "Lesson Completed" for the completion that closed the run, after the response. */
 export function trackLessonCompleted({
   isFirstCompletion,
   lessonId,

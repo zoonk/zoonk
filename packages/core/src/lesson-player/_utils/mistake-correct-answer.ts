@@ -1,11 +1,7 @@
 import { type StepKind } from "@zoonk/db";
 import { type LessonAnswerVerdict } from "./grade-lesson-answer";
 
-/**
- * Personal writing has no single sample answer. Only show the learner's corrected text when
- * each correction identifies one non-overlapping part of the original. Form key points can be
- * marked missing because of those same errors; the corrections still belong in the notebook.
- */
+/** Personal writing has no unique sample answer; use corrected text only when corrections identify non-overlapping source spans. */
 export function getMistakeCorrectAnswer({
   kind,
   targetLanguage,

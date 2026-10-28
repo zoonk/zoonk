@@ -16,10 +16,6 @@ function getExerciseQuestion(content: object): string | null {
   return text.length > 0 ? text.join("\n\n") : null;
 }
 
-/**
- * The question a screen asked, as the mistakes notebook keeps it, so an entry stays readable
- * after the lesson is regenerated.
- */
 export function getStepQuestion(step: PlayableLibraryStep): string | null {
   if ("exercise" in step) {
     return getExerciseQuestion(step.exercise.content);
@@ -36,7 +32,6 @@ export function getStepQuestion(step: PlayableLibraryStep): string | null {
       return step.content.check.kind === "interaction"
         ? step.content.prompt
         : step.content.check.question;
-    // A case is played through, not asked again, so it never goes to the mistakes notebook.
     case "challenge":
     case "explanation":
     case "hook":

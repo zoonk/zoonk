@@ -13,13 +13,10 @@ import {
   type PlayableTeachingStepOf,
 } from "./contract";
 
-/** A verdict code can reach from the screen's content alone. */
 export type GradedStepAnswer = {
-  /** The learner's answer as text, for the mistakes notebook. */
   answerText: string | null;
   /** The right answer as text when the learner missed it. */
   correctAnswer: string | null;
-  /** Why the answer is right or wrong: the option's reason or the check's explanation. */
   feedback: string | null;
   isCorrect: boolean;
 };
@@ -73,13 +70,6 @@ function gradeActivityChoice({
   };
 }
 
-/**
- * The engine computes the right end state of every activity, so the player and the server share
- * one verdict. A choice answers with an option, a numeric check with a number, and an interaction
- * with its end state. A number reads as the lesson's language writes it with its unit ("R$ 28" in
- * Portuguese, "$28" in English, "4 °C") and as exactly as the activity's own feedback shows it,
- * so a near miss never reads like the answer.
- */
 function gradeActivity({
   answer,
   language,
@@ -126,10 +116,6 @@ function gradeActivity({
   };
 }
 
-/**
- * A challenge is graded by its path: the ending it reached, and right when at least half of its
- * decisions were good. Every path ends, so the learner always finishes the case.
- */
 function gradeChallenge({
   answer,
   step,
@@ -156,7 +142,6 @@ function findOptionText(
   return option?.text ?? option?.prompt ?? null;
 }
 
-/** How a language exercise answer reads as text in the mistakes notebook. */
 function describeExerciseAnswer({
   answer,
   exercise,
@@ -190,7 +175,6 @@ function isExerciseAnswer(answer: LessonStepAnswer): answer is SelectedAnswer & 
   return !["activity", "challenge", "check", "spokenAnswer", "typedAnswer"].includes(answer.kind);
 }
 
-/** Language exercises keep today's check code, so a screen grades the same as it does today. */
 function gradeExercise({
   answer,
   step,
@@ -216,7 +200,6 @@ function gradeExercise({
   };
 }
 
-/** "I can't talk now": a spoken screen answered as its listening exercise grades like one. */
 function toListeningStep({
   listening,
   step,
@@ -234,13 +217,7 @@ function toListeningStep({
   };
 }
 
-/**
- * Grades the answers code can settle from a screen's content: checks, activities and language
- * exercises. The player grades on the device for instant feedback and the server grades again
- * from the stored step with this same function, so they can't disagree. A spoken screen answered
- * as its listening exercise ("I can't talk now") grades like that exercise. Returns null for an
- * answer that doesn't fit the screen and for typed or spoken answers, which only the server grades.
- */
+/** Returns null for mismatched answers and for typed/spoken answers requiring server grading. */
 export function gradeStepAnswer({
   answer,
   language,

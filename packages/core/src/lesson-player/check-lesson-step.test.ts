@@ -21,8 +21,6 @@ import { type LessonStepCheckOutcome, checkLessonStep } from "./check-lesson-ste
 import { type LessonStepAnswer } from "./contract";
 import type * as SkillLevelRules from "../language/levels/skill-level-rules";
 
-// A write that fails for a moment (a dropped connection) can't be made safely with the real
-// database: a test makes a language level's evidence fail once.
 vi.mock("../language/levels/skill-level-rules", async (importOriginal) => {
   const actual = await importOriginal<typeof SkillLevelRules>();
   return { ...actual, applyLevelEvidence: vi.fn(actual.applyLevelEvidence) };
@@ -53,10 +51,6 @@ function check({
   });
 }
 
-/**
- * Runs `writes` while the learner's row is locked, and lets them go once `waiters` of them wait
- * on it: what they read before writing, they all read before any of them wrote.
- */
 async function whileLearnerLocked<T>({
   userId,
   waiters,
@@ -84,7 +78,7 @@ async function whileLearnerLocked<T>({
 
   await vi.waitFor(
     async () => {
-      // A second waiter queues behind the first, so count everyone waiting down the line.
+      // PostgreSQL queues later row waiters behind the first, so traverse the full wait chain.
       const [{ count }] = await prisma.$queryRaw<[{ count: number }]>`
         WITH RECURSIVE waiting(pid) AS (
           SELECT pid FROM pg_stat_activity WHERE ${pid}::int = ANY(pg_blocking_pids(pid))
@@ -105,7 +99,6 @@ async function whileLearnerLocked<T>({
   return result;
 }
 
-/** A model's grade of a written answer. */
 function typedGrade({
   feedback,
   isCorrect,
@@ -243,7 +236,6 @@ describe(checkLessonStep, () => {
     const attemptId = randomUUID();
     const answer = { kind: "check", optionId: "size" } as const;
 
-    // Both requests look for the id before either records it, then queue on the learner's row.
     const outcomes = await whileLearnerLocked({
       userId: user.id,
       waiters: 2,
@@ -308,7 +300,6 @@ describe(checkLessonStep, () => {
 
     await check({ answer, attemptId, runId: run.id, stepId: first?.id ?? "" });
     await check({ answer, attemptId, runId: run.id, stepId: second?.id ?? "" });
-    // Sent again, the other screen's answer is recorded once too.
     await check({ answer, attemptId, runId: run.id, stepId: second?.id ?? "" });
 
     await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(2);
@@ -319,7 +310,6 @@ describe(checkLessonStep, () => {
     const stepId = stepOfKind(steps, "typedAnswer").id;
 
     vi.mocked(gradeTypedAnswer).mockImplementationOnce(async () => {
-      // The learner finished the lesson while the answer was still being graded.
       await prisma.learningEvent.update({ data: { endedAt: new Date() }, where: { id: run.id } });
 
       return {
@@ -371,7 +361,6 @@ describe(checkLessonStep, () => {
 
     await entered.promise;
 
-    // The screen stopped waiting; the learner rewrote the answer and checked it again.
     vi.mocked(gradeTypedAnswer).mockResolvedValueOnce(
       typedGrade({ feedback: "Both ideas are there.", isCorrect: true, score: 1 }),
     );
@@ -482,7 +471,6 @@ describe(checkLessonStep, () => {
 
       await entered.promise;
 
-      // The next screen, on the same skill, is answered and saved after midnight.
       vi.setSystemTime(new Date("2026-09-02T00:00:05Z"));
 
       await expect(
@@ -500,7 +488,6 @@ describe(checkLessonStep, () => {
         status: "checked",
       });
 
-      // Each answer keeps when it was given and its own day; only the skill's memory moves on.
       await expect(
         prisma.attempt.findMany({
           orderBy: { answeredAt: "asc" },
@@ -952,7 +939,6 @@ describe(checkLessonStep, () => {
     const stepId = stepOfKind(steps, "check").id;
     const answer = { kind: "check", optionId: "path" } as const;
 
-    /** Each answer lands before the next one is counted. */
     const outcomes = await [1, 2, 3, 4].reduce<Promise<LessonStepCheckOutcome[]>>(
       async (previous) => {
         const earlier = await previous;
@@ -1035,7 +1021,6 @@ describe(checkLessonStep, () => {
     const { run, steps, user } = await setupRun();
     const stepId = stepOfKind(steps, "typedAnswer").id;
 
-    // Earlier sittings today, before this run started: five answers already graded.
     await Promise.all(
       Array.from({ length: 5 }, () =>
         attemptFixture({
@@ -1059,7 +1044,6 @@ describe(checkLessonStep, () => {
       stepId,
     });
 
-    // Not marked wrong: shown with the sample answer, not recorded, no mistake saved.
     expect(paraphrase).toMatchObject({
       result: {
         checked: false,

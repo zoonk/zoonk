@@ -5,13 +5,9 @@ import { getString } from "@zoonk/utils/json";
 import { CURRENT_STEPS } from "../../library/lessons/lesson-versions";
 import { type LibraryLessonRun } from "../contract";
 
-/**
- * A run left open for half an hour (the longest a lesson's time counts) is abandoned; a new start
- * opens a new run instead of resuming it.
- */
+/** Runs older than the counted lesson-time limit must restart rather than resume. */
 const RUN_RESUME_WINDOW_MS = 1_800_000;
 
-/** The ledger kinds a lesson run is stored as: a first completion or a replay. */
 const LESSON_RUN_KINDS = ["lesson", "review"] as const satisfies LearningEvent["kind"][];
 
 /** A run keeps its lesson as a plain id, so the ledger row outlives the content. */
@@ -19,12 +15,11 @@ function getRunLessonId(run: Pick<LearningEvent, "contentIds">): string | null {
   return getString(run.contentIds, "lessonId");
 }
 
-/** The session a run was started from, when the lesson was one of its blocks. */
 export function getRunStudySessionId(run: Pick<LearningEvent, "contentIds">): string | null {
   return getString(run.contentIds, "studySessionId");
 }
 
-/** The signed-in learner's run of this lesson, or null for anyone else's or another lesson's. */
+/** Returns null for another learner's run or a run of another lesson. */
 export async function findLessonRun({
   lessonId,
   runId,
@@ -41,10 +36,7 @@ export async function findLessonRun({
   return run && getRunLessonId(run) === lessonId ? run : null;
 }
 
-/**
- * Locks the run against its completion and says whether it's still open: an answer that took a
- * while to grade isn't recorded once the run was finished without it.
- */
+/** Locks against completion; returns false once finished so late grades cannot record an answer. */
 export async function lockOpenRun(transaction: TransactionClient, runId: string): Promise<boolean> {
   const open = await transaction.$queryRaw<{ id: string }[]>`
     SELECT "id" FROM "learning_events"
@@ -55,13 +47,7 @@ export async function lockOpenRun(transaction: TransactionClient, runId: string)
   return open.length > 0;
 }
 
-/**
- * Whether the learner recorded another answer to this screen that arrived after `since` (when an
- * answer to it arrived; lesson answers are recorded as answered when they arrive): that one was
- * given later, so the answer that arrived first is out of date, such as a grade the screen stopped
- * waiting for before the learner checked again. The answer itself, sent again under its id
- * (`attemptId`), isn't another answer.
- */
+/** Uses arrival order, not grading completion order; excludes a retry with the same attemptId. */
 export async function hasAnswerSince(
   transaction: TransactionClient,
   {
@@ -84,7 +70,6 @@ export async function hasAnswerSince(
   return later !== null;
 }
 
-/** The lessons among these the learner ever started, finished or not. */
 export async function loadStartedLessonIds({
   lessonIds,
   userId,
@@ -108,7 +93,6 @@ export async function loadStartedLessonIds({
   return new Set(runs.flatMap((run) => getRunLessonId(run) ?? []));
 }
 
-/** The learner's open run of a lesson started recently enough to resume. */
 export function findResumableRun(
   tx: TransactionClient,
   { lessonId, now, userId }: { lessonId: string; now: Date; userId: string },
@@ -125,21 +109,12 @@ export function findResumableRun(
   });
 }
 
-/**
- * How long an unfinished lesson keeps the learner's answers for them to come back to. A week covers
- * coming back later the same day or after a weekend; a lesson set aside longer starts over, since
- * its first screens are forgotten by then and the plan has moved on.
- */
+/** Progress survives a weekend, but a lesson left longer than a week starts over. */
 const PROGRESS_WINDOW_MS = 7 * MS_PER_DAY;
 
-/** A sitting of a lesson: the run's start and the session it was a block of. */
 type ProgressRun = Pick<LearningEvent, "contentIds" | "startedAt">;
 
-/**
- * The learner's sittings of a lesson they haven't finished, oldest first, up to `until`: the runs
- * they left unfinished since they last finished it, at most a week back. The lesson's progress is
- * every answer since the first of them.
- */
+/** Oldest first, bounded by until and the last completion, at most one week back. */
 export async function loadProgressRuns({
   client = prisma,
   lessonId,
@@ -175,11 +150,7 @@ export async function loadProgressRuns({
   });
 }
 
-/**
- * The learner's answers to the lesson's screens since `since`, oldest first: the progress a run
- * continues from and what its completion counts. A rewritten lesson has new screens, so answers to
- * the old ones no longer count.
- */
+/** Oldest first; rewritten screens exclude answers to their replaced versions. */
 export async function loadProgressAnswers({
   lessonId,
   since,
@@ -208,7 +179,6 @@ export async function loadProgressAnswers({
   );
 }
 
-/** Each sitting's start and session, for scoring a lesson played over several. */
 export function toSittings(runs: readonly ProgressRun[]) {
   return runs.map((run) => ({
     startedAt: run.startedAt,
@@ -216,7 +186,6 @@ export function toSittings(runs: readonly ProgressRun[]) {
   }));
 }
 
-/** Whether the learner finished this lesson before, in a run other than this one. */
 export async function hasFinishedLessonBefore(
   tx: TransactionClient,
   { lessonId, runId, userId }: { lessonId: string; runId: string; userId: string },

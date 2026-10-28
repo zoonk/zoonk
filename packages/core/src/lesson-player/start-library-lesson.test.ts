@@ -59,7 +59,6 @@ describe(startLibraryLesson, () => {
   it("resumes one run across concurrent starts and counts the lesson once", async () => {
     const { lesson, user } = await setupPlayableLesson();
 
-    // More starts than pool slots: opening the run must not wait for a second connection.
     const outcomes = await Promise.all(Array.from({ length: 12 }, () => start(lesson.id)));
     const runIds = outcomes.map((outcome) => outcome.status === "started" && outcome.run.runId);
 
@@ -154,7 +153,6 @@ describe(startLibraryLesson, () => {
     });
 
     await Promise.all([
-      // Yesterday's streak in its own session, which must not carry into today's.
       attemptFixture({
         answeredAt: new Date(leftAt + 1000),
         stepId: check.id,

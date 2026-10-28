@@ -14,7 +14,6 @@ import { playableStepInclude } from "./_utils/lesson-rows";
 import { loadPlayableSteps } from "./_utils/load-playable-steps";
 import { type PlayableLibraryLesson } from "./contract";
 
-/** A lesson whose content isn't written yet: what the waiting page shows about it. */
 type LessonOutline = Pick<
   PlayableLibraryLesson,
   "description" | "estimatedMinutes" | "id" | "language" | "title"
@@ -23,7 +22,7 @@ type LessonOutline = Pick<
 export type PlayableLibraryLessonResult =
   | { lesson: PlayableLibraryLesson; status: "ready" }
   | { lesson: LessonOutline; status: "notGenerated" }
-  /** Written, but its screens load only with a session (a guest's is enough), so they can't be scraped. */
+  /** A learner or guest session is required to receive screens. */
   | { lesson: LessonOutline; status: "sessionRequired" };
 
 type LoadedPlayableLesson = {
@@ -83,10 +82,6 @@ async function toLoadedPlayableLesson(lesson: PlayableLessonRow): Promise<Loaded
   };
 }
 
-/**
- * One version of a lesson, shared by every viewer: the version is part of the cache key, so a
- * lesson that changed since gets a new entry instead of the cached one.
- */
 async function getCachedPlayableLesson({
   lessonId,
 }: {
@@ -111,10 +106,6 @@ async function getCachedPlayableLesson({
   return toLoadedPlayableLesson(lesson);
 }
 
-/**
- * When a lesson last changed: its row (written, pulled for a fix, rewritten, a fixed version
- * published) and its current screens (a picture linked later). Null when the lesson doesn't exist.
- */
 async function findLessonVersion(lessonId: string): Promise<string | null> {
   const [lesson, steps] = await Promise.all([
     prisma.lesson.findUnique({ select: { updatedAt: true }, where: { id: lessonId } }),
@@ -124,12 +115,7 @@ async function findLessonVersion(lessonId: string): Promise<string | null> {
   return lesson ? `${lesson.updatedAt.getTime()}:${steps._max.updatedAt?.getTime() ?? 0}` : null;
 }
 
-/**
- * The lesson as it is now. Each app keeps its own cache, and the API's workflows and the admin
- * write, pull and rewrite lessons that main serves, where their cache revalidation never reaches:
- * a cheap fresh read of the lesson's version picks the cached copy of that version, so a lesson
- * written, pulled for a fix or rewritten elsewhere is never served as it was.
- */
+/** Each app has separate caches, so fresh version keys must detect publication changes made elsewhere. */
 async function getCurrentPlayableLesson(lessonId: string): Promise<LoadedPlayableLesson | null> {
   const version = await findLessonVersion(lessonId);
   return version ? getCachedPlayableLesson({ lessonId, version }) : null;
@@ -140,11 +126,7 @@ function toOutline(lesson: PlayableLibraryLesson): LessonOutline {
   return { description, estimatedMinutes, id, language, title };
 }
 
-/**
- * A Library lesson's title and description for the player's page metadata, without its screens,
- * so naming the page never counts as reading the lesson. Null when it doesn't exist or isn't the
- * viewer's to see.
- */
+/** Returns no screens; null means absent or inaccessible to the viewer. */
 export async function getLibraryLessonOutline({
   lessonId,
 }: {
@@ -165,10 +147,6 @@ export async function getLibraryLessonOutline({
   return cached.result.status === "ready" ? toOutline(cached.result.lesson) : cached.result.lesson;
 }
 
-/**
- * The practice a language lesson leaves out because the learner's plan skips it (Plan settings):
- * the same rule its completion counts by, so every app shows the screens the run expects.
- */
 function loadLessonSkippedActivities({
   lesson,
   userId,
@@ -181,17 +159,7 @@ function loadLessonSkippedActivities({
     : Promise.resolve([]);
 }
 
-/**
- * Loads a Library lesson for the player: its screens in order with images, its skills and its home
- * chapter. The content is the same for every viewer and never includes provenance, so guests and
- * signed-in learners share one cached copy. A private lesson is only returned to its owner.
- * Screens go only to someone with a session, a guest's included: visitors get the outline, like
- * search engines on the public lesson page. A learner gets the screens their field or tool has a
- * version of in that version (see `withLearnerLessonVersions`), without the language practice their
- * plan leaves out. A lesson whose content isn't written
- * yet returns its outline, so the page can wait for it. Private cached, so a link that prefetches
- * the lesson opens it at once.
- */
+/** Private lessons require ownership; screens require a learner or guest session. Visitors and unfinished lessons receive an outline. */
 export async function getPlayableLibraryLesson({
   lessonId,
 }: {

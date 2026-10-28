@@ -8,10 +8,7 @@ import { type PlayableLibraryStep } from "../contract";
 import { isAnswerableStep } from "../lesson-run";
 import { type loadPlayedLesson } from "./load-played-lesson";
 
-/**
- * The answers the completion counts: every answerable screen's, since the first sitting the
- * learner left unfinished (this run's when there's none), with the sittings to score them by.
- */
+/** Include answers from every unfinished sitting, not only the current run. */
 export async function loadLessonAttempts({
   sittings,
   steps,
@@ -37,13 +34,9 @@ export async function loadLessonAttempts({
   });
 }
 
-/** A recorded answer of the run, oldest first. */
+/** Input answers are oldest first. */
 type RunAnswer = { isCorrect: boolean; skillId: string | null; stepId: string | null };
 
-/**
- * The run's first answer to each screen, as the lesson's tally counts it (`tallyLessonRun`): later
- * entries overwrite earlier ones, so reading the answers newest first keeps the first.
- */
 function toFirstAnswers(answers: readonly RunAnswer[]): boolean[] {
   const screens = answers.flatMap((answer) =>
     answer.stepId ? [[answer.stepId, answer.isCorrect] as const] : [],
@@ -52,10 +45,6 @@ function toFirstAnswers(answers: readonly RunAnswer[]): boolean[] {
   return [...new Map(screens.toReversed()).values()];
 }
 
-/**
- * The plan skills a run reviews as a whole when it's finished (see `reviewLessonPlanSkills`): the
- * ones the learner's plans hold its lesson for that none of its answers trained already.
- */
 function getSkillsToReview({
   answers,
   planSkillIds,
@@ -67,13 +56,7 @@ function getSkillsToReview({
   return planSkillIds.filter((skillId) => !trained.has(skillId));
 }
 
-/**
- * A finished lesson the learner's plans hold for a plan skill its answers don't land on (its
- * screens teach finer skills of their own) counts as one review of that plan skill, graded from
- * the run's first answers (`gradeLessonAnswers`): reviews and practice ask the plan's skills, so
- * this is what brings the lesson back, on the schedule its end screen gives. One review per lesson,
- * never one per screen, so a long lesson doesn't read as many days of remembering.
- */
+/** Review a plan skill once per finished lesson, not per screen, so a long lesson cannot simulate multiple recall days. */
 async function reviewLessonPlanSkills({
   answers,
   planSkillIds,
@@ -107,7 +90,7 @@ async function reviewLessonPlanSkills({
   return true;
 }
 
-/** The earliest review of the lesson's skills, which the completion moment announces. */
+/** Returns an ISO instant, or null without a scheduled review. */
 export async function getNextReviewAt({
   skillIds,
   transaction = prisma,
@@ -130,11 +113,7 @@ export async function getNextReviewAt({
   return next?.due?.toISOString() ?? null;
 }
 
-/**
- * A run just finished: its review of the plan skills it counts for (`reviewLessonPlanSkills`), then
- * the earliest review of the lesson's skills the completion announces (`skillIds`, see
- * `loadLessonReviewSkillIds`). A lesson that announces none (a quick explanation) reviews nothing.
- */
+/** An empty skillIds announcement, as for quick explanations, reviews nothing. */
 export async function reviewFinishedLesson({
   answers,
   planSkillIds,
@@ -168,12 +147,7 @@ export async function reviewFinishedLesson({
   return { changed, nextReviewAt };
 }
 
-/**
- * When a screen's idea comes back, said right after it's answered: the earliest review of the
- * plan skills the learner's plans hold its lesson for, as finishing the lesson with the run's
- * answers so far would schedule them (see `reviewLessonPlanSkills`), or the screen's own skill's
- * when no plan holds the lesson for one.
- */
+/** Projects completion's earliest plan-skill review, falling back to ownDue when no plan holds the lesson. */
 export async function getScreenComesBack({
   lessonId,
   ownDue,
@@ -182,7 +156,6 @@ export async function getScreenComesBack({
   userId,
 }: {
   lessonId: string;
-  /** When the skill the answer landed on comes back, now that it's recorded. */
   ownDue: Date | null;
   runStartedAt: Date;
   timeZone: string;

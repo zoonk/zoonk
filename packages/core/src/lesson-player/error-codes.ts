@@ -1,8 +1,4 @@
-/**
- * Stable error codes of the lesson endpoints, so the player (web or native) reacts to each one
- * (a calm wait, a sign-up or upgrade prompt, a fresh start) without parsing messages.
- * `SIGN_UP_REQUIRED` is a guest's new AI work once the day's budget all guests share is spent.
- */
+/** SIGN_UP_REQUIRED means shared guest AI spend is exhausted; a free account can continue. */
 export const LESSON_PLAYER_ERROR_CODES = {
   lessonSetAside: "LESSON_SET_ASIDE",
   noSpeech: "NO_SPEECH",

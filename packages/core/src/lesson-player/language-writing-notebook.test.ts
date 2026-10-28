@@ -58,7 +58,6 @@ async function writeAnswer({
   const step = stepOfKind(steps, "typedAnswer");
   const flush = runDeferredWork();
 
-  // The model is an external boundary; recording, skill history, and notebook reads use Postgres.
   vi.mocked(gradeTypedAnswer).mockResolvedValueOnce({
     data: {
       corrections,

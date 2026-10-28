@@ -1,6 +1,5 @@
 import { type PlayableLibraryStep } from "./contract";
 
-/** Screens with nothing to answer: reading, a guess that never counts and an alphabet card. */
 const READ_ONLY_KINDS = new Set<PlayableLibraryStep["kind"]>([
   "alphabet",
   "explanation",
@@ -10,7 +9,7 @@ const READ_ONLY_KINDS = new Set<PlayableLibraryStep["kind"]>([
   "workedExample",
 ]);
 
-/** Whether a screen takes an answer that counts: every one must be answered to finish a run. */
+/** Every answerable step is required to finish unless an explicit completion exception applies. */
 export function isAnswerableStep(step: Pick<PlayableLibraryStep, "kind">): boolean {
   return !READ_ONLY_KINDS.has(step.kind);
 }
@@ -32,10 +31,7 @@ function isStepAttempt(attempt: RunAttempt): attempt is StepAttempt {
   return attempt.stepId !== null;
 }
 
-/**
- * "I know this" skips the rest of a lesson when the learner gets every check right, so a run is
- * also complete when each check has a right answer, whatever else was skipped.
- */
+/** Passing every check permits I know this to skip the other screens. */
 function passedEveryCheck({
   attempts,
   steps,
@@ -52,12 +48,7 @@ function passedEveryCheck({
   return checks.length > 0 && checks.every((step) => rightStepIds.has(step.id));
 }
 
-/**
- * Tallies the answers of one run, given oldest first. A screen counts once, with its first answer,
- * so a question that comes back at the end of the lesson never adds a second right or wrong. An
- * optional screen counts when it's answered but never holds the run back (see
- * `isPictureLateForRun`).
- */
+/** Attempts must be oldest first; count each screen's first answer once. Optional screens count when answered but never block completion. */
 export function tallyLessonRun({
   attempts,
   optionalStepIds = new Set(),
@@ -75,7 +66,6 @@ export function tallyLessonRun({
     .filter((attempt) => isStepAttempt(attempt))
     .filter((attempt) => answerableIds.has(attempt.stepId));
 
-  /** Later entries overwrite earlier ones, so reading the attempts newest first keeps the first. */
   const firstVerdicts = new Map(
     counted.toReversed().map((attempt) => [attempt.stepId, attempt.isCorrect]),
   );

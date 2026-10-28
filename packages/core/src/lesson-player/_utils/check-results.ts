@@ -4,7 +4,6 @@ import { type LessonStepCheckResult } from "../contract";
 import { type LessonAnswerVerdict } from "./grade-lesson-answer";
 import { getScreenComesBack } from "./plan-skill-review";
 
-/** A graded answer as its screen shows it: the verdict, a saved mistake and when the idea comes back. */
 export function toCheckResult({
   nextReviewAt,
   savedMistake,
@@ -32,11 +31,7 @@ export type ComesBackInput = Omit<Parameters<typeof getScreenComesBack>[0], "own
   explanation: boolean;
 };
 
-/**
- * When the screen's idea comes back (see `getScreenComesBack`). A quick explanation never comes
- * back in a review (reviews come with a study plan's sessions, which explanations aren't part of),
- * so its screens don't say when their skill does.
- */
+/** Quick explanations do not participate in session reviews and return no review date. */
 export function getComesBack({
   explanation,
   ownDue,
@@ -45,11 +40,7 @@ export function getComesBack({
   return explanation ? null : getScreenComesBack({ ...input, ownDue });
 }
 
-/**
- * An answer past the run's cap, or a written one nothing checked, isn't recorded: the verdict,
- * with when the idea already comes back and no new mistake. An answer sent again says whether it
- * saved a mistake the first time.
- */
+/** Performs no writes; savedMistake may replay the outcome of a previously recorded answer. */
 export async function checkWithoutRecording({
   savedMistake = false,
   skillId,
@@ -75,14 +66,7 @@ export async function checkWithoutRecording({
   });
 }
 
-/**
- * An answer sent again (a retry after a dropped response) isn't recorded twice: it gets the verdict
- * it was saved with and whether it saved a mistake, which a miss always does when its screen has a
- * question for the notebook (a new entry, or the one the question already has there). The code's
- * words come with it when `verdict` is the code's (`fromCode`) and grades it the same; a written
- * answer a model graded keeps its saved verdict and score without the model's words, which aren't
- * kept, and never with the words of another request's model.
- */
+/** Replays the saved verdict; model feedback is not persisted and must never come from another request. */
 export function checkSaved({
   fromCode,
   hasQuestion,

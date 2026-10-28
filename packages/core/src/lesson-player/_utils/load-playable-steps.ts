@@ -43,7 +43,6 @@ function toWordData({
   };
 }
 
-/** Target-language words behind the wrong options, for their audio and pronunciation. */
 async function loadDistractorWords({ lesson, texts }: { lesson: ExerciseLesson; texts: string[] }) {
   const distractorTexts = deduplicateNormalizedTexts(texts);
 
@@ -62,11 +61,6 @@ async function loadDistractorWords({ lesson, texts }: { lesson: ExerciseLesson; 
   return words.map((word) => toWordData({ word }));
 }
 
-/**
- * The lesson's words and sentences with their meaning in the learner's language (the pair's
- * links), notes and sound tips, plus the target-language words its wrong options use. Word and
- * sentence exercises read these; lessons without them skip every query.
- */
 async function loadExerciseResources({
   lesson,
   rows,
@@ -124,7 +118,6 @@ async function loadExerciseResources({
   };
 }
 
-/** The screens a lesson serves from these stored steps, with their language pair when needed. */
 export async function loadPlayableSteps({
   lesson,
   rows,

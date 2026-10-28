@@ -19,7 +19,6 @@ import { PPTX_CONTENT_TYPE } from "../library/sources/source-contract";
 import { getLibraryLessonOutline, getPlayableLibraryLesson } from "./get-playable-library-lesson";
 
 describe(getPlayableLibraryLesson, () => {
-  // Screens load only with a session, so most cases play as a signed-in learner.
   beforeEach(() => {
     mockSession(randomUUID());
   });
@@ -180,7 +179,6 @@ describe(getPlayableLibraryLesson, () => {
       wordHints: null,
     });
 
-    // "I can't talk now" plays the spoken sentence as the lesson's listening exercise.
     expect(steps[4]).toMatchObject({
       kind: "spokenAnswer",
       listening: {
@@ -210,8 +208,6 @@ describe(getPlayableLibraryLesson, () => {
       getPlayableLibraryLesson({ lessonId: silent.lesson.id }),
     ]);
 
-    // "rent: rent" teaches nothing, and building "How much is the rent?" from the same sentence
-    // (or from no recording) tests nothing; hearing it and building it does.
     expect(heard?.status === "ready" && heard.lesson.steps.map((step) => step.kind)).toStrictEqual([
       "listening",
       "spokenAnswer",

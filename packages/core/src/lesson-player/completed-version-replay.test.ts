@@ -63,7 +63,7 @@ describe("completed lesson version replay", () => {
       }
 
       const savedRun = await prisma.learningEvent.findUniqueOrThrow({ where: { id: runId } });
-      /** Review scheduling reads current memory; the run's saved rewards and counts replay. */
+
       const expected = {
         completion: {
           brainPower: completed.completion.brainPower,

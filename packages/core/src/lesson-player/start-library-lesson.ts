@@ -29,7 +29,6 @@ import { getRunLessonSupport, loadLessonSupport } from "./_utils/lesson-support"
 import { getLatePictureStepIds } from "./_utils/screen-pictures";
 import { type LibraryLessonRun, type LibraryLessonStartInput } from "./contract";
 
-/** How the ledger labels a lesson run, so admin stats can tell it from checkpoints and practice. */
 const LIBRARY_LESSON_KIND = "library";
 
 /** `plusRequired`: a free exam plan past its first week holds this new lesson of its plan for Plus. */
@@ -46,11 +45,6 @@ type RunSource = {
   userId: string;
 };
 
-/**
- * Opens the run in the ledger with `endedAt` null, so a lesson started and never finished still
- * counts against the completion rate. The goal is the one the tabs show, and a lesson played as a
- * session block keeps the session, so its answers count toward it.
- */
 async function openLessonRun({ lesson, studySessionId, timeZone, userId }: RunSource) {
   const [goalId, existing] = await Promise.all([
     findActiveGoalId(userId),
@@ -95,7 +89,6 @@ async function openLessonRun({ lesson, studySessionId, timeZone, userId }: RunSo
   });
 }
 
-/** The lesson's answers this run continues from: its own and its unfinished earlier sittings'. */
 async function loadRunProgress({
   lessonId,
   run,
@@ -125,7 +118,6 @@ async function loadRunProgress({
     : null;
 }
 
-/** Reads the visible version of this sitting, even if a background check retired it. */
 async function readRun({
   lessonId,
   run,
@@ -146,17 +138,7 @@ async function readRun({
     : null;
 }
 
-/**
- * Starts a Library lesson for the learner or guest in the session. Starting counts against the
- * allowance once per lesson (restarts are free), so the outcome can ask the learner to slow down,
- * sign up or subscribe instead. A start within half an hour of another one (a double mount or a
- * reload) resumes the same run; later, a new run opens for this sitting. Either way the run comes
- * with the lesson's answers so far (`answers`, including sittings left unfinished in the last
- * week), so the learner continues where they left off; answers and the completion refer to its id.
- * The run says where Hyperdrive stood when it started, continuing this session's streak (never
- * another day's), and how the lesson opens for this learner (`support`). Only a new run counts as
- * "Lesson Started". A free exam plan past its first week opens its new lessons with Plus only.
- */
+/** Requires a learner or guest session; retries within half an hour resume the run and restarts do not consume lesson allowance again. */
 export async function startLibraryLesson({
   input,
   lessonId,
@@ -193,15 +175,10 @@ export async function startLibraryLesson({
     return { status: "notFound" };
   }
 
-  // A lesson played from its chapter finishes the day's block for it only in a saved day, and once
-  // played, a day planned after it no longer holds it: today's day is saved before it starts.
+  // Save today before starting so a standalone lesson can settle its existing block.
   await saveDayBeforeActivity({ timeZone: input.timeZone, userId });
 
-  /**
-   * A quick explanation is the front door: asking for it already claimed its own fair-use
-   * allowance, so playing it never takes one of the learner's lessons. The grader still checks only
-   * a few typed answers to each screen a day (`canGradeWithModel`).
-   */
+  // Quick explanations already claimed their own allowance and must not consume a lesson allowance too.
   if (!isOwnExplanation(lesson)) {
     if (await isLessonPlusOnly({ lessonId: lesson.id, timeZone: input.timeZone, userId })) {
       return { status: "plusRequired" };

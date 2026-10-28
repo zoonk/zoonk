@@ -7,10 +7,7 @@ import { type LibraryLessonRun } from "../contract";
 
 type LessonQuestionRow = { id: string; itemId: string | null };
 
-/**
- * The learner's session that has this lesson as a block, or null for someone else's session or one
- * without it: a stale link still plays the lesson, just outside the session.
- */
+/** Returns null for someone else's session or one without this lesson; stale links still play outside it. */
 export async function findLessonStudySessionId({
   lessonId,
   studySessionId,
@@ -32,10 +29,6 @@ export async function findLessonStudySessionId({
   return session?.id ?? null;
 }
 
-/**
- * Screens whose question the learner got right before the run: a bank item (math checks) or the
- * screen itself. Answering them right again is a repeat, which keeps Hyperdrive where it is.
- */
 async function getKnownStepIds({
   before,
   steps,
@@ -65,11 +58,7 @@ async function getKnownStepIds({
     .map((step) => step.id);
 }
 
-/**
- * Where Hyperdrive starts for a run, by the same rule the server scores with: the session's streak
- * and the screens that would be repeats, both as they were when the run started, so a resumed run
- * replays its own answers on top of them.
- */
+/** Uses the streak and known screens from run start, so resumed answers replay against the same baseline. */
 export async function getRunHyperdrive({
   lessonId,
   run,

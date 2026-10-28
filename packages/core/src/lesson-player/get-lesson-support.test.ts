@@ -12,7 +12,6 @@ import { completeLibraryLesson } from "./complete-library-lesson";
 import { getLessonSupport } from "./get-lesson-support";
 import { startLibraryLesson } from "./start-library-lesson";
 
-/** A lesson that opens (after its hook) with an explanation of `opening`, and also teaches `other`. */
 async function setupLesson() {
   const [user, opening, other] = await Promise.all([userFixture(), skillFixture(), skillFixture()]);
 
@@ -39,7 +38,6 @@ describe(getLessonSupport, () => {
   it("opens with the explanation for a learner who never answered the opening skill", async () => {
     const { lesson, other, user } = await setupLesson();
 
-    // Knowing a later skill of the lesson doesn't change how it opens.
     await learnerSkillFixture({ reps: 3, skillId: other.id, userId: user.id });
 
     await expect(getLessonSupport({ lessonId: lesson.id })).resolves.toBe("explanationFirst");
@@ -65,7 +63,6 @@ describe(getLessonSupport, () => {
       const { lesson, opening, steps, user } = await setupLesson();
 
       if (resetSkill) {
-        // Undoing a placement skip leaves the same learner-skill row with zero answers.
         await learnerSkillFixture({ reps: 0, skillId: opening.id, userId: user.id });
       }
 
@@ -106,7 +103,6 @@ describe(getLessonSupport, () => {
         }),
       ).resolves.toMatchObject({ run: { support: "explanationFirst" }, status: "started" });
 
-      // A later sitting starts a new run but continues the same unfinished lesson.
       await prisma.learningEvent.update({
         data: { startedAt: new Date(Date.now() - 31 * 60_000) },
         where: { id: started.run.runId },
