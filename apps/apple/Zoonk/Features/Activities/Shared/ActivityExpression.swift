@@ -1,9 +1,8 @@
 import Foundation
 
-/// Core's safe expression language (`library/activities/expression`): numbers, variables,
-/// `+ - * / ^`, parentheses, unary minus, `pi`, `e` and its functions. It parses and evaluates
-/// arithmetic only, never code, and gives nil for anything core would reject (a syntax error, an
-/// unknown name, a number that isn't finite), so a value the app shows is the one core computed.
+/// Mirrors core's safe expression language (`library/activities/expression`): arithmetic only,
+/// never code, and nil for anything core would reject, so a value the app shows is the one core
+/// computed.
 enum ActivityExpression {
   private static let maxLength = 300
   private static let maxDepth = 32
@@ -21,8 +20,6 @@ enum ActivityExpression {
 
     return value
   }
-
-  // MARK: - Tokens
 
   private enum Token: Equatable {
     case number(Double)
@@ -62,8 +59,6 @@ enum ActivityExpression {
 
     return tokens
   }
-
-  // MARK: - Parsing and evaluating in one pass
 
   private struct Parser {
     let tokens: [Token]
@@ -189,8 +184,6 @@ enum ActivityExpression {
       return value.isFinite ? value : nil
     }
   }
-
-  // MARK: - Functions
 
   private struct Function: Sendable {
     let minArguments: Int

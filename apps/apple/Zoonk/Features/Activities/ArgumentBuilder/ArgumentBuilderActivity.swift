@@ -36,10 +36,6 @@ struct ArgumentFields: Decodable, Hashable, Sendable {
   }
 }
 
-/// Build an argument in three parts: the claim is given, the learner picks the quote that supports
-/// it, then the reasoning that ties the quote to the claim (tap a candidate, or drag it into its
-/// part). After the check each part says whether the pick is strong, with why, and names the
-/// strong one when it wasn't.
 private struct ArgumentBuilderCanvas: View {
   private enum Part: String {
     case evidence, reasoning
@@ -65,7 +61,6 @@ private struct ArgumentBuilderCanvas: View {
     if case .checked = context.phase { true } else { false }
   }
 
-  /// The part waiting for a pick: evidence first, then reasoning, then none.
   private var openPart: Part? {
     if evidenceId == nil {
       return .evidence
@@ -150,8 +145,6 @@ private struct ArgumentBuilderCanvas: View {
       }
     }
   }
-
-  // MARK: - Parts
 
   private func slot(
     _ part: Part, label: Text, hint: Text, isStrong: Bool?, why: String?,
@@ -320,9 +313,6 @@ private struct ArgumentBuilderCanvas: View {
     }
   }
 
-  // MARK: - After the check
-
-  /// For each weak pick: the strong option and why it works.
   @ViewBuilder
   private func review(quote: ArgumentFields.Quote?, reasoning: ArgumentFields.Reasoning?)
     -> some View
@@ -361,7 +351,6 @@ private struct ArgumentBuilderCanvas: View {
   }
 }
 
-/// A quote with its citation under it.
 private struct QuoteText: View {
   let text: String
   let citation: String

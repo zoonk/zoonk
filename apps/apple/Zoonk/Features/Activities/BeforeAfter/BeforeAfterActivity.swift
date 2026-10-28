@@ -26,7 +26,7 @@ struct BeforeAfterFields: Decodable, Hashable, Sendable {
   let before: State
   let change: String
 
-  /// After divided by before for a fact, the number a numeric check grades.
+  /// The number a numeric check grades.
   func ratio(_ factId: String) -> Double? {
     guard let before = before.facts.first(where: { $0.id == factId })?.value,
       let after = after.facts.first(where: { $0.id == factId })?.value, before != 0
@@ -38,8 +38,7 @@ struct BeforeAfterFields: Decodable, Hashable, Sendable {
   }
 }
 
-/// How a fact changed, the way people say it: "8.3 times less" for big changes, "+15%" for small
-/// ones, as main's `describeChange`.
+/// Mirrors main's `describeChange`.
 enum FactChange: Hashable {
   case same
   case less(Double)
@@ -64,9 +63,6 @@ enum FactChange: Hashable {
   }
 }
 
-/// Two states of the same thing with what changed between them. The learner reads the before state
-/// and the change, then shows the after state: its bars start at the before length and move to
-/// their own (at once with Reduce Motion). Once checked, each fact says how much it changed.
 private struct BeforeAfterCanvas: View {
   let fields: BeforeAfterFields
   let context: ActivityCanvasContext

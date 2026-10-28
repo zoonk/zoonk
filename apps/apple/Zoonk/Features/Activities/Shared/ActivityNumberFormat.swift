@@ -1,9 +1,6 @@
 import Foundation
 
-/// Numbers in the learner's language with an activity's unit, the way main's `useFormatNumber`
-/// writes them (`@zoonk/utils/math-answer`): money units ("$", "R$", "EUR", or "R$ por metro") in
-/// the currency's format, "%", "°" and "‰" attached, any other unit after a no-break space, as
-/// many decimals as the size of the number needs, and a typographic minus.
+/// Mirrors main's `useFormatNumber` (`@zoonk/utils/math-answer`).
 enum ActivityNumberFormat {
   private static let currencies: [String: String] = [
     "$": "USD", "A$": "AUD", "C$": "CAD", "R$": "BRL", "US$": "USD", "£": "GBP", "¥": "JPY",
@@ -104,7 +101,6 @@ enum ActivityNumberFormat {
     text.replacingOccurrences(of: "-", with: "\u{2212}")
   }
 
-  /// Big numbers whole, small ones with enough digits to show their first figures.
   static func fractionDigits(_ value: Double) -> Int {
     let size = abs(value)
 

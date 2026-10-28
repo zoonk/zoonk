@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// The math of guessing on a scale, as main's `guess-scale`: a log scale gives each power of ten
-/// the same room, and a guess reads as a guess (two significant digits).
+/// Mirrors main's `guess-scale`: a guess reads as a guess (two significant digits).
 struct GuessScale: Hashable, Sendable {
   enum Kind: String, Decodable, Hashable, Sendable {
     case linear, log
@@ -24,7 +23,6 @@ struct GuessScale: Hashable, Sendable {
     return min + (max - min) * share
   }
 
-  /// Where a value sits on the scale, from 0 to 1, clamped to the ends.
   func share(of value: Double) -> Double {
     let share =
       kind == .log
@@ -45,8 +43,6 @@ struct GuessScale: Hashable, Sendable {
     case off(Double)
   }
 
-  /// How a guess compares with the real value: close (as graded), or how many times too big or too
-  /// small, or else its difference.
   static func compare(guess: Double, actual: Double, isCorrect: Bool) -> Comparison {
     if isCorrect {
       return .close
@@ -66,14 +62,10 @@ struct GuessScale: Hashable, Sendable {
   }
 }
 
-/// Guess on a linear or log scale with a slider (VoiceOver adjusts it, arrows move it on a
-/// keyboard); once the real value is known, the guess locks and both show on one drawn scale with
-/// the gap between them shaded.
 struct ActivityGuessScaleView: View {
   let scale: GuessScale
   let unit: String?
   let guess: Double?
-  /// The real value, once checked.
   let actual: Double?
   let onGuess: (Double) -> Void
 
@@ -148,7 +140,6 @@ struct ActivityGuessScaleView: View {
   }
 }
 
-/// The scale drawn after the check: the gap between the guess (ink) and the real value (blue).
 private struct GuessScaleBar: View {
   let guessShare: Double?
   let actualShare: Double

@@ -23,10 +23,6 @@ struct ProcessOrderFields: Decodable, Hashable, Sendable {
   let steps: [Step]
 }
 
-/// The steps of a process, shuffled, to put in order: drag a step to its place, or tap a step and
-/// then the step whose place it takes; VoiceOver moves a step up or down from its actions. Once
-/// checked, they show in their true order with why each needs the one before, and where the
-/// learner had the ones out of place. Explored, they show in their true order with each one's why.
 private struct ProcessOrderCanvas: View {
   let fields: ProcessOrderFields
   let context: ActivityCanvasContext
@@ -60,8 +56,6 @@ private struct ProcessOrderCanvas: View {
       solved(results: nil)
     }
   }
-
-  // MARK: - Ordering
 
   private var answering: some View {
     let byId = Dictionary(fields.steps.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
@@ -164,8 +158,6 @@ private struct ProcessOrderCanvas: View {
         comment: "VoiceOver, after a step of a process moves"))
   }
 
-  // MARK: - Solved
-
   private func solved(results: [ProcessOrder.StepResult]?) -> some View {
     VStack(alignment: .leading, spacing: 8) {
       if results != nil {
@@ -219,7 +211,6 @@ private struct ProcessOrderCanvas: View {
   }
 }
 
-/// A step's number and picture, level with its first line.
 private struct ProcessStepMarks: View {
   let position: Int
   let icon: String?
@@ -253,7 +244,7 @@ private struct ProcessStepMarks: View {
   }
 }
 
-/// The pure rules of ordering a process, as main's `process-order-model`.
+/// Mirrors main's `process-order-model`.
 enum ProcessOrder {
   struct StepResult: Hashable {
     let id: String
@@ -270,7 +261,6 @@ enum ProcessOrder {
     return isInOrder ? Array(shuffled.dropFirst() + shuffled.prefix(1)) : shuffled
   }
 
-  /// Each step in its true order, with where the learner put it.
   static func results(expected: [String], order: [String]) -> [StepResult] {
     expected.enumerated().map { index, id in
       StepResult(

@@ -11,10 +11,6 @@ extension ActivityRenderer {
   }
 }
 
-/// Pair cards that belong together, with look-alike traps. Pick one card on each side (or drag one
-/// onto the other): a match locks in, a miss says why the two don't go together. A trap that
-/// catches the learner shows it has no match at once; once every pair is matched, the traps left
-/// show it too. The check grades each pair's first try.
 private struct MatchPairsCanvas: View {
   private struct Miss: Equatable {
     let left: String
@@ -233,8 +229,6 @@ private struct MatchPairsCanvas: View {
       ].compactMap(\.self).joined(separator: " "))
   }
 
-  // MARK: - After the check
-
   @ViewBuilder
   private func results(_ columns: (left: [MatchCard], right: [MatchCard])) -> some View {
     let expected = Dictionary(pairIds.map { ($0, $0) }, uniquingKeysWith: { first, _ in first })
@@ -277,8 +271,6 @@ private struct MatchPairsCanvas: View {
   }
 }
 
-/// How a card to match reads: picked in ink, matched in soft blue, a miss in soft pink, and a trap
-/// shown to have no match faded behind a dashed edge.
 private enum MatchCardState {
   case idle, selected, matched, missed, noMatch
 

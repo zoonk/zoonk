@@ -67,10 +67,8 @@ struct DecisionTreeFields: Decodable, Hashable, Sendable {
   }
 }
 
-/// The pure rules of walking a decision tree, as core's `walkCase` and main's
-/// `decision-tree-walk`.
+/// Mirrors core's `walkCase` and main's `decision-tree-walk`.
 enum DecisionTreeWalk {
-  /// One answered question on a walk: the question and the branch taken.
   struct Step: Hashable {
     let question: String
     let branch: String
@@ -97,7 +95,6 @@ enum DecisionTreeWalk {
     return nil
   }
 
-  /// Outcomes still reachable from a node: what's "still possible" after the answers so far.
   static func reachableOutcomes(_ fields: DecisionTreeFields, from id: String)
     -> [DecisionTreeFields.Outcome]
   {
@@ -121,7 +118,6 @@ enum DecisionTreeWalk {
     }
   }
 
-  /// The questions answered along a path of node ids, with the branch that led to the next node.
   static func steps(_ fields: DecisionTreeFields, path: [String]) -> [Step] {
     zip(path, path.dropFirst()).compactMap { id, next in
       guard case .question(let question)? = fields.node(id),

@@ -1,8 +1,6 @@
 import Foundation
 
-/// The end state that makes an interaction right, computed by code from the template's fields as
-/// core's `computeExpected` does (timelines sort by date, trees are walked), and compared with the
-/// learner's answer as core's `matchesExpectedAnswer` does, so the app and the server agree.
+/// Mirrors core's `computeExpected` and `matchesExpectedAnswer`, so the app and the server agree.
 enum ActivityExpectedAnswer: Hashable, Sendable {
   struct Link: Codable, Hashable, Sendable {
     let from: String
@@ -43,8 +41,7 @@ enum ActivityExpectedAnswer: Hashable, Sendable {
     return isLetters ? String(trimmed.sorted()) : trimmed
   }
 
-  /// A renderer's `grade`: decodes the template's fields, computes what they expect and compares
-  /// the learner's answer with it. Content whose fields don't decode is never right.
+  /// Content whose fields don't decode is never right.
   static func grader<Fields: Decodable & Sendable>(
     _ type: Fields.Type, expected: @escaping @Sendable (Fields) -> ActivityExpectedAnswer?
   ) -> @Sendable (ActivityStepContent, ActivityAnswer) -> Bool {
@@ -59,8 +56,6 @@ enum ActivityExpectedAnswer: Hashable, Sendable {
   }
 }
 
-/// The interaction answers the API takes (`LessonStepAnswer.activity.answer`), built and read
-/// without each renderer writing its own JSON.
 extension ActivityAnswer {
   static func assignment(_ pairs: [String: String]) -> ActivityAnswer {
     ActivityAnswer(
@@ -93,7 +88,6 @@ extension ActivityAnswer {
       value: .object(["kind": .string("grid"), "cells": .array(cells.map(JSONValue.string))]))
   }
 
-  /// An assignment's pairs, or nil for another kind.
   var pairs: [String: String]? {
     guard case .object(let object) = value["pairs"] else {
       return nil
@@ -102,7 +96,6 @@ extension ActivityAnswer {
     return object.compactMapValues { if case .string(let text) = $0 { text } else { nil } }
   }
 
-  /// An order's or a selection's ids.
   var ids: [String]? {
     strings(at: "ids")
   }

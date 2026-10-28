@@ -40,10 +40,6 @@ struct CauseEffectFields: Decodable, Hashable, Sendable {
   }
 }
 
-/// Link causes to what they led to: the learner picks a cause, then its effect (or drags the cause
-/// onto it), and the link joins the list. With a question check each link is confirmed or turned
-/// down at once with why; with a links check the learner's set is the answer and the check shows
-/// the right, wrong and missed links. Explored, every link shows with its why.
 private struct CauseEffectCanvas: View {
   private typealias Link = ActivityExpectedAnswer.Link
 
@@ -243,8 +239,6 @@ private struct CauseEffectCanvas: View {
         comment: "A cause-effect link was made")
     announceActivityChange(notice ?? "")
   }
-
-  // MARK: - The links
 
   private var shownLinks: [(link: Link, state: LinkState)] {
     if isChecked, !isGuided {

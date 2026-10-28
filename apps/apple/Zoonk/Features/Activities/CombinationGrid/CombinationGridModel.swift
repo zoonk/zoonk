@@ -1,7 +1,5 @@
 import Foundation
 
-/// A `combinationGrid` activity's fields: a Punnett square (`alleles`) or two numbers added
-/// (`sum`) or multiplied (`product`), each cell combining its row and its column.
 struct CombinationGridFields: Decodable, Hashable, Sendable {
   struct Side: Decodable, Hashable, Sendable {
     let label: String
@@ -40,13 +38,11 @@ struct CombinationGridFields: Decodable, Hashable, Sendable {
   var isAllele: Bool { rule == "alleles" }
 }
 
-/// The pure rules of a combination grid, as core's `combination-grid` template and main's
-/// `grid-model`.
+/// Mirrors core's `combination-grid` template and main's `grid-model`.
 enum CombinationGrid {
   /// Past this many cells, filling every one by hand is busywork: the grid is shown filled.
   static let maxFilledCells = 9
 
-  /// Every cell, row by row: each row value combined with each column value by the grid's rule.
   static func cells(_ fields: CombinationGridFields) -> [String] {
     fields.rows.values.flatMap { row in
       fields.columns.values.map { column in combine(fields, row: row, column: column) }
@@ -99,8 +95,6 @@ enum CombinationGrid {
     return abs(value - number) <= 1e-9 * max(1, abs(number))
   }
 
-  /// What can go in a cell: the three genotypes one gene can make, dominant first, or every value
-  /// the numbers combine to, smallest first.
   static func options(_ fields: CombinationGridFields) -> [String] {
     if fields.isAllele {
       let letter = fields.rows.values.first ?? ""
@@ -116,7 +110,6 @@ enum CombinationGrid {
     ActivityExpectedAnswer.cellKey(first) == ActivityExpectedAnswer.cellKey(second)
   }
 
-  /// The first empty cell after `after`, wrapping around, or nil when the grid is full.
   static func nextEmpty(_ fill: [String?], after: Int?) -> Int? {
     let start = after.map { $0 + 1 } ?? 0
     return fill.indices.map { (start + $0) % fill.count }.first { fill[$0] == nil }

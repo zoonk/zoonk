@@ -1,8 +1,8 @@
 import Foundation
 
-/// Shuffles the same way as main's `seededShuffle` (`@zoonk/utils/seeded-random`), so an activity
-/// shows its items in the same order on the web and in the app, and on every visit, while the order
-/// the writer listed them in (often grouped by answer) never shows.
+/// Mirrors main's `seededShuffle` (`@zoonk/utils/seeded-random`), so items show in the same order on
+/// the web, in the app and on every visit, while the writer's order (often grouped by answer) never
+/// shows.
 enum SeededShuffle {
   /// The Park-Miller "minimal standard" generator's modulus and multiplier.
   private static let modulus: Int64 = 2_147_483_647

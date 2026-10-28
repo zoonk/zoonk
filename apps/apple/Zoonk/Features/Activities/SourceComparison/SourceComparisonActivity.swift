@@ -42,13 +42,12 @@ struct SourceComparisonFields: Decodable, Hashable, Sendable {
   }
 }
 
-/// A piece of an excerpt: plain text, or a passage the learner can mark.
 struct ExcerptSegment: Hashable {
   let passageId: String?
   let text: String
 
-  /// Splits an excerpt into plain text and markable passages in reading order, as core's
-  /// `splitExcerpt`: each passage at its first exact occurrence; a later overlapping one is skipped.
+  /// Mirrors core's `splitExcerpt`: each passage at its first exact occurrence; a later overlapping
+  /// one is skipped.
   static func split(_ excerpt: String, passages: [SourceComparisonFields.Passage])
     -> [ExcerptSegment]
   {
@@ -88,10 +87,6 @@ struct ExcerptSegment: Hashable {
   }
 }
 
-/// Two eyewitness sources, to see how who wrote a source shapes what it says. The learner marks
-/// passages in each by tapping them in the text (VoiceOver marks them from the excerpt's actions);
-/// with a selection check the marked passages are the answer and the check shows which ones the
-/// question was about.
 private struct SourceComparisonCanvas: View {
   private enum PassageState {
     case unmarked, marked, correct, incorrect, missed

@@ -37,9 +37,6 @@ struct DialogueFields: Decodable, Hashable, Sendable {
   }
 }
 
-/// A real conversation in the target language: the lines so far, each with its meaning and a
-/// voice when the app can speak it, then replies to choose from. After the check every reply shows
-/// what it means and why it fits the moment or doesn't.
 private struct DialogueCanvas: View {
   let fields: DialogueFields
   let context: ActivityCanvasContext

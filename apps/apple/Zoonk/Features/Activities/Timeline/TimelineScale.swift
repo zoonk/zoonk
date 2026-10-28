@@ -23,8 +23,8 @@ struct TimelineFields: Decodable, Hashable, Sendable {
   }
 }
 
-/// The pure rules of a timeline, as main's `timeline-scale`. Years are whole numbers with negative
-/// ones BCE, and there was no year 0.
+/// Mirrors main's `timeline-scale`. Years are whole numbers with negative ones BCE, and there was no
+/// year 0.
 enum TimelineScale {
   struct Placement: Hashable, Sendable {
     let id: String
@@ -64,7 +64,6 @@ enum TimelineScale {
     return to - from - (from < 0 && to > 0 ? 1 : 0)
   }
 
-  /// A gap rounded to two significant digits once it's large: "about 2,500 years".
   static func roundedGap(_ gap: Int) -> Int {
     let size = abs(gap)
     return size < 100 ? size : Int(FactChange.twoDigits(Double(size)))
@@ -92,7 +91,6 @@ enum TimelineScale {
     case bce, ce, none
   }
 
-  /// How a year reads: 30 BCE, 1969 CE, or just 1969 when the axis has no BCE.
   static func era(of year: Int, start: Int) -> (era: Era, year: Int) {
     if year < 0 {
       return (.bce, -year)

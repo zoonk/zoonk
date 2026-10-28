@@ -18,7 +18,6 @@ struct MatchPairsFields: Decodable, Hashable, Sendable {
   let distractors: [Distractor]
   let pairs: [Pair]
 
-  /// Each left card goes with the right card of its own pair.
   var expected: ActivityExpectedAnswer {
     .assignment(Dictionary(pairs.map { ($0.id, $0.id) }, uniquingKeysWith: { first, _ in first }))
   }
@@ -32,7 +31,7 @@ struct MatchCard: Hashable, Sendable, Identifiable {
   let why: String?
 }
 
-/// The pure rules of matching pairs, as main's `match-pairs-columns` and `match-pairs-progress`.
+/// Mirrors main's `match-pairs-columns` and `match-pairs-progress`.
 enum MatchPairs {
   enum Side: String, Sendable {
     case left, right
@@ -89,8 +88,6 @@ enum MatchPairs {
     !left.isTrap && left.id == right.id
   }
 
-  /// Records a try: its first try if the left card is a real pair, the pair if it matches, and the
-  /// trap if one caught the learner.
   static func recordTry(_ progress: Progress, left: MatchCard, right: MatchCard) -> Progress {
     var next = progress
 
@@ -106,7 +103,6 @@ enum MatchPairs {
     return next
   }
 
-  /// The answer once every pair is matched: each pair's first try.
   static func answer(pairIds: [String], progress: Progress) -> ActivityAnswer? {
     guard pairIds.allSatisfy(progress.matched.contains) else {
       return nil
@@ -118,7 +114,6 @@ enum MatchPairs {
       ))
   }
 
-  /// Rebuilds progress from a saved answer, for a screen the learner comes back to.
   static func progress(from answer: ActivityAnswer?) -> Progress {
     guard answer?.kind == "assignment", let pairs = answer?.pairs else {
       return Progress()

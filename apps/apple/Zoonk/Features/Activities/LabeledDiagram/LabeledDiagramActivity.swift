@@ -38,7 +38,6 @@ struct LabeledDiagramFields: Decodable, Hashable, Sendable {
       Dictionary(slots.map { ($0.key, $0.label) }, uniquingKeysWith: { first, _ in first }))
   }
 
-  /// The writer's feedback for a likely mix-up, when the learner made exactly that one.
   func mixUpFeedback(correct: String, placed: String?) -> String? {
     guard let placed, placed != correct else {
       return nil
@@ -48,10 +47,6 @@ struct LabeledDiagramFields: Decodable, Hashable, Sendable {
   }
 }
 
-/// Names go on the numbered parts of the screen's picture (drawn by the player with a number on
-/// each part). The learner taps a spot and a name, or drags a name onto a spot; VoiceOver puts a
-/// name on a spot from its actions. Once checked, every spot shows the right name next to theirs,
-/// with the writer's feedback for a likely mix-up. Explored, it's the picture's key.
 private struct LabeledDiagramCanvas: View {
   let fields: LabeledDiagramFields
   let context: ActivityCanvasContext
@@ -88,8 +83,6 @@ private struct LabeledDiagramCanvas: View {
       board
     }
   }
-
-  // MARK: - Labeling
 
   private var board: some View {
     let unplaced = names.filter { !placements.values.contains($0) }
@@ -285,7 +278,6 @@ private struct LabeledDiagramCanvas: View {
     fields.slots.allSatisfy { placements[$0.key] != nil } ? .assignment(placements) : nil
   }
 
-  /// The first empty spot after `after` (wrapping around), or nil when every spot has a name.
   private static func nextEmpty(
     after: String?, placements: [String: String], fields: LabeledDiagramFields
   )
@@ -297,9 +289,6 @@ private struct LabeledDiagramCanvas: View {
     return rotated.first { placements[$0] == nil }
   }
 
-  // MARK: - Explored
-
-  /// The picture's key: every number with its name.
   private var key: some View {
     VStack(alignment: .leading, spacing: 8) {
       ForEach(fields.slots, id: \.key) { slot in

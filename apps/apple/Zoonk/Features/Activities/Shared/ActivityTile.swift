@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// How a tile the learner moves or picks reads: waiting, picked up (ink, never blue, since blue
-/// would say "right"), and after the check right (soft blue) or wrong (soft pink).
+/// Picked up is ink, never blue, since blue would say "right".
 enum ActivityTileMark: Hashable, Sendable {
   case plain, selected, right, wrong, dimmed
 
@@ -13,7 +12,6 @@ enum ActivityTileMark: Hashable, Sendable {
     }
   }
 
-  /// What VoiceOver adds after the tile's text once it's checked.
   var verdict: Text? {
     switch self {
     case .right:
@@ -26,11 +24,8 @@ enum ActivityTileMark: Hashable, Sendable {
   }
 }
 
-/// A tile in an activity: an item to sort, a card to match, a name to place. Its text wraps at
-/// any text size, and its verdict shows as a mark as well as a color.
 struct ActivityTileStyle: ButtonStyle {
   let mark: ActivityTileMark
-  /// A grid's square: its value centered, the verdict's mark in a corner, little padding.
   var isCompact = false
 
   func makeBody(configuration: Configuration) -> some View {
@@ -103,8 +98,6 @@ struct ActivityTileStyle: ButtonStyle {
   }
 }
 
-/// A place tiles go (a group, a column, a slot): a soft panel that shows when a picked-up tile can
-/// land in it, and while a drag hovers over it.
 struct ActivityDropPanel<Content: View>: View {
   let isReady: Bool
   let isTargeted: Bool
@@ -126,7 +119,6 @@ struct ActivityDropPanel<Content: View>: View {
   }
 }
 
-/// What the check found, one card each with its why: a misplaced item, a missed pair, a mistake.
 struct ActivityReasonList: View {
   struct Reason: Identifiable {
     let id: String
@@ -156,7 +148,6 @@ struct ActivityReasonList: View {
   }
 }
 
-/// A small caption over or under a canvas: what's left to do, a count, a hint.
 struct ActivityCaption: View {
   let text: Text
 
@@ -172,13 +163,11 @@ struct ActivityCaption: View {
   }
 }
 
-/// Says a change out loud for VoiceOver users, as main's live regions do.
 @MainActor
 func announceActivityChange(_ text: String) {
   AccessibilityNotification.Announcement(text).post()
 }
 
-/// 1–9 pick one of a canvas's choices on a hardware keyboard, as the player's options do.
 struct ActivityNumberKey: ViewModifier {
   let index: Int
 

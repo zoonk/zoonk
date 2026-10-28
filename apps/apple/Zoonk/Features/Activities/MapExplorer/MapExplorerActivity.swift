@@ -38,9 +38,6 @@ struct MapExplorerFields: Decodable, Hashable, Sendable {
   }
 }
 
-/// Tap places on a map to uncover evidence, like John Snow tracing the 1854 cholera outbreak to
-/// one pump. Each numbered pin (also its number key on a keyboard) shows what's there; the question
-/// below the map is answered from what the learner found.
 private struct MapExplorerCanvas: View {
   let fields: MapExplorerFields
 

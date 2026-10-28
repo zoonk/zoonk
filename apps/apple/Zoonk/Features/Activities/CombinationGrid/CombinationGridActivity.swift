@@ -13,11 +13,6 @@ extension ActivityRenderer {
   }
 }
 
-/// A grid where every cell combines its row and its column: a Punnett square's alleles, two dice
-/// added, a times table. A small grid the learner fills cell by cell, picking each value from the
-/// palette under it, with a tally. A bigger one is shown filled, to read and count. A numeric check
-/// reads the share of cells its question asks about from the learner's own fill. Explored, the
-/// grid is filled in.
 private struct CombinationGridCanvas: View {
   let fields: CombinationGridFields
   let context: ActivityCanvasContext
@@ -77,8 +72,6 @@ private struct CombinationGridCanvas: View {
       }
     }
   }
-
-  // MARK: - The grid
 
   private var board: some View {
     let columns = fields.columns.values
@@ -197,10 +190,6 @@ private struct CombinationGridCanvas: View {
     }
   }
 
-  // MARK: - Caption and palette
-
-  /// While filling, the tally of each trait (or how many cells are filled); once checked, how many
-  /// cells the question counts or how many the learner got right.
   private var caption: Text? {
     let total = fill.count
 

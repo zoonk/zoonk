@@ -26,9 +26,6 @@ struct FindErrorFields: Decodable, Hashable, Sendable {
   let why: String
 }
 
-/// A worked answer with one wrong step: the learner taps the step they think is wrong (number keys
-/// pick it on a keyboard). After the check the wrong step is struck through with its correction,
-/// a different pick is marked, and why the step is wrong shows under them.
 private struct FindErrorCanvas: View {
   let fields: FindErrorFields
   let context: ActivityCanvasContext

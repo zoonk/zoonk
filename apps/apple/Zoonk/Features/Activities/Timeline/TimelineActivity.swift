@@ -11,11 +11,6 @@ extension ActivityRenderer {
   }
 }
 
-/// Events placed on a true-to-scale axis, to feel how far apart they are. The learner places each
-/// event, then slides it to the year they think (VoiceOver adjusts the slider; arrows move it on a
-/// keyboard). Afterwards the real dates show next to the guesses, with the years between known
-/// dates. With an order check the placed order is the answer; with a question the learner reveals
-/// the real dates first. Explored, every event shows at its real date.
 private struct TimelineCanvas: View {
   let fields: TimelineFields
   let context: ActivityCanvasContext
@@ -92,8 +87,6 @@ private struct TimelineCanvas: View {
       }
     }
   }
-
-  // MARK: - Events
 
   private func eventRow(_ event: TimelineFields.Event) -> some View {
     let year = placements.first { $0.id == event.id }?.year ?? event.year
@@ -176,10 +169,6 @@ private struct TimelineCanvas: View {
       placements.count == fields.events.count ? .order(TimelineScale.placedOrder(placements)) : nil)
   }
 
-  // MARK: - The axis
-
-  /// What the axis draws: the anchors, and each placed event at its guess (with its real year once
-  /// shown); explored, every event at its real year.
   private var marks: [TimelineAxis.Mark] {
     let anchors = fields.anchors.map {
       TimelineAxis.Mark(label: $0.label, year: $0.year, guess: nil, kind: .anchor)
@@ -214,7 +203,6 @@ private struct TimelineCanvas: View {
       tableName: "Activities", comment: "VoiceOver: a timeline's range, then each date on it")
   }
 
-  /// How far apart neighboring dates really are, once the real dates show.
   private var gaps: some View {
     let dated =
       (fields.anchors.map { ($0.label, $0.year) } + fields.events.map { ($0.label, $0.year) })
@@ -271,8 +259,6 @@ private struct TimelineCanvas: View {
   }
 }
 
-/// The true-to-scale axis: round year ticks, the anchors as dots, events at their years (hollow
-/// while guessed; once the real dates show, a line from the guess to the real year).
 private struct TimelineAxis: View {
   struct Mark: Hashable {
     enum Kind {

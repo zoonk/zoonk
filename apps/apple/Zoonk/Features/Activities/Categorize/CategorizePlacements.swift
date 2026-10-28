@@ -1,7 +1,5 @@
 import Foundation
 
-/// A `categorize` activity's fields: groups with the rule that sets them apart, and items with the
-/// group each belongs in and why.
 struct CategorizeFields: Decodable, Hashable, Sendable {
   struct Group: Decodable, Hashable, Sendable, Identifiable {
     let id: String
@@ -19,19 +17,17 @@ struct CategorizeFields: Decodable, Hashable, Sendable {
   let groups: [Group]
   let items: [Item]
 
-  /// Each item in the group the writer gave it.
   var expected: ActivityExpectedAnswer {
     .assignment(
       Dictionary(items.map { ($0.id, $0.groupId) }, uniquingKeysWith: { first, _ in first }))
   }
 
-  /// The items in the order the learner sees them, the same as on the web.
+  /// The same order as on the web.
   var shuffledItems: [Item] {
     SeededShuffle.shuffled(items, seed: items.map(\.id).joined(separator: " "))
   }
 }
 
-/// Which group each item sits in; items missing from it are still waiting to be sorted.
 enum CategorizePlacements {
   static func unplaced(_ items: [CategorizeFields.Item], _ placements: [String: String])
     -> [CategorizeFields.Item]
@@ -39,7 +35,6 @@ enum CategorizePlacements {
     items.filter { placements[$0.id] == nil }
   }
 
-  /// The learner's answer once every item has a group, and nothing while some are left.
   static func answer(_ items: [CategorizeFields.Item], _ placements: [String: String])
     -> ActivityAnswer?
   {
@@ -52,7 +47,6 @@ enum CategorizePlacements {
         items.map { ($0.id, placements[$0.id] ?? "") }, uniquingKeysWith: { first, _ in first }))
   }
 
-  /// Items in the wrong group, compared with the groups code computed from the fields.
   static func misplaced(
     _ items: [CategorizeFields.Item], expected: [String: String], placements: [String: String]
   ) -> [CategorizeFields.Item] {

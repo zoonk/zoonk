@@ -36,7 +36,6 @@ struct StepSolverFields: Decodable, Hashable, Sendable {
   let problem: String
   let steps: [Step]
 
-  /// Each step's right move.
   var expected: ActivityExpectedAnswer {
     .assignment(
       Dictionary(
@@ -44,12 +43,10 @@ struct StepSolverFields: Decodable, Hashable, Sendable {
   }
 }
 
-/// The pure rules of a step solver, as main's `step-solver-progress`: picks per step in order, the
-/// first one counting.
+/// Mirrors main's `step-solver-progress`: the first pick per step counts.
 enum StepSolver {
   typealias Picks = [String: [String]]
 
-  /// The first step still waiting for its right move, or the step count when all are solved.
   static func currentIndex(_ steps: [StepSolverFields.Step], picks: Picks) -> Int {
     steps.firstIndex { step in
       guard let correct = step.correct?.id else { return true }
@@ -79,9 +76,6 @@ enum StepSolver {
   }
 }
 
-/// A problem solved one step at a time: the learner picks each next move and sees it as a bar and
-/// as math. Wrong picks explain themselves and can be retried, but the answer keeps each step's
-/// first pick. A numeric check reads the value of its target step.
 private struct StepSolverCanvas: View {
   let fields: StepSolverFields
   let context: ActivityCanvasContext
@@ -198,8 +192,6 @@ private struct StepSolverCanvas: View {
   }
 }
 
-/// A step's mark on the line of steps: done (soft blue, pink when its first pick was wrong), the
-/// current one in ink, later ones dashed.
 private struct StepSolverMarker: View {
   let number: Int
   let isDone: Bool
@@ -234,7 +226,6 @@ private struct StepSolverMarker: View {
   }
 }
 
-/// A solved step's value as a bar against the biggest value in the problem, with its math.
 private struct StepSolverWork: View {
   let step: StepSolverFields.Step
   let maxValue: Double

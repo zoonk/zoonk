@@ -11,10 +11,6 @@ extension ActivityRenderer {
   }
 }
 
-/// Sort examples into groups to find the rule that separates them. Tap an item, then its group,
-/// or drag it there; VoiceOver puts it in a group from its actions. Every item needs a group
-/// before the check. Afterwards each item shows whether its group is right, and the misplaced ones
-/// say where they belong and why.
 private struct CategorizeCanvas: View {
   let fields: CategorizeFields
   let context: ActivityCanvasContext
@@ -86,7 +82,6 @@ private struct CategorizeCanvas: View {
         }
       }
 
-      // The groups share the width when they fit side by side, as on main, and wrap otherwise.
       ViewThatFits(in: .horizontal) {
         HStack(alignment: .top, spacing: 10) {
           ForEach(fields.groups) { group in
@@ -109,8 +104,6 @@ private struct CategorizeCanvas: View {
       }
     }
   }
-
-  // MARK: - Items and groups
 
   private func tile(_ item: CategorizeFields.Item) -> some View {
     let mark = mark(for: item)
@@ -266,8 +259,6 @@ private struct CategorizeCanvas: View {
       }
     }
   }
-
-  // MARK: - After the check
 
   private func results(expected: [String: String]) -> some View {
     let misplaced = CategorizePlacements.misplaced(

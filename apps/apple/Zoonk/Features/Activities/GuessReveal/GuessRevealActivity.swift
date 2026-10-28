@@ -14,7 +14,6 @@ struct GuessRevealFields: Decodable, Hashable, Sendable {
     let label: String
   }
 
-  /// Worked out by code from an expression (each working shown), or cited data.
   struct Truth: Decodable, Hashable, Sendable {
     let kind: String
     let expression: String?
@@ -41,9 +40,7 @@ struct GuessRevealFields: Decodable, Hashable, Sendable {
   }
 }
 
-/// Guess first, on a linear or log scale, before anything is explained, so the gap to the real
-/// value is felt. Once checked, the guess locks and the real value shows on the same scale: worked
-/// out by code with each step shown, or cited data. The comparison and the takeaway say why.
+/// The guess comes before anything is explained, so the gap to the real value is felt.
 private struct GuessRevealCanvas: View {
   let fields: GuessRevealFields
   let context: ActivityCanvasContext

@@ -13,9 +13,6 @@ extension ActivityRenderer {
   }
 }
 
-/// Walk a branching key one question at a time, using what the case says. Each answer narrows
-/// what's still possible; Undo steps back. Reaching an outcome is the answer; after the check, the
-/// walk is compared with the one code computes from the case.
 private struct DecisionTreeCanvas: View {
   let fields: DecisionTreeFields
   let context: ActivityCanvasContext
@@ -170,8 +167,6 @@ private struct DecisionTreeCanvas: View {
     }
   }
 
-  /// The walk code computed from the case, question by question, with the first place the
-  /// learner's walk left it.
   private func review(expected: [String]) -> some View {
     let divergence = DecisionTreeWalk.firstDivergence(expected: expected, walked: path)
     let steps = DecisionTreeWalk.steps(fields, path: expected)
