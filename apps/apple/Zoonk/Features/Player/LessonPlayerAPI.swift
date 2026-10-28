@@ -66,12 +66,6 @@ enum AnswerExplanationOutcome: Hashable, Sendable {
   case failed
 }
 
-enum LessonPlayerAPIError: Error, Equatable {
-  case notFound
-  case unauthorized
-  case network
-}
-
 /// The lesson player's calls to the public API.
 struct LessonPlayerAPI: Sendable {
   private let clients: APIClientFactory
@@ -81,8 +75,8 @@ struct LessonPlayerAPI: Sendable {
   }
 
   func getLesson(id: String, token: String?) async throws -> LessonLoad {
-    let output = try await perform {
-      try await clients.makeClient(token: token).getLibraryLesson(path: .init(lessonId: id))
+    let output = try await clients.perform(token: token) {
+      try await $0.getLibraryLesson(path: .init(lessonId: id))
     }
 
     switch output {
@@ -109,9 +103,9 @@ struct LessonPlayerAPI: Sendable {
             estimatedMinutes: lesson.estimatedMinutes))
       }
     case .notFound, .badRequest:
-      throw LessonPlayerAPIError.notFound
+      throw APIError.notFound
     case .internalServerError, .undocumented:
-      throw LessonPlayerAPIError.network
+      throw APIError.network
     }
   }
 
@@ -123,10 +117,12 @@ struct LessonPlayerAPI: Sendable {
       studySessionId: studySessionId, timeZone: TimeZone.current.identifier)
 
     guard
-      let output = try? await perform({
-        try await clients.makeClient(token: token).createLibraryLessonStart(
-          path: .init(lessonId: id), body: .json(body))
-      })
+      let output = try? await clients.perform(
+        token: token,
+        operation: {
+          try await $0.createLibraryLessonStart(
+            path: .init(lessonId: id), body: .json(body))
+        })
     else {
       return .failure(.failed)
     }
@@ -175,10 +171,12 @@ struct LessonPlayerAPI: Sendable {
       timeZone: TimeZone.current.identifier)
 
     guard
-      let output = try? await perform({
-        try await clients.makeClient(token: token).createStepCheck(
-          path: .init(stepId: stepId), body: .json(body))
-      })
+      let output = try? await clients.perform(
+        token: token,
+        operation: {
+          try await $0.createStepCheck(
+            path: .init(stepId: stepId), body: .json(body))
+        })
     else {
       return .failed
     }
@@ -212,10 +210,12 @@ struct LessonPlayerAPI: Sendable {
       runId: runId, timeZone: TimeZone.current.identifier)
 
     guard
-      let output = try? await perform({
-        try await clients.makeClient(token: token).createLibraryLessonCompletion(
-          path: .init(lessonId: id), body: .json(body))
-      })
+      let output = try? await clients.perform(
+        token: token,
+        operation: {
+          try await $0.createLibraryLessonCompletion(
+            path: .init(lessonId: id), body: .json(body))
+        })
     else {
       return .failed
     }
@@ -245,8 +245,8 @@ struct LessonPlayerAPI: Sendable {
   func getReadiness(id: String, token: String) async throws
     -> Components.Schemas.LessonReadiness.StatusPayload
   {
-    let output = try await perform {
-      try await clients.makeClient(token: token).getLibraryLessonReadiness(
+    let output = try await clients.perform(token: token) {
+      try await $0.getLibraryLessonReadiness(
         path: .init(lessonId: id))
     }
 
@@ -254,21 +254,23 @@ struct LessonPlayerAPI: Sendable {
     case .ok(let response):
       return try response.body.json.status
     case .unauthorized:
-      throw LessonPlayerAPIError.unauthorized
+      throw APIError.unauthorized
     case .notFound, .badRequest:
-      throw LessonPlayerAPIError.notFound
+      throw APIError.notFound
     case .internalServerError, .undocumented:
-      throw LessonPlayerAPIError.network
+      throw APIError.network
     }
   }
 
   /// Writes the lesson now. Only on the learner's tap: it runs AI.
   func writeLesson(id: String, token: String) async -> LessonWritingOutcome {
     guard
-      let output = try? await perform({
-        try await clients.makeClient(token: token).createLibraryLessonGeneration(
-          path: .init(lessonId: id))
-      })
+      let output = try? await clients.perform(
+        token: token,
+        operation: {
+          try await $0.createLibraryLessonGeneration(
+            path: .init(lessonId: id))
+        })
     else {
       return .failed
     }
@@ -300,10 +302,12 @@ struct LessonPlayerAPI: Sendable {
     -> AnswerExplanationOutcome
   {
     guard
-      let output = try? await perform({
-        try await clients.makeClient(token: token).createStepAnswerExplanation(
-          path: .init(stepId: stepId), body: .json(.init(answer: answer)))
-      })
+      let output = try? await clients.perform(
+        token: token,
+        operation: {
+          try await $0.createStepAnswerExplanation(
+            path: .init(stepId: stepId), body: .json(.init(answer: answer)))
+        })
     else {
       return .failed
     }
@@ -326,8 +330,8 @@ struct LessonPlayerAPI: Sendable {
 
   /// The colleagues' names for a challenge, in the case's slot order.
   func getChallengeTeam(lessonId: String, token: String) async -> [String] {
-    let output = try? await perform {
-      try await clients.makeClient(token: token).getChallengeTeam(path: .init(lessonId: lessonId))
+    let output = try? await clients.perform(token: token) {
+      try await $0.getChallengeTeam(path: .init(lessonId: lessonId))
     }
 
     guard case .ok(let response) = output, let team = try? response.body.json else {
@@ -339,8 +343,8 @@ struct LessonPlayerAPI: Sendable {
 
   /// Lesson sounds stay on until the learner turns them off.
   func getSoundsEnabled(token: String) async -> Bool {
-    let output = try? await perform {
-      try await clients.makeClient(token: token).getCurrentUserLearningProfile()
+    let output = try? await clients.perform(token: token) {
+      try await $0.getCurrentUserLearningProfile()
     }
 
     guard case .ok(let response) = output, let profile = try? response.body.json else {
@@ -385,35 +389,5 @@ struct LessonPlayerAPI: Sendable {
         }
       return .limitReached(tier: tier, period: period)
     }
-  }
-
-  private func perform<Output: Sendable>(_ operation: @Sendable () async throws -> Output)
-    async throws -> Output
-  {
-    do {
-      return try await operation()
-    } catch {
-      if isRequestCancellation(error) {
-        throw CancellationError()
-      }
-
-      throw LessonPlayerAPIError.network
-    }
-  }
-
-  private func isRequestCancellation(_ error: Error) -> Bool {
-    if error is CancellationError {
-      return true
-    }
-
-    if let urlError = error as? URLError {
-      return urlError.code == .cancelled
-    }
-
-    if let clientError = error as? ClientError {
-      return isRequestCancellation(clientError.underlyingError)
-    }
-
-    return false
   }
 }

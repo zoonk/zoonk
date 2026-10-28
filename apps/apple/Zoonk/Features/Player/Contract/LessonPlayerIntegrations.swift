@@ -109,6 +109,12 @@ struct LessonCompletionHook: Sendable {
   let lessonCompleted: @MainActor @Sendable (LessonCompletionEvent) -> Void
 
   static let none = LessonCompletionHook(lessonCompleted: { _ in })
+
+  /// Refreshes what a finished lesson changed, as main revalidates after `completeLibraryLesson`:
+  /// the learner's progress (the summary, Today, statistics, chapters) and their learner model.
+  static func invalidating(_ cache: AppCache) -> LessonCompletionHook {
+    LessonCompletionHook { _ in cache.invalidate([.userProgress, .learnerModel]) }
+  }
 }
 
 extension EnvironmentValues {

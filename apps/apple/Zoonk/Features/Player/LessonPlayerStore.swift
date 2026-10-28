@@ -87,7 +87,7 @@ final class LessonPlayerStore {
       }
     } catch is CancellationError {
       return
-    } catch LessonPlayerAPIError.notFound {
+    } catch APIError.notFound {
       screen = .notFound
     } catch {
       screen = .failed

@@ -11,6 +11,7 @@ struct ZoonkApp: App {
   @State private var subscriptions: AppStoreSubscriptionStore
   private let cache: AppCache
   private let initiallyPresentsAccount: Bool
+  private let lessonPlayerAPI: LessonPlayerAPI
   private let privateImages: PrivateImageLoader
 
   init() {
@@ -26,6 +27,7 @@ struct ZoonkApp: App {
     cache = dependencies.cache
     _courseCatalog = State(initialValue: dependencies.courseCatalogStore)
     _learnerSummary = State(initialValue: dependencies.learnerSummaryStore)
+    lessonPlayerAPI = dependencies.lessonPlayerAPI
     _myCourses = State(initialValue: dependencies.myCoursesStore)
     _practice = State(initialValue: dependencies.practiceStore)
     privateImages = dependencies.privateImageLoader
@@ -52,6 +54,8 @@ struct ZoonkApp: App {
         .environment(session)
         .environment(subscriptions)
         .environment(\.privateImageLoader, privateImages)
+        .environment(\.lessonPlayerAPI, lessonPlayerAPI)
+        .environment(\.lessonCompletionHook, .invalidating(cache))
         .onOpenURL { url in
           session.handleGoogleSignInURL(url)
         }

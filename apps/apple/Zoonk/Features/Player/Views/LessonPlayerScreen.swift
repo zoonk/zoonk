@@ -77,7 +77,12 @@ private struct LessonPlayerContent: View {
             suggestions: lesson.tutorSuggestions))
       }
     }
-    .task(id: session.authenticatedSession) {
+    // A lesson opened while the saved session is still being checked waits for it, so it reads once.
+    .task(id: session.state == .restoring ? nil : session.authenticatedSession?.bearerToken ?? "") {
+      guard session.state != .restoring else {
+        return
+      }
+
       store.isUnplayable = { [activityRenderers] step in
         guard case .activity(let content) = step.content, case .interaction = content.check else {
           return false
