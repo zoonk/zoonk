@@ -44,7 +44,7 @@ describe(getGoalResumePreview, () => {
     const { goal } = await pausedGoal();
 
     await expect(getGoalResumePreview(goal.id)).resolves.toStrictEqual({
-      preview: { effect: null, feasibility: null, ready: true, unchanged: true },
+      preview: false,
       status: "ready",
     });
   });
@@ -59,8 +59,8 @@ describe(getGoalResumePreview, () => {
     const result = await getGoalResumePreview(goal.id);
     const preview = result.status === "ready" ? result.preview : null;
 
-    // The kept end of the first phase moves back to its lessons: the preview names it.
-    expect(preview).toMatchObject({ effect: null, ready: true, unchanged: false });
+    // The read says confirmation is needed; the resume computes the actual dates.
+    expect(preview).toBe(true);
 
     await expect(readPlan(plan.id)).resolves.toStrictEqual(shown);
 

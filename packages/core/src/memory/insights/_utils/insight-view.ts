@@ -1,10 +1,6 @@
 import { type MemoryInsight, prisma } from "@zoonk/db";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
-import { getAnswerTimeZone } from "../../../learner/_utils/owned-goal";
-import { getRequestInstant } from "../../../learner/facts/request-instant";
-import { parsePlanChangePayload } from "../../../plans/_utils/plan-change-payload";
-import { isCurrentPlanPreview } from "../../../plans/_utils/plan-preview-basis";
+import { changeGoalSelect, toPlanChangeView } from "../../../plans/_utils/plan-change-view";
 import { type MemoryInsightView } from "../../memory-contract";
 
 /** What accepting an insight needs, stored with it: the suggested time or the plan change. */
@@ -38,31 +34,18 @@ export async function toMemoryInsightView(
 
   const change = planChangeId
     ? await prisma.planChange.findFirst({
-        include: { plan: { include: { goal: true } } },
+        include: { plan: { select: { goal: { select: changeGoalSelect }, version: true } } },
         where: { id: planChangeId, plan: { goal: { userId: insight.userId } } },
       })
     : null;
 
-  const quoted = change && parsePlanChangePayload(change.payload);
-
-  if (change?.status === "proposed") {
-    const timeZone = getAnswerTimeZone({ goal: change.plan.goal });
-    const today = getDateInTimeZone({ date: await getRequestInstant(), timeZone });
-
-    if (
-      !quoted?.effect ||
-      !isCurrentPlanPreview({
-        basis: quoted.previewBasis,
-        context: { plan: change.plan, timeZone, today },
-      })
-    ) {
-      return null;
-    }
-  }
+  const view =
+    change &&
+    (await toPlanChangeView({ change, goal: change.plan.goal, planVersion: change.plan.version }));
 
   const planChange =
-    change && (change.status === "proposed" || change.status === "applied")
-      ? { effect: quoted?.effect ?? null, id: change.id, status: change.status }
+    change && view && (change.status === "proposed" || change.status === "applied")
+      ? { canApply: view.canApply, effect: view.effect, id: change.id, status: change.status }
       : null;
 
   return {

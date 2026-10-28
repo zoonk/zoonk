@@ -4,10 +4,7 @@ import { computeChange } from "./_utils/compute-change";
 import { foldChangeAreas } from "./_utils/fold-part-areas";
 import { findOwnedPlan } from "./_utils/owned-plan";
 import { applyChangeOperations, loadGraphPartAreas } from "./_utils/part-areas";
-import { writePlanMetadata } from "./_utils/plan-metadata-write";
 import { assertPlanTargetDates } from "./_utils/plan-target-dates";
-import { prepareProposalPreviews } from "./_utils/prepare-plan-write";
-import { revalidatePlanTags } from "./_utils/replan";
 import { withPlanRetry } from "./plan-conflict";
 import { type PlanChangeInput } from "./plan-contract";
 import { type PlanChangePreview } from "./plan-preview-contract";
@@ -64,30 +61,11 @@ export async function previewPlanChange({
       return { preview: BUILDING, status: "ready" };
     }
 
-    const { baseline, computed, effect, unchanged } = await computeChange({
+    const { computed, effect, unchanged } = await computeChange({
       context,
       operations: result.operations,
       state: result.state,
     });
-
-    const previews = await prepareProposalPreviews({ baseline, context });
-
-    if (previews.length > 0) {
-      await writePlanMetadata({
-        context,
-        write: (tx) =>
-          Promise.all(
-            previews.map((preview) =>
-              tx.planChange.updateMany({
-                data: { payload: preview.payload },
-                where: { id: preview.id, status: "proposed" },
-              }),
-            ),
-          ),
-      });
-
-      revalidatePlanTags(context.goal.userId);
-    }
 
     const { coreFits, coveredShare, fits, measure } = computed.feasibility;
 

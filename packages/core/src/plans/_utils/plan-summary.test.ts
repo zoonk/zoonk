@@ -30,6 +30,19 @@ const coverage: SelectedCoverage = {
 };
 
 const summary: PlanSummary = {
+  advice: {
+    feasibility: {
+      coreFits: true,
+      coveredShare: 1,
+      deadline: null,
+      deepensMostAsked: false,
+      fits: true,
+      measure: "goal",
+      timeCovers: true,
+    },
+    fitOffer: null,
+    fullCourseEndDate: null,
+  },
   basis: {
     layoutInputVersion: 4,
     layoutStudyDay: "2026-10-14",
@@ -38,7 +51,7 @@ const summary: PlanSummary = {
     timeZone: "America/Sao_Paulo",
     userId: plan.userId,
   },
-  schemaVersion: 2,
+  schemaVersion: 3,
   selected: {
     bases: null,
     coverage,
@@ -89,7 +102,7 @@ describe(readPlanSummary, () => {
 });
 
 describe(readFreshPlanSummary, () => {
-  it("checks the session's input version and study day against a layout summary", () => {
+  it("checks the session's saved plan and study day against a layout summary", () => {
     const basis = {
       layoutInputVersion: 4,
       layoutStudyDay: "2026-10-14",
@@ -105,7 +118,7 @@ describe(readFreshPlanSummary, () => {
 
     expect(
       readFreshPlanSummary({ basis: { ...basis, layoutInputVersion: 5 }, value: summary }),
-    ).toBeNull();
+    ).toStrictEqual(summary);
 
     expect(
       readFreshPlanSummary({ basis: { ...basis, layoutStudyDay: "2026-10-15" }, value: summary }),

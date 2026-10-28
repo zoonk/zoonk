@@ -1,6 +1,6 @@
 import "server-only";
 import { loadCatchUpItems } from "../../sessions/_utils/catch-up";
-import { readEarlierWork } from "./left-work";
+import { selectLeftWork } from "./left-work";
 import { type PlanContext } from "./plan-context";
 import { readPlanSummary } from "./plan-summary";
 
@@ -10,7 +10,7 @@ export async function loadPlanReadProjection({ context }: { context: PlanContext
 
   return {
     catchUp: [
-      ...new Map([...readEarlierWork(context), ...catchUp].map((item) => [item.id, item])).values(),
+      ...new Map([...selectLeftWork(context), ...catchUp].map((item) => [item.id, item])).values(),
     ],
     context,
     summary: readPlanSummary({

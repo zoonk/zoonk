@@ -4,6 +4,7 @@ import { toPlanChangeModelResult } from "./tutor-plan-change-result";
 
 const CHANGE: PlanChangeView = {
   behind: null,
+  canApply: true,
   canUndo: false,
   createdAt: "2026-10-08T12:00:00.000Z",
   days: null,

@@ -1,5 +1,5 @@
-import { type TransactionClient } from "@zoonk/db";
 import "server-only";
+import { type TransactionClient } from "@zoonk/db";
 import {
   type OfficialExamDate,
   findOfficialDateConflict,
@@ -125,6 +125,7 @@ async function commitEdit({
         state: computed.state,
       },
     },
+    replacement: { applied: true, operations, source },
   });
 
   if (followToday) {

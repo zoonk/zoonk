@@ -147,14 +147,7 @@ export async function writePlan({
 
   await creditFinishedNewLessons({ context, plan, tx });
 
-  await Promise.all(
-    (plan.previews ?? []).map((preview) =>
-      tx.planChange.updateMany({
-        data: { payload: preview.payload },
-        where: { id: preview.id, status: "proposed" },
-      }),
-    ),
-  );
+  await saveProposalPreviews({ previews: plan.previews, tx });
 }
 
 /**
@@ -196,15 +189,26 @@ export async function savePlanInputsKey({
       throw new PlanConflictError();
     }
 
-    await Promise.all(
-      previews.map((preview) =>
-        tx.planChange.updateMany({
-          data: { payload: preview.payload },
-          where: { id: preview.id, status: "proposed" },
-        }),
-      ),
-    );
+    await saveProposalPreviews({ previews, tx });
 
     await extraWrites?.(tx);
   });
+}
+
+/** Persist the prepared survivor quotes through one write path. */
+export async function saveProposalPreviews({
+  tx,
+  previews = [],
+}: {
+  tx: TransactionClient;
+  previews?: PlanWrite["previews"];
+}): Promise<void> {
+  await Promise.all(
+    previews.map((preview) =>
+      tx.planChange.updateMany({
+        data: { payload: preview.payload },
+        where: { id: preview.id, status: "proposed" },
+      }),
+    ),
+  );
 }

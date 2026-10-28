@@ -1,6 +1,9 @@
 import "server-only";
 import { type Goal, type PlanChange, prisma } from "@zoonk/db";
+import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getExamDocument } from "../../exams/exam-document";
+import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { getRequestInstant } from "../../learner/facts/request-instant";
 import { OWN_LEVEL_SOURCE } from "../own-level-contract";
 import { type PlanChangeView } from "../plan-view-contract";
 import { addDays } from "../planner/plan-calendar";
@@ -44,21 +47,39 @@ export function canUndoChange({
 }
 
 /** The plan's goal as a change's view reads it: what its exam's documents are. */
-export const changeGoalSelect = { kind: true, targetLanguage: true } as const;
+export const changeGoalSelect = { kind: true, targetLanguage: true, timezone: true } as const;
 
-export function toPlanChangeView({
+export async function toPlanChangeView({
   change,
   goal,
   planVersion,
+  now,
+  timeZone,
 }: {
+  now?: Date;
+  timeZone?: string | null;
   change: PlanChange;
-  goal: Pick<Goal, "kind" | "targetLanguage">;
+  goal: Pick<Goal, "kind" | "targetLanguage" | "timezone">;
   planVersion: number;
-}): PlanChangeView {
+}): Promise<PlanChangeView> {
   const payload = parsePlanChangePayload(change.payload);
+  const zone = getAnswerTimeZone({ goal, timeZone });
+
+  const canApply =
+    change.status === "proposed" &&
+    payload.effect !== null &&
+    isCurrentPlanPreview({
+      basis: payload.previewBasis,
+      context: {
+        plan: { version: planVersion },
+        timeZone: zone,
+        today: getDateInTimeZone({ date: now ?? (await getRequestInstant()), timeZone: zone }),
+      },
+    });
 
   return {
     behind: payload.behind,
+    canApply,
     canUndo: canUndoChange({ change, planVersion }),
     createdAt: change.createdAt.toISOString(),
     days: payload.days,
@@ -86,7 +107,7 @@ export async function loadPlanChangeViews({
   planId,
   planVersion,
 }: {
-  goal: Pick<Goal, "kind" | "targetLanguage">;
+  goal: Pick<Goal, "kind" | "targetLanguage" | "timezone">;
   now: Date;
   planId: string;
   planVersion: number;
@@ -101,16 +122,11 @@ export async function loadPlanChangeViews({
     },
   });
 
-  return changes
-    .filter(
-      (change) =>
-        change.status !== "proposed" ||
-        (parsePlanChangePayload(change.payload).effect !== null &&
-          isCurrentPlanPreview({
-            basis: parsePlanChangePayload(change.payload).previewBasis,
-            context,
-          })),
-    )
-    .toSorted((a, b) => Number(b.status === "proposed") - Number(a.status === "proposed"))
-    .map((change) => toPlanChangeView({ change, goal, planVersion }));
+  return Promise.all(
+    changes
+      .toSorted((a, b) => Number(b.status === "proposed") - Number(a.status === "proposed"))
+      .map((change) =>
+        toPlanChangeView({ change, goal, now, planVersion, timeZone: context.timeZone }),
+      ),
+  );
 }

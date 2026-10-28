@@ -46,6 +46,7 @@ export function FitLessonsSuggestion({ item }: { item: SlotItem }) {
 
   return (
     <PlanOfferSuggestion
+      canApply={offer?.canApply ?? false}
       actions={
         <SuggestionAction onClick={() => dismiss(item.key)} variant="outline">
           {t("Not now")}

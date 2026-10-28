@@ -6,6 +6,7 @@ import { isUndoableChange } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
 import { savePlanSnapshot } from "./plan-snapshot";
 import { preparePlanWrite } from "./prepare-plan-write";
+import { type ProposalReplacement } from "./replace-waiting-proposals";
 import {
   type ComputedPlan,
   type PlanChangeRecord,
@@ -23,7 +24,9 @@ export async function commitPlan({
   phaseDates,
   restorable = null,
   revalidation = "now",
+  replacement,
 }: {
+  replacement?: ProposalReplacement;
   change: PlanChangeRecord | null;
   computed: ComputedPlan;
   context: PlanContext;
@@ -37,6 +40,7 @@ export async function commitPlan({
   const prepared = await preparePlanWrite({
     computed,
     context: { ...context, plan: { ...context.plan, inputVersion: context.plan.inputVersion + 1 } },
+    replacement,
   });
 
   const projected = {

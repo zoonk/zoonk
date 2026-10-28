@@ -1,5 +1,6 @@
 import { planChangeInputSchema } from "@zoonk/core/plans/contract";
 import { planChangePreviewSchema } from "@zoonk/core/plans/preview-contract";
+import { z } from "zod";
 import { goalPathParamsSchema } from "../schemas/paths";
 import { planDateChangeInvalidResponse } from "../schemas/plan-errors";
 import {
@@ -38,12 +39,12 @@ export const planPreviewPaths = {
   "/goals/{goalId}/plan/resume-preview": {
     get: {
       description:
-        "What resuming a paused goal would do to its plan, with nothing saved. A pause that left nothing behind (resumed the same day, or over rest days only) keeps the plan as it is (`unchanged`). When the pause left lessons on days now past, resuming plans again from today, as `PATCH /goals/{goalId}` with `status: active` does: show its effect where the learner resumes. A goal that isn't paused is `unchanged`.",
+        "Whether resuming a paused goal needs confirmation because lessons were planned for the paused days. The read saves nothing. PATCH /goals/{goalId} with status active computes and saves the actual move from current inputs. False when the plan stays as it is or the goal is not paused.",
       operationId: "previewGoalResume",
       requestParams: { path: goalPathParamsSchema },
       responses: {
         "200": {
-          content: { "application/json": { schema: planChangePreviewSchema } },
+          content: { "application/json": { schema: z.boolean() } },
           description: "What resuming would do",
         },
         "400": validationErrorResponse,

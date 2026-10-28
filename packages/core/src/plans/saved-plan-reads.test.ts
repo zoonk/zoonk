@@ -6,10 +6,10 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { revalidateTag } from "next/cache";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { getGoalsCacheTag } from "../cache/tags";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import { getLessonQuestion } from "../lesson-questions/get-lesson-question";
 import { getCurrentMemoryInsight } from "../memory/insights/get-current-memory-insight";
@@ -17,13 +17,16 @@ import { getProgressView } from "../view-models/progress/get-progress-view";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { proposeChange } from "./_utils/apply-plan-change";
+import * as changeComputation from "./_utils/compute-change";
 import { loadPlanAtToken } from "./_utils/plan-token";
 import { loadTodayPlanChange } from "./_utils/today-plan-change";
+import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
 import { getGoalResumePreview } from "./get-goal-resume-preview";
 import * as planner from "./planner/build-plan";
 import { previewPlanChange } from "./preview-plan-change";
+import { refreshGoalPlan } from "./refresh-goal-plan";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
 
@@ -73,7 +76,7 @@ describe("saved plan reads", () => {
     vi.useRealTimers();
   });
 
-  it("stores a proposal's preview at the current input token and local day", async () => {
+  it("stores a proposal's preview at the saved plan version and local day", async () => {
     const { goal } = await setup();
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
 
@@ -82,17 +85,12 @@ describe("saved plan reads", () => {
     });
 
     expect(proposal.payload).toMatchObject({
-      previewBasis: {
-        inputVersion: plan.inputVersion,
-        planVersion: plan.version,
-        studyDay: "2020-09-28",
-        timeZone: "UTC",
-      },
+      previewBasis: { planVersion: plan.version, studyDay: "2020-09-28", timeZone: "UTC" },
     });
   });
 
   it.each(["input token", "planning day"])(
-    "hides stale actionable quotes on every surface after the %s changes, until a preview POST",
+    "keeps card text after the %s changes and hides only a stale Apply",
     async (changed) => {
       const { goal, user } = await setup();
 
@@ -145,24 +143,81 @@ describe("saved plan reads", () => {
       const read = await getGoalPlan(goal.id);
       expect(read).toMatchObject({ status: "ready" });
 
+      const canApply = changed === "input token";
+
       expect(
-        read.status === "ready" && read.plan.changes.some((change) => change.id === proposal.id),
-      ).toBe(false);
+        read.status === "ready" && read.plan.changes.find((change) => change.id === proposal.id),
+      ).toMatchObject({ canApply, id: proposal.id });
 
       await expect(
         loadTodayPlanChange({ goal, now: new Date(), timeZone: "UTC" }),
-      ).resolves.toBeNull();
+      ).resolves.toMatchObject({ canApply, id: proposal.id });
 
       await expect(getCurrentMemoryInsight({ goalId: goal.id })).resolves.toMatchObject({
-        insight: null,
+        insight: { planChange: { canApply, id: proposal.id } },
       });
 
       await expect(getLessonQuestion({ questionId: question.id })).resolves.toMatchObject({
-        question: { planChange: null },
+        question: { planChange: { canApply, id: proposal.id } },
         status: "ready",
       });
 
       expect(build).not.toHaveBeenCalled();
+    },
+  );
+
+  it("R32 skips builds and writes when only an input token moved", async () => {
+    const { goal, user } = await setup();
+
+    await prisma.$transaction((tx) =>
+      markLearnerChanged(tx, { planInputs: true, userId: user.id }),
+    );
+
+    const build = vi.spyOn(planner, "buildPlan");
+
+    const refreshed = await countDatabaseStatements(() =>
+      refreshGoalPlan({ goalId: goal.id, pace: "sampled" }),
+    );
+
+    expect(refreshed.result).toMatchObject({ status: "unchanged" });
+    expect(build).toHaveBeenCalledTimes(0);
+    expect(refreshed.writes).toBe(0);
+  });
+
+  it("does not quote the waiting time proposal a time write replaces", async () => {
+    const { goal } = await setup();
+    const quote = vi.spyOn(changeComputation, "computeChange");
+
+    await expect(
+      changeGoalPlan({
+        goalId: goal.id,
+        input: { operations: [{ kind: "setDailyMinutes", minutes: 15 }] },
+      }),
+    ).resolves.toMatchObject({ status: "applied" });
+
+    expect(
+      quote.mock.calls.filter(([input]) =>
+        input.operations.some(
+          (operation) => operation.kind === "setDailyMinutes" && operation.minutes === 5,
+        ),
+      ),
+    ).toHaveLength(0);
+
+    await expect(
+      prisma.planChange.count({ where: { plan: { goalId: goal.id }, status: "replaced" } }),
+    ).resolves.toBeGreaterThan(0);
+  });
+
+  it.each([0, 1])(
+    "a preview POST leaves waiting quotes and tags untouched after %s days",
+    async (days) => {
+      const { goal } = await setup();
+      vi.setSystemTime(new Date(NOW.getTime() + days * 86_400_000));
+
+      const before = await prisma.planChange.findMany({
+        orderBy: { id: "asc" },
+        where: { plan: { goalId: goal.id } },
+      });
 
       vi.mocked(revalidateTag).mockClear();
 
@@ -171,23 +226,18 @@ describe("saved plan reads", () => {
         input: { operations: [{ kind: "setDailyMinutes", minutes: 5 }], timeZone: "UTC" },
       });
 
-      expect(revalidateTag).toHaveBeenCalledWith(getGoalsCacheTag(user.id), { expire: 0 });
+      expect(revalidateTag).not.toHaveBeenCalled();
 
-      const renewed = await loadTodayPlanChange({ goal, now: new Date(), timeZone: "UTC" });
-      expect(renewed?.id).toBe(proposal.id);
-
-      await expect(getLessonQuestion({ questionId: question.id })).resolves.toMatchObject({
-        question: { planChange: { effect: renewed?.effect, id: proposal.id } },
-        status: "ready",
-      });
-
-      await expect(getCurrentMemoryInsight({ goalId: goal.id })).resolves.toMatchObject({
-        insight: { planChange: { effect: renewed?.effect, id: proposal.id } },
-      });
+      await expect(
+        prisma.planChange.findMany({
+          orderBy: { id: "asc" },
+          where: { plan: { goalId: goal.id } },
+        }),
+      ).resolves.toStrictEqual(before);
     },
   );
 
-  it("lists an unfinished lesson from the last session even when the saved plan already dates it today", async () => {
+  it("excludes a previous session lesson that the saved plan dates today", async () => {
     const { goal, user } = await setup();
 
     const item = await prisma.planItem.findFirstOrThrow({
@@ -216,7 +266,7 @@ describe("saved plan reads", () => {
 
     await expect(getTodayView({ goalId: goal.id })).resolves.toMatchObject({
       status: "ready",
-      today: { earlierWork: expect.arrayContaining([{ id: item.id, title: item.titleSnapshot }]) },
+      today: { earlierWork: [] },
     });
   });
 

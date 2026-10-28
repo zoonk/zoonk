@@ -31,12 +31,12 @@ export function hasOverduePlanWork({ items, today }: Pick<PlanContext, "items" |
  * the plan's order: lessons and challenges due before today and still to do, and lessons the last
  * study day gave the learner (`givenLessonIds`) that the plan has after today.
  */
-function selectLeftWork<Item extends LeftWorkItem>({
-  givenLessonIds,
+export function selectLeftWork<Item extends LeftWorkItem>({
+  givenLessonIds = new Set<string>(),
   items,
   today,
 }: {
-  givenLessonIds: ReadonlySet<string>;
+  givenLessonIds?: ReadonlySet<string>;
   items: readonly Item[];
   today: Date;
 }): (Item & { scheduledFor: Date })[] {
@@ -86,11 +86,4 @@ export async function loadLeftWorkSelection(context: PlanContext) {
 export async function loadLeftWork(context: PlanContext): Promise<PlanContext["items"]> {
   const { left } = await loadLeftWorkSelection(context);
   return left;
-}
-
-/** Earlier unfinished saved work, in its saved order; screens make no new allocation. */
-export function readEarlierWork(
-  context: Pick<PlanContext, "items" | "today">,
-): PlanContext["items"] {
-  return selectLeftWork({ givenLessonIds: new Set(), items: context.items, today: context.today });
 }

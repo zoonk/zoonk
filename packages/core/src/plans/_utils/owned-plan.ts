@@ -107,7 +107,7 @@ export async function loadPlanChangeView(changeId: string): Promise<PlanChangeVi
   });
 
   return foldChangeAreas({
-    change: toPlanChangeView({ change, goal, planVersion: version }),
+    change: await toPlanChangeView({ change, goal, planVersion: version }),
     partAreas,
   });
 }

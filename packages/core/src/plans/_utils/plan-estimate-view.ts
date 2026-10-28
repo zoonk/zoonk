@@ -1,9 +1,7 @@
 import { type PlanView } from "../plan-view-contract";
-import { getFullCourseEnd } from "../planner/after-exam";
 import { toIsoDate } from "../planner/plan-calendar";
 import { type PlanReadContext } from "./plan-read-projection";
 import { readPlanSummary } from "./plan-summary";
-import { type ComputedPlan } from "./replan";
 
 export const MINUTES_PER_HOUR = 60;
 
@@ -31,32 +29,10 @@ function getShownEnd(context: PlanReadContext): string | null {
  * learner finishes it all after the exam once the plan holds all of it (see `getFullCourseEnd`). A
  * plan without a graph (a seeded one) keeps the estimate it was saved with.
  */
-export function buildEstimateView({
-  computed,
-  context,
-}: {
-  computed: ComputedPlan | null;
-  context: PlanReadContext;
-}): PlanView["estimate"] {
+export function buildEstimateView({ context }: { context: PlanReadContext }): PlanView["estimate"] {
   const pace = context.state.settings.pace;
   const endDate = getShownEnd(context);
   const fullCourse = context.goal.kind === "exam" && context.state.settings.fullCourse;
-  const targetDate = context.goal.targetDate && toIsoDate(context.goal.targetDate);
-
-  if (computed) {
-    const { estimate } = computed.built;
-
-    return {
-      endDate,
-      fullCourseEndDate: fullCourse
-        ? getFullCourseEnd({ built: computed.built, end: endDate, targetDate })
-        : null,
-      pace,
-      remainingHours: toHours(estimate.remainingMinutes),
-      totalHours: toHours(estimate.totalMinutes),
-    };
-  }
-
   const { items } = context;
   const totalHours = context.plan.estimateHours ?? 0;
 
@@ -70,7 +46,7 @@ export function buildEstimateView({
       ? (readPlanSummary({
           plan: { ...context.plan, userId: context.goal.userId },
           value: context.plan.summary,
-        })?.advice?.fullCourseEndDate ?? null)
+        })?.advice.fullCourseEndDate ?? null)
       : null,
     pace,
     remainingHours: toHours(remainingMinutes),

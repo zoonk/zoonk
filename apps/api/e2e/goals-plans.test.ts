@@ -2,7 +2,6 @@ import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { planChangedSinceSchema } from "@zoonk/core/plans/changed-since-contract";
-import { planChangePreviewSchema } from "@zoonk/core/plans/preview-contract";
 import {
   planTimeAdviceSchema,
   planTimeToCoverSchema,
@@ -19,6 +18,7 @@ import {
 } from "@zoonk/testing/fixtures/library-lessons";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { z } from "zod";
 import {
   goalCreateResponseSchema,
   goalListResponseSchema,
@@ -620,13 +620,13 @@ test.describe("Goals and plans API", () => {
     const preview = async () =>
       readBody({
         response: await apiContext.get(`/v1/goals/${goal.id}/plan/resume-preview`),
-        schema: planChangePreviewSchema,
+        schema: z.boolean(),
       });
 
     await apiContext.patch(`/v1/goals/${goal.id}`, { data: { status: "paused" } });
 
     // Resumed the day it paused, the plan stays as it is.
-    await expect(preview()).resolves.toMatchObject({ ready: true, unchanged: true });
+    await expect(preview()).resolves.toBe(false);
 
     // Days went by while it was paused: their lessons are now on days past.
     const items = await prisma.planItem.findMany({ where: { planId: plan.id } });
@@ -640,7 +640,7 @@ test.describe("Goals and plans API", () => {
       ),
     );
 
-    await expect(preview()).resolves.toMatchObject({ ready: true, unchanged: false });
+    await expect(preview()).resolves.toBe(true);
 
     const [resumed, hidden] = await Promise.all([
       apiContext.patch(`/v1/goals/${goal.id}`, { data: { status: "active" } }),

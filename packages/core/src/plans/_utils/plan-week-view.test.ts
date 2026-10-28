@@ -37,7 +37,6 @@ function buildWeek({
     calendar: { dailyMinutes: 30, firstDay: null, lightWeeks: [], weekdayMinutes: null },
     exam: null,
     items,
-    minutes: new Map(),
     skillAreas: new Map([["skill-stock", "Stock market"]]),
     startDate,
     studiedDates: new Set(studiedDates),

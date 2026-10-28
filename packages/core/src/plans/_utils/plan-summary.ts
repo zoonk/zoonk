@@ -13,7 +13,7 @@ import {
 /** Floating-point sums of minutes must not read a covered skill as short. */
 const EPSILON = 1e-6;
 
-const PLAN_SUMMARY_SCHEMA_VERSION = 2;
+const PLAN_SUMMARY_SCHEMA_VERSION = 3;
 
 /**
  * The stored plan a summary describes: its owner, plan and version, which make it valid, and the
@@ -33,28 +33,25 @@ const planSummaryBasisSchema = z
 /** The facts of the one selected build a layout posts with the plan it saves (see `readPlanSummary`). */
 export const planSummarySchema = z
   .object({
-    advice: z
-      .object({
-        feasibility: z.object({
-          coreFits: z.boolean(),
-          coveredShare: z.number(),
-          deadline: z.iso.date().nullable(),
-          deepensMostAsked: z.boolean(),
+    advice: z.object({
+      feasibility: z.object({
+        coreFits: z.boolean(),
+        coveredShare: z.number(),
+        deadline: z.iso.date().nullable(),
+        deepensMostAsked: z.boolean(),
+        fits: z.boolean(),
+        measure: z.enum(["exam", "goal"]),
+        timeCovers: z.boolean(),
+      }),
+      fitOffer: z
+        .object({
+          effect: planEffectSchema,
           fits: z.boolean(),
-          measure: z.enum(["exam", "goal"]),
-          timeCovers: z.boolean(),
-        }),
-        fitOffer: z
-          .object({
-            effect: planEffectSchema,
-            fits: z.boolean(),
-            operations: planChangeInputSchema.shape.operations,
-          })
-          .nullable(),
-        fullCourseEndDate: z.iso.date().nullable(),
-      })
-      .nullable()
-      .optional(),
+          operations: planChangeInputSchema.shape.operations,
+        })
+        .nullable(),
+      fullCourseEndDate: z.iso.date().nullable(),
+    }),
     basis: planSummaryBasisSchema,
     schemaVersion: z.literal(PLAN_SUMMARY_SCHEMA_VERSION),
     selected: selectedSummarySchema,
@@ -98,11 +95,14 @@ export function readPlanSummary({
 export function toPlanSummary({
   context,
   selected,
+  advice,
 }: {
+  advice: PlanSummary["advice"];
   context: Pick<PlanContext, "goal" | "plan" | "timeZone" | "today">;
   selected: SelectedSummary;
 }): PlanSummary {
   return {
+    advice,
     basis: {
       layoutInputVersion: context.plan.inputVersion,
       layoutStudyDay: toIsoDate(context.today),
@@ -239,6 +239,20 @@ export function reduceRestoredSummary({
   return reduction.kind === "reduced" ? reduction.summary : restored;
 }
 
+/** One basis for saved-plan summaries and quote freshness. */
+export function getPlanSummaryBasis(
+  context: Pick<PlanContext, "goal" | "plan" | "timeZone" | "today">,
+): PlanSummary["basis"] {
+  return {
+    layoutInputVersion: context.plan.inputVersion,
+    layoutStudyDay: toIsoDate(context.today),
+    planId: context.plan.id,
+    planVersion: context.plan.version,
+    timeZone: context.timeZone,
+    userId: context.goal.userId,
+  };
+}
+
 /** The session reader's complete basis must match before it may skip a selected build. */
 export function readFreshPlanSummary({
   basis,
@@ -253,7 +267,6 @@ export function readFreshPlanSummary({
   });
 
   return summary &&
-    summary.basis.layoutInputVersion === basis.layoutInputVersion &&
     summary.basis.layoutStudyDay === basis.layoutStudyDay &&
     summary.basis.timeZone === basis.timeZone
     ? summary

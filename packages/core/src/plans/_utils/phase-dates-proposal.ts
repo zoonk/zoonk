@@ -126,6 +126,7 @@ async function loadPhaseDatesChanges(
   return changes.map((change) => ({
     effect: parsePlanChangePayload(change.payload).effect,
     id: change.id,
+    payload: change.payload,
     status: change.status,
   }));
 }
@@ -225,6 +226,18 @@ export async function preparePhaseDatesProposal({
       data: { status: "replaced" },
       where: { id: { in: stale }, status: "proposed" },
     });
+
+    if (current) {
+      await tx.planChange.updateMany({
+        data: {
+          payload: toPlanChangePayload({
+            ...parsePlanChangePayload(current.payload),
+            previewBasis: getPlanPreviewBasis(context),
+          }),
+        },
+        where: { id: current.id, status: "proposed" },
+      });
+    }
 
     if (effect && !kept && !current) {
       await tx.planChange.create({

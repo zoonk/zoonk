@@ -89,15 +89,6 @@ export const planEffectSchema = z.object({
 
 const planChangePayloadSchema = z.object({
   /**
-   * When the learner said "Got it" to an applied change: the plan stops showing it. Null until then,
-   * and for proposals.
-   */
-  /** Replay binding for an acknowledged computed Today notice, never a client-supplied row ID. */
-  acknowledgedRead: z
-    .object({ inputVersion: z.number().int(), studyDay: z.iso.date(), version: z.number().int() })
-    .strict()
-    .optional(),
-  /**
    * For `missedDays`: falling behind made the plan cover less of its goal by its date (see
    * `FallingBehind`), so Today asks what the learner wants. Null when the date isn't at risk.
    */
@@ -126,6 +117,8 @@ const planChangePayloadSchema = z.object({
    * back to waiting, as it was before Apply (see `undoChange`).
    */
   fromProposal: z.boolean().default(false),
+  /** The quality hold whose changed plan IDs this loss record keeps for a durable refresh retry. */
+  lessonHoldKey: z.string().optional(),
   /**
    * For `testedOut`: the lessons it skipped as every screen counts them (`countLessons`, a stand-in
    * the lessons the plan taught in its place), so Today's "We skipped 235 lessons you already know"

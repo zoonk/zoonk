@@ -161,6 +161,7 @@ function useAnswer({
 function ChangeActions({
   answer,
   canUndo,
+  canApply,
   document,
   isPending,
   overridesNotice,
@@ -168,6 +169,7 @@ function ChangeActions({
 }: {
   answer: (status: Decision) => void;
   canUndo: boolean;
+  canApply: boolean;
   document: PlanChangeView["examDocument"];
   isPending: boolean;
   overridesNotice: boolean;
@@ -179,15 +181,19 @@ function ChangeActions({
   if (status === "proposed") {
     return (
       <div className="flex gap-2">
-        <Button
-          className="min-w-0 flex-1"
-          disabled={isPending}
-          focusableWhenDisabled
-          onClick={() => answer("applied")}
-          size="sm"
-        >
-          <span className="truncate">{overridesNotice ? t("Use my date anyway") : t("Apply")}</span>
-        </Button>
+        {canApply && (
+          <Button
+            className="min-w-0 flex-1"
+            disabled={isPending}
+            focusableWhenDisabled
+            onClick={() => answer("applied")}
+            size="sm"
+          >
+            <span className="truncate">
+              {overridesNotice ? t("Use my date anyway") : t("Apply")}
+            </span>
+          </Button>
+        )}
         <Button
           className="min-w-0 flex-1"
           disabled={isPending}
@@ -285,6 +291,7 @@ export function TutorPlanChange({
 
       <ChangeActions
         answer={answer}
+        canApply={change.canApply}
         canUndo={change.canUndo}
         document={change.examDocument}
         isPending={isPending}

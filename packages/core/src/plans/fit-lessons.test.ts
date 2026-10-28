@@ -3,6 +3,7 @@ import { goalWithBasesFixture } from "@zoonk/testing/fixtures/plan-bases";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
 import {
   AHEAD_START,
   aheadPlanFixture,
@@ -39,7 +40,7 @@ describe("lessons the learner's own time fits", () => {
   });
 
   it("are offered at the learner's time once it covers what their date left out", async () => {
-    const { goal, plan } = await aheadPlanFixture({ dailyMinutes: 15, faster: true });
+    const { goal, plan, user } = await aheadPlanFixture({ dailyMinutes: 15, faster: true });
     const before = await readPlanScreen();
 
     // The plan leaves topics out, and his own time planned again doesn't hold every lesson the
@@ -54,6 +55,14 @@ describe("lessons the learner's own time fits", () => {
     });
 
     expect(before?.fitOffer?.effect.lessonsAdded).toBeGreaterThan(0);
+
+    await prisma.$transaction((tx) =>
+      markLearnerChanged(tx, { planInputs: true, userId: user.id }),
+    );
+
+    const afterAnswer = await readPlanScreen();
+    expect(afterAnswer?.fitOffer).toStrictEqual(before?.fitOffer);
+    expect(afterAnswer?.fitOffer?.canApply).toBe(true);
 
     const applied = await changeGoalPlan({
       goalId: goal.id,

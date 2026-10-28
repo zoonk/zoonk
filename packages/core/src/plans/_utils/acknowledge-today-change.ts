@@ -1,45 +1,11 @@
 import "server-only";
-import { type TransactionClient, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
-import {
-  type AcknowledgeTodayPlanChangeInput,
-  type AcknowledgeTodayPlanChangeResult,
-} from "../today-change-contract";
+import { type AcknowledgeTodayPlanChangeResult } from "../today-change-contract";
 import { parsePlanChangePayload, toPlanChangePayload } from "./plan-change-payload";
 
-type ComputedNoticeInput = Extract<AcknowledgeTodayPlanChangeInput, { kind: "computed" }>;
-
-export function acknowledgmentResult(changeId: string): AcknowledgeTodayPlanChangeResult {
+function acknowledgmentResult(changeId: string): AcknowledgeTodayPlanChangeResult {
   return { changeId, status: "acknowledged" };
-}
-
-/** The plan the notice was read from identifies a replay even after its first POST changed it. */
-export async function findAcknowledgedRead({
-  client = prisma,
-  input,
-  userId,
-}: {
-  client?: Pick<TransactionClient, "planChange">;
-  input: ComputedNoticeInput;
-  userId: string;
-}): Promise<string | null> {
-  const change = await client.planChange.findFirst({
-    orderBy: { id: "desc" },
-    select: { id: true },
-    where: {
-      AND: [
-        {
-          payload: { equals: input.basis.inputVersion, path: ["acknowledgedRead", "inputVersion"] },
-        },
-        { payload: { equals: input.basis.version, path: ["acknowledgedRead", "version"] } },
-        { payload: { equals: input.shownDate, path: ["acknowledgedRead", "studyDay"] } },
-      ],
-      plan: { goal: { id: input.goalId, userId } },
-      status: "applied",
-    },
-  });
-
-  return change?.id ?? null;
 }
 
 class NoticeUnchangedError extends Error {

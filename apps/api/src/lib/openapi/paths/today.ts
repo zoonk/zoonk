@@ -76,7 +76,7 @@ export const todayPaths = {
   "/today/plan-change/acknowledgments": {
     post: {
       description:
-        "Acknowledges Today's mandatory notice in one learner POST. A stored notice uses its UUID. A computed notice has no ID yet: send its goal, shown day and Today's `noticeBasis`. The POST atomically persists the same selected plan, the real notice and its seenAt; it never opens a study session. Replays return the same real notice ID. If the day or the plan changed, read Today again before acknowledging.",
+        "Acknowledges a saved mandatory notice by its UUID without opening a session. Replays acknowledge the same notice. Read Today again if the notice is no longer available.",
       operationId: "acknowledgeTodayPlanChange",
       requestBody: {
         content: { "application/json": { schema: acknowledgeTodayPlanChangeInputSchema } },

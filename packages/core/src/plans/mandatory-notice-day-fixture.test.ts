@@ -39,7 +39,8 @@ describe("date-parameterized mandatory Today seed", () => {
       }
 
       expect(read.result.today.planChange).toBeNull();
-      expect((read.result.today.earlierWork ?? []).length).toBeGreaterThan(0);
+      // Skill-only stand-ins have no lesson or chapter to list, just as the status count says.
+      expect(read.result.today.earlierWork).toStrictEqual([]);
 
       await expect(prisma.planChange.count({ where: { planId: fixture.plan.id } })).resolves.toBe(
         0,

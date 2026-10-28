@@ -7,11 +7,8 @@ import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
 import { waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
-import { loadPlanContext } from "../../plans/_utils/plan-context";
 import { planSummarySchema } from "../../plans/_utils/plan-summary";
 import { completeLessonPlanItems, completePlanItem } from "./plan-items";
-import { prepareSelectedPlanSave, saveSelectedPlan } from "./save-selected-plan";
-import { selectDayPlanFromContext } from "./selected-day-plan";
 
 const NOW = new Date("2026-10-15T12:00:00Z");
 
@@ -28,6 +25,19 @@ async function postedPlan({
   const plan = await planFixture({ goalId: goal.id });
 
   const summary = planSummarySchema.parse({
+    advice: {
+      feasibility: {
+        coreFits: true,
+        coveredShare: 1,
+        deadline: null,
+        deepensMostAsked: false,
+        fits: true,
+        measure: "goal",
+        timeCovers: true,
+      },
+      fitOffer: null,
+      fullCourseEndDate: null,
+    },
     basis: {
       layoutInputVersion: 0,
       layoutStudyDay: "2026-10-01",
@@ -36,7 +46,7 @@ async function postedPlan({
       timeZone: "UTC",
       userId,
     },
-    schemaVersion: 2,
+    schemaVersion: 3,
     selected: {
       bases: null,
       coverage: {
@@ -103,37 +113,6 @@ async function postedPlan({
 }
 
 describe("completion reduces posted coverage without planning", () => {
-  it("credits a short lesson completed after the session metadata write", async () => {
-    const [user, lesson] = await Promise.all([userFixture(), libraryLessonFixture()]);
-    const { plan } = await postedPlan({ lessonIds: [lesson.id], short: true, userId: user.id });
-    const goal = await prisma.goal.findUniqueOrThrow({ where: { id: plan.goalId } });
-    const now = new Date("2026-10-01T12:00:00Z");
-    const context = await loadPlanContext({ goal, now, timeZone: "UTC" });
-
-    if (!context) {
-      throw new Error("Expected the posted plan context");
-    }
-
-    const selection = await selectDayPlanFromContext({ context, now });
-    const prepared = await prepareSelectedPlanSave({ selection, shown: true });
-    expect(prepared.kind).toBe("metadata");
-
-    await prisma.$transaction(async (tx) => {
-      await markLearnerChanged(tx, { planInputs: true, userId: user.id });
-      await saveSelectedPlan({ context, prepared, tx });
-    });
-
-    await prisma.$transaction(async (tx) => {
-      await markLearnerChanged(tx, { planInputs: true, userId: user.id });
-      await completeLessonPlanItems(tx, { lessonId: lesson.id, now: NOW, userId: user.id });
-    });
-
-    await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
-      coveredShare: 1,
-      summary: { selected: { coverage: { coveredShare: 1, shortLessons: [] } } },
-    });
-  });
-
   it("credits a shared short lesson once in each plan", async () => {
     const [user, lesson] = await Promise.all([userFixture(), libraryLessonFixture()]);
 

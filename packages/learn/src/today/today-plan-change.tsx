@@ -122,7 +122,7 @@ function ChangeActions({
 
   return (
     <SuggestionActions>
-      {change.effect !== null && (
+      {change.canApply && (
         <SuggestionAction disabled={disabled} onClick={() => onAnswer("applied")}>
           {overridesNotice ? t("Use my date anyway") : t("Apply")}
         </SuggestionAction>

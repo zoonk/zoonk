@@ -11,7 +11,6 @@ import { loadGraphPartAreas } from "./part-areas";
 import { parsePlanChangePayload } from "./plan-change-payload";
 import { changeGoalSelect, toPlanChangeView } from "./plan-change-view";
 import { isDateReached } from "./plan-end";
-import { isCurrentPlanPreview } from "./plan-preview-basis";
 
 /** An automatic change is news for a day; after that it's simply how the plan is. */
 export const RECENT_CHANGE_MS = 24 * 60 * 60 * 1000;
@@ -25,10 +24,7 @@ const MAX_PROPOSALS = 3;
  * The plan change Today shows: a proposal waiting for an OK, or falling behind that puts the date
  * at risk, which waits for the learner's choice (see `asksAboutAutomaticChange`).
  */
-export type TodayPlanChangeView = Omit<PlanChangeView, "id"> & {
-  /** A computed mandatory read has no persisted ID until the learner's POST. */
-  id: string | null;
-};
+export type TodayPlanChangeView = PlanChangeView;
 
 /**
  * The newest proposals waiting for an OK, and the newest unseen automatic change of the last day
@@ -82,22 +78,14 @@ async function findTodayChanges({
  */
 async function pickTodayChange({
   dateReached,
-  goal,
   now,
   planId,
-  inputVersion,
-  planVersion,
   skipPhaseDates,
-  timeZone,
 }: {
   dateReached: boolean;
-  goal: Goal;
   now: Date;
   planId: string;
-  inputVersion: number;
-  planVersion: number;
   skipPhaseDates: boolean;
-  timeZone?: string | null;
 }): Promise<{ change: PlanChange; effect: PlanChangeView["effect"] } | null> {
   const { automatic, proposals } = await findTodayChanges({
     dateReached,
@@ -106,23 +94,12 @@ async function pickTodayChange({
     skipPhaseDates,
   });
 
-  for (const proposal of proposals) {
-    const payload = parsePlanChangePayload(proposal.payload);
-    const zone = getAnswerTimeZone({ goal, timeZone });
+  const proposal = proposals.find(
+    (candidate) => parsePlanChangePayload(candidate.payload).effect !== null,
+  );
 
-    if (
-      payload.effect &&
-      isCurrentPlanPreview({
-        basis: payload.previewBasis,
-        context: {
-          plan: { inputVersion, version: planVersion },
-          timeZone: zone,
-          today: getDateInTimeZone({ date: now, timeZone: zone }),
-        },
-      })
-    ) {
-      return { change: proposal, effect: payload.effect };
-    }
+  if (proposal) {
+    return { change: proposal, effect: parsePlanChangePayload(proposal.payload).effect };
   }
 
   return (
@@ -154,7 +131,6 @@ export async function loadTodayPlanChange({
       goal: { select: { ...changeGoalSelect, examBlueprintId: true } },
       graph: true,
       id: true,
-      inputVersion: true,
       settings: true,
       version: true,
     },
@@ -170,16 +146,7 @@ export async function loadTodayPlanChange({
     });
 
   const picked = plan
-    ? await pickTodayChange({
-        dateReached,
-        goal,
-        inputVersion: plan.inputVersion,
-        now,
-        planId: plan.id,
-        planVersion: plan.version,
-        skipPhaseDates,
-        timeZone,
-      })
+    ? await pickTodayChange({ dateReached, now, planId: plan.id, skipPhaseDates })
     : null;
 
   if (!plan || !picked) {
@@ -193,7 +160,13 @@ export async function loadTodayPlanChange({
     graph: parsePlanGraph(plan.graph),
   });
 
-  const view = toPlanChangeView({ change, goal: plan.goal, planVersion: plan.version });
+  const view = await toPlanChangeView({
+    change,
+    goal: plan.goal,
+    now,
+    planVersion: plan.version,
+    timeZone,
+  });
 
   return foldChangeAreas({ change: { ...view, effect }, partAreas });
 }

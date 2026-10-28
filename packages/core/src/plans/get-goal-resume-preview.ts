@@ -2,10 +2,9 @@ import "server-only";
 import { isPlanReady } from "./_utils/apply-plan-change";
 import { hasOverduePlanWork } from "./_utils/left-work";
 import { loadOwnedPlanContext } from "./_utils/owned-plan";
-import { type PlanChangePreview } from "./plan-preview-contract";
 
 export type GoalResumePreviewResult =
-  | { preview: PlanChangePreview; status: "ready" }
+  | { preview: boolean; status: "ready" }
   | { status: "notFound" | "unauthorized" };
 
 /** The saved plan stays visible; the resume POST plans from that day's current inputs. */
@@ -20,12 +19,8 @@ export async function getGoalResumePreview(goalId: string): Promise<GoalResumePr
   const { context } = loaded;
 
   return {
-    preview: {
-      effect: null,
-      feasibility: null,
-      ready: isPlanReady(context),
-      unchanged: context.goal.status !== "paused" || !hasOverduePlanWork(context),
-    },
+    preview:
+      isPlanReady(context) && context.goal.status === "paused" && hasOverduePlanWork(context),
     status: "ready",
   };
 }

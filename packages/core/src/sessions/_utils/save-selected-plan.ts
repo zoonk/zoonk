@@ -4,17 +4,16 @@ import { getEstimateChange } from "../../plans/_utils/estimate-change";
 import { preparePhaseDatesProposal } from "../../plans/_utils/phase-dates-proposal";
 import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
 import { type PlanContext } from "../../plans/_utils/plan-context";
-import { type PlanSummary, readFreshPlanSummary } from "../../plans/_utils/plan-summary";
+import { type PlanSummary } from "../../plans/_utils/plan-summary";
 import { preparePlanWrite, prepareRetainedPlanWrite } from "../../plans/_utils/prepare-plan-write";
 import { type PlanChangeRecord } from "../../plans/_utils/replan";
 import { getSettledPlanChange } from "../../plans/_utils/settled-change";
-import { type PlanWrite, writePlan } from "../../plans/_utils/write-plan";
+import { type PlanWrite, saveProposalPreviews, writePlan } from "../../plans/_utils/write-plan";
 import { PHASE_DATES_SOURCE } from "../../plans/plan-change-contract";
-import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { type PlanState } from "../../plans/planner/plan-state";
 import { type SelectedDayPlan } from "./selected-day-plan";
 
-export function getSelectedPlanChange(selection: SelectedDayPlan): PlanChangeRecord | null {
+function getSelectedPlanChange(selection: SelectedDayPlan): PlanChangeRecord | null {
   const { computed, context, left } = selection;
 
   if (!computed) {
@@ -53,48 +52,6 @@ export type PreparedSelectedPlanSave =
       proposals?: ProposalWrite | null;
     };
 
-function prepareMetadata(selection: SelectedDayPlan): SelectedPlanMetadata | null {
-  const { context } = selection;
-  const update = selection.inputKeyUpdate;
-
-  const summary = readFreshPlanSummary({
-    basis: {
-      layoutInputVersion: context.plan.inputVersion,
-      layoutStudyDay: toIsoDate(context.today),
-      planId: context.plan.id,
-      planVersion: context.plan.version,
-      timeZone: context.timeZone,
-      userId: context.goal.userId,
-    },
-    value: context.plan.summary,
-  });
-
-  const selected = update?.summary ?? summary?.selected;
-
-  if (!selected && !update) {
-    return null;
-  }
-
-  return {
-    ...(update && { graph: update.graph, inputsKey: update.inputsKey }),
-    ...(selected && {
-      summary: {
-        basis: {
-          layoutInputVersion: context.plan.inputVersion + 1,
-          layoutStudyDay: toIsoDate(context.today),
-          planId: context.plan.id,
-          planVersion: context.plan.version,
-          timeZone: context.timeZone,
-          userId: context.goal.userId,
-        },
-        ...(summary?.advice && { advice: summary.advice }),
-        schemaVersion: 2,
-        selected,
-      },
-    }),
-  };
-}
-
 /** The same selected plan's exact write and notice are prepared before taking any row locks. */
 export async function prepareSelectedPlanSave({
   selection,
@@ -132,8 +89,6 @@ export async function prepareSelectedPlanSave({
       ? await prepareRetainedPlanWrite({ computed: candidate, context })
       : null;
 
-    const metadata = prepareMetadata(selection);
-
     return {
       data: retained
         ? {
@@ -141,7 +96,7 @@ export async function prepareSelectedPlanSave({
             inputsKey: retained.inputsKey ?? undefined,
             summary: retained.summary ?? undefined,
           }
-        : metadata,
+        : null,
       kind: "metadata",
       previews: retained?.previews,
       proposals,
@@ -166,12 +121,10 @@ export async function prepareSelectedPlanSave({
 }
 
 export async function saveSelectedPlan({
-  acknowledge,
   context,
   prepared,
   tx,
 }: {
-  acknowledge?: { inputVersion: number; studyDay: string; version: number };
   context: PlanContext;
   prepared: PreparedSelectedPlanSave;
   tx: TransactionClient;
@@ -185,14 +138,7 @@ export async function saveSelectedPlan({
       await tx.plan.update({ data: prepared.data, where: { id: context.plan.id } });
     }
 
-    await Promise.all(
-      (prepared.previews ?? []).map((preview) =>
-        tx.planChange.updateMany({
-          data: { payload: preview.payload },
-          where: { id: preview.id, status: "proposed" },
-        }),
-      ),
-    );
+    await saveProposalPreviews({ previews: prepared.previews, tx });
 
     await prepared.proposals?.(tx);
     return context.plan.version;
@@ -223,11 +169,7 @@ export async function saveSelectedPlan({
     await tx.planChange.create({
       data: {
         kind: change.kind,
-        payload: {
-          ...change.payload,
-          ...(acknowledge && { acknowledgedRead: acknowledge, seenAt: new Date().toISOString() }),
-          versionAfter: context.plan.version + 1,
-        },
+        payload: { ...change.payload, versionAfter: context.plan.version + 1 },
         planId: context.plan.id,
         reason: change.reason,
         status: change.status,

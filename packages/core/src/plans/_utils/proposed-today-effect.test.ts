@@ -7,9 +7,10 @@ import { planLibraryFixture, unplannedGoalFixture } from "../_test-utils/plan-li
 import { createGoalPlan } from "../create-goal-plan";
 import { addDays, toIsoDate } from "../planner/plan-calendar";
 import { parsePlanPhases, parsePlanSettings } from "../planner/plan-state";
-import { previewPlanChange } from "../preview-plan-change";
 import { refreshGoalPlan } from "../refresh-goal-plan";
+import { proposeChange } from "./apply-plan-change";
 import { parsePlanChangePayload } from "./plan-change-payload";
+import { loadPlanAtToken } from "./plan-token";
 import { loadTodayPlanChange } from "./today-plan-change";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
@@ -34,25 +35,26 @@ describe("proposal effects on Today", () => {
 
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
-    const proposal = await planChangeFixture({
-      kind: "edited",
-      payload: {
-        operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [6] }],
-        source: "memory",
-      },
-      planId: plan.id,
-      status: "proposed",
-    });
-
     mockSession(user.id);
+    const context = await loadPlanAtToken(goal.id);
 
-    await previewPlanChange({
-      goalId: goal.id,
-      input: {
-        operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [6] }],
-        timeZone: "UTC",
-      },
+    if (!context) {
+      throw new Error("Expected the plan");
+    }
+
+    const result = await proposeChange({
+      approval: "always",
+      context,
+      operations: [{ kind: "setWeekdayMinutes", minutes: 0, weekdays: [6] }],
+      reason: "A rest day",
+      source: "memory",
     });
+
+    if (result.status !== "proposed") {
+      throw new Error("Expected the rest-day proposal");
+    }
+
+    const proposal = { id: result.changeId };
 
     const savedProposal = await prisma.planChange.findUniqueOrThrow({ where: { id: proposal.id } });
 

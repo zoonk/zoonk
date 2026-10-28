@@ -7,7 +7,7 @@ import { acknowledgeTodayPlanChange } from "@zoonk/core/plans/acknowledge-today-
 import { acknowledgeTodayPlanChangeInputSchema } from "@zoonk/core/plans/today-change-contract";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** A learner's Got it persists only the selected plan and seen notice, never a study session. */
+/** A learner's Got it acknowledges a stored notice without opening a session. */
 async function acknowledgeChange(request: NextRequest) {
   const body = await readBody(request, acknowledgeTodayPlanChangeInputSchema);
 
@@ -17,7 +17,7 @@ async function acknowledgeChange(request: NextRequest) {
     return NextResponse.json(result);
   }
 
-  if (result.status === "retryable" || result.status === "otherDay") {
+  if (result.status === "retryable") {
     return createErrorResponse({
       code: todayErrorCodes.planChangeReadChanged,
       message: "The plan changed since this notice was shown. Read Today again.",

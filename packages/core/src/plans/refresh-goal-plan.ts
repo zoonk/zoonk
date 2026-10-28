@@ -11,7 +11,7 @@ import {
 } from "./_utils/phase-dates-proposal";
 import { type PlanContext } from "./_utils/plan-context";
 import { addsLessonsAfterLessonsDone, isPlanLaidOut } from "./_utils/plan-refresh-admission";
-import { readFreshPlanSummary } from "./_utils/plan-summary";
+import { getPlanSummaryBasis, readFreshPlanSummary } from "./_utils/plan-summary";
 import { loadPlanAtToken } from "./_utils/plan-token";
 import { isPlanUnchanged } from "./_utils/plan-unchanged";
 import { prepareRetainedPlanWrite } from "./_utils/prepare-plan-write";
@@ -20,7 +20,7 @@ import { getSettledPlanChange } from "./_utils/settled-change";
 import { computeSettledPlan } from "./_utils/settled-plan";
 import { savePlanInputsKey } from "./_utils/write-plan";
 import { isPlanConflictError, withPlanRetry } from "./plan-conflict";
-import { addDays, toIsoDate } from "./planner/plan-calendar";
+import { addDays } from "./planner/plan-calendar";
 
 type PlanRefreshResult = { status: "notFound" | "notReady" | "paused" | "refreshed" | "unchanged" };
 
@@ -87,7 +87,7 @@ async function settleLeftWork({
   const missed = !(await wasLastDayStudied(context));
   const computed = await computeSettledPlan({ context, missed, pace });
 
-  const saved = await saveOrLetGo(lostSave, () =>
+  await saveOrLetGo(lostSave, () =>
     commitPlan({
       change: getSettledPlanChange({ computed, context, left }),
       computed,
@@ -96,10 +96,6 @@ async function settleLeftWork({
       revalidation,
     }),
   );
-
-  if (!saved) {
-    return { plan: computed, status: "refreshed" };
-  }
 
   return { plan: computed, status: "refreshed" };
 }
@@ -120,20 +116,13 @@ async function computeRefreshedPlan({
   pace: "sampled" | "saved";
 }): Promise<{ computed: ComputedPlan; mode: "automatic" | "forced"; planned: PlanContext } | null> {
   const fresh = readFreshPlanSummary({
-    basis: {
-      layoutInputVersion: context.plan.inputVersion,
-      layoutStudyDay: toIsoDate(context.today),
-      planId: context.plan.id,
-      planVersion: context.plan.version,
-      timeZone: context.timeZone,
-      userId: context.goal.userId,
-    },
+    basis: getPlanSummaryBasis(context),
     value: context.plan.summary,
   });
 
   const request = { context, mode: "automatic" as const, pace };
 
-  const automatic = fresh?.advice
+  const automatic = fresh
     ? await computePlan({ ...request, skipUnchangedInputs: true })
     : await computePlan(request);
 
@@ -284,17 +273,7 @@ async function saveRefreshedPlan({
 
   if (
     computed.inputsKey === context.plan.inputsKey &&
-    readFreshPlanSummary({
-      basis: {
-        layoutInputVersion: context.plan.inputVersion,
-        layoutStudyDay: toIsoDate(context.today),
-        planId: context.plan.id,
-        planVersion: context.plan.version,
-        timeZone: context.timeZone,
-        userId: context.goal.userId,
-      },
-      value: context.plan.summary,
-    })?.advice
+    readFreshPlanSummary({ basis: getPlanSummaryBasis(context), value: context.plan.summary })
   ) {
     await saveOrLetGo(lostSave, () =>
       withdrawUnneededPhaseDatesProposal({ computed, context, revalidation }),

@@ -37,6 +37,7 @@ export type NoSitting = { closest: string[]; month: string };
 /** A change to the plan, announced in one plain sentence with an undo. */
 export type PlanChangeView = {
   /** Only the latest applied edit and test-outs can be undone; past work never is. */
+  canApply: boolean;
   canUndo: boolean;
   createdAt: string;
   /**
@@ -417,7 +418,7 @@ export type PlanView = {
    * change (`fitLessons`, see `loadFitOffer`): once every lesson is done, or once their time covers
    * everything the plan leaves out. Null otherwise, and when it would add no lesson.
    */
-  fitOffer: PlanOffer | null;
+  fitOffer: (PlanOffer & { canApply: boolean }) | null;
   /** Future todo mocks whose saved funding has started, with real item IDs and durations. */
   fundedMocks: (PlanItemView & { id: string })[];
   phases: PlanPhaseView[];

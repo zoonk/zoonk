@@ -39,12 +39,7 @@ async function setup() {
   return { goal, plan };
 }
 
-/*
- * Pedro's Today offered to move his phase dates, "the challenge fell on a day without room", with
- * Apply and no diff: the proposal was planned from another day, and moving the dates no longer did
- * anything by the time he read it (his challenge was already in today's session). Today previews a
- * proposal against the plan as it is now; one whose preview changes nothing isn't offered.
- */
+// A stale quote retains its saved explanation; only Apply waits for a writer to renew it.
 describe("a proposal whose preview no longer changes anything", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -55,11 +50,11 @@ describe("a proposal whose preview no longer changes anything", () => {
     vi.useRealTimers();
   });
 
-  it("isn't offered on Today, and the change before it still is", async () => {
+  it("keeps its saved text on Today with no Apply action", async () => {
     const { goal, plan } = await setup();
 
     // Falling behind that puts the date at risk, which the learner still has to answer.
-    const missed = await planChangeFixture({
+    await planChangeFixture({
       createdAt: new Date(NOW.getTime() - 60 * 60 * 1000),
       kind: "missedDays",
       payload: {
@@ -78,7 +73,7 @@ describe("a proposal whose preview no longer changes anything", () => {
     });
 
     // Planned on another day, it moved nothing the learner could see by now.
-    await planChangeFixture({
+    const proposal = await planChangeFixture({
       kind: "edited",
       payload: {
         effect: {
@@ -97,8 +92,9 @@ describe("a proposal whose preview no longer changes anything", () => {
     });
 
     await expect(loadTodayPlanChange({ goal, now: NOW, timeZone: "UTC" })).resolves.toMatchObject({
-      id: missed.id,
-      status: "applied",
+      canApply: false,
+      id: proposal.id,
+      status: "proposed",
     });
   });
 });

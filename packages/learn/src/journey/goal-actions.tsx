@@ -1,6 +1,5 @@
 "use client";
 
-import { type PlanChangePreview } from "@zoonk/core/plans/preview-contract";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,9 +26,8 @@ import {
   SuggestionOpen,
   SuggestionSummary,
 } from "../_components/suggestion";
-import { PlanEffectDiff } from "../plan-diff/plan-effect-diff";
 import { SlotContent } from "../plan/plan-suggestion-context";
-import { changesOnResume, useResumeEffectText } from "./resume-effect";
+import { useResumeEffectText } from "./resume-effect";
 
 /** What a goal's page can do to it: pause it, resume it, or archive it. */
 export type GoalStatusChange = "active" | "archived" | "paused";
@@ -47,7 +45,7 @@ export type GoalStatusControl = {
    * What resuming the paused goal would do to its plan (see `getGoalResumePreview`), shown before
    * the learner resumes it; null for a goal that isn't paused.
    */
-  resume: PlanChangePreview | null;
+  resume: boolean;
   status: "active" | "completed" | "paused";
 };
 
@@ -137,13 +135,11 @@ export function ResumeGoalDialog({
   onOpenChange,
   onResume,
   open,
-  preview,
 }: {
   goalTitle: string;
   onOpenChange: (open: boolean) => void;
   onResume: () => void;
   open: boolean;
-  preview: PlanChangePreview;
 }) {
   const t = useExtracted();
   const effectText = useResumeEffectText();
@@ -153,10 +149,8 @@ export function ResumeGoalDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{t("Resume {goal}?", { goal: goalTitle })}</AlertDialogTitle>
-          <AlertDialogDescription>{effectText(preview)}</AlertDialogDescription>
+          <AlertDialogDescription>{effectText}</AlertDialogDescription>
         </AlertDialogHeader>
-
-        <PlanEffectDiff effect={preview.effect} />
 
         <AlertDialogFooter>
           <AlertDialogCancel>{t("Cancel")}</AlertDialogCancel>
@@ -217,7 +211,7 @@ export function GoalPausedSuggestion({
   const effectText = useResumeEffectText();
   const { isPending, setStatus } = useSetGoalStatus(control.onSetStatus);
   const title = t("{goal} is paused", { goal: goalTitle });
-  const preview = changesOnResume(control.resume) ? control.resume : null;
+  const preview = control.resume;
 
   const resume = (
     <SuggestionAction disabled={isPending} onClick={() => setStatus("active")}>
@@ -235,9 +229,8 @@ export function GoalPausedSuggestion({
       <SlotContent>
         <SuggestionHeader>{title}</SuggestionHeader>
         <SuggestionDescription>
-          {preview ? effectText(preview) : t("Nothing is planned until you resume it.")}
+          {preview ? effectText : t("Nothing is planned until you resume it.")}
         </SuggestionDescription>
-        {preview && <PlanEffectDiff effect={preview.effect} />}
         <SuggestionActions>{resume}</SuggestionActions>
       </SlotContent>
     </Suggestion>

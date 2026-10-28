@@ -1,6 +1,4 @@
 import { getFittedStandInLessons } from "../planner/plan-effect";
-import { type PlanContext } from "./plan-context";
-import { toPlanSummary } from "./plan-summary";
 import { type ComputedPlan } from "./replan";
 import { withSelectedItemFacts } from "./selected-item-contract";
 import { type PlanWrite } from "./write-plan";
@@ -8,13 +6,7 @@ import { type PlanWrite } from "./write-plan";
 const MINUTES_PER_HOUR = 60;
 
 /** The same selected build's items and owned, versioned facts are committed atomically. */
-export function toComputedPlanWrite({
-  computed,
-  context,
-}: {
-  computed: ComputedPlan;
-  context: PlanContext;
-}): PlanWrite {
+export function toComputedPlanWrite({ computed }: { computed: ComputedPlan }): PlanWrite {
   const { built, selected } = computed;
 
   return {
@@ -29,6 +21,5 @@ export function toComputedPlanWrite({
       standInLessons: computed.standInLessons,
     }),
     state: computed.state,
-    summary: toPlanSummary({ context, selected }),
   };
 }

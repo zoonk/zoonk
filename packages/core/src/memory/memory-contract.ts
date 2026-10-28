@@ -162,7 +162,12 @@ export type MemoryInsightView = {
    * a chapter) waits for the learner's OK. `effect` says how many lessons it adds and how it moves
    * the end date.
    */
-  planChange: { effect: PlanEffect | null; id: string; status: "applied" | "proposed" } | null;
+  planChange: {
+    canApply: boolean;
+    effect: PlanEffect | null;
+    id: string;
+    status: "applied" | "proposed";
+  } | null;
   /** The suggested study time, such as "20:00", for a schedule idea. */
   studyTime: string | null;
   createdAt: Date;

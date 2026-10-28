@@ -89,6 +89,12 @@ async function acceptProposal({ change, context }: Decision) {
         state: computed.state,
       },
     },
+    replacement: {
+      applied: true,
+      except: change.id,
+      operations: payload.operations,
+      source: payload.source,
+    },
     restorable: change.id,
   });
 

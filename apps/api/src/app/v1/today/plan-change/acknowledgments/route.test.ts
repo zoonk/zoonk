@@ -1,12 +1,12 @@
 import { acknowledgedTodayPlanChangeSchema } from "@zoonk/core/plans/today-change-contract";
 import { prisma } from "@zoonk/db";
+import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../../../../../../../../packages/core/src/_test-utils/mock-session";
 import { mandatoryPhasePlanFixture } from "../../../../../../../../packages/core/src/plans/_test-utils/mandatory-phase-plan";
-import { getTodayView } from "../../../../../../../../packages/core/src/view-models/today/get-today-view";
 import { POST as acknowledgeRoute } from "./route";
 
 vi.mock("@zoonk/core/users/session", () => ({ getSession: vi.fn() }));
@@ -33,22 +33,14 @@ describe("POST /v1/today/plan-change/acknowledgments", () => {
     const fixture = await mandatoryPhasePlanFixture({ atRisk: true });
     mockSession(fixture.user.id);
     vi.setSystemTime(new Date("2026-10-14T12:00:00Z"));
-    const read = await getTodayView({ goalId: fixture.goal.id, timeZone: "UTC" });
-    expect(read.status).toBe("ready");
 
-    if (read.status !== "ready") {
-      throw new Error("Expected the mandatory notice preview");
-    }
+    const notice = await planChangeFixture({
+      kind: "missedDays",
+      planId: fixture.plan.id,
+      status: "applied",
+    });
 
-    expect(read.today.planChange).toBeNull();
-
-    const input = {
-      basis: { inputVersion: fixture.plan.inputVersion, version: fixture.plan.version },
-      goalId: fixture.goal.id,
-      kind: "computed",
-      shownDate: "2026-10-14",
-      timeZone: "UTC",
-    };
+    const input = { changeId: notice.id, kind: "stored" };
 
     const response = await acknowledge(input);
     expect(response.status).toBe(200);
@@ -84,20 +76,20 @@ describe("POST /v1/today/plan-change/acknowledgments", () => {
     expect(unauthorized.writes).toBe(0);
   });
 
-  it("never acknowledges another learner's computed notice", async () => {
+  it("never acknowledges another learner's saved notice", async () => {
     const fixture = await mandatoryPhasePlanFixture({ atRisk: true });
     const stranger = await userFixture();
     mockSession(stranger.id);
     vi.setSystemTime(new Date("2026-10-14T12:00:00Z"));
 
+    const notice = await planChangeFixture({
+      kind: "missedDays",
+      planId: fixture.plan.id,
+      status: "applied",
+    });
+
     const result = await countDatabaseStatements(() =>
-      acknowledge({
-        basis: { inputVersion: fixture.plan.inputVersion, version: fixture.plan.version },
-        goalId: fixture.goal.id,
-        kind: "computed",
-        shownDate: "2026-10-14",
-        timeZone: "UTC",
-      }),
+      acknowledge({ changeId: notice.id, kind: "stored" }),
     );
 
     expect(result.result.status).toBe(404);
@@ -105,6 +97,6 @@ describe("POST /v1/today/plan-change/acknowledgments", () => {
 
     await expect(
       prisma.planChange.count({ where: { planId: fixture.plan.id, status: "applied" } }),
-    ).resolves.toBe(0);
+    ).resolves.toBe(1);
   });
 });

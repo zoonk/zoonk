@@ -8,7 +8,6 @@ import {
   toIsoDate,
 } from "../planner/plan-calendar";
 import { type ExamDayRules, getPlannedMinutes } from "../planner/plan-days";
-import { getItemKey } from "../planner/plan-items";
 import { DAYS_PER_WEEK, type PlanSettings } from "../planner/plan-state";
 import { type SkillAreas, getWritingTitle, isWritingItem } from "./plan-phase-views";
 import { type PlanReadItem } from "./plan-read-projection";
@@ -31,15 +30,13 @@ function requiresPlus({ access, item }: { access: ItemAccess; item: PlanReadItem
 function toPlanItemView({
   access,
   item,
-  minutes,
   skillAreas,
 }: {
   access: ItemAccess;
   item: PlanReadItem;
-  minutes: ReadonlyMap<string, number>;
   skillAreas: SkillAreas;
 }): PlanItemView {
-  const itemMinutes = item.minutes ?? minutes.get(item.key ?? getItemKey(item));
+  const itemMinutes = item.minutes;
   const writing = isWritingItem(item);
 
   return {
@@ -47,7 +44,7 @@ function toPlanItemView({
     id: item.id,
     kind: item.kind,
     lessonId: item.lessonId,
-    minutes: itemMinutes === undefined ? null : Math.round(itemMinutes),
+    minutes: itemMinutes === null || itemMinutes === undefined ? null : Math.round(itemMinutes),
     requiresPlus: requiresPlus({ access, item }),
     scheduledFor: item.scheduledFor ? toIsoDate(item.scheduledFor) : null,
     skillId: item.skillId,
@@ -102,7 +99,6 @@ export function buildWeekView({
   calendar,
   exam,
   items,
-  minutes,
   overflow = [],
   skillAreas,
   startDate,
@@ -115,7 +111,6 @@ export function buildWeekView({
   /** The exam's day rules; null for goals that aren't exams. */
   exam: ExamDayRules | null;
   items: readonly PlanReadItem[];
-  minutes: ReadonlyMap<string, number>;
   /** The time the days' checkpoints take past them (`PlanSettings.checkpointOverflow`). */
   overflow?: PlanSettings["checkpointOverflow"];
   skillAreas: SkillAreas;
@@ -134,7 +129,7 @@ export function buildWeekView({
 
     const dayItems = items
       .flatMap((item) => projectSavedAllocationOn({ date, item }) ?? [])
-      .map((item) => toPlanItemView({ access, item, minutes, skillAreas }));
+      .map((item) => toPlanItemView({ access, item, skillAreas }));
 
     const dayMinutes =
       date < startDate ? 0 : getPlannedMinutes({ calendar, date, exam, overflow, targetDate });
@@ -188,11 +183,7 @@ export function buildFundedMocksView({
       }
 
       return [
-        {
-          ...toPlanItemView({ access, item, minutes: new Map(), skillAreas }),
-          id: item.id,
-          minutes: ledger.minutes,
-        },
+        { ...toPlanItemView({ access, item, skillAreas }), id: item.id, minutes: ledger.minutes },
       ];
     })
     .toSorted((a, b) => (a.scheduledFor ?? "").localeCompare(b.scheduledFor ?? ""));

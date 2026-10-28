@@ -41,7 +41,6 @@ import { NextOnPath } from "./next-on-path";
 import { PlanHeader } from "./plan-header";
 import { PlanRoadmap } from "./plan-roadmap";
 import { MoreSection, PathSection, PhasesSheet } from "./plan-sections";
-import { changesOnResume } from "./resume-effect";
 import { WeeklyStudyTimeProvider } from "./weekly-study-time-context";
 
 export type { PlanActions, PlanChangeOutcome, PlanTutor } from "../plan/plan-context";
@@ -140,7 +139,7 @@ function useGoalMenu(control: GoalStatusControl | null) {
   const [archiving, setArchiving] = useState(false);
   const [resuming, setResuming] = useState(false);
   const { setStatus } = useSetGoalStatus(control?.onSetStatus ?? null);
-  const resumePreview = control && changesOnResume(control.resume) ? control.resume : null;
+  const resumePreview = control?.resume ?? false;
 
   const archive = () => {
     setArchiving(false);
@@ -297,7 +296,6 @@ function JourneyBody({
             onOpenChange={goalMenu.setResuming}
             onResume={goalMenu.resume}
             open={goalMenu.resuming}
-            preview={goalMenu.resumePreview}
           />
         )}
       </PageWithAside>

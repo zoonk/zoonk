@@ -15268,7 +15268,7 @@
     },
     "/goals/{goalId}/plan/resume-preview": {
       "get": {
-        "description": "What resuming a paused goal would do to its plan, with nothing saved. A pause that left nothing behind (resumed the same day, or over rest days only) keeps the plan as it is (`unchanged`). When the pause left lessons on days now past, resuming plans again from today, as `PATCH /goals/{goalId}` with `status: active` does: show its effect where the learner resumes. A goal that isn't paused is `unchanged`.",
+        "description": "Whether resuming a paused goal needs confirmation because lessons were planned for the paused days. The read saves nothing. PATCH /goals/{goalId} with status active computes and saves the actual move from current inputs. False when the plan stays as it is or the goal is not paused.",
         "operationId": "previewGoalResume",
         "security": [
           {
@@ -15302,7 +15302,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PlanChangePreview"
+                  "type": "boolean"
                 }
               }
             }
@@ -22426,7 +22426,7 @@
     },
     "/today/plan-change/acknowledgments": {
       "post": {
-        "description": "Acknowledges Today's mandatory notice in one learner POST. A stored notice uses its UUID. A computed notice has no ID yet: send its goal, shown day and Today's `noticeBasis`. The POST atomically persists the same selected plan, the real notice and its seenAt; it never opens a study session. Replays return the same real notice ID. If the day or the plan changed, read Today again before acknowledging.",
+        "description": "Acknowledges a saved mandatory notice by its UUID without opening a session. Replays acknowledge the same notice. Read Today again if the notice is no longer available.",
         "operationId": "acknowledgeTodayPlanChange",
         "security": [
           {
@@ -22445,65 +22445,25 @@
           "content": {
             "application/json": {
               "schema": {
-                "oneOf": [
-                  {
-                    "type": "object",
-                    "properties": {
-                      "changeId": {
-                        "type": "string",
-                        "format": "uuid",
-                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                      },
-                      "kind": {
-                        "type": "string",
-                        "enum": [
-                          "stored"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "changeId",
-                      "kind"
-                    ],
-                    "additionalProperties": false
+                "type": "object",
+                "properties": {
+                  "changeId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                   },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "basis": {
-                        "$ref": "#/components/schemas/NoticeBasis"
-                      },
-                      "goalId": {
-                        "type": "string",
-                        "format": "uuid",
-                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                      },
-                      "kind": {
-                        "type": "string",
-                        "enum": [
-                          "computed"
-                        ]
-                      },
-                      "shownDate": {
-                        "type": "string",
-                        "format": "date",
-                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-                      },
-                      "timeZone": {
-                        "description": "The device's IANA timezone. The learner's day follows the goal's stored timezone; this one is used only when the goal has none, then UTC",
-                        "type": "string"
-                      }
-                    },
-                    "required": [
-                      "basis",
-                      "goalId",
-                      "kind",
-                      "shownDate"
-                    ],
-                    "additionalProperties": false
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "stored"
+                    ]
                   }
+                },
+                "required": [
+                  "changeId",
+                  "kind"
                 ],
-                "type": "object"
+                "additionalProperties": false
               }
             }
           }
@@ -27093,28 +27053,6 @@
           "status"
         ],
         "additionalProperties": false
-      },
-      "NoticeBasis": {
-        "type": "object",
-        "properties": {
-          "inputVersion": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991
-          },
-          "version": {
-            "type": "integer",
-            "minimum": 0,
-            "exclusiveMinimum": true,
-            "maximum": 9007199254740991
-          }
-        },
-        "required": [
-          "inputVersion",
-          "version"
-        ],
-        "additionalProperties": false,
-        "description": "The plan version and input version a computed notice was worked out from, as Today's `noticeBasis` returns them"
       },
       "__schema0": {
         "anyOf": [
@@ -33187,6 +33125,10 @@
             ],
             "additionalProperties": false
           },
+          "canApply": {
+            "type": "boolean",
+            "description": "Whether this saved quote can be applied on the current planning day."
+          },
           "canUndo": {
             "type": "boolean",
             "description": "True while the plan is still as the change left it"
@@ -33495,6 +33437,7 @@
         },
         "required": [
           "behind",
+          "canApply",
           "canUndo",
           "createdAt",
           "days",
@@ -69531,12 +69474,16 @@
                 "items": {
                   "$ref": "#/components/schemas/PlanOperationOutput"
                 }
+              },
+              "canApply": {
+                "type": "boolean"
               }
             },
             "required": [
               "effect",
               "fits",
-              "operations"
+              "operations",
+              "canApply"
             ],
             "additionalProperties": false
           },
@@ -71532,6 +71479,9 @@
             "description": "The plan change behind a plan change insight",
             "type": "object",
             "properties": {
+              "canApply": {
+                "type": "boolean"
+              },
               "effect": {
                 "nullable": true,
                 "description": "Lessons the change adds and how it moves the plan's end date",
@@ -71556,6 +71506,7 @@
               }
             },
             "required": [
+              "canApply",
               "effect",
               "id",
               "status"
@@ -79737,15 +79688,6 @@
               }
             ]
           },
-          "noticeBasis": {
-            "nullable": true,
-            "description": "The plan a computed notice (`planChange` with a null id) was worked out from: send it back to acknowledge that notice. Null without one",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/NoticeBasis"
-              }
-            ]
-          },
           "pattern": {
             "nullable": true,
             "description": "A language goal's pattern noticed in recent mistakes, not practiced or dismissed yet, offered beside the day; open it with GET /v1/mistake-patterns/{patternId}. Null for any other goal, without one, and when one of the day's missions already opens it, unless a bonus earned on another goal replaced the missions' rows",
@@ -79777,378 +79719,11 @@
           "planChange": {
             "nullable": true,
             "description": "The plan change to answer on Today, only when the learner has a say: the newest proposal waiting for an OK, or missed days of the last day that put the goal's date at risk (`behind`) until it's answered. Changes the plan makes on its own (missed days moved forward, closer estimates, test-outs, relearns) stay in the plan's `changes` and aren't Today's news. Answer it with POST /v1/goals/{goalId}/plan/changes/{changeId}",
-            "type": "object",
-            "properties": {
-              "behind": {
-                "nullable": true,
-                "description": "For missedDays: falling behind made the plan cover less of its goal by its date (coveredBefore to coveredAfter, as the missed days left it, at currentMinutes a day). Offer more time a day or, for a goal that isn't an exam, a later date (POST /v1/goals/{goalId}/plan/time-to-cover finds exactly the time or date that covers everything when the learner asks), keeping the time with less depth, or choosing where to focus (canFocus). Null when the date isn't at risk",
-                "type": "object",
-                "properties": {
-                  "canFocus": {
-                    "type": "boolean",
-                    "description": "The plan has more than one area to choose where to focus"
-                  },
-                  "coveredAfter": {
-                    "type": "number",
-                    "minimum": 0,
-                    "maximum": 1
-                  },
-                  "coveredBefore": {
-                    "type": "number",
-                    "minimum": 0,
-                    "maximum": 1
-                  },
-                  "currentMinutes": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 9007199254740991,
-                    "description": "The learner's daily time, which covers coveredAfter"
-                  },
-                  "measure": {
-                    "type": "string",
-                    "enum": [
-                      "exam",
-                      "goal"
-                    ],
-                    "description": "A share of the exam's questions and points, or of the goal"
-                  }
-                },
-                "required": [
-                  "canFocus",
-                  "coveredAfter",
-                  "coveredBefore",
-                  "currentMinutes",
-                  "measure"
-                ],
-                "additionalProperties": false
-              },
-              "canUndo": {
-                "type": "boolean",
-                "description": "True while the plan is still as the change left it"
-              },
-              "createdAt": {
-                "type": "string",
-                "format": "date-time",
-                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-              },
-              "days": {
-                "nullable": true,
-                "description": "For missedDays: the earlier days that left lessons, now first",
-                "type": "integer",
-                "minimum": -9007199254740991,
-                "maximum": 9007199254740991
-              },
-              "effect": {
-                "nullable": true,
-                "description": "A proposal on Today is previewed against the current plan before Apply is offered, and Today carries none whose preview would change nothing. Null when the plan is not ready or its operations cannot apply; never offer Apply without an effect",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/PlanEffect"
-                  }
-                ]
-              },
-              "examDocument": {
-                "$ref": "#/components/schemas/ExamDocument"
-              },
-              "id": {
-                "nullable": true,
-                "description": "Null only for a computed mandatory notice before its explicit acknowledgment or Open POST",
-                "type": "string",
-                "format": "uuid",
-                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-              },
-              "kind": {
-                "type": "string",
-                "description": "edited, testedOut, missedDays, estimateUpdated (automatic re-estimates from pace data or written lessons changed the net seen lesson count by more than one; say the count change and that the plan now allows for the time its lessons need), resumed, relearn (a miss in practice brought back the lessons of a topic taken as known; `effect.topicsAdded` names it) or coverageChanged (placement answers changed which topics fit by the date; `effect.topicsLeftOut` and `effect.topicsAdded` name them); keep unknown kinds"
-              },
-              "lessonsSkipped": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991,
-                "description": "Lessons a test-out skipped, as the plan's subjects and phases count them: a topic still being written counts the lessons the plan teaches in its place"
-              },
-              "officialDate": {
-                "nullable": true,
-                "description": "The exam day the notice officially sets, when the change moves the goal's date off it. Say it with the change and label applying it as keeping the learner's own date anyway. Null otherwise",
-                "type": "object",
-                "properties": {
-                  "date": {
-                    "type": "string",
-                    "format": "date",
-                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-                  },
-                  "source": {
-                    "nullable": true,
-                    "description": "The address of the notice that sets it",
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "date",
-                  "source"
-                ],
-                "additionalProperties": false
-              },
-              "operations": {
-                "type": "array",
-                "items": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/PlanOperationOutput"
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "kind": {
-                          "type": "string",
-                          "enum": [
-                            "addSkills"
-                          ]
-                        },
-                        "skills": {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "area": {
-                                "default": null,
-                                "nullable": true,
-                                "type": "string"
-                              },
-                              "beforeSkillId": {
-                                "default": null,
-                                "nullable": true,
-                                "type": "string"
-                              },
-                              "lessons": {
-                                "type": "integer",
-                                "minimum": 1,
-                                "maximum": 9007199254740991
-                              },
-                              "name": {
-                                "type": "string"
-                              },
-                              "skillId": {
-                                "type": "string"
-                              }
-                            },
-                            "required": [
-                              "area",
-                              "beforeSkillId",
-                              "lessons",
-                              "name",
-                              "skillId"
-                            ],
-                            "additionalProperties": false
-                          }
-                        }
-                      },
-                      "required": [
-                        "kind",
-                        "skills"
-                      ],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "kind": {
-                          "type": "string",
-                          "enum": [
-                            "setTools"
-                          ]
-                        },
-                        "tools": {
-                          "minItems": 1,
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "choice": {
-                                "type": "string",
-                                "enum": [
-                                  "have",
-                                  "setup",
-                                  "none"
-                                ]
-                              },
-                              "name": {
-                                "type": "string"
-                              },
-                              "setupSkillId": {
-                                "default": null,
-                                "nullable": true,
-                                "type": "string"
-                              },
-                              "system": {
-                                "default": null,
-                                "nullable": true,
-                                "type": "string",
-                                "enum": [
-                                  "windows",
-                                  "macos",
-                                  "linux",
-                                  "chromebook",
-                                  "phone"
-                                ]
-                              }
-                            },
-                            "required": [
-                              "choice",
-                              "name",
-                              "setupSkillId",
-                              "system"
-                            ],
-                            "additionalProperties": false
-                          }
-                        }
-                      },
-                      "required": [
-                        "kind",
-                        "tools"
-                      ],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "kind": {
-                          "type": "string",
-                          "enum": [
-                            "followNotice"
-                          ]
-                        }
-                      },
-                      "required": [
-                        "kind"
-                      ],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "estimated": {
-                          "type": "boolean"
-                        },
-                        "kind": {
-                          "type": "string",
-                          "enum": [
-                            "setNoticeDate"
-                          ]
-                        },
-                        "targetDate": {
-                          "type": "string",
-                          "format": "date",
-                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-                        }
-                      },
-                      "required": [
-                        "estimated",
-                        "kind",
-                        "targetDate"
-                      ],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "kind": {
-                          "type": "string",
-                          "enum": [
-                            "fitPhaseDates"
-                          ]
-                        }
-                      },
-                      "required": [
-                        "kind"
-                      ],
-                      "additionalProperties": false
-                    },
-                    {
-                      "type": "object",
-                      "properties": {
-                        "group": {
-                          "type": "string",
-                          "minLength": 1,
-                          "maxLength": 300,
-                          "description": "The notice's name for the choice group, such as Foreign language"
-                        },
-                        "subject": {
-                          "type": "string",
-                          "minLength": 1,
-                          "maxLength": 300,
-                          "description": "The option the learner takes: one of the choice's subjects, by name"
-                        },
-                        "kind": {
-                          "type": "string",
-                          "enum": [
-                            "setExamChoice"
-                          ]
-                        }
-                      },
-                      "required": [
-                        "group",
-                        "subject",
-                        "kind"
-                      ],
-                      "additionalProperties": false
-                    }
-                  ]
-                }
-              },
-              "reason": {
-                "nullable": true,
-                "description": "The sentence to show as written when an AI or a proposal wrote it; null when the client says it from kind, operations and effect, as for every change read from the learner's words (`source: planEdit`, the buddy's or the plan page's), so its card says what it does, never what was asked",
-                "type": "string"
-              },
-              "seen": {
-                "type": "boolean",
-                "description": "The learner said \"Got it\" to it, so the plan no longer shows it"
-              },
-              "source": {
-                "type": "string",
-                "description": "learner, planEdit, tutor, system, or the part that proposed it"
-              },
-              "status": {
-                "type": "string",
-                "enum": [
-                  "proposed",
-                  "applied",
-                  "declined",
-                  "undone",
-                  "replaced"
-                ],
-                "description": "proposed waits for the learner's answer, and waits again after they apply it and undo it; undone: the learner undid a change that applied without waiting for their answer (their own, a test-out); replaced: a newer change about the same thing (the time, the date, the focus, the exam's notice) replaced it before they answered, or waits in its place when they undo it, so it can't be applied"
-              },
-              "todaySession": {
-                "nullable": true,
-                "description": "For a change the learner made or applied: changed when today's session took it right away, unchanged when today's session stays as it was (underway or done), so the change starts on the next study day. Null otherwise",
-                "type": "string",
-                "enum": [
-                  "changed",
-                  "unchanged"
-                ]
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlanChange"
               }
-            },
-            "required": [
-              "behind",
-              "canUndo",
-              "createdAt",
-              "days",
-              "effect",
-              "examDocument",
-              "id",
-              "kind",
-              "lessonsSkipped",
-              "officialDate",
-              "operations",
-              "reason",
-              "seen",
-              "source",
-              "status",
-              "todaySession"
-            ],
-            "additionalProperties": false
+            ]
           },
           "progress": {
             "nullable": true,
@@ -80384,7 +79959,6 @@
           "insight",
           "lessonStatus",
           "mockFunding",
-          "noticeBasis",
           "pattern",
           "planChange",
           "progress",

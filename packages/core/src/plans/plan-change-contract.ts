@@ -52,6 +52,9 @@ export const planChangeSchema = z
         description:
           "For missedDays: falling behind made the plan cover less of its goal by its date (coveredBefore to coveredAfter, as the missed days left it, at currentMinutes a day). Offer more time a day or, for a goal that isn't an exam, a later date (POST /v1/goals/{goalId}/plan/time-to-cover finds exactly the time or date that covers everything when the learner asks), keeping the time with less depth, or choosing where to focus (canFocus). Null when the date isn't at risk",
       }),
+    canApply: z
+      .boolean()
+      .describe("Whether this saved quote can be applied on the current planning day."),
     canUndo: z
       .boolean()
       .meta({ description: "True while the plan is still as the change left it" }),

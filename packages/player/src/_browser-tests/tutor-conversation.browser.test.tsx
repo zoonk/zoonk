@@ -31,6 +31,7 @@ const PART_READ_MS = 300;
 
 const PROPOSED_CHANGE: PlanChangeView = {
   behind: null,
+  canApply: true,
   canUndo: false,
   createdAt: "2026-10-06T12:00:00.000Z",
   days: null,

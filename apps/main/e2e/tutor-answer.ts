@@ -49,6 +49,7 @@ export function toProposal(change: {
 
   return {
     behind: null,
+    canApply: true,
     canUndo: false,
     createdAt: change.createdAt.toISOString(),
     days: null,

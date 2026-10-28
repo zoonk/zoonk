@@ -102,6 +102,7 @@ export const memoryInsightSchema = z
     message: z.string().meta({ description: "One or two sentences in the learner's language" }),
     planChange: z
       .object({
+        canApply: z.boolean(),
         effect: planEffectSchema
           .nullable()
           .meta({ description: "Lessons the change adds and how it moves the plan's end date" }),

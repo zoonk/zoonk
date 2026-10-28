@@ -19,9 +19,9 @@ import {
 } from "../../plans/_utils/today-plan-change";
 import { type MockFundingView } from "../../plans/mock-funding-contract";
 import { daysBetween } from "../../plans/planner/plan-calendar";
-import { type NoticeBasis } from "../../plans/today-change-contract";
 import { type PlanStatus } from "../../preparation/plan-status";
 import { type ReadStudyDay, readStudyDay } from "../../sessions/_utils/read-study-day";
+import { getSelectedCatchUpItems } from "../../sessions/_utils/selected-day-plan";
 import { type TodayStudySessionInput } from "../../sessions/contract";
 import { type DayView } from "../../sessions/day-view";
 import { loadNoticedPattern, selectDayPattern } from "../language/_utils/today-pattern";
@@ -32,7 +32,6 @@ import { countLessonsLeftToday } from "./_utils/count-lessons-left-today";
 import { loadAroundSession } from "./_utils/load-around-session";
 import { loadDayMockFunding } from "./_utils/load-mock-funding";
 import { hasStudiedOn } from "./_utils/studied-on-day";
-import { loadEarlierWork } from "./earlier-work";
 
 type TodayGoal = {
   /** The date is the likely day of an exam edition whose notice isn't out yet. */
@@ -99,11 +98,6 @@ export type TodayView = {
   lessonStatus: Record<string, LessonGenerationState["status"]>;
   /** Exact saved contribution explaining a lighter day, welcome backs included; null without one. */
   mockFunding: MockFundingView | null;
-  /**
-   * The plan a notice Today worked out (`planChange` without an id) came from: acknowledging it
-   * sends this back, so only the notice shown is saved. Null without such a notice.
-   */
-  noticeBasis: NoticeBasis | null;
   /**
    * A language goal's pattern noticed in recent mistakes, offered beside the day; null when one of
    * the day's missions is already its drill (`selectDayPattern`), and for any other goal.
@@ -256,25 +250,16 @@ async function readAdmittedToday({
     selectedSettings: day.selection?.state.settings,
   });
 
-  const [
-    sessionDay,
-    around,
-    suggestedGoal,
-    planChange,
-    dateKind,
-    examChoice,
-    noticedPattern,
-    earlierWork,
-  ] = await Promise.all([
-    loadSessionDay({ day, goal: owned.goal, userId }),
-    loadAroundSession({ owned, selection: day.selection, session: day.session, timeZone }),
-    getCurrentSuggestedGoal(),
-    loadTodayPlanChange({ goal: owned.goal, now: new Date(), timeZone }),
-    loadGoalDateKind(owned.goal, day.blueprint),
-    loadOpenExamChoice(owned.goal),
-    loadNoticedPattern({ goal: owned.goal, userId }),
-    loadEarlierWork({ day, goalId: id }),
-  ]);
+  const [sessionDay, around, suggestedGoal, planChange, dateKind, examChoice, noticedPattern] =
+    await Promise.all([
+      loadSessionDay({ day, goal: owned.goal, userId }),
+      loadAroundSession({ owned, selection: day.selection, session: day.session, timeZone }),
+      getCurrentSuggestedGoal(),
+      loadTodayPlanChange({ goal: owned.goal, now: new Date(), timeZone }),
+      loadGoalDateKind(owned.goal, day.blueprint),
+      loadOpenExamChoice(owned.goal),
+      loadNoticedPattern({ goal: owned.goal, userId }),
+    ]);
 
   const { exam, lessonStates, shortPlan, studied, studySession } = sessionDay;
   const proposalsOpen = !studySession.examAccess.trialEnded;
@@ -289,7 +274,12 @@ async function readAdmittedToday({
   return {
     status: "ready",
     today: {
-      earlierWork,
+      earlierWork: day.selection
+        ? getSelectedCatchUpItems(day.selection).map((item) => ({
+            id: item.id,
+            title: item.titleSnapshot,
+          }))
+        : [],
       exam,
       examChoice,
       goal: {
@@ -305,7 +295,6 @@ async function readAdmittedToday({
         [...lessonStates].map(([lessonId, state]) => [lessonId, state.status]),
       ),
       mockFunding,
-      noticeBasis: null,
       pattern: selectDayPattern({ day: studySession, pattern: noticedPattern }),
       planChange: shownChange,
       progress: toTodayProgress({ ...around, lessonsToday }),

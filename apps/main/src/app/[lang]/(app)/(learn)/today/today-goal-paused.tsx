@@ -12,11 +12,11 @@ import { getLocalDay } from "./today-local-day";
 /** What resuming the paused goal would do to its plan, read only for a paused goal. */
 async function loadResumePreview(goal: { id: string; status: string } | undefined) {
   if (goal?.status !== "paused") {
-    return null;
+    return false;
   }
 
   const result = await getGoalResumePreview(goal.id);
-  return result.status === "ready" ? result.preview : null;
+  return result.status === "ready" ? result.preview : false;
 }
 
 /**

@@ -1,7 +1,6 @@
 import { examChoiceViewSchema } from "@zoonk/core/exams/choices/contract";
 import { planChangeSchema } from "@zoonk/core/plans/change-contract";
 import { mockFundingSchema } from "@zoonk/core/plans/mock-funding-contract";
-import { noticeBasisSchema } from "@zoonk/core/plans/today-change-contract";
 import { noticedPatternSchema } from "@zoonk/core/view-models/language/contract";
 import { GoalKind } from "@zoonk/db";
 import { z } from "zod";
@@ -64,11 +63,6 @@ export const todayResponseSchema = z
       .describe(
         "Exact saved contribution explaining a lighter study day, welcome-back sessions included; null on unrelated days and the mock's own day.",
       ),
-    noticeBasis: noticeBasisSchema
-      .nullable()
-      .describe(
-        "The plan a computed notice (`planChange` with a null id) was worked out from: send it back to acknowledge that notice. Null without one",
-      ),
     pattern: noticedPatternSchema
       .nullable()
       .meta({
@@ -76,14 +70,6 @@ export const todayResponseSchema = z
           "A language goal's pattern noticed in recent mistakes, not practiced or dismissed yet, offered beside the day; open it with GET /v1/mistake-patterns/{patternId}. Null for any other goal, without one, and when one of the day's missions already opens it, unless a bonus earned on another goal replaced the missions' rows",
       }),
     planChange: planChangeSchema
-      .extend({
-        id: z
-          .uuid()
-          .nullable()
-          .describe(
-            "Null only for a computed mandatory notice before its explicit acknowledgment or Open POST",
-          ),
-      })
       .nullable()
       .meta({
         description:

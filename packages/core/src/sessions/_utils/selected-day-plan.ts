@@ -2,13 +2,14 @@ import "server-only";
 import { type Goal } from "@zoonk/db";
 import { type GoalPlanSource } from "../../learner/_utils/goal-skill-graph";
 import { getEstimateChange } from "../../plans/_utils/estimate-change";
-import { loadLeftWorkSelection, readEarlierWork } from "../../plans/_utils/left-work";
+import { loadLeftWorkSelection, selectLeftWork } from "../../plans/_utils/left-work";
 import { type PlanContext, loadPlanContext } from "../../plans/_utils/plan-context";
 import {
   addsLessonsAfterLessonsDone,
   isPlanLaidOut,
 } from "../../plans/_utils/plan-refresh-admission";
 import {
+  getPlanSummaryBasis,
   planSummarySchema,
   readFreshPlanSummary,
   readPlanSummary,
@@ -17,7 +18,6 @@ import { loadPlanAtToken } from "../../plans/_utils/plan-token";
 import { isPlanUnchanged } from "../../plans/_utils/plan-unchanged";
 import { type ComputedPlan, computePlan } from "../../plans/_utils/replan";
 import { type SelectedSummary } from "../../plans/_utils/selected-summary-contract";
-import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { getItemKey } from "../../plans/planner/plan-items";
 import { type PlanPhase, type PlanState } from "../../plans/planner/plan-state";
 import { type SessionPlanItem, getSessionItemIdentity } from "./session-plan-item";
@@ -108,8 +108,6 @@ function needsCheckpointReconciliation(context: PlanContext): boolean {
 
 /** A day rollover cannot replace a shown layout whose actual inputs are still current. */
 function keepsShownLayout(context: PlanContext): boolean {
-  const { goal, timeZone } = context;
-
   const stored = planSummarySchema.safeParse(context.plan.summary);
 
   const hasManualPlaceholder = context.items.some(
@@ -120,17 +118,14 @@ function keepsShownLayout(context: PlanContext): boolean {
 
   const sameInputs =
     !stored.success ||
-    readFreshPlanSummary({
-      basis: {
-        layoutInputVersion: context.plan.inputVersion,
-        layoutStudyDay: stored.data.basis.layoutStudyDay,
-        planId: context.plan.id,
-        planVersion: context.plan.version,
-        timeZone,
-        userId: goal.userId,
-      },
-      value: context.plan.summary,
-    }) !== null;
+    (stored.data.basis.layoutInputVersion === context.plan.inputVersion &&
+      readFreshPlanSummary({
+        basis: {
+          ...getPlanSummaryBasis(context),
+          layoutStudyDay: stored.data.basis.layoutStudyDay,
+        },
+        value: context.plan.summary,
+      }) !== null);
 
   return hasShownLayout && sameInputs && !needsCheckpointReconciliation(context);
 }
@@ -140,7 +135,9 @@ export async function selectDayPlan({
   goal,
   now,
   timeZone,
+  useFreshSaved = false,
 }: {
+  useFreshSaved?: boolean;
   goal: Goal;
   now: Date;
   timeZone: string;
@@ -151,7 +148,7 @@ export async function selectDayPlan({
     return null;
   }
 
-  return selectDayPlanFromContext({ context, now });
+  return selectDayPlanFromContext({ context, now, useFreshSaved });
 }
 
 /** Queue writers select from one authorized context without loading it twice. */
@@ -164,21 +161,12 @@ export async function selectDayPlanFromContext({
   now: Date;
   useFreshSaved?: boolean;
 }): Promise<SelectedDayPlan> {
-  const { goal, timeZone } = context;
-
   const fresh = readFreshPlanSummary({
-    basis: {
-      layoutInputVersion: context.plan.inputVersion,
-      layoutStudyDay: toIsoDate(context.today),
-      planId: context.plan.id,
-      planVersion: context.plan.version,
-      timeZone,
-      userId: goal.userId,
-    },
+    basis: getPlanSummaryBasis(context),
     value: context.plan.summary,
   });
 
-  if (useFreshSaved && fresh?.advice) {
+  if (useFreshSaved && fresh?.basis.layoutInputVersion === context.plan.inputVersion) {
     return savedSelection({ context, summary: fresh.selected });
   }
 
@@ -189,15 +177,24 @@ export async function selectDayPlanFromContext({
 
   const { left, snapshot } = await loadLeftWorkSelection(context);
 
-  const computed = await computePlan({
+  const request = {
     carrySnapshot: snapshot,
     context,
     keepPhaseDates: true,
-    mode: left.length > 0 ? "forced" : "automatic",
+    mode: left.length > 0 ? ("forced" as const) : ("automatic" as const),
     now,
     setAsideLeftWork: left.length > 0,
     todayShown: true,
-  });
+  };
+
+  const computed =
+    useFreshSaved && canSkipBuild({ fresh, left })
+      ? await computePlan({ ...request, skipUnchangedInputs: true })
+      : await computePlan(request);
+
+  if (!computed) {
+    return savedSelection({ context, summary: fresh?.selected ?? null });
+  }
 
   const unchanged =
     left.length === 0 &&
@@ -256,7 +253,7 @@ function retainSelection({
     retained: computed,
   };
 
-  if (!unchanged || (computed.inputsKey === context.plan.inputsKey && fresh?.advice)) {
+  if (!unchanged || (computed.inputsKey === context.plan.inputsKey && fresh)) {
     return selection;
   }
 
@@ -269,6 +266,16 @@ function retainSelection({
       summary,
     },
   };
+}
+
+function canSkipBuild({
+  fresh,
+  left,
+}: {
+  fresh: ReturnType<typeof readFreshPlanSummary>;
+  left: readonly unknown[];
+}): boolean {
+  return fresh !== null && left.length === 0;
 }
 
 /** Actual lessons the selected settling carried; the Plan never applies Today's quiet-day rule. */
@@ -310,6 +317,6 @@ export async function readSavedDayPlan({
 
   return {
     ...savedSelection({ context, summary: summary?.selected ?? null }),
-    left: readEarlierWork(context),
+    left: selectLeftWork(context),
   };
 }

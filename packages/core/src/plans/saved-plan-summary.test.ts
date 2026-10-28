@@ -13,8 +13,21 @@ const basis: Basis = {
 };
 
 const summary: PlanSummary = {
+  advice: {
+    feasibility: {
+      coreFits: true,
+      coveredShare: 1,
+      deadline: null,
+      deepensMostAsked: false,
+      fits: true,
+      measure: "goal",
+      timeCovers: true,
+    },
+    fitOffer: null,
+    fullCourseEndDate: null,
+  },
   basis,
-  schemaVersion: 2,
+  schemaVersion: 3,
   selected: {
     bases: null,
     coverage: null,
@@ -37,7 +50,6 @@ describe("saved plan freshness", () => {
   });
 
   it.each<Partial<Basis>>([
-    { layoutInputVersion: 5 },
     { planId: "plan-b" },
     { planVersion: 8 },
     { layoutStudyDay: "2026-10-15" },

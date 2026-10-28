@@ -56,11 +56,11 @@ function getGoalStatus(goal: { status: string } | null) {
 /** What resuming a paused goal would do to its plan; read only then. */
 async function loadResumePreview({ goalId, paused }: { goalId: string; paused: boolean }) {
   if (!paused) {
-    return null;
+    return false;
   }
 
   const result = await getGoalResumePreview(goalId);
-  return result.status === "ready" ? result.preview : null;
+  return result.status === "ready" ? result.preview : false;
 }
 
 /** The goal in the switcher, as the goal list has it. */

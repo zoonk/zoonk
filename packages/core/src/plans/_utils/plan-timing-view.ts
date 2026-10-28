@@ -11,14 +11,12 @@ export function buildPlanTimingView({
   access,
   calendar,
   context,
-  minutes,
   skillAreas,
   studiedDates,
 }: {
   access: PlanView["access"];
   calendar: StudyCalendar;
   context: PlanReadContext;
-  minutes: ReadonlyMap<string, number>;
   skillAreas: SkillAreas;
   studiedDates: ReadonlySet<string>;
 }): Pick<PlanView, "fundedMocks" | "week"> {
@@ -37,7 +35,6 @@ export function buildPlanTimingView({
       calendar,
       exam: getExamDayRules({ isExam: goal.kind === "exam", settings: state.settings }),
       items,
-      minutes,
       overflow: state.settings.checkpointOverflow,
       skillAreas,
       startDate: getDateInTimeZone({ date: goal.createdAt, timeZone: context.timeZone }),

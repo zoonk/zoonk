@@ -15,6 +15,7 @@ const planOfferSchema = z.object({
 });
 
 export const planFitOfferSchema = planOfferSchema
+  .extend({ canApply: z.boolean() })
   .nullable()
   .meta({
     description:

@@ -6,10 +6,10 @@ import { keepPaceOwn } from "../_test-utils/keep-pace-own";
 import { planLibraryFixture, unplannedGoalFixture } from "../_test-utils/plan-library";
 import { createGoalPlan } from "../create-goal-plan";
 import { PlanConflictError } from "../plan-conflict";
-import { toComputedPlanWrite } from "./computed-plan-write";
 import { markPlanWrite } from "./mark-plan-write";
 import { loadPlanContext } from "./plan-context";
 import { readPlanSummary } from "./plan-summary";
+import { preparePlanWrite } from "./prepare-plan-write";
 import { computePlan } from "./replan";
 import { savePlanInputsKey, writePlan } from "./write-plan";
 
@@ -68,7 +68,7 @@ describe("plan writes", () => {
         plan: { id: plan.id, userId: goal.userId, version: plan.version },
         value: plan.summary,
       }),
-    ).toMatchObject({ basis: { planVersion: plan.version }, schemaVersion: 2 });
+    ).toMatchObject({ basis: { planVersion: plan.version }, schemaVersion: 3 });
   });
 
   it("refuses a layout an input writer marked since", async () => {
@@ -83,7 +83,7 @@ describe("plan writes", () => {
 
         await writePlan({
           context: writeContext,
-          plan: toComputedPlanWrite({ computed, context: writeContext }),
+          plan: await preparePlanWrite({ computed, context: writeContext }),
           tx,
         });
       }),
@@ -146,7 +146,7 @@ describe("plan writes", () => {
 
         await writePlan({
           context: writeContext,
-          plan: toComputedPlanWrite({ computed, context: writeContext }),
+          plan: await preparePlanWrite({ computed, context: writeContext }),
           tx,
         });
       });

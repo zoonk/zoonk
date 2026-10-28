@@ -2,6 +2,7 @@ import { request } from "@playwright/test";
 import { acknowledgedTodayPlanChangeSchema } from "@zoonk/core/plans/today-change-contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
+import { planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { mandatoryNoticeDayFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { todayResponseSchema } from "../src/lib/openapi/schemas/today";
@@ -12,7 +13,7 @@ const PATH = "/v1/today/plan-change/acknowledgments";
 test.describe("Today's mandatory notice acknowledgment API", () => {
   test.afterAll(() => prisma.$disconnect());
 
-  test("reads falling behind without a write, then keeping the plan persists it without a session", async () => {
+  test("reads falling behind without a write and acknowledges a saved notice without a session", async () => {
     const baseURL = process.env.E2E_BASE_URL ?? "";
     const { api, userId } = await createBearerLearner({ baseURL, prefix: "mandatory-notice" });
     const localDate = getDateInTimeZone({ date: new Date(), timeZone: "UTC" });
@@ -24,7 +25,7 @@ test.describe("Today's mandatory notice acknowledgment API", () => {
     const today = todayResponseSchema.parse(await response.json());
 
     expect(today.planChange).toBeNull();
-    expect(today.earlierWork.length).toBeGreaterThan(0);
+    expect(today.earlierWork).toStrictEqual([]);
 
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { id: fixture.plan.id } }),
@@ -33,13 +34,13 @@ test.describe("Today's mandatory notice acknowledgment API", () => {
     await expect(prisma.planChange.count({ where: { planId: fixture.plan.id } })).resolves.toBe(0);
     await expect(prisma.studySession.count({ where: { userId } })).resolves.toBe(0);
 
-    const input = {
-      basis: { inputVersion: before.inputVersion, version: before.version },
-      goalId: fixture.goal.id,
-      kind: "computed",
-      shownDate: localDate.toISOString().slice(0, 10),
-      timeZone: "UTC",
-    };
+    const notice = await planChangeFixture({
+      kind: "missedDays",
+      planId: fixture.plan.id,
+      status: "applied",
+    });
+
+    const input = { changeId: notice.id, kind: "stored" };
 
     const acknowledged = await api.post(PATH, { data: input });
     expect(acknowledged.status(), await acknowledged.text()).toBe(200);

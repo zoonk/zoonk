@@ -7,7 +7,6 @@ import { mockSession } from "../_test-utils/mock-session";
 import { openStudyDay } from "../sessions/open-study-day";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
-import { acknowledgeTodayPlanChange } from "./acknowledge-today-plan-change";
 import { createGoalPlan } from "./create-goal-plan";
 import { parsePlanSettings } from "./planner/plan-state";
 
@@ -57,7 +56,7 @@ async function returnAfterTarget({
   return { ...fixture, user };
 }
 
-describe("computed mandatory notice past-date eligibility", () => {
+describe("past-date notice eligibility", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(START);
@@ -87,24 +86,10 @@ describe("computed mandatory notice past-date eligibility", () => {
       }
 
       expect(read.result.today.planChange).toBeNull();
-      expect(read.result.today.noticeBasis).toBeNull();
 
       await expect(
         prisma.plan.findUniqueOrThrow({ include: { items: true }, where: { id: fixture.plan.id } }),
       ).resolves.toStrictEqual(before);
-
-      const acknowledgment = await countDatabaseStatements(() =>
-        acknowledgeTodayPlanChange({
-          basis: { inputVersion: fixture.plan.inputVersion, version: fixture.plan.version },
-          goalId: fixture.goal.id,
-          kind: "computed",
-          shownDate: "2020-10-20",
-          timeZone: "UTC",
-        }),
-      );
-
-      expect(acknowledgment.result).toStrictEqual({ status: "retryable" });
-      expect(acknowledgment.writes).toBe(0);
 
       await expect(
         openStudyDay({

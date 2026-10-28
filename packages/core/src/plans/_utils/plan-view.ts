@@ -30,7 +30,7 @@ import { buildPlanPath } from "./plan-path-view";
 import { getSkillAreas } from "./plan-phase-views";
 import { type PlanReadContext } from "./plan-read-projection";
 import { buildScheduleView } from "./plan-schedule-view";
-import { readFreshPlanSummary } from "./plan-summary";
+import { getPlanSummaryBasis, readFreshPlanSummary } from "./plan-summary";
 import { buildPlanTimingView } from "./plan-timing-view";
 import { loadPlanTools, toPlanToolViews } from "./plan-tools";
 import { readSavedBases, readSavedFeasibility } from "./saved-plan-advice";
@@ -228,8 +228,6 @@ export async function buildPlanView({
     listTaughtStandInSkills({ goal, graph: state.graph, items }),
   ]);
 
-  const minutes = new Map<string, number>();
-
   const skillAreas = getSkillAreas({
     courseTitle: course?.title ?? null,
     skills: state.graph.skills,
@@ -247,18 +245,11 @@ export async function buildPlanView({
   });
 
   const fresh = readFreshPlanSummary({
-    basis: {
-      layoutInputVersion: context.plan.inputVersion,
-      layoutStudyDay: toIsoDate(context.today),
-      planId: context.plan.id,
-      planVersion: context.plan.version,
-      timeZone: context.timeZone,
-      userId: goal.userId,
-    },
+    basis: getPlanSummaryBasis(context),
     value: context.plan.summary,
   });
 
-  const fitOffer = status?.kind === "pastDate" ? null : (fresh?.advice?.fitOffer ?? null);
+  const fitOffer = status?.kind === "pastDate" ? null : (summary?.advice.fitOffer ?? null);
 
   return {
     access,
@@ -277,11 +268,14 @@ export async function buildPlanView({
     })
       ? { kind: "finished" }
       : null,
-    estimate: buildEstimateView({ computed: null, context }),
+    estimate: buildEstimateView({ context }),
     examChoices,
     examDocument: getExamDocument(goal),
     feasibility,
-    fitOffer: fitOffer && foldChangeAreas({ change: fitOffer, partAreas }),
+    fitOffer: fitOffer && {
+      ...foldChangeAreas({ change: fitOffer, partAreas }),
+      canApply: fresh !== null,
+    },
     goalId: goal.id,
     notice: getNoticeWaitState({ noticeWaitUntil: context.plan.noticeWaitUntil, now }),
     numbers: summary ? buildSavedPlanNumbersView(context) : null,
@@ -312,7 +306,7 @@ export async function buildPlanView({
       skippedActivities: state.settings.skippedActivities,
     },
     tools: toPlanToolViews({ settings: state.settings, tools }),
-    ...buildPlanTimingView({ access, calendar, context, minutes, skillAreas, studiedDates }),
+    ...buildPlanTimingView({ access, calendar, context, skillAreas, studiedDates }),
     writtenPractice: getWrittenPracticeView({ goal, graph: state.graph, settings: state.settings }),
   };
 }

@@ -24,6 +24,7 @@ import { usePlanChange } from "./use-plan-change";
  */
 export function PlanOfferSuggestion({
   actions,
+  canApply = true,
   description,
   item,
   offer,
@@ -31,6 +32,7 @@ export function PlanOfferSuggestion({
 }: {
   /** The other ways on, after Apply: "Not now", or a menu of them. */
   actions: React.ReactNode;
+  canApply?: boolean;
   description: string[];
   item: SlotItem;
   offer: PlanOffer | null;
@@ -65,7 +67,7 @@ export function PlanOfferSuggestion({
       {offer && <PlanEffectDiff effect={offer.effect} />}
 
       <SuggestionActions>
-        {offer && (
+        {offer && canApply && (
           <SuggestionAction disabled={isPending} onClick={apply}>
             {t("Apply")}
           </SuggestionAction>

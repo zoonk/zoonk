@@ -2,7 +2,6 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { PHASE_DATES_SOURCE } from "../plan-change-contract";
 import { getFullCourseEnd } from "../planner/after-exam";
-import { showsPhaseDatesMove } from "../planner/phase-dates-move";
 import { fromIsoDate } from "../planner/plan-calendar";
 import { computeChange } from "./compute-change";
 import { toComputedPlanWrite } from "./computed-plan-write";
@@ -13,6 +12,7 @@ import { type PlanContext } from "./plan-context";
 import { readShownFeasibility, toFeasibilityView } from "./plan-feasibility-view";
 import { getPlanPreviewBasis } from "./plan-preview-basis";
 import { readPlanSummary, toPlanSummary } from "./plan-summary";
+import { type ProposalReplacement, getReplacedProposalIds } from "./replace-waiting-proposals";
 import { type ComputedPlan } from "./replan";
 import { retainPlanAllocation } from "./retained-plan-allocation";
 import { type PlanWrite } from "./write-plan";
@@ -50,11 +50,12 @@ function getComputedPlanContext({
 async function prepareReadModel({
   computed,
   context,
+  replacement,
 }: {
   computed: ComputedPlan;
   context: PlanContext;
+  replacement?: ProposalReplacement;
 }) {
-  const summary = toPlanSummary({ context, selected: computed.selected });
   const saved = getComputedPlanContext({ computed, context });
 
   const feasibility = readShownFeasibility({
@@ -64,13 +65,12 @@ async function prepareReadModel({
 
   const [fitOffer, previews] = await Promise.all([
     loadFitOffer({ baseline: computed, context: saved, feasibility }),
-    prepareProposalPreviews({ baseline: computed, context: saved }),
+    prepareProposalPreviews({ baseline: computed, context: saved, replacement }),
   ]);
 
   return {
     previews,
-    summary: {
-      ...summary,
+    summary: toPlanSummary({
       advice: {
         feasibility: toFeasibilityView(feasibility),
         fitOffer,
@@ -80,23 +80,38 @@ async function prepareReadModel({
           targetDate: computed.state.goal.targetDate,
         }),
       },
-    },
+      context,
+      selected: computed.selected,
+    }),
   };
 }
 
-export async function prepareProposalPreviews({
+async function prepareProposalPreviews({
   baseline,
   context,
+  replacement,
 }: {
   baseline: ComputedPlan;
   context: PlanContext;
+  replacement?: ProposalReplacement;
 }) {
   const proposals = await prisma.planChange.findMany({
     where: { planId: context.plan.id, status: "proposed" },
   });
 
+  const replaced = new Set(
+    replacement ? getReplacedProposalIds({ replacement, waiting: proposals }) : [],
+  );
+
+  const survivors = proposals.filter(
+    (proposal) =>
+      !replaced.has(proposal.id) &&
+      proposal.id !== replacement?.except &&
+      parsePlanChangePayload(proposal.payload).source !== PHASE_DATES_SOURCE,
+  );
+
   return Promise.all(
-    proposals.map(async (proposal) => {
+    survivors.map(async (proposal) => {
       const payload = parsePlanChangePayload(proposal.payload);
 
       const result = await applyChangeOperations({
@@ -115,12 +130,7 @@ export async function prepareProposalPreviews({
               state: result.state,
             });
 
-      const effect =
-        change &&
-        !change.unchanged &&
-        (payload.source !== PHASE_DATES_SOURCE || showsPhaseDatesMove(change.effect))
-          ? change.effect
-          : null;
+      const effect = change && !change.unchanged ? change.effect : null;
 
       return {
         id: proposal.id,
@@ -138,6 +148,7 @@ export async function prepareProposalPreviews({
 export async function preparePlanWrite(input: {
   computed: ComputedPlan;
   context: PlanContext;
+  replacement?: ProposalReplacement;
 }): Promise<PlanWrite> {
   return { ...toComputedPlanWrite(input), ...(await prepareReadModel(input)) };
 }
