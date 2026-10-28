@@ -236,13 +236,15 @@ final class LiveCall {
       usedHelp: false)
   }
 
-  /// Silences the call and has the server hang it up: true once the server confirmed, and only
-  /// then does the peer go. One request at a time; asking again after a failure sends a new one.
+  /// Ends the call on this device at once (silence, then the peer goes, which also ends any wait
+  /// for ICE or the channel) and has the server hang it up: true once the server confirmed. The
+  /// connection's ID stays for that, so asking again after a failure sends a new request, and
+  /// nothing is saved until the server confirms.
   func release() async -> Bool {
     silence()
+    closeTransport()
 
     guard let connectionId, !closeConfirmed else {
-      closeTransport()
       return true
     }
 
@@ -263,13 +265,7 @@ final class LiveCall {
     }
 
     ending = task
-    let closed = await task.value
-
-    if closed {
-      closeTransport()
-    }
-
-    return closed
+    return await task.value
   }
 
   // MARK: - Reservation
@@ -566,11 +562,14 @@ extension LiveCallClient {
   @MainActor
   static func live(conversationId: String, voice: VoiceServices, api: LiveCallAPI) -> LiveCallClient
   {
-    LiveCallClient(
+    let owner = CallOwner()
+
+    return LiveCallClient(
       connect: { takeover in
         // The call holds the plan's call time from its reservation.
         let reservation = await voice.cache.mutate(invalidating: [.allowance]) { identity in
-          try await api.connect(
+          owner.identity = identity
+          return try await api.connect(
             conversationId: conversationId, takeover: takeover, token: identity.bearerToken)
         }
 
@@ -594,17 +593,20 @@ extension LiveCallClient {
         return sdp
       },
       end: { connectionId in
-        let ended = await voice.cache.mutate(invalidating: [.allowance]) { identity in
-          try await api.end(
-            conversationId: conversationId, connectionId: connectionId,
-            token: identity.bearerToken)
-        }
-
-        guard case .done(let atDeadline) = ended else {
+        // Hanging up is cleanup: it goes out under the learner who reserved the call, even if the
+        // session changed since, so the server stops the call's time.
+        guard let identity = owner.identity else {
           return nil
         }
 
-        return atDeadline
+        let ended = try? await api.end(
+          conversationId: conversationId, connectionId: connectionId, token: identity.bearerToken)
+
+        if ended != nil {
+          voice.cache.invalidate([.allowance])
+        }
+
+        return ended ?? nil
       },
       checkObjectives: { turns in
         let met = await voice.cache.mutate { identity in
@@ -621,4 +623,10 @@ extension LiveCallClient {
       makeTransport: { WebRTCLiveCallTransport() },
       requestMicrophone: { await AVAudioApplication.requestRecordPermission() })
   }
+}
+
+/// The learner who reserved a call, for hanging it up under them.
+@MainActor
+private final class CallOwner {
+  var identity: AuthenticatedSession?
 }

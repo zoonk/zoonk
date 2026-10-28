@@ -212,6 +212,24 @@ final class LiveCallTests: XCTestCase {
     XCTAssertTrue(transport.isClosed)
   }
 
+  /// The review's repro (F21): ICE gathering stalls, the learner leaves, and the server can't
+  /// confirm the hangup. The device still lets go of its peer at once, and the offer's wait ends.
+  func testLeavingCleansUpLocallyEvenWhenTheServerCantConfirmTheHangup() async {
+    let transport = FakeTransport(holdsOffer: true)
+    let server = FakeServer(confirmsHangup: false)
+    let call = LiveCall(conversation: .fixture(), client: server.client(transport))
+
+    Task { await call.start() }
+    await settle { transport.isWaitingForOffer }
+    call.leave()
+    await settle { !server.ended.isEmpty }
+
+    XCTAssertEqual(server.ended, ["connection-1"])
+    XCTAssertTrue(transport.isClosed)
+    XCTAssertFalse(transport.isWaitingForOffer)
+    XCTAssertEqual(call.phase, .failed)
+  }
+
   // MARK: - Helpers
 
   private func event(_ json: String) -> LiveServerEvent? {
@@ -253,9 +271,25 @@ private final class FakeTransport: LiveCallTransport {
   private(set) var sent: [LiveClientCommand] = []
   private(set) var isSilenced = false
   private(set) var isClosed = false
+  private let holdsOffer: Bool
+  private var offerWait: CheckedContinuation<Void, any Error>?
+
+  /// `holdsOffer`: ICE gathering never finishes; only closing ends the wait, as WebRTC's does.
+  init(holdsOffer: Bool = false) {
+    self.holdsOffer = holdsOffer
+  }
+
+  var isWaitingForOffer: Bool {
+    offerWait != nil
+  }
 
   func makeOffer() async throws -> String {
     offers += 1
+
+    if holdsOffer {
+      try await withCheckedThrowingContinuation { offerWait = $0 }
+    }
+
     return "offer"
   }
 
@@ -271,6 +305,8 @@ private final class FakeTransport: LiveCallTransport {
 
   func close() {
     isClosed = true
+    offerWait?.resume(throwing: CancellationError())
+    offerWait = nil
   }
 }
 
@@ -278,14 +314,20 @@ private final class FakeTransport: LiveCallTransport {
 private final class FakeServer {
   private var reservations: [CallReservation?]
   private let endedAtDeadline: Bool
+  private let confirmsHangup: Bool
   private(set) var connects = 0
   private(set) var redeemed: [String] = []
   private(set) var ended: [String] = []
 
   /// Each connect takes the next reservation; nil (or none left) is a ready one.
-  init(reservations: [CallReservation?] = [], endedAtDeadline: Bool = false) {
+  /// `confirmsHangup: false`: the hangup request never gets through.
+  init(
+    reservations: [CallReservation?] = [], endedAtDeadline: Bool = false,
+    confirmsHangup: Bool = true
+  ) {
     self.reservations = reservations
     self.endedAtDeadline = endedAtDeadline
+    self.confirmsHangup = confirmsHangup
   }
 
   func client(_ transport: FakeTransport) -> LiveCallClient {
@@ -301,7 +343,7 @@ private final class FakeServer {
       },
       end: { connectionId in
         self.ended.append(connectionId)
-        return self.endedAtDeadline
+        return self.confirmsHangup ? self.endedAtDeadline : nil
       },
       checkObjectives: { _ in nil },
       makeTransport: { transport },
