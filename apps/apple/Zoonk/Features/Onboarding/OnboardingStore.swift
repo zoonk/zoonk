@@ -5,8 +5,8 @@ import Observation
 @MainActor
 @Observable
 final class OnboardingStore {
-  /// Words Today's box sent with the tap that opened the start flow, read once by it.
-  private(set) var sentGoal: String?
+  /// What Today's box sent with the tap that opened the start flow, read once by it.
+  private(set) var sentGoal: SentGoal?
 
   @ObservationIgnored private let api: OnboardingAPI
   @ObservationIgnored private let cache: AppCache
@@ -22,12 +22,12 @@ final class OnboardingStore {
     self.session = session
   }
 
-  /// Hands the words to the start flow Today opens next; it reads them once.
-  func send(goal: String) {
+  /// Hands the words and material to the start flow Today opens next; it reads them once.
+  func send(_ goal: SentGoal) {
     sentGoal = goal
   }
 
-  func takeSentGoal() -> String? {
+  func takeSentGoal() -> SentGoal? {
     defer { sentGoal = nil }
     return sentGoal
   }

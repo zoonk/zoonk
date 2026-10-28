@@ -1,17 +1,67 @@
 import SwiftUI
 
-/// "Start a goal" on Today, for a visitor or a learner without a goal: one box for the goal in the learner's own words and examples that start it in one tap. Today embeds it inside its `List`; sending opens the start flow as a task, which reads the words right away (the tap is what starts it). A visitor becomes a guest when they send, as on main.
+/// "Start a goal" on Today, for a visitor or a learner without a goal: one box for the goal in the learner's own words, the paperclip for their own material, and examples that start it in one tap. Today embeds it inside its `List`; sending opens the start flow as a task, which reads the words right away (the tap is what starts it). A visitor becomes a guest when they send, as on main.
 struct GoalStartEntry: View {
   @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
   @State private var words = ""
+  @State private var material: [AttachedSource] = []
+  @State private var intent: MaterialIntent?
 
   var body: some View {
-    GoalEntrySections(words: $words, isSection: true) { goal in
-      onboarding.send(goal: goal)
-      router.open(.startGoal())
-    }
+    GoalEntrySections(
+      words: $words, isSection: true, canSubmitEmpty: !material.isEmpty && intent != nil,
+      onSubmit: { goal in
+        onboarding.send(SentGoal(words: goal, material: material, intent: intent))
+        router.open(.startGoal())
+      },
+      attachment: {
+        GoalMaterialSections(material: $material, intent: $intent)
+      })
   }
+}
+
+/// What Today's box sends to the start flow: the words, and the material attached with what to do with it.
+struct SentGoal {
+  let words: String
+  var material: [AttachedSource] = []
+  var intent: MaterialIntent?
+
+  /// With material attached, what the learner chose to do with it decides: questions open answers from its pages, and a plan without words is read from its titles.
+  var start: GoalStart {
+    let withMaterial = material.isEmpty ? nil : intent
+
+    if withMaterial == .questions {
+      return .questions
+    }
+
+    return .goal(words.isEmpty ? materialGoal(exam: withMaterial == .exam) : words)
+  }
+
+  /// A goal in words for material attached without any: what to do with it, and its titles.
+  private func materialGoal(exam: Bool) -> String {
+    let titles = material.map { source in
+      source.title.flatMap { $0.isEmpty ? nil : $0 }
+        ?? String(
+          localized: "my notes", table: "Onboarding",
+          comment: "Pasted material without a title, inside a goal")
+    }
+    .joined(separator: ", ")
+
+    return exam
+      ? String(
+        localized: "Prepare for an exam on my material: \(titles)", table: "Onboarding",
+        comment: "A goal for an exam on the learner's material: its titles")
+      : String(
+        localized: "Understand my material: \(titles)", table: "Onboarding",
+        comment: "A goal to understand the learner's material: its titles")
+  }
+}
+
+/// Where sending the box goes: answers from the material, or a goal to read.
+enum GoalStart: Equatable {
+  case questions
+  case goal(String)
 }
 
 /// The entry's sections, shared by Today's embed and the start flow's first screen: the box (with the start flow's material under it) and "Build my plan", what stops a goal (an error, or a limit said up front), then the examples.

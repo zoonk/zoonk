@@ -98,12 +98,22 @@ private struct GoalStartFlow: View {
   @State private var material: [AttachedSource] = []
   @State private var intent: MaterialIntent?
 
-  init(sentGoal: String?, prefill: String?, needsAccount: Bool, limit: GoalLimitReason?) {
+  init(sentGoal: SentGoal?, prefill: String?, needsAccount: Bool, limit: GoalLimitReason?) {
     self.limit = limit
     _needsAccount = State(initialValue: needsAccount)
-    _words = State(initialValue: sentGoal ?? prefill ?? "")
-    _draft = State(initialValue: sentGoal.map(DraftState.sending))
-    _path = State(initialValue: sentGoal == nil ? [] : [.draft])
+    _words = State(initialValue: sentGoal?.words ?? prefill ?? "")
+    _material = State(initialValue: sentGoal?.material ?? [])
+    _intent = State(initialValue: sentGoal?.intent)
+
+    switch sentGoal?.start {
+    case .goal(let goal):
+      _draft = State(initialValue: .sending(goal))
+      _path = State(initialValue: [.draft])
+    case .questions:
+      _path = State(initialValue: [.questions])
+    case nil:
+      break
+    }
   }
 
   var body: some View {
@@ -154,7 +164,7 @@ private struct GoalStartFlow: View {
       }
       // Today's box sent the words with the tap that opened this screen.
       .task {
-        if case .sending(let goal) = draft, onboarding.takeSentGoal() != nil {
+        if onboarding.takeSentGoal() != nil, case .sending(let goal) = draft {
           send(goal)
         }
       }
@@ -187,35 +197,13 @@ private struct GoalStartFlow: View {
     }
   }
 
-  /// With material attached, what the learner chose to do with it decides: questions open answers from its pages, and a plan without words is read from its titles.
   private func submit(_ typed: String) {
-    let withMaterial = material.isEmpty ? nil : intent
-
-    if withMaterial == .questions {
+    switch SentGoal(words: typed, material: material, intent: intent).start {
+    case .questions:
       path = [.questions]
-      return
+    case .goal(let goal):
+      send(goal)
     }
-
-    send(typed.isEmpty ? materialGoal(exam: withMaterial == .exam) : typed)
-  }
-
-  /// A goal in words for material attached without any: what to do with it, and its titles.
-  private func materialGoal(exam: Bool) -> String {
-    let titles = material.map { source in
-      source.title.flatMap { $0.isEmpty ? nil : $0 }
-        ?? String(
-          localized: "my notes", table: "Onboarding",
-          comment: "Pasted material without a title, inside a goal")
-    }
-    .joined(separator: ", ")
-
-    return exam
-      ? String(
-        localized: "Prepare for an exam on my material: \(titles)", table: "Onboarding",
-        comment: "A goal for an exam on the learner's material: its titles")
-      : String(
-        localized: "Understand my material: \(titles)", table: "Onboarding",
-        comment: "A goal to understand the learner's material: its titles")
   }
 
   private func send(_ goal: String) {
