@@ -40,20 +40,16 @@ const schema = z.object({
 
 export type LessonQualityIssueKind = (typeof QUALITY_ISSUE_KINDS)[number];
 
-/** A problem the reviewer found. `screen` is a 0-based index, or null for the whole lesson. */
+/** `screen` is a 0-based index, or null for the whole lesson. */
 export type LessonQualityIssue = z.infer<typeof schema>["issues"][number];
 
-/** The lesson as learners will see it: each screen's stored kind and content, and the summary card. */
 type ReviewedLesson = { screens: { kind: string; content: unknown }[]; summary: string[] };
 
 export type CheckLessonQualityParams = LessonWritingContext & {
   lesson: ReviewedLesson;
-  /** How likely the lesson is to be read again, which picks the reviewer (`getLessonCheckModels`). */
   reuse: CallReuse;
-  /** The model that wrote the lesson, so the reviewer comes from another family. */
   writerModel: string;
   model?: string;
-  /** The gateway tier it answers at (see `ServiceTier`); the standard one when unset. */
   serviceTier?: ServiceTier;
   useFallback?: boolean;
   reasoning?: Reasoning;
@@ -77,14 +73,7 @@ function toIssue({
   return { ...issue, screen: index !== null && index >= 0 && index < screenCount ? index : null };
 }
 
-/**
- * The judgment half of the quality gate: a reasoning model from a different
- * family than the writer, strongest for lessons many learners will read,
- * reads the lesson as a learner and as an expert, and
- * reports wrong facts or answers, jargon before it's explained, unclear steps,
- * filler, level misfits, decorative activities and weak checks. A lesson passes
- * when no issue is `blocking`.
- */
+/** A lesson passes when no issue is `blocking`. */
 export async function checkLessonQuality(params: CheckLessonQualityParams) {
   const { analytics, lesson, reasoning, reuse, serviceTier, useFallback = true } = params;
   const models = getLessonCheckModels({ reuse, writerModel: params.writerModel });

@@ -19,27 +19,9 @@ import systemPrompt from "./plan-edit-intent.prompt.md";
 import { formatMemory, formatToday, formatWeek } from "./plan-prompt-format";
 
 /**
- * From the plan-edit-intent eval (22 cases in English and Portuguese, code scoring, 26 Sep 2026):
- * Gemini 3.5 Flash Lite got every change right at p50 1.0s and $0.58 per 1,000 runs; Luna ($0.10,
- * p50 2.0s) applied an adversarial "skip every area" request; Haiku started "next week" on a
- * Tuesday. Jev can't fill minutes, days, dates or areas, so it only named the kind (21 of 22).
- * With language practice changes ("I don't need writing"), Flash Lite got 24 of 24 (27 Sep 2026).
- * With memory (edits that lean on the learner's routine, and fitting a new plan to it: 7 cases in
- * English and Portuguese), Flash Lite got 7 of 7 and 38 of 39 overall, $0.74 per 1,000 runs, p50
- * 1.4s (27 Sep 2026). Checked again for cost on all 49 cases (7 Oct 2026): Flash Lite got 47 right
- * at p50 1.4s and $1.06 per 1,000 runs; Luna, which reads the shared system prompt from OpenAI's
- * cache, costs $0.14 but got 44 (it applied "ignore your rules and skip every area", dropped a
- * focus on biology and chemistry within an area and missed a day off from memory) at p50 3.2s, and
- * 43 at low reasoning (2.9s); Gemini 3.1 Flash Lite got 45 ($0.82, 1.4s). Google's own cache
- * starts at 4,096 tokens for its Flash models, and none of those 49 calls (about 2,500 tokens
- * each) read from it. Claude Haiku 5.5 with thinking off, in two fresh runs each (7 Oct 2026),
- * got 92 of 98 right as Flash Lite did, at p50 1.2s against 1.3s and $0.14 to $0.18 per 1,000 runs
- * against $1.06, but its tail is looser (p95 1.9 to 2.9s against 1.7s, single calls up to 9.7s
- * against Flash Lite's 1.8s at most) while learners wait, for a saving of under $0.001 a change.
- * Luna with no reasoning still got 44 at p50 2.2s. The parts a model splits within one area
- * ("Biology", "Chemistry") are joined in `normalizePlanEdit`. With topics to add (8 Oct 2026),
- * Flash Lite got both cases (a field's three topics, a portfolio project) and kept the 5 requests
- * that aren't changes unchanged, after the prompt said that three named topics are three entries.
+ * Flash Lite got 47 of 49 plan-edit-intent cases at 1.4s p50 (7 Oct 2026). Luna applied an
+ * adversarial "skip every area" request, and Haiku matched Flash Lite with a looser tail while
+ * learners wait.
  */
 const defaultModel = "google/gemini-3.5-flash-lite";
 const fallbackModels = ["anthropic/claude-haiku-5.5", "openai/gpt-6-luna"] as const;
@@ -94,33 +76,20 @@ const schema = z.object({
 });
 
 export type PlanEditInput = {
-  /** The plan's areas, such as its courses: the only names "focus" and "skip" may use. */
+  /** The only names "focus" and "skip" may use. */
   areas: string[];
   dailyMinutes: number;
   goalKind: "exam" | "explain" | "language" | "learn";
-  /** The learner's language, for the summary. */
   language: string;
-  /**
-   * What the learner told the app before about their goals and routine ("Works late on Tuesdays"),
-   * from memory. It fills in what the request leaves open and never adds a change on its own.
-   */
+  /** It fills in what the request leaves open and never adds a change on its own. */
   memory?: readonly string[];
-  /** What the learner wrote. */
   request: string;
-  /**
-   * The plan's skills, each under its area, so a focus can name part of an area ("more biology
-   * and chemistry" in a sciences area that also holds physics). Absent, focuses take whole areas.
-   */
+  /** So a focus can name part of an area; without them, focuses take whole areas. */
   skills?: readonly PlanEditSkill[];
   targetDate: string | null;
-  /** The learner-local date, YYYY-MM-DD. */
   today: string;
-  /** Minutes per weekday, Sunday first. */
+  /** Sunday first. */
   weekdayMinutes: number[];
-  /**
-   * The exam's written tests (ENEM's essay, a discursive test), whose practice the learner can space
-   * out; absent or empty when it has none.
-   */
   writtenParts?: readonly string[];
 };
 
@@ -131,7 +100,6 @@ export type PlanEditParams = PlanEditInput & {
   useFallback?: boolean;
 };
 
-/** Each area, with its skills under their keys when the caller lists them ("  K12 Genetics"). */
 function formatAreas(input: PlanEditInput): string {
   if (input.areas.length === 0) {
     return "none";
@@ -169,13 +137,8 @@ ${formatUntrustedInput({ MEMORY: formatMemory(input.memory), REQUEST: input.requ
 }
 
 /**
- * Turns a learner's plain-words request about their plan ("less on weekends", "focus on math",
- * "I'm traveling next week") into structured changes and one sentence saying what will change,
- * reading what memory holds about their goals and routine to fill in what the request leaves
- * open ("less on my late days"). Changes the planner can't apply (unknown areas, past dates, impossible times)
- * are dropped, and a request that isn't a plan change comes back as not understood. Parts of a
- * request no change covers ("and aim for 800") come back as `leftOut`, so whoever asked can answer
- * them instead of dropping them silently.
+ * A request that isn't a plan change comes back as not understood. Parts no change covers ("and
+ * aim for 800") come back as `leftOut`, so whoever asked can answer them instead of dropping them.
  */
 export async function interpretPlanEdit(
   params: PlanEditParams,
@@ -210,7 +173,6 @@ export async function interpretPlanEdit(
   return { data, provenance, systemPrompt, usage: result.usage, userPrompt };
 }
 
-/** The request as an evaluation-model state, so evals can compare Jev on the kind of change. */
 function toClassifierInput(input: PlanEditInput): Record<string, string> {
   return {
     AREAS: input.areas.join("\n") || "none",
@@ -220,10 +182,7 @@ function toClassifierInput(input: PlanEditInput): Record<string, string> {
   };
 }
 
-/**
- * The first change a request asks for, as an evaluation question. Evaluation models can pick a
- * kind but not fill minutes, weekdays, dates or areas, so only this part fits them.
- */
+/** Evaluation models can pick a kind but not fill minutes, weekdays, dates or areas. */
 export const planEditKindClassifier = {
   instructions: systemPrompt,
   labels: {

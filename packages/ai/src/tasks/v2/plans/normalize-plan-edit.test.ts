@@ -408,7 +408,6 @@ describe(normalizePlanEdit, () => {
     ]);
   });
 
-  // Carla asked to start her school's portfolio project "logo", and it landed seven weeks out.
   it.each([
     { date: "2026-09-28", expected: "2026-09-28", when: "today, for logo" },
     { date: "2026-10-05", expected: "2026-10-05", when: "next week" },

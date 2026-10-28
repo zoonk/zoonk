@@ -1,6 +1,5 @@
 import { normalizeString } from "@zoonk/utils/string";
 
-/** Areas match the plan's names by meaning of case and accents only; unknown ones are dropped. */
 export function matchAreas({
   areas,
   values,

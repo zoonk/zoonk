@@ -7,22 +7,14 @@ const MAX_TOPICS = 4;
 const MAX_TOPIC_NAME_LENGTH = 80;
 const MAX_TOPIC_DESCRIPTION_LENGTH = 200;
 
-/**
- * A topic the learner asked the plan to add (SQL in an interview, a portfolio project), named as a
- * skill a course would teach, under the plan's area it belongs to (null for none). Core finds or
- * creates its Library skill and adds it to the plan as the learner's next work.
- */
+/** `area` is null when the topic belongs to none of the plan's. */
 export type PlanEditTopic = { area: string | null; description: string; name: string };
 
 function cleanText({ max, text }: { max: number; text: string }): string {
   return decodeHtmlEntities(text).replaceAll(/\s+/gu, " ").trim().slice(0, max);
 }
 
-/**
- * Topics with a name, once each, under an area the plan has (the plan's own spelling) or none,
- * starting on the day the learner said (`startDate`) or spread through what the plan teaches next
- * (null).
- */
+/** A null `startDate` spreads the topics through what the plan teaches next. */
 export function toTopicsOperation({
   areas,
   startDate,

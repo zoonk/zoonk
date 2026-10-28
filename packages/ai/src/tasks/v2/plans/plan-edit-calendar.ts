@@ -5,7 +5,6 @@ const LAST_WEEKDAY = 6;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/u;
 const ISO_DATE_LENGTH = 10;
 
-/** The calendar fields of a change the plan models return, flat and nullable. */
 type RawCalendarChange = {
   date: string | null;
   kind: string;
@@ -13,17 +12,16 @@ type RawCalendarChange = {
   weekdays: readonly number[] | null;
 };
 
-/** A change to the plan's time: every study day's, or some weekdays' (0 is a day off). */
+/** 0 minutes is a day off. */
 export type TimeOperation =
   | { kind: "setDailyMinutes"; minutes: number }
   | { kind: "setWeekdayMinutes"; minutes: number; weekdays: number[] };
 
-/** A change on the calendar: a light week from a day, or the goal's date (none clears it). */
+/** A goal date of none clears it. */
 export type DateOperation =
   | { kind: "addLightWeek"; startDate: string }
   | { kind: "setTargetDate"; targetDate: string | null };
 
-/** A real YYYY-MM-DD day. */
 export function isValidDate(value: string | null): value is string {
   return (
     value !== null &&
@@ -46,7 +44,6 @@ function toWeekdays(values: readonly number[] | null): number[] {
   return [...new Set(valid)].toSorted((a, b) => a - b);
 }
 
-/** Minutes in range on real weekdays; a weekday's time may be 0, a day off. */
 export function toTimeOperation(
   change: Pick<RawCalendarChange, "kind" | "minutes" | "weekdays">,
 ): TimeOperation | null {
@@ -63,7 +60,6 @@ export function toTimeOperation(
     : { kind: "setWeekdayMinutes", minutes, weekdays };
 }
 
-/** A light week from today on, or a goal date after today; clearing the date needs none. */
 export function toDateOperation({
   change,
   today,

@@ -16,11 +16,7 @@ import {
 import { formatMemory, formatToday, formatWeek } from "./plan-prompt-format";
 import systemPrompt from "./plan-routine-fit.prompt.md";
 
-/**
- * The same model as plan edits, which fitted new plans to the routine before this task had its own
- * prompt: Gemini 3.5 Flash Lite got the routine cases right (27 Sep and 7 Oct 2026) in the
- * plan-edit-intent eval. It runs in the background after a plan is built.
- */
+/** Flash Lite got the routine cases right on the plan-edit-intent eval (27 Sep and 7 Oct 2026). */
 const defaultModel = "google/gemini-3.5-flash-lite";
 const fallbackModels = ["anthropic/claude-haiku-5.5", "openai/gpt-6-luna"] as const;
 
@@ -36,13 +32,10 @@ const schema = z.object({ changes: z.array(changeSchema), reason: z.string() });
 
 export type PlanRoutineFitInput = {
   dailyMinutes: number;
-  /** The learner's language, for the reason. */
   language: string;
-  /** What the learner told the app about their goals and routine ("Works late on Tuesdays"). */
   memory: readonly string[];
-  /** The learner-local date, YYYY-MM-DD. */
   today: string;
-  /** Minutes per weekday, Sunday first. */
+  /** Sunday first. */
   weekdayMinutes: number[];
 };
 
@@ -53,12 +46,10 @@ export type PlanRoutineFitParams = PlanRoutineFitInput & {
   useFallback?: boolean;
 };
 
-/** What fitting a new plan to the routine may change: days off, lighter days and light weeks. */
 type RoutineOperation =
   | Extract<DateOperation, { kind: "addLightWeek" }>
   | Extract<TimeOperation, { kind: "setWeekdayMinutes" }>;
 
-/** The changes that fit a new plan to the routine, with the sentence saying why; none fits. */
 export type PlanRoutineFit = { operations: RoutineOperation[]; reason: string };
 
 function toRoutineOperation({
@@ -76,10 +67,7 @@ function toRoutineOperation({
     : null;
 }
 
-/**
- * The changes the planner can apply as written, checked the same way as a plan edit's: real
- * weekdays, minutes in range and light weeks from today. The reason goes only with changes.
- */
+/** Checked the same way as a plan edit's; the reason goes only with changes. */
 function normalizeRoutineFit({
   raw,
   today,
@@ -103,12 +91,7 @@ ${formatUntrustedInput({ MEMORY: formatMemory(input.memory) })}
   `;
 }
 
-/**
- * Fits a new plan's week to what memory holds about the learner's routine ("Sundays are for
- * family"): only days off, lighter weekdays and dated light weeks, with one sentence saying what
- * changes and why. Changes the planner can't apply (unknown weekdays, past weeks) are dropped, and
- * nothing comes back when no fact clearly changes a day.
- */
+/** Nothing comes back when no fact clearly changes a day. */
 export async function fitPlanToRoutineFacts(
   params: PlanRoutineFitParams,
 ): Promise<{

@@ -14,10 +14,7 @@ import toolPrompt from "./step-variant-tool.prompt.md";
 import basePrompt from "./step-variant.prompt.md";
 
 /**
- * In the step-variant eval (4 screens in English and Portuguese, 26 Sep 2026)
- * Luna scored 8.76 at $0.24 per 1,000, and Gemini 3.8 Flash 7.90 at $3.23.
- * Tool and no-install versions (4 more screens, 27 Sep 2026): Luna 8.3 to 9.6,
- * with real syntax and output, and no step left on the learner's device.
+ * Luna outscored Gemini 3.8 Flash on the step-variant eval at a tenth of the cost (26 Sep 2026).
  */
 const defaultModel = "openai/gpt-6-luna";
 
@@ -25,17 +22,12 @@ const defaultModel = "openai/gpt-6-luna";
 const defaultReasoning: Reasoning = "low";
 const fallbackModels = ["google/gemini-3.8-flash", "openai/gpt-6-sol"] as const;
 
-/**
- * The `tool` key of the version for learners who go without installing anything: install and
- * run-on-your-device steps become examples and simulations they read on the screen.
- */
+/** For learners who install nothing: device steps become examples they read on the screen. */
 export const NO_INSTALL_TOOL_KEY = "no-install";
 
-/** Each call reads the instructions of its own version only: in a tool, or with nothing installed. */
 const toolSystemPrompt = `${basePrompt}\n${toolPrompt}`;
 const noInstallSystemPrompt = `${basePrompt}\n${noInstallPrompt}`;
 
-/** Screens that have tool versions. */
 export const VARIANT_SCREEN_KINDS = ["explanation", "workedExample", "check"] as const;
 type VariantScreenKind = (typeof VARIANT_SCREEN_KINDS)[number];
 
@@ -43,9 +35,8 @@ type VariantScreenSchemas = Pick<typeof WRITTEN_SCREEN_SCHEMAS, VariantScreenKin
 export type WrittenVariant = z.infer<VariantScreenSchemas[VariantScreenKind]>;
 
 export type GenerateStepVariantParams = {
-  /** The tool as the model reads it ("Spreadsheet (Google Sheets or Excel)"), or `NO_INSTALL_TOOL_KEY`. */
+  /** The tool as the model reads it, or `NO_INSTALL_TOOL_KEY`. */
   key: string;
-  /** The original screen: its stored kind and content. */
   screen: { kind: VariantScreenKind; content: unknown };
   lessonTitle: string;
   level: CourseLevel;
@@ -60,7 +51,6 @@ function isNoInstall(params: GenerateStepVariantParams): boolean {
   return params.key === NO_INSTALL_TOOL_KEY;
 }
 
-/** The tool's name; a version for a learner who installs nothing names no tool. */
 function formatTool(params: GenerateStepVariantParams): string {
   return isNoInstall(params) ? "" : `\n${formatUntrustedInput({ KEY: params.key })}\n`;
 }
@@ -76,12 +66,7 @@ ${formatLocalContext(params.language)}
 ${formatTool(params)}  `;
 }
 
-/**
- * Writes a tool version of one lesson screen (shown in the learner's tool, or as
- * examples for a learner who installs nothing) in the same shape the lesson writer
- * uses, so core converts and validates it with the same code. The result is
- * shared by every learner with that tool.
- */
+/** In the lesson writer's shape, so core converts and validates it with the same code. */
 export async function generateStepVariant(params: GenerateStepVariantParams) {
   const {
     analytics,

@@ -9,7 +9,7 @@ import { decodeHtmlEntities } from "../../_utils/html-entities";
 import { getPromptLanguageName } from "../../_utils/prompt-language";
 import systemPrompt from "./topic-skill-names.prompt.md";
 
-/** The same small model as plan edits: the learner waits on the buddy's card. */
+/** The plan edits' small model: the learner waits on the buddy's card. */
 const defaultModel = "google/gemini-3.5-flash-lite";
 const fallbackModels = ["anthropic/claude-haiku-5.5", "openai/gpt-6-luna"] as const;
 
@@ -20,17 +20,12 @@ const schema = z.object({
   skills: z.array(z.object({ description: z.string(), name: z.string() })),
 });
 
-/** A topic as the plan understood the learner's request, which may hold details about them. */
+/** May hold details about the learner. */
 export type TopicToName = { description: string; name: string; subject: string | null };
 
-/** A topic named as the shared Library skill every learner who needs it shares. */
 export type TopicSkillName = { description: string; name: string };
 
-export type TopicSkillNamesInput = {
-  /** The language the skill is written in: the goal's. */
-  language: string;
-  topics: readonly TopicToName[];
-};
+export type TopicSkillNamesInput = { language: string; topics: readonly TopicToName[] };
 
 export type TopicSkillNamesParams = TopicSkillNamesInput & {
   analytics?: AiGenerationContext;
@@ -39,7 +34,6 @@ export type TopicSkillNamesParams = TopicSkillNamesInput & {
   useFallback?: boolean;
 };
 
-/** One line, no dashes a heading wouldn't have, cut to fit. */
 function cleanText({ max, text }: { max: number; text: string }): string {
   return decodeHtmlEntities(text)
     .replaceAll(/\s*[—–]\s*/gu, ", ")
@@ -49,10 +43,7 @@ function cleanText({ max, text }: { max: number; text: string }): string {
     .slice(0, max);
 }
 
-/**
- * Each topic's name, in its order: null for one the model left without a name, which then isn't
- * added. Never the topic's own words: they may name the learner's teacher, school or test.
- */
+/** Never the topic's own words: they may name the learner's teacher, school or test. */
 function toSkillNames({
   count,
   raw,
@@ -91,11 +82,9 @@ ${formatUntrustedInput({ TOPICS: formatTopics(input.topics) })}
 }
 
 /**
- * Names the topics a learner asked their plan to add as the shared Library skills that teach them:
- * generic, as a course catalog would name them, with nothing of the learner's own (their teacher,
- * school, company, test or dates), so the skill, its search and every lesson written for it fit
- * anyone. "Fill in the organelles table for Ms. Ana's test" becomes "Fill in comparison tables
- * of cell organelles". A topic left unnamed comes back null.
+ * Named as a course catalog would, with nothing of the learner's own, so the shared skill fits
+ * anyone: "Fill in the organelles table for Ms. Ana's test" becomes "Fill in comparison tables of
+ * cell organelles".
  */
 export async function nameTopicSkills(
   params: TopicSkillNamesParams,

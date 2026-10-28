@@ -21,7 +21,7 @@ type AreaKind = "reduceAreas" | "restoreAreas" | "skipAreas";
 
 type ActivityKind = "restoreActivities" | "skipActivities";
 
-/** A change the planner applies, the same shape as core's plan operations. */
+/** The same shape as core's plan operations. */
 type PlanEditOperation =
   | { activities: (typeof LANGUAGE_ACTIVITIES)[number][]; kind: ActivityKind }
   | { areas: string[]; kind: AreaKind }
@@ -35,7 +35,7 @@ type PlanEditOperation =
   | { kind: "addTopics"; startDate: string | null; topics: PlanEditTopic[] };
 
 export type PlanEdit = {
-  /** Parts of the request no change covers (a target score, a question), in the learner's words. */
+  /** In the learner's words. */
   leftOut: string[];
   operations: PlanEditOperation[];
   summary: string;
@@ -46,7 +46,6 @@ export type PlanEdit = {
 const MAX_LEFT_OUT = 3;
 const MAX_LEFT_OUT_LENGTH = 120;
 
-/** A part of an area as the model named it: its skills by their keys ("K12"). */
 type RawPart = { area: string; name: string; skills: string[] };
 
 type RawChange = {
@@ -63,23 +62,18 @@ type RawChange = {
   weekdays: number[] | null;
 };
 
-/** A skill of the plan, as the prompt lists it under its area by key (see `toSkillKey`). */
 export type PlanEditSkill = { area: string; name: string; skillId: string };
 
 type Context = {
   areas: readonly string[];
   goalKind: string;
-  /** The learner's language, for a part's name joined from several ("Biology and Chemistry"). */
   language?: string;
-  /** The plan's skills, for a focus on part of an area; absent when the caller lists none. */
   skills?: readonly PlanEditSkill[];
   targetDate?: string | null;
   today: string;
-  /** The exam's written tests (ENEM's essay, a discursive test); absent or empty when it has none. */
   writtenParts?: readonly string[];
 };
 
-/** A skill's key in the prompt: its place in the list, from 1 ("K12"). */
 export function toSkillKey(index: number): string {
   return `K${index + 1}`;
 }
@@ -105,10 +99,7 @@ function toAreaOperation({
   return areas.length > 0 ? { areas, kind } : null;
 }
 
-/**
- * The parts of the focused areas the learner named, each with the skills of its own area the
- * model picked by key; a part left with none is dropped, so its area is focused whole.
- */
+/** A part left with no skills is dropped, so its area is focused whole. */
 function toFocusParts({
   areas,
   context,
@@ -142,11 +133,7 @@ function toFocusParts({
   return joinPartsByArea({ language: context.language, parts: named });
 }
 
-/**
- * Areas the plan has, each focused whole or in the part the learner named. A focus the learner
- * asks for always says its parts, none when they named whole areas, so it replaces the parts an
- * earlier focus named.
- */
+/** A focus always says its parts, none for whole areas, so it replaces an earlier focus's parts. */
 function toFocusOperation({
   change,
   context,
@@ -160,7 +147,6 @@ function toFocusOperation({
   return areas.length > 0 ? { areas, kind: "focusAreas", parts } : null;
 }
 
-/** Areas the plan has, starting past their basics or from them again. */
 function toAreaStartOperation({
   change,
   context,
@@ -224,10 +210,7 @@ function toBiasOperation(change: RawChange): PlanEditOperation | null {
   return null;
 }
 
-/**
- * The day added topics start, when the learner said when ("logo", "next week"): from today, and
- * before the goal's date, since topics after it are never studied. Null spreads them instead.
- */
+/** Before the goal's date, since topics after it are never studied. Null spreads them instead. */
 function toTopicsStart({ context, date }: { context: Context; date: string | null }) {
   if (!isValidDate(date) || date < context.today) {
     return null;
@@ -279,16 +262,12 @@ function shortenPhrase(text: string): string {
   return text.length > MAX_LEFT_OUT_LENGTH ? `${text.slice(0, MAX_LEFT_OUT_LENGTH - 1)}…` : text;
 }
 
-/** The parts no change covers, once each, trimmed and short. */
 function toLeftOut(values: readonly string[] | null | undefined): string[] {
   const phrases = (values ?? []).map((value) => decodeHtmlEntities(value).trim()).filter(Boolean);
   return [...new Set(phrases)].slice(0, MAX_LEFT_OUT).map((phrase) => shortenPhrase(phrase));
 }
 
-/**
- * Keeps only the changes the planner can apply as written: minutes in range, real weekdays, dates
- * after today, and areas the plan has. When none is left, the request counts as not understood.
- */
+/** When no change the planner can apply is left, the request counts as not understood. */
 export function normalizePlanEdit({
   input,
   raw,
