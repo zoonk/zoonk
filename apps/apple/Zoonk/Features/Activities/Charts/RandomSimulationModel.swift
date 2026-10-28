@@ -220,7 +220,7 @@ enum SamplingModel {
           return Double(random.binomialCount(trials: size, probability: share)) / Double(size)
         }
 
-        let count = ChartsExpression.jsRound(
+        let count = ChartsMath.jsRound(
           Double(size) * (share + error * random.standardNormal()))
         return ChartsMath.clamp(count, 0, Double(size)) / Double(size)
       }
@@ -239,7 +239,7 @@ enum SamplingModel {
       sorted[
         Int(
           ChartsMath.clamp(
-            ChartsExpression.jsRound(share * Double(sorted.count - 1)), 0, Double(sorted.count - 1))
+            ChartsMath.jsRound(share * Double(sorted.count - 1)), 0, Double(sorted.count - 1))
         )
       ]
     }

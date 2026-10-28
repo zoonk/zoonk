@@ -64,7 +64,7 @@ private struct ChanceSimulationView: View {
   /// The runs play once there's nothing left to guess: after the check, or explored.
   private var isRunning: Bool { context.phase != .answering }
 
-  private var seed: Int { ChartsRandom.hashSeed(fieldsJSON) + runIndex }
+  private var seed: Int { Int(SeededShuffle.hashSeed(fieldsJSON)) + runIndex }
 
   private var guess: Double? {
     guard case .choice(_, let options, _, _) = context.check, let id = context.answer?.optionId
@@ -292,7 +292,7 @@ private struct SamplingSimulationView: View {
   }
 
   private func seed(_ size: Int) -> Int {
-    ChartsRandom.hashSeed("\(fieldsJSON):\(size)") + runIndex
+    Int(SeededShuffle.hashSeed("\(fieldsJSON):\(size)")) + runIndex
   }
 
   private func results(_ size: Int) -> [Double] {

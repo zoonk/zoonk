@@ -92,7 +92,7 @@ enum GeometryBoardModel {
     let scale = pow(10, Double(digits))
     let scaled = values.map { $0 * scale }
     let floors = scaled.map { $0.rounded(.down) }
-    let total = ChartsExpression.jsRound(scaled.reduce(0, +))
+    let total = ChartsMath.jsRound(scaled.reduce(0, +))
     let missing = Int(total - floors.reduce(0, +))
     let bumped = Set(
       scaled.indices.sorted { first, second in

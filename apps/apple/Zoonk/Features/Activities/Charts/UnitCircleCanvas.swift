@@ -42,7 +42,7 @@ enum UnitCircleAngle {
   /// or half a degree.
   static func step(_ angles: [Double]) -> Double {
     [5.0, 1].first { step in
-      angles.allSatisfy { abs($0 / step - ChartsExpression.jsRound($0 / step)) < 1e-3 }
+      angles.allSatisfy { abs($0 / step - ChartsMath.jsRound($0 / step)) < 1e-3 }
     } ?? 0.5
   }
 
@@ -56,13 +56,13 @@ enum UnitCircleAngle {
 
     guard
       let denominator = [1, 2, 3, 4, 6, 12].first(where: { candidate in
-        abs(turns * Double(candidate) - ChartsExpression.jsRound(turns * Double(candidate))) < 1e-6
+        abs(turns * Double(candidate) - ChartsMath.jsRound(turns * Double(candidate))) < 1e-6
       })
     else {
       return nil
     }
 
-    let numerator = Int(ChartsExpression.jsRound(turns * Double(denominator)))
+    let numerator = Int(ChartsMath.jsRound(turns * Double(denominator)))
 
     if numerator == 0 {
       return "0"

@@ -4,6 +4,11 @@ import Foundation
 /// `template-helpers.ts`, `pattern-checks.ts` and `probability.ts`), so a handle lands where main's
 /// would and a readout agrees with grading.
 enum ChartsMath {
+  /// JavaScript's `Math.round`: halves round up, so -2.5 is -2.
+  static func jsRound(_ value: Double) -> Double {
+    (value + 0.5).rounded(.down)
+  }
+
   static func clamp(_ value: Double, _ low: Double, _ high: Double) -> Double {
     min(max(value, low), high)
   }
@@ -23,12 +28,12 @@ enum ChartsMath {
   /// Whether a value is a whole number of steps, allowing for float noise.
   static func isMultiple(_ value: Double, of step: Double) -> Bool {
     let ratio = value / step
-    return abs(ratio - ChartsExpression.jsRound(ratio)) < 1e-9 * max(1, abs(ratio))
+    return abs(ratio - ChartsMath.jsRound(ratio)) < 1e-9 * max(1, abs(ratio))
   }
 
   /// The nearest position the learner can reach (min plus whole steps), without float noise.
   static func snap(_ value: Double, min low: Double, max high: Double, step: Double) -> Double {
-    let steps = ChartsExpression.jsRound((clamp(value, low, high) - low) / step)
+    let steps = ChartsMath.jsRound((clamp(value, low, high) - low) / step)
     return clamp(clean(low + steps * step), low, high)
   }
 
@@ -163,24 +168,6 @@ struct ChartsRandom {
 
   mutating func binomialCount(trials: Int, probability: Double) -> Int {
     (0..<trials).reduce(0) { sum, _ in sum + (next() < probability ? 1 : 0) }
-  }
-
-  /// A stable number from text, like `hashSeed`: JavaScript's code points at each UTF-16 index.
-  static func hashSeed(_ text: String) -> Int {
-    let units = Array(text.utf16)
-
-    return units.indices.reduce(0) { hash, index in
-      let unit = units[index]
-      var code = Int(unit)
-
-      if UTF16.isLeadSurrogate(unit), index + 1 < units.count,
-        UTF16.isTrailSurrogate(units[index + 1])
-      {
-        code = 0x10000 + ((Int(unit) - 0xD800) << 10) + (Int(units[index + 1]) - 0xDC00)
-      }
-
-      return (hash * 31 + code) % modulus
-    }
   }
 
   /// `JSON.stringify` of a template's fields as the API sends them (keys in schema order, which

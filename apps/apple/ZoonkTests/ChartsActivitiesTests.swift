@@ -8,28 +8,6 @@ import XCTest
 final class ChartsActivitiesTests: XCTestCase {
   // MARK: - Shared helpers
 
-  func testEvaluatesFormulasLikeCore() {
-    XCTAssertEqual(ChartsExpression.evaluate("-2^2"), -4)
-    XCTAssertEqual(ChartsExpression.evaluate("2^3^2"), 512)
-    XCTAssertEqual(ChartsExpression.evaluate("round(2.345, 2)"), 2.35)
-    XCTAssertEqual(ChartsExpression.evaluate("round(-2.5)"), -2)
-    XCTAssertEqual(ChartsExpression.evaluate("max(1, 3, 2)"), 3)
-    XCTAssertEqual(ChartsExpression.evaluate("rad(180)"), .pi)
-    XCTAssertEqual(ChartsExpression.evaluate("Sin(pi/2)"), 1)
-    XCTAssertEqual(ChartsExpression.evaluate("e"), M_E)
-    XCTAssertEqual(ChartsExpression.evaluate("1e3 + .5"), 1000.5)
-    XCTAssertEqual(ChartsExpression.evaluate("A1*(1+B1)", ["A1": 100, "B1": 0.2]), 120)
-  }
-
-  func testRefusesWhatCoreRefuses() {
-    XCTAssertNil(ChartsExpression.evaluate("1/0"))
-    XCTAssertNil(ChartsExpression.evaluate("2x"))
-    XCTAssertNil(ChartsExpression.evaluate("sqrt(-1)"))
-    XCTAssertNil(ChartsExpression.evaluate("sin"))
-    XCTAssertNil(ChartsExpression.evaluate("x + 1"))
-    XCTAssertNil(ChartsExpression.evaluate("round(1, 0.5)"))
-  }
-
   func testSeedsLikeMain() {
     var random = ChartsRandom(seed: 42)
     XCTAssertEqual(random.next(), 0.0009665507832230542, accuracy: 1e-15)
@@ -38,9 +16,6 @@ final class ChartsActivitiesTests: XCTestCase {
 
     var normal = ChartsRandom(seed: 7)
     XCTAssertEqual(normal.standardNormal(), -0.008046984382329135, accuracy: 1e-12)
-
-    XCTAssertEqual(ChartsRandom.hashSeed("hello"), 99_162_322)
-    XCTAssertEqual(ChartsRandom.hashSeed("x😀y"), 128_836_865)
   }
 
   func testSnapsLikeMainsHandles() {

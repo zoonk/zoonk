@@ -233,7 +233,8 @@ enum PatternFormula {
       formula.trimmingCharacters(in: .whitespacesAndNewlines).trimmingPrefix("="))
 
     return fields.examples.map { example in
-      let value = source.isEmpty ? nil : ChartsExpression.evaluate(source, example.values)
+      let value =
+        source.isEmpty ? nil : ActivityExpression.evaluate(source, variables: example.values)
 
       return Result(
         expected: example.output, value: value,

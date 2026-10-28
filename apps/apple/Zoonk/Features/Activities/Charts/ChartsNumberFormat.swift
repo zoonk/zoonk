@@ -50,7 +50,7 @@ struct ChartsNumberFormat: Sendable {
   private func money(_ value: Double, currency: String, signed: Bool, digits: Int?) -> String {
     let isWhole = { (places: Int) in
       let scale = pow(10, Double(places))
-      return ChartsExpression.jsRound(value * scale).truncatingRemainder(dividingBy: scale) == 0
+      return ChartsMath.jsRound(value * scale).truncatingRemainder(dividingBy: scale) == 0
     }
 
     let maximum = digits ?? (abs(value) >= 1000 || isWhole(2) ? 0 : 2)

@@ -78,7 +78,7 @@ struct FormulaModelFields: Decodable, Hashable, Sendable {
     values.merge(startingValues) { _, start in start }
     values.merge(sliderInputs) { _, input in input }
 
-    return ChartsExpression.evaluate(output.formula, values)
+    return ActivityExpression.evaluate(output.formula, variables: values)
   }
 }
 
@@ -123,7 +123,7 @@ struct FormulaModelView {
       let x = axis.min + (axis.max - axis.min) * Double(index) / Double(samples)
       var at = values
       at[axis.name] = x
-      return ChartsExpression.evaluate(charted.formula, at).map { (x, $0) }
+      return ActivityExpression.evaluate(charted.formula, variables: at).map { (x, $0) }
     }
   }
 

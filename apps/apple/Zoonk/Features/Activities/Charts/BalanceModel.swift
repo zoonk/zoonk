@@ -64,7 +64,9 @@ enum BalanceModel {
 
   /// Reads a linear side like `4*x + 1` as 4 unknowns and 1 unit; nil when it isn't linear.
   static func pan(_ expression: String, variable: String) -> Pan? {
-    let values = [0.0, 1, 2].map { ChartsExpression.evaluate(expression, [variable: $0]) }
+    let values = [0.0, 1, 2].map {
+      ActivityExpression.evaluate(expression, variables: [variable: $0])
+    }
 
     guard let atZero = values[0], let atOne = values[1], let atTwo = values[2] else {
       return nil
