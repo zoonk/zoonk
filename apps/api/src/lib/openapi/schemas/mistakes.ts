@@ -10,9 +10,9 @@ import { progressCelebrationShape } from "@zoonk/core/sessions/progress-celebrat
 import { reachedSchema } from "@zoonk/core/sessions/reached";
 import { MistakeCause, MistakeStatus } from "@zoonk/db";
 import { z } from "zod";
+import { bankQuestionWith } from "./bank-question-with";
 import { paginationSchema } from "./common";
 import { itemSetSchema } from "./item-set";
-import { bankQuestionSchema } from "./learner";
 
 const mistakeCauseSchema = z
   .enum(MistakeCause)
@@ -126,17 +126,14 @@ export const mistakeDrillSchema = z
   .meta({ id: "MistakeDrill" });
 
 /** A drill's question, with the passage, case, chart or recording it was asked with. */
-const mistakeQuestionSchema = z.intersection(
-  bankQuestionSchema,
-  z.object({
-    set: itemSetSchema
-      .nullable()
-      .meta({
-        description:
-          "The passage, case, chart or recording the question was asked with: show it above the question; null for a question on its own",
-      }),
-  }),
-);
+const mistakeQuestionSchema = bankQuestionWith({
+  set: itemSetSchema
+    .nullable()
+    .meta({
+      description:
+        "The passage, case, chart or recording the question was asked with: show it above the question; null for a question on its own",
+    }),
+});
 
 export const mistakePracticeResponseSchema = z
   .object({

@@ -71170,24 +71170,154 @@
           "questions": {
             "type": "array",
             "items": {
-              "allOf": [
-                {
-                  "$ref": "#/components/schemas/BankQuestion"
-                },
+              "oneOf": [
                 {
                   "type": "object",
                   "properties": {
+                    "context": {
+                      "nullable": true,
+                      "description": "A situation shown before the question",
+                      "type": "string"
+                    },
+                    "image": {
+                      "nullable": true,
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/QuestionImage"
+                        }
+                      ]
+                    },
+                    "itemId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                      "description": "Answer with this item ID"
+                    },
+                    "skillId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                      "description": "Skill ID"
+                    },
+                    "visual": {
+                      "nullable": true,
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/LessonVisual"
+                        }
+                      ]
+                    },
+                    "format": {
+                      "type": "string",
+                      "enum": [
+                        "multipleChoice"
+                      ]
+                    },
+                    "options": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Answer with the chosen option's index, or indexes"
+                    },
+                    "question": {
+                      "type": "string"
+                    },
+                    "select": {
+                      "$ref": "#/components/schemas/QuestionSelect"
+                    },
                     "area": {
                       "type": "string",
                       "description": "The area it asks about, as learners call it"
                     }
                   },
                   "required": [
+                    "context",
+                    "image",
+                    "itemId",
+                    "skillId",
+                    "visual",
+                    "format",
+                    "options",
+                    "question",
+                    "select",
+                    "area"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "context": {
+                      "nullable": true,
+                      "description": "A situation shown before the question",
+                      "type": "string"
+                    },
+                    "image": {
+                      "nullable": true,
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/QuestionImage"
+                        }
+                      ]
+                    },
+                    "itemId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                      "description": "Answer with this item ID"
+                    },
+                    "skillId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                      "description": "Skill ID"
+                    },
+                    "visual": {
+                      "nullable": true,
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/LessonVisual"
+                        }
+                      ]
+                    },
+                    "format": {
+                      "type": "string",
+                      "enum": [
+                        "trueFalse"
+                      ]
+                    },
+                    "options": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        null
+                      ]
+                    },
+                    "question": {
+                      "type": "string",
+                      "description": "The statement to judge true or false"
+                    },
+                    "area": {
+                      "type": "string",
+                      "description": "The area it asks about, as learners call it"
+                    }
+                  },
+                  "required": [
+                    "context",
+                    "image",
+                    "itemId",
+                    "skillId",
+                    "visual",
+                    "format",
+                    "options",
+                    "question",
                     "area"
                   ],
                   "additionalProperties": false
                 }
-              ]
+              ],
+              "type": "object"
             },
             "description": "The questions that exist, area by area, `questionsPerArea` on each when every place has one, spread over the area's skills, in the exam's quick format and never one the learner already answered. While `needsItems` lists any, ask these first, then GET again once the run writing the others is ready and add the questions not asked yet: a question written later fills a place that had none, never one already asked"
           },
@@ -73251,13 +73381,62 @@
                 "questions": {
                   "type": "array",
                   "items": {
-                    "allOf": [
-                      {
-                        "$ref": "#/components/schemas/BankQuestion"
-                      },
+                    "oneOf": [
                       {
                         "type": "object",
                         "properties": {
+                          "context": {
+                            "nullable": true,
+                            "description": "A situation shown before the question",
+                            "type": "string"
+                          },
+                          "image": {
+                            "nullable": true,
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/QuestionImage"
+                              }
+                            ]
+                          },
+                          "itemId": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                            "description": "Answer with this item ID"
+                          },
+                          "skillId": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                            "description": "Skill ID"
+                          },
+                          "visual": {
+                            "nullable": true,
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/LessonVisual"
+                              }
+                            ]
+                          },
+                          "format": {
+                            "type": "string",
+                            "enum": [
+                              "multipleChoice"
+                            ]
+                          },
+                          "options": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "description": "Answer with the chosen option's index, or indexes"
+                          },
+                          "question": {
+                            "type": "string"
+                          },
+                          "select": {
+                            "$ref": "#/components/schemas/QuestionSelect"
+                          },
                           "set": {
                             "nullable": true,
                             "description": "The passage, case, chart or recording the question was asked with: show it above the question; null for a question on its own",
@@ -73269,11 +73448,97 @@
                           }
                         },
                         "required": [
+                          "context",
+                          "image",
+                          "itemId",
+                          "skillId",
+                          "visual",
+                          "format",
+                          "options",
+                          "question",
+                          "select",
+                          "set"
+                        ],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "context": {
+                            "nullable": true,
+                            "description": "A situation shown before the question",
+                            "type": "string"
+                          },
+                          "image": {
+                            "nullable": true,
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/QuestionImage"
+                              }
+                            ]
+                          },
+                          "itemId": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                            "description": "Answer with this item ID"
+                          },
+                          "skillId": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+                            "description": "Skill ID"
+                          },
+                          "visual": {
+                            "nullable": true,
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/LessonVisual"
+                              }
+                            ]
+                          },
+                          "format": {
+                            "type": "string",
+                            "enum": [
+                              "trueFalse"
+                            ]
+                          },
+                          "options": {
+                            "type": "string",
+                            "nullable": true,
+                            "enum": [
+                              null
+                            ]
+                          },
+                          "question": {
+                            "type": "string",
+                            "description": "The statement to judge true or false"
+                          },
+                          "set": {
+                            "nullable": true,
+                            "description": "The passage, case, chart or recording the question was asked with: show it above the question; null for a question on its own",
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/ItemSet"
+                              }
+                            ]
+                          }
+                        },
+                        "required": [
+                          "context",
+                          "image",
+                          "itemId",
+                          "skillId",
+                          "visual",
+                          "format",
+                          "options",
+                          "question",
                           "set"
                         ],
                         "additionalProperties": false
                       }
-                    ]
+                    ],
+                    "type": "object"
                   },
                   "description": "The original question first"
                 },

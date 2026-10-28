@@ -206,6 +206,20 @@ describe("OpenAPI document", () => {
     });
   });
 
+  it("never intersects closed objects in practice questions, which strict clients can't decode", () => {
+    const schemas = createOpenAPIDocument({ cookieName: "token", openapi: "3.0.3" }).components
+      ?.schemas as Record<string, { properties?: Record<string, unknown> }>;
+
+    const practice = schemas.MistakePractice?.properties?.practice as {
+      items: { properties: { questions: { items: object } } };
+    };
+
+    const focusTest = schemas.FocusTest?.properties?.questions as { items: object };
+
+    expect(practice.items.properties.questions.items).not.toHaveProperty("allOf");
+    expect(focusTest.items).not.toHaveProperty("allOf");
+  });
+
   it("owns its authentication schemes without publishing Better Auth internals", () => {
     const document = documentContractSchema.parse(openAPIDocument);
 

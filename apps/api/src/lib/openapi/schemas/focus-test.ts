@@ -1,7 +1,7 @@
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
 import { progressCelebrationShape } from "@zoonk/core/sessions/progress-celebration";
 import { z } from "zod";
-import { bankQuestionSchema } from "./learner";
+import { bankQuestionWith } from "./bank-question-with";
 
 const countSchema = z.int().min(0);
 
@@ -21,12 +21,9 @@ export const focusTestResponseSchema = z
       }),
     questions: z
       .array(
-        z.intersection(
-          bankQuestionSchema,
-          z.object({
-            area: z.string().meta({ description: "The area it asks about, as learners call it" }),
-          }),
-        ),
+        bankQuestionWith({
+          area: z.string().meta({ description: "The area it asks about, as learners call it" }),
+        }),
       )
       .meta({
         description:
