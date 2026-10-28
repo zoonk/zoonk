@@ -1,10 +1,6 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-/**
- * Gives Android Debug builds the clone- or worktree-specific API origin `pnpm dev` resolves, as
- * `write-apple-configuration.mts` does for Xcode, without checking a machine-specific value into Git.
- */
 export function writeAndroidDevelopmentConfiguration({
   apiUrl,
   currentDirectory,

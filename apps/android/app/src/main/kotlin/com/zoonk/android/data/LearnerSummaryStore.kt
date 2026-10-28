@@ -10,18 +10,11 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 
-/** Reads the signed-in learner's summary (`getCurrentUserSummary`). */
 fun interface LearnerSummaryApi {
     suspend fun summary(session: AuthenticatedSession): LearnerSummary
 }
 
-/**
- * The learner summary every part of the frame reads (goals, tier, day, today, level, places,
- * missions), kept fresh for the app's lifetime: the shell collects it, so it loads on launch and
- * sign-in, revalidates on returning to the foreground after a minute and after any mutation (every
- * write can change it), and is marked stale at its `nextChangeAt`. Screens read frame state from
- * it, never per screen.
- */
+/** Every domain, because any write can change the summary; screens read frame state from it, never per screen. */
 class LearnerSummaryStore(
     api: LearnerSummaryApi,
     cache: AppCache,
@@ -34,8 +27,7 @@ class LearnerSummaryStore(
         }
 
     init {
-        // When the summary says it changes without a write (the next midnight, the subscription's
-        // next change, the session's end). A newer summary reschedules it.
+        // nextChangeAt is when it changes without a write: the next midnight, the subscription's next change.
         scope.launch {
             summary.state
                 .map { it.value?.nextChangeAt }

@@ -18,7 +18,7 @@ import java.io.IOException
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration.Companion.seconds
 
-/** One step update from a generation's event stream. [at] is epoch milliseconds. */
+/** [at] is epoch milliseconds. */
 @Serializable
 data class GenerationEvent(
     val at: Long? = null,
@@ -29,10 +29,8 @@ data class GenerationEvent(
 )
 
 /**
- * Streams a generation's step updates from `GET /generations/{id}/events` until the run ends. A
- * dropped connection resumes after the last event received through the endpoint's `startIndex`;
- * it gives up after three drops in a row without a new event. When the stream ends, read the
- * generation's status: a run that stopped ends its stream at once.
+ * Resumes after a dropped connection from the last event received, giving up after three drops in
+ * a row without one. When it ends, read the generation's status: a stopped run ends its stream at once.
  */
 fun ApiClients.generationEvents(
     id: String,

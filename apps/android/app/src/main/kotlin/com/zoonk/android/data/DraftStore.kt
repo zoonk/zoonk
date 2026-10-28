@@ -36,25 +36,20 @@ import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
-/** One account's drafts on device: each feature's entry by key (`essay:<blockId>`). */
 @Serializable
 data class LearnerDrafts(
     val entries: Map<String, JsonElement> = emptyMap(),
 )
 
-/** Where drafts go when the session changes: [next]'s file, moving [moveFrom]'s drafts into it. */
+/** [moveFrom] is a guest whose drafts move into [next]'s; any other previous account's are deleted. */
 data class DraftsChange(
     val next: String?,
     val moveFrom: String? = null,
 )
 
 /**
- * Learner work that must survive process death and restarts (the mock's save queue, essay text,
- * test-out answers): one DataStore file per account (`drafts/<accountId>.json`), only the current
- * account's on device, written on [io] and never on the main thread. Screens open a [DraftHandle]
- * from the session they show; a handle stays bound to that account's file, so a late save made
- * under one learner can never reach another learner's file. `SessionStore` moves drafts between
- * accounts through [follow], under the one lock every handle waits on.
+ * Keeps only the current account's file on device and writes it on [io]. A handle stays bound to
+ * the account whose session opened it, so a late save from one learner never reaches the next.
  */
 class DraftStore(
     private val directory: File,
@@ -66,7 +61,6 @@ class DraftStore(
     private val lock = Mutex()
     private var current: AccountDrafts? = null
 
-    /** A handle on [key] in [session]'s drafts; it does nothing once that account isn't signed in. */
     fun <T> open(
         session: AuthenticatedSession,
         key: String,
@@ -74,10 +68,9 @@ class DraftStore(
     ): DraftHandle<T> = DraftHandle(this, session.accountId, key, serializer)
 
     /**
-     * Runs [transition] (which publishes the next session) under the drafts lock, then moves the
-     * drafts where it says: the same account keeps its file and handles; another account (or none)
-     * closes the old file and deletes it; a guest's upgrade flushes the guest's pending saves and
-     * merges its file into the account's, the guest's entries winning.
+     * Runs [transition] under the lock handles wait on, then moves the files: the same account keeps
+     * its file and handles, a guest's upgrade flushes and merges into the account's (the guest's
+     * entries winning), and any other change closes and deletes the old file.
      */
     suspend fun follow(transition: suspend () -> DraftsChange?) {
         lock.withLock {
@@ -122,7 +115,6 @@ class DraftStore(
             null
         }
 
-    /** One account's open file. Its DataStore and its debounced saves run in [job], cancelled on handover. */
     internal inner class AccountDrafts(
         val accountId: String,
     ) {
@@ -130,7 +122,7 @@ class DraftStore(
         private val sessionScope = CoroutineScope(scope.coroutineContext + job)
         private val pending = ConcurrentHashMap<String, PendingSave>()
 
-        /** The account the open file belongs to; cleared before handover, checked inside every write. */
+        // Checked again inside updateData: a write queued before handover must not land after it.
         @Volatile
         private var owner: String? = accountId
 
@@ -142,7 +134,7 @@ class DraftStore(
                 produceFile = { File(directory, fileName(accountId)) },
             )
 
-        /** The file's drafts; empty once it's closed (the account isn't signed in anymore). */
+        // A closed DataStore's flow throws its scope's cancellation.
         val data: Flow<LearnerDrafts> =
             flow { if (owner == accountId) emitAll(store.data) else emit(LearnerDrafts()) }
                 .catch { if (owner == accountId) throw it else emit(LearnerDrafts()) }
@@ -161,7 +153,7 @@ class DraftStore(
                     }
                 }
             } catch (e: CancellationException) {
-                // The file closed (another session); only the caller's own cancellation propagates.
+                // A closed file drops the write; only the caller's own cancellation propagates.
                 currentCoroutineContext().ensureActive()
             }
         }
@@ -180,7 +172,6 @@ class DraftStore(
             pending.remove(key)?.job?.cancel()
         }
 
-        /** Writes [key]'s debounced save now, or every pending one without a key. */
         suspend fun flush(key: String? = null) {
             val saves = if (key == null) pending.values.toList() else listOfNotNull(pending[key])
             for (save in saves) {
@@ -197,7 +188,7 @@ class DraftStore(
             pending.clear()
         }
 
-        /** A save waiting out the debounce; whichever of it and a flush takes it from [pending] writes it. */
+        /** Whichever of the debounce and a flush removes it from [pending] writes it. */
         private inner class PendingSave(
             val key: String,
             val entry: JsonElement,

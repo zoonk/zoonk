@@ -6,10 +6,7 @@ import android.content.Intent
 import android.util.Log
 import kotlinx.coroutines.launch
 
-/**
- * Signs a debug build in with a session token from the local API, for persona walks and tests:
- * `adb shell am broadcast -a com.zoonk.debug.SIGN_IN -n com.zoonk.debug/com.zoonk.android.app.DebugSignInReceiver --es token <token>`.
- */
+/** `adb shell am broadcast -a com.zoonk.debug.SIGN_IN -n com.zoonk.debug/com.zoonk.android.app.DebugSignInReceiver --es token <token>` */
 class DebugSignInReceiver : BroadcastReceiver() {
     override fun onReceive(
         context: Context,

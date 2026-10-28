@@ -33,12 +33,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.create
 
-/**
- * The generated API services, one per contract tag, sending every request through [client]. Each
- * service is created on first use.
- *
- * @param baseUrl the API's versioned root, ending in `/v1/`.
- */
+/** [baseUrl] is the API's versioned root, ending in `/v1/`. */
 class ApiServices(
     baseUrl: HttpUrl,
     client: OkHttpClient,

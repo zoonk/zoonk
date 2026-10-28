@@ -21,10 +21,8 @@ import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 
 /**
- * One piece of server data, kept for the app's lifetime and created only by [AppCache]. Screens
- * collect [shown] (through [collectShown]); collecting is viewing, so a screen loads it when it's
- * empty or stale on appear and on the app's return to the foreground. Every method runs on the
- * main thread; fetches run in the app scope, so leaving a screen doesn't cancel them.
+ * Call it on the main thread. Fetches run in the app scope, so leaving a screen doesn't cancel
+ * them. A screen collects [shown] through [collectShown]; collecting counts as viewing.
  */
 class Resource<T : Any> internal constructor(
     val audience: Audience,
@@ -47,7 +45,7 @@ class Resource<T : Any> internal constructor(
     val state: StateFlow<LoadState<T>> = stored.asStateFlow()
     val isRefreshing: StateFlow<Boolean> = refreshing.asStateFlow()
 
-    /** What a screen collects: each new collection (the screen shown, the app back in front) loads it. */
+    /** Each collection loads it when it's empty or stale; collectors other than this one don't count as viewing. */
     val shown: Flow<LoadState<T>> =
         flow {
             viewers++
@@ -59,25 +57,24 @@ class Resource<T : Any> internal constructor(
             }
         }
 
-    /** Bumps whenever the value is replaced or dropped, so a page appended with [update] can check it. */
+    /** Bumps whenever the value changes, so an appended page can check nothing replaced it meanwhile. */
     var revision = 0
         private set
 
-    /** Loads when nothing is cached or it's stale. */
     suspend fun load() {
         followSession()
         if (!canRequest || (stored.value.hasContent && !isStale)) return
         run()
     }
 
-    /** Loads now, keeping what's shown (pull to refresh, retry). */
+    /** Loads even when fresh, keeping what's shown. */
     suspend fun refresh() {
         followSession()
         if (!canRequest) return
         run()
     }
 
-    /** Loads only when nothing is cached: a screen opened beneath a task gets ready while hidden. */
+    /** Loads only when nothing is cached, ignoring staleness: for a screen a task opens over. */
     suspend fun prepare() {
         followSession()
         if (!canRequest || stored.value.hasContent) return
@@ -92,17 +89,14 @@ class Resource<T : Any> internal constructor(
         if (isShown && canRequest) scope.launch { run() }
     }
 
-    /** Derives a new value from what's shown (appending the next page). It doesn't count as fresh. */
+    /** Doesn't count as fresh, unlike [replace]. */
     fun update(transform: (T) -> T) {
         val current = stored.value as? LoadState.Loaded ?: return
         stored.value = shownState(transform(current.value))
         revision++
     }
 
-    /**
-     * Shows [value] as the whole, current value: a mutation's response that carries the full new
-     * value. It cancels an older read so that read can't land afterwards, and counts as fresh.
-     */
+    /** For a response carrying the whole new value: it counts as fresh and an older read in flight can't land. */
     fun replace(value: T) {
         followSession()
         cancelRequest()
@@ -112,10 +106,8 @@ class Resource<T : Any> internal constructor(
         revision++
     }
 
-    /** [replace], applied by [AppCache.mutate] after the write instead of refetching this resource. */
     fun replacing(value: T) = Replacement(this) { replace(value) }
 
-    /** Drops another session's data, and loads the new session's at once if a screen shows it. */
     fun followSession() {
         if (audience == Audience.Everyone || owner == session.current) return
         cancelRequest()
@@ -124,7 +116,6 @@ class Resource<T : Any> internal constructor(
         loadedAt = null
         isInvalidated = false
         revision++
-        // A screen still collecting doesn't resubscribe, so it loads the new session's value here.
         if (isShown && canRequest) scope.launch { run() }
     }
 
@@ -139,8 +130,7 @@ class Resource<T : Any> internal constructor(
         try {
             pending.await()
         } catch (e: CancellationException) {
-            // The request was replaced (an invalidation or a session change); only this caller's
-            // own cancellation propagates.
+            // Only this caller's own cancellation propagates, not the replaced request's.
             currentCoroutineContext().ensureActive()
         }
     }
@@ -218,15 +208,10 @@ class Resource<T : Any> internal constructor(
     }
 }
 
-/**
- * Collects a resource the way every screen should: it loads on appear and on the app's return to
- * the foreground, and stops counting as shown when the screen leaves.
- */
 @Suppress("StateFlowValueCalledInComposition") // Only the first frame's state, as for a StateFlow.
 @Composable
 fun <T : Any> Resource<T>.collectShown(): State<LoadState<T>> = shown.collectAsStateWithLifecycle(state.value)
 
-/** A resource's new value, applied by [AppCache.mutate] after a successful write. */
 class Replacement internal constructor(
     val resource: Resource<*>,
     internal val apply: () -> Unit,

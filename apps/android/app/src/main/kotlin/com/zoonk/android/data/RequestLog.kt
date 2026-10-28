@@ -4,11 +4,7 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import kotlin.time.TimeSource
 
-/**
- * Logs one line per request, `GET /v1/me/summary 200 18ms`, the counterpart of the CFNetwork
- * summary the Apple app reads: debug builds add it, so `adb logcat -s ZoonkHttp` counts the
- * requests a screen makes. Never logs headers or bodies.
- */
+/** Never logs headers or bodies: they carry the bearer and learner data. */
 class RequestLog(
     private val log: (String) -> Unit,
 ) : Interceptor {

@@ -8,16 +8,12 @@ import java.io.IOException
 import java.util.UUID
 import kotlin.coroutines.cancellation.CancellationException
 
-/** The calls `SessionStore` makes itself: validating a token and revoking it. */
 interface SessionApi {
-    /** The account [token] signs in (`getCurrentUser`). */
     suspend fun currentUser(token: String): MeResponse
 
-    /** Ends [token]'s session on the server (`deleteCurrentSession`). */
     suspend fun revoke(token: String)
 }
 
-/** Where the bearer token is kept between launches: DataStore encrypted with Tink in the app. */
 interface SessionCredentials {
     suspend fun read(): StoredSession?
 
@@ -31,7 +27,6 @@ data class StoredSession(
 )
 
 sealed interface SessionState {
-    /** Checking the stored session with the API before showing any account data. */
     data object Restoring : SessionState
 
     data object SignedOut : SessionState
@@ -42,42 +37,35 @@ sealed interface SessionState {
         val isGuest: Boolean,
     ) : SessionState
 
-    /** The stored session couldn't be checked (offline, the API down). [SessionStore.retryRestore] keeps it. */
+    /** The stored session couldn't be checked; [SessionStore.retryRestore] keeps its token. */
     data object Unavailable : SessionState
 }
 
 sealed interface SignInResult {
     data object SignedIn : SignInResult
 
-    /** The sign-in failed; [code] is the API's error code for the screen's message. */
+    /** [code] is the API's error code, for the screen's message. */
     data class Failed(
         val error: ApiError,
         val code: String? = null,
     ) : SignInResult
 
-    /** Another sign-in or a sign-out finished first; nothing changed and the new token was revoked. */
+    /** Another sign-in or a sign-out finished first: nothing changed and the new token was revoked. */
     data object Obsolete : SignInResult
 }
 
 sealed interface SignOutResult {
     data object SignedOut : SignOutResult
 
-    /** The server couldn't end the session; the learner stays signed in and can retry. */
     data class Failed(
         val error: ApiError,
     ) : SignOutResult
 }
 
 /**
- * Owns the signed-in session, the only writer of it. It restores the stored token at launch only
- * after `getCurrentUser` accepts it, stores a new token only after `getCurrentUser` succeeds with
- * it, and on every change publishes the new session and lets the cache, drafts and private images
- * follow, under the drafts lock, in one main-thread call.
- *
- * @param onChange runs right after a change is published, on the main thread: the cache follows
- *   the session and the previous session's private images are forgotten.
- * @param clearCredentialState clears Credential Manager's state on sign-out, so the next sign-in
- *   asks which account to use.
+ * The only writer of the session. A token is shown or stored only after `getCurrentUser` accepts
+ * it. [onChange] runs on the main thread right after each change is published, under the drafts
+ * lock.
  */
 class SessionStore(
     private val api: SessionApi,
@@ -95,14 +83,12 @@ class SessionStore(
     override val current: AuthenticatedSession?
         get() = (mutableState.value as? SessionState.SignedIn)?.session
 
-    /** Restores the stored session once at launch, validating it before showing account data. */
     suspend fun restore() {
         if (didRestore) return
         didRestore = true
         validateStoredSession()
     }
 
-    /** Checks the stored session again after [SessionState.Unavailable], keeping its token. */
     suspend fun retryRestore() {
         if (mutableState.value != SessionState.Unavailable) return
         mutableState.value = SessionState.Restoring
@@ -110,10 +96,8 @@ class SessionStore(
     }
 
     /**
-     * Signs in with the token [obtain] returns. [obtain] receives the current session so the
-     * sign-in call can carry its bearer: a guest's progress then moves to the account, and so do
-     * its drafts. Pass [asGuest] for a guest session. The token is validated with `getCurrentUser`
-     * before it's stored; if another sign-in or a sign-out finished meanwhile, it's revoked.
+     * [obtain] gets the current session so the sign-in call can send its bearer: the server then
+     * moves a guest's progress to the account, and the guest's drafts move too.
      */
     suspend fun signIn(
         asGuest: Boolean = false,
@@ -145,10 +129,7 @@ class SessionStore(
         return SignInResult.Obsolete
     }
 
-    /**
-     * Signs [session] out on this device if it's still the current one: after the API refused its
-     * token, or after the account was deleted. Its token, drafts and private images go.
-     */
+    /** Only if [session] is still current; also for after the account was deleted. */
     override suspend fun expire(session: AuthenticatedSession) {
         drafts.follow {
             if (current != session) return@follow null
@@ -156,10 +137,7 @@ class SessionStore(
         }
     }
 
-    /**
-     * Ends the session on the server, then forgets it here. If the server can't be reached the
-     * learner stays signed in and sees the error; a refused token signs out anyway.
-     */
+    /** Keeps the session when the server can't end it, unless the server refused its token. */
     suspend fun signOut(): SignOutResult {
         val session = current ?: return SignOutResult.SignedOut
         try {

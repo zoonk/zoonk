@@ -15,14 +15,11 @@ kotlin {
     jvmToolchain(25)
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_17)
-        // The generated code calls a few deprecated JDK constructors (URL(String)); warnings stay
-        // warnings here so a generator release can't fail the build on code we don't write.
+        // The generated code calls deprecated JDK constructors (URL(String)).
         allWarningsAsErrors.set(false)
     }
 }
 
-// Generates the whole public API from the contract `pnpm openapi:generate` writes next to this file.
-// Generation runs on build, so the client never drifts from `openapi.json`.
 openApiGenerate {
     generatorName = "kotlin"
     library = "jvm-retrofit2"
@@ -42,12 +39,10 @@ openApiGenerate {
             // An enum value is named `context`, a Kotlin soft keyword.
             "enumPropertyNaming" to "UPPERCASE",
         )
-    // The contract's integers carry no format, and some are epoch milliseconds (`readAt`,
-    // `nextChangeAt`), which overflow an Int. Long holds every integer JSON gives JavaScript.
+    // The contract's integers have no format, and epoch milliseconds (`readAt`) overflow an Int.
     typeMappings = mapOf("AnyType" to "JsonElement", "integer" to "kotlin.Long", "number" to "kotlin.Double")
     importMappings = mapOf("JsonElement" to "kotlinx.serialization.json.JsonElement")
-    // Unions of JSON values the generator can't express (recursive values, a value-or-object
-    // choice). Callers build or read them as JSON. A new one fails compilation; add its name here.
+    // Unions of JSON values the generator can't express; a new one fails compilation, so add it here.
     schemaMappings =
         listOf(
             "ExamTopicFrequency",
@@ -58,8 +53,8 @@ openApiGenerate {
             "__schema0",
             "__schema1",
         ).associateWith { "kotlinx.serialization.json.JsonElement" }
-    // The app builds its own OkHttp client, Retrofit services and Json (ApiJson.kt), so only the
-    // APIs, the models and the serializers they use are generated.
+    // The plugin passes its own supporting-file list, which skips any ignore file; the app builds its
+    // own client, so only the serializers the models use are listed.
     globalProperties =
         mapOf(
             "apis" to "",

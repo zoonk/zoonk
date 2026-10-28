@@ -81,7 +81,6 @@ class PrivateImagesTest {
             val url = api.url("/v1/files/course/1/cover.png").toString()
             val forAna = async(kotlinx.coroutines.Dispatchers.IO) { images.loader.execute(images.request(context, url, ana)) }
             Thread.sleep(200)
-            // Bia signs in while Ana's picture is still loading; Bia's screen asks for the same URL.
             val forBia = images.loader.execute(images.request(context, url, bia)) as SuccessResult
             anaResponds.countDown()
             val lateForAna = forAna.await() as SuccessResult

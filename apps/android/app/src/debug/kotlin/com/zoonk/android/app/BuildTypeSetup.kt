@@ -6,11 +6,8 @@ import okhttp3.Dns
 import okhttp3.OkHttpClient
 import java.net.InetAddress
 
-/**
- * Debug builds reach the API `pnpm dev` serves on this Mac: the emulator sees the Mac at 10.0.2.2,
- * and the local proxy routes by host name, so `*.localhost` names resolve there with their name
- * kept. Each request logs one `ZoonkHttp` line.
- */
+// The emulator reaches the Mac at 10.0.2.2, and the local proxy routes by host name, so
+// `*.localhost` names resolve there and keep their name.
 internal fun OkHttpClient.Builder.buildTypeSetup(): OkHttpClient.Builder =
     dns(EmulatorHost).addInterceptor(RequestLog { Log.i("ZoonkHttp", it) })
 

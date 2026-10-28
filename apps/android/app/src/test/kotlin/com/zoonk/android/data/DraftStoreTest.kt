@@ -31,7 +31,6 @@ data class EssayDraft(
     val text: String,
 )
 
-/** Draft handles across session changes, driven through `SessionStore` as the app does. */
 @OptIn(ExperimentalCoroutinesApi::class)
 class DraftStoreTest {
     @get:Rule

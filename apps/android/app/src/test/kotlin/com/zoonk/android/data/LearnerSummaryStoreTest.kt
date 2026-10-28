@@ -27,7 +27,6 @@ class LearnerSummaryStoreTest {
                 LearnerSummaryStore(
                     api = {
                         reads++
-                        // Each read says the summary next changes 30 minutes later (a midnight, say).
                         summary(readAt = currentTime, nextChangeAt = currentTime + 30.minutes.inWholeMilliseconds)
                     },
                     cache = cache,

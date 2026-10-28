@@ -7,7 +7,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
-// `pnpm dev` writes the API URL it serves for this checkout; without it, `pnpm dev:direct`'s port.
+// Written by `pnpm dev`; without it, `pnpm dev:direct`'s port.
 val localApiBaseUrl =
     providers
         .fileContents(layout.projectDirectory.file("../local-development.properties"))

@@ -7,13 +7,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.TimeSource
 
-/**
- * The app's cache of server data, created once in `AppContainer` with the app scope
- * (`Dispatchers.Main.immediate`). Feature stores create their resources here; a mutation names the
- * domains it changed so every resource reading one of them revalidates, and a session change drops
- * everything the previous session loaded. Memory only: the API's reads are private, so an HTTP
- * cache wouldn't serve them.
- */
+/** Call it on the main thread; [scope] is the app scope on `Dispatchers.Main.immediate`. */
 class AppCache(
     private val session: SessionSource,
     private val scope: CoroutineScope,
@@ -22,15 +16,7 @@ class AppCache(
     private val resources = mutableListOf<WeakReference<Resource<*>>>()
     private val keyedReads = mutableListOf<WeakReference<KeyedResources<*, *>>>()
 
-    /**
-     * Creates a resource and registers it for invalidation and session changes.
-     *
-     * @param audience whose data it is, which decides what a session change does to it.
-     * @param domains the data it reads that mutations can change.
-     * @param maxAge how long a loaded value counts as fresh; mutations revalidate sooner.
-     * @param isEmpty whether a loaded value has nothing to show; a fetch returning null is empty too.
-     * @param fetch one request for the value, given the session it's for (null when signed out).
-     */
+    /** A fetch returning null shows [LoadState.Empty], as a value matching [isEmpty] does. */
     fun <T : Any> resource(
         audience: Audience,
         domains: Set<DataDomain> = emptySet(),
@@ -45,8 +31,8 @@ class AppCache(
     }
 
     /**
-     * Heavy reads by id (a course, a lesson, a tutor thread): every key a screen shows stays, plus
-     * the [recentLimit] most recently used others.
+     * Keeps every key a screen shows plus the [recentLimit] most recently used others;
+     * [releaseInactive] drops the rest, which load again when opened.
      */
     fun <K, T : Any> keyed(
         audience: Audience,
@@ -65,10 +51,7 @@ class AppCache(
         return keyed
     }
 
-    /**
-     * Revalidates every resource reading one of [domains]: on screen now, elsewhere the next time
-     * it's shown. Mutations call it with everything they changed, as main revalidates cache tags.
-     */
+    /** Resources on screen refetch now, the others when next shown. */
     fun invalidate(
         domains: Set<DataDomain>,
         except: Set<Resource<*>> = emptySet(),
@@ -76,21 +59,18 @@ class AppCache(
         live().filter { it !in except && it.domains.any(domains::contains) }.forEach { it.invalidate() }
     }
 
-    /** Drops every resource that belongs to a session that's no longer current. `SessionStore` calls it. */
     fun followSession() {
         live().forEach { it.followSession() }
     }
 
-    /** Under memory pressure (`onTrimMemory`), keyed reads no screen shows go; they load again when opened. */
     fun releaseInactive() {
         keyedReads.mapNotNull { it.get() }.forEach { it.releaseInactive() }
     }
 
     /**
-     * Runs a write for the current session. After success it applies [replacing]'s new values,
-     * then revalidates every other resource reading [invalidating]. The write is [MutationResult.Obsolete]
-     * when there's no session or it changed during the write, and an `Unauthorized` answer signs
-     * that session out. Run it in `viewModelScope`; cancellation propagates.
+     * After success it applies [replacing]'s values, then revalidates every other resource reading
+     * [invalidating]. [MutationResult.Obsolete] when there's no session or it changed during the
+     * write; `Unauthorized` signs that session out. Run it in `viewModelScope`.
      */
     suspend fun <T> mutate(
         invalidating: Set<DataDomain> = emptySet(),
@@ -121,7 +101,6 @@ class AppCache(
     private fun live() = resources.mapNotNull { it.get() }
 
     companion object {
-        /** How long a value counts as fresh; catches changes made elsewhere, such as on another device. */
         val DEFAULT_MAX_AGE = 5.minutes
     }
 }
@@ -139,11 +118,6 @@ sealed interface MutationResult<out T> {
     data object Obsolete : MutationResult<Nothing>
 }
 
-/**
- * Keyed reads with a bounded memory: every resource a screen shows stays, plus the [recentLimit]
- * most recently used others; [AppCache.releaseInactive] releases all the others. A released key
- * loads again the next time a screen opens it.
- */
 class KeyedResources<K, T : Any> internal constructor(
     private val recentLimit: Int,
     private val create: (K) -> Resource<T>,

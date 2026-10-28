@@ -14,7 +14,6 @@ import org.junit.Before
 import org.junit.Test
 import java.util.UUID
 
-/** The generated services through the real Retrofit converter, as the app sends and reads them. */
 class ApiServicesTest {
     private val server = MockWebServer()
     private lateinit var services: ApiServices

@@ -25,21 +25,16 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.security.GeneralSecurityException
 
-/** What the encrypted session file holds. */
 @Serializable
 data class SessionFile(
     val session: StoredSession? = null,
 )
 
-/**
- * Keeps the bearer token in app-private DataStore, encrypted with AES-256-GCM under a Tink keyset
- * that an Android Keystore key wraps. Backup and device transfer exclude it. If the file can't be
- * decrypted (the Keystore key was lost) it's reset, which signs the learner out.
- */
+/** A file that can't be decrypted (the Keystore key was lost) resets, which signs the learner out. */
 class EncryptedSessionCredentials(
     private val context: Context,
 ) : SessionCredentials {
-    // Keystore work is slow, so the store is made on first use, off the main thread.
+    // Keystore work is slow: made on first use, off the main thread.
     private val store by lazy {
         DataStoreFactory.create(
             serializer = AeadSerializer(aead(), SessionFileSerializer, "zoonk-session".encodeToByteArray()),
@@ -68,7 +63,6 @@ class EncryptedSessionCredentials(
         return keyset.keysetHandle.getPrimitive(RegistryConfiguration.get(), Aead::class.java)
     }
 
-    /** The Keystore key that wraps the keyset is gone: a new keyset, and the old file resets. */
     private fun startOver(): AndroidKeysetManager {
         context.deleteSharedPreferences(KEYSET_PREFERENCES)
         return keysetManager()

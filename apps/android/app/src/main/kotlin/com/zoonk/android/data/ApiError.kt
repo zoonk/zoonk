@@ -7,10 +7,9 @@ import retrofit2.Response
 import java.io.IOException
 import kotlin.coroutines.cancellation.CancellationException
 
-/** How a request failed, in the terms screens recover from. Cancellation is never one. */
 enum class ApiError { Network, NotFound, Unauthorized, Unavailable }
 
-/** A failed request. [code] is the API's error code (`RATE_LIMIT_EXCEEDED`) when it sent one. */
+/** [code] is the API's error code (`RATE_LIMIT_EXCEEDED`) when it sent one. */
 class ApiException(
     val error: ApiError,
     val code: String? = null,
@@ -24,14 +23,13 @@ fun Throwable.toApiError(): ApiError =
     }
 
 /**
- * Runs one generated-service call and returns its body, so every feature maps failures the same
- * way: no connection is [ApiError.Network], 401 [ApiError.Unauthorized], 404
- * [ApiError.NotFound], any other failure or an unreadable body [ApiError.Unavailable].
- * Cancellation propagates. An operation answering 204 returns `Unit`.
+ * Throws [ApiException]: no connection is [ApiError.Network], 401 [ApiError.Unauthorized], 404
+ * [ApiError.NotFound], anything else or an unreadable body [ApiError.Unavailable]. Cancellation
+ * propagates.
  */
 suspend inline fun <reified T> perform(noinline call: suspend () -> Response<T>): T {
     val response = send(call)
-    // Retrofit gives no body for a 204; only a `Response<Unit>` operation answers with none.
+    // Retrofit gives no body for a 204.
     @Suppress("UNCHECKED_CAST")
     return response.body() ?: if (T::class == Unit::class) Unit as T else throw ApiException(ApiError.Unavailable)
 }
