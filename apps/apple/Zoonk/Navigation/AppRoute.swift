@@ -68,13 +68,13 @@ enum AppRoute: Hashable, Identifiable {
   }
 
   /// Main's gates for pushed pages: goal pages show "Start with a goal" without one, and a
-  /// visitor is asked to log in. Statistics and the catalog have their own signed-out views, and
-  /// task screens bring their own gates (main's `AuthGateScreen`).
+  /// visitor is asked to log in (Statistics too, as main's stats pages ask). The catalog has its
+  /// own signed-out view, and task screens bring their own gates (main's `AuthGateScreen`).
   var requirement: Requirement {
     switch self {
     case .subject, .chapter, .languageUnit, .mindMaps, .exam, .mockChooser, .mistakes, .speaking:
       .goal
-    case .earlierQuestions:
+    case .earlierQuestions, .statistics:
       .account
     default:
       .none

@@ -1,42 +1,16 @@
 import Foundation
 
-struct ProgressOverview: Codable, Equatable, Sendable {
-  let activity: ActivitySummary
-  let energy: Double?
-  let level: LevelProgress?
-  let score: ScorePerformance?
-  let strongestDaypart: DaypartScorePattern?
-  let strongestWeekday: WeekdayScorePattern?
-
-  var isEmpty: Bool {
-    activity.isEmpty
-      && energy == nil
-      && level == nil
-      && score == nil
-      && strongestDaypart == nil
-      && strongestWeekday == nil
-  }
-}
-
 struct ActivitySummary: Codable, Equatable, Sendable {
   let learningDays: Int
   let totalLearningSeconds: Int
   let totalLessonCompletions: Int
-
-  var isEmpty: Bool {
-    learningDays == 0
-      && totalLearningSeconds == 0
-      && totalLessonCompletions == 0
-  }
 }
 
+/// Every learning day counts (a day of only reviews or practice too); the calendar is the past
+/// 12 months, Sunday first, zero-filled up to today.
 struct ActivityProgress: Codable, Equatable, Sendable {
   let days: [ActivityProgressDay]
   let summary: ActivitySummary
-
-  var isEmpty: Bool {
-    summary.isEmpty
-  }
 }
 
 /// One calendar day lit by everything finished that day (lessons, reviews and practice), so the
@@ -72,8 +46,16 @@ struct LevelProgress: Codable, Equatable, Sendable {
   let bpToNextLevel: Int
   let isMaxLevel: Bool
   let level: Int
+  /// The belt after this one and the Brain Power it takes; nil on Black, the last belt.
+  let nextBelt: NextBelt?
   let progressInLevel: Int
   let totalBrainPower: Int
+}
+
+struct NextBelt: Codable, Equatable, Sendable {
+  let belt: ProgressBelt
+  let brainPowerToGo: Int
+  let startBrainPower: Int
 }
 
 enum ProgressBelt: String, CaseIterable, Codable, Equatable, Sendable {
@@ -94,8 +76,6 @@ struct ScorePerformance: Codable, Equatable, Sendable {
   let incorrectAnswers: Int
   let score: Double
   let totalAnswers: Int
-
-  var hasAnswers: Bool { totalAnswers > 0 }
 }
 
 struct ScoreProgress: Codable, Equatable, Sendable {

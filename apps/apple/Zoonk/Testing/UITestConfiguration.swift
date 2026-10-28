@@ -303,7 +303,6 @@
     let activity: ActivityProgress
     let energy: EnergyProgress?
     let level: LevelProgress?
-    let overview: ProgressOverview
     let patterns: ScorePatterns?
     let score: ScoreProgress?
   }
@@ -469,8 +468,8 @@
   }
 
   private enum UITestProgressFailure: String, Sendable {
+    case activityNetwork = "activity-network"
     case activityUnauthorized = "activity-unauthorized"
-    case overviewNetwork = "overview-network"
   }
 
   private actor UITestProgressAPI: ProgressAPIClient {
@@ -482,17 +481,14 @@
       self.snapshot = snapshot
     }
 
-    func getOverview(token: String) async throws -> ProgressOverview {
-      if failure == .overviewNetwork {
-        throw APIError.network
-      }
-
-      return snapshot.overview
-    }
-
     func getActivity(token: String) async throws -> ActivityProgress {
-      if failure == .activityUnauthorized {
+      switch failure {
+      case .activityNetwork:
+        throw APIError.network
+      case .activityUnauthorized:
         throw APIError.unauthorized
+      case nil:
+        break
       }
 
       return snapshot.activity

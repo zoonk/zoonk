@@ -2,7 +2,6 @@ import Foundation
 import OpenAPIRuntime
 
 protocol ProgressAPIClient {
-  func getOverview(token: String) async throws -> ProgressOverview
   func getActivity(token: String) async throws -> ActivityProgress
   func getEnergy(token: String) async throws -> EnergyProgress?
   func getLevel(token: String) async throws -> LevelProgress?
@@ -15,21 +14,6 @@ struct ProgressAPI {
 
   init(clients: APIClientFactory) {
     self.clients = clients
-  }
-
-  func getOverview(token: String) async throws -> ProgressOverview {
-    try await clients.perform(token: token) { client in
-      let output = try await client.getCurrentUserProgress(.init())
-
-      switch output {
-      case .ok(let response):
-        return try makeProgressOverview(try response.body.json)
-      case .unauthorized:
-        throw APIError.unauthorized
-      case .internalServerError, .undocumented:
-        throw APIError.unavailable
-      }
-    }
   }
 
   func getActivity(token: String) async throws -> ActivityProgress {
@@ -110,85 +94,6 @@ struct ProgressAPI {
 
 extension ProgressAPI: ProgressAPIClient {}
 
-private func makeProgressOverview(
-  _ response: Components.Schemas.CurrentUserProgressResponse
-) throws -> ProgressOverview {
-  ProgressOverview(
-    activity: makeOverviewActivitySummary(response.activity),
-    energy: response.energy?.currentEnergy,
-    level: try response.level.map(makeOverviewLevelProgress),
-    score: response.score.map(makeOverviewScorePerformance),
-    strongestDaypart: try makeOverviewStrongestDaypart(response.scorePatterns),
-    strongestWeekday: try makeOverviewStrongestWeekday(response.scorePatterns))
-}
-
-private func makeOverviewActivitySummary(
-  _ payload: Components.Schemas.CurrentUserProgressResponse.ActivityPayload
-) -> ActivitySummary {
-  ActivitySummary(
-    learningDays: payload.learningDays,
-    totalLearningSeconds: payload.totalLearningSeconds,
-    totalLessonCompletions: payload.totalLessonCompletions)
-}
-
-private func makeOverviewLevelProgress(
-  _ payload: Components.Schemas.CurrentUserProgressResponse.LevelPayload
-) throws -> LevelProgress {
-  LevelProgress(
-    belt: try makeDomainValue(payload.belt),
-    bpPerLevel: payload.bpPerLevel,
-    bpToNextLevel: payload.bpToNextLevel,
-    isMaxLevel: payload.isMaxLevel,
-    level: payload.level,
-    progressInLevel: payload.progressInLevel,
-    totalBrainPower: payload.totalBrainPower)
-}
-
-private func makeOverviewScorePerformance(
-  _ payload: Components.Schemas.CurrentUserProgressResponse.ScorePayload
-) -> ScorePerformance {
-  makeScorePerformance(
-    .init(
-      correctAnswers: payload.correctAnswers,
-      incorrectAnswers: payload.incorrectAnswers,
-      score: payload.score,
-      totalAnswers: payload.totalAnswers))
-}
-
-private func makeOverviewStrongestDaypart(
-  _ payload: Components.Schemas.CurrentUserProgressResponse.ScorePatternsPayload?
-) throws -> DaypartScorePattern? {
-  guard let strongestTime = payload?.strongestTime else {
-    return nil
-  }
-
-  return DaypartScorePattern(
-    daypart: try makeDomainValue(strongestTime.period),
-    performance: makeScorePerformance(
-      .init(
-        correctAnswers: strongestTime.correctAnswers,
-        incorrectAnswers: strongestTime.incorrectAnswers,
-        score: strongestTime.score,
-        totalAnswers: strongestTime.totalAnswers)))
-}
-
-private func makeOverviewStrongestWeekday(
-  _ payload: Components.Schemas.CurrentUserProgressResponse.ScorePatternsPayload?
-) throws -> WeekdayScorePattern? {
-  guard let strongestWeekday = payload?.strongestWeekday else {
-    return nil
-  }
-
-  return WeekdayScorePattern(
-    performance: makeScorePerformance(
-      .init(
-        correctAnswers: strongestWeekday.correctAnswers,
-        incorrectAnswers: strongestWeekday.incorrectAnswers,
-        score: strongestWeekday.score,
-        totalAnswers: strongestWeekday.totalAnswers)),
-    weekday: try makeDomainValue(strongestWeekday.dayOfWeek))
-}
-
 private func makeActivityProgress(
   _ response: Components.Schemas.CurrentUserActivityResponse
 ) throws -> ActivityProgress {
@@ -252,6 +157,12 @@ private func makeDetailedLevelProgress(
     bpToNextLevel: payload.bpToNextLevel,
     isMaxLevel: payload.isMaxLevel,
     level: payload.level,
+    nextBelt: try payload.nextBelt.map { next in
+      NextBelt(
+        belt: try makeDomainValue(next.belt),
+        brainPowerToGo: next.brainPowerToGo,
+        startBrainPower: next.startBrainPower)
+    },
     progressInLevel: payload.progressInLevel,
     totalBrainPower: payload.totalBrainPower)
 }

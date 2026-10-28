@@ -1,118 +1,113 @@
 import Foundation
 import SwiftUI
 
-func progressLearningTime(
-  _ totalSeconds: Int,
-  locale: Locale = .autoupdatingCurrent
-) -> String {
+/// Compact learning time as main's `formatDuration` says it: seconds below a minute, rounded
+/// minutes below an hour, then hours and minutes ("0 min", "45 sec", "2 hr 5 min").
+func progressLearningTime(_ totalSeconds: Int, locale: Locale = .autoupdatingCurrent) -> String {
+  func unit(_ value: Int, _ unit: UnitDuration) -> String {
+    Measurement(value: Double(value), unit: unit)
+      .formatted(.measurement(width: .abbreviated, usage: .asProvided).locale(locale))
+  }
+
   let seconds = max(totalSeconds, 0)
 
   if seconds == 0 {
-    return Duration.seconds(0).formatted(
-      .units(
-        allowed: [.minutes],
-        width: .abbreviated,
-        maximumUnitCount: 1,
-        zeroValueUnits: .show(length: 1)
-      )
-      .locale(locale))
+    return unit(0, .minutes)
   }
 
   if seconds < 60 {
-    return Duration.seconds(seconds).formatted(
-      .units(
-        allowed: [.seconds],
-        width: .abbreviated,
-        maximumUnitCount: 1
-      )
-      .locale(locale))
+    return unit(seconds, .seconds)
   }
 
-  return Duration.seconds(seconds).formatted(
-    .units(
-      allowed: [.hours, .minutes],
-      width: .abbreviated,
-      maximumUnitCount: 2
-    )
-    .locale(locale))
+  let totalMinutes = Int((Double(seconds) / 60).rounded())
+
+  if totalMinutes < 60 {
+    return unit(totalMinutes, .minutes)
+  }
+
+  let hours = unit(totalMinutes / 60, .hours)
+  let minutes = totalMinutes % 60
+  return minutes == 0 ? hours : "\(hours) \(unit(minutes, .minutes))"
 }
 
-extension EnergyProgress {
-  var displayedCurrentEnergy: Double {
-    currentEnergy.rounded()
-  }
+/// A metric's share as main's `formatMetricPercent` writes it, to a tenth when it has one: "70.5%",
+/// "70%". `value` is on the 0–100 scale the API sends.
+func metricPercent(_ value: Double) -> String {
+  (value / 100).formatted(
+    .percent.precision(.fractionLength(0...1)).rounded(rule: .toNearestOrAwayFromZero))
 }
 
-extension LevelProgress {
-  var progressTotal: Double {
-    Double(max(bpPerLevel, 1))
-  }
-
-  var progressValue: Double {
-    if isMaxLevel {
-      return progressTotal
-    }
-
-    return Double(min(max(progressInLevel, 0), max(bpPerLevel, 1)))
-  }
+/// A share in whole percents ("71%"), where main rounds: Energy now, a pattern's row.
+func wholePercent(_ value: Double) -> String {
+  (value / 100).formatted(
+    .percent.precision(.fractionLength(0)).rounded(rule: .toNearestOrAwayFromZero))
 }
 
 extension ProgressBelt {
+  /// The belt's full name ("Yellow belt"), as every screen names it.
   var localizedTitle: LocalizedStringResource {
     switch self {
     case .white:
-      LocalizedStringResource(
-        "White Belt",
-        table: "Progress",
-        comment: "Name of the white learning belt.")
+      LocalizedStringResource("White belt", table: "Progress", comment: "Name of the white belt")
     case .yellow:
-      LocalizedStringResource(
-        "Yellow Belt",
-        table: "Progress",
-        comment: "Name of the yellow learning belt.")
+      LocalizedStringResource("Yellow belt", table: "Progress", comment: "Name of the yellow belt")
     case .orange:
-      LocalizedStringResource(
-        "Orange Belt",
-        table: "Progress",
-        comment: "Name of the orange learning belt.")
+      LocalizedStringResource("Orange belt", table: "Progress", comment: "Name of the orange belt")
     case .green:
-      LocalizedStringResource(
-        "Green Belt",
-        table: "Progress",
-        comment: "Name of the green learning belt.")
+      LocalizedStringResource("Green belt", table: "Progress", comment: "Name of the green belt")
     case .blue:
-      LocalizedStringResource(
-        "Blue Belt",
-        table: "Progress",
-        comment: "Name of the blue learning belt.")
+      LocalizedStringResource("Blue belt", table: "Progress", comment: "Name of the blue belt")
     case .purple:
-      LocalizedStringResource(
-        "Purple Belt",
-        table: "Progress",
-        comment: "Name of the purple learning belt.")
+      LocalizedStringResource("Purple belt", table: "Progress", comment: "Name of the purple belt")
     case .brown:
-      LocalizedStringResource(
-        "Brown Belt",
-        table: "Progress",
-        comment: "Name of the brown learning belt.")
+      LocalizedStringResource("Brown belt", table: "Progress", comment: "Name of the brown belt")
     case .red:
-      LocalizedStringResource(
-        "Red Belt",
-        table: "Progress",
-        comment: "Name of the red learning belt.")
+      LocalizedStringResource("Red belt", table: "Progress", comment: "Name of the red belt")
     case .gray:
-      LocalizedStringResource(
-        "Gray Belt",
-        table: "Progress",
-        comment: "Name of the gray learning belt.")
+      LocalizedStringResource("Gray belt", table: "Progress", comment: "Name of the gray belt")
     case .black:
-      LocalizedStringResource(
-        "Black Belt",
-        table: "Progress",
-        comment: "Name of the black learning belt.")
+      LocalizedStringResource("Black belt", table: "Progress", comment: "Name of the black belt")
     }
   }
 
+  /// The belt's color alone ("Yellow"), under its belt on the rack, where the section already says
+  /// they're belts.
+  var shortTitle: LocalizedStringResource {
+    switch self {
+    case .white:
+      LocalizedStringResource(
+        "White", table: "Progress", comment: "The white belt's color, under it on the belt rack")
+    case .yellow:
+      LocalizedStringResource(
+        "Yellow", table: "Progress", comment: "The yellow belt's color, under it on the belt rack")
+    case .orange:
+      LocalizedStringResource(
+        "Orange", table: "Progress", comment: "The orange belt's color, under it on the belt rack")
+    case .green:
+      LocalizedStringResource(
+        "Green", table: "Progress", comment: "The green belt's color, under it on the belt rack")
+    case .blue:
+      LocalizedStringResource(
+        "Blue", table: "Progress", comment: "The blue belt's color, under it on the belt rack")
+    case .purple:
+      LocalizedStringResource(
+        "Purple", table: "Progress", comment: "The purple belt's color, under it on the belt rack")
+    case .brown:
+      LocalizedStringResource(
+        "Brown", table: "Progress", comment: "The brown belt's color, under it on the belt rack")
+    case .red:
+      LocalizedStringResource(
+        "Red", table: "Progress", comment: "The red belt's color, under it on the belt rack")
+    case .gray:
+      LocalizedStringResource(
+        "Gray", table: "Progress", comment: "The gray belt's color, under it on the belt rack")
+    case .black:
+      LocalizedStringResource(
+        "Black", table: "Progress", comment: "The black belt's color, under it on the belt rack")
+    }
+  }
+
+  /// The belt's own color, at full strength in every mode (artwork, like main's `belt-*`).
   var color: Color {
     switch self {
     case .white:
@@ -140,110 +135,77 @@ extension ProgressBelt {
 }
 
 extension ProgressDaypart {
+  /// The part of the day's name, in core's order (night, morning, afternoon, evening).
   var localizedTitle: LocalizedStringResource {
     switch self {
     case .night:
       LocalizedStringResource(
-        "Night",
-        table: "Progress",
-        comment: "Name of the midnight-to-morning score period")
+        "Night", table: "Progress", comment: "The part of the day from midnight to 6 AM")
     case .morning:
       LocalizedStringResource(
-        "Morning",
-        table: "Progress",
-        comment: "Name of the morning score period")
+        "Morning", table: "Progress", comment: "The part of the day from 6 AM to noon")
     case .afternoon:
       LocalizedStringResource(
-        "Afternoon",
-        table: "Progress",
-        comment: "Name of the afternoon score period")
+        "Afternoon", table: "Progress", comment: "The part of the day from noon to 6 PM")
     case .evening:
       LocalizedStringResource(
-        "Evening",
-        table: "Progress",
-        comment: "Name of the evening score period")
+        "Evening", table: "Progress", comment: "The part of the day from 6 PM to midnight")
     }
   }
 
-  var systemImage: String {
-    switch self {
-    case .night:
-      "moon.stars"
-    case .morning:
-      "sunrise"
-    case .afternoon:
-      "sun.max"
-    case .evening:
-      "moon"
+  /// The part's hours as a short clock range, short enough to sit beside its name: "12–6 AM" and
+  /// "6 AM–12 PM" on a 12-hour clock, "00–06" and "18–24" on a 24-hour one.
+  func localizedTimeRange(locale: Locale = .autoupdatingCurrent) -> String {
+    let (start, end) = hours
+    let clockFormat = DateFormatter.dateFormat(fromTemplate: "j", options: 0, locale: locale) ?? "H"
+
+    guard clockFormat.contains("a") else {
+      return String(format: "%02d–%02d", start, end)
     }
-  }
 
-  var localizedTimeRange: String {
-    localizedTimeRange(locale: .autoupdatingCurrent)
-  }
-
-  func localizedTimeRange(locale: Locale) -> String {
-    let timeZone = TimeZone(secondsFromGMT: 0)!
     var calendar = Calendar(identifier: .gregorian)
-    calendar.timeZone = timeZone
-    let startOfDay = Date(timeIntervalSinceReferenceDate: 0)
-    let startDate = calendar.date(byAdding: .hour, value: startHour, to: startOfDay)!
-    let endDate = calendar.date(byAdding: .hour, value: endHour, to: startOfDay)!
-    let formatter = DateFormatter()
-    formatter.calendar = calendar
-    formatter.locale = locale
-    formatter.timeZone = timeZone
-    formatter.dateStyle = .none
-    formatter.timeStyle = .short
-    return "\(formatter.string(from: startDate))–\(formatter.string(from: endDate))"
-  }
+    calendar.locale = locale
 
-  private var startHour: Int {
-    switch self {
-    case .night:
-      0
-    case .morning:
-      6
-    case .afternoon:
-      12
-    case .evening:
-      18
+    func clock(_ hour: Int) -> (hour: String, period: String) {
+      let twelveHour = hour % 12 == 0 ? 12 : hour % 12
+      return (
+        twelveHour.formatted(.number.locale(locale)),
+        hour % 24 < 12 ? calendar.amSymbol : calendar.pmSymbol
+      )
     }
+
+    let (from, to) = (clock(start), clock(end))
+
+    return from.period == to.period
+      ? "\(from.hour)–\(to.hour) \(to.period)"
+      : "\(from.hour) \(from.period)–\(to.hour) \(to.period)"
   }
 
-  private var endHour: Int {
+  private var hours: (start: Int, end: Int) {
     switch self {
     case .night:
-      6
+      (0, 6)
     case .morning:
-      12
+      (6, 12)
     case .afternoon:
-      18
+      (12, 18)
     case .evening:
-      24
+      (18, 24)
     }
   }
 }
 
 extension ProgressWeekday {
-  var localizedTitle: String {
-    weekdayName(from: DateFormatter().weekdaySymbols)
+  /// The day's full name in the learner's language, its first letter uppercase as a name on its
+  /// own reads ("Thursday", "Quinta-feira").
+  func localizedTitle(locale: Locale = .autoupdatingCurrent) -> String {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.locale = locale
+    let name = calendar.standaloneWeekdaySymbols[sundayIndex]
+    return name.prefix(1).uppercased(with: locale) + name.dropFirst()
   }
 
-  var shortLocalizedTitle: String {
-    weekdayName(from: DateFormatter().veryShortWeekdaySymbols)
-  }
-
-  var order: Int {
-    order(in: .autoupdatingCurrent)
-  }
-
-  func order(in calendar: Calendar) -> Int {
-    (foundationWeekdayIndex - (calendar.firstWeekday - 1) + Self.allCases.count)
-      % Self.allCases.count
-  }
-
-  private var foundationWeekdayIndex: Int {
+  private var sundayIndex: Int {
     switch self {
     case .sunday:
       0
@@ -261,9 +223,28 @@ extension ProgressWeekday {
       6
     }
   }
+}
 
-  private func weekdayName(from names: [String]) -> String {
-    names.indices.contains(foundationWeekdayIndex)
-      ? names[foundationWeekdayIndex] : rawValue.capitalized
+/// A formatted quantity with its numbers large and its units small and quiet beside them (main's
+/// `BigQuantity`): "2 hr 5 min", "90 days". A share keeps its percent sign with its number.
+func bigQuantity(_ text: String) -> Text {
+  var attributed = AttributedString()
+  var remainder = Substring(text)
+  let number = /[~≈+\-−]?\d[\d.,:]*(?:[\u{00A0}\u{202F}]?%)?/
+
+  while let match = remainder.firstMatch(of: number) {
+    var unit = AttributedString(remainder[remainder.startIndex..<match.range.lowerBound])
+    unit.font = .subheadline.weight(.medium)
+    unit.foregroundColor = .secondary
+    attributed += unit
+    attributed += AttributedString(remainder[match.range])
+    remainder = remainder[match.range.upperBound...]
   }
+
+  var tail = AttributedString(remainder)
+  tail.font = .subheadline.weight(.medium)
+  tail.foregroundColor = .secondary
+  attributed += tail
+
+  return Text(attributed)
 }

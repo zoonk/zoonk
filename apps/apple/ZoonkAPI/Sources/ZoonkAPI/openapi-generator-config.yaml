@@ -118,7 +118,6 @@ filter:
     - getCurrentUserLevel
     - getCurrentUserMemory
     - getCurrentUserMistakePractice
-    - getCurrentUserProgress
     - getCurrentUserScore
     - getCurrentUserScorePatterns
     - getCurrentUserStepExampleLine
