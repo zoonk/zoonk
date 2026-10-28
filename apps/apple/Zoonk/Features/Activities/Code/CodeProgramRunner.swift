@@ -1,8 +1,7 @@
 import Foundation
 import WebKit
 
-/// The languages a code activity runs, with main's runtime names, file names and time limits
-/// (core's `PROGRAM_TIME_LIMIT_MS`).
+/// Time limits are core's `PROGRAM_TIME_LIMIT_MS`.
 enum CodeLanguage: String, Decodable, Sendable {
   case javascript, python
 
@@ -28,7 +27,6 @@ enum CodeLanguage: String, Decodable, Sendable {
   }
 }
 
-/// How a run ended and what it printed, as main's `ProgramRun`.
 struct CodeProgramRun: Equatable, Sendable {
   enum Stop: String, Sendable {
     case done, error, timeout, tooMuchOutput, unavailable
@@ -36,17 +34,13 @@ struct CodeProgramRun: Equatable, Sendable {
 
   var stop: Stop
   var output = ""
-  /// What the program wrote to stderr, like `console.error` or warnings.
   var errorOutput = ""
-  /// The error the run stopped on, and the line of the learner's program it points to.
   var error: String?
   var errorLine: Int?
 }
 
-/// Runs a learner's program on the device, never on our servers: a page no one sees hosts main's
-/// sandbox (`CodeWorkerSources`). Python keeps one warm worker, so Pyodide loads once per activity;
-/// JavaScript gets a new worker per run. Closing the runner, or dropping it, releases the page and
-/// everything in it.
+/// Runs a learner's program on the device, never on our servers, in main's sandbox
+/// (`CodeWorkerSources`). Closing the runner, or dropping it, releases the page and everything in it.
 @MainActor
 final class CodeProgramRunner {
   /// Nothing a page does is saved on the device; sharing one store lets a later activity reuse
@@ -60,8 +54,7 @@ final class CodeProgramRunner {
     self.language = language
   }
 
-  /// Loads the runtime before the first run, so Run doesn't wait for Pyodide. False when it
-  /// didn't load, like when offline.
+  /// False when the runtime didn't load, like when offline.
   func warmUp() async -> Bool {
     (try? await call("return await warmUp()")) as? Bool ?? false
   }

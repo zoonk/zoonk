@@ -70,7 +70,6 @@ enum CodeWorkerSources {
       return isReady;
     }
 
-    /** The error on a traceback's last line and the line of main.py it points to. */
     function pythonError(traceback) {
       const lines = traceback.trimEnd().split("\n");
       const programLine = [...traceback.matchAll(/File "main\.py", line (\d+)/g)].at(-1)?.[1];

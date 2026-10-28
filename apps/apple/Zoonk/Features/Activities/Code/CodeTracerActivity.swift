@@ -86,10 +86,7 @@ struct CodeTracerFields: Decodable, Sendable {
   }
 }
 
-/// Step through a program line by line and watch its variables change (main's
-/// `CodeTracerActivity`). At each pause the learner predicts a value before stepping on to see it;
-/// the predictions are the answer. After the check every pause shows the traced value next to the
-/// prediction, and the run can still be replayed. Explored, the program steps freely.
+/// The learner's predictions at each pause are the answer.
 private struct CodeTracerCanvas: View {
   let context: ActivityCanvasContext
   let fields: CodeTracerFields
@@ -124,7 +121,6 @@ private struct CodeTracerCanvas: View {
     context.phase != .answering
   }
 
-  /// The pause right after the current step, while the learner hasn't seen its value.
   private var upcoming: Int? {
     guard !asksNothing,
       let index = fields.pauses.firstIndex(where: { $0.step == step + 1 }),
@@ -205,7 +201,6 @@ private struct CodeTracerCanvas: View {
         comment: "VoiceOver: a code trace's watched variables"))
   }
 
-  /// Each watched variable at this step; a value that just changed shows what it was.
   private var variableCells: some View {
     ForEach(fields.watch, id: \.self) { name in
       let value = fields.value(of: name, at: step)
@@ -305,7 +300,6 @@ private struct CodeTracerCanvas: View {
   private func prediction(index: Int) -> some View {
     let pause = fields.pauses[index]
     let key = String(index)
-    // Short values sit side by side; four make a 2 by 2 grid.
     let columns =
       pause.options.contains { $0.text.count > 8 } ? 1 : pause.options.count == 3 ? 3 : 2
 
@@ -347,7 +341,6 @@ private struct CodeTracerCanvas: View {
     }
   }
 
-  /// Predictions already revealed: what the learner said and what the run showed.
   @ViewBuilder
   private var predictionLog: some View {
     let revealed = fields.pauses.enumerated().filter { index, pause in

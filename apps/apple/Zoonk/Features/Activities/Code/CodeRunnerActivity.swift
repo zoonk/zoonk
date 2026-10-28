@@ -50,7 +50,6 @@ extension ActivityAnswer {
     ActivityAnswer(value: .object(["kind": .string("output"), "output": .string(output)]))
   }
 
-  /// What a program printed, for an output answer.
   var output: String? {
     guard kind == "output", case .string(let output) = value["output"] else {
       return nil
@@ -60,11 +59,7 @@ extension ActivityAnswer {
   }
 }
 
-/// Real code on the device (main's `CodeRunnerActivity`): the learner edits the lines that are
-/// theirs, runs the program and compares what it prints with what it should print. The output of
-/// the last run is the answer, so editing after a run waits for the next run. Likely mistakes
-/// explain themselves by what they print; errors point at their line. Explored, the program
-/// starts solved and shows only what it prints.
+/// The output of the last run is the answer, so editing after a run waits for the next run.
 private struct CodeRunnerCanvas: View {
   let context: ActivityCanvasContext
   let fields: CodeRunnerFields
@@ -266,9 +261,7 @@ private struct CodeRunnerCanvas: View {
   }
 }
 
-/// What the program printed next to what it should print, then why a run stopped and the
-/// feedback for a likely mistake (main's `CodeRunnerOutput`). The expected output is part of the
-/// task, so it shows from the start; an explored program shows only its output.
+/// The expected output is part of the task, so it shows from the start.
 private struct CodeRunnerOutput: View {
   let run: CodeProgramRun?
   /// Nil when there's no output to reach, as when the program is explored.
@@ -406,7 +399,6 @@ private struct CodeRunnerOutput: View {
       .textSelection(.enabled)
   }
 
-  /// Why a run stopped early, in words a learner can act on.
   @ViewBuilder
   private func stopNotice(_ run: CodeProgramRun) -> some View {
     if let message = stopMessage(run) {

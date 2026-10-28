@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// One numbered line of a program, marked like main's code lines: the line that just ran, or one
-/// with an error. Long lines wrap under their own text, so the numbers stay in one column.
+/// Long lines wrap under their own text, so the numbers stay in one column.
 struct CodeLine<Content: View>: View {
   enum Tone {
     case plain, current, error
@@ -48,9 +47,8 @@ enum CodeRuntimeStatus {
   case loading, ready, failed
 }
 
-/// Run and start over for code the learner writes (main's `SandboxRunBar`). Run is the main
-/// action until the first run, then steps back so the screen's Check stands out. While the
-/// runtime loads, Run still works: the run starts as soon as it's ready. ⌘↩ runs on a keyboard.
+/// Run is the main action until the first run, then steps back so the screen's Check stands out.
+/// While the runtime loads, Run still works: the run starts as soon as it's ready.
 struct CodeRunBar: View {
   let runtimeName: String
   let status: CodeRuntimeStatus

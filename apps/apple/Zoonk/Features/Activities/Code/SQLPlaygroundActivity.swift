@@ -72,8 +72,7 @@ struct SQLPlaygroundFields: Decodable, Sendable {
     return fields.expected.matches(result)
   }
 
-  /// Buttons for the SQL words a lesson query needs and the lesson's own table and column names,
-  /// (main's `sqlSnippets`). Keywords and tables add a space after themselves.
+  /// Mirrors main's `sqlSnippets`. Keywords and tables add a space after themselves.
   var snippets: [String] {
     let words =
       ["SELECT", "FROM", "WHERE", "AND", "OR", "ORDER BY", "DESC", "GROUP BY", "COUNT(*)"].map {
@@ -95,10 +94,7 @@ extension ActivityAnswer {
   }
 }
 
-/// Query the lesson's tables with real SQLite (main's `SqlPlaygroundActivity`). The learner writes
-/// a query, runs it and reads the result; the rows of the last run are the answer. After the
-/// check, missing and extra rows are marked against the expected result, with a query that works.
-/// Explored, the editor starts with the query that works, to run and change.
+/// The rows of the last run are the answer.
 private struct SQLPlaygroundCanvas: View {
   let context: ActivityCanvasContext
   let fields: SQLPlaygroundFields
@@ -220,7 +216,6 @@ private struct SQLPlaygroundCanvas: View {
     }
   }
 
-  /// Buttons for SQL words and the lesson's table and column names (main's `ActivitySnippetBar`).
   private var snippets: some View {
     ScrollView(.horizontal) {
       HStack(spacing: 6) {
@@ -286,8 +281,6 @@ private struct SQLPlaygroundCanvas: View {
     }
   }
 
-  /// After the check: the expected rows with the ones the result missed marked, the feedback for
-  /// likely mistakes, and a query that works.
   @ViewBuilder
   private var review: some View {
     if !isCorrect {
@@ -339,8 +332,7 @@ private struct SQLPlaygroundCanvas: View {
     }
   }
 
-  /// Which of `rows` the other rows also have, compared the way grading compares them: row by row
-  /// in order when order matters, as a set otherwise (main's `compareRows`).
+  /// Mirrors main's `compareRows`: row by row in order when order matters, as a set otherwise.
   private func compare(_ rows: [[JSONValue]], with other: [[JSONValue]]) -> [Bool] {
     rows.enumerated().map { index, row in
       fields.expected.orderMatters
@@ -364,7 +356,6 @@ private struct SQLPlaygroundCanvas: View {
     }
   }
 
-  /// Puts a snippet before the selection, or at the end when the editor has no cursor.
   private func insert(_ snippet: String) {
     var range = query.endIndex..<query.endIndex
     if case .selection(let selected) = selection?.indices, selected.upperBound <= query.endIndex {
@@ -408,8 +399,6 @@ private struct SQLPlaygroundCanvas: View {
   }
 }
 
-/// One of the lesson's tables: its name, columns and row count, opening to show its rows. Small
-/// tables start open.
 private struct SQLTableViewer: View {
   let table: SQLPlaygroundFields.Table
 
@@ -456,8 +445,6 @@ private struct SQLTableViewer: View {
   }
 }
 
-/// Rows in a table: the lesson's data, the learner's result or the expected result. After the
-/// check, rows the result shouldn't have and rows it's missing are marked. A wide table scrolls.
 private struct SQLRowsTable: View {
   enum Mark {
     case plain, extra, missing

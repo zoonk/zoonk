@@ -1,14 +1,12 @@
 import Foundation
 import SQLite3
 
-/// The rows a query returned, which are the answer of a SQL playground.
 struct SQLResult: Codable, Equatable, Sendable {
   var kind = "rows"
   let columns: [String]
   let rows: [[JSONValue]]
 }
 
-/// How a query ended (main's `QueryRun`).
 enum SQLRun: Equatable, Sendable {
   case done(SQLResult)
   case error(String)
@@ -16,9 +14,8 @@ enum SQLRun: Equatable, Sendable {
   case tooManyRows
 }
 
-/// Runs a learner's query with the system's SQLite on a fresh in-memory database built from the
-/// lesson's tables, so a DELETE or DROP never carries over. The result is the last statement that
-/// returned a table. Like main, a query stops after three seconds.
+/// A fresh in-memory database per run, so a DELETE or DROP never carries over. The result is the
+/// last statement that returned a table.
 enum CodeSQLRunner {
   static let timeLimitSeconds = 3
   /// Far more than a lesson's tables hold; a cross join past it would freeze the result table.

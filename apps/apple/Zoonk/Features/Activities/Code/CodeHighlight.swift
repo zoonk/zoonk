@@ -1,9 +1,7 @@
 import SwiftUI
 
-/// Colors code for reading, as main's `highlightCode`: keywords, built-ins, literals and comments.
-/// It only needs to look right for short lesson programs, so it scans tokens without parsing the
-/// language. Colors are main's palette by meaning (the design system's `viz` roles): keywords
-/// mint, built-ins purple, numbers and strings orange, comments secondary and italic.
+/// Mirrors main's `highlightCode`. It only needs to look right for short lesson programs, so it scans
+/// tokens without parsing the language.
 enum CodeHighlight {
   enum Language {
     case javascript, python, sql
@@ -22,7 +20,6 @@ enum CodeHighlight {
     }
   }
 
-  /// The whole program colored, its lines kept.
   static func text(of code: String, language: Language) -> AttributedString {
     lines(of: code, language: language).enumerated().reduce(into: AttributedString()) {
       text, line in
@@ -30,7 +27,6 @@ enum CodeHighlight {
     }
   }
 
-  /// The program's tokens split at its line breaks.
   static func tokenLines(of code: String, language: Language) -> [[(kind: Kind, text: String)]] {
     var lines: [[(kind: Kind, text: String)]] = [[]]
     var rest = code[...]
@@ -75,7 +71,6 @@ enum CodeHighlight {
     return part
   }
 
-  /// The token at the start of `code`: the first rule that matches, else plain text.
   private static func token(at code: Substring, language: Language) -> (Kind, Substring) {
     if let space = match(space, in: code) {
       return (.plain, space)
