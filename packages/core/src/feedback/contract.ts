@@ -7,7 +7,6 @@ const MAX_FEEDBACK_SCREEN_LENGTH = 100;
 const MAX_FEEDBACK_URL_LENGTH = 2000;
 const MAX_APP_VERSION_LENGTH = 50;
 
-/** Mapped types keep each list in step with its database enum without importing the Prisma runtime. */
 const feedbackContentKinds = {
   answerExplanation: "answerExplanation",
   chapter: "chapter",
@@ -25,10 +24,6 @@ const feedbackContentKinds = {
 const feedbackContentKindSchema = z.enum(feedbackContentKinds);
 const feedbackPlatformSchema = z.enum(["android", "ios", "web"]);
 
-/**
- * Where a feedback message was written: the screen, the page and the content
- * the learner was on, plus the client's platform and app version.
- */
 const feedbackContextSchema = z.object({
   appVersion: z.string().trim().max(MAX_APP_VERSION_LENGTH).optional(),
   contentId: z.uuid().optional(),

@@ -6,7 +6,6 @@ const FEEDBACK_SUBJECT = "Zoonk Feedback";
 
 type SendFeedbackMessageParams = { context: FeedbackContext; email: string; message: string };
 
-/** One "Label: value" line per context field the client sent, so the inbox shows where it came from. */
 function formatContext(context: FeedbackContext): string {
   const lines = [
     context.screen && `Screen: ${context.screen}`,
@@ -19,10 +18,6 @@ function formatContext(context: FeedbackContext): string {
   return lines.length > 0 ? `\n\n---\n${lines.join("\n")}` : "";
 }
 
-/**
- * Sends every product message to the same support inbox so web and native
- * clients share one simple feedback path.
- */
 export async function sendFeedbackMessage(params: SendFeedbackMessageParams) {
   return sendEmail({
     replyTo: params.email,

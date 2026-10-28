@@ -6,10 +6,6 @@ import { findContentProvenance } from "./_utils/content-provenance";
 import { type FeedbackContext, type FeedbackMessageInput } from "./contract";
 import { sendFeedbackMessage } from "./send-feedback-message";
 
-/**
- * Adds the model, prompt version and run behind the content the message is about, when the sender
- * can see it, so messages can be read per model and prompt version.
- */
 async function getStoredContext({
   context,
   userId,
@@ -30,11 +26,7 @@ async function getStoredContext({
   return provenance ? { ...context, provenance } : context;
 }
 
-/**
- * Stores a feedback message with its context and emails it to the team. Anyone can send one; a
- * signed-in learner's message is linked to their account. The stored message is the record, so an
- * email failure is logged instead of failing a message that was already saved.
- */
+/** Anyone may submit; email failures are logged after storage and do not fail a saved message. */
 export async function submitFeedback({ context = {}, email, message }: FeedbackMessageInput) {
   const session = await getSession();
   const userId = session?.user.id ?? null;

@@ -16,10 +16,6 @@ const NO_PROVENANCE: ContentProvenance = { model: null, promptVersion: null, run
 
 const provenanceSelect = { model: true, promptVersion: true, runId: true } as const;
 
-/**
- * A private course belongs to the learner in its `userId` column. Courses record only the run that
- * wrote their outline.
- */
 async function findCourseProvenance({ contentId, userId }: LookupParams) {
   const visibleCourse = userId
     ? { OR: [{ visibility: "public" as const }, { userId }] }
@@ -30,7 +26,6 @@ async function findCourseProvenance({ contentId, userId }: LookupParams) {
   return course ? { ...NO_PROVENANCE, runId: course.outlineRunId } : null;
 }
 
-/** Tutor answers are private to the learner who asked; shared ones carry the run that wrote them. */
 async function findLessonQuestionProvenance({ contentId, userId }: LookupParams) {
   if (!userId) {
     return null;
@@ -42,7 +37,6 @@ async function findLessonQuestionProvenance({ contentId, userId }: LookupParams)
   });
 }
 
-/** Plans and their changes are private to the learner whose goal they serve. */
 async function findPlanProvenance({ contentId, userId }: LookupParams) {
   if (!userId) {
     return null;
@@ -65,11 +59,6 @@ async function findPlanChangeProvenance({ contentId, userId }: LookupParams) {
   });
 }
 
-/**
- * Each kind of AI content resolves to the model, prompt version and run that wrote it, or null when
- * it doesn't exist or isn't the reader's to see. Plans and tutor answers are private to their
- * learner; Library content is public unless another learner owns it.
- */
 const provenanceLookups: Record<FeedbackContentKind, ProvenanceLookup> = {
   answerExplanation: ({ contentId }) =>
     prisma.answerExplanation.findUnique({ select: provenanceSelect, where: { id: contentId } }),
@@ -103,11 +92,7 @@ const provenanceLookups: Record<FeedbackContentKind, ProvenanceLookup> = {
     }),
 };
 
-/**
- * Snapshots the provenance of the content a feedback message is about, so feedback can be
- * read per model and prompt version even after the content is regenerated. Null means the content
- * doesn't exist or the reader can't see it.
- */
+/** Null means the content is absent or inaccessible to this viewer. */
 export function findContentProvenance({
   contentId,
   contentKind,
