@@ -31,7 +31,7 @@ struct TutorThreadView<Header: View>: View {
     TutorConversationView(
       conversation: tutor.conversation(scope),
       canTalk: session.authenticatedSession != nil && learner?.identity.isAnonymous != true,
-      buddyName: learner?.buddyDisplayName ?? buddyName(kind: .zu, name: nil),
+      buddyName: summary.buddyDisplayName,
       suggestions: suggestions ?? scope.suggestions,
       placeholder: placeholder ?? scope.placeholder,
       draft: draft,

@@ -80,7 +80,7 @@ struct TodayMoreSection: View {
             } label: {
               Label {
                 Text(
-                  "Practice with \(learner.summary.value?.buddyName ?? "Zu")", tableName: "Today",
+                  "Practice with \(learner.buddyDisplayName)", tableName: "Today",
                   comment: "Opens the buddy's quiz")
               } icon: {
                 Image(systemName: "bubble.left")
@@ -265,7 +265,7 @@ struct TodayMissionsSection: View {
       .listRowSeparator(.hidden, edges: .bottom)
 
       ForEach(Array(missions.enumerated()), id: \.offset) { _, mission in
-        MissionRow(mission: mission, buddyName: learner.summary.value?.buddyName ?? "Zu") {
+        MissionRow(mission: mission, buddyName: learner.buddyDisplayName) {
           go(mission)
         }
       }

@@ -53,7 +53,7 @@ struct TutorPanel: View {
   }
 
   private var name: String {
-    summary.summary.value?.buddyDisplayName ?? buddyName(kind: .zu, name: nil)
+    summary.buddyDisplayName
   }
 
   private func quoteLine(_ question: String) -> String {
@@ -80,7 +80,7 @@ struct TutorAskButton: View {
   @State private var isPresented = false
 
   var body: some View {
-    let name = summary.summary.value?.buddyDisplayName ?? buddyName(kind: .zu, name: nil)
+    let name = summary.buddyDisplayName
 
     Button {
       isPresented = true

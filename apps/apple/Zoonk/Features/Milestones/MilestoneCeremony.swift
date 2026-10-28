@@ -75,7 +75,7 @@ struct MilestoneCeremony: View {
   }
 
   private var buddy: String {
-    learner.summary.value?.buddyName ?? "Zu"
+    learner.buddyDisplayName
   }
 
   private var symbol: String {

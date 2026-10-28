@@ -7,6 +7,14 @@ extension LearnerSummary {
   }
 }
 
+extension LearnerSummaryStore {
+  /// The buddy's name wherever the app says it, the default buddy's own (localized) before the
+  /// summary arrives.
+  var buddyDisplayName: String {
+    summary.value?.buddyDisplayName ?? BuddyKind.zu.name
+  }
+}
+
 extension TutorScope {
   /// What the conversation is about, under the panel's title.
   var panelDescription: Text {

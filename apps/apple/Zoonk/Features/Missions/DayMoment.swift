@@ -61,7 +61,7 @@ struct DayMomentSections: View {
   let result: DayResult
 
   private var buddy: String {
-    learner.summary.value?.buddyName ?? "Zu"
+    learner.buddyDisplayName
   }
 
   var body: some View {

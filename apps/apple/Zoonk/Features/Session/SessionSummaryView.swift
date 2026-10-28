@@ -177,7 +177,7 @@ struct SessionSummaryView: View {
   }
 
   private var buddyName: String {
-    learner.summary.value?.buddyName ?? "Zu"
+    learner.buddyDisplayName
   }
 
   private func title(_ summary: SessionSummary) -> Text {
