@@ -20,6 +20,11 @@ async function postExamMove(
 
   const result = await moveLanguageGoalToExam(path.goalId);
 
+  // A move sent again gets the exam goal it made, with nothing started twice.
+  if (result.status === "alreadyMoved") {
+    return NextResponse.json({ generations: [], goal: result.goal, research: [] });
+  }
+
   if (result.status !== "moved") {
     return refuseMove(result.status);
   }

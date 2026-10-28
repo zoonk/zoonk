@@ -12,11 +12,25 @@ import { toIsoDate } from "../plans/planner/plan-calendar";
 import { getSession } from "../users/get-session";
 import { detectLanguageExam } from "./language-exam";
 
+/** Only `moved` starts the exam goal's research and curriculum, so a replay starts nothing twice. */
 export type MoveLanguageGoalResult =
-  | { goal: GoalView; status: "moved" }
+  | { goal: GoalView; status: "alreadyMoved" | "moved" }
   | { status: "noExam" | "notFound" | "unauthorized" };
 
-type MoveOutcome = { goalId: string; status: "moved" } | { status: "noExam" | "notFound" };
+type MoveOutcome =
+  | { goalId: string; status: "alreadyMoved" | "moved" }
+  | { status: "noExam" | "notFound" };
+
+function findReplacement(tx: TransactionClient, goal: Goal) {
+  return tx.goal.findFirst({
+    select: { id: true },
+    where: {
+      details: { equals: goal.id, path: ["movedFromGoalId"] },
+      status: { not: "archived" },
+      userId: goal.userId,
+    },
+  });
+}
 
 async function replaceWithExamGoal({
   examName,
@@ -56,8 +70,8 @@ async function replaceWithExamGoal({
 }
 
 /**
- * One learner write, so a failure partway leaves the language goal active and two requests take
- * turns. Only an active goal moves, so moving again can't make unlimited exam goals.
+ * One learner write, so a failure partway leaves the language goal active, and a request sent
+ * again gets the exam goal the first one made (`alreadyMoved`).
  */
 export async function moveLanguageGoalToExam(goalId: string): Promise<MoveLanguageGoalResult> {
   const session = await getSession();
@@ -73,8 +87,16 @@ export async function moveLanguageGoalToExam(goalId: string): Promise<MoveLangua
     async (tx) => {
       const goal = await tx.goal.findFirst({ where: { id: goalId, userId } });
 
-      if (goal?.status !== "active") {
+      if (!goal) {
         return unchanged({ status: "notFound" });
+      }
+
+      if (goal.status !== "active") {
+        const replacement = await findReplacement(tx, goal);
+
+        return unchanged(
+          replacement ? { goalId: replacement.id, status: "alreadyMoved" } : { status: "notFound" },
+        );
       }
 
       const details = isJsonObject(goal.details) ? goal.details : {};
@@ -96,7 +118,9 @@ export async function moveLanguageGoalToExam(goalId: string): Promise<MoveLangua
     return outcome;
   }
 
-  revalidateCacheTags([getGoalsCacheTag(userId), getLearningProfileCacheTag(userId)]);
+  if (outcome.status === "moved") {
+    revalidateCacheTags([getGoalsCacheTag(userId), getLearningProfileCacheTag(userId)]);
+  }
 
   const [exam, profile] = await Promise.all([
     prisma.goal.findUniqueOrThrow({ where: { id: outcome.goalId } }),

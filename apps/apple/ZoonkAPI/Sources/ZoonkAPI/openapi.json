@@ -3439,6 +3439,80 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "The goal had already moved: its exam goal, with nothing started again",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "generations": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "generationId": {
+                            "type": "string"
+                          },
+                          "goalId": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "curriculum",
+                              "explanation"
+                            ],
+                            "description": "curriculum: skill graph, plan and outlines for learn, exam and language goals; explanation: the quick explanation of an explain question"
+                          }
+                        },
+                        "required": [
+                          "generationId",
+                          "goalId",
+                          "kind"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "What is being written for each new goal: stream GET /generations/{generationId}/events for live progress"
+                    },
+                    "research": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "goalId": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "researchId": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "goalId",
+                          "researchId"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "description": "Research started for exam and learn goals: poll GET /research/{researchId}"
+                    },
+                    "goal": {
+                      "$ref": "#/components/schemas/Goal"
+                    }
+                  },
+                  "required": [
+                    "generations",
+                    "research",
+                    "goal"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
           "201": {
             "description": "The new exam goal",
             "content": {

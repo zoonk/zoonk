@@ -32,11 +32,11 @@ async function createOnboardingAnswer(
     return errors.unprocessableEntity("This answer can't be applied to the goal");
   }
 
-  if (result.movedTo) {
-    await startGoalWork([result.movedTo]);
+  if (result.movedTo?.created) {
+    await startGoalWork([result.movedTo.goal]);
   }
 
-  const goalId = result.movedTo?.id ?? path.goalId;
+  const goalId = result.movedTo?.goal.id ?? path.goalId;
 
   if (body.question === "schedule") {
     await scheduleGoalPreparation(goalId);

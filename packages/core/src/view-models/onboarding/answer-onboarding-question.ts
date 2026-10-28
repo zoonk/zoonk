@@ -2,7 +2,10 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { pickExamOptions } from "../../exams/choices/choose-exam-option";
-import { moveLanguageGoalToExam } from "../../exams/move-language-goal";
+import {
+  type MoveLanguageGoalResult,
+  moveLanguageGoalToExam,
+} from "../../exams/move-language-goal";
 import { splitDailyBudget } from "../../goals/daily-budget";
 import { type GoalUpdateInput, type GoalView } from "../../goals/goal-contract";
 import { updateGoal } from "../../goals/update-goal";
@@ -15,13 +18,21 @@ import { getAnsweredQuestions, getFollowUpQuestions, readExamTarget } from "./on
 
 /**
  * A saved answer says which goal onboarding goes on with: `movedTo` is the exam goal a language
- * goal moved to ("Pass an exam" naming a certificate), null when the goal stays.
+ * goal moved to ("Pass an exam" naming a certificate), null when the goal stays. `created` is true
+ * only for the request that created it, whose caller starts its research and curriculum.
  */
 export type OnboardingAnswerResult =
-  | { movedTo: GoalView | null; status: "saved" }
+  | { movedTo: { created: boolean; goal: GoalView } | null; status: "saved" }
   | { status: "invalid" }
   | { status: "notFound" }
   | { status: "unauthorized" };
+
+/** The exam goal a move gave, and whether this request created it. */
+function toMovedGoal(moved: MoveLanguageGoalResult) {
+  return moved.status === "moved" || moved.status === "alreadyMoved"
+    ? { created: moved.status === "moved", goal: moved.goal }
+    : null;
+}
 
 /** The buddy belongs to the learner, not the goal, so it's saved on the profile. */
 async function saveProfileAnswer(input: OnboardingAnswerInput): Promise<"invalid" | "saved"> {
@@ -222,6 +233,16 @@ export async function answerOnboardingQuestion({
 
   const { goal } = owned;
 
+  // A reason answer sent again after its goal moved (its response was lost) goes on with the
+  // exam goal, without writing to the archived one.
+  if (input.question === "reason" && goal.kind === "language" && goal.status !== "active") {
+    const movedTo = toMovedGoal(await moveLanguageGoalToExam(goalId));
+
+    if (movedTo) {
+      return { movedTo, status: "saved" };
+    }
+  }
+
   const [profile, choices] = await Promise.all([
     saveProfileAnswer(input),
     saveExamChoices({ goal, input }),
@@ -268,8 +289,7 @@ export async function answerOnboardingQuestion({
 
   // "Pass an exam" inside a language goal: a reason naming a certificate moves it to an exam goal.
   if (input.question === "reason" && goal.kind === "language") {
-    const moved = await moveLanguageGoalToExam(goalId);
-    return { movedTo: moved.status === "moved" ? moved.goal : null, status: "saved" };
+    return { movedTo: toMovedGoal(await moveLanguageGoalToExam(goalId)), status: "saved" };
   }
 
   return { movedTo: null, status: "saved" };

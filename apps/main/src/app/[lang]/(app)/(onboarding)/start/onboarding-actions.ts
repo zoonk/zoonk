@@ -77,11 +77,11 @@ export async function answerOnboardingAction(
   }
 
   // A language goal that moved to its exam goes on as that goal, whose curriculum starts now.
-  if (result.movedTo) {
-    await startGoalWork([result.movedTo]);
+  if (result.movedTo?.created) {
+    await startGoalWork([result.movedTo.goal]);
   }
 
-  const currentGoalId = result.movedTo?.id ?? goalId;
+  const currentGoalId = result.movedTo?.goal.id ?? goalId;
 
   // The time a day re-plans the first days, so their lessons start being written before Today needs them.
   if (parsed.data.question === "schedule") {

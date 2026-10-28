@@ -95,6 +95,10 @@ export const examPaths = {
       operationId: "moveLanguageGoalToExam",
       requestParams: { path: goalPathParamsSchema },
       responses: {
+        "200": {
+          content: { "application/json": { schema: replacementGoalResponseSchema } },
+          description: "The goal had already moved: its exam goal, with nothing started again",
+        },
         "201": {
           content: { "application/json": { schema: replacementGoalResponseSchema } },
           description: "The new exam goal",

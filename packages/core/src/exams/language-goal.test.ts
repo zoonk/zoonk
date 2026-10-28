@@ -117,7 +117,11 @@ describe(moveLanguageGoalToExam, () => {
       prisma.goal.count({ where: { status: "active", userId: guest.id } }),
     ).resolves.toBe(1);
 
-    await expect(moveLanguageGoalToExam(goal.id)).resolves.toStrictEqual({ status: "notFound" });
+    await expect(moveLanguageGoalToExam(goal.id)).resolves.toMatchObject({
+      goal: { kind: "exam", title: "IELTS" },
+      status: "alreadyMoved",
+    });
+
     await expect(prisma.goal.count({ where: { userId: guest.id } })).resolves.toBe(2);
   });
 });
@@ -141,7 +145,10 @@ describe("onboarding's reason answer", () => {
     });
 
     expect(result).toMatchObject({
-      movedTo: { details: { movedFromGoalId: goal.id }, kind: "exam", title: "IELTS" },
+      movedTo: {
+        created: true,
+        goal: { details: { movedFromGoalId: goal.id }, kind: "exam", title: "IELTS" },
+      },
       status: "saved",
     });
 
@@ -169,6 +176,40 @@ describe("onboarding's reason answer", () => {
     });
   });
 
+  it("gives a reason sent again after its goal moved the same exam goal, without writing to the old one", async () => {
+    const { goal } = await languageGoalInOnboarding();
+    const first = await answerOnboardingQuestion({ goalId: goal.id, input: IELTS_REASON });
+    const archived = await prisma.goal.findUniqueOrThrow({ where: { id: goal.id } });
+    const again = await answerOnboardingQuestion({ goalId: goal.id, input: IELTS_REASON });
+
+    expect(first).toMatchObject({ movedTo: { created: true }, status: "saved" });
+
+    expect(again).toStrictEqual({
+      movedTo: { created: false, goal: first.status === "saved" && first.movedTo?.goal },
+      status: "saved",
+    });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toStrictEqual(
+      archived,
+    );
+  });
+
+  it("makes one exam goal when the same reason is sent twice at once", async () => {
+    const { goal, user } = await languageGoalInOnboarding();
+
+    const answers = await Promise.all([
+      answerOnboardingQuestion({ goalId: goal.id, input: IELTS_REASON }),
+      answerOnboardingQuestion({ goalId: goal.id, input: IELTS_REASON }),
+    ]);
+
+    const moved = answers.map((answer) => (answer.status === "saved" ? answer.movedTo : null));
+
+    expect(moved.map((entry) => entry?.created).toSorted()).toStrictEqual([false, true]);
+    expect(moved[0]?.goal.id).toBe(moved[1]?.goal.id);
+
+    await expect(prisma.goal.count({ where: { kind: "exam", userId: user.id } })).resolves.toBe(1);
+  });
+
   it("leaves the language goal as it was when the exam goal can't be written", async () => {
     const { goal, user } = await languageGoalInOnboarding();
     vi.mocked(insertGoalWithPlan).mockRejectedValueOnce(new Error("Connection lost"));
@@ -184,6 +225,6 @@ describe("onboarding's reason answer", () => {
     // Sent again, the reason moves it.
     await expect(
       answerOnboardingQuestion({ goalId: goal.id, input: IELTS_REASON }),
-    ).resolves.toMatchObject({ movedTo: { title: "IELTS" } });
+    ).resolves.toMatchObject({ movedTo: { created: true, goal: { title: "IELTS" } } });
   });
 });
