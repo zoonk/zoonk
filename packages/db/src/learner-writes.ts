@@ -1,9 +1,7 @@
 import { type TransactionClient } from "./index";
 
-/** Marking and locking only run SQL, so any transaction or client that can do that may. */
 export type LearnerWriteTransaction = Pick<TransactionClient, "$executeRaw" | "$queryRaw">;
 
-/** Raises these plans' input version. The caller already holds their locks. */
 export async function markLockedPlanInputsChanged(
   tx: LearnerWriteTransaction,
   { planIds }: { planIds: readonly string[] },
@@ -15,9 +13,8 @@ export async function markLockedPlanInputsChanged(
 }
 
 /**
- * Locks every plan these learners' goals have, in id order, and returns them. Learner writers lock
- * plans, then learner rows, then their own rows, so two of them wait for each other instead of
- * deadlocking. A writer that reads what it then marks takes them first; marking retakes them.
+ * Learner writers lock plans, then learner rows, then their own rows, so two of them wait for each
+ * other instead of deadlocking.
  */
 export async function lockLearnerPlans(
   tx: LearnerWriteTransaction,
@@ -33,11 +30,6 @@ export async function lockLearnerPlans(
   return plans.map((plan) => plan.id);
 }
 
-/**
- * Raises the input version of every plan these learners' goals have, locking the plans in id
- * order first (`lockLearnerPlans`), and returns the plans it marked. Core's writers and auth's
- * guest link share it.
- */
 export async function markPlanInputsChanged(
   tx: LearnerWriteTransaction,
   { userIds }: { userIds: readonly string[] },
@@ -47,12 +39,7 @@ export async function markPlanInputsChanged(
   return planIds;
 }
 
-/**
- * Locks the learner's row until the transaction ends, so their writes take turns: a writer reads
- * what it then changes under it. Writers that update plans without changing their inputs lock those
- * owned plans here first: every writer locks plans, then learners, then its own rows, so two of them
- * wait for each other instead of deadlocking.
- */
+/** Plans lock before learners (see `lockLearnerPlans`), so a writer passes the plans it updates. */
 export async function lockLearner(
   tx: LearnerWriteTransaction,
   { lockPlanIds = [], userId }: { lockPlanIds?: readonly string[]; userId: string },

@@ -2,10 +2,7 @@ import { t } from "../../_utils/localize";
 import { bankOption } from "../content";
 import { type SeedItem } from "../types";
 
-/**
- * Quick questions for skills learners meet before the written lessons, so their capsules have
- * something to ask: the math of phase 1 and the light chapter of the overview.
- */
+/** Skills met before the written lessons need these, so their capsules have something to ask. */
 export const physicsReviewItems: SeedItem[] = [
   {
     content: {

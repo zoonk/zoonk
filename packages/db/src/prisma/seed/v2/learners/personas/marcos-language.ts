@@ -3,13 +3,8 @@ import { englishCourse } from "../../library/english/english-course";
 import { type SeedLearner } from "../types";
 import { marcosLanguageHistory } from "./marcos-language-history";
 
-/** About five months until the move, as the onboarding mockup has it. */
 const MOVE_IN_DAYS = 160;
 
-/**
- * A language goal: English for a move to Toronto, 25 minutes a day, A2 toward B1+. He
- * finished the arrival unit and is in the middle of renting an apartment.
- */
 const marcos: SeedLearner = {
   attempts: [
     {
@@ -156,7 +151,6 @@ const marcos: SeedLearner = {
   username: "marcos_toronto",
 };
 
-/** The move stays about five months ahead of whenever the seed runs. */
 export function buildMarcos({ now }: { now: Date }): SeedLearner {
   return { ...marcos, goal: { ...marcos.goal, targetDate: daysFrom(now, MOVE_IN_DAYS) } };
 }

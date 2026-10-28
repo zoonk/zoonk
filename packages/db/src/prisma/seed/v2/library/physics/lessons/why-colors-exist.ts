@@ -2,11 +2,6 @@ import { t } from "../../../_utils/localize";
 import { option } from "../../content";
 import { type SeedLesson } from "../../types";
 
-/**
- * Chapter "Inside the atom", lesson 4. Builds on the energy staircase from the electron lesson:
- * a drop between steps becomes a photon, the size of the drop becomes its color, and one
- * division turns an energy into a wavelength the learner can check on a slider.
- */
 export const whyColorsExistLesson: SeedLesson = {
   canDo: t(
     "You'll explain why fireworks come in different colors and work out a light's color from an energy jump.",

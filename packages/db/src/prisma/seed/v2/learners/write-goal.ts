@@ -12,13 +12,12 @@ const DAYS_PER_WEEK = 7;
 const SUNDAY = 0;
 
 /**
- * The pace a plan is saved with before anyone's lessons set one: the lessons' own estimates. Saved
- * with the plan, so the planner lays out the same plan on any database, whatever pace other
+ * Saved with the plan, so the planner lays out the same plan on any database, whatever pace other
  * learners' lessons there would sample.
  */
 const LESSON_PACE = { factor: 1, source: "typical" } as const;
 
-/** Past any plan's length: existing items move here first, so no two ever share a position. */
+/** Past any plan's length: items move here first, since positions are unique in a plan. */
 const POSITION_OFFSET = 1_000_000;
 
 export type LearnerScope = {
@@ -29,7 +28,6 @@ export type LearnerScope = {
   userId: string;
 };
 
-/** The learner-local calendar day `day` days from today, as `@db.Date` columns store it. */
 export function scopeDay(
   { learner, now }: Pick<LearnerScope, "learner" | "now">,
   day: number,
@@ -41,24 +39,18 @@ function isoDay(scope: Pick<LearnerScope, "learner" | "now">, day: number): stri
   return scopeDay(scope, day).toISOString().slice(0, "yyyy-mm-dd".length);
 }
 
-/** The stable id of the persona's plan item at one position of its `plan.items`. */
 export function planItemId(learner: SeedLearner, goal: SeedGoal, position: number): string {
   return seedId(`learner:${learner.key}:goal:${goal.key}:item:${position}`);
 }
 
-/**
- * One item the seed writes: the persona's item, or one lesson of a chapter the persona wrote as a
- * whole, as the planner stores chapters.
- */
 type WrittenItem = { day: number; id: string; item: SeedPlanItem; lesson?: string };
 
-/** Weeks run Monday to Sunday, as the planner's do: the days until this week's Sunday. */
+/** Weeks run Monday to Sunday, as the planner's do. */
 function getWeekEnd(scope: LearnerScope): number {
   const weekday = scopeDay(scope, 0).getUTCDay();
   return weekday === SUNDAY ? 0 : DAYS_PER_WEEK - weekday;
 }
 
-/** A persona's item already on the plan: finished, or due this week, which the planner keeps. */
 function isOnPlan(item: SeedPlanItem, weekEnd: number): boolean {
   if (item.status !== "todo") {
     return true;
@@ -71,10 +63,6 @@ function isOnPlan(item: SeedPlanItem, weekEnd: number): boolean {
   return item.day !== undefined && item.day <= weekEnd;
 }
 
-/**
- * The persona's items already on the plan, a chapter as its lessons. The planner lays out the
- * rest (see `planSeededGoal` in core), so the persona's later items only set the graph's order.
- */
 function listWrittenItems(scope: LearnerScope, goal: SeedGoal): WrittenItem[] {
   const weekEnd = getWeekEnd(scope);
   const prefix = `learner:${scope.learner.key}:goal:${goal.key}:item`;
@@ -108,11 +96,7 @@ function writtenContent(scope: LearnerScope, { item, lesson }: WrittenItem) {
   return { chapterId: found.chapterId, lessonId: found.id, titleSnapshot: found.title };
 }
 
-/**
- * Writes the persona's items on the plan in order. Every run plans the rest again, so the items
- * it doesn't write go, and the rest step aside before taking their positions. Their skills are
- * the planner's to assign.
- */
+/** Every run plans the rest again, so the items it doesn't write go. */
 async function writePlanItems(
   scope: LearnerScope,
   { goal, planId }: { goal: SeedGoal; planId: string },
@@ -199,11 +183,6 @@ async function writePlanChanges(
   );
 }
 
-/**
- * Writes a goal with what the persona wrote of its plan: the skill graph, the settings, the items
- * it finished and this week's, and plan changes with their reasons. The planner lays out the rest
- * and dates the phases (see `planSeededGoal` in core).
- */
 export async function writeGoal(scope: LearnerScope, goal: SeedGoal): Promise<string> {
   const { learner, lookup, now, prisma, userId } = scope;
   const goalId = seedId(`learner:${learner.key}:goal:${goal.key}`);

@@ -4,7 +4,6 @@ const A2 = 1;
 const A2_PLUS = 1.5;
 const B1 = 2;
 
-/** Linda, the landlord on Queen Street: the renting unit's call at A2. */
 const rentingCall = {
   character: { name: "Linda", place: "Queen Street", role: "proprietária" },
   characterBrief:
@@ -26,7 +25,6 @@ const rentingCall = {
   title: "Ligar para marcar uma visita",
 };
 
-/** The immigration officer at the airport: the arriving unit's call at A2. */
 const arrivingCall = {
   character: { name: "Officer Grant", place: "Toronto Pearson", role: "agente de imigração" },
   characterBrief:
@@ -41,10 +39,6 @@ const arrivingCall = {
   title: "Passar pela imigração",
 };
 
-/**
- * Marcos after four weeks: reading ahead of speaking, one unit call won (the airport), the renting
- * unit's call waiting, and a pattern with "since" in his recent mistakes.
- */
 export const marcosLanguageHistory: SeedLanguageHistory = {
   conversations: [
     {

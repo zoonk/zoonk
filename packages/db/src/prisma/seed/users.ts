@@ -8,7 +8,6 @@ export type SeedUsers = {
   owner: User;
 };
 
-/** Every seeded account's email, by the name `seedUsers` returns it under. */
 export const SEED_USER_EMAILS = {
   admin: "admin@zoonk.test",
   logoutTest: "logout-test@zoonk.test",

@@ -2,7 +2,6 @@ import { t } from "../../_utils/localize";
 import { outlineLesson } from "../content";
 import { type SeedChapter } from "../types";
 
-/** The intermediate band: calculus and classical physics, which quantum mechanics builds on. */
 export const classicalChapters: SeedChapter[] = [
   {
     description: t(
@@ -188,7 +187,6 @@ export const classicalChapters: SeedChapter[] = [
   },
 ];
 
-/** The advanced band: quantum mechanics with its math, the end of a from-scratch plan. */
 export const quantumChapters: SeedChapter[] = [
   {
     description: t(

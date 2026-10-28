@@ -4,7 +4,6 @@ import { type SeedGraphSkill } from "../types";
 
 const STRATEGY = t("Exam strategy", "Estratégia de prova");
 
-/** The contents of a foreign language the candidate may pick, as the notice words each option's. */
 function foreignLanguageTopics([en, pt]: [string, string]): Localized[] {
   return [
     t(
@@ -26,7 +25,6 @@ function foreignLanguageTopics([en, pt]: [string, string]): Localized[] {
   ];
 }
 
-/** The notice's contents the graph's skills teach, as the notice words them. */
 const TOPICS = [
   t("Basic and fundamental knowledge", "Conhecimentos básicos e fundamentais"),
   t(
@@ -130,10 +128,8 @@ function topic(notice: string): Localized {
 }
 
 /**
- * Ana's ENEM skill graph as the exam's graph task builds it for an ENEM goal: a real one's skills,
- * areas, phases, weights, notice contents and sizes (Medicina at UFMG, exported on 10 Oct 2026),
- * with the course's own skills in the places of the ones they teach, sharing their sizes. About
- * 3,800 lessons: the time the planner advises for the whole exam is a real ENEM's.
+ * From a real ENEM goal's graph (Medicina at UFMG), with the course's own skills in the places of
+ * the ones they teach.
  */
 export const anaGraph: SeedGraphSkill[] = [
   {
@@ -884,7 +880,6 @@ export const anaGraph: SeedGraphSkill[] = [
     ],
     weight: 4,
   },
-  // The foreign language options, which only the one the learner picks brings to their plan.
   {
     area: t("English", "Língua Inglesa"),
     lessons: 12,

@@ -16,14 +16,8 @@ import { studyMoment, writeAttempts } from "./write-learning";
 
 type SeedSession = NonNullable<SeedLearner["session"]>;
 
-/** Energy the learner had when the session started, a little below where it ends. */
 const ENERGY_GAINED_TODAY = 3;
 
-/**
- * One block of a day as the app's session builder plans it (`buildSessionBlocks` in core), with
- * the parts of its payload the learner's history reads: the capsules a review opened, the
- * questions a block asks and the lesson a learn block teaches.
- */
 export type BuiltBlock = {
   canDo: string | null;
   estimatedMinutes: number;
@@ -38,41 +32,29 @@ export type BuiltBlock = {
   };
 };
 
-/** A right answer to one of a block's questions, in the shape answering it in a session records. */
 export type BlockAnswer = { answer: Prisma.InputJsonObject; itemId: string; skillId: string };
 
-/** The day the session builder made for the learner, with what the session row records of it. */
 export type BuiltDay = {
-  /** Right answers to each question block's questions, by the block's position. */
+  /** By the block's position. */
   answers: ReadonlyMap<number, readonly BlockAnswer[]>;
   blocks: readonly BuiltBlock[];
   freshStart: StudyFreshStart | null;
-  /** The missions the app picks for the day as it builds it (`ensureStudySession` in core). */
   missions: Prisma.InputJsonObject;
-  /** The plan version the day was built from (`loadDayPlanVersion` in core). */
   planVersion: number | null;
 };
 
-/** A block the learner finished, timed as they studied it, with the answers they gave in it. */
 export type FinishedBlock = BuiltBlock & {
   answers: readonly BlockAnswer[];
   completedAt: Date;
   startedAt: Date;
 };
 
-/**
- * Today's session for a persona that opened it: the app's session builder makes its blocks (core
- * runs it once the plan is made), then `write` stores them with how far the persona got.
- */
 export type SeededToday = {
-  /** The learner-local date of the persona's today, as `@db.Date` columns store it. */
   localDate: Date;
-  /** The moment the seed writes the persona on: the day is built as of then. */
   now: Date;
   timeZone: string;
   /** The id the block at `position` gets: a math problem's numbers depend on its block. */
   blockId: (position: number) => string;
-  /** Writes the day and returns the blocks the persona finished. */
   write: (day: BuiltDay) => Promise<FinishedBlock[]>;
 };
 
@@ -100,10 +82,6 @@ function getSessionStatus(session: SeedSession, blocks: readonly BuiltBlock[]): 
   return session.finished > 0 || session.started ? "active" : "planned";
 }
 
-/**
- * Where the learner stood when the session's first block started, so its end can say what
- * changed: Brain Power, Energy and each skill's state.
- */
 function toStartSnapshot(scope: LearnerScope, earnedToday: number): Prisma.InputJsonObject {
   const { learner, lookup, now } = scope;
 
@@ -123,7 +101,6 @@ function toStartSnapshot(scope: LearnerScope, earnedToday: number): Prisma.Input
   };
 }
 
-/** Each block with its status and, once started, when the learner reached it. */
 function placeBlocks(
   scope: LearnerScope,
   { blocks, session }: { blocks: readonly BuiltBlock[]; session: SeedSession },
@@ -147,11 +124,7 @@ function placeBlocks(
   });
 }
 
-/**
- * Before the persona's days are written: its sessions from an earlier run (or the app's), their
- * answers and its mocks go, so the session builder reads today as it began, as the app does when
- * the learner opens Today, and the past sessions are the history's (see `writePastSessions`).
- */
+/** Clears earlier sessions, answers and mocks, so the session builder reads today as it began. */
 export async function clearSessions(scope: LearnerScope, goalId: string): Promise<void> {
   const { learner, prisma, userId } = scope;
 
@@ -171,7 +144,6 @@ export async function clearSessions(scope: LearnerScope, goalId: string): Promis
   await prisma.studySession.deleteMany({ where: sessions });
 }
 
-/** The answers the persona gave in the blocks it finished, spread over each block's time. */
 function toBlockAttempts(
   scope: LearnerScope,
   { blocks, sessionId }: { blocks: readonly FinishedBlock[]; sessionId: string },
@@ -199,12 +171,7 @@ function toBlockAttempts(
   });
 }
 
-/**
- * Writes today's session as the app's session builder made it, with how far the persona got: the
- * first `finished` blocks done and, when `started`, the next one begun. Its answers in the
- * session and the ledger rows of the blocks it finished come with it. The id is stable, so each
- * run moves the seeded session to today.
- */
+/** The id is stable, so each run moves the seeded session to today. */
 async function writeDay(
   scope: LearnerScope,
   { day, goalId, session }: { day: BuiltDay; goalId: string; session: SeedSession },
@@ -261,7 +228,6 @@ async function writeDay(
   return finished;
 }
 
-/** Today's session for a persona that opened it, for core to build (see `SeededToday`). */
 export function toSeededToday(
   scope: LearnerScope,
   { goalId, session }: { goalId: string; session: SeedSession },

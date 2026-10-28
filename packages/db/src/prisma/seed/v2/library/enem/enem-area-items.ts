@@ -2,7 +2,6 @@ import { t } from "../../_utils/localize";
 import { bankOption } from "../content";
 import { type SeedItem } from "../types";
 
-/** Items from the other areas that the diagnostic and mock exams mix in, in ENEM's format. */
 export const enemAreaItems: SeedItem[] = [
   {
     content: {

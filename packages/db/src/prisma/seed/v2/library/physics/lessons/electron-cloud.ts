@@ -2,11 +2,6 @@ import { t } from "../../../_utils/localize";
 import { guess, option } from "../../content";
 import { type SeedLesson } from "../../types";
 
-/**
- * Chapter "Inside the atom", lesson 2. Most people learned the planet picture of the atom, so the
- * lesson opens with a guess, breaks that picture with one fact and rebuilds the atom as a cloud
- * whose lowest energy is a floor.
- */
 export const electronCloudLesson: SeedLesson = {
   canDo: t(
     "You'll explain why atoms don't collapse, using the electron cloud.",

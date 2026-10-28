@@ -2,12 +2,11 @@ import { type Client, escapeIdentifier } from "pg";
 
 const INSERT_BATCH_SIZE = 250;
 
-/** A row with every value as the text Postgres printed, or null. */
 export type DatabaseRow = Record<string, string | null>;
 
 export type TableRows = { columns: string[]; rows: DatabaseRow[] };
 
-/** An unambiguous natural key, including null values and separators inside text. */
+/** JSON keeps null values and separators inside text unambiguous. */
 export function getRowKey(row: DatabaseRow, columns: readonly string[]): string {
   return JSON.stringify(columns.map((column) => row[column]));
 }
@@ -18,10 +17,7 @@ export function getRowKey(row: DatabaseRow, columns: readonly string[]): string 
  */
 const RAW_TEXT_TYPES = { getTypeParser: () => (value: unknown) => value };
 
-/**
- * A connection runs one query at a time (and `pg` rejects overlapping ones), so work on one client
- * runs in order.
- */
+/** A connection runs one query at a time, and `pg` rejects overlapping ones. */
 export async function runInOrder<Result>(
   tasks: readonly (() => Promise<Result>)[],
 ): Promise<Result[]> {
@@ -49,7 +45,6 @@ export async function readRows({
   return { columns: result.fields.map((field) => field.name), rows: result.rows };
 }
 
-/** The non-null values of one column, such as the ids of every row. */
 export function getColumnValues(data: TableRows, column: string): string[] {
   return data.rows.flatMap((row) => {
     const value = row[column];
@@ -61,7 +56,6 @@ export function getRowIds(data: TableRows): string[] {
   return getColumnValues(data, "id");
 }
 
-/** Replaces one column's value in every row, for foreign keys that point elsewhere in the destination. */
 export function mapColumn({
   column,
   data,
@@ -80,7 +74,6 @@ export function mapColumn({
   };
 }
 
-/** Clears a nullable foreign key whose row the destination doesn't have. */
 export function keepKnownReferences({
   column,
   data,
@@ -127,10 +120,7 @@ function getRowBatches(rows: DatabaseRow[]): DatabaseRow[][] {
   });
 }
 
-/**
- * Inserts rows in batches. `suffix` adds an `ON CONFLICT` or `RETURNING` clause; the returned rows
- * are what `RETURNING` gave back.
- */
+/** `suffix` adds an `ON CONFLICT` or `RETURNING` clause. */
 export async function insertRows({
   data,
   destination,
@@ -158,10 +148,6 @@ export async function insertRows({
   return inserted;
 }
 
-/**
- * Updates a destination row that already has the source row's natural key instead of inserting a
- * second one, leaving `keep` columns (the destination's id and its own counters) as they are.
- */
 export function getUpsertClause({
   columns,
   conflict,

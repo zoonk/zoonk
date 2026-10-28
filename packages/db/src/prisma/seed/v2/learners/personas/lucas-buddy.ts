@@ -1,7 +1,6 @@
 import { physicsCourse } from "../../library/physics/physics-course";
 import { type SeedAttempt, type SeedLearner } from "../types";
 
-/** Answers inside the lessons he finished, two in each, on the skill each lesson teaches. */
 const lessonAnswers: SeedAttempt[] = (
   [
     [-18, "atom-scale"],
@@ -22,11 +21,6 @@ const lessonAnswers: SeedAttempt[] = (
   })),
 );
 
-/**
- * A learner with a baby buddy (310 Brain Power is a white belt): Otto the octopus, wearing the Star glasses from his first boss, after
- * two Trickster checkpoints, whose questions core picks for his past sessions (see `SeededPast`). Lucas wants the ideas of quantum physics without the math, 15 minutes a
- * night.
- */
 export const lucasBuddy: SeedLearner = {
   attempts: [
     {

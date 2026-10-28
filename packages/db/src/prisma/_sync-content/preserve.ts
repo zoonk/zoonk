@@ -4,10 +4,6 @@ import { runInOrder } from "./rows";
 
 type TargetKind = "chapter" | "item" | "lesson" | "skill" | "step";
 
-/**
- * How a replaced row is found again after the copy. Chapters, lessons and skills have one identity
- * per language, a step is its lesson's screen at a position, and items only have their id.
- */
 type Target = { join: string; keys: string[]; table: string };
 
 const IDENTITY_KEYS = ["target.language", "target.identity_key"];
@@ -25,9 +21,8 @@ const TARGETS: Record<TargetKind, Target> = {
 };
 
 /**
- * A local learner's link to replaced content. `update` links are set to null by the removal and
- * pointed at the copied row afterwards; `reinsert` rows would block the removal (`learner_skills`)
- * or go with it (`step_example_lines`), so they are set aside and inserted back.
+ * `update` links are nulled by the removal and pointed at the copied row afterwards. `reinsert`
+ * rows would block the removal (`learner_skills`) or go with it, so they're set aside and put back.
  */
 type LearnerReference = {
   column: string;
@@ -109,10 +104,7 @@ async function snapshotReference({
   return result.rows[0]?.count ?? 0;
 }
 
-/**
- * Saves each local learner link to content the sync replaces, with the natural key that finds the
- * content again. Run it after `markRemovedContent` and before clearing.
- */
+/** Run it after `markRemovedContent` and before clearing. */
 export async function snapshotLearnerReferences(destination: Client): Promise<ReferenceCounts> {
   return runInOrder(
     LEARNER_REFERENCES.map(
@@ -212,10 +204,7 @@ async function restoreReference({
   }
 }
 
-/**
- * Points each saved learner link at the copied content with the same natural key, and fails (so the
- * whole sync rolls back) when the source doesn't have that content anymore.
- */
+/** Throws, rolling back the whole sync, when the source no longer has a linked row's content. */
 export async function restoreLearnerReferences({
   destination,
   expected,

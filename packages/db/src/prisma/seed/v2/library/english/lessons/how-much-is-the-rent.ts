@@ -2,10 +2,6 @@ import { pt } from "../../../_utils/localize";
 import { guess } from "../../content";
 import { type SeedLesson } from "../../types";
 
-/**
- * Unit "Renting an apartment", lesson 1: the words and the question learners need on their first
- * call to a landlord, with the how much/how many trap Portuguese speakers fall into.
- */
 export const howMuchIsTheRentLesson: SeedLesson = {
   canDo: pt("Você vai perguntar quanto é o aluguel e o que ele inclui."),
   description: pt("As palavras e perguntas da sua primeira ligação sobre um apartamento."),

@@ -7,26 +7,15 @@ import { anaGraph } from "./ana-graph";
 
 const TIME_ZONE = "America/Sao_Paulo";
 const DAYS_PER_WEEK = 7;
-/**
- * Her first mock, untitled as the planner's mocks are: apps name them by number, and core plans
- * its questions from the bank as the session builder plans the week's mock.
- */
+/** Untitled, as the planner's mocks are: apps name them by number. */
 const FIRST_MOCK = "";
 
-/**
- * Days back to the last Sunday, when she took her first mock; never today, so on a Sunday it's the
- * one a week ago. Her plan began two weeks ago, so it's the planner's first mock day (the week's
- * event day from the plan's second week), and the next ones come every few weeks at her 45 minutes
- * a day, as the planner lays them out.
- */
+/** Never today, so on a Sunday it's the one a week ago. */
 function lastSunday(now: Date): number {
   return -(localDay(now, TIME_ZONE).getUTCDay() || DAYS_PER_WEEK);
 }
 
-/**
- * The exam's four windows (foundations, gaps, practice and the final stretch), which the planner
- * dates back from the exam day and apps name by kind.
- */
+/** Unnamed, since apps name an exam's windows by kind. */
 const EXAM_PHASES = [{ name: "" }, { name: "" }, { name: "" }, { name: "" }];
 
 const anaAttempts: SeedAttempt[] = [
@@ -163,8 +152,6 @@ const anaAttempts: SeedAttempt[] = [
     seconds: 95,
     skill: "series-resistors",
   },
-  // Answers inside the lessons she finished: what shows preparation, since one right answer in a
-  // test only frees a topic from its lessons until practice confirms it.
   ...(
     [
       [-13, "percent-basics"],
@@ -219,7 +206,6 @@ const anaProfile: Omit<SeedLearner, "goal"> = {
   username: "ana_enem",
 };
 
-/** The ENEM goal, planned back from the first exam day of the edition ahead. */
 function anaGoal({ edition, now }: { edition: EnemEdition; now: Date }): SeedGoal {
   const firstMock = lastSunday(now);
 
@@ -294,13 +280,7 @@ function anaGoal({ edition, now }: { edition: EnemEdition; now: Date }): SeedGoa
   };
 }
 
-/**
- * An exam goal: ENEM with a date, 45 minutes a day, six days a week. Her diagnostic
- * found Humanities solid and Science and Math weaker; she took her first mock on Sunday, which
- * earned her the aviator glasses then (already celebrated, so her next session doesn't).
- */
 export function buildAna(context: { edition: EnemEdition; now: Date }): SeedLearner {
-  // The exam's first day, half of it: the 30 Languages and Humanities questions the bank has.
   const mock = { correct: 21, day: lastSunday(context.now), title: FIRST_MOCK, total: 30 };
 
   return {

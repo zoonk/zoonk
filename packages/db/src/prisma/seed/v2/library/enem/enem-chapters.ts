@@ -11,7 +11,6 @@ const HUMANITIES = t("Humanities", "Ciências Humanas");
 const LANGUAGES = t("Languages", "Linguagens");
 const ESSAY = t("Essay", "Redação");
 
-/** The exam's areas as its chapters and an ENEM goal's skill graph name them. */
 export const ENEM_AREAS = {
   essay: ESSAY,
   humanities: HUMANITIES,
@@ -20,7 +19,6 @@ export const ENEM_AREAS = {
   sciences: SCIENCES,
 };
 
-/** Math, the area ENEM weighs toward everyday money questions. */
 export const enemMathChapters: SeedChapter[] = [
   {
     area: MATH,
@@ -196,7 +194,6 @@ export const enemMathChapters: SeedChapter[] = [
   },
 ];
 
-/** Natural Sciences, Humanities, Languages and the essay. */
 export const enemAreaChapters: SeedChapter[] = [
   {
     area: SCIENCES,

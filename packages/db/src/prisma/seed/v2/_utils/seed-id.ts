@@ -6,10 +6,6 @@ const UUID_VERSION = "8";
 /** RFC 9562 variant bits (10xx), so the id passes every UUID check. */
 const UUID_VARIANT = "8";
 
-/**
- * A stable UUID for a seed key such as `lesson:physics:electron:pt`. Running the seed again
- * produces the same ids, so every row is an upsert and nothing is duplicated.
- */
 export function seedId(key: string): string {
   const hex = createHash("sha256").update(`zoonk-seed-v2:${key}`).digest("hex");
 

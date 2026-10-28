@@ -1,11 +1,6 @@
 import { physicsCourse } from "../../library/physics/physics-course";
 import { type SeedLearner } from "../types";
 
-/**
- * A guest: an anonymous user who arrived from the public lesson page on why the electron doesn't
- * fall in, answered its first question, finished the lesson and typed a goal. "Save your plan"
- * asks them for an account next.
- */
 export const guest: SeedLearner = {
   attempts: [
     {

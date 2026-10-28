@@ -5,7 +5,6 @@ import { type LearnerScope, planItemId } from "./write-goal";
 
 const NOTICED_CONFIDENCE = 0.8;
 
-/** Short facts the learner shared at onboarding or that their activity showed. */
 async function writeMemory({ learner, now, prisma, userId }: LearnerScope) {
   await Promise.all(
     learner.memory.map((fact, index) => {
@@ -34,7 +33,6 @@ function findBossItemId(scope: LearnerScope, day: number): string | null {
   return position === -1 ? null : planItemId(scope.learner, goal, position);
 }
 
-/** Belts, badges, glasses and buddy stages earned, each celebrated once. */
 async function writeMilestones(scope: LearnerScope) {
   const { learner, now, prisma, userId } = scope;
 

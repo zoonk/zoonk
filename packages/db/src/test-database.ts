@@ -12,12 +12,9 @@ import {
 } from "./test-environment";
 
 /**
- * Vitest global setup for suites that use the database. Each run tests on its own copy of the
- * migrated test database and drops it at the end, as every CI job starts on an empty database:
- * rows an earlier run left, such as other learners' lesson times that plans read, never change a
- * later one. The test database is only the template. Migrations and their alignment target it,
- * and tests never connect to it, since Postgres copies a database only while nothing else is
- * connected to it.
+ * Each run tests on its own copy of the migrated test database, so rows an earlier run left never
+ * change a later one. Tests never connect to the template, since Postgres copies a database only
+ * while nothing else is connected to it.
  */
 
 const MAINTENANCE_DATABASE = "postgres";
@@ -69,7 +66,6 @@ function isRunning(pid: number): boolean {
   }
 }
 
-/** A copy whose run ended without dropping it (a closed terminal, a crash), or this process' own. */
 function isAbandoned({ name, prefix }: { name: string; prefix: string }): boolean {
   const pid = Number(name.slice(prefix.length));
   return Number.isInteger(pid) && (pid === process.pid || !isRunning(pid));
@@ -148,7 +144,6 @@ async function readAppliedMigrations(url: string): Promise<Map<string, string>> 
       url,
     });
   } catch (error) {
-    // A database no migration ever ran on has no migrations table.
     if (getErrorCode(error) === UNDEFINED_TABLE) {
       return new Map();
     }
@@ -157,7 +152,6 @@ async function readAppliedMigrations(url: string): Promise<Map<string, string>> 
   }
 }
 
-/** How the copy's migrations differ from the repository's, compared as Prisma checksums them. */
 async function findMigrationDrift(url: string): Promise<string[]> {
   const applied = await readAppliedMigrations(url);
   const expected = [...readMigrationChecksums()];
@@ -198,12 +192,7 @@ function dropOnExit({ name, serverUrl }: { name: string; serverUrl: string }): v
   });
 }
 
-/**
- * Copies the test database for this run and drops the copy when the run ends, interrupted or not,
- * along with copies runs that crashed left behind. A copy whose migrations don't match the
- * repository's is refused, so tests never run on an old schema. Test tooling only: Vitest configs
- * name it as their `globalSetup` by path, so it's absent from production bundles.
- */
+/** Refuses a copy whose migrations differ from the repository's: tests never use an old schema. */
 export default async function setupTestDatabase(): Promise<() => Promise<void>> {
   const templateUrl = getTestEnvironment("test").DATABASE_URL_UNPOOLED ?? "";
   const copyUrl = getTestRunEnvironment().DATABASE_URL_UNPOOLED ?? "";

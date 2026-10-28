@@ -2,10 +2,6 @@ import { t } from "../../../_utils/localize";
 import { guess, option } from "../../content";
 import { type SeedLesson } from "../../types";
 
-/**
- * Chapter "What a stock is", lesson 1. Replaces the vague "a stock is something whose price goes
- * up and down" with ownership: a slice of profits, votes and risk, made concrete with one bakery.
- */
 export const ownAShareLesson: SeedLesson = {
   canDo: t(
     "You'll explain what you really own when you buy a share, and what you don't.",

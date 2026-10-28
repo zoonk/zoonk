@@ -1,7 +1,6 @@
 import { type PrismaClient } from "../../generated/prisma/client";
 import { type SeedUsers } from "./users";
 
-/** Deterministic random for reproducible seed data. */
 export function seededRandom(seed: number) {
   const x = Math.sin(seed) * 10_000;
   return x - Math.floor(x);
@@ -26,7 +25,7 @@ function buildOwnerDailyProgress(
 
   return indices
     .filter((i) => {
-      // Add base offset of 1 to avoid seed=0 when i=0 (sin(0)=0 would always skip today)
+      // sin(0) is 0, which would always skip today.
       const seed = (i + 1) * 12_345;
       return seededRandom(seed) > 0.15;
     })

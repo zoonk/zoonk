@@ -1,7 +1,6 @@
 import { t } from "../../_utils/localize";
 import { skill } from "../content";
 
-/** The overview band: what quantum physics says, without the math. */
 export const overviewSkills = [
   skill("atom-scale", "overview", {
     description: t(

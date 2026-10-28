@@ -2,10 +2,6 @@ import { t } from "../../../_utils/localize";
 import { guess, option } from "../../content";
 import { type SeedLesson } from "../../types";
 
-/**
- * Percentages chapter, lesson 3: ENEM's classic trap. A guess exposes the intuition that +10% and
- * −10% cancel, multipliers replace it, and a slider shows the loss growing with the size of the change.
- */
 export const raiseThenDiscountLesson: SeedLesson = {
   canDo: t(
     "You'll see through the “raise, then discount” trap and find the final price in one multiplication.",

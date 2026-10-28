@@ -6,12 +6,10 @@ import { type LearnerScope } from "./write-goal";
 
 const MS_PER_SECOND = 1000;
 
-/** The hour of the learner's study time, such as 19 for "19:00". */
 function studyHour(scope: Pick<LearnerScope, "learner">): number {
   return Number(scope.learner.goal.studyTime.split(":")[0]);
 }
 
-/** When the learner did something `day` days from today, at their study time, `order` minutes in. */
 export function studyMoment(
   scope: Pick<LearnerScope, "learner" | "now">,
   day: number,
@@ -28,7 +26,6 @@ export function studyMoment(
   return moment > scope.now ? scope.now : moment;
 }
 
-/** Each skill's memory, from New to Mastered or fading, as cards and skill lists read it. */
 export async function writeLearnerSkills(scope: LearnerScope): Promise<void> {
   const { learner, lookup, now, prisma, userId } = scope;
 
@@ -102,10 +99,6 @@ async function writeAttempt(
   });
 }
 
-/**
- * Answers with their learner-local time, and the mistakes notebook entries some of them left:
- * those given in today's session (`inSession`, written with it) or the others.
- */
 export async function writeAttempts(
   scope: LearnerScope,
   { inSession, sessionId }: { inSession: boolean; sessionId: string | null },

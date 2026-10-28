@@ -2,11 +2,6 @@ import { t } from "../../../_utils/localize";
 import { guess, option } from "../../content";
 import { type SeedLesson } from "../../types";
 
-/**
- * Percentages chapter, lesson 2. Opens on the most common slip (answering with the discount instead
- * of the price paid), builds a mental-math shortcut, then moves from a worked "buy 4, pay for 3" to
- * the ENEM classic "buy 3, pay for 2" with less support.
- */
 export const percentDiscountLesson: SeedLesson = {
   canDo: t(
     "You'll work out “buy 3, pay for 2” in your head.",

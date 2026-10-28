@@ -6,7 +6,6 @@ import { type SeedLearner } from "./types";
 
 const SUBSCRIPTION_DAYS = 365;
 
-/** The learner's account, credential login for tests, and Plus when the persona has it. */
 async function writeAccount(prisma: PrismaClient, learner: SeedLearner): Promise<string> {
   const data = {
     email: learner.email,
@@ -30,7 +29,6 @@ async function writeAccount(prisma: PrismaClient, learner: SeedLearner): Promise
   return user.id;
 }
 
-/** A year of Plus, granted by Zoonk rather than bought through a store. */
 export function getSeedPlus({ now, userId }: { now: Date; userId: string }) {
   return {
     periodEnd: daysFrom(now, SUBSCRIPTION_DAYS),
@@ -64,10 +62,6 @@ async function writePlus({
   await prisma.subscription.upsert({ create: { id, ...data }, update: data, where: { id } });
 }
 
-/**
- * Creates or refreshes the learner's user, sign-in account, learning profile (buddy, daily limit)
- * and Plus. Returns the user id.
- */
 export async function writeLearnerUser({
   learner,
   now,

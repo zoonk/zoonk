@@ -85,10 +85,6 @@ const englishItems: SeedItem[] = [
   },
 ];
 
-/**
- * The language course: English for Portuguese speakers, organized as real situations with "I can"
- * checks. Words and sentences are shared per target language with every other course.
- */
 export const englishCourse: SeedCourse = {
   category: "languages",
   chapters: englishUnits,

@@ -12,15 +12,13 @@ export function minutesBefore(date: Date, minutes: number): Date {
   return new Date(date.getTime() - minutes * MS_PER_MINUTE);
 }
 
-/** The learner-local calendar day of an instant, as Prisma expects for `@db.Date` columns. */
 export function localDay(date: Date, timeZone: string): Date {
   return getDateInTimeZone({ date, timeZone });
 }
 
 /**
- * The learner-local calendar day `days` days from the one `date` falls on, counted on the calendar
- * as the planner counts them: 24-hour steps from the instant land on the day before or after once
- * they cross a daylight saving change, when the local time is near midnight.
+ * Counts calendar days as the planner does: 24-hour steps land on the wrong day across a daylight
+ * saving change near midnight.
  */
 export function localDayFrom({
   date,
@@ -34,10 +32,7 @@ export function localDayFrom({
   return daysFrom(localDay(date, timeZone), days);
 }
 
-/**
- * The same day `daysAgo` days back, moved to a learner-local hour, so activity lands at the
- * learner's study time. Today's activity never lands in the future.
- */
+/** Today's activity never lands in the future. */
 export function atLocalHour({
   daysAgo,
   hour,
@@ -70,7 +65,6 @@ export function atLocalHour({
   return localDay(earlier, timeZone).getTime() === target.getTime() ? earlier : now;
 }
 
-/** Learner-local date, hour and weekday of an instant, as attempts and ledger rows store them. */
 export function localTimeFields(date: Date, timeZone: string) {
   const day = localDay(date, timeZone);
 

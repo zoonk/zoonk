@@ -11,7 +11,6 @@ import { type FinishedBlock } from "./write-session";
 
 const MS_PER_SECOND = 1000;
 
-/** Today's finished blocks were answered right: the session's answers say so (`BlockAnswer`). */
 const ALL_RIGHT = 1;
 const SECONDS_PER_MINUTE = 60;
 const SECONDS_PER_QUESTION = 40;
@@ -29,16 +28,11 @@ const BRAIN_POWER: Record<LearningEventKind, number> = {
   session: 0,
 };
 
-/** The Brain Power a ledger row of this kind pays, and the block it was studied in. */
 export function getBrainPower(kind: LearningEventKind): number {
   return BRAIN_POWER[kind];
 }
 
-/**
- * How the live flows label their ledger rows (`lessonKind`), so seeded history counts the same
- * way: Library lessons, capsules opened (Retro glasses), practice blocks, bosses won (Star
- * glasses) and weekly Big Challenges, which are mock exams for exam goals.
- */
+/** As the live flows label ledger rows (`lessonKind`), so seeded history counts the same way. */
 const LEDGER_KINDS = {
   boss: "boss",
   capsule: "capsule",
@@ -56,25 +50,18 @@ export type HistoryEvent = {
   incorrect: number;
   title: string;
   contentIds: Record<string, string>;
-  /** When it ended: a day's events one after another from the learner's study time. */
   endedAt?: Date;
 };
 
-/** A mock or checkpoint of the persona's history: its day, title and how many questions were right. */
 type SeedHistoryEvent = NonNullable<SeedLearner["history"]["checkpoints"]>[number];
 
 const SEED_HEX_DIGITS = 6;
 
-/**
- * A stable number per learner and day, so each learner's calendar has its own rhythm. A persona's
- * copies roll from the persona's key (`historyKey`), so they have its history.
- */
 function seedFor(learner: SeedLearner, day: number): number {
   const key = learner.historyKey ?? learner.key;
   return Number.parseInt(seedId(key).slice(0, SEED_HEX_DIGITS), 16) + day;
 }
 
-/** Plain content ids for a lesson row, as the player writes them, so the row outlives the content. */
 function lessonContentIds(lesson: {
   chapterId: string | null;
   id: string;
@@ -82,7 +69,6 @@ function lessonContentIds(lesson: {
   return { lessonId: lesson.id, ...(lesson.chapterId ? { chapterId: lesson.chapterId } : {}) };
 }
 
-/** The plan item a mock or boss on `day` belongs to, so its result shows on the plan. */
 function planItemIds(
   scope: LearnerScope,
   kinds: readonly string[],
@@ -102,7 +88,6 @@ function answered(questions: number, accuracy: number) {
   return { correct, incorrect: questions - correct };
 }
 
-/** A lesson of the plan the learner finished on `day`, as the player records it. */
 function lessonEvent(scope: LearnerScope, { day, lesson }: { day: number; lesson: string }) {
   const found = scope.lookup.lesson(lesson);
 
@@ -117,7 +102,6 @@ function lessonEvent(scope: LearnerScope, { day, lesson }: { day: number; lesson
   };
 }
 
-/** The lessons the plan says the learner finished on `day`, a chapter as its lessons. */
 function lessonsDoneOn(scope: LearnerScope, day: number): HistoryEvent[] {
   const { course, plan } = scope.learner.goal;
 
@@ -128,7 +112,6 @@ function lessonsDoneOn(scope: LearnerScope, day: number): HistoryEvent[] {
   );
 }
 
-/** The last lesson the learner finished by `day`: what a review that day brings back. */
 function lastLessonBy(scope: LearnerScope, day: number) {
   const { course, plan } = scope.learner.goal;
 
@@ -167,11 +150,6 @@ function checkpointEvent(scope: LearnerScope, checkpoint: SeedHistoryEvent): His
   };
 }
 
-/**
- * A past day's session as the learner studied it: a review every other day, the lessons the plan
- * says they finished that day, practice with the time left, and the day's challenge last. A mock
- * takes its whole day, in place of the day's lessons.
- */
 function studyDayEvents(scope: LearnerScope, day: number): HistoryEvent[] {
   const { learner } = scope;
   const { accuracy, checkpoints = [], minutesPerDay, mocks = [] } = learner.history;
@@ -227,7 +205,6 @@ function studyDayEvents(scope: LearnerScope, day: number): HistoryEvent[] {
   ];
 }
 
-/** Each event of a day after the one before it, from the learner's study time. */
 function timeDay(scope: LearnerScope, day: number, events: readonly HistoryEvent[]) {
   const start = studyMoment(scope, day).getTime();
 
@@ -237,14 +214,8 @@ function timeDay(scope: LearnerScope, day: number, events: readonly HistoryEvent
   });
 }
 
-/** A past day the learner studied, with the events of its session in the order they came. */
 export type StudyDay = { day: number; events: HistoryEvent[] };
 
-/**
- * The past days the learner studied: most days of their history (skipping some, so the calendar
- * has real gaps), and every day the plan or the history says they did something. Each is one
- * session (see `studyDayEvents`).
- */
 export function listStudyDays(scope: LearnerScope): StudyDay[] {
   const { learner } = scope;
   const { checkpoints = [], days, mocks = [], skipChance } = learner.history;
@@ -269,10 +240,6 @@ export function listStudyDays(scope: LearnerScope): StudyDay[] {
     .map((day) => ({ day, events: timeDay(scope, day, studyDayEvents(scope, day)) }));
 }
 
-/**
- * Lessons the learner finished today outside a session, such as the public lesson a guest
- * finished before making a goal. Today's session finishes its own lessons (`writeTodayHistory`).
- */
 function finishedToday(scope: LearnerScope): HistoryEvent[] {
   return scope.learner.goal.plan.items.flatMap((item): HistoryEvent[] =>
     item.day === 0 && item.status === "done" && item.lesson
@@ -316,7 +283,6 @@ function dayKeyOf(row: Prisma.LearningEventCreateManyInput): string {
   return row.localDate instanceof Date ? row.localDate.toISOString() : row.localDate;
 }
 
-/** Energy climbs toward today's value over the history, since the learner kept studying. */
 const ENERGY_STEP = 0.5;
 const MIN_ENERGY = 20;
 const MAX_ENERGY = 100;
@@ -358,7 +324,6 @@ function toDailyTotals(
   });
 }
 
-/** One finished block of today's session, as the ledger records it when the block ends. */
 function blockEvents(scope: LearnerScope, block: FinishedBlock): HistoryEvent[] {
   const { accuracy } = scope.learner.history;
   const { capsules, chapterId, drills, itemIds, title } = block.payload;
@@ -410,12 +375,7 @@ function blockEvents(scope: LearnerScope, block: FinishedBlock): HistoryEvent[] 
   ];
 }
 
-/**
- * The learner's history over the past weeks, for Progress, the activity calendar and stats: one
- * ledger row per lesson, question block, review, mock or checkpoint, the daily totals they add up
- * to. Today's rows come with today's session (see `writeTodayHistory`). Seeded learners belong
- * to the seed, so their history is rewritten on each run and always ends today.
- */
+/** Seeded learners belong to the seed, so their history is rewritten on each run and ends today. */
 export async function writeHistory(scope: LearnerScope, goalId: string): Promise<void> {
   const { learner, now, prisma, userId } = scope;
 
@@ -433,7 +393,6 @@ export async function writeHistory(scope: LearnerScope, goalId: string): Promise
     SEED_TRANSACTION,
   );
 
-  // A learner who hasn't opened today's session was last active at their last study.
   const endTimes = rows.flatMap((row) => (row.endedAt ? [new Date(row.endedAt).getTime()] : []));
 
   const progress = {
@@ -449,10 +408,7 @@ export async function writeHistory(scope: LearnerScope, goalId: string): Promise
   });
 }
 
-/**
- * The ledger rows of the blocks the learner finished in today's session and the day's totals they
- * add up to. Returns the Brain Power each block paid, in the session's order.
- */
+/** Returns the Brain Power each block paid, in the session's order. */
 export async function writeTodayHistory(
   scope: LearnerScope,
   { blocks, goalId }: { blocks: readonly FinishedBlock[]; goalId: string },

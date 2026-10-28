@@ -3,7 +3,6 @@ import { outlineLesson } from "../content";
 import { type SeedChapter } from "../types";
 import { scientificNotationLesson } from "./lessons/scientific-notation";
 
-/** The beginner band: the math physics uses, which a from-scratch plan starts with. */
 export const mathChapters: SeedChapter[] = [
   {
     description: t(

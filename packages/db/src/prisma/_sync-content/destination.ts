@@ -4,17 +4,14 @@ import { CATALOG_ROWS, CONTENT_TABLES, type ContentTable, NOT_SEEDED } from "./m
 import { LEARNER_REFERENCES } from "./preserve";
 import { runInOrder } from "./rows";
 
-/** Public Library tables: every public row not seeded is the AI organization's catalog. */
 const PUBLIC_LIBRARY_TABLES = ["library_lessons", "library_chapters", "skills"] as const;
 
-/** Pictures content shows; one that content staying here shows stays with it. */
 const PICTURE_LINKS = [
   { column: "media_asset_id", table: "library_steps" },
   { column: "image_asset_id", table: "library_lessons" },
   { column: "image_asset_id", table: "library_chapters" },
 ] as const;
 
-/** Rows removed with their parent, listed so references to them are checked and kept too. */
 const CHILD_REMOVALS = [
   { column: "lesson_id", parent: "library_lessons", table: "library_steps" },
   { column: "skill_id", parent: "skills", table: "items" },
@@ -43,7 +40,6 @@ function selectKeptPictures({ column, table }: (typeof PICTURE_LINKS)[number]): 
              AND id NOT IN (SELECT id FROM sync_removed WHERE table_name = ${escapeLiteral(table)})`;
 }
 
-/** Catalog pictures, except those content that stays (such as a seeded lesson's steps) shows. */
 function selectReplacedPictures(): string {
   return `SELECT 'media_assets', id FROM media_assets
            WHERE ${CATALOG_ROWS}
@@ -53,10 +49,8 @@ function selectReplacedPictures(): string {
 type ForeignKey = { column_name: string; referenced_table: string; table_name: string };
 
 /**
- * Records which destination rows the sync replaces: the AI organization's courses the source no
- * longer has (the others are updated in place) and every public Library row with the rows removed
- * with them. Learners' own courses, private content and seeded content are never listed, nor the
- * rows under them and the pictures they show.
+ * Never lists learners' own courses, private or seeded content, the rows under them or the pictures
+ * they show.
  */
 export async function markRemovedContent({
   courseSlugs,
@@ -116,7 +110,6 @@ function isCheckedReference(foreignKey: ForeignKey): boolean {
   return !isLearnerReference && !isCopiedChild;
 }
 
-/** A replaced table's own rows only count when they stay, such as a private lesson's step. */
 function getKeptRowsFilter(table: string): string {
   return REMOVED_TABLES.some((removed) => removed === table)
     ? `AND ref.id NOT IN (SELECT id FROM sync_removed WHERE table_name = ${escapeLiteral(table)})`
@@ -143,12 +136,7 @@ async function countReferences({
   return result.rows[0]?.count ?? 0;
 }
 
-/**
- * Stops before anything is removed when rows the sync can't restore point at the rows it replaces:
- * a local learner's goal on a course the source doesn't have, or rows from tables this sync doesn't
- * know. Learner references it knows are kept by `preserve.ts`, and copied child rows are replaced
- * with their parents.
- */
+/** Throws before anything is removed when rows the sync can't restore point at rows it replaces. */
 export async function assertNoUnkeptReferences(destination: Client): Promise<void> {
   const foreignKeys = await destination.query<ForeignKey>(
     `SELECT constraints.conrelid::regclass::text AS table_name,
@@ -188,10 +176,6 @@ export async function assertNoUnkeptReferences(destination: Client): Promise<voi
   }
 }
 
-/**
- * Removes the rows `markRemovedContent` listed. Their steps, items, placements and links go with
- * them; categories of the courses updated in place are replaced too, and seeded courses keep theirs.
- */
 export async function clearDestinationContent({
   destination,
   organizationId,

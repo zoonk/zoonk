@@ -1,7 +1,6 @@
 import { stockMarketCourse } from "../../library/stock-market/stock-market-course";
 import { type SeedLearner } from "../types";
 
-/** Learning how the stock market works to invest his first salary, with a one-hour daily limit. */
 export const pedroStocks: SeedLearner = {
   attempts: [
     {

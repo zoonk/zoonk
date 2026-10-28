@@ -9,7 +9,6 @@ import { type SeedCourse, type SeedItem, type SeedSkill } from "./types";
 
 type CourseLanguage = { course: SeedCourse; language: SeedLanguage; prisma: PrismaClient };
 
-/** The Library row of each of a course's skills in one language, by the skill's key. */
 export type SkillIds = ReadonlyMap<string, string>;
 
 function targetLanguageOf(course: SeedCourse): string | null {
@@ -23,7 +22,6 @@ function identityKeyOf(course: SeedCourse, skill: SeedSkill, language: SeedLangu
   });
 }
 
-/** The id of a course skill's Library row, from `findSkillIds`. */
 export function skillIdOf(course: SeedCourse, skillIds: SkillIds, key: string): string {
   const id = skillIds.get(key);
 
@@ -35,10 +33,8 @@ export function skillIdOf(course: SeedCourse, skillIds: SkillIds, key: string): 
 }
 
 /**
- * Each of a course's skills in one language, by key: the Library row with its identity. Identity
- * search keeps one skill per identity, so a skill the app already wrote under the same name, on a
- * database learners have used, is the seed's skill too, under the app's id. The others are the
- * seed's own rows, under their stable ids.
+ * Identity search keeps one skill per identity, so a skill the app already wrote under the same
+ * name is the seed's skill too, under the app's id.
  */
 export async function findSkillIds({
   course,
@@ -85,10 +81,6 @@ async function upsertSkill({ course, language, prisma }: CourseLanguage, skill: 
   await prisma.skill.upsert({ create: { id, ...data }, update: data, where: { id } });
 }
 
-/**
- * Skills first, then the graph edges between them. A skill the app already wrote is reused as is
- * (see `findSkillIds`). Returns each skill's row, which the course's lessons and items point at.
- */
 export async function writeSkills(context: CourseLanguage): Promise<SkillIds> {
   const { course, language, prisma } = context;
   const skillIds = await findSkillIds(context);
@@ -119,8 +111,7 @@ export async function writeSkills(context: CourseLanguage): Promise<SkillIds> {
   return skillIds;
 }
 
-/** Completes abbreviated seed declarations after their text is localized. */
-function itemContent(item: SeedItem, language: SeedLanguage): Prisma.InputJsonObject {
+function completeItemContent(item: SeedItem, language: SeedLanguage): Prisma.InputJsonObject {
   const content = localizeObject(item.content, language);
 
   if (item.format === "multipleChoice") {
@@ -147,7 +138,6 @@ function itemContent(item: SeedItem, language: SeedLanguage): Prisma.InputJsonOb
   return content;
 }
 
-/** Bank questions per skill; math items keep their solution as data inside `content`. */
 export async function writeItems({
   course,
   language,
@@ -159,7 +149,7 @@ export async function writeItems({
       const id = libraryIds.item(course.key, item.key, language);
 
       const data = {
-        content: itemContent(item, language),
+        content: completeItemContent(item, language),
         difficulty: item.difficulty,
         examBlueprintId: item.exam ? libraryIds.blueprint(item.exam, language) : null,
         format: item.format,
@@ -173,10 +163,7 @@ export async function writeItems({
   );
 }
 
-/**
- * Words and sentences are shared per target language, so an existing row is reused as is and
- * only the pronunciation guide for this learner language is added when missing.
- */
+/** Words and sentences are shared per target language, so an existing row is reused as is. */
 export async function writeVocabulary({
   course,
   language,

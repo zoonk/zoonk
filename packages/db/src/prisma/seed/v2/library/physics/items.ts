@@ -2,7 +2,6 @@ import { t } from "../../_utils/localize";
 import { bankOption } from "../content";
 import { type SeedItem } from "../types";
 
-/** Practice and review questions for the skills of the written lessons, math as data. */
 export const physicsItems: SeedItem[] = [
   {
     content: {

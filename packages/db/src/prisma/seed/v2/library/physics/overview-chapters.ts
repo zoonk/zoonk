@@ -4,7 +4,6 @@ import { type SeedChapter } from "../types";
 import { electronCloudLesson } from "./lessons/electron-cloud";
 import { whyColorsExistLesson } from "./lessons/why-colors-exist";
 
-/** The overview band: the ideas of quantum physics for anyone curious, in six chapters. */
 export const overviewChapters: SeedChapter[] = [
   {
     description: t(

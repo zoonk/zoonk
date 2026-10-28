@@ -2,11 +2,6 @@ import { t } from "../../../_utils/localize";
 import { option } from "../../content";
 import { type SeedLesson } from "../../types";
 
-/**
- * Chapter "Exponents and scientific notation", lesson 2: the math quantum physics leans on most.
- * One rule (count the jumps of the decimal point), a worked example with a real atom, a guess
- * that shows why the notation matters, then practice with less support.
- */
 export const scientificNotationLesson: SeedLesson = {
   canDo: t(
     "You'll write the size of an atom and the distance to the Sun in a few characters.",

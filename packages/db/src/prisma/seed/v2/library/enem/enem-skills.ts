@@ -1,7 +1,6 @@
 import { t } from "../../_utils/localize";
 import { skill } from "../content";
 
-/** Math skills, the area where the written lessons live: percentages first, since ENEM asks them most. */
 export const enemMathSkills = [
   skill("percent-basics", "beginner", {
     description: t(
@@ -175,7 +174,6 @@ export const enemMathSkills = [
   }),
 ];
 
-/** Natural Sciences, Humanities, Languages and the essay: what the diagnostic and mocks mix in. */
 export const enemAreaSkills = [
   skill("energy-flow", "intermediate", {
     description: t(

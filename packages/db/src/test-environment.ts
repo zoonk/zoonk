@@ -10,19 +10,12 @@ function readEnvironment(path: string): Record<string, string> {
   );
 }
 
-/**
- * The API a Main E2E run started for itself (`pnpm e2e:main` sets `E2E_API_URL`), over the
- * placeholder in `.env.e2e`, so Main's build and server call it.
- */
 function withRunApi(environment: Record<string, string>): Record<string, string> {
   const apiUrl = process.env.E2E_API_URL;
   return apiUrl ? { ...environment, NEXT_PUBLIC_API_URL: apiUrl } : environment;
 }
 
-/**
- * Keeps Prisma, Vitest, Playwright, and E2E builds on the same database, even when the shell has a development URL.
- * Test tooling only: test configs import it by path, so it's absent from production app bundles.
- */
+/** Overrides a development URL in the shell, so Prisma, Vitest, Playwright and E2E share one. */
 export function getTestEnvironment(mode: "test" | "e2e"): Record<string, string> {
   const directory = resolve(import.meta.dirname, "..");
   const defaults = readEnvironment(resolve(directory, `.env.${mode}`));
@@ -49,7 +42,6 @@ export function getTestEnvironment(mode: "test" | "e2e"): Record<string, string>
   return withRunApi({ ...defaults, ...(existsSync(localPath) && readEnvironment(localPath)) });
 }
 
-/** Marks a test run's own copy of the test database; the id of the process that made it follows. */
 export const TEST_RUN_DATABASE_MARKER = "_run_";
 
 /** Postgres cuts longer names short. */
@@ -68,9 +60,8 @@ function toRunDatabaseUrl(url: string): string {
 }
 
 /**
- * The test environment pointing at this run's own copy of the test database, for a Vitest config's
- * `test.env`. The `test-database.ts` global setup creates that copy and drops it after the
- * run; the copy is named after the process, which runs both the config and its global setup.
+ * The copy is named after the process, which runs both this config and the `test-database.ts`
+ * global setup that creates it.
  */
 export function getTestRunEnvironment(): Record<string, string> {
   const environment = getTestEnvironment("test");

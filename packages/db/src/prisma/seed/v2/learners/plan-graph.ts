@@ -3,16 +3,10 @@ import { type SeedCourse } from "../library/types";
 import { type SeedGoal, type SeedGraphSkill, type SeedPlanItem } from "./types";
 import { type LearnerScope } from "./write-goal";
 
-/** A Library lesson that teaches some of the goal's skills, in its chapter (null for none). */
 type CourseLesson = { chapter: string | null; key: string; skills: readonly string[] };
 
-/**
- * A skill of the goal's graph, by key, with its phase and the graph's size in lessons, and the
- * first plan lesson that teaches it.
- */
 type GoalSkill = { key: string; lesson: string; lessons: number; phase: number };
 
-/** The course's lessons in course order: chapters as listed, then lessons without a chapter. */
 export function listCourseLessons(course: SeedCourse): CourseLesson[] {
   return [
     ...course.chapters.flatMap((chapter) =>
@@ -30,7 +24,6 @@ export function listCourseLessons(course: SeedCourse): CourseLesson[] {
   ];
 }
 
-/** The lessons a plan item teaches: its lesson, or every lesson of its chapter. */
 export function itemLessonKeys(course: SeedCourse, item: SeedPlanItem): string[] {
   if (item.lesson) {
     return [item.lesson];
@@ -40,11 +33,6 @@ export function itemLessonKeys(course: SeedCourse, item: SeedPlanItem): string[]
   return chapter ? chapter.lessons.map((lesson) => lesson.key) : [];
 }
 
-/**
- * The goal's skill graph in plan order, as the graph task would write it: every skill the
- * persona's plan items teach (a chapter teaches all of its lessons' skills), once each, with the
- * size the persona gives it or, when it gives none, the lessons the Library has for it.
- */
 function listGoalSkills(goal: SeedGoal): GoalSkill[] {
   const lessons = listCourseLessons(goal.course);
   const sizes = goal.plan.skillLessons ?? {};
@@ -67,7 +55,6 @@ function listGoalSkills(goal: SeedGoal): GoalSkill[] {
   );
 }
 
-/** A goal's whole skill graph as the persona gives it (an exam's every skill), in the learner's language. */
 function toGraphSkills(scope: LearnerScope, graph: readonly SeedGraphSkill[]) {
   const { learner, lookup } = scope;
 
@@ -83,12 +70,6 @@ function toGraphSkills(scope: LearnerScope, graph: readonly SeedGraphSkill[]) {
   }));
 }
 
-/**
- * The skill graph the planner plans from: each skill in plan order with its phase, its size in
- * lessons, its area (an exam's area, or the course, as graphs made from courses name it) and, for
- * exams, its weight, with a written test's skills marked as outcome skills (how the planner tells
- * an exam's written tests, such as ENEM's essay). A persona that gives its whole graph plans it.
- */
 export function buildPlanGraph(scope: LearnerScope, goal: SeedGoal): Prisma.InputJsonObject {
   const { lookup } = scope;
 

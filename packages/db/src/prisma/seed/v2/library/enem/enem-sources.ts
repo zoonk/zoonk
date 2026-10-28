@@ -6,7 +6,6 @@ import { type EnemEdition, formatDatePt } from "./enem-edition";
 const INEP_ENEM_URL =
   "https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/enem";
 
-/** Passages of the Enem notice the blueprint cites, quoted as the stored text writes them. */
 export function getNoticePassages(edition: EnemEdition) {
   const [firstDay, secondDay] = edition.examDays;
 
@@ -30,7 +29,6 @@ export function getNoticePassages(edition: EnemEdition) {
   } as const;
 }
 
-/** Passages of the survey of past papers that topic frequency cites. */
 export const pastPaperPassages = {
   charts:
     "Leitura e interpretação de gráficos e tabelas é um dos temas mais frequentes de Matemática.",
@@ -49,11 +47,7 @@ function contentHash(text: string): string {
   return createHash("sha256").update(text).digest("hex");
 }
 
-/**
- * The two documents behind the Enem blueprint: the official notice (structure, rules and dates)
- * and a survey of past papers (how often each topic is asked). Both are in Portuguese, so the
- * English blueprint quotes them as written.
- */
+/** Both documents are in Portuguese, so the English blueprint quotes them as written. */
 export async function writeEnemSources({
   edition,
   now,

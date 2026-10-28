@@ -1,7 +1,6 @@
 import { t } from "../../_utils/localize";
 import { skill } from "../content";
 
-/** The intermediate band: calculus and the classical physics quantum mechanics builds on. */
 export const classicalSkills = [
   skill(
     "derivative",
@@ -119,7 +118,6 @@ export const classicalSkills = [
   ),
 ];
 
-/** The advanced band: quantum mechanics with its math. */
 export const quantumSkills = [
   skill(
     "born-rule",

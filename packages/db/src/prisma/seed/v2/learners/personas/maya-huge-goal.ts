@@ -1,13 +1,6 @@
 import { physicsCourse } from "../../library/physics/physics-course";
 import { type SeedLearner } from "../types";
 
-/**
- * A huge learn goal: quantum physics from scratch at 45 minutes a day, in five phases.
- * Her skill graph sizes skills the way the graph task does for a huge goal (chapter-sized, up to
- * 60 lessons each), so most of their lessons aren't outlined yet and the plan runs for months.
- * Placement let her skip fractions and equations, all 48 of their lessons; she's in phase 1, the
- * math.
- */
 export const mayaHugeGoal: SeedLearner = {
   attempts: [
     {

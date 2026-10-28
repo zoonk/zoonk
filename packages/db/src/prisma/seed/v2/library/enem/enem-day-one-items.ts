@@ -2,11 +2,7 @@ import { t } from "../../_utils/localize";
 import { bankOption } from "../content";
 import { type SeedItem } from "../types";
 
-/**
- * Languages and Humanities questions in ENEM's format, the areas of the exam's first day. With the
- * course's other items, a seeded learner's mock of that day asks 30 of them, enough for an
- * estimated score on the exam's scale.
- */
+/** A seeded learner's mock of the first day asks 30 of these, enough for an estimated score. */
 export const enemDayOneItems: SeedItem[] = [
   {
     content: {

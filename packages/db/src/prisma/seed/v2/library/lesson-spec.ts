@@ -4,7 +4,7 @@ import { type SeedLesson, type SeedSkill, type SeedStep } from "./types";
 
 type ScreenKind = "activity" | "application" | "check" | "explanation" | "hook" | "workedExample";
 
-/** How the lesson spec names each teaching step; summaries and language drills aren't screens. */
+/** Summaries and language drills aren't screens. */
 const SCREEN_BY_KIND: Partial<Record<StepKind, ScreenKind>> = {
   activity: "activity",
   check: "check",
@@ -55,10 +55,7 @@ function toScreen({
   ];
 }
 
-/**
- * The spec a written lesson was built from: its skills and screen plan. Seeded lessons are
- * written by hand, so the spec is read back from their steps, in the shape the lesson writer uses.
- */
+/** Seeded lessons are written by hand, so their spec is read back from their steps. */
 export function buildLessonSpec({
   language,
   lesson,

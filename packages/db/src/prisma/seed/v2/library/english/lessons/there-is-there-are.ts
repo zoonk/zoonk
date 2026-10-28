@@ -2,10 +2,6 @@ import { pt } from "../../../_utils/localize";
 import { guess, option } from "../../content";
 import { type SeedLesson } from "../../types";
 
-/**
- * Unit "Renting an apartment", lesson 2. Portuguese "tem" covers both having and existing, so
- * Portuguese speakers say "Have two bedrooms". The lesson names that mistake and drills the fix.
- */
 export const thereIsThereAreLesson: SeedLesson = {
   canDo: pt("Você vai descrever um apartamento com there is e there are."),
   description: pt(

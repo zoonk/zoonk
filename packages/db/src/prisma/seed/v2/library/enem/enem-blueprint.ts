@@ -10,8 +10,8 @@ const NOTICE = libraryIds.source("enem-notice");
 const PAST_PAPERS = libraryIds.source("enem-past-papers");
 const QUESTIONS_PER_AREA = 45;
 /**
- * The notice doesn't count the foreign language's questions: the latest edition's answer key has
- * an English and a Spanish column for questions 1 to 5 of day 1, inside the languages area's 45.
+ * The notice doesn't count them: the latest answer key has English and Spanish columns for day 1's
+ * questions 1 to 5, inside the languages area's 45.
  */
 const FOREIGN_LANGUAGE_QUESTIONS = 5;
 
@@ -23,17 +23,13 @@ const PAST_EDITION_ANSWER_KEY = {
 const DAY_ONE_MINUTES = 330;
 const DAY_TWO_MINUTES = 300;
 const RECHECK_DAYS = 7;
-/** Enem starts at 1:30 pm, Brasília time, on both days. */
 const START_TIME = "13:30";
 
 function cite(sourceId: string, passage: string) {
   return { passage, sourceId };
 }
 
-/*
- * The notice's contents ("objects of knowledge") as it words them, the ones past papers rate
- * named once so the topic frequency below names them exactly.
- */
+/* Named once, so the topic frequency below names these contents exactly. */
 const LANGUAGES_READING = t(
   "Text study: discourse sequences and text genres in communication and information",
   "Estudo do texto: as sequências discursivas e os gêneros textuais no sistema de comunicação e informação",
@@ -59,7 +55,6 @@ const SCIENCE_ELECTRICITY = t(
   "Fenômenos Elétricos e Magnéticos",
 );
 
-/** Natural sciences' contents under the notice's headings: physics, chemistry and biology. */
 const SCIENCE_GROUPS = [
   {
     name: t("Physics", "Física"),
@@ -115,12 +110,6 @@ const LANGUAGES = t(
 const ENGLISH = { name: t("English", "Língua Inglesa"), shortName: t("English", "Inglês") };
 const SPANISH = { name: t("Spanish", "Língua Espanhola"), shortName: t("Spanish", "Espanhol") };
 
-/**
- * The foreign language each candidate picks at registration, English or Spanish, inside the
- * languages area's 45 questions, each option with the matrix's foreign-language skills (H5 to H8)
- * as its contents. The notice doesn't count its questions: the latest edition's do
- * (`pastQuestions`).
- */
 function buildForeignLanguages(notice: ReturnType<typeof getNoticePassages>) {
   const option = ({
     language,
@@ -168,10 +157,6 @@ function buildForeignLanguages(notice: ReturnType<typeof getNoticePassages>) {
   ];
 }
 
-/**
- * The notice's parts (its four areas, the foreign language each candidate picks and the essay),
- * each with its contents as the notice words them.
- */
 function buildSubjects(notice: ReturnType<typeof getNoticePassages>) {
   const area = (name: ReturnType<typeof t>, topics: ReturnType<typeof t>[]) => ({
     citation: cite(NOTICE, notice.areas),
@@ -259,7 +244,6 @@ function buildSubjects(notice: ReturnType<typeof getNoticePassages>) {
   ];
 }
 
-/** The foreign language's questions in the latest edition, which the notice doesn't count. */
 function buildPastQuestions(now: Date) {
   return {
     checkedAt: now.toISOString(),
@@ -369,7 +353,6 @@ function buildStructure(notice: ReturnType<typeof getNoticePassages>, now: Date)
 const MATH = t("Mathematics", "Matemática");
 const SCIENCES = t("Natural Sciences", "Ciências da Natureza");
 
-/** How often past papers ask the topics they rate most, on the notice's own topics. */
 const topicFrequency = [
   {
     appearances: null,
@@ -534,7 +517,6 @@ async function writeBlueprint(
   await prisma.examBlueprint.upsert({ create: { id, ...data }, update: data, where: { id } });
 }
 
-/** The Enem blueprint in both languages, with the documents every fact cites. */
 export async function writeEnemBlueprint({
   edition,
   now,

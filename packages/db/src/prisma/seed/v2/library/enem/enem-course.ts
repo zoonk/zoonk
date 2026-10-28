@@ -8,11 +8,6 @@ import { enemExamSkills } from "./enem-exam-skills";
 import { enemMathItems } from "./enem-math-items";
 import { enemAreaSkills, enemMathSkills } from "./enem-skills";
 
-/**
- * The exam course: ENEM topic by topic, weighted by how often the exam asks each one. Its items
- * are written in the exam's format, with a misconception behind every wrong option. Its skills
- * also hold the rest of the exam's, whose lessons the Library writes as learners reach them.
- */
 export const enemCourse: SeedCourse = {
   category: "exams",
   chapters: [...enemMathChapters, ...enemAreaChapters],

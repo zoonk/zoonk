@@ -20,7 +20,6 @@ export { type SeededToday } from "./learners/write-session";
 
 const LIBRARY_COURSES = [physicsCourse, enemCourse, stockMarketCourse, englishCourse] as const;
 
-/** Seed the shared Library without replacing any learner's sessions or progress. */
 export async function writeSeedV2Library(prisma: PrismaClient): Promise<Date> {
   const now = new Date();
 
@@ -50,12 +49,9 @@ export async function writeSeedV2Library(prisma: PrismaClient): Promise<Date> {
 }
 
 /**
- * Writes Zoonk v2's seed: hand-written Library courses in English and Brazilian Portuguese, and
- * one learner per goal kind with their sessions, history and what they did of their plans. The
- * planner lays out the rest of each plan, which only core can run: seed through `seedV2` in
- * `@zoonk/core/seed/v2`. Every row has a stable id or key, so it runs on top of an existing
- * database (local dev, the test database or E2E setup) and running it again only brings the rows
- * up to date. Returns the learners and the moment they're written on.
+ * Only core can run the planner that lays out the rest of each plan, so seed through `seedV2` in
+ * `@zoonk/core/seed/v2`. Every row has a stable id or key, so running it again only brings the rows
+ * up to date.
  */
 export async function writeSeedV2(prisma: PrismaClient) {
   const now = await writeSeedV2Library(prisma);
@@ -64,16 +60,9 @@ export async function writeSeedV2(prisma: PrismaClient) {
 }
 
 /**
- * Writes an independent copy of one persona under its own key and email, so a test can change the
- * learner's plan, answers or profile without touching the shared personas other tests read. The
- * copy has the persona's history whatever its key: it studied on the same days. Run `writeSeedV2`
- * first: the copy points at its Library content. As with `writeSeedV2`, the planner lays out the
- * rest of its plan: copy through `seedV2PersonaCopy` in `@zoonk/core/seed/v2`.
- *
- * The copy can be on another day of its plan (`day`, day 1 being the day the plan was made), back
- * after days without studying (`awayDays`), and have another plan, time zone or language. The
- * persona's own words, such as its goal as typed and its memory, stay in its own language. Without
- * a `username`, signing in through the web asks for one first.
+ * Run `writeSeedV2` first: the copy points at its Library content. Copy through `seedV2PersonaCopy`
+ * in `@zoonk/core/seed/v2`, which lays out the rest of its plan. Without a `username`, signing in
+ * through the web asks for one first.
  */
 export async function writeSeedV2PersonaCopy(
   prisma: PrismaClient,
@@ -127,7 +116,6 @@ export async function writeSeedV2PersonaCopy(
   return { ...copy, now };
 }
 
-/** Gives a learner the Plus seeded personas have, such as a copy of an onboarded learner. */
 export async function seedV2Plus(
   prisma: PrismaClient,
   { now, userId }: { now: Date; userId: string },

@@ -40,15 +40,11 @@ function lookup(ids: ReadonlyMap<string, string>, text: string | undefined): str
   return id;
 }
 
-/** A row's place in a list the seed orders: a level band of a course's chapters, or a chapter's lessons. */
 type Slot = { id: string; position: number };
 
 /**
- * The places to write for the seed's rows in one of its lists. A list holding only seeded rows
- * takes the seed's order. The app adds its own rows to seeded lists and renumbers them (a chapter
- * in teaching order, a split lesson right after the one it came from), so in a list it has touched,
- * the rows already there keep their places and a missing one takes its seeded position, or goes
- * after the last row when another holds that position.
+ * The app adds and renumbers rows in seeded lists, so in a list it touched the rows already there
+ * keep their places, and a missing one takes its seeded position or goes last.
  */
 function arrangeSlots(placed: readonly Slot[], seeded: readonly Slot[]): Slot[] {
   const seededIds = new Set(seeded.map((slot) => slot.id));
@@ -67,7 +63,6 @@ function arrangeSlots(placed: readonly Slot[], seeded: readonly Slot[]): Slot[] 
   return [...free, ...moved.map((slot, index) => ({ ...slot, position: end + index }))];
 }
 
-/** The summary card is the lesson's `summary` step, stored on the lesson for Content and SEO. */
 function lessonSummary(lesson: SeedLesson, language: SeedLanguage) {
   const summary = lesson.steps?.find((step) => step.kind === "summary");
   return summary ? localizeObject(summary.content, language) : Prisma.DbNull;
@@ -103,10 +98,6 @@ async function writeSteps(context: CourseContext, lesson: SeedLesson, lessonId: 
   await prisma.step.deleteMany({ where: { id: { notIn: ids }, lessonId } });
 }
 
-/**
- * A language lesson's links to the shared words and sentences it teaches, with this pair's
- * translations, explanations and wrong options. Other pairs keep their own links to the same rows.
- */
 async function writeLessonVocabulary(context: CourseContext, lesson: SeedLesson, lessonId: string) {
   const { language, prisma, sentenceIds, wordIds } = context;
 
@@ -142,11 +133,6 @@ async function writeLessonVocabulary(context: CourseContext, lesson: SeedLesson,
   );
 }
 
-/**
- * Whether the app has written a seeded lesson: it wrote steps of its own (a learner reached the
- * outline lesson, or it was written again), or it started writing an outline lesson (its spec or
- * content is no longer pending).
- */
 async function isWrittenByApp(
   prisma: PrismaClient,
   { id, isWritten }: { id: string; isWritten: boolean },
@@ -171,7 +157,6 @@ async function isWrittenByApp(
   return !isWritten && (existing.specStatus !== "pending" || existing.contentStatus !== "pending");
 }
 
-/** A lesson with its skills and steps. Quick explanations have no home chapter and no course. */
 async function writeLesson(
   context: CourseContext,
   {
@@ -210,8 +195,6 @@ async function writeLesson(
     ...SEED_PROVENANCE,
   };
 
-  // What a lesson's writing sets: a written lesson's as the seed wrote it, an outline lesson's
-  // empty until a learner reaches it and the app writes it.
   const content = {
     canDo: lesson.canDo?.in(language) ?? null,
     contentStatus: isWritten ? ("completed" as const) : ("pending" as const),
@@ -348,10 +331,6 @@ async function writeCourseRow({
   return id;
 }
 
-/**
- * Puts the course's chapters in its outline, each level band ordered as the seed lists it (see
- * `arrangeSlots`).
- */
 async function writeOutline({ course, courseId, language, prisma }: CourseContext): Promise<void> {
   const placed = await prisma.courseChapter.findMany({
     select: { chapterId: true, level: true, position: true },
@@ -381,7 +360,6 @@ async function writeOutline({ course, courseId, language, prisma }: CourseContex
     ).map((slot) => ({ ...slot, level })),
   );
 
-  /** Existing seeded chapters keep their positions among generated chapters, but receive their area. */
   const arrangedIds = new Set(slots.map((slot) => slot.id));
 
   const existing = placed
@@ -400,10 +378,8 @@ async function writeOutline({ course, courseId, language, prisma }: CourseContex
 }
 
 /**
- * Writes one Library course in every language it has: skills and their graph, the outline of
- * chapters and lessons in level bands, the written lessons' steps, summaries and specs, and the
- * question bank. Rows are upserted by stable ids, so running it again only brings content up to date,
- * and on a database learners have used it keeps the skills and outline places the app wrote.
+ * Rows are upserted by stable ids, so running it again only brings content up to date, and on a
+ * database learners have used it keeps the skills and outline places the app wrote.
  */
 export async function writeLibraryCourse({
   course,

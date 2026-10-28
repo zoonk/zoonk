@@ -8,7 +8,6 @@ import { stockMarketChallengeItems } from "./stock-market-challenge-items";
 import { stockMarketItems } from "./stock-market-items";
 import { stockMarketSkills } from "./stock-market-skills";
 
-/** An overview course: the big picture of a subject for someone who wants to understand it. */
 export const stockMarketCourse: SeedCourse = {
   category: "economics",
   chapters: [

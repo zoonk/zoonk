@@ -1,10 +1,6 @@
 import { type SeedLanguage } from "../_utils/localize";
 import { seedId } from "../_utils/seed-id";
 
-/**
- * Stable ids for seeded Library rows, so learners, tests and E2E setups can point at a course,
- * lesson or skill without querying for it.
- */
 export const libraryIds = {
   blueprint: (exam: string, language: SeedLanguage) => seedId(`blueprint:${exam}:${language}`),
   chapter: (course: string, chapter: string, language: SeedLanguage) =>

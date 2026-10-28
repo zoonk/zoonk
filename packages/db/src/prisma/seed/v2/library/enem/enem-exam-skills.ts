@@ -1,12 +1,7 @@
 import { t } from "../../_utils/localize";
 import { skill } from "../content";
 
-/**
- * The rest of ENEM's skill graph: the skills an ENEM goal plans that the course has no lessons for
- * yet, which the Library writes as learners reach them. From a real ENEM goal's graph (Medicina at
- * UFMG, exported on 10 Oct 2026), without the ones the course's own skills stand for (see
- * `anaGraph`).
- */
+/** From a real ENEM goal's graph (Medicina at UFMG), minus those the course's skills stand for. */
 export const enemExamSkills = [
   skill("physical-units", "intermediate", {
     description: t(
@@ -1348,8 +1343,6 @@ export const enemExamSkills = [
     ),
     name: t("Choose between ENEM's options", "Decidir entre alternativas nas questões do ENEM"),
   }),
-  // The foreign language each candidate picks, one skill per option, as the graph's coverage
-  // check adds them for the notice's subjects the graph left out.
   skill("english-reading", "intermediate", {
     description: t(
       "Find the theme, the purpose and the key information of a short English text, from its words and its genre.",

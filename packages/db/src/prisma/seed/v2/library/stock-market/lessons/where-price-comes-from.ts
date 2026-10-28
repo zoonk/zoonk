@@ -2,11 +2,6 @@ import { t } from "../../../_utils/localize";
 import { guess, option } from "../../content";
 import { type SeedLesson } from "../../types";
 
-/**
- * Chapter "How trading works", lesson 1. The price on the screen is demystified as the last trade
- * between two people, the order book shows how trades happen, and a chart of results day shows
- * that expectations, not the company's buildings, move the price.
- */
 export const wherePriceComesFromLesson: SeedLesson = {
   canDo: t(
     "You'll read an order book and explain why a price moves when nothing at the company changed.",

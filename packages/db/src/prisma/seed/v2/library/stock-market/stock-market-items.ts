@@ -2,7 +2,6 @@ import { t } from "../../_utils/localize";
 import { bankOption } from "../content";
 import { type SeedItem } from "../types";
 
-/** Review questions for the written lessons and the quick explanation. */
 export const stockMarketItems: SeedItem[] = [
   {
     content: {

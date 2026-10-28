@@ -16,7 +16,6 @@ import { type IdMap, upsertCourses, upsertVocabulary } from "./upserts";
 type Transform = (data: TableRows) => TableRows;
 type TableCopy = readonly [ContentTable, TableRows];
 
-/** Ids of rows the sync doesn't copy (sources, exam blueprints) that the destination already has. */
 type ExistingIds = { blueprintIds: ReadonlySet<string>; sourceIds: ReadonlySet<string> };
 
 function remap({ column, ids }: { column: string; ids: IdMap }): Transform {
@@ -190,11 +189,6 @@ function getLessonContentTables({
   ];
 }
 
-/**
- * Writes the source catalog into the cleared destination. Rows keep their source ids; foreign keys
- * to rows the destination kept under its own id (courses, words, sentences) are mapped, and nullable
- * links to rows the sync doesn't copy are cleared unless the destination already has that row.
- */
 export async function copyCatalog({
   catalog,
   destination,

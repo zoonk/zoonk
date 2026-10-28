@@ -5,11 +5,6 @@ import { type SeedPersonaName, buildPersona } from "./seed-personas";
 import { type SeedLearner } from "./types";
 import { writeLearner } from "./write-learner";
 
-/**
- * One learner per goal kind (a huge learn goal, an exam with a date, a language and an explain),
- * plus a learner with a grown buddy, one with a daily limit and a guest. Sign in as any of them with the seed
- * password.
- */
 export async function writeLearners({
   edition,
   now,

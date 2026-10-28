@@ -5,15 +5,13 @@ const CONNECTION_TIMEOUT_MS = 10_000;
 const MAX_CONNECTIONS = 10;
 
 /**
- * `next build` prerenders on many workers at once, each with its own pool: at 10 connections each,
- * their first queries open over a hundred connections in the same moment, which can overflow the
- * queue of connections Postgres has yet to accept, and the reset ones fail the build.
+ * `next build` prerenders on many workers, each with its own pool: at 10 connections each, their
+ * first queries can overflow Postgres's accept queue and fail the build.
  */
 const BUILD_MAX_CONNECTIONS = 2;
 
 type Run = (...args: unknown[]) => unknown;
 
-/** A statement's SQL, given as text or as a query config. */
 function sqlOf(value: unknown): string | undefined {
   if (typeof value === "string") {
     return value;
@@ -33,11 +31,7 @@ function rowCountOf(value: unknown): number | null {
     : null;
 }
 
-/**
- * For verification only (`pnpm verify:pages --queries`): appends each statement's SQL, start,
- * duration and row count to `file` as a JSON line, never its parameters, so a page's database work
- * can be counted and its query plans checked. Without `ZOONK_QUERY_LOG` the pool is untouched.
- */
+/** For `pnpm verify:pages --queries` only: it logs SQL and timings, never parameters. */
 function logQueries(pool: Pool, file: string) {
   const log = createWriteStream(file, { flags: "a" });
 
@@ -82,7 +76,6 @@ function logQueries(pool: Pool, file: string) {
   });
 }
 
-/** The driver's pool shared by Prisma and Vercel's request-lifetime hook. */
 export function createDatabasePool(connectionString: string | undefined) {
   /** Fluid reuses concurrent connections; bound both socket setup and waiting for a free client. */
   const pool = new Pool({

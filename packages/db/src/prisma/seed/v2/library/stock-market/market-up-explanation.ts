@@ -2,10 +2,6 @@ import { t } from "../../_utils/localize";
 import { option } from "../content";
 import { type SeedLesson } from "../types";
 
-/**
- * A quick explanation: five short screens and one question, answering a headline-sized question
- * right away. Its "Want to go further?" leads into "How the stock market works".
- */
 export const marketUpExplanation: SeedLesson = {
   description: t(
     "What a headline means when it says the market went up, in five short screens.",

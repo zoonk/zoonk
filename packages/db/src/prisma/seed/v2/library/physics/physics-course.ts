@@ -13,10 +13,6 @@ import { quantumDevicesChallengeItems } from "./quantum-devices-challenge-items"
 import { quantumSystemsChallengeItems } from "./quantum-systems-challenge-items";
 import { physicsReviewItems } from "./review-items";
 
-/**
- * The huge-goal course: quantum physics from scratch, through the math and classical physics it
- * needs. Its overview band also serves learners who only want to understand the ideas.
- */
 export const physicsCourse: SeedCourse = {
   category: "science",
   chapters: [...overviewChapters, ...mathChapters, ...classicalChapters, ...quantumChapters],

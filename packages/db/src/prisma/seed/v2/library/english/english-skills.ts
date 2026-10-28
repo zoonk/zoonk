@@ -1,10 +1,7 @@
 import { pt } from "../../_utils/localize";
 import { skill } from "../content";
 
-/**
- * "I can" skills for English as used in real situations, from arriving at the airport to making
- * friends. The course is for Portuguese speakers, so only the Portuguese text is stored.
- */
+/** The course is for Portuguese speakers, so only the Portuguese text is stored. */
 export const englishSkills = [
   skill("explain-visit", "beginner", {
     description: pt("Dizer por que você está no país e por quanto tempo."),

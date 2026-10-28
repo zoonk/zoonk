@@ -57,7 +57,6 @@ async function writeScenarios({ learner, lookup, prisma }: LanguageScope) {
   );
 }
 
-/** Calls held before today: finished, with the feedback a model would have written. */
 async function writeConversations(scope: LanguageScope) {
   const { goalId, language, learner, lookup, now, prisma, userId } = scope;
   const history = learner.languageHistory;
@@ -128,11 +127,7 @@ async function writePattern({ goalId, language, learner, now, prisma, userId }: 
   await prisma.mistakePattern.upsert({ create: { id, ...data }, update: data, where: { id } });
 }
 
-/**
- * A language learner's history beyond answers: levels per skill against the level test, words
- * learned, unit calls with their feedback, the units' call scenarios (so tests and screenshots never
- * wait for a model) and a pattern noticed in recent mistakes.
- */
+/** Writes the units' call scenarios too, so tests and screenshots never wait for a model. */
 export async function writeLanguageHistory(scope: LearnerScope & { goalId: string }) {
   const language = scope.learner.goal.course.targetLanguage;
 

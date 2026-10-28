@@ -2,13 +2,8 @@ import { type Client } from "pg";
 import { type TableRows, getRowKey, getUpsertClause, insertRows, mapColumn } from "./rows";
 import { type SourceCatalog } from "./source";
 
-/** Source id to destination id, for rows the destination already had under the same natural key. */
 export type IdMap = ReadonlyMap<string, string>;
 
-/**
- * Inserts rows or updates the destination's row with the same natural key, and maps each source id
- * to the id the destination kept.
- */
 async function upsertRows({
   conflict,
   data,
@@ -56,8 +51,7 @@ function withOrganization({
 
 /**
  * Courses are updated in place by slug instead of being replaced, so everything that points at a
- * local course (goals, prompts, suggested goals, older rows) keeps its id. A new course starts with
- * no local learners.
+ * local course keeps its id.
  */
 export async function upsertCourses({
   catalog,
@@ -89,10 +83,7 @@ export async function upsertCourses({
   });
 }
 
-/**
- * Words and sentences are shared with learners' private language lessons, so they are never removed:
- * the source's rows are added, or update the local row with the same text.
- */
+/** Learners' private language lessons share words and sentences, so they're never removed. */
 export async function upsertVocabulary({
   catalog,
   destination,

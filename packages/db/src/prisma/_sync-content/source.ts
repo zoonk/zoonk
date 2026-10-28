@@ -6,7 +6,6 @@ export type SourceCatalog = Record<ContentTable, TableRows>;
 
 type Reader = (query: string, ...params: unknown[]) => Promise<TableRows>;
 
-/** Rows are filtered by the ids of copied parents: `[column, ids]`. */
 type ParentIds = readonly [string, string[]];
 
 function getReader(source: Client): Reader {
@@ -34,7 +33,6 @@ async function readCourses({ organizationId, read }: { organizationId: string; r
   return { categories, courses, families };
 }
 
-/** Items made from a learner's private upload or for a private exam stay private with it. */
 async function readSkills(read: Reader) {
   const skills = await read(`SELECT * FROM skills WHERE ${CATALOG_ROWS} ORDER BY id`);
   const skillIds = getRowIds(skills);
@@ -46,6 +44,7 @@ async function readSkills(read: Reader) {
     skillIds,
   );
 
+  // Items made from a learner's private upload or for a private exam stay private with it.
   const items = await read(
     `SELECT * FROM items
       WHERE skill_id = ANY($1::uuid[])
@@ -90,7 +89,6 @@ async function readChildren({
   return read(`SELECT * FROM ${table} WHERE ${parent[0]} = ANY($1::uuid[]) ORDER BY id`, parent[1]);
 }
 
-/** Rows linking two copied parents, such as a chapter's place in a course. */
 async function readLinks({
   parents: [first, second],
   read,
@@ -110,11 +108,8 @@ async function readLinks({
 }
 
 /**
- * Reads the AI organization's catalog: its courses and every public Library row (chapters, lessons,
- * steps, skills, items and media), with the organization's vocabulary. Public rows are shared by
- * every course and learner, so all of them are read, not only the ones a course reaches: a local
- * learner can point at a quick explanation or a goal's skill that no course outline lists. Seeded
- * rows are left out: each database has its own.
+ * Reads every public Library row, not only those a course reaches: a local learner can point at a
+ * quick explanation or a goal's skill that no outline lists.
  */
 export async function readSourceCatalog({
   organizationId,

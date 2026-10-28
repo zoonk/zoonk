@@ -7,19 +7,12 @@ import { type HistoryEvent, type StudyDay, getBrainPower, listStudyDays } from "
 const MS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;
 
-/**
- * A boss or mock the persona played on a past day. The seed writes its block with the result its
- * history gives (`correct` of `total`); core picks the questions it asked, the way the session
- * builder picks them, and records the answers and a mock's sitting (see `SeededPast`).
- */
 export type PastCheckpoint = {
   blockId: string;
   completedAt: Date;
   correct: number;
   kind: "boss" | "mock";
-  /** The learner-local date it was played on, as `@db.Date` columns store it. */
   localDate: Date;
-  /** The id a mock's sitting gets, the same on every run. */
   mockExamId: string;
   planItemId: string | null;
   sessionId: string;
@@ -28,17 +21,14 @@ export type PastCheckpoint = {
 };
 
 /**
- * The persona's past sessions, written before its plan is made: the bosses and mocks among their
- * blocks still need their questions, which core picks once the plan is made, and `settle` puts the
- * result of the questions a block got in the ledger when they aren't the `total` its history
- * gives (see `settleCheckpoint`).
+ * Core picks past bosses' and mocks' questions once the plan is made; `settle` fixes a block's
+ * ledger result when the questions it got aren't the `total` its history gives.
  */
 export type SeededPast = {
   checkpoints: PastCheckpoint[];
   settle: (checkpoint: PastCheckpoint, result: PastResult) => Promise<PastCheckpoint>;
 };
 
-/** A block's minutes, as a session estimates them: whole minutes, never none. */
 function toBlockMinutes(seconds: number): number {
   return Math.max(1, Math.round(seconds / SECONDS_PER_MINUTE));
 }
@@ -51,7 +41,6 @@ function pastBlockId(scope: LearnerScope, { day, position }: { day: number; posi
   return seedId(`learner:${scope.learner.key}:session:past:${day}:block:${position}`);
 }
 
-/** The phase of the plan item a boss or mock on `day` belongs to. */
 function findItemPhase(scope: LearnerScope, event: HistoryEvent): number | null {
   const kinds = event.kind === "mock" ? ["mock"] : ["boss", "checkpoint"];
 
@@ -62,11 +51,6 @@ function findItemPhase(scope: LearnerScope, event: HistoryEvent): number | null 
   );
 }
 
-/**
- * A ledger row's block as the session that played it holds it: the lesson a learn block taught, a
- * challenge's kind and plan item. Core fills in the questions a boss or mock asked; the seed keeps
- * no record of which questions past practice and reviews asked, as with the ledger.
- */
 function toBlock(
   scope: LearnerScope,
   event: HistoryEvent,
@@ -202,17 +186,9 @@ async function writeStudyDay(
   });
 }
 
-/**
- * What a boss or mock got: `correct` of `total` questions right, in `seconds`, in a block planned
- * for `minutes` (its time when absent).
- */
+/** `minutes` defaults to the time it took. */
 export type PastResult = { correct: number; minutes?: number; seconds: number; total: number };
 
-/**
- * A boss or mock's result as its questions give it, when the Library had other than the `total`
- * the persona's history gives it: its ledger row, its block and session, and its day's totals.
- * Returns the checkpoint as it ended.
- */
 async function settleCheckpoint(
   scope: LearnerScope,
   checkpoint: PastCheckpoint,
@@ -285,11 +261,7 @@ async function settleCheckpoint(
   return settled;
 }
 
-/**
- * Writes a session for each past day the learner studied (see `listStudyDays`), finished, with a
- * block for each ledger row of the day, timed as the ledger times them: the week's days, a boss's
- * result and a mock's sitting read them. Run `clearSessions` first.
- */
+/** Run `clearSessions` first. */
 export async function writePastSessions(scope: LearnerScope, goalId: string): Promise<SeededPast> {
   const days = await Promise.all(
     listStudyDays(scope).map((day) => writeStudyDay(scope, { ...day, goalId })),

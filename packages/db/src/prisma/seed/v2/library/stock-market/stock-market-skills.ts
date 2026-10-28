@@ -1,7 +1,6 @@
 import { t } from "../../_utils/localize";
 import { skill } from "../content";
 
-/** Overview skills: what a stock is, where its price comes from and how to think long term. */
 export const stockMarketSkills = [
   skill("share-ownership", "overview", {
     description: t(

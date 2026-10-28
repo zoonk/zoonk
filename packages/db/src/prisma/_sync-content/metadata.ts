@@ -1,6 +1,6 @@
 import { type Client, type QueryResultRow } from "pg";
 
-/** Every table the sync copies, in the order the copy inserts them. */
+/** In the order the copy inserts them. */
 export const CONTENT_TABLES = [
   "course_families",
   "courses",
@@ -28,23 +28,17 @@ export const CONTENT_TABLES = [
 
 export type ContentTable = (typeof CONTENT_TABLES)[number];
 
-/**
- * Public Library rows have no owner and make up the AI organization's catalog. Private rows belong to
- * one learner's too-specific goal: they never leave the source and are never replaced locally.
- */
+/** Private rows belong to one learner's goal: they never leave the source or get replaced here. */
 export const PUBLIC_ROWS = "visibility = 'public' AND owner_id IS NULL";
 
 /**
- * The v2 seed (`seed/v2`) writes its courses and Library rows with UUID version 8 ids, which
- * generated content never has. Seeded content belongs to the local database: the sync doesn't read
- * it from the source, and never removes or overwrites it locally, so the seeded personas keep their
- * goals, plans and history.
+ * The v2 seed's ids are UUID version 8, which generated content never has. Seeded content belongs
+ * to the local database, so the sync never reads, removes or overwrites it.
  */
 export const SEEDED_ROWS = "uuid_extract_version(id) = 8";
 
 export const NOT_SEEDED = `NOT (${SEEDED_ROWS})`;
 
-/** The AI organization's shared Library rows: what the sync copies and replaces. */
 export const CATALOG_ROWS = `${PUBLIC_ROWS} AND ${NOT_SEEDED}`;
 
 type TableColumn = QueryResultRow & {

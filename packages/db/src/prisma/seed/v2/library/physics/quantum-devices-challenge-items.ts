@@ -2,10 +2,7 @@ import { t } from "../../_utils/localize";
 import { bankOption } from "../content";
 import { type SeedItem } from "../types";
 
-/**
- * Phase challenge questions on spin, qubits, and the LEDs, lasers and chips quantum physics makes work. With the course's other
- * items, every phase on a seeded learner's plan has enough questions for its challenge, on any day of the plan.
- */
+/** With the course's other items, every phase of a seeded plan has enough for its challenge. */
 export const quantumDevicesChallengeItems: SeedItem[] = [
   {
     content: {

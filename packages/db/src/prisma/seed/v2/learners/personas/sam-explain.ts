@@ -1,10 +1,6 @@
 import { stockMarketCourse } from "../../library/stock-market/stock-market-course";
 import { type SeedLearner } from "../types";
 
-/**
- * An explain goal: one question, answered in five short screens and a check. The goal points at
- * the overview course, which is where "Want to go further?" leads.
- */
 export const samExplain: SeedLearner = {
   attempts: [
     {

@@ -24,7 +24,6 @@ function lesson(key: string, title: string, description: string, skills: string[
   return outlineLesson(key, { description: pt(description), title: pt(title) }, skills, 6);
 }
 
-/** Units are real situations, each closing with "I can" checks and a conversation. */
 export const englishUnits: SeedChapter[] = [
   unit(
     "arriving",

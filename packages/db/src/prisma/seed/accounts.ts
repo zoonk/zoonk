@@ -3,7 +3,6 @@ import { type PrismaClient, type User } from "../../generated/prisma/client";
 const CREDENTIAL_PROVIDER_ID = "credential";
 const TEST_PASSWORD = "password123";
 
-/** Gives each user a credential account, so tests and local sign-in can use the test password. */
 export async function seedAccounts(
   prisma: PrismaClient,
   users: Readonly<Record<string, Pick<User, "id">>>,

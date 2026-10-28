@@ -12,9 +12,8 @@ import { type SeededToday, clearSessions, toSeededToday } from "./write-session"
 import { writeLearnerUser } from "./write-user";
 
 /**
- * A learner the seed wrote. `today` is the session the persona opened today, which core builds with
- * the app's session builder once the plan is made (see `SeededToday`), and `past` the bosses and
- * mocks of its past sessions, whose questions core picks then (see `SeededPast`).
+ * `today` and `past` wait for the plan: core then builds today's session and picks the questions of
+ * past bosses and mocks.
  */
 export type SeededLearner = {
   email: string;
@@ -24,12 +23,6 @@ export type SeededLearner = {
   userId: string;
 };
 
-/**
- * Writes one learner end to end: account and profile, their goal with its plan, memory of each
- * skill, answers and mistakes, weeks of history with their sessions, memory facts, milestones and
- * votes. Today's session and the questions of past bosses and mocks wait for its plan: see
- * `SeededLearner`.
- */
 export async function writeLearner({
   learner,
   now,

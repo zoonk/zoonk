@@ -2,15 +2,11 @@ import { Prisma } from "./generated/prisma/client";
 import { type TransactionClient } from "./index";
 
 /**
- * What deleted learners' study still teaches everyone. Four aggregates read learners' rows: item
- * recalibration (first answers), mock pace (mock answers), pace samples (finished lessons) and
- * estimate calibration (reported exam results). Those rows are personal and go with the learner,
- * so deleting one first moves what each aggregate needs into the `anonymous_*` tables, with
- * nothing that points back at them. Each aggregate reads its rows here, live and kept together,
- * so the two sources can't drift apart.
+ * Learners' rows are personal and go with them, so deleting a learner first moves what each
+ * aggregate needs into the `anonymous_*` tables, with nothing that points back. Each aggregate
+ * reads both sources here, so they can't drift apart.
  */
 
-/** A learner's first answer to each item they answered: later answers come after the lesson. */
 function liveFirstAnswers(where: Prisma.Sql): Prisma.Sql {
   return Prisma.sql`
     SELECT DISTINCT ON (a.item_id, a.user_id) a.item_id, a.is_correct
@@ -19,7 +15,6 @@ function liveFirstAnswers(where: Prisma.Sql): Prisma.Sql {
     ORDER BY a.item_id, a.user_id, a.answered_at`;
 }
 
-/** Every learner's first answer to the items `itemIds` selects, deleted learners' included. */
 export function firstAnswersSql(itemIds: Prisma.Sql): Prisma.Sql {
   return Prisma.sql`(
     (${liveFirstAnswers(Prisma.sql`a.item_id IN (${itemIds})`)})
@@ -28,19 +23,13 @@ export function firstAnswersSql(itemIds: Prisma.Sql): Prisma.Sql {
   )`;
 }
 
-/** A ledger row of a finished lesson. */
 const FINISHED_LESSON = Prisma.sql`e.kind = 'lesson' AND e.ended_at IS NOT NULL`;
 
-/** The lesson a ledger row finished, when it's a Library lesson's id. */
 const LEDGER_LESSON_ID = Prisma.sql`
   CASE WHEN e.content_ids->>'lessonId' ~* '^[0-9a-f-]{36}$'
     THEN (e.content_ids->>'lessonId')::uuid
   END`;
 
-/**
- * How long each finished Library lesson of the ledger took, on learners' local days from `since`
- * to `until`, deleted learners' included (with no `user_id`).
- */
 export function lessonPacesSql({ since, until }: { since: Date; until: Date }): Prisma.Sql {
   return Prisma.sql`(
     SELECT e.user_id, ${LEDGER_LESSON_ID} AS lesson_id, e.seconds
@@ -53,13 +42,9 @@ export function lessonPacesSql({ since, until }: { since: Date; until: Date }): 
   )`;
 }
 
-/** A mock the learner finished, whose answers were graded and recorded as attempts. */
 const FINISHED_MOCK = Prisma.sql`m.status = 'finished'`;
 
-/**
- * Each answer of the exam's latest finished mocks, with who gave it (`learner`): a live learner's
- * id, or the random key a deleted learner's mocks share.
- */
+/** `learner` is a live learner's id, or the random key a deleted learner's mocks share. */
 export function mockAnswersSql({
   examBlueprintId,
   mocks,
@@ -87,11 +72,9 @@ export function mockAnswersSql({
   )`;
 }
 
-/** A report calibration can use: an official score next to the estimate shown before it. */
 const CALIBRATION_REPORT = Prisma.sql`
   score IS NOT NULL AND scale IS NOT NULL AND estimate_low IS NOT NULL AND estimate_high IS NOT NULL`;
 
-/** Official results reported for the exam that calibration can use, deleted learners' included. */
 export function examReportsSql(examBlueprintId: string): Prisma.Sql {
   return Prisma.sql`(
     SELECT score, scale, max_score, estimate_low, estimate_high, reported_at
@@ -105,12 +88,8 @@ export function examReportsSql(examBlueprintId: string): Prisma.Sql {
 }
 
 /**
- * Moves what the learners' rows teach every learner into the anonymous tables and deletes those
- * rows, before the learners are deleted. Only what each aggregate reads is kept: no user, goal or
- * mock id (a random key per learner and per mock keeps counts right), days instead of times, and
- * random row ids. The rows it copies are gone afterwards, so a retried deletion never counts a
- * learner twice. Feedback messages stay, without the sender's email (`emails` also matches the
- * ones they sent signed out).
+ * Run before deleting the learners. It deletes the rows it copies, so a retried deletion never
+ * counts a learner twice. `emails` also matches feedback sent signed out, which stays without them.
  */
 export async function anonymizeLearnerRecords({
   emails,

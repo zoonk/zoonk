@@ -14,7 +14,6 @@ const KEYED_TABLES = [
 
 type KeyedTable = (typeof KEYED_TABLES)[number];
 
-/** Natural keys a row that stays holds, which a source row with the same key can't take. */
 const NATURAL_KEYS: Record<KeyedTable, readonly string[]> = {
   courses: ["slug"],
   library_chapters: ["language", "identity_key"],
@@ -25,10 +24,7 @@ const NATURAL_KEYS: Record<KeyedTable, readonly string[]> = {
 
 type KeptKeys = Record<KeyedTable, ReadonlySet<string>>;
 
-/**
- * Rows that can't exist without a parent row, parents first, so a row left out takes the rows that
- * need it along. Nullable links to a row left out are cleared later, like any link the copy lacks.
- */
+/** Parents first, so a row left out takes the rows that need it along. */
 const REQUIRED_PARENTS = [
   ["course_categories", "course_id", "courses"],
   ["course_chapters", "course_id", "courses"],
@@ -75,7 +71,6 @@ async function readKeys({
   return new Set(data.rows.map((row) => getRowKey(row, columns)));
 }
 
-/** Library rows `markRemovedContent` didn't list: seeded and private content, and what they use. */
 function readStayingKeys({ destination, table }: { destination: Client; table: KeyedTable }) {
   return readKeys({
     destination,
@@ -84,11 +79,7 @@ function readStayingKeys({ destination, table }: { destination: Client; table: K
   });
 }
 
-/**
- * The natural keys the destination's staying rows hold: the slugs of seeded courses (the
- * organization's other courses take the source's by slug) and the keys of every Library row and
- * picture that stays. Run it after `markRemovedContent`.
- */
+/** Run it after `markRemovedContent`. */
 export async function readKeptKeys({
   destination,
   organizationId,
@@ -142,7 +133,6 @@ function addLeftOut({
   return { ...leftOut, [table]: new Set([...(leftOut[table] ?? []), ...ids]) };
 }
 
-/** Leaves out the source rows whose natural key a staying row holds. */
 function leaveOutKeptKeys({ catalog, keys }: { catalog: SourceCatalog; keys: KeptKeys }) {
   const none: LeftOut = {};
 
@@ -162,7 +152,6 @@ function leaveOutKeptKeys({ catalog, keys }: { catalog: SourceCatalog; keys: Kep
   );
 }
 
-/** Leaves out the rows whose required parent was left out, parents first. */
 function leaveOutOrphans({ catalog, leftOut }: { catalog: SourceCatalog; leftOut: LeftOut }) {
   return REQUIRED_PARENTS.reduce(
     (current, [table, column, parent]) => {
@@ -182,11 +171,6 @@ function leaveOutOrphans({ catalog, leftOut }: { catalog: SourceCatalog; leftOut
   );
 }
 
-/**
- * Leaves out source rows that share a natural key with a row that stays (a seeded course's slug, a
- * Library row's identity, a picture's reuse key), with the rows that need them: the local row stays
- * as it is. A skill merged into one left out is copied as not merged.
- */
 export function withoutKeptKeys({
   catalog,
   keys,

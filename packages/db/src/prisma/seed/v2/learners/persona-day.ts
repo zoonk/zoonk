@@ -11,20 +11,14 @@ import {
 } from "./types";
 
 /*
- * A persona is written on one day of its plan: day 1 is the day the plan was made. These move it
- * to another day as plain data, before anything is written, so the seed's writers stay the only
- * path to the database.
+ * These move a persona to another day of its plan as plain data, before anything is written, so the
+ * seed's writers stay the only path to the database.
  */
 
-/** The day of its plan the persona is on: day 1 is the day its plan was made. */
 function getPlanDay(learner: SeedLearner): number {
   return 1 - learner.goal.createdDay;
 }
 
-/**
- * Placement runs while the plan is made, before day 1's study: the answers given outside a session
- * and the lessons it tested out of. Those stay on the plan's first day when it moves.
- */
 function isPlacement(
   learner: SeedLearner,
   { day, placement }: { day: number; placement: boolean },
@@ -40,7 +34,6 @@ function isStudied(item: SeedPlanItem): boolean {
   return item.status === "done" || item.status === "testedOut";
 }
 
-/** Whether a change set the areas to focus on, which plan settings then keep. */
 function setsFocusAreas(change: SeedPlanChange): boolean {
   const { operations } = change.payload;
 
@@ -50,7 +43,6 @@ function setsFocusAreas(change: SeedPlanChange): boolean {
   );
 }
 
-/** Events dated by the learner's days that had happened by the new today, counted from it. */
 function rewindEvents<Event extends { day: number }>(
   { happened, shift }: Rewind,
   events: readonly Event[] = [],
@@ -60,15 +52,10 @@ function rewindEvents<Event extends { day: number }>(
     .map((event) => ({ ...event, day: shift(event.day) }));
 }
 
-/** How far through its history the persona is, to scale totals that only grow with it. */
 function scaleBy(total: number, ratio: number): number {
   return Math.round(total * ratio);
 }
 
-/**
- * The persona with a plan made `days` days earlier: the persona's usual generated history fills
- * the extra days, and placement moves to the new first day with the plan.
- */
 function startPersonaEarlier(learner: SeedLearner, days: number): SeedLearner {
   const { goal, history } = learner;
   const firstDay = goal.createdDay - days;
@@ -108,9 +95,7 @@ function startPersonaEarlier(learner: SeedLearner, days: number): SeedLearner {
 
 type Rewind = {
   learner: SeedLearner;
-  /** Whether something dated `day` in the persona's own days had happened by the new today. */
   happened: (day: number, placement?: boolean) => boolean;
-  /** A day in the persona's own days, counted from the new today. */
   shift: (day: number) => number;
 };
 
@@ -150,7 +135,6 @@ function rewindAttempts(rewind: Rewind) {
     });
 }
 
-/** The skills each answer and finished plan item gives evidence of. */
 function listEvidencedSkills(
   learner: SeedLearner,
   { attempts, items }: Pick<SeedLearner, "attempts"> & { items: readonly SeedPlanItem[] },
@@ -168,10 +152,7 @@ function listEvidencedSkills(
   return new Set([...attempts.map((attempt) => attempt.skill), ...taught]);
 }
 
-/**
- * Skills with evidence only after the new today weren't studied yet. Skills nothing dates are
- * the ones placement or the learner's own words settled, so they stay.
- */
+/** Skills nothing dates are the ones placement or the learner's own words settled, so they stay. */
 function rewindSkills(
   learner: SeedLearner,
   rewound: Pick<SeedLearner, "attempts"> & { items: readonly SeedPlanItem[] },
@@ -193,7 +174,6 @@ function rewindLanguageHistory(
   return {
     ...history,
     conversations: rewindEvents(rewind, history.conversations),
-    // Levels move from the level test's result toward today's as the history does.
     levels: history.levels.map((level) => ({
       ...level,
       score: level.start + (level.score - level.start) * ratio,
@@ -204,11 +184,8 @@ function rewindLanguageHistory(
 }
 
 /**
- * The persona `days` days back, as it was when that day began: built `days` days later than the
- * day it's written on, so its weekdays and exam dates stay real, then cut at the new today. What
- * it did before the new today stays; what came later didn't happen yet: those plan items are to
- * do again, mistakes fixed later are open, and today's session isn't built (the app builds it when
- * the learner opens Today). Memory the app noticed in activity goes, since the seed doesn't date it.
+ * Built `days` days later than the day it's written on, so its weekdays and exam dates stay real,
+ * then cut at the new today. Memory the app noticed in activity goes: the seed doesn't date it.
  */
 function rewindPersona(learner: SeedLearner, days: number): SeedLearner {
   const { goal, history } = learner;
@@ -250,7 +227,6 @@ function rewindPersona(learner: SeedLearner, days: number): SeedLearner {
       plan: {
         ...goal.plan,
         changes,
-        // The areas to focus on came from a change to the plan; before it, there are none.
         focusAreas: changes?.some((change) => setsFocusAreas(change))
           ? goal.plan.focusAreas
           : undefined,
@@ -274,9 +250,8 @@ function rewindPersona(learner: SeedLearner, days: number): SeedLearner {
 }
 
 /**
- * A persona on day `day` of its plan (its own day when absent), back after `awayDays` days without
- * studying: the persona as it was on its last study day, `day - awayDays`, moved that many days
- * into the past. Returns the learner and that last study day's moment, which it's written from.
+ * Back after `awayDays`, it's the persona on its last study day, `day - awayDays`, moved that many
+ * days into the past.
  */
 export function buildPersonaOn({
   awayDays = 0,

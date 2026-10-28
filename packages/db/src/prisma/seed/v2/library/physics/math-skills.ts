@@ -1,7 +1,6 @@
 import { t } from "../../_utils/localize";
 import { skill } from "../content";
 
-/** The beginner band: the math physics uses, from fractions to vectors. */
 export const mathSkills = [
   skill("fractions", "beginner", {
     description: t(

@@ -2,11 +2,6 @@ import { t } from "../../../_utils/localize";
 import { guess, option } from "../../content";
 import { type SeedLesson } from "../../types";
 
-/**
- * Ecology chapter, lesson 1. Starts from a guess about a pasture, explains where the energy goes
- * (respiration and heat), turns that into the 10% estimate and ends on an ENEM-style question
- * that applies it to diets and land use.
- */
 export const foodChainEnergyLesson: SeedLesson = {
   canDo: t(
     "You'll explain why big predators are rare and estimate the energy left at each level of a food chain.",

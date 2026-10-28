@@ -6,11 +6,7 @@ import { libraryIds } from "../library-ids";
 import { findSkillIds, skillIdOf } from "../write-skills";
 import { enemCourse } from "./enem-course";
 
-/**
- * Publishes the seed's hand-written exam curriculum as the same public course/blueprint link a
- * generated curriculum records. Repairs its explicit umbrella link while keeping a graph the
- * app already wrote; learner plans aren't read.
- */
+/** Keeps a graph the app already wrote; learner plans aren't read. */
 export async function writeEnemCourseGraph(prisma: PrismaClient) {
   await Promise.all(
     SEED_LANGUAGES.map(async (language) => {

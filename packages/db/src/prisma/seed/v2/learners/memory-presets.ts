@@ -12,10 +12,6 @@ type MemoryShape = {
   lastReviewedDaysAgo: number;
 };
 
-/**
- * The memory states cards and skill lists show. "fading" is a skill studied long enough ago that
- * its chance of recall dropped below 90%, which is when its card dims and a capsule brings it back.
- */
 const MEMORY_PRESETS = {
   fading: {
     difficulty: 6.5,
@@ -57,10 +53,8 @@ const MEMORY_PRESETS = {
 
 export type MemoryPreset = keyof typeof MEMORY_PRESETS;
 
-/** Days between first studying a skill and its last review, so "studied since" reads naturally. */
 const STUDY_SPAN_DAYS = 7;
 
-/** A `LearnerSkill` row in one memory state, with its dates relative to `now`. */
 export function toLearnerSkillMemory(preset: MemoryPreset, now: Date) {
   const memory = MEMORY_PRESETS[preset];
   const lastReviewedAt = daysFrom(now, -memory.lastReviewedDaysAgo);

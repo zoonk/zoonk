@@ -31,10 +31,6 @@ function findChapter(course: SeedCourse, key: string): SeedChapter {
   return chapter;
 }
 
-/**
- * Ids and titles of a seeded course's rows in one language, looked up by key, with its skills' rows
- * from `findSkillIds`.
- */
 export function courseLookup(course: SeedCourse, language: SeedLanguage, skillIds: SkillIds) {
   return {
     chapter: (key: string) => {

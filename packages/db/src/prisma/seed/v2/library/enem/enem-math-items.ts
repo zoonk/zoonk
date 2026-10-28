@@ -2,7 +2,6 @@ import { t } from "../../_utils/localize";
 import { bankOption } from "../content";
 import { type SeedItem } from "../types";
 
-/** Math practice: numeric items keep the solution as data, ENEM-format ones have five options. */
 export const enemMathItems: SeedItem[] = [
   {
     content: {
