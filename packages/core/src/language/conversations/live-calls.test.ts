@@ -9,6 +9,7 @@ import { prisma } from "@zoonk/db";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
+import { waitForBlockedStatement } from "../../_test-utils/learner-lock";
 import { mockSession } from "../../_test-utils/mock-session";
 import { getLiveCallCostMicros, getLiveCallReservationMicros } from "../../entitlements/limits";
 import {
@@ -17,6 +18,7 @@ import {
   liveCallHistoryFixture,
   mockLiveCallAdminSession,
 } from "./_test-utils/live-call-fixture";
+import { getCallExposureMicros } from "./_utils/live-call-money";
 import { connectLanguageConversation } from "./connect-language-conversation";
 import { type LanguageConversationSetup } from "./conversation-contract";
 import { endLanguageConversationConnection } from "./end-language-conversation-connection";
@@ -28,6 +30,8 @@ const DAY_MS = 86_400_000;
 const SECOND_MS = 1000;
 const BIG_BUDGET = 150_000_000;
 const TWO_MINUTES = 120;
+/** OpenAI's longest Live session (about 2 hours) and a creation's minute. */
+const LONGEST_SESSION_SECONDS = 2 * 60 * 60 + 60;
 
 /** Each test runs on a day of its own, so the free day's shared bucket is the test's alone. */
 const FIRST_DAY = Date.parse("2031-01-01T12:00:00Z");
@@ -513,6 +517,57 @@ describe("live calls", () => {
     });
   });
 
+  it("[F6] never gives the free day's room twice to a reservation whose offer was accepted at the window's edge", async () => {
+    const held = getLiveCallReservationMicros(TWO_MINUTES);
+    await setAdmission("all", held);
+    const reservedAt = Date.now();
+    const first = await learner();
+    const setup = await reserved(first.conversation.id);
+
+    // Another transaction holds the reservation's row, so its offer, accepted just inside the
+    // window, can't commit `starting` until after the window ended.
+    const holder = Promise.withResolvers<number>();
+    const release = Promise.withResolvers<null>();
+
+    const holding = prisma.$transaction(async (transaction) => {
+      await transaction.$queryRaw`SELECT id FROM live_call_connections WHERE id = ${setup.connectionId}::uuid FOR UPDATE`;
+      const [row] = await transaction.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
+      holder.resolve(row?.pid ?? 0);
+      await release.promise;
+    });
+
+    const pid = await holder.promise;
+    vi.setSystemTime(reservedAt + 59_900);
+    const offered = offer(setup, first.conversation.id);
+
+    await waitForBlockedStatement(pid, /UPDATE.*live_call_connections/u);
+
+    // Just past the window, another free learner reserves while the offer waits.
+    vi.setSystemTime(reservedAt + 60_100);
+    const second = await learner();
+    const other = reserve(second.conversation.id);
+
+    const waiting = waitForBlockedStatement(pid, /free_call_spend_days/u);
+    // Settled either way; only one of the two finishes before the release.
+    waiting.catch(() => null);
+    await Promise.race([other, waiting]);
+
+    release.resolve(null);
+    await holding;
+    await Promise.all([offered, other]);
+
+    const open = await prisma.liveCallConnection.findMany({
+      where: { state: { not: "ended" }, userId: { in: [first.user.id, second.user.id] } },
+    });
+
+    const exposure = open.reduce(
+      (total, row) => total + getCallExposureMicros({ connection: row, now: new Date() }),
+      0,
+    );
+
+    expect(exposure).toBeLessThanOrEqual(held);
+  });
+
   it("[F6] counts a reservation past its connect window as nothing, refuses its offer and ends it on the next start", async () => {
     const held = getLiveCallReservationMicros(TWO_MINUTES);
     await setAdmission("all", held + 50_000);
@@ -551,6 +606,25 @@ describe("live calls", () => {
     await expect(
       usage({ connectionId: stale.connectionId, userId: user.id }),
     ).resolves.toMatchObject({ costMicros: 0, seconds: 0 });
+  });
+
+  it("[2] settles a call abandoned for a month after its hangups failed, at most a session's longest life", async () => {
+    const { conversation } = await learner({ plus: true });
+    const setup = await live(conversation.id);
+
+    // Its deadline run gave up; OpenAI ended the session hours later, and the learner is back now.
+    advance(31 * 24 * 60 * 60);
+
+    await expect(
+      endLiveCall({ connectionId: setup.connectionId, reason: "reconnect" }),
+    ).resolves.toStrictEqual({ status: "ended" });
+
+    await expect(connection(setup.connectionId)).resolves.toMatchObject({
+      costMicros: getLiveCallCostMicros(LONGEST_SESSION_SECONDS),
+      state: "ended",
+    });
+
+    await expect(reserve(conversation.id)).resolves.toMatchObject({ status: "ready" });
   });
 
   it("[F7] settles a deleted learner's call at its deadline, keeping its cost on the connection and the free day", async () => {

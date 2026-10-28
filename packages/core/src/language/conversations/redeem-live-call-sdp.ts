@@ -10,6 +10,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getAllowanceCacheTag } from "../../cache/tags";
 import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
+import { lockFreeCallDay } from "../../entitlements/_utils/free-call-spend";
 import { refreshLiveCallViewer } from "../../entitlements/_utils/live-call-viewer";
 import { lockUsageForViewer } from "../../entitlements/_utils/usage-lock";
 import { getLiveCallCostMicros } from "../../entitlements/limits";
@@ -111,14 +112,21 @@ async function prepareCreation({
       return unchanged({ status: "callsPaused" as const });
     }
 
-    const unusable = unusableReservation({ connection, now });
+    // A free reservation's window is read under the free day's lock, with the clock read after it:
+    // a reservation reading this one as expired meanwhile can't also give away its room.
+    if (connection.freeSpendDay && connection.state === "reserved") {
+      await lockFreeCallDay({ day: connection.freeSpendDay, transaction });
+    }
+
+    const lockedAt = new Date();
+    const unusable = unusableReservation({ connection, now: lockedAt });
 
     if (unusable) {
       return unchanged(unusable);
     }
 
     const starting = await transaction.liveCallConnection.update({
-      data: { startedAt: now, state: "starting" },
+      data: { startedAt: lockedAt, state: "starting" },
       where: { id: connection.id },
     });
 
