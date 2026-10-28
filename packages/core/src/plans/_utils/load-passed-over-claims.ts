@@ -1,7 +1,7 @@
 import "server-only";
 import { type Plan, prisma } from "@zoonk/db";
+import { readSkillPrerequisiteMap } from "../../learner/_utils/plan-library-rows";
 import { type ClaimEvent } from "../../learner/_utils/skill-claims";
-import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
 import { listPassedOver } from "../planner/graph-areas";
 import { parsePlanGraph, parsePlanSettings } from "../planner/plan-state";
 import { toPassedOverClaims } from "./passed-over-claims";
@@ -38,7 +38,11 @@ export async function loadPassedOverClaims({
     return [];
   }
 
-  const prerequisites = await loadSkillPrerequisites(graph.skills.map((skill) => skill.skillId));
+  // A GET's known plan reads the Library's rows from the shared caches.
+  const prerequisites = await readSkillPrerequisiteMap(
+    graph.skills.map((skill) => skill.skillId),
+    known === undefined ? prisma : "shared",
+  );
 
   const passed = listPassedOver({ graph, prerequisites, settings }).filter((entry) =>
     skillIds.has(entry.skillId),

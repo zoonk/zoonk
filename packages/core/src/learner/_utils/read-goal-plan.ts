@@ -37,5 +37,5 @@ export async function readGoalPlan(goalId: string): Promise<GoalPlan> {
   );
 
   const saved = await readSavedPlan(userId, goalId);
-  return saved ? loadGoalPlan(goalId, saved) : { items: [], skills: [] };
+  return saved ? loadGoalPlan(goalId, saved, { sharedLibrary: true }) : { items: [], skills: [] };
 }

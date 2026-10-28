@@ -2,9 +2,12 @@ import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { readExamChoices } from "../../../exams/choices/exam-choices";
 import { loadClaimEvents } from "../../../learner/_utils/load-skill-claims";
+import {
+  type LibrarySource,
+  readSkillPrerequisiteMap,
+} from "../../../learner/_utils/plan-library-rows";
 import { listKnownSkills } from "../../../learner/_utils/skill-claims";
 import { type SavedPlan } from "../../../learner/facts/saved-plan";
-import { loadSkillPrerequisites } from "../../../library/skills/skill-prerequisites";
 import { listTaughtStandInSkills } from "../../../lookahead/plan-outline-needs";
 import { hasPlanDeadline } from "../../../plans/_utils/plan-end";
 import {
@@ -19,12 +22,8 @@ import {
   parsePlanGraph,
   parsePlanSettings,
 } from "../../../plans/planner/plan-state";
-import {
-  type AreaCourse,
-  type SyllabusInput,
-  type SyllabusItem,
-  type SyllabusSkill,
-} from "./syllabus-input";
+import { loadAreaCourses, loadChapterTitles, withSkills } from "./syllabus-content";
+import { type SyllabusInput, type SyllabusSkill } from "./syllabus-input";
 import { getPastBasicsSkillIds, withTestedOutSkills } from "./syllabus-known-skills";
 import { loadNotice } from "./syllabus-notice";
 import { getSkillSubjects } from "./syllabus-subjects";
@@ -49,122 +48,6 @@ function toSkills(graph: PlanGraph): SyllabusSkill[] {
     skillId: skill.skillId,
     topics: skill.topics ?? [],
   }));
-}
-
-/** Each area's Library course, from the first of its skills that names one. */
-async function loadAreaCourses(graph: PlanGraph): Promise<Map<string, AreaCourse>> {
-  const areaCourseIds = new Map(
-    graph.skills
-      .flatMap((skill) => {
-        const courseId = skill.courseIds?.[0];
-        return courseId ? [[getSkillArea({ graph, skill }), courseId] as const] : [];
-      })
-      .toReversed(),
-  );
-
-  const courses = await prisma.course.findMany({
-    select: { id: true, imageUrl: true, title: true },
-    where: { id: { in: [...new Set(areaCourseIds.values())] } },
-  });
-
-  const byId = new Map(courses.map((course) => [course.id, course]));
-
-  return new Map(
-    [...areaCourseIds].flatMap(([area, courseId]) => {
-      const course = byId.get(courseId);
-      return course ? [[area, { imageUrl: course.imageUrl, title: course.title }] as const] : [];
-    }),
-  );
-}
-
-type ContentSkill = { id: string; skillId: string };
-
-function groupSkills(rows: readonly ContentSkill[]): Map<string, string[]> {
-  return new Map(
-    [...Map.groupBy(rows, (row) => row.id)].map(([id, group]) => [
-      id,
-      group.map((row) => row.skillId),
-    ]),
-  );
-}
-
-/** The skills a lesson or a chapter teaches, by lesson or chapter, oldest first. */
-async function loadContentSkills(items: readonly SyllabusItem[]) {
-  const unknown = items.filter((item) => !item.skillId);
-  const lessonIds = unknown.flatMap((item) => item.lessonId ?? []);
-  const chapterIds = unknown.flatMap((item) => (item.lessonId ? [] : (item.chapterId ?? [])));
-
-  const [lessonRows, chapterRows] = await Promise.all([
-    lessonIds.length > 0
-      ? prisma.lessonSkill.findMany({
-          orderBy: { createdAt: "asc" },
-          select: { lessonId: true, skillId: true },
-          where: { lessonId: { in: lessonIds } },
-        })
-      : [],
-    chapterIds.length > 0
-      ? prisma.chapterSkill.findMany({
-          orderBy: { createdAt: "asc" },
-          select: { chapterId: true, skillId: true },
-          where: { chapterId: { in: chapterIds } },
-        })
-      : [],
-  ]);
-
-  return {
-    chapters: groupSkills(chapterRows.map((row) => ({ id: row.chapterId, skillId: row.skillId }))),
-    lessons: groupSkills(lessonRows.map((row) => ({ id: row.lessonId, skillId: row.skillId }))),
-  };
-}
-
-function getCandidates({
-  item,
-  skills,
-}: {
-  item: SyllabusItem;
-  skills: Awaited<ReturnType<typeof loadContentSkills>>;
-}): string[] {
-  if (item.lessonId) {
-    return skills.lessons.get(item.lessonId) ?? [];
-  }
-
-  return item.chapterId ? (skills.chapters.get(item.chapterId) ?? []) : [];
-}
-
-/**
- * Lessons and chapters saved without their skill take the one they teach that the plan's graph
- * has (else their first), so they still count for a subject.
- */
-async function withSkills({
-  graphSkillIds,
-  items,
-}: {
-  graphSkillIds: ReadonlySet<string>;
-  items: readonly SyllabusItem[];
-}): Promise<SyllabusItem[]> {
-  if (items.every((item) => item.skillId)) {
-    return [...items];
-  }
-
-  const skills = await loadContentSkills(items);
-
-  const pickSkill = (item: SyllabusItem): string | null => {
-    const candidates = getCandidates({ item, skills });
-    return candidates.find((skillId) => graphSkillIds.has(skillId)) ?? candidates[0] ?? null;
-  };
-
-  return items.map((item) => (item.skillId ? item : { ...item, skillId: pickSkill(item) }));
-}
-
-async function loadChapterTitles(items: readonly SyllabusItem[]): Promise<Map<string, string>> {
-  const chapterIds = [...new Set(items.flatMap((item) => item.chapterId ?? []))];
-
-  const chapters = await prisma.chapter.findMany({
-    select: { id: true, title: true },
-    where: { id: { in: chapterIds } },
-  });
-
-  return new Map(chapters.map((chapter) => [chapter.id, chapter.title]));
 }
 
 /** The syllabus's lessons and chapters of a saved plan, in plan order. */
@@ -250,23 +133,25 @@ export async function loadSyllabusInput(
 
   const graph = parsePlanGraph(plan.graph);
   const graphSkillIds = new Set(graph.skills.map((skill) => skill.skillId));
+  // A GET passes the saved plan it read; its Library rows come from the shared caches.
+  const from: LibrarySource = savedPlan === undefined ? prisma : "shared";
   // Already read for the notice above, when a GET passed it.
   const knownBlueprint = blueprint === undefined ? undefined : await blueprint;
 
   const [items, areaCourses, chapterTitles, claimEvents, prerequisites, taughtSkillIds] =
     await Promise.all([
-      withSkills({ graphSkillIds, items: plan.items }).then((withOwn) =>
+      withSkills({ from, graphSkillIds, items: plan.items }).then((withOwn) =>
         withTestedOutSkills({ graphSkillIds, items: withOwn }),
       ),
-      loadAreaCourses(graph),
-      loadChapterTitles(plan.items),
+      loadAreaCourses(graph, from),
+      loadChapterTitles(plan.items, from),
       loadClaimEvents({
         goalId: goal.id,
         plan: savedPlan,
         skillIds: [...graphSkillIds],
         userId: goal.userId,
       }),
-      loadSkillPrerequisites([...graphSkillIds]),
+      readSkillPrerequisiteMap([...graphSkillIds], from),
       listTaughtStandInSkills({
         blueprint: knownBlueprint,
         goal: { ...goal, primaryCourseId: plan.goal.primaryCourseId },
@@ -343,6 +228,6 @@ export async function loadSkillSubjects(
     return new Map();
   }
 
-  const areaCourses = await loadAreaCourses(graph);
+  const areaCourses = await loadAreaCourses(graph, savedPlan === undefined ? prisma : "shared");
   return getSkillSubjects({ areaCourses, notice, skills: toSkills(graph) });
 }

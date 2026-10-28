@@ -15,7 +15,14 @@ import {
   unique,
 } from "./goal-plan-projection";
 import { type GoalPlanSource, type PlanItemRow, loadSavedGoalPlanSource } from "./goal-plan-source";
-import { loadSkillSurvivors } from "./update-learner-skill";
+import {
+  type LibrarySource,
+  readChapterTitles,
+  readItemSkillRows,
+  readSkillEdges,
+  readSkillLevels,
+  readSurvivorOf,
+} from "./plan-library-rows";
 
 export { type GoalPlanSource } from "./goal-plan-source";
 
@@ -39,58 +46,20 @@ export type GoalPlanItem = Pick<PlanItem, "chapterId" | "id" | "status"> & { ski
 
 export type GoalPlan = { items: GoalPlanItem[]; skills: GoalSkillNode[] };
 
-/** The skills the Library says plan items' lessons and chapters teach (see `ItemSkillRows`). */
-export async function loadItemSkillRows({
-  chapterIds,
-  lessonIds,
-  tx = prisma,
-}: {
-  chapterIds: readonly string[];
-  lessonIds: readonly string[];
-  tx?: TransactionClient;
-}): Promise<ItemSkillRows> {
-  const [lessonSkills, chapterLessons] = await Promise.all([
-    lessonIds.length === 0
-      ? []
-      : tx.lessonSkill.findMany({
-          orderBy: [{ createdAt: "asc" }, { skillId: "asc" }],
-          select: { lesson: { select: { homeChapterId: true } }, lessonId: true, skillId: true },
-          where: { lessonId: { in: [...lessonIds] } },
-        }),
-    chapterIds.length === 0
-      ? []
-      : tx.chapterLesson.findMany({
-          orderBy: { position: "asc" },
-          select: {
-            chapterId: true,
-            lesson: {
-              select: {
-                skills: {
-                  orderBy: [{ createdAt: "asc" }, { skillId: "asc" }],
-                  select: { skillId: true },
-                },
-              },
-            },
-          },
-          where: { chapterId: { in: [...chapterIds] } },
-        }),
-  ]);
-
-  return { chapterLessons, lessonSkills };
-}
-
 /** The rows a saved plan's items need (see `loadItemSkillRows`). */
 function loadItemSkills(
   items: readonly PlanItemRow[],
-  tx: TransactionClient = prisma,
+  from: LibrarySource,
 ): Promise<ItemSkillRows> {
-  return loadItemSkillRows({
-    chapterIds: unique(
-      items.filter((item) => !item.lessonId && !item.skillId).map((item) => item.chapterId),
-    ),
-    lessonIds: unique(items.map((item) => item.lessonId)),
-    tx,
-  });
+  return readItemSkillRows(
+    {
+      chapterIds: unique(
+        items.filter((item) => !item.lessonId && !item.skillId).map((item) => item.chapterId),
+      ),
+      lessonIds: unique(items.map((item) => item.lessonId)),
+    },
+    from,
+  );
 }
 
 /** A finer skill a lesson planned for one of the graph's skills teaches. */
@@ -120,22 +89,18 @@ function toMemberEntries({
 
 async function loadAreaTitles({
   entries,
+  from,
   items,
   phases,
-  tx = prisma,
 }: {
   entries: readonly SkillEntry[];
+  from: LibrarySource;
   items: readonly PlanItemRow[];
   phases: unknown;
-  tx?: TransactionClient;
 }): Promise<Map<string, string>> {
   // Areas without a chapter are phases ("phase:0"), which aren't ids a chapter query accepts.
   const chapterIds = unique(entries.map((entry) => entry.areaId)).filter((id) => isUuid(id));
-
-  const chapters = await tx.chapter.findMany({
-    select: { id: true, title: true },
-    where: { id: { in: chapterIds } },
-  });
+  const chapters = await readChapterTitles(chapterIds, from);
 
   const phaseTitles = parsePlanPhases(phases).map((phase, index): [string, string] => [
     getPhaseAreaId(index),
@@ -188,23 +153,30 @@ function toMemberSkillIds(skillId: string, membersOf: ReadonlyMap<string, Member
 
 type PlanRead = {
   goalId: string;
+  /** A GET's reads take the Library's rows from shared caches (see `LibrarySource`). */
+  sharedLibrary?: boolean;
   source?: GoalPlanSource;
   tx?: TransactionClient;
   withLeftOut: boolean;
 };
 
+function getLibrarySource({ sharedLibrary, tx = prisma }: PlanRead): LibrarySource {
+  return sharedLibrary ? "shared" : tx;
+}
+
 /**
  * The raw teaching entries and rows shared by the full skill projection and test-out eligibility.
  * Null without a plan; a plan whose items lost every skill falls back to its skill graph's.
  */
-async function loadPlanEntryRows({ goalId, source, withLeftOut, tx = prisma }: PlanRead) {
+async function loadPlanEntryRows(input: PlanRead) {
+  const { goalId, source, withLeftOut, tx = prisma } = input;
   const plan = source ?? (await loadSavedGoalPlanSource(goalId, tx));
 
   if (!plan) {
     return null;
   }
 
-  const itemSkills = await loadItemSkills(plan.items, tx);
+  const itemSkills = await loadItemSkills(plan.items, getLibrarySource(input));
 
   const itemEntries = plan.items.flatMap((item) => expandItem({ item, skills: itemSkills }));
   const planned = itemEntries.length > 0 ? itemEntries : toGraphEntries(plan.graph);
@@ -229,12 +201,12 @@ export async function loadPlanEntries(input: PlanRead) {
 
   const members = toMemberEntries({ items: loaded.plan.items, skills: loaded.itemSkills });
 
-  const survivorOf = await loadSkillSurvivors(
+  const survivorOf = await readSurvivorOf(
     unique([
       ...loaded.allEntries.map((entry) => entry.skillId),
       ...members.flatMap((entry) => [entry.memberId, entry.skillId]),
     ]),
-    input.tx,
+    getLibrarySource(input),
   );
 
   const allEntries = loaded.allEntries.map((entry) => ({
@@ -261,8 +233,9 @@ export async function loadPlanEntries(input: PlanRead) {
  * graph's skills the plan's items leave out follow them (see `loadPlacementPlan`). A goal without
  * a plan has no skills yet; a plan whose items lost every skill falls back to its skill graph's.
  */
-async function loadPlan({ goalId, source, withLeftOut, tx = prisma }: PlanRead): Promise<GoalPlan> {
-  const loaded = await loadPlanEntries({ goalId, source, tx, withLeftOut });
+async function loadPlan(input: PlanRead): Promise<GoalPlan> {
+  const loaded = await loadPlanEntries(input);
+  const from = getLibrarySource(input);
 
   if (!loaded) {
     return { items: [], skills: [] };
@@ -272,12 +245,9 @@ async function loadPlan({ goalId, source, withLeftOut, tx = prisma }: PlanRead):
   const skillIds = entries.map((entry) => entry.skillId);
 
   const [titles, edges, bands] = await Promise.all([
-    loadAreaTitles({ entries, items: plan.items, phases: plan.phases, tx }),
-    tx.skillPrerequisite.findMany({
-      select: { prerequisiteId: true, skillId: true },
-      where: { prerequisiteId: { in: skillIds }, skillId: { in: skillIds } },
-    }),
-    tx.skill.findMany({ select: { id: true, level: true }, where: { id: { in: skillIds } } }),
+    loadAreaTitles({ entries, from, items: plan.items, phases: plan.phases }),
+    readSkillEdges(skillIds, from),
+    readSkillLevels(skillIds, from),
   ]);
 
   const graph = parsePlanGraph(plan.graph);
@@ -347,9 +317,16 @@ export function getSkillOwners(
   ]);
 }
 
-/** The skills a goal's plan covers: what preparation, sessions and the plan's screens measure. */
-export function loadGoalPlan(goalId: string, source?: GoalPlanSource): Promise<GoalPlan> {
-  return loadPlan({ goalId, source, withLeftOut: false });
+/**
+ * The skills a goal's plan covers: what preparation, sessions and the plan's screens measure. A
+ * GET (`readGoalPlan`) passes `sharedLibrary`; writes read the Library fresh.
+ */
+export function loadGoalPlan(
+  goalId: string,
+  source?: GoalPlanSource,
+  { sharedLibrary = false }: { sharedLibrary?: boolean } = {},
+): Promise<GoalPlan> {
+  return loadPlan({ goalId, sharedLibrary, source, withLeftOut: false });
 }
 
 /** A plan without the skills its exam practices only with recordings (`loadListeningSkillIds`). */

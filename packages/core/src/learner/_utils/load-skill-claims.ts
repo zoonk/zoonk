@@ -1,5 +1,6 @@
 import "server-only";
 import { type Plan, type PlanItem, prisma } from "@zoonk/db";
+import { getLessonSkillRows, toIdKey } from "../../library/_utils/shared-rows";
 import { loadPassedOverClaims } from "../../plans/_utils/load-passed-over-claims";
 import { loadUndoneTestOuts } from "../../plans/_utils/undone-test-outs";
 import { listFocusedSkillIds } from "../../plans/planner/focus-targets";
@@ -34,6 +35,31 @@ function isClaimingItem(item: ClaimPlan["items"][number]) {
     (item.kind === "chapter" || item.kind === "lesson") &&
     (item.status === "done" || item.status === "testedOut")
   );
+}
+
+/**
+ * The skills these finished lessons teach. A GET (which passes its saved plan) reads the shared
+ * rows of every lesson in the plan, the entry its other reads share, and keeps these.
+ */
+async function loadClaimLessonSkills({
+  known,
+  lessonIds,
+}: {
+  known?: ClaimPlan | null;
+  lessonIds: readonly string[];
+}) {
+  if (known) {
+    const wanted = new Set(lessonIds);
+    const rows = await getLessonSkillRows(toIdKey(known.items.map((item) => item.lessonId)));
+    return rows.filter((row) => wanted.has(row.lessonId));
+  }
+
+  return lessonIds.length > 0
+    ? prisma.lessonSkill.findMany({
+        select: { lessonId: true, skillId: true },
+        where: { lessonId: { in: [...lessonIds] } },
+      })
+    : [];
 }
 
 /**
@@ -73,14 +99,7 @@ async function loadPlanEvents({
   const graphSkills = new Set(parsePlanGraph(plan?.graph).skills.map((skill) => skill.skillId));
 
   const lessonIds = items.flatMap((item) => item.lessonId ?? []);
-
-  const lessonSkills =
-    lessonIds.length > 0
-      ? await prisma.lessonSkill.findMany({
-          select: { lessonId: true, skillId: true },
-          where: { lessonId: { in: lessonIds } },
-        })
-      : [];
+  const lessonSkills = await loadClaimLessonSkills({ known, lessonIds });
 
   const taughtBy = Map.groupBy(lessonSkills, (row) => row.lessonId);
 

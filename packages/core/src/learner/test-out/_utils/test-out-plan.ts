@@ -26,8 +26,16 @@ type SavedSource = GoalPlanSource | null | Promise<GoalPlanSource | null>;
 async function loadTestOutItems(goalId: string, known?: SavedSource): Promise<TestOutPlan> {
   const source = await known;
 
+  // Only a GET passes the saved plan, and its reads take the Library's rows from shared caches.
   const loaded =
-    source === null ? null : await loadPlanEntries({ goalId, source, withLeftOut: false });
+    source === null
+      ? null
+      : await loadPlanEntries({
+          goalId,
+          sharedLibrary: source !== undefined,
+          source,
+          withLeftOut: false,
+        });
 
   if (!loaded) {
     return { items: [], skills: [] };

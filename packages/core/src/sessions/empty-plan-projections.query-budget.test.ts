@@ -1,6 +1,6 @@
 import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
-import { loadItemSkillRows } from "../learner/_utils/goal-skill-graph";
+import { loadItemSkillRows } from "../learner/_utils/plan-library-rows";
 import { loadSkillSurvivorMap } from "../learner/_utils/update-learner-skill";
 import { loadSkillPrerequisites } from "../library/skills/skill-prerequisites";
 

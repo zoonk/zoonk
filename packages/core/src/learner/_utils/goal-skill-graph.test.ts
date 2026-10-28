@@ -7,7 +7,7 @@ import {
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { describe, expect, it, vi } from "vitest";
 import { freezeClock } from "../../_test-utils/frozen-clock";
-import { loadItemSkillRows } from "./goal-skill-graph";
+import { loadItemSkillRows } from "./plan-library-rows";
 
 function sortIds(ids: readonly string[]): string[] {
   return ids.toSorted((a, b) => a.localeCompare(b));

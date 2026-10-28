@@ -3,7 +3,7 @@ import { type Goal, type GoalKind } from "@zoonk/db";
 import { loadBossBankFacts } from "../../checkpoints/_utils/load-boss-bank-facts";
 import { loadListeningExam } from "../../exams/listening/listening-exam";
 import { getListeningSkillIds } from "../../exams/listening/listening-skills";
-import { loadItemSkillRows } from "../../learner/_utils/goal-skill-graph";
+import { loadItemSkillRows } from "../../learner/_utils/plan-library-rows";
 import { loadSkillSurvivorMap } from "../../learner/_utils/update-learner-skill";
 import { type ExistingPlanItem } from "../planner/plan-items";
 import { type PlanGraph } from "../planner/plan-state";

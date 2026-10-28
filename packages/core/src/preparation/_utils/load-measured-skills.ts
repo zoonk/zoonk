@@ -5,7 +5,7 @@ import {
   type GoalSkillNode,
   type loadGoalPlan,
 } from "../../learner/_utils/goal-skill-graph";
-import { loadSkillSurvivors } from "../../learner/_utils/update-learner-skill";
+import { readSurvivorOf } from "../../learner/_utils/plan-library-rows";
 import { getSkillArea } from "../../plans/planner/graph-areas";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 
@@ -59,7 +59,11 @@ export async function loadMeasuredSkills({
   const { examChoices: choices, fullCourse, skippedAreas } = parsePlanSettings(row?.settings);
   const skipped = new Set(skippedAreas);
   const graphSkills = graph.skills.filter((skill) => !skipped.has(getSkillArea({ graph, skill })));
-  const survivorOf = await loadSkillSurvivors(graph.skills.map((skill) => skill.skillId));
+  // A page's saved plan comes with its reads taking the Library's rows from the shared caches.
+  const survivorOf = await readSurvivorOf(
+    graph.skills.map((skill) => skill.skillId),
+    savedPlan === undefined ? prisma : "shared",
+  );
 
   const graphSections = new Map(
     graph.skills.map((skill) => [survivorOf(skill.skillId), getSkillArea({ graph, skill })]),
