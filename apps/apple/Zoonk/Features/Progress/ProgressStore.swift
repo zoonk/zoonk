@@ -1,9 +1,6 @@
 import Foundation
 import Observation
 
-/// The signed-in learner's statistics, each kept for the app's lifetime and revalidated when a
-/// mutation changes their progress (a lesson or a block finished). The overview reads all five, so
-/// every stat's page opens on numbers already loaded.
 @MainActor
 @Observable
 final class ProgressStore {

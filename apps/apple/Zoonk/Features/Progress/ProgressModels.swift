@@ -6,15 +6,11 @@ struct ActivitySummary: Codable, Equatable, Sendable {
   let totalLessonCompletions: Int
 }
 
-/// Every learning day counts (a day of only reviews or practice too); the calendar is the past
-/// 12 months, Sunday first, zero-filled up to today.
 struct ActivityProgress: Codable, Equatable, Sendable {
   let days: [ActivityProgressDay]
   let summary: ActivitySummary
 }
 
-/// One calendar day lit by everything finished that day (lessons, reviews and practice), so the
-/// calendar shows the same days that count as learning days.
 struct ActivityProgressDay: Codable, Equatable, Identifiable, Sendable {
   let activitiesCompleted: Int
   let date: ProgressDate

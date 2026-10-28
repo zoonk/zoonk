@@ -1,22 +1,16 @@
 import SwiftUI
 
-/// The learner's belt as an object, a close-up of its end (main's `BeltDrawing`): the band in its
-/// color with two rows of stitching and the dark rank bar, where each level reached is a stripe of
-/// white tape and the next fills with Brain Power's violet, numbered under the bar. Black's bar is
-/// red, as on a real black belt. It starts at the panel's edge, as if the rest of the belt ran past
-/// it. Decorative: the words above it name the belt and level.
+/// Black's bar is red, as on a real black belt.
 struct BeltDrawing: View {
   @Environment(\.colorScheme) private var colorScheme
 
   let level: LevelProgress
   let isWide: Bool
 
-  /// The numbers' line, at their largest (the drawing caps their size).
   private let numbersHeight = 16.0
 
   private var bandHeight: Double { isWide ? 44 : 32 }
 
-  /// The band, the rank bar and the belt's end, as shares of the width.
   private var columns: (band: Double, bar: Double) { isWide ? (0.6, 0.27) : (0.36, 0.52) }
 
   private var isLight: Bool {
@@ -55,8 +49,7 @@ struct BeltDrawing: View {
     .accessibilityHidden(true)
   }
 
-  /// White would vanish into a light panel and Black into a dark one without an edge, drawn along
-  /// the belt and around its end, never across the panel's edge where the belt runs on.
+  /// White would vanish into a light panel and Black into a dark one without an edge.
   private func drawEdges(in context: GraphicsContext, band: CGRect, end: CGRect, endShape: Path) {
     let edge: Color? =
       switch level.belt {
@@ -95,7 +88,6 @@ struct BeltDrawing: View {
     context.stroke(path, with: .color(color), style: StrokeStyle(lineWidth: 1, dash: [3, 3]))
   }
 
-  /// Ten stripes across the bar, then each level's number under its stripe.
   private func drawStripes(in context: GraphicsContext, bar: CGRect) {
     let inset = isWide ? 16.0 : 10.0
     let stripeWidth = isWide ? 6.0 : 4.0
@@ -134,8 +126,6 @@ struct BeltDrawing: View {
   }
 }
 
-/// Every belt in its own color, tied once reached and folded while ahead, the learner's framed;
-/// each named under it on a wide screen, the first and last under the rack on a phone.
 struct BeltRack: View {
   @Environment(\.horizontalSizeClass) private var sizeClass
 
@@ -196,8 +186,7 @@ struct BeltRack: View {
   }
 }
 
-/// One belt on the rack (main's SVG, 44 by 30): knot and tails once tied, folded while ahead. White
-/// and Black get an outline behind them so they keep their shape on a light or dark page.
+/// White and Black get an outline behind them so they keep their shape on a light or dark page.
 private struct RackBelt: View {
   @Environment(\.colorScheme) private var colorScheme
 

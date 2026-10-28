@@ -1,8 +1,7 @@
 import Foundation
 import SwiftUI
 
-/// Compact learning time as main's `formatDuration` says it: seconds below a minute, rounded
-/// minutes below an hour, then hours and minutes ("0 min", "45 sec", "2 hr 5 min").
+/// Mirrors main's `formatDuration`.
 func progressLearningTime(_ totalSeconds: Int, locale: Locale = .autoupdatingCurrent) -> String {
   func unit(_ value: Int, _ unit: UnitDuration) -> String {
     Measurement(value: Double(value), unit: unit)
@@ -30,21 +29,18 @@ func progressLearningTime(_ totalSeconds: Int, locale: Locale = .autoupdatingCur
   return minutes == 0 ? hours : "\(hours) \(unit(minutes, .minutes))"
 }
 
-/// A metric's share as main's `formatMetricPercent` writes it, to a tenth when it has one: "70.5%",
-/// "70%". `value` is on the 0–100 scale the API sends.
+/// Mirrors main's `formatMetricPercent`; `value` is on the API's 0–100 scale.
 func metricPercent(_ value: Double) -> String {
   (value / 100).formatted(
     .percent.precision(.fractionLength(0...1)).rounded(rule: .toNearestOrAwayFromZero))
 }
 
-/// A share in whole percents ("71%"), where main rounds: Energy now, a pattern's row.
 func wholePercent(_ value: Double) -> String {
   (value / 100).formatted(
     .percent.precision(.fractionLength(0)).rounded(rule: .toNearestOrAwayFromZero))
 }
 
 extension ProgressBelt {
-  /// The belt's full name ("Yellow belt"), as every screen names it.
   var localizedTitle: LocalizedStringResource {
     switch self {
     case .white:
@@ -70,8 +66,6 @@ extension ProgressBelt {
     }
   }
 
-  /// The belt's color alone ("Yellow"), under its belt on the rack, where the section already says
-  /// they're belts.
   var shortTitle: LocalizedStringResource {
     switch self {
     case .white:
@@ -107,7 +101,7 @@ extension ProgressBelt {
     }
   }
 
-  /// The belt's own color, at full strength in every mode (artwork, like main's `belt-*`).
+  /// Artwork, at full strength in every mode.
   var color: Color {
     switch self {
     case .white:
@@ -135,7 +129,6 @@ extension ProgressBelt {
 }
 
 extension ProgressDaypart {
-  /// The part of the day's name, in core's order (night, morning, afternoon, evening).
   var localizedTitle: LocalizedStringResource {
     switch self {
     case .night:
@@ -153,8 +146,6 @@ extension ProgressDaypart {
     }
   }
 
-  /// The part's hours as a short clock range, short enough to sit beside its name: "12–6 AM" and
-  /// "6 AM–12 PM" on a 12-hour clock, "00–06" and "18–24" on a 24-hour one.
   func localizedTimeRange(locale: Locale = .autoupdatingCurrent) -> String {
     let (start, end) = hours
     let clockFormat = DateFormatter.dateFormat(fromTemplate: "j", options: 0, locale: locale) ?? "H"
@@ -196,8 +187,7 @@ extension ProgressDaypart {
 }
 
 extension ProgressWeekday {
-  /// The day's full name in the learner's language, its first letter uppercase as a name on its
-  /// own reads ("Thursday", "Quinta-feira").
+  /// Capitalized, as a name on its own reads ("Quinta-feira").
   func localizedTitle(locale: Locale = .autoupdatingCurrent) -> String {
     var calendar = Calendar(identifier: .gregorian)
     calendar.locale = locale
@@ -225,8 +215,6 @@ extension ProgressWeekday {
   }
 }
 
-/// A formatted quantity with its numbers large and its units small and quiet beside them (main's
-/// `BigQuantity`): "2 hr 5 min", "90 days". A share keeps its percent sign with its number.
 func bigQuantity(_ text: String) -> Text {
   var attributed = AttributedString()
   var remainder = Substring(text)

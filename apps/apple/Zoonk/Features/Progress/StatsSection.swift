@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Statistics' stat pages, in main's order. The overview opens each one, pushed on a phone and
-/// beside it where there's room.
+/// In main's order.
 enum StatsSection: Hashable {
   case level
   case energy
@@ -34,13 +33,11 @@ enum StatsSection: Hashable {
 }
 
 extension EnvironmentValues {
-  /// Set where Statistics shows a stat beside the overview: a tile then shows its stat there
-  /// instead of pushing it.
+  /// Where it's set, a tile shows its stat beside the overview instead of pushing it.
   @Entry var statsSectionOpen: StatsSectionOpen?
 }
 
-/// The stat shown beside the overview and how a tile shows another. Two compare by the stat shown,
-/// so a new closure alone doesn't redraw the tiles.
+/// Two compare by the stat shown, so a new closure alone doesn't redraw the tiles.
 struct StatsSectionOpen: Equatable {
   let shown: StatsSection
   let open: (StatsSection) -> Void
@@ -48,8 +45,6 @@ struct StatsSectionOpen: Equatable {
   static func == (lhs: Self, rhs: Self) -> Bool { lhs.shown == rhs.shown }
 }
 
-/// The way to a stat's page from the overview: a navigation link on a phone, showing it beside the
-/// overview where there's room.
 struct StatsSectionLink<Label: View>: View {
   @Environment(\.statsSectionOpen) private var sectionOpen
 

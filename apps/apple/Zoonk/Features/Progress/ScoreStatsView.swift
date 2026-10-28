@@ -1,7 +1,6 @@
 import Charts
 import SwiftUI
 
-/// Score: its three numbers, its weekly trend and one line on what moves it.
 struct ScoreStatsView: View {
   @Environment(ProgressStore.self) private var progress
 
@@ -57,8 +56,6 @@ private struct ScoreTiles: View {
   }
 }
 
-/// The rolling Score as one weekly trend, a blue line on a 0–100 scale. A week's detail shows under
-/// the finger or pointer; VoiceOver reads every week with its answers.
 struct ScoreTrendChart: View {
   let score: ScoreProgress
 
@@ -145,8 +142,6 @@ struct ScoreTrendChart: View {
     }
     .chartXScale(range: .plotDimension(padding: 16))
     .chartXAxis {
-      // Each week's own date, as main labels its points: the first and last always, inside the
-      // chart, and the ones between give way when they'd crowd.
       AxisMarks(values: points.map(\.date)) { value in
         AxisValueLabel(
           anchor: value.index == 0

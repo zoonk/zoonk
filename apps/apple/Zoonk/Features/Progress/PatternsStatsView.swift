@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// A group of answers the patterns compare: a day of the week or a part of the day.
 protocol ScorePatternGroup: Equatable {
   var performance: ScorePerformance { get }
 }
@@ -8,23 +7,19 @@ protocol ScorePatternGroup: Equatable {
 extension WeekdayScorePattern: ScorePatternGroup {}
 extension DaypartScorePattern: ScorePatternGroup {}
 
-/// What the patterns can honestly say about one side of them (the week's days, the day's parts):
-/// which group is the best, that they're about even (within `points` of each other), or that fewer
-/// than two groups have enough answers to compare yet.
 enum PatternVerdict<Pattern: ScorePatternGroup>: Equatable {
   case best(Pattern)
   case even(points: Int)
   case notEnough
 
-  /// The answers a group needs to count, as core applies it: one lucky answer never makes a pattern.
+  /// Core's: one lucky answer never makes a pattern.
   static var minimumAnswers: Int { 10 }
 
   /// Under this many points between the best and the worst group that counts, none stands out.
   private static var evenSpread: Double { 5 }
 
-  /// Names a best group only when it stands out from others that count: a lone group has nothing
-  /// to be better than, and a lead of a few points is noise. `strongest` is core's, which already
-  /// leaves out groups with too few answers.
+  /// A lone group has nothing to be better than, and a lead of a few points is noise. `strongest` is
+  /// core's, which already leaves out groups with too few answers.
   init(groups: [Pattern], strongest: Pattern?) {
     let scores = Self.counted(groups).map(\.performance.score)
 
@@ -60,7 +55,6 @@ extension ScorePatterns {
     PatternVerdict(groups: dayparts, strongest: strongestDaypart)
   }
 
-  /// The best day's name, "Any day" when they're even, or nil before one can count.
   var bestDayName: String? {
     switch dayVerdict {
     case .best(let day):
@@ -74,7 +68,6 @@ extension ScorePatterns {
     }
   }
 
-  /// The best part of the day's name, "Any time" when they're even, or nil before one can count.
   var bestTimeName: String? {
     switch timeVerdict {
     case .best(let time):
@@ -88,7 +81,6 @@ extension ScorePatterns {
     }
   }
 
-  /// The range the counted days span in whole percents ("69–73%"), with two or more of them.
   var weekSpread: String? {
     let scores = PatternVerdict<WeekdayScorePattern>.counted(weekdays).map(\.performance.score)
 
@@ -100,8 +92,6 @@ extension ScorePatterns {
   }
 }
 
-/// Patterns: the best day and time on tiles, every day of the week and part of the day as rows on
-/// one scale (side by side on a wide screen), and the honest lines under them.
 struct PatternsStatsView: View {
   @Environment(ProgressStore.self) private var progress
 
@@ -162,7 +152,6 @@ private struct PatternTiles: View {
   }
 }
 
-/// Under a best day's or time's name: its share and answers, how close they all are, or why not yet.
 private func verdictDetail<Pattern: ScorePatternGroup>(_ verdict: PatternVerdict<Pattern>) -> Text {
   switch verdict {
   case .best(let group):
@@ -185,9 +174,7 @@ private func verdictDetail<Pattern: ScorePatternGroup>(_ verdict: PatternVerdict
   }
 }
 
-/// One day or part of the day as a row: its name (a part of the day with its hours beside it) over
-/// its answers, its share of right answers as a bar on a 0–100 scale, and the share. A group with
-/// too few answers to count stays gray, so a lucky answer never reads as a result.
+/// A group with too few answers to count stays gray, so a lucky answer never reads as a result.
 private struct PatternRow: View {
   let name: String
   var hours: String?
@@ -204,7 +191,6 @@ private struct PatternRow: View {
 
   var body: some View {
     Group {
-      // At the accessibility sizes the bar and share go under the name instead of squeezing it.
       if typeSize.isAccessibilitySize {
         VStack(alignment: .leading, spacing: 6) {
           label
@@ -283,7 +269,6 @@ private struct PatternRow: View {
   }
 }
 
-/// Every day of the week as a row, Sunday first, the best one (when one stands out) in blue.
 private struct WeekPatterns: View {
   let patterns: ScorePatterns
 
@@ -312,7 +297,6 @@ private struct WeekPatterns: View {
   }
 }
 
-/// The four parts of the day as rows with their hours, the best one (when one stands out) in blue.
 private struct DayPatterns: View {
   let patterns: ScorePatterns
 
@@ -343,8 +327,6 @@ private struct DayPatterns: View {
   }
 }
 
-/// The honest lines under the patterns: that the days (or the parts of the day) are too close to
-/// name a best, and how many answers a group needs to count.
 struct PatternsNote: View {
   let patterns: ScorePatterns
 

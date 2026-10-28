@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// A page of Statistics: its blocks down a dashboard-wide column on the grouped background, the
-/// same rhythm on every page (the tiles, the visual and the line).
 struct StatsPage<Content: View>: View {
   @ViewBuilder let content: Content
 
@@ -19,11 +17,8 @@ struct StatsPage<Content: View>: View {
   }
 }
 
-/// What a Statistics page shows for its read: the numbers, a spinner only on the first load,
-/// main's "start learning" state when there's nothing to count yet, or a retry.
 struct StatsContent<Value: Equatable & Sendable, Content: View>: View {
   let state: LoadState<Value>
-  /// Whether the loaded value has anything to count (Activity needs a study day).
   var hasNumbers: (Value) -> Bool = { _ in true }
   let retry: @MainActor () async -> Void
   @ViewBuilder let content: (Value) -> Content
@@ -44,7 +39,6 @@ struct StatsContent<Value: Equatable & Sendable, Content: View>: View {
   }
 }
 
-/// A learner with nothing to count yet is asked to start learning, with the way to Today.
 struct StatsEmpty: View {
   @Environment(AppRouter.self) private var router
 
@@ -71,7 +65,7 @@ struct StatsEmpty: View {
   }
 }
 
-/// Statistics' first load: a spinner, never a skeleton. Later visits show the cached numbers.
+/// A spinner, never a skeleton.
 struct StatsLoading: View {
   var body: some View {
     ProgressView()
@@ -121,8 +115,6 @@ struct StatsFailure: View {
   }
 }
 
-/// Two blocks side by side once the page is wide enough for both (a tablet's width at the text
-/// size it uses), stacked otherwise.
 struct StatsColumns<Content: View>: View {
   @ScaledMetric private var minimumWidth: Double
   @State private var width = 0.0
@@ -151,7 +143,6 @@ struct StatsColumns<Content: View>: View {
   }
 }
 
-/// A block of a page under its title, with an optional trailing value or link.
 struct StatsBlock<Trailing: View, Content: View>: View {
   let title: Text
   let trailing: Trailing

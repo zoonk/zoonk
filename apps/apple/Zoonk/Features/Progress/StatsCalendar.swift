@@ -1,19 +1,16 @@
 import Accessibility
 import SwiftUI
 
-/// One day of a contribution calendar: its date, its shade's step and the sentence the readout says
-/// for it ("Oct 12 · 3 activities").
 struct CalendarDay: Equatable, Sendable {
   let date: ProgressDate
   let step: Int
   let label: String
-  /// The day's number for the audio graph; nil where there's none (a day without Energy).
   let value: Double?
 }
 
 enum CalendarSteps {
-  /// Activity's relative steps (1–4), so a learner tells quieter days from busier ones even while
-  /// their counts are small; 0 is no study.
+  /// Relative steps, so a learner tells quieter days from busier ones even while their counts are
+  /// small.
   static func activity(_ count: Int, maximum: Int) -> Int {
     guard count > 0, maximum > 0 else {
       return 0
@@ -22,7 +19,6 @@ enum CalendarSteps {
     return max(1, Int((Double(count) / Double(maximum) * 4).rounded(.up)))
   }
 
-  /// Energy's fixed 25-point steps (1–4), the fifth only for full Energy; 0 is none recorded.
   static func energy(_ energy: Double?) -> Int {
     guard let energy, energy > 0 else {
       return 0
@@ -31,13 +27,11 @@ enum CalendarSteps {
     return energy >= 100 ? 5 : Int((energy / 25).rounded(.up))
   }
 
-  /// The day the readout starts on: the newest with something on it, else the newest.
   static func defaultIndex(_ days: [CalendarDay]) -> Int {
     days.lastIndex { $0.step > 0 } ?? max(days.count - 1, 0)
   }
 
-  /// The day a key moves to, in the grid's column-major order: up and down a day within its week,
-  /// left and right a week; at an edge it stays.
+  /// The grid is column-major: up and down move a day within its week, left and right a week.
   static func index(from index: Int, key: KeyEquivalent, count: Int) -> Int {
     let weekday = index % 7
 
@@ -56,22 +50,15 @@ enum CalendarSteps {
   }
 }
 
-/// A year of days as small squares, the way contribution charts look, read one day at a time: the
-/// readout under the grid says the day tapped, hovered or reached with the arrow keys (VoiceOver
-/// swipes up and down through the days). The grid is one control, so the squares stay small
-/// without hundreds of tiny targets. Days come Sunday first, seven to a column.
+/// The grid is one control, so the squares stay small without hundreds of tiny targets.
 struct StatsCalendar: View {
   let title: Text
-  /// What the grid shows, as VoiceOver names it ("Activity by day").
   let gridLabel: Text
-  /// The key read as one phrase ("Activity from less to more").
   let legendLabel: Text
   let low: Text
   let high: Text
-  /// One color per step, from none to the most.
   let shades: [Color]
   let days: [CalendarDay]
-  /// The audio graph's title and its one-line summary.
   let chartTitle: String
   let chartSummary: String
 
@@ -91,8 +78,6 @@ struct StatsCalendar: View {
     (days.count + 6) / 7
   }
 
-  /// With room, the year fills the width at 10–16pt a square; narrower, it keeps 20pt squares to
-  /// tap and scrolls from its newest edge.
   private var cell: Double {
     let fitted = ((width - 2 * ringInset + gap) / Double(max(weeks, 1)) - gap).rounded(.down)
     return fitted >= 10 ? min(fitted, 16) : 20
@@ -102,7 +87,6 @@ struct StatsCalendar: View {
     gridWidth(step: cell + gap) <= width
   }
 
-  /// The distance from one week to the next: a year that fits spreads its weeks across the width.
   private var step: Double {
     guard fits, weeks > 1 else {
       return cell + gap
@@ -155,7 +139,6 @@ struct StatsCalendar: View {
   }
 
   private var legend: some View {
-    // At the largest text sizes the words keep whole and the squares give way.
     HStack(spacing: 4) {
       low.fixedSize()
 
@@ -240,8 +223,7 @@ struct StatsCalendar: View {
       CalendarChartDescriptor(title: chartTitle, summary: chartSummary, days: days))
   }
 
-  /// The scrolling viewport, a whole number of weeks wide from its newest edge, so no week is cut
-  /// at its oldest edge (the gap before the first week shown stays inside it).
+  /// A whole number of weeks, so no week is cut at the oldest edge.
   private var wholeWeeksWidth: Double {
     let columns = max(((width - ringInset) / (cell + gap)).rounded(.down), 1)
     return columns * (cell + gap) + ringInset
@@ -258,8 +240,7 @@ struct StatsCalendar: View {
       width: cell, height: cell)
   }
 
-  /// A month's short name over the week holding its first day; not over the first two weeks, where
-  /// a partial month would crowd the next, and the last week's ends at the grid's edge.
+  /// Not over the first two weeks, where a partial month would crowd the next.
   private var monthLabels: [(week: Int, text: String, isLast: Bool)] {
     var utc = Calendar(identifier: .gregorian)
     utc.timeZone = .gmt
@@ -294,7 +275,6 @@ struct StatsCalendar: View {
   }
 }
 
-/// The calendar as VoiceOver's audio graph and chart summary: one point per day.
 private struct CalendarChartDescriptor: AXChartDescriptorRepresentable {
   let title: String
   let summary: String
@@ -331,8 +311,6 @@ private struct CalendarChartDescriptor: AXChartDescriptorRepresentable {
   }
 }
 
-/// Formats a calendar's days as its readout says them ("Oct 12"), keeping the API's date-only
-/// value, with the year only for a day in an earlier year than the newest one.
 func calendarDayFormatter(newest: ProgressDate?) -> (ProgressDate) -> String {
   var sameYear = Date.FormatStyle.dateTime.month(.abbreviated).day()
   sameYear.timeZone = .gmt

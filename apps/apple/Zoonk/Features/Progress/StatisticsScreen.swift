@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// The learner's statistics, opened from the level button or the sidebar's Study places. Every
-/// number covers all of the learner's goals. It opens on the overview: on a phone each stat is a
-/// tap from its page; where there's room, the stat a tile picks (Level first) shows beside it.
+/// Every number covers all of the learner's goals.
 struct StatisticsScreen: View {
   @State private var detail = StatsSection.level
 
@@ -29,8 +27,6 @@ struct StatisticsScreen: View {
     }
   }
 
-  /// A stat's page pushed on a phone, under its own title; Patterns says what it covers, since its
-  /// title alone doesn't.
   @ViewBuilder
   private func pushed(_ section: StatsSection) -> some View {
     if section == .patterns {
@@ -63,10 +59,6 @@ struct StatisticsScreen: View {
   }
 }
 
-/// Statistics at a glance: four numbers on tiles (the level, Energy, study days and right answers,
-/// each opening its page), the past 12 months of study, then on a wide screen Score's trend beside
-/// the best day and time (one Patterns row on a phone). Learners who haven't studied yet are asked
-/// to start.
 private struct StatsOverview: View {
   @Environment(\.horizontalSizeClass) private var sizeClass
   @Environment(ProgressStore.self) private var progress
@@ -208,7 +200,6 @@ private struct OverviewTiles: View {
   }
 }
 
-/// A tile as the way to its stat's page, the whole tile the target.
 private struct TileLink<Tile: View>: View {
   let section: StatsSection
   @ViewBuilder let tile: Tile
@@ -226,7 +217,6 @@ private struct TileLink<Tile: View>: View {
   }
 }
 
-/// Rings the way to the stat shown beside the overview, as a list marks its selected row.
 private struct StatsSelection<Outline: InsettableShape>: ViewModifier {
   @Environment(\.statsSectionOpen) private var sectionOpen
 
@@ -246,7 +236,6 @@ private struct StatsSelection<Outline: InsettableShape>: ViewModifier {
   }
 }
 
-/// Score's weekly trend on a wide screen, under its window and its number.
 private struct ScoreTrend: View {
   let score: ScoreProgress?
 
@@ -282,8 +271,6 @@ extension ScoreTrend {
   }
 }
 
-/// The best day and time on a wide screen as rows (named only when one stands out), the range of
-/// the week, and the honest lines under them, with the way to the full patterns.
 private struct PatternsOverview: View {
   let patterns: ScorePatterns?
 
@@ -362,7 +349,6 @@ private struct PatternsOverview: View {
   }
 }
 
-/// On a phone, the patterns as one row: the best day and time, opening the full patterns.
 private struct PatternsLinkRow: View {
   @Environment(\.dynamicTypeSize) private var typeSize
 
@@ -378,7 +364,6 @@ private struct PatternsLinkRow: View {
   var body: some View {
     StatsSectionLink(section: .patterns) {
       HStack(spacing: 12) {
-        // At the accessibility sizes the value goes under the name instead of squeezing it.
         let layout =
           typeSize.isAccessibilitySize
           ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))

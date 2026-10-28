@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// Energy: its three numbers (now, its average and the days at full), the past 12 months in its
-/// yellow, and one line on how it moves.
 struct EnergyStatsView: View {
   @Environment(ProgressStore.self) private var progress
 
@@ -58,15 +56,14 @@ private struct EnergyTiles: View {
   }
 }
 
-/// "12 days", as every tile counts days.
 func dayCount(_ count: Int) -> String {
   count == 0
     ? String(localized: "0 days", table: "Progress", comment: "A count of no days")
     : String(localized: "\(count) days", table: "Progress", comment: "A count of days")
 }
 
-/// Energy over the past 12 months in its yellow, softened at every step: most days sit in the upper
-/// steps, and at full strength they'd be the loudest thing on a quiet page.
+/// Softened at every step: most days sit in the upper steps, and at full strength they'd be the
+/// loudest thing on a quiet page.
 private struct EnergyCalendar: View {
   let energy: EnergyProgress
 

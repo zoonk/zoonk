@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// Level: its three numbers, the learner's belt drawn with every belt on a rack under it, and one
-/// line on how Brain Power grows.
 struct LevelStatsView: View {
   @Environment(ProgressStore.self) private var progress
 
@@ -46,9 +44,8 @@ private struct LevelTiles: View {
     }
   }
 
-  /// How much more Brain Power the next level takes, its bar showing how far into this one the
-  /// learner is. After a belt's tenth level the next one is the next belt's first, so the tile names
-  /// that belt instead of an eleventh level.
+  /// After a belt's tenth level the next one is the next belt's first, so the tile names that belt
+  /// instead of an eleventh level.
   @ViewBuilder
   private var nextLevelTile: some View {
     if level.isMaxLevel {
@@ -65,7 +62,6 @@ private struct LevelTiles: View {
     } else {
       StatTile(
         label: nextLevelLabel,
-        // What the number counts, quiet beside it, as the tile beside it names Brain Power.
         value: bigQuantity(
           "\(level.bpToNextLevel.formatted()) \(String(localized: "Brain Power", table: "Progress", comment: "Brain Power, the points every lesson earns"))"
         ),
@@ -123,14 +119,12 @@ private struct LevelTiles: View {
 }
 
 extension LevelProgress {
-  /// How far into the current level the learner is, from 0 to 1 (full at the last level).
+  /// From 0 to 1, full at the last level.
   var share: Double {
     isMaxLevel ? 1 : min(max(Double(progressInLevel) / Double(max(bpPerLevel, 1)), 0), 1)
   }
 }
 
-/// The learner's belt drawn as a belt, its stripes counting the levels reached, beside what the
-/// next belt takes; under it, every belt on a rack.
 private struct BeltProgression: View {
   @Environment(\.horizontalSizeClass) private var sizeClass
 
@@ -197,8 +191,6 @@ private struct BeltProgression: View {
   }
 }
 
-/// What the next belt takes: its name and the Brain Power where it starts, and how much more that
-/// is; on Black, that every belt is earned.
 private struct NextBeltView: View {
   let level: LevelProgress
   let alignment: HorizontalAlignment

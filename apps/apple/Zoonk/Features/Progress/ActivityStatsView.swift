@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Activity: its three numbers (study days, lessons and time) and the past 12 months that light the
-/// study days. Any learning day counts, a day of only reviews or practice too.
+/// Any learning day counts, a day of only reviews or practice too.
 struct ActivityStatsView: View {
   @Environment(ProgressStore.self) private var progress
 
@@ -56,8 +55,6 @@ private struct ActivityTiles: View {
   }
 }
 
-/// The learning days of the past 12 months, lit by how much was finished each day (lessons,
-/// reviews and practice), with the key to its shades on its title row.
 struct ActivityCalendar: View {
   let days: [ActivityProgressDay]
 

@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// A stat's color, on its icon (main's `StatTile` tones): blue for progress made, yellow for
-/// Energy, indigo for Brain Power (its number too); time and counts stay neutral.
 enum StatTone {
   case brain
   case energy
@@ -22,18 +20,14 @@ enum StatTone {
   }
 }
 
-/// One number on its tile: the icon in its stat's color and what it counts as a quiet label on
-/// top, the number as a readout under it (units small beside it), and an optional quiet line or
-/// meter. VoiceOver reads it as one element: its label, then the number and the line as its value.
 struct StatTile<Icon: View>: View {
   let label: Text
   let value: Text
   var tone = StatTone.neutral
   @ViewBuilder let icon: Icon
   var detail: Text?
-  /// A share from 0 to 1 as a thin bar under the number (how far into the level), decorative.
+  /// From 0 to 1.
   var meter: Double?
-  /// The number as VoiceOver says it, where it reads differently from how it shows ("175 of 247").
   var spokenValue: Text?
 
   var body: some View {
@@ -103,13 +97,9 @@ extension StatTile where Icon == Image {
   }
 }
 
-/// A few tiles side by side, as many a row as `columns` allows at the width (the first count that
-/// fits), with every tile in a row as tall as the tallest. A last row with fewer tiles spreads them
-/// across it, so an odd third tile takes the whole row on a phone.
 struct StatTileGrid: Layout {
-  /// The column counts to try, widest first ([4, 2, 1] on the overview, [3, 2, 1] on a page).
+  /// Widest first.
   let columns: [Int]
-  /// The narrowest a tile may get before the grid drops to fewer columns.
   let minimumWidth: CGFloat
   var spacing: CGFloat = 8
 
@@ -160,8 +150,7 @@ struct StatTileGrid: Layout {
   }
 }
 
-/// The belt as a dot in its own color, ringed so White shows on a light page and Black on a dark
-/// one (main's `BeltIndicator`).
+/// Ringed so White shows on a light page and Black on a dark one.
 struct BeltDot: View {
   let belt: ProgressBelt
   @ScaledMetric(relativeTo: .caption) private var size = 10.0
@@ -175,7 +164,6 @@ struct BeltDot: View {
   }
 }
 
-/// A stat page's one plain line under its visual: what moves the number.
 struct StatsLine: View {
   let text: Text
 
