@@ -7,6 +7,7 @@ import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import {
   DAY_MS,
   SESSION_NOW,
+  SESSION_TODAY,
   checkpointItemFixture,
   sessionGoalFixture,
 } from "../sessions/_test-utils/session-goal";
@@ -110,6 +111,11 @@ describe("a lost duel's actual reinforcement lessons", () => {
       status: "ready",
     });
 
+    // The lost duel's new try is tomorrow, in the saved plan as well.
+    await expect(
+      prisma.planItem.findUniqueOrThrow({ select: { scheduledFor: true }, where: { id: boss.id } }),
+    ).resolves.toStrictEqual({ scheduledFor: new Date(SESSION_TODAY.getTime() + DAY_MS) });
+
     vi.setSystemTime(new Date(SESSION_NOW.getTime() + DAY_MS));
     const tomorrow = await getTodayStudySession({ goalId: fixture.goal.id });
 
@@ -118,12 +124,6 @@ describe("a lost duel's actual reinforcement lessons", () => {
     }
 
     expect(tomorrow.session.blocks.filter((entry) => entry.reinforcement)).toHaveLength(count);
-
-    // Every lesson of the missed skill held back, the plan teaches that skill again before its
-    // phase's challenge, so the rematch waits for the new lesson.
-    if (count === 0) {
-      return;
-    }
 
     expect(tomorrow.session.blocks.at(-1)?.checkpoint).toMatchObject({
       kind: final ? "finalBoss" : "boss",

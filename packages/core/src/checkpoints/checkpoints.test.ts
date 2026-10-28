@@ -291,7 +291,6 @@ describe("phase checkpoint (boss)", () => {
     expect(learn.map((candidate) => [candidate.lessonId, candidate.reinforcement])).toStrictEqual([
       [lessons[0]?.id, true],
       [lessons[1]?.id, true],
-      [lessons[2]?.id, false],
     ]);
 
     expect(tomorrow.session.blocks.at(-1)).toMatchObject({
@@ -431,11 +430,10 @@ describe("phase checkpoint (boss)", () => {
 
     const learn = tomorrow.session.blocks.filter((block) => block.kind === "learn");
 
-    // The duel's missed skills come back first; the next phase keeps going, never locked.
+    // The duel's missed skills come back first, then the rematch closes the phase.
     expect(learn.map((block) => [block.lessonId, block.reinforcement])).toStrictEqual([
       [lessons[0]?.id, true],
       [lessons[1]?.id, true],
-      [lessons[2]?.id, false],
     ]);
 
     expect(tomorrow.session.blocks.at(-1)).toMatchObject({
@@ -444,6 +442,11 @@ describe("phase checkpoint (boss)", () => {
     });
 
     expect(tomorrow.session.localDate).toStrictEqual(new Date(SESSION_TODAY.getTime() + DAY_MS));
+
+    // The next phase keeps going after it, never locked: its lesson stays planned after the rematch.
+    const next = await prisma.planItem.findFirstOrThrow({ where: { lessonId: lessons[2]?.id } });
+    expect(next.status).toBe("todo");
+    expect(next.scheduledFor?.getTime()).toBeGreaterThan(SESSION_TODAY.getTime() + DAY_MS);
   });
 
   // r16-seed's thin bank: a phase whose skills held fewer than five questions lost its challenge

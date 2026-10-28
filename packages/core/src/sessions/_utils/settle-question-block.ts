@@ -22,7 +22,7 @@ import { countAskableQuestions } from "./askable-questions";
 import { getBlockEvents } from "./block-events";
 import { getBlockElapsedMs, pausedBlockTiming } from "./block-timing";
 import { loadBlockSkillStates } from "./load-block-skill-states";
-import { completePlanItem } from "./plan-items";
+import { completePlanItem, moveLostCheckpoint } from "./plan-items";
 import { type SessionAnswer, getBlockAnswers, loadSessionAnswers } from "./session-answers";
 import { trackBlockCompleted } from "./session-events";
 import { type ProgressChange, applySessionProgress } from "./session-progress";
@@ -321,15 +321,16 @@ export async function settleQuestionBlock(input: SettleInput): Promise<SettleQue
         ),
       );
 
-      // A checkpoint won, a weekly challenge finished or a review day practiced checks its item off.
+      // A checkpoint won, a weekly challenge finished or a review day practiced checks its item off;
+      // a phase checkpoint lost moves to tomorrow, its new try.
       const done = checkpoint ? checkpoint.passed || checkpoint.kind === "weekly" : true;
 
-      if (payload.planItemId && done) {
-        await completePlanItem(tx, {
-          now: lock.completedAt,
-          planItemId: payload.planItemId,
-          userId,
-        });
+      if (payload.planItemId) {
+        const item = { planItemId: payload.planItemId, userId };
+
+        await (done
+          ? completePlanItem(tx, { ...item, now: lock.completedAt })
+          : moveLostCheckpoint(tx, { ...item, localDate: session.localDate }));
       }
 
       return {

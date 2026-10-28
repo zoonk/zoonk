@@ -1,4 +1,5 @@
 import { type TransactionClient } from "@zoonk/db";
+import { MS_PER_DAY } from "@zoonk/utils/date";
 import { after } from "next/server";
 import { trackLessonCanDos } from "../../language/units/can-do-events";
 import { readPlanSummary, reduceCompletedSummary } from "../../plans/_utils/plan-summary";
@@ -64,6 +65,20 @@ export async function completePlanItem(
   });
 
   await reduceCompletedPlans(tx, { checked, userId });
+}
+
+/**
+ * A phase checkpoint lost today is tried again tomorrow, as its result says: its item moves to the
+ * day after `localDate`, so the plan run after the loss lays the rematch there.
+ */
+export async function moveLostCheckpoint(
+  tx: TransactionClient,
+  { localDate, planItemId, userId }: { localDate: Date; planItemId: string; userId: string },
+) {
+  await tx.planItem.updateMany({
+    data: { scheduledFor: new Date(localDate.getTime() + MS_PER_DAY) },
+    where: { id: planItemId, plan: { goal: { userId } }, status: "todo" },
+  });
 }
 
 /** A language goal whose plan just checked a lesson off: its unit may reach its "I can" checks. */
