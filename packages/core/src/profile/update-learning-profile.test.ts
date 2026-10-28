@@ -19,7 +19,6 @@ async function useLearner() {
 
 const INVALID_DAILY_LIMIT = 32_768;
 
-/** The input version of each of the learner's plans, in id order. */
 async function planInputs(userId: string) {
   const plans = await prisma.plan.findMany({
     orderBy: { id: "asc" },
@@ -53,7 +52,6 @@ async function plannedLearner(isAnonymous = false) {
   return { goals, user };
 }
 
-/** Observe the PostgreSQL lock wait instead of guessing when the profile write reached it. */
 async function waitForBlockedBy(holderPID: number) {
   await vi.waitFor(async () => {
     const [row] = await prisma.$queryRaw<{ blocked: boolean }[]>`
@@ -207,7 +205,7 @@ describe(updateLearningProfile, () => {
   it("rolls back the plan marks when PostgreSQL rejects the profile write", async () => {
     const { user } = await plannedLearner();
     await learningProfileFixture({ dailyLimitMinutes: 30, userId: user.id });
-    /** Bypass delivery validation to produce a real SMALLINT failure after admission. */
+
     await expect(
       updateLearningProfile({ dailyLimitMinutes: INVALID_DAILY_LIMIT }),
     ).rejects.toThrow();

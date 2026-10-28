@@ -4,7 +4,7 @@ import { type LearningProfileView } from "../learning-profile-contract";
 
 const STARTER_GLASSES = DEFAULT_BUDDY.glasses;
 
-/** Round comes with every buddy; other frames are earned as glasses milestones keyed by the frame. */
+/** Round glasses are always available; other frames require their matching milestone. */
 export async function listAvailableGlasses(userId: string): Promise<BuddyGlasses[]> {
   const milestones = await prisma.milestone.findMany({
     select: { key: true },
@@ -18,7 +18,6 @@ export async function listAvailableGlasses(userId: string): Promise<BuddyGlasses
   );
 }
 
-/** A learner without a saved choice gets the default buddy. */
 function toLearningProfileView({
   availableGlasses,
   profile,
@@ -35,7 +34,7 @@ function toLearningProfileView({
   };
 }
 
-/** A GET supplies its canonical fact; the omitted write-response input always reads fresh. */
+/** GETs supply their request fact; write responses omit it for a fresh read. */
 export async function findLearningProfileView(
   userId: string,
   knownProfile?: UserLearningProfile | null | Promise<UserLearningProfile | null>,

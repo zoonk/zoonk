@@ -15,7 +15,6 @@ export type LearningProfileUpdateResult =
   | { profile: LearningProfileView; status: "updated" }
   | { status: "glassesNotEarned" | "goalNotFound" | "unauthorized" };
 
-/** A buddy is set as a whole: its kind, an optional name and glasses (round unless earned ones). */
 function getBuddyData(buddy: LearningProfileUpdateInput["buddy"]) {
   if (buddy === undefined) {
     return {};
@@ -43,7 +42,7 @@ function getProfileData(input: LearningProfileUpdateInput) {
 
 type ProfileData = ReturnType<typeof getProfileData>;
 
-/** Unsaved defaults are a view, not a reason to create a row or mark plan inputs. */
+/** Showing unsaved defaults must not create rows or change plan inputs. */
 const UNSAVED_PROFILE = {
   activeGoalId: null,
   buddyGlasses: DEFAULT_BUDDY.glasses,
@@ -81,7 +80,6 @@ async function hasEarnedGlasses({ glasses, userId }: { glasses: BuddyGlasses; us
   return available.includes(glasses);
 }
 
-/** Learners can switch to any of their goals that isn't archived. */
 async function isSelectableGoal({ goalId, userId }: { goalId: string; userId: string }) {
   const goal = await prisma.goal.findFirst({
     select: { id: true },
@@ -113,7 +111,6 @@ async function findInvalidField({
   return goalAllowed ? null : "goalNotFound";
 }
 
-/** Saves what a screen changed on the learner's profile. */
 export async function updateLearningProfile(
   input: LearningProfileUpdateInput,
 ): Promise<LearningProfileUpdateResult> {

@@ -37,7 +37,7 @@ function hasProfileField(input: Record<string, unknown>) {
   return Object.values(input).some((value) => value !== undefined);
 }
 
-/** Every field is optional so each screen (onboarding, Appearance, the tabs) sends only what changed. */
+/** Omitted fields preserve current settings, allowing independent screen updates. */
 export const learningProfileUpdateSchema = z
   .object({
     activeGoalId: z
@@ -67,13 +67,11 @@ export const learningProfileUpdateSchema = z
 
 export type LearningProfileUpdateInput = z.infer<typeof learningProfileUpdateSchema>;
 
-/** What every screen and the API read about a learner's profile. */
 export type LearningProfileView = {
   activeGoalId: string | null;
   availableGlasses: BuddyGlasses[];
   /** The learner's own daily study limit in minutes, or null for none. */
   dailyLimitMinutes: number | null;
   buddy: ResolvedBuddy;
-  /** On until the learner turns them off in Appearance. */
   soundsEnabled: boolean;
 };

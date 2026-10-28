@@ -1,8 +1,6 @@
-/** The API accepts any daily limit from a short session to a long study day. */
 export const MIN_DAILY_LIMIT_MINUTES = 10;
 export const MAX_DAILY_LIMIT_MINUTES = 480;
 
-/** The daily limits Appearance offers, in minutes. Client-safe: no database imports. */
 const DAILY_LIMIT_CHOICE_MINUTES = {
   halfHour: 30,
   hour: 60,

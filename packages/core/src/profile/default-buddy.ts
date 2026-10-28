@@ -8,7 +8,7 @@ export type ResolvedBuddy = {
   picked: boolean;
 };
 
-/** Every learner has Zu until they choose a buddy; reading the default never saves a choice. */
+/** Reading the default never persists a buddy choice. */
 export const DEFAULT_BUDDY: ResolvedBuddy = {
   glasses: "round",
   kind: "zu",

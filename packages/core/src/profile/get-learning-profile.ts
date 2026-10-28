@@ -6,10 +6,7 @@ import { getSession } from "../users/get-session";
 import { findLearningProfileView } from "./_utils/learning-profile-view";
 import { type LearningProfileView } from "./learning-profile-contract";
 
-/**
- * Reads the signed-in learner's (or guest's) buddy, age answer, settings and active goal. The apps
- * and the API read this same view.
- */
+/** Returns null without a learner or guest session. */
 export async function getLearningProfile(): Promise<LearningProfileView | null> {
   "use cache: private";
 
