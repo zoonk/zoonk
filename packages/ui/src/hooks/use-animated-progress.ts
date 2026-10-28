@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { getDriftedProgress } from "./_utils/drift-progress";
 
-const PRECISION = 10;
+const TENTHS_PER_PERCENT = 10;
 
 const STEP_MS = 1000;
 
@@ -39,7 +39,7 @@ export function useAnimatedProgress({
       const value = getDriftedProgress({ base, elapsedMs, estimatedMs, target });
 
       shownRef.current = value;
-      setDisplay(Math.floor(value * PRECISION) / PRECISION);
+      setDisplay(Math.floor(value * TENTHS_PER_PERCENT) / TENTHS_PER_PERCENT);
     }
 
     const first = setTimeout(step, 0);
