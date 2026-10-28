@@ -101,6 +101,20 @@ export const languageGoalPaths = {
       summary: "List a language goal's units",
     },
   },
+  "/goals/{goalId}/mistake-pattern": {
+    get: {
+      ...common,
+      description:
+        "The pattern the mistakes notebook offers beside a goal's mistakes: a language goal's pattern noticed in recent mistakes, not practiced or dismissed yet, or null for any other goal.",
+      operationId: "getGoalMistakePattern",
+      requestParams: { path: goalPathParamsSchema },
+      responses: {
+        "200": jsonResponse(goalMistakePatternSchema, "The notebook's pattern"),
+        ...readErrors,
+      },
+      summary: "Get the notebook's mistake pattern",
+    },
+  },
   "/goals/{goalId}/speaking-paper": {
     get: {
       ...common,
@@ -199,20 +213,6 @@ export const languageGoalPaths = {
         ...readErrors,
       },
       summary: "Say the level test's sentence",
-    },
-  },
-  "/goals/{goalId}/mistake-pattern": {
-    get: {
-      ...common,
-      description:
-        "The pattern the mistakes notebook offers beside a goal's mistakes: a language goal's pattern noticed in recent mistakes, not practiced or dismissed yet, or null for any other goal.",
-      operationId: "getGoalMistakePattern",
-      requestParams: { path: goalPathParamsSchema },
-      responses: {
-        "200": jsonResponse(goalMistakePatternSchema, "The notebook's pattern"),
-        ...readErrors,
-      },
-      summary: "Get the notebook's mistake pattern",
     },
   },
   "/language-units/{chapterId}": {

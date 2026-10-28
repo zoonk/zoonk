@@ -4706,6 +4706,100 @@
         }
       }
     },
+    "/goals/{goalId}/mistake-pattern": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "Language"
+        ],
+        "description": "The pattern the mistakes notebook offers beside a goal's mistakes: a language goal's pattern noticed in recent mistakes, not practiced or dismissed yet, or null for any other goal.",
+        "operationId": "getGoalMistakePattern",
+        "summary": "Get the notebook's mistake pattern",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The notebook's pattern",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GoalMistakePattern"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request is valid but cannot be applied to the resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/goals/{goalId}/speaking-paper": {
       "get": {
         "security": [
@@ -5339,100 +5433,6 @@
           },
           "429": {
             "description": "`SLOW_DOWN`: try again after `Retry-After`; or a Plus learner reached today's AI budget (`USAGE_LIMIT_REACHED`), back tomorrow",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/goals/{goalId}/mistake-pattern": {
-      "get": {
-        "security": [
-          {
-            "bearerAuth": []
-          },
-          {
-            "cookieAuth": []
-          }
-        ],
-        "tags": [
-          "Language"
-        ],
-        "description": "The pattern the mistakes notebook offers beside a goal's mistakes: a language goal's pattern noticed in recent mistakes, not practiced or dismissed yet, or null for any other goal.",
-        "operationId": "getGoalMistakePattern",
-        "summary": "Get the notebook's mistake pattern",
-        "parameters": [
-          {
-            "in": "path",
-            "name": "goalId",
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
-              "description": "Goal ID"
-            },
-            "required": true,
-            "description": "Goal ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The notebook's pattern",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/GoalMistakePattern"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Authentication required",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "The request is valid but cannot be applied to the resource",
             "content": {
               "application/json": {
                 "schema": {
@@ -34858,6 +34858,43 @@
         ],
         "additionalProperties": false
       },
+      "GoalMistakePattern": {
+        "type": "object",
+        "properties": {
+          "pattern": {
+            "nullable": true,
+            "description": "A language goal's pattern noticed in recent mistakes, not practiced or dismissed yet; open it with GET /v1/mistake-patterns/{patternId}. Null for any other goal, and when one of the day's missions already opens it",
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "pattern",
+                  "typos"
+                ]
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "kind",
+              "title"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "pattern"
+        ],
+        "additionalProperties": false
+      },
       "LanguageLevelTest": {
         "oneOf": [
           {
@@ -35214,43 +35251,6 @@
         "required": [
           "heard",
           "test"
-        ],
-        "additionalProperties": false
-      },
-      "GoalMistakePattern": {
-        "type": "object",
-        "properties": {
-          "pattern": {
-            "nullable": true,
-            "description": "A language goal's pattern noticed in recent mistakes, not practiced or dismissed yet; open it with GET /v1/mistake-patterns/{patternId}. Null for any other goal, and when one of the day's missions already opens it",
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "string",
-                "format": "uuid",
-                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-              },
-              "kind": {
-                "type": "string",
-                "enum": [
-                  "pattern",
-                  "typos"
-                ]
-              },
-              "title": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "id",
-              "kind",
-              "title"
-            ],
-            "additionalProperties": false
-          }
-        },
-        "required": [
-          "pattern"
         ],
         "additionalProperties": false
       },
