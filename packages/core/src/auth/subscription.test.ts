@@ -5,10 +5,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getSession } from "../users/get-session";
 import { getActiveSubscription, hasActiveSubscription } from "./subscription";
 
-/**
- * Authenticates one fixture user so subscription reads exercise the same
- * identity boundary used by web and API callers.
- */
 async function authenticateFixtureUser() {
   const user = await userFixture();
   vi.mocked(getSession, { partial: true }).mockResolvedValue({ user });
@@ -98,7 +94,7 @@ describe(getActiveSubscription, () => {
 
     const entered = Promise.withResolvers<null>();
     const request = Promise.withResolvers<null>();
-    /** The real DB stays in use; only Next's request boundary has no request in Vitest. */
+
     const boundary = vi.spyOn(nextCache, "io").mockImplementationOnce(async () => {
       entered.resolve(null);
       await request.promise;

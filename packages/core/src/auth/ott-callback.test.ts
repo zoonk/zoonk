@@ -2,7 +2,6 @@ import { type NextRequest } from "next/server";
 import { describe, expect, it } from "vitest";
 import { verifyOneTimeTokenCallback } from "./ott-callback";
 
-/** Missing state exercises rejection before Better Auth or any token redemption can run. */
 function callbackRequest(path: string): NextRequest {
   return {
     cookies: { get: () => {} },

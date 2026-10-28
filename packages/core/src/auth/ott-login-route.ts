@@ -9,16 +9,11 @@ import {
   createLoginState,
 } from "./ott-state";
 
-/** A proxy appends its own value to a forwarded header (`a, b`); the first is the browser's. */
 function getFirstHeaderValue({ name, request }: { name: string; request: Request }) {
   return request.headers.get(name)?.split(",")[0]?.trim() || null;
 }
 
-/**
- * The origin in the browser's address bar. Behind a proxy (Vercel, or Portless in development) the
- * server is reached at another address, so the forwarded host and protocol say which one the
- * learner is on: the callback has to come back to the origin that holds the state cookie.
- */
+/** Forwarded headers identify the browser origin behind proxies; the callback must return to its state cookie. */
 export function getBrowserOrigin(request: Request): string {
   const url = new URL(request.url);
 
@@ -31,10 +26,7 @@ export function getBrowserOrigin(request: Request): string {
   return host ? `${protocol}://${host}` : url.origin;
 }
 
-/**
- * Scoped to the whole app, not `/login`, so the callback can read it. Scripts never need it, so
- * it's out of their reach.
- */
+/** The callback needs the cookie outside `/login`; scripts never need access. */
 function getLoginStateCookie({ secure, state }: { secure: boolean; state: string }): string {
   return [
     `${ONE_TIME_TOKEN_LOGIN_STATE_COOKIE}=${state}`,
@@ -46,12 +38,7 @@ function getLoginStateCookie({ secure, state }: { secure: boolean; state: string
   ].join("; ");
 }
 
-/**
- * Starts sign-in from an app's `/login` route, before anything renders: it binds a new state to this
- * browser with a cookie and answers with central auth's login page, whose callback comes back to
- * `callbackPath` with that state. `expired` says there that the last sign-in couldn't finish. A
- * `<Link>` to `/login` gets the router's document fallback, so only the page load binds a state.
- */
+/** A route-based login binds state only on a document navigation, including a Link's document fallback. */
 export function startOneTimeTokenLogin({
   callbackPath,
   expired = false,

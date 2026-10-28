@@ -1,12 +1,7 @@
 const FIRST_PRINTABLE_ASCII = 32;
 const ASCII_DELETE = 127;
 
-/**
- * Accepts only app-relative paths that browsers cannot reinterpret as
- * network-path references. Backslashes are rejected because URL parsers
- * normalize them as slashes, so `/\evil.com` can become `//evil.com`. ASCII controls are rejected
- * because browsers strip tabs and newlines before resolving a Location header.
- */
+/** Browsers normalize backslashes to slashes and strip tabs and newlines when resolving redirect URLs. */
 export function getSafeAppRelativePath(
   nextPath: string | string[] | undefined | null,
 ): string | null {
