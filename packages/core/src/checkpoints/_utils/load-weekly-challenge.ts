@@ -75,7 +75,7 @@ async function loadMockItems({
   };
 }
 
-/** Skills the learner answered on in the last week: what a weekly challenge brings together. */
+/** Skills answered on in the last week, in plan order so rebuilding keeps the same questions. */
 export async function loadWeekSkillIds({
   now,
   skillIds,
@@ -95,7 +95,8 @@ export async function loadWeekSkillIds({
     },
   });
 
-  return rows.flatMap((row) => (row.skillId ? [row.skillId] : []));
+  const answered = new Set(rows.map((row) => row.skillId));
+  return skillIds.filter((skillId) => answered.has(skillId));
 }
 
 /**
