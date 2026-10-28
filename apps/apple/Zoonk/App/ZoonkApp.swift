@@ -66,17 +66,9 @@ struct ZoonkApp: App {
     _voice = State(initialValue: dependencies.voice)
   }
 
-  @ViewBuilder private var rootView: some View {
-    #if DEBUG
-      if CodeActivityFixture.enabled { CodeActivityFixture() } else { AppView() }
-    #else
-      AppView()
-    #endif
-  }
-
   var body: some Scene {
     WindowGroup {
-      rootView
+      AppView()
         #if DEBUG
           .modifier(DebugLessonLaunch())
           // Inside the environment below, so the gallery's screens get the app's renderers.
