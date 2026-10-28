@@ -8,6 +8,7 @@ struct MindMapsScreen: View {
   /// Tiles grow with the text, so large text gets fewer, wider columns.
   @ScaledMetric(relativeTo: .body) private var tileWidth = 160.0
   @Environment(MindMapsStore.self) private var store
+  @State private var gridSpace = PaneSpace(width: 0)
 
   var body: some View {
     if let goal = learner.summary.value?.shownGoal {
@@ -20,6 +21,21 @@ struct MindMapsScreen: View {
         .toolbarTitleDisplayMode(.inlineLarge)
         .loads(list)
     }
+  }
+
+  /// One tile a row at accessibility text sizes, where a scaled tile is wider than a phone; as many
+  /// as fit otherwise, the same number on each side of iPhone Duo's fold while it's partially
+  /// folded.
+  private var columns: [GridItem] {
+    if dynamicTypeSize.isAccessibilitySize {
+      return [GridItem(.flexible())]
+    }
+
+    guard let fold = gridSpace.columnsAroundFold(minimum: tileWidth, spacing: 16) else {
+      return [GridItem(.adaptive(minimum: tileWidth), spacing: 16)]
+    }
+
+    return fold.map { GridItem(.fixed($0.width), spacing: $0.spacing) }
   }
 
   @ViewBuilder
@@ -50,15 +66,15 @@ struct MindMapsScreen: View {
               .foregroundStyle(.secondary)
             }
 
-          // One tile a row at accessibility text sizes, where a scaled tile is wider than a phone.
-          LazyVGrid(
-            columns: dynamicTypeSize.isAccessibilitySize
-              ? [GridItem(.flexible())] : [GridItem(.adaptive(minimum: tileWidth), spacing: 16)],
-            spacing: 16
-          ) {
+          LazyVGrid(columns: columns, spacing: 16) {
             ForEach(maps.chapters) { map in
               MindMapTile(goalId: goal.id, map: map)
             }
+          }
+          .onGeometryChange(for: PaneSpace.self) {
+            PaneSpace($0)
+          } action: {
+            gridSpace = $0
           }
         }
         .scenePadding()
