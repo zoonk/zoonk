@@ -71,27 +71,52 @@ private struct ExamList: View {
   let options: MockOptions?
 
   var body: some View {
-    List {
-      ExamHero(exam: exam, options: options)
-      ExamMomentSection(exam: exam)
-
-      if exam.takesResult {
-        ExamResultSection(exam: exam)
+    // Where there's room, the exam and where the learner stands lead; its mocks and how it works
+    // follow. The hero and the mocks are on nearly every exam, so neither pane stands empty.
+    PaneSplit(primaryShare: 0.55) {
+      List {
+        moment
+        ExamProgressSection(exam: exam)
       }
-
-      ExamMocksSection(exam: exam, options: options)
-      ExamProgressSection(exam: exam)
-
-      if !exam.format.isEmpty {
-        ExamFormatSection(exam: exam)
-      } else if let map = exam.map, !map.subjects.isEmpty {
-        ExamMapSection(map: map)
+    } secondary: {
+      List {
+        ExamMocksSection(exam: exam, options: options)
+        whatsOnIt
+        ExamSpeakingSection(exam: exam)
+        ExamScoringSection(exam: exam)
       }
-
-      ExamSpeakingSection(exam: exam)
-      ExamScoringSection(exam: exam)
+    } single: {
+      List {
+        moment
+        ExamMocksSection(exam: exam, options: options)
+        ExamProgressSection(exam: exam)
+        whatsOnIt
+        ExamSpeakingSection(exam: exam)
+        ExamScoringSection(exam: exam)
+      }
     }
     .navigationTitle(exam.examName)
+  }
+
+  /// The exam at a glance, the moment it's in and, after it, how it went.
+  @ViewBuilder
+  private var moment: some View {
+    ExamHero(exam: exam, options: options)
+    ExamMomentSection(exam: exam)
+
+    if exam.takesResult {
+      ExamResultSection(exam: exam)
+    }
+  }
+
+  /// The exam day by day, or the areas on it.
+  @ViewBuilder
+  private var whatsOnIt: some View {
+    if !exam.format.isEmpty {
+      ExamFormatSection(exam: exam)
+    } else if let map = exam.map, !map.subjects.isEmpty {
+      ExamMapSection(map: map)
+    }
   }
 }
 
