@@ -154,37 +154,154 @@ struct TutorTurnView: View {
   }
 }
 
-/// The buddy's answer as Markdown text. Its links open only once the server checked them: an
-/// answer still streaming reads without links.
+/// The buddy's answer drawn from its Markdown as main draws it: paragraphs, lists, headings and
+/// code as blocks, with their inline emphasis and links. Its links open only once the server
+/// checked them (an answer still streaming reads without links): one to a page of the app opens it
+/// here, any other its website.
 struct TutorAnswerText: View {
+  @Environment(AppRouter.self) private var router
+  @ScaledMetric private var listIndent = 20.0
+
   let text: String
   let linksEnabled: Bool
   let buddyName: String
 
   var body: some View {
-    Text(attributed)
-      .textSelection(.enabled)
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .accessibilityElement(children: .combine)
-      .accessibilityLabel(Text(verbatim: "\(buddyName): \(String(attributed.characters))"))
+    let blocks = TutorAnswerBlock.blocks(of: text, linksEnabled: linksEnabled)
+
+    VStack(alignment: .leading, spacing: 0) {
+      ForEach(blocks) { block in
+        blockView(block)
+          .padding(.top, block.id == 0 ? 0 : block.followsListItem ? 6 : 12)
+      }
+    }
+    .textSelection(.enabled)
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .environment(\.openURL, OpenURLAction(handler: open))
+    .accessibilityElement(children: .combine)
+    .accessibilityLabel(
+      Text(
+        verbatim:
+          "\(buddyName): \(blocks.map { String($0.text.characters) }.joined(separator: "\n"))"))
   }
 
-  private var attributed: AttributedString {
-    var answer =
-      (try? AttributedString(
-        markdown: text,
-        options: .init(
-          allowsExtendedAttributes: false,
-          interpretedSyntax: .inlineOnlyPreservingWhitespace,
-          failurePolicy: .returnPartiallyParsedIfPossible)))
-      ?? AttributedString(text)
+  @ViewBuilder
+  private func blockView(_ block: TutorAnswerBlock) -> some View {
+    switch block.kind {
+    case .paragraph:
+      Text(block.text)
+    case .heading:
+      Text(block.text)
+        .font(.headline)
+        .accessibilityAddTraits(.isHeader)
+    case .code:
+      Text(block.text)
+        .font(.callout.monospaced())
+    case .listItem(let marker):
+      HStack(alignment: .firstTextBaseline, spacing: 8) {
+        Text(verbatim: marker)
+          .monospacedDigit()
+        Text(block.text)
+      }
+      .padding(.leading, CGFloat(block.depth) * listIndent)
+    }
+  }
 
-    if !linksEnabled {
-      for run in answer.runs where run.link != nil {
-        answer[run.range].link = nil
+  /// The buddy links the app's pages by their path on main (`/session?block=…`, `/mistakes`).
+  private func open(_ url: URL) -> OpenURLAction.Result {
+    guard url.scheme == nil else {
+      return .systemAction
+    }
+
+    guard let page = URL(string: url.relativeString, relativeTo: Self.mainOrigin)?.absoluteURL
+    else {
+      return .discarded
+    }
+
+    return router.open(url: page) ? .handled : .discarded
+  }
+
+  /// Any of main's origins: the app reads only a link's path.
+  private static let mainOrigin = URL(string: "https://www.zoonk.com")
+}
+
+/// One block of a buddy answer's Markdown, with its inline text.
+struct TutorAnswerBlock: Identifiable {
+  enum Kind: Equatable {
+    case paragraph
+    case heading
+    case code
+    /// A list's item, with its bullet or number.
+    case listItem(marker: String)
+  }
+
+  let id: Int
+  let kind: Kind
+  /// How many lists the block sits inside, beyond the first.
+  let depth: Int
+  /// The outermost list the block is in, if any.
+  let listID: Int?
+  /// Whether the block before it is in the same list, so the list reads as one.
+  let followsListItem: Bool
+  let text: AttributedString
+
+  /// The answer's blocks in order. Without checked links, every link reads as its words; with
+  /// them, links are underlined, as main draws them, since the ink tint alone doesn't mark them.
+  static func blocks(of markdown: String, linksEnabled: Bool) -> [TutorAnswerBlock] {
+    guard
+      var parsed = try? AttributedString(
+        markdown: markdown,
+        options: .init(
+          allowsExtendedAttributes: false, interpretedSyntax: .full,
+          failurePolicy: .returnPartiallyParsedIfPossible))
+    else {
+      return [
+        TutorAnswerBlock(
+          id: 0, kind: .paragraph, depth: 0, listID: nil, followsListItem: false,
+          text: AttributedString(markdown))
+      ]
+    }
+
+    for run in parsed.runs where run.link != nil {
+      if linksEnabled {
+        parsed[run.range].underlineStyle = .single
+      } else {
+        parsed[run.range].link = nil
       }
     }
 
-    return answer
+    var blocks: [TutorAnswerBlock] = []
+
+    for (intent, range) in parsed.runs[\.presentationIntent] {
+      // Innermost first: a list item's paragraph, the item, its list, and any lists around it.
+      let components = intent?.components ?? []
+      let lists = components.filter { $0.kind == .orderedList || $0.kind == .unorderedList }
+      var text = AttributedString(parsed[range])
+      text.presentationIntent = nil
+
+      let kind =
+        components.lazy.compactMap { component -> Kind? in
+          switch component.kind {
+          case .listItem(let ordinal):
+            .listItem(marker: lists.first?.kind == .orderedList ? "\(ordinal)." : "•")
+          case .header: .heading
+          case .codeBlock: .code
+          default: nil
+          }
+        }.first ?? .paragraph
+
+      if kind == .code {
+        text.characters.removeLast(text.characters.last == "\n" ? 1 : 0)
+      }
+
+      let listID = lists.last?.identity
+
+      blocks.append(
+        TutorAnswerBlock(
+          id: blocks.count, kind: kind, depth: max(lists.count - 1, 0), listID: listID,
+          followsListItem: listID != nil && blocks.last?.listID == listID, text: text))
+    }
+
+    return blocks
   }
 }
