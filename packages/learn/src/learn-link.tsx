@@ -2,10 +2,6 @@
 
 import { type LearnLinkComponentProps, useLearnLinkComponent } from "./learn-context";
 
-/**
- * Links through the host app's navigation component, so destinations keep the
- * host's routing and prefetching. Destinations prefetch unless told not to.
- */
 export function LearnLink({ prefetch = true, ...props }: LearnLinkComponentProps) {
   const LinkComponent = useLearnLinkComponent();
 

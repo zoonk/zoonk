@@ -2,7 +2,6 @@ import { runInThisContext } from "node:vm";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { KEEP_TYPING_ATTRIBUTE, KEEP_TYPING_SCRIPT } from "./kept-typing-script";
 
-/** A text field as the keeper sees it: its words and, when it opted in, its key. */
 class TextField {
   value: string;
   readonly key: string | null;
@@ -19,7 +18,6 @@ class TextField {
 
 type Listener = (event: { target: unknown }) => void;
 
-/** Runs the keeper's inline script in a page whose text fields are `TextField`s. */
 function openPage() {
   const listeners: { listener: Listener; options: unknown; type: string }[] = [];
 
@@ -32,7 +30,6 @@ function openPage() {
     },
   });
 
-  // The page runs the serialized script, not this module's function.
   runInThisContext(KEEP_TYPING_SCRIPT);
 
   const type = (target: unknown) => {
