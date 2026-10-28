@@ -56,6 +56,7 @@ Every read the app shows goes through one pattern in `Zoonk/Data`, so screens ar
 - Keep String Catalogs together in `Zoonk/Resources/Localization`, named by their owning feature or app surface, such as `Account.xcstrings` and `Navigation.xcstrings`. Keep catalog basenames unique and stable within the target; Eloqnt discovers every catalog in this directory automatically.
 - After building to extract changed strings, run `pnpm --filter apple i18n` from the repository root to translate them and `pnpm --filter apple i18n:lint` to validate the catalogs. Never edit generated translations in `.xcstrings` files manually.
 - Reuse the main app's established wording when it fits native Apple UI, but prefer concise platform-standard terminology when the web wording is not appropriate for a native control.
+- A string with a count of something uses String Catalog plural variations: "Vary by Plural" on the English source entry (`variations.plural` with `one` and `other`), so no screen ever says "1 questions"; Eloqnt translates each plural case. Give each count its own string (join "3 right · 1 wrong" from two strings) instead of several plurals in one entry. Positions and fractions ("Question 2 of 5", "8/10") need none.
 - Treat dates, times, durations, and measurements as semantic values. Choose calendar and time-zone behavior intentionally, use native formatters, and test meaningful boundaries across locales.
 
 ## Performance

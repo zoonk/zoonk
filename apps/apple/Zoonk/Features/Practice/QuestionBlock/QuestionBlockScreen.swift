@@ -379,8 +379,18 @@ private struct NetScoreLine: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
       Text(
-        "\(tally.right) right · \(tally.wrong) wrong · net \(tally.net)", tableName: "Practice",
-        comment: "A net-scored block's live score: right, wrong and right minus wrong."
+        [
+          String(
+            localized: "\(tally.right) right", table: "Practice",
+            comment: "A net-scored block's right answers so far."),
+          String(
+            localized: "\(tally.wrong) wrong", table: "Practice",
+            comment: "A net-scored block's wrong answers so far."),
+          String(
+            localized: "net \(tally.net)", table: "Practice",
+            comment: "A net-scored block's score: right answers minus wrong ones."),
+        ]
+        .joined(separator: " · ")
       )
       .font(.footnote.monospacedDigit())
       .foregroundStyle(.secondary)
