@@ -1,5 +1,6 @@
 import { instant } from "@next/playwright";
 import { expect, test } from "./fixtures";
+import { expectHydrated } from "./hydration";
 import { createStudyDay, openAs } from "./study-day";
 
 /**
@@ -19,7 +20,8 @@ test.describe("Today's instant tab", () => {
       .getByRole("navigation", { name: "Learning tabs" })
       .getByRole("link", { name: /^Today\b/u });
 
-    await expect(today).toBeVisible();
+    // A tap before hydration would load the page as a document, which the lock stops at its shell.
+    await expectHydrated(today);
 
     await instant(page, async () => {
       await today.click();
