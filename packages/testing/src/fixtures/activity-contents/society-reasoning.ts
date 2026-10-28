@@ -1,7 +1,6 @@
 /* oxlint-disable no-magic-numbers -- Fixture content is literal lesson data. */
 import { choiceCheck, interactionCheck } from "./activity-checks";
 
-/** History and society, reasoning and writing: one valid activity per template. */
 export const societyReasoningActivities = {
   argumentBuilder: {
     check: interactionCheck,

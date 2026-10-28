@@ -6,7 +6,6 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-/** A learn goal understood from the typed words, the card's simplest case. */
 function learnUnderstanding(prompt: string): object {
   return {
     goals: [
@@ -35,7 +34,6 @@ function withGoalOnboardingId({ goal, id }: { goal: unknown; id: string }): unkn
   return { ...goal, draft: { ...goal.draft, details: { ...details, onboardingId: id } } };
 }
 
-/** Goals confirmed from a draft carry its id, which is how the draft finds them. */
 function withOnboardingId({ id, understanding }: { id: string; understanding: object }): object {
   if (!isRecord(understanding) || !Array.isArray(understanding.goals)) {
     return understanding;
@@ -47,11 +45,6 @@ function withOnboardingId({ id, understanding }: { id: string; understanding: ob
   };
 }
 
-/**
- * A goal a learner typed in onboarding: understood (a learn goal's card unless `understanding`,
- * a `GoalUnderstandingView`, says otherwise; its goals get the draft's id as `onboardingId`),
- * still being read (`status: "understanding"`, with `runId` for a run to follow), or failed.
- */
 export async function onboardingDraftFixture({
   understanding,
   ...attrs

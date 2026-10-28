@@ -1,7 +1,6 @@
 import { type EvaluationRun, prisma } from "@zoonk/db";
 import { type FixtureAttrs } from "./_utils/fixture-attrs";
 
-/** Logs a shared Jev verdict (a Library reuse decision unless `task` says otherwise). */
 export async function evaluationRunFixture(
   attrs: FixtureAttrs<EvaluationRun, "answers" | "input"> = {},
 ) {

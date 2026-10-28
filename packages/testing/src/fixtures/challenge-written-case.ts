@@ -18,10 +18,6 @@ function writtenPanel(panel: PanelFixture) {
   };
 }
 
-/**
- * `challengeCaseFixture` as the case writer returns it: every field present, null for "none",
- * no variant (code sets it from the lesson's spec) and a summary card.
- */
 export function writtenChallengeCaseFixture() {
   const { variant: _variant, ...content } = challengeCaseFixture();
 

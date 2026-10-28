@@ -1,5 +1,3 @@
-/** Checks and data notes shared by the activity fixtures, in the shape core's schemas expect. */
-
 const NUMERIC_TOLERANCE = 0.01;
 
 export const interactionCheck = { explanation: "Here is why.", kind: "interaction" } as const;
@@ -10,10 +8,7 @@ export const citedData = {
 
 export const exampleData = { isExample: true } as const;
 
-/**
- * A choice check from `[text, isCorrect, value?]` tuples. Give every option a value when the
- * template computes a number the options stand for.
- */
+/** Give every option a value when the template computes a number the options stand for. */
 export function choiceCheck(question: string, options: [string, boolean, number?][]) {
   return {
     kind: "choice" as const,
@@ -28,7 +23,6 @@ export function choiceCheck(question: string, options: [string, boolean, number?
   };
 }
 
-/** A numeric check with a small absolute tolerance; `extra` adds inputs, output or a unit. */
 export function numericCheck<TExtra extends object>(answer: number, extra?: TExtra) {
   return {
     answer,

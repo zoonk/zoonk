@@ -1,11 +1,6 @@
 /* oxlint-disable no-magic-numbers -- Fixture content is literal lesson data. */
 import { choiceCheck, exampleData, interactionCheck, numericCheck } from "./activity-checks";
 
-/**
- * Other modes of the generic engines, next to each one's fixture in `activityContentFixtures`:
- * what each merged template used to cover (a calculator, a what-if scenario, a projectile, cited
- * data, polls, dice, break-even, ear training). Core's validator test proves each one publishes.
- */
 export const engineModeFixtures = {
   combinationGrid: {
     dice: {

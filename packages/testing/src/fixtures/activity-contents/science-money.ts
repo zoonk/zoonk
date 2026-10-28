@@ -1,7 +1,6 @@
 /* oxlint-disable no-magic-numbers -- Fixture content is literal lesson data. */
 import { choiceCheck, interactionCheck } from "./activity-checks";
 
-/** Science, money and business: one valid activity per template. */
 export const scienceMoneyActivities = {
   combinationGrid: {
     check: choiceCheck("What share of the seeds grow white flowers?", [

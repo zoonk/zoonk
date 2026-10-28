@@ -1,6 +1,3 @@
-/** The decisions of `challengeCaseFixture`, one function each. */
-
-/** The week that passes before the last decision, with the new numbers. */
 const ONE_WEEK_LATER = {
   label: "One week later",
   panel: {
@@ -12,7 +9,6 @@ const ONE_WEEK_LATER = {
   },
 };
 
-/** The opening decision: the product manager wants to launch after one day. */
 export function startDecision() {
   return {
     choices: [
@@ -86,7 +82,6 @@ export function startDecision() {
   };
 }
 
-/** After launching early, the data scientist has doubts. */
 export function launchedDecision() {
   return {
     choices: [
@@ -128,7 +123,6 @@ export function launchedDecision() {
   };
 }
 
-/** What to tell the product manager at 3 pm. */
 export function reportDecision() {
   return {
     choices: [
@@ -191,7 +185,6 @@ export function reportDecision() {
   };
 }
 
-/** A week later, with the new numbers. */
 export function resultDecision() {
   return {
     choices: [

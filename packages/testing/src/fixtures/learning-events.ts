@@ -5,8 +5,8 @@ import { type FixtureAttrs } from "./_utils/fixture-attrs";
 const DEFAULT_LESSON_SECONDS = 180;
 
 /**
- * Appends a finished lesson to a learner's ledger. Times default to the last three minutes, and the
- * local date, hour and weekday to `endedAt` in UTC.
+ * Times default to the last three minutes; the local date, hour and weekday come from `endedAt` in
+ * UTC.
  */
 export async function learningEventFixture(
   attrs: FixtureAttrs<LearningEvent, "contentIds"> & Pick<LearningEvent, "userId">,

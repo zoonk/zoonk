@@ -6,8 +6,8 @@ import { normalizeString } from "@zoonk/utils/string";
 type UnderstandingResult = Parameters<typeof prisma.goalUnderstanding.create>[0]["data"]["result"];
 
 /**
- * The understanding prompt's current version: onboarding reuses only readings the current prompt
- * wrote. Read from the prompt itself, since the task's module needs a server and a Markdown loader.
+ * Onboarding reuses only readings the current prompt wrote. Read from the prompt itself, since the
+ * task's module needs a server and a Markdown loader.
  */
 const PROMPT_VERSION = getPromptVersion({
   systemPrompt: readFileSync(
@@ -16,11 +16,6 @@ const PROMPT_VERSION = getPromptVersion({
   ),
 });
 
-/**
- * Stores what onboarding understood from a goal the learner typed, so tests reach the "Here's what
- * I understood" card without the understanding AI task. `result` is the task's normalized output;
- * it's the learner's own, as a real reading is.
- */
 export async function goalUnderstandingFixture({
   goal,
   language = "en",
@@ -30,7 +25,6 @@ export async function goalUnderstandingFixture({
   goal: string;
   language?: string;
   result: UnderstandingResult;
-  /** The learner who typed the words. */
   userId: string;
 }) {
   const normalizedPrompt = normalizeString(goal);

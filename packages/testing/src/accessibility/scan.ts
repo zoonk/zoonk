@@ -1,24 +1,11 @@
 import { type NodeResult, type Result } from "axe-core";
 
-/**
- * The rules an accessibility scan applies, wherever axe runs (Playwright in an app's E2E, or a
- * package's browser tests): a serious or critical violation fails the scan, and lesser ones are
- * only listed.
- */
-
 const FAILING_IMPACTS = new Set(["critical", "serious"]);
 
-/** How many offending elements a violation lists before it only counts the rest. */
 const LISTED_TARGETS = 5;
 
-/** How much of an offending element's HTML a failure quotes, so a generated selector has context. */
 const HTML_LENGTH = 120;
 
-/**
- * Each offending element by its selector and the start of its HTML (selectors like
- * `#base-ui-_r_f_` say little alone); contrast findings name their colors, so a failure says which
- * token to fix.
- */
 function describeNode(node: NodeResult) {
   const target = `${node.target.join(" ")} \`${node.html.slice(0, HTML_LENGTH)}\``;
   const data: unknown = node.any[0]?.data;
@@ -39,7 +26,6 @@ function describeViolation(violation: Result, where: string) {
   return `${where}: [${violation.impact}] ${violation.id}: ${violation.help} (${violation.helpUrl}) → ${listed}${more}`;
 }
 
-/** A scan's violations, described: the ones that fail it, and the lesser ones it only lists. */
 export function describeViolations(violations: Result[], where: string) {
   const failing = violations.filter((violation) => FAILING_IMPACTS.has(violation.impact ?? ""));
 
@@ -52,11 +38,9 @@ export function describeViolations(violations: Result[], where: string) {
 }
 
 /**
- * Ends every CSS animation and transition the moment it starts while a scan reads the screen, as
- * Playwright's screenshots do, so an element that fades in again every few seconds (a waiting
- * screen's changing detail line) is read as people see it, not halfway through its fade.
- * `resumeAnimations` takes it away. Both run in the browser and read nothing outside themselves,
- * so Playwright can send them with `page.evaluate` and browser tests can call them directly.
+ * Lets a scan read an element that fades in again every few seconds as people see it, not mid-fade.
+ * It and `resumeAnimations` read nothing outside themselves, so Playwright can send them with
+ * `page.evaluate`.
  */
 export function stillAnimations() {
   const style = document.createElement("style");
@@ -76,12 +60,9 @@ export function resumeAnimations() {
 }
 
 /**
- * Waits up to `maxWaitMs` for the screen's entrance animations and theme transitions to end, so
- * contrast is measured on the screen people read rather than halfway through a fade, and returns
- * how many were running. Endless animations (pulses, spinners) and scroll-driven ones (they end with
- * the scroll) don't count. A transition can start a frame after another ends, so callers repeat it
- * until it returns 0. It runs in the browser and reads nothing outside itself, so Playwright can
- * send it with `page.evaluate` and browser tests can call it directly.
+ * Returns how many animations were running. A transition can start a frame after another ends, so
+ * callers repeat it until it returns 0. It reads nothing outside itself, so Playwright can send it
+ * with `page.evaluate`.
  */
 export async function settleAnimations(maxWaitMs: number): Promise<number> {
   const running = document

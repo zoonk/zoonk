@@ -48,7 +48,6 @@ function isMutatingStatement(statement: string[]): boolean {
       }
 
       if (statement[0] === "WITH") {
-        /** The command following the CTE list, or the command starting a mutating CTE. */
         const followsCTEs = nesting.depth === 0 && statement[index - 1] === ")";
 
         const startsCTE = /\bAS (?:NOT )?(?:MATERIALIZED )?\($/u.test(
@@ -65,7 +64,6 @@ function isMutatingStatement(statement: string[]): boolean {
   return false;
 }
 
-/** SQL literals, identifiers and comments must not turn read data into apparent writes. */
 function countSQL(text: string): StatementCounts {
   const tokens = text.matchAll(
     /--[^\n]*|\/\*[\s\S]*?\*\/|'(?:''|[^'])*'|"(?:""|[^"])*"|(?<delimiter>\$(?:[A-Za-z_][A-Za-z_0-9]*)?\$)[\s\S]*?\k<delimiter>|[A-Za-z_][A-Za-z_0-9$]*|[();]/gu,
@@ -124,9 +122,8 @@ Client.prototype.query = function query(...args: unknown[]) {
 };
 
 /**
- * Counts SQL submitted by the callback, including BEGIN/COMMIT/ROLLBACK and writes in CTEs.
- * Async context isolates concurrent callbacks; nested counters also contribute to their parent.
- * Queries still use the real database. Await all callback work before returning.
+ * Counts BEGIN/COMMIT/ROLLBACK and writes in CTEs too, and nested counters add to their parent.
+ * Await all callback work before returning.
  */
 export async function countDatabaseStatements<T>(callback: () => Promise<T>) {
   const counts: StatementCounts = { statements: 0, writes: 0 };

@@ -10,10 +10,7 @@ import { type FixtureAttrs, fixtureProvenance } from "./_utils/fixture-attrs";
 
 const DEFAULT_STEP_CONTENT = { text: "Test step content", title: "Test step" };
 
-/**
- * Creates a Library step. Without a position it goes after the lesson's current steps; tests that
- * create several steps in parallel should pass positions.
- */
+/** Tests that create several steps in parallel should pass positions. */
 export async function libraryStepFixture(
   attrs: FixtureAttrs<Step, "content"> & Pick<Step, "lessonId">,
 ) {
@@ -31,7 +28,6 @@ export async function libraryStepFixture(
   });
 }
 
-/** Creates a shared field or tool version of a step, a nursing version unless the test says. */
 export async function stepVariantFixture(
   attrs: FixtureAttrs<StepVariant, "content"> & Pick<StepVariant, "stepId">,
 ) {
@@ -46,7 +42,6 @@ export async function stepVariantFixture(
   });
 }
 
-/** Creates a shared explanation of a wrong answer for an item or a step (pass one of them). */
 export async function answerExplanationFixture(
   attrs: FixtureAttrs<AnswerExplanation> & ({ itemId: string } | { stepId: string }),
 ) {
@@ -61,7 +56,6 @@ export async function answerExplanationFixture(
   });
 }
 
-/** Creates an image or audio asset with a unique reuse key. */
 export async function mediaAssetFixture(attrs?: FixtureAttrs<MediaAsset, "scene">) {
   const key = randomUUID();
 

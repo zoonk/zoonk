@@ -1,7 +1,6 @@
 /* oxlint-disable no-magic-numbers -- Fixture content is literal lesson data. */
 import { choiceCheck, numericCheck } from "./activity-checks";
 
-/** Music and any subject: one valid activity per template. */
 export const musicAnySubjectActivities = {
   beforeAfter: {
     check: numericCheck(0.12, { output: "hours" }),

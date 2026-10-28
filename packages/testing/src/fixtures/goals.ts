@@ -14,7 +14,6 @@ import { skillFixture } from "./skills";
 
 const DEFAULT_DAILY_MINUTES = 20;
 
-/** Creates an active learn goal for a learner. */
 export async function goalFixture(attrs: FixtureAttrs<Goal, "details"> & Pick<Goal, "userId">) {
   return prisma.goal.create({
     data: {
@@ -33,10 +32,6 @@ type PlanAttrs = FixtureAttrs<Plan, "graph" | "phases" | "settings" | "summary">
 
 type PlanItemAttrs = Omit<Parameters<typeof planItemFixture>[0], "planId">;
 
-/**
- * The item with the skill the planner gives it: its lesson's, or one that lesson then teaches when
- * no skill links to it yet.
- */
 async function withLessonSkill(item: PlanItemAttrs): Promise<PlanItemAttrs> {
   if (item.skillId || !item.lessonId) {
     return item;
@@ -53,11 +48,6 @@ async function withLessonSkill(item: PlanItemAttrs): Promise<PlanItemAttrs> {
   return { ...item, skillId: skill.id };
 }
 
-/**
- * Creates the plan of a goal with one phase. With `items` (in their order unless they say) it's the
- * plan the planner laid out with them (see `layOutPlanFixture`), each lesson teaching a skill (see
- * `withLessonSkill`), returned with the items created.
- */
 export async function planFixture(
   attrs: PlanAttrs & { items: PlanItemAttrs[] },
 ): Promise<Plan & { items: PlanItem[] }>;
@@ -81,10 +71,7 @@ export async function planFixture({ items, ...attrs }: PlanAttrs & { items?: Pla
   return { ...laidOut.plan, items: created };
 }
 
-/**
- * Creates a plan item. Without a position it goes after the plan's current items; tests that add
- * several items in parallel should pass positions.
- */
+/** Tests that add several items in parallel should pass positions. */
 export async function planItemFixture(
   attrs: FixtureAttrs<PlanItem, "facts"> & Pick<PlanItem, "planId">,
 ) {
@@ -104,7 +91,6 @@ function isStoredPhase(value: unknown): value is StoredPhase {
   return typeof value === "object" && value !== null;
 }
 
-/** The planner's graph entry for each skill a plan teaches, in its phase (0 unless given). */
 export function plannedSkills(
   skills: readonly { id: string; lessons?: number; name: string; phase?: number }[],
 ) {
@@ -118,11 +104,6 @@ export function plannedSkills(
   }));
 }
 
-/**
- * The graph with each lesson's skill in its item's phase, as the planner places what it teaches:
- * a skill the graph has keeps the rest of its entry, and one it lacks joins it. A graph without
- * phases names one for each of the plan's.
- */
 function graphFromItems({
   graph,
   items,
@@ -163,7 +144,6 @@ function graphFromItems({
   return { ...graph, phases: graphPhases, skills: [...skills, ...plannedSkills(added)] };
 }
 
-/** The plan's phases with the first dated from today, unless the planner dated them already. */
 function datePhases(value: unknown) {
   const phases = Array.isArray(value) ? value.filter((phase) => isStoredPhase(phase)) : [];
   const startDate = toIsoDay(toUTCMidnight(new Date()));
@@ -176,10 +156,6 @@ function datePhases(value: unknown) {
   return [{ ...first, startDate }, ...rest];
 }
 
-/**
- * A challenge closing each phase in `open`, right after that phase's last item: each new
- * challenge's phase and position, and the items after it, each a place later.
- */
 function placeChallenges({
   items,
   open,
@@ -206,10 +182,7 @@ function placeChallenges({
 }
 
 /**
- * Makes a plan the shape the planner leaves it after laying it out, from its items: each lesson's
- * skill in the graph in its item's phase, the phases dated from today, and a challenge closing each
- * phase with lessons. A read keeps such a plan as saved, where it would re-plan one missing any of
- * it. Call it once a test's items are as it wants them; returns the plan and the challenges it added.
+ * A read re-plans a plan the planner didn't lay out, so call this once the test's items are final.
  */
 export async function layOutPlanFixture(planId: string) {
   const plan = await prisma.plan.findUniqueOrThrow({
@@ -267,7 +240,6 @@ function toIsoDay(date: Date | null): string | null {
   return date ? date.toISOString().slice(0, 10) : null;
 }
 
-/** The plan as it is now, as core's `PlanSnapshot` keeps it for an undo. */
 async function snapshotPlan(planId: string) {
   const plan = await prisma.plan.findUniqueOrThrow({
     include: { goal: true, items: { orderBy: { position: "asc" } } },
@@ -305,10 +277,6 @@ async function snapshotPlan(planId: string) {
   };
 }
 
-/**
- * Records a plan change with its one-sentence reason. An applied edit or test-out keeps the plan
- * as it is now, which its undo puts back, as the planner records one.
- */
 export async function planChangeFixture(
   attrs: FixtureAttrs<PlanChange, "payload"> & Pick<PlanChange, "planId">,
 ) {
@@ -325,7 +293,6 @@ export async function planChangeFixture(
   return change;
 }
 
-/** Offers a course a learner was taking before goals existed as a goal to plan. */
 export async function suggestedGoalFixture(
   attrs: FixtureAttrs<SuggestedGoal> & Pick<SuggestedGoal, "userId">,
 ) {

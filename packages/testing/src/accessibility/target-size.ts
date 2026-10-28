@@ -1,15 +1,10 @@
-/**
- * Zoonk's rule for anything people tap or click: 44 px each way, counting a hit area drawn by a
- * `::before` or `::after` (the `Button` primitive's). WCAG 2.2's 24 px (2.5.8) is the floor this
- * sits above; axe's own `target-size` rule is off by default and checks only that floor.
- */
+/** Zoonk's tap target rule sits above WCAG 2.2's 24 px floor (2.5.8), the only one axe checks. */
 export const MIN_TARGET_PX = 44;
 
 const TARGET_LIMITS = {
   /** A word in a sentence can be a little taller than its line (padding, room for focus). */
   lineTolerance: 1.25,
   min: MIN_TARGET_PX,
-  /** How much of a target's name a failure quotes. */
   nameLength: 40,
   /** Roughly what browsers use for `line-height: normal`. */
   normalLineHeight: 1.2,
@@ -17,7 +12,6 @@ const TARGET_LIMITS = {
   sizeTolerance: 0.5,
 };
 
-/** Everything that can be pressed: native controls and elements with an interactive role. */
 export const TARGET_SELECTOR = [
   "a[href]",
   "button",
@@ -41,36 +35,27 @@ export const TARGET_SELECTOR = [
   ].map((role) => `[role=${role}]`),
 ].join(",");
 
-/** What the browser measures of one target, judged by `findSmallTargets`. */
 export type TargetSample = {
-  /** Disabled, inert or hidden from assistive tech: nothing to press. */
   inactive: boolean;
-  /** Characters of text in the block the target's line sits in, and in the target itself. */
-  blockText: number;
-  ownText: number;
-  /** The block's `line-height` and `font-size`, as computed ("24px", or "normal"). */
+  blockTextLength: number;
+  ownTextLength: number;
   blockLineHeight: string;
   blockFontSize: string;
   clipPath: string;
   display: string;
-  /** The height of the target's first line box, which is its whole height unless it wraps. */
   firstLineHeight: number;
   height: number;
   width: number;
   name: string;
   overflow: string;
   pointerEvents: string;
-  /** The sizes of an absolutely positioned `::before`/`::after`, as computed ("44px"). */
   pseudos: { height: string; width: string }[];
   role: string;
   slot: string | undefined;
   visibility: string;
 };
 
-/**
- * Measures the candidate targets in the document. It runs in the browser and reads nothing outside
- * itself, so Playwright can send it with `page.evaluate` and browser tests can call it directly.
- */
+/** Reads nothing outside itself, so Playwright can send it with `page.evaluate`. */
 export function sampleTargets(selector: string): TargetSample[] {
   return [...document.querySelectorAll<HTMLElement>(selector)].map((element) => {
     const style = getComputedStyle(element);
@@ -84,7 +69,6 @@ export function sampleTargets(selector: string): TargetSample[] {
       null,
     );
 
-    // The block the element's line of text sits in: its nearest ancestor that isn't inline.
     const block =
       Array.from({ length: ancestors.snapshotLength }, (_, index) => ancestors.snapshotItem(index))
         .toReversed()
@@ -98,7 +82,7 @@ export function sampleTargets(selector: string): TargetSample[] {
     return {
       blockFontSize: blockStyle.fontSize,
       blockLineHeight: blockStyle.lineHeight,
-      blockText: block.textContent.trim().length,
+      blockTextLength: block.textContent.trim().length,
       clipPath: style.clipPath,
       display: style.display,
       firstLineHeight: element.getClientRects()[0]?.height ?? rect.height,
@@ -108,7 +92,7 @@ export function sampleTargets(selector: string): TargetSample[] {
         Boolean(element.closest("[inert], [aria-hidden='true']")),
       name: element.getAttribute("aria-label") ?? element.textContent.trim(),
       overflow: style.overflow,
-      ownText: element.textContent.trim().length,
+      ownTextLength: element.textContent.trim().length,
       pointerEvents: style.pointerEvents,
       pseudos: ["::before", "::after"]
         .map((pseudo) => getComputedStyle(element, pseudo))
@@ -126,10 +110,7 @@ function toPixels(value: string): number {
   return Number(value.replace("px", "")) || 0;
 }
 
-/**
- * Nothing to press: inactive, invisible, or visually hidden (screen-reader-only controls and Base
- * UI's slider input clip themselves to nothing).
- */
+/** Screen-reader-only controls and Base UI's slider input clip themselves to nothing. */
 function isHiddenTarget(sample: TargetSample): boolean {
   return (
     sample.inactive ||
@@ -142,10 +123,8 @@ function isHiddenTarget(sample: TargetSample): boolean {
 }
 
 /**
- * The one exception: a target inside running text (a link in a sentence, or a word or phrase in a
- * passage that opens its meaning or can be picked). It sits in the line (a button in text computes
- * to `inline-block`), has other text around it and is no taller than that line, so WCAG 2.5.8
- * exempts it because its height comes from the text.
+ * WCAG 2.5.8 exempts a target in running text, whose height comes from its line. A button in text
+ * computes to `inline-block`.
  */
 function isInText(sample: TargetSample): boolean {
   const lineHeight =
@@ -154,15 +133,11 @@ function isInText(sample: TargetSample): boolean {
 
   return (
     (sample.display === "inline" || sample.display === "inline-block") &&
-    sample.blockText > sample.ownText &&
+    sample.blockTextLength > sample.ownTextLength &&
     sample.firstLineHeight <= lineHeight * TARGET_LIMITS.lineTolerance
   );
 }
 
-/**
- * Where the target can be pressed: its box, widened by a `::before`/`::after` laid over it (the
- * `hit-area` utility) unless it clips its overflow and cuts that back.
- */
 function getHitArea(sample: TargetSample) {
   const pseudos = sample.overflow === "visible" ? sample.pseudos : [];
 
@@ -180,11 +155,6 @@ function describeTarget(sample: TargetSample, size: { height: number; width: num
   return `<${sample.role}${slot}> "${name}" is ${measured}`;
 }
 
-/**
- * The interactive targets on screen smaller than 44 px either way, described with their size.
- * Only what can be pressed counts, and a target inside running text is exempt (`isInText`); a
- * link or button that stands on its own must be 44 px.
- */
 export function findSmallTargets(samples: TargetSample[]): string[] {
   const smallest = TARGET_LIMITS.min - TARGET_LIMITS.sizeTolerance;
 

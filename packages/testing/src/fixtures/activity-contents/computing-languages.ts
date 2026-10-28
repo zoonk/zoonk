@@ -1,7 +1,6 @@
 /* oxlint-disable no-magic-numbers -- Fixture content is literal lesson data. */
 import { interactionCheck } from "./activity-checks";
 
-/** Computing and languages: one valid activity per template. */
 export const computingLanguagesActivities = {
   codeRunner: {
     check: interactionCheck,

@@ -1,10 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type UsageRecord, prisma } from "@zoonk/db";
 
-/**
- * Records `count` metered uses (lesson starts unless `kind` says otherwise), each with its own
- * target, so a test can put a learner right at a limit.
- */
 export async function usageRecordsFixture({
   count,
   ...attrs
@@ -18,22 +14,16 @@ export async function usageRecordsFixture({
   });
 }
 
-/** Budget tests use days from this far-future year on, so a reset never touches them. */
 const FIRST_TEST_ONLY_YEAR = 2100;
 const FIRST_TEST_ONLY_DAY = new Date(Date.UTC(FIRST_TEST_ONLY_YEAR, 0, 1));
 
-/**
- * Clears the AI budget all guests share for real days, so a day of test runs with guests never
- * spends it and refuses later tests' claims.
- */
 export async function resetGuestSpend() {
   await prisma.guestSpendDay.deleteMany({ where: { day: { lt: FIRST_TEST_ONLY_DAY } } });
 }
 
 /**
- * Clears live calls a past run left open: E2E servers never resume a past server's runs, so their
- * deadline runs never end them, and an open free call keeps counting against the day's shared free
- * bucket by the clock (`claimFreeCallSpend` in core) until later runs' free calls are refused.
+ * E2E servers never resume a past server's runs, so a call one left open never ends and keeps
+ * spending the day's shared free bucket (`claimFreeCallSpend` in core).
  */
 export async function clearLeftOpenLiveCalls() {
   await prisma.liveCallConnection.deleteMany({ where: { state: { not: "ended" } } });

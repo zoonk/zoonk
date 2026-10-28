@@ -5,11 +5,6 @@ import {
   startDecision,
 } from "./_utils/challenge-decisions";
 
-/**
- * A work case in the challenge step contract: judging an A/B test before a meeting, with a data
- * scientist, a product manager and an AI assistant. Every path ends after 2 or 3 decisions. The
- * strong path is `ask-ai` → `explain-plain` → `ship`.
- */
 export function challengeCaseFixture() {
   return {
     deadline: "Meeting with {{product}} today at 3 pm",
@@ -82,8 +77,6 @@ export function challengeCaseFixture() {
   };
 }
 
-/** The strong path through `challengeCaseFixture`, one choice per decision. */
 export const CHALLENGE_STRONG_PATH = ["ask-ai", "explain-plain", "ship"];
 
-/** A weak path through `challengeCaseFixture` that ends early. */
 export const CHALLENGE_WEAK_PATH = ["launch", "keep-live"];

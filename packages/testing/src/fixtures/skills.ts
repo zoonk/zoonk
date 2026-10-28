@@ -4,7 +4,6 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { normalizeString } from "@zoonk/utils/string";
 import { type FixtureAttrs, fixtureProvenance } from "./_utils/fixture-attrs";
 
-/** A skill row with a unique identity key and, unless given one, a unique name. */
 function skillData(attrs?: FixtureAttrs<Skill>) {
   const name = attrs?.name ?? `Test skill ${randomUUID()}`;
 
@@ -19,12 +18,10 @@ function skillData(attrs?: FixtureAttrs<Skill>) {
   };
 }
 
-/** Creates a Library skill with a unique identity key. */
 export async function skillFixture(attrs?: FixtureAttrs<Skill>) {
   return prisma.skill.create({ data: skillData(attrs) });
 }
 
-/** One skill like `skillFixture`'s for each name, in one statement. */
 export async function skillsFixture(
   names: readonly string[],
   attrs?: Omit<FixtureAttrs<Skill>, "identityKey" | "name" | "normalizedName">,
@@ -34,17 +31,13 @@ export async function skillsFixture(
   });
 }
 
-/** Records that `prerequisiteId` is learned before `skillId`. */
 export async function skillPrerequisiteFixture(
   attrs: Pick<SkillPrerequisite, "prerequisiteId" | "skillId">,
 ) {
   return prisma.skillPrerequisite.create({ data: attrs });
 }
 
-/**
- * A multiple-choice question the item bank accepts: the right option first, so a test answers
- * right or wrong on purpose, and a misconception and reason on the wrong one.
- */
+/** The right option comes first, so a test can answer right or wrong on purpose. */
 export function choiceItemContent(question = `Test question ${randomUUID()}?`) {
   return {
     context: null,
@@ -70,8 +63,7 @@ export function choiceItemContent(question = `Test question ${randomUUID()}?`) {
   };
 }
 
-/** Completes abbreviated test items before they reach the strict stored-content parser. */
-function itemContent(content: object, format: Item["format"]): object {
+function completeItemContent(content: object, format: Item["format"]): object {
   if (!isJsonObject(content)) {
     return content;
   }
@@ -98,7 +90,6 @@ function itemContent(content: object, format: Item["format"]): object {
   return content;
 }
 
-/** Creates an item for a skill, multiple-choice unless another format is given. */
 export async function itemFixture(attrs: FixtureAttrs<Item, "content"> & Pick<Item, "skillId">) {
   const { content = choiceItemContent("Test question?"), format = "multipleChoice" } = attrs;
 
@@ -107,13 +98,12 @@ export async function itemFixture(attrs: FixtureAttrs<Item, "content"> & Pick<It
       language: "en",
       ...fixtureProvenance(),
       ...attrs,
-      content: itemContent(content, format),
+      content: completeItemContent(content, format),
       format,
     },
   });
 }
 
-/** A passage several questions read (`ItemSet.content` of kind `text`), unique per call. */
 export function textSetContent(title = `Test passage ${randomUUID()}`) {
   return {
     source: "Adapted from a test article.",
@@ -122,7 +112,6 @@ export function textSetContent(title = `Test passage ${randomUUID()}`) {
   };
 }
 
-/** Creates an item set: a passage, unless another kind and content are given. */
 export async function itemSetFixture(attrs?: FixtureAttrs<ItemSet, "content">) {
   return prisma.itemSet.create({
     data: {

@@ -15,10 +15,6 @@ type PlayableStepAttrs = {
   skillId?: string | null;
 };
 
-/**
- * Creates a Library lesson with its content written: one step per entry, in order, with the
- * shared valid content for its kind unless the entry passes its own.
- */
 export async function playableLessonFixture({
   lesson,
   steps = TEACHING_LESSON_STEPS,
@@ -54,12 +50,6 @@ export async function playableLessonFixture({
   return { lesson: created, steps: createdSteps };
 }
 
-/**
- * An English lesson for Portuguese speakers with its language pair: the word "rent" and the
- * sentence "How much is the rent?" with their translations, a note and a sound tip, and one
- * vocabulary, translation, reading, listening and "say it out loud" screen on them. Another
- * `language` and its translations make the same lesson for other readers, such as English ones.
- */
 export async function languageLessonFixture({
   language = "pt",
   sentenceAudioUrl = null,

@@ -17,7 +17,6 @@ const DEFAULT_PLANNED_MINUTES = 20;
 const FIRST_INTERVIEW_PHASE_DAYS = 8;
 const INTERVIEW_PLAN_DAYS = 41;
 
-/** Creates today's planned study session for a learner. */
 export async function studySessionFixture(
   attrs: FixtureAttrs<StudySession, "startSnapshot" | "endSnapshot" | "missions"> &
     Pick<StudySession, "userId">,
@@ -34,10 +33,7 @@ export async function studySessionFixture(
   });
 }
 
-/**
- * Creates a session block. Without a position it goes after the session's current blocks; tests that
- * add several blocks in parallel should pass positions.
- */
+/** Tests that add several blocks in parallel should pass positions. */
 export async function studySessionBlockFixture(
   attrs: FixtureAttrs<StudySessionBlock, "payload"> & Pick<StudySessionBlock, "sessionId">,
 ) {
@@ -48,10 +44,7 @@ export async function studySessionBlockFixture(
   return prisma.studySessionBlock.create({ data: { kind: "learn", ...attrs, position } });
 }
 
-/**
- * One written lesson per skill, with real questions and lesson-skill links, in a plan the planner
- * hasn't laid out yet (see `layOutPlanFixture`).
- */
+/** Leaves the plan for `layOutPlanFixture` to lay out. */
 export async function studySessionPlanFixture({
   goal,
   itemsPerSkill = 3,
@@ -108,7 +101,6 @@ export async function studySessionPlanFixture({
   return { goal, items, lessons: lessonRows, plan, planItems, skills };
 }
 
-/** DB-only preconditions for a Plus call with free next-phase work after entitlement lapses. */
 export async function plusCallDayFixture({
   localDate,
   userId,
@@ -162,7 +154,6 @@ export async function plusCallDayFixture({
   return { ...fixture, boss, subscription };
 }
 
-/** DB-only inputs for a real plan build; a missing saved boss is later selected with a null ID. */
 export async function unplannedCheckpointFixture({ userId }: { userId: string }) {
   const goal = await goalFixture({ dailyMinutes: 12, timezone: "UTC", userId });
 
@@ -201,15 +192,8 @@ export async function unplannedCheckpointFixture({ userId }: { userId: string })
   };
 }
 
-/** Days to an at-risk goal's date: too few for its 72 lessons at 12 minutes a day. */
 const AT_RISK_DAYS = 7;
 
-/**
- * DB-only prior-day unwritten work: the read must settle it in memory, which moves a phase's end.
- * No notice, proposal, session or authored lesson is fabricated. At risk (`atRisk`), the goal has
- * a date its plan covered all of when it was last planned, which the missed day loses: Today asks
- * the learner what to do about it.
- */
 export async function mandatoryNoticeDayFixture({
   atRisk = false,
   localDate,

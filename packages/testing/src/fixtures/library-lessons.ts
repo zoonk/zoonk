@@ -7,7 +7,6 @@ const DEFAULT_ESTIMATED_MINUTES = 4;
 
 type LessonAttrs = FixtureAttrs<Lesson, "heldBackDrafts" | "spec" | "summary">;
 
-/** A lesson row with a unique identity key and, unless given one, a unique title. */
 function lessonData(attrs?: LessonAttrs) {
   const key = randomUUID();
   const title = attrs?.title ?? `Test Library Lesson ${key.split("-")[0]}`;
@@ -26,18 +25,11 @@ function lessonData(attrs?: LessonAttrs) {
   };
 }
 
-/**
- * Creates a shared Library lesson outline (title and description) with a unique identity key and,
- * unless given one, a unique title: plans teach a title once, so lessons of one plan need their own.
- */
+/** Plans teach a title once, so the title is unique unless given. */
 export async function libraryLessonFixture(attrs?: LessonAttrs) {
   return prisma.lesson.create({ data: lessonData(attrs) });
 }
 
-/**
- * `count` lessons like `libraryLessonFixture`'s, each with a title of its own, in one statement: a
- * test that outlines whole chapters doesn't wait on a round trip per lesson.
- */
 export async function libraryLessonsFixture(
   count: number,
   attrs?: Omit<LessonAttrs, "identityKey" | "normalizedTitle" | "slug" | "title">,
@@ -47,10 +39,7 @@ export async function libraryLessonsFixture(
   });
 }
 
-/**
- * Places a lesson in a chapter. Without a position it goes after the chapter's current lessons;
- * tests that place several lessons in parallel should pass positions.
- */
+/** Tests that place several lessons in parallel should pass positions. */
 export async function chapterLessonFixture(
   attrs: Pick<ChapterLesson, "chapterId" | "lessonId"> & Partial<ChapterLesson>,
 ) {
@@ -60,12 +49,10 @@ export async function chapterLessonFixture(
   return prisma.chapterLesson.create({ data: { ...attrs, position } });
 }
 
-/** Links a skill to a lesson that teaches it. */
 export async function lessonSkillFixture(attrs: Pick<LessonSkill, "lessonId" | "skillId">) {
   return prisma.lessonSkill.create({ data: attrs });
 }
 
-/** One draft the quality gate held back, as `Lesson.heldBackDrafts` stores it. */
 export function heldBackDraftFixture(
   attrs: Partial<{ model: string; problems: { problem: string; screen: number | null }[] }> = {},
 ) {

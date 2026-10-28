@@ -6,10 +6,7 @@ import { itemSetFixture, skillFixture } from "./skills";
 import { examBlueprintFixture } from "./sources";
 import { userFixture } from "./users";
 
-/**
- * A listening recording's stimulus (`ItemSet.content` of kind `audio`): a booking call between a
- * receptionist and a caller, with a unique line so each set's script, and its reuse key, is its own.
- */
+/** A unique line gives each set its own script and reuse key. */
 export function listeningContent({
   plays = 1,
   uniqueLine = `My booking number is ${randomUUID()}.`,
@@ -40,12 +37,10 @@ export function listeningContent({
   };
 }
 
-/** Creates an audio item set (a listening recording) without its voiced file. */
 export function listeningSetFixture(attrs?: FixtureAttrs<ItemSet, "content">) {
   return itemSetFixture({ content: listeningContent(), kind: "audio", ...attrs });
 }
 
-/** IELTS-like listening parts: a conversation played once, then a monologue the notice leaves unsaid. */
 const LISTENING_TASKS = [
   {
     count: 2,
@@ -55,10 +50,6 @@ const LISTENING_TASKS = [
   { count: 2, description: "Part 2: one speaker talking about local facilities" },
 ];
 
-/**
- * A public language-certificate blueprint with a reading section and a listening section of two
- * parts, whose recordings are practiced in an area named "Listening".
- */
 export function listeningBlueprintFixture({ name }: { name: string }) {
   return examBlueprintFixture({
     language: "pt",
@@ -90,10 +81,6 @@ export function listeningBlueprintFixture({ name }: { name: string }) {
   });
 }
 
-/**
- * A public language-certificate blueprint (`listeningBlueprintFixture`) and its shared skill graph:
- * two Listening skills (in that order) and a Reading one.
- */
 export async function listeningExamFixture() {
   const unique = randomUUID();
 
@@ -128,10 +115,6 @@ export async function listeningExamFixture() {
   return { blueprint, graph, listeningSkills: [listeningDetail, listeningGist], reading };
 }
 
-/**
- * A learner's goal for `listeningExamFixture`'s exam (English recordings) with a plan on its graph:
- * the two Listening skills are practiced only with recordings, the Reading one with text questions.
- */
 export async function listeningGoalFixture() {
   const [user, exam] = await Promise.all([userFixture(), listeningExamFixture()]);
 

@@ -15,14 +15,6 @@ function userAttrs(attrs?: Partial<UserAttrs>): UserAttrs {
   };
 }
 
-/**
- * Create a credential user directly with Prisma for tests.
- * Tests need a user row plus a credential account row so `signInAs()` can
- * authenticate through Better Auth. Writing the same database shape directly
- * keeps this fixture fast and avoids pulling the auth runtime into callers
- * that only need seeded data. We also assign explicit string IDs here because
- * these rows bypass Better Auth's own insert path.
- */
 export async function userFixture(attrs?: Partial<UserAttrs>) {
   const params = userAttrs(attrs);
   const userId = randomUUID();

@@ -8,7 +8,6 @@ import {
 } from "@zoonk/db";
 import { type FixtureAttrs, fixtureProvenance } from "./_utils/fixture-attrs";
 
-/** Creates a public official source fetched now, with a unique URL and hash. */
 export async function sourceFixture(attrs?: FixtureAttrs<Source, "reusePolicy" | "structure">) {
   const key = randomUUID();
   const url = `https://example.test/sources/${key}`;
@@ -27,7 +26,6 @@ export async function sourceFixture(attrs?: FixtureAttrs<Source, "reusePolicy" |
   });
 }
 
-/** Creates a canonical exam blueprint with a unique identity key. */
 export async function examBlueprintFixture(
   attrs?: FixtureAttrs<ExamBlueprint, "edition" | "structure" | "topicFrequency">,
 ) {
@@ -44,14 +42,12 @@ export async function examBlueprintFixture(
   });
 }
 
-/** Links a learner to a source, as an upload unless another origin is given. */
 export async function learnerSourceFixture(
   attrs: FixtureAttrs<LearnerSource> & Pick<LearnerSource, "sourceId" | "userId">,
 ) {
   return prisma.learnerSource.create({ data: { origin: "upload", ...attrs } });
 }
 
-/** Records a change notice on a source, with fixture provenance. */
 export async function sourceChangeNoticeFixture(
   attrs: FixtureAttrs<SourceChangeNotice> & Pick<SourceChangeNotice, "sourceId">,
 ) {

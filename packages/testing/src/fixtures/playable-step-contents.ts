@@ -1,11 +1,7 @@
 import { type StepKind } from "@zoonk/db";
 import { challengeCaseFixture } from "./challenge-contents";
 
-/**
- * Valid content for every teaching screen (step contract v2) and a few language exercises, from
- * one short lesson on why an electron is drawn as a cloud. Typed and spoken answers list accepted
- * answers, so tests that type them are graded by code and never call a model.
- */
+/** Typed and spoken answers list accepted answers, so code grades them without a model. */
 export const playableStepContent = {
   activity: {
     check: {
@@ -127,10 +123,6 @@ export const playableStepContent = {
 
 export type PlayableStepKind = keyof typeof playableStepContent;
 
-/**
- * A question whose options are pictures, to tell separate things apart by how they look: each
- * option asks for its own picture, described without naming it.
- */
 export const pictureCheckContent = {
   basis: null,
   options: [
@@ -168,10 +160,7 @@ export const pictureCheckContent = {
   question: "Which doorway is Gothic?",
 };
 
-/**
- * A question about where a part sits in one whole: code draws a number on each part, in the
- * order of `image.parts`, so the right option (the ovary's number) comes from that list.
- */
+/** Code numbers the parts in `image.parts` order, so the right option is the ovary's number. */
 export const numberedCheckContent = {
   basis: null,
   image: {
@@ -192,7 +181,6 @@ export const numberedCheckContent = {
   question: "Which number is the ovary?",
 };
 
-/** Every teaching screen once, in the order a lesson uses them. */
 export const TEACHING_LESSON_STEPS: PlayableStepKind[] = [
   "hook",
   "explanation",

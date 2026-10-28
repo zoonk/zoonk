@@ -11,19 +11,14 @@ const AREA = "Biology";
 const LESSONS_PER_SKILL = 3;
 const SHORT_DAILY_MINUTES = 15;
 
-/** The graph's size for each skill: far more than a short daily time covers in a month. */
 const GRAPH_LESSONS = 40;
 
-/** What the goal values most, each built on a base worth less to it. */
 const TOPICS = [
   { base: "Cell structure", name: "Heredity" },
   { base: "Living things", name: "Ecology" },
 ] as const;
 
-/**
- * A skill placement settled, so the plan has an item when it's handed over and the learner's first
- * POST (opening their day on Today, a plan change or an onboarding answer) lays it out. Reads don't.
- */
+/** A settled placement gives the plan an item for the first POST to lay out; reads don't. */
 const SETTLED = "Scientific method";
 
 /** Bases first, as the graph teaches prerequisites before what builds on them. */
@@ -33,16 +28,11 @@ const SKILL_NAMES = [
   ...TOPICS.map((topic) => topic.name),
 ];
 
-/**
- * Each skill's subject: all in biology, or (`subjectPerTopic`) each topic with its base in a subject
- * named after the topic, the scientific method staying in biology.
- */
 function getSubject({ name, subjectPerTopic }: { name: string; subjectPerTopic: boolean }) {
   const topic = TOPICS.find((entry) => entry.name === name || entry.base === name);
   return subjectPerTopic && topic ? topic.name : AREA;
 }
 
-/** A biology exam that asks heredity and ecology a lot, and cell structure and living things less. */
 function biologyExamFixture({ subjectPerTopic }: { subjectPerTopic: boolean }) {
   const subjectOf = (name: string) => getSubject({ name, subjectPerTopic });
 
@@ -77,7 +67,6 @@ function biologyExamFixture({ subjectPerTopic }: { subjectPerTopic: boolean }) {
   });
 }
 
-/** A skill with three short Library lessons in the chapter, after the skills before it. */
 async function createSkill({
   chapterId,
   index,
@@ -87,7 +76,6 @@ async function createSkill({
   index: number;
   name: string;
 }) {
-  // The bases come from an easier band than the topics built on them, as a goal's foundations do.
   const isBase = TOPICS.some((topic) => topic.base === name);
   const level = isBase ? "beginner" : "intermediate";
   const skill = await skillFixture({ level, name: `${name} ${randomUUID()}` });
@@ -116,14 +104,6 @@ async function createSkill({
   return { name, skillId: skill.id };
 }
 
-/**
- * A goal `days` away whose plan builds on bases, as the goal-driven workflow writes it (its graph,
- * not built yet, with the scientific method placement settled): an exam asks heredity and ecology
- * a lot and their bases (cell structure, living things) less; any other goal's outcome skills are
- * heredity and ecology. All in one area, or each topic with its base in an area of its own
- * (`subjectPerTopic`), each skill with three short Library lessons and a graph sized far beyond a
- * short daily time.
- */
 export async function goalWithBasesFixture({
   dailyMinutes = SHORT_DAILY_MINUTES,
   days,
@@ -134,7 +114,6 @@ export async function goalWithBasesFixture({
 }: {
   dailyMinutes?: number;
   days: number;
-  /** Adds to what onboarding stored on the goal, such as the questions it answered. */
   details?: Record<string, unknown>;
   kind: Extract<GoalKind, "exam" | "learn">;
   subjectPerTopic?: boolean;

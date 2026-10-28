@@ -17,7 +17,6 @@ import { playableLessonFixture } from "./playable-lessons";
 import { skillFixture, skillsFixture } from "./skills";
 import { userFixture } from "./users";
 
-/** Linda on Queen Street: a unit's call at A2, stored so starting a call needs no model. */
 export const RENTING_SCENARIO = {
   character: { name: "Linda", place: "Queen Street", role: "proprietária" },
   characterBrief: "A friendly landlord. Rent is $2,400; viewings on Saturday.",
@@ -35,7 +34,6 @@ export const RENTING_SCENARIO = {
 const TEST_DTLS_FINGERPRINT =
   "sha-256 6B:8B:F0:65:5F:78:E2:51:3B:AC:6F:F3:3F:46:1B:35:DC:B8:5F:64:1A:24:C2:43:F0:A1:58:D0:A1:2C:19:08";
 
-/** A browser's WebRTC offer, audio plus the events channel, as a live call's SDP endpoint takes it. */
 export const LIVE_CALL_SDP_OFFER = [
   "v=0",
   "o=- 4611731400430051336 2 IN IP4 127.0.0.1",
@@ -64,16 +62,10 @@ export const LIVE_CALL_SDP_OFFER = [
   "",
 ].join("\r\n");
 
-/** The unit, and the plan's phase, of the language goal's lesson at `index`: two lessons a unit. */
 function unitOf(index: number) {
   return index < 2 ? 0 : 1;
 }
 
-/**
- * A Portuguese speaker learning English: a course with two units (arriving, then renting, each with
- * two lessons), an active language goal on it with a plan laid out a unit a phase, each closed by
- * its checkpoint (`checkpoints`), and the renting unit's call cached at A2.
- */
 export async function languageGoalFixture({ userId }: { userId?: string } = {}) {
   const [user, course] = await Promise.all([
     userId ? prisma.user.findUniqueOrThrow({ where: { id: userId } }) : userFixture(),
@@ -185,11 +177,6 @@ export async function languageGoalFixture({ userId }: { userId?: string } = {}) 
   };
 }
 
-/**
- * Takes a language goal (see `languageGoalFixture`) to its renting unit's checkpoint, due today in
- * UTC: every lesson and the arriving unit's checkpoint done, then a next unit with one written
- * lesson, done unless `nextLessonTodo`.
- */
 export async function reachLanguageCheckpointFixture({
   checkpoints,
   goal,
@@ -243,7 +230,6 @@ export async function reachLanguageCheckpointFixture({
   return { checkpoint, nextItem, nextLesson: next.lesson };
 }
 
-/** The first letters of a few scripts, for alphabet lessons tests read without a model. */
 const FIRST_LETTERS: Record<
   "ja" | "ko" | "ru",
   { letters: [symbol: string, readingAid: string][]; script: string }
@@ -271,12 +257,7 @@ const FIRST_LETTERS: Record<
   },
 };
 
-/**
- * A script's published alphabet lesson for Portuguese speakers, found or created, as learners of
- * the pair share it: an intro, a card per letter (the first with its clip), a match and the
- * summary. Pass the key core gives the script (`getAlphabetIdentityKey`); concurrent calls get one
- * lesson.
- */
+/** Pass core's `getAlphabetIdentityKey` for the script; concurrent calls get one lesson. */
 export async function alphabetLessonFixture({
   identityKey,
   targetLanguage,

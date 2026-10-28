@@ -1,7 +1,6 @@
 /* oxlint-disable no-magic-numbers -- Fixture content is literal lesson data. */
 import { choiceCheck, exampleData, interactionCheck, numericCheck } from "./activity-checks";
 
-/** Numbers and algebra: one valid activity per template. */
 export const numbersAlgebraActivities = {
   areaModel: {
     check: choiceCheck("What is the garden's area?", [

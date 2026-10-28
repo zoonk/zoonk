@@ -6,7 +6,6 @@ import { organizationFixture } from "./orgs";
 
 type CourseAttrs = NonNullable<Parameters<typeof courseFixture>[0]>;
 
-/** Who the outline's chapters and lessons belong to: shared by default, or one learner's. */
 type ContentOwner = { ownerId?: string; visibility?: "private" };
 
 async function placeLessons({
@@ -40,10 +39,6 @@ async function placeLessons({
   return lessons;
 }
 
-/**
- * Places one beginner chapter per entry of `lessonCounts` in the course, in order, each written
- * for this course and holding that many written lessons.
- */
 async function placeOutline({
   course,
   lessonCounts,
@@ -80,10 +75,6 @@ async function placeOutline({
   return { chapters, lessons };
 }
 
-/**
- * A published brand course whose outline places one beginner chapter per entry of `lessonCounts`,
- * in order, each written for this course and holding that many written lessons.
- */
 export async function catalogCourseFixture({
   lessonCounts = [1],
   ...attrs
@@ -101,11 +92,6 @@ export async function catalogCourseFixture({
   return { ...outline, course, organization };
 }
 
-/**
- * A learner's private course, as a goal too specific for shared content creates it: no
- * organization, never published, with an outline like `catalogCourseFixture`'s whose chapters and
- * lessons are private to the same learner.
- */
 export async function privateCourseFixture({
   lessonCounts = [1],
   ownerId,

@@ -1,7 +1,6 @@
 /* oxlint-disable no-magic-numbers -- Fixture content is literal lesson data. */
 import { choiceCheck, citedData, numericCheck } from "./activity-checks";
 
-/** Geometry, probability and data: one valid activity per template. */
 export const geometryProbabilityActivities = {
   chartReader: {
     check: {
