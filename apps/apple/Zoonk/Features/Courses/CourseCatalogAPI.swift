@@ -195,6 +195,9 @@ private func makeCourse(
   Course(
     categories: payload.categories.map(makeCourseCategory),
     description: payload.description,
+    editions: payload.editions.map {
+      CourseEdition(id: $0.id, language: $0.language, title: $0.title)
+    },
     examplePlan: payload.examplePlan.map { makeCoursePlanExample($0.value1) },
     generationStatus: makeCatalogGenerationStatus(payload.generationStatus),
     id: payload.id,

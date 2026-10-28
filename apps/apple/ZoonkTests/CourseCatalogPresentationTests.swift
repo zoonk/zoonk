@@ -32,6 +32,50 @@ final class CourseCatalogPresentationTests: XCTestCase {
     XCTAssertFalse(summary(goals: [goal(courseID: course, kind: .explain)]).followsCourse(course))
   }
 
+  /// A page in another language points to the reader's edition; one in theirs points nowhere.
+  func testOnlyACourseInAnotherLanguagePointsToTheReadersEdition() {
+    XCTAssertEqual(Course.testFixture.edition(in: "pt")?.title, "Astronomia")
+    XCTAssertNil(Course.testFixture.edition(in: "en"))
+    XCTAssertNil(Course.testFixture.edition(in: "de"))
+  }
+
+  /// Only an exam plan with every chapter in an area places chapters by area, as main does.
+  func testOnlyAnExamPlanWithEveryChapterInAnAreaPlacesChaptersByArea() {
+    XCTAssertEqual(
+      example(
+        reach: .byDate(fittingLessons: 1, publishedLessons: 2, areas: []),
+        areas: ["Math", "Writing"]
+      )
+      .chapterAreas,
+      ["a": "Math", "b": "Writing"])
+    XCTAssertNil(
+      example(
+        reach: .byDate(fittingLessons: 1, publishedLessons: 2, areas: []), areas: ["Math", nil]
+      )
+      .chapterAreas)
+    XCTAssertNil(
+      example(reach: .toEnd(weeks: 3, endDate: nil, firstDay: []), areas: ["Math", "Writing"])
+        .chapterAreas)
+  }
+
+  private func example(reach: CoursePlanEstimate.Reach, areas: [String?]) -> CoursePlanExample {
+    CoursePlanExample(
+      exam: nil,
+      pace: CoursePlanExample.Pace(
+        estimate: CoursePlanEstimate(
+          reach: reach,
+          chapters: zip(["a", "b"], areas).map { id, area in
+            CoursePlanEstimate.ChapterPlace(
+              area: area, chapterID: id, endWeek: nil, lessonsInPlan: 1, studyOrder: 1, week: 1,
+              workKinds: [.original])
+          },
+          afterDeadlineMinutes: nil, beforeDeadlineMinutes: nil, coverage: nil,
+          fromDate: "2026-11-09", scheduledMinutes: 30, unwrittenLessonMinutes: 0,
+          workload: CoursePlanEstimate.Workload(
+            checkpointMinutes: 0, lessonMinutes: 30, practiceMinutes: 0, unwrittenLessonMinutes: 0)),
+        minutes: 30))
+  }
+
   private func goal(
     courseID: String, kind: LearnerGoal.Kind = .learn, status: LearnerGoal.Status = .active
   ) -> LearnerGoal {

@@ -86,6 +86,12 @@ extension Course {
   static let testFixture = Course(
     categories: [.science],
     description: "Understand the night sky.",
+    editions: [
+      CourseEdition(
+        id: "00000000-0000-7000-8000-000000000002", language: "en", title: "Astronomy"),
+      CourseEdition(
+        id: "00000000-0000-7000-8000-000000000009", language: "pt", title: "Astronomia"),
+    ],
     examplePlan: CoursePlanExample(
       exam: nil,
       pace: CoursePlanExample.Pace(

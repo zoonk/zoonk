@@ -68,6 +68,8 @@ struct Course: Codable, Equatable, Identifiable, Sendable {
   /// Oldest first: the first is the course's subject.
   let categories: [CourseCategory]
   let description: String?
+  /// The course's published editions in every language, itself included.
+  let editions: [CourseEdition]
   /// The page's example plan; nil for a learner's private course.
   let examplePlan: CoursePlanExample?
   let generationStatus: CatalogGenerationStatus
@@ -84,6 +86,13 @@ struct Course: Codable, Equatable, Identifiable, Sendable {
   let title: String
 
   var subject: CourseCategory? { categories.first }
+}
+
+/// The same course written in one language.
+struct CourseEdition: Codable, Equatable, Identifiable, Sendable {
+  let id: String
+  let language: String
+  let title: String
 }
 
 /// A course page's own words: its promise, who it's for and what it makes them able to do.

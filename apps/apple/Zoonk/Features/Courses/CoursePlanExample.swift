@@ -20,6 +20,28 @@ struct CoursePlanExample: Codable, Equatable, Sendable {
 
   let exam: Exam?
   let pace: Pace?
+
+  /// An exam course's chapters by the exam's area, as its plan against the exam's day reads them
+  /// (main's `getExamChapterAreas`), for a chapter's page to place it in the exam. Nil for a
+  /// course read to its end, or while any of its chapters has no area: its levels place them then.
+  var chapterAreas: [String: String]? {
+    guard let estimate = pace?.estimate, case .byDate = estimate.reach, !estimate.chapters.isEmpty
+    else {
+      return nil
+    }
+
+    var areas: [String: String] = [:]
+
+    for chapter in estimate.chapters {
+      guard let area = chapter.area else {
+        return nil
+      }
+
+      areas[chapter.chapterID] = area
+    }
+
+    return areas
+  }
 }
 
 /// A course's plan at one time a day, as core plans it from scratch: to the course's end, or for an

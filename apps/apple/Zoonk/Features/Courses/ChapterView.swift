@@ -58,6 +58,7 @@ private struct ChapterLandingList: View {
   var body: some View {
     let outline = course?.chapters.sorted { $0.position < $1.position } ?? []
     let index = outline.firstIndex { $0.id == chapter.id }
+    let areas = course?.course.examplePlan?.chapterAreas
     let hasLesson = !detail.lessons.isEmpty
     // The course's first chapter, or one whose lessons aren't written yet, starts the course at
     // the reader's level; any other starts the plan here.
@@ -67,7 +68,7 @@ private struct ChapterLandingList: View {
       Section {
         VStack(alignment: .leading, spacing: 12) {
           Label {
-            Text(chapter.courseTitle)
+            Text(areas?[chapter.id].map { "\(chapter.courseTitle) · \($0)" } ?? chapter.courseTitle)
           } icon: {
             SubjectGlyph(subject: course?.course.subject)
           }
@@ -97,7 +98,7 @@ private struct ChapterLandingList: View {
       }
 
       if let course, let index, outline.count > 1 {
-        ChapterStrip(course: course.course, index: index, outline: outline)
+        ChapterStrip(areas: areas, course: course.course, index: index, outline: outline)
       }
 
       if hasLesson {
@@ -176,32 +177,38 @@ private struct ChapterStart: View {
   }
 }
 
-/// Where the chapter sits in its course (main's `ChapterStrip`): the course's levels as a meter,
-/// each as long as its chapters, this chapter's level in ink, "Chapter 12 of 77 · Beginner" under
-/// it, then this chapter and the next ones, one tap each.
+/// Where the chapter sits in its course (main's `ChapterStrip`): the course's levels (an exam
+/// course's areas) as a meter, each as long as its chapters, this chapter's in ink, "Chapter 12 of
+/// 77 · Beginner" under it (in an exam area, its place there), then this chapter and the next
+/// ones, one tap each.
 private struct ChapterStrip: View {
   private static let next = 3
 
+  /// An exam course's chapters by the exam's area, which group them in place of the levels.
+  let areas: [String: String]?
   let course: Course
   let index: Int
   let outline: [CourseChapter]
 
   var body: some View {
     let here = outline[index]
-    let bands = courseLevelBands(outline)
+    let groups = stripGroups
+    let group = groups.first { $0.chapters.contains { $0.id == here.id } }
+    let counted = areas != nil ? group?.chapters ?? outline : outline
+    let number = (counted.firstIndex { $0.id == here.id } ?? index) + 1
 
     Section {
       VStack(alignment: .leading, spacing: 8) {
         MeterParts(
-          parts: bands.map { band in
+          parts: groups.map { item in
             MeterParts.Part(
-              weight: Double(band.chapters.count),
-              fill: band.level == here.level ? .color(.primary) : .track)
+              weight: Double(item.chapters.count),
+              fill: item.id == group?.id ? .color(.primary) : .track)
           }
         )
 
         Text(
-          "Chapter \((index + 1).formatted()) of \(outline.count.formatted()) · \(Text(here.level.localizedTitle))",
+          "Chapter \(number.formatted()) of \(counted.count.formatted()) · \(group?.label ?? "")",
           tableName: "Courses", comment: "Where a chapter sits in its course, and its level"
         )
         .font(.footnote.monospacedDigit())
@@ -226,6 +233,38 @@ private struct ChapterStrip: View {
         "Where this chapter sits in the course", tableName: "Courses",
         comment: "Header of where a chapter sits in its course")
     }
+  }
+
+  /// A run of the meter: a level's chapters, or an exam area's.
+  private struct Group {
+    let chapters: [CourseChapter]
+    let id: String
+    let label: String
+  }
+
+  /// The levels, or the exam's areas in the order the outline first reaches each.
+  private var stripGroups: [Group] {
+    guard let areas else {
+      return courseLevelBands(outline).map {
+        Group(
+          chapters: $0.chapters, id: $0.level.rawValue,
+          label: String(localized: $0.level.localizedTitle))
+      }
+    }
+
+    var groups: [Group] = []
+
+    for chapter in outline {
+      let area = areas[chapter.id] ?? ""
+
+      if let at = groups.firstIndex(where: { $0.id == area }) {
+        groups[at] = Group(chapters: groups[at].chapters + [chapter], id: area, label: area)
+      } else {
+        groups.append(Group(chapters: [chapter], id: area, label: area))
+      }
+    }
+
+    return groups
   }
 }
 

@@ -4409,6 +4409,35 @@
         }
       }
     },
+    "This course is also available in your language." : {
+      "comment" : "Links a course page in another language to its edition in the reader's",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diesen Kurs gibt es auch auf Deutsch."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este curso también está disponible en tu idioma."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce cours est aussi disponible dans ta langue."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este curso também está disponível no seu idioma."
+          }
+        }
+      }
+    },
     "to finish the whole course at %lld minutes a day, Monday to Friday, from scratch." : {
       "comment" : "Under the weeks a course's example plan takes",
       "localizations" : {

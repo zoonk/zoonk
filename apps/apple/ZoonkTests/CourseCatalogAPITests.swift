@@ -91,6 +91,18 @@ final class CourseCatalogAPITests: XCTestCase {
           {
             "categories": ["science"],
             "description": "Understand the night sky.",
+            "editions": [
+              {
+                "id": "00000000-0000-7000-8000-000000000002",
+                "language": "en",
+                "title": "Astronomy"
+              },
+              {
+                "id": "00000000-0000-7000-8000-000000000009",
+                "language": "pt",
+                "title": "Astronomia"
+              }
+            ],
             "exam": null,
             "examplePlan": {
               "exam": null,
@@ -168,6 +180,7 @@ final class CourseCatalogAPITests: XCTestCase {
           {
             "categories": ["exams"],
             "description": null,
+            "editions": [],
             "exam": null,
             "examplePlan": {
               "exam": {
@@ -328,6 +341,7 @@ final class CourseCatalogAPITests: XCTestCase {
           {
             "categories": [],
             "description": null,
+            "editions": [],
             "format": "core",
             "generationId": "run-1",
             "generationStatus": "running",

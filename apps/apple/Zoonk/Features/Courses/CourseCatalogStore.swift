@@ -15,7 +15,8 @@ final class CourseCatalogStore {
 
   @ObservationIgnored private let api: any CourseCatalogAPIClient
   @ObservationIgnored private let cache: AppCache
-  @ObservationIgnored private let language: String
+  /// The catalog's language, the reader's when Zoonk has courses in it.
+  @ObservationIgnored let language: String
   @ObservationIgnored private var chapters: [CatalogChapterKey: Resource<ChapterDetail>] = [:]
   @ObservationIgnored private var courseDetails: [String: Resource<CourseDetail>] = [:]
   @ObservationIgnored private var pages: [CourseCategory?: Resource<CourseCatalogPage>] = [:]

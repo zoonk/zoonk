@@ -46,6 +46,7 @@ struct CourseView: View {
 }
 
 private struct CourseLandingList: View {
+  @Environment(CourseCatalogStore.self) private var catalog
   @Environment(LearnerSummaryStore.self) private var learner
 
   let detail: CourseDetail
@@ -55,6 +56,10 @@ private struct CourseLandingList: View {
     let follows = learner.summary.value?.followsCourse(detail.course.id) ?? false
 
     List {
+      if let edition = detail.course.edition(in: catalog.language) {
+        EditionNotice(edition: edition)
+      }
+
       CourseHeroSection(detail: detail, exam: example?.exam, follows: follows)
 
       if let pace = example?.pace {
@@ -86,6 +91,27 @@ extension LearnerSummary {
   func followsCourse(_ courseID: String) -> Bool {
     goals.contains { goal in
       goal.courseID == courseID && goal.status == .active && goal.kind != .explain
+    }
+  }
+}
+
+/// Points a reader to the course's edition in their language, over a page written in another.
+private struct EditionNotice: View {
+  let edition: CourseEdition
+
+  var body: some View {
+    Section {
+      NavigationLink(
+        value: CourseDestination.course(CourseReference(id: edition.id, title: edition.title))
+      ) {
+        Label {
+          Text(
+            "This course is also available in your language.", tableName: "Courses",
+            comment: "Links a course page in another language to its edition in the reader's")
+        } icon: {
+          Image(systemName: "translate")
+        }
+      }
     }
   }
 }
