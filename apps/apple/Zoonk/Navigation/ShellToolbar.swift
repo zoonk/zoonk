@@ -74,7 +74,6 @@ private struct LevelButton: View {
   @Environment(AppRouter.self) private var router
 
   let level: LearnerLevel
-  @ScaledMetric(relativeTo: .body) private var dotSize: CGFloat = 9
 
   var body: some View {
     let belt = level.belt
@@ -83,11 +82,7 @@ private struct LevelButton: View {
       router.open(.statistics)
     } label: {
       HStack(spacing: 6) {
-        // The belt's own color, ringed so a white belt shows on a light bar.
-        Circle()
-          .fill(belt.color)
-          .strokeBorder(.secondary.opacity(0.35), lineWidth: 1)
-          .frame(width: dotSize, height: dotSize)
+        BeltDot(belt: belt)
 
         Text(level.level, format: .number)
           .monospacedDigit()
