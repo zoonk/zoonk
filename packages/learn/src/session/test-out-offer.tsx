@@ -12,17 +12,11 @@ import { type StudyMomentView } from "./session-types";
 
 type TestOutOfferView = NonNullable<StudyMomentView["testOutOffer"]>;
 
-/**
- * Right after the second lesson in a row of a chapter with every answer right, once: the chapter's
- * test, which skips the lessons a pass takes off the plan, as one hairline row with a small "Take
- * the test" on its right. Continue stays the moment's main action.
- */
 export function TestOutOffer({
   offer,
   onStart,
 }: {
   offer: TestOutOfferView;
-  /** Opens a chapter's test (`chapterId`). */
   onStart: (chapterId: string) => Promise<TestOutStart>;
 }) {
   const t = useExtracted();

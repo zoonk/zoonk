@@ -6,15 +6,11 @@ import { TaskActions } from "../../_components/task-layout";
 import { TaskMainButton } from "../../shell/task-frame";
 import { type QuestionBlockPhase } from "./question-block-state";
 
-/** A block opened again with every answer in: where the learner is, and what Finish shows. */
 export function FinishReadyBody({ phase }: { phase: QuestionBlockPhase }) {
   return phase.kind === "finishReady" ? <FinishReady /> : null;
 }
 
-/**
- * Finish in the bar of a block opened again with every answer in: completing it can prepare the
- * rest of the day, so it waits for this tap (or Enter).
- */
+/** Completing it can prepare the rest of the day (AI work), so it waits for this tap. */
 export function FinishReadyActions({
   onFinish,
   phase,

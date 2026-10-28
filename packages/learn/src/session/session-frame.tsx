@@ -4,12 +4,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { TaskAside, getTaskAsideRootProps } from "../_components/task-layout";
 import { type TaskFrameAside } from "../shell/task-frame";
 
-/**
- * A session screen's root (a block of questions, the moment between blocks, the next stop): its
- * header, column and action bar, and from `lg` the task's aside beside them with what helps
- * (`aside`: the day's queue, or the text a question is on), as every task's frame has. The
- * session page draws the `main` around it.
- */
 export function SessionFrame({
   aside,
   children,

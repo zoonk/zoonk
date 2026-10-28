@@ -4,7 +4,6 @@ import { getLessonCelebration } from "./lesson-celebration";
 
 const LEVEL_TWO = { color: "white", level: 2 } as const;
 
-/** A lesson completion as the server sends it, the lesson's own celebration nothing yet. */
 function lessonCompletion(
   overrides: Partial<LibraryLessonCompletion> = {},
 ): LibraryLessonCompletion {

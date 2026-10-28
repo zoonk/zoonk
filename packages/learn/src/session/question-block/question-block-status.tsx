@@ -5,7 +5,6 @@ import { AnswersSaveError } from "../../_components/save-error";
 import { ContinueButton, QuestionActionsRow } from "./question-actions";
 import { type QuestionBlockPhase } from "./question-block-state";
 
-/** What the bar says above its actions while an answer or the block is being saved, or failed. */
 export function QuestionBlockStatus({
   onContinue,
   onRetryAnswer,
@@ -13,7 +12,6 @@ export function QuestionBlockStatus({
   phase,
 }: {
   onContinue: () => void;
-  /** Sends the answer on screen again, as Check does. */
   onRetryAnswer: () => void;
   onRetryFinish: () => void;
   phase: QuestionBlockPhase;

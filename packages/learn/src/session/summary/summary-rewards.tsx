@@ -16,24 +16,15 @@ import { resolveLearnBuddy, useBuddyName } from "../../buddies/use-buddy-name";
 import { type StudySessionSummary } from "../session-types";
 import { useSessionSummary } from "./summary-context";
 
-/** A streak worth naming: three right answers in a row or more. */
 const SHOWN_STREAK = 3;
 
 type SummaryBelt = NonNullable<StudySessionSummary["belt"]>;
 
-/**
- * Every mission of this session's day done, with the day's bonus earned. The bonus is once a day
- * across goals, so another goal's earning it never says this goal's missions are done.
- */
+/** The bonus is once a day across goals, so another goal's earning it never says this goal's missions are done. */
 function hasMissionsDone(summary: StudySessionSummary): boolean {
   return summary.fullMeal && isFullMeal(summary.missions);
 }
 
-/**
- * Whether the session earned more than the Brain Power its numbers already show (all of today's
- * missions, a new stripe, a streak worth naming): only then does a phone give the rewards a step
- * of their own. Wide screens show them beside the numbers either way.
- */
 export function hasRewardsBeyondBrainPower(summary: StudySessionSummary): boolean {
   return (
     hasMissionsDone(summary) ||
@@ -42,11 +33,6 @@ export function hasRewardsBeyondBrainPower(summary: StudySessionSummary): boolea
   );
 }
 
-/**
- * The resolved buddy, glad about the day, including before a choice is saved: proud of the
- * session, a beat after the day's Brain Power starts counting up under it, its eyes closing content
- * as its chin lifts and its chest fills (the `zoonk-motion` skill). A revisit draws it still, proud.
- */
 function RewardsArt() {
   const t = useExtracted();
   const { buddy: learnerBuddy } = useSessionSummary();
@@ -68,10 +54,6 @@ function RewardsArt() {
   );
 }
 
-/**
- * A reward's value on its row's right, in the mono face: what the session added. Brain Power is in
- * its violet, as every reward amount reads; a level gained is progress made, in blue.
- */
 function RewardValue({
   children,
   tone,
@@ -91,7 +73,6 @@ function RewardValue({
   );
 }
 
-/** Today's missions, all done ("All 3 done", however many the day offered), and their bonus. */
 function MissionsBonusRow({ count }: { count: number }) {
   const t = useExtracted();
   const format = useFormatter();
@@ -112,11 +93,7 @@ function MissionsBonusRow({ count }: { count: number }) {
   );
 }
 
-/**
- * A stripe earned today: the belt's ten levels as ticks, lit in its color, with the belt and level
- * named and "+1 level" beside it. A new belt color starts over. The ticks hold still: each level
- * already landed at the end of the block that reached it.
- */
+/** The ticks hold still: each level already landed at the end of the block that reached it. */
 function BeltRow({ belt }: { belt: SummaryBelt }) {
   const t = useExtracted();
   const beltName = useBeltName();
@@ -150,7 +127,6 @@ function StreakRow({ count }: { count: number }) {
   );
 }
 
-/** Only what happened, as flat rows: the missions' bonus, a new stripe, the best streak. */
 function RewardRows() {
   const { summary } = useSessionSummary();
   const { belt, bestStreak } = summary;
@@ -171,12 +147,6 @@ function RewardRows() {
   );
 }
 
-/**
- * What the session earned, with the buddy glad about it: Brain Power as the title, a violet
- * readout (one of the few louder moments), then only what
- * happened as flat rows: the bonus for all of today's missions, a new stripe on the belt and the
- * best streak of right answers. A phone's step when there's more than Brain Power.
- */
 export function RewardsStep() {
   const t = useExtracted();
   const { summary } = useSessionSummary();
@@ -195,10 +165,6 @@ export function RewardsStep() {
   );
 }
 
-/**
- * The same rewards in the aside of a wide screen, beside the day's numbers: the buddy, the Brain
- * Power as its violet readout, and the rows. Not the page's heading (the summary's title is).
- */
 export function EarnedToday() {
   const { summary } = useSessionSummary();
 

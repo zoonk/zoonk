@@ -5,10 +5,6 @@ import { CompassIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type StudyQuestion } from "../session-types";
 
-/**
- * A placement question in the first week's sessions says what it's for: it fine-tunes where the
- * plan starts, and a miss is never saved as a mistake, so "I don't know yet" is a fine answer.
- */
 export function PlacementNote({ question }: { question: StudyQuestion }) {
   const t = useExtracted();
 

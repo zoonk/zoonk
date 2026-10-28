@@ -3,11 +3,7 @@ import { type QuestionBlockState } from "./question-block-state";
 
 type NetTally = { blank: number; right: number; wrong: number };
 
-/**
- * Right, wrong and blank so far, for the net score: this visit's answers, else what the block
- * says was answered on an earlier visit, which tells a blank apart too, so after a reload a blank
- * still counts as neither.
- */
+/** This visit's answers, else the block's record of an earlier visit, so after a reload a blank still counts as neither. */
 export function getNetTally({
   answers,
   questions,

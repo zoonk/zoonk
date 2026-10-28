@@ -12,14 +12,6 @@ import { SummarySteps } from "./summary-steps";
 
 export type { SummaryGoalKind } from "./summary-context";
 
-/**
- * The end of the session on one screen: what changed today, with what it earned beside it on a
- * wide screen. Right after "Stop for today", what's done so far.
- *
- * ```tsx
- * <SessionSummary actions={actions} buddy={buddy} exitHref="/today" goalKind="exam" summary={summary} />
- * ```
- */
 export function SessionSummary({
   actions,
   buddy,
@@ -32,17 +24,13 @@ export function SessionSummary({
   summary,
 }: {
   actions: SessionSummaryActions;
-  /** The learner's buddy, glad about the day's rewards; null resolves to the default buddy. */
+  /** `null` draws the default buddy. */
   buddy: LearnBuddy | null;
   exitHref: string;
   goalKind: SummaryGoalKind;
-  /** The mistakes notebook, for "See mistakes" when the session saved any. */
   mistakesHref?: string | null;
-  /** The ceremony screen for the session's one milestone, shown over the summary as it opens. */
   renderCeremony?: CeremonyRenderer;
-  /** For guests: after their first session, "Save your plan" asks for an account. */
   signUpHref?: string | null;
-  /** The learner just tapped "Stop for today": what's done so far, then Keep going. */
   stopped?: boolean;
   summary: StudySessionSummary;
 }) {

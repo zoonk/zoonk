@@ -19,10 +19,6 @@ import { useMomentEvents } from "./use-moment-events";
 import { useMomentTitle } from "./use-moment-title";
 import { useSessionAction } from "./use-session-action";
 
-/**
- * The lesson player's completion as this moment reads it: a lesson that's no longer one of the
- * day's blocks says what it earned and celebrates what it reached itself.
- */
 type LessonMomentCompletion = {
   result:
     | (ProgressCelebration & {
@@ -77,12 +73,6 @@ function SavedMoment({
   );
 }
 
-/**
- * The lesson was saved but isn't one of the day's blocks anymore (a replay, or a session left the
- * day before): what it earned and when it comes back, then the belt level and the tenth of Energy
- * it reached, as every result says them (its milestone opened before, from the lesson player's
- * `ceremony`), and Continue goes on with the day, saying so when it couldn't.
- */
 function OutsideSession({
   buddy,
   onContinue,
@@ -145,12 +135,7 @@ function OutsideSession({
   );
 }
 
-/**
- * The header over a lesson's completion moment when it's one of today's blocks: the session's,
- * with the day as one segment per block, like between every other block, in place of the lesson's
- * own segments, and the lesson's `menu` (its summary card). Nothing until the lesson is saved (the lesson's header stays
- * meanwhile).
- */
+/** Nothing until the lesson is saved, while the lesson's own header stays. */
 export function LessonMomentHeader({
   completion,
   exitHref,
@@ -169,11 +154,6 @@ export function LessonMomentHeader({
   return <SessionHeader exitHref={exitHref} menu={menu} sessionBar={moment.sessionBar} />;
 }
 
-/**
- * A lesson's completion moment when it's one of today's blocks, the same as every block's: what it
- * earned and when it comes back, the session bar, what's next, then one tap back into the
- * session. The host puts it in the lesson player's completion slot, under the player's header.
- */
 export function LessonMoment({
   buddy,
   completion,
@@ -183,12 +163,10 @@ export function LessonMoment({
   onStop,
   session,
 }: {
-  /** The learner's buddy, who cheers when the lesson completes one of the day's missions. */
   buddy?: LearnBuddy | null;
   completion: LessonMomentCompletion;
   onContinue: () => Promise<boolean>;
   onRetry: () => void;
-  /** Opens a chapter's test: the one the moment offers, or the next lesson's. */
   onStartTestOut: (chapterId: string) => Promise<TestOutStart>;
   onStop: () => Promise<boolean>;
   session: LessonMomentSession;

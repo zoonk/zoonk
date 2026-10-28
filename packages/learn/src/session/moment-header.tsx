@@ -8,20 +8,6 @@ import { TASK_MAIN_ACTION_CLASS } from "../_components/task-layout";
 import { isFocusLost } from "../_utils/is-focus-lost";
 import { MOMENT_TITLE_PROPS } from "./moment-ceremony";
 
-/**
- * The head every task's end opens with (a block, a lesson, a notebook practice, a drill, a round, a
- * quick explanation): its title saying what happened, with an eyebrow over it and one quiet line
- * under it where the end has one, then 24px under them what the work earned (`MomentReadouts`),
- * or while it saves, a quiet line in their place (`MomentSaving`), so the title never moves. The
- * title takes the focus the last answer's Continue took with it, or a closed ceremony's
- * (`MOMENT_TITLE_PROPS`), so a screen reader starts here and reads on.
- *
- * ```tsx
- * <MomentHeader title="Practice done">
- *   <MomentReadouts brainPower={18} score={{ answered: 5, correct: 4 }} />
- * </MomentHeader>
- * ```
- */
 export function MomentHeader({
   children,
   detail,
@@ -56,20 +42,12 @@ export function MomentHeader({
   );
 }
 
-/**
- * What a task's end shows in its readouts' place while its work is being saved: one quiet
- * shimmering line, the one sign of the wait, as far under the title as the readouts land.
- */
 export function MomentSaving() {
   const t = useExtracted();
 
   return <p className="text-muted-foreground shimmer text-sm">{t("Saving your progress…")}</p>;
 }
 
-/**
- * A task's end's main action while its work saves, in its place in the bar: its label, waiting
- * until the result is ready. The line above says why, so it shows no spinner of its own.
- */
 export function PendingMainAction({ children }: { children: React.ReactNode }) {
   return (
     <Button aria-busy className={TASK_MAIN_ACTION_CLASS} disabled focusableWhenDisabled size="xl">

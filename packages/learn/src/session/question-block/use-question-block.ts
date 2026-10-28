@@ -10,10 +10,8 @@ import {
 } from "../session-types";
 import { createQuestionBlockState, questionBlockReducer } from "./question-block-state";
 
-/** Hyperdrive starts to count from a double. */
 const FIRST_HYPERDRIVE_LEVEL = 2;
 
-/** A request that didn't reach the server reads as failed, with its retry, never as stuck. */
 const FAILED = { status: "failed" } as const;
 
 export type QuestionBlockActions = {
@@ -26,10 +24,6 @@ export type QuestionBlockActions = {
   refresh: () => void;
 };
 
-/**
- * Runs a question block: one question at a time, graded on the server, resuming where the learner
- * left it, and finished with its completion moment once every question is answered.
- */
 export function useQuestionBlock({
   actions,
   detail,
@@ -106,7 +100,6 @@ export function useQuestionBlock({
       return;
     }
 
-    /** A finished or skipped block has no answer to retry; read where this session stands now. */
     if (outcome.status === "blockNotActive") {
       actions.refresh();
       return;

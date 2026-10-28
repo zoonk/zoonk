@@ -5,7 +5,6 @@ import {
   type StudyQuestionAnswer,
 } from "../session-types";
 
-/** Where the block is: answering, waiting for the grade, reading it, or finished. */
 export type QuestionBlockPhase =
   | { kind: "answering" }
   | { kind: "checking" }
@@ -18,7 +17,6 @@ export type QuestionBlockPhase =
   | { kind: "finished"; moment: StudyMomentView };
 
 export type QuestionBlockState = {
-  /** Answers given in this visit, for the net score: a blank counts as neither right nor wrong. */
   answers: Record<string, { answer: StudyQuestionAnswer; blank: boolean; isCorrect: boolean }>;
   hyperdrive: number;
   index: number;
@@ -52,7 +50,6 @@ export function createQuestionBlockState(detail: StudyBlockDetail): QuestionBloc
   };
 }
 
-/** Moves to the next question, or to the block's end after the last one. */
 function advance({ state, total }: { state: QuestionBlockState; total: number }) {
   const index = state.index + 1;
 

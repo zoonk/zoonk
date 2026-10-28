@@ -2,11 +2,7 @@
 
 import { TypedAnswerField } from "../../questions/typed-answer-field";
 
-/**
- * A short typed answer (a word, a number, a term). The host gets it as it's typed (null while
- * it's empty) and its Check sends it; Enter in the field sends it too. Once graded, the field
- * locks and marks the answer right or wrong.
- */
+/** The host gets it as it's typed, null while it's empty. */
 export function TypedQuestion({
   disabled,
   onChange,

@@ -1,7 +1,4 @@
-/**
- * The Brain Power a block earned on its own: the day's bonus it paid, when it did, is the
- * missions' to show, beside it.
- */
+/** Without the day's bonus it paid: the missions show that beside it. */
 export function getOwnBrainPower(completion: {
   brainPower: number;
   fullMeal: { bonus: number; paid: boolean };

@@ -10,14 +10,11 @@ import { useTrueFalseLabels } from "../../questions/use-true-false-labels";
 import { parseRichBlocks } from "../../rich-text/rich-text-parser";
 import { QuestionTitle } from "./question-title";
 
-/** How far a card moves before letting go picks its answer. */
 const SWIPE_THRESHOLD_PX = 90;
 const TILT_DEGREES_PER_PX = 0.06;
 
-/** A statement's answer: true, false, or left blank where a wrong answer costs a point. */
 type TrueFalseAnswer = { dontKnow: true } | { isTrue: boolean };
 
-/** What the options show once graded: the right answer (when the grade says it) and the pick. */
 export type TrueFalseResult = { answer: TrueFalseAnswer; correct: boolean | null };
 
 type Option = { answer: TrueFalseAnswer; key: "blank" | "false" | "true"; keys: string };
@@ -26,7 +23,7 @@ const FALSE_OPTION: Option = { answer: { isTrue: false }, key: "false", keys: "A
 const TRUE_OPTION: Option = { answer: { isTrue: true }, key: "true", keys: "ArrowRight" };
 const BLANK_OPTION: Option = { answer: { dontKnow: true }, key: "blank", keys: "ArrowDown" };
 
-/** The answers in the order they read, so the number keys follow them: false, blank, true. */
+/** In reading order, so the number keys follow them: false, blank, true. */
 const THREE_OPTIONS = [FALSE_OPTION, BLANK_OPTION, TRUE_OPTION];
 const TWO_OPTIONS = [FALSE_OPTION, TRUE_OPTION];
 
@@ -57,7 +54,6 @@ function getOptionResult({ option, result }: { option: Option; result: TrueFalse
   return isSameAnswer(result.answer, option.answer) && "isTrue" in option.answer ? "wrong" : null;
 }
 
-/** Once graded, only the pick and the right answer stay, so the feedback fits under them. */
 function isShown({ option, result }: { option: Option; result: TrueFalseResult | null }) {
   if (!result) {
     return true;
@@ -66,7 +62,6 @@ function isShown({ option, result }: { option: Option; result: TrueFalseResult |
   return getOptionResult({ option, result }) !== null || isSameAnswer(result.answer, option.answer);
 }
 
-/** Drag the statement left to pick false or right to pick true; the options do the same. */
 function useSwipe({ enabled, onSwipe }: { enabled: boolean; onSwipe: (isTrue: boolean) => void }) {
   const [drag, setDrag] = useState<{ originX: number; x: number } | null>(null);
   const offset = drag ? drag.x - drag.originX : 0;
@@ -97,13 +92,6 @@ function useSwipe({ enabled, onSwipe }: { enabled: boolean; onSwipe: (isTrue: bo
   };
 }
 
-/**
- * A true-or-false statement, answered in the goal's exam's words (Cebraspe's are right or wrong).
- * The statement sits on a card the learner can swipe (left false, right true), and the answers
- * sit under it as options with their keys (the numbers, or the arrows; ↓ leaves it blank). Swipe
- * capsules and practice for net-scored exams add "Leave blank", since a wrong answer cancels a
- * right one. A swipe, a tap or a key picks; the host gets the pick and its Check sends it.
- */
 export function TrueFalseQuestion({
   allowBlank,
   disabled,

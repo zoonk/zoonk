@@ -18,19 +18,10 @@ import { type DayStep } from "./session-types";
 import { useBlockTitle } from "./use-block-copy";
 import { useSessionAction } from "./use-session-action";
 
-/**
- * A lesson being written is checked every few seconds, so a run picking it up, another run writing
- * it, or writing that stopped shows without the learner refreshing.
- */
 const WAITING_CHECK_MS = 5000;
 
-/**
- * How long a wait may look stuck before the learner gets a way to ask again: a lesson no run
- * picked up, and a run that took far longer than lessons take (its drafts included).
- */
 const STUCK_AFTER_MS = { notStarted: 20_000, writing: 300_000 } as const;
 
-/** The lesson's state read now differs from the wait's: another state, or another run writing it. */
 function hasLessonChanged({
   generationId,
   lesson,
@@ -45,12 +36,7 @@ function hasLessonChanged({
   );
 }
 
-/**
- * Checks the waited-for lesson on its own (`readLesson`) and reads the whole session again only
- * when it changed from what the screen shows. Failed waits still read the session: the readiness
- * contract doesn't distinguish a retryable failure from a lesson permanently set aside/skipped.
- * A host without that read, or a step without a lesson, also reads the session every time.
- */
+/** Reads the whole session only when the lesson changed; a failed wait always does, since the readiness contract can't tell a retryable failure from a lesson set aside. */
 function useWaitingCheck({
   actions,
   block,
@@ -84,7 +70,6 @@ function useWaitingCheck({
   });
 }
 
-/** A wait that looks stuck gets the same way to ask again as writing that stopped. */
 function useLooksStuck(lesson: NextStopLesson) {
   const [stuckWhile, setStuckWhile] = useState<NextStopLesson | null>(null);
 
@@ -100,12 +85,6 @@ function useLooksStuck(lesson: NextStopLesson) {
   return stuckWhile === lesson;
 }
 
-/**
- * The run writing the lesson, followed live with the shared wait (its bar and phases). Once the
- * run says the lesson is ready, the screen reads the session again, which opens it; a run that
- * fails or a lost connection says so with its way out. A new run (after asking again) gets a
- * fresh wait.
- */
 function WritingProgress({
   actions,
   block,
@@ -136,10 +115,6 @@ function WritingProgress({
   );
 }
 
-/**
- * The lesson being written, followed live; checked every few seconds so the wait shows live, with
- * a way to ask again when writing stopped or looks stuck.
- */
 export function Waiting({
   actions,
   block,
@@ -157,8 +132,6 @@ export function Waiting({
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Writing stopped, or looks stuck: asking again opens the block, which asks for the lesson
-          once more, and a run that stopped is replaced. */}
       {lesson === "failed" || stuck ? (
         <GenerationFailureNotice
           failure={lesson === "notStarted" ? "notStarted" : "generation"}
@@ -174,10 +147,6 @@ export function Waiting({
   );
 }
 
-/**
- * The lesson won't be written now: why, with its one thing to do, in the wait's place. Nothing
- * polls: only the learner's next tap can change it.
- */
 export function NotWritten({
   actions,
   block,
@@ -199,12 +168,7 @@ export function NotWritten({
   );
 }
 
-/**
- * A ready block to do while the lesson is written ("While you wait: Mixed practice") or instead of
- * one that won't be written now ("Instead: …"): the screen's next step, so it's the main action and
- * Enter starts it. The block's name follows a label: inside a sentence, "Do What you already know"
- * read wrong in every language.
- */
+/** The block's name follows a label: inside a sentence, "Do What you already know" read wrong in every language. */
 export function AlternativeButton({
   actions,
   alternative,

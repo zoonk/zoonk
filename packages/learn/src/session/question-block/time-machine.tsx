@@ -11,7 +11,6 @@ import { type StudyQuestion } from "../session-types";
 
 type TimeMachineView = NonNullable<StudyQuestion["timeMachine"]>;
 
-/** How today's answer went, or null before it. */
 type AnswerResult = "correct" | "wrong" | null;
 
 /** A quoted answer ends at its quote mark, so a period of its own would double the sentence's. */
@@ -19,12 +18,7 @@ function trimEndPeriod(text: string): string {
   return text.replace(/\.+$/u, "");
 }
 
-/**
- * What the line says. Before the answer: only when the learner saw the question, since their
- * earlier answer could give today's away. After it: the earlier answer, quoted, when it was wrong,
- * and, when it was right and today's isn't, why the question came back.
- * A statement's past answer is saved as "true" or "false" and reads in the exam's words.
- */
+/** Before the answer, only that the learner saw the question: their earlier answer could give today's away. */
 function useTimeMachineText({
   format,
   trueFalseLabels,
@@ -58,11 +52,6 @@ function useTimeMachineText({
   };
 }
 
-/**
- * When the learner last met a capsule question, in one quiet line above it before they answer. The
- * answer's own panel says how far they've come (`TimeMachineNote`), so the result speaks from one
- * place.
- */
 export function TimeMachine({
   format,
   machine,
@@ -82,7 +71,6 @@ export function TimeMachine({
   );
 }
 
-/** After the answer, the same history as the feedback panel's quiet last line. */
 export function TimeMachineNote({
   format,
   machine,

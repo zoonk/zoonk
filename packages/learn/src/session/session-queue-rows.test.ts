@@ -6,7 +6,6 @@ function block(id: string, status: StudyBlock["status"], estimatedMinutes: numbe
   return { estimatedMinutes, id, status } as StudyBlock;
 }
 
-/** A step of a day not opened yet: no id, only its place in the day. */
 function step(
   position: number,
   estimatedMinutes: number,

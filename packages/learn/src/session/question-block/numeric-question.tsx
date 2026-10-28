@@ -3,11 +3,7 @@
 import { NumericAnswerField } from "../../questions/numeric-answer-field";
 import { type StudyQuestion } from "../session-types";
 
-/**
- * A math problem in a block: type the number. The host gets it once it reads as a number the box
- * takes (null before) and its Check sends it; Enter in the field sends it too, or says how to
- * write one.
- */
+/** The host gets the number once the box takes it, null before. */
 export function NumericQuestion({
   disabled,
   entry,

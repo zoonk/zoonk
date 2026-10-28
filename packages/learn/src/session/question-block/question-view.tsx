@@ -13,7 +13,6 @@ import { type QuestionBlockPhase } from "./question-block-state";
 import { TrueFalseQuestion, type TrueFalseResult } from "./true-false-question";
 import { TypedQuestion } from "./typed-question";
 
-/** The options an answer picks: one, several, or none for another shape. */
 function getPicks(answer: StudyQuestionAnswer | null): number[] {
   if (!answer) {
     return [];
@@ -26,10 +25,6 @@ function getPicks(answer: StudyQuestionAnswer | null): number[] {
   return "selectedIndexes" in answer ? answer.selectedIndexes : [];
 }
 
-/**
- * What a graded choice question marks: the right options, and the ones the learner picked (none
- * for "I'm not sure", which still shows the right one).
- */
 function getChoiceResult(phase: QuestionBlockPhase): ChoiceResult | null {
   if (phase.kind !== "feedback") {
     return null;
@@ -38,7 +33,6 @@ function getChoiceResult(phase: QuestionBlockPhase): ChoiceResult | null {
   return { correct: getPicks(phase.feedback.correctAnswer), picked: getPicks(phase.answer) };
 }
 
-/** What a graded statement marks: its right answer, and the learner's (a blank included). */
 function getTrueFalseResult(phase: QuestionBlockPhase): TrueFalseResult | null {
   if (phase.kind !== "feedback") {
     return null;
@@ -53,7 +47,6 @@ function getTrueFalseResult(phase: QuestionBlockPhase): TrueFalseResult | null {
   };
 }
 
-/** Where a graded ordering question put each step, and where each one goes. */
 function getOrderResult(phase: QuestionBlockPhase): OrderResult | null {
   if (phase.kind !== "feedback" || !("order" in phase.answer)) {
     return null;
@@ -67,10 +60,6 @@ function getOrderResult(phase: QuestionBlockPhase): OrderResult | null {
   };
 }
 
-/**
- * A typed answer's mark once graded, a number's or a word's. "I don't know yet" (or a drill's clock
- * running out) leaves the field empty, with nothing to mark wrong: the verdict says what happened.
- */
 function getAnswerMark(phase: QuestionBlockPhase): "correct" | "wrong" | null {
   if (phase.kind !== "feedback" || "dontKnow" in phase.answer) {
     return null;
@@ -79,7 +68,6 @@ function getAnswerMark(phase: QuestionBlockPhase): "correct" | "wrong" | null {
   return phase.feedback.isCorrect ? "correct" : "wrong";
 }
 
-/** Scored net (Cebraspe), where a wrong answer cancels a right one: a swipe capsule or practice. */
 export function isNetScoredQuestion({
   detail,
   question,
@@ -91,11 +79,7 @@ export function isNetScoredQuestion({
   return capsule ? capsule.format === "swipe" : detail.block.netScored;
 }
 
-/**
- * The question's answer control for its format; the key resets it for every question. It hands
- * the host the answer as it's made (`onChange`, null until complete) for the host's Check, and a
- * typed answer straight away when Enter sends it from its field (`onSubmit`).
- */
+/** `onChange` gets the answer as it's made, null until complete; `onSubmit` gets a typed answer Enter sends from its field. */
 export function QuestionView({
   detail,
   onChange,

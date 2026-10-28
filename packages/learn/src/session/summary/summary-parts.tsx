@@ -31,10 +31,7 @@ import { type StudySessionSummary } from "../session-types";
 import { getRisenSkills } from "./risen-skills";
 import { useIsStopped, useSessionSummary } from "./summary-context";
 
-/**
- * "Done in 49 min", in the title's one face: the mono face's wide space read as "Done in 13  min"
- * beside a sans "13". A day stopped early can be shorter than a minute, and "0" would read as none.
- */
+/** In the title's one face: the mono face's wide space read "Done in 13  min". */
 function DoneTitle() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -47,12 +44,6 @@ function DoneTitle() {
   return t("Done in {time}", { time: formatDuration(summary.minutes) });
 }
 
-/**
- * Where the goal stands after the session, in its one measure as the Plan says it: an exam's
- * preparation, another goal's progress in its plan's lessons, with how the session moved it. A
- * language goal says its level elsewhere. The move shows only when the number on screen moved:
- * "32% → 32%" says nothing.
- */
 function useGoalNumber() {
   const t = useExtracted();
   const formatShare = useFormatShare();
@@ -83,7 +74,6 @@ function useGoalNumber() {
   };
 }
 
-/** "27/31", the total quieter than what was right. */
 function RightAnswersValue({ correct, questions }: { correct: number; questions: number }) {
   const format = useFormatter();
 
@@ -95,7 +85,6 @@ function RightAnswersValue({ correct, questions }: { correct: number; questions:
   );
 }
 
-/** What was right, as a share, and the net score where a wrong answer cancels a right one. */
 function RightAnswersDetail({ summary }: { summary: StudySessionSummary }) {
   const t = useExtracted();
   const formatShare = useFormatShare();
@@ -117,7 +106,6 @@ function RightAnswersDetail({ summary }: { summary: StudySessionSummary }) {
   );
 }
 
-/** "Back Oct 14 and Oct 16": the days the session's ideas come back for review. */
 function ComesBackDetail({ comesBack }: { comesBack: StudySessionSummary["comesBack"] }) {
   const t = useExtracted();
   const format = useFormatter();
@@ -133,7 +121,6 @@ function ComesBackDetail({ comesBack }: { comesBack: StudySessionSummary["comesB
   return t("Back {days}", { days: format.list(days, { type: "conjunction" }) });
 }
 
-/** The belt the session's Brain Power counts toward, with its color as a dot. */
 function BeltDetail({ belt }: { belt: NonNullable<StudySessionSummary["belt"]> }) {
   const t = useExtracted();
   const beltName = useBeltName();
@@ -147,15 +134,6 @@ function BeltDetail({ belt }: { belt: NonNullable<StudySessionSummary["belt"]> }
   );
 }
 
-/**
- * The day's four numbers, two by two on a phone and sharing one row from `md`: right answers (with
- * the share and, in an exam scored net, the net score), the goal's number and how it moved, what
- * goes to review and when it comes back, and the Brain Power earned toward the belt. Each only
- * when it means something for this goal: a language goal says its level elsewhere. From `lg` the
- * aside celebrates the Brain Power (`EarnedToday`), so its tile leaves the row rather than say it
- * twice. The icons stay quiet; the lines under the numbers carry the color, and Brain Power's
- * number its violet, as every Brain Power amount.
- */
 function SessionNumbers() {
   const t = useExtracted();
   const format = useFormatter();
@@ -197,8 +175,6 @@ function SessionNumbers() {
         />
       )}
 
-      {/* The ideas that come back, beside the days they do: "To review 0 · Back Oct 18" counted the
-          mistakes saved instead. */}
       <StatTile
         detail={<ComesBackDetail comesBack={summary.comesBack} />}
         icon={<RotateCcwIcon />}
@@ -223,12 +199,10 @@ function SessionNumbers() {
   );
 }
 
-/** The state a skill rose to stands out from the one it left. */
 function renderNewState(chunks: React.ReactNode) {
   return <span className="text-foreground">{chunks}</span>;
 }
 
-/** "Percentages · Learning → Solid": each skill that rose, in the same words as everywhere. */
 function SkillRises() {
   const t = useExtracted();
   const stateLabel = useStateLabel();
@@ -261,7 +235,6 @@ function SkillRises() {
   );
 }
 
-/** Tomorrow's lesson as the summary's last row, so the day ends knowing what comes next. */
 function TomorrowRow() {
   const t = useExtracted();
   const stopped = useIsStopped();
@@ -285,11 +258,6 @@ function TomorrowRow() {
   );
 }
 
-/**
- * The day's payoff on one screen, on the page: "Done in 49 min", the day's four numbers, the
- * skills that rose and tomorrow's lesson. Right after "Stop for today", "Done for now" with the
- * minutes so far.
- */
 export function DoneStep() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();

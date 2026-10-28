@@ -10,13 +10,8 @@ import { ExtraTimeButton } from "../extra-time-button";
 import { useSessionAction } from "../use-session-action";
 import { useIsStopped, useSessionSummary } from "./summary-context";
 
-/**
- * On a phone, a secondary action that shares its row with another one over a main action of its
- * own: both grow to fill the row.
- */
 export const SHARED_ROW_ACTION_CLASS = "max-lg:grow";
 
-/** "See mistakes", beside the main action: the notebook with what the session saved. */
 export function SeeMistakesLink({ className, href }: { className?: string; href: string }) {
   const t = useExtracted();
 
@@ -34,10 +29,6 @@ export function SeeMistakesLink({ className, href }: { className?: string; href:
   );
 }
 
-/**
- * Back to Today, the summary's main action: a link (prefetched, so it leaves at once), followed by
- * Enter while it's shown.
- */
 export function FinishLink({ className }: { className?: string }) {
   const t = useExtracted();
   const { exitHref } = useSessionSummary();
@@ -49,7 +40,6 @@ export function FinishLink({ className }: { className?: string }) {
   );
 }
 
-/** Right after stopping for today, the rest of the session: one tap away, beside Finish. */
 export function useKeepGoing() {
   const { actions } = useSessionSummary();
   return useSessionAction({ action: actions.keepGoing });
@@ -77,7 +67,6 @@ export function KeepGoingButton({
   );
 }
 
-/** Over the actions: keeping going didn't open the next step. */
 export function KeepGoingFailed({ keepGoing }: { keepGoing: ReturnType<typeof useKeepGoing> }) {
   const t = useExtracted();
 
@@ -92,13 +81,7 @@ export function KeepGoingFailed({ keepGoing }: { keepGoing: ReturnType<typeof us
   );
 }
 
-/**
- * Under the actions: "Keep learning" with the plan's next lessons after the day's session (or "10
- * more minutes" of practice once every lesson is done), while there's something left to study
- * (never past the learner's daily limit), as a quiet text button; and a guest's soft ask to save
- * their plan. A phone offers it beside Finish only (`lastStep`): under "Continue" to the rewards,
- * two "Continue" buttons would leave the learner guessing which one keeps them studying.
- */
+/** On a phone, only beside Finish (`lastStep`): two "Continue" buttons would leave the learner guessing which one keeps them studying. */
 export function SummaryOptions({ lastStep }: { lastStep: boolean }) {
   const t = useExtracted();
   const stopped = useIsStopped();

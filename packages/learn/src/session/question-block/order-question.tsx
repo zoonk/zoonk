@@ -7,7 +7,6 @@ import { AnswerOption, AnswerOptionGroup } from "../../_components/answer-option
 import { ItemLine } from "../../questions/item-text";
 import { useFocusCheckWhenComplete } from "./question-actions";
 
-/** Each step's place once graded: the learner's place was its right one, or not. */
 export type OrderResult = { correctOrder: readonly number[]; order: readonly number[] };
 
 function stepResult({ index, result }: { index: number; result: OrderResult | null }) {
@@ -18,7 +17,6 @@ function stepResult({ index, result }: { index: number; result: OrderResult | nu
   return result.order.indexOf(index) === result.correctOrder.indexOf(index) ? "right" : "wrong";
 }
 
-/** The place a step got, on its right: a filled number once placed, and whether it was right. */
 function PlaceTag({ place, result }: { place: number; result: "right" | "wrong" | null }) {
   const t = useExtracted();
 
@@ -37,12 +35,7 @@ function PlaceTag({ place, result }: { place: number; result: "right" | "wrong" 
   );
 }
 
-/**
- * An ordering question: tap the steps in the order they go, and each one shows its place on its
- * right. Tapping a placed step takes it out. Number keys tap the steps as shown. The host gets the
- * order once every step has its place (null before), and its Check sends it. Once graded, each
- * step's ring says whether its place was right.
- */
+/** The host gets the order once every step has its place, null before. */
 export function OrderQuestion({
   disabled,
   onChange,

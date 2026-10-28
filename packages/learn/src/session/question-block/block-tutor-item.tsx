@@ -4,10 +4,6 @@ import { type StudyBlockDetail, type StudyQuestion } from "../session-types";
 import { type useBlockDrill } from "./block-question";
 import { type QuestionBlockPhase } from "./question-block-state";
 
-/**
- * The block's question in view as the buddy is asked about it; none on a gap's idea screen, for a
- * placement question (a diagnostic the learner answers alone) and while a timed drill's clock runs.
- */
 export function getBlockTutorItem({
   blockDrill,
   detail,
@@ -17,7 +13,6 @@ export function getBlockTutorItem({
 }: {
   blockDrill: Pick<ReturnType<typeof useBlockDrill>, "drill" | "stage">;
   detail: StudyBlockDetail;
-  /** The question's place in the block. */
   index: number;
   phase: QuestionBlockPhase;
   question: StudyQuestion | null;
@@ -39,10 +34,6 @@ export function getBlockTutorItem({
   };
 }
 
-/**
- * The block's aside with the buddy docked at its foot and the way back to its conversation on the
- * header, when the host has one.
- */
 export function withTutorAside({
   aside,
   tutor,

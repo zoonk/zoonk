@@ -22,12 +22,6 @@ function useMaterialTitle() {
   };
 }
 
-/**
- * The block's aside from `lg`: the text, case, chart or recording the question in view shares with
- * its set, which its question places there (half the screen for a long text), or else the day's
- * queue, so the column never jumps from one question to the next. A question's own context stays
- * above it in the column.
- */
 export function useBlockAside({
   detail,
   question,

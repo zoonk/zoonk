@@ -5,7 +5,6 @@ import { useEffect, useRef } from "react";
 import { useLearnAnalytics } from "../../learn-context";
 import { type StudyBlockDetail } from "../session-types";
 
-/** Days since the capsule's ideas were last answered, which is when it was sealed. */
 function getDaysSinceSealed({
   capsuleKey,
   detail,
@@ -24,7 +23,6 @@ function getDaysSinceSealed({
   return answeredAt.length > 0 ? Math.floor((now - Math.max(...answeredAt)) / MS_PER_DAY) : 0;
 }
 
-/** Each capsule opened in a finished review block counts once. */
 export function useCapsuleEvents({
   detail,
   finished,

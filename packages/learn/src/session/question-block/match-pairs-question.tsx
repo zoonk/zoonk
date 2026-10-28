@@ -10,7 +10,6 @@ import { toPlainItemLine } from "../../questions/_utils/item-text";
 import { ItemLine } from "../../questions/item-text";
 import { useFocusCheckWhenComplete } from "./question-actions";
 
-/** Each left entry's pick, as an index into the right column; -1 while unmatched. */
 type Matches = number[];
 
 const UNMATCHED = -1;
@@ -25,7 +24,6 @@ function PairBadge({ number }: { number: number }) {
   );
 }
 
-/** An entry's words, with the emphasis item writers use, filling the button's width. */
 function EntryText({ text }: { text: string }) {
   return (
     <span className="flex-1">
@@ -34,16 +32,10 @@ function EntryText({ text }: { text: string }) {
   );
 }
 
-/** An entry, drawn like an answer option: a strong line, a firm ring while it's the one in play. */
 const entryClass =
   "rounded-option ring-input focus-visible:outline-ring flex min-h-12 w-full items-start gap-2 px-3 py-3 text-left text-sm font-medium ring-1 transition-colors outline-none ring-inset focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 enabled:hover:bg-muted/60 disabled:cursor-default";
 
-/**
- * Match pairs: pick an entry on the left, then its match on the right. Tapping a matched entry
- * undoes it. Every entry is a button, so it works the same with a keyboard; number keys pick in
- * the column in play (the left one, then the right one). The host gets the pairs once all are
- * matched (null before), and its Check sends them.
- */
+/** The host gets the pairs once all are matched, null before. */
 export function MatchPairsQuestion({
   disabled,
   left,

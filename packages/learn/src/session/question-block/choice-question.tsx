@@ -13,10 +13,8 @@ import {
 } from "../../questions/pick-rule";
 import { useFocusCheckWhenComplete } from "./question-actions";
 
-/** What the options show once graded: the right ones, and the ones the learner picked. */
 export type ChoiceResult = { correct: readonly number[]; picked: readonly number[] };
 
-/** A choice question's answer: its one pick, or its picks when it asks for several. */
 type ChoicePick = { selectedIndex: number } | { selectedIndexes: number[] };
 
 function getOptionResult({ index, result }: { index: number; result: ChoiceResult | null }) {
@@ -31,10 +29,6 @@ function getOptionResult({ index, result }: { index: number; result: ChoiceResul
   return result.picked.includes(index) ? "wrong" : null;
 }
 
-/**
- * Once graded, only the learner's picks and the right answers stay, so the feedback fits under
- * them. A grade that doesn't say which option was right keeps them all.
- */
 function isShown({ index, result }: { index: number; result: ChoiceResult | null }) {
   if (!result || result.correct.length === 0) {
     return true;
@@ -43,12 +37,7 @@ function isShown({ index, result }: { index: number; result: ChoiceResult | null
   return result.correct.includes(index) || result.picked.includes(index);
 }
 
-/**
- * A multiple-choice question, one option under the other with its number key. A tap (or the
- * number) picks an option and tapping it again clears it; one that asks for several (`select`: a
- * number, or "all") toggles them. The host gets the answer once it's complete (null before), and
- * its Check sends it. Once graded, the right option says "Correct" and a wrong pick "Your answer".
- */
+/** The host gets the answer once it's complete, null before. */
 export function ChoiceQuestion({
   disabled,
   onChange,

@@ -5,12 +5,7 @@ import { type StudyBlockDetail } from "../session-types";
 import { getNetTally } from "./net-tally";
 import { type QuestionBlockState } from "./question-block-state";
 
-/**
- * The net score of a Cebraspe-style capsule or practice, live, in one mono line ("3 right · 1
- * wrong · net 2"): a wrong answer cancels a right one, so "Leave blank" is there for statements
- * the learner isn't sure about. The counts have a `=0` case because Portuguese's "one" form also
- * covers zero ("0 erros", not "0 erro").
- */
+/** The counts have a `=0` case: Portuguese's "one" form also covers zero ("0 erros", not "0 erro"). */
 export function SwipeScore({
   answers,
   detail,

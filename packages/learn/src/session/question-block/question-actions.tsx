@@ -7,14 +7,8 @@ import { useEffect } from "react";
 import { EnterButton } from "../../_components/enter-button";
 import { TaskActions } from "../../_components/task-layout";
 
-/** The Check button's id, so a question can hand it the focus once its answer is complete. */
 const QUESTION_CHECK_ID = "question-check";
 
-/**
- * Check, the question's main action in its pinned bar: it sends the answer once it's complete
- * (a pick, every step placed, every pair matched, something typed), and Enter does the same. While
- * the grade is on its way it stays put with a spinner, so nothing jumps.
- */
 export function CheckButton({
   busy = false,
   disabled,
@@ -36,7 +30,6 @@ export function CheckButton({
   );
 }
 
-/** Continue, once the grade shows: on to the next question (or Enter). */
 export function ContinueButton({ onContinue }: { onContinue: () => void }) {
   const t = useExtracted();
 
@@ -45,11 +38,7 @@ export function ContinueButton({ onContinue }: { onContinue: () => void }) {
   return <EnterButton onClick={onContinue}>{t("Continue")}</EnterButton>;
 }
 
-/**
- * Once the last pick that completes an answer is made on a control that keeps its own Enter (a
- * checkbox, a step, a pair), the focus moves to Check, so Enter checks instead of undoing that
- * last pick.
- */
+/** On a control that keeps its own Enter (a checkbox, a step, a pair), completing the answer moves focus to Check, so Enter checks instead of undoing the last pick. */
 export function useFocusCheckWhenComplete({
   complete,
   containerRef,
@@ -64,16 +53,10 @@ export function useFocusCheckWhenComplete({
   }, [complete, containerRef]);
 }
 
-/**
- * A question's actions in the pinned bar with the learner's buddy after them, where the lesson
- * places it: an icon, saying its name after a miss, when asking helps most (`TutorAskButton`). From
- * `lg` the buddy is in the aside instead.
- */
 export function QuestionActionsRow({
   ask,
   children,
 }: {
-  /** "Ask {buddy}", when the host has one (`QuestionTutor.button`). */
   ask: React.ReactNode;
   children: React.ReactNode;
 }) {

@@ -28,13 +28,7 @@ import { useBlockTitle } from "./use-block-copy";
 import { type MomentKind, useMomentTitle } from "./use-moment-title";
 import { useSessionAction } from "./use-session-action";
 
-/**
- * What the block earned: its Brain Power as a readout (never "+0"), then on one quiet line the day
- * a lesson comes back (as a date, never a weekday that could be this one or the next) and its net
- * score when it's scored like an exam where a wrong answer cancels a right one. The day's bonus,
- * when the block paid it, is the missions' to show, so the readout counts only the block's own
- * points.
- */
+/** The day a lesson comes back reads as a date, never a weekday that could be this week's or the next. */
 function MomentEarned({ moment }: { moment: StudyMomentView }) {
   const t = useExtracted();
   const format = useFormatter();
@@ -49,19 +43,12 @@ function MomentEarned({ moment }: { moment: StudyMomentView }) {
           timeZone: "UTC",
         }),
       }),
-    // The block's right and wrong statements were counted live while answering.
     moment.netScore !== null && t("Net score {net}", { net: String(moment.netScore) }),
   ];
 
   return <MomentReadouts brainPower={brainPower} facts={facts} />;
 }
 
-/**
- * What Continue opens: the next block as the list's highlighted "next" row, its kind's dot, its
- * name and its minutes. From `lg` the day's queue beside the moment highlights the same row, so the
- * moment leaves it out there, unless something under it is about it (`subject`: taking the next
- * lesson's test).
- */
 function NextBlock({ block, subject }: { block: StudyBlock; subject: boolean }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -92,12 +79,7 @@ function ActionFailed({ children }: { children: React.ReactNode }) {
   );
 }
 
-/**
- * The moment's action bar: "Stop for today" beside Continue (what's done counts, the rest waits on
- * Today), or "See today's summary" alone once the session is done. On a phone Continue keeps the
- * bar's bottom row, where the last answer's Continue was, and "Stop for today" sits above it, so a
- * quick second tap never stops the session.
- */
+/** On a phone Continue keeps the bar's bottom row, where the last answer's Continue was, so a quick second tap never stops the session. */
 function MomentActions({
   onContinue,
   onStop,
@@ -141,15 +123,6 @@ function MomentActions({
   );
 }
 
-/**
- * The quick moment between the session's blocks, with the same chrome as every task: the day's
- * session bar in the header, then on the page what the block was ("Review done"), what it earned
- * in one mono line, and what comes next as the highlighted next row. The action bar holds "Stop
- * for today" beside Continue (or Enter). From `lg` the aside lists the day's queue, as Today does,
- * its next row highlighted, in the next row's place.
- * The full summary waits for the end of the session. Inside the lesson player the host's
- * completion header shows the day (`LessonMomentHeader`) and the queue takes the player's aside.
- */
 export function StudyMoment({
   blocks,
   buddy,
@@ -165,29 +138,17 @@ export function StudyMoment({
   renderCeremony,
   testedOut = false,
 }: {
-  /** The day's blocks, for its queue beside the moment. */
   blocks: readonly StudyBlock[];
-  /** The learner's buddy, who cheers when the block completes one of the day's missions. */
   buddy?: LearnBuddy | null;
-  /** Where leaving goes, for the moment's own header; inside the lesson player it has none. */
   exitHref?: string;
-  /** The chapter of the lesson just finished: a next lesson in another one starts a chapter. */
   finishedChapterId?: string | null;
-  /** Inside the lesson player, whose header holds the page's heading (the lesson's title). */
   inLessonPlayer?: boolean;
   kind: MomentKind;
   moment: StudyMomentView;
-  /** The block that comes next, shown above Continue. */
   next: StudyBlock | null;
   onContinue: () => Promise<boolean>;
-  /**
-   * Opens a chapter's test: the one a lesson's moment offers (`moment.testOutOffer`), or the next
-   * lesson's when it starts a chapter. Without it, neither shows.
-   */
   onStartTestOut?: (chapterId: string) => Promise<TestOutStart>;
-  /** "Stop for today" between blocks: what's done counts, the rest waits on Today. */
   onStop: () => Promise<boolean>;
-  /** The full-screen moment for a milestone the block earned (`moment.ceremony`), over this one. */
   renderCeremony?: MomentCeremony;
   testedOut?: boolean;
 }) {
@@ -204,7 +165,6 @@ export function StudyMoment({
 
   const aside = useSessionQueueAside(queue);
 
-  // A next lesson that starts a chapter can be skipped from here too, unless a test is offered.
   const nextChapterId =
     !offer && nextBlock?.canTestOut && nextBlock.chapterId !== finishedChapterId
       ? nextBlock.chapterId

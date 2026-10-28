@@ -20,7 +20,6 @@ type BlockCopyInput = Pick<
   | "weakest"
 >;
 
-/** What a checkpoint is called. */
 function useCheckpointTitle() {
   const t = useExtracted();
 
@@ -45,29 +44,14 @@ function useCheckpointTitle() {
   };
 }
 
-/**
- * The phase a phase's challenge closes, by name: every row of one says it, so two challenges due
- * the same day (one a half-studied day left, and the next phase's) never read the same. Null for
- * other blocks and a weekly challenge.
- */
 export function getChallengePhase(block: Pick<StudyBlock, "checkpoint" | "title">): string | null {
   return block.checkpoint && block.checkpoint.kind !== "weekly" && block.title ? block.title : null;
 }
 
-/**
- * A review block's questions come in capsules, except the first week's warm-up, which is placement
- * questions only: it's named and counted as questions, never as "0 capsules".
- */
 function hasCapsules(block: Pick<StudyBlock, "capsules" | "kind">): boolean {
   return block.kind === "review" && block.capsules.length > 0;
 }
 
-/**
- * A block's name on Today and in the session: the lesson's title for lessons, what the block is
- * for the rest ("Quick review" or "Reviews" by its length, "Mixed practice", "Practice mistakes"
- * when it only fixes mistakes, or "What you already know" for placement's questions in the first
- * week).
- */
 export function useBlockTitle() {
   const t = useExtracted();
   const checkpointTitle = useCheckpointTitle();
@@ -107,15 +91,12 @@ export function useBlockTitle() {
   };
 }
 
-/** The line under a block's name: what's inside it, in a few words. */
 export function useBlockDetail() {
   const t = useExtracted();
   const shortList = useShortList();
 
   return (block: BlockCopyInput & Pick<StudyBlock, "canDo">): string | null => {
-    // In plain words: how many questions and on what, never "capsules". The first week's
-    // placement questions in it are on what the learner already knows, not on the capsules' topics.
-    // Nothing was due, so the day reviews what the learner knows least: never called due.
+    // Nothing was due, so the day reviews the weakest topics: never called due.
     if (hasCapsules(block) && block.weakest) {
       return t(
         "No reviews due today · {count, plural, one {# question} other {# questions}} on your weakest topics",
@@ -123,7 +104,6 @@ export function useBlockDetail() {
       );
     }
 
-    // A few topics by name and a count of the rest: a return after a break once listed 19.
     if (hasCapsules(block)) {
       const titles = shortList(
         block.capsules.map((capsule) => capsule.title),
@@ -162,8 +142,6 @@ export function useBlockDetail() {
       });
     }
 
-    // A piece of writing is one prompt, which its name already says: "1 question" would add
-    // nothing.
     if (block.kind === "produce") {
       return block.canDo;
     }

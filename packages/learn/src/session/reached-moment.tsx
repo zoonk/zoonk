@@ -20,22 +20,18 @@ type Reached = StudyMomentView["reached"];
 
 const PERCENT = 100;
 
-/** Belts light enough that their level number reads in dark ink; the rest take white. */
 const LIGHT_BELTS: ReadonlySet<BeltColor> = new Set(["white", "yellow", "orange"]);
 
-/** Energy from which the buddy glows (`getBuddyEnergyState`): reaching it is the buddy's moment. */
+/** Where the buddy starts glowing (`getBuddyEnergyState`). */
 const GLOWING_ENERGY = 80;
 const MAX_ENERGY = 100;
 
-/** A row's one motion where the moment celebrates: none, or on its beat. */
 type RowMotion = { delay: number } | null;
 
-/** The motion's beat, as the element's own animation delay. */
 function beatStyle(motion: RowMotion): React.CSSProperties | undefined {
   return motion ? { animationDelay: `${motion.delay}ms` } : undefined;
 }
 
-/** One thing the block took the learner to, as a row: its mark, what it is, one line, a bar. */
 function ReachedRow({
   bar,
   detail,
@@ -63,7 +59,6 @@ function ReachedRow({
   );
 }
 
-/** The new level's number on its belt's color, with a firm edge, landing as it's reached. */
 function LevelBadge({
   color,
   level,
@@ -91,7 +86,6 @@ function LevelBadge({
   );
 }
 
-/** A new belt level: "Level up!", the belt and level, and its ten ticks, the new one filling. */
 function LevelReached({
   level,
   motion,
@@ -123,12 +117,7 @@ function LevelReached({
   );
 }
 
-/**
- * A new tenth of Energy, said as its number ("Energy at 60%"), with what it means: the buddy
- * glowing from 80%, or the most it goes at 100%. Its bar shows where Energy is now, never filling
- * from empty, since a block moves it only a little and the moment doesn't know from where; its
- * bolt pops once for the step.
- */
+/** Its bar shows where Energy is now, never filling from empty: the moment doesn't know where it came from. */
 function EnergyReached({
   buddy,
   energy,
@@ -188,13 +177,6 @@ function EnergyReached({
   );
 }
 
-/**
- * What the block took the learner to, as flat rows under its missions: a new belt level and a new
- * tenth of Energy. A new belt color gets its full-screen ceremony instead, so its level isn't said
- * twice. Where the moment celebrates, the level lands after `delay` (the missions' moment above
- * has its beats first) as its tick fills, and Energy's bolt pops a beat later. Nothing when the
- * block reached neither.
- */
 export function ReachedMoment({
   buddy,
   ceremony,
@@ -202,9 +184,7 @@ export function ReachedMoment({
   reached,
 }: {
   buddy?: LearnBuddy | null;
-  /** The block's full-screen ceremony: a new belt already celebrates its level. */
   ceremony: Pick<CeremonyMilestone, "kind"> | null;
-  /** When its first row moves: after the missions' moment (`getAfterMissionsDelay`). */
   delay: number;
   reached: Reached;
 }) {

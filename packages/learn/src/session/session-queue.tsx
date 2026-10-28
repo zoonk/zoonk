@@ -17,10 +17,6 @@ import { BlockMark } from "./block-mark";
 import { type SessionQueueRow, type getSessionQueue } from "./session-queue-rows";
 import { useBlockTitle } from "./use-block-copy";
 
-/**
- * The day's blocks as Today lists them: each one's mark (`BlockMark`), its name and its minutes in
- * the mono face; the done ones with the done mark and a quiet name, the next one highlighted.
- */
 function SessionQueue({ rows }: { rows: readonly SessionQueueRow[] }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -51,11 +47,6 @@ function SessionQueue({ rows }: { rows: readonly SessionQueueRow[] }) {
   );
 }
 
-/**
- * The aside of the session's screens from `lg`: today's queue (`getSessionQueue`), with the
- * minutes still to go. It keeps the learner's place in the day beside a question or between
- * blocks, as Today shows it.
- */
 export function useSessionQueueAside(queue: ReturnType<typeof getSessionQueue>): TaskFrameAside {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -69,11 +60,6 @@ export function useSessionQueueAside(queue: ReturnType<typeof getSessionQueue>):
   };
 }
 
-/**
- * The day's queue placed in the aside of a screen whose frame isn't the session's (a lesson's end,
- * in the lesson player): drawn like the aside's own header and body, from the aside's top. Wide
- * screens only; phones have the "Up next" row.
- */
 export function SessionQueueAsideContent({ queue }: { queue: ReturnType<typeof getSessionQueue> }) {
   const aside = useSessionQueueAside(queue);
 

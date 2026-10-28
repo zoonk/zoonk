@@ -37,11 +37,6 @@ import { TimeMachine, TimeMachineNote } from "./time-machine";
 import { useCapsuleEvents } from "./use-capsule-events";
 import { type QuestionBlockActions, useQuestionBlock } from "./use-question-block";
 
-/**
- * Each question's segment in the header: blue or red once answered (this sitting's answer, or the
- * one saved before it), read for a placement question or a statement left blank, which aren't
- * graded as right or wrong, the one in view, and the rest ahead.
- */
 function getQuestionSegments({
   detail,
   state,
@@ -90,8 +85,6 @@ function FinishedBlock({
 }) {
   useMomentEvents({ moment });
 
-  // The session's last block has its moment too (its missions, the day's bonus, a level), with
-  // "See today's summary" to go on.
   return (
     <StudyMoment
       blocks={session.blocks}
@@ -107,12 +100,10 @@ function FinishedBlock({
   );
 }
 
-/** Before the grade: answering, checking, or answering again after a failed save. */
 function isAnswerPhase(phase: QuestionBlockPhase): boolean {
   return phase.kind === "answering" || phase.kind === "checking" || phase.kind === "answerFailed";
 }
 
-/** How the current question's answer went, or null before it's graded. */
 function getAnswerResult(phase: QuestionBlockPhase): "correct" | "wrong" | null {
   if (phase.kind !== "feedback") {
     return null;
@@ -121,10 +112,7 @@ function getAnswerResult(phase: QuestionBlockPhase): "correct" | "wrong" | null 
   return phase.feedback.isCorrect ? "correct" : "wrong";
 }
 
-/**
- * The question the header's menu reports. A timed drill's clock never waits on a menu, so its
- * question is reported once answered.
- */
+/** A timed drill's clock never waits on a menu, so its question is reported once answered. */
 function getVoteTarget({
   phase,
   question,
@@ -139,7 +127,6 @@ function getVoteTarget({
   return { contentId: question.itemId, contentKind: "item" as const };
 }
 
-/** The "…" menu to report the question in view, when it can be reported now. */
 function BlockMenu({ target }: { target: ReturnType<typeof getVoteTarget> }) {
   const t = useExtracted();
 
@@ -157,13 +144,6 @@ function BlockMenu({ target }: { target: ReturnType<typeof getVoteTarget> }) {
   );
 }
 
-/**
- * One question block of today's session (capsules, practice or a mistake drill), played one
- * question at a time and ending with its completion moment. A saved mistake's drill plays the way
- * its cause calls for. Like the lesson, a tap picks and Check sends; the actions stay pinned to the
- * bottom of the screen, Check before the grade and Continue after it, and the learner's buddy can
- * be asked about the question in view (`tutor`).
- */
 export function QuestionBlock({
   actions,
   buddy,
@@ -175,16 +155,12 @@ export function QuestionBlock({
   tutor,
 }: {
   actions: SessionActions;
-  /** The learner's buddy, who cheers when the block completes one of the day's missions. */
   buddy?: LearnBuddy | null;
   detail: StudyBlockDetail;
   exitHref: string;
-  /** Where a content gap's lesson opens; without it the drill shows only the lesson's summary. */
   lessonHref?: LessonHref | null;
-  /** The full-screen moment for a milestone the block earned (a new belt, new glasses). */
   renderCeremony?: MomentCeremony;
   session: SessionContext;
-  /** The learner's buddy for the question in view, from the host; none plays without it. */
   tutor?: QuestionTutor | null;
 }) {
   const blockTitle = useBlockTitle();
@@ -280,7 +256,6 @@ export function QuestionBlock({
         )}
       </BlockBody>
 
-      {/* A gap's idea screen has its own Start. */}
       {showsQuestionActions({ phase, stage: blockDrill.stage }) && (
         <TaskActionBar>
           <QuestionBlockStatus

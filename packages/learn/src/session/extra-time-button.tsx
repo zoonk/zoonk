@@ -6,11 +6,7 @@ import { useExtracted } from "next-intl";
 import { ChangeSaveError } from "../_components/save-error";
 import { useSessionAction } from "./use-session-action";
 
-/**
- * "Study 10 more minutes" once the day's session is done: a text button under the actions, since
- * the day's main action is seeing what changed. Core offers it only while there's
- * something left to practice or learn, so a failure here is a connection problem worth retrying.
- */
+/** Core offers it only while something is left to practice or learn, so a failure here is a connection problem worth retrying. */
 export function ExtraTimeButton({
   action,
   className,
@@ -18,9 +14,7 @@ export function ExtraTimeButton({
   minutes,
 }: {
   action: () => Promise<boolean>;
-  /** Its width and place where it sits (`lg:w-auto` beside other actions). */
   className?: string;
-  /** What the time is for, when it's more specific than "Study 10 more minutes". */
   label?: string;
   minutes: number;
 }) {

@@ -8,12 +8,6 @@ import { TaskBody } from "../_components/task-layout";
 import { LearnLink } from "../learn-link";
 import { useSessionAction } from "./use-session-action";
 
-/**
- * Re-reads the session's next step as soon as it shows: the summary once the last
- * block is saved, or the block that still waits when the summary showed before it was there. Says
- * what it's doing meanwhile under the session's header (whose ✕ always leaves), and offers Try
- * again, or back to Today, when it didn't open.
- */
 export function OpenNextStep({
   exitHref,
   header,
@@ -21,7 +15,6 @@ export function OpenNextStep({
   status,
 }: {
   exitHref: string;
-  /** The session's header over the wait (`SessionHeader`). */
   header: React.ReactNode;
   /** Read-only: a remount must never start preparation or generation. */
   readNext: () => void;

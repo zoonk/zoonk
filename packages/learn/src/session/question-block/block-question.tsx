@@ -35,7 +35,6 @@ const NOT_SURE = { dontKnow: true } as const;
 
 type Run = ReturnType<typeof useQuestionBlock>;
 
-/** Before its question opens: a gap's idea first, then a misread's question before its answers. */
 type DrillStage = "idea" | "open" | "reading";
 
 function getOpeningStage({ drill, first }: { drill: Drill | null; first: boolean }): DrillStage {
@@ -46,10 +45,6 @@ function getOpeningStage({ drill, first }: { drill: Drill | null; first: boolean
   return isReadFirst(drill) ? "reading" : "open";
 }
 
-/**
- * The saved mistake's drill the current question belongs to, if any, and where the question
- * stands in it. It starts over with every question.
- */
 export function useBlockDrill({ detail, index }: { detail: StudyBlockDetail; index: number }) {
   const question = detail.questions[index] ?? null;
   const drill = question?.drill ?? null;
@@ -75,15 +70,10 @@ export function useBlockDrill({ detail, index }: { detail: StudyBlockDetail; ind
 
 type BlockDrill = ReturnType<typeof useBlockDrill>;
 
-/**
- * A gap's idea had its own screen; other drills say how they work above their first question, and
- * a misread above each one, since each waits behind "Show the answers".
- */
 function showsDrillIntro({ drill, first }: Pick<BlockDrill, "drill" | "first">): boolean {
   return drill !== null && !isIdeaFirst(drill) && (first || isReadFirst(drill));
 }
 
-/** The drill's notes under the grade: time running out, an honest "not sure", the trap. */
 export function BlockDrillNotes({
   blockDrill,
   feedback,
@@ -105,16 +95,11 @@ export function BlockDrillNotes({
   );
 }
 
-/** Whether the question before this one in the block was on the same text, case or recording. */
 function isSetContinued({ detail, index }: { detail: StudyBlockDetail; index: number }): boolean {
   const set = detail.questions[index]?.set;
   return Boolean(set) && detail.questions[index - 1]?.set?.id === set?.id;
 }
 
-/**
- * The questions of the current one's recording in the block, in order, for the learner to read
- * before it plays.
- */
 function getRecordingQuestions({
   detail,
   question,
@@ -130,12 +115,7 @@ function getRecordingQuestions({
   };
 }
 
-/**
- * A recording above its set's questions, beside them from `lg`. Keyed by its set, it stays
- * mounted from the set's first question to its last, so it keeps playing while the learner
- * answers along and reads each answer's feedback, as in the exam. Its plays count in this block,
- * as practice: one cut off by a reload comes back once.
- */
+/** Keyed by its set, so it keeps playing while the learner answers along, as in the exam. */
 function BlockRecording({
   detail,
   phase,
@@ -162,16 +142,10 @@ function BlockRecording({
   );
 }
 
-/** A text, case or chart above each of its questions; a recording plays above them all. */
 function hasTextStimulus(question: StudyQuestion): boolean {
   return Boolean(question.set) && !question.set?.listening;
 }
 
-/**
- * What the question is read with: its set's text, case or chart, shared with the set's other
- * questions, above them on a phone and beside them in the aside from `lg`; then its own context,
- * picture or chart, which is part of the question and stays right above it in the column.
- */
 function QuestionMaterial({
   continued,
   question,
@@ -211,10 +185,6 @@ function QuestionText({
   );
 }
 
-/**
- * The answer Check would send for the question in view, as the learner makes it: null until it's
- * complete. It starts over with every question.
- */
 export function useDraftAnswer(index: number) {
   const [draft, setDraft] = useState<{ answer: StudyQuestionAnswer | null; index: number }>({
     answer: null,
@@ -229,12 +199,6 @@ export function useDraftAnswer(index: number) {
 
 type DraftAnswer = ReturnType<typeof useDraftAnswer>;
 
-/**
- * The current question, played the way its mistake's drill calls for: the idea first for
- * a content gap, the question before its answers for a misread, a clock for a timed drill and "I'm
- * not sure" where guessing is the habit. Other questions play as they are. Its actions sit in the
- * block's pinned bar (`BlockQuestionActions`).
- */
 export function BlockQuestion({
   blockDrill,
   detail,
@@ -307,13 +271,6 @@ export function BlockQuestion({
   );
 }
 
-/**
- * The question's actions in the block's pinned bar: "Show the answers" for a misread still being
- * read; otherwise Check (once the answer is complete) with the honest way out beside it where it
- * applies ("I'm not sure" in a no-guessing drill, "I don't know yet" on a placement question and on
- * every typed one, so nobody has to type a guess to move on). A gap's idea screen has its own
- * Start.
- */
 export function BlockQuestionActions({
   blockDrill,
   draft,

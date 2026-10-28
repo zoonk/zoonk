@@ -9,12 +9,7 @@ const KIND_BY_BLOCK: Readonly<Record<StudyBlock["kind"], LearnKind>> = {
   review: "review",
 };
 
-/**
- * What a session block is, as its `KindDot` marks it: a lesson, a review, practice, writing, the
- * week's challenge or a mock exam, so a block has the same color and icon wherever it shows.
- * Practice that only fixes mistakes is the notebook's kind, as its name and the "Fix a mistake"
- * mission it counts for are.
- */
+/** Practice that only fixes mistakes is the notebook's kind, as the "Fix a mistake" mission it counts for is. */
 export function getBlockKind(
   block: Pick<StudyBlock, "checkpoint" | "kind" | "mistakesOnly">,
 ): LearnKind {

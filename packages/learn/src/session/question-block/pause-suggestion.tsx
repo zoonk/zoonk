@@ -6,11 +6,6 @@ import { useExtracted } from "next-intl";
 import { Callout } from "../../_components/callout";
 import { useSessionAction } from "../use-session-action";
 
-/**
- * Accuracy dropped sharply: a short break usually helps more than pushing on. One quiet line
- * under the feedback with a small way to stop; stopping keeps everything done so far, and keeping
- * going is just Continue.
- */
 export function PauseSuggestion({ onStop }: { onStop: () => Promise<boolean> }) {
   const t = useExtracted();
   const { failed, isPending, run } = useSessionAction({ action: onStop });

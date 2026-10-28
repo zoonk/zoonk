@@ -7,7 +7,6 @@ import { type StudyBlockDetail } from "../session-types";
 import { useMomentTitle } from "../use-moment-title";
 import { type QuestionBlockPhase } from "./question-block-state";
 
-/** The block's question in view, or its moment drawing in while the block is saved. */
 export function BlockBody({
   children,
   kind,
@@ -34,7 +33,6 @@ export function showsQuestionActions({
   phase: QuestionBlockPhase;
   stage: string;
 }): boolean {
-  // While the block is saved its moment is already drawing, and its own actions come with it.
   if (phase.kind === "finishing") {
     return false;
   }

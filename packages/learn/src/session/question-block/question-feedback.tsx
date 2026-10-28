@@ -21,10 +21,6 @@ import {
   type StudyQuestionAnswer,
 } from "../session-types";
 
-/**
- * The right answer in words, from the grade's answer shape: a math answer with its unit, a
- * statement's in the goal's exam's words.
- */
 export function useAnswerText(trueFalseLabels: TrueFalseLabels) {
   const locale = useLocale();
   const { answerLabel } = useTrueFalseLabels(trueFalseLabels);
@@ -81,10 +77,6 @@ export function useAnswerText(trueFalseLabels: TrueFalseLabels) {
   };
 }
 
-/**
- * How to solve a math problem, step by step with the numbers the learner saw, as a mono diff: the
- * steps as quiet lines and the result as the added line, so the eye lands on where they lead.
- */
 export function WorkedSteps({ steps }: { steps: string[] }) {
   const t = useExtracted();
 
@@ -105,13 +97,8 @@ export function WorkedSteps({ steps }: { steps: string[] }) {
   );
 }
 
-/** Hyperdrive in its quietest form: a right answer that makes a streak of three or more says so. */
 const SHOWN_STREAK = 3;
 
-/**
- * The right answer in words, only where the question doesn't mark it: choice and true-or-false
- * questions mark the right option, other formats say it here.
- */
 function useCorrectAnswerLine({
   feedback,
   question,
@@ -134,10 +121,6 @@ function useCorrectAnswerLine({
   return answerText({ answer: feedback.correctAnswer, question });
 }
 
-/**
- * The panel's last line when a mistake moved: fixed, or saved to come back, tomorrow unless
- * tomorrow is the exam.
- */
 function MistakeNote({
   examTomorrow,
   feedback,
@@ -164,11 +147,7 @@ function MistakeNote({
   );
 }
 
-/**
- * The verdict's words and tone: right, wrong, left blank where a wrong answer costs a point (blank
- * is neither, never red), or the learner's own "I don't know yet" (`notSure`), never called "Not
- * quite". Mistake practice says its verdicts the same way.
- */
+/** A blank is neither right nor wrong, never red, and the learner's own "I don't know yet" is never called "Not quite". */
 export function useVerdict({
   blank = false,
   isCorrect,
@@ -195,7 +174,6 @@ export function useVerdict({
   return { label: t("Not quite"), tone: "wrong" as const };
 }
 
-/** "3 right in a row", Hyperdrive's quiet mark beside a right answer's verdict. */
 function StreakNote({ streak }: { streak: number }) {
   const t = useExtracted();
 
@@ -207,12 +185,6 @@ function StreakNote({ streak }: { streak: number }) {
   );
 }
 
-/**
- * The grade after an answer, on the quiet feedback panel: right, wrong or left blank (with the
- * streak once it's three or more), the right answer where the question doesn't show it, why, how
- * to solve it, the passage it quotes, the drill's notes, and last one quiet line when a mistake
- * was saved or fixed.
- */
 export function QuestionFeedback({
   answer,
   children,
@@ -222,15 +194,11 @@ export function QuestionFeedback({
   timedOut,
   trueFalseLabels,
 }: {
-  /** What the learner sent: their own "I don't know yet" is said back to them. */
   answer: StudyQuestionAnswer;
-  /** Notes a mistake's drill adds after the grade, such as the trap it set. */
   children?: React.ReactNode;
-  /** The goal's exam is tomorrow: a saved mistake doesn't come back then. */
   examTomorrow: boolean;
   feedback: StudyAnswerFeedback;
   question: StudyQuestion;
-  /** A drill's time ran out: its "I don't know yet" is the clock's, not the learner's. */
   timedOut: boolean;
   trueFalseLabels: TrueFalseLabels;
 }) {

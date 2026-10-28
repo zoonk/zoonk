@@ -26,14 +26,8 @@ import { DoneStep } from "./summary-parts";
 import { EarnedToday, RewardsStep, hasRewardsBeyondBrainPower } from "./summary-rewards";
 import { useFirstSummaryVisit } from "./use-first-summary-visit";
 
-/** The summary's steps the learner has moved on from: shown again, they keep their end state. */
 const NO_STEP_LEFT = { done: false, rewards: false };
 
-/**
- * The phone's second step, what the day earned, when it earned more than its Brain Power: Continue
- * opens it, Back (or ←) returns. Wide screens show it in the aside instead, so their main action
- * is Finish from the first screen. A step shown again (`revisited`) keeps its end state.
- */
 function useRewardsStep(stepRef: React.RefObject<HTMLElement | null>) {
   const stopped = useIsStopped();
   const { summary } = useSessionSummary();
@@ -49,7 +43,6 @@ function useRewardsStep(stepRef: React.RefObject<HTMLElement | null>) {
 
   useKeyboardCallback("ArrowLeft", () => (open ? close() : false), { mode: "none", screen: true });
 
-  // A step the learner moves to takes the focus, but the first one keeps it where the browser put it.
   useEffect(() => {
     if (opened.current || open) {
       opened.current = true;
@@ -71,12 +64,6 @@ function useRewardsStep(stepRef: React.RefObject<HTMLElement | null>) {
   };
 }
 
-/**
- * The summary's buttons: Back on the rewards step, "See mistakes" (and "Keep going" right after
- * stopping) beside the main action, Continue to the rewards on a phone or Finish. Right after
- * stopping, "See mistakes" and "Keep going" share a phone's row and Finish takes its own under
- * them: all three in one row squeezed Finish's label ("Concluir" read "ncluir").
- */
 function SummaryButtons({
   continuesToRewards,
   keepGoing,
@@ -112,16 +99,6 @@ function SummaryButtons({
   );
 }
 
-/**
- * The end of the session on one screen: the day done with its four numbers, the skills that rose
- * and tomorrow's lesson, with "See mistakes" beside Finish, a link back to Today. From `lg` what
- * the day earned sits in the aside beside it; a phone gives it a step of its own (Continue) only
- * when there's more than the Brain Power the numbers show. Right after "Stop for today", what's
- * done so far, with Keep going beside Finish. The session's one milestone (a belt, the buddy
- * growing, glasses) opens over it first, as its own full-screen moment. A session with a block
- * still waiting that the learner didn't stop (the host read the day before "10 more minutes" added
- * it) goes straight on to that block.
- */
 export function SummarySteps() {
   const t = useExtracted();
   const stopped = useIsStopped();
@@ -131,8 +108,7 @@ export function SummarySteps() {
   const keepGoing = useKeepGoing();
   const firstVisit = useFirstSummaryVisit(summary);
 
-  // A summary the learner just reached with the focus nowhere (the tapped "Stop for today"
-  // went with the screen before it), so a screen reader starts at its title.
+  // The tapped "Stop for today" left with the screen before, so a screen reader starts at the title.
   const shown = stopped || summary.finished;
 
   useEffect(() => {

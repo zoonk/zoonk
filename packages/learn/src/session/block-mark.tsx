@@ -5,12 +5,6 @@ import { DoneMark } from "../_components/status-mark";
 import { getBlockKind } from "./block-kind";
 import { type DayStep } from "./session-types";
 
-/**
- * A block's mark in the day's queue, on Today and beside the session: its kind's icon, the
- * Trickster's face for a phase's challenge (he's its boss), the done mark every list shares once
- * done (`done` for a block that just ended on this screen, whose copy may still have it running)
- * and an empty ring once skipped.
- */
 export function BlockMark({
   block,
   className,

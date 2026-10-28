@@ -28,11 +28,6 @@ const SEGMENT_BY_STATE: Record<SessionQueueRow["state"], TaskSegment> = {
   next: "current",
 };
 
-/**
- * The day's blocks as segments: done ones blue, the next one in view, the rest ahead. With the
- * day's queue each block's segment is as long as its minutes, as Today draws the day; with only
- * the counts, the first ones done and every segment the same length.
- */
 function getSessionSegments({
   queue,
   sessionBar,
@@ -60,11 +55,6 @@ function getSessionSegments({
   };
 }
 
-/**
- * How far the day is, for screen readers: "2 of 6 done", and, while it holds time for lessons still
- * being outlined, that more come as the learner goes, as Today says, so the count growing when
- * they land is no surprise.
- */
 function useSessionProgressLabel({
   lessonsComing,
   sessionBar,
@@ -86,13 +76,6 @@ function useSessionProgressLabel({
       );
 }
 
-/**
- * The header between the session's blocks (the next stop, a block just done, a lesson's end), the
- * same as every task's: leave on the left (Escape too: nothing is open, so nothing is lost),
- * "Today's session" in the middle, and the day as one segment per block under it, done ones blue,
- * each as long as its minutes when the day's `queue` is known. It's the one place the whole
- * session shows on a phone.
- */
 export function SessionHeader({
   exitHref,
   lessonsComing = false,
@@ -101,13 +84,9 @@ export function SessionHeader({
   sessionBar = NO_BAR,
 }: {
   exitHref: string;
-  /** The day holds time for lessons still being outlined, which join its end once they land. */
   lessonsComing?: boolean;
-  /** A "…" menu on its end side, such as a finished lesson's, with its summary card. */
   menu?: ReactNode;
-  /** The day's blocks in order (`getSessionQueue`), for segments as long as their minutes. */
   queue?: readonly SessionQueueRow[];
-  /** The day's counts; without them (and without `queue`), the header has no bar. */
   sessionBar?: { completed: number; total: number };
 }) {
   const t = useExtracted();

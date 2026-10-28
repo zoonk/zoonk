@@ -2,13 +2,8 @@ import { useEffect, useState } from "react";
 import { deviceStorage } from "../../_utils/device-storage";
 import { type StudySessionSummary } from "../session-types";
 
-/** The summary the learner last saw celebrate: its session and the Brain Power it showed. */
 const CELEBRATED_KEY = "zoonk:summary-celebrated";
 
-/**
- * Whether the learner sees this summary for the first time, so what it earned counts up once:
- * opened again from Today's "See today's summary", it's still, until the day earns more.
- */
 export function useFirstSummaryVisit({
   brainPower,
   sessionId,

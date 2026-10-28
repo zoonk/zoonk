@@ -5,7 +5,6 @@ import { type StudyBlock } from "./session-types";
 
 export type MomentKind = StudyBlock["kind"];
 
-/** What the block was, as its moment's title: "Lesson complete", "Review done", "Practice done". */
 export function useMomentTitle({ kind, testedOut }: { kind: MomentKind; testedOut: boolean }) {
   const t = useExtracted();
 
