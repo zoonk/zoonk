@@ -815,8 +815,8 @@ final class ZoonkUITests: XCTestCase {
     openStatistics(in: app)
 
     XCTAssertTrue(
-      app.staticTexts["Log in to continue"].waitForExistence(timeout: 5),
-      "Expected authentication loss to leave Statistics for the log-in gate")
+      app.buttons["Log in"].firstMatch.waitForExistence(timeout: 5),
+      "Expected authentication loss to sign the learner out, with the way to log in again")
   }
 
   /// Every stat opens from its tile: a pushed page on a phone, the section's tab on an iPad.
@@ -875,15 +875,19 @@ final class ZoonkUITests: XCTestCase {
     XCTAssertTrue(calendar.waitForExistence(timeout: 5), "Expected the overview's calendar")
     XCTAssertEqual(calendar.value as? String, "Aug 20 · 9 activities")
 
-    calendar.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.6)).tap()
+    // The year scrolls from its newest edge, so tap a day near that edge, a few days earlier.
+    calendar.coordinate(withNormalizedOffset: CGVector(dx: 0.97, dy: 0.4)).tap()
     XCTAssertNotEqual(
       calendar.value as? String, "Aug 20 · 9 activities", "Expected a tap to pick another day")
   }
 
-  /// A tile is one button whose label starts with the stat's name ("Level, 4, Green belt").
+  /// A tile is one button named by its stat, its number and line as its value ("Level": "4, Green
+  /// belt"); the phone's Patterns row names its best day and time too ("Patterns, Morning").
   @MainActor
   private func statTile(_ name: String, in app: XCUIApplication) -> XCUIElement {
-    app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "\(name),")).firstMatch
+    app.buttons.matching(
+      NSPredicate(format: "label == %@ OR label BEGINSWITH %@", name, "\(name),")
+    ).firstMatch
   }
 
   /// Creates one isolated app process from scenario data owned by the UI-test target rather than the distributable app.

@@ -1,3 +1,5 @@
+import Foundation
+
 let progressUITestSnapshotJSON =
   #"""
   {

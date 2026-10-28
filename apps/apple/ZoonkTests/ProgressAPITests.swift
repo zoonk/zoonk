@@ -26,7 +26,8 @@ final class ProgressAPITests: XCTestCase {
           }
           """#))
 
-    let level = try XCTUnwrap(try await api.getLevel(token: "test-session"))
+    let response = try await api.getLevel(token: "test-session")
+    let level = try XCTUnwrap(response)
 
     XCTAssertEqual(level.belt, .green)
     XCTAssertEqual(
@@ -85,7 +86,7 @@ final class ProgressAPITests: XCTestCase {
 
     XCTAssertEqual(activity.days.map(\.activitiesCompleted), [3])
     XCTAssertEqual(
-      ProgressChartData.activityContributions(from: activity.days).map(\.intensity), [4])
+      activity.days.map { CalendarSteps.activity($0.activitiesCompleted, maximum: 3) }, [4])
   }
 
   func testEnergyPreservesDaysWithoutMeasurements() async throws {
@@ -253,7 +254,7 @@ final class ProgressAPITests: XCTestCase {
     XCTAssertEqual(patterns.weekdays.map(\.weekday), ProgressWeekday.allCases)
     XCTAssertEqual(patterns.strongestDaypart?.daypart, .morning)
     XCTAssertEqual(patterns.strongestWeekday?.weekday, .tuesday)
-    XCTAssertFalse(patterns.weekdays.first?.performance.hasAnswers ?? true)
+    XCTAssertEqual(patterns.weekdays.first?.performance.totalAnswers, 0)
   }
 
   func testUnauthorizedResponseMapsToUnauthorized() async {
