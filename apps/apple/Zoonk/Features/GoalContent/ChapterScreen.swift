@@ -53,6 +53,11 @@ struct ChapterScreen: View {
       .toolbarTitleDisplayMode(.inline)
       // The page heads itself with its title, as main does; the bar keeps it for the back button.
       .toolbar(removing: .title)
+      .toolbar {
+        ToolbarItem(placement: .primaryAction) {
+          TutorAskButton(scope: .chapter(chapterId: chapterId))
+        }
+      }
       .loads(chapter)
     }
   }
