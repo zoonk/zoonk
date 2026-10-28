@@ -393,6 +393,101 @@
         }
       }
     },
+    "%lld days left" : {
+      "comment" : "Days until a goal's date",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Tag übrig"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Tage übrig"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld day left"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld days left"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Queda %lld día"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Quedan %lld días"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld jour restant"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld jours restants"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld dia restante"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld dias restantes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld days · %@ a week" : {
       "comment" : "How many days the learner studies and their time a week",
       "localizations" : {
@@ -534,171 +629,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "%lld days left" : {
-      "comment" : "Days until a goal's date",
-      "localizations" : {
-        "de" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld Tag übrig"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld Tage übrig"
-                }
-              }
-            }
-          }
-        },
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld day left"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "%lld days left"
-                }
-              }
-            }
-          }
-        },
-        "es" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Queda %lld día"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Quedan %lld días"
-                }
-              }
-            }
-          }
-        },
-        "fr" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld jour restant"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld jours restants"
-                }
-              }
-            }
-          }
-        },
-        "pt" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld dia restante"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld dias restantes"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "~%@ of the plan's exam topics in depth by %@, what comes up most first." : {
-      "comment" : "What a time a day covers of an exam by its date",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bis zum %2$@ deckst du ungefähr %1$@ der Prüfungsthemen im Plan gründlich ab, die häufigsten zuerst."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "~%1$@ of the plan's exam topics in depth by %2$@, what comes up most first."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "~%1$@ del temario del examen estudiado a fondo antes del %2$@; primero, lo que más suele entrar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Environ %1$@ des sujets de l’examen prévus dans le plan seront étudiés en profondeur d’ici le %2$@, en commençant par les plus importants."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "~%1$@ dos tópicos da prova do plano a fundo até %2$@, começando pelos mais cobrados."
-          }
-        }
-      }
-    },
-    "~%@ of your goal in depth by %@, what matters most first." : {
-      "comment" : "What a time a day covers of a goal by its date",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bis zum %2$@ deckst du ungefähr %1$@ deines Ziels gründlich ab, das Wichtigste zuerst."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "~%1$@ of your goal in depth by %2$@, what matters most first."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "~%1$@ de tu objetivo estudiado a fondo antes del %2$@; primero, lo más importante."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Environ %1$@ de ton objectif sera étudié en profondeur d’ici le %2$@, en commençant par l’essentiel."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "~%1$@ da sua meta a fundo até %2$@, começando pelo que mais importa."
           }
         }
       }
@@ -881,35 +811,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Uma explicação curta feita para você, com cerca de 5 minutos."
-          }
-        }
-      }
-    },
-    "about %@ of study" : {
-      "comment" : "The study time a plan adds up to",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "etwa %@ Lernzeit"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "aproximadamente %@ de estudio"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "environ %@ d’étude"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "cerca de %@ de estudo"
           }
         }
       }
@@ -2005,35 +1906,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Continuar"
-          }
-        }
-      }
-    },
-    "Continue the mock exam" : {
-      "comment" : "Opens a placement mock left running",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Probeprüfung fortsetzen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuar el simulacro"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuer l’examen blanc"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuar o simulado"
           }
         }
       }
@@ -3517,35 +3389,6 @@
         }
       }
     },
-    "https://… an article, a class page or a PDF" : {
-      "comment" : "Placeholder of the box for a material link",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "https://… ein Artikel, eine Kursseite oder ein PDF"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "https://… un artículo, una página de clase o un PDF"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "https://… un article, une page de cours ou un PDF"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "https://… um artigo, uma página de aula ou um PDF"
-          }
-        }
-      }
-    },
     "I didn't understand the audio" : {
       "comment" : "Answers a listening question of the level test without guessing",
       "localizations" : {
@@ -3745,70 +3588,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Estou começando do zero"
-          }
-        }
-      }
-    },
-    "In the exam's format, about %@." : {
-      "comment" : "How long a placement mock takes",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Im Format der Prüfung, etwa %@."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con el formato del examen, unos %@."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Au format de l’examen, environ %@."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No formato da prova, cerca de %@."
-          }
-        }
-      }
-    },
-    "In the exam's format, from %@ to %@. You pick how long." : {
-      "comment" : "How long a placement mock can take, shortest to longest",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Im Format der Prüfung, %1$@ bis %2$@. Du entscheidest, wie lange."
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "In the exam's format, from %1$@ to %2$@. You pick how long."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Con el formato del examen, de %1$@ a %2$@. Tú eliges cuánto tiempo dedicar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Au format de l’examen, de %1$@ à %2$@. C’est toi qui choisis la durée."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No formato da prova, de %1$@ a %2$@. Você escolhe a duração."
           }
         }
       }
@@ -4509,35 +4288,6 @@
         }
       }
     },
-    "musicianship" : {
-      "comment" : "The subject of a musicianship goal, mid-sentence",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Musikalität"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "formación musical"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "formation musicale"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "música"
-          }
-        }
-      }
-    },
     "Musicianship for %@" : {
       "comment" : "Title of the goal that teaches musicianship for an instrument",
       "localizations" : {
@@ -4592,35 +4342,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Musicalidade para %@: reconheça acordes, leia melodias curtas e mantenha o ritmo. Não precisa de microfone."
-          }
-        }
-      }
-    },
-    "my notes" : {
-      "comment" : "Pasted material without a title, inside a goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "meine Notizen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "mis apuntes"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "mes notes"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "minhas anotações"
           }
         }
       }
@@ -5002,35 +4723,6 @@
         }
       }
     },
-    "Or take a mock exam" : {
-      "comment" : "Offers a placement mock",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Oder mach eine Probeprüfung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O haz un simulacro"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ou passer un examen blanc"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ou faça um simulado"
-          }
-        }
-      }
-    },
     "Other time a day" : {
       "comment" : "Picks any time a day the presets don't have",
       "localizations" : {
@@ -5118,93 +4810,6 @@
         }
       }
     },
-    "pass the Abitur, speak %@…" : {
-      "comment" : "Example goal in the empty goal box; the language is one the learner could speak",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "das Abitur bestehen, %@ sprechen…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aprobar el Abitur, hablar %@…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "réussir l’Abitur, parler %@…"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "passar no Abitur, falar %@…"
-          }
-        }
-      }
-    },
-    "Pass the bac" : {
-      "comment" : "An example goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fürs bac lernen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aprobar el bachillerato francés"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réussir le bac"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Passar no bac"
-          }
-        }
-      }
-    },
-    "pass the bac, speak %@…" : {
-      "comment" : "Example goal in the empty goal box; the language is one the learner could speak",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "das Baccalauréat bestehen, %@ sprechen…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aprobar el bac, hablar %@…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "réussir le bac, parler %@…"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "passar no bac, falar %@…"
-          }
-        }
-      }
-    },
     "Pass the ENEM" : {
       "comment" : "An example goal",
       "localizations" : {
@@ -5230,35 +4835,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Passar no Enem"
-          }
-        }
-      }
-    },
-    "pass the ENEM, speak %@…" : {
-      "comment" : "Example goal in the empty goal box; the language is one the learner could speak",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "das ENEM bestehen, %@ sprechen…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aprobar el ENEM, hablar %@…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "réussir l’ENEM, parler %@…"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "passar no Enem, falar %@…"
           }
         }
       }
@@ -5292,35 +4868,6 @@
         }
       }
     },
-    "pass the PAU, speak %@…" : {
-      "comment" : "Example goal in the empty goal box; the language is one the learner could speak",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "die PAU bestehen, %@ sprechen…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aprobar la PAU, hablar %@…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "réussir la PAU, parler %@…"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "passar na PAU, falar %@…"
-          }
-        }
-      }
-    },
     "Pass the SAT" : {
       "comment" : "An example goal",
       "localizations" : {
@@ -5350,31 +4897,31 @@
         }
       }
     },
-    "pass the SAT, speak %@…" : {
-      "comment" : "Example goal in the empty goal box; the language is one the learner could speak",
+    "Pass the bac" : {
+      "comment" : "An example goal",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "den SAT bestehen, %@ sprechen…"
+            "value" : "Fürs bac lernen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aprobar el SAT, hablar %@…"
+            "value" : "Aprobar el bachillerato francés"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "réussir le SAT, parler %@…"
+            "value" : "Réussir le bac"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "passar no SAT, falar %@…"
+            "value" : "Passar no bac"
           }
         }
       }
@@ -6336,35 +5883,6 @@
         }
       }
     },
-    "See my plan" : {
-      "comment" : "Ends placement and shows the plan",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meinen Plan ansehen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ver mi plan"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Voir mon plan"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ver meu plano"
-          }
-        }
-      }
-    },
     "See Plus" : {
       "comment" : "Opens the Plus subscription",
       "localizations" : {
@@ -6390,6 +5908,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Conhecer o Plus"
+          }
+        }
+      }
+    },
+    "See my plan" : {
+      "comment" : "Ends placement and shows the plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meinen Plan ansehen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver mi plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voir mon plan"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver meu plano"
           }
         }
       }
@@ -9822,35 +9369,6 @@
         }
       }
     },
-    "you said" : {
-      "comment" : "Marks a level row as the learner's own words",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "deine Worte"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "dijiste"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "tu as dit"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "você disse"
-          }
-        }
-      }
-    },
     "You speak" : {
       "comment" : "Row with the learner's own language",
       "localizations" : {
@@ -11187,6 +10705,366 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zu"
+          }
+        }
+      }
+    },
+    "about %@ of study" : {
+      "comment" : "The study time a plan adds up to",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "etwa %@ Lernzeit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aproximadamente %@ de estudio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "environ %@ d’étude"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "cerca de %@ de estudo"
+          }
+        }
+      }
+    },
+    "https://… an article, a class page or a PDF" : {
+      "comment" : "Placeholder of the box for a material link",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "https://… ein Artikel, eine Kursseite oder ein PDF"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "https://… un artículo, una página de clase o un PDF"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "https://… un article, une page de cours ou un PDF"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "https://… um artigo, uma página de aula ou um PDF"
+          }
+        }
+      }
+    },
+    "musicianship" : {
+      "comment" : "The subject of a musicianship goal, mid-sentence",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Musikalität"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "formación musical"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "formation musicale"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "música"
+          }
+        }
+      }
+    },
+    "my notes" : {
+      "comment" : "Pasted material without a title, inside a goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "meine Notizen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mis apuntes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mes notes"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "minhas anotações"
+          }
+        }
+      }
+    },
+    "pass the Abitur, speak %@…" : {
+      "comment" : "Example goal in the empty goal box; the language is one the learner could speak",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "das Abitur bestehen, %@ sprechen…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprobar el Abitur, hablar %@…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "réussir l’Abitur, parler %@…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "passar no Abitur, falar %@…"
+          }
+        }
+      }
+    },
+    "pass the ENEM, speak %@…" : {
+      "comment" : "Example goal in the empty goal box; the language is one the learner could speak",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "das ENEM bestehen, %@ sprechen…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprobar el ENEM, hablar %@…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "réussir l’ENEM, parler %@…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "passar no Enem, falar %@…"
+          }
+        }
+      }
+    },
+    "pass the PAU, speak %@…" : {
+      "comment" : "Example goal in the empty goal box; the language is one the learner could speak",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "die PAU bestehen, %@ sprechen…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprobar la PAU, hablar %@…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "réussir la PAU, parler %@…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "passar na PAU, falar %@…"
+          }
+        }
+      }
+    },
+    "pass the SAT, speak %@…" : {
+      "comment" : "Example goal in the empty goal box; the language is one the learner could speak",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "den SAT bestehen, %@ sprechen…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprobar el SAT, hablar %@…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "réussir le SAT, parler %@…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "passar no SAT, falar %@…"
+          }
+        }
+      }
+    },
+    "pass the bac, speak %@…" : {
+      "comment" : "Example goal in the empty goal box; the language is one the learner could speak",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "das Baccalauréat bestehen, %@ sprechen…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprobar el bac, hablar %@…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "réussir le bac, parler %@…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "passar no bac, falar %@…"
+          }
+        }
+      }
+    },
+    "you said" : {
+      "comment" : "Marks a level row as the learner's own words",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "deine Worte"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "dijiste"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tu as dit"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "você disse"
+          }
+        }
+      }
+    },
+    "~%@ of the plan's exam topics in depth by %@, what comes up most first." : {
+      "comment" : "What a time a day covers of an exam by its date",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bis zum %2$@ deckst du ungefähr %1$@ der Prüfungsthemen im Plan gründlich ab, die häufigsten zuerst."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "~%1$@ of the plan's exam topics in depth by %2$@, what comes up most first."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%1$@ del temario del examen estudiado a fondo antes del %2$@; primero, lo que más suele entrar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Environ %1$@ des sujets de l’examen prévus dans le plan seront étudiés en profondeur d’ici le %2$@, en commençant par les plus importants."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%1$@ dos tópicos da prova do plano a fundo até %2$@, começando pelos mais cobrados."
+          }
+        }
+      }
+    },
+    "~%@ of your goal in depth by %@, what matters most first." : {
+      "comment" : "What a time a day covers of a goal by its date",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bis zum %2$@ deckst du ungefähr %1$@ deines Ziels gründlich ab, das Wichtigste zuerst."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "~%1$@ of your goal in depth by %2$@, what matters most first."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%1$@ de tu objetivo estudiado a fondo antes del %2$@; primero, lo más importante."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Environ %1$@ de ton objectif sera étudié en profondeur d’ici le %2$@, en commençant par l’essentiel."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%1$@ da sua meta a fundo até %2$@, começando pelo que mais importa."
           }
         }
       }

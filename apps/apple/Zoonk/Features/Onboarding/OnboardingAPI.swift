@@ -129,59 +129,6 @@ struct TimeToCover: Decodable, Equatable, Sendable {
   let targetDateNamedMonth: Bool
 }
 
-/// An exam's placement mock: the goal's own once started, and the offer to take the whole exam
-/// as a mock, from its quick check to its longest, which comes with Plus.
-struct PlacementMock: Equatable, Sendable {
-  enum Status: String, Decodable, Sendable {
-    case running
-    case finished
-  }
-
-  struct Offer: Equatable, Sendable {
-    let requiresPlus: Bool
-    let shortestMinutes: Int
-    let longestMinutes: Int
-  }
-
-  let mockID: String?
-  let status: Status?
-  let offer: Offer?
-
-  fileprivate init(_ options: MockOptions) {
-    let placement = options.placement
-    mockID = placement?.mock?.id
-    status = placement?.mock?.status
-
-    if let shortest = placement?.options.first, let longest = placement?.options.last {
-      offer = Offer(
-        requiresPlus: options.access == "plusRequired",
-        shortestMinutes: shortest.estimatedMinutes, longestMinutes: longest.estimatedMinutes)
-    } else {
-      offer = nil
-    }
-  }
-}
-
-/// The part of a goal's mock options placement reads.
-private struct MockOptions: Decodable {
-  struct Placement: Decodable {
-    struct Mock: Decodable {
-      let id: String
-      let status: PlacementMock.Status
-    }
-
-    struct Option: Decodable {
-      let estimatedMinutes: Int
-    }
-
-    let mock: Mock?
-    let options: [Option]
-  }
-
-  let access: String
-  let placement: Placement?
-}
-
 /// A language goal's level test (`GET /goals/{goalId}/language-level-test`): its questions still
 /// being written for the language pair, or its next step with the level of each skill so far.
 struct LevelTest: Decodable, Equatable, Sendable {
@@ -663,45 +610,6 @@ struct OnboardingAPI: Sendable {
       throw Self.error(try response.body.json)
     case .unauthorized:
       throw APIError.unauthorized
-    default:
-      throw APIError.unavailable
-    }
-  }
-
-  /// Whether the whole exam can be taken as a mock instead of placement's questions, and the
-  /// goal's own placement mock once started (`GET /goals/{goalId}/mocks`).
-  func placementMock(goalID: String, token: String) async throws -> PlacementMock {
-    let output = try await clients.perform(token: token) { client in
-      try await client.listMocks(path: .init(goalId: goalID))
-    }
-
-    switch output {
-    case .ok(let response):
-      let options = try PracticeJSON.recode(try response.body.json, as: MockOptions.self)
-      return PlacementMock(options)
-    case .unauthorized:
-      throw APIError.unauthorized
-    case .notFound:
-      throw APIError.notFound
-    default:
-      throw APIError.unavailable
-    }
-  }
-
-  /// Stops a mock now; its answers so far set where the plan starts.
-  func stopMock(id: String, token: String) async throws {
-    let output = try await clients.perform(token: token) { client in
-      try await client.finishMock(
-        path: .init(blockId: id), body: .json(.init(timeZone: TimeZone.current.identifier)))
-    }
-
-    switch output {
-    case .ok:
-      return
-    case .unauthorized:
-      throw APIError.unauthorized
-    case .notFound:
-      throw APIError.notFound
     default:
       throw APIError.unavailable
     }

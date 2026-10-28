@@ -335,23 +335,6 @@ final class OnboardingStore {
     }
   }
 
-  func placementMock(goalID: String) async throws -> PlacementMock {
-    guard let token = session.authenticatedSession?.bearerToken else {
-      throw CancellationError()
-    }
-
-    return try await api.placementMock(goalID: goalID, token: token)
-  }
-
-  /// Stops the placement mock, then ends placement: the mock's answers set where the plan starts.
-  func stopPlacementMock(id: String, goalID: String) async throws {
-    try await cache.onboardingWrite(invalidating: [.learnerModel, .userProgress]) {
-      [api] identity in
-      try await api.stopMock(id: id, token: identity.bearerToken)
-    }
-    try await finishPlacement(goalID: goalID, fromScratch: false)
-  }
-
   func levelTest(goalID: String) async throws -> LevelTest {
     guard let token = session.authenticatedSession?.bearerToken else {
       throw CancellationError()
