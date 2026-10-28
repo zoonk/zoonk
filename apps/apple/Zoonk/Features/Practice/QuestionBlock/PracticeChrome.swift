@@ -34,8 +34,8 @@ struct PracticeSegmentsBar: View {
 
   private func color(_ segment: PracticeSegment) -> Color {
     switch segment {
-    case .right: .blue
-    case .wrong: .pink
+    case .right: .success
+    case .wrong: .destructive
     case .read: Color(.systemGray3)
     case .current: .primary
     case .ahead: Color(.systemFill)
@@ -116,7 +116,7 @@ struct PracticeMainButton: View {
       }
       .frame(maxWidth: .infinity)
     }
-    .buttonStyle(.glassProminent)
+    .buttonStyle(.mainAction)
     .controlSize(.large)
     .disabled(isDisabled || isBusy)
     .keyboardShortcut(.defaultAction)
@@ -162,7 +162,7 @@ struct PracticeSaveError: View {
         comment: "Shown over a run's actions when an answer or the finish didn't reach the server."
       )
       .font(.subheadline)
-      .foregroundStyle(.pink)
+      .foregroundStyle(.destructive)
 
       Spacer()
 
@@ -224,7 +224,7 @@ struct PracticeResultHeader: View {
             value: Text(brainPower, format: .number),
             label: Text(
               "Brain Power", tableName: "Practice", comment: "Readout label: Brain Power earned."),
-            tint: .purple)
+            tint: .brain)
         }
       }
 

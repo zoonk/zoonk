@@ -473,7 +473,7 @@ struct NumericItemView: View {
 
         if let mark {
           Image(systemName: mark == .right ? "checkmark" : "xmark")
-            .foregroundStyle(mark == .right ? Color.blue : Color.pink)
+            .foregroundStyle(mark == .right ? Color.success : Color.destructive)
             .accessibilityHidden(true)
         }
       }
@@ -482,7 +482,7 @@ struct NumericItemView: View {
       if isInvalid {
         Text(invalidHint)
           .font(.subheadline)
-          .foregroundStyle(.pink)
+          .foregroundStyle(.destructive)
       } else if let rule {
         Text(rule)
           .font(.subheadline)
@@ -573,7 +573,7 @@ struct TypedItemView: View {
 
       if let mark {
         Image(systemName: mark == .right ? "checkmark" : "xmark")
-          .foregroundStyle(mark == .right ? Color.blue : Color.pink)
+          .foregroundStyle(mark == .right ? Color.success : Color.destructive)
           .accessibilityHidden(true)
       }
     }
@@ -594,7 +594,7 @@ private struct AnswerFieldStyle: ViewModifier {
       .background(Color(.secondarySystemGroupedBackground), in: shape)
       .overlay(
         shape.strokeBorder(
-          mark == .right ? Color.blue : mark == .wrong ? Color.pink : Color(.separator),
+          mark == .right ? Color.success : mark == .wrong ? Color.destructive : Color(.separator),
           lineWidth: mark == nil ? 1 : 2))
   }
 }

@@ -333,7 +333,7 @@ private struct PatternRuleView: View {
               "You said", tableName: "Practice",
               comment: "Label of the learner's slip in a pattern.")
           }
-          .foregroundStyle(.pink)
+          .foregroundStyle(.destructive)
 
           Label {
             Text(example.correctAnswer)
@@ -342,7 +342,7 @@ private struct PatternRuleView: View {
               "Correct version", tableName: "Practice",
               comment: "Label of the corrected sentence in a pattern.")
           }
-          .foregroundStyle(.blue)
+          .foregroundStyle(.success)
         }
         .labelStyle(PatternChangeLabelStyle())
         .font(.callout)

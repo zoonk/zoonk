@@ -445,7 +445,7 @@ private struct PauseSuggestionView: View {
           comment: "Stopping the session failed."
         )
         .font(.subheadline)
-        .foregroundStyle(.pink)
+        .foregroundStyle(.destructive)
       }
     }
   }

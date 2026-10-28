@@ -80,7 +80,7 @@ struct CheckpointScreen: View {
           "Open the challenge", tableName: "Practice",
           comment: "Opens a checkpoint's challenge intro to start it.")
       }
-      .buttonStyle(.glassProminent)
+      .buttonStyle(.mainAction)
     }
   }
 
@@ -263,7 +263,7 @@ private struct ShieldGauge: View {
       )
       .monospacedDigit()
     }
-    .tint(.blue)
+    .tint(.success)
     .font(.subheadline)
   }
 }

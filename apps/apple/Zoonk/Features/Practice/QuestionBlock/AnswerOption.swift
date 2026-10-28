@@ -39,7 +39,7 @@ struct AnswerOption<Label: View>: View {
         if let result {
           Text(resultLabel(result))
             .font(.caption.weight(.semibold))
-            .foregroundStyle(result == .right ? Color.blue : Color.pink)
+            .foregroundStyle(result == .right ? Color.success : Color.destructive)
         }
       }
     }
@@ -85,16 +85,16 @@ struct AnswerOptionStyle: ButtonStyle {
 
   private var fill: Color {
     switch result {
-    case .right: Color.blue.opacity(0.1)
-    case .wrong: Color.pink.opacity(0.1)
+    case .right: Color.success.opacity(0.1)
+    case .wrong: Color.destructive.opacity(0.1)
     case nil: isPicked ? Color(.secondarySystemFill) : Color(.secondarySystemGroupedBackground)
     }
   }
 
   private var stroke: Color {
     switch result {
-    case .right: .blue
-    case .wrong: .pink
+    case .right: .success
+    case .wrong: .destructive
     case nil: isPicked ? .primary : Color(.separator)
     }
   }

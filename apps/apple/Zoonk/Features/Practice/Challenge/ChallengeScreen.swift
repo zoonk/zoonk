@@ -125,7 +125,7 @@ struct ChallengeScreen: View {
         } icon: {
           Image(systemName: "brain.head.profile")
         }
-        .foregroundStyle(.purple)
+        .foregroundStyle(.brain)
       }
 
       if challenge.locked || challenge.status == .plusRequired {
@@ -169,11 +169,11 @@ struct ChallengeScreen: View {
       }
 
       if let startProblem {
-        Text(startProblem).font(.subheadline).foregroundStyle(.pink)
+        Text(startProblem).font(.subheadline).foregroundStyle(.destructive)
       }
 
       if let moveProblem {
-        Text(moveProblem).font(.subheadline).foregroundStyle(.pink)
+        Text(moveProblem).font(.subheadline).foregroundStyle(.destructive)
       }
 
       if let movedChangeId, let date = challenge.date {

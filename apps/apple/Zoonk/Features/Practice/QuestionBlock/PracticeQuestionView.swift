@@ -157,8 +157,8 @@ enum PracticeVerdict: Equatable {
 
   var tint: Color {
     switch self {
-    case .right: .blue
-    case .wrong: .pink
+    case .right: .success
+    case .wrong: .destructive
     case .blank, .notSure: .secondary
     }
   }

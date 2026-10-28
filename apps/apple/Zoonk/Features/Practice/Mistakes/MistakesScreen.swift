@@ -221,7 +221,7 @@ private struct NotebookHeader: View {
             )
             .frame(maxWidth: .infinity)
           }
-          .buttonStyle(.glassProminent)
+          .buttonStyle(.mainAction)
           .controlSize(.large)
         }
       }
@@ -421,17 +421,17 @@ private struct MistakeAnswerRow: View {
             comment: "Mark beside the learner's wrong pick once a question is graded.")
       )
       .font(.caption.weight(.semibold))
-      .foregroundStyle(isRight ? Color.blue : Color.pink)
+      .foregroundStyle(isRight ? Color.success : Color.destructive)
     }
     .font(.subheadline.weight(.medium))
     .padding(12)
     .background(
-      (isRight ? Color.blue : Color.pink).opacity(0.1),
+      (isRight ? Color.success : Color.destructive).opacity(0.1),
       in: RoundedRectangle(cornerRadius: 10, style: .continuous)
     )
     .overlay(
       RoundedRectangle(cornerRadius: 10, style: .continuous).strokeBorder(
-        isRight ? Color.blue : Color.pink, lineWidth: 1.5)
+        isRight ? Color.success : Color.destructive, lineWidth: 1.5)
     )
     .accessibilityElement(children: .combine)
   }

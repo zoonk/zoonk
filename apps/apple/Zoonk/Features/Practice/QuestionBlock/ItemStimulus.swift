@@ -278,7 +278,7 @@ private struct ListeningPlayerView: View {
           comment: "Shown when a set's recording fails to load."
         )
         .font(.footnote)
-        .foregroundStyle(.pink)
+        .foregroundStyle(.destructive)
       }
 
       if let questions, !questions.prompts.isEmpty {

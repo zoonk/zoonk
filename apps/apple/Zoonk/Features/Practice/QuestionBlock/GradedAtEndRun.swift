@@ -228,7 +228,7 @@ struct PracticeQuestionsPreparingView: View {
         }
 
         if let failure {
-          Text(failureText(failure)).font(.subheadline).foregroundStyle(.pink)
+          Text(failureText(failure)).font(.subheadline).foregroundStyle(.destructive)
         }
       }
     } actions: {

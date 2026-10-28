@@ -132,7 +132,8 @@ struct FocusTestScreen: View {
             Text(area.label).frame(maxWidth: .infinity, alignment: .leading)
             HStack(spacing: 3) {
               ForEach(Array(area.answers.enumerated()), id: \.offset) { _, isCorrect in
-                Capsule().fill(isCorrect ? Color.blue : Color.pink).frame(width: 14, height: 4)
+                Capsule().fill(isCorrect ? Color.success : Color.destructive).frame(
+                  width: 14, height: 4)
               }
             }
             Text("\(area.correct)/\(area.total)").font(.subheadline.monospacedDigit())
@@ -147,7 +148,7 @@ struct FocusTestScreen: View {
           "We couldn't undo it. Try again.", tableName: "Practice",
           comment: "Undoing a focus test's change failed."
         )
-        .font(.subheadline).foregroundStyle(.pink)
+        .font(.subheadline).foregroundStyle(.destructive)
       }
     } actions: {
       if let changeId = result.changeId, !undone {
