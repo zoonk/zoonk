@@ -8,6 +8,10 @@ const millisecondsSchema = z.int().meta({ description: "Milliseconds since the e
 
 const learnerSummaryGoalSchema = z
   .object({
+    courseId: z
+      .uuid()
+      .nullable()
+      .meta({ description: "The Library course the goal follows; null for any other goal" }),
     dailyMinutes: z.int(),
     id: z.uuid(),
     isActive: z.boolean().meta({ description: "The goal the tabs show" }),

@@ -18,6 +18,8 @@ export type LearnerTier = "free" | "guest" | "plus";
 
 /** One of the learner's goals as the goal switcher and the command palette list it. */
 export type LearnerSummaryGoal = {
+  /** The Library course the goal follows, as a course's page reads it; null for any other goal. */
+  courseId: string | null;
   dailyMinutes: number;
   id: string;
   isActive: boolean;

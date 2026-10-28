@@ -64,6 +64,7 @@ function toSummaryGoals({
     .filter((goal) => goal.status !== "archived")
     .toSorted((a, b) => Number(b.id === activeGoalId) - Number(a.id === activeGoalId))
     .map((goal) => ({
+      courseId: goal.primaryCourseId,
       dailyMinutes: goal.dailyMinutes,
       id: goal.id,
       isActive: goal.id === activeGoalId,

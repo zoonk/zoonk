@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
@@ -236,6 +237,13 @@ describe(getLearnerSummary, () => {
     });
 
     assertReadBudget(counts, SUMMARY_STATEMENT_BUDGET);
+  });
+
+  it("names the course a goal follows, which a course's page reads", async () => {
+    const course = await courseFixture({ isPublished: true });
+    await learnerWithGoal({ primaryCourseId: course.id });
+
+    await expect(getLearnerSummary()).resolves.toMatchObject({ goals: [{ courseId: course.id }] });
   });
 
   it("counts the blocks left and goes on with the active one", async () => {
