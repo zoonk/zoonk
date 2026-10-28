@@ -1,14 +1,15 @@
 import "server-only";
-import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
+import { type ExamBlueprint, type Goal } from "@zoonk/db";
 import { readExamChoices } from "../../exams/choices/exam-choices";
 import { getExamStartTime } from "../../exams/mocks/_utils/mock-conditions";
-import { loadMockEssays } from "../../exams/mocks/_utils/mock-essays";
-import { loadBankTypedParts } from "../../exams/mocks/_utils/mock-typed-parts";
+import { getBankTypedParts } from "../../exams/mocks/_utils/mock-typed-parts";
 import { planWeeklyMock } from "../../exams/mocks/_utils/plan-weekly-mock";
 import { readMockStructure } from "../../exams/mocks/_utils/read-mock-structure";
 import { countPlannedQuestions, outlineMock } from "../../exams/mocks/mock-plan";
 import { type GoalPlanSource } from "../../learner/_utils/goal-plan-source";
 import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
+import { readMockEssays } from "../../learner/facts/mock-essays";
+import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { findScheduledMock } from "../../plans/planner/mock-identity";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
@@ -43,17 +44,16 @@ export async function loadMockCard({
 }) {
   const content = blueprint ? readBlueprintContent(blueprint) : null;
 
-  // Only reads render a card, so the goal's skills come from the request's one load of them.
-  const [goalPlan, { skills }, essays, typed] = await Promise.all([
-    source ??
-      prisma.plan.findUnique({
-        select: { graph: true, settings: true },
-        where: { goalId: goal.id },
-      }),
+  // Only reads render a card, so the goal's plan, skills and essays come from the request's one
+  // load of them, the ones the mocks any time read too.
+  const [saved, { skills }, essays, typed] = await Promise.all([
+    readSavedPlan(goal.userId, goal.id),
     readGoalPlan(goal.id),
-    loadMockEssays({ goal, userId: goal.userId }),
-    loadBankTypedParts(goal.examBlueprintId),
+    readMockEssays(goal.userId, goal.id, goal.examBlueprintId),
+    getBankTypedParts(goal.examBlueprintId),
   ]);
+
+  const goalPlan = source ?? saved;
 
   const dayMinutes = getGoalDayMinutes({ date, goal, planSettings: goalPlan?.settings });
 
@@ -73,6 +73,7 @@ export async function loadMockCard({
     essays,
     goal,
     identity,
+    savedPlan: saved ?? undefined,
     skillIds: getTestSkillIds({
       graph: parsePlanGraph(goalPlan?.graph),
       planSkillIds: skills.map((skill) => skill.id),

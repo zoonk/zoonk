@@ -28,6 +28,17 @@ export function loadBankTypedParts(examBlueprintId: string | null): Promise<Mock
   return examBlueprintId ? listTypedParts({ examBlueprintId }) : Promise.resolve([]);
 }
 
+/**
+ * `loadBankTypedParts` for a page: the same for every learner of the exam, so it's cached once for
+ * all of them; a question the API adds shows within the default revalidation. Starting a mock
+ * reads it fresh.
+ */
+export async function getBankTypedParts(examBlueprintId: string | null): Promise<MockTypedPart[]> {
+  "use cache";
+
+  return loadBankTypedParts(examBlueprintId);
+}
+
 /** The typed formats a sat mock asked, among its questions (see `loadBankTypedParts`). */
 export function loadAskedTypedParts(itemIds: readonly string[]): Promise<MockTypedPart[]> {
   return listTypedParts({ id: { in: [...itemIds] } });

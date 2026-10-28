@@ -1,5 +1,7 @@
 import "server-only";
+import { readMockEssays } from "../../learner/facts/mock-essays";
 import { getRequestInstant } from "../../learner/facts/request-instant";
+import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
 import { resolveViewGoal } from "../../view-models/_utils/resolve-view-goal";
 import { getExamDocument } from "../exam-document";
@@ -10,6 +12,7 @@ import {
   loadAnytimeMockSetup,
 } from "./_utils/anytime-mock-setup";
 import { findLastMock } from "./_utils/finished-mocks";
+import { getBankTypedParts } from "./_utils/mock-typed-parts";
 import { type MockOptionsView, mockConditionsSchema } from "./mock-contract";
 import { getRecommendedPlacementLength, toPlacementOptionView } from "./placement-mock";
 
@@ -45,6 +48,11 @@ export async function getMockOptions({
     loadAnytimeMockSetup(
       goal,
       goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
+      {
+        essays: readMockEssays(goal.userId, goal.id, goal.examBlueprintId),
+        plan: readSavedPlan(goal.userId, goal.id),
+        typed: getBankTypedParts(goal.examBlueprintId),
+      },
     ),
     getAnytimeMockAccess(goal),
     findRunningAnytimeMock({ goalId: goal.id, now: getRequestInstant(), userId: goal.userId }),

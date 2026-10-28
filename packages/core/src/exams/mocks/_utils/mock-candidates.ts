@@ -8,6 +8,7 @@ import {
   prisma,
 } from "@zoonk/db";
 import { GRADABLE_ITEM_FORMATS } from "../../../learner/_utils/choice-items";
+import { getLessonSkillRows, toIdKey } from "../../../library/_utils/shared-rows";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { fitsExamChoice, getExamChoiceFormat } from "../../../library/exams/exam-choice-format";
 import { getItemAudienceFilter } from "../../../library/items/item-field";
@@ -50,6 +51,30 @@ function getLessonAreas({
 }
 
 /**
+ * The skills these lessons teach, oldest first. A GET (which passes its saved plan) reads the
+ * shared rows of every lesson in the plan, the entry its other reads share, and keeps these.
+ */
+async function loadAreaLessonSkills({
+  known,
+  lessonIds,
+}: {
+  known?: { items: Pick<PlanItem, "lessonId">[] };
+  lessonIds: readonly string[];
+}) {
+  if (known) {
+    const wanted = new Set(lessonIds);
+    const rows = await getLessonSkillRows(toIdKey(known.items.map((item) => item.lessonId)));
+    return rows.filter((row) => wanted.has(row.lessonId));
+  }
+
+  return prisma.lessonSkill.findMany({
+    orderBy: { createdAt: "asc" },
+    select: { lessonId: true, skillId: true },
+    where: { lessonId: { in: [...lessonIds] } },
+  });
+}
+
+/**
  * Each goal skill's exam area, as the plan's graph names it ("Math", "Natural Sciences"). The
  * graph lists the plan's skills; the skills its lessons teach take the area of the plan item
  * that schedules the lesson, so a mock knows the area of every question it may ask.
@@ -77,10 +102,7 @@ export async function loadSkillAreas(
 
   const lessonAreas = getLessonAreas({ graphAreas, items: plan?.items ?? [] });
 
-  const lessonSkills = await prisma.lessonSkill.findMany({
-    orderBy: { createdAt: "asc" },
-    where: { lessonId: { in: [...lessonAreas.keys()] } },
-  });
+  const lessonSkills = await loadAreaLessonSkills({ known, lessonIds: [...lessonAreas.keys()] });
 
   const taughtAreas = lessonSkills.flatMap((row) => {
     const area = lessonAreas.get(row.lessonId);
@@ -284,12 +306,15 @@ async function loadSetUnits({
 export async function loadMockCandidates({
   goal,
   itemIds,
+  plan,
   skillIds,
   structure = null,
   userId,
 }: {
   goal: Pick<Goal, "examBlueprintId"> & { id: string | null };
   itemIds: readonly string[] | null;
+  /** The saved plan a GET already read, so its areas aren't read again. */
+  plan?: Parameters<typeof loadSkillAreas>[1];
   skillIds: readonly string[];
   /** The exam the mock copies, whose choice format its questions follow. */
   structure?: ExamStructure | null;
@@ -300,7 +325,7 @@ export async function loadMockCandidates({
 
   const [loaded, areas] = await Promise.all([
     loadItems({ examBlueprintId: goal.examBlueprintId, itemIds, skillIds, typed }),
-    goal.id ? loadSkillAreas(goal.id) : new Map<string, string>(),
+    goal.id ? loadSkillAreas(goal.id, plan) : new Map<string, string>(),
   ]);
 
   const choice = getExamChoiceFormat(structure);

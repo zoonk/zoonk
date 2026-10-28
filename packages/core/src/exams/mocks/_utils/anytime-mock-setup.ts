@@ -4,14 +4,17 @@ import { MIN_CHECKPOINT_QUESTIONS } from "../../../checkpoints/checkpoint-rules"
 import { findExamSpeakingSetup } from "../../../language/exam-speaking/_utils/exam-speaking-setup";
 import { GRADABLE_ITEM_FORMATS } from "../../../learner/_utils/choice-items";
 import { loadGoalSkillIds } from "../../../learner/_utils/goal-skill-graph";
+import { type SavedPlan } from "../../../learner/facts/saved-plan";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { getItemAudienceFilter } from "../../../library/items/item-field";
 import { getSkillArea } from "../../../plans/planner/graph-areas";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
+import { readExamChoices } from "../../choices/exam-choices";
 import { loadExamChoices } from "../../choices/load-exam-choices";
 import { type AnytimeMockChoice } from "../mock-contract";
 import { getDaySections } from "../mock-day-sections";
 import { getMockFormatMix } from "../mock-format-mix";
+import { type MockTypedPart } from "../mock-left-out";
 import { type MockOption, findMockOption, listMockOptions } from "../mock-options";
 import { type MockCandidate, getMockDays } from "../mock-plan";
 import { type MockSizeSource } from "../mock-view-contract";
@@ -80,6 +83,13 @@ async function canBuildMock({
   return questions >= MIN_CHECKPOINT_QUESTIONS;
 }
 
+/** What a page already read for the mocks any time (see `getMockOptions`). */
+type AnytimeMockPage = {
+  essays: Promise<MockEssayCandidate[]>;
+  plan: Promise<SavedPlan | null>;
+  typed: Promise<MockTypedPart[]>;
+};
+
 /**
  * What an exam goal's mocks taken any time copy: its blueprint's structure (a class test's short
  * test included) and the options it gives, on the plan's areas, each with about how long it takes
@@ -89,17 +99,21 @@ async function canBuildMock({
 export async function loadAnytimeMockSetup(
   goal: Goal,
   knownBlueprint?: ExamBlueprint | null | Promise<ExamBlueprint | null>,
+  /** A page's request facts, so what the weekly mock's card also reads is read once. */
+  page?: AnytimeMockPage,
 ): Promise<AnytimeMockSetup> {
+  const plan = page ? await page.plan : undefined;
+
   const [blueprint, areas, finished, pace, essays, choices, typed, speaking] = await Promise.all([
     knownBlueprint === undefined && goal.examBlueprintId
       ? prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
       : (knownBlueprint ?? null),
-    loadSkillAreas(goal.id),
+    loadSkillAreas(goal.id, plan ?? undefined),
     countFinishedMocksBefore({ goalId: goal.id }),
     loadMockPace(goal.examBlueprintId),
-    loadMockEssays({ goal, userId: goal.userId }),
-    loadExamChoices(goal.id),
-    loadBankTypedParts(goal.examBlueprintId),
+    page?.essays ?? loadMockEssays({ goal, userId: goal.userId }),
+    plan === undefined ? loadExamChoices(goal.id) : readExamChoices(plan?.settings),
+    page?.typed ?? loadBankTypedParts(goal.examBlueprintId),
     findExamSpeakingSetup({ goalId: goal.id, userId: goal.userId }),
   ]);
 

@@ -1,9 +1,11 @@
 import "server-only";
 import { type Goal } from "@zoonk/db";
 import { MIN_CHECKPOINT_QUESTIONS } from "../../../checkpoints/checkpoint-rules";
+import { type SavedPlan } from "../../../learner/facts/saved-plan";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { type MockIdentity } from "../../../plans/planner/mock-identity";
-import { isInFinalStretch } from "../../final-stretch/final-stretch-rules";
+import { parsePlanPhases } from "../../../plans/planner/plan-state";
+import { getFinalStretchStart, isInFinalStretch } from "../../final-stretch/final-stretch-rules";
 import { loadFinalStretchStart } from "../../final-stretch/load-final-stretch-start";
 import { getMockFormatMix } from "../mock-format-mix";
 import { toSubjectCandidates } from "../mock-option-plan";
@@ -89,6 +91,7 @@ export async function planWeeklyMock({
   goal,
   identity = null,
   itemIds = null,
+  savedPlan,
   skillIds,
   structure,
   today,
@@ -101,6 +104,8 @@ export async function planWeeklyMock({
   /** The scheduled mock's exam day and length, as its plan saved it (see `findScheduledMock`). */
   identity?: MockIdentity | null;
   itemIds?: readonly string[] | null;
+  /** The saved plan a GET already read (`readSavedPlan`), so it isn't read again. */
+  savedPlan?: SavedPlan;
   skillIds: readonly string[];
   structure: ExamStructure | null;
   /** The learner-local date, as a UTC-midnight label. */
@@ -108,9 +113,11 @@ export async function planWeeklyMock({
   userId: string;
 }): Promise<MockPlan> {
   const [candidates, mockNumber, finalStretchStart, written, listening] = await Promise.all([
-    loadMockCandidates({ goal, itemIds, skillIds, structure, userId }),
+    loadMockCandidates({ goal, itemIds, plan: savedPlan, skillIds, structure, userId }),
     countFinishedMocksBefore({ goalId: goal.id }),
-    loadFinalStretchStart(goal.id),
+    savedPlan
+      ? getFinalStretchStart(parsePlanPhases(savedPlan.phases))
+      : loadFinalStretchStart(goal.id),
     essays ?? loadWeeklyMockEssays({ goal, userId }),
     loadWeeklyMockListening({ goalId: goal.id, itemIds, structure, userId }),
   ]);

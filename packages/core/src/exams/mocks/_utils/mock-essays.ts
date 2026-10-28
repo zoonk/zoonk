@@ -16,9 +16,12 @@ import { type MockSitting } from "./owned-mock";
  */
 export async function loadMockEssays({
   goal,
+  plan,
   userId,
 }: {
   goal: Pick<Goal, "examBlueprintId" | "id">;
+  /** The saved plan a GET already read, so its areas aren't read again. */
+  plan?: Parameters<typeof loadSkillAreas>[1];
   userId: string;
 }): Promise<MockEssayCandidate[]> {
   if (!goal.examBlueprintId) {
@@ -31,7 +34,7 @@ export async function loadMockEssays({
       orderBy: { id: "asc" },
       where: { examBlueprintId: goal.examBlueprintId, format: "essay" },
     }),
-    loadSkillAreas(goal.id),
+    loadSkillAreas(goal.id, plan),
   ]);
 
   const written = await prisma.attempt.groupBy({
