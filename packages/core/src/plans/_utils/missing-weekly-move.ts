@@ -2,7 +2,7 @@ import { type PlanOperation } from "../plan-contract";
 import { type UnfundedMove } from "../plan-error-contract";
 import { toIsoDate } from "../planner/plan-calendar";
 import { type ExistingPlanItem, type PlannedItem } from "../planner/plan-items";
-import { type MovedEvent, type PlanState } from "../planner/plan-state";
+import { type MovedEvent } from "../planner/plan-state";
 
 /** A move can be saved only when the planner actually places its challenge on the requested day. */
 export function hasMissingWeeklyMove({
@@ -64,9 +64,8 @@ type MovedItem = Pick<ExistingPlanItem, "kind" | "scheduledFor" | "status"> & {
 };
 
 /**
- * A mock a learner's move asked for that the plan couldn't place on its new day (no day before the
- * goal's date has room for the work it would push there, see `layOutLocalMockMove`), with its
- * length as the plan holds it. Null for a move of anything else, or without a length.
+ * A mock a learner's move asked for that the plan couldn't place on its new day, with its length as the
+ * plan holds it. Null for a move of anything else, or without a length.
  */
 function findUnplacedMockMove({
   items,
@@ -117,24 +116,4 @@ export function findUnfundedMove({
   return (
     unfunded.find((mock) => moved.has(mock.date)) ?? findUnplacedMockMove({ items, operations })
   );
-}
-
-/**
- * The days a change asks the week's events to move to: its state's moves the saved plan doesn't
- * have. A mock there is funded on that day or refused (`unfundedMove`). Absent when it moves
- * nothing.
- */
-export function listRequestedMoveDates({
-  saved,
-  state,
-}: {
-  saved: Pick<PlanState, "settings">;
-  state: Pick<PlanState, "settings">;
-}): ReadonlySet<string> | undefined {
-  const requested = state.settings.movedEvents.filter(
-    (move) =>
-      !saved.settings.movedEvents.some((old) => old.from === move.from && old.to === move.to),
-  );
-
-  return requested.length > 0 ? new Set(requested.map((move) => move.to)) : undefined;
 }

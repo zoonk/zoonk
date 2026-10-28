@@ -1,5 +1,6 @@
 import "server-only";
 import { type PlanItem, type StudySessionBlock, prisma } from "@zoonk/db";
+import { isUuid } from "@zoonk/utils/uuid";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
@@ -9,6 +10,7 @@ import {
   getWeekdayMinutes,
   toIsoDate,
 } from "../../plans/planner/plan-calendar";
+import { type PlanEffect } from "../../plans/planner/plan-effect";
 import { type PlanChangeRefusal } from "../../plans/planner/plan-operations";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import { readBlockPayload } from "../../sessions/block-payload";
@@ -195,4 +197,22 @@ export async function restoreChallengeBlock({
 
     return changed.count === 0 ? unchanged(null) : null;
   });
+}
+
+/** The effect of the learner's move of this plan's week event (see `getChallenge`'s `moved`). */
+export async function loadMoveEffect({
+  changeId,
+  planId,
+}: {
+  changeId: string;
+  planId: string;
+}): Promise<PlanEffect | null> {
+  const change = isUuid(changeId)
+    ? await prisma.planChange.findFirst({ where: { id: changeId, planId } })
+    : null;
+
+  const payload = change ? parsePlanChangePayload(change.payload) : null;
+  const moves = payload?.operations.some((operation) => operation.kind === "moveWeeklyEvent");
+
+  return moves ? (payload?.effect ?? null) : null;
 }

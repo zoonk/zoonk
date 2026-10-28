@@ -1,7 +1,7 @@
 "use client";
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { useExtracted } from "next-intl";
+import { useExtracted, useFormatter } from "next-intl";
 import { useExamples, useShortList } from "./use-short-list";
 
 type ChangeEffect = PlanChangeView["effect"];
@@ -123,9 +123,26 @@ function useFewerLessonsText(): LessonTexts {
  */
 export function useLessonsEffectText() {
   const t = useExtracted();
+  const format = useFormatter();
   const shortList = useShortList();
   const examples = useExamples();
   const fewer = useFewerLessonsText();
+
+  /**
+   * The lessons not written yet it leaves out of topics it keeps, by topic, about how many: a
+   * stand-in that only shrinks has no title, so the names alone left them unsaid.
+   */
+  const unwrittenText = (effect: ChangeEffect): string | null => {
+    const skills = (effect?.unwrittenLeftOut ?? []).map(({ lessons, skill }) =>
+      t("{skill} (about {lessons, number})", { lessons, skill }),
+    );
+
+    return skills.length > 0
+      ? t("Lessons not written yet: {skills}.", {
+          skills: format.list(skills, { type: "conjunction" }),
+        })
+      : null;
+  };
 
   /** The lessons it adds and the ones it leaves out, with their names when it has them. */
   const bothText = ({ about, added, names, removed, someOf }: Counted & Added) => {
@@ -216,8 +233,10 @@ export function useLessonsEffectText() {
     const listed = someOf ? examples(leftOut) : shortList(leftOut, "lessons");
     const counted = { names: leftOut.length > 0 ? listed : null, removed, someOf };
 
+    const unwritten = unwrittenText(effect);
+
     if (named && counted.names === null) {
-      return null;
+      return unwritten;
     }
 
     const counts = sayLessons(byDate ? { addedText, bothText, removedText } : fewer, {
@@ -237,7 +256,7 @@ export function useLessonsEffectText() {
           })
         : null;
 
-    return [counts, netted].filter(Boolean).join(" ") || null;
+    return [counts, netted, unwritten].filter(Boolean).join(" ") || null;
   };
 }
 

@@ -5,6 +5,7 @@ import { getWrongPenalty } from "../exams/scoring/mock-scoring";
 import { readBlueprintContent } from "../library/exams/save-exam-blueprint";
 import { loadMilestoneCounts } from "../milestones/award-milestones";
 import { toIsoDate } from "../plans/planner/plan-calendar";
+import { type PlanEffect } from "../plans/planner/plan-effect";
 import { parsePlanPhases } from "../plans/planner/plan-state";
 import { readBlockPayload } from "../sessions/block-payload";
 import { getStoredBlockWait } from "../sessions/block-wait";
@@ -15,7 +16,7 @@ import { countBlockRecordings } from "./_utils/boss-recordings";
 import { getAvailableChallengeStatus } from "./_utils/challenge-availability";
 import { loadChallengeCall } from "./_utils/challenge-call";
 import { getNextStudyDay, readDailyLimitReachedToday } from "./_utils/challenge-daily-limit";
-import { getMovableDay, loadChallengeMoveRules } from "./_utils/challenge-move";
+import { getMovableDay, loadChallengeMoveRules, loadMoveEffect } from "./_utils/challenge-move";
 import { readBossOffer } from "./_utils/challenge-offer";
 import { needsPlus } from "./_utils/challenge-plus";
 import { loadChallengeSize } from "./_utils/challenge-size";
@@ -38,7 +39,7 @@ import { getCheckpointReward } from "./checkpoint-reward";
 import { getPassMark } from "./checkpoint-rules";
 
 export type ChallengeResult =
-  | { challenge: ChallengeView; status: "ready" }
+  | { challenge: ChallengeView; moved?: PlanEffect | null; status: "ready" }
   | { status: "notFound" }
   | { status: "unauthorized" };
 
@@ -280,9 +281,12 @@ function loadRecordings({
  */
 export async function getChallenge({
   input,
+  movedBy,
   planItemId,
 }: {
   input: Partial<StudySessionTimeZoneInput>;
+  /** The plan change that just moved it, whose effect the moved screen says (`moved`, R43). */
+  movedBy?: string | null;
   planItemId: string;
 }): Promise<ChallengeResult> {
   const owned = await findOwnedChallenge({ planItemId, timeZone: input.timeZone });
@@ -301,7 +305,7 @@ export async function getChallenge({
 
   const blockId = getOpenBlockId({ block: previewBlock, todayBlock });
 
-  const [size, canMoveIt, lastResult, counts, recordings, topics, call, limitReached] =
+  const [size, canMoveIt, lastResult, counts, recordings, topics, call, limitReached, moved] =
     await Promise.all([
       loadChallengeSize({ block: previewBlock, challenge }),
       // A mock the plan doesn't include has no day of its own to move.
@@ -313,6 +317,7 @@ export async function getChallenge({
       loadChallengeCall({ blockId, challenge }),
       // Start refuses a challenge once today's study time is used up: a ready one says so first.
       status === "ready" && !waitReason && readDailyLimitReachedToday(userId),
+      movedBy ? loadMoveEffect({ changeId: movedBy, planId: item.planId }) : null,
     ]);
 
   const reinforcement = await loadResultReinforcement({ result: lastResult, userId });
@@ -366,6 +371,7 @@ export async function getChallenge({
           )
         : 0,
     },
+    moved,
     status: "ready",
   };
 }

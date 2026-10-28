@@ -1,13 +1,13 @@
 import { type UnfundedMove } from "../plan-error-contract";
+import { type LessonDays, keepWindowTeaching } from "./kept-teaching";
 import {
-  type PracticeFunding,
-  fundCommittedMocks,
+  EPSILON,
+  findDayMock,
   fundDay,
   getMockDayMinutes,
-  getRequestedMoves,
-} from "./committed-mock-funding";
-import { type LessonDays, keepWindowTeaching } from "./kept-teaching";
-import { EPSILON, findDayMock, getSpendable } from "./mock-day";
+  getSpendable,
+  sumSavedOn,
+} from "./mock-day";
 import {
   type MockClock,
   type MockIdentity,
@@ -219,8 +219,6 @@ function fundWindow({
 export type FundedMocks = {
   days: PlanDay[];
   funding: MockFunding[];
-  /** The minimum saved practice reassigned to actual clock growth, for the quoted effect. */
-  practiceFunding?: PracticeFunding[];
   /** The saved mocks the run's mocks continue (see `matchSavedMocks`): each counts once. */
   matched: MockFunding[];
   /** The mocks whose identity continues a saved one's. */
@@ -245,12 +243,10 @@ export function fundMocks({
   clocks = [],
   cursor,
   days,
+  from,
   funding,
-  keepSelection = false,
   moves,
-  practice,
   promised = new Map(),
-  requested = new Set(),
   resolution = null,
 }: {
   /** Each exam day's mock clock (see `MockClock`); none: mocks keep the length their day gave. */
@@ -258,15 +254,18 @@ export function fundMocks({
   /** The exam day of the mock before these days; absent: the latest the plan saved before them. */
   cursor?: number | null;
   days: readonly PlanDay[];
+  /**
+   * The first day whose time funding may take (an ISO date): a run that keeps this week as saved
+   * starts after it, so this week's days give a mock what they set aside before and no more.
+   * Funded again, a mock moved to a longer day took this week's whole time on top of the lessons
+   * the run kept there. Absent: from the first of `days`.
+   */
+  from?: string;
   /** The funding the plan saved last (see `PlanSettings.mockFunding`). */
   funding: readonly MockFunding[];
-  keepSelection?: boolean;
   moves: readonly MovedEvent[];
-  practice?: ReadonlyMap<string, number>;
   /** The promised lesson's teaching, which funding never takes; none: every day's time can give. */
   promised?: LessonDays;
-  /** The days a learner's change asks mocks to move to (a move-only run's): funded there or refused. */
-  requested?: ReadonlySet<string>;
   resolution?: MockResolution | null;
 }): FundedMocks {
   // Each day's ISO date, read once for the whole pass.
@@ -279,16 +278,6 @@ export function fundMocks({
     return empty;
   }
 
-  if (keepSelection) {
-    return fundCommittedMocks({
-      clocks,
-      days,
-      funding,
-      moves: getRequestedMoves({ moves, requested }),
-      practice,
-    });
-  }
-
   const released = resolution?.released ?? new Set<string>();
 
   const dates = days.flatMap((day, index) => {
@@ -296,13 +285,23 @@ export function fundMocks({
     return findDayMock(day.shape) && !released.has(date) ? [date] : [];
   });
 
+  const fundFrom = from && from > start ? from : start;
+  const fromIndex = labels.findIndex((label) => label >= fundFrom);
+  const firstFunding = Math.max(0, fromIndex);
   const matches = matchSavedMocks({ dates, moves, saved: funding, start });
-  const shapes = days.map((day) => day.shape);
+
+  // The days before `from` keep what they set aside before.
+  const shapes = days.map((day, index) =>
+    index < firstFunding
+      ? fundDay({ minutes: sumSavedOn(funding, labels[index]), shape: day.shape })
+      : day.shape,
+  );
+
   const entries: MockFunding[] = [];
   const sourced = new Set<string>();
   const unfunded: UnfundedMove[] = [];
   let after = cursor === undefined ? getMockCursor({ saved: funding, start }) : cursor;
-  let windowStart = 0;
+  let windowStart = firstFunding;
   let carried: Contribution[] = [];
 
   days.forEach((day, index) => {
@@ -341,7 +340,7 @@ export function fundMocks({
         }
       : found;
 
-    const past = [...carried, ...listPast({ saved: source, start })];
+    const past = [...carried, ...listPast({ saved: source, start: fundFrom })];
 
     // Each window keeps the promised lesson's teaching, from where it really starts.
     keepWindowTeaching({ days, index, labels, promised, shapes, windowStart });
@@ -378,7 +377,7 @@ export function fundMocks({
 
     entries.push(entry);
     after = identity ? identity.day : after;
-    windowStart = index + 1;
+    windowStart = Math.max(index + 1, firstFunding);
     carried = [];
 
     if (source) {

@@ -23,7 +23,7 @@ const LEARN_KINDS = new Set<PlannedItem["kind"]>(["chapter", "lesson"]);
 
 /**
  * The end dates a learn plan's phases were last saved with, which the learner saw on the plan's
- * reveal and on Plan, by phase: every phase but the last (included for a weekly event move), whose end the goal's finish says,
+ * reveal and on Plan, by phase: every phase but the last, whose end the goal's finish says,
  * whose challenge is still to do on that day, or won early while the phase's lessons are still to
  * do (career 2110 won one three weeks early, and its phase then ended on its last lesson left, two
  * days sooner). None for an exam, whose phases are windows of the calendar that never move. A plan
@@ -32,14 +32,11 @@ const LEARN_KINDS = new Set<PlannedItem["kind"]>(["chapter", "lesson"]);
  * challenge in on that day, and the run after it left it out again.
  */
 export function getShownPhaseEnds({
-  includeLast = false,
   items,
   moved = new Map(),
   phases,
   released = new Set(),
 }: {
-  /** A weekly event move keeps every phase challenge; other replans can estimate the final end. */
-  includeLast?: boolean;
   items: readonly Pick<ExistingPlanItem, "kind" | "phase" | "scheduledFor" | "status">[];
   /** The ends moving the phase dates puts on other days, by phase (see `moveStrainedEnds`). */
   moved?: ReadonlyMap<number, string>;
@@ -64,11 +61,13 @@ export function getShownPhaseEnds({
 
   const won = listWonPhases(items);
 
-  const shown = (includeLast ? phases : phases.slice(0, -1)).flatMap((phase, index) =>
-    phase.endDate && (won.has(index) || challengeDays.has(`${index}:${phase.endDate}`))
-      ? [[index, phase.endDate] as const]
-      : [],
-  );
+  const shown = phases
+    .slice(0, -1)
+    .flatMap((phase, index) =>
+      phase.endDate && (won.has(index) || challengeDays.has(`${index}:${phase.endDate}`))
+        ? [[index, phase.endDate] as const]
+        : [],
+    );
 
   return new Map(
     [...new Map([...shown, ...moved])].flatMap(([index, date]) =>

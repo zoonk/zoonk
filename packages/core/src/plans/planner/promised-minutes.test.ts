@@ -195,7 +195,6 @@ describe("a promised lesson on a day that funds a mock", () => {
         key: "lesson",
         minutes: 4,
       }),
-      requested: new Set(["2026-10-14"]),
     });
 
     expect(funded.unfunded).toStrictEqual([{ date: "2026-10-14", minutes: 200 }]);

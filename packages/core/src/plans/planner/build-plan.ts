@@ -13,6 +13,7 @@ import {
   listThisWeekWork,
   setAsideLeftWork,
   splitExistingItems,
+  toKeptItem,
 } from "./kept-items";
 import { listEndsBeforeLessons, listStrainedEnds } from "./kept-phase-ends";
 import {
@@ -23,16 +24,15 @@ import {
 } from "./landed-lessons";
 import { listKeptTime, putLandedLessons } from "./landed-placement";
 import { type LaidOutOrder, toQueueUnit } from "./learned-order";
-import { layOutSelectedMove } from "./local-mock-move-layout";
 import { type MockClock, type MockResolution } from "./mock-identity";
 import { createLayOut } from "./pass-layout";
 import { placeItemsInPhaseTime } from "./phase-time";
-import { keepSelectedItem } from "./pinned-study-portions";
 import { type PlanBase } from "./plan-bases";
 import { addDays, getEndOfWeek } from "./plan-calendar";
 import { getLastLessonDate, scheduleRunEvents } from "./plan-events";
 import { type ExistingPlanItem, fromUnit, mergePlanItems } from "./plan-items";
 import { type ExamWindow } from "./plan-phases";
+import { buildPlanQueue } from "./plan-queue";
 import { createDays, getOpenStart, getPlanStart, listFundedPlanDays } from "./plan-run-days";
 import { type PlanGraph, type PlanSettings, type StoredBaseChoice } from "./plan-state";
 import { type PlannerLesson } from "./plan-units";
@@ -41,12 +41,7 @@ import { resolvePlannedMocks, settlePlannedMocks } from "./planned-mocks";
 import { type SkillReadiness } from "./skill-order";
 import { joinStandIns } from "./stand-in-parts";
 import { summarizePlan } from "./summarize-plan";
-import {
-  getKeptAfterExamSpan,
-  getPendingOrder,
-  getRunQueue,
-  listStillSetAside,
-} from "./this-week-items";
+import { getPendingOrder, listStillSetAside } from "./this-week-items";
 import { markKeptLessons } from "./whole-boss";
 
 /**
@@ -64,8 +59,6 @@ export type BuildPlanInput = {
   bossDays?: ExamBossDays;
   /** A new course's first day fills its study time with lessons before later days reserve practice. */
   courseStart?: boolean;
-  /** The days the change being planned moves the week's events to (see `fundMocks`). */
-  requestedMoveDates?: ReadonlySet<string>;
   /**
    * What the questions a class test's own material announces ask ("Essay on osmosis"): a
    * plan short on time keeps the lessons on them (see `findAnnouncedLessonIds`). Absent for goals
@@ -115,8 +108,6 @@ export type BuildPlanInput = {
    */
   heldSkillsLand?: boolean;
   items: readonly ExistingPlanItem[];
-  /** A move-only edit keeps saved membership, dates and committed mock funding. */
-  keepSelection?: boolean;
   /**
    * The exam's parts the learner said they already know (onboarding's known subjects, or past the
    * basics): an exam's study cycle opens with the others. Absent when they named none.
@@ -233,7 +224,7 @@ export function buildPlan(given: BuildPlanInput) {
 }
 
 function buildWithBosses(given: BuildPlanInput): BuiltPlan {
-  const landing = given.keepSelection ? null : findLanding(given);
+  const landing = findLanding(given);
 
   const input = landing?.asSaved ?? given;
 
@@ -242,7 +233,7 @@ function buildWithBosses(given: BuildPlanInput): BuiltPlan {
   const landedFor = (choices: StoredBaseChoice[]) =>
     landing && listLandedUnits({ input: withBaseChoices({ choices, input: given }), landing });
 
-  const keepsRest = given.keepSelection === true || (landing !== null && given.landedOnly === true);
+  const keepsRest = landing !== null && given.landedOnly === true;
 
   if (!hasBaseChoices(input)) {
     return resolvePlannedMocks((resolution) =>
@@ -312,7 +303,7 @@ function planGoal({
 }): BuiltPlan {
   const planStart = getPlanStart(input);
 
-  const { focused, prerequisites, ranks, rates, units: queue, values } = getRunQueue(input);
+  const { focused, prerequisites, ranks, rates, units: queue, values } = buildPlanQueue(input);
 
   const {
     finished,
@@ -406,30 +397,29 @@ function planGoal({
   const kept = [...finished, ...stillAside, ...thisWeek].flatMap((item) =>
     landedStandIns.includes(item)
       ? (landedBySkill.get(item.skillId ?? "") ?? []).map((unit) => fromUnit(unit))
-      : [keepSelectedItem({ input, item, units: unitsByKey, windows: days.windows })],
+      : [toKeptItem({ input, item, units: unitsByKey, windows: days.windows })],
   );
 
   const setAside = setAsideLeftWork({ input, placed: [...kept, ...units], yielded });
 
-  const merged = layOutSelectedMove({
-    days: funded.days,
-    input,
-    items: mergePlanItems({ events: spare.events, kept: [...kept, ...setAside], replaced, units }),
-    portions: keptPortions,
-    practiceFunding: funded.practiceFunding,
-    units: unitsByKey,
+  const merged = mergePlanItems({
+    events: spare.events,
+    kept: [...kept, ...setAside],
+    replaced,
+    units,
   });
 
   const dropped = afterExam?.dropped ?? schedule.dropped;
-  const planDays = merged.planDays ? [...merged.planDays] : funded.days;
-  const challengeDays = [...planDays, ...listAfterExamDays(afterExam)];
+  const planDays = funded.days;
+  // A challenge goes on a day the run lays out: one put on this week's kept days was never saved.
+  const challengeDays = [...planDays, ...listAfterExamDays(afterExam)].filter(
+    (day) => day.date >= start,
+  );
 
   // An exam's lessons already belong to the phase of the day they're due; a learn plan's late ones
   // (depth studied once every core is in) join the phase whose time they fall in.
   const items =
-    days.windows.length > 0
-      ? merged.items
-      : placeItemsInPhaseTime({ items: merged.items, kept: phaseEnds });
+    days.windows.length > 0 ? merged : placeItemsInPhaseTime({ items: merged, kept: phaseEnds });
 
   const mocks = settlePlannedMocks({
     afterExam: afterExam?.funded ?? null,
@@ -438,15 +428,13 @@ function planGoal({
     items,
     resolution,
     saved: input.settings.mockFunding,
-    selectionShifts: merged.selectionShifts,
     spare,
     today: input.today,
   });
 
   return {
     ...summarizePlan({
-      afterExam:
-        afterExam?.span ?? getKeptAfterExamSpan({ input, items, portions: merged.portions }),
+      afterExam: afterExam?.span ?? null,
       graph: input.graph,
       items,
       kept: phaseEnds,
@@ -458,7 +446,7 @@ function planGoal({
     endsBeforeLessons: listEndsBeforeLessons({ ends: phaseEnds, input, items, units: laidOut }),
     items,
     keptKeys: new Set([...kept, ...setAside].map((item) => item.key)),
-    ...listLessonDays(units, merged.portions),
+    ...listLessonDays(units, keptPortions),
     mockFunding: mocks.mockFunding,
     mocks,
     order: {
@@ -474,6 +462,6 @@ function planGoal({
     }),
     spill,
     strainedEnds: listStrainedEnds({ days: planDays, ends: phaseEnds, units: laidOut }),
-    ...listBossDayFacts({ days: challengeDays, input, kept: merged.portions, units }),
+    ...listBossDayFacts({ days: challengeDays, input, kept: keptPortions, units }),
   };
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { type ChallengeView } from "@zoonk/core/checkpoints/challenge-contract";
+import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import {
   GenerationTimelineDescription,
   GenerationTimelineTitle,
@@ -67,15 +68,18 @@ export function ChallengeScreen({
   actions,
   challenge,
   hrefs,
-  movedBy,
+  moved,
   rereading = false,
   writing = null,
 }: {
   actions: ChallengeActions;
   challenge: ChallengeView;
   hrefs: ChallengeHrefs;
-  /** The plan change that just moved it here, whose undo takes it back. */
-  movedBy: string | null;
+  /**
+   * The plan change that just moved it here, whose undo takes it back, with what it did to the
+   * plan.
+   */
+  moved: { changeId: string; effect: PlanChangeView["effect"] | null } | null;
   /**
    * The host is reading the page again after a refused Start: Start stays busy until the page says
    * where the challenge stands, so it never shows ready only to refuse again.
@@ -89,9 +93,9 @@ export function ChallengeScreen({
 
   return (
     <ChallengeProvider value={{ challenge, hrefs, move, start, writing }}>
-      {movedBy && <ChallengeMovedScreen changeId={movedBy} />}
-      {!movedBy && writing?.kind === "writing" && <ChallengeWritingScreen run={writing.run} />}
-      {!movedBy && writing?.kind !== "writing" && <ChallengeIntroScreen />}
+      {moved && <ChallengeMovedScreen changeId={moved.changeId} effect={moved.effect} />}
+      {!moved && writing?.kind === "writing" && <ChallengeWritingScreen run={writing.run} />}
+      {!moved && writing?.kind !== "writing" && <ChallengeIntroScreen />}
     </ChallengeProvider>
   );
 }

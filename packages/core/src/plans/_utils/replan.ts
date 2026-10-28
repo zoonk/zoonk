@@ -15,7 +15,6 @@ import { type StudyScheduleAt } from "../planner/daily-time-plans";
 import { weighGraphForExam } from "../planner/exam-weights";
 import { getShownPhaseEnds } from "../planner/kept-phase-ends";
 import { sizeLanguageGraph } from "../planner/language-size";
-import { getSelectionOptions } from "../planner/pinned-study-portions";
 import { type PlanBases } from "../planner/plan-bases";
 import { type PlanEffect } from "../planner/plan-effect";
 import { type PlanFeasibility, getPlanFeasibility } from "../planner/plan-feasibility";
@@ -32,7 +31,6 @@ import { choosePlanSettings } from "./choose-plan-pace";
 import { chooseExamOptionSkills } from "./exam-option-skills";
 import { listFinishedDays } from "./finished-days";
 import { keepPastBasicsBands } from "./level-bands";
-import { listRequestedMoveDates } from "./missing-weekly-move";
 import { type PlanChangeKind, type StoredPlanChangePayload } from "./plan-change-payload";
 import { type PlanContext, getStateTargetDate } from "./plan-context";
 import { getPlanInputsKey, readLanding, shouldSkipPlanBuild } from "./plan-inputs-key";
@@ -108,11 +106,6 @@ type ComputePlanRequest = {
    * them as the lessons fall, as a learner's change does, or to compare.
    */
   keepPhaseDates?: boolean;
-  /**
-   * Moving an event keeps the teaching and funding the learner already selected, and the last
-   * phase's challenge, rather than shortening the plan.
-   */
-  keepSelection?: boolean;
   mode: PlanningMode;
   /** The kept ends moving the phase dates puts on other days, by phase (see `planPhaseDatesMove`). */
   movedEnds?: ReadonlyMap<number, string>;
@@ -230,7 +223,7 @@ export async function computePlan({
   const { advise, input } = chooseBases({
     ...inputs,
     bossFacts: await bossFacts,
-    ...getSelectionOptions(options),
+    bringBackSetAside: options.bringBackSetAside ?? false,
     carryOver,
     courseStart:
       readCourseStart(isJsonObject(context.goal.details) ? context.goal.details : {}) !== null,
@@ -252,7 +245,6 @@ export async function computePlan({
     paceFactor: settings.pace.factor,
     phaseEnds: keepPhaseDates
       ? getShownPhaseEnds({
-          includeLast: options.keepSelection,
           items: context.items,
           moved: movedEnds,
           phases: context.phases,
@@ -260,7 +252,6 @@ export async function computePlan({
         })
       : undefined,
     quickLessons: quick,
-    requestedMoveDates: listRequestedMoveDates({ saved: context.state, state }),
     setAsideLeftWork,
     settings,
     today: context.today,

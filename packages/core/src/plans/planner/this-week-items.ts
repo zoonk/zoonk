@@ -1,10 +1,6 @@
-import { type AfterExamSpan } from "./after-exam";
 import { type BuildPlanInput } from "./build-plan";
-import { getRequestedMoves } from "./committed-mock-funding";
-import { type StudyPortion } from "./interval-study-minutes";
-import { fromIsoDate, getEndOfWeek, toIsoDate } from "./plan-calendar";
-import { type ExistingPlanItem, type PlannedItem, getItemKey } from "./plan-items";
-import { buildPlanQueue } from "./plan-queue";
+import { getEndOfWeek, toIsoDate } from "./plan-calendar";
+import { type ExistingPlanItem, getItemKey } from "./plan-items";
 import { type MovedEvent } from "./plan-state";
 import { type QueueUnit } from "./plan-units";
 import { withoutRepeatedTitles } from "./repeated-titles";
@@ -45,34 +41,13 @@ export function listThisWeekItems({
     return [];
   }
 
-  const moves = input.keepSelection
-    ? getRequestedMoves({
-        moves: input.settings.movedEvents,
-        requested: input.requestedMoveDates ?? new Set(),
-      })
-    : input.settings.movedEvents;
-
-  const moved = listMovedWeeklyItemIds({ items: input.items, moves });
-
-  const mockSources = new Set(
-    input.items
-      .filter((item) => item.kind === "mock" && item.scheduledFor)
-      .map((item) => item.scheduledFor && toIsoDate(item.scheduledFor)),
-  );
-
-  const reviews = new Set(
-    input.keepSelection
-      ? moves.filter((move) => mockSources.has(move.from)).map((move) => move.to)
-      : [],
-  );
-
+  const moved = listMovedWeeklyItemIds({ items: input.items, moves: input.settings.movedEvents });
   const end = getEndOfWeek(input.today);
 
   return input.items.filter(
     (item) =>
       item.status === "todo" &&
       !moved.has(item.id) &&
-      !(item.kind === "review" && item.scheduledFor && reviews.has(toIsoDate(item.scheduledFor))) &&
       (keepsRest || (item.scheduledFor !== null && item.scheduledFor <= end)),
   );
 }
@@ -97,16 +72,6 @@ export function getPendingOrder({
   };
 }
 
-/** A local edit can queue only the work the saved plan actually selected. */
-export function getRunQueue(input: BuildPlanInput) {
-  const queue = buildPlanQueue(input);
-  const selected = new Set(input.items.map((item) => getItemKey(item)));
-
-  return input.keepSelection
-    ? { ...queue, units: queue.units.filter((unit) => selected.has(unit.key)) }
-    : queue;
-}
-
 /** Work already set aside stays out unless this run actually placed it. */
 export function listStillSetAside({
   items,
@@ -117,68 +82,4 @@ export function listStillSetAside({
 }): ExistingPlanItem[] {
   const keys = new Set(placed.map((unit) => unit.key));
   return items.filter((item) => !keys.has(getItemKey(item)));
-}
-
-/** Only selected teaching within the local interval may be re-placed. */
-export function listIntervalTeaching({
-  interval,
-  items,
-  portions,
-}: {
-  interval: { from: string; to: string };
-  items: readonly ExistingPlanItem[];
-  portions: ReadonlyMap<string, readonly StudyPortion[]>;
-}): Map<string, StudyPortion[]> {
-  const teaching = new Set(items.map((item) => getItemKey(item)));
-
-  return new Map(
-    [...portions].flatMap(([key, parts]) => {
-      const released = teaching.has(key)
-        ? parts.filter((part) => part.date >= interval.from && part.date <= interval.to)
-        : [];
-
-      return released.length > 0 ? [[key, released]] : [];
-    }),
-  );
-}
-
-/** A local edit keeps the continuation's actual saved allocations without scheduling it again. */
-export function getKeptAfterExamSpan({
-  input,
-  items,
-  portions,
-}: {
-  input: BuildPlanInput;
-  items: readonly PlannedItem[];
-  portions: ReadonlyMap<string, readonly StudyPortion[]>;
-}): AfterExamSpan | null {
-  const exam = input.goal.targetDate;
-
-  if (!input.keepSelection || !input.settings.fullCourse || input.goal.kind !== "exam" || !exam) {
-    return null;
-  }
-
-  const after = items.flatMap((item): Pick<StudyPortion, "date" | "minutes">[] => {
-    const study = portions.get(getItemKey(item));
-
-    if (study) {
-      return study.filter((part) => part.date > toIsoDate(exam));
-    }
-
-    return item.scheduledFor && item.scheduledFor > exam
-      ? [{ date: toIsoDate(item.scheduledFor), minutes: item.minutes }]
-      : [];
-  });
-
-  const dates = after.map((part) => part.date).toSorted();
-  const first = dates[0];
-  const last = dates.at(-1);
-
-  return first && last
-    ? {
-        end: fromIsoDate(last),
-        minutes: after.reduce((sum, part) => sum + part.minutes, 0),
-        start: fromIsoDate(first),
-      }
-    : null;
 }

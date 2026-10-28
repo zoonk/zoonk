@@ -50,7 +50,8 @@ async function ChallengeContent({ params, searchParams }: Props) {
   // Where a challenge stands is the learner's own and changes with the day: render per request.
   await connection();
   const [{ lang, planItemId }, query] = await Promise.all([params, searchParams]);
-  const result = await getChallenge({ input: {}, planItemId });
+  const movedBy = readParam(query, MOVED_PARAM);
+  const result = await getChallenge({ input: {}, movedBy, planItemId });
 
   if (result.status === "unauthorized") {
     return <AuthGateScreen next={withQuery(`/challenge/${planItemId}`, query)} />;
@@ -77,7 +78,7 @@ async function ChallengeContent({ params, searchParams }: Props) {
     <MainLearnProvider>
       <ChallengeClient
         challenge={challenge}
-        movedBy={readParam(query, MOVED_PARAM)}
+        moved={movedBy ? { changeId: movedBy, effect: result.moved ?? null } : null}
         sessionId={sessionId}
       />
     </MainLearnProvider>

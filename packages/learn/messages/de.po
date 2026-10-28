@@ -1519,9 +1519,9 @@ msgid "Moved to {date}"
 msgstr "Auf {date} verschoben"
 
 #: src/challenge/challenge-moved-screen.tsx
-msgctxt "Mlb61X"
-msgid "Your plan made room for it and moved any lessons that didn't fit. Nothing is lost."
-msgstr "Dein Plan hat dafür Platz geschaffen und Lektionen verschoben, die nicht mehr gepasst haben. Es geht nichts verloren."
+msgctxt "NaKnZr"
+msgid "Your plan moved later lessons to make room for it."
+msgstr "Dein Plan hat spätere Lektionen verschoben, um Platz dafür zu schaffen."
 
 #: src/challenge/challenge-plus-lock.tsx
 msgctxt "Q3_ibn"
@@ -10648,6 +10648,16 @@ msgstr "{lessons, plural, one {# Lektion weniger} other {# Lektionen weniger}}, 
 msgctxt "TtcaE1"
 msgid "{lessons, plural, one {# fewer lesson} other {# fewer lessons}}: {names}."
 msgstr "{lessons, plural, one {# Lektion weniger} other {# Lektionen weniger}}: {names}."
+
+#: src/plan/use-effect-counts.ts
+msgctxt "kNBecE"
+msgid "{skill} (about {lessons, number})"
+msgstr "{skill} (etwa {lessons, number})"
+
+#: src/plan/use-effect-counts.ts
+msgctxt "iHy8J9"
+msgid "Lessons not written yet: {skills}."
+msgstr "Lektionen, die noch vorbereitet werden: {skills}."
 
 #: src/plan/use-effect-counts.ts
 msgctxt "iDJBGb"

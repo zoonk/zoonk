@@ -1,10 +1,10 @@
-import { getSkillArea } from "./graph-areas";
 import { type NextMockMove } from "./next-mock-move";
 import { daysBetween, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { SMALL_CHANGE_DAYS, SMALL_CHANGE_LESSONS } from "./plan-change-thresholds";
 import { type PlannedItem } from "./plan-items";
 import { type PlanGraph } from "./plan-state";
 import { type SkillMinutes } from "./skill-minutes";
+import { getTopicChanges } from "./topic-changes";
 
 export type EffectItem = Pick<
   PlannedItem,
@@ -23,6 +23,9 @@ export type AreaEnd = { after: string; area: string; before: string; lessonsGain
 
 /** How many lessons an area has still to do, before and after a change. */
 export type AreaLessons = { after: number; area: string; before: number };
+
+/** About how many lessons not written yet a change leaves out of a skill it keeps (see `getSeenChange`). */
+type UnwrittenLeftOut = { lessons: number; skill: string };
 
 /** Notice topics of one subject (a plan area), in the notice's own words. */
 export type AreaTopics = { area: string; topics: string[] };
@@ -114,6 +117,11 @@ export type PlanEffect = {
   phaseEnds?: PhaseEndMove[];
   topicsAdded?: AreaTopics[];
   topicsLeftOut?: AreaTopics[];
+  /**
+   * The lessons not written yet it leaves out of skills it keeps, about how many by skill, so with
+   * `lessonsLeftOut` every lesson it leaves out is said (see `listUnwrittenLeftOut`).
+   */
+  unwrittenLeftOut?: UnwrittenLeftOut[];
   weeklyEvents?: WeeklyEventMove;
 };
 
@@ -261,29 +269,10 @@ function countSkillLessons({
  * `lessonsAfter` say how many lessons each side's stand-ins teach; a skill that gains lessons while
  * a stand-in holds some of them makes the count an estimate.
  */
-export function countLessonChanges({
-  after,
-  before,
-  lessonsAfter,
-  lessonsBefore,
-}: {
-  after: readonly SeenItem[];
-  before: readonly SeenItem[];
-  lessonsAfter: (item: SeenItem) => number;
-  lessonsBefore: (item: SeenItem) => number;
-}): Pick<PlanEffect, "lessonsAdded" | "lessonsAddedEstimated" | "lessonsRemoved"> {
-  const seenSkills = new Map(
-    before.flatMap((item) => (item.lessonId ? [[item.lessonId, item.skillId] as const] : [])),
-  );
-
-  const filed = after.map((item) =>
-    item.lessonId && seenSkills.has(item.lessonId)
-      ? { ...item, skillId: seenSkills.get(item.lessonId) ?? item.skillId }
-      : item,
-  );
-
-  const was = countSkillLessons({ items: before, lessonsOf: lessonsBefore });
-  const now = countSkillLessons({ items: filed, lessonsOf: lessonsAfter });
+function countLessonChanges(
+  input: Parameters<typeof countSkillChanges>[0],
+): Pick<PlanEffect, "lessonsAdded" | "lessonsAddedEstimated" | "lessonsRemoved"> {
+  const { filed, now, was } = countSkillChanges(input);
 
   const standIns = new Set(
     filed.filter((item) => isStandIn(item)).map((item) => item.skillId ?? ""),
@@ -296,13 +285,87 @@ export function countLessonChanges({
   };
 }
 
+function sumLessons({
+  items,
+  lessonsOf,
+}: {
+  items: readonly SeenItem[];
+  lessonsOf: (item: SeenItem) => number;
+}): number {
+  return items.reduce((sum, item) => sum + lessonsOf(item), 0);
+}
+
+/** Each skill's lessons still to do before and after, the new plan's filed as the learner saw them. */
+function countSkillChanges({
+  after,
+  before,
+  lessonsAfter,
+  lessonsBefore,
+}: {
+  after: readonly SeenItem[];
+  before: readonly SeenItem[];
+  lessonsAfter: (item: SeenItem) => number;
+  lessonsBefore: (item: SeenItem) => number;
+}) {
+  const seenSkills = new Map(
+    before.flatMap((item) => (item.lessonId ? [[item.lessonId, item.skillId] as const] : [])),
+  );
+
+  const filed = after.map((item) =>
+    item.lessonId && seenSkills.has(item.lessonId)
+      ? { ...item, skillId: seenSkills.get(item.lessonId) ?? item.skillId }
+      : item,
+  );
+
+  return {
+    filed,
+    now: countSkillLessons({ items: filed, lessonsOf: lessonsAfter }),
+    was: countSkillLessons({ items: before, lessonsOf: lessonsBefore }),
+  };
+}
+
+/**
+ * The lessons not written yet a change leaves out of skills it keeps, by skill name, about how
+ * many: what each skill loses beyond the lessons `lessonsLeftOut` names. A stand-in that only
+ * shrinks has no title to name, so a card said "leaves out 6 lessons" without saying of what.
+ */
+function listUnwrittenLeftOut({
+  before,
+  graph,
+  leftOut,
+  ...input
+}: Parameters<typeof countSkillChanges>[0] & {
+  graph: PlanGraph;
+  /** The lessons the change leaves out whole, by title (see `listLessonsLeftOut`). */
+  leftOut: ReadonlySet<string>;
+}): UnwrittenLeftOut[] {
+  const { now, was } = countSkillChanges({ before, ...input });
+  const names = new Map(graph.skills.map((skill) => [skill.skillId, skill.name]));
+
+  const named = Map.groupBy(
+    before.filter(
+      (item) => item.kind === "lesson" && item.status === "todo" && leftOut.has(item.titleSnapshot),
+    ),
+    (item) => item.skillId ?? "",
+  );
+
+  return [...was].flatMap(([skillId, lessons]) => {
+    const removed = Math.max(0, lessons - (now.get(skillId) ?? 0));
+    const said = sumLessons({ items: named.get(skillId) ?? [], lessonsOf: input.lessonsBefore });
+    const unnamed = removed - said;
+    const skill = names.get(skillId);
+
+    return unnamed > 0 && skill ? [{ lessons: unnamed, skill }] : [];
+  });
+}
+
 /**
  * The lessons of the plan the learner sees (`before`) that a change leaves out whole, by title, in
  * its order: a lesson the new plan doesn't have or sets aside, and a skill's lessons not written yet
  * (its stand-in) when nothing of that skill stays. A stand-in that only shrinks, or whose lessons were
  * written meanwhile, isn't left out.
  */
-export function listLessonsLeftOut({
+function listLessonsLeftOut({
   after,
   before,
 }: {
@@ -351,15 +414,24 @@ export function getSeenChange({
   | "lessonsRemoved"
   | "topicsAdded"
   | "topicsLeftOut"
+  | "unwrittenLeftOut"
 > {
   const lessonsLeftOut = listLessonsLeftOut({ after, before });
   const { topicsAdded, topicsLeftOut } = getTopicChanges({ after, before, graph });
+  const counters = { after, before, lessonsAfter, lessonsBefore };
+
+  const unwrittenLeftOut = listUnwrittenLeftOut({
+    ...counters,
+    graph,
+    leftOut: new Set(lessonsLeftOut),
+  });
 
   return {
     endDateAfter: getEndDate(after),
     endDateBefore: getEndDate(before),
-    ...countLessonChanges({ after, before, lessonsAfter, lessonsBefore }),
+    ...countLessonChanges(counters),
     ...(lessonsLeftOut.length > 0 && { lessonsLeftOut }),
+    ...(unwrittenLeftOut.length > 0 && { unwrittenLeftOut }),
     ...(topicsAdded.length > 0 && { topicsAdded }),
     ...(topicsLeftOut.length > 0 && { topicsLeftOut }),
   };
@@ -377,75 +449,4 @@ export function needsApproval(effect: PlanEffect): boolean {
   return (
     effect.lessonsAdded + effect.lessonsRemoved > SMALL_CHANGE_LESSONS || shift > SMALL_CHANGE_DAYS
   );
-}
-
-/**
- * Each area's topics the plan teaches: a topic is in when any of its skills has an item. A graph
- * that maps no topics (a career's, a language's) names its skills instead, so what leaves or comes
- * into its plan is said too.
- */
-function listPlannedTopics({
-  graph,
-  items,
-}: {
-  graph: PlanGraph;
-  items: readonly Pick<EffectItem, "skillId" | "status">[];
-}): Map<string, Set<string>> {
-  // An item set aside for time (`skipped`) is out of the plan.
-  const planned = new Set(
-    items.flatMap((item) => (item.skillId && item.status !== "skipped" ? [item.skillId] : [])),
-  );
-
-  const mapsTopics = graph.skills.some((skill) => (skill.topics ?? []).length > 0);
-
-  return graph.skills
-    .filter((skill) => planned.has(skill.skillId))
-    .reduce((areas, skill) => {
-      const area = getSkillArea({ graph, skill });
-      const topics = areas.get(area) ?? new Set<string>();
-      (mapsTopics ? (skill.topics ?? []) : [skill.name]).forEach((topic) => topics.add(topic));
-      return areas.set(area, topics);
-    }, new Map<string, Set<string>>());
-}
-
-/** Each area's topics in `from` and not in `to`, in the graph's order. */
-function listMissingTopics({
-  from,
-  graph,
-  to,
-}: {
-  from: Map<string, Set<string>>;
-  graph: PlanGraph;
-  to: Map<string, Set<string>>;
-}): AreaTopics[] {
-  const areas = [...new Set(graph.skills.map((skill) => getSkillArea({ graph, skill })))];
-
-  return areas.flatMap((area) => {
-    const topics = [...(from.get(area) ?? [])].filter((topic) => !to.get(area)?.has(topic));
-    return topics.length > 0 ? [{ area, topics }] : [];
-  });
-}
-
-/**
- * The notice topics a change brings into the plan and the ones it leaves out, by subject, so what
- * a learner is told about it ("physics keeps its basics") is read from what it does: a topic is in
- * the plan while any skill that teaches it has a lesson there. A graph that doesn't map topics
- * names its skills (see `listPlannedTopics`).
- */
-export function getTopicChanges({
-  after,
-  before,
-  graph,
-}: {
-  after: readonly Pick<EffectItem, "skillId" | "status">[];
-  before: readonly Pick<EffectItem, "skillId" | "status">[];
-  graph: PlanGraph;
-}): { topicsAdded: AreaTopics[]; topicsLeftOut: AreaTopics[] } {
-  const was = listPlannedTopics({ graph, items: before });
-  const now = listPlannedTopics({ graph, items: after });
-
-  return {
-    topicsAdded: listMissingTopics({ from: now, graph, to: was }),
-    topicsLeftOut: listMissingTopics({ from: was, graph, to: now }),
-  };
 }

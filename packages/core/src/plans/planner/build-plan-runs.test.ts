@@ -234,6 +234,7 @@ describe("a later run on the day a settling carried earlier days' work", () => {
       carryOver: { itemIds: carried.map((item) => item.id), lessonIds: [] },
       items: store(settled),
       mode: "automatic",
+      settings: { ...input.settings, mockFunding: settled.mockFunding },
       today: sunday,
     });
 
@@ -304,14 +305,32 @@ describe("an automatic run on the plan a forced one laid out the same day", () =
     });
 
     const forced = buildPlan(input);
-    const automatic = buildPlan({ ...input, items: store(forced), mode: "automatic" });
+
+    const automatic = buildPlan({
+      ...input,
+      items: store(forced),
+      mode: "automatic",
+      settings: { ...input.settings, mockFunding: forced.mockFunding },
+    });
+
     const standIn = [...(forced.lessonRawMinutes.get("skill:s1") ?? new Map()).keys()];
 
     expect(standIn.some((date) => date <= "2026-10-18")).toBe(true);
     expect(standIn.some((date) => date > "2026-10-18")).toBe(true);
     expect(automatic.lessonRawMinutes).toStrictEqual(forced.lessonRawMinutes);
     expect(automatic.lessonDayMinutes).toStrictEqual(forced.lessonDayMinutes);
-    expect(automatic.mockFunding).toStrictEqual(forced.mockFunding);
+    // This week's days give what the forced run set aside; the rest is summed again, so compare
+    // the minutes past float noise.
+    const rounded = (funding: typeof forced.mockFunding) =>
+      funding.map((entry) => ({
+        ...entry,
+        contributions: entry.contributions.map((part) => ({
+          ...part,
+          minutes: Math.round(part.minutes * 1e6) / 1e6,
+        })),
+      }));
+
+    expect(rounded(automatic.mockFunding)).toStrictEqual(rounded(forced.mockFunding));
     expect(layout(automatic)).toStrictEqual(layout(forced));
   });
 });

@@ -12,7 +12,14 @@ import { type ChallengeActions, ChallengeScreen } from "@zoonk/learn/challenge";
 import { type HelpLimit } from "@zoonk/learn/help-limit";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useLocale } from "next-intl";
-import { useEffect, useEffectEvent, useMemo, useState, useTransition } from "react";
+import {
+  type ComponentProps,
+  useEffect,
+  useEffectEvent,
+  useMemo,
+  useState,
+  useTransition,
+} from "react";
 import {
   moveChallengeAction,
   startChallengeAction,
@@ -84,11 +91,11 @@ function WritingChallenge({
  */
 export function ChallengeClient({
   challenge,
-  movedBy,
+  moved,
   sessionId,
 }: {
   challenge: ChallengeView;
-  movedBy: string | null;
+  moved: ComponentProps<typeof ChallengeScreen>["moved"];
   sessionId: string | null;
 }) {
   const router = useRouter();
@@ -203,7 +210,7 @@ export function ChallengeClient({
     [challenge.blockId, challenge.mock, search],
   );
 
-  const screen = { actions, challenge, hrefs, movedBy, rereading };
+  const screen = { actions, challenge, hrefs, moved, rereading };
 
   if (writing?.kind !== "writing") {
     return <ChallengeScreen {...screen} writing={writing} />;

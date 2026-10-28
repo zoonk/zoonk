@@ -81,6 +81,7 @@ export const planEffectSchema = z.object({
   reviewFirst: z.object({ areas: z.array(z.string()), date: z.string() }).optional(),
   topicsAdded: z.array(z.object({ area: z.string(), topics: z.array(z.string()) })).optional(),
   topicsLeftOut: z.array(z.object({ area: z.string(), topics: z.array(z.string()) })).optional(),
+  unwrittenLeftOut: z.array(z.object({ lessons: z.int(), skill: z.string() })).optional(),
   weeklyEvents: z
     .object({ after: z.int(), before: z.int(), kind: z.enum(["challenge", "mock"]) })
     .optional(),

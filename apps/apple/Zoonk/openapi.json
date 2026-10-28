@@ -33790,6 +33790,30 @@
               "$ref": "#/components/schemas/PlanEffectTopics"
             }
           },
+          "unwrittenLeftOut": {
+            "description": "Lessons not written yet that the change leaves out of topics it keeps, by topic, about how many: with lessonsLeftOut, every lesson it leaves out. Say them with the change: \"about 4 fewer lessons of Cell biology\"",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "lessons": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 9007199254740991,
+                  "description": "About how many lessons it leaves out"
+                },
+                "skill": {
+                  "type": "string",
+                  "description": "The topic's name"
+                }
+              },
+              "required": [
+                "lessons",
+                "skill"
+              ],
+              "additionalProperties": false
+            }
+          },
           "weeklyEvents": {
             "description": "The week's mocks or challenges move to another weekday, as a change to the learner's days moves them off a rest day",
             "type": "object",

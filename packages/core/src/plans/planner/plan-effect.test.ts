@@ -1,15 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { fromIsoDate } from "./plan-calendar";
 import {
-  countLessonChanges,
+  type PlanEffect,
   getAddedSkillsStart,
   getFittedStandInLessons,
   getSeenChange,
-  getTopicChanges,
   needsApproval,
   startsBeforeBasics,
 } from "./plan-effect";
 import { type PlanGraph } from "./plan-state";
+import { getTopicChanges } from "./topic-changes";
 
 /** A graph without topics: changes name its skills. */
 const noTopics: PlanGraph = { skills: [] } as unknown as PlanGraph;
@@ -79,18 +79,28 @@ describe(getSeenChange, () => {
     ).not.toHaveProperty("lessonsAddedEstimated");
   });
 
-  it("counts a stand-in that shrinks as the lessons it leaves out", () => {
+  // A stand-in that only shrinks has no title to name: the card says its skill and about how many.
+  it("counts a stand-in that shrinks as the lessons it leaves out, by its skill", () => {
     const stays = [item({ date: "2026-10-05", skillId: "fractions" })];
+
+    const graph = {
+      phases: [{ milestone: null, name: "Only" }],
+      skills: [{ area: "Math", name: "Fractions", phase: 0, skillId: "fractions" }],
+    } as unknown as PlanGraph;
 
     expect(
       getSeenChange({
         after: stays,
         before: stays,
-        graph: noTopics,
+        graph,
         lessonsAfter: sizedBy({ fractions: 2 }),
         lessonsBefore: sizedBy({ fractions: 8 }),
       }),
-    ).toMatchObject({ lessonsAdded: 0, lessonsRemoved: 6 });
+    ).toMatchObject({
+      lessonsAdded: 0,
+      lessonsRemoved: 6,
+      unwrittenLeftOut: [{ lessons: 6, skill: "Fractions" }],
+    });
   });
 
   // Counted by item, the lessons written for a saved stand-in of 8 added themselves again.
@@ -144,10 +154,23 @@ function seen({ lessonId, skillId }: { lessonId: string | null; skillId: string 
     chapterId: null,
     kind: "lesson" as const,
     lessonId,
+    scheduledFor: null,
     skillId,
     status: "todo" as const,
     titleSnapshot: lessonId ?? skillId,
   };
+}
+
+/** The lessons a change adds and removes (see `getSeenChange`). */
+function countLessons(
+  input: Omit<Parameters<typeof getSeenChange>[0], "graph">,
+): Pick<PlanEffect, "lessonsAdded" | "lessonsAddedEstimated" | "lessonsRemoved"> {
+  const { lessonsAdded, lessonsAddedEstimated, lessonsRemoved } = getSeenChange({
+    ...input,
+    graph: noTopics,
+  });
+
+  return { lessonsAdded, ...(lessonsAddedEstimated && { lessonsAddedEstimated }), lessonsRemoved };
 }
 
 /** One lesson for a lesson; a stand-in plans 8. */
@@ -155,7 +178,7 @@ function countEight({ lessonId }: { lessonId: string | null }) {
   return lessonId ? 1 : 8;
 }
 
-describe(countLessonChanges, () => {
+describe("lessons counted skill by skill", () => {
   // Maya's "Study everything" said it left out 1 lesson: a lesson two skills share was filed under
   // the other one by the new plan, and its first skill counted it as gone.
   it("counts a lesson the new plan files under another skill as the same lesson", () => {
@@ -171,7 +194,7 @@ describe(countLessonChanges, () => {
     ];
 
     expect(
-      countLessonChanges({ after, before, lessonsAfter: () => 1, lessonsBefore: () => 1 }),
+      countLessons({ after, before, lessonsAfter: () => 1, lessonsBefore: () => 1 }),
     ).toStrictEqual({ lessonsAdded: 1, lessonsAddedEstimated: true, lessonsRemoved: 0 });
   });
 
@@ -179,7 +202,7 @@ describe(countLessonChanges, () => {
     const before = [seen({ lessonId: "a", skillId: "notation" })];
 
     const count = (after: ReturnType<typeof seen>[]) =>
-      countLessonChanges({ after, before, lessonsAfter: countEight, lessonsBefore: countEight });
+      countLessons({ after, before, lessonsAfter: countEight, lessonsBefore: countEight });
 
     expect(count([...before, seen({ lessonId: null, skillId: "dividends" })])).toStrictEqual({
       lessonsAdded: 8,

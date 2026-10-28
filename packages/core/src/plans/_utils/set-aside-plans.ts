@@ -1,7 +1,7 @@
 import { type PlanOperation } from "../plan-contract";
-import { getTopicChanges } from "../planner/plan-effect";
 import { type ExistingPlanItem } from "../planner/plan-items";
 import { type PlanGraph } from "../planner/plan-state";
+import { getTopicChanges } from "../planner/topic-changes";
 
 type TopicItem = Pick<ExistingPlanItem, "skillId" | "status">;
 

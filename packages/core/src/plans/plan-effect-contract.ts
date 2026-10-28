@@ -177,6 +177,18 @@ export const planEffectSchema = z
         description:
           "The exam's notice topics the change leaves out of the plan, by area: say them before the learner applies it",
       }),
+    unwrittenLeftOut: z
+      .array(
+        z.object({
+          lessons: z.int().min(1).meta({ description: "About how many lessons it leaves out" }),
+          skill: z.string().meta({ description: "The topic's name" }),
+        }),
+      )
+      .optional()
+      .meta({
+        description:
+          'Lessons not written yet that the change leaves out of topics it keeps, by topic, about how many: with lessonsLeftOut, every lesson it leaves out. Say them with the change: "about 4 fewer lessons of Cell biology"',
+      }),
     weeklyEvents: z
       .object({
         after: weekdaySchema.meta({

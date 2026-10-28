@@ -2,7 +2,6 @@ import { type PlanOperation } from "../plan-contract";
 import { getAreaEnds, getReducedEnds } from "../planner/focus-gain";
 import { getFocusTargets, getTargetOf } from "../planner/focus-targets";
 import { getSkillArea } from "../planner/graph-areas";
-import { isMoveOnlyPlanChange } from "../planner/pinned-study-portions";
 import { type AreaEnd, type AreaLessons } from "../planner/plan-effect";
 import { type PlanContext } from "./plan-context";
 import { type ComputedPlan } from "./replan";
@@ -46,17 +45,17 @@ export function getTodayExceptAreas(operations: readonly PlanOperation[]): strin
  * after it is planned the same way, to compare (see `askPhaseDatesAfterChange`): planned with
  * today's time open again, it fitted a phase's lessons before its challenge, so Today didn't ask
  * while the plan the change saved held two of them after it (career 2107).
- * A weekly-event move alone keeps every shown phase end and leaves work set aside out of the plan.
+ * A weekly-event move alone plans as the system does (R43): this week stays as saved, the shown
+ * phase ends stay, and work set aside stays out, since moving an event isn't permission to change
+ * the phase dates or bring unrelated work back.
  */
 export function getChangePlanning(operations: readonly PlanOperation[]) {
-  // Moving one weekly event isn't permission to change the phase dates, including the last one,
-  // or bring unrelated work back. A faster learner's replan could otherwise end before the move.
-  const movesWeeklyOnly = isMoveOnlyPlanChange(operations);
+  const movesWeeklyOnly =
+    operations.length > 0 && operations.every((operation) => operation.kind === "moveWeeklyEvent");
 
   return {
     bringBackSetAside: !movesWeeklyOnly,
     keepPhaseDates: movesWeeklyOnly || getSteeredAreas(operations) !== null,
-    keepSelection: movesWeeklyOnly,
     mode: movesWeeklyOnly ? ("automatic" as const) : ("forced" as const),
     todayExceptAreas: getTodayExceptAreas(operations),
   };
