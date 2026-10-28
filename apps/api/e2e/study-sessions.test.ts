@@ -476,13 +476,23 @@ test.describe("Study sessions API", () => {
       userId,
     });
 
-    const plan = await planFixture({ goalId: goal.id });
+    const studied = await libraryLessonFixture({ title: "Studied lesson" });
 
-    const [boss, session] = await Promise.all([
-      planItemFixture({ kind: "boss", phase: 0, planId: plan.id, position: 0 }),
+    // The phase's lesson is done, so its challenge closes it.
+    const [plan, session] = await Promise.all([
+      planFixture({
+        goalId: goal.id,
+        items: [{ lessonId: studied.id, status: "done" }, { kind: "boss" }],
+      }),
       studySessionFixture({ goalId: goal.id, userId }),
       learningProfileFixture({ activeGoalId: goal.id, userId }),
     ]);
+
+    const boss = plan.items[1];
+
+    if (!boss) {
+      throw new Error("Expected the phase's challenge");
+    }
 
     const sessionPath = `/v1/study-sessions/${session.id}`;
     const plusRequired = { error: { code: "PLUS_REQUIRED" } };
@@ -518,7 +528,7 @@ test.describe("Study sessions API", () => {
     const [chapter, skill] = await Promise.all([libraryChapterFixture(), skillFixture()]);
 
     const [lesson, question] = await Promise.all([
-      planItemFixture({ chapterId: chapter.id, planId: plan.id, position: 1, skillId: skill.id }),
+      planItemFixture({ chapterId: chapter.id, planId: plan.id, position: 2, skillId: skill.id }),
       itemFixture({ content: choiceItemContent(), skillId: skill.id }),
     ]);
 
