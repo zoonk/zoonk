@@ -26,14 +26,18 @@
     }()
 
     func body(content: Content) -> some View {
-      content.fullScreenCover(isPresented: .constant(steps != nil)) {
-        ActivityGallery(
-          steps: steps ?? [],
-          path: (steps ?? []).filter { $0.id == Self.environment["ZOONK_ACTIVITY_GALLERY_OPEN"] },
-          answer: Self.environment["ZOONK_ACTIVITY_GALLERY_ANSWER"].flatMap {
-            try? JSONDecoder().decode(LessonAnswer.self, from: Data($0.utf8))
-          },
-          isExploring: Self.environment["ZOONK_ACTIVITY_GALLERY_EXPLORE"] != nil)
+      if let steps {
+        content.fullScreenCover(isPresented: .constant(true)) {
+          ActivityGallery(
+            steps: steps,
+            path: steps.filter { $0.id == Self.environment["ZOONK_ACTIVITY_GALLERY_OPEN"] },
+            answer: Self.environment["ZOONK_ACTIVITY_GALLERY_ANSWER"].flatMap {
+              try? JSONDecoder().decode(LessonAnswer.self, from: Data($0.utf8))
+            },
+            isExploring: Self.environment["ZOONK_ACTIVITY_GALLERY_EXPLORE"] != nil)
+        }
+      } else {
+        content
       }
     }
   }
