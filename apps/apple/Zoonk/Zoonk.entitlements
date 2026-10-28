@@ -6,6 +6,11 @@
 	<array>
 		<string>Default</string>
 	</array>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:www.zoonk.com</string>
+		<string>applinks:zoonk.com</string>
+	</array>
 	<key>com.apple.developer.devicecheck.appattest-environment</key>
 	<string>development</string>
 </dict>
