@@ -6,10 +6,6 @@ import { useState, useTransition } from "react";
 import { usePlanScreen } from "./plan-context";
 import { useReportEditorChange } from "./plan-editor-change-context";
 
-/**
- * Undoes a change the learner just made, with a pending state and a failure flag, the same way
- * wherever its note offers Undo (a sheet's answer, the plan editor's last change).
- */
 export function useUndoChange({
   change,
   onUndone,

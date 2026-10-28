@@ -37,7 +37,6 @@ describe("plan preview validity", () => {
     const state = resolvePlanPreview({ current: request, preview: unchanged, request });
     expect(currentPlanPreview({ operations: [...operations], plan, state })).toBe(state);
 
-    // A route refresh serializes the same server view into a new object without changing it.
     expect(currentPlanPreview({ operations, plan: { ...plan }, state })).toBe(state);
 
     expect(

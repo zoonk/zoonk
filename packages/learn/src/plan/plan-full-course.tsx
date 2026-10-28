@@ -10,18 +10,7 @@ import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
 import { usePlanChange } from "./use-plan-change";
 
-/**
- * Studying everything at the learner's own pace, and the change that does it. Any goal with a date
- * but an exam can always drop it (`setTargetDate` null) for the whole course; an exam keeps its
- * date and goes on after it (`setFullCourse`), which changes something only while its time
- * doesn't cover everything by then (`fits`, exact) or while it's on. `endDate` is when they'd
- * finish it all, only when that's the plan's own end: an exam already studying everything whose
- * plan holds all of it (a few minutes a day can leave some out even after the exam), or a goal
- * whose plan covers everything. Otherwise working it out would plan the goal again, which a page
- * never does: the "Study everything" sheet previews it once opened, and the editor's switch says it
- * once on. Null when there's nothing to choose: no date, a quick explanation, or an exam whose time
- * covers it all.
- */
+/** `endDate` only when it's the plan's own end: working it out otherwise would plan the goal again, which a page never does. Null when there's nothing to choose. */
 export function useFullCourse() {
   const { goal, plan } = usePlanScreen();
   const { feasibility, schedule } = plan;
@@ -52,21 +41,15 @@ export function useFullCourse() {
 
 export type FullCourse = NonNullable<ReturnType<typeof useFullCourse>>;
 
-/** When studying everything at a daily time ends, and the date it goes past. */
 type Finish = {
   dailyMinutes: number;
-  /** Null unless the plan studying everything holds all of it (see `useFullCourse`). */
   endDate: string | null;
   isExam: boolean;
   targetDate: string;
   targetDateNamedMonth: boolean;
 };
 
-/**
- * "At 3 h a day, you finish in March 2027, after the exam on November 8, 2026": the exam's year is
- * named beside the finish month's, so November 2027 never reads as the exam's month. Null without
- * an end date. It reads no plan, so the time step says it for the time it asked about too.
- */
+/** Names the exam's year beside the finish's, so November 2027 never reads as the exam's month. */
 function useFinishText() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
@@ -101,15 +84,8 @@ function useFinishText() {
   };
 }
 
-/** When an exam studying everything at a daily time ends (see `useExamFullCourseText`). */
 export type ExamFinish = Omit<Finish, "isExam">;
 
-/**
- * What an exam studying everything does, said the same wherever it's chosen (the time step, the
- * plan editor, the reveal): when it ends and that, until the exam, what comes up most comes
- * first; while that end isn't known (null), or the plan can't hold everything even after the
- * exam, only what's sure.
- */
 export function useExamFullCourseText() {
   const t = useExtracted();
   const finishText = useFinishText();
@@ -123,7 +99,6 @@ export function useExamFullCourseText() {
   };
 }
 
-/** When the learner would finish everything, against the exam's date or as the plan's end. */
 export function useFullCourseText() {
   const t = useExtracted();
   const formatGoalDate = useFormatGoalDate();
@@ -133,11 +108,8 @@ export function useFullCourseText() {
   const { dailyMinutes } = plan.schedule;
 
   return {
-    /** When everything ends, with the plan's own end only (see `useFullCourse`): null without it. */
     finish: (course: FullCourse): string | null => finishText({ ...course, dailyMinutes }),
-    /** An exam's plan studying everything, as it stands (see `useExamFullCourseText`). */
     onExam: (course: FullCourse): string => examText({ ...course, dailyMinutes }),
-    /** What changes besides the end: nothing before the exam, or the deadline comes off. */
     rule: (course: FullCourse): string =>
       course.isExam
         ? t(
@@ -153,15 +125,8 @@ export function useFullCourseText() {
   };
 }
 
-/** Where the editor's Find sends the keyboard once no time covers an exam (see `FullCourseSwitch`). */
 export const FULL_COURSE_SWITCH_ID = "plan-editor-full-course";
 
-/**
- * "Study everything, even after the exam" in the plan editor, after Find's answer as onboarding
- * places, names and describes it, for an exam whose time doesn't cover it by its date: on, what doesn't fit goes on after the
- * exam, and it says when everything ends; off, what doesn't fit by the exam is left out. Each
- * switch re-plans from today.
- */
 export function FullCourseSwitch() {
   const t = useExtracted();
   const switchId = useId();

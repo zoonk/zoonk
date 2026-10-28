@@ -4,10 +4,6 @@ import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
 
-/**
- * The one phase a change moves the end of, as Plan dates it: "Basics ends Oct 1 instead of
- * Oct 7." Null when it moves none, or more than one, which `PhaseEndMoves` lists.
- */
 export function usePhaseEndsText() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
@@ -27,7 +23,6 @@ export function usePhaseEndsText() {
   };
 }
 
-/** The phases a change moves the end of, one row each when it moves more than one: "Basics: Nov 7 (was Oct 10)". */
 export function usePhaseEndRows() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();

@@ -37,10 +37,8 @@ import { PlanSteering } from "./plan-steering";
 import { PlanTools } from "./plan-tools";
 import { PlanWrittenPractice } from "./written-cadence";
 
-/** A section that may have nothing to show for this plan takes no room (and no gap) then. */
 const SECTION_CLASS = "flex flex-col gap-7 empty:hidden";
 
-/** Every way to reshape the plan, in the order the editor shows them. */
 function EditorSections() {
   const { plan } = usePlanScreen();
 
@@ -65,19 +63,12 @@ function EditorSections() {
   );
 }
 
-/** Every change is saved as it's made, so the frame's only way out is "Close". */
 type EditorFrameProps = {
-  /** Where focus lands on opening: the section's first control, or the frame's default. */
   initialFocus: () => HTMLElement | true;
   onOpenChange: (open: boolean) => void;
   open: boolean;
 };
 
-/**
- * From a tablet up, a panel on the right over the page's aside: the page beside it stays in sight
- * behind a light backdrop, so each change visibly re-plans the roadmap and the subjects. The
- * latest change sits under the title, where the eye lands after a tap.
- */
 function EditorPanel({ initialFocus, onOpenChange, open }: EditorFrameProps) {
   const t = useExtracted();
 
@@ -109,7 +100,6 @@ function EditorPanel({ initialFocus, onOpenChange, open }: EditorFrameProps) {
   );
 }
 
-/** On a phone, the bottom sheet, its latest change pinned at its foot in thumb reach. */
 function EditorSheet({ initialFocus, onOpenChange, open }: EditorFrameProps) {
   const t = useExtracted();
 
@@ -133,16 +123,6 @@ function EditorSheet({ initialFocus, onOpenChange, open }: EditorFrameProps) {
   );
 }
 
-/**
- * "Adjust your plan": everything that reshapes it, in a panel on the right from a tablet up and a
- * bottom sheet on a phone. The goal's date (or none, to study everything), time a day and study
- * days, the option the learner takes of each of an exam's choices (ENEM's foreign language), how
- * to study an exam's prerequisites, what a language plan practices, when an exam's written tests
- * are practiced, how the lessons feel, the tools it needs, and anything else in the learner's own
- * words. Each change re-plans from today and shows on the page at once, and the editor says what
- * the latest one did, with Undo (see `PlanEditorChange`). Opened at a `section` (a setting the
- * Plan lists), it focuses that setting's first control.
- */
 export function PlanEditor({
   onOpenChange,
   open,

@@ -6,14 +6,9 @@ type EndMoveEffect = Pick<
   "endDateAfter" | "endDateBefore" | "lessonsAdded" | "lessonsRemoved"
 >;
 
-/** The most days the plan's end can move and still read as rounding beside lessons that change. */
 const ROUNDING_DAYS = 1;
 
-/**
- * The plan's end a change moves, when it's worth saying: it moves, and not by a day or less while
- * the change adds or leaves out lessons, which is what the learner weighs (an end a day earlier
- * beside lessons left out reads backwards). Null when the end stays or isn't worth saying.
- */
+/** Not by a day or less while the change adds or leaves out lessons: an end a day earlier beside lessons left out reads backwards. */
 export function getShownEndMove(
   effect: EndMoveEffect | null | undefined,
 ): { after: string; before: string } | null {

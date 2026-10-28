@@ -36,18 +36,13 @@ import { usePlanPreview, usePreviewBase } from "./use-plan-preview";
 
 type Choices = ReadonlyMap<string, BaseChoice>;
 
-/** A pause after the last tap before the effect of the choices is planned. */
 const PREVIEW_DELAY_MS = 300;
 
 function toChoices(items: readonly PlanBaseView[]): Map<string, BaseChoice> {
   return new Map(items.map((item) => [item.skillId, item.choice]));
 }
 
-/**
- * The current choices' computed effect; older reads leave Save disabled. The wait and the request
- * follow the choices and the plan's content (`usePreviewBase`): a refresh that delivers the same
- * plan again neither cancels them nor starts them over.
- */
+/** Keyed by the choices and the plan's content, so a refresh with the same plan neither cancels the preview nor starts it over. */
 function usePreview(changed: { choice: BaseChoice; skillId: string }[]) {
   const { plan } = usePlanScreen();
   const base = usePreviewBase();
@@ -82,7 +77,6 @@ function usePreview(changed: { choice: BaseChoice; skillId: string }[]) {
   };
 }
 
-/** Under the choices: what they'd do, as a diff like the plan's other changes, then Save. */
 function BasesFooter({
   changed,
   failed,
@@ -152,11 +146,6 @@ function BasesFooter({
   );
 }
 
-/**
- * How to study the prerequisites: one choice for all of them, with the time each way takes and the
- * one the app recommends when the learner asks, then each subject's own choice, folded until asked,
- * with what the choices would do before saving them.
- */
 function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => void }) {
   const t = useExtracted();
   const knownText = useKnownText();
@@ -196,7 +185,6 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
     });
   };
 
-  // One choice for many acts on the ones open to it: a studied prerequisite stays studied.
   const choose = (skillIds: string[], choice: BaseChoice) =>
     setDraft(
       new Map([
@@ -268,13 +256,6 @@ function BasesChoices({ bases, onDone }: { bases: PlanBasesView; onDone: () => v
   );
 }
 
-/**
- * The prerequisites' sheet: the skills the goal's topics or final work build on, worth less to it
- * than what builds on them, all studied one way (in depth, their essentials, a quick lesson each,
- * or not at all) or each subject its own, with the time each way takes, what the app recommends
- * when the learner asks, and what the choices do before they're saved. Each opening starts from
- * the plan's own choices.
- */
 export function PlanBasesSheet({
   bases,
   onOpenChange,

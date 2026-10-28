@@ -15,11 +15,7 @@ import { useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
 /** Below half a percent, the share would read "0%". */
 const MIN_SHOWN_SHARE = 0.005;
 
-/**
- * How far the learner's own time goes before their date, exactly as their plan has it. Null when
- * the plan covers everything in depth or has no date to cover it by. What other daily times or
- * dates would do is the learner's to ask for (see `useTimeToCover`).
- */
+/** Null when the plan covers everything in depth or has no date to cover it by. */
 export function usePlanCoverage() {
   const { plan } = usePlanScreen();
   const { feasibility } = plan;
@@ -36,11 +32,6 @@ export function usePlanCoverage() {
   };
 }
 
-/**
- * Whether the learner's own time already covers the whole goal by its date (`timeCovers`): what
- * the plan still leaves out comes at their time then (the plan's `fitOffer`), never as another
- * daily time.
- */
 export function useTimeEnough(): boolean {
   const { plan } = usePlanScreen();
   return plan.feasibility?.timeCovers ?? false;
@@ -50,13 +41,6 @@ type Coverage = NonNullable<ReturnType<typeof usePlanCoverage>>;
 
 type CoveredProps = Pick<Coverage, "coreFits" | "coveredShare" | "deepensMostAsked" | "measure">;
 
-/**
- * What the learner's own time covers: every topic (for an exam, of the exam; for any other goal,
- * every part of it), the ones that count most in more depth (for an exam, only when the topics it
- * asks most really keep more of theirs); or, when even that doesn't fit, what the plan's cut
- * leaves out: an exam's least asked topics (or, studying everything, that they come after the
- * exam, since nothing is left out then), and for any other goal what its path reaches last.
- */
 export function useCoveredText() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -65,7 +49,6 @@ export function useCoveredText() {
   const { fullCourse } = plan.schedule;
 
   return ({ coreFits, coveredShare, deepensMostAsked, measure }: CoveredProps): string => {
-    // Next to nothing fits: a sentence about depth would say nothing a learner can use.
     if (coveredShare < MIN_SHOWN_SHARE) {
       return t("{time} a day isn't enough time to cover your goal.", { time });
     }
@@ -109,12 +92,6 @@ export function CoveredSentence(props: CoveredProps) {
   return <p>{coveredText(props)}</p>;
 }
 
-/**
- * "Move your date to cover everything", for a goal that isn't an exam, whose own time falls short
- * by its date (and doesn't cover everything once planned again: `useTimeEnough`). Once Find found
- * no date that does, a tap says so at once from that answer, with no search: the control stays,
- * so its message (and the keyboard's place) stays with it.
- */
 export function useCanMoveDate(): boolean {
   const { goal } = usePlanScreen();
   const coverage = usePlanCoverage();
@@ -122,24 +99,15 @@ export function useCanMoveDate(): boolean {
   return goal.kind !== "exam" && coverage !== null && !timeEnough;
 }
 
-/** Why moving the date didn't work: the plan was being built, or no date covers everything. */
 type MoveOutcome = "building" | "failed" | "noDate" | null;
 
-/**
- * Moves a goal's date to the earliest day the learner's own time covers everything by: the date
- * Find found for this plan (`date`, the same search, shared with Find: see `useTimeToCover`), saved
- * as any change (S1: no endpoint of its own), through `planChange` when the section saves one
- * change at a time. Moving a deadline is the learner's to see first: until the date is known, a tap
- * finds it and the control names it; once named, one tap moves it, with Undo where the change
- * shows. `onMoved` hears when the move was saved.
- */
+/** Until the date is known, a tap finds it and the control names it; once named, one tap moves it. Saved as any change (S1). */
 export function useMoveDate({
   onMoved,
   onMoving,
   planChange,
 }: {
   onMoved?: () => void;
-  /** Hears when the move starts finding its date or saving it, and when it's done, saved or not. */
   onMoving?: (moving: boolean) => void;
   planChange?: ReturnType<typeof usePlanChange>;
 } = {}) {
@@ -163,7 +131,6 @@ export function useMoveDate({
       return;
     }
 
-    // A plan that changed while it searched has no date found yet: the control asks again.
     setOutcome(found.status === "stale" ? null : found.status);
   };
 
@@ -190,8 +157,7 @@ export function useMoveDate({
       }
     });
 
-    // Move gives way once the plan covers everything: in the editor, the keyboard waits on the
-    // time picked, not on the page behind it.
+    // Move gives way once the plan covers everything, so the keyboard waits on the time picked.
     keepFocus(() => findPickedChip(document.querySelector(`#${getEditorSectionId("time")}`)));
   };
 
@@ -204,10 +170,6 @@ export function useMoveDate({
   };
 }
 
-/**
- * Move your date's label: the date it moves to once that's known ("Move your date to October 14,
- * 2028"), so the learner knows before a tap moves it, and what it's for until then.
- */
 export function MoveDateLabel({ move }: { move: ReturnType<typeof useMoveDate> }) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
@@ -217,10 +179,7 @@ export function MoveDateLabel({ move }: { move: ReturnType<typeof useMoveDate> }
     : t("Move your date to cover everything");
 }
 
-/**
- * Why moving the date didn't work, where the plan's failed message would be. Inside a block that's
- * a live region already (the editor's time), it isn't an alert of its own (`live`), so it's said once.
- */
+/** `live={false}` inside a block that's a live region already, so it's said once. */
 export function MoveDateFailure({
   live = true,
   move,
@@ -245,10 +204,6 @@ export function MoveDateFailure({
   return null;
 }
 
-/**
- * A control's label while its request runs (Find, Move your date, Get a recommendation, Study
- * everything): the kit's spinner before the unchanged label, so only its width is added.
- */
 export function PendingLabel({
   children,
   pending,
@@ -264,16 +219,11 @@ export function PendingLabel({
   );
 }
 
-/**
- * Move your date as a button, in the plan editor (see `useMoveDate`), named by the date it moves to
- * once that's known, saving through the schedule's one change at a time (`planChange`).
- */
 export function MoveDateSwitch({
   id,
   onMoving,
   planChange,
 }: {
-  /** Where the editor finds it, to move focus to it once Find answers. */
   id?: string;
   onMoving?: (moving: boolean) => void;
   planChange?: ReturnType<typeof usePlanChange>;
@@ -301,18 +251,9 @@ export function MoveDateSwitch({
   );
 }
 
-/** Where "Find the time that covers everything" stands (see `TimeToCoverState`). */
 export type FindStatus = "answered" | "building" | "failed" | "idle" | "pending";
 
-/**
- * "Find the time that covers everything" where it answers, in the plan editor's time a day and
- * onboarding's time step: the button while nothing's found (`canFind`), the answer in its place
- * once found, or why it couldn't be found, with Try again in the button's own element, so focus
- * stays on it. While it searches, only the button says so: its spinner, disabled, and a status for
- * screen readers. It's a polite live region of its own (`live`) unless it sits in one already, as
- * in the editor, so nothing is announced twice. It takes focus (found by `id`) when nothing closer
- * can once the button is gone. `waiting` takes its place while there's nothing to ask yet.
- */
+/** A polite live region of its own (`live`) unless it sits in one already; Try again takes the button's own element, so focus stays on it. */
 export function FindTimeLine({
   answer,
   canFind,
@@ -322,14 +263,12 @@ export function FindTimeLine({
   status,
   waiting,
 }: {
-  /** What the answer says, shown once found. */
   answer: React.ReactNode;
   canFind: boolean;
   id: string;
   live?: boolean;
   onFind: () => void;
   status: FindStatus;
-  /** Why there's nothing to find yet (the plan is being built), in the line's place. */
   waiting?: React.ReactNode;
 }) {
   const texts = useTimeToCoverTexts();
@@ -370,18 +309,10 @@ export function FindTimeLine({
   );
 }
 
-/**
- * The picked chip of a list of time chips (`container`): where the keyboard waits when Find's answer
- * has nothing to take focus, since the answer itself is read by the block it's in.
- */
 export function findPickedChip(container: ParentNode | null): HTMLElement | null {
   return container?.querySelector<HTMLElement>('[role="radio"][aria-checked="true"]') ?? null;
 }
 
-/**
- * The chip of a daily time in a list of time chips (`container`, its radios in the order of
- * `choices`), to take focus once Find marks it; null when it isn't there.
- */
 export function findTimeChip({
   choices,
   container,

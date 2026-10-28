@@ -4,7 +4,6 @@ import { type PlanOperation } from "@zoonk/core/plans/contract";
 import { useExtracted } from "next-intl";
 import { useFormatIsoDate } from "../_utils/iso-date";
 
-/** What the learner chooses to study: the goal's date (or none), all of it, its prerequisites. */
 type ChoiceOperation = Extract<
   PlanOperation,
   { kind: "setBaseChoices" | "setFullCourse" | "setTargetDate" }
@@ -12,7 +11,6 @@ type ChoiceOperation = Extract<
 
 type BaseChoices = Extract<PlanOperation, { kind: "setBaseChoices" }>["choices"];
 
-/** "2 prerequisites get a quick lesson. 1 prerequisite is skipped." */
 function useBaseChoicesSentence() {
   const t = useExtracted();
 
@@ -62,10 +60,6 @@ export function isChoiceOperation(operation: PlanOperation): operation is Choice
   );
 }
 
-/**
- * Says what the learner chose to study: a new date, no deadline (everything at their own pace),
- * an exam studied on after its date or ending at it again, and their prerequisites' choices.
- */
 export function useChoiceSentence() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();

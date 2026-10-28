@@ -31,13 +31,8 @@ import {
 } from "./plan-suggestion-context";
 import { useTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
 
-/** An exam's date is the exam's: its plan goes on after it, at the learner's pace. */
 const STUDY_AFTER_EXAM: LearnerPlanOperation[] = [{ fullCourse: true, kind: "setFullCourse" }];
 
-/**
- * The other ways on: the plan editor at its date (another date, an exam's next sitting), and "Not
- * now", which leaves the suggestion out until the Plan opens again.
- */
 function OtherOptions({ item }: { item: SlotItem }) {
   const t = useExtracted();
   const { dismiss, host } = usePlanSuggestionSlot();
@@ -57,17 +52,9 @@ function OtherOptions({ item }: { item: SlotItem }) {
   );
 }
 
-/** Where finding a goal's new date stands before its preview. */
 type DateSearch = "building" | "failed" | "finding" | "noDate" | null;
 
-/**
- * The plan's date came with lessons left (status `pastDate`): the plan doesn't end. The slot says
- * how many lessons are left and what the change that keeps the plan going does: a goal's own date
- * moves to the day the learner's time covers what's left, found when they tap Preview (it plans the
- * goal at each candidate date, so never for the page); an exam's plan goes on after the exam,
- * whose date is fixed. Preview shows the change's diff, with the date or the end it moves to, and
- * Apply saves it. The editor at its date is the other way on.
- */
+/** A goal's new date is found only when the learner taps Preview: finding it plans the goal at each candidate date. */
 export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "pastDate" }> }) {
   const t = useExtracted();
   const pastDateText = usePastDateText();
@@ -78,8 +65,7 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
   const { apply, failed, isPending } = useApplyPreview(item);
   const [operations, setOperations] = useState<LearnerPlanOperation[] | null>(null);
   const [search, setSearch] = useState<DateSearch>(null);
-  // The search the learner still waits for (0 for none), so one they put off ("Not now"), or one an
-  // earlier tap started, shows nothing.
+  // The search the learner still waits for (0 for none), so one put off or superseded shows nothing.
   const waiting = useRef(0);
   const asked = useRef(0);
   const isExam = goal.kind === "exam";
@@ -99,7 +85,6 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
     setSearch("finding");
     const found = await finder.find();
 
-    // Put off ("Not now"), or asked again since: this answer is no one's.
     if (waiting.current !== request) {
       return;
     }
@@ -107,7 +92,6 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
     waiting.current = 0;
 
     if (found.status !== "answered") {
-      // The plan changed while it searched: the card goes back to what it says, with Preview.
       setSearch(found.status === "stale" ? null : found.status);
       setOperations(null);
       return;

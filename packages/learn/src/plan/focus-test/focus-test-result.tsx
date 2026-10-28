@@ -20,21 +20,12 @@ import { DayMoment, StepWithDayMoment } from "../../session/day-moment";
 import { type MomentCeremony, getCeremonyMoment } from "../../session/moment-ceremony";
 import { TaskMainLink } from "../../shell/task-frame";
 
-/**
- * What the focus test found and chose, in the learner's terms, with the tenth of Energy its
- * answers reached and the milestone it's celebrated with; null when it couldn't be saved.
- */
 export type FocusTestOutcome = ProgressCelebration & {
-  /** Each area asked about, named as learners call it, and whether it got the focus. */
   areas: { answers: boolean[]; chosen: boolean; label: string }[];
-  /** The plan change that set the focus, for its undo; null when the focus was already this. */
+  /** For its undo; null when the focus was already this. */
   changeId: string | null;
 };
 
-/**
- * One short segment per answer, blue when right and red when wrong, as a task's header draws
- * them, and how many were right in numbers: an area's result at a glance.
- */
 function AnswerSegments({ answers }: { answers: readonly boolean[] }) {
   const t = useExtracted();
   const correct = answers.filter(Boolean).length;
@@ -66,7 +57,6 @@ function AnswerSegments({ answers }: { answers: readonly boolean[] }) {
   );
 }
 
-/** Each area asked about, with its answers as segments, then what the test did to the day. */
 function AreasStep({ buddy, outcome }: { buddy?: LearnBuddy | null; outcome: FocusTestOutcome }) {
   const t = useExtracted();
 
@@ -98,7 +88,6 @@ function AreasStep({ buddy, outcome }: { buddy?: LearnBuddy | null; outcome: Foc
   );
 }
 
-/** The focus it set and why, in one sentence. */
 function FocusStep({ outcome, undone }: { outcome: FocusTestOutcome; undone: boolean }) {
   const t = useExtracted();
   const format = useFormatter();
@@ -130,11 +119,6 @@ function FocusStep({ outcome, undone }: { outcome: FocusTestOutcome; undone: boo
   );
 }
 
-/**
- * The focus test's result, one thing at a time: how each area went, then the focus it set and
- * why, with the plan as the way on and an undo for the focus. A milestone it earned opens first,
- * on its own.
- */
 export function FocusTestResult({
   buddy,
   closeHref,

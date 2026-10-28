@@ -34,17 +34,12 @@ import { readTimeToCover, useTimeToCover, useTimeToCoverTexts } from "./use-time
 
 type Coverage = NonNullable<ReturnType<typeof usePlanCoverage>>;
 
-/** Where the card stands once Find asked (see `getCardFlags`). */
 type CardFlags = {
-  /** Find (or its Try again) leads: nothing found or offered yet. */
   findsTime: boolean;
-  /** Moving the date is a way on: a goal whose answer didn't say no date covers it. */
   moveDate: boolean;
-  /** Asked for a date, the search found none. */
   noDate: boolean;
   pending: boolean;
   retry: boolean;
-  /** No time covers an exam by its date: going on after it leads, as the one way to it all. */
   studiesEverything: boolean;
 };
 
@@ -56,7 +51,6 @@ function getCardFlags({
   offer,
   status,
 }: {
-  /** An exam studying everything, offered to end at the exam again. */
   course: boolean;
   found: PlanTimeToCover | null;
   intent: Intent;
@@ -80,11 +74,6 @@ function getCardFlags({
   };
 }
 
-/**
- * What the card says under its title: the offer's own lines (`description`), then, when the search
- * ends without an offer to show (`status`), that no time covers everything, that no date does, or
- * why the search didn't answer.
- */
 function useCardLines({
   flags,
   found,
@@ -121,11 +110,6 @@ function useCardLines({
   };
 }
 
-/**
- * The card's actions: the offer's diff with Apply once previewed, "Checking what changes…" while a
- * goal's date is found, or Preview, Find (or, once no time covers an exam, "Study everything, even
- * after the exam") and the other ways.
- */
 function CoverageBody({
   applying,
   ask,
@@ -210,15 +194,6 @@ function CoverageBody({
   );
 }
 
-/**
- * The plan's coverage as the slot's suggestion. Its title is what the learner's own time covers,
- * exactly; "Find the time that covers everything" plans the goal at each daily time when they ask
- * (never for the page) and, with one tap, shows what the change it found moves, as a diff (see
- * `useAnswerOffer`); Apply saves it, and the slot says "Plan updated" with what it did and Undo,
- * in the same place, even once the plan covers everything (`coverage` null). A goal's menu moves
- * its date the same way. When no time covers an exam by its date, studying everything, even after
- * it, leads instead, in its sheet. An exam studying everything is offered the exam's end again.
- */
 export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) {
   const texts = useTimeToCoverTexts();
   const coveredText = useCoveredText();
@@ -228,7 +203,6 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
   const finder = useTimeToCover();
   const { preview: storedPreview, requestPreview, setPreview } = usePlanSuggestionSlot();
   const [intent, setIntent] = useState<Intent>("time");
-  // What the card is asking for, so an answer it stopped waiting for ("Not now") shows nothing.
   const asking = useRef<Intent | null>(null);
   const covered = coverage ? coveredText(coverage) : "";
   const found = finder.answered;
@@ -255,10 +229,6 @@ export function CoverageSuggestion({ coverage }: { coverage: Coverage | null }) 
     state: storedPreview,
   });
 
-  /**
-   * Finds once for this plan (or reuses its answer, or waits for the search already running), then
-   * shows what the change it found moves.
-   */
   const ask = async (next: Intent) => {
     asking.current = next;
     setIntent(next);

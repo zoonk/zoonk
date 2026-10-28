@@ -5,19 +5,9 @@ import { useEstimateSentence } from "./use-estimate-sentence";
 import { usePhaseEndsText } from "./use-phase-ends-text";
 import { useRelearnSentence } from "./use-relearn-sentence";
 
-/** What a plan change says, saved or not yet (one Today worked out has no id until it's saved). */
+/** Without `id`: a change Today worked out has none until it's saved. */
 export type PlanChangeContent = Omit<PlanChangeView, "id">;
 
-/**
- * The sentence of a change the learner didn't make, said from its kind, with the notice topics it
- * moves into or out of the plan after what it did: "Lessons left from earlier days come first, and
- * the rest of your plan moved later. Genetics no longer fits by your date." Missed days and a
- * test-out moved topics without a word. A missed day says the phase end it moved (several are
- * listed under it, see `PhaseEndMoves`). A change a closer estimate of how long lessons take made
- * says why after what it did (see `useEstimateSentence`), then the phase end it moved: lessons that
- * slip past a challenge's day move it. Null for a kind said from its operations, and for an
- * estimate that changes neither the net lessons nor an end.
- */
 export function useSystemChangeSentence({
   targetDate = null,
 }: { targetDate?: string | null } = {}) {

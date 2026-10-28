@@ -24,10 +24,6 @@ import { useWrittenCadenceWords } from "./written-cadence";
 
 type DifficultyBias = PlanView["steering"]["difficultyBias"];
 
-/**
- * What a difficulty setting does, the same where it's changed and where the change is announced:
- * harder also skips the basics of what the learner already does well.
- */
 export function useDifficultySentence() {
   const t = useExtracted();
 
@@ -44,10 +40,6 @@ export function useDifficultySentence() {
   };
 }
 
-/**
- * "Your plan follows the exam notice.": what a change that brings the notice's subjects in did, or
- * a language certificate's official guide (see `ExamDocument`).
- */
 function useFollowsNoticeSentence() {
   const t = useExtracted();
 
@@ -58,11 +50,7 @@ function useFollowsNoticeSentence() {
     );
 }
 
-/**
- * Says what a waiting change sets where its sentence would say it happened ("Daily time changed to
- * 40 min."): "Daily time: 40 min." The buddy's card read "Daily time changed to 40 min." before
- * Marcos had said yes. Null for an operation whose sentence holds before and after.
- */
+/** For a waiting change: "Daily time: 40 min.", never "changed to" before the learner said yes. */
 function useProposedOperationSentence() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
@@ -85,7 +73,6 @@ function useProposedOperationSentence() {
   };
 }
 
-/** Says one operation the way the learner would: "Light week from Oct 12". */
 function useOperationSentence() {
   const t = useExtracted();
   const difficultySentence = useDifficultySentence();
@@ -176,11 +163,6 @@ function useOperationSentence() {
   };
 }
 
-/**
- * What the exam's notice changes, said once: its subjects when research read it after the plan
- * was built, and its exam day when it isn't the plan's date. A language certificate's are its
- * official guide's (see `ExamDocument`).
- */
 function useNoticeSentence() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
@@ -223,11 +205,6 @@ function useNoticeSentence() {
   };
 }
 
-/**
- * What an applied change did, said where its buttons were: today's session follows it, or it
- * starts on the next study day because today's is underway; with no session built for today yet,
- * the plan follows it from now on. The buddy's cards and Today's notice say it the same way.
- */
 export function useAppliedLine() {
   const t = useExtracted();
 
@@ -244,10 +221,6 @@ export function useAppliedLine() {
   };
 }
 
-/**
- * The one sentence that announces a change. Proposals and AI edits carry their own sentence;
- * the app says the rest from what changed, so nothing is ever silent.
- */
 export function useChangeSentence({ targetDate = null }: { targetDate?: string | null } = {}) {
   const t = useExtracted();
   const format = useFormatter();
@@ -274,7 +247,6 @@ export function useChangeSentence({ targetDate = null }: { targetDate?: string |
 
     const [first] = change.operations;
 
-    // A lower level of your own brings in foundations: they say what comes first now.
     if (change.source === OWN_LEVEL_SOURCE && first?.kind === "addSkills") {
       return t("For your new level, these come first: {skills}.", {
         skills: shortList(
@@ -284,7 +256,6 @@ export function useChangeSentence({ targetDate = null }: { targetDate?: string |
       });
     }
 
-    // A rebalance after a session says why: time went to the area that needs it most.
     if (change.source === REBALANCE_SOURCE && first?.kind === "focusAreas") {
       return t("More time for {areas}, where it's needed most.", {
         areas: format.list(first.areas, { type: "conjunction" }),
@@ -306,11 +277,6 @@ export function useChangeSentence({ targetDate = null }: { targetDate?: string |
   };
 }
 
-/**
- * "The exam notice sets the exam for January 10, 2027." for a waiting change that moves an exam off
- * the day its notice sets (a language certificate's official calendar): said with the change, so
- * the learner keeps their own date only on purpose. Null otherwise.
- */
 export function useOfficialDateLine() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
@@ -327,10 +293,6 @@ export function useOfficialDateLine() {
   };
 }
 
-/**
- * "Keep the notice's date": declining a change that moves the exam off its official day keeps that
- * day, said the same on Today and in the buddy's card (a language certificate's official date).
- */
 export function useKeepOfficialDateLabel() {
   const t = useExtracted();
 

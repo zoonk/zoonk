@@ -17,11 +17,6 @@ import {
 import { ChangeSaveError } from "../_components/save-error";
 import { useFormatIsoDate } from "../_utils/iso-date";
 
-/**
- * "The exam notice says January 10, 2027.": the notice's day when the plan counts down to another,
- * said the same way wherever the date shows (or, while the edition's notice isn't out, its likely
- * day). A language certificate's comes from its official calendar (see `ExamDocument`).
- */
 export function useNoticeDayText() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
@@ -35,10 +30,6 @@ export function useNoticeDayText() {
         );
 }
 
-/**
- * "Use this date": takes the notice's day as the goal's date with one tap. The caller saves it
- * (`onUse`) and says when that didn't work.
- */
 export function UseDateButton({
   onUse,
   variant = "outline",
@@ -77,10 +68,6 @@ function CalendarTile() {
   );
 }
 
-/**
- * The notice's day as a note with its one tap, where a page wants it read before the rest (the
- * plan's reveal, the exam's page). The learner's own date stays until they take it.
- */
 function NoticeDayCard({
   day,
   document,
@@ -114,17 +101,12 @@ function NoticeDayCard({
   );
 }
 
-/**
- * An exam held several times a year with no sitting in the learner's month ("No exam date in
- * February 2027"), with the closest dates still open for registration, each one tap away. The
- * learner's own date stays until they pick one.
- */
 function NoSittingCard({
   noSitting,
   onUse,
 }: {
   noSitting: NoSitting;
-  /** Saves the date as the goal's; false when it couldn't be saved. */
+  /** False when it couldn't be saved. */
   onUse: (date: string) => Promise<boolean>;
 }) {
   const t = useExtracted();
@@ -175,11 +157,6 @@ function NoSittingCard({
   );
 }
 
-/**
- * What the notice says about the learner's date, as a note where a page wants it read before the
- * rest (the plan's reveal, the exam's page): its day when the plan counts down to another (see
- * `NoticeDayCard`), or the closest sittings when their month has none (see `NoSittingCard`).
- */
 export function NoticeDatesCard({
   document,
   noSitting,
@@ -189,7 +166,7 @@ export function NoticeDatesCard({
   document: ExamDocument;
   noSitting: NoSitting | null;
   noticeDay: NoticeDay | null;
-  /** Saves the date as the goal's; false when it couldn't be saved. */
+  /** False when it couldn't be saved. */
   onUse: (date: string) => Promise<boolean>;
 }) {
   if (noticeDay) {

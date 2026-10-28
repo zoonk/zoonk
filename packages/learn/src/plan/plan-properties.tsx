@@ -17,31 +17,26 @@ import { type PlanEditorSection } from "./plan-editor-sections";
 const TITLE_ID = "plan-properties-title";
 const DAYS_PER_WEEK = 7;
 
-/** A Sunday, so a weekday number (Sunday 0 to Saturday 6) is that many days after it. */
-const FIRST_SUNDAY = Date.parse("2023-01-01T00:00:00Z");
+const REFERENCE_SUNDAY = Date.parse("2023-01-01T00:00:00Z");
 const DAY_MS = 86_400_000;
 
-/** The week from Monday, as weekday numbers (Sunday 0): a run of days reads Mon to Sun. */
 const MONDAY_FIRST: readonly number[] = Array.from(
   { length: DAYS_PER_WEEK },
   (_, index) => (index + 1) % DAYS_PER_WEEK,
 );
 
-/** The shortest run of days worth saying as a range ("Mon – Fri") instead of a list. */
 const MIN_RANGE_DAYS = 3;
 
-/** "Mon": a weekday's short name, for a weekday number (Sunday 0). */
 function useWeekdayShort() {
   const format = useFormatter();
 
   return (weekday: number) =>
-    format.dateTime(new Date(FIRST_SUNDAY + weekday * DAY_MS), {
+    format.dateTime(new Date(REFERENCE_SUNDAY + weekday * DAY_MS), {
       timeZone: "UTC",
       weekday: "short",
     });
 }
 
-/** Whether the study days, read from Monday, are one run with no day off inside it. */
 function isOneRun(days: readonly number[]): boolean {
   const positions = days.map((day) => MONDAY_FIRST.indexOf(day));
 
@@ -50,7 +45,6 @@ function isOneRun(days: readonly number[]): boolean {
   );
 }
 
-/** "Mon – Sat", "Every day" or "Mon, Wed, Fri": the plan's study days. */
 function useStudyDaysText() {
   const t = useExtracted();
   const weekdayShort = useWeekdayShort();
@@ -77,12 +71,10 @@ function useStudyDaysText() {
   };
 }
 
-/** A value's numbers, in the mono face; its words stay in the text face. */
 function mono(chunks: React.ReactNode) {
   return <span className="font-mono tabular-nums">{chunks}</span>;
 }
 
-/** "45 min", or "45 min · 1h weekends" when the weekend has its own time. */
 function DailyTimeValue() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -100,11 +92,9 @@ function DailyTimeValue() {
   });
 }
 
-/** A row is a whole 44 px target: rows touch, so a larger hit area would reach into the next. */
 const PROPERTY_ROW_CLASS =
   "hover:bg-muted focus-visible:ring-ring/50 -mx-2 flex min-h-11 w-[calc(100%+1rem)] items-center justify-between gap-3 rounded-md px-2 text-left text-[0.8125rem] transition-colors outline-none focus-visible:ring-[3px]";
 
-/** A row's name, which keeps its words, and its value, cut short on the row when long. */
 function PropertyRowParts({ children, label }: { children: React.ReactNode; label: string }) {
   return (
     <>
@@ -114,11 +104,6 @@ function PropertyRowParts({ children, label }: { children: React.ReactNode; labe
   );
 }
 
-/**
- * One setting as a row: its name, its value, and a tap opens "Adjust plan" at it. The name keeps
- * its words; a long value wraps to a second line, as the aside is narrow from 72rem: cut short on
- * one line, "Aos domingos, a cada 4 semanas" lost the weeks it's about.
- */
 function PropertyRow({
   children,
   label,
@@ -137,7 +122,6 @@ function PropertyRow({
   );
 }
 
-/** A weekday number (Sunday 0) as the key of its plural name below. */
 const WEEKDAY_KEYS = [
   "sunday",
   "monday",
@@ -148,10 +132,6 @@ const WEEKDAY_KEYS = [
   "saturday",
 ] as const;
 
-/**
- * When the mock exams ahead fall, saying only the pattern their days keep: "Sundays", "Sundays,
- * every 5 weeks", else the next one's day ("Next Oct 18", or the day alone when it's the last).
- */
 function MockScheduleValue({ mocks }: { mocks: MockScheduleView }) {
   const t = useExtracted();
   const weekday = mocks.weekday === null ? null : WEEKDAY_KEYS[mocks.weekday];
@@ -175,11 +155,7 @@ function MockScheduleValue({ mocks }: { mocks: MockScheduleView }) {
   return mocks.count > 1 ? t.rich("Next <date></date>", { date: () => date }) : date;
 }
 
-/**
- * The exam's mock exams still to take, by when they fall (`MockScheduleValue`). They aren't a
- * setting (they go on the week's last study day), so the row opens the exam's page, where they
- * are, like the next mock on the path; without Plus it's marked Plus.
- */
+/** Mock exams aren't a setting, so the row opens the exam's page, where they are. */
 function MockExamsRow({ examHref, mocks }: { examHref: string | null; mocks: MockScheduleView }) {
   const t = useExtracted();
   const { plan } = usePlanScreen();
@@ -204,10 +180,6 @@ function MockExamsRow({ examHref, mocks }: { examHref: string | null; mocks: Moc
   );
 }
 
-/**
- * The goal's date as the plan keeps it (an estimated day with "~", a named month as the month), in
- * the date's mono face; without one, words in the text face.
- */
 function GoalDateValue() {
   const t = useExtracted();
   const { goal, plan } = usePlanScreen();
@@ -226,12 +198,6 @@ function GoalDateValue() {
   );
 }
 
-/**
- * The plan's settings at a glance, as properties: the goal's date, the time a day, the study days,
- * an exam's mock exams ahead, each exam choice (a choice still to make in amber) and a language's
- * practice ("Everything", or the kinds it keeps). A tap on one opens "Adjust plan" at it
- * (`onOpen`), where it changes; the mock exams open the exam's page (`examHref`).
- */
 export function PlanProperties({
   className,
   examHref = null,

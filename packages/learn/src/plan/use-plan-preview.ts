@@ -7,14 +7,9 @@ import { useState } from "react";
 import { usePlanScreen } from "./plan-context";
 import { type PlanPreviewState, isSamePreviewPlan, resolvePlanPreview } from "./plan-preview-state";
 
-/** Match the other non-generating plan actions' bounded wait before offering retry. */
 const PREVIEW_TIMEOUT_MS = 45_000;
 
-/**
- * The server view a preview builds on: the same object while refreshes deliver it again unchanged
- * (see `isSamePreviewPlan`), so a wait for a preview or a request for it carries on through them,
- * and a new one once its content changes.
- */
+/** The same object while refreshes deliver an unchanged view, so a wait for a preview carries on through them. */
 export function usePreviewBase(): object {
   const { plan } = usePlanScreen();
   const [base, setBase] = useState<object>(plan);
@@ -27,7 +22,6 @@ export function usePreviewBase(): object {
   return changed ? plan : base;
 }
 
-/** Preview requests own their operation set, server view and identity until cancelled. */
 export function usePlanPreview() {
   const { actions, plan } = usePlanScreen();
   const [preview, setPreview] = useState<PlanPreviewState>({ status: "idle" });

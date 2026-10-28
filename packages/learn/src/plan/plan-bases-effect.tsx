@@ -9,7 +9,6 @@ import { useShortList } from "./use-short-list";
 type Preview = PlanChangePreview & { ready: true };
 type AreaTopics = { area: string; topics: string[] }[];
 
-/** "Ecology, Heat and 2 more": the topics a change moves, by name. */
 function useTopicNames() {
   const shortList = useShortList();
 
@@ -19,7 +18,6 @@ function useTopicNames() {
   };
 }
 
-/** What the time covers by the date with the choices, next to what it covers now. */
 function useCoverageLine() {
   const t = useExtracted();
   const formatShare = useFormatShare();
@@ -47,12 +45,6 @@ function useCoverageLine() {
   };
 }
 
-/**
- * What the learner's choices would do beyond their diff (`PlanEffectDiff`, which counts the lessons
- * they add and leave out, then the plan's end and every date that moves): the topics that come into
- * the plan and the ones that leave it, by name, and what their time then covers by the date against
- * now. Without the topics, a core for a base said only that lessons come in, not that heat does.
- */
 export function useBasesFootnote() {
   const t = useExtracted();
   const topicNames = useTopicNames();

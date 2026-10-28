@@ -13,10 +13,6 @@ import { useFullCourse } from "./plan-full-course";
 import { StudyEverything } from "./study-everything";
 import { usePlanChange } from "./use-plan-change";
 
-/**
- * What the date field says above it: a named month stands for the month until the learner picks a
- * day ("March for now"), and a goal without a deadline studies everything at its own pace.
- */
 function useDateNote() {
   const t = useExtracted();
   const formatGoalDate = useFormatGoalDate();
@@ -40,10 +36,6 @@ function useDateNote() {
   };
 }
 
-/**
- * The date field's value: the plan's date, empty for a named month, following the plan when
- * another control moves it (Move your date), and the learner's typing in between.
- */
 function useFieldDate({
   namedMonth,
   targetDate,
@@ -63,15 +55,7 @@ function useFieldDate({
   return [value, setValue];
 }
 
-/**
- * The goal's date (an exam's, or a deadline), which the learner can change any time: the full date,
- * saved as one change that re-plans from today. A month the learner named ("March") stays a month
- * until they pick its day: the field starts empty instead of showing a day they never chose. When
- * the plan counts down to another day than the exam's notice gives, that day is offered with one
- * tap. A goal that isn't an exam can drop its deadline to study everything at its own pace, and set
- * one again; an exam keeps its date and can go on after it instead, chosen with its time (see
- * `FullCourseSwitch`). Not for quick explanations, which have no plan days.
- */
+/** A month the learner named stays a month until they pick its day, so the field starts empty instead of showing a day they never chose. */
 export function PlanDate() {
   const t = useExtracted();
   const inputId = useId();

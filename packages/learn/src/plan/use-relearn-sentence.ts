@@ -2,18 +2,10 @@ import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { useExtracted, useFormatter } from "next-intl";
 import { toTopicWords } from "../syllabus/topic-number";
 
-/** Up to this many topics, the sentence names them; past it, it names their subjects. */
 const MAX_NAMED_TOPICS = 3;
 
-/** The subjects a sentence names before it counts the rest ("and 3 other subjects"). */
 const MAX_NAMED_SUBJECTS = 3;
 
-/**
- * "Nucleus is back in your plan: you missed a question on it." for the lessons a miss in practice
- * brought back of a topic the learner was taken to know (`relearn`): plans never change
- * unannounced. After a mock that brings many back, it names their subjects instead of a long
- * list of topics: "15 topics from Ethics, Civil Law, Labor Law and 3 other subjects are back…".
- */
 export function useRelearnSentence() {
   const t = useExtracted();
   const format = useFormatter();

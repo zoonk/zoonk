@@ -13,7 +13,6 @@ type WrittenCadence = WrittenPractice["cadence"];
 
 const CADENCES = ["weekly", "biweekly", "finalWeeks"] as const satisfies WrittenCadence[];
 
-/** What each cadence is called, and what it does in one honest line. */
 export function useWrittenCadenceWords() {
   const t = useExtracted();
 
@@ -46,12 +45,6 @@ function isCadence(value: unknown): value is WrittenCadence {
   return CADENCES.some((cadence) => cadence === value);
 }
 
-/**
- * When the exam's written tests are practiced, one tap each: every week (recommended), every
- * other week, or only the final weeks when the plan has a date to count back from. The chosen
- * one says what it does, so the trade-off is clear before and after the tap, which shows at once
- * while its change saves.
- */
 export function WrittenCadenceChoice({
   failed,
   onChange,
@@ -59,7 +52,6 @@ export function WrittenCadenceChoice({
   practice,
 }: {
   failed: boolean;
-  /** Saves the cadence; `answered` runs when its change answers, with the page it changed. */
   onChange: (cadence: WrittenCadence, answered: () => void) => void;
   pending: boolean;
   practice: WrittenPractice;
@@ -111,7 +103,6 @@ export function WrittenCadenceChoice({
   );
 }
 
-/** The written tests' cadence in "Adjust your plan", for exams that have them. */
 export function PlanWrittenPractice() {
   const { plan } = usePlanScreen();
   const { change, failed, isPending } = usePlanChange();

@@ -43,11 +43,6 @@ function TutorRow({ tutor }: { tutor: PlanTutor }) {
   );
 }
 
-/**
- * The last row of "Adjust your plan": anything the controls above don't cover ("less on
- * weekends", "a light week, I'm traveling") is said to the buddy in the conversation, which
- * proposes the change for the learner to apply. Hosts without the conversation show nothing.
- */
 export function PlanEditRequest() {
   const { tutor } = usePlanScreen();
   return tutor ? <TutorRow tutor={tutor} /> : null;

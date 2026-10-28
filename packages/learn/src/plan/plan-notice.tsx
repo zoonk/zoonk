@@ -4,19 +4,12 @@ import { useExtracted } from "next-intl";
 import { usePlanScreen } from "./plan-context";
 import { usePastDateText } from "./plan-status-label";
 
-/**
- * The plan's status in one sentence: no longer fitting (`adjust`: the way out is adjusting the
- * plan), the small fix for a delay, its date that came with lessons left, or every lesson done with
- * challenges left (what finishing it takes). The plan's notice and the Plan's "Your pace" say it
- * alike.
- */
 export function usePaceFixText(): { adjust: boolean; text: string } | null {
   const t = useExtracted();
   const pastDateText = usePastDateText();
   const { goal, plan } = usePlanScreen();
   const { status } = plan;
 
-  // The Plan's slot holds the change that keeps the plan going, right under the pace.
   if (status?.kind === "pastDate") {
     return {
       adjust: false,

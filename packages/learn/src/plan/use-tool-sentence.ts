@@ -6,7 +6,6 @@ import { useSystemName } from "./use-system-name";
 
 type ToolChoiceOperation = Extract<PlanOperation, { kind: "setTools" }>["tools"];
 
-/** A tool answer from the "You'll use" card: "A lesson to set up Python on Windows comes first". */
 export function useToolSentence() {
   const t = useExtracted();
   const format = useFormatter();

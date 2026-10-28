@@ -32,10 +32,6 @@ const AREA_ROW_CLASS = cn(
 
 type PlanArea = ReturnType<typeof usePlanScreen>["plan"]["areas"][number];
 
-/**
- * The subjects to choose from: the plan's areas still in it, each with the areas that are part of
- * it (the foreign language an ENEM candidate takes, inside the languages area), which go with it.
- */
 function listFocusChoices(areas: readonly PlanArea[]): (PlanArea & { parts: string[] })[] {
   const kept = areas.filter((area) => !area.skipped);
 
@@ -47,10 +43,6 @@ function listFocusChoices(areas: readonly PlanArea[]): (PlanArea & { parts: stri
     }));
 }
 
-/**
- * Whether the learner can choose where to focus: their time doesn't cover everything in depth and
- * the plan has more than one subject to choose from.
- */
 export function useCanChooseFocus(): boolean {
   const { plan } = usePlanScreen();
   const areas = listFocusChoices(plan.areas);
@@ -61,7 +53,6 @@ function sameAreas(a: readonly string[], b: readonly string[]): boolean {
   return a.length === b.length && a.every((area) => b.includes(area));
 }
 
-/** The focus test, offered first: a few questions, and the answers choose where the depth goes. */
 function FocusTestLink({ href }: { href: string }) {
   const t = useExtracted();
 
@@ -80,11 +71,6 @@ function FocusTestLink({ href }: { href: string }) {
   );
 }
 
-/**
- * A subject to pick, with what's part of it (the language the learner takes, inside ENEM's
- * languages area), and the part of it in focus when the learner named one ("Only Biology and
- * Chemistry"): choosing subjects again keeps it. It stays as picked while the picks save.
- */
 function AreaChoice({
   checked,
   disabled,
@@ -126,12 +112,6 @@ function AreaChoice({
   );
 }
 
-/**
- * The plan's subjects to pick from, the ones in focus checked, with the action under the list that
- * scrolls: what the learner picks gets its depth first, and every other topic stays in the plan.
- * Saving goes through the plan's own change, which plans again and can take seconds: the action
- * says it's saving meanwhile, then the sheet says what it did, or that nothing changed and why.
- */
 function FocusChoices({ onSaved }: { onSaved: () => void }) {
   const t = useExtracted();
   const formId = useId();
@@ -234,17 +214,10 @@ function FocusChoices({ onSaved }: { onSaved: () => void }) {
 
 const ChooseFocusContext = createContext<(() => void) | null>(null);
 
-/**
- * Holds the "Where to focus" sheet for a plan screen, so it stays on what the choice did (with
- * Undo) after what opened it leaves, as "Study everything" does (see `StudyEverythingHost`): the
- * notice or the editor's coverage once the plan reads differently, which closed a focus's card by
- * itself and lost its Undo. It opens on arrival when the host opened the plan to choose (the
- * buddy's offer, `openFocus`).
- */
+/** Held by the plan screen, so the sheet stays on what the choice did (with Undo) after what opened it leaves. */
 export function ChooseFocusHost({ children }: { children: React.ReactNode }) {
   const t = useExtracted();
   const { openFocus = false } = usePlanScreen();
-  // Until the learner opens or closes it, it's open when the host opened the plan to choose.
   const [opened, setOpened] = useState<boolean | null>(null);
   const open = opened ?? openFocus;
 
@@ -271,7 +244,6 @@ export function ChooseFocusHost({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** Opens the screen's "Where to focus" sheet (see `ChooseFocusHost`). */
 export function useChooseFocus(): () => void {
   const open = use(ChooseFocusContext);
 
@@ -282,12 +254,6 @@ export function useChooseFocus(): () => void {
   return open;
 }
 
-/**
- * "Choose where to focus", for a plan whose time doesn't cover everything in depth: it opens the
- * screen's sheet (see `ChooseFocusHost`) with the plan's subjects, so the learner says which ones
- * get the depth, and an exam's prerequisites, to say how to study each. Every topic stays in the
- * plan either way.
- */
 export function ChooseFocus() {
   const t = useExtracted();
   const open = useChooseFocus();

@@ -8,7 +8,7 @@ export type PlanPreviewState =
   | (PreviewInput & { status: "failed" | "loading" })
   | (PreviewInput & { preview: PlanChangePreview; status: "ready" });
 
-/** A refresh can deserialize an unchanged server view again without changing the preview's base. */
+/** A refresh deserializes an unchanged server view into a new object, which keeps the preview's base. */
 export function isSamePreviewPlan({
   current,
   previous,
@@ -19,7 +19,6 @@ export function isSamePreviewPlan({
   return current === previous || JSON.stringify(current) === JSON.stringify(previous);
 }
 
-/** A preview belongs to the exact operations and serialized server plan it was computed from. */
 export function currentPlanPreview({
   operations,
   plan,
@@ -36,7 +35,6 @@ export function currentPlanPreview({
   return state;
 }
 
-/** Only the still-active request can publish a computed effect or a retryable failure. */
 export function resolvePlanPreview({
   current,
   preview,

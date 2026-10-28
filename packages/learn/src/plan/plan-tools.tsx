@@ -18,10 +18,9 @@ import { PlanToolSheet } from "./plan-tool-sheet";
 import { useSystemName } from "./use-system-name";
 import { useToolChoice } from "./use-tool-choice";
 
-/** "Spreadsheet (Google Sheets or Excel)" reads as the tool, then the usual choices. */
+/** "Spreadsheet (Google Sheets or Excel)": the tool, then its usual choices. */
 const CHOICES_PATTERN = /^(?<tool>.+?)\s*\((?<choices>[^()]+)\)$/u;
 
-/** Picks an icon from common words in the tool's name; anything else is a tool. */
 const ICONS = [
   { icon: CalculatorIcon, pattern: /calculat|calculad|rechner/iu },
   { icon: SheetIcon, pattern: /sheet|excel|planilha|hoja|tabell|tableur/iu },
@@ -29,7 +28,6 @@ const ICONS = [
   { icon: CodeIcon, pattern: /python|code|código|javascript|sql|editor|\bR\b/iu },
 ] as const;
 
-/** The tool's icon as a row's leading mark: bare and quiet, as every list draws one. */
 function ToolIcon({ name }: { name: string }) {
   const Icon = ICONS.find((entry) => entry.pattern.test(name))?.icon ?? WrenchIcon;
 
@@ -60,12 +58,10 @@ function ToolRow({ onChoose, tool }: { onChoose: () => void; tool: PlanToolView 
   const t = useExtracted();
   const match = CHOICES_PATTERN.exec(tool.name)?.groups;
 
-  // On a narrow card the button moves under the name.
   return (
     <li className="grid min-h-14 grid-cols-[auto_1fr_auto] items-center gap-x-3 gap-y-2 py-2 @max-2xs:grid-cols-[auto_1fr]">
       <ToolIcon name={tool.name} />
 
-      {/* The usual choices get their own line under the name, so no "·" is left hanging. */}
       <div className="flex min-w-0 flex-col gap-0.5">
         <p className="text-sm font-medium">{match?.tool ?? tool.name}</p>
         {match?.choices && <p className="text-muted-foreground text-xs">{match.choices}</p>}
@@ -91,10 +87,6 @@ function ToolRow({ onChoose, tool }: { onChoose: () => void; tool: PlanToolView 
   );
 }
 
-/**
- * Going without every tool is one tap; once chosen, the card says what that path can't give, and
- * focus moves to that note in place of the button.
- */
 function NoToolsPath({ tools }: { tools: PlanToolView[] }) {
   const t = useExtracted();
   const holderRef = useRef<HTMLDivElement>(null);
@@ -104,9 +96,8 @@ function NoToolsPath({ tools }: { tools: PlanToolView[] }) {
   const { choose, failed, isPending } = useToolChoice();
   const withoutTools = tools.every((tool) => tool.choice === "none");
 
-  // The button leaves when the saved plan comes back, and the editor's sheet would take the focus
-  // it had. So the focus waits on this card (which stays) while saving, then goes to the note, or
-  // back to the button when the save fails.
+  // The button leaves with the saved plan, and the sheet would take its focus, so focus waits on this
+  // card while saving, then goes to the note (or back to the button on failure).
   useEffect(() => {
     if (!chose.current) {
       return;
@@ -156,10 +147,6 @@ function NoToolsPath({ tools }: { tools: PlanToolView[] }) {
   );
 }
 
-/**
- * Tools only later phases use: named on one line, and opened on request, so a months-long plan
- * doesn't ask about a tool it won't need for months.
- */
 function LaterTools({
   onChoose,
   tools,
@@ -197,12 +184,6 @@ function LaterTools({
   );
 }
 
-/**
- * "You'll use", in the plan editor: the tools the phase the learner is in uses, essential ones
- * first, and the rest under "More later". For each, the learner says they have it, they'll set it
- * up (a short lesson for their device comes right before the first chapter that uses it), or no
- * install. Nothing shows when no chapter uses a tool.
- */
 export function PlanTools() {
   const t = useExtracted();
   const { plan } = usePlanScreen();

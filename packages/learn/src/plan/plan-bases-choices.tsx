@@ -13,13 +13,10 @@ import { useFormatDuration } from "../_utils/time-format";
 
 export type BaseChoice = PlanBaseView["choice"];
 
-/** Every way to study prerequisites, from the most time to none. */
 const BASE_CHOICES = ["deep", "essential", "quick", "skip"] as const satisfies BaseChoice[];
 
-/** A subject's select while its prerequisites are studied in different ways. */
 const MIXED = "mixed";
 
-/** The names learners know each way to study prerequisites by. */
 function useChoiceName() {
   const t = useExtracted();
 
@@ -33,10 +30,6 @@ function useChoiceName() {
   return (choice: BaseChoice) => names[choice];
 }
 
-/**
- * The minutes a prerequisite still takes as `choice` studies it: one whose core the learner
- * studied takes only its depth, in depth, and nothing otherwise; a skipped one takes none.
- */
 function minutesFor(item: PlanBaseView, choice: BaseChoice): number {
   if (item.studied) {
     return choice === "deep" ? Math.max(0, item.minutes.deep - item.minutes.essential) : 0;
@@ -45,31 +38,23 @@ function minutesFor(item: PlanBaseView, choice: BaseChoice): number {
   return choice === "skip" ? 0 : item.minutes[choice];
 }
 
-/** The minutes prerequisites take each as the learner chose. */
 function minutesOf(items: readonly PlanBaseView[], choiceOf: (base: PlanBaseView) => BaseChoice) {
   return items.reduce((sum, item) => sum + minutesFor(item, choiceOf(item)), 0);
 }
 
-/**
- * What one choice for many prerequisites does to each: the ones open to it take it, and the others
- * keep theirs (one whose core the learner studied stays studied unless it's in depth).
- */
 export function chooseFor(item: PlanBaseView, choice: BaseChoice, current: BaseChoice): BaseChoice {
   return item.choices.includes(choice) ? choice : current;
 }
 
-/** The ways any of these prerequisites can still be studied, in `BASE_CHOICES`' order. */
 function listOpenChoices(items: readonly PlanBaseView[]): BaseChoice[] {
   return BASE_CHOICES.filter((choice) => items.some((item) => item.choices.includes(choice)));
 }
 
-/** The prerequisites a choice for all of them can change: the ones not studied yet. */
 export function listOpen(items: readonly PlanBaseView[]): readonly PlanBaseView[] {
   const open = items.filter((item) => !item.studied);
   return open.length > 0 ? open : items;
 }
 
-/** The one way the prerequisites are all studied; null while they're studied in different ways. */
 export function getSharedChoice(
   items: readonly PlanBaseView[],
   choiceOf: (base: PlanBaseView) => BaseChoice,
@@ -79,12 +64,6 @@ export function getSharedChoice(
   return choices.size === 1 && only ? only : null;
 }
 
-/**
- * How to study every prerequisite, one choice for all of them, each way with the time it takes
- * them all: every lesson, their essentials (the first third of their lessons), a quick lesson each,
- * or leaving them out. The way the app recommends is marked once the learner asked for it. None is
- * picked while they're studied in different ways.
- */
 export function AllBasesChoice({
   items,
   onChoose,
@@ -133,13 +112,6 @@ export function AllBasesChoice({
   );
 }
 
-/**
- * A subject's prerequisites as one choice: the subject, its prerequisites by name with the time
- * they take as chosen, so the learner knows what they'd skip, and a select with the four ways,
- * under the names on a phone, where an exam's subjects can take several lines ("Noções de Direito
- * Constitucional e de Regimento Interno…"). While they're studied in different ways, it says so
- * until the learner picks one way for them all.
- */
 function SubjectChoice({
   area,
   choiceOf,
@@ -214,11 +186,6 @@ function SubjectChoice({
   );
 }
 
-/**
- * The prerequisites by subject, folded until the learner asks, since most choose for all of them
- * at once: each subject one row with its own choice. Open on arrival when the subjects are already
- * studied in different ways (`defaultOpen`), so the learner sees how.
- */
 export function BasesBySubject({
   areas,
   choiceOf,

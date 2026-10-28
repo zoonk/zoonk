@@ -15,13 +15,8 @@ const STYLE_OPTIONS: Record<PlanDateStyle, DateTimeFormatOptions> = {
   monthYear: { month: "short", year: "numeric" },
 };
 
-/** Every date on the Plan: the mono face, on one line, so a long title wraps before its date. */
 const PLAN_DATE_CLASS = "font-mono tabular-nums whitespace-nowrap";
 
-/**
- * Formats a date by the Plan's one rule (see `getPlanDateStyle`): "Jan 24" this coming year,
- * "Jan 24, 2028" beyond it, "Jan" for an estimate known to the month (`month`).
- */
 export function useFormatPlanDate() {
   const format = useFormatter();
   const plan = use(PlanScreenContext);
@@ -35,10 +30,6 @@ export function useFormatPlanDate() {
     });
 }
 
-/**
- * A date on the Plan by its one rule, in the mono face. An estimate (`estimate`) reads "~Jan" (or
- * "~Nov 14, 2027" for an estimated day) and is heard as "About Jan".
- */
 export function PlanDateText({
   className,
   estimate = false,

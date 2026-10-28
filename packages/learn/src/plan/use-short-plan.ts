@@ -4,10 +4,6 @@ import { type ShortExamFocus, type ShortPhaseView } from "@zoonk/core/plans/view
 import { useExtracted } from "next-intl";
 import { usePlanScreen } from "./plan-context";
 
-/**
- * What a day of a plan for a test days away is for. Without mocks in the learner's plan (they come
- * with Plus), the short mock's day is a full review of every topic instead.
- */
 export function useShortFocusName() {
   const t = useExtracted();
 
@@ -29,7 +25,6 @@ export function useShortFocusName() {
   };
 }
 
-/** "Day 1 of 3" or "Days 1 to 4 of 7": which days of a plan for a test days away. */
 export function useShortDayRange() {
   const t = useExtracted();
 
@@ -39,7 +34,6 @@ export function useShortDayRange() {
       : t("Days {first, number} to {last, number} of {days, number}", { days, first, last });
 }
 
-/** A phase's days in the plan on screen, or null when the plan isn't for a test days away. */
 export function useShortDays() {
   const { plan } = usePlanScreen();
   const dayRange = useShortDayRange();

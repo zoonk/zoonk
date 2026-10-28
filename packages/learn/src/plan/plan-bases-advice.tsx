@@ -8,16 +8,11 @@ import { PendingLabel } from "./plan-coverage";
 import { type RecommendedBases, useAdviceText } from "./use-bases-texts";
 import { requestWithin } from "./use-time-to-cover";
 
-/** Where asking for the recommendation stands (see `useBasesAdvice`). */
 type AdviceState =
   | { status: "building" | "failed" | "idle" | "pending" }
   | { advice: RecommendedBases; status: "answered" };
 
-/**
- * "Get a recommendation": the app plans the goal with every prerequisite in depth to say what it
- * recommends (see `PlanActions.adviseOnBases`), only when the learner asks, never for the page.
- * Nothing is saved, so the plan isn't read again.
- */
+/** Only when the learner asks, never for the page. Nothing is saved, so the plan isn't read again. */
 export function useBasesAdvice() {
   const { actions } = usePlanScreen();
   const [state, setState] = useState<AdviceState>({ status: "idle" });
@@ -41,14 +36,6 @@ export function useBasesAdvice() {
   return { ask, recommended: state.status === "answered" ? state.advice.recommended : null, state };
 }
 
-/**
- * Under the prerequisites' choice: "Get a recommendation" until the learner asks, its spinner while
- * the app works it out, then why it recommends the way the choice now marks, which one tap picks
- * (its preview then runs as for any choice), and that the plan already follows it when it does
- * (`followed`): a new plan starts on it, so asking right after often confirms what's picked. Once it answers, focus moves to the answer, since the
- * button that had it is gone; waiting and failing are said once, in their own status line. When it
- * couldn't be worked out, Try again takes the button's place, so focus stays on it.
- */
 export function BasesAdvice({
   ask,
   followed,
@@ -70,8 +57,8 @@ export function BasesAdvice({
       ? t("Your plan is still being built. Try again in a moment.")
       : t("We couldn't get a recommendation.");
 
-  // Before the browser moves on: the button that asked gives way to the answer, and the sheet takes
-  // focus back from the page on its own, again a frame later, over a focus moved after paint.
+  // Before paint and again a frame later: the sheet takes focus back from the page on its own after
+  // the button gives way.
   useLayoutEffect(() => {
     if (answered) {
       answer.current?.focus();

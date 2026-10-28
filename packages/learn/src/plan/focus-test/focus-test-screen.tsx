@@ -28,34 +28,27 @@ import { type FocusTestOutcome, FocusTestResult } from "./focus-test-result";
 
 export type { FocusTestOutcome } from "./focus-test-result";
 
-/** About how long one of the test's questions takes, reading included. */
 const SECONDS_PER_QUESTION = 30;
 
 const SECONDS_PER_MINUTE = 60;
 
-/** A question of the test, with the area it asks about. */
 type FocusTestQuestion = ChoiceQuestionView & { area: string };
 
 export type FocusTestView = {
   areas: string[];
-  /** The ones that exist: fewer than the test asks while some are still to be written. */
   questions: FocusTestQuestion[];
   questionsPerArea: number;
   trueFalseLabels: TrueFalseLabels;
 };
 
-/** How the host writes the test's questions, when it doesn't have them all yet. */
 type FocusTestPreparing = {
-  /** The learner's small AI help doesn't cover writing them now. */
   limit: HelpLimit | null;
-  /** Asks for the questions (a POST, on the learner's tap). */
+  /** A POST, on the learner's tap. */
   onStart: () => void;
-  /** The run writing them, once asked for. */
   run: GenerationRun | null;
   starting: boolean;
 };
 
-/** The test before it starts: what it is, how long it takes, and its one action. */
 function FocusTestIntro({
   closeHref,
   onStart,
@@ -109,7 +102,6 @@ function FocusTestIntro({
   );
 }
 
-/** The test's questions being written, under the task's header; it opens once they're ready. */
 function FocusTestWriting({ closeHref, run }: { closeHref: string; run: GenerationRun }) {
   const t = useExtracted();
 
@@ -127,15 +119,10 @@ function FocusTestWriting({ closeHref, run }: { closeHref: string; run: Generati
   );
 }
 
-/** How many questions the test asks once every one is written. */
 function countTestQuestions(test: FocusTestView): number {
   return test.areas.length * test.questionsPerArea;
 }
 
-/**
- * The questions as the learner meets them: the ones the run started with, then each one written
- * since, at the end, so a question never moves once it's in line.
- */
 function useArrivingQuestions(questions: readonly FocusTestQuestion[]): FocusTestQuestion[] {
   const [inLine, setInLine] = useState<FocusTestQuestion[]>([...questions]);
   const [latest, setLatest] = useState(questions);
@@ -149,10 +136,6 @@ function useArrivingQuestions(questions: readonly FocusTestQuestion[]): FocusTes
   return inLine;
 }
 
-/**
- * In place of the next question while it's written: how the run writing it is going, or, once it
- * ended without some of them, that the answers given are enough to finish.
- */
 function FocusTestWaiting({ run }: { run: GenerationRun }) {
   const t = useExtracted();
   const endedShort = run.status === "ready";
@@ -174,10 +157,6 @@ function FocusTestWaiting({ run }: { run: GenerationRun }) {
   );
 }
 
-/**
- * The questions, area by area, each under its area's name; then the result. While the run
- * writing the rest (`writing`) goes on, the ones that exist are asked first.
- */
 function FocusTestRun({
   buddy,
   closeHref,
@@ -252,16 +231,6 @@ function FocusTestRun({
   );
 }
 
-/**
- * The focus test, for a plan whose time doesn't cover everything in depth: a few questions on each
- * subject worth most, in the exam's format, whose answers choose where the depth goes. It opens on
- * what it is and its one action; questions the bank doesn't have yet are written on that tap (the
- * host follows the run and reads the page again as it ends) while the ones that exist are asked,
- * one per screen, area by area, the written ones after them. Only a test without any question
- * waits for the run first. The result says how each area went and the focus it set, with an undo,
- * and celebrates the Energy its answers reached as every result does. `started` skips the opening
- * once the learner already started it.
- */
 export function FocusTestScreen({
   buddy,
   closeHref,
@@ -273,17 +242,14 @@ export function FocusTestScreen({
   started,
   test,
 }: {
-  /** The learner's buddy, glad about the Energy the answers reach. */
   buddy?: LearnBuddy | null;
   closeHref: string;
-  /** Where "See your plan" leads. */
   doneHref: string;
   onSubmit: (answers: ChoiceQuestionAnswer[]) => Promise<FocusTestOutcome | null>;
-  /** Takes the focus the test set back; false when it didn't work. */
+  /** False when it didn't work. */
   onUndo: (changeId: string) => Promise<boolean>;
   /** Null when every question exists. */
   preparing: FocusTestPreparing | null;
-  /** The full-screen moment for a milestone not shown yet (new glasses, a belt from earlier). */
   renderCeremony?: MomentCeremony;
   started: boolean;
   test: FocusTestView;
@@ -292,8 +258,7 @@ export function FocusTestScreen({
   const [tapped, setTapped] = useState(false);
   const [running, setRunning] = useState(false);
 
-  // Once asked, the questions stay on screen through to the result: the page reading the test
-  // again (the answers just saved are never asked again) doesn't take the learner back.
+  // Once asked, the questions stay through to the result, though the page reads the test again.
   if (!running && ready && (started || tapped)) {
     setRunning(true);
   }
@@ -327,7 +292,6 @@ export function FocusTestScreen({
   );
 }
 
-/** Whether every question of the test exists, so it needs nothing written to start. */
 export function isFocusTestComplete(test: FocusTestView): boolean {
   return test.questions.length >= countTestQuestions(test);
 }

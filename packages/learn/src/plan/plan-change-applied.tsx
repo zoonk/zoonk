@@ -12,11 +12,6 @@ import { useAppliedLine, useChangeSentence } from "./use-change-sentence";
 import { useAppliedEffectText } from "./use-effect-text";
 import { useUndoChange } from "./use-undo-change";
 
-/**
- * What a change did, beside its icon: its sentence, then what it changes (when the subjects start,
- * the lessons they gain, when the plan ends, as the plan on screen now says it). Announced as it
- * appears.
- */
 export function PlanChangeSummary({
   change,
   icon: Icon,
@@ -52,10 +47,6 @@ export function PlanChangeSummary({
   );
 }
 
-/**
- * What a change made in a sheet did, in the sheet that made it (see `PlanChangeSummary`) with Done,
- * and Undo while it's the plan's latest change.
- */
 export function PlanChangeApplied({
   change,
   icon,

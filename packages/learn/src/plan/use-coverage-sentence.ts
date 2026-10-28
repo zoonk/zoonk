@@ -2,13 +2,7 @@ import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { useExtracted } from "next-intl";
 import { useShortList } from "./use-short-list";
 
-/**
- * "Origin and evolution no longer fits by your date. Genetics now fits by your date." for the notice
- * topics a change leaves out of the plan or brings into it, so a change the learner didn't make (a
- * test-out, missed days, a goal back from a pause) names them. `added: false` leaves out the ones
- * it brings in, for a change whose own sentence names them; `named` caps the names said (see
- * `useShortList`). Null when it moves none.
- */
+/** `added: false` leaves out the topics it brings in, for a change whose own sentence names them; `named` caps the names said. */
 export function useTopicsMovedSentence() {
   const t = useExtracted();
   const shortList = useShortList();
@@ -37,11 +31,6 @@ export function useTopicsMovedSentence() {
   };
 }
 
-/**
- * "Now in your plan: Genetics." and "Out of your plan: Origin and evolution.", one line each, for
- * the notice topics a change brings into the plan or leaves out of it: what a change moves, under
- * what it did. Empty when it moves no topic.
- */
 function useTopicsMovedLines() {
   const t = useExtracted();
   const shortList = useShortList();
@@ -57,11 +46,6 @@ function useTopicsMovedLines() {
   };
 }
 
-/**
- * "Your placement answers changed what fits by your date. Now in your plan: Genetics. Out of your
- * plan: Origin and evolution." for a plan placement's answers planned again (`effect.fromPlacement`), so the
- * learner knows it was what they missed or showed they know. Null when it moves no topic.
- */
 function usePlacementCoverageSentence() {
   const t = useExtracted();
   const topicsMovedLines = useTopicsMovedLines();
@@ -75,11 +59,6 @@ function usePlacementCoverageSentence() {
   };
 }
 
-/**
- * "Origin and evolution no longer fits by your date." for a plan planned again as lessons were
- * written, the learner studied or placement ended, which teaches other topics by its date
- * (`coverageChanged`): plans never change unannounced.
- */
 export function useCoverageSentence() {
   const t = useExtracted();
   const topicsMoved = useTopicsMovedSentence();

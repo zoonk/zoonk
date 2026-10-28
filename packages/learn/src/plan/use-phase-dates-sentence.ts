@@ -4,13 +4,6 @@ import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
 import { useExtracted, useFormatter } from "next-intl";
 import { daysBetween, useFormatIsoDate } from "../_utils/iso-date";
 
-/**
- * Why Today proposes moving the phase dates, so "Keep mine" is an informed choice: lessons that
- * take longer than planned and would come after the challenge that tests them (with how far the
- * end moves), a phase's challenge on a day the learner rests (named), the job search lessons
- * keeping the dates leaves out by the goal's date, lessons written since that moving them fits in,
- * or a challenge on a day without room for it.
- */
 export function usePhaseDatesSentence() {
   const t = useExtracted();
   const format = useFormatter();
@@ -24,9 +17,6 @@ export function usePhaseDatesSentence() {
     const [first] = late;
     const [rest] = resting;
 
-    // Several are listed under the sentence (see `PhaseEndMoves`). Lessons take longer when the
-    // ones written for a topic are longer than planned, or when the learner's pace is slower: "came
-    // out longer" read as wrong to a learner back from days away.
     if (late.length > 1) {
       return t(
         "Some lessons are taking longer than planned, so the challenges that end these phases now come before them. Moving their dates fits the lessons in first.",

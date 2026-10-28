@@ -6,11 +6,6 @@ import { useState } from "react";
 import { PlanBasesSheet } from "./plan-bases-sheet";
 import { usePlanBases, useSummaryText } from "./use-bases-texts";
 
-/**
- * The prerequisites in the focus sheet and the plan editor: how many there are and the time they
- * take, with "Choose" opening their sheet, where the app recommends how to study them when the
- * learner asks. Only for plans with prerequisites to choose for.
- */
 export function PlanBases() {
   const t = useExtracted();
   const bases = usePlanBases();

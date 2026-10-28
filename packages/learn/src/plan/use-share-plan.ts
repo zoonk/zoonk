@@ -9,10 +9,7 @@ function isAbort(error: unknown) {
   return error instanceof DOMException && error.name === "AbortError";
 }
 
-/**
- * Shares the plan's link: the phone's share sheet where there is one, otherwise the link is copied.
- * Whoever opens it sees only the subject and the plan's shape, and can start their own.
- */
+/** Whoever opens the link sees only the subject and the plan's shape. */
 export function useSharePlan() {
   const t = useExtracted();
   const { goal, shareHref } = usePlanScreen();

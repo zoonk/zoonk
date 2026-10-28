@@ -3,16 +3,9 @@
 import { useExtracted, useFormatter } from "next-intl";
 import { toTopicWords } from "../syllabus/topic-number";
 
-/** At most this many names are said; the rest are counted. */
 const NAMED = 3;
 
-/**
- * "Ecology, Heat and 2 more topics": what a change moves, by name, the first few and a count of
- * what they are (`kind`), so a list of lessons never reads as topics. Topics go by their words,
- * without the notice's numbering ("12 Noções…" read as a count). A lesson list counts the rest
- * without a unit: a name can stand for a topic's lessons not written yet, so "and 2 more lessons"
- * could be many more. A card already long names fewer (`named`).
- */
+/** Topics drop the notice's numbering ("12 Noções…" read as a count), and a lesson list counts the rest without a unit, since a name can stand for many unwritten lessons. */
 export function useShortList() {
   const t = useExtracted();
   const format = useFormatter();
@@ -40,10 +33,6 @@ export function useShortList() {
   };
 }
 
-/**
- * "Ecology, Heat and Osmosis": a few of the names, as examples of what they stand for, for a count
- * they aren't one per (`useShortList` would add "and 182 more" beside "304 lessons").
- */
 export function useExamples() {
   const format = useFormatter();
 

@@ -77,7 +77,6 @@ function ToolChoiceForm({ onClose, tool }: { onClose: () => void; tool: PlanTool
   const { choose, failed, isPending } = useToolChoice();
   const needsSystem = choice === "setup" && system === null;
   const canSave = Boolean(choice) && !needsSystem && !isPending;
-  // Enter saves from anywhere in the sheet, such as right after a number key picked an answer.
   const saveRef = useEnterClick<HTMLButtonElement>({ enabled: canSave });
 
   const save = () => {
@@ -118,10 +117,6 @@ function ToolChoiceForm({ onClose, tool }: { onClose: () => void; tool: PlanTool
   );
 }
 
-/**
- * How the learner will use one tool: they have it, they'll set it up (then which device), or no
- * install, with what that path can't give said plainly.
- */
 export function PlanToolSheet({
   onClose,
   tool,

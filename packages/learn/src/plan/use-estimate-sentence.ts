@@ -3,16 +3,11 @@ import { useExtracted } from "next-intl";
 
 type ChangeEffect = PlanChangeView["effect"];
 
-/**
- * Whether a change's lessons count against the plan's date (`targetDate`, null without one still
- * ahead): only then do lessons fit or no longer fit by it. A full-course exam plan may grow after
- * the exam, so its count isn't one by the date.
- */
+/** A full-course exam plan may grow past its date, so its count isn't one by the date. */
 export function countsByDate(effect: ChangeEffect, targetDate: string | null): boolean {
   return targetDate !== null && (!effect?.endDateAfter || effect.endDateAfter <= targetDate);
 }
 
-/** The net count first, then one explanation for every automatic re-estimate. */
 export function useEstimateSentence({ targetDate = null }: { targetDate?: string | null } = {}) {
   const t = useExtracted();
 
@@ -43,7 +38,6 @@ export function useEstimateSentence({ targetDate = null }: { targetDate?: string
       );
     }
 
-    // Lessons not written yet count as their topic's estimate, as the diff's "Adds about" says.
     return effect?.lessonsAddedEstimated
       ? t(
           "{lessons, plural, one {About # more lesson fits by your date.} other {About # more lessons fit by your date.}}",

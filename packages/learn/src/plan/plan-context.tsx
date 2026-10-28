@@ -14,47 +14,28 @@ import { isFocusLost } from "../_utils/is-focus-lost";
 import { type LearnBuddy } from "../buddies/use-buddy-name";
 import { getTimeToCoverRevision } from "./time-to-cover-revision";
 
-/**
- * What a change did: applied (with the change, null while the plan isn't built yet), or for a focus
- * that would move nothing, unchanged with why: its subjects already have every lesson in the plan
- * (`alreadyIn`), or already start as early as what they build on allows (`cantMove`).
- */
+/** `change` is null while the plan isn't built yet. */
 export type PlanChangeOutcome =
   | { change: PlanChangeView | null; status: "applied" }
   | { reason: "alreadyIn" | "cantMove"; status: "unchanged" };
 
-/**
- * The host saves every change through core and re-renders the plan. Each action resolves to
- * whether it worked (a change, to what it did, or null when it didn't), so the screen can say so
- * without knowing how the host talks to core.
- */
+/** Each action resolves to what it did, or null when it didn't work. */
 export type PlanActions = {
   change: (operations: LearnerPlanOperation[]) => Promise<PlanChangeOutcome | null>;
-  /** What a change would do before the learner makes it; nothing is saved. Null when it failed. */
+  /** Nothing is saved. */
   preview: (operations: LearnerPlanOperation[]) => Promise<PlanChangePreview | null>;
-  /**
-   * The daily time that covers the whole goal by its date in the plan's own week, and for a goal
-   * that isn't an exam the date its time covers everything by, found when the learner taps "Find
-   * the time that covers everything" (see `PlanTimeToCover`). Nothing is saved and the plan isn't
-   * read again, so the page and its prefetched links stay as they are. Null when it failed.
-   */
+  /** Nothing is saved and the plan isn't read again, so the page and its prefetched links stay as they are. */
   findTimeToCover: () => Promise<PlanTimeToCover | null>;
-  /** What the app recommends for the plan's bases, when the learner asks; null when it failed. */
   adviseOnBases: () => Promise<PlanBasesAdvice | null>;
   decide: (input: {
     changeId: string;
     status: PlanChangeDecisionInput["status"];
   }) => Promise<boolean>;
-  /**
-   * The option the learner takes of one of their exam's choices, from the plan editor: the change
-   * it made (null when the pick changed nothing, or the plan isn't built yet), or null when it
-   * didn't work.
-   */
+  /** The change it made: null when the pick changed nothing or the plan isn't built yet. */
   chooseExamOption: (input: {
     group: string;
     subject: string;
   }) => Promise<{ change: PlanChangeView | null } | null>;
-  /** The learner's answer for these tools, from the plan editor. */
   chooseTools: (input: {
     choice: ToolChoice;
     system: ToolSystem | null;
@@ -62,94 +43,51 @@ export type PlanActions = {
   }) => Promise<boolean>;
 };
 
-/** The buddy's conversation, by its tab's link and its identity; null uses the default buddy. */
+/** A null `buddy` uses the default buddy. */
 export type PlanTutor = { buddy: Pick<LearnBuddy, "kind" | "name"> | null; href: string };
 
-/** The goal as the plan's screens name it. */
 export type PlanGoal = { kind: "exam" | "explain" | "language" | "learn"; title: string };
 
 type PlanScreenValue = {
   actions: PlanActions;
   goal: PlanGoal;
-  /**
-   * The learner's buddy, their tutor for the goal, where questions about the plan and changes in
-   * their own words go; hosts without the buddy's conversation leave it out.
-   */
   tutor?: PlanTutor;
   plan: PlanView;
-  /**
-   * The focus test's page on the host, where answers choose where the plan's depth goes; hosts
-   * without it leave it out, and only choosing by hand is offered.
-   */
   focusTestHref?: string;
-  /**
-   * The host opened the plan to choose where to focus (the buddy offered it): "Choose where to
-   * focus" opens on arrival.
-   */
   openFocus?: boolean;
-  /** The plan's link, as a path on the host (the origin is added when sharing). */
+  /** A path on the host; sharing adds the origin. */
   shareHref: string;
 };
 
-/**
- * The learner's "Find the time that covers everything" for the plan as it is now: asked, waiting,
- * answered, failed, or found the plan being built again. It belongs to what it searched (its
- * `revision`, see `getTimeToCoverRevision`: the plan's time, days, date, focus, bases or exam
- * choices): while those differ, Find shows again where the plan still falls short, and the answer
- * shows again once they're back to what it searched.
- */
 type TimeToCoverState =
   | { status: "idle" }
   | { revision: string; status: "building" | "failed" | "pending" }
   | { revision: string; status: "answered"; time: PlanTimeToCover };
 
-/** The search still running for a revision: asking again waits for it instead of searching. */
 type TimeToCoverSearch = { promise: Promise<PlanTimeToCover | null>; revision: string };
 
-/**
- * How a find ended for the one who asked: the answer, the plan being built, a failure, or a plan
- * that changed while it searched (`stale`), whose answer is for a plan no longer shown.
- */
 type FindOutcome =
   | { status: "answered"; time: PlanTimeToCover }
   | { status: "building" | "failed" | "stale" };
 
-/** The find answer the Plan's card, editor and moves share, since they ask the same question. */
 type TimeToCoverStore = {
-  /**
-   * Asks for the time that covers the plan as it is now (`request`), once per revision: asked
-   * again while it runs, it waits for that search; once answered, it gives that answer.
-   */
   find: (request: () => Promise<PlanTimeToCover | null>) => Promise<FindOutcome>;
   state: TimeToCoverState;
 };
 
-/** Where focus goes when a save takes its control away and nothing closer can take it. */
 export const PLAN_TITLE_ID = "plan-title";
 
-/** Where focus should land if the control that saved is gone; null falls back to the plan's title. */
 type FocusTarget = () => HTMLElement | null;
 
-/**
- * The plan's changes, whichever control saves them (every save goes through `actions`): whether one
- * is saving, so a control that works out its change first (Move your date) leaves the plan to the
- * learner's newer word. Read it in handlers, never while rendering.
- */
-type PlanChanges = {
-  /** Whether a change is saving right now: current before the screen shows it. */
-  isSaving: () => boolean;
-};
+/** Read it in handlers, never while rendering. */
+type PlanChanges = { isSaving: () => boolean };
 
 type PlanScreenContextValue = PlanScreenValue & {
-  /** The learner-local day already marked by core in this plan, shared by SSR and hydration. */
+  /** The learner's day as core marked it, so the server's render and hydration agree. */
   today: string;
   changes: PlanChanges;
   timeToCover: TimeToCoverStore;
-  /**
-   * Call as a save starts. If the save takes the focused control away (an answered change leaves,
-   * a tool's choice replaces its button), focus moves to `target` or the plan's title once the saved
-   * plan shows, instead of to the page.
-   */
+  /** Call as a save starts: if the save takes the focused control away, focus moves to `target` or the plan's title. */
   keepFocus: (target?: FocusTarget) => void;
 };
 
@@ -189,7 +127,6 @@ function useKeepFocus(plan: PlanView) {
 
 const IDLE: TimeToCoverState = { status: "idle" };
 
-/** One find answer for the plan as it is now (see `TimeToCoverState`). */
 function useTimeToCoverStore(plan: PlanView): TimeToCoverStore {
   const revision = useMemo(() => getTimeToCoverRevision(plan), [plan]);
   const [stored, setStored] = useState<TimeToCoverState>(IDLE);
@@ -242,11 +179,7 @@ function useTimeToCoverStore(plan: PlanView): TimeToCoverStore {
   return { find, state };
 }
 
-/**
- * Counts every action that changes the plan while it saves (see `PlanChanges`): its own changes,
- * an Undo or an Apply, an exam's option, the tools. A ref, not state: a save starts inside its
- * transition, where a state update would only show once the save is done.
- */
+/** A ref, not state: a save starts inside its transition, where a state update would only show once it's done. */
 function useCountedChanges(actions: PlanActions): { actions: PlanActions; changes: PlanChanges } {
   const saving = useRef(0);
 

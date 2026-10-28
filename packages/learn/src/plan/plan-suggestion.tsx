@@ -37,29 +37,16 @@ import {
 } from "./plan-suggestion-context";
 import { usePlanPreview } from "./use-plan-preview";
 
-/**
- * How long an answer's result (with its Undo) stays in the slot before the slot moves on, counted
- * again while the learner's focus or pointer is on it.
- */
 const RESULT_MS = 8000;
 
 const SLOT_DATA = "plan-suggestion";
 
-/** Whether the learner's focus or pointer is on the slot, in either of its two places. */
 function isLearnerOnSlot(): boolean {
   return [...document.querySelectorAll(`[data-slot="${SLOT_DATA}"]`)].some(
     (slot) => slot.contains(document.activeElement) || slot.matches(":hover"),
   );
 }
 
-/**
- * What the slot could say about the learner's time: the lessons their own time fits that the plan
- * doesn't hold (no more time asked, so first), then what more time would cover. When their time
- * already covers everything, the coverage has no time to offer: what the plan leaves out comes at
- * their time. Past its date, what the time covers by it says nothing (the date's offer comes
- * first), and a free exam plan past its first week opens nothing new with more time (they wait
- * for Plus).
- */
 function useTimeItems(): SlotItem[] {
   const { plan } = usePlanScreen();
   const coverage = usePlanCoverage();
@@ -72,14 +59,6 @@ function useTimeItems(): SlotItem[] {
   ].filter((item) => item !== false);
 }
 
-/**
- * Everything the Plan's slot could say, the most pressing first: the goal is paused, each exam
- * choice still to make (a plan "finished" while it leaves an exam's subject out isn't finished
- * yet), the plan's date came with lessons left (the change that keeps it going), the plan is
- * finished, the plan no longer fits, the learner is behind, what their time fits or covers (see
- * `useTimeItems`), a free exam plan's week is over. A finished plan whose time left part of the
- * goal out offers the rest before the next level, as a unit is finished before the next one.
- */
 function usePlanSuggestions(host: PlanSuggestionHost): SlotItem[] {
   const { plan } = usePlanScreen();
   const fix = usePaceFixText();
@@ -109,12 +88,7 @@ function usePlanSuggestions(host: PlanSuggestionHost): SlotItem[] {
   return items.filter((item) => item !== false);
 }
 
-/**
- * Holds the Plan's one slot for suggestions: what it could say, which one shows ("1 of 3"), what
- * the learner put off ("Not now"), a change's preview and an answer's result. The slot shows in
- * two places, the line in the page's column under 72rem and the panel in the aside from 72rem
- * (see `PlanSuggestionSlot`); both read this one state, so an answer given in one is the other's.
- */
+/** The slot shows twice (a line under 72rem, a panel from it), so both read this one state. */
 export function PlanSuggestionProvider({
   children,
   host,
@@ -130,8 +104,7 @@ export function PlanSuggestionProvider({
   const items = all.filter((item) => !dismissed.includes(item.key));
   const index = Math.min(position, Math.max(0, items.length - 1));
 
-  // An answer's result stays a moment with its Undo; then the slot moves on to what's left. Keep
-  // Undo under focus or the pointer.
+  // The result stays a moment with its Undo, longer while focus or the pointer is on it.
   useEffect(() => {
     if (!result) {
       return;
@@ -181,10 +154,6 @@ export function PlanSuggestionProvider({
   );
 }
 
-/**
- * The plan no longer fits, said once (the panel's title is its sentence), with Adjust plan; or the
- * learner is behind, with the fix in a sentence and Today, which puts what's behind first.
- */
 function PaceSuggestion({ item }: { item: Extract<SlotItem, { kind: "behind" | "tooTight" }> }) {
   const t = useExtracted();
   const routes = useLearnRoutes();
@@ -225,7 +194,6 @@ function PaceSuggestion({ item }: { item: Extract<SlotItem, { kind: "behind" | "
   );
 }
 
-/** A free exam plan past its first week: what stays free, and what Plus opens. */
 function FreeWeekSuggestion() {
   const t = useExtracted();
   const routes = useLearnRoutes();
@@ -281,14 +249,6 @@ function SlotSuggestion({ item }: { item: SlotItem }) {
   }
 }
 
-/**
- * The Plan's one slot for what it wants the learner to know or decide, one thing at a time (see
- * `PlanSuggestionProvider`): a line in the page's column under 72rem and a panel in the aside from
- * it, so the page draws it twice and `className` shows each in its place. Under 72rem the pager
- * sits under the line: "Adjust" or "Resume" act from the line itself, and the next thing to say
- * waited behind a sheet that never opened. An answer's result shows where the answers were, with
- * Undo, until the slot moves on.
- */
 export function PlanSuggestionSlot({ className }: { className?: string }) {
   const t = useExtracted();
   const { index, items, result } = usePlanSuggestionSlot();

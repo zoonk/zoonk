@@ -27,16 +27,8 @@ import { useChangeSentence } from "./use-change-sentence";
 import { usePlanChange } from "./use-plan-change";
 import { readTimeToCover, useTimeToCoverTexts } from "./use-time-to-cover";
 
-/*
- * What the Plan's suggestions offer and show before Apply: the change a coverage card offers (the
- * find answer's time or date, an exam's end), its preview as a diff with Apply, and the card's
- * other ways on. The past-date card shares the preview.
- */
-
-/** The goal's own date a change moves, from the one the plan has. */
 type GoalDateMove = { after: string; before: string | null };
 
-/** The goal's date `operations` move, for the diff to show beside its lessons; none otherwise. */
 export function getGoalDateMove({
   operations,
   targetDate,
@@ -51,10 +43,6 @@ export function getGoalDateMove({
     : undefined;
 }
 
-/**
- * Applies the slot's previewed change for `item`, never without the diff it makes, then says what
- * it did where the suggestion was, with Undo (see `SlotResult`).
- */
 export function useApplyPreview(item: SlotItem) {
   const t = useExtracted();
   const sentence = useChangeSentence();
@@ -86,11 +74,6 @@ export function useApplyPreview(item: SlotItem) {
   return { apply, failed, isPending };
 }
 
-/**
- * What the offer does before it's applied: the plan's dates that move, as a diff. While it's being
- * checked, and when it couldn't be, it says so in place over the same row of actions, so the panel
- * doesn't jump, with the way to read it again (`onRetry`) or put it off.
- */
 export function OfferPreview({
   goalDate,
   onApply,
@@ -98,7 +81,6 @@ export function OfferPreview({
   pending,
   preview,
 }: {
-  /** The goal's own date the change moves, from the one the plan has (see `PlanEffectDiff`). */
   goalDate?: GoalDateMove;
   onApply: () => void;
   onRetry: () => void;
@@ -177,11 +159,6 @@ export function OfferPreview({
   );
 }
 
-/**
- * "Checking what changes…" while a goal's new date is being found before its preview (the menu's
- * Move your date, a past date's Preview), as the preview says it once found, with the way to put
- * it off (`onCancel`).
- */
 export function CheckingChange({ onCancel }: { onCancel: () => void }) {
   const t = useExtracted();
 
@@ -199,22 +176,14 @@ export function CheckingChange({ onCancel }: { onCancel: () => void }) {
   );
 }
 
-/** The change the suggestion offers, in words and as the operations that make it. */
 export type CoverageOffer = {
   description: string[];
   operations: LearnerPlanOperation[];
   title: string;
 };
 
-/** What the learner asked the card for: the time that covers everything, or a goal's new date. */
 export type Intent = "date" | "time";
 
-/**
- * The change a find answer offers (see `useTimeToCover`), all of it exact, since it was planned:
- * asked for a date, the earliest one the learner's own time covers everything by; asked for
- * time, the time found, or when no time covers everything, a goal's new date when it has one.
- * Null when nothing is worth one tap: no time covers everything and no date was found.
- */
 export function useAnswerOffer() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -227,7 +196,6 @@ export function useAnswerOffer() {
     intent,
     time,
   }: {
-    /** What the learner's own time covers (see `useCoveredText`). */
     covered: string;
     intent: Intent;
     time: PlanTimeToCover;
@@ -262,12 +230,6 @@ export function useAnswerOffer() {
   };
 }
 
-/**
- * What the card offers without asking anything: an exam studying everything can end at the exam
- * again, a change worked out from the plan as it is. It says when everything ends, or, while the
- * plan can't hold it all even after the exam, only what it studies. Null otherwise: the rest is the
- * learner's to ask for (Find, Move your date).
- */
 export function useCourseOffer(): CoverageOffer | null {
   const t = useExtracted();
   const course = useFullCourse();
@@ -284,18 +246,11 @@ export function useCourseOffer(): CoverageOffer | null {
   };
 }
 
-/**
- * The other ways to change what the plan covers, in one menu: moving a goal's date (unless it's
- * the offer already), choosing where to focus, studying everything at the learner's own pace (an
- * exam's even after the exam, unless the card leads with it; its sheet takes the card's place),
- * and "Not now", which leaves the suggestion out until the Plan opens again.
- */
 export function OtherOptions({
   onMoveDate,
   studyEverythingLeads,
 }: {
   onMoveDate: (() => void) | null;
-  /** The card's main action is studying everything already: no time covers the exam. */
   studyEverythingLeads: boolean;
 }) {
   const t = useExtracted();

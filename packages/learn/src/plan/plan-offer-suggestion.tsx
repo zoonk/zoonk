@@ -16,12 +16,6 @@ import {
 import { useChangeSentence } from "./use-change-sentence";
 import { usePlanChange } from "./use-plan-change";
 
-/**
- * A change the Plan worked out before the learner sees it (see `PlanOffer`) as the slot's
- * suggestion: its title, what the diff can't say, the diff, then Apply beside the other ways on
- * (`actions`). Apply saves it, and the slot says "Plan updated" with what it did and Undo, in the
- * same place; Undo puts the offer back. Without an offer, only its words and the other ways on.
- */
 export function PlanOfferSuggestion({
   actions,
   canApply = true,
@@ -30,7 +24,6 @@ export function PlanOfferSuggestion({
   offer,
   title,
 }: {
-  /** The other ways on, after Apply: "Not now", or a menu of them. */
   actions: React.ReactNode;
   canApply?: boolean;
   description: string[];

@@ -17,10 +17,6 @@ import { useLessonsEffectText, useTopicsEffectText } from "./use-effect-counts";
 import { usePhaseEndsText } from "./use-phase-ends-text";
 import { useNextMockText, useWeeklyEventsText } from "./use-weekday-texts";
 
-/**
- * How a change moves the end: "Ends Nov 20 instead of Nov 12". Null when the end stays, or moves
- * too little to say beside the lessons the change moves (see `getShownEndMove`).
- */
 function useChangeEffectText() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
@@ -39,15 +35,9 @@ function useChangeEffectText() {
   };
 }
 
-/** The plan as it is now, so a waiting change's effect never names an end the plan doesn't show. */
 type CurrentEnd = Pick<PlanView["estimate"], "endDate"> & Pick<PlanView["schedule"], "targetDate">;
 
-/**
- * The end a change moves, in the plan's own terms. A plan with a date keeps it, so only a plan
- * without one says its new end, as the Plan writes it (see `useFormatPlanDate`: "Nov 1" this coming
- * year), and only while the change starts from the end the plan shows now: an older change's dates
- * would contradict it.
- */
+/** Only a plan without a date says its new end, and only while the change starts from the end the plan shows now. */
 function usePlanEndEffectText() {
   const t = useExtracted();
   const formatPlanDate = useFormatPlanDate();
@@ -76,10 +66,8 @@ function usePlanEndEffectText() {
   };
 }
 
-/** The plan on screen once a change applied: its date, and whether an exam's goes on past it. */
 type AppliedPlan = Pick<PlanView["schedule"], "fullCourse" | "targetDate">;
 
-/** Whether a change takes the plan's end off its date: no deadline, or an exam studied past it. */
 function removesDate(operations: readonly PlanOperation[]): boolean {
   return operations.some(
     (operation) =>
@@ -88,13 +76,7 @@ function removesDate(operations: readonly PlanOperation[]): boolean {
   );
 }
 
-/**
- * How a change the learner made moves the end, said as the plan on screen now says it: a plan with
- * a date ends at it, so nothing; a plan the change took the date off finishes around a month, since
- * "instead of" the day the last lesson fell on misread as their deadline; an exam that goes on
- * after its date, by month, as the Plan writes that end; a plan without a date before and after, as
- * the Plan writes its end ("Nov 1"), so a time that brings it six days closer says so.
- */
+/** A plan the change took the date off says its end by month: "instead of" the last lesson's day misread as the deadline. */
 function useAppliedEndText() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
@@ -131,12 +113,6 @@ function useAppliedEndText() {
   };
 }
 
-/**
- * What a proposal does, for the learner to weigh before saying yes: "Adds 6 lessons. Ends Nov 20
- * instead of Nov 12." or "Leaves out 56 lessons." With `current` (the plan on screen), its end is
- * said the plan's way, or not at all when the plan has a date. Null when it neither changes how
- * many lessons are left nor moves the end.
- */
 export function useProposalEffectText() {
   const effectText = useChangeEffectText();
   const planEndEffect = usePlanEndEffectText();
@@ -145,15 +121,7 @@ export function useProposalEffectText() {
   return function proposalEffectText(
     change: Pick<PlanChangeView, "effect">,
     current?: CurrentEnd,
-    {
-      besideDiff = false,
-      byDate = true,
-    }: {
-      /** Said over its diff, which counts the lessons first: their count isn't said again. */
-      besideDiff?: boolean;
-      /** Its lessons count against a date still ahead, as its diff's (`PlanEffectDiff`). */
-      byDate?: boolean;
-    } = {},
+    { besideDiff = false, byDate = true }: { besideDiff?: boolean; byDate?: boolean } = {},
   ): string | null {
     return sentences(
       change,
@@ -163,11 +131,6 @@ export function useProposalEffectText() {
   };
 }
 
-/**
- * What a change the learner just made did, beside its sentence, in the sheet that made it: as a
- * proposal says it (see `useProposalEffectText`), its end as the plan now on screen says it (see
- * `useAppliedEndText`).
- */
 export function useAppliedEffectText() {
   const appliedEndText = useAppliedEndText();
   const sentences = useEffectSentences();
@@ -180,7 +143,6 @@ export function useAppliedEffectText() {
   };
 }
 
-/** What a change does past its sentence, with its end as the caller says it (`endText`). */
 function useEffectSentences() {
   const lessonsText = useLessonsEffectText();
   const topicsText = useTopicsEffectText();
@@ -198,10 +160,8 @@ function useEffectSentences() {
     endText: string | null,
     { besideDiff = false, byDate = true }: { besideDiff?: boolean; byDate?: boolean } = {},
   ): string | null {
-    // With a review ahead that the focus opens, a start that stays says nothing the review doesn't.
     const ends = change.effect?.areaEnds ?? [];
 
-    // A start that stays says nothing when a review ahead opens with the area, or its end moves.
     const starts = (change.effect?.areaStarts ?? []).filter(
       (start) =>
         start.after !== start.before ||

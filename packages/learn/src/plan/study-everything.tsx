@@ -24,12 +24,6 @@ import { currentPlanPreview } from "./plan-preview-state";
 import { usePlanChange } from "./use-plan-change";
 import { usePlanPreview, usePreviewBase } from "./use-plan-preview";
 
-/**
- * When studying everything would end, before the learner chooses it: the plan's own end when it's
- * that already (see `useFullCourse`), or else the end of the change previewed, planned as choosing
- * it plans it, asked once the sheet shows (`asking`, until the learner chooses) and again if the
- * plan changes meanwhile. `checking` while it's on its way; a failed check leaves only what's sure.
- */
 function useFullCourseEnd({ asking, course }: { asking: boolean; course: FullCourse }) {
   const { plan } = usePlanScreen();
   const base = usePreviewBase();
@@ -58,11 +52,6 @@ function useFullCourseEnd({ asking, course }: { asking: boolean; course: FullCou
   };
 }
 
-/**
- * The sheet's body: what studying everything changes before they choose it, with when they'd
- * finish (see `useFullCourseEnd`), then what their choice did, with Undo, which says when they
- * finish.
- */
 function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () => void }) {
   const t = useExtracted();
   const text = useFullCourseText();
@@ -114,7 +103,6 @@ function FullCourseChoice({ course, onDone }: { course: FullCourse; onDone: () =
   );
 }
 
-/** The sheet as last opened: the course it was opened for stays while it shows what it did. */
 type Shown = { course: FullCourse; open: boolean };
 
 function StudyEverythingSheet({
@@ -150,12 +138,7 @@ function StudyEverythingSheet({
 
 const StudyEverythingContext = createContext<((course: FullCourse) => void) | null>(null);
 
-/**
- * Holds the "Study everything" sheet for a plan screen, so it stays on what the choice did (with
- * Undo) after what opened it leaves: the notice once the plan covers everything, the editor's
- * button once the deadline is gone, the reveal's row. `openOnArrival` opens it when the host
- * opened the plan to choose it (Today's offer).
- */
+/** Held by the plan screen, so the sheet stays on what the choice did (with Undo) after what opened it leaves. */
 export function StudyEverythingHost({
   children,
   openOnArrival = false,
@@ -179,7 +162,6 @@ export function StudyEverythingHost({
   );
 }
 
-/** Opens the screen's "Study everything" sheet for the course (see `StudyEverythingHost`). */
 export function useStudyEverything(): (course: FullCourse) => void {
   const open = use(StudyEverythingContext);
 
@@ -190,10 +172,6 @@ export function useStudyEverything(): (course: FullCourse) => void {
   return open;
 }
 
-/**
- * Opens the "Study everything" sheet from a suggestion, in the place of the suggestion's own sheet
- * (see `useCloseSuggestionSheet`), so closing it leaves the page.
- */
 export function useStudyEverythingFromSuggestion(): (course: FullCourse) => void {
   const open = useStudyEverything();
   const closeSheet = useCloseSuggestionSheet();
@@ -204,11 +182,6 @@ export function useStudyEverythingFromSuggestion(): (course: FullCourse) => void
   };
 }
 
-/**
- * "Study everything" under a goal's deadline in the plan editor: one small secondary button, as
- * the editor's other actions, opening the sheet that says what studying everything at their time
- * changes before they choose it.
- */
 export function StudyEverything({ course }: { course: FullCourse }) {
   const t = useExtracted();
   const open = useStudyEverything();

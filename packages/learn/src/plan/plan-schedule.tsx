@@ -35,16 +35,7 @@ import { getOfferedMinutes, useTimeToCoverTexts } from "./use-time-to-cover";
 
 const DAYS_PER_WEEK = 7;
 
-/**
- * What the chosen time covers, under the presets, so each change shows its effect right away: the
- * whole goal, or what it leaves lighter, exactly as the plan has it; then Find, which plans the
- * goal at each daily time when the learner asks (never for the page), and the other ways: moving
- * a goal's date, choosing where to focus, and after them an exam's "Study everything, even after
- * the exam" (see `FullCourseSwitch`); a goal's is chosen with its date, above it (see `PlanDate`).
- * Nothing for a plan without a date, which covers everything at any pace. While the schedule's
- * change saves, the old plan's coverage would describe a time no longer
- * picked, so its place says the new one is being worked out, keeping its height.
- */
+/** While the schedule's change saves, its place says the new coverage is being worked out: the old one would describe a time no longer picked. */
 function DailyCoverage({
   canFind,
   onAsk,
@@ -80,8 +71,7 @@ function DailyCoverage({
         {coverage ? (
           <>
             <div className="text-muted-foreground">
-              {/* Her own time covers it all once planned again (lessons set aside come back): say so,
-                  as the Plan's suggestion does, rather than what the plan as it stands leaves out. */}
+              {/* Planned again, the learner's own time covers it all (set-aside lessons come back), so it says so. */}
               {plan.fitOffer?.fits && plan.schedule.targetDate ? (
                 <p>
                   {t("Your time covers everything by {date}", {
@@ -117,33 +107,19 @@ function DailyCoverage({
   );
 }
 
-/** The schedule's one change at a time (see `PlanSchedule`). */
 type PlanChange = ReturnType<typeof usePlanChange>;
 
-/** The plan's week split into weekdays and the weekend (see `getWeekShape`). */
 function useWeekShape() {
   const { plan } = usePlanScreen();
   return getWeekShape(plan.schedule);
 }
 
-/**
- * The time of a study weekday, as onboarding asks it: the presets, with the learner's own time
- * among them, even an unusual one, and "Other time…" for any other, which joins them. Once Find
- * answers, the time it found joins them too, as it is (1 hr 25 min: it was planned, so it's exact,
- * where the preset above it can cover less, as a mock can take a study day), and says "Covers
- * everything", or, when no time does, the time that brings every topic in, "Every topic"; none is
- * picked for the learner. While the weekend has its own time (`weekendOn`),
- * it changes the weekdays alone, so the weekend keeps what the learner gave it; otherwise every
- * study day moves with it. The time picked shows picked while its change saves (see
- * `useTappedChoice`); another pick waits for it.
- */
 function DailyMinutes({
   moving,
   onMoving,
   planChange,
   weekendOn,
 }: {
-  /** Move your date is finding or saving its date: the chips wait, as for any change. */
   moving: boolean;
   onMoving: (moving: boolean) => void;
   planChange: PlanChange;
@@ -221,10 +197,6 @@ function DailyMinutes({
   );
 }
 
-/**
- * One toggle a day, pressed while it's a study day. A tapped day shows its new state while its
- * change saves.
- */
 function StudyDays({ planChange: { change, isPending } }: { planChange: PlanChange }) {
   const t = useExtracted();
   const { plan } = usePlanScreen();
@@ -232,7 +204,6 @@ function StudyDays({ planChange: { change, isPending } }: { planChange: PlanChan
   const shape = useWeekShape();
   const tapped = useTappedChoice<{ studies: boolean; weekday: number } | null>(null);
 
-  // A day back on the plan takes the time of its part of the week.
   const minutesFor = (weekday: number) =>
     shape.weekend !== null && isWeekend(weekday) ? shape.weekend : shape.weekdays;
 
@@ -247,7 +218,6 @@ function StudyDays({ planChange: { change, isPending } }: { planChange: PlanChan
   return (
     <fieldset className="flex flex-col gap-2" id={getEditorSectionId("days")}>
       <legend className="mb-2 text-sm font-medium">{t("Study days")}</legend>
-      {/* Seven equal columns keep the week on one row on a phone, whatever the day names. */}
       <div className="grid max-w-sm grid-cols-7 gap-1">
         {weekdays.map((day) => (
           <WeekdayToggle
@@ -279,11 +249,6 @@ function StudyDays({ planChange: { change, isPending } }: { planChange: PlanChan
   );
 }
 
-/**
- * Saturday and Sunday's own time: switched on, the weekend gets its time from every time a day,
- * in one select; switched off, it goes back to the weekdays' time. Only for a week studied both on
- * weekdays and on the weekend. The time picked shows while it saves.
- */
 function WeekendMinutes({
   checked,
   onCheckedChange,
@@ -333,18 +298,11 @@ function WeekendMinutes({
   );
 }
 
-/**
- * Daily time, study days and the weekend's own time: the plan's shape, each change re-planned from
- * today. They save one change at a time (`planChange`), each from the plan the last one left. The
- * weekend switch answers the learner at once (`weekendChoice`), while the plan they changed is read
- * again; until they touch it, it shows whether the plan's weekend has its own time.
- */
 export function PlanSchedule() {
   const shape = useWeekShape();
   const planChange = usePlanChange();
   const [weekendChoice, setWeekendChoice] = useState<boolean | null>(null);
   const weekendOn = weekendChoice ?? shape.weekend !== null;
-  // While Move your date finds its date or saves it, the other settings wait, as for any change.
   const [moving, setMoving] = useState(false);
   const schedule = { ...planChange, isPending: planChange.isPending || moving };
 

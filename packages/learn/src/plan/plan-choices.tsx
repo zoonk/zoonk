@@ -19,12 +19,6 @@ import { useFullCourse } from "./plan-full-course";
 import { useStudyEverything } from "./study-everything";
 import { usePlanBases, useSummaryText } from "./use-bases-texts";
 
-/**
- * The choices a new plan comes with, on the plan's reveal, each a row opening its sheet: how its
- * prerequisites are studied (the sheet recommends how when the learner asks), and studying
- * everything at the learner's own pace, when the plan's notice doesn't already offer it (its time
- * covers the goal by its date). Nothing when there's nothing to choose.
- */
 export function PlanChoices() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();

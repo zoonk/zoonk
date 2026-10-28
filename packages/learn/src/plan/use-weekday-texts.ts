@@ -8,15 +8,14 @@ import { isoDateToUtc, useFormatIsoDate } from "../_utils/iso-date";
 import { toLabelCase } from "../_utils/label-case";
 import { useFormatDuration } from "../_utils/time-format";
 
-/** A Sunday, the first weekday as plans count them (0), to name weekdays by. */
-const FIRST_SUNDAY = isoDateToUtc("2023-01-01").getTime();
+const REFERENCE_SUNDAY = isoDateToUtc("2023-01-01").getTime();
 
-/** The weekday's ISO day in the week of `FIRST_SUNDAY`, to name it in the viewer's language. */
 function toWeekdayIsoDate(weekday: number): string {
-  return new Date(FIRST_SUNDAY + weekday * MS_PER_DAY).toISOString().slice(0, "YYYY-MM-DD".length);
+  return new Date(REFERENCE_SUNDAY + weekday * MS_PER_DAY)
+    .toISOString()
+    .slice(0, "YYYY-MM-DD".length);
 }
 
-/** A change to some weekdays' time, as the plan now has it: "Sunday: rest day." */
 export function useWeekdaySentence() {
   const t = useExtracted();
   const format = useFormatter();
@@ -39,7 +38,6 @@ export function useWeekdaySentence() {
   };
 }
 
-/** "Weekly mocks move to Saturday.": where a change to the learner's days moves them. */
 export function useWeeklyEventsText() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
@@ -59,7 +57,6 @@ export function useWeeklyEventsText() {
   };
 }
 
-/** "Your next mock moves to Sunday, November 1.": the day a change moves the next mock to. */
 export function useNextMockText() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();

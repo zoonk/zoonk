@@ -34,12 +34,6 @@ import {
 import { useChangeSentence } from "./use-change-sentence";
 import { useTappedChoice } from "./use-tapped-choice";
 
-/**
- * Saves a pick with a pending state and a failure flag, like the plan's other controls. The change
- * it made becomes the editor's latest, so the editor says which option the plan now studies, with
- * Undo (see `PlanEditorChange`); `onChange` hears it too, for a card that says it in place.
- * `answer` runs once the pick answers, with the re-planned page, as `usePlanChange`'s does.
- */
 function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => void } = {}) {
   const { actions, keepFocus } = usePlanScreen();
   const editor = useReportEditorChange();
@@ -74,10 +68,6 @@ function useExamChoice({ onChange }: { onChange?: (change: PlanChangeView) => vo
   return { choose, failed, isPending };
 }
 
-/**
- * One of the exam's choices: its options, one tap each, and what an unpicked choice means. The
- * tapped option shows picked while its change saves (see `useTappedChoice`).
- */
 function ExamChoice({ choice }: { choice: ExamChoiceView }) {
   const t = useExtracted();
   const { choose, failed, isPending } = useExamChoice();
@@ -118,21 +108,12 @@ function ExamChoice({ choice }: { choice: ExamChoiceView }) {
   );
 }
 
-/**
- * The exam's choices in "Adjust your plan" (ENEM's foreign language: English or Spanish): the
- * plan, practice and mocks study only the option picked, and changing it re-plans from today.
- */
 export function PlanExamChoices() {
   const { plan } = usePlanScreen();
 
   return plan.examChoices.map((choice) => <ExamChoice choice={choice} key={choice.group} />);
 }
 
-/**
- * One of the exam's choices the learner hasn't picked yet, in the Plan's slot until they do, since
- * the plan studies none of a choice's options before: one tap per option. The pick then says what
- * it did in its place, with Undo while it's the plan's latest change.
- */
 export function ExamChoiceSuggestion({ item }: { item: Extract<SlotItem, { kind: "choice" }> }) {
   const t = useExtracted();
   const sentence = useChangeSentence();

@@ -24,7 +24,6 @@ type Steer = {
   operation: (active: boolean) => SteerOperation;
 };
 
-/** The steering a tap asks for, shown while the plan saves it. */
 function applySteer(steering: Steering, operation: SteerOperation): Steering {
   return operation.kind === "setDifficultyBias"
     ? { ...steering, difficultyBias: operation.bias }
@@ -64,12 +63,6 @@ function useSteers({ difficultyBias, practiceBias }: Steering): Steer[] {
   ];
 }
 
-/**
- * Steering in one tap: "Too easy", "Too hard", "More practice" and "More explanation", once the
- * learner studied a lesson of the plan. Each re-plans from today; tapping an active one again
- * goes back to the default. A difficulty that isn't the default says what it does. A tap shows at
- * once while the plan saves it, as a time picked does: re-planning can take a few seconds.
- */
 export function PlanSteering() {
   const t = useExtracted();
   const { plan } = usePlanScreen();
@@ -80,7 +73,6 @@ export function PlanSteering() {
   const difficultySentence = useDifficultySentence();
   const { difficultyBias } = steering;
 
-  // Nothing studied yet means nothing to call too easy or too hard.
   if (plan.steering.lessonsStudied === 0) {
     return null;
   }

@@ -34,12 +34,6 @@ function EditorChangeNote({ change }: { change: PlanChangeView }) {
   );
 }
 
-/**
- * The plan editor's latest change, by its controls (under its title in the panel, at the foot of
- * the phone's sheet): what it did, as a sheet's change says it, with Undo while it's the plan's
- * latest change; once undone, that the plan is back. A time or a date changed in the editor
- * re-plans at once, and nothing said so or offered a way back.
- */
 export function PlanEditorChange({ className }: { className?: string }) {
   const t = useExtracted();
   const latest = useEditorChange();

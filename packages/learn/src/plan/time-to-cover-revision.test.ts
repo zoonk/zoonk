@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getTimeToCoverRevision } from "./time-to-cover-revision";
 
-/** A plan as Find reads it: two goals' plans can show exactly this and still need other times. */
 function searchedPlan(planId: string) {
   return {
     areas: [],

@@ -2,13 +2,7 @@
 
 import { useState } from "react";
 
-/**
- * What a plan control shows: the learner's tap at once while its change saves, since re-planning
- * can take a few seconds, and the saved choice otherwise. `pick` holds the tapped value and
- * returns its change's answer (see `usePlanChange`), which lets the pick go with the re-planned
- * page: a change that didn't work shows the saved choice again by "That didn't work", and a pick
- * never shows again over a later change, such as an undo or another control's change.
- */
+/** Shows the learner's tap at once while its change saves, then the saved choice; a pick never shows again over a later change. */
 export function useTappedChoice<T>(saved: T) {
   const [tapped, setTapped] = useState<{ value: T } | null>(null);
 

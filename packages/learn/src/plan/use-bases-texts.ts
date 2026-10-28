@@ -6,23 +6,15 @@ import { useExtracted } from "next-intl";
 import { useFormatDuration } from "../_utils/time-format";
 import { usePlanScreen } from "./plan-context";
 
-/** A recommendation the app worked out for the prerequisites (see `PlanBasesAdvice`). */
 export type RecommendedBases = Pick<PlanBasesAdvice, "daysLeft"> & {
   recommended: NonNullable<PlanBasesAdvice["recommended"]>;
 };
 
-/** The plan's prerequisites to choose how to study; null when it has none to choose for. */
 export function usePlanBases(): PlanBasesView | null {
   const { plan } = usePlanScreen();
   return plan.bases && plan.bases.items.length > 0 ? plan.bases : null;
 }
 
-/**
- * What the app recommends for the prerequisites, in one line, once the learner asked for it (see
- * `PlanBasesAdvice`): in depth when the time covers everything with every prerequisite in depth; a
- * quick lesson for each when the date is close and the time short, so it goes to what comes up
- * most (an exam's) or what matters most for the goal; their essentials otherwise.
- */
 export function useAdviceText() {
   const t = useExtracted();
   const { goal } = usePlanScreen();
@@ -51,7 +43,6 @@ export function useAdviceText() {
   };
 }
 
-/** What the prerequisites are, at the top of their sheet. */
 export function usePrerequisitesDescription() {
   const t = useExtracted();
   const { goal } = usePlanScreen();
@@ -61,7 +52,6 @@ export function usePrerequisitesDescription() {
     : t("Your goal's final work builds on these.");
 }
 
-/** That what the learner showed they know is out of the plan already. */
 export function useKnownText() {
   const t = useExtracted();
 
@@ -74,16 +64,10 @@ export function useKnownText() {
       : t("Already know some? Show it in a test and they leave your plan on their own.");
 }
 
-/** What a prerequisite takes as the learner chose to study it. */
 function minutesOf(item: PlanBasesView["items"][number]): number {
   return item.choice === "skip" ? 0 : item.minutes[item.choice];
 }
 
-/**
- * "12 prerequisites, 2 h 30 min for their essentials": how many and the time they take, with the
- * way they're all studied, which the app chose for a new plan, or, once they differ, the time the
- * learner's choices take.
- */
 export function useSummaryText() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();

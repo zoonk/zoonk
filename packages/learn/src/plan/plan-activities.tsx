@@ -11,7 +11,6 @@ import { usePlanScreen } from "./plan-context";
 import { usePlanChange } from "./use-plan-change";
 import { useTappedChoice } from "./use-tapped-choice";
 
-/** The names learners know each kind of language practice by. */
 export function useActivityName() {
   const t = useExtracted();
 
@@ -25,11 +24,6 @@ export function useActivityName() {
   return (activity: LanguageActivityType) => names[activity];
 }
 
-/**
- * A language plan's practice, one toggle each: turning one off ("I don't need writing") leaves it
- * out of lessons from now on, and turning it on brings it back. A tapped one shows its new state
- * while its change saves.
- */
 export function PlanActivities() {
   const t = useExtracted();
   const activityName = useActivityName();

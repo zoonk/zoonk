@@ -9,30 +9,23 @@ import { getLessonLineTone } from "./line-tone";
 
 type PlanEffect = NonNullable<PlanChangeView["effect"]>;
 
-/** The goal's date before a change (null without one) and after it. */
 type GoalDateMove = { after: string; before: string | null };
 
 const NO_BREAK_SPACE = "\u00A0";
 
-/** A Sunday, so a weekday number (Sunday 0 to Saturday 6) is that many days after it. */
-const FIRST_SUNDAY = Date.parse("2023-01-01T00:00:00Z");
+const REFERENCE_SUNDAY = Date.parse("2023-01-01T00:00:00Z");
 const DAY_MS = 86_400_000;
 
-/** "Sunday", for a plan's weekday number. */
 function useWeekdayName() {
   const format = useFormatter();
 
   return (weekday: number) =>
-    format.dateTime(new Date(FIRST_SUNDAY + weekday * DAY_MS), {
+    format.dateTime(new Date(REFERENCE_SUNDAY + weekday * DAY_MS), {
       timeZone: "UTC",
       weekday: "long",
     });
 }
 
-/**
- * A day as a diff line says it, kept whole: a long line wraps before "October 12", never inside it
- * (phones read "until Oct" over "12").
- */
 function useDiffDate() {
   const formatDate = useFormatIsoDate();
 
@@ -40,10 +33,6 @@ function useDiffDate() {
     formatDate(...args).replaceAll(" ", NO_BREAK_SPACE);
 }
 
-/**
- * A line that moves: what it was, then what it becomes; nothing when it doesn't move. A move is
- * neither good nor bad news on its own, so it carries no color.
- */
 function moved({ after, before }: { after: string; before: string }): DiffLine[] {
   return after === before
     ? []
@@ -53,18 +42,10 @@ function moved({ after, before }: { after: string; before: string }): DiffLine[]
       ];
 }
 
-/** A sentence as a diff line, whose lines end without a full stop ("Plan ends October 12"). */
 function asLine(sentence: string): string {
   return sentence.replace(/\.$/u, "");
 }
 
-/**
- * The lessons a change leaves out and adds, each a line in the words its sentence says them
- * ("Leaves out 228 lessons", "Adds about 8 lessons" when some aren't written yet), so screen
- * readers hear no "Now" before them. Without a date they count against (`byDate`), the plan keeps
- * every lesson, so it only has fewer or more of them ("3 fewer lessons", "About 4 more lessons"):
- * "left out" is for lessons a date leaves no time for.
- */
 function useLessonLines() {
   const t = useExtracted();
 
@@ -91,8 +72,7 @@ function useLessonLines() {
   };
 
   return (effect: PlanEffect, byDate: boolean): DiffLine[] => {
-    // Without a date only the net count changes: one line with the number its sentence says ("7
-    // fewer lessons"), never "8 fewer" beside "1 more".
+    // Without a date only the net count changes, never "8 fewer" beside "1 more".
     const net = effect.lessonsAdded - effect.lessonsRemoved;
 
     const counts = byDate
@@ -119,7 +99,6 @@ function useLessonLines() {
   };
 }
 
-/** The goal's date a change moves: the one it had over the new one, or the new one alone. */
 function useGoalDateLines() {
   const t = useExtracted();
   const formatDate = useDiffDate();
@@ -135,14 +114,6 @@ function useGoalDateLines() {
   };
 }
 
-/**
- * What a plan change moves, line by line, the biggest change a learner can see first: the lessons
- * it leaves out or adds (what they'll study), then the goal's date when the card passes it, the
- * plan's end, each phase's and area's end, how many lessons an area has left, the next mock and
- * the week's mock or challenge day. Resting on
- * Saturdays highlighted the end moving a day while the 228 lessons it left out were only in its
- * sentence; an end that moves a day beside lessons that change isn't said (see `getShownEndMove`).
- */
 function usePlanEffectLines() {
   const t = useExtracted();
   const formatDate = useDiffDate();
@@ -224,26 +195,15 @@ function usePlanEffectLines() {
   };
 }
 
-/**
- * A plan change as a diff, colored by what it means for the learner (`getLessonLineTone`): the
- * lessons it leaves out or adds first, the one line in color (good news blue, bad news red), then
- * each date or count that moves, plain: the old value struck through over the new one. Nothing when
- * the change moves none; its sentence says the rest.
- */
 export function PlanEffectDiff({
   byDate = true,
   className,
   effect,
   goalDate,
 }: {
-  /**
-   * Whether the lessons it leaves out or adds count against a date still ahead (`countsByDate`).
-   * Without one, an automatic change only gives the goal fewer or more lessons.
-   */
   byDate?: boolean;
   className?: string;
   effect: PlanEffect | null;
-  /** The goal's date a change moves, when the card knows both: it comes right after the lessons. */
   goalDate?: GoalDateMove;
 }) {
   const t = useExtracted();
