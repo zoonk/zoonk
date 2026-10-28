@@ -75,6 +75,7 @@ private struct BuddyContent: View {
   @Environment(BuddyStore.self) private var store
   @Environment(TutorStore.self) private var tutor
   @Environment(\.horizontalSizeClass) private var sizeClass
+  @Environment(\.dynamicTypeSize) private var typeSize
   @Environment(\.tutorPlaces) private var places
 
   let status: BuddyStatus
@@ -270,25 +271,34 @@ private struct BuddyContent: View {
       isDayShown.toggle()
     } label: {
       HStack(spacing: 16) {
-        Label {
-          Text(
-            status.energy.current.map {
-              ($0 / 100).formatted(.percent.precision(.fractionLength(0)))
-            } ?? "–")
-        } icon: {
-          Image(systemName: "bolt.fill")
-            .foregroundStyle(.energy)
-        }
+        // At accessibility sizes the two values stack, so neither breaks across lines.
+        let values =
+          typeSize.isAccessibilitySize
+          ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))
+          : AnyLayout(HStackLayout(spacing: 16))
 
-        if let today = status.today, !today.missions.isEmpty {
+        values {
           Label {
             Text(
-              verbatim:
-                "\(today.missions.filter { $0.status == .done }.count)/\(today.missions.count)")
+              status.energy.current.map {
+                ($0 / 100).formatted(.percent.precision(.fractionLength(0)))
+              } ?? "–")
           } icon: {
-            Image(systemName: "target")
+            Image(systemName: "bolt.fill")
+              .foregroundStyle(.energy)
+          }
+
+          if let today = status.today, !today.missions.isEmpty {
+            Label {
+              Text(
+                verbatim:
+                  "\(today.missions.filter { $0.status == .done }.count)/\(today.missions.count)")
+            } icon: {
+              Image(systemName: "target")
+            }
           }
         }
+        .fixedSize()
 
         Spacer(minLength: 0)
 

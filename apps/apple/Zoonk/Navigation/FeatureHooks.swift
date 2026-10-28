@@ -74,7 +74,9 @@ extension TutorPlaces {
       case .mission(let opens):
         switch opens {
         case .case1, .case7:
-          router.open(.session)
+          // A block of the day (or an area's practice) opens from Today, which opens the day
+          // first; the session screen alone has nothing to show before that.
+          router.select(.today)
         case .case2:
           router.open(.mistakePractice())
         case .case3(let pattern):

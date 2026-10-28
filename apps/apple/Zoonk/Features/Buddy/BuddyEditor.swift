@@ -165,7 +165,7 @@ struct BuddyGlassesPicker: View {
           }
         }
 
-        ToolbarItem(placement: .confirmationAction) {
+        ToolbarItem(placement: .cancellationAction) {
           Button(role: .close) {
             dismiss()
           }
