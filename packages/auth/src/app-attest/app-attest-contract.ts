@@ -19,7 +19,7 @@ export const APP_ATTEST_OPERATIONS = {
   guest: "guest",
 } as const;
 
-export type AppAttestOperation = (typeof APP_ATTEST_OPERATIONS)[keyof typeof APP_ATTEST_OPERATIONS];
+type AppAttestOperation = (typeof APP_ATTEST_OPERATIONS)[keyof typeof APP_ATTEST_OPERATIONS];
 
 /** A request an assertion is for: its operation and its fields in a fixed order. */
 export type AppAttestBinding = { fields: string[]; operation: AppAttestOperation };
