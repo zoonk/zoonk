@@ -1,0 +1,407 @@
+import XCTest
+
+@testable import Zoonk
+
+final class LessonPlayerStateTests: XCTestCase {
+  func testReadsAnswersAndEndsInOrder() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+
+    XCTAssertEqual(state.currentStep?.id, "hook")
+    state.continueLesson()
+    XCTAssertEqual(state.currentStep?.id, "explanation")
+    state.continueLesson()
+    XCTAssertEqual(state.currentStep?.id, "check")
+
+    try answerCheck(&state, optionId: "right")
+    XCTAssertEqual(state.phase, .feedback)
+    XCTAssertEqual(state.currentResult?.isCorrect, true)
+
+    state.continueLesson()
+    XCTAssertEqual(state.currentStep?.id, "summary")
+    state.continueLesson()
+
+    XCTAssertEqual(state.phase, .completed)
+    XCTAssertEqual(state.completion?.status, .saving)
+    XCTAssertEqual(state.firstVerdicts, ["check": true])
+  }
+
+  func testMissedCheckComesBackOnceAndKeepsItsFirstVerdict() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+    state.continueLesson()
+    state.continueLesson()
+
+    try answerCheck(&state, optionId: "wrong")
+    XCTAssertEqual(state.currentResult?.correctAnswer, "Paris")
+    state.continueLesson()
+    state.continueLesson()
+
+    XCTAssertEqual(state.currentStep?.id, "check", "a missed check returns after the summary")
+    try answerCheck(&state, optionId: "wrong")
+    state.continueLesson()
+
+    XCTAssertEqual(state.phase, .completed, "it comes back only once")
+    XCTAssertEqual(state.firstVerdicts, ["check": false])
+  }
+
+  func testWorkedExampleRevealsOnePartPerContinue() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: [try step(workedExample)])
+
+    XCTAssertEqual(state.revealed["worked"] ?? 1, 1)
+    state.continueLesson()
+    XCTAssertEqual(state.revealed["worked"], 2)
+    state.continueLesson()
+    XCTAssertEqual(state.phase, .completed)
+  }
+
+  func testBuiltLanguageAnswerGetsOneChanceToSelfCorrect() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: [try step(fillBlank)])
+    let step = try XCTUnwrap(state.currentStep)
+
+    let first = try XCTUnwrap(LessonGrading.grade(.fillBlank(userAnswers: ["est"]), step: step))
+    state.resolve(step.id, result: LessonStepResult(first))
+    XCTAssertEqual(state.phase, .playing)
+    XCTAssertEqual(state.notice, .selfCorrect)
+    XCTAssertEqual(state.firstVerdicts, [step.id: false])
+
+    let second = try XCTUnwrap(LessonGrading.grade(.fillBlank(userAnswers: [" Suis "]), step: step))
+    state.resolve(step.id, result: LessonStepResult(second))
+    XCTAssertEqual(state.phase, .feedback)
+    XCTAssertNil(state.notice)
+    XCTAssertEqual(state.firstVerdicts, [step.id: false], "the first verdict still counts")
+  }
+
+  func testPreviousShowsAnAnsweredScreenAgain() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+
+    XCTAssertTrue(state.canGoBack)
+    state.goBack()
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.phase, .feedback)
+    XCTAssertTrue(state.reviewing)
+    state.continueLesson()
+    XCTAssertEqual(state.currentStep?.id, "summary")
+  }
+
+  func testResumedRunOpensAfterTheReadingBeforeTheFirstOpenScreen() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps(extraCheck: true))
+
+    state.startRun(
+      runId: "run",
+      answers: [LessonRunAnswer(stepId: "check", isCorrect: false, answeredAt: .now)])
+
+    XCTAssertEqual(state.runId, "run")
+    XCTAssertEqual(state.currentStep?.id, "explanation-2", "the reading before the open question")
+    XCTAssertEqual(state.queue.last, "check", "a check missed once comes back at the end")
+    XCTAssertEqual(state.firstVerdicts, ["check": false])
+  }
+
+  func testRunWithEveryScreenAnsweredIsReadyToFinish() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+
+    state.startRun(
+      runId: "run", answers: [LessonRunAnswer(stepId: "check", isCorrect: true, answeredAt: .now)])
+
+    XCTAssertEqual(state.phase, .completed)
+    XCTAssertEqual(state.completion?.status, .ready)
+  }
+
+  func testRunStartedAfterAnAnswerKeepsTheLearnersScreen() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+
+    state.startRun(
+      runId: "run", answers: [LessonRunAnswer(stepId: "check", isCorrect: false, answeredAt: .now)])
+
+    XCTAssertEqual(state.currentStep?.id, "check")
+    XCTAssertEqual(state.phase, .feedback)
+  }
+
+  func testQuestionFirstSupportOpensWithTheQuestion() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+
+    state.startRun(runId: "run", answers: [], support: .questionFirst)
+
+    XCTAssertEqual(state.queue, ["hook", "check", "explanation", "summary"])
+  }
+
+  func testOptionalScreensAreLeftOut() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+
+    state.startRun(runId: "run", answers: [], optionalStepIds: ["check"])
+
+    XCTAssertEqual(state.queue, ["hook", "explanation", "summary"])
+  }
+
+  func testIncompleteCompletionReturnsToTheMissingScreen() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+    state.startRun(runId: "run", answers: [])
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    state.continueLesson()
+    XCTAssertEqual(state.phase, .completed)
+
+    state.resync(answers: [])
+
+    XCTAssertEqual(state.currentStep?.id, "hook", "nothing reached the server: from the top")
+    XCTAssertEqual(state.notice, .answerNotSaved)
+    XCTAssertEqual(state.phase, .playing)
+  }
+
+  func testResyncWithEveryAnswerSavedMarksTheCompletionFailed() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "right")
+    state.continueLesson()
+    state.continueLesson()
+
+    state.resync(answers: [LessonRunAnswer(stepId: "check", isCorrect: true, answeredAt: .now)])
+
+    XCTAssertEqual(state.phase, .completed)
+    XCTAssertEqual(state.completion?.status, .failed)
+  }
+
+  func testLateConfirmationOfAnEarlierAttemptChangesNothing() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+    state.continueLesson()
+    state.continueLesson()
+    try answerCheck(&state, optionId: "wrong", attemptId: "second")
+
+    state.confirm("check", attemptId: "first", nextReviewAt: .now, savedMistake: true)
+    XCTAssertEqual(state.currentResult?.savedMistake, false)
+
+    state.confirm("check", attemptId: "second", nextReviewAt: .now, savedMistake: true)
+    XCTAssertEqual(state.currentResult?.savedMistake, true)
+  }
+
+  func testServerGradedAnswerWaitsAndCanBeRetried() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: [try step(typedAnswer)])
+
+    state.select(.typedAnswer(text: "Because"), for: "typed")
+    state.startChecking()
+    XCTAssertEqual(state.phase, .checking)
+    state.failChecking()
+    XCTAssertEqual(state.phase, .playing)
+    XCTAssertTrue(state.checkFailed)
+    XCTAssertEqual(state.currentAnswer, .typedAnswer(text: "Because"), "the answer stays to resend")
+  }
+
+  func testRefusedRunHasNoPrevious() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+    state.continueLesson()
+    state.refuseRun(.limitReached(tier: .guest, period: .total))
+
+    XCTAssertFalse(state.canGoBack)
+  }
+
+  // MARK: - Helpers
+
+  private func answerCheck(
+    _ state: inout LessonPlayerState, optionId: String, attemptId: String? = nil
+  ) throws {
+    let step = try XCTUnwrap(state.currentStep)
+    state.select(.check(optionId: optionId), for: step.id)
+    let grade = try XCTUnwrap(LessonGrading.grade(.check(optionId: optionId), step: step))
+    state.resolve(step.id, result: LessonStepResult(grade, attemptId: attemptId))
+  }
+
+  private func lessonSteps(extraCheck: Bool = false) throws -> [LessonStep] {
+    var steps = [try step(textHook), try step(explanation), try step(check(id: "check"))]
+
+    if extraCheck {
+      steps.append(
+        try step(
+          explanation.replacingOccurrences(
+            of: "\"id\": \"explanation\"", with: "\"id\": \"explanation-2\"")))
+      steps.append(try step(check(id: "second")))
+    }
+
+    return steps + [try step(summary)]
+  }
+}
+
+final class LessonGradingTests: XCTestCase {
+  func testArrangedWordsIgnorePunctuationAndCase() throws {
+    let step = try step(reading)
+
+    let right = LessonGrading.grade(.reading(arrangedWords: ["je", "suis", "Marie"]), step: step)
+    let wrong = LessonGrading.grade(.reading(arrangedWords: ["Marie", "suis", "je"]), step: step)
+
+    XCTAssertEqual(right?.isCorrect, true)
+    XCTAssertEqual(right?.correctAnswer, "Je suis Marie.")
+    XCTAssertEqual(wrong?.isCorrect, false)
+  }
+
+  func testFillBlankShowsTheWholeSentence() throws {
+    let grade = LessonGrading.grade(.fillBlank(userAnswers: ["es"]), step: try step(fillBlank))
+
+    XCTAssertEqual(grade?.isCorrect, false)
+    XCTAssertEqual(grade?.correctAnswer, "Je suis ici.")
+  }
+
+  func testNumericActivityAnswerWithinTolerance() throws {
+    let step = try step(numericActivity)
+
+    XCTAssertEqual(LessonGrading.grade(.activity(.numeric(10.4)), step: step)?.isCorrect, true)
+    XCTAssertEqual(LessonGrading.grade(.activity(.numeric(11)), step: step)?.isCorrect, false)
+    XCTAssertNil(
+      LessonGrading.grade(.activity(.choice(optionId: "a")), step: step),
+      "an answer that doesn't fit the check isn't graded")
+  }
+
+  func testInteractionActivityIsGradedByItsRendererOrTheServer() throws {
+    let step = try step(interactionActivity)
+    let answer = LessonAnswer.activity(
+      ActivityAnswer(value: .object(["kind": .string("order"), "ids": .array([.string("b")])])))
+
+    XCTAssertNil(LessonGrading.grade(answer, step: step))
+    XCTAssertEqual(
+      LessonGrading.grade(answer, step: step, gradeActivity: { _, _ in true })?.isCorrect, true)
+  }
+
+  func testChallengePathEndsAndScoresItsDecisions() throws {
+    let step = try step(challenge)
+
+    guard case .challenge(let content) = step.content else {
+      return XCTFail("Expected a challenge")
+    }
+
+    XCTAssertEqual(
+      LessonGrading.grade(.challenge(choiceIds: ["good"]), step: step)?.isCorrect, true)
+    XCTAssertEqual(
+      LessonGrading.grade(.challenge(choiceIds: ["bad"]), step: step)?.isCorrect, false)
+    XCTAssertNil(
+      LessonGrading.grade(.challenge(choiceIds: []), step: step), "a path still deciding")
+
+    guard
+      case .deciding(_, _, _, let pending) = ChallengeProgress(
+        content: content, picks: ["good"], shown: 1)
+    else {
+      return XCTFail("Expected the first decision")
+    }
+
+    XCTAssertEqual(pending, "good")
+    XCTAssertEqual(
+      ChallengeWalk.meters(content, decisions: ChallengeWalk(content, choiceIds: ["bad"]).decisions)
+        .first?.value, 30)
+  }
+
+  func testDecodesEveryCoreScreenKind() throws {
+    let kinds = try [
+      textHook, explanation, workedExample, check(id: "c"), typedAnswer, summary, fillBlank,
+      reading,
+      numericActivity, challenge,
+    ].map { try step($0).kind }
+
+    XCTAssertEqual(
+      kinds,
+      [
+        .hook, .explanation, .workedExample, .check, .typedAnswer, .summary, .fillBlank, .reading,
+        .activity, .challenge,
+      ])
+  }
+}
+
+// MARK: - Fixtures
+
+private func step(_ json: String) throws -> LessonStep {
+  try JSONDecoder().decode(LessonStep.self, from: Data(json.utf8))
+}
+
+private func teaching(_ id: String, kind: String, content: String) -> String {
+  """
+  {"id": "\(id)", "position": 0, "skillId": null, "citation": null, "image": null,
+   "imagePending": false, "kind": "\(kind)", "content": \(content)}
+  """
+}
+
+private let textHook = teaching(
+  "hook", kind: "hook", content: #"{"variant": "text", "text": "Why?"}"#)
+
+private let explanation = teaching(
+  "explanation", kind: "explanation", content: #"{"title": "Idea", "text": "Paris is **big**."}"#)
+
+private let workedExample = teaching(
+  "worked", kind: "workedExample",
+  content:
+    #"{"problem": "2 + 2", "steps": [{"text": "Add"}, {"text": "Done", "math": "4"}], "result": "4"}"#
+)
+
+private func check(id: String) -> String {
+  teaching(
+    id, kind: "check",
+    content: #"""
+      {"question": "Capital of France?", "basis": null, "options": [
+        {"id": "right", "isCorrect": true, "reason": "It is.", "text": "Paris"},
+        {"id": "wrong", "isCorrect": false, "reason": "That's Lyon.", "text": "Lyon"}]}
+      """#)
+}
+
+private let typedAnswer = teaching(
+  "typed", kind: "typedAnswer",
+  content:
+    #"{"question": "Why?", "basis": null, "keyPoints": ["size"], "sampleAnswer": "Because."}"#)
+
+private let summary = teaching(
+  "summary", kind: "summary", content: #"{"ideas": [{"text": "Paris"}]}"#)
+
+private func language(_ id: String, kind: String, content: String, sentence: String = "null")
+  -> String
+{
+  """
+  {"id": "\(id)", "position": 0, "skillId": null, "kind": "\(kind)", "wordHints": null,
+   "exercise": {"id": "\(id)", "position": 0, "kind": "\(kind)", "content": \(content),
+     "sentence": \(sentence), "word": null, "wordBankOptions": [], "sentenceWordOptions": [],
+     "fillBlankOptions": [], "translationOptions": [], "vocabularyOptions": [],
+     "matchColumnsRightItems": []}}
+  """
+}
+
+private let fillBlank = language(
+  "blank", kind: "fillBlank",
+  content:
+    #"{"template": "Je [BLANK] ici.", "answers": ["suis"], "distractors": ["es"], "feedback": "Je → suis."}"#
+)
+
+private let reading = language(
+  "reading", kind: "reading", content: "{}",
+  sentence: #"""
+    {"id": "s", "sentence": "Je suis Marie.", "translation": "I am Marie.", "explanation": null,
+     "audioUrl": null, "romanization": null, "distractors": [], "translationDistractors": []}
+    """#)
+
+private let numericActivity = teaching(
+  "numeric", kind: "activity",
+  content: #"""
+    {"template": "numberLine", "prompt": "Move it", "fields": {"start": 0},
+     "check": {"kind": "numeric", "question": "Where?", "answer": 10, "explanation": "Ten.",
+       "tolerance": {"kind": "relative", "value": 0.05}}}
+    """#)
+
+private let interactionActivity = teaching(
+  "order", kind: "activity",
+  content: #"""
+    {"template": "processOrder", "prompt": "Order", "fields": {},
+     "check": {"kind": "interaction", "explanation": "First a."}}
+    """#)
+
+private let challenge = teaching(
+  "challenge", kind: "challenge",
+  content: #"""
+    {"title": "Launch", "variant": "work", "setting": "Office", "mission": "Ship", "team": [],
+     "meters": [{"id": "trust", "label": "Trust", "start": 50, "goodWhen": "high"}],
+     "panels": [], "skills": [], "startNodeId": "n1",
+     "nodes": [{"id": "n1", "prompt": "What now?", "messages": [], "choices": [
+       {"id": "good", "text": "Ask", "next": "end", "quality": "strong", "effects": [], "replies": [], "notes": []},
+       {"id": "bad", "text": "Guess", "next": "end", "quality": "weak",
+        "effects": [{"meter": "trust", "change": -20}], "replies": [], "notes": []}]}],
+     "endings": [{"id": "end", "outcome": "Shipped."}]}
+    """#)
