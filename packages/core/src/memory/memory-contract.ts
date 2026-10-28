@@ -59,12 +59,17 @@ export const memorySettingsUpdateSchema = z
 
 export type MemorySettingsUpdateInput = z.infer<typeof memorySettingsUpdateSchema>;
 
+/**
+ * An absent id reads as null: generated native clients (swift-openapi-generator) leave out a
+ * required key whose value is null, so a deletion's undo would arrive without `factId`.
+ */
 const memoryChangeReferenceSchema = z
   .object({
-    factId: z.uuid().nullable().meta({ description: "The fact the change added" }),
+    factId: z.uuid().nullable().default(null).meta({ description: "The fact the change added" }),
     previousFactId: z
       .uuid()
       .nullable()
+      .default(null)
       .meta({ description: "The fact the change replaced or removed" }),
   })
   .strict()
