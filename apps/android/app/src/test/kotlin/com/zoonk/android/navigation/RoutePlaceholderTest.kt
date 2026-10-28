@@ -1,0 +1,35 @@
+package com.zoonk.android.navigation
+
+import androidx.activity.ComponentActivity
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.ZoonkApp
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
+
+@RunWith(AndroidJUnit4::class)
+@Config(qualifiers = "w411dp-h891dp")
+class RoutePlaceholderTest {
+    @get:Rule
+    val rule = createAndroidComposeRule<ComponentActivity>()
+
+    @Test
+    fun everyRouteOpensItsScreen() {
+        lateinit var navigator: AppNavigator
+        rule.setContent {
+            navigator = rememberAppNavigator()
+            ZoonkApp(app = AppContainer(), navigator = navigator)
+        }
+
+        routeSamples.filter { it.presentation != Presentation.Web }.forEach { route ->
+            rule.runOnIdle { navigator.open(route) }
+            rule.onNode(hasText(route.toString()) and !hasClickAction()).assertIsDisplayed()
+        }
+    }
+}

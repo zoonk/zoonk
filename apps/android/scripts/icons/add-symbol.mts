@@ -32,8 +32,11 @@ async function addVariant({ file, url }: { file: string; url: string }) {
 
   const original = await response.text();
 
+  // Some of Google's files (`arrow_back`) are already mirrored.
+  const mirrors = values.mirrored && !original.includes("android:autoMirrored");
+
   const xml = original
-    .replace(/\s+android:tint="[^"]*"/u, values.mirrored ? '\n    android:autoMirrored="true"' : "")
+    .replace(/\s+android:tint="[^"]*"/u, mirrors ? '\n    android:autoMirrored="true"' : "")
     .replaceAll("@android:color/white", "@android:color/black");
 
   await writeFile(new URL(file, drawables), xml);

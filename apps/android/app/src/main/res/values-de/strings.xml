@@ -15,28 +15,56 @@
   "belt_red": "de1ef1d0df57e7c24eed5022d1e96445e23d03ddeac023d4cc05d2268460bf91",
   "belt_white": "91a2b81c2515e0f80c1d8ef7e305294310287d72cee8857eadee669e4a9dbd83",
   "belt_yellow": "5dd844f038b50cbe7d661a387a46339c9dc91c5f5f6bb4f4ed6181a1bd0c0c41",
+  "gate_log_in": "a83605d8917f901db673fe7067bb6ccf8da935238194afa9219561a8ecfebbd3",
+  "gate_session_ended_description": "4f0ebdc083a32de66d396be11b2de9f253e2dd45065592cf21f8c73a18732ba9",
+  "gate_session_ended_title": "40bbcee5fca44e23722acce0e7671eccf70e4c2a8d23301431f966538654d222",
+  "gate_sign_in_description": "a39c30b45be46b36d9076f84b43f7c041760d21733a1838eea059bc22134c9fc",
+  "gate_sign_in_title": "6ce52ad0a76cb821085bf93ec80e0683112c152337a0e3ea97a008a273138f0b",
+  "gate_start_free": "99da13678f841faf1c03848b227643bef6000362c87cf532ac6b915ea03012b1",
+  "gate_start_goal": "7b36c0b19e584872bd2505cfa5249aa0fb949fedd2d96d84a2df6963a2bcb4e7",
+  "gate_start_goal_description": "aba619fcfbe2c1549ea7777f9d47cd8f95a61a693ef43469f53d576c5a6a9976",
+  "gate_start_goal_title": "ce62479880f78cd9115b282879c068c11fb96217efb0b5e1ef74abdd08f4302e",
+  "gate_start_something_new": "a0a6d42aec64bc9434d4b747de0c1b71aaa1e5be339e6145b126fff71c82a8ed",
   "load_failed_description": "d47a259f4a86e443c34252968e2a02478b034526c12f62d558a55d85f546ba60",
   "load_failed_title": "c9dec3bccf7b404a259a6778b9e0e365f54578c2f05308680b60c6c544f22e4c",
   "load_failed_try_again": "66c55caebd82532c7b8ac874b156c93fa6f73401887624769384c590c0ba5cce",
-  "navigation_courses": "3503391c67799ee44bd9bae7a86d44f744f703e8e6b381629a15d268e0ec2649",
-  "navigation_home": "7442f4129488ceb699d3eaca7ab0642714a54d2a7b61685980a11aa9b426ae8d",
-  "navigation_new": "56af1792d08bdc98221fa712fe5e5d4dea7b0a9236da4e953a4dc70903d9f6e7",
-  "navigation_progress": "f3a5c7e607eb600c69468487007fcc61874609f054b9f80758c918da2e44d394",
-  "placeholder_courses": "b2983415c2320c18eb5919f11ccd90434d25c346b3a225194234ee23322365db",
-  "placeholder_home": "139c3e8bbaff3c8bd5e26cd4256c6b768449fd78ff6386b3d6331549ebacc6d6",
-  "placeholder_new_course": "f6c8a24dfe95557adff75c10963853c8c18455b4a2f3a0bd36d48e53a2ac9187",
-  "placeholder_progress": "d0110b0967dd8aee67dbcd7e2c58142749f37c76e03dfa22c957b6ce4629975b"
+  "navigation_back": "991c560fdb8edd1501e082cdc5e49c3efa7cf513e1700404512bf8cfec77c65f",
+  "navigation_buddy": "ba1cd1244098c498a98569ba446cb636f9c6bbc3bd0e69445b0077ccbd8a8043",
+  "navigation_exam": "35d7ed00834fa898e73553396ef524e9e22201935c86da04f6e4d0c78491b322",
+  "navigation_mind_maps": "0f6332d21ef00b88cc190534244ab1c578c29ec9aee6a7dca8d9fcf12ed15a4a",
+  "navigation_mistakes": "da691f07e02cf61d491b6e2103b32de83d1bf3e4026629cb0893eb6e767ea23f",
+  "navigation_plan": "342492bbf77aa3d8a9963619e4a8ea559140bde0df0e42404cadaff71b917b17",
+  "navigation_speaking": "addbd281ce8bffc0f23acacec5e6ab25db3b99829a42c88534c09aea619a0e5e",
+  "navigation_statistics": "e8fb592ed33cc1f4c97a05321cc8f0a7711ed5e501b155c173d6702c8684c3c9",
+  "navigation_study": "8b3752f2d808233863b8e0797833bad85e2c9d653c47232cfe7b060895bfc381",
+  "navigation_today": "797d355eb2b1e46bf90bd415faeff70a9c42b76904bae823d8d7a4bd4da9d095",
+  "navigation_user_menu": "aa0d6f9b07be2db17049f069e73ffc6ac80559d1ee9db474bbec1c642f6bc384",
+  "task_leave": "e1bb1d841def987889c30c7e783fa24211f01266bb638d633c974d7082d6f4cf"
 }
 -->
 <resources>
-    <string name="navigation_home">Start</string>
-    <string name="navigation_new">Neu</string>
-    <string name="navigation_courses">Kurse</string>
-    <string name="navigation_progress">Fortschritt</string>
-    <string name="placeholder_home">Startseite</string>
-    <string name="placeholder_new_course">Seite für einen neuen Kurs</string>
-    <string name="placeholder_courses">Kursübersicht</string>
-    <string name="placeholder_progress">Fortschrittsübersicht</string>
+    <string name="navigation_today">Heute</string>
+    <string name="navigation_plan">Plan</string>
+    <string name="navigation_buddy">Kumpel</string>
+    <string name="navigation_study">Lernen</string>
+    <string name="navigation_mistakes">Fehlerheft</string>
+    <string name="navigation_exam">Prüfung</string>
+    <string name="navigation_speaking">Sprechen</string>
+    <string name="navigation_mind_maps">Mindmaps</string>
+    <string name="navigation_statistics">Statistik</string>
+    <string name="navigation_back">Zurück</string>
+    <string name="navigation_user_menu">Benutzermenü</string>
+    <string name="task_leave">Verlassen</string>
+    <string name="gate_sign_in_title">Melde dich an, um weiterzumachen</string>
+    <string name="gate_sign_in_description">Melde dich an, um dort weiterzumachen, wo du aufgehört hast, oder kostenlos zu starten.</string>
+    <string name="gate_session_ended_title">Deine Sitzung ist abgelaufen</string>
+    <string name="gate_session_ended_description">Melde dich an, um mit deinem Plan weiterzumachen.</string>
+    <string name="gate_log_in">Anmelden</string>
+    <string name="gate_start_free">Kostenlos starten</string>
+    <string name="gate_start_something_new">Etwas Neues anfangen</string>
+    <string name="gate_start_goal_title">Starte mit einem Ziel</string>
+    <string name="gate_start_goal_description">Erzähl uns, was du lernen möchtest, und wir planen jeden Tag bis dahin.</string>
+    <string name="gate_start_goal">Ziel starten</string>
     <string name="belt_white">Weißer Gürtel</string>
     <string name="belt_yellow">Gelber Gürtel</string>
     <string name="belt_orange">Oranger Gürtel</string>

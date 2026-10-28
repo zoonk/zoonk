@@ -1,14 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Zoonk</string>
-    <string name="navigation_home">Home</string>
-    <string name="navigation_new">New</string>
-    <string name="navigation_courses">Courses</string>
-    <string name="navigation_progress">Progress</string>
-    <string name="placeholder_home">Home screen</string>
-    <string name="placeholder_new_course">New course screen</string>
-    <string name="placeholder_courses">Courses screen</string>
-    <string name="placeholder_progress">Progress screen</string>
+    <string name="navigation_today">Today</string>
+    <string name="navigation_plan">Plan</string>
+    <string name="navigation_buddy">Buddy</string>
+    <string name="navigation_study">Study</string>
+    <string name="navigation_mistakes">Mistakes notebook</string>
+    <string name="navigation_exam">Exam</string>
+    <string name="navigation_speaking">Speaking</string>
+    <string name="navigation_mind_maps">Mind maps</string>
+    <string name="navigation_statistics">Statistics</string>
+    <string name="navigation_back">Back</string>
+    <string name="navigation_user_menu">User menu</string>
+    <string name="task_leave">Leave</string>
+    <string name="gate_sign_in_title">Log in to continue</string>
+    <string name="gate_sign_in_description">Log in to pick up where you left off, or start free.</string>
+    <string name="gate_session_ended_title">Your session ended</string>
+    <string name="gate_session_ended_description">Log in to pick up your plan.</string>
+    <string name="gate_log_in">Log in</string>
+    <string name="gate_start_free">Start free</string>
+    <string name="gate_start_something_new">Start something new</string>
+    <string name="gate_start_goal_title">Start with a goal</string>
+    <string name="gate_start_goal_description">Tell us what you want to learn, and we\'ll plan every day until you get there.</string>
+    <string name="gate_start_goal">Start a goal</string>
     <string name="belt_white">White belt</string>
     <string name="belt_yellow">Yellow belt</string>
     <string name="belt_orange">Orange belt</string>
