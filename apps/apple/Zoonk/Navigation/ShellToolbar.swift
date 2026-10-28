@@ -6,6 +6,8 @@ struct ShellToolbar: ViewModifier {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+  @Environment(\.isToolbarVertical) private var isToolbarVertical
 
   /// Search's root has its own field and no bar of the shell's.
   let isShown: Bool
@@ -16,6 +18,14 @@ struct ShellToolbar: ViewModifier {
     } else {
       content
     }
+  }
+
+  /// Beside a vertical toolbar (the iPhone Duo) the bar holds the tab's title too. Folded, it's too
+  /// narrow for the title and the goal's name both, and the system would drop the title, so the
+  /// switcher shows only its symbol: the title keeps its place, as main's page title does, and the
+  /// menu still names every goal.
+  private var isSwitcherCompact: Bool {
+    isToolbarVertical && horizontalSizeClass == .compact
   }
 
   @ToolbarContentBuilder
@@ -36,7 +46,7 @@ struct ShellToolbar: ViewModifier {
     case .signedIn, .unavailable:
       if let summary = learner.summary.value {
         ToolbarItem(placement: .topBarLeading) {
-          GoalSwitcher(summary: summary)
+          GoalSwitcher(summary: summary, isCompact: isSwitcherCompact)
         }
 
         if let level = summary.level {
@@ -103,6 +113,8 @@ private struct GoalSwitcher: View {
   @ScaledMetric(relativeTo: .body) private var maxTitleWidth: CGFloat = 140
 
   let summary: LearnerSummary
+  /// Shows only the goal's symbol, for a bar without room for its name.
+  let isCompact: Bool
 
   var body: some View {
     let followed = summary.followedGoals
@@ -112,13 +124,18 @@ private struct GoalSwitcher: View {
       Button {
         router.open(.startGoal())
       } label: {
-        Label {
-          startGoalTitle
-        } icon: {
+        if isCompact {
           Image(systemName: "plus")
+        } else {
+          Label {
+            startGoalTitle
+          } icon: {
+            Image(systemName: "plus")
+          }
+          .labelStyle(.titleAndIcon)
         }
-        .labelStyle(.titleAndIcon)
       }
+      .accessibilityLabel(startGoalTitle)
     } else {
       Menu {
         if !followed.isEmpty {
@@ -178,20 +195,24 @@ private struct GoalSwitcher: View {
           }
         }
       } label: {
-        HStack(spacing: 4) {
-          if let goal = shownGoal {
-            Text(goal.title)
-              .lineLimit(1)
-              .frame(maxWidth: maxTitleWidth)
-          } else {
-            startGoalTitle
-          }
+        if isCompact {
+          Image(systemName: "target")
+        } else {
+          HStack(spacing: 4) {
+            if let goal = shownGoal {
+              Text(goal.title)
+                .lineLimit(1)
+                .frame(maxWidth: maxTitleWidth)
+            } else {
+              startGoalTitle
+            }
 
-          Image(systemName: "chevron.down")
-            .imageScale(.small)
-            .foregroundStyle(.secondary)
+            Image(systemName: "chevron.down")
+              .imageScale(.small)
+              .foregroundStyle(.secondary)
+          }
+          .fontWeight(.semibold)
         }
-        .fontWeight(.semibold)
       }
       .accessibilityLabel(shownGoal.map { Text($0.title) } ?? startGoalTitle)
       .accessibilityHint(
@@ -284,4 +305,15 @@ private func daysLeft(until targetDate: String?) -> Int? {
   }
 
   return days
+}
+
+extension EnvironmentValues {
+  /// Whether the system shows the toolbar as a vertical bar beside the content (iPhone Duo).
+  var isToolbarVertical: Bool {
+    if #available(iOS 27.1, *) {
+      toolbarVerticalEdge != nil
+    } else {
+      false
+    }
+  }
 }
