@@ -71,10 +71,8 @@ struct MockResultView: View {
     Group {
       if view.purpose == .placement {
         Button {
+          // Onboarding is under the mock: its plan starts from these answers.
           dismiss()
-          if let goalId = view.goalId {
-            router.open(.goalSetup(goalId: goalId))
-          }
         } label: {
           Text("See my plan", tableName: "Mock", comment: "After a placement mock")
         }
@@ -584,7 +582,8 @@ private struct MockPreparationRow: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 6) {
       Text(
-        "\(preparation.before.formatted(.percent.precision(.fractionLength(0)))) → \(preparation.after.formatted(.percent.precision(.fractionLength(0))))"
+        verbatim:
+          "\(preparation.before.formatted(.percent.precision(.fractionLength(0)))) → \(preparation.after.formatted(.percent.precision(.fractionLength(0))))"
       )
       .font(.title2.weight(.semibold).monospacedDigit())
       ProgressView(value: preparation.after, total: 1)

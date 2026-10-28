@@ -71,7 +71,6 @@ private struct MockChooserContent: View {
 /// set where the plan starts; stopping midway keeps them. Once started it runs right here.
 struct PlacementMockScreen: View {
   @Environment(ExamStore.self) private var exam
-  @Environment(AppRouter.self) private var router
   @Environment(\.dismiss) private var dismiss
   @State private var startedId: String?
 
@@ -130,12 +129,9 @@ struct PlacementMockScreen: View {
         startedId = id
       }
     default:
-      // A goal that isn't an exam, or one already past it: the quick placement goes on.
+      // A goal that isn't an exam, or one already past it: back to onboarding's quick placement.
       ProgressView()
-        .task {
-          dismiss()
-          router.open(.goalSetup(goalId: goalId))
-        }
+        .task { dismiss() }
     }
   }
 }

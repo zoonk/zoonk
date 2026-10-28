@@ -98,7 +98,7 @@ struct EssayGradeSections: View {
           DisclosureGroup {
             VStack(alignment: .leading, spacing: 8) {
               if let quote = criterion.quote {
-                Text("“\(quote)”")
+                Text(verbatim: "“\(quote)”")
                   .italic()
                   .foregroundStyle(.secondary)
               }

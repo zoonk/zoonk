@@ -72,7 +72,8 @@ struct MockRunnerView: View {
       }
     } message: {
       Text(
-        "\(MockSectionCounts(run: run).leftOpen) \(String(localized: "After this, your answers can't change.", table: "Mock", comment: "Handing in is final"))"
+        verbatim:
+          "\(MockSectionCounts(run: run).leftOpen) \(String(localized: "After this, your answers can't change.", table: "Mock", comment: "Handing in is final"))"
       )
     }
   }
@@ -304,30 +305,34 @@ extension View {
 }
 
 private struct ItemClock: ViewModifier {
+  @State private var deadline: Date?
   let run: MockRun
   let question: MockQuestion
 
   func body(content: Content) -> some View {
     if let seconds = run.moves.itemSeconds {
-      let spent = run.drafts[question.itemId]?.durationMs ?? 0
-      let deadline = Date.now.addingTimeInterval(max(0, Double(seconds) - Double(spent) / 1000))
-
       content
         .safeAreaInset(edge: .top) {
-          HStack {
-            Spacer()
-            Text(timerInterval: Date.now...deadline, countsDown: true)
-              .font(.caption.monospacedDigit())
-              .foregroundStyle(.secondary)
-              .accessibilityLabel(
-                Text(
-                  "Time left for this question", tableName: "Mock",
-                  comment: "A question's own clock"))
+          if let deadline {
+            HStack {
+              Spacer()
+              Text(timerInterval: Date.now...max(deadline, .now), countsDown: true)
+                .font(.caption.monospacedDigit())
+                .foregroundStyle(.secondary)
+                .accessibilityLabel(
+                  Text(
+                    "Time left for this question", tableName: "Mock",
+                    comment: "A question's own clock"))
+            }
+            .scenePadding(.horizontal)
           }
-          .scenePadding(.horizontal)
         }
         .task(id: question.id) {
-          try? await Task.sleep(for: .seconds(deadline.timeIntervalSinceNow))
+          // The question's clock counts from what it already spent, set once as it appears.
+          let spent = Double(run.drafts[question.itemId]?.durationMs ?? 0) / 1000
+          let end = Date.now.addingTimeInterval(max(0, Double(seconds) - spent))
+          deadline = end
+          try? await Task.sleep(for: .seconds(end.timeIntervalSinceNow))
           guard !Task.isCancelled else { return }
           run.timeOutQuestion()
         }
