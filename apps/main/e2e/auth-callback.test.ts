@@ -4,10 +4,6 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser, generateOneTimeToken } from "@zoonk/e2e/fixtures/users";
 import { expect, test } from "./fixtures";
 
-/**
- * Reads the redirect target from a response that intentionally does not follow
- * redirects, so tests can inspect callback failures at the route boundary.
- */
 function getRedirectLocation(response: APIResponse): string {
   const location = response.headers().location;
 
@@ -18,11 +14,6 @@ function getRedirectLocation(response: APIResponse): string {
   return location;
 }
 
-/**
- * Creates the local login state directly because these tests target the
- * callback contract: the callback may redeem a token only when the same browser
- * already has the state cookie that `/login` writes.
- */
 async function createLoginState({
   baseURL,
   context,

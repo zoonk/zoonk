@@ -4,10 +4,8 @@ import { expectHydrated } from "./hydration";
 import { createStudyDay, openAs } from "./study-day";
 
 /**
- * Today is the screen learners open every day, and a tap on its tab must show their day at once:
- * every read it renders is a private cached read that rides in the tab's prefetch. Under
- * `instant()` nothing the server reads at tap time can arrive, so a read that drops out of the
- * prefetch (an uncached query, a request-time API in core) leaves Today's frame without the day.
+ * Under `instant()` nothing the server reads at tap time arrives, so a read that drops out of the
+ * tab's prefetch leaves Today without the day.
  */
 test.describe("Today's instant tab", () => {
   test("a tap on Today shows the learner's day from its prefetch", async ({ browser }) => {

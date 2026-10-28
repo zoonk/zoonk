@@ -22,11 +22,6 @@ function countSetAside(goalId: string): Promise<number> {
   });
 }
 
-/**
- * Lucas set himself a date and fell behind: it came three days ago, and the new day's settling set
- * aside the lessons it left (and dropped the challenges past it). Today has no session yet, so it
- * builds the day as it would the morning after.
- */
 async function passTheDate(goalId: string) {
   const date = isoDaysFromNow(-3);
 
@@ -48,10 +43,6 @@ async function passTheDate(goalId: string) {
   return { date, setAside: await countSetAside(goalId) };
 }
 
-/**
- * Standing in for the API: Preview finds the day his time covers what's left by (the date
- * search runs only when he asks), here two months out.
- */
 async function routeFoundDate({
   date,
   goalId,
@@ -68,14 +59,11 @@ async function routeFoundDate({
   return fittingDate;
 }
 
-/** The Plan's one suggestion: the aside's panel from 72rem, the line in the page's column under it. */
 function suggestionSlot(page: Page) {
   return page.locator('[data-slot="plan-suggestion"]').filter({ visible: true });
 }
 
 test.describe("A plan whose date came with lessons left", () => {
-  // Lucas's plan read "Ended" and "Your plan ended · 13 lessons were left out" the day after his
-  // date. The owner: plans don't end; offer a way to adjust them automatically.
   test("keeps going from the Plan once he previews it, and undo brings it back", async ({
     browser,
   }) => {
@@ -88,7 +76,6 @@ test.describe("A plan whose date came with lessons left", () => {
       await page.setViewportSize({ height: 900, width: 1440 });
       await page.goto("/plan");
 
-      // The new date is found once he taps Preview, then its diff shows before Apply.
       const slot = suggestionSlot(page);
       await slot.getByRole("button", { exact: true, name: "Preview" }).click();
       await expect(slot.locator('[data-slot="diff-lines"]')).toBeVisible();
@@ -102,8 +89,6 @@ test.describe("A plan whose date came with lessons left", () => {
       await expect.poll(() => readTargetDate(user.goalId)).toBe(date);
       await expect.poll(() => countSetAside(user.goalId)).toBe(setAside);
 
-      // Undo gives the offer back with the plan: he read "Undone" with no way back to it until he
-      // reloaded.
       await expect(slot.getByRole("button", { exact: true, name: "Preview" })).toBeVisible();
     });
   });

@@ -3,11 +3,6 @@ import { type Page, expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 
-/**
- * The Plan's "Adjust plan" changes the plan as the learner says, and Undo gives it back as it was.
- */
-
-/** A preset's time as the editor writes it: "45 min", "1 hr", "1 hr 30 min". */
 function minutesLabel(minutes: number): string {
   const hours = Math.floor(minutes / 60);
   const rest = minutes % 60;
@@ -28,9 +23,7 @@ test.describe("Journey", () => {
   test("says what a time change in the plan editor did, and Undo gives the plan back as it was", async ({
     browser,
   }) => {
-    // Lucas's small plan plans again in a moment after each change.
     await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
-      // Each item by what it is, its day and its status: what the learner sees of the plan.
       const loadPlanItems = async () => {
         const items = await prisma.planItem.findMany({
           select: { kind: true, lessonId: true, scheduledFor: true, skillId: true, status: true },
@@ -57,13 +50,10 @@ test.describe("Journey", () => {
 
       await minutes.getByText(otherTime, { exact: true }).click();
 
-      // The editor says what the change did, by its controls, with a way back, once the plan is
-      // made again.
       await expect(
         editor.getByRole("status").filter({ hasText: `Daily time changed to ${otherTime}.` }),
       ).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });
 
-      // The plan was made again for the new time, so Undo has something to give back.
       await expect.poll(loadPlanItems).not.toStrictEqual(before);
       await editor.getByRole("button", { name: "Undo" }).click();
 

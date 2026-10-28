@@ -11,7 +11,6 @@ import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 import { continueToStep } from "./result-steps";
 import { openAs } from "./study-day";
 
-/** Wait for the submitted section's response before checking its next screen. */
 async function confirmMockHandIn(page: Page) {
   const mockId = new URL(page.url()).pathname.split("/").at(-1);
 
@@ -42,13 +41,12 @@ test.describe("Mocks whenever the learner wants", () => {
   }) => {
     const { answers, goal, user } = await createAnytimeMockLearner({ plus: true, written: true });
     const page = await openAs(browser, user);
-    // Long enough to grade: a shorter answer is "too short" without reaching a model.
+
     const essayText =
       "O controle externo da administração pública cabe ao Congresso Nacional, com o auxílio do Tribunal de Contas da União, que julga as contas dos administradores e fiscaliza a aplicação dos recursos federais.";
 
     await page.goto("/mock/new");
 
-    // The whole exam day, the discursive test included.
     await expect(page.getByRole("radio", { name: /^A full exam day/u })).toBeChecked();
     await page.getByRole("button", { name: "Start" }).click();
     await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
@@ -57,7 +55,6 @@ test.describe("Mocks whenever the learner wants", () => {
     await page.getByRole("button", { name: "Hand in this section" }).click();
     await confirmMockHandIn(page);
 
-    // The written test on its own clock: the exam's essay question, written in the mock.
     await expect(page.getByText(/^Written part · Mathematics$/u)).toBeVisible();
 
     await expect(
@@ -76,7 +73,6 @@ test.describe("Mocks whenever the learner wants", () => {
     await page.getByRole("button", { name: "Hand in the mock exam" }).click();
     await confirmMockHandIn(page);
 
-    // The objective score shows at once.
     await expect(
       page.getByRole("heading", { level: 1, name: /^Mock exam 1 done\s*8 of 8$/u }),
     ).toBeVisible();
@@ -91,13 +87,11 @@ test.describe("Mocks whenever the learner wants", () => {
       )
       .not.toBeNull();
 
-    // The essay's grading fails the way an outage would, and the essay offers to be graded again.
     await continueToStep(page, "Your answer");
     await expect(page.getByText("That didn't go through. Try again in a moment.")).toBeVisible();
     await expect(page.getByRole("button", { name: "Grade it" })).toBeEnabled();
     await resumeGrading();
 
-    // Once graded, the essay shows its grade by the exam's rubric after the score.
     const essay = await prisma.item.findFirstOrThrow({
       where: { examBlueprintId: goal.examBlueprintId, format: "essay" },
     });
@@ -155,8 +149,6 @@ test.describe("Mocks whenever the learner wants", () => {
 
     const page = await openAs(browser, user);
 
-    // On a slow connection the mock's page arrives after onboarding's wait asked for its run again
-    // (every 2 s). That ask must stay with onboarding: the mock's page can't answer it.
     const unanswered: string[] = [];
     const mockPage = Promise.withResolvers<null>();
 
@@ -183,13 +175,11 @@ test.describe("Mocks whenever the learner wants", () => {
     expect(unanswered).toStrictEqual([]);
     await answerMockQuestions({ answers, count: 2, knows: () => true, page });
 
-    // Leaving keeps it running; onboarding offers to go on or stop with what was answered.
     await page.getByRole("link", { name: "Leave" }).click();
     await expect(page).toHaveURL(new RegExp(`/start/${goal.id}$`, "u"));
     await expect(page.getByRole("heading", { name: "Your mock exam is waiting" })).toBeVisible();
     await page.getByRole("button", { name: "Stop and see my plan" }).click();
 
-    // Stopping places the learner from what was answered and plans again.
     await expect(page.getByRole("heading", { name: "Your mock exam is waiting" })).toBeHidden({
       timeout: REPLAN_TIMEOUT_MS,
     });

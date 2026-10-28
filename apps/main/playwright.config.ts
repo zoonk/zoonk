@@ -2,7 +2,7 @@ import { createBaseConfig } from "@zoonk/e2e/base.config";
 
 const config = createBaseConfig({ globalSetup: "./e2e/global-setup.ts", testDir: "./e2e" });
 
-/** Admission-changing cases run after all learner calls, including in the full CI suite. */
+/** These cases change call admission, so they run after every other learner call. */
 const playwrightConfig = {
   ...config,
   projects: [

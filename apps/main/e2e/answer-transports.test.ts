@@ -1,11 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { expect, test } from "./fixtures";
 
-/**
- * Answers, grades and recordings go to the app's own routes instead of Server Actions. The session
- * cookie authenticates them, so only the app's own pages may send them.
- */
-
 const ATTACKER_ORIGIN = "https://attacker.example";
 
 test.describe("Answer transports", () => {
@@ -28,7 +23,6 @@ test.describe("Answer transports", () => {
         page.request
           .post(path, { data: {}, headers: { Origin: ATTACKER_ORIGIN } })
           .then((response) => response.status()),
-        // A request without an Origin isn't a page of this app either.
         page.request.post(path, { data: {} }).then((response) => response.status()),
       ]),
     );

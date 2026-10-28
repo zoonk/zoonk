@@ -7,10 +7,6 @@ import { openAs } from "./study-day";
 
 const NOT_THROUGH = "That didn't go through. Your answers are saved. Try again in a moment.";
 
-/**
- * Holds every POST `matches` picks, like a server that doesn't answer, until `release`; later ones
- * go through. With the page's clock run ahead, a wait shows it's bounded.
- */
 async function holdPosts(page: Page, matches: (request: Request) => boolean) {
   const held: Route[] = [];
   let holding = true;
@@ -31,14 +27,12 @@ async function holdPosts(page: Page, matches: (request: Request) => boolean) {
       holding = false;
       await Promise.all(held.map((route) => route.abort().catch(() => null)));
     },
-    /** Lets later POSTs through, still holding the ones already held. */
     stopHolding: () => {
       holding = false;
     },
   };
 }
 
-/** Holds every Server Action whose body matches (see `holdPosts`). */
 function holdServerActions(page: Page, matches: (body: string) => boolean) {
   return holdPosts(
     page,
@@ -46,10 +40,6 @@ function holdServerActions(page: Page, matches: (body: string) => boolean) {
   );
 }
 
-/**
- * An ENEM learner whose essay in today's session is graded once, on a page of their own. Its
- * theme fits in one line, so the last grade has the aside to itself.
- */
 async function withGradedEssay(
   browser: Browser,
   run: (learner: { essay: { blockId: string }; page: Page }) => Promise<void>,
@@ -75,9 +65,6 @@ test.describe("Exam goal", () => {
     await asPersona(browser, { persona: "exam" }, async ({ page, user }) => {
       const mock = await addTodayMock({ goalId: user.goalId, userId: user.id });
 
-      // Its start (from its challenge's intro, by plan item) and hand-in are held at first: past
-      // their usual time they say they're still working, and past their limit they stop waiting
-      // and offer to try again.
       const isStart = (body: string) => body.includes(mock.planItemId);
 
       const isHandIn = (body: string) => body.includes(mock.blockId) && !body.includes("itemId");
@@ -85,7 +72,6 @@ test.describe("Exam goal", () => {
       await page.clock.install();
       const starting = await holdServerActions(page, isStart);
 
-      // Before it starts, the mock's own page is its challenge's intro.
       await page.goto(`/mock/${mock.blockId}`);
       await expect(page).toHaveURL(new RegExp(`/challenge/${mock.planItemId}$`, "u"));
 
@@ -121,7 +107,6 @@ test.describe("Exam goal", () => {
 
       await handingIn.release();
 
-      // Handing in is confirmed first; the retry goes through.
       await page.getByRole("button", { name: "Hand in the mock exam" }).click();
 
       await page
@@ -129,7 +114,6 @@ test.describe("Exam goal", () => {
         .getByRole("button", { name: "Hand in" })
         .click();
 
-      // The score is a range: an estimate.
       await expect(
         page.getByRole("heading", { level: 1, name: /^Mock exam 2 done\s*\d+–\d+$/u }),
       ).toBeVisible();
@@ -140,7 +124,6 @@ test.describe("Exam goal", () => {
     browser,
   }) => {
     await withGradedEssay(browser, async ({ essay, page }) => {
-      // Long enough for an ENEM grade (60 words), so the send reaches grading instead of the length check.
       const draft = [
         "Minha segunda versão deixa a proposta de intervenção completa. O governo federal, por meio do Ministério da Educação,",
         "deve ampliar programas de leitura nas escolas públicas, com bibliotecas abertas no contraturno e oficinas semanais.",
@@ -151,7 +134,6 @@ test.describe("Exam goal", () => {
       const isSubmission = (request: Request) =>
         new URL(request.url()).pathname === `/api/essays/${essay.blockId}/submissions`;
 
-      // The first send is held, so its wait shows it's bounded; the next one reaches grading.
       await page.clock.install();
 
       const grading = await holdPosts(
@@ -161,7 +143,6 @@ test.describe("Exam goal", () => {
 
       await page.goto(`/essay/${essay.blockId}`);
 
-      // The grade first, then its next step, then rewriting the draft.
       await expect(
         page.getByRole("heading", { level: 1, name: /^Your essay\s*660–740$/u }),
       ).toBeVisible();
@@ -179,7 +160,6 @@ test.describe("Exam goal", () => {
         await expect(page.getByText(/^\d{2,} words$/u)).toBeVisible({ timeout: 1000 });
       }).toPass();
 
-      // Once graded, grading the rewrite is the main action.
       const send = page.getByRole("button", { name: "Grade the rewrite" });
 
       const failed = page.getByText(
@@ -211,7 +191,6 @@ test.describe("Exam goal", () => {
 
       await send.click();
 
-      // The same text sent again keeps its id, so the server grades and records it once.
       const resent = await graded;
       expect(resent.request().postDataJSON()).toMatchObject({ attemptId });
 
@@ -219,9 +198,6 @@ test.describe("Exam goal", () => {
       await expect(send).toBeEnabled();
       await expect(rewrite).toHaveValue(draft);
 
-      // A rewrite the screen stopped waiting for is still being graded when the learner sends a
-      // different one and then skips the rest: the block is finished only once both settled, so
-      // it counts whatever they recorded, and nothing more is sent once it's being finished.
       const earlier = await holdPosts(page, isSubmission);
       await send.click();
       await page.clock.fastForward(91_000);
@@ -268,14 +244,12 @@ test.describe("Exam goal", () => {
       const text = "Minha nova versão começa pela proposta de intervenção, com o agente e o meio.";
 
       await page.goto(`/essay/${essay.blockId}`);
-      // The grade's steps are read once they show.
       await expect(stepDots(page)).toBeVisible();
       await nextStep(page);
       await page.getByRole("button", { exact: true, name: "Rewrite" }).click();
 
       const rewrite = page.getByLabel("Rewrite what needs work");
 
-      // Rewrite mounted through React's action; its graded text and word count prove the writer is ready.
       const gradedText = await rewrite.inputValue();
       expect(gradedText).not.toBe("");
 
@@ -287,7 +261,6 @@ test.describe("Exam goal", () => {
       await expect(rewrite).toHaveValue(text);
       await expect(page.getByText("14 words", { exact: true })).toBeVisible();
 
-      // A reload loses nothing: the text comes back on the next Rewrite.
       await page.reload();
       await expect(stepDots(page)).toBeVisible();
       await nextStep(page);
@@ -295,7 +268,6 @@ test.describe("Exam goal", () => {
       await expect(rewrite).toHaveValue(text);
       await expect(page.getByText("14 words", { exact: true })).toBeVisible();
 
-      // Leaving with the text unsent asks first; keeping on writing keeps it.
       await page.getByRole("link", { name: "Leave" }).click();
       const leave = page.getByRole("alertdialog", { name: "Leave for now?" });
       await expect(leave).toBeVisible();

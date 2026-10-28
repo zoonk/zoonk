@@ -13,7 +13,6 @@ test.describe("Account data", () => {
     const dialog = page.getByRole("alertdialog", { name: "Delete your account?" });
     await dialog.getByRole("button", { name: "Delete my account" }).click();
 
-    // Back on the home page, signed out.
     await expect(page.getByRole("link", { name: "Log in" })).toBeVisible();
 
     await expect

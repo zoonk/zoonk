@@ -16,15 +16,12 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 
 const MINUTE_MS = 60_000;
 
-/** The summary card of every drill's lesson: what a content gap's drill brings back first. */
 const LESSON_IDEA = "A discount comes off the price you pay.";
 
-/** The question a cause's drill asks first, and the one it adds on the same skill. */
 function drillQuestion(cause: MistakeCause, which: "extra" | "original") {
   return `${cause} ${which === "original" ? "first" : "second"} question?`;
 }
 
-/** Where each cause's drill stands: its mistake, questions and lesson. */
 async function createCauseDrill({
   cause,
   index,
@@ -73,10 +70,6 @@ async function createCauseDrill({
   return { cause, extra, lesson, mistake, original, skill };
 }
 
-/**
- * A new learner, with nothing studied yet, whose goal has one open mistake from
- * yesterday per cause, each on its own skill with two questions and a lesson that teaches it.
- */
 export async function createMistakeLearner({ causes }: { causes: MistakeCause[] }) {
   const user = await createE2EUser(getBaseURL());
   const goal = await goalFixture({ timezone: "UTC", userId: user.id });

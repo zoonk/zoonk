@@ -7,7 +7,6 @@ function todaySession(page: Page) {
   return page.getByRole("region", { name: "Today's session" });
 }
 
-/** Today's steps as the learner reads them: each one's title (its first line) and minutes (its last). */
 async function readTodaySteps(page: Page) {
   const rows = todaySession(page).getByRole("listitem");
   await expect(rows).toHaveCount(4);
@@ -23,10 +22,7 @@ async function readTodaySteps(page: Page) {
   });
 }
 
-/**
- * Today, read and settled: its prefetches (the session screen's among them) have landed, so
- * whatever the page's load could have saved is saved by now.
- */
+/** Waits for its prefetches too, so anything the page's load could have saved is saved by now. */
 async function openToday(page: Page) {
   const sessionFrame = page.waitForResponse(
     (response) =>
@@ -55,7 +51,6 @@ test.describe("An unstarted day", () => {
     const shown = await readTodaySteps(page);
     await expect(countSessions(day.user.id)).resolves.toBe(0);
 
-    // Start opens that day, and Today goes on with it.
     await page.getByRole("button", { name: "Start session" }).click();
     await expect(page.getByRole("heading", { name: day.reviewQuestion })).toBeVisible();
 
@@ -79,7 +74,6 @@ test.describe("An unstarted day", () => {
     await page.getByRole("link", { exact: true, name: "Plan" }).click();
     await expect(page).toHaveURL(/\/plan$/u);
 
-    // Another device opens the day meanwhile.
     const phone = await openAs(browser, day.user);
     await phone.goto("/today");
     await phone.getByRole("button", { name: "Start session" }).click();

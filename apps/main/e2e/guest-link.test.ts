@@ -17,13 +17,6 @@ import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { startCourseWithLevel } from "./course-start";
 import { expect, test } from "./fixtures";
 
-/**
- * A visitor from a search result: the answer on the public page opens the lesson as a guest, and
- * the lesson ends with "Build my plan" (the lesson's course as their goal). The API's and auth's
- * own tests cover moving a guest's work to the account they sign up with.
- */
-
-/** A published course whose first lesson a visitor opens from its public page. */
 async function createPublicLesson() {
   const id = randomUUID().slice(0, 8);
   const org = await getAiOrganization();
@@ -54,7 +47,6 @@ async function createPublicLesson() {
   });
 
   await Promise.all([
-    // The course's later bands are written too, so the guest's start plans from this outline.
     courseBandsFixture({ courseId: course.id, levels: ["intermediate", "advanced"] }),
     courseChapterFixture({ chapterId: chapter.id, courseId: course.id, position: 0 }),
     chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 }),
@@ -116,7 +108,6 @@ test.describe("A visitor from a public lesson page", () => {
 
     await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
 
-    // Brain Power shows once the server saved the lesson and its answers.
     await expect(page.getByText("Brain Power")).toBeVisible();
 
     const guest = await prisma.attempt.findFirstOrThrow({
@@ -126,8 +117,6 @@ test.describe("A visitor from a public lesson page", () => {
 
     expect(guest.user.isAnonymous).toBe(true);
 
-    // "Build my plan" starts the lesson's course without typing it again. The lesson was in the
-    // course's first chapter, so the plan starts at the course's beginning, after their level.
     await page.getByRole("button", { name: "Build my plan" }).click();
     await expect(page).toHaveURL(new RegExp(`/start/course/${course.id}$`, "u"));
     await startCourseWithLevel(page);

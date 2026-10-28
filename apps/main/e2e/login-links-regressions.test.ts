@@ -18,8 +18,7 @@ function getRedirectUrl(response: APIResponse | Response): URL {
 test("the sidebar logs in with one document request and returns to Plan", async ({ page }) => {
   const loginRequests: string[] = [];
 
-  // Main's E2E server has no central-auth server. Stop at that external page; the real Main
-  // callback below still redeems a real token with the state cookie written by this click.
+  // Main's E2E server has no central-auth server, so this stops at that external page.
   await mockCentralAuthTransport(page);
   await page.goto("/plan");
 
@@ -84,7 +83,6 @@ test("signed-in home resolves browser, saved, and explicit locales in one redire
   const explicitLocale = await context.request.get("/pt", { maxRedirects: 0 });
   expect(getRedirectUrl(explicitLocale).pathname).toBe("/pt/today");
 
-  // Opening the Portuguese address doesn't change the saved language.
   const cookies = await context.cookies();
   expect(cookies.find((cookie) => cookie.name === LOCALE_COOKIE)?.value).toBe("de");
 

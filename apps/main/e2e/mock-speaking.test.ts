@@ -7,7 +7,6 @@ import { openAs } from "./study-day";
 
 const SPEAKING = "Prueba 4: Expresión e interacción orales";
 
-/** DELE B2's three tasks as their card writer leaves them, under the names the paper gives them. */
 const TASKS = [
   { name: "Tarea 1: Valorar propuestas y conversar sobre ellas", task: "t1" },
   { name: "Tarea 2: Describir una situación imaginada a partir de una fotografía", task: "t2" },
@@ -23,7 +22,6 @@ const CARD = {
   text: null,
 };
 
-/** A task's call, written when the learner started the speaking section, done or still to do. */
 function taskCall({
   done,
   goalId,
@@ -68,10 +66,6 @@ function taskCall({
   });
 }
 
-/**
- * A DELE B2 learner on Plus whose full mock reached its speaking section and started its paper:
- * the first task's call is done and the others wait.
- */
 async function createSpeakingMock() {
   const { goal, user } = await createAnytimeMockLearner({ plus: true });
   const sectionId = randomUUID();
@@ -146,7 +140,6 @@ test.describe("Mock speaking sections", () => {
 
     await page.getByRole("button", { exact: true, name: "End" }).click();
 
-    // No feedback mid-mock, as on exam day: the saved call opens the mock again.
     await expect(page).toHaveURL(new RegExp(`/mock/${mock.id}$`, "u"));
     await expect(page.getByText(/1 task left\.$/u)).toBeVisible();
     await expect(page.getByRole("listitem").nth(1)).toContainText("Done");

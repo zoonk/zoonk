@@ -12,14 +12,11 @@ import {
   studySessionFixture,
 } from "@zoonk/testing/fixtures/study-sessions";
 
-/** Six questions keep a mock quick to play; the pace still follows the exam's. */
 const MOCK_QUESTIONS = 6;
 const PASS_MARK = 4;
 
-/** After every item the persona's plan has. */
 const MOCK_PLAN_POSITION = 10_000;
 
-/** An ENEM essay's scores by competency: strong, except the intervention proposal (C5). */
 const STRONG = 160;
 const GOOD = 140;
 const WEAK = 80;
@@ -46,7 +43,6 @@ function readQuestion(content: unknown): string {
   return typeof question === "string" ? question : "";
 }
 
-/** The options of a bank item's multiple-choice content, each with whether it's right. */
 function readOptions(content: unknown): ChoiceOption[] {
   const options =
     content && typeof content === "object" && "options" in content ? content.options : [];
@@ -54,11 +50,6 @@ function readOptions(content: unknown): ChoiceOption[] {
   return Array.isArray(options) ? options.filter((option) => isChoiceOption(option)) : [];
 }
 
-/**
- * Puts the week's mock in the persona's session today, with questions from the exam's own bank.
- * The mock asks those of one exam day. Returns the right and a wrong option of each question, so
- * a test can answer on purpose.
- */
 export async function addTodayMock({ goalId, userId }: { goalId: string; userId: string }) {
   const [goal, session, seen, plan] = await Promise.all([
     prisma.goal.findUniqueOrThrow({ where: { id: goalId } }),
@@ -67,7 +58,6 @@ export async function addTodayMock({ goalId, userId }: { goalId: string; userId:
     prisma.plan.findUniqueOrThrow({ where: { goalId } }),
   ]);
 
-  // The plan's week's mock, today: its intro is the challenge page, by its plan item.
   const planItem = await planItemFixture({
     kind: "mock",
     phase: 0,
@@ -84,7 +74,6 @@ export async function addTodayMock({ goalId, userId }: { goalId: string; userId:
     where: { examBlueprintId: goal.examBlueprintId, format: "multipleChoice" },
   });
 
-  // Unseen questions first, as the builder picks them; the seeded bank is small, so seen ones fill in.
   const items = bank
     .toSorted((first, second) => Number(seenIds.has(first.id)) - Number(seenIds.has(second.id)))
     .slice(0, MOCK_QUESTIONS);
@@ -131,7 +120,6 @@ export async function addTodayMock({ goalId, userId }: { goalId: string; userId:
 
 type MockAnswers = Awaited<ReturnType<typeof addTodayMock>>["answers"];
 
-/** Hands the running mock in, confirming it in the dialog that says what's still open. */
 async function handInMock(page: Page) {
   await page.getByRole("button", { name: "Hand in the mock exam" }).click();
   await page.getByRole("alertdialog").getByRole("button", { name: "Hand in" }).click();
@@ -162,11 +150,6 @@ async function answerMockQuestion(
   await page.getByRole("button", { name: "Next" }).click();
 }
 
-/**
- * Plays a running mock from `addTodayMock`: the first question wrong and flagged as unsure, the
- * rest right, moving with Next until the last question hands the mock in, confirmed. A mock asks
- * one exam day's questions, so the first question's counter says how many there are.
- */
 export async function playMock({ answers, page }: { answers: MockAnswers; page: Page }) {
   const counter = await page.getByText(/^Question 1 of \d+/u).textContent();
   const total = Number(/of (?<total>\d+)/u.exec(counter ?? "")?.groups?.total ?? 0);
@@ -177,14 +160,9 @@ export async function playMock({ answers, page }: { answers: MockAnswers; page: 
   }
 }
 
-/** The instruction with its theme, as ENEM words it. */
 const ENEM_INSTRUCTION =
   "A partir da leitura dos textos motivadores e com base nos conhecimentos construídos ao longo de sua formação, redija texto dissertativo-argumentativo em modalidade escrita formal da língua portuguesa sobre o tema *Desafios para tornar clara a comunicação dos serviços públicos no Brasil*, apresentando proposta de intervenção que respeite os direitos humanos. Selecione, organize e relacione, de forma coerente e coesa, argumentos e fatos para defesa de seu ponto de vista.";
 
-/**
- * An ENEM writing block open in today's session and not written yet, on its own blueprint: its
- * prompt is an instruction with the theme, and the theme alone in one line as its context.
- */
 export async function createEnemEssayDay() {
   const [user, skill, blueprint] = await Promise.all([
     createE2EUser(getBaseURL()),
@@ -233,10 +211,6 @@ export async function createEnemEssayDay() {
   return { blockId: block.id, goalId: goal.id, user };
 }
 
-/**
- * A writing block already open in today's session, with one draft graded by ENEM's rubric: essays
- * are graded by a model, which tests don't call, so the grade is stored the way grading stores it.
- */
 export async function addGradedEssay({ goalId, userId }: { goalId: string; userId: string }) {
   const [goal, session] = await Promise.all([
     prisma.goal.findUniqueOrThrow({ where: { id: goalId } }),

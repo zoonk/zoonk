@@ -187,7 +187,6 @@ function installPeer({ mode, sdp }: { mode: PeerMode; sdp: string }) {
   Object.defineProperty(globalThis, "RTCPeerConnection", { configurable: true, value: FakePeer });
 }
 
-/** Broad UI coverage fakes only the browser media peer; SDP still reaches the product broker. */
 export async function answerLiveCalls(page: Page, behavior: PeerMode) {
   const asked = Promise.withResolvers<null>();
   await page.exposeFunction("e2eLiveAsked", () => asked.resolve(null));

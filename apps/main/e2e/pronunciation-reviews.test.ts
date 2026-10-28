@@ -7,7 +7,6 @@ import { asPersona } from "./learn-personas";
 import { allowPronunciationRecording } from "./pronunciation-recording";
 import { saveMissions } from "./study-day";
 
-/** Two words Marcos mispronounced, due to be said again today. */
 async function seedDueWords(userId: string) {
   const organization = await aiOrganizationFixture();
   const suffix = crypto.randomUUID().slice(0, 6);

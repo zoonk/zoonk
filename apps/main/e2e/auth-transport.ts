@@ -28,10 +28,8 @@ export async function mockCentralSignOut(page: Page): Promise<string[]> {
 }
 
 /**
- * Main's CI pipeline has no central-auth server. Exercise its real login response and state
- * cookie, then split the document redirect so Playwright can intercept the external host:
- * browser routing only intercepts the first request in an HTTP redirect chain.
- * API's suite and the live auth walkthrough cover the central form and session itself.
+ * Main's CI has no central-auth server. Playwright routes only the first request of a redirect
+ * chain, so the document redirect is split to intercept the external host.
  */
 export async function mockCentralAuthTransport(page: Page) {
   const appOrigin = new URL(getBaseURL()).origin;

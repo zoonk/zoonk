@@ -14,11 +14,6 @@ import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
 import { type Page, expect, test } from "./fixtures";
 
-/**
- * A published course with a Library outline like the outline writer leaves
- * it: two chapters, the second with one written lesson (a guess first, then
- * more screens) and one lesson that isn't written yet.
- */
 async function createLibraryCourse() {
   const id = randomUUID().slice(0, 8);
   const org = await getAiOrganization();
@@ -121,11 +116,6 @@ async function createLibraryCourse() {
   };
 }
 
-/**
- * Stands in for the API while a visitor's lesson is written: asking for it answers with a run, and
- * following that run writes the lesson (straight to the database, as the API's workflow does)
- * and then says it's ready. Returns every request that asked for a lesson.
- */
 async function writeLessonWhenFollowed({ lessonId, page }: { lessonId: string; page: Page }) {
   const runId = `e2e-public-start-${randomUUID()}`;
   const asked: string[] = [];
@@ -194,7 +184,6 @@ test.describe("public Library lesson page", () => {
     const start = page.getByRole("button", { name: "Start this lesson" });
     await expect(start).toBeVisible();
 
-    // Loading the page alone makes no guest and asks for nothing, so a crawler starts no AI work.
     const before = await page.request.get("/api/auth/get-session");
     expect(await before.json()).toBeNull();
     expect(asked).toStrictEqual([]);
@@ -202,9 +191,6 @@ test.describe("public Library lesson page", () => {
     const followed = page.waitForRequest(`**/v1/generations/${runId}/events**`);
     await start.click();
 
-    // One tap: the visitor became a guest, the player asked for the lesson once and followed
-    // the run writing it, with no second "Start".
-    // The lesson remembers the page it was started from, which closing it returns to.
     await expect(page).toHaveURL(
       new RegExp(
         `/learn/${unwritten.id}\\?generation=${runId}&from=${encodeURIComponent(unwrittenPath)}$`,
@@ -220,7 +206,6 @@ test.describe("public Library lesson page", () => {
     const session = await page.request.get("/api/auth/get-session");
     expect(await session.json()).toMatchObject({ user: { isAnonymous: true } });
 
-    // The lesson plays: its next screen is a question.
     await page.getByRole("button", { name: "Next" }).click();
     await expect(page.getByText(playableStepContent.check.question)).toBeVisible();
   });

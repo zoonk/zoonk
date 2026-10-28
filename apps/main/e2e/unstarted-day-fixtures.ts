@@ -13,7 +13,6 @@ const SHORT_ID_LENGTH = 6;
 const LESSONS = 3;
 const QUESTIONS_PER_SKILL = 3;
 
-/** The skill a review brings back was last reviewed a few days ago, so today is a later-day recall. */
 const LAST_REVIEW_DAYS_AGO = 4;
 const FIRST_LESSON_DONE_DAYS_AGO = 3;
 
@@ -22,13 +21,8 @@ function daysAgo(days: number): Date {
 }
 
 /**
- * A learner whose day isn't opened yet, as core's `sessionGoalFixture` sets one up: a 45-minute
- * learn goal in UTC with placement declined, three written lessons in its plan (each teaching its
- * own skill, three choice questions per skill), the first one done three days ago, its skill due
- * since yesterday with a mistake on its first question. No study session exists, so Today shows the
- * day's preview: a review of the first skill, the second and third lessons, then practice of the
- * learner's mistakes. Titles and questions carry a tag of their own, so each test finds only its
- * own learner's words. The right option is always the first.
+ * Titles and questions carry a tag of their own, so each test finds only its own learner's words.
+ * The right option is always the first.
  */
 export async function createUnstartedDay() {
   // A letter first: rich text groups a long number's digits ("775,202"), which no title search finds.
@@ -117,7 +111,6 @@ export async function createUnstartedDay() {
   return {
     goal,
     lessons,
-    /** The first skill's questions, the ones its review brings back. */
     reviewQuestion: new RegExp(`^Skill 1 ${tag} question \\d\\?`, "u"),
     user,
   };

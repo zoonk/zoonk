@@ -30,7 +30,6 @@ const SHORT_ID_LENGTH = 6;
 const LESSON_TITLE = "Discounts in your head";
 const LESSON_CAN_DO = "You'll work out a discount in your head";
 
-/** A written lesson with one check, or one still waiting to be written. */
 async function createLesson({ written }: { written: boolean }) {
   const lesson = { canDo: LESSON_CAN_DO, estimatedMinutes: 3, title: LESSON_TITLE };
 
@@ -42,10 +41,6 @@ async function createLesson({ written }: { written: boolean }) {
   return playable.lesson;
 }
 
-/**
- * Writes the day's unwritten lesson the way the API's run does: its screen straight to the
- * database, then the lesson marked written, from outside this app's cache.
- */
 export async function writeStudyLesson(lessonId: string) {
   await libraryStepFixture({
     content: playableStepContent.check,
@@ -79,18 +74,9 @@ async function createContent({ writtenLesson }: { writtenLesson: boolean }) {
   return { discounts, items, lesson, percentages };
 }
 
-type StudyDayOptions = {
-  /** The capsules already played, so the session opens on its lesson. */
-  reviewDone?: boolean;
-  /** False for a lesson not written yet: the session asks for it when the learner starts it. */
-  writtenLesson?: boolean;
-};
+type StudyDayOptions = { reviewDone?: boolean; writtenLesson?: boolean };
 
-/**
- * A learner whose exam is 32 days away, with today's session already
- * built in the session shape: capsules first (two quick questions, one with a time machine), a
- * short lesson with one check, then mixed practice. The right option is always the first.
- */
+/** The right option is always the first. */
 export async function createStudyDay({
   reviewDone = false,
   writtenLesson = true,
@@ -177,10 +163,6 @@ export async function createStudyDay({
   return { goal, lesson, session, user };
 }
 
-/**
- * Lessons earlier days left, as the plan's last new-day settling carried them: written lessons of 3
- * minutes each that today's time didn't fit, first on tomorrow's plan. Returns them in plan order.
- */
 export async function carryLessons({ count, goalId }: { count: number; goalId: string }) {
   const [plan, skill, lessons] = await Promise.all([
     prisma.plan.findUniqueOrThrow({ where: { goalId } }),
@@ -195,7 +177,6 @@ export async function carryLessons({ count, goalId }: { count: number; goalId: s
     ),
   ]);
 
-  // They go before the phase's challenge, after today's lesson.
   await prisma.planItem.updateMany({
     data: { position: { increment: count } },
     where: { kind: "boss", planId: plan.id },
@@ -229,7 +210,6 @@ export async function carryLessons({ count, goalId }: { count: number; goalId: s
   return lessons.map(({ lesson }) => lesson);
 }
 
-/** A mission as a session stores it when its day is built (core's `MissionPick`). */
 type StoredMission = {
   anchor: Record<string, string>;
   detail?: Record<string, number | string>;
@@ -239,10 +219,6 @@ type StoredMission = {
   total: number;
 };
 
-/**
- * Gives a test day the missions a session picks when it's built, instead of the ones a session
- * from before stored picks reads from its blocks.
- */
 export async function saveMissions(sessionId: string, picks: StoredMission[]) {
   await prisma.studySession.update({
     data: { missions: { picks, version: 1 } },
@@ -250,19 +226,12 @@ export async function saveMissions(sessionId: string, picks: StoredMission[]) {
   });
 }
 
-/**
- * Opens a page signed in as the learner, in a browser context of its own that closes when the test
- * ends (`closeOpenedContexts`).
- */
 export async function openAs(browser: Browser, user: E2EUser): Promise<Page> {
   const context = await browser.newContext({ storageState: user.storageState });
   return context.newPage();
 }
 
-/**
- * Waits for the grade, then continues with Enter. Its listener attaches right after the grade
- * shows, so the press retries until the feedback goes away.
- */
+/** The Enter listener attaches right after the grade shows, so the press retries until the feedback goes. */
 async function continueWithEnter(page: Page) {
   const feedback = page.getByRole("region", { name: "Answer feedback" });
   await expect(feedback.getByText("Correct!")).toBeVisible();
@@ -273,19 +242,16 @@ async function continueWithEnter(page: Page) {
   }).toPass({ timeout: 5000 });
 }
 
-/** Checks the picked answer with Enter, once the pinned Check is ready for it. */
 async function checkWithEnter(page: Page) {
   await expect(page.getByRole("button", { name: /^Check/u })).toBeEnabled();
   await page.keyboard.press("Enter");
 }
 
-/** How long a screen's next step gets to show before a press is retried. */
 const ARRIVED_TIMEOUT_MS = 2000;
 
 /**
- * Presses on a screen that ignores a press in its first half second, as meant for the screen
- * before it (a block's moment, a milestone's ceremony), until `arrived` shows (or hides:
- * `visible: false`), pressing again only while it hasn't: a slow press lands after the wait.
+ * A screen ignores presses in its first half second, as meant for the screen before it, so this
+ * presses again until `arrived` shows (or hides, with `visible: false`).
  */
 export async function pressUntil(
   press: () => Promise<void>,
@@ -301,10 +267,6 @@ export async function pressUntil(
   }).toPass({ timeout: 10_000 });
 }
 
-/**
- * Answers a quick question with its first option (always the right one): its number picks it and
- * Enter checks it, as in the lesson. Then it moves on.
- */
 export async function answerRight(page: Page, question: RegExp | string) {
   await expect(page.getByRole("heading", { name: question })).toBeVisible();
   await page.keyboard.press("1");

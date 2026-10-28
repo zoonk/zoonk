@@ -6,7 +6,6 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { expect, test } from "./fixtures";
 import { openAs } from "./study-day";
 
-/** A learner with two planned goals, on the first. */
 async function createTwoGoalLearner() {
   const user = await createE2EUser(getBaseURL());
 
@@ -29,7 +28,6 @@ async function readActiveGoalId(userId: string) {
   return profile?.activeGoalId;
 }
 
-/** The learning tabs' goal switcher: every tab reads the goal picked in it. */
 test.describe("Learning tabs frame", () => {
   test("the goal switcher switches the goal, and every tab follows", async ({ browser }) => {
     const { second, user } = await createTwoGoalLearner();
@@ -44,7 +42,6 @@ test.describe("Learning tabs frame", () => {
 
     await expect.poll(() => readActiveGoalId(user.id)).toBe(second.id);
 
-    // Before a buddy is picked, its tab shows the default buddy, Zu.
     await page.getByRole("link", { exact: true, name: "Zu" }).click();
     await expect(page).toHaveURL(/\/buddy$/u);
 

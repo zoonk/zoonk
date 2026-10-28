@@ -5,15 +5,6 @@ import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understan
 import { type Page, expect, test } from "./fixtures";
 import { stopRuns } from "./generation-run";
 
-/**
- * The way into onboarding: a goal sent from `/start` or Today is saved as a draft and read, the
- * address keeps the draft so a refresh shows the same screen, and nothing is read or written
- * until the learner sends. Understandings are stored the way a real one is (the cache), so these
- * run without the AI task. Words nobody read yet start a run that reads them, which waits on the
- * E2E API: it has no model. A read that didn't start (no API is reachable) or stopped offers to
- * try again.
- */
-
 type Understanding = Parameters<typeof goalUnderstandingFixture>[0]["result"];
 
 const DRAFT_URL = /\/start\?draft=[0-9a-f-]{36}$/u;
@@ -70,8 +61,6 @@ test.describe("Coming back", () => {
 
     const draft = await findDraft(question);
 
-    // The external read finished while this tab was away. Reloading must not turn the old
-    // submission into a new explanation request, even if it was made only moments ago.
     await prisma.onboardingDraft.update({
       data: {
         status: "understood",
@@ -97,7 +86,6 @@ test.describe("Coming back", () => {
     const goal = uniqueWords("understand quantum physics, back later");
     await goalUnderstandingFixture({ goal, result: QUANTUM, userId: await ensureGuest(page) });
 
-    // With a session, the home page opens Today, whose start form sends what was typed.
     await page.goto("/");
     await expect(page).toHaveURL(/\/today$/u);
     await page.getByRole("textbox", { name: "I want to" }).fill(goal);
@@ -106,7 +94,6 @@ test.describe("Coming back", () => {
     await expect(page).toHaveURL(/\/today\?draft=[0-9a-f-]{36}$/u);
     await expect(page.getByText("Understand quantum physics", { exact: true })).toBeVisible();
 
-    // Back on the home page later, a guest without a goal yet finds the goal they typed on Today.
     await page.goto("/");
 
     await expect(page).toHaveURL(/\/today$/u);
@@ -121,7 +108,6 @@ test.describe("Coming back", () => {
     const resumeReads = await stopRuns({ page });
     await sendGoal(page, goal);
 
-    // Nobody read these words before and reading them failed: the draft is saved, unread.
     await expect(page).toHaveURL(DRAFT_URL);
     await expect(page.getByText(FAILED_READ)).toBeVisible();
     await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
@@ -146,7 +132,6 @@ test.describe("Coming back", () => {
       status: "goals",
     };
 
-    // The words got read after all (the cache has them now): trying again shows the card.
     await prisma.onboardingDraft.update({
       data: { status: "understood", understanding },
       where: { id: draft.id },
@@ -155,8 +140,6 @@ test.describe("Coming back", () => {
     await page.getByRole("button", { name: "Try again" }).click();
     await expect(page.getByText("Juggle five balls", { exact: true })).toBeVisible();
 
-    // A read still running when the page is refreshed: the refresh only follows the run it finds,
-    // the wait, then the card on its own.
     const runId = `e2e-understanding-${randomUUID()}`;
 
     await prisma.onboardingDraft.update({

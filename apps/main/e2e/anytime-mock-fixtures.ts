@@ -17,17 +17,10 @@ const SKILLS_PER_AREA = 2;
 
 type Question = { area: string; right: string; skill: string; wrong: string };
 
-/** The area of the plan's skill at this index: two per area, in order. */
 function areaOf(index: number): string {
   return AREAS[Math.floor(index / SKILLS_PER_AREA)] ?? "";
 }
 
-/**
- * An exam learner whose plan has two areas (Mathematics, Languages) of two topics each, one lesson
- * per topic, and four questions per topic in the exam's own bank: enough for a mock of either
- * subject or of the whole day without writing any. `onboarding`: the goal waits at placement, with
- * every earlier question answered. Returns each question's right and wrong answer by its text.
- */
 export async function createAnytimeMockLearner({
   onboarding = false,
   plus,
@@ -35,7 +28,6 @@ export async function createAnytimeMockLearner({
 }: {
   onboarding?: boolean;
   plus: boolean;
-  /** The exam day ends with a discursive test, which its full mock asks (`WRITTEN_STRUCTURE`). */
   written?: boolean;
 }) {
   // Numeric-only random suffixes are grouped by Markdown, which changes the fixture lookup key.
@@ -141,11 +133,6 @@ export async function createAnytimeMockLearner({
   return { answers, goal, plan, skills, user };
 }
 
-/**
- * Answers the running section's questions in order, from the one on screen: right on the topics
- * `knows` names, wrong on the rest, until `count` are answered (the whole section without it). It
- * moves with Next, which the section's last question doesn't have.
- */
 export async function answerMockQuestions({
   answers,
   count,
@@ -169,7 +156,6 @@ export async function answerMockQuestions({
     await expect(page.getByText(new RegExp(`^Question ${number} of \\d+`, "u"))).toBeVisible();
 
     const title = main.getByRole("heading", { level: 2 });
-    // Wait for the question title before selecting its fixture answer.
     // oxlint-disable-next-line no-await-in-loop -- Each question must be ready before answering it.
     await expect(title).not.toBeEmpty();
     // oxlint-disable-next-line no-await-in-loop -- The question on screen decides the answer.
@@ -197,7 +183,6 @@ export async function answerMockQuestions({
 /** A mock page's Server Action with two arguments, the mock and the time zone: grading or finish. */
 const TWO_ARGUMENT_ACTION = /^\["[\w-]+","[^"\]]+"\]$/u;
 
-/** Aborts a mock's essay grading, and lets every other request through. */
 function abortEssayGrading(route: Route) {
   const request = route.request();
 
@@ -209,11 +194,7 @@ function abortEssayGrading(route: Route) {
   return isGrading ? route.abort() : route.fallback();
 }
 
-/**
- * Stands in for an outage of the essays' grading before the server sees it: E2E has no model, and
- * a server that tried would report the failure. Only for a mock handed in section by section (its
- * hand-in has three arguments), since finish has grading's shape. Returns what lifts it.
- */
+/** Only for a mock handed in section by section: finish has grading's two-argument shape. */
 export async function failEssayGrading(page: Page) {
   await page.route("**/*", abortEssayGrading);
   return () => page.unroute("**/*", abortEssayGrading);

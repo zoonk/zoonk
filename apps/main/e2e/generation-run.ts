@@ -1,12 +1,8 @@
 import { type Page } from "@playwright/test";
 
-/** One event of a run's step stream, as the API writes it. */
 export type StreamEvent = { entityId?: string; reason?: string; status: string; step: string };
 
-/**
- * Stands in for the API's run: its step stream (read afresh on every connection, so events pushed
- * later arrive when the page reconnects) and its status, still running.
- */
+/** The step stream is read afresh on every connection, so events pushed later arrive when the page reconnects. */
 export async function followRun({
   events,
   page,
@@ -33,9 +29,8 @@ const ANY_RUN_EVENTS = "**/v1/generations/*/events**";
 const ANY_RUN_STATUS = /\/v1\/generations\/[^/]+$/u;
 
 /**
- * Stands in for the API saying every run the page follows stopped: E2E runs wait on a model that
- * never answers, and the server's own calls to the API are out of `page.route`'s reach. Returns
- * what lifts it.
+ * E2E runs wait on a model that never answers, and the server's own calls to the API are out of
+ * `page.route`'s reach. Returns what lifts it.
  */
 export async function stopRuns({ entityId, page }: { entityId?: string; page: Page }) {
   const stopped: StreamEvent = {

@@ -2,13 +2,6 @@ import { prisma } from "@zoonk/db";
 import { expect, test } from "./fixtures";
 import { ANSWERED, createMappedGoal } from "./onboarding-fixtures";
 
-/**
- * The end of onboarding: placement while the plan is being made, then the plan. The goal is one
- * whose skill map is already written, the way the goal workflow leaves it. Core's placement and
- * time advice tests cover what's asked and what's offered; these cover the pages around them.
- */
-
-/** A moment this many minutes from now (before it, when negative). */
 function inMinutes(minutes: number): Date {
   return new Date(Date.now() + minutes * 60_000);
 }
@@ -32,14 +25,12 @@ test.describe("Placement and the plan", () => {
     await expect(question).not.toHaveText(first ?? "");
     await expect(page.getByText("Question 2", { exact: true })).toBeVisible();
 
-    // A refresh comes back to placement's next question instead of its start.
     await page.reload();
     await expect(page.getByText("Question 2", { exact: true })).toBeVisible();
 
     await page.getByRole("button", { name: "I don't know yet" }).click();
     await expect(page.getByText("Question 3", { exact: true })).toBeVisible();
 
-    // The answer saves before the next question takes input.
     const stop = page.getByRole("button", { name: "Stop here and see my plan" });
     await expect(stop).toBeEnabled();
     await stop.click();
@@ -57,7 +48,6 @@ test.describe("Placement and the plan", () => {
   });
 });
 
-// An IELTS learner's time was lost when saving it crashed and "Try again" started the step over.
 test("keeps the learner's time when saving it fails, and saves it on the next try", async ({
   noProgressUser,
   userWithoutProgress: page,
@@ -83,7 +73,6 @@ test("keeps the learner's time when saving it fails, and saves it on the next tr
     .getByText("45 min", { exact: true })
     .click();
 
-  // The first save of the time doesn't reach the server.
   let failSave = true;
 
   await page.route(`**/start/${goal.id}`, async (route) => {
@@ -109,14 +98,12 @@ test("keeps the learner's time when saving it fails, and saves it on the next tr
   await expect(page.getByText("45 min a day", { exact: true })).toBeVisible();
 });
 
-// Core's notice wait tests cover when the plan stops waiting; this covers the reveal following it.
 test("an exam's plan waits on the reveal while its notice is read, then shows on its own", async ({
   noProgressUser,
   userWithoutProgress: page,
 }) => {
   const goal = await createMappedGoal(noProgressUser.id);
 
-  // Placement is done; research is still reading the exam's notice.
   await Promise.all([
     prisma.goal.update({
       data: { details: { answered: [...ANSWERED, "placement"], subject: "algebra" } },
@@ -133,7 +120,6 @@ test("an exam's plan waits on the reveal while its notice is read, then shows on
 
   await expect(page.getByRole("link", { name: "Start" })).toHaveCount(0);
 
-  // The reading lands in the plan: the reveal shows it by itself.
   await prisma.plan.update({ data: { noticeWaitUntil: null }, where: { goalId: goal.id } });
 
   await expect(page.getByText("Plan created", { exact: true })).toBeVisible();

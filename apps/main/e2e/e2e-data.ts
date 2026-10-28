@@ -4,10 +4,8 @@ import { seedV2 } from "@zoonk/e2e/fixtures/seed-v2";
 import { clearLeftOpenLiveCalls, resetGuestSpend } from "@zoonk/testing/fixtures/usage";
 
 /**
- * The structural data browser tests read: the v2 seed (the Library courses and one persona per
- * goal kind, `v2-*@zoonk.test`) and the AI organization. It runs before the E2E build, because the
- * build prerenders the catalog from the database and serves that copy while the tests run, and
- * again before the tests, which also clears the AI budget guests share.
+ * Runs before the E2E build, which prerenders the catalog from the database, and again before the
+ * tests, which also clears the AI budget guests share.
  */
 export async function prepareE2EData(): Promise<void> {
   await seedV2();

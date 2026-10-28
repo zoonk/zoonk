@@ -2,21 +2,15 @@ import { type Request } from "@playwright/test";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { type Page, expect, test } from "./fixtures";
 
-/** Chromium's fake microphone, so recording starts without a device or a permission prompt. */
+/** Chromium's fake microphone records without a device or a permission prompt. */
 test.use({
   launchOptions: { args: ["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"] },
 });
 
-/**
- * Spoken answers go to the public API from the browser. These stand in for its answers, so each
- * test picks the grade it needs (the API's own suite covers the endpoint, its limits included, and
- * the player's tests what each answer shows).
- */
 const SPOKEN_ANSWERS_URL = "**/v1/steps/*/spoken-answers";
 
 const TARGET_WORDS = ["The", "electron", "is", "a", "cloud"];
 
-/** The grade of "The electron is a crowd": one word came out as another. */
 const GRADE = {
   attemptId: crypto.randomUUID(),
   explanation: null,
@@ -44,7 +38,7 @@ const NO_SPEECH = {
 async function sayIt(page: Page) {
   await page.getByRole("button", { name: "Record" }).click();
   await expect(page.getByText("Listening… Tap Stop to check.")).toBeVisible();
-  // The clock on Stop has run a second, so there's something to check.
+
   await expect(
     page.getByRole("button", { name: /^Stop\s?\d+:(?:0[1-9]|[1-5]\d)$/u }),
   ).toBeVisible();
@@ -68,7 +62,6 @@ test.describe("A spoken answer", () => {
     const page = await context.newPage();
     const sent: Request[] = [];
 
-    // The first recording had no words in it; the second is graded.
     await page.route(SPOKEN_ANSWERS_URL, async (route) => {
       sent.push(route.request());
       await route.fulfill(sent.length === 1 ? NO_SPEECH : { json: GRADE, status: 200 });
@@ -83,7 +76,6 @@ test.describe("A spoken answer", () => {
       await sayIt(page);
       await expect(page.getByText("What we heard")).toBeVisible();
 
-      // The browser sends the recording and required fields with the learner's bearer token.
       const [request] = sent;
       const body = request?.postData() ?? "";
 

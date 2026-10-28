@@ -6,7 +6,6 @@ import { openAs } from "./study-day";
 
 type Answers = Awaited<ReturnType<typeof createAnytimeMockLearner>>["answers"];
 
-/** Picks the right answer to the question on screen, found by its heading. */
 async function answerShown(page: Page, answers: Answers) {
   const main = page.getByRole("main");
   const heading = (await main.getByRole("heading", { level: 2 }).textContent()) ?? "";
@@ -16,7 +15,6 @@ async function answerShown(page: Page, answers: Answers) {
   await expect(page.getByRole("radio", { checked: true, name: right })).toBeVisible();
 }
 
-/** The learner's answers the server has stored, with a pick (a visited question has none). */
 async function countStoredAnswers(userId: string) {
   const rows = await prisma.mockExamAnswer.findMany({ where: { mockExam: { userId } } });
   return rows.filter((row) => row.answer !== null).length;
@@ -38,7 +36,6 @@ test.describe("Mock answers on a bad connection", () => {
     await expect(page.getByRole("timer", { name: "Time left" })).toBeVisible();
     await page.clock.pauseAt(new Date(Date.now() + 1000));
 
-    // The connection drops for the first answer's save.
     let dropped = false;
 
     await page.route("**/*", async (route) => {
@@ -57,7 +54,6 @@ test.describe("Mock answers on a bad connection", () => {
 
     await answerShown(page, answers);
 
-    // The bar says it isn't saved (never "saved"), and the answer goes out again on its own.
     const retrying = page.getByRole("status").filter({ hasText: "Not saved yet · retrying" });
     await expect(retrying).toBeVisible();
     await expect(retrying.getByRole("button", { name: "Retry" })).toBeEnabled();
@@ -65,7 +61,6 @@ test.describe("Mock answers on a bad connection", () => {
     await expect.poll(() => countStoredAnswers(user.id)).toBe(1);
     await expect(retrying).toBeHidden();
 
-    // The answers after it keep saving: one failure never stops the rest.
     await page.getByRole("button", { name: /^Next/u }).click();
     await answerShown(page, answers);
 

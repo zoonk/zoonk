@@ -10,10 +10,6 @@ import { openAs } from "./study-day";
 const NATIVE_SETUP_TIMEOUT_MS = 8000;
 const NATIVE_TEARDOWN_TIMEOUT_MS = 30_000;
 
-/**
- * When the call's server deadline falls, counted from its Start. A checkpoint's call time runs
- * from its first connection, so an earlier one sets it; a practice call holds at least a minute.
- */
 const DEADLINE_MS = 25_000;
 
 type NativeCallResources = {
@@ -175,7 +171,6 @@ async function startNativePeer({ peer, session }: { peer: Page; session: BridgeS
   );
 }
 
-/** Failure teardown records a stopped local fake, never happy-path or OpenAI evidence. */
 async function cleanupNativeCall({
   answer,
   bridge,
@@ -192,7 +187,7 @@ async function cleanupNativeCall({
   session: BridgeSession | undefined;
 }) {
   if (session?.awaitingAnswer) {
-    /** A failed SDP setup must still return the fake's ID so the real core can recover and close it. */
+    // A failed SDP setup must still return the fake's ID so core can recover and close it.
     const response = await request.post(`${bridge}/control/sessions/${session.id}/answer`, {
       data: { sdp: answer ?? TEST_LIVE_SDP_ANSWER },
     });
@@ -246,7 +241,6 @@ async function cleanupNativeCall({
     .toMatchObject({ state: "ended" });
 }
 
-/** Fixture teardown retains browser/request dependencies and its own budget even when the test times out. */
 const test = base.extend<{ liveCallResources: NativeCallResources }>({
   liveCallResources: [
     async ({ browser, request }, use) => {
@@ -299,10 +293,6 @@ const test = base.extend<{ liveCallResources: NativeCallResources }>({
   ],
 });
 
-/**
- * A checkpoint call that already connected once: its next connection ends where the first one's
- * call time does, `DEADLINE_MS` from now.
- */
 async function reconnectingCheckpoint({ callId, userId }: { callId: string; userId: string }) {
   const now = Date.now();
 
@@ -320,7 +310,6 @@ async function reconnectingCheckpoint({ callId, userId }: { callId: string; user
   });
 }
 
-/** Native browser transport against a local AI fake; this does not establish OpenAI termination semantics. */
 test("the durable deadline hangs up an established WebRTC peer when the client never ends", async ({
   browser,
   request,
@@ -463,12 +452,11 @@ test("the durable deadline hangs up an established WebRTC peer when the client n
 
   expect(connection.state).toBe("live");
   expect(connection.conversationId).toBe(call.id);
-  // The whole seconds left of the checkpoint's first window, never past it.
   const underFirst = first.deadlineAt.getTime() - connection.deadlineAt.getTime();
   expect(underFirst).toBeGreaterThanOrEqual(0);
   expect(underFirst).toBeLessThan(1000);
 
-  /** Frozen client timers defeat its countdown. Only the actual server Workflow may hang it up. */
+  // Frozen client timers defeat its countdown, so only the server's workflow can hang it up.
   await expect
     .poll(
       async () => {

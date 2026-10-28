@@ -6,7 +6,6 @@ import {
 import { createLanguageLearner } from "./language-learner";
 import { saveMissions } from "./study-day";
 
-/** A written unit call stays visible on both plans, while only Plus can play it. */
 export async function createLanguageChallenge({
   nextLessonTodo = false,
   plus = false,

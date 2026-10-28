@@ -5,7 +5,6 @@ import { type Page, expect, test } from "./fixtures";
 
 type PrivateCourse = Awaited<ReturnType<typeof privateCourseFixture>>;
 
-/** The owner starts the course from its start page; anyone else finds no such page. */
 async function expectOwnerOnly({
   course: { chapters, course },
   owner,
@@ -45,7 +44,6 @@ test.describe("Private course start authorization", () => {
     page,
     userWithoutProgress: owner,
   }) => {
-    // The page starts a published course or the learner's own private one: both reach the owner.
     const courses = await Promise.all(
       [false, true].map((isPublished) =>
         privateCourseFixture({

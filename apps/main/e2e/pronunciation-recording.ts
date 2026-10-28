@@ -1,7 +1,6 @@
 import { type Page } from "@playwright/test";
 import { PRONUNCIATION_RECORDING } from "../../../packages/e2e/src/pronunciation-grader";
 
-/** Uses the player's EventTarget recorder fake pattern; no real microphone or provider opens. */
 export async function allowPronunciationRecording(page: Page) {
   await page.addInitScript((recording) => {
     class TestRecorder extends EventTarget {

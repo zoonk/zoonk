@@ -18,12 +18,6 @@ function readChangeStatus(changeId: string) {
 
 type BuddyAnswer = { answer: string; planChange?: PlanChangeView };
 
-/**
- * Stands in for the goal's tutor routes in the browser, as the lesson tutor's tests do (the API
- * doesn't run here): an empty thread, each question stored as sent, and each answer streamed in
- * order, with the plan change it proposed as the API sends it. The API's own tests cover how
- * answers are written and saved.
- */
 async function stubBuddy({ answers, page }: { answers: BuddyAnswer[]; page: Page }) {
   const asked: { question: string }[] = [];
   const queue = [...answers];
@@ -69,9 +63,6 @@ async function stubBuddy({ answers, page }: { answers: BuddyAnswer[]; page: Page
 }
 
 test.describe("Buddy tab", () => {
-  // Core covers which changes the buddy proposes and what applying one does to the plan and to
-  // today's session; this covers the card: nothing changes until the learner's tap, and Apply and
-  // Undo reach the plan.
   test("the buddy proposes a plan change that applies only on the learner's tap, and Undo takes it back", async ({
     browser,
   }) => {
@@ -94,12 +85,10 @@ test.describe("Buddy tab", () => {
       const conversation = page.getByRole("region", { name: "Conversation with Otto" });
       const composer = conversation.getByRole("textbox", { name: "Message Otto" });
 
-      // The conversation reads its latest in the background as it opens; Send is ready after.
       await composer.fill(`No studying on ${day}s`);
       await expect(conversation.getByRole("button", { name: "Send" })).toBeEnabled();
       await composer.press("Enter");
 
-      // A plan change in the learner's own words comes back as a card; nothing changes yet.
       const card = conversation.getByRole("region", { name: "Change to your plan" });
       await expect(card).toContainText(`${day}: rest day.`);
       await expect(card.getByRole("button", { name: "Apply" })).toBeVisible();
@@ -116,7 +105,6 @@ test.describe("Buddy tab", () => {
         })
         .toBe(0);
 
-      // While it's the plan's latest change, it can be undone right there: the card asks again.
       await card.getByRole("button", { name: "Undo" }).click();
       await expect(card.getByRole("button", { name: "Apply" })).toBeVisible();
       await expect.poll(() => readChangeStatus(change.id)).toBe("proposed");

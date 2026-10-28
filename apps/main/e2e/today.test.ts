@@ -55,8 +55,6 @@ test.describe("Today without a session to start", () => {
     await context.close();
   });
 
-  // Will's plan had Sunday off, and Will wanted to study anyway: Today showed only "Study for 10
-  // minutes", which gave practice instead of the plan's next lessons, as if none were left.
   test("Keep learning on a rest day adds the plan's next lessons, those earlier days left first, and opens the first", async ({
     browser,
   }) => {
@@ -64,7 +62,6 @@ test.describe("Today without a session to start", () => {
     const goal = await goalFixture({ dailyMinutes: 10, timezone: "UTC", userId: user.id });
     const today = toUTCMidnight(new Date());
 
-    // The plan gives today no time, and every other day its 10 minutes.
     const weekdayMinutes = Array.from({ length: DAYS_PER_WEEK }, (_, weekday) =>
       weekday === today.getUTCDay() ? 0 : goal.dailyMinutes,
     );
@@ -79,8 +76,6 @@ test.describe("Today without a session to start", () => {
       learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
     ]);
 
-    // The plan's next lessons were saved first; settling the missed day then put the two lessons
-    // an earlier day left ahead of them.
     await planFixture({
       goalId: goal.id,
       items: upcoming.map(({ lesson }, index) => ({
@@ -97,7 +92,6 @@ test.describe("Today without a session to start", () => {
     const page = await openAs(browser, user);
     await page.goto("/today");
 
-    // The lessons join the day in that order, and the first one opens: a lesson, not practice.
     const keepLearning = page
       .getByRole("region", { name: "Today's session" })
       .getByRole("button", { name: "Keep learning" });

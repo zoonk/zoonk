@@ -5,10 +5,6 @@ import { expect, test } from "./fixtures";
 import { createLanguageChallenge } from "./language-challenge-fixtures";
 import { openAs } from "./study-day";
 
-/**
- * Everything of the learner's that starting a call would change: their sessions and blocks, the
- * call, model calls, usage and the plan's items.
- */
 async function readLearnerState(userId: string) {
   const [sessions, conversations, aiCalls, usage, items] = await Promise.all([
     prisma.studySession.findMany({
@@ -28,7 +24,6 @@ async function readLearnerState(userId: string) {
   return { aiCalls, conversations, items, sessions, usage };
 }
 
-/** Resolves once the router has prefetched the page at `path` (a link's prefetch, not a visit). */
 function pagePrefetched(page: Page, path: string) {
   return page.waitForResponse((response) => {
     const headers = response.request().headers();
@@ -51,7 +46,6 @@ test("Today's call link and the call's page write nothing until the learner star
 
   await page.goto("/today");
 
-  // Start is a link to the call's page, prefetched while Today is on screen.
   await expect(page.getByRole("link", { name: /^(?:Start|Continue) session/u })).toHaveAttribute(
     "href",
     href,
@@ -60,7 +54,6 @@ test("Today's call link and the call's page write nothing until the learner star
   const prefetch = await prefetched;
   await prefetch.finished();
 
-  // Opening the page, and opening it again, shows the call's intro and starts nothing.
   const title = page.getByRole("heading", { level: 1, name: RENTING_SCENARIO.title });
   await page.goto(href);
   await expect(title).toBeVisible();

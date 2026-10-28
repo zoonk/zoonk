@@ -11,10 +11,8 @@ import { openAs } from "./study-day";
 
 const LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
 const GOAL_DAYS_AHEAD = 90;
-/** Every onboarding question before the level test, so `/start/:goalId` opens on the test. */
 const ANSWERED = ["reason", "targetDate", "level", "schedule", "buddy", "followUps"];
 
-/** A practice call on the learner's renting unit, whose call is written at A2. */
 function createCall({
   chapterId,
   goalId,
@@ -41,7 +39,6 @@ function createCall({
   });
 }
 
-/** A language goal at A2 in onboarding, with every question answered up to the level test. */
 function onboardingGoal({
   details,
   ...goal
@@ -61,7 +58,6 @@ function onboardingGoal({
   });
 }
 
-/** A written level test bank: two questions per skill and level, and a sentence per level. */
 function levelTestBankContent() {
   const questions = LEVELS.flatMap((level) =>
     (["reading", "listening"] as const).flatMap((skill) =>
@@ -108,7 +104,6 @@ const CLIP_URL = "https://audio.e2e.zoonk.test/listening.wav";
 const CLIP_SAMPLE_RATE = 8000;
 const CLIP_SAMPLES = 2400;
 
-/** A short, quiet WAV the browser can really play to its end. */
 function clipAudio(): Buffer {
   const header = Buffer.alloc(44);
   header.write("RIFF", 0);
@@ -127,11 +122,6 @@ function clipAudio(): Buffer {
   return Buffer.concat([header, Buffer.alloc(CLIP_SAMPLES, 128)]);
 }
 
-/**
- * `POST /v1/speech-clips` as the API answers it (the API's own tests cover the endpoint), and the
- * generated file it points to: `url` as the API gives it, `file` as
- * the page loads it (a private clip plays through main's own file route).
- */
 async function routeSpeechClips(page: Page, { file = CLIP_URL, url = CLIP_URL } = {}) {
   const requests: unknown[] = [];
   let fileLoaded = false;
@@ -164,10 +154,8 @@ test.describe("Language calls", () => {
     const transcript = page.getByRole("log", { name: "Conversation" });
     await expect(transcript.getByText("Hi! Are you calling about the apartment?")).toBeVisible();
 
-    // Advance through the idle warning, then the client cutoff.
     await page.clock.fastForward("00:21");
 
-    // Still quiet: the call ends before its two minutes, since the voice is paid by the second.
     await page.clock.fastForward("00:25");
     await expect(page.getByRole("img", { name: "2 of 3 stars" })).toBeVisible();
 
@@ -191,12 +179,10 @@ test.describe("Language calls", () => {
     await page.getByRole("button", { name: "Start the call" }).click();
     await expect(page.getByText("Calling…")).toBeVisible();
 
-    // Typing works from the first ring: the reply waits for the call to connect.
     await page.getByRole("textbox", { name: "Type your reply" }).fill("Hello?");
     await page.keyboard.press("Enter");
     await expect(page.getByRole("log", { name: "Conversation" }).getByText("Hello?")).toBeVisible();
 
-    // The session never starts: after a while the call says so, without blaming anyone.
     await gateway.asked;
     await page.clock.fastForward("00:16");
 
@@ -207,7 +193,6 @@ test.describe("Language calls", () => {
     await page.getByRole("button", { name: "Try again" }).click();
     await expect(page.getByText("Calling…")).toBeVisible();
 
-    // Ending a call that never connected saves nothing: it goes back to its intro.
     await page.getByRole("button", { exact: true, name: "End" }).click();
     await expect(page.getByRole("button", { name: "Start the call" })).toBeVisible();
 
@@ -243,7 +228,6 @@ test.describe("Language practice in the plan", () => {
     await page.getByRole("radio", { name: "Right A2" }).click();
     await page.getByRole("button", { name: "Confirm" }).click();
 
-    // The voice message is a clip generated in the language tested, played to its end.
     const clip = await routeSpeechClips(page);
     await page.getByRole("button", { name: "Play the message" }).click();
     await expect(page.getByRole("button", { name: "Play the message again" })).toBeVisible();
@@ -262,11 +246,9 @@ test.describe("Language practice in the plan", () => {
 
     await expect(page.getByRole("heading", { name: "Your level today" })).toBeVisible();
 
-    // Stopping before the sentence out loud leaves speaking without a level.
     await expect(page.getByRole("listitem").filter({ hasText: "Reading" })).toBeVisible();
     await expect(page.getByRole("listitem").filter({ hasText: "Speaking" })).toHaveCount(0);
 
-    // Building the plan saves the levels the test placed.
     await page.getByRole("button", { name: "Build my plan" }).click();
 
     await expect

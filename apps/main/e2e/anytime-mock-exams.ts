@@ -1,7 +1,6 @@
 export const AREAS = ["Mathematics", "Languages"] as const;
 const CITATION = { passage: "From the notice.", sourceId: "notice" };
 
-/** One exam day of two sections of eight questions, each one of the notice's subjects. */
 const STRUCTURE = {
   formats: [],
   mock: {
@@ -29,13 +28,8 @@ const STRUCTURE = {
   })),
 };
 
-/** What the notice says it takes to pass, in its own words. */
 const WRITTEN_PASS_MARK = "Aprovado quem obtiver no mínimo 4 dos 8 pontos (50%).";
 
-/**
- * An exam day like a Cebraspe one: an objective test of eight Mathematics questions, then a
- * discursive test with its own half hour, and a pass mark in the notice.
- */
 const WRITTEN_STRUCTURE = {
   formats: [
     {
@@ -64,7 +58,6 @@ const WRITTEN_STRUCTURE = {
   ],
 };
 
-/** The exam's own essay question, which its full mock's discursive test asks. */
 export const WRITTEN_ESSAY = {
   context: "O controle externo da administração pública cabe ao Congresso Nacional.",
   keyPoints: ["Cites the constitution"],

@@ -24,10 +24,7 @@ export const test = base.extend<{
     await use(getBaseURL());
   },
 
-  /**
-   * Closes the browser contexts a test opened (`openAs` and the like) once it ends, so their pages
-   * stop prefetching and polling while the worker's later tests run.
-   */
+  /** Their pages would keep prefetching and polling while the worker's later tests run. */
   closeOpenedContexts: [
     async ({ browser }, use) => {
       const before = new Set(browser.contexts());
@@ -38,11 +35,7 @@ export const test = base.extend<{
     { auto: true },
   ],
 
-  /**
-   * A run's guests start goals (each weighs about $1.80 in core's limits), which would use up the
-   * day's AI budget all guests share and refuse later tests' guests: each test starts with that
-   * budget untouched. Core's own tests cover the budget itself.
-   */
+  /** Guests share one daily AI budget, which a run's guests would use up and refuse later tests' guests. */
   guestBudget: [
     // oxlint-disable-next-line eslint/no-empty-pattern -- Playwright requires destructuring pattern
     async ({}, use) => {

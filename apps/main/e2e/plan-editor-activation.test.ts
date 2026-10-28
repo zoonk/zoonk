@@ -8,7 +8,6 @@ async function readDailyMinutes(goalId: string) {
   return goal.dailyMinutes;
 }
 
-// Each save re-plans and can start writing lessons, so moving through the presets must save nothing.
 test("arrow keys move through the time presets without saving, and Enter applies one", async ({
   browser,
 }) => {

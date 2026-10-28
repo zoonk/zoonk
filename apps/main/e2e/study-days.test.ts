@@ -4,12 +4,6 @@ import { expect, test } from "./fixtures";
 import { asPersona } from "./learn-personas";
 import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 
-/**
- * Which days the learner studies is theirs to choose in "Adjust your plan": a change that doesn't
- * save shows the saved week again, never one the plan doesn't have.
- */
-
-/** Sunday's minutes in the plan's week; null while every day keeps the daily time. */
 async function loadSundayMinutes(goalId: string): Promise<unknown> {
   const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId } });
   const weekdayMinutes = isJsonObject(plan.settings) ? plan.settings.weekdayMinutes : null;
@@ -21,13 +15,9 @@ test.describe("Study days", () => {
   test("the day he taps shows at once, his saved week again when the change doesn't save, and Sunday off once it does", async ({
     browser,
   }) => {
-    // Lucas studies every day of the week, 15 minutes a day, and his small plan plans again in a
-    // moment.
     await asPersona(browser, { persona: "buddy" }, async ({ page, user }) => {
       const sundayBefore = await loadSundayMinutes(user.goalId);
 
-      // While failing, every change to his week is held on its way to the server, and then never
-      // reaches it.
       const held: (() => void)[] = [];
       let failing = true;
 
@@ -62,7 +52,6 @@ test.describe("Study days", () => {
 
       await expect(sunday).toHaveAttribute("aria-pressed", "true");
 
-      // Sunday shows off as soon as he taps it, while the other days wait for the plan to save.
       await sunday.click();
       await expect.poll(() => held.length).toBe(1);
       await expect(sunday).toHaveAttribute("aria-pressed", "false");
@@ -73,8 +62,6 @@ test.describe("Study days", () => {
       await expect(sunday).toHaveAttribute("aria-pressed", "true");
       await expect(monday).toBeEnabled();
 
-      // The time he picks next shows picked while it saves, and the Sunday that didn't save
-      // never shows off again meanwhile.
       await time.getByText("45 min", { exact: true }).click();
       await expect.poll(() => held.length).toBe(2);
       await expect(time.getByRole("radio", { name: /^45 min/u })).toBeChecked();
@@ -86,7 +73,6 @@ test.describe("Study days", () => {
       await expect(time.getByRole("radio", { name: /^15 min/u })).toBeChecked();
       expect(await loadSundayMinutes(user.goalId)).toBe(sundayBefore);
 
-      // Once it saves, Sunday is off.
       failing = false;
       await sunday.click();
       await expect(sunday).toHaveAttribute("aria-pressed", "false");

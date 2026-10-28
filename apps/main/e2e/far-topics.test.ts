@@ -13,14 +13,9 @@ import { openAs } from "./study-day";
 const GENERATIONS_URL = "**/v1/goals/*/skills/*/outline/generations";
 const OUTLINE_URL = /\/v1\/goals\/[^/]+\/skills\/[^/]+\/outline$/u;
 
-/** The far topic starts two months from now, past the two weeks the plan writes ahead. */
+/** Past the two weeks the plan writes ahead. */
 const START_DAYS = 60;
 
-/**
- * A learner of a learn goal whose current phase holds a chapter to study now, in the Charts module,
- * and a topic two months away, in the Inference module, its lessons not written yet. Each module's
- * page lists its chapters.
- */
 async function createLearner() {
   const user = await createE2EUser(getBaseURL());
   const suffix = randomUUID().slice(0, 6);
@@ -91,7 +86,6 @@ test.describe("Far topics", () => {
 
     await page.goto("/plan/inference");
 
-    // Opening it reads its lesson plan; it writes nothing until the tap.
     await page.getByRole("button", { name: new RegExp(far.name, "u") }).click();
     const sheet = page.getByRole("dialog", { name: far.name });
     const see = sheet.getByRole("button", { name: "See the lessons" });

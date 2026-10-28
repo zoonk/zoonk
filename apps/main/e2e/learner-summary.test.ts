@@ -8,7 +8,6 @@ import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profile
 import { mockCentralSignOut } from "./auth-transport";
 import { expect, test } from "./fixtures";
 
-/** A learner with a planned goal, on it. */
 async function createGoalLearner() {
   const user = await createE2EUser(getBaseURL());
 
@@ -87,7 +86,6 @@ test.describe("learner summary", () => {
     await expect(accountRow(page, name)).toBeVisible();
     await expect(gate).toHaveCount(0);
 
-    // Logged out in another tab, the Plan reloads and asks the visitor to log in.
     const loggedOut = page.waitForEvent("load");
     await logOutInAnotherTab(context);
     await loggedOut;
@@ -97,12 +95,10 @@ test.describe("learner summary", () => {
   });
 });
 
-/** A gated page's way in, where its body would be. */
 function loginGate(page: Page) {
   return page.getByRole("main").getByRole("heading", { level: 2, name: "Log in to continue" });
 }
 
-/** Logs the learner out from another tab's account menu, as they would. */
 async function logOutInAnotherTab(context: BrowserContext) {
   const other = await context.newPage();
   await mockCentralSignOut(other);
@@ -119,10 +115,6 @@ async function logOutInAnotherTab(context: BrowserContext) {
   ]);
 }
 
-/**
- * Signs the learner in from another tab through the auth callback, as a real sign-in ends, with a
- * token from a new session of theirs (a logout ended the one they had).
- */
 async function signInInAnotherTab({ context, user }: { context: BrowserContext; user: E2EUser }) {
   const auth = await apiRequest.newContext({ baseURL: getBaseURL() });
 

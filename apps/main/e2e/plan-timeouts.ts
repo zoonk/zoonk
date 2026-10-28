@@ -1,6 +1,2 @@
-/**
- * How long a change that plans again may take before the editor says what it did, under load:
- * every plan edit plans again. Only waits on the new plan use it; what a control shows at once
- * keeps the default wait.
- */
+/** Re-planning under load can take this long. Use it only for waits on the new plan. */
 export const REPLAN_TIMEOUT_MS = 15_000;

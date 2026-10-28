@@ -12,19 +12,11 @@ import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-conte
 import { expect, test } from "./fixtures";
 import { openAs } from "./study-day";
 
-/**
- * These tests cover the page when the API can't write the lesson. Another local server may be
- * listening on the E2E API port, so the request fails on purpose instead of by assumption.
- */
+/** Another local server may be listening on the E2E API port, so the request fails on purpose. */
 async function failLessonWriting(page: Page) {
   await page.route("**/v1/library/lessons/*/generations", (route) => route.abort());
 }
 
-/**
- * Stands in for the API: asking for the lesson answers with the run writing it (the next run id
- * each time it's asked), and each run's step stream is read afresh on every connection, so steps
- * pushed later arrive when the page reconnects after the stream closes.
- */
 async function answerLessonWriting(page: Page, runs: { events: object[]; id: string }[]) {
   const asked: string[] = [];
 
@@ -56,7 +48,6 @@ function lessonStep(step: string, status: "completed" | "error" | "started") {
   return { entityId: "lesson", status, step };
 }
 
-/** A learner whose plan's next lesson isn't written yet, with a written one after it. */
 async function createWaitingLearner() {
   const [user, unwritten, written] = await Promise.all([
     createE2EUser(getBaseURL()),
@@ -77,10 +68,7 @@ async function createWaitingLearner() {
   return { unwritten, user, written: written.lesson };
 }
 
-/**
- * Writes the lesson the way the API's workflows do: straight to the database, from another app
- * whose cache revalidation never reaches this app's cache.
- */
+/** As the API's workflows do: from another app, whose cache revalidation never reaches this one. */
 async function writeLessonElsewhere(lessonId: string) {
   await Promise.all([
     libraryStepFixture({
@@ -118,7 +106,6 @@ test("loading an unwritten lesson asks for nothing, and it opens once another ap
 
   await failLessonWriting(page);
 
-  // Loading and reloading it asks for nothing: only the learner's tap does.
   await page.goto(`/learn/${unwritten.id}`);
   await expect(page.getByText("This lesson isn't written yet")).toBeVisible();
   await expect(start).toBeVisible();
@@ -148,7 +135,6 @@ test("a lesson another app pulls for a fix and rewrites opens as it is now, not 
   await page.goto(`/learn/${lesson.id}`);
   await expect(page.getByText("A cloud, not a little ball")).toBeVisible();
 
-  // A later review takes it out of play, straight in the database: it waits to be written again.
   await prisma.lesson.update({ data: { contentStatus: "failed" }, where: { id: lesson.id } });
   await page.reload();
   await page.getByRole("button", { name: "Start this lesson" }).click();
@@ -156,7 +142,6 @@ test("a lesson another app pulls for a fix and rewrites opens as it is now, not 
   await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
   await expect(page.getByText("A cloud, not a little ball")).toBeHidden();
 
-  // Its new version replaces the screens it had.
   await prisma.step.deleteMany({ where: { lessonId: lesson.id } });
 
   await libraryStepFixture({
@@ -203,7 +188,6 @@ test.describe("A lesson still being written", () => {
       /^Writing the lesson, in progress/u,
     ]);
 
-    // The run writes the lesson and says it's ready: the page opens it without a refresh.
     await writeLessonElsewhere(unwritten.id);
     events.push(lessonStep("lessonReady", "completed"));
 
@@ -235,7 +219,6 @@ test.describe("A lesson still being written", () => {
     await page.goto(`/learn/${unwritten.id}`);
     await page.getByRole("button", { name: "Start this lesson" }).click();
 
-    // Never a dead end: it can be tried again, or swapped for the plan's next written lesson.
     await expect(page.getByText("This didn't finish")).toBeVisible();
 
     await expect(page.getByRole("link", { name: written.title })).toHaveAttribute(
@@ -245,7 +228,6 @@ test.describe("A lesson still being written", () => {
 
     await page.getByRole("button", { name: "Try again" }).click();
 
-    // Asking again starts a new run, and the wait follows that one.
     await expect(
       page
         .getByRole("list", { name: "Writing your lesson" })
@@ -276,7 +258,6 @@ test.describe("A lesson still being written", () => {
 
     await expect(page.getByRole("heading", { level: 1, name: unwritten.title })).toBeVisible();
 
-    // Loading the page alone makes no guest and writes nothing, so a crawler never starts AI work.
     const start = page.getByRole("button", { name: "Start this lesson" });
     await expect(start).toBeVisible();
 
@@ -286,8 +267,6 @@ test.describe("A lesson still being written", () => {
 
     await start.click();
 
-    // Asking for the lesson made the visitor a guest. Writing it fails here, so the page offers
-    // to try again instead of ending there.
     await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
     expect(writeRequests).toHaveLength(1);
 

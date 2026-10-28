@@ -58,8 +58,7 @@ test("logout ends the app session and signs out centrally before login can reope
       }
     });
 
-    // The HTML's "Log in" can't know the page it's on, so the browser swaps in the link that
-    // returns here as the page hydrates: tapped once it has, as a tap across the swap is lost.
+    // Hydration swaps in the link that returns here, and a tap across the swap is lost.
     const logIn = page.getByRole("link", { exact: true, name: "Log in" });
     await expect(logIn).toHaveAttribute("href", "/login?next=%2F");
     await logIn.click();

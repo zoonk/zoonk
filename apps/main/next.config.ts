@@ -10,7 +10,6 @@ const CACHE_IMAGE_DAYS = 30;
 
 const isE2E = process.env.E2E_TESTING === "true";
 
-// Substitute authentication and external AI boundaries only in E2E builds.
 const e2eAliases: Record<string, string> = isE2E
   ? {
       "@zoonk/ai/tasks/v2/language/assess-pronunciation":
@@ -21,13 +20,8 @@ const e2eAliases: Record<string, string> = isE2E
     }
   : {};
 
-/** Paths without a locale are the default language; the others start with their locale. */
 const localePrefixes = ["", `/:locale(${SUPPORTED_LOCALES.join("|")})`];
 
-/**
- * The old course-prompt pages (`/start/learn/{prompt}`, `/start/speak`, `/start/exam`) are now
- * onboarding, which reads the goal from `?goal=`, so their links and search results keep working.
- */
 const oldStartRedirects = localePrefixes.flatMap((prefix) => [
   {
     destination: `${prefix}/start?goal=:prompt`,
@@ -41,11 +35,7 @@ const oldStartRedirects = localePrefixes.flatMap((prefix) => [
   },
 ]);
 
-/**
- * Pages folded into others: the language setting lives in Appearance, and "My courses" gave way to
- * Today, where a learner's goals and their courses are. Help lives at `/support`, and `/help` is
- * the address people guess.
- */
+/** `/help` is the address people guess for `/support`. */
 const movedPageRedirects = localePrefixes.flatMap((prefix) => [
   { destination: `${prefix}/settings/appearance`, permanent: true, source: `${prefix}/language` },
   { destination: `${prefix}/today`, permanent: true, source: `${prefix}/my` },
@@ -55,7 +45,6 @@ const movedPageRedirects = localePrefixes.flatMap((prefix) => [
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["**.local"],
   cacheComponents: true,
-  // Use separate build directories so E2E and production builds don't conflict
   distDir: isE2E ? ".next-e2e" : ".next",
   experimental: {
     authInterrupts: true,
@@ -82,10 +71,7 @@ const nextConfig: NextConfig = {
   redirects: async () => [...oldStartRedirects, ...movedPageRedirects],
   turbopack: {
     resolveAlias: { ...e2eAliases },
-    rules: {
-      // Allow to import MDX files used for AI prompts
-      "*.md": { as: "*.js", loaders: ["raw-loader"] },
-    },
+    rules: { "*.md": { as: "*.js", loaders: ["raw-loader"] } },
   },
   typedRoutes: true,
   typescript: { ignoreBuildErrors: true },

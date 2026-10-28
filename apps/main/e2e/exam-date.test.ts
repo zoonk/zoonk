@@ -18,14 +18,8 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { expect, test } from "./fixtures";
 import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 
-/**
- * The exam's date is the learner's: the plan editor changes it any time, with the notice's day one
- * tap away.
- */
-
 const citation = { passage: "", sourceId: "notice" };
 
-/** A public notice whose one exam day is this one. */
 function noticeFixture(day: string) {
   return examBlueprintFixture({
     edition: {
@@ -45,7 +39,6 @@ function isoDaysFromNow(days: number): string {
   return new Date(Date.now() + days * MS_PER_DAY).toISOString().slice(0, 10);
 }
 
-/** "November 8", with the year when it isn't this one, as the app writes a day. */
 function longDate(isoDate: string): string {
   const date = new Date(`${isoDate}T00:00:00Z`);
   const otherYear = date.getUTCFullYear() !== new Date().getUTCFullYear();
@@ -58,7 +51,6 @@ function longDate(isoDate: string): string {
   }).format(date);
 }
 
-/** A topic of the exam with one Library lesson in the chapter, as the planner lays it out. */
 async function createTopic({ chapterId, position }: { chapterId: string; position: number }) {
   const [skill, lesson] = await Promise.all([
     skillFixture({ name: `Reading ${randomUUID()}` }),
@@ -73,11 +65,6 @@ async function createTopic({ chapterId, position }: { chapterId: string; positio
   return { area: null, lessons: 1, name: skill.name, phase: 0, skillId: skill.id, weight: null };
 }
 
-/**
- * A learner past onboarding who prepares for the exam of `blueprint`'s notice, counting down to
- * `targetDate`, with a small plan the planner owns: two topics, a lesson each. Returns the goal
- * and a page on their device, in the goal's time zone.
- */
 async function openExamPlan(
   browser: Browser,
   {
@@ -119,7 +106,6 @@ async function openExamPlan(
     learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
   ]);
 
-  // A plan laid out once, so the Plan opens: placement settled the first topic.
   await planItemFixture({
     completedAt: new Date(),
     planId: plan.id,
@@ -141,7 +127,6 @@ test.describe("Exam date", () => {
   test("the plan editor changes the exam's full date any time, with the notice's day one tap away", async ({
     browser,
   }) => {
-    // Her plan counts down to a day of her own, a week after the notice's.
     const noticeDay = isoDaysFromNow(70);
     const ownDay = isoDaysFromNow(77);
     const laterDay = isoDaysFromNow(84);
@@ -154,7 +139,6 @@ test.describe("Exam date", () => {
     });
 
     try {
-      // Her date is one of her plan's settings beside it: a tap opens the editor at it.
       await page.goto("/plan");
 
       await page
@@ -170,14 +154,11 @@ test.describe("Exam date", () => {
       await expect(date).toHaveValue(ownDay);
       await expect(offer).toBeVisible();
 
-      // One tap takes the notice's day. Saving a date plans again, and the offer goes with the new
-      // plan, after the date is saved (see `plan-timeouts.ts`).
       await editor.getByRole("button", { name: "Use this date" }).click();
       await expect(offer).toBeHidden({ timeout: REPLAN_TIMEOUT_MS });
       await expect(date).toHaveValue(noticeDay);
       await expect.poll(() => readTargetDate(goal.id)).toBe(noticeDay);
 
-      // Any full date of her own, saved when she says so; the notice's day is offered again.
       await date.fill(laterDay);
       await editor.getByRole("button", { name: "Save" }).click();
       await expect(offer).toBeVisible({ timeout: REPLAN_TIMEOUT_MS });

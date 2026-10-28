@@ -13,7 +13,6 @@ test.describe("A checkpoint from today's session", () => {
     await expect(async () => {
       await page.keyboard.press("Enter");
 
-      // Its intro is the challenge's page, keeping the session it came from.
       await expect(page).toHaveURL(new RegExp(`/challenge/${boss.id}\\?session=`, "u"), {
         timeout: 1000,
       });
@@ -31,19 +30,14 @@ test.describe("A checkpoint from today's session", () => {
 
     await playDuel(page);
 
-    // Winning the first checkpoint earned the Star glasses: their moment opens first, right after
-    // the duel, and Enter puts them on.
     const ceremony = page.getByRole("dialog", { name: "Star glasses!" });
     await expect(ceremony.getByRole("button", { name: "Wear them" })).toBeFocused();
     await pressUntil(() => page.keyboard.press("Enter"), ceremony, { visible: false });
 
-    // Then the duel's result shows, and takes the focus.
     await expect(
       page.getByRole("heading", { level: 1, name: "You beat the Trickster!" }),
     ).toBeFocused();
 
-    // Enter leaves the single-screen result for the session. The checkpoint was the day's only
-    // block, so the session shows the day's summary, without the glasses' moment again.
     await expect(page.getByRole("link", { name: "Continue" })).toHaveAttribute("href", "/session");
 
     await pressUntil(

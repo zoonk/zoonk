@@ -5,23 +5,12 @@ import { expect, test } from "./fixtures";
 import { followRun, stopRuns } from "./generation-run";
 import { ANSWERED, mapGoalSkills } from "./onboarding-fixtures";
 
-/**
- * The steps after a goal is created (`/start/[goalId]`): a refresh comes back to where the learner
- * was, the wait for placement's questions follows the goal's run and moves on by itself, and a run
- * that failed or never started says so with a way on. The run's stream is the API's, stood in for
- * with `page.route`.
- */
-
-/** A run that doesn't appear within 45 s didn't start. */
+/** The page gives a run 45 s to appear. */
 const RUN_START_LIMIT_MS = 46_000;
 
-/**
- * Placement checks for its questions every 3 s, and one in flight as they land leaves them to the
- * next: two checks and their replies.
- */
+/** Placement checks every 3 s, and a check in flight as the questions land leaves them to the next. */
 const NEXT_CHECK_TIMEOUT_MS = 10_000;
 
-/** A goal whose run is still drawing its skill map: placement and the plan wait for it. */
 async function createGoalBeingMapped({
   answered = ANSWERED,
   runId,
@@ -53,7 +42,6 @@ test.describe("Refreshing mid-onboarding", () => {
 
     await page.goto(`/start/${goal.id}`);
 
-    // A one-answer question moves on with the pick.
     await page.getByRole("radio", { name: /Understand it in depth/u }).click();
 
     const date = page.getByRole("heading", { name: "Is there a date you're aiming for?" });
@@ -62,8 +50,6 @@ test.describe("Refreshing mid-onboarding", () => {
     await page.reload();
     await expect(date).toBeVisible();
 
-    // "Start over", in the bar's "More", asks first. Starting over sets the goal aside and goes
-    // back to typing a goal.
     await page.getByRole("button", { name: "More" }).click();
     await page.getByRole("menuitem", { name: /^Start over/u }).click();
 
@@ -104,12 +90,10 @@ test.describe("Waiting for placement's questions", () => {
 
     await expect(page.getByRole("heading", { name: "Getting your questions ready" })).toBeVisible();
 
-    // A refresh while waiting comes back to the wait, not to placement's start.
     await page.reload();
 
     await expect(page.getByRole("heading", { name: "Getting your questions ready" })).toBeVisible();
 
-    // The run writes the skill map and its questions: the first one shows without a refresh.
     await mapGoalSkills({ goalId: goal.id });
 
     await expect(page.getByText("Question 1", { exact: true })).toBeVisible({
@@ -143,7 +127,6 @@ test.describe("When a wait can't go on", () => {
     await expect(page.getByRole("button", { name: "Skip for now" })).toBeVisible();
     await failed.getByRole("button", { name: "Try again" }).click();
 
-    // The tap starts the run again: the wait follows it, or says the start failed with a way out.
     await expect(failed).toBeHidden();
 
     await expect(
@@ -168,8 +151,7 @@ test.describe("When a wait can't go on", () => {
 
     await expect(page.getByRole("heading", { name: "What do you want from it?" })).toBeVisible();
 
-    // Picking an answer shows the page is interactive, so its wait for the run has begun; a
-    // one-answer question then moves on by itself.
+    // Picking an answer shows the page is interactive, so its wait for the run has begun.
     const deep = page.getByRole("radio", { name: /Understand it in depth/u });
     await deep.click();
     await expect(deep).toBeChecked();
@@ -184,11 +166,9 @@ test.describe("When a wait can't go on", () => {
 
     await expect(notice).toBeVisible();
 
-    // The learner keeps answering under the notice.
     const nextQuestion = page.getByRole("heading", { name: "Is there a date you're aiming for?" });
     await expect(nextQuestion).toBeVisible();
 
-    // The API accepts the learner's retry, and the new run stops.
     await stopRuns({ entityId: goal.id, page });
 
     await notice.getByRole("button", { name: "Try again" }).click();

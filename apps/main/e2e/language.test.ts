@@ -2,10 +2,6 @@ import { type Locator, type Page } from "@playwright/test";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { expect, test } from "./fixtures";
 
-/**
- * Change the language and wait for the proxy to finish canonicalizing the
- * locale-prefixed target before making assertions against the new page.
- */
 async function selectLanguage({
   expectedPath,
   locale,

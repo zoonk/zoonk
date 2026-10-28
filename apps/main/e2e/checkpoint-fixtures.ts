@@ -14,11 +14,9 @@ import {
 const SKILL_NAMES = ["Discounts", "Ratios"];
 const QUESTIONS_PER_SKILL = 3;
 
-/** Seven of ten wins: with six questions, five right. */
 export const CHECKPOINT_QUESTIONS = SKILL_NAMES.length * QUESTIONS_PER_SKILL;
 const CHECKPOINT_PASS_MARK = 5;
 
-/** A learner who owns the returned goal, studying it. */
 export async function createGoalLearner() {
   const user = await createE2EUser(getBaseURL());
   const goal = await goalFixture({ timezone: "UTC", title: "Learn percentages", userId: user.id });
@@ -33,10 +31,6 @@ const BOSS_TITLE = "Basics boss";
 /** A checkpoint takes about a minute and a half a question. */
 const CHECKPOINT_MINUTES = 9;
 
-/**
- * Today's session holding one checkpoint: the first phase's boss, with six questions on two skills.
- * The plan has a second phase after it.
- */
 export async function createCheckpointLearner() {
   const [{ goal, user }, skills, lessons] = await Promise.all([
     createGoalLearner(),
@@ -44,7 +38,6 @@ export async function createCheckpointLearner() {
     Promise.all(SKILL_NAMES.map((name) => libraryLessonFixture({ title: name }))),
   ]);
 
-  // The phase's lessons are done, so its boss is next.
   const plan = await planFixture({
     goalId: goal.id,
     items: [
@@ -107,12 +100,7 @@ export async function createCheckpointLearner() {
   return { block, boss, user };
 }
 
-/**
- * Answers a duel's question right by keyboard: its number key picks the right answer (the options
- * keep their order, so it's the first), Enter confirms and, once the verdict shows, moves on. The
- * answer that reaches the pass mark breaks the Trickster's shield, which his line adds to the
- * verdict (`checkpoints.test.ts`).
- */
+/** The options keep their order, so the right answer is the first. */
 async function answerDuelQuestion(page: Page, number: number) {
   const decides = number === CHECKPOINT_PASS_MARK;
 
@@ -132,7 +120,6 @@ async function answerDuelQuestion(page: Page, number: number) {
   await page.keyboard.press("Enter");
 }
 
-/** Wins a running boss duel from `createCheckpointLearner` by keyboard, ending at its pass mark. */
 export async function playDuel(page: Page) {
   for (let number = 1; number <= CHECKPOINT_PASS_MARK; number += 1) {
     // oxlint-disable-next-line no-await-in-loop -- A duel is answered one question at a time.

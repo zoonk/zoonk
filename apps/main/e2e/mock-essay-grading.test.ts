@@ -7,7 +7,6 @@ import { openAs } from "./study-day";
 const ESSAY_TEXT =
   "O controle externo da administração pública cabe ao Congresso Nacional, com o auxílio do Tribunal de Contas da União, que julga as contas dos administradores e fiscaliza a aplicação dos recursos federais.";
 
-/** A resumed last section whose essay is already saved; no generation is needed to reach it. */
 async function writtenSitting({ expired }: { expired: boolean }) {
   const { goal, user } = await createAnytimeMockLearner({ plus: true, written: true });
 
@@ -87,8 +86,7 @@ test.describe("Mock essays need a learner's grading request", () => {
         await page.clock.install();
       }
 
-      // On this route, a two-argument action is finish or essay grading. The automatic section
-      // submit has three arguments. Block grading before the server sees it, so RED never runs AI.
+      // Here a two-argument action is finish or essay grading; the automatic section submit has three.
       await page.route("**/*", async (route) => {
         const request = route.request();
         const body = request.postData() ?? "";

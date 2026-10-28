@@ -5,13 +5,10 @@ import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-conte
 import { expect, test } from "./fixtures";
 
 /**
- * A private course's pictures live in the private Blob store, so the player loads them from main's
- * own file route with the learner's session cookie, never through the shared image optimizer.
- * Blob storage is an external service E2E servers never call, so the file route's answer for the
- * owner is stood in for; who may read a file is checked on the real route below.
+ * E2E servers never call Blob storage, so the file route's answer for the owner is stood in for;
+ * who may read a file is checked on the real route below.
  */
 
-/** The smallest valid PNG, one transparent pixel, for the stood-in file route. */
 const PIXEL_PNG = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=",
   "base64",

@@ -22,7 +22,6 @@ const CARD = {
   text: null,
 };
 
-/** DELE B2's first task as its card writer leaves it: Lucía examines, the card is on the table. */
 const SCENARIO = {
   character: { name: "Lucía", place: "Sala de examen", role: "examinadora" },
   characterBrief:
@@ -91,7 +90,7 @@ test.describe("Exam speaking tasks", () => {
     await expect(transcript.getByText(CHARACTER_REPLY)).toBeVisible();
     await page.getByRole("button", { exact: true, name: "End" }).click();
 
-    // E2E blocks the scoring model: the review tries it again a few times, then saves no estimate.
+    // E2E blocks the scoring model, so the review retries a few times before giving up.
     await expect(page.getByRole("heading", { name: "This task has no estimate" })).toBeVisible({
       timeout: 20_000,
     });
@@ -102,7 +101,7 @@ test.describe("Exam speaking tasks", () => {
 
     await page.getByRole("link", { name: "Go to task 2" }).click();
     await expect(page).toHaveURL(/\/exam\?task=t2$/u);
-    // The exam page the router kept opens the task the link asks for, ready to start.
+
     await expect(page.getByRole("button", { name: /Tarea 2: Describir/u })).toHaveAttribute(
       "aria-expanded",
       "true",

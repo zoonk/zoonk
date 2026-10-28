@@ -12,10 +12,6 @@ import { fulfillTutorAnswer } from "./tutor-answer";
 
 const ANSWER_TEXT = "Gravity keeps pulling while the satellite moves forward, bending its path.";
 
-/**
- * A Library lesson played in the lesson player, whose tutor is the questions sheet: a check, then
- * an explanation.
- */
 async function createQuestionLesson() {
   // A letter first: an id of digits alone reads as a number, which the lesson writes grouped.
   const uniqueId = `q${randomUUID().slice(0, 8)}`;
@@ -75,11 +71,6 @@ function expectBearerAuthorization(route: Route) {
   expect(route.request().headers().authorization).toMatch(/^Bearer .+/u);
 }
 
-/**
- * The tutor's API routes, answered like the API: each screen's thread, new questions and their
- * streamed answers. The player's browser tests cover how the tutor handles failures and late or
- * unfinished answers; this checks the app's wiring to the routes.
- */
 async function mockQuestionApi({ lessonId, page }: { lessonId: string; page: Page }) {
   const threadId = randomUUID();
 
@@ -169,15 +160,12 @@ test.describe("The tutor", () => {
   test("asks from the screen in view and follows up on the next one in its own thread", async ({
     userWithoutProgress: page,
   }) => {
-    // Any signed-in learner can ask, without a subscription or progress.
     const scenario = await createQuestionLesson();
     const api = await mockQuestionApi({ lessonId: scenario.lessonId, page });
 
     await page.goto(scenario.url);
     await expect(page.getByText(scenario.question)).toBeVisible();
 
-    // The screen's history preloads once the page is interactive. On a wide screen the buddy is
-    // beside the lesson, about the screen in view.
     await expect.poll(() => api.getRequests).toBe(1);
     const aside = page.getByRole("complementary", { name: "Help with this screen" });
     const textbox = aside.getByRole("textbox", { name: "Ask Zu about this screen" });
@@ -186,7 +174,6 @@ test.describe("The tutor", () => {
     await textbox.fill(firstQuestion);
     await textbox.press("Enter");
 
-    // One question asks for one answer.
     const conversation = page.getByRole("region", { name: "Questions to Zu" });
     await expect(conversation.getByText(ANSWER_TEXT)).toBeVisible();
     expect(api.answerRequests).toBe(1);
@@ -202,7 +189,6 @@ test.describe("The tutor", () => {
     await page.getByRole("button", { name: /^Continue/u }).click();
     await expect(page.getByText(scenario.secondStepTitle)).toBeVisible();
 
-    // The next screen's questions are its own thread.
     const followUp = "How does that connect to free fall?";
     await aside.getByRole("textbox", { name: "Ask Zu about this screen" }).fill(followUp);
     await aside.getByRole("button", { name: "Send" }).click();

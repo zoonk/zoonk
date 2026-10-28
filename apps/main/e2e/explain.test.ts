@@ -15,19 +15,12 @@ import { type Page, expect, test } from "./fixtures";
 import { expectHydrated } from "./hydration";
 import { asPersona } from "./learn-personas";
 
-/**
- * Quick explanations: a question goes straight to its explanation, with a wait while it's
- * written, then about five short screens, one question and "Now you know".
- */
-
-/** One idea per screen: "Next" moves through the story one screen at a time. */
 async function readStory(page: Page, screens: number): Promise<void> {
   if (screens === 0) {
     return;
   }
 
-  // The first screen is in the page's HTML before the player's code runs, and a tap on its Next
-  // does nothing until then.
+  // The first screen's Next is in the HTML before the player's code runs, and does nothing until then.
   const next = page.getByRole("button", { name: /^Next/u });
   await expectHydrated(next);
   await next.click();
@@ -98,8 +91,6 @@ test.describe("Quick explanations", () => {
 
     const saved = Promise.withResolvers<null>();
 
-    // The run saves the explanation on the goal's plan, then reports writing done; its course
-    // to go further is still being found, so the run isn't over.
     await page.route(
       `**/v1/generations/${runId}/events**`,
       async (route) => {
@@ -131,7 +122,6 @@ test.describe("Quick explanations", () => {
     await page.goto(`/explain/${goal.id}`);
     await saved.promise;
 
-    // It opens without a refresh, before the page's own next check five seconds later.
     await expect(page.getByRole("button", { name: "See explanation" })).toBeVisible({
       timeout: 3000,
     });

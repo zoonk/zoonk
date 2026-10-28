@@ -15,13 +15,8 @@ import {
 const SHORT_ID_LENGTH = 8;
 const SKILLS_PER_PHASE = [3, 2];
 
-/** Every question up to placement is behind the learner: only placement and the plan are left. */
 export const ANSWERED = ["purpose", "targetDate", "level", "schedule", "buddy"];
 
-/**
- * A goal whose skill map is already written, the way the goal workflow leaves it, with every
- * question up to placement answered: placement (two questions per skill) and the plan are left.
- */
 export async function createMappedGoal(userId: string) {
   const id = randomUUID().slice(0, SHORT_ID_LENGTH);
 
@@ -37,10 +32,6 @@ export async function createMappedGoal(userId: string) {
   return goal;
 }
 
-/**
- * Writes an existing goal's skill map as the goal workflow does: its plan, skills and two placement
- * questions per skill.
- */
 export async function mapGoalSkills({ goalId }: { goalId: string }) {
   const id = randomUUID().slice(0, SHORT_ID_LENGTH);
 

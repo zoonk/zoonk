@@ -8,18 +8,10 @@ import { type StreamEvent, followRun } from "./generation-run";
 import { continueToLastStep } from "./result-steps";
 import { answerRight, createStudyDay, openAs, pressUntil, writeStudyLesson } from "./study-day";
 
-/**
- * A moment sits under its header's heading: the lesson's title in the player, "Today's session"
- * between a session's blocks.
- */
 async function expectMoment(page: Page, title: string) {
   await expect(page.getByRole("heading", { level: 2, name: title })).toBeVisible();
 }
 
-/**
- * Stands in for the API taking the learner's request to write the lesson: a run starts (still
- * running, nothing written yet), and every request is recorded, so a test can say none went unasked.
- */
 async function acceptLessonWriting(page: Page) {
   const runId = `e2e-session-lesson-${randomUUID()}`;
   const asked: string[] = [];
@@ -34,10 +26,6 @@ async function acceptLessonWriting(page: Page) {
   return { asked, runId };
 }
 
-/**
- * A first-week day: placement is still unsure about a skill, so today's review opens with
- * one placement question about it, the way the session builder puts it first.
- */
 async function createFirstWeekDay() {
   const day = await createStudyDay();
   const skill = await skillFixture({ name: `Ratios ${randomUUID()}` });
@@ -59,7 +47,6 @@ async function createFirstWeekDay() {
   return day;
 }
 
-/** The placement question takes "I don't know yet"; the capsules follow. */
 async function answerPlacement(page: Page) {
   await expect(page).toHaveURL((url) => url.pathname === "/session");
   await expect(page.getByRole("heading", { name: /^Placement:/u })).toBeVisible();
@@ -68,7 +55,6 @@ async function answerPlacement(page: Page) {
   await page.keyboard.press("Enter");
 }
 
-/** Both capsules from the keyboard. */
 async function playCapsules(page: Page) {
   await answerRight(page, /^Capsule one/u);
   await answerRight(page, /^Capsule two/u);
@@ -95,7 +81,6 @@ async function playLesson(page: Page) {
   );
 }
 
-/** The day's last block, to its moment and on to the summary by Enter. */
 async function playPractice(page: Page) {
   await expect(page).toHaveURL((url) => url.pathname === "/session");
   await answerRight(page, /^Practice one/u);
@@ -185,7 +170,6 @@ test.describe("Today's session", () => {
     await playLesson(page);
     await playPractice(page);
 
-    // Finish is a link back to Today, and Enter follows it.
     await continueToLastStep(page, { keyboard: true });
     await expect(page.getByRole("link", { name: "Finish" })).toBeVisible();
     await page.keyboard.press("Enter");
@@ -204,7 +188,6 @@ test.describe("Today's session", () => {
     await playCapsules(page);
     await expectMoment(page, "Review done");
 
-    // What changed so far, said as a pause: nothing is skipped.
     await pressUntil(
       () => page.getByRole("button", { name: "Stop for today" }).click({ timeout: 1000 }),
       page.getByRole("heading", { level: 1, name: "Done for now" }),
@@ -217,7 +200,6 @@ test.describe("Today's session", () => {
 
     expect(blocks.map((block) => block.status)).toStrictEqual(["completed", "pending", "pending"]);
 
-    // Today picks the session up where it stopped.
     await page.getByRole("link", { name: "Finish" }).click();
     await expect(page).toHaveURL(/\/today$/u);
     await page.getByRole("button", { name: /^Continue/u }).click();
@@ -235,7 +217,6 @@ test.describe("Today's session", () => {
     const { asked, runId } = await acceptLessonWriting(page);
     const writing = page.getByRole("progressbar", { name: "Writing your lesson" });
 
-    // A bookmark, or a new tab: nothing writes the lesson, so the step offers its Start.
     await page.goto("/session");
     const start = page.getByRole("main").getByRole("button", { exact: true, name: "Start" });
     await expect(start).toBeEnabled();
@@ -243,13 +224,11 @@ test.describe("Today's session", () => {
     await page.waitForLoadState("networkidle");
     expect(asked).toStrictEqual([]);
 
-    // Start asks for it once, and only then the wait for its writing shows.
     await start.click();
     await expect(writing).toBeVisible();
     await expect(page).toHaveURL((url) => url.searchParams.get("generation") === runId);
     expect(asked).toStrictEqual(["POST"]);
 
-    // Asked for, not picked up by its run yet: the wait stays, without asking again.
     await page.reload();
     await expect(writing).toBeVisible();
     await expect(start).toHaveCount(0);
@@ -265,7 +244,6 @@ test.describe("Today's session", () => {
 
     const runId = `e2e-session-lesson-${randomUUID()}`;
 
-    // The run writing the lesson, as the API streams it.
     const events: StreamEvent[] = [
       { entityId: lesson.id, status: "started", step: "planLesson" },
       { entityId: lesson.id, status: "completed", step: "planLesson" },
@@ -287,7 +265,6 @@ test.describe("Today's session", () => {
       page.getByRole("list", { name: "Writing your lesson" }).getByRole("listitem"),
     ).toHaveText([/^Planning the lesson, done/u, /^Writing the lesson, in progress/u]);
 
-    // The run says it's ready: the screen reads the session again and opens the lesson.
     await writeStudyLesson(lesson.id);
     events.push({ entityId: lesson.id, status: "completed", step: "lessonReady" });
 

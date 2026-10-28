@@ -9,14 +9,6 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { createGoalLearner } from "./checkpoint-fixtures";
 import { type Page, expect, test } from "./fixtures";
 
-/**
- * Plays a Library lesson through the app: every teaching screen (the hook's guess, an explanation,
- * a worked example, a check, a typed and a spoken answer, the summary) for a signed-in learner,
- * checked by the server, to the completion; a plan lesson played from its chapter counting for the
- * plan and closing to the chapter; and a signed-in learner kept when the session check fails. What
- * single screens show, and where a lesson resumes, is the player's to test (`packages/player`).
- */
-
 const RIGHT_TYPED = "It shows where the electron is likely to be";
 
 function primary(page: Page, label: RegExp) {
@@ -90,10 +82,6 @@ async function answerSpokenByTyping(page: Page) {
   await primary(page, /^Continue/u).click();
 }
 
-/**
- * Two playable lessons of a chapter, each one an item of the learner's plan for a later day, so
- * neither is in a session.
- */
 async function createChapterLearner(browser: Browser) {
   const { goal, user } = await createGoalLearner();
 
@@ -131,8 +119,7 @@ async function createChapterLearner(browser: Browser) {
   const context = await browser.newContext({ storageState: user.storageState });
   const page = await context.newPage();
 
-  // These two lessons are already written. Their click asks the separate API for readiness;
-  // without its narrow external mock the lane's API sink correctly refuses the request.
+  // The click asks the separate API for readiness, which isn't running here.
   await Promise.all(
     [first, second].map(({ lesson }) =>
       page.route(`**/v1/library/lessons/${lesson.id}/generations`, (route) =>
@@ -201,7 +188,6 @@ test.describe("Library lesson player", () => {
       await primary(page, /^Continue/u).click();
       await expect(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
 
-      // Finishing a plan lesson anywhere checks it off the plan, a week before its day.
       await expect
         .poll(async () =>
           prisma.planItem.findUniqueOrThrow({
@@ -239,7 +225,6 @@ test.describe("Library lesson player", () => {
       }
     });
 
-    // A rate limit (or a network error) on the check says nothing about the session: never a guest.
     await page.route("**/api/auth/get-session**", (route) =>
       route.fulfill({ body: "{}", contentType: "application/json", status: 429 }),
     );

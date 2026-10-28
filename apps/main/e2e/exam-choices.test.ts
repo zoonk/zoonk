@@ -4,12 +4,6 @@ import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { isJsonObject } from "@zoonk/utils/json";
 import { expect, test } from "./fixtures";
 
-/**
- * An exam whose candidates take one of several subjects (ENEM's foreign language: English or
- * Spanish) asks which one when the goal starts, and the plan studies the one picked. An exam
- * learner who can't get past this step never reaches their plan.
- */
-
 const LANGUAGES = "Linguagens";
 const FOREIGN = "Língua Estrangeira";
 const ENGLISH = "Língua Inglesa";
@@ -20,7 +14,6 @@ async function loadPicks(goalId: string): Promise<unknown> {
   return isJsonObject(plan.settings) ? (plan.settings.examChoices ?? []) : null;
 }
 
-/** An ENEM-like notice: 45 language questions, 5 of them in English or Spanish, as picked. */
 function choiceBlueprintFixture() {
   const citation = { passage: "Língua Estrangeira (Inglês ou Espanhol)", sourceId: "notice" };
 
@@ -44,7 +37,6 @@ function choiceBlueprintFixture() {
   });
 }
 
-/** A new goal for an exam with English or Spanish, past the questions before the choice. */
 async function createChoiceGoal(userId: string) {
   const blueprint = await choiceBlueprintFixture();
 

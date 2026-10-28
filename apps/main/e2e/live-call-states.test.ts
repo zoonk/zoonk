@@ -86,7 +86,6 @@ async function cleanupStateResources({
   assertCleanup(results);
 }
 
-/** Teardown keeps auth contexts and request/browser dependencies alive, with a budget independent of the body. */
 const test = base.extend<{ stateCallResources: StateCallResources }>({
   stateCallResources: [
     async ({ browser, request }, use) => {
@@ -166,7 +165,6 @@ async function closeBehavior({
   expect(response.ok()).toBe(true);
 }
 
-/** Whether the server asked the lane's provider to hang this session up. */
 async function hangupRequested({
   request,
   sessionId,
@@ -225,7 +223,6 @@ type CallActions = {
   sdp: unknown[];
 };
 
-/** Observe the real Next action transport; no action, API or broker interception. */
 function observeActions({ page, conversationId }: { page: Page; conversationId: string }) {
   const actions: CallActions = { complete: [], end: [], reserve: [], sdp: [] };
 
@@ -461,7 +458,7 @@ test.describe("Live call server states", () => {
       const actions = observeActions({ conversationId: callId, page });
       await page.getByRole("button", { name: "Start the call" }).click();
       await page.getByRole("button", { name: "End that call and start this one" }).click();
-      // The takeover's hangup waits on the provider while the learner leaves.
+
       await expect
         .poll(() => hangupRequested({ request, sessionId: original.providerSessionId }))
         .toBe(true);
@@ -512,7 +509,6 @@ test.describe("Live call server states", () => {
       await closeBehavior({ mode: "reject", request, sessionId: connection.providerSessionId });
       await page.getByRole("button", { exact: true, name: "End" }).click();
 
-      // The hangup failed, yet the call is saved: its review run ends the connection later.
       await expect.poll(() => actions.complete.length).toBe(1);
       expect(actions.end).toContain(connection.id);
       expect(actions.complete[0]?.connectionId).toBe(connection.id);
@@ -521,7 +517,7 @@ test.describe("Live call server states", () => {
         expect.arrayContaining([expect.objectContaining({ text: "Please keep this reply." })]),
       );
 
-      // E2E blocks the review model: it's tried again a few times before the call saves without feedback.
+      // E2E blocks the review model, so it's retried a few times before the call saves without feedback.
       await expect
         .poll(() => prisma.languageConversation.findUnique({ where: { id: call.id } }), {
           timeout: 20_000,

@@ -1,7 +1,6 @@
 import { type Page, expect, test } from "./fixtures";
 import { openAsGuest } from "./guest-session";
 
-/** Opens the user menu, again until the client has hydrated its trigger. */
 async function openUserMenu(page: Page) {
   await expect(async () => {
     await page.getByRole("button", { name: /user menu/iu }).click();
@@ -16,7 +15,6 @@ test.describe("User menu - Guest", () => {
 
     await openUserMenu(page);
 
-    // Signing out would leave the guest's progress in an account nobody can sign back into.
     await expect(page.getByRole("menuitem", { name: "Create an account" })).toBeVisible();
     await expect(page.getByRole("menuitem", { name: "Log out" })).toHaveCount(0);
 

@@ -4,20 +4,10 @@ import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { type Page, expect, test } from "./fixtures";
 
-/**
- * Onboarding from a typed goal, as a visitor who becomes a guest. The understanding is stored the
- * way a real one is, as that guest's own (a reading is its learner's), so the flow runs without
- * the AI task. Core's onboarding tests cover which questions are asked and what each answer saves.
- */
-
 type Understanding = Parameters<typeof goalUnderstandingFixture>[0]["result"];
 
 const GOAL_URL = /\/start\/[0-9a-f-]{36}$/u;
 
-/**
- * Stores what the words mean for the page's guest, as a real read leaves it, and returns the words
- * made unique.
- */
 async function storeUnderstanding(
   page: Page,
   { result, words }: { result: Understanding; words: string },
@@ -49,11 +39,9 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(page).toHaveURL(GOAL_URL);
     const created = await prisma.goal.findFirstOrThrow({ where: { prompt: goal } });
 
-    // A one-answer question moves on with the pick.
     await expect(page.getByRole("heading", { name: "What do you want from it?" })).toBeVisible();
     await page.getByRole("radio", { name: /Change careers/u }).click();
 
-    // A career change is planned around the role they want and what they do now.
     await expect(page.getByRole("heading", { name: "Where are you headed?" })).toBeVisible();
     await page.getByRole("textbox", { name: "The role you want" }).fill("Data analyst");
     await page.getByRole("textbox", { name: "What you do now" }).fill("Teacher");
@@ -65,20 +53,17 @@ test.describe("Onboarding from a typed goal", () => {
 
     await page.getByRole("button", { name: "No date" }).click();
 
-    // The level moves on with the pick too.
     await expect(
       page.getByRole("heading", { name: "How much do you already know?" }),
     ).toBeVisible();
 
     await page.getByRole("radio", { name: /^The basics/u }).click();
 
-    // Everyone's first onboarding brings a buddy: one comes picked, so one Continue is enough.
     await expect(page.getByRole("heading", { name: "Choose your buddy" })).toBeVisible();
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
     await page.getByRole("button", { name: "Skip and start from the basics" }).click();
 
-    // A refresh after placement still counts it: the time is the last step.
     const time = page.getByRole("heading", { name: "How much time can you study each day?" });
     await expect(time).toBeVisible();
     await page.reload();
@@ -89,7 +74,6 @@ test.describe("Onboarding from a typed goal", () => {
       .getByText("30 min", { exact: true })
       .click();
 
-    // The week starts Monday to Friday; Saturday joins with a time of its own.
     await page.getByRole("button", { name: /^Which days\?/u }).click();
     await page.getByRole("button", { name: "Saturday" }).click();
     await page.getByRole("switch", { name: "Different time on weekends" }).click();
@@ -102,7 +86,6 @@ test.describe("Onboarding from a typed goal", () => {
     await expect(page.getByText("6 days · 3 hr 30 min a week")).toBeVisible();
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
-    // The plan is written in the background, from the answers saved on the way.
     await expect(page.getByRole("heading", { name: "Building your plan" })).toBeVisible();
 
     const saved = await prisma.goal.findUniqueOrThrow({

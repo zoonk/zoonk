@@ -7,7 +7,7 @@ export default defineConfig({
   resolve: {
     alias: [
       {
-        // Use auth's testing config in tests to avoid nextCookies() which requires Next.js context
+        // nextCookies() needs a Next.js request context.
         find: /^@zoonk\/auth$/u,
         replacement: resolve(import.meta.dirname, "../../packages/auth/src/testing.ts"),
       },
@@ -27,8 +27,7 @@ export default defineConfig({
       },
     },
     setupFiles: "./setup-tests.ts",
-    // Actions read and write the real database; on CI two suites share a 4-vCPU runner, where a
-    // test that takes a second locally takes four or five. A test that hangs still fails.
+    // On CI two real-database suites share a 4-vCPU runner, where a 1-second test takes four or five.
     testTimeout: 15_000,
   },
 });

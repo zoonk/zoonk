@@ -8,7 +8,6 @@ import { openAs } from "./study-day";
 
 const EXHAUSTED_CALL_SECONDS = 120;
 
-/** A locked challenge creates no call or AI request, and adds no call seconds or AI spend. */
 async function expectNoChallengeSpend(userId: string) {
   const [conversations, calls, usage] = await Promise.all([
     prisma.languageConversation.count({ where: { userId } }),
@@ -145,7 +144,6 @@ test("leaving cancels a checkpoint Start resolved after returning", async ({ bro
     await page.getByRole("link", { name: "Leave" }).click();
     await expect(page).toHaveURL(/\/today$/u);
 
-    // The microphone that tap opened goes at once, while its start is still on its way.
     await expect
       .poll(() => microphoneRequests(page))
       .toStrictEqual([{ active: true, tracks: ["ended"] }]);
@@ -156,9 +154,6 @@ test("leaving cancels a checkpoint Start resolved after returning", async ({ bro
     release.resolve(null);
     await delivered.promise;
 
-    // The full Main run reported ERR_ABORTED here after Leave; without its trace, the abort's
-    // origin is unproved. Wait for the body to settle, then check what the learner sees: the late
-    // answer never opens a call or takes them back. response() and body() also settle on failure.
     const heldStart = await held.promise;
     const answer = await heldStart.response();
     expect(answer, "the held start's answer reached the page").not.toBeNull();
@@ -193,10 +188,6 @@ test("leaving cancels a checkpoint Start resolved after returning", async ({ bro
   }
 });
 
-/**
- * Each microphone request, as a silent stream: whether the learner's tap was still active when it
- * was asked for, and whether its tracks are still live (let go once nothing uses them).
- */
 async function watchMicrophone(page: Page) {
   await page.addInitScript(() => {
     const requests: { active: boolean; stream: MediaStream }[] = [];

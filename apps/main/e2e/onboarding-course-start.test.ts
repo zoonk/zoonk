@@ -18,10 +18,6 @@ import { type Page, expect, test } from "./fixtures";
 
 const GOAL_URL = /\/start\/(?<goalId>[0-9a-f-]{36})$/u;
 
-/**
- * A published Library course of two Overview chapters with two lessons each, every lesson with
- * its own skill: what a course's outline looks like once its first band is written.
- */
 async function createOutlinedCourse() {
   const id = randomUUID().slice(0, 8);
   const org = await getAiOrganization();
@@ -78,7 +74,6 @@ async function createOutlinedCourse() {
     }),
   );
 
-  // The course's other bands are written too, so a whole-course start plans from this outline.
   await courseBandsFixture({
     courseId: course.id,
     levels: ["beginner", "intermediate", "advanced"],
@@ -87,10 +82,6 @@ async function createOutlinedCourse() {
   return { course, coursePath: `/b/${org.slug}/c/${course.slug}` };
 }
 
-/**
- * Follows the way in from the page's first screen: "Build my plan", which opens the start page
- * ("Continue your plan" for a learner already studying the course, which the start page sends on).
- */
 async function startFromHero(
   page: Page,
   { link = "Build my plan", name }: { link?: string; name: string },
@@ -109,18 +100,15 @@ test.describe("Starting a course from its page", () => {
   }) => {
     const { course, coursePath } = await createOutlinedCourse();
 
-    // The course's page sends a whole course's start to its start page: the tap creates nothing.
     await page.goto(coursePath);
     await startFromHero(page, { name: course.title });
     await expect(page).toHaveURL(new RegExp(`/start/course/${course.id}\\?minutes=15$`, "u"));
 
-    // No goal to type, nothing to confirm: the first screen is the learner's level in the course.
     const level = "How much do you already know?";
     await expect(page.getByRole("heading", { level: 1, name: level })).toBeVisible();
     await expect(page.getByRole("textbox", { name: "I want to" })).toBeHidden();
     await expect(page.getByRole("heading", { name: "Here's what I understood" })).toBeHidden();
 
-    // Opening the page writes nothing: no goal, and no guest until Start.
     await expect(prisma.goal.count({ where: { primaryCourseId: course.id } })).resolves.toBe(0);
     const session = await page.request.get("/api/auth/get-session");
     await expect(session.json()).resolves.toBeNull();
@@ -132,8 +120,6 @@ test.describe("Starting a course from its page", () => {
       page.getByRole("heading", { name: "Is there a date you're aiming for?" }),
     ).toBeVisible();
 
-    // Leaving after the level (including a failed date render) must not activate the default
-    // plan. Home leads to recovery, and continuing opens the same unanswered date screen.
     const beforeLeaving = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
     await page.goto("/");
     await expect(page).toHaveURL(/\/today$/u);
@@ -161,7 +147,6 @@ test.describe("Starting a course from its page", () => {
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
     await expect(page.getByRole("heading", { name: "Choose your buddy" })).toBeVisible();
 
-    // The level is answered: onboarding goes on without asking it again.
     await expect(page.getByRole("heading", { name: level })).toBeHidden();
 
     await expect(prisma.goal.findUniqueOrThrow({ where: { id: goalId } })).resolves.toMatchObject({
@@ -176,8 +161,6 @@ test.describe("Starting a course from its page", () => {
       title: course.title,
     });
 
-    // The course's page knows they study it now, and its way in brings them back to the same goal,
-    // without asking their level again.
     await page.goto(coursePath);
     await startFromHero(page, { link: "Continue your plan", name: course.title });
 
