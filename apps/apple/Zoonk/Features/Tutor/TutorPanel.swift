@@ -81,8 +81,7 @@ struct TutorAskButton: View {
 
   var body: some View {
     let name = summary.buddyDisplayName
-
-    Button {
+    let button = Button {
       isPresented = true
     } label: {
       Label {
@@ -92,6 +91,16 @@ struct TutorAskButton: View {
       } icon: {
         let buddy = summary.summary.value?.buddy ?? BuddyLook()
         BuddyFace(kind: buddy.kind, glasses: buddy.glasses)
+      }
+    }
+
+    Group {
+      // Beside a question's Check it's the buddy's face alone, so the bar keeps room for its
+      // actions, until a miss, as main's bar does.
+      if case .item(_, _, _, missed: false) = scope {
+        button.labelStyle(.iconOnly)
+      } else {
+        button
       }
     }
     .buttonStyle(.bordered)
