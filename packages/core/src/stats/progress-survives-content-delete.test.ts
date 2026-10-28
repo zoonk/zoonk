@@ -24,7 +24,6 @@ import { getCurrentUserScore } from "../progress/get-score-history";
 import { getCurrentUserScorePatterns } from "../progress/get-score-patterns";
 import { getStudiedToday } from "../progress/get-studied-today";
 
-/** Every progress resource the learner's pages read. */
 function readProgress(timeZone: string) {
   return Promise.all([
     getCurrentUserActivity(),
@@ -41,7 +40,6 @@ function readProgress(timeZone: string) {
 const TIME_ZONE = "UTC";
 const RIGHT_TYPED = "It shows where the electron is likely to be";
 
-/** A Library course whose one chapter holds a written lesson with a check and a typed answer. */
 async function createCourse() {
   const [course, skill] = await Promise.all([courseFixture(), skillFixture()]);
   const chapter = await libraryChapterFixture({ homeCourseId: course.id });
@@ -60,7 +58,6 @@ async function createCourse() {
   return { chapter, course, lesson, steps };
 }
 
-/** Plays the lesson the way the player does: start, answer both questions, finish. */
 async function playLesson({ lesson, steps }: Awaited<ReturnType<typeof createCourse>>) {
   const input = { timeZone: TIME_ZONE };
   const started = await startLibraryLesson({ input, lessonId: lesson.id });

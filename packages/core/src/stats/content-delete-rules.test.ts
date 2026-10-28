@@ -43,7 +43,6 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 
-/** Library content that a learner's rows point at, built through every Library fixture. */
 async function createLibrary() {
   const [course, skill, prerequisite, image, source] = await Promise.all([
     courseFixture(),
@@ -84,7 +83,6 @@ async function createLibrary() {
 
 type Library = Awaited<ReturnType<typeof createLibrary>>;
 
-/** A learner's personal rows pointing at the Library, built through every personal-layer fixture. */
 async function createLearnerRows({ library, userId }: { library: Library; userId: string }) {
   const goal = await goalFixture({
     examBlueprintId: library.blueprint.id,
@@ -131,7 +129,6 @@ async function createLearnerRows({ library, userId }: { library: Library; userId
   return { goal };
 }
 
-/** Deletes every piece of Library content except skills, which are merged rather than deleted. */
 async function deleteLibraryContent(library: Library) {
   await prisma.course.delete({ where: { id: library.course.id } });
   await prisma.chapter.delete({ where: { id: library.chapter.id } });

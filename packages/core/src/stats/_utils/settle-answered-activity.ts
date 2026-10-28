@@ -21,10 +21,7 @@ export type AnsweredActivity = {
   userId: string;
 };
 
-/**
- * Records answers under the owner's progress lock, in the caller's settlement transaction, and
- * returns the Brain Power and Energy before and after them.
- */
+/** Requires the owner's progress lock and the caller's settlement transaction. */
 export async function settleAnsweredActivity(
   transaction: TransactionClient,
   {

@@ -1,13 +1,8 @@
 import { type TransactionClient } from "@zoonk/db";
 
-/** What a finished lesson adds to the day, however it was scored. */
 type DailyScore = { brainPower: number; correctCount: number; incorrectCount: number };
 
-/**
- * Daily progress is a global learner timeline, so there is exactly one row per
- * user and day. Keeping the upsert logic here prevents every completion write
- * from rebuilding the same counter and energy updates inline.
- */
+/** Exactly one daily row per learner across all goals. */
 export async function upsertDailyProgress(
   tx: TransactionClient,
   params: {

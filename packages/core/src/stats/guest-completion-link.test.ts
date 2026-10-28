@@ -125,7 +125,6 @@ describe("guest completion during account linking", () => {
       const ready = Promise.withResolvers<{ date: Date; pid: number }>();
       const write = Promise.withResolvers<null>();
 
-      /** Existing progress used to skip acquiring the owner's FK lock before locking progress. */
       await expect(prisma.userProgress.count({ where: { userId: guest.guestId } })).resolves.toBe(
         1,
       );
@@ -171,7 +170,6 @@ describe("guest completion during account linking", () => {
       const { date, pid } = await ready.promise;
 
       if (owner === "account") {
-        /** A colliding day used to be merged/locked before the account's lifetime progress. */
         await Promise.all(
           [guest.guestId, account.userId].map((dayOwner) =>
             prisma.dailyProgress.create({
@@ -188,10 +186,7 @@ describe("guest completion during account linking", () => {
       try {
         await waitForBlocked(pid);
 
-        /**
-         * Let the linker's default one-second detector run before this slow completion resumes.
-         * With the old order the writer then closes the cycle and is aborted, losing its counters.
-         */
+        // Wait beyond PostgreSQL's one-second deadlock detector before resuming completion.
         await new Promise((resolve) => {
           setTimeout(resolve, 1400);
         });
@@ -242,7 +237,6 @@ describe("guest completion during account linking", () => {
     const complete = () =>
       completeLibraryLesson({ input: { runId: run.id, timeZone: "UTC" }, lessonId: lesson.id });
 
-    // The lesson's run moved to the account, so finishing it for the guest breaks its reference.
     await linkBeforeSettlement({ account, guest, rejection: { code: "P2003" }, settle: complete });
 
     await expect(
@@ -286,7 +280,6 @@ describe("guest completion during account linking", () => {
     await linkBeforeSettlement({
       account,
       guest,
-      // Locking the guest finds no guest anymore, before anything is written.
       rejection: { message: "Cannot lock a missing learner" },
       settle: () => recordAnsweredActivity({ ...activity, userId: guest.guestId }),
     });
