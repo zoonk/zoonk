@@ -542,7 +542,6 @@
       summary
         ?? LearnerSummary(
           activeGoalID: nil,
-          buddyKind: .zu,
           buddyName: nil,
           goals: [],
           identity: LearnerIdentity(isAnonymous: false, signedInAt: .now, userID: token),

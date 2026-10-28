@@ -2,7 +2,6 @@ import SwiftUI
 
 @main
 struct ZoonkApp: App {
-  @State private var buddy: BuddyStore
   @State private var courseCatalog: CourseCatalogStore
   @State private var goalContent: GoalContentStore
   @State private var learnerSummary: LearnerSummaryStore
@@ -15,12 +14,10 @@ struct ZoonkApp: App {
   @State private var session: SessionStore
   @State private var settings: SettingsStore
   @State private var subscriptions: AppStoreSubscriptionStore
-  @State private var tutor: TutorStore
   private let cache: AppCache
   private let lessonPlayerAPI: LessonPlayerAPI
   private let lessonPlayerRoutes: LessonPlayerRoutes
   private let practiceHooks: PracticeHooks
-  private let tutorPlaces: TutorPlaces
   private let privateImages: PrivateImageLoader
 
   init() {
@@ -33,7 +30,6 @@ struct ZoonkApp: App {
       let initiallyPresentsAccount = false
     #endif
 
-    _buddy = State(initialValue: dependencies.buddyStore)
     cache = dependencies.cache
     _courseCatalog = State(initialValue: dependencies.courseCatalogStore)
     _goalContent = State(initialValue: dependencies.goalContentStore)
@@ -49,11 +45,9 @@ struct ZoonkApp: App {
     _router = State(initialValue: router)
     lessonPlayerRoutes = .routed(by: router)
     practiceHooks = .routed(by: router)
-    tutorPlaces = .routed(by: router)
     _session = State(initialValue: dependencies.sessionStore)
     _settings = State(initialValue: dependencies.settingsStore)
     _subscriptions = State(initialValue: dependencies.subscriptionStore)
-    _tutor = State(initialValue: dependencies.tutorStore)
   }
 
   var body: some Scene {
@@ -66,7 +60,6 @@ struct ZoonkApp: App {
         .onChange(of: session.authenticatedSession) {
           cache.followSession()
         }
-        .environment(buddy)
         .environment(courseCatalog)
         .environment(goalContent)
         .environment(learnerSummary)
@@ -81,10 +74,7 @@ struct ZoonkApp: App {
         .environment(session)
         .environment(settings)
         .environment(subscriptions)
-        .environment(tutor)
         .environment(\.privateImageLoader, privateImages)
-        .environment(\.lessonTutor, .buddy)
-        .environment(\.tutorPlaces, tutorPlaces)
         .environment(\.lessonPlayerAPI, lessonPlayerAPI)
         .environment(\.lessonCompletionHook, .invalidating(cache))
         .onOpenURL { url in
