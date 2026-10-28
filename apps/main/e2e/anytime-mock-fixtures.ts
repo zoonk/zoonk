@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type Page, expect } from "@playwright/test";
+import { type Page, type Route, expect } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
@@ -192,4 +192,29 @@ export async function answerMockQuestions({
     // oxlint-disable-next-line no-await-in-loop -- Next shows the following question.
     await next.click();
   }
+}
+
+/** A mock page's Server Action with two arguments, the mock and the time zone: grading or finish. */
+const TWO_ARGUMENT_ACTION = /^\["[\w-]+","[^"\]]+"\]$/u;
+
+/** Aborts a mock's essay grading, and lets every other request through. */
+function abortEssayGrading(route: Route) {
+  const request = route.request();
+
+  const isGrading =
+    request.method() === "POST" &&
+    Boolean(request.headers()["next-action"]) &&
+    TWO_ARGUMENT_ACTION.test(request.postData() ?? "");
+
+  return isGrading ? route.abort() : route.fallback();
+}
+
+/**
+ * Stands in for an outage of the essays' grading before the server sees it: E2E has no model, and
+ * a server that tried would report the failure. Only for a mock handed in section by section (its
+ * hand-in has three arguments), since finish has grading's shape. Returns what lifts it.
+ */
+export async function failEssayGrading(page: Page) {
+  await page.route("**/*", abortEssayGrading);
+  return () => page.unroute("**/*", abortEssayGrading);
 }

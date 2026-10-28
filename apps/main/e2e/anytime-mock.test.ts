@@ -1,7 +1,11 @@
 import { type Page } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { WRITTEN_ESSAY } from "./anytime-mock-exams";
-import { answerMockQuestions, createAnytimeMockLearner } from "./anytime-mock-fixtures";
+import {
+  answerMockQuestions,
+  createAnytimeMockLearner,
+  failEssayGrading,
+} from "./anytime-mock-fixtures";
 import { expect, test } from "./fixtures";
 import { REPLAN_TIMEOUT_MS } from "./plan-timeouts";
 import { continueToStep } from "./result-steps";
@@ -68,6 +72,7 @@ test.describe("Mocks whenever the learner wants", () => {
       await expect(page.getByText(/^\d+ words$/u)).toBeVisible({ timeout: 1000 });
     }).toPass();
 
+    const resumeGrading = await failEssayGrading(page);
     await page.getByRole("button", { name: "Hand in the mock exam" }).click();
     await confirmMockHandIn(page);
 
@@ -86,11 +91,11 @@ test.describe("Mocks whenever the learner wants", () => {
       )
       .not.toBeNull();
 
-    // Tests never reach a model, so the essay's grading fails the way an outage would, and the
-    // essay offers to be graded again.
+    // The essay's grading fails the way an outage would, and the essay offers to be graded again.
     await continueToStep(page, "Your answer");
     await expect(page.getByText("That didn't go through. Try again in a moment.")).toBeVisible();
     await expect(page.getByRole("button", { name: "Grade it" })).toBeEnabled();
+    await resumeGrading();
 
     // Once graded, the essay shows its grade by the exam's rubric after the score.
     const essay = await prisma.item.findFirstOrThrow({
