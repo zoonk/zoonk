@@ -12,6 +12,7 @@
 - Before choosing, adding, or replacing a model, dependency, API, or version, check the provider's current catalog or registry for the latest option and its lifecycle (deprecation and shutdown dates on every route we call). Existing code, your training data, and a deprecation notice's suggested replacement may already be outdated.
 - Write engineering work in US English: code, identifiers, comments, docs, commit messages, and examples in them. Use other languages only where the content is about that language or its learners: translation catalogs, language guides, test inputs and fixtures, eval cases, and AI prompt variants written for a language.
 - Preserve unrelated formatting; `oxfmt` owns formatting. Do not hard-wrap Markdown prose.
+- Make the best decision that will elevate all three: the user experience (UX), developer experience (DX), and agent experience (AX) always, without breaking anything.
 
 ## Scope and completion
 
