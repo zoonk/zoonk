@@ -23,11 +23,7 @@ type AccountDeletionCredentials =
   | { appleCredentials?: never; emailCredentials: EmailAccountDeletionCredentials }
   | { appleCredentials?: never; emailCredentials?: never };
 
-/**
- * Creates request headers that contain only the fresh bearer session returned
- * by provider reauthentication. Removing an older cookie prevents Better Auth
- * from selecting a stale browser session over the new credential.
- */
+/** Remove old cookies so Better Auth cannot select a stale session over the fresh reauthentication bearer. */
 function getFreshBearerHeaders({
   requestHeaders,
   token,
@@ -41,11 +37,7 @@ function getFreshBearerHeaders({
   return freshHeaders;
 }
 
-/**
- * Chooses the fresh email or Apple session that will authorize deletion. The
- * provider cleanup hook reports stored Apple revocation separately after the
- * deletion begins, so email reauthentication does not guess that outcome.
- */
+/** Authorize with fresh reauthentication; email reauthentication cannot determine stored Apple grant revocation. */
 async function getAccountDeletionAuthorization({
   appleCredentials,
   emailCredentials,
@@ -91,11 +83,7 @@ async function getAccountDeletionAuthorization({
   };
 }
 
-/**
- * Combines every Apple grant cleanup attempted during this deletion. Null means
- * no Apple account was linked; false means at least one fresh or stored grant
- * could not be confirmed revoked and the client should show manual recovery.
- */
+/** null means no Apple account; false means some grant revocation is unconfirmed and requires manual recovery. */
 function getAppleAuthorizationRevocationResult({
   reauthenticated,
   stored,
@@ -110,11 +98,7 @@ function getAppleAuthorizationRevocationResult({
   return outcomes.length > 0 ? outcomes.every(Boolean) : null;
 }
 
-/**
- * Removes a fresh reauthentication session when Better Auth cannot finish the
- * deletion. Successful deletion removes the same session through the User
- * cascade, so cleanup is only needed on the failure path.
- */
+/** Failure must remove the temporary session; successful deletion removes it through the user cascade. */
 async function throwAfterTemporarySessionCleanup({
   error,
   sessionToken,
@@ -133,11 +117,7 @@ async function throwAfterTemporarySessionCleanup({
   throw error;
 }
 
-/**
- * Keeps the deleted account's id (its PostHog distinct id) so an admin can remove its analytics
- * by hand and mark it done. The account is already gone, so a failure is logged with the id and
- * never fails the deletion.
- */
+/** Retain the deleted account's analytics id for manual removal; logging failure must not fail account deletion. */
 async function logAccountDeletion(userId: string) {
   const { error } = await safeAsync(() => prisma.accountDeletion.create({ data: { userId } }));
 
@@ -146,12 +126,7 @@ async function logAccountDeletion(userId: string) {
   }
 }
 
-/**
- * Permanently deletes the authenticated user through Better Auth's sensitive
- * operation boundary. Better Auth resolves the acting user from the request,
- * checks the authoritative session, and rejects sessions older than freshAge
- * before its cleanup hook or database deletion can run.
- */
+/** Permanently deletes the session's user through Better Auth's fresh-session checks and cleanup hooks. */
 export async function deleteCurrentUser({
   appleCredentials,
   emailCredentials,
@@ -198,12 +173,7 @@ export async function deleteCurrentUser({
   }
 }
 
-/**
- * Deletes the signed-in account from a page that showed `shownUserId`, only while that's still the
- * session's account: a confirmation left open after another account signed in (in another tab)
- * deletes nothing (`otherAccount`). It confirms the account, never chooses it: the session's user
- * is still the one deleted (`deleteCurrentUser`).
- */
+/** Deletes only when shownUserId still matches the session; a cross-tab account switch returns otherAccount. */
 export async function deleteShownAccount({
   shownUserId,
 }: {

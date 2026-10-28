@@ -25,10 +25,6 @@ export type CurrentUser = Pick<
   | "username"
 >;
 
-/**
- * Projects the database user into the account fields shared with product
- * clients, excluding billing identifiers, moderation state, and auth internals.
- */
 function toCurrentUser(user: User): CurrentUser {
   return {
     analyticsDisabled: user.analyticsDisabled,
@@ -44,20 +40,12 @@ function toCurrentUser(user: User): CurrentUser {
   };
 }
 
-/**
- * Loads one trusted user row after the public capability derives identity from
- * the authenticated session.
- */
 async function findCurrentUser(userId: string): Promise<CurrentUser | null> {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   return user ? toCurrentUser(user) : null;
 }
 
-/**
- * Returns the authenticated account resource without accepting an acting user
- * id from an app. The private cache shares the complete read across callers in
- * the same render tree.
- */
+/** Returns the session's account; its private cache shares reads only within the render tree. */
 export async function getCurrentUser() {
   "use cache: private";
 
@@ -71,10 +59,7 @@ export async function getCurrentUser() {
   return findCurrentUser(session.user.id);
 }
 
-/**
- * Omits unchanged profile fields so idempotent updates do not ask the identity
- * provider to rewrite the current username.
- */
+/** Better Auth must not rewrite an unchanged username. */
 function getSessionUserUpdate({
   currentUser,
   input,
@@ -90,18 +75,11 @@ function getSessionUserUpdate({
   };
 }
 
-/**
- * Detects whether a partial account patch changes any identity field.
- */
 function hasSessionUserUpdate(input: CurrentUserUpdate): boolean {
   return Object.keys(input).length > 0;
 }
 
-/**
- * Updates the authenticated account through Better Auth, expires the cached
- * account resource, and returns the fresh public user. Core owns the
- * current-user comparison and apps never pass user IDs.
- */
+/** Requires sign-in; updates through Better Auth and returns the fresh account after cache invalidation. */
 export async function updateCurrentUser({ input }: { input: CurrentUserUpdate }) {
   const session = await getSession();
 
@@ -134,12 +112,7 @@ export async function updateCurrentUser({ input }: { input: CurrentUserUpdate })
   return user;
 }
 
-/**
- * Reuses Better Auth's canonical normalization, reserved-name policy, and
- * uniqueness lookup for the public product endpoint used by profile clients.
- * The later profile update remains authoritative because availability can
- * change between this read and a mutation.
- */
+/** Uses Better Auth's username rules; availability is advisory because the later update is authoritative. */
 export async function getUsernameAvailability(username: string) {
   const normalizedUsername = normalizeUsername(username);
 
@@ -148,11 +121,7 @@ export async function getUsernameAvailability(username: string) {
   return { isAvailable: result.available, username: normalizedUsername };
 }
 
-/**
- * The username a new account's setup starts from: the one it has, or a free one made from its
- * email, so the learner only types one when they want another. Null without a session, or when
- * every username made from the email is taken.
- */
+/** Returns null without a session or when all email-derived names are taken. */
 export async function suggestCurrentUsername(): Promise<string | null> {
   const session = await getSession();
 

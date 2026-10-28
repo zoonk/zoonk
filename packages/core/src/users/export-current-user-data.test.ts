@@ -16,7 +16,6 @@ import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { exportCurrentUserData } from "./export-current-user-data";
 
-/** A question the learner asked their buddy about their goal, with its answer. */
 async function buddyQuestionFixture({ goalId, userId }: { goalId: string; userId: string }) {
   const thread = await prisma.lessonQuestionThread.create({
     data: { goalId, kind: "plan", userId },
@@ -39,7 +38,6 @@ async function buddyQuestionFixture({ goalId, userId }: { goalId: string; userId
   });
 }
 
-/** A line a lesson wrote for the learner from their memory. */
 async function exampleLineFixture(userId: string) {
   const lesson = await libraryLessonFixture({ contentStatus: "completed" });
   const step = await libraryStepFixture({ lessonId: lesson.id });
@@ -57,7 +55,6 @@ async function exampleLineFixture(userId: string) {
   });
 }
 
-/** A learner with something in every part of the export. */
 async function createLearnerWithData() {
   const user = await userFixture();
   const goal = await goalFixture({ title: "Pass ENEM", userId: user.id });
@@ -139,7 +136,6 @@ describe(exportCurrentUserData, () => {
       usage: [expect.objectContaining({ kind: "lessonStart" })],
     });
 
-    // How a row was made and what it cost Zoonk are ours, not the learner's.
     expect(data?.buddy.conversations[0]?.questions[0]).not.toHaveProperty("model");
     expect(data?.buddy.exampleLines[0]).not.toHaveProperty("runId");
     expect(data?.usage[0]).not.toHaveProperty("costMicros");

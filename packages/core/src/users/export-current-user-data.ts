@@ -16,7 +16,6 @@ import { getSession } from "./get-session";
 const byCreation = [{ createdAt: "asc" as const }, { id: "asc" as const }];
 const byAnswer = [{ answeredAt: "asc" as const }, { id: "asc" as const }];
 
-/** Goals with their plans, the plan's items and every change it went through. */
 function loadGoals(userId: string) {
   return prisma.goal.findMany({
     include: {
@@ -35,7 +34,6 @@ async function loadProgressTotals(userId: string) {
   return totals ? { ...totals, totalBrainPower: Number(totals.totalBrainPower) } : null;
 }
 
-/** Totals, days and every learning session behind the stats pages. */
 function loadProgress(userId: string) {
   return Promise.all([
     loadProgressTotals(userId),
@@ -55,13 +53,7 @@ function loadLearnerModel(userId: string) {
   ]);
 }
 
-/**
- * Everything Zoonk keeps about the signed-in learner, as one download: the account, the learning
- * profile, goals and plans, the progress ledger, study sessions and mocks, answers, skills,
- * mistakes, milestones, language learning, memory, the buddy's conversations and the example lines
- * written from memory, sources, usage and feedback. Uncached, so it reflects what's
- * stored at that moment.
- */
+/** Requires sign-in; uncached export reflects currently stored personal data. */
 export async function exportCurrentUserData() {
   const session = await getSession();
 

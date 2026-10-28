@@ -2,17 +2,7 @@ import "server-only";
 import { auth } from "@zoonk/auth";
 import { isHumanRequest } from "@zoonk/auth/human-check";
 
-/**
- * Sends the sign-in OTP through Better Auth and returns its delivery result.
- *
- * Better Auth needs request headers when resolving a dynamic base URL.
- * Accepting the current request headers here keeps login actions aligned with
- * the real incoming host instead of relying on the auth fallback. Callers keep
- * the `success` response so they do not advance to the OTP screen if Better
- * Auth accepts the request shape but reports that it did not send the code.
- * This is the web sign-up form, so BotID must see a person first; native apps
- * request codes through their own endpoint.
- */
+/** Web sign-up requires BotID and incoming headers for Better Auth's dynamic host; advance only when success confirms delivery. */
 export async function sendVerificationOTP({
   email,
   headers,
