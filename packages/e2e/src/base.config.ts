@@ -19,7 +19,6 @@ export function createBaseConfig(options: {
     fullyParallel: true,
     globalSetup: options.globalSetup,
     projects: [CHROMIUM_PROJECT],
-    // CI annotates failures and logs each test with its time.
     reporter: process.env.CI ? [["github"], ["list"]] : [["list"]],
     retries: process.env.CI ? 2 : 0,
     testDir: options.testDir,
@@ -41,7 +40,6 @@ export function createBaseConfig(options: {
       // Let pnpm forward shutdown to the server in its separate process group.
       gracefulShutdown: { signal: "SIGTERM", timeout: 10_000 },
       timeout: 120_000,
-      // Capture port from Next.js stdout: "- Local: http://localhost:12345"
       wait: { stdout: /-\s+Local:\s+(?<E2E_BASE_URL>http:\/\/localhost:(?<E2E_PORT>\d+))/u },
     },
   });

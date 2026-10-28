@@ -9,12 +9,7 @@ async function readSessionUserId(page: Page): Promise<string | null> {
   return isJsonObject(session) ? getString(session.user, "id") : null;
 }
 
-/**
- * The id of the page's learner, signing a visitor in as a guest first through the real auth API,
- * as sending a goal does. A test that stores what a learner's words mean needs whose words they
- * are before they type them: a reading is its learner's own. A signed-in learner or a guest keeps
- * their session, so sending the goal later starts no other guest.
- */
+/** Returns the page's user id, signing in as a guest only when the page has no session. */
 export async function ensureGuest(page: Page): Promise<string> {
   const current = await readSessionUserId(page);
 

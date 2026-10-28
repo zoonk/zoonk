@@ -7,7 +7,6 @@ const NOT_FOUND = 404;
 
 export const TEST_LIVE_SDP_ANSWER = "v=0\r\ns=e2e-provider-peer\r\n";
 
-/** E2E builds replace only the AI boundary; production never imports this module. */
 function assertTestEnvironment() {
   if (process.env.E2E_TESTING !== "true") {
     throw new Error("The Live test provider is restricted to E2E builds.");

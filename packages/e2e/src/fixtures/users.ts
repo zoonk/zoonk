@@ -20,12 +20,6 @@ type CreateE2EUserOptions = {
   withSubscription?: boolean;
 };
 
-/**
- * Create a browser-ready user by going through the real auth API.
- * E2E tests need cookies, sessions, and Better Auth side effects to match the
- * production path, so this helper signs up, optionally attaches org access or
- * a subscription, and then returns storage state for immediate reuse.
- */
 export async function createE2EUser(
   baseURL: string,
   options?: CreateE2EUserOptions,
@@ -80,11 +74,6 @@ export async function createE2EUser(
   return { email, id: user.id, password, storageState };
 }
 
-/**
- * Mint a one-time auth token for an existing browser user.
- * Tests use this to validate callback and cross-app auth flows without having
- * to reach into internal session tables directly.
- */
 export async function generateOneTimeToken(baseURL: string, user: E2EUser): Promise<string> {
   const ctx = await request.newContext({ baseURL, storageState: user.storageState });
 

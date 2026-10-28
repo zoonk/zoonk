@@ -11,31 +11,16 @@ const STYLESHEET_PATH = fileURLToPath(STYLESHEET_URL);
 
 const designSystem = await loadDesignSystem();
 
-/**
- * The Tailwind language server uses Tailwind's own design system to decide
- * which utility spelling is canonical. Loading the same stylesheet keeps this
- * lint rule aligned with the CSS entrypoint that defines Zoonk's theme tokens.
- */
 async function loadDesignSystem() {
   const stylesheet = await readFile(STYLESHEET_PATH, "utf8");
 
   return __unstable__loadDesignSystem(stylesheet, { base: dirname(STYLESHEET_PATH) });
 }
 
-/**
- * JSX namespaced attributes are not class attributes in this codebase. Keeping
- * the name check narrow avoids treating unrelated SVG or framework attributes
- * as Tailwind class lists.
- */
 function isClassAttributeName(name) {
   return name.type === "JSXIdentifier" && CLASS_ATTRIBUTE_NAMES.has(name.name);
 }
 
-/**
- * The rule only inspects known class composition helpers because ordinary
- * function string arguments may be copy, IDs, URLs, or enum values rather than
- * Tailwind classes.
- */
 function getClassFunctionName(callee) {
   if (callee.type === "Identifier") {
     return callee.name;
@@ -48,11 +33,6 @@ function getClassFunctionName(callee) {
   return null;
 }
 
-/**
- * Dynamic template strings can contain partial utility names, so Tailwind cannot
- * safely canonicalize them as complete candidates. Static templates are handled
- * the same way as normal string literals.
- */
 function getStaticStringExpression(expression) {
   if (expression.type === "Literal" && typeof expression.value === "string") {
     return expression;
@@ -65,10 +45,6 @@ function getStaticStringExpression(expression) {
   return null;
 }
 
-/**
- * Replacement ranges are based on the raw source, not the decoded JS value, so
- * fixes preserve the surrounding quotes/backticks and only replace class tokens.
- */
 function getStringContentRange({ node, sourceText }) {
   const text = sourceText.slice(node.range[0], node.range[1]);
   const quote = text[0];
@@ -83,10 +59,6 @@ function getStringContentRange({ node, sourceText }) {
   return { content, start: node.range[0] + 1 };
 }
 
-/**
- * Tailwind classes are whitespace-delimited in source files. Reporting each
- * token separately gives Oxlint a small, conflict-free fix range for `--fix`.
- */
 function getClassTokens({ content, start }) {
   return Array.from(content.matchAll(/\S+/gu), (match) => ({
     end: start + match.index + match[0].length,
@@ -95,10 +67,6 @@ function getClassTokens({ content, start }) {
   }));
 }
 
-/**
- * Tailwind returns the original candidate when no better canonical spelling is
- * available. This helper isolates that API detail from the reporting logic.
- */
 function getCanonicalClassName(className) {
   const [canonicalClassName] = designSystem.canonicalizeCandidates([className]);
 
@@ -109,10 +77,6 @@ function getCanonicalClassName(className) {
   return canonicalClassName;
 }
 
-/**
- * Mapping byte offsets back to a source location makes diagnostics point at the
- * exact class token instead of the whole attribute or helper call.
- */
 function getTokenLocation({ sourceCode, token }) {
   return {
     end: sourceCode.getLocFromIndex(token.end),
@@ -120,11 +84,6 @@ function getTokenLocation({ sourceCode, token }) {
   };
 }
 
-/**
- * Object values in class helpers may contain nested class strings, but condition
- * values like identifiers and booleans are not classes. This lets `clsx` object
- * keys still be linted without treating every property name as a class.
- */
 function canContainClassString(expression) {
   if (expression.type === "Literal") {
     return typeof expression.value === "string";
@@ -139,10 +98,6 @@ function canContainClassString(expression) {
   );
 }
 
-/**
- * Static class strings are fixed token-by-token, which preserves existing class
- * ordering and whitespace while still applying Tailwind's canonical spellings.
- */
 function reportClassString({ context, node, sourceText }) {
   const contentRange = getStringContentRange({ node, sourceText });
 
@@ -168,11 +123,6 @@ function reportClassString({ context, node, sourceText }) {
   }
 }
 
-/**
- * Class helpers accept arrays, conditionals, and object values. Walking those
- * small expression containers lets the rule catch static classes without trying
- * to evaluate runtime conditions.
- */
 function checkClassExpression({ context, expression, sourceText }) {
   const staticString = getStaticStringExpression(expression);
 
@@ -212,11 +162,6 @@ function checkClassExpression({ context, expression, sourceText }) {
   }
 }
 
-/**
- * Object properties show up in both `clsx({ "class": condition })` and `cva`
- * variant maps. Values are always safe to inspect; string keys are checked only
- * when the value is not itself another class expression.
- */
 function checkClassProperty({ context, property, sourceText }) {
   if (property.type !== "Property") {
     return;

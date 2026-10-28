@@ -7,14 +7,9 @@ import { isJsonObject } from "@zoonk/utils/json";
 
 const execFileAsync = promisify(execFile);
 
-/** Room for what the seed command prints: a copy is one line of JSON, the rest is logging. */
 const MAX_OUTPUT_BYTES = 10 * 1024 * 1024;
 
-/**
- * Runs core's v2 seed command (`pnpm seed:v2` in `@zoonk/core`) on the test run's database. The
- * planner that lays out the seeded plans is core's server code, which Playwright can't load, so it
- * runs in its own process. Returns what it printed.
- */
+/** Core's planner is server code Playwright can't load, so the seed runs in its own process. */
 async function runSeedV2(args: readonly string[]): Promise<string> {
   const { stdout } = await execFileAsync(
     "pnpm",
@@ -28,9 +23,8 @@ async function runSeedV2(args: readonly string[]): Promise<string> {
 type CopyAnswer = { copy?: unknown; error?: string; id: string };
 
 /**
- * This process's copy writer: core's seed command kept open with `--serve`, answering one request
- * a line. Starting that command is nearly all a copy costs, so a Playwright worker starts it once,
- * and it ends with the worker, whose exit closes its stdin.
+ * Starting the seed command is nearly all a copy costs, so each worker keeps one open. The worker's
+ * exit closes its stdin, which ends it.
  */
 const copyWriter: {
   answers: Map<string, (answer: CopyAnswer) => void>;
@@ -48,7 +42,6 @@ function readJsonLine(line: string): unknown {
 function startCopyWriter(): ChildProcessWithoutNullStreams {
   const child = spawn("pnpm", ["--filter", "@zoonk/core", "--silent", "seed:v2", "--serve"]);
 
-  // Lines without a waiting request's id are the seed's own logging.
   createInterface({ input: child.stdout }).on("line", (line) => {
     const answer = readJsonLine(line);
     const id = isJsonObject(answer) && typeof answer.id === "string" ? answer.id : null;
@@ -76,7 +69,6 @@ function startCopyWriter(): ChildProcessWithoutNullStreams {
   return child;
 }
 
-/** Asks this process's copy writer for a persona copy, starting it the first time. */
 async function requestCopy(request: Record<string, string | undefined>): Promise<unknown> {
   copyWriter.process ??= startCopyWriter();
   const id = randomUUID();
@@ -95,15 +87,10 @@ async function requestCopy(request: Record<string, string | undefined>): Promise
   return answer.copy;
 }
 
-/** Seeds the v2 Library and personas with the plans the planner makes (see `seedV2` in core). */
 export async function seedV2(): Promise<void> {
   await runSeedV2([]);
 }
 
-/**
- * Writes a private copy of a v2 persona with the plan the planner makes for it (see
- * `seedV2PersonaCopy` in core).
- */
 export async function seedV2PersonaCopy({
   copyKey,
   email,
