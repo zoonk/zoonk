@@ -1,15 +1,18 @@
 package com.zoonk.android.navigation
 
-import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
@@ -210,6 +213,7 @@ class AppNavigator internal constructor(
 @Composable
 fun rememberAppNavigator(): AppNavigator {
     val context = LocalContext.current
+    val language by rememberUpdatedState(LocalConfiguration.current.locales[0].language)
     val today = rememberNavBackStack(AppTab.Today.root)
     val plan = rememberNavBackStack(AppTab.Plan.root)
     val buddy = rememberNavBackStack(AppTab.Buddy.root)
@@ -222,10 +226,7 @@ fun rememberAppNavigator(): AppNavigator {
             selected = selected,
             tasks = tasks,
             openWebPage = { page ->
-                val language =
-                    context.resources.configuration.locales[0]
-                        .language
-                CustomTabsIntent.Builder().build().launchUrl(context, Uri.parse(AppLink.webUrl(page, language)))
+                CustomTabsIntent.Builder().build().launchUrl(context, AppLink.webUrl(page, language).toUri())
             },
         )
     }
