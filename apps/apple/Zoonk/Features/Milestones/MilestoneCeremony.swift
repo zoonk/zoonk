@@ -1,24 +1,10 @@
 import SwiftUI
 
-/// The artwork a ceremony shows for its milestone. The characters' lane provides the buddy and
-/// belt art; until then the ceremony draws the milestone's SF Symbol.
-struct MilestoneArtwork: Sendable {
-  let view: (@MainActor @Sendable (Milestone) -> AnyView)?
-
-  static let symbol = MilestoneArtwork(view: nil)
-}
-
-extension EnvironmentValues {
-  @Entry var milestoneArtwork = MilestoneArtwork.symbol
-}
-
-/// A milestone's full-screen moment, shown once over the result that earned it: its art, a title
-/// and one line on what earned it, and one button; new glasses can go on the buddy right away, or
-/// not now. It marks itself as shown when it appears, so it never repeats; its one motion is the
-/// art landing, and none with Reduce Motion.
+/// A milestone's full-screen moment, shown once over the result that earned it: the buddy on its
+/// stage, a title and one line on what earned it, and one button; new glasses can go on the buddy
+/// right away, or not now. It marks itself as shown when it appears, so it never repeats; the buddy
+/// acts it out once, and only changes its face with Reduce Motion.
 struct MilestoneCeremony: View {
-  @Environment(\.accessibilityReduceMotion) private var reduceMotion
-  @Environment(\.milestoneArtwork) private var artwork
   @Environment(BuddyStore.self) private var buddyStore
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(StudySessionStore.self) private var sessions
@@ -26,24 +12,11 @@ struct MilestoneCeremony: View {
   let milestone: Milestone
   let onClose: () -> Void
 
-  @State private var landed = false
-
   var body: some View {
     VStack(spacing: 24) {
       Spacer()
 
-      Group {
-        if let view = artwork.view {
-          view(milestone)
-        } else {
-          Image(systemName: symbol)
-            .font(.system(.largeTitle))
-            .imageScale(.large)
-            .foregroundStyle(.brain)
-            .symbolEffect(.bounce, options: .nonRepeating, value: landed)
-        }
-      }
-      .accessibilityHidden(true)
+      MilestoneStage(milestone: milestone, buddy: learner.summary.value?.buddy ?? BuddyLook())
 
       VStack(spacing: 8) {
         Text(title)
@@ -96,10 +69,6 @@ struct MilestoneCeremony: View {
     }
     .scenePadding()
     .task(id: milestone.id) {
-      if !reduceMotion {
-        landed = true
-      }
-
       await sessions.markShown(milestone)
     }
   }
@@ -111,15 +80,6 @@ struct MilestoneCeremony: View {
   /// The glasses a glasses milestone earned, which the learner can put on the buddy right away.
   private var newGlasses: BuddyGlasses? {
     milestone.kind == "glasses" ? BuddyGlasses(rawValue: milestone.key) : nil
-  }
-
-  private var symbol: String {
-    switch milestone.kind {
-    case "belt": "figure.martial.arts"
-    case "glasses": "eyeglasses"
-    case "buddyStage": "sparkles"
-    default: "rosette"
-    }
   }
 
   private var title: String {
@@ -199,6 +159,77 @@ struct MilestoneCeremony: View {
         localized: "They come with your buddy.", table: "Session",
         comment: "What earned the glasses")
     }
+  }
+}
+
+/// The ceremony's picture (main's `CeremonyArt`): the buddy large on its stage, a disc in the new
+/// belt's color (soft, and the quiet fill for a stage, glasses, or a white or black belt that would
+/// vanish), wearing what changed. For a belt or a stage, both grown from Brain Power, violet sparks
+/// burst from behind it and it cheers with its whole body a beat in; new glasses come from other
+/// achievements, so it shows them off, proud, without a burst. Decorative: the title says it.
+struct MilestoneStage: View {
+  @Environment(\.colorScheme) private var colorScheme
+  @Environment(\.horizontalSizeClass) private var sizeClass
+
+  let milestone: Milestone
+  let buddy: BuddyLook
+
+  /// Sparks fly from behind the buddy past the disc's edge, so they show around it.
+  private static let sparks: [Burst.Spark] = [
+    .init(size: 13, x: -128, y: -50), .init(size: 10, x: -68, y: -118),
+    .init(size: 14, x: 18, y: -136), .init(size: 10, x: 98, y: -96),
+    .init(size: 13, x: 136, y: -8), .init(size: 10, x: 104, y: 82),
+    .init(size: 12, x: -12, y: 132), .init(size: 10, x: -108, y: 84),
+  ]
+
+  private var belt: ProgressBelt? {
+    milestone.kind == "belt" ? ProgressBelt(rawValue: milestone.key) : nil
+  }
+
+  private var isGlasses: Bool { milestone.kind == "glasses" }
+
+  /// The buddy wearing what changed: the new belt, the stage it grew to, or the new glasses.
+  private var look: BuddyLook {
+    var look = buddy
+
+    if let belt {
+      look.belt = belt
+    }
+    if milestone.kind == "buddyStage", let stage = BuddyStage(key: milestone.key) {
+      look = look.grown(to: stage)
+    }
+    if isGlasses, let glasses = BuddyGlasses(rawValue: milestone.key) {
+      look.glasses = glasses
+    }
+
+    return look
+  }
+
+  private var disc: Color {
+    guard let belt, belt != .white, belt != .black else { return Color(.tertiarySystemFill) }
+    return belt.color.opacity(colorScheme == .dark ? 0.25 : 0.2)
+  }
+
+  var body: some View {
+    let side: CGFloat = sizeClass == .regular ? 256 : 224
+
+    Circle()
+      .fill(disc)
+      .aspectRatio(1, contentMode: .fit)
+      .overlay {
+        if !isGlasses {
+          Burst(sparks: Self.sparks, delay: .beat)
+        }
+      }
+      .overlay {
+        BuddyCharacter(
+          look: look, expression: .happy,
+          reaction: ActReaction(act: isGlasses ? .proud : .cheer, delay: .beat)
+        )
+        .padding(side * 0.14)
+      }
+      .frame(maxWidth: side, maxHeight: side)
+      .accessibilityHidden(true)
   }
 }
 
