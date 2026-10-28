@@ -137,50 +137,6 @@ extension ProgressBelt {
       .black
     }
   }
-
-  var accentColor: Color {
-    switch self {
-    case .white, .black:
-      .primary
-    case .yellow, .orange:
-      .brown
-    case .green:
-      .green
-    case .blue:
-      .blue
-    case .purple:
-      .purple
-    case .brown:
-      .brown
-    case .red:
-      .red
-    case .gray:
-      .secondary
-    }
-  }
-
-  var progressColor: Color {
-    switch self {
-    case .white, .gray:
-      .gray
-    case .yellow:
-      .yellow
-    case .orange:
-      .orange
-    case .green:
-      .green
-    case .blue:
-      .blue
-    case .purple:
-      .purple
-    case .brown:
-      .brown
-    case .red:
-      .red
-    case .black:
-      .primary
-    }
-  }
 }
 
 extension ProgressDaypart {

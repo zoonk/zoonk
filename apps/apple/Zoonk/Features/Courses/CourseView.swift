@@ -264,11 +264,7 @@ private struct CourseInformationView: View {
 
           if !course.categories.isEmpty {
             Text(categoryDescription)
-              .font(.caption.weight(.medium))
-              .foregroundStyle(.secondary)
-              .padding(.horizontal, 10)
-              .padding(.vertical, 6)
-              .background(.quaternary, in: Capsule())
+              .chip()
           }
 
           if course.organization?.slug == "ai" {

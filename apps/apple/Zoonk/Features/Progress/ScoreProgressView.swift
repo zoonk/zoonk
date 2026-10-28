@@ -85,7 +85,7 @@ private struct ScoreProgressContent: View {
               comment: "Label for incorrect answers in the Score period"),
             value: Text(score.performance.incorrectAnswers, format: .number),
             systemImage: "xmark.circle",
-            tint: .orange)
+            tint: .destructive)
 
           ProgressDetailMetric(
             label: Text(

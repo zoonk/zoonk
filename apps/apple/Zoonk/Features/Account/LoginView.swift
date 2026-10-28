@@ -8,7 +8,8 @@ struct LoginView: View {
       VStack(spacing: 24) {
         VStack(spacing: 8) {
           Image(systemName: "person.crop.circle.badge.checkmark")
-            .font(.system(size: 48))
+            .font(.largeTitle)
+            .imageScale(.large)
             .symbolRenderingMode(.hierarchical)
             .foregroundStyle(.tint)
 
@@ -103,7 +104,9 @@ struct LoginView: View {
                 Text(
                   "Terms of Service",
                   tableName: "Account",
-                  comment: "Link to the terms of service")
+                  comment: "Link to the terms of service"
+                )
+                .underline()
               }
             )
             .frame(minHeight: 44)
@@ -114,7 +117,9 @@ struct LoginView: View {
                 Text(
                   "Privacy Policy",
                   tableName: "Account",
-                  comment: "Link to the privacy policy")
+                  comment: "Link to the privacy policy"
+                )
+                .underline()
               }
             )
             .frame(minHeight: 44)
@@ -141,7 +146,7 @@ struct AccountFailureMessage: View {
         Image(systemName: "exclamationmark.circle")
       }
       .font(.footnote)
-      .foregroundStyle(.red)
+      .foregroundStyle(.destructive)
       .multilineTextAlignment(.center)
       .accessibilityElement(children: .combine)
     }

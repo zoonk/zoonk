@@ -24,7 +24,7 @@ struct CatalogContinueLink: View {
       }
       .frame(maxWidth: .infinity)
     }
-    .buttonStyle(.borderedProminent)
+    .buttonStyle(.mainAction)
     .controlSize(.large)
     .frame(maxWidth: horizontalSizeClass == .regular ? 280 : .infinity)
     .accessibilityLabel(accessibilityTitle)

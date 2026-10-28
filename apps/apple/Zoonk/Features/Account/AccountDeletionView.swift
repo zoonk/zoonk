@@ -309,7 +309,7 @@ struct AccountDeletionView: View {
       Button(action: dismiss.callAsFunction) {
         Text("Done", tableName: "Account", comment: "Closes successful account deletion")
       }
-      .buttonStyle(.borderedProminent)
+      .buttonStyle(.mainAction)
     }
   }
 
@@ -338,7 +338,7 @@ struct AccountDeletionView: View {
             tableName: "Account",
             comment: "Opens Apple account authorization management after deletion")
         }
-        .buttonStyle(.borderedProminent)
+        .buttonStyle(.mainAction)
 
         Button(action: dismiss.callAsFunction) {
           Text(

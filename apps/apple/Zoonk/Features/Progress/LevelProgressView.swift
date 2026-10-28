@@ -52,7 +52,7 @@ private struct LevelProgressContent: View {
           comment: "Learner's current numbered level"),
         description: milestoneDescription,
         systemImage: "brain.head.profile",
-        tint: level.belt.accentColor)
+        tint: .brain)
 
       ProgressDetailSection(
         title: Text(
@@ -95,7 +95,7 @@ private struct LevelProgressContent: View {
           .font(.subheadline)
 
           ProgressView(value: level.progressValue, total: level.progressTotal)
-            .tint(level.belt.progressColor)
+            .tint(.brain)
             .accessibilityLabel(
               level.isMaxLevel
                 ? Text(
@@ -122,7 +122,7 @@ private struct LevelProgressContent: View {
             tableName: "Progress",
             comment: "Learner's lifetime Brain Power value"),
           systemImage: "brain",
-          tint: level.belt.accentColor)
+          tint: .brain)
 
         ProgressDetailMetric(
           label: Text(
@@ -134,7 +134,7 @@ private struct LevelProgressContent: View {
             tableName: "Progress",
             comment: "Brain Power required to advance one level"),
           systemImage: "arrow.up.forward",
-          tint: level.belt.accentColor)
+          tint: .brain)
       }
 
       ProgressDetailSection(
@@ -167,7 +167,7 @@ private struct LevelProgressContent: View {
           tableName: "Progress",
           comment: "Explains how much Brain Power a lesson earns and that it never decreases."),
         systemImage: "brain.head.profile",
-        tint: level.belt.accentColor)
+        tint: .brain)
     }
   }
 }
@@ -188,7 +188,7 @@ private struct BeltMilestone: View {
     .frame(maxWidth: .infinity)
     .padding(.vertical, 8)
     .background(
-      isCurrent ? belt.progressColor.opacity(0.09) : .clear,
+      isCurrent ? Color(.tertiarySystemFill) : .clear,
       in: RoundedRectangle(cornerRadius: 12, style: .continuous)
     )
     .accessibilityElement(children: .combine)

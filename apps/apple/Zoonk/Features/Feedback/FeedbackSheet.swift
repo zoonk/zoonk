@@ -161,7 +161,7 @@ struct FeedbackSheet: View {
           } icon: {
             Image(systemName: "exclamationmark.triangle")
           }
-          .foregroundStyle(.red)
+          .foregroundStyle(.destructive)
           .accessibilityAddTraits(.isStaticText)
         }
       }
@@ -184,7 +184,7 @@ struct FeedbackSheet: View {
           comment: "Confirmation title after feedback is sent.")
       } icon: {
         Image(systemName: "checkmark.circle.fill")
-          .foregroundStyle(.green)
+          .foregroundStyle(.success)
       }
     } description: {
       Text(

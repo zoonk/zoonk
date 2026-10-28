@@ -318,7 +318,7 @@ private struct ChapterLoadingView: View {
             description: "A short lesson description",
             imageURL: nil,
             number: index + 1,
-            symbolTint: .orange,
+            symbolTint: .secondary,
             systemImage: "lightbulb",
             title: "Lesson title"
           ) {

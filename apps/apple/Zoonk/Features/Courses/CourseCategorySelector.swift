@@ -66,7 +66,6 @@ private struct CourseCategoryButton: View {
         title
       } icon: {
         Image(systemName: category?.systemImage ?? "square.grid.2x2")
-          .font(.system(size: 15, weight: .semibold))
       }
       .font(.subheadline.weight(.semibold))
       .foregroundStyle(isSelected ? selectedForegroundStyle : Color.primary)

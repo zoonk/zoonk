@@ -56,16 +56,12 @@ enum ProgressDestination: CaseIterable, Hashable, Identifiable {
 
   var tint: Color {
     switch self {
-    case .activity:
-      .blue
-    case .score:
-      .green
-    case .patterns:
-      .green
+    case .activity, .patterns, .score:
+      .success
     case .level:
-      .orange
+      .brain
     case .energy:
-      .orange
+      .energy
     }
   }
 }

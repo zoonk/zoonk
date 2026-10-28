@@ -67,7 +67,7 @@ struct ProgressDetailHero: View {
       }
 
       value
-        .font(.system(.largeTitle, design: .rounded, weight: .bold))
+        .font(.largeTitle.weight(.semibold))
         .contentTransition(.numericText())
         .monospacedDigit()
 
@@ -287,7 +287,7 @@ private struct ProgressDetailFailureView: View {
           tableName: "Progress",
           comment: "Retries loading a progress detail screen")
       }
-      .buttonStyle(.borderedProminent)
+      .buttonStyle(.mainAction)
     }
   }
 

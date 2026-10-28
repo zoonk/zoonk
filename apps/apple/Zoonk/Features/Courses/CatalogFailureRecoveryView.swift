@@ -31,7 +31,7 @@ struct CatalogFailureRecoveryView: View {
             tableName: "Courses",
             comment: "Leaves a course or chapter page whose content no longer exists.")
         }
-        .buttonStyle(.borderedProminent)
+        .buttonStyle(.mainAction)
       } else {
         Button {
           Task {
@@ -43,7 +43,7 @@ struct CatalogFailureRecoveryView: View {
             tableName: "Courses",
             comment: "Retries loading catalog content after a failure.")
         }
-        .buttonStyle(.borderedProminent)
+        .buttonStyle(.mainAction)
       }
     }
     .frame(maxWidth: .infinity, minHeight: 360)

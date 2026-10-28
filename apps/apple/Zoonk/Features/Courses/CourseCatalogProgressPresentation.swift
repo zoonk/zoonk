@@ -109,8 +109,7 @@ struct CatalogProgressLabel: View {
   private var tint: Color {
     switch progress {
     case .notStarted: Color(uiColor: .secondaryLabel)
-    case .inProgress: .blue
-    case .completed: .green
+    case .inProgress, .completed: .success
     }
   }
 

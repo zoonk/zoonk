@@ -62,7 +62,7 @@ struct CourseArtwork: View {
       fallbackBackground
 
       Image(systemName: systemImage)
-        .font(.system(.largeTitle, design: .rounded, weight: .medium))
+        .font(.largeTitle.weight(.medium))
         .symbolRenderingMode(.hierarchical)
         .foregroundStyle(fallbackForeground)
     }

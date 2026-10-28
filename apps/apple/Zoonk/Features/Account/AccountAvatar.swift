@@ -52,7 +52,7 @@ struct AccountAvatar: View {
   private var fallback: some View {
     if let user {
       Text(getInitial(user: user))
-        .font(.system(size: size * 0.42, weight: .semibold, design: .rounded))
+        .font(.system(size: size * 0.42, weight: .semibold))
         .foregroundStyle(.secondary)
     } else {
       Image(systemName: "person.crop.circle.fill")

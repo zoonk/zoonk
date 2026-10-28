@@ -147,7 +147,7 @@ struct AccountSheet: View {
         } label: {
           Text("Try again", tableName: "Account", comment: "Retries loading the saved account")
         }
-        .buttonStyle(.borderedProminent)
+        .buttonStyle(.mainAction)
         .disabled(session.isWorking)
       }
       .navigationTitle(

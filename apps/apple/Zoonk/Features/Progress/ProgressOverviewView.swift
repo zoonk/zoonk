@@ -77,7 +77,7 @@ struct ProgressOverviewView: View {
           tableName: "Progress",
           comment: "Action that opens account sign-in from the Progress tab.")
       }
-      .buttonStyle(.borderedProminent)
+      .buttonStyle(.mainAction)
     }
   }
 
@@ -107,7 +107,7 @@ struct ProgressOverviewView: View {
           tableName: "Progress",
           comment: "Retries restoring the account from the Progress tab.")
       }
-      .buttonStyle(.borderedProminent)
+      .buttonStyle(.mainAction)
     }
   }
 
@@ -300,10 +300,7 @@ private struct ProgressOverviewContent: View {
   }
 
   private var levelCard: some View {
-    ProgressOverviewCard(
-      destination: .level,
-      tint: overview.level?.belt.progressColor ?? ProgressDestination.level.tint
-    ) {
+    ProgressOverviewCard(destination: .level) {
       if let level = overview.level {
         ProgressOverviewMetric(
           value: String(localized: level.belt.localizedTitle),
@@ -316,7 +313,7 @@ private struct ProgressOverviewContent: View {
           value: level.progressValue,
           total: level.progressTotal
         )
-        .tint(level.belt.progressColor)
+        .tint(.brain)
         .accessibilityLabel(
           level.isMaxLevel
             ? Text(
@@ -380,18 +377,7 @@ private struct ProgressOverviewContent: View {
 
 private struct ProgressOverviewCard<Content: View>: View {
   let destination: ProgressDestination
-  let tint: Color
   @ViewBuilder let content: Content
-
-  init(
-    destination: ProgressDestination,
-    tint: Color? = nil,
-    @ViewBuilder content: () -> Content
-  ) {
-    self.destination = destination
-    self.tint = tint ?? destination.tint
-    self.content = content()
-  }
 
   var body: some View {
     NavigationLink(value: destination) {
@@ -399,9 +385,7 @@ private struct ProgressOverviewCard<Content: View>: View {
         HStack(spacing: 12) {
           Image(systemName: destination.systemImage)
             .font(.headline)
-            .foregroundStyle(tint)
-            .frame(width: 34, height: 34)
-            .background(tint.opacity(0.12), in: Circle())
+            .foregroundStyle(destination.tint)
 
           Text(destination.title)
             .font(.headline)
@@ -573,7 +557,7 @@ struct ProgressUnavailableView: View {
             tableName: "Progress",
             comment: "Retries loading a progress screen.")
         }
-        .buttonStyle(.borderedProminent)
+        .buttonStyle(.mainAction)
       }
     }
   }
