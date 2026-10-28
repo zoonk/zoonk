@@ -31,7 +31,7 @@ Read the whole diff since the work started, then take every row it touches. A on
 
 Use the [development guide](../../guides/development.md)'s table for the change's checks before a commit: format and lint the touched files (lint after format), typecheck, the affected tests, and the containing suites when the impact is broad. Before a PR, run the full gate the root `AGENTS.md` describes, reading `.github/workflows` for the commands. A check that fails is investigated and fixed, never rerun until green.
 
-Then `pnpm verify:diff` (`--base <ref>` for a branch) reads the change as a principal engineer, a security researcher and a designer would: every client component, effect, browser fetch, cache, migration, entry point, model call, raw HTML or SQL, public env value, dependency, raw color or `aria-label` it adds, each with the question to answer. Answer every item in your report, by fixing the code or saying why it's right; credentials, env files, focused tests and a vulnerable dependency the change adds block.
+Then `pnpm verify:diff` (`--base <ref>` for a branch) reads the change as a principal engineer, a security researcher and a designer would: every client component, effect, browser fetch, waterfall (an `await` that waits for one it doesn't use), cache, migration, entry point, model call, raw HTML or SQL, public env value, dependency, raw color or `aria-label` it adds, each with the question to answer. Answer every item in your report, by fixing the code or saying why it's right; credentials, env files, focused tests and a vulnerable dependency the change adds block.
 
 ## 3. Use the change in the running app
 

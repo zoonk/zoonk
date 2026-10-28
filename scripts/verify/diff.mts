@@ -5,6 +5,7 @@ import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import { addsVulnerability, auditDependencies } from "./dependencies.mts";
 import { type ChangedFile, auditDiff, parseDiff, renderAudit } from "./diff-audit.mts";
+import { auditWaterfalls } from "./waterfalls.mts";
 
 /**
  * Reads the change (`pnpm verify:diff`: uncommitted work against HEAD, or `--base <ref>` for a
@@ -48,7 +49,10 @@ const files = [
   ...untracked,
 ];
 
-const flags = auditDiff(files, (path) => /^\s*["']use client["']/mu.test(read(path)));
+const flags = [
+  ...auditDiff(files, (path) => /^\s*["']use client["']/mu.test(read(path))),
+  ...auditWaterfalls(files, read),
+];
 // What production installs changes only through the lockfile or the workspace's overrides.
 const installsChanged = files.some((file) =>
   ["pnpm-lock.yaml", "pnpm-workspace.yaml"].includes(file.path),

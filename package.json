@@ -59,6 +59,7 @@
     "@zoonk/tsconfig": "workspace:*",
     "knip": "6.40.0",
     "neonctl": "2.27.0",
+    "oxc-parser": "0.156.0",
     "oxfmt": "0.72.0",
     "oxlint": "1.87.0",
     "oxlint-tsgolint": "7.0.2003",
