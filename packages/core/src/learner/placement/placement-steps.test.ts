@@ -15,9 +15,6 @@ import {
   isPlacementSettled,
 } from "./placement-steps";
 
-/**
- * Two phases of a chain: a -> b -> c (phase 0) -> d -> e (phase 1). Each skill needs the one before.
- */
 const CHAIN: PlacementSkill[] = [
   { id: "a", order: 0, phase: 0, prerequisiteIds: [], sectionTitle: null },
   { id: "b", order: 1, phase: 0, prerequisiteIds: ["a"], sectionTitle: null },
@@ -28,10 +25,6 @@ const CHAIN: PlacementSkill[] = [
 
 const ALL_ASKABLE = new Set(CHAIN.map((skill) => skill.id));
 
-/**
- * An exam with two subjects interleaved in plan order, like the plan puts them: math m1 -> m2 ->
- * m3 and history h1 -> h2 -> h3, one phase.
- */
 const EXAM: PlacementSkill[] = [
   { id: "m1", order: 0, phase: 0, prerequisiteIds: [], sectionTitle: "Math" },
   { id: "h1", order: 1, phase: 0, prerequisiteIds: [], sectionTitle: "History" },
@@ -43,10 +36,6 @@ const EXAM: PlacementSkill[] = [
 
 const EXAM_ASKABLE = new Set(EXAM.map((skill) => skill.id));
 
-/**
- * Two subjects without prerequisites between their skills, each skill in the Library band the
- * skill graph put it in, like an exam whose graph links few skills.
- */
 const BANDED: PlacementSkill[] = (
   [
     ["overview", "law-overview", "Law"],
@@ -65,11 +54,6 @@ const BANDED: PlacementSkill[] = (
   sectionTitle,
 }));
 
-/**
- * An exam whose skills all sit in the band it asks them at, as exam graphs put a public exam's
- * school subjects: each subject's foundations (the skill graph's first phase) come before the
- * rest of it, which builds on them in later phases.
- */
 const FOUNDED: PlacementSkill[] = (
   [
     ["pt-read", "Portuguese", true],
@@ -89,7 +73,6 @@ const FOUNDED: PlacementSkill[] = (
   sectionTitle,
 }));
 
-/** Each banded skill's status before any answer, from the learner's own level alone. */
 function statusByLevel(ownLevel: OwnLevel | null) {
   const beliefs = getPlacementBeliefs({ evidence: [], ownLevel, skills: BANDED });
   return BANDED.map((skill) => getSkillPlacementStatus(beliefs.get(skill.id)));
@@ -148,7 +131,6 @@ describe(getPlacementBeliefs, () => {
   });
 
   it("starts the bands below a stated level as known, and nothing without a level", () => {
-    // Law: overview, beginner, intermediate, advanced; then English: beginner, intermediate.
     expect(statusByLevel(null)).toStrictEqual(Array.from({ length: 6 }, () => "unsure"));
     expect(statusByLevel("none")).toStrictEqual(Array.from({ length: 6 }, () => "unsure"));
 
@@ -222,7 +204,6 @@ describe(getPlacementBeliefs, () => {
 
     const missed = getPlacementBeliefs({ evidence: [answer("pt-read", "wrong")], skills: FOUNDED });
 
-    // Missing a foundation says what builds on it isn't known either.
     expect(getSkillPlacementStatus(missed.get("pt-syntax"))).toBe("unknown");
   });
 
@@ -235,7 +216,6 @@ describe(getPlacementBeliefs, () => {
     expect(getSkillPlacementStatus(beliefs.get("law-overview"))).toBe("known");
     expect(getSkillPlacementStatus(beliefs.get("law-beginner"))).toBe("known");
     expect(getSkillPlacementStatus(beliefs.get("law-intermediate"))).toBe("known");
-    // One quick answer can be a lucky guess, and another subject says nothing about this one.
     expect(getSkillPlacementStatus(beliefs.get("law-advanced"))).toBe("unsure");
     expect(getSkillPlacementStatus(beliefs.get("english-beginner"))).toBe("unsure");
   });
@@ -251,8 +231,6 @@ describe(getPlacementBeliefs, () => {
     expect(getSkillPlacementStatus(beliefs.get("law-intermediate"))).toBe("unsure");
   });
 
-  // Pedro's two right answers on organelles tested his whole handout out: in a test from the
-  // learner's own material, every topic is on the test, so only the topics answered are settled.
   it("settles only the skills its answers checked in a test from the learner's own material", () => {
     const beliefs = getPlacementBeliefs({
       answeredOnly: true,
@@ -296,7 +274,6 @@ describe(getPlacementBeliefs, () => {
       ],
     });
 
-    // A miss settles only its own topic: what builds on it is still asked.
     expect(getSkillPlacementStatus(missed.get("law-intermediate"))).toBe("unknown");
     expect(getSkillPlacementStatus(missed.get("law-cases"))).toBe("unsure");
   });
@@ -317,7 +294,6 @@ describe(getPhaseStarts, () => {
   });
 
   it("stops when every phase has a confident start, not after a set count", () => {
-    // Every skill before the start is confirmed by an answer of its own.
     const { phases } = place([
       answer("a", "correct"),
       answer("b", "correct"),
@@ -429,7 +405,6 @@ function nextFor(evidence: PlacementEvidence[], ownLevel: "basic" | "none" | nul
   });
 }
 
-/** The next skill for a learner who said history is weak for them. */
 function nextForWeakHistory(evidence: PlacementEvidence[]) {
   return chooseNextPlacementSkill({
     askableSkillIds: EXAM_ASKABLE,
@@ -441,7 +416,6 @@ function nextForWeakHistory(evidence: PlacementEvidence[]) {
   });
 }
 
-/** History is worth most of the exam (its notice's questions); `focusAreas` are the weak ones. */
 function nextForHeavyHistory({
   evidence,
   focusAreas = [],
@@ -476,25 +450,19 @@ describe("placement across an exam's areas", () => {
 
   it("asks first about the subjects the learner said are weak, among those asked least", () => {
     expect(nextForWeakHistory([])).toBe("h2");
-    // Every subject is asked before a weak one twice.
     expect(nextForWeakHistory([answer("h2", "correct")])).toBe("m2");
   });
 
   it("asks the subject worth most of the exam first among those asked least, after weak ones", () => {
-    // The OAB's ethics, 8 of 80 questions, comes before a subject the plan reaches first.
     expect(nextForHeavyHistory({ evidence: [] })).toBe("h2");
-    // Every subject is asked before the heaviest one twice.
     expect(nextForHeavyHistory({ evidence: [answer("h2", "correct")] })).toBe("m2");
-    // A subject the learner said is weak comes before a heavier one.
     expect(nextForHeavyHistory({ evidence: [], focusAreas: ["Math"] })).toBe("m2");
   });
 
   it("follows each area's own answers: harder after a right one, easier after a wrong one", () => {
     const evidence = [answer("m2", "correct"), answer("h2", "wrong"), answer("m3", "wrong")];
 
-    // History has fewer answers, and its wrong h2 points to its prerequisite.
     expect(nextFor(evidence)).toBe("h1");
-    // Math's last answer (m3) was wrong, so it goes back to what m3 builds on.
     expect(nextFor([...evidence, answer("h1", "dontKnow")])).toBe("m1");
   });
 
@@ -606,11 +574,8 @@ describe(pickPlacementItem, () => {
     const pick = (quickFormat: "multipleChoice" | "trueFalse") =>
       pickPlacementItem({ confirming: false, items: both, quickFormat, skillId: "c" })?.id;
 
-    // The multiple-choice question is closer to the target difficulty, and still loses for an
-    // exam that judges assertions right or wrong.
     expect([pick("trueFalse"), pick("multipleChoice")]).toStrictEqual(["tf", "mc"]);
 
-    // Without a question that's hard to guess, a right answer is confirmed in the same order.
     expect(
       pickPlacementItem({ confirming: true, items: both, quickFormat: "trueFalse", skillId: "c" })
         ?.id,

@@ -4,10 +4,7 @@ import { z } from "zod";
 /** An hour covers a slow typed answer; anything longer is a tab left open, not answering time. */
 export const MAX_ANSWER_DURATION_MS = 3_600_000;
 
-/**
- * How long the learner took to answer. A screen left open overnight still saves: idle time isn't
- * answering time, so anything past the limit counts as the limit instead of failing the answer.
- */
+/** Clamp idle time instead of rejecting an otherwise valid answer. */
 export const answerDurationSchema = z
   .number()
   .int()
@@ -18,14 +15,9 @@ export const answerDurationSchema = z
       "Milliseconds from showing the question to the answer; anything over an hour counts as an hour",
   });
 
-/** The most options a multiple-choice question has, so the most a learner can pick. */
 const MAX_PICKS = 8;
 
-/**
- * A choice question's answer: the option picked (multiple choice), the options picked (a question
- * that asks for several, `select` 2 or more or "all"), true or false (a statement), or "I don't
- * know yet", which placement welcomes and which never counts as a guess.
- */
+/** dontKnow is welcome in placement and never counts as a guess. */
 export const choiceAnswerSchema = z
   .union([
     z.object({ selectedIndex: z.number().int().min(0) }).strict(),
@@ -45,7 +37,6 @@ export const choiceAnswerSchema = z
 
 export type ChoiceAnswer = z.infer<typeof choiceAnswerSchema>;
 
-/** One answer to one bank question, as placement, test-outs and mistake practice receive it. */
 export const itemAnswerInputSchema = z
   .object({ answer: choiceAnswerSchema, durationMs: answerDurationSchema, itemId: z.uuid() })
   .strict()
@@ -53,10 +44,7 @@ export const itemAnswerInputSchema = z
 
 export type ItemAnswerInput = z.infer<typeof itemAnswerInputSchema>;
 
-/**
- * The device's IANA timezone. The learner's day follows the goal's stored zone (see
- * `getAnswerTimeZone`); this one counts only for a goal without one.
- */
+/** The request zone is used only when the goal has no stored zone. */
 export const answerTimeZoneSchema = z
   .string()
   .refine(isValidTimeZone, { message: "Invalid timezone" })
@@ -93,7 +81,6 @@ export type ReviewScheduleInput = z.infer<typeof reviewScheduleInputSchema>;
 
 const skillCountSchema = z.int().min(0);
 
-/** How many of a set of skills are in each mastery state, and how many are fading. */
 export const skillStateCountsSchema = z
   .object({
     fading: skillCountSchema,

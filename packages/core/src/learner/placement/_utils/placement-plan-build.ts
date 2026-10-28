@@ -8,27 +8,16 @@ import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { pickPlacementItemSkillIds } from "../placement-item-picks";
 import { type OwnLevel } from "../placement-steps";
 
-/**
- * A plan whose run never recorded the end of placement's questions (a lost run, or a plan built
- * before the run recorded it) stops waiting for them this long after its graph was written.
- */
+/** Lost generation runs must not leave placement waiting indefinitely. */
 const QUESTION_WRITING_WINDOW_MS = 10 * 60 * 1000;
 
-/** How the run building the goal's plan went, as placement needs it. */
 type PlanBuild = {
-  /** The run gave up before the plan had skills: nothing will come until it's started again. */
   failed: boolean;
-  /** The skills whose placement questions are still being written: none once writing ended. */
   preparingSkillIds: Set<string>;
-  /**
-   * A language certificate's questions are being written before its blueprint is linked
-   * (`awaitsExamBlueprint`): placement asks nothing yet, since a skill only recordings practice
-   * isn't known as one, and would get a text question.
-   */
+  /** Wait for the blueprint so listening-only skills cannot be mistaken for text-testable ones. */
   waitsForExam: boolean;
 };
 
-/** How the run building the goal's plan went, and which placement questions it still writes. */
 export async function loadPlanBuild({
   everySkill,
   focusAreas,
@@ -39,7 +28,6 @@ export async function loadPlanBuild({
 }: {
   /** A test from the learner's own material, whose every skill gets questions. */
   everySkill: boolean;
-  /** The plan's areas the learner said are weak, whose picks come first. */
   focusAreas: readonly string[];
   goalId: string;
   /** The subjects the learner knows well, whose basics placement writes no questions for. */

@@ -11,11 +11,7 @@ import { getAnswerTimeZone } from "../../_utils/owned-goal";
 import { type PlacementEvidence } from "../placement-beliefs";
 import { type PlacementState, loadPlacementState } from "./load-placement-state";
 
-/**
- * What placement settles for a goal now, read only: the goal's plan as placement sees it, where
- * placement stands (with `answer`, a question a first-week session just asked, answered) and the
- * listening areas its text answers start past their basics (`listPlacementListeningAreas`).
- */
+/** Read-only; answer can include the placement evidence just recorded inside a first-week session. */
 export async function loadPlacement({
   answer = null,
   goalId,
@@ -43,16 +39,7 @@ export async function loadPlacement({
   return { goalPlan, pastBasicsAreas, state };
 }
 
-/**
- * Applies what placement knows, on every skill of the goal's skill graph: skills it's sure the
- * learner can do become known in the learner model, plan items teaching only known skills are
- * tested out, and known skills the plan's time leaves out get tested-out stand-ins, so no re-plan
- * brings them back; a language exam's listening areas start past the basics of the bands its text
- * answers confirmed (`listPlacementListeningAreas`). The plan announces all of it with an undo.
- * Returns the placement it applied, the plan items it tested out, the listening areas it started
- * past their basics and the change that announced them (null when there was nothing to announce,
- * or the plan isn't the planner's yet).
- */
+/** Announces skipped items with an undo; changeId is null when nothing can be announced yet. */
 export async function applyPlacement({
   announceAlso,
   answer = null,
@@ -119,15 +106,7 @@ function endedPlacement(details: unknown): boolean {
   return answered.includes("placement") && record.placementDeclined !== true;
 }
 
-/**
- * Applies placement to a goal's plan the moment it's first built, when the learner already ended
- * placement (or a language goal's level test) before the plan existed: what their level and
- * answers settled is tested out right away, so day one starts past it. It's the plan's
- * `placement` setup task (see `runPlanSetupTask`): its items are tested out as of the plan's
- * creation, whichever attempt does it, so a retry after an attempt that failed before announcing
- * them announces them with the rest; the announcement ends the task in its own transaction, so
- * they're announced once.
- */
+/** Test-outs and their announcement complete the setup task atomically, so retries announce skipped work once. */
 export async function applyPlacementToNewPlan(goalId: string): Promise<void> {
   const task = { goalId, task: "placement" as const };
   const plan = await prisma.plan.findUnique({ include: { goal: true }, where: { goalId } });
@@ -152,7 +131,6 @@ export async function applyPlacementToNewPlan(goalId: string): Promise<void> {
     userId: plan.goal.userId,
   });
 
-  // Nothing announced carried the task's end: placement settled nothing the plan holds.
   if (!changeId) {
     await endPlanSetupTask(task);
   }

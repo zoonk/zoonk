@@ -34,10 +34,6 @@ import {
   type LearnerTier,
 } from "./learner-summary-contract";
 
-/**
- * The goal the tabs show (`findActiveGoalId`): the one the learner picked, or their first active
- * goal while none is picked yet.
- */
 function findActiveGoal({
   activeGoalId,
   goals,
@@ -52,7 +48,6 @@ function findActiveGoal({
   return goals.find((goal) => goal.status === "active") ?? null;
 }
 
-/** The goals the switcher and the palette list: not archived, the active one first, then oldest first. */
 function toSummaryGoals({
   activeGoalId,
   goals,
@@ -76,16 +71,11 @@ function toSummaryGoals({
     }));
 }
 
-/**
- * Sessions in every zone's today and yesterday: the learner's day is in their goal's zone, which
- * this same read finds, so it asks for the days around the UTC date.
- */
 function getRecentSessionRange(now: Date) {
   const utcToday = getDateInTimeZone({ date: now, timeZone: "UTC" }).getTime();
   return { gte: new Date(utcToday - 2 * MS_PER_DAY), lte: new Date(utcToday + MS_PER_DAY) };
 }
 
-/** The active goal's own zone, as the learner's device last set it; null before it has one. */
 function getSavedTimeZone(goal: Goal | null): string | null {
   return goal?.timezone && isValidTimeZone(goal.timezone) ? goal.timezone : null;
 }
@@ -104,10 +94,6 @@ function getTier({
   return subscription ? "plus" : "free";
 }
 
-/**
- * The listed active goal's places: an exam's page, a language goal's speaking paper (from the
- * blueprint it names and the learner's speaking score) and its mind maps once a chapter has one.
- */
 function getPlaces({
   activeGoal,
   facts,
@@ -139,7 +125,6 @@ function getPlaces({
   };
 }
 
-/** The goal analytics tag events with: the listed active goal's kind and the phase it's in. */
 function getAnalyticsGoal({
   goal,
   phaseChallengesRequired,
@@ -159,11 +144,7 @@ function getAnalyticsGoal({
   return { kind: goal.kind, phase };
 }
 
-/**
- * Everything the app's frame, the command palette and analytics show about the signed-in learner
- * or guest (see `LearnerSummary`): one bounded read of saved rows that never writes, never builds
- * or settles a day, and never runs the planner. Null without a session.
- */
+/** Returns null without a session; reads only saved state and never creates, settles, or re-plans a day. */
 export async function getLearnerSummary(): Promise<LearnerSummary | null> {
   "use cache: private";
 
@@ -237,7 +218,7 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
   ]);
 
   return {
-    // The row, not the session: its cookie keeps a name or picture changed elsewhere for an hour.
+    // Better Auth's retained session fields may lag edits from another device for an hour.
     account: { email: session.user.email, image: user.image, name: user.name },
     activeGoalId,
     analytics: {

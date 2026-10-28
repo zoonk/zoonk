@@ -11,12 +11,10 @@ import { getRequestInstant } from "./facts/request-instant";
 import { getOwnedGoal } from "./get-owned-goal";
 import { type SkillStateCounts, countSkillStates } from "./mastery-state";
 
-/** A skill as a study card: the idea on the front, an example on the back, and its memory. */
 type SkillCard = SkillStatus &
   Pick<Skill, "description" | "example" | "name"> & {
     areaId: string | null;
     areaTitle: string | null;
-    /** The course or exam subject above the area, when the goal's graph names one. */
     sectionTitle: string | null;
     skillId: string;
   };
@@ -98,11 +96,7 @@ async function loadAllCards({ now, userId }: { now: Date; userId: string }) {
   );
 }
 
-/**
- * Lists the learner's skills as study cards with counts per state for the filters (All, Fading,
- * Gold, New). For a goal, every skill of its plan appears in plan order, New ones included; without
- * one, every skill the learner has started.
- */
+/** A goal includes every plan skill in plan order, including New; without one, includes only started skills. */
 export async function listCurrentUserSkills(input: SkillListInput): Promise<CurrentUserSkills> {
   "use cache: private";
 

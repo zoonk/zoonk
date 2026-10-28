@@ -37,13 +37,8 @@ const SIGNED_IN_AT = new Date("2026-03-01T08:00:00.000Z");
 const SESSION_ENDS_AT = new Date("2026-04-01T08:00:00.000Z");
 const MINUTE_MS = 60_000;
 
-/**
- * The summary's budget: the learner's row, then one wave of reads, then the day's own counts and
- * the active goal's ready mistakes (the notebook's own count, with its plan, when any can be ready).
- */
 const SUMMARY_STATEMENT_BUDGET = 25;
 
-/** Without a mistake made before the learner's day, nothing is read for the count. */
 const QUIET_SUMMARY_STATEMENT_BUDGET = 10;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -62,7 +57,6 @@ async function learnerWithGoal(attrs: Partial<Parameters<typeof goalFixture>[0]>
   return { goal, user };
 }
 
-/** Today's session: a lesson done, one review done and one to go, with saved missions. */
 async function savedDay({ goalId, userId }: { goalId: string; userId: string }) {
   const day = await studySessionFixture({
     goalId,
@@ -133,7 +127,6 @@ describe(getLearnerSummary, () => {
 
     const counts = await countDatabaseStatements(() => getLearnerSummary());
 
-    // An unsaved day is still today's: Today names the day it builds the same way.
     expect(counts.result).toMatchObject({
       day: { goalId: goal.id, localDate: "2026-03-10" },
       missions: null,
@@ -192,7 +185,6 @@ describe(getLearnerSummary, () => {
     const user = await userFixture();
     const image = "https://example.com/learner.png";
 
-    // The session keeps the account for up to an hour: renamed since, on another device.
     signIn({ ...user, name: "Name before" });
 
     await prisma.user.update({ data: { image, name: "Name now" }, where: { id: user.id } });
@@ -230,7 +222,6 @@ describe(getLearnerSummary, () => {
       activeGoalId: goal.id,
       day: { goalId: goal.id, localDate: TODAY.toISOString().slice(0, 10) },
       goals: [{ id: goal.id, isActive: true, kind: "learn", status: "active", title: goal.title }],
-      // The lesson is done, one review of two, one mistake fixed of two.
       missions: { done: 1, total: 3 },
       timeZone: "UTC",
       today: { blocksLeft: 1, next: { minutes: 6, sessionId: day.id, title: "Simple interest" } },
@@ -348,7 +339,6 @@ describe(getLearnerSummary, () => {
 
     expect(summary?.today).toMatchObject({ blocksLeft: 1, next: { sessionId: yesterday.id } });
 
-    // Its missions are the night before's day, and say so.
     expect(summary?.day).toStrictEqual({ goalId: goal.id, localDate: "2026-03-09" });
   });
 
@@ -537,10 +527,8 @@ describe(getLearnerSummary, () => {
   });
 });
 
-/** São Paulo's midnight starting NOW's local day (UTC-3). */
 const LOCAL_MIDNIGHT = new Date("2026-03-10T03:00:00.000Z");
 
-/** An active goal in São Paulo whose plan has two skills with practice questions. */
 async function learnerWithPlannedGoal() {
   const user = await userFixture();
   const fixture = await learnerGoalFixture({ phases: [2], userId: user.id });
@@ -554,7 +542,6 @@ async function learnerWithPlannedGoal() {
   return { ...fixture, user };
 }
 
-/** What the mistakes notebook counts as ready to practice for the goal. */
 async function notebookReady(goalId: string) {
   const notebook = await listCurrentUserMistakes(mistakeListInputSchema.parse({ goalId }));
   return notebook.status === "ready" ? notebook.availability.ready : null;
@@ -575,14 +562,12 @@ describe("the summary's ready mistakes", () => {
     const [elsewhere, other] = await Promise.all([skillFixture(), userFixture()]);
 
     await Promise.all([
-      // One second before the learner's local midnight, and the day before: ready.
       mistakeFixture({
         createdAt: new Date(LOCAL_MIDNIGHT.getTime() - 1000),
         skillId: skills[0]?.id,
         userId: user.id,
       }),
       mistakeFixture({ createdAt: YESTERDAY, skillId: skills[1]?.id, userId: user.id }),
-      // At local midnight (today), fixed, outside the goal, or someone else's: not counted.
       mistakeFixture({ createdAt: LOCAL_MIDNIGHT, skillId: skills[0]?.id, userId: user.id }),
       mistakeFixture({
         createdAt: YESTERDAY,
@@ -622,7 +607,6 @@ describe("the summary's ready mistakes", () => {
     const allowanceResets = new Date("2026-03-11T00:00:00.000Z");
     const nextMidnight = new Date(LOCAL_MIDNIGHT.getTime() + DAY_MS);
 
-    // The allowance starts over at UTC midnight first; read then, it waits for the learner's own.
     expect(today).toMatchObject({
       nextChangeAt: allowanceResets.getTime(),
       places: { readyMistakes: 0 },
@@ -642,10 +626,6 @@ describe("the summary's ready mistakes", () => {
   });
 });
 
-/**
- * The summary's statements for a Plus learner's saved call day: what it read before it previewed a
- * lapsed day's replacement. The preview's gates are pure, so a day that isn't lapsed reads no more.
- */
 const PLUS_CALL_DAY_STATEMENTS = 9;
 
 describe("the summary of a Plus call day", () => {

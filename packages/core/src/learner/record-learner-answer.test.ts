@@ -71,7 +71,6 @@ describe(recordLearnerAnswer, () => {
 
   it("records the attempt on the learner's local day and reviews the skill", async () => {
     const { item, skill, user } = await setup();
-    // 22:30 on September 1st in São Paulo is already September 2nd in UTC.
     const answeredAt = new Date("2026-09-02T01:30:00Z");
 
     const recorded = await recordLearnerAnswer(
@@ -249,7 +248,6 @@ describe(recordLearnerAnswer, () => {
 
     const sent = vi.mocked(trackServerEvent).mock.calls.map(([event]) => event);
 
-    // The same-day repeat is neither a review nor a change; the spaced one makes the skill Solid.
     expect(sent).toStrictEqual([
       expect.objectContaining({
         distinctId: user.id,

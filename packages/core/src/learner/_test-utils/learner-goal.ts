@@ -18,10 +18,6 @@ import {
   skillPrerequisiteFixture,
 } from "@zoonk/testing/fixtures/skills";
 
-/**
- * A goal whose plan has one chapter per phase and one lesson per skill, each skill building on
- * the one before, and `itemsPerSkill` multiple-choice questions per skill.
- */
 export async function learnerGoalFixture({
   itemsPerSkill = 2,
   phases,
@@ -32,8 +28,7 @@ export async function learnerGoalFixture({
   phases: number[];
   userId: string;
 }) {
-  // Its sessions don't open with first-week placement questions unless a test asks; aging the goal
-  // instead would end a free exam trial.
+  // Decline placement rather than aging the goal, which would also end a free exam trial.
   const goal = await goalFixture({ details: { placementDeclined: true }, userId });
 
   const chapters = await Promise.all(

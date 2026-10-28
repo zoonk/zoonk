@@ -13,12 +13,7 @@ export type GoalPlacementResult =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/**
- * Returns where placement stands for one of the learner's goals and the next question to ask.
- * The learner's own level sets where the first question comes from; once the day's few minutes
- * are used, there's no next question until the first week's sessions ask the rest. Uncached: it is the step of
- * a flow, and every answer changes it.
- */
+/** Uncached flow read; after today's budget is used, first-week sessions ask the remaining questions. */
 export async function getGoalPlacement({
   goalId,
   level,

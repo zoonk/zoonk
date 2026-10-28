@@ -15,18 +15,11 @@ import {
 } from "../record-learner-answer";
 import { markLearnerChanged } from "./mark-learner-changed";
 
-/** The hex digits of a hash a UUID is read from: its version and variant digits are the other two. */
 const UUID_HASH_DIGITS = 30;
 
-/** A UUID's five groups, without its version and variant digits. */
 const UUID_GROUPS = /^(?<first>.{8})(?<second>.{4})(?<third>.{3})(?<fourth>.{3})(?<fifth>.{12})$/u;
 
-/**
- * The id an answer an app sends under its own key is saved under: the same learner, question and
- * key always give the same id, and nobody else's do, so a key can neither collide with another
- * learner's answer nor tell whether one exists. A version 8 UUID (with the standard variant) read
- * from a hash of the three, so it's a UUID wherever one is checked.
- */
+/** Deterministic per learner, question, and client key; keys cannot reveal or collide with another learner's answers. */
 export function getAnswerAttemptId({
   key,
   questionId,
@@ -44,7 +37,6 @@ export function getAnswerAttemptId({
   return hex.replace(UUID_GROUPS, "$<first>-$<second>-8$<third>-8$<fourth>-$<fifth>");
 }
 
-/** The learner's answer saved under this id, when it was saved already. */
 export function findSavedAttempt({
   attemptId,
   userId,
@@ -55,7 +47,6 @@ export function findSavedAttempt({
   return prisma.attempt.findFirst({ where: { id: attemptId, userId } });
 }
 
-/** The answer can't be recorded now (see `recordAnswerOnce`'s `refuse`): the transaction rolls back. */
 class AnswerRefusedError extends Error {
   override name = "AnswerRefusedError";
 }
@@ -71,20 +62,7 @@ type RecordAnswerInput = {
   withAnswer?: (transaction: TransactionClient) => Promise<void>;
 };
 
-/**
- * Records an answer in one transaction under the learner's lock:
- * - once under its id: the same answer sent twice at once fails on the id in the second request,
- *   which rolls back with its marks and gets the attempt the first one saved;
- * - only when `refuse` finds nothing against it: it locks what the answer belongs to (a lesson
- *   run, a writing block) and says why the answer can't be recorded now (it closed, or a later
- *   answer to the question was recorded first). It runs after the learner's lock, which every one
- *   of their answers takes first, so it sees each of their answers committed before, and a finish
- *   either waits for the answer or the answer sees it finished;
- * - with `withAnswer`, the writes that must commit with it (a lesson answer's language evidence),
- *   so an answer sent again never finds itself saved without them.
- *
- * Any other failure is thrown as it is.
- */
+/** Locks the learner before refuse/withAnswer and records an attempt id only once. Refusals roll back; duplicate ids return the saved attempt; other failures propagate. */
 export function recordAnswerOnce(input: RecordAnswerInput): Promise<RecordedOutcome>;
 
 export function recordAnswerOnce<Refusal extends string>(

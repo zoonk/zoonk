@@ -45,7 +45,6 @@ describe(getCurrentUserReviewSchedule, () => {
       ),
     );
 
-    // 5 minutes a day holds 3 reviews.
     await prisma.goal.update({ data: { dailyMinutes: 5 }, where: { id: goal.id } });
 
     const result = await getCurrentUserReviewSchedule({ goalId: goal.id, timeZone: "UTC" });
@@ -53,7 +52,6 @@ describe(getCurrentUserReviewSchedule, () => {
     expect(result.status).toBe("ready");
     expect(result.status === "ready" && result.schedule.cap).toBe(3);
 
-    // The longest overdue skills have the lowest chance of recall, so they come first.
     expect(
       result.status === "ready" && result.schedule.dueToday.map((review) => review.skillId),
     ).toStrictEqual([skills[4], skills[3], skills[2]].map((skill) => skill?.id));

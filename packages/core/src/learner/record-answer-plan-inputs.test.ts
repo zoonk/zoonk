@@ -106,7 +106,6 @@ describe("answer input freshness", () => {
 
     for (const { lesson } of lessons) {
       const start = () => startLibraryLesson({ input: { timeZone: "UTC" }, lessonId: lesson.id });
-      // Repeat three real mixed-writer races; each lesson has exactly one successful new run.
       // oxlint-disable-next-line eslint/no-await-in-loop -- Each completed race is the next race's baseline.
       const [recorded, first, second] = await Promise.all([
         recordLearnerAnswer(input),
@@ -129,9 +128,6 @@ describe("answer input freshness", () => {
       const old = before.plans.find((row) => row.id === plan.id)!;
       expect(plan.inputVersion).toBe(old.inputVersion + (plan.goal.userId === user.id ? 6 : 0));
     }
-
-    // Per lesson: the answer, the one new run, and the lesson start the allowance counts once (the
-    // racing start reuses both). Counting the start doesn't change what plans read.
 
     await expect(prisma.learningEvent.count({ where: { userId: user.id } })).resolves.toBe(3);
     await expect(prisma.attempt.count({ where: { userId: user.id } })).resolves.toBe(3);

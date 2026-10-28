@@ -30,14 +30,11 @@ import { scoreTestOut } from "./test-out-rules";
 const PERCENT = 100;
 /** Namespaces the per-test submit lock so it never collides with other advisory locks. */
 const SUBMIT_LOCK_NAMESPACE = 51_884;
-/** Includes planning and a second submit waiting for the first, within the request's lifetime. */
 const SUBMIT_TIMEOUT_MS = 300_000;
 
 type ChapterTestOutOutcome = ProgressCelebration & {
-  /** The plan change that skipped the lessons, so the result can offer its undo right there. */
   changeId: string | null;
   correct: number;
-  /** The lessons it skipped, as the plan change and the Plan count them. */
   lessonsSkipped: number;
   passed: boolean;
   total: number;
@@ -59,7 +56,6 @@ function firstAnswerPerItem(answers: readonly ItemAnswerInput[]): ItemAnswerInpu
   );
 }
 
-/** Each answer graded; null when one isn't a question about the chapter's skills. */
 async function gradeAnswers({
   answers,
   chapterSkillIds,
@@ -83,11 +79,7 @@ async function gradeAnswers({
   return graded.every((entry) => entry !== null) ? graded : null;
 }
 
-/**
- * Records every answer as diagnostic, so each is evidence for its skill. A chapter of few skills
- * asks each several times: one skill's answers update its memory one after another, so they never
- * race on the same row.
- */
+/** Record answers on the same skill sequentially so their memory updates cannot race. */
 async function recordAnswers({
   answeredAt,
   graded,
@@ -122,12 +114,6 @@ async function recordAnswers({
   );
 }
 
-/**
- * Adds the test to the learner's day (its time, its answers and the Energy they give) with a
- * ledger row that keeps what its result says. The submit lock holds until this receipt is saved,
- * so a double submit reads it before recording any answers. Statistics and the day's totals show
- * it, so it's a learner change.
- */
 function countTestOut({
   chapterId,
   goalId,
@@ -163,7 +149,6 @@ function countTestOut({
   });
 }
 
-/** The result: the score and plan change as the test recorded them. */
 function toReadyResult({
   celebration,
   said,
@@ -184,7 +169,6 @@ function toReadyResult({
   };
 }
 
-/** Submits an authorized test while its submit lock is held. */
 async function submitOwnedTestOut({
   chapterId,
   goal,
@@ -198,7 +182,7 @@ async function submitOwnedTestOut({
 }): Promise<SubmitChapterTestOutResult> {
   const goalId = goal.id;
 
-  // Before any check or grade that could say otherwise now: a retry says what was recorded.
+  // Retries must return their receipt even if current grading or eligibility checks would refuse them.
   const sent = await findTestOutReceipt({ chapterId, goalId, requestId: input.requestId, userId });
 
   if (sent) {
@@ -295,14 +279,7 @@ async function submitOwnedTestOut({
   return toReadyResult({ celebration, said });
 }
 
-/**
- * Grades a chapter test-out and records every answer as diagnostic, so each right answer is the
- * evidence for its skill: nothing the test-out didn't ask about is assumed known. Its answering
- * time counts in the learner's day like any other study. Passing tests out the plan items that
- * teach only skills answered right. Every question must belong to the chapter. Past a free exam
- * plan's first week it comes with Plus. The same test sent again returns its recorded result,
- * even after its trial ends or questions change, without recording, counting or celebrating again.
- */
+/** Every question must belong to the chapter. Retrying a requestId returns its receipt without recording or celebrating again. */
 export async function submitChapterTestOut({
   chapterId,
   goalId,
@@ -320,8 +297,7 @@ export async function submitChapterTestOut({
 
   const key = `${owned.userId}:${goalId}:${chapterId}:${input.requestId}`;
 
-  // Only the advisory lock lives in this transaction: answer and plan writers commit their own
-  // transactions. A duplicate waits here, then reads the receipt before checking or writing again.
+  // Domain writers commit their own transactions; this transaction holds only the per-test advisory lock.
   return prisma.$transaction(
     async (tx) => {
       await tx.$queryRaw`

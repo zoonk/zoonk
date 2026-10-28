@@ -12,13 +12,9 @@ import {
 import { type ItemSkillRows } from "./goal-plan-projection";
 import { loadSkillSurvivors } from "./update-learner-skill";
 
-/**
- * Where the skill projection reads Library rows: a GET's shared caches (`"shared"`, see
- * `library/_utils/shared-rows.ts`), or a write's client, which reads them after its own writes.
- */
+/** GETs use shared caches; writes use their transaction so they see their own changes. */
 export type LibrarySource = "shared" | TransactionClient;
 
-/** The skills the Library says plan items' lessons and chapters teach (see `ItemSkillRows`). */
 export async function loadItemSkillRows({
   chapterIds,
   lessonIds,
@@ -74,11 +70,7 @@ function toLessonSkills({
   }));
 }
 
-/**
- * `loadItemSkillRows` from the shared caches. Which lessons a chapter holds changes under the
- * chapter's id (another app places and splits lessons), so that list is read fresh, ids only; the
- * skills of the lessons it names come from the shared rows keyed by those lessons.
- */
+/** Read chapter membership fresh because another app can change it without expiring this app's caches. */
 async function readSharedItemSkillRows({
   chapterIds,
   lessonIds,
@@ -112,7 +104,6 @@ async function readSharedItemSkillRows({
   };
 }
 
-/** `loadItemSkillRows` from where `from` says (see `LibrarySource`). */
 export function readItemSkillRows(
   input: { chapterIds: readonly string[]; lessonIds: readonly string[] },
   from: LibrarySource,
@@ -122,11 +113,7 @@ export function readItemSkillRows(
     : loadItemSkillRows({ ...input, tx: from });
 }
 
-/**
- * Skills are merged, never deleted: each skill maps to its survivor, or to itself (see
- * `loadSkillSurvivors`). Resolve merges fresh: Admin moves learner mastery to the survivor,
- * and its invalidation cannot clear Main's shared entries for the old ids.
- */
+/** Resolve merges fresh: another app's invalidation cannot expire retained mappings here. */
 export async function readSurvivorOf(
   skillIds: readonly string[],
   from: LibrarySource,
@@ -134,7 +121,6 @@ export async function readSurvivorOf(
   return loadSkillSurvivors(skillIds, from === "shared" ? prisma : from);
 }
 
-/** These chapters' titles. */
 export function readChapterTitles(chapterIds: readonly string[], from: LibrarySource) {
   return from === "shared"
     ? getChapterTitleRows(toIdKey(chapterIds))
@@ -144,7 +130,6 @@ export function readChapterTitles(chapterIds: readonly string[], from: LibrarySo
       });
 }
 
-/** The prerequisite edges between these skills. */
 export function readSkillEdges(skillIds: readonly string[], from: LibrarySource) {
   return from === "shared"
     ? getSkillPrerequisiteRows(toIdKey(skillIds))
@@ -154,7 +139,6 @@ export function readSkillEdges(skillIds: readonly string[], from: LibrarySource)
       });
 }
 
-/** Each of these skills' level band. */
 export function readSkillLevels(skillIds: readonly string[], from: LibrarySource) {
   return from === "shared"
     ? getSkillLevelRows(toIdKey(skillIds))
@@ -164,7 +148,6 @@ export function readSkillLevels(skillIds: readonly string[], from: LibrarySource
       });
 }
 
-/** Each skill's prerequisites among these (see `loadSkillPrerequisites`), from `from`. */
 export async function readSkillPrerequisiteMap(
   skillIds: readonly string[],
   from: LibrarySource,

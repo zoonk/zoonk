@@ -5,11 +5,7 @@ import { loadMockEssays } from "../../exams/mocks/_utils/mock-essays";
 import { type MockEssayCandidate } from "../../exams/mocks/written-parts";
 import { readSavedPlan } from "./saved-plan";
 
-/**
- * Internal GET fact: the exam's essays for the learner's mocks, the ones written longest ago
- * first, read once per request for the weekly mock's card and the mocks taken any time. The caller
- * resolved the goal as the learner's; starting a mock reads them fresh.
- */
+/** GET-only fact after ownership authorization; starts must read fresh. Essays are oldest first. */
 export async function readMockEssays(
   userId: string,
   goalId: string,

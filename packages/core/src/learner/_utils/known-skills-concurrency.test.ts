@@ -14,10 +14,6 @@ import * as knownSkills from "./known-skills";
 
 const TODAY = "2020-09-28";
 
-/**
- * A learner who ended placement before their plan existed, with a right answer that settles its
- * first skill (two lessons), and the new plan that owes placement. Monday, September 28, 2020.
- */
 async function placedGoal() {
   freezeClock();
   vi.setSystemTime(new Date(`${TODAY}T12:00:00Z`));
@@ -48,7 +44,6 @@ async function placedGoal() {
   return { goalId: goal.id, planId: plan.id };
 }
 
-/** Holds the next `count` placements once each has read the plan, until all of them have. */
 function holdPlacementReads(count: number) {
   const markKnown = knownSkills.markSkillsKnown;
   const reached = Promise.withResolvers<null>();
@@ -69,7 +64,6 @@ function holdPlacementReads(count: number) {
   return reached.promise;
 }
 
-/** Holds the next announcement of skipped lessons until `release`; it then runs. */
 function holdNextAnnouncement() {
   const announce = announcement.announceTestedOutItems;
   const released = Promise.withResolvers<null>();
@@ -88,9 +82,6 @@ function holdNextAnnouncement() {
 }
 
 describe("test-outs from the same read of the plan", () => {
-  // Two runs of a new plan's placement read it before either tested its lessons out. The one that
-  // lost the test-out ended the task without announcing, which rolled back the winner's
-  // announcement: the lessons were skipped with no note and no undo.
   it("announce a new plan's placement once, with the task's end", async () => {
     const { goalId, planId } = await placedGoal();
     const run = () => runPlanSetupTask({ goalId, task: "placement" });
@@ -101,7 +92,6 @@ describe("test-outs from the same read of the plan", () => {
       const both = Promise.all([run(), run()]);
       await read;
 
-      // The first to announce waits until the other has ended the task.
       await vi.waitFor(async () => {
         await expect(isPlanSetupTaskOwed({ goalId, task: "placement" })).resolves.toBe(false);
       });

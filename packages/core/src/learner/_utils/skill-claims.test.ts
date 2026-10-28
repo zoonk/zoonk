@@ -65,7 +65,6 @@ describe(readSkillClaims, () => {
   });
 
   it("makes a confirmed claim a gap when practice misses it before the learner studied it", () => {
-    // A tested-out topic was never studied: the test-out didn't hold (R19).
     const claims = readSkillClaims([claim(1), practice(2, true), practice(3, false)]);
     expect(claims.get("organelles")).toBe("gap");
   });
@@ -94,8 +93,6 @@ describe(readSkillClaims, () => {
   });
 
   it("takes nothing on trust once the learner studied the skill's lessons", () => {
-    // A right answer in a mock or the notebook later claims nothing, so practice can't make it a
-    // gap; a test's miss still is one.
     const claims = readSkillClaims([studied(1), test(2, true), practice(3, false)]);
     expect(claims.get("organelles")).toBe("confirmed");
 
@@ -122,7 +119,6 @@ describe(listTakenToKnow, () => {
 });
 
 describe(listAnsweredWrong, () => {
-  // Right, wrong, right in placement: the last answer claims it again, but it was missed.
   it("lists a skill missed once, whatever came after", () => {
     const events = [test(1, true), test(2, false), test(3, true), test(4, true, "membrane")];
 
@@ -163,8 +159,6 @@ describe(meetsKnownBar, () => {
 });
 
 describe(listKnownSkills, () => {
-  // A Câmara learner's one right true-or-false answer in a session read as known, and a plan short
-  // on time cut its topic first.
   it("keeps a skill to confirm, not known, after one right true-or-false answer", () => {
     const events = [trueFalse(1)];
 
@@ -202,8 +196,6 @@ describe(listKnownSkills, () => {
     expect(listKnownSkills({ events })).toStrictEqual(new Set(["studied", "tested"]));
   });
 
-  // The learner asked to study it: Pedro undid placement's skip of organelles, and a plan short on
-  // time cut them first again as known.
   it("doesn't know a skill whose test-out the learner undid until a later answer of its own", () => {
     expect(listKnownSkills({ events: [test(1, true), claim(2), undone(2)] })).toStrictEqual(
       new Set(),
@@ -214,7 +206,6 @@ describe(listKnownSkills, () => {
     ).toStrictEqual(new Set(["organelles"]));
   });
 
-  // A base the learner chose to skip is still to confirm, not known.
   it("doesn't know a skill passed over by choice that practice hasn't confirmed", () => {
     const events = [claim(1, "skipped"), claim(1, "confirmed"), practice(2, true, "confirmed")];
 

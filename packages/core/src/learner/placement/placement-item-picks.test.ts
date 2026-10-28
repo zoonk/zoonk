@@ -3,7 +3,6 @@ import { type GoalSkillGraph } from "../../library/curriculum/save-goal-skills";
 import { type PlanGraph } from "../../plans/planner/plan-state";
 import { pickPlacementGraphSkillIds, pickPlacementItemSkillIds } from "./placement-item-picks";
 
-/** Each picked skill's place in its subject, from its fixture id ("Subject 3/2" is 2). */
 function positionsOf(ids: readonly string[]): number[] {
   return ids.map((id) => Number(id.split("/")[1]));
 }
@@ -22,7 +21,6 @@ function graphOf(skills: { area: string | null; id: string; phase: number }[]): 
   };
 }
 
-/** A graph whose skills build on nothing: no subject has basics. */
 const NO_EDGES = new Map<string, string[]>();
 
 describe(pickPlacementItemSkillIds, () => {
@@ -70,16 +68,13 @@ describe(pickPlacementItemSkillIds, () => {
 
     const picked = pickPlacementItemSkillIds({ graph, prerequisites: NO_EDGES });
 
-    // Day 1 asks at most 12 questions: 16 skills cover it with room for the walk to choose.
     expect(picked).toHaveLength(16);
     expect(new Set(picked.map((id) => id.split("/")[0])).size).toBe(areas.length);
     expect(picked.every((id) => id.split("/")[1] === "0")).toBe(true);
-    // Each subject's pick placement asks first: without a level, its middle, as the walk starts.
     expect(picked).toContain("Subject 12/0/1");
   });
 
   it("covers every subject of an exam with more subjects than the cap, its weak ones first", () => {
-    // The OAB's first phase has 20 subjects; the learner asked to focus on two of them.
     const areas = Array.from({ length: 20 }, (_, index) => `Subject ${index}`);
 
     const graph = graphOf(
@@ -91,8 +86,6 @@ describe(pickPlacementItemSkillIds, () => {
     const picked = pickPlacementItemSkillIds({ graph, prerequisites: NO_EDGES });
     expect(new Set(picked.map((id) => id.split("/")[0])).size).toBe(areas.length);
 
-    // With fewer subjects than the cap, the weak ones get the picks left after each subject's
-    // first: their first skill, where a wrong answer settles where they start.
     const few = graphOf(
       graph.skills
         .slice(0, 13 * 4)
@@ -110,9 +103,6 @@ describe(pickPlacementItemSkillIds, () => {
     expect(weak).toContain("Subject 12/0");
   });
 
-  // Sofia studied the OAB before: the bands below her level are her word, which placement confirms
-  // first, so day 1 needs each subject's first skill's question; without a level, it starts in the
-  // middle.
   it("picks each subject's first skill for a learner who gave a level, the middle without one", () => {
     const areas = Array.from({ length: 20 }, (_, index) => `Subject ${index}`);
 
@@ -131,8 +121,6 @@ describe(pickPlacementItemSkillIds, () => {
   });
 
   it("picks the basics of the subjects the learner knows well first, which placement confirms first", () => {
-    // ENEM's four objective areas, each its basics in phase 0 and what builds on them in phase 1;
-    // the learner said they know Languages and Math well.
     const areas = ["Languages", "Math", "Sciences", "Humanities"];
 
     const graph = graphOf(
@@ -147,7 +135,6 @@ describe(pickPlacementItemSkillIds, () => {
       ),
     );
 
-    // What builds on each basic: a phase-1 skill on its phase-0 one.
     const prerequisites = new Map(
       graph.skills
         .filter((skill) => skill.phase === 1)
@@ -163,7 +150,6 @@ describe(pickPlacementItemSkillIds, () => {
     const pickedIn = (area: string, phase: number) =>
       picked.filter((id) => id.startsWith(`${area}/${phase}/`)).length;
 
-    // Every basic of a subject they know well: that's their word, which only answers confirm.
     expect([pickedIn("Languages", 0), pickedIn("Math", 0)]).toStrictEqual([3, 3]);
     expect(pickedIn("Languages", 1)).toBeGreaterThan(0);
     expect(pickedIn("Math", 1)).toBeGreaterThan(0);
@@ -196,7 +182,6 @@ describe(pickPlacementItemSkillIds, () => {
   });
 });
 
-/** A skill graph as the model writes it: phases counted from 1, courses as the areas. */
 function skillGraphOf(skills: { course: string; key: string; phase: number }[]): GoalSkillGraph {
   const courses = [...new Set(skills.map((skill) => skill.course))];
 
@@ -256,7 +241,6 @@ describe(pickPlacementGraphSkillIds, () => {
       Array.from({ length: 7 }, (_, index) => ({ course: "math", key: `m${index}`, phase: 1 })),
     );
 
-    // The graph's first two skills are the same Library skill: the plan keeps it once.
     const idsByKey = {
       ...Object.fromEntries(graph.skills.map((skill) => [skill.key, `id-${skill.key}`])),
       m1: "id-m0",

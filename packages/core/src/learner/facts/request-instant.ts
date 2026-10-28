@@ -1,6 +1,6 @@
 import "server-only";
 
-/** One reference instant for GET facts; each goal derives its local day in its own stored zone. */
+/** Shared GET reference instant; derive each local day using that goal's stored zone. */
 export async function getRequestInstant(): Promise<Date> {
   "use cache: private";
 

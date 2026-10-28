@@ -17,10 +17,7 @@ import {
 
 type PlacementCompletion = {
   areas: AreaStart[];
-  /**
-   * Whether every area of every phase had a confident starting point when placement finished.
-   * False when the plan had no skills yet: nothing was placed.
-   */
+  /** False when the plan has no skills. */
   complete: boolean;
   knownSkillIds: string[];
   phases: PhaseStart[];
@@ -30,17 +27,13 @@ type PlacementCompletion = {
 export type FinishPlacementResult =
   | {
       completion: PlacementCompletion;
-      /**
-       * The lesson the plan now opens with, which Day 1 opens: the apps get it written right away.
-       * Null while that item still stands in for a skill whose lessons aren't outlined.
-       */
+      /** Null while the first item stands in for an unoutlined skill. */
       firstLessonId: string | null;
       status: "ready";
     }
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/** "Start from scratch" is remembered, so the first week's sessions don't ask placement questions. */
 async function declinePlacement(goal: Goal) {
   await writeLearnerChange({ planInputs: true, userId: goal.userId }, async (tx) => {
     const current = await tx.goal.findUnique({ where: { id: goal.id } });
@@ -57,13 +50,7 @@ async function declinePlacement(goal: Goal) {
   });
 }
 
-/**
- * Ends placement for a goal, whenever the learner wants ("Stop anytime"): skills placement is sure
- * the learner can do become known in the learner model, plan items teaching only known skills are
- * tested out, and the plan follows what the answers found missing. "Start from scratch" changes
- * nothing else and starts every phase at its beginning; the first week's sessions then ask no
- * placement questions.
- */
+/** May stop before placement settles; starting from scratch also disables first-week placement questions. */
 export async function finishGoalPlacement({
   goalId,
   input,
@@ -109,7 +96,6 @@ export async function finishGoalPlacement({
     userId: owned.userId,
   });
 
-  // A skip re-plans as it's announced; answers that skipped nothing re-plan here.
   if (!changeId) {
     await replanAfterPlacement({ goalId, now, pastBasicsAreas, timeZone });
   }
@@ -122,7 +108,6 @@ export async function finishGoalPlacement({
       phases: state.phases,
       testedOutPlanItemIds,
     },
-    // After placement tested items out: where the plan starts now.
     firstLessonId: await findPlanFirstLessonId(goalId),
     status: "ready",
   };

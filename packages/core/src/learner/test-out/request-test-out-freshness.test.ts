@@ -9,8 +9,7 @@ import { learnerGoalFixture } from "../_test-utils/learner-goal";
 import { getChapterTestOut } from "./get-chapter-test-out";
 import { requestTestOutQuestions } from "./request-test-out-questions";
 
-// Next's shared cache is a platform boundary absent from Vitest. Keep its real database results
-// by serialized arguments to model a Main entry that an API content write cannot expire.
+// Vitest lacks Next's shared cache; retain entries to model another app's unpropagated invalidation.
 vi.mock("../../library/_utils/shared-rows", async (importOriginal) => {
   const actual = await importOriginal<{ getLessonSkillRows: typeof getLessonSkillRows }>();
   const entries = new Map<string, ReturnType<typeof actual.getLessonSkillRows>>();

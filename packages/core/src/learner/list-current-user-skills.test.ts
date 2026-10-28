@@ -8,7 +8,6 @@ import { listCurrentUserSkills } from "./list-current-user-skills";
 
 const DAY_MS = 86_400_000;
 
-/** A skill reviewed `daysAgo` days ago with the given stability and recall days. */
 function memory({
   daysAgo,
   recallDays = 0,

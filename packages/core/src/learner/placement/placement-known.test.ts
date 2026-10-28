@@ -4,14 +4,12 @@ import { type PlacementSkill } from "./placement-graph";
 import { listKnownSkillIds, readSkillStatuses } from "./placement-known";
 import { chooseNextPlacementSkill } from "./placement-steps";
 
-/** Graphs built on a chain: a function of a graph's reading needs the reading. */
 const CHAIN: PlacementSkill[] = [
   { id: "funcoes", order: 0, phase: 0, prerequisiteIds: [], sectionTitle: "Math" },
   { id: "graficos", order: 1, phase: 0, prerequisiteIds: ["funcoes"], sectionTitle: "Math" },
   { id: "modelos", order: 2, phase: 0, prerequisiteIds: ["graficos"], sectionTitle: "Math" },
 ];
 
-/** OAB-like subjects: a law's basic its later topics build on, and Portuguese in two bands. */
 const CLAIMED: PlacementSkill[] = [
   {
     band: "beginner",
@@ -74,7 +72,6 @@ function statusesOf({
 }
 
 describe(readSkillStatuses, () => {
-  // Two right answers on graphs made placement sure of functions too, and skipped its lessons.
   it("takes as known only what a skill's own answers confirm; what a right answer builds on is to confirm", () => {
     const statuses = statusesOf({
       evidence: [answer("graficos", "correct"), answer("graficos", "correct")],
@@ -147,7 +144,6 @@ describe("what placement asks first", () => {
       statuses: statusesOf({ evidence: [], ownLevel: "intermediate" }),
     });
 
-    // Without a claim, an intermediate learner's first question would be the law's later topic.
     expect(next).toBe("adm-atos");
   });
 });

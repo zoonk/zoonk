@@ -2,13 +2,6 @@ import "server-only";
 import { type Attempt, prisma } from "@zoonk/db";
 import { loadSkillSurvivors } from "./update-learner-skill";
 
-/**
- * The plan skills the learner's study plans hold each lesson for. A plan item with a skill and a
- * lesson teaches the plan's skill through that lesson, whose own skills are usually finer (the
- * relation `memberSkillIds` reads in `loadGoalPlan`): sessions review and practice the plan's
- * skill, with the bank's questions on it, so a finished lesson comes back through it. A quick
- * explanation's plan has no sessions to bring anything back.
- */
 export async function loadLessonPlanSkillIds({
   lessonIds,
   userId,
@@ -40,10 +33,7 @@ export async function loadLessonPlanSkillIds({
   );
 }
 
-/**
- * The skills a lesson comes back with in reviews and practice: the plan skills the learner's plans
- * hold it for (see `loadLessonPlanSkillIds`), else the skills its answers land on.
- */
+/** Uses plan skills when the lesson belongs to a plan, otherwise its own skills. */
 export async function loadLessonReviewSkillIds({
   lessonId,
   ownSkillIds,
@@ -59,11 +49,7 @@ export async function loadLessonReviewSkillIds({
   return held.length > 0 ? held : [...ownSkillIds];
 }
 
-/**
- * The skills answers come back with in reviews and practice: a lesson screen's answer comes back
- * with the plan skills its lesson is held for (see `loadLessonPlanSkillIds`), any other answer and
- * a screen of a lesson no plan holds for a skill with the skill it landed on.
- */
+/** Lesson answers map to the plan's skill when available; other answers keep their recorded skill. */
 export async function loadAnswersReviewSkillIds({
   answers,
   userId,

@@ -7,12 +7,7 @@ import { NEW_SKILL_MEMORY, reviewSkillMemory } from "../fsrs-scheduler";
 import { type GoalPlan, type GoalPlanItem, loadGoalPlan } from "./goal-skill-graph";
 import { unchanged, writeLearnerChange } from "./write-learner-change";
 
-/**
- * Records skills placement takes as known (each one's own answers confirmed it) as one right answer
- * now. Skills the learner is already learning keep their memory: their real answers outrank this
- * record. Undoing the skip that followed takes it back (`forgetAssumedSkills`). With `transaction`,
- * it writes in the caller's, which marked the learner changed.
- */
+/** Existing learned memory outranks inferred knowledge. A supplied transaction must already have marked the learner changed. */
 export async function markSkillsKnown({
   knownAt,
   skillIds,
@@ -61,7 +56,6 @@ export async function markSkillsKnown({
   );
 }
 
-/** A skill placement placed, which the plan may hold no item for. */
 type LeftOutSkill = Pick<GoalPlan["skills"][number], "id" | "phase">;
 
 type TestOutInput = {
@@ -70,13 +64,6 @@ type TestOutInput = {
   placedSkills?: readonly LeftOutSkill[];
 };
 
-/**
- * What a test-out changes on the plan: the items still to do that teach only known skills, and the
- * known skills of `placedSkills` the plan holds no item for (a skill the learner's time leaves out
- * for now), which get an item standing in for their lessons, already tested out. Every re-plan
- * keeps a tested-out skill out (`getSettledSkillIds`), so a plan that grows with more time never
- * brings back what placement skipped, and undoing the skip brings these back with the rest.
- */
 function findTestOut({ items, knownSkillIds, placedSkills = [] }: TestOutInput) {
   const planned = new Set(items.flatMap((item) => item.skillIds));
 
@@ -93,11 +80,6 @@ function findTestOut({ items, knownSkillIds, placedSkills = [] }: TestOutInput) 
   };
 }
 
-/**
- * Inserts one tested-out stand-in per skill, after the plan's items, in the caller's transaction,
- * which holds the plan. It moves the plan's version on, so a re-plan computed meanwhile starts over
- * with them (`withPlanRetry`); a skill that got its item meanwhile is left alone.
- */
 async function insertTestedOutStandIns(
   tx: TransactionClient,
   {
@@ -157,13 +139,7 @@ async function insertTestedOutStandIns(
   return created.map((item) => item.id);
 }
 
-/**
- * Tests out, in the caller's transaction, the plan items still to do that teach only known skills,
- * and inserts the stand-ins of the known `placedSkills` the plan leaves out (see `findTestOut`),
- * together: the caller marked the learner's plan inputs changed first, so it holds their plans.
- * Returns what it changed: the items, in the plan's order, and the stand-ins. An item another
- * test-out changed first isn't among them.
- */
+/** Caller must hold the marked learner's plans; returns only changed items and inserted stand-ins, in plan order. */
 export async function testOutKnownPlanItems(
   tx: TransactionClient,
   {
@@ -193,18 +169,7 @@ export async function testOutKnownPlanItems(
   return { itemIds: ids.filter((id) => changed.has(id)), standInIds };
 }
 
-/**
- * Marks plan items as tested out when the learner knows every skill they teach, so the plan skips
- * them. Placement also passes the skills it placed (`placedSkills`, from `loadPlacementPlan`): the
- * known ones the plan leaves out get tested-out stand-ins (`findTestOut`). Only items still to do
- * change; done and skipped items stay as they are. The plan then says what it skipped and re-plans
- * from today: the items this call found still to do, whichever test-out changed them, so a run
- * whose announcement ends a task (`applyPlacementToNewPlan`) announces them even when another run
- * that lost its announcement tested them out first. Returns the ids, the plan change that
- * announced them (null when the plan isn't the planner's yet), whose undo brings them back, the
- * lessons it says it skipped (`countLessons`: a stand-in, the lessons the plan taught in its
- * place), so a result says the count Today and the Plan say, and the plan's version it left.
- */
+/** Returns changed ids, the announcement's undoable plan change, lesson count, and resulting version; only todo items change. */
 export async function markPlanItemsTestedOut({
   announceAlso = [],
   extraWrites,
@@ -229,7 +194,6 @@ export async function markPlanItemsTestedOut({
   knownSkillIds: ReadonlySet<string>;
   /** When the plan is planned again from: `testedOutAt`, unless a retry kept an earlier one. */
   now?: Date;
-  /** Areas the same answers start past their basics (see `announceTestedOutItems`). */
   pastBasicsAreas?: readonly string[];
   placedSkills?: readonly LeftOutSkill[];
   testedOutAt: Date;
@@ -290,7 +254,6 @@ export async function markPlanItemsTestedOut({
   };
 }
 
-/** The skills some of a goal's plan items teach, such as the ones a skip's undo brings back. */
 export async function loadPlanItemSkillIds({
   goalId,
   planItemIds,
@@ -304,11 +267,7 @@ export async function loadPlanItemSkillIds({
   return [...new Set(items.filter((item) => ids.has(item.id)).flatMap((item) => item.skillIds))];
 }
 
-/**
- * Takes back what `markSkillsKnown` assumed when a skip is undone: a skill the learner never
- * answered a question on goes back to New, so lessons back in the plan aren't counted as known.
- * Skills with answers keep the memory those answers built.
- */
+/** Preserves memory backed by real answers; unstudied assumed skills revert to New. */
 export async function forgetAssumedSkills({
   skillIds,
   tx,

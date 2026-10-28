@@ -1,19 +1,12 @@
-/** A test-out passes at 80% right, like placement's confidence bar. */
 export const TEST_OUT_PASS_MARK = 0.8;
 
-/** Enough questions to sample a chapter's skills, few enough to take in two minutes. */
 export const TEST_OUT_MAX_QUESTIONS = 8;
 
-/** Never fewer: one lucky answer, or two, never skips a chapter. */
+/** Lucky guesses must not skip an entire chapter. */
 const TEST_OUT_MIN_QUESTIONS = 4;
 
-/** One more question for every this many lessons a pass would skip. */
 const LESSONS_PER_QUESTION = 2;
 
-/**
- * How many questions a test-out asks: more the more lessons passing it skips (what it vouches
- * for), from four to eight.
- */
 export function getTestOutQuestionCount(lessonsSkipped: number): number {
   return Math.min(
     TEST_OUT_MAX_QUESTIONS,
@@ -21,7 +14,6 @@ export function getTestOutQuestionCount(lessonsSkipped: number): number {
   );
 }
 
-/** Each sampled skill's share of the questions: a chapter of one skill asks it several times. */
 export function getQuestionsPerSkill({
   questions,
   skills,
@@ -32,7 +24,6 @@ export function getQuestionsPerSkill({
   return skills > 0 ? Math.ceil(questions / skills) : 0;
 }
 
-/** Spreads a test-out over the whole chapter: evenly spaced skills when there are too many. */
 export function pickTestOutSkills<TSkill>(skills: readonly TSkill[]): TSkill[] {
   if (skills.length <= TEST_OUT_MAX_QUESTIONS) {
     return [...skills];
@@ -48,7 +39,7 @@ export function pickTestOutSkills<TSkill>(skills: readonly TSkill[]): TSkill[] {
 
 export type TestOutScore = {
   correct: number;
-  /** Skills answered 80% right or better: the ones a passed test-out takes off the plan. */
+  /** Includes only sampled skills answered at least 80% right. */
   knownSkillIds: string[];
   missedSkillIds: string[];
   passed: boolean;
@@ -60,13 +51,7 @@ function isKnownBy(results: readonly { isCorrect: boolean }[]): boolean {
   return results.length > 0 && right / results.length >= TEST_OUT_PASS_MARK;
 }
 
-/**
- * Scores a test-out. It only vouches for what it asked: passing needs at least four answers, an
- * answer on every skill it samples (each skill of a chapter of up to eight, eight spread over a
- * bigger one) and 80% of the answers right. Then the skills answered 80% right count as known;
- * skills it missed or never asked about stay in the plan, so a chapter with questions on only
- * some of its skills can't be skipped.
- */
+/** Requires enough answers across every sampled skill; never assumes unasked skills are known. */
 export function scoreTestOut({
   chapterSkillIds,
   results,

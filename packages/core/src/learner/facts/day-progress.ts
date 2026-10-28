@@ -4,10 +4,7 @@ import { cacheTag } from "next/cache";
 import { getLearnerModelCacheTag, getUserProgressCacheTag } from "../../cache/tags";
 import { fromIsoDate } from "../../plans/planner/plan-calendar";
 
-/**
- * Internal GET fact: the learner's totals for one local day (`YYYY-MM-DD`), read once per request
- * for Today's "studied today", the buddy's nap and the day's time limit. Writes read it fresh.
- */
+/** GET-only fact keyed by learner-local YYYY-MM-DD; writes must read fresh. */
 export async function readDayProgress(userId: string, isoDate: string) {
   "use cache: private";
 

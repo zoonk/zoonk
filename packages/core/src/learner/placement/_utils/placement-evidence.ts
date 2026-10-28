@@ -4,7 +4,6 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { type PlacementEvidence } from "../placement-beliefs";
 import { isPlacementAnswer } from "./placement-answers";
 
-/** Most skills need one or two questions: more than 1000 answers on one goal's skills is noise. */
 const MAX_EVIDENCE = 1000;
 
 type AttemptRow = {
@@ -34,7 +33,6 @@ function toEvidence(attempt: AttemptRow): PlacementEvidence | null {
   }
 
   return {
-    // Lesson screens aren't bank items; their questions are about as guessable as multiple choice.
     format: attempt.item?.format ?? "multipleChoice",
     outcome: getOutcome(attempt),
     skillId: attempt.skillId,
@@ -45,11 +43,7 @@ function toEvidenceList(attempts: readonly AttemptRow[]): PlacementEvidence[] {
   return attempts.map((attempt) => toEvidence(attempt)).filter((item) => item !== null);
 }
 
-/**
- * The learner's answers on these skills, oldest first, as placement reads them: every answer
- * (`evidence`), the ones to placement's own questions (`placementAnswers`, see
- * `isPlacementAnswer`) and the questions already seen.
- */
+/** Returns evidence oldest first. */
 export async function loadEvidence({
   skillIds,
   tx = prisma,

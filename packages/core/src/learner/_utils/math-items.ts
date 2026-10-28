@@ -10,7 +10,6 @@ import { type MistakeSnapshot } from "../../mistakes/mistake-snapshot";
 
 type MathContent = Extract<ParsedItemContent, { format: "numeric" }>["content"];
 
-/** A math item: a problem stored as data, asked with fresh numbers each time it's served. */
 export type MathItem = Pick<Item, "id" | "language" | "skillId"> & {
   content: MathContent;
   format: "numeric";
@@ -18,10 +17,7 @@ export type MathItem = Pick<Item, "id" | "language" | "skillId"> & {
 
 type BankItem = Pick<Item, "content" | "format" | "id" | "language" | "skillId">;
 
-/**
- * Reads a bank item as a math problem, or null when it isn't one. Stored content passed the item
- * checks, so a parse failure is logged and the item skipped instead of failing the learner.
- */
+/** Returns null for nonnumeric or invalid content; parse failures are logged. */
 export function parseMathItem(item: BankItem): MathItem | null {
   if (item.format !== "numeric") {
     return null;
@@ -39,10 +35,7 @@ export function parseMathItem(item: BankItem): MathItem | null {
   }
 }
 
-/**
- * The numbers one serving shows, drawn from its `seed` (such as the session block that asks it), so
- * showing and grading the serving always agree and the next serving gets new ones.
- */
+/** Reuse the same seed when showing and grading a serving. */
 export function serveMath({ item, seed }: { item: MathItem; seed: string }): MathVersion {
   return withNewNumbers({
     ...item.content,
@@ -51,26 +44,22 @@ export function serveMath({ item, seed }: { item: MathItem; seed: string }): Mat
   });
 }
 
-/** The unit next to the answer field, where the item's language writes it ("R$ 45", "45 €"). */
 function toUnitView({ language, unit }: { language: string; unit: string | null }) {
   return unit ? { position: getUnitPosition({ language, unit }), symbol: unit } : null;
 }
 
-/** The question with this serving's numbers, never its answer. */
+/** Omits the answer. */
 export function toMathQuestionView({ item, version }: { item: MathItem; version: MathVersion }) {
   return {
     context: version.context,
-    /** How the answer box takes the number: any number, a whole one, n decimals or a fraction. */
     entry: item.content.entry,
     format: item.format,
-    /** New numbers each time, so a math problem never asks about a figure. */
     image: null,
     itemId: item.id,
     options: null,
     question: version.question,
     skillId: item.skillId,
     unit: toUnitView({ language: item.language, unit: item.content.math.unit }),
-    /** Math problems draw new numbers each time, so their data is in the words, never a chart. */
     visual: null,
   };
 }
@@ -79,11 +68,7 @@ function formatAnswer({ item, value }: { item: MathItem; value: number }): strin
   return formatMathAnswer({ language: item.language, unit: item.content.math.unit, value });
 }
 
-/**
- * Grades a typed number against the numbers the learner saw. A wrong answer that matches a common
- * mistake explains that mistake; the worked steps show the way with the same numbers. The attempt
- * keeps the numbers, so earlier answers can be read exactly later.
- */
+/** version must be the serving the learner saw; the attempt preserves its numbers. */
 export function gradeMathAnswer({
   answer,
   item,
@@ -130,7 +115,7 @@ const recordedMathSchema = z.object({
   values: z.record(z.string(), z.number()),
 });
 
-/** A math answer as its attempt stored it: the number typed and the numbers it was asked with. */
+/** Returns null for invalid stored answers. */
 export function readRecordedMath(answer: unknown): z.infer<typeof recordedMathSchema> | null {
   const parsed = recordedMathSchema.safeParse(answer);
   return parsed.success ? parsed.data : null;
@@ -141,10 +126,7 @@ function isSameVersion(a: Readonly<MathValues>, b: Readonly<MathValues>): boolea
   return names.length === Object.keys(b).length && names.every((name) => a[name] === b[name]);
 }
 
-/**
- * An earlier answer as text, for "On Sep 30 you answered R$ 45". Only when that serving had the
- * same numbers as this one: with other numbers, the old answer says nothing about today's.
- */
+/** Returns nothing unless the recorded answer used the same numbers as the current serving. */
 export function describeEarlierMathAnswer({
   answer,
   item,

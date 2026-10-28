@@ -9,7 +9,6 @@ import { canMoveGoalTimeZone } from "./_utils/goal-time-zone";
 import { markLearnerChanged } from "./_utils/mark-learner-changed";
 import { findOwnedGoal, getAnswerTimeZone } from "./_utils/owned-goal";
 
-/** A follow that lost a race tries once more from a fresh read; a second loss says no move. */
 const MAX_FOLLOW_ATTEMPTS = 2;
 
 export type FollowGoalTimeZoneResult =
@@ -17,26 +16,11 @@ export type FollowGoalTimeZoneResult =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/**
- * A goal's zone move once written, or `unchanged` when the goal can't move (the learner studied
- * today, the zone isn't one, or it's already the goal's), before anything is written.
- */
 type GoalTimeZoneMove = { kind: "moved"; planInputsChanged: boolean } | { kind: "unchanged" };
 
-/**
- * Why a move found nothing to do once it held the learner's lock: the learner studied while it
- * waited (`studied`, the day stays theirs until the next one), another writer moved the zone
- * first (`zoneChanged`), or a midnight passed that changes whether the plan's days move
- * (`dayChanged`). The last two are worth trying again from a fresh read of the goal.
- */
 type TimeZoneUnchangedReason = "dayChanged" | "studied" | "zoneChanged";
 
-/**
- * The move can't happen after all, found once it held the learner's lock: thrown so the caller's
- * transaction rolls back the plan inputs it already marked. A caller tells it from a real failure with
- * `isTimeZoneUnchanged` and reads its `reason`; anything else thrown is an infrastructure failure,
- * never retried as this.
- */
+/** Roll back early marks when a locked recheck refuses the move; infrastructure failures must propagate separately. */
 class TimeZoneUnchangedError extends Error {
   override name = "TimeZoneUnchangedError";
 
@@ -48,14 +32,10 @@ class TimeZoneUnchangedError extends Error {
   }
 }
 
-/**
- * Whether a move's transaction rolled back because the move found nothing to do after all.
- */
 export function isTimeZoneUnchanged(error: unknown): error is TimeZoneUnchangedError {
   return error instanceof TimeZoneUnchangedError;
 }
 
-/** Whether the goal's today is another date in `toZone` at `now`: the plan's days move then. */
 function movesTheDate({
   goal,
   now,
@@ -69,7 +49,6 @@ function movesTheDate({
   return getDateInTimeZone({ date: now, timeZone: toZone }).getTime() !== today.getTime();
 }
 
-/** The goal's stored zone as the writer's transaction reads it now; undefined once it's gone. */
 async function readGoalZone(
   tx: TransactionClient,
   { goalId, userId }: { goalId: string; userId: string },
@@ -82,16 +61,7 @@ async function readGoalZone(
   return goal?.timezone;
 }
 
-/**
- * Moves a goal from `fromZone` (the zone the caller read) to `toZone` inside the caller's
- * transaction, when `canMoveGoalTimeZone` allows it: the plans' inputs and the learner's lock
- * first (a zone is an input even while its local date stays the same), then the same checks at the
- * moment it holds the learner's lock (the goal may have moved, an answer or a block start may have
- * committed, or a midnight passed, while it waited), then the zone, set only while it's still
- * `fromZone`. `unchanged` when the goal can't move, having written nothing; when that's only found
- * under the lock, it throws `TimeZoneUnchangedError` instead, so the caller's transaction rolls
- * back (with its early marks). It expires no cache: the caller does, once committed.
- */
+/** A locked recheck may throw TimeZoneUnchangedError to roll back early marks; other errors propagate. Caller expires caches after commit. */
 export async function moveGoalTimeZoneInTransaction(
   tx: TransactionClient,
   {
@@ -115,7 +85,6 @@ export async function moveGoalTimeZoneInTransaction(
 
   const lockedAt = new Date();
 
-  // Another writer moved the goal while this waited: its day is no longer the one checked.
   if ((await readGoalZone(tx, { goalId, userId })) !== fromZone) {
     throw new TimeZoneUnchangedError("zoneChanged");
   }
@@ -140,13 +109,7 @@ export async function moveGoalTimeZoneInTransaction(
   return { kind: "moved", planInputsChanged: true };
 }
 
-/**
- * Follows the learner to their device's zone when a screen of the goal opens: a goal without a
- * zone stores it, and a learner who moved takes it while nothing was done yet in the goal's day
- * (see `moveGoalTimeZoneInTransaction`). A move that lost a race to another writer, or to
- * midnight, tries once more from a fresh read of the goal. Says whether the goal moved, so the
- * screen can read itself again when it did.
- */
+/** Reload the screen when moved is true; a lost race is retried once from fresh goal state. */
 export async function followGoalTimeZone({
   attempt = 1,
   goalId,
@@ -164,7 +127,6 @@ export async function followGoalTimeZone({
 
   const { goal, userId } = owned;
 
-  // Already the goal's zone: nothing can move, so no transaction is opened for it.
   if (timeZone === goal.timezone) {
     return { moved: false, status: "ready" };
   }

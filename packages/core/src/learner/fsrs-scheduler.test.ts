@@ -32,13 +32,11 @@ function learn(memory: SkillMemory, reviewedAt: string, answer: GradedAnswer = R
 
 describe(reviewSkillMemory, () => {
   it("brings a skill taught today back the next day, then lets FSRS space it", () => {
-    // Taught on September 1st in São Paulo: three right answers in the lesson.
     const taught = ["2026-09-01T23:00:00Z", "2026-09-01T23:02:00Z", "2026-09-01T23:04:00Z"].reduce(
       (memory, at) => learn(memory, at),
       NEW_SKILL_MEMORY,
     );
 
-    // Midnight of September 2nd in São Paulo: the next day's review.
     expect(taught.due).toStrictEqual(new Date("2026-09-02T03:00:00Z"));
 
     expect(review(NEW_SKILL_MEMORY, "2026-09-01T23:00:00Z").due?.getTime()).toBeGreaterThan(
@@ -78,7 +76,6 @@ describe(reviewSkillMemory, () => {
   it("schedules the next review at the start of the learner's due day", () => {
     const memory = review(NEW_SKILL_MEMORY, "2026-09-01T23:00:00Z");
 
-    // Midnight in São Paulo (UTC-3) is 03:00 UTC.
     expect(memory.due?.toISOString()).toMatch(/T03:00:00\.000Z$/u);
     expect(memory.due?.getTime()).toBeGreaterThan(new Date("2026-09-02T03:00:00Z").getTime());
   });
@@ -89,7 +86,6 @@ describe(reviewSkillMemory, () => {
       "2026-09-02T03:00:05Z",
     );
 
-    // Given at 23:59:50 in São Paulo, before that review, but saved after it.
     const late = review(reviewed, "2026-09-02T02:59:50Z", WRONG);
 
     expect(late.lastReviewedAt).toStrictEqual(reviewed.lastReviewedAt);
@@ -98,7 +94,6 @@ describe(reviewSkillMemory, () => {
 
   it("keeps stability for another right answer on the same local day", () => {
     const first = review(NEW_SKILL_MEMORY, "2026-09-01T23:00:00Z");
-    // 21:30 in São Paulo is still September 1st there, although it is September 2nd in UTC.
     const sameDay = review(first, "2026-09-02T00:30:00Z");
 
     expect(sameDay.stability).toBe(first.stability);

@@ -6,8 +6,7 @@ import { mergeSkillForAdmin } from "../../library/skills/merge-skill";
 import { getSession } from "../../users/get-session";
 import { readSurvivorOf } from "./plan-library-rows";
 
-// Model a retained shared merge entry: Admin's tag expiry cannot reach Main. Persistence and the
-// merge capability stay real; Vitest does not otherwise retain Next's cache entries.
+// Vitest does not retain Next cache entries; model one that another app's invalidation cannot expire.
 vi.mock("../../library/_utils/shared-rows", async (importOriginal) => {
   const actual = await importOriginal<{
     getMergedSkillRows: (ids: string[]) => Promise<Pick<Skill, "id" | "mergedIntoId">[]>;

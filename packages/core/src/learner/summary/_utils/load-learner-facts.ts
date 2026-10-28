@@ -6,23 +6,16 @@ import {
   mindMapChapterRows,
 } from "../../../mind-maps/_utils/listed-mind-map-chapters";
 
-/** How many of the learner's latest days with study are enough to tell today and earlier apart. */
 const RECENT_STUDY_DAYS = 4;
 
 /** A day the learner studied: its `YYYY-MM-DD` date and the time spent in it. */
 export type StudyDay = { date: string; timeSpentSeconds: number };
 
-/**
- * What the summary reads beside the learner's rows: progress (Brain Power and Energy), their
- * latest days with study, the goals whose mind maps have a chapter to show, and what tells a
- * language goal's speaking paper: the names of the blueprints goals name and the speaking scores.
- */
 export type LearnerFacts = {
   /** The blueprint each goal names, by goal id. */
   blueprintNames: Record<string, string>;
   currentEnergy: number | null;
   lastActiveAt: Date | null;
-  /** The goals (not archived, not a language's) with a finished chapter its mind maps list. */
   mindMapGoalIds: string[];
   recentStudyDays: StudyDay[];
   /** The learner's speaking score, by language. */
@@ -30,10 +23,6 @@ export type LearnerFacts = {
   totalBrainPower: bigint | null;
 };
 
-/**
- * A finished chapter outside a language with lessons written or a map (`mindMapChapterRows`), as
- * the facts' JSON carries it: what `isListedMindMapChapter` reads.
- */
 type MindMapChapterFacts = Pick<
   MindMapChapterState,
   "canHaveMap" | "hasWrittenLessons" | "mapStatus" | "mapStructure"
@@ -43,10 +32,6 @@ type LearnerFactsRow = Omit<LearnerFacts, "mindMapGoalIds"> & {
   mindMapChapters: MindMapChapterFacts[];
 };
 
-/**
- * The learner's facts in one statement. A goal has mind maps when one of its chapters is listed by
- * the rule `listGoalMindMaps` lists them by (`isListedMindMapChapter`).
- */
 export async function loadLearnerFacts(userId: string): Promise<LearnerFacts> {
   const mindMapGoals = sql`g.user_id = ${userId}::uuid AND g.status <> 'archived'`;
 

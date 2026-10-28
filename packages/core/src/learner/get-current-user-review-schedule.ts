@@ -17,18 +17,15 @@ import {
   selectDueReviews,
 } from "./review-load";
 
-/** A week of review load: enough for "Opens Friday" and the plan's view of this week. */
 const FORECAST_DAYS = 7;
 
-/** The daily time new goals start with, used for the cap when no goal is given. */
 const DEFAULT_DAILY_MINUTES = 20;
 
 type ReviewSchedule = {
-  /** Most skills one day's reviews hold at the goal's daily time. */
   cap: number;
-  /** Today's reviews, most at risk of being forgotten first. */
+  /** Lowest retrievability first. */
   dueToday: { due: Date | null; name: string; retrievability: number | null; skillId: string }[];
-  /** Reviews per learner-local day from today, overdue ones spread under the cap. */
+  /** Local-day counts from today; overdue work is spread under the daily cap. */
   forecast: { localDate: Date; reviews: number }[];
 };
 
@@ -62,11 +59,7 @@ async function loadCandidates({ goal, userId }: { goal: Goal | null; userId: str
   return rows.map((row) => ({ memory: row, name: row.skill.name, skillId: row.skillId }));
 }
 
-/**
- * Returns the learner's review schedule: what is due today (never more than the daily cap, most at
- * risk first) and the load of the coming days. Missed days re-flow: overdue skills fill the next
- * days under the cap instead of piling onto one.
- */
+/** Never exceeds the daily cap; overdue reviews spread over later days rather than piling onto today. */
 export async function getCurrentUserReviewSchedule(
   input: ReviewScheduleInput,
 ): Promise<ReviewScheduleResult> {

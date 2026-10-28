@@ -13,7 +13,6 @@ function sortIds(ids: readonly string[]): string[] {
   return ids.toSorted((a, b) => a.localeCompare(b));
 }
 
-/** Two skills, their ids in ascending order. */
 async function twoSkills(name: string) {
   const skills = await Promise.all(
     [1, 2].map((index) => skillFixture({ name: `${name} part ${index}` })),
@@ -23,7 +22,6 @@ async function twoSkills(name: string) {
   return { higher: higher ?? "", lower: lower ?? "" };
 }
 
-/** A lesson in a chapter of its own. */
 async function lessonInChapter(title: string) {
   const [chapter, lesson] = await Promise.all([
     libraryChapterFixture({ title }),
@@ -36,7 +34,6 @@ async function lessonInChapter(title: string) {
 
 describe(loadItemSkillRows, () => {
   it("lists lessons' skills linked at one instant by skill id, whatever order the database returns", async () => {
-    // One instant for every row, as a lesson's skills written by one statement share it.
     freezeClock();
 
     const [skills, lessons] = await Promise.all([
@@ -46,8 +43,6 @@ describe(loadItemSkillRows, () => {
 
     const [lowerLesson, higherLesson] = sortIds(lessons.map((lesson) => lesson.id));
 
-    // The lesson with the lower id teaches the higher skill, and it's linked first: the primary
-    // key (lesson, then skill) and the stored row order both list the higher skill first.
     await lessonSkillFixture({ lessonId: lowerLesson ?? "", skillId: skills.higher });
     await lessonSkillFixture({ lessonId: higherLesson ?? "", skillId: skills.lower });
 
@@ -70,7 +65,6 @@ describe(loadItemSkillRows, () => {
       lessonInChapter("Comparing fractions"),
     ]);
 
-    // Linked in reverse id order, so the stored row order is the reverse of id order.
     await lessonSkillFixture({ lessonId, skillId: skills.higher });
     await lessonSkillFixture({ lessonId, skillId: skills.lower });
 
@@ -89,7 +83,6 @@ describe(loadItemSkillRows, () => {
       lessonInChapter("Simplifying fractions"),
     ]);
 
-    // The earlier link decides, whatever the ids say.
     await lessonSkillFixture({ lessonId, skillId: skills.higher });
     vi.setSystemTime(Date.now() + 1000);
     await lessonSkillFixture({ lessonId, skillId: skills.lower });

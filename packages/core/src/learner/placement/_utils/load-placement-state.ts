@@ -49,47 +49,25 @@ import {
 } from "./placement-items";
 import { loadPlanBuild } from "./placement-plan-build";
 
-/**
- * Where placement stands for a goal: each phase's and each area's starting point, whether every
- * one is settled, the next question (null when there's none to ask now) and the skills that
- * still need questions made before placement can settle them.
- */
 export type PlacementState = {
-  /** This goal's placement answers so far, which number its questions (`countPlacementAnswers`). */
   answered: number;
   areas: AreaStart[];
-  /** Every area of every phase has a confident start. False while the plan has no skills yet. */
+  /** False while the plan has no skills. */
   complete: boolean;
-  /**
-   * How much of today's few minutes the day's answers used, from 0 to 1 (`getPlacementBudgetSpent`):
-   * how far along today's questions are at most, since placement can stop sooner once it's sure.
-   */
+  /** Fraction from 0 to 1; placement can settle before it reaches one. */
   dayBudgetSpent: number;
-  /**
-   * Today's few minutes of placement are used: it stops for the day with what it knows, and the
-   * first week's sessions ask the rest a few at a time.
-   */
+  /** Unfinished placement continues in first-week sessions after today's budget is used. */
   dayBudgetUsed: boolean;
-  /** The skills placement takes as known: their own answers confirm them (see `listKnownSkillIds`). */
   knownSkillIds: string[];
   needsItems: string[];
   next: PlacementQuestionView | null;
   phases: PhaseStart[];
-  /**
-   * This goal's placement already has answers (`answered` isn't 0), so a client coming back
-   * resumes at `next` instead of showing placement's start.
-   */
+  /** Resume at next rather than showing the start screen. */
   started: boolean;
-  /** What the client does next (`placementStatusSchema`). */
   status: PlacementStatus;
-  /** The words the goal's true-or-false questions are answered with. */
   trueFalseLabels: TrueFalseLabels;
 };
 
-/**
- * Each of the plan's areas' share of the exam (`getAreaShares`), counting only the options the
- * learner takes of its choices (ENEM's English or Spanish); null without a notice.
- */
 function getChosenAreaShares({
   graph,
   settings,
@@ -107,10 +85,6 @@ function getChosenAreaShares({
     : null;
 }
 
-/**
- * The goal's exam, whose questions placement may ask, how placement asks quickly for it, and the
- * words its statements are answered with.
- */
 async function loadGoalExam(goalId: string, tx: TransactionClient) {
   const goal = await tx.goal.findUnique({
     include: { examBlueprint: true, plan: { select: { graph: true, settings: true } } },
@@ -133,7 +107,6 @@ async function loadGoalExam(goalId: string, tx: TransactionClient) {
     goalLevel: goal ? getOwnLevel({ goal }) : null,
     knownAreas: goal ? getKnownSubjects(goal) : [],
     measuredLevel: goal && isLevelMeasured(goal) ? getOwnLevel({ goal }) : null,
-    // Before the notice's blueprint is linked, the formats a first pass over it read.
     quickFormat: getPlacementQuickFormat(structure ?? notice),
     trueFalseLabels: getTrueFalseLabels(structure ?? notice),
     typed: goal ? confirmsInWriting(goal) : false,
@@ -154,13 +127,6 @@ async function loadQuestion(
   return parsed ? toPlacementQuestionView(parsed) : null;
 }
 
-/**
- * What the client does next. Without skills, placement waits for the plan, or stops when the run
- * building it gave up (`failed`). With nothing to ask while the day's budget is left and nothing is
- * settled: the question it asks next is still being written (`waitingForQuestions`), or none could
- * be written and the learner has no answer on its skills (`unavailable`), so the learner goes on
- * without placement.
- */
 function getStatus({
   buildFailed,
   complete,
@@ -198,11 +164,7 @@ function getStatus({
   return hasEvidence ? "done" : "unavailable";
 }
 
-/**
- * Computes placement from the learner's answers on the goal's skills. Every answer counts, placement
- * or not, so placement never really ends: lessons and reviews keep sharpening the same picture.
- * With `today` (the learner-local day), it stops asking once that day's few minutes are used.
- */
+/** Uses all answers, not only placement's; today applies the learner-local daily budget. */
 export async function loadPlacementState({
   answer: sessionAnswer = null,
   goalId,
@@ -212,10 +174,7 @@ export async function loadPlacementState({
   userId,
   tx = prisma,
 }: {
-  /**
-   * A placement question a first-week session just asked, answered: one of placement's own too,
-   * though asked inside a session (see `listKnownSkillIds`).
-   */
+  /** Include a placement question answered inside a first-week session. */
   answer?: PlacementEvidence | null;
   goalId: string;
   /** A level the request gave; the one stored on the goal otherwise. */
@@ -272,7 +231,7 @@ export async function loadPlacementState({
     seen: seenItemIds.has(item.id),
   }));
 
-  /** The full material's scope keeps its budget stable as question batches arrive or time out. */
+  /** Keep the full material's budget stable while question batches arrive or time out. */
   const topics = answeredOnly ? skills.length : 0;
 
   const dayBudgetSpent =
@@ -366,7 +325,6 @@ export async function loadPlacementState({
       dayBudgetUsed,
       hasEvidence: evidence.length > 0,
       hasNext: next !== null,
-      // A language certificate's skills are known once its blueprint is (see `loadPlanBuild`).
       hasSkills: skills.length > 0 && !build.waitsForExam,
       waitsForQuestions: waitsForNext,
     }),

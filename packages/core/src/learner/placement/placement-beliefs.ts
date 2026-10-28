@@ -9,31 +9,20 @@ import {
 import { PLACEMENT_CONFIDENCE } from "./placement-status";
 import { type OwnLevel } from "./placement-steps";
 
-/** "I don't know yet" is its own outcome: honest, and stronger evidence than a wrong guess. */
 type PlacementOutcome = "correct" | "dontKnow" | "wrong";
 
-/** One answer on one of the goal's skills, in the order it was given. */
+/** Evidence must be in answer order. */
 export type PlacementEvidence = { format: ItemFormat; outcome: PlacementOutcome; skillId: string };
 
-/** The chance (0 to 1) that the learner can already do each skill. */
+/** Probability from 0 to 1. */
 export type SkillBeliefs = ReadonlyMap<string, number>;
 
-/** Before any answer, placement has no opinion about a skill. */
 const PRIOR_BELIEF = 0.5;
 
-/** A band the learner's level covers: known until an answer says otherwise. */
 const KNOWN_BY_LEVEL = 0.85;
 
-/** A band the learner's level likely covers: one right answer is enough to be sure. */
 const LIKELY_BY_LEVEL = 0.65;
 
-/**
- * What the learner's own level says before any answer, by a skill's band: someone who studied the
- * subject before ("intermediate") has its overview and beginner skills, so placement asks about
- * what's left and the plan starts past them. "I know it well" leans toward its intermediate ones
- * too. Without a level, or starting from nothing, nothing is assumed. A level never settles the band
- * an area mostly teaches on its own (`getLevelPrior`).
- */
 const LEVEL_PRIORS: Readonly<Record<OwnLevel, Partial<Record<CourseLevel, number>>>> = {
   advanced: { beginner: KNOWN_BY_LEVEL, intermediate: LIKELY_BY_LEVEL, overview: KNOWN_BY_LEVEL },
   basic: { overview: KNOWN_BY_LEVEL },
@@ -41,22 +30,13 @@ const LEVEL_PRIORS: Readonly<Record<OwnLevel, Partial<Record<CourseLevel, number
   none: {},
 };
 
-/** A learner who can do the skill still gets it wrong this often. */
 const SLIP_RATE = 0.1;
 
-/** Someone who can do a skill rarely says "I don't know yet". */
 const DONT_KNOW_WHEN_KNOWN = 0.02;
 
-/**
- * How strongly one skill speaks for its neighbors: doing a skill means its prerequisites are very
- * likely known too, and missing one means what builds on it is very likely unknown.
- */
 const GRAPH_TRANSFER = 0.95;
 
-/**
- * The chance of a right answer by luck. Quick formats are easy to guess, so they need
- * confirmation; typed and numeric answers barely are, so a lucky guess can't skip a phase.
- */
+/** Quick formats need confirmation because they can be guessed; typed and numeric answers rarely can. */
 const GUESS_RATES: Readonly<Record<ItemFormat, number>> = {
   essay: 0.05,
   matchPairs: 0.1,
@@ -82,13 +62,11 @@ function getLikelihoods({ format, outcome }: Pick<PlacementEvidence, "format" | 
   return { known: DONT_KNOW_WHEN_KNOWN, unknown: 1 };
 }
 
-/** Bayes' rule for one answer on a skill whose prior belief is `prior`. */
 function getPosterior({ evidence, prior }: { evidence: PlacementEvidence; prior: number }): number {
   const { known, unknown } = getLikelihoods(evidence);
   return (prior * known) / (prior * known + (1 - prior) * unknown);
 }
 
-/** The right answers in `format` that take a skill from `belief` to `PLACEMENT_CONFIDENCE`. */
 function countRightAnswersFrom({ belief, format }: { belief: number; format: ItemFormat }): number {
   if (belief >= PLACEMENT_CONFIDENCE) {
     return 0;
@@ -98,31 +76,15 @@ function countRightAnswersFrom({ belief, format }: { belief: number; format: Ite
   return 1 + countRightAnswersFrom({ belief: getPosterior({ evidence, prior: belief }), format });
 }
 
-/**
- * How many right answers in a format make placement sure of a skill it had no opinion about:
- * two multiple-choice picks, three statements judged right or wrong (a guess passes those more
- * often), one typed answer. Placement writes that many quick questions per skill, so a right
- * answer is confirmed without typing.
- */
+/** Assumes no prior knowledge of the skill. */
 export function countRightAnswersToKnow(format: ItemFormat): number {
   return countRightAnswersFrom({ belief: PRIOR_BELIEF, format });
 }
 
-/**
- * How basic a skill is within its subject: its band, and inside a band its subject's foundations
- * before what builds on them. Null without a band.
- */
 function getSkillDepth(skill: PlacementSkill | undefined): number | null {
   return skill?.band ? getBandRank(skill.band) * 2 + (skill.foundation ? 0 : 1) : null;
 }
 
-/**
- * The skills of the answered skill's subject that are more basic (after a right answer) or less
- * basic (after a wrong one): doing a subject's intermediate skill says its beginner ones are done,
- * as doing what builds on its foundations says the foundations are; missing a basic one says
- * what's past it isn't known either. Skills outside the graph's subjects, or without a band, have
- * none.
- */
 function getDepthNeighbors({
   graph,
   isCorrect,
@@ -153,12 +115,6 @@ function getDepthNeighbors({
     .map((other) => other.id);
 }
 
-/**
- * Updates the answered skill, then its neighbors. More basic skills of its subject (or less basic
- * ones, after a wrong answer) take the answer as their own evidence, so a few answers across a
- * subject add up. Then a right answer raises every prerequisite to at least the transferred belief, and a
- * wrong one lowers every dependent to at most it.
- */
 function applyEvidence({
   answeredOnly,
   beliefs,
@@ -180,8 +136,7 @@ function applyEvidence({
   const next = new Map(beliefs).set(evidence.skillId, posterior);
   const isCorrect = evidence.outcome === "correct";
 
-  // An answer settles only its own skill when every skill is on the test (`answeredOnly`): a miss
-  // on the membrane says nothing of the organelles, which placement still asks.
+  // A test of every topic must still ask other topics after a miss.
   if (answeredOnly) {
     return next;
   }
@@ -209,10 +164,8 @@ function applyEvidence({
   return next;
 }
 
-/** A subject the learner says they know well reads like having studied it before. */
 const KNOWN_AREA_LEVEL: OwnLevel = "intermediate";
 
-/** The band most of these skills are in, the higher one on a tie; -1 when none has a band. */
 function getMainBandRank(skills: readonly PlacementSkill[]): number {
   const ranks = skills.flatMap((skill) => (skill.band ? [getBandRank(skill.band)] : []));
   const countOf = (rank: number) => ranks.filter((other) => other === rank).length;
@@ -220,10 +173,6 @@ function getMainBandRank(skills: readonly PlacementSkill[]): number {
   return ranks.toSorted((a, b) => countOf(b) - countOf(a) || b - a)[0] ?? -1;
 }
 
-/**
- * The band each area mostly teaches, by area: the band most of its skills are in, the higher one on
- * a tie. That's the depth the goal asks of the area, which the learner's level is measured against.
- */
 function getAreaBandRanks(skills: readonly PlacementSkill[]): Map<string | null, number> {
   return new Map(
     [...Map.groupBy(skills, (skill) => skill.sectionTitle)].map(([area, areaSkills]) => [
@@ -233,12 +182,6 @@ function getAreaBandRanks(skills: readonly PlacementSkill[]): Map<string | null,
   );
 }
 
-/**
- * What the learner's own level says about a skill's band. The level is about the goal ("I know a
- * little of it"), so it covers the bands below the one the area mostly teaches; at that band and
- * above it's at most likely, and one right answer confirms it. Saying "I know a little" of an
- * overview goal, which is all overview, asks before skipping anything.
- */
 function getLevelPrior({
   areaBandRank,
   level,
@@ -254,19 +197,12 @@ function getLevelPrior({
   return isAreaDepth ? Math.min(prior, LIKELY_BY_LEVEL) : prior;
 }
 
-/**
- * A skill's belief before any answer: what the learner's own level says about its band, or, in a
- * subject they said they know well, what having studied it before says, and that its foundations
- * are known. That matters for an exam, which asks a school subject all at one band: knowing the
- * subject then means knowing its foundations, not only the bands below the exam's.
- */
 function getPriorBelief({
   areaBandRank,
   knownAreas,
   ownLevel,
   skill,
 }: {
-  /** The band the skill's area mostly teaches (`getAreaBandRanks`). */
   areaBandRank: number;
   knownAreas: ReadonlySet<string>;
   ownLevel: OwnLevel | null;
@@ -283,11 +219,7 @@ function getPriorBelief({
   );
 }
 
-/**
- * What placement believes of each skill before any answer: what the learner's own level (and the
- * subjects they said they know well) says about its band, or no opinion. A test from the
- * learner's own material (`answeredOnly`) takes neither: only answers settle its topics.
- */
+/** answeredOnly ignores stated levels and known subjects; only the topic's own answers settle it. */
 export function getPlacementPriors({
   answeredOnly = false,
   knownAreas = [],
@@ -315,13 +247,7 @@ export function getPlacementPriors({
   );
 }
 
-/**
- * Replays every answer on the goal's skills, oldest first, into a belief per skill, starting from
- * what the learner's own level (and the subjects they know well) says about each skill's band.
- * Answers on skills outside the graph are ignored. It's placement's guess of where the learner
- * stands, which steers what it asks: what it skips is only what a skill's own answers confirm (see
- * `readSkillStatuses`).
- */
+/** Evidence must be oldest first; answers outside the graph are ignored and only own answers justify skipping. */
 export function getPlacementBeliefs({
   answeredOnly = false,
   evidence,
@@ -329,14 +255,9 @@ export function getPlacementBeliefs({
   ownLevel = null,
   skills,
 }: {
-  /**
-   * Only answers on a skill settle it: a test from the learner's own material asks every topic of
-   * it, so neither a stated level nor an answer on another topic settles one. A miss that lowered
-   * what builds on it settled those topics as unknown, and placement ended after three questions.
-   */
+  /** Ignore stated levels and cross-topic inference for tests that cover every topic. */
   answeredOnly?: boolean;
   evidence: readonly PlacementEvidence[];
-  /** Subjects (areas) the learner said they already know well, such as an exam's. */
   knownAreas?: readonly string[];
   ownLevel?: OwnLevel | null;
   skills: readonly PlacementSkill[];

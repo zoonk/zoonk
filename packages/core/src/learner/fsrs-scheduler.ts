@@ -6,13 +6,11 @@ import { getLocalDaysBetween, getStartOfLocalDay } from "./_utils/local-time";
 import { type GradedAnswer, type ReviewRating, isUnaidedRecall, rateAnswer } from "./answer-rating";
 import { TARGET_RETENTION, getMasteryState } from "./mastery-state";
 
-/** The memory columns of `LearnerSkill`: what FSRS and the mastery states read and write. */
 export type SkillMemory = Pick<
   LearnerSkill,
   "difficulty" | "due" | "lapses" | "lastReviewedAt" | "recallDays" | "reps" | "stability" | "state"
 >;
 
-/** A skill the learner has never answered: New, with no schedule. */
 export const NEW_SKILL_MEMORY: SkillMemory = {
   difficulty: 0,
   due: null,
@@ -24,17 +22,11 @@ export const NEW_SKILL_MEMORY: SkillMemory = {
   state: "new",
 };
 
-/** A skill nobody has looked at for a year still gets checked once a year. */
+/** Even skills unreviewed for a year must be checked yearly. */
 const MAX_REVIEW_INTERVAL_DAYS = 365;
 const MIN_DIFFICULTY = 1;
 
-/**
- * FSRS-6 through ts-fsrs, scheduling in whole days. Short-term learning steps are off because a
- * skill is reviewed across days (the session puts a missed question back at the end of a lesson by
- * itself), and fuzz is off so the same answers always give the same schedule. Same-day answers
- * still count: FSRS sees a retrievability of 1, so a right answer keeps stability and a wrong one
- * lowers it.
- */
+/** Sessions handle immediate retries; disable short-term steps and fuzz for deterministic schedules across days. */
 const scheduler = fsrs({
   enable_fuzz: false,
   enable_short_term: false,
@@ -53,10 +45,7 @@ function hasMemoryState(memory: SkillMemory): boolean {
   return memory.reps > 0 && memory.stability >= S_MIN && memory.difficulty >= MIN_DIFFICULTY;
 }
 
-/**
- * FSRS counts elapsed days in UTC calendar days. Feeding it learner-local dates (as UTC-midnight
- * labels) makes "a day later" mean the learner's next day, wherever they live.
- */
+/** FSRS counts UTC calendar days, so pass learner-local UTC-midnight labels. */
 function toCard({
   memory,
   today,
@@ -82,10 +71,7 @@ function toCard({
   };
 }
 
-/**
- * The first answer on a skill usually comes right after it was taught, so it can't show the skill
- * is easy to remember yet: Easy is capped at Good until the skill has been reviewed once.
- */
+/** A first answer cannot establish easy recall immediately after teaching, so cap it at Good. */
 function getRating({
   answer,
   memory,
@@ -97,11 +83,6 @@ function getRating({
   return memory.reps === 0 && rating === "easy" ? "good" : rating;
 }
 
-/**
- * Counts learner-local days the skill was remembered. Only the first answer of a later day counts:
- * right and unaided adds a day, anything else is a lapse and starts the count over. Answers on the
- * day a skill is first seen never count, since that is learning, not remembering.
- */
 function getRecallDays({
   answer,
   memory,
@@ -127,13 +108,7 @@ function getRecallDays({
   return isUnaidedRecall(answer) ? memory.recallDays + 1 : 0;
 }
 
-/**
- * The learner-local day a skill comes back. A skill being learned (taught today, or relearned
- * after a lapse) and not yet recalled on a later day comes back the next day at the latest: the
- * quick questions that used to close a lesson move to the next day's review, when recalling helps
- * most, and FSRS spaces the reviews after that first recall. Diagnostic answers (placement,
- * test-outs, inferred knowledge) show what the learner already knew, so FSRS alone schedules them.
- */
+/** Learning returns by the next day until its first later-day recall; diagnostics use FSRS alone. */
 function getDueDay({
   fsrsDue,
   learning,
@@ -150,12 +125,7 @@ function getDueDay({
   return learning && recallDays === 0 && fsrsDue > tomorrow ? tomorrow : fsrsDue;
 }
 
-/**
- * Applies one graded answer to a skill's memory: an FSRS review in learner-local days, the recall
- * day count and the mastery state. The next due date is the start of the learner's due day.
- * `learning` is true for answers while learning (lessons, reviews, practice), false for
- * diagnostics, which measure what the learner knew before being taught.
- */
+/** learning distinguishes taught practice from diagnostics; due is the start of a learner-local day. */
 export function reviewSkillMemory({
   answer,
   learning = false,
@@ -169,8 +139,7 @@ export function reviewSkillMemory({
   reviewedAt: Date;
   timeZone: string;
 }): SkillMemory {
-  // A review never goes back before the last one: an answer given first but saved after a later
-  // review of the skill (its grade took longer) counts as reviewed with that one.
+  // Delayed grading must not move a skill's review clock backward.
   const reviewedAt =
     memory.lastReviewedAt && memory.lastReviewedAt > answeredAt
       ? memory.lastReviewedAt
@@ -195,10 +164,7 @@ export function reviewSkillMemory({
   return { ...next, state: getMasteryState(next) };
 }
 
-/**
- * The chance (0 to 1) the learner recalls the skill right now, from the FSRS forgetting curve.
- * Null for a skill that was never answered.
- */
+/** Probability from 0 to 1; null for a skill never answered. */
 export function getSkillRetrievability({
   memory,
   now,

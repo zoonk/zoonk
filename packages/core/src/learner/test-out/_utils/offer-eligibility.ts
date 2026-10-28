@@ -11,10 +11,7 @@ function failedTest(event: { contentIds: unknown }) {
   return isJsonObject(event.contentIds) && event.contentIds.testOutPassed === "false";
 }
 
-/**
- * Chapters with no skippable lessons offer no test. A failed chapter test waits until the learner studies a lesson there or their next local day.
- * Session, chapter, language-unit and new Buddy offers share this rule; direct test access stays open while lessons remain.
- */
+/** Failed offers wait for a studied chapter lesson or the next local day; direct access stays open while lessons remain. */
 export async function loadBlockedTestOutChapters({
   chapterIds,
   goalId,

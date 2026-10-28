@@ -1,6 +1,5 @@
 import { type CourseLevel } from "@zoonk/db";
 
-/** Library bands from the most basic up: a subject's overview comes before its beginner skills. */
 const BAND_RANK: Readonly<Record<CourseLevel, number>> = {
   advanced: 3,
   beginner: 1,
@@ -8,34 +7,24 @@ const BAND_RANK: Readonly<Record<CourseLevel, number>> = {
   overview: 0,
 };
 
-/** How basic a band is, 0 for the overview; lower bands come first in a subject. */
+/** Overview is zero; lower ranks are more basic. */
 export function getBandRank(band: CourseLevel): number {
   return BAND_RANK[band];
 }
 
-/** One skill of a goal's plan as placement walks it. */
 export type PlacementSkill = {
-  /**
-   * The Library band the skill graph put the skill in (overview, beginner, intermediate or
-   * advanced): how basic it is within its subject. Null or absent when unknown.
-   */
+  /** Null or omitted means the Library band is unknown. */
   band?: CourseLevel | null;
-  /**
-   * One of its subject's foundations (`getFoundationSkillIds`): what the subject's later skills
-   * build on. Knowing the subject, or its later skills, says these are known too.
-   */
+  /** A subject's later skills build on these foundations. */
   foundation?: boolean;
   id: string;
   /** The plan phase (0-based) the skill belongs to. */
   phase: number;
   /** Position across the whole plan: lower is learned earlier. */
   order: number;
-  /** Prerequisites inside this graph; edges to skills outside the goal are ignored. */
+  /** Ignore prerequisite edges outside this goal. */
   prerequisiteIds: readonly string[];
-  /**
-   * The area the skill graph put the skill in: the course it belongs to, such as an exam's
-   * subject ("History"). Null when the graph names none. Placement places each area on its own.
-   */
+  /** The graph's subject, not a chapter; null when none is named. */
   sectionTitle: string | null;
 };
 
@@ -46,7 +35,6 @@ export type SkillGraph = {
   ordered: readonly PlacementSkill[];
 };
 
-/** Indexes a goal's skills by id, plan order and reverse (dependent) edges. */
 export function buildSkillGraph(skills: readonly PlacementSkill[]): SkillGraph {
   const byId = new Map(skills.map((skill) => [skill.id, skill]));
 
@@ -83,10 +71,7 @@ function getNeighbors({
   return (graph.byId.get(skillId)?.prerequisiteIds ?? []).filter((id) => graph.byId.has(id));
 }
 
-/**
- * Every skill reachable from `skillId` in one direction: all prerequisites (what the skill builds
- * on) or all dependents (what builds on it). The skill itself is not included.
- */
+/** Excludes skillId itself. */
 export function collectRelated({
   direction,
   graph,

@@ -8,11 +8,6 @@ import { gradeOptionPicks } from "../../library/items/option-picks";
 import { type MistakeSnapshot, withMistakeStimulus } from "../../mistakes/mistake-snapshot";
 import { type ChoiceAnswer } from "../contract";
 
-/**
- * Formats graded here on the server: one right option, or a true or false statement. Placement,
- * test-outs, mocks and "Practice mistakes" ask only these; session blocks also ask match pairs and
- * math problems with fresh numbers (`sessions/_utils/session-items`).
- */
 export const GRADABLE_ITEM_FORMATS = [
   "multipleChoice",
   "trueFalse",
@@ -20,14 +15,9 @@ export const GRADABLE_ITEM_FORMATS = [
 
 type ChoiceContent = Extract<ParsedItemContent, { format: (typeof GRADABLE_ITEM_FORMATS)[number] }>;
 
-/** A bank question with the picture it shows, when it's about one. */
 export type ChoiceItem = Pick<Item, "id" | "language" | "skillId"> &
   ChoiceContent & { image: ItemImage | null; set?: ItemSetView | null };
 
-/**
- * A bank item as reads return it. Reads that show questions include its picture's file
- * (`ITEM_IMAGE_INCLUDE`) and its set (`ITEM_SET_INCLUDE`), including reads that save a mistake.
- */
 export type BankItem = Pick<Item, "content" | "format" | "id" | "language" | "skillId"> & {
   mediaAsset?: Pick<MediaAsset, "height" | "url" | "width"> | null;
   set?: Parameters<typeof toItemSetView>[0]["item"]["set"];
@@ -38,10 +28,7 @@ function isGradableFormat(format: ItemFormat): format is ChoiceContent["format"]
   return GRADABLE_ITEM_FORMATS.some((gradable) => gradable === format);
 }
 
-/**
- * Reads a bank item as a choice question, or null when it isn't one. Stored content passed the
- * item checks, so a parse failure is logged and the item skipped instead of failing the learner.
- */
+/** Returns null for unsupported or invalid stored content; parse failures are logged. */
 export function parseChoiceItem(item: BankItem): ChoiceItem | null {
   if (!isGradableFormat(item.format)) {
     return null;
@@ -68,7 +55,7 @@ export function parseChoiceItem(item: BankItem): ChoiceItem | null {
   }
 }
 
-/** The question as the learner sees it: never which answer is right or why. */
+/** Omits correct answers and explanations. */
 export function toQuestionView(item: ChoiceItem) {
   const base = {
     context: item.content.context,
@@ -94,17 +81,14 @@ export function toQuestionView(item: ChoiceItem) {
 
 export type QuestionView = ReturnType<typeof toQuestionView>;
 
-/** Whether a question is answered with one pick: a statement, or one right option. */
 export function isSinglePick(item: ChoiceItem): boolean {
   return item.format === "trueFalse" || item.content.select === 1;
 }
 
-/** The indexes of a multiple-choice question's right options. */
 function getRightIndexes(options: readonly { isCorrect: boolean }[]): number[] {
   return options.flatMap((option, index) => (option.isCorrect ? [index] : []));
 }
 
-/** The right answer in the shape the learner answers with, shown after grading. */
 export function getChoiceCorrectAnswer(
   item: ChoiceItem,
 ): { isTrue: boolean } | { selectedIndex: number } | { selectedIndexes: number[] } {
@@ -116,12 +100,10 @@ export function getChoiceCorrectAnswer(
   return isSinglePick(item) ? { selectedIndex: right[0] ?? -1 } : { selectedIndexes: right };
 }
 
-/** The question text, for how long reading it takes and for the notebook. */
 export function getQuestionText(item: ChoiceItem): string {
   return item.format === "trueFalse" ? item.content.statement : item.content.question;
 }
 
-/** Whether a wrong answer is tagged with a misconception, which trap drills look for. */
 export function hasMisconceptions(item: ChoiceItem): boolean {
   if (item.format === "trueFalse") {
     return Boolean(item.content.misconception);
@@ -130,12 +112,7 @@ export function hasMisconceptions(item: ChoiceItem): boolean {
   return item.content.options.some((option) => !option.isCorrect && Boolean(option.misconception));
 }
 
-type GradedChoice = {
-  dontKnow: boolean;
-  isCorrect: boolean;
-  /** What the notebook keeps when the answer is wrong. */
-  snapshot: MistakeSnapshot;
-};
+type GradedChoice = { dontKnow: boolean; isCorrect: boolean; snapshot: MistakeSnapshot };
 
 function gradeTrueFalse({
   answer,
@@ -173,11 +150,6 @@ function joinTexts(options: readonly { text: string }[]): string | null {
   return options.length > 0 ? options.map((option) => option.text).join("; ") : null;
 }
 
-/**
- * Why a multiple-choice answer went the way it did: a right answer's picks say why they're right;
- * a miss says what went wrong, each wrong pick and each right option left unpicked, not the right
- * picks the learner already has (several reasons in a row would repeat what they share).
- */
 function explainPicks({
   isCorrect,
   missed,
@@ -195,10 +167,6 @@ function explainPicks({
   return reasons.length > 0 ? reasons.join(" ") : null;
 }
 
-/**
- * Grades the options picked against the right ones (`gradeOptionPicks`): one pick for a question
- * with one right option, every right option and nothing else for one that asks for several.
- */
 function gradeMultipleChoice({
   answer,
   item,
@@ -227,10 +195,7 @@ function gradeMultipleChoice({
   };
 }
 
-/**
- * Grades a choice answer. An option index past the list, a pick count other than the question
- * asks for, or an answer shape for the other format, counts as wrong, like any wrong pick.
- */
+/** Invalid answer shapes, pick counts, and out-of-range options count as wrong. */
 export function gradeChoiceAnswer({ answer, item }: { answer: ChoiceAnswer; item: ChoiceItem }) {
   const graded =
     item.format === "trueFalse"

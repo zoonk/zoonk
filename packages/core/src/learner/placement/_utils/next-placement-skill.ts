@@ -2,13 +2,7 @@ import { chooseNextPlacementSkill } from "../placement-steps";
 
 type SkillChoice = Omit<Parameters<typeof chooseNextPlacementSkill>[0], "askableSkillIds">;
 
-/**
- * The skill placement asks next. Skills whose questions are still being written count as askable,
- * so the walk keeps its order; but while the one it goes to is written, a quick question already in
- * the bank on another undecided skill is asked instead (not the skill just answered again), so the
- * learner never waits while one is ready. A question answered in words only confirms a quick one,
- * so it never fills in. Placement waits only when no quick question is ready.
- */
+/** Preparing skills retain their walk position, but an available quick question may fill the wait; typed confirmation never does. */
 export function chooseNextSkill({
   askableSkillIds,
   choice,

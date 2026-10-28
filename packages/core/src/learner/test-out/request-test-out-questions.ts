@@ -6,11 +6,7 @@ import { type RefusedUsage } from "../../entitlements/contract";
 import { findOwnedGoal } from "../_utils/owned-goal";
 import { loadChapterTestOut } from "./get-chapter-test-out";
 
-/**
- * `ready`: every sampled skill has a question, so the test-out can start. `start`: the caller
- * starts a run writing questions for `skillIds`, whose analytics name the learner, their goal and
- * the client that asked. `refused`: the learner's AI help allowance doesn't cover it now.
- */
+/** On start, the caller must generate questionsPerSkill for each skillId using the supplied analytics. */
 export type TestOutQuestionsRequest =
   | { status: "ready" }
   | {
@@ -26,12 +22,7 @@ export type TestOutQuestionsRequest =
   | { status: "plusRequired" }
   | { status: "unauthorized" };
 
-/**
- * Decides what asking for a chapter's test-out questions does, when the learner taps to get the
- * test ready: skills the test-out samples without their share of questions get some written
- * (shared with placement, reviews and practice), claimed as small AI help first. Nothing is written
- * when the test-out already has every skill's share, or when it comes with Plus.
- */
+/** Learner action only; claims AI help before requesting missing questions and writes nothing for complete or Plus-gated tests. */
 export async function requestTestOutQuestions({
   chapterId,
   goalId,

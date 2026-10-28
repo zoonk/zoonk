@@ -26,7 +26,6 @@ function queryText(args: unknown): string {
   throw new Error("Expected a raw SQL query at the Prisma observation boundary");
 }
 
-/** Observe real SQL through Prisma's query lifecycle, without changing its args or results. */
 function observeStatements() {
   const statements: string[] = [];
 

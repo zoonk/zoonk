@@ -28,10 +28,8 @@ export const placementStatusSchema = z
 
 export type PlacementStatus = z.infer<typeof placementStatusSchema>;
 
-/** Typed answers are a sentence or two, graded one key point at a time. */
 const MAX_TYPED_PLACEMENT_ANSWER = 1000;
 
-/** A choice (or "I don't know yet"), or the text of a typed answer. */
 const placementAnswerSchema = z
   .union([
     choiceAnswerSchema,
@@ -68,10 +66,6 @@ export const placementCompletionInputSchema = z
 
 export type PlacementCompletionInput = z.infer<typeof placementCompletionInputSchema>;
 
-/**
- * A language level test's result on the own-level scale, by the Library band it covers: B1 and up
- * has the beginner band (A1–A2) behind it, C1 and up the intermediate one too.
- */
 const CEFR_OWN_LEVELS: readonly { from: number; level: OwnLevel }[] = [
   { from: CEFR_LEVELS.indexOf("C1"), level: "advanced" },
   { from: CEFR_LEVELS.indexOf("B1"), level: "intermediate" },
@@ -87,10 +81,7 @@ function fromCefrLevel(label: unknown): OwnLevel | null {
     : (CEFR_OWN_LEVELS.find((step) => score >= step.from)?.level ?? null);
 }
 
-/**
- * The level the learner gave: this request's, then the one onboarding stored on the goal, which a
- * language goal's level test replaces with its CEFR level ("B1+").
- */
+/** Request level overrides the stored goal level, including a measured language level. */
 export function getOwnLevel({
   goal,
   level,
@@ -108,20 +99,11 @@ export function getOwnLevel({
   return parsed.success ? parsed.data : fromCefrLevel(stored);
 }
 
-/**
- * Whether the goal's level was measured, not stated: a language goal's level test sets it from
- * answers on calibrated questions (`details.levelTest`), so it counts as evidence (see
- * `listKnownByMeasuredLevel`). A level the learner gave in onboarding only marks bands to confirm.
- */
+/** Only a measured level is evidence; a self-reported level merely identifies bands to confirm. */
 export function isLevelMeasured(goal: Pick<Goal, "details">): boolean {
   return isJsonObject(goal.details) && isJsonObject(goal.details.levelTest);
 }
 
-/**
- * Whether the learner skipped placement for the goal: they start from nothing (`level: "none"`),
- * at a chapter they chose in the catalog, or chose to start from scratch. Placement then asks
- * them nothing, in onboarding or the first week's sessions, and nothing writes its questions.
- */
 export function isPlacementSkipped(goal: { details: unknown }): boolean {
   const details = isJsonObject(goal.details) ? goal.details : {};
 
@@ -132,10 +114,6 @@ export function isPlacementSkipped(goal: { details: unknown }): boolean {
   );
 }
 
-/**
- * The subjects of an exam the learner said they already know well in onboarding (the notice's
- * names): their basics start as known.
- */
 export function getKnownSubjects(goal: Pick<Goal, "details">): string[] {
   const known = isJsonObject(goal.details) ? goal.details.knownSubjects : null;
 

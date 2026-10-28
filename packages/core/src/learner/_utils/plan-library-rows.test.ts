@@ -16,13 +16,11 @@ import {
   readSurvivorOf,
 } from "./plan-library-rows";
 
-// Only observe which keys the shared rows are read by; their reads are unchanged.
 vi.mock("../../library/_utils/shared-rows", async (importOriginal) => {
   const actual = await importOriginal<{ getLessonSkillRows: typeof getLessonSkillRows }>();
   return { ...actual, getLessonSkillRows: vi.fn(actual.getLessonSkillRows) };
 });
 
-/** A chapter holding one lesson that teaches one skill. */
 async function chapterWithLesson(title: string) {
   const [chapter, lesson, skill] = await Promise.all([
     libraryChapterFixture({ title }),
@@ -55,7 +53,6 @@ describe("the skill projection's Library rows on a GET", () => {
       "shared",
     );
 
-    // The API writes the chapter's next lesson while the plan still holds the chapter.
     const [lesson, skill] = await Promise.all([
       libraryLessonFixture({ title: "Ratios, part 2" }),
       skillFixture({ name: "Ratios, part 2" }),
@@ -78,8 +75,6 @@ describe("the skill projection's Library rows on a GET", () => {
       before: [first.skillId],
     });
 
-    // The shared rows are asked for by the chapter's lessons, read fresh: a cached entry for the
-    // chapter's earlier lessons can't stand in for the new one.
     expect(vi.mocked(getLessonSkillRows)).toHaveBeenCalledWith(
       toIdKey([first.lessonId, lesson.id]),
     );

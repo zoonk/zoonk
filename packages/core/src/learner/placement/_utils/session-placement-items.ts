@@ -14,13 +14,6 @@ import { loadEvidence } from "./placement-evidence";
 
 type StartSkill = { id: string; phase: number; sectionTitle: string | null };
 
-/**
- * Undecided skills taken in turn from each phase and area (an exam's subjects, say), so a few
- * questions reach every start placement is unsure of instead of settling one area first, in the
- * order placement asks areas (`rankAreasToAsk`): the ones asked least first (a subject the plan
- * gained after day 1's placement, as Rafaela's English and IT came with the notice), then the
- * learner's weak ones, then the ones worth most of the exam.
- */
 function interleaveByStart<TSkill extends StartSkill>({
   evidence,
   priority,
@@ -29,7 +22,6 @@ function interleaveByStart<TSkill extends StartSkill>({
 }: {
   evidence: readonly { skillId: string }[];
   priority: AreaPriority;
-  /** Every skill of the plan, whose answers count for their area. */
   skills: readonly StartSkill[];
   undecided: readonly TSkill[];
 }): TSkill[] {
@@ -58,10 +50,6 @@ function interleaveByStart<TSkill extends StartSkill>({
   return interleave(groups.toSorted((a, b) => rankOf(a) - rankOf(b)));
 }
 
-/**
- * What the learner only said they know first, as placement asks it: their own answer is all that
- * skips it.
- */
 function claimedFirst<TSkill extends { id: string }>({
   skills,
   statuses,
@@ -73,13 +61,7 @@ function claimedFirst<TSkill extends { id: string }>({
   return skills.toSorted((a, b) => rank(a) - rank(b));
 }
 
-/**
- * Up to `limit` quick questions (multiple choice or true or false) a session can ask about skills
- * placement hasn't settled: unseen, one per skill (in the goal's quick format when it has one),
- * taken in turn from each phase and area whose starting point isn't confident yet. Empty once
- * every start is settled. Never on a skill the exam practices only with recordings
- * (`loadPlacementPlan`).
- */
+/** At most limit unseen quick questions, one per unsettled skill; never selects listening-only skills. */
 export async function pickSessionPlacementItems({
   areaShares,
   excludeItemIds,
@@ -91,10 +73,6 @@ export async function pickSessionPlacementItems({
   userId,
 }: AreaPriority & {
   excludeItemIds: ReadonlySet<string>;
-  /**
-   * The goal: its exam's questions only (never another exam's), and the level and subjects the
-   * learner gave, which settle the easier bands before any answer.
-   */
   goal: Pick<Goal, "details" | "examBlueprintId" | "id">;
   limit: number;
   quickFormat: PlacementQuickFormat;
@@ -107,7 +85,7 @@ export async function pickSessionPlacementItems({
 
   const [{ evidence, placementAnswers, seenItemIds }, bankItems, blueprint] = await Promise.all([
     loadEvidence({ skillIds, userId }),
-    // Sessions grade quick questions on the spot; typed confirmation stays in placement itself.
+    // Sessions grade immediately; typed confirmation stays in placement.
     loadPlacementItems({ examBlueprintId: goal.examBlueprintId, skillIds, typed: false }),
     goal.examBlueprintId
       ? prisma.examBlueprint.findUnique({
@@ -119,7 +97,6 @@ export async function pickSessionPlacementItems({
 
   const answeredOnly = isOwnMaterialTest(blueprint);
 
-  // A session knows the subjects the learner said are weak, not the part of one they named.
   const focus = new Set(focusAreas);
 
   const statuses = readSkillStatuses({

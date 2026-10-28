@@ -17,7 +17,6 @@ const KNOWN_AT = new Date("2020-09-28T12:00:00Z");
 async function setup() {
   const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
   const goal = await goalFixture({ userId: user.id });
-  // An unfinished plan isolates these writes from the later planner announcement.
   const plan = await planFixture({ goalId: goal.id });
   return { goal, plan, skill, user };
 }

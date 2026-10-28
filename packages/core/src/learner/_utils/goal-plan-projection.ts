@@ -1,6 +1,5 @@
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 
-/** What a plan item is to the skills it teaches: what it is and what it's planned in. */
 export type ProjectedPlanItem = {
   chapterId: string | null;
   id: string;
@@ -11,10 +10,7 @@ export type ProjectedPlanItem = {
 
 export type SkillEntry = { areaId: string; phase: number; planItemId: string; skillId: string };
 
-/**
- * The skills the Library says a plan's lessons and chapters teach (see `loadItemSkillRows`): each
- * lesson's, and each chapter's lessons' in order.
- */
+/** Chapter lessons and their skills must be in teaching order. */
 export type ItemSkillRows = {
   chapterLessons: readonly {
     chapterId: string;
@@ -35,10 +31,6 @@ export function getPhaseAreaId(phase: number): string {
   return `phase:${phase}`;
 }
 
-/**
- * Expands one plan item into its skills in teaching order: the item's own skill, the skills its
- * lesson teaches, or every skill of its chapter's lessons.
- */
 export function expandItem({
   item,
   skills,
@@ -75,11 +67,7 @@ export function firstPerSkill(entries: readonly SkillEntry[]): SkillEntry[] {
   );
 }
 
-/**
- * The goal's skills from its skill graph, for a plan whose items no longer carry any: a re-plan
- * with no room left (a class test opened only the day before) drops every lesson, and the mock
- * and reviews still need the goal's skills.
- */
+/** Empty plans still need graph skills for mocks and review when no teaching fits. */
 export function toGraphEntries(graph: unknown): SkillEntry[] {
   return parsePlanGraph(graph).skills.map((skill) => ({
     areaId: getPhaseAreaId(skill.phase),
@@ -89,11 +77,7 @@ export function toGraphEntries(graph: unknown): SkillEntry[] {
   }));
 }
 
-/**
- * A plan's skills as its learner's sessions read them (see `loadGoalPlan`): each item's skills,
- * its own or its lesson's or chapter's, as their surviving skills (`survivorOf`), and the plan's
- * skills, the first time each is taught, in plan order; the skill graph's when no item teaches any.
- */
+/** Resolves merged skills, preserves teaching order, and falls back to the graph when no item teaches a skill. */
 export function projectPlanSkills({
   graph,
   items,

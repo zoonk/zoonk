@@ -8,10 +8,6 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { pickSessionPlacementItems } from "./_utils/session-placement-items";
 import { getGoalPlacement } from "./get-goal-placement";
 
-/**
- * An exam goal on one skill, with a general question on it written for another goal earlier, while
- * its run is still writing placement's questions (`placementPreparedAt` unset).
- */
 async function examGoalFixture() {
   const [user, skill, blueprint] = await Promise.all([
     userFixture(),
@@ -40,7 +36,6 @@ async function examGoalFixture() {
   return { blueprint, general, goal, skill, user };
 }
 
-/** A skill of a plan's graph in its first phase, in the given area. */
 function graphSkill(area: string, skill: { id: string; name: string }) {
   return { area, lessons: 1, name: skill.name, phase: 0, skillId: skill.id, weight: null };
 }
@@ -95,7 +90,6 @@ describe("placement questions for an exam goal", () => {
       itemFixture({ content: choiceItemContent(), skillId: other.id }),
     ]);
 
-    // Two phases, so each skill starts a phase of its own that placement isn't sure of yet.
     const skills = [skill, other].map((node, index) => ({
       areaId: `phase:${index}`,
       areaTitle: `Phase ${index + 1}`,
@@ -137,7 +131,6 @@ describe("placement questions for an exam goal", () => {
       weight: null,
     });
 
-    // The latest edition's counts: ethics 8 of 80, civil law 6.
     const blueprint = await examBlueprintFixture({
       name: "OAB",
       structure: {
@@ -165,7 +158,6 @@ describe("placement questions for an exam goal", () => {
       userId: user.id,
     });
 
-    // The plan reaches civil law first.
     const plan = await planFixture({
       goalId: goal.id,
       graph: {
@@ -198,7 +190,6 @@ describe("placement questions for an exam goal", () => {
       examItemFixture({ blueprintId: blueprint.id, skillId: ethics.id }),
     ]);
 
-    // The plan reaches civil law first; ethics is worth more of the exam.
     const skills = [
       { area: "Direito Civil", id: skill.id },
       { area: "Ética Profissional", id: ethics.id },
@@ -257,7 +248,6 @@ describe("placement questions for an exam goal", () => {
       })),
     };
 
-    // Written for the exam before its notice said how many options: two of them.
     const [twoOptions, five] = await Promise.all([
       examItemFixture({ blueprintId: blueprint.id, skillId: skill.id }),
       prisma.plan.update({ data: { placementPreparedAt: new Date() }, where: { goalId: goal.id } }),
@@ -272,7 +262,6 @@ describe("placement questions for an exam goal", () => {
 
     await expect(readPlacement(goal.id)).resolves.toMatchObject({ next: { itemId: five?.id } });
 
-    // An exam whose statements are judged right or wrong never asks multiple choice, not even its own old ones.
     await Promise.all([
       prisma.item.delete({ where: { id: five?.id } }),
       prisma.examBlueprint.update({
@@ -299,7 +288,6 @@ describe("placement questions for an exam goal", () => {
       })),
     };
 
-    // The notice was read again without the count; a lookup found the latest edition's five.
     await Promise.all([
       prisma.plan.update({ data: { placementPreparedAt: new Date() }, where: { goalId: goal.id } }),
       prisma.examBlueprint.update({
@@ -323,7 +311,6 @@ describe("placement questions for an exam goal", () => {
       }),
     ]);
 
-    // The general two-option question written for another goal isn't asked.
     const waiting = await readPlacement(goal.id);
     expect(waiting?.next?.itemId).not.toBe(general.id);
 

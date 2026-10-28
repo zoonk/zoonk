@@ -26,27 +26,17 @@ import {
 
 export { type GoalPlanSource } from "./goal-plan-source";
 
-/**
- * A goal skill with the area it belongs to (its chapter, or its plan phase without one), below its
- * section (`sectionTitle`): the course the skill graph put it in, such as an exam's subject or one
- * course of a goal that spans several. `memberSkillIds` are the skill and the finer skills its
- * planned Library lessons teach, where the learner's answers in those lessons land.
- */
+/** memberSkillIds includes finer lesson skills on which learner answers are recorded. */
 export type GoalSkillNode = PlacementSkill & {
   areaId: string;
   areaTitle: string;
   memberSkillIds: string[];
 };
 
-/**
- * A plan item with the skills it teaches and the chapter it's planned in, for marking what a
- * learner already knows.
- */
 export type GoalPlanItem = Pick<PlanItem, "chapterId" | "id" | "status"> & { skillIds: string[] };
 
 export type GoalPlan = { items: GoalPlanItem[]; skills: GoalSkillNode[] };
 
-/** The rows a saved plan's items need (see `loadItemSkillRows`). */
 function loadItemSkills(
   items: readonly PlanItemRow[],
   from: LibrarySource,
@@ -62,13 +52,8 @@ function loadItemSkills(
   );
 }
 
-/** A finer skill a lesson planned for one of the graph's skills teaches. */
 type MemberEntry = { memberId: string; skillId: string };
 
-/**
- * A lesson planned for one of the graph's skills teaches its own one to three skills, and the
- * learner's answers in it are recorded on those: each becomes a member of the plan skill.
- */
 function toMemberEntries({
   items,
   skills,
@@ -98,7 +83,6 @@ async function loadAreaTitles({
   items: readonly PlanItemRow[];
   phases: unknown;
 }): Promise<Map<string, string>> {
-  // Areas without a chapter are phases ("phase:0"), which aren't ids a chapter query accepts.
   const chapterIds = unique(entries.map((entry) => entry.areaId)).filter((id) => isUuid(id));
   const chapters = await readChapterTitles(chapterIds, from);
 
@@ -118,10 +102,6 @@ async function loadAreaTitles({
   ]);
 }
 
-/**
- * The skill graph's skills the plan's items don't hold, in the graph's order: what the learner's
- * time leaves out for now, never an area they took out of the plan.
- */
 function toLeftOutEntries({
   graph,
   planned,
@@ -146,7 +126,6 @@ function toLeftOutEntries({
   });
 }
 
-/** A goal skill and the finer skills its lessons teach, which count for it. */
 function toMemberSkillIds(skillId: string, membersOf: ReadonlyMap<string, MemberEntry[]>) {
   return unique([skillId, ...(membersOf.get(skillId) ?? []).map((member) => member.memberId)]);
 }
@@ -164,10 +143,6 @@ function getLibrarySource({ sharedLibrary, tx = prisma }: PlanRead): LibrarySour
   return sharedLibrary ? "shared" : tx;
 }
 
-/**
- * The raw teaching entries and rows shared by the full skill projection and test-out eligibility.
- * Null without a plan; a plan whose items lost every skill falls back to its skill graph's.
- */
 async function loadPlanEntryRows(input: PlanRead) {
   const { goalId, source, withLeftOut, tx = prisma } = input;
   const plan = source ?? (await loadSavedGoalPlanSource(goalId, tx));
@@ -188,10 +163,7 @@ async function loadPlanEntryRows(input: PlanRead) {
   return { allEntries: [...planned, ...leftOut], itemSkills, plan };
 }
 
-/**
- * The plan's teaching entries with merged skills resolved to their survivors, and each goal skill's
- * finer member skills: what the full projection (`loadPlan`) and test-outs build on.
- */
+/** Returns null without a plan and resolves merged skills to their survivors. */
 export async function loadPlanEntries(input: PlanRead) {
   const loaded = await loadPlanEntryRows(input);
 
@@ -227,12 +199,6 @@ export async function loadPlanEntries(input: PlanRead) {
   };
 }
 
-/**
- * Loads the skills a goal's plan covers, in plan order, with their phase, area, band and
- * prerequisites inside the goal, plus each plan item's skills. With `withLeftOut`, the skill
- * graph's skills the plan's items leave out follow them (see `loadPlacementPlan`). A goal without
- * a plan has no skills yet; a plan whose items lost every skill falls back to its skill graph's.
- */
 async function loadPlan(input: PlanRead): Promise<GoalPlan> {
   const loaded = await loadPlanEntries(input);
   const from = getLibrarySource(input);
@@ -265,9 +231,6 @@ async function loadPlan(input: PlanRead): Promise<GoalPlan> {
 
   const bandOf = new Map(bands.map((skill) => [skill.id, skill.level]));
 
-  // A lesson can teach a skill the graph doesn't name; it belongs to the subject of the plan item
-  // that teaches it, so what placement learns about that subject reaches it too. Graph skills
-  // without a plan item have no item to share a subject through.
   const itemSections = new Map(
     allEntries.flatMap((entry) => {
       const section = sections.get(entry.skillId);
@@ -301,11 +264,6 @@ async function loadPlan(input: PlanRead): Promise<GoalPlan> {
   };
 }
 
-/**
- * Which of a goal's skills each answered skill counts for: a goal skill for itself, and a finer
- * skill its lessons teach (where their screens' answers and mistakes land) for the first goal skill
- * whose lessons teach it.
- */
 export function getSkillOwners(
   skills: readonly Pick<GoalSkillNode, "id" | "memberSkillIds">[],
 ): Map<string, string> {
@@ -317,10 +275,7 @@ export function getSkillOwners(
   ]);
 }
 
-/**
- * The skills a goal's plan covers: what preparation, sessions and the plan's screens measure. A
- * GET (`readGoalPlan`) passes `sharedLibrary`; writes read the Library fresh.
- */
+/** GETs pass sharedLibrary; writes must use fresh Library reads. */
 export function loadGoalPlan(
   goalId: string,
   source?: GoalPlanSource,
@@ -329,7 +284,6 @@ export function loadGoalPlan(
   return loadPlan({ goalId, sharedLibrary, source, withLeftOut: false });
 }
 
-/** A plan without the skills its exam practices only with recordings (`loadListeningSkillIds`). */
 async function loadTextTestPlan({ goalId, withLeftOut, tx = prisma }: PlanRead): Promise<GoalPlan> {
   const [plan, listening] = await Promise.all([
     loadPlan({ goalId, tx, withLeftOut }),
@@ -339,16 +293,7 @@ async function loadTextTestPlan({ goalId, withLeftOut, tx = prisma }: PlanRead):
   return { ...plan, skills: plan.skills.filter((skill) => !listening.has(skill.id)) };
 }
 
-/**
- * The goal's plan with every skill of its skill graph, the ones the plan's items leave out after
- * its own: the skills placement places the learner on. Placement runs before the learner picks
- * their time, while the plan holds only what the default time fits (an ENEM plan at 15 minutes a
- * day had only its essay), and what the learner already knows decides what fits once they pick
- * it, so placement asks every subject the goal has, and its questions are written for the graph's
- * skills too. Except the skills its exam practices only with recordings (`loadListeningSkillIds`):
- * a text question tests reading, not listening, so placement never asks or skips them, and their
- * lessons stay.
- */
+/** Includes left-out graph skills for placement, but excludes listening-only skills that text questions cannot test. */
 export function loadPlacementPlan(
   goalId: string,
   tx: TransactionClient = prisma,
@@ -356,7 +301,7 @@ export function loadPlacementPlan(
   return loadTextTestPlan({ goalId, tx, withLeftOut: true });
 }
 
-/** The ids of every skill a goal's plan covers, in plan order. */
+/** Preserves plan order. */
 export async function loadGoalSkillIds(goalId: string): Promise<string[]> {
   const plan = await loadGoalPlan(goalId);
   return plan.skills.map((skill) => skill.id);

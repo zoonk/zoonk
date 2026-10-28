@@ -6,7 +6,6 @@ export type PlanItemRow = Pick<
   "chapterId" | "id" | "kind" | "lessonId" | "phase" | "skillId" | "status" | "titleSnapshot"
 >;
 
-/** The selected plan can be projected before its new items have database IDs. */
 export type GoalPlanSource = {
   graph: unknown;
   items: PlanItemRow[];
@@ -14,7 +13,6 @@ export type GoalPlanSource = {
   settings: unknown;
 };
 
-/** The saved plan as its skill projection reads it, with stable item order. */
 export function loadSavedGoalPlanSource(
   goalId: string,
   tx: TransactionClient = prisma,

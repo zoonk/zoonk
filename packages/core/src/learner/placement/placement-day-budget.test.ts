@@ -189,7 +189,7 @@ describe("placement's day budget", () => {
         ready: 14,
         topics: 14,
       });
-      // A short schedule omits these topics, but placement still has the full material's scope.
+
       await prisma.planItem.deleteMany({
         where: { planId: plan.id, skillId: { in: skills.slice(1).map((skill) => skill.id) } },
       });
@@ -230,7 +230,6 @@ describe("placement's day budget", () => {
     const { goal: otherGoal, items, skills, user } = await setup();
     await answer({ goalId: otherGoal.id, itemId: items[0]?.id ?? "" });
     await answer({ goalId: otherGoal.id, itemId: items[1]?.id ?? "" });
-    // This answer belongs only to the other goal's scope.
     await answer({ goalId: otherGoal.id, itemId: items.at(-1)?.id ?? "" });
 
     vi.setSystemTime(Date.now() + 1000);

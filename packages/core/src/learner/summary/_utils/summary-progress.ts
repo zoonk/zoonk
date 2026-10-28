@@ -13,11 +13,6 @@ function toLocalDate(day: StudyDay): number {
   return new Date(`${day.date}T00:00:00.000Z`).getTime();
 }
 
-/**
- * The buddy and the belt as the tabs draw them: kind, name and glasses from the profile, growth
- * from the belt (white before any learning), and Energy from the first thing learned. A buddy
- * never naps on a day the learner studied.
- */
 export function getSummaryProgress({
   facts,
   localDate,
@@ -58,7 +53,6 @@ export function getSummaryProgress({
   };
 }
 
-/** The subscription's own next change: a trial or period ending, or a cancellation taking effect. */
 function getSubscriptionChanges(subscription: Subscription | null): Date[] {
   if (!subscription) {
     return [];
@@ -69,12 +63,7 @@ function getSubscriptionChanges(subscription: Subscription | null): Date[] {
   );
 }
 
-/**
- * When the summary changes on its own: the learner's next midnight (a new day, its missions and
- * Energy), the next UTC midnight (the allowance's day starts over, and a month's on its first day),
- * the end of a day carried over from the night before, the subscription's next change (an App Store
- * period's end too), or the session's end, whichever comes first.
- */
+/** Uses the earliest local/UTC midnight, carried-day end, subscription change, or session expiry. */
 export function getNextChangeAt({
   carriedUntil,
   localDate,

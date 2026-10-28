@@ -2,16 +2,11 @@ import { type LearnerSkill, type Mistake } from "@zoonk/db";
 import { type AnalyticsEvent } from "../analytics/events";
 import { getLocalDaysBetween } from "./_utils/local-time";
 
-/** A skill's memory right before and right after one answer. */
 export type SkillReview = { after: LearnerSkill; before: LearnerSkill };
 
 type FixedMistake = Pick<Mistake, "cause" | "skillId">;
 
-/**
- * "Review Completed" for the first answer on a later learner-local day of a skill already studied,
- * like the recall days mastery counts: answers on the day a skill is taught, or again the same day,
- * are learning, not recall. Days after due are negative for an early review.
- */
+/** Same-local-day answers are learning rather than recall; days after due may be negative. */
 function getReviewEvent({
   answeredAt,
   isCorrect,
@@ -67,10 +62,6 @@ function getLevelEvent({ after, before }: SkillReview): AnalyticsEvent[] {
   ];
 }
 
-/**
- * The learning outcomes one recorded answer produced: a spaced review of its skill, the skill's
- * mastery state changing, and each notebook mistake it fixed.
- */
 export function getAnswerEvents({
   answeredAt,
   fixedMistakes,

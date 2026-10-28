@@ -21,13 +21,7 @@ export type PlacementAnswerResult =
 
 type PlacementAnswer = PlacementAnswerInput["answer"];
 
-/**
- * Placement asks the goal's own questions, and only ones it can grade here. A question it asked
- * stays answerable when the plan changes under it (a re-plan swaps the lessons whose skills it was
- * asked on, or a notice read again rebuilds the skill graph): the answer is still evidence on its
- * skill. So a question on a skill the plan no longer has counts when placement could have asked
- * it: one the learner can see, and not another exam's.
- */
+/** A question already asked stays answerable after re-planning removes its skill, provided it remains visible and exam-eligible. */
 async function findGoalItem({
   examBlueprintId,
   itemId,
@@ -48,11 +42,6 @@ async function findGoalItem({
   return item ? parsePlacementItem(item) : null;
 }
 
-/**
- * A typed answer, graded by `gradeTypedItemAnswer`. "I don't know yet" is never graded. Placement
- * asks each question once, so only a client answering one question over and over gets past the
- * day's model-graded answers, where only an accepted answer counts.
- */
 async function gradeTyped({
   answer,
   item,
@@ -82,7 +71,6 @@ async function gradeTyped({
   return verdict.isCorrect;
 }
 
-/** Whether the answer is right, or null when its shape doesn't fit the question. */
 function gradeAnswer({
   answer,
   item,
@@ -101,11 +89,7 @@ function gradeAnswer({
   return "text" in answer ? null : gradeChoiceAnswer({ answer, item }).isCorrect;
 }
 
-/**
- * Grades one placement answer, records it as a diagnostic answer (it teaches the learner model
- * what the learner already knows, and never fills the mistakes notebook) and returns the updated
- * placement with the next question. "I don't know yet" is an answer too.
- */
+/** Records diagnostics without adding notebook mistakes; dontKnow is a valid answer. */
 export async function answerPlacementQuestion({
   goalId,
   input,

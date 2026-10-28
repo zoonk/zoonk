@@ -23,7 +23,6 @@ function skill(memory: Partial<LearnerSkill>): LearnerSkill {
   };
 }
 
-/** A skill studied on September 1st (São Paulo), due on the 4th, answered again. */
 function reviewed(after: Partial<LearnerSkill> = {}): SkillReview {
   const before = skill({
     due: new Date("2026-09-04T03:00:00Z"),
@@ -65,7 +64,6 @@ describe(getAnswerEvents, () => {
   });
 
   it("doesn't count answers on the day a skill was studied, even past UTC midnight", () => {
-    // 23:30 on September 1st in São Paulo is already the 2nd in UTC.
     expect(events("2026-09-02T02:30:00Z", reviewed())).toStrictEqual([]);
 
     expect(

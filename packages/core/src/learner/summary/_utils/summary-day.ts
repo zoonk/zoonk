@@ -13,10 +13,6 @@ import { type LearnerSummaryToday } from "../learner-summary-contract";
 
 export type SavedSession = StudySession & { blocks: StudySessionBlock[] };
 
-/**
- * The active goal's saved day among the learner's recent sessions: today's, or the day before's
- * while they're still in it. Never one the summary builds.
- */
 function findSavedDay({
   goal,
   localDate,
@@ -43,12 +39,6 @@ function findSavedDay({
   });
 }
 
-/**
- * The saved day as the sidebar and the palette show it: its blocks left and the one up next (its
- * lesson's title, when it has one, and its minutes). Free language plans skip their locked calls,
- * and a day whose call Plus ended for shows the free lessons Open saves in its place (`projected`),
- * as Today does. An explanation, or a goal that isn't followed now, has none.
- */
 function getSummaryToday({
   day,
   goal,
@@ -87,10 +77,6 @@ function getSummaryToday({
   };
 }
 
-/**
- * The day's missions as the buddy's tab rings them, through the one mission reader Today and the
- * buddy use. The ring only counts them, so the blocks' saved minutes stand in for their display.
- */
 async function countDayMissions({
   day,
   goal,
@@ -116,11 +102,7 @@ async function countDayMissions({
   return countMissions(missions);
 }
 
-/**
- * What the active goal's saved day gives the summary: today's queue, the missions ring, when a day
- * carried over from the night before stops being the learner's (`carriedUntil`), and the day they
- * describe (`dayDate`: that carried day's, else today's).
- */
+/** dayDate may name yesterday's carried session; carriedUntil bounds how long it remains active. */
 export async function loadActiveGoalDay({
   goal,
   localDate,

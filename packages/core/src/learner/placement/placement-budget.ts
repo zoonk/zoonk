@@ -1,35 +1,17 @@
-/**
- * Placement's budget for one day, the first included: a few minutes. Past this many answers, or
- * this much answering time, it stops for the day with what it knows, and the first week's
- * sessions ask the rest a few at a time, so the learner starts learning on day 1.
- */
 const DAY_PLACEMENT_ANSWERS = 12;
 
 const DAY_PLACEMENT_MS = 240_000;
 
-/**
- * One answer counts for at most this long: a question left open while the learner stepped away
- * isn't minutes of answering, and would otherwise end the day's placement after one answer.
- */
+/** Idle time must not end a day's placement after one answer. */
 const MAX_COUNTED_ANSWER_MS = 60_000;
 
-/** Placement questions each of the goal's first-week sessions carries, while any phase is unsure. */
 export const SESSION_PLACEMENT_QUESTIONS = 3;
 
-/** Placement spreads over the goal's first week; after that, lessons and reviews refine it. */
 export const PLACEMENT_WEEK_DAYS = 7;
 
-/** A topic of the learner's own material takes about this long: a quick answer, or a typed one. */
 const TOPIC_ANSWER_MS = 40_000;
 
-/**
- * How much of the day's few minutes today's placement answers used, from 0 to 1: the further along
- * of its two limits, the answers and the answering time. Placement stops for the day at 1, or
- * sooner once it's sure, so it's how far along the day's questions are at most, never how many are
- * still to come. A test from the learner's own material asks every one of its `topics` (see
- * `answeredOnly`), so its day has room for an answer on each: a class test days away has no first
- * week to ask the rest in.
- */
+/** Returns a fraction from 0 to 1, never a promise of remaining questions; topics expands the budget for full-material tests. */
 export function getPlacementBudgetSpent({
   answers,
   topics = 0,

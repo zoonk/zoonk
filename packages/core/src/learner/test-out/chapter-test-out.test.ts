@@ -62,7 +62,6 @@ describe(getChapterTestOut, () => {
     const { goal, plan, skills } = await setup();
     const later = await libraryChapterFixture({ title: "More of skill 1" });
 
-    // The plan teaches the first skill in a second chapter too, further on.
     await planItemFixture({
       chapterId: later.id,
       phase: 0,
@@ -92,14 +91,12 @@ describe(getChapterTestOut, () => {
 
     const small = await getChapterTestOut({ chapterId, goalId: goal.id });
 
-    // One lesson to skip still takes four questions: one right answer never skips a chapter.
     const asked = small.status === "ready" ? small.testOut.questions : [];
 
     expect(asked.map((question) => question.skillId)).toStrictEqual(
       Array.from({ length: 4 }, () => skills[0]?.id),
     );
 
-    // Its four answers on one skill are all recorded, one after another.
     const passed = await submitChapterTestOut({
       chapterId,
       goalId: goal.id,
@@ -119,7 +116,6 @@ describe(getChapterTestOut, () => {
       prisma.learnerSkill.findFirstOrThrow({ where: { skillId: skills[0]?.id, userId: user.id } }),
     ).resolves.toMatchObject({ reps: 4 });
 
-    // Sixteen more lessons of the skill planned in the chapter: eight questions, which its bank lacks.
     await Promise.all(
       Array.from({ length: 16 }, (_, index) =>
         planItemFixture({
@@ -207,22 +203,21 @@ describe(submitChapterTestOut, () => {
       chapterId,
       goalId: goal.id,
       input: {
-        answers: items.slice(0, 4).map((item, index) => ({
-          answer: index === 3 ? WRONG : RIGHT,
-          // A question left open for an hour counts as five minutes of study.
-          durationMs: index === 3 ? 3_600_000 : 20_000,
-          itemId: item.id,
-        })),
+        answers: items
+          .slice(0, 4)
+          .map((item, index) => ({
+            answer: index === 3 ? WRONG : RIGHT,
+            durationMs: index === 3 ? 3_600_000 : 20_000,
+            itemId: item.id,
+          })),
         requestId: randomUUID(),
       },
     });
 
-    // 3 of 4 is 75%, below the pass mark.
     expect(result.status === "ready" && result.outcome.passed).toBe(false);
 
     const right = await prisma.attempt.findMany({ where: { isCorrect: true, userId: user.id } });
 
-    // What was right is kept as evidence for its skills.
     expect(new Set(right.map((attempt) => attempt.skillId))).toStrictEqual(
       new Set(skills.slice(0, 3).map((skill) => skill.id)),
     );
@@ -323,7 +318,6 @@ describe(submitChapterTestOut, () => {
     const passed = await submitChapterTestOut({ chapterId, goalId: goal.id, input });
     expect(passed).toMatchObject({ outcome: { lessonsSkipped: 4, passed: true }, status: "ready" });
 
-    // Even if its bank now needs writing, an exhausted chapter must start no AI work.
     await prisma.item.deleteMany({
       where: { id: { in: items.slice(0, 4).map((item) => item.id) } },
     });
@@ -405,7 +399,6 @@ describe(submitChapterTestOut, () => {
     const { chapters, goal, items, planItems, skills, user } = await setup();
     const [asked] = items;
 
-    // Only the first skill has a question yet, as when the others' are still being written.
     await prisma.item.deleteMany({
       where: { skillId: { in: skills.slice(1, 4).map((skill) => skill.id) } },
     });
@@ -450,7 +443,6 @@ describe(submitChapterTestOut, () => {
     const testOut = await getChapterTestOut({ chapterId, goalId: goal.id });
     const questions = testOut.status === "ready" ? testOut.testOut.questions : [];
 
-    // Eight questions spread over ten skills leave the fifth and the tenth unasked.
     const unasked = [skills[4]?.id, skills[9]?.id];
     expect(questions).toHaveLength(8);
     expect(questions.map((question) => question.skillId)).not.toContain(unasked[0]);
@@ -500,8 +492,6 @@ describe(submitChapterTestOut, () => {
   });
 });
 
-// A free exam plan past its first week opens new lessons with Plus only, and a test-out takes its
-// learner past them (and writes questions with AI): the free plan shows it marked Plus.
 describe("a free exam plan past its first week", () => {
   const DAY_MS = 86_400_000;
 

@@ -1,4 +1,3 @@
-/** What an answer needs to tell whether it was one of placement's own, and when. */
 type PlacementAnswerRow = {
   answeredAt: Date;
   itemId: string | null;
@@ -7,15 +6,10 @@ type PlacementAnswerRow = {
   studySessionId: string | null;
 };
 
-/**
- * Placement's own answers: bank questions answered outside a lesson and outside a session
- * (sessions carry their own few questions).
- */
 export function isPlacementAnswer(attempt: PlacementAnswerRow): boolean {
   return attempt.itemId !== null && attempt.stepId === null && attempt.studySessionId === null;
 }
 
-/** Placement's own answers on one learner-local day. */
 export function isPlacementAnswerOn({
   attempt,
   day,
@@ -26,11 +20,7 @@ export function isPlacementAnswerOn({
   return isPlacementAnswer(attempt) && attempt.localDate.getTime() === day.getTime();
 }
 
-/**
- * This goal's placement answers: answers to placement since the goal was created, which number its
- * questions. Earlier answers on the same skills (another goal's placement, lessons) still place the
- * learner, but they aren't this placement's.
- */
+/** Counts only answers since this goal began; older answers still contribute placement evidence. */
 export function countPlacementAnswers({
   attempts,
   since,

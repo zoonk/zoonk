@@ -13,7 +13,6 @@ export async function readLearningProfile(userId: string) {
   return prisma.userLearningProfile.findUnique({ where: { userId } });
 }
 
-/** A stored selection is authoritative even when ineligible for a particular caller's view. */
 export async function readActiveGoal(userId: string) {
   "use cache: private";
 

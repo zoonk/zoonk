@@ -111,7 +111,6 @@ describe(scoreTestOut, () => {
 
     expect(one.passed).toBe(false);
 
-    // Eight questions on its one skill: a slip still passes it, as 80% right overall does.
     const eight = scoreTestOut({
       chapterSkillIds: ["a"],
       results: Array.from({ length: 8 }, (_, index) => ({ isCorrect: index !== 3, skillId: "a" })),

@@ -2,7 +2,6 @@ import { type LearnerSkill, type MasteryState } from "@zoonk/db";
 import { NEW_SKILL_MEMORY, getSkillRetrievability } from "../fsrs-scheduler";
 import { isFadingRetrievability } from "../mastery-state";
 
-/** What the apps show about one skill: its state, whether it fades and when it comes back. */
 export type SkillStatus = {
   due: Date | null;
   fading: boolean;
@@ -14,7 +13,7 @@ export type SkillStatus = {
   studiedAt: Date | null;
 };
 
-/** Reads a learner's row for a skill (or its absence, which is New) at one moment. */
+/** A missing learner row represents New. */
 export function toSkillStatus({
   learnerSkill,
   now,

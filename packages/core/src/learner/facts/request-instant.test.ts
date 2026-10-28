@@ -203,7 +203,6 @@ describe("GET request instant", () => {
     vi.setSystemTime(new Date("2030-01-01T12:00:00Z"));
     vi.spyOn(requestClock, "getRequestInstant").mockResolvedValue(INSTANT);
 
-    /** Exercise the real capability rather than the shared progress tests' date boundary. */
     const { getRequestProgressDateContext } = await vi.importActual<typeof ProgressDateContext>(
       "../../progress/get-request-date-context",
     );

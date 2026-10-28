@@ -19,20 +19,13 @@ import {
 
 type ChapterTestOut = {
   chapterId: string;
-  /**
-   * Sampled skills with no question to ask yet: `POST .../test-out/generations` writes them when
-   * the learner asks (`requestTestOutQuestions`).
-   */
+  /** Request test-out generation when this list is nonempty. */
   needsItems: string[];
   passMark: number;
-  /**
-   * The sampled skills' questions, spread over them, or none while `needsItems` lists any: a
-   * test-out can only pass with enough answers on every sampled skill, so it doesn't start on some.
-   */
+  /** Empty until every sampled skill has its required share of questions. */
   questions: QuestionView[];
   /** How many questions each sampled skill needs: several when the chapter has few skills. */
   questionsPerSkill: number;
-  /** The words the goal's true-or-false statements are answered with, by its exam. */
   trueFalseLabels: TrueFalseLabels;
 };
 
@@ -43,10 +36,6 @@ export type ChapterTestOutResult =
   | { status: "ready"; testOut: ChapterTestOut }
   | { status: "unauthorized" };
 
-/**
- * A skill's questions for the test: unseen ones first, picked the way placement picks, then ones
- * the learner answered before.
- */
 function pickSkillItems({
   count,
   items,
@@ -69,7 +58,6 @@ function pickSkillItems({
   return [...picked, ...seen].slice(0, count);
 }
 
-/** One question per skill in turn, so the test moves across the chapter. */
 function interleave(picks: readonly { itemIds: string[] }[]): string[] {
   const rounds = Math.max(0, ...picks.map((pick) => pick.itemIds.length));
 
@@ -78,10 +66,7 @@ function interleave(picks: readonly { itemIds: string[] }[]): string[] {
   );
 }
 
-/**
- * The test-out for one chapter of the learner's own goal, or why it has none: outside the plan
- * or nothing left to skip. Callers first check the goal belongs to the learner.
- */
+/** Caller must verify goal ownership before supplying userId. */
 export async function loadChapterTestOut({
   chapterId,
   goal,
@@ -113,7 +98,6 @@ export async function loadChapterTestOut({
 
   const sampled = pickTestOutSkills(chapterSkills);
 
-  // Every sampled skill gets a question, and a chapter of few skills asks them more than once.
   const count = Math.max(sampled.length, getTestOutQuestionCount(skippable));
 
   const questionsPerSkill = getQuestionsPerSkill({ questions: count, skills: sampled.length });
@@ -162,13 +146,7 @@ export async function loadChapterTestOut({
   };
 }
 
-/**
- * Builds the test-out for one chapter of a goal's plan: four to eight questions, more the more
- * lessons a pass skips, spread over the chapter's sampled skills (a chapter of one skill asks it
- * several times), unseen questions first, once every sampled skill has its share. Nothing is
- * stored until the learner submits the answers. Past a free exam plan's first week it comes with
- * Plus (`isTestOutPlusOnly`).
- */
+/** Read-only until submission; returns no questions until every sampled skill has its required share. */
 export async function getChapterTestOut({
   chapterId,
   goalId,

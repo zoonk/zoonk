@@ -9,11 +9,10 @@ import { type BankItem } from "./choice-items";
 
 type TypedContent = Extract<ParsedItemContent, { format: "typed" }>;
 
-/** A typed question: answered in the learner's own words, a word or a sentence. */
 export type TypedItem = Pick<Item, "id" | "language" | "skillId"> &
   TypedContent & { image: ItemImage | null };
 
-/** A typed question as the learner sees it: never its key points or accepted answers. */
+/** Omits key points and accepted answers. */
 export type TypedQuestionView = {
   context: string | null;
   format: "typed";
@@ -25,10 +24,7 @@ export type TypedQuestionView = {
   visual: LessonVisual | null;
 };
 
-/**
- * Reads a bank item as a typed question, or null when it isn't one. Stored content passed the
- * item checks, so a parse failure is logged and the item skipped instead of failing the learner.
- */
+/** Returns null for unsupported or invalid content; parse failures are logged. */
 export function parseTypedItem(item: BankItem): TypedItem | null {
   if (item.format !== "typed") {
     return null;
@@ -65,22 +61,16 @@ export function toTypedQuestionView(item: TypedItem): TypedQuestionView {
   };
 }
 
-/** The question as a model grading it reads it: with its support text, when it has one. */
 export function getTypedQuestionText(item: TypedItem): string {
   const { context, question } = item.content;
   return context ? `${context}\n\n${question}` : question;
 }
 
-/** What the learner sees as the right answer: the first accepted wording, or the model answer. */
 export function getTypedCorrectAnswer(item: TypedItem): string {
   return item.content.acceptedAnswers[0] ?? item.content.sampleAnswer;
 }
 
-/**
- * Whether code settles the answer: it's one of the accepted wordings, or one with a slip. A
- * rounded number isn't: a language goal's item may ask for the number heard, and an item doesn't
- * say which goal it serves.
- */
+/** Rounded-number matches are excluded: a shared item may test the exact number heard in listening. */
 export function matchesAcceptedAnswer({ item, text }: { item: TypedItem; text: string }): boolean {
   const { kind } = matchTypedAnswer({
     acceptedAnswers: item.content.acceptedAnswers,
@@ -90,7 +80,6 @@ export function matchesAcceptedAnswer({ item, text }: { item: TypedItem; text: s
   return kind === "exact" || kind === "typo";
 }
 
-/** What the notebook keeps for a typed answer that missed. */
 export function toTypedSnapshot({
   explanation,
   item,

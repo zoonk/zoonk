@@ -8,10 +8,7 @@ export type OwnedGoal =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/**
- * Resolves a goal for the signed-in learner. Another learner's goal is "not found", so goal ids
- * never reveal whether a goal exists.
- */
+/** Requires a session; another learner's goal returns notFound to hide its existence. */
 export async function findOwnedGoal(goalId: string): Promise<OwnedGoal> {
   const session = await getSession();
 
@@ -30,12 +27,7 @@ export async function findOwnedGoal(goalId: string): Promise<OwnedGoal> {
 
 const DEFAULT_TIME_ZONE = "UTC";
 
-/**
- * The zone the learner's day is in, for every read and write of it (Today, the session, answers,
- * progress, the plan): the goal's stored zone, the request's only for a goal without one, then
- * UTC. A learner who moves takes their new zone at the start of a day (`moveGoalTimeZone`), so a
- * screen and the actions on it never read different days.
- */
+/** Uses the stored goal zone, falling back to the request and then UTC only when no zone is stored. */
 export function getAnswerTimeZone({
   goal,
   timeZone,

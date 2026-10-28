@@ -4,7 +4,7 @@ import { cacheTag } from "next/cache";
 import { getUserSubscriptionCacheTag } from "../../cache/tags";
 import { getRequestInstant } from "./request-instant";
 
-/** The shared eligibility query; permission callers supply their own fresh clock and client. */
+/** Permission callers must supply a fresh clock and client. */
 export function getActiveSubscriptionQuery({ now, userId }: { now: Date; userId: string }) {
   return {
     orderBy: { id: "desc" as const },
@@ -29,7 +29,7 @@ export function getActiveSubscriptionQuery({ now, userId }: { now: Date; userId:
   };
 }
 
-/** Internal display fact; only an authenticated capability derives the actor for this key. */
+/** Display-only fact; authenticated capabilities must derive the userId. */
 export async function readActiveSubscription(userId: string) {
   "use cache: private";
 

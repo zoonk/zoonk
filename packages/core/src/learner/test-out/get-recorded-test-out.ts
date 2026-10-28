@@ -4,18 +4,15 @@ import { canUndoChange } from "../../plans/_utils/plan-change-view";
 import { findOwnedGoal } from "../_utils/owned-goal";
 import { findTestOutReceipt } from "./_utils/test-out-receipt";
 
-/** A chapter test-out the learner sent, as it was recorded then. */
 type RecordedTestOut = {
   /** Whether its plan change can still be undone: the plan is exactly as this skip left it. */
   canUndo: boolean;
   /** The plan change that skipped its lessons; null when it skipped none. */
   changeId: string | null;
   correct: number;
-  /** The lessons its result said were off the plan. */
   lessonsSkipped: number;
   passed: boolean;
   total: number;
-  /** Whether the learner undid the skip: its lessons are back in the plan. */
   undone: boolean;
 };
 
@@ -24,12 +21,7 @@ export type RecordedTestOutResult =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/**
- * The result of a chapter test-out the learner sent (its `requestId`), as it was recorded, so a
- * reload, Back or the link opened later shows that result again instead of a new test. Its undo
- * holds while the plan is as this skip left it, as on the Plan: a later skip joins the same plan
- * change, and undoing it from here would bring that one's lessons back too. Nothing is written.
- */
+/** Read-only recorded result; undo is valid only while the plan matches this receipt's version. */
 export async function getRecordedTestOut({
   chapterId,
   goalId,

@@ -26,7 +26,6 @@ describe(getPlacementBudgetSpent, () => {
     expect(getPlacementBudgetSpent({ answers: answers(4, 340_000) })).toBe(1);
   });
 
-  // Pedro's class test has nine topics, days away: its day has room for an answer on each.
   it("has room for an answer on every topic of the learner's own material", () => {
     expect(getPlacementBudgetSpent({ answers: answers(12, 15_000), topics: 14 })).toBeLessThan(1);
     expect(getPlacementBudgetSpent({ answers: answers(9, 40_000), topics: 9 })).toBe(1);

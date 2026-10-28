@@ -10,14 +10,7 @@ import { getSession } from "../../users/get-session";
 import { readSavedPlan } from "../facts/saved-plan";
 import { type GoalPlan, loadGoalPlan } from "./goal-skill-graph";
 
-/**
- * `loadGoalPlan` for the reads a page renders, which ask for the same goal's skills several times
- * (the Plan's progress, skills, mistakes and map): built once per request from the request's saved
- * plan (`readSavedPlan`) and tagged like the tabs' reads (`resolveViewGoal`), so whatever clears
- * them clears it too. Mutations call
- * `loadGoalPlan`, whose reads after their own writes must see them. The caller has checked the
- * goal is the learner's.
- */
+/** GETs only, after ownership authorization; mutations must use loadGoalPlan for fresh reads. */
 export async function readGoalPlan(goalId: string): Promise<GoalPlan> {
   "use cache: private";
 

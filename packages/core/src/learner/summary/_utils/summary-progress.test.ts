@@ -6,7 +6,6 @@ import { getNextChangeAt } from "./summary-progress";
 const NOW = new Date("2026-03-10T12:00:00.000Z");
 const HOUR_MS = 60 * 60 * 1000;
 
-/** A renewing App Store subscription whose period ends at `periodEnd`. */
 function appleSubscription({
   periodEnd,
   trialEnd = null,
@@ -43,7 +42,6 @@ function appleSubscription({
   };
 }
 
-/** The summary's next change for a learner in `timeZone` at `now`, a month-long session ahead. */
 function nextChange({
   carriedUntil = null,
   now = NOW,
@@ -69,19 +67,16 @@ function nextChange({
 
 describe(getNextChangeAt, () => {
   it("reads again when the allowance starts over at UTC midnight, before a later local one", () => {
-    // São Paulo's midnight is at 03:00 UTC: the day's allowance renews three hours before.
     expect(nextChange({ timeZone: "America/Sao_Paulo" })).toBe("2026-03-11T00:00:00.000Z");
   });
 
   it("reads again at a local midnight that comes before UTC's", () => {
-    // Tokyo's midnight is at 15:00 UTC.
     expect(nextChange({ timeZone: "Asia/Tokyo" })).toBe("2026-03-10T15:00:00.000Z");
   });
 
   it("reads again when the month's allowance starts over, at the month's first UTC midnight", () => {
     const now = new Date("2026-03-31T20:00:00.000Z");
 
-    // Los Angeles is still on March 31 until 07:00 UTC on April 1.
     expect(nextChange({ now, timeZone: "America/Los_Angeles" })).toBe("2026-04-01T00:00:00.000Z");
   });
 

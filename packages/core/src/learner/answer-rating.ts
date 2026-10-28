@@ -1,7 +1,5 @@
-/** The FSRS review grades, named for how the answer went. */
 export type ReviewRating = "again" | "hard" | "good" | "easy";
 
-/** What an answer says about memory. Grading (right, wrong, partial credit) happens before this. */
 export type GradedAnswer = {
   isCorrect: boolean;
   /** Partial credit from 0 to 1 for typed or spoken answers graded one key point at a time. */
@@ -15,10 +13,7 @@ export type GradedAnswer = {
 
 const DEFAULT_EXPECTED_DURATION_MS = 20_000;
 
-/**
- * A skill placement or a passed test-out shows the learner can do, without asking about it: it
- * counts as one plain right answer (Good), so a review soon confirms it is remembered.
- */
+/** Inferred knowledge is Good, leaving an early review to confirm recall. */
 export const INFERRED_KNOWN_ANSWER: GradedAnswer = {
   durationMs: DEFAULT_EXPECTED_DURATION_MS,
   isCorrect: true,
@@ -27,12 +22,7 @@ const FAST_SHARE = 0.5;
 const SLOW_FACTOR = 2;
 const PASSING_SCORE = 0.5;
 
-/**
- * A finished lesson as one answer on a topic it teaches without asking it directly: the share of
- * its screens answered right the first time is the credit, so a lesson all right is Good, one with
- * a miss is Hard and one under half right is Again (see `rateAnswer`). Its screens take as long as
- * they need, so time doesn't count. Null for a lesson with no answers.
- */
+/** Uses only first answers and ignores timing; returns null for lessons with no answers. */
 export function gradeLessonAnswers(firstAnswers: readonly boolean[]): GradedAnswer | null {
   if (firstAnswers.length === 0) {
     return null;
@@ -43,13 +33,6 @@ export function gradeLessonAnswers(firstAnswers: readonly boolean[]): GradedAnsw
   return { durationMs: DEFAULT_EXPECTED_DURATION_MS, isCorrect: score >= PASSING_SCORE, score };
 }
 
-/**
- * Turns one graded answer into an FSRS grade. A wrong answer is Again; help, partial credit (a
- * right answer that left out key points) or taking over twice the expected time is Hard; answering
- * in under half the expected time is Easy; everything else is Good. It's a code rule rather than a
- * model's score: partial credit already comes from the per-key-point grader, and help and time are
- * facts code measures, so asking a model again would add cost and noise without new information.
- */
 export function rateAnswer({
   durationMs,
   expectedDurationMs = DEFAULT_EXPECTED_DURATION_MS,
@@ -74,10 +57,6 @@ export function rateAnswer({
   return "good";
 }
 
-/**
- * Remembered means right with nothing to lean on: correct, full credit and no help. Only a recall
- * counts toward the three days a skill needs to be Mastered.
- */
 export function isUnaidedRecall({ isCorrect, score, usedHint = false }: GradedAnswer): boolean {
   return isCorrect && !usedHint && (typeof score !== "number" || score >= 1);
 }

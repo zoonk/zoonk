@@ -6,11 +6,7 @@ import {
   markPlanInputsChanged,
 } from "@zoonk/db/learner-writes";
 
-/**
- * Each learner write calls this once, first, in the transaction that owns its domain write: it
- * raises the plans' input version when the write changes what the planner reads (`planInputs`),
- * then locks the learner, so the learner's writes take turns.
- */
+/** Call once before domain writes in the owning transaction; acquires plan locks before the learner lock. */
 export async function markLearnerChanged(
   tx: LearnerWriteTransaction,
   {
@@ -20,18 +16,13 @@ export async function markLearnerChanged(
   }: { lockPlanIds?: readonly string[]; planInputs?: boolean; userId: string },
 ): Promise<void> {
   if (planInputs) {
-    /** Always acquire plan locks before the learner row, including in mixed writer transactions. */
     await markPlanInputsChanged(tx, { userIds: [userId] });
   }
 
-  /** Planning-input writes already hold every owned plan; plan writes that keep inputs opt in. */
   await lockLearner(tx, { lockPlanIds: planInputs ? [] : lockPlanIds, userId });
 }
 
-/**
- * A shared-content writer marks dependent plans, then locks their learners in id order, so it
- * takes turns with each learner's own writes without deadlocking against another such writer.
- */
+/** Locks learners in id order after their plans to avoid deadlocks between shared-content writers. */
 export async function markPlansChanged(
   tx: LearnerWriteTransaction,
   { planIds }: { planIds: readonly string[] },

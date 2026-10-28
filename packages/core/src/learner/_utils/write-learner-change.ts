@@ -7,7 +7,6 @@ const UNCHANGED = Symbol("unchanged learner write");
 
 type Unchanged<T> = { readonly [UNCHANGED]: T };
 
-/** What a learner write returns when it found nothing to change (see `writeLearnerChange`). */
 export function unchanged<const T>(result: T): Unchanged<T> {
   return { [UNCHANGED]: result };
 }
@@ -16,12 +15,7 @@ function isUnchanged<T, Kept>(written: T | Unchanged<Kept>): written is Unchange
   return typeof written === "object" && written !== null && UNCHANGED in written;
 }
 
-/**
- * Runs one learner write in its own transaction with the learner marked (`markLearnerChanged`) first,
- * so every writer takes its locks in the same order: plans, then learners, then everything else. A
- * write that finds nothing to change returns `unchanged(result)`: the transaction rolls back with
- * its marks, and `result` is the outcome, so no plan input is marked for it.
- */
+/** Acquires plans before learners before other locks. Returning unchanged(result) rolls back writes and marks but returns result. */
 export async function writeLearnerChange<T, Kept = T>(
   marker: Parameters<typeof markLearnerChanged>[1],
   write: (tx: TransactionClient) => Promise<T | Unchanged<Kept>>,

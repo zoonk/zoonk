@@ -3,7 +3,6 @@ import { type SkillReview } from "../answer-events";
 import { type GradedAnswer } from "../answer-rating";
 import { reviewSkillMemory } from "../fsrs-scheduler";
 
-/** Two answers on one skill rarely land together; a few retries always settle them. */
 const MAX_CONCURRENT_RETRIES = 3;
 
 type SkillAnswer = {
@@ -16,11 +15,7 @@ type SkillAnswer = {
   userId: string;
 };
 
-/**
- * Skills are merged, never deleted, and a merged skill's learner rows and lessons move to the
- * survivor. Content that still points at a merged skill reads the survivor instead: the returned
- * function maps each skill to its survivor, or to itself.
- */
+/** Maps merged skills to their survivor and unmerged skills to themselves. */
 export async function loadSkillSurvivors(
   skillIds: readonly string[],
   transaction: TransactionClient = prisma,
@@ -29,7 +24,6 @@ export async function loadSkillSurvivors(
   return (skillId) => survivors.get(skillId) ?? skillId;
 }
 
-/** Each merged skill of `skillIds` with its survivor (see `loadSkillSurvivors`). */
 export async function loadSkillSurvivorMap(
   skillIds: readonly string[],
   transaction: TransactionClient = prisma,
@@ -46,10 +40,6 @@ export async function loadSkillSurvivorMap(
   return new Map(merged.map((skill) => [skill.id, skill.mergedIntoId ?? skill.id]));
 }
 
-/**
- * Reads the learner's row for a skill, creating it as New the first time. The insert skips an
- * existing row, so two first answers at once never collide on the unique key.
- */
 async function getOrCreateLearnerSkill({
   skillId,
   transaction,
@@ -94,12 +84,7 @@ async function applyWithRetries({
   return applyWithRetries({ ...input, retriesLeft: retriesLeft - 1, transaction });
 }
 
-/**
- * Applies one graded answer to the learner's FSRS memory of a skill. Every review adds a rep, so
- * the write only lands when `reps` still matches what was read: two answers on the same skill at
- * once are applied one after the other instead of one overwriting the other. Returns the memory
- * the answer was applied to and the result, so each change is reported once.
- */
+/** Applies concurrent answers without overwriting memory; returns the before/after pair for this answer only. */
 export function applyAnswerToLearnerSkill(
   input: SkillAnswer,
   transaction: TransactionClient = prisma,

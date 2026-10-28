@@ -17,18 +17,13 @@ import {
   readSkillClaims,
 } from "./skill-claims";
 
-/** More answers than this on one goal's skills say nothing new about what's still to confirm. */
 const MAX_ANSWERS = 2000;
 
-/**
- * The saved plan a GET already read (`readSavedPlan`), so its claims don't read it again; writes
- * leave it out and read their own.
- */
+/** GETs pass the saved plan already read; writes omit it for a fresh read. */
 export type ClaimPlan = Pick<Plan, "createdAt" | "graph" | "id" | "settings"> & {
   items: Pick<PlanItem, "completedAt" | "kind" | "lessonId" | "skillId" | "status">[];
 };
 
-/** A plan's finished lessons and chapters, which claim their skills. */
 function isClaimingItem(item: ClaimPlan["items"][number]) {
   return (
     item.completedAt !== null &&
@@ -37,10 +32,6 @@ function isClaimingItem(item: ClaimPlan["items"][number]) {
   );
 }
 
-/**
- * The skills these finished lessons teach. A GET (which passes its saved plan) reads the shared
- * rows of every lesson in the plan, the entry its other reads share, and keeps these.
- */
 async function loadClaimLessonSkills({
   known,
   lessonIds,
@@ -62,15 +53,7 @@ async function loadClaimLessonSkills({
     : [];
 }
 
-/**
- * A goal's test-outs as claims on the skills they skipped, and its finished lessons as skills
- * studied: a stand-in's skill, or every skill its lesson teaches. A test-out claims the skill its
- * item counts for, which the learner showed they know (see `markPlanItemsTestedOut`), never one
- * the Library links to its lesson later: a portfolio case study outlined with the lessons of a
- * journey map the learner had tested out of read as known, though they never answered on it
- * (career seed 2042). An item whose skill left the plan's graph (merged since) claims every skill
- * its lesson teaches.
- */
+/** A test-out claims the skill tested, never skills later linked to its lesson. */
 async function loadPlanEvents({
   goalId,
   known,
@@ -123,12 +106,6 @@ async function loadPlanEvents({
   });
 }
 
-/**
- * The learner's answers to the bank's questions on these skills (lesson steps aren't any): a
- * session's are practice (its reviews, mixed practice, full review and mock), the others a test's
- * (placement, the focus test, a chapter test, a mock taken any time). A placement question a
- * first-week session asks is still a test's.
- */
 async function loadAnswerEvents({
   skillIds,
   userId,
@@ -165,11 +142,7 @@ async function loadAnswerEvents({
   );
 }
 
-/**
- * Each claim on a goal's skills with the day it began (see `loadSkillClaims`): practice asks a
- * topic still to confirm first once it has waited about a week. The basics the learner passed
- * over by choice are claims too, from the day of the choice (see `loadPassedOverClaims`).
- */
+/** Includes basics skipped by choice, dated from that choice. */
 export async function loadDatedClaims({
   goalId,
   skillIds,
@@ -186,7 +159,6 @@ export async function loadDatedClaims({
   return readDatedClaims(await loadClaimEvents({ goalId, skillIds, userId }));
 }
 
-/** Everything the learner model reads of a goal's skills (see `loadDatedClaims`). */
 export async function loadClaimEvents({
   goalId,
   plan,
@@ -208,11 +180,6 @@ export async function loadClaimEvents({
   return [...planEvents, ...passedOver, ...undone, ...answers];
 }
 
-/**
- * What a plan reads of the learner model: each skill's claim (see `loadSkillClaims`), the skills
- * an answer missed, even ones a later answer claimed again (see `listAnsweredWrong`), and the ones
- * the learner showed they know (see `listKnownSkills`), which the syllabus says are known.
- */
 export async function loadSkillEvidence({
   focused,
   passedOver,
@@ -239,12 +206,7 @@ export async function loadSkillEvidence({
   };
 }
 
-/**
- * What a plan reads of one skill (see `loadSkillEvidence`, `loadPlannerInputs`), before the answer
- * given at `answeredAt` and with it: whether the learner showed they know it (two right answers of
- * its own when they focused on it), whether it's a gap, and whether an answer missed it. Two equal
- * readings plan alike.
- */
+/** Compares evidence immediately before answeredAt with evidence including that answer. */
 export async function loadAnswerPlanReadings({
   answeredAt,
   goalId,
@@ -276,11 +238,7 @@ export async function loadAnswerPlanReadings({
   return { after: read(events), before: read(events.filter((event) => event.at < answeredAt)) };
 }
 
-/**
- * What a goal's skills the learner was taken to know still need (see `SkillClaim`): from its
- * test-outs, the lessons finished and the learner's answers on them. Skills nothing claimed are
- * absent.
- */
+/** Omits skills with no claim. */
 async function loadSkillClaims(input: {
   goalId: string;
   skillIds: readonly string[];
@@ -290,10 +248,7 @@ async function loadSkillClaims(input: {
   return new Map([...dated].map(([skillId, { claim }]) => [skillId, claim]));
 }
 
-/**
- * Which of these skills the learner was taken to know without studying them (see
- * `listTakenToKnow`): a miss on one brings its lessons back (`bringBackMissedLessons`).
- */
+/** Returns only skills assumed known without study; missing one brings its lessons back. */
 export async function loadSkillsToRelearn(input: {
   goalId: string;
   skillIds: readonly string[];
@@ -306,7 +261,7 @@ export async function loadSkillsToRelearn(input: {
   return listTakenToKnow(await loadClaimEvents(input));
 }
 
-/** Which of these skills the learner was taken to know and practice hasn't confirmed yet. */
+/** Returns claimed skills not yet confirmed by practice. */
 export async function loadSkillsToConfirm(input: {
   goalId: string;
   skillIds: readonly string[];

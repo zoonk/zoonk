@@ -5,11 +5,7 @@ import { GRADABLE_ITEM_FORMATS } from "../../_utils/choice-items";
 import { type GoalSkillNode } from "../../_utils/goal-skill-graph";
 import { type TestOutPlan } from "./test-out-plan";
 
-/**
- * The chapter's skills inside the goal's plan, in plan order: the skills whose area it is and the
- * ones its planned lessons teach, so a skill whose lessons span several chapters can be tested
- * out from any of them.
- */
+/** Returns skills in plan order; a shared skill can be tested from any chapter teaching it. */
 export function getChapterSkills({
   chapterId,
   plan,
@@ -24,10 +20,7 @@ export function getChapterSkills({
   return plan.skills.filter((skill) => skill.areaId === chapterId || taught.has(skill.id));
 }
 
-/**
- * The plan's lessons still to do that a pass on these skills would skip: the ones teaching only
- * them, wherever the plan has them.
- */
+/** Counts todo lessons teaching only these skills, even when placed in other chapters. */
 export function countSkippableItems({
   plan,
   skills,
@@ -45,10 +38,7 @@ export function countSkippableItems({
   ).length;
 }
 
-/**
- * Gradable bank questions for some skills, with whether the learner has answered each before.
- * Another exam's questions stay out: general ones and the goal's exam's are asked.
- */
+/** Includes general and matching-exam questions, never another exam's. */
 export async function loadSkillItems({
   examBlueprintId,
   skillIds,

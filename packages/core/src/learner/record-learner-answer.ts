@@ -20,38 +20,23 @@ import { applyAnswerToLearnerSkill, loadSkillSurvivors } from "./_utils/update-l
 import { type SkillReview, getAnswerEvents } from "./answer-events";
 import { type GradedAnswer } from "./answer-rating";
 
-/** How many earlier answers on the skill the mistake cause looks at. */
 const RECENT_SKILL_ANSWERS = 10;
 
-/**
- * `learning` answers (lessons, reviews, practice, mocks) update memory and fill the mistakes
- * notebook. `diagnostic` answers (placement, test-outs) measure what the learner already knows: a
- * right one counts as a review, a wrong one only when the skill is already being learned, and
- * neither is a mistake, since nobody taught the skill yet.
- */
+/** Diagnostics never create notebook mistakes and update memory only when correct or already being learned. */
 type LearnerAnswerPurpose = "diagnostic" | "learning";
 
 export type LearnerAnswer = {
-  /** The learner's raw answer, stored on the attempt. */
   answer: JsonObject;
   answeredAt?: Date;
-  /**
-   * The attempt's id, chosen by the app that sent the answer, so an answer sent again (a retry
-   * after a dropped response) can't be recorded twice: the second insert fails on the id.
-   */
+  /** Reuse the client attempt id across retries to prevent recording the same answer twice. */
   attemptId?: string;
   graded: GradedAnswer;
-  /**
-   * An answer to one of placement's questions, in placement itself or inside a first-week session:
-   * a test's answer, never practice, even when a session asked it.
-   */
+  /** Placement remains diagnostic evidence even when asked inside a session. */
   isPlacement?: boolean;
   itemId?: string | null;
-  /** The question's language, for the cause classifier. */
   language: string;
   /** For wrong learning answers: what the notebook keeps and what its cause reads. */
   mistake?: { questionText: string; snapshot: MistakeSnapshot; timeLimitMs?: number | null } | null;
-  /** The mock the answer was given in: each of its questions is recorded once. */
   mockExamId?: string | null;
   /** The notebook entry a practice drill targets; a right answer on a later day fixes it. */
   practicedMistakeId?: string | null;
@@ -59,10 +44,6 @@ export type LearnerAnswer = {
   skillId?: string | null;
   stepId?: string | null;
   studySessionId?: string | null;
-  /**
-   * The language practiced, for answers in a language lesson or review. Stored on the attempt so
-   * language stats (minutes spoken per language) never read content.
-   */
   targetLanguage?: string | null;
   timeZone: string;
   userId: string;
@@ -117,7 +98,6 @@ type AnswerContext = {
   transaction: TransactionClient;
 };
 
-/** See `LearnerAnswerPurpose`: diagnostics only review skills they confirm or that are underway. */
 async function updateMemory({
   answeredAt,
   before,
@@ -196,13 +176,7 @@ function addToNotebook({ attemptId, context }: { attemptId: string; context: Ans
   );
 }
 
-/**
- * Records one graded answer in the learner model: the attempt on the learner's local day, the
- * FSRS review of its skill, fixes for notebook entries it answers right on a later day, and a new
- * notebook entry for a wrong learning answer. The outcomes (a spaced review, a skill changing state,
- * a mistake fixed) go to analytics after the response. Internal: public capabilities grade the
- * answer and derive `userId` from the session first.
- */
+/** Internal: callers must authorize the learner and grade the answer before supplying input.userId. */
 export async function persistLearnerAnswer({
   input,
   transaction,
@@ -238,7 +212,7 @@ export async function persistLearnerAnswer({
     addToNotebook({ attemptId: attempt.id, context }),
   ]);
 
-  // Attribution is server evidence, never something the learner's raw answer can supply.
+  // Attribution must come from server evidence, never the raw client answer.
   const recordedAttempt =
     fixedMistakes.length > 0 || "fixedMistakeIds" in input.answer
       ? await transaction.attempt.update({
@@ -286,7 +260,7 @@ export function publishLearnerAnswer({
   }
 }
 
-/** The answer and its notebook outcome commit together; checkpoints supply their own transaction. */
+/** Commits the answer and notebook changes together; checkpoint writers use their enclosing transaction instead. */
 export async function recordLearnerAnswer(input: LearnerAnswer): Promise<RecordedLearnerAnswer> {
   const { events, recorded } = await prisma.$transaction(async (transaction) => {
     await markLearnerChanged(transaction, { planInputs: true, userId: input.userId });

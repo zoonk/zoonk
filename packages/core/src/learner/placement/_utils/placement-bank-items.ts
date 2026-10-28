@@ -9,7 +9,6 @@ import { readBlueprintContent } from "../../../library/exams/save-exam-blueprint
 import { getItemAudienceFilter } from "../../../library/items/item-field";
 import { PLACEMENT_ITEM_FORMATS, preferExamItems } from "./placement-items";
 
-/** How the goal's exam asks the questions picked by choice; null for a goal without one. */
 async function loadExamChoice(
   examBlueprintId: string | null,
   tx: TransactionClient = prisma,
@@ -21,13 +20,7 @@ async function loadExamChoice(
   return blueprint ? getExamChoiceFormat(readBlueprintContent(blueprint).structure) : null;
 }
 
-/**
- * The questions placement may ask on these skills: the goal's exam's first, general ones where a
- * skill has none of its exam's and none are being written (`preferExamItems`), never another
- * exam's (a shared skill's "on the first day of ENEM…" question isn't for a police exam), only in
- * the exam's own format (`fitsExamChoice`), and typed ones only for a goal that confirms in writing
- * (`typed`), though the bank shares them with every goal.
- */
+/** Never uses another exam's questions; general questions fill gaps only when no matching exam questions are being written. */
 export async function loadPlacementItems({
   examBlueprintId,
   skillIds,

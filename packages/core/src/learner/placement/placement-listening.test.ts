@@ -12,13 +12,8 @@ import { getGoalPlacement } from "./get-goal-placement";
 
 const RIGHT = { selectedIndex: 0 };
 
-/** More questions than placement could ask on the fixture's three skills. */
 const MAX_QUESTIONS = 8;
 
-/**
- * An IELTS-like goal (two Listening skills, one Reading) whose bank holds an old text question on
- * every skill, in the exam's own format, as writers left them before listening moved to recordings.
- */
 async function setup() {
   const fixture = await listeningGoalFixture();
   const { blueprint, listeningSkills, reading, user } = fixture;
@@ -37,7 +32,6 @@ async function setup() {
   return { ...fixture, onListening, onReading };
 }
 
-/** Answers right every question placement asks, and returns the skills it asked and where it ended. */
 async function answerEveryQuestion({
   asked = [],
   goalId,
@@ -66,7 +60,6 @@ describe("placement on an exam whose listening is practiced only with recordings
     const { goal, listeningSkills, reading } = await setup();
     const listening = new Set(listeningSkills.map((skill) => skill.id));
 
-    // Placement's questions are written: nothing else is coming for the walk to wait on.
     await prisma.plan.update({
       data: { placementPreparedAt: new Date() },
       where: { goalId: goal.id },
@@ -89,8 +82,6 @@ describe("placement on an exam whose listening is practiced only with recordings
     const { blueprint, goal, listeningSkills, reading } = await setup();
     const listening = new Set(listeningSkills.map((skill) => skill.id));
 
-    // Research is still reading the notice, and the bank has a general text question on every
-    // skill: before the link, nothing says which skills only recordings practice.
     await Promise.all([
       prisma.goal.update({ data: { examBlueprintId: null }, where: { id: goal.id } }),
       ...[reading, ...listeningSkills].map((skill) =>

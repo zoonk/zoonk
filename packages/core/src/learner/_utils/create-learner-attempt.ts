@@ -2,7 +2,7 @@ import { type TransactionClient, prisma } from "@zoonk/db";
 import { type LearnerAnswer } from "../record-learner-answer";
 import { getLocalAnswerTime } from "./local-time";
 
-/** Shared attempt persistence; callers resolve merged skills before supplying the answer. */
+/** Callers must resolve merged skills before supplying the answer. */
 export function createLearnerAttempt({
   answeredAt,
   input,

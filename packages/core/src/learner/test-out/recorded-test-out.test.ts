@@ -16,7 +16,6 @@ import { submitChapterTestOut } from "./submit-chapter-test-out";
 const NOW = new Date("2026-09-30T12:00:00Z");
 const DAY_MS = 86_400_000;
 
-/** A planned goal of the library's two chapters, as the learner makes it. */
 async function plannedGoal({
   graph,
   userId,
@@ -35,7 +34,6 @@ async function plannedGoal({
   return goal;
 }
 
-/** Two planned chapters of six lessons on one skill each, whose tests ask four questions each. */
 async function setup() {
   const user = await userFixture();
 
@@ -68,10 +66,6 @@ async function setup() {
 
   const questions = tests.map((test) => (test.status === "ready" ? test.testOut.questions : []));
 
-  /**
-   * A chapter's test (the first unless `chapter`) sent with one answer per question, the first
-   * option (the right one) unless `wrong`.
-   */
   const send = ({
     chapter = 0,
     goalId = goal.id,
@@ -99,7 +93,6 @@ async function setup() {
   return { chapterId: chapterIds[0] ?? "", chapterIds, goal, library, questions, send, user };
 }
 
-/** What a test sent again says: what it recorded, celebrating nothing again. */
 function sentAgain(first: Awaited<ReturnType<typeof submitChapterTestOut>>) {
   return {
     outcome: { ...(first.status === "ready" && first.outcome), reached: NOTHING_REACHED },
@@ -139,7 +132,6 @@ describe("a chapter test-out sent and read back", () => {
     expect(first).toMatchObject({ outcome: { correct: 4, passed: true }, status: "ready" });
     expect(counted).toStrictEqual({ attempts: 4, correctAnswers: 4, events: 1 });
 
-    // A retry after a lost response: nothing is recorded, counted or celebrated again.
     await expect(send({ requestId })).resolves.toStrictEqual(sentAgain(first));
     await expect(countRecorded(user.id)).resolves.toStrictEqual(counted);
   });
@@ -150,14 +142,12 @@ describe("a chapter test-out sent and read back", () => {
     const first = await send({ requestId });
     const counted = await countRecorded(user.id);
 
-    // Its questions were written again: these can't be graded anymore.
     await prisma.item.deleteMany({
       where: { id: { in: (questions[0] ?? []).map((asked) => asked.itemId) } },
     });
 
     await expect(send({ requestId })).resolves.toStrictEqual(sentAgain(first));
 
-    // Even after the free week ends, the saved test stays taken and a new one has nothing to skip.
     await prisma.goal.update({
       data: { createdAt: new Date(NOW.getTime() - 10 * DAY_MS), kind: "exam" },
       where: { id: goal.id },
@@ -288,7 +278,6 @@ describe("a chapter test-out sent and read back", () => {
     const later = await send({ chapter: 1, requestId: second });
     const changeId = passed.status === "ready" ? passed.outcome.changeId : null;
 
-    // The later skip joins the same plan change: its undo would bring both chapters back.
     expect(changeId).toBeTruthy();
     expect(later.status === "ready" && later.outcome.changeId).toBe(changeId);
 

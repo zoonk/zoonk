@@ -25,10 +25,6 @@ const TYPED_CONTENT = {
   visual: null,
 };
 
-/**
- * The real grader settles accepted answers by code, as in production; an answer that needs its
- * model gets this verdict once.
- */
 function mockGrade({ met }: { met: number }) {
   vi.mocked(gradeTypedAnswer).mockResolvedValueOnce({
     data: {
@@ -47,10 +43,6 @@ function mockGrade({ met }: { met: number }) {
   });
 }
 
-/**
- * One skill with two quick questions and a typed one. A language goal confirms a right pick in
- * writing; every other goal, an exam that asks short written answers too, with the other pick.
- */
 async function setup({ goal = "language" }: { goal?: "hobby" | "language" | "shortAnswers" } = {}) {
   const user = await userFixture();
 
@@ -64,7 +56,6 @@ async function setup({ goal = "language" }: { goal?: "hobby" | "language" | "sho
   const [typed] = await Promise.all([
     itemFixture({ content: TYPED_CONTENT, format: "typed", skillId }),
     itemFixture({ content: choiceItemContent(), skillId }),
-    // Its run wrote placement's questions, so placement asks the general ones in the bank.
     prisma.plan.update({
       data: { placementPreparedAt: new Date() },
       where: { id: fixture.plan.id },
@@ -114,7 +105,6 @@ describe("typed answers in placement", () => {
     expect(JSON.stringify(afterPick)).not.toContain("5/6");
     expect(JSON.stringify(afterPick)).not.toContain("shared denominator");
 
-    // An accepted answer is settled by code, and it settles the skill.
     const confirmed = await answerPlacementQuestion({
       goalId: goal.id,
       input: { answer: { text: " 5/6 " }, durationMs: 9000, itemId: typed.id },
@@ -139,7 +129,6 @@ describe("typed answers in placement", () => {
       where: { id: typed.id },
     });
 
-    // Only the external model verdict is supplied; the goal and grading orchestration are real.
     mockGrade({ met: 0 });
 
     const result = await answerPlacementQuestion({
@@ -232,19 +221,13 @@ describe("typed answers in placement", () => {
 
     expect(attempt).toMatchObject({ answer: { text: "Make the bottoms equal" }, isCorrect: false });
 
-    // A diagnostic answer never fills the mistakes notebook.
     await expect(
       prisma.mistake.count({ where: { skillId: skills[0]?.id, userId: user.id } }),
     ).resolves.toBe(0);
   });
 
-  /*
-   * A hobby biology course asked the learner to write what Iara's cell diagram was missing:
-   * learners would rather pick, so a goal whose exam asks no written answers never gets a typed
-   * question, even one the shared bank has.
-   */
   it("confirms a right pick with another quick question for every goal but a language's", async () => {
-    // Each setup signs its own learner in, so the two answer one after the other.
+    // setup changes the shared signed-in learner, so these flows must run sequentially.
     const hobby = await setup({ goal: "hobby" });
     const hobbyPick = await answerQuickRight({ goalId: hobby.goal.id });
     const shortAnswers = await setup({ goal: "shortAnswers" });
@@ -255,7 +238,6 @@ describe("typed answers in placement", () => {
       { placement: { complete: false, next: { format: "multipleChoice" } }, status: "ready" },
     ]);
 
-    // The second right pick makes placement as sure of the skill as a right typed answer did.
     mockSession(hobby.user.id);
 
     const confirmed = await answerPlacementQuestion({

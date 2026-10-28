@@ -19,13 +19,11 @@ function localDay(timeZone: string): Date {
   return getDateInTimeZone({ date: new Date(), timeZone });
 }
 
-/** A zone whose day isn't São Paulo's right now: far ahead of it, or far behind it early on. */
 function zoneOnAnotherDay(): string {
   const zones = ["Pacific/Kiritimati", "Pacific/Pago_Pago"];
   return zones.find((zone) => localDay(zone).getTime() !== localDay(SAO_PAULO).getTime()) ?? "UTC";
 }
 
-/** Ana: her goal lives in São Paulo, and today's session there is built, not opened yet. */
 async function setup({ timezone = SAO_PAULO }: { timezone?: string | null } = {}) {
   const user = await userFixture();
   const goal = await goalFixture({ timezone, userId: user.id });
@@ -46,7 +44,6 @@ async function readZone(goalId: string) {
   return goal.timezone;
 }
 
-/** The goal a Today read is about, its day ready or still preparing. */
 function todayGoalId(result: TodayViewResult): string | null {
   if (result.status === "ready") {
     return result.today.goal.id;
@@ -55,7 +52,6 @@ function todayGoalId(result: TodayViewResult): string | null {
   return "goal" in result ? result.goal.id : null;
 }
 
-/** The goal plan's input version, as writers raise it. */
 function readVersions({ planId }: { planId: string; userId: string }) {
   return prisma.plan.findUniqueOrThrow({ select: { inputVersion: true }, where: { id: planId } });
 }
@@ -165,7 +161,6 @@ describe("moving a goal's zone inside a writer's transaction", () => {
     const { goal, user } = await setup();
     const plan = await planFixture({ goalId: goal.id });
 
-    // Another writer moved the goal to Tokyo after this one read São Paulo.
     await prisma.goal.update({ data: { timezone: "Asia/Tokyo" }, where: { id: goal.id } });
     const before = await readVersions({ planId: plan.id, userId: user.id });
 
@@ -180,7 +175,6 @@ describe("moving a goal's zone inside a writer's transaction", () => {
       )
       .catch((error: unknown) => error);
 
-    // The caller tells this rollback from a real failure.
     expect(isTimeZoneUnchanged(lost) && lost.reason).toBe("zoneChanged");
     expect(isTimeZoneUnchanged(new Error("connection lost"))).toBe(false);
 
@@ -195,7 +189,6 @@ describe("moving a goal's zone inside a writer's transaction", () => {
     const continuePlanWriter = Promise.withResolvers<null>();
     const movePID = Promise.withResolvers<number>();
 
-    // A plan writer holds the plan, then marks the learner and writes the goal row.
     const planWriter = prisma.$transaction(async (tx) => {
       await tx.$queryRaw`SELECT id FROM plans WHERE id = ${plan.id}::uuid FOR UPDATE`;
       locked.resolve(null);
@@ -226,7 +219,6 @@ describe("moving a goal's zone inside a writer's transaction", () => {
     const pid = await movePID.promise;
 
     try {
-      // The move waits on the plan, before it holds the learner's or the goal's row.
       await expect
         .poll(async () => {
           const [backend] = await prisma.$queryRaw<{ waiting: boolean }[]>`

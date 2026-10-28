@@ -2,19 +2,14 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getStartOfLocalDay } from "./_utils/local-time";
 import { type SkillMemory, getSkillRetrievability } from "./fsrs-scheduler";
 
-/** A studied skill that may need a review, with its FSRS memory. */
 export type ReviewCandidate = { skillId: string; memory: SkillMemory };
 
-/**
- * About a third of the daily study time goes to reviews, and one quick review question takes about
- * 45 seconds. The cap keeps even a long break from turning into a wall of reviews.
- */
+/** Cap reviews so returning after a long break does not create a wall of overdue work. */
 export const REVIEW_SHARE_OF_DAY = 0.3;
 export const MINUTES_PER_REVIEW = 0.75;
 const MIN_REVIEWS_PER_DAY = 3;
 const MAX_REVIEWS_PER_DAY = 30;
 
-/** How many skills one day's reviews can hold at the learner's daily study time. */
 export function getDailyReviewCap({ dailyMinutes }: { dailyMinutes: number }): number {
   const reviews = Math.round((dailyMinutes * REVIEW_SHARE_OF_DAY) / MINUTES_PER_REVIEW);
   return Math.min(MAX_REVIEWS_PER_DAY, Math.max(MIN_REVIEWS_PER_DAY, reviews));
@@ -24,7 +19,6 @@ function isDueBy(candidate: ReviewCandidate, until: Date): boolean {
   return candidate.memory.due !== null && candidate.memory.due < until;
 }
 
-/** Lowest chance of recall first (most at risk of being forgotten), then the longest overdue. */
 function compareReviewPriority({
   a,
   b,
@@ -44,11 +38,7 @@ function compareReviewPriority({
   return (a.memory.due?.getTime() ?? 0) - (b.memory.due?.getTime() ?? 0);
 }
 
-/**
- * Picks the reviews for one day: skills due before `until` (usually the end of the learner's
- * day), most at risk first, never more than `cap`. Skills left out stay due and come first on the
- * next days, so missed days re-flow instead of piling up.
- */
+/** Never exceeds cap; until is normally the end of the learner-local day. */
 export function selectDueReviews({
   candidates,
   cap,
@@ -66,11 +56,7 @@ export function selectDueReviews({
 
 type ForecastDay = { localDate: Date; reviews: number };
 
-/**
- * Forecasts the review load of the next `days` learner-local days under the daily cap. Overdue
- * skills spread over the first days rather than landing on one, which is what "Opens Friday" and
- * plan estimates read. A skill reviewed in the forecast is not rescheduled inside it.
- */
+/** Spreads overdue work under the daily cap and does not reschedule forecasted reviews within the forecast. */
 export function forecastReviewLoad({
   candidates,
   cap,
