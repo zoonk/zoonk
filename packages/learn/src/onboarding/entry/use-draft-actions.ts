@@ -9,10 +9,6 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { type GoalError, useStartError } from "../goal-errors";
 import { type StartUnderstandingOutcome, type UnderstandingActions } from "../onboarding-actions";
 
-/**
- * Reading the words again hit a cap: the day's small AI calls, a guest's one goal, or the guests'
- * daily AI budget.
- */
 function isLimit(
   outcome: StartUnderstandingOutcome | null,
 ): outcome is Extract<
@@ -26,10 +22,6 @@ function isLimit(
   );
 }
 
-/**
- * What the learner can do with a draft on screen: load it once its words were read, start the read
- * again ("Try again"), and fix one fact on the card. Each hands the new draft to `onDraft`.
- */
 export function useDraftActions({
   draft,
   onDraft,
@@ -41,7 +33,6 @@ export function useDraftActions({
 }) {
   const toError = useStartError();
   const [readFailed, setReadFailed] = useState(false);
-  /** Starting the read again hit a limit: why, with the way to an account when one helps. */
   const [limit, setLimit] = useState<GoalError | null>(null);
   const [isRetrying, startRetrying] = useTransition();
   const pending = useRef<AbortController | null>(null);
@@ -62,7 +53,6 @@ export function useDraftActions({
     return controller.signal;
   }
 
-  /** The run said the words were read: load what was understood. */
   const loadRead = async () => {
     if (!draft) {
       return;
@@ -82,7 +72,6 @@ export function useDraftActions({
     }
   };
 
-  /** "Try again" on a read that failed or didn't start: a new run, followed from the start. */
   const retry = () => {
     if (!draft) {
       return;
@@ -108,7 +97,6 @@ export function useDraftActions({
     });
   };
 
-  /** The follower's own "Try again": the new run's id, followed in place. */
   const restart = async (): Promise<string | null> => {
     if (!draft) {
       return null;
@@ -136,7 +124,6 @@ export function useDraftActions({
     return outcome.draft.generationId;
   };
 
-  /** One fix on the card; false when it couldn't be saved. */
   const revise = async (edit: OnboardingDraftEdit): Promise<boolean> => {
     if (!draft) {
       return false;

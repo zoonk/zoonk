@@ -14,10 +14,8 @@ import {
 } from "../onboarding-frame";
 import { GoalErrorAlert, TypedGoal } from "./goal-outcomes";
 
-/** Before a run is known: the goal was just sent, or its run is starting again. */
 const WAITING_RUN: GenerationRun = { failure: null, status: "waiting", steps: {} };
 
-/** The wait itself: the learner's words, then how far reading them got. */
 function UnderstandingWaitScreen({ goal, run }: { goal: string; run: GenerationRun }) {
   const t = useExtracted();
 
@@ -35,7 +33,6 @@ function UnderstandingWaitScreen({ goal, run }: { goal: string; run: GenerationR
   );
 }
 
-/** No more new goals can be read today: why, and for a guest, the way to an account. */
 function UnderstandingLimit({
   error,
   goal,
@@ -60,17 +57,11 @@ function UnderstandingLimit({
   );
 }
 
-/** Right after sending, before the draft exists. */
 export function SendingGoal({ goal }: { goal: string }) {
   return <UnderstandingWaitScreen goal={goal} run={WAITING_RUN} />;
 }
 
-/**
- * A draft whose words are still being read, or couldn't be. A running read is followed live and
- * moves on by itself (`onReady`); one that failed or never started waits for the learner's "Try
- * again" (`onRetry`), since starting it is new work. After a refresh this only follows: it never
- * starts anything on its own.
- */
+/** Only follows the read: one that failed or never started waits for the learner's "Try again", since starting it is new work. */
 export function UnderstandingWait({
   draft,
   isRetrying,
@@ -83,13 +74,10 @@ export function UnderstandingWait({
 }: {
   draft: OnboardingDraftView;
   isRetrying: boolean;
-  /** Starting it again hit the day's limit: why, with the way to an account for a guest. */
   limitError: GoalError | null;
   onReady: () => void;
-  /** Starts the read again from the follower's "Try again"; resolves to the new run's id. */
   onRestart: () => Promise<string | null>;
   onRetry: () => void;
-  /** The read finished, but its result couldn't be loaded. */
   readFailed: boolean;
   signUpHref: string;
 }) {

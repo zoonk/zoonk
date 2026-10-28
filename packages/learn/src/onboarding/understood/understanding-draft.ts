@@ -4,10 +4,8 @@ import {
   type UnderstoodSchedule,
 } from "@zoonk/core/view-models/onboarding/contract";
 
-/** What the learner is confirming on the card, with their edits. */
 export type UnderstandingDraft = {
   goals: UnderstoodGoalView[];
-  /** Whether the typed goal said how long they study, so the card shows it. */
   minutesSaid: boolean;
   schedule: UnderstoodSchedule;
 };
@@ -27,10 +25,6 @@ export function toUnderstandingDraft({
 
 type Draft = UnderstoodGoalView["draft"];
 
-/**
- * The main goal remembers what the learner wants from their material: an exam on it asks for its
- * date, and lessons that teach it skip the "what for" question.
- */
 function withMaterialIntent({
   draft,
   intent,
@@ -48,7 +42,6 @@ function withMaterialIntent({
   return { ...draft, details: needsPurpose ? { ...details, purpose: "other" } : details };
 }
 
-/** The confirmed card as `POST /v1/goals` takes it: the goals share the day's time. */
 export function toGoalCreateInput({
   draft,
   materialIntent = null,
@@ -56,9 +49,7 @@ export function toGoalCreateInput({
   timeZone,
 }: {
   draft: UnderstandingDraft;
-  /** What the learner chose to do with the material they attached. */
   materialIntent?: "exam" | "questions" | "understand" | null;
-  /** Material attached with the paperclip, for the main goal's research and curriculum. */
   sourceIds?: string[];
   timeZone: string;
 }): GoalCreateInput {

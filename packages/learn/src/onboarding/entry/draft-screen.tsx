@@ -30,12 +30,10 @@ type DraftActions = ReturnType<typeof useDraftActions>;
 type Creation = {
   error: GoalError | null;
   isCreating: boolean;
-  /** Creates goals, then goes on to their steps. */
   run: (run: () => Promise<CreateGoalsOutcome>) => void;
   startExplanation: (input: { draft: OnboardingDraftView; question: string }) => void;
 };
 
-/** An instrument: musicianship to start today, and the waitlist for playing. */
 function InstrumentDraft({
   actions,
   creation,
@@ -73,7 +71,6 @@ function InstrumentDraft({
   );
 }
 
-/** What a read draft turned out to be, each with its own next step. */
 function ReadDraft({
   actions,
   attached,
@@ -92,7 +89,6 @@ function ReadDraft({
   creation: Creation;
   draft: OnboardingDraftView;
   draftActions: DraftActions;
-  /** A goal limit the learner already reached, said before they typed. */
   goalLimit: GoalLimitReason | null;
   intent: MaterialIntent | null;
   onBack: () => void;
@@ -157,10 +153,6 @@ function ReadDraft({
   }
 }
 
-/**
- * The typed goal as its draft says now: the wait while its words are read (or the way to try
- * again), then what they turned out to be.
- */
 export function DraftScreen({
   draft,
   draftActions,
@@ -171,7 +163,6 @@ export function DraftScreen({
   creation: Creation;
   draft: OnboardingDraftView;
   draftActions: DraftActions;
-  /** A goal limit the learner already reached, said before they typed. */
   goalLimit: GoalLimitReason | null;
   intent: MaterialIntent | null;
   onBack: () => void;

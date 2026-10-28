@@ -8,10 +8,6 @@ import { MAX_GOAL_LENGTH } from "../entry/goal-entry";
 import { GOAL_PANEL_CLASS } from "../entry/goal-field";
 import { TypedGoal } from "../entry/goal-outcomes";
 
-/**
- * What the learner wrote, above what was understood. "Fix something" opens it to change the words,
- * which are then read again from scratch, so every fact on the card follows the new words.
- */
 export function UnderstoodWords({
   disabled,
   onCancel,
@@ -61,7 +57,6 @@ export function UnderstoodWords({
         maxLength={MAX_GOAL_LENGTH}
         onChange={(event) => setValue(event.target.value)}
         onFocus={(event) => {
-          // The caret waits at the end of the words, ready to add or change a detail.
           const { length } = event.currentTarget.value;
           event.currentTarget.setSelectionRange(length, length);
         }}

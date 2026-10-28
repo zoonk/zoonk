@@ -51,7 +51,6 @@ function readEditValue({ draft, row }: { draft: GoalDraft; row: UnderstoodRow })
   return typeof value === "string" ? value : "";
 }
 
-/** One fix on the card, as the draft takes it; the server recomputes what depends on it. */
 function toDraftEdit({
   field,
   goal,
@@ -70,10 +69,7 @@ function toDraftEdit({
 
 type Field = EditableField["key"];
 
-/**
- * A fact being fixed on one goal's card: the goal's position on the screen and the field. The
- * field, not the row, since the official dates' row turns into a deadline row once it's saved.
- */
+/** By field, not row: the official dates' row turns into a deadline row once it's saved. */
 type FieldEdit = { field: Field; goal: number };
 
 function isField(row: UnderstoodRow, field: Field | null): boolean {
@@ -88,7 +84,6 @@ function GoalCard({
   onEdit,
   onSave,
 }: {
-  /** The field whose editor just closed; its pencil takes focus back. */
   edited: Field | null;
   editing: Field | null;
   extraRows: UnderstoodRow[];
@@ -120,13 +115,6 @@ function GoalCard({
   );
 }
 
-/**
- * "Here's what I understood": every fact the typed goal already gave, one flat row each, with its
- * source when it's official. Confirming is one tap. One wrong fact is fixed in place (any full date
- * for the exam, or the notice's day with one tap); "Fix something" changes the words themselves,
- * which are read again from scratch. A goal Plus would let start (the free plan's one goal, said
- * before they typed, or refused on confirming) has Plus and the free way in their place.
- */
 export function UnderstoodScreen({
   draft,
   error,
@@ -140,19 +128,13 @@ export function UnderstoodScreen({
   signUpHref,
 }: {
   draft: UnderstandingDraft;
-  /** Why the goals couldn't be created, such as a goal limit. */
   error: GoalError | null;
-  /** What the learner typed, shown as they typed it. */
   goal: string;
-  /** A goal limit the learner already reached, said before they typed. */
   goalLimit?: GoalLimitReason | null;
   isCreating: boolean;
-  /** What the learner attached with the paperclip; the first goal is built from it. */
   material: readonly { title: string }[];
   onConfirm: () => void;
-  /** Saves one fix; false when it couldn't be saved. */
   onRevise: (edit: OnboardingDraftEdit) => Promise<boolean>;
-  /** Reads new words from scratch. */
   onRewrite: (words: string) => void;
   signUpHref: string;
 }) {

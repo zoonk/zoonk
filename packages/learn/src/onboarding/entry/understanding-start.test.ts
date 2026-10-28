@@ -102,7 +102,6 @@ describe(sendGoal, () => {
     const draft = draftBeingRead("draft-followed");
     const get = vi.fn(() => Promise.resolve(draft));
     const start = vi.fn(() => Promise.resolve({ draft, status: "started" as const }));
-    // The screens pass their whole actions: reading the draft stays theirs, after its run ends.
     const understanding = { get, start };
 
     const sent = sendGoal({ goal: draft.prompt, language: "en", understanding });

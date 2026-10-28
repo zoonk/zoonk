@@ -2,10 +2,7 @@
 
 import { useLocale } from "next-intl";
 
-/**
- * A well-known exam in each interface language, so the example feels local. Messages name it in a
- * `select`, so each language writes it with its own article ("o ENEM", "la PAU", "le bac").
- */
+/** Messages name it in a `select`, so each language writes it with its own article ("o ENEM", "le bac"). */
 type LocalExam = "abitur" | "bac" | "enem" | "pau" | "sat";
 
 const LOCAL_EXAMS: Record<string, LocalExam> = {
@@ -16,10 +13,7 @@ const LOCAL_EXAMS: Record<string, LocalExam> = {
   pt: "enem",
 };
 
-/**
- * What onboarding's examples suggest, in the interface language: a local exam, and a language to
- * speak that isn't the page's own, since a page never suggests learning the language it's in.
- */
+/** The language suggested is never the page's own. */
 export function useLocalGoalExample(): { exam: LocalExam; language: string } {
   const locale = useLocale();
   const spoken = locale === "en" ? "es" : "en";

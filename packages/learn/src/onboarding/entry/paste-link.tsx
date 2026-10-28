@@ -5,7 +5,6 @@ import { Input } from "@zoonk/ui/components/input";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 
-/** A page with the learner's material: an article, a class page or a public PDF. */
 export function PasteLink({ onAdd, pending }: { onAdd: (url: string) => void; pending: boolean }) {
   const t = useExtracted();
   const inputId = useId();

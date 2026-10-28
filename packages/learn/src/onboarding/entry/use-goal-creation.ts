@@ -16,10 +16,6 @@ function useCreateError() {
       : t("We couldn't save your goal. Try again in a moment.");
 }
 
-/**
- * Creating goals from what was understood: pending while it saves, then on to where the goal
- * continues, or why it couldn't (a goal limit, or a failure) for the screen to say.
- */
 export function useGoalCreation() {
   const createError = useCreateError();
   const [error, setError] = useState<GoalError | null>(null);

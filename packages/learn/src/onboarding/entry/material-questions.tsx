@@ -32,7 +32,6 @@ const MAX_QUESTION_LENGTH = 500;
 
 type Turn = { id: string; outcome: MaterialQuestionOutcome; question: string };
 
-/** The plan's cap on questions: the day's or the month's, with Plus for a free learner. */
 function useQuestionLimitMessage() {
   const t = useExtracted();
 
@@ -51,7 +50,6 @@ function useQuestionLimitMessage() {
   };
 }
 
-/** The buddy's answer to one question, with the pages it came from, or why there's no answer. */
 function TurnAnswer({
   identity,
   outcome,
@@ -105,11 +103,6 @@ function TurnAnswer({
   );
 }
 
-/**
- * "Ask questions" about the material the learner attached, answered by their resolved buddy:
- * each answer comes from their pages and shows the page it came
- * from, so they can read it there.
- */
 export function MaterialQuestions({
   ask,
   buddy,

@@ -14,11 +14,6 @@ import {
   takeSentGoal,
 } from "./understanding-start";
 
-/**
- * Sending a typed goal from this screen (cancelled on leaving or changing goals), and carrying the
- * click on once its words are read (`settle`): wherever it was sent, this tab's own draft says how
- * it was classified, and a question goes straight on to its explanation.
- */
 export function useSubmitUnderstanding({
   draftId,
   hasAttachment,
@@ -44,7 +39,6 @@ export function useSubmitUnderstanding({
 
   useEffect(() => () => submitted.current?.abort(), []);
 
-  // A home-page click transfers to this flow; once it leaves this draft, that click ends here.
   useEffect(() => (draftId ? holdSentGoal(draftId) : undefined), [draftId]);
 
   function cancel() {
@@ -57,10 +51,7 @@ export function useSubmitUnderstanding({
     setIsSubmitting(false);
   }
 
-  /**
-   * One goal on its way at a time: another send while it is (two taps the page replays once its
-   * code has arrived) would save a second draft. Cancelling, or the send ending, lets the next go.
-   */
+  /** One goal on its way at a time: taps replayed once the page's code arrived would otherwise save a second draft. */
   async function send(goal: string) {
     if (submitted.current) {
       return;
@@ -99,7 +90,6 @@ export function useSubmitUnderstanding({
     onDraft(outcome.draft);
   }
 
-  /** A draft on screen: once it's read, the click that sent it from this tab goes on, once. */
   function settle(draft: OnboardingDraftView) {
     const read = draft.status === "understood" ? draft.understanding : null;
     const sentAt = read ? takeSentGoal(draft.id) : null;

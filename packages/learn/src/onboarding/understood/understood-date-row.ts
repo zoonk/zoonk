@@ -19,7 +19,6 @@ import { type UnderstoodRow } from "./use-understood-rows";
 
 const NO_BREAK_SPACE = " ";
 
-/** "2028" in "2028-11-12". */
 const YEAR_LENGTH = 4;
 
 function yearOf(isoDate: string): number {
@@ -28,7 +27,6 @@ function yearOf(isoDate: string): number {
 
 const MONTHS_PER_YEAR = 12;
 
-/** The exam's month the learner named ("in March"), 1 to 12, or null. */
 function readExamMonth(draft: GoalDraft): number | null {
   const month = draft.details?.examMonth;
 
@@ -40,10 +38,6 @@ function readExamMonth(draft: GoalDraft): number | null {
     : null;
 }
 
-/**
- * An exam without its official day, as far as the learner's words go: "March 2027, to be
- * confirmed" when they named the month, else the year, else just to be confirmed.
- */
 function useToBeConfirmed() {
   const t = useExtracted();
   const format = useFormatter();
@@ -67,12 +61,6 @@ function useToBeConfirmed() {
   };
 }
 
-/**
- * The month the learner named when the plan keeps it (see `getKeptMonthStart`): over the notice's
- * day in another month, which the card offers one tap away, or, for an exam held several times a
- * year, with no sitting in their month to offer (see `findMeantExamDay`). The card says what the
- * plan does: their month.
- */
 function useKeptMonthRow() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
@@ -116,7 +104,6 @@ function useKeptMonthRow() {
   };
 }
 
-/** The exam's year: the one the learner named, else the year of its next dates. */
 function readExamYear({
   dates,
   draft,
@@ -134,10 +121,6 @@ function readExamYear({
   return first ? yearOf(first.date) : null;
 }
 
-/**
- * The exam's days in one line, the year said once at the end when they share it ("November 8
- * and November 15, 2026"). Each day stays on one line; a long list breaks between days.
- */
 function useExamDaysValue() {
   const format = useFormatter();
   const formatDate = useFormatIsoDate();
@@ -158,10 +141,6 @@ function useExamDaysValue() {
   };
 }
 
-/**
- * The exam day the goal's date is, when a search or the notice gives it officially (any sitting the
- * learner picked): its source and days left.
- */
 function findOfficialDay({
   draft,
   examDates,
@@ -174,15 +153,8 @@ function findOfficialDay({
   );
 }
 
-/** The sittings a learner without a date picks from: the next ones open for registration. */
 const SITTING_CHOICES = 3;
 
-/**
- * An exam held several times a year when the learner gave no date or month: the card asks which
- * sitting they'll take, from the next ones still open for registration, each one tap away. Until
- * they pick, the plan counts down to the first (see `findLearnerSitting`). Null for an exam of one
- * sitting, or fewer than two sittings to pick from.
- */
 function useSittingChoiceRow() {
   const t = useExtracted();
 
@@ -222,10 +194,6 @@ function useSittingChoiceRow() {
   };
 }
 
-/**
- * The exam's days the learner prepares for: its one sitting, or, held several times a year, the
- * one in the month they named, else the next one open for registration (see `findLearnerSitting`).
- */
 function findMeantSitting({
   draft,
   examDates,
@@ -239,11 +207,7 @@ function findMeantSitting({
   return findLearnerSitting({ days: examDates, from, goalDate }) ?? examDates;
 }
 
-/**
- * The exam's official day when the learner's own date isn't one of its days: offered with one tap,
- * never put in its place. For an exam held several times a year, only the sitting in their date's
- * month (see `findMeantExamDay`). An estimated day is never offered over their date.
- */
+/** Offered with one tap, never put in place of the learner's date; an estimated day is never offered. */
 function findSuggestedDay({
   draft,
   examDates,
@@ -265,7 +229,6 @@ function findSuggestedDay({
   return day;
 }
 
-/** The learner's own date (or the one a search found), with what the notice says about it. */
 function useOwnDateRow() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
@@ -302,12 +265,6 @@ function useOwnDateRow() {
   };
 }
 
-/**
- * The goal's one date row: the day the learner or their words gave (with its official source when
- * a search found it, or the notice's day one tap away when it's another), else the exam's days
- * (official with their source, or estimated from its usual timing), else, for an exam whose
- * official day isn't out, that it's to be confirmed. The learner can set any full date on it.
- */
 export function useDateRow() {
   const t = useExtracted();
   const examDaysValue = useExamDaysValue();

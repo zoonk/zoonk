@@ -14,7 +14,6 @@ import { AttachPanel, SignUpPrompt } from "./attach-panel";
 import { GoalEntry } from "./goal-entry";
 import { type MaterialIntent, MaterialIntentChoice } from "./material-intent";
 
-/** The material already attached, as chips on the goal; removing one only unlinks it here. */
 function AttachedChips({
   items,
   onRemove,
@@ -48,11 +47,6 @@ function AttachedChips({
   );
 }
 
-/**
- * The paperclip's part of the goal box: the chips of what's attached, "What do you want to do?"
- * once there's material and, when open, the way to add more. Only accounts can add material, so
- * guests and visitors see how to create one.
- */
 function GoalAttachments({
   attach,
   canAttach,
@@ -102,10 +96,6 @@ function GoalAttachments({
   );
 }
 
-/**
- * The goal box with its paperclip: the chips of what's attached, what the learner wants to do
- * with them and, when open, how to add more. With material and a choice, the box may stay empty.
- */
 export function AttachableGoalEntry({
   attach,
   attached,

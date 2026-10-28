@@ -16,11 +16,6 @@ import {
 import { StepIcon } from "../steps/step-parts";
 import { SignUpLink } from "./goal-outcomes";
 
-/**
- * A guest whose one goal is taken, before they type another: only an account adds one, so they're
- * asked first instead of after waiting for words that can't become a goal. Their plan comes with
- * them when they sign up.
- */
 export function GuestGoalGate({ routes }: { routes: OnboardingRoutes }) {
   const t = useExtracted();
 

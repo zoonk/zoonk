@@ -4,7 +4,6 @@ import { useExtracted } from "next-intl";
 import { type AttachedSource } from "../onboarding-actions";
 import { type MaterialIntent } from "./material-intent";
 
-/** A goal in words for material attached without any: what to do with it, and its titles. */
 function useMaterialGoal() {
   const t = useExtracted();
 
@@ -17,10 +16,6 @@ function useMaterialGoal() {
   };
 }
 
-/**
- * With material attached, what the learner chose to do with it decides the goal: questions open
- * answers from their pages, and a plan without words is read from the material's titles.
- */
 export function useSubmitGoal({
   attached,
   intent,

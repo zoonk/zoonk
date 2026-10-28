@@ -14,13 +14,12 @@ import {
 } from "../onboarding-actions";
 import { PasteLink } from "./paste-link";
 
-/** What the uploads route reads: PDFs, Word, PowerPoint, text, Markdown and photos. */
+/** What the uploads route reads. */
 const ACCEPTED_FILES =
   ".pdf,.docx,.pptx,.txt,.md,.jpg,.jpeg,.png,.webp,application/pdf,text/plain,text/markdown,image/jpeg,image/png,image/webp";
 
 const PANEL_CLASS = "bg-card ring-border flex flex-col gap-3 rounded-xl p-4 ring-1";
 
-/** The plan's cap on new material: the day's or the month's, with Plus for a free learner. */
 function useAttachLimitMessage() {
   const t = useExtracted();
 
@@ -61,7 +60,6 @@ function useAttachError() {
   };
 }
 
-/** Guests and visitors: their material needs an account, so the paperclip says how to get one. */
 export function SignUpPrompt({ signUpHref }: { signUpHref: string }) {
   const t = useExtracted();
 
@@ -121,11 +119,6 @@ type AttachControlsProps = {
   onAttached: (source: AttachedSource) => void;
 };
 
-/**
- * The ways to add material: upload a file, or paste text or a link, with the pending and error
- * states. The onboarding paperclip wraps them in its panel; other screens that ask for a document
- * (the notice research couldn't find) put them under their own words.
- */
 export function AttachControls({ attach, language, onAttached }: AttachControlsProps) {
   const t = useExtracted();
   const fileId = useId();
@@ -134,7 +127,6 @@ export function AttachControls({ attach, language, onAttached }: AttachControlsP
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  // Another way to add it is a new try: the last one's error is about something else.
   const toggle = (way: "link" | "text") => {
     setError(null);
     setPasting((previous) => (previous === way ? null : way));
@@ -232,7 +224,6 @@ export function AttachControls({ attach, language, onAttached }: AttachControlsP
   );
 }
 
-/** Upload a file, or paste text or a link; each becomes a chip on the goal. */
 export function AttachPanel(props: AttachControlsProps) {
   const t = useExtracted();
 

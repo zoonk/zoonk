@@ -3,13 +3,8 @@
 import { useExtracted } from "next-intl";
 import { type Choice, ChoiceList } from "../choice-list";
 
-/**
- * What the learner wants from the material they attached: an exam on it with a date, lessons
- * that teach it in order, or answers to their questions about it.
- */
 export type MaterialIntent = "exam" | "questions" | "understand";
 
-/** "What do you want to do?", once material is attached. */
 export function MaterialIntentChoice({
   onChange,
   value,

@@ -27,10 +27,8 @@ import { GoalLimitNotice, isPlusGoalLimit } from "./goal-limit-notice";
 const BUBBLE_CLASS =
   "bg-muted self-end rounded-xl rounded-br-sm px-3.5 py-2.5 text-[15px] leading-relaxed whitespace-pre-wrap";
 
-/** An outcome's glyph over its title: bare, no tile. */
 const ICON_CLASS = "text-muted-foreground flex [&_svg]:size-6";
 
-/** Creating a free account, as a screen's one main action. */
 export function SignUpLink({ href }: { href: string }) {
   const t = useExtracted();
 
@@ -41,11 +39,6 @@ export function SignUpLink({ href }: { href: string }) {
   );
 }
 
-/**
- * Why the goal couldn't be read or created, said where the learner tried. A limit only an account
- * lifts (a guest's one goal, their day's AI help) isn't an error: it says why, and creating a free
- * account is the way on. One Plus lifts (the free plan's one goal at a time) is the Plus notice.
- */
 export function GoalErrorAlert({
   error,
   signUpHref,
@@ -81,10 +74,6 @@ export function GoalErrorAlert({
   );
 }
 
-/**
- * The buttons of a screen that starts a goal, under why it couldn't when that happened. When only
- * an account helps, creating one replaces them, so nothing competes with the one way on.
- */
 export function GoalFooter({
   children,
   error,
@@ -110,16 +99,11 @@ export function GoalFooter({
   );
 }
 
-/** What the learner typed, as they typed it. */
 export function TypedGoal({ goal }: { goal: string }) {
   return <p className={BUBBLE_CLASS}>{goal}</p>;
 }
 
-/**
- * A question gets a short explanation instead of a plan. Right after the learner sent it, it opens
- * by itself (`isStarting`); coming back to it later, it waits for their tap, since writing the
- * explanation is new work.
- */
+/** Right after sending it opens by itself (`isStarting`); coming back later it waits for a tap, since writing it is new work. */
 export function ExplainGoal({
   error,
   goal,
@@ -159,7 +143,6 @@ export function ExplainGoal({
   );
 }
 
-/** A goal the app can't help with, said kindly, with another way to start. */
 export function DeclinedGoal({ goal, onRetry }: { goal: string; onRetry: () => void }) {
   const t = useExtracted();
 
@@ -184,7 +167,6 @@ export function DeclinedGoal({ goal, onRetry }: { goal: string; onRetry: () => v
   );
 }
 
-/** Too vague to plan: ask for a little more instead of guessing. */
 export function UnclearGoal({ goal, onRetry }: { goal: string; onRetry: () => void }) {
   const t = useExtracted();
 
@@ -242,10 +224,6 @@ function WaitlistNote({
   return outcome === "failed" ? <ChangeSaveError /> : null;
 }
 
-/**
- * Playing an instrument needs someone to hear you play, so it's a waitlist for now. Meanwhile,
- * musicianship (reading music, ear training and rhythm) is a normal goal they can start today.
- */
 export function InstrumentGoal({
   error,
   goal,

@@ -6,13 +6,8 @@ import { useExtracted, useLocale } from "next-intl";
 import { type OnboardingActions } from "../onboarding-actions";
 import { getExplanationGoalInput } from "./understanding-start";
 
-/** Musicianship starts with a gentle daily time. */
 const MUSICIANSHIP_MINUTES = 15;
 
-/**
- * Goals that come straight from a read draft, without the card: its quick explanation, or
- * musicianship for an instrument. Both carry the draft's id, which closes the draft.
- */
 export function useDraftGoals(actions: OnboardingActions) {
   const t = useExtracted();
   const locale = useLocale();

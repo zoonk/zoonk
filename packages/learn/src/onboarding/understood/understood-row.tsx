@@ -12,15 +12,12 @@ import { type UnderstoodRow as Row } from "./use-understood-rows";
 
 type EditorType = NonNullable<Row["editable"]>["kind"];
 
-/** The editor's native limits: no day before today. */
 function getInputLimits(type: EditorType) {
   return type === "date" ? { min: toLocalIsoDate(new Date()) } : {};
 }
 
-/** Past this, a notice's title (often its whole heading, in capitals) reads as its site instead. */
 const MAX_SOURCE_TITLE_LENGTH = 40;
 
-/** The source as a few words: its short title, else the site it's on ("cebraspe.org.br"). */
 function getSourceName(source: NonNullable<Row["source"]>): string {
   const host = URL.canParse(source.url)
     ? new URL(source.url).hostname.replace(/^www\./u, "")
@@ -30,7 +27,6 @@ function getSourceName(source: NonNullable<Row["source"]>): string {
   return title && title.length <= MAX_SOURCE_TITLE_LENGTH ? title : (host ?? source.url);
 }
 
-/** Where an official fact comes from, as a quiet link to it ("inep.gov.br ↗"). */
 function SourceLink({ source }: { source: NonNullable<Row["source"]> }) {
   const t = useExtracted();
 
@@ -58,7 +54,7 @@ function RowEditor({
   defaultValue: string;
   label: string;
   onCancel: () => void;
-  /** Saves the fix; false when it couldn't be saved, so the editor stays open to try again. */
+  /** False when it couldn't be saved, which keeps the editor open. */
   onSave: (value: string) => Promise<boolean>;
   type: EditorType;
 }) {
@@ -109,7 +105,6 @@ function RowEditor({
   );
 }
 
-/** "Use this date" for the notice's day, saved as the row's date, with a word when it isn't. */
 function SuggestedDate({
   date,
   onSave,
@@ -132,7 +127,6 @@ function SuggestedDate({
   );
 }
 
-/** The dates the row's date is picked from (an exam's next sittings), each saved with one tap. */
 function ChoiceDates({
   dates,
   onSave,
@@ -169,14 +163,6 @@ function ChoiceDates({
   );
 }
 
-/**
- * One understood fact as a flat row: what it is, the value, where it came from, and a pencil to
- * fix it in place (always there on touch; with a pointer, on hover and focus). On phones the label
- * sits over the value; from `sm` they share the line, labels in one column. Official exam dates
- * keep their source one tap away, and the notice's day, when the date is another, one tap to take.
- * Closing the editor gives focus back to the pencil (`focusEdit`), so keyboard users keep their
- * place.
- */
 export function UnderstoodRowItem({
   editValue,
   editing,
@@ -189,7 +175,6 @@ export function UnderstoodRowItem({
   editing: boolean;
   focusEdit: boolean;
   onEdit: (editing: boolean) => void;
-  /** Saves the fix; false when it couldn't be saved. */
   onSave: (value: string) => Promise<boolean>;
   row: Row;
 }) {

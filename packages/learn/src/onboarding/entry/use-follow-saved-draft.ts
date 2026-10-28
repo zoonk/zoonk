@@ -1,7 +1,6 @@
 import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/contract";
 import { useState } from "react";
 
-/** Two saved copies of a draft say the same: the page reads a new object on each render. */
 function isSameDraft(
   next: OnboardingDraftView | null | undefined,
   previous: OnboardingDraftView | null | undefined,
@@ -9,13 +8,7 @@ function isSameDraft(
   return JSON.stringify(next ?? null) === JSON.stringify(previous ?? null);
 }
 
-/**
- * Follows the page's saved copy of the draft on screen (`initialDraft`) when it changes (another
- * tab corrected it), so confirming here sends what's saved: `follow` shows it. Never over a copy
- * this screen saved or read itself (`markOwn`): no version says which of the two is newer, and the
- * page may have read before that copy was saved. A page copy equal to it means the page caught up,
- * and the screen follows the page again.
- */
+/** Never over a copy this screen saved or read itself (`markOwn`): no version says which is newer. */
 export function useFollowSavedDraft({
   follow,
   initialDraft,

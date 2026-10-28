@@ -36,10 +36,6 @@ function useGoalExamples(): GoalExample[] {
   ];
 }
 
-/**
- * Examples in the interface language, as flat rows: the goal, and what kind of goal it is under
- * it. Each one starts onboarding with its words.
- */
 export function GoalExamples({
   className,
   onPick,

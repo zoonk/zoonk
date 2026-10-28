@@ -7,27 +7,15 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useEffect, useRef } from "react";
 import { useKeptTyping } from "../../use-kept-typing";
 
-/**
- * The words in the field and anything stacked in the same place (the landing's rotating examples)
- * share one size, so they line up.
- */
 export const GOAL_FIELD_TEXT_CLASS = "py-2.5 text-[17px] leading-6";
 
-/** The words' name in a goal form's data. */
 const GOAL_FIELD = "goal";
 
-/**
- * How a goal box sends: through a form action, with the words the box holds. A tap before the
- * form's code has arrived (a slow device) is sent once it has, with what was typed until then, so
- * the box is uncontrolled (`defaultValue`, with `field` spread on it) and `action` goes to
- * `GoalField`. With nothing to send it puts the cursor in the box instead: the button is never
- * greyed out.
- */
+/** The box is uncontrolled (`defaultValue`, with `field` spread on it), so a tap before the form's code arrived is sent once it has, with what was typed. */
 export function useGoalFieldAction({
   canSendEmpty = false,
   onSend,
 }: {
-  /** Material is attached and what to do with it chosen, so the words are optional. */
   canSendEmpty?: boolean;
   onSend: (goal: string) => void;
 }) {
@@ -49,7 +37,6 @@ export function useGoalFieldAction({
     send(typeof words === "string" ? words : "");
   };
 
-  // Words put in the box (an example, to change before sending), with the cursor after them.
   const fill = (words: string) => {
     const field = ref.current;
 
@@ -62,25 +49,10 @@ export function useGoalFieldAction({
   return { action, field: { name: GOAL_FIELD, ref }, fill, send };
 }
 
-/**
- * The panel onboarding's boxes are written in (the goal, a rewrite of it, a question about the
- * learner's material): the stronger line, which takes the app's field focus while its words have
- * focus (the line in the ring's color and a 3px ring around it, as `Input` draws), so someone on
- * a keyboard sees where they are. Words that took focus on their own as the page opened
- * (`autoFocusOnPointer`) only darken the line, as the buddy's composer does, until they're left:
- * the page's first sight is the question, not a ring. With more contrast asked for, the line at
- * rest is already the text color, so any focus takes the full ring. The buttons inside draw their
- * own.
- */
+/** Words focused on their own as the page opened (`data-autofocused`) only darken the line until they're left, so the page's first sight isn't a ring. */
 export const GOAL_PANEL_CLASS =
   "bg-card inset-ring-input has-[textarea[data-autofocused]:focus]:inset-ring-foreground/35 contrast-more:has-[textarea[data-autofocused]:focus]:inset-ring-ring contrast-more:has-[textarea:focus-visible]:ring-ring/50 contrast-more:has-[textarea:focus-visible]:ring-[3px] has-[textarea:focus-visible:not([data-autofocused])]:inset-ring-ring has-[textarea:focus-visible:not([data-autofocused])]:ring-ring/50 rounded-xl inset-ring transition-shadow has-[textarea:focus-visible:not([data-autofocused])]:ring-[3px] motion-reduce:transition-none";
 
-/**
- * The one place a goal is written, on the landing and on `/start`: a panel with the stronger line,
- * the words, and "Build my plan ⏎" inside it. Put a `GoalFieldText` (or the words' own grid) and a
- * `GoalFieldSubmit` inside; anything before the words (the paperclip, the "I want to" label)
- * goes first.
- */
 export function GoalField({ className, ...props }: React.ComponentProps<"form">) {
   return (
     <form
@@ -95,7 +67,6 @@ export function GoalField({ className, ...props }: React.ComponentProps<"form">)
   );
 }
 
-/** A quiet word before the goal ("I want to"), on the words' first line, naming the field `htmlFor`. */
 export function GoalFieldLabel({
   children,
   className,
@@ -119,13 +90,7 @@ export function GoalFieldLabel({
   );
 }
 
-/**
- * The goal's words: one line that grows with them. Enter sends (Shift+Enter breaks the line). On
- * a device with a mouse or trackpad it takes focus when it shows (`autoFocusOnPointer`), unless
- * the learner already has keyboard focus on a control, whose focus and ring stay; on a phone it
- * waits for a tap, so the keyboard doesn't cover what's under it. Words typed before its code
- * arrived stay, instead of the words it came with (`useKeptTyping`).
- */
+/** Takes focus as it shows only with a fine pointer, and not from a control the keyboard is on: on a phone, focus would raise the keyboard. */
 export function GoalFieldText({
   autoFocusOnPointer = false,
   className,
@@ -199,7 +164,6 @@ export function GoalFieldText({
   );
 }
 
-/** "Build my plan ⏎": the field's inverted button, busy while the goal is on its way. */
 export function GoalFieldSubmit({
   children,
   className,
