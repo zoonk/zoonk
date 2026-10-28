@@ -33,16 +33,13 @@ import {
   type TutorTarget,
 } from "./contract";
 
-/** How the apps word one of the tutor's suggestions in a language. */
 type WordSuggestion = (input: {
   language: string;
   suggestion: LessonScreenSuggestion;
 }) => Promise<string>;
 
-/** What the learner asked, as stored: a tapped suggestion in the app's own words. */
 type AskedQuestion = { question: string; suggestion: LessonScreenSuggestion | null };
 
-/** Counts the question toward today's missions; what it completed, for the conversation to say. */
 async function settleAskedQuestion({
   questionId,
   userId,
@@ -59,10 +56,6 @@ async function settleAskedQuestion({
 
 type PersistedQuestionOutcome = Awaited<ReturnType<typeof getCreateLessonQuestionOutcome>>;
 
-/**
- * A question just asked, as the client asked to read it, with what asking did to today's missions;
- * a conflicting request, as it is.
- */
 async function finishCreatedQuestion({
   outcome,
   userId,
@@ -135,7 +128,6 @@ async function persistLessonQuestion({
 }) {
   const threadWhere = { ...getSubjectThreadColumn(subject), userId };
 
-  // A new question shows on the thread; a retried request or a blocked one changes nothing.
   return writeLearnerChange<PersistedQuestionOutcome>({ userId }, async (transaction) => {
     await transaction.lessonQuestionThread.createMany({
       data: [{ ...threadWhere, kind: subject.kind }],
@@ -194,10 +186,7 @@ async function persistLessonQuestion({
   });
 }
 
-/**
- * A tapped suggestion is asked in the app's own words, in the thread's language, whatever words
- * the client sent, so a learner's words never stand in for one. Anything else is asked as written.
- */
+/** Ignore client text for recognized suggestions so private learner words can never enter a shared answer. */
 async function toAskedQuestion({
   input,
   language,
@@ -217,11 +206,7 @@ async function toAskedQuestion({
   };
 }
 
-/**
- * Creates one durable learner turn only after live access to what it's about has been checked and
- * the context the tutor sees has been built on the server: a lesson's screens from the step ids
- * the client sent, or the chapter, plan or finished mock as a whole.
- */
+/** Requires a learner session and current subject access; builds all content-bearing context on the server. */
 export async function createLessonQuestion({
   input,
   target,
@@ -229,7 +214,7 @@ export async function createLessonQuestion({
 }: {
   input: CreateLessonQuestionInput;
   target: TutorTarget;
-  /** Words a tapped suggestion; without it, a suggestion is asked as the learner's own words. */
+  /** Without a suggestion translator, supplied text remains a personal question. */
   wordSuggestion?: WordSuggestion;
 }) {
   const session = await getSession();
@@ -264,7 +249,7 @@ export async function createLessonQuestion({
     });
   }
 
-  // A first question leaves what Today offers: the day Today shows is saved before it's asked.
+  // Save the offered day before a question can complete one of its missions.
   await saveDayBeforeActivity({ userId });
 
   const [context, asked] = await Promise.all([

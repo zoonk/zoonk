@@ -3,7 +3,6 @@ import { type PlanScopeContext } from "@zoonk/ai/tasks/lessons/question-context"
 import { type Goal } from "@zoonk/db";
 import { loadTargetCutoff } from "../../exams/cutoffs/load-target-cutoff";
 
-/** The target's last cut-off in a few words, for the buddy to say where the bar was. */
 export async function loadGoalCutoff(goal: Goal): Promise<PlanScopeContext["goal"]["cutoff"]> {
   const cutoff = await loadTargetCutoff({
     details: goal.details,

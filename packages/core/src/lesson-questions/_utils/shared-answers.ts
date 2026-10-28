@@ -6,13 +6,7 @@ export type SharedAnswerKey = { stepId: string; suggestion: LessonScreenSuggesti
 
 type SharedQuestion = Pick<LessonQuestion, "contextKind" | "libraryStepId" | "suggestion">;
 
-/**
- * Where a question's shared answer lives, written once for everyone who taps the same suggestion
- * on the screen.
- * Only the tutor's own suggestions about a lesson screen have one, as a first question (a
- * follow-up depends on the conversation before it): whatever a learner types is theirs, answered
- * with what memory knows about them, so shared rows never hold a learner's words.
- */
+/** Only first-turn screen suggestions can share answers; typed learner text and follow-ups must remain private. */
 export function getSharedAnswerKey({
   hasPriorTurns,
   question,
@@ -32,10 +26,7 @@ export function getSharedAnswerKey({
   return { stepId: question.libraryStepId, suggestion: question.suggestion };
 }
 
-/**
- * Saves an answer as its screen's shared answer and links the question to it. The first writer
- * wins: a learner who raced another one to the same suggestion links the answer already saved.
- */
+/** First writer wins; racing questions link the already-saved shared answer. */
 export async function saveSharedAnswer({
   answer,
   key,

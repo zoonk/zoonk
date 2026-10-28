@@ -29,10 +29,8 @@ const PLAN_ITEM_REASONS = [
   "weakArea",
 ] as const;
 
-/** A mock exam the learner's plan doesn't include stays on its day, marked as Plus's. */
 const plusMarkSchema = z.literal(true).optional();
 
-/** Where something opens in the app (see `TutorLink`); null or absent when it opens nowhere. */
 const tutorLinkSchema = z
   .discriminatedUnion("kind", [
     z.object({ blockId: z.string(), kind: z.literal("block") }),
@@ -142,12 +140,10 @@ const planScopeSnapshotSchema = z.object({
       name: z.string(),
     })
     .nullable(),
-  // Questions asked before private content was marked have none: they read as private.
+  // Missing privacy marks must default to private.
   privateContent: z.boolean().default(true),
   scope: z.object({ kind: z.literal("plan") }),
-  // Questions to the buddy from its own conversation have no screen.
   screen: screenSnapshotSchema.optional(),
-  // Questions asked from a screen have none.
   selectedGoal: z.literal(true).optional(),
   setup: z
     .object({

@@ -19,7 +19,6 @@ import { lookUpTutorData } from "./look-up-tutor-data";
 
 const MODEL = "openai/gpt-6-luna";
 
-/** A learner with a built plan teaching Math and Biology, each skill in its own area. */
 async function plannedLearner() {
   const user = await userFixture();
 
@@ -37,10 +36,6 @@ async function plannedLearner() {
   return { goal, library, user };
 }
 
-/**
- * A learner whose goal has a plan row and no lessons, for look-ups decided before the plan is read:
- * the goal's mocks, a refusal, or another kind of goal.
- */
 async function learnerWithEmptyPlan() {
   const user = await userFixture();
   const goal = await goalFixture({ userId: user.id });
@@ -50,7 +45,6 @@ async function learnerWithEmptyPlan() {
   return { goal, user };
 }
 
-/** The buddy's answer being written for a question about the goal. */
 async function answering(goalId: string) {
   const created = await createLessonQuestion({
     input: { context: { kind: "plan" }, question: "How am I doing?", requestId: randomUUID() },
@@ -80,7 +74,6 @@ function lookUp(
   return lookUpTutorData({ area: null, query: null, ...asked, ...request });
 }
 
-/** A whole mock taken any time, as starting it fixes it. */
 const MOCK_CONDITIONS: MockConditions = {
   day: null,
   examQuestions: null,
@@ -97,7 +90,6 @@ const MOCK_CONDITIONS: MockConditions = {
   wrongPenalty: 1,
 };
 
-/** A finished mock's result as grading saves it, with no estimate (the exam's scoring has none). */
 function mockResult(): MockResult {
   return {
     areas: [
@@ -141,7 +133,6 @@ describe(lookUpTutorData, () => {
       attemptFixture({ isCorrect: true, skillId: math, userId: user.id }),
       attemptFixture({ isCorrect: true, skillId: math, userId: user.id }),
       attemptFixture({ isCorrect: false, skillId: math, userId: user.id }),
-      // Weeks ago, and another learner's: neither counts.
       attemptFixture({ answeredAt: longAgo, isCorrect: false, skillId: math, userId: user.id }),
       attemptFixture({ isCorrect: false, skillId: math, userId: other.id }),
       mistakeFixture({ skillId: math, userId: user.id }),
@@ -158,7 +149,6 @@ describe(lookUpTutorData, () => {
       what: "subjectProgress",
     });
 
-    // A subject the plan doesn't have says which ones it has.
     await expect(
       lookUp(asked, { area: "Chemistry", what: "subjectProgress" }),
     ).resolves.toStrictEqual({
@@ -396,7 +386,6 @@ describe(lookUpTutorData, () => {
     });
   });
 
-  // Persona pass 10: "You finished 4 lessons" about lessons placement skipped.
   it("tells the lessons a test skipped apart from the ones the learner finished", async () => {
     const { goal, library } = await plannedLearner();
     const [first, second] = library.lessons;
@@ -414,12 +403,10 @@ describe(lookUpTutorData, () => {
   });
 });
 
-/** A skill of an exam plan's graph in one of the notice's subjects. */
 function graphSkill(skill: { id: string; name: string }, area: string) {
   return { area, lessons: 2, name: skill.name, phase: 0, skillId: skill.id };
 }
 
-/** An OAB notice that gives no count per subject, with the latest edition's counts looked up. */
 async function oabLearner() {
   const user = await userFixture();
   const citation = { passage: "Conteúdo programático", sourceId: "notice" };
@@ -458,7 +445,6 @@ async function oabLearner() {
     skillFixture({ name: "Avaliar negócios jurídicos" }),
   ]);
 
-  // The plan follows the notice's subjects, so the syllabus and the reveal show them.
   const plan = await planFixture({
     goalId: goal.id,
     graph: {
@@ -473,7 +459,6 @@ async function oabLearner() {
   return goal;
 }
 
-// Persona pass 10: the buddy said ethics has no count while Sofia's reveal says 8 for it.
 describe("the exam's question counts the buddy reads", () => {
   it("are the ones the app shows: the latest edition's when the notice gives none, with their source", async () => {
     const goal = await oabLearner();

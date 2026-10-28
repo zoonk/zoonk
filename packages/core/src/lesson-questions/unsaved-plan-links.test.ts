@@ -15,7 +15,7 @@ async function selectedCheckpointFixture() {
   const fixture = await unplannedCheckpointFixture({ userId: user.id });
   await createGoalPlan({ goalId: fixture.goal.id, graph: fixture.graph });
   mockSession(user.id);
-  // A legacy plan can lack a newly selected checkpoint. Only the next POST may persist it.
+
   await prisma.$transaction(async (tx) => {
     await markPlansChanged(tx, { planIds: [fixture.plan.id] });
     await tx.planItem.deleteMany({ where: { kind: "boss", planId: fixture.plan.id } });

@@ -4,11 +4,7 @@ import { getString, isJsonObject } from "@zoonk/utils/json";
 import { isUuid } from "@zoonk/utils/uuid";
 import { getSession } from "../users/get-session";
 
-/**
- * A question the learner asked about a lesson that no longer exists: one from an earlier version of
- * a course (before the Library rewrote every course), kept readable so their history isn't lost.
- * The course and lesson titles are what the learner saw then, from the question's snapshot.
- */
+/** Titles come from the saved snapshot when the original course or lesson is gone. */
 export type EarlierQuestion = {
   answer: string | null;
   askedAt: string;
@@ -23,10 +19,8 @@ export type EarlierQuestionsResult =
   | { status: "invalidCursor" }
   | { status: "unauthorized" };
 
-/** One page of the history, newest first; `nextCursor` reads the page before it. */
 const EARLIER_QUESTIONS_PAGE_SIZE = 50;
 
-/** A lesson thread that lost its lesson, and nothing else it could belong to. */
 function earlierThreadWhere(userId: string) {
   return {
     chapterId: null,
@@ -45,7 +39,6 @@ function readSnapshotTitle(snapshot: unknown, key: "course" | "lesson"): string 
   return getString(part, "title");
 }
 
-/** Whether the learner has any such questions, so the buddy only offers them when there are. */
 export async function hasEarlierQuestions(): Promise<boolean> {
   "use cache: private";
 
@@ -63,7 +56,6 @@ export async function hasEarlierQuestions(): Promise<boolean> {
   return question !== null;
 }
 
-/** The questions older than the cursor's, in the newest-first order the pages follow. */
 async function getOlderWhere({ cursor, userId }: { cursor?: string; userId: string }) {
   if (!cursor) {
     return {};
@@ -85,11 +77,7 @@ async function getOlderWhere({ cursor, userId }: { cursor?: string; userId: stri
   };
 }
 
-/**
- * A page of the learner's questions from an earlier version of their courses, newest first, with
- * the answer they got (null when none was saved). They're read-only: the lessons they were about
- * are gone. `cursor` is the last question of the page before.
- */
+/** Read-only history, newest first; cursor is the previous page's last question id. */
 export async function listEarlierQuestions({
   cursor,
 }: { cursor?: string } = {}): Promise<EarlierQuestionsResult> {

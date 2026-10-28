@@ -13,14 +13,9 @@ import { loadSyllabusInput } from "../../view-models/syllabus/_utils/load-syllab
 import { type TutorToolOffer } from "../contract";
 import { type TutorOfferAccess, type TutorToolResult } from "./tutor-tool-result";
 
-/** The words a new goal's card fills in, as long as the goal box takes them. */
 const MAX_GOAL_WORDS = 500;
 
-/**
- * Whether the learner's plan lets them start another goal now: the free plan follows one goal at a
- * time and a few new ones a day, which Plus lifts. Plus's own daily cap is left to the goal's start
- * to say, since there's nothing to unlock.
- */
+/** Plus offers cannot unlock its own daily cap; leave that refusal to goal creation. */
 function getStartGoalAccess(allowance: Allowance | null): TutorOfferAccess {
   if (!allowance || allowance.tier === "plus") {
     return "open";
@@ -33,7 +28,6 @@ function getStartGoalAccess(allowance: Allowance | null): TutorOfferAccess {
   return atGoalLimit || newGoalsLeft === 0 ? "plusRequired" : "open";
 }
 
-/** The catalog's course that teaches the subject, in the learner's language, when one matches. */
 async function findCatalogCourse({
   language,
   topic,
@@ -59,11 +53,7 @@ async function findCatalogCourse({
   };
 }
 
-/**
- * "Start a new goal" with the learner's own words filled in, for something this goal doesn't
- * cover, and the catalog's course for it when one matches. A learner whose plan can't start
- * another goal sees it locked with what Plus unlocks, never hidden.
- */
+/** Unavailable goal slots are shown locked, never hidden. */
 export async function offerStartGoal({
   goal,
   topic,
@@ -90,11 +80,6 @@ export async function offerStartGoal({
   };
 }
 
-/**
- * The exam's written test (an essay) as its subject's page shows it: when the plan practices it,
- * where that changes. A free exam plan past its first days practices it no more, so the card
- * shows it locked with what Plus unlocks.
- */
 export async function offerEssay(goal: Goal): Promise<TutorToolResult> {
   const input = goal.kind === "exam" ? await loadSyllabusInput(goal) : null;
   const practice = input?.writtenPractice;
@@ -133,7 +118,6 @@ export async function offerEssay(goal: Goal): Promise<TutorToolResult> {
   };
 }
 
-/** The mistakes notebook, while the goal has mistakes waiting to be fixed. */
 export async function offerMistakes(goal: Goal): Promise<TutorToolResult> {
   const skillIds = await loadGoalSkillIds(goal.id);
 
@@ -146,7 +130,6 @@ export async function offerMistakes(goal: Goal): Promise<TutorToolResult> {
     : { reason: "noMistakes", status: "unavailable" };
 }
 
-/** The language's mispronounced words due to be said again, named by the first few. */
 export async function offerPronunciation(goal: Goal): Promise<TutorToolResult> {
   if (goal.kind !== "language" || !goal.targetLanguage) {
     return { reason: "notLanguage", status: "unavailable" };
@@ -159,7 +142,6 @@ export async function offerPronunciation(goal: Goal): Promise<TutorToolResult> {
     : { reason: "nothingDue", status: "unavailable" };
 }
 
-/** The Plus page: what it includes for a learner without it, managing it for one with it. */
 export async function offerPlus(): Promise<TutorToolResult> {
   const allowance = await getAllowance();
 

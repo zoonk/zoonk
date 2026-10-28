@@ -75,12 +75,7 @@ async function getQuestionPage({
   };
 }
 
-/**
- * The learner's thread about a lesson, chapter, plan or finished mock, newest page first.
- * Filters before pagination so other steps cannot displace the active step's history. Private
- * cached, so the buddy's tab prefetches with its conversation; the conversation reads it again
- * through the API once on screen, so nothing asked meanwhile is missed.
- */
+/** Newest page first; context/step filters apply before pagination. Refresh through the API when opened after a prefetch. */
 export async function getLessonQuestionThread({
   contextKind,
   cursor,

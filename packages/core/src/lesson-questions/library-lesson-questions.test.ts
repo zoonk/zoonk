@@ -26,17 +26,14 @@ import { createLessonQuestion } from "./create-lesson-question";
 import { getLessonQuestionThread } from "./get-lesson-question-thread";
 import type * as ClaimUsage from "../entitlements/claim-usage";
 
-/** The run that wrote a test answer, as the answers route passes it from the task's provenance. */
 const ANSWER_RUN = {
   generatedAt: "2026-09-27T12:00:00.000Z",
   promptVersion: "lesson-question-test",
   runId: "run-lesson-question-test",
 };
 
-/** Memory extraction calls a model; the memory module's own tests cover what it learns. */
 vi.mock("../memory/update-memory-from-activity", () => ({ updateMemoryFromActivity: vi.fn() }));
 
-/** The real allowance runs; one test makes its claim fail, as a database outage would. */
 vi.mock("../entitlements/claim-usage", async (importOriginal) => {
   const actual = await importOriginal<typeof ClaimUsage>();
   return { ...actual, claimUsage: vi.fn(actual.claimUsage) };
@@ -65,7 +62,6 @@ async function ask({
   return created.question;
 }
 
-/** The tutor's answer to a question, saved as the answers route saves it. */
 function answerWith({ answer, questionId }: { answer: string; questionId: string }) {
   return prisma.lessonQuestion.update({
     data: { answer, status: "completed" },
@@ -73,7 +69,6 @@ function answerWith({ answer, questionId }: { answer: string; questionId: string
   });
 }
 
-/** Asks, and the tutor answers with `answer`. */
 async function askAnswered({ answer, ...asked }: Parameters<typeof ask>[0] & { answer: string }) {
   const question = await ask(asked);
   await answerWith({ answer, questionId: question.id });
@@ -161,8 +156,6 @@ describe("questions about a Library lesson", () => {
     });
   });
 
-  // A missed question comes back at the end of the lesson: before it's checked again, the buddy
-  // only gives hints, so what it said about the miss stays out of what it's answered with.
   it("leaves what the tutor said about an earlier answer out of a hint's history until it's checked again", async () => {
     const { lesson, steps } = await setupPlayableLesson();
     const check = stepOfKind(steps, "check");
@@ -321,7 +314,6 @@ describe("questions about a Library lesson", () => {
       status: "usageRefused",
     });
 
-    // A refused claim releases the question, so it can be answered once the allowance allows.
     await expect(
       prisma.lessonQuestion.findUniqueOrThrow({ where: { id: question.id } }),
     ).resolves.toMatchObject({ status: "failed" });
@@ -369,12 +361,10 @@ describe("questions about a Library lesson", () => {
     const change = { action: "added" as const, fact, previous: null };
     vi.mocked(updateMemoryFromActivity).mockResolvedValue([change]);
 
-    // Nothing is learned from an answer that isn't saved yet.
     await expect(rememberLessonQuestionAnswer({ questionId: question.id })).resolves.toStrictEqual(
       [],
     );
 
-    // Saving is done on its own, so the learner can ask again while memory learns.
     await expect(
       completeLessonQuestionAnswer({
         ...ANSWER_RUN,
@@ -389,7 +379,6 @@ describe("questions about a Library lesson", () => {
 
     expect(updateMemoryFromActivity).not.toHaveBeenCalled();
 
-    // Another learner can't make memory learn from this exchange.
     const stranger = await userFixture();
     mockSession(stranger.id);
 

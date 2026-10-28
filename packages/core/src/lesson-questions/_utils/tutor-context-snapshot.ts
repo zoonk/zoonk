@@ -33,10 +33,7 @@ function isLessonContext(context: LessonQuestionContextInput): context is Lesson
   return context.kind === "lesson" || context.kind === "step" || context.kind === "answer";
 }
 
-/**
- * A subject is its goal's own, and a session's or practice's question comes from one, so they're
- * only ever asked about with that goal's plan.
- */
+/** Item and subject questions require their owning goal's plan. */
 function needsGoalPlan(
   context: TutorScreenContext,
 ): context is ItemScopeContext | SubjectScopeContext {
@@ -49,11 +46,6 @@ function toScreenSnapshot(contextSnapshot: TutorScreenContext | null): ScreenSna
     : INVALID_CONTEXT;
 }
 
-/**
- * What the screen shows: a lesson's screens and answers from the step ids the client sent, or the
- * chapter, mock or subject as a whole, or a session's or practice's question. The context must
- * match the thing the thread is about.
- */
 async function buildScreenSnapshot({
   context,
   subject,
@@ -98,12 +90,6 @@ async function buildScreenSnapshot({
   }
 }
 
-/**
- * Whether the screen's own Library row (its lesson or chapter, with its home course, or its
- * question's skill) was written for this learner alone, so its words are as personal as theirs. A
- * subject's and a mock's words come from the goal's course or the exam: the plan marks a course
- * of the learner's own.
- */
 async function isOwnScreen(subject: ScreenSubject): Promise<boolean> {
   switch (subject.kind) {
     case "lesson": {
@@ -136,7 +122,6 @@ async function isOwnScreen(subject: ScreenSubject): Promise<boolean> {
   }
 }
 
-/** The goal a screen belongs to and its plan, as the buddy reads it; null without one. */
 async function buildScreenGoalSnapshot({
   subject,
   userId,
@@ -150,14 +135,7 @@ async function buildScreenGoalSnapshot({
   return goal && plan ? { goalId: goal.id, plan } : null;
 }
 
-/**
- * What the tutor sees for a new question, built on the server. A question about the plan, or
- * from a chapter, a lesson, a subject or a finished mock inside one of the learner's goals, goes
- * to the buddy with the goal's plan, plus the screen it came from: every place the buddy is asked
- * can read the plan, propose a change to it and offer the app's features. A learner without a
- * goal asks about the screen alone. `goalId` is the goal whose plan the snapshot holds: the
- * question keeps it, so its answer reads and acts on that goal alone (see `findAnsweringGoal`).
- */
+/** Returned goalId must be saved on the question; later answer tools may act on that goal only. */
 export async function buildTutorContextSnapshot({
   context,
   subject,
@@ -168,7 +146,6 @@ export async function buildTutorContextSnapshot({
   userId: string;
 }) {
   if (subject.kind === "plan") {
-    // The buddy's own conversation is about the goal the app has open: its answers may link it.
     const contextSnapshot =
       context.kind === "plan"
         ? await buildPlanContextSnapshot(subject.goal, { conversation: true })
@@ -198,7 +175,7 @@ export async function buildTutorContextSnapshot({
   if (goalPlan) {
     const contextSnapshot = {
       ...goalPlan.plan,
-      // The plan's own marks, and the screen's: a plan without one reads as private.
+      // Treat unmarked plans as private alongside the screen's own privacy mark.
       privateContent: ownScreen || goalPlan.plan.privateContent !== false,
       screen: screen.contextSnapshot,
     };

@@ -29,30 +29,19 @@ import {
   toWeeklyChallenge,
 } from "../plan-day-context";
 
-/** Enough lessons to go over in one answer; the rest only count (`more`). */
 const MAX_CATCH_UP_LESSONS = 30;
 
-/** Two weeks: enough for "what's next week", never the whole plan at once. */
 const SCHEDULE_DAYS = 14;
 
-/** A day's items listed; the rest only count (`moreItems`). */
 const MAX_DAY_ITEMS = 8;
 
-/** The weekly challenges and mocks ahead listed by day: about two months; the rest only count. */
 const MAX_WEEKLY_CHALLENGES = 8;
 
-/** The plan as the apps show it, read only, once it's built; null before. */
 async function readPlanView(goalId: string): Promise<PlanView | null> {
   const result = await getGoalPlan(goalId);
   return result.status === "ready" && result.plan.ready ? result.plan : null;
 }
 
-/**
- * Every lesson earlier days left, past the first few the context lists, from the same rows the
- * plan's status counts (`loadCatchUpItems`), in the plan's order: each linked as the context links
- * it (see `loadCatchUp`). No original day: the plan keeps only that earlier days left them. A free
- * exam plan past its first week has none.
- */
 async function lookUpCatchUp({
   goal,
   scope,
@@ -70,11 +59,7 @@ async function lookUpCatchUp({
   return catchUp ? { ...catchUp, status: "found", what } : { status: "notFound", what };
 }
 
-/**
- * The first day a schedule reads: the day the buddy asked for when it's a real one, never before
- * the day after the one Today opens (that day is in the context, and earlier ones aren't ahead).
- * While the learner is still in the session from before midnight, the calendar's today is ahead.
- */
+/** Ahead begins after the session Today opens, which may still be yesterday's carried session. */
 async function getScheduleStart({ goal, query }: { goal: Goal; query: string | null }) {
   const day = await loadSavedDay(goal);
 
@@ -89,14 +74,12 @@ async function getScheduleStart({ goal, query }: { goal: Goal; query: string | n
   return start > first ? start : first;
 }
 
-/** How a day's items read: the minutes the Plan's week gives them, its access and each subject. */
 type ScheduleSources = {
   minutes: ReadonlyMap<string, number | null>;
   plan: PlanView;
   skillAreas: SkillAreas;
 };
 
-/** A plan item on a day ahead: a stand-in by its subject, as the Plan names it. */
 function toScheduledItem({
   item,
   minutes,
@@ -116,7 +99,6 @@ function toScheduledItem({
   };
 }
 
-/** A day ahead with its first items; past a free exam plan's first week, it comes with Plus. */
 function toScheduleDay({
   date,
   items,
@@ -133,12 +115,7 @@ function toScheduleDay({
   };
 }
 
-/**
- * The plan's study days ahead as it saved them, from the day `query` names (the day after Today's
- * when it names none) through two weeks: each day's items in the plan's order, a few per day.
- * Minutes come from the Plan's own week, the only days it estimates. Days are the learner's own, as
- * the plan stores them; nothing here plans them again.
- */
+/** Read-only; uses saved learner-local dates and returns at most two weeks. */
 async function lookUpSchedule({
   goal,
   query,
@@ -196,17 +173,11 @@ async function lookUpSchedule({
   };
 }
 
-/** A challenge's phase, as the Plan names it: an exam's phases have no name, only their kind. */
 function toChallengePhase(phase: PlanPhaseView | undefined) {
   return phase ? { index: phase.index, kind: phase.kind, name: phase.name || null } : null;
 }
 
-/**
- * Every phase challenge still ahead, as the Plan shows when it comes and whether it's locked, then
- * the next weekly challenges still to take by their day (an exam's mocks, locked as the Plan locks
- * mocks; the week's mixed challenge otherwise), and how many of each the learner already did.
- * Their pages open them, whatever goal is open.
- */
+/** Challenge links remain valid regardless of the currently open goal. */
 async function lookUpChallenges(goal: Goal): Promise<GoalTutorLookUpResult> {
   const what = "challenges";
 
@@ -265,11 +236,7 @@ async function lookUpChallenges(goal: Goal): Promise<GoalTutorLookUpResult> {
   return { challenges: ahead, done, more: planned.length - shown.length, status: "found", what };
 }
 
-/**
- * The daily time that covers the learner's whole goal by its date, found by planning it at each
- * daily time (see `findPlanTimeToCover`): exact, and only when the buddy asks for it, which it does
- * only for a question about time. Not found without a date or while the plan is being built.
- */
+/** Runs the planner only for an explicit time-to-cover lookup; unavailable without a date or built plan. */
 async function lookUpTimeToCover(goal: Goal): Promise<GoalTutorLookUpResult> {
   const what = "timeToCover";
   const result = await findPlanTimeToCover({ goalId: goal.id, input: {} });
@@ -283,10 +250,7 @@ async function lookUpTimeToCover(goal: Goal): Promise<GoalTutorLookUpResult> {
   return { coreMinutes, fittingDate, recommendedMinutes, status: "found", targetDate, what };
 }
 
-/**
- * Reads what a plan lookup asks for (`PLAN_LOOKUPS`) from the learner's own goal: only the goal the
- * answer is about, which `lookUpTutorData` resolved from the signed-in learner's question.
- */
+/** goal must be resolved from the signed-in learner's question, never caller-selected. */
 export function lookUpPlanData({
   goal,
   linkScope,

@@ -7,14 +7,9 @@ import { toSummaryIdeas } from "../../../library/lessons/_utils/summary-ideas";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
 import { matchesQuery } from "./lookup-text";
 
-/** A title's words can fit several lessons ("Review"); a few are enough to pick from. */
 const MAX_LESSONS = 3;
 
-/**
- * Lessons of the learner's plan by title (`query`): what each teaches (its key ideas, from its
- * summary, which holds no question's answer), whether they finished it and when the plan has it.
- * A lesson titled exactly as asked comes alone.
- */
+/** An exact title match returns alone; summary ideas never expose question answers. */
 export async function lookUpLesson({
   goal,
   query,

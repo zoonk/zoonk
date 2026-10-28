@@ -1,12 +1,7 @@
 import "server-only";
 import { AnyNull, type LessonQuestionWhereInput, type TransactionClient, prisma } from "@zoonk/db";
 
-/**
- * Questions asked about an answer the learner checked, so the tutor saw it and the right one: a
- * lesson's screen asked about its answer, or a session's or practice's question asked once it was
- * checked, whose snapshot holds the learner's answer (`screen.answer`, null before the check).
- * Before a question is checked the tutor only gives hints, so these wait until it's checked again.
- */
+/** Checked-answer turns stay hidden during hint-only reattempts to avoid revealing previous solutions. */
 export const aboutCheckedAnswerWhere = {
   OR: [
     { contextKind: "answer" },
@@ -14,7 +9,6 @@ export const aboutCheckedAnswerWhere = {
   ],
 } satisfies LessonQuestionWhereInput;
 
-/** Which of these questions were asked about an answer the learner checked. */
 export async function findAboutCheckedAnswer({
   client = prisma,
   questionIds,

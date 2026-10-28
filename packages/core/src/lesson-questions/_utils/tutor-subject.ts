@@ -9,24 +9,13 @@ import { type SyllabusSubject } from "../../view-models/syllabus/syllabus-contra
 import { type TutorTarget } from "../contract";
 import { type LibraryQuestionLesson, getLessonQuestionAccess } from "./question-access";
 
-/**
- * The thing a thread is about once the learner's access to it is checked, with the language its
- * content and memory are in.
- */
 export type TutorSubject =
   | { chapterId: string; kind: "chapter"; language: string }
   | { goal: Goal; kind: "plan"; language: string }
   | { item: { id: string; language: string }; kind: "item"; language: string }
-  | {
-      goal: Goal;
-      kind: "subject";
-      language: string;
-      /** The subject as the goal's syllabus shows it now. */
-      syllabusSubject: SyllabusSubject;
-    }
+  | { goal: Goal; kind: "subject"; language: string; syllabusSubject: SyllabusSubject }
   | {
       blockId: string | null;
-      /** The goal the mock was taken for, whose plan the buddy reads with it. */
       goalId: string | null;
       kind: "mock";
       language: string;
@@ -34,7 +23,7 @@ export type TutorSubject =
     }
   | { kind: "lesson"; language: string; lesson: LibraryQuestionLesson };
 
-/** A thread finds its mock by id: the mock's session block may be gone. */
+/** Thread lookup uses mock id because its original session block may have been deleted. */
 type SubjectLookup = TutorTarget | { kind: "mock"; mockExamId: string };
 
 type SubjectAccess = { status: "notFound" } | { status: "ready"; subject: TutorSubject };
@@ -53,7 +42,6 @@ async function findLessonSubject({ lessonId, userId }: { lessonId: string; userI
     : NOT_FOUND;
 }
 
-/** Public chapters and the learner's own private ones. */
 async function findChapterSubject({ chapterId, userId }: { chapterId: string; userId: string }) {
   const chapter = await prisma.chapter.findFirst({
     select: { id: true, language: true },
@@ -65,13 +53,11 @@ async function findChapterSubject({ chapterId, userId }: { chapterId: string; us
   );
 }
 
-/** A plan belongs to one of the learner's own goals. */
 async function findPlanSubject({ goalId, userId }: { goalId: string; userId: string }) {
   const goal = await prisma.goal.findFirst({ where: { id: goalId, userId } });
   return toAccess(goal && { goal, kind: "plan", language: goal.language });
 }
 
-/** A subject of one of the learner's own goals, by its key in the goal's syllabus. */
 async function findSyllabusSubject({
   goalId,
   subjectKey,
@@ -98,10 +84,6 @@ async function findSyllabusSubject({
   );
 }
 
-/**
- * Whether the question is on a mock the learner is still sitting, not one whose time ran out while
- * they were away.
- */
 async function isOnRunningMock({ itemId, userId }: { itemId: string; userId: string }) {
   const mocks = await prisma.mockExam.findMany({
     select: {
@@ -125,10 +107,7 @@ async function isOnRunningMock({ itemId, userId }: { itemId: string; userId: str
   );
 }
 
-/**
- * A question of the item bank, as sessions and mistakes practice ask it, unless it's on a mock the
- * learner is still sitting: the tutor never helps with an exam that's still running.
- */
+/** Never offer tutor help on questions in a currently running mock. */
 async function findItemSubject({ itemId, userId }: { itemId: string; userId: string }) {
   const [item, onRunningMock] = await Promise.all([
     prisma.item.findFirst({
@@ -141,9 +120,7 @@ async function findItemSubject({ itemId, userId }: { itemId: string; userId: str
   return toAccess(item && !onRunningMock ? { item, kind: "item", language: item.language } : null);
 }
 
-/**
- * Only the learner's own finished mocks: the tutor never helps with an exam that's still running.
- */
+/** Only finished mocks may receive tutor help. */
 async function findMockSubject({
   userId,
   where,
@@ -151,7 +128,7 @@ async function findMockSubject({
   userId: string;
   where: { blockId: string } | { id: string };
 }) {
-  // A mock taken any time opens by its own id, where a scheduled one opens by its block's.
+  // Anytime mocks have no block and use their own id at the mock route.
   const opened = "blockId" in where ? { OR: [where, { blockId: null, id: where.blockId }] } : where;
 
   const mock = await prisma.mockExam.findFirst({
@@ -211,11 +188,7 @@ function findSubject({ lookup, userId }: { lookup: SubjectLookup; userId: string
   }
 }
 
-/**
- * Checks the learner may ask about a thing, again for every question operation: lessons and
- * chapters that are public or their own, their own goals' plans and subjects, item-bank questions
- * not on a mock they're sitting, and their own finished mocks.
- */
+/** Recheck access for every question operation; running mocks are never eligible. */
 export async function findTutorSubject({
   target,
   userId,
@@ -230,10 +203,6 @@ export async function findTutorSubject({
   return findSubject({ lookup: target, userId });
 }
 
-/**
- * What a stored thread is about; null when its content is gone. Nothing answers a thread about a
- * course any more: the plan's "Ask" answers about the course it's built from.
- */
 function getThreadLookup(
   thread: Pick<
     LessonQuestionThread,
@@ -264,7 +233,7 @@ function getThreadLookup(
   return lookups[thread.kind] || null;
 }
 
-/** Re-checks access to what a stored thread is about. */
+/** Rechecks current access; a saved thread is not an authorization grant. */
 export function findThreadSubject({
   thread,
   userId,
@@ -276,7 +245,6 @@ export function findThreadSubject({
   return lookup ? findTutorSubject({ target: lookup, userId }) : Promise.resolve(NOT_FOUND);
 }
 
-/** The thread's column for its subject: one thread per learner and thing. */
 export function getSubjectThreadColumn(subject: TutorSubject) {
   switch (subject.kind) {
     case "chapter":

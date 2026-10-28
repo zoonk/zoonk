@@ -11,10 +11,7 @@ const PERCENT = 100;
 
 export type Lookup = { area: string | null; goal: Goal; query: string | null; scope: LinkScope };
 
-/**
- * One of the app's pages, when the buddy may link it here: a page that shows the open goal only in
- * that goal's own conversation (see `LinkScope`); every other page always.
- */
+/** Open-goal pages may link only from that goal's own conversation. */
 export function toPageLink({
   page,
   scope,
@@ -27,7 +24,7 @@ export function toPageLink({
     : null;
 }
 
-/** A share from 0 to 1 as the app shows it: points out of 100. */
+/** Converts a fraction from 0 to 1 into rounded points out of 100. */
 export function toPoints(share: number): number {
   return Math.round(share * PERCENT);
 }

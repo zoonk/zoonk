@@ -15,13 +15,11 @@ import {
 import { type LessonScreenSuggestion } from "./contract";
 import { createLessonQuestion } from "./create-lesson-question";
 
-/** Memory reads and memory extraction call models; each is tested apart. */
 vi.mock("../memory/get-memory-for-task", () => ({ findMemoryForTask: vi.fn() }));
 vi.mock("../memory/update-memory-from-activity", () => ({ updateMemoryFromActivity: vi.fn() }));
 
 const MODEL = "openai/gpt-6-luna";
 
-/** How the app words the tutor's suggestions for a lesson screen, in English. */
 const WORDS: Record<LessonScreenSuggestion, string> = {
   deeper: "I want to go deeper",
   example: "Give me another example",
@@ -58,7 +56,6 @@ async function sharedLesson() {
 
 type SharedLesson = Awaited<ReturnType<typeof sharedLesson>>;
 
-/** A learner asks about the lesson's first screen; `suggestion` is the suggestion they tapped. */
 async function askOnScreen({
   question,
   shared,
@@ -100,7 +97,6 @@ async function claimReady(questionId: string) {
   return claimed.claim;
 }
 
-/** Answers like the answers route: saved, then remembered when the answer is personal. */
 async function answerQuestion({ questionId, text }: { questionId: string; text: string }) {
   const claim = await claimReady(questionId);
 
@@ -160,10 +156,8 @@ describe("shared answers to the tutor's suggestions on a screen", () => {
       question: WORDS.simpler,
     });
 
-    // Writing it cost a generation, so it counts against the asker's allowance.
     await expect(countTutorMessages(first.id)).resolves.toBe(1);
 
-    // The next learner who taps it gets the saved answer, whatever their screen calls it.
     const again = await askOnScreen({
       question: "Explique de um jeito mais simples",
       shared,
@@ -228,7 +222,6 @@ describe("shared answers to the tutor's suggestions on a screen", () => {
       answerQuestion({ questionId: typed.id, text: "It means the path around a planet." }),
     ).resolves.toMatchObject({ learnerMemory: ["Studies for a pilot exam"], shareAnswer: false });
 
-    // Typed, even a suggestion's own words are the learner's question: no shared answer is read.
     const sameWords = await askOnScreen({ question: WORDS.simpler, shared, userId: other.id });
 
     await expect(
@@ -258,7 +251,6 @@ describe("shared answers to the tutor's suggestions on a screen", () => {
     expect(asked.question).toBe(WORDS.simpler);
     await answerQuestion({ questionId: asked.id, text: "A simpler take." });
 
-    // What everyone gets holds the app's words only; the client's words were never stored.
     await expect(
       prisma.tutorSharedAnswer.findMany({
         select: { question: true, suggestion: true },
@@ -346,7 +338,6 @@ describe("shared answers to the tutor's suggestions on a screen", () => {
       where: { id: { in: questions.map((question) => question.id) } },
     });
 
-    // Each learner keeps the answer they saw; both point at the one saved for everyone.
     expect(stored.map((question) => question.sharedAnswerId)).toStrictEqual([
       saved[0]?.id,
       saved[0]?.id,

@@ -17,7 +17,6 @@ import { getLessonQuestionThread } from "./get-lesson-question-thread";
 
 type LessonSteps = NonNullable<Parameters<typeof playableLessonFixture>[0]>["steps"];
 
-/** A learner and a written Library lesson, without signing the learner in. */
 async function createLesson(steps?: LessonSteps) {
   const [user, { lesson, steps: lessonSteps }] = await Promise.all([
     userFixture(),
@@ -135,7 +134,6 @@ describe(createLessonQuestion, () => {
     await createLessonQuestion({ input, target: { kind: "lesson", lessonId: lesson.id } });
     await flush();
 
-    // Asked once, however often the request is replayed.
     expect(trackServerEvent).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         distinctId: user.id,

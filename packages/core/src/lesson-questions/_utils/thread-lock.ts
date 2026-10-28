@@ -1,7 +1,6 @@
 import "server-only";
 import { type TransactionClient } from "@zoonk/db";
 
-/** Serializes turn creation and generation claims for one lesson conversation. */
 export async function lockLessonQuestionThread({
   threadId,
   transaction,

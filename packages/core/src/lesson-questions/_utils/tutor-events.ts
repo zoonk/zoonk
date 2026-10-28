@@ -3,7 +3,6 @@ import { type AnalyticsEvent } from "../../analytics/events";
 import { type CreateLessonQuestionInput } from "../contract";
 import { type TutorSubject } from "./tutor-subject";
 
-/** The lesson tutor's scopes as analytics names them: a step is one screen. */
 const LESSON_SCOPES = { answer: "answer", lesson: "lesson", step: "screen" } as const;
 
 function getLessonScope(context: CreateLessonQuestionInput["context"]) {
@@ -12,7 +11,6 @@ function getLessonScope(context: CreateLessonQuestionInput["context"]) {
     : "lesson";
 }
 
-/** "Tutor Asked" for a new question, named by what it's about. */
 export function getTutorAskedEvent({
   input,
   subject,

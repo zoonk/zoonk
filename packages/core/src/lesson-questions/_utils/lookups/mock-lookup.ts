@@ -7,17 +7,12 @@ import { getMockProgress } from "../../../exams/view/_utils/mock-progress";
 import { getAnswerTimeZone } from "../../../learner/_utils/owned-goal";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
 
-/** The latest mocks; how the subjects went over time counts every one. */
 const MAX_MOCKS = 5;
 
-/**
- * The mocks the learner finished for this goal, newest first, as their results show them: right
- * answers by subject, the net for an exam scored right minus wrong, an estimated range only where
- * the exam's scoring gives one, and the subjects that got better or still need work.
- */
+/** Estimated ranges appear only when the exam's scoring supports them. */
 export async function lookUpMocks(goal: Goal): Promise<GoalTutorLookUpResult> {
   const rows = await prisma.mockExam.findMany({
-    // In creation order, so each mock keeps the number its screen showed.
+    // Preserve the mock numbers learners saw on their result screens.
     orderBy: { createdAt: "asc" },
     select: { conditions: true, finishedAt: true, result: true },
     where: { goalId: goal.id, status: "finished", userId: goal.userId },

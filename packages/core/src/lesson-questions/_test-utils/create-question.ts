@@ -6,7 +6,6 @@ import { createLessonQuestion } from "../create-lesson-question";
 
 type LessonSteps = NonNullable<Parameters<typeof playableLessonFixture>[0]>["steps"];
 
-/** A signed-in learner who asked one question about a written Library lesson. */
 export async function createLessonQuestionFixture({ steps }: { steps?: LessonSteps } = {}) {
   const [user, { lesson, steps: lessonSteps }] = await Promise.all([
     userFixture(),

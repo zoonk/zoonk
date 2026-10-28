@@ -22,7 +22,6 @@ function toStepContext({
   stepNumber: number;
 }): LessonQuestionStepContext {
   return {
-    // A language exercise carries its word, sentence and options in today's exercise shape.
     content: "exercise" in step ? step.exercise : step.content,
     kind: step.kind,
     sentence: null,
@@ -31,7 +30,6 @@ function toStepContext({
   };
 }
 
-/** The steps the question is about, in the order the learner saw them. */
 function getContextStepIds(context: LessonScopeContextInput): string[] {
   return context.kind === "lesson" ? (context.stepIds ?? []) : [context.stepId];
 }
@@ -59,10 +57,7 @@ function getRequestedSteps({
   return requested.length === ids.length ? requested : null;
 }
 
-/**
- * Typed and spoken answers are graded by a model on the server, so their verdict is the one the
- * learner saw: their latest recorded answer to the step.
- */
+/** Model-graded answers must use the recorded verdict the learner actually saw. */
 async function getRecordedAnswer({
   answer,
   step,
@@ -132,10 +127,6 @@ function getStepNumber({
   return context.kind === "lesson" ? index + 1 : context.stepNumber;
 }
 
-/**
- * Where the lesson sits: its home chapter and that chapter's course. A lesson outside any chapter
- * stands for both, so the tutor always has a topic to anchor to.
- */
 function getLessonPlace(
   lesson: LibraryQuestionLesson,
 ): Pick<LessonScopeContext, "chapter" | "course" | "lesson"> {
@@ -159,11 +150,6 @@ function getLessonPlace(
   };
 }
 
-/**
- * The tutor's view of a Library lesson, resolved on the server from the step ids the player sent:
- * the lesson and its home chapter and course, the steps in question with their content, and for an
- * answer, the verdict graded again from the stored step.
- */
 export async function buildLibraryQuestionContextSnapshot({
   context,
   lesson,
@@ -173,7 +159,7 @@ export async function buildLibraryQuestionContextSnapshot({
   lesson: LibraryQuestionLesson;
   userId: string;
 }) {
-  // A learner asking about a screen of a version replaced while they played it asks about theirs.
+  // Use the learner's opened version even when a background check has replaced it.
   const version = await findOpenedVersion({
     lessonId: lesson.id,
     stepIds: getContextStepIds(context).filter((id) => isUuid(id)),

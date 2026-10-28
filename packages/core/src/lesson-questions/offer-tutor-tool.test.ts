@@ -20,7 +20,6 @@ import { createLessonQuestion } from "./create-lesson-question";
 import { getLessonQuestionThread } from "./get-lesson-question-thread";
 import { offerTutorTool } from "./offer-tutor-tool";
 
-/** A Monday in 2020, before the learning events other tests write, so estimates stay put. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 
 const ANSWER_RUN = {
@@ -57,10 +56,6 @@ async function setup({ dailyMinutes = 12 }: { dailyMinutes?: number } = {}) {
   return { goal, library, user };
 }
 
-/**
- * A learn goal with a plan row and no lessons, for offers decided before the plan's lessons are
- * read: a refusal, a tool for another kind of goal, or one every learner has.
- */
 async function learnSetup() {
   const user = await userFixture();
   const goal = await goalFixture({ timezone: "UTC", userId: user.id });
@@ -78,14 +73,12 @@ async function learnSetup() {
 const MOCK_AREAS = ["Mathematics", "Languages", "Philosophy"] as const;
 const ASKED_FOR_MOCK = "I want to practice with a mock exam";
 
-/** Each subject's questions: Philosophy's two still get it a mock of its own, at five questions. */
 const MOCK_QUESTIONS: Record<(typeof MOCK_AREAS)[number], number> = {
   Languages: 8,
   Mathematics: 8,
   Philosophy: 2,
 };
 
-/** An exam of one day: a section for each of its subjects, with its questions. */
 const MOCK_STRUCTURE = {
   formats: [],
   mock: {
@@ -113,10 +106,6 @@ const MOCK_STRUCTURE = {
   })),
 };
 
-/**
- * An exam goal whose plan has a skill in each of the notice's subjects: with the notice read
- * (`notice`), its mocks can be built; without it and with no questions in the bank, none can.
- */
 async function examSetup({ notice = true, plus }: { notice?: boolean; plus: boolean }) {
   const [user, blueprint, skills] = await Promise.all([
     userFixture(),
@@ -158,7 +147,6 @@ async function examSetup({ notice = true, plus }: { notice?: boolean; plus: bool
   return { goal };
 }
 
-/** The learner asks the buddy something, and the answer's generation claims it. */
 async function askBuddy(goalId: string, question = "The English lessons are too basic") {
   const created = await createLessonQuestion({
     input: { context: { kind: "plan" }, question, requestId: randomUUID() },
@@ -217,9 +205,6 @@ describe("app tools the buddy offers", () => {
 
     const result = await offerTutorTool({ ...asked, area: "english", tool: "chapterTest" });
 
-    // The offer shows with the answer on the buddy's thread: one change.
-
-    // The same offer again, from the same answer, changes nothing.
     await expect(
       offerTutorTool({ ...asked, area: "english", tool: "chapterTest" }),
     ).resolves.toStrictEqual(result);
@@ -256,12 +241,10 @@ describe("app tools the buddy offers", () => {
     const { goal } = await setup({ dailyMinutes: 120 });
     const asked = await askBuddy(goal.id);
 
-    // Law's chapter has one lesson left: a test wouldn't skip enough to be worth it.
     await expect(
       offerTutorTool({ ...asked, area: "Law", tool: "chapterTest" }),
     ).resolves.toStrictEqual({ reason: "nothingToSkip", status: "unavailable" });
 
-    // A plan without a date covers every subject in depth: there's no focus to choose.
     await expect(offerTutorTool({ ...asked, tool: "chooseFocus" })).resolves.toStrictEqual({
       reason: "everythingFits",
       status: "unavailable",
@@ -308,7 +291,6 @@ describe("app tools the buddy offers", () => {
         access: "open",
         goalId: goal.id,
         kind: "mockExam",
-        // Every subject the plan studies has a mock of its own, Philosophy's two questions too.
         subjects: ["Mathematics", "Languages", "Philosophy"],
       },
       status: "offered",
@@ -339,8 +321,6 @@ describe("app tools the buddy offers", () => {
   });
 
   it("never offers a mock that can't be taken: tests with nothing to build from and goals that aren't exams", async () => {
-    // A class test with no material and no questions in the bank has no mock to take yet, even
-    // with Plus.
     const unbuilt = await examSetup({ notice: false, plus: true });
     const unbuiltAsked = await askBuddy(unbuilt.goal.id, ASKED_FOR_MOCK);
 
@@ -366,7 +346,6 @@ describe("app tools the buddy offers", () => {
   });
 });
 
-/** A published course of a brand, findable in the catalog by its own (unique) title. */
 async function catalogCourseFixture(language: string) {
   const title = `Violão ${randomUUID().slice(0, 8)}`;
   const brand = await organizationFixture({ kind: "brand" });
@@ -474,7 +453,6 @@ describe("every feature the buddy can suggest", () => {
     await completeLessonQuestionAnswer({ ...ANSWER_RUN, ...asked });
     const again = await askBuddy(goal.id, "Can I review my mistakes?");
 
-    // Only this goal's open mistakes count: not fixed ones, not another subject's.
     await expect(offerTutorTool({ ...again, tool: "mistakes" })).resolves.toStrictEqual({
       offer: { goalId: goal.id, kind: "mistakes", open: 2 },
       status: "offered",
@@ -547,7 +525,6 @@ describe("every feature the buddy can suggest", () => {
       status: "unavailable",
     });
 
-    // ENEM-like: the notice has an essay with no questions, and the plan practises it.
     const learner = await userFixture();
 
     const [blueprint, essaySkill] = await Promise.all([
@@ -598,7 +575,6 @@ describe("every feature the buddy can suggest", () => {
     mockSession(learner.id);
     const writtenAsked = await askBuddy(written.id, "I want to practise my essay");
 
-    // A month in, the free plan's first days are over: the page is shown, locked.
     await expect(offerTutorTool({ ...writtenAsked, tool: "essay" })).resolves.toStrictEqual({
       offer: {
         access: "plusRequired",

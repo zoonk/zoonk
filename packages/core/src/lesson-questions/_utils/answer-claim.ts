@@ -14,10 +14,7 @@ import { lockLessonQuestionThread } from "./thread-lock";
 const MAX_PRIOR_TURNS = 12;
 const STALE_GENERATION_MILLISECONDS = 2 * 60 * 1000;
 
-/**
- * The model the answer is requested from, recorded while it's written; adapters whose task
- * depends on what the question is about pass it by the question's context kind.
- */
+/** requestedModel may depend on contextKind; record the model requested while generation is pending. */
 export type ClaimLessonQuestionAnswerInput = {
   questionId: string;
   requestedModel: string | ((contextKind: LessonQuestionContextKind) => string);
@@ -61,17 +58,11 @@ function toPriorTurns(
     );
 }
 
-/** Questions about the same step share turns and wait for each other. */
 function sameStepWhere(question: { libraryStepId: string | null }) {
   return { libraryStepId: question.libraryStepId };
 }
 
-/**
- * The turns a question is answered with. Before a question is checked the tutor only gives hints,
- * so a question asked then (a missed question coming back) is answered without what the tutor
- * said about an earlier answer to it, as the learner's conversation shows it; those turns come
- * back once it's checked.
- */
+/** Exclude earlier checked-answer turns while giving hints; restore them only after the question is checked again. */
 async function getPriorTurns({
   question,
   transaction,
@@ -137,7 +128,6 @@ async function hasBlockingQuestion({
   return Boolean(earlierUnfinishedQuestion || otherRunningQuestion);
 }
 
-/** Claims only the revision that was read, while it's still unanswered or abandoned. */
 function getClaimWhere({
   now,
   question,
@@ -158,10 +148,6 @@ function getClaimWhere({
   };
 }
 
-/**
- * Someone already asked this on the same screen: the question is answered with the shared answer
- * and the run that wrote it, with no new generation.
- */
 async function completeWithSharedAnswer({
   question,
   shared,
@@ -270,13 +256,11 @@ export async function claimAnswerInTransaction({
   return {
     claim: {
       contextSnapshot: parseLessonQuestionContextSnapshot(question.contextSnapshot),
-      /** The goal whose plan the question was asked with; null without one. */
       goalId: question.goalId,
       priorTurns,
       question: question.question,
       questionId: question.id,
       revision: question.generationRevision + 1,
-      /** The answer is written once for everyone who taps the same suggestion on the screen. */
       shareAnswer: sharedKey !== null,
     },
     status: "ready" as const,

@@ -19,23 +19,18 @@ import { lookUpTutorData } from "./look-up-tutor-data";
 
 const MODEL = "openai/gpt-6-luna";
 
-/** A Monday: the plan's week runs through Sunday, October 4. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 
 const TODAY_LINK = { kind: "page", page: "today" };
 
 type LearnerSpec = {
-  /** The goal is the one the app has open, so the buddy may link what acts on it. */
   active?: boolean;
-  /** Lessons earlier days left: the plan's last new-day settling carried its first ones. */
   behind?: number;
   lessons?: number;
   phases?: string[];
-  /** The goal's date; none when absent. */
   targetDate?: Date;
 };
 
-/** A learner with a built plan of Physics lessons, with each phase's lessons in its own skill. */
 async function plannedLearner({
   active = true,
   behind = 0,
@@ -66,7 +61,6 @@ async function plannedLearner({
 
   const carried = plan.items.filter((item) => item.kind === "lesson").slice(0, behind);
 
-  // Otherwise another goal is the one the app has open.
   const open = active ? { goal } : await unplannedGoalFixture({ userId: user.id });
 
   await Promise.all([
@@ -84,7 +78,6 @@ async function plannedLearner({
   return { carried, goal, library, plan, user };
 }
 
-/** The buddy's answer being written for the learner's question about their plan. */
 async function answering({ goalId, userId }: { goalId: string; userId: string }) {
   mockSession(userId);
 
@@ -109,7 +102,6 @@ async function answering({ goalId, userId }: { goalId: string; userId: string })
   return { questionId: created.question.id, revision: claimed.claim.revision };
 }
 
-/** The learn block of today's day for each lesson it holds: asking the buddy saves the day first. */
 async function readTodayBlocks(goalId: string) {
   const blocks = await prisma.studySessionBlock.findMany({
     where: { kind: "learn", session: { goalId } },
@@ -118,7 +110,6 @@ async function readTodayBlocks(goalId: string) {
   return new Map(blocks.map((block) => [block.lessonId, block.id]));
 }
 
-/** What the buddy finds while it writes that answer. */
 function lookUp(
   asked: { questionId: string; revision: number },
   request: Partial<GoalTutorLookUpRequest> & Pick<GoalTutorLookUpRequest, "what">,
@@ -152,7 +143,6 @@ describe("the plan the buddy looks up", () => {
       const blocks = await readTodayBlocks(learner.goal.id);
 
       expect(found).toStrictEqual({
-        // Asking saved today's day, which holds the first two; Today offers catching up on the rest.
         lessons: learner.carried.map((item, index) =>
           index < 2
             ? {
@@ -220,7 +210,6 @@ describe("the plan the buddy looks up", () => {
 
       const blocks = await readTodayBlocks(goal.id);
 
-      // Today's day, saved by asking, holds the first two; the next days open with the rest.
       expect(found.status === "found" && found.what === "catchUp" && found.lessons).toStrictEqual(
         carried
           .slice(0, 30)
@@ -376,7 +365,6 @@ describe("the plan the buddy looks up", () => {
     it("reads today too while the learner is still in the session from before midnight", async () => {
       const { goal, plan, user } = await plannedLearner();
 
-      // Yesterday's session, started a few minutes ago: Today still opens it, so today is ahead.
       const [session, today] = await Promise.all([
         studySessionFixture({
           goalId: goal.id,
@@ -430,7 +418,6 @@ describe("the plan the buddy looks up", () => {
       const { goal, library, plan, user } = await plannedLearner();
       const [skill] = library.skills;
 
-      // A stand-in: the plan saves the skill's own name for lessons the Library hasn't outlined yet.
       await planItemFixture({
         lessons: 4,
         planId: plan.id,
@@ -503,7 +490,6 @@ describe("the plan the buddy looks up", () => {
           scheduledFor: new Date("2020-09-27"),
           status: "done",
         }),
-        // Neither a mock set aside nor one with no day is ahead.
         planItemFixture({
           kind: "mock",
           planId: plan.id,
@@ -517,7 +503,6 @@ describe("the plan the buddy looks up", () => {
       const bosses = plan.items.filter((item) => item.kind === "boss");
       expect(bosses).toHaveLength(2);
 
-      // The plan's own week's challenges, from its second week on, and the mock ahead, by day.
       const dated = [
         ...plan.items.filter(
           (item) => item.kind === "checkpoint" && item.status === "todo" && item.scheduledFor,
@@ -599,7 +584,6 @@ describe("the plan the buddy looks up", () => {
       const user = await userFixture();
       const library = await planLibraryFixture({ skills: [{ area: "Physics", lessons: 4 }] });
 
-      // The free plan covers the goal's first 7 days: through Sunday, October 4.
       const { goal } = await unplannedGoalFixture({
         createdAt: NOW,
         dailyMinutes: 12,
@@ -669,8 +653,6 @@ describe("the plan the buddy looks up", () => {
     });
   });
 
-  // The buddy's context says what the learner's own time covers; the time that covers everything
-  // plans the goal at each daily time, so the buddy looks it up only for a question about time.
   describe("timeToCover", () => {
     it("finds the same exact time the Plan's Find answers, for the goal's own week", async () => {
       const { goal, user } = await plannedLearner({

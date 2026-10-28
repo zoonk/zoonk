@@ -9,7 +9,7 @@ import {
 } from "./_utils/question-resource";
 import { findThreadSubject } from "./_utils/tutor-subject";
 
-/** Returns one current learner-owned question without loading its large immutable AI snapshot. */
+/** Requires ownership; omits the immutable AI snapshot. */
 export async function getLessonQuestion({ questionId }: { questionId: string }) {
   const session = await getSession();
 

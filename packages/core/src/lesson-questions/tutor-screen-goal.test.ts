@@ -23,7 +23,6 @@ import { lookUpTutorData } from "./look-up-tutor-data";
 import { offerTutorTool } from "./offer-tutor-tool";
 import { proposeTutorPlanChange } from "./propose-tutor-plan-change";
 
-/** A Monday in 2020, before the learning events other tests write, so estimates stay put. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 
 const MODEL = "openai/gpt-6-luna";
@@ -38,7 +37,6 @@ const ANSWER_RUN = {
   runId: "run-screen-buddy",
 };
 
-/** A goal with a built plan for a learner, whose first chapter the plan teaches. */
 async function plannedGoal(userId: string, title = "Get a UX job") {
   const library = await planLibraryFixture({
     skills: [
@@ -65,10 +63,6 @@ async function plannedGoal(userId: string, title = "Get a UX job") {
   return { chapter, goal, skills: library.skills };
 }
 
-/**
- * A learner with two planned goals who asks on a chapter of the first while it's open, then opens
- * the second on another device while the buddy is still writing the answer.
- */
 async function switchGoalsMidAnswer() {
   const user = await userFixture();
 
@@ -93,14 +87,12 @@ async function switchGoalsMidAnswer() {
   return { answering: { questionId, revision: claim.revision }, asked, other, user };
 }
 
-/** A learner's goal with a plan row and no lessons, for screens that read none of its lessons. */
 async function goalWithEmptyPlan(userId: string) {
   const goal = await goalFixture({ title: "Get a UX job", userId });
   await planFixture({ goalId: goal.id, graph: { phases: [], skills: [] } });
   return goal;
 }
 
-/** The learner asks on a screen and the answer's generation claims the question. */
 async function askAndClaim({
   context,
   question = "Can my portfolio case study start earlier?",
@@ -131,7 +123,6 @@ async function askAndClaim({
   return { claim: claimed.claim, questionId: created.question.id };
 }
 
-/** The learner's words read as a rest day on Sundays, a change every plan can make. */
 function mockRestDay() {
   vi.mocked(interpretPlanEdit).mockResolvedValue({
     data: {
@@ -338,7 +329,6 @@ describe("the buddy on a screen inside a goal", () => {
       revision: onPublic.claim.revision,
     });
 
-    // The same chapter, written for this learner's goal alone.
     await prisma.chapter.update({
       data: { ownerId: user.id, visibility: "private" },
       where: { id: chapter.id },
@@ -369,7 +359,6 @@ describe("the buddy on a screen inside a goal", () => {
 
     const questionId = created.question.id;
 
-    // As a question saved before the mark existed: its snapshot has none.
     await prisma.$executeRaw`
       UPDATE lesson_questions SET context_snapshot = context_snapshot - 'privateContent'
       WHERE id = ${questionId}::uuid`;
@@ -411,7 +400,6 @@ describe("the buddy on a screen inside a goal", () => {
 
     expect(claim.contextSnapshot).not.toHaveProperty("screen");
 
-    // A goal the learner starts while the answer is being written isn't the one they asked under.
     await plannedGoal(user.id);
     const answering = { questionId, revision: claim.revision };
 

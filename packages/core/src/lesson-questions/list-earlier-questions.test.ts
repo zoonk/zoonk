@@ -6,10 +6,8 @@ import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { hasEarlierQuestions, listEarlierQuestions } from "./list-earlier-questions";
 
-/** How many questions one page of the history holds. */
 const PAGE_SIZE = 50;
 
-/** What a lesson question saved before the Library looked like: the lesson it was about is gone. */
 const EARLIER_SNAPSHOT = {
   course: { title: "Physics" },
   lesson: { title: "Newton's laws" },
@@ -51,8 +49,6 @@ async function askedQuestion({
 }
 
 describe(listEarlierQuestions, () => {
-  // A learner's questions from before the Library lost the lessons they were about; hiding them
-  // would read as their history being deleted.
   it("keeps a learner's questions whose lessons are gone, newest first, with the course they were in", async () => {
     const [user, other] = await Promise.all([userFixture(), userFixture()]);
     const goal = await goalFixture({ userId: user.id });
@@ -70,7 +66,6 @@ describe(listEarlierQuestions, () => {
         snapshot: { version: 1 },
         userId: user.id,
       }),
-      // Their buddy conversation still has its goal, and someone else's history isn't theirs.
       askedQuestion({
         createdAt: new Date("2026-05-01T10:00:00Z"),
         goalId: goal.id,
@@ -125,7 +120,6 @@ describe(listEarlierQuestions, () => {
     });
   });
 
-  // A learner who asked a lot before the rewrite would otherwise lose everything past one read.
   it("pages through a long history, oldest last", async () => {
     const user = await userFixture();
     const start = Date.parse("2026-01-01T00:00:00Z");

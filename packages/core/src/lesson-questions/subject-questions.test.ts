@@ -16,7 +16,6 @@ import { getLessonQuestionThread } from "./get-lesson-question-thread";
 
 vi.mock("../memory/update-memory-from-activity", () => ({ updateMemoryFromActivity: vi.fn() }));
 
-/** A learner whose plan teaches two modules, ecology (two lessons) and genetics (one). */
 async function plannedLearner() {
   const user = await userFixture();
 
@@ -70,7 +69,6 @@ describe("asking the buddy about a subject", () => {
     const questionId = result.status === "created" ? result.question.id : "";
     const stored = await prisma.lessonQuestion.findUniqueOrThrow({ where: { id: questionId } });
 
-    // The buddy reads the goal's plan, and the subject's page as the screen it was asked from.
     expect(parseLessonQuestionContextSnapshot(stored.contextSnapshot)).toMatchObject({
       goal: { title: goal.title },
       scope: { kind: "plan" },
@@ -88,7 +86,6 @@ describe("asking the buddy about a subject", () => {
       }),
     );
 
-    // One thread per subject, apart from the plan's own conversation.
     await expect(
       prisma.lessonQuestionThread.findMany({ where: { userId: user.id } }),
     ).resolves.toMatchObject([

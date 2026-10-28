@@ -61,11 +61,7 @@ function getContextFingerprint(context: LessonQuestionContextInput): unknown[] {
   }
 }
 
-/**
- * Idempotency compares only the normalized client request. Authoritative curriculum snapshots may
- * change after the first commit, but replaying that request must continue to resolve its original turn.
- * A tapped suggestion adds its name, so requests without one keep their fingerprints.
- */
+/** Fingerprint only normalized client input; changing curriculum snapshots must not change a retried turn's identity. */
 export function getLessonQuestionRequestFingerprint(
   input: Omit<CreateLessonQuestionInput, "requestId">,
 ): string {

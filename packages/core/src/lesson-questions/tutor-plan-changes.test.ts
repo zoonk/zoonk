@@ -33,7 +33,6 @@ import { createLessonQuestion } from "./create-lesson-question";
 import { getLessonQuestionThread } from "./get-lesson-question-thread";
 import { proposeTutorPlanChange } from "./propose-tutor-plan-change";
 
-/** A Monday in 2020, before the learning events other tests write, so estimates stay put. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 
 const ANSWER_RUN = {
@@ -46,7 +45,6 @@ const ANSWER_RUN = {
   runId: "run-goal-tutor",
 };
 
-/** What reading the learner's words, the one model call in a plan change, understood. */
 function mockWords(data: Awaited<ReturnType<typeof interpretPlanEdit>>["data"]) {
   vi.mocked(interpretPlanEdit).mockResolvedValue({
     data,
@@ -66,7 +64,6 @@ function mockWords(data: Awaited<ReturnType<typeof interpretPlanEdit>>["data"]) 
   });
 }
 
-/** The shared names the naming step gives the topics; by default each topic's own. */
 function mockSkillNames(name: (topic: { description: string; name: string }) => TopicSkillName) {
   vi.mocked(nameTopicSkills).mockImplementation(async ({ topics }) => ({
     data: topics.map((topic) => name(topic)),
@@ -108,7 +105,6 @@ async function setup() {
   return { goal, library, plan, user };
 }
 
-/** The learner asks the buddy something, and the answer's generation claims it. */
 async function askBuddy({ goalId, question }: { goalId: string; question: string }) {
   const created = await createLessonQuestion({
     input: { context: { kind: "plan" }, question, requestId: randomUUID() },
@@ -144,7 +140,6 @@ async function readThread(goalId: string) {
   return result.status === "ready" ? (result.thread?.questions ?? []) : [];
 }
 
-/** The buddy proposes a change in an answer the learner asked for, and the answer is saved. */
 async function proposeInAnswer({
   goalId,
   operations,
@@ -168,10 +163,6 @@ async function proposeInAnswer({
   return result.change.id;
 }
 
-/**
- * The changes' statuses in the order asked. The clock is faked, so changes made in one test share
- * a `createdAt` and can't be ordered by it.
- */
 async function readStatuses(ids: string[]) {
   const changes = await prisma.planChange.findMany({
     select: { id: true, status: true },
@@ -201,7 +192,6 @@ describe("plan changes the buddy proposes", () => {
 
   it("frees a rest day the learner asks for: the week's challenges move to a study day, as the card says", async () => {
     const user = await userFixture();
-    // Weeks of lessons, so the plan has weekly challenges ahead.
     const library = await planLibraryFixture({ skills: [{ area: "Math", lessons: 60 }] });
 
     const { goal, plan } = await unplannedGoalFixture({
@@ -217,7 +207,6 @@ describe("plan changes the buddy proposes", () => {
       where: { kind: "checkpoint", planId: plan.id, status: "todo" },
     });
 
-    // The weekly challenge is on Sundays while the learner studies every day.
     expect(before.length).toBeGreaterThan(0);
     expect(before.every((item) => item.scheduledFor?.getUTCDay() === 0)).toBe(true);
 
@@ -291,14 +280,10 @@ describe("plan changes the buddy proposes", () => {
     const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     const graph = stored.graph as { skills: { area: string | null; skillId: string }[] };
 
-    // The learner hasn't started the plan: the topic comes in among its skills, in Math, after
-    // the one they start next instead of ahead of everything (Marcos got 19 field lessons before
-    // his interview basics).
     const [first, ...rest] = library.graph.skills.map((entry) => entry.skillId);
     expect(graph.skills.map((entry) => entry.skillId)).toStrictEqual([first, skill.id, ...rest]);
     expect(graph.skills[1]?.area).toBe("Math");
 
-    // Its 8 lessons wait as a stand-in until the Library outlines them.
     await expect(
       prisma.planItem.count({
         where: { kind: "lesson", lessonId: null, planId: plan.id, skillId: skill.id },
@@ -306,8 +291,6 @@ describe("plan changes the buddy proposes", () => {
     ).resolves.toBe(1);
   });
 
-  // The owner's rule: a topic the learner adds is a shared skill under a canonical name, never
-  // under the learner's own words ("…for Ms. Ana's test").
   it("adds a topic asked for with personal details as a shared skill named without them", async () => {
     const { goal, plan } = await setup();
     const word = uniqueWord();
@@ -353,7 +336,6 @@ describe("plan changes the buddy proposes", () => {
     expect(skill.description).not.toMatch(/Ana|Friday|Saint Paul/u);
     expect(graph.skills.find((entry) => entry.skillId === skill.id)?.name).toBe(canonical);
 
-    // Only the naming step reads the learner's words; the shared search and decision never do.
     const shared = JSON.stringify([
       vi.mocked(generateSearchTerms).mock.calls,
       vi.mocked(decideLibraryIdentity).mock.calls,
@@ -366,8 +348,6 @@ describe("plan changes the buddy proposes", () => {
     });
   });
 
-  // Only what the learner's own material teaches is private: a topic they ask for in words joins
-  // the shared Library even when their course is a private one (a class test from their notes).
   it("adds a topic to a plan built from the learner's material as a shared skill", async () => {
     const { goal, user } = await setup();
     const word = uniqueWord();
@@ -505,7 +485,6 @@ describe("plan changes the buddy proposes", () => {
     const order = graph.skills.map((entry) => entry.name);
     const positions = names.map((name) => order.indexOf(name));
 
-    // Each topic comes after some of the plan's own skills, none of them next to another.
     expect(positions.every((position) => position > 0)).toBe(true);
     expect(positions.toSorted((a, b) => a - b)).toStrictEqual(positions);
 
@@ -513,8 +492,6 @@ describe("plan changes the buddy proposes", () => {
     expect(gaps.every((gap) => gap > 1)).toBe(true);
   });
 
-  // Carla asked to start her school's portfolio project "logo": it landed seven weeks out, and
-  // the card didn't say when.
   it.each([
     { startDate: "2020-09-28", when: "soon" },
     { startDate: "2020-10-05", when: "from next week" },
@@ -536,7 +513,6 @@ describe("plan changes the buddy proposes", () => {
       await createGoalPlan({ goalId: goal.id, graph: library.graph });
       mockSession(user.id);
 
-      // The learner is into the first skill: it keeps its place.
       const [started] = await prisma.planItem.findMany({
         orderBy: { position: "asc" },
         take: 1,
@@ -575,8 +551,6 @@ describe("plan changes the buddy proposes", () => {
         where: { kind: "lesson", planId: plan.id },
       });
 
-      // The skill the project comes before: the first one not started whose lessons begin on
-      // that day or later.
       const firstDays = Map.groupBy(
         items.filter((item) => item.skillId !== started?.skillId),
         (item) => item.skillId ?? "",
@@ -599,7 +573,6 @@ describe("plan changes the buddy proposes", () => {
       expect(anchorId).toBeDefined();
       expect(order.indexOf(skill.id)).toBe(order.indexOf(anchorId ?? "") - 1);
 
-      // Asked for soon, it comes right after the skill the learner is into.
       expect(startDate > "2020-09-28" || order.indexOf(skill.id) === 1).toBe(true);
 
       const standIn = await prisma.planItem.findFirstOrThrow({
@@ -608,7 +581,6 @@ describe("plan changes the buddy proposes", () => {
 
       const due = standIn.scheduledFor?.toISOString().slice(0, 10) ?? "";
 
-      // The card says the day its lessons are due, from the day the learner said.
       expect(result).toMatchObject({ change: { effect: { addedTopicsStart: due } } });
       expect([startDate, due].toSorted()).toStrictEqual([startDate, due]);
     },
@@ -629,8 +601,6 @@ describe("plan changes the buddy proposes", () => {
 
     const result = await proposeTutorPlanChange({ ...asked, request: "Study 13 minutes a day" });
 
-    // The card says what the change does, from its operations and effect, never the model's
-    // summary of what was asked.
     expect(result).toMatchObject({
       change: {
         operations: [{ kind: "setDailyMinutes", minutes: 13 }],
@@ -645,7 +615,6 @@ describe("plan changes the buddy proposes", () => {
       expect.objectContaining({ dailyMinutes: 12, request: "Study 13 minutes a day" }),
     );
 
-    // Nothing moved: the plan and the goal stay as they were until the learner says yes.
     const [planAfter, goalAfter] = await Promise.all([
       prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
       prisma.goal.findUniqueOrThrow({ where: { id: goal.id } }),
@@ -658,7 +627,6 @@ describe("plan changes the buddy proposes", () => {
 
     await completeLessonQuestionAnswer({ ...ANSWER_RUN, ...asked });
 
-    // The conversation shows the proposal under the answer that made it.
     await expect(readThread(goal.id)).resolves.toMatchObject([
       {
         answer: ANSWER_RUN.answer,
@@ -736,7 +704,6 @@ describe("plan changes the buddy proposes", () => {
       { id: sundays, status: "proposed" },
     ]);
 
-    // The earlier card says it was replaced; it can't be applied any more.
     const thread = await readThread(goal.id);
 
     expect(thread.map((question) => question.planChange?.status)).toStrictEqual([
@@ -775,7 +742,6 @@ describe("plan changes the buddy proposes", () => {
       { id: biology, status: "proposed" },
     ]);
 
-    // The learner answers the older one first; the newer one still waits for its own answer.
     await expect(
       decidePlanChange({
         changeId: saturdays,
@@ -810,7 +776,6 @@ describe("plan changes the buddy proposes", () => {
       summary: "Biology gets priority.",
     });
 
-    // The plan's own controls set the time: the buddy's hour no longer means anything.
     await expect(
       changeGoalPlan({
         goalId: goal.id,
@@ -843,7 +808,6 @@ describe("plan changes the buddy proposes", () => {
   it("never offers a no-op while the Library outlines lessons the plan hasn't taken in yet", async () => {
     const user = await userFixture();
 
-    // Biology isn't outlined yet: the plan holds it as a stand-in of 6 lessons.
     const library = await planLibraryFixture({
       skills: [
         { area: "Math", lessons: 8 },
@@ -860,7 +824,6 @@ describe("plan changes the buddy proposes", () => {
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
     mockSession(user.id);
 
-    // The Library outlines Biology afterwards; the stored plan still has its stand-in.
     const chapterId = library.chapters[0]?.id ?? "";
 
     await Promise.all(
@@ -878,7 +841,6 @@ describe("plan changes the buddy proposes", () => {
       }),
     );
 
-    // Math already comes first: asking for it changes nothing, whatever the Library wrote since.
     mockWords({
       leftOut: [],
       operations: [{ areas: ["Math"], kind: "focusAreas" }],
@@ -931,7 +893,6 @@ describe("plan changes the buddy proposes", () => {
       }),
     );
 
-    // Twice the time a day: no lesson comes or goes, the plan only ends sooner.
     mockWords({
       leftOut: [],
       operations: [{ kind: "setDailyMinutes", minutes: 24 }],
@@ -1043,7 +1004,6 @@ describe("plan changes the buddy proposes", () => {
 
     await completeLessonQuestionAnswer({ ...ANSWER_RUN, ...asked });
 
-    // Another change says nothing of the notice's day.
     mockWords({
       leftOut: ["aim for 60 points"],
       operations: [{ kind: "setDailyMinutes", minutes: 30 }],
@@ -1123,14 +1083,11 @@ describe("plan changes the buddy proposes", () => {
       understood: true,
     });
 
-    // The learner's own date needs no "keep the notice's date": there's no notice.
     await expect(
       proposeTutorPlanChange({ ...asked, request: "The test is on Monday now" }),
     ).resolves.toMatchObject({ change: { officialDate: null }, status: "proposed" });
   });
 
-  // Pedro asked the day before his class test's full review for "only osmosis and organelles
-  // tomorrow": the card has to say the review starts with them, since no lesson moves.
   it("says a class test's review day ahead starts with the topics the learner focuses on", async () => {
     const user = await userFixture();
 
@@ -1235,7 +1192,6 @@ describe("plan changes the buddy proposes", () => {
     await createGoalPlan({ goalId: goal.id, graph: graph as typeof library.graph });
     mockSession(user.id);
 
-    // The model read the focus as the whole of the plan's only subject, which changes nothing.
     mockWords({
       leftOut: [],
       operations: [{ areas: ["Biologia"], kind: "focusAreas", parts: [] }],
@@ -1281,7 +1237,6 @@ describe("plan changes the buddy proposes", () => {
     const result = await proposeTutorPlanChange({ ...asked, request: "Biology first" });
     const starts = result.status === "proposed" ? result.change.effect?.areaStarts : null;
 
-    // Biology moves ahead of Math, so it starts sooner than it did.
     expect(starts).toHaveLength(1);
     expect(starts?.[0]?.area).toBe("Biology");
     expect(starts?.[0]?.after?.localeCompare(starts[0].before ?? "")).toBeLessThan(0);
@@ -1337,7 +1292,6 @@ describe("plan changes the buddy proposes", () => {
 
     const asked = await askBuddy({ goalId: goal.id, question: "20 minutes a day" });
 
-    // An earlier revision lost its claim to a retry; it can't ask for anything anymore.
     await expect(
       proposeTutorPlanChange({
         ...asked,
@@ -1400,8 +1354,6 @@ describe("plan changes the buddy proposes", () => {
   it("starts one subject past its basics when its lessons are too basic", async () => {
     const user = await userFixture();
 
-    // English goes on past its basics, which what comes after builds on; Law sits in one phase, so
-    // all of it is what the goal asks.
     const library = await planLibraryFixture({
       phases: ["Basics", "Deeper"],
       skills: [
@@ -1462,7 +1414,6 @@ describe("plan changes the buddy proposes", () => {
     expect(skillIds.has(library.skills[1]?.id ?? "")).toBe(true);
     expect(skillIds.has(library.skills[2]?.id ?? "")).toBe(true);
 
-    // Law has no basics apart from what it asks: starting it past them moves nothing.
     mockWords({
       leftOut: [],
       operations: [{ areas: ["Law"], kind: "setAreaStart", start: "pastBasics" }],

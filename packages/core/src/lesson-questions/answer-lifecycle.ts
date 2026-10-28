@@ -22,7 +22,7 @@ import { type TutorSubject, findThreadSubject } from "./_utils/tutor-subject";
 type CompleteLessonQuestionAnswerInput = LessonQuestionAnswerCompletion & {
   questionId: string;
   revision: number;
-  /** The claim decided the answer is shared by everyone who taps the same suggestion there. */
+  /** Only the claim may decide sharing; never derive it from learner input. */
   shareAnswer?: boolean;
 };
 
@@ -40,7 +40,6 @@ async function getQuestionAnswerAccess({
   return thread ? findThreadSubject({ thread, userId }) : { status: "notFound" as const };
 }
 
-/** The thread shows a failed answer with "Try again"; a stale revision changes nothing. */
 function markClaimedLessonQuestionAnswerFailed({
   questionId,
   revision,
@@ -65,7 +64,7 @@ function markClaimedLessonQuestionAnswerFailed({
   });
 }
 
-/** Releases the claimed revision before propagating an allowance infrastructure failure. */
+/** Release the claimed revision before propagating infrastructure failures. */
 async function claimTutorUsage({
   question,
   userId,
@@ -90,12 +89,7 @@ type AnswerClaimOutcome = Awaited<ReturnType<typeof claimAnswerInTransaction>>;
 
 type ClaimedQuestion = Extract<AnswerClaimOutcome, { status: "ready" }>["claim"];
 
-/**
- * A new answer counts against the learner's `tutorMessage` allowance (guests sign up first), even
- * when it's written to share. A personal answer reads what the learner's memory holds about their
- * learning and goals; a shared one (a tutor's suggestion on a lesson screen) is written without
- * it, for everyone who taps the same suggestion. Nothing is read before the allowance says yes.
- */
+/** Shared answers never read personal memory; allowance must succeed before any memory read. */
 async function claimTutorAnswer({
   question,
   subject,
@@ -135,10 +129,6 @@ async function claimTutorAnswer({
   return { learnerMemory, shareAnswer: false, status: "ready" };
 }
 
-/**
- * Who the answer's AI calls run for, so the tutor's cost is summed per learner, and per goal for
- * the buddy's answers asked under a goal (its conversation, or a chapter, lesson or mock of it).
- */
 function getAnswerAnalytics({
   goalId,
   userId,
@@ -149,11 +139,7 @@ function getAnswerAnalytics({
   return goalId ? { distinctId: userId, goalId } : { distinctId: userId };
 }
 
-/**
- * Atomically claims a pending, failed, or abandoned answer generation for its owner. A tutor's
- * suggestion about a lesson screen that someone already tapped there is answered right away with
- * the shared answer (`shared`), without a generation, the allowance or memory.
- */
+/** Requires the owner session; an existing shared answer completes immediately without allowance or memory reads. */
 export async function claimLessonQuestionAnswer(input: ClaimLessonQuestionAnswerInput) {
   const session = await getSession();
 
@@ -174,7 +160,6 @@ export async function claimLessonQuestionAnswer(input: ClaimLessonQuestionAnswer
 
   const now = new Date();
 
-  // Writing (or a shared answer) shows on the thread; a refused claim changes nothing.
   const claimed = await writeLearnerChange<AnswerClaimOutcome>({ userId }, async (transaction) => {
     const result = await claimAnswerInTransaction({ input, now, transaction, userId });
 
@@ -205,7 +190,7 @@ export async function claimLessonQuestionAnswer(input: ClaimLessonQuestionAnswer
       analytics: getAnswerAnalytics({ goalId, userId }),
       contextSnapshot,
       learnerMemory,
-      /** Only for the buddy's web search to keep out of what it sends (see `loadLearnerNames`). */
+      /** Only use these names to exclude them from outgoing web searches. */
       learnerNames,
       priorTurns,
       question,
@@ -238,11 +223,7 @@ async function getConditionalWriteOutcome({
   return exists ? { status: "stale" as const } : { status: "notFound" as const };
 }
 
-/**
- * Saves the answer and the run that wrote it, only while the generation still owns the claimed
- * revision, without the em dashes the app never shows, as the learner read it streamed. A shared
- * answer becomes its screen's answer for everyone who taps the same suggestion.
- */
+/** Only the claimed revision may save; the stored text must match what the learner saw streamed. */
 function saveCompletedAnswer({
   input,
   userId,
@@ -260,7 +241,6 @@ function saveCompletedAnswer({
     runId: completion.runId,
   };
 
-  // The answer shows on the thread; a stale revision saves nothing.
   return writeLearnerChange({ userId }, async (transaction) => {
     const updated = await transaction.lessonQuestion.updateMany({
       data: {
@@ -300,11 +280,7 @@ function saveCompletedAnswer({
   });
 }
 
-/**
- * Persists a model completion only when it still owns the current generation revision. What a
- * personal exchange teaches memory is learned afterwards (`rememberLessonQuestionAnswer`), so the
- * answer counts as done as soon as it's saved.
- */
+/** Saves only the current owned revision; learn personal memory separately after completion. */
 export async function completeLessonQuestionAnswer(input: CompleteLessonQuestionAnswerInput) {
   const session = await getSession();
 
@@ -325,12 +301,7 @@ export async function completeLessonQuestionAnswer(input: CompleteLessonQuestion
   });
 }
 
-/**
- * After a personal answer is saved, the exchange may teach the learner's memory something
- * lasting; the changes come back so the tutor can show "Memory updated" with undo. A shared
- * answer, one not saved yet or another learner's question leaves memory alone. Memory is a help:
- * a failure is logged and nothing changes.
- */
+/** Shared, unsaved, or another learner's answers never affect memory; failures are logged without failing the answer. */
 export async function rememberLessonQuestionAnswer({
   questionId,
 }: {
@@ -345,7 +316,7 @@ export async function rememberLessonQuestionAnswer({
   return rememberTutorExchange({ questionId, userId: session.user.id });
 }
 
-/** Marks only the current owned generation revision as retryable after a streaming failure. */
+/** Changes only the owned current revision; stale streaming failures have no effect. */
 export async function failLessonQuestionAnswer({
   questionId,
   revision,

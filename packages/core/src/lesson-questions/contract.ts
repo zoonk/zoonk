@@ -6,7 +6,6 @@ import { WRITTEN_CADENCES } from "../plans/planner/plan-state";
 import { missionMomentSchema } from "../sessions/completion-contract";
 import { practiceCallSchema } from "../view-models/language/language-view-contract";
 
-/** Where a buddy answer may send the learner: each host links the app's pages and these itself. */
 export type {
   GoalTutorLinks,
   GoalTutorPage,
@@ -20,20 +19,11 @@ const MAX_LESSON_QUESTION_STEP_NUMBER = 2_147_483_647;
 
 const lessonQuestionThreadCursorSchema = z.uuid();
 
-/** The things a learner can ask the tutor about beyond a lesson; each has one thread. */
 const SCREEN_CONTEXT_KINDS = ["chapter", "plan", "mock", "subject"] as const;
 
-/**
- * The tutor's suggestions a learner taps to ask about a lesson screen: explain it more simply, go
- * deeper, another example.
- */
 const LESSON_SCREEN_SUGGESTIONS = ["simpler", "deeper", "example"] as const;
 
-/**
- * One of the tutor's suggestions for a lesson's screens as its chip reads, worded by the server in
- * the lesson's language: tapping it sends `id` as the question's `suggestion`, and the question is
- * stored in these same words.
- */
+/** Send id as suggestion; the server stores the question in the same localized words. */
 export const lessonTutorSuggestionSchema = z
   .object({ id: z.enum(LESSON_SCREEN_SUGGESTIONS), label: z.string() })
   .strict()
@@ -51,10 +41,7 @@ const lessonQuestionLessonContextInputSchema = z
   .object({ kind: z.literal("lesson"), stepIds: z.array(z.uuid()).optional() })
   .strict();
 
-/**
- * The player can shuffle and subset steps, so only the client knows the learner-visible ordinal.
- * This number is presentation metadata; Core still resolves every content-bearing field by step ID.
- */
+/** Client ordinals are presentation-only because screens can shuffle; content is always resolved by step id. */
 const lessonQuestionStepNumberSchema = z.number().int().min(1).max(MAX_LESSON_QUESTION_STEP_NUMBER);
 
 const lessonQuestionStepContextInputSchema = z
@@ -63,7 +50,6 @@ const lessonQuestionStepContextInputSchema = z
 
 const lessonQuestionAnswerContextInputSchema = z
   .object({
-    /** Language exercises answer in today's shapes; Library screens also answer checks and text. */
     answer: lessonStepAnswerSchema,
     kind: z.literal("answer"),
     stepId: z.uuid(),
@@ -71,15 +57,9 @@ const lessonQuestionAnswerContextInputSchema = z
   })
   .strict();
 
-/** A chapter, plan, mock or subject is asked about as a whole: the server builds what it shows. */
 const lessonQuestionScreenContextSchema = z.object({ kind: z.enum(SCREEN_CONTEXT_KINDS) }).strict();
 
-/**
- * A question of the item bank as a session's block or mistakes practice shows it. The server
- * builds it from the item: with the numbers a math problem was served with in its block
- * (`blockId`), and, once the learner checked it (`answered`), with their latest answer to it from
- * their own record and the right one. Before the check the tutor never sees the answer.
- */
+/** answered gates all answer/solution context; math numbers come from the named block. */
 const lessonQuestionItemContextSchema = z
   .object({
     answered: z.boolean(),
@@ -104,28 +84,19 @@ export const createLessonQuestionInputSchema = z
     context: lessonQuestionContextInputSchema,
     question: z.string().trim().min(1).max(MAX_LESSON_QUESTION_LENGTH),
     requestId: z.uuid(),
-    /**
-     * The tutor's suggestion the learner tapped. The server words the question itself, in the
-     * thread's language, and answers a lesson screen's suggestion once for everyone who taps it
-     * there; anything a learner types is answered as their own.
-     */
+    /** The server words suggestions and may share their answers; typed learner questions remain personal. */
     suggestion: z.enum(LESSON_SCREEN_SUGGESTIONS).optional(),
   })
   .strict();
 
 export type TutorTool = GoalTutorAppTool;
 
-/**
- * Whether the learner's plan includes an offered feature. Features are never hidden: one their
- * plan doesn't include is offered too, shown locked with what Plus unlocks.
- */
 const tutorOfferAccessSchema = z
   .enum(["open", "plusRequired"])
   .meta({
     description: "plusRequired: shown locked, with what Plus unlocks, instead of its button",
   });
 
-/** A course of the catalog, as a new goal's card shows it. */
 const tutorOfferCourseSchema = z
   .object({
     brandSlug: z.string(),
@@ -137,7 +108,6 @@ const tutorOfferCourseSchema = z
   })
   .strict();
 
-/** A feature with nothing to say beyond where it opens. */
 function placeOfferSchema<Kind extends string>({
   description,
   kind,
@@ -148,13 +118,6 @@ function placeOfferSchema<Kind extends string>({
   return z.object({ kind: z.literal(kind).meta({ description }) }).strict();
 }
 
-/**
- * One of the app's own features the buddy offered in an answer, when it answers what the learner
- * wants (`GOAL_TUTOR_APP_TOOLS` lists them all): starting a new goal (with a matching catalog
- * course), a chapter's test ("Already know this?"), choosing where the plan's depth goes (with the
- * focus test), a mock exam, the exam's written test, the mistakes notebook, a practice call or
- * pronunciation in the language being learned, statistics, the week in review, memory, or Plus.
- */
 export const tutorToolOfferSchema = z
   .discriminatedUnion("kind", [
     z
@@ -300,14 +263,10 @@ export const lessonQuestionResourceSchema = z
     context: lessonQuestionContextSummarySchema,
     createdAt: z.iso.datetime(),
     id: z.uuid(),
-    /**
-     * In a goal's conversation with the buddy, the plan change the answer proposed: it waits for
-     * the learner's tap and says how it was answered.
-     */
+    /** Proposals require a learner tap before applying. */
     planChange: planChangeSchema.nullable(),
     question: z.string(),
     status: z.enum(["pending", "running", "completed", "failed"]),
-    /** In a goal's conversation with the buddy, one of the app's tools the answer offered. */
     toolOffer: tutorToolOfferSchema.nullable(),
     updatedAt: z.iso.datetime(),
   })
@@ -328,7 +287,6 @@ export const lessonQuestionThreadResponseSchema = lessonQuestionThreadResourceSc
 export type CreateLessonQuestionInput = z.infer<typeof createLessonQuestionInputSchema>;
 export type GetLessonQuestionThreadInput = z.infer<typeof getLessonQuestionThreadInputSchema>;
 export type LessonQuestionContextInput = z.infer<typeof lessonQuestionContextInputSchema>;
-/** A question about a lesson: all of it, one screen, or an answer given on a screen. */
 export type LessonScopeContextInput = Extract<
   LessonQuestionContextInput,
   { kind: "answer" | "lesson" | "step" }
@@ -339,13 +297,7 @@ export type LessonQuestionScreenKind = (typeof SCREEN_CONTEXT_KINDS)[number];
 export type LessonScreenSuggestion = (typeof LESSON_SCREEN_SUGGESTIONS)[number];
 export type LessonTutorSuggestion = z.infer<typeof lessonTutorSuggestionSchema>;
 
-/**
- * What a tutor thread is about: a Library lesson, a chapter, the plan of one of the learner's
- * goals (with the course it's built from), a subject of one of their goals (by its key in the
- * goal's syllabus), a question of the item bank they're asked in a session or practice, or one of
- * their finished mocks (by its session block, as the API addresses mocks everywhere). A learner has
- * one thread per thing.
- */
+/** One thread per learner and target; mocks are addressed by their session block. */
 export type TutorTarget =
   | { chapterId: string; kind: "chapter" }
   | { goalId: string; kind: "plan" }
@@ -353,10 +305,6 @@ export type TutorTarget =
   | { itemId: string; kind: "item" }
   | { blockId: string; kind: "mock" }
   | { kind: "lesson"; lessonId: string };
-/**
- * A question just asked: the question, and what asking did to the day's missions (a question to
- * the buddy can be one of them), so the conversation can say so.
- */
 export const createdLessonQuestionSchema = lessonQuestionResourceSchema.extend({
   missionMoment: missionMomentSchema.nullable(),
 });
@@ -367,10 +315,7 @@ export type LessonQuestionThreadResource = z.infer<typeof lessonQuestionThreadRe
 
 const memoryFactSummarySchema = z.object({ id: z.uuid(), statement: z.string() }).nullable();
 
-/**
- * What a Library lesson's tutor answer changed in the learner's memory, sent as the answer
- * stream's `data-memory` part after the text, for a "Memory updated" notice with undo.
- */
+/** Sent after answer text as data-memory; consumers may offer undo. */
 export const lessonQuestionMemoryChangesSchema = z.array(
   z.object({
     action: z.enum(["added", "removed", "replaced"]),
@@ -381,32 +326,18 @@ export const lessonQuestionMemoryChangesSchema = z.array(
 
 export type LessonQuestionMemoryChange = z.infer<typeof lessonQuestionMemoryChangesSchema>[number];
 
-/** The answer stream's part that carries memory changes. */
 export const LESSON_QUESTION_MEMORY_PART = "data-memory";
 
-/**
- * The answer stream's part that carries the plan change the buddy proposed, as soon as it's
- * saved, so the conversation shows it with its Apply and Not now.
- */
 export const LESSON_QUESTION_PLAN_CHANGE_PART = "data-plan-change";
 
-/** The answer stream's part that carries one of the app's tools the buddy offered. */
 export const LESSON_QUESTION_TOOL_OFFER_PART = "data-tool-offer";
 
-/**
- * The answer stream's part that lists the conversation's earlier proposals the new one replaced
- * (it changes the same thing), so their cards say so without reading the thread again.
- */
+/** Replaced proposal ids let clients invalidate earlier cards without rereading the thread. */
 export const LESSON_QUESTION_REPLACED_CHANGES_PART = "data-plan-changes-replaced";
 
 export const replacedPlanChangesSchema = z.object({ ids: z.array(z.uuid()) });
 
-/**
- * The answer stream's part that carries a buddy answer as it was saved, once it's saved: its links
- * checked against the ones the answer was given (the rest are its words). The answer it streamed
- * reads with no live links; this text replaces it, and only it, or the answer read again from the
- * server, links the app.
- */
+/** Only saved answer text has validated live links; streamed text must remain unlinked until this replacement arrives. */
 export const LESSON_QUESTION_SAVED_ANSWER_PART = "data-saved-answer";
 
 export const savedAnswerSchema = z.object({ answer: z.string() });

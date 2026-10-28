@@ -16,28 +16,23 @@ import { type PlanOperationError } from "../plans/planner/plan-operations";
 import { getSession } from "../users/get-session";
 import { findAnsweringGoal } from "./_utils/answering-question";
 
-/** Parts of the learner's words no change covers ("and aim for 800"), for the buddy to answer. */
+/** leftOut contains learner requests no supported plan operation covered; the buddy must answer them separately. */
 type LeftOut = { leftOut: string[] };
 
 export type TutorPlanChangeResult =
   | (LeftOut & {
-      /** What the change costs that the buddy says before the learner applies it. */
+      /** Explain these costs before the learner applies the change. */
       cautions: PlanChangeCaution[];
       change: PlanChangeView;
-      /** Earlier proposals still waiting that this one replaced: it changes the same thing. */
+      /** Ids of earlier proposals superseded by this one. */
       replaced: string[];
       status: "proposed";
     })
   | (LeftOut & { error: PlanOperationError; status: "invalid" })
-  /** The plan already works that way, or the change wouldn't move anything: nothing to apply. */
   | (LeftOut & { status: "unchanged" })
   | { status: "notFound" | "notReady" | "notUnderstood" | "unauthorized" };
 
-/**
- * Ties the proposal to the answer that made it. An earlier proposal of the conversation still
- * waits for its own answer unless this one changes the same thing (`proposeChange` replaces it
- * then). A generation that lost its claim meanwhile leaves its proposal declined, unseen.
- */
+/** A generation that loses its claim must leave its proposal declined and unseen. */
 async function linkToAnswer({
   changeId,
   questionId,
@@ -128,7 +123,6 @@ async function proposeForGoal({
       return { ...result, leftOut };
     }
 
-    // A ready plan with `approval: "always"` stores every change as a proposal.
     return result.status === "proposed"
       ? {
           changeId: result.changeId,
@@ -142,27 +136,14 @@ async function proposeForGoal({
   });
 }
 
-/**
- * The buddy asks for a change to the learner's plan while it answers them ("I want to study 1
- * hour a day", "no studying on Saturdays", "the exam moved to January 24"): the learner's words,
- * as the conversation made them clear, read into the same changes the plan's controls make. The
- * change never applies here: it's stored as a proposal with its effect, tied to the answer, and
- * waits for the learner's tap (Apply or Not now) in the conversation, on Today or on the Plan.
- * A change that would leave the plan as it is is never offered (`unchanged`), so the buddy says so;
- * parts of the words no change covers come back as `leftOut`, so the buddy answers those too; and
- * a change that moves an exam off the day its notice sets carries that day (`officialDate`). What
- * the change costs (an exam subject with questions left out, a plan ending weeks before its date)
- * comes back as `cautions`, for the buddy to say before the learner applies it.
- * Only the generation answering the learner's own question inside one of their goals may ask: in
- * the buddy's conversation, or on a chapter, a lesson or a mock of that goal.
- */
+/** Only the claimed answer may propose changes to its saved goal; never applies them. The learner must confirm, after seeing cautions. */
 export async function proposeTutorPlanChange({
   questionId,
   request,
   revision,
 }: {
   questionId: string;
-  /** The change in the learner's words, self-contained (no "that" or "the same"). */
+  /** Self-contained learner words; resolve references such as that or the same before calling. */
   request: string;
   revision: number;
 }): Promise<TutorPlanChangeResult> {

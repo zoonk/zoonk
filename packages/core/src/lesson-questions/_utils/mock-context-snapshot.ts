@@ -4,7 +4,6 @@ import { prisma } from "@zoonk/db";
 import { getMock } from "../../exams/mocks/get-mock";
 import { type MockResult } from "../../exams/mocks/mock-contract";
 
-/** Enough missed questions to see the patterns without flooding the tutor's context. */
 const MAX_MISSED_QUESTIONS = 40;
 
 type MockRange = { high: number; low: number } | null;
@@ -28,7 +27,6 @@ function toResult(result: MockResult | null): MockScopeContext["result"] {
   };
 }
 
-/** Each missed question's skill, by name, so the tutor can say what to practice. */
 async function loadSkillNames(itemIds: string[]): Promise<Map<string, string>> {
   const items = await prisma.item.findMany({
     select: { id: true, skill: { select: { name: true } } },
@@ -38,11 +36,6 @@ async function loadSkillNames(itemIds: string[]): Promise<Map<string, string>> {
   return new Map(items.map((item) => [item.id, item.skill.name]));
 }
 
-/**
- * The tutor's view of a mock the learner finished, from the same view its result screen shows:
- * the result (an estimated range only where the exam's scoring gives one), each area, the causes
- * of mistakes and the questions they missed with each one's skill.
- */
 export async function buildMockContextSnapshot({
   blockId,
   language,
@@ -85,7 +78,6 @@ export async function buildMockContextSnapshot({
       learnerAnswer: entry.learnerAnswer,
       number: entry.number,
       outcome: entry.outcome,
-      // The question as the mock showed it, with the text it reads first (the equation, the case).
       question: [entry.context, entry.question].filter(Boolean).join("\n\n"),
       skill: skills.get(entry.itemId) ?? null,
     })),

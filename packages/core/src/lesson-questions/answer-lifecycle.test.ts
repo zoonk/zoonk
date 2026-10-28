@@ -16,7 +16,6 @@ import {
 import { createLessonQuestion } from "./create-lesson-question";
 import { getLessonQuestionThread } from "./get-lesson-question-thread";
 
-/** The run that wrote a test answer, as the answers route passes it from the task's provenance. */
 const ANSWER_RUN = {
   generatedAt: "2026-09-27T12:00:00.000Z",
   promptVersion: "lesson-question-test",
@@ -242,7 +241,6 @@ describe("lesson question answer lifecycle", () => {
 
     expect(retry.claim.revision).toBe(2);
 
-    // A retry answers the same message, so the tutor allowance counts it once.
     await expect(
       prisma.usageRecord.count({
         where: { kind: "tutorMessage", targetId: question.id, userId: user.id },

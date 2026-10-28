@@ -15,20 +15,16 @@ import {
 } from "../../../view-models/syllabus/syllabus-contract";
 import { matchesArea, matchesQuery } from "./lookup-text";
 
-/** One subject's topics in full; with every subject, fewer each, so the answer stays small. */
 const MAX_SUBJECT_TOPICS = 80;
 const MAX_TOPICS_EACH = 25;
 
-/** A subject's last chapters done and the next ones, enough to say where the learner is. */
 const DONE_CHAPTERS = 2;
 const CHAPTERS_AHEAD = 6;
 
-/** "Right answers lately": the last four weeks of answers on the subject's skills. */
 const RECENT_DAYS = 28;
 
 type Lookup = { area: string | null; goal: Goal; query: string | null };
 
-/** The goal's syllabus as its page shows it, with what it's built from. */
 async function loadSyllabus(goal: Goal) {
   const input = await loadSyllabusInput(goal);
 
@@ -44,7 +40,6 @@ function getSubjectNames(subject: SyllabusSubject): string[] {
   return [subject.name, subject.shortName, ...subject.areas];
 }
 
-/** The subjects the buddy asked about: the one it named, or all of them. */
 function pickSubjects({
   area,
   subjects,
@@ -57,7 +52,6 @@ function pickSubjects({
     : [...subjects];
 }
 
-/** A notice topic, with what the plan does with it when the plan says which skills teach it. */
 function toTopic({
   heading,
   name,
@@ -77,7 +71,6 @@ function toTopic({
   };
 }
 
-/** The syllabus's topics by subject and words, where it follows the notice. */
 function indexPlannedTopics(syllabus: { kind: string; subjects: readonly SyllabusSubject[] }) {
   const topics = syllabus.kind === "notice" ? syllabus.subjects : [];
 
@@ -88,11 +81,7 @@ function indexPlannedTopics(syllabus: { kind: string; subjects: readonly Syllabu
   );
 }
 
-/**
- * The notice's topics, in its own words, each with what the plan does with it: the subject the
- * buddy named, or the topics that have every word of its query ("Lei 8.112"), or all of them.
- * Nothing found comes back with the notice's subjects, to try one of them.
- */
+/** An empty match returns the notice's subjects so the caller can retry with one. */
 export async function lookUpNoticeTopics({
   area,
   goal,
@@ -142,7 +131,6 @@ export async function lookUpNoticeTopics({
   return { source: loaded.syllabus.noticeUrl, status: "found", subjects, what };
 }
 
-/** Right and wrong answers by skill, on the learner's own answers since `since`. */
 function loadAnswers({
   since,
   skillIds,
@@ -181,7 +169,6 @@ function getSubjectSkillIds({
   );
 }
 
-/** The lessons a passed test skipped on these skills, which the syllabus counts as done. */
 function toChapter(chapter: SyllabusChapter) {
   return {
     lessonsDone: chapter.lessonsDone,
@@ -191,7 +178,6 @@ function toChapter(chapter: SyllabusChapter) {
   };
 }
 
-/** The last chapters done and the next ones, in the subject's order. */
 function pickChapters(chapters: readonly SyllabusChapter[]) {
   const done = chapters.filter((chapter) => chapter.state === "done").slice(-DONE_CHAPTERS);
   const ahead = chapters.filter((chapter) => chapter.state !== "done").slice(0, CHAPTERS_AHEAD);
@@ -203,11 +189,6 @@ function pickChapters(chapters: readonly SyllabusChapter[]) {
   };
 }
 
-/**
- * How the learner is doing by subject, from the syllabus and their own answers: lessons done of
- * the total, topics studied, right answers in the last weeks, open mistakes, the chapters around
- * where they are and when the subject comes next.
- */
 export async function lookUpSubjectProgress({
   area,
   goal,
@@ -252,7 +233,7 @@ export async function lookUpSubjectProgress({
     return {
       answers: total > 0 ? { right, total } : null,
       chapters,
-      // The lookup's done counts what a test skipped too, which it names apart (see the tool).
+      // Done includes tested-out lessons, which are also named separately.
       lessonsDone: subject.lessonsDone + subject.lessonsKnown,
       lessonsTestedOut: subject.lessonsKnown,
       lessonsTotal: subject.lessonsTotal,

@@ -3,10 +3,6 @@ import { type ChapterScopeContext } from "@zoonk/ai/tasks/lessons/question-conte
 import { listFinishedLessonIds } from "../../catalog/_utils/finished-lessons";
 import { getLibraryChapter } from "../../library/chapters/get-library-chapter";
 
-/**
- * The tutor's view of a chapter: what it's about, what it teaches, and its lessons with what each
- * one lets the learner do and whether they finished it, from their own ledger rows.
- */
 export async function buildChapterContextSnapshot({
   chapterId,
   userId,

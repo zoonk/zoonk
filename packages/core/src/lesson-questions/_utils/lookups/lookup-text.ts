@@ -1,18 +1,12 @@
 import { normalizeString, stripPunctuation } from "@zoonk/utils/string";
 
-/** Words this short ("of", "a") are in almost everything, so a query's are left out; numbers stay. */
 const MIN_WORD_LENGTH = 3;
 
-/** Text as a lookup compares it: no accents, case or punctuation ("Lei nº 8.112" reads "lei nº 8112"). */
 function toSearchText(text: string): string {
   return stripPunctuation(normalizeString(text));
 }
 
-/**
- * Whether `text` has every word of the buddy's query, short ones aside; an empty query matches
- * everything. A query of short words only ("Go", "C", "AI") names them: each must be a whole word
- * of the text, so it never matches everything.
- */
+/** Empty queries match all; short-word-only queries require whole words rather than matching everything. */
 export function matchesQuery({ query, text }: { query: string; text: string }): boolean {
   const words = toSearchText(query).split(/\s+/u).filter(Boolean);
   const long = words.filter((word) => word.length >= MIN_WORD_LENGTH || /\d/u.test(word));
@@ -26,10 +20,6 @@ export function matchesQuery({ query, text }: { query: string; text: string }): 
   return words.every((word) => textWords.has(word));
 }
 
-/**
- * Whether one of `names` is the subject the buddy named: the same words, or one inside the other
- * ("Constitutional" and "Basics of Constitutional Law and Internal Rules").
- */
 export function matchesArea({ area, names }: { area: string; names: readonly string[] }): boolean {
   const wanted = toSearchText(area);
 

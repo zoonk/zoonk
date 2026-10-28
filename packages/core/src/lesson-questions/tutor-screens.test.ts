@@ -205,8 +205,6 @@ describe("the tutor beyond lessons", () => {
 
       const snapshot = await storedSnapshot(question.id);
 
-      // One "Ask" on the plan answers about its course too, from the course's outline: its
-      // chapters' titles level by level, which every message sends, so no lesson lists.
       expect(snapshot).toMatchObject({
         course: {
           levels: [{ chapters: ["Chapter 1", "Chapter 2"], level: "beginner" }],
@@ -262,7 +260,6 @@ describe("the tutor beyond lessons", () => {
         return next.flatMap((day) => day.items.filter((item) => item.kind === "mock"));
       }
 
-      // Features are never hidden: the buddy sees the free plan's mock too, and that it's Plus's.
       await expect(kindsAhead({ isPlus: false, userId: free.id })).resolves.toStrictEqual([
         expect.objectContaining({ kind: "mock", plusRequired: true }),
       ]);
@@ -301,7 +298,6 @@ describe("the tutor beyond lessons", () => {
 
       await startMock({ blockId, input: {} });
 
-      // No help with an exam that's still running.
       await expect(ask({ context: { kind: "mock" }, target })).resolves.toStrictEqual({
         status: "notFound",
       });
@@ -316,7 +312,6 @@ describe("the tutor beyond lessons", () => {
 
       const snapshot = await storedSnapshot(question.id);
 
-      // The buddy reads the goal's plan with the mock, so it can change the plan from there.
       expect(snapshot).toMatchObject({
         goal: { kind: "exam" },
         scope: { kind: "plan" },

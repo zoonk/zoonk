@@ -20,10 +20,6 @@ import { type LinkScope } from "./_utils/plan-day-context";
 
 type Lookup = { area: string | null; goal: Goal; query: string | null };
 
-/**
- * What a lookup may link for this question, as its context does (see `LinkScope`): what acts on
- * the open goal only in the buddy's own conversation about it, as its snapshot recorded it.
- */
 async function loadLinkScope(questionId: string): Promise<LinkScope> {
   const question = await prisma.lessonQuestion.findUnique({
     select: { contextSnapshot: true },
@@ -70,14 +66,7 @@ function toWords(text: string | null): string | null {
   return text?.trim() || null;
 }
 
-/**
- * The buddy looks up the learner's own data its context doesn't show while it answers them: the
- * exam notice's topics, progress by subject, the mocks they finished, a lesson of their plan or
- * their older mistakes. Read only, and only the goal the answer is about: the generation still
- * writing the learner's own answer inside one of their goals may look up (in the buddy's
- * conversation, or on a chapter, a lesson or a mock of that goal). What it finds goes to the model
- * alone, never to the learner's screen.
- */
+/** Read-only model context, never screen output; only the currently claimed answer may look up its own question's saved goal. */
 export async function lookUpTutorData({
   area,
   query,

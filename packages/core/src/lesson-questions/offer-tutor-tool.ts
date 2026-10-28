@@ -32,20 +32,14 @@ import {
 import { type TutorToolResult } from "./_utils/tutor-tool-result";
 import { type TutorTool } from "./contract";
 
-/** Fewer lessons to skip than this aren't worth a test: the learner just finishes them. */
 const MIN_LESSONS_TO_SKIP = 2;
 
-/** The plan's next lessons a chapter's test is looked for among. */
 const NEXT_LESSONS = 200;
 
 function sameArea(a: string, b: string): boolean {
   return normalizeString(a) === normalizeString(b);
 }
 
-/**
- * The chapters of the plan's next lessons, in the order they come (an area's own when one is
- * named), each once.
- */
 async function listNextChapters({ area, goalId }: { area: string | null; goalId: string }) {
   const plan = await prisma.plan.findUnique({
     select: { graph: true, id: true },
@@ -84,10 +78,6 @@ async function listNextChapters({ area, goalId }: { area: string | null; goalId:
   );
 }
 
-/**
- * "Already know this? Take the test" for the chapter the plan (or the named area) goes to next,
- * when passing it would skip lessons: the first such chapter ahead.
- */
 async function offerChapterTest({
   area,
   goal,
@@ -137,10 +127,6 @@ async function offerChapterTest({
   };
 }
 
-/**
- * "Choose where to focus" (with the focus test first), offered where the plan offers it: its time
- * doesn't cover everything in depth and it has more than one subject.
- */
 async function offerChooseFocus(goalId: string): Promise<TutorToolResult> {
   const result = await getGoalPlan(goalId);
 
@@ -156,7 +142,6 @@ async function offerChooseFocus(goalId: string): Promise<TutorToolResult> {
     : { reason: "everythingFits", status: "unavailable" };
 }
 
-/** A practice call in the unit the learner is in, as the unit page offers it. */
 async function offerConversationCall(goal: Goal): Promise<TutorToolResult> {
   if (goal.kind !== "language") {
     return { reason: "notLanguage", status: "unavailable" };
@@ -185,11 +170,6 @@ async function offerConversationCall(goal: Goal): Promise<TutorToolResult> {
   };
 }
 
-/**
- * "Take a mock exam" for an exam goal, where the exam's pages offer it: only when a mock can be
- * built, so the button always opens one, and locked with what Plus unlocks when the learner's
- * plan doesn't include mock exams. The chooser continues the one they started, when there is one.
- */
 async function offerMockExam(goal: Goal): Promise<TutorToolResult> {
   if (goal.kind !== "exam") {
     return { reason: "notExam", status: "unavailable" };
@@ -216,7 +196,6 @@ async function offerMockExam(goal: Goal): Promise<TutorToolResult> {
   };
 }
 
-/** What a feature needs to open, besides the learner's goal. */
 type OfferRequest = {
   /** For a chapter's test: the plan area whose next chapter to test, as the plan names it. */
   area: string | null;
@@ -262,17 +241,7 @@ function resolveOffer({
   }
 }
 
-/**
- * The buddy offers one of the app's own features while it answers, whenever one answers what the
- * learner wants (`GOAL_TUTOR_APP_TOOLS` lists them): starting a new goal, a chapter's test for
- * lessons that feel too easy, choosing where the plan's depth goes, a mock exam, the exam's
- * written test, the mistakes notebook, a practice call or pronunciation in the language they're
- * learning, statistics, the week in review, memory or Plus. A feature the learner's plan doesn't
- * include comes locked, never hidden. The offer is saved with the answer, so the conversation
- * shows its card after a reload too; a feature that can't help now comes back `unavailable` with
- * why. Only the generation answering the learner's own question inside one of their goals may
- * offer one, wherever they asked it.
- */
+/** Only the claimed answer generation may save offers for its question's goal. Unavailable features return a reason; locked ones stay visible. */
 export async function offerTutorTool({
   area = null,
   goalWords = null,
@@ -307,8 +276,6 @@ export async function offerTutorTool({
     return result;
   }
 
-  // The offer shows with the answer; a generation that lost its claim, or offers the same again,
-  // changes nothing.
   return writeLearnerChange<TutorToolResult>({ userId: session.user.id }, async (tx) => {
     const answering = await tx.lessonQuestion.findFirst({
       select: { toolOffer: true },

@@ -10,11 +10,7 @@ import { lookUpAccount, lookUpCourses, lookUpGoals } from "./learner-account-loo
 import { lookUpMissions, lookUpWeekly } from "./learner-day-lookups";
 import { lookUpProgress } from "./learner-progress-lookup";
 
-/**
- * Reads what a learner lookup asks for (`LEARNER_LOOKUPS`) about the signed-in learner, with the
- * goal the answer is about, which `lookUpTutorData` resolved from their own question. The account
- * readers it reuses read the same signed-in learner the goal belongs to.
- */
+/** goal must belong to the signed-in learner and come from the question being answered. */
 export async function lookUpLearnerData({
   linkScope,
   what,

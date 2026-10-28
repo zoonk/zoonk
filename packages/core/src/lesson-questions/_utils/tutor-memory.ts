@@ -8,15 +8,9 @@ import { type MemoryChange } from "../../memory/memory-contract";
 import { updateMemoryFromActivity } from "../../memory/update-memory-from-activity";
 import { findThreadSubject } from "./tutor-subject";
 
-/** The tutor reads what helps it explain: how the learner learns and what they're working toward. */
 const TUTOR_MEMORY_CATEGORIES = ["learning", "goals"] as const;
 
-/**
- * What the learner's memory holds that could help the tutor answer this question, read while the
- * tutor may still decide to answer for everyone without it (`markTutorMemoryUsed` records what a
- * personal answer reads). Memory is a help, not a requirement: when it can't be read, the tutor
- * answers without it.
- */
+/** Memory failures never block an answer; markTutorMemoryUsed records only facts used in a personal answer. */
 export async function findTutorMemory({
   language,
   question,
@@ -45,10 +39,7 @@ export async function findTutorMemory({
   return facts;
 }
 
-/**
- * The facts a personal answer reads, recorded as used so stale ones can be reviewed. A failed
- * record doesn't keep the tutor from answering.
- */
+/** Recording failures do not block the answer. */
 export async function markTutorMemoryUsed({
   facts,
   userId,
@@ -67,7 +58,6 @@ export async function markTutorMemoryUsed({
   return facts.map((fact) => fact.statement);
 }
 
-/** Learns from a saved personal answer; nothing for a shared or unsaved one. */
 async function learnFromExchange({
   questionId,
   userId,
@@ -104,10 +94,7 @@ async function learnFromExchange({
   });
 }
 
-/**
- * After the tutor's answer is saved, the exchange may teach memory something lasting, such as a
- * goal the learner mentioned. A failure is logged and the answer still counts.
- */
+/** Call after saving the answer; memory failures are logged without undoing the answer. */
 export async function rememberTutorExchange({
   questionId,
   userId,

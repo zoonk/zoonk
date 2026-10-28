@@ -15,10 +15,6 @@ import { createGoalPlan } from "../plans/create-goal-plan";
 import { parseLessonQuestionContextSnapshot } from "./_utils/context-snapshot-schema";
 import { createLessonQuestion } from "./create-lesson-question";
 
-/**
- * A learner with a built plan whose first two lessons earlier days left (the plan's last new-day
- * settling carried them first), with this goal open in the app unless `active` is false.
- */
 async function learnerBehind({ active = true }: { active?: boolean } = {}) {
   const user = await userFixture();
   const library = await planLibraryFixture({ skills: [{ area: "Physics", lessons: 4 }] });
@@ -47,7 +43,6 @@ async function learnerBehind({ active = true }: { active?: boolean } = {}) {
   return { carried, goal, user };
 }
 
-/** What the buddy reads when the learner asks about their plan. */
 async function askAboutPlan({ goalId, userId }: { goalId: string; userId: string }) {
   mockSession(userId);
 
@@ -71,7 +66,6 @@ async function askAboutPlan({ goalId, userId }: { goalId: string; userId: string
   return { raw: JSON.stringify(stored.contextSnapshot), snapshot: stored.contextSnapshot };
 }
 
-/** The learn block of today's day for each lesson it holds: asking the buddy saves the day first. */
 async function readTodayBlocks(goalId: string) {
   const blocks = await prisma.studySessionBlock.findMany({
     where: { kind: "learn", session: { goalId } },
@@ -80,7 +74,6 @@ async function readTodayBlocks(goalId: string) {
   return new Map(blocks.map((block) => [block.lessonId, block.id]));
 }
 
-/** The stored snapshot as the plan's, which only a question about the plan has. */
 function readPlanSnapshot(value: unknown) {
   const snapshot = parseLessonQuestionContextSnapshot(value);
 
@@ -110,7 +103,6 @@ describe("the plan the buddy reads", () => {
 
     const blocks = await readTodayBlocks(learner.goal.id);
 
-    // Asking saved today's day, which holds them: each opens its block.
     expect(plan.catchUp).toStrictEqual({
       lessons: learner.carried.map((item) => ({
         inToday: true,
@@ -202,7 +194,6 @@ describe("the plan the buddy reads", () => {
       items: [{ catchUp: true, link: blockLink, title: first.titleSnapshot }],
     });
 
-    // The lighter day leaves the other one for the next days: nothing opens it today.
     expect(plan.catchUp?.lessons[1]).toStrictEqual({
       inToday: false,
       link: null,
@@ -240,7 +231,6 @@ describe("the plan the buddy reads", () => {
   it("links nothing that would open another goal's day when this goal isn't the one open", async () => {
     const { carried, goal, user } = await learnerBehind({ active: false });
 
-    // Another goal is the one the app has open.
     const open = await unplannedGoalFixture({ userId: user.id });
 
     await prisma.userLearningProfile.update({

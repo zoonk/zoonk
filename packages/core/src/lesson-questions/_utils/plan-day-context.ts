@@ -23,27 +23,16 @@ import { type StudySessionRow } from "../../sessions/_utils/study-session-access
 import { readBlockPayload } from "../../sessions/block-payload";
 import { getBlockReason } from "./block-reason";
 
-/** The first lessons earlier days left, by title; the rest only count (see `catchUp.total`). */
 const CATCH_UP_LESSONS = 5;
 
 type PlanScopeItem = NonNullable<PlanScopeContext["today"]>["items"][number];
 
-/**
- * What the buddy may link for this goal: the links that act on the goal the app has open (today's
- * blocks, Today, the Plan and its subjects) only in the buddy's own conversation about that goal,
- * whose page always shows the open goal's thread, so a link never opens another goal's day, even
- * read again after the learner switched goals. A challenge's page is its own plan item's, whatever
- * goal is open.
- */
+/** Links acting on the open goal are allowed only in its own conversation; challenge links carry their own plan item. */
 export type LinkScope = { activeGoal: boolean };
 
 const TODAY_LINK = { kind: "page", page: "today" } as const satisfies TutorLink;
 
-/**
- * Where a block of the learner's day opens: itself, as Today opens it, while it's still to do and
- * nothing in the day holds it back; a challenge that waits for earlier work, its page; anything
- * else, Today. Nothing outside the open goal's conversation (see `LinkScope`).
- */
+/** Returns no link outside the open goal's conversation; blocked challenges link their intro instead. */
 export function toBlockLink({
   block,
   current,
@@ -68,7 +57,6 @@ export function toBlockLink({
     : TODAY_LINK;
 }
 
-/** The learner's day, as Today shows it, with the lesson titles its learn blocks teach. */
 export type SavedDay = {
   lessonTitles: Map<string, string>;
   session: StudySessionRow;
@@ -83,11 +71,9 @@ function toSessionItem({
   shown,
 }: {
   block: StudySessionBlock;
-  /** The lessons earlier days left (`loadCatchUpItems`). */
   catchUpItems: readonly PlanItem[];
   day: SavedDay;
   scope: LinkScope;
-  /** The block as Today shows it. */
   shown: StudyBlockView;
 }): PlanScopeItem {
   const payload = readBlockPayload(block);
@@ -115,16 +101,12 @@ const PLAN_ITEM_REASONS: Record<PlanItemKind, PlanItemReason> = {
   review: "reviewDue",
 };
 
-/**
- * A mock exam the learner's plan doesn't include stays on its day, marked: features are never
- * hidden, so the buddy can say it comes with Plus when asked about it, and that the day is a full
- * review of every topic instead.
- */
+/** Locked mocks remain visible so the tutor can explain Plus access and their replacement full review. */
 export function toPlusMark(item: Pick<PlanItemView, "kind" | "requiresPlus">) {
   return item.kind === "mock" && item.requiresPlus ? { plusRequired: true as const } : {};
 }
 
-/** A challenge or a planned mock opens on its page, before its day too. */
+/** Challenge links work before their scheduled day too. */
 export function toChallengeLink(item: Pick<PlanItemView, "id" | "kind">): TutorLink | null {
   const challenge = item.kind === "boss" || item.kind === "checkpoint" || item.kind === "mock";
   return challenge && item.id ? { kind: "challenge", planItemId: item.id } : null;
@@ -143,12 +125,7 @@ function toPlanItem(item: PlanItemView): PlanScopeItem {
   };
 }
 
-/**
- * The learner's day as Today opens it (the session from before midnight they're still in, or
- * today's), read as Today's queue shows it: its visible blocks, which of them catch up, and the
- * lessons its learn blocks teach. Null while the day isn't built or has no blocks: nothing here
- * builds it.
- */
+/** Read-only; null before a saved day exists or while it has no blocks. */
 export async function loadSavedDay(goal: Goal): Promise<SavedDay | null> {
   const timeZone = getAnswerTimeZone({ goal });
 
@@ -173,7 +150,6 @@ export async function loadSavedDay(goal: Goal): Promise<SavedDay | null> {
   return { lessonTitles: new Map(lessons.map(({ id, title }) => [id, title])), session, view };
 }
 
-/** Today's session once it's built, as Today shows it; until then, what the plan gives the day. */
 function toToday({
   catchUpItems,
   day,
@@ -205,21 +181,12 @@ function toToday({
     : null;
 }
 
-/**
- * Today's block that teaches a lesson earlier days left, as Today shows it, when the day holds it:
- * by the same rule Today's catching up reads (`isCatchingUp`), on any day, a welcome back's
- * lighter day too, whose view says nothing about catching up.
- */
 function findCatchUpBlock({ day, item }: { day: SavedDay | null; item: PlanItem }) {
   const held = day?.session.blocks.find((block) => isCatchingUp({ block, items: [item] }));
   return held ? day?.view.blocks.find((block) => block.id === held.id) : undefined;
 }
 
-/**
- * Where a lesson earlier days left opens: today's block that holds it; otherwise Today when it
- * offers adding them to today. Nowhere else: the next study days open with it, and no page shows
- * it before then.
- */
+/** Catch-up opens only through its saved block or an offered Today action, never through a future standalone lesson. */
 function toCatchUpLink({
   block,
   day,
@@ -242,20 +209,12 @@ function toCatchUpLink({
   return offeredToday ? TODAY_LINK : null;
 }
 
-/** The lessons earlier days left, as the buddy reads them (see `loadCatchUp`). */
 export type CatchUpLessons = NonNullable<PlanScopeContext["catchUp"]> & {
   /** Lessons left past the ones named. */
   more: number;
 };
 
-/**
- * The lessons earlier days left, from the same rows the plan's status counts (`loadCatchUpItems`):
- * the first `limit` by title, each linked to today's block when the day holds it, or to Today when
- * it offers catching up (`offeredToday`); unlinked otherwise, as the next days open with them. No
- * original day: the plan keeps only that earlier days left them. A free exam plan past its first
- * week has none, as its status says. The context names the first few; the buddy's `catchUp` lookup
- * names more.
- */
+/** Links only saved blocks or explicitly offered catch-up actions; no original dates are available for earlier work. */
 export async function loadCatchUp({
   day,
   goal,
@@ -297,15 +256,10 @@ export async function loadCatchUp({
   };
 }
 
-/** The lessons earlier days left; none on a free exam plan past its first week, which has no new lessons. */
 async function loadCatchUpLessons({ goal, plan }: { goal: Goal; plan: PlanView }) {
   return plan.access.freeWeekOver ? [] : loadCatchUpItems(goal.id);
 }
 
-/**
- * A weekly challenge still to take on its planned day, as its page names it: an exam's mock
- * (`mock`), locked when the plan doesn't include mocks, or the week's mixed challenge (`weekly`).
- */
 export function toWeeklyChallenge({
   item,
   plan,
@@ -324,11 +278,6 @@ export function toWeeklyChallenge({
   };
 }
 
-/**
- * The challenges still ahead: the current phase's challenge, as the plan shows when it comes, and
- * the next weekly challenge (an exam's mock), by its day. Their pages open them, whatever goal is
- * open; a mock the plan doesn't include comes with Plus, the week's mixed challenge never does.
- */
 async function loadChallenges({
   goal,
   plan,
@@ -365,7 +314,6 @@ async function loadChallenges({
   ];
 }
 
-/** The context's catch-up: the first few lessons and how many in all. */
 function toContextCatchUp(catchUp: CatchUpLessons | null): PlanScopeContext["catchUp"] {
   if (!catchUp) {
     return null;
@@ -375,11 +323,6 @@ function toContextCatchUp(catchUp: CatchUpLessons | null): PlanScopeContext["cat
   return { lessons, offeredToday, total };
 }
 
-/**
- * The learner's day as the buddy reads it, from what Today itself reads: today's items (the saved
- * day's blocks, or the plan's items until it's built), the lessons earlier days left and the
- * challenges ahead, each with where it opens (see `LinkScope`).
- */
 export async function loadPlanDayContext({
   goal,
   plan,

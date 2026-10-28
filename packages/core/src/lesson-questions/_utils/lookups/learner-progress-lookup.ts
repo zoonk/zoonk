@@ -10,10 +10,8 @@ import {
 import { type Lookup, toPageLink, toPoints } from "./learner-page-link";
 import { matchesArea } from "./lookup-text";
 
-/** Every area of most goals; one asked by `area` comes alone. */
 const MAX_AREAS = 12;
 
-/** The first skills an area still needs, by name; `skillsLeft` counts them all. */
 const MAX_AREA_SKILLS = 5;
 
 function toPreparation(preparation: ProgressView["preparation"] | undefined) {
@@ -40,7 +38,6 @@ function toPreparation(preparation: ProgressView["preparation"] | undefined) {
 
 type StillNeededArea = ProgressView["stillNeeded"]["areas"][number];
 
-/** The areas still needed, or the one `area` names; null when it names none of them. */
 function pickAreas({
   area,
   areas,
@@ -55,7 +52,6 @@ function pickAreas({
   return picked.length > 0 || areas.length === 0 ? picked : null;
 }
 
-/** What the areas still need, the totals counting only them: the goal's, or the one asked. */
 function toStillNeeded(areas: StillNeededArea[]) {
   if (areas.length === 0) {
     return null;
@@ -77,14 +73,12 @@ function toStillNeeded(areas: StillNeededArea[]) {
   };
 }
 
-/** A language goal's level as its Plan shows it: across skills, each skill's, and its checks. */
 function toLanguage(language: LanguageProgressView | null) {
   if (!language) {
     return null;
   }
 
   return {
-    // The view keeps the last units' checks and the current unit's.
     canDo: language.canDo.map((check) => ({ done: check.done, text: check.text })),
     level: language.level,
     skills: language.levels.map((level) => ({
@@ -97,7 +91,6 @@ function toLanguage(language: LanguageProgressView | null) {
   };
 }
 
-/** The goal's progress as the Plan shows it, and a language goal's level. */
 async function loadProgress(goal: Goal) {
   const [standing, language] = await Promise.all([
     getProgressView({ goalId: goal.id }),
@@ -110,11 +103,7 @@ async function loadProgress(goal: Goal) {
   };
 }
 
-/**
- * Progress toward this goal as its Plan shows it: preparation, what's still needed by area (one
- * area with `area`, naming the areas when none matches), open mistakes and, for a language goal,
- * its level.
- */
+/** An unmatched area returns available area names so the caller can choose one. */
 export async function lookUpProgress({
   area,
   goal,

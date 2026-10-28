@@ -8,20 +8,17 @@ import { toIsoDate } from "../../../plans/planner/plan-calendar";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import { matchesArea, matchesQuery } from "./lookup-text";
 
-/** Enough mistakes to go over in one answer. */
 const MAX_MISTAKES = 8;
 
-/** The latest mistakes a query looks through; older ones are rarely what the learner means. */
+/** Query searches cover only the latest 200 mistakes. */
 const SEARCHED_MISTAKES = 200;
 
-/** Each question cut to a short line, as the buddy's context has them. */
 const MAX_TEXT = 300;
 
 function shorten(text: string | null | undefined): string | null {
   return text ? text.slice(0, MAX_TEXT) : null;
 }
 
-/** The goal's skills, as the mistakes notebook scopes them, or one subject's from the plan's graph. */
 async function loadSkillIds({ area, goal }: { area: string | null; goal: Goal }) {
   if (!area) {
     return loadGoalSkillIds(goal.id);
@@ -39,11 +36,7 @@ async function loadSkillIds({ area, goal }: { area: string | null; goal: Goal })
     .map((skill) => skill.skillId);
 }
 
-/**
- * The learner's mistakes in this goal, newest first, open and fixed: a subject's (`area`), the ones
- * whose skill or question has every word of `query`, or all of them. Each with the question, their
- * answer, the right one and why they missed it, from what they saw when they answered.
- */
+/** Includes open and fixed mistakes newest first, using their recorded question and answers. */
 export async function lookUpMistakes({
   area,
   goal,

@@ -14,10 +14,6 @@ import {
 import { getBlockItemIds, readBlockPayload } from "../../sessions/block-payload";
 import { type LessonQuestionItemContext } from "../contract";
 
-/**
- * The learner's own session block the question is asked in: one that holds it, never a mock's,
- * which is sat on its own screen. Null when it isn't theirs or doesn't hold it.
- */
 async function findQuestionBlock({
   blockId,
   itemId,
@@ -39,7 +35,6 @@ async function findQuestionBlock({
   return !payload.checkpoint?.mock && getBlockItemIds(payload).includes(itemId) ? block : null;
 }
 
-/** What the learner reads the question with, and picks or places, as text. */
 function describeQuestion(question: SessionQuestion): ItemScopeContext["question"] {
   const options = [
     ...(question.options ?? []),
@@ -52,10 +47,6 @@ function describeQuestion(question: SessionQuestion): ItemScopeContext["question
   return { format: question.format, options, text };
 }
 
-/**
- * The learner's latest answer to the question, as they gave it (in this block, when asked in one),
- * with the right answer and why, from their own record; null before they answered it there.
- */
 async function describeLatestAnswer({
   blockId,
   item,
@@ -88,13 +79,7 @@ async function describeLatestAnswer({
   };
 }
 
-/**
- * The tutor's view of a question of the learner's session or mistakes practice, as they saw it:
- * a session's math problem with the numbers its block served. After the check (`answered`), their
- * latest answer to it, the right one and why; before it, nothing that gives the answer away. Null
- * for private content they don't own, a block that isn't theirs or doesn't hold it, a question
- * without their own practice evidence when no block is given, and a format sessions don't ask.
- */
+/** Before checking, never includes answers or solutions; null for inaccessible content, unrelated blocks, or unsupported formats. */
 export async function buildItemContextSnapshot({
   context,
   itemId,
@@ -110,7 +95,7 @@ export async function buildItemContextSnapshot({
       where: {
         id: itemId,
         skill: libraryRowsVisibleTo(userId),
-        /** Practice also serves unseen questions on a saved mistake's skill, including after fixing it. */
+        /** Practice can serve unseen questions for a previously fixed mistake's skill too. */
         ...(context.blockId
           ? {}
           : {
@@ -130,7 +115,6 @@ export async function buildItemContextSnapshot({
     return null;
   }
 
-  // Practice asks only choice questions, whose words don't depend on a block.
   const blockId = block?.id ?? "";
 
   const answer = context.answered

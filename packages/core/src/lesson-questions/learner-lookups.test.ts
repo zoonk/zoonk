@@ -30,10 +30,6 @@ import { lookUpTutorData } from "./look-up-tutor-data";
 
 const MODEL = "openai/gpt-6-luna";
 
-/**
- * A learner whose goal has a plan row and no lessons, open in the app unless `open` is false (then
- * another of their goals is the one open).
- */
 async function learnerWithGoal({ open = true }: { open?: boolean } = {}) {
   const user = await userFixture();
 
@@ -54,10 +50,6 @@ async function learnerWithGoal({ open = true }: { open?: boolean } = {}) {
   return { goal, user };
 }
 
-/**
- * A learner with a built plan teaching Math, then Biology: each skill in a chapter of its own,
- * which Progress counts as an area.
- */
 async function plannedLearner({ open = true }: { open?: boolean } = {}) {
   const user = await userFixture();
 
@@ -81,7 +73,6 @@ async function plannedLearner({ open = true }: { open?: boolean } = {}) {
   return { goal, library, user };
 }
 
-/** The buddy's answer being written for a question about the goal. */
 async function answering(goalId: string) {
   const created = await createLessonQuestion({
     input: { context: { kind: "plan" }, question: "How am I doing?", requestId: randomUUID() },
@@ -111,7 +102,6 @@ function lookUp(
   return lookUpTutorData({ area: null, query: null, ...asked, ...request });
 }
 
-/** Today's session with a lesson to do, a finished review and the missions saved for the day. */
 async function savedDay({ goalId, userId }: { goalId: string; userId: string }) {
   const session = await studySessionFixture({
     goalId,
@@ -224,8 +214,6 @@ describe("the learner's data the buddy looks up", () => {
   it("lists the learner's own goals, the open one linked to its Plan, bounded", async () => {
     const [{ goal, user }, other] = await Promise.all([learnerWithGoal(), userFixture()]);
 
-    // The oldest of the rest, a minute before any of them, so it's shown second even when the
-    // others share its millisecond (goals are listed by creation time alone).
     const paused = await goalFixture({
       createdAt: new Date(Date.now() - 60_000),
       status: "paused",
@@ -249,7 +237,6 @@ describe("the learner's data the buddy looks up", () => {
       throw new Error(`Expected goals, received ${result.status}`);
     }
 
-    // Eleven goals not archived: the open one first, ten shown.
     expect(result.goals).toHaveLength(10);
     expect(result.moreGoals).toBe(1);
 
@@ -318,7 +305,6 @@ describe("the learner's data the buddy looks up", () => {
         userId: user.id,
       }),
       usageRecordsFixture({ count: 1, kind: "conversation", seconds: 600, userId: user.id }),
-      // Another learner's call time never counts.
       usageRecordsFixture({ count: 1, kind: "conversation", seconds: 900, userId: free.user.id }),
     ]);
 
@@ -344,7 +330,6 @@ describe("the learner's data the buddy looks up", () => {
       what: "account",
     });
 
-    // The account's pages are the whole account's, linked in any conversation.
     mockSession(free.user.id);
     const freeAsked = await answering(free.goal.id);
 
@@ -361,7 +346,6 @@ describe("the learner's data the buddy looks up", () => {
     const asked = await answering(goal.id);
     const skill = await skillFixture({ name: `Proportions ${randomUUID()}` });
 
-    // The week of Sep 28 to Oct 4, read on its Sunday, when the logbook is ready.
     const monday = new Date("2026-09-28T00:00:00Z");
 
     const day = (offset: number, hour = 0) =>
@@ -507,7 +491,6 @@ describe("the learner's data the buddy looks up", () => {
 
     expect(JSON.stringify(result)).not.toContain(theirs.course.title);
 
-    // A course's words narrow it to that course.
     await expect(
       lookUp(asked, { query: studied.course.title, what: "courses" }),
     ).resolves.toMatchObject({ courses: [{ title: studied.course.title }], moreCourses: 0 });
@@ -607,7 +590,6 @@ describe("the learner's data the buddy looks up", () => {
       what: "progress",
     });
 
-    // One area asked: what's still needed counts that area alone, never the whole goal.
     const mathOnly = await lookUp(asked, { area: "math", what: "progress" });
 
     if (mathOnly.status !== "found" || mathOnly.what !== "progress") {
@@ -623,7 +605,6 @@ describe("the learner's data the buddy looks up", () => {
       skillsLeft: 1,
     });
 
-    // An area the goal doesn't have says which ones it has.
     await expect(lookUp(asked, { area: "Chemistry", what: "progress" })).resolves.toStrictEqual({
       areas: ["Math chapter 1", "Biology chapter 2"],
       moreAreas: 0,

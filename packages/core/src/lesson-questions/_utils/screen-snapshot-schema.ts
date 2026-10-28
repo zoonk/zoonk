@@ -173,20 +173,12 @@ const itemScopeSnapshotSchema = z.object({
   version: z.literal(1),
 });
 
-/**
- * The page a question came from without a goal's plan: a lesson (all of it, one screen or an
- * answer given there), a chapter or a finished mock.
- */
 export const standaloneScreenSnapshotSchema = z.union([
   lessonScopeSnapshotSchema,
   chapterScopeSnapshotSchema,
   mockScopeSnapshotSchema,
 ]);
 
-/**
- * The page a question came from, with the goal's plan for the buddy: a subject and a session's or
- * practice's question only come so.
- */
 export const screenSnapshotSchema = z.union([
   standaloneScreenSnapshotSchema,
   subjectScopeSnapshotSchema,

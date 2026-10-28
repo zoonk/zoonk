@@ -9,17 +9,14 @@ import { type Mission } from "../../../sessions/missions";
 import { type LinkScope, type SavedDay, loadSavedDay, toBlockLink } from "../plan-day-context";
 import { type Lookup, toPageLink, toPoints } from "./learner-page-link";
 
-/** More than the day ever offers; the rest only count. */
 const MAX_MISSIONS = 8;
 
-/** The pages a mission opens outside the day's blocks; the rest (a call, a pattern) have no link. */
 const MISSION_PAGES: Partial<Record<NonNullable<Mission["opens"]>["kind"], GoalTutorPage>> = {
   mistakesPractice: "mistakesPractice",
   mockChooser: "mockChooser",
   pronunciation: "pronunciation",
 };
 
-/** Where a mission still to do opens, as Today opens it: its block, or its page. */
 function toMissionLink({
   day,
   mission,
@@ -48,10 +45,7 @@ function getMissionTitle({ detail }: Mission): string | null {
   return detail?.title ?? detail?.chapterTitle ?? detail?.patternTitle ?? detail?.areaTitle ?? null;
 }
 
-/**
- * Today's missions from the saved day, as Today shows them (never building it), with the Brain
- * Power earned today and in all.
- */
+/** Reads only a saved day and never creates it. */
 export async function lookUpMissions({ goal, scope }: Lookup): Promise<GoalTutorLookUpResult> {
   const what = "missions";
 
@@ -95,7 +89,6 @@ function toWeekNumbers(week: WeekNumbers) {
   };
 }
 
-/** The week the logbook tells (the latest finished one, or this one on Sunday) for this goal. */
 export async function lookUpWeekly({ goal, scope }: Lookup): Promise<GoalTutorLookUpResult> {
   const what = "weekly";
   const result = await getWeeklyRecap({ goalId: goal.id });
@@ -119,7 +112,6 @@ export async function lookUpWeekly({ goal, scope }: Lookup): Promise<GoalTutorLo
     lastWeek: toWeekNumbers(recap.lastWeek),
     link: toPageLink({ page: "logbook", scope }),
     next: recap.nextFocus?.title ?? null,
-    // A plan has a handful of phases, so a week finishes few.
     phasesFinished: recap.phasesFinished.map((phase) => phase.name),
     status: "found",
     week: {

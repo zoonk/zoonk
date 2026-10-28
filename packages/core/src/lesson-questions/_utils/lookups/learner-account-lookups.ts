@@ -11,15 +11,13 @@ import { getLearningProfile } from "../../../profile/get-learning-profile";
 import { type Lookup, toPageLink } from "./learner-page-link";
 import { matchesQuery } from "./lookup-text";
 
-/** Enough goals to compare; a learner rarely has more. */
 const MAX_GOALS = 10;
 
-/** The most recent courses, each read with its progress; the rest only count. */
 const MAX_COURSES = 5;
 
 const SECONDS_PER_MINUTE = 60;
 
-/** Every goal the learner hasn't archived, the open one first, with its plan's progress. */
+/** Excludes archived goals and puts the open goal first. */
 export async function lookUpGoals({ goal, scope }: Lookup): Promise<GoalTutorLookUpResult> {
   const what = "goals";
   const list = await listCurrentUserGoals();
@@ -57,10 +55,7 @@ function toMinutesLeft({ limit, used }: { limit: number | null; used: number }):
   return limit === null ? null : Math.floor(Math.max(0, limit - used) / SECONDS_PER_MINUTE);
 }
 
-/**
- * The learner's account as Settings shows it: their plan, the call time it leaves (none when calls
- * aren't in it, as a guest's), memory and their preferences. Never a price.
- */
+/** Never returns prices. */
 export async function lookUpAccount({ goal, scope }: Lookup): Promise<GoalTutorLookUpResult> {
   const what = "account";
 
@@ -101,7 +96,6 @@ export async function lookUpAccount({ goal, scope }: Lookup): Promise<GoalTutorL
   };
 }
 
-/** A course the learner studies, with the lessons they finished in it, as its catalog page counts. */
 async function toCourse({ course, goal }: { course: { id: string; title: string }; goal: Goal }) {
   const progress = await getCatalogCourseProgress({ courseId: course.id });
 
@@ -116,10 +110,7 @@ async function toCourse({ course, goal }: { course: { id: string; title: string 
   };
 }
 
-/**
- * The courses the learner studies, most recent first, the ones `query` names when it does: all of
- * them searched and counted, the first few read with their progress.
- */
+/** Counts all matching courses but loads progress only for the most recent few. */
 export async function lookUpCourses({
   goal,
   query,

@@ -1,11 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 
-/**
- * The names a learner goes by in the app: their account's display name, username and email's
- * local part, and their buddy's name. The buddy's web search reads them only to keep each one out
- * of what it sends (in any written form), the way it keeps their memory's words out.
- */
+/** Names are read only to exclude them from outgoing web searches. */
 export async function loadLearnerNames(userId: string): Promise<string[]> {
   const user = await prisma.user.findUnique({
     select: {

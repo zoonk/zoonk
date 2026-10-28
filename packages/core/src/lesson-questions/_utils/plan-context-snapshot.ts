@@ -14,18 +14,11 @@ import { type PlanStatus } from "../../preparation/plan-status";
 import { loadGoalCutoff } from "./goal-cutoff";
 import { loadPlanDayContext, toChallengeLink, toPlusMark } from "./plan-day-context";
 
-/** "What comes next" covers the next few study days of the week. */
 const NEXT_DAYS = 3;
 
-/**
- * Every message sends the context, so it carries what a question about the plan needs, not the
- * whole plan: a day's first lessons, the phase's chapters still ahead (an exam's phase can hold a
- * hundred), and the course's levels without their chapters.
- */
 const NEXT_DAY_ITEMS = 8;
 const PHASE_CHAPTERS_AHEAD = 8;
 
-/** The buddy sees the learner's latest few open mistakes, each question cut to a short line. */
 const RECENT_MISTAKES = 3;
 const MAX_MISTAKE_TEXT = 300;
 
@@ -88,11 +81,6 @@ function toNextDays(plan: PlanView): PlanScopeContext["next"] {
     }));
 }
 
-/**
- * The course the plan is built from, so one "Ask" on the plan answers about both: what it is and
- * its chapters' titles level by level, with the levels the plan teaches from. An exam's plan is
- * built from the notice's subjects (`setup.areas`), not from one course, so it has none.
- */
 async function loadCourse({
   goal,
   plan,
@@ -122,12 +110,10 @@ async function loadCourse({
       targetLanguage: course.targetLanguage,
       title: course.title,
     },
-    // A private course was written for this learner's goal alone: its words are theirs.
     ownCourse: course.visibility === "private",
   };
 }
 
-/** How the learner shaped the plan, so the buddy can say what a change would touch. */
 function toSetup(plan: PlanView): NonNullable<PlanScopeContext["setup"]> {
   return {
     areas: plan.areas.map((area) => ({
@@ -160,7 +146,6 @@ function shorten(text: string | null | undefined): string | null {
   return text ? text.slice(0, MAX_MISTAKE_TEXT) : null;
 }
 
-/** The learner's latest open mistakes in this goal, so "explain my mistake" has them. */
 async function loadRecentMistakes(goal: Goal): Promise<NonNullable<PlanScopeContext["mistakes"]>> {
   const skillIds = await loadGoalSkillIds(goal.id);
 
@@ -187,7 +172,6 @@ async function loadRecentMistakes(goal: Goal): Promise<NonNullable<PlanScopeCont
   });
 }
 
-/** What the learner said they aim for: a score, a course, a position ("750 · Medicina, UFMG"). */
 function getGoalTarget(goal: Goal): string | null {
   const parts = ["targetScore", "targetCourse", "targetPosition"].flatMap(
     (field) => getString(goal.details, field)?.trim() || [],
@@ -215,10 +199,7 @@ function toGoalContext({
   };
 }
 
-/**
- * While the planner is still writing the plan, the buddy knows the goal and nothing of the plan
- * yet: doubts about the subject get answered, and a plan change waits for the plan.
- */
+/** A pending plan can answer subject questions but cannot propose plan changes yet. */
 async function buildPlanBuildingSnapshot(goal: Goal): Promise<PlanScopeContext> {
   const [exam, cutoff] = await Promise.all([loadExamNoticeFacts(goal), loadGoalCutoff(goal)]);
 
@@ -241,21 +222,13 @@ async function buildPlanBuildingSnapshot(goal: Goal): Promise<PlanScopeContext> 
   };
 }
 
-/**
- * The buddy's view of the learner's goal and plan, from the same plan view the apps show and
- * today's session: where they are, why each thing is in their day, what comes next, how they
- * shaped the plan, their latest mistakes, the course it's built from, and for an exam what its
- * notice says. Null for a goal without a plan.
- */
+/** Returns null without a plan. */
 export async function buildPlanContextSnapshot(
   goal: Goal,
   {
     conversation = false,
   }: {
-    /**
-     * The buddy's own conversation about the goal, not a screen of it: only there may answers link
-     * what acts on the open goal (see `LinkScope`).
-     */
+    /** Only the goal's own conversation may link actions on the currently open goal. */
     conversation?: boolean;
   } = {},
 ): Promise<PlanScopeContext | null> {
@@ -292,7 +265,6 @@ export async function buildPlanContextSnapshot(
     mistakes,
     next: toNextDays(plan),
     phase: toPhase(plan),
-    // Text built from the learner's goal words or their own material is theirs (see `PlanScopeContext`).
     privateContent: ownCourse || exam?.fromMaterial === true,
     scope: { kind: "plan" },
     ...(scope.activeGoal && { selectedGoal: true as const }),

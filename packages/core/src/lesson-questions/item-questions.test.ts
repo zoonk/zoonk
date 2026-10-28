@@ -18,7 +18,6 @@ import { getLessonQuestionThread } from "./get-lesson-question-thread";
 
 vi.mock("../memory/update-memory-from-activity", () => ({ updateMemoryFromActivity: vi.fn() }));
 
-/** A learner with a goal, and a question of their goal's skill as practice asks it. */
 async function practiceQuestion() {
   const user = await userFixture();
   const { skills } = await learnerGoalFixture({ itemsPerSkill: 0, phases: [1], userId: user.id });
@@ -53,7 +52,6 @@ function askedId(result: Awaited<ReturnType<typeof ask>>) {
   return result.status === "created" ? result.question.id : "";
 }
 
-/** Asks, and the tutor answers with `answer`, as the answers route saves it. */
 async function askAnswered({ answer, ...asked }: Parameters<typeof ask>[0] & { answer: string }) {
   const questionId = askedId(await ask(asked));
 
@@ -78,7 +76,6 @@ async function claimedHistory(questionId: string) {
   return claimed.claim.priorTurns;
 }
 
-/** The learner checks a wrong answer to the question. */
 function missQuestion({ itemId, userId }: { itemId: string; userId: string }) {
   return attemptFixture({ answer: { selectedIndex: 1 }, isCorrect: false, itemId, userId });
 }
@@ -126,7 +123,6 @@ describe("asking the buddy about a session's or practice's question", () => {
       }),
     );
 
-    // The buddy answered the hint; then the learner checks a wrong answer and asks again.
     await prisma.lessonQuestion.updateMany({
       data: { answer: "Even numbers end in 0, 2, 4, 6 or 8.", status: "completed" },
       where: { thread: { userId: user.id } },
@@ -145,7 +141,6 @@ describe("asking the buddy about a session's or practice's question", () => {
       answer: { correctAnswer: "Right answer", isCorrect: false, learnerAnswer: "Wrong answer" },
     });
 
-    // One thread per question, both turns in it.
     await expect(
       getLessonQuestionThread({ target: { itemId: item.id, kind: "item" } }),
     ).resolves.toMatchObject({ status: "ready", thread: { questions: [{}, {}] } });
@@ -155,8 +150,6 @@ describe("asking the buddy about a session's or practice's question", () => {
     ).resolves.toMatchObject([{ itemId: item.id, kind: "item" }]);
   });
 
-  // Practice asks a missed question again: before it's checked, the buddy only gives hints, so
-  // what it said about the learner's earlier answer stays out of what it's answered with.
   it("leaves what the buddy said about an earlier answer out of a hint's history until it's checked again", async () => {
     const { item, user } = await practiceQuestion();
 
