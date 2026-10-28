@@ -2062,6 +2062,35 @@
         }
       }
     },
+    "a full turn" : {
+      "comment" : "What a quadrilateral's angles fill",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "einen vollen Kreis"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "una vuelta completa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "un tour complet"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "uma volta completa"
+          }
+        }
+      }
+    },
     "A line chart of %@ by %@, from %@ at %@ to %@ at %@." : {
       "comment" : "What a chart reader's line shows, for VoiceOver",
       "localizations" : {
@@ -2302,6 +2331,35 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "a straight line" : {
+      "comment" : "What a triangle's angles fill",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "eine gerade Linie"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "una línea recta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "une ligne droite"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "uma linha reta"
           }
         }
       }
@@ -5610,6 +5668,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Alvo: %@"
+          }
+        }
+      }
+    },
+    "Tear off the corners and put them side by side" : {
+      "comment" : "Above a geometry board's corners laid side by side",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trenne die Ecken ab und lege sie nebeneinander"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recorta las esquinas y colócalas una junto a otra"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Détache les coins et place-les côte à côte"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Destaque os cantos e coloque-os lado a lado"
           }
         }
       }

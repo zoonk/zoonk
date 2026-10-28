@@ -193,7 +193,29 @@ struct GeometryBoardCanvas: View {
     moveTo(index, (points[index].x + offset.0, points[index].y + offset.1))
   }
 
-  private static let squareColors: [Color] = [.mint, .purple, .orange]
+  static func color(_ tone: GeometryBoardModel.Tone) -> Color {
+    switch tone {
+    case .accent: .mint
+    case .highlight: .orange
+    case .secondary: .purple
+    case .neutral: .secondary
+    }
+  }
+
+  /// The color a part of the sum has on the board, so the numbers match the marks.
+  private func partColor(_ index: Int, reading: GeometryBoardModel.Reading) -> Color {
+    switch fields.measure {
+    case .angleSum:
+      Self.color(GeometryBoardModel.cornerTone(index, count: reading.parts.count))
+    case .pythagoras:
+      Self.color(
+        GeometryBoardModel.squareTone(
+          reading.partIndexes.indices.contains(index) ? reading.partIndexes[index] : index,
+          totalIndex: reading.totalIndex))
+    default:
+      .primary
+    }
+  }
 
   private func draw(
     in canvas: inout GraphicsContext, transform: BoardTransform, reading: GeometryBoardModel.Reading
@@ -216,9 +238,7 @@ struct GeometryBoardCanvas: View {
           path.addLines(square.map { transform.point($0.x, $0.y) })
           path.closeSubpath()
         }
-        let color =
-          index == reading.totalIndex
-          ? Color.orange : (reading.partIndexes.firstIndex(of: index) == 0 ? Color.mint : .purple)
+        let color = Self.color(GeometryBoardModel.squareTone(index, totalIndex: reading.totalIndex))
         canvas.fill(path, with: .style(color.opacity(0.15)))
         canvas.stroke(path, with: .style(color), lineWidth: 1.5)
 
@@ -244,6 +264,7 @@ struct GeometryBoardCanvas: View {
     canvas.fill(shape, with: .style(Color.mint.opacity(fields.measure == .area ? 0.25 : 0.12)))
     canvas.stroke(shape, with: .style(.primary), lineWidth: 2)
 
+    let angles = GeometryBoardModel.interiorAngles(points)
     let centroid = (
       points.map(\.x).reduce(0, +) / Double(points.count),
       points.map(\.y).reduce(0, +) / Double(points.count)
@@ -269,11 +290,29 @@ struct GeometryBoardCanvas: View {
             .secondary)), at: name)
 
       if fields.measure == .angleSum, index < reading.parts.count {
-        let inside = CGPoint(x: at.x - unitOut.0 * 26, y: at.y + unitOut.1 * 26)
+        let previous = transform.point(
+          points[(index - 1 + points.count) % points.count].x,
+          points[(index - 1 + points.count) % points.count].y)
+        let next = transform.point(
+          points[(index + 1) % points.count].x, points[(index + 1) % points.count].y)
+        let shortest = min(
+          hypot(previous.x - at.x, previous.y - at.y), hypot(next.x - at.x, next.y - at.y))
+        let wedge = GeometryBoardModel.cornerWedge(
+          angle: angles[index], corner: at, next: next, previous: previous,
+          radius: max(min(26, shortest * 0.35), 12))
+        let color = partColor(index, reading: reading)
+        let path = Path { path in
+          path.move(to: at)
+          path.addLines(wedge.points)
+          path.closeSubpath()
+        }
+        canvas.fill(path, with: .style(color.opacity(0.18)))
+        canvas.stroke(path, with: .style(color), lineWidth: 1.5)
         canvas.draw(
           canvas.resolve(
-            Text(verbatim: ActivityNumberFormat.format(reading.parts[index], unit: "°")).font(
-              .caption2.weight(.semibold).monospacedDigit())), at: inside)
+            Text(verbatim: ActivityNumberFormat.format(reading.parts[index], unit: "°"))
+              .font(.caption2.weight(.semibold).monospacedDigit()).foregroundStyle(color)),
+          at: wedge.label)
       }
 
       if fields.measure == .perimeter, index < reading.parts.count {
@@ -305,12 +344,35 @@ struct GeometryBoardCanvas: View {
         ChartsReadout(text: total, style: isAnswer ? .success : .primary)
       }
     } else {
-      let parts = reading.parts.map { ActivityNumberFormat.format($0, unit: unit) }.joined(
-        separator: " + ")
-      ChartsReadout(text: "\(parts) = \(total)", style: isAnswer ? .success : .primary)
-        .minimumScaleFactor(0.6)
-        .lineLimit(2)
+      VStack(alignment: .leading, spacing: 12) {
+        if fields.measure == .angleSum && !hidesTotal && reading.parts.count <= 4 {
+          AngleFan(
+            angles: reading.parts,
+            colors: reading.parts.indices.map { partColor($0, reading: reading) })
+        }
+
+        Text(sumText(reading, total: total, isAnswer: isAnswer))
+          .font(.title2.weight(.semibold).monospacedDigit())
+          .minimumScaleFactor(0.6)
+          .lineLimit(2)
+      }
     }
+  }
+
+  /// "45° + 72° + 63° = 180°", each part in its mark's color.
+  private func sumText(_ reading: GeometryBoardModel.Reading, total: String, isAnswer: Bool)
+    -> AttributedString
+  {
+    var sum = reading.parts.indices.reduce(into: AttributedString()) { sum, index in
+      var part = AttributedString(ActivityNumberFormat.format(reading.parts[index], unit: unit))
+      part.foregroundColor = partColor(index, reading: reading)
+      sum += index == 0 ? part : AttributedString(" + ") + part
+    }
+    var totalText = AttributedString(total)
+    totalText.foregroundColor =
+      isAnswer ? Color.success : fields.measure == .pythagoras ? Color.orange : .primary
+    sum += AttributedString(" = ") + totalText
+    return sum
   }
 
   /// What the board measures now, in words, for VoiceOver.
@@ -379,5 +441,76 @@ private struct BoardTransform {
       bounds.minX + Double((point.x - origin.x) / scale),
       bounds.maxY - Double((point.y - origin.y) / scale)
     )
+  }
+}
+
+/// The corners torn off and laid side by side around one point (main's `AngleFan`): a triangle's
+/// angles fill a straight line, a quadrilateral's a full turn. It shows why the sum never changes.
+private struct AngleFan: View {
+  let angles: [Double]
+  let colors: [Color]
+
+  private var isTriangle: Bool { angles.count == 3 }
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 4) {
+      Text(
+        "Tear off the corners and put them side by side", tableName: "ActivitiesCharts",
+        comment: "Above a geometry board's corners laid side by side"
+      )
+      .font(.footnote)
+      .foregroundStyle(.secondary)
+
+      HStack(alignment: .bottom, spacing: 12) {
+        Canvas { canvas, size in
+          let radius = 44.0
+          let center = CGPoint(x: size.width / 2, y: radius + 6)
+          var start = Double.pi
+
+          for (index, angle) in angles.enumerated() {
+            let sweep = angle * .pi / 180
+            let path = Path { path in
+              path.move(to: center)
+              path.addLines(
+                (0...24).map { step in
+                  let direction = start + sweep * Double(step) / 24
+                  return CGPoint(
+                    x: center.x + radius * cos(direction), y: center.y + radius * sin(direction))
+                })
+              path.closeSubpath()
+            }
+            let color = colors.indices.contains(index) ? colors[index] : .secondary
+            canvas.fill(path, with: .style(color.opacity(0.18)))
+            canvas.stroke(path, with: .style(color), lineWidth: 1.5)
+            start += sweep
+          }
+
+          if isTriangle {
+            let line = Path { path in
+              path.move(to: CGPoint(x: 6, y: center.y))
+              path.addLine(to: CGPoint(x: size.width - 6, y: center.y))
+            }
+            canvas.stroke(
+              line, with: .style(.primary), style: StrokeStyle(lineWidth: 2, lineCap: .round))
+          }
+        }
+        .frame(width: 180, height: isTriangle ? 56 : 100)
+
+        Group {
+          if isTriangle {
+            Text(
+              "a straight line", tableName: "ActivitiesCharts",
+              comment: "What a triangle's angles fill")
+          } else {
+            Text(
+              "a full turn", tableName: "ActivitiesCharts",
+              comment: "What a quadrilateral's angles fill")
+          }
+        }
+        .font(.footnote)
+        .foregroundStyle(.secondary)
+      }
+    }
+    .accessibilityHidden(true)
   }
 }

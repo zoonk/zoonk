@@ -1,3 +1,4 @@
+import CoreGraphics
 import Foundation
 
 struct GeometryBoardFields: Decodable, Hashable, Sendable {
@@ -27,6 +28,58 @@ struct GeometryBoardFields: Decodable, Hashable, Sendable {
 /// snap to, and the moves that keep it a shape the board can measure honestly.
 enum GeometryBoardModel {
   typealias Point = GeometryBoardFields.Point
+
+  /// Main's board tones (`board-tones.ts`): what the learner moves, a target, a second series, or
+  /// neutral.
+  enum Tone: CaseIterable {
+    case accent, highlight, secondary, neutral
+  }
+
+  /// A tone per corner, so each angle can be matched with its number in the sum. Neighbouring
+  /// corners never share one, including the last and the first.
+  static func cornerTone(_ index: Int, count: Int) -> Tone {
+    let tone = Tone.allCases[index % Tone.allCases.count]
+    let wrapsOntoFirst = index == count - 1 && index % Tone.allCases.count == 0 && index > 0
+    return wrapsOntoFirst ? .secondary : tone
+  }
+
+  /// Pythagoras: the two legs' squares in two tones, the square on the longest side in a third.
+  static func squareTone(_ index: Int, totalIndex: Int?) -> Tone {
+    if index == totalIndex {
+      return .highlight
+    }
+
+    return index == 0 || (totalIndex == 0 && index == 1) ? .accent : .secondary
+  }
+
+  /// The wedge marking a corner's inside angle on screen (y pointing down), as points around the
+  /// corner, and where its label goes: along the middle of the angle, just past the wedge. It turns
+  /// from the next side toward the previous one through the inside of the shape.
+  static func cornerWedge(
+    angle: Double, corner: CGPoint, next: CGPoint, previous: CGPoint, radius: Double
+  ) -> (points: [CGPoint], label: CGPoint) {
+    let unit = { (to: CGPoint) -> CGPoint in
+      let length = max(hypot(to.x - corner.x, to.y - corner.y), 1e-9)
+      return CGPoint(x: (to.x - corner.x) / length, y: (to.y - corner.y) / length)
+    }
+    let (toNext, toPrevious) = (unit(next), unit(previous))
+    let from = atan2(toNext.y, toNext.x)
+    let shortTurn = atan2(
+      toNext.x * toPrevious.y - toNext.y * toPrevious.x,
+      toNext.x * toPrevious.x + toNext.y * toPrevious.y)
+    // The short way round is the inside for a corner under 180°; a dent goes the long way.
+    let direction: Double = shortTurn < 0 ? -1 : 1
+    let radians = angle * .pi / 180
+    let sweep = angle > 180 ? -direction * radians : direction * radians
+    let along = { (direction: Double, distance: Double) in
+      CGPoint(x: corner.x + distance * cos(direction), y: corner.y + distance * sin(direction))
+    }
+
+    return (
+      (0...24).map { along(from + sweep * Double($0) / 24, radius) },
+      along(from + sweep / 2, radius + 14)
+    )
+  }
 
   struct Bounds: Hashable {
     let minX: Double
