@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "answer_tag_correct": "64f9d75800e72dc02df3fc0a747acac6b20dc8026b66e9b499711db79d6254ba",
+  "answer_tag_your_answer": "5fb162b668b6b79bf950d6abfd25117233a69e151e9f2ebaec4ae488a5543a8c",
+  "answer_tag_your_guess": "f3e4feb8ce0a141b7a8d3bdd7b58f3deb9d246621d345990f204c595dc7be34a",
+  "belt_black": "1fbfa072a8ff14a4da68038567404a53b4b6ee2a2bbd2900f38bd670d2bd9ed3",
+  "belt_blue": "ce7b252d0050dcc3b512406735c4c70b36f190348b13a4d35d43f703a82d6b69",
+  "belt_brown": "850541eab27bccc8448447431c823650c591f272c635e0176cefbffda55be666",
+  "belt_gray": "a55ba233a6619f7376c2d2ab7f92939b372103bc608f9e2976f087e204d5dd95",
+  "belt_green": "7f5b15bbe9990a921c849bc8e91a1013e59a4340c10a46d47dbb69ac5ccaccc5",
+  "belt_level": "14a1d063a747d3ef0e91f683abfc01e40517b63f0c65a21c21e787305cd349f8",
+  "belt_orange": "6c8f300f6b5d24ca82f8aa702b208a8fd2f94a115d0623ecceae1393125540c8",
+  "belt_purple": "e19807ec6616efacb0a6c11340c21b58ace30dc68e7fc5aca899dbb3fb06cbc9",
+  "belt_red": "43b0f1da55e2b586d711036f928b7dd44cab643b6549ea840eb7ec6ac0732b02",
+  "belt_white": "4348afae540fb5a9714476d821e196046435c2ae4fb1b02b9987ea8b4b919124",
+  "belt_yellow": "f8faf5651d3d1463f6fa8734c37fe116923213ca2419eeae60a0e3b0b9d06083",
+  "load_failed_description": "93516c35a7c24e5942ac614c4ceb31c51aba595c9b79baffc527842450c055ae",
+  "load_failed_title": "785e5861dd84250db47b3c38ae5393a7bb7068ddf7d5463c7355b504745117bb",
+  "load_failed_try_again": "b2fb2fb6f246e570782d8e78c5d54a370ad40c10e896581b53ca646acaf96077",
   "navigation_courses": "67712d7098ee3f11f6c26c56a2f3213e967d47208162be8610a6e8b772571152",
   "navigation_home": "64557015e6a1bebd1556e2a421ca4f4508814c2a161648bb1a18e5c6d85db627",
   "navigation_new": "2056ffb89d945f32b58e77f8c98b5dfc35c06c2bdf775d9de3c83ce4409d7643",
@@ -20,4 +37,21 @@
     <string name="placeholder_new_course">Tela de novo curso</string>
     <string name="placeholder_courses">Tela de cursos</string>
     <string name="placeholder_progress">Tela de progresso</string>
+    <string name="belt_white">Faixa branca</string>
+    <string name="belt_yellow">Faixa amarela</string>
+    <string name="belt_orange">Faixa laranja</string>
+    <string name="belt_green">Faixa verde</string>
+    <string name="belt_blue">Faixa azul</string>
+    <string name="belt_purple">Faixa roxa</string>
+    <string name="belt_brown">Faixa marrom</string>
+    <string name="belt_red">Faixa vermelha</string>
+    <string name="belt_gray">Faixa cinza</string>
+    <string name="belt_black">Faixa preta</string>
+    <string name="belt_level">%1$s, nível %2$s</string>
+    <string name="answer_tag_correct">Correta</string>
+    <string name="answer_tag_your_answer">Sua resposta</string>
+    <string name="answer_tag_your_guess">Seu palpite</string>
+    <string name="load_failed_title">Esta página não carregou</string>
+    <string name="load_failed_description">Pode ser sua conexão ou um problema do nosso lado. Tentar de novo costuma resolver.</string>
+    <string name="load_failed_try_again">Tentar de novo</string>
 </resources>

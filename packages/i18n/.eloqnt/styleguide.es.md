@@ -14,6 +14,7 @@
 - “goal”: “objetivo”
 - “session” (study): “sesión”; expired sign-in session: “Tu sesión ha caducado”
 - “check” (an answer): “comprobar”
+- “guess” (a pick that doesn't count, “Your guess”): “suposición”, never “respuesta”
 - “write” (Zoonk generating content): “preparar”; learner writing: “escribir”
 - “learning” (study days): “estudio”
 - “Brain Power”: “Poder Mental”

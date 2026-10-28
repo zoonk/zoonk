@@ -9,4 +9,21 @@
     <string name="placeholder_new_course">New course screen</string>
     <string name="placeholder_courses">Courses screen</string>
     <string name="placeholder_progress">Progress screen</string>
+    <string name="belt_white">White belt</string>
+    <string name="belt_yellow">Yellow belt</string>
+    <string name="belt_orange">Orange belt</string>
+    <string name="belt_green">Green belt</string>
+    <string name="belt_blue">Blue belt</string>
+    <string name="belt_purple">Purple belt</string>
+    <string name="belt_brown">Brown belt</string>
+    <string name="belt_red">Red belt</string>
+    <string name="belt_gray">Gray belt</string>
+    <string name="belt_black">Black belt</string>
+    <string name="belt_level">%1$s, level %2$s</string>
+    <string name="answer_tag_correct">Correct</string>
+    <string name="answer_tag_your_answer">Your answer</string>
+    <string name="answer_tag_your_guess">Your guess</string>
+    <string name="load_failed_title">This page didn\'t load</string>
+    <string name="load_failed_description">It might be your connection or a problem on our side. Trying again usually fixes it.</string>
+    <string name="load_failed_try_again">Try again</string>
 </resources>

@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "answer_tag_correct": "5883fbf8cd9e1ed51046e78ee01e98faf260fe1baa0f29a1bc6ea8f7d81feab6",
+  "answer_tag_your_answer": "39e7a2810ce0ed347fc59c72933a9684c046645875f64bf23f6ecdc3b75f120a",
+  "answer_tag_your_guess": "a79830d671841ea09b6832cd5ce21649a215560bf2507182a2ed6e04db91de76",
+  "belt_black": "b862c0c187b87d77e5a423b7cd097945db5abd457f994f8d983c7d7d0067f87c",
+  "belt_blue": "ba39281c035a18c525909722c44b139965a714adb7ffca48ad6426431f9e3b51",
+  "belt_brown": "7b4058540ab5a1e90f21d931853ac34f1a59de39f6b615b5f775c243d0312dda",
+  "belt_gray": "a53da5c9dfe444e2f1b3d1d3a9b36f3c55eb17c4d6908c54c5c0bb8c5c23f981",
+  "belt_green": "0f267974f5458635b0d0a5c7270da1ceb1c0d7348c1205f850cdff4123bfcaef",
+  "belt_level": "d4247b3b9eb4257d7510ccfdd14d293261324db5f1309302f3a48b2a7637354a",
+  "belt_orange": "818f56446c683afe225683776c9513405ff19762a2336474f0a4bc476b317c50",
+  "belt_purple": "e7446787632ef7f0f017eead848662483dfcb038f1673b0e07986e7708c5cd39",
+  "belt_red": "de1ef1d0df57e7c24eed5022d1e96445e23d03ddeac023d4cc05d2268460bf91",
+  "belt_white": "91a2b81c2515e0f80c1d8ef7e305294310287d72cee8857eadee669e4a9dbd83",
+  "belt_yellow": "5dd844f038b50cbe7d661a387a46339c9dc91c5f5f6bb4f4ed6181a1bd0c0c41",
+  "load_failed_description": "d47a259f4a86e443c34252968e2a02478b034526c12f62d558a55d85f546ba60",
+  "load_failed_title": "c9dec3bccf7b404a259a6778b9e0e365f54578c2f05308680b60c6c544f22e4c",
+  "load_failed_try_again": "66c55caebd82532c7b8ac874b156c93fa6f73401887624769384c590c0ba5cce",
   "navigation_courses": "3503391c67799ee44bd9bae7a86d44f744f703e8e6b381629a15d268e0ec2649",
   "navigation_home": "7442f4129488ceb699d3eaca7ab0642714a54d2a7b61685980a11aa9b426ae8d",
   "navigation_new": "56af1792d08bdc98221fa712fe5e5d4dea7b0a9236da4e953a4dc70903d9f6e7",
@@ -20,4 +37,21 @@
     <string name="placeholder_new_course">Seite für einen neuen Kurs</string>
     <string name="placeholder_courses">Kursübersicht</string>
     <string name="placeholder_progress">Fortschrittsübersicht</string>
+    <string name="belt_white">Weißer Gürtel</string>
+    <string name="belt_yellow">Gelber Gürtel</string>
+    <string name="belt_orange">Oranger Gürtel</string>
+    <string name="belt_green">Grüner Gürtel</string>
+    <string name="belt_blue">Blauer Gürtel</string>
+    <string name="belt_purple">Lila Gürtel</string>
+    <string name="belt_brown">Brauner Gürtel</string>
+    <string name="belt_red">Roter Gürtel</string>
+    <string name="belt_gray">Grauer Gürtel</string>
+    <string name="belt_black">Schwarzer Gürtel</string>
+    <string name="belt_level">%1$s, Level %2$s</string>
+    <string name="answer_tag_correct">Richtig</string>
+    <string name="answer_tag_your_answer">Deine Antwort</string>
+    <string name="answer_tag_your_guess">Deine Vermutung</string>
+    <string name="load_failed_title">Diese Seite wurde nicht geladen</string>
+    <string name="load_failed_description">Vielleicht liegt es an deiner Verbindung oder an einem Problem bei uns. Meistens hilft es, es noch einmal zu versuchen.</string>
+    <string name="load_failed_try_again">Noch einmal versuchen</string>
 </resources>

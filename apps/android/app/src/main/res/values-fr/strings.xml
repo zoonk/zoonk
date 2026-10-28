@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "answer_tag_correct": "1e69b6532a4a421f975b8159bbd77a2c6ecdcb9a8a94b2dbac9cdd9fd0892780",
+  "answer_tag_your_answer": "0e1b111dbcd56c21547f578947126d23e0b8cb42a489c1b8326e2eaddedf55b2",
+  "answer_tag_your_guess": "a2b7ecc731d6a9bcb115a4847cf9c4f64464983ea3c554780eb18fc939a6ddb7",
+  "belt_black": "6700d819f35d16a7ae2e70f1911a160a4407c5333dd09770d30c0646f50e2291",
+  "belt_blue": "182cdeb18597e374a7169c3b1752da6359a58553fdaf35af5d58d3644828485c",
+  "belt_brown": "accf29b8f93ede79eb17344e52ff867ac1076b25cce6b74c3a6687b7fdce29ba",
+  "belt_gray": "fadf2f29007207b66302060253d59825cd95eadfb7bfdbd56d9204bb79970137",
+  "belt_green": "eaa30bdca53d32fa4684a04331268d5f8daa1afcb73ec78db391b952d161c0e9",
+  "belt_level": "52e1e184acc5ca8ecbfb19c5c423b2764bba958c38e6f289b24d06a1df8ecaed",
+  "belt_orange": "54f6949a5707e9def3743650eefdf25af95c30de5a1a4cb302a17242a52c6aee",
+  "belt_purple": "db1201e766c1718a72283a22e1a9b73b39670eca24cf174586b88f02c7796c67",
+  "belt_red": "a9f02985c569f17bc3351efe4294456664c666ca9d15f43f2e1f7adeee7cc6d3",
+  "belt_white": "bbc179333e29cd74b97cef712b1ea491c573c11ccfb40a1b896ed0551302a71d",
+  "belt_yellow": "7417738a13dc996cf5151c2f447dad51f8049cb12006319e1279bd55fa55735e",
+  "load_failed_description": "38864e84f5211f3a98879c8163334c59341d7c552df2f8ee04d5367c68c9ae38",
+  "load_failed_title": "e16fd39f1c41f2c8a1846884827c966465b2c28c09d4694d5948bfc11295d508",
+  "load_failed_try_again": "3ad686b28b967764673f4fa46cabacda75ef2bede6a80d84d2c77ab8d2a1f924",
   "navigation_courses": "219e663f0841152e77bdaaecced7d1b0e132e42fa273c3cba2cfcec6d7d3fcc8",
   "navigation_home": "a6f2a6ed3d05a85a051afaf10cfb4166e09f8105251b92263677770401ceec42",
   "navigation_new": "f3cf68cea2e228c82838003c815b60ea72fee967f7e6fb9aab84b98199745050",
@@ -20,4 +37,21 @@
     <string name="placeholder_new_course">Écran de création d’un cours</string>
     <string name="placeholder_courses">Écran des cours</string>
     <string name="placeholder_progress">Écran de progression</string>
+    <string name="belt_white">Ceinture blanche</string>
+    <string name="belt_yellow">Ceinture jaune</string>
+    <string name="belt_orange">Ceinture orange</string>
+    <string name="belt_green">Ceinture verte</string>
+    <string name="belt_blue">Ceinture bleue</string>
+    <string name="belt_purple">Ceinture violette</string>
+    <string name="belt_brown">Ceinture marron</string>
+    <string name="belt_red">Ceinture rouge</string>
+    <string name="belt_gray">Ceinture grise</string>
+    <string name="belt_black">Ceinture noire</string>
+    <string name="belt_level">%1$s, niveau %2$s</string>
+    <string name="answer_tag_correct">Correct</string>
+    <string name="answer_tag_your_answer">Ta réponse</string>
+    <string name="answer_tag_your_guess">Ton estimation</string>
+    <string name="load_failed_title">Cette page ne s’est pas chargée</string>
+    <string name="load_failed_description">Le problème vient peut-être de ta connexion ou de notre côté. Réessaie, ça règle souvent le problème.</string>
+    <string name="load_failed_try_again">Réessayer</string>
 </resources>
