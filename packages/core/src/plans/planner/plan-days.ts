@@ -1,7 +1,7 @@
 import { getCheckpointMinutes } from "../../checkpoints/checkpoint-minutes";
 import { CHECKPOINT_QUESTIONS } from "../../checkpoints/checkpoint-rules";
 import { getPlannedBossMinutes } from "./boss-minutes";
-import { type ExamBossDays, listBossEvents } from "./exam-boss-days";
+import { type ExamBossDays, listBossEvents, withBossEvents } from "./exam-boss-days";
 import { type MockDays, getExamMockDays, getMockWeeks, isMockDay, isMockWeek } from "./mock-days";
 import { type MockFunding, getFundedMinutes } from "./mock-funding";
 import {
@@ -348,7 +348,7 @@ export function createExamDays({
     const bosses = bossDays && !isShortPlan ? listBossEvents({ bossDays, bossMinutes, date }) : [];
 
     return {
-      events: [...events, ...bosses],
+      events: withBossEvents({ bosses, events }),
       minutes,
       open: window.kind !== "finalStretch",
       phase,

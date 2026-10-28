@@ -1,6 +1,6 @@
 import { type GoalKind } from "@zoonk/db";
 import { MAX_PLAN_DAYS } from "../target-date-range";
-import { type ExamBossDays, listBossEvents } from "./exam-boss-days";
+import { type ExamBossDays, listBossEvents, withBossEvents } from "./exam-boss-days";
 import { type FundedMocks, type MockFunding, fundMocks } from "./mock-funding";
 import { type MockClock, type MockResolution } from "./mock-identity";
 import { type StudyCalendar, addDays, getWeeklyEventWeekday } from "./plan-calendar";
@@ -164,7 +164,7 @@ export function continueAfterExam({
   const describeDay = (date: Date) => {
     const day = learnDay(date);
     const bosses = bossDays ? listBossEvents({ bossDays, bossMinutes, date }) : [];
-    return { ...day, events: [...day.events, ...bosses], phase };
+    return { ...day, events: withBossEvents({ bosses, events: day.events }), phase };
   };
 
   // The weekly mocks after the exam take their time from the days before them too (see `fundMocks`).

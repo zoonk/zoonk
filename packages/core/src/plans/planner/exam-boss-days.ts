@@ -322,6 +322,32 @@ export function listBossEvents({
 }
 
 /**
+ * A day's events with the phase challenges a run places on it (see `listBossEvents`): a review
+ * fills what the day has left, so it gives the time of the challenges that lead the day (R45).
+ * Laid beside a review of the whole day, two challenges asked a 45-minute day for 68 minutes.
+ */
+export function withBossEvents({
+  bosses,
+  events,
+}: {
+  bosses: readonly FixedEvent[];
+  events: readonly FixedEvent[];
+}): FixedEvent[] {
+  const taken = bosses.reduce((total, boss) => total + (boss.beside ? 0 : boss.minutes), 0);
+
+  const kept =
+    taken > 0
+      ? events.map((event) =>
+          event.kind === "review"
+            ? { ...event, minutes: Math.max(0, event.minutes - taken) }
+            : event,
+        )
+      : events;
+
+  return [...kept, ...bosses];
+}
+
+/**
  * What a built plan says of where its exam's phase challenges can go (see `placeExamBosses`): the
  * study days (`listPhaseChallengeDays`; a day a mock was moved onto, by the learner or a run, is
  * one), and the day each scheduled lesson's time ends, when later than its date, this week's kept
