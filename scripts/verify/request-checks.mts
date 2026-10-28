@@ -12,7 +12,6 @@ function isNoise(text: string): boolean {
   return text.startsWith("Failed to load resource") || text.includes("/_vercel/");
 }
 
-/** Errors and failed responses: what breaks the page whatever server it runs on. */
 export function errorFindings(
   load: Pick<LoadMeasurement, "console" | "pageErrors" | "requests">,
 ): Finding[] {
@@ -53,10 +52,8 @@ export function errorFindings(
 }
 
 /**
- * Work the page asked the server for on its own, before anyone touched it. A Server Action or
- * other POST might only read, but if it writes or starts AI it breaks the rule that only a
- * learner's click does; data the client fetched for itself is usually data the server should
- * have rendered with the page.
+ * A POST the page sends on its own breaks the rule when it writes or starts AI, which only a
+ * learner's click may; data the client fetched itself is usually data the server should render.
  */
 export function requestFindings(requests: RequestRecord[]): Finding[] {
   return requests.flatMap((request): Finding[] => {

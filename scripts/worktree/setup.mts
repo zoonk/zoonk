@@ -23,7 +23,7 @@ function log(message: string): void {
 function installDependencies(): Promise<string> {
   const pnpm = getPnpmCommand(process.env);
 
-  /** Direct setup calls have no npm_execpath, and pnpm may only be a .cmd shim on Windows. */
+  // Direct setup calls have no npm_execpath, and pnpm may only be a .cmd shim on Windows.
   if (process.platform === "win32" && pnpm.command === "pnpm") {
     return run({
       args: ["/d", "/s", "/c", "pnpm install --frozen-lockfile --prefer-offline"],

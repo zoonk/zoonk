@@ -17,7 +17,6 @@ function formatValue(value: number, unit: string | undefined): string {
   return unit === "CLS" ? value.toFixed(CLS_DIGITS) : `${Math.round(value)} ${unit ?? ""}`.trim();
 }
 
-/** Findings that repeat across screens are listed once, with every screen they showed on. */
 function groupFindings(entries: { findings: Finding[]; place: Place }[]): Group[] {
   const groups = new Map<string, Group>();
 
@@ -42,7 +41,6 @@ function groupFindings(entries: { findings: Finding[]; place: Place }[]): Group[
   return [...groups.values()];
 }
 
-/** "/plan (every screen)" or "/plan (phone light, laptop dark)", page by page. */
 function describePlaces(places: Place[], screensPerPage: Map<string, number>): string {
   const pages = Map.groupBy(places, (place) => place.page);
 
@@ -116,7 +114,6 @@ function loadRows(loads: LoadReport[], out: string): string[] {
   ];
 }
 
-/** "prefetch ×9, asset ×13": what a navigation fetched after the tap. */
 function countKinds(navigation: NavigationReport): string {
   const kinds = Map.groupBy(navigation.requests, (request) => classifyRequest(request));
   return [...kinds].map(([kind, requests]) => `${kind} ×${requests.length}`).join(", ") || "none";
@@ -140,7 +137,6 @@ function navigationRows(navigations: NavigationReport[]): string[] {
   ];
 }
 
-/** The run's report in Markdown, its failures first, and how many failures it has. */
 export function renderReport({
   extra,
   header,
@@ -150,13 +146,11 @@ export function renderReport({
   sections,
   sheets,
 }: {
-  /** Findings from the run's other checks (exposure, memory, the baseline), with where they apply. */
   extra: { findings: Finding[]; place: Place }[];
   header: string[];
   loads: LoadReport[];
   navigations: NavigationReport[];
   out: string;
-  /** Those checks' own tables, after the loads and navigations. */
   sections: string[];
   sheets: string[];
 }) {

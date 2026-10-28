@@ -7,10 +7,7 @@ import { stopChildProcess } from "./stop-child-process.mts";
 const STARTUP_TIMEOUT_MS = 60_000;
 const STARTUP_OUTPUT_CHARACTERS = 8192;
 
-/**
- * Starts only this checkout's prebuilt E2E API on `port`; callers own its lifetime and shut down
- * this exact child.
- */
+/** Callers own its lifetime and shut down this exact child. */
 export async function startLiveCallApi({ port, repository }: { port: number; repository: string }) {
   const directory = resolve(repository, "apps/api");
   const require = createRequire(resolve(directory, "package.json"));

@@ -16,7 +16,6 @@ import { type ViewportName } from "./viewports.mts";
 
 export type NavigationReport = NavigationMeasurement & {
   findings: Finding[];
-  /** Paints after the tap, in ms since it, saved in `framesDirectory`. */
   frames: number[];
   framesDirectory: string;
   from: string;
@@ -28,8 +27,8 @@ export type NavigationReport = NavigationMeasurement & {
 type Probe = NonNullable<Awaited<ReturnType<typeof readProbe>>>;
 
 /**
- * Times one tap from the probe read before it and after the next page settled, in ms since the
- * epoch, so a tap that loaded a whole new document (whose probe started over) is timed too.
+ * In ms since the epoch, so a tap that loaded a whole new document (whose probe started over) is
+ * timed too.
  */
 function timeTap({ after, before, tapAt }: { after: Probe; before: Probe; tapAt: number }) {
   const fullLoad = after.timeOrigin !== before.timeOrigin;
@@ -60,7 +59,6 @@ function timeTap({ after, before, tapAt }: { after: Probe; before: Probe; tapAt:
   };
 }
 
-/** A tap the probe couldn't time: no link to tap, or a page that didn't answer the probe. */
 const UNTIMED: Omit<ReturnType<typeof timeTap>, "clickAt"> & { clickAt: null } = {
   blankSeenMs: null,
   clickAt: null,
@@ -76,10 +74,6 @@ const UNTIMED: Omit<ReturnType<typeof timeTap>, "clickAt"> & { clickAt: null } =
 
 type Opened = Awaited<ReturnType<typeof openPage>>;
 
-/**
- * Whether the destination showed without asking the server for it after the tap: a navigation's
- * own fetch of the page, or a whole new document, before its content was on screen.
- */
 function servedFromPrefetch({
   clickAt,
   contentMs,
@@ -101,7 +95,6 @@ function servedFromPrefetch({
   );
 }
 
-/** One tap from the page showing now to `to`: what it did, what it painted, and how it judged. */
 async function measureTap(
   target: Target,
   {
@@ -163,7 +156,6 @@ async function measureTap(
   return {
     ...measurement,
     findings: judgeNavigation(measurement),
-    // Named by ms since the tap, so the sheet shows what the learner saw after tapping.
     frames: await saveFrames({
       directory: framesDirectory,
       frames: screencast.frames,
@@ -177,7 +169,6 @@ async function measureTap(
   };
 }
 
-/** Each step from one path to the next, in order. */
 function hops(paths: string[]) {
   return paths.slice(1).map((to, index) => {
     const from = paths[index] ?? "/";
@@ -185,7 +176,6 @@ function hops(paths: string[]) {
   });
 }
 
-/** Aborts the prefetches of `paths`, so a tap to one finds nothing prefetched. */
 async function blockPrefetches(
   page: Page,
   { baseUrl, paths }: { baseUrl: string; paths: string[] },
@@ -199,7 +189,6 @@ async function blockPrefetches(
   );
 }
 
-/** Waits until a load shows its content (a frame with words and no skeleton in its main region). */
 async function waitForContent(page: Page) {
   await page.waitForFunction(
     () => {
@@ -211,10 +200,6 @@ async function waitForContent(page: Page) {
   );
 }
 
-/**
- * Each tap as soon as a cold load of its page shows its content, before the page's code is ready:
- * a learner opening the app on a slow phone and tapping at once.
- */
 async function measureEarlyTaps(
   target: Target,
   { paths, viewport }: { paths: string[]; viewport: ViewportName },
@@ -250,11 +235,6 @@ async function measureEarlyTaps(
   return reports;
 }
 
-/**
- * Opens the first path, then taps through to each next one by its link, as a learner would:
- * after the page's prefetches landed, with the next pages' prefetches blocked (`noPrefetch`), or
- * each tap right after a cold load showed its content (`early`).
- */
 export async function measureNavigations(
   target: Target,
   { mode, paths, viewport }: { mode: NavigationMode; paths: string[]; viewport: ViewportName },

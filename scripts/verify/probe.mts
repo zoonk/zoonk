@@ -1,10 +1,9 @@
 import { type MainFrame } from "./content-frames.mts";
 
 /**
- * What `pnpm verify:pages` watches inside the page. Every function here runs in the browser and
- * reads nothing outside itself, so Playwright can send it with `addInitScript` or `evaluate`; that
- * is why helpers live inside the function that uses them. Times are milliseconds since the
- * document's navigation started (`performance.now()`).
+ * Every function here runs in the browser and reads nothing outside itself, so Playwright can send
+ * it with `addInitScript` or `evaluate`; that is why helpers live inside the function that uses
+ * them.
  */
 export type ProbeState = {
   blankFrames: number[];
@@ -12,14 +11,10 @@ export type ProbeState = {
   fcp: number | null;
   lastMutationAt: number;
   lcp: number | null;
-  /** Main-thread tasks over 50 ms: while one runs, the page can't answer a tap. */
   longTasks: { at: number; duration: number }[];
-  /** The main region's skeleton and words, recorded when either changes (`content-frames.mts`). */
   mainFrames: MainFrame[];
-  /** Frames on which a tapped link showed it was waiting (`data-link-pending`, `aria-busy`). */
   pendingFrames: number[];
   shifts: { at: number; sources: string[]; value: number }[];
-  /** Frames on which a loading skeleton was visible. */
   skeletonFrames: number[];
   urls: { at: number; href: string }[];
 };
@@ -29,7 +24,6 @@ declare global {
   var zoonkVerify: ProbeState | undefined;
 }
 
-/** Starts watching before the page's own scripts run: layout shifts, paints, skeletons, URLs. */
 export function installProbe() {
   const MAX_FRAMES = 2000;
   const TEXT_LENGTH = 30;
@@ -172,7 +166,6 @@ export function installProbe() {
   let wordsReadAt = -Infinity;
   let words = 0;
 
-  /** The page's main region (the body on a page without one): its skeleton, and its words. */
   function readMain(now: number) {
     const main = document.querySelector("main") ?? document.body;
 
@@ -198,9 +191,8 @@ export function installProbe() {
   }
 
   /**
-   * Reads each frame as it painted: the page's own animation-frame callbacks run after this one
-   * (React reveals streamed content in one), so a skeleton they replace in the same frame was
-   * never on screen.
+   * The page's own animation-frame callbacks run after this one (React reveals streamed content in
+   * one), so a skeleton they replace in the same frame was never on screen.
    */
   function watchFrame() {
     const now = performance.now();
@@ -211,13 +203,11 @@ export function installProbe() {
   requestAnimationFrame(watchFrame);
 }
 
-/** The probe's state, with the document's start (`timeOrigin`, ms since the epoch) and now. */
 export function readProbe(): (ProbeState & { now: number; timeOrigin: number }) | null {
   const state = globalThis.zoonkVerify;
   return state ? { ...state, now: performance.now(), timeOrigin: performance.timeOrigin } : null;
 }
 
-/** Bytes the page load transferred: its HTML, its scripts, and everything together. */
 export function transferredBytes() {
   const [navigation] = performance.getEntriesByType("navigation");
   const html = navigation instanceof PerformanceNavigationTiming ? navigation.transferSize : 0;
@@ -242,10 +232,6 @@ export function isNextDev(): boolean {
   return document.querySelector("nextjs-portal") !== null;
 }
 
-/**
- * The page's width against the viewport's and, when it scrolls sideways, the outermost elements
- * that stick out past the viewport outside any scroller that clips them (a carousel doesn't count).
- */
 export function findOverflow() {
   const MAX_OFFENDERS = 5;
   const TEXT_LENGTH = 30;
@@ -290,10 +276,6 @@ export function findOverflow() {
   };
 }
 
-/**
- * Text the layout cuts off: an element whose own text overflows a box that clips it (an ellipsis,
- * hidden overflow or a line clamp), as people see it now.
- */
 export function findTruncated(): string[] {
   const MAX_CUT = 10;
   const TEXT_LENGTH = 40;
@@ -327,7 +309,6 @@ export function findTruncated(): string[] {
     .slice(0, MAX_CUT);
 }
 
-/** This site's links someone can see on screen now (path and query), other than the page's own. */
 export function visibleLinks(): string[] {
   const links = [...document.querySelectorAll<HTMLAnchorElement>("a[href]")].filter((link) => {
     const rect = link.getBoundingClientRect();
@@ -346,7 +327,6 @@ export function visibleLinks(): string[] {
   return [...new Set(links.map((link) => link.pathname + link.search))];
 }
 
-/** Marks the first visible link to `path` (path and query, and no other) for Playwright to tap. */
 export function markLinkTo(path: string): boolean {
   const links = [...document.querySelectorAll<HTMLAnchorElement>("a[href]")];
 

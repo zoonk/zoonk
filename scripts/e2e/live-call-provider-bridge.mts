@@ -89,7 +89,7 @@ async function createSession({
   }
 }
 
-/** OpenAI's answers: 200 once the session ends, 404 `session_id_not_found` once it's gone. */
+/** OpenAI answers 200 once the session ends, and 404 `session_id_not_found` once it's gone. */
 function hangUpSession(session: Session, response: ServerResponse) {
   session.closeRequestedAt ??= Date.now();
 
@@ -226,7 +226,6 @@ async function handle({
   json(response, { error: "Unknown test boundary operation" }, HTTP_NOT_FOUND);
 }
 
-/** Lane-owned AI boundary fake, never OpenAI evidence. Native browser peers answer SDP; hangups answer like OpenAI's. */
 export async function startLiveCallTestProvider() {
   const sessions: Sessions = new Map();
 

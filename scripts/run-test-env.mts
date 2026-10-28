@@ -7,7 +7,6 @@ if ((mode !== "test" && mode !== "e2e") || !command) {
   throw new Error("Usage: node scripts/run-test-env.mts <test|e2e> <command> [arguments]");
 }
 
-/** Let pnpm resolve platform-specific shims and preserve their module search paths. */
 const pnpm = getPnpmCommand(process.env);
 
 applyCommandExit(

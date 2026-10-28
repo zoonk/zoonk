@@ -55,10 +55,6 @@ function findPort(url: URL): string | undefined {
   return url.hostname.endsWith(".localhost") ? findPortlessPort(url) : undefined;
 }
 
-/**
- * The Next.js server answering a local URL (a Portless route or a localhost port), found by the
- * port it listens on, so a page load's server CPU can be measured. Null for any other URL.
- */
 export function findServerPid(url: URL): number | null {
   const port = findPort(url);
 
@@ -79,7 +75,6 @@ export function readRssMb(pid: number): number | null {
   return kilobytes > 0 ? kilobytes / KB_PER_MB : null;
 }
 
-/** The process's CPU time so far (user and system), in milliseconds. */
 export function readCpuMs(pid: number): number | null {
   try {
     const fields = readFileSync(`/proc/${pid}/stat`, "utf8").split(") ")[1]?.split(" ") ?? [];

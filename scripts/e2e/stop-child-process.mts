@@ -4,10 +4,9 @@ import { setTimeout as delay } from "node:timers/promises";
 const STOP_GRACE_MS = 10_000;
 
 /**
- * E2E's `next start` exits on SIGTERM at once (`NEXT_MANUAL_SIG_HANDLE` in `.env.e2e`); the SIGKILL
- * after the grace is the backstop for a server that doesn't, which the local Workflow queue could
- * keep alive for minutes. Only `next start` children belong here: `next dev` forks a server that a
- * SIGKILL of its parent would orphan.
+ * E2E's `next start` exits on SIGTERM at once (`NEXT_MANUAL_SIG_HANDLE`); the SIGKILL is the
+ * backstop for one the local Workflow queue keeps alive. `next dev` forks a server a SIGKILL of
+ * its parent would orphan, so only `next start` children belong here.
  */
 export async function stopChildProcess({
   child,

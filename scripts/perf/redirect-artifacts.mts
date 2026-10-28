@@ -37,7 +37,6 @@ function validTarget(target: string): boolean {
   return ["http:", "https:"].includes(url.protocol);
 }
 
-/** Compare the persisted HTTP response with the redirect React sends to client navigations. */
 export function getRedirectProblems({
   flight,
   meta,

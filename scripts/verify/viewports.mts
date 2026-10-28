@@ -8,7 +8,6 @@ const IPAD =
 
 const TOUCH = { hasTouch: true, isMobile: true };
 
-/** The screens zoonk-design checks every change on, smallest first. */
 export const VIEWPORT_NAMES = [
   "phone",
   "tablet",

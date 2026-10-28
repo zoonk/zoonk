@@ -6,11 +6,7 @@ import { applyCommandExit, runForegroundCommand } from "../dev/process.mts";
 import { startLiveCallApi } from "./live-call-api.mts";
 import { startLiveCallTestProvider } from "./live-call-provider-bridge.mts";
 
-/**
- * Main's E2E run (`pnpm e2e:main`), the same in CI and in any checkout with its own E2E database:
- * migrates that database, builds the real API and Main side by side, starts the API and a no-spend
- * live-call provider, and runs Main's Playwright suite with the arguments it was given.
- */
+/** `pnpm e2e:main`, the same in CI and in any checkout with its own E2E database. */
 const repository = resolve(import.meta.dirname, "../..");
 
 if (process.env.CODEX_SANDBOX && process.env.CODEX_SANDBOX !== "none") {
@@ -45,8 +41,8 @@ async function run({
 }
 
 /**
- * Marks an app's finished E2E build, Turbopack's cache written: CI saves that cache only from a
- * finished build, even when a newer push cancels the run after it (`e2e-main.yml`).
+ * CI saves Turbopack's cache only from a finished build, even when a newer push cancels the run
+ * (`e2e-main.yml`).
  */
 async function markBuilt({ app, built }: { app: "api" | "main"; built: boolean }) {
   if (built) {
@@ -58,7 +54,6 @@ async function markBuilt({ app, built }: { app: "api" | "main"; built: boolean }
   return built;
 }
 
-/** A free local port, so Main builds against the API's address while the API builds. */
 async function findFreePort(): Promise<number> {
   const server = createServer().listen(0, "127.0.0.1");
   await once(server, "listening");
@@ -83,7 +78,6 @@ async function runMain() {
   }
 
   const port = await findFreePort();
-  // The test environment (`getTestEnvironment`) points Main's build and server at this API.
   process.env.E2E_API_URL = `http://localhost:${port}`;
 
   const [apiBuilt, mainBuilt] = await Promise.all([
@@ -101,7 +95,6 @@ async function runMain() {
   const api = await startLiveCallApi({ port, repository });
 
   try {
-    // Main's build prepared the data its tests read: the global setup doesn't again.
     await run({
       args: ["--filter", "main", "e2e", ...process.argv.slice(2)],
       environment: { ...process.env, E2E_DATA_PREPARED: "true" },
@@ -111,7 +104,6 @@ async function runMain() {
   }
 }
 
-/** CI measures the same build it tests, then gates its artifacts before opening the browser. */
 async function buildMain(): Promise<boolean> {
   if (process.env.MAIN_PERF_GATES !== "true") {
     return run({ args: ["--filter", "main", "build:e2e"] });

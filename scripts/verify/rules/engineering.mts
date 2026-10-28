@@ -1,6 +1,5 @@
 import { CODE, type Rule, SERVER_SOURCE, SOURCE, TESTS, UI } from "./shared.mts";
 
-/** What a principal engineer questions: rendering, React, data, caching, migrations and leftovers. */
 export const ENGINEERING_RULES: Rule[] = [
   {
     files: SOURCE,

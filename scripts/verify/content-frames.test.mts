@@ -9,7 +9,6 @@ const SETTLED_WORDS = 300;
 const PAINT_AFTER_SHELL = 250;
 const PAINT_BEFORE_SHELL = 100;
 
-/** A hard load: the shell's title and skeletons, then the day, then a word more. */
 const LOAD: MainFrame[] = [
   { at: SHELL_AT, skeleton: true, words: 1 },
   { at: CONTENT_AT, skeleton: false, words: 290 },

@@ -60,7 +60,8 @@ async function prepareDatabase({
     throw new Error(`Refusing to replace unmanaged database ${name}.`);
   }
 
-  /** Only unfinished databases from this worktree's previous setup may be rebuilt. Never force a disconnect. */
+  // Only unfinished databases from this worktree's previous setup may be rebuilt. Never force a
+  // disconnect.
   if (state === "false") {
     await query({ source, sql: `DROP DATABASE "${name}"` });
   }
@@ -89,7 +90,7 @@ async function copyDevelopmentDatabase({
   const env = postgresEnvironment(source);
 
   try {
-    /** A logical snapshot works while the primary checkout has open connections. */
+    // A logical snapshot works while the primary checkout has open connections.
     await run({
       args: [
         "-w",

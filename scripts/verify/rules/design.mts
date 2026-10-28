@@ -1,6 +1,5 @@
 import { type Rule, UI } from "./shared.mts";
 
-/** What a designer questions in code: tokens, accessible names and controls, focus, motion and images. */
 export const DESIGN_RULES: Rule[] = [
   {
     files: UI,

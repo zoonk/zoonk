@@ -2,11 +2,9 @@ import { type describeViolations } from "../../packages/testing/src/accessibilit
 
 type Violation = Parameters<typeof describeViolations>[0][number];
 
-/** How far apart red, green and blue may be for a color to still read as gray. */
 const GRAY_SPREAD = 12;
 const HEX = /^#(?<red>[0-9a-f]{2})(?<green>[0-9a-f]{2})(?<blue>[0-9a-f]{2})/iu;
 
-/** Whether a color axe reports (`#737373`) is a gray: the design system's neutral text. */
 export function isNeutral(color: unknown): boolean {
   const groups = typeof color === "string" ? HEX.exec(color)?.groups : undefined;
 
@@ -22,9 +20,8 @@ export function isNeutral(color: unknown): boolean {
 }
 
 /**
- * The regular look's contrast failures on neutral text only. Neutral text (titles, body, muted
- * lines) meets WCAG AA in every look; colored marks and words stay soft by design and turn strict
- * only when the device asks for more contrast, so they're never failures here.
+ * Colored marks and words stay soft by design and turn strict only when the device asks for more
+ * contrast, so only neutral text fails here.
  */
 export function neutralTextOnly(violations: Violation[]): Violation[] {
   return violations

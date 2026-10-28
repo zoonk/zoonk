@@ -33,7 +33,6 @@ describe("Release CI reuse", () => {
   ])(
     "requires checks=$required for main CI results $conclusions",
     async ({ conclusions, required }) => {
-      // GitHub's run API is an external boundary; no workflow is dispatched by these tests.
       vi.stubGlobal("fetch", (url: URL) => {
         expect(url.searchParams.get("head_sha")).toBe("release-sha");
 

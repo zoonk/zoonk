@@ -14,7 +14,6 @@ function sourceTokens(source: string): string[] {
     .filter((token) => !token.startsWith("//") && !token.startsWith("/*"));
 }
 
-/** Ignore comments and string contents when finding the literal segment export. */
 function requiresNavigation(source: string): boolean {
   const tokens = sourceTokens(source);
 
@@ -68,7 +67,6 @@ export async function getNavigationRoutes(appDirectory: string): Promise<string[
   return [...new Set(pages.map(({ file }) => urlPattern(dirname(file))))].toSorted();
 }
 
-/** Match only the catalog's shared unlisted address, without loading server-only queries. */
 export function getCatalogPlaceholderMatcher(appDirectory: string) {
   const app = resolve(appDirectory);
   const values = new Map(Object.entries(UNLISTED_ROUTE));

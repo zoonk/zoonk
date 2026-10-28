@@ -10,7 +10,6 @@ const steady = {
   serverRssMb: 600,
 } satisfies MemorySample;
 
-/** Six laps whose heap, nodes and server memory grow by these amounts each lap. */
 function laps(growth: { heapMb?: number; nodes?: number; serverRssMb?: number }): MemorySample[] {
   return Array.from({ length: 6 }, (_, index) => ({
     ...steady,

@@ -5,7 +5,6 @@ import { stopChildProcess } from "./stop-child-process.mts";
 
 const children = new Set<ChildProcess>();
 
-/** A real child that reports once its SIGTERM handler is installed, so the test never races startup. */
 async function startChild(script: string) {
   const child = spawn(process.execPath, ["--eval", script], {
     stdio: ["ignore", "pipe", "ignore"],
@@ -26,7 +25,6 @@ describe("bounded child shutdown", () => {
   afterEach(() => {
     vi.restoreAllMocks();
 
-    /** A failed assertion must not leave a SIGTERM-ignoring child running. */
     for (const child of children) {
       if (child.exitCode === null && child.signalCode === null) {
         child.kill("SIGKILL");

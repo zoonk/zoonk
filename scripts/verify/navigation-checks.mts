@@ -12,31 +12,20 @@ import {
 } from "./checks.mts";
 import { errorFindings, requestFindings } from "./request-checks.mts";
 
-/**
- * How the tap was set up: after the page's prefetches landed (`prefetched`), with the next page's
- * prefetches blocked (`noPrefetch`), or as soon as a cold load showed its content, before its code
- * was ready (`early`).
- */
+/** `early` taps as soon as a cold load showed its content, before its code was ready. */
 export type NavigationMode = "early" | "noPrefetch" | "prefetched";
 
-/** A navigation from one page to the next, by tapping or clicking its link. */
 export type NavigationMeasurement = Pick<
   LoadMeasurement,
   "console" | "flashes" | "pageErrors" | "requests"
 > & {
-  /** Whether the tap ended on the page it was meant to reach. */
   arrived: boolean;
   blankSeenMs: number | null;
-  /** From the tap to its page's content on screen (`content-frames.mts`). */
   contentMs: number | null;
-  /** From the tap to the new URL (a client navigation) or the new document's first paint. */
   commitMs: number | null;
   mode: NavigationMode;
-  /** From the tap to its first change on screen: the new page, or the link showing it's waiting. */
   responseMs: number | null;
-  /** Whether its page showed without a request to the server for it after the tap. */
   usedPrefetch: boolean;
-  /** The tap loaded a whole new document instead of navigating on the client. */
   fullLoad: boolean;
   linkFound: boolean;
   production: boolean;
@@ -45,7 +34,6 @@ export type NavigationMeasurement = Pick<
   skeletonSeenMs: number | null;
 };
 
-/** What a navigation did wrong: no link, never arriving, errors, a blank frame, a jump, a slow switch. */
 export function judgeNavigation(navigation: NavigationMeasurement): Finding[] {
   if (!navigation.linkFound) {
     return [{ check: "navigation", level: "warn", message: "no visible link to the next page" }];

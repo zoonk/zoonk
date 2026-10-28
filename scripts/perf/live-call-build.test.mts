@@ -19,10 +19,6 @@ type Event = {
   auth?: string;
 };
 
-/**
- * The API starts on the port Main was built against once both builds succeed, and the services
- * close last, the API before the provider.
- */
 function assertApiLifecycle({
   events,
   mainApi,

@@ -9,7 +9,6 @@ const CODE_POLL_MS = 500;
 
 type CapturedEmail = { htmlBody?: string; receivedAt: string; textBody?: string; to: string };
 
-/** The newest sign-in code the dev mailbox received for `email` since `since`. */
 async function readCode({
   email,
   mailboxUrl,
@@ -53,10 +52,6 @@ async function post(context: APIRequestContext, path: string, data: Record<strin
   }
 }
 
-/**
- * Signs `email` in through Main's real auth API, with the code the dev mailbox receives (on
- * `pnpm dev` and `pnpm start` alike), and returns the session as Playwright storage state.
- */
 export async function signIn({
   baseUrl,
   email,

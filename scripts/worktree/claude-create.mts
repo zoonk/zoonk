@@ -6,9 +6,9 @@ import { z } from "zod";
 import { run } from "./postgres.mts";
 
 /**
- * Claude Code's WorktreeCreate hook replaces its own `git worktree add`, and Claude Code has no hook that runs after its own creation.
- * Creating the worktree here lets every Claude Code worktree get the same setup as Codex and T3 Code before Claude enters it.
- * Claude Code reads the last stdout line as the worktree path, so setup output goes to stderr.
+ * Claude Code's WorktreeCreate hook replaces its own `git worktree add` and has no post-create hook,
+ * so the worktree is created and set up here. Claude Code reads the last stdout line as the path, so
+ * setup output goes to stderr.
  */
 const input = z
   .object({ cwd: z.string(), name: z.string() })
@@ -18,8 +18,8 @@ const root = await run({ args: ["rev-parse", "--show-toplevel"], command: "git",
 const worktree = join(root, ".claude", "worktrees", input.name);
 
 /**
- * Claude Code passes the main checkout as `cwd`, so new branches start from the session checkout's commit, as T3 Code and Codex worktrees do.
- * Claude Code never deletes the branch of a worktree a hook created, so reusing a name resumes that branch instead of failing.
+ * Claude Code passes the main checkout as `cwd` and never deletes a hook-created branch, so reusing
+ * a name resumes that branch.
  */
 async function addWorktree(): Promise<void> {
   const branch = `worktree-${input.name}`;
@@ -42,7 +42,6 @@ async function addWorktree(): Promise<void> {
   });
 }
 
-/** Runs the new checkout's own setup, as Codex and T3 Code do, so a branch's setup changes apply to its worktrees. */
 function setupWorktree(): Promise<void> {
   return new Promise((resolve, reject) => {
     const child = spawn(process.execPath, [join(worktree, "scripts/worktree/setup.mts")], {

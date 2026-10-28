@@ -8,9 +8,8 @@ import { type ChangedFile, auditDiff, parseDiff, renderAudit } from "./diff-audi
 import { auditWaterfalls } from "./waterfalls.mts";
 
 /**
- * Reads the change (`pnpm verify:diff`: uncommitted work against HEAD, or `--base <ref>` for a
- * branch) as a principal engineer, a security researcher and a designer would, and prints every
- * line they'd question with the question to answer. It exits with 1 on what must be fixed.
+ * `pnpm verify:diff` reads uncommitted work against HEAD, or `--base <ref>` for a branch. It exits
+ * with 1 on what must be fixed.
  */
 const repository = resolve(import.meta.dirname, "../..");
 const OUTPUT_LIMIT_MB = 256;
@@ -29,7 +28,6 @@ function read(path: string): string {
   }
 }
 
-/** Files git doesn't track yet count as created, every line added (binary files skipped). */
 const untracked: ChangedFile[] = git(["ls-files", "--others", "--exclude-standard"])
   .split("\n")
   .filter(Boolean)

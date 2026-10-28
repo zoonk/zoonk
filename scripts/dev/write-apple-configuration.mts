@@ -8,9 +8,6 @@ function getXcodeConfigurationURL(apiUrl: string): string {
   return apiUrl.replace("://", ":/$()/");
 }
 
-/**
- * Gives Debug builds the same clone- or worktree-specific API origin that `pnpm dev` already resolves for the web apps, eliminating per-scheme setup without checking a machine-specific value into Git.
- */
 export function writeAppleDevelopmentConfiguration({
   apiUrl,
   currentDirectory,

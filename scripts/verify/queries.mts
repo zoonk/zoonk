@@ -5,19 +5,16 @@ import { setTimeout as delay } from "node:timers/promises";
 import { type APIRequestContext, request } from "@playwright/test";
 import { type Finding } from "./checks.mts";
 
-/** One statement the server sent, as `ZOONK_QUERY_LOG` writes it (packages/db/src/pool.ts). */
+/** As `ZOONK_QUERY_LOG` writes it (`packages/db/src/pool.ts`). */
 export type Statement = { at: number; ms: number; rows: number | null; sql: string };
 
-/** A statement repeated this often in one page's render is read once per item, or not shared. */
 const REPEATED = 3;
-/** A result this large on a page is unbounded or reads what the page doesn't show. */
 const LARGE_RESULT = 1000;
 const QUIET_MS = 1000;
 const QUIET_LIMIT_MS = 15_000;
 const QUIET_POLL_MS = 200;
 const LABEL_LENGTH = 140;
 
-/** The log's statements that started between `from` and `to` (ms since the epoch). */
 export function readStatements(
   file: string,
   { from, to }: { from: number; to: number },
@@ -33,7 +30,6 @@ export function readStatements(
     .filter((statement) => statement.at >= from && statement.at <= to);
 }
 
-/** Waits until the server stops writing statements (the log hasn't grown for a second). */
 async function waitForQuietDatabase(file: string) {
   const deadline = Date.now() + QUIET_LIMIT_MS;
   const last = { changedAt: Date.now(), size: -1 };
@@ -51,7 +47,6 @@ async function waitForQuietDatabase(file: string) {
   }
 }
 
-/** A statement short enough to read: its tables and the start of its SQL, without schema noise. */
 export function label(sql: string): string {
   return sql
     .replaceAll('"public".', "")
@@ -63,7 +58,6 @@ export function label(sql: string): string {
 
 const isRead = (sql: string) => /^\s*(?:SELECT|WITH)\b/iu.test(sql);
 
-/** One render's database work: how much, and what repeats or reads too much. */
 export function summarizeStatements(statements: Statement[]) {
   const counts = Map.groupBy(statements, (statement) => statement.sql);
 
@@ -78,7 +72,6 @@ export function summarizeStatements(statements: Statement[]) {
   };
 }
 
-/** What a page's render asked the database that a reviewer should look at. */
 export function queryFindings(summary: ReturnType<typeof summarizeStatements>): Finding[] {
   return [
     ...summary.repeated.map(({ sql, times }): Finding => ({
@@ -105,7 +98,6 @@ type PlanNode = {
   "Relation Name"?: string;
 };
 
-/** Every sequential scan with a filter in a plan: a WHERE no index can serve. */
 export function filteredScans(node: PlanNode): { filter: string; table: string }[] {
   const own =
     node["Node Type"] === "Seq Scan" && node.Filter
@@ -121,10 +113,7 @@ type Client = {
   query: (sql: string) => Promise<{ rows: Record<string, unknown>[] }>;
 };
 
-/**
- * The database URL Main's server uses, loaded the way Next.js loads it, and `pg` from the package
- * that already depends on it.
- */
+/** Loaded the way Next.js loads it, with `pg` from the package that already depends on it. */
 function connect(repository: string, production: boolean): Client {
   const main = createRequire(join(repository, "apps/main/package.json"));
   const next = createRequire(main.resolve("next/package.json"));
@@ -146,9 +135,8 @@ function connect(repository: string, production: boolean): Client {
 }
 
 /**
- * Each read's plan with sequential scans turned off: Postgres then uses any index that can serve
- * the query, so a sequential scan that remains is a filter no index serves, however small the
- * table is here. That holds on a small local database, where the planner would otherwise scan.
+ * With sequential scans off, Postgres uses any index that can serve the query, so a sequential scan
+ * that remains is a filter no index serves, even on a small local table.
  */
 export async function findUnindexed(
   repository: string,
@@ -199,8 +187,8 @@ export async function findUnindexed(
 type StorageState = Awaited<ReturnType<APIRequestContext["storageState"]>>;
 
 /**
- * The page's server render on its own (an HTTP request, so no prefetches or browser requests mix
- * in), and the statements it sent, background work after the response included.
+ * An HTTP request, so no prefetches or browser requests mix in; background work after the response
+ * counts.
  */
 export async function measureRender({
   baseUrl,
@@ -234,7 +222,6 @@ export type RenderReport = {
   summary: ReturnType<typeof summarizeStatements>;
 };
 
-/** Each page's render as a report table: statements, database time, and what it flagged. */
 export function renderRows(renders: RenderReport[]): string[] {
   if (renders.length === 0) {
     return [];

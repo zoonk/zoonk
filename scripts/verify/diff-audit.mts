@@ -5,20 +5,17 @@ import { type Role, type Rule } from "./rules/shared.mts";
 
 const RULES = [...SECURITY_RULES, ...ENGINEERING_RULES, ...DESIGN_RULES];
 
-/** A file in the diff: the lines it adds (by their new line number) and whether the change creates it. */
 export type ChangedFile = {
   added: { line: number; text: string }[];
   created: boolean;
   path: string;
 };
 
-/** Lines one rule flagged in one file. */
 export type Flag = { lines: number[]; path: string; rule: Rule; sample: string };
 
 const HUNK = /^@@ -\d+(?:,\d+)? \+(?<start>\d+)(?:,\d+)? @@/u;
 const SAMPLE_LENGTH = 100;
 
-/** The files a `git diff --unified=0` adds lines to, with each added line's number. */
 export function parseDiff(diff: string): ChangedFile[] {
   const files: ChangedFile[] = [];
   const position = { inHunk: false, line: 0 };
@@ -51,10 +48,6 @@ function applies(rule: Rule, file: ChangedFile, isClient: boolean): boolean {
   return (!rule.files || rule.files.test(file.path)) && (!rule.side || rule.side === side);
 }
 
-/**
- * Every rule's hits in the changed files: added lines it matches, and files it covers that the
- * change creates. `isClient` tells whether a file's current content says `"use client"`.
- */
 export function auditDiff(files: ChangedFile[], isClient: (path: string) => boolean): Flag[] {
   return files.flatMap((file) => {
     const client = isClient(file.path);
@@ -89,7 +82,6 @@ const ROLES: { role: Role; title: string }[] = [
   { role: "design", title: "Designer" },
 ];
 
-/** The audit as a checklist the author answers in the report, by role, blocking items first. */
 export function renderAudit(flags: Flag[]): string[] {
   return ROLES.flatMap(({ role, title }) => {
     const mine = flags

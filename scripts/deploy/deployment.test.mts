@@ -30,7 +30,6 @@ afterEach(() => {
 });
 
 function intercept(handler: (call: Call) => unknown): undefined {
-  // These APIs create billable deployments and touch real databases; exercise their boundary locally.
   vi.stubGlobal("fetch", (url: URL, init: RequestInit) => {
     const value = handler({
       body: z

@@ -37,7 +37,6 @@ function children(node: Node): Node[] {
     .filter((value) => isNode(value));
 }
 
-/** Type assertions and parentheses around an `await` don't change what it waits for. */
 function unwrap(node: unknown): unknown {
   return isNode(node) &&
     [
@@ -50,7 +49,6 @@ function unwrap(node: unknown): unknown {
     : node;
 }
 
-/** The awaited expression of `const x = await …` (or a destructuring), with the names it binds. */
 function awaitedDeclaration(statement: unknown): { bound: Set<string>; awaited: Node } | null {
   if (
     !isNode(statement) ||
@@ -72,7 +70,6 @@ function awaitedDeclaration(statement: unknown): { bound: Set<string>; awaited: 
     : null;
 }
 
-/** Every identifier under `node`, leaving out the property names after a dot. */
 function names(node: Node | null): Set<string> {
   const found = new Set<string>();
 
@@ -105,7 +102,6 @@ function calleeName(awaited: Node): string | null {
   return callee?.type === "Identifier" && typeof callee.name === "string" ? callee.name : null;
 }
 
-/** Statement lists: function and block bodies, the module, and a switch's cases. */
 function statementLists(root: unknown): Node[][] {
   const lists: Node[][] = [];
 
@@ -132,10 +128,8 @@ function statementLists(root: unknown): Node[][] {
 }
 
 /**
- * The statements in `source` that await work independent of the await right before them: a
- * `const … = await …` whose awaited expression uses nothing the previous one bound. Bare `await x;`
- * steps are left out, since their order is usually the point (a write, `navigation()`), and so are
- * statements in a transaction, which run one at a time on its connection anyway.
+ * Bare `await x;` steps are left out, since their order is usually the point (a write,
+ * `navigation()`), and so are statements in a transaction.
  */
 export function findWaterfalls(path: string, source: string): { offset: number; text: string }[] {
   const { errors, program } = parseSync(path, source);
@@ -174,7 +168,6 @@ function lineOf(source: string, offset: number): number {
   return source.slice(0, offset).split("\n").length;
 }
 
-/** Waterfalls the change adds to app and package source: only lines the diff adds count. */
 export function auditWaterfalls(files: ChangedFile[], read: (path: string) => string): Flag[] {
   return files.flatMap((file) => {
     if (!SOURCE.test(file.path) || file.added.length === 0) {

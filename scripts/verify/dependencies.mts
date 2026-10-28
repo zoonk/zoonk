@@ -12,20 +12,17 @@ type Advisory = {
   url: string;
 };
 
-/** One vulnerable package as installed: an advisory, the version it hits, and how production reaches it. */
 export type Exposure = { advisory: Advisory; path: string; version: string };
 
 const SERIOUS = new Set(["critical", "high"]);
 const OUTPUT_LIMIT_MB = 64;
 const OUTPUT_LIMIT = OUTPUT_LIMIT_MB * 1024 * 1024;
 
-/** What `pnpm audit` reads to know what production installs: the lockfile and the workspace. */
 const INSTALL_FILES = ["pnpm-lock.yaml", "pnpm-workspace.yaml", "package.json"];
 
 /**
- * `pnpm audit --prod --json` in `directory` (it exits non-zero when it finds advisories), as each
- * serious advisory's installed version and production path. Null when it couldn't answer, such as
- * the registry being unreachable: that's unverified, not clean.
+ * `pnpm audit` exits non-zero when it finds advisories. Null when it couldn't answer, such as the
+ * registry being unreachable: that's unverified, not clean.
  */
 function audit(directory: string): Exposure[] | null {
   const run = () => {
@@ -65,7 +62,6 @@ function audit(directory: string): Exposure[] | null {
   }
 }
 
-/** The same audit of the base's lockfile and workspace, from a scratch folder. */
 function auditBase(repository: string, base: string): Exposure[] | null {
   const directory = mkdtempSync(join(tmpdir(), "zoonk-audit-base-"));
 
@@ -86,15 +82,11 @@ function auditBase(repository: string, base: string): Exposure[] | null {
   }
 }
 
-/** The same advisory at the same installed version is one exposure, however production reaches it. */
 const key = ({ advisory, version }: Exposure) => `${advisory.id} ${version}`;
 
 /**
- * One line per high or critical advisory in production dependencies. One the base's production
- * install didn't have at that version is brought in by this change (a new package, a new version,
- * or a dev dependency moved into production) and must be fixed; the rest are named for whoever
- * updates dependencies. Paths can't decide it: `pnpm audit` lists only a sample of a version's
- * paths, and a different one on each run.
+ * Compared with the base's install by advisory and version, since `pnpm audit` lists only a sample of
+ * a version's paths, and a different one on each run.
  */
 export function describeExposures({
   before,
@@ -122,7 +114,6 @@ export function describeExposures({
   });
 }
 
-/** `pnpm audit --prod` now and at `base`, as the lines `describeExposures` writes. */
 export function auditDependencies(repository: string, base: string): string[] {
   const now = audit(repository);
   const before = auditBase(repository, base);
@@ -143,7 +134,6 @@ export function auditDependencies(repository: string, base: string): string[] {
   return ["## Dependencies", "", ...describeExposures({ before, now }), ""];
 }
 
-/** Whether the audit found an advisory this change brought in, or couldn't answer. */
 export function addsVulnerability(lines: string[]): boolean {
   return lines.some(
     (line) =>

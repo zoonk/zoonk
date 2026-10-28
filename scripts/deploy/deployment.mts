@@ -12,9 +12,8 @@ const MAX_DNS_LABEL = 63;
 type AppUrls = { api: string | null; main: string | null };
 
 /**
- * An app's address in a target: its domain in production and staging, and on previews the branch
- * URL Vercel gives every project, `<project>-git-<branch>-<team>.vercel.app`, which always serves
- * the branch's latest deployment. Null on a preview whose label Vercel would shorten.
+ * Previews use the branch URL Vercel gives every project, `<project>-git-<branch>-<team>.vercel.app`,
+ * which always serves the branch's latest deployment. Null when Vercel would shorten the label.
  */
 export function getAppUrl({
   app,
@@ -47,7 +46,6 @@ export function getAppUrl({
   return label.length > MAX_DNS_LABEL ? null : `https://${label}.vercel.app`;
 }
 
-/** The team's slug, which preview URLs end with. Null when Vercel doesn't answer. */
 async function getTeamSlug(): Promise<string | null> {
   try {
     const team = z
@@ -60,10 +58,6 @@ async function getTeamSlug(): Promise<string | null> {
   }
 }
 
-/**
- * The API's and the main app's addresses for this deploy. A preview whose addresses can't be known
- * (an unknown team, or a branch name long enough for Vercel to shorten) gets none.
- */
 async function resolveAppUrls(target: Target): Promise<AppUrls> {
   const teamSlug = target === "preview" ? await getTeamSlug() : "";
 
@@ -266,7 +260,6 @@ export async function deploy(target: Target): Promise<void> {
 
   const apiUrl = urls.api;
 
-  // Every app builds at once. Wait for every result: a failed app must not hide the others' status.
   const results = await Promise.allSettled(
     PROJECTS.map((project) => deployApp({ apiUrl, mainAppUrl: urls.main, project, target })),
   );

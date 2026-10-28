@@ -2,10 +2,8 @@ import { errorFindings, requestFindings } from "./request-checks.mts";
 import { type RequestRecord } from "./requests.mts";
 
 /**
- * The bar `pnpm verify:pages` holds a page to. A `fail` must be fixed (or the change explained);
- * a `warn` is looked at and either fixed or named in the report. Speed is judged only on a
- * production build (`pnpm start`): a dev server compiles on demand, streams without
- * prefetching and shows loading states a learner never sees.
+ * Speed is judged only on a production build (`pnpm start`): a dev server compiles on demand,
+ * streams without prefetching and shows loading states a learner never sees.
  */
 export const BUDGETS = {
   /** Lighthouse's Total Blocking Time lines: past them, taps wait on the main thread (INP). */
@@ -13,14 +11,11 @@ export const BUDGETS = {
   /** Core Web Vitals' "good" line fails; any shift at all is listed, since a page shouldn't jump. */
   cls: { fail: 0.1, warn: 0 },
   fcpMs: { fail: 1800, warn: 1000 },
-  /** A paint this long after the largest one: the page went on changing after it appeared. */
   lateChangeMs: { warn: 1000 },
   lcpMs: { fail: 2500, warn: 1200 },
-  /** From the click to the new page's URL: a prefetched page is there at once. */
   navigationCommitMs: { fail: 1000, warn: 200 },
   /** A page's RSC data in its HTML: client components' props, which every prefetch carries too. */
   rscKb: { warn: 300 },
-  /** The server's CPU time during one page load, its prefetches included. */
   serverCpuMs: { fail: 1000, warn: 250 },
   /** From the tap to its page's content on screen: skeletons on the way are fine. */
   tapContentMs: { fail: 2500, warn: 1000 },
@@ -33,8 +28,8 @@ export const CLS_DIGITS = 4;
 const KILOBYTE = 1024;
 
 /**
- * One problem. `message` stays the same wherever it happens, so the report lists it once with
- * every screen it showed on; what was measured goes in `value`.
+ * `message` stays the same wherever it happens, so the report lists it once with every screen it
+ * showed on; what was measured goes in `value`.
  */
 export type Finding = {
   check: string;
@@ -46,30 +41,21 @@ export type Finding = {
 
 export type LayoutShift = { at: number; sources: string[]; value: number };
 
-/** What one page load measured, at one screen size and color scheme. */
 export type LoadMeasurement = {
   accessibility: string[];
   blankSeenMs: number | null;
-  /**
-   * When the page first showed its content: no skeleton in its main region and nearly all the
-   * words it settled on (`content-frames.mts`).
-   */
+  /** No skeleton in its main region and nearly all the words it settled on (`content-frames.mts`). */
   contentMs: number | null;
   /** Times it showed its content, then a skeleton or most of it gone, then its content again. */
   flashes: number;
   /** When its links came alive (its first prefetch), in ms since the navigation started. */
   linksLiveMs: number | null;
-  /** How many prefetches it started while loading. */
   prefetches: number;
-  /** Its RSC data written into the HTML, in characters: what client components receive. */
   rscBytes: number;
-  /** Words the first paint showed in the page's main region; null without a first paint. */
   shellWords: number | null;
-  /** Total Blocking Time: each long task's time past 50 ms, after the first contentful paint. */
   blockingMs: number | null;
   console: { text: string; type: "error" | "warning" }[];
   fcpMs: number | null;
-  /** The last paint the screencast saw, in ms since the navigation started. */
   lastPaintMs: number | null;
   lcpMs: number | null;
   overflow: { offenders: string[]; scrollWidth: number; viewportWidth: number };
@@ -79,13 +65,10 @@ export type LoadMeasurement = {
   regularContrast: string[];
   requests: RequestRecord[];
   serverCpuMs: number | null;
-  /** Whether the page stopped changing before the wait's deadline. */
   settled: boolean;
   shifts: LayoutShift[];
-  /** The last frame a loading skeleton was visible on. */
   skeletonLastMs: number | null;
   skeletonSeenMs: number | null;
-  /** Text the layout cuts off, as it showed. */
   truncated: string[];
   ttfbMs: number | null;
   unprefetchedLinks: string[];
@@ -100,9 +83,8 @@ const SESSION_LIMIT_MS = 5000;
 const BLOCKING_AFTER_MS = 50;
 
 /**
- * Total Blocking Time as Lighthouse scores it: each long task clipped to start no earlier than the
- * first contentful paint, and its time past 50 ms counted, so a task that straddles the paint
- * still counts for its part after it.
+ * As Lighthouse scores it: each long task clipped to start no earlier than the first contentful
+ * paint, so a task that straddles the paint counts for its part after it.
  */
 export function totalBlockingTime(
   longTasks: { at: number; duration: number }[],
@@ -172,7 +154,6 @@ export function shiftFindings(cls: number, shifts: LayoutShift[]): Finding[] {
   ];
 }
 
-/** A painted viewport without text, graphics or skeletons after its first paint. */
 export function blankFindings(seenMs: number | null): Finding[] {
   return seenMs === null
     ? []
@@ -262,7 +243,6 @@ export const UNSETTLED: Finding = {
     "still changing or loading 10 s later: a poll, a loop or an endless animation? Its numbers are partial",
 };
 
-/** What a load's measurements can't vouch for: a page still changing, or a paint never measured. */
 function trustFindings(load: LoadMeasurement): Finding[] {
   return [
     ...(load.settled ? [] : [UNSETTLED]),
@@ -278,7 +258,6 @@ function trustFindings(load: LoadMeasurement): Finding[] {
   ];
 }
 
-/** A page that showed its content and then lost it before showing it again. */
 export function flashFindings(flashes: number): Finding[] {
   return flashes > 0
     ? [
@@ -292,7 +271,6 @@ export function flashFindings(flashes: number): Finding[] {
     : [];
 }
 
-/** What a load's first paint and payload say about its shell and what it sends. */
 function shellFindings(load: LoadMeasurement): Finding[] {
   return [
     ...(load.production && load.shellWords === 0
@@ -319,7 +297,6 @@ function shellFindings(load: LoadMeasurement): Finding[] {
   ];
 }
 
-/** Everything one page load did wrong, failures first. */
 export function judgeLoad(load: LoadMeasurement): Finding[] {
   const findings: Finding[] = [
     ...errorFindings(load),
@@ -350,7 +327,6 @@ export function judgeLoad(load: LoadMeasurement): Finding[] {
   return findings.toSorted((a, b) => Number(a.level === "warn") - Number(b.level === "warn"));
 }
 
-/** Checks whose numbers swing with whatever else the machine is running. */
 const TIMING_CHECKS = new Set([
   "FCP",
   "LCP",
@@ -366,8 +342,8 @@ const TIMING_CHECKS = new Set([
 ]);
 
 /**
- * On a busy machine, timing findings can't tell the change from the load: they stay to look at,
- * marked inconclusive, rather than fail. A tap that never arrived still fails.
+ * On a busy machine, timing findings can't tell the change from the load, so they're inconclusive
+ * instead of failing.
  */
 export function markBusy(findings: Finding[]): Finding[] {
   return findings.map((finding) =>

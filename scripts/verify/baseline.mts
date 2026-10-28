@@ -5,7 +5,6 @@ import { type LoadReport } from "./measure.mts";
 
 const KILOBYTE = 1024;
 
-/** The numbers compared between runs, from a load. */
 type Loaded = Pick<
   LoadReport,
   | "blockingMs"
@@ -36,8 +35,8 @@ const METRICS = [
 type Metric = (typeof METRICS)[number];
 
 /**
- * How much worse a load may get before it's called a regression: past both a share and an
- * amount, so noise on small numbers and small moves on big ones don't count.
+ * Past both a share and an amount, so noise on small numbers and small moves on big ones don't
+ * count.
  */
 const REGRESSION: Record<Metric, { label: string; minimum: number; share: number; unit: string }> =
   {
@@ -51,7 +50,6 @@ const REGRESSION: Record<Metric, { label: string; minimum: number; share: number
     serverCpuMs: { label: "server CPU", minimum: 50, share: 0.25, unit: "ms" },
   };
 
-/** A load's value for `metric`, or null when it (or an older report) didn't measure it. */
 function measure(load: Loaded, metric: Metric): number | null {
   if (metric === "cls") {
     return cumulativeLayoutShift(load.shifts);
@@ -61,7 +59,6 @@ function measure(load: Loaded, metric: Metric): number | null {
   return typeof value === "number" ? value : null;
 }
 
-/** The loads a previous run saved (`--baseline <its folder>`), and whether it throttled them. */
 export async function readBaseline(
   directory: string,
 ): Promise<{ loads: Loaded[]; throttle: boolean | null }> {
@@ -84,11 +81,7 @@ function regressed(metric: Metric, was: number | null, is: number | null): boole
   return was !== null && is !== null && is - was > rule.minimum && is > was * (1 + rule.share);
 }
 
-/**
- * Each page's numbers on each screen before and after, and, when both runs measured production
- * builds with the same throttling, a finding for every one that got clearly worse. Screens are
- * compared one by one, so a regression on the phone alone isn't averaged away by the others.
- */
+/** Screens are compared one by one, so a regression on the phone alone isn't averaged away. */
 export function compareWithBaseline(
   baseline: Loaded[],
   current: Loaded[],
@@ -137,7 +130,6 @@ export function compareWithBaseline(
   };
 }
 
-/** The comparison as a report table: each load's numbers, before → after. */
 export function comparisonRows({
   header,
   rows,

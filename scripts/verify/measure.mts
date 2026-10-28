@@ -35,10 +35,8 @@ import { type Scheme, type ViewportName } from "./viewports.mts";
 
 export const NETWORK_IDLE_MS = 15_000;
 
-/** Where and how a run measures: the app, who is signed in, and the run's output folder. */
 export type Target = {
   actions: Map<string, string>;
-  /** The `ZOONK_QUERY_LOG` file the server writes, when it logs its statements. */
   queries?: string;
   baseUrl: string;
   browser: Browser;
@@ -50,22 +48,18 @@ export type Target = {
 
 export type LoadReport = LoadMeasurement & {
   bytes: { html: number; scripts: number; total: number };
-  /** CPU time the page's main thread spent during the load, from DevTools' thread clock. */
   mainThreadMs: number;
-  /** Statements the server sent during the load, its prefetches included, and their time. */
   database: { count: number; ms: number } | null;
   findings: Finding[];
   frames: number[];
   framesDirectory: string;
   path: string;
-  /** A full-page screenshot in each color scheme. */
   screenshots: string[];
   viewport: ViewportName;
 };
 
 const QUERY_HASH_LENGTH = 8;
 
-/** A file name for a path: its redacted form, plus a hash of its query so two queries don't collide. */
 export function slug(path: string): string {
   const { search } = new URL(path, "http://slug.invalid");
 
@@ -79,8 +73,8 @@ export function slug(path: string): string {
 }
 
 /**
- * Loads `path` once without measuring it, so the server CPU a measured load reports is the page's
- * steady cost rather than the first request's compiling and cache filling.
+ * An unmeasured load first, so the measured one's server CPU is the page's steady cost rather than
+ * the first request's compiling and cache filling.
  */
 export async function warmUp(target: Target, path: string) {
   const context = await target.browser.newContext({ storageState: target.storageState });
@@ -94,7 +88,6 @@ export async function warmUp(target: Target, path: string) {
   }
 }
 
-/** What the loaded page shows and holds, read once it has settled. */
 async function readLoadedPage(page: Page, traffic: Traffic) {
   const prefetched = new Set(
     traffic.requests
@@ -128,9 +121,8 @@ async function readLoadedPage(page: Page, traffic: Traffic) {
 }
 
 /**
- * Loads `path` fresh on one screen in the first color scheme and measures everything the checks
- * judge, then scans and screenshots it in each scheme. Dark mode is the device's
- * `prefers-color-scheme` in CSS alone, so switching it restyles the same screen in place.
+ * Dark mode is `prefers-color-scheme` in CSS alone, so switching it restyles the same screen in
+ * place.
  */
 export async function measureLoad(
   target: Target,

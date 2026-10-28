@@ -1,6 +1,5 @@
 import { CODE, type Rule, SERVER_SOURCE, SOURCE } from "./shared.mts";
 
-/** What a security researcher questions: secrets, entry points, model calls, injection and trust. */
 export const SECURITY_RULES: Rule[] = [
   {
     blocks: true,

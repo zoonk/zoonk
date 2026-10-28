@@ -28,7 +28,6 @@ function figure(kind: "paint" | "screen", caption: string, file: string): string
   return `<figure class="${kind}"><figcaption>${caption}</figcaption><img src="${pathToFileURL(file).href}"></figure>`;
 }
 
-/** Renders `html` beside the screenshots it shows and screenshots it whole into `file`. */
 async function shoot(browser: Browser, { file, html }: { file: string; html: string }) {
   const source = file.replace(/\.png$/u, ".html");
   await writeFile(source, html);
@@ -42,11 +41,6 @@ async function shoot(browser: Browser, { file, html }: { file: string; html: str
   }
 }
 
-/**
- * One image per page with every screen in each scheme (`screens.png`), and one with every paint of
- * each screen's load in order (`paints.png`), so a run is reviewed in two looks per page instead of
- * dozens of files. Returns the sheets' paths.
- */
 export async function renderSheets(
   browser: Browser,
   {
@@ -59,7 +53,6 @@ export async function renderSheets(
   for (const [path, here] of Map.groupBy(loads, (load) => load.path)) {
     const directory = dirname(here[0]?.framesDirectory ?? "");
 
-    // With a baseline, each screen shows before beside after, so unintended changes stand out.
     const screens = here.flatMap((load) =>
       load.screenshots.flatMap((file) => {
         const name = basename(file, ".png");
@@ -100,7 +93,6 @@ export async function renderSheets(
   return sheets;
 }
 
-/** One image with every paint after each tap, in order, so a navigation is judged by what showed. */
 export async function renderNavigationSheet(
   browser: Browser,
   { navigations, out }: { navigations: NavigationReport[]; out: string },

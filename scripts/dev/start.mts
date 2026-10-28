@@ -17,11 +17,9 @@ import { writeAppleDevelopmentConfiguration } from "./write-apple-configuration.
 const currentDirectory = process.cwd();
 const directMode = process.argv.includes("--direct");
 const lanMode = process.argv.includes("--lan");
-/** `pnpm start` builds every app for these URLs and serves the production builds instead of development servers. */
 const productionMode = process.argv.includes("--production");
 const pnpmCommand = getPnpmCommand(process.env);
 
-/** Runs Turbo in the foreground so its normal terminal shutdown owns the complete development stack. */
 async function runDevelopmentCommand({
   args,
   environment,
@@ -46,7 +44,6 @@ function startProxy(environment: NodeJS.ProcessEnv): void {
   });
 }
 
-/** Runs the preserved fixed-port topology when Portless needs to be bypassed during the trial. */
 async function startDirectDevelopment(): Promise<CommandResult> {
   writeAppleDevelopmentConfiguration({ apiUrl: "http://localhost:4000", currentDirectory });
 

@@ -17,7 +17,6 @@ const GOALS =
 const ITEM =
   'SELECT "public"."PlanItem"."id" FROM "public"."PlanItem" WHERE "public"."PlanItem"."id" = $1';
 
-/** A statement that started inside the window the test reads. */
 const INSIDE = { at: 1500 };
 
 function statement(sql: string, overrides: { at?: number; rows?: number } = {}) {

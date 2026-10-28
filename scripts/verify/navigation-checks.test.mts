@@ -36,7 +36,6 @@ const navigation: NavigationMeasurement = {
   usedPrefetch: true,
 };
 
-/** What judging the navigation with these changes finds, as "level check". */
 function judged(overrides: Partial<NavigationMeasurement>): string[] {
   return judgeNavigation({ ...navigation, ...overrides }).map(
     (finding) => `${finding.level} ${finding.check}`,

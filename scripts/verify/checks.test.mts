@@ -21,7 +21,6 @@ const STEADY_GAP_MS = 800;
 const FIRST_PAINT_MS = 800;
 const BLOCKED_MS = 70;
 const STRADDLE_BLOCKED_MS = 150;
-/** More RSC data than a page should send: 400 KB. */
 const HEAVY_RSC_BYTES = 409_600;
 
 function requestTo(path: string, overrides: Partial<RequestRecord> = {}): RequestRecord {
@@ -136,7 +135,6 @@ describe("judging a page load", () => {
     {
       cls: "0.07",
       name: "a window ends 5 s after its first shift",
-      // A small shift every 800 ms for 5.6 s: the first seven fall inside one 5 s window.
       shifts: Array.from({ length: 8 }, (_, index) => ({ at: index * STEADY_GAP_MS, value: 0.01 })),
     },
   ])("scores CLS by its largest session window: $name", ({ cls, shifts }) => {
@@ -234,10 +232,8 @@ describe("main-thread blocking and cut-off text", () => {
       { at: 1200, duration: 40 },
     ];
 
-    // The first task ran before the first paint; the third blocked nothing.
     assert.equal(totalBlockingTime(tasks, FIRST_PAINT_MS), BLOCKED_MS);
 
-    // A task that straddles the first paint counts for its part after it.
     assert.equal(
       totalBlockingTime([{ at: 700, duration: 300 }], FIRST_PAINT_MS),
       STRADDLE_BLOCKED_MS,

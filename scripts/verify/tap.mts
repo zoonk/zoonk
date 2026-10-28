@@ -5,10 +5,7 @@ import { VIEWPORTS, type ViewportName } from "./viewports.mts";
 
 export const LOAD_TIMEOUT_MS = 60_000;
 
-/**
- * Goes from the page showing now to `to` the way a learner does: taps (or clicks) the visible link
- * to it and waits for its URL. Without such a link it loads `to` directly and reports false.
- */
+/** Without a visible link to `to`, it loads `to` directly and returns false. */
 export async function tapTo({
   baseUrl,
   page,

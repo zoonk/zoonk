@@ -4,7 +4,6 @@ import { redactQuery } from "./requests.mts";
 
 type StorageState = Awaited<ReturnType<APIRequestContext["storageState"]>>;
 
-/** Who a signed-in learner is, as their pages would show them. */
 export type Learner = { email: string; id: string; name: string };
 
 async function read(baseUrl: string, path: string, storageState?: StorageState) {
@@ -18,7 +17,6 @@ async function read(baseUrl: string, path: string, storageState?: StorageState) 
   }
 }
 
-/** The signed-in learner, from Better Auth's session endpoint. */
 export async function readLearner(
   baseUrl: string,
   storageState: StorageState,
@@ -39,7 +37,6 @@ const HTML_ESCAPES: Record<string, string> = {
   ">": "&gt;",
 };
 
-/** A value as a page can carry it: as is, escaped in its HTML, and escaped in its JSON data. */
 function spellings(value: string): string[] {
   return [
     value,
@@ -49,15 +46,14 @@ function spellings(value: string): string[] {
 }
 
 /**
- * What only this learner's private pages carry: their email and account id, and their name when
- * it's a full name (a first name alone, like "Ana", also appears in public lessons).
+ * A name counts only when it's a full name: a first name alone, like "Ana", also appears in public
+ * lessons.
  */
 function identities(learner: Learner): string[] {
   const fullName = learner.name.trim().split(/\s+/u).length > 1 ? [learner.name] : [];
   return [learner.email, learner.id, ...fullName];
 }
 
-/** Whether a page someone else opened carries the learner's identity, rendered or in its data. */
 export function exposureFindings({
   body,
   learner,
@@ -82,11 +78,6 @@ export function exposureFindings({
     : [];
 }
 
-/**
- * Opens each path as someone who isn't the learner: signed out, and as another learner when one
- * is given. Neither may receive the learner's identity (a missing ownership check, or private
- * data in a cache shared between learners).
- */
 export async function checkExposure({
   baseUrl,
   intruder,

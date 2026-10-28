@@ -7,7 +7,6 @@ const currentDirectory = process.cwd();
 const lanMode = process.argv.includes("--lan");
 const pnpmCommand = getPnpmCommand(process.env);
 
-/** Resolves the API callback through the active development topology so Stripe follows the same clone or linked worktree as the listener. */
 function getApiUrl(): string {
   if (process.env.PORTLESS === "0") {
     return "http://localhost:4000";

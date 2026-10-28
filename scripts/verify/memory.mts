@@ -9,7 +9,6 @@ import { LOAD_TIMEOUT_MS, tapTo } from "./tap.mts";
 
 const BYTES_PER_MB = 1024 * 1024;
 
-/** What the browser holds after a forced garbage collection, and the Next.js server's memory. */
 export type MemorySample = {
   documents: number;
   heapMb: number;
@@ -25,14 +24,10 @@ export type SoakReport = {
   production: boolean;
   /** The tab kept one document through every lap; a reload resets the browser's memory. */
   sameDocument: boolean;
-  /** One sample after each lap, in order. */
   samples: MemorySample[];
 };
 
-/**
- * Growth per lap over the second half of the laps that points at a leak: memory a page keeps after
- * the learner left it. Caches fill in the first laps and level off; a leak keeps growing.
- */
+/** Caches fill in the first laps and level off; a leak keeps growing. */
 const LEAK_PER_LAP = { heapMb: 1, listeners: 20, nodes: 200, serverRssMb: 5 };
 
 async function sample(cdp: CDPSession, serverPid: number | null): Promise<MemorySample> {
@@ -51,10 +46,6 @@ async function sample(cdp: CDPSession, serverPid: number | null): Promise<Memory
   };
 }
 
-/**
- * Walks the paths `laps` times in one tab, by their links, as a learner moving around a session
- * does (one path reloads itself), and samples memory after the first lap and after the last.
- */
 export async function measureSoak(
   target: Target,
   { laps, paths }: { laps: number; paths: string[] },
@@ -110,10 +101,8 @@ export async function measureSoak(
   };
 }
 
-/** The lap from which growth is judged: caches have filled by halfway. */
 const middle = (laps: number) => Math.ceil(laps / 2);
 
-/** How much `key` grew per lap from the middle lap to the last one. */
 function lateGrowth(samples: MemorySample[], key: keyof MemorySample): number {
   const from = samples[middle(samples.length) - 1]?.[key];
   const to = samples.at(-1)?.[key];
@@ -124,11 +113,7 @@ function lateGrowth(samples: MemorySample[], key: keyof MemorySample): number {
     : (to - from) / laps;
 }
 
-/**
- * Memory that keeps growing through the later laps. The browser's counts only when the tab kept
- * one document (one path reloads itself, and a missing link loads the next page), the server's
- * always.
- */
+/** The browser's growth counts only when the tab kept one document; the server's always does. */
 export function judgeSoak({ production, sameDocument, samples }: SoakReport): Finding[] {
   if (samples.length < 2 || !production) {
     return [];
@@ -176,7 +161,6 @@ function format(value: number | null, digits: number): string {
   return value === null ? "–" : value.toFixed(digits);
 }
 
-/** The soak's samples as a report table: after the first lap, after the last, and per lap. */
 export function soakRows({ laps, paths, sameDocument, samples }: SoakReport): string[] {
   const rows: [string, keyof MemorySample, number][] = [
     ["Browser JS heap (MB)", "heapMb", 1],

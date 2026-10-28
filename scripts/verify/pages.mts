@@ -30,10 +30,8 @@ import { signIn } from "./sign-in.mts";
 import { THROTTLING, VIEWPORT_NAMES, type ViewportName } from "./viewports.mts";
 
 /**
- * Measures pages the way a learner meets them (`pnpm verify:pages [path...]`): each path loaded
- * fresh on every screen size and color scheme, judged by `checks.mts`, with screenshots, paint
- * frames and a report. `--nav` also taps through the paths in order. The verify skill explains
- * when to run it and how to read it.
+ * `pnpm verify:pages [path...]`; `--nav` also taps through the paths in order. The verify skill
+ * explains when to run it and how to read it.
  */
 const repository = resolve(import.meta.dirname, "../..");
 const SCHEMES = ["light", "dark"] as const;
@@ -99,8 +97,8 @@ const laps = Number(values.soak ?? 0);
 
 await mkdir(out, { recursive: true });
 /**
- * Runnable tasks per core over the last minute. Back-to-back runs of the same build at 2 per core
- * agreed within 1% (6% for server CPU); at 4.6 per core single loads swung by seconds.
+ * Back-to-back runs of the same build at 2 runnable tasks per core agreed within 1% (6% for server
+ * CPU); at 4.6 per core single loads swung by seconds.
  */
 const loadPerCore = () => (loadavg()[0] ?? 0) / availableParallelism();
 const BUSY_LOAD_PER_CORE = 3;
@@ -121,7 +119,6 @@ const target = {
   throttle: values.throttle,
 };
 
-/** How `--nav` taps: after prefetches landed, with them blocked, or right after a cold load. */
 function navigationMode(): NavigationMode {
   if (values.early) {
     return "early";
@@ -138,7 +135,6 @@ const sheets: string[] = [];
 let soak: SoakReport | null = null;
 const renders: RenderReport[] = [];
 
-/** Navigations run on a phone and a laptop (whichever were asked for), or the first screen asked. */
 const navigationViewports: ViewportName[] = viewports.filter(
   (viewport) => viewport === "phone" || viewport === "laptop",
 );
@@ -167,7 +163,6 @@ try {
     }
   }
 
-  // Each page's render on its own: the statements it sends, and the plans of its reads.
   for (const path of queries ? paths : []) {
     const summary = summarizeStatements(
       await measureRender({ baseUrl, file: queries ?? "", path, storageState }),

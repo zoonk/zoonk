@@ -35,8 +35,8 @@ const FRAME_NAME_DIGITS = 5;
 const SCREENCAST = { format: "jpeg", maxHeight: 1600, maxWidth: 800, quality: 60 } as const;
 
 /**
- * axe-core's source, run through DevTools' evaluate rather than a script tag, so the page keeps its
- * own Content Security Policy while it's measured.
+ * Run through DevTools' evaluate rather than a script tag, so the page keeps its own Content
+ * Security Policy.
  */
 const axeScript = readFileSync(
   createRequire(resolve(import.meta.dirname, "../../packages/testing/package.json")).resolve(
@@ -47,7 +47,6 @@ const axeScript = readFileSync(
 
 type Violations = Parameters<typeof describeViolations>[0];
 
-/** Records every request, console message and uncaught error a page makes. */
 function recordTraffic(page: Page, actions: Map<string, string>) {
   const traffic = {
     console: [] as LoadMeasurement["console"],
@@ -107,10 +106,6 @@ function recordTraffic(page: Page, actions: Map<string, string>) {
 
 export type Traffic = ReturnType<typeof recordTraffic>;
 
-/**
- * Waits until the page stops changing: no DOM changes and no requests for a second. False when it
- * was still changing at the deadline (a poll, a loop or an endless animation).
- */
 export async function waitForQuiet(page: Page, traffic: Traffic): Promise<boolean> {
   const deadline = Date.now() + QUIET_LIMIT_MS;
 
@@ -131,7 +126,6 @@ export async function waitForQuiet(page: Page, traffic: Traffic): Promise<boolea
   return false;
 }
 
-/** A fresh browser context on one screen and scheme, probed, throttled when asked, recorded. */
 export async function openPage({
   actions,
   browser,
@@ -168,13 +162,11 @@ export async function openPage({
   return { cdp, context, page, traffic: recordTraffic(page, actions) };
 }
 
-/** The CPU time the page's main thread has spent on tasks so far, in ms. */
 export async function readMainThreadMs(cdp: CDPSession): Promise<number> {
   const { metrics } = await cdp.send("Performance.getMetrics");
   return (metrics.find((metric) => metric.name === "TaskDuration")?.value ?? 0) * 1000;
 }
 
-/** Lifts the throttling once a load is measured, so scans and screenshots don't crawl. */
 export async function unthrottle(cdp: CDPSession) {
   await cdp.send("Emulation.setCPUThrottlingRate", { rate: 1 });
 
@@ -186,10 +178,7 @@ export async function unthrottle(cdp: CDPSession) {
   });
 }
 
-/**
- * axe-core's serious and critical violations and targets under 44 px, by the player's scan rules:
- * on a device asking for more contrast, where the app keeps WCAG AA (its regular look is softer).
- */
+/** Scanned with more contrast asked for, where the app keeps WCAG AA; its regular look is softer. */
 async function scanAccessibility(page: Page, where: string) {
   await page.evaluate(stillAnimations);
 
@@ -228,12 +217,10 @@ async function scanAccessibility(page: Page, where: string) {
   };
 }
 
-/** A saved paint's file name, by its time in ms, so names sort in the order they were painted. */
 export function frameFile(ms: number): string {
   return `${String(ms).padStart(FRAME_NAME_DIGITS, "0")}ms.jpg`;
 }
 
-/** Saves the screencast's frames painted after the navigation started, named by their ms. */
 export async function saveFrames({
   directory,
   frames,
@@ -258,7 +245,6 @@ export async function saveFrames({
   return timed.map((frame) => frame.ms);
 }
 
-/** Keeps every frame Chrome paints until `stop`, with the time it was painted. */
 export async function recordScreencast(cdp: CDPSession) {
   const frames: { data: string; timestamp: number }[] = [];
 
@@ -278,10 +264,7 @@ export async function recordScreencast(cdp: CDPSession) {
   return { frames, stop };
 }
 
-/**
- * Scans and screenshots the loaded screen in each color scheme, switched in place. The full-page
- * screenshot ends touch emulation until the next load, so it comes after the scan.
- */
+/** The full-page screenshot ends touch emulation until the next load, so it comes after the scan. */
 export async function checkSchemes(
   page: Page,
   { name, schemes }: { name: string; schemes: Scheme[] },

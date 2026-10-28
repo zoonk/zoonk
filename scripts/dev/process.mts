@@ -6,7 +6,7 @@ const TERMINATION_EXIT_CODE = 143;
 export type CommandResult = { code: number | null; signal: NodeJS.Signals | null };
 export type ExecutableCommand = { args: string[]; command: string };
 
-/** Invokes pnpm through the current Node runtime so Windows `.cmd` shims are not required inside pnpm lifecycle scripts. */
+/** Through the current Node runtime, so Windows `.cmd` shims aren't needed inside pnpm scripts. */
 export function getPnpmCommand(environment: NodeJS.ProcessEnv): ExecutableCommand {
   const pnpmExecutable = environment.npm_execpath;
 
@@ -21,9 +21,6 @@ export function getPnpmCommand(environment: NodeJS.ProcessEnv): ExecutableComman
   return { args: [], command: pnpmExecutable };
 }
 
-/**
- * Keeps one interactive child attached to the current terminal and forwards explicit shutdowns to it. Turbo and Portless remain responsible for their own child processes.
- */
 export function runForegroundCommand({
   args,
   command,
@@ -42,24 +39,20 @@ export function runForegroundCommand({
       stdio: "inherit",
     });
 
-    /** Gives the child the same explicit stop received by this lightweight wrapper. */
     function forwardSignal(signal: NodeJS.Signals): void {
       if (child.exitCode === null && !child.killed) {
         child.kill(signal);
       }
     }
 
-    /** Forwards an interactive stop using the signal expected by terminal applications. */
     function forwardInterrupt(): void {
       forwardSignal("SIGINT");
     }
 
-    /** Forwards task-runner shutdowns so nested framework processes can release their locks. */
     function forwardTermination(): void {
       forwardSignal("SIGTERM");
     }
 
-    /** Removes process-level listeners after the one child owned by this wrapper exits. */
     function removeSignalHandlers(): void {
       process.off("SIGINT", forwardInterrupt);
       process.off("SIGTERM", forwardTermination);
@@ -80,7 +73,6 @@ export function runForegroundCommand({
   });
 }
 
-/** Preserves a failed child status so shell scripts and agents can detect that the development command did not start cleanly. */
 export function applyCommandExit({ code, signal }: CommandResult): void {
   if (signal) {
     process.exitCode = signal === "SIGINT" ? INTERRUPT_EXIT_CODE : TERMINATION_EXIT_CODE;

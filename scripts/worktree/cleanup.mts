@@ -1,6 +1,9 @@
 import { postgresEnvironment, run, sqlLiteral } from "./postgres.mts";
 
-/** Statistics only establish inactivity after two unchanged observations. Resets, restarts, reads, and writes all extend retention. */
+/**
+ * Inactivity takes two unchanged observations; resets, restarts, reads and writes all extend
+ * retention.
+ */
 export function pruneDatabases({
   source,
   worktree,
