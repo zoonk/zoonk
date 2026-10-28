@@ -210,9 +210,17 @@ private struct ChapterContent: View {
     let minutes = lessons.reduce(0) { $0 + $1.minutes }
     let share = Double(done) / Double(max(lessons.count, 1))
 
-    return Text(
-      "^[\(lessons.count) lesson](inflect: true) · \(planDurationText(minutes: Double(minutes))) · \(share.formatted(.percent.precision(.fractionLength(0)))) done",
-      tableName: "Plan", comment: "A chapter's lessons, their time and the share done")
+    let facts = [
+      String(
+        localized: "\(lessons.count) lessons", table: "Plan",
+        comment: "How many lessons a chapter has"),
+      planDurationText(minutes: Double(minutes)),
+      String(
+        localized: "\(share.formatted(.percent.precision(.fractionLength(0)))) done", table: "Plan",
+        comment: "The share of a chapter's lessons done"),
+    ]
+
+    return Text(facts.joined(separator: " · "))
   }
 
   private func practice() {

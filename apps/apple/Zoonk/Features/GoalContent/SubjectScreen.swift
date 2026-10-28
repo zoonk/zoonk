@@ -129,6 +129,26 @@ private struct SubjectContent: View {
             Text("Known", tableName: "Plan", comment: "Lessons the learner already knew")
           }
         }
+
+        if isExam, subject.preparation != nil {
+          LabeledContent {
+            if let mastery = subject.mastery {
+              Text(
+                "\(mastery.correct) of \(mastery.answered) right", tableName: "Plan",
+                comment: "A subject's first answers to unseen questions that were right")
+            } else {
+              Text(
+                "Shows after a few practice questions", tableName: "Plan",
+                comment: "Mastery isn't counted yet")
+            }
+          } label: {
+            Text("Mastery", tableName: "Plan", comment: "Label of a subject's mastery")
+          }
+        }
+      }
+
+      if !subject.topics.isEmpty {
+        SubjectTopicsSection(goal: goal, subject: subject)
       }
 
       if !chapters.isEmpty {
@@ -228,6 +248,109 @@ private struct SubjectChapterRow: View {
     case .done: return .done
     case .current: return .next
     case .upcoming: return .todo
+    }
+  }
+}
+
+/// The notice's topics, as its own outline (grouped by its headings), each with where the learner
+/// stands and opening to the chapters that teach it.
+private struct SubjectTopicsSection: View {
+  let goal: LearnerGoal
+  let subject: SyllabusSubject
+
+  var body: some View {
+    let headings = subject.topics.reduce(into: [String?]()) { headings, topic in
+      if headings.last != .some(topic.heading) {
+        headings.append(topic.heading)
+      }
+    }
+
+    ForEach(Array(headings.enumerated()), id: \.offset) { index, heading in
+      Section {
+        ForEach(subject.topics.filter { $0.heading == heading }) { topic in
+          SubjectTopicRow(goal: goal, topic: topic)
+        }
+      } header: {
+        if index == 0 {
+          HStack(alignment: .firstTextBaseline) {
+            Text("Topics", tableName: "Plan", comment: "Section of a subject's topics")
+
+            if let studied = subject.topicsStudied {
+              Spacer()
+              Text(
+                "\(studied) of \(subject.topics.count) topics", tableName: "Plan",
+                comment: "Topics studied of the subject's topics"
+              )
+              .monospacedDigit()
+            }
+          }
+        } else if let heading {
+          Text(heading)
+        }
+      }
+    }
+  }
+}
+
+private struct SubjectTopicRow: View {
+  let goal: LearnerGoal
+  let topic: SyllabusSubject.Topic
+
+  var body: some View {
+    if topic.chapters.isEmpty {
+      label
+    } else {
+      DisclosureGroup {
+        ForEach(topic.chapters) { chapter in
+          if let chapterId = chapter.chapterId {
+            NavigationLink(
+              value: goal.kind == .language
+                ? AppRoute.languageUnit(chapterId: chapterId)
+                : AppRoute.chapter(chapterId: chapterId)
+            ) {
+              Text(chapter.title)
+            }
+          } else {
+            Text(chapter.title)
+              .foregroundStyle(.secondary)
+          }
+        }
+      } label: {
+        label
+      }
+    }
+  }
+
+  private var label: some View {
+    Label {
+      VStack(alignment: .leading, spacing: 2) {
+        HStack {
+          Text(topic.name)
+            .foregroundStyle(topic.notPlannedReason == nil ? .primary : .secondary)
+
+          if topic.frequency == "high" {
+            Text("Appears a lot", tableName: "Plan", comment: "A topic past exams ask often")
+              .chip()
+          }
+        }
+
+        if topic.notPlannedReason != nil {
+          Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
+            .font(.caption)
+            .foregroundStyle(.secondary)
+        }
+      }
+    } icon: {
+      StatusMark(status: status)
+    }
+  }
+
+  private var status: StatusMark.Status {
+    switch topic.status {
+    case "studied": .done
+    case "known": .skipped
+    case "inProgress": .next
+    default: .todo
     }
   }
 }

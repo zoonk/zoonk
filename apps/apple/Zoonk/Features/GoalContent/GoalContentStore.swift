@@ -154,6 +154,24 @@ final class GoalContentStore {
     return unit
   }
 
+  /// Starts a unit's practice call from the learner's tap; nil when it didn't reach the server.
+  func startPracticeCall(goalId: String, chapterId: String, minutes: Int) async -> PracticeCallStart
+  {
+    guard let session = cache.session.authenticatedSession else {
+      return .unavailable
+    }
+
+    do {
+      return try await api.startPracticeCall(
+        token: session.bearerToken, goalId: goalId, chapterId: chapterId, minutes: minutes)
+    } catch APIError.unauthorized {
+      await cache.session.expire(session)
+      return .unavailable
+    } catch {
+      return .unavailable
+    }
+  }
+
   /// Adds a bonus block on the chapter's skills to today's session; nil when it didn't work. The
   /// day changed, so Today and the summary follow.
   func practice(goalId: String, areaId: String) async -> AreaPracticeOutcome? {
