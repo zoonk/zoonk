@@ -131,7 +131,7 @@ final class ZoonkUITests: XCTestCase {
       accountButton.waitForExistence(timeout: 5), "Expected the account button to exist")
     accountButton.tap()
 
-    for method in ["Continue with Apple", "Sign in with Google", "Continue with email"] {
+    for method in ["Continue with Apple", "Continue with Google", "Continue with email"] {
       XCTAssertTrue(
         app.buttons[method].waitForExistence(timeout: 5),
         "Expected the login screen to offer \(method)")
@@ -166,7 +166,7 @@ final class ZoonkUITests: XCTestCase {
     app.navigationBars.buttons["Log in"].firstMatch.tap()
 
     let appleButton = app.buttons["Continue with Apple"]
-    let googleButton = app.buttons["Sign in with Google"]
+    let googleButton = app.buttons["Continue with Google"]
     let emailButton = app.buttons["Continue with email"]
 
     for button in [appleButton, googleButton, emailButton] {

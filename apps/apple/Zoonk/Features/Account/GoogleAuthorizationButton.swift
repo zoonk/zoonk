@@ -28,7 +28,7 @@ struct GoogleAuthorizationButton: View {
           .accessibilityHidden(true)
 
         Text(
-          "Sign in with Google",
+          "Continue with Google",
           tableName: "Account",
           comment: "Visible label on the Google sign-in button"
         )
@@ -49,7 +49,7 @@ struct GoogleAuthorizationButton: View {
     .buttonStyle(AuthenticationButtonStyle())
     .accessibilityLabel(
       Text(
-        "Sign in with Google",
+        "Continue with Google",
         tableName: "Account",
         comment: "Accessibility label for the native Google sign-in button"
       )

@@ -14,14 +14,15 @@ struct LoginView: View {
             .foregroundStyle(.tint)
 
           Text(
-            "Sign in to Zoonk",
+            "Sign in or create an account",
             tableName: "Account",
-            comment: "Title above the native sign-in methods"
+            comment:
+              "Title above the native sign-in methods; new learners create an account here too"
           )
           .font(.title2.bold())
 
           Text(
-            "Keep your courses and progress available on all your devices.",
+            "Keep your plan and progress on all your devices.",
             tableName: "Account",
             comment: "Explains the benefit of signing in"
           )

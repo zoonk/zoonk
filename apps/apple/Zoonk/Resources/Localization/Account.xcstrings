@@ -587,6 +587,9 @@
         }
       }
     },
+    "Continue with Google" : {
+      "comment" : "Accessibility label for the native Google sign-in button\nVisible label on the Google sign-in button"
+    },
     "Continue with email" : {
       "comment" : "Email sign-in button label",
       "localizations" : {
@@ -1283,34 +1286,8 @@
         }
       }
     },
-    "Keep your courses and progress available on all your devices." : {
-      "comment" : "Explains the benefit of signing in",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Kurse und dein Fortschritt sind auf allen deinen Geräten verfügbar."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Accede a tus cursos y a tu progreso desde todos tus dispositivos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Retrouve tes cours et ta progression sur tous tes appareils."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Acesse seus cursos e seu progresso em todos os seus dispositivos."
-          }
-        }
-      }
+    "Keep your plan and progress on all your devices." : {
+      "comment" : "Explains the benefit of signing in"
     },
     "Log in" : {
       "comment" : "Asks a visitor to log in before subscribing",
@@ -2211,6 +2188,9 @@
         }
       }
     },
+    "Sign in or create an account" : {
+      "comment" : "Title above the native sign-in methods; new learners create an account here too"
+    },
     "Sign in to the Zoonk account that owns this App Store purchase, or contact support for help." : {
       "comment" : "Recovery guidance when an App Store purchase belongs to another Zoonk account",
       "localizations" : {
@@ -2236,64 +2216,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Entre na conta do Zoonk vinculada a esta compra da App Store ou fale com o suporte para receber ajuda."
-          }
-        }
-      }
-    },
-    "Sign in to Zoonk" : {
-      "comment" : "Title above the native sign-in methods",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bei Zoonk anmelden"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inicia sesión en Zoonk"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connecte-toi à Zoonk"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entrar no Zoonk"
-          }
-        }
-      }
-    },
-    "Sign in with Google" : {
-      "comment" : "Accessibility label for the native Google sign-in button\nVisible label on the Google sign-in button",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit Google anmelden"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Iniciar sesión con Google"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se connecter avec Google"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entrar com o Google"
           }
         }
       }
@@ -2646,6 +2568,35 @@
         }
       }
     },
+    "Use Google Play on an Android device to change or cancel this subscription." : {
+      "comment" : "Explains how to manage a Google-owned subscription without linking to external purchasing",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verwende Google Play auf einem Android-Gerät, um dieses Abo zu ändern oder zu kündigen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usa Google Play en un dispositivo Android para cambiar o cancelar esta suscripción."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utilise Google Play sur un appareil Android pour modifier ou annuler cet abonnement."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use o Google Play em um dispositivo Android para alterar ou cancelar esta assinatura."
+          }
+        }
+      }
+    },
     "Use a different email" : {
       "comment" : "Button that returns to the email entry step",
       "localizations" : {
@@ -2704,35 +2655,6 @@
         }
       }
     },
-    "Use Google Play on an Android device to change or cancel this subscription." : {
-      "comment" : "Explains how to manage a Google-owned subscription without linking to external purchasing",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verwende Google Play auf einem Android-Gerät, um dieses Abo zu ändern oder zu kündigen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Usa Google Play en un dispositivo Android para cambiar o cancelar esta suscripción."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Utilise Google Play sur un appareil Android pour modifier ou annuler cet abonnement."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Use o Google Play em um dispositivo Android para alterar ou cancelar esta assinatura."
-          }
-        }
-      }
-    },
     "Username" : {
       "comment" : "Profile username field label",
       "localizations" : {
@@ -2758,35 +2680,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nome de usuário"
-          }
-        }
-      }
-    },
-    "username" : {
-      "comment" : "Placeholder for the username field",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "benutzername"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nombre de usuario"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nom d’utilisateur"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "nome de usuário"
           }
         }
       }
@@ -2878,35 +2771,6 @@
         }
       }
     },
-    "you@example.com" : {
-      "comment" : "Example email address in the sign-in field",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "du@beispiel.de"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "tu@ejemplo.com"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "toi@exemple.fr"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "voce@exemplo.com"
-          }
-        }
-      }
-    },
     "Your App Store purchases are now available on this Zoonk account." : {
       "comment" : "Confirms restored purchases were synchronized with Zoonk",
       "localizations" : {
@@ -2932,6 +2796,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Suas compras da App Store agora estão disponíveis nesta conta do Zoonk."
+          }
+        }
+      }
+    },
+    "Your Zoonk account and personalized data were permanently deleted." : {
+      "comment" : "Confirms that account data was permanently deleted",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Zoonk-Konto und deine personalisierten Daten wurden dauerhaft gelöscht."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu cuenta de Zoonk y tus datos personalizados se eliminaron permanentemente."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton compte Zoonk et tes données personnalisées ont été supprimés définitivement."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua conta do Zoonk e seus dados personalizados foram excluídos permanentemente."
+          }
+        }
+      }
+    },
+    "Your Zoonk data was deleted, but Apple couldn't confirm that its authorization was removed. Remove Zoonk from Sign in with Apple to finish." : {
+      "comment" : "Explains that Zoonk deletion succeeded but Apple authorization needs manual removal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Zoonk-Daten wurden gelöscht, aber Apple konnte nicht bestätigen, dass die Autorisierung entfernt wurde. Entferne Zoonk aus „Mit Apple anmelden“, um den Vorgang abzuschließen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus datos de Zoonk se eliminaron, pero Apple no pudo confirmar que se retirara la autorización. Elimina Zoonk de Inicio de sesión con Apple para finalizar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tes données Zoonk ont été supprimées, mais Apple n’a pas pu confirmer le retrait de l’autorisation. Retire Zoonk de Connexion avec Apple pour terminer."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seus dados do Zoonk foram excluídos, mas a Apple não conseguiu confirmar a remoção da autorização. Remova o Zoonk de Iniciar Sessão com a Apple para concluir."
           }
         }
       }
@@ -3110,60 +3032,31 @@
         }
       }
     },
-    "Your Zoonk account and personalized data were permanently deleted." : {
-      "comment" : "Confirms that account data was permanently deleted",
+    "Zoonk Plus" : {
+      "comment" : "Title of the native Zoonk Plus subscription screen",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Zoonk-Konto und deine personalisierten Daten wurden dauerhaft gelöscht."
+            "value" : "Zoonk Plus"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu cuenta de Zoonk y tus datos personalizados se eliminaron permanentemente."
+            "value" : "Zoonk Plus"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton compte Zoonk et tes données personnalisées ont été supprimés définitivement."
+            "value" : "Zoonk Plus"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua conta do Zoonk e seus dados personalizados foram excluídos permanentemente."
-          }
-        }
-      }
-    },
-    "Your Zoonk data was deleted, but Apple couldn't confirm that its authorization was removed. Remove Zoonk from Sign in with Apple to finish." : {
-      "comment" : "Explains that Zoonk deletion succeeded but Apple authorization needs manual removal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Zoonk-Daten wurden gelöscht, aber Apple konnte nicht bestätigen, dass die Autorisierung entfernt wurde. Entferne Zoonk aus „Mit Apple anmelden“, um den Vorgang abzuschließen."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tus datos de Zoonk se eliminaron, pero Apple no pudo confirmar que se retirara la autorización. Elimina Zoonk de Inicio de sesión con Apple para finalizar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes données Zoonk ont été supprimées, mais Apple n’a pas pu confirmer le retrait de l’autorisation. Retire Zoonk de Connexion avec Apple pour terminer."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seus dados do Zoonk foram excluídos, mas a Apple não conseguiu confirmar a remoção da autorização. Remova o Zoonk de Iniciar Sessão com a Apple para concluir."
+            "value" : "Zoonk Plus"
           }
         }
       }
@@ -3342,31 +3235,60 @@
         }
       }
     },
-    "Zoonk Plus" : {
-      "comment" : "Title of the native Zoonk Plus subscription screen",
+    "username" : {
+      "comment" : "Placeholder for the username field",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "benutzername"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "nombre de usuario"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "nom d’utilisateur"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk Plus"
+            "value" : "nome de usuário"
+          }
+        }
+      }
+    },
+    "you@example.com" : {
+      "comment" : "Example email address in the sign-in field",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "du@beispiel.de"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "tu@ejemplo.com"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "toi@exemple.fr"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "voce@exemplo.com"
           }
         }
       }
