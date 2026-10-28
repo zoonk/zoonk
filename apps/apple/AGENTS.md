@@ -6,16 +6,17 @@ These instructions apply to the native iPhone and iPad app in this directory and
 
 - For UI and interaction decisions, use [Zoonk design](../../.agents/skills/zoonk-design/SKILL.md) for the product's look and experience and [Apple Human Interface Guidelines](../../.agents/skills/apple-human-interface-guidelines/SKILL.md) for native controls and platform behavior, and consult the relevant official platform documentation. Framework-independent logic and documentation edits do not require a UI-guidance pass.
 - Prefer native SwiftUI containers and semantic APIs before adding custom view hierarchies, state synchronization, platform branches, or animation workarounds. Consult official examples and validate a small equivalent implementation when platform behavior is uncertain.
-- Use native controls for performance and platform behavior, with the look of the `main` app, as Duolingo does. Main defines product intent, copy, business behavior, API contracts, and the visual design: colors, typography, icons, proportions and screen structure. Apple conventions define how controls, navigation, gestures, input, and accessibility behave. When main's look would break native behavior, keep the behavior and adapt the look.
-- Design for touch and adaptive layouts across compact iPhone screens, regular-width iPad layouts, multitasking, and resizable iPad windows.
-- Style native controls with Zoonk's design tokens, mirrored from main's [semantic tokens](../../packages/ui/src/styles/globals.css) as named colors with light and dark values. Build a custom control only when a native one cannot be styled to match, and give it native accessibility and input behavior.
-- Preserve Dynamic Type (custom fonts included), VoiceOver semantics, sufficient contrast, safe areas, keyboard behavior, focus behavior, and reduced-motion settings by relying on native components and avoiding fixed-size assumptions.
+- **System defaults first.** Use what Apple provides by default so the system handles Dynamic Type, Increase Contrast, Dark Mode, accessibility, window sizes and new devices: semantic system colors, the system font through text styles, SF Symbols, native default components and system spacing. Match the design system's meaning through the closest system API; [the design-system mapping](../../.agents/skills/apple-human-interface-guidelines/references/design-system.md) lists which one carries each role. Use custom colors, styles or assets only where no system equivalent carries the meaning (such as belt and character artwork), and make them adapt to dark, Increase Contrast and Dynamic Type too. Don't hard-code hex colors, point sizes or fixed frames.
+- Main defines product intent, copy, business behavior, API contracts, information hierarchy, icons (as the closest SF Symbol) and screen structure. Apple defines controls, navigation, gestures, input, styling and accessibility.
+- Design for every size one binary runs at: compact iPhone screens, iPhone Duo's outer and inner displays (folded too), regular-width iPad layouts, multitasking, resizable iPad windows, and the Designed for iPad Mac and Vision destinations. Adapt with size classes, safe areas and adaptive containers, never device checks.
+- Preserve Dynamic Type, VoiceOver semantics, contrast, safe areas, keyboard behavior, focus behavior and reduced-motion settings by relying on native components and avoiding fixed-size assumptions.
 - Keep grouped controls visually consistent in height, alignment, typography, shape, and prominence while still allowing localized labels and Dynamic Type to expand when needed.
 - For dense visualizations, separate visible mark size from the interaction surface. Make data explorable with simple touch, pointer, keyboard, and VoiceOver interactions instead of turning tiny marks into tiny controls.
 - When using an SF Symbol, first check what symbol is used for this feature in the `main` app. Then, choose the closest SF Symbol. Symbols/icons should be consistent across platforms.
 
 ## Platform Architecture
 
+- The deployment target is iOS 26: use iOS 26 APIs (Liquid Glass, the current `TabView` and toolbar APIs) directly, and guard only newer APIs with `if #available(iOS 27, *)` or `27.1`. The app is unreleased, so don't add fallbacks for older systems.
 - Keep one `Zoonk` application target for iPhone and iPad. Both devices should use the same feature code and adapt through SwiftUI size classes and native containers rather than separate implementations.
 - Keep the Designed for iPhone/iPad compatibility destinations enabled for Apple silicon Mac and Apple Vision Pro. They run the iPad app and are not independently maintained native targets.
 - Keep application lifecycle and dependency composition in the `App` folder. Organize product code vertically by feature rather than creating global `Views`, `Models`, or `ViewModels` buckets.
@@ -27,10 +28,10 @@ These instructions apply to the native iPhone and iPad app in this directory and
 
 ## Navigation and Presentation
 
-- Use `TabView` and `NavigationStack` for the primary navigation shell, allowing SwiftUI to adapt between iPhone and iPad.
+- Use `TabView` with `Tab` values, a `NavigationStack` per tab and `.tabViewStyle(.sidebarAdaptable)` for the primary navigation shell, allowing SwiftUI to adapt between iPhone, iPhone Duo and iPad. App-wide search is a `Tab(role: .search)`.
 - A tab represents a persistent top-level destination, never an immediate action. Use toolbars, menus, sheets, or confirmation dialogs for actions according to the conventions of the current platform.
 - Let iPad adopt its native sidebar-style tab presentation instead of forcing an iPhone-style bottom tab bar at regular widths.
-- Put screen titles and navigation actions in `NavigationStack` navigation titles and toolbars. Do not recreate navigation bars with safe-area insets or fixed top headers.
+- Put screen titles and navigation actions in `NavigationStack` navigation titles and toolbars. Do not recreate navigation bars or bottom bars with safe-area insets, fixed headers or overlays: the system moves bars to a vertical side bar on iPhone Duo, and a fake bar won't follow. Give toolbar items a `Label` with a title and an SF Symbol.
 - When completing a modal flow is required, disable interactive dismissal and hide every dismissal affordance until completion; hiding only a close button is insufficient.
 
 ## Localization
@@ -42,9 +43,14 @@ These instructions apply to the native iPhone and iPad app in this directory and
 - Reuse the main app's established wording when it fits native Apple UI, but prefer concise platform-standard terminology when the web wording is not appropriate for a native control.
 - Treat dates, times, durations, and measurements as semantic values. Choose calendar and time-zone behavior intentionally, use native formatters, and test meaningful boundaries across locales.
 
+## Performance
+
+- Screens feel instant: show cached data at once and revalidate in the background; show a loading state only when nothing is cached. Keep data in app-scoped stores so it survives tab switches and navigation, load each fact once, and never refetch on every appear.
+- Keep view bodies cheap and dependencies narrow (see Fast SwiftUI in the [Apple skill](../../.agents/skills/apple-human-interface-guidelines/SKILL.md)). Measure requests per screen, memory, leaks, CPU and hangs on the simulator with the [verify skill's Apple reference](../../.agents/skills/verify/references/apple.md) whenever a change touches data loading, stores, navigation or long-lived state, and report the numbers before and after.
+
 ## Verification
 
-- For app code changes, build the iOS target. For UI or adaptive-layout changes, inspect the affected iPhone and iPad destinations because one binary can render differently across size classes and multitasking widths. Documentation-only edits need document validation, not a simulator run.
+- For app code changes, build the iOS target. For UI or adaptive-layout changes, inspect the affected iPhone, iPhone Duo and iPad destinations because one binary can render differently across size classes, displays and multitasking widths. Documentation-only edits need document validation, not a simulator run.
 - Prefer UI tests for user flows and unit tests for non-trivial pure domain logic. Do not test SwiftUI implementation details or static catalog contents.
 - When changing asynchronous observable stores, cover the affected success, authentication-expiry, transient-failure, and request-order transitions directly; UI tests alone may miss state-machine races.
-- Never call Apple UI work complete based only on builds or automated tests. Inspect the rendered result on relevant iPhone and iPad simulators, compare it with the matching `main` screen, compare neighboring controls for alignment and visual consistency, and verify accessibility, localization, focus, window sizing, and input behavior in proportion to the change.
+- Never call Apple UI work complete based only on builds or automated tests. Inspect the rendered result on relevant iPhone and iPad simulators in light, dark and Increase Contrast and at a large Dynamic Type size, compare it with the matching `main` screen, compare neighboring controls for alignment and visual consistency, and verify accessibility, localization, focus, window sizing, and input behavior in proportion to the change.
