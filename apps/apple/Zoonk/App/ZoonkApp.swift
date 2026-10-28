@@ -81,6 +81,7 @@ struct ZoonkApp: App {
         .environment(subscriptions)
         .environment(tutor)
         .environment(\.privateImageLoader, privateImages)
+        .environment(\.lessonTutor, .buddy)
         .environment(\.lessonPlayerAPI, lessonPlayerAPI)
         .environment(\.lessonCompletionHook, .invalidating(cache))
         .onOpenURL { url in
