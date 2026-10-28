@@ -90,7 +90,12 @@ struct ActivityStepView: View {
   }
 }
 
+/// A number answer read with either decimal separator, as main reads it: the field keeps what the
+/// learner typed ("0," on the way to "0,17") and answers with the number it reads.
 private struct NumericAnswerField: View {
+  @Environment(\.locale) private var locale
+  @State private var typed: String?
+
   let value: Double?
   let unit: String?
   let isLocked: Bool
@@ -98,9 +103,7 @@ private struct NumericAnswerField: View {
 
   var body: some View {
     HStack {
-      TextField(
-        value: Binding(get: { value }, set: onChange), format: .number
-      ) {
+      TextField(text: Binding(get: { typed ?? shown }, set: type)) {
         Text("Your answer", tableName: "Player", comment: "Placeholder of a number answer")
       }
       .keyboardType(.decimalPad)
@@ -113,5 +116,20 @@ private struct NumericAnswerField: View {
     }
     .padding()
     .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 16))
+    .onChange(of: value) {
+      // An answer set elsewhere (going back to the screen) shows as itself.
+      if let typed, parseLocalizedNumber(typed, locale: locale) != value {
+        self.typed = nil
+      }
+    }
+  }
+
+  private var shown: String {
+    value?.formatted(.number.grouping(.never).locale(locale)) ?? ""
+  }
+
+  private func type(_ text: String) {
+    typed = text
+    onChange(parseLocalizedNumber(text, locale: locale))
   }
 }

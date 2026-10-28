@@ -595,6 +595,37 @@ final class LessonPlayerHelpTests: XCTestCase {
   }
 }
 
+final class LocalizedNumberTests: XCTestCase {
+  func testReadsEitherDecimalSeparatorAndTheLocalesGrouping() {
+    let english = Locale(identifier: "en_US")
+    let portuguese = Locale(identifier: "pt_BR")
+    let german = Locale(identifier: "de_DE")
+
+    XCTAssertEqual(parseLocalizedNumber("0.17", locale: english), 0.17)
+    XCTAssertEqual(parseLocalizedNumber("3,5", locale: english), 3.5)
+    XCTAssertEqual(parseLocalizedNumber("1,000", locale: english), 1000)
+    XCTAssertEqual(parseLocalizedNumber("1,234.5", locale: english), 1234.5)
+
+    XCTAssertEqual(parseLocalizedNumber("0.17", locale: portuguese), 0.17)
+    XCTAssertEqual(parseLocalizedNumber("0,17", locale: portuguese), 0.17)
+    XCTAssertEqual(parseLocalizedNumber("1.000", locale: portuguese), 1000)
+    XCTAssertEqual(parseLocalizedNumber("1.234,5", locale: portuguese), 1234.5)
+
+    XCTAssertEqual(parseLocalizedNumber("0.17", locale: german), 0.17)
+    XCTAssertEqual(parseLocalizedNumber(" \u{2212}2,5 ", locale: german), -2.5)
+    XCTAssertEqual(parseLocalizedNumber("12\u{202F}345,5", locale: german), 12345.5)
+  }
+
+  func testAnythingButOnePlainNumberIsNoAnswer() {
+    let english = Locale(identifier: "en_US")
+
+    XCTAssertNil(parseLocalizedNumber("", locale: english))
+    XCTAssertNil(parseLocalizedNumber("12 cm", locale: english))
+    XCTAssertNil(parseLocalizedNumber("1,2,3", locale: english))
+    XCTAssertNil(parseLocalizedNumber("1.2.3", locale: english))
+  }
+}
+
 final class LessonMathTests: XCTestCase {
   func testExponentsRiseAndIndicesDropAsText() {
     let typeset = LessonMath.attributed("x^{2} + a_1")
