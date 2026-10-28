@@ -52,7 +52,7 @@ final class SearchItemsTests: XCTestCase {
     let fallback = searchFallback(question: "black holes", summary: .searchFixture())
 
     XCTAssertEqual(
-      fallback.items.map(\.action), [.select(.buddy), .open(.startGoal(goal: "black holes"))])
+      fallback.items.map(\.action), [.ask("black holes"), .open(.startGoal(goal: "black holes"))])
   }
 }
 

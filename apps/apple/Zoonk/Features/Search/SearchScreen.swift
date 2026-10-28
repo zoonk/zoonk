@@ -7,6 +7,7 @@ import SwiftUI
 /// debounced catalog search.
 struct SearchScreen: View {
   @Environment(AppRouter.self) private var router
+  @Environment(BuddyStore.self) private var buddy
   @Environment(CourseCatalogStore.self) private var catalog
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
@@ -148,6 +149,9 @@ struct SearchScreen: View {
 
   private func perform(_ action: SearchItem.Action) {
     switch action {
+    case .ask(let question):
+      buddy.broughtQuestion = question
+      router.showRoot(of: .buddy)
     case .open(let route):
       router.open(route)
     case .select(let tab):

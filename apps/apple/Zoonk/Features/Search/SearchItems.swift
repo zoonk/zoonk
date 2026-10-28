@@ -4,6 +4,8 @@ import Foundation
 /// and testable; `SearchScreen` runs their actions.
 struct SearchItem: Equatable, Identifiable {
   enum Action: Equatable {
+    /// Opens the buddy's tab with the question waiting in its composer.
+    case ask(String)
     case feedback
     case open(AppRoute)
     case present(AppSheet)
@@ -71,7 +73,7 @@ func searchFallback(question: String, summary: LearnerSummary?) -> SearchGroup {
       localized: "Ask \(buddyName(summary)): “\(question)”", table: "Search",
       comment: "Asks the study buddy what the learner typed in search; the first value is its name"),
     systemImage: "bubble.left.and.text.bubble.right",
-    action: .select(.buddy))
+    action: .ask(question))
 
   return SearchGroup(
     id: "fallback",
