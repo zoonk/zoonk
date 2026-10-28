@@ -26,7 +26,7 @@ final class PracticeStore {
 
     let api = api
     let list: Resource<Components.Schemas.MistakeList> = cache.resource(
-      audience: .signedIn, domains: [.learnerModel]
+      audience: .signedIn, domains: [.learnerModel, .learningProfile]
     ) { session in
       guard let session else { return nil }
       return try await api.mistakes(
@@ -45,7 +45,7 @@ final class PracticeStore {
 
     let api = api
     let pattern: Resource<NoticedPattern> = cache.resource(
-      audience: .signedIn, domains: [.learnerModel]
+      audience: .signedIn, domains: [.learnerModel, .learningProfile]
     ) { session in
       guard let session else { return nil }
       return try await api.notebookPattern(token: session.bearerToken, goalId: goalId)
