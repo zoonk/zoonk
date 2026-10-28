@@ -23,7 +23,7 @@ struct LiveQuestionBlockClient: QuestionBlockClient {
     -> StudyAnswerOutcome
   {
     let (practice, sessionId, blockId) = (practice, sessionId, blockId)
-    return try await Self.value(
+    return try Self.value(
       await practice.write(.answered) { identity in
         try await practice.api.answerStudy(
           token: identity.bearerToken, sessionId: sessionId, blockId: blockId, itemId: itemId,
@@ -33,7 +33,7 @@ struct LiveQuestionBlockClient: QuestionBlockClient {
 
   func finish() async throws -> Components.Schemas.StudyBlockCompletion {
     let (practice, sessionId, blockId) = (practice, sessionId, blockId)
-    return try await Self.value(
+    return try Self.value(
       await practice.write(.finished) { identity in
         try await practice.api.finishStudyBlock(
           token: identity.bearerToken, sessionId: sessionId, blockId: blockId)
