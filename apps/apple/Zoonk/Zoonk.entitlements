@@ -6,5 +6,7 @@
 	<array>
 		<string>Default</string>
 	</array>
+	<key>com.apple.developer.devicecheck.appattest-environment</key>
+	<string>development</string>
 </dict>
 </plist>

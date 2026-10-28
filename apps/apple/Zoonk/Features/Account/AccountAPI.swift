@@ -69,9 +69,11 @@ extension AccountAPIClient {
 }
 
 struct AccountAPI {
+  private let appAttest: any AppAttestProving
   private let clients: APIClientFactory
 
-  init(clients: APIClientFactory) {
+  init(clients: APIClientFactory, appAttest: (any AppAttestProving)? = nil) {
+    self.appAttest = appAttest ?? AppAttestClient(api: AppAttestAPI(clients: clients))
     self.clients = clients
   }
 
@@ -90,11 +92,17 @@ struct AccountAPI {
     }
   }
 
-  /// Asks the existing mailer to send the same localized six-digit sign-in code used by the web application.
+  /// Asks the existing mailer to send the same localized six-digit sign-in code used by the web application. An anonymous request can create an account, so it carries App Attest proof; an account's own bearer is proof enough.
   func sendEmailCode(email: String, token: String?) async throws {
+    let proof = token == nil ? await appAttest.proof() : nil
     let output = try await perform(token: token) { client in
       try await client.createEmailSignInCode(
-        .init(body: .json(.init(email: email))))
+        .init(
+          headers: .init(
+            xAppAttestAssertion: proof?.assertion,
+            xAppAttestChallenge: proof?.challenge,
+            xAppAttestKeyId: proof?.keyID),
+          body: .json(.init(email: email))))
     }
 
     switch output {
@@ -113,9 +121,15 @@ struct AccountAPI {
   }
 
   func signInWithEmailCode(email: String, code: String) async throws -> String {
+    let proof = await appAttest.proof()
     let output = try await perform { client in
       try await client.createEmailCodeSession(
-        .init(body: .json(.init(code: code, email: email))))
+        .init(
+          headers: .init(
+            xAppAttestAssertion: proof?.assertion,
+            xAppAttestChallenge: proof?.challenge,
+            xAppAttestKeyId: proof?.keyID),
+          body: .json(.init(code: code, email: email))))
     }
 
     switch output {

@@ -7,6 +7,8 @@ namingStrategy: idiomatic
 # when a feature starts using it.
 filter:
   operations:
+    - createAppAttestChallenge
+    - createAppAttestKey
     - createAppleSession
     - createAppleSubscription
     - createChallengeGeneration
