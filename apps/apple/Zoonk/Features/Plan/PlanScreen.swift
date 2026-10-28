@@ -130,6 +130,7 @@ private struct PlanBuildingView: View {
 
 /// The plan's sections, in one list on a compact width and in two columns on a regular one.
 private struct PlanContent: View {
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.horizontalSizeClass) private var sizeClass
   @Environment(PlanStore.self) private var store
   @State private var adjusting: AdjustPlanSheet.Section?
@@ -143,7 +144,8 @@ private struct PlanContent: View {
     let context = PlanContext(goal: goal, plan: plan, adjust: { adjusting = $0 })
 
     Group {
-      if sizeClass == .regular {
+      // Accessibility text sizes need the whole width, so the aside joins the one list.
+      if sizeClass == .regular && !dynamicTypeSize.isAccessibilitySize {
         HStack(alignment: .top, spacing: 0) {
           List {
             PlanHeaderRow(context: context)

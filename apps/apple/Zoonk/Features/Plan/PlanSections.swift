@@ -180,6 +180,7 @@ private struct RoadmapCompact: View {
 /// The two numbers that answer "will I make it?": where the learner stands (an exam's preparation,
 /// another goal's lessons) and the pace against the plan, each opening what's behind it.
 struct PlanNumbersSection: View {
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
   @State private var open: Sheet?
@@ -205,7 +206,13 @@ struct PlanNumbersSection: View {
     let standing = standingNumber
 
     Section {
-      HStack(alignment: .top, spacing: 16) {
+      // Side by side, or one over the other at accessibility text sizes.
+      let layout =
+        dynamicTypeSize.isAccessibilitySize
+        ? AnyLayout(VStackLayout(alignment: .leading, spacing: 16))
+        : AnyLayout(HStackLayout(alignment: .top, spacing: 16))
+
+      layout {
         if let standing {
           tile(standing) { open = .standing }
         }
