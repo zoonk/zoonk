@@ -14,10 +14,6 @@ import {
   getScorePerformance,
 } from "./score-performance";
 
-/**
- * Loads only the weighted answer totals needed by compact Score surfaces such
- * as Home, while sharing the same rolling date contract as the detail page.
- */
 async function findScore({
   endDate,
   startDate,
@@ -38,9 +34,7 @@ async function findScore({
   });
 }
 
-/**
- * Returns the authenticated learner's weighted Score for the current 90 local dates.
- */
+/** Uses exactly 90 learner-local dates; null without answers or a session. */
 export async function getScore({
   history,
 }: ProgressHistoryOptions = {}): Promise<ScorePerformance | null> {

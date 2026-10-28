@@ -10,10 +10,7 @@ export type DatedScorePerformance = ScorePerformance & { date: Date };
 
 type ScoreWeek = { date: Date; rows: readonly AnswerCounts[] };
 
-/**
- * Converts answer totals into the canonical weighted Score shape shared by the
- * headline, weekly trend, weekday patterns, and time-of-day patterns.
- */
+/** Returns null for zero total answers. */
 export function getScorePerformance({
   correctAnswers,
   incorrectAnswers,
@@ -32,10 +29,6 @@ export function getScorePerformance({
   };
 }
 
-/**
- * Adds one answer-count row without mutating the running total so callers can
- * combine database buckets with a small, named reduction rule.
- */
 function addAnswerCounts(total: AnswerCounts, row: AnswerCounts): AnswerCounts {
   return {
     correctAnswers: total.correctAnswers + row.correctAnswers,
@@ -43,10 +36,7 @@ function addAnswerCounts(total: AnswerCounts, row: AnswerCounts): AnswerCounts {
   };
 }
 
-/**
- * Combines answer-count rows before calculating Score so high- and low-volume
- * rows contribute in proportion to the questions the learner answered.
- */
+/** Weight by answer counts, never average per-row percentages. */
 export function getCombinedScorePerformance(
   rows: readonly AnswerCounts[],
 ): ScorePerformance | null {
@@ -58,17 +48,10 @@ export function getCombinedScorePerformance(
   return getScorePerformance(totals);
 }
 
-/**
- * The fewest answers a weekday or a part of the day needs before it can be called the strongest:
- * with fewer, one lucky answer (a single right answer is 100%) would read as a pattern. Learners
- * see this number where no group is named yet.
- */
+/** Require enough observations so a single lucky answer cannot become a named pattern. */
 export const MIN_PATTERN_ANSWERS = 10;
 
-/**
- * Picks the strongest group by accuracy first and answer volume second, among the groups with
- * enough answers to count (`MIN_PATTERN_ANSWERS`); null while none has.
- */
+/** Null without enough answers; accuracy ranks first, answer volume breaks ties. */
 export function getStrongestScorePerformance<T extends ScorePerformance>(
   rows: readonly T[],
 ): T | null {
@@ -81,10 +64,6 @@ export function getStrongestScorePerformance<T extends ScorePerformance>(
   );
 }
 
-/**
- * Normalizes any date in a stored Score row to the UTC Monday that identifies
- * its weekly trend bucket.
- */
 function getMondayOfWeek(date: Date): Date {
   const dayOfWeek = date.getUTCDay();
   const daysSinceMonday = dayOfWeek === 0 ? DAYS_FROM_SUNDAY_TO_PREVIOUS_MONDAY : dayOfWeek - 1;
@@ -94,11 +73,6 @@ function getMondayOfWeek(date: Date): Date {
   );
 }
 
-/**
- * Groups date-only answer rows without changing their counts so each weekly
- * Score can be calculated from combined answers rather than averaged daily
- * percentages.
- */
 function groupScoreRowsByWeek(rows: readonly DatedAnswerCounts[]): ScoreWeek[] {
   const weeks = new Map<string, ScoreWeek>();
 
@@ -115,19 +89,12 @@ function groupScoreRowsByWeek(rows: readonly DatedAnswerCounts[]): ScoreWeek[] {
   );
 }
 
-/**
- * Converts one non-empty weekly group into the complete Score shape consumed by
- * the trend chart. Stored zero-answer rows are discarded before grouping.
- */
 function getWeeklyPerformance({ date, rows }: ScoreWeek): DatedScorePerformance | null {
   const performance = getCombinedScorePerformance(rows);
   return performance ? { ...performance, date } : null;
 }
 
-/**
- * Builds a Monday-based weighted weekly trend while omitting stored progress
- * rows that contain no answered questions.
- */
+/** Omits dates with no answers; week keys are UTC-midnight Monday labels. */
 export function getWeeklyScorePerformance(
   rows: readonly DatedAnswerCounts[],
 ): DatedScorePerformance[] {

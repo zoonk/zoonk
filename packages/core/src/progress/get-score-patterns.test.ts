@@ -6,7 +6,6 @@ import { mockSession, mockSessionFailure } from "../_test-utils/mock-session";
 import { getRequestProgressDateContext } from "./get-request-date-context";
 import { getScorePatterns } from "./get-score-patterns";
 
-/** Fixes the instant and timezone used to derive the rolling pattern window. */
 function mockScoreDate(now: Date = new Date(), timeZone = "UTC") {
   vi.mocked(getRequestProgressDateContext).mockResolvedValue({
     currentDate: now,
@@ -15,10 +14,6 @@ function mockScoreDate(now: Date = new Date(), timeZone = "UTC") {
   });
 }
 
-/**
- * Appends one finished activity to the ledger on a learner-local date and hour,
- * the only fields time-of-day patterns read besides the answer counts.
- */
 function ledgerRow({
   correctAnswers,
   hour,
@@ -154,7 +149,6 @@ describe(getScorePatterns, () => {
       { correctAnswers: 1, incorrectAnswers: 1, period: 2, score: 50, totalAnswers: 2 },
     ]);
 
-    // One right answer is 100%, but too few answers to count: the strongest has enough of them.
     expect(result?.strongestWeekday).toStrictEqual(result?.weekdays[1]);
     expect(result?.strongestTime).toStrictEqual(result?.times[1]);
   });
@@ -240,7 +234,6 @@ describe(getScorePatterns, () => {
       { correctAnswers: 3, incorrectAnswers: 0, period: 3, score: 100, totalAnswers: 3 },
     ]);
 
-    // A few answers each: too few to name a strongest day or part of the day.
     expect(result?.strongestWeekday).toBeNull();
     expect(result?.strongestTime).toBeNull();
   });
@@ -253,7 +246,6 @@ describe(getScorePatterns, () => {
     const endedAt = new Date("2026-01-15T09:30:00.000Z");
     const answers = { correctAnswers: 3, endedAt, incorrectAnswers: 1, userId: user.id };
 
-    // The session's row sums the answers its lesson and question block already recorded.
     await Promise.all([
       learningEventFixture({ ...answers, correctAnswers: 2, incorrectAnswers: 0, kind: "lesson" }),
       learningEventFixture({

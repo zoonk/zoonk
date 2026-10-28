@@ -21,12 +21,7 @@ export type CurrentUserProgress = {
   scorePatterns: StrongestScorePatterns | null;
 };
 
-/**
- * Returns the compact learner progress resource used by Home without loading
- * the 53-week calendars or complete Score pattern breakdowns needed only by
- * detail screens. A missing Activity result identifies an unauthenticated
- * request because authenticated learners always have zero-valued totals.
- */
+/** Compact summary without detail calendars or Score patterns; null means unauthenticated. */
 export async function getCurrentUserProgress({
   history,
 }: ProgressHistoryOptions = {}): Promise<CurrentUserProgress | null> {

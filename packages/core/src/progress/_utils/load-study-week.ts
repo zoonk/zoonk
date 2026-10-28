@@ -16,10 +16,7 @@ import { type WeeklyStudyTime } from "../weekly-study-time-contract";
 
 export type StudyWeek = {
   days: WeekDay[];
-  /**
-   * The learner's next day with study time after this one, within a week, past the week's end too:
-   * when today's study time used up is back ("See you Monday!"). Null when the coming week has none.
-   */
+  /** Next local study day within a week, even beyond this week's end; null without one. */
   nextStudyDate: Date | null;
   time: WeeklyStudyTime;
 };
@@ -27,10 +24,7 @@ export type StudyWeek = {
 const WEEK_DAYS = 7;
 const SECONDS_PER_MINUTE = 60;
 
-/**
- * The learner's time goal for a day is shared by their active goals ("ENEM and English" split one
- * budget): the sum of what each goal's plan gives that day, rest days and light weeks included.
- */
+/** Active goals share one daily budget; sum each plan's allocations including rest/light days. */
 export async function loadStudyWeek({
   localDate,
   selectedPlan,
@@ -59,13 +53,10 @@ export async function loadStudyWeek({
     }),
   ]);
 
-  // Ended once: "10 more minutes" reopens a finished session, and the day still counts.
+  // Adding more time can reopen a completed session; its original completion still counts.
   const completed = sessions.filter((day) => day.endedAt !== null);
 
-  /**
-   * A day already past asks what its session asked when it was built: a daily time changed since
-   * doesn't measure it again (Ana's 45-minute days read as partial once she chose 3 hours).
-   */
+  /** Past days keep the budget their saved session requested, regardless of later setting changes. */
   const getPastMinutes = (goalId: string, date: Date): number | null => {
     const asked = sessions.find(
       (day) => day.goalId === goalId && day.localDate.getTime() === date.getTime(),
@@ -82,8 +73,7 @@ export async function loadStudyWeek({
     targetDate: goal.targetDate,
   }));
 
-  // Days before a goal existed weren't days to study for it, so a new learner's week doesn't open
-  // with days that read as missed, or as rest days they never chose.
+  // Dates before a goal existed must not appear as missed study or chosen rest days.
   const getDayMinutes = (date: Date): number =>
     started.reduce(
       (sum, { goal, planSettings, startDate }) =>

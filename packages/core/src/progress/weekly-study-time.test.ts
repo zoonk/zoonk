@@ -222,7 +222,6 @@ describe("weekly study time", () => {
         data: { createdAt: MONDAY, dailyMinutes: 45, timezone: "UTC" },
         where: { id: goal.id },
       }),
-      // Weekdays only: Saturday and Sunday rest, so Friday's "tomorrow" would be wrong.
       prisma.plan.update({
         data: { settings: { weekdayMinutes: [0, 45, 45, 45, 45, 45, 0] } },
         where: { goalId: goal.id },
@@ -239,7 +238,6 @@ describe("weekly study time", () => {
       throw new Error(`Expected ready Today, received ${today.status}`);
     }
 
-    // The week's days end on Sunday's rest; the next study day is the next week's Monday.
     expect(today.today.session.week.days.slice(5).map((day) => day.kind)).toStrictEqual([
       "rest",
       "rest",

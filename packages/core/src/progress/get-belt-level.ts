@@ -15,7 +15,6 @@ export type BeltLevelDetails = BeltLevelResult & {
   totalBrainPower: number;
 };
 
-/** Converts one durable progress row into every value needed by belt progress surfaces. */
 function toBeltLevel(progress: UserProgress | null): BeltLevelDetails | null {
   if (!hasUserLearningProgress(progress)) {
     return null;
@@ -30,17 +29,14 @@ function toBeltLevel(progress: UserProgress | null): BeltLevelDetails | null {
   };
 }
 
-/** Returns the authenticated learner's current belt and its durable total in one read. */
+/** Null without a session or learning progress. */
 export async function getBeltLevel(): Promise<BeltLevelDetails | null> {
   "use cache: private";
 
   return toBeltLevel(await getUserProgress());
 }
 
-/**
- * Preserves the difference between an unauthenticated request and a signed-in
- * learner whose zeroed progress has not reached the first visible level yet.
- */
+/** Outer null means unauthenticated; level=null means no visible learning progress yet. */
 export async function getCurrentUserLevel(): Promise<{ level: BeltLevelDetails | null } | null> {
   const [session, level] = await Promise.all([getSession(), getBeltLevel()]);
   return session ? { level } : null;

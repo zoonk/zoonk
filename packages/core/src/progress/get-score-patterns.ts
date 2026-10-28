@@ -48,10 +48,6 @@ const EMPTY_SCORE_PERFORMANCE: ScorePerformance = {
   totalAnswers: 0,
 };
 
-/**
- * Converts one weekday aggregate into the shared Score shape while retaining
- * its learner-local weekday key.
- */
 function toWeekdayScorePerformance(row: WeekdayScoreRow): WeekdayScorePattern | null {
   const performance = getScorePerformance({
     correctAnswers: row._sum.correctAnswers ?? 0,
@@ -61,11 +57,6 @@ function toWeekdayScorePerformance(row: WeekdayScoreRow): WeekdayScorePattern | 
   return performance ? { ...performance, dayOfWeek: row.dayOfWeek } : null;
 }
 
-/**
- * Sums the ledger's hourly answer totals that fall in one 0-to-3 daypart
- * (night, morning, afternoon, evening), the period key used by Home and
- * translations.
- */
 function getPeriodAnswerTotals({
   period,
   rows,
@@ -84,10 +75,6 @@ function getPeriodAnswerTotals({
   };
 }
 
-/**
- * Converts one daypart's answer totals into the shared Score shape while
- * keeping its period key.
- */
 function toTimeScorePattern({
   period,
   rows,
@@ -100,25 +87,16 @@ function toTimeScorePattern({
   return performance ? { ...performance, period } : null;
 }
 
-/**
- * Converts hourly ledger totals into daypart Score rows, keeping only the
- * dayparts with answers.
- */
 function getTimeScorePatterns(rows: HourScoreRow[]): TimeScorePattern[] {
   return getObservedPerformance(
     Array.from({ length: TIME_PERIOD_COUNT }, (_, period) => toTimeScorePattern({ period, rows })),
   );
 }
 
-/**
- * Keeps only observed groups after nullable database aggregates have been
- * converted into Score performance rows.
- */
 function getObservedPerformance<T>(rows: (T | null)[]): T[] {
   return rows.filter((row) => row !== null);
 }
 
-/** Uses the daily rows already loaded for lifetime Energy without changing Score's window. */
 function weekdayDailyTotals({
   dayOfWeek,
   rows,
@@ -165,14 +143,7 @@ async function readWeekdayTotals({
   return rows;
 }
 
-/**
- * Loads weekday and time-of-day aggregates in parallel so the Patterns page
- * gets one coherent window without creating a database waterfall. Weekdays
- * come from the daily totals and dayparts from the learning ledger's
- * learner-local hour, so neither depends on content tables. A session's own
- * row sums the answers its lessons and blocks already recorded, so it's left
- * out to count each answer once.
- */
+/** Exclude session aggregate rows because their lesson/block answers are already counted separately. */
 async function queryScorePatterns({
   endDate,
   startDate,
@@ -206,10 +177,7 @@ async function queryScorePatterns({
   };
 }
 
-/**
- * Returns every observed performance pattern plus the strongest weekday and
- * time of day for the current learner's 90-day Score window.
- */
+/** Returns only observed groups in the current 90-day window. */
 export async function getScorePatterns({
   history,
 }: ProgressHistoryOptions = {}): Promise<ScorePatternsData | null> {
@@ -232,10 +200,6 @@ export async function getScorePatterns({
   return queryScorePatterns({ ...dateRange, history, userId: session.user.id });
 }
 
-/**
- * Preserves an observed weekday or returns a zero-answer placeholder so every
- * consumer receives the same stable Sunday-through-Saturday sequence.
- */
 function getCompleteWeekdayPattern({
   dayOfWeek,
   patterns,
@@ -251,10 +215,6 @@ function getCompleteWeekdayPattern({
   );
 }
 
-/**
- * Preserves an observed daypart or returns a zero-answer placeholder so every
- * consumer receives the same stable night-through-evening sequence.
- */
 function getCompleteTimePattern({
   patterns,
   period,
@@ -267,12 +227,7 @@ function getCompleteTimePattern({
   );
 }
 
-/**
- * Adds every weekday and daypart to the observed Score patterns so API clients
- * receive one stable contract and do not each need to recreate missing rows.
- * Zero answer counts make it explicit that an absent category is not a measured
- * zero-percent score.
- */
+/** Missing categories have zero answer counts, which is not a measured zero-percent score. */
 function completeScorePatterns(patterns: ScorePatternsData): ScorePatternsData {
   const weekdays = Array.from({ length: WEEKDAY_COUNT }, (_, dayOfWeek) =>
     getCompleteWeekdayPattern({ dayOfWeek, patterns: patterns.weekdays }),
@@ -285,11 +240,7 @@ function completeScorePatterns(patterns: ScorePatternsData): ScorePatternsData {
   return { ...patterns, times, weekdays };
 }
 
-/**
- * Returns a complete current-user Score-pattern resource while distinguishing
- * missing authentication from an authenticated learner with no observed
- * answers in the rolling window.
- */
+/** Outer null means unauthenticated; patterns=null means no observed answers. */
 export async function getCurrentUserScorePatterns({
   history,
 }: ProgressHistoryOptions = {}): Promise<{ patterns: ScorePatternsData | null } | null> {

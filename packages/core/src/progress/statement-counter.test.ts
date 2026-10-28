@@ -15,7 +15,6 @@ type QueuePool = {
   waitingCount: number;
 };
 
-/** A one-connection real pool reproduces the DB adapter's acquisition queue without ten holders. */
 function createQueuePool(): QueuePool {
   const requireDatabaseDependency = createRequire(import.meta.resolve("@zoonk/db"));
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Use the same installed driver as the DB adapter, not a second dependency or a mock.

@@ -4,17 +4,10 @@ import { DEFAULT_PROGRESS_LOOKBACK_DAYS } from "@zoonk/utils/date-ranges";
 
 const SCORE_LOOKBACK_DAY_OFFSET = DEFAULT_PROGRESS_LOOKBACK_DAYS - 1;
 
-/**
- * Learner-local calendar dates stored as UTC-midnight values, the shape of
- * `DailyProgress.date` and `LearningEvent.localDate`. Every Score surface
- * reads those learner-owned tables, so one date-only range keeps them aligned.
- */
+/** Learner-local date labels stored at UTC midnight; bounds are inclusive. */
 export type ScoreDateRange = { endDate: Date; startDate: Date };
 
-/**
- * Keeps every Score surface on exactly 90 learner-local calendar dates,
- * including today.
- */
+/** Exactly 90 learner-local dates, including today. */
 export function getScoreDateRange({
   now,
   timeZone,

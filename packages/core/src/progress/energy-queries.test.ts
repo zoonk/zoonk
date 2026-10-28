@@ -10,7 +10,6 @@ import { getRequestProgressDateContext } from "./get-request-date-context";
 
 const NOW = new Date("2025-01-10T12:00:00Z");
 
-/** Selects the learner and local date used by one private Energy read. */
 function mockEnergyRequest({
   currentDate,
   timeZone = "UTC",

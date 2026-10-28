@@ -8,7 +8,6 @@ import { getRequestProgressDateContext } from "./get-request-date-context";
 const CURRENT_DATE = new Date("2025-01-10T00:00:00Z");
 const NEXT_DATE = new Date("2025-01-11T00:00:00Z");
 
-/** Fixes the learner-local date used to build the Activity calendar. */
 function mockCurrentDate(currentDate: Date) {
   vi.mocked(getRequestProgressDateContext).mockResolvedValue({
     currentDate,
@@ -118,7 +117,6 @@ describe("authenticated users", () => {
       lessonCompletions: 1,
     });
 
-    // Time alone (a lesson left halfway) isn't a learning day, in the calendar or the total.
     expect(
       result?.days.find((day) => day.date.getTime() === new Date("2025-01-06T00:00:00Z").getTime()),
     ).toStrictEqual({
@@ -127,7 +125,6 @@ describe("authenticated users", () => {
       lessonCompletions: 0,
     });
 
-    // A day of reviews and practice only, with no lesson finished, still counts as a learning day.
     expect(
       result?.days.find((day) => day.date.getTime() === new Date("2025-01-07T00:00:00Z").getTime()),
     ).toStrictEqual({
@@ -136,7 +133,6 @@ describe("authenticated users", () => {
       lessonCompletions: 0,
     });
 
-    // Days kept from before learning v2 have only their lesson count.
     expect(
       result?.days.find((day) => day.date.getTime() === new Date("2025-01-09T00:00:00Z").getTime()),
     ).toStrictEqual({

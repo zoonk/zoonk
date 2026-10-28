@@ -17,10 +17,6 @@ export type LearningActivityTotals = {
   totalLearningSeconds: number;
 };
 
-/**
- * Composes the lifetime day, time and first-completion totals from the daily
- * table so every progress surface shares one definition of each metric.
- */
 async function findLearningActivityTotals({
   history,
   userId,
@@ -48,10 +44,7 @@ async function findLearningActivityTotals({
   };
 }
 
-/**
- * Returns the signed-in learner's lifetime activity totals without loading the
- * daily calendar rows used only by the Activity page.
- */
+/** Returns null without a session; never loads the daily calendar rows by default. */
 export async function getLearningActivityTotals({
   history,
 }: ProgressHistoryOptions = {}): Promise<LearningActivityTotals | null> {

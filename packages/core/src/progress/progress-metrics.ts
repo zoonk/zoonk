@@ -6,20 +6,12 @@ export type TotalLearningTimeData = { totalLearningSeconds: number };
 
 type TotalLessonsCompletedData = { totalLessonCompletions: number };
 
-/**
- * Returns the learner's canonical aggregate progress row for callers that have
- * already authenticated an explicit identity.
- */
+/** Internal query: caller must authorize userId first. */
 export function getUserProgress({ userId }: { userId: string }) {
   return prisma.userProgress.findUnique({ where: { userId } });
 }
 
-/**
- * A learning day has at least one finished activity. `lessonsCompleted` covers
- * days copied from progress kept before learning v2, which have no completion
- * counters. Answer attempts and empty placeholder rows do not create learning
- * days by themselves.
- */
+/** Time and answer attempts alone do not create a learning day; older imported rows may have only lesson totals. */
 export const LEARNING_DAY_WHERE = {
   OR: [
     { interactiveCompleted: { gt: 0 } },
@@ -28,17 +20,13 @@ export const LEARNING_DAY_WHERE = {
   ],
 };
 
-/**
- * The activities finished on one day (lessons, reviews, practice): more than zero exactly on a
- * learning day. Days kept from before learning v2 only counted their lessons.
- */
+/** Older imported daily rows may contain lesson totals without completion counters. */
 export function countActivitiesCompleted(
   day: Pick<DailyProgress, "interactiveCompleted" | "lessonsCompleted" | "staticCompleted">,
 ): number {
   return Math.max(day.interactiveCompleted + day.staticCompleted, day.lessonsCompleted);
 }
 
-/** Counts the learner's learning days across their complete history. */
 export async function getTotalLearningDays({
   userId,
 }: {
@@ -51,7 +39,6 @@ export async function getTotalLearningDays({
   return { learningDays };
 }
 
-/** Sums the learner's durable daily lesson time across their complete history. */
 export async function getTotalLearningTime({
   userId,
 }: {
@@ -65,10 +52,6 @@ export async function getTotalLearningTime({
   return { totalLearningSeconds: result._sum.timeSpentSeconds ?? 0 };
 }
 
-/**
- * Sums first lesson completions from the daily totals, so the lifetime count
- * survives the lessons themselves being deleted or regenerated.
- */
 export async function getTotalLessonsCompleted({
   userId,
 }: {

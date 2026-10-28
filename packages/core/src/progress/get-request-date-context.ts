@@ -9,11 +9,7 @@ import { getSession } from "../users/get-session";
 
 type RequestProgressDateContext = { currentDate: Date; currentInstant: Date; timeZone: string };
 
-/**
- * Captures one instant and the learner's day for it, so every progress capability in the same
- * render tree uses one clock. The day is in the learner's active goal's stored zone, as Today
- * reads it (see `getAnswerTimeZone`); UTC for a visitor without one.
- */
+/** Uses the active goal's stored zone, or UTC without one; all GET progress reads share the same instant. */
 export async function getRequestProgressDateContext(): Promise<RequestProgressDateContext> {
   "use cache: private";
 

@@ -12,7 +12,7 @@ function normalizeCount(value: number): number {
   return Math.max(Math.round(value), 0);
 }
 
-/** Partial progress stays visible, below 100 until every item is complete. */
+/** Never reaches 100 until every item is complete. */
 export function calculateProgressPercent({
   completedItems,
   totalItems,
@@ -39,7 +39,7 @@ function countLessons(chapters: readonly CourseContinueProgressChapter[]): numbe
   return chapters.reduce((total, chapter) => total + normalizeCount(chapter.totalLessons), 0);
 }
 
-/** Unwritten chapters are estimated from completed outlines, never below the lessons that exist. */
+/** Estimates unwritten outlines but never below the count of existing lessons. */
 export function calculateCourseContinueProgressPercent({
   chapters,
 }: {

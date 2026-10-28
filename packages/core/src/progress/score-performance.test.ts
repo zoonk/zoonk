@@ -6,7 +6,6 @@ import {
   getWeeklyScorePerformance,
 } from "./score-performance";
 
-/** Covers the canonical weighted Score math shared by every progress capability. */
 describe(getScorePerformance, () => {
   it("calculates score and exposes every answer count", () => {
     expect(getScorePerformance({ correctAnswers: 17, incorrectAnswers: 3 })).toStrictEqual({

@@ -4,7 +4,6 @@ import { mockSession, mockSessionFailure } from "../_test-utils/mock-session";
 import { getRequestProgressDateContext } from "./get-request-date-context";
 import { getScore } from "./get-score";
 
-/** Fixes the instant and timezone used to derive the rolling Score window. */
 function mockScoreDate(now: Date = new Date(), timeZone = "UTC") {
   vi.mocked(getRequestProgressDateContext).mockResolvedValue({
     currentDate: now,

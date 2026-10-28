@@ -35,10 +35,6 @@ type CurrentUserScoreHistoryResource =
   | { isAuthenticated: false }
   | { isAuthenticated: true; score: ScoreHistoryResource | null };
 
-/**
- * Converts one DailyProgress row into the answer-count shape used by weighted
- * Score aggregation without coupling the pure helper to Prisma models.
- */
 function toDatedAnswerCounts(row: DatedAnswerCounts): DatedAnswerCounts {
   return {
     correctAnswers: row.correctAnswers,
@@ -47,10 +43,6 @@ function toDatedAnswerCounts(row: DatedAnswerCounts): DatedAnswerCounts {
   };
 }
 
-/**
- * Builds one rolling Score result from the same rows used by its weekly trend,
- * guaranteeing the headline and chart cannot drift to different denominators.
- */
 function buildScoreHistory({
   endDate,
   rows,
@@ -71,11 +63,6 @@ function buildScoreHistory({
   return { ...performance, dataPoints, periodEnd: endDate, periodStart: startDate };
 }
 
-/**
- * Reads already-resolved date-only boundaries under one progress cache key.
- * Resolving the request timezone before this leaf keeps request APIs out of the
- * shared cache while every locale can reuse the same persistence rows.
- */
 async function findScoreHistoryRows({
   endDate,
   startDate,
@@ -93,11 +80,6 @@ async function findScoreHistoryRows({
   return rows.map((row) => toDatedAnswerCounts(row));
 }
 
-/**
- * Loads the authenticated learner's raw rolling Score resource once so server
- * UI callers can add localized labels while API callers preserve date-only
- * values without generating or discarding presentation text.
- */
 async function getCurrentUserScoreHistoryResource({
   history,
 }: ProgressHistoryOptions = {}): Promise<CurrentUserScoreHistoryResource> {
@@ -130,10 +112,6 @@ async function getCurrentUserScoreHistoryResource({
   return { isAuthenticated: true, score };
 }
 
-/**
- * Adds locale-specific chart labels to a raw Score resource for server-rendered
- * web surfaces without making localization part of the shared API contract.
- */
 function localizeScoreHistory({
   locale,
   score,
@@ -149,10 +127,7 @@ function localizeScoreHistory({
   return { ...score, dataPoints };
 }
 
-/**
- * Returns the learner's weighted rolling Score and localized weekly trend.
- * Every locale reads the same fixed 90-day answer window.
- */
+/** Uses exactly 90 learner-local dates for every locale; null without answers or a session. */
 export async function getScoreHistory({
   locale,
   history,
@@ -170,11 +145,7 @@ export async function getScoreHistory({
   return localizeScoreHistory({ locale, score: resource.score });
 }
 
-/**
- * Exposes Score as an authenticated resource while keeping the existing null
- * state for learners who have not answered a question in the rolling window
- * and omitting every locale-specific presentation field.
- */
+/** Outer null means unauthenticated; score=null means no answers in the window. Omits localized labels. */
 export async function getCurrentUserScore(): Promise<{
   score: ScoreHistoryResource | null;
 } | null> {

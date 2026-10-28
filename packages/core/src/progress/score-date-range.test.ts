@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getScoreDateRange } from "./score-date-range";
 
-/** Covers timezone boundaries shared by every app's Score queries. */
 describe(getScoreDateRange, () => {
   it("returns exactly 90 local dates ahead of UTC", () => {
     const range = getScoreDateRange({

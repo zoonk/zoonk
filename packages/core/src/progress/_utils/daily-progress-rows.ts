@@ -3,10 +3,10 @@ import { type DailyProgress, prisma } from "@zoonk/db";
 import { cacheTag } from "next/cache";
 import { getUserProgressCacheTag } from "../../cache/tags";
 
-/** Only opt in when the caller already needs lifetime history; detail reads keep their bounds. */
+/** Opt into lifetime rows only when already needed; detail reads retain their own date bounds. */
 export type ProgressHistoryOptions = { history?: "lifetime" };
 
-/** Authenticated capabilities share the rows already needed for lifetime Energy on Statistics. */
+/** Internal GET fact; callers must derive userId from authenticated capability access. */
 export async function readLifetimeDailyProgress(userId: string) {
   "use cache: private";
   cacheTag(getUserProgressCacheTag(userId));
@@ -14,7 +14,7 @@ export async function readLifetimeDailyProgress(userId: string) {
   return prisma.dailyProgress.findMany({ orderBy: { date: "asc" }, where: { userId } });
 }
 
-/** The Score and calendar contracts retain their own inclusive learner-local date bounds. */
+/** Both learner-local date bounds are inclusive. */
 export function dailyProgressInWindow({
   endDate,
   rows,

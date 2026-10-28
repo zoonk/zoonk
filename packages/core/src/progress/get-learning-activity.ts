@@ -19,10 +19,7 @@ import {
 import { getRequestProgressDateContext } from "./get-request-date-context";
 import { LEARNING_DAY_WHERE, countActivitiesCompleted } from "./progress-metrics";
 
-/**
- * One calendar day: the activities finished (lessons, reviews, practice), which light the day
- * exactly when it counts as a learning day, and the lessons finished for the first time.
- */
+/** Dates are learner-local labels; any completed activity counts as a learning day. */
 export type LearningActivityDay = {
   activitiesCompleted: number;
   date: Date;
@@ -37,11 +34,6 @@ type LearningActivityDateQuery = ContributionCalendarDateRange & { userId: strin
 
 type ActivityByDate = Record<string, Omit<LearningActivityDay, "date">>;
 
-/**
- * The learning days in the visible calendar, by the same definition as the lifetime total, so
- * the calendar and "learning days" never disagree. Daily totals survive lessons being deleted, and
- * the query stays bounded to the visible calendar instead of the learner's lifetime rows.
- */
 function listLearningActivityRows({ endDate, startDate, userId }: LearningActivityDateQuery) {
   return prisma.dailyProgress.findMany({
     orderBy: { date: "asc" },
@@ -49,7 +41,6 @@ function listLearningActivityRows({ endDate, startDate, userId }: LearningActivi
   });
 }
 
-/** One daily row per date lets the calendar look up each square's counts by its date key. */
 function buildActivityByDate(rows: LearningActivityRow[]): ActivityByDate {
   return Object.fromEntries(
     rows.map((row) => [
@@ -62,10 +53,6 @@ function buildActivityByDate(rows: LearningActivityRow[]): ActivityByDate {
   );
 }
 
-/**
- * Each calendar square needs a concrete date even when no daily row exists, so
- * the UI can render a stable 53-week grid for new learners too.
- */
 function buildLearningActivityDay({
   activityByDate,
   date,
@@ -82,10 +69,6 @@ function buildLearningActivityDay({
   };
 }
 
-/**
- * The heatmap covers every date from the first Sunday through the learner's
- * current local date instead of returning only non-empty dates.
- */
 function buildLearningActivityDays({
   endDate,
   rows,
@@ -101,10 +84,6 @@ function buildLearningActivityDays({
   return dates.map((date) => buildLearningActivityDay({ activityByDate, date }));
 }
 
-/**
- * Reads only the bounded rows needed for the calendar. Lifetime totals have a
- * separate compact query so Home never loads this 53-week dataset.
- */
 async function findLearningActivityDays({
   endDate,
   startDate,
@@ -125,10 +104,7 @@ async function findLearningActivityDays({
   return buildLearningActivityDays({ endDate, rows, startDate });
 }
 
-/**
- * Returns the signed-in learner's 53-week completion-activity calendar and
- * lifetime totals using the current learner-local date.
- */
+/** Returns 53 weeks of local dates plus lifetime totals; null without a session. */
 export async function getLearningActivity({
   history,
 }: ProgressHistoryOptions = {}): Promise<LearningActivityData | null> {
@@ -153,11 +129,7 @@ export async function getLearningActivity({
   return totals ? { ...totals, days } : null;
 }
 
-/**
- * Wraps the complete Activity read as a current-user resource so delivery
- * adapters can distinguish missing authentication from a valid zero-activity
- * calendar without reimplementing an authorization check.
- */
+/** Null means unauthenticated, never an empty authenticated calendar. */
 export async function getCurrentUserActivity(): Promise<{ activity: LearningActivityData } | null> {
   const activity = await getLearningActivity();
   return activity ? { activity } : null;

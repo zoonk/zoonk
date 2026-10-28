@@ -7,7 +7,6 @@ import { getRequestProgressDateContext } from "./get-request-date-context";
 
 const CURRENT_DATE = new Date("2026-01-10T00:00:00Z");
 
-/** Fixes the learner-local clock used by the private Energy capability. */
 function mockCurrentDate() {
   vi.mocked(getRequestProgressDateContext).mockResolvedValue({
     currentDate: CURRENT_DATE,

@@ -26,16 +26,11 @@ export type CurrentEnergyProjection = { currentEnergy: number; effectiveDate: Da
 
 export type PersistedEnergy = { currentEnergy: number; lastActiveAt: Date };
 
-/** Keeps every persisted and previewed Energy value within the product's 0–100 range. */
 export function clampEnergy(value: number): number {
   return Math.min(MAX_ENERGY, Math.max(MIN_ENERGY, value));
 }
 
-/**
- * Projects a dated Energy value through fully inactive calendar days. Historical
- * timelines can contain a future learner-local date after travel, so the
- * effective date never moves behind the supplied cursor.
- */
+/** Future local dates caused by travel must not project backward behind the cursor. */
 export function projectCurrentEnergy({
   cursor,
   targetDate,
@@ -57,11 +52,7 @@ export function projectCurrentEnergy({
   return { currentEnergy, effectiveDate };
 }
 
-/**
- * Converts the last completion instant into the caller's current timezone
- * before projecting decay. The instant stays authoritative across travel while
- * daily learning metrics remain attached to each completion's truthful date.
- */
+/** Reinterpret the last completion instant in the current zone; never change its historical stored local date. */
 export function projectPersistedEnergy({
   persistedEnergy,
   targetDate,

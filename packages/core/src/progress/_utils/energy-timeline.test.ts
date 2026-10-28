@@ -2,7 +2,6 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { describe, expect, it } from "vitest";
 import { projectEnergyTimeline } from "./energy-timeline";
 
-/** Creates a UTC-midnight date label that matches DailyProgress storage. */
 const date = (value: string) => new Date(`${value}T00:00:00Z`);
 
 describe(projectEnergyTimeline, () => {
