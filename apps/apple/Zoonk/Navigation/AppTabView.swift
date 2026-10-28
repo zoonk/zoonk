@@ -93,10 +93,8 @@ struct AppTabView: View {
     }
   }
 
-  /// The Study places live in the sidebar (and as one "Study" item in a top bar); a bottom tab
-  /// bar has no room for them, so phones and compact windows reach them as pushes.
   private var isStudyShown: Bool {
-    tabBarPlacement != nil && tabBarPlacement != .bottomBar
+    tabBarPlacement?.listsStudyPlaces == true
   }
 
   /// Main's Study shortcuts: the notebook and statistics always, the rest where the goal has them.

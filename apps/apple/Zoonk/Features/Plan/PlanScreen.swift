@@ -106,10 +106,8 @@ private struct GoalPlanView: View {
   }
 }
 
-/// The plan's sections, in one list on a compact width and in two columns on a regular one.
+/// The plan's sections, in one list, or in two panes where there's room for both.
 private struct PlanContent: View {
-  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-  @Environment(\.horizontalSizeClass) private var sizeClass
   @Environment(PlanStore.self) private var store
   @State private var adjusting: AdjustPlanSheet.Section?
 
@@ -121,35 +119,30 @@ private struct PlanContent: View {
     let structure = syllabus.flatMap { $0.hasSubjectPages ? $0 : nil }
     let context = PlanContext(goal: goal, plan: plan, adjust: { adjusting = $0 })
 
-    Group {
-      // Accessibility text sizes need the whole width, so the aside joins the one list.
-      if sizeClass == .regular && !dynamicTypeSize.isAccessibilitySize {
-        HStack(alignment: .top, spacing: 0) {
-          List {
-            PlanHeaderRow(context: context)
-            PlanRoadmapSection(context: context, structure: structure)
-            structureSections(context: context, structure: structure)
-          }
-
-          List {
-            PlanNumbersSection(context: context, syllabus: syllabus)
-            PlanSuggestionSection(context: context)
-            NextOnPathSection(context: context)
-            PlanSettingsSection(context: context)
-          }
-          .containerRelativeFrame(.horizontal, count: 5, span: 2, spacing: 0)
-        }
-      } else {
-        List {
-          PlanHeaderRow(context: context)
-          PlanRoadmapSection(context: context, structure: structure)
-          PlanNumbersSection(context: context, syllabus: syllabus)
-          PlanSuggestionSection(context: context)
-          structureSections(context: context, structure: structure)
-          NextOnPathSection(context: context)
-          PlanMoreSection(goal: goal)
-          PlanSettingsSection(context: context)
-        }
+    PaneSplit(primaryShare: 0.55) {
+      List {
+        PlanHeaderRow(context: context)
+        PlanRoadmapSection(context: context, structure: structure)
+        structureSections(context: context, structure: structure)
+      }
+    } secondary: {
+      List {
+        PlanNumbersSection(context: context, syllabus: syllabus)
+        PlanSuggestionSection(context: context)
+        NextOnPathSection(context: context)
+        PlanMoreSection(goal: goal)
+        PlanSettingsSection(context: context)
+      }
+    } single: {
+      List {
+        PlanHeaderRow(context: context)
+        PlanRoadmapSection(context: context, structure: structure)
+        PlanNumbersSection(context: context, syllabus: syllabus)
+        PlanSuggestionSection(context: context)
+        structureSections(context: context, structure: structure)
+        NextOnPathSection(context: context)
+        PlanMoreSection(goal: goal)
+        PlanSettingsSection(context: context)
       }
     }
     .sheet(item: $adjusting) { section in

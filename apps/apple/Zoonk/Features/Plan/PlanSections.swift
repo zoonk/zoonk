@@ -649,17 +649,18 @@ func planFinishText(_ context: PlanContext) -> Text? {
 
 // MARK: - More
 
-/// Where the Plan leads that the sidebar lists on a regular width: the exam's page and the mind
-/// maps. On a compact width they close the page.
+/// Where the Plan leads that the sidebar lists: the exam's page and the mind maps. Where the tabs
+/// don't list them (a bottom or a vertical tab bar), they close the page.
 struct PlanMoreSection: View {
   @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(\.tabBarPlacement) private var tabBarPlacement
 
   let goal: LearnerGoal
 
   var body: some View {
     let mindMaps = learner.summary.value?.places.mindMaps == true
 
-    if goal.kind == .exam || mindMaps {
+    if tabBarPlacement?.listsStudyPlaces != true, goal.kind == .exam || mindMaps {
       Section {
         if goal.kind == .exam {
           NavigationLink(value: AppRoute.exam) {

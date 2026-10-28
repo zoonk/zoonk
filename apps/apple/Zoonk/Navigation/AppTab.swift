@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// The app's top-level places: the three learning tabs and search, then the Study places the
-/// sidebar lists (main's sidebar shortcuts), which compact widths reach as pushes instead.
+/// sidebar lists (main's sidebar shortcuts), which a bottom tab bar reaches as pushes instead.
 enum AppTab: Hashable, CaseIterable {
   case today
   case plan
@@ -76,5 +76,14 @@ enum AppTab: Hashable, CaseIterable {
     case .mindMaps: "point.3.connected.trianglepath.dotted"
     case .statistics: "chart.bar"
     }
+  }
+}
+
+extension TabBarPlacement {
+  /// Whether the tabs list the Study places: the sidebar does (and a top bar, as one "Study" item).
+  /// A bottom tab bar has no room for them, and neither has iPhone Duo's vertical bar, which reports
+  /// itself as one even open; there the pages that lead to them link them.
+  var listsStudyPlaces: Bool {
+    self != .bottomBar
   }
 }
