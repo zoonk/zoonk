@@ -120,6 +120,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.core)
 
     implementation(project(":api"))
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.datastore.tink)
