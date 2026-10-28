@@ -5,7 +5,6 @@ import { type RichInlineSegment, RichInlineSegments } from "./rich-inline-segmen
 import { type RichBlock, markRichBlocks, parseRichBlocks } from "./rich-text-parser";
 import { typesetNumbers } from "./rich-text-typography";
 
-/** Numbers in the learner's language, kept with their units; math and code stay as written. */
 function typeset({
   locale,
   segments,
@@ -101,10 +100,6 @@ function RichBlockView({
   );
 }
 
-/**
- * Lesson text with paragraphs, short lists and tables of data, as the step contract allows, and
- * the `mark` sentence highlighted where the text shows it.
- */
 export function RichTextBlocks({
   className,
   htmlFor,

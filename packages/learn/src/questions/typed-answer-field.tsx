@@ -5,14 +5,9 @@ import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 
-/** A short typed answer is a word, a number or a term; the contract takes up to 500 characters. */
+/** The contract takes up to 500 characters. */
 const MAX_TYPED_ANSWER = 500;
 
-/**
- * The answer field of a short typed answer (a word, a number, a term). Enter submits what the
- * learner typed, trimmed; an empty answer isn't sent. Once graded, it locks and marks the answer
- * right or wrong. `children` go inside the form, such as a submit button.
- */
 export function TypedAnswerField({
   children,
   locked,
@@ -22,7 +17,6 @@ export function TypedAnswerField({
 }: {
   children?: React.ReactNode;
   locked: boolean;
-  /** The answer as typed so far, trimmed (empty while there's none). */
   onChange?: (text: string) => void;
   onSubmit: (text: string) => void;
   result: "correct" | "wrong" | null;

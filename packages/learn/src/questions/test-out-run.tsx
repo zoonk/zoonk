@@ -29,13 +29,9 @@ import { UndoButton } from "./undo-button";
 
 const PERCENT = 100;
 
-/**
- * What the test-out decided, in the learner's terms, with the tenth of Energy its answers reached
- * and the milestone it's celebrated with; null when it couldn't be graded.
- */
 export type TestOutOutcome =
   | (ProgressCelebration & {
-      /** The plan change that skipped the lessons, for its undo; null when nothing was skipped. */
+      /** For its undo; null when nothing was skipped. */
       changeId: string | null;
       correct: number;
       passed: boolean;
@@ -46,13 +42,8 @@ export type TestOutOutcome =
 
 type GradedTestOut = NonNullable<TestOutOutcome>;
 
-/**
- * A test the learner sent before, as it was recorded: what it decided, with its undo while the
- * skip can still be undone (`changeId`) and whether it was undone. It celebrates nothing again.
- */
 export type TestOutRecord = Omit<GradedTestOut, keyof ProgressCelebration> & { undone: boolean };
 
-/** The test's questions, its pass mark, and the words its true-or-false questions are answered with. */
 export type TestOutTest = {
   passMark: number;
   questions: ChoiceQuestionView[];
@@ -120,11 +111,6 @@ function ResultStep({
   );
 }
 
-/**
- * What the test-out decided, as one step, then back to the chapter. Lessons it took off the plan
- * come back with one tap here, as on the plan change it made. A milestone it earned opens first,
- * on its own.
- */
 function TestOutResult({
   buddy,
   closeHref,
@@ -138,7 +124,6 @@ function TestOutResult({
   onUndo: (changeId: string) => Promise<boolean>;
   outcome: GradedTestOut;
   renderCeremony?: MomentCeremony;
-  /** A recorded result whose skip was undone already. */
   undone?: boolean;
 }) {
   const t = useExtracted();
@@ -177,7 +162,6 @@ function TestOutResult({
   );
 }
 
-/** "80% right skips the chapter. No feedback until the end.", the test's one rule. */
 function useTestOutRule(passMark: number): string {
   const t = useExtracted();
 
@@ -186,11 +170,6 @@ function useTestOutRule(passMark: number): string {
   });
 }
 
-/**
- * What helps beside the questions from `lg`: what a pass takes off the plan (the chapter, with the
- * lessons it has left when the plan knows them) and the test's one rule, which a phone reads above
- * each question instead.
- */
 function useTestOutAside({
   chapterTitle,
   lessonsLeft,
@@ -227,7 +206,6 @@ function useTestOutAside({
   };
 }
 
-/** The test's questions, one per screen, with its rule above each on a phone and beside them from `lg`. */
 function TestOutQuestions({
   chapterTitle,
   closeHref,
@@ -270,16 +248,6 @@ function TestOutQuestions({
   );
 }
 
-/**
- * A chapter test-out, full screen like every task: one question per screen, no feedback until the
- * end, and "I don't know yet" always allowed; each answer is kept on the device as it's given
- * (`draftKey`). Its rule sits above each question on a phone, and beside them from `lg` with what a
- * pass skips (`lessonsLeft`). Passing takes the chapter's lessons off the plan, with an undo on its
- * result. Answers that couldn't be graded keep the last question on screen with Try again: a
- * failure is never shown as a result. A test sent before (`recorded`: a reload, Back, its link)
- * shows its result as it was, still, in the same place, so the result just reached stays on screen
- * whatever the page reads again. Closing goes back to the chapter.
- */
 export function TestOutRun({
   buddy,
   chapterTitle,
@@ -292,34 +260,23 @@ export function TestOutRun({
   renderCeremony,
   test,
 }: {
-  /** The learner's buddy, glad about the Energy the answers reach. */
   buddy?: LearnBuddy | null;
   chapterTitle: string;
   closeHref: string;
-  /** Where the answers are kept on the device as they're given, so a reload goes on from there. */
   draftKey?: string;
-  /** The chapter's lessons still on the plan, which a pass skips; null when the plan doesn't say. */
   lessonsLeft?: number | null;
-  /**
-   * Grades the answers. `requestId` is the test's own id, kept with the answers (`draftKey`) from
-   * its first send until it's graded: a retry, after a reload too, sends it again, so the test is
-   * counted once.
-   */
+  /** `requestId` is kept with the answers until graded, so a retry, even after a reload, counts the test once. */
   onSubmit: (input: {
     answers: ChoiceQuestionAnswer[];
     requestId: string;
   }) => Promise<TestOutOutcome>;
-  /** Puts the lessons a passed test-out skipped back in the plan; false when it didn't work. */
+  /** False when it didn't work. */
   onUndo: (changeId: string) => Promise<boolean>;
-  /** A test the learner sent before, shown as it was recorded instead of the questions. */
   recorded?: TestOutRecord | null;
-  /** The full-screen moment for a milestone not shown yet (new glasses, a belt from earlier). */
   renderCeremony?: MomentCeremony;
-  /** The questions to answer; null when only a recorded result shows. */
   test: TestOutTest | null;
 }) {
   const [outcome, setOutcome] = useState<GradedTestOut | null>(null);
-  // The answers whose grading didn't go through, to send again.
   const [unsent, setUnsent] = useState<ChoiceQuestionAnswer[] | null>(null);
   const [isPending, startTransition] = useTransition();
   const ownId = useMemo(() => crypto.randomUUID(), []);
@@ -329,8 +286,7 @@ export function TestOutRun({
       const requestId = draftKey ? keepDraftRequestId({ fallback: ownId, key: draftKey }) : ownId;
       const graded = await onSubmit({ answers, requestId }).catch(() => null);
 
-      // Graded answers are done with the device's draft and the test's id; ones that didn't go
-      // through keep both, so leaving and coming back still has them and sends the same test.
+      // Only graded answers clear the draft and the test's id, so a failed send is retried as the same test.
       if (graded && draftKey) {
         clearAnswerDraft(draftKey);
       }

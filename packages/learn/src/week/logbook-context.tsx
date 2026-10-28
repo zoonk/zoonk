@@ -5,15 +5,9 @@ import { createContext, use } from "react";
 
 export type WeeklyRecapView = Extract<WeeklyRecapResult, { status: "ready" }>["recap"];
 
-/** Where the logbook leads: out of it, and into the next session. */
 export type LogbookHrefs = { close: string; start: string };
 
-type LogbookValue = {
-  hrefs: LogbookHrefs;
-  /** The learner's first name for "What a week, Ana!", when there is one. */
-  learnerName: string | null;
-  recap: WeeklyRecapView;
-};
+type LogbookValue = { hrefs: LogbookHrefs; learnerName: string | null; recap: WeeklyRecapView };
 
 const LogbookContext = createContext<LogbookValue | null>(null);
 

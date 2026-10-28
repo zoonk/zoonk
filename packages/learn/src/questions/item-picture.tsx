@@ -3,7 +3,7 @@
 import { OWN_FILES_WEB_PATH, toOwnFileUrl } from "@zoonk/utils/user-blobs";
 import { useState } from "react";
 
-/** Question pictures are drawn at 1024 by 1280; this ratio holds their space when a size isn't stored. */
+/** Question pictures are drawn at 1024 by 1280. */
 const DEFAULT_WIDTH = 1024;
 const DEFAULT_HEIGHT = 1280;
 
@@ -14,11 +14,6 @@ export type ItemPictureData = {
   width: number | null;
 };
 
-/**
- * The figure a question is about (a diagram, a map, a geometry figure), sized from the stored file
- * so the question never jumps as it loads, and capped in height so the options stay in reach on a
- * phone. A file that fails to load disappears instead of leaving a broken frame.
- */
 export function ItemPicture({ image }: { image: ItemPictureData }) {
   const [failedUrl, setFailedUrl] = useState<string | null>(null);
 

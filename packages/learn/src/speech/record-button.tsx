@@ -8,11 +8,6 @@ import { formatClock } from "../_utils/clock";
 
 const MS_PER_SECOND = 1000;
 
-/**
- * The one way to say something out loud: Record, then Stop with how long it's been in the mono
- * face, ringed in the text color while the microphone is on. A screen's main action, so it's as
- * tall as one (44px) and fills its row in an action bar.
- */
 export function RecordButton({
   className,
   disabled = false,

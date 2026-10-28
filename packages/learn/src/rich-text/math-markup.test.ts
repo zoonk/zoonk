@@ -3,7 +3,6 @@ import { mathMarkupKey } from "./math-key";
 import { collectMathMarkup, renderMathMarkup } from "./math-markup";
 import { parseRichBlocks, parseRichInline, toOneLine } from "./rich-text-parser";
 
-/** The formulas the player draws for a line of lesson text, as the browser parses it. */
 function shownFormulas(text: string) {
   return parseRichInline(text).flatMap((segment) =>
     segment.kind === "math" || segment.kind === "displayMath"

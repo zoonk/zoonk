@@ -14,10 +14,6 @@ import {
 } from "../_components/help-limit-notice";
 import { type SpokenAudioState } from "./use-spoken-audio";
 
-/**
- * A play button's icon for its sound's state: the button's own icon at rest, a spinner while the
- * clip is on its way, stop while it plays and try again after it failed.
- */
 export function SpeechStatusIcon({
   className,
   idle,
@@ -42,15 +38,10 @@ export function SpeechStatusIcon({
   return idle;
 }
 
-/**
- * The state a screen's main play button shows when the screen explains a failure itself
- * (`SpeechFailedNote`, with its own Try again): the button goes back to playing, not retrying.
- */
 export function withoutFailure(state: SpokenAudioState): SpokenAudioState {
   return state.status === "failed" ? { status: "idle" } : state;
 }
 
-/** A play button's accessible name for its sound's state; `idle` is what it plays. */
 export function useSpeechActionLabel(state: SpokenAudioState, idle: string): string {
   const t = useExtracted();
 
@@ -69,11 +60,6 @@ function LimitMessage({ limit }: { limit: HelpLimit }) {
   return <>{useHelpLimitMessage(limit)}</>;
 }
 
-/**
- * What a learner sees when a sound didn't come: why, a way to try again unless a cap stands in
- * the way (a guest gets the link to create a free account instead), and, when the screen gives
- * it, the words the sound says, so they can keep going.
- */
 export function SpeechFailedNote({
   className,
   language,

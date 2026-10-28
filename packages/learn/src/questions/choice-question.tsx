@@ -12,10 +12,9 @@ import { ItemLine, ItemStem, ItemSupport, ItemText, QUESTION_TEXT_CLASS } from "
 import { PickRule, isCompletePick, isMultiPick, togglePick } from "./pick-rule";
 import { useTrueFalseLabels } from "./use-true-false-labels";
 
-/** The question's title, which a run of questions focuses as each new one shows. */
 export const CHOICE_QUESTION_TITLE_SLOT = "choice-question-title";
 
-/** A bank question as learners see it: never which answer is right. */
+/** Never says which answer is right. */
 export type ChoiceQuestionView = Extract<
   ChapterTestOutResult,
   { status: "ready" }
@@ -27,7 +26,6 @@ export type ChoiceAnswer =
   | { selectedIndex: number }
   | { selectedIndexes: number[] };
 
-/** Shown after an answer when the flow gives feedback (practice); tests give none. */
 export type ChoiceFeedback = {
   correctAnswer: { isTrue: boolean } | { selectedIndex: number } | { selectedIndexes: number[] };
   explanation: string | null;
@@ -63,7 +61,6 @@ function isSame(a: ChoiceAnswer | null, b: ChoiceAnswer): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
-/** Whether an answer picks the option at `index`, as its one pick or one of several. */
 function picksOption({ answer, index }: { answer: ChoiceAnswer | null; index: number }) {
   if (answer && "selectedIndexes" in answer) {
     return answer.selectedIndexes.includes(index);
@@ -98,10 +95,6 @@ function getOptionResult({
   return picked ? "wrong" : null;
 }
 
-/**
- * The options picked so far for a question that asks for several, kept per question and shown
- * whether or not they're enough to send yet. A sent answer's picks show again after a reload.
- */
 function usePicks({
   question,
   selected,
@@ -125,10 +118,6 @@ function usePicks({
   ] as const;
 }
 
-/**
- * The grade after an answer, on the panel every question's feedback uses: the verdict (only it
- * carries color) and why.
- */
 function ChoiceGrade({ feedback }: { feedback: ChoiceFeedback }) {
   const t = useExtracted();
 
@@ -146,13 +135,7 @@ function ChoiceGrade({ feedback }: { feedback: ChoiceFeedback }) {
   );
 }
 
-/**
- * One multiple-choice or true-or-false question, for test-outs and mistake practice. The host
- * decides what happens on an answer; with feedback, the right answer and why appear in place. A
- * question that asks for several options
- * (`select`) toggles them, and the host gets an answer only once as many as it asks are picked
- * (null before).
- */
+/** For several picks (`select`), the host gets an answer only once as many as it asks are picked, null before. */
 export function ChoiceQuestion({
   disabled = false,
   feedback = null,
@@ -166,7 +149,6 @@ export function ChoiceQuestion({
   onSelect: (answer: ChoiceAnswer | null) => void;
   question: ChoiceQuestionView;
   selected: ChoiceAnswer | null;
-  /** How true-or-false questions are answered: the goal's exam's words, or true or false. */
   trueFalseLabels?: TrueFalseLabels;
 }) {
   const options = useOptions({ question, trueFalseLabels });
@@ -209,7 +191,6 @@ export function ChoiceQuestion({
 
       {isMultiPick(select) && <PickRule select={select} />}
 
-      {/* Picked like an exam's answer sheet: Enter on a picked answer sends it, as a radio does. */}
       <AnswerOptionGroup role={isMultiPick(select) ? "group" : "radiogroup"}>
         {options.map((option, index) => {
           const picked = isPicked(option, index);

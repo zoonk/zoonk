@@ -5,11 +5,7 @@ import {
   readMarkdownTable,
 } from "@zoonk/utils/markdown-table";
 
-/**
- * Item text (a question's support text and its command) is Markdown limited to paragraphs, GFM
- * pipe tables for data, and inline code, bold and italics, as the item writers are told. Anything
- * else stays text, so a stray marker never changes a question's layout.
- */
+/** Paragraphs, GFM pipe tables and inline code, bold and italics, as item writers are told; anything else stays text. */
 export type ItemTextBlock =
   | { kind: "paragraph"; lines: InlineMarkup[][] }
   | {
@@ -24,7 +20,6 @@ const SIGN_THEN_AMOUNT = /(?<sign>\p{Sc})[ \t](?=\d)/gu;
 const AMOUNT_THEN_SIGN = /(?<digit>\d)[ \t](?=[\p{Sc}%])/gu;
 const NO_BREAK_SPACE = "\u00A0";
 
-/** "R$ 96,00", "96,00 €" and "40 %" never break across lines. */
 function keepAmountsTogether(text: string): string {
   return text
     .replaceAll(SIGN_THEN_AMOUNT, `$<sign>${NO_BREAK_SPACE}`)
@@ -77,20 +72,14 @@ function readBlocks(lines: readonly string[], index: number): ItemTextBlock[] {
   return [{ kind: "paragraph", lines: paragraph }, ...readBlocks(lines, end)];
 }
 
-/**
- * Splits item text into paragraphs (lines separated by a single line break stay together, each
- * on its own line) and tables.
- */
 export function parseItemText(text: string): ItemTextBlock[] {
   return readBlocks(text.split(/\r?\n/u), 0);
 }
 
-/** One line of item text, such as a question's command, with its line breaks read as spaces. */
 export function parseItemLine(text: string): InlineMarkup[] {
   return parseInline(text.trim().replaceAll(LINE_BREAKS, " "));
 }
 
-/** One line of item text without its markers, for a label read aloud or a line of plain copy. */
 export function toPlainItemLine(text: string): string {
   return parseItemLine(text)
     .map((segment) => segment.text)

@@ -12,13 +12,10 @@ import { useExtracted, useLocale } from "next-intl";
 import { useId, useState } from "react";
 import { type NumericEntry, parseEntryAnswer } from "./_utils/numeric-entry";
 
-/** Where a math answer's unit sits: money before the number ("R$ 45"), the rest after it. */
 type NumericUnit = { position: "prefix" | "suffix"; symbol: string };
 
-/** Shown when a typed answer isn't a number, so the learner sees how their language writes one. */
 const DECIMAL_EXAMPLE = 2.5;
 
-/** The answer box's rule under the field, when it takes less than any number. */
 function EntryRule({ entry, id }: { entry: NumericEntry; id: string }) {
   const t = useExtracted();
 
@@ -39,7 +36,6 @@ function EntryRule({ entry, id }: { entry: NumericEntry; id: string }) {
   ) : null;
 }
 
-/** How to type a number this box takes, once the learner typed one it doesn't. */
 function InvalidHint({ entry, id }: { entry: NumericEntry | null; id: string }) {
   const t = useExtracted();
   const locale = useLocale();
@@ -60,7 +56,6 @@ function InvalidHint({ entry, id }: { entry: NumericEntry | null; id: string }) 
   );
 }
 
-/** The field's description: its unit, its rule and the hint, whichever show. */
 function describeField(ids: Record<"hint" | "rule" | "unit", string | false>): string | undefined {
   return [ids.unit, ids.rule, ids.hint].filter(Boolean).join(" ") || undefined;
 }
@@ -75,13 +70,6 @@ function UnitAddon({ id, unit }: { id: string; unit: NumericUnit }) {
   );
 }
 
-/**
- * The answer field of a math problem. The learner types a number with a decimal comma or point
- * (either works in any language) next to its unit, and Enter submits it. A box that takes less
- * than any number (`entry`: a whole number, n decimal places, a fraction) says so under the field,
- * and a fraction box takes "2/3" as its value. Typing digits here never picks an option. Once
- * graded, it locks and marks the answer right or wrong.
- */
 export function NumericAnswerField({
   defaultText = "",
   entry = null,
@@ -91,7 +79,6 @@ export function NumericAnswerField({
   result,
   unit,
 }: {
-  /** The answer typed before, shown when the field opens again (a mock's draft). */
   defaultText?: string;
   entry?: NumericEntry | null;
   locked: boolean;

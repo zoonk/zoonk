@@ -3,10 +3,6 @@
 import { useExtracted, useFormatter } from "next-intl";
 import { isoDateToUtc } from "../_utils/iso-date";
 
-/**
- * When a far topic starts, as its row says it: the day while it's this month ("Oct 14"), else its
- * month ("March"), with the year once it's another year's.
- */
 function useStartWords() {
   const format = useFormatter();
 
@@ -28,12 +24,6 @@ function useStartWords() {
   };
 }
 
-/**
- * What the plan knows about a topic whose lessons aren't written yet, instead of "being written":
- * the lessons it teaches the topic, an estimate, and when it starts ("About 12 lessons · from
- * March"). One lesson (a base studied in a quick lesson) is just that: "1 lesson". A plan saved
- * before it stored how many (`lessons` null) says only when it starts, or nothing without a date.
- */
 export function useFarTopicLine() {
   const t = useExtracted();
   const startWords = useStartWords();
@@ -55,12 +45,6 @@ export function useFarTopicLine() {
   };
 }
 
-/**
- * The line under a topic whose lessons aren't written yet: what the plan knows about it once it
- * starts after the weeks the plan writes ahead (`far`), whether or not it can be opened early,
- * else that its lessons are on the way. `nextDate` is left out where the row shows the date
- * already.
- */
 export function useWritingLine() {
   const t = useExtracted();
   const farLine = useFarTopicLine();

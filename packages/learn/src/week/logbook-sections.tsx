@@ -24,10 +24,6 @@ import { TurnaroundChart } from "./turnaround-chart";
 
 const DAYS_PER_WEEK = 7;
 
-/**
- * The week's seven days as Today draws its week: a ring per day, closed in blue with a check on a
- * day studied, an empty track otherwise, and the day's letter under it in the mono face.
- */
 function WeekRings() {
   const t = useExtracted();
   const format = useFormatter();
@@ -65,7 +61,7 @@ function WeekRings() {
   );
 }
 
-/** "40 min more than the week before!": only good news is compared; a quieter week starts over. */
+/** Only good news is compared; a quieter week starts over. */
 function useGainLine(): string | null {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -86,10 +82,6 @@ function useGainLine(): string | null {
   return null;
 }
 
-/**
- * The week at a glance: its days, a word when it beat the one before, and its time and questions
- * as numbers on their tiles.
- */
 export function WeekStep({ range }: { range: string }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -128,7 +120,6 @@ export function WeekStep({ range }: { range: string }) {
   );
 }
 
-/** Before the first finished week, or a week without study: one calm line, no blame. */
 export function QuietWeekStep({ range }: { range: string }) {
   const t = useExtracted();
   const { recap } = useLogbook();
@@ -151,7 +142,6 @@ export function QuietWeekStep({ range }: { range: string }) {
   );
 }
 
-/** Why a skill now reads Solid or Mastered; practice that paid off is said by its numbers. */
 function useReason(): string | null {
   const t = useExtracted();
   const { recap } = useLogbook();
@@ -173,7 +163,6 @@ function useReason(): string | null {
   return null;
 }
 
-/** The skill that grew the most: its week day by day, and why it grew. */
 export function TurnaroundStep() {
   const t = useExtracted();
   const formatShare = useFormatShare();
@@ -204,7 +193,6 @@ export function TurnaroundStep() {
   );
 }
 
-/** Whether the week added up to anything to list: new ideas, reviews, fixes or badges. */
 export function hasLearned(recap: ReturnType<typeof useLogbook>["recap"]): boolean {
   const { fixes, newIdeas, reviews } = recap.buddyAte;
   return newIdeas + reviews + fixes + recap.badges.length > 0;
@@ -234,10 +222,7 @@ function LearnedRow({
   );
 }
 
-/**
- * A kind's icon as a row's mark here (`KindMark`), so the kinds read apart by shape. Wrapped, since
- * a step row sizes and grays any icon that is its direct child.
- */
+/** Wrapped, since a step row sizes and grays any icon that is its direct child. */
 function LearnedKindMark({ kind }: { kind: LearnKind }) {
   return (
     <span className="flex size-4 shrink-0 items-center justify-center">
@@ -246,7 +231,6 @@ function LearnedKindMark({ kind }: { kind: LearnKind }) {
   );
 }
 
-/** What the week's study added up to: new ideas, reviews and fixes, plus badges earned. */
 export function LearnedStep() {
   const t = useExtracted();
   const { recap } = useLogbook();
@@ -284,7 +268,6 @@ export function LearnedStep() {
   );
 }
 
-/** What the plan does next week, by name. */
 export function NextWeekStep({ title }: { title: string }) {
   const t = useExtracted();
 

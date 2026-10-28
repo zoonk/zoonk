@@ -16,10 +16,6 @@ function toPoint({ accuracy, index, count }: { accuracy: number; count: number; 
   return { x, y };
 }
 
-/**
- * A skill's right answers day by day through the week, days off left as gaps. It's decoration for
- * the sentence beside it, which says the same thing in words.
- */
 export function TurnaroundChart({ turnaround }: { turnaround: Turnaround }) {
   const t = useExtracted();
   const format = useFormatter();

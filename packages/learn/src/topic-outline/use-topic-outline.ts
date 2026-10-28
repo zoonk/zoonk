@@ -6,10 +6,8 @@ import { type OutlineLimit } from "../_components/help-limit-notice";
 import { usePoll } from "../_utils/use-poll";
 import { type TopicOutlineActions } from "./topic-outline-actions";
 
-/** A topic's first chapter takes about half a minute; its lesson plan is read again this often. */
 const POLL_MS = 4000;
 
-/** What the sheet shows: the lesson plan as read, or why a tap didn't start it. */
 export type TopicOutlineShown =
   | SkillOutline["status"]
   | "loading"
@@ -17,14 +15,9 @@ export type TopicOutlineShown =
   | "unavailable"
   | "unreachable";
 
-/** Why the sheet shows no lesson plan: a tap refused by the learner's caps, or a failure. */
 type TopicOutlineFailure = { limit?: OutlineLimit; shown: TopicOutlineShown };
 
-/**
- * A far topic's lesson plan while its sheet is open: read once on opening (a GET, never AI), the
- * tap that asks for it (once at a time), then read again every few seconds while it's written.
- * `onLanded` runs once its chapters are in, for the page to show them in the plan.
- */
+/** Read once on opening (a GET, never AI), then again every few seconds while it's written after the learner's tap. */
 export function useTopicOutline({
   actions,
   onLanded,
@@ -114,7 +107,6 @@ export function useTopicOutline({
     isPending,
     limit: failure?.limit ?? null,
     request,
-    /** After a failure: reading again when reading failed, else asking again. */
     retry: isStuck ? poll.restart : request,
     shown,
   };

@@ -1,10 +1,6 @@
 import { useMathMarkup } from "#math-renderer";
 import { Suspense } from "react";
 
-/**
- * A run of lesson text with one formatting primitive. `marked` runs are a sentence the screen
- * points at, such as the one a question rests on, read again after a wrong answer.
- */
 export type RichInlineSegment = (
   | { kind: "bold"; text: string }
   | { kind: "code"; text: string }
@@ -20,12 +16,10 @@ function mathClassName(segment: MathSegment) {
   return segment.kind === "displayMath" ? "my-3 block overflow-x-auto" : undefined;
 }
 
-/** A formula as written, where KaTeX isn't here yet (or couldn't load). */
 function MathSource({ segment }: { segment: MathSegment }) {
   return <span className={mathClassName(segment)}>{segment.text}</span>;
 }
 
-/** A formula drawn as MathML by KaTeX: on the server, or in the browser only for screens with math. */
 function MathView({ segment }: { segment: MathSegment }) {
   const markup = useMathMarkup({ displayMode: segment.kind === "displayMath", text: segment.text });
 
@@ -60,8 +54,7 @@ function RichInlineSegmentView({ segment }: { segment: RichInlineSegment }) {
   }
 
   if (segment.kind === "math" || segment.kind === "displayMath") {
-    // Its own boundary: hydration keeps the server's drawing while KaTeX loads, and only a formula
-    // drawn before it arrived shows as written meanwhile (screens with math preload it).
+    // Its own boundary, so hydration keeps the server's drawing while KaTeX loads.
     return (
       <Suspense fallback={<MathSource segment={segment} />}>
         <MathView segment={segment} />
@@ -74,7 +67,6 @@ function RichInlineSegmentView({ segment }: { segment: RichInlineSegment }) {
 
 type SegmentRun = { marked: boolean; segments: RichInlineSegment[]; start: number };
 
-/** Consecutive segments grouped by whether they're marked, so one mark spans a whole sentence. */
 function toRuns(segments: RichInlineSegment[]): SegmentRun[] {
   return segments.reduce<SegmentRun[]>((runs, segment, index) => {
     const marked = segment.marked === true;
@@ -94,11 +86,6 @@ function SegmentViews({ segments, start }: { segments: RichInlineSegment[]; star
   });
 }
 
-/**
- * Renders parsed lesson text with only the primitives lessons use: LaTeX math, inline code and
- * bold or italic emphasis, with a marked sentence highlighted. Each text dialect has its own
- * parser and shares this rendering.
- */
 export function RichInlineSegments({ segments }: { segments: RichInlineSegment[] }) {
   return toRuns(segments).map((run) =>
     run.marked ? (

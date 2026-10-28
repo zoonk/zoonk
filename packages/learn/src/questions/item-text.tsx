@@ -58,7 +58,6 @@ function toPlainText(cell: InlineMarkup[]): string {
   return cell.map((segment) => segment.text).join("");
 }
 
-/** A table of data with its header row, shared with the lesson player's tables. */
 function ItemTableView({ table }: { table: ItemTable }) {
   return (
     <RichTable
@@ -71,10 +70,6 @@ function ItemTableView({ table }: { table: ItemTable }) {
   );
 }
 
-/**
- * An item's support text, such as a question's context or an essay's motivating texts: its
- * paragraphs, tables of data and emphasis, the way item writers write them.
- */
 export function ItemText({ className, text }: { className?: string; text: string }) {
   return (
     <div className={cn("flex min-w-0 flex-col gap-3", className)} data-slot="item-text">
@@ -91,26 +86,13 @@ export function ItemText({ className, text }: { className?: string; text: string
   );
 }
 
-/**
- * A question's command, the same on every screen that asks one (a checkpoint, a mock, a test-out,
- * a practice): 19px, a little heavier than body text and tight, so it reads as the screen's one
- * question without shouting.
- */
 export const QUESTION_TEXT_CLASS =
   "text-[1.1875rem] leading-[1.35] font-[560] tracking-[-0.02em] text-balance";
 
-/** One line of item text, such as a question's command or a statement, with its emphasis. */
 export function ItemLine({ text }: { text: string }) {
   return <InlineMarkupView segments={parseItemLine(text)} />;
 }
 
-/**
- * What a question shows before its command: its support text (paragraphs and tables), the figure
- * it's about and the chart or timeline it reads. Every question screen uses it, so a picture or a
- * visual never goes missing. The text is body text, as a lesson's situation is: it holds what the
- * question needs, so it never reads as a quiet aside. Only a recap of an earlier question
- * (`className`) draws it quieter.
- */
 export function ItemSupport({
   className,
   context,
@@ -133,7 +115,6 @@ export function ItemSupport({
   );
 }
 
-/** A question stem with paragraphs and tables, outside inline labels and answer options. */
 export function ItemStem({
   text,
   heading = false,

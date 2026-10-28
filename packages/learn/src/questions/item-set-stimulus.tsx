@@ -15,13 +15,9 @@ import {
 import { LessonVisual } from "../visuals/lesson-visual";
 import { ItemText } from "./item-text";
 
-/**
- * A text shorter than this fits in the folded height on a phone anyway, so it never folds: about
- * eight lines at the narrowest width.
- */
+/** About eight lines at the narrowest width, which fits the folded height anyway. */
 const FOLD_MIN_CHARACTERS = 400;
 
-/** Where the question sits among the questions that share the stimulus. */
 function SetPlace({ set }: { set: ItemSetView }) {
   const t = useExtracted();
   const place = { count: set.count, position: set.position + 1 };
@@ -36,26 +32,11 @@ function SetPlace({ set }: { set: ItemSetView }) {
   return <p className="text-muted-foreground text-xs font-medium">{label}</p>;
 }
 
-/** How a recording is asked: where its plays count, and whether practice's restart applies. */
 type RecordingProps = {
-  /**
-   * The block or mock a recording is asked in: its plays count there, so the same recording asked
-   * again later (a mistake's drill, a mock) starts with every play.
-   */
   askedIn?: string | null;
-  /**
-   * Says which of the recording's questions this is; off where the recording plays once above all
-   * of them, as in a challenge's review.
-   */
   place?: boolean;
-  /**
-   * A recording asked in practice gives back a play cut off by a reload or the app going to the
-   * background, once; anywhere else (a mock) every play counts, as in the exam.
-   */
   practice?: boolean;
-  /** A recording's questions, to read before it plays. */
   questions?: ListeningQuestions | null;
-  /** A mock's plays of the recording, kept on the server (see `ServedPlays`). */
   served?: ServedPlays | null;
   transcript?: ListeningSetView["transcript"];
 };
@@ -136,17 +117,6 @@ function SetText({ continued, set }: { continued: boolean; set: ItemSetView }) {
   );
 }
 
-/**
- * The text, case, chart or recording a set's questions share, above each of them. A text sits flat
- * on the page behind a left hairline, as a quote does, and with nothing around it beside the
- * question in a task's aside from `lg`. It shows whole, except a long one on a phone or tablet
- * right after another question on it (`continued`): the learner just read it, so it shows its
- * start, with a button to read it all again. A wide screen has room for the whole text next to
- * nothing else, so it never folds there. A recording plays in its own player, with the exam's play
- * limit kept across the set's questions and the questions to read first (`questions`), and shows
- * its transcript once they're answered (`transcript`, from the last answer's feedback, or the view
- * after a reload).
- */
 export function ItemSetStimulus({
   continued = false,
   set,

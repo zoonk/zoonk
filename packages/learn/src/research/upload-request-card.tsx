@@ -11,10 +11,6 @@ import { ChangeSaveError } from "../_components/save-error";
 import { AttachControls } from "../onboarding/entry/attach-panel";
 import { type GoalAttachActions } from "../onboarding/onboarding-actions";
 
-/**
- * How the host answers the ask, already bound to the goal: uploads through its uploads API, then
- * research with them, or dismissing it.
- */
 type UploadRequestActions = {
   answer: (sourceIds: string[]) => Promise<boolean>;
   attach: GoalAttachActions;
@@ -23,10 +19,6 @@ type UploadRequestActions = {
 
 type CardState = "answered" | "asking" | "dismissed" | "uploading";
 
-/**
- * What's missing, in the goal's own terms: an exam's notice (a language certificate's official
- * guide), a law's text, a class's material.
- */
 export function useRequestCopy({
   examDocument: document,
   goalKind,
@@ -81,12 +73,6 @@ export function useRequestCopy({
   };
 }
 
-/**
- * Research couldn't find (or confirm) what the goal is built from, and it never guesses an
- * exam's structure: Today asks the learner for the document. Uploading it
- * answers at once and research reads it; the plan is rebuilt from it a few minutes later.
- * "Not now" takes the ask away for good.
- */
 export function UploadRequestCard({
   actions,
   className,
@@ -95,7 +81,6 @@ export function UploadRequestCard({
 }: {
   actions: UploadRequestActions;
   className?: string;
-  /** The learner's language, for uploads that don't say their own. */
   language: string;
   request: Pick<GoalUploadRequest, "examDocument" | "goalKind" | "reason">;
 }) {

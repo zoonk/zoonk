@@ -20,10 +20,7 @@ import {
   hasLearned,
 } from "./logbook-sections";
 
-/**
- * "Sep 21 – 27". Node's ICU puts thin spaces around the dash and browsers plain ones, so the
- * spaces are normalized to render the same on the server and in the browser (no hydration error).
- */
+/** Node's ICU puts thin spaces around the dash and browsers plain ones, so the spaces are normalized to hydrate cleanly. */
 function useWeekRange(): string {
   const format = useFormatter();
   const { recap } = useLogbook();
@@ -37,12 +34,10 @@ function useWeekRange(): string {
     .replaceAll("\u2009", " ");
 }
 
-/** The week's steps: the week in one line, its biggest turnaround, what it added up to, next week. */
 function useWeekItems(): StepsItem[] {
   const { recap } = useLogbook();
   const range = useWeekRange();
 
-  // Before the first finished week, or a week without study, there's one calm thing to say.
   if (!recap.ready || recap.week.daysStudied.length === 0) {
     return [{ content: <QuietWeekStep range={range} />, id: "week" }];
   }
@@ -69,11 +64,7 @@ function WeeklySummarySteps() {
   );
 }
 
-/**
- * The week's recap from core, one thing at a time: the week in the learner's own numbers, the
- * biggest turnaround and why, what it added up to and what next week brings. Nothing here is
- * written by a model.
- */
+/** Nothing here is written by a model. */
 export function LogbookScreen({
   hrefs,
   learnerName,

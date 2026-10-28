@@ -3,16 +3,11 @@
 import { createContext, use, useEffect, useMemo } from "react";
 import { type HelpLimit } from "../_components/help-limit-notice";
 
-/** A clip to play, or why there's none: today's help used up, or a failure worth retrying. */
 export type SpeechClipOutcome =
   | { status: "ready"; url: string }
   | { limit: HelpLimit | null; status: "failed" };
 
-/**
- * How the host app gets text read aloud: from the learner's tap to its API, which returns the
- * shared clip or voices it the first time anyone asks. The learner's own words (`personal`) get a
- * clip of theirs alone. Never called on render or page load.
- */
+/** Called only from the learner's tap, never on render or page load. `personal` words get a clip of the learner's own. */
 export type VoiceText = (input: {
   language: string;
   personal?: boolean;
@@ -21,11 +16,9 @@ export type VoiceText = (input: {
 
 type PlaybackEnd = "ended" | "failed" | "stopped";
 
-/** Who started the clip playing, so a screen only stops its own sound. */
 type PlaybackOwner = object;
 
 type SpeechPlayer = {
-  /** The clip for the text, asked for once per page however often it plays. */
   load: VoiceText;
   play: (input: {
     onStart: () => void;
@@ -34,14 +27,11 @@ type SpeechPlayer = {
     url: string;
   }) => Promise<PlaybackEnd>;
   stop: (owner: PlaybackOwner) => void;
-  /** Lets the shared element play later, after the clip arrives; call it inside the tap. */
+  /** Call it inside the tap, so the shared element may play the clip once it arrives. */
   unlock: () => void;
 };
 
-/**
- * A tenth of a second of silence. Mobile Safari only lets an element play sound it started inside
- * a tap; playing this inside the tap lets the clip play on that element once it has loaded.
- */
+/** Mobile Safari only lets an element play sound it started inside a tap, so this plays there first. */
 const SILENT_WAV =
   "data:audio/wav;base64,UklGRnQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YVAAAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgA==";
 
@@ -53,10 +43,6 @@ function clipKey({ language, personal = false, text }: Parameters<VoiceText>[0])
 
 type Playback = { finish: (end: PlaybackEnd) => void; owner: PlaybackOwner };
 
-/**
- * One audio element for every spoken clip on the page, so only one sound plays at a time:
- * starting a clip stops whatever was playing, and its screen hears that it stopped.
- */
 function createSpeechPlayer(voice: VoiceText): SpeechPlayer & { dispose: () => void } {
   const clips = new Map<string, Promise<SpeechClipOutcome>>();
   let audio: HTMLAudioElement | null = null;
@@ -77,7 +63,6 @@ function createSpeechPlayer(voice: VoiceText): SpeechPlayer & { dispose: () => v
     }
 
     const loading = voice(input).then((outcome) => {
-      // A failure isn't kept, so trying again asks again.
       if (outcome.status !== "ready") {
         clips.delete(key);
       }
@@ -166,11 +151,7 @@ function createSpeechPlayer(voice: VoiceText): SpeechPlayer & { dispose: () => v
   return { dispose, load, play, stop, unlock };
 }
 
-/**
- * Gives every learn screen and the lesson player one way to hear text in its language: the host
- * app's `voice` returns a generated clip, and one shared element plays it. Mount it once, above
- * every screen that speaks, with a `voice` that keeps its identity (a module-level function).
- */
+/** Mount it once, above every screen that speaks, with a `voice` that keeps its identity. */
 export function SpeechPlayerProvider({
   children,
   voice,
@@ -185,7 +166,6 @@ export function SpeechPlayerProvider({
   return <SpeechPlayerContext value={player}>{children}</SpeechPlayerContext>;
 }
 
-/** The page's speech player, or null when the host app gives screens no voice. */
 export function useSpeechPlayer(): SpeechPlayer | null {
   return use(SpeechPlayerContext);
 }

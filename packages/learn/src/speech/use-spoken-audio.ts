@@ -5,29 +5,16 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { type HelpLimit } from "../_components/help-limit-notice";
 import { type SpeechClipOutcome, useSpeechPlayer } from "./speech-player-provider";
 
-/**
- * Text to read aloud, or a word with a native recording that plays instead when there is one. The
- * learner's own words (`personal`) are read in a clip of theirs alone.
- */
 export type SpokenText = string | { audioUrl: string | null; personal?: boolean; text: string };
 
-/**
- * Nothing playing; the first clip on its way (it can take a few seconds the first time anyone
- * hears it); playing; or the sound didn't come, with today's help used up as the reason when
- * that's why.
- */
 export type SpokenAudioState =
   | { status: "idle" | "loading" | "playing" }
   | { limit: HelpLimit | null; status: "failed" };
 
 type SpeakInput = {
-  /** The segment to start from; the ones before it are skipped. */
   from?: number;
-  /** After the last segment ends, unless something stopped it first. */
   onDone?: () => void;
-  /** As each segment starts playing. */
   onSegment?: (index: number) => void;
-  /** 1 is normal speed; the pitch stays the same at any speed. */
   rate?: number;
   segments: readonly SpokenText[];
 };
@@ -66,17 +53,12 @@ function loadSegment({
     : player.load({ language, text: segment.text, ...(segment.personal && { personal: true }) });
 }
 
-/** A recording that wouldn't play is read aloud instead. */
 function withoutRecording(segments: readonly SpokenText[], index: number): SpokenText[] {
   return segments.map((segment, position) =>
     position === index && typeof segment !== "string" ? segment.text : segment,
   );
 }
 
-/**
- * Plays the segments in order from `index`, getting the next clip while one plays so they follow
- * each other without a gap. A newer reading, `cancel` or another screen's sound ends this one.
- */
 async function readFrom(reading: Reading, index: number): Promise<void> {
   const segment = reading.segments[index];
 
@@ -132,12 +114,7 @@ async function readFrom(reading: Reading, index: number): Promise<void> {
   reading.setState(end === "failed" ? { limit: null, status: "failed" } : IDLE);
 }
 
-/**
- * Text read aloud in `language` by generated speech: segments in order, at any speed, one sound at
- * a time on the page. The clip is asked for on the learner's tap (`speak`), never on render, and
- * `status` drives the play button: loading on the first play, playing, or failed with a reason.
- * `isAvailable` is false where the host gives no voice or the language has none.
- */
+/** The clip is asked for on the learner's tap (`speak`), never on render. */
 export function useSpokenAudio(language: string) {
   const player = useSpeechPlayer();
   const [state, setState] = useState<SpokenAudioState>(IDLE);

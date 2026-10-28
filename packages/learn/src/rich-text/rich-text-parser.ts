@@ -2,11 +2,7 @@ import { parseInlineMarkup } from "@zoonk/utils/inline-markup";
 import { type MarkdownTableAlign, readMarkdownTable } from "@zoonk/utils/markdown-table";
 import { type RichInlineSegment } from "./rich-inline-segments";
 
-/**
- * Lesson text is Markdown limited to emphasis, short lists, GFM tables of data, inline code and
- * `$...$` math. This parser covers exactly that subset, so generated headings or links can never
- * change the player's layout.
- */
+/** Emphasis, short lists, GFM tables, inline code and `$...$` math only, so generated headings or links can never change the player's layout. */
 export type RichBlock =
   | { kind: "list"; items: RichInlineSegment[][]; ordered: boolean }
   | { kind: "paragraph"; lines: RichInlineSegment[][] }
@@ -34,7 +30,6 @@ function isEscaped(text: string, index: number): boolean {
   return index > 0 && text[index - 1] === "\\";
 }
 
-/** "R$ 80", "US$5" and "C$ 12" are currency signs, never math delimiters. */
 function isCurrencySign(text: string, index: number): boolean {
   return (
     UPPERCASE_LETTER.test(text[index - 1] ?? "") && PRICE_AFTER_SIGN.test(text.slice(index + 1))
@@ -45,10 +40,7 @@ function isDelimiter(text: string, index: number): boolean {
   return !isEscaped(text, index) && !isCurrencySign(text, index);
 }
 
-/**
- * A closing `$` has text right before it and no digit right after, so prices like "$5 and $10"
- * stay text (Pandoc's rule), and a currency sign like "R$ 80" never closes math.
- */
+/** Pandoc's rule: a closing `$` has text right before it and no digit right after, so "$5 and $10" stay text. */
 function findInlineMathClose(text: string, from: number): number | null {
   const index = text.indexOf("$", from);
 
@@ -82,7 +74,6 @@ function matchMathAt(text: string, start: number): (Span & { display: boolean })
     : { content: text.slice(start + 1, close), display: false, end: close + 1, start };
 }
 
-/** The first `$...$` or `$$...$$` span that follows the math rules, searching from `from`. */
 function findDollarMath(text: string, from = 0): (Span & { display: boolean }) | null {
   const start = text.indexOf("$", from);
 
@@ -94,7 +85,6 @@ function findDollarMath(text: string, from = 0): (Span & { display: boolean }) |
   return span ?? findDollarMath(text, start + 1);
 }
 
-/** Dollar and standard LaTeX delimiters share the same rendering across question surfaces. */
 function findMath(text: string): (Span & { display: boolean }) | null {
   const dollar = findDollarMath(text);
 
@@ -128,7 +118,6 @@ function findMath(text: string): (Span & { display: boolean }) | null {
   );
 }
 
-/** Emphasis and inline code, with an escaped `\$` (a dollar sign that isn't math) as a plain `$`. */
 function parseMarkup(text: string): RichInlineSegment[] {
   return parseInlineMarkup(text).map((segment) =>
     segment.kind === "text"
@@ -137,15 +126,11 @@ function parseMarkup(text: string): RichInlineSegment[] {
   );
 }
 
-/** One line of lesson text (a question, an option, a label): its line breaks read as spaces. */
 export function toOneLine(text: string): string {
   return text.replaceAll(/\s*\n\s*/gu, " ");
 }
 
-/**
- * Parses one line: math first (so emphasis markers never touch LaTeX), then inline code (so its
- * punctuation stays literal), then bold and italics.
- */
+/** Math first, so emphasis markers never touch LaTeX, then inline code, so its punctuation stays literal. */
 export function parseRichInline(text: string): RichInlineSegment[] {
   const math = findMath(text);
 
@@ -180,7 +165,6 @@ function classifyLine(line: string): LineKind {
   return line.trim() ? { kind: "text", text: line.trim() } : { kind: "blank" };
 }
 
-/** Adds a line to the open block when it continues it, or starts a new block. */
 function appendLine(
   blocks: RichBlock[],
   line: LineKind,
@@ -206,7 +190,6 @@ function appendLine(
     : [...blocks, { kind: "paragraph", lines: [inline] }];
 }
 
-/** The lines between tables as paragraphs and lists. */
 function parseTextLines(lines: readonly string[]): RichBlock[] {
   const classified = lines.map((line) => classifyLine(line));
 
@@ -216,7 +199,6 @@ function parseTextLines(lines: readonly string[]): RichBlock[] {
   );
 }
 
-/** Where the text before the next table ends: the table's header line, or the end of the text. */
 function findNextTable(lines: readonly string[], from: number) {
   const index = lines.findIndex(
     (_, position) => position >= from && readMarkdownTable(lines, position) !== null,
@@ -248,25 +230,18 @@ function readBlocks(lines: readonly string[], from: number): RichBlock[] {
   ];
 }
 
-/**
- * Splits lesson text into paragraphs (lines separated by a single line break stay together),
- * lists (lines starting with "-", "*", "•" or "1.") and tables of data (GFM pipe tables).
- */
 export function parseRichBlocks(text: string): RichBlock[] {
   return readBlocks(text.split(/\r?\n/u), 0);
 }
 
-/** The words a line shows, as its segments read them: emphasis marks gone, math as written. */
 function toShownText(segments: readonly RichInlineSegment[]): string {
   return segments.map((segment) => segment.text).join("");
 }
 
-/** Only words can be cut; a formula or code is marked whole once the quote reaches into it. */
 function canSplit(segment: RichInlineSegment): boolean {
   return segment.kind === "text" || segment.kind === "bold" || segment.kind === "italic";
 }
 
-/** One segment's part of the marked range: before it, inside it and after it, each when present. */
 function markSegment({
   end,
   segment,
@@ -294,7 +269,6 @@ function markSegment({
   ].filter((piece) => piece.text.length > 0);
 }
 
-/** A line with the shown words from `start` to `end` marked. */
 function markRange({
   end,
   segments,
@@ -312,13 +286,11 @@ function markRange({
   });
 }
 
-/** The line with the quote's words marked, or null when the line doesn't show them. */
 function markLine(segments: RichInlineSegment[], quote: string): RichInlineSegment[] | null {
   const start = toShownText(segments).indexOf(quote);
   return start === -1 ? null : markRange({ end: start + quote.length, segments, start });
 }
 
-/** Marks the quote in the first of a block's lines that shows it, while none was marked yet. */
 function markLines(
   lines: RichInlineSegment[][],
   quote: string,
@@ -348,26 +320,16 @@ function markBlock(block: RichBlock, quote: string): { block: RichBlock; done: b
   }
 }
 
-/**
- * A quote is written like lesson text, Markdown marks included, so it's compared by the words it
- * shows, read as its line is: a list item without its marker ("- ", "1. "). One that cuts a mark
- * in two shows the mark itself, which no line shows.
- */
 function toShownQuote(quote: string): string {
   const line = classifyLine(quote.trim());
   return line.kind === "blank" ? "" : toShownText(parseRichInline(line.text));
 }
 
-/** One line with the quote's words marked, or as it was when it doesn't show them. */
 export function markRichInline(segments: RichInlineSegment[], quote: string): RichInlineSegment[] {
   const shown = toShownQuote(quote);
   return (shown && markLine(segments, shown)) || segments;
 }
 
-/**
- * The blocks with one sentence marked: the first paragraph line or list item that shows the
- * quote's words (see `toShownQuote`). A quote no line shows marks nothing.
- */
 export function markRichBlocks(blocks: RichBlock[], quote: string): RichBlock[] {
   const shown = toShownQuote(quote);
 

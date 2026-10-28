@@ -24,7 +24,6 @@ import { type TopicOutlineShown, useTopicOutline } from "./use-topic-outline";
 
 const TEXT_CLASS = "text-muted-foreground text-sm text-pretty";
 
-/** What the sheet says before the tap, while the lessons are written, and when they can't be. */
 function useStateCopy(shown: TopicOutlineShown): { action: string | null; message: string } {
   const t = useExtracted();
 
@@ -51,7 +50,6 @@ function useStateCopy(shown: TopicOutlineShown): { action: string | null; messag
   };
 }
 
-/** The topic's chapters once written, each opening its page. */
 function OutlineChapters({
   chapterHref,
   chapters,
@@ -72,7 +70,6 @@ function OutlineChapters({
   );
 }
 
-/** The sheet's body: the tap that writes the lessons, its wait, then the chapters. */
 function FarTopicBody({
   actions,
   chapterHref,
@@ -105,7 +102,6 @@ function FarTopicBody({
     return <OutlineChapters chapterHref={chapterHref} chapters={chapters} />;
   }
 
-  // A cap reached keeps the button in sight, disabled, with the notice's one thing to do under it.
   const isCapped = limit !== null && limit.status !== "slowDown";
   const isFailure = shown === "unreachable";
 
@@ -135,13 +131,7 @@ function FarTopicBody({
   );
 }
 
-/**
- * A topic of the plan whose lessons aren't written yet (the plan writes them two weeks ahead), as
- * a row (`trigger`, holding `children`) that opens a sheet: what the plan knows about it, and
- * "See the lessons", which writes its lesson plan now and shows its chapters once they're in. The
- * page is read again when the sheet closes after they landed: read while it's open, the plan could
- * take away the row the sheet opened from (its lessons are written now).
- */
+/** The page is read again only when the sheet closes after the lessons landed: read while open, the plan could take away the row the sheet opened from. */
 export function FarTopicSheet({
   actions,
   chapterHref,
@@ -155,12 +145,10 @@ export function FarTopicSheet({
   actions: TopicOutlineActions;
   chapterHref: (chapterId: string) => string;
   children: ReactNode;
-  /** The lessons the plan teaches the topic; null when the plan doesn't know how many yet. */
   lessons: number | null;
   nextDate: string | null;
   skillId: string;
   title: string;
-  /** The row the learner taps, rendered with `children` inside. */
   trigger: ReactElement;
 }) {
   const [open, setOpen] = useState(false);

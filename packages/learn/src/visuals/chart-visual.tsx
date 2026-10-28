@@ -8,24 +8,18 @@ import { useExtracted } from "next-intl";
 import { useFormatNumber } from "../_utils/use-format-number";
 import { type CategoryLabelLayout, getCategoryLabels } from "./_utils/category-labels";
 
-/** Phone width of the chart, used until its real width is measured. */
 const FALLBACK_WIDTH = 318;
 const HEIGHT = 208;
 const PADDING = { bottom: 26, left: 48, right: 8, top: 22 } as const;
 const TICK_COUNT = 4;
-/** Bars fill this share of their category's band; the rest is the gap between categories. */
 const GROUP_SHARE = 0.68;
-/** A value label fits over a bar this wide, so tight charts leave them out. */
 const MIN_LABEL_WIDTH = 30;
-/** Points of a line sit closer to their neighbors' labels than bars do, so they need more room. */
 const MIN_POINT_LABEL_BAND = 45;
 const LABEL_GAP = 6;
 const LABEL_LINE_HEIGHT = 14;
-/** From the plot's bottom edge to the baseline of the category labels' first line. */
 const LABEL_OFFSET = 16;
 const DOT_RADIUS = 3.5;
 
-/** One color per series, the same three the activities use, readable in light and dark. */
 const SERIES_TONES = [
   { fill: "fill-viz-accent", stroke: "stroke-viz-accent", swatch: "bg-viz-accent" },
   { fill: "fill-viz-secondary", stroke: "stroke-viz-secondary", swatch: "bg-viz-secondary" },
@@ -49,12 +43,10 @@ function getLayout({ visual, width }: { visual: ChartVisual; width: number }): L
   const anchors = visual.axisStart === null ? values : [...values, visual.axisStart];
   const nice = niceDomain(anchors, { includeZero: visual.chart === "bar" });
 
-  // A screen about a cropped axis starts it where the data says, as the chart it discusses does.
   const yDomain = visual.axisStart === null ? nice : ([visual.axisStart, nice[1]] as const);
   const plotWidth = Math.max(width - PADDING.left - PADDING.right, 1);
   const band = plotWidth / visual.categories.length;
 
-  // Counts read as whole numbers, so their axis skips ticks like 2.5.
   const wholeNumbers = values.every((value) => Number.isInteger(value));
 
   return {
@@ -68,7 +60,6 @@ function getLayout({ visual, width }: { visual: ChartVisual; width: number }): L
   };
 }
 
-/** The chart's height with room for category labels that take two lines. */
 function getChartHeight(layout: Layout): number {
   const lines = Math.max(...layout.labels.lines.map((label) => label.length));
   return HEIGHT + (lines - 1) * LABEL_LINE_HEIGHT;
@@ -224,7 +215,6 @@ function Legend({ visual }: { visual: ChartVisual }) {
   );
 }
 
-/** The chart's numbers as a table for screen readers, so every value is read exactly. */
 function ChartData({ visual }: { visual: ChartVisual }) {
   const format = useFormatNumber();
 
@@ -256,11 +246,6 @@ function ChartData({ visual }: { visual: ChartVisual }) {
   );
 }
 
-/**
- * A bar or line chart drawn from its data at its real width, so labels stay 12px on a phone and a
- * laptop. Bars and points carry their values when there's room, since questions ask about exact
- * numbers; screen readers get the same numbers as a table.
- */
 export function ChartVisualView({
   className,
   visual,

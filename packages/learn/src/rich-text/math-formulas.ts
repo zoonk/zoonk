@@ -10,10 +10,6 @@ function toFormulas(segments: readonly RichInlineSegment[]): Formula[] {
   );
 }
 
-/**
- * Every formula a text can show, read each way lesson text is drawn: as one line (a question, an
- * option), as written, and as blocks (paragraphs, lists, tables).
- */
 function formulasIn(text: string): Formula[] {
   const blocks = parseRichBlocks(text).flatMap((block) => {
     switch (block.kind) {
@@ -35,7 +31,6 @@ function formulasIn(text: string): Formula[] {
   ];
 }
 
-/** Every formula in serialized content: its texts' math, and the LaTeX of its `math` fields. */
 export function collectFormulas(value: unknown, key: string | null = null): Formula[] {
   if (typeof value === "string") {
     return key === "math" ? [{ displayMode: true, text: value }] : formulasIn(value);

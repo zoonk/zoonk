@@ -16,10 +16,6 @@ import { useLearnRoutes } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { TaskFrame, TaskMainButton, TaskMainLink } from "../shell/task-frame";
 
-/**
- * The test before it's asked for: the question it answers big ("Already know this?") and what
- * doing well does, straight on the page. The header already names the chapter.
- */
 function TestOutCard() {
   const t = useExtracted();
 
@@ -37,7 +33,6 @@ function TestOutCard() {
   );
 }
 
-/** What the learner can do before the test: Start, or why not (Plus, AI help used up). */
 function TestOutStart({
   limit,
   onStart,
@@ -76,14 +71,6 @@ function TestOutStart({
   );
 }
 
-/**
- * A chapter's test-out while its questions are written: the run's progress under the task's
- * header, and the test opens by itself once they exist (the host reads the page again). Opened
- * without a run (a link from elsewhere), it shows what the test is and waits for the learner's
- * Start (or Enter) in the pinned action bar, since loading a page never writes anything; a refusal
- * says why with the one thing to do. Past a free exam plan's first week (`plusRequired`) the test
- * comes with Plus: the free week's end and "See Plus" take Start's place.
- */
 export function TestOutPreparing({
   chapterTitle,
   closeHref,
@@ -95,11 +82,9 @@ export function TestOutPreparing({
 }: {
   chapterTitle: string;
   closeHref: string;
-  /** The learner's small AI help doesn't cover writing it now. */
   limit: HelpLimit | null;
   plusRequired?: boolean;
   onStart: () => void;
-  /** The run writing the questions, once the learner asked for them. */
   run: GenerationRun | null;
   starting: boolean;
 }) {

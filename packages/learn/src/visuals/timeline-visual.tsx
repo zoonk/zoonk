@@ -1,10 +1,6 @@
 import { type TimelineVisual } from "@zoonk/core/library/steps/contract";
 import { cn } from "@zoonk/ui/lib/utils";
 
-/**
- * Dated events in order down a rail, each date set apart from what happened, so the order and
- * the gaps read at a glance on a phone. It's a list, so screen readers count the events too.
- */
 export function TimelineVisualView({
   className,
   visual,

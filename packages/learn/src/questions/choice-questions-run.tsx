@@ -20,28 +20,13 @@ import {
 
 const PERCENT = 100;
 
-/** The run's header: where closing goes, the screen a report names, and the test's title. */
 type QuestionsHeader = { closeHref: string; screen: string; title: string };
 
-/** One answer of a run of questions, with how long the learner took on it. */
 export type ChoiceQuestionAnswer = { answer: ChoiceAnswer; durationMs: number; itemId: string };
 
-/** Questions still being written while the first ones are asked. */
-type UpcomingQuestions = {
-  /** The writing stopped short of `total`: the learner can finish with the answers so far. */
-  ended: boolean;
-  /** How many questions the run asks in all, the ones still being written included. */
-  total: number;
-  /** Shown in place of the next question once every question so far is answered, until it comes. */
-  waiting: React.ReactNode;
-};
+type UpcomingQuestions = { ended: boolean; total: number; waiting: React.ReactNode };
 
-/**
- * Keeps each answer on the device as it's given (`draftKey`), so a reload goes on from the next
- * question instead of starting over. The host clears it once the answers are graded
- * (`clearAnswerDraft`): answers whose grade didn't go through stay on the device, so leaving and
- * coming back still has them.
- */
+/** The host clears the draft once the answers are graded (`clearAnswerDraft`); until then, a reload goes on from the next question. */
 function useAnswerDraft({
   answers,
   draftKey,
@@ -83,7 +68,6 @@ function useAnswerDraft({
   }, [answers, draftKey]);
 
   return {
-    /** The last answer is in: the draft holds them all until the host clears it. */
     finish: (all: ChoiceQuestionAnswer[]) => {
       if (draftKey) {
         writeAnswerDraft({ answers: all, key: draftKey });
@@ -92,12 +76,7 @@ function useAnswerDraft({
   };
 }
 
-/**
- * A new question takes the focus, on its title: a screen reader reads it, and Enter sends the
- * answer picked instead of pressing the button the last question was answered with ("I don't know
- * yet" kept the focus, so Enter sent that for every later answer). The first question keeps the
- * focus where the browser put it.
- */
+/** Focuses each new question's title, so Enter sends the pick instead of pressing the button the last one was answered with. */
 function useFocusNewQuestion({
   container,
   itemId,
@@ -120,19 +99,6 @@ function useFocusNewQuestion({
   }, [container, itemId]);
 }
 
-/**
- * Questions asked one per screen, full screen like every task: no feedback until the end, "I
- * don't know yet" always allowed beside Next in the pinned action bar, and Enter for Next once an
- * option is picked. The task's header (`header`) has the question's "…" menu to report a problem
- * and one bar for how far in; a quiet line sits above each question (`hint`) with its number in the
- * mono face, and the host gets
- * every answer once the last one is in (`onFinish`); `pending` holds the buttons while it grades
- * them, and a grade that didn't go through says so over them (`error`), the last question still on
- * screen and locked. Questions can arrive while the first ones are asked (`upcoming`): they're
- * added at the end of `questions`, and the run waits for them after the last one it has. With
- * `draftKey`, each answer is kept on the device as it's given, so a reload goes on where the
- * learner was, until the host clears it once the answers are graded.
- */
 export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
   aside,
   draftKey,
@@ -145,22 +111,14 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
   trueFalseLabels,
   upcoming,
 }: {
-  /**
-   * What helps beside the questions from `lg` (a test-out's rule and what passing skips); the hint
-   * line is then the phone's, since the aside says it on a wide screen.
-   */
   aside?: TaskFrameAside | null;
-  /** Where this run's answers are kept on the device until it's finished; none to keep them. */
   draftKey?: string;
-  /** Over the actions: the answers couldn't be graded, with a way to send them again. */
   error?: React.ReactNode;
   header: QuestionsHeader;
-  /** The line above a question: a rule of the test, or what the question is about. */
   hint?: (question: Question) => string;
   onFinish: (answers: ChoiceQuestionAnswer[]) => void;
   pending: boolean;
   questions: readonly Question[];
-  /** The words the goal's true-or-false questions are answered with, by its exam. */
   trueFalseLabels: TrueFalseLabels;
   upcoming?: UpcomingQuestions | null;
 }) {
@@ -183,8 +141,6 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
   const draft = useAnswerDraft({ answers, draftKey, onResume: resume, questionIds, total });
   usePreloadMath(questions);
 
-  // Each answer is timed from when its question showed, even one that arrived while the learner
-  // waited for it.
   useEffect(() => {
     if (itemId) {
       shownAt.current = Date.now();
@@ -273,7 +229,6 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
             </p>
           </div>
 
-          {/* The answer being graded, or waiting to be sent again, stays the one on screen. */}
           <ChoiceQuestion
             disabled={pending || Boolean(error)}
             onSelect={setSelected}
@@ -287,11 +242,6 @@ export function ChoiceQuestionsRun<Question extends ChoiceQuestionView>({
   );
 }
 
-/**
- * The run's pinned action bar: "I don't know yet" beside Next (Finish on the last question, with a
- * spinner while the answers are graded), or, while waiting for questions that stopped coming,
- * finishing with the answers given.
- */
 function QuestionsFooter({
   canFinish,
   isLast,

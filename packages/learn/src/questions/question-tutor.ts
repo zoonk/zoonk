@@ -1,9 +1,3 @@
-/**
- * The question in view of a session's block or of mistakes practice, as the learner's buddy is
- * asked about it: which one, the block it's asked in (null in practice), its place in the run (a
- * question asked again later in it is another visit), its words for the quote, and whether it was
- * checked and missed.
- */
 export type TutorItem = {
   answered: boolean;
   blockId: string | null;
@@ -13,20 +7,9 @@ export type TutorItem = {
   text: string;
 };
 
-/**
- * The learner's buddy for a run of questions, from the host (the player's tutor for a question):
- * `wrap` puts the conversation about the question in view around the run (null between questions,
- * and while asking would spoil the question, as a placement question or a timed drill's clock),
- * `button` asks beside the main action under `lg`, `aside` docks the buddy in the aside from `lg`,
- * and `asideMeta` draws the aside header's quiet fact. Opening it only reads the conversation; what
- * the learner sends is answered.
- */
+/** `wrap` is null between questions and while asking would spoil the question (placement, a timed drill's clock). Opening it only reads the conversation. */
 export type QuestionTutor = {
   aside: React.ReactNode;
-  /**
-   * The aside header's quiet fact: the run's own (`meta`, such as the minutes left) until the
-   * learner has asked about the question in view, then the way back to that conversation.
-   */
   asideMeta: (meta: React.ReactNode) => React.ReactNode;
   button: React.ReactNode;
   wrap: (item: TutorItem | null, children: React.ReactNode) => React.ReactNode;
