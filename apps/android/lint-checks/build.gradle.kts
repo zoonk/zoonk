@@ -10,7 +10,7 @@ java {
 }
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(25)
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_17)
         allWarningsAsErrors.set(true)

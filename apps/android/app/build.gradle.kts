@@ -12,9 +12,7 @@ android {
     defaultConfig {
         applicationId = "com.zoonk"
         minSdk = 23
-        // API 37 targeting remains a preview opt-in until its behavior changes are reviewed.
-        //noinspection OldTargetApi
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "0.1.0"
 
@@ -70,7 +68,7 @@ android {
 }
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(25)
     compilerOptions {
         jvmTarget.set(JvmTarget.JVM_17)
         allWarningsAsErrors.set(true)
@@ -81,6 +79,7 @@ dependencies {
     lintChecks(project(":lint-checks"))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.annotation)
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)
