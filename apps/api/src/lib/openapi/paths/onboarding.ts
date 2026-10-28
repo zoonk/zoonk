@@ -182,7 +182,7 @@ export const onboardingPaths = {
   "/goals/{goalId}/onboarding/answers": {
     post: {
       description:
-        "Saves one onboarding answer and returns the screens still ahead. Skippable questions take null and are never asked again. The schedule re-plans, splits the day's time between goals typed together and starts writing the lessons and outlines the first days now hold, as `POST /goals/{goalId}/lesson-preparations` does. The buddy goes to the learner's profile.",
+        "Saves one onboarding answer and returns the screens still ahead. Skippable questions take null and are never asked again. The schedule re-plans, splits the day's time between goals typed together and starts writing the lessons and outlines the first days now hold, as `POST /goals/{goalId}/lesson-preparations` does. The buddy goes to the learner's profile. A language goal whose reason names a language certificate (IELTS, DELE, Celpe-Bras…) moves to an exam goal for it, whose research and curriculum start: the response is then that goal's onboarding (`goal.id` changes), and the next answers go to it.",
       operationId: "answerOnboardingQuestion",
       requestBody: {
         content: { "application/json": { schema: onboardingAnswerInputSchema } },

@@ -91,7 +91,7 @@ export const examPaths = {
   "/goals/{goalId}/exam-moves": {
     post: {
       description:
-        '"Pass an exam" inside a language goal: when the goal\'s reason names a language certificate (IELTS, TOEFL, DELE, Celpe-Bras…), it moves to an exam goal for it with the same language, details and schedule; research and the curriculum start, and the language goal is archived.',
+        '"Pass an exam" inside a language goal: when the goal\'s reason names a language certificate (IELTS, TOEFL, DELE, Celpe-Bras…), it moves to an exam goal for it with the same language, details and schedule; research and the curriculum start, and the language goal is archived. Answering the reason question in onboarding (`POST /goals/{goalId}/onboarding/answers`) already does this, so onboarding never needs this call.',
       operationId: "moveLanguageGoalToExam",
       requestParams: { path: goalPathParamsSchema },
       responses: {

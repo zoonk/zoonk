@@ -368,7 +368,7 @@ describe("onboarding's last answer", () => {
         goalId: goal.id,
         input: { dailyMinutes: 240, fullCourse: true, question: "schedule", timeZone: "UTC" },
       }),
-    ).resolves.toStrictEqual({ status: "saved" });
+    ).resolves.toStrictEqual({ movedTo: null, status: "saved" });
 
     const viewed = await readPlan(goal.id);
 

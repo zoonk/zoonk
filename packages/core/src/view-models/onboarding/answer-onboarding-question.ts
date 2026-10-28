@@ -2,8 +2,9 @@ import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { pickExamOptions } from "../../exams/choices/choose-exam-option";
+import { moveLanguageGoalToExam } from "../../exams/move-language-goal";
 import { splitDailyBudget } from "../../goals/daily-budget";
-import { type GoalUpdateInput } from "../../goals/goal-contract";
+import { type GoalUpdateInput, type GoalView } from "../../goals/goal-contract";
 import { updateGoal } from "../../goals/update-goal";
 import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { scheduleMemoryUpdate } from "../../memory/update-memory-from-activity";
@@ -12,7 +13,15 @@ import { updateLearningProfile } from "../../profile/update-learning-profile";
 import { type OnboardingAnswerInput } from "./onboarding-contract";
 import { getAnsweredQuestions, getFollowUpQuestions, readExamTarget } from "./onboarding-steps";
 
-export type OnboardingAnswerResult = { status: "invalid" | "notFound" | "saved" | "unauthorized" };
+/**
+ * A saved answer says which goal onboarding goes on with: `movedTo` is the exam goal a language
+ * goal moved to ("Pass an exam" naming a certificate), null when the goal stays.
+ */
+export type OnboardingAnswerResult =
+  | { movedTo: GoalView | null; status: "saved" }
+  | { status: "invalid" }
+  | { status: "notFound" }
+  | { status: "unauthorized" };
 
 /** The buddy belongs to the learner, not the goal, so it's saved on the profile. */
 async function saveProfileAnswer(input: OnboardingAnswerInput): Promise<"invalid" | "saved"> {
@@ -197,7 +206,7 @@ async function updateSharedGoals({ goal, input }: { goal: Goal; input: ScheduleA
   };
 }
 
-/** Requires an owned goal; remembers skipped answers too, and schedule answers settle its plan and shared time. */
+/** Requires an owned goal; remembers skipped answers too, and schedule answers settle its plan and shared time. A language goal whose reason names a certificate moves to an exam goal for it. */
 export async function answerOnboardingQuestion({
   goalId,
   input,
@@ -257,5 +266,11 @@ export async function answerOnboardingQuestion({
     });
   }
 
-  return { status: "saved" };
+  // "Pass an exam" inside a language goal: a reason naming a certificate moves it to an exam goal.
+  if (input.question === "reason" && goal.kind === "language") {
+    const moved = await moveLanguageGoalToExam(goalId);
+    return { movedTo: moved.status === "moved" ? moved.goal : null, status: "saved" };
+  }
+
+  return { movedTo: null, status: "saved" };
 }

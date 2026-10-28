@@ -194,14 +194,14 @@ describe("course-start deadlines", () => {
         goalId,
         input: { question: "targetDate", targetDate: "2020-09-29" },
       }),
-    ).resolves.toStrictEqual({ status: "saved" });
+    ).resolves.toStrictEqual({ movedTo: null, status: "saved" });
 
     const dated = await readGoal(goalId);
     expect(dated.scheduledLessons).toBe(1);
 
     await expect(
       answerOnboardingQuestion({ goalId, input: { question: "targetDate", targetDate: null } }),
-    ).resolves.toStrictEqual({ status: "saved" });
+    ).resolves.toStrictEqual({ movedTo: null, status: "saved" });
 
     const cleared = await readGoal(goalId);
     expect(cleared.goal.targetDate).toBeNull();
@@ -362,7 +362,7 @@ describe("course-start deadlines", () => {
 
       await expect(
         answerOnboardingQuestion({ goalId, input: { question: "targetDate", targetDate } }),
-      ).resolves.toStrictEqual({ status: "saved" });
+      ).resolves.toStrictEqual({ movedTo: null, status: "saved" });
 
       const answered = await readGoal(goalId);
       expect(answered.goal.targetDate?.toISOString().slice(0, 10) ?? null).toBe(targetDate);

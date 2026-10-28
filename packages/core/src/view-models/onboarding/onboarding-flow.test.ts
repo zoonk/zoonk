@@ -399,7 +399,10 @@ describe("onboarding a new goal", () => {
       },
     });
 
-    expect([dated, scheduled]).toStrictEqual([{ status: "saved" }, { status: "saved" }]);
+    expect([dated, scheduled]).toStrictEqual([
+      { movedTo: null, status: "saved" },
+      { movedTo: null, status: "saved" },
+    ]);
 
     const saved = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
 
@@ -422,7 +425,7 @@ describe("onboarding a new goal", () => {
       },
     });
 
-    expect(scheduled).toStrictEqual({ status: "saved" });
+    expect(scheduled).toStrictEqual({ movedTo: null, status: "saved" });
 
     const saved = await prisma.goal.findUniqueOrThrow({
       include: { plan: true },

@@ -2,7 +2,6 @@
 
 import { startGoalWork } from "@/lib/goals/start-goal-work";
 import { prepareGoalLessons, writeLessonAhead } from "@/lib/session/session-preparation";
-import { moveLanguageGoalToExam } from "@zoonk/core/exams/language-goal";
 import { mockTimeZoneInputSchema } from "@zoonk/core/exams/mocks/contract";
 import { finishMock } from "@zoonk/core/exams/mocks/finish";
 import { getMockOptions } from "@zoonk/core/exams/mocks/options";
@@ -73,27 +72,25 @@ export async function answerOnboardingAction(
 
   const result = await answerOnboardingQuestion({ goalId, input: parsed.data });
 
-  // "Pass an exam" inside a language goal: a reason naming a certificate moves it to an exam goal.
-  const moved =
-    result.status === "saved" && parsed.data.question === "reason"
-      ? await moveLanguageGoalToExam(goalId)
-      : null;
-
-  if (moved?.status === "moved") {
-    await startGoalWork([moved.goal]);
+  if (result.status !== "saved") {
+    return { status: "failed" };
   }
 
-  const currentGoalId = moved?.status === "moved" ? moved.goal.id : goalId;
+  // A language goal that moved to its exam goes on as that goal, whose curriculum starts now.
+  if (result.movedTo) {
+    await startGoalWork([result.movedTo]);
+  }
+
+  const currentGoalId = result.movedTo?.id ?? goalId;
 
   // The time a day re-plans the first days, so their lessons start being written before Today needs them.
-  if (result.status === "saved" && parsed.data.question === "schedule") {
+  if (parsed.data.question === "schedule") {
     prepareGoalLessons(currentGoalId);
   }
 
-  const onboarding =
-    result.status === "saved" ? await getOnboarding({ goalId: currentGoalId }) : null;
+  const onboarding = await getOnboarding({ goalId: currentGoalId });
 
-  return onboarding?.status === "ready"
+  return onboarding.status === "ready"
     ? { onboarding: onboarding.onboarding, status: "saved" }
     : { status: "failed" };
 }

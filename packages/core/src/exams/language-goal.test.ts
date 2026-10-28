@@ -4,6 +4,7 @@ import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
+import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
 import { moveLanguageGoalToExam } from "./move-language-goal";
 
 describe(moveLanguageGoalToExam, () => {
@@ -88,5 +89,53 @@ describe(moveLanguageGoalToExam, () => {
 
     await expect(moveLanguageGoalToExam(goal.id)).resolves.toStrictEqual({ status: "notFound" });
     await expect(prisma.goal.count({ where: { userId: guest.id } })).resolves.toBe(2);
+  });
+});
+
+describe("onboarding's reason answer", () => {
+  it("moves a language goal whose reason names a certificate, and onboarding goes on as the exam goal", async () => {
+    const user = await userFixture();
+
+    const goal = await goalFixture({
+      kind: "language",
+      prompt: "Aprender inglês",
+      targetLanguage: "en",
+      userId: user.id,
+    });
+
+    mockSession(user.id);
+
+    const result = await answerOnboardingQuestion({
+      goalId: goal.id,
+      input: { question: "reason", reason: "vou fazer o IELTS em março" },
+    });
+
+    expect(result).toMatchObject({
+      movedTo: { details: { movedFromGoalId: goal.id }, kind: "exam", title: "IELTS" },
+      status: "saved",
+    });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      status: "archived",
+    });
+  });
+
+  it("keeps a language goal whose reason names no exam", async () => {
+    const user = await userFixture();
+
+    const goal = await goalFixture({ kind: "language", targetLanguage: "en", userId: user.id });
+
+    mockSession(user.id);
+
+    await expect(
+      answerOnboardingQuestion({
+        goalId: goal.id,
+        input: { question: "reason", reason: "to travel" },
+      }),
+    ).resolves.toStrictEqual({ movedTo: null, status: "saved" });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      status: "active",
+    });
   });
 });

@@ -78,7 +78,7 @@ describe("onboarding an exam with a choice", () => {
         goalId: goal.id,
         input: { choices: [{ group: FOREIGN, subject: SPANISH }], question: "examChoice" },
       }),
-    ).resolves.toStrictEqual({ status: "saved" });
+    ).resolves.toStrictEqual({ movedTo: null, status: "saved" });
 
     await expect(loadChoices(plan.id)).resolves.toStrictEqual([
       { group: FOREIGN, subject: SPANISH },

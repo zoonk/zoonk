@@ -1,5 +1,6 @@
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { startGoalWork } from "@/lib/goal-content";
 import { goalPathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readBody, readPathParams } from "@/lib/request-input";
 import { scheduleGoalPreparation } from "@/lib/session-preparation";
@@ -17,8 +18,7 @@ async function createOnboardingAnswer(
     readPathParams(context, goalPathParamsSchema),
   ]);
 
-  const { goalId } = path;
-  const result = await answerOnboardingQuestion({ goalId, input: body });
+  const result = await answerOnboardingQuestion({ goalId: path.goalId, input: body });
 
   if (result.status === "unauthorized") {
     return errors.unauthorized();
@@ -31,6 +31,12 @@ async function createOnboardingAnswer(
   if (result.status === "invalid") {
     return errors.unprocessableEntity("This answer can't be applied to the goal");
   }
+
+  if (result.movedTo) {
+    await startGoalWork([result.movedTo]);
+  }
+
+  const goalId = result.movedTo?.id ?? path.goalId;
 
   if (body.question === "schedule") {
     await scheduleGoalPreparation(goalId);
