@@ -153,6 +153,7 @@ Open, the Duo reads like an open wallet: two panes either side of the fold, each
 - Side panels in a task (Ask, the mock answer sheet, the call aside) stay `.inspector` on regular widths and sheets on compact widths: partially folded, the system moves the inspector's edge to the fold. A tab's side panel (the buddy's day) is `PaneSplit`'s trailing pane instead: SwiftUI turns a presented inspector into a sheet when the width turns compact, and a hidden tab's would cover the tab on show.
 - A pane is about a phone wide even where the size class is regular. A view inside it that picks a wide layout from the regular size class overflows, so give the pane `.environment(\.horizontalSizeClass, .compact)` (as Statistics does) or choose by the measured width.
 - One-column screens (onboarding, results, celebrations) let their scrolling content cross the fold and move their bottom action off it with `.keepsOffFold()`.
+- A one-column screen that stays one column on the open Duo (the catalog, a course or chapter page) adjusts while folded rather than rearranging: a grid takes `PaneSpace.columnsAroundFold` (the same number of columns on each side, the fold as their gap), a block under the title ends at the fold with `listSectionMargins`, a reading column moves to the page before the fold, and a search drawer moves to the toolbar.
 
 ## Pitfalls
 
