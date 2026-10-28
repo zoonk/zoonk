@@ -6,6 +6,7 @@
     "i18n": "node scripts/i18n/translate.mts",
     "i18n:lint": "node scripts/i18n/check-catalogs.mts && eloqnt lint --strict",
     "palette": "node scripts/theme/generate-palette.mts",
+    "symbol": "node scripts/icons/add-symbol.mts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
