@@ -52,6 +52,10 @@ struct SessionSummaryView: View {
     List {
       Section {
         VStack(alignment: .leading, spacing: 4) {
+          SummaryBuddy(
+            look: learner.summary.value?.buddy ?? BuddyLook(),
+            visit: "\(sessionID):\(summary.brainPower)")
+
           title(summary)
             .font(.largeTitle.bold())
             .accessibilityAddTraits(.isHeader)
@@ -223,5 +227,37 @@ struct SessionSummaryView: View {
         break
       }
     }
+  }
+}
+
+/// The buddy, proud of the day (main's `RewardsArt`): a beat in, its eyes close content as its chin
+/// lifts and its chest fills. Only the summary's first visit plays it, as main's
+/// `useFirstSummaryVisit` decides: the same summary opened again from Today draws it still, proud.
+private struct SummaryBuddy: View {
+  /// The summary last celebrated, by its session and the Brain Power it shows.
+  private static let celebratedKey = "celebratedSessionSummary"
+
+  let look: BuddyLook
+  let visit: String
+
+  @State private var isFirstVisit: Bool
+
+  init(look: BuddyLook, visit: String) {
+    self.look = look
+    self.visit = visit
+    _isFirstVisit = State(
+      initialValue: UserDefaults.standard.string(forKey: Self.celebratedKey) != visit)
+  }
+
+  var body: some View {
+    var studied = look
+    studied.studiedToday = true
+
+    return BuddyCharacter(
+      look: studied, expression: isFirstVisit ? .happy : .proud,
+      reaction: isFirstVisit ? ActReaction(act: .proud, delay: .beat) : nil
+    )
+    .frame(width: 96, height: 96)
+    .onAppear { UserDefaults.standard.set(visit, forKey: Self.celebratedKey) }
   }
 }
