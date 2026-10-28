@@ -26716,8 +26716,9 @@
                 ]
               },
               "role": {
-                "nullable": true,
+                "default": null,
                 "description": "The learner's current role",
+                "nullable": true,
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 200
@@ -26738,8 +26739,7 @@
               }
             },
             "required": [
-              "question",
-              "role"
+              "question"
             ],
             "additionalProperties": false
           },
@@ -26753,6 +26753,7 @@
                 ]
               },
               "reason": {
+                "default": null,
                 "nullable": true,
                 "type": "string",
                 "minLength": 1,
@@ -26760,8 +26761,7 @@
               }
             },
             "required": [
-              "question",
-              "reason"
+              "question"
             ],
             "additionalProperties": false
           },
@@ -26775,6 +26775,7 @@
                 ]
               },
               "target": {
+                "default": null,
                 "nullable": true,
                 "type": "string",
                 "minLength": 1,
@@ -26782,8 +26783,7 @@
               }
             },
             "required": [
-              "question",
-              "target"
+              "question"
             ],
             "additionalProperties": false
           },
@@ -26797,16 +26797,16 @@
                 ]
               },
               "targetDate": {
-                "nullable": true,
+                "default": null,
                 "description": "The learner's deadline, or null for none: after their today (an earlier one is refused with 422) and at most 3,650 days after it (a later one with 422 TARGET_DATE_OUT_OF_RANGE)",
+                "nullable": true,
                 "type": "string",
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
               }
             },
             "required": [
-              "question",
-              "targetDate"
+              "question"
             ],
             "additionalProperties": false
           },
@@ -26840,8 +26840,9 @@
             "type": "object",
             "properties": {
               "choices": {
-                "nullable": true,
+                "default": null,
                 "description": "The option the learner takes for each of the exam's choices (`examChoices`); null to decide later, from the plan",
+                "nullable": true,
                 "minItems": 1,
                 "maxItems": 5,
                 "type": "array",
@@ -26861,7 +26862,6 @@
               }
             },
             "required": [
-              "choices",
               "question"
             ],
             "additionalProperties": false
@@ -26880,6 +26880,7 @@
                 }
               },
               "level": {
+                "default": null,
                 "nullable": true,
                 "type": "string",
                 "enum": [
@@ -26897,7 +26898,6 @@
               }
             },
             "required": [
-              "level",
               "question"
             ],
             "additionalProperties": false

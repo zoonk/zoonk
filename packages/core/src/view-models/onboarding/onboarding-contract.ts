@@ -288,6 +288,12 @@ export type OnboardingView = {
 
 const nullableAnswer = z.string().trim().min(1).max(MAX_ANSWER_LENGTH).nullable();
 
+/**
+ * A skipped answer is null, and leaving the field out says the same: generated clients (the iOS
+ * app's) drop a property whose value is nil instead of sending null.
+ */
+const skippableAnswer = nullableAnswer.default(null);
+
 const scheduleAnswerSchema = z
   .object({
     dailyMinutes: z.int().min(MIN_DAILY_MINUTES).max(MAX_DAILY_MINUTES),
@@ -333,7 +339,7 @@ export const onboardingAnswerInputSchema = z
     z
       .object({
         question: z.literal("role"),
-        role: nullableAnswer.meta({ description: "The learner's current role" }),
+        role: skippableAnswer.meta({ description: "The learner's current role" }),
         targetPosition: nullableAnswer
           .optional()
           .meta({ description: "For a career change, the role they're aiming for" }),
@@ -342,14 +348,15 @@ export const onboardingAnswerInputSchema = z
           .meta({ description: "For work, what they use the subject for in their job" }),
       })
       .strict(),
-    z.object({ question: z.literal("reason"), reason: nullableAnswer }).strict(),
-    z.object({ question: z.literal("target"), target: nullableAnswer }).strict(),
+    z.object({ question: z.literal("reason"), reason: skippableAnswer }).strict(),
+    z.object({ question: z.literal("target"), target: skippableAnswer }).strict(),
     z
       .object({
         question: z.literal("targetDate"),
         targetDate: z.iso
           .date()
           .nullable()
+          .default(null)
           .meta({
             description:
               "The learner's deadline, or null for none: after their today (an earlier one is refused with 422) and at most 3,650 days after it (a later one with 422 TARGET_DATE_OUT_OF_RANGE)",
@@ -366,6 +373,7 @@ export const onboardingAnswerInputSchema = z
           .min(1)
           .max(MAX_EXAM_CHOICES)
           .nullable()
+          .default(null)
           .meta({
             description:
               "The option the learner takes for each of the exam's choices (`examChoices`); null to decide later, from the plan",
@@ -384,7 +392,7 @@ export const onboardingAnswerInputSchema = z
             description:
               "For an exam with several subjects: the notice's subjects the learner already knows well, whose basics the plan skips",
           }),
-        level: ownLevelSchema.nullable(),
+        level: ownLevelSchema.nullable().default(null),
         question: z.literal("level"),
       })
       .strict(),
