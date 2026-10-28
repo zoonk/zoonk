@@ -21,7 +21,6 @@ import {
 import { withQuery } from "@/lib/with-query";
 import { findAlternativeStudyBlock } from "@zoonk/core/sessions/alternative";
 import { getStudyBlock } from "@zoonk/core/sessions/block";
-import { getDayBlockScreen } from "@zoonk/core/sessions/day-block";
 import {
   type NextStopFacts,
   type SessionPageView,
@@ -54,7 +53,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 function isQuestionBlock(block: DayStep): boolean {
-  return block.kind !== "learn" && getDayBlockScreen(block, { lessonReady: null }) === "session";
+  return block.kind !== "learn" && block.screen === "session";
 }
 
 function SessionMain({ children }: { children: React.ReactNode }) {

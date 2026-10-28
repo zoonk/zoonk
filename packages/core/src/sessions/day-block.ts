@@ -61,11 +61,15 @@ export type DayWork = Omit<DayBlockRef, "flags" | "checkpoint"> &
       | null;
   };
 
+export const dayBlockScreenSchema = z.enum(["session", "lesson", "challenge", "essay", "unknown"]);
+
+export type DayBlockScreen = z.infer<typeof dayBlockScreenSchema>;
+
 /** Unknown readiness must go through the learner's action before navigating to a player. */
 export function getDayBlockScreen(
   block: Pick<DayWork, "kind" | "lessonId">,
   { lessonReady }: { lessonReady: boolean | null },
-): "session" | "lesson" | "challenge" | "essay" | "unknown" {
+): DayBlockScreen {
   if (block.kind === "learn") {
     if (lessonReady === null) {
       return "unknown";
@@ -79,6 +83,32 @@ export function getDayBlockScreen(
   }
 
   return block.kind === "produce" ? "essay" : "session";
+}
+
+/**
+ * Where a block plays as far as a read knows its lesson: by the lesson's state when the read has it
+ * (`lessonStates`), `unknown` for a lesson it didn't read, and on the session screen for a step
+ * whose lesson the plan hasn't picked yet.
+ */
+export function getBlockScreen(
+  block: Pick<DayWork, "kind" | "lessonId">,
+  lessonStates?: ReadonlyMap<string, { status: string }>,
+): DayBlockScreen {
+  const state = block.lessonId ? lessonStates?.get(block.lessonId) : undefined;
+  const lessonReady = block.lessonId && !state ? null : state?.status === "ready";
+
+  return getDayBlockScreen(block, { lessonReady });
+}
+
+/** The day with where each block plays by its lessons' states, once a read has them. */
+export function withLessonScreens<Day extends DayView>(
+  day: Day,
+  lessonStates: ReadonlyMap<string, { status: string }>,
+): Day {
+  return {
+    ...day,
+    blocks: day.blocks.map((block) => ({ ...block, screen: getBlockScreen(block, lessonStates) })),
+  };
 }
 
 export function toDayBlockRef(block: DayWork): DayBlockRef {

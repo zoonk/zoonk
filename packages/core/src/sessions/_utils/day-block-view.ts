@@ -3,6 +3,7 @@ import { getPlannedQuestions } from "../../checkpoints/checkpoint-rules";
 import { type BlockCheckpoint, getBlockItemIds, readBlockPayload } from "../block-payload";
 import { getStoredBlockWait } from "../block-wait";
 import { type BlockOutcome, EMPTY_OUTCOME, estimateBrainPower } from "../brain-power";
+import { getBlockScreen } from "../day-block";
 import { type DayBlockView } from "../day-view";
 
 /** Planned blocks lack database ids until persistence. */
@@ -109,6 +110,7 @@ export function toDayBlockView({
     questions: waitsForQuestions ? getPlannedQuestions(itemIds.length) : itemIds.length,
     refresh: payload.refresh,
     reinforcement: payload.reinforcement,
+    screen: getBlockScreen(block),
     status: block.status,
     subject,
     title: payload.title ?? payload.capsules[0]?.title ?? null,

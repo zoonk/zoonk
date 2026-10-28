@@ -12,7 +12,11 @@ import {
 import { type MistakeAvailability } from "@zoonk/core/mistakes/contract";
 import { listCurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
 import { getBeltLevel } from "@zoonk/core/progress/get-belt-level";
-import { type DayBlockRef, getDayBlockScreen, toDayBlockRef } from "@zoonk/core/sessions/day-block";
+import {
+  type DayBlockRef,
+  type DayBlockScreen,
+  toDayBlockRef,
+} from "@zoonk/core/sessions/day-block";
 import { type LanguageTodayView } from "@zoonk/core/view-models/language/contract";
 import { getLanguageTodayView } from "@zoonk/core/view-models/language/today";
 import { getPlanTabView } from "@zoonk/core/view-models/plan/get";
@@ -25,7 +29,7 @@ import {
 import { type TodaySyllabus } from "@zoonk/learn/today";
 
 /** Worked out here with core's rules, so the browser carries them with the step instead of building refs. */
-type TodayStep = { ref: DayBlockRef; screen: ReturnType<typeof getDayBlockScreen> };
+type TodayStep = { ref: DayBlockRef; screen: DayBlockScreen };
 
 export type TodayScreenData = {
   brainPower: number | null;
@@ -126,20 +130,6 @@ async function loadNotices(goalId: string): Promise<TodayScreenData["notices"]> 
   };
 }
 
-/** A lesson Today holds no readiness for goes through the learner's action first (`unknown`). */
-function toTodayStep({
-  block,
-  lessonStatus,
-}: {
-  block: TodayView["session"]["blocks"][number];
-  lessonStatus: TodayView["lessonStatus"];
-}): TodayStep {
-  const status = block.lessonId ? lessonStatus[block.lessonId] : undefined;
-  const lessonReady = block.lessonId && !status ? null : status === "ready";
-
-  return { ref: toDayBlockRef(block), screen: getDayBlockScreen(block, { lessonReady }) };
-}
-
 /** Only reads: a day not opened yet is shown as it will open, and opening it is the learner's own tap. */
 export async function loadTodayScreen(): Promise<TodayScreenResult> {
   const result = await getTodayView({});
@@ -163,9 +153,10 @@ export async function loadTodayScreen(): Promise<TodayScreenResult> {
       getBeltLevel(),
     ]);
 
-  const steps = today.session.blocks.map((block) =>
-    toTodayStep({ block, lessonStatus: today.lessonStatus }),
-  );
+  const steps = today.session.blocks.map((block) => ({
+    ref: toDayBlockRef(block),
+    screen: block.screen,
+  }));
 
   return {
     data: {

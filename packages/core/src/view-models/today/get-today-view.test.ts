@@ -238,6 +238,23 @@ describe(getTodayView, () => {
     });
   });
 
+  it("says where each lesson plays: the player once it's written, the session screen before", async () => {
+    const { lessons } = await setup();
+    const [written, unwritten] = lessons;
+
+    if (!written || !unwritten) {
+      throw new Error("Expected two lessons");
+    }
+
+    await prisma.lesson.update({ data: { contentStatus: "completed" }, where: { id: written.id } });
+
+    const today = await readReadyToday();
+    const screens = new Map(today?.session.blocks.map((block) => [block.lessonId, block.screen]));
+
+    expect(screens.get(written.id)).toBe("lesson");
+    expect(screens.get(unwritten.id)).toBe("session");
+  });
+
   it("counts no days once the goal's date passed, and says it came with lessons left", async () => {
     const user = await userFixture();
 

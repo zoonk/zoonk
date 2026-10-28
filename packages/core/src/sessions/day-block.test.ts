@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   type DayWork,
   dayBlockRefSchema,
+  getBlockScreen,
   getDayBlockScreen,
   resolveDayBlock,
   toDayBlockRef,
@@ -49,6 +50,19 @@ describe("day work selected before a session exists", () => {
     );
 
     expect(getDayBlockScreen(lesson({ kind: "produce" }), { lessonReady: null })).toBe("essay");
+  });
+
+  it("plays a lesson by the state a read has for it, and a lesson the plan hasn't picked on the session screen", () => {
+    const states = new Map([
+      [LESSON, { status: "ready" }],
+      [OTHER_LESSON, { status: "generating" }],
+    ]);
+
+    expect(getBlockScreen(lesson(), states)).toBe("lesson");
+    expect(getBlockScreen(lesson({ lessonId: OTHER_LESSON }), states)).toBe("session");
+    expect(getBlockScreen(lesson())).toBe("unknown");
+    expect(getBlockScreen(lesson({ lessonId: null }))).toBe("session");
+    expect(getBlockScreen(lesson({ kind: "review", lessonId: null }))).toBe("session");
   });
 
   it("resolves the same lesson after its position changes", () => {

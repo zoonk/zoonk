@@ -1,4 +1,4 @@
-import { dayBlockRefSchema } from "@zoonk/core/sessions/day-block";
+import { dayBlockRefSchema, dayBlockScreenSchema } from "@zoonk/core/sessions/day-block";
 import { StudyBlockKind, StudyBlockStatus } from "@zoonk/db";
 import { z } from "zod";
 import { studyCheckpointSchema } from "./checkpoint-evidence";
@@ -75,6 +75,10 @@ export const studyBlockSchema = z
           "Content's \"Review\" (`POST /v1/goals/{goalId}/refresh-practice`): bonus practice on the goal's skills that are fading or due today",
       }),
     reinforcement: z.boolean().meta({ description: "A short lesson before a boss rematch" }),
+    screen: dayBlockScreenSchema.meta({
+      description:
+        "Where a tap on the block opens it. `session`: the session screen, which plays questions and shows the wait of a lesson not written yet (or not picked yet). `lesson`: the lesson player, since its lesson is written. `challenge`: its own screen (a checkpoint or a mock), on its intro while it hasn't started. `essay`: the writing screen. `unknown`: a lesson block whose lesson this read didn't check (only Today checks them): ask for its lesson's readiness (`GET /v1/library/lessons/{lessonId}/readiness`) before opening it",
+    }),
     status: z.enum(StudyBlockStatus),
     subject: z
       .string()

@@ -3,6 +3,7 @@ import { type StudyWeek } from "../../progress/_utils/load-study-week";
 import { type BlockCheckpoint } from "../block-payload";
 import { type CapsuleFormat } from "../capsules";
 import { type WeekDay } from "../daily-goal";
+import { type DayBlockScreen } from "../day-block";
 import { type ExtraTime } from "../extra-time";
 import { type DailyTimeLimitStatus } from "../get-daily-time-limit";
 import { type Mission } from "../missions";
@@ -49,6 +50,8 @@ export type StudyBlockView = Pick<
   /** Bonus practice on fading or due skills, as offered by Content's Review. */
   refresh: boolean;
   reinforcement: boolean;
+  /** Where the block plays (`getBlockScreen`); only Today reads the day's lessons, so elsewhere a lesson block is `unknown`. */
+  screen: DayBlockScreen;
   /** Short subject name; null for mixed blocks and goals with fewer than two subjects. */
   subject: string | null;
   title: string | null;
