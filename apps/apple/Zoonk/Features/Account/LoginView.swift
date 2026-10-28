@@ -20,6 +20,7 @@ struct LoginView: View {
               "Title above the native sign-in methods; new learners create an account here too"
           )
           .font(.title2.bold())
+          .multilineTextAlignment(.center)
 
           Text(
             "Keep your plan and progress on all your devices.",
