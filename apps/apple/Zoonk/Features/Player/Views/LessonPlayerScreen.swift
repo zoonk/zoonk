@@ -81,7 +81,29 @@ private struct LessonPlayerContent: View {
             }
           }
           .navigationBarTitleDisplayMode(.inline)
-          .toolbar { toolbar(hasVerticalBar: hasVerticalBar) }
+          .taskClose { closeButton }
+          .toolbar {
+            if !hasVerticalBar, let progress {
+              ToolbarItem(placement: .principal) {
+                progressBar(progress)
+                  .frame(minWidth: 120, idealWidth: 240)
+              }
+            }
+          }
+          .taskOptions(
+            isShown: store.screen == .playing && store.state != nil,
+            label: Text("Screen options", tableName: "Player", comment: "The lesson's menu")
+          ) {
+            if let state = store.state {
+              screenMenuItems(state)
+            }
+          }
+          .taskAction(
+            isShown: tutor.panel != nil && store.screen == .playing
+              && store.state?.phase != .completed
+          ) {
+            askButton
+          }
       }
     }
     .confirmationDialog(
@@ -182,63 +204,31 @@ private struct LessonPlayerContent: View {
     }
   }
 
-  /// Close and Ask stay in a crowded bar (iPhone Duo's vertical one); the menu's items go to the
-  /// system's overflow menu.
-  @ToolbarContentBuilder
-  private func toolbar(hasVerticalBar: Bool) -> some ToolbarContent {
-    if #available(iOS 27, *) {
-      closeItem.visibilityPriority(.high)
-    } else {
-      closeItem
-    }
-
-    if !hasVerticalBar, let progress {
-      ToolbarItem(placement: .principal) {
-        progressBar(progress)
-          .frame(minWidth: 120, idealWidth: 240)
-      }
-    }
-
-    screenMenu
-
-    if tutor.panel != nil, store.screen == .playing, store.state?.phase != .completed {
-      if #available(iOS 27, *) {
-        askItem.visibilityPriority(.high)
+  private var closeButton: some View {
+    Button {
+      if hasUnsentAnswer {
+        isLeaving = true
       } else {
-        askItem
+        dismiss()
+      }
+    } label: {
+      Label {
+        Text("Close lesson", tableName: "Player", comment: "Button that closes the lesson")
+      } icon: {
+        Image(systemName: "xmark")
       }
     }
+    .keyboardShortcut(.cancelAction)
   }
 
-  private var closeItem: some ToolbarContent {
-    ToolbarItem(placement: .cancellationAction) {
-      Button {
-        if hasUnsentAnswer {
-          isLeaving = true
-        } else {
-          dismiss()
-        }
-      } label: {
-        Label {
-          Text("Close lesson", tableName: "Player", comment: "Button that closes the lesson")
-        } icon: {
-          Image(systemName: "xmark")
-        }
-      }
-      .keyboardShortcut(.cancelAction)
-    }
-  }
-
-  private var askItem: some ToolbarContent {
-    ToolbarItem(placement: .primaryAction) {
-      Button {
-        store.ask(isCompact: horizontalSizeClass == .compact)
-      } label: {
-        Label {
-          Text("Ask", tableName: "Player", comment: "Opens the panel to ask about the lesson")
-        } icon: {
-          Image(systemName: "bubble.left.and.text.bubble.right")
-        }
+  private var askButton: some View {
+    Button {
+      store.ask(isCompact: horizontalSizeClass == .compact)
+    } label: {
+      Label {
+        Text("Ask", tableName: "Player", comment: "Opens the panel to ask about the lesson")
+      } icon: {
+        Image(systemName: "bubble.left.and.text.bubble.right")
       }
     }
   }
@@ -262,30 +252,6 @@ private struct LessonPlayerContent: View {
     }
 
     return LessonGuestEnding(lessonTitle: lesson.title, fit: store.fit)
-  }
-
-  /// The lesson's menu: the system's overflow menu on iOS 27, its own "…" menu before.
-  @ToolbarContentBuilder
-  private var screenMenu: some ToolbarContent {
-    if store.screen == .playing, let state = store.state {
-      if #available(iOS 27, *) {
-        ToolbarOverflowMenu {
-          screenMenuItems(state)
-        }
-      } else {
-        ToolbarItem(placement: .primaryAction) {
-          Menu {
-            screenMenuItems(state)
-          } label: {
-            Label {
-              Text("Screen options", tableName: "Player", comment: "The lesson's menu")
-            } icon: {
-              Image(systemName: "ellipsis")
-            }
-          }
-        }
-      }
-    }
   }
 
   @ViewBuilder
