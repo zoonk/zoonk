@@ -1,39 +1,163 @@
 import SwiftUI
 
-/// The end of a goal's onboarding: "Building your plan" while the goal's run writes it, then the plan created, with Start opening the first day on Today.
+/// The end of a goal's onboarding: "Building your plan" while the goal's run writes it, then the plan itself, shown only once the plan says it's ready. An exam's plan first waits for research to read its official documents, so the learner sees the plan they follow.
 struct PlanStep: View {
   let view: GoalOnboarding
 
-  @State private var isBuilt = false
+  @Environment(OnboardingStore.self) private var onboarding
+  @Environment(PlanStore.self) private var plans
+  /// Once the wait shows, reading the plan again never swaps it for a spinner.
+  @State private var isWaiting = false
+
+  /// How often the reveal checks an exam's documents are read.
+  private static let noticeCheck = Duration.seconds(3)
 
   var body: some View {
-    if isBuilt || view.generationId == nil {
-      PlanCreated(view: view)
-    } else if let generationID = view.generationId {
-      GenerationWaitView(
-        title: LocalizedStringResource(
-          "Building your plan", table: "Onboarding", comment: "Title while a goal's plan is built"),
-        description: LocalizedStringResource(
-          "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two.",
-          table: "Onboarding", comment: "Shown while a goal's plan is built"),
-        generationID: generationID,
-        kind: .curriculum
-      ) {
-        isBuilt = true
+    let plan = plans.plan(goalId: view.goal.id)
+
+    Group {
+      switch plan.value?.plan {
+      case let ready? where ready.ready && ready.notice != .reading:
+        PlanReveal(view: view, plan: ready)
+      case let reading? where reading.ready:
+        NoticeReadingView(plan: reading)
+          .task {
+            while !Task.isCancelled {
+              try? await Task.sleep(for: Self.noticeCheck)
+              await plan.refresh()
+            }
+          }
+      default:
+        switch (plan.state, isWaiting) {
+        case (.idle, false), (.loading, false):
+          ProgressView()
+        default:
+          building(plan)
+            .onAppear { isWaiting = true }
+        }
       }
+    }
+    .loads(plan, refreshable: false)
+  }
+
+  private func building(_ plan: Resource<PlanRead>) -> some View {
+    GenerationWaitView(
+      title: LocalizedStringResource(
+        "Building your plan", table: "Onboarding", comment: "Title while a goal's plan is built"),
+      description: LocalizedStringResource(
+        "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two.",
+        table: "Onboarding", comment: "Shown while a goal's plan is built"),
+      generationID: view.generationId,
+      kind: .curriculum,
+      readGenerationID: {
+        let goal = onboarding.onboarding(goalID: view.goal.id)
+        await goal.refresh()
+        return goal.value?.generationId
+      },
+      restart: { try await onboarding.writeGoal(goalID: view.goal.id) },
+      readResult: { await readUntilReady(plan) })
+  }
+
+  /// The run saved the plan: read it, again a moment later while the save lands.
+  private func readUntilReady(_ plan: Resource<PlanRead>) async -> Bool {
+    for attempt in 0..<5 {
+      await plan.refresh()
+
+      if plan.value?.plan.ready == true {
+        return true
+      }
+
+      do {
+        try await Task.sleep(for: .seconds(attempt + 1))
+      } catch {
+        return true
+      }
+    }
+
+    return false
+  }
+}
+
+/// An exam's plan while research reads its official documents: the plan from what the learner said is done, and the documents' subjects, topics and dates go into it before they see it.
+private struct NoticeReadingView: View {
+  let plan: GoalPlan
+
+  var body: some View {
+    List {
+      StepHeader(title: title, description: description)
+
+      Section {
+        LabeledContent {
+          Image(systemName: "checkmark")
+            .fontWeight(.semibold)
+            .foregroundStyle(.success)
+            .accessibilityLabel(
+              Text("Done", tableName: "Onboarding", comment: "A finished step of a wait"))
+        } label: {
+          Text(
+            "Your plan, from what you told us", tableName: "Onboarding",
+            comment: "The done step while an exam's official documents are read")
+        }
+
+        LabeledContent {
+          ProgressView()
+        } label: {
+          Text(
+            "Reading the official documents", tableName: "Onboarding",
+            comment: "The step going while an exam's official documents are read")
+        }
+      }
+    }
+  }
+
+  /// While the next edition's documents aren't out, the plan follows the last edition's.
+  private var title: Text {
+    plan.schedule.targetDateEstimated
+      ? Text(
+        "Reading the last edition's official documents", tableName: "Onboarding",
+        comment: "Title while the last edition of an exam's official documents is read")
+      : Text(
+        "Reading the exam's official documents", tableName: "Onboarding",
+        comment: "Title while an exam's official documents are read")
+  }
+
+  private var description: Text {
+    if plan.schedule.targetDateEstimated {
+      return Text(
+        "The next edition's documents aren't out yet, so your plan follows the last one's subjects and topics. We'll tell you when the new ones are out. This usually takes a few minutes.",
+        tableName: "Onboarding", comment: "While the last edition of an exam's documents is read")
+    }
+
+    switch plan.examDocument {
+    case .notice:
+      return Text(
+        "Your plan will follow the notice's subjects, topics and dates. This usually takes a few minutes.",
+        tableName: "Onboarding", comment: "While an exam's public notice is read")
+    case .guide:
+      return Text(
+        "Your plan will follow the official guide's parts, topics and dates. This usually takes a few minutes.",
+        tableName: "Onboarding", comment: "While a language certificate's official guide is read")
     }
   }
 }
 
-/// "Plan created": the goal, what the plan asks of a day, and Start.
-private struct PlanCreated: View {
+/// "Plan created", as the plan's page: the goal and its facts in one line, Start (Return) and Adjust, then the phases in time, the goal's structure or its path, and the one thing the plan wants the learner to know.
+private struct PlanReveal: View {
   let view: GoalOnboarding
+  let plan: GoalPlan
 
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(PlanStore.self) private var plans
+  @State private var adjusting: AdjustPlanSheet.Section?
 
   var body: some View {
-    Form {
+    let goal = learnerGoal
+    let context = PlanContext(goal: goal, plan: plan, adjust: { adjusting = $0 })
+    let syllabus = plans.syllabus(goalId: goal.id)
+    let structure = syllabus.value.flatMap { $0.hasSubjectPages ? $0 : nil }
+
+    List {
       Section {
         VStack(alignment: .leading, spacing: 6) {
           Label {
@@ -46,26 +170,40 @@ private struct PlanCreated: View {
           .font(.subheadline.weight(.semibold))
           .foregroundStyle(.success)
 
-          Text(view.goal.title)
+          Text(goal.title)
             .font(.title2.bold())
             .accessibilityAddTraits(.isHeader)
 
-          Text(facts)
+          Text(facts.joined(separator: " · "))
+            .font(.subheadline)
+            .monospacedDigit()
             .foregroundStyle(.secondary)
         }
         .listRowBackground(Color.clear)
       }
 
       Section {
-        Button {
-          router.showRoot(of: .today)
-        } label: {
-          Text("Start", tableName: "Onboarding", comment: "Opens Today with the plan's first day")
+        VStack(spacing: 12) {
+          Button {
+            router.showRoot(of: .today)
+          } label: {
+            Text("Start", tableName: "Onboarding", comment: "Opens Today with the plan's first day")
+              .frame(maxWidth: .infinity)
+          }
+          .buttonStyle(.mainAction)
+          .keyboardShortcut(.defaultAction)
+
+          Button {
+            adjusting = .top
+          } label: {
+            Text(
+              "Adjust", tableName: "Onboarding", comment: "Opens the plan's settings to change it"
+            )
             .frame(maxWidth: .infinity)
+          }
+          .buttonStyle(.bordered)
         }
-        .buttonStyle(.mainAction)
         .controlSize(.large)
-        .keyboardShortcut(.defaultAction)
         .listRowInsets(EdgeInsets())
         .listRowBackground(Color.clear)
       } footer: {
@@ -84,20 +222,91 @@ private struct PlanCreated: View {
           }
         }
       }
+
+      PlanRoadmapSection(context: context, structure: structure)
+
+      if plan.notice == .usual {
+        Section {
+        } footer: {
+          Text(
+            "This plan follows the exam's usual structure while we finish reading its official documents. If they change your plan, you'll decide on Today.",
+            tableName: "Onboarding",
+            comment: "Under a plan revealed before its exam's official documents were read")
+        }
+      }
+
+      PlanSuggestionSection(context: context)
+
+      if let structure {
+        PlanSyllabusSection(goalKind: goal.kind, syllabus: structure)
+      } else {
+        PlanPathSection(context: context)
+      }
+    }
+    .loads(syllabus, refreshable: false)
+    .sheet(item: $adjusting) { section in
+      AdjustPlanSheet(goal: goal, plan: plan, section: section)
     }
   }
 
-  /// The plan's day and date: "15 minutes a day · until November 8, 2027".
-  private var facts: String {
-    let daily = String(
-      localized: LocalizedStringResource(
-        "\(Duration.seconds(view.goal.dailyMinutes * 60), format: .units(allowed: [.hours, .minutes], width: .wide)) a day",
-        table: "Onboarding", comment: "How long the learner studies each day"))
+  /// The goal as the plan's sections read it; the summary has it only once it refreshes.
+  private var learnerGoal: LearnerGoal {
+    LearnerGoal(
+      dailyMinutes: plan.schedule.dailyMinutes,
+      id: view.goal.id,
+      kind: LearnerGoal.Kind(rawValue: view.goal.kind.rawValue) ?? .learn,
+      status: .active,
+      targetDate: plan.schedule.targetDate,
+      title: view.goal.title)
+  }
 
-    guard let date = view.goal.targetDate.flatMap(UnderstoodRows.day) else {
-      return daily
+  /// How long until the goal (or when it ends at this pace), the time a day and the study time it adds up to: "About 375 days · 30 min a day · about 120 hr of study".
+  private var facts: [String] {
+    let schedule = plan.schedule
+    var facts: [String] = []
+
+    if let targetDate = schedule.targetDate, targetDate >= plan.today {
+      let days = PlanDate.days(from: plan.today, to: targetDate)
+      facts.append(
+        schedule.targetDateEstimated
+          ? String(
+            localized: "About \(days) days", table: "Onboarding",
+            comment: "How long until a goal's estimated date")
+          : String(
+            localized: "\(days) days", table: "Onboarding", comment: "How long until a goal's date")
+      )
+    } else if schedule.targetDate == nil, let endDate = plan.estimate.endDate {
+      facts.append(
+        String(
+          localized: "Until about \(PlanDate.text(endDate, today: plan.today))",
+          table: "Onboarding", comment: "When a plan without a date ends at this pace"))
     }
 
-    return [daily, date.formatted(.dateTime.day().month(.wide).year())].joined(separator: " · ")
+    facts.append(
+      String(
+        localized: "\(planDurationText(minutes: Double(schedule.dailyMinutes))) a day",
+        table: "Onboarding", comment: "How long the learner studies each day"))
+
+    if let study = studyMinutes, study > 0 {
+      facts.append(
+        String(
+          localized: "about \(planDurationText(minutes: study)) of study", table: "Onboarding",
+          comment: "The study time a plan adds up to"))
+    }
+
+    return facts
+  }
+
+  /// What the plan studies before the date, or all of it without one; to five minutes under two hours and to the hour above, as "about" says.
+  private var studyMinutes: Double? {
+    guard let numbers = plan.numbers else {
+      return nil
+    }
+
+    let minutes =
+      numbers.context.targetDate == nil
+      ? numbers.scheduledMinutes : (numbers.beforeDeadlineMinutes ?? 0)
+
+    return minutes >= 120 ? (minutes / 60).rounded() * 60 : (minutes / 5).rounded() * 5
   }
 }

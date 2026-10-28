@@ -158,7 +158,7 @@ private struct GoalStartFlow: View {
   private var draftPage: some View {
     switch draft {
     case .sending(let goal):
-      UnderstandingWaitView(goal: goal, generationID: nil) {}
+      UnderstandingWaitView(goal: goal, generationID: nil) { true }
     case .draft(let value, let sentHere):
       DraftView(
         draft: value,
@@ -221,9 +221,9 @@ private struct DraftView: View {
   var body: some View {
     switch draft.status {
     case .understanding:
-      UnderstandingWaitView(goal: draft.prompt, generationID: draft.generationId) {
-        await reload()
-      }
+      // However the run ended, the draft says where the reading is.
+      UnderstandingWaitView(
+        goal: draft.prompt, generationID: draft.generationId, readResult: reload)
     case .failed:
       failed
     case .understood:
@@ -244,29 +244,9 @@ private struct DraftView: View {
 
       TypedGoalSection(goal: draft.prompt)
 
-      Section {
-        Label {
-          VStack(alignment: .leading, spacing: 4) {
-            Text("This didn't finish", tableName: "Onboarding", comment: "A run that failed")
-              .font(.headline)
-            Text(
-              "Something went wrong on our side.", tableName: "Onboarding",
-              comment: "Why a run failed")
-          }
-        } icon: {
-          Image(systemName: "exclamationmark.triangle")
-            .foregroundStyle(.secondary)
-        }
-
-        if retryError?.needsAccount != true {
-          Button {
-            Task { await retry() }
-          } label: {
-            Text("Try again", tableName: "Onboarding", comment: "Starts a failed run again")
-          }
-          .disabled(isRetrying)
-        }
-      }
+      GenerationFailureSection(
+        failure: .generation, isActing: isRetrying,
+        act: retryError?.needsAccount == true ? nil : { Task { await retry() } })
 
       if let retryError {
         GoalErrorSection(error: retryError)
@@ -288,18 +268,24 @@ private struct DraftView: View {
     }
   }
 
-  /// The run's stream ended: read the draft. A stream that ended before the draft was saved reads it again a moment later.
-  private func reload() async {
+  /// The run ended: read the draft, whether it was read or failed. A run that ended before the draft was saved reads it again a moment later.
+  private func reload() async -> Bool {
     for attempt in 0..<5 {
       if let fresh = try? await onboarding.understanding(id: draft.id),
         fresh.status != .understanding
       {
         onDraft(fresh)
-        return
+        return true
       }
 
-      try? await Task.sleep(for: .seconds(attempt + 1))
+      do {
+        try await Task.sleep(for: .seconds(attempt + 1))
+      } catch {
+        return true
+      }
     }
+
+    return false
   }
 }
 
@@ -323,7 +309,7 @@ private struct UnderstandingWaitView: View {
   let goal: String
   /// The run reading them; nil right after sending, before the draft exists.
   let generationID: String?
-  let onEnd: () async -> Void
+  let readResult: () async -> Bool
 
   var body: some View {
     GenerationWaitView(
@@ -335,7 +321,7 @@ private struct UnderstandingWaitView: View {
         comment: "Shown while a typed goal is read"),
       generationID: generationID,
       kind: .understanding,
-      onEnd: onEnd
+      readResult: readResult
     ) {
       TypedGoalSection(goal: goal)
     }

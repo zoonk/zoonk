@@ -60,6 +60,14 @@ final class OnboardingStore {
     return try await api.understanding(id: id, token: token)
   }
 
+  func generationStatus(id: String) async throws -> GenerationStatus {
+    guard let token = session.authenticatedSession?.bearerToken else {
+      throw CancellationError()
+    }
+
+    return try await api.generationStatus(id: id, token: token)
+  }
+
   func readAgain(id: String) async throws -> OnboardingDraft {
     try await cache.onboardingWrite { [api] identity in
       try await api.readAgain(id: id, token: identity.bearerToken)

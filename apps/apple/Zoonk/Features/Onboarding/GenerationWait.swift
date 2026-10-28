@@ -187,19 +187,45 @@ struct GenerationWait: Equatable, Sendable {
   }
 }
 
-/// The wait while a run works: its phases as a checklist, with the one going now marked by a spinner. Follows the run's event stream, and a run it hands over to; `onEnd` runs when the content is ready or the stream ends, so the caller reads the result. Without a run yet (the words were just sent), the first phase shows as going.
+/// Why a wait stopped, as main's waits say it: the run never appeared, the updates stopped coming
+/// although the run may still be working, or the run itself failed.
+enum GenerationFailure: Equatable, Sendable {
+  case notStarted
+  case connection
+  case generation
+}
+
+/// The wait while a run works: its phases as a checklist, with the one going now marked by a spinner. Follows the run's event stream, and a run it hands over to, then `readResult` reads what it made. It never gives up silently: no run, a lost stream or a stopped run each say so, with the way out. Without a run yet (the words were just sent), the first phase shows as going.
 struct GenerationWaitView<Leading: View>: View {
   let title: LocalizedStringResource
   let description: LocalizedStringResource
   let generationID: String?
   let kind: GenerationWait.Kind
-  let onEnd: () async -> Void
+  /// Asks for the run's id while the caller doesn't have it: a run saves it a few seconds after it starts.
+  var readGenerationID: (() async -> String?)?
+  /// Starts the run again after it stopped or never started (a POST the learner's tap makes), returning the new run's id. Without it, a stopped run is the caller's to read.
+  var restart: (() async throws -> String)?
+  /// Reads what the run made once it says it's done; false while it isn't there, which shows as lost updates.
+  let readResult: () async -> Bool
   @ViewBuilder let leading: () -> Leading
 
   @Environment(OnboardingStore.self) private var onboarding
   @State private var wait: GenerationWait?
+  @State private var failure: GenerationFailure?
+  /// The run read while the caller had none, or started again.
+  @State private var followedID: String?
+  /// Counts reconnections, so following the same run again opens its stream again.
+  @State private var connection = 0
+  @State private var isRestarting = false
+
+  private struct Following: Equatable {
+    let id: String?
+    let connection: Int
+  }
 
   var body: some View {
+    let runID = followedID ?? generationID
+
     List {
       StepHeader(title: Text(title), description: Text(description))
 
@@ -212,7 +238,9 @@ struct GenerationWaitView<Leading: View>: View {
             case .waiting:
               EmptyView()
             case .working:
-              ProgressView()
+              if failure == nil {
+                ProgressView()
+              }
             case .done:
               Image(systemName: "checkmark")
                 .fontWeight(.semibold)
@@ -226,14 +254,21 @@ struct GenerationWaitView<Leading: View>: View {
           }
         }
       }
-    }
-    .task(id: generationID) {
-      guard let generationID else {
-        return
-      }
 
-      await follow(generationID)
-      await onEnd()
+      if let failure {
+        GenerationFailureSection(
+          failure: failure, isActing: isRestarting,
+          act: failure == .connection || restart != nil ? { retry(failure) } : nil)
+      }
+    }
+    .task(id: Following(id: runID, connection: connection)) {
+      failure = nil
+
+      if let runID {
+        await finish(await follow(runID))
+      } else {
+        await readMissingID()
+      }
     }
   }
 
@@ -242,7 +277,15 @@ struct GenerationWaitView<Leading: View>: View {
     wait ?? GenerationWait(kind: kind).started
   }
 
-  private func follow(_ id: String) async {
+  private enum Ending {
+    case ready
+    /// The stream ended without saying so: the run's status says how it went.
+    case ended(String)
+    /// The stream broke and gave up reconnecting: the run may still be working.
+    case lost
+  }
+
+  private func follow(_ id: String) async -> Ending {
     var current = GenerationWait(kind: kind).started
     wait = current
 
@@ -252,16 +295,89 @@ struct GenerationWaitView<Leading: View>: View {
         wait = current
 
         if let joined = current.joinedGenerationID {
-          await follow(joined)
-          return
+          return await follow(joined)
         }
 
         if current.isDone {
-          return
+          return .ready
         }
       }
+
+      return .ended(id)
     } catch {
-      // The caller reads the result either way; a failed stream shows as the run's status.
+      return .lost
+    }
+  }
+
+  private func finish(_ ending: Ending) async {
+    switch ending {
+    case .ready:
+      await read()
+    case .lost:
+      failure = .connection
+    case .ended(let id):
+      switch try? await onboarding.generationStatus(id: id) {
+      case .completed:
+        await read()
+      case .stopped where restart != nil:
+        failure = .generation
+      case .stopped:
+        await read()
+      case .working, nil:
+        failure = .connection
+      }
+    }
+  }
+
+  private func read() async {
+    if await !readResult(), !Task.isCancelled {
+      failure = .connection
+    }
+  }
+
+  private func readMissingID() async {
+    guard let readGenerationID else {
+      return
+    }
+
+    // A run saves its id within a few seconds; with none after about 45 seconds, it didn't start.
+    for _ in 0..<22 {
+      if let id = await readGenerationID() {
+        followedID = id
+        return
+      }
+
+      do {
+        try await Task.sleep(for: .seconds(2))
+      } catch {
+        return
+      }
+    }
+
+    if restart != nil {
+      failure = .notStarted
+    }
+  }
+
+  private func retry(_ failure: GenerationFailure) {
+    guard failure != .connection, let restart else {
+      connection += 1
+      return
+    }
+
+    isRestarting = true
+
+    Task {
+      defer { isRestarting = false }
+
+      do {
+        followedID = try await restart()
+        connection += 1
+      } catch is CancellationError {
+        // The write is obsolete: the learner who asked is gone, so nothing shows.
+      } catch {
+        self.failure = .notStarted
+      }
     }
   }
 }
@@ -272,10 +388,82 @@ extension GenerationWaitView where Leading == EmptyView {
     description: LocalizedStringResource,
     generationID: String?,
     kind: GenerationWait.Kind,
-    onEnd: @escaping () async -> Void
+    readGenerationID: (() async -> String?)? = nil,
+    restart: (() async throws -> String)? = nil,
+    readResult: @escaping () async -> Bool
   ) {
     self.init(
       title: title, description: description, generationID: generationID, kind: kind,
-      onEnd: onEnd, leading: { EmptyView() })
+      readGenerationID: readGenerationID, restart: restart, readResult: readResult,
+      leading: { EmptyView() })
+  }
+}
+
+/// Why a run stopped, with the way out: reconnecting to a run that may still be working, or
+/// starting one again that failed or never started. Without `act`, there's nothing to tap.
+struct GenerationFailureSection: View {
+  let failure: GenerationFailure
+  var isActing = false
+  let act: (() -> Void)?
+
+  var body: some View {
+    Section {
+      Label {
+        VStack(alignment: .leading, spacing: 4) {
+          title
+            .font(.headline)
+          description
+        }
+      } icon: {
+        Image(
+          systemName: failure == .connection ? "wifi.exclamationmark" : "exclamationmark.triangle"
+        )
+        .foregroundStyle(.secondary)
+      }
+
+      if let act {
+        Button(action: act) {
+          action
+        }
+        .disabled(isActing)
+      }
+    }
+  }
+
+  private var title: Text {
+    switch failure {
+    case .connection:
+      Text(
+        "Connection lost", tableName: "Onboarding", comment: "A wait that stopped getting updates")
+    case .generation:
+      Text("This didn't finish", tableName: "Onboarding", comment: "A run that failed")
+    case .notStarted:
+      Text("This didn't start", tableName: "Onboarding", comment: "A run that never started")
+    }
+  }
+
+  private var description: Text {
+    switch failure {
+    case .connection:
+      Text(
+        "We stopped getting updates. It may still be working.", tableName: "Onboarding",
+        comment: "Why a wait stopped getting updates")
+    case .generation:
+      Text(
+        "Something went wrong on our side.", tableName: "Onboarding", comment: "Why a run failed")
+    case .notStarted:
+      Text(
+        "We couldn't get this started.", tableName: "Onboarding",
+        comment: "Why a run never started")
+    }
+  }
+
+  private var action: Text {
+    switch failure {
+    case .connection:
+      Text("Reconnect", tableName: "Onboarding", comment: "Follows a run again after lost updates")
+    case .generation, .notStarted:
+      Text("Try again", tableName: "Onboarding", comment: "Starts a failed run again")
+    }
   }
 }

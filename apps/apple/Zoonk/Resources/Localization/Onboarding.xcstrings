@@ -94,6 +94,101 @@
         }
       }
     },
+    "%lld days" : {
+      "comment" : "How long until a goal's date",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Tag"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Tage"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld day"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld days"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld día"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld días"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld jour"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld jours"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld dia"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld dias"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld days · %@ a week" : {
       "comment" : "How many days the learner studies and their time a week",
       "localizations" : {
@@ -516,6 +611,130 @@
         }
       }
     },
+    "about %@ of study" : {
+      "comment" : "The study time a plan adds up to",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "etwa %@ Lernzeit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aproximadamente %@ de estudio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "environ %@ d’étude"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "cerca de %@ de estudo"
+          }
+        }
+      }
+    },
+    "About %lld days" : {
+      "comment" : "How long until a goal's estimated date",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Etwa %lld Tag"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Etwa %lld Tage"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "About %lld day"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "About %lld days"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Aproximadamente %lld día"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Aproximadamente %lld días"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Environ %lld jour"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Environ %lld jours"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Cerca de %lld dia"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Cerca de %lld dias"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Adapts to your answers, about %@" : {
       "comment" : "Level choice detail; the time a quick test takes",
       "localizations" : {
@@ -541,6 +760,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Se adapta às suas respostas, em cerca de %@"
+          }
+        }
+      }
+    },
+    "Adjust" : {
+      "comment" : "Opens the plan's settings to change it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anpassen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajustar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajuster"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajustar"
           }
         }
       }
@@ -947,6 +1195,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Confirmar"
+          }
+        }
+      }
+    },
+    "Connection lost" : {
+      "comment" : "A wait that stopped getting updates",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verbindung unterbrochen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se ha perdido la conexión"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connexion perdue"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conexão perdida"
           }
         }
       }
@@ -3822,6 +4099,93 @@
         }
       }
     },
+    "Reading the exam's official documents" : {
+      "comment" : "Title while an exam's official documents are read",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offizielle Prüfungsunterlagen werden gelesen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leyendo los documentos oficiales del examen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecture des documents officiels de l’examen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lendo os documentos oficiais da prova"
+          }
+        }
+      }
+    },
+    "Reading the last edition's official documents" : {
+      "comment" : "Title while the last edition of an exam's official documents is read",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offizielle Unterlagen der letzten Ausgabe werden gelesen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leyendo los documentos oficiales de la última convocatoria"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecture des documents officiels de la dernière édition"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lendo os documentos oficiais da última edição"
+          }
+        }
+      }
+    },
+    "Reading the official documents" : {
+      "comment" : "The step going while an exam's official documents are read",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offizielle Unterlagen werden gelesen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leyendo los documentos oficiales"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecture des documents officiels"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lendo os documentos oficiais"
+          }
+        }
+      }
+    },
     "Reading your goal" : {
       "comment" : "A step of the wait while a plan is built\nA step of the wait while a typed goal is read",
       "localizations" : {
@@ -3934,6 +4298,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Motivo"
+          }
+        }
+      }
+    },
+    "Reconnect" : {
+      "comment" : "Follows a run again after lost updates",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erneut verbinden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a conectar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reprendre"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reconectar"
           }
         }
       }
@@ -4901,6 +5294,35 @@
         }
       }
     },
+    "The next edition's documents aren't out yet, so your plan follows the last one's subjects and topics. We'll tell you when the new ones are out. This usually takes a few minutes." : {
+      "comment" : "While the last edition of an exam's documents is read",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Unterlagen der nächsten Ausgabe sind noch nicht veröffentlicht. Deshalb richtet sich dein Plan nach den Fächern und Themen der letzten Ausgabe. Wir sagen dir Bescheid, sobald die neuen Unterlagen da sind. Das dauert normalerweise ein paar Minuten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los documentos de la próxima convocatoria aún no se han publicado, así que tu plan sigue las asignaturas y los temas de la última. Te avisaremos cuando se publiquen los nuevos. Esto suele tardar unos minutos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les documents de la prochaine édition ne sont pas encore disponibles. Ton plan suit donc les matières et les thèmes de la dernière édition. On te préviendra quand les nouveaux documents seront disponibles. Cela prend généralement quelques minutes."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O edital da próxima edição ainda não foi publicado, então seu plano segue as matérias e os tópicos do edital anterior. Vamos avisar você quando o novo edital sair. Isso costuma levar alguns minutos."
+          }
+        }
+      }
+    },
     "The notice can have a different exam for each position." : {
       "comment" : "Under the position question",
       "localizations" : {
@@ -5162,6 +5584,35 @@
         }
       }
     },
+    "This didn't start" : {
+      "comment" : "A run that never started",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das wurde nicht gestartet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto no ha empezado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le démarrage a échoué"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isso não começou"
+          }
+        }
+      }
+    },
     "This is the expected date until the notice confirms it." : {
       "comment" : "Under an exam date estimated from past years",
       "localizations" : {
@@ -5187,6 +5638,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Esta é a data prevista até que o edital confirme a data oficial."
+          }
+        }
+      }
+    },
+    "This plan follows the exam's usual structure while we finish reading its official documents. If they change your plan, you'll decide on Today." : {
+      "comment" : "Under a plan revealed before its exam's official documents were read",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Plan folgt dem üblichen Aufbau der Prüfung, während wir die offiziellen Unterlagen fertig lesen. Falls sie deinen Plan ändern, entscheidest du heute darüber."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este plan sigue la estructura habitual del examen mientras terminamos de leer sus documentos oficiales. Si estos hacen que cambie el plan, decidirás qué hacer en Hoy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce plan suit la structure habituelle de l’examen pendant que nous terminons la lecture des documents officiels. Si ces documents changent ton plan, tu décideras quoi faire dans Aujourd’hui."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este plano segue a estrutura habitual da prova enquanto terminamos de ler os documentos oficiais. Se eles mudarem seu plano, você decide o que fazer em Hoje."
           }
         }
       }
@@ -5394,6 +5874,35 @@
         }
       }
     },
+    "Until about %@" : {
+      "comment" : "When a plan without a date ends at this pace",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bis etwa %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hasta aproximadamente %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jusqu’au %@ environ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Até por volta de %@"
+          }
+        }
+      }
+    },
     "Use it at work" : {
       "comment" : "Purpose choice",
       "localizations" : {
@@ -5448,6 +5957,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A gente não pode ajudar com essa meta"
+          }
+        }
+      }
+    },
+    "We couldn't get this started." : {
+      "comment" : "Why a run never started",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das ließ sich nicht starten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hemos podido iniciar esto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas pu démarrer."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível iniciar."
           }
         }
       }
@@ -5564,6 +6102,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não foi possível salvar sua meta. Tente de novo daqui a pouco."
+          }
+        }
+      }
+    },
+    "We stopped getting updates. It may still be working." : {
+      "comment" : "Why a wait stopped getting updates",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir erhalten keine Updates mehr. Es kann trotzdem noch laufen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hemos dejado de recibir actualizaciones. Puede que siga funcionando."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous ne recevons plus de mises à jour. Le processus est peut-être toujours en cours."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paramos de receber atualizações. Talvez ainda esteja funcionando."
           }
         }
       }
@@ -7165,6 +7732,93 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seu plano começa depois do conteúdo básico dessas matérias. Um teste rápido identifica seu nível no restante."
+          }
+        }
+      }
+    },
+    "Your plan will follow the notice's subjects, topics and dates. This usually takes a few minutes." : {
+      "comment" : "While an exam's public notice is read",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan richtet sich nach den Fächern, Themen und Terminen der Ausschreibung. Das dauert normalerweise ein paar Minuten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan seguirá las asignaturas, los temas y las fechas de la convocatoria. Esto suele tardar unos minutos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan suivra les matières, les thèmes et les dates indiqués dans l’avis officiel. Cela prend généralement quelques minutes."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano vai seguir as matérias, os tópicos e as datas do edital. Isso costuma levar alguns minutos."
+          }
+        }
+      }
+    },
+    "Your plan will follow the official guide's parts, topics and dates. This usually takes a few minutes." : {
+      "comment" : "While a language certificate's official guide is read",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan richtet sich nach den Teilen, Themen und Terminen des offiziellen Leitfadens. Das dauert normalerweise ein paar Minuten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan seguirá los apartados, los temas y las fechas de la guía oficial. Esto suele tardar unos minutos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan suivra les parties, les thèmes et les dates indiqués dans le guide officiel. Cela prend généralement quelques minutes."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano vai seguir as partes, os tópicos e as datas do guia oficial. Isso costuma levar alguns minutos."
+          }
+        }
+      }
+    },
+    "Your plan, from what you told us" : {
+      "comment" : "The done step while an exam's official documents are read",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan nach deinen Angaben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan, según lo que nos has contado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan, d’après ce que tu nous as dit"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano, com base no que você contou"
           }
         }
       }

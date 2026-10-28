@@ -21,6 +21,14 @@ enum OnboardingError: Error, Equatable, Sendable {
   case failed(APIError)
 }
 
+/// A run's status (`GET /generations/{id}`), as a wait reads it once the stream ends.
+enum GenerationStatus: Sendable {
+  case working
+  case completed
+  /// Failed or cancelled: its content won't come without starting it again.
+  case stopped
+}
+
 struct OnboardingLimit: Decodable, Equatable, Sendable {
   let period: String
   let resource: String
@@ -193,6 +201,26 @@ struct OnboardingAPI: Sendable {
   }
 
   /// Starts a goal's curriculum again after its run stopped; a run already going is joined.
+  /// Where a run is: still working, done, or stopped without its content.
+  func generationStatus(id: String, token: String) async throws -> GenerationStatus {
+    let output = try await clients.perform(token: token) { client in
+      try await client.getGeneration(path: .init(generationId: id))
+    }
+
+    switch output {
+    case .ok(let response):
+      switch try response.body.json.status {
+      case .pending, .running: return .working
+      case .completed: return .completed
+      case .failed, .cancelled: return .stopped
+      }
+    case .notFound:
+      throw APIError.notFound
+    default:
+      throw APIError.unavailable
+    }
+  }
+
   func writeGoal(goalID: String, token: String) async throws -> String {
     let output = try await clients.perform(token: token) { client in
       try await client.createGoalGeneration(path: .init(goalId: goalID))

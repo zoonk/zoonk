@@ -122,7 +122,7 @@ struct PlanDateSection: View {
         comment: "The exam's likely day while its notice isn't out")
     }
 
-    if plan.examDocument == "notice" {
+    if plan.examDocument == .notice {
       return Text(
         "The exam notice says \(date).", tableName: "Plan",
         comment: "The exam's day its notice gives")

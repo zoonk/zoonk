@@ -126,6 +126,27 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     let parts: [String]
   }
 
+  /// An exam plan built before research read its notice: `reading` while the reveal waits for
+  /// it, `usual` once the wait ended without it.
+  enum Notice: String, Decodable, Sendable {
+    case reading
+    case usual
+  }
+
+  /// The plan's own sums of the time it schedules, as the course's page and the time question
+  /// read them.
+  struct Numbers: Decodable, Equatable, Sendable {
+    struct Context: Decodable, Equatable, Sendable {
+      let targetDate: String?
+    }
+
+    /// What's scheduled before the goal's date; nil without one.
+    let beforeDeadlineMinutes: Double?
+    let context: Context
+    /// Everything scheduled from today, after the date included.
+    let scheduledMinutes: Double
+  }
+
   struct Schedule: Decodable, Equatable, Sendable {
     /// The exam's day its notice gives, when the plan counts down to another.
     struct NoticeDay: Decodable, Equatable, Sendable {
@@ -182,11 +203,13 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   let end: End?
   let estimate: Estimate
   let examChoices: [ExamChoice]
-  /// `notice` for an exam a public notice announces, `guide` for a language certificate's.
-  let examDocument: String
+  let examDocument: ExamDocument
   let feasibility: Feasibility?
   let fitOffer: FitOffer?
   let goalId: String
+  let notice: Notice?
+  /// Nil until the plan is computed.
+  let numbers: Numbers?
   let phases: [PlanPhase]
   let planId: String
   let ready: Bool
