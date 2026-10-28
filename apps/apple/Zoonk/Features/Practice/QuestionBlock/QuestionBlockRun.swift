@@ -70,7 +70,9 @@ final class QuestionBlockRun {
 
   private let client: any QuestionBlockClient
   private let now: () -> Date
-  private var shownAt: Date
+  /// When the question in view was shown, which its answer's time and a timed drill's clock count
+  /// from.
+  private(set) var shownAt: Date
 
   init(
     detail: QuestionBlockDetail, client: any QuestionBlockClient,

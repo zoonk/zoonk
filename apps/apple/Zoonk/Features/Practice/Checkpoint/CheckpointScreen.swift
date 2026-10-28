@@ -212,6 +212,8 @@ struct CheckpointScreen: View {
       let loaded = try await practice.api.checkpoint(token: identity.bearerToken, blockId: blockId)
       guard session.authenticatedSession == identity else { return }
       state = CheckpointDuelState(load: loaded)
+      // Read again after an answer the server already had: the question in view may be another.
+      draft = nil
       shownAt = .now
       load = .loaded(loaded)
     } catch let error as APIError {

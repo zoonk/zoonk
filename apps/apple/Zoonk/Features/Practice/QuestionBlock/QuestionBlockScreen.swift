@@ -183,7 +183,7 @@ struct QuestionBlockView: View {
         }
 
         if let seconds = run.drill?.timeLimitSeconds, phase == .answering {
-          DrillCountdownView(seconds: seconds) { Task { await run.timeUp() } }
+          DrillCountdownView(seconds: seconds, start: run.shownAt) { Task { await run.timeUp() } }
             .id("clock-\(question.id)")
         }
 

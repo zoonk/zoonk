@@ -139,11 +139,12 @@ struct DrillIdeaView: View {
 }
 
 /// A timed drill's clock for one question: the seconds left and a bar that empties. Its task
-/// ends the question when the time runs out; key it by the question so each gets the whole time.
+/// ends the question when the time runs out; key it by the question. It counts from when the
+/// question was shown (`start`, the host's), so drawing it again never adds time.
 struct DrillCountdownView: View {
   let seconds: Int
+  let start: Date
   let onTimeUp: () -> Void
-  @State private var start = Date.now
 
   var body: some View {
     let end = start.addingTimeInterval(TimeInterval(seconds))
@@ -164,7 +165,8 @@ struct DrillCountdownView: View {
           ))
     }
     .task {
-      try? await Task.sleep(for: .seconds(seconds))
+      let left = start.addingTimeInterval(TimeInterval(seconds)).timeIntervalSinceNow
+      try? await Task.sleep(for: .seconds(max(left, 0)))
       if !Task.isCancelled { onTimeUp() }
     }
   }

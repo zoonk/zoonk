@@ -101,8 +101,10 @@ struct MistakePracticeScreen: View {
       }
 
       if let seconds = drill.timeLimitSeconds, state.phase == .answering {
-        DrillCountdownView(seconds: seconds) { Task { await check(.dontKnow, timedOut: true) } }
-          .id("clock-\(state.index)")
+        DrillCountdownView(seconds: seconds, start: shownAt) {
+          Task { await check(.dontKnow, timedOut: true) }
+        }
+        .id("clock-\(state.index)")
       }
 
       asked(step).stimulus
