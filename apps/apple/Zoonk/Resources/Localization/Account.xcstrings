@@ -1,6 +1,41 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@/%@ buddy messages used today" : {
+      "comment" : "A free plan's buddy messages used today, as in “3/5 buddy messages used today”",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute %1$@/%2$@ Buddy-Nachrichten verwendet"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@/%2$@ buddy messages used today"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mensajes del compañero usados hoy: %1$@/%2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@/%2$@ messages du Compagnon utilisées aujourd’hui"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@/%2$@ mensagens do parceiro usadas hoje"
+          }
+        }
+      }
+    },
     "6-digit code" : {
       "comment" : "Placeholder for the account deletion verification code\nPlaceholder for the email sign-in code",
       "localizations" : {
@@ -233,6 +268,35 @@
         }
       }
     },
+    "An AI study buddy whenever you're stuck" : {
+      "comment" : "Zoonk Plus benefit: the study buddy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein KI-Lernbuddy, der dir hilft, wenn du nicht weiterkommst"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un compañero de estudio con IA cuando te atasques"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un Compagnon d’étude IA quand tu bloques"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um parceiro de estudos com IA para quando você travar"
+          }
+        }
+      }
+    },
     "App Store" : {
       "comment" : "Status shown when an active subscription is managed by the App Store",
       "localizations" : {
@@ -258,35 +322,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "App Store"
-          }
-        }
-      }
-    },
-    "Blog" : {
-      "comment" : "Account option for the blog",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Blog"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Blog"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Blog"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Blog"
           }
         }
       }
@@ -639,8 +674,37 @@
         }
       }
     },
+    "Create an account" : {
+      "comment" : "Asks a guest to create an account before subscribing\nSettings row where a guest creates the account that keeps their plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konto erstellen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crear una cuenta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Créer un compte"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Criar uma conta"
+          }
+        }
+      }
+    },
     "Delete account" : {
-      "comment" : "Account deletion navigation title\nAccount option that opens permanent account deletion\nConfirms permanent account deletion\nStarts permanent account deletion",
+      "comment" : "Account deletion navigation title\nConfirms permanent account deletion\nProfile section about deletion\nStarts permanent account deletion",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -664,6 +728,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Excluir conta"
+          }
+        }
+      }
+    },
+    "Delete my account" : {
+      "comment" : "Opens permanent account deletion",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mein Konto löschen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar mi cuenta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer mon compte"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Excluir minha conta"
           }
         }
       }
@@ -693,6 +786,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Excluir sua conta do Zoonk?"
+          }
+        }
+      }
+    },
+    "Deletes your account and everything in it for good. Plus bought on the web is canceled; App Store purchases are managed in the App Store." : {
+      "comment" : "What deleting the account does",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dadurch werden dein Konto und alle darin gespeicherten Daten endgültig gelöscht. Plus-Abos, die du im Web abgeschlossen hast, werden gekündigt. Käufe im App Store verwaltest du im App Store."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elimina tu cuenta y todo su contenido para siempre. Plus comprado en la web se cancela; las compras del App Store se gestionan en el App Store."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprime définitivement ton compte et tout ce qu’il contient. L’abonnement Plus acheté sur le Web est résilié ; les achats de l’App Store se gèrent dans l’App Store."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua conta e tudo nela serão excluídos permanentemente. O Plus comprado pela web será cancelado; compras pela App Store são gerenciadas na App Store."
           }
         }
       }
@@ -784,6 +906,35 @@
         }
       }
     },
+    "Download my data" : {
+      "comment" : "Row that downloads everything Zoonk keeps about the learner",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meine Daten herunterladen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descargar mis datos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Télécharger mes données"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Baixar meus dados"
+          }
+        }
+      }
+    },
     "Email" : {
       "comment" : "Email sign-in field label\nFixed account email used to reauthorize deletion\nRead-only profile email label",
       "localizations" : {
@@ -871,31 +1022,60 @@
         }
       }
     },
-    "Feedback & Support" : {
-      "comment" : "Account option for feedback and support",
+    "Every goal · every lesson" : {
+      "comment" : "What Zoonk Plus includes, in one line",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Feedback & Support"
+            "value" : "Jedes Ziel · jede Lektion"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comentarios y ayuda"
+            "value" : "Todos tus objetivos · todas las lecciones"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avis et aide"
+            "value" : "Tous tes objectifs · toutes tes leçons"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sugestões e Suporte"
+            "value" : "Todas as metas · todas as aulas"
+          }
+        }
+      }
+    },
+    "Everything Zoonk keeps about you, as one file" : {
+      "comment" : "What the data download contains",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alles, was Zoonk über dich speichert, in einer Datei"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todo lo que Zoonk guarda sobre ti, en un solo archivo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout ce que Zoonk conserve sur toi, dans un seul fichier"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tudo que o Zoonk guarda sobre você, em um arquivo"
           }
         }
       }
@@ -959,7 +1139,7 @@
       }
     },
     "Free" : {
-      "comment" : "Status shown when the account has no active subscription",
+      "comment" : "Status shown when the account has no active subscription\nThe free plan's name",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1045,6 +1225,64 @@
         }
       }
     },
+    "Help" : {
+      "comment" : "Settings row to ask the team for help",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hilfe"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayuda"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aide"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajuda"
+          }
+        }
+      }
+    },
+    "Higher limits for speaking calls" : {
+      "comment" : "Zoonk Plus benefit: more speaking call time, never a number",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mehr Zeit für Gespräche"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Más tiempo para las llamadas de expresión oral"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus de temps pour les appels d’expression orale"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mais tempo para conversas de prática oral"
+          }
+        }
+      }
+    },
     "Keep your courses and progress available on all your devices." : {
       "comment" : "Explains the benefit of signing in",
       "localizations" : {
@@ -1074,60 +1312,60 @@
         }
       }
     },
-    "Learn anything. It’s all included." : {
-      "comment" : "Headline on the Zoonk Plus subscription screen",
+    "Log in" : {
+      "comment" : "Asks a visitor to log in before subscribing",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lerne, was du willst. Alles ist dabei."
+            "value" : "Anmelden"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aprende lo que quieras. Todo está incluido."
+            "value" : "Iniciar sesión"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Apprends ce que tu veux. Tout est inclus."
+            "value" : "Se connecter"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aprenda qualquer coisa. Está tudo incluído."
+            "value" : "Entrar"
           }
         }
       }
     },
-    "Learning built around your goals" : {
-      "comment" : "Zoonk Plus benefit describing personalized learning",
+    "Log out" : {
+      "comment" : "Account log-out action",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lernen passend zu deinen Zielen"
+            "value" : "Abmelden"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estudio adaptado a tus objetivos"
+            "value" : "Cerrar sesión"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un apprentissage adapté à tes objectifs"
+            "value" : "Se déconnecter"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estudo pensado para seus objetivos"
+            "value" : "Sair"
           }
         }
       }
@@ -1248,6 +1486,35 @@
         }
       }
     },
+    "Memory" : {
+      "comment" : "Settings row for what Zoonk remembers",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erinnerungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memoria"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mémoire"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Memória"
+          }
+        }
+      }
+    },
     "Memory, feedback and uploads" : {
       "comment" : "What the app remembers about the learner, their feedback and their uploaded files, removed during account deletion",
       "localizations" : {
@@ -1273,6 +1540,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Memória, comentários e arquivos enviados"
+          }
+        }
+      }
+    },
+    "Mock exams, timed like the real one" : {
+      "comment" : "Zoonk Plus benefit: timed mock exams",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probeprüfungen mit der Zeitvorgabe der echten Prüfung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulacros con el mismo tiempo que el examen real"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Des examens blancs chronométrés comme le vrai"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulados com tempo igual ao da prova"
           }
         }
       }
@@ -1422,31 +1718,31 @@
         }
       }
     },
-    "Plus gives you unlimited courses and lessons for whatever you want to learn." : {
-      "comment" : "Summary of the Zoonk Plus subscription",
+    "Preferences" : {
+      "comment" : "Settings row for Preferences",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit Plus bekommst du unbegrenzt viele Kurse und Lektionen zu allem, was du lernen möchtest."
+            "value" : "Einstellungen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus te ofrece cursos y lecciones ilimitados sobre todo lo que quieras aprender."
+            "value" : "Preferencias"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avec Plus, suis autant de cours et de leçons que tu veux, sur tout ce que tu souhaites apprendre."
+            "value" : "Préférences"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Plus oferece cursos e aulas ilimitados sobre o que você quiser aprender."
+            "value" : "Preferências"
           }
         }
       }
@@ -1481,7 +1777,7 @@
       }
     },
     "Profile" : {
-      "comment" : "Account option for profile\nProfile editor navigation title",
+      "comment" : "Profile editor navigation title",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1828,6 +2124,35 @@
         }
       }
     },
+    "Settings" : {
+      "comment" : "Title of the settings hub",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einstellungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajustes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réglages"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Configurações"
+          }
+        }
+      }
+    },
     "Sign in" : {
       "comment" : "Button that verifies an email code",
       "localizations" : {
@@ -1973,31 +2298,31 @@
         }
       }
     },
-    "Sign out" : {
-      "comment" : "Account sign-out action",
+    "Subscribe to Zoonk Plus" : {
+      "comment" : "Headline on the Zoonk Plus subscription screen",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abmelden"
+            "value" : "Zoonk Plus abonnieren"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cerrar sesión"
+            "value" : "Suscríbete a Zoonk Plus"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se déconnecter"
+            "value" : "S’abonner à Zoonk Plus"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sair"
+            "value" : "Assine o Zoonk Plus"
           }
         }
       }
@@ -2288,35 +2613,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tentar de novo"
-          }
-        }
-      }
-    },
-    "Unlimited courses and lessons" : {
-      "comment" : "Zoonk Plus benefit describing unlimited learning content",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unbegrenzt viele Kurse und Lektionen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cursos y lecciones ilimitados"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cours et leçons en illimité"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cursos e aulas ilimitados"
           }
         }
       }
@@ -2640,6 +2936,35 @@
         }
       }
     },
+    "Your data" : {
+      "comment" : "Profile section with the data download",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Daten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus datos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tes données"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seus dados"
+          }
+        }
+      }
+    },
     "Your name" : {
       "comment" : "Placeholder for the profile name field",
       "localizations" : {
@@ -2665,6 +2990,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seu nome"
+          }
+        }
+      }
+    },
+    "Your plan" : {
+      "comment" : "Section with the learner's own plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Tarif"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano"
           }
         }
       }
@@ -2723,6 +3077,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sua compra está segura. Entre na sua conta e depois restaure as compras para ativar o Plus na sua conta do Zoonk."
+          }
+        }
+      }
+    },
+    "Your whole exam plan, every day to the exam" : {
+      "comment" : "Zoonk Plus benefit: the full exam plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein kompletter Prüfungsplan, Tag für Tag bis zur Prüfung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todo tu plan de preparación para el examen, día a día hasta la fecha"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout ton plan de préparation à l’examen, jour après jour jusqu’à l’examen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano completo para a prova, dia a dia até o exame"
           }
         }
       }
