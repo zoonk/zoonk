@@ -32,7 +32,7 @@ private struct SpokenStepRecorder: View {
       VoiceAnswerRecorder(
         grade: { voice, recording in
           await voice.gradeSpokenStep(
-            stepId: context.stepId, studySessionId: nil, recording: recording)
+            stepId: context.stepId, studySessionId: context.studySessionId, recording: recording)
         },
         onGraded: { grade in
           context.onGraded(
