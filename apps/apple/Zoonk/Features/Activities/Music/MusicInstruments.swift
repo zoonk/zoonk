@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// The surface a music activity draws on: main's `ActivityCanvas`, a soft panel.
 struct MusicCanvas<Content: View>: View {
   @ViewBuilder let content: Content
 
@@ -14,7 +13,6 @@ struct MusicCanvas<Content: View>: View {
   }
 }
 
-/// An outlined "Hear it" button: plays a sound the canvas shows.
 struct MusicSoundButton: View {
   let title: Text
   var isDisabled = false
@@ -50,8 +48,6 @@ struct MusicSoundNote: View {
   }
 }
 
-/// A note's name in a circle, drawn on a piano key or a guitar string: pressed (`new`), kept,
-/// taken away, sounding, and after a check right, wrong or missing.
 struct NoteMark: View {
   @ScaledMetric(relativeTo: .caption2) private var size = 28
 
@@ -120,9 +116,8 @@ extension Color {
     })
 }
 
-/// A piano keyboard drawn to scale, for pressing notes or showing them. Each key is a button
-/// named by its note ("E flat") and selected while pressed. With a hardware keyboard it's one
-/// stop: the arrows move between keys and Return or Space presses the focused one.
+/// With a hardware keyboard it's one stop: the arrows move between keys and Return or Space presses
+/// the focused one.
 struct PianoKeyboard: View {
   @ScaledMetric(relativeTo: .caption) private var height = 150
   @FocusState private var isFocused: Bool
@@ -280,10 +275,7 @@ private struct PianoKeyStyle: ButtonStyle {
   }
 }
 
-/// A guitar neck in standard tuning, drawn the way tab reads it (high E on top) with a window of
-/// frets. It shows a shape, or, with `onChange`, lets the learner pick one fret per string (or
-/// mute it). VoiceOver reads each string as one adjustable element: swipe up or down to move
-/// along it.
+/// Drawn the way tab reads it, high E on top. VoiceOver reads each string as one adjustable element.
 struct GuitarFretboard: View {
   @ScaledMetric(relativeTo: .body) private var rowHeight = 44
   @ScaledMetric(relativeTo: .caption) private var nameWidth = 20

@@ -20,8 +20,7 @@ struct NotationPlayerFields: Decodable, Hashable, Sendable {
   let view: View
 }
 
-/// Plays a tune on the piano and follows it: which note sounds, and which bar. Audio and the
-/// highlight start together on the same moment of the host clock.
+/// Audio and the highlight start together on the same moment of the host clock.
 @MainActor
 @Observable
 final class NotationPlayback {
@@ -36,7 +35,6 @@ final class NotationPlayback {
 
   var isPlaying: Bool { startTime != nil }
 
-  /// The note or rest sounding at host time `now`.
   func current(at now: TimeInterval) -> NotationElementID? {
     guard let startTime else {
       return nil
@@ -127,9 +125,6 @@ final class NotationPlayback {
   }
 }
 
-/// A short melody drawn on the staff (or with guitar tab under it) that plays while the sounding
-/// note lights up. The learner can slow it down and switch views; the question below asks about
-/// what they read and heard. VoiceOver reads the notes bar by bar.
 private struct NotationPlayerCanvas: View {
   @State private var view: NotationPlayerFields.View
   @State private var tempo: Int
@@ -294,7 +289,6 @@ private struct NotationPlayerCanvas: View {
     }
   }
 
-  /// The notes bar by bar, as VoiceOver reads the staff: "Bar 1: E, E, F, G."
   private var outlineText: String {
     tune.outline.enumerated().map { bar, midis in
       let notes = midis.map { MusicLabels.spoken(MusicNotes.pitchClassName($0)) }.joined(
@@ -307,9 +301,6 @@ private struct NotationPlayerCanvas: View {
   }
 }
 
-/// The tune drawn crisply at the width it's shown, in the text color so it follows light, dark
-/// and Increase Contrast; the note playing turns mint (main's `viz-accent`). The staff scales
-/// with Dynamic Type.
 private struct NotationStaff: View {
   @ScaledMetric(relativeTo: .body) private var space = 8
   @ScaledMetric(relativeTo: .caption2) private var tabSpace = 13

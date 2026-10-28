@@ -18,10 +18,7 @@ private enum RhythmDeviceDelay {
   static let skipped = "skipped"
 }
 
-/// Tap a rhythm over a steady click, timed by the device (no microphone). The first rhythm on a
-/// device starts with a sound check that measures the delay its headphones or speakers add. Then
-/// listen first to hear the rhythm, a bar counts in and every round is timed. The answer is the
-/// taps with that delay, which core grades after taking it out.
+/// The answer is the taps with the device's measured delay, which core grades after taking it out.
 private struct RhythmTapperCanvas: View {
   @AppStorage(RhythmDeviceDelay.key) private var storedDelay: String?
   @State private var audio = MusicAudio()
@@ -60,8 +57,6 @@ private struct RhythmTapperCanvas: View {
   }
 }
 
-/// The rhythm itself, with the device's measured delay: its taps go to core with that delay,
-/// and the dots show the same judgment per tap.
 private struct RhythmRunView: View {
   @State private var run = RhythmRun()
 
@@ -129,7 +124,6 @@ private struct RhythmRunView: View {
   }
 }
 
-/// The tempo and, while tapping, which round is playing.
 private struct RhythmStatus: View {
   let tempo: Int
   let rounds: Int
@@ -158,8 +152,6 @@ private struct RhythmStatus: View {
   }
 }
 
-/// The rhythm on its beat grid, one row per round: hits in color, rests blank, the playhead
-/// outlined, and after tapping a dot over each hit (on time, early or late, or missed).
 private struct RhythmGrid: View {
   @ScaledMetric(relativeTo: .body) private var cellHeight = 32
 
@@ -268,8 +260,6 @@ private struct RhythmGrid: View {
   }
 }
 
-/// Listen to the rhythm first, then start (or try again) with a bar counted in. The sound check
-/// can be redone anytime, for new headphones.
 private struct RhythmControls: View {
   let hasTried: Bool
   let onCalibrate: () -> Void
@@ -329,8 +319,6 @@ private struct RhythmControls: View {
   }
 }
 
-/// How the taps went, in words: how many were on time and the one furthest off. It reads the
-/// same per-tap judgment the dots show.
 private struct RhythmFeedback: View {
   let hits: [Rhythm.HitResult]
   let extraTaps: Int
@@ -381,9 +369,8 @@ private struct RhythmFeedback: View {
   }
 }
 
-/// The one-time sound check before the first rhythm on a device: the learner taps along with
-/// steady clicks, and the delay the device adds (Bluetooth headphones add up to half a second)
-/// is taken out of every rhythm after. It can be skipped, and redone from any rhythm.
+/// The delay the device adds (Bluetooth headphones add up to half a second) is taken out of every
+/// rhythm after.
 private struct RhythmCalibrationView: View {
   @State private var calibration = RhythmCalibration()
 

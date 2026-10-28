@@ -1,10 +1,7 @@
 import Foundation
 
-/// A short melody written in ABC notation, read the way abcjs reads it for main's notation player:
-/// the T: and C: headers name it, M: L: and K: set the meter, the unit length and the key (with
-/// its clef), and the body's notes, rests, chords, ties, tuplets, broken rhythms, chord symbols,
-/// bar lines and repeats follow. Ornaments, grace notes, slurs, lyrics and other voices are read
-/// past and left out.
+/// Read the way abcjs reads it for main's notation player. Ornaments, grace notes, slurs, lyrics and
+/// other voices are read past and left out.
 struct ABCTune: Hashable, Sendable {
   enum Clef: Hashable, Sendable {
     case treble, bass
@@ -79,10 +76,8 @@ struct ABCTune: Hashable, Sendable {
 
     var isRest: Bool { pitches.isEmpty }
 
-    /// Some of its notes are tied to the next note or chord.
     var isTied: Bool { pitches.contains(where: \.isTied) }
 
-    /// Every note rings on from a tie: nothing new is struck.
     var continuesTie: Bool { !pitches.isEmpty && pitches.allSatisfy(\.continuesTie) }
 
     static func == (lhs: Element, rhs: Element) -> Bool {
@@ -130,7 +125,6 @@ struct ABCTune: Hashable, Sendable {
 }
 
 extension ABCTune {
-  /// Reads `notation`; anything it doesn't know is read past.
   init(notation: String) {
     var reader = ABCReader()
     self = reader.read(notation)
@@ -186,7 +180,6 @@ extension ABCTune {
     return order
   }
 
-  /// The sounding notes bar by bar, as MIDI numbers, for the words that describe the melody.
   var outline: [[Int]] {
     let lastWithNotes = bars.lastIndex { !$0.elements.isEmpty } ?? -1
 
@@ -196,7 +189,6 @@ extension ABCTune {
   }
 }
 
-/// The notation's title and composer, shown above the music instead of in it.
 enum NotationHeader {
   static func field(_ letter: Character, in notation: String) -> String? {
     for line in notation.split(separator: "\n", omittingEmptySubsequences: false) {
@@ -212,7 +204,6 @@ enum NotationHeader {
   }
 }
 
-/// Reads ABC notation into an `ABCTune`, one character at a time.
 private struct ABCReader {
   private var tune = ABCTune()
   private var unitLength: Double?
@@ -224,7 +215,6 @@ private struct ABCReader {
   private var chordSymbol: String?
   private var tuplet: (number: Int, count: Int, left: Int, factor: Double)?
   private var broken: Double?
-  /// The notes the last note or chord tied over to the next one.
   private var tiedMidis = Set<Int>()
   private var inBody = false
   private var voices = 0
@@ -416,8 +406,6 @@ private struct ABCReader {
     default: return nil
     }
   }
-
-  // MARK: - Body
 
   private mutating func readBody(_ characters: [Character]) {
     var index = 0

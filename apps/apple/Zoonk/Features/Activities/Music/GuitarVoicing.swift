@@ -3,9 +3,7 @@ import Foundation
 /// One fret per string, low E first; nil is a string that isn't played.
 typealias GuitarVoicing = [Int?]
 
-/// Where notes sit on a guitar in standard tuning, and a playable shape for a set of pitch
-/// classes: the kind of chord diagram a guitarist would pick, near the nut when possible (main's
-/// `guitar-voicing.ts`).
+/// Mirrors main's `guitar-voicing.ts`.
 enum Guitar {
   /// Open strings from the low E to the high E, as MIDI numbers (E2 A2 D3 G3 B3 E4).
   static let tuning = [40, 45, 50, 55, 59, 64]
@@ -13,7 +11,6 @@ enum Guitar {
   /// Frets shown at once: one hand's reach plus one.
   static let fretboardSpan = 4
 
-  /// The highest window the neck scrolls to.
   static let highestWindow = 12
 
   static let unplayed: GuitarVoicing = tuning.map { _ in nil }
@@ -87,7 +84,6 @@ enum Guitar {
     return first[index] < second[index]
   }
 
-  /// Every way to fill the strings from the given options, one choice per string.
   private static func combinations(_ options: [[Int?]]) -> [GuitarVoicing] {
     options.reduce([[]]) { partials, choices in
       partials.flatMap { partial in choices.map { partial + [$0] } }

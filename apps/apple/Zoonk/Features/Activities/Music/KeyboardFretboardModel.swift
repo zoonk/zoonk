@@ -1,7 +1,5 @@
 import Foundation
 
-/// The notes or chord a keyboard and fretboard activity is about: the target to find, or the
-/// start already on the keys.
 enum NoteTarget: Decodable, Hashable, Sendable {
   case chord(root: String, quality: ChordQuality)
   case notes([String])
@@ -53,9 +51,7 @@ struct KeyboardFretboardFields: Decodable, Hashable, Sendable {
   var showsGuitar: Bool { instruments.contains("guitar") }
 }
 
-/// What a keyboard and fretboard activity knows from its fields and state (main's
-/// `keyboard-fretboard-notes.ts`): which keys to start with, how each is spelled and marked, the
-/// answer it makes and how the target sounds.
+/// Mirrors main's `keyboard-fretboard-notes.ts`.
 enum KeyboardFretboard {
   /// The keyboard shows one octave from middle C: every note has one key.
   static let keyboardFrom = 60
@@ -83,12 +79,10 @@ enum KeyboardFretboard {
     }
   }
 
-  /// Pressing a key adds its note, or takes it away when it's already there.
   static func toggle(_ pitches: [Int], _ pitch: Int) -> [Int] {
     pitches.contains(pitch) ? pitches.filter { $0 != pitch } : (pitches + [pitch]).sorted()
   }
 
-  /// Keys to mark while answering: pressed notes, and start notes the learner took away.
   static func answeringMarks(pressed: [Int], start: [Int]) -> [Int: NoteMarkKind] {
     var marks: [Int: NoteMarkKind] = [:]
 
@@ -103,7 +97,6 @@ enum KeyboardFretboard {
     return marks
   }
 
-  /// Keys to mark after the check: each pressed note right or wrong, and any note missing.
   static func checkedMarks(expected: [Int], pressed: [Int]) -> [Int: NoteMarkKind] {
     var marks: [Int: NoteMarkKind] = [:]
 
@@ -134,7 +127,6 @@ enum KeyboardFretboard {
     pitches.isEmpty ? nil : Guitar.voicing(bass: bass(of: pitches), pitchClasses: pitches)
   }
 
-  /// The notes a guitar shape plays, as pitch classes.
   static func pitches(of voicing: GuitarVoicing) -> [Int] {
     let pitches = voicing.enumerated().compactMap { string, fret in
       fret.map { Guitar.noteMidi(string: string, fret: $0) % MusicNotes.octave }
@@ -143,7 +135,6 @@ enum KeyboardFretboard {
     return Array(Set(pitches)).sorted()
   }
 
-  /// The notes a guitar shape plays, low to high, as MIDI numbers.
   static func midis(of voicing: GuitarVoicing) -> [Int] {
     voicing.enumerated().compactMap { string, fret in
       fret.map { Guitar.noteMidi(string: string, fret: $0) }
@@ -211,8 +202,6 @@ enum KeyboardFretboard {
   }
 }
 
-/// How a note shows on an instrument: pressed by the learner (`new`), already there (`kept`),
-/// taken away (`removed`), sounding (`heard`), and after a check right, wrong or missing.
 enum NoteMarkKind: Hashable, Sendable {
   case correct, heard, kept, missed, new, removed, wrong
 }

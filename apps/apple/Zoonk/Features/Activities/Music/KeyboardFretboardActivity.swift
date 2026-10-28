@@ -10,9 +10,8 @@ extension ActivityRenderer {
   }
 }
 
-/// Press notes on a piano keyboard, or pick frets on a guitar, and see them on both. The keys
-/// start with the start chord when there is one ("change one note"); the answer is the notes
-/// pressed, graded by pitch class. With a choice check the instrument is free to explore.
+/// The answer is the notes pressed, graded by pitch class. With a choice check the instrument is
+/// free to explore.
 private struct KeyboardFretboardCanvas: View {
   @State private var audio = MusicAudio()
 
@@ -33,8 +32,6 @@ private struct KeyboardFretboardCanvas: View {
   }
 }
 
-/// What both boards know from the context: whether the answer is the notes, and whether the
-/// target shows yet.
 private struct KeyboardFretboardState {
   let fields: KeyboardFretboardFields
   let context: ActivityCanvasContext
@@ -129,8 +126,6 @@ private struct PianoBoard: View {
   }
 }
 
-/// The guitar alone: pick one fret per string (or leave it muted) and hear the shape. The window
-/// moves up the neck for shapes past the fourth fret.
 private struct GuitarOnlyBoard: View {
   @State private var voicing: GuitarVoicing
   @State private var firstFret: Int
@@ -258,9 +253,7 @@ private struct GuitarOnlyBoard: View {
   }
 }
 
-/// What the learner is looking for (the chord's name, or how many notes) and the notes on the
-/// keys now, with a button to hear them. Found by ear, the target isn't named until it's
-/// answered, and a button plays it.
+/// Found by ear, the target isn't named until it's answered.
 private struct KeyboardFretboardHeader: View {
   let fields: KeyboardFretboardFields
   let isRevealed: Bool
@@ -341,8 +334,6 @@ private struct KeyboardFretboardHeader: View {
   }
 }
 
-/// The notes on the keys as a guitar shape a hand can play, so a learner sees one idea on both
-/// instruments. It follows the keys; after the check it shows the answer.
 private struct GuitarMirror: View {
   let pitches: [Int]
   let spell: (Int) -> String

@@ -1,9 +1,7 @@
 import Foundation
 
-/// Notes, chords and their names, as core's `library/activities/templates/_utils/music.ts` grades
-/// them and main's player (`music-notes.ts`) draws them: a note is a letter with "#" or "b" and an
-/// optional octave ("C", "Eb", "F#4"), a pitch class is 0 for C up to 11 for B, and MIDI 60 is
-/// middle C.
+/// Mirrors core's `library/activities/templates/_utils/music.ts` and main's `music-notes.ts`: a
+/// pitch class is 0 for C up to 11 for B, and MIDI 60 is middle C.
 enum MusicNotes {
   static let octave = 12
 
@@ -90,7 +88,6 @@ enum MusicNotes {
     return Array(Set([rootClass] + above)).sorted()
   }
 
-  /// The note's name with the octave, like "C#4", from its MIDI number (60 is middle C).
   static func midiToNote(_ midi: Int) -> String {
     let octaveNumber = Int((Double(midi) / Double(octave)).rounded(.down)) - 1
     return "\(sharpNames[mod(midi, octave)])\(octaveNumber)"
@@ -114,7 +111,6 @@ enum MusicNotes {
     rootNames[mod(pitch, octave)]
   }
 
-  /// The root without its octave, as written: "Eb4" is "Eb".
   static func withoutOctave(_ note: String) -> String {
     note.last?.isNumber == true ? String(note.dropLast()) : note
   }
@@ -131,7 +127,6 @@ enum MusicNotes {
     return "\(letter)\(accidentals[offset] ?? "")"
   }
 
-  /// A chord's notes spelled from its root: C minor is C, Eb, G.
   static func spellChord(root: String, quality: ChordQuality) -> [String] {
     let name = withoutOctave(root)
 
@@ -142,13 +137,11 @@ enum MusicNotes {
       }
   }
 
-  /// A chord voiced upward from its root, as MIDI numbers: C4 minor is 60, 63, 67.
   static func chordMidis(root: String, quality: ChordQuality) -> [Int] {
     let base = noteToMidi(root) ?? 0
     return [base] + quality.intervals.map { base + $0.semitones }
   }
 
-  /// The chord a set of pitch classes forms, if any, like C minor.
   static func nameChord(_ pitchClasses: [Int]) -> (root: String, quality: ChordQuality)? {
     let target = Array(Set(pitchClasses)).sorted()
 
@@ -189,7 +182,6 @@ enum MusicNotes {
 enum ChordQuality: String, CaseIterable, Codable, Hashable, Sendable {
   case augmented, diminished, dominant7, major, major7, minor, minor7
 
-  /// The notes above the root, as intervals from it, lowest first.
   var intervals: [MusicInterval] {
     switch self {
     case .augmented: [.majorThird, .minorSixth]
@@ -203,7 +195,6 @@ enum ChordQuality: String, CaseIterable, Codable, Hashable, Sendable {
   }
 }
 
-/// Intervals one semitone apart, from a minor second to the octave.
 enum MusicInterval: Int {
   case minorSecond = 1
   case majorSecond, minorThird, majorThird, perfectFourth, tritone, perfectFifth

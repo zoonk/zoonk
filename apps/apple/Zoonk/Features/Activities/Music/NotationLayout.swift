@@ -1,15 +1,12 @@
 import SwiftUI
 
-/// Where a note or rest is in the tune: its bar and its place in it.
 struct NotationElementID: Hashable, Sendable {
   let bar: Int
   let index: Int
 }
 
-/// A tune laid out on staves at a width: filled shapes, strokes and short texts, each tagged with
-/// the note it belongs to so the one playing can light up. Lines wrap a few bars at a time, as
-/// main's abcjs staves do (two bars a line on a phone, four when wide), and every line but a short
-/// last one is spread to the full width.
+/// Lines wrap a few bars at a time, as main's abcjs staves do, and every line but a short last one is
+/// spread to the full width.
 struct NotationDrawing: Sendable {
   enum TextKind: Sendable {
     case chordSymbol, tabFret, tupletNumber, endingNumber
@@ -31,9 +28,8 @@ struct NotationDrawing: Sendable {
 }
 
 extension NotationDrawing {
-  /// Lays `tune` out at `width`, with staff lines `space` apart and, for tab, the six strings
-  /// `tabSpace` apart under each staff. `textHeight` is a line of the texts' font, so a line of
-  /// music leaves room for its chord symbols at any text size.
+  /// `textHeight` is a line of the texts' font, so a line of music leaves room for its chord symbols
+  /// at any text size.
   init(tune: ABCTune, width: CGFloat, space: CGFloat, tabSpace: CGFloat?, textHeight: CGFloat) {
     var layout = NotationLayout(
       tune: tune, width: width, space: space, tabSpace: tabSpace, textHeight: textHeight)
@@ -41,8 +37,6 @@ extension NotationDrawing {
   }
 }
 
-/// The engraving rules: spacing by length, stems and beams, ledger lines, accidentals and dots,
-/// ties and tuplet numbers, bar lines with repeats and endings, and tab under the staff.
 private struct NotationLayout {
   let tune: ABCTune
   let width: CGFloat
@@ -58,7 +52,6 @@ private struct NotationLayout {
   private var stemWidth: CGFloat { max(space * 0.12, 1) }
   private var lineWidth: CGFloat { max(space * 0.1, 0.75) }
 
-  /// Bars a line holds at most: two on a phone, four when there's room.
   private var preferredBars: Int { width < 480 ? 2 : 4 }
 
   /// The bottom line of the staff: E4 on a treble staff, G2 on a bass staff.
@@ -72,8 +65,6 @@ private struct NotationLayout {
     self.textHeight = textHeight
     fifths = tune.fifths
   }
-
-  // MARK: - Lines
 
   mutating func draw() -> NotationDrawing {
     let lines = breakLines()
@@ -105,7 +96,6 @@ private struct NotationLayout {
     return NotationDrawing(items: items, height: max(top - space * 2.5, 0))
   }
 
-  /// Bars that fit a line, up to the preferred number.
   private func breakLines() -> [[Int]] {
     let drawn = tune.bars.indices.filter { !tune.bars[$0].elements.isEmpty }
     var lines: [[Int]] = []
@@ -198,8 +188,6 @@ private struct NotationLayout {
     return stretch
   }
 
-  // MARK: - Staff
-
   /// The height of staff position `position`, in half spaces up from the bottom line.
   private func y(_ position: Int) -> CGFloat {
     space * 4 - CGFloat(position) * space / 2
@@ -256,7 +244,6 @@ private struct NotationLayout {
     return x
   }
 
-  /// The sharps or flats of the key in force, on their lines; returns where the music goes on.
   private mutating func drawKeySignature(at start: CGFloat) -> CGFloat {
     let sharps = [8, 5, 9, 6, 3, 7, 4]
     let flats = [4, 7, 3, 6, 2, 5, 1]
@@ -310,8 +297,6 @@ private struct NotationLayout {
 
     return String(number).compactMap { $0.wholeNumberValue.map { all[$0] } }
   }
-
-  // MARK: - Bars
 
   private struct Placed {
     let id: NotationElementID
@@ -419,8 +404,6 @@ private struct NotationLayout {
       ))
   }
 
-  // MARK: - Notes
-
   /// A written length as a note type and its dots: 3/8 is a dotted quarter.
   static func noteType(_ length: Double) -> (base: Double, dots: Int) {
     for base in [1.0, 0.5, 0.25, 0.125, 0.0625, 0.03125] {
@@ -437,7 +420,6 @@ private struct NotationLayout {
     base >= 1 ? .wholeNote : base >= 0.5 ? .halfNote : .blackNote
   }
 
-  /// Flags (or beams) a note type has: an eighth has one.
   private static func flagCount(_ base: Double) -> Int {
     base <= 0.03125 ? 3 : base <= 0.0625 ? 2 : base <= 0.125 ? 1 : 0
   }
@@ -799,8 +781,6 @@ private struct NotationLayout {
     add(.stroke(path, width: max(space * 0.14, 1)), element: start.id)
   }
 
-  // MARK: - Tab
-
   /// Each note's fret on the highest string that reaches it, as abcjs's guitar tab picks them;
   /// a chord's notes take one string each, the highest note first. A note a tie holds isn't
   /// played again. The guitar reads an octave above how it sounds, so the strings are E3 A3 D4
@@ -827,13 +807,10 @@ private struct NotationLayout {
     }
   }
 
-  // MARK: - Items
-
   private mutating func add(_ mark: NotationDrawing.Mark, element: NotationElementID? = nil) {
     items.append(NotationDrawing.Item(mark: mark, element: element))
   }
 
-  /// Where a mark reaches, texts by how they're anchored when drawn.
   private func bounds(of mark: NotationDrawing.Mark) -> CGRect {
     switch mark {
     case .fill(let path), .stroke(let path, _):

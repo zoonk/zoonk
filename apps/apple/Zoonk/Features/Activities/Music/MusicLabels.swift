@@ -1,9 +1,7 @@
 import Foundation
 
-/// Note names as the learner reads them (E♭, or H in German) and as VoiceOver says them ("E
-/// flat"), chord names, and what a guitar's strings and frets are called (main's
-/// `use-music-labels.ts` and `use-fretboard-labels.ts`). Names come in with "#" and "b" and an
-/// optional octave, like "Eb4".
+/// Mirrors main's `use-music-labels.ts` and `use-fretboard-labels.ts`. Names come in with "#" and "b"
+/// and an optional octave, like "Eb4".
 enum MusicLabels {
   private static var languageCode: String {
     Bundle.main.preferredLocalizations.first ?? "en"
@@ -32,14 +30,12 @@ enum MusicLabels {
     return letter
   }
 
-  /// Notes read aloud one after another, or "none".
   static func spokenList(_ names: [String]) -> String {
     names.isEmpty
       ? String(localized: "none", table: "ActivitiesMusic", comment: "No notes are on the keys")
       : names.map(spoken).formatted(.list(type: .and, width: .narrow))
   }
 
-  /// A chord's full name, like "C minor", with the root shown as the learner reads notes.
   static func chord(root: String, quality: ChordQuality) -> String {
     let note = display(root)
 
@@ -75,10 +71,8 @@ enum MusicLabels {
     }
   }
 
-  /// The short names on the left of a guitar neck: E A D G B E.
   static let stringNames = ["E", "A", "D", "G", "B", "E"]
 
-  /// A string's name for VoiceOver: "Low E string", "A string", "High E string".
   static func string(_ index: Int) -> String {
     if index == 0 {
       return String(
@@ -98,7 +92,6 @@ enum MusicLabels {
       comment: "A guitar string named by its open note, like “A string”")
   }
 
-  /// A place on a string for VoiceOver: "Not played", "Open, E" or "Fret 3, G".
   static func position(fret: Int?, midi: Int?) -> String {
     guard let fret, let midi else {
       return String(

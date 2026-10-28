@@ -8,7 +8,6 @@ struct RhythmTapperFields: Decodable, Hashable, Sendable {
   let tempo: Int
   let toleranceMs: Int
 
-  /// The grid steps marked "x", where a tap should land.
   var hitSteps: [Int] {
     pattern.enumerated().compactMap { $1 == "x" ? $0 : nil }
   }
@@ -34,9 +33,8 @@ struct RhythmTapperFields: Decodable, Hashable, Sendable {
   }
 }
 
-/// Rhythm timing and grading as core's `music.ts` does it, and how each tap went as main's
-/// `rhythm-results.ts` shows it: taps are milliseconds from the first step of the first round,
-/// and one steady delay (the device's sound, or the learner's) is taken out before judging.
+/// Mirrors core's `music.ts` and main's `rhythm-results.ts`: one steady delay (the device's sound, or
+/// the learner's) is taken out before judging.
 enum Rhythm {
   /// How far a whole performance may sit from the beat and still count as the device's delay:
   /// Bluetooth headphones add up to about 300 ms, and people anticipate a click a little.
@@ -143,7 +141,6 @@ enum Rhythm {
     case early, late, missed, onTime
   }
 
-  /// How one hit of the rhythm went: when its tap came, relative to the beat, once delay is out.
   struct HitResult: Hashable, Sendable {
     let offsetMs: Double?
     let status: TapStatus
@@ -191,7 +188,6 @@ enum Rhythm {
     return (hits, tapsMs.count - raw.count)
   }
 
-  /// The hit that went furthest off, to name in the feedback, or nil when all were on time.
   static func worstHit(_ hits: [HitResult]) -> (hit: HitResult, index: Int)? {
     let off = hits.enumerated().filter { $0.element.status != .onTime }
 

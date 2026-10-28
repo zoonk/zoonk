@@ -26,24 +26,16 @@ enum MusicClick: Sendable {
   case accent, beat, hit
 }
 
-/// The sound of the music activities, synthesized on the device (main plays sampled instruments
-/// and oscillator clicks with Web Audio): a piano, a steel-string guitar and a metronome's
-/// clicks. Every sound is scheduled at the moment it is heard, in the host clock touches are
-/// timed by (`CACurrentMediaTime`, `UITouch.timestamp`), with the route's output delay taken
-/// into account, so a tap and the click it follows share one timeline.
-///
-/// It plays with the Ring/Silent switch off, as a sound the learner tapped for does in the rest
-/// of the app (`.playback`). The engine starts on the first sound, pauses after a moment of
-/// silence (no CPU while idle) and is released by `close()` when the activity goes away. An
-/// interruption, a lost route or a new one stops what's playing and tells `onInterruption`, since
-/// a timed run can't go on with a different delay.
+/// Every sound is scheduled at the moment it is heard, in the host clock touches are timed by
+/// (`CACurrentMediaTime`, `UITouch.timestamp`), with the route's output delay taken into account, so
+/// a tap and the click it follows share one timeline. An interruption, a lost route or a new one
+/// stops what's playing, since a timed run can't go on with a different delay.
 @MainActor
 @Observable
 final class MusicAudio {
   /// The sound couldn't start: the activity still works, and says so.
   private(set) var isUnavailable = false
 
-  /// Called when the system stopped the sound mid-way (a call, a lost or new route).
   @ObservationIgnored var onInterruption: (() -> Void)?
 
   @ObservationIgnored private var engine: AVAudioEngine?
@@ -94,7 +86,6 @@ final class MusicAudio {
     watchForIdle()
   }
 
-  /// Silences every sound and drops the ones not heard yet.
   func stop() {
     renderer?.stopAll()
   }
@@ -115,7 +106,6 @@ final class MusicAudio {
     return CACurrentMediaTime() + session.ioBufferDuration + session.outputLatency
   }
 
-  /// Stops and releases the engine and gives the audio back to other apps.
   func close() {
     // The screen's handler holds what it stops (often this object): letting go breaks the loop.
     onInterruption = nil
@@ -135,7 +125,6 @@ final class MusicAudio {
     }
   }
 
-  /// Starts the sound when it isn't running; a running engine needs nothing more.
   private func start() -> Bool {
     if let engine, engine.isRunning {
       return true
@@ -236,7 +225,6 @@ final class MusicAudio {
     onInterruption?()
   }
 
-  /// Pauses the engine once nothing has sounded or waited to sound for a moment.
   private func watchForIdle() {
     guard idleTask == nil else {
       return
@@ -377,8 +365,6 @@ final class MusicRenderer: @unchecked Sendable {
   func setOutputLatency(_ latency: Double) {
     inbox.withLock { $0.outputLatency = latency }
   }
-
-  // MARK: - Audio thread
 
   /// The node that pulls sound from this renderer. Made outside the main actor, since the audio
   /// thread calls its block.

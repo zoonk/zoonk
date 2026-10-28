@@ -1,16 +1,13 @@
 import Observation
 import QuartzCore
 
-/// Where the playhead is: which round and which step of the pattern.
 struct RhythmPosition: Hashable {
   let round: Int
   let step: Int
 }
 
-/// Runs a rhythm on the audio clock (main's `useRhythmRun`): clicks on every beat, the first one
-/// accented, a bar counted in before tapping, and where the playhead is while it plays. Taps are
-/// kept in milliseconds from the moment the first step of the first round is heard, as core
-/// grades them; listening plays one round with the rhythm's hits.
+/// Mirrors main's `useRhythmRun`. Taps are kept in milliseconds from the moment the first step of
+/// the first round is heard, as core grades them.
 @MainActor
 @Observable
 final class RhythmRun {
@@ -40,7 +37,6 @@ final class RhythmRun {
 
   var isRunning: Bool { timing != nil }
 
-  /// What the run is doing at host time `now`.
   func phase(at now: TimeInterval) -> Phase {
     guard let timing else {
       return hasFinished ? .done : .idle
@@ -63,8 +59,7 @@ final class RhythmRun {
     return RhythmPosition(round: elapsed / patternLength, step: elapsed % patternLength)
   }
 
-  /// Plays the rhythm: listening plays one round with its hits, tapping counts in one bar first
-  /// and times every round. `onFinish` gets the taps once the last round has rung out.
+  /// `onFinish` gets the taps once the last round has rung out.
   func start(
     _ kind: Kind, fields: RhythmTapperFields, audio: MusicAudio,
     onFinish: @escaping ([Double]) -> Void
@@ -130,7 +125,6 @@ final class RhythmRun {
     }
   }
 
-  /// Stops the run and forgets its taps.
   func reset() {
     finishTask?.cancel()
     finishTask = nil
@@ -140,9 +134,7 @@ final class RhythmRun {
   }
 }
 
-/// The one-time sound check (main's `useDelayCalibration`): a few clicks to count in, then the
-/// learner taps along with steady clicks, and the reading is the middle of their taps' distances
-/// from the clicks as heard.
+/// Mirrors main's `useDelayCalibration`.
 @MainActor
 @Observable
 final class RhythmCalibration {
@@ -227,7 +219,6 @@ final class RhythmCalibration {
     }
   }
 
-  /// Stops a reading in progress; nothing is measured.
   func cancel() {
     finishTask?.cancel()
     finishTask = nil
