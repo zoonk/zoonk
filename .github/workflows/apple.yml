@@ -11,7 +11,10 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+  # A newer push waits for the running build instead of cancelling it: on a busy PR, pushes came
+  # faster than the build runs, so it rarely finished or saved its compilation cache. GitHub keeps
+  # one run pending, the newest.
+  cancel-in-progress: false
 
 permissions:
   contents: read
