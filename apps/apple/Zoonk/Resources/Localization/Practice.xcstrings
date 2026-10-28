@@ -2551,7 +2551,7 @@
       }
     },
     "Every question is answered" : {
-      "comment" : "Title of a block opened again with every answer in.",
+      "comment" : "Title of a block opened again with every answer in.\nTitle of a test whose answers are all in, before they're graded.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
