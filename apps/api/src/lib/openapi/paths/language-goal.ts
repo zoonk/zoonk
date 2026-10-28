@@ -1,3 +1,4 @@
+import { speakingPaperViewSchema } from "@zoonk/core/language/exam-speaking/contract";
 import {
   languageLevelTestViewSchema,
   levelTestAnswerInputSchema,
@@ -97,6 +98,20 @@ export const languageGoalPaths = {
         ...readErrors,
       },
       summary: "List a language goal's units",
+    },
+  },
+  "/goals/{goalId}/speaking-paper": {
+    get: {
+      ...common,
+      description:
+        "A language goal's speaking practice: the speaking paper of the exam that certifies its target level (DELE, DELF, Goethe or Cambridge), its tasks with the criteria each is rated on, and the learner's last try at each. Each task is practiced as a call (POST /v1/language-conversations with `examSpeaking`), which needs Plus and live-call admission (`access`). `NOT_LANGUAGE` for other goals, whose exam page has their speaking paper; 404 when no exam's format fits the goal.",
+      operationId: "getSpeakingPaper",
+      requestParams: { path: goalPathParamsSchema },
+      responses: {
+        "200": jsonResponse(speakingPaperViewSchema, "The goal's speaking paper"),
+        ...readErrors,
+      },
+      summary: "Get a language goal's speaking practice",
     },
   },
   [levelTestPath]: {

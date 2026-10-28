@@ -166,6 +166,17 @@ test.describe("Language goal API", () => {
       speakingMock: null,
     });
 
+    const paper = await free.apiContext.get(`/v1/goals/${freeGoal.goal.id}/speaking-paper`);
+
+    expect(paper.status()).toBe(200);
+
+    expect(await paper.json()).toMatchObject({
+      access: "plusRequired",
+      exam: "cambridge",
+      tasks: expect.arrayContaining([expect.objectContaining({ key: "p1", lastTry: null })]),
+      title: "B2 First",
+    });
+
     const refused = await free.apiContext.post("/v1/language-conversations", {
       data: { goalId: freeGoal.goal.id, kind: "examSpeaking", task: "p1" },
     });

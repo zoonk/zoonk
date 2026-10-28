@@ -4706,6 +4706,100 @@
         }
       }
     },
+    "/goals/{goalId}/speaking-paper": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "tags": [
+          "Language"
+        ],
+        "description": "A language goal's speaking practice: the speaking paper of the exam that certifies its target level (DELE, DELF, Goethe or Cambridge), its tasks with the criteria each is rated on, and the learner's last try at each. Each task is practiced as a call (POST /v1/language-conversations with `examSpeaking`), which needs Plus and live-call admission (`access`). `NOT_LANGUAGE` for other goals, whose exam page has their speaking paper; 404 when no exam's format fits the goal.",
+        "operationId": "getSpeakingPaper",
+        "summary": "Get a language goal's speaking practice",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "goalId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Goal ID"
+            },
+            "required": true,
+            "description": "Goal ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The goal's speaking paper",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpeakingPaper"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The request is valid but cannot be applied to the resource",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/goals/{goalId}/language-level-test": {
       "get": {
         "security": [
