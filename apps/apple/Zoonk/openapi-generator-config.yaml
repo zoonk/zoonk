@@ -3,86 +3,215 @@ generate:
   - client
 accessModifier: internal
 namingStrategy: idiomatic
-# The lesson player decodes screens and answers into its own types: the generated unions of every
-# screen kind and activity template are index-named and far larger than what it reads.
-typeOverrides:
-  schemas:
-    LessonStepAnswer: LessonAnswer
-    PlayableLibraryStep: LessonStep
 # Generates only the operations the app calls, and the schemas they reference. Add an operation here
 # when a feature starts using it.
 filter:
   operations:
+    - acknowledgeTodayPlanChange
+    - adaptPlanFromMock
+    - answerLanguageLevelTest
+    - answerLanguageLevelTestOutLoud
+    - answerMemoryInsight
+    - answerOnboardingQuestion
+    - answerPronunciationReview
+    - answerSuggestedGoal
+    - askMaterialQuestion
+    - checkLanguageConversationObjectives
+    - completeGoalPlacement
+    - completeLanguageConversation
+    - completePronunciationRound
+    - connectLanguageConversation
+    - continueGoalAtNextLevel
     - createAppAttestChallenge
     - createAppAttestKey
     - createAppleSession
     - createAppleSubscription
+    - createAreaPractice
     - createChallengeGeneration
+    - createChapterMindMapGeneration
+    - createChapterQuestion
     - createChapterTestOutGeneration
     - createEmailCodeSession
     - createEmailSignInCode
     - createFeedback
     - createFocusTestGeneration
     - createGenerationWait
+    - createGoalFromPlanLink
+    - createGoalGeneration
+    - createGoalLessonPreparation
+    - createGoalUnderstanding
+    - createGoalUnderstandingGeneration
+    - createGoals
     - createGoogleSession
     - createGuestSession
+    - createItemQuestion
+    - createLanguageLevelTestGeneration
+    - createLessonQuestion
+    - createLessonQuestionAnswer
     - createLibraryLessonCompletion
     - createLibraryLessonGeneration
     - createLibraryLessonStart
+    - createMemoryChangeReversal
+    - createMilestoneView
     - createMistakePracticeAnswer
     - createMistakePracticeCompletion
+    - createMockQuestion
+    - createMockQuestionsGeneration
+    - createPlacementAnswer
+    - createPlanBasesAdvice
+    - createPlanChange
+    - createPlanExamChoice
+    - createPlanQuestion
+    - createPlanToolChoice
+    - createSkillOutlineGeneration
+    - createSpokenAnswer
     - createStepAnswerExplanation
     - createStepCheck
     - createStudyAnswer
     - createStudyBlockCompletion
     - createStudyBlockStart
+    - createStudyCatchUpBlocks
+    - createStudyExtraBlock
+    - createStudySessionPreparation
     - createStudySessionStop
+    - createSubjectQuestion
     - decidePlanChange
     - deleteCurrentSession
     - deleteCurrentUser
+    - deleteMemoryFact
+    - dismissGoalUploadRequest
     - dismissMistakePattern
+    - endLanguageConversationConnection
+    - endMockBreak
+    - estimateCoursePlan
+    - exportCurrentUserData
+    - exportCurrentUserMemory
+    - findPlanTimeToCover
+    - finishLanguageLevelTest
+    - finishMock
     - getChallenge
     - getChallengeTeam
     - getChapter
+    - getChapterMindMap
+    - getChapterMindMapStatus
     - getChapterNextLesson
     - getChapterProgress
+    - getChapterQuestionThread
     - getChapterTestOut
     - getChapterTestOutResult
     - getCheckpoint
     - getCourse
     - getCourseNextLesson
     - getCourseProgress
+    - getCurrentMemoryInsight
     - getCurrentUser
     - getCurrentUserActivity
+    - getCurrentUserAllowance
+    - getCurrentUserBuddy
+    - getCurrentUserDailyTimeLimit
     - getCurrentUserEnergy
     - getCurrentUserLearningProfile
     - getCurrentUserLevel
+    - getCurrentUserMemory
     - getCurrentUserMistakePractice
     - getCurrentUserProgress
     - getCurrentUserScore
     - getCurrentUserScorePatterns
     - getCurrentUserStepExampleLine
     - getCurrentUserSummary
+    - getCurrentUserWeeklyRecap
+    - getEssay
+    - getExam
+    - getExamBlueprint
+    - getExplanation
     - getFocusTest
     - getGeneration
+    - getGoalChapter
+    - getGoalGeneration
+    - getGoalMap
+    - getGoalPlacement
+    - getGoalPlan
+    - getGoalPreparation
+    - getGoalProgress
+    - getGoalSyllabus
+    - getGoalUnderstanding
+    - getGoalUploadRequest
+    - getItemQuestionThread
+    - getLanguageConversation
+    - getLanguageLevelTest
+    - getLanguageProgress
+    - getLanguageToday
+    - getLanguageUnit
+    - getLanguageUnits
+    - getLessonQuestion
+    - getLessonQuestionThread
     - getLibraryLesson
     - getLibraryLessonReadiness
     - getMistakePattern
+    - getMock
+    - getMockQuestionThread
+    - getOnboarding
+    - getOnboardingResume
+    - getPlanChangedSince
+    - getPlanLink
+    - getPlanQuestionThread
+    - getPlanTimeAdvice
+    - getSkillOutline
     - getStudyBlock
+    - getStudySession
+    - getStudySessionSummary
+    - getSubjectQuestionThread
+    - getToday
+    - getUsernameAvailability
+    - getWeeklyChallenge
+    - gradeMockEssays
+    - joinInstrumentWaitlist
+    - leaveInstrumentWaitlist
     - listChapterLessons
+    - listCourseCategoryCounts
     - listCourseChapters
     - listCourses
     - listCurrentUserCourses
+    - listCurrentUserMilestones
     - listCurrentUserMistakes
+    - listEarlierQuestions
+    - listGoalMindMaps
+    - listInstrumentWaitlist
+    - listMocks
+    - listPronunciationReviews
+    - listSourceChangeNotices
     - moveChallenge
+    - moveLanguageGoalToExam
     - moveWeeklyChallenge
+    - openStudyDay
     - practiceMistakePattern
+    - previewGoalResume
+    - previewPlanChange
+    - recordMockPlay
+    - redeemLanguageConversationSdp
+    - reportExamResult
     - requestCurrentUserStepExampleLine
+    - requestSpeechClip
+    - reviseGoalUnderstanding
+    - saveMockAnswer
     - searchCatalog
+    - skipAlphabetIntro
+    - startAnytimeMock
     - startChallenge
+    - startCourseGoal
+    - startLanguageConversation
+    - startMock
+    - startMockSpeaking
     - streamGenerationEvents
     - submitChapterTestOut
+    - submitEssay
     - submitFocusTest
+    - submitMockSection
     - undoChallengeMove
     - undoWeeklyChallengeMove
     - updateCurrentUser
+    - updateCurrentUserLearningProfile
+    - updateCurrentUserMemorySettings
+    - updateGoal
+    - updateMemoryFact
+    - updateOwnLevel
