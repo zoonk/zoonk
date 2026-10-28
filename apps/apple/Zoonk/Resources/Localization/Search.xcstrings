@@ -123,6 +123,35 @@
         }
       }
     },
+    "Buddy" : {
+      "comment" : "Search word that finds the buddy by role",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kumpel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compañero"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compagnon"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parceiro"
+          }
+        }
+      }
+    },
     "Continue today's session" : {
       "comment" : "Search action that continues the day's session",
       "localizations" : {

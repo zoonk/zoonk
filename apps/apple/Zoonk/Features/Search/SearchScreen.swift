@@ -72,8 +72,9 @@ struct SearchScreen: View {
       }
     }
     .navigationTitle(Text(AppTab.search.title))
+    // Always under the title: on a phone the tab bar doesn't turn the search tab into a field.
     .searchable(
-      text: $query,
+      text: $query, placement: .navigationBarDrawer(displayMode: .always),
       prompt: Text(
         "Search or ask…", tableName: "Search",
         comment: "Placeholder of the search field that also asks the buddy or starts a goal")
@@ -116,7 +117,7 @@ struct SearchScreen: View {
         return group.isShownWithoutQuery ? group : nil
       }
 
-      let items = group.items.filter { $0.title.localizedStandardContains(text) }
+      let items = group.items.filter { $0.matches(text) }
       return items.isEmpty ? nil : SearchGroup(id: group.id, title: group.title, items: items)
     }
   }

@@ -54,6 +54,15 @@ final class SearchItemsTests: XCTestCase {
     XCTAssertEqual(
       fallback.items.map(\.action), [.ask("black holes"), .open(.startGoal(goal: "black holes"))])
   }
+  func testTheBuddyGoesByItsNameAndIsFoundByItsRole() {
+    let summary = LearnerSummary.searchFixture()
+    let buddy = searchGroups(summary: summary, isSignedIn: true)
+      .flatMap(\.items).first { $0.id == "buddy" }
+
+    XCTAssertEqual(buddy?.title, summary.buddyDisplayName, "The default buddy is named, as its tab")
+    XCTAssertEqual(buddy?.matches("buddy"), true)
+  }
+
   func testThePlansSubjectsAndChaptersOpenTheirPages() throws {
     let groups = searchGroups(
       summary: .searchFixture(), isSignedIn: true, syllabus: try .searchFixture(kind: "exam"))

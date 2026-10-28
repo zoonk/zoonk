@@ -17,7 +17,13 @@ struct SearchItem: Equatable, Identifiable {
   let title: String
   let systemImage: String
   var badge = 0
+  /// Other words that find the row, such as "Buddy" for the buddy's own name.
+  var keywords: String?
   let action: Action
+
+  func matches(_ text: String) -> Bool {
+    title.localizedStandardContains(text) || keywords?.localizedStandardContains(text) == true
+  }
 }
 
 struct SearchGroup: Equatable, Identifiable {
@@ -147,6 +153,8 @@ private func places(_ summary: LearnerSummary) -> SearchGroup {
     tab(.plan),
     SearchItem(
       id: "buddy", title: buddyName(summary), systemImage: AppTab.buddy.systemImage,
+      keywords: String(
+        localized: "Buddy", table: "Search", comment: "Search word that finds the buddy by role"),
       action: .select(.buddy)),
     SearchItem(
       id: "mistakes", title: String(localized: AppTab.mistakes.title),
@@ -352,5 +360,5 @@ private func canAskBuddy(_ summary: LearnerSummary) -> Bool {
 }
 
 private func buddyName(_ summary: LearnerSummary) -> String {
-  summary.buddyName ?? String(localized: AppTab.buddy.title)
+  summary.buddyDisplayName
 }
