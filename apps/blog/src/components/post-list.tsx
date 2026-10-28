@@ -1,12 +1,6 @@
 import { formatDateWithoutYear, getPostsByYear } from "@/lib/posts";
 import Link from "next/link";
 
-/**
- * Chronological list of blog posts grouped by year.
- * Each year appears as a section header above its posts.
- * Post rows show the title and a short date (without the year,
- * since the section header already provides that context).
- */
 export function PostList() {
   const postsByYear = getPostsByYear();
   const yearGroups = [...postsByYear.entries()];

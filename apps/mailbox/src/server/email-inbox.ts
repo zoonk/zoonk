@@ -10,12 +10,6 @@ export type EmailInbox = {
   list: () => CapturedEmail[];
 };
 
-/**
- * Keeps local messages for the lifetime of the Vite process so development
- * email never requires a database, migration, cleanup job, or production
- * service. The small limit prevents a long-running dev session from growing
- * without bound.
- */
 export function createEmailInbox(): EmailInbox {
   let emails: CapturedEmail[] = [];
 

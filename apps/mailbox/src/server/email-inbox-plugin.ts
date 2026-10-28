@@ -5,11 +5,6 @@ import { type EmailInbox, createEmailInbox } from "./email-inbox.ts";
 
 const EMAILS_PATH = "/api/emails";
 
-/**
- * Adds the development-only inbox API directly to Vite. Keeping the API beside
- * the UI means the feature has one process, one in-memory lifetime, and no
- * runtime surface in any deployed application.
- */
 export function createEmailInboxPlugin(): Plugin {
   const inbox = createEmailInbox();
 
@@ -28,7 +23,6 @@ export function createEmailInboxPlugin(): Plugin {
   };
 }
 
-/** Handles supported inbox operations after the synchronous Vite middleware has matched the path. */
 async function handleEmailRequest({
   inbox,
   request,
@@ -65,11 +59,6 @@ async function handleEmailRequest({
   sendJson({ body: { error: "Method not allowed" }, response, status: 405 });
 }
 
-/**
- * Reads the request through the platform Web Stream bridge so message bodies
- * can be parsed without maintaining a second mutable buffering abstraction.
- * Invalid JSON is treated the same as an invalid shape at this local boundary.
- */
 async function readEmailPayload(request: IncomingMessage): Promise<EmailPayload | null> {
   try {
     const body = await readRequestBody(request);
@@ -81,11 +70,6 @@ async function readEmailPayload(request: IncomingMessage): Promise<EmailPayload 
   }
 }
 
-/**
- * Buffers one small local JSON request with explicit string chunks. Email size
- * limits remain the provider's concern because this endpoint never leaves the
- * developer's loopback interface.
- */
 function readRequestBody(request: IncomingMessage): Promise<string> {
   request.setEncoding("utf8");
 
@@ -98,7 +82,6 @@ function readRequestBody(request: IncomingMessage): Promise<string> {
   });
 }
 
-/** Writes every endpoint response with one predictable JSON representation. */
 function sendJson({
   body,
   response,

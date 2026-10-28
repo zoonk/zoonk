@@ -42,10 +42,6 @@ const copy = {
   to: "To",
 };
 
-/**
- * Keeps the newest local email visible by default while preserving an older
- * explicit selection as new messages arrive during a testing flow.
- */
 export function App() {
   const { emails, status } = useEmailInbox();
   const [selectedEmailId, setSelectedEmailId] = useState<string | null>(null);
@@ -105,7 +101,6 @@ export function App() {
   );
 }
 
-/** Keeps list rendering shallow while preserving semantic, keyboard-accessible message rows. */
 function EmailList({
   emails,
   onSelect,
@@ -138,7 +133,6 @@ function EmailList({
   );
 }
 
-/** Gives each message one selection action while keeping its visible metadata independently styled. */
 function EmailListMessage({
   email,
   isSelected,
@@ -168,7 +162,6 @@ function EmailListMessage({
   );
 }
 
-/** Renders one selected message without allowing its HTML to affect the mailbox UI. */
 function EmailPreview({ email }: { email: CapturedEmail }) {
   return (
     <MailboxPreview>
@@ -222,7 +215,6 @@ function EmailPreview({ email }: { email: CapturedEmail }) {
   );
 }
 
-/** Resolves selection as a pure derivation so new mail needs no synchronizing effect. */
 function getSelectedEmail({
   emails,
   selectedEmailId,
@@ -233,7 +225,6 @@ function getSelectedEmail({
   return emails.find((email) => email.id === selectedEmailId) ?? emails[0];
 }
 
-/** Gives the live indicator a clear failure label when the Vite API is unavailable. */
 function getStatusLabel(status: "loading" | "ready" | "unavailable"): string {
   if (status === "unavailable") {
     return "Offline";
@@ -246,7 +237,6 @@ function getStatusLabel(status: "loading" | "ready" | "unavailable"): string {
   return "Live";
 }
 
-/** Maps the transport state to shared semantic colors without coupling status logic to markup. */
 function getStatusDotClassName(status: "loading" | "ready" | "unavailable"): string {
   return cn(
     "size-1.75 rounded-full",
@@ -256,7 +246,6 @@ function getStatusDotClassName(status: "loading" | "ready" | "unavailable"): str
   );
 }
 
-/** Keeps the header count grammatical without adding localization machinery to a local tool. */
 function getMessageCountLabel(count: number): string {
   return `${count} ${count === 1 ? "message" : "messages"}`;
 }
