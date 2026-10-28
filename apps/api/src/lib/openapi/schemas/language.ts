@@ -1,5 +1,6 @@
 import { languageLevelTestViewSchema } from "@zoonk/core/language/level-test/contract";
 import { spokenAnswerFieldsSchema } from "@zoonk/core/library/language/spoken-answer-contract";
+import { LiveCallEndReason } from "@zoonk/db/live-call-enums";
 import { MAX_CEFR_SCORE } from "@zoonk/utils/cefr";
 import { z } from "zod";
 
@@ -28,7 +29,16 @@ export const languageConversationConnectionPathParamsSchema = languageConversati
   .meta({ id: "LanguageConversationConnectionPathParams" });
 
 export const liveCallEndResponseSchema = z
-  .object({ status: z.literal("closed") })
+  .object({
+    endReason: z
+      .enum(LiveCallEndReason)
+      .nullable()
+      .meta({
+        description:
+          "Why the connection ended: `deadline` when the server had already hung it up at the call's deadline, which closes the call's channel without `session.closed`",
+      }),
+    status: z.literal("closed"),
+  })
   .meta({ id: "LiveCallEndResponse" });
 
 export const mistakePatternPathParamsSchema = z

@@ -221,7 +221,7 @@ export function useLiveCall({
   const attempt = useRef(0);
   const { blocked: micBlocked, keep: keepAudio, stop: stopAudio } = useCallMicrophone();
   const connection = useCallConnection(actions);
-  const { end: endConnection, getConnectionId, reserve } = connection;
+  const { end: endConnection, endedByServer, getConnectionId, reserve } = connection;
 
   const objectives = useCallObjectives({
     checkObjectives: actions.checkObjectives,
@@ -338,7 +338,10 @@ export function useLiveCall({
       });
 
       watchConnection({
+        endedByServer,
         isOpen: () => phaseRef.current === "connecting" || phaseRef.current === "live",
+        // Our server hung it up at its deadline: the call ended, and is saved with its transcript.
+        onEnded: hangUp,
         onLost: () => fail(phaseRef.current === "live" ? "dropped" : "connect"),
         session: created,
       });
@@ -349,7 +352,7 @@ export function useLiveCall({
       // only a second connect on one session rejects, and this run connects each session once.
       void created.connect({ stream: audio.stream }).catch(() => null);
     },
-    [fail, handleEvent, keepAudio, phaseRef, reserve, setPhase, tappedAudio],
+    [endedByServer, fail, handleEvent, hangUp, keepAudio, phaseRef, reserve, setPhase, tappedAudio],
   );
 
   const finish = useCallFinish({ getConnectionId, release, turnsRef });

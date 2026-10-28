@@ -1,6 +1,9 @@
 import { withApiErrorBoundary } from "@/lib/api-handler";
 import { conversationRefusalError } from "@/lib/language-errors";
-import { languageConversationConnectionPathParamsSchema } from "@/lib/openapi/schemas/language";
+import {
+  languageConversationConnectionPathParamsSchema,
+  liveCallEndResponseSchema,
+} from "@/lib/openapi/schemas/language";
 import { readPathParams } from "@/lib/request-input";
 import { endLanguageConversationConnection } from "@zoonk/core/language/conversations/end-connection";
 import { NextResponse } from "next/server";
@@ -18,7 +21,9 @@ async function endConnection(
     return conversationRefusalError({ status: result.status });
   }
 
-  return NextResponse.json(result, { headers: { "Cache-Control": "no-store" } });
+  return NextResponse.json(liveCallEndResponseSchema.parse(result), {
+    headers: { "Cache-Control": "no-store" },
+  });
 }
 
 export const POST = withApiErrorBoundary(endConnection);

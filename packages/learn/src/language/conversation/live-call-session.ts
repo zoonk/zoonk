@@ -102,25 +102,40 @@ export function createLiveCallSession({
 }
 
 /**
- * Calls `onLost` when a call that's still open loses its connection: it never started in time,
- * failed, or closed without GPT-Live confirming the end (a confirmed end is the call finishing).
- * A cue GPT-Live rejected doesn't count. Disposing the session stops the watch.
+ * Follows an open call's connection. One lost without GPT-Live confirming the end (it never
+ * started in time, failed, or closed) asks our server how it ended (`endedByServer`): a hangup at
+ * the call's deadline closes the browser's channel without `session.closed`, and that call ended
+ * normally (`onEnded`); anything else lost it (`onLost`). A cue GPT-Live rejected doesn't count.
+ * Disposing the session stops the watch.
  */
 export function watchConnection({
+  endedByServer,
   isOpen,
+  onEnded,
   onLost,
   session,
 }: {
+  endedByServer: () => Promise<boolean>;
   isOpen: () => boolean;
+  onEnded: () => void;
   onLost: () => void;
   session: LiveCallSession;
 }) {
+  const lost = { asked: false };
+
   session.subscribe(() => {
     const { session: live, status } = session.getSnapshot();
     const closedUnconfirmed = status === "disconnected" && live?.finalization !== "confirmed";
 
-    if ((status === "error" || closedUnconfirmed) && isOpen()) {
-      onLost();
+    if ((status !== "error" && !closedUnconfirmed) || !isOpen() || lost.asked) {
+      return;
     }
+
+    lost.asked = true;
+
+    void endedByServer().then(
+      (ended) => (ended ? onEnded() : onLost()),
+      () => onLost(),
+    );
   });
 }

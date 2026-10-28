@@ -45,7 +45,7 @@ async function statusOf(responsePromise: Promise<APIResponse>) {
 async function assertEnded(api: APIRequestContext, path: string) {
   const response = await api.post(path);
   expect(response.status()).toBe(200);
-  await expect(response.json()).resolves.toStrictEqual({ status: "closed" });
+  await expect(response.json()).resolves.toStrictEqual({ endReason: "learner", status: "closed" });
 }
 
 async function connectionState(connectionId: string) {

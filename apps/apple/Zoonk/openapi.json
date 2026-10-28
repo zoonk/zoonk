@@ -37053,6 +37053,20 @@
       "LiveCallEndResponse": {
         "type": "object",
         "properties": {
+          "endReason": {
+            "nullable": true,
+            "description": "Why the connection ended: `deadline` when the server had already hung it up at the call's deadline, which closes the call's channel without `session.closed`",
+            "type": "string",
+            "enum": [
+              "learner",
+              "deadline",
+              "reconnect",
+              "takeover",
+              "completion",
+              "refused",
+              "failed"
+            ]
+          },
           "status": {
             "type": "string",
             "enum": [
@@ -37061,6 +37075,7 @@
           }
         },
         "required": [
+          "endReason",
           "status"
         ],
         "additionalProperties": false

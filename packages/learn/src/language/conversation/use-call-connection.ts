@@ -32,10 +32,16 @@ export type ConversationConnection =
 export type CallConnectionActions = {
   /** Reserves the call; `takeover` ends the learner's other open call first. */
   connect: (input: { takeover: boolean }) => Promise<ConversationConnection>;
-  /** Has the server hang the connection up and settle it. */
+  /**
+   * Has the server hang the connection up and settle it; `endedAtDeadline` when the server had
+   * already hung it up at the call's deadline.
+   */
   end: (
     connectionId: string,
-  ) => Promise<{ status: "closed" | "failed" | "previousConnectionClosing" }>;
+  ) => Promise<
+    | { endedAtDeadline: boolean; status: "closed" }
+    | { status: "failed" | "previousConnectionClosing" }
+  >;
 };
 
 const FAILED = { status: "failed" } as const;
@@ -54,6 +60,7 @@ export function useCallConnection(actions: CallConnectionActions) {
   const connectionId = useRef<string | null>(null);
   const sessionUrl = useRef<string | null>(null);
   const confirmed = useRef(false);
+  const endedAtDeadline = useRef(false);
   const ending = useRef<Promise<boolean> | null>(null);
 
   useEffect(() => {
@@ -73,6 +80,7 @@ export function useCallConnection(actions: CallConnectionActions) {
       .then(
         (result) => {
           confirmed.current = result.status === "closed";
+          endedAtDeadline.current = result.status === "closed" && result.endedAtDeadline;
           return confirmed.current;
         },
         () => false,
@@ -137,5 +145,8 @@ export function useCallConnection(actions: CallConnectionActions) {
 
   const getConnectionId = useCallback(() => connectionId.current, []);
 
-  return { end, getConnectionId, reconnecting, reserve };
+  /** Ends the connection and says whether our server had already ended it at the deadline. */
+  const endedByServer = useCallback(async () => (await end()) && endedAtDeadline.current, [end]);
+
+  return { end, endedByServer, getConnectionId, reconnecting, reserve };
 }

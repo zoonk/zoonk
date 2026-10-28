@@ -9,12 +9,7 @@ import { studySessionError } from "./study-session-errors";
 type RefusedConversation =
   | Exclude<ConnectLanguageConversationResult, { status: "ready" }>
   | Exclude<Awaited<ReturnType<typeof redeemLiveCallSdp>>, { status: "ready" }>
-  | {
-      status: Exclude<
-        Awaited<ReturnType<typeof endLanguageConversationConnection>>["status"],
-        "closed"
-      >;
-    }
+  | Exclude<Awaited<ReturnType<typeof endLanguageConversationConnection>>, { status: "closed" }>
   | Exclude<StartLanguageConversationResult, { status: "ready" }>;
 
 /** What a refused call says, by the call time that ran out. */

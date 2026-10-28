@@ -56,7 +56,10 @@ export async function connectConversationAction({
   };
 }
 
-/** Stops provider billing before the browser drops its peer; an uncertain close stays retryable. */
+/**
+ * Hangs the call up before the browser drops its peer, and says whether the server already had at
+ * the call's deadline; an uncertain hangup stays retryable.
+ */
 export async function endConversationConnectionAction(
   conversationId: string,
   connectionId: string,
@@ -66,7 +69,10 @@ export async function endConversationConnectionAction(
   });
 
   if (response.ok) {
-    return { status: "closed" } as const;
+    return {
+      endedAtDeadline: getString(response.json, "endReason") === "deadline",
+      status: "closed",
+    } as const;
   }
 
   const refusal = readConnectionRefusal(response.json);
