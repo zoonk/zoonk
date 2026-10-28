@@ -23,43 +23,44 @@ struct TodayDayView: View {
     case main
   }
 
+  /// Whether Today has room for main's aside (72rem on the web): the missions, the week, the
+  /// notices and practice in a column beside the day. Measured on Today's own width, so a sidebar,
+  /// split view, a compact window or the iPhone Duo keeps one column.
+  @State private var isWide = false
+
+  /// The width from which the day and the aside both keep a comfortable column.
+  private static let wideWidth = 900.0
+
   var body: some View {
-    List {
-      TodaySessionSection(view: view, busy: busy, failed: failed, open: open)
+    Group {
+      if isWide {
+        HStack(alignment: .top, spacing: 0) {
+          List {
+            day
+          }
 
-      if !view.upNextLessons.isEmpty {
-        TodayUpNextSection(view: view, isBusy: busy == .keepLearning) {
-          run(.keepLearning) { await store.addExtraTime(in: view) }
+          List {
+            aside
+            notices
+            TodayPracticeSection(view: view)
+          }
+          .containerRelativeFrame(.horizontal) { width, _ in width * 0.4 }
+        }
+      } else {
+        List {
+          day
+          notices
+          aside
+          TodayPracticeSection(view: view)
         }
       }
-
-      TodayMoreSection(
-        view: view, busy: busy,
-        addTime: { run(.keepLearning) { await store.addExtraTime(in: view) } },
-        catchUp: {
-          perform(.catchUp) { await store.catchUp(in: view) }
-        })
-
-      if let insight = view.insight {
-        Section {
-          MemoryInsightCard(insight: insight)
-        }
-        .listRowBackground(Color.clear)
-        .listRowInsets(EdgeInsets())
-      }
-
-      if view.planChange?.status == "proposed" {
-        TodayPlanChangeSection(change: view.planChange)
-      }
-
-      if !view.session.missions.isEmpty {
-        TodayMissionsSection(view: view, open: open)
-      }
-
-      TodayWeekSection(view: view)
-      TodayPracticeSection(view: view)
     }
     .listStyle(.insetGrouped)
+    .onGeometryChange(for: Bool.self) {
+      $0.size.width >= Self.wideWidth
+    } action: {
+      isWide = $0
+    }
     .navigationSubtitle(dayLine)
     .task(id: view.session.localDate) {
       await refreshAtDayEnd()
@@ -70,6 +71,51 @@ struct TodayDayView: View {
     .onDisappear {
       tapTask?.cancel()
     }
+  }
+
+  /// The day itself: its session and action, the plan's next lessons, and what else it offers.
+  @ViewBuilder
+  private var day: some View {
+    TodaySessionSection(view: view, busy: busy, failed: failed, open: open)
+
+    if !view.upNextLessons.isEmpty {
+      TodayUpNextSection(view: view, isBusy: busy == .keepLearning) {
+        run(.keepLearning) { await store.addExtraTime(in: view) }
+      }
+    }
+
+    TodayMoreSection(
+      view: view, busy: busy,
+      addTime: { run(.keepLearning) { await store.addExtraTime(in: view) } },
+      catchUp: {
+        perform(.catchUp) { await store.catchUp(in: view) }
+      })
+  }
+
+  /// The one insight and a plan change waiting for the learner's say.
+  @ViewBuilder
+  private var notices: some View {
+    if let insight = view.insight {
+      Section {
+        MemoryInsightCard(insight: insight)
+      }
+      .listRowBackground(Color.clear)
+      .listRowInsets(EdgeInsets())
+    }
+
+    if view.planChange?.status == "proposed" {
+      TodayPlanChangeSection(change: view.planChange)
+    }
+  }
+
+  /// The day's missions and the week.
+  @ViewBuilder
+  private var aside: some View {
+    if !view.session.missions.isEmpty {
+      TodayMissionsSection(view: view, open: open)
+    }
+
+    TodayWeekSection(view: view)
   }
 
   /// The quiet line under Today's title: the date, the days left, the exam's own day and where the
