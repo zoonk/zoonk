@@ -9,6 +9,7 @@ struct AppDependencies {
   let privateImageLoader: PrivateImageLoader
   let progressStore: ProgressStore
   let sessionStore: SessionStore
+  let settingsStore: SettingsStore
   let subscriptionStore: AppStoreSubscriptionStore
 
   static func live(configuration: AppConfiguration = .current) -> AppDependencies {
@@ -34,7 +35,8 @@ struct AppDependencies {
     courseCatalogAPI: (any CourseCatalogAPIClient)? = nil,
     learnerSummaryAPI: (any LearnerSummaryAPIClient)? = nil,
     myCoursesAPI: (any MyCoursesAPIClient)? = nil,
-    progressAPI: (any ProgressAPIClient)? = nil
+    progressAPI: (any ProgressAPIClient)? = nil,
+    settingsAPI: (any SettingsAPIClient)? = nil
   ) {
     let cache = AppCache(session: session)
     self.cache = cache
@@ -55,6 +57,7 @@ struct AppDependencies {
       api: progressAPI ?? ProgressAPI(clients: clients),
       cache: cache)
     sessionStore = session
+    settingsStore = SettingsStore(api: settingsAPI ?? SettingsAPI(clients: clients), cache: cache)
     self.subscriptionStore = subscriptionStore
   }
 }

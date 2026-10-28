@@ -3,15 +3,19 @@ import SwiftUI
 struct ProfileEditorView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(SessionStore.self) private var session
+  @Environment(SettingsStore.self) private var settings
   @State private var name: String
   @State private var username: String
 
   let account: CurrentAccount
   let isRequiredSetup: Bool
+  /// Opens account deletion; the required setup has no way out but finishing it.
+  let deleteAccount: (() -> Void)?
 
-  init(account: CurrentAccount, isRequiredSetup: Bool) {
+  init(account: CurrentAccount, isRequiredSetup: Bool, deleteAccount: (() -> Void)? = nil) {
     self.account = account
     self.isRequiredSetup = isRequiredSetup
+    self.deleteAccount = deleteAccount
     _name = State(initialValue: account.user.name)
     _username = State(initialValue: account.user.displayUsername ?? account.user.username ?? "")
   }
@@ -81,6 +85,38 @@ struct ProfileEditorView: View {
       if session.failure != nil {
         Section {
           AccountFailureMessage(failure: session.failure)
+        }
+      }
+
+      if let deleteAccount {
+        Section {
+          DataExportRow(
+            title: Text(
+              "Download my data", tableName: "Account",
+              comment: "Row that downloads everything Zoonk keeps about the learner"),
+            description: Text(
+              "Everything Zoonk keeps about you, as one file", tableName: "Account",
+              comment: "What the data download contains"),
+            filename: "zoonk-data"
+          ) {
+            await settings.exportAccountData()
+          }
+        } header: {
+          Text("Your data", tableName: "Account", comment: "Profile section with the data download")
+        }
+
+        Section {
+          Button(role: .destructive, action: deleteAccount) {
+            Text(
+              "Delete my account", tableName: "Account",
+              comment: "Opens permanent account deletion")
+          }
+        } header: {
+          Text("Delete account", tableName: "Account", comment: "Profile section about deletion")
+        } footer: {
+          Text(
+            "Deletes your account and everything in it for good. Plus bought on the web is canceled; App Store purchases are managed in the App Store.",
+            tableName: "Account", comment: "What deleting the account does")
         }
       }
     }

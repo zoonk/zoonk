@@ -1,15 +1,72 @@
 import StoreKit
 import SwiftUI
 
+/// The subscription sheet a Plus lock's "See Plus" opens (main's `/subscription`): an account
+/// subscribes in the App Store's own view, a guest creates an account first and a visitor logs in,
+/// each under the same offer.
+struct SubscriptionScreen: View {
+  @Environment(\.dismiss) private var dismiss
+  @Environment(AppRouter.self) private var router
+  @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(SessionStore.self) private var session
+
+  var body: some View {
+    NavigationStack {
+      Group {
+        if !isGuest, let account = session.account,
+          let appAccountToken = UUID(uuidString: account.user.id)
+        {
+          SubscriptionView(appAccountToken: appAccountToken)
+        } else {
+          ScrollView {
+            SubscriptionMarketingContent()
+              .scenePadding()
+          }
+          .safeAreaBar(edge: .bottom) {
+            Button {
+              router.present(.account)
+            } label: {
+              if isGuest {
+                Text(
+                  "Create an account", tableName: "Account",
+                  comment: "Asks a guest to create an account before subscribing")
+              } else {
+                Text(
+                  "Log in", tableName: "Account",
+                  comment: "Asks a visitor to log in before subscribing")
+              }
+            }
+            .buttonStyle(.mainAction)
+            .controlSize(.large)
+            .scenePadding()
+          }
+        }
+      }
+      .toolbar {
+        ToolbarItem(placement: .cancellationAction) {
+          Button(role: .close) {
+            dismiss()
+          }
+        }
+      }
+    }
+  }
+
+  private var isGuest: Bool {
+    learner.summary.value?.identity.isAnonymous == true
+  }
+}
+
 struct SubscriptionView: View {
   @Environment(AppStoreSubscriptionStore.self) private var subscriptions
   @Environment(SessionStore.self) private var session
+  @Environment(SettingsStore.self) private var settings
 
   let appAccountToken: UUID
 
   var body: some View {
     SubscriptionStoreView(productIDs: AppStoreSubscriptionProduct.productIDs) {
-      SubscriptionMarketingContent()
+      SubscriptionMarketingContent(allowance: settings.allowance.value)
     }
     .subscriptionStoreControlStyle(.prominentPicker)
     .subscriptionStoreButtonLabel(.multiline)
@@ -22,7 +79,7 @@ struct SubscriptionView: View {
       [.appAccountToken(appAccountToken)]
     }
     .onInAppPurchaseCompletion { _, result in
-      _ = await subscriptions.handlePurchase(
+      let isSubscribed = await subscriptions.handlePurchase(
         StoreKitSubscriptionClient.purchaseOutcome(from: result),
         synchronizationScope: session.account?.user.id
       ) { signedTransaction, expectedAccountID in
@@ -30,7 +87,12 @@ struct SubscriptionView: View {
           signedTransaction: signedTransaction,
           expectedAccountID: expectedAccountID)
       }
+
+      if isSubscribed {
+        settings.subscriptionChanged()
+      }
     }
+    .loads(settings.allowance, refreshable: false)
     .navigationTitle(
       Text(
         "Zoonk Plus",
@@ -212,58 +274,81 @@ struct SubscriptionView: View {
   }
 }
 
+/// Main's offer: what Plus gives (`PlusBenefits`), after a free account's own plan.
 private struct SubscriptionMarketingContent: View {
-  var body: some View {
-    VStack(spacing: 20) {
-      Image(systemName: "sparkles")
-        .font(.largeTitle)
-        .foregroundStyle(.tint)
-        .accessibilityHidden(true)
+  var allowance: PlanAllowance?
 
-      VStack(spacing: 8) {
+  var body: some View {
+    VStack(alignment: .leading, spacing: 24) {
+      VStack(alignment: .leading, spacing: 8) {
         Text(
-          "Learn anything. It’s all included.",
+          "Subscribe to Zoonk Plus",
           tableName: "Account",
           comment: "Headline on the Zoonk Plus subscription screen"
         )
         .font(.largeTitle.bold())
-        .multilineTextAlignment(.center)
 
         Text(
-          "Plus gives you unlimited courses and lessons for whatever you want to learn.",
+          "Every goal · every lesson",
           tableName: "Account",
-          comment: "Summary of the Zoonk Plus subscription"
+          comment: "What Zoonk Plus includes, in one line"
         )
-        .font(.body)
+        .font(.title3)
         .foregroundStyle(.secondary)
-        .multilineTextAlignment(.center)
       }
 
       VStack(alignment: .leading, spacing: 12) {
         benefit(
-          title: Text(
-            "Unlimited courses and lessons",
-            tableName: "Account",
-            comment: "Zoonk Plus benefit describing unlimited learning content"),
-          systemImage: "infinity")
+          Text(
+            "Your whole exam plan, every day to the exam", tableName: "Account",
+            comment: "Zoonk Plus benefit: the full exam plan"))
         benefit(
-          title: Text(
-            "Learning built around your goals",
-            tableName: "Account",
-            comment: "Zoonk Plus benefit describing personalized learning"),
-          systemImage: "scope")
+          Text(
+            "Mock exams, timed like the real one", tableName: "Account",
+            comment: "Zoonk Plus benefit: timed mock exams"))
+        benefit(
+          Text(
+            "An AI study buddy whenever you're stuck", tableName: "Account",
+            comment: "Zoonk Plus benefit: the study buddy"))
+        benefit(
+          Text(
+            "Higher limits for speaking calls", tableName: "Account",
+            comment: "Zoonk Plus benefit: more speaking call time, never a number"))
       }
-      .frame(maxWidth: 420, alignment: .leading)
+
+      if let allowance, allowance.tier == .free {
+        GroupBox {
+          VStack(alignment: .leading, spacing: 2) {
+            Text("Free", tableName: "Account", comment: "The free plan's name")
+
+            if let limit = allowance.buddyMessagesDailyLimit {
+              Text(
+                "\(Text(allowance.buddyMessagesToday, format: .number).monospacedDigit())/\(Text(limit, format: .number).monospacedDigit()) buddy messages used today",
+                tableName: "Account",
+                comment:
+                  "A free plan's buddy messages used today, as in “3/5 buddy messages used today”"
+              )
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
+            }
+          }
+          .frame(maxWidth: .infinity, alignment: .leading)
+        } label: {
+          Text("Your plan", tableName: "Account", comment: "Section with the learner's own plan")
+        }
+      }
     }
+    .frame(maxWidth: 560, alignment: .leading)
+    .frame(maxWidth: .infinity)
     .padding(.horizontal)
   }
 
-  private func benefit(title: Text, systemImage: String) -> some View {
+  private func benefit(_ title: Text) -> some View {
     Label {
       title
     } icon: {
-      Image(systemName: systemImage)
-        .foregroundStyle(.tint)
+      Image(systemName: "checkmark")
+        .foregroundStyle(.secondary)
     }
   }
 }
