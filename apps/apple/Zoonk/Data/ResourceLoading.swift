@@ -1,11 +1,7 @@
 import SwiftUI
 
 extension View {
-  /// Loads the resources a screen shows the way every screen should: cached data at once, a
-  /// request only when nothing is cached or it's stale (on appear and on returning to the
-  /// foreground), pull to refresh, and a revalidation when a mutation invalidates it while it's
-  /// on screen. A failed request isn't asked again as the screen redraws, only by those. Frame
-  /// data that isn't a screen's content passes `refreshable: false`, so pull to refresh stays
+  /// Frame data that isn't a screen's content passes `refreshable: false`, so pull to refresh stays
   /// with the screens.
   func loads(_ resources: any CachedResource..., refreshable: Bool = true) -> some View {
     modifier(ResourceLoading(resources: resources, refreshable: refreshable))
@@ -13,10 +9,8 @@ extension View {
 }
 
 extension EnvironmentValues {
-  /// Whether a full-screen task covers this screen. A covered screen doesn't count as showing its
-  /// resources: a mutation made in the task marks them stale instead of refetching them behind it,
-  /// and they revalidate once when the task closes. It only loads what it has nothing of yet, so a
-  /// screen opened under a task is ready when uncovered. The shell sets it from its stack of tasks.
+  /// A covered screen doesn't count as showing its resources: a mutation made in the task marks
+  /// them stale instead of refetching them behind it, and they revalidate once the task closes.
   @Entry var isCoveredByTask = false
 }
 
@@ -75,8 +69,6 @@ private struct ResourceLoading: ViewModifier {
   }
 }
 
-/// Restarts loading when the screen shows other resources, another session signs in, or a task
-/// covers or uncovers it.
 private struct ResourceLoadingID: Equatable {
   let resources: [ObjectIdentifier]
   let session: AuthenticatedSession?
@@ -89,7 +81,6 @@ private struct ResourceLoadingID: Equatable {
   }
 }
 
-/// Runs the resources' requests side by side.
 @MainActor
 private func forEach(
   _ resources: [any CachedResource],
@@ -102,8 +93,7 @@ private func forEach(
   }
 }
 
-/// Keeps the view's task, and with it the resources' viewing count, alive until SwiftUI cancels
-/// it when the view disappears or shows other resources.
+/// Holds the resources' viewing count until SwiftUI cancels the view's task.
 private func untilCancelled() async {
   try? await Task.sleep(for: .seconds(60 * 60 * 24 * 365))
 }

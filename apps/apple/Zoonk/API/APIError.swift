@@ -1,8 +1,6 @@
 import Foundation
 import OpenAPIRuntime
 
-/// How a request to the API failed, in the terms screens recover from. Cancellation stays a
-/// `CancellationError` so a cancelled request is never shown as a failure.
 enum APIError: Error, Equatable, Sendable {
   case network
   case notFound
@@ -11,8 +9,6 @@ enum APIError: Error, Equatable, Sendable {
 }
 
 extension APIClientFactory {
-  /// Runs one generated-client call and reports its failure as an `APIError`, so every feature API
-  /// maps transport and decoding errors the same way.
   func perform<Output: Sendable>(
     token: String?,
     sendingNull keys: [String] = [],
@@ -27,8 +23,7 @@ extension APIClientFactory {
   }
 }
 
-/// Classifies an error thrown by a generated client: its own `APIError`s pass through, a
-/// cancelled request stays a cancellation, and connectivity problems become `.network`.
+/// A cancelled request stays a `CancellationError`, so it's never shown as a failure.
 func apiError(from error: Error) -> Error {
   if let error = error as? APIError {
     return error

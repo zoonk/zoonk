@@ -24,10 +24,8 @@ struct APIRequestMiddleware: ClientMiddleware {
   }
 }
 
-/// Writes `null` for `keys` a JSON request body leaves out. Generated clients omit an optional
-/// property that's nil (apple/swift-openapi-generator#419), so a PATCH couldn't say "clear this",
-/// such as `{"dailyLimitMinutes": null}` for no daily limit. A dotted key (`shape.area`) reaches into
-/// a nested object the body has, for a schema whose nested keys are required but nullable.
+/// Generated clients omit a nil optional property (apple/swift-openapi-generator#419), so a PATCH
+/// couldn't clear a field. A dotted key (`shape.area`) reaches into a nested object.
 struct ExplicitNullMiddleware: ClientMiddleware {
   let keys: [String]
 
@@ -73,8 +71,7 @@ struct ExplicitNullMiddleware: ClientMiddleware {
   }
 }
 
-/// Sends `body` as the request's JSON instead of the generated client's encoding, for a body the
-/// generated types can't say, such as a plan change clearing its date with a nested `null`.
+/// For a body the generated types can't encode, such as a nested `null`.
 struct JSONBodyMiddleware: ClientMiddleware {
   let body: Data
 
@@ -92,8 +89,7 @@ struct JSONBodyMiddleware: ClientMiddleware {
 }
 
 extension HTTPRequest {
-  /// The request carrying `body` in place of its own: the generated client already announced its
-  /// own body's length, and a longer body cut short reaches the server as broken JSON.
+  /// The generated client already set its own body's length, which would cut a longer body short.
   fileprivate func sending(_ body: Data) -> (HTTPRequest, HTTPBody) {
     var request = self
     request.headerFields[.contentLength] = String(body.count)

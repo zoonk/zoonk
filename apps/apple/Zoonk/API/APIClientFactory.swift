@@ -3,12 +3,9 @@ import OpenAPIRuntime
 import OpenAPIURLSession
 
 /// The app target uses `SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated` because Swift OpenAPI
-/// Generator cannot yet generate its client and middleware conformances for a default-`MainActor`
-/// module. UI and mutable app state stay explicitly `@MainActor` until upstream issues #796 and
-/// #804 are released: https://github.com/apple/swift-openapi-generator/issues/796 and
-/// https://github.com/apple/swift-openapi-generator/issues/804.
+/// Generator can't generate conformances for a default-`MainActor` module:
+/// https://github.com/apple/swift-openapi-generator/issues/796
 struct APIClientFactory {
-  /// The API's versioned root; files it serves to their owner live under it.
   let serverURL: URL
   private let streamingTransport: any ClientTransport
   private let transport: any ClientTransport
@@ -23,7 +20,8 @@ struct APIClientFactory {
     self.streamingTransport = streamingTransport ?? transport
   }
 
-  /// Creates cookie-free transports because native authentication is authorized only by the bearer token kept in Keychain. Streams get their own session without the one-minute cap on a whole response, since a generation's events can run for minutes.
+  /// Cookie-free: the Keychain bearer token is the only credential. Streams get their own session
+  /// without the one-minute response cap, since a generation's events can run for minutes.
   static func live(baseURL: URL) -> APIClientFactory {
     let configuration = sessionConfiguration()
     configuration.timeoutIntervalForRequest = 30
@@ -39,17 +37,14 @@ struct APIClientFactory {
         configuration: .init(session: URLSession(configuration: streamingConfiguration))))
   }
 
-  /// Captures the token in an immutable middleware while every generated client reuses the same transport.
-  /// `sendingNull` names body keys sent as an explicit `null` when the generated body leaves them out;
-  /// `body` replaces the generated body with JSON the generated types can't encode.
+  /// `sendingNull` keys go out as explicit `null`s; `body` replaces the generated client's body.
   func makeClient(token: String? = nil, sendingNull keys: [String] = [], body: Data? = nil)
     -> Client
   {
     makeClient(token: token, transport: transport, sendingNull: keys, body: body)
   }
 
-  /// A client for long-lived responses such as Server-Sent Events, or a write the server takes
-  /// longer than a request's usual wait to answer (grading an essay is a model call).
+  /// Also for a write slower than the one-minute cap, such as grading an essay.
   func makeStreamingClient(token: String? = nil) -> Client {
     makeClient(token: token, transport: streamingTransport)
   }

@@ -1,8 +1,6 @@
 PROJECT := Zoonk.xcodeproj
 APP_SCHEME := Zoonk
 SWIFT_SOURCES := Zoonk ZoonkAPI/Package.swift ZoonkAPI/Sources ZoonkTests ZoonkUITests
-# Debug compiles the app's files in parallel; Release optimizes the whole module in one job and takes
-# several times longer. Pass CONFIGURATION=Release to check a release build.
 CONFIGURATION ?= Debug
 TEST_DESTINATION ?= platform=iOS Simulator,name=iPhone 17,OS=latest
 TEST_ARGUMENTS ?=

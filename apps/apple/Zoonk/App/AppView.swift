@@ -38,7 +38,8 @@ struct AppView: View {
       }
   }
 
-  /// Rechecks iCloud Keychain whenever the app returns from the background so a login or logout from another Apple device updates this UI without a process restart. Launch's first activation skips it: `restore()` just read the Keychain.
+  /// iCloud Keychain brings sign-ins and sign-outs from the learner's other Apple devices. Launch's
+  /// first activation skips this: `restore()` just read the Keychain.
   private func reconcileSessionOnReturn(_ scenePhase: ScenePhase) {
     switch scenePhase {
     case .background:

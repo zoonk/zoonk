@@ -104,8 +104,6 @@ struct ZoonkApp: App {
   }
 }
 
-/// One window's navigation: its tabs, stacks, tasks and sheet, so two Zoonk windows (on iPad or the
-/// open iPhone Duo) go their own ways while the stores they show stay the app's.
 private struct AppWindow: View {
   @Environment(SessionStore.self) private var session
   @State private var router: AppRouter

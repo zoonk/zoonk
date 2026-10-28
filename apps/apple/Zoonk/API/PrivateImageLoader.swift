@@ -1,9 +1,6 @@
 import SwiftUI
 import UIKit
 
-/// Loads pictures of a learner's private courses, chapters and lessons. They have no public URL: the
-/// API serves them from `/v1/files/` to their owner only, so each request carries the learner's
-/// session. Loaded pictures are kept in memory for the current session and dropped when it changes.
 actor PrivateImageLoader {
   typealias Fetch = @Sendable (URLRequest) async throws -> (Data, URLResponse)
 
@@ -18,7 +15,6 @@ actor PrivateImageLoader {
     filesURL = apiBaseURL.appending(path: "v1/files")
   }
 
-  /// Uses a cookie-free session so the bearer token is the only credential, like the API client.
   static func live(configuration: AppConfiguration = .current) -> PrivateImageLoader {
     let sessionConfiguration = URLSessionConfiguration.ephemeral
     sessionConfiguration.httpCookieAcceptPolicy = .never
@@ -31,8 +27,7 @@ actor PrivateImageLoader {
     }
   }
 
-  /// Whether the picture is one of the API's private files. The session is only ever sent to the
-  /// API's own origin, never to a public image host.
+  /// The session is only ever sent to the API's own origin, never to a public image host.
   nonisolated func requiresSession(_ url: URL) -> Bool {
     url.scheme == filesURL.scheme
       && url.host() == filesURL.host()
@@ -40,7 +35,6 @@ actor PrivateImageLoader {
       && url.path().hasPrefix(filesURL.path() + "/")
   }
 
-  /// Returns the picture, or nil when it can't be loaded so the artwork keeps its fallback.
   func image(for url: URL, token: String) async -> UIImage? {
     guard requiresSession(url) else {
       return nil
@@ -104,6 +98,5 @@ actor PrivateImageLoader {
 }
 
 extension EnvironmentValues {
-  /// Nil in previews, where private pictures show their fallback artwork.
   @Entry var privateImageLoader: PrivateImageLoader?
 }

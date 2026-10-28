@@ -176,10 +176,7 @@ function bootSimulator(device: Simulator) {
   runCommand({ arguments: ["simctl", "bootstatus", device.udid, "-b"], command: "xcrun" });
 }
 
-/**
- * Signs the simulator build to run locally (no provisioning profile needed) so it carries its
- * entitlements: an unsigned build can't use the Keychain, so sign-in could never be saved.
- */
+/** Signed so it carries its entitlements: an unsigned build can't use the Keychain to save sign-in. */
 function buildApp(device: Simulator) {
   runCommand({
     arguments: [
@@ -225,10 +222,7 @@ function getBundleIdentifier(appPath: string) {
   });
 }
 
-/**
- * Brings the device window forward. Xcode 27 replaced the Simulator app with DeviceHub, so this
- * falls back to it when Simulator isn't installed.
- */
+/** Xcode 27 replaced the Simulator app with DeviceHub. */
 function showSimulator(device: Simulator) {
   const isOpen = SIMULATOR_APP_BUNDLE_IDENTIFIERS.some(
     (bundleIdentifier) =>

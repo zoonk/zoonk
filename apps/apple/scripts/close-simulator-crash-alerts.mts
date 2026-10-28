@@ -4,11 +4,7 @@ import { homedir } from "node:os";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
 
-/**
- * Closes the "<process> quit unexpectedly" alerts that crashes inside iOS simulators open on the
- * Mac, so agents clean up after their simulator work instead of leaving alerts for the owner. It
- * stops at the first alert for anything else: a Mac app's crash is for a person to read.
- */
+// Stops at the first alert that isn't a simulator crash: a Mac app's crash is for a person to read.
 
 const ALERT_TITLE = /^(?<name>.+) quit unexpectedly\.$/u;
 const MAX_ALERTS = 500;
@@ -26,7 +22,6 @@ function runAppleScript(script: string) {
   return result.stdout.trim();
 }
 
-/** The crashed process named by the alert on screen, if a crash alert is showing. */
 function getAlertProcessName() {
   const texts = runAppleScript(`
     tell application "System Events"
@@ -44,7 +39,6 @@ function getAlertProcessName() {
     .find((name) => name !== undefined);
 }
 
-/** A crash alert names the process, and its newest report says where that process ran. */
 function isSimulatorCrash(processName: string) {
   const newestReport = readdirSync(REPORTS_DIRECTORY)
     .filter((file) => file.startsWith(`${processName}-`) && file.endsWith(".ips"))
@@ -64,7 +58,6 @@ function ignoreAlert() {
     end tell`);
 }
 
-/** The next queued alert appears a moment after the previous one closes. */
 async function waitForAlertProcessName() {
   const processName = getAlertProcessName();
 

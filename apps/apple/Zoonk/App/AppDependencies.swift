@@ -39,7 +39,6 @@ struct AppDependencies {
       mindMapsAPI: mindMapsAPI)
   }
 
-  /// Builds every data store on one cache, so mutations and session changes reach all of them.
   init(
     clients: APIClientFactory,
     session: SessionStore,

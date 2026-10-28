@@ -1,9 +1,7 @@
 import Foundation
 import OpenAPIRuntime
 
-/// One step update from a generation's event stream.
 struct GenerationEvent: Decodable, Hashable, Sendable {
-  /// When the step reported it.
   let at: Date?
   let entityID: String?
   let reason: String?
@@ -39,10 +37,8 @@ struct GenerationEvent: Decodable, Hashable, Sendable {
 }
 
 extension APIClientFactory {
-  /// Streams a generation's step updates from `GET /generations/{id}/events` until the run ends.
-  /// A dropped connection resumes after the last event received, through the endpoint's
-  /// `startIndex`; it gives up after three drops in a row without a new event. When the stream
-  /// ends, read the generation's status: a run that stopped ends its stream at once.
+  /// Resumes a dropped connection after the last event. When the stream ends, read the
+  /// generation's status: a run that stopped ends its stream at once.
   func generationEvents(
     id: String,
     token: String?
