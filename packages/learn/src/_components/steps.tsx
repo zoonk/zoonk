@@ -15,40 +15,21 @@ import { StepDots } from "./step-dots";
 import { useTaskAsideShown } from "./task-header";
 import { TASK_BACK_ACTION_CLASS, TaskActions } from "./task-layout";
 
-/** One thing to say, as its own step. Steps with nothing to say are left out by the caller. */
 export type StepsItem = {
-  /** A secondary action beside Continue on this step ("See mistakes"), left of the main one. */
   action?: React.ReactNode;
-  /**
-   * What it says sits in the `aside` from `lg`, so the steps there skip it (never the first step).
-   * The server then draws both arrangements and the screen's width shows one, so a reload at any
-   * width draws the steps that stay.
-   */
   beside?: boolean;
   content: React.ReactNode;
   id: string;
-  /**
-   * A quiet option on its own row under this step's actions ("See the questions"), so the main
-   * action keeps its room in a row it shares with the buddy.
-   */
   option?: React.ReactNode;
-  /**
-   * A full-screen moment for this step (a ceremony), shown once as the learner reaches it, before
-   * the step itself, so the step's own motion doesn't play hidden behind it: the step is drawn
-   * under it once it begins to close, so it fades out over the step. It calls `close` once it's
-   * gone, and the step takes the focus.
-   */
   moment?: (close: () => void) => React.ReactNode;
 };
 
-/** Moves focus to the step's title, so a screen reader reads each step as it comes. */
 export function focusStepTitle(container: HTMLElement | null) {
   container
     ?.querySelector<HTMLElement>(`[data-slot="${STEP_TITLE_SLOT}"]`)
     ?.focus({ preventScroll: true });
 }
 
-/** Back to the step before, the 44px square on the bar's left (← too, from `Steps`). */
 export function StepsBackButton({ onClick }: { onClick: () => void }) {
   const t = useExtracted();
 
@@ -66,16 +47,10 @@ export function StepsBackButton({ onClick }: { onClick: () => void }) {
   );
 }
 
-/** What only wide screens show (`when`), the last step's actions there; otherwise as it is. */
 function WideOnly({ children, when }: { children: React.ReactNode; when: boolean }) {
   return when ? <div className="contents max-lg:hidden">{children}</div> : children;
 }
 
-/**
- * A step's full-screen moment (`StepsItem.moment`), shown once as the learner reaches it: drawn on
- * its own until it begins to close, then over the step (`showsStep`) as it fades, and gone once
- * it's closed. `shown` lists the steps whose moment closed, so the step takes the focus then.
- */
 function useStepMoment(item: StepsItem | undefined) {
   const [shown, setShown] = useState<string[]>([]);
   const [closing, setClosing] = useState<string | null>(null);
@@ -97,16 +72,6 @@ function useStepMoment(item: StepsItem | undefined) {
   };
 }
 
-/**
- * A result told one thing at a time, full screen like a task: leave on the left (Escape too), dots
- * for where the learner is, the step on the page from the top of the column, and Continue (Enter)
- * in the pinned action bar, with Back beside it (← too). The last step has the screen's own
- * actions instead of Continue. From `lg` an `aside` can hold what the steps after the first tell
- * on a phone (what the day earned, the steps `beside` it), so a wide screen says it all at once.
- * The learner's buddy (`ask`) sits where it does on every task: after the main action on a phone,
- * at the aside's foot from `lg`. A step's celebration plays the first time it shows; going back to
- * it shows its end state.
- */
 export function Steps({
   aside,
   ask,
@@ -116,15 +81,9 @@ export function Steps({
   items,
 }: {
   aside?: TaskFrameAside | null;
-  /** "Ask {buddy}" about the result, as a task's buddy (`AskTutor` with the `task` size). */
   ask?: React.ReactNode;
   exitHref: string;
-  /**
-   * The last step's main action, in Continue's place (a `TaskMainButton` or `TaskMainLink`, which
-   * binds its own Enter); a line about it, like an error, goes in `finalOptions`.
-   */
   finalAction: React.ReactNode;
-  /** Quiet options under the last step's main action. */
   finalOptions?: React.ReactNode;
   items: StepsItem[];
 }) {
@@ -136,7 +95,6 @@ export function Steps({
   const focusedIndex = useRef(0);
   const reached = Math.min(index, items.length - 1);
 
-  // A screen widened on a step that sits in the aside from `lg` shows the step before it.
   const current =
     asideShown && items[reached]?.beside
       ? Math.max(
@@ -149,8 +107,8 @@ export function Steps({
   const { moment, showsStep, shown: momentsShown } = useStepMoment(item);
   const phone = getStepMoves({ current, steps: items, wide: false });
   const wide = getStepMoves({ current, steps: items, wide: true });
-  // Some step sits beside the others from `lg`: each arrangement's dots and last-step actions are
-  // drawn, and the screen's width shows its own (`lg:hidden`, `max-lg:hidden`).
+  // The server can't know the width, so each arrangement's dots and last-step actions are drawn and
+  // CSS shows one (`lg:hidden`, `max-lg:hidden`).
   const split = items.some((step) => step.beside);
   const isLastHere = phone.next === -1;
   const isLastWide = wide.next === -1;
@@ -174,7 +132,6 @@ export function Steps({
 
   useKeyboardCallback("ArrowLeft", back, { mode: "none", screen: true });
 
-  // A new step takes the focus, but the page's first one keeps it where the browser put it.
   useEffect(() => {
     if (focusedIndex.current === current) {
       return;
@@ -184,7 +141,6 @@ export function Steps({
     focusStepTitle(stepRef.current);
   }, [current]);
 
-  // Once a moment before the step closes, the step takes the focus.
   useEffect(() => {
     if (momentsShown.length > 0) {
       focusStepTitle(stepRef.current);

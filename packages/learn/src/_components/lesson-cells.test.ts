@@ -22,7 +22,6 @@ describe(getLessonCells, () => {
   it("shares larger plans out among cells that fill partly, with no outline", () => {
     const cells = getLessonCells({ known: 4, studied: 10, today: 3, total: 227 });
 
-    // 227 lessons: cells of 8, the last holding the 3 left.
     expect(cells).toHaveLength(29);
     expect(cells[0]).toStrictEqual({ known: 0, planned: false, studied: 1 });
     expect(cells[1]).toStrictEqual({ known: 0.5, planned: false, studied: 0.25 });

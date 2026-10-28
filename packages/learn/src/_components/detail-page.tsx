@@ -15,38 +15,6 @@ import { LearnLink } from "../learn-link";
 import { PageWithAside } from "../shell/learn-shell";
 import { PAGE_COLUMN_CLASS, PageSection, PageSectionHeader, PageSectionTitle } from "./page";
 
-/**
- * A page opened from a tab (a subject, a chapter, a unit, the exam, the mistakes notebook), as
- * Linear's issue view: its bar (`bar`, the way back), its header (the group it belongs to as a mono
- * eyebrow, its name, a mono line of facts) with its one main action and its "…" beside the name
- * from `md` (under it, the main action full width, on a phone), then its sections flat on the page.
- * Its properties (`aside`: coverage, details, practice) sit in the full-height aside from 72rem,
- * and follow the sections in the same column under it. The bar sits in the page's own column, so
- * from 72rem it ends where the aside begins.
- *
- * ```tsx
- * <DetailLayout
- *   aside={<DetailAsideSection title="Details" titleId="…">…</DetailAsideSection>}
- *   asideLabel="About this chapter"
- *   bar={<LearnPageBar back={{ href: "/plan", label: "Plan" }} title="Circuits" />}
- * >
- *   <DetailAside>
- *     <DetailHero>
- *       <DetailHeroText>
- *         <PageEyebrow>Chapter 5</PageEyebrow>
- *         <DetailTitle>Circuits</DetailTitle>
- *         <DetailFacts>4 lessons · 26 min · 50% done</DetailFacts>
- *       </DetailHeroText>
- *       <DetailActions>
- *         <DetailContinueLink href="/learn/1" started />
- *         <DetailMenu label="Chapter options">…menu items…</DetailMenu>
- *       </DetailActions>
- *     </DetailHero>
- *   </DetailAside>
- *   <DetailContent>…sections…</DetailContent>
- * </DetailLayout>
- * ```
- */
 export function DetailLayout({
   aside,
   asideLabel = "",
@@ -55,11 +23,8 @@ export function DetailLayout({
   className,
   ...props
 }: React.ComponentProps<"article"> & {
-  /** The page's properties, beside its sections from 72rem. */
   aside?: React.ReactNode;
-  /** The aside's accessible name. */
   asideLabel?: string;
-  /** The page's bar (`LearnPageBar`), over its header. */
   bar?: React.ReactNode;
 }) {
   const page = (
@@ -85,7 +50,6 @@ export function DetailLayout({
   );
 }
 
-/** The page's header and what it says first, on top of its sections. */
 export function DetailAside({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -106,10 +70,6 @@ export function DetailContent({ className, ...props }: React.ComponentProps<"div
   );
 }
 
-/**
- * The page's header: the eyebrow, the name and the facts, and its actions (`DetailActions`) beside
- * them from `md`, under them on a phone.
- */
 export function DetailHero({ className, ...props }: React.ComponentProps<"header">) {
   return (
     <header
@@ -141,7 +101,6 @@ export function DetailTitle({ children, className, ...props }: React.ComponentPr
   );
 }
 
-/** A line of facts under the name, separated by dots, in the mono face as every number is. */
 export function DetailFacts({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
@@ -155,7 +114,6 @@ export function DetailFacts({ className, ...props }: React.ComponentProps<"p">) 
   );
 }
 
-/** The main action, then the page's other actions (its "…"), at the end of the title's row. */
 export function DetailActions({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -166,30 +124,14 @@ export function DetailActions({ className, ...props }: React.ComponentProps<"div
   );
 }
 
-/**
- * A detail page's main action: the primary button at its 44px, as wide as the row beside the
- * page's "…" on a phone, as wide as its words from `md`, for one that's a link or a button.
- */
 export const DETAIL_PRIMARY_CLASS = cn(
   buttonVariants({ size: "lg" }),
   "min-w-0 flex-1 md:flex-none md:px-5",
 );
 
-/** The "…" beside a detail page's main action (an `icon` button), as tall as it. */
 export const DETAIL_MENU_TRIGGER_CLASS = "size-11 shrink-0";
 
-/**
- * The page's other actions beside its main one: an outline "…" the height of the main action,
- * opening a menu of `children` (`DropdownMenuItem`s, or `ReportProblemItem`).
- */
-export function DetailMenu({
-  children,
-  label,
-}: {
-  children: React.ReactNode;
-  /** Names the button for screen readers ("Chapter options"). */
-  label: string;
-}) {
+export function DetailMenu({ children, label }: { children: React.ReactNode; label: string }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -206,11 +148,6 @@ export function DetailMenu({
   );
 }
 
-/**
- * "Continue" (or "Start"): the page's way in, which Enter follows from anywhere on the page, its
- * ⏎ shown on devices with a keyboard at hand. How far the learner is sits in the facts line, never
- * inside the button.
- */
 export function DetailContinueLink({
   href,
   lessonWritten,
@@ -237,7 +174,6 @@ export function DetailContinueLink({
   );
 }
 
-/** "33% done": how far the learner is in a page's lessons or topics, for its facts line. */
 export function useDoneShare() {
   const t = useExtracted();
 
@@ -245,10 +181,6 @@ export function useDoneShare() {
     t("{percent}% done", { percent: String(Math.round(Math.min(Math.max(share, 0), 1) * 100)) });
 }
 
-/**
- * A block of the aside: its label, then its content (a page's coverage, its properties, more to
- * do). Under 72rem it follows the sections as one of them.
- */
 export function DetailAsideSection({
   children,
   className,
@@ -258,7 +190,6 @@ export function DetailAsideSection({
 }: {
   children: React.ReactNode;
   className?: string;
-  /** A quiet count beside the label ("180 q"). */
   detail?: React.ReactNode;
   title: string;
   titleId: string;
@@ -276,15 +207,10 @@ export function DetailAsideSection({
   );
 }
 
-/** A page's properties, one row each (see `DetailProperty`). */
 export function DetailProperties({ children }: { children: React.ReactNode }) {
   return <dl className="flex flex-col">{children}</dl>;
 }
 
-/**
- * One property, Linear's way: its name muted on the left, its value on the right (`mono` for a
- * number or a date).
- */
 export function DetailProperty({
   children,
   label,

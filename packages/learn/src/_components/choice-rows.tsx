@@ -14,26 +14,14 @@ import {
   ListRowTrailing,
 } from "./list-group";
 
-/** One option to pick: its name, what it means under it, and its size at its end. */
 export type RowChoice<Value extends string> = {
   description?: string;
   label: string;
-  /** A word beside the name, as a chip ("Recommended"). */
   mark?: string;
-  /** The size in the mono face ("90 q · ~4h 42m", "5 h"). */
   trailing?: string;
   value: Value;
 };
 
-/**
- * One option from a short list (a mock, how to study prerequisites), as flat rows with hairlines
- * between them, like every list: the name, what it means in a quiet line and its size in the mono
- * face at the end. The picked row is highlighted a little past the column with a check, and a tap
- * anywhere on a row picks it. With long names (`stackOnPhone`), a phone puts the size under the
- * name, which then keeps the row's width instead of wrapping word by word. One radio group for
- * assistive tech; number keys pick from it, unless another list on the screen owns them
- * (`numberKeys`). `readOnly` keeps the pick as it is while it can't change (a save in flight).
- */
 export function ChoiceRows<Value extends string>({
   choices,
   label,
@@ -101,7 +89,6 @@ export function ChoiceRows<Value extends string>({
             </ListRowTrailing>
           )}
 
-          {/* The pick is the row's highlight and its check; the radio itself stays unseen. */}
           <span
             aria-hidden="true"
             className={cn(

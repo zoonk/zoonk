@@ -4,35 +4,10 @@ import { type LearnLinkComponentProps } from "../learn-context";
 import { LearnLink } from "../learn-link";
 import { SURFACE_CLASS } from "./surface";
 
-/**
- * The one list on every page: rows flat on the page with a hairline between them, as wide as the
- * column. A row in view (`aria-current`, or `data-highlighted` where it isn't the current one) or
- * under the pointer is highlighted a little past the column's edges, and the highlighted row's
- * hairlines turn transparent (`divided-rows`). `variant="panel"` puts the rows on one panel
- * instead, for the rare list that is a self-contained thing (inside a sheet, beside other panels).
- * Rows are direct children, or the items of one `ol`/`ul` directly inside: an item that wraps its
- * row carries the row's mark.
- *
- * ```tsx
- * <ListGroup>
- *   <ListRowLink href="/mistakes">
- *     <ListRowLeading><KindDot kind="mistakes" /></ListRowLeading>
- *     <ListRowContent>
- *       <ListRowTitle>Mistakes notebook</ListRowTitle>
- *       <ListRowDescription>Redo what you got wrong</ListRowDescription>
- *     </ListRowContent>
- *     <ListRowTrailing>14</ListRowTrailing>
- *   </ListRowLink>
- * </ListGroup>
- * ```
- *
- * The panel clips its corners without becoming a scroll container (`overflow-clip`, not
- * `overflow-hidden`), so inside a sheet's flex column it keeps its rows' height instead of
- * shrinking to a line.
- */
+/** Rows are direct children, or the items of one `ol`/`ul` directly inside. */
 export const LIST_GROUP_CLASS = "divided-rows flex flex-col";
 
-/** The list on a panel, its rows inset from the panel's edge. */
+/** `overflow-clip`, not `overflow-hidden`: a scroll container would shrink to a line in a sheet's flex column. */
 const LIST_GROUP_PANEL_CLASS = cn(SURFACE_CLASS, LIST_GROUP_CLASS, "overflow-clip");
 
 export function ListGroup({
@@ -50,36 +25,19 @@ export function ListGroup({
   );
 }
 
-/**
- * A row's frame: leading, content and trailing side by side, the content setting the height. Its
- * highlight (in view, under the pointer) is drawn behind it, a little past the column's edges on
- * the page and edge to edge on a panel, so the hairlines between rows keep the column's width.
- */
 export const LIST_ROW_CLASS = cn(
   "relative isolate flex w-full min-w-0 items-stretch gap-3 text-left",
   "aria-[current]:before:bg-muted data-highlighted:before:bg-muted before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-[0.625rem] before:transition-colors",
   "in-data-[list=panel]:px-4 in-data-[list=panel]:before:inset-0 in-data-[list=panel]:before:rounded-none",
 );
 
-/**
- * A row that opens or does something: the hover, the press and the keyboard focus inside the list.
- * All are drawn on the highlight, which has the radius, so the row itself stays square and the
- * hairline between rows runs straight to the column's edges; a press also gives way as a wide
- * option does, so a tap shows before the next page does.
- */
 export const LIST_ROW_INTERACTIVE_CLASS = cn(
   LIST_ROW_CLASS,
   "hover:before:bg-muted/70 active:before:bg-muted press focus-visible:before:ring-ring/50 outline-none [--press-scale:0.99] focus-visible:before:ring-[3px]",
 );
 
-/**
- * The row the learner is on, for a row that marks it without `aria-current` (the next chapter, the
- * mock to take next): the same highlight, kept under the pointer. Its list item carries
- * `aria-current`, which drops the hairlines around it.
- */
 export const CURRENT_ROW_CLASS = "before:bg-muted hover:before:bg-muted";
 
-/** The row's way forward, after its trailing content. */
 function ListRowChevron({ className }: { className?: string }) {
   return (
     <ChevronRightIcon
@@ -89,12 +47,10 @@ function ListRowChevron({ className }: { className?: string }) {
   );
 }
 
-/** A row that only shows something. */
 export function ListRow({ className, ...props }: React.ComponentProps<"div">) {
   return <div className={cn(LIST_ROW_CLASS, className)} data-slot="list-row" {...props} />;
 }
 
-/** A row opening another page, the whole row being the link. */
 export function ListRowLink({
   children,
   className,
@@ -107,9 +63,7 @@ export function ListRowLink({
   className?: string;
   href: string;
   lessonWritten?: boolean;
-  /** As `LearnLink`'s: runs before the host navigates. */
   onClick?: LearnLinkComponentProps["onClick"];
-  /** As `LearnLink`'s: `"auto"` for a destination that writes itself when opened. */
   prefetch?: boolean | "auto";
 }) {
   return (
@@ -126,7 +80,6 @@ export function ListRowLink({
   );
 }
 
-/** A row opening something in place (a sheet, more rows) or acting, the whole row being the button. */
 export function ListRowButton({
   children,
   className,
@@ -146,7 +99,6 @@ export function ListRowButton({
   );
 }
 
-/** The row's icon, tile, mark or picture; one left empty (a topic without a status) takes no room. */
 export function ListRowLeading({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -157,7 +109,6 @@ export function ListRowLeading({ className, ...props }: React.ComponentProps<"sp
   );
 }
 
-/** A row's icon as its leading: a quiet 16px glyph, no tile. A thing with a kind takes its dot. */
 export function ListRowIcon({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -172,7 +123,6 @@ export function ListRowIcon({ className, ...props }: React.ComponentProps<"span"
   );
 }
 
-/** The title and its lines. */
 export function ListRowContent({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -196,11 +146,6 @@ export function ListRowTitle({ className, ...props }: React.ComponentProps<"span
   );
 }
 
-/**
- * A numbered row's title: its place ("2.") hung before the words in the mono face, so a long title
- * wraps under its own first word, never under the number. `textClassName` reaches the words (a
- * clamp, a muted done row).
- */
 export function ListRowNumberedTitle({
   children,
   className,
@@ -232,10 +177,6 @@ export function ListRowDescription({ className, ...props }: React.ComponentProps
   );
 }
 
-/**
- * A count, a time or a date at the row's end, before its chevron, in the mono face. A word there
- * (a chip, a status) takes `font-sans` back.
- */
 export function ListRowTrailing({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span

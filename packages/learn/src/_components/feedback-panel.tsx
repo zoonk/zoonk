@@ -2,11 +2,6 @@ import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, MinusIcon, XIcon } from "lucide-react";
 
-/**
- * What an answer's verdict means, for its color and glyph: right (✓ blue), wrong (✕ pink-red),
- * almost (✕ amber), or neutral (a blank, a guess, an answer nothing checked) in the text color.
- * The verdict is words, so each takes its meaning's `-text` step.
- */
 export type FeedbackTone = "almost" | "neutral" | "right" | "wrong";
 
 const TONE_CLASS: Readonly<Record<FeedbackTone, string>> = {
@@ -16,22 +11,6 @@ const TONE_CLASS: Readonly<Record<FeedbackTone, string>> = {
   wrong: "text-destructive-text",
 };
 
-/**
- * How an answer went, on one quiet panel under the question, the same in a lesson, a session, a
- * practice and a checkpoint: the verdict (`FeedbackVerdict`), one line on why
- * (`FeedbackExplanation`), the worked step that went wrong as a mono diff (`DiffLines`), and a
- * faint last line on what happens next (`FeedbackNote`). Only the verdict carries color; the panel
- * stays neutral, so the learner reads the why, not a red box.
- *
- * ```tsx
- * <FeedbackPanel>
- *   <FeedbackVerdict tone="wrong">Not quite</FeedbackVerdict>
- *   <FeedbackExplanation>The discount applies to the raised price.</FeedbackExplanation>
- *   <DiffLines labels={labels} lines={lines} />
- *   <FeedbackNote>Saved to your mistakes · back at the end of this lesson</FeedbackNote>
- * </FeedbackPanel>
- * ```
- */
 export function FeedbackPanel({ className, ...props }: React.ComponentProps<"section">) {
   return (
     <section
@@ -57,11 +36,6 @@ function ToneGlyph({ tone }: { tone: FeedbackTone }) {
   return <XIcon aria-hidden="true" className="size-4" />;
 }
 
-/**
- * The verdict, as the panel's title: a plain ✓ or ✕ in its color and a few words ("Not quite"),
- * with room on the right for a quiet aside (`end`, such as "3 right in a row"). `icon` replaces
- * the glyph for a verdict of its own (a guess's sparkle).
- */
 export function FeedbackVerdict({
   children,
   className,
@@ -97,7 +71,6 @@ export function FeedbackVerdict({
   );
 }
 
-/** The one line on why, under the verdict. */
 export function FeedbackExplanation({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -108,10 +81,6 @@ export function FeedbackExplanation({ className, ...props }: React.ComponentProp
   );
 }
 
-/**
- * The panel's faint last line: what happens next ("Saved to your mistakes · back at the end of
- * this lesson"), with nothing to do about it.
- */
 export function FeedbackNote({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p

@@ -12,7 +12,6 @@ import {
   type AnswerOptionResult,
 } from "./answer-tone";
 
-/** The picks of a question, one under the other like an exam's answer sheet. */
 export function AnswerOptionGroup({ className, ...props }: React.ComponentProps<"div">) {
   const t = useExtracted();
 
@@ -27,11 +26,7 @@ export function AnswerOptionGroup({ className, ...props }: React.ComponentProps<
   );
 }
 
-/**
- * What a checked option says on its right: "Correct" on the right answer the learner didn't pick,
- * "Your answer" on their pick (blue when right, so a right answer isn't called correct twice
- * under its verdict), and "Your guess" on a guess.
- */
+/** A right pick says "Your answer", so it isn't called correct twice under its verdict. */
 function ResultTag({ picked, result }: { picked: boolean; result: AnswerOptionResult }) {
   const t = useExtracted();
 
@@ -48,18 +43,6 @@ function ResultTag({ picked, result }: { picked: boolean; result: AnswerOptionRe
   );
 }
 
-/**
- * One answer to pick, the same in a lesson, a session, a practice, a checkpoint and a mock: its
- * number key in a keycap on the left, its words, and a strong line around it. Picked, it gets the
- * learner's ring and tint in the text color; once checked, the right answer turns blue ("Correct",
- * or "Your answer" when it was the pick) and a wrong pick red ("Your answer"), while its words stay
- * readable in the text color; a guess's pick keeps a neutral ring ("Your guess"). `role="checkbox"`
- * where a question takes several picks; tapping a picked one again clears it.
- *
- * ```tsx
- * <AnswerOption marker={2} picked result="right">96%</AnswerOption>
- * ```
- */
 export function AnswerOption({
   children,
   className,
@@ -70,12 +53,11 @@ export function AnswerOption({
   tag,
   ...props
 }: React.ComponentProps<"button"> & {
-  /** `stacked` puts a picture option's key over its picture, the words under it. */
   layout?: "row" | "stacked";
   marker: React.ReactNode;
   picked: boolean;
   result?: AnswerOptionResult | null;
-  /** What the option says on its right instead of its result's word; `null` says nothing. */
+  /** Replaces the result's word; `null` shows none. */
   tag?: React.ReactNode;
 }) {
   const shownTag =
@@ -101,7 +83,6 @@ export function AnswerOption({
       type="button"
       {...props}
     >
-      {/* On the answer's first line: the keycap is centered on one line of text. */}
       <LineMarker
         aria-hidden="true"
         className={cn(layout === "stacked" && "absolute top-3 left-3 z-10")}

@@ -16,20 +16,6 @@ import {
   ListRowTrailing,
 } from "./list-group";
 
-/**
- * Something a page keeps folded until asked (a chapter's summary, a unit's words): a row of its
- * page's list (`ListGroup`) with its icon, title and an optional count, opening in place under it.
- * Closed by default, so the page leads with what to do; open on arrival (`defaultOpen`) when what it
- * holds already differs from what the page leads with.
- *
- * ```tsx
- * <ListGroup>
- *   <Disclosure icon={<ListRowIcon><ListChecksIcon /></ListRowIcon>} title="Chapter summary">
- *     …
- *   </Disclosure>
- * </ListGroup>
- * ```
- */
 export function Disclosure({
   aside,
   children,
@@ -39,12 +25,10 @@ export function Disclosure({
   icon,
   title,
 }: {
-  /** A count or a short note before the chevron. */
   aside?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
   defaultOpen?: boolean;
-  /** A quiet line under the title saying what's inside. */
   description?: React.ReactNode;
   icon: React.ReactNode;
   title: string;

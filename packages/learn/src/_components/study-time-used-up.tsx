@@ -7,17 +7,8 @@ import { LearnLink } from "../learn-link";
 import { TaskMainLink } from "../shell/task-frame";
 import { TaskActions } from "./task-layout";
 
-type NextStudyDay = {
-  /** The next day its plan studies, YYYY-MM-DD; null (or absent) when the page can't say. */
-  nextStudyDate?: string | null;
-  /** The learner's today, YYYY-MM-DD, which "tomorrow" counts from. */
-  today?: string;
-};
+type NextStudyDay = { nextStudyDate?: string | null; today?: string };
 
-/**
- * When it's back: tomorrow, or the day its plan studies next, named, since tomorrow may be a rest
- * day; the next session when the page doesn't know that day.
- */
 function BackOn({ nextStudyDate, today }: NextStudyDay) {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
@@ -35,17 +26,11 @@ function BackOn({ nextStudyDate, today }: NextStudyDay) {
   });
 }
 
-/**
- * An intro's note once today's study time is used up. The owning footer puts it in its status
- * region, mounted from the start, so a note that replaces a refused Start is read out as it
- * arrives; a page that opens past the limit says where things stand without an alert, since
- * Next.js already announces the new page assertively.
- */
+/** Not an alert: its footer's status region reads it out, and Next.js announces a new page itself. */
 export function StudyTimeUsedUpNote({ children }: { children: React.ReactNode }) {
   return <p className="text-muted-foreground text-sm text-pretty">{children}</p>;
 }
 
-/** The note for a call or phase challenge, which comes back on its own: when it's back. */
 export function StudyTimeUsedUpLine({ nextStudyDate, today }: NextStudyDay) {
   return (
     <StudyTimeUsedUpNote>
@@ -54,13 +39,6 @@ export function StudyTimeUsedUpLine({ nextStudyDate, today }: NextStudyDay) {
   );
 }
 
-/**
- * The way back to Today in Start's place, with nothing to start. When an action that isn't study is
- * the way on instead (`main`, such as the week's challenge's Move to Monday, which keeps it), that
- * one is the main action, which Enter presses, and the way back to Today the outline one before it:
- * beside it from `lg`, the main action last, and above it on a phone, where both labels don't fit
- * side by side in every language.
- */
 export function StudyTimeUsedUpActions({ href, main }: { href: string; main?: React.ReactNode }) {
   const t = useExtracted();
 

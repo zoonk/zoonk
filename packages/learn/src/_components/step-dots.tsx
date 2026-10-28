@@ -3,11 +3,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 
-/**
- * Where the learner is in a few steps (onboarding's screens, a result told in steps): one short
- * segment per step, the ones behind a quiet gray (blue means right everywhere else), the current
- * one in the text color, announced as "Step 2 of 4".
- */
 export function StepDots({
   className,
   current,

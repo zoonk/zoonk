@@ -3,13 +3,8 @@
 import { useExtracted } from "next-intl";
 import { SectionLabel } from "./section-label";
 
-/** A finished lesson's summary card: its title and every idea in one sentence. */
 type LessonSummary = { ideas: string[]; lessonId: string; title: string };
 
-/**
- * The summary cards a chapter's or unit's finished lessons left. Ideas are lesson text (math,
- * emphasis), so the host draws them the way lessons do.
- */
 export function LessonSummaries({
   renderText,
   summaries,

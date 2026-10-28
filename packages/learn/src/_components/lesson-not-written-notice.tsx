@@ -7,11 +7,6 @@ import { type ComponentProps } from "react";
 import { useFreeWeekOverCopy } from "./free-week-over";
 import { type LessonLimit, LessonLimitNotice } from "./help-limit-notice";
 
-/**
- * Why a lesson won't be written now: the learner's allowance said not now (`refused`, with why),
- * every draft failed its checks, so nothing writes it again (`setAside`), or a free exam plan past
- * its first week holds this new lesson for Plus (`plusRequired`).
- */
 export type LessonNotWritten =
   | { limit: LessonLimit; status: "refused" }
   | { status: "plusRequired" }
@@ -19,7 +14,6 @@ export type LessonNotWritten =
 
 type NoticeLinks = Pick<ComponentProps<typeof LessonLimitNotice>, "linkComponent" | "routes">;
 
-/** A free exam plan's new lesson past its first week: what stays free, and Plus as the way on. */
 function FreeWeekOver({ linkComponent: LinkComponent, routes }: NoticeLinks) {
   const t = useExtracted();
   const { body, title } = useFreeWeekOverCopy();
@@ -40,23 +34,12 @@ function FreeWeekOver({ linkComponent: LinkComponent, routes }: NoticeLinks) {
   );
 }
 
-/**
- * Takes the wait's place when a lesson won't be written now, so the learner never waits for
- * nothing: the shared limit notice with its one thing to do (an account, Plus, or a short break
- * with "Try again"), the end of a free exam plan's first week, or why a lesson was set aside.
- * Hosts pass their links, like the notice.
- */
 export function LessonNotWrittenNotice({
   className,
   onRetry,
   reason,
   ...links
-}: NoticeLinks & {
-  className?: string;
-  /** Asks again after a short break; only fair use offers it. */
-  onRetry?: () => void;
-  reason: LessonNotWritten;
-}) {
+}: NoticeLinks & { className?: string; onRetry?: () => void; reason: LessonNotWritten }) {
   const t = useExtracted();
 
   return (

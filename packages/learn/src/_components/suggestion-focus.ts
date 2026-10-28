@@ -2,14 +2,8 @@
 
 import { useEffect, useRef } from "react";
 
-/** Whether the learner answered a suggestion: `true`, or the answer's name. */
 export type Answered = boolean | string;
 
-/**
- * Focuses the suggestion on each answer (and on mount when it replaced another in place): its
- * answers give way to what the answer did, so the keyboard keeps its place instead of falling back
- * to the page.
- */
 export function useFocusOnAnswer({
   answered,
   focusOnMount,
@@ -30,11 +24,6 @@ export function useFocusOnAnswer({
   }, [answered, focusOnMount, section]);
 }
 
-/**
- * Keeps the keyboard in the suggestion when the control it was on gives way in place (Preview to
- * the check, Try again to the result, Not now back to the offer): focus moves to the suggestion
- * instead of falling to the page. In the sheet, the sheet takes it.
- */
 export function useFocusOnRemovedControl(section: React.RefObject<HTMLElement | null>) {
   const control = useRef<Element | null>(null);
 

@@ -18,21 +18,10 @@ import {
 } from "./list-group";
 import { PlusMark } from "./plus-lock";
 
-/**
- * How asking for a chapter's test-out went. `started` means the host already opened it; a
- * refusal says what the learner's AI help allows, and `plusRequired` that a free exam plan past
- * its first week takes it with Plus only.
- */
 export type TestOutStart =
   | { limit: HelpLimit; status: "refused" }
   | { status: "failed" | "plusRequired" | "started" };
 
-/**
- * One tap asks for the test's questions and opens it, where they're written while the learner
- * watches when they don't exist yet. `opening` stays on once the host opened it, until the screen
- * is left: coming back to it (a screen kept in the background, as Today is) offers the test again
- * instead of still opening it.
- */
 export function useTestOutStart(onStart: () => Promise<TestOutStart>) {
   const [result, setResult] = useState<TestOutStart | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -47,10 +36,6 @@ export function useTestOutStart(onStart: () => Promise<TestOutStart>) {
   return { isPending, opening: isPending || result?.status === "started", result, start };
 }
 
-/**
- * What a tap that didn't open the test says: the AI help limit, the end of a free exam plan's
- * first week, or to try again.
- */
 export function TestOutStartStatus({
   isPending,
   result,
@@ -80,15 +65,10 @@ export function TestOutStartStatus({
   return null;
 }
 
-/**
- * "Already know this? Take the test": a quiet line, its action in the text color; nothing asks
- * first.
- */
 export function TestOutStartLink({
   className,
   onStart,
 }: {
-  /** The line's size and room: 14px by default, 12px as a third line of Today's next block. */
   className?: string;
   onStart: () => Promise<TestOutStart>;
 }) {
@@ -109,19 +89,13 @@ export function TestOutStartLink({
   );
 }
 
-/**
- * "Already know this? Take the test and skip the chapter" as a row of its page's list
- * (`ListGroup`), with what a tap that didn't open the test says under it.
- */
 export function TestOutStartRow({
   onStart,
   plusRequired = false,
   scope,
 }: {
   onStart: () => Promise<TestOutStart>;
-  /** A free exam plan past its first week takes it with Plus only: marked Plus, as its lessons. */
   plusRequired?: boolean;
-  /** What passing the test skips, as the page calls it. */
   scope: "chapter" | "unit";
 }) {
   const t = useExtracted();

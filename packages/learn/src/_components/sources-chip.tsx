@@ -13,10 +13,6 @@ import {
 import { BookOpenCheckIcon, ExternalLinkIcon } from "lucide-react";
 import { useExtracted, useFormatter } from "next-intl";
 
-/**
- * "Sources · Checked Sep 2026": the public document a screen or a question comes from (a law, an
- * exam notice), with when it was last checked. It opens the document's title, publisher and link.
- */
 export function SourcesChip({ citation }: { citation: SourceCitation }) {
   const t = useExtracted();
   const format = useFormatter();

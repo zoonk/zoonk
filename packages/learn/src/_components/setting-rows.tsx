@@ -5,12 +5,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useId } from "react";
 import { ListRow, ListRowContent, ListRowDescription, ListRowTitle } from "./list-group";
 
-/**
- * A setting as a row of its page's list, as Linear lays settings out: its name with what it does
- * under it on the left, its control on the right (a switch, a 30px select or button). No icon: the
- * names are short and unique. A wide control (`wide`, a text field) goes under the name on a phone
- * and to the right from a tablet up.
- */
 export function SettingRow({
   children,
   className,
@@ -19,12 +13,10 @@ export function SettingRow({
   label,
   wide = false,
 }: {
-  /** The control. */
   children: React.ReactNode;
   className?: string;
   description?: React.ReactNode;
   descriptionId?: string;
-  /** The setting's name: a `label` for a field, or text the control names itself with. */
   label: React.ReactNode;
   wide?: boolean;
 }) {
@@ -49,7 +41,6 @@ export function SettingRow({
   );
 }
 
-/** A setting turned on or off: its name, what it does under it, and the switch at the row's end. */
 export function SwitchSettingRow({
   checked,
   description,
@@ -80,11 +71,6 @@ export function SwitchSettingRow({
   );
 }
 
-/**
- * A setting picked from a list: its name, what it does under it, and a 30px select at the row's
- * end at every size. `children` is the select (`size="sm"`), named by the label (`selectId`) and
- * described by `descriptionId`.
- */
 export function SelectSettingRow({
   children,
   description,

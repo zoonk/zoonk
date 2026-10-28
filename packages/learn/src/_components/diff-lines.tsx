@@ -1,14 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 
-/**
- * One line of a change: what goes away (`removed`), what comes in (`added`) or what stays as it
- * was (`context`). `lang` names the line's language when it isn't the page's (a sentence in the
- * language being learned), so screen readers say it right. `label` replaces what screen readers
- * hear before it (`labels`), and null says nothing first, for a line whose words say it
- * ("Leaves out 228 lessons"). `tone` colors a line by what it means for the learner rather than by
- * its sign (a plan change: good news blue, bad news red, a plain move neutral); without it, an
- * added line is blue and a removed one red (a worked answer: the right step and the wrong one).
- */
+/** `label` replaces the line's prefix from `labels`; `null` drops it. */
 export type DiffLine = {
   kind: "added" | "context" | "removed";
   label?: string | null;
@@ -17,7 +9,6 @@ export type DiffLine = {
   tone?: DiffTone;
 };
 
-/** What a line means for the learner: good news, bad news, or a plain move. */
 export type DiffTone = "bad" | "good" | "neutral";
 
 const LINE_CLASS: Readonly<Record<DiffLine["kind"], string>> = {
@@ -26,7 +17,6 @@ const LINE_CLASS: Readonly<Record<DiffLine["kind"], string>> = {
   removed: "bg-destructive/12 text-destructive-text",
 };
 
-/** A plain move reads as a diff without color: the old value struck through, the new one plain. */
 const NEUTRAL_CLASS: Readonly<Record<DiffLine["kind"], string>> = {
   added: "text-foreground",
   context: "text-muted-foreground",
@@ -52,33 +42,12 @@ const LINE_SIGN: Readonly<Record<DiffLine["kind"], string>> = {
   removed: "− ",
 };
 
-/**
- * A change told line by line in the mono face, the way a diff reads: a red-tinted line for what
- * goes, a blue-tinted line for what comes, quiet lines for what stays; or, with a `tone`, colored
- * by what each line means for the learner. Plan changes (fewer
- * minutes, a later date) and worked answers (the step that went wrong, the right one) both use it,
- * so the learner sees exactly what moved. The signs are for sighted readers, in a column of their
- * own so a long line wraps under its words; screen readers hear each line with what it means
- * (`labels`).
- *
- * ```tsx
- * <DiffLines
- *   labels={{ added: "New", removed: "Was" }}
- *   lines={[
- *     { kind: "removed", text: "Mon to Thu 50 min a day" },
- *     { kind: "added", text: "Mon to Thu 25 min a day" },
- *     { kind: "context", text: "Preparation 70% → 66%" },
- *   ]}
- * />
- * ```
- */
 export function DiffLines({
   className,
   labels,
   lines,
 }: {
   className?: string;
-  /** What screen readers hear before an added and a removed line ("New", "Was"). */
   labels: { added: string; removed: string };
   lines: readonly DiffLine[];
 }) {
@@ -96,7 +65,6 @@ export function DiffLines({
           // oxlint-disable-next-line react/no-array-index-key -- Lines are positions in the change.
           key={index}
         >
-          {/* The sign keeps its own column, so a wrapped line hangs under its text. */}
           {line.kind !== "context" && (
             <span aria-hidden="true" className="shrink-0 whitespace-pre">
               {LINE_SIGN[line.kind]}

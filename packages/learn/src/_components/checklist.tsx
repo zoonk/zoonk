@@ -6,7 +6,6 @@ import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { DoneMark } from "./status-mark";
 
-/** The tick, on the label's first line when a long item wraps. */
 function CheckMark({ checked }: { checked: boolean }) {
   return (
     <LineMarker aria-hidden="true">
@@ -21,11 +20,7 @@ function CheckMark({ checked }: { checked: boolean }) {
   );
 }
 
-/**
- * A routine to tick off on the device, such as exam day's, as flat rows: a ring to tick, then the
- * done mark and a quiet line once ticked. It's a calm reminder, never a test, so nothing is saved
- * and nothing waits for it.
- */
+/** Nothing is saved: it's a calm reminder, never a test. */
 export function Checklist<Item extends string>({
   items,
   label,

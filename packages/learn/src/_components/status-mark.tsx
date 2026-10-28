@@ -3,11 +3,6 @@ import { CheckIcon, FastForwardIcon } from "lucide-react";
 
 type MarkStatus = "done" | "next" | "skipped" | "todo";
 
-/**
- * The one mark for something done, wherever it shows: a chapter, a lesson, a phase, a mission, a
- * ticked routine, Today's blocks folded away. A blue check, since blue is progress made.
- * Decorative: the row's words or screen-reader text say it's done.
- */
 export function DoneMark({ className }: { className?: string }) {
   return (
     <CheckIcon
@@ -19,15 +14,6 @@ export function DoneMark({ className }: { className?: string }) {
   );
 }
 
-/**
- * Where a thing in a list stands, the same everywhere (chapters, lessons, topics, phases), in the
- * quiet marks of Today's queue: a blue check once done, a muted fast-forward once skipped because
- * the learner showed they know it, the learner's blue dot with a halo for the one to do next, the
- * edge of their progress (where they are; its row is highlighted too, in the neutral fill) and a
- * faint dot ahead. The halo keeps it from reading as a kind's dot. Every mark sits in one 16px box,
- * so the rows' words start in one place. `label` names the state for screen readers when the row
- * doesn't say it in words.
- */
 export function StatusMark({
   className,
   label,

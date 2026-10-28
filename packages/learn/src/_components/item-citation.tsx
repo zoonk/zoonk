@@ -4,10 +4,6 @@ import { type ItemCitation } from "@zoonk/core/library/sources/source-citation";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SourcesChip } from "./sources-chip";
 
-/**
- * The passage a question quotes, such as "Lei nº 8.112, Art. 13", and, when its document is
- * stored, the dated Sources chip. Legal content always names the article and the law.
- */
 export function ItemCitationNote({
   citation,
   className,

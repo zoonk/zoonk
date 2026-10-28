@@ -1,10 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { type MarkdownTableAlign } from "@zoonk/utils/markdown-table";
 
-/**
- * Numbers line up on their digits. Cells wrap between words, amounts stay whole, and the gap
- * between columns is tighter than the frame's edge, so four columns fit a phone.
- */
 function getCellClass(align: MarkdownTableAlign | undefined) {
   return cn(
     "p-2 align-top first:ps-3 last:pe-3",
@@ -14,15 +10,6 @@ function getCellClass(align: MarkdownTableAlign | undefined) {
   );
 }
 
-/**
- * A table of data in learner text (a question's context, a lesson screen) with its header row. On
- * a narrow screen it scrolls sideways inside its frame instead of widening the page, and keyboard
- * users can focus it to scroll. Each text renderer draws its own cells (emphasis, code, math).
- *
- * ```tsx
- * <RichTable align={table.align} header={cells} label="Month, Letters" renderCell={(cell) => <Inline segments={cell} />} rows={rows} />
- * ```
- */
 export function RichTable<TCell>({
   align,
   className,
@@ -34,7 +21,6 @@ export function RichTable<TCell>({
   align: readonly MarkdownTableAlign[];
   className?: string;
   header: readonly TCell[];
-  /** What the table holds for screen readers, such as its column names. */
   label: string;
   renderCell: (cell: TCell) => React.ReactNode;
   rows: readonly (readonly TCell[])[];
@@ -59,7 +45,6 @@ export function RichTable<TCell>({
 
               return (
                 <th
-                  // Long labels ("Durchschnittlicher Fahrpreis") hyphenate, so the table fits a phone.
                   className={cn(getCellClass(align[index]), "font-semibold hyphens-auto")}
                   key={key}
                   scope="col"

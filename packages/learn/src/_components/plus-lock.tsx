@@ -16,22 +16,7 @@ import {
   NoticeCardTitle,
 } from "./notice-card";
 
-/**
- * A feature the learner's plan doesn't include, marked where it shows: a row, a card's title, a
- * path's mock. Plus features are never hidden: free learners and guests see them as Plus learners
- * do, with this mark, and they open as usual to a page that says what Plus unlocks. Screen readers
- * hear "Available with Plus" (or `label`, where it marks the learner's own plan). The one way the
- * app draws Plus: a quiet 22px chip on a strong hairline, neither blue (right, done) nor a pick's
- * ring (the learner's own), since a plan is neither.
- */
-export function PlusMark({
-  className,
-  label,
-}: {
-  className?: string;
-  /** What screen readers hear, where the mark is the learner's own plan ("Plus"). */
-  label?: string;
-}) {
+export function PlusMark({ className, label }: { className?: string; label?: string }) {
   const t = useExtracted();
 
   return (
@@ -42,16 +27,6 @@ export function PlusMark({
   );
 }
 
-/**
- * The one notice for what the learner's plan doesn't include: "Available with Plus", what Plus
- * unlocks here in one line (`children`), and "See Plus" to the Plus page (the host's `upgrade`
- * route, or `href`). At most one on a page, inline where the locked things are, never a pop-up.
- * `inset` drops its panel for use inside a card or a step that already has one; `cta={false}`
- * drops its link where the screen's main action already goes to Plus (a task's "See Plus").
- * `title` replaces "Available with Plus" where something the free plan had ends (a free exam
- * plan's first week). `action` is the free way, after "See Plus" (the free plan's one goal: their
- * Plan, where they pause the goal they're on).
- */
 export function PlusNotice({
   action,
   children,

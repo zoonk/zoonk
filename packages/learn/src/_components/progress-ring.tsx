@@ -3,11 +3,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 const RADIUS = 42;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-/**
- * A share drawn as a ring: the visual anchor beside a big number (a goal's preparation). It sits
- * next to that number, so it's hidden from screen readers; put an icon or a short value inside it
- * as `children`. It's drawn still: it shows in list rows and on pages that load many times a day.
- */
 export function ProgressRing({
   children,
   className,

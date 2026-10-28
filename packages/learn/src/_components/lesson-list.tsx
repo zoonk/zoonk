@@ -26,7 +26,6 @@ type ListedLesson = Pick<
 
 const LESSONS_TITLE_ID = "lesson-list-title";
 
-/** The lesson's mark: done, the one to open now, or ahead. */
 function LessonMark({ isNext, lesson }: { isNext: boolean; lesson: ListedLesson }) {
   const t = useExtracted();
 
@@ -41,12 +40,6 @@ function LessonMark({ isNext, lesson }: { isNext: boolean; lesson: ListedLesson 
   return <StatusMark label={t("Coming up")} status="todo" />;
 }
 
-/**
- * A written lesson loads its screens before the tap (reading the plan's lessons counts toward no
- * limit), so it opens at once; one not written yet loads only the player's frame, and is written
- * when the learner opens it. One the learner's plan leaves to Plus is marked so, and opens to say
- * what Plus unlocks.
- */
 function LessonRow({
   href,
   isNext,
@@ -88,12 +81,6 @@ function LessonRow({
   );
 }
 
-/**
- * A unit's or chapter's lessons under their header, flat, in teaching order, numbered, each with
- * its mark and minutes; the next one is the page's "Start" or "Continue", highlighted as "Up next"
- * when the host enables the mark (`upNext`). Every lesson opens in the player, so a lesson a
- * session schedules out of order is always one tap away.
- */
 export function LessonList({
   lessonHref,
   lessons,
@@ -101,7 +88,6 @@ export function LessonList({
 }: {
   lessonHref: (lessonId: string) => string;
   lessons: readonly ListedLesson[];
-  /** Mark the lesson chosen as next by the host view. */
   upNext?: boolean;
 }) {
   const t = useExtracted();
@@ -136,10 +122,6 @@ export function LessonList({
   );
 }
 
-/**
- * A chapter's or unit's lessons as a meter of parts, one per lesson, blue once done, so the aside
- * shows at a glance how far the learner is ("1 of 3").
- */
 export function LessonProgress({
   lessons,
 }: {

@@ -5,7 +5,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useStateLabel } from "../_utils/use-state-label";
 
-/** A skill with its state: fading or in today's reviews puts it up for review. */
 type ListedSkill = {
   dueToday?: boolean;
   fading: boolean;
@@ -21,10 +20,6 @@ const STATE_DOT: Record<MapSkill["state"], string> = {
   solid: "bg-foreground",
 };
 
-/**
- * Each skill as one line: a dot for its state, its name and its state in words, so the dots need
- * no legend.
- */
 export function SkillList({ skills }: { skills: readonly ListedSkill[] }) {
   const t = useExtracted();
   const stateLabel = useStateLabel();

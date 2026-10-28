@@ -5,11 +5,7 @@ import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { TASK_MAIN_ACTION_CLASS } from "./task-layout";
 
-/**
- * A step's main action (44px, the screen's main button) with its ⏎ hint right after its label,
- * both centered, sized like every task's main action in its `TaskActions` row. The caller binds
- * Enter, since when it may press the button depends on the step.
- */
+/** Shows the ⏎ hint only: the caller binds Enter, since when it may press depends on the step. */
 export function EnterButton({
   children,
   className,

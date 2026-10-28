@@ -1,6 +1,5 @@
 import { cn } from "@zoonk/ui/lib/utils";
 
-/** How a day's track reads: today darker, a study day missed dashed, a rest day faint. */
 export type GoalRingTrack = "default" | "missed" | "rest" | "today";
 
 const TRACK_CLASS: Readonly<Record<GoalRingTrack, string>> = {
@@ -13,13 +12,6 @@ const TRACK_CLASS: Readonly<Record<GoalRingTrack, string>> = {
 const RADIUS = 15;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-/**
- * A day's goal as a small activity ring, like the rings learners know from their phones: its arc
- * fills blue with how much of the day's goal was done, and a mark sits inside it (`children`: a
- * check once reached, the exam's cap, a challenge's icon). Today's week and the logbook's draw
- * their days with it (Today's at 30px, `className="size-7.5"`). Decorative: the day's words say
- * how it went.
- */
 export function GoalRing({
   children,
   className,

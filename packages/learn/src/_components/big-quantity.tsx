@@ -1,13 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { splitQuantity } from "../_utils/quantity-parts";
 
-/**
- * A readout ("~2 h", "1 h 30 min", "~16"): its numbers large in the text face with tabular figures
- * (`text-readout`), its units under half their size in the muted step (never under 13px, so a
- * small readout's units stay legible), close beside them, so the number leads. The one way every
- * big number with a unit is drawn, in the text face wherever it sits (a line of mono data
- * included). Size it with `className`.
- */
 export function BigQuantity({ children, className }: { children: string; className?: string }) {
   return (
     <span className={cn("text-readout font-sans", className)} data-slot="big-quantity">

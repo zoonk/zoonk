@@ -1,9 +1,5 @@
 import { cn } from "@zoonk/ui/lib/utils";
 
-/**
- * A rule or a note the learner should notice before acting ("The result only appears at the end"):
- * one quiet 13px line with its muted icon, straight on the page, never a filled box.
- */
 export function Callout({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div

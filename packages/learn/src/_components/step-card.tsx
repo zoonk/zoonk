@@ -1,14 +1,8 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { PageEyebrow } from "./page";
 
-/** The title the `Steps` frame moves focus to as each step comes. */
 export const STEP_TITLE_SLOT = "step-title";
 
-/**
- * One step of a result told in steps, straight on the page (no card around it): its anchor (art
- * or a big number) when it has one, then its title and what supports it, left-aligned to the
- * task's column like every other page.
- */
 export function StepCard({ className, ...props }: React.ComponentProps<"section">) {
   return (
     <section
@@ -19,7 +13,6 @@ export function StepCard({ className, ...props }: React.ComponentProps<"section"
   );
 }
 
-/** The step's title with its quiet lines above (`StepEyebrow`) and under it (`StepDetail`). */
 export function StepHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -30,14 +23,12 @@ export function StepHeader({ className, ...props }: React.ComponentProps<"div">)
   );
 }
 
-/** The quiet line above the title ("TODAY'S SESSION"), in the mono face of a page's eyebrow. */
 export function StepEyebrow({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <PageEyebrow className={cn("text-balance", className)} data-slot="step-eyebrow" {...props} />
   );
 }
 
-/** The step's one main thing, as the page's heading. The frame focuses it when the step comes. */
 export function StepTitle({ children, className, ...props }: React.ComponentProps<"h1">) {
   return (
     <h1
@@ -51,11 +42,6 @@ export function StepTitle({ children, className, ...props }: React.ComponentProp
   );
 }
 
-/**
- * A title led by a number ("300–470", "29% → 33%") with a quiet line that names it, above or under
- * the number: `StepTitleNumber` and `StepTitleLabel` inside `StepTitle className="flex flex-col"`.
- * The number is a readout: the text face with tabular figures.
- */
 export function StepTitleNumber({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -66,7 +52,6 @@ export function StepTitleNumber({ className, ...props }: React.ComponentProps<"s
   );
 }
 
-/** The words that name a title's number; spaced from it, so it reads as one heading. */
 export function StepTitleLabel({ children, className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -90,7 +75,6 @@ export function StepDetail({ className, ...props }: React.ComponentProps<"p">) {
   );
 }
 
-/** A few facts of the same kind, one per row, as a flat list with hairlines between the rows. */
 export function StepRows({ className, ...props }: React.ComponentProps<"ul">) {
   return (
     <ul
@@ -101,7 +85,6 @@ export function StepRows({ className, ...props }: React.ComponentProps<"ul">) {
   );
 }
 
-/** One row: a muted icon or a dot, its words, and what it's worth at the end (mono). */
 export function StepRow({ className, ...props }: React.ComponentProps<"li">) {
   return (
     <li

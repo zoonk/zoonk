@@ -18,17 +18,13 @@ import { ChangeSaveError } from "./save-error";
 import { type Answered, useFocusOnAnswer, useFocusOnRemovedControl } from "./suggestion-focus";
 import { SURFACE_CLASS } from "./surface";
 
-/** Where the suggestion's parts are drawn: the line, the aside's panel or the sheet. */
 type Presentation = "line" | "panel" | "sheet";
 
 type SuggestionValue = {
   answered: boolean;
-  /** The suggestion's accessible name, which also names its sheet. */
   label: string;
-  /** Its leading mark: the amber sparkle, or the kind's icon (muted). */
   mark: React.ReactNode;
   section: React.RefObject<HTMLElement | null>;
-  /** Opens or closes its sheet. */
   setOpen: (open: boolean) => void;
 };
 
@@ -45,10 +41,8 @@ function useSuggestion(): SuggestionValue {
   return value;
 }
 
-/** The suggestion's frame: a hairline, never the stronger line of a control. */
 const FRAME_CLASS = cn(SURFACE_CLASS, "ring-inset");
 
-/** Under 72rem the line shows; from 72rem, where the page has its aside, the panel does. */
 const LINE_CLASS = "min-[72rem]:hidden";
 const PANEL_CLASS = "hidden min-[72rem]:flex";
 
@@ -58,35 +52,6 @@ const MARK_SIZE: Readonly<Record<Presentation, string>> = {
   sheet: "[&>svg]:size-5",
 };
 
-/**
- * The one thing a page wants the learner to know or decide (a plan suggestion, a change already
- * made, falling behind, an exam's moment, a document to upload), drawn one way everywhere. Under
- * 72rem it's one line under the page's work (`SuggestionLine`): its mark, one sentence and "View",
- * which opens the whole suggestion in a sheet from the bottom. From 72rem, where the page has its
- * aside, it's a panel there with everything inline (`SuggestionContent`), answered in place.
- * `SuggestionContent` draws the same parts in the sheet and in the panel, so a suggestion is
- * written once. Once it's `answered`, the sheet closes and the line and the panel say what the
- * answer did (`SuggestionResult`), with Undo while it can be undone.
- *
- * ```tsx
- * <Suggestion answered={answered} label={t("Plan suggestion")}>
- *   <SuggestionLine>
- *     <SuggestionSummary>Make Saturday a rest day? You have a prep course then.</SuggestionSummary>
- *     <SuggestionOpen />
- *   </SuggestionLine>
- *
- *   <SuggestionContent>
- *     <SuggestionHeader>{t("Plan suggestion")}</SuggestionHeader>
- *     <SuggestionDescription>You have a prep course on Saturday mornings…</SuggestionDescription>
- *     <PlanEffectDiff effect={change.effect} />
- *     <SuggestionActions>
- *       <SuggestionAction onClick={apply}>{t("Apply")}</SuggestionAction>
- *       <SuggestionAction onClick={decline} variant="outline">{t("Not now")}</SuggestionAction>
- *     </SuggestionActions>
- *   </SuggestionContent>
- * </Suggestion>
- * ```
- */
 export function Suggestion({
   answered = false,
   children,
@@ -96,23 +61,16 @@ export function Suggestion({
   mark,
   ...props
 }: Omit<React.ComponentProps<"section">, "aria-label" | "ref"> & {
-  /**
-   * The learner answered: the sheet closes and focus moves to the suggestion. `true`, or the
-   * answer's name ("applied", then "undone"), so a second answer such as Undo keeps focus too.
-   */
+  /** Pass the answer's name ("applied", then "undone"), so a second answer such as Undo moves focus too. */
   answered?: Answered;
-  /** It replaced an answered suggestion in place ("Next suggestion"), so the keyboard lands on it. */
   focusOnMount?: boolean;
-  /** Its accessible name, and its sheet's: "Plan suggestion", "What changed". */
   label: string;
-  /** The kind's icon, drawn muted; the amber sparkle when it's a suggestion (the default). */
   mark?: React.ReactNode;
 }) {
   const section = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
   const [settled, setSettled] = useState(answered);
 
-  // An answer closes the sheet it was given in; the line then says what it did.
   if (answered !== settled) {
     setSettled(answered);
 
@@ -145,7 +103,6 @@ export function Suggestion({
   );
 }
 
-/** The suggestion's mark, sized for where it's drawn: amber for a suggestion, muted for a kind. */
 function SuggestionMark() {
   const { mark } = useSuggestion();
   const presentation = use(PresentationContext);
@@ -165,11 +122,6 @@ function SuggestionMark() {
   );
 }
 
-/**
- * The suggestion as one line under the page's work, under 72rem: its mark, one sentence
- * (`SuggestionSummary`, or `SuggestionResult` once answered) and one small action, usually
- * `SuggestionOpen`.
- */
 export function SuggestionLine({ children, className, ...props }: React.ComponentProps<"div">) {
   return (
     <PresentationContext value="line">
@@ -190,7 +142,6 @@ export function SuggestionLine({ children, className, ...props }: React.Componen
   );
 }
 
-/** The line's one sentence: two lines at most, the sheet has the rest. */
 export function SuggestionSummary({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
@@ -204,17 +155,11 @@ export function SuggestionSummary({ className, ...props }: React.ComponentProps<
   );
 }
 
-/**
- * Closes the suggestion's sheet, for an action that opens another sheet in its place ("Study
- * everything"): one sheet shows at a time, so closing that one leaves the page, not this sheet
- * under it. Nothing to close in the aside's panel.
- */
 export function useCloseSuggestionSheet(): () => void {
   const { setOpen } = useSuggestion();
   return () => setOpen(false);
 }
 
-/** "View" at the line's end: opens the whole suggestion in a sheet ("Upload", "Choose"). */
 export function SuggestionOpen({ children }: { children?: React.ReactNode }) {
   const t = useExtracted();
 
@@ -225,10 +170,6 @@ export function SuggestionOpen({ children }: { children?: React.ReactNode }) {
   );
 }
 
-/**
- * Everything the suggestion says and asks, written once: from 72rem it's the panel, in the aside;
- * under it, the sheet "View" opens.
- */
 export function SuggestionContent({
   children,
   className,
@@ -249,7 +190,7 @@ export function SuggestionContent({
         </div>
       </PresentationContext>
 
-      {/* Closed by an answer, the sheet hands focus to the suggestion: "View" is gone by then. */}
+      {/* Closed by an answer, the sheet hands focus to the suggestion, since "View" is gone by then. */}
       <DrawerPopup aria-label={label} finalFocus={answered ? section : true}>
         <PresentationContext value="sheet">
           <DrawerContent
@@ -264,7 +205,6 @@ export function SuggestionContent({
   );
 }
 
-/** What the suggestion is ("Plan suggestion"), after its mark; it names the sheet too. */
 export function SuggestionHeader({ children }: { children: React.ReactNode }) {
   const presentation = use(PresentationContext);
 
@@ -293,7 +233,6 @@ const DESCRIPTION_SIZE: Readonly<Record<Presentation, string>> = {
   sheet: "text-[0.9375rem] leading-normal",
 };
 
-/** What it's about, in a sentence or two; a note under the diff ("Mock exams stay on Sundays."). */
 export function SuggestionDescription({ className, ...props }: React.ComponentProps<"p">) {
   const presentation = use(PresentationContext);
 
@@ -312,7 +251,6 @@ const RESULT_SIZE: Readonly<Record<Presentation, string>> = {
   sheet: "text-[0.9375rem] leading-normal",
 };
 
-/** What the answer did, where the answers were: "Saturday is now a rest day." */
 export function SuggestionResult({ className, ...props }: React.ComponentProps<"p">) {
   const presentation = use(PresentationContext);
 
@@ -326,7 +264,6 @@ export function SuggestionResult({ className, ...props }: React.ComponentProps<"
   );
 }
 
-/** An answer that didn't save, under the answers, at the suggestion's size. */
 export function SuggestionSaveError() {
   return <ChangeSaveError className="text-[0.8125rem] leading-snug" />;
 }
@@ -334,15 +271,10 @@ export function SuggestionSaveError() {
 const ACTIONS_CLASS: Readonly<Record<Presentation, string>> = {
   line: "flex shrink-0 items-center gap-2",
   panel: "flex flex-wrap items-center gap-2 pt-1",
-  // The sheet's answers form its action bar: two side by side, the first (the main one) leading
-  // and widest, in the order the panel has them; three or more stacked full width, the first on top.
-  // A long first label ("Find the time that covers everything", longer still translated) wraps
-  // onto a second line instead of running past a phone's edge.
   sheet:
     "flex gap-2 pt-1 [&>*:first-child]:h-auto [&>*:first-child]:min-h-11 [&>*:first-child]:min-w-0 [&>*:first-child]:flex-1 [&>*:first-child]:text-balance [&>*:first-child]:whitespace-normal has-[>:nth-child(3)]:flex-col",
 };
 
-/** The answers, the main one first: small in the panel, the sheet's 44px action bar under it. */
 export function SuggestionActions({ className, ...props }: React.ComponentProps<"div">) {
   const presentation = use(PresentationContext);
 
@@ -355,18 +287,15 @@ export function SuggestionActions({ className, ...props }: React.ComponentProps<
   );
 }
 
-/** A button's size where it's drawn: 44px in the sheet, small beside the line's and panel's words. */
 function useActionSize(): "lg" | "sm" {
   return use(PresentationContext) === "sheet" ? "lg" : "sm";
 }
 
-/** One answer ("Apply", "Not now", "Undo"): the main one is the default; the others `outline`. */
 export function SuggestionAction(props: Omit<React.ComponentProps<typeof Button>, "size">) {
   const size = useActionSize();
   return <Button focusableWhenDisabled size={size} {...props} />;
 }
 
-/** An answer that opens another screen ("Open", "See Plus"), drawn as `SuggestionAction`. */
 export function SuggestionLinkAction({
   className,
   variant = "default",

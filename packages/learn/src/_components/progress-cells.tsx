@@ -3,12 +3,7 @@ import { type LessonCounts, getLessonCells } from "./lesson-cells";
 
 const PERCENT = 100;
 
-/**
- * One cell of a goal's progress: the track, filled blue for what's studied and muted for what's
- * known (shares from 0 to 1, side by side as `CoverageBar` draws them), or outlined in blue when
- * it's progress still to come: today's lessons, the levels up to the target. Decoration: the card
- * around it says the same in words.
- */
+/** Shares are 0 to 1. */
 export function ProgressCell({
   className,
   known = 0,
@@ -39,10 +34,6 @@ export function ProgressCell({
   );
 }
 
-/**
- * A plan's lessons as a row of cells (`getLessonCells`), so "6 of 19" reads as six cells of
- * nineteen, today's outlined in blue.
- */
 export function LessonCells({ className, ...counts }: LessonCounts & { className?: string }) {
   return (
     <span aria-hidden="true" className={cn("flex gap-[3px]", className)} data-slot="lesson-cells">

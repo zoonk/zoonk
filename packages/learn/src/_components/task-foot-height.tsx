@@ -2,11 +2,6 @@
 
 import { type RefObject, useLayoutEffect } from "react";
 
-/**
- * Keeps the height of the buddy's dock at the foot of a task's aside in `--task-dock` on the task's
- * root, so what sits in the aside's body ends above it, whatever it holds: suggestions over the
- * composer, a composer grown to a few lines. A task without an aside measures nothing.
- */
 export function useTaskFootHeight(ref: RefObject<HTMLElement | null>) {
   useLayoutEffect(() => {
     const element = ref.current;

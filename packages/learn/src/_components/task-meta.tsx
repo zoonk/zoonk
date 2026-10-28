@@ -1,10 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { Fragment } from "react";
 
-/**
- * Facts joined by "·", each its own segment that never breaks, with its dot kept beside it, so a
- * narrow line wraps between facts and never inside one ("1 fixed" stays whole).
- */
 export function FactSegments({ facts }: { facts: readonly string[] }) {
   return facts.map((fact, index) => (
     <Fragment key={fact}>
@@ -14,13 +10,6 @@ export function FactSegments({ facts }: { facts: readonly string[] }) {
   ));
 }
 
-/**
- * A task's facts before it starts ("6 questions · 5 right to win · +300 Brain Power"), as one quiet
- * line in the mono face, the way a count or a time reads everywhere: the learner sees its size at a
- * glance, without chips or boxes. Each fact keeps its own element, so it reads (and is found) on
- * its own and wraps whole (`FactSegments`); empty ones are left out. A `reward` comes last in Brain
- * Power's violet, as every reward amount reads, offered or earned.
- */
 export function TaskMeta({
   className,
   facts,

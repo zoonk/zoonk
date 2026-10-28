@@ -1,50 +1,10 @@
 import { cn } from "@zoonk/ui/lib/utils";
 
-/**
- * A page's column: from the frame's left edge (40px from the sidebar from `lg`) across the whole
- * room beside the sidebar, or up to the aside on a page with one, as app shells with a sidebar lay
- * out their pages (Apple's web apps, Khan Academy, Linear). A wide screen gives the page more room,
- * never a wider margin: grids gain columns, rows and charts grow, and what has to stay readable
- * (prose, a form, a conversation) keeps its measure on the same left edge. Every page's container
- * takes it (`Page`, `DetailLayout`, a section), so every title, tab row and section starts at one
- * place on every page.
- */
 export const PAGE_COLUMN_CLASS = "w-full min-w-0";
 
-/**
- * An inbox page's width from `lg` (the mistakes notebook): its list (20rem), the gap and the pane's
- * hairline and inset (4rem and 1px), then an entry at the column's measure. The whole page, its
- * header included, ends with the entries, so its main action lines up with them rather than with
- * the screen's edge, which on a wide screen sat far past the last word.
- */
+/** The list (20rem), the gap and the pane's inset (4rem), its hairline (1px), then an entry at the column's measure. */
 export const INBOX_PAGE_CLASS = "lg:max-w-[calc(24rem+1px+var(--container-column))]";
 
-/**
- * The page templates' building blocks, one source for every page's structure: a page opens with
- * its large title (`PageHeader`) and holds its content in sections, each named by a bold header
- * (`PageSection`), so a learner always sees where they are and what's on the page.
- *
- * ```tsx
- * <Page>
- *   <PageHeader>
- *     <PageHeaderContent>
- *       <PageEyebrow>Wednesday, October 7</PageEyebrow>
- *       <PageTitle>Today</PageTitle>
- *       <PageSubtitle>34 days left</PageSubtitle>
- *     </PageHeaderContent>
- *   </PageHeader>
- *
- *   <PageSection aria-labelledby="session-title">
- *     <PageSectionHeader>
- *       <PageSectionTitle id="session-title">Today's session</PageSectionTitle>
- *       <PageSectionDetail>7 lessons</PageSectionDetail>
- *     </PageSectionHeader>
- *     …
- *     <PageSectionFooter>Where the numbers come from.</PageSectionFooter>
- *   </PageSection>
- * </Page>
- * ```
- */
 export function Page({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -55,7 +15,6 @@ export function Page({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-/** A tab's, a section's or a settings page's large title, with one control beside it at most. */
 export function PageHeader({ className, ...props }: React.ComponentProps<"header">) {
   return (
     <header
@@ -66,10 +25,6 @@ export function PageHeader({ className, ...props }: React.ComponentProps<"header
   );
 }
 
-/**
- * The title's column. A page with nothing to say over its title keeps the eyebrow's line empty,
- * so every page's title sits at the same height and moving between pages never moves it.
- */
 export function PageHeaderContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -83,10 +38,6 @@ export function PageHeaderContent({ className, ...props }: React.ComponentProps<
   );
 }
 
-/**
- * The context above the title (the date, the goal and its day): the quietest line on the page, in
- * the mono face.
- */
 export function PageEyebrow({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
@@ -100,7 +51,6 @@ export function PageEyebrow({ className, ...props }: React.ComponentProps<"p">) 
   );
 }
 
-/** The page's name: the tab, the section or the setting the learner is on. */
 export function PageTitle({ children, className, ...props }: React.ComponentProps<"h1">) {
   return (
     <h1 className={cn("text-title", className)} data-slot="page-title" {...props}>
@@ -109,7 +59,6 @@ export function PageTitle({ children, className, ...props }: React.ComponentProp
   );
 }
 
-/** One supporting line under the title, its facts side by side. */
 export function PageSubtitle({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -123,7 +72,6 @@ export function PageSubtitle({ className, ...props }: React.ComponentProps<"div"
   );
 }
 
-/** A block of the page under its own header. */
 export function PageSection({ className, ...props }: React.ComponentProps<"section">) {
   return (
     <section
@@ -134,10 +82,6 @@ export function PageSection({ className, ...props }: React.ComponentProps<"secti
   );
 }
 
-/**
- * The section's title with its count or one action on the same line, or under it when the line is
- * too narrow for both, so a long detail never squeezes the title to a word a line.
- */
 export function PageSectionHeader({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -151,18 +95,9 @@ export function PageSectionHeader({ className, ...props }: React.ComponentProps<
   );
 }
 
-/**
- * A block's name as a real title: sentence case, the body's size and a firmer weight. Where the
- * name can't be a heading (inside a link or a button that opens the block), a span takes it.
- */
 export const PAGE_SECTION_TITLE_CLASS =
   "min-w-0 text-sm leading-5 font-semibold tracking-[-0.01em] text-balance";
 
-/**
- * A section's name as a real title in sentence case, in the text color at the body's size and a
- * firmer weight, so the page reads as named parts and its content still leads: "Your path",
- * "Practice anytime". Uppercase labels stay inside panels (`text-label`).
- */
 export function PageSectionTitle({ children, className, ...props }: React.ComponentProps<"h2">) {
   return (
     <h2
@@ -175,7 +110,6 @@ export function PageSectionTitle({ children, className, ...props }: React.Compon
   );
 }
 
-/** A quiet count or state beside the title ("7 lessons", "3 of 9"). */
 export function PageSectionDetail({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
@@ -186,7 +120,6 @@ export function PageSectionDetail({ className, ...props }: React.ComponentProps<
   );
 }
 
-/** A group's name inside a section ("Objective tests", "Physics"), over its list. */
 export function PageSectionLabel({ children, className, ...props }: React.ComponentProps<"h3">) {
   return (
     <h3
@@ -199,7 +132,6 @@ export function PageSectionLabel({ children, className, ...props }: React.Compon
   );
 }
 
-/** A note under the section's content: where its numbers come from, or the rule it follows. */
 export function PageSectionFooter({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
