@@ -1,18 +1,11 @@
 import SwiftUI
 
-/// Where the buddy sends the learner: an account or Plus when a limit asks for one, the app places
-/// its answers offer, and the Buddy tab's links. The shell opens them with its router
-/// (`\.tutorPlaces`), set once at the root so task covers have it too.
 enum TutorPlace: Hashable, Sendable {
-  /// Sign in or create an account.
   case account
   case subscription
-  /// Start a new goal, with the learner's words filled in.
   case startGoal(goal: String)
   case chapterTest(chapterId: String)
-  /// Choosing where the plan focuses: the Plan's adjust.
   case chooseFocus(goalId: String)
-  /// A language unit, whose practice call starts there.
   case languageUnit(chapterId: String)
   case mockChooser
   case subject(subjectKey: String)
@@ -20,15 +13,12 @@ enum TutorPlace: Hashable, Sendable {
   case pronunciation(goalId: String)
   case statistics
   case logbook
-  /// What the buddy remembers, in settings.
   case memory
-  /// The Buddy tab's places: Energy over time, earlier questions, and where a mission is done.
   case energy
   case earlierQuestions
   case mission(Components.Schemas.StudyMissionOpens)
 }
 
-/// Opens a place the buddy sends the learner to. Without it (previews), nothing opens.
 struct TutorPlaces {
   let open: @MainActor (TutorPlace) -> Void
 
@@ -39,7 +29,6 @@ extension EnvironmentValues {
   @Entry var tutorPlaces = TutorPlaces.unavailable
 }
 
-/// One of the app's tools the buddy offered under its answer: what it is, and its one button.
 /// A Plus-only one shows locked, with See Plus instead.
 struct TutorToolOfferCard: View {
   @Environment(\.tutorPlaces) private var places

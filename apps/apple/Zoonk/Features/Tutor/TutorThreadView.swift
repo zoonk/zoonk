@@ -1,17 +1,7 @@
 import SwiftUI
 
-/// The learner's conversation with their buddy about one scope: earlier messages, each question
-/// with its answer (streamed in place, with the plan change or app tool it brought), a few
-/// suggestions to start, and a composer that stays at the bottom. Signed-in learners talk;
-/// guests and visitors are asked to create an account. Reading the thread is the only request it
-/// makes on its own: an answer (paid AI) comes only after the learner sends something.
-///
-/// ```swift
-/// TutorThreadView(scope: .chapter(chapterId: id))
-/// ```
-///
-/// The Buddy tab passes a `header` (the buddy's hello), its own `suggestions` and `placeholder`,
-/// and a `draft` brought from search, which waits in the composer for the learner's own send.
+/// Reading the thread is the only request it makes on its own: an answer (paid AI) comes only after
+/// the learner sends something. A `draft` waits in the composer for the learner's own send.
 struct TutorThreadView<Header: View>: View {
   @Environment(TutorStore.self) private var tutor
   @Environment(LearnerSummaryStore.self) private var summary
@@ -199,7 +189,6 @@ private struct LoadsThread: ViewModifier {
   }
 }
 
-/// A day's name between stretches of the conversation.
 private struct TutorDayLabel: View {
   let date: Date
 

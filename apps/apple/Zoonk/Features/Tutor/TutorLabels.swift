@@ -1,22 +1,18 @@
 import SwiftUI
 
 extension LearnerSummary {
-  /// The learner's buddy by name, the one who answers in every conversation.
   var buddyDisplayName: String {
     Zoonk.buddyName(kind: buddy.kind, name: buddyName)
   }
 }
 
 extension LearnerSummaryStore {
-  /// The buddy's name wherever the app says it, the default buddy's own (localized) before the
-  /// summary arrives.
   var buddyDisplayName: String {
     summary.value?.buddyDisplayName ?? BuddyKind.zu.name
   }
 }
 
 extension TutorScope {
-  /// What the conversation is about, under the panel's title.
   var panelDescription: Text {
     switch self {
     case .plan:
@@ -54,7 +50,6 @@ extension TutorScope {
     }
   }
 
-  /// The composer's hint.
   var placeholder: Text {
     switch self {
     case .plan:
@@ -87,7 +82,6 @@ extension TutorScope {
     }
   }
 
-  /// "Ask Zu about this chapter": what an Ask button says to VoiceOver.
   func askLabel(_ name: String) -> String {
     switch self {
     case .plan:
@@ -121,8 +115,7 @@ extension TutorScope {
     }
   }
 
-  /// A few questions to start with, never a list: in a lesson its own suggestions (what
-  /// "Simpler" and "Go deeper" were), elsewhere what main's buddy offers there.
+  /// A few questions to start with, never a list.
   var suggestions: [TutorSuggestion] {
     switch self {
     case .lesson(_, let suggestions), .step(_, _, _, let suggestions):
@@ -198,7 +191,6 @@ extension TutorScope {
 }
 
 extension TutorTurn.About {
-  /// What a question was about, above it in a panel.
   var label: Text {
     switch self {
     case .answer:
@@ -224,7 +216,6 @@ extension TutorTurn.About {
 }
 
 extension TutorFailure {
-  /// Why it didn't work, in one sentence.
   var message: Text {
     switch self {
     case .signUpRequired:
@@ -287,7 +278,6 @@ extension TutorFailure {
     }
   }
 
-  /// The one thing to do about it: create a free account, see Plus, sign in, or try again.
   enum Remedy {
     case createAccount
     case seePlus
@@ -312,7 +302,6 @@ extension TutorFailure {
   }
 }
 
-/// "Today", "Yesterday" or the date: the day a stretch of the conversation is from.
 func tutorDayLabel(_ date: Date, now: Date = .now) -> Text {
   let calendar = Calendar.current
 

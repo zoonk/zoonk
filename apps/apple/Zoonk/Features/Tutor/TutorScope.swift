@@ -1,18 +1,15 @@
 import Foundation
 
-/// What the learner asks their buddy about. Each scope is one conversation, as on main: a lesson
-/// screen and a practice question keep their own, and a plan, subject, chapter, lesson or mock has
-/// one each.
+/// Each scope is one conversation, as on main: a lesson screen and a practice question keep their
+/// own.
 enum TutorScope: Hashable, Sendable {
-  /// The goal's conversation: the Buddy tab, and asking about the plan.
   case plan(goalId: String)
   case subject(goalId: String, subjectKey: String)
   case chapter(chapterId: String)
-  /// A finished mock exam.
   case mock(blockId: String)
-  /// A lesson as a whole. `suggestions` are the lesson's `tutorSuggestions`, each with its `lessonSuggestionID`.
+  /// `suggestions` are the lesson's `tutorSuggestions`, each with its `lessonSuggestionID`.
   case lesson(lessonId: String, suggestions: [TutorSuggestion])
-  /// One lesson screen, by its id and its 1-based position as the learner sees it.
+  /// The position is 1-based, as the learner sees it.
   case step(
     lessonId: String, stepId: String, stepNumber: Int,
     suggestions: [TutorSuggestion])
@@ -20,8 +17,7 @@ enum TutorScope: Hashable, Sendable {
   /// it's asked in (absent in mistakes practice), and whether the learner missed it.
   case item(itemId: String, blockId: String?, answered: Bool, missed: Bool)
 
-  /// The conversation the scope reads: a checked item or a lesson's suggestions don't start
-  /// another one.
+  /// A checked item or a lesson's suggestions don't start another conversation.
   var conversationKey: String {
     switch self {
     case .plan(let goalId):
@@ -51,7 +47,6 @@ enum TutorScope: Hashable, Sendable {
     }
   }
 
-  /// The goal a plan change proposed in this conversation belongs to.
   var goalId: String? {
     switch self {
     case .plan(let goalId), .subject(let goalId, _):

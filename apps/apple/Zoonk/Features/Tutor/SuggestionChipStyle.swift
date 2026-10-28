@@ -1,8 +1,7 @@
 import SwiftUI
 
-/// A question or an example sent or filled in with one tap: a quiet capsule on the system's
-/// tertiary fill, which reads on whatever the conversation sits on (a page, a sheet, an inspector)
-/// in light, dark and Increase Contrast. `.bordered` blends its fill into a sheet's background.
+/// The tertiary fill reads on a page, a sheet or an inspector; `.bordered` blends its fill into a
+/// sheet's background.
 struct SuggestionChipStyle: ButtonStyle {
   func makeBody(configuration: Configuration) -> some View {
     SuggestionChip(configuration: configuration)

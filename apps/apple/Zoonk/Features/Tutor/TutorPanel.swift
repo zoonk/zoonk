@@ -1,18 +1,13 @@
 import SwiftUI
 
-/// The buddy's conversation about what the learner is on, in a sheet or a pane: the buddy by name,
-/// what it's about, and the question quoted when it's a practice question. A sheet has its own bar
-/// with a close button; a pane beside the screen has neither, since the screen's bar is the only
-/// bar and its Ask closes the pane. Hosts that place it themselves (the player) return it from their
-/// hook; others use `TutorAskButton`.
+/// Hosts that place it themselves (the player) return it from their hook; others use
+/// `TutorAskButton`.
 struct TutorPanel: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(LearnerSummaryStore.self) private var summary
 
   let scope: TutorScope
-  /// The practice question asked about, quoted so it stays in view.
   var quote: String?
-  /// Beside the screen rather than in a sheet.
   var isPane = false
 
   var body: some View {
@@ -88,7 +83,6 @@ struct TutorPanel: View {
   }
 }
 
-/// "Ask Zu": the learner's buddy answers about what the screen shows, in its panel as a sheet.
 /// After a missed answer it says the buddy's name, when asking helps most.
 struct TutorAskButton: View {
   @Environment(LearnerSummaryStore.self) private var summary

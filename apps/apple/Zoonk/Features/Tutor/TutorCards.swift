@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// A plan change the buddy proposed, under its answer: what it changes, Apply or Not now, then
-/// what became of it, with Undo while the plan is still as the change left it.
+/// Undo shows while the plan is still as the change left it.
 struct TutorPlanChangeCard: View {
   let change: Components.Schemas.PlanChange
   let turnID: String
@@ -160,7 +159,6 @@ struct TutorPlanChangeCard: View {
   }
 }
 
-/// What an answer changed in the buddy's memory, with Undo.
 struct TutorMemoryUpdate: View {
   let changes: [TutorMemoryChange]
   let turnID: String
@@ -223,7 +221,6 @@ struct TutorMemoryUpdate: View {
   }
 }
 
-/// Asking was one of the day's missions: the conversation says so after the question.
 struct TutorMissionMoment: View {
   let moment: Components.Schemas.StudyMissionMoment
 

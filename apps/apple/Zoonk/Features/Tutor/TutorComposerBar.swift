@@ -1,8 +1,5 @@
 import SwiftUI
 
-/// The bottom of a conversation: the suggestions before the first question, then the composer.
-/// A limit takes the composer's place with its one way forward, and guests and visitors see
-/// the way to an account instead.
 struct TutorComposerBar: View {
   @Bindable var conversation: TutorConversation
   let canTalk: Bool
@@ -121,16 +118,13 @@ struct TutorComposerBar: View {
   }
 }
 
-/// What a hardware keyboard's keys do in the composer.
 enum TutorComposerKeys {
-  /// Return sends, as on main, and so does Command-Return; Shift-Return starts a new line.
+  /// Return sends, as on main; Shift-Return starts a new line.
   static func returnSends(modifiers: EventModifiers) -> Bool {
     !modifiers.contains(.shift)
   }
 }
 
-/// A limit the learner reached, as every limit in the app says it: the reason in one line and
-/// the one thing to do (create a free account, see Plus), or nothing but to wait.
 struct TutorLimitNotice: View {
   let failure: TutorFailure
 
@@ -146,7 +140,6 @@ struct TutorLimitNotice: View {
   }
 }
 
-/// The one thing to do about a failure: create a free account, see Plus, sign in, or try again.
 struct TutorRemedyButton: View {
   @Environment(\.tutorPlaces) private var places
 

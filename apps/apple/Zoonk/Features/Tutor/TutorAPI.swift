@@ -1,22 +1,17 @@
 import Foundation
 import OpenAPIRuntime
 
-/// The buddy's conversations over the public API: read a scope's thread, ask, stream the answer
-/// and answer a plan change it proposed. Stubbed in tests.
 protocol TutorAPIClient: Sendable {
-  /// The scope's newest page (or the one before `cursor`); an empty page before the first question.
   func thread(_ scope: TutorScope, cursor: String?, token: String) async throws -> TutorThreadPage
   func ask(
     _ scope: TutorScope, question: String, suggestion: String?, requestId: String, token: String
   ) async throws -> TutorAskedQuestion
-  /// Streams the answer to a pending or failed question. Throws `TutorFailure` when it's refused.
+  /// Throws `TutorFailure` when it's refused.
   func answer(questionId: String, token: String) -> AsyncThrowingStream<TutorAnswerEvent, Error>
-  /// Reads a question again, as when its answer was written elsewhere.
   func question(id: String, token: String) async throws -> TutorTurn
   func decidePlanChange(
     goalId: String, changeId: String, decision: TutorPlanChangeDecision, token: String
   ) async throws -> Components.Schemas.PlanChange
-  /// Undoes what an answer changed in memory.
   func undoMemoryChanges(_ changes: [TutorMemoryChange], token: String) async throws
 }
 
@@ -155,10 +150,6 @@ struct TutorAPI: TutorAPIClient {
   }
 }
 
-// MARK: - Per-scope operations
-
-/// Reads a scope's thread with the operation for what it's about. A screen's or a whole thing's
-/// conversation is picked by `stepId` or `contextKind`, as main reads it.
 private func readThread(
   _ scope: TutorScope, cursor: String?, client: Client
 ) async throws -> Components.Schemas.LessonQuestionThread? {
@@ -229,7 +220,6 @@ private func readThread(
   }
 }
 
-/// Asks with the operation for what the question is about.
 private func createQuestion(
   _ scope: TutorScope, request: Components.Schemas.CreateLessonQuestionRequest, client: Client
 ) async throws -> Components.Schemas.CreatedLessonQuestion {
@@ -268,8 +258,6 @@ private func createdQuestion(_ output: some CreatedQuestionOutput) throws
   try output.createdQuestion
 }
 
-/// Maps a create operation's statuses to what the conversation says: a refusal's body says
-/// which allowance refused it.
 private func createFailure(
   status: Int, error: Components.Schemas._Error?
 ) -> Error {
@@ -390,10 +378,7 @@ extension Operations.CreateItemQuestion.Output: CreatedQuestionOutput {
   }
 }
 
-// MARK: - Mapping
-
 extension TutorScope {
-  /// The question's context as the API takes it.
   fileprivate var contextInput: Components.Schemas.LessonQuestionContextInput {
     switch self {
     case .plan:
@@ -487,8 +472,7 @@ extension TutorMemoryChange {
 }
 
 extension TutorFailure {
-  /// Reads which allowance refused a request from its error body (`SLOW_DOWN`,
-  /// `USAGE_LIMIT_REACHED`, `SIGN_UP_REQUIRED`); `fallback` when the body says none.
+  /// `fallback` when the error body names no allowance.
   init(refusal error: Components.Schemas._Error?, fallback: TutorFailure) {
     switch error?.error.code {
     case "SIGN_UP_REQUIRED":
@@ -529,10 +513,7 @@ private struct UsageLimitDetails: Decodable {
   }
 }
 
-// MARK: - Answer stream
-
-/// One AI SDK UI message chunk: a text delta, a data part, `finish` or `error`. Chunks the
-/// conversation doesn't use (`start`, `text-start`, ...) decode to nothing.
+/// An AI SDK UI message chunk; chunks the conversation doesn't use decode to nothing.
 struct TutorAnswerChunk: Decodable, Hashable, Sendable {
   private let type: String
   private let delta: String?
@@ -551,7 +532,7 @@ struct TutorAnswerChunk: Decodable, Hashable, Sendable {
     data = try container.decodeIfPresent(JSONData.self, forKey: .data)?.data
   }
 
-  /// The event this chunk carries. A malformed data part is skipped; an `error` chunk throws.
+  /// A malformed data part is skipped; an `error` chunk throws.
   func event() throws -> TutorAnswerEvent? {
     switch type {
     case "text-delta":
@@ -594,7 +575,7 @@ struct TutorAnswerChunk: Decodable, Hashable, Sendable {
   }
 }
 
-/// Keeps a chunk's `data` as raw JSON, so each part decodes it as its own type.
+/// Raw JSON, so each part decodes it as its own type.
 private struct JSONData: Decodable {
   let data: Data
 

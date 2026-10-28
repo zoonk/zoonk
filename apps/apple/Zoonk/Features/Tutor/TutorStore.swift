@@ -1,9 +1,6 @@
 import Foundation
 import Observation
 
-/// Every conversation with the buddy the learner opened, kept for the app's lifetime so one opened
-/// again (the Buddy tab after another tab, a lesson's Ask) shows at once. A session change starts
-/// them over.
 @MainActor
 @Observable
 final class TutorStore {
@@ -17,8 +14,8 @@ final class TutorStore {
     self.cache = cache
   }
 
-  /// The scope's conversation, made on first use. A later scope for the same conversation (a
-  /// question now checked) is what its next question is about.
+  /// A later scope for the same conversation (a question now checked) is what its next question is
+  /// about.
   func conversation(_ scope: TutorScope) -> TutorConversation {
     if owner != cache.session.authenticatedSession {
       owner = cache.session.authenticatedSession
@@ -36,25 +33,17 @@ final class TutorStore {
   }
 }
 
-/// One conversation with the buddy: its thread, cached like any other read, and what's happening
-/// in it now (a draft, a question being sent, an answer streaming in, why one failed).
 @MainActor
 @Observable
 final class TutorConversation {
-  /// The thread as read, with the questions asked here and their answers as they stream in.
   let thread: Resource<TutorThreadPage>
 
   var draft = ""
   private(set) var isAsking = false
-  /// The question whose answer streams in now.
   private(set) var answeringID: String?
-  /// Why the last question wasn't taken.
   private(set) var askFailure: TutorFailure?
-  /// Why an answer didn't come, by question.
   private(set) var answerFailures: [String: TutorFailure] = [:]
-  /// What an answer changed in memory, by question, until it's undone.
   private(set) var memoryChanges: [String: [TutorMemoryChange]] = [:]
-  /// What the latest question did to the day's missions, when it completed one.
   private(set) var missionMoment: Components.Schemas.StudyMissionMoment?
   private(set) var isLoadingEarlier = false
   private(set) var earlierFailed = false
@@ -84,8 +73,7 @@ final class TutorConversation {
     thread.value?.turns ?? []
   }
 
-  /// A limit the learner reached: nothing can be asked until it resets, so it takes the
-  /// composer's place.
+  /// Nothing can be asked until it resets, so it takes the composer's place.
   var limit: TutorFailure? {
     if let askFailure, askFailure.isLimit {
       return askFailure
@@ -94,19 +82,16 @@ final class TutorConversation {
     return turns.last.flatMap { answerFailures[$0.id] }.flatMap { $0.isLimit ? $0 : nil }
   }
 
-  /// Whether a new question can go: the thread is shown, nothing is being asked or answered, and
-  /// every earlier question has its answer (a failed one is retried first, as on main).
+  /// Every earlier question needs its answer first: a failed one is retried first, as on main.
   var canAsk: Bool {
     thread.value != nil && !isAsking && answeringID == nil && limit == nil
       && !turns.contains { $0.status != .completed }
   }
 
-  /// Whether what the learner typed can go now: it has words, and a question can be asked.
   var canSendDraft: Bool {
     canAsk && !draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
   }
 
-  /// Sends what the learner typed.
   func send() async {
     let question = draft.trimmingCharacters(in: .whitespacesAndNewlines)
 
@@ -117,13 +102,11 @@ final class TutorConversation {
     await ask(question, suggestion: nil)
   }
 
-  /// Sends a suggestion as offered; a lesson's own suggestion goes by its id so its shared answer
-  /// is reused.
+  /// A lesson's own suggestion goes by its id, so its shared answer is reused.
   func send(_ suggestion: TutorSuggestion) async {
     await ask(suggestion.label, suggestion: suggestion.lessonSuggestionID)
   }
 
-  /// Asks the failed answer again.
   func retryAnswer(_ id: String) async {
     guard answeringID == nil, !isAsking else {
       return
@@ -132,7 +115,6 @@ final class TutorConversation {
     await streamAnswer(id)
   }
 
-  /// Reads a question again whose answer may have finished elsewhere.
   func checkAgain(_ id: String) async {
     guard let session = cache.session.authenticatedSession else {
       return
@@ -180,7 +162,6 @@ final class TutorConversation {
     }
   }
 
-  /// Saves the learner's answer to a plan change the buddy proposed.
   func decide(
     _ change: Components.Schemas.PlanChange, in turnID: String, decision: TutorPlanChangeDecision
   ) async -> MutationResult<Void> {
@@ -208,7 +189,6 @@ final class TutorConversation {
     }
   }
 
-  /// Undoes what an answer changed in memory.
   func undoMemory(of turnID: String) async -> MutationResult<Void> {
     guard let changes = memoryChanges[turnID] else {
       return .obsolete
@@ -353,7 +333,7 @@ final class TutorConversation {
     answeringID = nil
   }
 
-  /// A stream that ended without `finish`: an answer that came is kept, none is a failure.
+  /// An answer that came is kept; none is a failure.
   private func finishUnsaved(_ id: String, text: String) {
     if text.isEmpty {
       update(id) { $0.status = .failed }
@@ -396,7 +376,7 @@ final class TutorConversation {
   }
 }
 
-/// A question the learner can send with one tap. A lesson's own suggestion carries its id.
+/// A lesson's own suggestion carries its id.
 struct TutorSuggestion: Identifiable, Hashable, Sendable {
   let id: String
   let label: String

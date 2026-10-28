@@ -1,12 +1,9 @@
 import SwiftUI
 
-/// One question and the buddy's answer: the learner's words in a bubble on the trailing side, the
-/// buddy's as plain text, then the plan change, app tool or memory update the answer brought.
 struct TutorTurnView: View {
   let turn: TutorTurn
   let conversation: TutorConversation
   let buddyName: String
-  /// In a panel, what each question was about ("About your answer").
   let showsAbout: Bool
 
   var body: some View {
@@ -79,7 +76,6 @@ struct TutorTurnView: View {
         }
 
         if let failure, failure.isLimit {
-          // Why, and the one thing to do about it, take the composer's place.
           Text(
             "This one wasn't answered.", tableName: "Tutor",
             comment: "A question the learner's limit stopped"
@@ -154,10 +150,8 @@ struct TutorTurnView: View {
   }
 }
 
-/// The buddy's answer drawn from its Markdown as main draws it: paragraphs, lists, headings and
-/// code as blocks, with their inline emphasis and links. Its links open only once the server
-/// checked them (an answer still streaming reads without links): one to a page of the app opens it
-/// here, any other its website.
+/// Its links open only once the server checked them, so an answer still streaming reads without
+/// links.
 struct TutorAnswerText: View {
   @Environment(AppRouter.self) private var router
   @ScaledMetric private var listIndent = 20.0
@@ -225,13 +219,11 @@ struct TutorAnswerText: View {
   private static let mainOrigin = URL(string: "https://www.zoonk.com")
 }
 
-/// One block of a buddy answer's Markdown, with its inline text.
 struct TutorAnswerBlock: Identifiable {
   enum Kind: Equatable {
     case paragraph
     case heading
     case code
-    /// A list's item, with its bullet or number.
     case listItem(marker: String)
   }
 
@@ -239,14 +231,11 @@ struct TutorAnswerBlock: Identifiable {
   let kind: Kind
   /// How many lists the block sits inside, beyond the first.
   let depth: Int
-  /// The outermost list the block is in, if any.
   let listID: Int?
-  /// Whether the block before it is in the same list, so the list reads as one.
   let followsListItem: Bool
   let text: AttributedString
 
-  /// The answer's blocks in order. Without checked links, every link reads as its words; with
-  /// them, links are underlined, as main draws them, since the ink tint alone doesn't mark them.
+  /// Links are underlined, as main draws them, since the ink tint alone doesn't mark them.
   static func blocks(of markdown: String, linksEnabled: Bool) -> [TutorAnswerBlock] {
     guard
       var parsed = try? AttributedString(
