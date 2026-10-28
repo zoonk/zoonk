@@ -1,6 +1,41 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ → %@ right answers" : {
+      "comment" : "A skill's right answers at the week's start and end",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ → %2$@ richtige Antworten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ → %2$@ right answers"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ → %2$@ respuestas correctas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ → %2$@ bonnes réponses"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ → %2$@ respostas certas"
+          }
+        }
+      }
+    },
     "%@ done" : {
       "comment" : "The block the learner just finished",
       "localizations" : {
@@ -26,6 +61,122 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ concluído"
+          }
+        }
+      }
+    },
+    "%@ grew up!" : {
+      "comment" : "The buddy's new stage",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ist gewachsen!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡%@ ha crecido!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ a grandi !"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ cresceu!"
+          }
+        }
+      }
+    },
+    "%@ is an Adult now, fully grown with your Brain Power." : {
+      "comment" : "The buddy's last stage",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ist jetzt erwachsen und dank deiner Brain Power ausgewachsen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ya es Adulto y ha completado su crecimiento con tu Poder Mental."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ est maintenant adulte, sa croissance est terminée grâce à ta Puissance Mentale."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ agora é Adulto e cresceu por completo com seu Poder Mental."
+          }
+        }
+      }
+    },
+    "%@ is Young now, and keeps growing with your Brain Power." : {
+      "comment" : "The buddy's next stage",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ist jetzt jung und wächst mit deiner Brain Power weiter."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ya es Joven y seguirá creciendo con tu Poder Mental."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ est maintenant jeune et continue de grandir grâce à ta Puissance Mentale."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ agora é Jovem e continua crescendo com seu Poder Mental."
+          }
+        }
+      }
+    },
+    "%@ more than the week before!" : {
+      "comment" : "More time than last week",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ mehr als in der Woche davor!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡%@ más que la semana pasada!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ de plus que la semaine dernière !"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ a mais que na semana passada!"
           }
         }
       }
@@ -61,6 +212,130 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@, nível %2$lld"
+          }
+        }
+      }
+    },
+    "%@!" : {
+      "comment" : "A new belt's ceremony title",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡%@!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ !"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@!"
+          }
+        }
+      }
+    },
+    "%lld more questions than the week before!" : {
+      "comment" : "More questions than last week",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Frage mehr als in der Woche davor!"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Fragen mehr als in der Woche davor!"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld more question than the week before!"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld more questions than the week before!"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "¡%lld pregunta más que la semana pasada!"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "¡%lld preguntas más que la semana pasada!"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld question de plus que la semaine dernière !"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld questions de plus que la semaine dernière !"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld pergunta a mais que na semana passada!"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld perguntas a mais que na semana passada!"
+                }
+              }
+            }
           }
         }
       }
@@ -129,6 +404,122 @@
         }
       }
     },
+    "A monocle!" : {
+      "comment" : "Glasses earned",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Monokel!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Un monóculo!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un monocle !"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um monóculo!"
+          }
+        }
+      }
+    },
+    "A new badge!" : {
+      "comment" : "A badge's ceremony",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein neues Abzeichen!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Una insignia nueva!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un nouveau badge !"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uma nova medalha!"
+          }
+        }
+      }
+    },
+    "A new belt!" : {
+      "comment" : "A new belt's ceremony",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein neuer Gürtel!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Un cinturón nuevo!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une nouvelle ceinture !"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uma nova faixa!"
+          }
+        }
+      }
+    },
+    "A quiet week" : {
+      "comment" : "A week without study",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine ruhige Woche"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una semana tranquila"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une semaine tranquille"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uma semana sem estudar"
+          }
+        }
+      }
+    },
     "All done. +50 Brain Power." : {
       "comment" : "Missions done",
       "localizations" : {
@@ -154,6 +545,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tudo concluído. +50 Poder Mental."
+          }
+        }
+      }
+    },
+    "Aviator glasses!" : {
+      "comment" : "Glasses earned",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pilotenbrille!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Gafas de aviador!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Des lunettes d’aviateur !"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Óculos de aviador!"
           }
         }
       }
@@ -303,8 +723,37 @@
         }
       }
     },
+    "Cat-eye glasses!" : {
+      "comment" : "Glasses earned",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Katzenaugenbrille!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Gafas de ojo de gato!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Des lunettes œil-de-chat !"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Óculos gatinho!"
+          }
+        }
+      }
+    },
     "Continue" : {
-      "comment" : "Opens the session's next block",
+      "comment" : "Closes a milestone's ceremony\nOpens the session's next block",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -448,6 +897,35 @@
         }
       }
     },
+    "Every week starts fresh." : {
+      "comment" : "A quiet week",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jede Woche fängt neu an."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cada semana empieza de cero."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chaque semaine repart à zéro."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toda semana é uma nova chance."
+          }
+        }
+      }
+    },
     "Finish" : {
       "comment" : "Closes the summary",
       "localizations" : {
@@ -473,6 +951,151 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Finalizar"
+          }
+        }
+      }
+    },
+    "For finishing 50 reviews." : {
+      "comment" : "What earned the glasses",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für 50 abgeschlossene Wiederholungen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por completar 50 repasos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour avoir terminé 50 révisions."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por concluir 50 revisões."
+          }
+        }
+      }
+    },
+    "For finishing every mission on 7 different days." : {
+      "comment" : "What earned the glasses",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dafür, dass du an 7 verschiedenen Tagen alle Missionen abgeschlossen hast."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por completar todas las misiones en 7 días distintos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour avoir terminé toutes les missions pendant 7 jours différents."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por concluir todas as missões em 7 dias diferentes."
+          }
+        }
+      }
+    },
+    "For finishing your first weekly challenge." : {
+      "comment" : "What earned the glasses",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für deine erste abgeschlossene wöchentliche Herausforderung."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por completar tu primer Desafío semanal."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour avoir terminé ton premier défi hebdomadaire."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por concluir seu primeiro Desafio semanal."
+          }
+        }
+      }
+    },
+    "For winning the final challenge." : {
+      "comment" : "What earned the glasses",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für den Sieg in der letzten Herausforderung."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por ganar el desafío final."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour avoir remporté le défi final."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por vencer o desafio final."
+          }
+        }
+      }
+    },
+    "For winning your first phase challenge." : {
+      "comment" : "What earned the glasses",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für den Sieg in deiner ersten Phasen-Herausforderung."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por ganar tu primer Desafío de la fase."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour avoir remporté ton premier défi de la phase."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por vencer seu primeiro Desafio da fase."
           }
         }
       }
@@ -564,6 +1187,35 @@
         }
       }
     },
+    "It shows your week in numbers and the skill that grew the most." : {
+      "comment" : "What the weekly summary shows",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sie zeigt deine Woche in Zahlen und welche Fähigkeit sich am meisten verbessert hat."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muestra tu semana en cifras y la habilidad que más ha mejorado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il présente ta semaine en chiffres et la compétence qui a le plus progressé."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ele mostra sua semana em números e a habilidade que mais evoluiu."
+          }
+        }
+      }
+    },
     "Keep learning" : {
       "comment" : "Adds the next lessons",
       "localizations" : {
@@ -589,6 +1241,180 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Continuar estudando"
+          }
+        }
+      }
+    },
+    "Let's go" : {
+      "comment" : "Closes the recap and opens Today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los geht's"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Vamos!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C’est parti"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vamos lá"
+          }
+        }
+      }
+    },
+    "Logbook" : {
+      "comment" : "The weekly recap's title",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Logbuch"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuaderno de bitácora"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Journal de bord"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diário de bordo"
+          }
+        }
+      }
+    },
+    "Mistakes fixed" : {
+      "comment" : "Mistakes fixed this week",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Korrigierte Fehler"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Errores corregidos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erreurs corrigées"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erros corrigidos"
+          }
+        }
+      }
+    },
+    "New glasses!" : {
+      "comment" : "Glasses earned",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine neue Brille!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Gafas nuevas!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouvelles lunettes !"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Óculos novos!"
+          }
+        }
+      }
+    },
+    "New ideas" : {
+      "comment" : "New ideas learned this week",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neue Ideen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ideas nuevas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouvelles idées"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Novas ideias"
+          }
+        }
+      }
+    },
+    "Next week" : {
+      "comment" : "The plan's next week",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nächste Woche"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La semana que viene"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La semaine prochaine"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Próxima semana"
           }
         }
       }
@@ -622,6 +1448,35 @@
         }
       }
     },
+    "Not studied" : {
+      "comment" : "A day not studied",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nicht gelernt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sin estudiar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas étudié"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não estudou"
+          }
+        }
+      }
+    },
     "Orange belt" : {
       "comment" : "A belt",
       "localizations" : {
@@ -647,6 +1502,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Faixa laranja"
+          }
+        }
+      }
+    },
+    "Phase %lld · %@ done" : {
+      "comment" : "A phase finished this week",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phase %1$lld · %2$@ abgeschlossen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Phase %1$lld · %2$@ done"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fase %1$lld · %2$@ completada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phase %1$lld · %2$@ terminé"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fase %1$lld · %2$@ concluída"
           }
         }
       }
@@ -680,6 +1570,35 @@
         }
       }
     },
+    "Questions" : {
+      "comment" : "The week's questions",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fragen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Questions"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntas"
+          }
+        }
+      }
+    },
     "Red belt" : {
       "comment" : "A belt",
       "localizations" : {
@@ -705,6 +1624,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Faixa vermelha"
+          }
+        }
+      }
+    },
+    "Retro glasses!" : {
+      "comment" : "Glasses earned",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retrobrille!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Gafas retro!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lunettes rétro !"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Óculos retrô!"
+          }
+        }
+      }
+    },
+    "Reviews" : {
+      "comment" : "Reviews done this week",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wiederholungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repasos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Révisions"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisões"
           }
         }
       }
@@ -796,6 +1773,35 @@
         }
       }
     },
+    "Star glasses!" : {
+      "comment" : "Glasses earned",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sternbrille!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Gafas de estrella!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lunettes étoilées !"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Óculos de estrela!"
+          }
+        }
+      }
+    },
     "Start today's session from Today." : {
       "comment" : "The session screen with no day opened",
       "localizations" : {
@@ -850,6 +1856,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Encerrar por hoje"
+          }
+        }
+      }
+    },
+    "Studied" : {
+      "comment" : "A day studied this week",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gelernt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Días de estudio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jours d’étude"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dias de estudo"
           }
         }
       }
@@ -949,6 +1984,35 @@
         }
       }
     },
+    "The biggest turnaround" : {
+      "comment" : "The skill that grew most",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der größte Fortschritt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La habilidad que más ha mejorado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La plus forte progression"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A maior evolução"
+          }
+        }
+      }
+    },
     "The session didn't load" : {
       "comment" : "Load failed",
       "localizations" : {
@@ -1007,6 +2071,35 @@
         }
       }
     },
+    "They come with your buddy." : {
+      "comment" : "What earned the glasses",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sie gehören zu deinem Kumpel."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vienen con tu compañero."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elles viennent avec ton compagnon."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eles vêm com seu parceiro."
+          }
+        }
+      }
+    },
     "This lesson isn't written yet." : {
       "comment" : "A lesson nobody started writing",
       "localizations" : {
@@ -1032,6 +2125,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Esta aula ainda não foi criada."
+          }
+        }
+      }
+    },
+    "Time" : {
+      "comment" : "The week's study time",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lernzeit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tiempo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temps d’étude"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempo"
           }
         }
       }
@@ -1123,8 +2245,37 @@
         }
       }
     },
+    "Trap hunter badges" : {
+      "comment" : "Badges earned this week",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fallenjäger-Abzeichen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Insignias de cazatrampas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Badges de chasseur de pièges"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Insígnias de caçador de armadilhas"
+          }
+        }
+      }
+    },
     "Try again" : {
-      "comment" : "Retries loading the session\nRetries loading the summary",
+      "comment" : "Retries loading\nRetries loading the session\nRetries loading the summary",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1210,6 +2361,122 @@
         }
       }
     },
+    "Weekly summary · %@" : {
+      "comment" : "The recap's week",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wochenrückblick · %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resumen semanal · %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Résumé de la semaine · %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resumo da semana · %@"
+          }
+        }
+      }
+    },
+    "What a week, %@!" : {
+      "comment" : "The recap's title",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was für eine Woche, %@!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Menuda semana, %@!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quelle semaine, %@ !"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Que semana, %@!"
+          }
+        }
+      }
+    },
+    "What a week!" : {
+      "comment" : "The recap's title",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was für eine Woche!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Menuda semana!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quelle semaine !"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Que semana!"
+          }
+        }
+      }
+    },
+    "What you learned" : {
+      "comment" : "The week's learning",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was du gelernt hast"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que has aprendido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que tu as appris"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que você aprendeu"
+          }
+        }
+      }
+    },
     "White belt" : {
       "comment" : "A belt",
       "localizations" : {
@@ -1264,6 +2531,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Faixa amarela"
+          }
+        }
+      }
+    },
+    "Your Brain Power earned it." : {
+      "comment" : "What earned a new belt",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Brain Power hat ihn verdient."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Te lo has ganado con tu Poder Mental."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta Puissance Mentale te l’a fait gagner."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu Poder Mental conquistou essa faixa."
+          }
+        }
+      }
+    },
+    "Your first summary comes on Sunday" : {
+      "comment" : "No weekly summary yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine erste Zusammenfassung gibt’s am Sonntag"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu primer resumen llegará el domingo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton premier résumé arrivera dimanche"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu primeiro resumo chega no domingo"
           }
         }
       }

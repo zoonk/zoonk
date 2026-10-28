@@ -254,5 +254,9 @@ private actor StudyAPIStub: StudyAPIClient {
 
   func lessonStatus(token: String, lessonID: String) async throws -> String { "ready" }
   func answerInsight(token: String, insightID: String, accepted: Bool) async throws {}
+  func markMilestoneShown(token: String, milestoneID: String) async throws {}
 
+  func getWeeklyRecap(token: String, goalID: String?) async throws -> WeeklyRecap {
+    throw APIError.unavailable
+  }
 }

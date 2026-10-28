@@ -2,7 +2,7 @@ import SwiftUI
 
 /// The end of today's session, or what's done so far once the learner stops: the time, what they
 /// got right and the Brain Power earned, the missions, the belt, the skills that rose and what
-/// comes tomorrow. Finish goes back to Today, and "Keep
+/// comes tomorrow; its milestone's ceremony first, once. Finish goes back to Today, and "Keep
 /// learning" adds the plan's next lessons when there's time for them.
 struct SessionSummaryView: View {
   @Environment(\.dismiss) private var dismiss
@@ -13,6 +13,7 @@ struct SessionSummaryView: View {
   let sessionID: String
   let stopped: Bool
 
+  @State private var ceremony: Milestone?
   @State private var isAddingTime = false
   @State private var failed = false
 
@@ -43,6 +44,16 @@ struct SessionSummaryView: View {
       }
     }
     .loads(summary)
+    .onChange(of: summary.value?.ceremony, initial: true) { _, milestone in
+      if ceremony == nil, let milestone {
+        ceremony = milestone
+      }
+    }
+    .fullScreenCover(item: $ceremony) { milestone in
+      MilestoneCeremony(milestone: milestone) {
+        ceremony = nil
+      }
+    }
   }
 
   private func content(_ summary: SessionSummary) -> some View {

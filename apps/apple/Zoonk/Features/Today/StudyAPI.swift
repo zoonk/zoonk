@@ -34,6 +34,8 @@ protocol StudyAPIClient: Sendable {
   func getSummary(token: String, sessionID: String) async throws -> SessionSummary
   func lessonStatus(token: String, lessonID: String) async throws -> String
   func answerInsight(token: String, insightID: String, accepted: Bool) async throws
+  func markMilestoneShown(token: String, milestoneID: String) async throws
+  func getWeeklyRecap(token: String, goalID: String?) async throws -> WeeklyRecap
 }
 
 /// The step a tap names in a day not opened yet: the day's next one as the screen showed it, or one
@@ -270,6 +272,32 @@ struct StudyAPI: StudyAPIClient {
       {
       case .ok:
         return
+      case .unauthorized:
+        throw APIError.unauthorized
+      default:
+        throw APIError.unavailable
+      }
+    }
+  }
+
+  func markMilestoneShown(token: String, milestoneID: String) async throws {
+    try await clients.perform(token: token) { client in
+      switch try await client.createMilestoneView(path: .init(milestoneId: milestoneID)) {
+      case .ok:
+        return
+      case .unauthorized:
+        throw APIError.unauthorized
+      default:
+        throw APIError.unavailable
+      }
+    }
+  }
+
+  func getWeeklyRecap(token: String, goalID: String?) async throws -> WeeklyRecap {
+    try await clients.perform(token: token) { client in
+      switch try await client.getCurrentUserWeeklyRecap(query: .init(goalId: goalID)) {
+      case .ok(let response):
+        return try StudyJSON.recode(try response.body.json)
       case .unauthorized:
         throw APIError.unauthorized
       default:
