@@ -29,3 +29,12 @@ const FIRST_TEST_ONLY_DAY = new Date(Date.UTC(FIRST_TEST_ONLY_YEAR, 0, 1));
 export async function resetGuestSpend() {
   await prisma.guestSpendDay.deleteMany({ where: { day: { lt: FIRST_TEST_ONLY_DAY } } });
 }
+
+/**
+ * Clears live calls a past run left open: each E2E run has its own workflow store, so their
+ * deadline runs stopped with that run's server, and open calls of a few learners at once pause
+ * calls for everyone (`isLiveCallCleanupHealthy` in core).
+ */
+export async function clearLeftOpenLiveCalls() {
+  await prisma.liveCallConnection.deleteMany({ where: { state: { not: "closed" } } });
+}

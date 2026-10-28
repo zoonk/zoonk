@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { seedV2 } from "@zoonk/e2e/fixtures/seed-v2";
-import { resetGuestSpend } from "@zoonk/testing/fixtures/usage";
+import { clearLeftOpenLiveCalls, resetGuestSpend } from "@zoonk/testing/fixtures/usage";
 
 /**
  * The structural data browser tests read: the v2 seed (the Library courses and one persona per
@@ -15,6 +15,7 @@ export async function prepareE2EData(): Promise<void> {
   await Promise.all([
     getAiOrganization(),
     resetGuestSpend(),
+    clearLeftOpenLiveCalls(),
     prisma.liveCallSetting.upsert({
       create: { admission: "all", freeDailyBudgetMicros: 100_000_000, id: "live" },
       update: { admission: "all", freeDailyBudgetMicros: 100_000_000 },
