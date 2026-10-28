@@ -6,7 +6,6 @@ import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
 import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { getLanguageActivitySettings } from "./activities/skipped-activities";
 import { liveCallFixture } from "./conversations/_test-utils/live-call-fixture";
 import { getLanguageConversation } from "./conversations/get-language-conversation";
 import { getMistakePattern } from "./patterns/get-mistake-pattern";
@@ -19,18 +18,6 @@ describe("language supporting render read budgets", () => {
     const counts = await countDatabaseStatements(() => getLanguageConversation(conversation.id));
     assertReadBudget(counts, 3);
     expect(counts.result.status).toBe("ready");
-  });
-
-  it("reads plan activity settings", async () => {
-    const { user } = await languageGoalFixture();
-    mockSession(user.id);
-
-    const counts = await countDatabaseStatements(() =>
-      getLanguageActivitySettings({ targetLanguage: "en" }),
-    );
-
-    assertReadBudget(counts, 2);
-    expect(counts.result).toStrictEqual({ skipped: [] });
   });
 
   it("reads due pronunciation words", async () => {

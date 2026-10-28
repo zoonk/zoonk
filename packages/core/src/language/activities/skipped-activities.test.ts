@@ -8,7 +8,6 @@ import { getPlayableLibraryLesson } from "../../lesson-player/get-playable-libra
 import { startLibraryLesson } from "../../lesson-player/start-library-lesson";
 import { changeGoalPlan } from "../../plans/change-goal-plan";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
-import { getLanguageActivitySettings } from "./skipped-activities";
 
 const TIME_ZONE = "UTC";
 
@@ -33,6 +32,11 @@ async function languageLessonSetup() {
   return { ...setup, goal, plan };
 }
 
+async function skippedActivities(planId: string) {
+  const plan = await prisma.plan.findUniqueOrThrow({ where: { id: planId } });
+  return parsePlanSettings(plan.settings).skippedActivities;
+}
+
 async function startAndComplete(lessonId: string) {
   const started = await startLibraryLesson({ input: { timeZone: TIME_ZONE }, lessonId });
 
@@ -51,9 +55,7 @@ describe("skipping language activities", () => {
     const { goal, plan, user } = await languageLessonSetup();
     mockSession(user.id);
 
-    await expect(getLanguageActivitySettings({ targetLanguage: "en" })).resolves.toStrictEqual({
-      skipped: [],
-    });
+    await expect(skippedActivities(plan.id)).resolves.toStrictEqual([]);
 
     const skipped = await changeGoalPlan({
       goalId: goal.id,
@@ -61,18 +63,14 @@ describe("skipping language activities", () => {
     });
 
     expect(skipped.status).toBe("applied");
-
-    const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
-    expect(parsePlanSettings(saved.settings).skippedActivities).toStrictEqual(["writing"]);
+    await expect(skippedActivities(plan.id)).resolves.toStrictEqual(["writing"]);
 
     await changeGoalPlan({
       goalId: goal.id,
       input: { operations: [{ activities: ["writing"], kind: "restoreActivities" }] },
     });
 
-    await expect(getLanguageActivitySettings({ targetLanguage: "en" })).resolves.toStrictEqual({
-      skipped: [],
-    });
+    await expect(skippedActivities(plan.id)).resolves.toStrictEqual([]);
   });
 
   it("finishes a language lesson without its writing screens once writing is skipped", async () => {
@@ -106,12 +104,5 @@ describe("skipping language activities", () => {
     });
 
     await expect(kinds()).resolves.toStrictEqual(["explanation", "summary"]);
-  });
-
-  it("offers nothing to change without a goal for the language", async () => {
-    const { user } = await setupPlayableLesson();
-    mockSession(user.id);
-
-    await expect(getLanguageActivitySettings({ targetLanguage: "ja" })).resolves.toBeNull();
   });
 });
