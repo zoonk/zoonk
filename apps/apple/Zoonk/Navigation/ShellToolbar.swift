@@ -124,16 +124,16 @@ private struct GoalSwitcher: View {
       Button {
         router.open(.startGoal())
       } label: {
-        if isCompact {
+        // A toolbar draws a Label as its icon alone; main's link says "Start a goal" beside it.
+        HStack(spacing: 4) {
           Image(systemName: "plus")
-        } else {
-          Label {
+
+          if !isCompact {
             startGoalTitle
-          } icon: {
-            Image(systemName: "plus")
+              .lineLimit(1)
           }
-          .labelStyle(.titleAndIcon)
         }
+        .fontWeight(.semibold)
       }
       .accessibilityLabel(startGoalTitle)
     } else {
