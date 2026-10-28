@@ -3,8 +3,8 @@ import UIKit
 
 /// Typesets the LaTeX lessons write (main draws it with KaTeX) as text: variables in italics,
 /// exponents raised and indices lowered in a smaller size, fractions as a raised numerator over a
-/// fraction slash and a lowered denominator, roots, `\text{}` upright, and symbols as their
-/// characters. It stays text, so it wraps, scales with Dynamic Type and reads aloud.
+/// fraction slash and a lowered denominator, roots, `\text{}` upright, `\underline{}` underlined,
+/// and symbols as their characters. It stays text, so it wraps, scales with Dynamic Type and reads aloud.
 enum LessonMath {
   static func attributed(_ latex: String) -> AttributedString {
     var parser = Parser(source: Array(latex))
@@ -167,6 +167,10 @@ enum LessonMath {
         var bold = argument(style: style)
         bold.inlinePresentationIntent = .stronglyEmphasized
         return bold
+      case "underline":
+        var underlined = argument(style: style)
+        underlined[AttributeScopes.SwiftUIAttributes.UnderlineStyleAttribute.self] = .single
+        return underlined
       case "frac", "dfrac", "tfrac":
         let numerator = argument(style: .superscript)
         let denominator = argument(style: .subscript)

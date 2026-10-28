@@ -782,6 +782,16 @@ final class LessonMathTests: XCTestCase {
       "√(x\u{2005}+\u{2005}1)\u{2005}≤\u{2005}π")
   }
 
+  func testUnderlineMarksItsArgument() {
+    let typeset = LessonMath.attributed(#"0.0\underline{5}3"#)
+    let underlined = typeset.runs
+      .filter { $0[AttributeScopes.SwiftUIAttributes.UnderlineStyleAttribute.self] != nil }
+      .map { String(typeset[$0.range].characters) }
+
+    XCTAssertEqual(String(typeset.characters), "0.053")
+    XCTAssertEqual(underlined, ["5"])
+  }
+
   func testOperatorsAreSpacedAndSignsStayWithTheirNumbers() {
     XCTAssertEqual(
       String(LessonMath.attributed("-3 + x^{-1} = (-2) - 1").characters),
