@@ -8,7 +8,7 @@ final class SearchItemsTests: XCTestCase {
     let groups = searchGroups(summary: nil, isSignedIn: false)
 
     XCTAssertEqual(
-      groups.first?.items.map(\.action), [.open(.catalog), .select(.today), .present(.account)])
+      groups.first?.items.map(\.action), [.open(.catalog), .select(.today), .present(.signIn)])
   }
 
   func testLearnerActionsFollowTheirPlaces() {
