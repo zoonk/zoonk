@@ -21,6 +21,55 @@ enum OnboardingError: Error, Equatable, Sendable {
   case failed(APIError)
 }
 
+/// The week the time question shows: its study days (Sunday first), the weekend's own time when
+/// it has one, and, for an exam, whether it studies everything, even after the exam.
+struct ScheduleWeek: Hashable, Sendable {
+  var studyDays: [Int]
+  var weekendMinutes: Int?
+  var fullCourse = false
+}
+
+/// A week as the plan's time questions take it; the time a day only for what a time covers.
+private struct ScheduleWeekInput: Encodable {
+  let studyDays: [Int]
+  let weekendMinutes: Int?
+  let dailyMinutes: Int?
+  let fullCourse: Bool?
+
+  init(week: ScheduleWeek, dailyMinutes: Int?) {
+    studyDays = week.studyDays
+    weekendMinutes = week.weekendMinutes
+    self.dailyMinutes = dailyMinutes
+    fullCourse = week.fullCourse ? true : nil
+  }
+}
+
+/// What a time a day covers by the goal's date (`POST /goals/{goalId}/plan/time-advice`); not
+/// `ready` while the plan is still being built.
+struct TimeAdvice: Decodable, Equatable, Sendable {
+  /// Nil for a plan with nothing to cover by.
+  let coveredShare: Double?
+  /// For an exam studying everything: when everything ends at this time, once the plan holds it.
+  let fullCourseEndDate: String?
+  /// `exam` for a share of the plan's exam topics, `goal` for one of the goal.
+  let measure: String
+  /// The plan waits for research to read the exam's official documents.
+  let readingNotice: Bool
+  let ready: Bool
+  let targetDate: String?
+  let targetDateNamedMonth: Bool
+}
+
+/// The time that covers everything by the goal's date (`POST /goals/{goalId}/plan/time-to-cover`):
+/// `recommendedMinutes`, or, when no time does, `coreMinutes`, the time that studies every topic.
+struct TimeToCover: Decodable, Equatable, Sendable {
+  let coreMinutes: Int?
+  let ready: Bool
+  let recommendedMinutes: Int?
+  let targetDate: String?
+  let targetDateNamedMonth: Bool
+}
+
 /// A language goal's level test (`GET /goals/{goalId}/language-level-test`): its questions still
 /// being written for the language pair, or its next step with the level of each skill so far.
 struct LevelTest: Decodable, Equatable, Sendable {
@@ -375,6 +424,50 @@ struct OnboardingAPI: Sendable {
       return
     case .unauthorized:
       throw APIError.unauthorized
+    default:
+      throw APIError.unavailable
+    }
+  }
+
+  /// What a time a day covers by the goal's date in a week, as the goal's plan works it out.
+  func timeAdvice(goalID: String, week: ScheduleWeek, dailyMinutes: Int, token: String)
+    async throws -> TimeAdvice
+  {
+    let input = try PracticeJSON.recode(
+      ScheduleWeekInput(week: week, dailyMinutes: dailyMinutes),
+      as: Components.Schemas.PlanTimeAdviceInput.self)
+    let output = try await clients.perform(token: token) { client in
+      try await client.getPlanTimeAdvice(path: .init(goalId: goalID), body: .json(input))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try PracticeJSON.recode(try response.body.json)
+    case .unauthorized:
+      throw APIError.unauthorized
+    case .notFound:
+      throw APIError.notFound
+    default:
+      throw APIError.unavailable
+    }
+  }
+
+  /// The fewest minutes a day that cover everything by the goal's date in a week.
+  func timeToCover(goalID: String, week: ScheduleWeek, token: String) async throws -> TimeToCover {
+    let input = try PracticeJSON.recode(
+      ScheduleWeekInput(week: week, dailyMinutes: nil),
+      as: Components.Schemas.PlanTimeToCoverInput.self)
+    let output = try await clients.perform(token: token) { client in
+      try await client.findPlanTimeToCover(path: .init(goalId: goalID), body: .json(input))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try PracticeJSON.recode(try response.body.json)
+    case .unauthorized:
+      throw APIError.unauthorized
+    case .notFound:
+      throw APIError.notFound
     default:
       throw APIError.unavailable
     }

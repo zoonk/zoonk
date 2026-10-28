@@ -603,6 +603,16 @@ enum PlanDate {
     return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
   }
 
+  /// "March 3, 2027", or "March 2027" for a month: a goal's date inside a sentence.
+  static func longText(_ isoDate: String, month: Bool = false) -> String {
+    guard let date = date(isoDate) else {
+      return isoDate
+    }
+
+    let style = Date.FormatStyle(timeZone: .gmt)
+    return date.formatted(month ? style.month(.wide).year() : style.month(.wide).day().year())
+  }
+
   /// "Mon": a day's short weekday.
   static func weekday(_ isoDate: String) -> String {
     date(isoDate)?.formatted(Date.FormatStyle(timeZone: .gmt).weekday(.abbreviated)) ?? ""

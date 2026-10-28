@@ -285,6 +285,24 @@ final class OnboardingStore {
     }
   }
 
+  func timeAdvice(goalID: String, week: ScheduleWeek, dailyMinutes: Int) async throws -> TimeAdvice
+  {
+    guard let token = session.authenticatedSession?.bearerToken else {
+      throw CancellationError()
+    }
+
+    return try await api.timeAdvice(
+      goalID: goalID, week: week, dailyMinutes: dailyMinutes, token: token)
+  }
+
+  func timeToCover(goalID: String, week: ScheduleWeek) async throws -> TimeToCover {
+    guard let token = session.authenticatedSession?.bearerToken else {
+      throw CancellationError()
+    }
+
+    return try await api.timeToCover(goalID: goalID, week: week, token: token)
+  }
+
   func levelTest(goalID: String) async throws -> LevelTest {
     guard let token = session.authenticatedSession?.bearerToken else {
       throw CancellationError()
