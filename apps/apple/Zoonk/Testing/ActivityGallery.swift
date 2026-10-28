@@ -99,7 +99,8 @@
             ActivityStepView(
               step: step, content: content,
               context: LessonStepContext(
-                lessonId: "gallery", answer: answer, result: result, isLocked: result != nil,
+                lessonId: "gallery", studySessionId: nil, answer: answer, result: result,
+                isLocked: result != nil,
                 select: { answer = $0 }, resolveSpoken: { _ in }))
           }
 
