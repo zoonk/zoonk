@@ -1,6 +1,41 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%lld chapters · about %@ at your pace" : {
+      "comment" : "A course's size at the end of a guest's lesson",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld Kapitel · in deinem Tempo etwa %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld chapters · about %2$@ at your pace"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld capítulos · unos %2$@ a tu ritmo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld chapitres · environ %2$@ à ton rythme"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld capítulos · cerca de %2$@ no seu ritmo"
+          }
+        }
+      }
+    },
     "%lld of %lld key points" : {
       "comment" : "How many key points a typed answer stated",
       "localizations" : {
@@ -32,6 +67,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$lld de %2$lld pontos-chave"
+          }
+        }
+      }
+    },
+    "%lld of %lld lessons" : {
+      "comment" : "The lesson's place in its chapter",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lektion %1$lld von %2$lld"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld of %2$lld lessons"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld de %2$lld lecciones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld sur %2$lld leçons"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld de %2$lld aulas"
+          }
+        }
+      }
+    },
+    "%lld right in a row" : {
+      "comment" : "Hyperdrive: right answers in a row",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld richtige Antworten in Folge"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld aciertos seguidos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld bonnes réponses d’affilée"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld respostas certas seguidas"
           }
         }
       }
@@ -181,6 +280,64 @@
         }
       }
     },
+    "Ask %@" : {
+      "comment" : "Opens the Ask panel with the buddy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar a %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demander à %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar a %@"
+          }
+        }
+      }
+    },
+    "Ask your buddy" : {
+      "comment" : "Opens the Ask panel with the buddy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frag deinen Kumpel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar a tu compañero"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demander à ton compagnon"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar ao seu parceiro"
+          }
+        }
+      }
+    },
     "Back" : {
       "comment" : "Leaves a lesson that can't open",
       "localizations" : {
@@ -303,31 +460,60 @@
         }
       }
     },
-    "Challenge · %@" : {
-      "comment" : "Above a challenge's title",
+    "Build my plan" : {
+      "comment" : "Starts a plan from a guest's lesson",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Herausforderung · %@"
+            "value" : "Meinen Plan erstellen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desafío · %@"
+            "value" : "Crear mi plan"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Défi · %@"
+            "value" : "Créer mon plan"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Desafio · %@"
+            "value" : "Montar meu plano"
+          }
+        }
+      }
+    },
+    "Can't write now" : {
+      "comment" : "Leaves writing out for the rest of today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich kann gerade nicht schreiben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ahora no puedo escribir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je ne peux pas écrire maintenant"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não posso escrever agora"
           }
         }
       }
@@ -357,6 +543,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Desafio concluído"
+          }
+        }
+      }
+    },
+    "Challenge · %@" : {
+      "comment" : "Above a challenge's title",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herausforderung · %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desafío · %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Défi · %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desafio · %@"
           }
         }
       }
@@ -593,6 +808,35 @@
         }
       }
     },
+    "Create an account to save" : {
+      "comment" : "A guest creates an account at the end of a lesson",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konto erstellen und Fortschritt speichern"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea una cuenta para guardar tu progreso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crée un compte pour enregistrer ta progression"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crie uma conta para salvar"
+          }
+        }
+      }
+    },
     "Drawing the picture…" : {
       "comment" : "While a screen's picture is drawn",
       "localizations" : {
@@ -676,6 +920,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Números de exemplo"
+          }
+        }
+      }
+    },
+    "Explain first" : {
+      "comment" : "Shows the explanation before answering",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erst erklären"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primero, explícame"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher l’explication d’abord"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explicar primeiro"
           }
         }
       }
@@ -854,6 +1127,35 @@
         }
       }
     },
+    "Here's a good answer" : {
+      "comment" : "\"I don't know yet\" shows a good answer",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hier ist eine gute Antwort"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta es una buena respuesta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voici une bonne réponse"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aqui vai uma boa resposta"
+          }
+        }
+      }
+    },
     "Here's the answer" : {
       "comment" : "A hook's guess missed",
       "localizations" : {
@@ -883,8 +1185,37 @@
         }
       }
     },
+    "I already know this" : {
+      "comment" : "Asks the lesson's checks to skip it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das kenne ich schon"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto ya lo sé"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je le sais déjà"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eu já sabia disso"
+          }
+        }
+      }
+    },
     "I can talk now" : {
-      "comment" : "Goes back to answering out loud",
+      "comment" : "Takes back \"I can't talk now\"",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -913,7 +1244,7 @@
       }
     },
     "I can't talk now" : {
-      "comment" : "Answers a spoken screen by listening or typing instead",
+      "comment" : "Answers a spoken screen as a listening exercise",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -937,6 +1268,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não posso falar agora"
+          }
+        }
+      }
+    },
+    "I don't know yet" : {
+      "comment" : "Shows a good answer to a written question",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das weiß ich noch nicht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todavía no lo sé"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je ne sais pas encore"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ainda não sei"
+          }
+        }
+      }
+    },
+    "In your own words" : {
+      "comment" : "Above a question answered in a few sentences",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit deinen eigenen Worten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con tus propias palabras"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec tes propres mots"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com suas palavras"
           }
         }
       }
@@ -1144,6 +1533,64 @@
         }
       }
     },
+    "Lesson summary" : {
+      "comment" : "Opens the lesson's summary card",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lektionsübersicht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resumen de la lección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Résumé de la leçon"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resumo da aula"
+          }
+        }
+      }
+    },
+    "Made with AI. It may contain mistakes." : {
+      "comment" : "In the lesson's menu",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit KI erstellt. Kann Fehler enthalten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creado con IA. Puede contener errores."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Créé avec l’IA. Le contenu peut contenir des erreurs."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feito com IA. Pode conter erros."
+          }
+        }
+      }
+    },
     "Match the pairs." : {
       "comment" : "Instruction of a match-the-pairs exercise",
       "localizations" : {
@@ -1289,6 +1736,64 @@
         }
       }
     },
+    "No more writing today." : {
+      "comment" : "\"Can't write now\" left the lesson's writing out",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute wird nicht mehr geschrieben."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy ya no escribirás más."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus d’écriture aujourd’hui."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chega de escrever por hoje."
+          }
+        }
+      }
+    },
+    "No thanks" : {
+      "comment" : "Puts away the offer to ask the buddy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nein, danke"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No, gracias"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Non merci"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não, obrigado"
+          }
+        }
+      }
+    },
     "Not checked this time" : {
       "comment" : "A typed answer that wasn't graded",
       "localizations" : {
@@ -1405,6 +1910,35 @@
         }
       }
     },
+    "Not quite. Look again and fix it yourself, then check." : {
+      "comment" : "A wrong language answer the learner can fix once",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch nicht ganz. Schau noch einmal hin, verbessere deine Antwort selbst und prüfe sie dann."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No del todo. Vuelve a mirarlo, corrígelo y comprueba la respuesta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas tout à fait. Relis ta réponse et corrige-la toi-même, puis vérifie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quase. Revise e corrija sua resposta, depois confira."
+          }
+        }
+      }
+    },
     "Play" : {
       "comment" : "Plays a word's or sentence's sound",
       "localizations" : {
@@ -1488,6 +2022,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dica de pronúncia:"
+          }
+        }
+      }
+    },
+    "Quick check · %lld of %lld" : {
+      "comment" : "While \"I already know this\" asks the lesson's checks",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurztest · %1$lld von %2$lld"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Quick check · %1$lld of %2$lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprobación rápida · %1$lld de %2$lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérification rapide · %1$lld sur %2$lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conferência rápida · %1$lld de %2$lld"
           }
         }
       }
@@ -1604,6 +2173,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Certo, mas atenção à grafia"
+          }
+        }
+      }
+    },
+    "Save your progress and a quick review comes back to help it stick." : {
+      "comment" : "At the end of a guest's lesson",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speichere deinen Fortschritt. Eine kurze Wiederholung hilft dir später, das Gelernte zu behalten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea una cuenta para guardar tu progreso y volver a repasar pronto para afianzarlo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistre ta progression et une courte révision reviendra pour t’aider à retenir."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salve seu progresso e uma revisão rápida vai ajudar você a fixar o conteúdo."
           }
         }
       }
@@ -1749,6 +2347,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cenário concluído"
+          }
+        }
+      }
+    },
+    "Screen options" : {
+      "comment" : "The lesson's menu",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bildschirmoptionen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opciones de pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Options de l’écran"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opções da tela"
           }
         }
       }
@@ -2194,6 +2821,64 @@
         }
       }
     },
+    "Taking your time? %@ can explain it another way." : {
+      "comment" : "Offer to ask the buddy after a long pause",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brauchst du etwas länger? %@ kann es dir anders erklären."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Te está llevando tiempo? %@ puede explicártelo de otra forma."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu prends ton temps ? %@ peut te l’expliquer autrement."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Levou um tempinho? %@ pode explicar de outro jeito."
+          }
+        }
+      }
+    },
+    "Taking your time? Your buddy can explain it another way." : {
+      "comment" : "Offer to ask the buddy after a long pause",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brauchst du etwas länger? Dein Kumpel kann es dir anders erklären."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Te está llevando tiempo? Tu compañero puede explicártelo de otra forma."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu prends ton temps ? Ton compagnon peut te l’expliquer autrement."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Levou um tempinho? Seu parceiro pode explicar de outro jeito."
+          }
+        }
+      }
+    },
     "Tap and say it out loud" : {
       "comment" : "Above a sentence to say",
       "localizations" : {
@@ -2368,6 +3053,35 @@
         }
       }
     },
+    "This is part of" : {
+      "comment" : "Above the course a guest's lesson is in",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das gehört zu"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto forma parte de"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette leçon fait partie de"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isso faz parte de"
+          }
+        }
+      }
+    },
     "This lesson didn't pass our checks, so your plan moved on without it." : {
       "comment" : "Every draft of a lesson was held back",
       "localizations" : {
@@ -2451,6 +3165,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Esta aula ainda não foi criada."
+          }
+        }
+      }
+    },
+    "This one is tricky. %@ can explain it another way." : {
+      "comment" : "Offer to ask the buddy after two misses",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das ist knifflig. %@ kann es dir anders erklären."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta pregunta es difícil. %@ puede explicártela de otra forma."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Celle-ci est difficile. %@ peut te l’expliquer autrement."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta é complicada. %@ pode explicar de outro jeito."
+          }
+        }
+      }
+    },
+    "This one is tricky. Your buddy can explain it another way." : {
+      "comment" : "Offer to ask the buddy after two misses",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das ist knifflig. Dein Kumpel kann es dir anders erklären."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta pregunta es difícil. Tu compañero puede explicártela de otra forma."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Celle-ci est difficile. Ton compagnon peut te l’expliquer autrement."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta é complicada. Seu parceiro pode explicar de outro jeito."
           }
         }
       }
@@ -2948,6 +3720,35 @@
         }
       }
     },
+    "Write again" : {
+      "comment" : "Takes back \"Can't write now\"",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weiter schreiben"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escribir de nuevo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Écrire à nouveau"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escrever novamente"
+          }
+        }
+      }
+    },
     "Write your answer" : {
       "comment" : "Placeholder of a written answer",
       "localizations" : {
@@ -2973,6 +3774,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Escreva sua resposta"
+          }
+        }
+      }
+    },
+    "You already knew this" : {
+      "comment" : "Title after \"I already know this\" passed every check",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das wusstest du schon"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esto ya lo sabías"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu le savais déjà"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você já sabia disso"
           }
         }
       }
@@ -3350,6 +4180,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sua resposta ainda não foi conferida e não será salva."
+          }
+        }
+      }
+    },
+    "Your answer here didn't save. Answer it again to finish the lesson." : {
+      "comment" : "The lesson came back to a screen whose answer was never saved",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Antwort wurde nicht gespeichert. Beantworte die Frage noch einmal, um die Lektion abzuschließen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu respuesta no se ha guardado. Vuelve a responder para terminar la lección."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ta réponse n’a pas été enregistrée. Réponds à nouveau pour terminer la leçon."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua resposta não foi salva. Responda novamente para terminar a aula."
+          }
+        }
+      }
+    },
+    "Your example: %@" : {
+      "comment" : "VoiceOver label of the learner's personal example",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Beispiel: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu ejemplo: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton exemple : %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu exemplo: %@"
           }
         }
       }
