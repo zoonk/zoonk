@@ -7,7 +7,7 @@ import { type PlanSummary } from "./plan-summary";
 
 export function readSavedFeasibility(summary: PlanSummary | null): PlanView["feasibility"] {
   const coverage = summary?.selected.coverage;
-  const saved = summary?.advice?.feasibility ?? null;
+  const saved = summary?.advice.feasibility ?? null;
 
   if (!saved || !coverage) {
     return saved;

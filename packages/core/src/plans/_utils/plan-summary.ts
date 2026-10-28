@@ -103,14 +103,7 @@ export function toPlanSummary({
 }): PlanSummary {
   return {
     advice,
-    basis: {
-      layoutInputVersion: context.plan.inputVersion,
-      layoutStudyDay: toIsoDate(context.today),
-      planId: context.plan.id,
-      planVersion: context.plan.version + 1,
-      timeZone: context.timeZone,
-      userId: context.goal.userId,
-    },
+    basis: { ...getPlanSummaryBasis(context), planVersion: context.plan.version + 1 },
     schemaVersion: PLAN_SUMMARY_SCHEMA_VERSION,
     selected,
   };
@@ -239,7 +232,7 @@ export function reduceRestoredSummary({
   return reduction.kind === "reduced" ? reduction.summary : restored;
 }
 
-/** One basis for saved-plan summaries and quote freshness. */
+/** One basis for saved-plan summary writes and reads. */
 export function getPlanSummaryBasis(
   context: Pick<PlanContext, "goal" | "plan" | "timeZone" | "today">,
 ): PlanSummary["basis"] {
@@ -253,7 +246,7 @@ export function getPlanSummaryBasis(
   };
 }
 
-/** The session reader's complete basis must match before it may skip a selected build. */
+/** Replay only the saved plan's summary for this local planning day and zone. */
 export function readFreshPlanSummary({
   basis,
   value,
