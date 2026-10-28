@@ -57,6 +57,7 @@ import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import { goalContentWorkflow } from "./goal-content-workflow";
 import * as goalPlacement from "./goal-placement-items";
 import { placementItemsWorkflow } from "./placement-items-workflow";
+import * as lookaheadSteps from "./steps/goal-lookahead-steps";
 import * as planSteps from "./steps/goal-plan-steps";
 import { runPlanSetupTaskStep } from "./steps/goal-plan-steps";
 import * as noticeSteps from "./steps/notice-steps";
@@ -901,6 +902,80 @@ describe(goalContentWorkflow, () => {
 
       expect(phaseStarts).toHaveLength(2);
       expect(startedLessons).toStrictEqual(phaseStarts);
+    },
+  );
+
+  it(
+    "starts the plan's first lesson once other runs' writes stop moving the plan",
+    { timeout: TIMEOUT },
+    async () => {
+      const { goal, user } = await newGoal();
+      runOutlinesInline();
+
+      // Other runs (a band's lessons, placement's questions) save while the first lesson's
+      // targets are read, marking the plan between every read's token and its check, until the
+      // run waits. A few write at once, so a mark lands within each read.
+      const createManifest = lookaheadSteps.createGoalGenerationManifestStep;
+      const burst = { over: false, started: false };
+      let marks: Promise<unknown> = Promise.resolve();
+
+      const markUntilTheRunWaits = async () => {
+        while (!burst.over) {
+          // oxlint-disable-next-line no-await-in-loop -- each write marks the plan in turn
+          await prisma.$transaction((tx) => markPlanInputsChanged(tx, { userIds: [user.id] }));
+        }
+      };
+
+      // The durable runtime runs a step that threw again at once, up to its retries; this inline
+      // run does the same, so the burst outlasts every retry that doesn't wait.
+      const createAsTheRuntimeDoes = async (
+        input: Parameters<typeof createManifest>[0],
+        attempt = 0,
+      ): ReturnType<typeof createManifest> => {
+        try {
+          return await createManifest(input);
+        } catch (error) {
+          if (!isPlanConflictError(error) || attempt >= STEP_RETRIES) {
+            throw error;
+          }
+
+          return createAsTheRuntimeDoes(input, attempt + 1);
+        }
+      };
+
+      const manifest = vi
+        .spyOn(lookaheadSteps, "createGoalGenerationManifestStep")
+        .mockImplementation((input) => {
+          if (!burst.started) {
+            burst.started = true;
+            marks = Promise.all(Array.from({ length: 3 }, () => markUntilTheRunWaits()));
+          }
+
+          return createAsTheRuntimeDoes(input);
+        });
+
+      vi.mocked(sleep).mockImplementation(async () => {
+        if (burst.started) {
+          burst.over = true;
+          await marks;
+        }
+      });
+
+      try {
+        const result = await goalContentWorkflow({ goalId: goal.id });
+
+        const first = await prisma.planItem.findFirstOrThrow({
+          orderBy: { position: "asc" },
+          where: { kind: "lesson", plan: { goalId: goal.id }, status: "todo" },
+        });
+
+        expect(result.status).toBe("built");
+        expect(result.speculativeLessonIds[0]).toBe(first.lessonId);
+      } finally {
+        burst.over = true;
+        await marks;
+        manifest.mockRestore();
+      }
     },
   );
 

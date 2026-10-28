@@ -12,6 +12,7 @@ import {
   listSoonStandInCourseIds,
 } from "@zoonk/core/lookahead/plan-outline-needs";
 import {
+  type PlanGenerationManifest,
   createPlanGenerationManifest,
   pickPlanStartToWrite,
   pickSpeculativeLessons,
@@ -19,6 +20,8 @@ import {
 import { type GoalKind, prisma } from "@zoonk/db";
 import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
+import { catchPlanConflict } from "../../_shared/plan-conflict-outcome";
+import { type PlanStepOutcome } from "../../_shared/plan-conflict-retry";
 
 type OwnLevel = Parameters<typeof pickSpeculativeLessons>[0]["ownLevel"];
 
@@ -129,15 +132,17 @@ export async function pickSpeculativeLessonsStep(input: {
 /**
  * The lessons of `lessonIds` to start writing now: one the learner finished, or placement tested
  * out, since it was picked is left out. The admitted targets carry the same versioned token to
- * their child runs; they never compute the plan merely to ask membership.
+ * their child runs; they never compute the plan merely to ask membership. A plan other runs kept
+ * marking while it was read comes back as a conflict, for the run to read it again after a durable
+ * wait (see `retryPlanConflicts`).
  */
 export async function createGoalGenerationManifestStep(input: {
   goalId: string;
   lessonIds: string[];
-}) {
+}): Promise<PlanStepOutcome<PlanGenerationManifest | null>> {
   "use step";
 
-  return createPlanGenerationManifest(input);
+  return catchPlanConflict(() => createPlanGenerationManifest(input));
 }
 
 /**

@@ -3,6 +3,7 @@ import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-c
 import { sleep } from "workflow";
 import { start } from "workflow/api";
 import { type ContentAnalytics } from "../_shared/content-analytics";
+import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { repeatUntil } from "../_shared/repeat-until";
 import { lessonContentWorkflow } from "../lessons/lesson-content-workflow";
 import {
@@ -80,7 +81,9 @@ async function writeLessons({
   writer: LessonWriter;
 }): Promise<string[]> {
   const planManifest =
-    lessonIds.length > 0 ? await createGoalGenerationManifestStep({ goalId, lessonIds }) : null;
+    lessonIds.length > 0
+      ? await retryPlanConflicts(createGoalGenerationManifestStep, { goalId, lessonIds })
+      : null;
 
   const admitted = planManifest?.targets.map((target) => target.lessonId) ?? [];
 
