@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type Goal } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { pickExamOptions } from "../../exams/choices/choose-exam-option";
 import {
@@ -13,6 +13,7 @@ import { findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { scheduleMemoryUpdate } from "../../memory/update-memory-from-activity";
 import { settleNewPlan } from "../../plans/_utils/recommended-bases";
 import { updateLearningProfile } from "../../profile/update-learning-profile";
+import { findOnboardingGoalIds } from "./_utils/onboarding-goals";
 import { type OnboardingAnswerInput } from "./onboarding-contract";
 import { getAnsweredQuestions, getFollowUpQuestions, readExamTarget } from "./onboarding-steps";
 
@@ -161,40 +162,23 @@ function getScheduleChanges(input: OnboardingAnswerInput): Omit<GoalUpdateInput,
   return {};
 }
 
-/** Goals from one onboarding share daily time, with the main goal receiving the larger share. */
-async function shareDailyMinutes({
-  dailyMinutes,
-  goal,
-}: {
-  dailyMinutes: number;
-  goal: Goal;
-}): Promise<Map<string, number>> {
-  const onboardingId = isJsonObject(goal.details) ? goal.details.onboardingId : null;
-
-  const goals =
-    typeof onboardingId === "string"
-      ? await prisma.goal.findMany({
-          orderBy: { createdAt: "asc" },
-          select: { id: true },
-          where: { details: { equals: onboardingId, path: ["onboardingId"] }, userId: goal.userId },
-        })
-      : [{ id: goal.id }];
-
-  const shares = splitDailyBudget({ budget: dailyMinutes, count: goals.length });
-
-  return new Map(goals.map((item, index) => [item.id, shares[index] ?? dailyMinutes]));
+/** Goals typed together share the day's time: the main one gets the bigger share. */
+function shareMinutes({ goalIds, minutes }: { goalIds: string[]; minutes: number }) {
+  const shares = splitDailyBudget({ budget: minutes, count: goalIds.length });
+  return new Map(goalIds.map((id, index) => [id, shares[index] ?? minutes]));
 }
 
 type ScheduleAnswer = Extract<OnboardingAnswerInput, { question: "schedule" }>;
 
 /** Applies shared weekday/weekend schedules and returns this goal's allocation. */
 async function updateSharedGoals({ goal, input }: { goal: Goal; input: ScheduleAnswer }) {
-  const [shares, weekendShares] = await Promise.all([
-    shareDailyMinutes({ dailyMinutes: input.dailyMinutes, goal }),
+  const goalIds = await findOnboardingGoalIds(goal);
+  const shares = shareMinutes({ goalIds, minutes: input.dailyMinutes });
+
+  const weekendShares =
     input.weekendMinutes === undefined
       ? null
-      : shareDailyMinutes({ dailyMinutes: input.weekendMinutes, goal }),
-  ]);
+      : shareMinutes({ goalIds, minutes: input.weekendMinutes });
 
   const others = [...shares].filter(([id]) => id !== goal.id);
 

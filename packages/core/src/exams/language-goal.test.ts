@@ -6,7 +6,9 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockGuestSession, mockSession } from "../_test-utils/mock-session";
 import { insertGoalWithPlan } from "../goals/_utils/create-goal-records";
+import { splitDailyBudget } from "../goals/daily-budget";
 import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
+import { getOnboarding } from "../view-models/onboarding/get-onboarding";
 import { moveLanguageGoalToExam } from "./move-language-goal";
 import type * as GoalRecords from "../goals/_utils/create-goal-records";
 
@@ -228,5 +230,67 @@ describe("onboarding's reason answer", () => {
     await expect(
       answerOnboardingQuestion({ goalId: goal.id, input: IELTS_REASON }),
     ).resolves.toMatchObject({ movedTo: { created: true, goal: { title: "IELTS" } } });
+  });
+
+  it("keeps all of the day's time for the exam goal a goal typed alone moved to", async () => {
+    const { goal } = await languageGoalInOnboarding();
+    const answer = await answerOnboardingQuestion({ goalId: goal.id, input: IELTS_REASON });
+    const exam = answer.status === "saved" ? answer.movedTo?.goal : null;
+
+    if (!exam) {
+      throw new Error("Expected the goal to move");
+    }
+
+    await answerOnboardingQuestion({
+      goalId: exam.id,
+      input: { dailyMinutes: 60, question: "schedule" },
+    });
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: exam.id } })).resolves.toMatchObject({
+      dailyMinutes: 60,
+    });
+
+    await expect(getOnboarding({ goalId: exam.id })).resolves.toMatchObject({
+      onboarding: { goalIds: [exam.id] },
+    });
+  });
+
+  it("gives the exam goal the moved goal's place among the goals typed with it", async () => {
+    const { draft, goal, user } = await languageGoalInOnboarding();
+
+    const other = await goalFixture({
+      details: { onboardingId: draft.id },
+      kind: "learn",
+      userId: user.id,
+    });
+
+    const answer = await answerOnboardingQuestion({ goalId: goal.id, input: IELTS_REASON });
+    const exam = answer.status === "saved" ? answer.movedTo?.goal : null;
+
+    if (!exam) {
+      throw new Error("Expected the goal to move");
+    }
+
+    await answerOnboardingQuestion({
+      goalId: exam.id,
+      input: { dailyMinutes: 60, question: "schedule" },
+    });
+
+    const [main, second] = splitDailyBudget({ budget: 60, count: 2 });
+
+    await expect(
+      prisma.goal.findMany({
+        orderBy: { createdAt: "asc" },
+        select: { dailyMinutes: true, id: true },
+        where: { id: { in: [exam.id, other.id] } },
+      }),
+    ).resolves.toStrictEqual([
+      { dailyMinutes: second, id: other.id },
+      { dailyMinutes: main, id: exam.id },
+    ]);
+
+    await expect(getOnboarding({ goalId: exam.id })).resolves.toMatchObject({
+      onboarding: { goalIds: [exam.id, other.id] },
+    });
   });
 });

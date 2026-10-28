@@ -14,6 +14,7 @@ import { findOwnedGoal, getAnswerTimeZone } from "../../learner/_utils/owned-goa
 import { examStructureSchema } from "../../library/exams/blueprint-contract";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
 import { findLearningProfileView } from "../../profile/_utils/learning-profile-view";
+import { findOnboardingGoalIds } from "./_utils/onboarding-goals";
 import { getGoalSize, getRecommendedMinutes } from "./_utils/recommended-minutes";
 import {
   ONBOARDING_QUESTIONS,
@@ -31,30 +32,6 @@ import {
 export type OnboardingResult =
   | { onboarding: OnboardingView; status: "ready" }
   | { status: "notFound" | "unauthorized" };
-
-async function findOnboardingGoalIds({
-  details,
-  goalId,
-  userId,
-}: {
-  details: Record<string, unknown>;
-  goalId: string;
-  userId: string;
-}): Promise<string[]> {
-  const onboardingId = details.onboardingId;
-
-  if (typeof onboardingId !== "string") {
-    return [goalId];
-  }
-
-  const goals = await prisma.goal.findMany({
-    orderBy: { createdAt: "asc" },
-    select: { id: true },
-    where: { details: { equals: onboardingId, path: ["onboardingId"] }, userId },
-  });
-
-  return goals.length > 0 ? goals.map((goal) => goal.id) : [goalId];
-}
 
 async function findExamNotice({
   examBlueprintId,
@@ -174,7 +151,7 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
   const [profile, activeGoalId, goalIds, notice, examDays] = await Promise.all([
     findLearningProfileView(userId),
     findActiveGoalId(userId),
-    findOnboardingGoalIds({ details, goalId, userId }),
+    findOnboardingGoalIds(goal),
     findExamNotice({ examBlueprintId: goal.examBlueprintId, goalId }),
     findCourseExamDays(goal),
   ]);
