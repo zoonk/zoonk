@@ -17,8 +17,7 @@ type RequestProgressDateContext = { currentDate: Date; currentInstant: Date; tim
 export async function getRequestProgressDateContext(): Promise<RequestProgressDateContext> {
   "use cache: private";
 
-  const session = await getSession();
-  const currentInstant = await getRequestInstant();
+  const [session, currentInstant] = await Promise.all([getSession(), getRequestInstant()]);
 
   if (session) {
     cacheTag(getGoalsCacheTag(session.user.id));

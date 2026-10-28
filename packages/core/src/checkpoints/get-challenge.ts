@@ -211,9 +211,9 @@ async function loadChallengeDay(challenge: OwnedChallenge) {
   const { goal, item, today, userId } = challenge;
   const timing = getTiming(challenge);
   const due = timing === "nextSession" && item.status === "todo";
-  const plusRequired = await needsPlus(challenge);
 
-  const [block, savedDay] = await Promise.all([
+  const [plusRequired, block, savedDay] = await Promise.all([
+    needsPlus(challenge),
     findChallengeBlock({ challenge }),
     prisma.studySession.findUnique({
       select: {

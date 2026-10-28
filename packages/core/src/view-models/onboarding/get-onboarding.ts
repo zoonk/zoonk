@@ -202,9 +202,10 @@ export async function getOnboarding({ goalId }: { goalId: string }): Promise<Onb
     findCourseExamDays(goal),
   ]);
 
-  const earlierGoals = await prisma.goal.count({ where: { id: { notIn: goalIds }, userId } });
-
-  const [view] = await loadGoalViews({ activeGoalId, goals: [goal] });
+  const [earlierGoals, [view]] = await Promise.all([
+    prisma.goal.count({ where: { id: { notIn: goalIds }, userId } }),
+    loadGoalViews({ activeGoalId, goals: [goal] }),
+  ]);
 
   if (!view) {
     return { status: "notFound" };

@@ -91,12 +91,13 @@ async function loadToday({
     return null;
   }
 
-  const carried = await findCarriedOverSession({ goalId, now, timeZone, userId });
-
-  const current = await prisma.studySession.findUnique({
-    include: STUDY_SESSION_INCLUDE,
-    where: { userGoalDate: { goalId, localDate, userId } },
-  });
+  const [carried, current] = await Promise.all([
+    findCarriedOverSession({ goalId, now, timeZone, userId }),
+    prisma.studySession.findUnique({
+      include: STUDY_SESSION_INCLUDE,
+      where: { userGoalDate: { goalId, localDate, userId } },
+    }),
+  ]);
 
   const session = carried && !current?.startedAt ? carried : current;
 

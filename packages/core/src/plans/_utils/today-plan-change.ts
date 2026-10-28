@@ -155,18 +155,13 @@ export async function loadTodayPlanChange({
 
   const { change, effect } = picked;
 
-  const partAreas = await loadGraphPartAreas({
-    examBlueprintId: plan.goal.examBlueprintId,
-    graph: parsePlanGraph(plan.graph),
-  });
-
-  const view = await toPlanChangeView({
-    change,
-    goal: plan.goal,
-    now,
-    planVersion: plan.version,
-    timeZone,
-  });
+  const [partAreas, view] = await Promise.all([
+    loadGraphPartAreas({
+      examBlueprintId: plan.goal.examBlueprintId,
+      graph: parsePlanGraph(plan.graph),
+    }),
+    toPlanChangeView({ change, goal: plan.goal, now, planVersion: plan.version, timeZone }),
+  ]);
 
   return foldChangeAreas({ change: { ...view, effect }, partAreas });
 }
