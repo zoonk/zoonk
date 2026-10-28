@@ -77,6 +77,8 @@ struct TodayView: Decodable, Equatable, Sendable {
     let date: String?
     let kind: String
     let planItemId: String?
+    let questions: Int?
+    let timeLimitMinutes: Int?
 
     var requiresPlus: Bool { access == "plusRequired" }
   }

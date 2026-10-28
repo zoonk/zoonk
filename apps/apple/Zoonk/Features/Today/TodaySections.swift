@@ -210,69 +210,96 @@ struct TodayPlanChangeSection: View {
 }
 
 /// Today's missions: how many are left and their Brain Power, then each one, opening where it's
-/// done.
+/// done. Once they're all done the card folds to one line; when another goal already earned the
+/// day's Brain Power, it says so in one line. `rowsInQueue`: where the card follows the queue and
+/// every mission only opens one of its blocks, it leaves the rows to the queue, whose marks name
+/// those blocks, so no block is listed twice.
 struct TodayMissionsSection: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
 
   let view: TodayView
+  let rowsInQueue: Bool
   let open: (StudyBlock, Bool) -> Void
 
   private var missions: [StudyMission] { view.session.missions }
 
   var body: some View {
     let left = missions.filter { !$0.isDone }
-    let won = view.session.fullMeal.earned
+    let bonus = view.session.fullMeal.bonus
 
-    Section {
-      VStack(alignment: .leading, spacing: 8) {
-        HStack(alignment: .firstTextBaseline) {
-          if won {
-            Text(
-              "You earned +\(view.session.fullMeal.bonus) Brain Power.", tableName: "Today",
-              comment: "Today's missions are done")
-          } else {
+    if view.session.fullMeal.earned {
+      Section {
+        if left.isEmpty {
+          HStack {
+            Text("Missions done", tableName: "Today", comment: "Today's missions are done")
+              .font(.body.weight(.medium))
+            Spacer()
+            reward(bonus)
+          }
+        } else {
+          Text(
+            "Today's +\(bonus) Brain Power is already earned.", tableName: "Today",
+            comment: "Another goal already earned the day's missions reward")
+            .foregroundStyle(.secondary)
+        }
+      }
+    } else {
+      Section {
+        VStack(alignment: .leading, spacing: 8) {
+          HStack(alignment: .firstTextBaseline) {
             Text(
               "\(left.count) left · ~\(studyDuration(minutes: minutesLeft(left)))",
               tableName: "Today", comment: "Missions left and their time"
             )
             .monospacedDigit()
+
+            Spacer()
+
+            reward(bonus)
+              .accessibilityLabel(
+                Text(
+                  "\(bonus) Brain Power for finishing them", tableName: "Today",
+                  comment: "The missions' reward"))
           }
+          .font(.subheadline)
 
-          Spacer()
+          MeterParts(
+            parts: missions.map {
+              MeterParts.Part(fill: $0.isDone ? .color(.brain) : .color(.brain.opacity(0.18)))
+            })
+        }
+        .listRowSeparator(.hidden, edges: .bottom)
 
-          if !won {
-            Label {
-              Text("+\(view.session.fullMeal.bonus)")
-                .monospacedDigit()
-            } icon: {
-              Image(systemName: "brain")
+        if !(rowsInQueue && onlyOpensBlocks) {
+          ForEach(Array(missions.enumerated()), id: \.offset) { _, mission in
+            MissionRow(mission: mission, buddyName: learner.buddyDisplayName) {
+              go(mission)
             }
-            .foregroundStyle(.brain)
-            .accessibilityLabel(
-              Text(
-                "\(view.session.fullMeal.bonus) Brain Power for finishing them", tableName: "Today",
-                comment: "The missions' reward"))
           }
         }
-        .font(.subheadline)
-
-        MeterParts(
-          parts: missions.map {
-            MeterParts.Part(fill: $0.isDone ? .color(.brain) : .color(.brain.opacity(0.18)))
-          })
+      } header: {
+        Text("Today's missions", tableName: "Today", comment: "Today's missions header")
       }
-      .listRowSeparator(.hidden, edges: .bottom)
+    }
+  }
 
-      ForEach(Array(missions.enumerated()), id: \.offset) { _, mission in
-        MissionRow(mission: mission, buddyName: learner.buddyDisplayName) {
-          go(mission)
-        }
-      }
-    } header: {
-      won
-        ? Text("Missions done", tableName: "Today", comment: "Today's missions are done")
-        : Text("Today's missions", tableName: "Today", comment: "Today's missions header")
+  private func reward(_ bonus: Int) -> some View {
+    Label {
+      Text("+\(bonus)")
+        .monospacedDigit()
+    } icon: {
+      Image(systemName: "brain")
+    }
+    .foregroundStyle(.brain)
+  }
+
+  /// Every mission still to do only opens one of the day's blocks, with nothing to wait for and no
+  /// count of its own: the queue already lists each one, marked.
+  private var onlyOpensBlocks: Bool {
+    missions.allSatisfy { mission in
+      mission.isDone
+        || (mission.opens?.kind == "block" && mission.waitReason == nil && mission.total <= 1)
     }
   }
 
@@ -344,8 +371,11 @@ struct TodayWeekSection: View {
       }
       .padding(.vertical, 4)
 
-      if view.session.state != .ahead {
-        TodayChallengeRow(view: view)
+      // A challenge in a later week waits for its week: the Plan says when the next one is.
+      if let challenge = view.weeklyChallenge, let dateText = challenge.date,
+        week.days.contains(where: { $0.date == dateText }), let date = studyDate(dateText)
+      {
+        WeekChallengeRow(challenge: challenge, date: date)
       }
     } header: {
       ViewThatFits(in: .horizontal) {
@@ -361,6 +391,78 @@ struct TodayWeekSection: View {
         }
       }
     }
+  }
+}
+
+/// The week's challenge under its days: its name over its day, questions and time, opening its
+/// intro. A mock the learner's plan doesn't include (it comes with Plus) leaves its day to a full
+/// review of every topic; one the plan adds only once the day opens has nothing to open yet.
+private struct WeekChallengeRow: View {
+  @Environment(AppRouter.self) private var router
+
+  let challenge: TodayView.WeeklyChallenge
+  let date: Date
+
+  private var day: String { date.formatted(.studyDay.weekday(.wide)) }
+
+  var body: some View {
+    if challenge.kind == "mock" && challenge.requiresPlus {
+      Label {
+        VStack(alignment: .leading, spacing: 2) {
+          Text("Full review", tableName: "Today", comment: "A free plan's mock day")
+          Text(
+            "\(day) · every topic, your weakest first", tableName: "Today",
+            comment: "When a free plan's full review is and what it asks")
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+        }
+      } icon: {
+        KindMark(kind: .review)
+      }
+    } else if let planItemID = challenge.planItemId {
+      Button {
+        router.open(.challenge(planItemId: planItemID))
+      } label: {
+        label
+      }
+      .tint(.primary)
+    } else {
+      label
+    }
+  }
+
+  private var label: some View {
+    Label {
+      VStack(alignment: .leading, spacing: 2) {
+        challenge.kind == "mock"
+          ? Text("Mock exam", tableName: "Today", comment: "The week's mock")
+          : Text("Weekly challenge", tableName: "Today", comment: "The week's challenge")
+        Text(facts)
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+          .monospacedDigit()
+      }
+    } icon: {
+      KindMark(kind: challenge.kind == "mock" ? .mock : .challenge)
+    }
+  }
+
+  /// "Sunday · 10 questions · 15 min".
+  private var facts: String {
+    var parts = [day]
+
+    if let questions = challenge.questions, questions > 0 {
+      parts.append(
+        String(
+          localized: "\(questions) questions", table: "Today",
+          comment: "How many questions the week's challenge asks"))
+    }
+
+    if let minutes = challenge.timeLimitMinutes {
+      parts.append(studyDuration(minutes: minutes))
+    }
+
+    return parts.joined(separator: " · ")
   }
 }
 

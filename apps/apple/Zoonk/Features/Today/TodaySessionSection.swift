@@ -28,6 +28,8 @@ struct TodaySessionSection: View {
           .foregroundStyle(.secondary)
       }
 
+      mockFunding
+
       if !session.blocks.isEmpty {
         DayProgressRow(session: session)
       }
@@ -53,8 +55,17 @@ struct TodaySessionSection: View {
     }
   }
 
-  /// Why today is lighter, kindly and briefly; nil on an ordinary day.
+  /// Why today is lighter, kindly and briefly; nil on an ordinary day. It belongs to the session
+  /// it explains, so it goes once the learner starts, and a day with nothing to start says its own
+  /// words instead.
   private var freshStart: String? {
+    let state = session.state
+    guard !view.studiedToday, !session.isStarted, session.dailyLimit?.reached != true,
+      state != .ahead, state != .rest
+    else {
+      return nil
+    }
+
     let time = studyDuration(minutes: session.blocks.reduce(0) { $0 + $1.estimatedMinutes })
 
     switch session.freshStart {
@@ -76,22 +87,38 @@ struct TodaySessionSection: View {
         localized: "A fresh week. Today starts with an easy warm-up.", table: "Today",
         comment: "A day starting a new week")
     case nil:
-      return mockFunding
+      return nil
     }
   }
 
-  private var mockFunding: String? {
-    guard let funding = view.mockFunding, session.state != .done, session.state != .rest,
+  /// Why a study day is lighter than the learner's time: it saves some for a mock exam longer than
+  /// their day. A return after a break already says the day is lighter, so it only names the mock;
+  /// a mock the learner's plan doesn't include wears the Plus mark.
+  @ViewBuilder
+  private var mockFunding: some View {
+    if let funding = view.mockFunding, session.state != .done, session.state != .rest,
       let date = studyDate(funding.mockDate)
-    else {
-      return nil
+    {
+      let day = date.formatted(.studyDay.month(.abbreviated).day())
+
+      HStack {
+        if session.freshStart == .welcomeBack {
+          Text(
+            "Saving time for \(day)'s mock exam", tableName: "Today",
+            comment: "Why the day is lighter, on a return after a break that already says so")
+        } else {
+          Text(
+            "Lighter day: saving time for \(day)'s mock exam", tableName: "Today",
+            comment: "Why the day is lighter")
+        }
+
+        if !session.examAccess.includesMockExams {
+          PlusMark()
+        }
+      }
+      .font(.subheadline)
+      .foregroundStyle(.secondary)
     }
-
-    let day = date.formatted(.studyDay.month(.abbreviated).day())
-
-    return String(
-      localized: "Lighter day: saving time for \(day)'s mock exam", table: "Today",
-      comment: "Why the day is lighter")
   }
 
   @ViewBuilder

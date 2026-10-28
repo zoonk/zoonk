@@ -112,7 +112,8 @@ struct TodayDayView: View {
   @ViewBuilder
   private var aside: some View {
     if !view.session.missions.isEmpty {
-      TodayMissionsSection(view: view, open: open)
+      // Beside the day, each mission keeps its row; under it, the queue marks the blocks.
+      TodayMissionsSection(view: view, rowsInQueue: !isWide, open: open)
     }
 
     TodayWeekSection(view: view)

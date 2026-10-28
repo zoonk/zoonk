@@ -204,6 +204,35 @@
         }
       }
     },
+    "%@ · every topic, your weakest first" : {
+      "comment" : "When a free plan's full review is and what it asks",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · alle Themen, zuerst die, die dir am schwersten fallen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · todos los temas, empezando por el que peor se te da"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · tous les sujets, en commençant par les plus difficiles"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ · todos os tópicos, começando pelo mais difícil"
+          }
+        }
+      }
+    },
     "%@ · often tested" : {
       "comment" : "A topic the exam asks a lot",
       "localizations" : {
@@ -1263,7 +1292,7 @@
       }
     },
     "%lld questions" : {
-      "comment" : "A practice block's questions",
+      "comment" : "A practice block's questions\nHow many questions the week's challenge asks",
       "localizations" : {
         "de" : {
           "variations" : {
@@ -3159,7 +3188,7 @@
       }
     },
     "Full review" : {
-      "comment" : "A full review block",
+      "comment" : "A free plan's mock day\nA full review block",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3507,7 +3536,7 @@
       }
     },
     "Mock exam" : {
-      "comment" : "A weekly mock exam block",
+      "comment" : "A weekly mock exam block\nThe week's mock",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4624,6 +4653,35 @@
         }
       }
     },
+    "Saving time for %@'s mock exam" : {
+      "comment" : "Why the day is lighter, on a return after a break that already says so",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zeit für %@s Probeprüfung einplanen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reservando tiempo para el simulacro de examen de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temps réservé pour l’examen blanc de %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guardando tempo para o simulado de %@"
+          }
+        }
+      }
+    },
     "See %@'s challenge" : {
       "comment" : "The week's challenge",
       "localizations" : {
@@ -5539,6 +5597,35 @@
         }
       }
     },
+    "Today's +%lld Brain Power is already earned." : {
+      "comment" : "Another goal already earned the day's missions reward",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die heutigen +%lld Brain Power hast du bereits verdient."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya has conseguido los +%lld PM de hoy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les +%lld PM d’aujourd’hui sont déjà gagnés."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os +%lld PM de hoje já foram conquistados."
+          }
+        }
+      }
+    },
     "Today's missions" : {
       "comment" : "Today's missions header",
       "localizations" : {
@@ -5714,7 +5801,7 @@
       }
     },
     "Weekly challenge" : {
-      "comment" : "The week's challenge block",
+      "comment" : "The week's challenge\nThe week's challenge block",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -5941,35 +6028,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prática de escrita"
-          }
-        }
-      }
-    },
-    "You earned +%lld Brain Power." : {
-      "comment" : "Today's missions are done",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast +%lld Brain Power verdient."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Has ganado +%lld de Poder Mental."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as gagné +%lld PM."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você ganhou +%lld PM."
           }
         }
       }
