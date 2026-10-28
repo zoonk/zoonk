@@ -28,6 +28,7 @@ Use it for any change a learner can see or feel: screens, flows, copy, plan beha
 
 ## 3. Walk with fresh eyes
 
+- Walk the production build `pnpm start` serves, not a dev server: it's what learners get, and a dev server adds compile waits and loading states they never see ([development guide](../../guides/development.md)).
 - A builder can't unknow the implementation. For substantial changes, have a separate agent walk with only the persona brief, the journeys to cover and the app URL, without the diff, and report back; the builder fixes. When you walk your own work, write down what the persona knows before each screen and judge only from what the screen shows.
 - Enter through the normal UI, reach the outcome, then come back: the next day, after a gap, on another device.
 - Cover the unhappy paths in [journeys](references/journeys.md) for every surface the change reaches, not only the screen you edited.

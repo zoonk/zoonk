@@ -4,13 +4,13 @@
 
 ## Run it
 
-| Where                                             | Command                                                                        |
-| ------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `pnpm dev`                                        | `pnpm verify:pages --email <persona>@zoonk.test /today /plan`                  |
-| Production build (`pnpm start`, after `pnpm dev`) | `pnpm verify:pages --email <persona>@zoonk.test --throttle --nav /today /plan` |
-| A page anyone can open                            | Leave out `--email`                                                            |
+| Where                      | Command                                                                        |
+| -------------------------- | ------------------------------------------------------------------------------ |
+| `pnpm start`               | `pnpm verify:pages --email <persona>@zoonk.test /today /plan`                  |
+| Speed work on `pnpm start` | `pnpm verify:pages --email <persona>@zoonk.test --throttle --nav /today /plan` |
+| A page anyone can open     | Leave out `--email`                                                            |
 
-It measures this checkout's Main at its Portless URL, whichever of the two serves it (`--url` points it elsewhere), and signs in with the newest code the dev mailbox received for `--email`.
+It measures this checkout's Main at its Portless URL, whether `pnpm start` or `pnpm dev` serves it (`--url` points it elsewhere), and signs in with the newest code the dev mailbox received for `--email`.
 
 - `--throttle` is a mid-range phone on slow 4G (4× CPU, 150 ms, 1.6 Mbps), as Lighthouse's mobile run. Use it on production builds; it's what "instant on slower devices" means.
 - `--nav` loads the first path, then taps the visible link to each next path in order, as a learner moves between them (on the phone and the laptop). `navigations/paints.png` shows every paint after each tap: what the learner saw, not only when the URL changed.
