@@ -112,6 +112,8 @@ private struct BuddyContent: View {
       thread(opensDay: false)
     } secondary: {
       dayView(showsTitle: true)
+        // A day opened in a sheet before iPhone Duo unfolded gives way to the pane.
+        .onAppear { isDayShown = false }
     } single: {
       thread(opensDay: true)
     }
