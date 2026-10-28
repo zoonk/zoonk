@@ -109,11 +109,27 @@ private struct BuddyContent: View {
           menu
         }
       }
-      .inspector(isPresented: $isDayShown) {
-        BuddyDayView(
-          status: status, name: name, onGlasses: { isWearing = true },
-          onClose: { isDayShown = false }
-        )
+      // A wide screen keeps the day in a column beside the conversation; a phone opens it in a
+      // sheet, with its title in the sheet's bar.
+      .inspector(isPresented: isDayShown(when: .regular)) {
+        dayView(showsTitle: true)
+      }
+      .sheet(isPresented: isDayShown(when: .compact)) {
+        let day = dayView(showsTitle: false)
+
+        NavigationStack {
+          day
+            .navigationTitle(day.title)
+            .navigationSubtitle(day.subtitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+              ToolbarItem(placement: .cancellationAction) {
+                Button(role: .close) {
+                  isDayShown = false
+                }
+              }
+            }
+        }
         .presentationDetents([.medium, .large])
       }
       .sheet(isPresented: $isEditing) {
@@ -144,6 +160,26 @@ private struct BuddyContent: View {
 
         store.broughtQuestion = nil
       }
+  }
+
+  private func dayView(showsTitle: Bool) -> BuddyDayView {
+    BuddyDayView(
+      status: status, name: name,
+      onGlasses: {
+        // A phone's day is a sheet: it gives way to the glasses' own sheet.
+        if !showsTitle {
+          isDayShown = false
+        }
+
+        isWearing = true
+      }, showsTitle: showsTitle)
+  }
+
+  /// The day shown in the presentation that fits the width: a column or a sheet.
+  private func isDayShown(when sizeClass: UserInterfaceSizeClass) -> Binding<Bool> {
+    Binding(
+      get: { isDayShown && (self.sizeClass ?? .compact) == sizeClass },
+      set: { isDayShown = $0 })
   }
 
   @ViewBuilder

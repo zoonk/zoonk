@@ -9,74 +9,82 @@ struct BuddyDayView: View {
   let status: BuddyStatus
   let name: String
   let onGlasses: () -> Void
-  /// Hides the day: its sheet on a phone, its column on a wide screen.
-  let onClose: () -> Void
+  /// Beside the conversation the day names itself; in its sheet the navigation bar does.
+  var showsTitle = false
 
   var body: some View {
-    NavigationStack {
-      List {
-        energy
+    List {
+      if showsTitle {
+        VStack(alignment: .leading, spacing: 2) {
+          title
+            .font(.headline)
+          subtitle
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+        }
+        .listRowBackground(Color.clear)
+        .accessibilityAddTraits(.isHeader)
+      }
 
-        if let today = status.today, !today.missions.isEmpty {
-          Section {
-            ForEach(Array(today.missions.enumerated()), id: \.offset) { _, mission in
-              BuddyMissionRow(mission: mission, buddyName: name) {
-                if let opens = mission.opens?.value1 {
-                  places.open(.mission(opens))
-                }
+      energy
+
+      if let today = status.today, !today.missions.isEmpty {
+        Section {
+          ForEach(Array(today.missions.enumerated()), id: \.offset) { _, mission in
+            BuddyMissionRow(mission: mission, buddyName: name) {
+              if let opens = mission.opens?.value1 {
+                places.open(.mission(opens))
               }
             }
-          } header: {
-            missionsHeader(today)
-          }
-        }
-
-        Section {
-          Button {
-            places.open(.memory)
-          } label: {
-            Text(
-              "What \(name) remembers", tableName: "Buddy",
-              comment: "Opens what the buddy remembers; the argument is its name")
-          }
-
-          Button(action: onGlasses) {
-            LabeledContent {
-              Text(
-                "\(status.earnedGlasses) of \(status.glasses.count)", tableName: "Buddy",
-                comment: "Glasses earned of all of them"
-              )
-              .monospacedDigit()
-            } label: {
-              Text("Glasses", tableName: "Buddy", comment: "Opens the buddy's glasses")
-            }
-          }
-
-          Button {
-            places.open(.logbook)
-          } label: {
-            Text("Weekly summary", tableName: "Buddy", comment: "Opens the week's logbook")
           }
         } header: {
-          Text(name)
-        }
-        .foregroundStyle(.primary)
-      }
-      .navigationTitle(
-        Text(
-          "\(name) today", tableName: "Buddy",
-          comment: "Title of the buddy's day; the argument is its name")
-      )
-      .navigationSubtitle(
-        Text("\(status.stage.name) · \(status.growthLine)")
-      )
-      .navigationBarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .cancellationAction) {
-          Button(role: .close, action: onClose)
+          missionsHeader(today)
         }
       }
+
+      Section {
+        Button {
+          places.open(.memory)
+        } label: {
+          Text(
+            "What \(name) remembers", tableName: "Buddy",
+            comment: "Opens what the buddy remembers; the argument is its name")
+        }
+
+        Button(action: onGlasses) {
+          LabeledContent {
+            Text(
+              "\(status.earnedGlasses) of \(status.glasses.count)", tableName: "Buddy",
+              comment: "Glasses earned of all of them"
+            )
+            .monospacedDigit()
+          } label: {
+            Text("Glasses", tableName: "Buddy", comment: "Opens the buddy's glasses")
+          }
+        }
+
+        Button {
+          places.open(.logbook)
+        } label: {
+          Text("Weekly summary", tableName: "Buddy", comment: "Opens the week's logbook")
+        }
+      } header: {
+        Text(name)
+      }
+      .foregroundStyle(.primary)
     }
+  }
+
+  /// "Otto today".
+  var title: Text {
+    Text(
+      "\(name) today", tableName: "Buddy",
+      comment: "Title of the buddy's day; the argument is its name")
+  }
+
+  /// "Baby · Grows to Young at Orange Belt".
+  var subtitle: Text {
+    Text("\(status.stage.name) · \(status.growthLine)")
   }
 
   /// "Today's missions", how many and about how long, and the Brain Power every mission done

@@ -20,6 +20,7 @@ struct ZoonkApp: App {
   private let lessonPlayerAPI: LessonPlayerAPI
   private let lessonPlayerRoutes: LessonPlayerRoutes
   private let practiceHooks: PracticeHooks
+  private let tutorPlaces: TutorPlaces
   private let privateImages: PrivateImageLoader
 
   init() {
@@ -48,6 +49,7 @@ struct ZoonkApp: App {
     _router = State(initialValue: router)
     lessonPlayerRoutes = .routed(by: router)
     practiceHooks = .routed(by: router)
+    tutorPlaces = .routed(by: router)
     _session = State(initialValue: dependencies.sessionStore)
     _settings = State(initialValue: dependencies.settingsStore)
     _subscriptions = State(initialValue: dependencies.subscriptionStore)
@@ -82,6 +84,7 @@ struct ZoonkApp: App {
         .environment(tutor)
         .environment(\.privateImageLoader, privateImages)
         .environment(\.lessonTutor, .buddy)
+        .environment(\.tutorPlaces, tutorPlaces)
         .environment(\.lessonPlayerAPI, lessonPlayerAPI)
         .environment(\.lessonCompletionHook, .invalidating(cache))
         .onOpenURL { url in
