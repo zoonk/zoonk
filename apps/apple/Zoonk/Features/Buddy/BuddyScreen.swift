@@ -80,7 +80,6 @@ struct BuddyScreen: View {
 private struct BuddyContent: View {
   @Environment(BuddyStore.self) private var store
   @Environment(TutorStore.self) private var tutor
-  @Environment(\.horizontalSizeClass) private var sizeClass
   @Environment(\.dynamicTypeSize) private var typeSize
   @Environment(\.tutorPlaces) private var places
 
@@ -89,8 +88,8 @@ private struct BuddyContent: View {
   /// The learner has mistakes to fix, so the buddy offers to explain the last one.
   let hasMistake: Bool
 
+  /// The day's sheet where it isn't beside the conversation, opened from the day's line.
   @State private var isDayShown = false
-  @State private var didPlaceDay = false
   @State private var isEditing = false
   @State private var isWearing = false
   @State private var goalDraft = ""
@@ -118,100 +117,108 @@ private struct BuddyContent: View {
   }
 
   var body: some View {
-    conversation
-      .navigationTitle(Text(name))
-      .navigationSubtitle(
-        Text(
-          "Your study buddy · \(status.stage.name)", tableName: "Buddy",
-          comment: "What the buddy is, and its stage")
-      )
-      .toolbar {
+    // Where there's room, the day stays in sight beside the conversation (main's aside); a phone
+    // opens it in a sheet from the day's line. A pane rather than an inspector: a hidden tab's
+    // inspector turns into a sheet over the shown tab when the width turns compact.
+    PaneSplit(primaryShare: 0.55) {
+      thread(opensDay: false)
+    } secondary: {
+      dayView(showsTitle: true)
+    } single: {
+      thread(opensDay: true)
+    }
+    .navigationTitle(Text(name))
+    .navigationSubtitle(
+      Text(
+        "Your study buddy · \(status.stage.name)", tableName: "Buddy",
+        comment: "What the buddy is, and its stage")
+    )
+    .toolbar {
+      // The system's overflow menu, which iPhone Duo's vertical bar keeps with its other items.
+      if #available(iOS 27, *) {
+        ToolbarOverflowMenu {
+          menuItems
+        }
+      } else {
         ToolbarItem(placement: .topBarTrailing) {
-          menu
+          Menu {
+            menuItems
+          } label: {
+            Label {
+              Text(
+                "More about \(name)", tableName: "Buddy",
+                comment: "The buddy's menu; the argument is its name")
+            } icon: {
+              Image(systemName: "ellipsis")
+            }
+          }
         }
       }
-      // Energy and today's missions stay in sight under the title, as main's line beside the
-      // buddy's name does, while the conversation scrolls under them.
-      .safeAreaBar(edge: .top) {
-        dayLine
-      }
-      // A wide screen keeps the day in a column beside the conversation; a phone opens it in a
-      // sheet, with its title in the sheet's bar.
-      .inspector(isPresented: isDayShown(when: .regular)) {
-        dayView(showsTitle: true)
-      }
-      .sheet(isPresented: isDayShown(when: .compact), onDismiss: openPlaceAfterDay) {
-        let day = dayView(showsTitle: false)
+    }
+    // The day's sheet has its title in the sheet's bar.
+    .sheet(isPresented: $isDayShown, onDismiss: openPlaceAfterDay) {
+      let day = dayView(showsTitle: false)
 
-        NavigationStack {
-          day
-            .navigationTitle(day.title)
-            .navigationSubtitle(day.subtitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-              ToolbarItem(placement: .cancellationAction) {
-                Button(role: .close) {
-                  isDayShown = false
-                }
+      NavigationStack {
+        day
+          .navigationTitle(day.title)
+          .navigationSubtitle(day.subtitle)
+          .navigationBarTitleDisplayMode(.inline)
+          .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+              Button(role: .close) {
+                isDayShown = false
               }
             }
-        }
-        .presentationDetents([.medium, .large])
-        // A phone's day is a sheet: it gives way to the place it opens (a mission, what the
-        // buddy remembers, the week), which would otherwise open under it.
-        .environment(
-          \.tutorPlaces,
-          TutorPlaces { place in
-            placeAfterDay = place
-            isDayShown = false
-          })
+          }
       }
-      .sheet(isPresented: $isEditing) {
-        BuddyEditor(
-          choice: status.choice,
-          availableGlasses: status.glasses.filter(\.earned).compactMap {
-            BuddyGlasses(rawValue: $0.glasses.rawValue)
-          },
-          save: { choice in Task { await store.save(choice) } })
+      .presentationDetents([.medium, .large])
+      // A phone's day is a sheet: it gives way to the place it opens (a mission, what the
+      // buddy remembers, the week), which would otherwise open under it.
+      .environment(
+        \.tutorPlaces,
+        TutorPlaces { place in
+          placeAfterDay = place
+          isDayShown = false
+        })
+    }
+    .sheet(isPresented: $isEditing) {
+      BuddyEditor(
+        choice: status.choice,
+        availableGlasses: status.glasses.filter(\.earned).compactMap {
+          BuddyGlasses(rawValue: $0.glasses.rawValue)
+        },
+        save: { choice in Task { await store.save(choice) } })
+    }
+    .sheet(isPresented: $isWearing) {
+      BuddyGlassesPicker(status: status)
+    }
+    .onChange(of: goalId.map { tutor.conversation(.plan(goalId: $0)).isAsking } ?? false) {
+      _, isAsking in
+      if isAsking {
+        react(.glance)
       }
-      .sheet(isPresented: $isWearing) {
-        BuddyGlassesPicker(status: status)
+    }
+    .onChange(of: goalId.map { tutor.conversation(.plan(goalId: $0)).answeringID } ?? nil) {
+      answered, answering in
+      let turn = goalId.flatMap { tutor.conversation(.plan(goalId: $0)).turns.last }
+      if let answered, answering == nil, turn?.id == answered, turn?.status == .completed {
+        react(.smile)
       }
-      .onAppear {
-        // A wide screen has room to keep the day in sight beside the conversation, once: after
-        // that the learner's choice stays.
-        if !didPlaceDay, sizeClass == .regular {
-          isDayShown = true
-        }
+    }
+    .onChange(of: store.broughtQuestion, initial: true) { _, question in
+      guard let question else {
+        return
+      }
 
-        didPlaceDay = true
+      if let goalId {
+        tutor.conversation(.plan(goalId: goalId)).draft = question
+      } else {
+        goalDraft = question
       }
-      .onChange(of: goalId.map { tutor.conversation(.plan(goalId: $0)).isAsking } ?? false) {
-        _, isAsking in
-        if isAsking {
-          react(.glance)
-        }
-      }
-      .onChange(of: goalId.map { tutor.conversation(.plan(goalId: $0)).answeringID } ?? nil) {
-        answered, answering in
-        let turn = goalId.flatMap { tutor.conversation(.plan(goalId: $0)).turns.last }
-        if let answered, answering == nil, turn?.id == answered, turn?.status == .completed {
-          react(.smile)
-        }
-      }
-      .onChange(of: store.broughtQuestion, initial: true) { _, question in
-        guard let question else {
-          return
-        }
 
-        if let goalId {
-          tutor.conversation(.plan(goalId: goalId)).draft = question
-        } else {
-          goalDraft = question
-        }
-
-        store.broughtQuestion = nil
-      }
+      store.broughtQuestion = nil
+    }
   }
 
   private func dayView(showsTitle: Bool) -> BuddyDayView {
@@ -234,11 +241,15 @@ private struct BuddyContent: View {
     }
   }
 
-  /// The day shown in the presentation that fits the width: a column or a sheet.
-  private func isDayShown(when sizeClass: UserInterfaceSizeClass) -> Binding<Bool> {
-    Binding(
-      get: { isDayShown && (self.sizeClass ?? .compact) == sizeClass },
-      set: { isDayShown = $0 })
+  /// The conversation with the day's line over it, as main's line beside the buddy's name: Energy
+  /// and today's missions stay in sight while the conversation scrolls under them.
+  private func thread(opensDay: Bool) -> some View {
+    conversation
+      .safeAreaBar(edge: .top) {
+        dayLine(opensDay: opensDay)
+          .scenePadding(.horizontal)
+          .padding(.vertical, 8)
+      }
   }
 
   @ViewBuilder
@@ -330,66 +341,77 @@ private struct BuddyContent: View {
     ]
   }
 
-  /// The buddy's day as one quiet line: Energy and today's missions. It shows the whole day, in a
-  /// sheet on a phone and beside the conversation on a wide screen.
-  private var dayLine: some View {
-    Button {
-      isDayShown.toggle()
-    } label: {
-      HStack(spacing: 16) {
-        // Its face, so a glance or a smile reads at this size whatever its stage.
-        BuddyCharacter(look: look, crop: .face, cue: faceCue)
-          .frame(width: 32, height: 32)
+  /// The buddy's day as one quiet line: Energy and today's missions. Where the day isn't beside the
+  /// conversation, it opens the whole day.
+  @ViewBuilder
+  private func dayLine(opensDay: Bool) -> some View {
+    if opensDay {
+      Button {
+        isDayShown = true
+      } label: {
+        dayLineLabel(opensDay: true)
+      }
+      .buttonStyle(.plain)
+      .accessibilityLabel(dayLabel)
+      .accessibilityHint(
+        Text(
+          "Shows \(name)'s day", tableName: "Buddy",
+          comment: "VoiceOver hint of the buddy's day line; the argument is the buddy's name")
+      )
+    } else {
+      dayLineLabel(opensDay: false)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(dayLabel)
+    }
+  }
 
-        // At accessibility sizes the two values stack, so neither breaks across lines.
-        let values =
-          typeSize.isAccessibilitySize
-          ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))
-          : AnyLayout(HStackLayout(spacing: 16))
+  private func dayLineLabel(opensDay: Bool) -> some View {
+    HStack(spacing: 16) {
+      // Its face, so a glance or a smile reads at this size whatever its stage.
+      BuddyCharacter(look: look, crop: .face, cue: faceCue)
+        .frame(width: 32, height: 32)
 
-        values {
+      // At accessibility sizes the two values stack, so neither breaks across lines.
+      let values =
+        typeSize.isAccessibilitySize
+        ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))
+        : AnyLayout(HStackLayout(spacing: 16))
+
+      values {
+        Label {
+          Text(
+            status.energy.current.map {
+              ($0 / 100).formatted(.percent.precision(.fractionLength(0)))
+            } ?? "–")
+        } icon: {
+          Image(systemName: "bolt.fill")
+            .foregroundStyle(.energy)
+        }
+
+        if let today = status.today, !today.missions.isEmpty {
           Label {
             Text(
-              status.energy.current.map {
-                ($0 / 100).formatted(.percent.precision(.fractionLength(0)))
-              } ?? "–")
+              verbatim:
+                "\(today.missions.filter { $0.status == .done }.count)/\(today.missions.count)")
           } icon: {
-            Image(systemName: "bolt.fill")
-              .foregroundStyle(.energy)
-          }
-
-          if let today = status.today, !today.missions.isEmpty {
-            Label {
-              Text(
-                verbatim:
-                  "\(today.missions.filter { $0.status == .done }.count)/\(today.missions.count)")
-            } icon: {
-              Image(systemName: "target")
-            }
+            Image(systemName: "target")
           }
         }
-        .fixedSize()
+      }
+      .fixedSize()
 
-        Spacer(minLength: 0)
+      Spacer(minLength: 0)
 
+      if opensDay {
         Image(systemName: "chevron.right")
           .font(.footnote.weight(.semibold))
           .foregroundStyle(.tertiary)
       }
-      .labelStyle(.titleAndIcon)
-      .font(.subheadline.monospacedDigit())
-      .foregroundStyle(.secondary)
-      .contentShape(.rect)
     }
-    .buttonStyle(.plain)
-    .accessibilityLabel(dayLabel)
-    .accessibilityHint(
-      Text(
-        "Shows \(name)'s day", tableName: "Buddy",
-        comment: "VoiceOver hint of the buddy's day line; the argument is the buddy's name")
-    )
-    .scenePadding(.horizontal)
-    .padding(.vertical, 8)
+    .labelStyle(.titleAndIcon)
+    .font(.subheadline.monospacedDigit())
+    .foregroundStyle(.secondary)
+    .contentShape(.rect)
   }
 
   private var dayLabel: Text {
@@ -410,69 +432,60 @@ private struct BuddyContent: View {
       comment: "VoiceOver: the buddy's day button, with Energy and today's missions")
   }
 
-  private var menu: some View {
-    Menu {
-      Button {
-        isEditing = true
-      } label: {
-        Label {
-          status.buddy.picked
-            ? Text(
-              "Change \(name)", tableName: "Buddy",
-              comment: "Opens changing the buddy; the argument is its name")
-            : Text(
-              "Choose your buddy", tableName: "Buddy",
-              comment: "Opens choosing a buddy and its name")
-        } icon: {
-          Image(systemName: status.buddy.picked ? "pencil" : "face.smiling")
-        }
-      }
-
-      Button {
-        isWearing = true
-      } label: {
-        Label {
-          Text("Glasses", tableName: "Buddy", comment: "Opens the buddy's glasses")
-        } icon: {
-          Image(systemName: "eyeglasses")
-        }
-        Text(
-          "\(status.earnedGlasses) of \(status.glasses.count)", tableName: "Buddy",
-          comment: "Glasses earned of all of them")
-      }
-
-      Divider()
-
-      Button {
-        places.open(.logbook)
-      } label: {
-        Label {
-          Text("Weekly summary", tableName: "Buddy", comment: "Opens the week's logbook")
-        } icon: {
-          Image(systemName: "calendar")
-        }
-      }
-
-      if case .loaded = store.earlierQuestions.state {
-        Button {
-          places.open(.earlierQuestions)
-        } label: {
-          Label {
-            Text(
-              "Earlier questions", tableName: "Buddy",
-              comment: "Opens questions asked before the courses were rewritten")
-          } icon: {
-            Image(systemName: "clock.arrow.circlepath")
-          }
-        }
-      }
+  @ViewBuilder
+  private var menuItems: some View {
+    Button {
+      isEditing = true
     } label: {
       Label {
-        Text(
-          "More about \(name)", tableName: "Buddy",
-          comment: "The buddy's menu; the argument is its name")
+        status.buddy.picked
+          ? Text(
+            "Change \(name)", tableName: "Buddy",
+            comment: "Opens changing the buddy; the argument is its name")
+          : Text(
+            "Choose your buddy", tableName: "Buddy",
+            comment: "Opens choosing a buddy and its name")
       } icon: {
-        Image(systemName: "ellipsis")
+        Image(systemName: status.buddy.picked ? "pencil" : "face.smiling")
+      }
+    }
+
+    Button {
+      isWearing = true
+    } label: {
+      Label {
+        Text("Glasses", tableName: "Buddy", comment: "Opens the buddy's glasses")
+      } icon: {
+        Image(systemName: "eyeglasses")
+      }
+      Text(
+        "\(status.earnedGlasses) of \(status.glasses.count)", tableName: "Buddy",
+        comment: "Glasses earned of all of them")
+    }
+
+    Divider()
+
+    Button {
+      places.open(.logbook)
+    } label: {
+      Label {
+        Text("Weekly summary", tableName: "Buddy", comment: "Opens the week's logbook")
+      } icon: {
+        Image(systemName: "calendar")
+      }
+    }
+
+    if case .loaded = store.earlierQuestions.state {
+      Button {
+        places.open(.earlierQuestions)
+      } label: {
+        Label {
+          Text(
+            "Earlier questions", tableName: "Buddy",
+            comment: "Opens questions asked before the courses were rewritten")
+        } icon: {
+          Image(systemName: "clock.arrow.circlepath")
+        }
       }
     }
   }
