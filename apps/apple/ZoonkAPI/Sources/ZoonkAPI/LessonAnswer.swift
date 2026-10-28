@@ -3,10 +3,15 @@ import Foundation
 /// What the learner picked, built or wrote on a screen, in the shape `POST /v1/steps/{stepId}/checks`
 /// takes. It replaces the generated `LessonStepAnswer` (`typeOverrides`) so activities can send
 /// their own answer types. A hook's guess never counts, so only the player sees it.
-enum LessonAnswer: Codable, Hashable, Sendable {
-  struct Pair: Codable, Hashable, Sendable {
-    let left: String
-    let right: String
+public enum LessonAnswer: Codable, Hashable, Sendable {
+  public struct Pair: Codable, Hashable, Sendable {
+    public let left: String
+    public let right: String
+
+    public init(left: String, right: String) {
+      self.left = left
+      self.right = right
+    }
   }
 
   case hookGuess(optionId: String)
@@ -29,7 +34,7 @@ enum LessonAnswer: Codable, Hashable, Sendable {
   }
 
   /// Whether the server records it: a hook's guess is the player's alone.
-  var isRecorded: Bool {
+  public var isRecorded: Bool {
     if case .hookGuess = self {
       return false
     }
@@ -37,7 +42,7 @@ enum LessonAnswer: Codable, Hashable, Sendable {
     return true
   }
 
-  init(from decoder: any Decoder) throws {
+  public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
 
     switch try container.decode(String.self, forKey: .kind) {
@@ -69,7 +74,7 @@ enum LessonAnswer: Codable, Hashable, Sendable {
     }
   }
 
-  func encode(to encoder: any Encoder) throws {
+  public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
 
     switch self {

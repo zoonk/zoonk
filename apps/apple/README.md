@@ -46,9 +46,9 @@ make test TEST_ARGUMENTS='-only-testing:ZoonkUITests/ZoonkUITests/testPrimaryTab
 
 ## API client
 
-Xcode generates the internal Swift API client automatically during a normal build. A fresh clone does not need a separate SDK setup or generation command, and generated Swift files are not committed.
+The local `ZoonkAPI` Swift package generates the public Swift API client during a normal build, isolating it from app recompilation. The package also owns the hand-written lesson wire models used by the generator’s type overrides. A fresh clone does not need a separate SDK setup or generation command, and generated Swift files are not committed.
 
-The committed `Zoonk/openapi.json` file is an OpenAPI 3.0 compatibility projection generated from the same schemas as the public OpenAPI 3.1 contract. It must not be edited by hand. After changing the contract, run one command from the repository root:
+The committed `ZoonkAPI/Sources/ZoonkAPI/openapi.json` file is an OpenAPI 3.0 compatibility projection generated from the same schemas as the public OpenAPI 3.1 contract. It must not be edited by hand. After changing the contract, run one command from the repository root:
 
 ```sh
 pnpm openapi:generate
@@ -56,7 +56,7 @@ pnpm openapi:generate
 
 CI checks the file byte-for-byte against the source contract, so a stale artifact cannot merge. Feature code should continue to call small hand-written clients such as `AccountAPIClient`; generated transport types stay behind those feature boundaries, while `APIClientFactory` owns shared transport and middleware configuration.
 
-The generator only builds the operations listed under `filter` in `Zoonk/openapi-generator-config.yaml`, plus the schemas they use, so endpoints the app doesn't call can't break its build. Add an operation there when a feature starts calling it.
+The generator only builds the operations listed under `filter` in `ZoonkAPI/Sources/ZoonkAPI/openapi-generator-config.yaml`, plus the schemas they use, so endpoints the app doesn't call can't break its build. Add an operation there when a feature starts calling it.
 
 ## StoreKit testing
 

@@ -4,31 +4,31 @@ import Foundation
 /// included so feedback is instant. It replaces the generated `PlayableLibraryStep`
 /// (`typeOverrides` in `openapi-generator-config.yaml`): the generated union of every screen and
 /// activity template is index-named and far larger than what the player reads.
-struct LessonStep: Codable, Hashable, Sendable, Identifiable {
-  let id: String
-  let position: Int
+public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
+  public let id: String
+  public let position: Int
   /// The skill the screen teaches or checks, when it has its own.
-  let skillId: String?
-  let citation: LessonCitation?
+  public let skillId: String?
+  public let citation: LessonCitation?
   /// The drawn picture, once it's ready.
-  let image: LessonStepImage?
+  public let image: LessonStepImage?
   /// The picture is still being drawn.
-  let imagePending: Bool
+  public let imagePending: Bool
   /// A question whose options are pictures: each drawn picture by option id.
-  let optionPictures: [String: LessonStepImage]
+  public let optionPictures: [String: LessonStepImage]
   /// When the screen was written, in epoch milliseconds: a missing picture may still arrive for
   /// five minutes from then.
-  let pictureWaitStartedAt: Int?
-  let content: LessonStepContent
+  public let pictureWaitStartedAt: Int?
+  public let content: LessonStepContent
 
-  var kind: LessonStepKind { content.kind }
+  public var kind: LessonStepKind { content.kind }
 
   private enum CodingKeys: String, CodingKey {
     case citation, content, exercise, id, image, imagePending, kind, listening, optionPictures
     case pictureWaitStartedAt, position, skillId, wordHints
   }
 
-  init(
+  public init(
     id: String,
     position: Int,
     skillId: String? = nil,
@@ -50,7 +50,7 @@ struct LessonStep: Codable, Hashable, Sendable, Identifiable {
     self.content = content
   }
 
-  init(from decoder: any Decoder) throws {
+  public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     id = try container.decode(String.self, forKey: .id)
     position = try container.decode(Int.self, forKey: .position)
@@ -92,7 +92,7 @@ struct LessonStep: Codable, Hashable, Sendable, Identifiable {
     }
   }
 
-  func encode(to encoder: any Encoder) throws {
+  public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(id, forKey: .id)
     try container.encode(position, forKey: .position)
@@ -130,7 +130,7 @@ struct LessonStep: Codable, Hashable, Sendable, Identifiable {
 
 extension LessonStep {
   /// This screen with the pictures a fresh read of the lesson drew since.
-  func withPictures(from fresh: LessonStep) -> LessonStep {
+  public func withPictures(from fresh: LessonStep) -> LessonStep {
     LessonStep(
       id: id, position: position, skillId: skillId, citation: citation,
       image: fresh.image ?? image, imagePending: fresh.imagePending,
@@ -139,7 +139,7 @@ extension LessonStep {
   }
 
   /// The same screen no longer waiting for a picture.
-  var withoutPendingPictures: LessonStep {
+  public var withoutPendingPictures: LessonStep {
     LessonStep(
       id: id, position: position, skillId: skillId, citation: citation, image: image,
       imagePending: false, optionPictures: optionPictures,
@@ -148,7 +148,7 @@ extension LessonStep {
 
   /// A missing picture may still arrive: five minutes from when the screen was written, or from
   /// when the lesson opened for a screen that doesn't say.
-  func isWaitingForPicture(openedAt: Date, now: Date = .now) -> Bool {
+  public func isWaitingForPicture(openedAt: Date, now: Date = .now) -> Bool {
     guard imagePending else {
       return false
     }
@@ -159,13 +159,13 @@ extension LessonStep {
   }
 }
 
-enum LessonStepKind: String, Hashable, Sendable {
+public enum LessonStepKind: String, Hashable, Sendable {
   case activity, alphabet, challenge, check, explanation, fillBlank, hook, listening
   case matchColumns, multipleChoice, reading, spokenAnswer, summary, translation, typedAnswer
   case vocabulary, workedExample
 }
 
-enum LessonStepContent: Hashable, Sendable {
+public enum LessonStepContent: Hashable, Sendable {
   case hook(HookContent)
   case explanation(ExplanationContent)
   case workedExample(WorkedExampleContent)
@@ -180,7 +180,7 @@ enum LessonStepContent: Hashable, Sendable {
   /// multiple choice and match columns.
   case language(LanguageExercise, wordHints: WordHints?)
 
-  var kind: LessonStepKind {
+  public var kind: LessonStepKind {
     switch self {
     case .hook: .hook
     case .explanation: .explanation
@@ -199,25 +199,25 @@ enum LessonStepContent: Hashable, Sendable {
 // MARK: - Shared parts
 
 /// The drawn picture of a screen.
-struct LessonStepImage: Codable, Hashable, Sendable {
-  let id: String
-  let url: String
-  let alt: String?
-  let width: Int?
-  let height: Int?
+public struct LessonStepImage: Codable, Hashable, Sendable {
+  public let id: String
+  public let url: String
+  public let alt: String?
+  public let width: Int?
+  public let height: Int?
 }
 
 /// What a screen's picture shows, written with the screen: its description reads while the
 /// picture is drawn or when it can't load.
-struct LessonPictureDescription: Codable, Hashable, Sendable {
-  let alt: String
-  let prompt: String
+public struct LessonPictureDescription: Codable, Hashable, Sendable {
+  public let alt: String
+  public let prompt: String
   /// The numbered parts of a labeled picture.
-  let parts: [String]?
+  public let parts: [String]?
 }
 
 /// Where a screen comes from: the learner's own material, a public document, or neither.
-enum LessonCitation: Codable, Hashable, Sendable {
+public enum LessonCitation: Codable, Hashable, Sendable {
   case material(title: String, unit: String, page: Int?)
   case source(title: String, publisher: String?, url: String?, checkedAt: String)
   case notInMaterial
@@ -226,7 +226,7 @@ enum LessonCitation: Codable, Hashable, Sendable {
     case checkedAt, kind, page, publisher, title, unit, url
   }
 
-  init(from decoder: any Decoder) throws {
+  public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
 
     switch try container.decode(String.self, forKey: .kind) {
@@ -246,7 +246,7 @@ enum LessonCitation: Codable, Hashable, Sendable {
     }
   }
 
-  func encode(to encoder: any Encoder) throws {
+  public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
 
     switch self {
@@ -268,13 +268,13 @@ enum LessonCitation: Codable, Hashable, Sendable {
 }
 
 /// The passage of the learner's material a question is about.
-struct LessonBasis: Codable, Hashable, Sendable {
-  let position: Int
-  let quote: String
+public struct LessonBasis: Codable, Hashable, Sendable {
+  public let position: Int
+  public let quote: String
 }
 
 /// A chart or a timeline drawn from data on a screen.
-enum LessonVisual: Codable, Hashable, Sendable {
+public enum LessonVisual: Codable, Hashable, Sendable {
   case chart(LessonChart)
   case timeline(LessonTimeline)
 
@@ -282,14 +282,14 @@ enum LessonVisual: Codable, Hashable, Sendable {
     case kind
   }
 
-  init(from decoder: any Decoder) throws {
+  public init(from decoder: any Decoder) throws {
     let kind = try decoder.container(keyedBy: CodingKeys.self).decode(String.self, forKey: .kind)
     self =
       kind == "timeline"
       ? .timeline(try LessonTimeline(from: decoder)) : .chart(try LessonChart(from: decoder))
   }
 
-  func encode(to encoder: any Encoder) throws {
+  public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
 
     switch self {
@@ -303,250 +303,250 @@ enum LessonVisual: Codable, Hashable, Sendable {
   }
 }
 
-struct LessonChart: Codable, Hashable, Sendable {
-  struct Series: Codable, Hashable, Sendable {
-    let name: String
-    let values: [Double]
+public struct LessonChart: Codable, Hashable, Sendable {
+  public struct Series: Codable, Hashable, Sendable {
+    public let name: String
+    public let values: [Double]
   }
 
-  enum Style: String, Codable, Hashable, Sendable {
+  public enum Style: String, Codable, Hashable, Sendable {
     case bar, line
   }
 
-  let chart: Style
-  let title: String
-  let categoryLabel: String
-  let valueLabel: String
-  let unit: String?
-  let axisStart: Double?
-  let categories: [String]
-  let series: [Series]
-  let source: String?
+  public let chart: Style
+  public let title: String
+  public let categoryLabel: String
+  public let valueLabel: String
+  public let unit: String?
+  public let axisStart: Double?
+  public let categories: [String]
+  public let series: [Series]
+  public let source: String?
 }
 
-struct LessonTimeline: Codable, Hashable, Sendable {
-  struct Event: Codable, Hashable, Sendable {
-    let date: String
-    let label: String
-    let detail: String?
+public struct LessonTimeline: Codable, Hashable, Sendable {
+  public struct Event: Codable, Hashable, Sendable {
+    public let date: String
+    public let label: String
+    public let detail: String?
   }
 
-  let title: String
-  let events: [Event]
+  public let title: String
+  public let events: [Event]
 }
 
 // MARK: - Teaching screens
 
-struct HookContent: Codable, Hashable, Sendable {
-  struct Option: Codable, Hashable, Sendable, Identifiable {
-    let id: String
-    let isCorrect: Bool
-    let text: String
+public struct HookContent: Codable, Hashable, Sendable {
+  public struct Option: Codable, Hashable, Sendable, Identifiable {
+    public let id: String
+    public let isCorrect: Bool
+    public let text: String
   }
 
-  enum Variant: String, Codable, Hashable, Sendable {
+  public enum Variant: String, Codable, Hashable, Sendable {
     case guess, text
   }
 
-  let variant: Variant
+  public let variant: Variant
   /// A text hook's words.
-  let text: String?
+  public let text: String?
   /// A guess hook's question, options and the why shown after any pick.
-  let question: String?
-  let options: [Option]?
-  let reveal: String?
-  let image: LessonPictureDescription?
-  let visual: LessonVisual?
+  public let question: String?
+  public let options: [Option]?
+  public let reveal: String?
+  public let image: LessonPictureDescription?
+  public let visual: LessonVisual?
 }
 
-struct ExplanationContent: Codable, Hashable, Sendable {
-  struct ExampleLineSlot: Codable, Hashable, Sendable {
-    let idea: String
+public struct ExplanationContent: Codable, Hashable, Sendable {
+  public struct ExampleLineSlot: Codable, Hashable, Sendable {
+    public let idea: String
   }
 
-  let title: String?
-  let text: String
-  let image: LessonPictureDescription?
-  let visual: LessonVisual?
+  public let title: String?
+  public let text: String
+  public let image: LessonPictureDescription?
+  public let visual: LessonVisual?
   /// An activity template to play with: nothing is asked or graded.
-  let explore: ActivityExploreContent?
+  public let explore: ActivityExploreContent?
   /// Where a personal example line fits, when the screen has room for one.
-  let exampleLineSlot: ExampleLineSlot?
+  public let exampleLineSlot: ExampleLineSlot?
 }
 
-struct WorkedExampleContent: Codable, Hashable, Sendable {
-  struct Step: Codable, Hashable, Sendable {
-    let text: String
-    let math: String?
+public struct WorkedExampleContent: Codable, Hashable, Sendable {
+  public struct Step: Codable, Hashable, Sendable {
+    public let text: String
+    public let math: String?
   }
 
-  let title: String?
-  let problem: String
-  let steps: [Step]
-  let result: String
-  let image: LessonPictureDescription?
-  let visual: LessonVisual?
+  public let title: String?
+  public let problem: String
+  public let steps: [Step]
+  public let result: String
+  public let image: LessonPictureDescription?
+  public let visual: LessonVisual?
 }
 
-struct CheckContent: Codable, Hashable, Sendable {
-  struct Option: Codable, Hashable, Sendable, Identifiable {
-    struct Picture: Codable, Hashable, Sendable {
-      let alt: String
-      let prompt: String
+public struct CheckContent: Codable, Hashable, Sendable {
+  public struct Option: Codable, Hashable, Sendable, Identifiable {
+    public struct Picture: Codable, Hashable, Sendable {
+      public let alt: String
+      public let prompt: String
     }
 
-    let id: String
-    let isCorrect: Bool
-    let reason: String
-    let text: String
+    public let id: String
+    public let isCorrect: Bool
+    public let reason: String
+    public let text: String
     /// Picture options: the drawn picture comes with the step's pictures.
-    let picture: Picture?
+    public let picture: Picture?
   }
 
-  let question: String
-  let context: String?
-  let options: [Option]
-  let basis: LessonBasis?
-  let image: LessonPictureDescription?
-  let visual: LessonVisual?
+  public let question: String
+  public let context: String?
+  public let options: [Option]
+  public let basis: LessonBasis?
+  public let image: LessonPictureDescription?
+  public let visual: LessonVisual?
 }
 
-struct TypedAnswerContent: Codable, Hashable, Sendable {
-  let question: String
-  let context: String?
-  let acceptedAnswers: [String]?
-  let keyPoints: [String]
-  let sampleAnswer: String
-  let basis: LessonBasis?
-  let visual: LessonVisual?
+public struct TypedAnswerContent: Codable, Hashable, Sendable {
+  public let question: String
+  public let context: String?
+  public let acceptedAnswers: [String]?
+  public let keyPoints: [String]
+  public let sampleAnswer: String
+  public let basis: LessonBasis?
+  public let visual: LessonVisual?
 }
 
-struct SpokenAnswerContent: Codable, Hashable, Sendable {
-  let language: String
-  let prompt: String
-  let targetText: String
-  let romanization: String?
-  let translation: String?
+public struct SpokenAnswerContent: Codable, Hashable, Sendable {
+  public let language: String
+  public let prompt: String
+  public let targetText: String
+  public let romanization: String?
+  public let translation: String?
 }
 
-struct SummaryContent: Codable, Hashable, Sendable {
-  struct Idea: Codable, Hashable, Sendable {
-    let text: String
+public struct SummaryContent: Codable, Hashable, Sendable {
+  public struct Idea: Codable, Hashable, Sendable {
+    public let text: String
   }
 
-  let ideas: [Idea]
+  public let ideas: [Idea]
 }
 
 // MARK: - Language exercises
 
-struct WordHints: Codable, Hashable, Sendable {
-  let note: String?
-  let pronunciationTip: String?
+public struct WordHints: Codable, Hashable, Sendable {
+  public let note: String?
+  public let pronunciationTip: String?
 }
 
 /// A language exercise. `content` holds the fields of its kind (`alphabet`, `fillBlank`,
 /// `matchColumns` and `multipleChoice`); the other kinds read the sentence, the word and the
 /// option lists around it.
-struct LanguageExercise: Codable, Hashable, Sendable {
-  struct Content: Codable, Hashable, Sendable {
-    struct Form: Codable, Hashable, Sendable {
-      let label: String
-      let symbol: String
+public struct LanguageExercise: Codable, Hashable, Sendable {
+  public struct Content: Codable, Hashable, Sendable {
+    public struct Form: Codable, Hashable, Sendable {
+      public let label: String
+      public let symbol: String
     }
 
-    struct Pair: Codable, Hashable, Sendable {
-      let left: String
-      let right: String
+    public struct Pair: Codable, Hashable, Sendable {
+      public let left: String
+      public let right: String
     }
 
-    struct Option: Codable, Hashable, Sendable, Identifiable {
-      let id: String
-      let isCorrect: Bool
-      let text: String
-      let feedback: String
+    public struct Option: Codable, Hashable, Sendable, Identifiable {
+      public let id: String
+      public let isCorrect: Bool
+      public let text: String
+      public let feedback: String
     }
 
-    struct Picture: Codable, Hashable, Sendable {
-      let prompt: String
-      let url: String?
+    public struct Picture: Codable, Hashable, Sendable {
+      public let prompt: String
+      public let url: String?
     }
 
     // alphabet
-    let symbol: String?
-    let readingAid: String?
-    let pronunciation: String?
-    let audioText: String?
-    let audioUrl: String?
-    let forms: [Form]?
+    public let symbol: String?
+    public let readingAid: String?
+    public let pronunciation: String?
+    public let audioText: String?
+    public let audioUrl: String?
+    public let forms: [Form]?
     // fillBlank
-    let template: String?
-    let answers: [String]?
-    let distractors: [String]?
-    let feedback: String?
-    let romanizations: [String: String]?
+    public let template: String?
+    public let answers: [String]?
+    public let distractors: [String]?
+    public let feedback: String?
+    public let romanizations: [String: String]?
     // matchColumns
-    let pairs: [Pair]?
+    public let pairs: [Pair]?
     // multipleChoice
-    let context: String?
-    let image: Picture?
-    let options: [Option]?
+    public let context: String?
+    public let image: Picture?
+    public let options: [Option]?
     // fillBlank, matchColumns and multipleChoice
-    let question: String?
+    public let question: String?
   }
 
-  struct WordOption: Codable, Hashable, Sendable {
-    let word: String
-    let audioUrl: String?
-    let romanization: String?
-    let translation: String?
+  public struct WordOption: Codable, Hashable, Sendable {
+    public let word: String
+    public let audioUrl: String?
+    public let romanization: String?
+    public let translation: String?
   }
 
-  struct TranslationOption: Codable, Hashable, Sendable, Identifiable {
-    let id: String
-    let word: String
-    let audioUrl: String?
-    let romanization: String?
+  public struct TranslationOption: Codable, Hashable, Sendable, Identifiable {
+    public let id: String
+    public let word: String
+    public let audioUrl: String?
+    public let romanization: String?
   }
 
-  struct Sentence: Codable, Hashable, Sendable {
-    let id: String
-    let sentence: String
-    let translation: String
-    let explanation: String?
-    let audioUrl: String?
-    let romanization: String?
-    let distractors: [String]
-    let translationDistractors: [String]
+  public struct Sentence: Codable, Hashable, Sendable {
+    public let id: String
+    public let sentence: String
+    public let translation: String
+    public let explanation: String?
+    public let audioUrl: String?
+    public let romanization: String?
+    public let distractors: [String]
+    public let translationDistractors: [String]
   }
 
-  struct Word: Codable, Hashable, Sendable, Identifiable {
-    let id: String
-    let word: String
-    let translation: String
-    let audioUrl: String?
-    let pronunciation: String?
-    let romanization: String?
-    let distractors: [String]
+  public struct Word: Codable, Hashable, Sendable, Identifiable {
+    public let id: String
+    public let word: String
+    public let translation: String
+    public let audioUrl: String?
+    public let pronunciation: String?
+    public let romanization: String?
+    public let distractors: [String]
   }
 
-  let id: String
-  let kind: LessonStepKind
-  let content: Content
-  let sentence: Sentence?
-  let word: Word?
-  let wordBankOptions: [WordOption]
-  let sentenceWordOptions: [WordOption]
-  let fillBlankOptions: [WordOption]
-  let translationOptions: [TranslationOption]
-  let vocabularyOptions: [Word]
-  let matchColumnsRightItems: [String]
+  public let id: String
+  public let kind: LessonStepKind
+  public let content: Content
+  public let sentence: Sentence?
+  public let word: Word?
+  public let wordBankOptions: [WordOption]
+  public let sentenceWordOptions: [WordOption]
+  public let fillBlankOptions: [WordOption]
+  public let translationOptions: [TranslationOption]
+  public let vocabularyOptions: [Word]
+  public let matchColumnsRightItems: [String]
 
   private enum CodingKeys: String, CodingKey {
     case content, fillBlankOptions, id, kind, matchColumnsRightItems, sentence, sentenceWordOptions
     case translationOptions, vocabularyOptions, word, wordBankOptions
   }
 
-  init(from decoder: any Decoder) throws {
+  public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     id = try container.decode(String.self, forKey: .id)
     let kindName = try container.decode(String.self, forKey: .kind)
@@ -568,7 +568,7 @@ struct LanguageExercise: Codable, Hashable, Sendable {
     matchColumnsRightItems = try container.decode([String].self, forKey: .matchColumnsRightItems)
   }
 
-  func encode(to encoder: any Encoder) throws {
+  public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(id, forKey: .id)
     try container.encode(kind.rawValue, forKey: .kind)

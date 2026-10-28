@@ -14,6 +14,10 @@ These instructions apply to the native iPhone and iPad app in this directory and
 - For dense visualizations, separate visible mark size from the interaction surface. Make data explorable with simple touch, pointer, keyboard, and VoiceOver interactions instead of turning tiny marks into tiny controls.
 - When using an SF Symbol, first check what symbol is used for this feature in the `main` app. Then, choose the closest SF Symbol. Symbols/icons should be consistent across platforms.
 
+## Generated API client
+
+- The local `ZoonkAPI` package owns the generated client and its hand-written lesson wire models. Edit the operation filter and type overrides in `ZoonkAPI/Sources/ZoonkAPI/openapi-generator-config.yaml`; `pnpm openapi:generate` writes the single contract to `ZoonkAPI/Sources/ZoonkAPI/openapi.json`. Keep generation in the package so app edits do not recompile the client. App runtime glue stays in `Zoonk`; `App/APIExports.swift` re-exports the package.
+
 ## Platform Architecture
 
 - The deployment target is iOS 26: use iOS 26 APIs (Liquid Glass, the current `TabView` and toolbar APIs) directly, and guard only newer APIs with `if #available(iOS 27, *)` or `27.1`. The app is unreleased, so don't add fallbacks for older systems.

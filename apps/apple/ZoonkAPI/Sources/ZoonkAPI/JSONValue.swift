@@ -2,7 +2,7 @@ import Foundation
 
 /// Any JSON value, kept as the API sent it. Activity templates each have their own fields, which
 /// only their renderer reads, so the lesson keeps them raw and a renderer decodes its own shape.
-enum JSONValue: Codable, Hashable, Sendable {
+public enum JSONValue: Codable, Hashable, Sendable {
   case null
   case bool(Bool)
   case number(Double)
@@ -10,7 +10,7 @@ enum JSONValue: Codable, Hashable, Sendable {
   case array([JSONValue])
   case object([String: JSONValue])
 
-  init(from decoder: any Decoder) throws {
+  public init(from decoder: any Decoder) throws {
     let container = try decoder.singleValueContainer()
 
     if container.decodeNil() {
@@ -28,7 +28,7 @@ enum JSONValue: Codable, Hashable, Sendable {
     }
   }
 
-  func encode(to encoder: any Encoder) throws {
+  public func encode(to encoder: any Encoder) throws {
     var container = encoder.singleValueContainer()
 
     switch self {
@@ -42,16 +42,16 @@ enum JSONValue: Codable, Hashable, Sendable {
   }
 
   /// Wraps any encodable value, such as an activity's own answer type.
-  init(encoding value: some Encodable) throws {
+  public init(encoding value: some Encodable) throws {
     self = try JSONDecoder().decode(JSONValue.self, from: JSONEncoder().encode(value))
   }
 
   /// Reads the value as a typed shape, such as a template's `fields`.
-  func decode<Value: Decodable>(as type: Value.Type = Value.self) throws -> Value {
+  public func decode<Value: Decodable>(as type: Value.Type = Value.self) throws -> Value {
     try JSONDecoder().decode(type, from: JSONEncoder().encode(self))
   }
 
-  subscript(key: String) -> JSONValue? {
+  public subscript(key: String) -> JSONValue? {
     guard case .object(let object) = self else {
       return nil
     }

@@ -1,7 +1,7 @@
 generate:
   - types
   - client
-accessModifier: internal
+accessModifier: public
 namingStrategy: idiomatic
 # The lesson player decodes screens and answers into its own types: the generated unions of every
 # screen kind and activity template are index-named and far larger than what it reads.

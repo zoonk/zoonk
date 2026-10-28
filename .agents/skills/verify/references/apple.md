@@ -66,3 +66,7 @@ Repeat the same navigation loop ten times and compare footprint, leak count and 
 ## Report
 
 For each screen or flow the change touches: requests on first open, on return and on each tab switch (before and after), footprint and leak count after one and ten loops, idle CPU, and any hang. Save the commands' output next to the screenshots.
+
+## Generated API client
+
+The app imports the local `apps/apple/ZoonkAPI` package. Its generator inputs live in `apps/apple/ZoonkAPI/Sources/ZoonkAPI/openapi.json` and `openapi-generator-config.yaml`; regenerate the contract with `pnpm openapi:generate`. Include the package sources in Apple formatting checks.

@@ -53,7 +53,7 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/Library/Developer/Xcode/DerivedData/CompilationCache.noindex
-          key: ${{ runner.os }}-${{ runner.arch }}-apple-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/**/Package.resolved', 'apps/apple/**/*.xcproj', 'apps/apple/Makefile') }}
+          key: ${{ runner.os }}-${{ runner.arch }}-apple-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/**/Package.resolved', 'apps/apple/**/*.xcproj', 'apps/apple/**/Package.swift', 'apps/apple/Makefile') }}
           restore-keys: |
             ${{ runner.os }}-${{ runner.arch }}-apple-compilation-xcode-${{ steps.xcode.outputs.version }}-
 

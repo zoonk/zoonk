@@ -27,11 +27,8 @@
         "up-to-next-major-version": "156.0.0",
       },
     }, {
-      "kind": "remote",
-      "repository": "https://github.com/apple/swift-openapi-generator",
-      "version": {
-        "up-to-next-major-version": "1.14.0",
-      },
+      "kind": "local",
+      "path": "ZoonkAPI",
     }, {
       "kind": "remote",
       "repository": "https://github.com/apple/swift-openapi-runtime",
@@ -100,15 +97,17 @@
         { "name": "Debug", "file": "Debug.xcconfig" },
         { "name": "Release", "file": "Release.xcconfig" },
       ],
-      "dependencies": [
-        { "kind": "package", "package": "swift-openapi-generator", "product-name": "OpenAPIGenerator", "product-type": "build-tool-plugin" },
-      ],
       "build-phases": [
         "compile-sources",
         "frameworks",
         "resources",
       ],
       "package-product-members": [
+        {
+          "package": "ZoonkAPI",
+          "product-name": "ZoonkAPI",
+          "build-phase": { "build-phase": "frameworks" },
+        },
         {
           "package": "GoogleSignIn-iOS",
           "product-name": "GoogleSignIn",

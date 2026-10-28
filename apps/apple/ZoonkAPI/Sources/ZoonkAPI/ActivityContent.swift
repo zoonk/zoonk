@@ -4,20 +4,20 @@ import Foundation
 /// `chartReader`, `numberLine`, ...). The player owns the prompt, the check and the feedback;
 /// the template's canvas belongs to its renderer (`ActivityRenderer`), which reads its own
 /// `fields` from `payload`.
-struct ActivityStepContent: Codable, Hashable, Sendable {
-  let template: String
-  let prompt: String
-  let check: ActivityCheck
-  let image: LessonPictureDescription?
-  let data: ActivityData?
+public struct ActivityStepContent: Codable, Hashable, Sendable {
+  public let template: String
+  public let prompt: String
+  public let check: ActivityCheck
+  public let image: LessonPictureDescription?
+  public let data: ActivityData?
   /// The whole content as sent, for the renderer to decode its template's `fields`.
-  let payload: JSONValue
+  public let payload: JSONValue
 
   private enum CodingKeys: String, CodingKey {
     case check, data, image, prompt, template
   }
 
-  init(from decoder: any Decoder) throws {
+  public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     template = try container.decode(String.self, forKey: .template)
     prompt = try container.decode(String.self, forKey: .prompt)
@@ -27,78 +27,83 @@ struct ActivityStepContent: Codable, Hashable, Sendable {
     payload = try JSONValue(from: decoder)
   }
 
-  func encode(to encoder: any Encoder) throws {
+  public func encode(to encoder: any Encoder) throws {
     try payload.encode(to: encoder)
   }
 
   /// The template's own fields, typed by its renderer.
-  func fields<Fields: Decodable>(as type: Fields.Type = Fields.self) throws -> Fields {
+  public func fields<Fields: Decodable>(as type: Fields.Type = Fields.self) throws -> Fields {
     try (payload["fields"] ?? .null).decode(as: type)
   }
 }
 
 /// An activity template on an explanation screen: a canvas to play with, nothing asked.
-struct ActivityExploreContent: Codable, Hashable, Sendable {
-  let template: String
-  let data: ActivityData?
-  let payload: JSONValue
+public struct ActivityExploreContent: Codable, Hashable, Sendable {
+  public let template: String
+  public let data: ActivityData?
+  public let payload: JSONValue
 
   private enum CodingKeys: String, CodingKey {
     case data, template
   }
 
-  init(from decoder: any Decoder) throws {
+  public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     template = try container.decode(String.self, forKey: .template)
     data = try container.decodeIfPresent(ActivityData.self, forKey: .data)
     payload = try JSONValue(from: decoder)
   }
 
-  func encode(to encoder: any Encoder) throws {
+  public func encode(to encoder: any Encoder) throws {
     try payload.encode(to: encoder)
   }
 
-  func fields<Fields: Decodable>(as type: Fields.Type = Fields.self) throws -> Fields {
+  public func fields<Fields: Decodable>(as type: Fields.Type = Fields.self) throws -> Fields {
     try (payload["fields"] ?? .null).decode(as: type)
   }
 }
 
 /// Where an activity's numbers come from: made up to show the idea, or a real source.
-struct ActivityData: Codable, Hashable, Sendable {
-  struct Source: Codable, Hashable, Sendable {
-    let title: String
-    let publisher: String?
-    let url: String?
-    let year: Int?
+public struct ActivityData: Codable, Hashable, Sendable {
+  public struct Source: Codable, Hashable, Sendable {
+    public let title: String
+    public let publisher: String?
+    public let url: String?
+    public let year: Int?
   }
 
-  let isExample: Bool?
-  let source: Source?
+  public let isExample: Bool?
+  public let source: Source?
 }
 
 /// How an activity is answered. `choice`: options under a canvas to explore. `numeric`: a number
 /// the canvas helps find. `interaction`: the canvas's end state is the answer.
-enum ActivityCheck: Codable, Hashable, Sendable {
-  struct Option: Codable, Hashable, Sendable, Identifiable {
-    let id: String
-    let isCorrect: Bool
-    let reason: String
-    let text: String
-    let value: Double?
+public enum ActivityCheck: Codable, Hashable, Sendable {
+  public struct Option: Codable, Hashable, Sendable, Identifiable {
+    public let id: String
+    public let isCorrect: Bool
+    public let reason: String
+    public let text: String
+    public let value: Double?
   }
 
-  struct Input: Codable, Hashable, Sendable {
-    let name: String
-    let value: Double
+  public struct Input: Codable, Hashable, Sendable {
+    public let name: String
+    public let value: Double
   }
 
-  struct Tolerance: Codable, Hashable, Sendable {
-    enum Kind: String, Codable, Hashable, Sendable {
+  public struct Tolerance: Codable, Hashable, Sendable {
+    public enum Kind: String, Codable, Hashable, Sendable {
       case absolute, relative
     }
 
-    let kind: Kind
-    let value: Double
+    public let kind: Kind
+    public let value: Double
+
+    public init(kind: Kind, value: Double) {
+      self.kind = kind
+      self.value = value
+    }
   }
 
   case choice(question: String, options: [Option], inputs: [Input]?, output: String?)
@@ -111,7 +116,7 @@ enum ActivityCheck: Codable, Hashable, Sendable {
     case answer, explanation, inputs, kind, options, output, question, tolerance, unit
   }
 
-  init(from decoder: any Decoder) throws {
+  public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
 
     switch try container.decode(String.self, forKey: .kind) {
@@ -135,7 +140,7 @@ enum ActivityCheck: Codable, Hashable, Sendable {
     }
   }
 
-  func encode(to encoder: any Encoder) throws {
+  public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
 
     switch self {
@@ -161,7 +166,7 @@ enum ActivityCheck: Codable, Hashable, Sendable {
     }
   }
 
-  var explanation: String? {
+  public var explanation: String? {
     switch self {
     case .choice: nil
     case .numeric(_, _, _, _, let explanation, _, _), .interaction(let explanation): explanation
@@ -172,35 +177,35 @@ enum ActivityCheck: Codable, Hashable, Sendable {
 /// The learner's answer to an activity, as `POST /v1/steps/{stepId}/checks` takes it: an object
 /// with its `kind` (`choice`, `numeric`, `order`, `assignment`, `selection`, ...). A renderer
 /// builds its kind with `init(encoding:)` from its own `Encodable` type.
-struct ActivityAnswer: Codable, Hashable, Sendable {
-  let value: JSONValue
+public struct ActivityAnswer: Codable, Hashable, Sendable {
+  public let value: JSONValue
 
-  init(value: JSONValue) {
+  public init(value: JSONValue) {
     self.value = value
   }
 
   /// An answer of the renderer's own type, which must encode the API's `kind` field.
-  init(encoding answer: some Encodable) throws {
+  public init(encoding answer: some Encodable) throws {
     value = try JSONValue(encoding: answer)
   }
 
-  init(from decoder: any Decoder) throws {
+  public init(from decoder: any Decoder) throws {
     value = try JSONValue(from: decoder)
   }
 
-  func encode(to encoder: any Encoder) throws {
+  public func encode(to encoder: any Encoder) throws {
     try value.encode(to: encoder)
   }
 
-  static func choice(optionId: String) -> ActivityAnswer {
+  public static func choice(optionId: String) -> ActivityAnswer {
     ActivityAnswer(value: .object(["kind": .string("choice"), "optionId": .string(optionId)]))
   }
 
-  static func numeric(_ number: Double) -> ActivityAnswer {
+  public static func numeric(_ number: Double) -> ActivityAnswer {
     ActivityAnswer(value: .object(["kind": .string("numeric"), "value": .number(number)]))
   }
 
-  var kind: String? {
+  public var kind: String? {
     guard case .string(let kind) = value["kind"] else {
       return nil
     }
@@ -208,7 +213,7 @@ struct ActivityAnswer: Codable, Hashable, Sendable {
     return kind
   }
 
-  var optionId: String? {
+  public var optionId: String? {
     guard case .string(let id) = value["optionId"] else {
       return nil
     }
@@ -216,7 +221,7 @@ struct ActivityAnswer: Codable, Hashable, Sendable {
     return id
   }
 
-  var number: Double? {
+  public var number: Double? {
     guard case .number(let number) = value["value"] else {
       return nil
     }
@@ -225,7 +230,7 @@ struct ActivityAnswer: Codable, Hashable, Sendable {
   }
 
   /// The renderer's own answer type.
-  func decode<Answer: Decodable>(as type: Answer.Type = Answer.self) throws -> Answer {
+  public func decode<Answer: Decodable>(as type: Answer.Type = Answer.self) throws -> Answer {
     try value.decode(as: type)
   }
 }

@@ -3,7 +3,10 @@ import { resolve } from "node:path";
 import { getSessionCookieName } from "@zoonk/auth/cookies";
 import { createOpenAPIDocument } from "../src/lib/openapi/create-document";
 
-const SWIFT_OPENAPI_ARTIFACT_PATH = resolve(import.meta.dirname, "../../apple/Zoonk/openapi.json");
+const SWIFT_OPENAPI_ARTIFACT_PATH = resolve(
+  import.meta.dirname,
+  "../../apple/ZoonkAPI/Sources/ZoonkAPI/openapi.json",
+);
 
 function serializeOpenAPIDocument() {
   const document = createOpenAPIDocument({
