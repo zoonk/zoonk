@@ -246,7 +246,8 @@ struct LessonActionBar: View {
         ? LocalizedStringResource(
           "See the answer", table: "Player", comment: "Reveals a hook's answer after a guess")
         : LocalizedStringResource("Check", table: "Player", comment: "Checks the learner's answer"),
-      isDisabled: !isReady)
+      // A question waits for the picture it asks about while it's still being drawn.
+      isDisabled: !isReady || state.isWaitingForPicture(step, openedAt: store.openedAt))
   }
 
   private func isAnswerReady(_ answer: LessonAnswer) -> Bool {

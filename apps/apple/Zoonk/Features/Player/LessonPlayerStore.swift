@@ -64,17 +64,11 @@ final class LessonPlayerStore {
   private let session: SessionStore
   private let choices: LessonTodayChoices
   private var identity: AuthenticatedSession?
-  private var openedAt = Date.now
+  private(set) var openedAt = Date.now
   /// The lesson's example lines are written once, after the learner's first action.
   private var exampleLinesWriting: Task<Void, Never>?
-  /// Answers graded on the device that the server hasn't recorded yet, sent again before finishing.
-  private var unsentChecks: [String: UnsentCheck] = [:]
-
-  private struct UnsentCheck {
-    let answer: LessonAnswer
-    let attemptId: String
-    let durationMs: Int
-  }
+  /// The device-graded answers being sent now, by screen, so finishing waits for them.
+  private var saving: [String: Task<Void, Never>] = [:]
 
   init(
     lessonId: String, studySessionId: String?, api: LessonPlayerAPI, session: SessionStore,
@@ -171,17 +165,28 @@ final class LessonPlayerStore {
   /// While a screen still waits for its picture (the lesson was written moments ago), the lesson
   /// is read again every few seconds, as the API asks, until the pictures come or the wait ends.
   func followLatePictures() async {
-    while !Task.isCancelled {
-      guard let state, let identity,
-        state.steps.values.contains(where: { $0.isWaitingForPicture(openedAt: openedAt) })
-      else {
-        return
+    while !Task.isCancelled, let state, let identity,
+      state.steps.values.contains(where: \.imagePending)
+    {
+      let isLastRead = !state.steps.values.contains { $0.isWaitingForPicture(openedAt: openedAt) }
+
+      if !isLastRead {
+        try? await Task.sleep(for: .seconds(4))
       }
 
-      try? await Task.sleep(for: .seconds(4))
       let fresh = try? await api.getLesson(id: lessonId, token: identity.bearerToken)
-      guard isCurrent(identity), case .ready(let lesson) = fresh else { continue }
-      self.state?.applyPictures(from: lesson.steps)
+      guard isCurrent(identity) else { return }
+
+      if case .ready(let lesson) = fresh {
+        self.state?.applyPictures(from: lesson.steps)
+      }
+
+      // A numbered picture that never came leaves its question out once the wait is over.
+      self.state?.leaveOutLostPictures(openedAt: openedAt)
+
+      if isLastRead {
+        return
+      }
     }
   }
 
@@ -342,14 +347,23 @@ final class LessonPlayerStore {
     let durationMs = Int(Date.now.timeIntervalSince(state.stepStartedAt) * 1000)
 
     if let grade = LessonGrading.grade(answer, step: step, gradeActivity: gradeActivity) {
-      self.state?.resolve(
-        step.id, result: LessonStepResult(grade, attemptId: attemptId), counts: answer.isRecorded)
-      finishIfCompleted()
+      let unsaved =
+        answer.isRecorded
+        ? LessonPlayerState.UnsavedAnswer(
+          answer: answer, attemptId: attemptId, durationMs: durationMs,
+          usedHelp: state.helped.contains(step.id))
+        : nil
 
-      if answer.isRecorded {
-        await record(step.id, answer: answer, attemptId: attemptId, durationMs: durationMs)
+      // The answer counts as unsaved before anything moves on, so finishing waits for it.
+      self.state?.resolve(
+        step.id, result: LessonStepResult(grade, attemptId: attemptId), counts: answer.isRecorded,
+        saving: unsaved)
+
+      if let unsaved {
+        send(step.id, unsaved)
       }
 
+      finishIfCompleted()
       return
     }
 
@@ -372,6 +386,9 @@ final class LessonPlayerStore {
       self.state?.resolve(step.id, result: result)
     case .failed, .refused:
       self.state?.failChecking()
+    case .unauthorized:
+      self.state?.failChecking()
+      self.state?.refuseRun(.unauthorized)
     }
   }
 
@@ -391,33 +408,43 @@ final class LessonPlayerStore {
     state?.resolve(stepId, result: result)
   }
 
-  private func record(_ stepId: String, answer: LessonAnswer, attemptId: String, durationMs: Int)
-    async
-  {
+  /// Sends a device-graded answer once, keeping the task so finishing can wait for it.
+  private func send(_ stepId: String, _ unsaved: LessonPlayerState.UnsavedAnswer) {
+    guard saving[stepId] == nil else {
+      return
+    }
+
+    saving[stepId] = Task {
+      await record(stepId, unsaved)
+      saving[stepId] = nil
+    }
+  }
+
+  /// One answer to the server. Accepted (or refused for good, such as a finished run), it stops
+  /// holding the lesson back; a failed send stays unsaved and goes again with the same attempt id.
+  private func record(_ stepId: String, _ unsaved: LessonPlayerState.UnsavedAnswer) async {
     let identity = identity
 
     guard let runId = state?.runId, let token = identity?.bearerToken else {
-      unsentChecks[stepId] = UnsentCheck(
-        answer: answer, attemptId: attemptId, durationMs: durationMs)
       return
     }
 
     let outcome = await api.checkStep(
-      stepId: stepId, answer: answer, attemptId: attemptId, durationMs: durationMs, runId: runId,
-      usedHelp: state?.helped.contains(stepId) == true, token: token)
+      stepId: stepId, answer: unsaved.answer, attemptId: unsaved.attemptId,
+      durationMs: unsaved.durationMs, runId: runId, usedHelp: unsaved.usedHelp, token: token)
     guard isCurrent(identity) else { return }
 
     switch outcome {
     case .checked(let result):
-      unsentChecks[stepId] = nil
       state?.confirm(
-        stepId, attemptId: attemptId, nextReviewAt: result.nextReviewAt,
+        stepId, attemptId: unsaved.attemptId, nextReviewAt: result.nextReviewAt,
         savedMistake: result.savedMistake)
-    case .failed:
-      unsentChecks[stepId] = UnsentCheck(
-        answer: answer, attemptId: attemptId, durationMs: durationMs)
     case .refused:
-      unsentChecks[stepId] = nil
+      state?.answerSaved(stepId, attemptId: unsaved.attemptId)
+    case .unauthorized:
+      state?.refuseRun(.unauthorized)
+    case .failed:
+      break
     }
   }
 
@@ -466,9 +493,21 @@ final class LessonPlayerStore {
       return
     }
 
-    for (stepId, unsent) in unsentChecks {
-      await record(
-        stepId, answer: unsent.answer, attemptId: unsent.attemptId, durationMs: unsent.durationMs)
+    // Every answer reaches the server before the run is finished: the ones on their way, then any
+    // that failed, sent again under their attempt ids.
+    for task in saving.values {
+      await task.value
+    }
+
+    for (stepId, unsaved) in state?.unsavedAnswers ?? [:] {
+      await record(stepId, unsaved)
+    }
+
+    guard isCurrent(identity) else { return }
+
+    guard state?.unsavedAnswers.isEmpty == true else {
+      state?.completionFailed()
+      return
     }
 
     let outcome = await api.completeLesson(
@@ -487,6 +526,8 @@ final class LessonPlayerStore {
       if isGuest, studySessionId == nil {
         fit = await api.getLessonFit(id: lessonId, token: token)
       }
+    case .unauthorized:
+      state?.refuseRun(.unauthorized)
     case .incomplete:
       // The run is missing an answer: the server's answers say which screen to go back to.
       let restarted = await api.startLesson(

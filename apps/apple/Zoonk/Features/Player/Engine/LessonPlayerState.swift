@@ -68,6 +68,15 @@ struct LessonPlayerState: Hashable, Sendable {
     case explanationFirst, questionFirst
   }
 
+  /// A device-graded answer the server hasn't accepted yet: the lesson can't finish without it,
+  /// and a resend keeps its attempt id so the server records it once.
+  struct UnsavedAnswer: Hashable, Sendable {
+    let answer: LessonAnswer
+    let attemptId: String
+    let durationMs: Int
+    let usedHelp: Bool
+  }
+
   let lessonId: String
   private(set) var steps: [String: LessonStep]
   private let lessonOrder: [String]
@@ -109,6 +118,8 @@ struct LessonPlayerState: Hashable, Sendable {
   private(set) var reviewing = false
   private(set) var completion: Completion?
   private(set) var stepStartedAt: Date
+  /// Answers graded on the device that the server hasn't accepted yet, by screen.
+  private(set) var unsavedAnswers: [String: UnsavedAnswer] = [:]
 
   init(
     lessonId: String, steps lessonSteps: [LessonStep], support: LessonSupport? = nil,
@@ -410,10 +421,16 @@ struct LessonPlayerState: Hashable, Sendable {
   /// to self-correct first; during "I know this" a miss ends the quick check instead. A hook's
   /// guess (`counts: false`) only shows its reveal.
   mutating func resolve(
-    _ stepId: String, result: LessonStepResult, counts: Bool = true, now: Date = .now
+    _ stepId: String, result: LessonStepResult, counts: Bool = true, saving: UnsavedAnswer? = nil,
+    now: Date = .now
   ) {
     guard phase != .completed, let step = steps[stepId] else {
       return
+    }
+
+    // Kept before anything moves on: match columns finishes a lesson on its own check.
+    if let saving {
+      unsavedAnswers[stepId] = saving
     }
 
     let isFirst = counts && firstVerdicts[stepId] == nil
@@ -468,6 +485,8 @@ struct LessonPlayerState: Hashable, Sendable {
   mutating func confirm(
     _ stepId: String, attemptId: String, nextReviewAt: Date?, savedMistake: Bool
   ) {
+    answerSaved(stepId, attemptId: attemptId)
+
     guard var result = results[stepId], result.attemptId == attemptId else {
       return
     }
@@ -475,6 +494,32 @@ struct LessonPlayerState: Hashable, Sendable {
     result.nextReviewAt = nextReviewAt
     result.savedMistake = savedMistake
     results[stepId] = result
+  }
+
+  /// The server accepted (or refused for good) an answer: it no longer holds the lesson back. A
+  /// reply about an earlier attempt leaves a newer one waiting.
+  mutating func answerSaved(_ stepId: String, attemptId: String) {
+    if unsavedAnswers[stepId]?.attemptId == attemptId {
+      unsavedAnswers[stepId] = nil
+    }
+  }
+
+  // MARK: - Pictures
+
+  /// A question that can't be answered yet: its picture, or its options', is still being drawn.
+  func isWaitingForPicture(_ step: LessonStep, openedAt: Date, now: Date = .now) -> Bool {
+    step.isAnswerable && step.isWaitingForPicture(openedAt: openedAt, now: now)
+  }
+
+  /// Once a numbered picture's wait ends without it, its question is left out: without the
+  /// picture nobody can tell which number is which (main's `getLostNumberedScreens`).
+  mutating func leaveOutLostPictures(openedAt: Date, now: Date = .now) {
+    let lost = steps.values.filter { step in
+      step.asksNumberedPicture && step.image == nil
+        && !step.isWaitingForPicture(openedAt: openedAt, now: now)
+    }
+
+    skipSteps(lost.map(\.id), now: now)
   }
 
   // MARK: - The run
@@ -866,6 +911,20 @@ struct LessonPlayerState: Hashable, Sendable {
 }
 
 extension LessonStep {
+  /// A question keyed to the numbers of its picture ("which number is the ovary?").
+  var asksNumberedPicture: Bool {
+    let description: LessonPictureDescription? =
+      switch content {
+      case .check(let content): content.image
+      case .activity(let content): content.image
+      case .hook(let content): content.image
+      case .workedExample(let content): content.image
+      default: nil
+      }
+
+    return !(description?.parts ?? []).isEmpty
+  }
+
   /// Screens the learner reads and moves past with Continue. A hook with a guess waits for a pick.
   var isRead: Bool {
     switch content {

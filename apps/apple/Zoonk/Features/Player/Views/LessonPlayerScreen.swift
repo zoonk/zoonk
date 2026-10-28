@@ -84,6 +84,7 @@ private struct LessonPlayerContent: View {
         panel(
           LessonTutorScope(
             lessonId: lesson.id, stepId: store.state?.currentStep?.id,
+            stepNumber: store.state.flatMap { $0.currentStep == nil ? nil : $0.position + 1 },
             suggestions: lesson.tutorSuggestions, startingSuggestionId: store.askingSuggestionId))
       }
     }

@@ -74,6 +74,8 @@ struct LessonTutorScope: Hashable, Sendable {
   let lessonId: String
   /// The screen in view when the panel opened.
   let stepId: String?
+  /// That screen's place in the lesson, from 1, so Ask is about it and not the whole lesson.
+  var stepNumber: Int?
   /// Questions worded in the lesson's language ("Explain it more simply", …).
   let suggestions: [Components.Schemas.LessonTutorSuggestion]
   /// The suggestion to have ready to send (`simpler` when the learner seems stuck), if any.

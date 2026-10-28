@@ -61,6 +61,8 @@ enum LessonCheckOutcome: Hashable, Sendable {
   case checked(LessonStepResult)
   /// Worth sending again (the connection, the server).
   case failed
+  /// The session ended: sending again with it never works.
+  case unauthorized
   /// Never worth sending again: the run finished, or the answer doesn't fit the screen.
   case refused
 }
@@ -69,6 +71,8 @@ enum LessonCompletionOutcome: Hashable, Sendable {
   case completed(LessonCompletionSummary)
   /// An answer the screens show never reached the server.
   case incomplete
+  /// The session ended: sending again with it never works.
+  case unauthorized
   case failed
 }
 
@@ -227,7 +231,9 @@ struct LessonPlayerAPI: Sendable {
       return .checked(verdict)
     case .conflict, .unprocessableContent, .badRequest, .notFound:
       return .refused
-    case .unauthorized, .internalServerError, .undocumented:
+    case .unauthorized:
+      return .unauthorized
+    case .internalServerError, .undocumented:
       return .failed
     }
   }
@@ -267,7 +273,9 @@ struct LessonPlayerAPI: Sendable {
           reachedLevel: completion.reached.level?.level))
     case .unprocessableContent:
       return .incomplete
-    case .badRequest, .unauthorized, .notFound, .internalServerError, .undocumented:
+    case .unauthorized:
+      return .unauthorized
+    case .badRequest, .notFound, .internalServerError, .undocumented:
       return .failed
     }
   }

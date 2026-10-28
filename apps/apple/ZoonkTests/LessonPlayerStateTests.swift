@@ -607,3 +607,50 @@ final class LessonMathTests: XCTestCase {
       "So 0.75×80=60 now")
   }
 }
+
+final class LessonPlayerSavingTests: XCTestCase {
+  func testAMatchColumnsAnswerThatEndsTheLessonStaysUnsavedUntilTheServerTakesIt() throws {
+    let match = #"""
+      {"id": "match", "position": 0, "skillId": null, "kind": "matchColumns", "wordHints": null,
+       "exercise": {"id": "match", "position": 0, "kind": "matchColumns",
+         "content": {"pairs": [{"left": "a", "right": "b"}]}, "sentence": null, "word": null,
+         "wordBankOptions": [], "sentenceWordOptions": [], "fillBlankOptions": [],
+         "translationOptions": [], "vocabularyOptions": [], "matchColumnsRightItems": ["b"]}}
+      """#
+    var state = LessonPlayerState(lessonId: "lesson", steps: [try step(match)])
+    let answer = LessonAnswer.matchColumns(userPairs: [.init(left: "a", right: "b")], mistakes: 0)
+    let grade = try XCTUnwrap(LessonGrading.grade(answer, step: try XCTUnwrap(state.currentStep)))
+    let unsaved = LessonPlayerState.UnsavedAnswer(
+      answer: answer, attemptId: "first", durationMs: 1, usedHelp: false)
+
+    state.resolve("match", result: LessonStepResult(grade, attemptId: "first"), saving: unsaved)
+
+    XCTAssertEqual(state.completion?.status, .saving, "match columns finishes on its own check")
+    XCTAssertEqual(state.unsavedAnswers["match"], unsaved, "so finishing has to wait for it")
+
+    state.answerSaved("match", attemptId: "older")
+    XCTAssertNotNil(state.unsavedAnswers["match"], "a reply about another attempt changes nothing")
+
+    state.confirm("match", attemptId: "first", nextReviewAt: nil, savedMistake: false)
+    XCTAssertTrue(state.unsavedAnswers.isEmpty)
+  }
+
+  func testANumberedPictureThatNeverCameLeavesItsQuestionOut() throws {
+    let numbered = check(id: "numbered")
+      .replacingOccurrences(of: "\"imagePending\": false", with: "\"imagePending\": true")
+      .replacingOccurrences(
+        of: "\"basis\": null,",
+        with:
+          #""basis": null, "image": {"alt": "A flower", "prompt": "Flower", "parts": ["ovary"]},"#)
+    let openedAt = Date.now.addingTimeInterval(-10 * 60)
+    var state = LessonPlayerState(
+      lessonId: "lesson", steps: [try step(textHook), try step(numbered), try step(summary)])
+    let question = try XCTUnwrap(state.steps["numbered"])
+
+    XCTAssertTrue(state.isWaitingForPicture(question, openedAt: .now), "the check waits for it")
+    XCTAssertFalse(state.isWaitingForPicture(question, openedAt: openedAt), "until its wait ends")
+
+    state.leaveOutLostPictures(openedAt: openedAt)
+    XCTAssertEqual(state.queue, ["hook", "summary"])
+  }
+}
