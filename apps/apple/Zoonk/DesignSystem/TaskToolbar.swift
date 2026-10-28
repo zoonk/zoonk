@@ -7,7 +7,7 @@ extension View {
     modifier(TaskCloseToolbar(close: close()))
   }
 
-  /// A task's own options in the toolbar's "…" menu: the system's overflow menu on iOS 27, which
+  /// A screen's own options in the toolbar's "…" menu: the system's overflow menu on iOS 27, which
   /// also takes what a short bar can't fit, and a menu of its own before it.
   func taskOptions<Actions: View>(
     isShown: Bool = true, label: Text, @ViewBuilder _ actions: () -> Actions

@@ -121,27 +121,12 @@ private struct BuddyContent: View {
         "Your study buddy · \(status.stage.name)", tableName: "Buddy",
         comment: "What the buddy is, and its stage")
     )
-    .toolbar {
-      // The system's overflow menu, which iPhone Duo's vertical bar keeps with its other items.
-      if #available(iOS 27, *) {
-        ToolbarOverflowMenu {
-          menuItems
-        }
-      } else {
-        ToolbarItem(placement: .topBarTrailing) {
-          Menu {
-            menuItems
-          } label: {
-            Label {
-              Text(
-                "More about \(name)", tableName: "Buddy",
-                comment: "The buddy's menu; the argument is its name")
-            } icon: {
-              Image(systemName: "ellipsis")
-            }
-          }
-        }
-      }
+    .taskOptions(
+      label: Text(
+        "More about \(name)", tableName: "Buddy",
+        comment: "The buddy's menu; the argument is its name")
+    ) {
+      menuItems
     }
     .sheet(isPresented: $isDayShown, onDismiss: openPlaceAfterDay) {
       let day = dayView(showsTitle: false)
