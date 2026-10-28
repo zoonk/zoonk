@@ -98,7 +98,7 @@ export async function planItemFixture(
 
 const LEARN_KINDS = new Set<string>(["chapter", "lesson"]);
 
-type StoredPhase = { kind?: string; startDate?: string | null };
+type StoredPhase = { kind?: string; name?: string; startDate?: string | null };
 
 function isStoredPhase(value: unknown): value is StoredPhase {
   return typeof value === "object" && value !== null;
@@ -120,14 +120,17 @@ export function plannedSkills(
 
 /**
  * The graph with each lesson's skill in its item's phase, as the planner places what it teaches:
- * a skill the graph has keeps the rest of its entry, and one it lacks joins it.
+ * a skill the graph has keeps the rest of its entry, and one it lacks joins it. A graph without
+ * phases names one for each of the plan's.
  */
 function graphFromItems({
   graph,
   items,
+  phases,
 }: {
   graph: Record<string, unknown>;
   items: { phase: number; skill: { id: string; name: string } | null }[];
+  phases: readonly StoredPhase[];
 }) {
   const taught = Map.groupBy(
     items.flatMap((item) => (item.skill ? [{ ...item.skill, phase: item.phase }] : [])),
@@ -149,7 +152,15 @@ function graphFromItems({
     return item ? { ...skill, phase: item.phase } : skill;
   });
 
-  return { phases: [], ...graph, skills: [...skills, ...plannedSkills(added)] };
+  const phaseCount = Math.max(phases.length, ...items.map((item) => item.phase + 1));
+
+  const named = Array.from({ length: phaseCount }, (_, index) => ({
+    milestone: null,
+    name: phases[index]?.name || `Phase ${index + 1}`,
+  }));
+
+  const graphPhases = Array.isArray(graph.phases) && graph.phases.length > 0 ? graph.phases : named;
+  return { ...graph, phases: graphPhases, skills: [...skills, ...plannedSkills(added)] };
 }
 
 /** The plan's phases with the first dated from today, unless the planner dated them already. */
@@ -236,7 +247,7 @@ export async function layOutPlanFixture(planId: string) {
     );
 
     return tx.plan.update({
-      data: { graph: graphFromItems({ graph, items: lessons }), phases },
+      data: { graph: graphFromItems({ graph, items: lessons, phases }), phases },
       where: { id: planId },
     });
   });

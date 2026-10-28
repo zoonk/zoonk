@@ -424,8 +424,8 @@ describe("a phase checkpoint's challenge", () => {
     });
 
     const topics = [
-      { name: "Skill 1", subject: null },
-      { name: "Skill 2", subject: null },
+      { name: "Skill 1", subject: "Basics" },
+      { name: "Skill 2", subject: "Basics" },
     ];
 
     await expect(challengeOf(boss.id)).resolves.toMatchObject({
