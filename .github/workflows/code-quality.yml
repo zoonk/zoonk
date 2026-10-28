@@ -41,8 +41,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-turbo-
 
-      # Node comes from the runner's tool cache. pnpm/setup would download it from nodejs.org (it
-      # reads `.tool-versions`), whose slow downloads timed jobs out, so it only sets up pnpm.
+      # Node comes from the runner's tool cache: pnpm/setup would download it from nodejs.org,
+      # whose slow downloads time jobs out.
       - name: Setup Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:

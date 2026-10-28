@@ -11,9 +11,8 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  # A newer push waits for the running build instead of cancelling it: on a busy PR, pushes came
-  # faster than the build runs, so it rarely finished or saved its compilation cache. GitHub keeps
-  # one run pending, the newest.
+  # A newer push waits for the running build instead of cancelling it, so a busy PR's build still
+  # finishes and saves its compilation cache. GitHub keeps one run pending, the newest.
   cancel-in-progress: false
 
 permissions:
@@ -56,16 +55,15 @@ jobs:
         uses: actions/cache@v6
         with:
           path: ~/Library/Developer/Xcode/DerivedData/CompilationCache.noindex
-          # Any app edit recompiles the whole app module, so the cache pays off for packages and the
-          # API client: a new entry is saved when they or the project change, on top of the last one.
-          # Xcode or build flag changes invalidate every entry, so they start from an empty cache.
+          # Any app edit recompiles the whole app module, so the key follows the packages, the API
+          # client and the project; Xcode or build flag changes start from an empty cache.
           key: ${{ runner.os }}-${{ runner.arch }}-apple-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/Makefile', '.github/workflows/apple.yml') }}-${{ hashFiles('apps/apple/**/Package.resolved', 'apps/apple/**/*.xcproj', 'apps/apple/ZoonkAPI/**') }}
           restore-keys: |
             ${{ runner.os }}-${{ runner.arch }}-apple-compilation-xcode-${{ steps.xcode.outputs.version }}-${{ hashFiles('apps/apple/Makefile', '.github/workflows/apple.yml') }}-
 
       - name: Build iPhone and iPad app
         env:
-          # CI only checks that the app compiles, so it skips debug info (about 10% of compile time).
+          # CI only checks that the app compiles, so it skips debug info.
           XCODEBUILD_ARGUMENTS: >-
             -clonedSourcePackagesDirPath ${{ runner.temp }}/apple-source-packages
             -onlyUsePackageVersionsFromResolvedFile

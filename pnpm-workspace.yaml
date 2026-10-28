@@ -69,7 +69,7 @@ catalog:
 minimumReleaseAge: 0
 
 overrides:
-  # Keep this override because we don't want to install codex in this repo
+  # This repo never installs codex.
   "ai-sdk-provider-codex-cli>@openai/codex": "-"
   # Audit remediation (Prisma's config loader): deepmerge-ts 8 prevents stack exhaustion on recursive inputs.
   deepmerge-ts@<8.0.0: ^8.0.0

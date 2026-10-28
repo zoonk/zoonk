@@ -18,8 +18,8 @@ permissions:
 
 concurrency:
   group: e2e-main-${{ github.event.pull_request.number || github.ref }}
-  # A newer push waits for the running suite instead of cancelling it: on a busy PR, pushes came
-  # faster than the suite runs, so it never finished. GitHub keeps one run pending, the newest.
+  # A newer push waits for the running suite instead of cancelling it, so a busy PR's suite still
+  # finishes. GitHub keeps one run pending, the newest.
   cancel-in-progress: false
 
 jobs:
@@ -29,11 +29,9 @@ jobs:
     timeout-minutes: 15
     strategy:
       fail-fast: false
-      # Every job builds the API and Main, then runs its share of the tests (Playwright's `--shard`
-      # splits a fully parallel project test by test). The dependent live-call-states project runs in
-      # its own job: Playwright runs a sharded project's dependencies whole in each shard. That job is
-      # the shortest, so it also checks that Main's navigation pages are prerendered whole and saves
-      # the build caches.
+      # Playwright runs a sharded project's dependencies whole in each shard, so the dependent
+      # live-call-states project runs in its own job. That job is the shortest, so it also checks
+      # that Main's navigation pages are prerendered whole and saves the build caches.
       matrix:
         include:
           - { suite: chromium 1/3, args: --project=chromium --shard=1/3 }
@@ -66,7 +64,7 @@ jobs:
           ref: ${{ inputs.ref || github.sha }}
 
       # Hashed once, before dependencies are installed: a cache's post step evaluates its inputs
-      # again, and `hashFiles` would then walk every node_modules (about 20 s per cache).
+      # again, and `hashFiles` would then walk every node_modules.
       - name: Compute cache keys
         id: cache-keys
         run: |
@@ -89,8 +87,8 @@ jobs:
           key: nextjs-e2e-api-${{ steps.cache-keys.outputs.lockfile }}-${{ steps.cache-keys.outputs.sources }}
           restore-keys: nextjs-e2e-api-${{ steps.cache-keys.outputs.lockfile }}-
 
-      # Node comes from the runner's tool cache. pnpm/setup would download it from nodejs.org (it
-      # reads `.tool-versions`), whose slow downloads timed jobs out, so it only sets up pnpm.
+      # Node comes from the runner's tool cache: pnpm/setup would download it from nodejs.org,
+      # whose slow downloads time jobs out.
       - name: Setup Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
@@ -119,10 +117,7 @@ jobs:
         if: matrix.gates
         run: pnpm test:deploy scripts/perf
 
-      # `pnpm e2e:main` through turbo's cache: a shard whose inputs (Main, the API, the packages,
-      # the E2E scripts and its arguments) passed before replays that run. Otherwise it migrates the
-      # database, builds and starts the API, builds Main (timing it and checking its prerendered
-      # pages in the gates job), then runs the shard's tests.
+      # Through turbo's cache: a shard whose inputs passed before replays that run.
       - name: Run E2E tests
         run: pnpm turbo run e2e:suite --filter main --env-mode=loose -- ${{ matrix.args }} --workers=2
 

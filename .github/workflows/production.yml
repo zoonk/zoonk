@@ -40,8 +40,8 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ github.event.release.tag_name }}
-      # Node comes from the runner's tool cache. pnpm/setup would download it from nodejs.org (it
-      # reads `.tool-versions`), whose slow downloads timed jobs out, so it only sets up pnpm.
+      # Node comes from the runner's tool cache: pnpm/setup would download it from nodejs.org,
+      # whose slow downloads time jobs out.
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: package.json

@@ -26,10 +26,8 @@ jobs:
     name: vitest (${{ matrix.part }})
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    # Three runners of about the same length: core's and the API's files split in half across two,
-    # and the player's browser tests, which leave a runner's CPU a third idle, with the small suites
-    # on the third. Each runner has 4 vCPUs, which two suites at once keep busy; more at once only
-    # slowed every test down.
+    # Three runners of about the same length. Each has 4 vCPUs, which two suites at once keep busy;
+    # more at once only slowed every test down.
     strategy:
       fail-fast: false
       matrix:
@@ -49,9 +47,8 @@ jobs:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
     steps:
-      # Postgres pulls and starts while the code checks out and installs; as a service container it
-      # held the job ~13 s before its first step. A throwaway database: it lives in memory and skips
-      # flushing its files. Suites share it at the same time, each worker with up to 10 connections.
+      # Postgres pulls and starts while the code checks out and installs; a service container would
+      # hold the job before its first step. It lives in memory and skips flushing its files.
       - name: Start Postgres
         run: >-
           docker run --detach --name db --publish 5432:5432 --tmpfs /var/lib/postgresql
@@ -64,15 +61,15 @@ jobs:
         with:
           ref: ${{ inputs.ref || github.sha }}
 
-      # Node comes from the runner's tool cache. pnpm/setup would download it from nodejs.org (it
-      # reads `.tool-versions`), whose slow downloads timed jobs out, so it only sets up pnpm.
+      # Node comes from the runner's tool cache: pnpm/setup would download it from nodejs.org,
+      # whose slow downloads time jobs out.
       - name: Setup Node.js
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version-file: package.json
 
-      # Every job saved its own copy of the store (533 MB, 7-10 s), filling the repository's cache:
-      # runs on `main` save it, and pull requests restore that one.
+      # Only runs on `main` save the store, and pull requests restore that one, so jobs don't fill
+      # the repository's cache with copies.
       - name: Setup pnpm
         uses: pnpm/setup@fa36a5ef7dcdefc3a7cb25655c122e00cf6e636e # v3.1.2
         with:
@@ -92,7 +89,6 @@ jobs:
           docker logs db
           exit 1
 
-      # Migrates the test database first (`db:setup:test`), then runs the part's suites.
       - name: Run Vitest
         run: pnpm turbo run test ${{ matrix.filter }} --concurrency=2 ${{ matrix.args }}
 

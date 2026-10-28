@@ -91,7 +91,7 @@
     ],
     "react/jsx-props-no-spreading": "off",
     "react/jsx-pascal-case": ["error", { "allowAllCaps": true }],
-    // no need with react compiler
+    // The React Compiler memoizes context values.
     "jsx-no-constructed-context-values": "off",
     "react/no-multi-comp": "off",
     "react/only-export-components": "off",
@@ -142,7 +142,6 @@
     "vitest/require-top-level-describe": "off",
     "vitest/valid-title": "off",
 
-    // custom rules
     "zoonk/no-dynamic-translation-key": "error",
     "zoonk/no-get-extracted-in-promise": "error",
     "zoonk/no-object-params-in-cache": ["error", { "exceptions": ["headers"] }],
