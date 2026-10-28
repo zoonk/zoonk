@@ -2,7 +2,6 @@ import SwiftUI
 
 /// Nothing is graded while talking.
 struct ConversationLiveView: View {
-  @Environment(\.horizontalSizeClass) private var sizeClass
   @State private var reply = ""
   @FocusState private var isTyping: Bool
 
@@ -12,11 +11,35 @@ struct ConversationLiveView: View {
   let onEnd: () -> Void
 
   var body: some View {
+    // Side panels are panes, never inspectors: one presented while iPhone Duo is folded misplaces
+    // the call beside it.
+    PaneSplit(primaryShare: 0.55) {
+      callColumn(besideAside: true)
+    } secondary: {
+      ScrollView {
+        VStack(alignment: .leading, spacing: 20) {
+          aside
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .scenePadding()
+      }
+      .background(Color(.secondarySystemBackground))
+    } single: {
+      callColumn(besideAside: false)
+    }
+    .toolbar {
+      ToolbarItem(placement: .principal) {
+        CallClock(call: call)
+      }
+    }
+  }
+
+  private func callColumn(besideAside: Bool) -> some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 20) {
         CharacterRow(intro: CallIntro(conversation), isTalking: call.isCharacterTalking)
 
-        if !showsAside, conversation.speakingTask == nil {
+        if !besideAside, conversation.speakingTask == nil {
           CallGoals(conversation: conversation, met: call.metLabels)
         }
 
@@ -27,7 +50,7 @@ struct ConversationLiveView: View {
           .foregroundStyle(.secondary)
           .accessibilityAddTraits(.updatesFrequently)
 
-        if !showsAside {
+        if !besideAside {
           tip
 
           if usedHelp {
@@ -42,41 +65,27 @@ struct ConversationLiveView: View {
     .defaultScrollAnchor(.bottom, for: .sizeChanges)
     .scrollDismissesKeyboard(.interactively)
     // The controls belong to the call's column, so they stay beside the aside rather than under
-    // it, and on the leading side of iPhone Duo's fold.
+    // it, and one column moves them off iPhone Duo's fold.
     .safeAreaBar(edge: .bottom) {
       VStack(spacing: 12) {
         typedReply
         controls
       }
       .scenePadding()
-    }
-    .inspector(isPresented: .constant(showsAside)) {
-      ScrollView {
-        VStack(alignment: .leading, spacing: 20) {
-          if conversation.speakingTask == nil {
-            CallGoals(conversation: conversation, met: call.metLabels)
-          }
-
-          tip
-
-          if usedHelp {
-            phrases
-          }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .scenePadding()
-      }
-      .inspectorColumnWidth(min: 260, ideal: 320)
-    }
-    .toolbar {
-      ToolbarItem(placement: .principal) {
-        CallClock(call: call)
-      }
+      .keepsOffFold()
     }
   }
 
-  private var showsAside: Bool {
-    sizeClass == .regular
+  @ViewBuilder private var aside: some View {
+    if conversation.speakingTask == nil {
+      CallGoals(conversation: conversation, met: call.metLabels)
+    }
+
+    tip
+
+    if usedHelp {
+      phrases
+    }
   }
 
   private var status: String {
