@@ -193,6 +193,8 @@ private struct CodeRunnerCanvas: View {
   private var program: some View {
     let digits = String(lines.count).count
     let errorLine = isStale ? nil : run?.errorLine
+    let colored = CodeHighlight.lines(
+      of: lines.joined(separator: "\n"), language: fields.language.highlight)
 
     return VStack(alignment: .leading, spacing: 2) {
       ForEach(Array(lines.enumerated()), id: \.offset) { index, line in
@@ -215,7 +217,7 @@ private struct CodeRunnerCanvas: View {
             .submitLabel(.go)
             .onSubmit(startRun)
           } else {
-            Text(verbatim: line)
+            Text(colored.indices.contains(index) ? colored[index] : AttributedString(line))
           }
         }
       }

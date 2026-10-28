@@ -330,7 +330,7 @@ private struct SQLPlaygroundCanvas: View {
         .font(.subheadline.weight(.medium))
 
         GroupBox {
-          Text(verbatim: verifiedSolution)
+          Text(CodeHighlight.text(of: verifiedSolution, language: .sql))
             .font(.subheadline.monospaced())
             .textSelection(.enabled)
             .frame(maxWidth: .infinity, alignment: .leading)
