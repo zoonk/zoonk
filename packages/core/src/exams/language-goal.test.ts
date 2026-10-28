@@ -204,7 +204,9 @@ describe("onboarding's reason answer", () => {
 
     const moved = answers.map((answer) => (answer.status === "saved" ? answer.movedTo : null));
 
-    expect(moved.map((entry) => entry?.created).toSorted()).toStrictEqual([false, true]);
+    // One of them created it; the other got it without starting its work again.
+    expect(moved.filter((entry) => entry?.created)).toHaveLength(1);
+    expect(moved.filter((entry) => entry?.created === false)).toHaveLength(1);
     expect(moved[0]?.goal.id).toBe(moved[1]?.goal.id);
 
     await expect(prisma.goal.count({ where: { kind: "exam", userId: user.id } })).resolves.toBe(1);
