@@ -9,14 +9,17 @@ import { after } from "next/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { markLearnerChanged } from "../learner/_utils/mark-learner-changed";
+import * as milestones from "../milestones/award-milestones";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import * as replan from "../plans/_utils/replan";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { getGoalPlan } from "../plans/get-goal-plan";
+import * as refresh from "../plans/refresh-goal-plan";
 import { answerStudyQuestion } from "./answer-study-question";
 import { toBlockPayload } from "./block-payload";
 import { finishStudyBlock } from "./finish-study-block";
 import { startStudyBlock } from "./start-study-block";
+import { stopStudySession } from "./stop-study-session";
 
 /** Observe real refresh calls; only Next's request-lifetime boundary is held by the test. */
 function holdDeferredWork() {
@@ -147,6 +150,38 @@ describe("session completion awaits its saved plan", () => {
     });
 
     expect(ledger.endedAt).toStrictEqual(saved.endedAt);
+  });
+
+  it("still finishes and awards milestones when its awaited plan refresh fails", async () => {
+    holdDeferredWork();
+    const { block, session } = await plannedPractice();
+    vi.spyOn(refresh, "refreshGoalPlan").mockRejectedValue(new Error("Planning unavailable"));
+    const award = vi.spyOn(milestones, "awardMilestones");
+
+    await expect(
+      finishStudyBlock({ blockId: block.id, input: { timeZone: "UTC" }, sessionId: session.id }),
+    ).resolves.toMatchObject({ completion: { sessionCompleted: true }, status: "ready" });
+
+    expect(award).toHaveBeenCalledOnce();
+
+    await expect(
+      prisma.studySession.findUniqueOrThrow({ where: { id: session.id } }),
+    ).resolves.toMatchObject({ status: "completed" });
+  });
+
+  it("awaits the plan on the first stop, once, while unfinished work stays", async () => {
+    holdDeferredWork();
+    const { session } = await plannedPractice();
+    await studySessionBlockFixture({ kind: "learn", position: 1, sessionId: session.id });
+    const renew = vi.spyOn(refresh, "refreshGoalPlan");
+
+    await expect(
+      stopStudySession({ input: { timeZone: "UTC" }, sessionId: session.id }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    expect(renew).toHaveBeenCalledOnce();
+    await stopStudySession({ input: { timeZone: "UTC" }, sessionId: session.id });
+    expect(renew).toHaveBeenCalledOnce();
   });
 
   it("returns only after items, summary and proposals have been saved", async () => {

@@ -2,6 +2,7 @@ import { prisma } from "@zoonk/db";
 import { attemptFixture, learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { runDeferredWork } from "../_test-utils/deferred-work";
 import { mockSession } from "../_test-utils/mock-session";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { loadPlanChangeView } from "../plans/_utils/owned-plan";
@@ -168,7 +169,9 @@ describe(rebalancePlanAfterSession, () => {
     const { blocks, id: sessionId } = today.session;
 
     await startStudyBlock({ blockId: blocks[0]?.id ?? "", input: {}, sessionId });
+    const finishDeferred = runDeferredWork();
     await stopStudySession({ input: {}, sessionId });
+    await finishDeferred();
 
     await expect(
       prisma.studySession.findUniqueOrThrow({ where: { id: sessionId } }),

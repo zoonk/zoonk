@@ -1,8 +1,13 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { PlanConflictError } from "../../plans/plan-conflict";
+import { getItemKey } from "../../plans/planner/plan-items";
 import { AWAITING_OUTLINES_VERSION, loadDayPlanVersion } from "./day-plan-version";
 import { withSessionAppendLock } from "./extra-blocks";
 import { hasSameBlocks, planRestOfDay } from "./refresh-day-session";
+import { prepareSelectedPlanSave, saveSelectedPlan } from "./save-selected-plan";
+import { type SelectedDayPlan } from "./selected-day-plan";
+import { isSelectedPlanCurrent } from "./selected-plan-current";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
 /**
@@ -16,27 +21,62 @@ export async function appendLandedLessons({
   goal,
   session,
   timeZone,
-}: Parameters<typeof planRestOfDay>[0]["day"]): Promise<StudySessionRow> {
-  if (session.planVersion !== AWAITING_OUTLINES_VERSION || session.status === "completed") {
+  selection,
+}: Parameters<typeof planRestOfDay>[0]["day"] & {
+  selection?: SelectedDayPlan;
+}): Promise<StudySessionRow> {
+  if (
+    (!selection && session.planVersion !== AWAITING_OUTLINES_VERSION) ||
+    session.status === "completed"
+  ) {
     return session;
   }
 
-  const planVersion = await loadDayPlanVersion({ goal, localDate: session.localDate });
+  const planVersion = await loadDayPlanVersion({
+    goal,
+    localDate: session.localDate,
+    plan: selection && { graph: selection.state.graph, version: selection.context.plan.version },
+  });
 
-  if (planVersion === AWAITING_OUTLINES_VERSION) {
+  if (!selection && planVersion === AWAITING_OUTLINES_VERSION) {
     return session;
   }
 
-  const planned = await planRestOfDay({ day: { goal, session, timeZone }, kept: session.blocks });
-  const lessons = planned.filter((block) => block.kind === "learn");
+  const planned = await planRestOfDay({
+    day: { goal, session, timeZone },
+    kept: session.blocks,
+    selection,
+  });
 
-  if (lessons.length === 0) {
-    await prisma.studySession.update({ data: { planVersion }, where: { id: session.id } });
-    return { ...session, planVersion };
-  }
+  const lessons = selection ? planned : planned.filter((block) => block.kind === "learn");
+
+  const persistsPlan =
+    selection !== undefined &&
+    (selection.computed !== null || selection.inputKeyUpdate !== undefined);
+
+  const prepared = selection
+    ? await prepareSelectedPlanSave({ selection, shown: persistsPlan })
+    : null;
+
+  const savedVersion =
+    planVersion === null || planVersion === AWAITING_OUTLINES_VERSION
+      ? planVersion
+      : planVersion + Number(prepared?.kind === "computed");
 
   await withSessionAppendLock({
+    plan: selection && { id: selection.context.plan.id, write: persistsPlan },
     run: async ({ session: locked, transaction }) => {
+      if (
+        selection &&
+        !(await isSelectedPlanCurrent({
+          increment: Number(persistsPlan),
+          selection,
+          tx: transaction,
+        }))
+      ) {
+        throw new PlanConflictError();
+      }
+
       if (
         locked.status === "completed" ||
         !hasSameBlocks({ locked: locked.blocks, read: session.blocks })
@@ -44,11 +84,26 @@ export async function appendLandedLessons({
         return;
       }
 
+      if (selection && prepared) {
+        await saveSelectedPlan({ context: selection.context, prepared, tx: transaction });
+      }
+
+      const items = selection?.computed
+        ? await transaction.planItem.findMany({ where: { planId: selection.context.plan.id } })
+        : (selection?.context.items ?? []);
+
+      const ids = new Map(items.map((item) => [getItemKey(item), item.id]));
       const firstPosition = Math.max(-1, ...session.blocks.map((block) => block.position)) + 1;
 
       await transaction.studySessionBlock.createMany({
         data: lessons.map((block, index) => ({
           ...block,
+          payload: {
+            ...block.payload,
+            planItemId: block.payload.planItemKey
+              ? (ids.get(block.payload.planItemKey) ?? block.payload.planItemId)
+              : block.payload.planItemId,
+          },
           position: firstPosition + index,
           sessionId: session.id,
         })),
@@ -56,7 +111,7 @@ export async function appendLandedLessons({
 
       await transaction.studySession.update({
         data: {
-          planVersion,
+          planVersion: savedVersion,
           plannedMinutes:
             session.blocks.reduce((sum, block) => sum + (block.estimatedMinutes ?? 0), 0) +
             lessons.reduce((sum, block) => sum + block.estimatedMinutes, 0),

@@ -9,6 +9,7 @@ import { trackServerEvent } from "../analytics/server";
 import { keptEndPlanFixture, readPlan } from "../plans/_test-utils/kept-end-plan";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { createGoalPlan } from "../plans/create-goal-plan";
+import * as refresh from "../plans/refresh-goal-plan";
 import { getTodayStudySession } from "../sessions/_test-utils/open-today";
 import { loadCatchUpItems } from "../sessions/_utils/catch-up";
 import { updateGoal } from "./update-goal";
@@ -54,7 +55,32 @@ describe(updateGoal, () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.useRealTimers();
+  });
+
+  it("saves combined goal metadata and schedule with one planning commit", async () => {
+    const { goal, plan } = await setup();
+    const renew = vi.spyOn(refresh, "refreshGoalPlan");
+
+    await expect(
+      updateGoal({
+        goalId: goal.id,
+        input: {
+          dailyMinutes: 15,
+          details: { placementDeclined: true },
+          timeZone: "Pacific/Kiritimati",
+        },
+      }),
+    ).resolves.toMatchObject({ status: "updated" });
+
+    expect(renew).toHaveBeenCalledTimes(0);
+
+    const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
+
+    expect(saved.summary).toMatchObject({
+      basis: { layoutStudyDay: "2020-09-29", timeZone: "Pacific/Kiritimati" },
+    });
   });
 
   it("updates plain fields without touching the plan", async () => {

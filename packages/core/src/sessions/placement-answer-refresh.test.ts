@@ -86,7 +86,7 @@ async function runAfterResponse() {
 }
 
 const replans = () =>
-  vi.mocked(refreshGoalPlan).mock.calls.filter(([input]) => input.settleOnly === false);
+  vi.mocked(refreshGoalPlan).mock.calls.filter(([input]) => input.pace === "saved");
 
 describe("a placement answer in a first-week session", () => {
   beforeEach(() => {

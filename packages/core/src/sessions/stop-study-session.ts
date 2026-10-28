@@ -1,8 +1,10 @@
 import "server-only";
+import { after } from "next/server";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { scheduleMemoryAfterSession } from "../memory/after-session";
 import { rebalancePlanAfterSession } from "../preparation/rebalance-plan";
+import { refreshPlanAroundSession } from "./_utils/refresh-plan";
 import { settleQuestionBlock } from "./_utils/settle-question-block";
 import { settleSessionDay } from "./_utils/settle-session-day";
 import { type StudySessionRow, findOwnedStudySession } from "./_utils/study-session-access";
@@ -76,7 +78,12 @@ export async function stopStudySession({
   // Otherwise the first stop does it, once: stopping again (or a client looping) runs no model.
   if (!settled.sessionCompleted && (await markFirstStop({ sessionId: session.id, userId }))) {
     scheduleMemoryAfterSession({ goalId: session.goalId, sessionId: session.id, timeZone, userId });
-    await rebalancePlanAfterSession({ goalId: session.goalId, userId });
+
+    const refreshed = await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
+
+    if (refreshed) {
+      after(() => rebalancePlanAfterSession({ goalId: session.goalId, userId }));
+    }
   }
 
   return getStudySessionSummary({ input, sessionId });

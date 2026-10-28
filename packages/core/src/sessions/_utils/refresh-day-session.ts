@@ -157,6 +157,7 @@ async function planRestOfDayWithPlan({
 
 /** The new blocks for the rest of the day, never a second block of a kind the day keeps. */
 export async function planRestOfDay(input: {
+  selection?: SelectedDayPlan;
   day: DaySession;
   kept: readonly StudySessionBlock[];
 }): Promise<PlannedBlock[]> {
@@ -187,7 +188,7 @@ export function hasSameBlocks({
  * append lock marks the plan before it reads the queue and commits that mark even when the content
  * is unchanged.
  */
-export async function replaceNotStartedBlocks({
+async function replaceNotStartedBlocks({
   day,
   selection: selected,
 }: {

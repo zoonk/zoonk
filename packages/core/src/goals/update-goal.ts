@@ -1,6 +1,6 @@
 import "server-only";
 import { isDeepStrictEqual } from "node:util";
-import { type Goal } from "@zoonk/db";
+import { type Goal, type TransactionClient } from "@zoonk/db";
 import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import {
   getGoalsCacheTag,
@@ -71,34 +71,46 @@ async function saveMetadata({
       userId,
     },
     async (tx) => {
-      const current = await tx.goal.findFirstOrThrow({ where: { id: goal.id, userId } });
-      const changed = changesMetadata(current, input);
-
-      const updated = changed
-        ? await tx.goal.update({ data: goalMetadata(input), where: { id: current.id } })
-        : current;
-
-      const moved = input.status
-        ? await moveActiveGoalAway({ goalId: goal.id, status: input.status, tx, userId })
-        : 0;
-
-      if (!changed && moved === 0) {
-        return unchanged({ completed: false, goal: current });
-      }
-
-      return {
-        completed: current.status !== "completed" && updated.status === "completed",
-        goal: updated,
-      };
+      const saved = await saveMetadataInTransaction(tx, { goal, input, userId });
+      return saved.changed ? saved : unchanged(saved);
     },
   );
+}
+
+async function saveMetadataInTransaction(
+  tx: TransactionClient,
+  { goal, input, userId }: { goal: Goal; input: GoalUpdateInput; userId: string },
+) {
+  const current = await tx.goal.findFirstOrThrow({ where: { id: goal.id, userId } });
+  const changed = changesMetadata(current, input);
+
+  const updated = changed
+    ? await tx.goal.update({ data: goalMetadata(input), where: { id: current.id } })
+    : current;
+
+  const moved = input.status
+    ? await moveActiveGoalAway({ goalId: goal.id, status: input.status, tx, userId })
+    : 0;
+
+  if (!changed && moved === 0) {
+    return { changed: false, completed: false, goal: current };
+  }
+
+  return {
+    changed: true,
+    completed: current.status !== "completed" && updated.status === "completed",
+    goal: updated,
+  };
 }
 
 /**
  * A goal back from a pause keeps its plan, or starts it again from today when the pause left
  * lessons behind (see `computeResumedPlan`): the paused days aren't missed days.
  */
-async function resumePlan(context: PlanContext): Promise<string | null> {
+async function resumePlan(
+  context: PlanContext,
+  extraWrites: (tx: TransactionClient) => Promise<unknown>,
+): Promise<string | null> {
   const resumed = await computeResumedPlan(context);
 
   if (!resumed) {
@@ -118,12 +130,21 @@ async function resumePlan(context: PlanContext): Promise<string | null> {
     },
     computed: resumed.computed,
     context,
+    extraWrites,
   });
 }
 
 async function updatePlan({ goal, input }: { goal: Goal; input: GoalUpdateInput }) {
   return withPlanRetry(async () => {
-    const context = await loadPlanAtToken(goal.id, { timeZone: input.timeZone });
+    const context = await loadPlanAtToken(goal.id, { goalChanges: goalMetadata(input) });
+
+    const writes: { metadata: Awaited<ReturnType<typeof saveMetadataInTransaction>> | null } = {
+      metadata: null,
+    };
+
+    const extraWrites = async (tx: TransactionClient) => {
+      writes.metadata = await saveMetadataInTransaction(tx, { goal, input, userId: goal.userId });
+    };
 
     // Checked against the plan's own today and date, before anything is planned or saved.
     if (context) {
@@ -145,13 +166,17 @@ async function updatePlan({ goal, input }: { goal: Goal; input: GoalUpdateInput 
     if (!context || operations.length === 0) {
       const isResuming = input.status === "active" && goal.status === "paused";
 
-      return {
-        changeId: context && isResuming && isPlanReady(context) ? await resumePlan(context) : null,
-      };
+      const changeId =
+        context && isResuming && isPlanReady(context)
+          ? await resumePlan(context, extraWrites)
+          : null;
+
+      return { changeId, metadata: writes.metadata };
     }
 
     const result = await applyChangeNow({
       context,
+      extraWrites,
       followToday: true,
       operations,
       reason: SETTINGS_NOTE,
@@ -162,7 +187,10 @@ async function updatePlan({ goal, input }: { goal: Goal; input: GoalUpdateInput 
       return result;
     }
 
-    return { changeId: result.status === "saved" ? null : result.changeId };
+    return {
+      changeId: result.status === "saved" ? null : result.changeId,
+      metadata: writes.metadata,
+    };
   });
 }
 
@@ -198,9 +226,11 @@ export async function updateGoal({
     return planResult;
   }
 
-  const { completed, goal: updated } = await saveMetadata({ goal, input, userId });
+  const { completed, goal: updated } =
+    planResult.metadata ?? (await saveMetadata({ goal, input, userId }));
 
   if (
+    !planResult.metadata &&
     updated.status === "active" &&
     (input.details !== undefined || input.timeZone !== undefined)
   ) {

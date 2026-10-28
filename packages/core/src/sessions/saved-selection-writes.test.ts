@@ -6,6 +6,7 @@ import { markLearnerChanged, markPlansChanged } from "../learner/_utils/mark-lea
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import * as replan from "../plans/_utils/replan";
 import { createGoalPlan } from "../plans/create-goal-plan";
+import * as planner from "../plans/planner/build-plan";
 import { ensureStudySession } from "./ensure-study-session";
 import { openStudyDay, openStudySession } from "./open-study-day";
 
@@ -54,12 +55,23 @@ describe("Start and Continue save a fresh selection", () => {
       where: { kind: "learn", sessionId: opened.sessionId },
     });
 
-    await prisma.studySessionBlock.update({
-      data: { startedAt: NOW, status: "active" },
-      where: { id: block.id },
+    await prisma.$transaction(async (tx) => {
+      await markLearnerChanged(tx, { planInputs: true, userId: user.id });
+
+      await tx.studySessionBlock.update({
+        data: { startedAt: NOW, status: "active" },
+        where: { id: block.id },
+      });
     });
 
-    const kept = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } });
+    const kept = await prisma.studySessionBlock.findMany({
+      orderBy: { position: "asc" },
+      where: { sessionId: opened.sessionId },
+    });
+
+    const build = vi.spyOn(planner, "buildPlan");
+    await openStudySession({ input: { timeZone: "UTC" }, sessionId: opened.sessionId });
+    expect(build).toHaveBeenCalledTimes(0);
     const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
 
     await prisma.$transaction(async (tx) => {
@@ -84,7 +96,10 @@ describe("Start and Continue save a fresh selection", () => {
     ).resolves.toMatchObject({ planVersion: saved.version });
 
     await expect(
-      prisma.studySessionBlock.findUniqueOrThrow({ where: { id: block.id } }),
+      prisma.studySessionBlock.findMany({
+        orderBy: { position: "asc" },
+        where: { id: { in: kept.map((entry) => entry.id) } },
+      }),
     ).resolves.toStrictEqual(kept);
   });
 

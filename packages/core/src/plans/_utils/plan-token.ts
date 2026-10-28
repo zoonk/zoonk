@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Goal, prisma } from "@zoonk/db";
 import { type PlanContext, loadPlanContext } from "./plan-context";
 
 /**
@@ -11,7 +11,11 @@ import { type PlanContext, loadPlanContext } from "./plan-context";
  */
 export async function loadPlanAtToken(
   goalId: string,
-  options: { now?: Date; timeZone?: string | null } = {},
+  options: {
+    now?: Date;
+    timeZone?: string | null;
+    goalChanges?: Partial<Pick<Goal, "details" | "status" | "studyTime" | "timezone" | "title">>;
+  } = {},
 ): Promise<PlanContext | null> {
   const token = await prisma.plan.findUnique({
     select: { inputVersion: true, version: true },
@@ -19,7 +23,15 @@ export async function loadPlanAtToken(
   });
 
   const goal = token ? await prisma.goal.findUnique({ where: { id: goalId } }) : null;
-  const context = goal ? await loadPlanContext({ goal, ...options }) : null;
+  const { goalChanges, ...readOptions } = options;
+
+  const changes = Object.fromEntries(
+    Object.entries(goalChanges ?? {}).filter(([, value]) => value !== undefined),
+  );
+
+  const context = goal
+    ? await loadPlanContext({ goal: { ...goal, ...changes }, ...readOptions })
+    : null;
 
   return context && token ? { ...context, plan: { ...context.plan, ...token } } : null;
 }

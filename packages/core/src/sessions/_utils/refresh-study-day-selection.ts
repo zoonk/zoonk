@@ -1,11 +1,12 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { withPlanRetry } from "../../plans/plan-conflict";
-import { replaceNotStartedBlocks } from "./refresh-day-session";
+import { appendLandedLessons } from "./append-landed-lessons";
+import { AWAITING_OUTLINES_VERSION } from "./day-plan-version";
 import { selectDayPlan } from "./selected-day-plan";
 import { STUDY_SESSION_INCLUDE, type StudySessionRow } from "./study-session-access";
 
-/** Continue checks current inputs, saving a new selection with only the unstarted queue. */
+/** Continue reuses current inputs; a changed selection can only append to the shown queue. */
 export async function refreshStudyDaySelection({
   session,
   timeZone,
@@ -23,7 +24,12 @@ export async function refreshStudyDaySelection({
       return current;
     }
 
-    const selection = await selectDayPlan({ goal: current.goal, now: new Date(), timeZone });
+    const selection = await selectDayPlan({
+      goal: current.goal,
+      now: new Date(),
+      timeZone,
+      useFreshSaved: true,
+    });
     // Item-only goals keep their existing open path until the phase B legacy cutover.
     if (!selection || selection.state.graph.skills.length === 0) {
       return current;
@@ -32,19 +38,17 @@ export async function refreshStudyDaySelection({
     if (
       !selection.computed &&
       !selection.inputKeyUpdate &&
-      current.planVersion === selection.context.plan.version
+      (current.planVersion === selection.context.plan.version ||
+        current.planVersion === AWAITING_OUTLINES_VERSION)
     ) {
       return current;
     }
 
-    await replaceNotStartedBlocks({
-      day: { goal: selection.context.goal, session: current, timeZone },
+    return appendLandedLessons({
+      goal: selection.context.goal,
       selection,
-    });
-
-    return prisma.studySession.findUniqueOrThrow({
-      include: STUDY_SESSION_INCLUDE,
-      where: { id: session.id },
+      session: current,
+      timeZone,
     });
   });
 }

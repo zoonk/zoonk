@@ -1,16 +1,17 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import { after } from "next/server";
 import { markLearnerChanged } from "../../learner/_utils/mark-learner-changed";
 import { scheduleMemoryAfterSession } from "../../memory/after-session";
 import { type BrainPowerReward } from "../../milestones/milestone-reward";
-import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { rebalancePlanAfterSession } from "../../preparation/rebalance-plan";
 import { type Mission } from "../missions";
 import { type BlockMissionResult } from "../missions/block-mission-result";
 import { getDayMissions } from "../missions/get-day-missions";
 import { type MissionCompletionSource, settleMissions } from "../missions/settle-missions";
 import { measureSessionState } from "./capture-snapshot";
+import { refreshPlanAroundSession } from "./refresh-plan";
 import { type SessionAnswer, loadSessionAnswers } from "./session-answers";
 import { trackSessionCompleted } from "./session-events";
 import { recordSessionEnd } from "./session-ledger";
@@ -113,7 +114,7 @@ async function completeIfFinished({
 
   if (error instanceof SessionCompletionUnchangedError) {
     if (error.status === "alreadyCompleted" && session.goalId) {
-      await refreshGoalPlan({ goalId: session.goalId, pace: "sampled", revalidation: "skip" });
+      await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
     }
 
     return error.status === "alreadyCompleted";
@@ -135,10 +136,10 @@ async function completeIfFinished({
   }
 
   if (session.goalId) {
-    await refreshGoalPlan({ goalId: session.goalId, pace: "sampled", revalidation: "skip" });
+    const refreshed = await refreshPlanAroundSession({ goalId: session.goalId, pace: "sampled" });
 
-    if (!completed.session.endedAt && !completed.session.stoppedAt) {
-      await rebalancePlanAfterSession({ goalId: session.goalId, userId });
+    if (refreshed && !completed.session.endedAt && !completed.session.stoppedAt) {
+      after(() => rebalancePlanAfterSession({ goalId: session.goalId, userId }));
     }
   }
 
