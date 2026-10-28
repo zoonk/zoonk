@@ -61,7 +61,7 @@ struct ChallengeScreen: View {
   private func intro(_ challenge: Components.Schemas.Challenge) -> some View {
     // Once beaten, the Trickster's checkpoint says how it went, never the rules of a duel already
     // played, as on main.
-    let won = isTrickster(challenge) && challenge.status == .done
+    let won = isCheckpoint(challenge) && challenge.status == .done
 
     return PracticeTaskLayout {
       // A phase's challenge is the Trickster's, smug with his sign until he's beaten. A mock, a
@@ -77,15 +77,24 @@ struct ChallengeScreen: View {
             .font(.subheadline.weight(.medium)).foregroundStyle(.secondary)
         }
 
-        Text(title(challenge)).font(.largeTitle.bold())
+        titleText(challenge).font(.largeTitle.bold())
 
-        if won, let result = challenge.result {
-          Text(
-            "\(result.correct) of \(result.total) right", tableName: "Practice",
-            comment: "How a won challenge went, as in “8 of 10 right”."
-          )
-          .font(.subheadline.monospacedDigit())
-          .foregroundStyle(.secondary)
+        if won {
+          if let result = challenge.result {
+            Group {
+              if challenge.call != nil {
+                Text(
+                  "\(result.correct) of \(result.total) goals", tableName: "Practice",
+                  comment: "How a passed challenge call went, as in “2 of 3 goals”.")
+              } else {
+                Text(
+                  "\(result.correct) of \(result.total) right", tableName: "Practice",
+                  comment: "How a won challenge went, as in “8 of 10 right”.")
+              }
+            }
+            .font(.subheadline.monospacedDigit())
+            .foregroundStyle(.secondary)
+          }
         } else {
           Text(description(challenge)).foregroundStyle(.secondary)
 
@@ -219,7 +228,7 @@ struct ChallengeScreen: View {
       actions(challenge)
     }
     .practiceActionsHidden(!hasActions(challenge))
-    .navigationTitle(Text(title(challenge)))
+    .navigationTitle(titleText(challenge))
   }
 
   @ViewBuilder
@@ -241,7 +250,7 @@ struct ChallengeScreen: View {
         dismiss()
         hooks.navigate(.checkpoint(blockId: blockId, sessionId: sessionId))
       }
-    } else if challenge.call != nil {
+    } else if challenge.call != nil, challenge.status != .done {
       if let call = hooks.challengeCall {
         call(itemId)
       } else {
@@ -289,17 +298,24 @@ struct ChallengeScreen: View {
 
   /// Before its day a challenge has nothing to do yet: no pinned bar.
   private func hasActions(_ challenge: Components.Schemas.Challenge) -> Bool {
-    challenge.locked || challenge.status == .plusRequired || challenge.call != nil
+    challenge.locked || challenge.status == .plusRequired
+      || (challenge.call != nil && challenge.status != .done)
       || challenge.canMove
       || challenge.waitReason != nil
-      || [.ready, .started, .done, .tried].contains(challenge.status)
+      || [.ready, .started].contains(challenge.status)
+      || ([.done, .tried].contains(challenge.status) && challenge.blockId != nil)
   }
 
   // MARK: Copy
 
-  /// A phase's or the final checkpoint played as a duel: not a mock, a call or the week's.
+  /// A phase's or the final checkpoint: a duel with the Trickster, or a language goal's call.
+  private func isCheckpoint(_ challenge: Components.Schemas.Challenge) -> Bool {
+    challenge.kind != .weekly && !challenge.mock
+  }
+
+  /// A checkpoint played as a duel, not a call.
   private func isTrickster(_ challenge: Components.Schemas.Challenge) -> Bool {
-    challenge.kind != .weekly && !challenge.mock && challenge.call == nil
+    isCheckpoint(challenge) && challenge.call == nil
   }
 
   /// Which checkpoint it is, over the Trickster's title: "Phase 2 challenge", "Final challenge",
@@ -307,7 +323,7 @@ struct ChallengeScreen: View {
   private func eyebrow(_ challenge: Components.Schemas.Challenge) -> String? {
     let phase = challenge.phase.map { $0.value1.index + 1 }
 
-    guard isTrickster(challenge) else {
+    guard isCheckpoint(challenge) else {
       return phase.map {
         String(
           localized: "Phase \($0)", table: "Practice",
@@ -337,10 +353,28 @@ struct ChallengeScreen: View {
       : name
   }
 
+  /// The title, or an open challenge call's own, written for its unit.
+  private func titleText(_ challenge: Components.Schemas.Challenge) -> Text {
+    if let title = challenge.call?.title, challenge.status != .done, isCheckpoint(challenge) {
+      Text(title)
+    } else {
+      Text(title(challenge))
+    }
+  }
+
   private func title(_ challenge: Components.Schemas.Challenge) -> LocalizedStringResource {
     if challenge.mock, let number = challenge.number {
       return LocalizedStringResource(
         "Mock exam \(number)", table: "Practice", comment: "Title of a numbered mock exam.")
+    }
+
+    if challenge.call != nil, isCheckpoint(challenge) {
+      return challenge.status == .done
+        ? LocalizedStringResource(
+          "Challenge passed", table: "Practice", comment: "A finished challenge.")
+        : LocalizedStringResource(
+          "The unit's call", table: "Practice",
+          comment: "Title of a language goal's challenge call before it's written.")
     }
 
     if isTrickster(challenge) {
