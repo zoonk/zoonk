@@ -30,7 +30,8 @@ const apple = await vi.hoisted(async () => {
   process.env.APPLE_TEAM_ID = "apple-team-id";
   process.env.NEXT_PUBLIC_API_URL = "https://api.zoonk.com";
 
-  type Identity = { email: string; subject: string };
+  /** `expiresIn` stands in for a grant the server fails to save (an expiry no date can hold). */
+  type Identity = { email: string; expiresIn?: number; subject: string };
 
   const identities = new Map<string, Identity>();
   const tokenRequests: URLSearchParams[] = [];
@@ -61,7 +62,7 @@ const apple = await vi.hoisted(async () => {
 
     return Response.json({
       access_token: `apple-access-${identity.subject}`,
-      expires_in: 3600,
+      expires_in: identity.expiresIn ?? 3600,
       id_token: await signIdentityToken({ ...identity, audience: body.get("client_id") ?? "" }),
       refresh_token: `apple-refresh-${identity.subject}`,
       token_type: "Bearer",
@@ -86,9 +87,21 @@ const apple = await vi.hoisted(async () => {
 });
 
 /** What Apple hands the app after the learner authorizes: a single-use code and an identity token. */
-async function authorizeWithApple({ audience }: { audience: string }) {
+async function authorizeWithApple({
+  audience,
+  expiresIn,
+}: {
+  audience: string;
+  expiresIn?: number;
+}) {
   const id = randomUUID();
-  const identity = { email: `apple-flow-${id}@example.test`, subject: `apple-flow-${id}` };
+
+  const identity = {
+    email: `apple-flow-${id}@example.test`,
+    expiresIn,
+    subject: `apple-flow-${id}`,
+  };
+
   const authorizationCode = `apple-code-${id}`;
   const rawNonce = `raw-nonce-${id}`;
   const hashedNonce = createHash("sha256").update(rawNonce).digest("hex");
@@ -160,6 +173,37 @@ describe("native Apple sign-in through Apple's endpoints", () => {
       expect(exchange?.get("redirect_uri") ?? null).toBe(redirectURI);
     },
   );
+});
+
+describe("a guest's Apple sign-in that fails after Apple's grant", () => {
+  it("leaves the guest and its progress as they were, so it can try again", async () => {
+    const guest = await guestAuth.api.signInAnonymous();
+    const goal = await createGoal(guest.user.id);
+    const ip = createRequestIP();
+
+    const credentials = await authorizeWithApple({
+      audience: SERVICES_ID,
+      expiresIn: Number.MAX_VALUE,
+    });
+
+    await expect(
+      signInWithNativeApple({
+        credentials: { ...credentials, client: "web" },
+        headers: new Headers({ authorization: `Bearer ${guest.token}`, "x-forwarded-for": ip }),
+        requestURL: REQUEST_URL,
+      }),
+    ).rejects.toThrow();
+
+    await prisma.rateLimit.deleteMany({ where: { key: `${ip}|/sign-in/native-apple` } });
+
+    const [keptGoal, guestSession] = await Promise.all([
+      prisma.goal.findUnique({ where: { id: goal.id } }),
+      prisma.session.findUnique({ where: { token: guest.token } }),
+    ]);
+
+    expect(keptGoal?.userId).toBe(guest.user.id);
+    expect(guestSession?.userId).toBe(guest.user.id);
+  });
 });
 
 describe("Better Auth's public social endpoint", () => {

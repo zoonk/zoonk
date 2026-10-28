@@ -1,13 +1,14 @@
 import { AsyncLocalStorage } from "node:async_hooks";
+import { prisma } from "@zoonk/db";
 import { type BetterAuthPlugin } from "better-auth";
 import { createAuthEndpoint } from "better-auth/api";
 import { betterAuth } from "better-auth/minimal";
 import { bearer } from "better-auth/plugins";
 import { type BetterAuthOptions } from "better-auth/types";
 import { z } from "zod";
+import { linkGuestAccount } from "./guests/link-guest-account";
 import { type NativeAppleCredentials } from "./native-apple-contract";
 import { callNativeAuthHandler } from "./native-auth-handler";
-import { guestPlugin } from "./plugins/guest";
 import { getNativeAppleProvider } from "./providers/apple";
 import { baseAuthConfig, baseAuthPlugins } from "./server";
 import { stripePlugin } from "./stripe/plugin";
@@ -79,7 +80,7 @@ const nativeAppleDatabaseHooks = {
   },
 } satisfies BetterAuthOptions["databaseHooks"];
 
-/** A guest sends its bearer, which the guest plugin reads to move its progress to the Apple account. */
+/** The bearer plugin reads the guest a sign-in may carry (`linkNativeAppleGuest`). */
 function createNativeAppleAuth({ disableSignUp }: { disableSignUp: boolean }) {
   const appleProvider = getNativeAppleProvider();
 
@@ -90,13 +91,7 @@ function createNativeAppleAuth({ disableSignUp }: { disableSignUp: boolean }) {
   return betterAuth({
     ...baseAuthConfig,
     databaseHooks: nativeAppleDatabaseHooks,
-    plugins: [
-      ...baseAuthPlugins,
-      bearer(),
-      stripePlugin(),
-      guestPlugin(),
-      nativeAppleRateLimitPlugin(),
-    ],
+    plugins: [...baseAuthPlugins, bearer(), stripePlugin(), nativeAppleRateLimitPlugin()],
     rateLimit: { enabled: true, storage: "database" },
     socialProviders: nativeAppleProvider,
   });
@@ -169,4 +164,34 @@ export function signInWithExistingAppleAccount(credentials: NativeAppleCredentia
     signIn: () =>
       existingAppleAccountAuth.api.signInSocial({ body: getNativeAppleSignInBody(credentials) }),
   });
+}
+
+/**
+ * Moves the progress of the guest whose bearer the sign-in carries to the
+ * Apple account, as the main auth does for Google and email. It runs once the
+ * sign-in can no longer roll back, since undoing a new account would delete
+ * what moved; a failed move changes nothing (one transaction).
+ */
+export async function linkNativeAppleGuest({
+  headers,
+  userId,
+}: {
+  headers: Headers;
+  userId: string;
+}) {
+  const current = await nativeAppleAuth.api.getSession({
+    headers,
+    query: { disableCookieCache: true, disableRefresh: true },
+  });
+
+  const guest = current
+    ? await prisma.user.findUnique({
+        select: { id: true },
+        where: { id: current.user.id, isAnonymous: true },
+      })
+    : null;
+
+  if (guest) {
+    await linkGuestAccount({ account: { id: userId }, guestUserId: guest.id });
+  }
 }

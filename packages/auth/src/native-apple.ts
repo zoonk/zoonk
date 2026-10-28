@@ -7,6 +7,7 @@ import {
   type NativeAppleAuthChanges,
   type NativeAppleSessionRequest,
   enforceNativeAppleSignInRateLimit,
+  linkNativeAppleGuest,
   signInWithExistingAppleAccount,
   signInWithNativeAppleAccount,
 } from "./native-apple-session";
@@ -242,14 +243,17 @@ async function requireExpectedAppleAccount({
   }
 }
 
+/** Saves the grant, then moves the carried guest's progress; cleans up both credentials if either fails. */
 async function persistAppleAuthorization({
   accountId,
   changes,
+  headers,
   session,
   verifiedAuthorization,
 }: {
   accountId: string;
   changes: NativeAppleAuthChanges;
+  headers: Headers;
   session: NativeAppleSession;
   verifiedAuthorization: VerifiedAppleAuthorization;
 }) {
@@ -265,6 +269,8 @@ async function persistAppleAuthorization({
       },
       where: { id: accountId },
     });
+
+    await linkNativeAppleGuest({ headers, userId: session.user.id });
   } catch (error) {
     return throwAfterSessionCleanup({
       ...verifiedAuthorization,
@@ -277,18 +283,15 @@ async function persistAppleAuthorization({
 
 /** Stores Apple's refresh token in plaintext, as Better Auth stores every OAuth account's. */
 export async function signInWithNativeApple(request: NativeAppleSessionRequest) {
-  const { credentials } = request;
+  const { credentials, headers, requestURL } = request;
 
-  await enforceNativeAppleSignInRateLimit({
-    headers: request.headers,
-    requestURL: request.requestURL,
-  });
+  await enforceNativeAppleSignInRateLimit({ headers, requestURL });
 
   const verifiedAuthorization = await exchangeVerifiedAuthorization(credentials);
 
   const { account, changes, session } = await createVerifiedSession({
     createSession: (nativeCredentials) =>
-      signInWithNativeAppleAccount({ credentials: nativeCredentials, headers: request.headers }),
+      signInWithNativeAppleAccount({ credentials: nativeCredentials, headers }),
     credentials,
     verifiedAuthorization,
   });
@@ -296,6 +299,7 @@ export async function signInWithNativeApple(request: NativeAppleSessionRequest) 
   await persistAppleAuthorization({
     accountId: account.id,
     changes,
+    headers,
     session,
     verifiedAuthorization,
   });

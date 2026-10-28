@@ -9,6 +9,7 @@ const APPLE_PROVIDER_ID = "apple";
 const mocks = vi.hoisted(() => ({
   enforceSignInRateLimit: vi.fn(),
   exchangeAuthorizationCode: vi.fn(),
+  linkGuest: vi.fn(),
   revokeToken: vi.fn(),
   signInExistingAppleAccount: vi.fn(),
   signInNativeAppleAccount: vi.fn(),
@@ -17,6 +18,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("./native-apple-session", () => ({
   enforceNativeAppleSignInRateLimit: mocks.enforceSignInRateLimit,
+  linkNativeAppleGuest: mocks.linkGuest,
   signInWithExistingAppleAccount: mocks.signInExistingAppleAccount,
   signInWithNativeAppleAccount: mocks.signInNativeAppleAccount,
 }));
@@ -113,6 +115,9 @@ describe(signInWithNativeApple, () => {
     // oxlint-disable-next-line unicorn/no-useless-undefined -- Vitest's promise shorthand requires an explicit resolved value.
     mocks.enforceSignInRateLimit.mockResolvedValue(undefined);
     mocks.exchangeAuthorizationCode.mockResolvedValue(authorization);
+
+    // oxlint-disable-next-line unicorn/no-useless-undefined -- Vitest's promise shorthand requires an explicit resolved value.
+    mocks.linkGuest.mockResolvedValue(undefined);
 
     // oxlint-disable-next-line unicorn/no-useless-undefined -- Vitest's promise shorthand requires an explicit resolved value.
     mocks.revokeToken.mockResolvedValue(undefined);
@@ -320,6 +325,40 @@ describe(signInWithNativeApple, () => {
       });
     },
   );
+
+  it("undoes the sign-in when the guest's progress can't move to the new account", async () => {
+    const subject = `apple-${randomUUID()}`;
+    const user = await createTestUser();
+
+    const [account, sessionResponse] = await Promise.all([
+      createAppleAccount({ subject, userId: user.id }),
+      createSessionResponse({ userId: user.id }),
+    ]);
+
+    verifySubject(subject);
+    mocks.linkGuest.mockRejectedValue(new Error("Guest link failed"));
+
+    mocks.signInNativeAppleAccount.mockResolvedValue({
+      changes: { accountId: account.id, sessionToken: sessionResponse.token, userId: user.id },
+      response: sessionResponse,
+      success: true,
+    });
+
+    await expect(signInWithNativeApple(nativeSignInRequest)).rejects.toThrow("Guest link failed");
+
+    expect(mocks.linkGuest).toHaveBeenCalledExactlyOnceWith({
+      headers: nativeSignInRequest.headers,
+      userId: user.id,
+    });
+
+    await expect(prisma.user.findUnique({ where: { id: user.id } })).resolves.toBeNull();
+
+    expect(mocks.revokeToken).toHaveBeenCalledExactlyOnceWith({
+      clientIdentifier: "com.zoonk.dev",
+      token: authorization.refreshToken,
+      tokenType: "refresh_token",
+    });
+  });
 });
 
 describe(reauthorizeAppleForAccountDeletion, () => {
