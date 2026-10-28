@@ -205,7 +205,7 @@ function speedFindings(load: LoadMeasurement): Finding[] {
           },
         ]
       : blankFindings(load.blankSeenMs)),
-    ...budgetFinding({ budget: BUDGETS.lcpMs, check: "complete content", value: load.contentMs }),
+    ...budgetFinding({ budget: BUDGETS.lcpMs, check: "content", value: load.contentMs }),
     ...budgetFinding({ budget: BUDGETS.lcpMs, check: "LCP", value: load.lcpMs }),
     ...budgetFinding({ budget: BUDGETS.fcpMs, check: "FCP", value: load.fcpMs }),
     ...budgetFinding({
@@ -347,7 +347,7 @@ const TIMING_CHECKS = new Set([
   "FCP",
   "LCP",
   "blocking time",
-  "complete content",
+  "content",
   "late change",
   "memory",
   "navigation",
