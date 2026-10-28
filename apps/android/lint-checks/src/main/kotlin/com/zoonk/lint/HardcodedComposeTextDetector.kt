@@ -119,7 +119,7 @@ class HardcodedComposeTextDetector :
             ISSUE,
             expression,
             context.getLocation(expression),
-            "Move user-facing text to res/values/strings.xml and use stringResource (or pluralStringResource).",
+            "Move user-facing text to a res/values/strings*.xml catalog and use stringResource (or pluralStringResource).",
         )
     }
 

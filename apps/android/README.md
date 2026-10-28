@@ -43,7 +43,7 @@ Read [AGENTS.md](AGENTS.md) for architecture, platform, and contribution constra
 
 ## Localization
 
-Author English copy in [strings.xml](app/src/main/res/values/strings.xml), then use `stringResource` or `pluralStringResource`. Android resources are explicit, not automatically extracted from Kotlin.
+Author English copy in your feature's `app/src/main/res/values/strings_<feature>.xml`, with names prefixed by the feature (`today_blocks_left`); shared words live in [strings.xml](app/src/main/res/values/strings.xml). Each file is its own Eloqnt catalog. Then use `stringResource` or `pluralStringResource`. Android resources are explicit, not automatically extracted from Kotlin.
 
 ```sh
 pnpm --filter android i18n       # Translate missing/changed copy and prune removed entries

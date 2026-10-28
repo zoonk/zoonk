@@ -10,10 +10,16 @@ test("translatable resources cannot bypass Eloqnt via another XML file, locale, 
   onTestFinished(() => rm(root, { force: true, recursive: true }));
   const source = '<resources><string name="title">Home</string></resources>';
 
-  const paths = [
+  const tracked = [
     "app/src/main/res/values/strings.xml",
     "app/src/main/res/values-de/strings.xml",
+    "app/src/main/res/values/strings_today.xml",
+    "app/src/main/res/values-de/strings_today.xml",
+  ];
+
+  const untracked = [
     "app/src/main/res/values/feature.xml",
+    "app/src/main/res/values-de/strings_removed.xml",
     "app/src/main/res/values-ja/strings.xml",
     "app/src/debug/res/values/strings.xml",
   ];
@@ -24,13 +30,13 @@ test("translatable resources cannot bypass Eloqnt via another XML file, locale, 
     await writeFile(file, source);
   }
 
-  await Promise.all(paths.map((path) => writeCatalog(path)));
+  await Promise.all([...tracked, ...untracked].map((path) => writeCatalog(path)));
 
   await writeFile(
     join(root, "app/src/main/res/values/colors.xml"),
     '<resources><color name="background">#FFFFFF</color><string name="brand" translatable="false">Zoonk</string></resources>',
   );
 
-  const untracked = await untrackedCatalogs(root);
-  assert.deepEqual(untracked.toSorted(), paths.slice(2).toSorted());
+  const found = await untrackedCatalogs(root);
+  assert.deepEqual(found.toSorted(), untracked.toSorted());
 });

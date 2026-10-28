@@ -35,7 +35,7 @@ function sourceMessages(source: string) {
 }
 
 function translatedXml({ source = SOURCE, target = TARGET } = {}) {
-  const codec = createTrackedAndroidXmlCodec({ readSource: () => source });
+  const codec = createTrackedAndroidXmlCodec({ readSources: () => [source] });
 
   return codec.encode(createAndroidXmlCodec().decode(target), {
     locale: "es",
@@ -44,7 +44,7 @@ function translatedXml({ source = SOURCE, target = TARGET } = {}) {
 }
 
 function readTranslations({ source = SOURCE, target = translatedXml(), locale = "es" } = {}) {
-  return createTrackedAndroidXmlCodec({ readSource: () => source }).decode(target, {
+  return createTrackedAndroidXmlCodec({ readSources: () => [source] }).decode(target, {
     ...CONTEXT,
     locale,
   });
@@ -103,7 +103,7 @@ test("edited targets and targets copied into a different locale cannot reuse fin
 });
 
 test("partial writes do not certify untranslated messages", () => {
-  const codec = createTrackedAndroidXmlCodec({ readSource: () => SOURCE });
+  const codec = createTrackedAndroidXmlCodec({ readSources: () => [SOURCE] });
   const pending = codec.decode(TARGET, CONTEXT);
 
   const updated = pending.map((message) =>
@@ -125,7 +125,7 @@ test("partial writes do not certify untranslated messages", () => {
 });
 
 test("partial arrays cannot shift translated items onto a different source index", () => {
-  const codec = createTrackedAndroidXmlCodec({ readSource: () => SOURCE });
+  const codec = createTrackedAndroidXmlCodec({ readSources: () => [SOURCE] });
 
   const messages = codec
     .decode(TARGET, CONTEXT)
@@ -166,7 +166,7 @@ test("removed source IDs remain visible to Eloqnt's superfluous-key rule", () =>
 });
 
 test("source resources are never treated as untranslated or stamped", () => {
-  const codec = createTrackedAndroidXmlCodec({ readSource: () => SOURCE });
+  const codec = createTrackedAndroidXmlCodec({ readSources: () => [SOURCE] });
   const messages = codec.decode(SOURCE, { locale: "en", sourceLocale: "en" });
   assert.ok(messages.every((message) => message.message));
   assert.ok(!messages.some((message) => message.id === "brand"));
@@ -198,4 +198,32 @@ test("source-template filtering preserves XML escaping, CDATA, XLIFF, and format
       .decode(source)
       .map((message) => message.message),
   );
+});
+
+test("each catalog's target is written from its own source and checked against it", () => {
+  const today = `<resources>
+  <!-- Today -->
+  <string name="today_title">Today</string>
+</resources>`;
+
+  const codec = createTrackedAndroidXmlCodec({ readSources: () => [SOURCE, today] });
+
+  const messages = createAndroidXmlCodec()
+    .decode(today)
+    .map((message) => ({ ...message, message: "Hoy" }));
+
+  const target = codec.encode(messages, {
+    locale: "es",
+    sourceMessagesById: sourceMessages(today),
+  });
+
+  assert.match(target, /<!-- Today -->/u);
+  assert.doesNotMatch(target, /name="(?:brand|title|levels)"/u);
+
+  function decode(sources: string[]) {
+    return createTrackedAndroidXmlCodec({ readSources: () => sources }).decode(target, CONTEXT);
+  }
+
+  assert.equal(decode([SOURCE, today])[0]?.message, "Hoy");
+  assert.equal(decode([SOURCE, today.replace(">Today<", ">Your day<")])[0]?.message, "");
 });

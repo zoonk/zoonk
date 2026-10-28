@@ -16,12 +16,15 @@ function decodeXml(content: string) {
 /**
  * Treat stale values as missing so Eloqnt's existing lint and translate commands handle them.
  * Fingerprints travel with each locale's XML; CI needs neither Git history nor model credentials.
+ *
+ * `readSources` returns every catalog's source XML: Eloqnt doesn't tell a codec which file it
+ * reads, and Android resource names are unique across catalogs, so a message's ID finds its source.
  */
 export function createTrackedAndroidXmlCodec({
-  readSource,
+  readSources,
   sourceLocale = "en",
 }: {
-  readSource: () => string;
+  readSources: () => string[];
   sourceLocale?: string;
 }) {
   return defineCodec(() => ({
@@ -33,7 +36,12 @@ export function createTrackedAndroidXmlCodec({
       }
 
       const fingerprints = readFingerprints(content);
-      const sources = new Map(decodeXml(readSource()).map((message) => [message.id, message]));
+
+      const sources = new Map(
+        readSources()
+          .flatMap((xml) => decodeXml(xml))
+          .map((message) => [message.id, message]),
+      );
 
       function markStale(target: (typeof messages)[number]) {
         const source = sources.get(target.id);
@@ -48,9 +56,14 @@ export function createTrackedAndroidXmlCodec({
       return messages.map((message) => markStale(message));
     },
     encode(messages, { locale, sourceMessagesById }) {
-      // Source XML owns printf types, XLIFF metadata, and resource kinds.
+      // The catalog's source XML owns printf types, XLIFF metadata, resource kinds, and comments.
       const codec = createAndroidXmlCodec();
-      const sourceXml = readSource();
+      const [sourceId] = sourceMessagesById.keys();
+
+      const sourceXml =
+        readSources().find((xml) => decodeXml(xml).some((message) => message.id === sourceId)) ??
+        "<resources />";
+
       codec.decode(locale === sourceLocale ? sourceXml : translationTemplate(sourceXml));
       const complete = completeMessages({ messages, sources: sourceMessagesById });
       const xml = codec.encode(complete, { sourceMessagesById });
