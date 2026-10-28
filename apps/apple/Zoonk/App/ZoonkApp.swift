@@ -14,6 +14,7 @@ struct ZoonkApp: App {
   @State private var session: SessionStore
   @State private var settings: SettingsStore
   @State private var subscriptions: AppStoreSubscriptionStore
+  @State private var tutor: TutorStore
   private let cache: AppCache
   private let lessonPlayerAPI: LessonPlayerAPI
   private let lessonPlayerRoutes: LessonPlayerRoutes
@@ -48,6 +49,7 @@ struct ZoonkApp: App {
     _session = State(initialValue: dependencies.sessionStore)
     _settings = State(initialValue: dependencies.settingsStore)
     _subscriptions = State(initialValue: dependencies.subscriptionStore)
+    _tutor = State(initialValue: dependencies.tutorStore)
   }
 
   var body: some Scene {
@@ -74,6 +76,7 @@ struct ZoonkApp: App {
         .environment(session)
         .environment(settings)
         .environment(subscriptions)
+        .environment(tutor)
         .environment(\.privateImageLoader, privateImages)
         .environment(\.lessonPlayerAPI, lessonPlayerAPI)
         .environment(\.lessonCompletionHook, .invalidating(cache))
