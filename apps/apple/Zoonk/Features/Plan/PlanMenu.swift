@@ -1,9 +1,9 @@
 import SwiftUI
 
-/// The Plan's "…": what the learner does now and then. The exam's page (exam goals), sharing,
-/// talking to the buddy ("Talk to Zu"), reporting; last, what acts on the goal itself (pause or resume, archive), here on its
-/// own page so it's clear which goal changes. Archiving asks first, and so does resuming a goal
-/// whose plan it changes.
+/// The Plan's "…": what the learner does now and then. The exam's page (exam goals), the course
+/// the plan takes part of, sharing, talking to the buddy ("Talk to Zu") and reporting; last, what
+/// acts on the goal itself (pause or resume, archive), here on its own page so it's clear which
+/// goal changes. Archiving asks first, and so does resuming a goal whose plan it changes.
 struct PlanMenu: View {
   @Environment(AppRouter.self) private var router
   @Environment(SessionStore.self) private var session
@@ -25,14 +25,30 @@ struct PlanMenu: View {
 
   var body: some View {
     Menu {
-      if context.goal.kind == .exam {
-        Button {
-          router.open(.exam)
-        } label: {
-          Label {
-            Text("About the exam", tableName: "Plan", comment: "Opens the exam's page")
-          } icon: {
-            Image(systemName: "graduationcap")
+      Section {
+        if context.goal.kind == .exam {
+          Button {
+            router.open(.exam)
+          } label: {
+            Label {
+              Text("About the exam", tableName: "Plan", comment: "Opens the exam's page")
+            } icon: {
+              Image(systemName: "graduationcap")
+            }
+          }
+        }
+
+        if let course = context.plan.partialCourse {
+          Button {
+            router.open(.course(courseId: course.courseId, title: course.title))
+          } label: {
+            Label {
+              Text(
+                "See the full course", tableName: "Plan",
+                comment: "Opens the Library course the plan takes some chapters of")
+            } icon: {
+              Image(systemName: "books.vertical")
+            }
           }
         }
       }

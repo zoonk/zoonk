@@ -1,4 +1,4 @@
-import Foundation
+import SwiftUI
 
 enum CourseDestination: Hashable {
   case course(CourseReference)
@@ -30,6 +30,15 @@ struct CourseReference: Hashable {
     id = course.id
     imageURL = course.imageURL
     title = course.title
+  }
+
+  /// A course known only by its id and title, such as the one a plan is built from; its page
+  /// reads the rest.
+  init(id: String, title: String) {
+    description = nil
+    self.id = id
+    imageURL = nil
+    self.title = title
   }
 
   init(_ result: CatalogCourseSearchResult) {
@@ -93,5 +102,24 @@ struct ChapterReference: Hashable {
       source.reference.position
       ?? (source.chapter.courseID == source.reference.courseID ? source.chapter.position : nil)
     title = source.chapter.title
+  }
+}
+
+extension View {
+  /// The catalog's course and chapter pages, pushed on the stack that shows them.
+  func catalogDestinations() -> some View {
+    navigationDestination(for: CourseDestination.self) { destination in
+      Group {
+        switch destination {
+        case .course(let course):
+          CourseView(course: course)
+        case .chapter(let chapter):
+          ChapterView(chapter: chapter)
+        }
+      }
+      .navigationTitle(destination.title)
+      .navigationBarTitleDisplayMode(.inline)
+      .toolbar(removing: .title)
+    }
   }
 }

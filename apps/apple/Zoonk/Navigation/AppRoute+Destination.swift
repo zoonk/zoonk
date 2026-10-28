@@ -47,6 +47,12 @@ extension AppRoute {
       StatisticsScreen()
     case .catalog:
       CatalogScreen()
+    case .course(let courseId, let title):
+      CourseView(course: CourseReference(id: courseId, title: title))
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar(removing: .title)
+        .catalogDestinations()
     case .session:
       SessionScreen()
     case .logbook:

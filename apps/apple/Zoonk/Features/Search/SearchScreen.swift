@@ -87,19 +87,7 @@ struct SearchScreen: View {
     .task(id: query) {
       await searchCatalog()
     }
-    .navigationDestination(for: CourseDestination.self) { destination in
-      Group {
-        switch destination {
-        case .course(let course):
-          CourseView(course: course)
-        case .chapter(let chapter):
-          ChapterView(chapter: chapter)
-        }
-      }
-      .navigationTitle(destination.title)
-      .navigationBarTitleDisplayMode(.inline)
-      .toolbar(removing: .title)
-    }
+    .catalogDestinations()
     .sheet(isPresented: $isFeedbackPresented) {
       FeedbackSheet(
         api: FeedbackAPI.live(),

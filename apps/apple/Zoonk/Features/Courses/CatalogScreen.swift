@@ -21,18 +21,6 @@ struct CatalogScreen: View {
           tableName: "Navigation",
           comment: "Navigation title for browsing the public course catalog.")
       )
-      .navigationDestination(for: CourseDestination.self) { destination in
-        Group {
-          switch destination {
-          case .course(let course):
-            CourseView(course: course)
-          case .chapter(let chapter):
-            ChapterView(chapter: chapter)
-          }
-        }
-        .navigationTitle(destination.title)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar(removing: .title)
-      }
+      .catalogDestinations()
   }
 }

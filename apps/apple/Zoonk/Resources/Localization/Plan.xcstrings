@@ -9103,6 +9103,35 @@
         }
       }
     },
+    "See the full course" : {
+      "comment" : "Opens the Library course the plan takes some chapters of",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den ganzen Kurs ansehen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver el curso completo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voir le cours complet"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ver curso completo"
+          }
+        }
+      }
+    },
     "See the lessons" : {
       "comment" : "Writes a far topic's lessons now",
       "localizations" : {

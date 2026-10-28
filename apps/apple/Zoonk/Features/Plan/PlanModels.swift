@@ -24,8 +24,10 @@ struct GoalPlan: Decodable, Equatable, Sendable {
 
   struct Course: Decodable, Equatable, Sendable {
     let brandSlug: String
+    let chapterCount: Int
     let courseId: String
     let courseSlug: String
+    let planChapterCount: Int
     let title: String
   }
 
@@ -241,6 +243,17 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   let areas: [Area]
   let bases: Bases?
   let course: Course?
+
+  /// The Library course the plan picks some chapters of, whose page shows all of it.
+  var partialCourse: Course? {
+    guard let course, !course.brandSlug.isEmpty, course.planChapterCount > 0,
+      course.planChapterCount < course.chapterCount
+    else {
+      return nil
+    }
+
+    return course
+  }
   /// Set once nothing of the plan is left.
   let end: End?
   let estimate: Estimate

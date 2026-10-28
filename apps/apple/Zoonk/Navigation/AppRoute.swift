@@ -16,6 +16,8 @@ enum AppRoute: Hashable, Identifiable {
   case earlierQuestions
   case statistics
   case catalog
+  /// A Library course's page, as main's "See the full course" opens it.
+  case course(courseId: String, title: String)
 
   // Full-screen tasks
   case session
@@ -58,7 +60,7 @@ enum AppRoute: Hashable, Identifiable {
   var presentation: Presentation {
     switch self {
     case .subject, .chapter, .languageUnit, .mindMaps, .exam, .mockChooser, .mistakes, .speaking,
-      .earlierQuestions, .statistics, .catalog:
+      .earlierQuestions, .statistics, .catalog, .course:
       .push
     default:
       .task
