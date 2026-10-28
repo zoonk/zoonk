@@ -14,8 +14,7 @@ export type LiveCallAdmissionState = {
   submissionId: number;
 };
 
-/** Typed in dollars, stored in whole micros. */
-function toMicros(dollars: string | null): number | null {
+function dollarsToMicros(dollars: string | null): number | null {
   const value = Number(dollars);
   return dollars?.trim() && Number.isFinite(value) ? Math.round(value * MICROS_PER_DOLLAR) : null;
 }
@@ -29,7 +28,7 @@ export async function updateLiveCallAdmissionAction(
 
   const parsed = liveCallAdmissionInputSchema.safeParse({
     admission: parseFormField(formData, "admission"),
-    freeDailyBudgetMicros: toMicros(parseFormField(formData, "freeDailyBudget")),
+    freeDailyBudgetMicros: dollarsToMicros(parseFormField(formData, "freeDailyBudget")),
   });
 
   if (!parsed.success) {
