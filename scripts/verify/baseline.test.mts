@@ -18,6 +18,7 @@ function load(
     bytes: { html: 20_000, scripts: overrides.scripts ?? BEFORE.scripts, total: 900_000 },
     fcpMs: 900,
     lcpMs: overrides.lcpMs ?? BEFORE.lcpMs,
+    linksLiveMs: null,
     mainThreadMs: 300,
     path,
     production: true,

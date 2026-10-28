@@ -68,8 +68,9 @@ function recordTraffic(page: Page, actions: Map<string, string>) {
   page.on("request", (request) => {
     const headers = request.headers();
 
-    const record = {
+    const record: RequestRecord = {
       action: actions.get(headers["next-action"] ?? ""),
+      at: Date.now(),
       headers,
       method: request.method(),
       resourceType: request.resourceType(),

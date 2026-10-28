@@ -12,7 +12,7 @@ import {
   waitForQuiet,
 } from "./browser.mts";
 import { type Finding, type LoadMeasurement, judgeLoad, totalBlockingTime } from "./checks.mts";
-import { type NavigationMeasurement, judgeNavigation } from "./navigation-checks.mts";
+import { measureFrames } from "./content-frames.mts";
 import {
   findOverflow,
   findTruncated,
@@ -22,12 +22,18 @@ import {
   visibleLinks,
 } from "./probe.mts";
 import { readStatements } from "./queries.mts";
-import { classifyRequest, pathOf, redactQuery } from "./requests.mts";
+import {
+  classifyRequest,
+  inlineRscCharacters,
+  pathOf,
+  redactQuery,
+  summarizePrefetches,
+} from "./requests.mts";
 import { readCpuMs } from "./server-process.mts";
-import { LOAD_TIMEOUT_MS, tapTo } from "./tap.mts";
+import { LOAD_TIMEOUT_MS } from "./tap.mts";
 import { type Scheme, type ViewportName } from "./viewports.mts";
 
-const NETWORK_IDLE_MS = 15_000;
+export const NETWORK_IDLE_MS = 15_000;
 
 /** Where and how a run measures: the app, who is signed in, and the run's output folder. */
 export type Target = {
@@ -57,21 +63,10 @@ export type LoadReport = LoadMeasurement & {
   viewport: ViewportName;
 };
 
-export type NavigationReport = NavigationMeasurement & {
-  findings: Finding[];
-  /** Paints after the tap, in ms since it, saved in `framesDirectory`. */
-  frames: number[];
-  framesDirectory: string;
-  from: string;
-  settleMs: number | null;
-  to: string;
-  viewport: ViewportName;
-};
-
 const QUERY_HASH_LENGTH = 8;
 
 /** A file name for a path: its redacted form, plus a hash of its query so two queries don't collide. */
-function slug(path: string): string {
+export function slug(path: string): string {
   const { search } = new URL(path, "http://slug.invalid");
 
   const name =
@@ -109,18 +104,19 @@ async function readLoadedPage(page: Page, traffic: Traffic) {
 
   const links = await page.evaluate(visibleLinks);
   const probe = await page.evaluate(readProbe);
-  const shifts = probe?.shifts ?? [];
+  const fcpMs = probe?.fcp ?? null;
 
   return {
+    ...measureFrames(probe?.mainFrames ?? [], fcpMs),
+    ...summarizePrefetches(traffic.requests, probe?.timeOrigin ?? null),
     blankSeenMs: probe?.blankFrames[0] ?? null,
-    blockingMs: probe ? totalBlockingTime(probe.longTasks, probe.fcp) : null,
+    blockingMs: probe ? totalBlockingTime(probe.longTasks, fcpMs) : null,
     bytes: await page.evaluate(transferredBytes),
-    contentMs: probe?.lastMutationAt ?? null,
-    fcpMs: probe?.fcp ?? null,
+    fcpMs,
     lcpMs: probe?.lcp ?? null,
     overflow: await page.evaluate(findOverflow),
     production: !(await page.evaluate(isNextDev)),
-    shifts,
+    shifts: probe?.shifts ?? [],
     skeletonLastMs: probe?.skeletonFrames.at(-1) ?? null,
     skeletonSeenMs: probe?.skeletonFrames[0] ?? null,
     timeOrigin: await page.evaluate(() => performance.timeOrigin),
@@ -189,6 +185,7 @@ export async function measureLoad(
       pageErrors: traffic.pageErrors,
       regularContrast: appearances.regularContrast,
       requests: traffic.requests,
+      rscBytes: inlineRscCharacters((await response?.text().catch(() => "")) ?? ""),
       serverCpuMs: cpuBefore === null || cpuAfter === null ? null : cpuAfter - cpuBefore,
       settled,
       ttfbMs: responseStart >= 0 ? responseStart : null,
@@ -214,134 +211,4 @@ export async function measureLoad(
   } finally {
     await context.close();
   }
-}
-
-type Probe = NonNullable<Awaited<ReturnType<typeof readProbe>>>;
-
-/**
- * Times one tap from the probe read before it and after the next page settled, in ms since the
- * epoch, so a tap that loaded a whole new document (whose probe started over) is timed too.
- */
-function timeTap({ after, before, tapAt }: { after: Probe; before: Probe; tapAt: number }) {
-  const fullLoad = after.timeOrigin !== before.timeOrigin;
-  const pageClick = fullLoad ? undefined : after.clicks[before.clicks.length];
-  const clickAt = pageClick === undefined ? tapAt : before.timeOrigin + pageClick;
-
-  const since = (at: number | null | undefined) =>
-    at === null || at === undefined ? null : after.timeOrigin + at - clickAt;
-
-  const url = after.urls.find((entry) => after.timeOrigin + entry.at >= clickAt);
-
-  return {
-    blankSeenMs: since(after.blankFrames.find((at) => after.timeOrigin + at >= clickAt)),
-    commitMs: since(fullLoad ? after.fcp : url?.at),
-    fullLoad,
-    settleMs: since(after.lastMutationAt),
-    shifts: fullLoad ? after.shifts : after.shifts.slice(before.shifts.length),
-    skeletonSeenMs: since(after.skeletonFrames.find((at) => after.timeOrigin + at >= clickAt)),
-  };
-}
-
-type Opened = Awaited<ReturnType<typeof openPage>>;
-
-/** One tap from the page showing now to `to`: what it did, what it painted, and how it judged. */
-async function measureTap(
-  target: Target,
-  {
-    from,
-    name,
-    opened,
-    production,
-    to,
-    viewport,
-  }: {
-    from: string;
-    name: string;
-    opened: Opened;
-    production: boolean;
-    to: string;
-    viewport: ViewportName;
-  },
-): Promise<NavigationReport> {
-  const { cdp, page, traffic } = opened;
-
-  const seen = {
-    console: traffic.console.length,
-    errors: traffic.pageErrors.length,
-    requests: traffic.requests.length,
-  };
-
-  const before = await page.evaluate(readProbe);
-  const screencast = await recordScreencast(cdp);
-  const tapAt = Date.now();
-  const linkFound = await tapTo({ baseUrl: target.baseUrl, page, to, viewport });
-  const settled = await waitForQuiet(page, traffic);
-  await screencast.stop();
-  const after = await page.evaluate(readProbe);
-  const timed = before && after && linkFound ? timeTap({ after, before, tapAt }) : null;
-  const framesDirectory = join(target.out, "navigations", `${viewport}-${name}-frames`);
-
-  const measurement: NavigationMeasurement = {
-    arrived: pathOf(page.url()) === pathOf(new URL(to, target.baseUrl)),
-    blankSeenMs: timed?.blankSeenMs ?? null,
-    commitMs: timed?.commitMs ?? null,
-    console: traffic.console.slice(seen.console),
-    contentMs: timed?.settleMs ?? null,
-    fullLoad: timed?.fullLoad ?? false,
-    linkFound,
-    pageErrors: traffic.pageErrors.slice(seen.errors),
-    production,
-    requests: traffic.requests.slice(seen.requests),
-    settled,
-    shifts: timed?.shifts ?? [],
-    skeletonSeenMs: timed?.skeletonSeenMs ?? null,
-  };
-
-  return {
-    ...measurement,
-    findings: judgeNavigation(measurement),
-    // Named by ms since the tap, so the sheet shows what the learner saw after tapping.
-    frames: await saveFrames({
-      directory: framesDirectory,
-      frames: screencast.frames,
-      timeOrigin: tapAt,
-    }),
-    framesDirectory,
-    from: redactQuery(from),
-    settleMs: timed?.settleMs ?? null,
-    to: redactQuery(to),
-    viewport,
-  };
-}
-
-/** Opens the first path, then taps through to each next one by its link, as a learner would. */
-export async function measureNavigations(
-  target: Target,
-  { paths, viewport }: { paths: string[]; viewport: ViewportName },
-): Promise<NavigationReport[]> {
-  const opened = await openPage({ ...target, scheme: "light", viewport });
-  const { context, page, traffic } = opened;
-  const reports: NavigationReport[] = [];
-
-  try {
-    await page.goto(new URL(paths[0] ?? "/", target.baseUrl).toString(), {
-      timeout: LOAD_TIMEOUT_MS,
-      waitUntil: "load",
-    });
-
-    await page.waitForLoadState("networkidle", { timeout: NETWORK_IDLE_MS }).catch(() => null);
-    await waitForQuiet(page, traffic);
-    const production = !(await page.evaluate(isNextDev));
-
-    for (const [index, to] of paths.slice(1).entries()) {
-      const from = paths[index] ?? "/";
-      const name = `${slug(from)}-to-${slug(to)}`;
-      // oxlint-disable-next-line no-await-in-loop -- Each tap starts where the last one ended.
-      reports.push(await measureTap(target, { from, name, opened, production, to, viewport }));
-    }
-  } finally {
-    await context.close();
-  }
-
-  return reports;
 }

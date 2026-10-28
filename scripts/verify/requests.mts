@@ -2,6 +2,8 @@
 export type RequestRecord = {
   /** The Server Action it ran, by name, when the build's manifest knows its id. */
   action?: string;
+  /** When it was sent, in ms since the epoch. */
+  at?: number;
   failure?: string;
   headers: Record<string, string>;
   method: string;
@@ -107,4 +109,32 @@ export function describeRequest({
   const id = headers["next-action"];
   const ran = action ?? (id ? `action ${id}` : null);
   return `${method} ${origin}${pathname}${ran ? ` (Server Action ${ran})` : ""}`;
+}
+
+/**
+ * How many prefetches a load started, and when its links came alive (its first prefetch, in ms
+ * since the navigation started at `timeOrigin`): before that, a tap reloads the whole page.
+ */
+export function summarizePrefetches(requests: RequestRecord[], timeOrigin: number | null) {
+  const prefetches = requests.filter((request) => classifyRequest(request) === "prefetch");
+  const firstAt = prefetches[0]?.at;
+
+  return {
+    linksLiveMs: firstAt === undefined || timeOrigin === null ? null : firstAt - timeOrigin,
+    prefetches: prefetches.length,
+  };
+}
+
+/**
+ * The page's RSC data written into its HTML (Next.js's `self.__next_f` pushes), in characters:
+ * what its client components receive, which a prefetch of the page carries too.
+ */
+export function inlineRscCharacters(html: string): number {
+  return [...html.matchAll(/self\.__next_f\.push\(\[1,(?<chunk>"(?:[^"\\]|\\.)*")\]\)/gu)].reduce(
+    (total, match) => {
+      const chunk: unknown = JSON.parse(match.groups?.chunk ?? '""');
+      return total + (typeof chunk === "string" ? chunk.length : 0);
+    },
+    0,
+  );
 }

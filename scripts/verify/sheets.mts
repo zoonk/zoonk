@@ -3,7 +3,8 @@ import { basename, dirname, join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { type Browser } from "@playwright/test";
 import { frameFile } from "./browser.mts";
-import { type LoadReport, type NavigationReport } from "./measure.mts";
+import { type LoadReport } from "./measure.mts";
+import { type NavigationReport } from "./navigations.mts";
 
 const SHEET_VIEWPORT = { height: 900, width: 1600 };
 

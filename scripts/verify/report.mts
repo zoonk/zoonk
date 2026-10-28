@@ -1,6 +1,7 @@
 import { relative } from "node:path";
 import { CLS_DIGITS, type Finding, cumulativeLayoutShift } from "./checks.mts";
-import { type LoadReport, type NavigationReport } from "./measure.mts";
+import { type LoadReport } from "./measure.mts";
+import { type NavigationReport } from "./navigations.mts";
 import { classifyRequest } from "./requests.mts";
 
 export type Place = { page: string; screen: string };
@@ -80,8 +81,8 @@ function list(title: string, groups: Group[], screensPerPage: Map<string, number
 
 function loadRows(loads: LoadReport[], out: string): string[] {
   return [
-    "| Page | Screen | TTFB | FCP | Content (last DOM update) | Blank at | LCP | Blocking | CLS | Main thread | Server CPU | SQL (ms) | KB (HTML/JS/all) | Skeleton shown | Paints (last) | Screenshots |",
-    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+    "| Page | Screen | TTFB | FCP | Shell words | Content | Blank at | LCP | Links live | Blocking | CLS | Main thread | Server CPU | SQL (ms) | KB (HTML/JS/all) | RSC KB | Prefetches | Skeleton shown | Paints (last) | Screenshots |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ...loads.map((load) => {
       const kilobytes = [load.bytes.html, load.bytes.scripts, load.bytes.total].map((bytes) =>
         Math.round(bytes / KILOBYTE),
@@ -92,15 +93,19 @@ function loadRows(loads: LoadReport[], out: string): string[] {
         load.viewport,
         format(load.ttfbMs),
         format(load.fcpMs),
+        load.shellWords ?? "–",
         format(load.contentMs),
         format(load.blankSeenMs),
         format(load.lcpMs),
+        format(load.linksLiveMs),
         format(load.blockingMs),
         cumulativeLayoutShift(load.shifts).toFixed(CLS_DIGITS),
         format(load.mainThreadMs),
         format(load.serverCpuMs),
         load.database ? `${load.database.count} (${Math.round(load.database.ms)})` : "–",
         kilobytes.join("/"),
+        Math.round(load.rscBytes / KILOBYTE),
+        load.prefetches,
         load.skeletonSeenMs === null
           ? "–"
           : `${Math.round(load.skeletonSeenMs)}–${format(load.skeletonLastMs)}`,
@@ -125,11 +130,11 @@ function navigationRows(navigations: NavigationReport[]): string[] {
   return [
     "## Navigations",
     "",
-    "| From → to | Screen | Destination frame | Content (last DOM update) | Blank at | Skeleton at | Requests after the tap |",
-    "| --- | --- | --- | --- | --- | --- | --- |",
+    "| From → to | Screen | Taps | Response | Destination frame | Content | From prefetch | Blank at | Skeleton at | Flashes | Requests after the tap |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ...navigations.map(
       (navigation) =>
-        `| ${navigation.from} → ${navigation.to} | ${navigation.viewport} | ${format(navigation.commitMs)} | ${format(navigation.settleMs)} | ${format(navigation.blankSeenMs)} | ${format(navigation.skeletonSeenMs)} | ${countKinds(navigation)} |`,
+        `| ${navigation.from} → ${navigation.to} | ${navigation.viewport} | ${navigation.mode}${navigation.fullLoad ? " (reloaded)" : ""} | ${format(navigation.responseMs)} | ${format(navigation.commitMs)} | ${format(navigation.contentMs)} | ${navigation.usedPrefetch ? "yes" : "no"} | ${format(navigation.blankSeenMs)} | ${format(navigation.skeletonSeenMs)} | ${navigation.flashes} | ${countKinds(navigation)} |`,
     ),
     "",
   ];

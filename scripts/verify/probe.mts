@@ -1,3 +1,5 @@
+import { type MainFrame } from "./content-frames.mts";
+
 /**
  * What `pnpm verify:pages` watches inside the page. Every function here runs in the browser and
  * reads nothing outside itself, so Playwright can send it with `addInitScript` or `evaluate`; that
@@ -12,6 +14,10 @@ export type ProbeState = {
   lcp: number | null;
   /** Main-thread tasks over 50 ms: while one runs, the page can't answer a tap. */
   longTasks: { at: number; duration: number }[];
+  /** The main region's skeleton and words, recorded when either changes (`content-frames.mts`). */
+  mainFrames: MainFrame[];
+  /** Frames on which a tapped link showed it was waiting (`data-link-pending`, `aria-busy`). */
+  pendingFrames: number[];
   shifts: { at: number; sources: string[]; value: number }[];
   /** Frames on which a loading skeleton was visible. */
   skeletonFrames: number[];
@@ -27,6 +33,8 @@ declare global {
 export function installProbe() {
   const MAX_FRAMES = 2000;
   const TEXT_LENGTH = 30;
+  /** Counting the main region's words lays it out, so it's read at most this often. */
+  const WORDS_EVERY_MS = 100;
 
   const state: ProbeState = {
     blankFrames: [],
@@ -35,6 +43,8 @@ export function installProbe() {
     lastMutationAt: 0,
     lcp: null,
     longTasks: [],
+    mainFrames: [],
+    pendingFrames: [],
     shifts: [],
     skeletonFrames: [],
     urls: [{ at: 0, href: location.href }],
@@ -147,6 +157,43 @@ export function installProbe() {
 
     if (state.urls.at(-1)?.href !== location.href) {
       state.urls.push({ at: now, href: location.href });
+    }
+
+    readMain(now);
+
+    if (
+      state.pendingFrames.length < MAX_FRAMES &&
+      document.querySelector('[data-link-pending], a[aria-busy="true"]')
+    ) {
+      state.pendingFrames.push(now);
+    }
+  }
+
+  let wordsReadAt = -Infinity;
+  let words = 0;
+
+  /** The page's main region (the body on a page without one): its skeleton, and its words. */
+  function readMain(now: number) {
+    const main = document.querySelector("main") ?? document.body;
+
+    if (!main || state.mainFrames.length >= MAX_FRAMES) {
+      return;
+    }
+
+    const skeleton = [...main.querySelectorAll('[data-slot="skeleton"]')].some(
+      (element) => element.checkVisibility() && element.getClientRects().length > 0,
+    );
+
+    if (now - wordsReadAt >= WORDS_EVERY_MS) {
+      // oxlint-disable-next-line unicorn/prefer-dom-node-text-content -- Only `innerText` skips the router's hidden pages (`display: none`), which `textContent` would count.
+      words = main.innerText.split(/\s+/u).filter(Boolean).length;
+      wordsReadAt = now;
+    }
+
+    const last = state.mainFrames.at(-1);
+
+    if (!last || last.skeleton !== skeleton || last.words !== words) {
+      state.mainFrames.push({ at: now, skeleton, words });
     }
   }
 

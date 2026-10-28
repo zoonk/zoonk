@@ -7,8 +7,13 @@ import {
   markBusy,
   totalBlockingTime,
 } from "./checks.mts";
-import { type NavigationMeasurement, judgeNavigation } from "./navigation-checks.mts";
-import { type RequestRecord, classifyRequest, pathOf, redactQuery } from "./requests.mts";
+import {
+  type RequestRecord,
+  classifyRequest,
+  inlineRscCharacters,
+  pathOf,
+  redactQuery,
+} from "./requests.mts";
 import { parseCpuTime } from "./server-process.mts";
 
 const PAGE = "http://localhost:3000";
@@ -16,6 +21,8 @@ const STEADY_GAP_MS = 800;
 const FIRST_PAINT_MS = 800;
 const BLOCKED_MS = 70;
 const STRADDLE_BLOCKED_MS = 150;
+/** More RSC data than a page should send: 400 KB. */
+const HEAVY_RSC_BYTES = 409_600;
 
 function requestTo(path: string, overrides: Partial<RequestRecord> = {}): RequestRecord {
   return { headers: {}, method: "GET", resourceType: "fetch", url: `${PAGE}${path}`, ...overrides };
@@ -29,15 +36,20 @@ function load(overrides: Partial<LoadMeasurement> = {}): LoadMeasurement {
     console: [],
     contentMs: null,
     fcpMs: 300,
+    flashes: 0,
     lastPaintMs: 400,
     lcpMs: 400,
+    linksLiveMs: null,
     overflow: { offenders: [], scrollWidth: 390, viewportWidth: 390 },
     pageErrors: [],
+    prefetches: 0,
     production: true,
     regularContrast: [],
     requests: [requestTo("/today", { resourceType: "document", status: 200 })],
+    rscBytes: 0,
     serverCpuMs: 40,
     settled: true,
+    shellWords: 3,
     shifts: [],
     skeletonLastMs: null,
     skeletonSeenMs: null,
@@ -51,6 +63,14 @@ function load(overrides: Partial<LoadMeasurement> = {}): LoadMeasurement {
 function checks(measurement: LoadMeasurement) {
   return judgeLoad(measurement).map((finding) => `${finding.level} ${finding.check}`);
 }
+
+describe("a page's RSC data", () => {
+  it("counts the characters of every `self.__next_f` chunk in the HTML", () => {
+    const html = String.raw`<script>self.__next_f.push([1,"abc"])</script><script>self.__next_f.push([1,"de\nf"])</script>`;
+
+    assert.equal(inlineRscCharacters(html), "abc".length + "de\nf".length);
+  });
+});
 
 describe("what a page's requests were for", () => {
   it.each([
@@ -230,76 +250,16 @@ describe("main-thread blocking and cut-off text", () => {
   it("asks about text that doesn't fit, once per text", () => {
     assert.deepEqual(checks(load({ truncated: ["Por que os preços se mexem"] })), ["warn cut off"]);
   });
-});
 
-describe("judging a navigation", () => {
-  const navigation: NavigationMeasurement = {
-    arrived: true,
-    blankSeenMs: null,
-    commitMs: 40,
-    console: [],
-    contentMs: null,
-    fullLoad: false,
-    linkFound: true,
-    pageErrors: [],
-    production: true,
-    requests: [],
-    settled: true,
-    shifts: [],
-    skeletonSeenMs: null,
-  };
-
-  it("passes a prefetched page that appears at once", () => {
-    assert.deepEqual(judgeNavigation(navigation), []);
-  });
-
-  it("allows skeletons, fails a slow switch, and asks about a missing link", () => {
-    const slow = judgeNavigation({ ...navigation, commitMs: 1500, skeletonSeenMs: 30 });
-
-    assert.deepEqual(
-      slow.map((finding) => `${finding.level} ${finding.check}`),
-      ["fail navigation"],
-    );
-
-    assert.equal(judgeNavigation({ ...navigation, linkFound: false })[0]?.level, "warn");
-  });
-
-  it("fails a tap that never reached its page, and errors along the way", () => {
-    const lost = judgeNavigation({ ...navigation, arrived: false, commitMs: null });
-
-    assert.deepEqual(
-      lost.map((finding) => `${finding.level} ${finding.check}`),
-      ["fail navigation"],
-    );
-
-    const broken = judgeNavigation({
-      ...navigation,
-      requests: [requestTo("/plan", { headers: { rsc: "1" }, status: 500 })],
-    });
-
-    assert.deepEqual(
-      broken.map((finding) => `${finding.level} ${finding.check}`),
-      ["fail failed response"],
-    );
-  });
-
-  it("fails missing first paints and destination frames", () => {
+  it("fails a missing first paint and a blank painted frame", () => {
     assert.ok(checks(load({ fcpMs: null })).includes("fail blank frame"));
-    assert.equal(judgeNavigation({ ...navigation, commitMs: null })[0]?.check, "navigation");
-  });
-
-  it("fails blank painted frames on loads and taps", () => {
     assert.deepEqual(checks(load({ blankSeenMs: 40 })), ["fail blank frame"]);
-    assert.equal(judgeNavigation({ ...navigation, blankSeenMs: 40 })[0]?.check, "blank frame");
   });
 
-  it("asks about a tap that loaded a whole new document", () => {
-    const full = judgeNavigation({ ...navigation, fullLoad: true });
-
-    assert.deepEqual(
-      full.map((finding) => finding.check),
-      ["full page load"],
-    );
+  it("fails a page that flashes, and asks about a wordless shell and a heavy payload", () => {
+    assert.deepEqual(checks(load({ flashes: 1 })), ["fail flash"]);
+    assert.deepEqual(checks(load({ shellWords: 0 })), ["warn shell words"]);
+    assert.deepEqual(checks(load({ rscBytes: HEAVY_RSC_BYTES })), ["warn payload"]);
   });
 });
 

@@ -10,14 +10,10 @@ import { readActionNames } from "./actions.mts";
 import { compareWithBaseline, comparisonRows, readBaseline } from "./baseline.mts";
 import { type Finding, markBusy } from "./checks.mts";
 import { checkExposure, readLearner } from "./exposure.mts";
-import {
-  type LoadReport,
-  type NavigationReport,
-  measureLoad,
-  measureNavigations,
-  warmUp,
-} from "./measure.mts";
+import { type LoadReport, measureLoad, warmUp } from "./measure.mts";
 import { type SoakReport, judgeSoak, measureSoak, soakRows } from "./memory.mts";
+import { type NavigationMode } from "./navigation-checks.mts";
+import { type NavigationReport, measureNavigations } from "./navigations.mts";
 import {
   type RenderReport,
   findUnindexed,
@@ -46,9 +42,11 @@ const { positionals, values } = parseArgs({
   allowPositionals: true,
   options: {
     baseline: { type: "string" },
+    early: { default: false, type: "boolean" },
     email: { type: "string" },
     intruder: { type: "string" },
     nav: { default: false, type: "boolean" },
+    "no-prefetch": { default: false, type: "boolean" },
     out: { type: "string" },
     queries: { type: "string" },
     schemes: { default: SCHEMES.join(","), type: "string" },
@@ -123,6 +121,17 @@ const target = {
   throttle: values.throttle,
 };
 
+/** How `--nav` taps: after prefetches landed, with them blocked, or right after a cold load. */
+function navigationMode(): NavigationMode {
+  if (values.early) {
+    return "early";
+  }
+
+  return values["no-prefetch"] ? "noPrefetch" : "prefetched";
+}
+
+const mode = navigationMode();
+
 const loads: LoadReport[] = [];
 const navigations: NavigationReport[] = [];
 const sheets: string[] = [];
@@ -154,7 +163,7 @@ try {
     for (const viewport of navigationViewports.length > 0
       ? navigationViewports
       : viewports.slice(0, 1)) {
-      navigations.push(...(await measureNavigations(target, { paths, viewport })));
+      navigations.push(...(await measureNavigations(target, { mode, paths, viewport })));
     }
   }
 
@@ -203,6 +212,11 @@ const comparison = baseline
 const header = [
   `Target: ${baseUrl} (${production ? "production build" : "next dev: speed, skeletons and prefetching aren't judged; measure them on pnpm start"})`,
   `Throttled: ${values.throttle ? `${THROTTLING.cpuRate}× CPU, slow 4G` : "no"}; signed in: ${values.email ?? "no"}; server CPU: ${serverPid ? `pid ${serverPid}` : "not measured"}`,
+  ...(values.nav
+    ? [
+        `Taps: ${{ early: "right after a cold load showed its content, before its code was ready", noPrefetch: "with the next pages' prefetches blocked", prefetched: "after the page's prefetches landed" }[mode]}`,
+      ]
+    : []),
   `Output: ${out}`,
   `Machine load: ${loadAtStart.toFixed(1)} runnable tasks per core at the start, ${loadAtEnd.toFixed(1)} at the end${busy ? " (busy: speed, memory and regressions are inconclusive; main-thread work and counts still hold)" : ""}`,
 ];

@@ -1,4 +1,5 @@
-import { type RequestRecord, classifyRequest, describeRequest } from "./requests.mts";
+import { errorFindings, requestFindings } from "./request-checks.mts";
+import { type RequestRecord } from "./requests.mts";
 
 /**
  * The bar `pnpm verify:pages` holds a page to. A `fail` must be fixed (or the change explained);
@@ -17,11 +18,19 @@ export const BUDGETS = {
   lcpMs: { fail: 2500, warn: 1200 },
   /** From the click to the new page's URL: a prefetched page is there at once. */
   navigationCommitMs: { fail: 1000, warn: 200 },
+  /** A page's RSC data in its HTML: client components' props, which every prefetch carries too. */
+  rscKb: { warn: 300 },
   /** The server's CPU time during one page load, its prefetches included. */
   serverCpuMs: { fail: 1000, warn: 250 },
+  /** From the tap to its page's content on screen: skeletons on the way are fine. */
+  tapContentMs: { fail: 2500, warn: 1000 },
+  /** From the tap to anything it changed on screen: the new page, or the link showing it's waiting. */
+  tapResponseMs: { fail: 500, warn: 100 },
 };
 
 export const CLS_DIGITS = 4;
+
+const KILOBYTE = 1024;
 
 /**
  * One problem. `message` stays the same wherever it happens, so the report lists it once with
@@ -41,8 +50,21 @@ export type LayoutShift = { at: number; sources: string[]; value: number };
 export type LoadMeasurement = {
   accessibility: string[];
   blankSeenMs: number | null;
-  /** Last DOM update, a conservative proxy for complete content. */
+  /**
+   * When the page first showed its content: no skeleton in its main region and nearly all the
+   * words it settled on (`content-frames.mts`).
+   */
   contentMs: number | null;
+  /** Times it showed its content, then a skeleton or most of it gone, then its content again. */
+  flashes: number;
+  /** When its links came alive (its first prefetch), in ms since the navigation started. */
+  linksLiveMs: number | null;
+  /** How many prefetches it started while loading. */
+  prefetches: number;
+  /** Its RSC data written into the HTML, in characters: what client components receive. */
+  rscBytes: number;
+  /** Words the first paint showed in the page's main region; null without a first paint. */
+  shellWords: number | null;
   /** Total Blocking Time: each long task's time past 50 ms, after the first contentful paint. */
   blockingMs: number | null;
   console: { text: string; type: "error" | "warning" }[];
@@ -69,8 +91,6 @@ export type LoadMeasurement = {
   unprefetchedLinks: string[];
 };
 
-const HTTP_CLIENT_ERROR = 400;
-const HTTP_SERVER_ERROR = 500;
 const LISTED_SOURCES = 5;
 /** Core Web Vitals' session window: shifts under 1 s apart, within 5 s of the first. */
 const SESSION_GAP_MS = 1000;
@@ -167,84 +187,6 @@ export function blankFindings(seenMs: number | null): Finding[] {
       ];
 }
 
-/**
- * Chrome logs every failed response as a bare "Failed to load resource", which the failed-response
- * check names with its URL, and Vercel serves `/_vercel/` scripts only on Vercel.
- */
-function isNoise(text: string): boolean {
-  return text.startsWith("Failed to load resource") || text.includes("/_vercel/");
-}
-
-/** Errors and failed responses: what breaks the page whatever server it runs on. */
-export function errorFindings(
-  load: Pick<LoadMeasurement, "console" | "pageErrors" | "requests">,
-): Finding[] {
-  const own = load.requests.filter((request) => classifyRequest(request) !== "analytics");
-
-  // Next.js cancels prefetch bodies it has read enough of, and a navigation aborts the requests
-  // the page it leaves still had out.
-  const broken = own.filter(
-    (request) => request.failure && !request.failure.includes("ERR_ABORTED"),
-  );
-
-  return [
-    ...load.pageErrors.map((text): Finding => ({
-      check: "uncaught error",
-      level: "fail",
-      message: text,
-    })),
-    ...load.console
-      .filter((entry) => !isNoise(entry.text))
-      .map((entry): Finding => ({
-        check: `console ${entry.type}`,
-        level: entry.type === "error" ? "fail" : "warn",
-        message: entry.text,
-      })),
-    ...own
-      .filter((request) => (request.status ?? 0) >= HTTP_CLIENT_ERROR)
-      .map((request): Finding => ({
-        check: "failed response",
-        level: (request.status ?? 0) >= HTTP_SERVER_ERROR ? "fail" : "warn",
-        message: `${request.status} ${describeRequest(request)}`,
-      })),
-    ...broken.map((request): Finding => ({
-      check: "failed request",
-      level: "warn",
-      message: `${request.failure} ${describeRequest(request)}`,
-    })),
-  ];
-}
-
-/**
- * Work the page asked the server for on its own, before anyone touched it. A Server Action or
- * other POST might only read, but if it writes or starts AI it breaks the rule that only a
- * learner's click does; data the client fetched for itself is usually data the server should
- * have rendered with the page.
- */
-export function requestFindings(requests: RequestRecord[]): Finding[] {
-  return requests.flatMap((request): Finding[] => {
-    const kind = classifyRequest(request);
-
-    if (kind === "analytics") {
-      return [];
-    }
-
-    if (kind === "action" || (request.method !== "GET" && request.method !== "HEAD")) {
-      return [
-        {
-          check: "POST without a click",
-          level: "warn",
-          message: `${describeRequest(request)}: fine if it only reads; a write or a model call before a click is a bug`,
-        },
-      ];
-    }
-
-    return kind === "data"
-      ? [{ check: "client data fetch", level: "warn", message: describeRequest(request) }]
-      : [];
-  });
-}
-
 function speedFindings(load: LoadMeasurement): Finding[] {
   if (!load.production) {
     return [];
@@ -328,6 +270,47 @@ function trustFindings(load: LoadMeasurement): Finding[] {
   ];
 }
 
+/** A page that showed its content and then lost it before showing it again. */
+export function flashFindings(flashes: number): Finding[] {
+  return flashes > 0
+    ? [
+        {
+          check: "flash",
+          level: "fail",
+          message: "showed its content, then a skeleton or most of it gone, then its content again",
+          value: flashes,
+        },
+      ]
+    : [];
+}
+
+/** What a load's first paint and payload say about its shell and what it sends. */
+function shellFindings(load: LoadMeasurement): Finding[] {
+  return [
+    ...(load.production && load.shellWords === 0
+      ? [
+          {
+            check: "shell words",
+            level: "warn" as const,
+            message:
+              "the first paint had no words in the page: draw its static words (title, labels) in the shell",
+          },
+        ]
+      : []),
+    ...(load.rscBytes / KILOBYTE > BUDGETS.rscKb.warn
+      ? [
+          {
+            check: "payload",
+            level: "warn" as const,
+            message: `over ${BUDGETS.rscKb.warn} KB of RSC data in the page: pass client components only what they draw`,
+            unit: "KB",
+            value: Math.round(load.rscBytes / KILOBYTE),
+          },
+        ]
+      : []),
+  ];
+}
+
 /** Everything one page load did wrong, failures first. */
 export function judgeLoad(load: LoadMeasurement): Finding[] {
   const findings: Finding[] = [
@@ -335,6 +318,8 @@ export function judgeLoad(load: LoadMeasurement): Finding[] {
     ...requestFindings(load.requests),
     ...shiftFindings(cumulativeLayoutShift(load.shifts), load.shifts),
     ...speedFindings(load),
+    ...(load.production ? flashFindings(load.flashes) : []),
+    ...shellFindings(load),
     ...overflowFindings(load.overflow),
     ...load.accessibility.map((message): Finding => ({
       check: "accessibility",
@@ -368,6 +353,8 @@ const TIMING_CHECKS = new Set([
   "navigation",
   "regression",
   "server CPU",
+  "tap content",
+  "tap response",
 ]);
 
 /**

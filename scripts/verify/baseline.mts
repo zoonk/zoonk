@@ -12,6 +12,7 @@ type Loaded = Pick<
   | "bytes"
   | "fcpMs"
   | "lcpMs"
+  | "linksLiveMs"
   | "mainThreadMs"
   | "path"
   | "production"
@@ -24,6 +25,7 @@ type Loaded = Pick<
 const METRICS = [
   "lcpMs",
   "fcpMs",
+  "linksLiveMs",
   "blockingMs",
   "mainThreadMs",
   "cls",
@@ -43,6 +45,7 @@ const REGRESSION: Record<Metric, { label: string; minimum: number; share: number
     cls: { label: "CLS", minimum: 0.01, share: 0, unit: "" },
     fcpMs: { label: "FCP", minimum: 100, share: 0.2, unit: "ms" },
     lcpMs: { label: "LCP", minimum: 100, share: 0.2, unit: "ms" },
+    linksLiveMs: { label: "links live", minimum: 200, share: 0.1, unit: "ms" },
     mainThreadMs: { label: "main-thread work", minimum: 50, share: 0.2, unit: "ms" },
     scriptsKb: { label: "JS", minimum: 10, share: 0.05, unit: "KB" },
     serverCpuMs: { label: "server CPU", minimum: 50, share: 0.25, unit: "ms" },
