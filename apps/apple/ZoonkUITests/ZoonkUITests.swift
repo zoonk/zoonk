@@ -630,7 +630,7 @@ final class ZoonkUITests: XCTestCase {
       "Expected authentication loss to sign the learner out, with the way to log in again")
   }
 
-  /// Every stat opens from its tile: a pushed page on a phone, the section's tab on an iPad.
+  /// Every stat opens from its tile: a pushed page on a phone, beside the overview on an iPad.
   @MainActor
   func testStatisticsOpensEveryStat() {
     continueAfterFailure = false
@@ -652,9 +652,7 @@ final class ZoonkUITests: XCTestCase {
     ]
 
     for stat in stats {
-      // A wide screen shows the patterns beside Score's trend, opened from "See all".
-      let tile =
-        isPad && stat.tile == "Patterns" ? app.buttons["See all"] : statTile(stat.tile, in: app)
+      let tile = statTile(stat.tile, in: app)
       XCTAssertTrue(
         tile.waitForExistence(timeout: 5), "Expected the overview to open \(stat.title)")
       tile.tap()
@@ -663,9 +661,7 @@ final class ZoonkUITests: XCTestCase {
         "Expected \(stat.title) to show its numbers")
 
       if isPad {
-        XCTAssertTrue(
-          app.buttons[stat.title].isSelected, "Expected \(stat.title)'s tab to be selected")
-        app.buttons["Overview"].tap()
+        XCTAssertTrue(tile.isSelected, "Expected \(stat.title)'s tile to be marked as shown")
       } else {
         XCTAssertTrue(app.navigationBars[stat.title].exists, "Expected \(stat.title) to be pushed")
         app.navigationBars.buttons["Statistics"].firstMatch.tap()

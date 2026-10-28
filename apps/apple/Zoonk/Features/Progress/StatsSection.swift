@@ -1,22 +1,16 @@
 import SwiftUI
 
-/// Statistics' pages: the overview, then each stat's own, in main's order. On a phone the overview
-/// opens each one; from a tablet up they're the section's tabs.
-enum StatsSection: CaseIterable, Hashable, Identifiable {
-  case overview
+/// Statistics' stat pages, in main's order. The overview opens each one, pushed on a phone and
+/// beside it where there's room.
+enum StatsSection: Hashable {
   case level
   case energy
   case activity
   case score
   case patterns
 
-  var id: Self { self }
-
   var title: LocalizedStringResource {
     switch self {
-    case .overview:
-      LocalizedStringResource(
-        "Overview", table: "Progress", comment: "Tab with every stat at a glance on Statistics")
     case .level:
       LocalizedStringResource(
         "Level", table: "Progress", comment: "Title of the stat with the learner's belt and level")
@@ -40,19 +34,22 @@ enum StatsSection: CaseIterable, Hashable, Identifiable {
 }
 
 extension EnvironmentValues {
-  /// Set where Statistics shows its pages as tabs: a tile then switches the tab instead of pushing.
+  /// Set where Statistics shows a stat beside the overview: a tile then shows its stat there
+  /// instead of pushing it.
   @Entry var statsSectionOpen: StatsSectionOpen?
 }
 
-/// How a tile opens its stat's tab. Two compare equal, so setting one doesn't redraw the tiles.
+/// The stat shown beside the overview and how a tile shows another. Two compare by the stat shown,
+/// so a new closure alone doesn't redraw the tiles.
 struct StatsSectionOpen: Equatable {
+  let shown: StatsSection
   let open: (StatsSection) -> Void
 
-  static func == (lhs: Self, rhs: Self) -> Bool { true }
+  static func == (lhs: Self, rhs: Self) -> Bool { lhs.shown == rhs.shown }
 }
 
-/// The way to a stat's page from the overview: a navigation link on a phone, a tab switch where
-/// the section shows its pages as tabs.
+/// The way to a stat's page from the overview: a navigation link on a phone, showing it beside the
+/// overview where there's room.
 struct StatsSectionLink<Label: View>: View {
   @Environment(\.statsSectionOpen) private var sectionOpen
 

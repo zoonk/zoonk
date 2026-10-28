@@ -3051,35 +3051,6 @@
         }
       }
     },
-    "Overview" : {
-      "comment" : "Tab with every stat at a glance on Statistics",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Überblick"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Visión general"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vue d’ensemble"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Visão geral"
-          }
-        }
-      }
-    },
     "Past 12 months" : {
       "comment" : "Title of a calendar of the past year's days",
       "localizations" : {
@@ -4699,35 +4670,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sua pontuação vai aparecer depois que você responder pela primeira vez."
-          }
-        }
-      }
-    },
-    "Your stats" : {
-      "comment" : "Spoken name of the Statistics tabs",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Statistiken"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tus estadísticas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes stats"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Suas estatísticas"
           }
         }
       }

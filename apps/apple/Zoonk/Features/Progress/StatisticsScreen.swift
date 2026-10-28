@@ -1,34 +1,22 @@
 import SwiftUI
 
 /// The learner's statistics, opened from the level button or the sidebar's Study places. Every
-/// number covers all of the learner's goals. On a phone it opens on the overview, each stat a tap
-/// from its page; from a tablet up the overview and every stat are the section's tabs.
+/// number covers all of the learner's goals. It opens on the overview: on a phone each stat is a
+/// tap from its page; where there's room, the stat a tile picks (Level first) shows beside it.
 struct StatisticsScreen: View {
-  @Environment(\.horizontalSizeClass) private var sizeClass
-  @State private var section = StatsSection.overview
+  @State private var detail = StatsSection.level
 
   var body: some View {
-    Group {
-      if sizeClass == .regular {
-        page(section)
-          .environment(\.statsSectionOpen, StatsSectionOpen { section = $0 })
-          .safeAreaBar(edge: .top) {
-            Picker(selection: $section) {
-              ForEach(StatsSection.allCases) { section in
-                Text(section.title).tag(section)
-              }
-            } label: {
-              Text(
-                "Your stats", tableName: "Progress", comment: "Spoken name of the Statistics tabs")
-            }
-            .pickerStyle(.segmented)
-            .scenePadding(.horizontal)
-            .padding(.bottom, 8)
-            .frame(maxWidth: 1_100)
-          }
-      } else {
-        StatsOverview()
-      }
+    PaneSplit {
+      StatsOverview()
+        .environment(\.statsSectionOpen, StatsSectionOpen(shown: detail) { detail = $0 })
+        // Each pane is about a phone wide, so the overview and the stat take their phone layouts.
+        .environment(\.horizontalSizeClass, .compact)
+    } secondary: {
+      page(detail)
+        .environment(\.horizontalSizeClass, .compact)
+    } single: {
+      StatsOverview()
     }
     .navigationTitle(Text(AppTab.statistics.title))
     .navigationSubtitle(
@@ -61,8 +49,6 @@ struct StatisticsScreen: View {
   @ViewBuilder
   private func page(_ section: StatsSection) -> some View {
     switch section {
-    case .overview:
-      StatsOverview()
     case .level:
       LevelStatsView()
     case .energy:
@@ -228,12 +214,35 @@ private struct TileLink<Tile: View>: View {
   @ViewBuilder let tile: Tile
 
   var body: some View {
+    let shape = RoundedRectangle(cornerRadius: 12, style: .continuous)
+
     StatsSectionLink(section: section) {
       tile
-        .contentShape(.hoverEffect, RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .contentShape(.hoverEffect, shape)
         .hoverEffect(.highlight)
+        .modifier(StatsSelection(section: section, shape: shape))
     }
     .buttonStyle(.plain)
+  }
+}
+
+/// Rings the way to the stat shown beside the overview, as a list marks its selected row.
+private struct StatsSelection<Outline: InsettableShape>: ViewModifier {
+  @Environment(\.statsSectionOpen) private var sectionOpen
+
+  let section: StatsSection
+  let shape: Outline
+
+  func body(content: Content) -> some View {
+    let isShown = sectionOpen?.shown == section
+
+    content
+      .overlay {
+        if isShown {
+          shape.strokeBorder(.tint, lineWidth: 2)
+        }
+      }
+      .accessibilityAddTraits(isShown ? .isSelected : [])
   }
 }
 
@@ -402,6 +411,9 @@ private struct PatternsLinkRow: View {
         in: RoundedRectangle(cornerRadius: 16, style: .continuous)
       )
       .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+      .modifier(
+        StatsSelection(
+          section: .patterns, shape: RoundedRectangle(cornerRadius: 16, style: .continuous)))
     }
     .buttonStyle(.plain)
   }
