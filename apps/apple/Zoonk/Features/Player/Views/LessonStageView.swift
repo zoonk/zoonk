@@ -1,12 +1,14 @@
 import SwiftUI
 
-/// One screen of the lesson, its verdict under it once checked (scrolled into view), and the action
-/// bar pinned at the bottom with the one next action (Check, Continue, ...) and Previous.
+/// One screen of the lesson, its verdict or "fix it" note under it once checked (scrolled into
+/// view, so the bar stays small at large text sizes), and the action bar pinned at the bottom with
+/// the one next action (Check, Continue, ...) and Previous.
 struct LessonStageView: View {
   let store: LessonPlayerStore
   let state: LessonPlayerState
 
   private static let verdictId = "verdict"
+  private static let checkNoteId = "check-note"
 
   /// A verdict that counts: a hook's guess is never wrong and "I don't know yet" has none.
   private func countedVerdict(_ step: LessonStep) -> Bool? {
@@ -25,6 +27,9 @@ struct LessonStageView: View {
             LessonNotice(state: state, store: store)
 
             LessonStepView(step: step, state: state, store: store)
+
+            LessonCheckNote(state: state)
+              .id(Self.checkNoteId)
 
             if let result = state.currentResult, state.phase == .feedback, !step.showsOwnResult {
               LessonVerdictView(
@@ -54,6 +59,11 @@ struct LessonStageView: View {
             proxy.scrollTo(Self.verdictId, anchor: .bottom)
           }
         }
+        .onChange(of: state.notice == .selfCorrect || state.checkFailed) { _, hasNote in
+          if hasNote {
+            proxy.scrollTo(Self.checkNoteId, anchor: .bottom)
+          }
+        }
       }
       .id(step.id)
       .scrollDismissesKeyboard(.interactively)
@@ -72,8 +82,37 @@ struct LessonStageView: View {
   }
 }
 
-/// The task's action bar: the verdict when there is one, Previous, and the one next action.
-/// Return does what the main button says, as on main.
+/// Under a checked screen with no verdict yet: a language answer to fix once, or a check the
+/// server couldn't make.
+private struct LessonCheckNote: View {
+  let state: LessonPlayerState
+
+  var body: some View {
+    if state.notice == .selfCorrect {
+      Label {
+        Text(
+          "Not quite. Look again and fix it yourself, then check.", tableName: "Player",
+          comment: "A wrong language answer the learner can fix once")
+      } icon: {
+        Image(systemName: "pencil")
+      }
+      .font(.subheadline.weight(.medium))
+      .foregroundStyle(.destructive)
+    }
+
+    if state.checkFailed {
+      Text(
+        "We couldn't check your answer this time. Try again.", tableName: "Player",
+        comment: "The server couldn't grade a written or spoken answer"
+      )
+      .font(.subheadline)
+      .foregroundStyle(.secondary)
+    }
+  }
+}
+
+/// The task's action bar: Previous and the one next action. Return does what the main button says,
+/// as on main.
 struct LessonActionBar: View {
   let store: LessonPlayerStore
   let state: LessonPlayerState
@@ -82,53 +121,28 @@ struct LessonActionBar: View {
   @Environment(\.activityRenderers) private var activityRenderers
 
   var body: some View {
-    VStack(spacing: 12) {
-      if state.notice == .selfCorrect {
-        Label {
-          Text(
-            "Not quite. Look again and fix it yourself, then check.", tableName: "Player",
-            comment: "A wrong language answer the learner can fix once")
-        } icon: {
-          Image(systemName: "pencil")
-        }
-        .font(.subheadline.weight(.medium))
-        .foregroundStyle(.destructive)
-        .frame(maxWidth: .infinity, alignment: .leading)
-      }
-
-      if state.checkFailed {
-        Text(
-          "We couldn't check your answer this time. Try again.", tableName: "Player",
-          comment: "The server couldn't grade a written or spoken answer"
-        )
-        .font(.subheadline)
-        .foregroundStyle(.secondary)
-        .frame(maxWidth: .infinity, alignment: .leading)
-      }
-
-      HStack(spacing: 12) {
-        if state.canGoBack {
-          Button {
-            store.goBack()
-          } label: {
-            Label {
-              Text(
-                "Previous screen", tableName: "Player",
-                comment: "Goes back one screen in the lesson")
-            } icon: {
-              Image(systemName: "chevron.left")
-            }
-            .labelStyle(.iconOnly)
-            .frame(minHeight: 32)
+    HStack(spacing: 12) {
+      if state.canGoBack {
+        Button {
+          store.goBack()
+        } label: {
+          Label {
+            Text(
+              "Previous screen", tableName: "Player",
+              comment: "Goes back one screen in the lesson")
+          } icon: {
+            Image(systemName: "chevron.left")
           }
-          .buttonStyle(.bordered)
-          .buttonBorderShape(.circle)
-          .controlSize(.large)
-          .keyboardShortcut(.leftArrow, modifiers: [])
+          .labelStyle(.iconOnly)
+          .frame(minHeight: 32)
         }
-
-        primaryButton
+        .buttonStyle(.bordered)
+        .buttonBorderShape(.circle)
+        .controlSize(.large)
+        .keyboardShortcut(.leftArrow, modifiers: [])
       }
+
+      primaryButton
     }
     .frame(maxWidth: 680)
     .frame(maxWidth: .infinity)
