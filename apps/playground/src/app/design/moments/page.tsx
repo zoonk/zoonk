@@ -60,7 +60,6 @@ function MissionsSpecimen() {
   );
 }
 
-/** Today's missions card's reward and the buddy's ring, before and after every mission is done. */
 function MissionsChips() {
   return (
     <div className="flex flex-wrap items-center gap-10">
@@ -78,7 +77,6 @@ function MissionsChips() {
   );
 }
 
-/** A specimen that only renders under `pnpm dev`, like every one using next-intl's extraction. */
 function devOnly(Example: () => React.ReactNode) {
   return function DevOnlyExample() {
     return (
@@ -89,7 +87,6 @@ function devOnly(Example: () => React.ReactNode) {
   };
 }
 
-/** Each moment's live specimen; the ones that move on their own replay (a ceremony opens anew). */
 const SPECIMENS: Record<string, { Example: () => React.ReactNode; replays: boolean }> = {
   ceremony: { Example: devOnly(CeremonySpecimen), replays: false },
   challenge: { Example: devOnly(ChallengeWonSpecimen), replays: true },

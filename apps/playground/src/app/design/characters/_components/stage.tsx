@@ -11,15 +11,12 @@ import {
   useReducedMotionCss,
 } from "../../_components/reduced-motion";
 
-/** 10% speed, to judge an act frame by frame as an animator would. */
 const SLOW_RATE = 0.1;
 
-/** The playback rate the stage's speed switch asks for. */
 export function stageRate(slow: boolean): number {
   return slow ? SLOW_RATE : 1;
 }
 
-/** The stage's switches: reduced motion (its own, or the device's) and 10% speed. */
 export function useStageSwitches() {
   const device = useDeviceReducesMotion();
   const [switched, setSwitched] = useState(false);
@@ -53,10 +50,6 @@ function LabeledSwitch({
   );
 }
 
-/**
- * One character on its own stage: the character large, a button per act (each plays from the
- * act's own start), Replay, and the stage's switches for reduced motion and 10% speed.
- */
 export function Stage<ActName extends string>({
   acts,
   children,

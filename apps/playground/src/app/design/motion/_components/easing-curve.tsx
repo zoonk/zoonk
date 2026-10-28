@@ -11,16 +11,12 @@ import { useReducedPreview } from "./motion-preview";
 
 const SAMPLES = 48;
 
-/** The plot's box: time across, progress up, with room above 1 for the spring's overshoot. */
 const WIDTH = 160;
 const HEIGHT = 80;
 const OVERSHOOT_ROOM = 0.15;
 const TRAVEL_PX = 136;
 
-/**
- * The curve as the browser runs it: a paused animation with the token's easing, its eased
- * progress read at each step, so the plot is the token itself, overshoot included.
- */
+/** Reads a paused animation's eased progress at each step, so the plot is the token itself. */
 function sampleEasing(element: Element, easing: string): number[] {
   const probe = element.animate([], { duration: 1000, easing, fill: "both" });
   probe.pause();
@@ -44,10 +40,6 @@ function toPath(values: readonly number[]): string {
     .join(" ");
 }
 
-/**
- * An easing token's curve, with a dot that travels on it in its paired duration's time; Play runs
- * it again. With reduced motion a celebration's duration is 0, so the dot just arrives.
- */
 export function EasingCurve({
   duration,
   easing,

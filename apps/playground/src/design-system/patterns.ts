@@ -1,6 +1,3 @@
-/** The core components and patterns: one way to draw each thing, with what to do and what not. */
-
-/** A pattern: one way to draw one thing, with what to do and what not to. */
 export type Pattern = {
   avoid: string[];
   follow: string[];

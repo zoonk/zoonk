@@ -3,20 +3,16 @@ import { beltColorClasses } from "@zoonk/ui/components/belt-indicator";
 import { type CSSPropertiesWithVariables } from "@zoonk/ui/lib/css-variables";
 import { cn } from "@zoonk/ui/lib/utils";
 
-/** A belt has ten levels, each a tick. */
 const LEVELS_PER_BELT = 10;
 
-/** The demos' learner: an orange belt at level 4, Energy at 60%. */
 const DEMO_LEVEL = 4;
 export const ENERGY_NOW = 60;
 const PERCENT = 100;
 
-/** The day's missions: one done, one just done from half way, one to go. */
 const MISSION_FILLS = [1, 1, 0] as const;
 const JUST_DONE = 1;
 const JUST_DONE_FROM = 0.5;
 
-/** "+27", as every reward amount reads. */
 export function plus(value: number): string {
   return `+${value}`;
 }
@@ -25,12 +21,10 @@ export function percent(value: number): string {
   return `${value}%`;
 }
 
-/** A beat of a moment's order, as the delay of what plays on it. */
 export function beat(delayMs: number): React.CSSProperties {
   return { animationDelay: `${delayMs}ms` };
 }
 
-/** A new level's number on its belt's color, landing on the spring, as `ReachedMoment` draws it. */
 export function LevelBadge({ delayMs = 0 }: { delayMs?: number }) {
   return (
     <span
@@ -47,7 +41,6 @@ export function LevelBadge({ delayMs = 0 }: { delayMs?: number }) {
   );
 }
 
-/** The belt's ten levels as a meter's parts, the new one filling over its track (`BeltTicks`). */
 export function BeltTicks({ delayMs = 0 }: { delayMs?: number }) {
   return (
     <MeterParts as="span">
@@ -77,7 +70,6 @@ export function BeltTicks({ delayMs = 0 }: { delayMs?: number }) {
   );
 }
 
-/** Energy's meter where Energy is: a moment knows only where it is now, so it doesn't fill. */
 export function EnergyMeter() {
   return (
     <Meter>
@@ -86,7 +78,6 @@ export function EnergyMeter() {
   );
 }
 
-/** The day's missions as one violet track, the mission just done filling from where it was. */
 export function MissionsTrack({ delayMs = 0 }: { delayMs?: number }) {
   const fillFrom: CSSPropertiesWithVariables = { ...beat(delayMs), "--fill-from": JUST_DONE_FROM };
 

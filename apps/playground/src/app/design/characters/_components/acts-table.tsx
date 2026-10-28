@@ -6,7 +6,6 @@ import { TRICKSTER_ACTS } from "@zoonk/ui/components/trickster-actor";
 import { cn } from "@zoonk/ui/lib/utils";
 import { renderCode } from "../../_components/doc";
 
-/** An act's length in frames, read from the act itself. */
 function getFrames(act: CharacterAct): number {
   return act.character === "buddy" ? BUDDY_ACTS[act.act].frames : TRICKSTER_ACTS[act.act].frames;
 }
@@ -21,7 +20,6 @@ const FRAME_MS = 1000 / 24;
 const COLUMNS = "lg:grid-cols-[9rem_minmax(0,1fr)_minmax(0,1fr)]";
 const ROW = "grid gap-x-6 gap-y-1 border-t py-3 text-sm leading-6";
 
-/** The acts: who plays them, how long they last, what happens, and the moments they play at. */
 export function ActsTable() {
   return (
     <div className="flex flex-col" role="table">

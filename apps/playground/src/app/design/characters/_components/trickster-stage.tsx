@@ -11,7 +11,6 @@ import { Stage, stageRate, useStageSwitches } from "./stage";
 
 type Take = "blink" | "defeat" | "sly" | "smug" | "smugWithSign" | "smugThenDefeat";
 
-/** Each take, the face it starts from, and whether he holds his sign, as at a challenge's intro. */
 const ACTS: readonly { label: string; name: Take; sign?: boolean; start: TricksterExpression }[] = [
   { label: "Blink", name: "blink", start: "sly" },
   { label: "Smug", name: "smug", start: "sly" },
@@ -21,7 +20,6 @@ const ACTS: readonly { label: string; name: Take; sign?: boolean; start: Trickst
   { label: "Smug, then defeated", name: "smugThenDefeat", start: "sly" },
 ];
 
-/** The pause between smug and defeated in the sequence, at full speed. */
 const BEAT_BETWEEN_MS = 700;
 
 function wait(ms: number) {
@@ -41,7 +39,6 @@ async function perform(actor: ActorHandle<TricksterActName>, take: Take, rate: n
   await actor.play(take === "smugWithSign" ? "smug" : take, { playbackRate: rate });
 }
 
-/** The Trickster on his stage: smug (with his sign too), back to sly, defeated, or smug then defeated. */
 export function TricksterStage() {
   const actor = useRef<ActorHandle<TricksterActName>>(null);
   const switches = useStageSwitches();
@@ -49,7 +46,6 @@ export function TricksterStage() {
   const shown = ACTS.find((act) => act.name === take?.act);
   const rate = stageRate(switches.slow);
 
-  // Only a new take plays, at the speed the switch shows when it starts.
   const playTake = useEffectEvent((act: Take) => {
     if (actor.current) {
       void perform(actor.current, act, rate);

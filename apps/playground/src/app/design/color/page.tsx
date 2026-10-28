@@ -15,7 +15,6 @@ function subjectName(subject: Subject): string {
   return subject.charAt(0).toUpperCase() + subject.slice(1);
 }
 
-/** Every subject's label, glyph and line in each mode, from the one hue table in `globals.css`. */
 function SubjectTable() {
   return (
     <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">

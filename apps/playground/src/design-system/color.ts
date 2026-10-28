@@ -1,16 +1,9 @@
-/**
- * What each color token means and where it goes. The values live in
- * `packages/ui/src/styles/globals.css` (light, dark and both `prefers-contrast: more` modes); the
- * playground's `/design/color` page shows them live beside these words.
- */
+/** The values live in `packages/ui/src/styles/globals.css`; `/design/color` shows them live. */
 
 import { BELT_GROUP } from "./belts";
 
-/** A color token: its CSS variable in `globals.css` (`--name`, used as `bg-name`, `text-name`). */
 export type ColorToken = {
-  /** Where it never goes, when that's a mistake worth naming. */
   avoid?: string;
-  /** What the color says. */
   meaning: string;
   name: string;
   /** The token it sits on, when that isn't the page (words on the main action). */
@@ -19,7 +12,6 @@ export type ColorToken = {
   text?: boolean;
   /** A faint fill under something else, so it has no contrast of its own. */
   tint?: boolean;
-  /** Where it goes, by component. */
   use: string;
 };
 
@@ -299,7 +291,6 @@ export const COLOR_GROUPS: readonly ColorGroup[] = [
   BELT_GROUP,
 ];
 
-/** How color is used, whatever the token. */
 export const COLOR_RULES: readonly string[] = [
   "Neutral by default: tone steps and hairlines separate a page's parts; color only signals.",
   "One meaning per hue, the same on every screen. Before giving something a color, find its token; if none fits, it stays neutral.",

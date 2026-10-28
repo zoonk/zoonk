@@ -12,10 +12,6 @@ import { MODES, modeClass } from "./modes";
 const TEXT_MINIMUM = 4.5;
 const MARK_MINIMUM = 3;
 
-/**
- * Every measured sample's ratio, once the modes' classes apply: a mark's fill (`data-measure="fill"`)
- * or a word's color (`"text"`) against the surface it sits on (`data-surface`) over its mode's page.
- */
 function measure(table: HTMLElement | null): Record<string, number> {
   const ratios: Record<string, number> = {};
 
@@ -37,10 +33,6 @@ function measure(table: HTMLElement | null): Record<string, number> {
   return ratios;
 }
 
-/**
- * A token's sample in one mode: a word in its color on what it sits on, or its fill as a square
- * (with "Aa" beside it for a token read as words).
- */
 function Sample({ mode, token }: { mode: string; token: ColorToken }) {
   if (token.on) {
     return (
@@ -105,12 +97,6 @@ function Ratio({ ratio, text }: { ratio?: number; text?: boolean }) {
   );
 }
 
-/**
- * A group's tokens as rows: what each means and where it goes, then its swatch in the four modes,
- * read live from `globals.css`, with its contrast against the page when `contrast` is on (marks
- * against 3:1, words against 4.5:1; a ratio under its bar shows in amber). A subject's roles need
- * a `subject` to take their hue from.
- */
 export function SwatchTable({
   contrast = true,
   subject,

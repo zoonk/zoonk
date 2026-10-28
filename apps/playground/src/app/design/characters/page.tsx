@@ -27,10 +27,8 @@ const KINDS: readonly { kind: BuddyKind; name: string }[] = [
   { kind: "beep", name: "Beep" },
 ];
 
-/** Enough Energy for a glad buddy, short of its glow. */
 const ENERGY = 70;
 
-/** Energy's three faces: napping on a day without study, awake, and glowing from 80%. */
 const ENERGY_STATES = [
   { energy: 12, label: "Napping, 12%", studiedToday: false },
   { energy: 55, label: "Awake, 55%", studiedToday: true },
@@ -85,7 +83,6 @@ function ExpressionGrid() {
   );
 }
 
-/** Each buddy at Energy's three faces: only Zu and Beep wear a light, which Energy brightens. */
 function EnergyGrid() {
   return (
     <div className="grid w-fit grid-cols-2 gap-x-12 gap-y-6 sm:grid-cols-4">
@@ -114,7 +111,6 @@ function EnergyGrid() {
 const MOMENT_COLUMNS = "lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_8rem_minmax(0,1.2fr)]";
 const MOMENT_ROW = "grid gap-x-6 gap-y-1 border-t py-3 text-sm leading-6";
 
-/** Where each character reacts in the product, with the act and its beat. */
 function MomentsTable() {
   return (
     <div className="flex flex-col" role="table">

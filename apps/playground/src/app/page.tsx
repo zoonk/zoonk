@@ -89,12 +89,6 @@ function GallerySkeleton() {
   );
 }
 
-/**
- * Every screen the lesson player can show, played in the real player from the same fixtures as
- * its browser tests: each activity template explored, answering and checked, each lesson screen
- * kind, pictures and language exercises, on a phone or a desktop, in this computer's light or dark
- * appearance.
- */
 export default function GalleryPage({ searchParams }: PageProps<"/">) {
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6">

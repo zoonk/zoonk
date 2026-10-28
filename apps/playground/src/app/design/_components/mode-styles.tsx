@@ -7,14 +7,12 @@ type Scope = "root" | "subject";
 type Declarations = Map<string, string>;
 type Collected = Record<Scope, Record<ModeId, Declarations>>;
 
-/** The roles a subject's table gives (its hue and chroma stay the subject's own). */
 const SUBJECT_ROLES = new Set(["--subject", "--subject-text", "--subject-tint"]);
 
 function emptyModes(): Record<ModeId, Declarations> {
   return { dark: new Map(), "dark-more": new Map(), light: new Map(), "light-more": new Map() };
 }
 
-/** Whether a rule under these media conditions is part of a mode, as the device would apply it. */
 function appliesTo(mode: ModeId, conditions: readonly string[]): boolean {
   const text = conditions.join(" and ");
   const dark = mode.startsWith("dark");
@@ -43,7 +41,6 @@ function scopeOf(selectorText: string): Scope | null {
   return selectorText.trim() === "[data-subject]" ? "subject" : null;
 }
 
-/** Walks the stylesheet's rules in order, through media, supported and layer blocks. */
 export function walk(
   rules: CSSRuleList,
   conditions: readonly string[],
@@ -77,7 +74,6 @@ export function readRules(sheet: CSSStyleSheet): CSSRuleList | null {
   }
 }
 
-/** Every mode's custom properties, as the app's own stylesheets declare them, in order. */
 function collect(): { collected: Collected; themed: Set<string> } {
   const collected: Collected = { root: emptyModes(), subject: emptyModes() };
   const themed = new Set<string>();
@@ -111,10 +107,6 @@ function collect(): { collected: Collected; themed: Set<string> } {
   return { collected, themed };
 }
 
-/**
- * One class per mode with that mode's tokens (`ds-mode-dark`, …), copied as written from the app's
- * stylesheet, so a swatch in it reads the real value through `var()` whatever the device's mode.
- */
 function buildModeCss(): string {
   const { collected, themed } = collect();
 
@@ -156,15 +148,10 @@ function getServerSnapshot(): string {
   return "";
 }
 
-/** The modes' classes once they're read (an empty string on the server and before). */
 export function useModeCss(): string {
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
 
-/**
- * Adds the four modes' classes to the page, read from `globals.css` as the browser loaded it, so
- * the design system shows every mode side by side without a second copy of any value.
- */
 export function ModeStyles() {
   const css = useModeCss();
   return css ? <style>{css}</style> : null;

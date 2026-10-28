@@ -4,19 +4,11 @@ import { type TricksterExpression } from "@zoonk/ui/components/trickster";
 import { type TricksterActName } from "@zoonk/ui/components/trickster-actor";
 
 /**
- * How the buddy and the Trickster act: the rules, the moments they react at, their parts,
- * expressions and acts, lights and Energy, idle and timing. Acting in code is the system: the rig
- * and the acts live in `@zoonk/ui` (`BuddyActor`, `TricksterActor`), with no animation runtime,
- * their tokens in `packages/ui/src/styles/globals.css` (`duration-frame`, `ease-accelerate`,
- * `ease-swing`, `ease-follow`), and the playground's `/design/characters` page plays every act
- * beside these words. How to apply them: the `zoonk-motion` skill.
+ * The rig and acts live in `@zoonk/ui` (`BuddyActor`, `TricksterActor`), their tokens in
+ * `packages/ui/src/styles/globals.css`, and `/design/characters` plays every act. How to apply them:
+ * the `zoonk-motion` skill.
  */
 
-/**
- * The buddy and the Trickster are characters, not objects: a person shows a feeling with their face
- * and body, so moving the whole drawing (a hop, a pop, a landing, a tip) reads as a sticker, worse
- * than holding still. They act with their parts instead, as `/design/characters` shows.
- */
 export const CHARACTER_RULES: readonly string[] = [
   "A character never moves as a single unit: no hop, pop, landing, tip, slide or fade of the whole buddy or the whole Trickster, its face in the navigation included. Inside an act its body may squash, stretch or lean on its feet, as long as it reads natural, while its face and loose parts do their own thing.",
   "It acts with its parts, eyes first: the eyes lead (a blink, a glance), the brows and mouth follow, then the head and the arms, and the loose parts (antennae, a tail, a crown) last, swinging past their stop.",
@@ -28,10 +20,8 @@ export const CHARACTER_RULES: readonly string[] = [
   "With reduced motion an act draws its expression at once (the face, and the Trickster's pose), and nothing moves.",
 ];
 
-/** A moment a character reacts at: who, the act, and when in the moment. */
 export type CharacterMoment = { act: string; beat: string; character: string; moment: string };
 
-/** Where characters react in the product: everywhere else they hold still. */
 export const CHARACTER_MOMENTS: readonly CharacterMoment[] = [
   {
     act: "Smile",
@@ -91,7 +81,6 @@ export const CHARACTER_MOMENTS: readonly CharacterMoment[] = [
   },
 ];
 
-/** A character's named part (`data-part`) and how acts move it. */
 export type CharacterPart = { moves: string; parts: string };
 
 export const CHARACTER_PARTS: readonly CharacterPart[] = [
@@ -124,14 +113,12 @@ export const CHARACTER_PARTS: readonly CharacterPart[] = [
   },
 ];
 
-/** Which characters wear a light, and how Energy reads on the ones that don't. */
 export const CHARACTER_LIGHT_RULES: readonly string[] = [
   "Only Zu's antenna tips and Beep's antenna bulb light up, in orange, brighter and wider as Energy rises, and dark while the buddy naps.",
   "Noodle, Otto and the Trickster wear no light: a bright spot on them pulled the eye away from the screen. Otto's spots are its skin, a shade deeper than it.",
   "Every buddy's Energy shows in its face, the same for all four: sleepy while it naps (under 30% on a day without study), happy when awake, beaming from 80%. The number is where Energy is shown: the buddy's tab and a result's Energy row.",
 ];
 
-/** An expression as the server draws it, still: what it says and where it belongs. */
 export type CharacterExpression<Name extends string> = { label: string; name: Name; says: string };
 
 export const BUDDY_EXPRESSIONS: readonly CharacterExpression<BuddyExpression>[] = [
@@ -155,7 +142,6 @@ export const TRICKSTER_EXPRESSIONS: readonly CharacterExpression<TricksterExpres
   },
 ];
 
-/** An act by its key in `BUDDY_ACTS` or `TRICKSTER_ACTS`: what happens, in order, and where. */
 export type CharacterAct = { does: string; name: string; when: string } & (
   | { act: BuddyActName; character: "buddy" }
   | { act: TricksterActName; character: "trickster" }
@@ -234,14 +220,12 @@ export const CHARACTER_ACTS: readonly CharacterAct[] = [
   },
 ];
 
-/** When a character may move without an act the learner caused: almost never. */
 export const CHARACTER_IDLE_RULES: readonly string[] = [
   "Everyday screens stay still: the buddy in the navigation, on Today and on its tab never idles.",
   "After a reaction it holds its pose; where its eyes are open, one blink about 2s later keeps it from looking frozen (a moving hold), then it rests, all within 5s (WCAG 2.2.2). A face with its eyes shut (cheering, proud, asleep) just holds.",
   "Where a character is the screen's subject and the learner works with it (the buddy's chat, a duel), it reacts to what happens (a glance at a message, a smile at its answer, a smirk at a miss), never on a timer.",
 ];
 
-/** How acts are timed, in frames at 24 a second. */
 export const CHARACTER_TIMING_RULES: readonly string[] = [
   'Acts are timed in frames (`duration-frame`, 24 a second); a script reads it with `readDuration(element, "frame")`, and reduced motion makes it 0.',
   "A blink: 2 frames down on `ease-accelerate`, 1 shut, 3 up on the ease-out. A dart: 2 frames on the ease-out, most of the travel in the first.",

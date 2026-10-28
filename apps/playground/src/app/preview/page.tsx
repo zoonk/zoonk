@@ -9,9 +9,8 @@ import { PreviewIntlProvider } from "./preview-intl-provider";
 export const metadata: Metadata = { title: "Preview" };
 
 /**
- * The entry's lesson in the state the URL asks for (its first state otherwise), built once and then
- * read, like the app's own lessons: building it draws ids and shuffles language options, which a
- * prerender can't do outside a cache.
+ * Building a lesson draws ids and shuffles language options, which a prerender can't do outside a
+ * cache.
  */
 async function getPreview(entryId: string, requestedState: string | undefined) {
   "use cache";
@@ -35,7 +34,6 @@ async function PreviewScreen({ searchParams }: Pick<PageProps<"/preview">, "sear
   );
 }
 
-/** One screen of the player's catalog, played alone at the window's size. */
 export default function PreviewPage({ searchParams }: PageProps<"/preview">) {
   return (
     <Suspense>

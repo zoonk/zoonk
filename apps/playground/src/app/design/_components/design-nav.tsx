@@ -5,10 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DESIGN_PAGES } from "./pages";
 
-/**
- * The design system's pages, the current one marked: 32px rows as the app's sidebar has them,
- * `hit-area` keeping each one 44px to tap.
- */
 export function DesignNav() {
   const pathname = usePathname();
 

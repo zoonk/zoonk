@@ -16,7 +16,6 @@ const ACTS: readonly { label: string; name: BuddyActName; start: BuddyExpression
   { label: "Proud", name: "proud", start: "happy" },
 ];
 
-/** A buddy acting on its stage: each act plays from its own start, drawn anew. */
 export function BuddyStage({
   beltColor,
   energy,
@@ -34,7 +33,6 @@ export function BuddyStage({
   const start = ACTS.find((act) => act.name === take?.act)?.start ?? "happy";
   const rate = stageRate(switches.slow);
 
-  // Only a new take plays, at the speed the switch shows when it starts.
   const playTake = useEffectEvent((act: BuddyActName) => {
     void actor.current?.play(act, { playbackRate: rate });
   });

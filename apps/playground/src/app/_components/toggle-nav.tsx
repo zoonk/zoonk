@@ -1,7 +1,6 @@
 import { Button } from "@zoonk/ui/components/button";
 import Link from "next/link";
 
-/** A few fixed choices as links, so every view of the gallery is a URL to share or reopen. */
 export function ToggleNav({
   label,
   options,

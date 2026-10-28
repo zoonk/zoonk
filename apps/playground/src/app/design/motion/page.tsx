@@ -34,7 +34,6 @@ const DEMOS: Record<string, () => React.ReactNode> = {
   state: StateDemo,
 };
 
-/** Each easing beside the duration it usually runs in. */
 const EASING_DURATION: Record<string, { duration: MotionDuration; easing: MotionEasing }> = {
   "--ease-accelerate": { duration: "pop", easing: "accelerate" },
   "--ease-follow": { duration: "fill", easing: "follow" },
@@ -45,7 +44,6 @@ const EASING_DURATION: Record<string, { duration: MotionDuration; easing: Motion
 
 const TABLE_ROW_BASE = "grid gap-x-6 gap-y-1 border-t py-3 text-sm leading-6";
 
-/** A token table's columns: the token, what it's for, what reduced motion makes of it. */
 const TOKEN_COLUMNS = "lg:grid-cols-[10rem_minmax(0,1fr)_minmax(0,1fr)]";
 
 function TokenRow({ token, value }: { token: MotionToken; value: React.ReactNode }) {
@@ -99,7 +97,6 @@ function PatternFacts({ pattern }: { pattern: MotionPattern }) {
   );
 }
 
-/** The ladder's columns: the moment, how often it comes, how it moves. */
 const LADDER_COLUMNS = "lg:grid-cols-[14rem_10rem_minmax(0,1fr)]";
 
 function LadderTable() {

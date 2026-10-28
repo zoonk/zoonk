@@ -1,15 +1,10 @@
 import { type GallerySelection } from "../_utils/gallery-params";
 
-/** The sizes the walkthroughs check, with a desktop scaled down to fit beside the list. */
 const DEVICE_FRAMES = {
   desktop: { height: 860, scale: 0.6, width: 1280 },
   phone: { height: 844, scale: 1, width: 390 },
 } as const;
 
-/**
- * A screen in a frame of the device's real size, so its layout is the one a learner sees. It
- * follows this computer's light or dark appearance, as the player follows a learner's device.
- */
 export function PreviewFrame({
   device,
   src,

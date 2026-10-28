@@ -5,7 +5,6 @@ import { readRules, walk } from "./mode-styles";
 
 const REDUCE_QUERY = "(prefers-reduced-motion: reduce)";
 
-/** The class that draws what's inside it as `prefers-reduced-motion: reduce` does. */
 export const REDUCED_CLASS = "ds-motion-reduce";
 
 function subscribeToDevice(onChange: () => void): () => void {
@@ -22,15 +21,10 @@ function serverReduces(): boolean {
   return false;
 }
 
-/** Whether this device asks for less motion. */
 export function useDeviceReducesMotion(): boolean {
   return useSyncExternalStore(subscribeToDevice, deviceReduces, serverReduces);
 }
 
-/**
- * The reduced-motion class, copied from what `globals.css` declares on `:root` under
- * `prefers-reduced-motion: reduce`, so a switch shows exactly what such a device gets.
- */
 function buildReducedCss(): string {
   const declarations: string[] = [];
 
@@ -72,7 +66,6 @@ function getServerCss(): string {
   return "";
 }
 
-/** The rules `REDUCED_CLASS` needs, empty on the server. */
 export function useReducedMotionCss(): string {
   return useSyncExternalStore(subscribeToSheet, getReducedCss, getServerCss);
 }

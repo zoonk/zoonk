@@ -10,15 +10,10 @@ import {
 
 const ReducedContext = createContext(false);
 
-/** Whether the demos show their reduced-motion version, by the switch or the device. */
 export function useReducedPreview(): boolean {
   return use(ReducedContext);
 }
 
-/**
- * Every demo under it with a switch for its reduced-motion version, and the device's setting
- * honored as it is: a device that asks for less motion sees every demo calm.
- */
 export function MotionPreview({ children }: React.PropsWithChildren) {
   const device = useDeviceReducesMotion();
   const css = useReducedMotionCss();

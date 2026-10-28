@@ -207,7 +207,6 @@ function BandsSpecimen() {
   );
 }
 
-/** A level's chapters, each a station on the route. */
 function RouteSpecimenRows() {
   return (
     <ol className="flex flex-col text-sm">

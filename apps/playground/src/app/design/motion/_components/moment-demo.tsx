@@ -6,11 +6,9 @@ import { BeltTicks, ENERGY_NOW, EnergyMeter, LevelBadge, beat, percent, plus } f
 
 const EARNED = 27;
 
-/** The moment's beats: what plays when, each as the one before lands. */
 const LEVEL_BEAT_MS = 250;
 const ENERGY_BEAT_MS = 500;
 
-/** A row of what the block reached: its mark, its title and line, its bar. */
 function ReachedRow({
   bar,
   detail,
@@ -54,11 +52,6 @@ function Readouts() {
   );
 }
 
-/**
- * A lesson's end that reached a level and a tenth of Energy, in order: Brain Power counts up, the
- * level lands as its tick fills, then Energy's bolt pops (its meter stays where Energy is); still
- * within 1.2s.
- */
 export function MomentDemo() {
   return (
     <div className="flex max-w-md flex-col gap-4">

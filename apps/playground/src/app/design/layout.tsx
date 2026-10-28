@@ -7,11 +7,7 @@ export const metadata: Metadata = {
   title: { default: "Design system", template: "%s · Design system | Zoonk Playground" },
 };
 
-/**
- * Zoonk's design system: what every token, type role, shape and pattern means, beside live
- * specimens and the tokens' values in every mode, read from `globals.css`. Its words live in
- * `src/design-system/`, so agents read the same source.
- */
+/** Its words live in `src/design-system/`, so agents read the same source. */
 export default function DesignLayout({ children }: LayoutProps<"/design">) {
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-6 sm:px-6">

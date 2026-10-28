@@ -8,7 +8,6 @@ function groupEntries() {
   return [...groups].map(([group, entries]) => ({ entries, group }));
 }
 
-/** Every screen of the catalog by group; each link keeps the device being compared. */
 export function GalleryNav({
   current,
   device,

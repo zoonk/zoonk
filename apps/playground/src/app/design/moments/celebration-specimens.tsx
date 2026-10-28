@@ -33,12 +33,10 @@ const BUDDY: LearnBuddy = {
 
 const BONUS = 50;
 
-/** The docs' moments are only looked at: nothing is tracked or marked as shown. */
 function ignore() {
   // Nothing to record.
 }
 
-/** The docs' links go nowhere, and nothing is tracked. */
 const ADAPTERS: React.ComponentProps<typeof LearnProvider>["adapters"] = {
   analytics: { track: ignore },
   linkComponent: ({ children, className, href }) => (
@@ -49,7 +47,6 @@ const ADAPTERS: React.ComponentProps<typeof LearnProvider>["adapters"] = {
   routes: { buddy: "#", journey: "#", signUp: "#", today: "#", upgrade: "#" },
 };
 
-/** A result that reached no new level nor a new tenth of Energy. */
 const NOTHING_REACHED: DayMomentProps["reached"] = { energy: null, level: null };
 
 const ONE_DONE: MissionMomentView["missions"] = [
@@ -64,20 +61,17 @@ const ALL_DONE: MissionMomentView["missions"] = [
   { done: 1, kind: "practice", status: "done", total: 1 },
 ];
 
-/** A mock's day: a review done earlier, then the mock itself, the day's last mission. */
 const MOCK_DAY: MissionMomentView["missions"] = [
   { done: 1, kind: "review", status: "done", total: 1 },
   { done: 1, kind: "mock", status: "done", total: 1 },
 ];
 
-/** What the mock did to the day: it was the day's last mission, so it paid the bonus. */
 const MOCK_MISSIONS: MissionMomentView = {
   completed: ["mock"],
   fullMeal: { bonus: BONUS, paid: true },
   missions: MOCK_DAY,
 };
 
-/** A notebook practice's day: it fixed the day's mistakes, a lesson still to do. */
 const PRACTICE_MISSIONS: MissionMomentView = {
   completed: ["fixMistake"],
   fullMeal: { bonus: BONUS, paid: false },
@@ -94,7 +88,6 @@ const CHALLENGE_DONE: MissionMomentView["missions"] = [
   { done: 0, kind: "practice", minutes: 6, status: "todo", total: 1 },
 ];
 
-/** A block's end, as the session shows it: its title and readouts, then the day's moment. */
 function BlockEnd({ children, title }: { children?: React.ReactNode; title: string }) {
   return (
     <div className="max-w-column flex flex-col items-start gap-6">
@@ -109,16 +102,10 @@ function BlockEnd({ children, title }: { children?: React.ReactNode; title: stri
   );
 }
 
-/** A specimen's quiet caption, naming the variant under it. */
 function Variant({ children }: { children: React.ReactNode }) {
   return <p className="text-muted-foreground text-xs">{children}</p>;
 }
 
-/**
- * A notebook practice's end, as `PracticeDone` lays it out: its title with the line a run with a
- * miss has under it, right answers and Brain Power as readouts with the mistakes it fixed on the
- * mono line, then what the run did to the day.
- */
 function PracticeEnd() {
   return (
     <div className="max-w-column flex flex-col items-start gap-6">
@@ -141,12 +128,6 @@ function PracticeEnd() {
   );
 }
 
-/**
- * A task's end: a lesson's readouts, a notebook practice's with a line under its title and what it
- * did to the day, and the end while it saves (`PendingMoment`: the title in place, the line where
- * the readouts land). Every result that earns Brain Power or Energy ends
- * this way (a block, a lesson on its own, a drill, a round, a quick explanation).
- */
 export function TaskEndSpecimen() {
   return (
     <LearnProvider adapters={ADAPTERS}>
@@ -168,7 +149,6 @@ export function TaskEndSpecimen() {
   );
 }
 
-/** A mission done: the moment says what's left for the day's bonus. */
 export function MissionDoneSpecimen() {
   return (
     <LearnProvider adapters={ADAPTERS}>
@@ -188,7 +168,6 @@ export function MissionDoneSpecimen() {
   );
 }
 
-/** The day's last mission: the whole buddy and the bonus. */
 export function MissionsCompleteSpecimen() {
   return (
     <LearnProvider adapters={ADAPTERS}>
@@ -208,10 +187,6 @@ export function MissionsCompleteSpecimen() {
   );
 }
 
-/**
- * A test's end, which earns only Energy: its verdict and score, then the tenth of Energy it
- * reached, alone, as a stepped result lays it out (`StepWithDayMoment`).
- */
 function TestEnd() {
   return (
     <div className="max-w-column">
@@ -237,7 +212,6 @@ function TestEnd() {
   );
 }
 
-/** A new belt level and a new tenth of Energy, under a block's readouts or alone. */
 export function ReachedSpecimen() {
   return (
     <LearnProvider adapters={ADAPTERS}>
@@ -268,11 +242,6 @@ export function ReachedSpecimen() {
   );
 }
 
-/**
- * A mock's end, a graded result: its score leads, named small above it, the answers it comes from
- * as tiles, then the day's moment as under a block's readouts. The title is a paragraph here, so the
- * docs keep one heading for the page.
- */
 export function MockEndSpecimen() {
   return (
     <LearnProvider adapters={ADAPTERS}>
@@ -284,7 +253,6 @@ export function MockEndSpecimen() {
           </p>
           <StepDetail className="text-sm">Estimated score · ENEM · Natural Sciences</StepDetail>
         </div>
-        {/* Side by side while their words fit, as `MockResultAnswers` lays them out. */}
         <StatTiles className="flex flex-wrap [&>li]:min-w-max [&>li]:flex-1">
           <StatTile icon={<CheckIcon />} label="Right" tone="success" value="30" />
           <StatTile icon={<XIcon />} label="Wrong" tone="danger" value="13" />
@@ -301,10 +269,6 @@ export function MockEndSpecimen() {
   );
 }
 
-/**
- * A challenge won, as its result opens right after the duel: the Trickster acting out his defeat,
- * the score, then the day's moment.
- */
 export function ChallengeWonSpecimen() {
   return (
     <LearnProvider adapters={ADAPTERS}>
@@ -335,7 +299,6 @@ const CEREMONIES: readonly { label: string; milestone: CeremonyMilestone }[] = [
   { label: "New glasses", milestone: { id: "glasses", key: "star", kind: "glasses" } },
 ];
 
-/** Each milestone's full-screen ceremony, opened from here and closed by its button or Escape. */
 export function CeremonySpecimen() {
   const [open, setOpen] = useState<CeremonyMilestone | null>(null);
 

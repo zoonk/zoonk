@@ -10,10 +10,8 @@ const EARNED = 27;
 const TILE_EARNED = 12;
 const BONUS = 50;
 
-/** A readout's number, as a task's end draws it. */
 const READOUT_CLASS = "text-readout text-[2.5rem]";
 
-/** Brain Power counting up as a task's end draws it, and as a result's tile does. */
 export function CountDemo() {
   return (
     <div className="flex flex-wrap items-end gap-10">
@@ -30,7 +28,6 @@ export function CountDemo() {
   );
 }
 
-/** A new level's badge, a mission's check and a call's star, each landing on the spring. */
 export function SettleDemo() {
   return (
     <div className="flex flex-wrap items-center gap-10">
@@ -47,7 +44,6 @@ export function SettleDemo() {
   );
 }
 
-/** A belt's new tick filling from empty, and the mission just done filling its part of the track. */
 export function FillDemo() {
   return (
     <div className="flex max-w-xs flex-col gap-5">
@@ -57,7 +53,6 @@ export function FillDemo() {
   );
 }
 
-/** Today's bonus in violet, bursting once. */
 export function BurstDemo() {
   return (
     <span className="relative flex w-fit flex-col items-start gap-1 px-10 py-6">

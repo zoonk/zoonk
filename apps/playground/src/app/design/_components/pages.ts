@@ -1,4 +1,3 @@
-/** The design system's pages, in the order its navigation lists them. */
 export const DESIGN_PAGES = [
   { href: "/design", label: "Overview" },
   { href: "/design/color", label: "Color" },

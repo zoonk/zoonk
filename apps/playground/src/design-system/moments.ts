@@ -1,6 +1,3 @@
-/** The system in a few lines, and the few moments allowed to be louder than the rest. */
-
-/** A moment allowed to be louder than the rest: earned, rare and brief. */
 export type Moment = { id: string; summary: string; title: string; where: string };
 
 export const MOMENTS: readonly Moment[] = [
@@ -67,10 +64,6 @@ export const MOMENTS: readonly Moment[] = [
   },
 ];
 
-/**
- * How every celebration is built, so they read as one family. Motion is its own guideline; these
- * say what moves, never how.
- */
 export const MOMENT_RULES: readonly string[] = [
   "One family, one order: a celebration sits where a task's result sits (top of the column, under the header) and reads the title, what was earned as readouts, the day's moment (`DayMoment`: missions, then a level or Energy reached), then what's next, each part 24px from the next (`StepWithDayMoment` keeps it in a result told in steps). A graded result (a mock's score) leads with its number, the words naming it small above. Its one action is pinned in the bar and Enter presses it.",
   "Warmer than everyday screens, never busy: the buddy or the Trickster where it's the subject, a big readout for what was earned, and nothing to read twice.",
@@ -79,7 +72,6 @@ export const MOMENT_RULES: readonly string[] = [
   "Every motion has a calm reduced-motion version. Each part that may move is its own element with a `data-slot`: `readout-number`, `missions-bonus`, `mission-stamp`, `mission-track`, `level-badge`, `belt-ticks`, `energy-mark`, and a ceremony's `ceremony-stage` and `ceremony-text`. The buddy (`moment-buddy`) and the Trickster react with their parts, once (`reaction`), never as one block: `/design/characters` maps each moment to its act.",
 ];
 
-/** The system in a few lines, for the overview. */
 export const PRINCIPLES: readonly string[] = [
   "Neutral by default, colored on purpose: tone steps separate, color signals.",
   "Soft colors in the regular theme; strict contrast when the device asks for more.",

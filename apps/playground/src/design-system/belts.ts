@@ -1,7 +1,6 @@
 import { BELT_COLORS_ORDER } from "@zoonk/utils/belt-level";
 import { type ColorGroup } from "./color";
 
-/** The belts' colors, the learner's identity: a group of `COLOR_GROUPS` on the color page. */
 export const BELT_GROUP: ColorGroup = {
   id: "belts",
   intro:

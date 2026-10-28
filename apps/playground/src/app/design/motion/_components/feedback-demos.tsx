@@ -6,7 +6,6 @@ import { useState } from "react";
 
 const SEGMENTS = 5;
 
-/** The demo's answers, right or wrong in turn, as a task's header colors them. */
 function segmentClass(index: number, answered: number): string {
   if (index >= answered) {
     return "bg-surface-3";
@@ -15,7 +14,6 @@ function segmentClass(index: number, answered: number): string {
   return index === 2 ? "bg-destructive" : "bg-success";
 }
 
-/** A button and a wide option giving way while held. */
 export function PressDemo() {
   return (
     <div className="flex flex-col items-start gap-4">
@@ -37,7 +35,6 @@ export function PressDemo() {
   );
 }
 
-/** A task's header: each answer turns its segment blue or pink-red, in the quick time. */
 export function StateDemo() {
   const [answered, setAnswered] = useState(0);
   const done = answered === SEGMENTS;

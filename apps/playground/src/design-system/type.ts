@@ -1,12 +1,5 @@
-/**
- * The type ramp: one class (or component) per job, and the rules around them. The sizes live in
- * `packages/ui/src/styles/globals.css` (`@utility text-*`) and Tailwind's scale.
- */
+/** The sizes live in `packages/ui/src/styles/globals.css` (`@utility text-*`) and Tailwind's scale. */
 
-/**
- * A type role: one class for one job, or the kit's component that owns it (`component`), whose
- * classes live in that component.
- */
 export type TypeRole = {
   className?: string;
   component?: "PageSectionTitle";
@@ -78,7 +71,6 @@ export const TYPE_ROLES: readonly TypeRole[] = [
   },
 ];
 
-/** Typography rules beyond the roles. */
 export const TYPE_RULES: readonly string[] = [
   "Geist for words, Geist Mono for data (`font-sans`, `font-mono`); no other family. Writing and quoting are words too: an essay's box, a typed answer and a quoted source are Geist, never a serif.",
   "The one exception is a formula: KaTeX's MathML keeps a math face, a serif, because math has its own conventions (italic variables, upright operators, fractions, stretchy brackets) that Geist can't set. Numbers in a sentence stay in the sentence's face; only real formulas take it.",

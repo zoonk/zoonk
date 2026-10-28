@@ -1,12 +1,9 @@
 /**
- * Motion: when things move, how, and which kinds. The values (durations, easings, the spring, the
- * keyframes and `press`) live in `packages/ui/src/styles/globals.css`, scripts read them through
- * `@zoonk/ui/lib/motion`, and the playground's `/design/motion` page moves every pattern live
- * beside these words. How to apply them: the `zoonk-motion` skill. How characters act (their parts,
- * expressions, acts and timing): `characters.ts`, acting live at `/design/characters`.
+ * The values live in `packages/ui/src/styles/globals.css`, scripts read them through
+ * `@zoonk/ui/lib/motion`, and `/design/motion` plays every pattern. How to apply them: the
+ * `zoonk-motion` skill.
  */
 
-/** How much something moves follows how often the learner meets it. */
 export type MotionTier = { id: string; rules: readonly string[]; summary: string; title: string };
 
 export const MOTION_TIERS: readonly MotionTier[] = [
@@ -43,12 +40,9 @@ export const MOTION_TIERS: readonly MotionTier[] = [
   },
 ];
 
-/** A motion token: its name in Tailwind (`duration-<name>`, `ease-<name>`) and in CSS. */
 export type MotionToken = {
-  /** The CSS custom property a script reads. */
   cssVariable: string;
   name: string;
-  /** What it becomes with reduced motion. */
   reduced: string;
   use: string;
   utility: string;
@@ -144,17 +138,13 @@ export const MOTION_EASINGS: readonly MotionToken[] = [
   },
 ];
 
-/** One kind of motion: what it says, how it's made, and its reduced-motion version. */
 export type MotionPattern = {
-  /** What the learner understands from it. */
   communicates: string;
-  /** The tokens and pieces that make it. */
   how: string;
   id: string;
   reduced: string;
   tier: MotionTier["id"];
   title: string;
-  /** Where it goes. */
   where: string;
 };
 
@@ -218,7 +208,6 @@ export const MOTION_PATTERNS: readonly MotionPattern[] = [
   },
 ];
 
-/** A celebration, how often it comes, and how much it moves: louder as it's rarer. */
 export type CelebrationStep = { how: string; moment: string; often: string };
 
 export const CELEBRATION_LADDER: readonly CelebrationStep[] = [

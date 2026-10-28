@@ -6,7 +6,6 @@ const LINKS = [
   { href: "/", id: "player", label: "Player" },
 ] as const;
 
-/** The playground's two halves, linked from each one's header. */
 export function SiteNav({ current }: { current: (typeof LINKS)[number]["id"] }) {
   return (
     <nav aria-label="Playground" className="flex items-center gap-1">

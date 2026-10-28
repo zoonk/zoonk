@@ -1,9 +1,5 @@
-/**
- * Spacing, radius, measures, elevation and icons: what each is for. The values live in
- * `packages/ui/src/styles/globals.css` and Tailwind's scale.
- */
+/** The values live in `packages/ui/src/styles/globals.css` and Tailwind's scale. */
 
-/** A named value and what it's for, by its class. */
 export type ShapeRule = { className: string; name: string; use: string };
 
 export const RADII: readonly ShapeRule[] = [

@@ -7,9 +7,8 @@ import { useState } from "react";
 import { Specimen } from "./doc";
 
 /**
- * A live specimen that plays its motion once it's on the page, and again with Replay. It draws its
- * example in the browser, as the moment the learner's action opens: a celebration never plays on
- * a page the server drew (`useCelebration`).
+ * A celebration never plays on a page the server drew (`useCelebration`), so the example draws in
+ * the browser.
  */
 export function MotionSpecimen({ children }: React.PropsWithChildren) {
   const mounted = useIsMounted();

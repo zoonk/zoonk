@@ -1,7 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, XIcon } from "lucide-react";
 
-/** A design system page's header: its name and what it covers. */
 export function DocHeader({ children, title }: React.PropsWithChildren<{ title: string }>) {
   return (
     <header className="max-w-column flex flex-col gap-2 pb-8">
@@ -13,7 +12,6 @@ export function DocHeader({ children, title }: React.PropsWithChildren<{ title: 
   );
 }
 
-/** A part of a page, named by a title, with an optional line under it. */
 export function DocSection({
   children,
   className,
@@ -34,7 +32,6 @@ export function DocSection({
   );
 }
 
-/** Rules as a short list, each one sentence. */
 export function DocRules({ rules }: { rules: readonly string[] }) {
   return (
     <ul className="max-w-column flex list-disc flex-col gap-1.5 pl-5 text-sm leading-6">
@@ -45,7 +42,6 @@ export function DocRules({ rules }: { rules: readonly string[] }) {
   );
 }
 
-/** Live components on the page, as learners see them, in this device's mode. */
 export function Specimen({ children, className }: React.PropsWithChildren<{ className?: string }>) {
   return (
     <div className={cn("ring-border rounded-xl p-5 ring-1 sm:p-6", className)} data-slot="specimen">
@@ -55,9 +51,8 @@ export function Specimen({ children, className }: React.PropsWithChildren<{ clas
 }
 
 /**
- * A specimen whose components speak through next-intl's `useExtracted`, which only the dev server
- * runs without next-intl's compiler (the player's preview needs it too): a production build of the
- * playground says so in its place instead of failing.
+ * Only the dev server runs next-intl's `useExtracted` without its compiler, so a production build
+ * shows a note here instead of failing.
  */
 export function DevOnlySpecimen({ children }: React.PropsWithChildren) {
   if (process.env.NODE_ENV !== "production") {
@@ -72,7 +67,6 @@ export function DevOnlySpecimen({ children }: React.PropsWithChildren) {
   );
 }
 
-/** What to do and what not, side by side. */
 export function DoDont({ avoid, follow }: { avoid: readonly string[]; follow: readonly string[] }) {
   return (
     <div className="grid gap-4 text-sm leading-6 sm:grid-cols-2">
@@ -102,7 +96,6 @@ export function DoDont({ avoid, follow }: { avoid: readonly string[]; follow: re
   );
 }
 
-/** Text with `code` spans, as the design system's module writes component and token names. */
 export function renderCode(text: string): React.ReactNode {
   return text.split(/(?<code>`[^`]+`)/u).map((part, index) =>
     part.startsWith("`") ? (

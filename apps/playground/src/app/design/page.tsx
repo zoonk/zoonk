@@ -26,7 +26,6 @@ const MODE_CHECKS = [
   "These pages show every token in all four modes side by side, read from the stylesheet the browser loaded.",
 ];
 
-/** The states a learner meets most, in each mode at a glance, drawn by the real components. */
 function AtAGlance() {
   return (
     <PreviewIntlProvider>

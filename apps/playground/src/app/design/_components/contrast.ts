@@ -13,10 +13,7 @@ const FLARE = 0.05;
 
 let context: CanvasRenderingContext2D | null = null;
 
-/**
- * Any CSS color the browser computed (oklch, `color(srgb …)`, rgb) as sRGB channels, by painting
- * one pixel: the browser converts, so nothing here parses color syntax.
- */
+/** The browser converts any computed color by painting one pixel, so nothing here parses color syntax. */
 function toRgba(color: string): Rgba {
   context ??= document.createElement("canvas").getContext("2d", { willReadFrequently: true });
 
@@ -44,7 +41,6 @@ function luminance({ blue, green, red }: Rgba): number {
   return RED_WEIGHT * linear(red) + GREEN_WEIGHT * linear(green) + BLUE_WEIGHT * linear(blue);
 }
 
-/** A see-through color laid over the surface it sits on, as the eye sees it. */
 function over(color: Rgba, surface: Rgba): Rgba {
   const mix = (top: number, bottom: number) => top * color.alpha + bottom * (1 - color.alpha);
 
@@ -56,10 +52,7 @@ function over(color: Rgba, surface: Rgba): Rgba {
   };
 }
 
-/**
- * WCAG 2's contrast ratio of a color over the surface it sits on, itself laid over the page (all
- * three as computed by CSS), so see-through colors and tints count as the eye sees them.
- */
+/** WCAG 2's contrast ratio, with see-through colors laid over their surface and the page first. */
 export function contrastRatio({
   color,
   page,
