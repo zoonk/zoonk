@@ -1,9 +1,9 @@
-import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { MAX_DAILY_MINUTES } from "../plans/daily-minutes";
+import { getLearningShare } from "../plans/planner/plan-phases";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { SESSION_NOW, sessionGoalFixture } from "./_test-utils/session-goal";
 
@@ -48,21 +48,17 @@ describe("a long study day", () => {
     );
   });
 
-  it("fills a whole day when the learner gives one, as the week counts it", async () => {
+  it("gives lessons the learn share of a whole day the learner gives, as the week counts the day", async () => {
     const user = await userFixture();
 
-    const { goal, plan } = await sessionGoalFixture({
+    const { goal } = await sessionGoalFixture({
       goal: { dailyMinutes: MAX_DAILY_MINUTES },
       itemsPerSkill: 1,
       lessons: 400,
       userId: user.id,
     });
 
-    await Promise.all([
-      layOutPlanFixture(plan.id),
-      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
-    ]);
-
+    await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
     mockSession(user.id);
 
     const result = await getTodayStudySession({});
@@ -71,12 +67,16 @@ describe("a long study day", () => {
       throw new Error(`Expected a session, got ${result.status}`);
     }
 
-    const minutes = result.session.blocks.reduce((sum, block) => sum + block.estimatedMinutes, 0);
-    const today = result.session.week.days.find((day) => day.isToday);
+    const lessonMinutes = result.session.blocks
+      .filter((block) => block.kind === "learn")
+      .reduce((sum, block) => sum + block.estimatedMinutes, 0);
 
-    // With the lessons written, nothing stops Today short of the time chosen: a walk with no lessons
-    // written showed 4 hours of a 24-hour day, all the lessons there were.
-    expect(minutes).toBe(MAX_DAILY_MINUTES);
+    const today = result.session.week.days.find((day) => day.isToday);
+    const share = getLearningShare({ phaseKind: "learn", practiceBias: "balanced" });
+
+    // The plan has more lessons than the day holds, so lessons fill their share of it: a walk with
+    // no lessons written showed 4 hours of a 24-hour day, all the lessons there were.
+    expect(lessonMinutes).toBe(MAX_DAILY_MINUTES * share);
     expect(today?.goalMinutes).toBe(MAX_DAILY_MINUTES);
   });
 });
