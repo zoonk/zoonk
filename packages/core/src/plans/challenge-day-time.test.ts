@@ -7,7 +7,6 @@ import { fromIsoDate, getPlanCalendar, toIsoDate } from "./planner/plan-calendar
 import { getExamDayRules, getPlannedMinutes } from "./planner/plan-days";
 import { parsePlanSettings } from "./planner/plan-state";
 
-/** The time a plan's items take on a day: each lesson's portion there, or an event's whole time. */
 function sumDay({
   date,
   items,
@@ -34,8 +33,6 @@ function sumDay({
   }, 0);
 }
 
-// R45: a challenge counts inside its day's time. Ana's last two phase challenges share a day of
-// her final stretch, whose review took the whole day beside them: the day asked 68 minutes of 45.
 describe("a day that holds a challenge", () => {
   it("asks no more than its time, the time the day's challenges take past it included", async () => {
     const copyKey = randomUUID().slice(0, 8);

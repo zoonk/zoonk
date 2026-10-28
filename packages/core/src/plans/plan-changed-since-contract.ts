@@ -1,9 +1,5 @@
 import { z } from "zod";
 
-/**
- * What a screen waiting on lessons watches: the plan alone (the Plan), or the plan and the
- * recent sessions too (Today).
- */
 export const planWatchSchema = z
   .enum(["plan", "today"])
   .meta({
@@ -14,7 +10,6 @@ export const planWatchSchema = z
 
 export type PlanWatch = z.infer<typeof planWatchSchema>;
 
-/** Whether what a screen waiting on lessons shows changed since it read it. */
 export const planChangedSinceSchema = z
   .object({
     changed: z

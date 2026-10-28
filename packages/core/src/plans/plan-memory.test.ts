@@ -36,7 +36,6 @@ async function learnerFixture({ memoryEnabled = true }: { memoryEnabled?: boolea
   return user;
 }
 
-/** A learner with facts in every category, and a goal whose plan the planner hasn't built yet. */
 async function setup({ settings = {} }: { settings?: object } = {}) {
   const user = await learnerFixture();
 

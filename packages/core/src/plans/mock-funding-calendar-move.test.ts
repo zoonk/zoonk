@@ -51,7 +51,6 @@ const TWO_DAY_STRUCTURE = examStructureSchema.parse({
   },
 });
 
-/** Enough real written work keeps the first funded mock inside the undated plan. */
 async function setup({
   dailyMinutes = 30,
   targetDate = null,
@@ -100,7 +99,6 @@ async function setup({
     status: "created",
   });
 
-  // Auth is a request/framework boundary; plan persistence and all capability work stay real.
   mockSession(user.id);
   return { blueprint, goal, library, plan, user };
 }
@@ -464,7 +462,6 @@ describe("mock funding through exported calendar and challenge moves", () => {
         ).length,
       ).toBeGreaterThanOrEqual(fullMocks);
 
-      // Only day two has questions: its bank must not change the first scheduled day into day two.
       const bank = await Promise.all(
         Array.from({ length: 18 }, () =>
           itemFixture({ content: choiceItemContent(), skillId: library.skills[1]?.id ?? "" }),

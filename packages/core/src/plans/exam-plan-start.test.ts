@@ -21,11 +21,6 @@ const TODAY = "2020-09-28";
 const RIGHT = { selectedIndex: 0 };
 const LESSONS_PER_SKILL = 12;
 
-/**
- * An adult's public-service exam whose skills are still one stand-in each while placement runs:
- * a Portuguese foundation (word classes, which the exam doesn't ask on its own), rewriting at the
- * exam's depth, logic and law.
- */
 async function setup() {
   const user = await userFixture();
 
@@ -68,10 +63,6 @@ async function setup() {
   return { goal, items, library, plan };
 }
 
-/**
- * The course outlines land: each skill gets its chapter's lessons, written a chapter at a time so
- * the test doesn't wait on a round trip per lesson.
- */
 async function outlineSkills(skillIds: readonly string[]) {
   await Promise.all(
     skillIds.map(async (skillId) => {
@@ -156,13 +147,9 @@ describe("an exam plan after placement", () => {
   });
 });
 
-/** An answer placement grades wrong: the fixture's choice items have their right option first. */
+/** The fixture's choice items have their right option first. */
 const WRONG = { selectedIndex: 1 };
 
-/**
- * A law exam four weeks away at 10 minutes a day: its time keeps the core of some of its skills,
- * asked alike, in teaching order.
- */
 async function shortExamSetup() {
   const user = await userFixture();
 
@@ -191,7 +178,6 @@ async function shortExamSetup() {
   return { goal, library, plan };
 }
 
-/** The skills the plan has lessons on still to do. */
 async function listPlannedSkills(planId: string): Promise<Set<string>> {
   const items = await prisma.planItem.findMany({
     include: { lesson: { select: { skills: { select: { skillId: true } } } } },
@@ -215,9 +201,6 @@ describe("an exam plan short on time when placement ends", () => {
     vi.useRealTimers();
   });
 
-  // Placement skipped nothing, so nothing re-planned, and a topic it found missing stayed out
-  // while topics asked as often, which the learner wasn't asked about, kept their lessons. A miss
-  // ranks first among topics asked alike.
   it("brings in a topic placement found missing even when it skipped nothing", async () => {
     const { goal, library, plan } = await shortExamSetup();
     const planned = await listPlannedSkills(plan.id);
@@ -237,7 +220,6 @@ describe("an exam plan short on time when placement ends", () => {
     expect(finished).toMatchObject({ completion: { testedOutPlanItemIds: [] }, status: "ready" });
     await expect(listPlannedSkills(plan.id)).resolves.toContain(missing?.id);
 
-    // Today says it was their answers that changed what fits.
     const changes = await prisma.planChange.findMany({ where: { planId: plan.id } });
 
     expect(changes).toMatchObject([

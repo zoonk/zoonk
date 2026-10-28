@@ -10,10 +10,7 @@ import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { proposePlanChange } from "./propose-plan-change";
 
-/**
- * A Monday in 2020, before the learning events other tests write: estimates read everyone's recent
- * pace, and this keeps it out of the dates these tests expect.
- */
+/** Before other tests' learning events, so their pace never changes these plans. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 
 async function setup() {
@@ -58,7 +55,6 @@ describe("plan changes", () => {
   it("saves no focus that would move nothing, and says why", async () => {
     const { goal, plan } = await setup();
 
-    // Every lesson fits and Math already comes first: focusing it moves nothing.
     await expect(
       changeGoalPlan({
         goalId: goal.id,
@@ -70,7 +66,6 @@ describe("plan changes", () => {
     expect(stored.settings).not.toMatchObject({ focusAreas: ["Math"] });
     await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(0);
 
-    // The focus test's choice is kept even then: its result names the focus it chose.
     await expect(
       changeGoalPlan({
         goalId: goal.id,
@@ -120,9 +115,6 @@ describe("plan changes", () => {
     const { goal, library, plan } = await setup();
     const biology = library.skills[1]?.id ?? "";
 
-    // The plan the learner sees starts Biology later than planning it again from today would (as
-    // when a week kept its days while lessons landed): Lucas was told he "still" started biology on
-    // the re-planned day while his plan showed it two days later.
     await prisma.planItem.updateMany({
       data: { scheduledFor: new Date("2020-10-09T00:00:00Z") },
       where: { planId: plan.id, skillId: biology },
@@ -133,7 +125,6 @@ describe("plan changes", () => {
       input: { operations: [{ areas: ["Biology"], kind: "focusAreas" }] },
     });
 
-    // Today's lessons stay as the learner sees them, so Biology comes in from tomorrow.
     expect(result.status === "applied" && result.change?.effect?.areaStarts).toStrictEqual([
       { after: "2020-09-29", area: "Biology", before: "2020-10-09" },
     ]);
@@ -237,9 +228,6 @@ describe("plan changes", () => {
     ).resolves.toStrictEqual({ status: "conflict" });
   });
 
-  // Pedro asked his buddy to add starting with little money: the change planned today again from
-  // scratch, so his session swapped its lesson for the earlier phase's, and his Plan went back a
-  // phase. A topic the learner adds comes after today's lessons, as its card says.
   it("keeps today's lessons when the learner adds a topic", async () => {
     const { goal, library, plan } = await setup();
 
@@ -292,8 +280,6 @@ describe("plan changes", () => {
     await expect(readToday()).resolves.toStrictEqual(today);
   });
 
-  // Pedro's card said a topic added 8 lessons, and the Library wrote 5 for it: a topic's lessons
-  // not written yet are the plan's estimate, so the card says about how many.
   it("says about how many lessons a topic adds while its lessons aren't written", async () => {
     const { goal } = await setup();
 
@@ -415,7 +401,6 @@ describe("plan changes", () => {
   it(`makes "harder" harder now: the basics of a subject the learner does well in leave the plan`, async () => {
     const user = await userFixture();
 
-    // Two subjects, each with its basics in the first phase and what builds on them in the next.
     const library = await planLibraryFixture({
       phases: ["Basics", "Further"],
       skills: [
@@ -435,7 +420,6 @@ describe("plan changes", () => {
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
     mockSession(user.id);
 
-    // Right every time in math's first lessons; nothing in biology yet.
     await Promise.all(
       Array.from({ length: 8 }, () =>
         attemptFixture({ skillId: library.skills[0]?.id ?? "", userId: user.id }),
@@ -457,7 +441,6 @@ describe("plan changes", () => {
       status: "applied",
     });
 
-    // Math starts past its basics; biology, not shown yet, and math's next part stay.
     await expect(
       Promise.all([0, 1, 2, 3].map((index) => todoLessons(index))),
     ).resolves.toStrictEqual([0, 3, 4, 3]);

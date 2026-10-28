@@ -14,7 +14,6 @@ import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { parsePlanGraph } from "./planner/plan-state";
 
-/** A Monday. */
 const TODAY = new Date("2026-10-12T00:00:00Z");
 const DAY_MS = 86_400_000;
 
@@ -34,10 +33,6 @@ function setClock(offset: number) {
   });
 }
 
-/**
- * A learner who said English's lessons are too basic: English's two basics (each built on by what
- * comes after) leave the plan, and Law stays as it was. Each skill has questions in the bank.
- */
 async function setup() {
   const user = await userFixture();
 
@@ -88,8 +83,6 @@ function countTodo({ planId, skillId }: { planId: string; skillId: string }) {
   return prisma.planItem.count({ where: { kind: "lesson", planId, skillId, status: "todo" } });
 }
 
-// "Too basic" is the learner's choice: the basics leave the plan at once, but practice still
-// confirms them, and a miss brings back the one missed, named on Today.
 describe("basics a learner passed over as too basic", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -106,7 +99,6 @@ describe("basics a learner passed over as too basic", () => {
     await expect(countTodo({ planId: plan.id, skillId: grammar.id })).resolves.toBe(0);
     await expect(countTodo({ planId: plan.id, skillId: vocabulary.id })).resolves.toBe(0);
 
-    // A week after the choice, practice asks them first, as it does a topic a test-out skipped.
     setClock(7);
 
     const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
@@ -128,7 +120,6 @@ describe("basics a learner passed over as too basic", () => {
       loadSkillsToConfirm({ goalId: goal.id, skillIds, userId: user.id }),
     ).resolves.toStrictEqual(new Set(skillIds));
 
-    // A miss on grammar brings its lessons back, named on Today; vocabulary stays out.
     const [question] = itemsOf(grammar);
 
     await attemptFixture({

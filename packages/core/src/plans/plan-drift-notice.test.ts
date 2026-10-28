@@ -15,7 +15,6 @@ import { getSeenEffect } from "./_utils/seen-effect";
 import { countLessons } from "./_utils/stand-in-lessons";
 import { refreshGoalPlan } from "./refresh-goal-plan";
 
-/** Keep the source at own while the next session moves its blended factor. */
 async function saveOwnPace({ factor, planId }: { factor: number; planId: string }) {
   const plan = await prisma.plan.findUniqueOrThrow({ where: { id: planId } });
 
@@ -54,10 +53,7 @@ describe("notices for changes within an estimate", () => {
 
   afterEach(() => vi.useRealTimers());
 
-  // A faster pace adds nothing by itself (see estimate-update.test.ts).
   it("announces an own-pace drift that makes fewer lessons fit", async () => {
-    // Two weeks: an automatic run honestly keeps this week, and on an 8-day plan the final
-    // challenge (C2) took the only day left after it; two weeks keep the multi-lesson change.
     const { goal, plan, user } = await pacedPlanFixture({
       dailyMinutes: 30,
       days: 14,
@@ -65,7 +61,6 @@ describe("notices for changes within an estimate", () => {
       skills: 8,
     });
 
-    // The plan starts whole, so a slower pace can only leave lessons out.
     await expect(
       prisma.planItem.count({ where: { kind: "lesson", planId: plan.id } }),
     ).resolves.toBe(8 * 6);
@@ -82,7 +77,6 @@ describe("notices for changes within an estimate", () => {
     const saved = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     const beforeReads = await prisma.planChange.findMany({ where: { planId: plan.id } });
 
-    // The Plan lists it; Today, with nothing for the learner to do, stays quiet.
     await expect(readTodayChange(goal.id)).resolves.toBeNull();
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toStrictEqual(
@@ -102,13 +96,9 @@ describe("notices for changes within an estimate", () => {
     ).resolves.toBe(1);
   });
 
-  // Every lesson a run leaves out is named, a single one too: the threshold keeps only small gains
-  // quiet.
   it.each([false, true])(
     "names the one lesson a sampled change leaves out (already own: %s)",
     async (own) => {
-      // 22 minutes: at 20, the 5% slower pace this week's kept work spilled past Sunday cost two
-      // lessons once each phase's challenge took its 15 minutes (C2), not the one this asks about.
       const { goal, plan, user } = await pacedPlanFixture({
         dailyMinutes: 22,
         days: 14,
@@ -233,8 +223,6 @@ describe("notices for changes within an estimate", () => {
     expect(change?.effect?.lessonsRemoved).toBe(0);
   });
 
-  // At 15 minutes a day, one stand-in begins before the exam and goes on after it: landed, it kept
-  // a stand-in for one more lesson after the exam beside all eight written ones.
   it("lands every lesson of a stand-in that goes on past the exam, keeping no stand-in", async () => {
     const { goal, library, plan } = await pacedPlanFixture({
       dailyMinutes: 16,
@@ -322,8 +310,6 @@ describe("notices for changes within an estimate", () => {
     expect(countLessons(after) - countLessons(before)).toBe(8);
     expect(byDate(after)).toBe(byDate(before));
     expect(change?.effect?.lessonsAdded).toBe(8);
-    // The last lessons reclaim time no longer set aside for an omitted after-exam mock, after the
-    // time each challenge takes inside its day (R45).
     expect(change?.effect?.endDateAfter).toBe("2020-11-01");
   });
 

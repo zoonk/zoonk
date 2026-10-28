@@ -65,8 +65,6 @@ async function setup(timeZone: string) {
   const { goal, plan } = await unplannedGoalFixture({
     dailyMinutes: 10,
     details: {
-      // The learner answered the start's questions: a course start whose questions are left is
-      // still setting up, and Today leads back to them (see `isCourseSetupLeft`).
       answered: ["targetDate", "schedule"],
       courseStart: { chapterId: library.chapters[0]?.id ?? null },
       placementDeclined: true,
@@ -79,7 +77,6 @@ async function setup(timeZone: string) {
   });
 
   await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
-  // Only the existing auth/cache framework harness is mocked; all learning and plan rows persist.
   mockSession(user.id);
 
   await expect(createGoalPlan({ goalId: goal.id, graph: library.graph })).resolves.toMatchObject({
@@ -259,8 +256,6 @@ async function expectTuesdayStable({
   finished: Awaited<ReturnType<typeof completeAhead>>;
   nextMorning: string;
 }) {
-  // A learner replan releases the safe previously shown Thursday end. Automatic refresh alone
-  // intentionally keeps that end; no saved date is edited to establish the new Tuesday promise.
   await expect(
     changeGoalPlan({
       goalId: fixture.goal.id,
@@ -389,7 +384,6 @@ describe("a boss's actual completed teaching day stays fixed as today advances",
 
   afterEach(async () => {
     // Vitest's timeout does not cancel async SQL: drain the body before another case owns Date/auth.
-    // Its original rejection is already reported by the test, not swallowed as a successful result.
     await Promise.allSettled([running.body]);
     vi.useRealTimers();
   });

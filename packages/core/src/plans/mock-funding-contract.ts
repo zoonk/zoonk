@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-/** The saved mock contribution that explains why this study day has less time. */
 export const mockFundingSchema = z
   .object({
     mockDate: z.iso.date().describe("The scheduled date of the mock this day funds."),

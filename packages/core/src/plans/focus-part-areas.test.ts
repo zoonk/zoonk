@@ -19,10 +19,6 @@ const MATH = "Matemática";
 
 const citation = { passage: "Conteúdo programático", sourceId: "notice" };
 
-/**
- * Ana's ENEM plan, in focus on `focusAreas`: Linguagens, the foreign language she takes (which the
- * notice counts inside Linguagens, so she only sees it there) and Matemática.
- */
 async function loadContext(focusAreas: string[]) {
   const user = await userFixture();
   const areas = [LANGUAGES, ENGLISH, MATH];

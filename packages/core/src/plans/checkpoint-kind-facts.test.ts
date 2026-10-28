@@ -37,7 +37,6 @@ async function questionBank({ count, skillId }: { count: number; skillId: string
   );
 }
 
-/** Real voiced/unvoiced Library sets; no audio generation or fake recording lookup. */
 async function recording({
   count,
   examBlueprintId,
@@ -161,8 +160,7 @@ async function onBossDay(fixture: Awaited<ReturnType<typeof setup>>, expectedMin
   if (!boss?.scheduledFor) {
     throw new Error("Expected the actual scheduled boss date");
   }
-  // The learner already studied these test-owned lessons; the real day resolver therefore
-  // offers the saved boss instead of carrying overdue lesson work into its date.
+
   await prisma.planItem.updateMany({
     data: { completedAt: NOW, status: "done" },
     where: { kind: "lesson", planId: fixture.plan.id },
@@ -418,7 +416,6 @@ describe("checkpoint kind facts share the actual planned and played duration", (
 
     mockSession(null);
     const after = await estimateCoursePlan(input);
-    // The existing card and persisted block round thirteen 1.5-minute questions to twenty minutes.
     expect.soft(after).toMatchObject({ workload: { checkpointMinutes: 20 } });
 
     await expect(
@@ -466,8 +463,7 @@ describe("checkpoint kind facts share the actual planned and played duration", (
       await expect(
         createGoalPlan({ goalId: goal.id, graph: library.graph, setup: "steps" }),
       ).resolves.toMatchObject({ status: "created" });
-      // Read the first committed workflow plan directly; no Plan/Today read or setup task can
-      // rebuild it from the newly saved graph before this assertion.
+
       const initial = await prisma.plan.findUniqueOrThrow({
         include: { items: true },
         where: { id: plan.id },
@@ -576,8 +572,6 @@ describe("checkpoint kind facts share the actual planned and played duration", (
       .soft(await estimateCoursePlan(input))
       .toMatchObject({ workload: { checkpointMinutes: 18 } });
 
-    // Make only the inaccessible set unvoiced. The remaining private-blueprint recording still
-    // must not affect the actual public estimate; the twelve public questions set its baseline.
     await prisma.itemSet.update({
       data: { mediaAssetId: null },
       where: { id: privateAudio.set.id },

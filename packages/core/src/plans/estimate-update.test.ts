@@ -16,7 +16,6 @@ async function findChange({ kind, planId }: { kind: string | string[]; planId: s
   return { ...change, effect: (change.payload as { effect: PlanEffect }).effect };
 }
 
-/** A closer source is news only when more than one seen lesson moves. */
 describe("a closer estimate of how long lessons take", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -27,8 +26,6 @@ describe("a closer estimate of how long lessons take", () => {
     vi.useRealTimers();
   });
 
-  // A run the learner didn't ask for never takes a faster pace than the plan's (see
-  // `choosePlanSettings`): the plan adds no lesson because they studied faster.
   it("adds no lesson by itself when a faster pace would fit more", async () => {
     const { goal, plan, user } = await pacedPlanFixture({
       dailyMinutes: 15,
@@ -45,7 +42,6 @@ describe("a closer estimate of how long lessons take", () => {
         .toSorted((left, right) => left.localeCompare(right));
     };
 
-    // Short on time: the plan leaves lessons out that a faster pace could bring in.
     const before = await readLessons();
     expect(before.length).toBeLessThan(12 * 4);
 

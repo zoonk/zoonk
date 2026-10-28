@@ -25,11 +25,6 @@ describe("asking to move the phase dates a run keeps", () => {
     vi.useRealTimers();
   });
 
-  /*
-   * A slower session must move the challenge after its tested teaching, planned from the next day
-   * as its run was. The zero-net applied notice says which shown end moved, instead of leaving an
-   * optional proposal and a challenge before its lessons.
-   */
   it("moves a phase's end after a slower session and records it, quietly on Today", async () => {
     const user = await userFixture();
 
@@ -54,8 +49,6 @@ describe("asking to move the phase dates a run keeps", () => {
     mockSession(user.id);
     await getTodayStudySession({ goalId: goal.id, timeZone: "UTC" });
 
-    // The learner finished today's lessons taking twice their estimate, long ago enough that no one
-    // else's pace reads it: the rest of the week is laid out again from tomorrow.
     await prisma.planItem.updateMany({
       data: { completedAt: NOW, status: "done" },
       where: { kind: "lesson", planId: plan.id, scheduledFor: new Date("2020-09-28T00:00:00Z") },
@@ -106,7 +99,6 @@ describe("asking to move the phase dates a run keeps", () => {
     expect(payload.effect).toMatchObject({ lessonsAdded: 0, lessonsRemoved: 0 });
     expect(payload.effect?.phaseEnds).toStrictEqual(phaseEnds);
 
-    // The plan moved the end on its own: its change says so, and Today asks nothing.
     await expect(getTodayView({ goalId: goal.id, timeZone: "UTC" })).resolves.toMatchObject({
       status: "ready",
       today: { planChange: null },

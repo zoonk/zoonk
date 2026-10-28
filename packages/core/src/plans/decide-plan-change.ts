@@ -25,10 +25,6 @@ export type PlanChangeDecisionResult =
 
 type Decision = { change: PlanChange; context: PlanContext };
 
-/**
- * Applies a proposal the learner said OK to, on the plan as it is now; today's session follows it
- * (see `followPlanToday`).
- */
 async function acceptProposal({ change, context }: Decision) {
   const payload = parsePlanChangePayload(change.payload);
 
@@ -67,7 +63,6 @@ async function acceptProposal({ change, context }: Decision) {
       });
 
       if (count === 0) {
-        /** A decision committed during compute; the retry reads it as a conflict. */
         throw new PlanConflictError();
       }
 
@@ -120,7 +115,6 @@ async function decline({ change, context }: Decision) {
   return refusal;
 }
 
-/** "Got it": the learner read an applied change, so the plan stops showing it. Nothing else moves. */
 async function markSeen({ change, context }: Decision) {
   if (change.status !== "applied") {
     return { status: "conflict" as const };
@@ -182,11 +176,6 @@ async function decide({ decision, input }: { decision: Decision; input: PlanChan
   return undoChange(decision);
 }
 
-/**
- * The learner's answer to a change: OK or no to a proposal, undo an applied change (the latest
- * edit, or a test-out's skipped lessons; an applied proposal waits for an answer again), or "Got
- * it" on an applied one. Changes that already moved on are a conflict.
- */
 export async function decidePlanChange({
   changeId,
   goalId,

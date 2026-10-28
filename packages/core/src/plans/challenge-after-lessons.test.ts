@@ -13,7 +13,6 @@ const DAY = 86_400_000;
 /** A Sunday in 2020, before the learning events other tests write, which estimates read. */
 const SUNDAY = new Date("2020-09-27T12:00:00Z");
 
-/** A learn goal with a phase per entry of `lessons`, each of one skill with that many lessons. */
 async function setup({ dailyMinutes, lessons }: { dailyMinutes: number; lessons: number[] }) {
   const user = await userFixture();
 
@@ -36,13 +35,11 @@ async function setup({ dailyMinutes, lessons }: { dailyMinutes: number; lessons:
   return { goal, library, plan };
 }
 
-/** The learner opens Today `days` after Sunday, and the plan settles what the days before left. */
 async function comeBack({ days, goalId }: { days: number; goalId: string }) {
   vi.setSystemTime(new Date(SUNDAY.getTime() + days * DAY));
   await refreshGoalPlan({ goalId });
 }
 
-/** The learner opens Today and finishes the plan's next lesson: a studied day. */
 async function studyToday({
   goal,
   planId,
@@ -67,7 +64,6 @@ async function studyToday({
   ]);
 }
 
-/** The end date each phase of the plan shows, by name. */
 async function readPhaseEnds(planId: string): Promise<Map<string, string | null>> {
   const plan = await prisma.plan.findUniqueOrThrow({ where: { id: planId } });
   const phases = plan.phases as { endDate: string | null; name: string }[];
@@ -75,7 +71,6 @@ async function readPhaseEnds(planId: string): Promise<Map<string, string | null>
   return new Map(phases.map((phase) => [phase.name, phase.endDate]));
 }
 
-/** Today's proposal to move the phase dates, while it waits, with the moves its card names. */
 async function readProposal(planId: string) {
   const proposal = await prisma.planChange.findFirst({
     where: { payload: { equals: "phaseDates", path: ["source"] }, planId, status: "proposed" },
@@ -88,12 +83,6 @@ async function readProposal(planId: string) {
   return { moves: payload?.effect?.phaseEnds ?? [], proposal };
 }
 
-/**
- * Four phases of eight lessons at 12 minutes a day. The learner studied on Sunday, the first day,
- * then comes back a week later: the first phase ended in between with its lessons and challenge
- * left, and the next ones' lessons now come after their challenges, on the ends the learner saw.
- * A studied day never moves those ends (R6), so Today offers to move them.
- */
 async function setupAwayAfterStudying() {
   const plan = await setup({ dailyMinutes: 12, lessons: [8, 8, 8, 8] });
 
@@ -113,10 +102,6 @@ describe("a phase's challenge after missed days", () => {
     vi.useRealTimers();
   });
 
-  // Career 1027: a missed day left a phase's lessons and challenge undone, and the phases after it
-  // ended today and tomorrow: keeping those ends held the challenge today, its lessons after it. A
-  // missed day may move phase ends (R6), so the end goes, and the challenge it moves after its
-  // lessons pushes the next phases' lessons past their own ends, which go too.
   it("comes after the lessons it tests, moving the later phase ends it would pass", async () => {
     const { goal, library, plan } = await setup({ dailyMinutes: 24, lessons: [3, 3, 3, 3, 3] });
 
@@ -141,10 +126,6 @@ describe("a phase's challenge after missed days", () => {
     expect(lessonsAfter).toStrictEqual([]);
   });
 
-  // Career 1160: the settling moved the ended first phase's end to its carried lessons, while
-  // Today's card named that end's move from the day before the run. The next run read the card as
-  // not starting from the ends the learner sees and withdrew it, and a later challenge stayed
-  // before its lessons with no card.
   it("names each move on Today's card from the end the plan it comes with shows", async () => {
     const { plan } = await setupAwayAfterStudying();
     const ends = await readPhaseEnds(plan.id);
@@ -154,9 +135,6 @@ describe("a phase's challenge after missed days", () => {
     expect(moves.filter((move) => move.before !== ends.get(move.name))).toStrictEqual([]);
   });
 
-  // Career 1160: the learner kept their dates ("Keep mine"), then days away moved ends that card
-  // named. Judged against the ends from before the run, as if the learner still saw them, the
-  // answer held, and the challenges stayed before their lessons with no card.
   it("asks again once a run moves an end the learner kept", async () => {
     const { goal, plan } = await setupAwayAfterStudying();
     const kept = await readProposal(plan.id);

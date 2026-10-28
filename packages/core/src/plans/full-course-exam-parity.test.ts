@@ -16,7 +16,6 @@ const NOW = new Date("2026-10-24T15:00:00Z");
 const EXAM = "2027-11-14";
 const TIME_ZONE = "America/Sao_Paulo";
 
-/** Joined stand-ins include later work: compare only the portions studied by the exam. */
 function beforeExam(built: BuiltPlan) {
   return built.items
     .filter((item) => item.scheduledFor && toIsoDate(item.scheduledFor) <= EXAM)
@@ -188,9 +187,6 @@ describe("studying everything after an exam (R14)", () => {
     120_000,
   );
 
-  // Three weeks from ENEM, studying everything ends in 2028. The Plan's read took the phase after
-  // the exam, which has no challenge by design, for one missing its challenge, and laid the plan
-  // out again: the editor said a finish days before the one the change had just saved.
   it("reads the end the change saved after the exam", async () => {
     const copyKey = randomUUID();
 

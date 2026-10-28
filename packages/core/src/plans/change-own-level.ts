@@ -20,12 +20,11 @@ import { withPlanRetry } from "./plan-conflict";
 import { type PlanChangeView } from "./plan-view-contract";
 import { refreshGoalPlan } from "./refresh-goal-plan";
 
-/** Not shown to the learner: the app announces the foundations from the change's operations. */
+/** For logs and admin only; the apps word the foundations from the change's operations. */
 const OWN_LEVEL_NOTE = "The learner lowered their own level; foundations were added.";
 
 const LEVEL_ORDER: readonly OwnLevel[] = ["none", "basic", "intermediate", "advanced"];
 
-/** Without a level given, placement started in the middle of the plan, as intermediate does. */
 const UNSTATED_LEVEL: OwnLevel = "intermediate";
 
 function getDirection({ from, to }: { from: OwnLevel | null; to: OwnLevel }) {
@@ -54,7 +53,6 @@ async function saveLevel({ context, level }: { context: PlanContext; level: OwnL
   revalidateCacheTags([getGoalsCacheTag(context.goal.userId)]);
 }
 
-/** Adds the foundations a lower level needs, with an undo; null when there's nothing to add. */
 async function addFoundations(context: PlanContext): Promise<PlanChangeView | null> {
   const plan = await loadGoalPlan(context.goal.id);
   const operations = await findFoundationOperations({ context, plan });
@@ -74,12 +72,6 @@ async function addFoundations(context: PlanContext): Promise<PlanChangeView | nu
   return result.status === "applied" ? loadPlanChangeView(result.changeId) : null;
 }
 
-/**
- * Changes the learner's own level for a goal from the plan. Past work is never undone: known
- * skills and passed test-outs stay. A lower level adds the foundations the plan left out, right
- * before the skills they prepare for, as a change with an undo. A higher level skips nothing: it
- * offers test-outs for the chapters the new level covers. Placement starts from the new level.
- */
 export async function changeOwnLevel({
   goalId,
   input,
@@ -98,8 +90,7 @@ export async function changeOwnLevel({
 
   await saveLevel({ context, level: input.level });
 
-  // Only the plan's part starts over when another write wins: the level is saved, so reading it
-  // again would say "same". The goal is read again, as another write may have changed it too.
+  // Only the plan's part retries: the level is already saved, so reading it again would say "same".
   return withPlanRetry(async () => {
     const current = await findOwnedPlan({ goalId, timeZone: input.timeZone });
 

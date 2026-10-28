@@ -8,7 +8,6 @@ import { openStudyDay } from "../sessions/open-study-day";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { acknowledgeTodayPlanChange } from "./acknowledge-today-plan-change";
 
-/** The browser seed must work on different real calendar labels without a stored proposal. */
 describe("date-parameterized mandatory Today seed", () => {
   beforeEach(() => vi.useFakeTimers({ toFake: ["Date"] }));
   afterEach(() => vi.useRealTimers());
@@ -39,7 +38,6 @@ describe("date-parameterized mandatory Today seed", () => {
       }
 
       expect(read.result.today.planChange).toBeNull();
-      // Skill-only stand-ins have no lesson or chapter to list, just as the status count says.
       expect(read.result.today.earlierWork).toStrictEqual([]);
 
       await expect(prisma.planChange.count({ where: { planId: fixture.plan.id } })).resolves.toBe(

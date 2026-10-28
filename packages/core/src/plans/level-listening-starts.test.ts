@@ -14,11 +14,6 @@ import { settleNewPlan } from "./_utils/recommended-bases";
 import { createGoalPlan } from "./create-goal-plan";
 import { parsePlanSettings } from "./planner/plan-state";
 
-/**
- * An IELTS-like learner with what they said of their level, whose plan has two Listening basics
- * (each built on by what comes after) and a Reading one, and who just answered onboarding's time
- * question.
- */
 async function settledLearner(details: { knownSubjects?: string[]; level: OwnLevel | null }) {
   const user = await userFixture();
 
@@ -63,10 +58,6 @@ async function settledLearner(details: { knownSubjects?: string[]; level: OwnLev
   return { goal, settings: parsePlanSettings(saved.settings), skills: library.skills, todo, user };
 }
 
-// Placement never asks listening (a text question tests reading), so a learner who studied the
-// language before met its sound drills on day one. Their level, or saying they know Listening well,
-// now starts it past its basics, as if they had said those lessons are too basic: practice confirms
-// them with recordings.
 describe("a language exam's listening basics at the learner's own level", () => {
   it("start past the basics for a learner who studied the language before, still to confirm", async () => {
     const { goal, settings, skills, todo, user } = await settledLearner({ level: "intermediate" });
@@ -113,12 +104,6 @@ describe("a language exam's listening basics at the learner's own level", () => 
   });
 });
 
-/**
- * A DELE-like learner who gave no level, on a plan with two Listening basics (each built on by what
- * comes after, in `listeningLevel`'s band) and two beginner Reading basics with intermediate Reading
- * built on them, who answered placement's text questions on the Reading basics (`readingRight`,
- * one per basic) and then onboarding's time question.
- */
 async function placedLearner({
   listeningLevel,
   readingRight,
@@ -190,10 +175,6 @@ async function placedLearner({
   return { goal, settings: parsePlanSettings(saved.settings), skills: library.skills, todo, user };
 }
 
-// Placement asks listening nothing (a text question tests reading), so a learner who gave no level
-// and showed the text basics known still met the sound drills on day one. Text basics placement
-// confirms pass over the same band's listening basics, as if the learner had said they're too
-// basic: practice confirms them with recordings, and a miss brings their lessons back.
 describe("a language exam's listening basics after placement's text questions", () => {
   it("start past the basics when placement confirmed the text basics of their band", async () => {
     const { goal, settings, skills, todo, user } = await placedLearner({
@@ -213,7 +194,6 @@ describe("a language exam's listening basics after placement's text questions", 
       loadSkillsToConfirm({ goalId: goal.id, skillIds: basics, userId: user.id }),
     ).resolves.toStrictEqual(new Set(basics));
 
-    // Placement's "lessons skipped" change carries them, so it names them leaving.
     const change = await prisma.planChange.findFirstOrThrow({
       where: { kind: "testedOut", plan: { goalId: goal.id } },
     });

@@ -4,27 +4,16 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { findOwnedGoal } from "../learner/_utils/owned-goal";
 import { type PlanWatch } from "./plan-changed-since-contract";
 
-/**
- * Lessons are written on another server, whose clock can run a little behind this one: a change
- * this long before the screen's read still counts, so it's never missed (an extra read at worst).
- */
+/** Lessons are written on another server, whose clock can run a little behind this one. */
 const CLOCK_MARGIN_MS = 2000;
 
-/** The sessions Today can be showing: the day's, or one carried over from the day before. */
 const SESSION_DAYS = 2;
 
 export type PlanChangedSinceResult =
   | { changed: boolean; status: "ready" }
   | { status: "notFound" | "unauthorized" };
 
-/**
- * Whether what Today and the Plan show while lessons are being written changed since they read
- * it (`since`, milliseconds since the epoch: the screen's read time): the goal's plan (a re-plan
- * brings in the lessons the Library wrote), one of its items or an item's lesson, and, watching
- * `today` (the Plan shows only the plan), a recent session, one of its stops or a stop's lesson.
- * A screen waiting on lessons asks this every few seconds and reads itself again only when it says
- * so, instead of reading everything each time. Never cached: it's the poll.
- */
+/** `since` is the screen's read time in epoch milliseconds. Uncached: screens poll it. */
 export async function getPlanChangedSince({
   goalId,
   since,

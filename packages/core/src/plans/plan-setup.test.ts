@@ -17,8 +17,8 @@ import { runPlanSetupTask } from "./plan-setup";
 import type * as NoticeDay from "../exams/_utils/notice-day";
 import type * as Announcement from "./announce-tested-out-items";
 
-// A database read or write that fails for a moment (a dropped connection) can't be made safely
-// with the real database: tests make the placement's announcement and the notice's day fail once.
+// A database failure that lasts a moment can't be made safely with the real database, so these fail
+// once on purpose.
 vi.mock("./announce-tested-out-items", async (importOriginal) => {
   const actual = await importOriginal<typeof Announcement>();
   return { ...actual, announceTestedOutItems: vi.fn(actual.announceTestedOutItems) };
@@ -54,7 +54,6 @@ function mockFit(data: Awaited<ReturnType<typeof fitPlanToRoutineFacts>>["data"]
   });
 }
 
-/** Only a light week: the week's minutes stay as they were, so nothing in them says it was fitted. */
 function mockLightWeek() {
   mockFit({
     operations: [{ kind: "addLightWeek", startDate: "2020-10-05" }],
@@ -62,7 +61,6 @@ function mockLightWeek() {
   });
 }
 
-/** A learner whose memory holds their routine, with a goal whose plan the planner hasn't built. */
 async function routineGoal() {
   const user = await userFixture();
 
@@ -81,7 +79,6 @@ async function routineGoal() {
   return { ...unplanned, library };
 }
 
-/** A goal whose learner ended placement before its plan existed, at a level past the first skill. */
 async function placedGoal() {
   const user = await userFixture();
   const library = await planLibraryFixture({ skills: [{ lessons: 2 }, { lessons: 1 }] });
@@ -99,8 +96,6 @@ async function placedGoal() {
     ),
   );
 
-  // Placement settled the first skill with a right answer of its own (an item, no step): the
-  // stated level alone would only leave it to confirm.
   const skillId = library.skills[0]?.id ?? "";
   const item = await itemFixture({ content: choiceItemContent(), skillId });
   await attemptFixture({ isCorrect: true, itemId: item.id, skillId, userId: user.id });
@@ -109,7 +104,6 @@ async function placedGoal() {
   return { ...unplanned, library };
 }
 
-/** An exam the learner said is in December, whose stored notice sets it for November. */
 async function examInAnotherMonth() {
   const [user, blueprint, library] = await Promise.all([
     userFixture(),
@@ -230,7 +224,6 @@ describe(runPlanSetupTask, () => {
       library.skills[0]?.id,
     ]);
 
-    // One announcement, with its undo, for both lessons the failed attempt tested out.
     expect(announced).toHaveLength(1);
 
     expect(announced[0]?.payload).toMatchObject({
@@ -240,8 +233,6 @@ describe(runPlanSetupTask, () => {
     await expect(readSetupTasks(plan.id)).resolves.toStrictEqual(["routine"]);
   });
 
-  // The plan counts down to the month the learner named until they answer the notice's day on
-  // Today, never replacing it silently.
   it("asks about the notice's day once: a failed ask is retried, and a retry after it asks nothing", async () => {
     const { goal, library, plan } = await examInAnotherMonth();
 
@@ -280,7 +271,6 @@ describe(runPlanSetupTask, () => {
     const { goal, library, plan } = await routineGoal();
     vi.mocked(fitPlanToRoutineFacts).mockRejectedValueOnce(new Error("The provider is overloaded"));
 
-    // Placement has nothing to apply here; the routine's fit fails and is still owed.
     await expect(createGoalPlan({ goalId: goal.id, graph: library.graph })).resolves.toStrictEqual({
       setupTasks: ["routine"],
       status: "created",

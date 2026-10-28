@@ -1,11 +1,5 @@
 import { z } from "zod";
 
-/**
- * What the app recommends for the plan's bases, worked out when the learner asks for it ("Get a
- * recommendation"): every lesson of each (`deep`) when their time covers everything with every
- * base in depth, else a quick lesson for each (`quick`) when the date is close and their core
- * (`essential`) further away. Exact: it plans the goal with every base in depth to say it.
- */
 export const planBasesAdviceSchema = z
   .object({
     daysLeft: z

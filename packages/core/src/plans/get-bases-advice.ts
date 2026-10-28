@@ -9,9 +9,8 @@ export type PlanBasesAdviceResult =
   | { status: "notFound" | "unauthorized" };
 
 /**
- * What the app recommends for the learner's plan bases (see `PlanBasesAdvice`), when they ask for
- * it: it plans their goal with every base in depth to see whether their time covers everything
- * then, so it's never worked out for a page or prefetch.
+ * Plans the goal with every base in depth, so call it only when the learner asks, never for a page
+ * or prefetch.
  */
 export async function getPlanBasesAdvice(goalId: string): Promise<PlanBasesAdviceResult> {
   const owned = await findOwnedPlan({ goalId });

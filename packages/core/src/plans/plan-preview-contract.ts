@@ -1,11 +1,6 @@
 import { z } from "zod";
 import { planEffectSchema } from "./plan-effect-contract";
 
-/**
- * What a change would do to the plan, planned the way applying it plans it, with nothing saved:
- * its effect (lessons, the end, topics in or out), what the learner's time covers then, and
- * whether it would change anything at all.
- */
 export const planChangePreviewSchema = z
   .object({
     effect: planEffectSchema

@@ -27,10 +27,8 @@ async function getOwnGoalView({ goalId, userId }: { goalId: string; userId: stri
 }
 
 /**
- * Starts the learner's own goal from someone's plan link: the same kind, subject and exam, and a
- * copy of the plan's structure (its phases and skills), planned at the learner's own time. Nothing
- * of the owner's comes along: their answers, dates, pace and progress stay theirs. Placement
- * then adjusts the new plan to what the learner already knows. Guests can start one too.
+ * Copies only the plan's structure: the owner's answers, dates, pace and progress stay theirs.
+ * Guests can start one too.
  */
 export async function startGoalFromPlanLink({
   input,
@@ -101,7 +99,6 @@ export async function startGoalFromPlanLink({
   await createGoalPlan({
     fromPlanLink: true,
     goalId: goal.id,
-    // The visitor picks their own options of the exam's choices: the plan starts with them all.
     graph: await keepPublicGraph(joinOptionSkills(parsePlanGraph(source.graph))),
   });
 

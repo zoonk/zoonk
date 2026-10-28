@@ -7,7 +7,6 @@ import {
   type AcknowledgeTodayPlanChangeResult,
 } from "./today-change-contract";
 
-/** A learner POST acknowledges a saved notice and expires its screen data. */
 export async function acknowledgeTodayPlanChange(
   input: AcknowledgeTodayPlanChangeInput,
 ): Promise<AcknowledgeTodayPlanChangeResult> {

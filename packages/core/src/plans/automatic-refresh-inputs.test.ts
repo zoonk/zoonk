@@ -106,7 +106,6 @@ async function setupMissedMock() {
   return { finished, goal, plan };
 }
 
-/** What each of the plan's challenges tests, as its saved facts keep it. */
 async function readTested(planId: string) {
   const bosses = await prisma.planItem.findMany({
     orderBy: { position: "asc" },

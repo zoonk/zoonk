@@ -38,7 +38,6 @@ describe("notice writes that keep plan inputs, with the planner", () => {
       const release = Promise.withResolvers<null>();
 
       const planning = prisma.$transaction(async (tx) => {
-        // Pause at the planner's first lock, before it takes the learner marker.
         await tx.$queryRaw`SELECT id FROM plans WHERE id = ${plan.id}::uuid FOR UPDATE`;
         const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
         held.resolve(backend?.pid ?? 0);
@@ -75,7 +74,6 @@ describe("notice writes that keep plan inputs, with the planner", () => {
         version: plan.version + 1,
       });
 
-      // A repeated notice transition cannot retain an input-version bump.
       await startNoticeWait({ goalId: goal.id, now: NOW });
 
       await expect(

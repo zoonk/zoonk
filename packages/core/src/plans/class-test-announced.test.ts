@@ -11,14 +11,12 @@ import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-lib
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
 
-/** A Thursday: Pedro's biology test is on Saturday, and Friday is its full review. */
 const TODAY = new Date("2026-10-08T00:00:00Z");
 const DAY_MS = 86_400_000;
 
 const ANNOUNCEMENT =
   "A prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!";
 
-/** His notes as their reading stores them: the formats the teacher's last line announces. */
 const NOTES_STRUCTURE = {
   formats: [
     {
@@ -41,10 +39,6 @@ const NOTES_STRUCTURE = {
 
 const OSMOSIS = "Osmose em células animais e vegetais";
 
-/**
- * Pedro's shape (persona pass 7): passive transport, whose third lesson is osmosis, and the
- * organelles' roles, both missed in placement; nucleus and viruses answered right once.
- */
 async function setup() {
   const user = await userFixture();
 
@@ -91,7 +85,6 @@ async function setup() {
       userId: user.id,
     });
 
-  // One right answer: he recalls it for a couple of days, which the plan reads as known.
   const knownOnce = (skillId: string) =>
     learnerSkillFixture({
       difficulty: 5,
@@ -149,7 +142,6 @@ describe("a class test whose material announces its questions", () => {
     const titles = lessons.map((item) => item.titleSnapshot);
     const skills = new Set(lessons.map((item) => item.skillId));
 
-    // The announced topic comes first, with its skill's core; what he knows waits for it.
     expect(titles).toContain(OSMOSIS);
     expect(skills.has(passive?.id ?? "")).toBe(true);
     expect(skills.has(nucleus?.id ?? "") || skills.has(virus?.id ?? "")).toBe(false);
@@ -174,7 +166,6 @@ describe("a class test whose material announces its questions", () => {
   });
 });
 
-/** Pass 9's reading of Pedro's notes: the formats, described without what they ask about. */
 const GENERIC_FORMATS = {
   ...NOTES_STRUCTURE,
   formats: [
@@ -186,7 +177,6 @@ const GENERIC_FORMATS = {
 const AREA = "Biologia Celular";
 const TABLE_LESSONS = 4;
 
-/** Pedro's graph from pass 9: a skill for each of the formats his teacher announced. */
 const FORMAT_SKILLS = [
   { lessons: 3, name: "Explicar os fundamentos da teoria celular", weight: 3 },
   { lessons: 5, name: "Calcular e prever processos de transporte passivo", weight: 5 },
@@ -205,11 +195,6 @@ async function listSkillTitles({ planId, skillId }: { planId: string; skillId: s
   return items.map((item) => item.titleSnapshot).toSorted();
 }
 
-/**
- * Pedro a week before his test with 25 minutes a day, as persona pass 9 met him: his notes'
- * reading kept the formats the teacher announced but not what they ask about, and his graph has
- * a skill practicing each format.
- */
 async function setupFormatSkills() {
   const user = await userFixture();
 
@@ -257,7 +242,6 @@ async function setupFormatSkills() {
     throw new Error("The library has no table skill.");
   }
 
-  // His focus on osmosis: the passive transport skill that teaches it and the essay on it.
   const osmosis = { area: AREA, name: "Osmose", skillIds: [passive?.id ?? "", essay?.id ?? ""] };
 
   return { goal, osmosis, plan, table };

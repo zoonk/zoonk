@@ -115,8 +115,6 @@ describe("past-date notice eligibility", () => {
     },
   );
 
-  // Past the exam's date the plan has no date to put at risk, so settling missed days asks nothing:
-  // Open saves it for the Plan's history, and Today stays quiet.
   it("settles missed days quietly when the learner explicitly studies an exam course beyond its date", async () => {
     const user = await userFixture();
 

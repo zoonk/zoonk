@@ -25,16 +25,11 @@ const MINUTES_PER_HOUR = 60;
 
 type Provenance = { generatedAt: Date; model: string; promptVersion: string; runId: string };
 
-/**
- * `unchanged`: the plan was already this one, so nothing was written. `setupTasks`: what the new
- * plan still owes (see `runPlanSetupTask`), in the order they run.
- */
 export type GoalPlanCreation = {
   setupTasks: PlanSetupTask[];
   status: "created" | "notFound" | "unchanged";
 };
 
-/** Skills the graph names that aren't in the Library can't be planned; they're left out. */
 async function keepKnownSkills(graph: PlanGraph): Promise<PlanGraph> {
   const known = await prisma.skill.findMany({
     select: { id: true },
@@ -45,26 +40,8 @@ async function keepKnownSkills(graph: PlanGraph): Promise<PlanGraph> {
   return { ...graph, skills: graph.skills.filter((skill) => ids.has(skill.skillId)) };
 }
 
-/**
- * The date the plan counts down to, and the notice's day it came from, if it did. `asksNotice`:
- * the notice puts the exam in another month than the one the learner named, so its day waits for
- * their answer.
- */
 type ExamTarget = { asksNotice: boolean; noticeDate: string | null; targetDate: string | null };
 
-/**
- * An exam goal without a date takes its exam's next day from the stored notice, so the plan
- * counts down to the real day, and remembers it as the notice's (`noticeDate`). The edition is the
- * year the learner named, or the notice's own; a year without its notice yet, or the next edition
- * after a past one, has estimated days, and the plan counts down to the estimated day itself:
- * every screen shows that one date, marked as an estimate. Without a notice day, the month the
- * learner named ("in March") is the date: its first day, kept the same way, so a notice's day
- * replaces it. A notice day in another month than the one they named never replaces it silently:
- * the plan keeps their month as their own date, and the notice's day waits for their answer (see
- * `proposeNoticeChange`), since they may mean a later sitting. A later notice day arrives as a
- * change the learner applies, except with `followNotice` (the notice read before they saw the
- * plan), when a date that was the notice's simply becomes the new one.
- */
 async function getExamTarget({
   followNotice,
   goal,
@@ -98,7 +75,6 @@ async function getExamTarget({
 
   const noticeDay = await findNoticeNextDay({ goal, goalDate });
   const keptMonth = getKeptMonthStart({ details: goal.details, noticeDay, today });
-  // A day past what a plan reaches can't be its date: the goal stays undated, and onboarding asks.
   const latest = getTargetDateBounds(today).max;
 
   if (keptMonth) {
@@ -111,12 +87,6 @@ async function getExamTarget({
   return next && next <= latest ? { asksNotice: false, noticeDate: next, targetDate: next } : kept;
 }
 
-/**
- * The exam's next day after today in its own zone, of the sitting the learner means (see
- * `findMeantExamDay`): the one of the date the plan took from the notice (`goalDate`), else of the
- * month they named, else the next one. Public course days use the same cutoff, independent of
- * the learner's study timezone. Null without one.
- */
 async function findNoticeNextDay({
   goal,
   goalDate,
@@ -150,13 +120,6 @@ type GraphPlanning = {
   provenance: Provenance | null;
 };
 
-/**
- * The plan from the graph, read after the plan's token (see `loadPlanAtToken`), so a change that
- * lands while it's worked out fails its save, and the caller plans again. The first plan starts
- * on the recommendation for its bases, creating nothing (see `planOnRecommendedBases`), and owes
- * its setup. A rebuilt plan that comes out the same writes nothing. With `followNotice`, the plan
- * still has to wait for the notice's reading when it's saved (see `checkNoticeLanding`).
- */
 async function planFromGraph({ followNotice, goalId, graph, provenance }: GraphPlanning) {
   const context = await loadPlanAtToken(goalId);
 
@@ -185,15 +148,12 @@ async function planFromGraph({ followNotice, goalId, graph, provenance }: GraphP
 
   const planned = await computePlan({ context, mode: "forced", state });
 
-  // A new plan starts on the recommendation for its bases; a rebuilt one keeps the learner's.
   const computed = isFirst ? await planOnRecommendedBases({ computed: planned, context }) : planned;
 
   if (!isFirst && isPlanUnchanged({ computed, context })) {
     return { computed, goal, isFirst, status: "unchanged" as const };
   }
 
-  // A new plan owes its setup from the moment it's saved. A notice read later proposes its day
-  // when that reading lands (the research workflow's reconciliation).
   const setupTasks: PlanSetupTask[] = isFirst
     ? ["placement", "routine", ...(target.asksNotice ? (["notice"] as const) : [])]
     : [];
@@ -218,21 +178,10 @@ async function planFromGraph({ followNotice, goalId, graph, provenance }: GraphP
   return { computed, goal, isFirst, status: "created" as const };
 }
 
-/** Whether the learner finished lessons of the plan before it existed (see `savePlanItems`). */
 function hasFinishedLessons(context: PlanContext): boolean {
   return context.items.some((item) => item.kind === "lesson" && item.status === "done");
 }
 
-/**
- * The saved plan planned again from what it has now, once more is known than when it was worked
- * out: the quick lessons its bases are studied with, created here (outlines, no model call), and
- * the lessons the learner finished before it existed, now checked off (a guest's lesson's chapter
- * is in progress, so its next lesson comes first, R10). Planned from the plan as it is, the
- * learner's choices, date and time included, without recommending its bases again. Runs after
- * every build, so a run that stopped before it, or a quick lesson another learner's run created
- * first, still ends with the plan they make. Writes nothing when the plan already is so; null when
- * it wrote nothing.
- */
 async function planAgainFromSaved(goalId: string): Promise<ComputedPlan | null> {
   const saved = await prisma.plan.findUnique({ select: { settings: true }, where: { goalId } });
   const settings = parsePlanSettings(saved?.settings);
@@ -260,24 +209,9 @@ async function planAgainFromSaved(goalId: string): Promise<ComputedPlan | null> 
 }
 
 /**
- * Builds a goal's plan from its skill graph: the phases, and the goal's skills in teaching order
- * with their size, area and exam weight. The Library's lessons for those skills fill the plan,
- * with dates at the learner's time; skills not outlined yet stand as one item each until their
- * lessons exist. Running it again replaces the graph and re-plans from today, keeping past work;
- * a run that changes nothing writes nothing (`unchanged`). The plan is worked out outside any
- * lock and saved only if nothing it reads changed meanwhile (see `loadPlanAtToken`): planned again
- * once when something did, then it throws (see `isPlanConflictError`), for the caller to try again
- * later, as lessons and questions other runs save for the same skills can keep landing for a while.
- * Once saved, it's planned again with the quick lessons its bases are studied with and the lessons
- * finished before it existed (see `planAgainFromSaved`).
- * The first plan of a goal sends "Plan Created" and owes its setup, each task once (see
- * `runPlanSetupTask`): testing out what placement already settled when the learner ended it before
- * the plan existed, fitting it to the routine memory holds (days off, lighter days, trips) as a
- * change the learner sees with an undo, and, when it keeps the month the learner named over a
- * notice day in another month, the notice's day waiting on Today. A request sets the plan up
- * before it returns (`setup: "now"`), leaving a task that failed owed for the goal's next run; a
- * workflow runs each task as a step of its own (`setup: "steps"`). Returns the tasks still owed,
- * also when the plan was already built, so a run that stopped after saving it still sets it up.
+ * Throws a plan conflict (`isPlanConflictError`) when other writes keep landing while it plans, for
+ * the caller to try again later. Returns the setup tasks still owed, also when the plan was already
+ * built.
  */
 export async function createGoalPlan({
   followNotice = false,
@@ -289,18 +223,15 @@ export async function createGoalPlan({
   setup = "now",
 }: {
   /**
-   * The exam's notice was read before the learner saw the plan: a date the plan took from the
-   * notice follows its new day instead of waiting for the learner's OK.
+   * The notice was read before the learner saw the plan, so a date taken from it follows its new
+   * day.
    */
   followNotice?: boolean;
-  /** The plan copies someone's shared plan instead of a new skill graph. */
   fromPlanLink?: boolean;
   goalId: string;
   graph: PlanGraph;
-  /** The client that started the work, for "Plan Created"; omitted, it's read from the request. */
   platform?: AnalyticsPlatform | null;
   provenance?: Provenance | null;
-  /** A new plan's setup: run in this call, or left for the caller's steps (`runPlanSetupTask`). */
   setup?: "now" | "steps";
 }): Promise<GoalPlanCreation> {
   const goal = await prisma.goal.findUnique({ select: { id: true }, where: { id: goalId } });
@@ -309,9 +240,7 @@ export async function createGoalPlan({
     return { setupTasks: [], status: "notFound" };
   }
 
-  // The empty plan is saved first and on its own, so a run that fails still leaves it. One
-  // statement that waits for another run saving it instead of failing on it (an upsert that
-  // updates nothing reads first, then inserts).
+  // Not an upsert: Prisma's upsert reads first, so a concurrent run's insert would fail it.
   await prisma.plan.createMany({ data: [{ goalId }], skipDuplicates: true });
 
   const built = await withPlanRetry(() =>
@@ -336,8 +265,6 @@ export async function createGoalPlan({
     });
   }
 
-  // A run that saved the plan, then stopped before setting it up, still sets it up when it runs
-  // again: the tasks it owes are the plan's.
   const setupTasks =
     setup === "now" ? await setUpPlanNow(goalId) : await listPlanSetupTasks(goalId);
 

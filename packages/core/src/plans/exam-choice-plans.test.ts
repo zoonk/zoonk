@@ -25,16 +25,8 @@ const NOW = new Date("2020-09-28T12:00:00Z");
 const TIME_ZONE = "Europe/Madrid";
 const CASTELLANA = "Lengua Castellana y Literatura II";
 
-/** The PAU-like exam's subjects, in the notice's order, each with one skill in the graph. */
 const AREAS = [CASTELLANA, SPANISH_HISTORY, PHILOSOPHY, ENGLISH_II, FRENCH];
 
-/**
- * A learner preparing a Spanish university entrance exam with two choices (a history, a foreign
- * language): one skill per subject in the Library, with its lessons, and their plan built from
- * the graph with every option, as a graph written for the exam has them. Without `options`, the
- * plan is built from a graph that has none (written before the notice's reading named them), and
- * the exam's shared graph has them all.
- */
 async function setup({ options = true }: { options?: boolean } = {}) {
   const [user, blueprint] = await Promise.all([userFixture(), twoChoiceBlueprintFixture()]);
 
@@ -79,7 +71,6 @@ async function setup({ options = true }: { options?: boolean } = {}) {
   return { areaOf, blueprint, goal, library, plan, user };
 }
 
-/** The subjects the plan has lessons of, in the notice's order. */
 async function loadPlannedAreas({
   areaOf,
   planId,
@@ -111,7 +102,6 @@ function pick({ goalId, subject }: { goalId: string; subject: string }) {
   return chooseExamOption({ goalId, input: { group, subject, timeZone: TIME_ZONE } });
 }
 
-/** The areas a change names as coming into the plan and leaving it. */
 function namedAreas(result: Awaited<ReturnType<typeof chooseExamOption>>) {
   const effect = result.status === "applied" ? result.change?.effect : null;
 
@@ -138,7 +128,6 @@ describe("plans of an exam with choices of subject", () => {
       CASTELLANA,
     ]);
 
-    // Set aside with the plan, never studied, counted or shown.
     await expect(loadGraphAreas(plan.id)).resolves.toStrictEqual({
       aside: [SPANISH_HISTORY, PHILOSOPHY, ENGLISH_II, FRENCH],
       studied: [CASTELLANA],
@@ -160,7 +149,6 @@ describe("plans of an exam with choices of subject", () => {
       FRENCH,
     ]);
 
-    // Another history instead: its lessons take the other's place, and the change says both.
     const history = await pick({ goalId: goal.id, subject: SPANISH_HISTORY });
 
     expect(namedAreas(history)).toStrictEqual({ added: [SPANISH_HISTORY], leftOut: [PHILOSOPHY] });
@@ -176,7 +164,6 @@ describe("plans of an exam with choices of subject", () => {
       studied: [CASTELLANA, SPANISH_HISTORY, FRENCH],
     });
 
-    // Undoing the change brings the earlier pick's lessons back.
     await decidePlanChange({
       changeId: history.status === "applied" ? (history.change?.id ?? "") : "",
       goalId: goal.id,
@@ -201,7 +188,6 @@ describe("plans of an exam with choices of subject", () => {
       ENGLISH_II,
     ]);
 
-    // The other language and both histories stay out until they're picked.
     await expect(loadGraphAreas(plan.id)).resolves.toStrictEqual({
       aside: [],
       studied: [CASTELLANA, ENGLISH_II],

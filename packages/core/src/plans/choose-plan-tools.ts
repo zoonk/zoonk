@@ -22,12 +22,11 @@ export type PlanToolChoiceResult =
   | { error: PlanOperationError | "unknownTool"; status: "invalid" }
   | { status: "notFound" | "unauthorized" };
 
-/** Not shown to the learner: the app says a tool choice from its operation. */
+/** For logs and admin only; the apps word a tool choice from its operation. */
 const TOOLS_CHANGE_NOTE = "The learner chose how to use the plan's tools.";
 
 type ChosenTool = { setup: SetupLesson | null; tool: PlanTool };
 
-/** Each named tool as the plan lists it; null when one isn't in the plan. */
 async function findChosenTools({
   context,
   names,
@@ -44,10 +43,6 @@ async function findChosenTools({
   return tools.length === keys.length ? tools : null;
 }
 
-/**
- * The setup lesson for each tool the learner will set up, written the first time anyone needs
- * that tool on that device. It runs before planning, like plan edits' model call.
- */
 async function prepareSetups({
   goal,
   input,
@@ -80,7 +75,6 @@ async function prepareSetups({
   );
 }
 
-/** The choice for every tool, and each new setup lesson right before its tool's first chapter. */
 async function toOperations({
   chosen,
   graph,
@@ -115,13 +109,6 @@ async function toOperations({
   ];
 }
 
-/**
- * The learner's answer on the "You'll use" card for one or more of the plan's tools: they have it,
- * they'll set it up on their device, or they'll go without ("No tools? You can do it all with
- * examples"). Setting a tool up adds its short setup lesson right before the first chapter that
- * uses the tool; any other answer takes back a setup lesson an earlier answer added. It re-plans
- * from today and shows up in the plan's changes with an undo, like any change the learner makes.
- */
 export async function choosePlanTools({
   goalId,
   input,

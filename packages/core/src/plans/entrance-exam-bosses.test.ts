@@ -23,15 +23,10 @@ function subject(name: string, topics: string[]) {
   return { citation, group: "Objective tests", name, questions: 45, topics, weight: null };
 }
 
-/** A skill of the plan's graph in an area, with the notice topics it teaches. */
 function skill(row: { id: string; name: string }, area: string, topics: string[]) {
   return { area, lessons: 2, name: row.name, phase: 0, skillId: row.id, topics };
 }
 
-/**
- * Main's entrance exam learner (`createEntranceExamLearner`): an exam three months away, a plan
- * with one phase of two skills and one lesson item, never laid out yet.
- */
 async function createEntranceExamLearner({ dailyMinutes }: { dailyMinutes?: number } = {}) {
   const user = await userFixture();
   const today = toUTCMidnight(new Date());
@@ -114,7 +109,6 @@ async function createEntranceExamLearner({ dailyMinutes }: { dailyMinutes?: numb
   return { goal };
 }
 
-/** The plan's phase challenges as a run plans them, with the time each one's day asks past it. */
 async function planBosses(goalId: string) {
   const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
   const context = await loadPlanContext({ goal });
@@ -137,9 +131,6 @@ async function planBosses(goalId: string) {
     });
 }
 
-// Main's entrance exam learner: the Plan's daily-time advice plans the exam at 5 minutes a day,
-// where its three challenges took a mock week's time from the lessons they test, then tested
-// nothing, and so on: "The plan's bosses didn't settle in 5 passes", and the Plan didn't open.
 describe("an entrance exam plan's challenges", () => {
   afterEach(() => {
     vi.mocked(logError).mockClear();
@@ -152,9 +143,6 @@ describe("an entrance exam plan's challenges", () => {
     expect(logError).not.toHaveBeenCalled();
   });
 
-  // The Plan's daily-time advice plans this learner at 5 minutes a day: each pass's challenges kept
-  // the teaching the pass before laid out from the mock's funding, which spread it again a little
-  // differently, so the same days, lessons and minutes never settled.
   it("plans its challenges at 5 minutes a day", async () => {
     const { goal } = await createEntranceExamLearner({ dailyMinutes: 5 });
     const bosses = await planBosses(goal.id);
@@ -163,8 +151,6 @@ describe("an entrance exam plan's challenges", () => {
     expect(logError).not.toHaveBeenCalled();
   });
 
-  // Placed by the time they take, a challenge's time reshuffled the days before it, so its lessons
-  // ended after it, then before it: the plan was built a dozen times and logged an error.
   it("asks each challenge's day for all of its time, on top of its lessons", async () => {
     const { goal } = await createEntranceExamLearner();
     const bosses = await planBosses(goal.id);

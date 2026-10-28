@@ -18,22 +18,18 @@ import { proposeNoticeChange } from "./notice-plan-change";
 const NOW = new Date("2020-09-28T12:00:00Z");
 const TODAY = "2020-09-28";
 
-/** The notice's one exam day: a Sunday in November. */
 const NOTICE_DAY = "2020-11-08";
 
 const citation = { passage: "", sourceId: "notice" };
 
-/** An exam goal on a stored notice, planned with the learner's own date or month. */
 async function plannedExam({
   days = [NOTICE_DAY],
   details = {},
   registrationEnds = [],
   targetDate = null,
 }: {
-  /** The notice's exam days: its one day, or several sittings. */
   days?: string[];
   details?: Record<string, unknown>;
-  /** The last days to register the notice gives, one per sitting in date order. */
   registrationEnds?: string[];
   targetDate?: string | null;
 }) {
@@ -177,12 +173,10 @@ describe("the notice's day where the exam date shows", () => {
   });
 
   it("is offered over the month the learner named, which the exam page says as a month, until she takes it", async () => {
-    // She said "December"; the notice says November 8. Her month stays the plan's date.
     const goal = await plannedExam({ details: { examMonth: 12, examYear: 2020 } });
 
     const [plan, exam] = await Promise.all([readPlan(goal.id), readExam(goal.id)]);
 
-    // Her month, said as that month wherever the plan's date shows.
     expect(plan.schedule).toMatchObject({
       noticeDay: { date: NOTICE_DAY, estimated: false },
       targetDate: "2020-12-01",
@@ -199,10 +193,8 @@ describe("the notice's day where the exam date shows", () => {
       noticeDay: { date: NOTICE_DAY, estimated: false },
     });
 
-    // Its sittings get no day in her month: she never gave one.
     expect(exam.format.map((day) => day.date)).toStrictEqual([null, null]);
 
-    // Today asks too; one tap on any screen takes the day and answers that question.
     const waiting = await prisma.planChange.findMany({
       where: { plan: { goalId: goal.id }, status: "proposed" },
     });
@@ -261,12 +253,9 @@ describe("the notice's day where the exam date shows", () => {
     expect(exam).toMatchObject({ namedMonth: false, noticeDay: null });
   });
 
-  // DELE B2's calendar lists a sitting every month or two. Dele said "four months" (February):
-  // the plan, Today and the exam page offered the next sitting, six days away.
   it("offers the sitting in the learner's month when the notice lists several, and none when it has none", async () => {
     const days = ["2020-10-16", "2020-11-14", "2021-04-02", "2021-05-22"];
 
-    // Each plans as its own learner, signed in one after the other.
     const april = await plannedExam({ days, targetDate: "2021-04-20" });
     const [aprilPlan, aprilExam] = await Promise.all([readPlan(april.id), readExam(april.id)]);
 
@@ -282,8 +271,6 @@ describe("the notice's day where the exam date shows", () => {
     expect(exam).toMatchObject({ days: [{ date: "2021-02-10" }], noticeDay: null });
   });
 
-  // Dele's DELE B2 without a date planned for the sitting six days away, whose registration had
-  // closed a month before.
   it("plans a learner without a date for the next sitting still open for registration", async () => {
     const goal = await plannedExam({
       days: ["2020-10-16", "2020-11-14", "2021-04-02"],
@@ -304,7 +291,6 @@ describe("the notice's day where the exam date shows", () => {
       noticeDay: null,
     });
 
-    // An exam's one sitting stays the plan's day after its registration closed: they may be in.
     const single = await plannedExam({ registrationEnds: ["2020-06-01"] });
 
     await expect(readPlan(single.id)).resolves.toMatchObject({
@@ -312,11 +298,9 @@ describe("the notice's day where the exam date shows", () => {
     });
   });
 
-  // Dele said February; DELE B2 has no sitting then. Nothing told her.
   it("says the learner's month has no exam date, with the closest still open, keeping her date", async () => {
     const days = ["2020-10-16", "2020-11-14", "2021-04-02", "2021-05-22"];
 
-    // November's registration is still open for this learner.
     const open = await plannedExam({ days, targetDate: "2021-02-10" });
     const [openPlan, openExam] = await Promise.all([readPlan(open.id), readExam(open.id)]);
     const both = { closest: ["2020-11-14", "2021-04-02"], month: "2021-02-01" };
@@ -324,7 +308,6 @@ describe("the notice's day where the exam date shows", () => {
     expect(openPlan.schedule).toMatchObject({ noSitting: both, targetDate: "2021-02-10" });
     expect(openExam.noSitting).toStrictEqual(both);
 
-    // For this one it closed: only April's is left to offer.
     const goal = await plannedExam({
       days,
       registrationEnds: ["2020-09-02", "2020-09-25", "2021-02-10", "2021-04-07"],
@@ -343,7 +326,6 @@ describe("the notice's day where the exam date shows", () => {
     expect(exam).toMatchObject({ days: [{ date: "2021-02-10" }], noSitting: april });
     await expect(proposeNoticeChange({ goalId: goal.id })).resolves.toBe("none");
 
-    // Picking one makes it her date, and the month has its exam.
     await expect(
       changeGoalPlan({
         goalId: goal.id,
@@ -366,7 +348,6 @@ describe("the notice's day where the exam date shows", () => {
       targetDate: "2021-04-20",
     });
 
-    // Each plans as its own learner, signed in one after the other.
     await expect(readPlan(april.id)).resolves.toMatchObject({ schedule: { noSitting: null } });
 
     const single = await plannedExam({ targetDate: "2021-02-10" });
@@ -387,7 +368,6 @@ describe("the notice's day where the exam date shows", () => {
     expect(exam).toMatchObject({ days: [{ date: "2020-11-14" }], noticeDay: null });
   });
 
-  // After "Keep mine" on Today, the exam page still offered the day.
   it("isn't offered anywhere once the learner kept their date over it", async () => {
     const goal = await plannedExam({ targetDate: "2020-12-20" });
 

@@ -20,10 +20,8 @@ import { bringBackMissedLessons } from "./bring-back-missed-lessons";
 import { createGoalPlan } from "./create-goal-plan";
 import { type PlanGraph } from "./planner/plan-state";
 
-/** A Monday. */
 const NOW = new Date("2026-10-12T12:00:00Z");
 
-/** A chapter of its own course holding these lessons, each tagged with the chapter's skill. */
 async function courseChapter({ skillId, titles }: { skillId: string; titles: string[] }) {
   const [course, chapter] = await Promise.all([courseFixture(), libraryChapterFixture()]);
 
@@ -45,11 +43,6 @@ async function courseChapter({ skillId, titles }: { skillId: string; titles: str
   return { course, lessons };
 }
 
-/**
- * Two skills of one area, each learned in its own course. A lesson of the known skill's course
- * also teaches the missed one, but the missed skill learns only from its own course, so the plan
- * never counts that lesson for it. Placement tested both skills out.
- */
 async function setup() {
   const user = await userFixture();
   const [known, missed] = await Promise.all([skillFixture(), skillFixture()]);
@@ -101,10 +94,6 @@ async function setup() {
   return { goal, missed, plan, shared: shared?.id ?? "" };
 }
 
-// A practice miss on a topic placement took as known brings its lessons back. A lesson of another
-// known topic's course that also teaches it came back to do, but the plan never counts it for the
-// missed topic: it left the plan while staying in the database past every other row, and the
-// plan's next save failed on a taken position.
 describe(bringBackMissedLessons, () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });

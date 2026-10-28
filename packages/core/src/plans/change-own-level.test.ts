@@ -17,7 +17,6 @@ import { parsePlanGraph } from "./planner/plan-state";
 const NOW = new Date("2020-09-28T12:00:00Z");
 const TIME_ZONE = "UTC";
 
-/** A two-phase plan of four skills whose learner said "intermediate" in onboarding. */
 async function setup() {
   const user = await userFixture();
 
@@ -47,10 +46,6 @@ function change(goalId: string, level: "advanced" | "basic" | "intermediate" | "
   return changeOwnLevel({ goalId, input: { level, timeZone: TIME_ZONE } });
 }
 
-/**
- * Another write marks the plan once, while the level change reads the plan for its foundations or
- * test-outs, after the level is saved. Only the order is the test's; the writes are real.
- */
 function markWhileReadingPlan(planId: string) {
   const load = goalSkillGraph.loadGoalPlan;
 
@@ -127,7 +122,6 @@ describe(changeOwnLevel, () => {
       },
     ]);
 
-    // The foundation comes right before the skill it prepares for.
     await expect(graphSkillIds(plan.id)).resolves.toStrictEqual([
       foundation.id,
       ...library.skills.map((skill) => skill.id),
@@ -151,8 +145,6 @@ describe(changeOwnLevel, () => {
     await expect(graphSkillIds(plan.id)).resolves.not.toContain(foundation.id);
   });
 
-  // The foundations lost to the other write, and planning again read the level already saved:
-  // "same", with no foundations.
   it("lowering still adds the foundations when another write lands while they're planned", async () => {
     const { goal, library, plan } = await setup();
     const [first] = library.skills;

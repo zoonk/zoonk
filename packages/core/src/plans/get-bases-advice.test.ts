@@ -6,12 +6,6 @@ import { unplannedGoalFixture } from "./_test-utils/plan-library";
 import { createGoalPlan } from "./create-goal-plan";
 import { getPlanBasesAdvice } from "./get-bases-advice";
 
-/*
- * What the app recommends for a plan's bases plans the goal with every base in depth, so it's
- * worked out only when the learner asks ("Get a recommendation"), never for a page: the plan's
- * view lists the bases and the learner's choices without it (see plan-choices.test.ts for what it
- * recommends).
- */
 describe(getPlanBasesAdvice, () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });

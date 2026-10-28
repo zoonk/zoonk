@@ -8,14 +8,12 @@ import { createGoalPlan } from "./create-goal-plan";
 import { parsePlanSettings } from "./planner/plan-state";
 import { refreshGoalPlan } from "./refresh-goal-plan";
 
-/** Lucas's ENEM goal 30 days out, which starts its bases on a quick lesson each. */
 async function setup() {
   const built = await enemBiologyGoal({ days: 30 });
   mockSession(built.user.id);
   return built;
 }
 
-/** The base's quick lessons ("Quick lesson") in the Library. */
 function findQuickLessons(skillId: string) {
   return prisma.lesson.findMany({
     select: { id: true },
@@ -23,7 +21,6 @@ function findQuickLessons(skillId: string) {
   });
 }
 
-/** The lessons the plan has for the skill: a lesson's id, or `null` for its stand-in. */
 async function skillLessons({ planId, skillId }: { planId: string; skillId: string }) {
   const items = await prisma.planItem.findMany({
     orderBy: { position: "asc" },
@@ -44,9 +41,6 @@ describe("a new plan's quick lessons, created after it's saved", () => {
     vi.restoreAllMocks();
   });
 
-  // The run saved the plan on the recommendation (a quick lesson for the base, a stand-in until it
-  // exists), then stopped before creating it: running again creates and places it, still sets the
-  // plan up, and a last run changes nothing.
   it("places the quick lesson when a run that stopped after saving the plan runs again", async () => {
     const { goal, graph, living, plan } = await setup();
     const input = { goalId: goal.id, graph, setup: "steps" as const };
@@ -86,8 +80,6 @@ describe("a new plan's quick lessons, created after it's saved", () => {
     });
   });
 
-  // Another learner's run creates the same base's quick lesson at the same moment: one lesson is
-  // created, and the plan places it.
   it("places one quick lesson when another run creates it at the same moment", async () => {
     const { goal, graph, living, plan } = await setup();
     const ensure = quickBases.ensureQuickBaseLessons;
@@ -109,8 +101,6 @@ describe("a new plan's quick lessons, created after it's saved", () => {
     ]);
   });
 
-  // The learner changes their daily time while the quick lesson is created: the plan places it from
-  // the plan as they left it, keeping their change.
   it("keeps a change the learner made while the quick lesson was created", async () => {
     const { goal, graph, living, plan } = await setup();
     const ensure = quickBases.ensureQuickBaseLessons;

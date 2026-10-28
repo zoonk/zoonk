@@ -16,10 +16,7 @@ import { runPlanSetupTask } from "./plan-setup";
 import { parsePlanSettings } from "./planner/plan-state";
 import { type PlanTimeAdviceInput } from "./time-advice-contract";
 
-/**
- * A Monday in 2020, before the learning events other tests write: estimates read everyone's recent
- * pace, and this keeps it out of the numbers these tests expect.
- */
+/** Before other tests' learning events, so their pace never changes these plans. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 const EVERY_DAY = [0, 1, 2, 3, 4, 5, 6];
 const WEEKDAYS = [1, 2, 3, 4, 5];
@@ -55,7 +52,6 @@ const WEEKEND_SCHEDULES = [
   },
 ];
 
-/** A goal due in under two weeks whose 5 minutes a day can't cover its lessons. */
 async function setup(lessons = 6, dailyMinutes = 5) {
   const user = await userFixture();
 
@@ -79,10 +75,6 @@ async function setup(lessons = 6, dailyMinutes = 5) {
   return { goal, library, user };
 }
 
-/**
- * What the time question says for a week: what the time asked about covers, and, as the learner
- * asks for it ("Find the time that covers everything"), the time that covers everything.
- */
 async function readAdvice(goalId: string, studyDays: number[], week: PlanTimeAdviceInput = {}) {
   const [coverage, found] = await Promise.all([
     getPlanTimeAdvice({ goalId, input: { studyDays, ...week } }),
@@ -96,7 +88,6 @@ async function readAdvice(goalId: string, studyDays: number[], week: PlanTimeAdv
   return { ...coverage.advice, recommendedMinutes: found.time.recommendedMinutes };
 }
 
-/** The time the Plan finds for the week the learner saved, when they ask for it there. */
 async function readPlanTime(goalId: string) {
   const result = await findPlanTimeToCover({ goalId, input: {} });
 
@@ -124,11 +115,6 @@ function change(
   return changeGoalPlan({ goalId, input: { operations, timeZone: "UTC" } });
 }
 
-/*
- * Onboarding's time question recommends the daily time that covers the whole goal by its date, and
- * the plan reveal and the Plan show the time it needs from the same plan: the learner must never
- * be told one number before the plan and another right after.
- */
 describe(getPlanTimeAdvice, () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -175,7 +161,6 @@ describe(getPlanTimeAdvice, () => {
     expect(preview65.coveredShare).toBe(1);
     expect(preview70.coveredShare).toBe(0.91);
 
-    // Every smaller accepted candidate misses work; funding the added mock makes 70 worse again.
     for (const dailyMinutes of Array.from({ length: 9 }, (_, index) => (index + 1) * 5)) {
       // eslint-disable-next-line no-await-in-loop -- Each candidate reads the previous accepted state.
       const preview = await readAdvice(goal.id, studyDays, { dailyMinutes });
@@ -283,8 +268,6 @@ describe(getPlanTimeAdvice, () => {
     });
   });
 
-  // The time question's estimate changes as the learner taps a time: what that time covers by the
-  // date, the share the plan then shows, and never another time recommended.
   it("says what the time the learner looks at covers, without changing the time recommended", async () => {
     const { goal, library } = await setup();
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
@@ -298,7 +281,6 @@ describe(getPlanTimeAdvice, () => {
       readAdvice(goal.id, EVERY_DAY, { dailyMinutes: recommended }),
     ]);
 
-    // The goal's own 5 minutes cover a little, more time more, the recommended time all of it.
     expect(advice.coveredShare).toBeGreaterThan(0);
     expect(advice.coveredShare).toBeLessThan(1);
     expect(some.coveredShare).toBeGreaterThan(advice.coveredShare ?? 1);
@@ -334,9 +316,7 @@ describe(getPlanTimeAdvice, () => {
     });
   });
 
-  // The time step recommended the same time a day with two hours on weekends as without them.
   it("counts the weekend's own time: the number the plan shows once the week is set", async () => {
-    // Enough written lessons, and an hour on weekends, that the weekdays' time a day shows it.
     const { goal, library } = await setup(18);
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
@@ -347,7 +327,6 @@ describe(getPlanTimeAdvice, () => {
 
     expect(withWeekend.recommendedMinutes).toBeLessThan(everyDay.recommendedMinutes ?? 0);
 
-    // The week onboarding saves: 10 minutes on weekdays, the weekend's own hour.
     await change(goal.id, [
       { kind: "setDailyMinutes", minutes: 10 },
       { kind: "setWeekdayMinutes", minutes: 60, weekdays: [0, 6] },
@@ -357,7 +336,6 @@ describe(getPlanTimeAdvice, () => {
       recommendedMinutes: withWeekend.recommendedMinutes,
     });
 
-    // Switching to it, as the reveal's one tap does, covers the goal and leaves the weekend as is.
     await change(goal.id, [
       { kind: "setDailyMinutes", minutes: withWeekend.recommendedMinutes ?? 0 },
     ]);
@@ -567,8 +545,7 @@ describe(getPlanTimeAdvice, () => {
     const before = await readAdvice(goal.id, EVERY_DAY);
     const other = await userFixture();
 
-    // Other learners took twice as long on this plan's lessons the day before; removed after, so
-    // no other test's plan reads them.
+    // Other learners' slower lessons, removed after so no other test's plan reads them.
     await Promise.all(
       Array.from({ length: 24 }, (_, index) =>
         learningEventFixture({
@@ -583,8 +560,6 @@ describe(getPlanTimeAdvice, () => {
     try {
       await expect(readAdvice(goal.id, EVERY_DAY)).resolves.toStrictEqual(before);
 
-      // Choosing less, the plan still recommends the same time, and switching to it, as the
-      // reveal's one tap does, covers the whole goal.
       await change(goal.id, [{ kind: "setDailyMinutes", minutes: 6 }]);
 
       await expect(readPlanTime(goal.id)).resolves.toMatchObject({
@@ -634,9 +609,7 @@ describe(getPlanTimeAdvice, () => {
     const [own, everything, sundays, wholeDays] = await Promise.all([
       ask({ dailyMinutes: 60, studyDays: EVERY_DAY }),
       ask({ dailyMinutes: 60, fullCourse: true, studyDays: EVERY_DAY }),
-      // 5 minutes on Sundays never finish 600 lessons within the years the plan lays out.
       ask({ dailyMinutes: 5, fullCourse: true, studyDays: [0] }),
-      // Whole days of study hold all of it before the exam: nothing goes on after it.
       ask({ dailyMinutes: 1440, fullCourse: true, studyDays: EVERY_DAY }),
     ]);
 
@@ -652,7 +625,6 @@ describe(getPlanTimeAdvice, () => {
     expect(own.advice).toMatchObject({ fullCourseEndDate: null, ready: true });
     expect(own.advice.coveredShare).toBeLessThan(1);
 
-    // Until the exam the plan stays the one its date shapes; the rest goes on after it.
     expect(everything.advice.coveredShare).toBe(own.advice.coveredShare);
     expect(everything.advice.fullCourseEndDate).toMatch(/^\d{4}-\d{2}-\d{2}$/u);
     expect((everything.advice.fullCourseEndDate ?? "") > "2020-10-16").toBe(true);
@@ -697,19 +669,16 @@ describe(getPlanTimeAdvice, () => {
       return result.plan.estimate;
     };
 
-    // Ending at the exam, nothing goes on after it.
     await expect(readEstimate()).resolves.toMatchObject({ fullCourseEndDate: null });
 
     await expect(
       change(goal.id, [{ fullCourse: true, kind: "setFullCourse" }]),
     ).resolves.toMatchObject({ status: "applied" });
 
-    // Going on after the exam at an hour a day, it holds all of it: its end is the finish.
     const everything = await readEstimate();
     expect(everything.fullCourseEndDate).toBe(everything.endDate);
     expect((everything.fullCourseEndDate ?? "") > "2020-10-16").toBe(true);
 
-    // 5 minutes on Sundays never finish 600 lessons within the years the plan lays out.
     await expect(
       updateGoal({ goalId: goal.id, input: { dailyMinutes: 5, studyDays: [0], timeZone: "UTC" } }),
     ).resolves.toMatchObject({ status: "updated" });
@@ -718,7 +687,6 @@ describe(getPlanTimeAdvice, () => {
     expect(sundays.endDate).not.toBeNull();
     expect(sundays.fullCourseEndDate).toBeNull();
 
-    // Whole days of study hold all of it before the exam: it doesn't go on after it.
     await expect(
       updateGoal({
         goalId: goal.id,
@@ -747,8 +715,6 @@ describe(getPlanTimeAdvice, () => {
     });
   });
 
-  // A plan built after the learner ended placement tests lessons out in its setup step: asked
-  // before that step, the time question would recommend more than the plan then shows.
   it("waits for the placement the learner ended before the plan existed, then recommends the plan's time", async () => {
     const { goal, library } = await setup();
     await createGoalPlan({ goalId: goal.id, graph: library.graph, setup: "steps" });
@@ -769,15 +735,11 @@ describe(getPlanTimeAdvice, () => {
     });
   });
 
-  // A reading of the exam's notice that lands while the reveal waits builds the plan again with it:
-  // DELE's time question said 2h50 a day, and the plan, built again with the notice right after,
-  // said 2h40.
   it("waits while the plan waits for its exam's notice reading, then recommends the plan's time", async () => {
     const { goal, library } = await setup();
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
     await startNoticeWait({ goalId: goal.id, now: NOW });
 
-    // The time screen says what it waits for.
     await expect(readAdvice(goal.id, EVERY_DAY)).resolves.toMatchObject({
       readingNotice: true,
       ready: false,
@@ -795,8 +757,6 @@ describe(getPlanTimeAdvice, () => {
     });
   });
 
-  // A reading that fails or never lands doesn't hold the time question: once the plan's wait for it
-  // runs out, the reveal shows the plan as it is, and so does the advice.
   it("recommends the plan's time once its wait for the notice runs out without a reading", async () => {
     const { goal, library } = await setup();
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
@@ -814,7 +774,6 @@ describe(getPlanTimeAdvice, () => {
   it("asks a language goal for the hours that reach the level aimed for, and keeps new lessons to the date", async () => {
     const user = await userFixture();
 
-    // Three interview situations the Library teaches in six lessons each so far.
     const library = await planLibraryFixture({
       skills: [{ lessons: 6 }, { lessons: 6 }, { lessons: 6 }],
     });
@@ -841,14 +800,10 @@ describe(getPlanTimeAdvice, () => {
 
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
-    // B1+ to B2 is about 88 guided hours (Cambridge English): 656 four-minute lessons, half of each
-    // study day, the rest reviews and practice.
     const stored = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     const graph = stored.graph as { skills: { lessons: number }[] };
     expect(graph.skills.reduce((total, skill) => total + skill.lessons, 0)).toBe(656);
 
-    // 45 minutes on weekdays can't hold that by the interview: new lessons fill every week to it,
-    // with no weeks of review alone, and the last phase closes in the interview's week.
     const items = await prisma.planItem.findMany({ where: { planId: plan.id } });
     const lastWeek = new Date("2020-12-21T00:00:00Z").getTime();
 

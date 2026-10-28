@@ -142,7 +142,6 @@ describe("selected plan persistence", () => {
     const { context, library } = await setup();
     const boss = context.items.find((item) => item.kind === "boss");
     expect(boss).toBeDefined();
-    // A thin text bank reserves the ten-question clock prepared when the learner starts.
     expect(readSelectedItemFacts(boss?.facts)?.boss).toMatchObject({ minutes: 15 });
 
     await createItems({
@@ -182,7 +181,6 @@ describe("selected plan persistence", () => {
         change: null,
         computed,
         context,
-        // The missing lesson is a real FK failure after items and summary were written.
         extraWrites: (tx) =>
           tx.planItem.create({
             data: {

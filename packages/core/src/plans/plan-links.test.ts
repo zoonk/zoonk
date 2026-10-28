@@ -10,13 +10,9 @@ import { createGoalPlan } from "./create-goal-plan";
 import { getPlanLink } from "./get-plan-link";
 import { startGoalFromPlanLink } from "./start-goal-from-plan-link";
 
-/**
- * A Monday in 2020, before the learning events other tests write: estimates read everyone's recent
- * pace, and this keeps it out of the dates these tests expect.
- */
+/** Before other tests' learning events, so their pace never changes these plans. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 
-/** An owner's plan with one private skill made for their own goal, in its own phase. */
 async function setup() {
   const [owner, course] = await Promise.all([
     userFixture(),
@@ -150,7 +146,6 @@ describe("plan links", () => {
       visibility: "private",
     });
 
-    // An exam plan's phases are time-boxed and nameless: the link says what each one is for.
     await Promise.all([
       prisma.goal.update({
         data: { examBlueprintId: exam.id, kind: "exam", primaryCourseId: null },

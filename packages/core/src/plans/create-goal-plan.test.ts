@@ -21,10 +21,7 @@ import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-lib
 import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
 
-/**
- * A Monday in 2020, before the learning events other tests write: estimates read everyone's recent
- * pace, and this keeps it out of the dates these tests expect.
- */
+/** Before other tests' learning events, so their pace never changes these plans. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 
 function mockClock() {
@@ -55,7 +52,6 @@ async function setup() {
   return { goal, library, plan, user };
 }
 
-/** A four-minute lesson at `position` in a chapter, teaching the skills. */
 async function teachingLesson(chapterId: string, position: number, skillIds: string[]) {
   const created = await libraryLessonFixture({ estimatedMinutes: 4, homeChapterId: chapterId });
 
@@ -81,9 +77,6 @@ describe(createGoalPlan, () => {
     vi.useRealTimers();
   });
 
-  // Placement was stopped while the plan was still being written, by someone who studied it. The
-  // stated level alone tests nothing out (its lower band is only to confirm); a right placement
-  // answer of the skill's own does (`plan-setup.test.ts`, "tests out what placement settled once").
   it("tests out nothing from the stated level alone when placement ended before the plan", async () => {
     const user = await userFixture();
     const library = await planLibraryFixture({ skills: [{ lessons: 2 }, { lessons: 1 }] });
@@ -162,8 +155,6 @@ describe(createGoalPlan, () => {
   it("never shows a lesson another course made first as its own chapter next to this plan's", async () => {
     const { goal, plan } = await setup();
 
-    // Another course made "Describe entanglement"'s lesson first; this plan's course outline put
-    // it in its own entanglement chapter, tagged with the plan's next skill.
     const [otherCourseChapter, planChapter, described, correlations] = await Promise.all([
       libraryChapterFixture({ title: "Entanglement" }),
       libraryChapterFixture({ title: "Entanglement and distant correlations" }),
@@ -230,7 +221,6 @@ describe(createGoalPlan, () => {
     mockSession(user.id);
     mockClock();
 
-    // Physics and the ENEM course each teach the shared skill in a chapter of their own.
     const taught = await Promise.all(
       [physics, enem].map(async (course) => {
         const chapter = await libraryChapterFixture({ title: `${course.title} electricity` });
@@ -265,11 +255,6 @@ describe(createGoalPlan, () => {
     expect(items.map((item) => item.lessonId)).toStrictEqual([taught[1]?.id]);
   });
 
-  /*
-   * An outline tags a chapter with every graph skill it teaches, not each lesson with its own: the
-   * chapter teaches them one after another. Planning all of its lessons under the first skill left
-   * the others without lessons of their own, so their topics read as left out of the plan.
-   */
   it("gives each skill of a chapter tagged with several its own run of the lessons", async () => {
     const user = await userFixture();
 
@@ -312,7 +297,6 @@ describe(createGoalPlan, () => {
         phases: [{ milestone: null, name: "Cells" }],
         skills: skills.map((skill, index) => ({
           area: "Biology",
-          // Each run follows what its skill needs: one lesson, two, then three.
           lessons: index + 1,
           name: skill.name,
           phase: 0,
@@ -361,7 +345,6 @@ describe(createGoalPlan, () => {
   it("lays an exam out as a study cycle: a couple of subjects a day, foundations first", async () => {
     const user = await userFixture();
 
-    // Five subjects of a public-service exam at an hour a day: two subjects a day.
     const library = await planLibraryFixture({
       phases: ["Fundamentos", "Núcleo", "Especialidade"],
       skills: [
@@ -373,7 +356,6 @@ describe(createGoalPlan, () => {
       ],
     });
 
-    // Parliamentary procedure builds on the constitution's chapter on Congress.
     await prisma.skillPrerequisite.create({
       data: { prerequisiteId: library.skills[1]?.id ?? "", skillId: library.skills[3]?.id ?? "" },
     });
@@ -407,7 +389,6 @@ describe(createGoalPlan, () => {
     expect(subjectsOf("2020-09-28")).toStrictEqual(["Língua Portuguesa", "Direito Constitucional"]);
     expect(subjectsOf("2020-09-29")).toContain("Língua Inglesa");
 
-    // Two subjects a day while they last; a day a subject runs out, the next one due fills it.
     const week = [...days.keys()].slice(0, 6);
     expect(week.every((date) => subjectsOf(date).length === 2)).toBe(true);
     expect([...days.keys()].every((date) => subjectsOf(date).length <= 3)).toBe(true);
@@ -415,8 +396,6 @@ describe(createGoalPlan, () => {
     const firstDay = (area: string) =>
       [...days.keys()].findIndex((date) => subjectsOf(date).includes(area));
 
-    // The specialized subjects join once the foundations are under way, and the procedure only
-    // once the constitution it builds on has begun.
     expect(firstDay("Processo Legislativo")).toBeGreaterThan(1);
     expect(firstDay("Reconhecimento de Fala")).toBeGreaterThan(firstDay("Processo Legislativo"));
 
@@ -430,7 +409,6 @@ describe(createGoalPlan, () => {
     const user = await userFixture();
     const library = await planLibraryFixture({ skills: [{ lessons: 4 }] });
 
-    // "The test is in March": the month and year only, and the notice isn't read yet.
     const { goal } = await unplannedGoalFixture({
       dailyMinutes: 30,
       details: { examMonth: 3, examYear: 2021 },
@@ -449,7 +427,6 @@ describe(createGoalPlan, () => {
       getGoalPlan(goal.id),
     ]);
 
-    // Ready as that month starts, and said as an estimate until the notice sets the day.
     expect(saved.targetDate?.toISOString().slice(0, 10)).toBe("2021-03-01");
 
     expect(result.status === "ready" && result.plan.schedule).toMatchObject({
@@ -480,7 +457,6 @@ describe(createGoalPlan, () => {
       items,
     );
 
-    // A graph that does change the plan is saved, with a new version.
     const [first, ...rest] = library.graph.skills;
     const reordered = { ...library.graph, skills: [...rest, ...(first ? [first] : [])] };
 
@@ -502,7 +478,6 @@ describe(createGoalPlan, () => {
       throw new Error("The library has no lessons.");
     }
 
-    // A guest's lesson from a public page, before "Build my plan" made the goal: no goal on it.
     await learningEventFixture({ contentIds: { lessonId: finished.id }, endedAt, userId: user.id });
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
@@ -524,9 +499,6 @@ describe(createGoalPlan, () => {
     ).toStrictEqual(["todo", "todo"]);
   });
 
-  // A guest finished "What you own when you buy a share", the first lesson of its chapter, then
-  // built the plan from it: the plan put two other chapters first, though the chapter's next lesson
-  // was written and builds only on what that lesson taught. The chapter is in progress (R10).
   it("goes on with the chapter of a lesson the learner finished before the plan existed", async () => {
     const user = await userFixture();
 
@@ -542,7 +514,6 @@ describe(createGoalPlan, () => {
       throw new Error("Expected the guest's chapters and skills.");
     }
 
-    // The first lesson teaches owning and being a holder; selling builds on being a holder.
     const [finished, profits, voting, next] = await Promise.all([
       teachingLesson(first.id, 0, [owning.id, holder.id]),
       teachingLesson(other.id, 0, [owning.id]),
@@ -648,7 +619,6 @@ describe(getGoalPlan, () => {
       status: { kind: "onTrack" },
     });
 
-    // A phase counts the lessons its stand-in teaches, not one row for them.
     expect(
       plan?.phases.map((phase) => [phase.name, phase.state, phase.lessonsTotal]),
     ).toStrictEqual([
@@ -674,7 +644,6 @@ describe(getGoalPlan, () => {
       },
     ]);
 
-    // A later phase lists its chapters too, none of them the one the learner is in.
     expect(
       plan?.phases[1]?.chapters.map((chapter) => [chapter.state, chapter.writing]),
     ).toStrictEqual([["upcoming", true]]);
@@ -683,15 +652,9 @@ describe(getGoalPlan, () => {
     expect(plan?.week.days[0]).toMatchObject({ date: "2020-09-28", minutes: 12, state: "today" });
     expect(plan?.week.days[0]?.items.map((item) => item.kind)).toStrictEqual(["lesson", "lesson"]);
     expect(plan?.estimate.endDate).toBe("2020-10-04");
-    // What another daily time would do plans the goal again: a read never works it out.
     expect(plan?.feasibility).not.toHaveProperty("alternative");
   });
 
-  /*
-   * A plan's numbers used to be read at a pace sampled again on every read from other learners'
-   * recent lessons, so the plan reveal and the Plan, minutes apart, said different times for the
-   * same plan. A read takes the pace the plan was saved with; only planning again takes a new one.
-   */
   it("reads the plan at the pace it was saved with, however others' lessons went since", async () => {
     const { goal, library } = await setup();
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
@@ -704,8 +667,8 @@ describe(getGoalPlan, () => {
     const before = await read();
     const other = await userFixture();
 
-    // Other learners took twice as long on this plan's lessons the day before. Fewer than the
-    // average across all lessons needs, and removed after, so no other test's plan reads them.
+    // Fewer samples than the all-lesson average needs, and removed after, so no other test's plan
+    // reads them.
     await Promise.all(
       Array.from({ length: 24 }, (_, index) =>
         learningEventFixture({

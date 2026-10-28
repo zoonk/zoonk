@@ -33,7 +33,6 @@ function setToday(isoDate: string) {
   });
 }
 
-/** An exam of three subjects in a study cycle, two months away, at 30 minutes a day. */
 async function examSetup() {
   const user = await userFixture();
 
@@ -60,7 +59,6 @@ async function examSetup() {
   return { goal, library, plan, user };
 }
 
-/** What a learner sees of the plan's time: each item's day, and the plan's version. */
 async function readPlanDates(planId: string) {
   const [plan, items] = await Promise.all([
     prisma.plan.findUniqueOrThrow({ where: { id: planId } }),
@@ -74,7 +72,6 @@ async function readPlanDates(planId: string) {
   };
 }
 
-/** Current summary facts describe the actual kept allocation, not a prospective shifted layout. */
 async function assertRetainedSummary({
   day,
   planId,
@@ -123,7 +120,6 @@ async function assertRetainedSummary({
   );
 }
 
-/** The learner studies every lesson due by `isoDate`, as finishing them in sessions does. */
 async function studyThrough({ isoDate, planId }: { isoDate: string; planId: string }) {
   await prisma.planItem.updateMany({
     data: { completedAt: at(isoDate), status: "done" },
@@ -172,7 +168,6 @@ describe("a plan nobody changed", () => {
     await studyThrough({ isoDate: "2020-09-28", planId: plan.id });
     const studied = await readPlanDates(plan.id);
 
-    // Tuesday, and the next Monday: a new day, then a new week.
     setToday("2020-09-29");
     await openToday(goal.id);
     await getGoalPlan(goal.id);
@@ -222,7 +217,6 @@ describe("a plan nobody changed", () => {
   });
 });
 
-/** Outlines `count` lessons for a skill, as the Library's outline does. */
 async function outline({
   chapterId,
   count,
@@ -231,7 +225,6 @@ async function outline({
 }: {
   chapterId: string;
   count: number;
-  /** The chapter position the first outlined lesson takes. */
   from?: number;
   skillId: string;
 }) {
@@ -251,7 +244,6 @@ async function outline({
   );
 }
 
-/** An exam whose Law subject the Library hasn't outlined yet: its skill is a stand-in. */
 async function standInSetup() {
   const user = await userFixture();
 
@@ -300,7 +292,6 @@ describe("the Library outlining a plan's lessons", () => {
 
     const after = await prisma.planItem.findMany({ where: { planId: plan.id } });
 
-    // The outlined lessons start this week, where the stand-in was.
     const lawLessons = after.filter((item) => item.skillId === law && item.lessonId !== null);
     expect(lawLessons.length).toBeGreaterThan(0);
 
@@ -316,7 +307,6 @@ describe("the Library outlining a plan's lessons", () => {
     const law = library.skills[1]?.id ?? "";
     const chapterId = library.chapters[0]?.id ?? "";
 
-    // Law's first lessons are outlined; the rest of Law waits as a stand-in.
     await outline({ chapterId, count: 5, skillId: law });
     await replanGoalsWaitingOnSkills({ skillIds: [law] });
 

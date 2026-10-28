@@ -22,10 +22,8 @@ import { parsePlanChangePayload } from "./_utils/plan-change-payload";
 import { createGoalPlan } from "./create-goal-plan";
 import { type PlanGraph } from "./planner/plan-state";
 
-/** A Thursday: Pedro's biology test is on Saturday. */
 const TODAY = new Date("2026-10-08T00:00:00Z");
 const DAY_MS = 86_400_000;
-/** Half an hour, the goal's daily time, studied on a day the learner studied. */
 const STUDY_DAY_SECONDS = 30 * 60;
 
 function day(offset: number): Date {
@@ -71,7 +69,6 @@ function frequency({ level, topic }: { level: "high" | "low"; topic: string }) {
   };
 }
 
-/** The graph with the topics of the material each skill teaches, in its order. */
 function withTopics({ graph, topics }: { graph: PlanGraph; topics: string[] }): PlanGraph {
   return {
     ...graph,
@@ -80,18 +77,12 @@ function withTopics({ graph, topics }: { graph: PlanGraph; topics: string[] }): 
 }
 
 type Shape = {
-  /** The notice: a class test's own material (private, its announcements) or a public exam. */
   blueprint: Parameters<typeof examBlueprintFixture>[0];
   days: number;
   ownMaterial: boolean;
   topics: string[];
 };
 
-/**
- * Four skills of one subject, four questions each. Placement asked three of them: the first
- * missed, the second and third right once (taken as known, so their lessons are tested out). The
- * learner studied the fourth before, and it's fading.
- */
 async function setup(
   shape: Shape,
   { dailyMinutes = 30, testOut = true }: { dailyMinutes?: number; testOut?: boolean } = {},
@@ -169,7 +160,6 @@ async function setup(
     graph: withTopics({ graph: library.graph, topics: shape.topics }),
   });
 
-  // Placement: one right answer frees each known topic from its lessons.
   const known = [frequent.id, ordinary.id];
   const placed = await loadPlacementPlan(goal.id);
 
@@ -191,7 +181,6 @@ async function setup(
   return { frequent, goal, itemsOf, missed, ordinary, plan, studied, user };
 }
 
-/** The day's practice block, started, with its questions. */
 async function startPractice(goalId: string) {
   const result = await getTodayStudySession({ goalId });
 
@@ -306,8 +295,6 @@ describe.each([
     const ids = (skill: Skill) => new Set(itemsOf(skill).map((item) => item.id));
     const position = (skill: Skill) => payload.itemIds.findIndex((id) => ids(skill).has(id));
 
-    // One question each confirms them: the topic asked most opens the practice, the other comes
-    // after the round of what the learner studied, so a short block cuts it first.
     expect(position(frequent)).toBe(0);
     expect(position(studied)).toBeGreaterThan(0);
     expect(position(ordinary)).toBeGreaterThan(position(studied));
@@ -356,12 +343,9 @@ describe.each([
 
     await expect(readCoverage(goal.id)).resolves.toMatchObject({ studiedSkills: 0 });
 
-    // Plans never change unannounced: the plan's change names the topic that came back.
     await expectRelearnChange({ goalId: goal.id, topic: shape.topics[2] });
   });
 
-  // A tested-out topic was never studied: a miss after practice confirmed it once means the
-  // test-out didn't hold, unlike forgetting a topic the learner studied (R19).
   it("brings a known topic's lessons back when practice misses it after confirming it", async () => {
     const { goal, itemsOf, ordinary, plan } = await setup(shape);
     const isOrdinary = (id: string) => itemsOf(ordinary).some((item) => item.id === id);
@@ -395,10 +379,6 @@ describe.each([
   });
 });
 
-/**
- * The plan's change names the topic a miss brought back; Today asks nothing about it, since the
- * learner has nothing to decide (see `asksAboutAutomaticChange`).
- */
 async function expectRelearnChange({ goalId, topic }: { goalId: string; topic?: string }) {
   const [change, today] = await Promise.all([
     prisma.planChange.findFirstOrThrow({
@@ -427,8 +407,6 @@ describe("a known topic Pedro's time left without lessons", () => {
     vi.useRealTimers();
   });
 
-  // At 15 minutes his plan cut what he answered right once instead of testing it out: a miss in
-  // practice makes it a gap the plan teaches first.
   it("brings its lessons into the plan when practice misses it", async () => {
     const { goal, itemsOf, ordinary, plan } = await setup(PEDRO, {
       dailyMinutes: 15,
@@ -495,12 +473,9 @@ describe("a known topic a week after its test-out", () => {
     vi.useRealTimers();
   });
 
-  // Each known topic gets a question within its first two weeks: from about a week after it was
-  // taken as known, it's asked first, even on a topic the exam asks little.
   it("asks an ordinary known topic first once a week has passed", async () => {
     const { goal, itemsOf, ordinary, studied, user } = await setup(PUBLIC_EXAM);
 
-    // The learner studied every day since the test-out, so day 6 is an ordinary day, not a return.
     await dailyProgressFixtureMany(
       [0, 1, 2, 3, 4, 5].map((offset) => ({
         date: day(offset),
@@ -530,13 +505,9 @@ describe("a free learner's known topic after the exam plan's first week", () => 
     vi.useRealTimers();
   });
 
-  // A free exam plan's practice is Plus after its first week, so a known topic came up nowhere:
-  // OAB's "Avaliar demanda e resposta do réu" was never asked in two weeks (sim N14). The quick
-  // review, which free plans keep, asks it instead.
   it("asks it in the day's quick review", async () => {
     const { goal, itemsOf, ordinary, user } = await setup(PUBLIC_EXAM);
 
-    // Its memory isn't due for review yet: only the week it waited to be confirmed brings it up.
     await prisma.learnerSkill.updateMany({
       data: { due: day(40) },
       where: { skillId: ordinary.id, userId: user.id },
@@ -565,7 +536,6 @@ describe("a free learner's known topic after the exam plan's first week", () => 
     expect(kinds).not.toContain("checkpoint");
     expect(itemsOf(ordinary).some((item) => asked.has(item.id))).toBe(true);
 
-    // The syllabus says so: a known topic comes back in the reviews, not in practice.
     await expect(getSyllabusView({ goalId: goal.id })).resolves.toMatchObject({
       syllabus: { knownTopicsReturn: "reviews" },
     });

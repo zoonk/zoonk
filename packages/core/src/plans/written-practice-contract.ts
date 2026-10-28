@@ -1,10 +1,6 @@
 import { z } from "zod";
 import { WRITTEN_CADENCES } from "./planner/plan-state";
 
-/**
- * When an exam's written tests (ENEM's essay, a discursive test) are practiced, which the learner
- * chooses (see `WRITTEN_CADENCES`); the total practice stays the same.
- */
 export const writtenPracticeSchema = z
   .object({
     cadence: z

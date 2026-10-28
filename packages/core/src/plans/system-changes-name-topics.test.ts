@@ -21,13 +21,11 @@ const AREAS = ["Matemática", "Natureza", "Humanas"] as const;
 
 const citation = { passage: "Conteúdo programático", sourceId: "notice" };
 
-/** Each area's basics in the first phase and what builds on them in the next, a topic each. */
 const SKILLS = AREAS.flatMap((area) => [
   { area, lessons: 6, phase: 0, topic: `${area}: fundamentos` },
   { area, lessons: 6, phase: 1, topic: `${area}: aplicação` },
 ]);
 
-/** An exam learner short on time: the plan can't teach every topic by the exam. */
 async function setup({
   dailyMinutes,
   daysAway,
@@ -97,7 +95,6 @@ async function setup({
   return { goal, library, plan };
 }
 
-/** The notice topics the plan's lesson items teach, whatever their status. */
 async function plannedTopics({
   library,
   planId,
@@ -115,7 +112,6 @@ async function plannedTopics({
   );
 }
 
-/** The topics a change's effect names coming in and leaving, flattened. */
 function namedTopics(effect: PlanEffect | undefined) {
   return {
     added: (effect?.topicsAdded ?? []).flatMap((area) => area.topics).toSorted(),
@@ -123,7 +119,6 @@ function namedTopics(effect: PlanEffect | undefined) {
   };
 }
 
-/** What a recorded change says it did, from its saved payload. */
 async function readChange({
   kind,
   planId,
@@ -137,7 +132,6 @@ async function readChange({
   return namedTopics(effect);
 }
 
-/** The topics one set has that the other doesn't. */
 function difference(from: Set<string>, to: Set<string>): string[] {
   return [...from].filter((topic) => !to.has(topic)).toSorted();
 }
@@ -158,8 +152,6 @@ describe("a change the learner didn't make names the topics it moves", () => {
     vi.useRealTimers();
   });
 
-  // Placement found the learner knows mathematics' basics: the time it frees brings mathematics'
-  // application into a plan short on time, and the test-out's change says so.
   it("names the topics a test-out brings into the plan", async () => {
     const { goal, library, plan } = await setup({
       dailyMinutes: 9,
@@ -225,8 +217,6 @@ describe("a change the learner didn't make names the topics it moves", () => {
     });
   });
 
-  // Four days missed on a plan that just fit: what's left no longer fits by the exam, and the
-  // missed-days change names what leaves, not only that the plan covers less.
   it("names the topics missed days leave out of the plan", async () => {
     const { goal, library, plan } = await setup({ dailyMinutes: 11, daysAway: 14 });
     const before = await plannedTopics({ library, planId: plan.id });
@@ -245,7 +235,6 @@ describe("a change the learner didn't make names the topics it moves", () => {
     });
   });
 
-  // Back from a pause with less time left: the resumed plan names what no longer fits.
   it("names the topics a goal back from a pause leaves out of the plan", async () => {
     const { goal, library, plan } = await setup({ dailyMinutes: 11, daysAway: 14 });
     const before = await plannedTopics({ library, planId: plan.id });
@@ -282,8 +271,6 @@ describe("an exam plan planned again with nothing new", () => {
     vi.useRealTimers();
   });
 
-  // Its challenges go on the days their teaching ends, taking none of its time, so a mock's funding
-  // never moves them: planned again with nothing new, it keeps the funding it was made with.
   it("keeps its mock funding when planned again with nothing new", async () => {
     const { goal, plan } = await setup({
       dailyMinutes: 9,

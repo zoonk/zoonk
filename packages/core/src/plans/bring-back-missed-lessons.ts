@@ -11,13 +11,9 @@ import { getSkillArea } from "./planner/graph-areas";
 import { type AreaTopics } from "./planner/plan-effect";
 import { type PlanGraph } from "./planner/plan-state";
 
-/** A plain note for logs and admin; the apps say "Nucleus is back in your plan" from its topics. */
+/** For logs and admin only; the apps word it from its topics. */
 const RELEARN_NOTE = "A miss in practice brought back the lessons of a topic taken as known.";
 
-/**
- * The topics the learner missed, by area, as the plan's change names them: each skill by the first
- * topic of the material it teaches ("Nucleus"), or by its own name when it names none.
- */
 function listMissedTopics({
   graph,
   skillIds,
@@ -34,11 +30,6 @@ function listMissedTopics({
   }));
 }
 
-/**
- * The topics a relearn brings in, by area: the missed ones first, then the others the plan built
- * again from today brings into the plan the learner sees (see `getRunEffect`). Naming only the
- * missed one, an OAB plan's legislative process and juvenile offense topics came in unnamed.
- */
 function joinTopics(missed: readonly AreaTopics[], seen: readonly AreaTopics[] = []): AreaTopics[] {
   const byArea = new Map(missed.map((entry) => [entry.area, [...entry.topics]]));
 
@@ -49,7 +40,6 @@ function joinTopics(missed: readonly AreaTopics[], seen: readonly AreaTopics[] =
   return [...byArea].map(([area, topics]) => ({ area, topics }));
 }
 
-/** The tested-out items that teach any of these skills: their own stand-ins, or lessons on them. */
 async function findTestedOutItemIds({
   context,
   skillIds,
@@ -81,7 +71,6 @@ async function findTestedOutItemIds({
   );
 }
 
-/** The plan rebuilt with these tested-out items back to do. */
 async function planWithRestored({
   context,
   ids,
@@ -97,7 +86,6 @@ async function planWithRestored({
 
   const restored = { ...context, items };
 
-  // A change the learner didn't make keeps the phase end dates they saw (see `keepPhaseEnds`).
   const computed = await computePlan({
     context: restored,
     keepPhaseDates: true,
@@ -108,7 +96,6 @@ async function planWithRestored({
   return { computed, restored };
 }
 
-/** The restored items the rebuilt plan teaches. */
 function getPlannedIds({
   computed,
   ids,
@@ -122,16 +109,8 @@ function getPlannedIds({
 }
 
 /**
- * Puts back in the plan the lessons of skills the learner was taken to know and then missed (see
- * `SkillClaim`): one right answer frees a topic from its lessons, never from practice, and a miss
- * there makes it a gap the plan teaches first. Lessons a test-out skipped come back to do, and the
- * plan is built again from today, where a gap's lessons come first; today's session keeps its
- * blocks. Plans never change unannounced: Today says which topic came back and why. The caller
- * says which skills the learner was taken to know before the miss (`loadSkillsToRelearn`).
- *
- * Only the lessons the rebuilt plan teaches come back: a lesson that also teaches the missed skill
- * but that the plan counts for another known one (the missed skill learns from other courses)
- * stays tested out, where it would otherwise come back to do and leave the plan at once.
+ * The caller says which skills the learner was taken to know before the miss
+ * (`loadSkillsToRelearn`).
  */
 export async function bringBackMissedLessons({
   goalId,
@@ -141,7 +120,6 @@ export async function bringBackMissedLessons({
 }: {
   goalId: string;
   now: Date;
-  /** The skills taken to know that the learner just missed a question on. */
   skillIds: readonly string[];
   timeZone: string;
 }): Promise<void> {
@@ -156,7 +134,6 @@ export async function bringBackMissedLessons({
       return;
     }
 
-    // An area the learner took out stays out: a miss on its skills brings nothing back.
     const { graph, settings } = context.state;
     const skipped = new Set(settings.skippedAreas);
 

@@ -20,7 +20,6 @@ import { type PlanOperation } from "./plan-contract";
 import { previewPlanChange } from "./preview-plan-change";
 import { refreshGoalPlan } from "./refresh-goal-plan";
 
-/** Lucas's ENEM goal with its plan built (see `enemBiologyGoal`). */
 async function setup(options: Parameters<typeof enemBiologyGoal>[0]) {
   const built = await enemBiologyGoal(options);
 
@@ -40,10 +39,6 @@ async function readPlan(goalId: string) {
   return result.plan;
 }
 
-/**
- * What the app recommends for the plan's bases, when the learner asks ("Get a recommendation"): it
- * plans the goal with every base in depth, so no read of the plan says it.
- */
 async function readBasesAdvice(goalId: string) {
   const result = await getPlanBasesAdvice(goalId);
 
@@ -58,7 +53,6 @@ async function change(goalId: string, operations: PlanOperation[]) {
   return changeGoalPlan({ goalId, input: { operations: operations as never, timeZone: "UTC" } });
 }
 
-/** The base's quick lesson ("Quick lesson"), when the Library has one. */
 async function findQuickLesson(skillId: string) {
   return prisma.lesson.findFirst({
     select: { contentStatus: true, id: true },
@@ -113,13 +107,11 @@ describe("bases a learner chooses how to study", () => {
     expect(deep).toBeGreaterThan(essential);
     expect(essential).toBeGreaterThan(quick);
 
-    // One lesson: the base's quick lesson, never one of its own, nothing written before it's needed.
     expect(livingItems.map((item) => item.lessonId)).toStrictEqual([quickLesson?.id]);
     expect(library.lessons.some((lesson) => lesson.id === quickLesson?.id)).toBe(false);
     expect(quickLesson?.contentStatus).toBe("pending");
     expect(ecologyItems.length).toBeGreaterThan(0);
 
-    // Opening it gets it written, like any planned lesson.
     await expect(
       requestLessonGeneration({ lessonId: quickLesson?.id ?? "" }),
     ).resolves.toMatchObject({ lessonId: quickLesson?.id, status: "start" });
@@ -248,9 +240,6 @@ describe("bases a learner chooses how to study", () => {
     expect(learned.length).toBeGreaterThan(1);
   });
 
-  // Class test seed 1255: a quick lesson for a base whose core the learner had studied re-planned
-  // the plan, and cell theory left it. Such a base shows as studied, open only to deep study, and a
-  // quick lesson for it is refused before anything is planned (R15).
   it("offers a base whose core the learner studied only deep study, and refuses a quick lesson for it", async () => {
     const { goal, living, plan } = await setup({ days: 30, size: 3 });
     const learnFirst = [{ choice: "essential" as const, skillId: living.id }];
@@ -265,7 +254,6 @@ describe("bases a learner chooses how to study", () => {
       where: { id: { in: core.map((item) => item.id) } },
     });
 
-    // The session that finished them saves what the learner studied.
     await refreshGoalPlan({ goalId: goal.id });
 
     const view = await readPlan(goal.id);
@@ -303,9 +291,6 @@ describe("bases a learner chooses how to study", () => {
     expect(after).toStrictEqual(before);
   });
 
-  // Lucas switched a base from its quick lesson to deep study and back, then to its core and back.
-  // Picking the earlier option again undid the change before it: the preview had said a topic
-  // comes in, and saving put back a plan without it.
   it("saves what the preview said, each time the learner switches a base and back", async () => {
     const { goal, library, living, plan } = await setup({ days: 30 });
     const topicOf = new Map(library.skills.map((skill, index) => [skill.id, TOPICS[index] ?? ""]));
@@ -317,7 +302,6 @@ describe("bases a learner chooses how to study", () => {
       return [...topics].toSorted((a, b) => a.localeCompare(b));
     };
 
-    /** The preview of a choice for the base, what saving it answered, and the topics before and after. */
     const switchTo = async (choice: "deep" | "essential" | "quick") => {
       const operations: PlanOperation[] = [
         { choices: [{ choice, skillId: living.id }], kind: "setBaseChoices" },
@@ -386,7 +370,6 @@ describe("onboarding's last answer", () => {
       }),
     ).resolves.toStrictEqual({ status: "saved" });
 
-    // Four hours a day cover everything by the exam: the bases are studied in depth.
     const viewed = await readPlan(goal.id);
 
     expect(viewed.bases).toMatchObject({ items: [{ choice: "deep" }] });
@@ -426,7 +409,6 @@ describe("studying everything", () => {
     const before = await readPlan(goal.id);
 
     expect(before.feasibility).toMatchObject({ fits: false });
-    // The plan doesn't work out when everything would end for a read: the switch says it.
     expect(before.feasibility).not.toHaveProperty("fullCourseEndDate");
 
     const switched = await change(goal.id, [{ fullCourse: true, kind: "setFullCourse" }]);
@@ -443,8 +425,6 @@ describe("studying everything", () => {
     expect(viewed.feasibility).toMatchObject({ fits: false });
     expect(viewed.estimate.endDate).toBe(endDate);
     expect(viewed.phases.at(-1)).toMatchObject({ kind: "afterExam", startDate: isoDay(31) });
-    // The rest of each subject's lessons comes after the exam: their time and days, and their
-    // items once the Library outlines them; the weekly mocks go on there too, for the next sitting.
     expect(viewed.phases.at(-1)?.hours).toBeGreaterThan(0);
     expect(after.some((item) => item.kind === "mock")).toBe(true);
     expect(after.some((item) => item.kind === "review" || item.kind === "checkpoint")).toBe(false);
@@ -458,8 +438,6 @@ describe("studying everything", () => {
     ).resolves.toBe(0);
   });
 
-  // Missed days set aside work there was no time for by the exam. Studying everything goes on
-  // after the exam, and a class test's organelles stayed set aside.
   it("brings back work missed days set aside, as the same item", async () => {
     const { goal, plan } = await setup({ days: 30 });
 
@@ -482,8 +460,6 @@ describe("studying everything", () => {
   });
 
   it("keeps the learner's pace once they study everything after the exam", async () => {
-    // Lucas M. accepted "Study everything" on pace and read "Needs adjusting" with no reason: the
-    // lessons he chose to study after the exam aren't a plan that no longer fits.
     const { goal } = await setup({ days: 30 });
     const before = await readPlan(goal.id);
 
@@ -538,13 +514,11 @@ describe("studying everything", () => {
 
     expect(open.schedule.targetDate).toBeNull();
     expect(open.feasibility?.deadline).toBeNull();
-    // The change that drops the date says when everything ends: the plan's own end once it's off.
     expect(endDate).toBeTruthy();
     expect(open.estimate.endDate).toBe(endDate);
   });
 });
 
-/** The days of the plan's mocks still to take, from `from` on. */
 async function listMockDays({ from, planId }: { from: Date; planId: string }) {
   const mocks = await prisma.planItem.findMany({
     orderBy: { scheduledFor: "asc" },
@@ -565,7 +539,6 @@ describe("the plan's mock days", () => {
   });
 
   it("keeps the next mock's day when the learner moves the exam's date", async () => {
-    // Ana moved ENEM a week earlier and read Sunday's mock three weeks later, with no word why.
     const { goal, plan } = await setup({ days: 200 });
 
     setClock(4);
@@ -581,11 +554,8 @@ describe("the plan's mock days", () => {
   });
 
   it("says when a new daily time moves the next mock", async () => {
-    // Ana's mock is weeks apart at a few minutes a day; more time brings it closer, and the card
-    // has to say so, or her next mock just moves.
     const { goal, plan } = await setup({ days: 200 });
 
-    // Past the plan's first mock: the next one is weeks away.
     setClock(10);
     const [before] = await listMockDays({ from: day(10), planId: plan.id });
 
@@ -597,7 +567,6 @@ describe("the plan's mock days", () => {
   });
 
   it("says when the mocks ahead fall, only as regular as their planned days are", async () => {
-    // Ana's "Your plan" reads "Mock exams · Sundays" only when every mock ahead is on a Sunday.
     const { goal, plan } = await setup({ days: 200 });
 
     setClock(4);
@@ -683,11 +652,6 @@ describe("after an exam that the learner studies everything for", () => {
   });
 });
 
-/**
- * A UX career whose first portfolio project builds on research, all at the beginner band (the
- * course is the path), and whose product project builds on metrics, which build on statistics
- * from an easier band.
- */
 async function careerSetup({ level }: { level: "intermediate" | "none" }) {
   const user = await userFixture();
 

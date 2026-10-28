@@ -22,9 +22,6 @@ describe("a miss that brings a known topic's lessons back", () => {
     vi.useRealTimers();
   });
 
-  // R5 (OAB seed 1002): a practice miss on a topic taken as known planned the plan again from
-  // today, which also brought in the legislative process and juvenile offense topics, and its card
-  // named only the missed topic.
   it("names every topic the plan planned again brings in, not only the missed one", async () => {
     const user = await userFixture();
 
@@ -45,7 +42,6 @@ describe("a miss that brings a known topic's lessons back", () => {
     mockSession(user.id);
     const [known, left] = library.skills;
 
-    // Placement took the first skill as known; the plan the learner sees left the second out.
     await Promise.all([
       prisma.planItem.updateMany({
         data: { completedAt: NOW, status: "testedOut" },
@@ -71,9 +67,6 @@ describe("a miss that brings a known topic's lessons back", () => {
     ]);
   });
 
-  // R19 (class test seed 2080): on a day that carried missed work, a test-out answer brought a
-  // tested-out topic back and named it, and the same step's re-plan for the lessons it skipped
-  // dropped the topic's lessons again: ranked behind the carried work before the class test.
   it("carries the lessons it brought back on every later run that day", async () => {
     const user = await userFixture();
     const goal = await goalFixture({ timezone: "UTC", userId: user.id });

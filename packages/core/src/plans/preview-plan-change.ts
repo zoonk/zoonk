@@ -22,12 +22,7 @@ const BUILDING: PlanChangePreview = {
   unchanged: false,
 };
 
-/**
- * What a change the learner is weighing would do to their plan, before they make it: planned from
- * today as applying it plans it (see `computeChange`), with nothing saved. The bases' choices,
- * studying everything and any other change read their effect here, so the learner sees what moves
- * before they confirm.
- */
+/** Saves nothing: it plans from today as applying the change would. */
 export async function previewPlanChange({
   goalId,
   input,

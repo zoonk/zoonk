@@ -32,12 +32,6 @@ const targetDateNamedMonthSchema = z
       "The date is the start of the month the learner named, standing for that month: say the month, not the day",
   });
 
-/**
- * What the daily time the learner is looking at covers by the goal's date, in the week they'd
- * study: the plan that time plans, as the plan shows it once they choose it, studying everything
- * when the learner asks about that for an exam (`fullCourse`), with the day it would end. Only
- * that time: the time that covers everything is asked for on its own (see `PlanTimeToCover`).
- */
 export const planTimeAdviceSchema = z
   .object({
     coveredShare: z
@@ -71,13 +65,6 @@ export const planTimeAdviceSchema = z
 
 export type PlanTimeAdvice = z.infer<typeof planTimeAdviceSchema>;
 
-/**
- * The daily time a goal needs, found when the learner asks for it ("Find the time that covers
- * everything"): the fewest minutes that study the whole goal in depth by its date, at the
- * learner's study days, planning the goal at each daily time from the least. Exact: the plan at
- * that time covers everything. For a goal that isn't an exam, falling short in its own week, also
- * the earliest date its own time covers everything by.
- */
 export const planTimeToCoverSchema = z
   .object({
     coreMinutes: z
@@ -111,19 +98,9 @@ export const planTimeToCoverSchema = z
 
 export type PlanTimeToCover = z.infer<typeof planTimeToCoverSchema>;
 
-/**
- * The week the learner would study: the weekdays, Sunday first (0; the plan's own days when
- * absent), and the weekend's own time when it has one apart from the weekdays'.
- */
+/** `studyDays` are weekdays from Sunday (0); absent, the plan's own. */
 export type PlanTimeToCoverInput = { studyDays?: readonly number[]; weekendMinutes?: number };
 
-/**
- * The week the learner would study (see `PlanTimeToCoverInput`), and the weekdays' time they're
- * looking at (`dailyMinutes`, the goal's own when absent), which says what that time covers
- * (`coveredShare`). For an exam, `fullCourse` plans that time studying everything, even after the
- * exam (see `PlanSettings.fullCourse`), and says when that ends (`fullCourseEndDate`); other goals
- * ignore it.
- */
 export type PlanTimeAdviceInput = PlanTimeToCoverInput & {
   dailyMinutes?: number;
   fullCourse?: boolean;

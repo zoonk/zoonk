@@ -13,7 +13,6 @@ const TODAY = "2020-09-28";
 
 const citation = { passage: "", sourceId: "notice" };
 
-/** A stored notice with its exam days. */
 function examBlueprint({ days, year }: { days: string[]; year: number }) {
   return examBlueprintFixture({
     edition: {
@@ -36,10 +35,6 @@ type PlanExamInput = {
   year: number;
 };
 
-/**
- * Plans an exam goal without a date of its own for the stored notice, with the year (and month)
- * the learner named, and returns the goal with the date the plan counts down to.
- */
 async function planExamGoal({
   days,
   examMonth = null,
@@ -67,7 +62,6 @@ async function planExamGoal({
   return { goalId: goal.id, targetDate: planned.targetDate?.toISOString().slice(0, 10) ?? null };
 }
 
-/** The date an exam goal's plan counts down to (see `planExamGoal`). */
 async function planExam(input: PlanExamInput): Promise<string | null> {
   const { targetDate } = await planExamGoal(input);
   return targetDate;
@@ -105,17 +99,13 @@ describe("the date an exam plan counts down to", () => {
     ).resolves.toBe("2020-11-08");
   });
 
-  // The next year, not one further: a plan two years long fills hundreds of practice days after its
-  // one lesson, which is planning work that says nothing about the date.
   it("is the estimated first day of a year the notice isn't for, the day the exam screen shows", async () => {
-    // The notice's 2nd and 3rd Sundays of November fall on the 14th and 21st in 2021.
     await expect(
       planExam({ days: ["2020-11-08", "2020-11-15"], examYear: 2021, year: 2020 }),
     ).resolves.toBe("2021-11-14");
   });
 
   it("is the estimated day in the month the learner named", async () => {
-    // The notice's 2nd Sunday of November moves to the 2nd Sunday of the March the learner said.
     await expect(
       planExam({ days: ["2020-11-08"], examMonth: 3, examYear: 2021, year: 2020 }),
     ).resolves.toBe("2021-03-14");
@@ -134,7 +124,6 @@ describe("the date an exam plan counts down to", () => {
   });
 
   it("is the next edition's estimated first day once the notice's days passed", async () => {
-    // The 2019 notice's 1st and 2nd Sundays of November fall on the 1st and 8th in 2020.
     await expect(
       planExam({ days: ["2019-11-03", "2019-11-10"], examYear: null, year: 2019 }),
     ).resolves.toBe("2020-11-01");

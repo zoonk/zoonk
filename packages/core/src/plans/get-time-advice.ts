@@ -33,14 +33,8 @@ export type PlanTimeToCoverResult =
   | { status: "ready"; time: PlanTimeToCover }
   | { status: "notFound" | "unauthorized" };
 
-/** What the time question can say while the plan isn't ready to be asked. */
 type Waiting = { readingNotice: boolean; ready: false };
 
-/**
- * An explicit weekend starts the search for the time a goal needs at the least daily time. Every
- * candidate reapplies that override to the original saved calendar, even when it equals the
- * candidate time.
- */
 function getSearchWeekdayMinutes({
   input,
   state,
@@ -51,11 +45,6 @@ function getSearchWeekdayMinutes({
   return input.weekendMinutes === undefined ? state.goal.dailyMinutes : MIN_DAILY_MINUTES;
 }
 
-/**
- * Apply the same complete schedule operations as updateGoal, including the scalar normalized
- * after changing study days or weekends. The scalar also budgets a rested first day. An exam
- * studying everything (`fullCourse`) turns that on as its plan change does.
- */
 function withStudyWeek({
   context,
   dailyMinutes,
@@ -86,14 +75,6 @@ function withStudyWeek({
   return result.state;
 }
 
-/**
- * The learner's plan, once it can be asked about time: not while it's being built, while it still
- * owes the placement the learner ended before it existed, whose test-outs change what it needs,
- * or while it waits for its exam's notice reading (`readingNotice`), which builds it again when it
- * lands (see `getNoticeWaitState`): DELE's time question said 2h50 a day, and the plan built with
- * the notice right after it, 2h40. That wait ends when the reading lands or research ends without
- * one, or runs out (see `startNoticeWait`), and the plan answers as it is from then on.
- */
 async function loadAskedPlan(
   goalId: string,
 ): Promise<
@@ -120,10 +101,6 @@ async function loadAskedPlan(
   return { context, status: "ready" };
 }
 
-/**
- * The learner's plan with its date moved (null for none), planned as the change that moves it plans
- * it (work set aside for time comes back), read on the measure the plan shows (`PlanFeasibility`).
- */
 async function planAtDate(context: PlanContext, targetDate: Date | null) {
   const operations: LearnerPlanOperation[] = [
     { kind: "setTargetDate", targetDate: targetDate && toIsoDate(targetDate) },
@@ -138,13 +115,6 @@ async function planAtDate(context: PlanContext, targetDate: Date | null) {
   return computePlan({ ...getChangePlanning(result.operations), context, state: result.state });
 }
 
-/**
- * The earliest date a goal's own time covers everything by, for a goal that isn't an exam (an
- * exam's date is the exam's), on the plan's one measure (see `getSelectedCoverage`): from the day
- * the plan without a date ends, a day at a time, the first date the plan covers everything by, as
- * it then shows (`fits`). So Move applies a date whose plan says it covers everything. Null when
- * none of the tries does.
- */
 async function findCoveringDate(context: PlanContext): Promise<string | null> {
   const open = await planAtDate(context, null);
   const end = open?.feasibility.endDate ?? null;
@@ -167,14 +137,6 @@ async function findCoveringDate(context: PlanContext): Promise<string | null> {
   return null;
 }
 
-/**
- * What the time a day the learner is looking at covers by the goal's date (see `PlanTimeAdvice`),
- * in the week they'd study (its days, and the weekend's own time, which a new daily time leaves as
- * it is): the plan that time plans, read as the plan reveal reads it, so the two say the same share.
- * For an exam asked about studying everything (`fullCourse`), the plan that does, and the day it
- * ends. Only that time's own plan, built once: the time that covers everything is the learner's to
- * ask for (see `findPlanTimeToCover`).
- */
 export async function getPlanTimeAdvice({
   goalId,
   input,
@@ -240,12 +202,8 @@ export async function getPlanTimeAdvice({
 }
 
 /**
- * The daily time that studies the learner's whole goal in depth by its date (see
- * `PlanTimeToCover`), in the week they'd study, found by planning the goal at each daily time from
- * the least: exact, and only when the learner asks ("Find the time that covers everything"), never
- * for a page or prefetch. For a goal that isn't an exam and falls short in its own week, or whose
- * date passed, also the earliest date its own time covers everything by, measured like the time,
- * which "Move your date" applies.
+ * Plans the goal at each daily time, so call it only when the learner asks, never for a page or
+ * prefetch.
  */
 export async function findPlanTimeToCover({
   goalId,
@@ -284,7 +242,6 @@ export async function findPlanTimeToCover({
       mode: "forced",
       pace: "saved",
       state: stateAt(getSearchWeekdayMinutes({ input, state: context.state })),
-      /** Every candidate starts from the saved state and retains acceptance's normalized scalar. */
       studyScheduleAt: (dailyMinutes) => {
         const state = stateAt(dailyMinutes);
 
@@ -299,8 +256,6 @@ export async function findPlanTimeToCover({
 
   const { feasibility } = computed;
 
-  // The date is for the plan's own week: another week asked about isn't one a date move keeps. A
-  // date that came with lessons left moves too, though nothing measures as left out by it then.
   const ownWeek = input.studyDays === undefined && input.weekendMinutes === undefined;
   const pastDate = context.goal.targetDate !== null && context.goal.targetDate < context.today;
   const movesDate = ownWeek && context.goal.kind !== "exam" && (pastDate || !feasibility.fits);

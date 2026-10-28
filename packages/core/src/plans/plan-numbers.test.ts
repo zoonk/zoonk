@@ -174,8 +174,6 @@ describe("learner plan numbers", () => {
       workload,
     });
 
-    // 45 stand-in minutes fall on the deadline; the written lesson and review add 25 + 10.
-    // Before it, the stand-in takes 20 + 25, and the mock keeps its own 20 minutes.
     expect(numbers.afterDeadlineMinutes).toBe(80);
     expect(numbers.beforeDeadlineMinutes).toBe(65);
     expect(numbers.scheduledMinutes).toBe(145);

@@ -164,7 +164,6 @@ describe("the visible Plan after days away, before any learner POST", () => {
     const user = await prisma.user.findUniqueOrThrow({ where: { id: copy.userId } });
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: copy.goalId } });
 
-    // This is the real Today/Plan E2E's stayAway operation, on this test's private learner only.
     await Promise.all([
       prisma.planItem.updateMany({
         data: { scheduledFor: new Date("2026-10-12T12:00:00Z") },
@@ -313,7 +312,6 @@ describe("the visible Plan after days away, before any learner POST", () => {
       userId: user.id,
     });
 
-    // Supported first-layout input: placement settled one skill before any schedule was shown.
     await prisma.plan.update({ data: { graph: library.graph }, where: { id: plan.id } });
 
     await planItemFixture({

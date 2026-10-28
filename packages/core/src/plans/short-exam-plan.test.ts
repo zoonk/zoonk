@@ -19,7 +19,6 @@ import { createGoalPlan } from "./create-goal-plan";
 import { getGoalPlan } from "./get-goal-plan";
 import { parsePlanGraph, parsePlanSettings } from "./planner/plan-state";
 
-/** A Wednesday: Bia uploads her slides and plans for her biochemistry test. */
 const TODAY = new Date("2026-09-30T00:00:00Z");
 const DAY_MS = 86_400_000;
 
@@ -43,10 +42,8 @@ function setClock(offset: number) {
   });
 }
 
-/** A teacher's test read from slides says nothing about its length. */
 const CLASS_TEST_STRUCTURE = { formats: [], mock: null, rules: [], subjects: [] };
 
-/** A public exam's notice gives its day in real conditions: 90 questions in three hours. */
 const PUBLIC_EXAM_STRUCTURE = {
   ...CLASS_TEST_STRUCTURE,
   mock: {
@@ -60,11 +57,6 @@ const PUBLIC_EXAM_STRUCTURE = {
   },
 };
 
-/**
- * Bia's exam map from last year's test: enzymes came up four times, glycolysis three, the Krebs
- * cycle and the respiratory chain twice. Placement found glycolysis solid. A class test read from
- * her own material has a private blueprint, whose mock is ten questions in half an hour.
- */
 async function setup({
   dailyMinutes = 45,
   days,
@@ -149,10 +141,6 @@ function datesOf({ items, kind }: { items: readonly PlanItem[]; kind: PlanItem["
     .map((item) => item.scheduledFor?.toISOString().slice(0, 10) ?? null);
 }
 
-/**
- * The teacher's announced essay on a topic the plan's days have no room for: a skill of its own in
- * the graph, the format in the class test's blueprint and an essay question written for it.
- */
 async function addAnnouncedEssay(goal: { examBlueprintId: string | null; id: string }) {
   const [plan, osmosis] = await Promise.all([
     prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
@@ -260,7 +248,6 @@ describe("a class test days away", () => {
   it("keeps today's day in progress when placement already tested out its lessons", async () => {
     const { goal, plan } = await setup({ days: 3 });
 
-    // Placement showed she knows every lesson of day 1: its items are tested out on day 1.
     await prisma.planItem.updateMany({
       data: { completedAt: day(0), status: "testedOut" },
       where: { kind: "lesson", phase: 0, planId: plan.id },
@@ -314,7 +301,6 @@ describe("a class test days away", () => {
     expect(firstKinds).not.toContain("checkpoint");
     expect(first.today.weeklyChallenge).toMatchObject({ date: day(2), kind: "mock" });
 
-    // She did every lesson on the first two days.
     await prisma.planItem.updateMany({
       data: { completedAt: day(1), status: "done" },
       where: { kind: "lesson", plan: { goalId: goal.id } },
@@ -336,13 +322,11 @@ describe("a class test days away", () => {
       kind: "checkpoint",
     });
 
-    // Today and the exam screen both say the day before is the short mock, not a light review.
     const [todayView, examView] = await Promise.all([
       getTodayView({ goalId: goal.id }),
       getExamView({ goalId: goal.id }),
     ]);
 
-    // A class test has no ID check or gates: what the teacher allows, and sleep.
     expect(todayView.status === "ready" && todayView.today.exam).toMatchObject({
       checklist: ["materials", "sleep"],
       dayBefore: "mock",
@@ -355,7 +339,6 @@ describe("a class test days away", () => {
     });
   });
 
-  // Pedro's Plus mock the day before only asked the topics his 30 minutes a day had kept.
   it("asks every topic of the material in the day before's mock, the ones its days left out too", async () => {
     const { goal } = await setup({ dailyMinutes: 10, days: 3 });
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
@@ -366,8 +349,6 @@ describe("a class test days away", () => {
       where: { kind: "lesson", planId: plan.id, status: "todo" },
     });
 
-    // Ten minutes a day leave some of her topics without lessons in the plan's days, and she did
-    // those days.
     expect(skillIds.some((skillId) => !taught.some((item) => item.skillId === skillId))).toBe(true);
 
     await prisma.planItem.updateMany({
@@ -391,14 +372,11 @@ describe("a class test days away", () => {
     expect(new Set(asked.map((item) => item.skillId)).size).toBe(skillIds.length);
   });
 
-  // Pedro (free): his Thursday was a 1-minute review and 5 minutes of practice next to a locked
-  // mock, and the card said he had prepared after one 12-minute session.
   it("gives the day before a full review sized to the day on the free plan: its short mock comes with Plus", async () => {
     const { goal, user } = await setup({ days: 3, plus: false });
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
     const skillIds = parsePlanGraph(plan.graph).skills.map((skill) => skill.skillId);
 
-    // Her material's questions: enough for the whole day.
     await Promise.all(
       skillIds.flatMap((skillId) =>
         [0, 1, 2, 3].map(() => itemFixture({ content: choiceItemContent(), skillId })),
@@ -412,7 +390,6 @@ describe("a class test days away", () => {
       getExamView({ goalId: goal.id }),
     ]);
 
-    // Never stuck on a mock they can't take: the day is a review of every topic, at its length.
     const { blocks } = today.today.session;
     const kinds = blocks.map((block) => block.kind);
     const review = blocks.find((block) => block.fullReview);
@@ -421,7 +398,6 @@ describe("a class test days away", () => {
     expect(kinds).not.toContain("learn");
     expect(review).toMatchObject({ kind: "practice" });
 
-    // Every topic of her material, the ones her plan's days left out included.
     const reviewBlock = await prisma.studySessionBlock.findUniqueOrThrow({
       where: { id: review?.id },
     });
@@ -440,15 +416,12 @@ describe("a class test days away", () => {
 
     expect(today.today.weeklyChallenge).toMatchObject({ access: "plusRequired", kind: "mock" });
 
-    // The mock stays in sight on the exam page, locked, instead of disappearing.
     expect(examView.status === "ready" && examView.exam).toMatchObject({
       dayBefore: "review",
       mocksRequirePlus: true,
       nextMock: { planItemId: today.today.weeklyChallenge?.planItemId },
     });
 
-    // A first day started and left halfway, and a second one skipped, isn't preparing: the card
-    // says only what she did.
     await studySessionFixture({
       goalId: goal.id,
       localDate: day(0),
@@ -464,7 +437,6 @@ describe("a class test days away", () => {
       sessionsDone: 1,
     });
 
-    // Once she finished her plan's days, their lessons included, the card can say she prepared.
     await Promise.all([
       prisma.studySession.updateMany({
         data: { status: "completed" },
@@ -488,7 +460,6 @@ describe("a class test days away", () => {
     expect(after.status === "ready" && after.today.exam).toMatchObject({ prepared: true });
   });
 
-  // Pedro's full review the day before asked the placement questions he had answered right again.
   it("asks the day before's full review in questions not seen yet, repeating only the missed ones", async () => {
     const { goal, user } = await setup({ days: 3, plus: false });
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
@@ -505,7 +476,6 @@ describe("a class test days away", () => {
       where: { skillId: { in: skillIds } },
     });
 
-    // On her first day she answered two questions of each topic right and missed a third.
     const answered = skillIds.flatMap((skillId) =>
       items.filter((item) => item.skillId === skillId).slice(0, 3),
     );
@@ -552,7 +522,6 @@ describe("a class test days away", () => {
 
     expect(asked.some((id) => rightIds.has(id))).toBe(false);
 
-    // Every topic's new questions come before the one it missed.
     const order = review?.itemIds ?? [];
     const firstMissed = order.findIndex((id) => missedIds.has(id));
 
@@ -562,7 +531,6 @@ describe("a class test days away", () => {
     expect(order.slice(0, firstMissed).some((id) => answeredIds.has(id))).toBe(false);
   });
 
-  // Pedro asked the buddy for more osmosis and organelles tomorrow; nothing in his plan could do it.
   it("lets a free learner put the topics they choose first in the day before's full review", async () => {
     const { goal } = await setup({ days: 3, plus: false });
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
@@ -606,14 +574,11 @@ describe("a class test days away", () => {
     const detail = await prisma.studySessionBlock.findUniqueOrThrow({ where: { id: review?.id } });
     const payload = readBlockPayload(detail);
 
-    // The chosen topic opens the review and takes more of it; every other topic still comes up.
     expect(chosenItemIds.has(payload.itemIds[0] ?? "")).toBe(true);
     expect(payload.itemIds.filter((id) => chosenItemIds.has(id)).length).toBeGreaterThan(1);
     expect(payload.fullReview).toBe(true);
   });
 
-  // Pedro's teacher announced "an essay on osmosis": at 30 minutes, osmosis didn't fit
-  // his first day, and the essay written for it never came up.
   it("practices the essay the material announces even when its topic's lessons don't fit", async () => {
     const { goal } = await setup({ days: 3, plus: false });
     await addAnnouncedEssay(goal);
@@ -626,8 +591,6 @@ describe("a class test days away", () => {
     expect(kinds).toContain("produce");
   });
 
-  // Pedro's teacher announced "an essay on osmosis": a 20-minute essay took two thirds
-  // of his 30-minute day and left out the lesson on osmosis the plan had for it.
   it("keeps the day's lessons next to a class test's discursive answer, which is short", async () => {
     const { goal, plan } = await setup({ dailyMinutes: 30, days: 3, plus: false });
     await addAnnouncedEssay(goal);
@@ -659,8 +622,6 @@ describe("a class test days away", () => {
     );
   });
 
-  // Pedro's first look on the day before dropped the four lessons Thursday left, two of them his
-  // own request, while the day before is a full review with no room for lessons.
   it("keeps the lessons day 1 left on the day before: the full review stays and they're offered", async () => {
     const { goal, plan } = await setup({ days: 2, plus: false });
     const first = await getTodayStudySession({ goalId: goal.id });
@@ -700,12 +661,9 @@ describe("a class test days away", () => {
     expect(last.session.catchUp).toMatchObject({ lessonsLeft: left.length });
   });
 
-  // Pedro's day before opened its quick review with a placement question ("We're adjusting your
-  // plan"), and its right answer rebuilt his full review into a short practice.
   it("asks no placement question on the day before: nothing is left to place", async () => {
     const { goal } = await setup({ days: 2, plus: false });
 
-    // Placement ran yesterday, when the goal was set: this week's sessions ask what it left unsure.
     await prisma.goal.update({ data: { createdAt: day(0), details: {} }, where: { id: goal.id } });
 
     setClock(1);
@@ -721,7 +679,6 @@ describe("a class test days away", () => {
   it("still runs the short mock for a learner who first opens the app the day before", async () => {
     const { goal } = await setup({ days: 3 });
 
-    // She skipped the first two days, so the re-plan has no room left for any lesson.
     setClock(2);
     const last = await getTodayStudySession({ goalId: goal.id });
 

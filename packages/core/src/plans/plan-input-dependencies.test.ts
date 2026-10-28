@@ -31,7 +31,6 @@ async function makePlan({
   });
 }
 
-/** Plans whose builds read the skill, a skill merged into it or its exam, and one that didn't. */
 async function contentScope() {
   const [skill, unrelatedSkill, first, second, untouched, exam] = await Promise.all([
     skillFixture(),
@@ -45,7 +44,6 @@ async function contentScope() {
   const alias = await skillFixture({ mergedIntoId: skill.id });
 
   const affected = await Promise.all([
-    // A cut skill remains a dependency even when neither the selected graph nor items include it.
     makePlan({ skillIds: [unrelatedSkill.id], sourceSkillIds: [skill.id], userId: first.id }),
     makePlan({ skillIds: [skill.id], userId: first.id }),
     makePlan({ skillIds: [alias.id], userId: second.id }),
@@ -120,7 +118,6 @@ describe("question-bank plan invalidation", () => {
     const scope = await contentScope();
     const before = await readVersions(scope);
 
-    // A genuinely absent source fails the FK after invalidation; no persistence API is mocked.
     await expect(createItems({ ...scope.input, sourceId: randomUUID() })).rejects.toMatchObject({
       code: "P2003",
     });

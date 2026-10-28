@@ -14,13 +14,10 @@ import { createGoalPlan } from "./create-goal-plan";
 /** A Monday in 2020, before the learning events other tests write. */
 const START = new Date("2020-09-28T12:00:00Z");
 
-/** Nine days later: too soon for every lesson at 24 minutes a day, so the plan cuts depth. */
 const DATE = new Date("2020-10-07T00:00:00Z");
 
-/** The day after the date. */
 const DAY_AFTER = new Date("2020-10-08T12:00:00Z");
 
-/** Four phases, one skill each: 28 lessons in all, as `kept-ends-cut.test.ts` plans them. */
 const SIZES = [8, 8, 8, 4];
 
 async function readPlan() {
@@ -51,19 +48,16 @@ async function readNext() {
   return result.status === "ready" ? result.map.next : null;
 }
 
-/** Where a challenge stands on its own page (`GET /v1/challenges/{planItemId}`). */
 async function readChallengeStatus(planItemId: string) {
   const result = await getChallenge({ input: {}, planItemId });
   return result.status === "ready" ? result.challenge.status : null;
 }
 
-/** Each phase's state as the map draws it, which the API serves as `GET /v1/goals/{id}/map`. */
 async function readMapPhaseStates() {
   const result = await getFieldMapView();
   return result.status === "ready" ? result.map.phases.map((phase) => phase.state) : null;
 }
 
-/** The learner finished every plan item of these kinds: lessons studied, challenges won. */
 async function finish(planId: string, kinds: PlanItemKind[]) {
   await prisma.planItem.updateMany({
     data: { completedAt: new Date(), status: "done" },
@@ -71,11 +65,6 @@ async function finish(planId: string, kinds: PlanItemKind[]) {
   });
 }
 
-/**
- * Pedro's kind of goal (not an exam, measured in lessons), with a date nine days away at 24
- * minutes a day: the plan fits 19 of the graph's 28 lessons by cutting each skill's depth, and
- * closes each of its four phases with a challenge.
- */
 async function shortLearnGoal(targetDate = DATE) {
   const user = await userFixture();
 
@@ -107,13 +96,6 @@ async function shortLearnGoal(targetDate = DATE) {
   return { challenges, goal, lessons, plan };
 }
 
-/*
- * Two readings of "finished" disagreed. A plan that cut depth to fit its date read "Finished" at
- * 19 of 28 lessons, about 68%, since its number counted the graph's full depth. And a plan whose
- * every lesson was done read "Finished" and "Continue at Beginner" beside "0 of 4 phases done":
- * a phase is done with its challenge, and none was won. The owner: the label, the number, the
- * phase count and the next level's offer agree.
- */
 describe("a finished plan", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -145,7 +127,6 @@ describe("a finished plan", () => {
 
     await expect(readNext()).resolves.toBeNull();
 
-    // A carried challenge and reviews beyond the target must never return to date math.
     await prisma.planItem.updateMany({
       data: { scheduledFor: new Date("2020-10-29T00:00:00Z") },
       where: { kind: { in: ["boss", "review"] }, planId: plan.id, status: "todo" },
@@ -169,7 +150,6 @@ describe("a finished plan", () => {
       view?.phases.map((phase) => phase.state),
     );
 
-    // Finishing changes the label, not the practice still scheduled around the lessons.
     await expect(
       prisma.planItem.count({ where: { kind: "review", planId: plan.id, status: "todo" } }),
     ).resolves.toBe(reviews.length);
@@ -225,7 +205,6 @@ describe("a finished plan", () => {
     expect(view?.phases.every((phase) => phase.state === "done")).toBe(true);
     await expect(readTodayStatus(goal.id)).resolves.toStrictEqual({ kind: "finished" });
 
-    // The map's phases read the Plan's: its own rule kept the last one "current".
     await expect(readMapPhaseStates()).resolves.toStrictEqual(
       view?.phases.map((phase) => phase.state),
     );
@@ -268,7 +247,6 @@ describe("a finished plan", () => {
     expect(view?.end).toBeNull();
     expect(view?.phases.some((phase) => phase.state === "done")).toBe(false);
 
-    // The first one's saved day came; finishing lessons early leaves the others on their days.
     expect(checkpointTimings(view)).toStrictEqual(
       Array.from({ length: challenges }, (_, index) => (index === 0 ? "nextSession" : "date")),
     );
@@ -284,7 +262,6 @@ describe("a finished plan", () => {
       view?.phases.map((phase) => phase.state),
     );
 
-    // The first challenge won: one phase done, the rest still to win.
     await prisma.planItem.update({
       data: { completedAt: new Date(), status: "done" },
       where: { id: first.id },
@@ -301,13 +278,11 @@ describe("a finished plan", () => {
     await expect(readChallengeStatus(second.id)).resolves.toBe("ready");
   });
 
-  // Past the date a challenge left is still there to take, never a plan that no longer fits.
   it("says the challenges left after its date too, never that it needs adjusting", async () => {
     const { challenges, plan } = await shortLearnGoal();
 
     await finish(plan.id, ["chapter", "lesson"]);
 
-    // The challenges carried to the days after the date, as a new day's settling carries them.
     await prisma.planItem.updateMany({
       data: { scheduledFor: new Date("2020-10-08T00:00:00Z") },
       where: { kind: "boss", planId: plan.id },
@@ -319,14 +294,11 @@ describe("a finished plan", () => {
 
     expect(view).toMatchObject({ end: null, status: { challenges, kind: "challengesLeft" } });
 
-    // Their day came: the next session duels every one, so none reads a day.
     expect(view?.phases.flatMap((phase) => phase.checkpoint?.when ?? [])).toStrictEqual(
       Array.from({ length: challenges }, () => "nextSession"),
     );
   });
 
-  // Lucas moved his date three days away: his last three phases left the plan, and once he
-  // finished the rest they read "done", "6 of 6 phases done".
   it("never reads a phase the plan holds nothing of as done", async () => {
     const { plan } = await shortLearnGoal(new Date("2020-09-30T00:00:00Z"));
 
@@ -340,7 +312,6 @@ describe("a finished plan", () => {
       before?.phases.map((phase) => phase.state),
     );
 
-    // Every lesson, challenge and review the plan holds done.
     await finish(plan.id, ["boss", "chapter", "checkpoint", "lesson", "review"]);
 
     const after = await readPlan();

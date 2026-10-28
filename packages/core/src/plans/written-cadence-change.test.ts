@@ -8,14 +8,10 @@ import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 import { getGoalPlan } from "./get-goal-plan";
 
-/** A Monday in 2020, before the learning events other tests write (see `plan-changes.test.ts`). */
+/** A Monday in 2020, before the learning events other tests write. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 const TARGET = "2020-11-08";
 
-/**
- * An exam six weeks away with two subjects and an essay of three written-test skills, an hour a
- * day: time for everything, so the final weeks hold the essay at under half of each day.
- */
 async function setup() {
   const user = await userFixture();
 
@@ -30,7 +26,6 @@ async function setup() {
     ],
   });
 
-  // The skill graph gives an exam outcome skills only for the parts answered in writing.
   const graph = {
     ...library.graph,
     skills: library.graph.skills.map((skill) =>
@@ -56,7 +51,6 @@ async function setup() {
   return { essaySkillIds, goal, plan };
 }
 
-/** The days the plan's essay lessons are due, in order. */
 async function writtenDays({
   planId,
   essaySkillIds,
@@ -86,7 +80,6 @@ describe("the written tests' cadence", () => {
     const { goal, plan, essaySkillIds } = await setup();
     const weekly = await writtenDays({ essaySkillIds, planId: plan.id });
 
-    // Every week by default: the essay starts in the plan's first week.
     expect(weekly[0] && weekly[0] < "2020-10-05").toBe(true);
 
     const result = await changeGoalPlan({
@@ -98,7 +91,6 @@ describe("the written tests' cadence", () => {
 
     const final = await writtenDays({ essaySkillIds, planId: plan.id });
 
-    // The final weeks of a six-week plan: its last three, from 18 Oct.
     expect(final).toHaveLength(weekly.length);
     expect(final.every((day) => day >= "2020-10-18" && day < TARGET)).toBe(true);
 

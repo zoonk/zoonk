@@ -50,10 +50,7 @@ const activitiesSchema = z
   .min(1)
   .max(LANGUAGE_ACTIVITY_TYPES.length);
 
-/**
- * One change to how a plan is shaped. Every operation re-plans from today: past work never moves,
- * and the change can be undone. Weekdays count from Sunday (0) to Saturday (6).
- */
+/** Weekdays count from Sunday (0) to Saturday (6). */
 const planOperationSchema = z
   .discriminatedUnion("kind", [
     z.object({ kind: z.literal("setDailyMinutes"), minutes: dailyMinutesSchema }).strict(),
@@ -214,16 +211,12 @@ const planOperationSchema = z
 
 export type LearnerPlanOperation = z.infer<typeof planOperationSchema>;
 
-/**
- * Adds lessons for skills the plan was missing, such as a prerequisite that mistakes revealed.
- * Other parts of core propose it; learners never send it.
- */
 const addSkillsOperationSchema = z.object({
   kind: z.literal("addSkills"),
   skills: z.array(
     z.object({
       area: z.string().nullable().default(null),
-      /** The skill it comes before; null puts it at the start of the plan's first phase. */
+      /** Null puts it at the start of the plan's first phase. */
       beforeSkillId: z.string().nullable().default(null),
       lessons: z.int().min(1),
       name: z.string(),
@@ -232,47 +225,21 @@ const addSkillsOperationSchema = z.object({
   ),
 });
 
-/**
- * What the learner said about some of the plan's tools on the "You'll use" card. A setup lesson an
- * earlier choice for the same tool added leaves the plan; `addSkills` in the same change adds the
- * new one. Core builds it from `PlanToolChoiceInput`; learners never send it.
- */
 const setToolsOperationSchema = z.object({
   kind: z.literal("setTools"),
   tools: z.array(toolChoiceSchema).min(1),
 });
 
-/**
- * Makes the plan follow the exam's notice research read after the learner saw their plan: the
- * skills the notice expects and the plan missed, its subjects' names and topics, and its exam
- * weights. The graph it follows stays with the change (`noticeGraph` in its payload), so clients
- * only see which change it is. Core proposes it; learners never send it.
- */
 const followNoticeOperationSchema = z.object({ kind: z.literal("followNotice") });
 
-/**
- * Moves the plan to the exam day its notice gives (`estimated` when the notice isn't out and the
- * day is the likely one), which stays the notice's day: a later notice day may replace it again.
- * Core proposes it; learners never send it (their own date is `setTargetDate`).
- */
 const setNoticeDateOperationSchema = z.object({
   estimated: z.boolean(),
   kind: z.literal("setNoticeDate"),
   targetDate: z.iso.date(),
 });
 
-/**
- * Moves the plan's phase dates so its lessons fit by the goal's date. A refresh keeps the dates the
- * learner saw while lessons the Library writes take more or less time than planned; when keeping
- * them leaves lessons out that moving them fits in, core proposes this. Learners never send it.
- */
 const fitPhaseDatesOperationSchema = z.object({ kind: z.literal("fitPhaseDates") });
 
-/**
- * The option the learner takes of one of their exam's choices (ENEM's foreign language): the plan
- * studies it and no other option of that choice. Core builds it from `ExamChoiceInput` once the
- * option is checked against the exam's notice; learners never send it.
- */
 const setExamChoiceOperationSchema = examChoicePickSchema.extend({
   kind: z.literal("setExamChoice"),
 });

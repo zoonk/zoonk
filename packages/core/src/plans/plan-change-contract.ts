@@ -6,30 +6,13 @@ import { type PlanChangeView } from "./plan-view-contract";
 
 const isoDateSchema = z.iso.date();
 
-/**
- * The source of a change the exam's notice brings: research read the notice after the learner saw
- * their plan, or a check found a new or corrected notice. Clients answer it with Apply or "Keep
- * mine".
- */
 export const NOTICE_SOURCE = "notice";
 
-/**
- * The source of a proposal to move the plan's phase dates (`fitPhaseDates`): lessons written since
- * the learner saw them take more or less time than planned, and keeping the dates leaves lessons
- * out by the goal's date. Clients answer it with Apply or "Keep mine", like the notice's.
- */
 export const PHASE_DATES_SOURCE = "phaseDates";
 
-/**
- * The same statuses as the database's, listed here so clients can parse a change. `replaced`: a
- * proposal a newer change about the same thing replaced before the learner answered it.
- */
+/** The database's statuses, listed here so clients can parse a change. */
 const PLAN_CHANGE_STATUSES = ["proposed", "applied", "declined", "undone", "replaced"] as const;
 
-/**
- * A change to a plan as the learner sees it: the plan's own changes, and a change the buddy
- * proposed in the conversation.
- */
 export const planChangeSchema = z
   .object({
     behind: z

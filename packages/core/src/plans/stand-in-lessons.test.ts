@@ -9,15 +9,9 @@ import { getGoalPlan } from "./get-goal-plan";
 
 const DAY_MS = 86_400_000;
 
-/** Each skill's size in the graph, three of its lessons written: 27 left to outline. */
 const SKILL_SIZE = 30;
 const WRITTEN = 3;
 
-/**
- * Lucas's far topics said "about 25 lessons" for skills his plan, short on time, teaches a few
- * lessons of: a topic not outlined yet says the lessons the plan teaches it, never its skill's
- * whole size.
- */
 describe("a topic whose lessons aren't written yet", () => {
   it("counts the lessons the plan teaches it after cutting what doesn't fit, wherever it shows", async () => {
     const user = await userFixture();
@@ -30,7 +24,6 @@ describe("a topic whose lessons aren't written yet", () => {
       })),
     });
 
-    // Five minutes a day for two months: every skill's core fits, not all its depth.
     const { goal, plan } = await unplannedGoalFixture({
       dailyMinutes: 5,
       targetDate: new Date(Date.now() + 60 * DAY_MS),
@@ -49,7 +42,6 @@ describe("a topic whose lessons aren't written yet", () => {
     const saved = new Map(standIns.map((item) => [item.skillId, item.lessons ?? 0]));
     const left = SKILL_SIZE - WRITTEN;
 
-    // Each stand-in keeps the lessons the plan teaches in its place: some, never all 27 left.
     expect(standIns.length).toBeGreaterThan(0);
     expect([...saved.values()].every((lessons) => lessons >= 1 && lessons < left)).toBe(true);
 
@@ -63,12 +55,10 @@ describe("a topic whose lessons aren't written yet", () => {
         ? viewed.plan.phases.flatMap((phase) => phase.chapters.filter((row) => row.writing))
         : [];
 
-    // The plan's row for the course's topics not written yet adds them up.
     expect(writingRows.reduce((sum, row) => sum + row.lessonsTotal, 0)).toBe(
       [...saved.values()].reduce((sum, lessons) => sum + lessons, 0),
     );
 
-    // The module's page gives each topic its own count.
     const topicRows =
       syllabus.status === "ready"
         ? syllabus.syllabus.subjects.flatMap((subject) =>

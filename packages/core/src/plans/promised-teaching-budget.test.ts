@@ -95,7 +95,6 @@ async function skillChapter({
   };
 }
 
-/** The pure chapter-in-progress cycle, with isolated real Library identities and question bank. */
 async function setup() {
   const [user, course, blueprint] = await Promise.all([
     userFixture(),
@@ -183,7 +182,6 @@ function pastDonations(settings: PlanSettings) {
     .toSorted((first, second) => first.date.localeCompare(second.date));
 }
 
-/** Real ledger and completion projections keep this an active learner, without invented plan items. */
 async function finishBefore({
   activeChapterId,
   date,
@@ -299,7 +297,6 @@ async function readPromise(fixture: Fixture) {
   };
 }
 
-/** The lessons the learner was shown from the change day through the mock, and its busiest day. */
 function listShownDays(items: readonly PlanItem[]) {
   const lessonDays = items.flatMap((item) =>
     item.kind === "lesson" &&
@@ -387,14 +384,6 @@ describe("promised teaching shares the real checkpoint and mock funding budget",
 
   afterEach(() => vi.useRealTimers());
 
-  /**
-   * Less Linguagens still leaves Natureza, Humanas and Matemática teaching phase 0 through October
-   * 17, so its challenge stays on the 19th: a phase's challenge comes the first study day after its
-   * own lessons, never between them, and the 18th is the mock's. The change keeps what the learner
-   * was shown: the next Linguagens lesson, the funded mock and its credit, and the lessons of the
-   * days before it, which may trade days but never come from later ones or crowd a day. Each lesson
-   * keeping its exact day is replanning's own promise to keep this week, so it isn't asserted here.
-   */
   it("keeps the shown challenge, mock and Linguagens lesson when Linguagens is reduced", async () => {
     const fixture = await setup();
     const original = await readSaved(fixture.plan.id);

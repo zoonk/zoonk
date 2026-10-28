@@ -45,7 +45,6 @@ function setDay(date: string) {
   });
 }
 
-/** Saved, balanced mock funding: 120 banked minutes and its own 45-minute study day. */
 async function setup() {
   const user = await userFixture();
 
@@ -313,7 +312,6 @@ describe("public mock funding views", () => {
       }),
     ]);
 
-    // GET is read-only; the learner's POST persists the same selected allocation.
     const before = await prisma.plan.findUniqueOrThrow({ where: { id: plan.id } });
     const result = await getTodayView({ goalId: goal.id });
 

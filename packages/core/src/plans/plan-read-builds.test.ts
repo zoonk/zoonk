@@ -8,10 +8,6 @@ import { getGoalPlan } from "./get-goal-plan";
 import { findPlanTimeToCover, getPlanTimeAdvice } from "./get-time-advice";
 import { type buildPlan } from "./planner/build-plan";
 
-/**
- * Plans laid out per read, counted at the planner's door: a build another build runs (a settling
- * pass) counts with the one that ran it.
- */
 const builds = vi.hoisted(() => ({ depth: 0, laidOut: 0 }));
 
 vi.mock("./planner/build-plan", async (importOriginal) => {
@@ -54,13 +50,10 @@ describe("plans laid out per read", () => {
 
     mockSession(user.userId);
 
-    // Her plan and what her own time covers: the plan she studies and, when it falls short, the
-    // plan her own time plans once switched to (`timeCovers`).
     const plan = await countBuilds(() => getGoalPlan(user.goalId));
     expect(plan.result.status).toBe("ready");
     expect.soft(plan.builds, "Plan").toBeLessThanOrEqual(3);
 
-    // The time step: her plan at her time, then what another time she looks at covers.
     const own = await countBuilds(() => getPlanTimeAdvice({ goalId: user.goalId, input: {} }));
     expect(own.result.status).toBe("ready");
     expect.soft(own.builds, "time advice at her own time").toBeLessThanOrEqual(2);
@@ -72,9 +65,6 @@ describe("plans laid out per read", () => {
     expect(other.result.status).toBe("ready");
     expect.soft(other.builds, "time advice at another time").toBeLessThanOrEqual(3);
 
-    // A buddy turn that isn't about time reads her plan as the screens do: it builds the turn's
-    // context and runs no search (the time that covers everything is the buddy's `timeToCover`
-    // lookup, only for a question about time).
     const turn = await countBuilds(() =>
       createLessonQuestion({
         input: { context: { kind: "plan" }, question: "What's next?", requestId: randomUUID() },
@@ -85,7 +75,6 @@ describe("plans laid out per read", () => {
     expect(turn.result.status).toBe("created");
     expect.soft(turn.builds, "a buddy turn not about time").toBeLessThanOrEqual(3);
 
-    // Where the searches went: only when she asks, each a POST of its own.
     const found = await countBuilds(() => findPlanTimeToCover({ goalId: user.goalId, input: {} }));
 
     expect(found.result.status).toBe("ready");

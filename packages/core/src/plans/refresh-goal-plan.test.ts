@@ -23,10 +23,7 @@ import { findPlanTimeToCover } from "./get-time-advice";
 import { parsePlanGraph } from "./planner/plan-state";
 import { refreshGoalPlan } from "./refresh-goal-plan";
 
-/**
- * A Monday in 2020, before the learning events other tests write: estimates read everyone's recent
- * pace, and this keeps it out of the dates these tests expect.
- */
+/** Before other tests' learning events, so their pace never changes these plans. */
 const MONDAY = new Date("2020-09-28T12:00:00Z");
 const THURSDAY = new Date("2020-10-01T12:00:00Z");
 const FRIDAY = new Date("2020-10-02T12:00:00Z");
@@ -153,7 +150,6 @@ describe(refreshGoalPlan, () => {
       skillFixture({ name: "Apply the fundamental principles" }),
     ]);
 
-    // A plan saved before this read: its pace and start not set yet, so the refresh writes it.
     const plan = await planFixture({
       goalId: goal.id,
       graph: {
@@ -179,7 +175,6 @@ describe(refreshGoalPlan, () => {
   });
 });
 
-/** What the plan's screens show about its reach: its end and what the learner's time covers. */
 async function readNumbers(goalId: string) {
   const result = await getGoalPlan(goalId);
   const plan = result.status === "ready" ? result.plan : null;
@@ -206,7 +201,6 @@ describe("a plan's numbers while the Library outlines it", () => {
   it("measures the plan it holds before and after its stand-ins are outlined", async () => {
     const user = await userFixture();
 
-    // Two skills written, and one the Library hasn't outlined yet: a stand-in of 30 lessons.
     const library = await planLibraryFixture({
       skills: [{ lessons: 4 }, { lessons: 3 }, { lessons: 0, size: 30 }],
     });
@@ -227,7 +221,6 @@ describe("a plan's numbers while the Library outlines it", () => {
     expect(before.feasibility?.coveredShare).toBeGreaterThan(0);
     expect(before.feasibility?.coveredShare).toBeLessThan(1);
 
-    // The time for everything is the learner's to ask for ("Find the time that covers everything").
     const findTime = () => findPlanTimeToCover({ goalId: goal.id, input: {} });
     const timeBefore = await findTime();
     const found = timeBefore.status === "ready" ? timeBefore.time : null;
@@ -235,7 +228,6 @@ describe("a plan's numbers while the Library outlines it", () => {
     expect(found?.recommendedMinutes).toBeGreaterThan(12);
     expect(found?.fittingDate).toMatch(/^\d{4}-\d{2}-\d{2}$/u);
 
-    // The Library outlines the stand-in as 18 lessons of 5 minutes, not 30 of 3.
     const standIn = library.skills[2];
     const chapterId = library.chapters[0]?.id ?? "";
 
@@ -260,18 +252,14 @@ describe("a plan's numbers while the Library outlines it", () => {
       where: { plan: { goalId: goal.id }, skillId: standIn?.id, status: "todo" },
     });
 
-    // The plan now holds the outlined lessons, and its numbers measure that plan: the share can
-    // move as a stand-in's estimate becomes written lessons, and the plan still falls short.
     expect(planned.some((item) => item.lessonId !== null)).toBe(true);
     const after = await readNumbers(goal.id);
 
-    // Its end stays where it was: the outlined lessons take the stand-in's days.
     expect(after.estimate).toBe(before.estimate);
     expect(after.feasibility).toMatchObject({ fits: false });
     expect(after.feasibility?.coveredShare).toBeGreaterThan(0);
     expect(after.feasibility?.coveredShare).toBeLessThan(1);
 
-    // The time for everything is found for the plan it holds now.
     const timeAfter = await findTime();
     const foundAfter = timeAfter.status === "ready" ? timeAfter.time : null;
 
@@ -309,7 +297,6 @@ describe("test-outs on the plan", () => {
       where: { kind: "testedOut", planId: plan.id },
     });
 
-    // The skip returns its change, so the screen that skipped the lessons can undo it right there.
     expect(changeId).toBe(change.id);
 
     expect(change.payload).toMatchObject({ planItemIds: ids, source: "system" });
@@ -346,7 +333,6 @@ describe("test-outs on the plan", () => {
       timeZone: "UTC",
     });
 
-    // The Library outlines another chapter of each skill afterwards.
     const outlined = await Promise.all(
       [known, other].map(async (skill, index) => {
         const lesson = await libraryLessonFixture({
@@ -379,12 +365,9 @@ describe("test-outs on the plan", () => {
     expect(todoLessonIds).toContain(outlined[1]?.id);
   });
 
-  // Juliana's Today said "We skipped 49 lessons you already know" while her Plan's subjects
-  // added up to 235: the change counted rows, a stand-in as one, and the Plan its lessons.
   it("counts a skip's lessons as the Journey does, and its undo forgets what it only assumed", async () => {
     const user = await userFixture();
 
-    // The first skill's lessons aren't written yet: one stand-in plans six of them.
     const library = await planLibraryFixture({
       skills: [{ lessons: 0, size: 6 }, { lessons: 2 }, { lessons: 4 }],
     });
@@ -401,7 +384,6 @@ describe("test-outs on the plan", () => {
     const [assumed, answered] = library.skills;
     const skillIds = [assumed?.id ?? "", answered?.id ?? ""];
 
-    // Placement asked about the second skill and assumed the first from the answers around it.
     await attemptFixture({ answeredAt: MONDAY, skillId: answered?.id, userId: user.id });
     await markSkillsKnown({ knownAt: MONDAY, skillIds, timeZone: "UTC", userId: user.id });
     const goalPlan = await loadGoalPlan(goal.id);
@@ -414,7 +396,6 @@ describe("test-outs on the plan", () => {
       timeZone: "UTC",
     });
 
-    // The stand-in is one row on the plan, as in the result that lists these ids, and six lessons.
     expect(ids).toHaveLength(3);
 
     const change = await prisma.planChange.findFirstOrThrow({
@@ -448,8 +429,6 @@ describe("the lessons a plan counted for each skill", () => {
     vi.useRealTimers();
   });
 
-  // A challenge sizes a skill's core by them (`listCoreLessonItems`): a count older than the plan's
-  // key let it ask a skill whose core grew, here from two lessons to three.
   it("follows the Library when it grows past what a plan short on time keeps", async () => {
     const user = await userFixture();
     const library = await planLibraryFixture({ skills: [{ lessons: 4 }, { lessons: 6 }] });
@@ -490,7 +469,6 @@ describe("the lessons a plan counted for each skill", () => {
     const counted = (graph: unknown) =>
       parsePlanGraph(graph).skills.find((skill) => skill.skillId === grown?.id)?.plannedLessons;
 
-    // The plan keeps the same lessons and version; only the count follows the Library.
     expect(new Set(itemsAfter.map((item) => item.lessonId))).toStrictEqual(
       new Set(itemsBefore.map((item) => item.lessonId)),
     );

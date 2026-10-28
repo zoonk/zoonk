@@ -69,7 +69,6 @@ function undo({ changeId, goalId }: { changeId: string; goalId: string }) {
   return decidePlanChange({ changeId, goalId, input: { status: "undone", timeZone: "UTC" } });
 }
 
-/** Both operations are real calls; a held row makes their ordering observable in Postgres. */
 async function holdBlock(blockId: string) {
   const release = Promise.withResolvers<null>();
   const ready = Promise.withResolvers<number>();
@@ -104,8 +103,7 @@ async function waitForWriter({
 }) {
   const query =
     operation === "start"
-      ? // A starter behind Undo now waits at the learner's lock, before domain rows.
-        "(UPDATE.*study_session|study_session_blocks.*FOR UPDATE|FROM users WHERE id = .*FOR NO KEY UPDATE)"
+      ? "(UPDATE.*study_session|study_session_blocks.*FOR UPDATE|FROM users WHERE id = .*FOR NO KEY UPDATE)"
       : "(DELETE|FOR UPDATE)";
 
   await expect
@@ -320,7 +318,7 @@ describe("Undo keeps intervening study and can retry failed restoration", () => 
 
   it("restores a completed day after Apply reopened it with untouched extra blocks", async () => {
     const { day, goal } = await setup();
-    /** This fixture writes only its own completion rows; playing lessons would add unrelated assessment setup. */
+
     await prisma.$transaction([
       prisma.studySessionBlock.updateMany({
         data: { completedAt: NOW, startedAt: NOW, status: "completed" },
@@ -344,7 +342,6 @@ describe("Undo keeps intervening study and can retry failed restoration", () => 
     const reopened = await readDay(day.id);
     expect(reopened.status).toBe("active");
     expect(reopened.blocks.some((block) => block.status === "pending")).toBe(true);
-    /** endedAt remains historical when Apply adds study time; status and open blocks describe the day now. */
     expect(reopened.endedAt).toStrictEqual(completed.endedAt);
 
     await expect(undo({ changeId: change.id, goalId: goal.id })).resolves.toMatchObject({
@@ -425,7 +422,7 @@ describe("Undo keeps intervening study and can retry failed restoration", () => 
     if (!first || !second) {
       throw new Error("Expected two blocks to be recreated on Undo");
     }
-    /** Deliberately duplicate two restored positions to trigger the actual session-position constraint. */
+
     await prisma.planChangeSnapshot.update({
       data: {
         plan: {
@@ -480,7 +477,6 @@ describe("Undo keeps intervening study and can retry failed restoration", () => 
       throw new Error("Expected a lesson in the original day");
     }
 
-    // Keep this test-owned day to one lesson: finishing its replacement will hold all its work.
     await prisma.studySessionBlock.deleteMany({
       where: { id: { not: first.id }, sessionId: day.id },
     });

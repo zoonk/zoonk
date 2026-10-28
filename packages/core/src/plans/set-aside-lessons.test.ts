@@ -47,7 +47,6 @@ describe("lessons set aside after their last held-back draft", () => {
   });
 });
 
-/** An exam learner returns after missed days, with no time left to place the overdue lessons. */
 async function missedDaysPlan(credit: "done" | "testedOut" | null) {
   const [user, library, blueprint] = await Promise.all([
     userFixture(),
@@ -139,7 +138,6 @@ async function missedDaysPlan(credit: "done" | "testedOut" | null) {
   return { goal };
 }
 
-/** The Plan tab and the public API's core capability, beside the same plan's syllabus. */
 async function readTopicCoverage(goalId: string) {
   const [main, api, syllabus] = await Promise.all([
     getPlanTabView({ goalId }),

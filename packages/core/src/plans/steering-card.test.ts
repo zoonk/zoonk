@@ -11,7 +11,6 @@ import { parsePlanGraph } from "./planner/plan-state";
 /** A Monday in 2020, before the learning events other tests write, so nobody's pace moves it. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 
-/** Each area's lessons still to do in the saved plan, a stand-in as the lessons it was saved with. */
 async function countAreaLessons(planId: string): Promise<Map<string, number>> {
   const [items, { graph }] = await Promise.all([
     prisma.planItem.findMany({ where: { kind: "lesson", planId, status: "todo" } }),
@@ -26,11 +25,6 @@ async function countAreaLessons(planId: string): Promise<Map<string, number>> {
   }, new Map<string, number>());
 }
 
-/**
- * An exam three weeks away, short on time: ethics is small enough to fit whole, exam strategy and
- * criminal law aren't. Applies the change and returns its result with each area's lessons still to
- * do before and after it.
- */
 async function changeShortExam({
   dailyMinutes,
   operations,
@@ -76,12 +70,7 @@ describe("a change of where to focus on a plan short on time", () => {
     vi.useRealTimers();
   });
 
-  // OAB seed 1007: "more ethics, less exam strategy" moved criminal procedure, which the change
-  // doesn't name, from 40 to 44 lessons, and the card said nothing (R2). Ethics already had every
-  // lesson in, so the time strategy freed went to criminal procedure too.
   it("names on the card a subject it doesn't name whose lessons move by more than rounding", async () => {
-    // 19 minutes: short of every area's depth, which less exam strategy gives criminal law; at 25,
-    // criminal law is all but whole, and only rounding is left to move.
     const { after, before, result } = await changeShortExam({
       dailyMinutes: 19,
       operations: [
@@ -102,9 +91,6 @@ describe("a change of where to focus on a plan short on time", () => {
     });
   });
 
-  // ENEM, Ana's walk: with math focused, choosing math and natural sciences read "Nothing
-  // changed", though natural sciences alone gained 10 lessons: the change was judged on math too,
-  // which shares some of its depth with the area added beside it.
   it("applies an area added beside one focused before, the card naming what the earlier one gives", async () => {
     const { after, before, result } = await changeShortExam({
       dailyMinutes: 20,

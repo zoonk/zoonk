@@ -10,13 +10,8 @@ import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { getPlanChangedSince } from "./get-plan-changed-since";
 
-/** Past the clock margin, so rows written before the screen's read read as unchanged. */
 const AFTER_READ_MS = 5000;
 
-/**
- * A learner waiting on lessons: a plan with an item whose lesson is being written, and today's
- * session with a stop for another lesson. Returns a read time after everything was written.
- */
 async function setup() {
   const user = await userFixture();
   const goal = await goalFixture({ userId: user.id });
@@ -47,7 +42,6 @@ async function setup() {
   };
 }
 
-/** Writes happen after the screen's read: the clock moves past it first. */
 function afterRead(readAt: number) {
   vi.setSystemTime(readAt + AFTER_READ_MS);
 }

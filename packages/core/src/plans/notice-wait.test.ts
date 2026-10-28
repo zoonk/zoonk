@@ -15,7 +15,6 @@ const MINUTE_MS = 60_000;
 
 const citation = { passage: "", sourceId: "notice" };
 
-/** The request's clock, so the plan reads its wait at that instant. */
 function setNow(now: Date) {
   vi.setSystemTime(now);
 
@@ -26,7 +25,6 @@ function setNow(now: Date) {
   });
 }
 
-/** An exam goal whose plan was just built, before or from an estimated notice. */
 async function builtExam({ days, year }: { days: string[]; year: number }) {
   const [user, blueprint, library] = await Promise.all([
     userFixture(),
@@ -93,7 +91,6 @@ describe("an exam plan waiting for its notice", () => {
     await startNoticeWait({ goalId: goal.id, now: NOW });
     await expect(readPlan(goal.id)).resolves.toMatchObject({ notice: "reading" });
 
-    // A reading that lands in time is part of the plan, and the reveal waits while it's built.
     await expect(
       claimNoticeLanding({ goalId: goal.id, now: new Date(NOW.getTime() + 2 * MINUTE_MS) }),
     ).resolves.toBe(true);
@@ -101,7 +98,6 @@ describe("an exam plan waiting for its notice", () => {
     setNow(new Date(NOW.getTime() + 4 * MINUTE_MS));
     await expect(readPlan(goal.id)).resolves.toMatchObject({ notice: "reading" });
 
-    // Past the wait, the learner sees the plan and the reading becomes a change to apply.
     const late = new Date(NOW.getTime() + 10 * MINUTE_MS);
     setNow(late);
 
@@ -111,13 +107,11 @@ describe("an exam plan waiting for its notice", () => {
     await endNoticeWait(goal.id);
     await expect(readPlan(goal.id)).resolves.toMatchObject({ notice: null });
 
-    // When it stopped waiting is kept: what was read before then is the plan's own.
     const plan = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
     expect(plan).toMatchObject({ noticeWaitEndedAt: late, noticeWaitUntil: null });
   });
 
   it("says when the date it counts down to is an estimate, and when it's the notice's own", async () => {
-    // The 2019 notice's first Sunday of November falls on the 1st in 2020.
     const estimated = await builtExam({ days: ["2019-11-03"], year: 2019 });
 
     await expect(readPlan(estimated.id)).resolves.toMatchObject({

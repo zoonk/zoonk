@@ -26,20 +26,13 @@ const AREAS = ["Matemática", "Direito", "Inglês"] as const;
 
 const citation = { passage: "Conteúdo programático", sourceId: "notice" };
 
-/** Each area's basics in the first phase and what builds on them in the next, a topic each. */
 const SKILLS = AREAS.flatMap((area) => [
   { area, lessons: 6, phase: 0, topic: `${area}: fundamentos` },
   { area, lessons: 6, phase: 1, topic: `${area}: aplicação` },
 ]);
 
-/** The topic an earlier run of the plan left out, which the learner sees out of it. */
 const LEFT_OUT = "Inglês: aplicação";
 
-/**
- * An exam learner three weeks before the exam, with a notice topic per skill, the plan's
- * `settings` (where they focus) and each Library lesson's minutes taken from `lessonMinutes` in
- * turn.
- */
 async function setup({
   dailyMinutes,
   lessonMinutes = [6],
@@ -123,11 +116,6 @@ async function setup({
   return { goal, leftOutSkill, plan };
 }
 
-/**
- * The plan as the learner sees it, saved by an earlier run that left a topic out (an automatic
- * run that kept the week, a pace or lessons that moved what fits): planning it again from today
- * brings that topic back.
- */
 async function leaveOut({ planId, skillId }: { planId: string; skillId: string }) {
   await prisma.planItem.deleteMany({ where: { planId, skillId, status: "todo" } });
 }
@@ -191,7 +179,6 @@ describe("a change's card says what changes in the plan the learner sees", () =>
   it("never offers a focus that leaves its area fewer lessons than the learner sees", async () => {
     const { english, goal, plan } = await setupStandIns();
 
-    // The plan the learner sees has more of English's lessons than any plan made today could.
     await prisma.planItem.updateMany({
       data: { lessons: 40 },
       where: { lessonId: null, planId: plan.id, skillId: { in: english }, status: "todo" },
@@ -228,7 +215,6 @@ describe("a plan that changes as the learner studies says so", () => {
     const { goal, plan } = await setup({ dailyMinutes: 12 });
     const before = await listPlannedTopics(plan.id);
 
-    // The lessons written since take twice the time: the same days now fit fewer topics.
     await prisma.lesson.updateMany({
       data: { estimatedMinutes: 12 },
       where: { skills: { some: { skillId: { in: await listPlanSkillIds(plan.id) } } } },
@@ -256,8 +242,6 @@ describe("a missed day's card says what changes in the saved plan", () => {
     vi.useRealTimers();
   });
 
-  // The card counts stand-ins as saved, skill by skill (R3): counted by item, a stand-in that only
-  // partly fits said it added all its lessons, and one that shrank said nothing.
   it("counts the stand-ins it shrinks or grows as the saved plan does", async () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(NOW);
@@ -307,8 +291,6 @@ describe("more of one subject and less of another", () => {
     { areas: ["Inglês"], kind: "focusAreas", parts: [] },
   ];
 
-  // Sofia's "less Philosophy, more Civil" with every lesson in her plan: each kept its lessons and
-  // the card said "Adds 5 lessons and leaves out 9" while only her reviews moved.
   it("finishes the subject asked for sooner when everything fits, and the card says what moved", async () => {
     const { goal, plan } = await setup({ dailyMinutes: 60 });
     const before = await readAreas(plan.id);
@@ -329,8 +311,6 @@ describe("more of one subject and less of another", () => {
       before: before.get(area)?.last,
     });
 
-    // Less of math keeps every lesson because everything still fits: the card says when it ends,
-    // moved or not, so "less math" never reads as doing something it didn't.
     expect(after.get("Matemática")?.lessons).toBe(before.get("Matemática")?.lessons);
     expect(changed?.effect?.areaEnds).toStrictEqual([ends("Inglês"), ends("Matemática")]);
     expect(changed?.effect).toMatchObject(countSavedChange({ after, before }));
@@ -372,8 +352,6 @@ describe("more of one subject and less of another", () => {
         .toSorted((a, b) => a - b)
         .at(-1);
 
-    // The original premise compares the change with planning from today without it. Establish it
-    // independently of the preview's unchanged verdict: all 12 math lessons remain, ending together.
     expect(mathLessons(baseline.built)).toHaveLength(12);
 
     expect(
@@ -411,9 +389,6 @@ describe("more of one subject and less of another", () => {
     await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(0);
   });
 
-  // IELTS seed 1056: on day one, more reading with less writing ended writing two days
-  // sooner than the plan the learner saw, which an earlier run had laid out looser than planning
-  // again from today does. The buddy never offers such a change; the editor applied it.
   it("never applies more of one subject and less of another that ends the other sooner than the learner sees", async () => {
     const { goal, plan } = await setup({ dailyMinutes: 60 });
 
@@ -437,10 +412,6 @@ describe("more of one subject and less of another", () => {
     await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(0);
   });
 
-  // Sofia's OAB plan after a mock: with more Civil Law and less Philosophy, the
-  // mock's "more Ethics" added Ethics beside Civil Law. Ethics had every lesson in from day one
-  // and gained nothing, yet sharing the time moved Civil Law's lessons, so the change was applied
-  // and the mock said Ethics got more time.
   it("never applies a subject added to the focus that gains nothing, whatever the one focused before does", async () => {
     const { goal, plan } = await setup({
       dailyMinutes: 25,
@@ -464,7 +435,6 @@ describe("more of one subject and less of another", () => {
     await expect(prisma.planChange.count({ where: { planId: plan.id } })).resolves.toBe(0);
   });
 
-  // Rafaela's "more Legislative Process, less Linguistics", short on time.
   it("gives the subject asked for more lessons and the other fewer when time is short, as the card says", async () => {
     const { goal, plan } = await setup({ dailyMinutes: 25 });
     const before = await readAreas(plan.id);
@@ -478,7 +448,6 @@ describe("more of one subject and less of another", () => {
       before.get("Matemática")?.lessons ?? 0,
     );
 
-    // The time comes from the subject the learner wants less of, never from another one.
     expect(after.get("Direito")?.lessons ?? 0).toBeGreaterThanOrEqual(
       before.get("Direito")?.lessons ?? 0,
     );
@@ -486,8 +455,6 @@ describe("more of one subject and less of another", () => {
     expect(changed?.effect).toMatchObject(countSavedChange({ after, before }));
   });
 
-  // Ana's "more Linguagens", short on time: Linguagens gained 96 lessons and ended in October
-  // instead of August, and her card said only that she'd finish it later.
   it("says how many more lessons the subject asked for gets when that ends it later", async () => {
     const { goal, plan } = await setup({ dailyMinutes: 22, mockMinutes: 30 });
     const before = await readAreas(plan.id);
@@ -496,7 +463,6 @@ describe("more of one subject and less of another", () => {
     const after = await readAreas(plan.id);
     const [was, now] = [before.get("Direito"), after.get("Direito")];
 
-    // The premise: short on time, more of it gains it lessons and ends it later.
     expect(now?.lessons ?? 0).toBeGreaterThan(was?.lessons ?? 0);
     expect(toTime(now)).toBeGreaterThan(toTime(was));
 
@@ -508,8 +474,6 @@ describe("more of one subject and less of another", () => {
     });
   });
 
-  // Rafaela's "less Linguistics" took 43 lessons from political science and administrative law and left
-  // linguistics' alone. With more of another subject, see "gives the subject asked for more lessons".
   it("takes the time from the subject the learner wants less of, never from another one", async () => {
     const { goal, plan } = await setup({ dailyMinutes: 25 });
     const before = await readAreas(plan.id);
@@ -530,8 +494,6 @@ describe("more of one subject and less of another", () => {
     );
   });
 
-  // Sofia's "more Civil, less Philosophy" opened today with 5 criminal procedure lessons and moved
-  // ethics, her heaviest subject, from first to 18th.
   it("keeps today's lessons first, as the learner sees them, but the ones of the subject they want less of", async () => {
     const { goal, plan } = await setup({ dailyMinutes: 60 });
     const named = new Set<string>(["Matemática"]);
@@ -542,12 +504,10 @@ describe("more of one subject and less of another", () => {
     await change(goal.id, MORE_LESS);
     const after = await listTodayKeys({ exceptAreas: named, planId: plan.id });
 
-    // They open the day as before; time the change frees today may add lessons after them.
     expect(after.slice(0, before.length)).toStrictEqual(before);
   });
 });
 
-/** Today's lessons still to do, in the plan's order, of every area but `exceptAreas`. */
 async function listTodayKeys({
   exceptAreas,
   planId,
@@ -575,7 +535,6 @@ async function listTodayKeys({
     .map((item) => item.lessonId ?? item.skillId ?? "");
 }
 
-/** The skills of the subject the learner wants less of, as the plan's graph files them. */
 async function listAreaSkills(planId: string): Promise<string[]> {
   const { graph } = await prisma.plan.findUniqueOrThrow({ where: { id: planId } });
 
@@ -590,10 +549,6 @@ function toTime(read: AreaRead | undefined): number {
   return read ? Date.parse(read.last) : Number.NaN;
 }
 
-/**
- * Each area's lessons still to do in the saved plan, as every screen counts them (a stand-in as
- * the lessons it was saved with), each skill's, and the day its last one is due.
- */
 async function readAreas(planId: string): Promise<Map<string, AreaRead>> {
   const [items, { graph }] = await Promise.all([
     prisma.planItem.findMany({ where: { kind: "lesson", planId, status: "todo" } }),
@@ -619,12 +574,10 @@ async function readAreas(planId: string): Promise<Map<string, AreaRead>> {
   }, new Map<string, AreaRead>());
 }
 
-/** Each skill's lessons in these areas. */
 function listSkillLessons(areas: Map<string, AreaRead>): Map<string, number> {
   return new Map([...areas.values()].flatMap((area) => [...area.skills]));
 }
 
-/** The lessons `from` has beyond `to`, skill by skill. */
 function countGained(from: Map<string, number>, to: Map<string, number>): number {
   return [...from].reduce(
     (total, [skillId, lessons]) => total + Math.max(0, lessons - (to.get(skillId) ?? 0)),
@@ -632,7 +585,6 @@ function countGained(from: Map<string, number>, to: Map<string, number>): number
   );
 }
 
-/** The lessons the saved plan gained and lost, skill by skill: what the card must say. */
 function countSavedChange({
   after,
   before,
@@ -644,7 +596,6 @@ function countSavedChange({
   return { lessonsAdded: countGained(now, was), lessonsRemoved: countGained(was, now) };
 }
 
-/** The notice topics the plan's saved items teach. */
 async function listPlannedTopics(planId: string): Promise<string[]> {
   const items = await prisma.planItem.findMany({ where: { kind: "lesson", planId } });
   const planned = new Set(items.map((item) => item.skillId));
@@ -672,10 +623,6 @@ async function listTodoTitles(planId: string): Promise<string[]> {
   return items.map((item) => item.titleSnapshot);
 }
 
-/**
- * The same exam with each skill's lessons not written yet past its first three, short on time:
- * every skill plans the rest as a stand-in, which the plan saves with the lessons it teaches.
- */
 async function setupStandIns() {
   const user = await userFixture();
   const blueprint = await examBlueprintFixture({});

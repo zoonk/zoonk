@@ -12,15 +12,11 @@ import { createGoalPlan } from "./create-goal-plan";
 import { previewPlanChange } from "./preview-plan-change";
 import { isInputRangeError } from "./target-date-range";
 
-/**
- * A Monday in 2020, before the learning events other tests write. A plan run from it lays out
- * 3,650 days, to 2030-09-26: the last date a learner can set.
- */
+/** A Monday in 2020, before the learning events other tests write. */
 const MONDAY = new Date("2020-09-28T12:00:00Z");
 const LAST_DAY = "2030-09-26";
 const TOO_FAR = "2030-09-27";
 
-/** The signed-in learner's goal with the planner's plan; `targetDate` is the goal's date now. */
 async function plannedGoal({ targetDate }: { targetDate?: string } = {}) {
   const [user, library] = await Promise.all([
     userFixture(),
@@ -53,7 +49,6 @@ async function readGoal(goalId: string) {
   };
 }
 
-/** The refusal a call ends with, or null when it didn't refuse a date. */
 async function refusal(run: () => Promise<unknown>): Promise<z.ZodError | null> {
   try {
     await run();

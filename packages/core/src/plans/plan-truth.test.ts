@@ -27,17 +27,11 @@ const AREAS = ["Matemática", "Direito", "Inglês"] as const;
 
 const citation = { passage: "Conteúdo programático", sourceId: "notice" };
 
-/** Each area's basics in the first phase and what builds on them in the next, a topic each. */
-// Each area's application builds on its fundamentals, the skill before it.
 const SKILLS = AREAS.flatMap((area, index) => [
   { area, lessons: 6, phase: 0, topic: `${area}: fundamentos` },
   { area, builds: index * 2, lessons: 6, phase: 1, topic: `${area}: aplicação` },
 ]);
 
-/**
- * An exam learner whose Library lessons take twice the time the skill graph sized them at, as
- * written lessons often do, three weeks before the exam.
- */
 async function setup({ dailyMinutes }: { dailyMinutes: number }) {
   const user = await userFixture();
 
@@ -86,7 +80,6 @@ async function setup({ dailyMinutes }: { dailyMinutes: number }) {
   return { goal, library, user };
 }
 
-/** What the plan's headline says about every topic, and what each subject page says. */
 async function readTruth(goalId: string) {
   const [plan, syllabus] = await Promise.all([getGoalPlan(goalId), getSyllabusView({ goalId })]);
   const feasibility = plan.status === "ready" ? plan.plan.feasibility : null;
@@ -143,11 +136,9 @@ describe("a plan's headline and its topics tell one truth", () => {
   });
 
   it("says topics don't fit exactly when subject pages leave some out, and the time that brings them in", async () => {
-    // Enough time for every topic as the skill graph sizes them, not as the lessons are written.
     const { goal } = await setup({ dailyMinutes: 7 });
 
     const short = await readTruth(goal.id);
-    // The time that brings every topic in is found when the learner asks, never on a read.
     const found = await findPlanTimeToCover({ goalId: goal.id, input: {} });
     const coreMinutes = found.status === "ready" ? found.time.coreMinutes : null;
 
@@ -163,7 +154,6 @@ describe("a plan's headline and its topics tell one truth", () => {
   it("says a subject's basics are past, not out of time, once harder lessons skip them", async () => {
     const { goal, library, user } = await setup({ dailyMinutes: 30 });
 
-    // Right every time in law's basics: harder lessons start law past them.
     await Promise.all(
       Array.from({ length: 8 }, () =>
         attemptFixture({ skillId: library.skills[2]?.id ?? "", userId: user.id }),
@@ -189,9 +179,6 @@ describe("a plan's headline and its topics tell one truth", () => {
       throw new Error("The library has no English skills.");
     }
 
-    // A course outline tags its basics chapter with the basics and another chapter with what
-    // builds on them, and that chapter also holds the basics' first lesson (Rafaela's "Voz do
-    // autor", in her interpretation chapter and in the inference one).
     const [course, appliedChapter] = await Promise.all([
       courseFixture(),
       libraryChapterFixture({ title: `English in use ${goal.id}` }),
@@ -205,7 +192,6 @@ describe("a plan's headline and its topics tell one truth", () => {
       chapterLessonFixture({ chapterId: appliedChapter.id, lessonId: shared.id, position: 0 }),
     ]);
 
-    // Placement found the learner knows the basics: their first lesson is skipped, nothing else.
     await prisma.planItem.updateMany({
       data: { completedAt: NOW, status: "testedOut" },
       where: { lessonId: shared.id },

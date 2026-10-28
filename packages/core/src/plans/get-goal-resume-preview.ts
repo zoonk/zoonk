@@ -7,7 +7,6 @@ export type GoalResumePreviewResult =
   | { preview: boolean; status: "ready" }
   | { status: "notFound" | "unauthorized" };
 
-/** The saved plan stays visible; the resume POST plans from that day's current inputs. */
 export async function getGoalResumePreview(goalId: string): Promise<GoalResumePreviewResult> {
   "use cache: private";
   const loaded = await loadOwnedPlanContext(goalId);

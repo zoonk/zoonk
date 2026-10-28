@@ -42,10 +42,7 @@ function mockOutline(title: string) {
   });
 }
 
-/**
- * A plan over two chapters, basics then practice. Tool names are unique per test, so the shared
- * setup lessons one test writes never meet another test's.
- */
+/** Tool names are unique per test, so one test's shared setup lessons never meet another's. */
 async function setup() {
   const user = await userFixture();
   const word = randomUUID().slice(0, 8);
@@ -113,7 +110,6 @@ describe(choosePlanTools, () => {
   it("lists only the plan's tools, one per tool: this phase's first, later phases' after", async () => {
     const { goal, tools } = await setup();
 
-    // The spreadsheet is used from the first phase on; Python only once practice starts.
     await expect(loadTools(goal.id)).resolves.toStrictEqual([
       { choice: null, essential: true, later: false, name: tools.spreadsheet, system: null },
       { choice: null, essential: false, later: true, name: tools.python, system: null },
@@ -218,7 +214,6 @@ describe(choosePlanTools, () => {
       system: "windows",
     });
 
-    // The learner's device is their own answer: a shared link leaves the setup lesson out.
     await expect(getPlanLink(plan.id)).resolves.toMatchObject({
       outline: { skillCount: library.graph.skills.length },
     });

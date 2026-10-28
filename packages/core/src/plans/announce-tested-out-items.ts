@@ -17,18 +17,16 @@ import { RECENT_CHANGE_MS } from "./_utils/today-plan-change";
 import { PlanConflictError, withPlanRetry } from "./plan-conflict";
 import { type PlanEffect } from "./planner/plan-effect";
 
-/** A plain note for logs and admin; the apps say "Skipped 12 lessons you already know". */
+/** For logs and admin only; the apps word it as "Skipped 12 lessons you already know". */
 const TESTED_OUT_NOTE = "Placement or a test-out skipped lessons the learner already knows.";
 
 type Move = { after: unknown; before: unknown };
 
-/** A move over two skips: its first `before` and its last `after`; none when they're the same. */
 function joinMove<T extends Move>(older: T | undefined, newer: T | undefined): T | undefined {
   const move = older && newer ? { ...newer, before: older.before } : (newer ?? older);
   return move && move.after !== move.before ? move : undefined;
 }
 
-/** The moves of two skips, one per phase or area (`key`), as `joinMove` joins them. */
 function joinMoves<T extends Move>({
   key,
   newer = [],
@@ -53,13 +51,6 @@ function joinNames(older: readonly string[] = [], newer: readonly string[] = [])
   return [...new Set([...older, ...newer])];
 }
 
-/**
- * Two skips as one, from the plan before the first to the plan after the last: what moved keeps its
- * first `before` and its last `after`, and the lessons and topics are the diff of the plan the
- * first one started from, every skip in it, with the plan the last one saves (`seen`, see
- * `getSeenEffect`), as one skip's own effect reads it. Summed instead, a skill the two skips moved
- * both ways counted twice.
- */
 function joinSkipEffects({
   newer,
   older,
@@ -109,13 +100,6 @@ function joinSkipEffects({
   };
 }
 
-/**
- * The plan's latest change when it's a skip the learner hasn't seen yet, still news on Today (see
- * `RECENT_CHANGE_MS`), with the plan still as it left it, and the snapshot its Undo restores: a new
- * skip adds to it, so Today's one card counts them all and its Undo brings them all back. A
- * session's placement answers skip lessons one answer at a time: Maya's two answers skipped 60
- * each, and Today said 60.
- */
 async function findUnseenSkip({
   context,
   now,
@@ -161,14 +145,6 @@ async function findUnseenSkip({
     : null;
 }
 
-/**
- * After placement or a test-out skipped plan items, says so on the plan ("Skipped 12 lessons you
- * already know", with an undo) and re-plans from today, so the time those lessons would have
- * taken goes to what comes next, today's blocks not started included. Skips the learner hasn't
- * seen yet are one change (see `findUnseenSkip`). Returns the change, so the screen that skipped
- * them can offer its undo right there, the lessons it skipped as every screen counts them, and the
- * plan's version the skip left (`planVersion`); null when the plan isn't the planner's yet.
- */
 export async function announceTestedOutItems({
   extraWrites,
   followToday = true,
@@ -178,22 +154,14 @@ export async function announceTestedOutItems({
   planItemIds,
   timeZone,
 }: {
-  /** Other writes that must land with the announcement, such as ending the plan setup task it is. */
   extraWrites?: (tx: TransactionClient) => Promise<unknown>;
   /**
-   * Today's blocks not started follow the re-plan: true for a test the learner took on its own
-   * (placement's end, a chapter test). An answer inside today's session (the first week's
-   * placement questions) keeps the rest of the day as the learner was shown it, but for the
-   * skipped lessons: Pedro's right answer in his quick review turned his full review the day
-   * before his test into a short practice.
+   * True for a test the learner took on its own; an answer inside today's session keeps the rest of
+   * the day as shown.
    */
   followToday?: boolean;
   goalId: string;
   now: Date;
-  /**
-   * Areas the same answers start past their basics (see `listPlacementListeningAreas`): they land
-   * with the announcement, so its undo takes them back too.
-   */
   pastBasicsAreas?: readonly string[];
   planItemIds: readonly string[];
   timeZone: string;
@@ -243,13 +211,12 @@ export async function announceTestedOutItems({
       ...getListeningPastBasicsEffect({ areas: pastBasicsAreas, state: context.state }),
     };
 
-    // The unseen skip takes this one in. Writing the plan drops earlier changes' snapshots, so its
-    // snapshot from before its first skip is kept again for the Undo.
+    // Writing the plan drops earlier changes' snapshots, so the one from before the first skip is
+    // kept again for the Undo.
     if (unseen) {
       const added = parsePlanChangePayload(unseen.payload);
       const counted = new Set(added.planItemIds);
 
-      // Items it already counted (two tabs sending the same test) count once.
       const newlySkipped = countLessons(
         context.items.filter((item) => skipped.has(item.id) && !counted.has(item.id)),
       );
@@ -316,8 +283,6 @@ export async function announceTestedOutItems({
           extraWrites,
         });
 
-    // The learner's own answers skipped them, so today skips them too, the lesson they have open
-    // included, and the part of today not started follows the plan (or keeps what it showed).
     await skipTestedOutBlocks({ goalId, notStarted: !followToday, planItemIds });
 
     if (followToday) {

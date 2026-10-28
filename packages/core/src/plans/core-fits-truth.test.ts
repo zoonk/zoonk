@@ -25,9 +25,6 @@ describe("what the plan view says it covers", () => {
     vi.useRealTimers();
   });
 
-  // R25 (Câmara seed 2008): a session's run saved a plan that kept this week as it was, and the plan
-  // view read it again planning this week anew, which kept a skill more, so the view said every
-  // topic's core fits next to 12 topics out for time.
   it("never says every skill fits when the plan's week leaves one out for time", async () => {
     const user = await userFixture();
     const library = await planLibraryFixture({ skills: [{ lessons: 8 }, { lessons: 6 }] });
@@ -42,8 +39,6 @@ describe("what the plan view says it covers", () => {
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
     mockSession(user.id);
 
-    // The run that saved the plan gave every day to Friday's date to the first skill, two lessons a
-    // day: no time is left for the second one.
     const [first] = library.skills;
     await prisma.planItem.deleteMany({ where: { planId: plan.id } });
 

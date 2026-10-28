@@ -44,7 +44,6 @@ describe("funding only the exam work the saved plan retains", () => {
       prisma.planItem.findMany({ orderBy: { position: "asc" }, where: { planId: learn.plan.id } }),
     ]);
 
-    // Both outlines finish before the first weekly event, so no mock can consume their time.
     expect(examItems.filter((item) => item.kind === "mock")).toStrictEqual([]);
     expect(learnItems.filter((item) => item.kind === "checkpoint")).toStrictEqual([]);
     expect(parsePlanSettings(saved.settings).mockFunding).toStrictEqual([]);

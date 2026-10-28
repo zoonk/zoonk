@@ -11,12 +11,10 @@ import { loadPlanChangeView } from "./_utils/owned-plan";
 import { createGoalPlan } from "./create-goal-plan";
 import { decidePlanChange } from "./decide-plan-change";
 
-/** A Monday in 2020, the plan's first day. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 
 const HOUR = 60 * 60 * 1000;
 
-/** A plan of two skills, one a phase, as the signed-in learner sees it. */
 async function setupPlan() {
   const user = await userFixture();
 
@@ -40,7 +38,6 @@ async function setupPlan() {
   return { goal, plan, skillIds: library.skills.map((skill) => skill.id), user };
 }
 
-/** One placement answer in a session: the skill it shows the learner knows skips its lessons. */
 async function skipSkill({ goalId, skillId }: { goalId: string; skillId: string }) {
   const { items } = await loadGoalPlan(goalId);
 
@@ -64,8 +61,6 @@ describe("lessons skipped one answer at a time", () => {
     vi.useRealTimers();
   });
 
-  // Maya's placement check skipped 60 lessons on each of two answers: Today said 60, its Undo
-  // brought back only those, and the other 60 came back as a second card with no Undo.
   it("keeps the skips the learner hasn't seen as one change, which counts and undoes them all", async () => {
     const { goal, plan, skillIds } = await setupPlan();
     const shown = await readPlan(plan.id);
@@ -103,8 +98,6 @@ describe("lessons skipped one answer at a time", () => {
     });
   });
 
-  // Two tabs sent the same chapter test, both from the plan as they had it: the second announces
-  // the same lessons again, and the one card counts them once.
   it("counts lessons two announcements both name once", async () => {
     const { goal, skillIds } = await setupPlan();
     const { items } = await loadGoalPlan(goal.id);

@@ -1,5 +1,5 @@
 import { z } from "zod";
-/** A stored notice is acknowledged by its real database ID. */
+
 export const acknowledgeTodayPlanChangeInputSchema = z
   .object({ changeId: z.uuid(), kind: z.literal("stored") })
   .strict();

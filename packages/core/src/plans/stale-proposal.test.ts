@@ -10,10 +10,8 @@ import { PHASE_DATES_SOURCE } from "./plan-change-contract";
 /** A Monday in 2020, before the learning events other tests write, which estimates read. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 
-/** Far enough for every lesson: keeping the phase dates costs nothing. */
 const TARGET = new Date("2020-12-31T00:00:00Z");
 
-/** A dated learn plan of two phases that fits its date as it is. */
 async function setup() {
   const user = await userFixture();
 
@@ -39,7 +37,6 @@ async function setup() {
   return { goal, plan };
 }
 
-// A stale quote retains its saved explanation; only Apply waits for a writer to renew it.
 describe("a proposal whose preview no longer changes anything", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -53,7 +50,6 @@ describe("a proposal whose preview no longer changes anything", () => {
   it("keeps its saved text on Today with no Apply action", async () => {
     const { goal, plan } = await setup();
 
-    // Falling behind that puts the date at risk, which the learner still has to answer.
     await planChangeFixture({
       createdAt: new Date(NOW.getTime() - 60 * 60 * 1000),
       kind: "missedDays",
@@ -72,7 +68,6 @@ describe("a proposal whose preview no longer changes anything", () => {
       status: "applied",
     });
 
-    // Planned on another day, it moved nothing the learner could see by now.
     const proposal = await planChangeFixture({
       kind: "edited",
       payload: {

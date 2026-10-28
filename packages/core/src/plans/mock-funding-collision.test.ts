@@ -71,7 +71,6 @@ describe("mock move collisions", () => {
       status: "created",
     });
 
-    // Only request authentication is doubled; creation, the move and persistence use PostgreSQL.
     mockSession(user.id);
 
     const readPlan = () =>

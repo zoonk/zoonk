@@ -19,8 +19,6 @@ describe("mandatory phase notices after missed days", () => {
 
   afterEach(() => vi.useRealTimers());
 
-  // The move is the plan doing its job: Open saves it for the Plan's history, and Today, with
-  // nothing for the learner to choose, says nothing about it (see `asksAboutAutomaticChange`).
   it("saves the phase move a missed day makes on Open, and keeps it off Today", async () => {
     const { built, goal, pending, plan, user } = await mandatoryPhasePlanFixture();
     mockSession(user.id);
@@ -42,7 +40,6 @@ describe("mandatory phase notices after missed days", () => {
 
     vi.setSystemTime(NEXT_DAY);
 
-    /** A read neither persists the move nor tells the learner about it. */
     const preview = await countDatabaseStatements(() =>
       getTodayView({ goalId: goal.id, timeZone: "UTC" }),
     );

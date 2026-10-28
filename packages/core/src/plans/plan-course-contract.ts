@@ -12,11 +12,6 @@ const planCourseLevelSchema = z
   })
   .meta({ id: "PlanCourseLevel" });
 
-/**
- * The Library course a plan is built from: "Built from the Statistics course · 14 of 62 chapters ·
- * See full course", and its levels with the plan's marked ("Overview · your plan"). A private
- * course has no levels and no public page.
- */
 export const planCourseSchema = z
   .object({
     brandSlug: z

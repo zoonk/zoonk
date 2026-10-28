@@ -21,15 +21,8 @@ import { refreshGoalPlan } from "./refresh-goal-plan";
 /** A Sunday in 2020, before the learning events other tests write, which estimates read. */
 const SUNDAY = new Date("2020-09-27T12:00:00Z");
 
-/** Just enough days for the plan as first estimated, so keeping its phase dates leaves lessons out. */
 const TIGHT = new Date("2020-10-17T00:00:00Z");
 
-/**
- * A two-phase plan whose outlined lessons land shorter in the first phase and longer in the
- * second: keeping the phase dates leaves lessons out by the goal's date, so every write that keeps
- * them asks to move them right after it commits. `refresh: false` leaves the plan before the
- * refresh that plans those lessons and asks first.
- */
 async function setup({ refresh = true }: { refresh?: boolean } = {}) {
   const user = await userFixture();
 
@@ -84,10 +77,6 @@ async function setup({ refresh = true }: { refresh?: boolean } = {}) {
   return { goal, library, plan };
 }
 
-/**
- * Another write marks the plan once, right after the next plan write commits, before the request
- * that made it ends. Only the order is the test's; the writes are real.
- */
 function markAfterPlanWrite(planId: string) {
   const commit = replan.commitPlan;
 
@@ -105,10 +94,6 @@ function readPlan(planId: string) {
   });
 }
 
-/*
- * Each write asked to move the phase dates after it committed; the other write made that ask lose,
- * and the retry around the whole write ran it again.
- */
 describe("a plan write when another write lands right after it commits", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -120,7 +105,6 @@ describe("a plan write when another write lands right after it commits", () => {
     vi.restoreAllMocks();
   });
 
-  // The learner's change applied twice: the second took the first one's undo snapshot.
   it("applies the learner's change once, and its Undo puts the plan back", async () => {
     const { goal, plan } = await setup();
     const before = await readPlan(plan.id);
@@ -156,7 +140,6 @@ describe("a plan write when another write lands right after it commits", () => {
     await expect(readPlan(plan.id)).resolves.toStrictEqual(before);
   });
 
-  // The retry read the proposal it had just applied and answered "conflict".
   it("answers a proposal the learner applied as applied", async () => {
     const { goal, plan } = await setup();
 
@@ -189,13 +172,10 @@ describe("a plan write when another write lands right after it commits", () => {
     });
   });
 
-  // The retry found nothing left to bring back and recorded a second relearn change with nothing
-  // in it. A relearn has no undo, so it keeps no snapshot.
   it("brings missed lessons back once", async () => {
     const { goal, library, plan } = await setup();
     const skillId = library.graph.skills[0]?.skillId ?? "";
 
-    // Placement took the first skill as known, then the learner missed a question on it.
     await prisma.planItem.updateMany({
       data: { completedAt: SUNDAY, status: "testedOut" },
       where: { kind: "lesson", planId: plan.id, skillId },
@@ -226,7 +206,6 @@ describe("a plan write when another write lands right after it commits", () => {
     ).resolves.toBe(4);
   });
 
-  // The retry planned the saved plan again and said it was unchanged.
   it("refreshes the plan once", async () => {
     const { goal, plan } = await setup({ refresh: false });
     const marked = markAfterPlanWrite(plan.id);

@@ -8,7 +8,6 @@ import { getRequestProgressDateContext } from "../progress/get-request-date-cont
 import { keptEndPlanFixture, readPlan } from "./_test-utils/kept-end-plan";
 import { getGoalResumePreview } from "./get-goal-resume-preview";
 
-/** The Monday the plan starts, and the Thursday the learner comes back after pausing on it. */
 const MONDAY = new Date("2020-09-28T12:00:00Z");
 const THURSDAY = new Date("2020-10-01T12:00:00Z");
 
@@ -22,7 +21,6 @@ function setNow(now: Date) {
   });
 }
 
-/** A paused goal whose plan had lessons for the days of the pause. */
 async function pausedGoal() {
   const fixture = await keptEndPlanFixture();
   await learningProfileFixture({ activeGoalId: fixture.goal.id, userId: fixture.user.id });
@@ -49,8 +47,6 @@ describe(getGoalResumePreview, () => {
     });
   });
 
-  // Back after days with lessons on them, the plan starts again from today: the learner sees what
-  // that moves before they resume, and resuming then does what they saw.
   it("reads a generic resume preview and saves the exact move on resume", async () => {
     const { goal, plan } = await pausedGoal();
     const shown = await readPlan(plan.id);
@@ -59,7 +55,6 @@ describe(getGoalResumePreview, () => {
     const result = await getGoalResumePreview(goal.id);
     const preview = result.status === "ready" ? result.preview : null;
 
-    // The read says confirmation is needed; the resume computes the actual dates.
     expect(preview).toBe(true);
 
     await expect(readPlan(plan.id)).resolves.toStrictEqual(shown);

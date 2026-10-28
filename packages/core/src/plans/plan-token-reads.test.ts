@@ -18,7 +18,6 @@ import * as planContext from "./_utils/plan-context";
 import { createGoalPlan } from "./create-goal-plan";
 import { refreshGoalPlan } from "./refresh-goal-plan";
 
-/** A learner's calendar write: their daily time changes, and their plans' inputs with it. */
 async function setDailyMinutes({
   goalId,
   minutes,
@@ -34,10 +33,6 @@ async function setDailyMinutes({
   });
 }
 
-/**
- * The learner's write lands once, while a run works its plan out: after it read the goal, before
- * it read the plan. Only the order is the test's; the write and the run are real.
- */
 function landAfterGoalRead(write: () => Promise<void>) {
   const load = planContext.loadPlanContext;
 
@@ -61,8 +56,6 @@ describe("a plan worked out while the learner changes what it's planned from", (
     vi.restoreAllMocks();
   });
 
-  // Saved from the goal as it was read, the first plan would keep the old daily time while
-  // saying it planned the new one: it's planned again from the goal as the learner left it.
   it("plans a new goal again when the learner's daily time changes while it's worked out", async () => {
     const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
     const goal = await goalFixture({ dailyMinutes: 10, userId: user.id });
@@ -90,14 +83,11 @@ describe("a plan worked out while the learner changes what it's planned from", (
       },
     });
 
-    // Planned from the daily time the learner saved: planning again finds nothing to change.
     await expect(refreshGoalPlan({ goalId: goal.id })).resolves.toStrictEqual({
       status: "unchanged",
     });
   });
 
-  // A band's lessons land and a refresh plans them; meanwhile the learner changes their daily
-  // time: the refresh saves a plan from the new time, not the one it first read.
   it("refreshes a plan again when the learner's daily time changes while it's worked out", async () => {
     const skill = await skillFixture();
     const { goal } = await waitingGoal(skill, { dailyMinutes: 5 });

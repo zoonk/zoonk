@@ -34,7 +34,6 @@ async function setup() {
   return { goal, plan };
 }
 
-/** The plan as the learner sees it: each item on its day, and their daily time. */
 async function readPlan(planId: string) {
   const plan = await prisma.plan.findUniqueOrThrow({
     include: { goal: true, items: { orderBy: { position: "asc" } } },
@@ -51,12 +50,6 @@ function decide(goalId: string, changeId: string, status: "applied" | "undone") 
   return decidePlanChange({ changeId, goalId, input: { status } });
 }
 
-/*
- * Ana applied Today's suggestion to rest on Saturdays, then undid it: the card said "Undone" and
- * the suggestion was gone until she reloaded, though nothing she chose had changed. Undo puts back
- * what was there before Apply, the question included (Gmail's and Linear's undo restore the prompt
- * too), so the learner can still apply it or say "Not now".
- */
 describe("undoing an applied suggestion", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });
@@ -95,7 +88,6 @@ describe("undoing an applied suggestion", () => {
 
     await expect(readPlan(plan.id)).resolves.toStrictEqual(before);
 
-    // The learner can still say yes, and undo that too.
     await expect(decide(goal.id, changeId, "applied")).resolves.toMatchObject({
       change: { status: "applied" },
       status: "updated",
@@ -109,8 +101,6 @@ describe("undoing an applied suggestion", () => {
     await expect(readPlan(plan.id)).resolves.toStrictEqual(before);
   });
 
-  // An hour a day after 30 minutes moves this plan's end a day at most, as it's built: no bigger
-  // than a lesson (see `needsApproval`), so it applies at once, and Undo puts the plan back.
   it("applies a suggestion no bigger than a lesson at once, and Undo puts the plan back", async () => {
     const { goal, plan } = await setup();
 
@@ -155,7 +145,6 @@ describe("undoing an applied suggestion", () => {
     const olderId = "changeId" in older ? older.changeId : "";
     await decide(goal.id, olderId, "applied");
 
-    // A day sooner applies at once (see `needsApproval`): five minutes a day moves the end weeks out.
     const newer = await proposePlanChange({
       goalId: goal.id,
       operations: [{ kind: "setDailyMinutes", minutes: 5 }],
@@ -165,7 +154,6 @@ describe("undoing an applied suggestion", () => {
 
     expect(newer).toMatchObject({ status: "proposed" });
 
-    // Both waiting would ask two contradicting times; the newer one is the question now.
     await expect(decide(goal.id, olderId, "undone")).resolves.toMatchObject({
       change: { status: "replaced" },
       status: "updated",

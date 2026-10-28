@@ -23,7 +23,6 @@ const DAY = 86_400_000;
 /** A Monday in 2020, before the learning events other tests write, which estimates read. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 
-/** Today's session as the learner has it: its blocks in order, with what each holds. */
 async function readDaySession(goalId: string) {
   const session = await prisma.studySession.findFirstOrThrow({
     include: { blocks: { orderBy: { position: "asc" } } },
@@ -47,7 +46,6 @@ async function readDaySession(goalId: string) {
   };
 }
 
-/** A built day of a plan whose first topic has an open mistake, so the day fixes it in practice. */
 async function setupDayWithMistake({ dailyMinutes = 12 } = {}) {
   const user = await userFixture();
 
@@ -94,8 +92,6 @@ describe("undoing a change in the app", () => {
     vi.useRealTimers();
   });
 
-  // R38. Planned again from the state before the change, an undo moved what earlier runs kept:
-  // after a light week, 243 items and every phase end of a career plan (seed 1005).
   it("puts back the phase end and the days an earlier run kept, not a plan made again", async () => {
     const { goal, plan } = await keptEndPlanFixture();
     const shown = await readPlan(plan.id);
@@ -119,9 +115,6 @@ describe("undoing a change in the app", () => {
     await expect(readPlan(plan.id)).resolves.toStrictEqual(shown);
   });
 
-  // Class test seed 1002: undoing placement's test-outs planned the plan again, which left the
-  // skipped lessons as todo rows on day one, beside the lessons laid out without them. Each comes
-  // back on the day it had, with every other item as it was.
   it("puts back the lessons a test-out skipped on the days they had", async () => {
     const { goal, library, plan } = await keptEndPlanFixture();
     const [shown, goalPlan] = await Promise.all([readPlan(plan.id), loadGoalPlan(goal.id)]);
@@ -145,8 +138,6 @@ describe("undoing a change in the app", () => {
     await expect(readPlan(plan.id)).resolves.toStrictEqual(shown);
   });
 
-  // Marcos moved his date and undid it: the plan came back, but today's session went from 3
-  // activities to 6, with lessons being written. Undo gives back the day the learner had.
   it("gives back today's session as the learner had it", async () => {
     const user = await userFixture();
 
@@ -192,10 +183,6 @@ describe("undoing a change in the app", () => {
     await expect(readDay()).resolves.toStrictEqual(day);
   });
 
-  // Ana applied "Saturday becomes a rest day" on Today and undid it: the plan came back, but today's
-  // session was built again, with other lessons and without her mistakes practice. Undo gives back
-  // the very day she had, not a new one built like it: its blocks (the same rows, so a screen
-  // showing one still reaches it), their order, the questions they ask and its minutes.
   it("gives back today's exact session, with its mistakes practice", async () => {
     const { goal } = await setupDayWithMistake();
     const day = await readDaySession(goal.id);
@@ -259,8 +246,6 @@ describe("undoing a change in the app", () => {
     await expect(readDaySession(goal.id)).resolves.toStrictEqual(original);
   });
 
-  // What the learner did between Apply and Undo is theirs: the lesson they finished stays done, and
-  // the day they had comes back around it, without that lesson twice.
   it("keeps what the learner did since the change when it gives back today's session", async () => {
     const { goal } = await setupDayWithMistake();
     const day = await readDaySession(goal.id);
@@ -299,8 +284,6 @@ describe("undoing a change in the app", () => {
     expect(after.blocks.filter((block) => block.lessonId === done?.lessonId)).toHaveLength(1);
   });
 
-  // Ana set her time to 15 minutes and back to 45 in the editor: the plan, Today and her subjects'
-  // shares came back different from the ones she had. Setting the old value back is Undo.
   it("undoes the latest change when the learner sets back by hand what it changed", async () => {
     const user = await userFixture();
 
@@ -399,9 +382,6 @@ describe("undoing a change in the app", () => {
     ).resolves.toBe(0);
   });
 
-  // Language seed 1054: the learner applied Today's "move phase dates", then picked
-  // the practice mix their plan already had. Moving phase dates changes no setting, so the edit
-  // read as setting it back, and the dates they had just accepted went back without a word.
   it("never takes an edit that changes nothing as the Undo of a change that set nothing", async () => {
     const user = await userFixture();
     const library = await planLibraryFixture({ skills: [{ area: "Math", lessons: 4 }] });

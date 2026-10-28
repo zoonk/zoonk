@@ -22,10 +22,8 @@ const TODAY = "2020-09-28";
 
 const citation = { passage: "", sourceId: "notice" };
 
-/** Past the five minutes a landing reading holds the reveal's wait (see `claimNoticeLanding`). */
 const WAIT_RAN_OUT_MS = 10 * 60 * 1000;
 
-/** A stored notice with its exam days. */
 function examBlueprint({ days, year }: { days: string[]; year: number }) {
   return examBlueprintFixture({
     edition: {
@@ -41,7 +39,6 @@ function examBlueprint({ days, year }: { days: string[]; year: number }) {
   });
 }
 
-/** An exam goal on the stored notice, with its plan built: the learner saw it. */
 async function plannedExam({
   days,
   graph,
@@ -152,7 +149,6 @@ describe(proposeNoticeChange, () => {
     await expect(readTargetDate(goal.id)).resolves.toBe("2020-12-20");
   });
 
-  // A new edition is something new: the plan it gives is offered once, even after Keep mine.
   it("offers the notice's subjects again once per new edition after Keep mine", async () => {
     const { blueprint, goal, library } = await plannedExam({
       days: [],
@@ -215,7 +211,6 @@ describe(proposeNoticeChange, () => {
   });
 
   it("proposes a better estimate for a date the plan took from the notice, never for the learner's own", async () => {
-    // The 2019 notice's first Sunday of November falls on the 1st in 2020: the plan's estimate.
     const { blueprint, goal, library } = await plannedExam({
       days: ["2019-11-03"],
       targetDate: null,
@@ -224,7 +219,6 @@ describe(proposeNoticeChange, () => {
 
     await expect(readTargetDate(goal.id)).resolves.toBe("2020-11-01");
 
-    // The notice is read again: its exam is the second Sunday, so the estimate moves a week.
     await prisma.examBlueprint.update({
       data: {
         edition: {
@@ -241,7 +235,6 @@ describe(proposeNoticeChange, () => {
       where: { id: blueprint.id },
     });
 
-    // A plan rebuilt after the learner saw it (new lessons outlined, say) keeps its date.
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
     await expect(readTargetDate(goal.id)).resolves.toBe("2020-11-01");
 
@@ -285,9 +278,6 @@ describe(proposeNoticeChange, () => {
     await expect(proposeNoticeChange({ goalId: goal.id })).resolves.toBe("none");
   });
 
-  // The reading claimed the reveal's wait, but planning with it outlasted the wait (or its save
-  // waited to be tried again): the learner may have seen the plan by then, so nothing lands
-  // silently, and the reading is left to wait on Today instead.
   it("leaves the plan as it was when a notice's reading lands after the reveal stopped waiting", async () => {
     const { blueprint, goal, library } = await plannedExam({
       days: ["2019-11-03"],
@@ -333,7 +323,6 @@ describe(proposeNoticeChange, () => {
   });
 
   it("asks before a notice read before the reveal moves the exam out of the month the learner said", async () => {
-    // She said "December 2020", and no notice gave a day yet: the plan counts down to December.
     const [user, blueprint, library] = await Promise.all([
       userFixture(),
       examBlueprintFixture(),
@@ -352,7 +341,6 @@ describe(proposeNoticeChange, () => {
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
     await expect(readTargetDate(goal.id)).resolves.toBe("2020-12-01");
 
-    // The notice, read while the reveal waits, sets the exam for November.
     await prisma.examBlueprint.update({
       data: {
         edition: {
@@ -383,8 +371,6 @@ describe(proposeNoticeChange, () => {
     await expect(readTargetDate(goal.id)).resolves.toBe("2020-11-08");
   });
 
-  // Sofia's understanding card said the OAB notice puts the exam on 10 January, and she kept
-  // "March"; Today then asked her the same thing again.
   it("never asks again about a notice day the learner was offered and kept their month over", async () => {
     const [user, blueprint, library] = await Promise.all([
       userFixture(),
@@ -405,14 +391,12 @@ describe(proposeNoticeChange, () => {
       userId: user.id,
     });
 
-    // The new plan's setup asks about the notice's day on Today, when there's one to ask about.
     mockSession(user.id);
     await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
     await expect(findProposals(goal.id)).resolves.toHaveLength(0);
     await expect(readTargetDate(goal.id)).resolves.toBe("2020-12-01");
 
-    // Something new, the notice moving the exam, is asked.
     await prisma.examBlueprint.update({
       data: {
         edition: {
@@ -465,7 +449,6 @@ describe(proposeNoticeChange, () => {
       { operations: [{ estimated: false, kind: "setNoticeDate", targetDate: "2020-11-15" }] },
     ]);
 
-    // The earlier one stays on record as replaced, never as kept: the learner never answered it.
     await expect(
       prisma.planChange.findMany({
         select: { status: true },
@@ -512,7 +495,6 @@ describe(proposeNoticeChange, () => {
     const before = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
     const [proposal] = await findProposals(goal.id);
 
-    // The learner saw this plan: it stays as it is until they apply.
     expect(parsePlanGraph(before.graph).skills.map((skill) => skill.skillId)).toStrictEqual([
       first.skillId,
       extra.id,
@@ -569,7 +551,6 @@ describe(proposeNoticeChange, () => {
       ],
     };
 
-    // Research read the notice after the learner saw the plan: its subjects and day wait on Today.
     await expect(proposeNoticeChange({ goalId: goal.id, graph: noticeGraph })).resolves.toBe(
       "proposed",
     );
@@ -587,7 +568,6 @@ describe(proposeNoticeChange, () => {
       status: "proposed",
     });
 
-    // Then a corrected notice moves the exam a week: a date-only change that says only that.
     await prisma.examBlueprint.update({
       data: {
         edition: {
@@ -625,7 +605,6 @@ describe(proposeNoticeChange, () => {
     const proposals = await findProposals(goal.id);
     const noticeProposal = proposals.find((change) => change.id !== buddyProposal.id);
 
-    // One change says both, in the app's words, since the notice's message only says the date.
     expect(proposals.map((change) => change.id)).toContain(buddyProposal.id);
     expect(proposals).toHaveLength(2);
     expect(noticeProposal?.reason).toBe("");

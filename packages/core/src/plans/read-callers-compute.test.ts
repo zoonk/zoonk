@@ -20,7 +20,6 @@ import { buildSessionBlocks } from "../sessions/session-builder";
 import { createGoalPlan } from "./create-goal-plan";
 import { buildPlan } from "./planner/build-plan";
 
-// Call through both producers: PostgreSQL and the behavior under test remain real.
 vi.mock("./planner/build-plan", { spy: true });
 vi.mock("../sessions/session-builder", { spy: true });
 
@@ -116,8 +115,6 @@ describe("row-5 callers read their saved artifacts", () => {
     const read = await countDatabaseStatements(() => getLearnerSummary());
 
     expect(read.writes).toBe(0);
-    // As Today does, it builds the lapsed day's free blocks once from the saved plan (its input's
-    // empty-day check builds them too); it never builds a plan.
     expect(buildPlan).toHaveBeenCalledTimes(0);
     expect(buildSessionBlocks).toHaveBeenCalledTimes(2);
 
