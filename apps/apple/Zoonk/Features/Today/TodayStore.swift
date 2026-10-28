@@ -120,6 +120,21 @@ final class TodayStore {
     }
   }
 
+  /// Opens one of today's blocks named by its id (a mission, a buddy link) as its row on Today
+  /// opens it; nil when Today doesn't list it as one to do now (done meanwhile, another day), as
+  /// main's `openMissionAction`.
+  func open(blockID: String) async -> MutationResult<StudyDestination>? {
+    guard let view = day,
+      let block = view.session.blocks.first(where: {
+        $0.id == blockID && !$0.isFinished && $0.waitReason == nil
+      })
+    else {
+      return nil
+    }
+
+    return await open(block, next: false, in: view)
+  }
+
   /// Opens a block of a saved session the learner picked on the session screen, where it plays.
   func open(_ block: StudyBlock, sessionID: String) async -> MutationResult<StudyDestination> {
     await openStep(for: day.map(OpenedSession.Day.init)) { token in

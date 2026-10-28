@@ -35,6 +35,7 @@ struct StudyMission: Decodable, Equatable, Sendable {
     }
 
     let kind: String
+    let areaId: String?
     let blockId: String?
     let chapterId: String?
     let patternId: String?

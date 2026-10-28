@@ -52,7 +52,10 @@ struct ZoonkApp: App {
     _practice = State(initialValue: dependencies.practiceStore)
     privateImages = dependencies.privateImageLoader
     _progress = State(initialValue: dependencies.progressStore)
-    let router = AppRouter(sheet: initiallyPresentsAccount ? .account : nil)
+    let router = AppRouter(
+      sheet: initiallyPresentsAccount ? .account : nil,
+      openBlock: AppRouter.openingTodayBlocks(
+        today: dependencies.todayStore, sessions: dependencies.studySessionStore))
     _router = State(initialValue: router)
     lessonPlayerRoutes = .routed(by: router)
     practiceHooks = .routed(by: router)

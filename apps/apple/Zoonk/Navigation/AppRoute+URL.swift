@@ -4,6 +4,8 @@ import Foundation
 enum AppLink: Equatable {
   case tab(AppTab)
   case route(AppRoute)
+  /// One of today's blocks, which opens as Today opens it (the session screen's `?block=`).
+  case block(blockId: String)
 
   /// The locales main prefixes its paths with (`localePrefix: "as-needed"`, English has none).
   private static let localePrefixes: Set<String> = ["de", "en", "es", "fr", "pt"]
@@ -53,7 +55,7 @@ enum AppLink: Equatable {
     case (2, "plan", let subjectKey, _): return .route(.subject(subjectKey: subjectKey))
     case (3, "content", "chapters", let chapterId): return .route(.chapter(chapterId: chapterId))
     case (3, "content", "units", let chapterId): return .route(.languageUnit(chapterId: chapterId))
-    case (1, "session", _, _): return .route(.session)
+    case (1, "session", _, _): return value("block").map { .block(blockId: $0) } ?? .route(.session)
     case (1, "logbook", _, _): return .route(.logbook)
     case (2, "learn", let lessonId, _):
       return .route(.lesson(lessonId: lessonId, sessionId: session))

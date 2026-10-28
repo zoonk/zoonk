@@ -246,6 +246,24 @@ struct TodayDayView: View {
 }
 
 extension AppRouter {
+  /// Opens one of today's blocks by its id, from a mission or a link to it, as its row on Today
+  /// does. A block Today doesn't list as one to do now shows Today as it stands; one that couldn't
+  /// open leaves the learner where they tapped, as main's `openBlock`.
+  static func openingTodayBlocks(today: TodayStore, sessions: StudySessionStore) -> BlockOpener {
+    { blockID, router in
+      Task {
+        switch await today.open(blockID: blockID) {
+        case .done(let destination)?:
+          router.openStudy(destination, sessions: sessions)
+        case nil:
+          router.showRoot(of: .today)
+        case .failed?, .obsolete?:
+          break
+        }
+      }
+    }
+  }
+
   /// Shows a step the learner's tap opened on the session screen: a question block plays there,
   /// and anything else opens its own screen over it, so closing that screen goes on with the day.
   /// A step opened from Today comes in as one transition, with the session under it out of sight

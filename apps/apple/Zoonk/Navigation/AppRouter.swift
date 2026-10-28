@@ -29,10 +29,18 @@ final class AppRouter {
   /// The depths of tasks opened beneath the task the learner asked for (see `open(_:over:)`).
   private var hiddenTasks: Set<Int> = []
   private var paths: [AppTab: NavigationPath] = [:]
+  /// Opens one of today's blocks by its id as Today's row opens it; the app's root gives Today's.
+  @ObservationIgnored private let openBlock: BlockOpener
 
-  init(selectedTab: AppTab = .today, sheet: AppSheet? = nil) {
+  typealias BlockOpener = @MainActor (_ blockID: String, _ router: AppRouter) -> Void
+
+  init(
+    selectedTab: AppTab = .today, sheet: AppSheet? = nil,
+    openBlock: @escaping BlockOpener = { _, _ in }
+  ) {
     self.selectedTab = selectedTab
     self.sheet = sheet
+    self.openBlock = openBlock
   }
 
   func path(for tab: AppTab) -> Binding<NavigationPath> {
@@ -130,9 +138,17 @@ final class AppRouter {
     case .route(let route):
       open(route)
       return true
+    case .block(let blockID):
+      open(blockID: blockID)
+      return true
     case nil:
       return false
     }
+  }
+
+  /// Starts one of today's blocks where it plays, from a mission or a link to it.
+  func open(blockID: String) {
+    openBlock(blockID, self)
   }
 
   /// Shows a tab at its root, closing any task: where "Start free" and "Start a goal" lead.

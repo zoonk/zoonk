@@ -336,6 +336,10 @@ struct TodayMissionsSection: View {
       router.select(.buddy)
     case "mockChooser":
       router.open(.mockChooser)
+    case "areaPractice":
+      if let areaID = opens.areaId {
+        router.open(.chapter(chapterId: areaID))
+      }
     default:
       router.select(.plan)
     }

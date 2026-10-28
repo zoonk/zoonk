@@ -48,6 +48,29 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(starts, ["b1"])
   }
 
+  /// A mission or a buddy link names one of today's blocks by its id: it starts as its row on
+  /// Today starts it, and a block done meanwhile opens nothing.
+  func testABlockNamedByItsIdStartsAsTodaysRowDoes() async throws {
+    let lesson = try block(position: 0, kind: "learn", id: "b1", lessonID: "l1")
+    let done = try block(position: 1, kind: "review", status: "completed", id: "b2")
+    let view = try today(
+      session: day(blocks: [lesson, done], nextPosition: 0, id: "s1"),
+      lessonStatus: ["l1": "ready"])
+    let api = StudyAPIStub(today: .day(view))
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
+
+    let destination = await store.open(blockID: "b1")?.destination
+    let finished = await store.open(blockID: "b2")
+    let elsewhere = await store.open(blockID: "b3")
+
+    XCTAssertEqual(destination, .lesson(lessonID: "l1", sessionID: "s1"))
+    XCTAssertNil(finished)
+    XCTAssertNil(elsewhere)
+    let starts = await api.startedBlocks
+    XCTAssertEqual(starts, ["b1"])
+  }
+
   /// Sol's F14: the tap on a lesson nobody is writing asks for it (main's `unwrittenLesson`)
   /// without starting its block, and the session waits for it.
   func testAnUnwrittenLessonIsAskedForByTheTapWithoutStartingTheBlock() async throws {

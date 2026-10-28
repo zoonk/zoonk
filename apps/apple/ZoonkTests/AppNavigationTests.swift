@@ -31,6 +31,8 @@ final class AppNavigationTests: XCTestCase {
       ),
       ("https://www.zoonk.com/start/g1", .route(.goalSetup(goalId: "g1"))),
       ("https://www.zoonk.com/de/plan-link/p1", .route(.planLink(planId: "p1"))),
+      ("https://www.zoonk.com/session", .route(.session)),
+      ("https://www.zoonk.com/session?block=b1", .block(blockId: "b1")),
     ]
 
     for (url, expected) in links {
