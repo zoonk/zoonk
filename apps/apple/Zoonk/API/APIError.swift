@@ -15,10 +15,11 @@ extension APIClientFactory {
   /// maps transport and decoding errors the same way.
   func perform<Output: Sendable>(
     token: String?,
+    sendingNull keys: [String] = [],
     operation: (Client) async throws -> Output
   ) async throws -> Output {
     do {
-      return try await operation(makeClient(token: token))
+      return try await operation(makeClient(token: token, sendingNull: keys))
     } catch {
       throw apiError(from: error)
     }

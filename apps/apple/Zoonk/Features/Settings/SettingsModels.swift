@@ -59,6 +59,12 @@ enum PreferencesUpdate: Equatable, Sendable {
     return next
   }
 
+  /// Keys the body sends as `null`: "No limit" clears the daily limit, which the generated body
+  /// would leave out.
+  var nullKeys: [String] {
+    self == .dailyLimitMinutes(nil) ? ["dailyLimitMinutes"] : []
+  }
+
   var body: Components.Schemas.LearningProfileUpdate {
     switch self {
     case .buddy(let buddy):

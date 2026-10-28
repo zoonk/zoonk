@@ -39,8 +39,9 @@ struct APIClientFactory {
   }
 
   /// Captures the token in an immutable middleware while every generated client reuses the same transport.
-  func makeClient(token: String? = nil) -> Client {
-    makeClient(token: token, transport: transport)
+  /// `sendingNull` names body keys sent as an explicit `null` when the generated body leaves them out.
+  func makeClient(token: String? = nil, sendingNull keys: [String] = []) -> Client {
+    makeClient(token: token, transport: transport, sendingNull: keys)
   }
 
   /// A client for long-lived responses such as Server-Sent Events.
@@ -48,12 +49,15 @@ struct APIClientFactory {
     makeClient(token: token, transport: streamingTransport)
   }
 
-  private func makeClient(token: String?, transport: any ClientTransport) -> Client {
+  private func makeClient(
+    token: String?, transport: any ClientTransport, sendingNull keys: [String] = []
+  ) -> Client {
     Client(
       serverURL: serverURL,
       configuration: .init(dateTranscoder: .iso8601WithFractionalSeconds),
       transport: transport,
-      middlewares: [APIRequestMiddleware(token: token)])
+      middlewares: [APIRequestMiddleware(token: token)]
+        + (keys.isEmpty ? [] : [ExplicitNullMiddleware(keys: keys)]))
   }
 
   private static func sessionConfiguration() -> URLSessionConfiguration {
