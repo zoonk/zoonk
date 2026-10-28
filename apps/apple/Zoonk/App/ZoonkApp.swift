@@ -4,6 +4,7 @@ import SwiftUI
 struct ZoonkApp: App {
   @State private var buddy: BuddyStore
   @State private var courseCatalog: CourseCatalogStore
+  @State private var explain: ExplainStore
   @State private var goalContent: GoalContentStore
   @State private var learnerSummary: LearnerSummaryStore
   @State private var mindMaps: MindMapsStore
@@ -39,6 +40,7 @@ struct ZoonkApp: App {
     _buddy = State(initialValue: dependencies.buddyStore)
     cache = dependencies.cache
     _courseCatalog = State(initialValue: dependencies.courseCatalogStore)
+    _explain = State(initialValue: dependencies.explainStore)
     _goalContent = State(initialValue: dependencies.goalContentStore)
     _learnerSummary = State(initialValue: dependencies.learnerSummaryStore)
     lessonPlayerAPI = dependencies.lessonPlayerAPI
@@ -74,6 +76,7 @@ struct ZoonkApp: App {
         }
         .environment(buddy)
         .environment(courseCatalog)
+        .environment(explain)
         .environment(goalContent)
         .environment(learnerSummary)
         .environment(mindMaps)
