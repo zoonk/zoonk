@@ -135,9 +135,16 @@ Reduce Motion: system controls and symbol effects adapt on their own. A celebrat
 ## Every device
 
 - Choose layouts by size class and available space, never by device. `userInterfaceIdiom`, screen bounds, orientation and known screen sizes are wrong on iPhone Duo and in resizable iPad windows. Measure with `onGeometryChange`, and use `ViewThatFits` and native containers.
-- **iPhone Duo** (iOS 27.1 SDK, which Xcode 27.1 builds with): on the inner display the app fills the screen, the status bar sits on the right edge, and the tab bar stands vertically below it, showing **icons only**. Every tab's SF Symbol must read on its own, with its title kept as the label for VoiceOver. Content keeps clear of the bar through the safe area. Unfolding resizes the app live, so state must survive size changes. Apple says the inner display should feel like an extension of the iPad layout. Don't crop media with `.aspectRatio(contentMode: .fill)` without a focal point.
+- **iPhone Duo** (iOS 27.1 SDK, which Xcode 27.1 builds with): on the inner display the app fills the screen, the status bar sits on the right edge, and the tab bar stands vertically below it, showing **icons only**. Every tab's SF Symbol must read on its own, with its title kept as the label for VoiceOver. Content keeps clear of the bar through the safe area. Don't crop media with `.aspectRatio(contentMode: .fill)` without a focal point.
 - **iPad**: `sidebarAdaptable` tabs become a top tab bar or a sidebar. Rows and panels keep the same roles; grids gain columns as the width grows.
 - **Simulators**: a headless iPhone Duo renders black until something attaches a display (agent-device or Simulator). `simctl io <udid> screenshot --display=primary` captures the inner display. `simctl ui <udid> appearance|increase_contrast|content_size` sets each mode for checks.
+
+### iPhone Duo
+
+- **Owner decision (2026-10-28):** Apple's foldable on iOS 27.1 reads like an open wallet when open. Use two panes either side of the fold, with content and controls off the hinge, as the best launch apps do; don't make it an iPad or a stretched iPhone.
+- Keep regular iPhone and iPad layouts great through the same size-class/geometry-driven SwiftUI code, with no device checks. Preserve the learner's state when the Duo folds or unfolds mid-task.
+
+Per-screen two-pane layouts: see each feature's notes below as they land
 
 ## Pitfalls
 
