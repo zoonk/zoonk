@@ -18,6 +18,27 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertEqual(normal.standardNormal(), -0.008046984382329135, accuracy: 1e-12)
   }
 
+  /// A real lesson's fields as Postgres stores them (shorter keys first) give main's seed: main
+  /// hashes the fields after core's schema parse, which writes keys in the schemas' alphabetical
+  /// order, the order the app encodes them in.
+  func testSeedsARealSimulationLikeMain() throws {
+    let stored = try JSONDecoder().decode(
+      JSONValue.self,
+      from: Data(
+        #"""
+        {"mode": "chance", "runs": 200, "model": {"hit": {"value": 1, "comparison": "exactly"},
+         "kind": "binomial", "trials": 1, "probability": 0.1}, "hitLabel": "Cartão premiado",
+         "trialLabel": "Retirada"}
+        """#.utf8))
+    let json = ChartsRandom.json(stored)
+
+    XCTAssertEqual(
+      json,
+      #"{"hitLabel":"Cartão premiado","mode":"chance","model":{"hit":{"comparison":"exactly","value":1},"kind":"binomial","probability":0.1,"trials":1},"runs":200,"trialLabel":"Retirada"}"#
+    )
+    XCTAssertEqual(SeededShuffle.hashSeed(json), 1_483_884_420)
+  }
+
   func testSnapsLikeMainsHandles() {
     XCTAssertEqual(ChartsMath.snap(0.30000000004, min: 0, max: 1, step: 0.1), 0.3)
     XCTAssertEqual(ChartsMath.snap(7.4, min: -5, max: 6, step: 1), 6)

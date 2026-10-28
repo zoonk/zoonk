@@ -170,8 +170,9 @@ struct ChartsRandom {
     (0..<trials).reduce(0) { sum, _ in sum + (next() < probability ? 1 : 0) }
   }
 
-  /// `JSON.stringify` of a template's fields as the API sends them (keys in schema order, which
-  /// core writes alphabetically), so the seed matches main's.
+  /// `JSON.stringify` of a template's fields as main's player sees them: after core's schema parse,
+  /// which writes keys in the schemas' (alphabetical) order whatever order Postgres stored them in,
+  /// so the seed matches main's.
   static func json(_ value: JSONValue) -> String {
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
