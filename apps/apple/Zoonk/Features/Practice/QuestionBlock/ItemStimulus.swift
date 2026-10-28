@@ -15,6 +15,8 @@ struct ItemSetStimulusView: View {
   /// The questions of a recording, to read before it plays; the one on screen is `current`.
   var recordingQuestions: (prompts: [String], current: Int)?
   var transcript: [PracticeTranscriptLine]?
+  /// A mock counts a recording's plays on the server, the same on any device (`ServedPlays`).
+  var served: ServedPlays?
 
   var body: some View {
     if let listening = set.listening {
@@ -24,7 +26,8 @@ struct ItemSetStimulusView: View {
           listening: listening,
           playsKey: [askedIn, set.id].compactMap(\.self).joined(separator: ":"),
           questions: recordingQuestions,
-          transcript: transcript ?? listening.transcript)
+          transcript: transcript ?? listening.transcript,
+          served: served)
       }
     } else {
       SetTextView(set: set, continued: continued)
@@ -224,6 +227,13 @@ private enum ListeningPlays {
   static var used: [String: Int] = [:]
 }
 
+/// A recording's plays as a mock counts them on the server: the ones used, and counting one more
+/// as it starts, false when none were left (another device used the last one), so it stops.
+struct ServedPlays {
+  let played: Int
+  let record: @MainActor () async -> Bool
+}
+
 /// The recording a set's questions are about: the exam's play limit kept across the set's
 /// questions, its questions to read before it plays, and, once they're answered, free replays and
 /// the transcript on request. A play doesn't pause, as in the exam.
@@ -232,6 +242,7 @@ private struct ListeningPlayerView: View {
   let playsKey: String
   let questions: (prompts: [String], current: Int)?
   let transcript: [PracticeTranscriptLine]?
+  let served: ServedPlays?
   @State private var player: AVPlayer?
   @State private var isPlaying = false
   @State private var played = 0
@@ -322,7 +333,8 @@ private struct ListeningPlayerView: View {
         }
       }
     }
-    .onAppear { played = ListeningPlays.used[playsKey] ?? 0 }
+    .onAppear { played = max(served?.played ?? 0, ListeningPlays.used[playsKey] ?? 0) }
+    .onChange(of: served?.played) { _, count in played = max(played, count ?? 0) }
     .onDisappear {
       player?.pause()
       player = nil
@@ -385,6 +397,15 @@ private struct ListeningPlayerView: View {
     played += 1
     ListeningPlays.used[playsKey] = played
     next.play()
+
+    if let served {
+      Task { @MainActor in
+        guard await !served.record() else { return }
+        next.pause()
+        isPlaying = false
+        played = listening.plays
+      }
+    }
 
     Task { @MainActor in
       for await status in item.publisher(for: \.status).values where status != .unknown {

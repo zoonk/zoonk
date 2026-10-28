@@ -17,6 +17,7 @@ struct PracticeQuestionView: View {
   var askedIn: String?
   var recordingQuestions: (prompts: [String], current: Int)?
   var transcript: [PracticeTranscriptLine]?
+  var served: ServedPlays?
   @Binding var draft: PracticeAnswer?
   var onSubmit: (PracticeAnswer) -> Void = { _ in }
 
@@ -42,7 +43,7 @@ struct PracticeQuestionView: View {
       if let set = question.set {
         ItemSetStimulusView(
           set: set, continued: continuesSet, askedIn: askedIn,
-          recordingQuestions: recordingQuestions, transcript: transcript)
+          recordingQuestions: recordingQuestions, transcript: transcript, served: served)
       }
 
       ItemSupportView(context: question.context, image: question.image, visual: question.visual)

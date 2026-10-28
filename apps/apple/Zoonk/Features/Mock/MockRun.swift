@@ -252,6 +252,30 @@ final class MockRun {
     }
   }
 
+  /// Counts a play of a listening section's recording as it starts: false when the mock had none
+  /// left for it (another device used the last one), so it stops. A play the server couldn't count
+  /// keeps going.
+  func play(setId: String) async -> Bool {
+    guard let blockId = view?.blockId else { return true }
+
+    let result = await store.write { api, token in
+      try await api.recordPlay(token: token, blockId: blockId, setId: setId)
+    }
+
+    guard case .done(let played) = result else { return true }
+
+    guard let played else { return false }
+
+    mock.update { view in
+      var view = view
+      view.current?.plays.removeAll { $0.setId == setId }
+      view.current?.plays.append(.init(played: played, setId: setId))
+      return view
+    }
+
+    return true
+  }
+
   /// Reads the mock again (a speaking task's call came back, or a stale sitting).
   func reload() async {
     await mock.refresh()

@@ -5,6 +5,7 @@ import SwiftUI
 /// on a wide screen, a sheet on a phone) to jump around and hand in. When the clock runs out,
 /// answers close and handing in waits for the learner.
 struct MockRunnerView: View {
+  @Environment(\.horizontalSizeClass) private var sizeClass
   @State private var showsSheet = false
   @State private var confirmsHandIn = false
   @Bindable var run: MockRun
@@ -51,6 +52,10 @@ struct MockRunnerView: View {
         confirmsHandIn = true
       } onPick: { position in
         run.go(to: position)
+        // On a phone the sheet covers the question it opens; beside it, it stays.
+        if sizeClass == .compact {
+          showsSheet = false
+        }
       }
       .presentationDetents([.medium, .large])
     }
@@ -178,7 +183,7 @@ private struct MockQuestionCard: View {
         question: practice, labels: view.trueFalseLabels,
         allowsBlank: view.scoring == .net && question.format == .trueFalse, result: nil,
         isLocked: isLocked, continuesSet: previous?.set?.id == question.set?.id,
-        askedIn: view.blockId, recordingQuestions: recordingQuestions,
+        askedIn: view.blockId, recordingQuestions: recordingQuestions, served: served,
         draft: run.answerBinding(for: question))
     } else {
       MockEssayBox(run: run, view: view, question: question, isLocked: isLocked)
@@ -187,6 +192,14 @@ private struct MockQuestionCard: View {
 
   private var previous: MockQuestion? {
     run.position > 0 ? run.questions[run.position - 1] : nil
+  }
+
+  /// The exam plays each recording a set number of times and gives none back: the mock counts
+  /// them, so another device opens it with the same plays left.
+  private var served: ServedPlays? {
+    guard let set = question.set, set.listening != nil else { return nil }
+    let played = run.current?.plays.first { $0.setId == set.id }?.played ?? 0
+    return ServedPlays(played: played) { [run] in await run.play(setId: set.id) }
   }
 
   /// A recording's questions, to read before it plays.
