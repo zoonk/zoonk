@@ -600,12 +600,7 @@ struct PlanSuggestionSection: View {
           "Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.",
           tableName: "Plan", comment: "What stays free and what Plus opens after the free week")
       ) {
-        // TODO(S10): use `SeePlusButton()` once PlusLock.swift lands.
-        Button {
-          router.present(.subscription)
-        } label: {
-          Text("See Plus", tableName: "Plan", comment: "Opens the Plus subscription")
-        }
+        SeePlusButton()
       }
     }
   }

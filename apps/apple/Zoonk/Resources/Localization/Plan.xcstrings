@@ -3704,35 +3704,6 @@
         }
       }
     },
-    "Plus" : {
-      "comment" : "Marks a feature that comes with Plus",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus"
-          }
-        }
-      }
-    },
     "Practice" : {
       "comment" : "Name of an exam plan's practice phase\nSection of a chapter's practice",
       "localizations" : {
@@ -3990,35 +3961,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Revisar e corrigir o que você errou continua grátis. O Plus libera novas aulas, o restante do seu plano e simulados."
-          }
-        }
-      }
-    },
-    "See Plus" : {
-      "comment" : "Opens the Plus subscription",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus ansehen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ver Plus"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Découvrir Plus"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conhecer o Plus"
           }
         }
       }

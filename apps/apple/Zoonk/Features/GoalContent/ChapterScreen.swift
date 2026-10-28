@@ -146,9 +146,7 @@ private struct ChapterContent: View {
                   .foregroundStyle(.primary)
 
                   if chapter.testOut.plusRequired {
-                    // TODO(S10): use `PlusMark()` once PlusLock.swift lands.
-                    Text("Plus", tableName: "Plan", comment: "Marks a feature that comes with Plus")
-                      .chip()
+                    PlusMark()
                   }
                 }
 
@@ -259,9 +257,7 @@ struct LessonRow: View {
             .foregroundStyle(.primary)
 
           if lesson.plusRequired {
-            // TODO(S10): use `PlusMark()` once PlusLock.swift lands.
-            Text("Plus", tableName: "Plan", comment: "Marks a feature that comes with Plus")
-              .chip()
+            PlusMark()
           }
         }
       } icon: {
