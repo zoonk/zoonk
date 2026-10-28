@@ -883,8 +883,37 @@
         }
       }
     },
+    "I can talk now" : {
+      "comment" : "Goes back to answering out loud",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich kann jetzt sprechen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ya puedo hablar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je peux parler maintenant"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Posso falar agora"
+          }
+        }
+      }
+    },
     "I can't talk now" : {
-      "comment" : "Answers a spoken screen as a listening exercise",
+      "comment" : "Answers a spoken screen by listening or typing instead",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1666,6 +1695,35 @@
         }
       }
     },
+    "Say it instead" : {
+      "comment" : "Tries the microphone again",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stattdessen sprechen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dilo en su lugar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répondre à l’oral"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Falar em voz alta"
+          }
+        }
+      }
+    },
     "Scenario complete" : {
       "comment" : "Title after a what-if scenario ends",
       "localizations" : {
@@ -2248,6 +2306,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Essas são todas as novas aulas de hoje"
+          }
+        }
+      }
+    },
+    "The microphone is blocked. Type your answer instead." : {
+      "comment" : "A spoken screen falls back to typing when the microphone is off",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Mikrofon ist gesperrt. Gib deine Antwort stattdessen ein."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El micrófono está bloqueado. Escribe tu respuesta en su lugar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le micro est bloqué. Écris ta réponse à la place."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O microfone está bloqueado. Digite sua resposta."
           }
         }
       }

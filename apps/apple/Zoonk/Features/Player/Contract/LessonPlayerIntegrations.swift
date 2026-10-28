@@ -55,6 +55,8 @@ struct SpokenAnswerContext {
   /// The screen was answered: the recorder shows no control.
   let isLocked: Bool
   let onGraded: @MainActor (SpokenAnswerVerdict) -> Void
+  /// The microphone is off for the app: the screen offers typing instead.
+  let onBlocked: @MainActor () -> Void
 }
 
 /// Records spoken answers. Without a recorder (`input` nil), spoken screens take a typed answer,

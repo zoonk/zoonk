@@ -40,7 +40,8 @@ private struct SpokenStepRecorder: View {
               isCorrect: grade.isCorrect, score: grade.score, transcript: grade.transcript,
               feedback: grade.explanation, wordsToPractice: grade.wordsToPractice.map(\.text)))
         },
-        asksToSpeak: false)
+        asksToSpeak: false,
+        onBlocked: context.onBlocked)
     }
   }
 }

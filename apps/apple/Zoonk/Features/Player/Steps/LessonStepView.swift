@@ -236,9 +236,31 @@ struct LessonAnswerField: View {
   }
 }
 
+/// How a spoken screen is answered now, as main's `getAnswerMode` decides: out loud by default;
+/// "I can't talk now" plays it as listening when the screen has a listening version, or as
+/// typing when it doesn't; typing also covers a microphone that's off. Every spoken screen keeps
+/// a way to answer.
+enum SpokenAnswerMode: Equatable {
+  case speak
+  case listen
+  case type
+
+  init(canListen: Bool, canSpeak: Bool, cantTalk: Bool, micBlocked: Bool) {
+    if (cantTalk || !canSpeak) && canListen {
+      self = .listen
+    } else if cantTalk || micBlocked || !canSpeak {
+      self = .type
+    } else {
+      self = .speak
+    }
+  }
+}
+
 private struct SpokenAnswerStepView: View {
   @Environment(\.spokenAnswerRecording) private var recording
-  @State private var cantTalk = false
+  /// "I can't talk now" holds for every spoken screen for the rest of the day, as on main.
+  @AppStorage("player.cantTalkDay") private var cantTalkDay = ""
+  @State private var micBlocked = false
   @FocusState private var isFocused: Bool
 
   let step: LessonStep
@@ -246,13 +268,31 @@ private struct SpokenAnswerStepView: View {
   let listening: LanguageExercise?
   let context: LessonStepContext
 
+  private var today: String {
+    Date.now.formatted(.iso8601.year().month().day())
+  }
+
+  private var cantTalk: Bool {
+    cantTalkDay == today
+  }
+
+  private var mode: SpokenAnswerMode {
+    SpokenAnswerMode(
+      canListen: listening != nil, canSpeak: recording.input != nil, cantTalk: cantTalk,
+      micBlocked: micBlocked)
+  }
+
   var body: some View {
-    if cantTalk, let listening {
+    if mode == .listen, let listening {
       LanguageStepView(exercise: listening, wordHints: nil, context: context)
+      modeSwitch
     } else {
-      Text("Tap and say it out loud", tableName: "Player", comment: "Above a sentence to say")
-        .font(.caption.monospaced())
-        .foregroundStyle(.secondary)
+      if mode == .speak {
+        Text("Tap and say it out loud", tableName: "Player", comment: "Above a sentence to say")
+          .font(.caption.monospaced())
+          .foregroundStyle(.secondary)
+      }
+
       LessonQuestionText(text: content.prompt)
       VStack(alignment: .leading, spacing: 4) {
         Text(content.targetText)
@@ -265,13 +305,23 @@ private struct SpokenAnswerStepView: View {
         }
       }
 
-      if let input = recording.input {
+      if mode == .speak, let input = recording.input {
         input(
           SpokenAnswerContext(
             lessonId: context.lessonId, stepId: step.id, content: content,
             isLocked: context.isLocked,
-            onGraded: context.resolveSpoken))
+            onGraded: context.resolveSpoken,
+            onBlocked: { micBlocked = true }))
       } else {
+        if micBlocked, !context.isLocked {
+          Text(
+            "The microphone is blocked. Type your answer instead.", tableName: "Player",
+            comment: "A spoken screen falls back to typing when the microphone is off"
+          )
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+        }
+
         LessonAnswerField(
           text: context.answer?.text ?? "", isLocked: context.isLocked, isFocused: $isFocused
         ) {
@@ -279,17 +329,42 @@ private struct SpokenAnswerStepView: View {
         }
       }
 
-      if listening != nil, !context.isLocked {
-        Button {
-          context.select(nil)
-          cantTalk = true
-        } label: {
-          Text(
-            "I can't talk now", tableName: "Player",
-            comment: "Answers a spoken screen as a listening exercise")
+      modeSwitch
+    }
+  }
+
+  /// "I can't talk now" while speaking; "I can talk now" or "Say it instead" otherwise. An answer
+  /// started one way doesn't carry over, and asking to speak tries the microphone again.
+  @ViewBuilder
+  private var modeSwitch: some View {
+    if !context.isLocked, recording.input != nil {
+      Button {
+        context.select(nil)
+        cantTalkDay = mode == .speak ? today : ""
+        micBlocked = false
+      } label: {
+        if mode == .speak {
+          Label {
+            Text(
+              "I can't talk now", tableName: "Player",
+              comment: "Answers a spoken screen by listening or typing instead")
+          } icon: {
+            Image(systemName: listening == nil ? "keyboard" : "headphones")
+          }
+        } else {
+          Label {
+            if cantTalk {
+              Text(
+                "I can talk now", tableName: "Player", comment: "Goes back to answering out loud")
+            } else {
+              Text("Say it instead", tableName: "Player", comment: "Tries the microphone again")
+            }
+          } icon: {
+            Image(systemName: "mic")
+          }
         }
-        .buttonStyle(.bordered)
       }
+      .buttonStyle(.borderless)
     }
   }
 }

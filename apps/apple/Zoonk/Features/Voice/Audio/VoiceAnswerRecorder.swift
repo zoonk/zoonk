@@ -14,6 +14,9 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
   let onGraded: @MainActor (Grade) -> Void
   /// Says "Tap and say it out loud" while idle; off where the screen already asks.
   var asksToSpeak = true
+  /// Where the screen has another way to answer (typing), a microphone that's off hands over to
+  /// it instead of showing how to turn it on.
+  var onBlocked: (() -> Void)?
 
   private enum Issue: Equatable {
     case noSpeech
@@ -22,7 +25,7 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
   }
 
   var body: some View {
-    if recorder.isDenied {
+    if recorder.isDenied, onBlocked == nil {
       MicrophoneOffView(
         description: Text(
           "Turn on the microphone for Zoonk in Settings to answer out loud.", tableName: "Voice",
@@ -85,8 +88,12 @@ struct VoiceAnswerRecorder<Grade: Sendable>: View {
   private func record() async {
     issue = nil
 
-    await recorder.start { recording in
+    let started = await recorder.start { recording in
       Task { await check(recording) }
+    }
+
+    if !started, recorder.isDenied {
+      onBlocked?()
     }
   }
 
