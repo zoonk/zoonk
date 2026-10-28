@@ -10,8 +10,47 @@
     "%lld fixed" : {
       "comment" : "Notebook count of fixed mistakes."
     },
+    "%lld lessons are off your plan." : {
+      "comment" : "How many lessons a passed test-out skipped."
+    },
     "%lld mistakes fixed" : {
       "comment" : "How many mistakes a run fixed."
+    },
+    "%lld of %lld" : {
+      "comment" : "Where a test is: question n of total.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "%lld of %lld broken" : {
+      "comment" : "How much of the Trickster's shield is broken.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld of %2$lld broken"
+          }
+        }
+      }
+    },
+    "%lld of %lld right" : {
+      "comment" : "A test-out's right answers out of its questions.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld of %2$lld right"
+          }
+        }
+      }
+    },
+    "%lld questions" : {
+      "comment" : "How many questions a test asks."
     },
     "%lld ready to practice" : {
       "comment" : "Notebook count of mistakes ready now."
@@ -30,8 +69,20 @@
     "%lld right in a row" : {
       "comment" : "Hyperdrive's quiet mark beside a right answer's verdict."
     },
+    "%lld right to win" : {
+      "comment" : "A phase challenge's pass mark."
+    },
     "%lld seconds a question, like on the day." : {
       "comment" : "How a timed drill goes."
+    },
+    "%lld subjects" : {
+      "comment" : "How many subjects a focus test asks about."
+    },
+    "%lld%% right skips the chapter. No feedback until the end." : {
+      "comment" : "A chapter test-out's rule above each question."
+    },
+    "+%lld Brain Power" : {
+      "comment" : "A challenge's Brain Power reward."
     },
     "A few misses in a row. A short break often helps, and everything you did today counts." : {
       "comment" : "Suggests a break after accuracy dropped."
@@ -39,14 +90,32 @@
     "A few questions on an idea you missed." : {
       "comment" : "How a content-gap drill goes, without ideas to show."
     },
+    "A few questions on each subject. The ones you need most come first and get more depth." : {
+      "comment" : "What a focus test does."
+    },
+    "A few questions on this chapter. Do well, and your plan skips what you already know." : {
+      "comment" : "What a chapter test-out does."
+    },
     "A fraction, like 2/3, or a decimal." : {
       "comment" : "Rule under a math answer field that takes a fraction."
+    },
+    "A live call where you get your point across. Speak or type." : {
+      "comment" : "What a challenge call is."
     },
     "A whole number." : {
       "comment" : "Rule under a math answer field that takes a whole number."
     },
     "A wrong answer cancels a right one. Not sure? Leave it blank." : {
       "comment" : "Why a net-scored block offers 'Leave blank'."
+    },
+    "About %@" : {
+      "comment" : "About how long a test takes."
+    },
+    "Already know this?" : {
+      "comment" : "Title of a chapter test-out's start."
+    },
+    "Also came up in" : {
+      "comment" : "Heading over the other answers a pattern came up in."
     },
     "Answer feedback" : {
       "comment" : "VoiceOver name of the feedback panel."
@@ -62,6 +131,12 @@
     },
     "Brain Power" : {
       "comment" : "Readout label: Brain Power earned."
+    },
+    "Challenge calls come with Plus. Your plan keeps going without them." : {
+      "comment" : "A challenge call is Plus-only."
+    },
+    "Challenge passed" : {
+      "comment" : "A finished challenge."
     },
     "Challenge, second try" : {
       "comment" : "Title of a lost phase challenge's rematch."
@@ -81,6 +156,9 @@
     "Close. Your answers are saved." : {
       "comment" : "VoiceOver label of a practice task's close button."
     },
+    "Confirm" : {
+      "comment" : "Sends a checkpoint answer."
+    },
     "Content gap" : {
       "comment" : "Mistake cause: didn't know the idea."
     },
@@ -90,8 +168,14 @@
     "Correct" : {
       "comment" : "Mark beside the right option once a question is graded."
     },
+    "Correct version" : {
+      "comment" : "Label of the corrected sentence in a pattern."
+    },
     "Correct!" : {
       "comment" : "Verdict after a right answer."
+    },
+    "Done" : {
+      "comment" : "Leaves a finished screen."
     },
     "End practice. What you answered counts." : {
       "comment" : "VoiceOver label: ends mistake practice early."
@@ -101,6 +185,9 @@
     },
     "Every question is answered" : {
       "comment" : "Title of a block opened again with every answer in."
+    },
+    "Every question is answered." : {
+      "comment" : "A checkpoint with every answer in."
     },
     "False" : {
       "comment" : "Answer to a true-or-false statement."
@@ -115,16 +202,31 @@
       "comment" : "Note above a placement question in the first week's sessions."
     },
     "Finish" : {
-      "comment" : "Finishes a block opened with every answer in."
+      "comment" : "Finishes a block opened with every answer in.\nSends a test's answers to be graded."
     },
     "Finish to see how it went." : {
       "comment" : "Under the title of a block opened again with every answer in."
     },
+    "Finish with the answers you gave: they still choose where your plan goes deeper." : {
+      "comment" : "A focus test can finish with the answers given when its writing stopped short."
+    },
+    "Finish with these answers" : {
+      "comment" : "Finishes a test whose writing stopped short."
+    },
     "Fixed %lld" : {
       "comment" : "Notebook list of fixed mistakes, with its count."
     },
+    "Focus test" : {
+      "comment" : "Title of a plan's focus test."
+    },
     "Full review" : {
       "comment" : "Title of a full review block."
+    },
+    "Getting your challenge ready" : {
+      "comment" : "While a challenge's questions are written."
+    },
+    "Getting your test ready" : {
+      "comment" : "Title while a test's questions are written."
     },
     "Go over the lesson" : {
       "comment" : "Opens the lesson a content-gap drill is about."
@@ -135,8 +237,14 @@
     "Guessed" : {
       "comment" : "Mistake cause: guessed."
     },
+    "His shield is broken. You won!" : {
+      "comment" : "A won phase challenge's line."
+    },
     "How to solve it" : {
       "comment" : "VoiceOver name of a math problem's worked steps."
+    },
+    "How you did" : {
+      "comment" : "Heading over a focus test's results by subject."
     },
     "I don't know yet" : {
       "comment" : "Answers a question as not known yet.\nVerdict after the learner said they don't know."
@@ -146,6 +254,15 @@
     },
     "I've read it. Show the answers" : {
       "comment" : "Shows a misread drill's answers once the question was read."
+    },
+    "It came up %lld times in your recent answers." : {
+      "comment" : "How often a mistake pattern came up."
+    },
+    "Just typos" : {
+      "comment" : "Title when recent mistakes were only typos."
+    },
+    "Knowing the rule is the first step. It gets easier each time you use it." : {
+      "comment" : "End of a pattern drill with misses."
     },
     "Last time you answered: %@" : {
       "comment" : "A mistake drill's note: what the learner answered when they got it wrong."
@@ -174,6 +291,9 @@
     "Mistake fixed. It leaves your notebook." : {
       "comment" : "After answering a saved mistake right."
     },
+    "Mistake pattern" : {
+      "comment" : "Eyebrow over a noticed mistake pattern.\nTitle of a mistake pattern screen."
+    },
     "Mistakes" : {
       "comment" : "VoiceOver name of the notebook's list picker."
     },
@@ -189,11 +309,35 @@
     "Mixed practice" : {
       "comment" : "Title of a mixed practice block."
     },
+    "Mixed questions from this phase, with no hints." : {
+      "comment" : "What a phase challenge asks."
+    },
     "Mock exam" : {
       "comment" : "Title of a weekly mock exam block."
     },
+    "Mock exam %lld" : {
+      "comment" : "Title of a numbered mock exam."
+    },
+    "Mock exams come with Plus: whenever you want, and every week in your plan." : {
+      "comment" : "A mock exam challenge is Plus-only."
+    },
+    "Move to Monday" : {
+      "comment" : "Moves the weekly challenge to next Monday."
+    },
+    "Moved to %@" : {
+      "comment" : "A weekly challenge moved to another day."
+    },
     "New lesson" : {
       "comment" : "Title of a lesson block without a title yet."
+    },
+    "New try tomorrow, after %lld short lessons. Nothing is lost." : {
+      "comment" : "A lost phase challenge comes back after short lessons."
+    },
+    "New try tomorrow. Nothing is lost." : {
+      "comment" : "A lost phase challenge comes back."
+    },
+    "Next" : {
+      "comment" : "Moves to a checkpoint's next question.\nMoves to a test's next question."
     },
     "Not quite" : {
       "comment" : "Verdict after a wrong answer."
@@ -201,11 +345,20 @@
     "Not sorted yet" : {
       "comment" : "Mistake cause not named yet."
     },
+    "Not this time" : {
+      "comment" : "A lost phase challenge."
+    },
+    "Not yet, and that's fine" : {
+      "comment" : "A failed test-out's result."
+    },
     "Nothing to fix right now. Mistakes from your lessons and reviews show up here." : {
       "comment" : "Empty open list of the notebook."
     },
     "Nothing to practice yet" : {
       "comment" : "Title when no mistake is ready to practice."
+    },
+    "Nothing to skip" : {
+      "comment" : "A chapter test-out with no lessons left to skip."
     },
     "On %@ this one tripped you up." : {
       "comment" : "Time machine note: wrong last time, without the answer's text."
@@ -224,14 +377,23 @@
     "Only answer when you're sure. Saying you're not sure is fine." : {
       "comment" : "How a no-guessing drill goes."
     },
+    "Open the challenge" : {
+      "comment" : "Opens a checkpoint's challenge intro to start it."
+    },
     "Open the lesson" : {
       "comment" : "Opens the lesson that teaches a mistake's idea."
+    },
+    "Opens after this phase's lessons" : {
+      "comment" : "A phase challenge waiting for earlier lessons."
     },
     "Other questions" : {
       "comment" : "Notebook group of mistakes without a skill."
     },
     "Past exam question · %@" : {
       "comment" : "Source of a real past exam question shown with it."
+    },
+    "Phase %lld" : {
+      "comment" : "Eyebrow naming a phase challenge's phase."
     },
     "Phase challenge" : {
       "comment" : "Title of a phase challenge block."
@@ -256,6 +418,9 @@
     },
     "Practice mistakes" : {
       "comment" : "Starts practicing the notebook's ready mistakes.\nTitle of a block that only fixes mistakes.\nTitle of the mistakes practice run."
+    },
+    "Practice this · %@" : {
+      "comment" : "Starts a mistake pattern's drill, with how long it takes."
     },
     "Practice this skill" : {
       "comment" : "Practices only this skill's mistakes."
@@ -318,6 +483,12 @@
         }
       }
     },
+    "Questions from what you studied this week, with no hints." : {
+      "comment" : "What the weekly challenge asks."
+    },
+    "Questions on recordings from this phase, played as in the exam, with no hints." : {
+      "comment" : "What a listening phase challenge asks."
+    },
     "Questions on this recording (%lld)" : {
       "comment" : "Folds the list of every question about a recording, to read before it plays."
     },
@@ -335,6 +506,9 @@
     },
     "Review done" : {
       "comment" : "End of a review block."
+    },
+    "Review the answers" : {
+      "comment" : "Opens a finished checkpoint's answers with why."
     },
     "Reviews" : {
       "comment" : "Title of a long review block."
@@ -354,6 +528,21 @@
     "Saved to your mistakes · it comes back tomorrow" : {
       "comment" : "After a wrong answer saved to the mistakes notebook."
     },
+    "See how it went" : {
+      "comment" : "Finishes a checkpoint to see its result.\nOpens a finished checkpoint's result."
+    },
+    "See how you did" : {
+      "comment" : "Ends a pattern drill to see its result."
+    },
+    "See Plus" : {
+      "comment" : "Opens the Plus subscription."
+    },
+    "See the rule" : {
+      "comment" : "Opens a pattern's rule during its drill."
+    },
+    "See your plan" : {
+      "comment" : "Leaves a focus test's result for the plan."
+    },
     "Select all that apply." : {
       "comment" : "Rule above a multiple-choice question where every right option must be picked."
     },
@@ -363,8 +552,20 @@
     "Show more" : {
       "comment" : "Loads the notebook's next page."
     },
+    "Some questions couldn't be written" : {
+      "comment" : "A test's writing stopped short."
+    },
+    "Start" : {
+      "comment" : "Starts a challenge."
+    },
+    "Start the mock exam" : {
+      "comment" : "Starts a mock exam challenge."
+    },
     "Start the questions" : {
       "comment" : "Starts a content-gap drill's questions after its idea."
+    },
+    "Start the test" : {
+      "comment" : "Asks for a test's questions and starts it."
     },
     "Stop for today" : {
       "comment" : "Stops today's session from the pause suggestion."
@@ -372,8 +573,29 @@
     "Tap the steps in order." : {
       "comment" : "Instruction above an ordering question."
     },
+    "Test out" : {
+      "comment" : "Title of a chapter test-out."
+    },
+    "That day already has a weekly challenge or mock exam, so this one stays where it is." : {
+      "comment" : "Moving a weekly challenge was refused: the day already has one."
+    },
+    "That didn't go through. Try again in a moment." : {
+      "comment" : "A challenge's start or move failed."
+    },
+    "The chapter stays in your plan, and your answers help it start at the right level." : {
+      "comment" : "A failed test-out keeps the chapter."
+    },
     "The idea first, then a few questions on it." : {
       "comment" : "How a content-gap drill goes, when it shows the lesson's ideas first."
+    },
+    "The lessons are back in your plan." : {
+      "comment" : "After undoing a test-out's skip."
+    },
+    "The next phase, %@, is already open." : {
+      "comment" : "After a won phase challenge."
+    },
+    "The questions were removed" : {
+      "comment" : "A checkpoint ended without questions."
     },
     "The recording didn't load. Check your connection and try again." : {
       "comment" : "Shown when a set's recording fails to load."
@@ -381,14 +603,32 @@
     "The rest come back another day, when they stick better." : {
       "comment" : "End of a mistakes practice run with a miss."
     },
+    "The rule" : {
+      "comment" : "Title of a pattern's rule."
+    },
     "The trap: %@" : {
       "comment" : "The misconception a trap drill's wrong answer fell for."
+    },
+    "The Trickster's shield" : {
+      "comment" : "Label of the phase challenge's shield gauge."
     },
     "There's a trap in here. Find it before you answer." : {
       "comment" : "How a trap drill goes."
     },
+    "These subjects count a lot, and they're where you missed most. Your plan now gives them more depth, and every other topic stays in it." : {
+      "comment" : "Why a focus test chose its subjects."
+    },
+    "This challenge isn't ready yet." : {
+      "comment" : "A challenge that can't start on this device yet."
+    },
     "This didn't load" : {
       "comment" : "Title when a practice screen can't load."
+    },
+    "This test comes with Plus." : {
+      "comment" : "A test that needs Plus."
+    },
+    "This week's topics" : {
+      "comment" : "Heading over a weekly challenge's topics."
     },
     "Time left" : {
       "comment" : "VoiceOver label of a timed drill's clock."
@@ -399,8 +639,17 @@
     "To fix %lld" : {
       "comment" : "Notebook list of open mistakes, with its count."
     },
+    "Today" : {
+      "comment" : "A challenge planned for today."
+    },
+    "Tomorrow" : {
+      "comment" : "A challenge planned for tomorrow."
+    },
     "Transcript" : {
       "comment" : "Folds who said what in a recording."
+    },
+    "Trap hunter badge" : {
+      "comment" : "Reward of a won phase challenge."
     },
     "True" : {
       "comment" : "Answer to a true-or-false statement."
@@ -420,14 +669,47 @@
     "Type a whole number, like 12." : {
       "comment" : "Hint after typing something a whole-number answer field can't read."
     },
+    "Undo" : {
+      "comment" : "Puts a passed test-out's skipped lessons back in the plan.\nPuts the plan back as it was before a focus test.\nUndoes moving a weekly challenge."
+    },
+    "We couldn't put the lessons back. Try again." : {
+      "comment" : "Undoing a test-out's skip failed."
+    },
     "We couldn't stop the session. Try again." : {
       "comment" : "Stopping the session failed."
+    },
+    "We couldn't undo it. Try again." : {
+      "comment" : "Undoing a focus test's change failed."
+    },
+    "We couldn't write your test. Try again." : {
+      "comment" : "Writing a test's questions failed."
+    },
+    "We noticed a pattern" : {
+      "comment" : "Eyebrow over a noticed mistake pattern."
+    },
+    "We're writing a few questions on this chapter. The test opens here when they're ready." : {
+      "comment" : "While a test-out's questions are written."
+    },
+    "We're writing its questions. It starts here when they're ready." : {
+      "comment" : "A challenge waits for its questions."
+    },
+    "We're writing the rest of the test. It goes on here when they're ready." : {
+      "comment" : "A test waits for the questions still being written."
     },
     "Weekly challenge" : {
       "comment" : "Title of the weekly challenge block."
     },
+    "Weekly challenge done" : {
+      "comment" : "End of the weekly challenge."
+    },
+    "What he'll ask" : {
+      "comment" : "Heading over a phase challenge's topics."
+    },
     "What you already know" : {
       "comment" : "Title of the first week's placement questions block."
+    },
+    "Where should you focus?" : {
+      "comment" : "Title of a focus test's start."
     },
     "With these" : {
       "comment" : "VoiceOver name of the right column."
@@ -441,11 +723,20 @@
     "You already answered this question." : {
       "comment" : "Shown when an answer was saved before."
     },
+    "You already know this" : {
+      "comment" : "A passed test-out's result."
+    },
+    "You beat the Trickster!" : {
+      "comment" : "A won phase challenge."
+    },
     "You can listen one more time." : {
       "comment" : "Under a recording with one play left."
     },
     "You got it right on %@. Reviewing it now helps it stick." : {
       "comment" : "Time machine note: right last time, wrong today."
+    },
+    "You hadn't answered any yet, so this challenge isn't scored. Nothing is lost." : {
+      "comment" : "Why a checkpoint without questions isn't scored."
     },
     "You hear it once, like in the exam. Read the questions first." : {
       "comment" : "Under a recording that plays once."
@@ -456,20 +747,62 @@
     "You reached level %lld." : {
       "comment" : "A run took the learner to a new level."
     },
+    "You said" : {
+      "comment" : "Label of the learner's slip in a pattern."
+    },
     "You saw this on %@." : {
       "comment" : "Time machine line above a question seen before."
+    },
+    "You'll see why at the end." : {
+      "comment" : "A checkpoint keeps its answers until it ends."
     },
     "You're offline" : {
       "comment" : "Title when a practice screen can't load offline."
     },
+    "You've got this rule." : {
+      "comment" : "End of a pattern drill, all right."
+    },
+    "You've reached today's study time." : {
+      "comment" : "A challenge can't start today: the daily limit is reached."
+    },
+    "You've reached today's study time. Move it to Monday to keep it." : {
+      "comment" : "A weekly challenge can't start today: the daily limit is reached."
+    },
     "You've used every play. Answer from what you heard." : {
       "comment" : "Under a recording with no plays left."
+    },
+    "You've used today's AI help. Try again tomorrow." : {
+      "comment" : "A test's questions can't be written: the AI allowance is spent."
     },
     "Your answer" : {
       "comment" : "Mark beside the learner's wrong pick once a question is graded.\nPlaceholder of an answer field."
     },
     "Your answer wasn't saved. Check your connection." : {
       "comment" : "Shown over a run's actions when an answer or the finish didn't reach the server."
+    },
+    "Your new focus" : {
+      "comment" : "Eyebrow over a focus test's chosen subjects."
+    },
+    "Your next questions are on the way" : {
+      "comment" : "Waiting for a test's next questions."
+    },
+    "Your plan already skips it." : {
+      "comment" : "A passed test-out that skipped nothing new."
+    },
+    "Your plan already skips this chapter." : {
+      "comment" : "Why a test-out has nothing to skip."
+    },
+    "Your plan can't make room for this challenge on Monday. It stays where it is." : {
+      "comment" : "Moving a weekly challenge was refused: no room on Monday."
+    },
+    "Your plan is back as it was" : {
+      "comment" : "After undoing a focus test's change."
+    },
+    "Your recent mistakes were slips while typing, not a rule you're missing. There's nothing to practice." : {
+      "comment" : "Why a typos pattern has nothing to practice."
+    },
+    "Your result only shows at the end, like on exam day." : {
+      "comment" : "What a mock exam challenge is."
     }
   },
   "version" : "1.0"
