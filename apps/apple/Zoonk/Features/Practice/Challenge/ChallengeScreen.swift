@@ -20,6 +20,9 @@ struct ChallengeScreen: View {
   @State private var isMoving = false
   @State private var moveProblem: LocalizedStringResource?
   @State private var movedChangeId: String?
+  /// The start, move or undo in flight: cancelled when the screen goes away, so a closed challenge
+  /// never opens its checkpoint or starts the next request later.
+  @State private var action: Task<Void, Never>?
 
   init(planItemId: String, sessionId: String? = nil) {
     self.planItemId = planItemId
@@ -50,6 +53,7 @@ struct ChallengeScreen: View {
     // Loads once the session (and the active goal) is known, and again if it changes: a screen
     // opened at launch can appear before the session is restored.
     .task(id: session.authenticatedSession) { await read() }
+    .onDisappear { action?.cancel() }
   }
 
   // MARK: Intro
@@ -185,7 +189,7 @@ struct ChallengeScreen: View {
             comment: "A weekly challenge moved to another day.")
           Spacer()
           Button {
-            Task { await undoMove(movedChangeId) }
+            run { await undoMove(movedChangeId) }
           } label: {
             Text("Undo", tableName: "Practice", comment: "Undoes moving a weekly challenge.")
           }
@@ -237,7 +241,7 @@ struct ChallengeScreen: View {
               "Move to Monday", table: "Practice",
               comment: "Moves the weekly challenge to next Monday."),
             isDisabled: isMoving || isStarting
-          ) { Task { await move() } }
+          ) { run { await move() } }
         }
 
         PracticeMainButton(
@@ -247,7 +251,7 @@ struct ChallengeScreen: View {
             : LocalizedStringResource("Start", table: "Practice", comment: "Starts a challenge."),
           isBusy: isStarting || isWriting,
           isDisabled: challenge.dailyLimitReached
-        ) { Task { await start(afterWriting: false) } }
+        ) { run { await start(afterWriting: false) } }
       }
     } else if challenge.canMove, movedChangeId == nil {
       PracticeSecondaryButton(
@@ -255,7 +259,7 @@ struct ChallengeScreen: View {
           "Move to Monday", table: "Practice", comment: "Moves the weekly challenge to next Monday."
         ),
         isDisabled: isMoving
-      ) { Task { await move() } }
+      ) { run { await move() } }
     } else if challenge.waitReason != nil {
       Text(
         "Opens after this phase's lessons", tableName: "Practice",
@@ -398,6 +402,11 @@ struct ChallengeScreen: View {
 
   // MARK: Requests
 
+  private func run(_ work: @escaping @MainActor () async -> Void) {
+    action?.cancel()
+    action = Task { await work() }
+  }
+
   private func read() async {
     guard let identity = session.authenticatedSession else { return }
 
@@ -426,6 +435,7 @@ struct ChallengeScreen: View {
     do {
       let start = try await practice.api.startChallenge(
         token: identity.bearerToken, planItemId: itemId, afterWriting: afterWriting)
+      guard !Task.isCancelled else { return }
       practice.changed(.answered)
       dismiss()
 
@@ -470,6 +480,9 @@ struct ChallengeScreen: View {
         comment: "A challenge's start or move failed.")
       return
     }
+
+    // Closed meanwhile: the questions stay written, and nothing starts behind the learner.
+    guard !Task.isCancelled else { return }
 
     isWriting = false
     await start(afterWriting: true)
