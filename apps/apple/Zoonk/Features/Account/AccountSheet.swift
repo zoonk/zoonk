@@ -316,10 +316,7 @@ private struct SettingsHubView: View {
     }
     .loads(settings.preferences, settings.memory, refreshable: false)
     .sheet(isPresented: $isHelpPresented) {
-      FeedbackSheet(
-        api: FeedbackAPI.live(),
-        defaultEmail: isGuest ? nil : account.user.email,
-        token: session.authenticatedSession?.bearerToken)
+      FeedbackSheet(api: FeedbackAPI.live())
     }
   }
 

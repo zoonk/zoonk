@@ -89,10 +89,7 @@ struct SearchScreen: View {
     }
     .catalogDestinations()
     .sheet(isPresented: $isFeedbackPresented) {
-      FeedbackSheet(
-        api: FeedbackAPI.live(),
-        defaultEmail: session.account?.user.email,
-        token: session.authenticatedSession?.bearerToken)
+      FeedbackSheet(api: FeedbackAPI.live())
     }
   }
 

@@ -1,21 +1,42 @@
 import SwiftUI
 
+/// The message form, from Help and from a screen's menu. Only someone the app doesn't know (a
+/// visitor, or a guest, whose account has no real email) types an email to be answered at, as on
+/// main; a signed-in learner's reply goes to their account's.
 struct FeedbackSheet: View {
+  @Environment(SessionStore.self) private var session
+  @Environment(LearnerSummaryStore.self) private var learner
+
+  let api: any FeedbackAPIClient
+  var context: FeedbackContext?
+
+  var body: some View {
+    FeedbackForm(
+      api: api, context: context,
+      accountEmail: learner.summary.value?.identity.isAnonymous == true
+        ? nil : session.account?.user.email,
+      token: session.authenticatedSession?.bearerToken)
+  }
+}
+
+private struct FeedbackForm: View {
   @Environment(\.dismiss) private var dismiss
   @FocusState private var focusedField: FeedbackField?
   @State private var store: FeedbackFormStore
+  private let asksForEmail: Bool
 
   init(
     api: any FeedbackAPIClient,
-    context: FeedbackContext? = nil,
-    defaultEmail: String? = nil,
-    token: String? = nil
+    context: FeedbackContext?,
+    accountEmail: String?,
+    token: String?
   ) {
+    asksForEmail = accountEmail?.isEmpty ?? true
     _store = State(
       initialValue: FeedbackFormStore(
         api: api,
         context: context,
-        defaultEmail: defaultEmail,
+        defaultEmail: accountEmail,
         token: token))
   }
 
@@ -90,40 +111,43 @@ struct FeedbackSheet: View {
           comment: "Introduction shown above the feedback fields."
         )
         .foregroundStyle(.secondary)
+        .listRowBackground(Color.clear)
       }
 
-      Section {
-        TextField(
-          text: $store.email,
-          prompt: Text(
-            "you@example.com",
-            tableName: "Feedback",
-            comment: "Example email address in the feedback form.")
-        ) {
+      if asksForEmail {
+        Section {
+          TextField(
+            text: $store.email,
+            prompt: Text(
+              "you@example.com",
+              tableName: "Feedback",
+              comment: "Example email address in the feedback form.")
+          ) {
+            Text(
+              "Email address",
+              tableName: "Feedback",
+              comment: "Email field label in the feedback form.")
+          }
+          .focused($focusedField, equals: .email)
+          .textInputAutocapitalization(.never)
+          .keyboardType(.emailAddress)
+          .autocorrectionDisabled()
+          .textContentType(.emailAddress)
+          .submitLabel(.next)
+          .onSubmit {
+            focusedField = .message
+          }
+          .accessibilityLabel(
+            Text(
+              "Email address",
+              tableName: "Feedback",
+              comment: "Email field label in the feedback form."))
+        } footer: {
           Text(
-            "Email address",
+            "We'll use this email to contact you.",
             tableName: "Feedback",
-            comment: "Email field label in the feedback form.")
+            comment: "Explains why the feedback form asks for an email address.")
         }
-        .focused($focusedField, equals: .email)
-        .textInputAutocapitalization(.never)
-        .keyboardType(.emailAddress)
-        .autocorrectionDisabled()
-        .textContentType(.emailAddress)
-        .submitLabel(.next)
-        .onSubmit {
-          focusedField = .message
-        }
-        .accessibilityLabel(
-          Text(
-            "Email address",
-            tableName: "Feedback",
-            comment: "Email field label in the feedback form."))
-      } footer: {
-        Text(
-          "We'll use this email to contact you.",
-          tableName: "Feedback",
-          comment: "Explains why the feedback form asks for an email address.")
       }
 
       Section {

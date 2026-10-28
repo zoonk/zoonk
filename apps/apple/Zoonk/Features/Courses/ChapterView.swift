@@ -33,7 +33,6 @@ struct ChapterView: View {
 }
 
 private struct ChapterDetailContent: View {
-  @Environment(SessionStore.self) private var session
   @State private var isFeedbackPresented = false
   @State private var isInformationPresented = false
   @State private var isSearchPresented = false
@@ -62,9 +61,7 @@ private struct ChapterDetailContent: View {
     .sheet(isPresented: $isFeedbackPresented) {
       FeedbackSheet(
         api: FeedbackAPI.live(),
-        context: FeedbackContext(contentID: chapter.id, contentKind: .chapter),
-        defaultEmail: session.account?.user.email,
-        token: session.authenticatedSession?.bearerToken)
+        context: FeedbackContext(contentID: chapter.id, contentKind: .chapter))
     }
   }
 

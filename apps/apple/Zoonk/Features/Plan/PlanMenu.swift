@@ -6,7 +6,6 @@ import SwiftUI
 /// goal changes. Archiving asks first, and so does resuming a goal whose plan it changes.
 struct PlanMenu: View {
   @Environment(AppRouter.self) private var router
-  @Environment(SessionStore.self) private var session
   @Environment(PlanStore.self) private var store
   @Environment(LearnerSummaryStore.self) private var learner
   @State private var isReporting = false
@@ -101,9 +100,7 @@ struct PlanMenu: View {
     .sheet(isPresented: $isReporting) {
       FeedbackSheet(
         api: FeedbackAPI.live(),
-        context: FeedbackContext(contentID: context.plan.planId, contentKind: .plan),
-        defaultEmail: session.account?.user.email,
-        token: session.authenticatedSession?.bearerToken)
+        context: FeedbackContext(contentID: context.plan.planId, contentKind: .plan))
     }
     .confirmationDialog(
       confirmationTitle, isPresented: isConfirming, titleVisibility: .visible,

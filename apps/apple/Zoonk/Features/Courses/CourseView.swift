@@ -27,7 +27,6 @@ struct CourseView: View {
 }
 
 private struct CourseDetailContent: View {
-  @Environment(SessionStore.self) private var session
   @State private var isFeedbackPresented = false
   @State private var isInformationPresented = false
   @State private var isSearchPresented = false
@@ -54,9 +53,7 @@ private struct CourseDetailContent: View {
     .sheet(isPresented: $isFeedbackPresented) {
       FeedbackSheet(
         api: FeedbackAPI.live(),
-        context: FeedbackContext(contentID: detail.course.id, contentKind: .course),
-        defaultEmail: session.account?.user.email,
-        token: session.authenticatedSession?.bearerToken)
+        context: FeedbackContext(contentID: detail.course.id, contentKind: .course))
     }
   }
 }
