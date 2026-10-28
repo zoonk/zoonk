@@ -26,10 +26,6 @@ const generation: AiGeneration = {
   task: "lesson-explanation",
 };
 
-/**
- * `@zoonk/ai` never calls a sink under tests, so this calls the registered
- * sink directly to check what the app would send.
- */
 async function sendThroughRegisteredSink() {
   registerAiGenerationAnalytics();
   await globalThis.zoonkAiGenerationSinks?.get("posthog")?.(generation);

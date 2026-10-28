@@ -3,7 +3,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { trackServerEvent, trackSystemEvent } from "./server";
 import { buildSharedEventProperties } from "./shared-properties";
 
-// `setup-tests.ts` replaces it for every other test: this one tests the real one.
 vi.unmock("./server");
 
 const posthogClient = vi.hoisted(() => ({ capture: vi.fn(), shutdown: vi.fn() }));

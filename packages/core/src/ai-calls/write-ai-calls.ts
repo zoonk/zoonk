@@ -9,7 +9,6 @@ function toCount(value: number | undefined): number {
   return value === undefined ? 0 : Math.round(value);
 }
 
-/** One finished AI call as its `ai_calls` row. */
 export function toAiCallRow({ context = {}, provenance, task }: AiGeneration): AiCallRow {
   const { usage } = provenance;
 
@@ -41,10 +40,6 @@ export function toAiCallRow({ context = {}, provenance, task }: AiGeneration): A
   };
 }
 
-/**
- * The learners that still exist and the owner of each goal that does, to keep only links that can
- * be saved.
- */
 async function findLinkedIds(rows: readonly AiCallRow[]) {
   const userIds = [...new Set(rows.flatMap((row) => (row.userId ? [row.userId] : [])))];
   const goalIds = [...new Set(rows.flatMap((row) => (row.goalId ? [row.goalId] : [])))];
@@ -60,11 +55,6 @@ async function findLinkedIds(rows: readonly AiCallRow[]) {
   };
 }
 
-/**
- * Saves AI calls in one insert. A learner or goal deleted while its calls ran keeps the calls,
- * and their cost, without the link. A guest who signed up while theirs ran is gone too, but their
- * goal moved to the account (see `linkGuestAccount`), so the goal's owner gets the call.
- */
 export async function writeAiCalls(rows: readonly AiCallRow[]): Promise<void> {
   try {
     await prisma.aiCall.createMany({ data: [...rows] });

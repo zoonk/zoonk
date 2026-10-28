@@ -2,7 +2,6 @@ import { headers } from "next/headers";
 import { describe, expect, it, vi } from "vitest";
 import { getRequestPlatform } from "./request-platform";
 
-/** Request headers only exist inside a Next.js request: tests hand in the ones a client sends. */
 function requestFrom(userAgent: string | null) {
   vi.mocked(headers).mockResolvedValueOnce(
     new Headers(userAgent === null ? {} : { "user-agent": userAgent }),

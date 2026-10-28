@@ -25,7 +25,6 @@ type LearnerEventsInput = {
   userId: string;
 };
 
-/** The goal's kind and language, and its plan's current phase as Plan and the map show it. */
 async function loadEventGoal({ goalId, userId }: { goalId: string; userId: string }) {
   const goal = await prisma.goal.findFirst({
     select: { kind: true, language: true, plan: { select: { id: true, phases: true } } },
@@ -41,10 +40,6 @@ async function loadEventGoal({ goalId, userId }: { goalId: string; userId: strin
   return { kind: goal.kind, language: goal.language, phase: phases.get(goal.plan.id) ?? null };
 }
 
-/**
- * Whether the learner is a guest, and the goal's kind, language and current phase:
- * the goal the events are about, or the one the tabs show.
- */
 async function loadLearner({ goalId, userId }: Pick<LearnerEventsInput, "goalId" | "userId">) {
   const [user, eventGoalId] = await Promise.all([
     prisma.user.findUnique({ select: { isAnonymous: true }, where: { id: userId } }),
@@ -79,13 +74,7 @@ function toSharedProperties({
   });
 }
 
-/**
- * Sends a learner's outcomes from the server with the shared properties read from the database
- * (guest or not, and the goal's kind, phase and language) and the client they came from, so every
- * outcome is compared the same way. A lookup or PostHog failure never fails the
- * caller. Request paths call it inside `after()` so the learner never waits on PostHog; workflow
- * steps await it.
- */
+/** Lookup and analytics failures never fail the caller. */
 export async function trackLearnerEvents({
   events,
   goalId,
@@ -103,7 +92,6 @@ export async function trackLearnerEvents({
       platform === undefined ? getRequestPlatform() : platform,
     ]);
 
-    // A deleted account, or an organization paying for a subscription, isn't a learner.
     if (!learner) {
       return;
     }

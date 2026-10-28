@@ -41,7 +41,6 @@ function findRun(runId: string) {
   return prisma.aiCall.findFirst({ where: { runId } });
 }
 
-/** The log saves in the background a second after a call, so the test waits for the row. */
 async function waitForRun(
   runId: string,
   waited = 0,
@@ -133,7 +132,6 @@ describe(writeAiCalls, () => {
     const account = await userFixture();
     const goal = await goalFixture({ userId: account.id });
 
-    // The guest's row is gone once sign-up moved their goal: only the goal says whose call it is.
     const call = generation({ context: { distinctId: crypto.randomUUID(), goalId: goal.id } });
 
     await writeAiCalls([toAiCallRow(call)]);
@@ -202,7 +200,6 @@ describe(writeAiCalls, () => {
       serviceTier: "mixed",
     });
 
-    /** Admin spend totals sum these ledger columns without re-pricing the joined model field. */
     const totals = await prisma.aiCall.aggregate({
       _count: { id: true },
       _sum: { costUsd: true, inputTokens: true, outputTokens: true },
@@ -228,7 +225,6 @@ describe(registerAiCallLog, () => {
 
     await Promise.all(calls.map(async (call) => sink?.(call)));
 
-    // Queued, not written yet: nothing waits on the database on the learner's path.
     await expect(findRun(calls[0]?.provenance.runId ?? "")).resolves.toBeNull();
 
     const saved = await Promise.all(calls.map((call) => waitForRun(call.provenance.runId)));

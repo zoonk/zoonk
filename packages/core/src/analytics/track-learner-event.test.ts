@@ -12,7 +12,6 @@ const APPLE_APP_USER_AGENT = "Zoonk/42 CFNetwork/3826.500.111 Darwin/25.0.0";
 
 const EVENT = { name: "Logbook Viewed" } as const;
 
-/** A learner whose active exam goal is in its second phase, plus another goal. */
 async function setup() {
   const user = await userFixture();
 
@@ -33,7 +32,6 @@ async function setup() {
 }
 
 describe(trackLearnerEvents, () => {
-  // Request headers only exist inside a Next.js request; outside one, reading them fails like this.
   beforeEach(() => {
     vi.mocked(headers).mockRejectedValue(new Error("`headers` was called outside a request scope"));
   });

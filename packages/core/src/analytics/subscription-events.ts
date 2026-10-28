@@ -8,12 +8,6 @@ const SUBSCRIPTION_EVENT_NAMES = {
   started: "Subscription Conversion",
 } as const;
 
-/**
- * Sends "Subscription Conversion" (the plan's "Subscription Started") and "Subscription Canceled"
- * from the Stripe webhooks Better Auth handles, so a learner who never returns from checkout still
- * counts. Each app that serves Better Auth calls this from `instrumentation.ts`, since
- * `@zoonk/auth` can't depend on core.
- */
 export function registerSubscriptionAnalytics(): void {
   registerSubscriptionChangeSink(({ change, plan, referenceId }) => {
     const event: AnalyticsEvent = { name: SUBSCRIPTION_EVENT_NAMES[change], properties: { plan } };
