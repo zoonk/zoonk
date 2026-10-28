@@ -17,6 +17,7 @@ struct SessionSummaryView: View {
   @State private var action: Task<Void, Never>?
   @State private var isAddingTime = false
   @State private var failed = false
+  @ScaledMetric(relativeTo: .body) private var beltDotSize: CGFloat = 12
 
   var body: some View {
     let summary = store.summary(id: sessionID)
@@ -103,7 +104,11 @@ struct SessionSummaryView: View {
               "\(beltName(belt.after.color) ?? belt.after.color), level \(belt.after.level)",
               tableName: "Session", comment: "The belt and level reached")
           } icon: {
-            Image(systemName: "figure.martial.arts")
+            // The belt's own color, ringed so a white belt shows on a light row.
+            Circle()
+              .fill(ProgressBelt(rawValue: belt.after.color)?.color ?? .secondary)
+              .strokeBorder(.secondary.opacity(0.35), lineWidth: 1)
+              .frame(width: beltDotSize, height: beltDotSize)
           }
         }
       }
