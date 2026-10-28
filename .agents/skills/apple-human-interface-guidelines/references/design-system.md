@@ -143,17 +143,18 @@ Reduce Motion: system controls and symbol effects adapt on their own. A celebrat
 
 Open, the Duo reads like an open wallet: two panes either side of the fold, each about an iPhone wide, so the phone's views go in unchanged. `PaneSplit` places them; its `single` builder is the phone's one column. Folding or unfolding keeps the learner's place.
 
-| Screen kind                                      | Leading pane                                                      | Trailing pane                                                                            | `primaryShare` |
-| ------------------------------------------------ | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | -------------- |
-| Spread: lesson player, practice, the mock runner | the screen: question or title, teaching, stimulus, worked example | the learner's turn: options, fields, canvas, feedback, with the action bar at its bottom | 0.5            |
-| Main and supporting: Today, Plan, Buddy, Exam    | the main content                                                  | what supports it: missions, the week, numbers, settings                                  | 0.55           |
-| List and detail: Statistics                      | the list                                                          | the selected item                                                                        | 0.5            |
+| Screen kind                                      | Leading pane                                                       | Trailing pane                                                                            | `primaryShare` |
+| ------------------------------------------------ | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- | -------------- |
+| Spread: lesson player, practice, the mock runner | the screen: question or title, teaching, stimulus, worked example  | the learner's turn: options, fields, canvas, feedback, with the action bar at its bottom | 0.5            |
+| Main and supporting: Today, Plan, Buddy, Exam    | the main content                                                   | what supports it: missions, the week, numbers, settings                                  | 0.55           |
+| List and detail: Statistics                      | the list                                                           | the selected item                                                                        | 0.5            |
+| Landing: a course's or a chapter's page          | the course or chapter and its way in (a course's example plan too) | what it covers: who it's for, the outline or the lessons, the way in again               | 0.5            |
 
 - In the lesson player, Previous and the main action stay at the bottom of the trailing page on every screen. A screen with a picture, visual or canvas puts it on the trailing page; a text-only screen leaves the trailing page empty above Continue, so Continue never moves.
 - Side panels in a task (Ask, the mock answer sheet, the call aside) stay `.inspector` on regular widths and sheets on compact widths: partially folded, the system moves the inspector's edge to the fold. A tab's side panel (the buddy's day) is `PaneSplit`'s trailing pane instead: SwiftUI turns a presented inspector into a sheet when the width turns compact, and a hidden tab's would cover the tab on show.
 - A pane is about a phone wide even where the size class is regular. A view inside it that picks a wide layout from the regular size class overflows, so give the pane `.environment(\.horizontalSizeClass, .compact)` (as Statistics does) or choose by the measured width.
 - One-column screens (onboarding, results, celebrations) let their scrolling content cross the fold and move their bottom action off it with `.keepsOffFold()`.
-- A one-column screen that stays one column on the open Duo (the catalog, a course or chapter page) adjusts while folded rather than rearranging: a grid takes `PaneSpace.columnsAroundFold` (the same number of columns on each side, the fold as their gap), a block under the title ends at the fold with `listSectionMargins`, a reading column moves to the page before the fold, and a search drawer moves to the toolbar.
+- A one-column screen that stays one column on the open Duo (the catalog, its search) adjusts while folded rather than rearranging: a grid takes `PaneSpace.columnsAroundFold` (the same number of columns on each side, the fold as their gap), a block under the title ends at the fold with `listSectionMargins`, a list of results moves to the page before the fold, and a search drawer moves to the toolbar.
 
 ## Pitfalls
 
