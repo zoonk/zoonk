@@ -1,11 +1,9 @@
 #if DEBUG
   import SwiftUI
 
-  /// Opens the lesson on `ZOONK_DEBUG_LESSON_ID` once a session is restored, so a lesson from the
-  /// local database (such as one holding every activity template) can be played on a simulator
-  /// without tapping through the app. `ZOONK_DEBUG_SIGN_IN_EMAIL` and `ZOONK_DEBUG_SIGN_IN_CODE` (a
-  /// code from the local mailbox) sign in first; the lesson waits for that sign-in, since switching
-  /// from a restored account closes every task the previous one had open.
+  /// `ZOONK_DEBUG_SIGN_IN_EMAIL` and `ZOONK_DEBUG_SIGN_IN_CODE` (a code from the local mailbox)
+  /// sign in first. The lesson waits for that sign-in, since switching from a restored account
+  /// closes every task the previous one had open.
   struct DebugLessonLaunch: ViewModifier {
     @Environment(AppRouter.self) private var router
     @Environment(SessionStore.self) private var session

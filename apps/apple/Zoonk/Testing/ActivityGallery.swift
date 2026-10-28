@@ -1,13 +1,10 @@
 #if DEBUG
   import SwiftUI
 
-  /// A Debug-only page of activity screens, for looking at templates on a simulator without a
-  /// backend or a lesson that uses them. Launch with `--activity-gallery` and the screens as JSON
-  /// (`[PlayableLibraryStep]`, the API's shape) in `ZOONK_ACTIVITY_GALLERY`; the fixtures stay
-  /// outside the app. Each screen plays like the player: answer, check (graded on the device the
-  /// way the player grades), start over, or explore the canvas. `ZOONK_ACTIVITY_GALLERY_OPEN`
-  /// opens one screen at launch; with `ZOONK_ACTIVITY_GALLERY_ANSWER` (a `LessonStepAnswer`) it
-  /// starts answered and checked, and with `ZOONK_ACTIVITY_GALLERY_EXPLORE` it starts explored.
+  /// Launch with `--activity-gallery` and the screens as `[PlayableLibraryStep]` JSON in
+  /// `ZOONK_ACTIVITY_GALLERY`. `ZOONK_ACTIVITY_GALLERY_OPEN` opens one screen at launch; with
+  /// `ZOONK_ACTIVITY_GALLERY_ANSWER` (a `LessonStepAnswer`) it starts answered and checked, and
+  /// with `ZOONK_ACTIVITY_GALLERY_EXPLORE` it starts explored.
   struct ActivityGalleryLaunch: ViewModifier {
     private static let environment = ProcessInfo.processInfo.environment
 

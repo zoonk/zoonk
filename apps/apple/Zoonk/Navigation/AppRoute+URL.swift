@@ -1,13 +1,11 @@
 import Foundation
 
-/// Where a link to one of main's pages lands in the app (universal links, shared plan links).
 enum AppLink: Equatable {
   case tab(AppTab)
   case route(AppRoute)
-  /// One of today's blocks, which opens as Today opens it (the session screen's `?block=`).
   case block(blockId: String)
 
-  /// The locales main prefixes its paths with (`localePrefix: "as-needed"`, English has none).
+  /// Mirrors `SUPPORTED_LOCALES` in `@zoonk/utils/locale`, which main prefixes its paths with.
   private static let localePrefixes: Set<String> = ["de", "en", "es", "fr", "pt"]
 
   init?(url: URL) {
@@ -37,10 +35,9 @@ enum AppLink: Equatable {
 
     let session = value("session")
 
-    // Pads the path so one tuple pattern matches every route shape.
-    let part = path + Array(repeating: "", count: max(0, 3 - path.count))
+    let paddedPath = path + Array(repeating: "", count: max(0, 3 - path.count))
 
-    switch (path.count, part[0], part[1], part[2]) {
+    switch (path.count, paddedPath[0], paddedPath[1], paddedPath[2]) {
     case (1, "today", _, _): return .tab(.today)
     case (1, "plan", _, _): return .tab(.plan)
     case (1, "buddy", _, _): return .tab(.buddy)
@@ -63,7 +60,6 @@ enum AppLink: Equatable {
     case (2, "pattern", let patternId, _): return .route(.pattern(patternId: patternId))
     case (2, "test-out", let chapterId, _): return .route(.testOut(chapterId: chapterId))
     case (1, "focus-test", _, _):
-      // The screen tests one goal; main's link names it unless it's the one in the switcher.
       return value("goal").map { .route(.focusTest(goalId: $0)) }
     case (2, "challenge", let planItemId, _):
       return .route(.challenge(planItemId: planItemId, sessionId: session))

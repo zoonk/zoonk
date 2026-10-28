@@ -1,8 +1,6 @@
 import SwiftUI
 
 extension PracticeHooks {
-  /// Where practice screens lead, opened by the shell's router, and the ceremony of a milestone a
-  /// run earned. The Ask button and a challenge's call join here as the buddy and voice lanes land.
   static func routed(by router: AppRouter) -> PracticeHooks {
     PracticeHooks(
       navigate: { destination in
@@ -40,8 +38,6 @@ extension PracticeHooks {
 }
 
 extension TutorPlaces {
-  /// Where the buddy sends the learner: an account or Plus when a limit asks for one, the app
-  /// places its answers offer, and the Buddy tab's links.
   static func routed(by router: AppRouter) -> TutorPlaces {
     TutorPlaces { place in
       switch place {
@@ -98,8 +94,6 @@ extension TutorPlaces {
 }
 
 extension LessonPlayerRoutes {
-  /// The player's sign-up refusals open the shell's sheet over the lesson, which stays where the
-  /// learner was; a guest's "Build my plan" opens the course or goal start with its subject.
   static func routed(by router: AppRouter) -> LessonPlayerRoutes {
     LessonPlayerRoutes(
       signIn: { router.present(.signIn) },

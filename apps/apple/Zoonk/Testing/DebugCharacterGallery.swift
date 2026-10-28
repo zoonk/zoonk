@@ -1,10 +1,8 @@
 #if DEBUG
   import SwiftUI
 
-  /// Opens every character drawing and act over the app when `ZOONK_DEBUG_CHARACTERS` is set, the
-  /// native side of main's playground page `/design/characters`, so the art can be compared with
-  /// main's on a simulator in every mode. `ZOONK_DEBUG_CHARACTERS=ceremony` opens a milestone's
-  /// ceremony instead, and `=moments` a result's missions: one done, then all of them.
+  /// `ZOONK_DEBUG_CHARACTERS=ceremony` opens a milestone's ceremony instead, and `=moments` a
+  /// result's missions.
   struct DebugCharacterGallery: ViewModifier {
     private let mode = ProcessInfo.processInfo.environment["ZOONK_DEBUG_CHARACTERS"]
 
@@ -154,8 +152,6 @@
     }
   }
 
-  /// A milestone's ceremony as a result would open it; Continue moves to the next milestone.
-  /// Signed out, it marks nothing as shown.
   private struct CeremonyPreview: View {
     @State private var index = 0
 
@@ -173,7 +169,6 @@
       .id(index)
     }
   }
-  /// A result's missions as a block's end shows them, one mission done and then the day's last.
   private struct MomentsPreview: View {
     @State private var allDone = false
 

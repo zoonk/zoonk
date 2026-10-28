@@ -1,14 +1,10 @@
 import SwiftUI
 
-/// The app's frame, main's learn frame natively: Today, Plan, the buddy and search as tabs, which
-/// become a sidebar with the Study places where there's room. Each tab keeps its own stack; tasks
-/// cover everything, and the account and subscription open as sheets.
 struct AppTabView: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
   @State private var tabBarPlacement: TabBarPlacement?
-  /// The guest signed in now, whose session may become an account without leaving their place.
   @State private var guestID: String?
 
   var body: some View {
@@ -69,9 +65,8 @@ struct AppTabView: View {
       AppSheetView(sheet: sheet)
     }
     .onChange(of: session.account?.user.id) { previous, current in
-      // A learner's pages and tasks end with their session (signed out, expired or another
-      // account), so nothing is left loading for someone who can't read it. Signing in keeps
-      // the visitor's place, and a guest's: their plan and progress move to the account.
+      // Signing in keeps a visitor's place, and a guest's: their plan and progress move to the
+      // account.
       if previous != nil, previous != current, previous != guestID {
         router.popToRoots()
       }
@@ -97,7 +92,6 @@ struct AppTabView: View {
     tabBarPlacement?.listsStudyPlaces == true
   }
 
-  /// Main's Study shortcuts: the notebook and statistics always, the rest where the goal has them.
   private var studyTabs: [AppTab] {
     let places = learner.summary.value?.places
 
@@ -124,13 +118,12 @@ private struct TabLabel: View {
   }
 }
 
-/// One tab's stack, kept by the router across tab switches, with the shell's bar on its root.
 private struct TabRoot: View {
   @Environment(\.tabBarPlacement) private var placement
   @Environment(AppRouter.self) private var router
 
   let tab: AppTab
-  /// Where the tabs show (a bar or the sidebar), which only a tab's content can read.
+  /// Only a tab's content can read where the tabs show.
   @Binding var tabBarPlacement: TabBarPlacement?
 
   var body: some View {

@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// The bar over every tab root, as main's top bar: the goal switcher leading, the learner's belt
-/// and level (opening Statistics) and the account trailing; a visitor gets "Log in" instead.
 struct ShellToolbar: ViewModifier {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
@@ -9,7 +7,6 @@ struct ShellToolbar: ViewModifier {
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(\.isToolbarVertical) private var isToolbarVertical
 
-  /// Search's root has its own field and no bar of the shell's.
   let isShown: Bool
 
   func body(content: Content) -> some View {
@@ -20,10 +17,8 @@ struct ShellToolbar: ViewModifier {
     }
   }
 
-  /// Beside a vertical toolbar (the iPhone Duo) the bar holds the tab's title too. Folded, it's too
-  /// narrow for the title and the goal's name both, and the system would drop the title, so the
-  /// switcher shows only its symbol: the title keeps its place, as main's page title does, and the
-  /// menu still names every goal.
+  /// iPhone Duo's folded vertical bar can't fit the tab's title and the goal's name, and the system
+  /// would drop the title; the menu still names every goal.
   private var isSwitcherCompact: Bool {
     isToolbarVertical && horizontalSizeClass == .compact
   }
@@ -68,8 +63,6 @@ struct ShellToolbar: ViewModifier {
   }
 }
 
-/// The learner's belt as a dot and their level, opening Statistics: the one number of theirs
-/// that only grows, in sight on every tab.
 private struct LevelButton: View {
   @Environment(AppRouter.self) private var router
 
@@ -97,9 +90,7 @@ private struct LevelButton: View {
   }
 }
 
-/// Main's goal switcher: the goal every tab shows, the other goals to switch to, open quick
-/// explanations, and the ways to a new goal or the catalog. Acting on one goal (pause, archive)
-/// lives on the Plan.
+/// Acting on one goal (pause, archive) lives on the Plan.
 private struct GoalSwitcher: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
@@ -108,7 +99,6 @@ private struct GoalSwitcher: View {
   @ScaledMetric(relativeTo: .body) private var maxTitleWidth: CGFloat = 140
 
   let summary: LearnerSummary
-  /// Shows only the goal's symbol, for a bar without room for its name.
   let isCompact: Bool
 
   var body: some View {
@@ -228,8 +218,6 @@ private struct GoalSwitcher: View {
     summary.followedGoals.first { $0.id == pendingGoalId } ?? summary.shownGoal
   }
 
-  /// Marks the goal the tabs show; choosing another shows it right away while the switch is
-  /// saved, then follows the summary.
   private func isShown(_ goal: LearnerGoal) -> Binding<Bool> {
     Binding(
       get: { shownGoal?.id == goal.id },
@@ -249,7 +237,6 @@ private struct GoalSwitcher: View {
   }
 }
 
-/// A goal's line in the switcher: its time a day and days left, or that it's paused or finished.
 private func goalLine(_ goal: LearnerGoal) -> String {
   switch goal.status {
   case .paused:
@@ -282,7 +269,6 @@ private func goalLine(_ goal: LearnerGoal) -> String {
   }
 }
 
-/// Days until a goal's date (YYYY-MM-DD, a calendar day), none once it passed.
 private func daysLeft(until targetDate: String?) -> Int? {
   guard let targetDate,
     let date = try? Date(targetDate, strategy: .iso8601.year().month().day())
@@ -304,7 +290,6 @@ private func daysLeft(until targetDate: String?) -> Int? {
 }
 
 extension EnvironmentValues {
-  /// Whether the system shows the toolbar as a vertical bar beside the content (iPhone Duo).
   var isToolbarVertical: Bool {
     if #available(iOS 27.1, *) {
       toolbarVerticalEdge != nil

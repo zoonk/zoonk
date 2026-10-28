@@ -1,10 +1,6 @@
 import Foundation
 
-/// Every place a feature opens another feature's screen. Push routes stack on the current tab;
-/// task routes are main's full-screen pages (no tabs around them) and cover everything.
-/// `ROUTES.md` in the lane notes is the contract each feature's `<Thing>Screen` follows.
 enum AppRoute: Hashable, Identifiable {
-  // Pushes
   case subject(subjectKey: String)
   case chapter(chapterId: String)
   case languageUnit(chapterId: String)
@@ -16,10 +12,8 @@ enum AppRoute: Hashable, Identifiable {
   case earlierQuestions
   case statistics
   case catalog
-  /// A Library course's page, as main's "See the full course" opens it.
   case course(courseId: String, title: String)
 
-  // Full-screen tasks
   case session
   case logbook
   case lesson(lessonId: String, sessionId: String? = nil)
@@ -36,7 +30,7 @@ enum AppRoute: Hashable, Identifiable {
   case mindMap(chapterId: String)
   case pronunciation(goalId: String? = nil)
   case conversation(conversationId: String)
-  /// `goal` fills the box, as main's `/start?goal=`; reading the words waits for the learner's tap.
+  /// `goal` only fills the box: reading the words waits for the learner's tap.
   case startGoal(goal: String? = nil)
   case goalSetup(goalId: String)
   case courseStart(courseId: String, chapterId: String? = nil)
@@ -48,7 +42,6 @@ enum AppRoute: Hashable, Identifiable {
     case task
   }
 
-  /// What a screen needs before it can show anything of its own; the shell gates the rest.
   enum Requirement {
     case none
     case account
@@ -67,9 +60,8 @@ enum AppRoute: Hashable, Identifiable {
     }
   }
 
-  /// Main's gates for pushed pages: goal pages show "Start with a goal" without one, and a
-  /// visitor is asked to log in (Statistics too, as main's stats pages ask). The catalog has its
-  /// own signed-out view, and task screens bring their own gates (main's `AuthGateScreen`).
+  /// The catalog has its own signed-out view, and task screens bring their own gates (main's
+  /// `AuthGateScreen`).
   var requirement: Requirement {
     switch self {
     case .subject, .chapter, .languageUnit, .mindMaps, .exam, .mockChooser, .mistakes, .speaking:
@@ -81,8 +73,6 @@ enum AppRoute: Hashable, Identifiable {
     }
   }
 
-  /// The Study place a push stands for, so opening it where the sidebar shows that place
-  /// doesn't stack a second copy on it.
   var studyTab: AppTab? {
     AppTab.study.first { $0.studyRoute == self }
   }

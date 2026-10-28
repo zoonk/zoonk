@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// Stands in for a screen its feature lane hasn't built yet, so every route opens something.
-/// Its words are verbatim on purpose: no placeholder ships, and none should reach the catalogs.
+/// Its words aren't localized on purpose: no placeholder ships, and none should reach the catalogs.
 struct RoutePlaceholder: View {
   @Environment(\.dismiss) private var dismiss
 

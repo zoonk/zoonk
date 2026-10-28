@@ -1,9 +1,6 @@
 #if DEBUG
   import Foundation
 
-  /// Mind maps from `ZOONK_UI_TEST_MIND_MAPS` (a goal's maps as `GET /v1/goals/{goalId}/mind-maps`
-  /// returns them, with each map's outline): the gallery lists them for any goal, a chapter's map
-  /// opens from them, and a tap to make one answers at once without generating anything.
   struct UITestMindMapsAPI: MindMapsAPIClient {
     let maps: GoalMindMaps
 

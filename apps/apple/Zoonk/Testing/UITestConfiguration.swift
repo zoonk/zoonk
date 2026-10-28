@@ -5,8 +5,6 @@
   struct UITestConfiguration {
     let dependencies: AppDependencies
     let initiallyPresentsAccount: Bool
-    /// Why a fixture the UI test passed couldn't be read. The app shows it instead of crashing, so
-    /// the test that launched it fails once, with the reason.
     var fixtureFailure: String?
 
     static var current: UITestConfiguration? {
@@ -14,8 +12,7 @@
       let environment = ProcessInfo.processInfo.environment
 
       guard arguments.contains("--ui-testing") else {
-        // A Debug run against the live API can draw mind maps from a fixture, so the maps can be
-        // checked without paying to generate one.
+        // Lets a Debug run against the live API check mind maps without paying to generate one.
         return UITestMindMapsAPI(environment: environment).map { mindMaps in
           UITestConfiguration(
             dependencies: .live(mindMapsAPI: mindMaps), initiallyPresentsAccount: false)
@@ -41,11 +38,8 @@
       let fixtures = UITestFixtures(environment: environment)
       let catalogSnapshot = try fixtures.decode(
         UITestCourseCatalogSnapshot.self, "ZOONK_UI_TEST_CATALOG")
-      // The summary as `GET /v1/me/summary` returns it, so the fixture follows the API's contract.
       let summary = try fixtures.decode(
         Components.Schemas.LearnerSummary.self, "ZOONK_UI_TEST_SUMMARY")
-      // The buddy's day as `GET /v1/me/buddy` returns it. With it, the buddy and its
-      // conversations answer from fixtures instead of the network.
       let buddyStatus = try fixtures.decode(BuddyStatus.self, "ZOONK_UI_TEST_BUDDY")
 
       return UITestConfiguration(
@@ -81,8 +75,6 @@
         snapshot: snapshot)
     }
 
-    /// Today and its session's summary as the API returns them, for days no test learner is on (a
-    /// rest day, a milestone's ceremony); without a Today, the app reads the API.
     private static func studyAPI(from fixtures: UITestFixtures) throws -> (any StudyAPIClient)? {
       guard let today = try fixtures.decode(TodayView.self, "ZOONK_UI_TEST_TODAY") else {
         return nil
@@ -105,7 +97,6 @@
     }
   }
 
-  /// The JSON fixtures a UI test passes in the launch environment.
   private struct UITestFixtures {
     struct Failure: Error, CustomStringConvertible {
       let key: String
@@ -116,7 +107,6 @@
 
     let environment: [String: String]
 
-    /// The fixture under `key`, or nil when the test didn't pass one.
     func decode<Value: Decodable>(_ type: Value.Type, _ key: String) throws -> Value? {
       guard let json = environment[key] else {
         return nil
@@ -174,7 +164,6 @@
       try readableCourse(id: id)
     }
 
-    /// Like the API, a course that doesn't place the chapter doesn't find it.
     func getChapter(_ key: CatalogChapterKey) async throws -> CourseChapter {
       _ = try readableCourse(id: key.courseID)
       return try placedChapter(key)
@@ -305,7 +294,6 @@
     let score: ScoreProgress?
   }
 
-  /// Keeps UI tests off the network: the frame gets a summary that doesn't change during a run.
   private struct UITestLearnerSummaryAPI: LearnerSummaryAPIClient {
     let summary: LearnerSummary?
 
@@ -329,7 +317,6 @@
     func switchGoal(token: String, goalID: String) async throws {}
   }
 
-  /// The buddy's day from the fixture; earlier questions are empty and nothing is saved.
   private struct UITestBuddyAPI: BuddyAPIClient {
     let status: BuddyStatus
 
@@ -346,10 +333,7 @@
     func answer(insightId: String, accepted: Bool, token: String) async throws {}
   }
 
-  /// Every conversation starts empty. UI tests never ask, so nothing is answered.
   private struct UITestTutorAPI: TutorAPIClient {
-    /// How many answered questions each conversation holds (`ZOONK_UI_TEST_TUTOR_TURNS`), to
-    /// measure a long conversation; none by default.
     let turns: Int
 
     func thread(_ scope: TutorScope, cursor: String?, token: String) async throws
@@ -396,8 +380,6 @@
     }
   }
 
-  /// A day that doesn't change during a run: Today and its session read as given, a ceremony is
-  /// marked shown, and every other write fails as if offline.
   private struct UITestStudyAPI: StudyAPIClient {
     let summary: SessionSummary?
     let today: TodayView

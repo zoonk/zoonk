@@ -1,11 +1,9 @@
 import SwiftUI
 
-/// Who the shell is showing a screen to, from the session and the learner summary.
 enum LearnerAccess {
-  /// Still restoring the session from the Keychain.
   case restoring
   case visitor
-  /// Signed in, summary not read yet: screens load as for a learner with a goal.
+  /// Summary not read yet: screens load as for a learner with a goal.
   case signedIn
   case noGoal
   case learner
@@ -29,8 +27,7 @@ enum LearnerAccess {
   }
 }
 
-/// Main's gates where a screen's content would be: a visitor logs in or starts free, and a learner
-/// without a goal starts one on Today. The screen inside can assume what `requirement` asks for.
+/// The screen inside can assume what `requirement` asks for.
 struct ShellGate<Content: View>: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner

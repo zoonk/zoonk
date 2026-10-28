@@ -1,7 +1,6 @@
 import SwiftUI
 
 extension AppRoute {
-  /// The screen each route shows, behind the shell's gate for what the route requires.
   @MainActor
   var destination: some View {
     ShellGate(requirement: requirement, title: gateTitle) {
@@ -9,7 +8,6 @@ extension AppRoute {
     }
   }
 
-  /// The title over a gate, which stands where the screen's own title would be.
   private var gateTitle: LocalizedStringResource {
     switch self {
     case .mockChooser:
@@ -100,7 +98,6 @@ extension AppRoute {
 }
 
 extension AppTab {
-  /// The tab's root screen; a Study place's is the same screen its push shows.
   @MainActor
   @ViewBuilder
   var root: some View {
@@ -123,7 +120,6 @@ extension AppTab {
   }
 }
 
-/// A full-screen task, which can cover itself with the next one (a session opening a lesson).
 struct PresentedTask: View {
   @Environment(AppRouter.self) private var router
 
@@ -131,8 +127,6 @@ struct PresentedTask: View {
   let depth: Int
 
   var body: some View {
-    // A task opened beneath another stays clear and empty until it's uncovered, so the screen
-    // under both shows while the task above comes in.
     let isHidden = router.isHidden(taskAt: depth)
 
     route.destination
