@@ -41,6 +41,19 @@ struct ConversationLiveView: View {
       .frame(maxWidth: .infinity, alignment: .leading)
       .scenePadding()
     }
+    // Starts at the top, then follows what's said.
+    .defaultScrollAnchor(.top, for: .alignment)
+    .defaultScrollAnchor(.bottom, for: .sizeChanges)
+    .scrollDismissesKeyboard(.interactively)
+    // The controls belong to the call's column, so they stay beside the aside rather than under
+    // it, and on the leading side of iPhone Duo's fold.
+    .safeAreaBar(edge: .bottom) {
+      VStack(spacing: 12) {
+        typedReply
+        controls
+      }
+      .scenePadding()
+    }
     // On a wide screen the goals, the tip and Help's phrases sit beside the call, as main's aside.
     .inspector(isPresented: .constant(showsAside)) {
       ScrollView {
@@ -60,21 +73,10 @@ struct ConversationLiveView: View {
       }
       .inspectorColumnWidth(min: 260, ideal: 320)
     }
-    // Starts at the top, then follows what's said.
-    .defaultScrollAnchor(.top, for: .alignment)
-    .defaultScrollAnchor(.bottom, for: .sizeChanges)
-    .scrollDismissesKeyboard(.interactively)
     .toolbar {
       ToolbarItem(placement: .principal) {
         CallClock(call: call)
       }
-    }
-    .safeAreaBar(edge: .bottom) {
-      VStack(spacing: 12) {
-        typedReply
-        controls
-      }
-      .scenePadding()
     }
   }
 
