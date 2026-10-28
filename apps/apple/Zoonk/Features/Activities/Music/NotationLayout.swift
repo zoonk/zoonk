@@ -82,20 +82,20 @@ private struct NotationLayout {
       previousStretch = drawLine(
         line, isFirst: number == 0, isLast: isLast, previous: previousStretch)
 
-      var bounds = CGRect.null
+      var extent = CGRect.null
 
       for item in items[start...] {
-        bounds = bounds.union(bounds(of: item.mark))
+        extent = extent.union(bounds(of: item.mark))
       }
 
-      let shift = top - bounds.minY
+      let shift = top - extent.minY
       let move = CGAffineTransform(translationX: 0, y: shift)
 
       for index in start..<items.count {
         items[index] = Self.moved(items[index], by: move, dy: shift)
       }
 
-      top += bounds.height + space * 2.5
+      top += extent.height + space * 2.5
     }
 
     return NotationDrawing(items: items, height: max(top - space * 2.5, 0))
