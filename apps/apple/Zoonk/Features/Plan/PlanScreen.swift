@@ -30,11 +30,21 @@ private struct GoalPlanView: View {
     let syllabus = store.syllabus(goalId: goal.id)
     let standing = store.standing(goalId: goal.id)
 
-    content(plan: plan)
-      .navigationTitle(Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"))
-      .navigationSubtitle(subtitle(plan.value?.plan) ?? Text(verbatim: ""))
-      .toolbarTitleDisplayMode(.inlineLarge)
-      .loads(plan, syllabus, standing)
+    Group {
+      // A language goal stands on its level and may start with its alphabet.
+      if goal.kind == .language {
+        content(plan: plan)
+          .loads(
+            plan, syllabus, store.languageStanding(goalId: goal.id),
+            store.languageUnits(goalId: goal.id))
+      } else {
+        content(plan: plan)
+          .loads(plan, syllabus, standing)
+      }
+    }
+    .navigationTitle(Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"))
+    .navigationSubtitle(subtitle(plan.value?.plan) ?? Text(verbatim: ""))
+    .toolbarTitleDisplayMode(.inlineLarge)
   }
 
   @ViewBuilder
@@ -43,7 +53,9 @@ private struct GoalPlanView: View {
     case .loaded(let read) where read.plan.ready:
       PlanContent(goal: goal, plan: read.plan)
     case .loaded, .empty, .failed(.notFound):
-      PlanBuildingView(goal: goal)
+      PlanBuildingView(goal: goal) {
+        await plan.refresh()
+      }
     case .failed:
       ContentUnavailableView {
         Label {
@@ -85,46 +97,13 @@ private struct GoalPlanView: View {
 
     if plan.schedule.targetDateEstimated {
       return Text(
-        "~^[\(days) day](inflect: true) left", tableName: "Plan",
+        "~\(days) days left", tableName: "Plan",
         comment: "Plan subtitle: about how many days are left until the goal's estimated date")
     }
 
     return Text(
-      "^[\(days) day](inflect: true) left", tableName: "Plan",
+      "\(days) days left", tableName: "Plan",
       comment: "Plan subtitle: how many days are left until the goal's date")
-  }
-}
-
-/// A goal whose plan isn't ready: its questions still to answer, or its plan being built. Setup
-/// opens where the learner left it.
-private struct PlanBuildingView: View {
-  @Environment(AppRouter.self) private var router
-
-  let goal: LearnerGoal
-
-  var body: some View {
-    ContentUnavailableView {
-      Label {
-        Text(
-          "Building your plan", tableName: "Plan",
-          comment: "Title shown on the Plan while the goal's plan is being made")
-      } icon: {
-        Image(systemName: "map")
-      }
-    } description: {
-      Text(
-        "It usually takes a minute or two. Your plan opens here as soon as it's ready.",
-        tableName: "Plan", comment: "Explains that the plan appears on its own once it's built")
-    } actions: {
-      Button {
-        router.open(.goalSetup(goalId: goal.id))
-      } label: {
-        Text(
-          "Continue setup", tableName: "Plan",
-          comment: "Opens the goal's setup where the learner left it")
-      }
-      .buttonStyle(.bordered)
-    }
   }
 }
 
@@ -175,7 +154,7 @@ private struct PlanContent: View {
       }
     }
     .sheet(item: $adjusting) { section in
-      AdjustPlanSheet(goal: goal, plan: plan, section: section)
+      AdjustPlanSheet(goal: goal, plan: plan, section: section, store: store)
     }
   }
 

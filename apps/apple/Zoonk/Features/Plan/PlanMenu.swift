@@ -6,7 +6,9 @@ import SwiftUI
 /// whose plan it changes.
 struct PlanMenu: View {
   @Environment(AppRouter.self) private var router
+  @Environment(SessionStore.self) private var session
   @Environment(PlanStore.self) private var store
+  @State private var isReporting = false
   @State private var confirming: Confirmation?
   @State private var failure: GoalStatusOutcome?
   @State private var isSaving = false
@@ -54,6 +56,18 @@ struct PlanMenu: View {
         }
       }
 
+      Button {
+        isReporting = true
+      } label: {
+        Label {
+          Text(
+            "Report a problem", tableName: "Plan", comment: "Opens the feedback form about the plan"
+          )
+        } icon: {
+          Image(systemName: "flag")
+        }
+      }
+
       Section {
         statusItems
       }
@@ -67,6 +81,13 @@ struct PlanMenu: View {
       .frame(maxHeight: .infinity)
     }
     .disabled(isSaving)
+    .sheet(isPresented: $isReporting) {
+      FeedbackSheet(
+        api: FeedbackAPI.live(),
+        context: FeedbackContext(contentID: context.plan.planId, contentKind: .plan),
+        defaultEmail: session.account?.user.email,
+        token: session.authenticatedSession?.bearerToken)
+    }
     .confirmationDialog(
       confirmationTitle, isPresented: isConfirming, titleVisibility: .visible,
       presenting: confirming

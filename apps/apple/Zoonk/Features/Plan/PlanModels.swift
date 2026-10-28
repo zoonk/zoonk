@@ -10,12 +10,16 @@ struct GoalPlan: Decodable, Equatable, Sendable {
     let mocksRequirePlus: Bool
   }
 
-  struct Area: Decodable, Equatable, Sendable {
+  struct Area: Decodable, Equatable, Identifiable, Sendable {
     let focused: Bool
     let name: String
+    /// A part of another area, listed under it.
+    let partOf: String?
     let pastBasics: Bool
     let reduced: Bool
     let skipped: Bool
+
+    var id: String { name }
   }
 
   struct Course: Decodable, Equatable, Sendable {
@@ -32,6 +36,94 @@ struct GoalPlan: Decodable, Equatable, Sendable {
   struct Estimate: Decodable, Equatable, Sendable {
     /// When the plan ends at this pace; nil while it can't tell.
     let endDate: String?
+    /// When studying everything would end, for an exam plan that stops at the exam.
+    let fullCourseEndDate: String?
+  }
+
+  /// A part of an exam where the learner takes one option of several (ENEM's foreign language).
+  struct ExamChoice: Decodable, Hashable, Identifiable, Sendable {
+    struct Option: Decodable, Equatable, Hashable, Sendable {
+      let name: String
+      let shortName: String?
+    }
+
+    let group: String
+    let options: [Option]
+    /// The option picked; nil until the learner picks, and the plan leaves the group out.
+    let subject: String?
+
+    var id: String { group }
+  }
+
+  /// What the learner's time covers by the goal's date.
+  struct Feasibility: Decodable, Equatable, Sendable {
+    let coreFits: Bool
+    let coveredShare: Double
+    let deadline: String?
+    let deepensMostAsked: Bool
+    let fits: Bool
+    /// `exam` or `goal`.
+    let measure: String
+    let timeCovers: Bool
+  }
+
+  /// The lessons the learner's own time fits that the plan doesn't hold, ready to apply.
+  struct FitOffer: Decodable, Equatable, Sendable {
+    let canApply: Bool
+    let fits: Bool
+    let operations: [JSONValue]
+  }
+
+  /// Prerequisites to study before the topics that build on them, each with how deep.
+  struct Bases: Decodable, Equatable, Sendable {
+    struct Item: Decodable, Equatable, Identifiable, Sendable {
+      struct Minutes: Decodable, Equatable, Sendable {
+        let deep: Int
+        let essential: Int
+        let quick: Int
+      }
+
+      let area: String?
+      let choice: BaseChoice
+      let choices: [BaseChoice]
+      let minutes: Minutes
+      let name: String
+      let skillId: String
+      let studied: Bool
+
+      var id: String { skillId }
+    }
+
+    let items: [Item]
+  }
+
+  struct Steering: Decodable, Equatable, Sendable {
+    /// `easier`, `standard` or `harder`.
+    let difficultyBias: String
+    let lessonsStudied: Int
+    /// `moreExplanation`, `balanced` or `morePractice`.
+    let practiceBias: String
+    /// A language plan's activities left out: `vocabulary`, `listening`, `writing`, `speaking`.
+    let skippedActivities: [String]
+  }
+
+  /// A tool the plan's chapters use, with the learner's answer.
+  struct Tool: Decodable, Equatable, Identifiable, Sendable {
+    /// `have`, `setup` or `none`; nil until the learner answers.
+    let choice: String?
+    let essential: Bool
+    let later: Bool
+    let name: String
+    let system: String?
+
+    var id: String { name }
+  }
+
+  /// When an exam's written tests are practiced.
+  struct WrittenPractice: Decodable, Equatable, Sendable {
+    /// `weekly`, `biweekly` or `finalWeeks`.
+    let cadence: String
+    let parts: [String]
   }
 
   struct Schedule: Decodable, Equatable, Sendable {
@@ -76,18 +168,25 @@ struct GoalPlan: Decodable, Equatable, Sendable {
 
   let access: Access
   let areas: [Area]
+  let bases: Bases?
   let course: Course?
   /// Set once nothing of the plan is left.
   let end: End?
   let estimate: Estimate
+  let examChoices: [ExamChoice]
+  let feasibility: Feasibility?
+  let fitOffer: FitOffer?
   let goalId: String
   let phases: [PlanPhase]
   let planId: String
   let ready: Bool
   let schedule: Schedule
   let status: Status?
+  let steering: Steering
+  let tools: [Tool]
   let week: Week
   let weekTime: WeekTime
+  let writtenPractice: WrittenPractice?
 
   /// The learner's today as the plan wrote its days.
   var today: String {
@@ -232,6 +331,77 @@ struct PlanWeekDay: Decodable, Equatable, Identifiable, Sendable {
   }
 }
 
+/// How deep a prerequisite is studied.
+enum BaseChoice: String, Codable, Sendable {
+  case deep
+  case essential
+  case quick
+  case skip
+}
+
+/// What to study once the plan is over: the next level of its course and the courses it drew from.
+struct StudyNext: Decodable, Equatable, Sendable {
+  struct NextLevel: Decodable, Equatable, Sendable {
+    let level: String
+    let title: String
+  }
+
+  struct Course: Decodable, Equatable, Identifiable, Sendable {
+    let courseId: String
+    let title: String
+
+    var id: String { courseId }
+  }
+
+  let nextLevel: NextLevel?
+  let related: [Course]
+}
+
+/// A language goal's level across skills (`GET /goals/{goalId}/language-progress`).
+struct LanguageStanding: Decodable, Equatable, Sendable {
+  struct Level: Decodable, Equatable, Sendable {
+    let label: String
+    let score: Double
+    /// `reading`, `listening`, `speaking` or `writing`.
+    let skill: String
+  }
+
+  struct Target: Decodable, Equatable, Sendable {
+    let label: String
+  }
+
+  let level: String?
+  let levels: [Level]
+  let target: Target?
+}
+
+/// A language goal's units and its alphabet lesson (`GET /goals/{goalId}/language-units`).
+struct LanguageUnitsOverview: Decodable, Equatable, Sendable {
+  /// A script that isn't Latin: its alphabet lesson, first in the sessions while `pending`.
+  struct Alphabet: Decodable, Equatable, Sendable {
+    let lessonId: String
+    let minutes: Int
+    let pending: Bool
+    let title: String
+  }
+
+  let alphabet: Alphabet?
+}
+
+/// The lessons of a topic past the weeks the plan writes ahead, outlined when the learner asks.
+struct SkillOutline: Decodable, Equatable, Sendable {
+  struct Chapter: Decodable, Equatable, Identifiable, Sendable {
+    let chapterId: String
+    let title: String
+
+    var id: String { chapterId }
+  }
+
+  /// `available` (a tap outlines it), `writing` or `ready`.
+  let status: String
+  let chapters: [Chapter]
+}
+
 /// A plan read with when it was read, so returning to the Plan asks the cheap
 /// `getPlanChangedSince` before reading the expensive plan again.
 struct PlanRead: Equatable, Sendable {
@@ -282,17 +452,41 @@ struct SyllabusSubject: Decodable, Equatable, Identifiable, Sendable {
     var id: String { chapterId ?? skillId ?? "\(position)" }
   }
 
+  /// An exam subject's first answers to unseen questions, once it has enough to count.
+  struct Mastery: Decodable, Equatable, Sendable {
+    let answered: Int
+    let correct: Int
+  }
+
+  /// A topic as the notice lists it, with where the learner stands on it.
+  struct Topic: Decodable, Equatable, Identifiable, Sendable {
+    let chapters: [Chapter]
+    /// `high` reads "Appears a lot".
+    let frequency: String?
+    let heading: String?
+    let name: String
+    let notPlannedReason: String?
+    /// `studied`, `known`, `inProgress`, `toStudy` or `notPlanned`; nil when the plan doesn't map
+    /// topics.
+    let status: String?
+
+    var id: String { (heading ?? "") + "/" + name }
+  }
+
   let chapters: [Chapter]
   let key: String
   let lessonsDone: Int
   let lessonsKnown: Int
   let lessonsTotal: Int
+  let mastery: Mastery?
   let name: String
   let nextDate: String?
   let notPlannedReason: String?
   let preparation: Double?
   let questions: Int?
   let source: String
+  let topics: [Topic]
+  let topicsStudied: Int?
 
   var id: String { key }
 
@@ -368,6 +562,12 @@ enum PlanDate {
     }
 
     return date.formatted(style)
+  }
+
+  /// A day picked in a GMT calendar as "2027-11-14".
+  static func isoDate(_ date: Date) -> String {
+    let parts = calendar.dateComponents([.year, .month, .day], from: date)
+    return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
   }
 
   /// "Mon": a day's short weekday.

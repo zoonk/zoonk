@@ -141,7 +141,7 @@ private struct RoadmapCompact: View {
           .foregroundStyle(.secondary)
         } else {
           Text(
-            "\(phases.filter { $0.state == .done }.count) of ^[\(phases.count) phase](inflect: true) done",
+            "\(phases.filter { $0.state == .done }.count) of \(phases.count) phases done",
             tableName: "Plan", comment: "Phases done of the plan's phases, once none is current"
           )
           .foregroundStyle(.secondary)
@@ -231,7 +231,13 @@ struct PlanNumbersSection: View {
       NavigationStack {
         switch sheet {
         case .standing:
-          PlanStandingSheet(context: context, syllabus: syllabus)
+          if context.goal.kind == .language,
+            let language = store.languageStanding(goalId: context.goal.id).value
+          {
+            LanguageLevelSheet(standing: language)
+          } else {
+            PlanStandingSheet(context: context, syllabus: syllabus)
+          }
         case .pace:
           PlanPaceSheet(context: context) {
             then = .adjust
@@ -309,6 +315,17 @@ struct PlanNumbersSection: View {
         detailIsGain: points > 0)
     }
 
+    if context.goal.kind == .language {
+      guard let language = store.languageStanding(goalId: context.goal.id).value else {
+        return nil
+      }
+
+      return PlanNumber(
+        label: String(
+          localized: "Level", table: "Plan", comment: "Label of a language goal's level"),
+        value: language.levelText, detail: language.leadingSkill)
+    }
+
     guard context.goal.kind == .learn, let lessons = syllabus?.lessons else {
       return nil
     }
@@ -320,10 +337,8 @@ struct PlanNumbersSection: View {
         localized: "Progress", table: "Plan", comment: "Label of the goal's progress number"),
       value: share.formatted(.percent.precision(.fractionLength(0...2))),
       detail: String(
-        AttributedString(
-          localized: "\(lessons.done + lessons.known) of ^[\(lessons.total) lesson](inflect: true)",
-          table: "Plan", comment: "Lessons studied or known of the plan's lessons"
-        ).characters))
+        localized: "\(lessons.done + lessons.known) of \(lessons.total) lessons",
+        table: "Plan", comment: "Lessons studied or known of the plan's lessons"))
   }
 
   /// The pace in a word, with what it means. A paused goal has no pace to keep; a plan without a
@@ -346,10 +361,8 @@ struct PlanNumbersSection: View {
         value: String(
           localized: "Past date", table: "Plan", comment: "Pace of a plan whose date came"),
         detail: String(
-          AttributedString(
-            localized: "^[\(status.lessons ?? 0) lesson](inflect: true) left", table: "Plan",
-            comment: "Lessons left in a plan whose date came"
-          ).characters))
+          localized: "\(status.lessons ?? 0) lessons left", table: "Plan",
+          comment: "Lessons left in a plan whose date came"))
     case .challengesLeft:
       return PlanNumber(
         label: label,
@@ -411,30 +424,22 @@ func planStatusText(_ status: GoalPlan.Status) -> String {
   switch status.kind {
   case .ahead:
     String(
-      AttributedString(
-        localized: "^[\(status.days ?? 0) day](inflect: true) ahead", table: "Plan",
-        comment: "How many days ahead of the plan the learner is"
-      ).characters)
+      localized: "\(status.days ?? 0) days ahead", table: "Plan",
+      comment: "How many days ahead of the plan the learner is")
   case .behind:
     if let lessons = status.lessons, lessons > 0 {
       String(
-        AttributedString(
-          localized: "^[\(lessons) lesson](inflect: true) to catch up", table: "Plan",
-          comment: "Lessons from earlier days still to do"
-        ).characters)
+        localized: "\(lessons) lessons to catch up", table: "Plan",
+        comment: "Lessons from earlier days still to do")
     } else {
       String(
-        AttributedString(
-          localized: "^[\(status.days ?? 0) day](inflect: true) behind", table: "Plan",
-          comment: "How many days behind the plan the learner is"
-        ).characters)
+        localized: "\(status.days ?? 0) days behind", table: "Plan",
+        comment: "How many days behind the plan the learner is")
     }
   case .challengesLeft:
     String(
-      AttributedString(
-        localized: "^[\(status.challenges ?? 0) challenge](inflect: true) left", table: "Plan",
-        comment: "Challenges left once every lesson is done"
-      ).characters)
+      localized: "\(status.challenges ?? 0) challenges left", table: "Plan",
+      comment: "Challenges left once every lesson is done")
   case .finished:
     String(localized: "Plan finished", table: "Plan", comment: "Pace of a finished plan, in words")
   case .needsAdjusting:
@@ -457,23 +462,13 @@ func planPaceFix(_ plan: GoalPlan, isExam: Bool) -> (text: String, adjust: Bool)
   case .pastDate:
     let lessons = status.lessons ?? 0
     let text =
-      switch (isExam, lessons == 1) {
-      case (true, true):
-        String(
-          localized: "1 lesson was left before your exam.", table: "Plan",
-          comment: "One lesson left when an exam's date came")
-      case (true, false):
-        String(
-          localized: "\(lessons) lessons were left before your exam.", table: "Plan",
-          comment: "Lessons left when an exam's date came")
-      case (false, _):
-        String(
-          AttributedString(
-            localized: "Your date came with ^[\(lessons) lesson](inflect: true) left.",
-            table: "Plan",
-            comment: "Lessons left when the goal's date came"
-          ).characters)
-      }
+      isExam
+      ? String(
+        localized: "\(lessons) lessons were left before your exam.", table: "Plan",
+        comment: "Lessons left when an exam's date came")
+      : String(
+        localized: "Your date came with \(lessons) lessons left.", table: "Plan",
+        comment: "Lessons left when the goal's date came")
     return (text, false)
   case .challengesLeft:
     return (
@@ -491,160 +486,20 @@ func planPaceFix(_ plan: GoalPlan, isExam: Bool) -> (text: String, adjust: Bool)
     )
   case .behind:
     if let lessons = status.lessons, lessons > 0 {
-      let text =
-        lessons == 1
-        ? String(
-          localized:
-            "1 lesson from earlier days comes first: once you've done it, you're keeping pace again.",
-          table: "Plan", comment: "How a learner one lesson behind catches up")
-        : String(
-          localized:
-            "\(lessons) lessons from earlier days come first: once you've done them, you're keeping pace again.",
-          table: "Plan", comment: "How a learner behind by several lessons catches up")
+      let text = String(
+        localized:
+          "\(lessons) lessons from earlier days come first: once you've done them, you're keeping pace again.",
+        table: "Plan", comment: "How a learner behind by some lessons catches up")
       return (text, false)
     }
 
-    let text = AttributedString(
+    let text = String(
       localized:
-        "\(status.extraMinutesPerDay ?? 0) more minutes a day for ^[\(status.days ?? 0) day](inflect: true) and you're keeping pace again.",
+        "\(status.extraMinutesPerDay ?? 0) more minutes a day for \(status.days ?? 0) days and you're keeping pace again.",
       table: "Plan", comment: "How much more time a day catches up")
-    return (String(text.characters), false)
+    return (text, false)
   default:
     return nil
-  }
-}
-
-// MARK: - Slot
-
-/// The one thing the Plan wants the learner to know or decide, the most pressing first: the goal
-/// is paused, its date came with lessons left, the plan no longer fits, the learner is behind, or a
-/// free exam plan's first week is over.
-struct PlanSuggestionSection: View {
-  @Environment(AppRouter.self) private var router
-  @Environment(PlanStore.self) private var store
-  @State private var isResuming = false
-
-  let context: PlanContext
-
-  var body: some View {
-    let plan = context.plan
-
-    if context.isPaused {
-      let preview = store.resumeChangesPlan(goalId: context.goal.id)
-
-      suggestion(
-        title: Text(
-          "\(context.goal.title) is paused", tableName: "Plan",
-          comment: "Title of the Plan's notice for a paused goal"),
-        systemImage: "pause",
-        description: preview.value == true
-          ? Text(
-            "Your plan picks up from today, starting with the lessons planned for the days you paused.",
-            tableName: "Plan", comment: "Explains how resuming the paused goal changes its plan")
-          : Text(
-            "Nothing is planned until you resume it.", tableName: "Plan",
-            comment: "Explains a paused goal")
-      ) {
-        Button {
-          resume()
-        } label: {
-          Text("Resume", tableName: "Plan", comment: "Resumes the paused goal")
-        }
-        .disabled(isResuming)
-      }
-      .loads(preview, refreshable: false)
-    } else if plan.status?.kind == .pastDate,
-      let fix = planPaceFix(plan, isExam: context.goal.kind == .exam)
-    {
-      suggestion(
-        title: Text(
-          "Your date came", tableName: "Plan",
-          comment: "Title of the Plan's notice when the goal's date came"),
-        systemImage: "calendar.badge.exclamationmark", description: Text(fix.text)
-      ) {
-        adjustButton(.date)
-      }
-    } else if plan.status?.kind == .needsAdjusting {
-      suggestion(
-        title: Text(
-          "Your plan no longer fits", tableName: "Plan",
-          comment: "Title of the Plan's notice when the plan no longer fits"),
-        systemImage: "calendar.badge.clock", description: nil
-      ) {
-        adjustButton(.top)
-      }
-    } else if plan.status?.kind == .behind,
-      let fix = planPaceFix(plan, isExam: context.goal.kind == .exam)
-    {
-      suggestion(
-        title: Text(
-          "A little to catch up", tableName: "Plan",
-          comment: "Title of the Plan's notice when behind"),
-        systemImage: "calendar.badge.clock", description: Text(fix.text)
-      ) {
-        Button {
-          router.select(.today)
-        } label: {
-          Text(
-            "Go to Today", tableName: "Plan", comment: "Opens Today, which puts what's behind first"
-          )
-        }
-      }
-    } else if plan.access.freeWeekOver {
-      suggestion(
-        title: Text(
-          "Your free week of exam prep is over", tableName: "Plan",
-          comment: "Title of the Plan's notice when a free exam plan's first week ended"),
-        systemImage: "sparkles",
-        description: Text(
-          "Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.",
-          tableName: "Plan", comment: "What stays free and what Plus opens after the free week")
-      ) {
-        SeePlusButton()
-      }
-    }
-  }
-
-  private func suggestion(
-    title: Text, systemImage: String, description: Text?,
-    @ViewBuilder action: () -> some View
-  ) -> some View {
-    Section {
-      VStack(alignment: .leading, spacing: 8) {
-        Label {
-          title.font(.headline)
-        } icon: {
-          Image(systemName: systemImage)
-            .foregroundStyle(.warning)
-        }
-
-        if let description {
-          description
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
-        }
-
-        action()
-          .buttonStyle(.bordered)
-      }
-      .padding(.vertical, 4)
-    }
-  }
-
-  private func adjustButton(_ section: AdjustPlanSheet.Section) -> some View {
-    Button {
-      context.adjust(section)
-    } label: {
-      Text("Adjust plan", tableName: "Plan", comment: "Opens the plan's settings to change them")
-    }
-  }
-
-  private func resume() {
-    Task {
-      isResuming = true
-      _ = await store.setStatus(.active, goalId: context.goal.id)
-      isResuming = false
-    }
   }
 }
 

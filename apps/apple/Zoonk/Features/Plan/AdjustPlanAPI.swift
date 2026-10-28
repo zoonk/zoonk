@@ -1,26 +1,85 @@
 import Foundation
 
-/// A change the learner makes in "Adjust plan", in the API's operation shape.
+/// A change the learner makes to their plan, in the API's operation shape.
 enum PlanEdit: Encodable, Equatable, Sendable {
   case dailyMinutes(Int)
+  /// The subjects to focus on: they come first and get more depth.
+  case focusAreas([String])
+  /// An operation the API offered as it is (a fit offer's), sent back unchanged.
+  case operation(JSONValue)
+  case baseChoices([(skillId: String, choice: BaseChoice)])
+  /// `easier`, `standard` or `harder`.
+  case difficultyBias(String)
+  /// Studying everything, even after an exam, with no end date.
+  case fullCourse(Bool)
+  /// `moreExplanation`, `balanced` or `morePractice`.
+  case practiceBias(String)
+  /// A language plan's activities brought back into its lessons.
+  case restoreActivities([String])
+  /// A language plan's activities left out of its lessons.
+  case skipActivities([String])
   case targetDate(String)
   /// Minutes for some weekdays (Sunday 0); 0 makes them rest days.
   case weekdayMinutes(Int, weekdays: [Int])
+  /// `weekly`, `biweekly` or `finalWeeks`.
+  case writtenCadence(String)
+
+  static func == (lhs: PlanEdit, rhs: PlanEdit) -> Bool {
+    (try? JSONEncoder().encode(lhs)) == (try? JSONEncoder().encode(rhs))
+  }
 
   private enum CodingKeys: String, CodingKey {
+    case activities
+    case areas
+    case bias
+    case cadence
+    case choices
+    case fullCourse
     case kind
     case minutes
     case targetDate
     case weekdays
   }
 
+  private struct BaseChoiceInput: Encodable {
+    let choice: BaseChoice
+    let skillId: String
+  }
+
   func encode(to encoder: any Encoder) throws {
+    if case .operation(let operation) = self {
+      try operation.encode(to: encoder)
+      return
+    }
+
     var container = encoder.container(keyedBy: CodingKeys.self)
 
     switch self {
     case .dailyMinutes(let minutes):
       try container.encode("setDailyMinutes", forKey: .kind)
       try container.encode(minutes, forKey: .minutes)
+    case .focusAreas(let areas):
+      try container.encode("focusAreas", forKey: .kind)
+      try container.encode(areas, forKey: .areas)
+    case .baseChoices(let choices):
+      try container.encode("setBaseChoices", forKey: .kind)
+      try container.encode(
+        choices.map { BaseChoiceInput(choice: $0.choice, skillId: $0.skillId) }, forKey: .choices)
+    case .difficultyBias(let bias):
+      try container.encode("setDifficultyBias", forKey: .kind)
+      try container.encode(bias, forKey: .bias)
+    case .fullCourse(let fullCourse):
+      try container.encode("setFullCourse", forKey: .kind)
+      try container.encode(fullCourse, forKey: .fullCourse)
+    case .practiceBias(let bias):
+      try container.encode("setPracticeBias", forKey: .kind)
+      try container.encode(bias, forKey: .bias)
+    case .restoreActivities(let activities):
+      try container.encode("restoreActivities", forKey: .kind)
+      try container.encode(activities, forKey: .activities)
+    case .skipActivities(let activities):
+      try container.encode("skipActivities", forKey: .kind)
+      try container.encode(activities, forKey: .activities)
     case .targetDate(let date):
       try container.encode("setTargetDate", forKey: .kind)
       try container.encode(date, forKey: .targetDate)
@@ -28,19 +87,27 @@ enum PlanEdit: Encodable, Equatable, Sendable {
       try container.encode("setWeekdayMinutes", forKey: .kind)
       try container.encode(minutes, forKey: .minutes)
       try container.encode(weekdays, forKey: .weekdays)
+    case .writtenCadence(let cadence):
+      try container.encode("setWrittenCadence", forKey: .kind)
+      try container.encode(cadence, forKey: .cadence)
+    case .operation:
+      break
     }
   }
 }
 
-/// A change the plan made: what it did to the plan's end, and whether today's session follows it.
-struct AppliedPlanChange: Decodable, Equatable, Identifiable, Sendable {
-  struct Effect: Decodable, Equatable, Sendable {
-    let endDateAfter: String?
-    let endDateBefore: String?
-  }
+/// What a change does to the plan: its end, and the lessons it brings in or leaves out.
+struct PlanEffect: Decodable, Equatable, Sendable {
+  let endDateAfter: String?
+  let endDateBefore: String?
+  let lessonsAdded: Int
+  let lessonsRemoved: Int
+}
 
+/// A change the plan made: what it did, and whether today's session follows it.
+struct AppliedPlanChange: Decodable, Equatable, Identifiable, Sendable {
   let canUndo: Bool
-  let effect: Effect?
+  let effect: PlanEffect?
   let id: String
   /// `changed` when today's session follows the change, `unchanged` when it starts tomorrow.
   let todaySession: String?
@@ -49,87 +116,29 @@ struct AppliedPlanChange: Decodable, Equatable, Identifiable, Sendable {
 /// What saving a change came to: applied, or not saved because it wouldn't change anything.
 enum PlanChangeOutcome: Equatable, Sendable {
   case applied(AppliedPlanChange)
-  /// The date is outside what the plan can reach.
-  case invalidDate
+  /// The API refused it (a date out of range, a choice that no longer fits).
+  case invalid
   case unchanged
 }
 
-private struct PlanChangeRequest: Encodable {
-  let operations: [PlanEdit]
-  let timeZone: String
+/// "Find the time that covers everything": the time a day that covers the goal by its date.
+struct PlanTimeToCover: Decodable, Equatable, Sendable {
+  let coreMinutes: Int?
+  let fittingDate: String?
+  let ready: Bool
+  let recommendedMinutes: Int?
+  let targetDate: String?
 }
 
-private struct PlanChangeResult: Decodable {
-  let change: AppliedPlanChange?
-  let status: String
+/// How the app recommends studying the prerequisites, asked for by the learner.
+struct PlanBasesAdvice: Decodable, Equatable, Sendable {
+  let ready: Bool
+  let recommended: BaseChoice?
 }
 
-private struct PlanDecision: Encodable {
-  let status: String
-  let timeZone: String
-}
-
-extension PlanAPI {
-  func change(token: String, goalId: String, edits: [PlanEdit]) async throws -> PlanChangeOutcome {
-    let body: Components.Schemas.PlanChangeInput = try PracticeJSON.recode(
-      PlanChangeRequest(operations: edits, timeZone: TimeZone.current.identifier))
-
-    return try await clients.perform(token: token) { client in
-      switch try await client.createPlanChange(path: .init(goalId: goalId), body: .json(body)) {
-      case .ok(let response):
-        let result: PlanChangeResult = try PracticeJSON.recode(try response.body.json)
-
-        guard result.status == "applied", let change = result.change else {
-          return .unchanged
-        }
-
-        return .applied(change)
-      case .unprocessableContent: return .invalidDate
-      case .unauthorized: throw APIError.unauthorized
-      case .notFound: throw APIError.notFound
-      default: throw APIError.unavailable
-      }
-    }
-  }
-
-  /// Undoes the plan's latest change while the plan is still as it left it.
-  func undo(token: String, goalId: String, changeId: String) async throws -> Bool {
-    let body: Components.Schemas.PlanChangeDecisionInput = try PracticeJSON.recode(
-      PlanDecision(status: "undone", timeZone: TimeZone.current.identifier))
-
-    return try await clients.perform(token: token) { client in
-      switch try await client.decidePlanChange(
-        path: .init(goalId: goalId, changeId: changeId), body: .json(body))
-      {
-      case .ok: return true
-      case .conflict: return false
-      case .unauthorized: throw APIError.unauthorized
-      default: throw APIError.unavailable
-      }
-    }
-  }
-}
-
-extension PlanStore {
-  /// Saves a change from "Adjust plan". It re-plans from today, so the plan, Today and the summary
-  /// follow; nil when it didn't go through.
-  func change(goalId: String, edits: [PlanEdit]) async -> PlanChangeOutcome? {
-    await write { token in
-      try await self.api.change(token: token, goalId: goalId, edits: edits)
-    } changed: { outcome in
-      if case .applied = outcome {
-        return true
-      }
-
-      return false
-    }
-  }
-
-  func undo(goalId: String, changeId: String) async -> Bool {
-    await write { token in
-      try await self.api.undo(token: token, goalId: goalId, changeId: changeId)
-    } changed: {
-      $0
-    } ?? false
-  }
+/// A tool's answer: the learner has it, a setup lesson comes first, or examples only.
+enum ToolChoice: String, Sendable {
+  case have
+  case none
+  case setup
 }

@@ -35,7 +35,7 @@ struct MindMapsScreen: View {
             Spacer()
 
             Text(
-              "^[\(maps.chapters.count) chapter](inflect: true)", tableName: "MindMaps",
+              "\(maps.chapters.count) chapters", tableName: "MindMaps",
               comment: "How many chapters have mind maps"
             )
             .font(.subheadline)

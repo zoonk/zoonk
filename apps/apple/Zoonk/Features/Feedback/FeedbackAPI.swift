@@ -4,6 +4,7 @@ import OpenAPIRuntime
 enum FeedbackContentKind: String, Equatable, Sendable {
   case chapter
   case course
+  case plan
 }
 
 /// The content a message is about, so the team can see the course or chapter the learner was on.
@@ -114,6 +115,7 @@ struct FeedbackAPI: FeedbackAPIClient, @unchecked Sendable {
     switch kind {
     case .chapter: .chapter
     case .course: .course
+    case .plan: .plan
     }
   }
 

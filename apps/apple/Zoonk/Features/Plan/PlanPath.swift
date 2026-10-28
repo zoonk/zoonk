@@ -2,6 +2,8 @@ import SwiftUI
 
 /// A goal without subjects of its own (a language's units, one course's plan): its path.
 struct PlanPathSection: View {
+  @Environment(PlanStore.self) private var store
+
   let context: PlanContext
 
   var body: some View {
@@ -9,6 +11,12 @@ struct PlanPathSection: View {
     let done = phases.filter { $0.state == .done }.count
 
     Section {
+      if context.goal.kind == .language,
+        let alphabet = store.languageUnits(goalId: context.goal.id).value?.alphabet
+      {
+        PlanAlphabetRow(alphabet: alphabet, goalId: context.goal.id)
+      }
+
       PlanPathRows(context: context)
     } header: {
       HStack(alignment: .firstTextBaseline) {
@@ -17,7 +25,7 @@ struct PlanPathSection: View {
         if phases.count > 1 {
           Spacer()
           Text(
-            "\(done) of ^[\(phases.count) phase](inflect: true) done", tableName: "Plan",
+            "\(done) of \(phases.count) phases done", tableName: "Plan",
             comment: "Phases done of the plan's phases"
           )
           .font(.footnote)
@@ -154,6 +162,11 @@ private struct PlanPhaseRow: View {
 /// A chapter on the path: its mark, its title and lessons done, opening its page. Lessons still
 /// being written have no page yet; far ones are an outline the learner can ask for.
 private struct PlanChapterRow: View {
+  @Environment(AppRouter.self) private var router
+  @Environment(\.planSheetOpen) private var sheetOpen
+  @State private var showsOutline = false
+  @State private var pendingRoute: AppRoute?
+
   let context: PlanContext
   let chapter: PlanChapter
 
@@ -162,9 +175,40 @@ private struct PlanChapterRow: View {
       PlanRouteLink(route: route(chapterId)) {
         content
       }
+    } else if chapter.far, let skillId = chapter.skillId {
+      // Past the weeks the plan writes ahead: its outline is the learner's to ask for.
+      Button {
+        showsOutline = true
+      } label: {
+        content
+          .foregroundStyle(.primary)
+      }
+      .sheet(isPresented: $showsOutline, onDismiss: openPendingRoute) {
+        FarTopicSheet(goal: context.goal, skillId: skillId, title: chapter.title)
+          .environment(
+            \.planSheetOpen,
+            PlanSheetOpen { route in
+              pendingRoute = route
+              showsOutline = false
+            })
+      }
     } else {
       content
         .foregroundStyle(.secondary)
+    }
+  }
+
+  private func openPendingRoute() {
+    guard let route = pendingRoute else {
+      return
+    }
+
+    pendingRoute = nil
+
+    if let sheetOpen {
+      sheetOpen.open(route)
+    } else {
+      router.open(route)
     }
   }
 
@@ -213,6 +257,11 @@ private struct PlanChapterRow: View {
       return Text(
         "Going deeper into an earlier topic", tableName: "Plan",
         comment: "A chapter that deepens an earlier one")
+    }
+
+    if chapter.far && chapter.chapterId == nil {
+      return Text(
+        "Lessons on the way", tableName: "Plan", comment: "A far topic's lessons, not planned yet")
     }
 
     if chapter.writing && chapter.chapterId == nil {
@@ -318,11 +367,11 @@ struct PlanSyllabusSection: View {
     } footer: {
       if isExam {
         Text(
-          "^[\(syllabus.subjects.count) subject](inflect: true)", tableName: "Plan",
+          "\(syllabus.subjects.count) subjects", tableName: "Plan",
           comment: "How many subjects the exam has")
       } else {
         Text(
-          "^[\(syllabus.subjects.count) module](inflect: true)", tableName: "Plan",
+          "\(syllabus.subjects.count) modules", tableName: "Plan",
           comment: "How many modules the plan has")
       }
     }
