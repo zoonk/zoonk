@@ -323,7 +323,8 @@ struct PracticeSaveError: View {
   }
 }
 
-/// The close of a task's toolbar: answers are saved as they go, so it just leaves.
+/// The close of a task's toolbar: answers are saved as they go, so it just leaves. The bar shows
+/// its mark; its title is what VoiceOver says.
 struct PracticeCloseButton: View {
   var label: LocalizedStringResource = LocalizedStringResource(
     "Close. Your answers are saved.", table: "Practice",
@@ -332,9 +333,12 @@ struct PracticeCloseButton: View {
 
   var body: some View {
     Button(action: action) {
-      Image(systemName: "xmark")
+      Label {
+        Text(label)
+      } icon: {
+        Image(systemName: "xmark")
+      }
     }
-    .accessibilityLabel(Text(label))
     .keyboardShortcut(.cancelAction)
   }
 }
