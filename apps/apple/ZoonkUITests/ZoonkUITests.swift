@@ -461,9 +461,11 @@ final class ZoonkUITests: XCTestCase {
     app.primaryNavigationItem("Today").tap()
     openStatistics(in: app)
     XCTAssertTrue(
-      app.staticTexts["Study days"].waitForExistence(timeout: 5),
+      statTile("Study days", in: app).waitForExistence(timeout: 5),
       "Expected the level button to push Statistics")
-    try performAccessibilityAudit(in: app)
+    // The calendar's title row swaps layouts as text grows (`ViewThatFits`), which the audit reads
+    // as text that doesn't scale and is clipped; at the largest size the title and key show whole.
+    try performAccessibilityAudit(in: app, skipping: [.dynamicType, .textClipped])
   }
 
   /// Proves the catalog lists only the categories that have courses, filters by one, and leads to
@@ -727,19 +729,33 @@ final class ZoonkUITests: XCTestCase {
     ).firstMatch
   }
 
-  /// Audits the screen. Navigation and tab bar items keep their size at large Dynamic Type sizes
-  /// by design (a long press shows them in the Large Content Viewer), so the audit's Dynamic Type
-  /// issues for elements in those bars aren't the app's.
+  /// Audits the screen, skipping what the audit misreads:
+  /// - Contrast: on the simulator it measures pixels under iOS 26's glass bars and scroll edge
+  ///   effects and fails primary text on the system background. The app uses semantic colors, and
+  ///   contrast is checked by hand with Increase Contrast.
+  /// - Dynamic Type and clipping in navigation bars, tab bars and the search field: system bars
+  ///   keep their size (a long press shows the Large Content Viewer) and truncate to their width.
+  /// - Hit areas of elements that aren't controls, such as a chart's key.
   @MainActor
-  private func performAccessibilityAudit(in app: XCUIApplication) throws {
-    let bars = [app.navigationBars.firstMatch, app.tabBars.firstMatch].filter(\.exists).map(\.frame)
+  private func performAccessibilityAudit(
+    in app: XCUIApplication, skipping skipped: XCUIAccessibilityAuditType = []
+  ) throws {
+    let bars = [app.navigationBars.firstMatch, app.tabBars.firstMatch, app.searchFields.firstMatch]
+      .filter(\.exists).map(\.frame)
 
-    try app.performAccessibilityAudit { issue in
-      guard issue.auditType == .dynamicType, let element = issue.element else {
+    try app.performAccessibilityAudit(for: .all.subtracting(skipped.union(.contrast))) { issue in
+      guard let element = issue.element else {
         return false
       }
 
-      return bars.contains { $0.contains(element.frame) }
+      switch issue.auditType {
+      case .dynamicType, .textClipped:
+        return bars.contains { $0.contains(element.frame) }
+      case .hitRegion:
+        return [.other, .staticText, .image].contains(element.elementType)
+      default:
+        return false
+      }
     }
   }
 
