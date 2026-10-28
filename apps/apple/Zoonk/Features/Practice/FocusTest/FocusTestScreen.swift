@@ -214,8 +214,9 @@ struct FocusTestScreen: View {
         token: identity.bearerToken, goalId: goalId)
       {
         started = !questions.isEmpty
-        try await PracticeGenerationWait.untilDone(
-          api: practice.api, token: identity.bearerToken, generationId: generationId)
+        try await practice.api.waitForQuestions(
+          token: identity.bearerToken, generationId: generationId,
+          readyStep: "focusTestQuestionsReady")
       }
 
       await read()

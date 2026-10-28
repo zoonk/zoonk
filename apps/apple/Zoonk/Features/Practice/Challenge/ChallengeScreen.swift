@@ -458,8 +458,9 @@ struct ChallengeScreen: View {
       if case .generating(let generationId) = try await practice.api.writeChallenge(
         token: identity.bearerToken, planItemId: itemId)
       {
-        try? await PracticeGenerationWait.untilDone(
-          api: practice.api, token: identity.bearerToken, generationId: generationId)
+        try? await practice.api.waitForQuestions(
+          token: identity.bearerToken, generationId: generationId,
+          readyStep: "challengeQuestionsReady")
       }
     } catch PracticeAPIError.plusRequired {
       await read()

@@ -215,8 +215,9 @@ struct TestOutScreen: View {
       case .ready:
         break
       case .generating(let generationId):
-        try await PracticeGenerationWait.untilDone(
-          api: practice.api, token: identity.bearerToken, generationId: generationId)
+        try await practice.api.waitForQuestions(
+          token: identity.bearerToken, generationId: generationId,
+          readyStep: "testOutQuestionsReady")
       }
 
       await read()

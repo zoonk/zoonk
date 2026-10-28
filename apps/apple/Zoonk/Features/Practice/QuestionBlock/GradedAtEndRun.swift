@@ -181,18 +181,6 @@ enum PracticeAnswerDraft {
   }
 }
 
-/// Follows the run writing a test's questions until it ends, by its status: the test opens when
-/// the run is done. Started only from the learner's tap.
-enum PracticeGenerationWait {
-  static func untilDone(api: PracticeAPI, token: String, generationId: String?) async throws {
-    guard let generationId else { return }
-
-    while try await api.generationIsRunning(token: token, generationId: generationId) {
-      try await Task.sleep(for: .seconds(2))
-    }
-  }
-}
-
 /// A test with no questions yet: one tap asks for them (AI work only ever starts here), then the
 /// screen follows the run until the test opens.
 struct PracticeQuestionsPreparingView: View {

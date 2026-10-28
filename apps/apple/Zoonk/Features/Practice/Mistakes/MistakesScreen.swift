@@ -13,12 +13,15 @@ struct MistakesScreen: View {
   @State private var isLoadingMore = false
 
   private var resource: Resource<Components.Schemas.MistakeList> {
-    practice.mistakes(goalId: summary.summary.value?.activeGoalID, fixed: showsFixed)
+    practice.mistakes(goalId: goalId, fixed: showsFixed)
   }
+
+  private var goalId: String? { summary.summary.value?.activeGoalID }
 
   var body: some View {
     let state = resource.state
     let list = resource.value
+    let pattern = goalId.map { practice.pattern(goalId: $0) }
 
     List {
       Section {
@@ -48,6 +51,12 @@ struct MistakesScreen: View {
       }
       .listRowBackground(Color.clear)
       .listRowInsets(EdgeInsets())
+
+      if !showsFixed, let noticed = pattern?.value {
+        Section {
+          PatternRow(pattern: noticed) { hooks.navigate(.pattern(patternId: noticed.id)) }
+        }
+      }
 
       if let list {
         let labels = PracticeTrueFalseLabels(list.trueFalseLabels.value1)
@@ -99,6 +108,7 @@ struct MistakesScreen: View {
       Text("Mistakes notebook", tableName: "Practice", comment: "Title of the mistakes notebook.")
     )
     .loads(resource)
+    .modifier(LoadsPattern(pattern: pattern))
   }
 
   private var emptyText: LocalizedStringResource {
@@ -154,7 +164,7 @@ struct MistakesScreen: View {
 
     guard
       let next = try? await practice.api.mistakes(
-        token: identity.bearerToken, goalId: summary.summary.value?.activeGoalID, fixed: showsFixed,
+        token: identity.bearerToken, goalId: goalId, fixed: showsFixed,
         cursor: cursor),
       resource.revision == revision
     else { return }
@@ -413,5 +423,57 @@ private struct MistakeAnswerRow: View {
         isRight ? Color.success : Color.destructive, lineWidth: 1.5)
     )
     .accessibilityElement(children: .combine)
+  }
+}
+
+/// The notebook's pattern row loads with the list, for a goal that has one to offer.
+private struct LoadsPattern: ViewModifier {
+  let pattern: Resource<NoticedPattern>?
+
+  func body(content: Content) -> some View {
+    if let pattern {
+      content.loads(pattern, refreshable: false)
+    } else {
+      content
+    }
+  }
+}
+
+/// A language goal's pattern noticed in these mistakes, one tap away, as main's notebook shows it.
+private struct PatternRow: View {
+  let pattern: NoticedPattern
+  let open: () -> Void
+
+  var body: some View {
+    Button(action: open) {
+      Label {
+        VStack(alignment: .leading, spacing: 2) {
+          Text(
+            pattern.isTypos
+              ? LocalizedStringResource(
+                "Just typos", table: "Practice",
+                comment: "Title when recent mistakes were only typos.")
+              : LocalizedStringResource(
+                "We noticed a pattern", table: "Practice",
+                comment: "Eyebrow over a noticed mistake pattern.")
+          )
+          .foregroundStyle(.primary)
+
+          Text(
+            pattern.isTypos
+              ? String(
+                localized: "Your recent mistakes were slips, not a rule to learn.",
+                table: "Practice",
+                comment: "Notebook row for a typos-only pattern.")
+              : pattern.title
+          )
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+        }
+      } icon: {
+        Image(systemName: pattern.isTypos ? "keyboard" : "sparkles")
+          .foregroundStyle(pattern.isTypos ? Color.secondary : Color.warning)
+      }
+    }
   }
 }

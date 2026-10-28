@@ -78,6 +78,13 @@ struct MistakePracticeGrade: Equatable {
   var trap: String?
 }
 
+/// A language goal's pattern noticed in recent mistakes, or the note that they were only typos.
+struct NoticedPattern: Equatable, Sendable {
+  let id: String
+  let isTypos: Bool
+  let title: String
+}
+
 /// A checkpoint with its questions read as practice questions.
 struct CheckpointLoad: Equatable {
   var checkpoint: Components.Schemas.Checkpoint
@@ -541,14 +548,31 @@ struct PracticeAPI: Sendable {
 
   // MARK: Generations
 
-  /// Whether the run writing questions is still at it.
-  func generationIsRunning(token: String, generationId: String) async throws -> Bool {
+  /// Follows the run writing questions (started by the learner's tap) until its ready step; a
+  /// step that errors, or a stream that ends without it, fails the wait.
+  func waitForQuestions(token: String, generationId: String?, readyStep: String) async throws {
+    guard let generationId else { return }
+
+    for try await event in clients.generationEvents(id: generationId, token: token) {
+      if event.step == readyStep, event.status == "completed" { return }
+      if event.status == "error" { throw APIError.unavailable }
+    }
+
+    throw APIError.unavailable
+  }
+
+  // MARK: Notebook pattern
+
+  /// The pattern the notebook offers for a goal: a language goal's noticed pattern, or none.
+  func notebookPattern(token: String, goalId: String) async throws -> NoticedPattern? {
     try await perform(token) { client in
-      switch try await client.getGeneration(path: .init(generationId: generationId)) {
+      switch try await client.getGoalMistakePattern(path: .init(goalId: goalId)) {
       case .ok(let response):
-        let status = try response.body.json.status
-        if status == .failed || status == .cancelled { throw APIError.unavailable }
-        return status == .pending || status == .running
+        return try response.body.json.pattern.map {
+          NoticedPattern(id: $0.id, isTypos: $0.kind == .typos, title: $0.title)
+        }
+      case .unauthorized: throw APIError.unauthorized
+      case .notFound: throw APIError.notFound
       default: throw APIError.unavailable
       }
     }

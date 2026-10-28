@@ -9,6 +9,8 @@ enum PracticeChange: Equatable, Sendable {
   case finished
   /// The plan changed (a test-out's skip or its undo, a focus test, a challenge's move).
   case planChanged
+  /// A noticed pattern was practiced or dismissed: it leaves the notebook and Today.
+  case patternDone
 }
 
 /// Where a practice screen goes next. The shell's router opens these; see PRACTICE-CONTRACT.md.

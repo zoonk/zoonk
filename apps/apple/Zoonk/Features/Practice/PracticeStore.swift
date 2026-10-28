@@ -9,6 +9,7 @@ final class PracticeStore {
   let api: PracticeAPI
   private let cache: AppCache
   private var mistakeLists: [String: Resource<Components.Schemas.MistakeList>] = [:]
+  private var patterns: [String: Resource<NoticedPattern>] = [:]
 
   init(api: PracticeAPI, cache: AppCache) {
     self.api = api
@@ -36,6 +37,24 @@ final class PracticeStore {
     return list
   }
 
+  /// The pattern the notebook offers beside a goal's mistakes; empty for a goal without one.
+  func pattern(goalId: String) -> Resource<NoticedPattern> {
+    if let pattern = patterns[goalId] {
+      return pattern
+    }
+
+    let api = api
+    let pattern: Resource<NoticedPattern> = cache.resource(
+      audience: .signedIn, domains: [.learnerModel]
+    ) { session in
+      guard let session else { return nil }
+      return try await api.notebookPattern(token: session.bearerToken, goalId: goalId)
+    }
+
+    patterns[goalId] = pattern
+    return pattern
+  }
+
   /// Revalidates what a practice write changed, the way core revalidates main's cache tags:
   /// answers save and fix mistakes (the learner model) and count toward the day's progress;
   /// finishes also move the day and the plan; plan changes replan the goal.
@@ -44,6 +63,7 @@ final class PracticeStore {
     case .answered: cache.invalidate([.learnerModel, .userProgress])
     case .finished: cache.invalidate([.goals, .learnerModel, .userProgress])
     case .planChanged: cache.invalidate([.goals, .learnerModel])
+    case .patternDone: cache.invalidate([.learnerModel, .userProgress])
     }
   }
 }

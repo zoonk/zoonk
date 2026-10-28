@@ -127,10 +127,10 @@ filter:
     - getExamBlueprint
     - getExplanation
     - getFocusTest
-    - getGeneration
     - getGoalChapter
     - getGoalGeneration
     - getGoalMap
+    - getGoalMistakePattern
     - getGoalPlacement
     - getGoalPlan
     - getGoalPreparation

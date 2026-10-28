@@ -258,7 +258,11 @@ struct PatternScreen: View {
 
   private func dismissTypos() async {
     guard let identity = session.authenticatedSession else { return }
-    try? await practice.api.dismissPattern(token: identity.bearerToken, patternId: patternId)
+    guard
+      (try? await practice.api.dismissPattern(token: identity.bearerToken, patternId: patternId))
+        != nil
+    else { return }
+    practice.changed(.patternDone)
   }
 
   private func save(_ pattern: Components.Schemas.MistakePattern) async {
@@ -272,7 +276,7 @@ struct PatternScreen: View {
       let result = try await practice.api.practicePattern(
         token: identity.bearerToken, patternId: patternId, answers: picks, requestId: requestId)
       step = .result(result)
-      practice.changed(.finished)
+      practice.changed(.patternDone)
     } catch {
       saveFailed = true
     }
