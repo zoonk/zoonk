@@ -56,9 +56,19 @@ private struct PlanChangeRequest: Encodable {
   let timeZone: String
 }
 
-private struct PlanChangeResult: Decodable {
+/// A change's answer, as the plan's changes and choices give it.
+struct PlanChangeResult: Decodable {
   let change: AppliedPlanChange?
   let status: String
+
+  var outcome: PlanChangeOutcome {
+    guard status == "applied", let change else {
+      return .unchanged
+    }
+
+    // The latest change, undone: what it says it did is what the plan no longer does.
+    return change.status == "undone" ? .undone : .applied(change)
+  }
 }
 
 private struct PlanChangePreview: Decodable {
@@ -209,7 +219,8 @@ struct PlanAPI: PlanAPIClient {
 
     return try await clients.perform(token: token, body: json) { client in
       switch try await client.createPlanChange(path: .init(goalId: goalId), body: .json(body)) {
-      case .ok(let response): return try Self.outcome(PracticeJSON.recode(try response.body.json))
+      case .ok(let response):
+        return try (PracticeJSON.recode(try response.body.json) as PlanChangeResult).outcome
       case .unprocessableContent: return .invalid
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
@@ -260,7 +271,8 @@ struct PlanAPI: PlanAPIClient {
 
     return try await clients.perform(token: token) { client in
       switch try await client.createPlanExamChoice(path: .init(goalId: goalId), body: .json(body)) {
-      case .ok(let response): return try Self.outcome(PracticeJSON.recode(try response.body.json))
+      case .ok(let response):
+        return try (PracticeJSON.recode(try response.body.json) as PlanChangeResult).outcome
       case .unprocessableContent: return .invalid
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
@@ -277,7 +289,8 @@ struct PlanAPI: PlanAPIClient {
 
     return try await clients.perform(token: token) { client in
       switch try await client.createPlanToolChoice(path: .init(goalId: goalId), body: .json(body)) {
-      case .ok(let response): return try Self.outcome(PracticeJSON.recode(try response.body.json))
+      case .ok(let response):
+        return try (PracticeJSON.recode(try response.body.json) as PlanChangeResult).outcome
       case .unprocessableContent: return .invalid
       case .unauthorized: throw APIError.unauthorized
       case .notFound: throw APIError.notFound
@@ -397,13 +410,5 @@ struct PlanAPI: PlanAPIClient {
   {
     let json = try JSONEncoder().encode(PlanChangeRequest(operations: edits, timeZone: timeZone))
     return (try JSONDecoder().decode(Components.Schemas.PlanChangeInput.self, from: json), json)
-  }
-
-  private static func outcome(_ result: PlanChangeResult) -> PlanChangeOutcome {
-    guard result.status == "applied", let change = result.change else {
-      return .unchanged
-    }
-
-    return .applied(change)
   }
 }

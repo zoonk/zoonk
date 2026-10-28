@@ -285,7 +285,7 @@ private struct ExamHero: View {
     defer { usingDate = false }
 
     switch await plan.change(goalId: exam.goalId, edits: [.targetDate(date)]) {
-    case .done(.applied), .done(.unchanged), .obsolete: break
+    case .done(.applied), .done(.undone), .done(.unchanged), .obsolete: break
     case .done(.invalid), .failed: dateFailed = true
     }
   }

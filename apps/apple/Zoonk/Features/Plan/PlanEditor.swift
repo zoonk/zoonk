@@ -62,6 +62,9 @@ final class PlanEditor {
       latest = .invalid
     case .done(.unchanged):
       latest = .unchanged
+    case .done(.undone):
+      latest = .undone
+      return true
     case .failed:
       failed = true
     case .obsolete:

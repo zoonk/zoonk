@@ -144,16 +144,16 @@ final class PlanStore {
     }
   }
 
-  /// Saves a change, or a choice that answers like one: the goal revalidates once it's applied.
+  /// Saves a change, or a choice that answers like one: the goal revalidates once it's applied,
+  /// or once it undid the latest change by setting it back.
   func change(
     _ request: (any PlanAPIClient, String) async throws -> PlanChangeOutcome
   ) async -> MutationResult<PlanChangeOutcome> {
     await write(request) { outcome in
-      if case .applied = outcome {
-        return true
+      switch outcome {
+      case .applied, .undone: true
+      case .invalid, .unchanged: false
       }
-
-      return false
     }
   }
 

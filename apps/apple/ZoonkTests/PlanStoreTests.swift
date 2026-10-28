@@ -105,6 +105,43 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertFalse(editor.failed)
   }
 
+  // Pedro set a deadline, then dropped it: core took that as setting back the latest change and
+  // undid it, answering with that change, whose effect is the deadline's (core's `undoSetBack`).
+  func testChangeThatSetsBackTheLatestOneSaysItsUndone() throws {
+    let json = """
+      {
+        "change": {
+          "canUndo": false, "id": "change-1", "status": "undone", "todaySession": null,
+          "effect": {
+            "endDateAfter": "2026-11-19", "endDateBefore": "2026-11-13",
+            "lessonsAdded": 0, "lessonsRemoved": 0
+          }
+        },
+        "status": "applied"
+      }
+      """
+
+    let result = try JSONDecoder().decode(PlanChangeResult.self, from: Data(json.utf8))
+
+    XCTAssertEqual(result.outcome, .undone)
+  }
+
+  func testUndoneChangeSaysSoAndRevalidatesThePlan() async {
+    let api = PlanAPIStub()
+    let store = makeStore(api: api)
+    let plan = store.plan(goalId: "goal")
+    await plan.load()
+
+    await api.setChangeOutcome(.undone)
+    let editor = PlanEditor(goalId: "goal", store: store)
+    await editor.change([.targetDate(nil)], sentence: "")
+    await plan.load()
+
+    XCTAssertEqual(editor.latest, .undone)
+    let calls = await api.calls
+    XCTAssertEqual(calls.changed, 1)
+  }
+
   func testFailedChangeKeepsTheLatestAndFlagsIt() async {
     let api = PlanAPIStub()
     let editor = PlanEditor(goalId: "goal", store: makeStore(api: api))
@@ -275,7 +312,7 @@ private actor PlanAPIStub: PlanAPIClient {
 
 extension AppliedPlanChange {
   fileprivate static let stub = AppliedPlanChange(
-    canUndo: true, effect: nil, id: "change-1", todaySession: "unchanged")
+    canUndo: true, effect: nil, id: "change-1", status: "applied", todaySession: "unchanged")
 }
 
 extension GoalPlan {

@@ -118,6 +118,8 @@ struct AppliedPlanChange: Decodable, Equatable, Identifiable, Sendable {
   let canUndo: Bool
   let effect: PlanEffect?
   let id: String
+  /// `applied`, or `undone` for the latest change a new one set back by hand.
+  let status: String
   /// `changed` when today's session follows the change, `unchanged` when it starts tomorrow.
   let todaySession: String?
 }
@@ -128,6 +130,9 @@ enum PlanChangeOutcome: Equatable, Sendable {
   /// The API refused it (a date out of range, a choice that no longer fits).
   case invalid
   case unchanged
+  /// It set back by hand what the latest change set, which undoes that change instead: the plan is
+  /// back as it was (core's `undoSetBack`).
+  case undone
 }
 
 /// "Find the time that covers everything": the time a day that covers the goal by its date.
