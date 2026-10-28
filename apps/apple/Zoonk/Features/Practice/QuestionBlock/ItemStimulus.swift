@@ -222,18 +222,29 @@ struct PracticeVisualView: View {
 
 // MARK: - Recording
 
-/// The recording playing now, kept apart from the view that plays it: folding or unfolding iPhone
-/// Duo draws that view again, and a play that doesn't pause mustn't stop for it. It stops once no
-/// view shows the recording anymore, as when the learner leaves its questions.
+/// Each set recording as the learner left it, by where it's asked (`playsKey`), kept apart from
+/// the view that shows it: folding or unfolding iPhone Duo draws that view again, and nothing the
+/// learner did with the recording may change for that. A play that doesn't pause keeps playing,
+/// and stops once no view shows the recording anymore, as when the learner leaves its questions.
 @MainActor
 @Observable
-private final class ListeningPlayback {
-  static let shared = ListeningPlayback()
+private final class SetRecordings {
+  /// The panels the learner opened or folded beside a recording.
+  struct Panels {
+    /// Open before the first play until the learner folds it, folded after it.
+    var questions: Bool?
+    var transcript = false
+  }
 
-  /// Plays already used per asking of a recording (`playsKey`), kept while the app runs, so moving
-  /// between a set's questions keeps the exam's play limit.
+  static let shared = SetRecordings()
+
+  /// Plays already used, kept while the app runs, so moving between a set's questions keeps the
+  /// exam's play limit.
   var used: [String: Int] = [:]
-  /// The recording playing, by where it's asked.
+  var panels: [String: Panels] = [:]
+  /// Recordings whose last play didn't load.
+  var failed: Set<String> = []
+  /// The recording playing.
   private(set) var playing: String?
   @ObservationIgnored private var player: AVPlayer?
   @ObservationIgnored private var shown: [String: Int] = [:]
@@ -290,14 +301,11 @@ private struct ListeningPlayerView: View {
   let transcript: [PracticeTranscriptLine]?
   let served: ServedPlays?
   @State private var played = 0
-  @State private var failed = false
-  @State private var showsQuestions: Bool?
-  @State private var showsTranscript = false
 
   var body: some View {
     let answered = transcript != nil
     let playsLeft = max(listening.plays - played, 0)
-    let isPlaying = playback.playing == playsKey
+    let isPlaying = recordings.playing == playsKey
 
     VStack(alignment: .leading, spacing: 12) {
       if let title = listening.title {
@@ -328,7 +336,7 @@ private struct ListeningPlayerView: View {
       .buttonStyle(.bordered)
       .disabled(isPlaying || (!answered && playsLeft == 0) || listening.audio == nil)
 
-      if failed {
+      if recordings.failed.contains(playsKey) {
         Text(
           "The recording didn't load. Check your connection and try again.", tableName: "Practice",
           comment: "Shown when a set's recording fails to load."
@@ -359,7 +367,7 @@ private struct ListeningPlayerView: View {
       }
 
       if let transcript, !transcript.isEmpty {
-        DisclosureGroup(isExpanded: $showsTranscript) {
+        DisclosureGroup(isExpanded: transcriptExpanded) {
           VStack(alignment: .leading, spacing: 10) {
             ForEach(Array(transcript.enumerated()), id: \.offset) { index, turn in
               VStack(alignment: .leading, spacing: 2) {
@@ -379,27 +387,35 @@ private struct ListeningPlayerView: View {
       }
     }
     .onAppear {
-      played = max(served?.played ?? 0, playback.used[playsKey] ?? 0)
-      playback.show(playsKey)
+      played = max(served?.played ?? 0, recordings.used[playsKey] ?? 0)
+      recordings.show(playsKey)
     }
     // The next question on another recording: this one's play ends with its questions.
     .onChange(of: playsKey) { previous, key in
-      playback.hide(previous)
-      playback.show(key)
-      played = max(served?.played ?? 0, playback.used[key] ?? 0)
+      recordings.hide(previous)
+      recordings.show(key)
+      played = max(served?.played ?? 0, recordings.used[key] ?? 0)
     }
     .onChange(of: served?.played) { _, count in played = max(played, count ?? 0) }
-    .onDisappear { playback.hide(playsKey) }
+    .onDisappear { recordings.hide(playsKey) }
     .onReceive(NotificationCenter.default.publisher(for: AVPlayerItem.didPlayToEndTimeNotification))
     {
-      playback.ended($0.object as? AVPlayerItem)
+      recordings.ended($0.object as? AVPlayerItem)
     }
   }
 
-  private var playback: ListeningPlayback { .shared }
+  private var recordings: SetRecordings { .shared }
 
   private var questionsExpanded: Binding<Bool> {
-    Binding(get: { showsQuestions ?? (played == 0) }, set: { showsQuestions = $0 })
+    Binding(
+      get: { recordings.panels[playsKey]?.questions ?? (played == 0) },
+      set: { recordings.panels[playsKey, default: .init()].questions = $0 })
+  }
+
+  private var transcriptExpanded: Binding<Bool> {
+    Binding(
+      get: { recordings.panels[playsKey]?.transcript ?? false },
+      set: { recordings.panels[playsKey, default: .init()].transcript = $0 })
   }
 
   private func rule(answered: Bool, playsLeft: Int, isPlaying: Bool) -> LocalizedStringResource {
@@ -437,16 +453,16 @@ private struct ListeningPlayerView: View {
   private func play() {
     guard let audio = listening.audio, let url = URL(string: audio.url) else { return }
 
-    failed = false
     let key = playsKey
-    let item = playback.play(url, key: key)
+    recordings.failed.remove(key)
+    let item = recordings.play(url, key: key)
     played += 1
-    playback.used[key] = played
+    recordings.used[key] = played
 
     if let served {
       Task { @MainActor in
         guard await !served.record() else { return }
-        if playback.playing == key { playback.stop() }
+        if recordings.playing == key { recordings.stop() }
         played = listening.plays
       }
     }
@@ -454,8 +470,8 @@ private struct ListeningPlayerView: View {
     Task { @MainActor in
       for await status in item.publisher(for: \.status).values where status != .unknown {
         if status == .failed {
-          failed = true
-          if playback.playing == key { playback.stop() }
+          recordings.failed.insert(key)
+          if recordings.playing == key { recordings.stop() }
         }
         break
       }
