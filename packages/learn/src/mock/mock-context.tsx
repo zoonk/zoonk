@@ -9,61 +9,32 @@ import { type MomentCeremony } from "../session/moment-ceremony";
 import { type DraftSaveStatus } from "./draft-save-queue";
 import { type SectionMoves } from "./section-moves";
 
-/**
- * What the learner's yes to one of the finished mock's offers did: applied (with the lessons a
- * skip took off), or nothing moved and, for a focus, why.
- */
 export type MockPlanOfferOutcome =
   | { lessonsSkipped: number; status: "applied" }
   | { reason: "alreadyIn" | "cantMove" | null; status: "unchanged" };
 
-/**
- * What grading a finished mock's essays came to: the mock with their grades, and whether the day's
- * essay grades ran out before every one was graded (`limitReached`).
- */
 export type MockEssayGrading = { mock: MockView; status: "graded" | "limitReached" };
 
-/**
- * What counting a recording's play came to: `counted` with the plays now used, or `usedUp` when
- * the mock had none left for it (another page used the last one).
- */
 export type MockPlayOutcome = { played: number; status: "counted" | "usedUp" };
 
-/** How the screen reaches the server. Each step returns the mock as it now stands. */
+/** Each resolves to null when it didn't go through. */
 export type MockActions = {
-  /** Applies one of the finished mock's offers (`MockAdaptView`); null when it didn't go through. */
   adapt: (offer: MockPlanOffer) => Promise<MockPlanOfferOutcome | null>;
   answer: (input: MockAnswerInput) => Promise<boolean>;
-  /** Ends the break between two sections now; the mock as it stands. */
   endBreak: () => Promise<MockView | null>;
   finish: () => Promise<MockView | null>;
-  /** Grades the finished mock's essays (a model call each); null when it didn't go through. */
   gradeEssays: () => Promise<MockEssayGrading | null>;
-  /** Counts a play of a listening section's recording as it starts; null when it didn't go through. */
   play: (setId: string) => Promise<MockPlayOutcome | null>;
-  /** Re-reads the screen through a GET when its deadline may now be abandoned. Never scores it. */
+  /** A GET, for when the deadline may now be abandoned; never scores the mock. */
   refresh?: () => void;
-  /**
-   * Starts the running speaking section: its paper's cards are written (or the ones already
-   * written come back); the mock as it stands, with `speaking`.
-   */
   startSpeaking: () => Promise<MockView | null>;
   submit: (section: number) => Promise<MockView | null>;
 };
 
-/**
- * Where grading the finished mock's essays stands on this screen: on its way (`grading`), failed,
- * held for another day (`limitReached`), or not running (`idle`).
- */
 export type MockEssayGradingStatus = "failed" | "grading" | "idle" | "limitReached";
 
 export type MockPlanOffer = "focus" | "skip";
 
-/**
- * Where the screen leads: out, back to the day, to the mistakes in the notebook, to a speaking
- * task's live call, which comes back to the mock, and to a new mock once its time ran out while the
- * learner was away (`again`: the plan's mock's challenge, or the goal's mocks).
- */
 export type MockHrefs = {
   again: string;
   continue: string;
@@ -72,66 +43,41 @@ export type MockHrefs = {
   speakingTask: (conversationId: string) => string;
 };
 
-/** A step of the mock the learner waits on: handing a section in, or scoring it. */
 export type MockStep = "endBreak" | "finish" | "startSpeaking" | "submit";
 
 export type MockRunner = {
-  /** Saves the current question's pick (or picks), or a blank, at once. */
   answer: (answer: MockAnswer | null) => void;
-  /** The step on its way, so its button says what's happening. */
   busy: MockStep | null;
   drafts: Record<string, MockDraft>;
-  /** The last step (handing in, the break, grading) didn't go through. */
   error: boolean;
-  /** Where grading the finished mock's essays stands. */
   essayGrading: MockEssayGradingStatus;
   finish: () => Promise<void>;
-  /** Grades the finished mock's essays: right after hand-in, or again from the result. */
   gradeEssays: () => Promise<void>;
-  /** Starts the next section now, or once the break ran out, shows it. */
   endBreak: () => Promise<void>;
   go: (position: number) => void;
-  /** How the running section lets the learner move, as the notice says (see `SectionMoves`). */
   moves: SectionMoves;
   pending: boolean;
-  /**
-   * Counts a recording's play on the mock as it starts: false when the mock had none left for it,
-   * so the recording stops. A play the server couldn't count keeps going.
-   */
+  /** Resolves false when the mock had no play left, which stops the recording; one the server couldn't count keeps going. */
   play: (setId: string) => Promise<boolean>;
   position: number;
-  /** Sends the answers waiting after a failed request now. */
   retrySaves: () => void;
-  /** Where the answers' saves stand, so the bar says when one isn't stored (`DraftSaveStatus`). */
   saveStatus: DraftSaveStatus;
-  /** The answers still being saved, which leaving waits for a moment; null when none is. */
   savesInFlight: () => Promise<unknown> | null;
-  /** The step on its way is taking longer than usual. */
   slow: boolean;
-  /** Starts the running speaking section's paper (see `MockActions.startSpeaking`). */
   startSpeaking: () => Promise<void>;
   submitSection: () => Promise<void>;
-  /** The current question clock expired: advance without requiring an answer. */
   timeOutQuestion: () => void;
-  /** The section or its last question ran out of time; answers close until explicit hand-in. */
   timeUp: boolean;
   toggleFlag: () => void;
   view: MockView;
-  /**
-   * Keeps what the learner types for the current question (an essay's text, a word, a number),
-   * saved a moment after they stop typing.
-   */
   write: (answer: MockAnswer | null) => void;
 };
 
 type MockScreenValue = {
   actions: MockActions;
-  /** The host's "Ask" about the finished mock; never shown while the mock runs. */
   ask?: React.ReactNode;
-  /** The learner's buddy, who cheers when the mock completes one of the day's missions. */
   buddy?: LearnBuddy | null;
   hrefs: MockHrefs;
-  /** The full-screen moment for a milestone the mock earned (a new belt), before its result. */
   renderCeremony?: MomentCeremony;
   runner: MockRunner;
 };

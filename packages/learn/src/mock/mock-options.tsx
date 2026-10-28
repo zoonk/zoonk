@@ -13,23 +13,13 @@ import { useTrueFalseLabels } from "../questions/use-true-false-labels";
 import { useMockScreen } from "./mock-context";
 import { getOptionMarks } from "./mock-keys";
 
-/**
- * One pick: its answer (none for "Leave blank"), its words and its mark: its number, the key that
- * picks it, or, for a statement judged right, wrong or left blank, a glyph (its number key still
- * picks it).
- */
 type Option = { answer: MockChoice | null; key: string; label: string; marker: React.ReactNode };
 
 function isSame(first: MockAnswer | null, second: MockAnswer | null): boolean {
   return JSON.stringify(first) === JSON.stringify(second);
 }
 
-/**
- * The picks a question offers, statements in the exam's words. Where a wrong answer cancels a right
- * one (Cebraspe), a statement can be left blank, since leaving one blank is a strategy there, but
- * never in a section that asks for an answer before moving on; elsewhere a pick is cleared by
- * tapping it again.
- */
+/** A statement can be left blank only where a wrong answer cancels a right one (Cebraspe), and never in a section that asks for an answer before moving on. */
 function useOptions(question: MockQuestion): Option[] {
   const t = useExtracted();
   const { runner } = useMockScreen();
@@ -66,7 +56,6 @@ export function MockOptions({ question }: { question: MockQuestion }) {
   const draft = runner.drafts[question.itemId];
   const hasDraft = draft !== undefined;
   const current = draft?.answer ?? null;
-  // A question left behind in a section that never goes back keeps its answer.
   const locked = !runner.moves.canChange(runner.position);
 
   function pick(index: number): false | undefined {
@@ -78,7 +67,6 @@ export function MockOptions({ question }: { question: MockQuestion }) {
 
     const alreadyPicked = option.answer !== null && hasDraft && isSame(option.answer, current);
 
-    // A section that asks for an answer before moving on never clears one.
     if (alreadyPicked && runner.moves.mustAnswer) {
       return undefined;
     }
@@ -99,7 +87,6 @@ export function MockOptions({ question }: { question: MockQuestion }) {
           key={option.key}
           marker={option.marker}
           onClick={() => pick(index)}
-          // Leaving a statement blank clears the pick; an untouched statement is blank too.
           picked={option.answer !== null && hasDraft && isSame(option.answer, current)}
         >
           <ItemLine text={option.label} />
@@ -109,17 +96,11 @@ export function MockOptions({ question }: { question: MockQuestion }) {
   );
 }
 
-/** Whether the question on screen can't change: one left behind in a section that never goes back. */
 export function useLocked(): boolean {
   const { runner } = useMockScreen();
   return runner.pending || !runner.moves.canChange(runner.position);
 }
 
-/**
- * A question that asks for several options: each one toggles, like ticking boxes on the answer
- * sheet, and the picks are saved as they change (none picked is a blank). The rule above says how
- * many to pick, as the exam words it.
- */
 export function MockPicks({ question, select }: { question: MockQuestion; select: OptionSelect }) {
   const { runner } = useMockScreen();
   const locked = useLocked();

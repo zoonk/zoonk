@@ -2,7 +2,6 @@ import { type MockDraft } from "@zoonk/core/exams/mocks/view-contract";
 
 const MS_PER_SECOND = 1000;
 
-/** A resumed final question whose saved time already consumed its budget stays closed. */
 export function isSavedQuestionExpired({
   drafts,
   itemId,

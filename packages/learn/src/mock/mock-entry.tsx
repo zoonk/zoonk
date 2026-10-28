@@ -16,11 +16,6 @@ import {
 import { PlusMark } from "../_components/plus-lock";
 import { LearnLink } from "../learn-link";
 
-/**
- * What the learner can take (one subject too, when `bySubject`), the same for every plan: without
- * Plus, the row or card says it's locked with `PlusMark` instead. The exam's entry and the buddy's
- * offer say it alike.
- */
 export function useMockEntryDescription({ bySubject }: { bySubject: boolean }): string {
   const t = useExtracted();
 
@@ -29,17 +24,10 @@ export function useMockEntryDescription({ bySubject }: { bySubject: boolean }): 
     : t("Whenever you want: a full exam day or half a day");
 }
 
-/**
- * "Take a mock exam" whenever the learner wants, as a row of its page's list (`ListGroup`): what it
- * offers in a line (a full exam day, half a day, one subject) and, when the learner's plan doesn't
- * include mocks, the Plus mark (the chooser it opens shows them locked, with what Plus unlocks), or
- * the mock they started, to continue it. Nothing while no mock can be built.
- */
 export function MockEntryRow({
   hrefs,
   view,
 }: {
-  /** `choose`: the page to pick a mock; `mock`: a running mock, by its id. */
   hrefs: { choose: string; mock: (id: string) => string };
   view: MockOptionsView;
 }) {
@@ -49,7 +37,6 @@ export function MockEntryRow({
     bySubject: view.options.some((option) => option.kind === "area"),
   });
 
-  // No mock can be built yet (a class test with no material and few questions): nothing to offer.
   if (!view.running && view.options.length === 0) {
     return null;
   }
@@ -86,12 +73,6 @@ export function MockEntryRow({
   );
 }
 
-/**
- * "Take a mock exam" as a detail page's main action (the exam's page), with the timer of mocks and,
- * when the learner's plan doesn't include mocks, the Plus mark (the chooser shows them locked, with
- * what Plus unlocks); "Continue your mock exam" while one is running. Nothing while no mock can be
- * built.
- */
 export function MockEntryButton({
   hrefs,
   view,

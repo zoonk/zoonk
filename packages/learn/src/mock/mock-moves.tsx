@@ -9,11 +9,6 @@ import { useMockScreen } from "./mock-context";
 
 const MS_PER_SECOND = 1000;
 
-/**
- * How the section moves, in a quiet line, as the notice sets it: never back to a question once
- * left, an answer before moving on, and in the review at a forward-only section's end, the answers
- * it may still change. Nothing for a section that moves freely.
- */
 export function MovesNote() {
   const t = useExtracted();
   const { runner } = useMockScreen();
@@ -54,10 +49,6 @@ export function MovesNote() {
   );
 }
 
-/**
- * A question's own clock, inline in the line under the header: when it runs out, the next
- * question opens, or after the last one the answers close until the learner hands the section in.
- */
 function ItemCountdown({ seconds }: { seconds: number }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
@@ -74,7 +65,6 @@ function ItemCountdown({ seconds }: { seconds: number }) {
   );
 }
 
-/** Each question's clock, where the notice gives every question its own time. */
 export function ItemClock() {
   const { runner } = useMockScreen();
   const seconds = runner.moves.itemSeconds;

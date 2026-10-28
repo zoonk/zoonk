@@ -25,7 +25,6 @@ import { useSectionCounts } from "./mock-section-counts";
 import { SheetSections } from "./mock-sheet-sections";
 import { isDraftAnswered } from "./use-mock-drafts";
 
-/** "16 answered · 1 flagged": the sheet at a glance, in the mono face. */
 function useSheetCountLine(): string {
   const t = useExtracted();
   const { answered, flagged } = useSectionCounts();
@@ -36,17 +35,11 @@ function useSheetCountLine(): string {
   );
 }
 
-/** How big a question's cell is: the row under the question on a phone, or the whole sheet. */
 const CELL_SIZE = {
   row: { cell: "h-7 rounded-[0.375rem] text-xs", essay: "size-3.5" },
   sheet: { cell: "h-11 rounded-lg text-sm", essay: "size-4" },
 } as const;
 
-/**
- * One question of the sheet, its number in the mono face: blank as a hairline outline, answered
- * filled, flagged with an amber ring and number, and the one on screen inverted. A forward-only
- * section shows every question but opens none behind.
- */
 function QuestionCell({
   index,
   onPick,
@@ -76,7 +69,6 @@ function QuestionCell({
         isDraftAnswered(draft) &&
           "bg-surface-3 text-foreground enabled:hover:bg-surface-3 ring-transparent",
         draft?.flagged && "text-warning-text ring-warning ring-[1.5px]",
-        // Where the learner is: the blue ring, over the answered fill when it has one.
         isCurrent && "text-foreground ring-success ring-2",
       )}
       disabled={!runner.moves.canOpen(index)}
@@ -92,7 +84,6 @@ function QuestionCell({
   );
 }
 
-/** Every question of the section, 44px cells as many to a row as fit. */
 function SheetGrid({ onPick }: { onPick: (position: number) => void }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
@@ -112,15 +103,8 @@ function SheetGrid({ onPick }: { onPick: (position: number) => void }) {
   );
 }
 
-/** How many questions the map under the question shows at once: one row of the paper's sheet. */
 const MAP_ROW = 9;
 
-/**
- * The row of the answer sheet the question on screen sits in, right under it on a phone: nine
- * questions at a time, answered, flagged or still blank at a glance, each a tap away (the one
- * before too). The whole sheet, and handing in from it, opens from the header. Nothing for a
- * section of one question.
- */
 export function MockQuestionMap({ className }: { className?: string }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
@@ -147,10 +131,6 @@ export function MockQuestionMap({ className }: { className?: string }) {
   );
 }
 
-/**
- * What the amber ring means, drawn as the flagged cell is (an amber ring, not a fill), and the
- * mock's rule, in one quiet line under the sheet.
- */
 export function SheetLegend({ className }: { className?: string }) {
   const t = useExtracted();
 
@@ -165,12 +145,6 @@ export function SheetLegend({ className }: { className?: string }) {
   );
 }
 
-/**
- * What the section's notice says beside its questions, as quiet lines in the sheet: what may be
- * used in it, as on the exam's cover page; how many of the exam's questions the mock asks when the
- * bank had too few new ones; and how many it asks again (answered before, missed ones first), so
- * the score reads right.
- */
 function SheetNotes() {
   const t = useExtracted();
   const { runner } = useMockScreen();
@@ -204,18 +178,11 @@ function SheetNotes() {
   );
 }
 
-/**
- * The answer sheet itself, the same beside the question from `lg` and in the drawer on a phone:
- * every question of the section at a glance (answered, flagged, still blank), a tap to jump to one,
- * what the amber ring means, the section's notes (what may be used, questions asked again), and the
- * mock's sections.
- */
 function MockSheetContent({
   onPick,
   withMoves = false,
 }: {
   onPick: (position: number) => void;
-  /** The section's rule under the grid, for the drawer that covers the one under the question. */
   withMoves?: boolean;
 }) {
   return (
@@ -233,7 +200,6 @@ function MockSheetContent({
   );
 }
 
-/** Handing the section in from the sheet, at its foot; `onHandIn` confirms it first. */
 function SheetHandIn({ onHandIn }: { onHandIn: () => void }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
@@ -251,11 +217,6 @@ function SheetHandIn({ onHandIn }: { onHandIn: () => void }) {
   );
 }
 
-/**
- * The answer sheet beside the question from `lg`, where there's room for it: the section's clock on
- * top, the sheet, and handing in at its foot, level with the action bar. The header's Sheet button
- * is for the screens without it.
- */
 export function useMockSheetAside({
   deadline,
   onHandIn,
@@ -281,12 +242,6 @@ export function useMockSheetAside({
   };
 }
 
-/**
- * The answer sheet on a phone or a tablet in portrait, a small "Sheet" button in the header: the
- * same sheet in a drawer from the bottom, so the question stays in place under it. A pick closes
- * it on that question; handing in from it confirms first (`onHandIn`). From `lg` the sheet is
- * beside the question and the button leaves the header.
- */
 export function MockAnswerSheet({ onHandIn }: { onHandIn: () => void }) {
   const t = useExtracted();
   const { runner } = useMockScreen();

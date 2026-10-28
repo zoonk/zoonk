@@ -1,12 +1,6 @@
-/**
- * Where the answers' saves stand: every one stored (`saved`), some on their way (`saving`), some
- * waiting to go out again after a request that couldn't reach the server (`retrying`), or one the
- * server turned down (`refused`, such as an answer sent after the section's time ran out), which
- * holds until a later answer is stored.
- */
+/** `refused` holds until a later answer is stored. */
 export type DraftSaveStatus = "refused" | "retrying" | "saved" | "saving";
 
-/** The wait before the first new try after a failed request; each next one doubles, up to the last. */
 const FIRST_RETRY_MS = 1000;
 const LONGEST_RETRY_MS = 15_000;
 const RETRY_BACKOFF = 2;
@@ -16,23 +10,17 @@ function getRetryDelay(attempt: number): number {
 }
 
 /**
- * Sends a mock's answers one after another, so an older answer to a question never lands after a
- * newer one, and never drops one: a request that couldn't reach the server (it rejects) is tried
- * again with growing waits (or at once with `retryNow`, when the connection is back), before
- * anything after it. A newer answer to a question waiting to go out replaces the older one, since
- * each answer holds everything about its question. A refused save (`save` resolves false) isn't
- * tried again: nothing would change. `idle` waits for every answer, which is what handing a
- * section in needs.
+ * Sends answers in order, so an older answer never lands after a newer one, and retries one that
+ * couldn't reach the server before what follows.
  */
 export function createDraftSaveQueue<TDraft>({
   keyOf,
   onStatus,
   save,
 }: {
-  /** The question an answer is to: a newer answer to it replaces one still waiting. */
   keyOf: (draft: TDraft) => string;
   onStatus: (status: DraftSaveStatus) => void;
-  /** Stores one answer: true once stored, false when refused; rejects when it didn't get through. */
+  /** True once stored, false when refused; rejects when it didn't get through. */
   save: (draft: TDraft) => Promise<boolean>;
 }) {
   const waiting: TDraft[] = [];
@@ -66,7 +54,6 @@ export function createDraftSaveQueue<TDraft>({
     }
   }
 
-  /** Keeps a draft that didn't get through first in line, unless a newer one replaced it. */
   function keepForRetry(draft: TDraft) {
     const key = keyOf(draft);
 
@@ -120,7 +107,6 @@ export function createDraftSaveQueue<TDraft>({
   }
 
   return {
-    /** Sends an answer after the ones before it, replacing one to its question still waiting. */
     add(draft: TDraft) {
       const key = keyOf(draft);
       const index = waiting.findIndex((other) => keyOf(other) === key);
@@ -143,9 +129,7 @@ export function createDraftSaveQueue<TDraft>({
         idleWaiters.push(resolve);
       });
     },
-    /** Whether an answer is still waiting or on its way. */
     isBusy,
-    /** Tries the waiting answers again now (the connection is back, or the learner asked to). */
     retryNow() {
       if (!retryTimer) {
         return;

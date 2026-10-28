@@ -17,7 +17,6 @@ import { useMockShapeLabel } from "./mock-labels";
 function useMeasureText() {
   const t = useExtracted();
   const format = useFormatter();
-  // Partial credit and a fractional penalty leave decimals: "2,25" in Portuguese.
   const points = (value: number) => format.number(value, { maximumFractionDigits: 2 });
 
   return (mock: ExamMockSummary): string => {
@@ -41,12 +40,6 @@ function useMeasureText() {
   };
 }
 
-/**
- * One finished mock as a row, marked done as every finished thing is (its list holds only mocks,
- * so a kind's dot would say nothing): "Mock exam 3", its day and what it sat under it, and how it went in
- * the mono face at its end (under its day in a narrow column, `stacked`, such as a page's aside);
- * the whole row opens its result when it has one (`href`).
- */
 export function MockSummaryRow({
   href,
   mock,
@@ -63,7 +56,6 @@ export function MockSummaryRow({
   const date = format.dateTime(new Date(mock.finishedAt), { day: "numeric", month: "short" });
   const shape = shapeLabel(mock);
 
-  // A mock that asked fewer than the exam's questions says so beside what it sat.
   const label =
     mock.examQuestions !== null && mock.examQuestions > mock.total
       ? t(

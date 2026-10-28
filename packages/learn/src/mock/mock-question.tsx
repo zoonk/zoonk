@@ -15,17 +15,10 @@ import { isMultiPick } from "../questions/pick-rule";
 import { useMockScreen } from "./mock-context";
 import { MockOptions, MockPicks, useLocked } from "./mock-options";
 
-/** A typed word or short answer is a few words, as the exam's answer box takes it. */
 const MAX_TYPED_ANSWER = 500;
 
-/** A number saved before shows with up to this many decimals: two thirds reads 0.6667. */
 const NUMBER_DIGITS = 4;
 
-/**
- * A number typed into the question's answer box, by the box's rule (a whole number, n decimals,
- * a fraction), saved a moment after the learner stops typing; one that isn't a number yet is a
- * blank.
- */
 function MockNumberAnswer({ question }: { question: MockQuestion }) {
   const locale = useLocale();
   const { runner } = useMockScreen();
@@ -55,7 +48,6 @@ function MockNumberAnswer({ question }: { question: MockQuestion }) {
   );
 }
 
-/** A word or short answer typed in, saved a moment after the learner stops typing. */
 function MockWordAnswer({ question }: { question: MockQuestion }) {
   const t = useExtracted();
   const inputId = useId();
@@ -90,10 +82,6 @@ function MockWordAnswer({ question }: { question: MockQuestion }) {
 
 const WORD_PATTERN = /\S+/gu;
 
-/**
- * An essay of a full mock's written part, written on the section's clock: the text is kept as the
- * learner types and saved once they pause, with its word count.
- */
 function EssayAnswer({ question }: { question: MockQuestion }) {
   const t = useExtracted();
   const textId = useId();
@@ -116,7 +104,6 @@ function EssayAnswer({ question }: { question: MockQuestion }) {
         readOnly={runner.pending}
         value={text}
       />
-      {/* Counted from the first word: "0 words" under an empty box says nothing. */}
       <p
         aria-live="polite"
         className="text-muted-foreground min-h-4 font-mono text-xs tabular-nums"
@@ -127,7 +114,6 @@ function EssayAnswer({ question }: { question: MockQuestion }) {
   );
 }
 
-/** Where the question sits: its number of the mock's, or the written part an essay belongs to. */
 export function useQuestionPlace(question: MockQuestion): string {
   const t = useExtracted();
   const { runner } = useMockScreen();
@@ -143,7 +129,6 @@ export function useQuestionPlace(question: MockQuestion): string {
     : t("Question {number} of {total}", place);
 }
 
-/** How the question is answered: a pick or several, a number, a word, or an essay. */
 function MockAnswerInput({ question }: { question: MockQuestion }) {
   switch (question.format) {
     case "essay":
@@ -164,12 +149,7 @@ function MockAnswerInput({ question }: { question: MockQuestion }) {
   }
 }
 
-/**
- * A recording above its set's questions in a listening section. Keyed by its set, it stays mounted
- * from the set's first question to its last, so it keeps playing while the learner answers along,
- * as in the exam. Every play counts in this mock, a reload's too: the exam gives none back. The
- * mock keeps the count, so another tab or device opens it with the same plays left.
- */
+/** Keyed by its set, so it keeps playing while the learner answers along, as in the exam. */
 export function MockRecording({ question }: { question: MockQuestion }) {
   const { runner } = useMockScreen();
   const { set } = question;
@@ -198,12 +178,6 @@ export function MockRecording({ question }: { question: MockQuestion }) {
   );
 }
 
-/**
- * One question of the running section (its place is in the line under the header): the text its
- * set shares (folded on a phone right after another question on it; a recording plays above them
- * all, `MockRecording`), the question and how it's answered (picks, a number, a word), or an
- * essay's prompt and the box to write it in.
- */
 export function MockQuestionCard({ question }: { question: MockQuestion }) {
   const { runner } = useMockScreen();
   const previous = runner.view.current?.questions[runner.position - 1];

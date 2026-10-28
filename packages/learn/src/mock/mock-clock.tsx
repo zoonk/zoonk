@@ -9,12 +9,12 @@ import { useTimeLeft } from "../_utils/use-time-left";
 import { useMockScreen } from "./mock-context";
 import { useMockTitle } from "./mock-labels";
 
-/** The section stops accepting answers at its deadline; grading waits for the learner's click. */
+/** Answers stop at the deadline; grading still waits for the learner's click. */
 export function useIsSectionExpired(deadline?: string): boolean {
   return useTimeLeft({ deadline }) === 0;
 }
 
-/** Re-reads a stale sitting after the shared abandonment window and when its tab returns. Never hands it in. */
+/** Never hands the sitting in. */
 export function useRefreshPastMockDeadline({
   deadline,
   refresh,
@@ -56,11 +56,7 @@ const CLOCK_CLASS = {
   header: { box: "items-center", time: "text-[1.625rem] leading-8" },
 } as const;
 
-/**
- * The section's time left as a readout, with a small "time left" under it: in the task's
- * header, or at the top of the answer sheet beside the question from `lg`. A timer isn't a live
- * region, so it never reads every second.
- */
+/** A timer isn't a live region, so it never reads every second. */
 export function SectionClock({
   className,
   deadline,
@@ -91,12 +87,6 @@ export function SectionClock({
   );
 }
 
-/**
- * The task header's title, like an exam room's clock: the section's time left (the one header
- * allowed a second line). The mock's name is the page's heading, for screen readers while the
- * clock leads; where the clock moves to the answer sheet beside the question from `lg`
- * (`clockBeside`), the header shows the name instead.
- */
 export function ClockTitle({
   clockBeside = false,
   deadline,

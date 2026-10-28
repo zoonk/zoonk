@@ -18,17 +18,10 @@ import { isSavedQuestionExpired } from "./mock-deadline";
 import { getSectionMoves } from "./section-moves";
 import { isDraftAnswered, useMockDrafts } from "./use-mock-drafts";
 
-/**
- * Handing a section in and scoring the mock are database work of a second or two (no model
- * runs): past `slowMs` the screen says it's still at it, and past `timeoutMs` it stops waiting and
- * offers to try again, which is safe (a handed-in section stays handed in).
- */
+/** A retry after the timeout is safe: a handed-in section stays handed in. */
 const STEP_BOUNDS = { slowMs: 10_000, timeoutMs: 45_000 } as const;
 
-/**
- * Grading essays takes about 9 to 17 seconds each (a fallback model up to 24 s), at once for a
- * mock's few; past this the screen stops waiting and offers to grade them again.
- */
+/** Essays grade at once, about 9 to 17 s each and up to 24 s on the fallback model. */
 const ESSAY_GRADING_TIMEOUT_MS = 120_000;
 
 function isSameAnswer(first: MockAnswer | null, second: MockAnswer | null): boolean {
@@ -39,7 +32,6 @@ function hasPendingEssays(view: MockView): boolean {
   return view.essays.some((essay) => essay.status === "pending");
 }
 
-/** The mock with a recording's plays as the server counted them. */
 function withPlayed({
   outcome,
   setId,
@@ -58,11 +50,6 @@ function withPlayed({
   return { ...view, current: { ...view.current, plays } };
 }
 
-/**
- * Counts a recording's play on the mock as it starts, keeping the server's count on screen: false
- * when the mock had none left, so the recording stops. A play the server couldn't count keeps
- * going: the page still counts it.
- */
 async function countPlay({
   play,
   setId,
@@ -82,7 +69,6 @@ async function countPlay({
   return outcome.status === "counted";
 }
 
-/** Essay scoring has its own wait and retry state, independent of question movement. */
 function useEssayGrading({
   actions,
   setView,
@@ -128,7 +114,6 @@ function hasExpiredFinalQuestion(view: MockView): boolean {
   });
 }
 
-/** Stops a question's saved duration when time replaces it with the hand-in screen. */
 function useShownQuestion({
   currentItemId,
   drafts,
@@ -159,11 +144,6 @@ function useShownQuestion({
   useEffect(() => synchronize(shownItemId), [shownItemId]);
 }
 
-/**
- * The started mock from the learner's side: answering and flagging (saved as drafts), moving
- * through the section, handing it in (or letting the clock do it) and seeing the result. Each step
- * takes the mock as the server returns it, so the screen always matches what's stored.
- */
 export function useMockRunner({
   actions,
   initial,
@@ -174,7 +154,6 @@ export function useMockRunner({
   const analytics = useLearnAnalytics();
   const [view, setView] = useState(initial);
   const [position, setPosition] = useState(initial.current?.resume ?? 0);
-  // The furthest question opened, and the questions the review changed, in the running section.
   const [reached, setReached] = useState(initial.current?.resume ?? 0);
   const [changed, setChanged] = useState<readonly number[]>([]);
   const [pending, setPending] = useState(false);
@@ -217,7 +196,6 @@ export function useMockRunner({
       drafts.leave(question.itemId);
     }
 
-    // Answers are saved first, then the step; a step that fails or takes too long says so.
     const settled = await settleWithin({
       ms: STEP_BOUNDS.timeoutMs,
       request: async () => {
@@ -249,7 +227,6 @@ export function useMockRunner({
     setQuestionTimeUp(false);
     setView(next);
 
-    // An explicit hand-in grades essays right away, while the objective result shows.
     if (
       (kind === "submit" || kind === "finish") &&
       next.status === "finished" &&
@@ -282,10 +259,6 @@ export function useMockRunner({
     setReached((current) => Math.max(current, target));
   }
 
-  /**
-   * Whether the current question's answer may become this one. In a forward-only section's
-   * review, changing a left-behind answer uses one of its changes, once per question.
-   */
   function canAnswer(next: MockAnswer | null): boolean {
     if (!question || timeUp || !moves.canChange(position)) {
       return false;

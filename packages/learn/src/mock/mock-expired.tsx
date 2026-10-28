@@ -8,11 +8,6 @@ import { TaskMainLink } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
 import { MockEyebrow, MockFrame } from "./mock-frame";
 
-/**
- * A mock whose time ran out while the learner was away, with most of it unanswered: it says so
- * calmly, that it isn't scored and leaves their preparation as it was, and leads to a new one. No
- * score, answers or blame.
- */
 export function MockExpired() {
   const t = useExtracted();
   const { hrefs } = useMockScreen();

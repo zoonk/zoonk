@@ -27,10 +27,6 @@ export type {
   MockPlayOutcome,
 } from "./mock-context";
 
-/**
- * Every section was handed in but grading didn't finish (the tab closed first): one line says it's
- * in, and one tap grades it now.
- */
 function MockGrading() {
   const t = useExtracted();
   const { runner } = useMockScreen();
@@ -57,10 +53,7 @@ function MockGrading() {
   );
 }
 
-/**
- * A clock never starts grading: time closes the answers, and the learner hands them in. It says
- * the answers are saved only when they are; the bar says what isn't.
- */
+/** A clock never starts grading: time closes the answers, and the learner hands them in. */
 function MockTimeUp() {
   const t = useExtracted();
   const { actions, runner } = useMockScreen();
@@ -128,11 +121,6 @@ function MockStage() {
   return view.current ? <MockRunnerView /> : <MockGrading />;
 }
 
-/**
- * A started mock exam in real conditions, to its result: its sections, clock, scoring and
- * analysis. Its challenge page introduces and starts it. The host supplies the mock's view model,
- * how to reach the server and where to go next.
- */
 export function MockScreen({
   actions,
   ask,
@@ -142,17 +130,13 @@ export function MockScreen({
   renderCeremony,
 }: {
   actions: MockActions;
-  /** "Ask" about the result, such as the player's `AskTutor`; it shows once the mock is over. */
   ask?: React.ReactNode;
-  /** The learner's buddy, who cheers when the mock completes one of the day's missions. */
   buddy?: LearnBuddy | null;
   hrefs: MockHrefs;
   mock: MockView;
-  /** The full-screen moment for a milestone the mock earned (a new belt), before its result. */
   renderCeremony?: MomentCeremony;
 }) {
   const runner = useMockRunner({ actions, initial: mock });
-  // A result opened again later is a record, not a celebration: only one finished here moves.
   // oxlint-disable-next-line react/hook-use-state -- Read once as the screen opens, never updated.
   const [openedFinished] = useState(mock.status === "finished");
 

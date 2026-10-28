@@ -16,13 +16,11 @@ import { TaskAsideSection } from "../_components/task-layout";
 import { useMockScreen } from "./mock-context";
 import { useSectionCounts } from "./mock-section-counts";
 
-/** Each section's mark, as every list draws where things stand: handed in, the one running, ahead. */
 const SECTION_MARK = { current: "next", done: "done", upcoming: "todo" } as const satisfies Record<
   MockSectionView["status"],
   string
 >;
 
-/** What a section's row says at its end: how much of it is answered, or that it's handed in. */
 function SectionTrailing({ section }: { section: MockSectionView }) {
   const t = useExtracted();
   const counts = useSectionCounts();
@@ -35,7 +33,6 @@ function SectionTrailing({ section }: { section: MockSectionView }) {
   return `${answered}/${section.questions + section.essays}`;
 }
 
-/** One section: its mark, its name (quiet unless it's running) and how far it is. */
 function SectionRow({ section }: { section: MockSectionView }) {
   const t = useExtracted();
 
@@ -56,16 +53,10 @@ function SectionRow({ section }: { section: MockSectionView }) {
   );
 }
 
-/** Whether the mock has sections to list: one section is the whole sitting. */
 export function hasSeveralSections(sections: readonly MockSectionView[]): boolean {
   return sections.length > 1;
 }
 
-/**
- * The mock's sections in the exam's order, the one running highlighted, each with how much of it
- * is answered, so the learner sees the whole sitting; nothing for a mock of one section. Under its
- * own label, unless the aside's header already names it (`titled={false}`).
- */
 export function SheetSections({ titled = true }: { titled?: boolean }) {
   const t = useExtracted();
   const { runner } = useMockScreen();

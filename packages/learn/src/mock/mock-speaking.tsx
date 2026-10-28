@@ -28,7 +28,6 @@ import { MockFrame, MockStepStatus } from "./mock-frame";
 
 type SpeakingTask = SpeakingSectionView["tasks"][number];
 
-/** One task of the paper: its name and time, and its call to open, or done. */
 function SpeakingTaskRow({ number, task }: { number: number; task: SpeakingTask }) {
   const t = useExtracted();
   const { hrefs } = useMockScreen();
@@ -61,7 +60,6 @@ function SpeakingTaskRow({ number, task }: { number: number; task: SpeakingTask 
   );
 }
 
-/** The paper's tasks in the exam's order, each a call with the examiner. */
 function SpeakingPaper({ paper }: { paper: SpeakingSectionView }) {
   const t = useExtracted();
   const left = paper.tasks.filter((task) => task.status !== "completed").length;
@@ -86,11 +84,6 @@ function SpeakingPaper({ paper }: { paper: SpeakingSectionView }) {
   );
 }
 
-/**
- * Handing the speaking section in can't be undone, so it's confirmed first, Enter included: with
- * tasks still to do, that the paper's estimate needs every one; with all of them done, that they
- * can't be done again in this mock.
- */
 function SpeakingHandIn({ isLast, left }: { isLast: boolean; left: number }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
@@ -189,12 +182,7 @@ function SpeakingScreen({ deadline, section: index }: { deadline: string; sectio
   );
 }
 
-/**
- * The mock's speaking section: the exam's speaking paper, each task a live call with an examiner
- * the app stands in for. Its cards are written when the learner starts the section, so a mock
- * handed in before it never pays for them. The section's clock runs through the calls, as the
- * exam's does, and handing it in moves on; tasks not done count as not done.
- */
+/** Its cards are written when the learner starts the section, so a mock handed in before it never pays for them. */
 export function MockSpeakingView() {
   const { runner } = useMockScreen();
   const { current } = runner.view;

@@ -16,7 +16,6 @@ import { LearnLink } from "../learn-link";
 import { TaskMainLink } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
 
-/** The questions answered wrong: the ones to fix. Blanks are reviewed but aren't mistakes. */
 export function useMistakeCount(): number {
   const { runner } = useMockScreen();
   // A question with several picks answered partly right missed some, so the notebook keeps it too.
@@ -30,7 +29,6 @@ function useMistakesTitle() {
     t("{count, plural, one {# mistake to review} other {# mistakes to review}}", { count });
 }
 
-/** The one thing to do now, a phone's last step: the mistakes to review. */
 export function MockNextStep({ count }: { count: number }) {
   const t = useExtracted();
   const title = useMistakesTitle();
@@ -45,7 +43,6 @@ export function MockNextStep({ count }: { count: number }) {
   );
 }
 
-/** What's next beside a wide screen's result: the mistakes to review, as Today lists a block. */
 export function MockNextRow({ count }: { count: number }) {
   const title = useMistakesTitle();
 
@@ -63,10 +60,6 @@ export function MockNextRow({ count }: { count: number }) {
   );
 }
 
-/**
- * Review the mistakes when there are some; otherwise back to the day. A placement mock goes on to
- * the plan its answers set. Enter follows it.
- */
 export function MockResultActions() {
   const t = useExtracted();
   const { hrefs, runner } = useMockScreen();
@@ -89,12 +82,6 @@ export function MockResultActions() {
   );
 }
 
-/**
- * The way on without reviewing the mistakes: back to the day's session, or "Not now". From `lg` it
- * sits before the main action in the bar's row (`row`), as every task bar puts its secondary; on a
- * phone, where two long labels don't share a row, it's a quiet button under the main action
- * (`under`).
- */
 export function MockResultOptions({ placement }: { placement: "row" | "under" }) {
   const t = useExtracted();
   const { hrefs, runner } = useMockScreen();

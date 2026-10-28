@@ -17,21 +17,12 @@ import { MockLeftOutNote } from "./mock-notes";
 import { useMockOptionName } from "./mock-option-labels";
 import { MockSizeNote } from "./mock-size-note";
 
-/** Where the chooser leads: to Plus, and to a finished mock's result by its id. */
 export type MockChooserHrefs = { mock: (id: string) => string; plus: string };
 
-/** A mock without a written part beside its questions. */
 const NO_WRITTEN_PARTS: readonly string[] = [];
 
-/** A picked mock's size: its questions, its time limit and about how long learners take. */
 type PickedSize = { estimatedMinutes: number; minutes: number; questions: number };
 
-/**
- * The picked mock in the page's aside from 72rem, where a narrower screen has its size on the row:
- * its questions, time limit and about how long learners take as properties, then what it asks
- * (`asks`: the subjects, or the exam's parts it sits, named as a group of its section) with the
- * written parts beside its questions.
- */
 export function ChooserPicked({
   asks,
   size,
@@ -84,12 +75,6 @@ export function ChooserPicked({
   );
 }
 
-/**
- * The picked mock in the page's aside: its properties and what it asks from 72rem (a narrower
- * screen has its size on the row), then where its size comes from and what it leaves out (a
- * subject's leaves out less than the whole day; half of a day already says "objective part only"
- * beside it), and how the last mock went.
- */
 export function PickedMock({
   hrefs,
   option,

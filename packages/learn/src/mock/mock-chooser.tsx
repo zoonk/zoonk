@@ -29,12 +29,10 @@ import {
 
 export type { MockChooserStatus } from "./mock-chooser-parts";
 
-/** What Start asks for: one of the goal's options, or a diagnostic mock in a length. */
 export type MockStart =
   | { option: MockOptionView; purpose: "practice" }
   | { length: PlacementMockLength; purpose: "placement" };
 
-/** One option's key among the goal's, as the chooser and its `short` status name it. */
 export function getMockOptionKey(option: MockOptionView): string {
   return [option.kind, option.day ?? "", option.area ?? ""].join(":");
 }
@@ -58,10 +56,6 @@ function useMockChoices({
   }));
 }
 
-/**
- * The mocks to pick from: the exam itself (each day, half of one), then each subject on its own.
- * Number keys pick from the first list.
- */
 function MockOptionLists({
   onPick,
   picked,
@@ -104,13 +98,6 @@ function MockOptionLists({
   );
 }
 
-/**
- * "Take a mock exam", whenever the learner wants, as a page of the app's frame: the exam's name,
- * the one rule, and Start beside them (Enter starts the picked mock), the mocks to pick from with
- * their honest size and time (the full exam is picked to start), and the picked one in the page's
- * aside from 72rem, with how the last mock went. A mock the bank is short of has its questions
- * written first, while the page says so. Without Plus, the options show with what it would take.
- */
 function PracticeChooser({
   bar,
   busy,
@@ -130,10 +117,8 @@ function PracticeChooser({
   const [first] = view.options;
   const [picked, setPicked] = useState(first ? getMockOptionKey(first) : "");
   const option = view.options.find((candidate) => getMockOptionKey(candidate) === picked) ?? null;
-  // An exam of several days names each day's mocks by their day.
   const severalDays = view.options.filter((candidate) => candidate.kind === "full").length > 1;
   const open = view.access === "open";
-  // How much of the picked mock is ready; picking another one starts over.
   const short = status.kind === "short" && status.optionKey === picked ? status : null;
 
   const shown: MockChooserStatus =
@@ -185,14 +170,6 @@ function PracticeChooser({
   );
 }
 
-/**
- * A diagnostic mock in onboarding instead of the quick questions, as a page of the app's frame:
- * what it is (the exam's format, and the plan starts from its answers) with Start beside it, how
- * long, as one choice of a few lengths with their questions and how fine a starting point each sets
- * (the suggested one picked), and that stopping midway keeps what was answered; from 72rem the
- * picked length's size and subjects in the page's aside. Without Plus, the lengths show with what
- * it takes.
- */
 function PlacementChooser({
   bar,
   busy,
@@ -229,7 +206,6 @@ function PlacementChooser({
           </DetailAsideSection>
         )
       }
-      // A narrower screen has each length's size on its row: the aside would only repeat it.
       asideClassName="hidden min-[72rem]:flex"
       bar={bar}
     >
@@ -270,12 +246,6 @@ function PlacementChooser({
   );
 }
 
-/**
- * Taking a mock any time, or (`placement`) a diagnostic mock as placement in onboarding, as a page
- * of the app's frame under the host's bar (`bar`); the mock itself runs full screen. The host
- * starts the picked mock (`onStart`), follows the run writing its questions when the bank is short
- * (`status`), and says why it couldn't start.
- */
 export function MockChooserScreen({
   bar,
   busy,
@@ -285,7 +255,6 @@ export function MockChooserScreen({
   status,
   view,
 }: {
-  /** The page's bar (`LearnPageBar`), with the way back to where the chooser was opened. */
   bar: ReactNode;
   busy: boolean;
   hrefs: MockChooserHrefs;

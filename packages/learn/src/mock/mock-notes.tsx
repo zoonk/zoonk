@@ -4,7 +4,6 @@ import { type MockLeftOut, type MockScoreNotes } from "@zoonk/core/exams/mocks/v
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
 
-/** Why a part of the real exam isn't in the mock, in one line (see `MockLeftOut`). */
 function useLeftOutLine() {
   const t = useExtracted();
 
@@ -52,7 +51,6 @@ function NoteLines({ className, lines }: { className?: string; lines: readonly s
   );
 }
 
-/** What a mock leaves out of the real exam, each part with why, as quiet lines. */
 export function MockLeftOutNote({
   className,
   leftOut,
@@ -64,10 +62,6 @@ export function MockLeftOutNote({
   return <NoteLines className={className} lines={leftOut.map((part) => line(part))} />;
 }
 
-/**
- * How many of the exam's questions a mock asks, when the bank had too few new ones for all of
- * them (`MockView.examQuestions`); null when it asks them all.
- */
 export function useMockShortLine({
   examQuestions,
   questions,
@@ -87,7 +81,6 @@ export function useMockShortLine({
   );
 }
 
-/** The exam's own scale in one line, with the mock's right answers on it when they convert. */
 function useScaleLine() {
   const t = useExtracted();
   const format = useFormatter();
@@ -116,11 +109,6 @@ function useScaleLine() {
   };
 }
 
-/**
- * What a mock's score says about the real one: the exam's own scale (the right answers on it
- * where they convert) and the score that passes on it, how the notice scores the exam where the
- * mock only counts right answers, and that the real result depends on everyone in the sitting.
- */
 export function MockScoreNote({ notes }: { notes: MockScoreNotes }) {
   const t = useExtracted();
   const format = useFormatter();

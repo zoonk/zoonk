@@ -19,13 +19,6 @@ import { useMockScreen } from "./mock-context";
 import { MockFrame, MockStepStatus } from "./mock-frame";
 import { SheetSections, hasSeveralSections } from "./mock-sheet-sections";
 
-/**
- * The break the notice gives between two sections, like the real exam's, straight on the page:
- * its time left big in the mono face, the section that comes next as one row (what may be used in
- * it under its name, its time in the mono face at its end), and starting it early. From `lg` the
- * sitting's sections are beside it, the ones handed in and the one next, as the answer sheet
- * lists them.
- */
 export function MockBreak({ until }: { until: string }) {
   const t = useExtracted();
   const duration = useFormatDuration();

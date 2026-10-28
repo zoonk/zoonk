@@ -10,7 +10,6 @@ export function useMockTitle() {
     t("Mock exam {number}", { number: String(mock.number) });
 }
 
-/** A mock sits a whole exam day or half of one, including when the exam has several days. */
 export function useMockDaySizeLabel() {
   const t = useExtracted();
 
@@ -25,10 +24,6 @@ export function useMockDaySizeLabel() {
   };
 }
 
-/**
- * What a mock sat, in a few words, beside its number: the subject, half an exam day or all of it for
- * one taken any time, the starting point for one taken in onboarding; empty for the plan's own.
- */
 export function useMockShapeLabel() {
   const t = useExtracted();
   const daySize = useMockDaySizeLabel();

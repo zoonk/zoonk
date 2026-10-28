@@ -7,11 +7,6 @@ import { StatTile, StatTiles } from "../_components/stat-tile";
 
 type AnswerCounts = { blank: number; partial: number; right: number; wrong: number };
 
-/**
- * The answers a score comes from: a net score's right, wrong, partly right and blank ones, and the
- * right, wrong and blank ones an estimated range was worked out from, which the range alone doesn't
- * say. A score in right answers already says them.
- */
 function getAnswerCounts(result: MockResult): AnswerCounts | null {
   if (result.net) {
     return result.net;
@@ -29,17 +24,8 @@ function getAnswerCounts(result: MockResult): AnswerCounts | null {
   };
 }
 
-/**
- * The tiles share a row wherever their words fit, however wide the step is (a phone, the column,
- * beside the questions from `lg`): each is at least as wide as its words, so three sit side by side
- * whenever they can, and only a row too narrow for them wraps the last one across the next.
- */
 const ANSWER_TILES_CLASS = "flex flex-wrap [&>li]:min-w-max [&>li]:flex-1";
 
-/**
- * The answers behind the score (`getAnswerCounts`): each its own tile, its mark in its color
- * (right blue, wrong pink-red) and the count as the tile's readout.
- */
 export function MockResultAnswers({ result }: { result: MockResult }) {
   const t = useExtracted();
   const format = useFormatter();

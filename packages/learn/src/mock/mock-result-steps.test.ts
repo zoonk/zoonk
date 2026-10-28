@@ -9,7 +9,6 @@ const everything: Record<MockResultPart, boolean> = {
   speaking: true,
 };
 
-/** The steps a screen shows: every one on a phone, the ones not beside the others from `lg`. */
 function stepsShown({ has, wide }: { has: Record<MockResultPart, boolean>; wide: boolean }) {
   return getResultSteps(has).flatMap((step) => (wide && step.beside ? [] : [step.part]));
 }

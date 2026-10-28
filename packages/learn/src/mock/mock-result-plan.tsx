@@ -15,15 +15,12 @@ import { StepCard, StepDetail, StepEyebrow, StepHeader, StepTitle } from "../_co
 import { useFormatShare } from "../_utils/percent";
 import { type MockPlanOffer, type MockPlanOfferOutcome, useMockScreen } from "./mock-context";
 
-/** A plan offer once answered: what the learner said, and what it did. */
 type Answer = { outcome: MockPlanOfferOutcome } | { declined: true } | { failed: true };
 
 type Answers = Partial<Record<MockPlanOffer, Answer>>;
 
-/** Topics named in the change: the first three, then how many more. */
 const TOPICS_NAMED = 3;
 
-/** The offers a finished mock makes, in the order they're applied: skip first, then focus. */
 function getOffers(adapt: MockAdaptView): MockPlanOffer[] {
   return [adapt.skip && "skip", adapt.focus && "focus"].filter(
     (offer): offer is MockPlanOffer => typeof offer === "string",
@@ -34,7 +31,6 @@ function isSettled(answer: Answer | undefined): boolean {
   return answer !== undefined && !("failed" in answer);
 }
 
-/** Applies the offers one after the other (both change the plan), each with what it came to. */
 function applyOffers({
   adapt,
   offers,
@@ -49,12 +45,6 @@ function applyOffers({
   }, Promise.resolve({}));
 }
 
-/**
- * What a finished mock offers to change in the plan (`MockAdaptView`), as one change the learner
- * applies or not: skip the lessons of the topics it showed they know and give the area that went
- * worst more time. Nothing changes until they say so. One state for every place it's drawn (a
- * phone's step, a wide screen's aside), so applying it in one shows in the other.
- */
 export function usePlanChange(adapt: MockAdaptView | null) {
   const { actions } = useMockScreen();
   const [answers, setAnswers] = useState<Answers>({});
@@ -71,7 +61,6 @@ export function usePlanChange(adapt: MockAdaptView | null) {
         setAnswers((current) => ({ ...current, ...applied }));
       }),
     isPending,
-    // What already went through stays; only what's still open is kept as it was.
     keep: () =>
       setAnswers((current) => ({
         ...current,
@@ -121,10 +110,6 @@ function isApplied(answer: Answer): boolean {
   return "outcome" in answer && answer.outcome.status === "applied";
 }
 
-/**
- * What the change came to, one line per offer; keeping the plan is one line, said only when
- * nothing was applied.
- */
 function PlanChangeStatus({ change }: { change: PlanChange }) {
   const answerLine = useAnswerLine();
 
@@ -157,11 +142,6 @@ function PlanChangeStatus({ change }: { change: PlanChange }) {
   );
 }
 
-/**
- * The change as a diff, colored by what it means as every plan change is: each topic it showed the
- * learner knows going out is good news (blue), with the lessons it saves, and the area that went
- * worst getting more time is a plain change, with its score.
- */
 function usePlanChangeLines(adapt: MockAdaptView): DiffLine[] {
   const t = useExtracted();
   const { focus, skip } = adapt;
@@ -199,10 +179,6 @@ function usePlanChangeLines(adapt: MockAdaptView): DiffLine[] {
   return lines.filter((line): line is DiffLine => typeof line === "object" && line !== null);
 }
 
-/**
- * What the change is about, in a sentence: the topics the mock got all right, or the area to focus
- * on; null when it offers none.
- */
 function usePlanChangeTitle(adapt: MockAdaptView | null): string | null {
   const t = useExtracted();
 
@@ -215,10 +191,6 @@ function usePlanChangeTitle(adapt: MockAdaptView | null): string | null {
   return adapt?.focus ? t("Focus more on {area}?", { area: adapt.focus.area }) : null;
 }
 
-/**
- * The plan change itself: its sentence (unless it's the step's title already), the diff, Apply or
- * Keep my plan, and then what it came to. A failed one can be tried again.
- */
 export function MockPlanChange({
   change,
   showTitle = true,
@@ -266,12 +238,10 @@ export function MockPlanChange({
   );
 }
 
-/** Whether the mock offers a change to the plan. */
 export function hasPlanChange(change: PlanChange): change is PlanChange & { adapt: MockAdaptView } {
   return change.adapt !== null && change.offers.length > 0;
 }
 
-/** "29% → 33%": preparation before and after the mock, the number before muted. */
 export function PreparationNumbers({ change }: { change: NonNullable<MockResult["preparation"]> }) {
   const formatShare = useFormatShare();
 
@@ -283,10 +253,6 @@ export function PreparationNumbers({ change }: { change: NonNullable<MockResult[
   );
 }
 
-/**
- * Preparation's bar in progress's blue and what moved it: the answers the mock gave count, never
- * more than that.
- */
 export function PreparationMeter({ change }: { change: NonNullable<MockResult["preparation"]> }) {
   const t = useExtracted();
   const fell = change.after < change.before;
@@ -305,11 +271,6 @@ export function PreparationMeter({ change }: { change: NonNullable<MockResult["p
   );
 }
 
-/**
- * A phone's plan step after the score: how preparation moved, as a readout, and the change
- * the mock offers for the plan, as one diff to apply or not. Without a preparation move, the
- * change's sentence is the step's title.
- */
 export function MockPlanStep({
   change,
   preparation,

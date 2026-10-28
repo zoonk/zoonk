@@ -9,7 +9,6 @@ import { ResultSection } from "./mock-result-section";
 
 type Area = MockResult["areas"][number];
 
-/** The area furthest over the exam's pace per question, if any went over. */
 function findSlowestArea(areas: Area[]): (Area & { over: number }) | null {
   const slowest = areas
     .filter((area) => area.targetSecondsPerQuestion !== null)
@@ -42,7 +41,6 @@ function Insight({
   );
 }
 
-/** The slowest area against the exam's pace, and the questions time ran out on. */
 function TimingInsight({ result }: { result: MockResult }) {
   const t = useExtracted();
   const slowest = findSlowestArea(result.areas);
@@ -77,7 +75,6 @@ function TimingInsight({ result }: { result: MockResult }) {
   );
 }
 
-/** ENEM: easy questions missed next to hard ones right, which its scoring weighs against you. */
 function ConsistencyInsight({ result }: { result: MockResult }) {
   const t = useExtracted();
   const { coherence } = result;
@@ -98,7 +95,6 @@ function ConsistencyInsight({ result }: { result: MockResult }) {
   );
 }
 
-/** Cebraspe: how often the learner is right when sure versus when they flagged a statement. */
 function CalibrationInsight({ result }: { result: MockResult }) {
   const t = useExtracted();
   const { calibration } = result;
@@ -135,7 +131,6 @@ function CalibrationInsight({ result }: { result: MockResult }) {
   );
 }
 
-/** Whether the mock showed something to change: a slow area, an inconsistency, unsure answers. */
 export function useHasInsights(): boolean {
   const { runner } = useMockScreen();
   const result = runner.view.result;
@@ -152,10 +147,6 @@ export function useHasInsights(): boolean {
   );
 }
 
-/**
- * What the mock showed beyond the score, as rows under each area's: only what's worth changing
- * (pace, consistency, blanks).
- */
 export function MockResultInsights() {
   const t = useExtracted();
   const { runner } = useMockScreen();

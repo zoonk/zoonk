@@ -14,7 +14,6 @@ import { ResultSection } from "./mock-result-section";
 type Topic = MockResult["topics"][number];
 type Area = MockResult["areas"][number];
 
-/** Topics that went worst come first: they're what the learner looks for. */
 function byShare(first: Topic, second: Topic): number {
   return first.correct / first.total - second.correct / second.total || second.total - first.total;
 }
@@ -23,7 +22,6 @@ function useRightOf() {
   const t = useExtracted();
   const format = useFormatter();
 
-  // An area's partial credit leaves decimals: "2,25 of 6" in Portuguese.
   return ({ correct, total }: { correct: number; total: number }) =>
     t("{correct} of {total}", {
       correct: format.number(correct, { maximumFractionDigits: 2 }),
@@ -31,7 +29,6 @@ function useRightOf() {
     });
 }
 
-/** "300–470": a range, since one mock can't pin a score down. */
 export function useMockRange() {
   const t = useExtracted();
 
@@ -39,7 +36,6 @@ export function useMockRange() {
     t("{low}–{high}", { high: String(high), low: String(low) });
 }
 
-/** Enough topics to see what went worst at a glance; the rest open on request. */
 const TOPICS_SHOWN = 5;
 
 function TopicList({ topics }: { topics: readonly Topic[] }) {
@@ -62,7 +58,6 @@ function TopicList({ topics }: { topics: readonly Topic[] }) {
   );
 }
 
-/** The topics that went worst first; past the first few, the rest open in place. */
 function TopicRows({ topics }: { topics: readonly Topic[] }) {
   const t = useExtracted();
   const sorted = topics.toSorted(byShare);
@@ -90,7 +85,6 @@ function TopicRows({ topics }: { topics: readonly Topic[] }) {
   );
 }
 
-/** An area with its score; its topics open under it. */
 function AreaRow({ area, topics }: { area: Area; topics: readonly Topic[] }) {
   const rightOf = useRightOf();
   const range = useMockRange();
@@ -126,15 +120,10 @@ function AreaRow({ area, topics }: { area: Area; topics: readonly Topic[] }) {
   );
 }
 
-/** Whether the result has more than one thing to break down: areas, or a single area's topics. */
 export function hasBreakdown(result: MockResult): boolean {
   return result.areas.length > 1 || result.topics.length > 1;
 }
 
-/**
- * How each part went, under the score: with several areas, each with its score and its topics a
- * tap away (the ones that went worst first); with one, its topics.
- */
 export function MockResultBreakdown({ result }: { result: MockResult }) {
   const t = useExtracted();
 

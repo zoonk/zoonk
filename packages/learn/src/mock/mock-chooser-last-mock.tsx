@@ -6,10 +6,6 @@ import { DetailAsideSection } from "../_components/detail-page";
 import { ListGroup } from "../_components/list-group";
 import { MockSummaryRow } from "./mock-summary-row";
 
-/**
- * How the goal's last mock went, in the page's aside from 72rem (a narrower screen keeps just the
- * list), so the next pick can follow from it; nothing before the first. Its row opens its result.
- */
 export function ChooserLastMock({
   mock,
   resultHref,

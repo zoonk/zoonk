@@ -9,7 +9,6 @@ import { useFormatDuration } from "../_utils/time-format";
 
 type Size = { minutes: number; questions: number };
 
-/** "Questions per subject in the 42nd Exam, as counted by folha.qconcursos.com", linked. */
 function PastEditionLine({ source }: { source: NonNullable<MockSizeSource["pastEdition"]> }) {
   const t = useExtracted();
   const publisher = getSourceHost(source.url);
@@ -40,7 +39,6 @@ function PastEditionLine({ source }: { source: NonNullable<MockSizeSource["pastE
   );
 }
 
-/** What the notice (or the learner's material) leaves unsaid about the mock's size, and its own. */
 function useUnstatedLines({
   document,
   size,
@@ -95,11 +93,6 @@ function useUnstatedLines({
   ].filter((line) => typeof line === "string");
 }
 
-/**
- * Where a mock's size comes from whenever it isn't the notice, so a number is never made up: the
- * past edition the counts follow (cited, with its source), or what the notice doesn't say and what
- * the mock asks instead. Nothing when the notice states it all.
- */
 export function MockSizeNote({
   className,
   document,
@@ -107,9 +100,7 @@ export function MockSizeNote({
   source,
 }: {
   className?: string;
-  /** What the exam's official documents are, for the lines' words (see `ExamDocument`). */
   document: ExamDocument;
-  /** The mock's own size, which the lines name when the notice doesn't give one. */
   size: Size;
   source: MockSizeSource;
 }) {

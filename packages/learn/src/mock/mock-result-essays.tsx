@@ -11,10 +11,8 @@ import { EssayGradeCard, NextStepComment } from "../essay/essay-feedback";
 import { useWritingName } from "../essay/essay-labels";
 import { useMockScreen } from "./mock-context";
 
-/** Grading takes ten to thirty seconds; past this the line says it's taking longer. */
 const SLOW_GRADING_MS = 30_000;
 
-/** Where an essay not graded yet stands, and the way to grade it when nothing is running. */
 function PendingState() {
   const t = useExtracted();
   const { runner } = useMockScreen();
@@ -48,7 +46,6 @@ function PendingState() {
   );
 }
 
-/** An essay without a grade: left blank, too short to grade, or waiting for its grade. */
 function UngradedEssayStep({ essay, eyebrow }: { essay: MockEssayView; eyebrow: string | null }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
@@ -68,11 +65,6 @@ function UngradedEssayStep({ essay, eyebrow }: { essay: MockEssayView; eyebrow: 
   );
 }
 
-/**
- * A full mock's essays after its score, one step each: its grade by the exam's rubric with each
- * criterion, then the one thing to work on; while it's being graded, that it's on its way. The
- * objective result never waits for it.
- */
 export function useEssayItems(): StepsItem[] {
   const t = useExtracted();
   const { runner } = useMockScreen();

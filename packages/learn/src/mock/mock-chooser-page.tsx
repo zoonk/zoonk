@@ -31,11 +31,6 @@ import { type MockChooserStatus } from "./mock-chooser-parts";
 
 type MockShortStatus = Extract<MockChooserStatus, { kind: "short" }>;
 
-/**
- * The chooser as a page of the app's frame, laid out as a detail page (`DetailLayout`): its bar
- * (the host's way back), then the header and the choices, and from 72rem the picked mock beside
- * them in the page's aside (`asideClassName` hides an aside that only repeats the rows under 72rem).
- */
 export function ChooserLayout({
   aside,
   asideClassName,
@@ -72,7 +67,6 @@ function useFailureText() {
       : t("We couldn't start the mock. Try again.");
 }
 
-/** How much of the picked mock is ready, and when more can be written, before it starts. */
 function ShortText({ status }: { status: MockShortStatus }) {
   const t = useExtracted();
   const duration = useFormatDuration();
@@ -98,11 +92,6 @@ function ShortText({ status }: { status: MockShortStatus }) {
   );
 }
 
-/**
- * The chooser's one line under its title: the rule that changes how to take it, or what stops the
- * mock now in its place (how much of the picked mock is ready, or why it couldn't start), so the
- * header never moves and the message sits right by Start.
- */
 function ChooserLine({ detail, status }: { detail: string; status: MockChooserStatus }) {
   const failureText = useFailureText();
 
@@ -121,10 +110,6 @@ function ChooserLine({ detail, status }: { detail: string; status: MockChooserSt
   );
 }
 
-/**
- * The chooser's header, a detail page's: the exam it's for, the title and one quiet line, with the
- * main action (`action`: Start, or "See Plus") beside them from `md` and under them on a phone.
- */
 export function ChooserHeader({
   action,
   detail,
@@ -151,10 +136,6 @@ export function ChooserHeader({
   );
 }
 
-/**
- * The chooser's main action, as every detail page's: Enter presses it, its ⏎ shown where there's
- * a keyboard; while its request is on its way, a spinner beside the label says so, not dimmed.
- */
 export function ChooserStartButton({
   busy,
   children,
@@ -186,7 +167,6 @@ export function ChooserStartButton({
   );
 }
 
-/** Without Plus the main action is "See Plus", in Start's place; Enter follows it. */
 export function ChooserPlusLink({ href }: { href: string }) {
   const t = useExtracted();
   const ref = useEnterClick<HTMLAnchorElement>();
@@ -204,10 +184,6 @@ export function ChooserPlusLink({ href }: { href: string }) {
   );
 }
 
-/**
- * AI help used up for now, so the picked mock's missing questions can't be written: when that
- * renews, and the way on, over the choices (the header's line says the rest of what stops a mock).
- */
 export function ChooserRefusal({ status }: { status: MockChooserStatus }) {
   const routes = useLearnRoutes();
 
@@ -218,7 +194,6 @@ export function ChooserRefusal({ status }: { status: MockChooserStatus }) {
   return <HelpLimitNotice limit={status.limit} linkComponent={LearnLink} routes={routes} />;
 }
 
-/** While the picked mock's questions are written: the run's progress, and that it starts here. */
 export function MockWriting({ bar, run }: { bar: ReactNode; run: GenerationRun }) {
   const t = useExtracted();
 

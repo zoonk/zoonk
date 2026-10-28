@@ -30,13 +30,6 @@ import { useSectionCounts } from "./mock-section-counts";
 
 const PERCENT = 100;
 
-/**
- * Where the learner is in the section, under the header: the in-column bar of questions answered,
- * then one mono line with the question's subject on the left (after the mock's name on a phone,
- * whose header shows the clock) and its place in the section on the right, counted like the bar,
- * the question's own clock beside it where the exam times each one. Screen readers hear the
- * question by its number on the answer sheet.
- */
 function RunnerProgress({ question }: { question: MockQuestion }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
@@ -86,10 +79,6 @@ function RunnerProgress({ question }: { question: MockQuestion }) {
   );
 }
 
-/**
- * Flag the question to come back to it: a secondary beside Next, amber while it's flagged. F flags
- * it too, its keycap on the button where there's a keyboard.
- */
 function FlagButton() {
   const t = useExtracted();
   const { runner } = useMockScreen();
@@ -152,7 +141,6 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
   useKeyboardCallback("ArrowLeft", () => runner.go(runner.position - 1), screenKey);
 
   const nextLabel = isLastSection ? t("Hand in the mock exam") : t("Hand in this section");
-  // Also when the clock hands the section in, wherever the learner is.
   const handingIn = runner.busy === "submit";
 
   return (
@@ -182,13 +170,6 @@ function RunnerFooter({ onHandIn }: { onHandIn: () => void }) {
   );
 }
 
-/**
- * The running section, like the exam room: the clock, one question at a time with no feedback,
- * Flag and Next at the thumb, and the answer sheet to jump around, read the section's notes and
- * hand it in after saying what's still blank or flagged. On a phone the sheet's row of the
- * question sits under it and the whole sheet opens from the header; from `lg` the sheet is the
- * aside, clock on top. When the clock runs out, answers close and hand-in waits for a click.
- */
 function RunnerScreen({ deadline, question }: { deadline: string; question: MockQuestion }) {
   const [confirming, setConfirming] = useState(false);
   const handIn = () => setConfirming(true);

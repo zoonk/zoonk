@@ -14,11 +14,7 @@ import { useMockScreen } from "./mock-context";
 import { getOptionMarks } from "./mock-keys";
 import { ResultSection } from "./mock-result-section";
 
-/**
- * An answer's mark on its row, as the runner showed it where the review knows it: a statement's
- * number (1 for true, 2 for false), or its glyph where it's judged right or wrong. The review has
- * a pick's words but not its number, so other answers are marked by how they went (`right`).
- */
+/** The review has a pick's words but not its number, so answers other than a statement's are marked by how they went. */
 function AnswerMark({
   answer,
   entry,
@@ -43,11 +39,6 @@ function AnswerMark({
   return right ? <CheckIcon /> : <XIcon />;
 }
 
-/**
- * The learner's answer and the right one as the answer rows they just used: their pick in red
- * ("Your answer"), the right answer in blue ("Correct"); a statement's in the exam's words. A
- * blank says so instead of a row.
- */
 function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {
   const t = useExtracted();
   const { runner } = useMockScreen();
@@ -85,19 +76,11 @@ function ReviewAnswers({ entry }: { entry: MockReviewEntry }) {
   );
 }
 
-function ReviewEntry({
-  continued,
-  entry,
-}: {
-  /** The entry before it reads the same text, so a phone folds this one. */
-  continued: boolean;
-  entry: MockReviewEntry;
-}) {
+function ReviewEntry({ continued, entry }: { continued: boolean; entry: MockReviewEntry }) {
   const t = useExtracted();
 
   return (
     <li className="border-border flex flex-col gap-3 border-b py-5 first:pt-0 last:border-b-0">
-      {/* A mock runs in real conditions without menus; its questions are voted on in the review. */}
       <div className="flex items-center justify-between gap-2">
         <p className="text-muted-foreground font-mono text-xs tabular-nums">
           {entry.area
@@ -129,10 +112,6 @@ function ReviewEntry({
   );
 }
 
-/**
- * The questions missed or left blank, in the mock's order, each with the learner's answer, the
- * right one and why.
- */
 function MockReviewList() {
   const { runner } = useMockScreen();
   const { review } = runner.view;
@@ -150,7 +129,6 @@ function MockReviewList() {
   );
 }
 
-/** The questions to review on the result's page, where a wide screen has room for them. */
 export function MockReviewSection() {
   const t = useExtracted();
   const { runner } = useMockScreen();
@@ -166,10 +144,6 @@ export function MockReviewSection() {
   );
 }
 
-/**
- * The questions to review on a phone: a quiet option under Continue on the score's step, opening
- * them in a drawer from the bottom.
- */
 export function MockReviewDrawer() {
   const t = useExtracted();
   const { runner } = useMockScreen();

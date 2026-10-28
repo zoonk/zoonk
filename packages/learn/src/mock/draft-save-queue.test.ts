@@ -3,10 +3,8 @@ import { type DraftSaveStatus, createDraftSaveQueue } from "./draft-save-queue";
 
 type Draft = { answer: string; itemId: string };
 
-/** A request the test answers when it wants: stored, refused, or not reached (rejects). */
 type PendingSave = { draft: Draft; fail: () => void; refuse: () => void; store: () => void };
 
-/** Lets every resolved promise run its callbacks before the test looks. */
 function flushPromises() {
   return new Promise<void>((resolve) => {
     setImmediate(resolve);
@@ -72,7 +70,6 @@ describe(createDraftSaveQueue, () => {
 
     expect(statuses.at(-1)).toBe("retrying");
 
-    // The learner keeps answering while the connection is down.
     queue.add({ answer: "D", itemId: "q2" });
     expect(requests).toHaveLength(1);
 
@@ -152,7 +149,6 @@ describe(createDraftSaveQueue, () => {
     requests[0]?.refuse();
     await flushPromises();
 
-    // Refused isn't tried again: it would be refused again.
     expect(statuses.at(-1)).toBe("refused");
     expect(vi.getTimerCount()).toBe(0);
 

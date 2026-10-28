@@ -7,10 +7,6 @@ import { TaskFrame } from "../shell/task-frame";
 import { useMockScreen } from "./mock-context";
 import { useMockShapeLabel } from "./mock-labels";
 
-/**
- * The mock's frame: leave on the left, the section's clock in the middle, the answer sheet on the
- * right. Leaving right after an answer waits for it to be saved.
- */
 export function MockFrame(
   props: Omit<React.ComponentProps<typeof TaskFrame>, "beforeExit" | "exitHref">,
 ) {
@@ -18,7 +14,6 @@ export function MockFrame(
   return <TaskFrame {...props} beforeExit={runner.savesInFlight} exitHref={hrefs.exit} />;
 }
 
-/** "Mock exam · Half an exam day": the quiet line over the title of a step the mock's time ends. */
 export function MockEyebrow() {
   const t = useExtracted();
   const shapeLabel = useMockShapeLabel();
@@ -28,11 +23,6 @@ export function MockEyebrow() {
   return <StepEyebrow>{shape ? `${t("Mock exam")} · ${shape}` : t("Mock exam")}</StepEyebrow>;
 }
 
-/**
- * Answers that aren't stored yet, said plainly over the bar: one waiting to go out again after the
- * connection failed (it's retried on its own, or now with Retry), or one the server turned down.
- * Nothing when every answer is stored.
- */
 function SaveStatusLine() {
   const t = useExtracted();
   const { runner } = useMockScreen();
@@ -59,11 +49,6 @@ function SaveStatusLine() {
   return null;
 }
 
-/**
- * Over the mock's actions: an answer that isn't stored, a step that didn't go through (it says
- * the answers are saved only when they are, and the button tries again), or a step taking longer
- * than usual.
- */
 export function MockStepStatus() {
   const t = useExtracted();
   const { runner } = useMockScreen();

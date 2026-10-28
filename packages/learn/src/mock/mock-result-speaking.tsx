@@ -19,7 +19,6 @@ import { useMockScreen } from "./mock-context";
 
 type Estimate = SpeakingSectionView["estimate"];
 
-/** What the exam asks of the speaking paper, as data the notice states; never a verdict. */
 function usePassRule(pass: SpeakingSectionView["pass"]): string | null {
   const t = useExtracted();
 
@@ -44,7 +43,6 @@ function hasPoints(estimate: Estimate): estimate is Estimate & { high: number; l
   return estimate.complete && estimate.low !== null && estimate.high !== null;
 }
 
-/** The paper's estimated points on its own total, or that it has none. */
 function useEstimateTitle(estimate: Estimate): string {
   const t = useExtracted();
   const format = useFormatter();
@@ -68,10 +66,6 @@ function useEstimateTitle(estimate: Estimate): string {
   });
 }
 
-/**
- * What the estimate is, or why there's none: a task was typed, which shows nothing of how the
- * candidate sounds, a task wasn't done, or a done task couldn't be graded.
- */
 function useEstimateDetail({ done, estimate }: { done: boolean; estimate: Estimate }): string {
   const t = useExtracted();
 
@@ -92,7 +86,6 @@ function useEstimateDetail({ done, estimate }: { done: boolean; estimate: Estima
   return t("A task couldn't be graded, so the speaking part has no estimate.");
 }
 
-/** Each task of the paper with its feedback, which the mock kept until it was over. */
 function SpeakingTaskRows({ tasks }: { tasks: SpeakingSectionView["tasks"] }) {
   const t = useExtracted();
   const { hrefs } = useMockScreen();
@@ -119,11 +112,6 @@ function SpeakingTaskRows({ tasks }: { tasks: SpeakingSectionView["tasks"] }) {
   );
 }
 
-/**
- * The mock's speaking paper as its own step: the estimated points on the paper's own total once
- * every task is graded (never an official score) or why there's none, what the exam asks of it,
- * and each task's feedback to open now that the mock is over.
- */
 function SpeakingStep({ paper }: { paper: SpeakingSectionView }) {
   const t = useExtracted();
   const done = paper.tasks.every((task) => task.status === "completed");
@@ -137,7 +125,6 @@ function SpeakingStep({ paper }: { paper: SpeakingSectionView }) {
         <StepEyebrow>{paper.paper}</StepEyebrow>
         <StepTitle>{title}</StepTitle>
         <StepDetail>{detail}</StepDetail>
-        {/* Spoken tasks can still rate the whole paper's sound, so some typing may leave points. */}
         {paper.estimate.typed && hasPoints(paper.estimate) && (
           <StepDetail>
             {t("You typed in at least one task, so the estimate leaves out how you sounded there.")}
@@ -150,7 +137,6 @@ function SpeakingStep({ paper }: { paper: SpeakingSectionView }) {
   );
 }
 
-/** The mock's speaking paper as a result step, once the learner started it; none otherwise. */
 export function useSpeakingItems(): StepsItem[] {
   const { runner } = useMockScreen();
   const { speaking } = runner.view;

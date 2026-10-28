@@ -3,10 +3,6 @@
 import { useMockScreen } from "./mock-context";
 import { isDraftAnswered } from "./use-mock-drafts";
 
-/**
- * How much of the running section is answered, flagged and still blank: its questions, and apart
- * from them its essays (a full mock's written part).
- */
 export function useSectionCounts() {
   const { runner } = useMockScreen();
   const questions = runner.view.current?.questions ?? [];
