@@ -105,15 +105,6 @@ struct StoreKitSubscriptionClient: AppStoreSubscriptionClient {
   }
 
   private func collectCurrentEntitlements() async -> [AppStoreSubscriptionTransaction] {
-    if #available(iOS 18.4, *) {
-      return await collectCurrentEntitlementsByProduct()
-    }
-
-    return await collectVerifiedTransactions(from: Transaction.currentEntitlements)
-  }
-
-  @available(iOS 18.4, *)
-  private func collectCurrentEntitlementsByProduct() async -> [AppStoreSubscriptionTransaction] {
     var transactions = [AppStoreSubscriptionTransaction]()
 
     for productID in AppStoreSubscriptionProduct.productIDs {

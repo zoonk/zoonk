@@ -81,18 +81,11 @@ struct AppView: View {
     }
   }
 
-  @ToolbarContentBuilder
   private var accountToolbarItem: some ToolbarContent {
-    if #available(iOS 26.0, *) {
-      ToolbarItem(placement: .topBarTrailing) {
-        accountButton
-      }
-      .sharedBackgroundVisibility(.hidden)
-    } else {
-      ToolbarItem(placement: .topBarTrailing) {
-        accountButton
-      }
+    ToolbarItem(placement: .topBarTrailing) {
+      accountButton
     }
+    .sharedBackgroundVisibility(.hidden)
   }
 
   private var accountButton: some View {
