@@ -23482,8 +23482,9 @@
         "type": "object",
         "properties": {
           "answerIndex": {
-            "nullable": true,
+            "default": null,
             "description": "The option chosen, or null for \"I don't know\"",
+            "nullable": true,
             "type": "integer",
             "minimum": 0,
             "maximum": 3
@@ -23500,7 +23501,6 @@
           }
         },
         "required": [
-          "answerIndex",
           "questionId"
         ],
         "additionalProperties": false

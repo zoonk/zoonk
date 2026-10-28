@@ -82,6 +82,8 @@ export const levelTestAnswerInputSchema = z
       .min(0)
       .max(OPTIONS - 1)
       .nullable()
+      // Generated clients (the iOS app's) drop a nil property instead of sending null.
+      .default(null)
       .meta({ description: 'The option chosen, or null for "I don\'t know"' }),
     durationMs: answerDurationSchema
       .optional()
