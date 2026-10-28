@@ -22,25 +22,17 @@ type ReadyAlternative = NonNullable<
 
 type LessonOutline = { description: string; estimatedMinutes: number; id: string; title: string };
 
-/** After this long, a ready alternative is offered so the wait is never the only way forward. */
 const ALTERNATIVE_AFTER_MS = 15_000;
 
-/** Once the lesson is written, the page is read again this often until the player shows it. */
 const OPEN_RETRY_MS = 2000;
 
-/** Where a refused guest creates an account and a free learner sees Plus. */
 const LIMIT_ROUTES = { signUp: "/login", upgrade: "/subscription" };
 
-/**
- * Something ready, as the list's highlighted "next" row: its name and where it leads, one tap away
- * while the lesson is written or in place of one that won't be.
- */
 function Alternative({
   alternative,
   instead = false,
 }: {
   alternative: ReadyAlternative;
-  /** Offered in place of this lesson (it won't be written now), not while it's written. */
   instead?: boolean;
 }) {
   const t = useExtracted();
@@ -85,15 +77,9 @@ function useIsLate() {
   return late;
 }
 
-/**
- * Once written, the page reads itself again and opens the player; the wait (from asking for the
- * lesson) is recorded alongside, so the lesson never waits on analytics. It keeps reading until the
- * player shows, in case one read still finds the lesson being written.
- */
 function useOpenWhenReady(isReady: boolean) {
   const router = useRouter();
   const locale = useLocale();
-  // When the wait began: set once the page shows, never during a render.
   const startedAt = useRef<number | null>(null);
 
   const open = useEffectEvent(() => {
@@ -123,12 +109,6 @@ function useOpenWhenReady(isReady: boolean) {
   }, [isReady]);
 }
 
-/**
- * The run writing the lesson, followed live: the shared wait's bar and phases, the lesson opening
- * on its own once it's ready, and a stop (a lost connection, a failed run, a request that didn't
- * go through) said plainly with its way out. A plan's next written lesson is offered after a while
- * or as soon as the wait stops.
- */
 function WritingWait({
   alternative,
   writing,
@@ -145,7 +125,6 @@ function WritingWait({
     restart: writing.restart,
   });
 
-  // The request itself didn't go through: nothing started, and asking again starts it.
   const run: GenerationRun =
     writing.request.status === "failed"
       ? { failure: "notStarted", retry: writing.retry, status: "failed", steps: {} }
@@ -153,7 +132,6 @@ function WritingWait({
 
   useOpenWhenReady(run.status === "ready");
 
-  // The header names the lesson and the frame says what it's about, so the wait is only the wait.
   return (
     <>
       <GenerationWait kind="lesson" run={run} />
@@ -171,10 +149,6 @@ function WritingWait({
   );
 }
 
-/**
- * Why the lesson isn't here and what starting it does, flat in the column like the notes that take
- * its place (a limit reached, a lesson set aside).
- */
 function UnwrittenLessonNote() {
   const t = useExtracted();
 
@@ -188,10 +162,6 @@ function UnwrittenLessonNote() {
   );
 }
 
-/**
- * "Start this lesson", the direct visitor's one main action, pinned where the lesson's own actions
- * will be: Enter presses it, and it says it's starting while the lesson is asked for.
- */
 function StartLessonBar({ busy, onStart }: { busy: boolean; onStart: () => void }) {
   const t = useExtracted();
 
@@ -212,13 +182,6 @@ function isWriting(request: LessonRequest): boolean {
   );
 }
 
-/**
- * A lesson that isn't written yet, for someone who can have it written, with the same chrome as
- * the lesson it becomes (leave on the left, its title in the header, what it's about beside it from
- * `lg`): it offers writing from an explicit action or follows writing already requested, opens
- * the lesson once it's ready, and offers something ready
- * if it takes long. Never a spinner with no end.
- */
 export function LessonWaiting({
   alternative,
   exitHref,
@@ -232,10 +195,8 @@ export function LessonWaiting({
 }) {
   const writing = useLessonWriting({ initialRequest, lessonId: lesson.id });
   const { request } = writing;
-  // The visitor pressed Start: its button stays, busy, until the request is answered.
   const [starting, setStarting] = useState(false);
 
-  // Written meanwhile (another run finished it): the page opens it.
   useOpenWhenReady(request.status === "ready");
 
   const start = () => {

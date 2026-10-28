@@ -4,11 +4,6 @@ import { LessonWaiting } from "./lesson-waiting";
 
 type LessonOutline = { description: string; estimatedMinutes: number; id: string; title: string };
 
-/**
- * Follows writing already requested, or offers the one action that starts it. The page reads the
- * lesson's state (`waiting`, an active run from an earlier visit included) with its other data, so
- * the view renders with them in one pass.
- */
 export function LessonWaitingView({
   initialRequest,
   inSession,
@@ -17,10 +12,8 @@ export function LessonWaitingView({
   waiting,
 }: {
   initialRequest: LessonRequest;
-  /** Opened from today's session, so going back returns to Today. */
   inSession: boolean;
   lesson: LessonOutline;
-  /** The catalog page a visitor opened it from, which going back returns to. */
   origin: string | null;
   waiting: Awaited<ReturnType<typeof getLessonWaitingState>> | null;
 }) {

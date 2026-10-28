@@ -5,7 +5,6 @@ import { type LessonRouting } from "./lesson-player-client";
 
 const TODAY: LessonRouting = { exit: "/today", exitTo: null, nextLesson: null };
 
-/** A language goal's chapter is a unit, with a page of its own. */
 function getChapterHref({
   chapterId,
   goalKind,
@@ -16,11 +15,6 @@ function getChapterHref({
   return goalKind === "language" ? `/content/units/${chapterId}` : `/content/chapters/${chapterId}`;
 }
 
-/**
- * Where a learner's lesson closes to when it isn't a session block: its chapter in their plan,
- * with the chapter's next lesson still to do after this one, or Today when the plan doesn't have
- * the chapter.
- */
 export async function getLessonRouting({
   chapterId,
   lessonId,

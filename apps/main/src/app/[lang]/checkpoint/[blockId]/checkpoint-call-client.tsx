@@ -14,21 +14,13 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { type ConversationClient } from "../../conversation/[conversationId]/conversation-client";
 import { startCheckpointCallAction } from "./checkpoint-call-actions";
 
-/**
- * The call's own screen (the live call, its result, and the contract its turns are checked
- * against) isn't part of the intro's first load: it loads once the intro is idle, and again with
- * Start's tap, alongside the call's creation. A load that failed is null.
- */
+/** Out of the intro's first load: it loads once the intro is idle, or with Start's tap. */
 function loadConversationClient() {
   return import("../../conversation/[conversationId]/conversation-client")
     .then((mod) => mod.ConversationClient)
     .catch(() => null);
 }
 
-/**
- * A language checkpoint whose call isn't written yet: the learner's tap writes it and opens it.
- * Today's study time used up, as the page read it, leaves no Start to tap.
- */
 export function CheckpointCallPreviewClient({
   blockId,
   buddy,
@@ -36,7 +28,6 @@ export function CheckpointCallPreviewClient({
   intro,
 }: {
   blockId: string;
-  /** The learner's buddy, for the call's result once it's over. */
   buddy: LearnBuddy;
   dailyLimitReached: boolean;
   intro: LanguageConversationIntro;
@@ -53,8 +44,7 @@ export function CheckpointCallPreviewClient({
   const generation = useRef(0);
   const tappedAudio = useRef<TappedCallAudio | null>(null);
 
-  // Leaving (or the screen kept hidden) lets go of the tap's microphone at once, unless its call
-  // already took it: a start still on its way never keeps it.
+  // A start still on its way never keeps the tap's microphone once the learner leaves.
   useEffect(
     () => () => {
       generation.current += 1;
@@ -63,8 +53,6 @@ export function CheckpointCallPreviewClient({
     [],
   );
 
-  // The call's screen loads while the learner reads the intro, so Start rarely waits for it. Past
-  // today's study time there's no Start to load it for.
   useEffect(() => {
     if (dailyLimitReached) {
       return;
@@ -98,8 +86,6 @@ export function CheckpointCallPreviewClient({
         const isCurrent = () =>
           mine === generation.current && learnerGeneration === getLearnerGeneration();
 
-        // The call's screen loads alongside its creation, but only a call that's ready waits for
-        // it: a refusal shows (and lets go of the microphone) at once.
         const client = loadConversationClient();
         const started = await startCheckpointCallAction(blockId);
 
@@ -107,9 +93,6 @@ export function CheckpointCallPreviewClient({
           return "cancelled";
         }
 
-        // It changed since the page showed it (done elsewhere, earlier steps first, today's study
-        // time used up, signed out): the page reads it again and opens where it stands, Start busy
-        // until it does.
         if (started.status === "changed") {
           startRereading(() => router.refresh());
         }
@@ -124,7 +107,6 @@ export function CheckpointCallPreviewClient({
           return "cancelled";
         }
 
-        // Its screen didn't load (offline for a moment): Start tries again, and opens the same call.
         if (!Client) {
           return "failed";
         }
@@ -136,7 +118,6 @@ export function CheckpointCallPreviewClient({
   );
 }
 
-/** A scenario not written yet keeps its existing explicit preparation flow. */
 export function CheckpointCallClient({
   blockId,
   unitTitle,

@@ -18,22 +18,15 @@ import {
   submitMockSectionAction,
 } from "./mock-actions";
 
-/**
- * Wires the mock screen to its actions in the learner's timezone. Once done it continues where the
- * page says (back to the session it was opened from, or Today), or to practicing its mistakes, and
- * the learner can ask the tutor about the result.
- */
 export function MockClient({
   againHref,
   continueHref,
   mock,
   tutor,
 }: {
-  /** Where a new mock starts once this one's time ran out while the learner was away. */
   againHref: string;
   continueHref: string;
   mock: MockView;
-  /** Who asks and the buddy who answers (`getTutorViewer`). */
   tutor: TutorViewer;
 }) {
   const { blockId } = mock;
@@ -55,11 +48,9 @@ export function MockClient({
     [blockId, refresh],
   );
 
-  // A placement mock leaves for onboarding, where stopping it keeps what was answered.
   const exit = mock.purpose === "placement" ? continueHref : "/today";
 
-  // A speaking task's call comes back to the mock when it's over. The mock's mistakes are reviewed
-  // in the notebook: practice brings them back only from tomorrow, so it couldn't show them now.
+  // Practice brings mistakes back only from tomorrow, so the mock's are reviewed in the notebook.
   const hrefs = useMemo(
     () => ({
       again: againHref,
@@ -72,9 +63,8 @@ export function MockClient({
   );
 
   return (
-    // Coming back by a link or redirect (a speaking task's call returns here) opens the mock as the
-    // server has it now; the screen kept from before would miss the task just done. Back and
-    // forward keep it as it was. A read deriving expired replaces this runner; an active read keeps drafts.
+    // A link or redirect back opens the mock as the server has it now; Back and forward keep the
+    // screen as it was.
     <MockScreen
       actions={actions}
       ask={<MainAskTutor {...tutor} size="task" target={target} />}

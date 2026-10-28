@@ -11,13 +11,11 @@ function readTier(value: unknown): "free" | "guest" | "plus" {
   return tier === "free" || tier === "plus" ? tier : "guest";
 }
 
-/** When the limit starts over: a daily cap tomorrow, a monthly one next month, a guest's never. */
 function readPeriod(value: unknown): "day" | "month" | "total" {
   const period = isJsonObject(value) ? getString(value.limit, "period") : null;
   return period === "month" || period === "total" ? period : "day";
 }
 
-/** Maps the start route's outcome (core's own shape) to what the player needs. */
 function toStartOutcome(body: unknown): LessonStartOutcome {
   const status = getString(body, "status");
 
@@ -50,10 +48,7 @@ function toStartOutcome(body: unknown): LessonStartOutcome {
     : { reason: "failed" };
 }
 
-/**
- * The web player's `startLesson` adapter. It posts to the app's own start route after the player
- * mounts (never while a route is prefetched), and signs a visitor in as a guest first.
- */
+/** Posts to the app's own start route after the player mounts, never while a route is prefetched. */
 export async function startLibraryLesson({
   lessonId,
   runId,

@@ -9,7 +9,6 @@ import { LessonPlayerClient } from "./lesson-player-client";
 
 type EndingSlots = NonNullable<ComponentProps<typeof LessonPlayerClient>["endingSlots"]>;
 
-/** A guest's completion moment ends with where the lesson fits and two ways to keep going. */
 function createGuestEnding({ fit, goal }: { fit: LessonFit | null; goal: string }): EndingSlots {
   const start = fit?.course
     ? { chapterId: fit.course.startChapterId, courseId: fit.course.id }
@@ -26,10 +25,6 @@ function createGuestEnding({ fit, goal }: { fit: LessonFit | null; goal: string 
   };
 }
 
-/**
- * The lesson player for visitors and guests: the same lesson and completion moment, then where it
- * fits, "Build my plan" (the lesson's course as their goal) and "Create an account to save".
- */
 export function GuestLessonPlayer({
   fit,
   ...props

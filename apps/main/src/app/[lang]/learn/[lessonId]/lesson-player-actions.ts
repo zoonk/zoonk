@@ -12,10 +12,6 @@ import { z } from "zod";
 const idSchema = z.uuid();
 const stepIdsSchema = z.array(z.uuid()).optional();
 
-/**
- * The web player's completion: the same core capability as `POST /v1/library/lessons/{id}/completions`.
- * A run missing an answer is `incomplete`, so the player goes back to that screen.
- */
 export async function completeLibraryLessonAction({
   lessonId,
   ...rawInput
@@ -47,12 +43,7 @@ export async function completeLibraryLessonAction({
   return outcome.status === "invalid" ? { status: "incomplete" } : { status: "failed" };
 }
 
-/**
- * The lesson's pictures drawn so far, for screens whose picture was still being drawn when the
- * page loaded: those of the screens still waiting (`stepIds`), or every screen's without it. Read
- * fresh: the API's workflow draws them, and this app's cached lesson doesn't have them yet (the
- * public API's lesson read returns them as they're drawn).
- */
+/** Read fresh: the API's workflow draws the pictures, and this app's cached lesson doesn't have them yet. */
 export async function getLessonPicturesAction(
   lessonId: string,
   stepIds?: unknown,

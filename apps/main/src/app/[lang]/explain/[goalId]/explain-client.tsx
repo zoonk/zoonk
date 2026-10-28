@@ -18,10 +18,7 @@ import { preloadLessonPlayer } from "./lesson-player-code";
 
 type EndingSlots = NonNullable<ComponentProps<typeof LazyLessonPlayer>["endingSlots"]>;
 
-/**
- * The course to go further is linked a few seconds after the explanation can be read, so an
- * ending rendered before that asks the page for it once.
- */
+/** The course to go further is linked a few seconds after the explanation can be read. */
 function GoFurtherRefresh() {
   const router = useRouter();
 
@@ -32,18 +29,10 @@ function GoFurtherRefresh() {
   return null;
 }
 
-/**
- * Where the learner goes after an explanation: back to their plan's day, or, with only
- * explanations, to asking the next question, since there's no day to plan.
- */
 function getHomeHref(explanation: ExplanationView) {
   return explanation.hasStudyGoal ? "/today" : "/start";
 }
 
-/**
- * The explanation's title as words inside a sentence: "how inflation works" for "How
- * inflation works", leaving an acronym ("GDP") as it is.
- */
 function toTopic(title: string): string {
   const topic = title.trim().replace(/[?!.]+$/u, "");
   const isAcronym = /^\p{Lu}{2}/u.test(topic);
@@ -51,12 +40,6 @@ function toTopic(title: string): string {
   return isAcronym ? topic : topic.charAt(0).toLocaleLowerCase() + topic.slice(1);
 }
 
-/**
- * "I want to learn this in depth": the Overview course's start page, which asks the learner's
- * level before anything is created, or, before a course is linked (or when the subject has none),
- * onboarding with the topic as the goal, said as the learner would say it ("I want to understand
- * how inflation works in depth").
- */
 function DeeperStart({ explanation }: { explanation: ExplanationView }) {
   const t = useExtracted();
   const { course } = explanation.goFurther;
@@ -80,10 +63,6 @@ function DeeperStart({ explanation }: { explanation: ExplanationView }) {
   );
 }
 
-/**
- * The explanation's own ending replaces the lesson's completion moment, with the same "I want to
- * learn this in depth" as before it, so turning it into a goal is one tap at the end too.
- */
 function createExplainEnding({
   buddy,
   explanation,
@@ -117,10 +96,6 @@ function createExplainEnding({
   };
 }
 
-/**
- * "Generation Waited" (explanation), from the first waiting screen until the explanation is
- * written. One opened already written waited for nothing, so it sends nothing.
- */
 function useExplanationWait(isWritten: boolean) {
   const locale = useLocale();
   const startedAt = useRef<number | null>(null);
@@ -141,15 +116,7 @@ function useExplanationWait(isWritten: boolean) {
   }, [isWritten, locale]);
 }
 
-/**
- * A quick explanation: a designed wait while it's written (each step live,
- * the outline taking shape; shown as soon as the run says it can be read), then the story screens
- * and the check in the lesson player, with the outline beside them on a wide screen, ending with
- * "Now you know" and "Want to go further?". A learner who waited sees the finished outline first
- * and starts it with "See explanation". Opened from an old prefetched copy (Today's link) that
- * still shows the wait, it follows the run, which reads the page again once it can be read. The
- * learner's buddy is beside the screens, as in any lesson.
- */
+/** An old prefetched copy that still shows the wait follows the run, which reads the page again once ready. */
 export function ExplainClient({
   explanation,
   hasSession,
@@ -174,7 +141,7 @@ export function ExplainClient({
     () => ({ exit: getHomeHref(explanation), exitTo: null, nextLesson: null }),
     [explanation],
   );
-  // A learner who waited sees the finished outline first; one opening a ready one plays it.
+
   const [phase, setPhase] = useState<"outline" | "playing">(() =>
     explanation.lesson ? "playing" : "outline",
   );
@@ -184,7 +151,6 @@ export function ExplainClient({
   const { lesson } = explanation;
   const isWaiting = !lesson || phase === "outline";
 
-  // The player loads while the learner waits, so the explanation opens at once when it's ready.
   useEffect(() => {
     if (isWaiting) {
       preloadLessonPlayer();
@@ -194,7 +160,6 @@ export function ExplainClient({
   const progress = useWorkflowRun({
     generationId: explanation.generationId,
     kind: "explanation",
-    // The run says when the explanation can be read: the page shows it at once.
     onReady: () => {
       if (!explanation.lesson) {
         router.refresh();

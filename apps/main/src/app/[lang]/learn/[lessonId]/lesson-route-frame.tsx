@@ -22,13 +22,6 @@ import { useExtracted } from "next-intl";
 
 type LessonAbout = { description: string; estimatedMinutes?: number; title: string };
 
-/**
- * A lesson's page before its screens play (being written, or opening for a visitor) in the
- * player's chrome: leave on the left, the lesson's title as the page's one heading, the column where
- * the lesson's screens will be and, from `lg`, the aside beside it with what the lesson is about
- * (above the column on a phone), so nothing moves when the lesson opens in its place. Its action
- * bar (`footer`) holds the one main action, when there is one.
- */
 export function LessonRouteFrame({
   children,
   exitHref,

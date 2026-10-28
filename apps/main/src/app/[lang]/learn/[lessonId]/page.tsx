@@ -42,10 +42,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { robots: { follow: false, index: false }, title: lesson?.title };
 }
 
-/**
- * The player's own shape (its header with the lesson's segments, a screen in the column, the
- * action bar, and the aside beside them from `lg`), so nothing moves when the lesson arrives.
- */
 function LessonPlayerSkeleton() {
   return (
     <TaskSkeleton aside menu progress title={<Skeleton className="h-4 w-40" />}>
@@ -59,10 +55,6 @@ function LessonPlayerSkeleton() {
   );
 }
 
-/**
- * The player's URL contract: the option a visitor picked on the public page's first screen, the
- * catalog page they opened the lesson from, and the study session the lesson is a block of.
- */
 function readPlayerQuery(query: Awaited<Props["searchParams"]>) {
   const firstAnswer = query[FIRST_ANSWER_PARAM];
   const sessionParam = query[STUDY_SESSION_PARAM];
@@ -74,7 +66,6 @@ function readPlayerQuery(query: Awaited<Props["searchParams"]>) {
   };
 }
 
-/** A lesson with a challenge plays with the learner's team, kept with their plan. */
 async function getLessonChallengeTeam(played: { lesson: PlayableLibraryLesson } | null) {
   const lesson = played?.lesson;
 
@@ -86,19 +77,12 @@ async function getLessonChallengeTeam(played: { lesson: PlayableLibraryLesson } 
   return outcome.status === "ready" ? outcome.team : null;
 }
 
-/** Where a lesson not written yet stands; read only for one. */
 async function loadWaitingState(result: PlayableLibraryLessonResult | null) {
   return result?.status === "notGenerated"
     ? getLessonWaitingState({ lessonId: result.lesson.id })
     : null;
 }
 
-/**
- * A lesson whose screens aren't here yet: a visitor becomes a guest first, since screens load only
- * with a session, and a lesson still being written is written now, on a live screen. A visitor
- * presses "Start this lesson" before an unwritten lesson is written, so loading the page alone
- * never writes one.
- */
 function LessonWithoutScreens({
   inSession,
   initialRequest,
@@ -129,12 +113,6 @@ function LessonWithoutScreens({
 
 const SESSION_ROUTING: LessonRouting = { exit: "/today", exitTo: null, nextLesson: null };
 
-/**
- * Where the lesson closes to: a session block back to Today, a learner's lesson to its chapter
- * in their plan (with the next lesson there), and otherwise back to the catalog page it was opened
- * from (a guest who tried it on a course's page returns there), or where the default player
- * sends it.
- */
 async function getRouting({
   inSession,
   isGuest,
@@ -164,11 +142,6 @@ async function getRouting({
   return routing.exitTo === null && fromPage ? fromPage : routing;
 }
 
-/**
- * Screens need a session, so visitors from a public page become guests before the lesson opens
- * (`LessonGuestGate`); outside a study session, a guest's lesson ends with a way to keep it. A
- * guest's session lessons keep the session's moments.
- */
 function isGuestLesson({
   session,
   studySessionId,
@@ -180,9 +153,8 @@ function isGuestLesson({
 }
 
 /**
- * A missing task's message is left to the browser here, unlike other task pages (`NotFoundPage`):
- * drawing the task's frame on the server too makes this page's scripts carry the frame's code
- * twice, about 11 KB more on every visit.
+ * A missing task's message is left to the browser here: drawing the task's frame on the server too
+ * makes this page's scripts carry the frame's code twice, about 11 KB more on every visit.
  */
 async function LessonPlayerContent({ params, searchParams }: Props) {
   const [{ lessonId }, query] = await Promise.all([params, searchParams]);
@@ -192,7 +164,6 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
   const sessionRead = getSession();
   const sessionContextRead = getLessonSessionContext(studySessionId);
 
-  // What the lesson itself decides is read as soon as the lesson is, beside the other reads.
   const lessonDetailsRead = lessonRead.then((lessonResult) => {
     const lesson = lessonResult?.status === "ready" ? lessonResult.lesson : null;
 
@@ -238,7 +209,6 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
   ]);
 
   const isGuest = isGuestLesson({ session, studySessionId });
-  /** Sounds stay on until the learner turns them off in Appearance. */
   const soundsEnabled = profile?.soundsEnabled ?? true;
 
   const played = result?.status === "ready" ? { lesson: result.lesson } : null;
@@ -298,7 +268,6 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
   );
 }
 
-/** Plays a Library lesson full screen, with no navigation bar. */
 export default function LearnLessonPage(props: Props) {
   return (
     <Suspense fallback={<LessonPlayerSkeleton />}>

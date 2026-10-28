@@ -13,13 +13,7 @@ import { useCallback } from "react";
 
 const EXIT_HREF = "/today";
 
-/**
- * The step the learner just tapped on another screen, drawn from what that screen held while the
- * session screen's own content is on its way: the day's segments, "Up next", the step's title and
- * minutes, and its Start busy (with the focus the tapped control had, and its wait line counting
- * from the tap). Only for the identity, the page and the day the tap was made for; the bare frame
- * otherwise. It applies nothing: the screen's content does, once it arrives.
- */
+/** Only for the identity, page and day the tap was made for. It applies nothing; the screen's content does. */
 function HeldStep({ entry }: { entry: DayEntry }) {
   const router = useRouter();
   const refresh = useCallback(() => router.refresh(), [router]);
@@ -42,7 +36,6 @@ function HeldStep({ entry }: { entry: DayEntry }) {
       <NextStop
         actions={{
           refresh,
-          // After a failed tap, Start taps again from here, the same way.
           start: () => (entry.next ? taps.next(entry.step) : taps.open(entry.step)),
           stop: navigation.stop,
         }}
@@ -61,11 +54,6 @@ function HeldStep({ entry }: { entry: DayEntry }) {
   );
 }
 
-/**
- * The session screen's frame while its content is on its way: the tapped step when a tap brought
- * the learner here (`HeldStep`), otherwise the frame itself (a hard load, or a tap where no day
- * was shown), with no placeholder either way. The server and a fresh document hold no tap.
- */
 export function SessionEntryFallback() {
   const entry = useDayEntry();
   return entry ? <HeldStep entry={entry} /> : <SessionShell exitHref={EXIT_HREF} />;

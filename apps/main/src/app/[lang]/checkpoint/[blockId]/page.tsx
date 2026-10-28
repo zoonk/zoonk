@@ -19,16 +19,11 @@ import { CheckpointClient } from "./checkpoint-client";
 
 type Props = PageProps<"/[lang]/checkpoint/[blockId]">;
 
-/** A checkpoint is one learner's own duel: nothing here is for search. */
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
   return { robots: { follow: false, index: false }, title: t("Challenge") };
 }
 
-/**
- * The duel's own shape (its chrome, a question and its options, and the Trickster's aside from
- * `lg`), so nothing moves when it arrives.
- */
 function CheckpointSkeleton() {
   return (
     <TaskSkeleton
@@ -56,9 +51,7 @@ function CheckpointSkeleton() {
 async function CheckpointContent({ params, searchParams }: Props) {
   const [{ blockId, lang }, query] = await Promise.all([params, searchParams]);
 
-  // A language goal's checkpoint is the unit's conversation, played on its own screen. Opening
-  // the page never writes the call: a session's preparation writes it ahead, else the learner's
-  // tap does. Its read is cached for the learner's browser, so a link's prefetch draws the call.
+  // Its read is cached for the learner's browser, so a link's prefetch draws the call.
   const [call, buddy] = await Promise.all([openLanguageCheckpointCall(blockId), getLearnerBuddy()]);
 
   if (call.status === "earlierFirst") {
@@ -109,9 +102,6 @@ async function CheckpointContent({ params, searchParams }: Props) {
   const { checkpoint } = result;
   const sessionReturn = getSessionBlockReturn({ query, sessionId: checkpoint.sessionId });
 
-  // Until it starts it's introduced (and started) by its challenge page, which also says where a
-  // block that stepped aside stands, and what Plus unlocks for a call the learner's plan leaves to
-  // Plus, started before or not.
   if (
     call.status === "plusRequired" ||
     checkpoint.status === "pending" ||
@@ -128,7 +118,6 @@ async function CheckpointContent({ params, searchParams }: Props) {
     redirect({ href: `/challenge/${checkpoint.planItemId}${sessionReturn.search}`, locale: lang });
   }
 
-  // An exam's weekly mock runs in real conditions on its own screen.
   if (checkpoint.mock) {
     redirect({ href: `/mock/${blockId}${sessionReturn.search}`, locale: lang });
   }
@@ -144,10 +133,6 @@ async function CheckpointContent({ params, searchParams }: Props) {
   );
 }
 
-/**
- * A checkpoint of today's session, full screen like a lesson: the phase checkpoint's duel (the
- * Trickster) or the weekly challenge, and its result. Its intro is its challenge page.
- */
 export default function CheckpointPage(props: Props) {
   return (
     <Suspense fallback={<CheckpointSkeleton />}>

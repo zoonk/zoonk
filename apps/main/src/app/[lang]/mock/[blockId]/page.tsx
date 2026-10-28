@@ -18,16 +18,11 @@ import { MockClient } from "./mock-client";
 
 type Props = PageProps<"/[lang]/mock/[blockId]">;
 
-/** A mock is one learner's own exam: nothing here is for search. */
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
   return { robots: { follow: false, index: false }, title: t("Mock exam") };
 }
 
-/**
- * A running section's own shape (its chrome with the clock, a question and its options, Flag and
- * Next in the bar, and the answer sheet beside them from `lg`), so nothing moves when it arrives.
- */
 function MockSkeleton() {
   return (
     <TaskSkeleton
@@ -80,7 +75,6 @@ async function MockContent({ params, searchParams }: Props) {
     ? getSessionBlockReturn({ query, sessionId: mock.sessionId })
     : { continueHref: "/today", search: "" };
 
-  // Before it starts, it's introduced (and started) by its challenge page, by its plan item.
   if (mock.status === "ready") {
     if (!mock.planItemId) {
       return (
@@ -93,18 +87,15 @@ async function MockContent({ params, searchParams }: Props) {
     redirect({ href: `/challenge/${mock.planItemId}${sessionReturn.search}`, locale: lang });
   }
 
-  // A placement mock goes back to onboarding, where its answers set the plan's start.
   const continueHref =
     mock.purpose === "placement" && mock.goalId
       ? `/start/${mock.goalId}`
       : sessionReturn.continueHref;
 
-  // A new mock after one whose time ran out: the plan's starts from its challenge, as it first did.
   const againHref = mock.planItemId
     ? `/challenge/${mock.planItemId}${sessionReturn.search}`
     : MOCK_ENTRY_HREFS.choose;
 
-  // The buddy reads and changes the plan of the goal the mock was taken for, as core does.
   return (
     <MainLearnProvider>
       <MockClient
@@ -117,7 +108,6 @@ async function MockContent({ params, searchParams }: Props) {
   );
 }
 
-/** The started weekly mock exam in real conditions, full screen like the exam room. */
 export default function MockPage(props: Props) {
   return (
     <Suspense fallback={<MockSkeleton />}>

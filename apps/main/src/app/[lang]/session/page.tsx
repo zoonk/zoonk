@@ -48,26 +48,19 @@ type Props = PageProps<"/[lang]/session">;
 
 type SessionFacts = Pick<SessionPageView, "goal" | "localDate" | "userId">;
 
-/** One learner's own day: nothing here is for search. */
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
   return { robots: { follow: false, index: false }, title: t("Today's session") };
 }
 
-/** Questions play here; lessons open in the player, checkpoints and essays on their own screen. */
 function isQuestionBlock(block: DayStep): boolean {
   return block.kind !== "learn" && getDayBlockScreen(block, { lessonReady: null }) === "session";
 }
 
-/**
- * The session's full screen, around the screens that don't bring their own `main`: the summary and
- * a missing block's answer (both task screens), and the sign-in gate, do.
- */
 function SessionMain({ children }: { children: React.ReactNode }) {
   return <main className="bg-background flex min-h-dvh flex-col">{children}</main>;
 }
 
-/** The answer for a session or block that isn't there: the task's own not-found screen, as a 404. */
 function SessionNotFound() {
   return (
     <NotFoundPage>
@@ -95,7 +88,6 @@ async function SessionSummaryView({
     return <SessionNotFound />;
   }
 
-  // The summary is a task screen of its own, with its own `main`.
   return (
     <SessionSummaryClient
       goalKind={facts.goal.kind}
@@ -108,10 +100,6 @@ async function SessionSummaryView({
   );
 }
 
-/**
- * The block the learner opened (`?block=`), while it's still to do: Today's queue opens any of the
- * day's blocks, so the first one under way isn't always the one they picked.
- */
 function findOpenedBlock({ blockId, session }: { blockId: string | null; session: StudySession }) {
   return (
     session.blocks.find(
@@ -120,7 +108,6 @@ function findOpenedBlock({ blockId, session }: { blockId: string | null; session
   );
 }
 
-/** The question block the screen plays: the one the learner opened, or else the first under way. */
 function findActiveQuestionBlock({
   opened,
   session,
@@ -137,13 +124,8 @@ function findActiveQuestionBlock({
 
 type ScreenRequest = { limit: LessonLimit | null; request: LessonRequest };
 
-/** A screen whose address asks nothing about the step's lesson. */
 const UNASKED: ScreenRequest = { limit: null, request: { status: "idle" } };
 
-/**
- * What the learner's tap asked about a step's lesson, as the address carries it: the run writing
- * it, why it can't be written now, or that it's being prepared (`?preparing`: asked, no run yet).
- */
 function readScreenRequest(search: Awaited<Props["searchParams"]>): ScreenRequest {
   const request = readLessonWritingRequest(search);
   const preparing = readSessionPreparingParam(search[SESSION_PREPARING_PARAM]);
@@ -154,11 +136,6 @@ function readScreenRequest(search: Awaited<Props["searchParams"]>): ScreenReques
   };
 }
 
-/**
- * The next step of either kind of day, for the session screen: its lesson's state and why it won't
- * be written now, the day's facts the screen keys and guards it by, and a ready block to do while
- * it's written (a saved day only: a day not opened yet has no block to start in its place).
- */
 async function NextStepView({
   alternative,
   day,
@@ -209,7 +186,6 @@ async function SavedDayView({
   next: NextStopFacts | null;
   screen: ScreenRequest;
   session: StudySession;
-  /** The learner just stopped for today: what changed so far, before the next step. */
   stopped: boolean;
 }) {
   if (stopped) {
@@ -242,8 +218,6 @@ async function SavedDayView({
     return <SessionSummaryView facts={facts} session={session} stopped={false} />;
   }
 
-  // The address's request is about the block it names: once that block is behind the learner,
-  // the step shown now was never asked for.
   return (
     <NextStepView
       alternative={findAlternativeStudyBlock({ blockId: step.id, blocks: session.blocks })}
@@ -262,7 +236,6 @@ async function SessionContent({ searchParams }: Pick<Props, "searchParams">) {
   const blockId = readSessionBlockParam(search[SESSION_BLOCK_PARAM]);
   const goalId = blockId ? null : readSessionGoalParam(search[SESSION_GOAL_PARAM]);
 
-  // The block names its day; else the goal whose day a tap opened; else the active goal's.
   const result = await getSessionPageView({
     ...(blockId ? { blockId } : {}),
     ...(goalId ? { goalId } : {}),
@@ -276,8 +249,6 @@ async function SessionContent({ searchParams }: Pick<Props, "searchParams">) {
     redirect({ href: "/start", locale: language });
   }
 
-  // A goal on pause, one not the learner's, or a plan still being built has no session to run:
-  // Today explains it.
   if (result.status !== "ready" && result.status !== "unstarted") {
     redirect({ href: "/today", locale: language });
     return null;
@@ -298,13 +269,11 @@ async function SessionContent({ searchParams }: Pick<Props, "searchParams">) {
 
   const step = result.day.blocks.find((block) => block.position === result.day.nextPosition);
 
-  // A day with nothing to open: Today says what the day is.
   if (!step) {
     redirect({ href: "/today", locale: language });
     return null;
   }
 
-  // A day not opened yet has no block a tap's request could name.
   return (
     <NextStepView
       alternative={null}
@@ -317,13 +286,7 @@ async function SessionContent({ searchParams }: Pick<Props, "searchParams">) {
   );
 }
 
-/**
- * Today's session, full screen like a lesson: the question block in progress, the next step, or
- * the summary once the day's blocks are done (or what changed so far, right after stopping). Its
- * frame is static: a tap from a screen that showed the day draws the tapped step at once from what
- * that screen held (`SessionEntryFallback`), and a hard load draws the frame until the day streams
- * into the same response. Never a placeholder.
- */
+/** Its frame is static: a tap draws the tapped step at once from what the previous screen held (`SessionEntryFallback`). */
 export default function SessionPage({ searchParams }: Props) {
   return (
     <MainLearnProvider>

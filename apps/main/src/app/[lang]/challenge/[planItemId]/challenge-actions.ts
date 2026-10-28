@@ -20,20 +20,9 @@ const changeIdSchema = z.uuid();
 const sessionIdSchema = z.uuid();
 const localeSchema = z.enum(SUPPORTED_LOCALES);
 
-/** Where a move or its undo comes back to: the page's locale and the session that opened it. */
 type ChallengePage = { locale: unknown; sessionId: unknown };
 
-/**
- * "Start" on a challenge's day: today's block for it starts and the result says where it's played,
- * or that the bank holds too few questions for it yet (`questionsNeeded`: they're written first,
- * and once the learner waited for that, `afterWriting` starts it with what was written), or that
- * the learner's plan leaves it to Plus (`plusRequired`, as when Plus lapsed since the intro opened).
- * `notToday` (today's session was planned without it), `dailyLimitReached` (today's study time ran
- * out since the intro opened) and `earlierFirst` (with its `reason`: the day's lessons or the
- * challenge before it come first) are named outcomes the intro reads again for. Each can follow a
- * write, since Start may save today's session before it refuses, so none says nothing was saved.
- * Inputs are untrusted, so they're parsed with the API's schemas.
- */
+/** Start may save today's session before it refuses, so no outcome means nothing was saved. */
 export async function startChallengeAction(
   planItemId: unknown,
   timeZone: unknown,
@@ -74,23 +63,13 @@ export async function startChallengeAction(
   return result.status === "ready" ? result.destination : null;
 }
 
-/** `?session=` for a challenge today's session opened, so its block continues back to it. */
 function toSessionSearch(sessionId: unknown): string {
   const id = sessionIdSchema.safeParse(sessionId);
   return id.success ? `?${STUDY_SESSION_PARAM}=${id.data}` : "";
 }
 
-/** What a move or its undo answers when it didn't go through; otherwise it redirects. */
 type NotDone = "notDone";
 
-/**
- * "Move to Monday": the week's challenge moves through the plan, and the page goes on to it on its
- * new day (a dated plan item is a new one once it moves) with the move's undo. A mock the plan
- * can't make room for that Monday stays where it is, and the answer says when and how long, for
- * the screen to say why (`unfundedMove`); one onto a day that already has a mock says that
- * (`mockCollision`); a weekly challenge the plan can't put there says so too (`noRoom`), since
- * asking again can only be refused again.
- */
 export async function moveChallengeAction(
   { page, planItemId }: { page: ChallengePage; planItemId: unknown },
   timeZone: unknown,
@@ -134,7 +113,6 @@ export async function moveChallengeAction(
   const { changeId, planItemId: movedId } = result.move;
 
   if (!movedId || !changeId) {
-    // Keep the learner on the action's screen with its failure notice rather than silently leave.
     return "notDone";
   }
 
@@ -148,7 +126,6 @@ export async function moveChallengeAction(
   );
 }
 
-/** Undoes the move while the plan is as it left it; the page goes back to it on its day. */
 export async function undoChallengeMoveAction(
   { changeId, page, planItemId }: { changeId: unknown; page: ChallengePage; planItemId: unknown },
   timeZone: unknown,
@@ -172,7 +149,7 @@ export async function undoChallengeMoveAction(
     return "notDone";
   }
 
-  // The moved item is gone too: the page back on its day replaces it, so Back leaves the challenge.
+  // The moved item is gone too, so the page back on its day replaces it.
   return redirect(
     {
       href: result.planItemId

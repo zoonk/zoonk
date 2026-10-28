@@ -15,19 +15,12 @@ import { safeAsync } from "@zoonk/utils/error";
 import { useState, useTransition } from "react";
 import { type MockStartOutcome, startAnytimeMockAction } from "./mock-start-actions";
 
-/** While the goal's skill map is still drawn (a goal in onboarding), the page asks again this often. */
 const PREPARING_RETRY_MS = 3000;
 
-/** Enough tries to cover a skill map that takes a minute or two. */
 const PREPARING_TRIES = 60;
 
-type ChooserPage = {
-  goalId: string;
-  /** A diagnostic mock as placement, in onboarding; otherwise the mocks to pick from. */
-  placement: boolean;
-};
+type ChooserPage = { goalId: string; placement: boolean };
 
-/** The mock picked, as the start and question-writing requests name it. */
 function toChoice(start: MockStart) {
   if (start.purpose === "placement") {
     return { length: start.length, purpose: "placement" as const };
@@ -43,7 +36,6 @@ function wait(ms: number): Promise<void> {
   });
 }
 
-/** Asks for the mock's questions, waiting while the skill map is still drawn. */
 async function requestMockWriting({
   page,
   start,
@@ -54,7 +46,6 @@ async function requestMockWriting({
   const path: `/${string}` = `/goals/${encodeURIComponent(page.goalId)}/mocks/generations`;
 
   const ask = async (tries: number): Promise<QuestionWriting> => {
-    // A request that never answers reads as a failed one, as a refused start does.
     const { data: writing } = await safeAsync(() => requestQuestionWriting(path, toChoice(start)));
 
     if (!writing) {
@@ -72,12 +63,10 @@ async function requestMockWriting({
   return ask(PREPARING_TRIES);
 }
 
-/** The picked option's key, for a mock that can ask only part of its questions now. */
 function getStartKey(start: MockStart): string | null {
   return start.purpose === "practice" ? getMockOptionKey(start.option) : null;
 }
 
-/** Why the mock didn't open: it can ask only part of its questions now, or it couldn't start. */
 function toStatus({ outcome, start }: { outcome: MockStartOutcome; start: MockStart }) {
   const optionKey = getStartKey(start);
 
@@ -91,7 +80,6 @@ function toStatus({ outcome, start }: { outcome: MockStartOutcome; start: MockSt
     : ({ kind: "failed", reason: "failed" } as const);
 }
 
-/** The chooser while a run writes the picked mock's questions; it starts the mock once they're in. */
 function WritingMock({
   generationId,
   onReady,
@@ -110,12 +98,6 @@ function WritingMock({
 
 type Writing = { generationId: string; start: MockStart };
 
-/**
- * Wires the mocks to pick from (or the placement mock) to their actions in the learner's timezone:
- * Start runs the mock and opens it; a bank short of its questions has them written first (the
- * page follows the run), then the mock starts with what there is. `bar` is the chooser page's bar,
- * with the way back to where it was opened.
- */
 export function MockChooserClient({
   bar,
   page,
@@ -130,10 +112,7 @@ export function MockChooserClient({
   const [status, setStatus] = useState<MockChooserStatus>({ kind: "choosing" });
   const [writing, setWriting] = useState<Writing | null>(null);
 
-  /**
-   * A start the server couldn't answer (a busy server's transaction that never began, a dropped
-   * connection) is a failed start: the chooser says so with Start ready again, never an error page.
-   */
+  /** A start the server couldn't answer is a failed start, never an error page. */
   const startMock = async ({
     acceptFewer,
     start,
@@ -158,7 +137,6 @@ export function MockChooserClient({
     setStatus(toStatus({ outcome, start }));
   };
 
-  // The bank holds what it can now: the mock starts with the questions there are.
   const startWithWhatThereIs = async (start: MockStart) =>
     open({ outcome: await startMock({ acceptFewer: true, start }), start });
 
@@ -185,7 +163,6 @@ export function MockChooserClient({
 
   const begin = (start: MockStart) =>
     startTransition(async () => {
-      // Start again on a mock the screen said is short takes it as it is.
       const acceptFewer = status.kind === "short" && status.optionKey === getStartKey(start);
       setStatus({ kind: "choosing" });
       const outcome = await startMock({ acceptFewer, start });

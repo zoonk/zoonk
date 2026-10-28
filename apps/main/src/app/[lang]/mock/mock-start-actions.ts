@@ -9,11 +9,6 @@ import { z } from "zod";
 
 const goalIdSchema = z.uuid();
 
-/**
- * What starting a mock any time came to: it runs (`started`, or the one `running` already), its
- * questions must be written first, it can ask only part of them now (`short`, for the learner to
- * start it knowingly), or why it couldn't start.
- */
 export type MockStartOutcome =
   | { id: string; status: "running" | "started" }
   | Extract<StartAnytimeMockResult, { status: "short" }>
@@ -23,12 +18,10 @@ type KeptRefusal = "needsQuestions" | "notEnoughQuestions";
 
 const KEPT_REFUSALS: readonly KeptRefusal[] = ["needsQuestions", "notEnoughQuestions"];
 
-/** The refusals the screen says in its own words; the rest read as a failed start. */
 function isKeptRefusal(status: string): status is KeptRefusal {
   return KEPT_REFUSALS.some((kept) => kept === status);
 }
 
-/** "Start" on the mocks to pick from, or the placement mock in onboarding. Inputs are untrusted. */
 export async function startAnytimeMockAction(
   goalId: unknown,
   input: unknown,

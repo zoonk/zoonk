@@ -15,17 +15,11 @@ import { MOVED_PARAM } from "./challenge-params";
 
 type Props = PageProps<"/[lang]/challenge/[planItemId]">;
 
-/** A challenge is one learner's own: nothing here is for search. */
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getExtracted();
   return { robots: { follow: false, index: false }, title: t("Challenge") };
 }
 
-/**
- * The intro's own shape (its chrome, the eyebrow, title and facts, Start in the bar, and what it
- * asks beside them from `lg`), so nothing moves when it arrives. Most challenges are the week's,
- * whose intro has no art.
- */
 function ChallengeSkeleton() {
   return (
     <TaskSkeleton aside={<Skeleton className="h-24 w-full" />}>
@@ -62,11 +56,8 @@ async function ChallengeContent({ params, searchParams }: Props) {
   }
 
   const { challenge } = result;
-  // Today's session opened it (`?session=`): its block continues back to the session.
   const sessionId = readParam(query, STUDY_SESSION_PARAM);
 
-  // A language goal's checkpoint is the unit's call, which its own screen opens on its day. One the
-  // learner's plan leaves to Plus stays on its intro, which says what Plus unlocks.
   if (challenge.call && challenge.blockId && challenge.status !== "done" && !challenge.locked) {
     redirect({
       href: `/checkpoint/${challenge.blockId}${sessionId ? `?${STUDY_SESSION_PARAM}=${sessionId}` : ""}`,
@@ -85,10 +76,6 @@ async function ChallengeContent({ params, searchParams }: Props) {
   );
 }
 
-/**
- * A phase's checkpoint or the week's challenge (an exam's mock), by its plan item: its intro
- * before its day and on it, where it starts.
- */
 export default function ChallengePage(props: Props) {
   return (
     <Suspense fallback={<ChallengeSkeleton />}>

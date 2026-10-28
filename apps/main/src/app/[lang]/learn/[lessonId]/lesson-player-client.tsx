@@ -39,16 +39,10 @@ const ROUTES = { signUp: "/login", upgrade: "/subscription" };
 
 type LessonPlayerSlots = NonNullable<LessonPlayerProviderProps["slots"]>;
 
-/** Where a lesson closes to: back where it was opened from, and the next lesson there, if any. */
 export type LessonRouting = Pick<LessonPlayerRoutes, "exit" | "exitTo" | "nextLesson">;
 
-/** A lesson opened from nowhere in particular (a public page, a quick explanation). */
 const DEFAULT_ROUTING: LessonRouting = { exit: "/", exitTo: null, nextLesson: null };
 
-/**
- * The full-screen moment for a milestone a lesson played on its own earned, with the learner's
- * buddy. The player sits outside the learning tabs, so the ceremony brings main's adapters along.
- */
 function createCeremonySlot(buddy: TutorViewer["buddy"]): Pick<LessonPlayerSlots, "ceremony"> {
   return {
     ceremony: (milestone, onClose) => (
@@ -59,7 +53,6 @@ function createCeremonySlot(buddy: TutorViewer["buddy"]): Pick<LessonPlayerSlots
   };
 }
 
-/** A lesson played as a session block sends its session with the start and spoken answers. */
 function createAdapters({
   lessonId,
   studySessionId,
@@ -80,10 +73,6 @@ function createAdapters({
   };
 }
 
-/**
- * Hosts the lesson player: the app's routes, its server actions and the public API as adapters,
- * its links and its analytics.
- */
 export function LessonPlayerClient({
   challengeTeam = null,
   endingSlots,
@@ -100,12 +89,7 @@ export function LessonPlayerClient({
   tutor: tutorViewer,
   tutorSuggestions,
 }: {
-  /** The learner's colleagues in a challenge, kept with their plan. */
   challengeTeam?: ChallengeTeam | null;
-  /**
-   * How the lesson ends, when the host shows something else: a quick explanation's own ending,
-   * or a guest's "Build my plan" and "Create an account to save".
-   */
   endingSlots?: Pick<
     NonNullable<LessonPlayerProviderProps["slots"]>,
     "completion" | "completionActions"
@@ -113,27 +97,14 @@ export function LessonPlayerClient({
   firstAnswer: string | null;
   hasSession: boolean;
   lesson: PlayableLibraryLesson;
-  /** The lesson's outline beside its reading screens on a wide screen, for a quick explanation. */
   outline?: boolean;
-  /** The answers of the learner's open run of this lesson, so it opens where they left off. */
   resume?: LessonRunAnswers;
-  /**
-   * Where closing the lesson goes (back where it was opened from) and the lesson after it in that
-   * chapter, which its completion opens next.
-   */
   routing?: LessonRouting;
-  /** Today's session when the lesson is one of its blocks: its completion moment. */
   sessionContext?: LessonSessionContext | null;
   soundsEnabled: boolean;
   studySessionId: string | null;
-  /** How the lesson opens for this learner: new skills explanation first, known ones question first. */
   support?: LessonSupport | null;
-  /**
-   * Who asks the buddy in the lesson and the buddy who answers (`getTutorViewer`): a signed-in
-   * learner asks, and a guest sees the way to an account that can.
-   */
   tutor: TutorViewer;
-  /** The tutor's suggestions for the lesson's screens, worded in its language (`wordTutorSuggestions`). */
   tutorSuggestions?: readonly LessonTutorSuggestion[];
 }) {
   const router = useRouter();

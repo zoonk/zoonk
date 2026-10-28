@@ -14,7 +14,6 @@ import { ExplainClient } from "./explain-client";
 
 type Props = PageProps<"/[lang]/explain/[goalId]">;
 
-/** A learner's own question: nothing here is for search. */
 export const metadata: Metadata = { robots: { follow: false, index: false } };
 
 /**
@@ -69,7 +68,6 @@ function ExplainSkeleton() {
   );
 }
 
-/** A quick explanation for one of the learner's questions: about five screens and one check. */
 export default function ExplainPage(props: Props) {
   return (
     <Suspense fallback={<ExplainSkeleton />}>

@@ -10,12 +10,6 @@ import { type CheckpointActions, CheckpointScreen } from "@zoonk/learn/checkpoin
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useMemo } from "react";
 
-/**
- * Wires the started checkpoint to the session's answer route and its block finish, in the
- * learner's timezone, with the learner's buddy for its result's missions and milestone. Leaving
- * goes to Today; once done, it continues where the page says: back to the session it was opened
- * from, or Today.
- */
 export function CheckpointClient({
   buddy,
   checkpoint,

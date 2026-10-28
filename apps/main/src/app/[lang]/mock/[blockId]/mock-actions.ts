@@ -25,13 +25,12 @@ import { z } from "zod";
 const blockIdSchema = z.uuid();
 const sectionSchema = z.int().min(0);
 
-/** The mock as it now stands, after a step went through. */
 async function readMock(blockId: string): Promise<MockView | null> {
   const result = await getMock(blockId);
   return result.status === "ready" ? result.mock : null;
 }
 
-/** Saves a draft answer; never says whether it's right. */
+/** Never says whether the answer is right. */
 export async function saveMockAnswerAction(blockId: unknown, answer: unknown): Promise<boolean> {
   const id = blockIdSchema.safeParse(blockId);
   const input = mockAnswerInputSchema.safeParse(answer);
@@ -44,7 +43,6 @@ export async function saveMockAnswerAction(blockId: unknown, answer: unknown): P
   return result.status === "saved";
 }
 
-/** Hands in a section: the next one starts, or the mock ends and comes back graded. */
 export async function submitMockSectionAction(
   blockId: unknown,
   section: unknown,
@@ -70,7 +68,6 @@ export async function submitMockSectionAction(
     : readMock(id.data);
 }
 
-/** Ends the break between two sections now; the mock as it stands either way. */
 export async function endMockBreakAction(blockId: unknown) {
   const id = blockIdSchema.safeParse(blockId);
 
@@ -83,7 +80,6 @@ export async function endMockBreakAction(blockId: unknown) {
   return readMock(id.data);
 }
 
-/** Counts a play of the running listening section's recording as it starts. */
 export async function recordMockPlayAction(
   blockId: unknown,
   setId: unknown,
@@ -102,10 +98,6 @@ export async function recordMockPlayAction(
     : null;
 }
 
-/**
- * Starts the running speaking section: its paper's task cards are written now (model calls), or
- * the ones already written come back; the mock as it stands, with its paper.
- */
 export async function startMockSpeakingAction(blockId: unknown) {
   const id = blockIdSchema.safeParse(blockId);
 
@@ -117,7 +109,6 @@ export async function startMockSpeakingAction(blockId: unknown) {
   return result.status === "ready" ? readMock(id.data) : null;
 }
 
-/** Ends the mock now and returns it graded. */
 export async function finishMockAction(blockId: unknown, timeZone: unknown) {
   const id = blockIdSchema.safeParse(blockId);
   const input = mockTimeZoneInputSchema.safeParse({ timeZone });
@@ -130,10 +121,6 @@ export async function finishMockAction(blockId: unknown, timeZone: unknown) {
   return result.status === "finished" ? readMock(id.data) : null;
 }
 
-/**
- * Grades the finished mock's essays with the exam's rubric, right after hand-in (a model call per
- * essay), and returns the mock with their grades, or why some wait for another day.
- */
 export async function gradeMockEssaysAction(
   blockId: unknown,
   timeZone: unknown,
@@ -155,7 +142,6 @@ export async function gradeMockEssaysAction(
   return mock ? { mock, status: result.status } : null;
 }
 
-/** The learner's yes to one of the finished mock's offers: skip what it showed they know, or focus. */
 export async function adaptPlanFromMockAction(
   blockId: unknown,
   offer: unknown,

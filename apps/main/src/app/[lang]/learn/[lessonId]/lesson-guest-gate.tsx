@@ -22,11 +22,6 @@ function gateReducer(_phase: GatePhase, action: GateAction): GatePhase {
   return action.hasSession ? "refreshing" : "failed";
 }
 
-/**
- * Starts a guest session (an anonymous account behind BotID), then reloads the page, which now
- * sends the lesson's screens. If either step fails, or the reload still has no screens, the
- * visitor can try again.
- */
 function useOpenAsGuest() {
   const router = useRouter();
   const [phase, dispatch] = useReducer(gateReducer, "opening");
@@ -52,17 +47,11 @@ function useOpenAsGuest() {
   return { failed, retry: () => dispatch({ type: "retry" }) };
 }
 
-/**
- * A lesson's screens load only with a session, so they can't be scraped from the page. A visitor
- * (from a public lesson page or a shared link) becomes a guest here and the lesson opens; nothing
- * is lost, since signing up later keeps what they did. It's drawn in the lesson's own chrome, so
- * the way back (to the page it was opened from) is there while it opens and if it can't.
- */
+/** A lesson's screens load only with a session, so they can't be scraped from the page. */
 export function LessonGuestGate({
   exitHref,
   lesson,
 }: {
-  /** Where leaving goes: the catalog page the lesson was opened from, or the home page. */
   exitHref: string;
   lesson: { description: string; title: string };
 }) {

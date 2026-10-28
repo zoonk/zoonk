@@ -2,7 +2,6 @@ import { RouteNotFoundProvider } from "@/components/errors/route-not-found-conte
 import { TaskNotFound } from "@/components/learn/task-not-found";
 import { ClientMessagesProvider } from "@/i18n/client-messages-provider";
 
-/** Learn screens render here, so their client components get the learn catalog. */
 export default function Layout({ children }: LayoutProps<"/[lang]/session">) {
   return (
     <ClientMessagesProvider scope="learn">

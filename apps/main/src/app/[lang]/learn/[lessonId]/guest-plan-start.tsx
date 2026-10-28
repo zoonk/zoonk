@@ -15,7 +15,6 @@ type CourseStart = { chapterId: string | null; courseId: string };
 
 const PLAN_CLASS = cn(buttonVariants({ size: "xl" }), "w-full");
 
-/** Starts the lesson's course as the guest's goal right here: no goal to type or confirm. */
 function StartCoursePlan({ start }: { start: CourseStart }) {
   const t = useExtracted();
   const ref = useEnterClick<HTMLButtonElement>();
@@ -55,11 +54,6 @@ function StartCoursePlan({ start }: { start: CourseStart }) {
   );
 }
 
-/**
- * "Build my plan" after a guest's lesson: the lesson's course becomes their goal on the tap, from
- * the lesson's chapter when that's where they began (see `LessonFit`). A lesson outside any
- * public course opens onboarding with its subject filled in instead.
- */
 export function GuestPlanStart({ goal, start }: { goal: string; start: CourseStart | null }) {
   const t = useExtracted();
   const ref = useEnterClick<HTMLAnchorElement>();
