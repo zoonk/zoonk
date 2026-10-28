@@ -62,6 +62,10 @@ final class LessonPlayerStore {
   /// The Ask panel is open, with the question it opened with ("Explain it more simply").
   var isAsking = false
   private(set) var askingSuggestionId: String?
+  /// Ask was opened on a compact width, where it's a sheet over the lesson. Only such a tap shows
+  /// the sheet: closing iPhone Duo with Ask beside the lesson keeps the lesson in view, and opening
+  /// it again brings Ask back beside it.
+  private(set) var isAskingOnCompact = false
 
   private let api: LessonPlayerAPI
   private let cache: AppCache
@@ -110,8 +114,9 @@ final class LessonPlayerStore {
   }
 
   /// Opens the Ask panel, with a suggestion ready to send when it came from an offer.
-  func ask(suggestionId: String? = nil) {
+  func ask(suggestionId: String? = nil, isCompact: Bool) {
     askingSuggestionId = suggestionId
+    isAskingOnCompact = isCompact
     isAsking = true
   }
 

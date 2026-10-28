@@ -56,6 +56,7 @@ struct LessonPlayerScreen: View {
 
 private struct LessonPlayerContent: View {
   @Environment(\.dismiss) private var dismiss
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(\.activityRenderers) private var activityRenderers
   @Environment(\.lessonTutor) private var tutor
   @Environment(SessionStore.self) private var session
@@ -108,7 +109,7 @@ private struct LessonPlayerContent: View {
         "Your answer hasn't been checked, so it won't be kept.", tableName: "Player",
         comment: "Closing a lesson with a written answer not checked yet")
     }
-    .inspector(isPresented: $store.isAsking) {
+    .inspector(isPresented: isShowingAsk) {
       if let panel = tutor.panel, let lesson = store.lesson {
         panel(
           LessonTutorScope(
@@ -231,13 +232,25 @@ private struct LessonPlayerContent: View {
   private var askItem: some ToolbarContent {
     ToolbarItem(placement: .primaryAction) {
       Button {
-        store.ask()
+        store.ask(isCompact: horizontalSizeClass == .compact)
       } label: {
         Label {
           Text("Ask", tableName: "Player", comment: "Opens the panel to ask about the lesson")
         } icon: {
           Image(systemName: "bubble.left.and.text.bubble.right")
         }
+      }
+    }
+  }
+
+  /// Ask beside the lesson on regular widths. On compact ones the inspector is a sheet, shown only
+  /// when Ask was opened there, so a size change alone (closing iPhone Duo) never covers the lesson.
+  private var isShowingAsk: Binding<Bool> {
+    Binding {
+      store.isAsking && (horizontalSizeClass == .regular || store.isAskingOnCompact)
+    } set: { isShown in
+      if !isShown {
+        store.isAsking = false
       }
     }
   }

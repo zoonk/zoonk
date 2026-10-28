@@ -94,6 +94,7 @@ struct LessonAskBuddyOffer: View {
   }
 
   @Environment(\.lessonTutor) private var tutor
+  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(LearnerSummaryStore.self) private var learnerSummary: LearnerSummaryStore?
   @State private var isDismissed = false
 
@@ -108,7 +109,7 @@ struct LessonAskBuddyOffer: View {
 
         HStack {
           Button {
-            store.ask(suggestionId: "simpler")
+            store.ask(suggestionId: "simpler", isCompact: horizontalSizeClass == .compact)
           } label: {
             askLabel
           }
