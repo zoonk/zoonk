@@ -139,6 +139,7 @@ filter:
     - getGoalUnderstanding
     - getGoalUploadRequest
     - getItemQuestionThread
+    - getLanguageCheckpointCall
     - getLanguageConversation
     - getLanguageLevelTest
     - getLanguageProgress

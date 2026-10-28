@@ -100,9 +100,7 @@ final class TodayStore {
 
     return await openStep(for: OpenedSession.Day(view)) { token in
       let (sessionID, saved) = try await self.savedBlock(block, next: next, in: view, token: token)
-      let destination = try await self.start(
-        saved, sessionID: sessionID, lessonReady: view.isLessonReady(block), token: token)
-      return (sessionID, destination)
+      return (sessionID, try await self.start(saved, sessionID: sessionID, token: token))
     }
   }
 
@@ -126,7 +124,7 @@ final class TodayStore {
     }
 
     return await openStep(for: day.map(OpenedSession.Day.init)) { token in
-      (sessionID, try await self.start(block, sessionID: sessionID, lessonReady: nil, token: token))
+      (sessionID, try await self.start(block, sessionID: sessionID, token: token))
     }
   }
 
@@ -163,7 +161,7 @@ final class TodayStore {
   private func openQuestions(_ block: StudyBlock, sessionID: String?, day: OpenedSession.Day?)
     -> MutationResult<StudyDestination>?
   {
-    guard let sessionID, let blockID = block.id, block.kind == .review || block.kind == .practice,
+    guard let sessionID, let blockID = block.id, block.isQuestionBlock,
       let owner = cache.session.authenticatedSession
     else {
       return nil
@@ -211,7 +209,7 @@ final class TodayStore {
 
   private func addExtraBlock(sessionID: String, token: String) async throws -> StudyDestination {
     let block = try await api.addExtraBlock(token: token, sessionID: sessionID)
-    return try await start(block, sessionID: sessionID, lessonReady: nil, token: token)
+    return try await start(block, sessionID: sessionID, token: token)
   }
 
   /// Throws when the day no longer has the block.
@@ -246,68 +244,98 @@ final class TodayStore {
   }
 
   /// Mirrors main's `openStudyBlock`.
-  private func start(
-    _ block: StudyBlock, sessionID: String, lessonReady: Bool?, token: String
-  ) async throws -> StudyDestination {
+  private func start(_ block: StudyBlock, sessionID: String, token: String) async throws
+    -> StudyDestination
+  {
     guard let blockID = block.id else {
       throw DayChanged()
     }
 
-    switch block.kind {
-    case .review, .practice:
-      return .questionBlock(sessionID: sessionID, blockID: blockID)
-    case .learn:
-      // A step whose lesson the plan hasn't picked yet is prepared by the tap; the session waits.
-      guard let lessonID = block.lessonId else {
-        try await api.prepareSession(token: token, sessionID: sessionID)
-        return .lessonWait(blockID: blockID, writing: .preparing)
+    switch try await screen(of: block, token: token) {
+    case .session, .unknown:
+      guard block.kind == .learn else {
+        return .questionBlock(sessionID: sessionID, blockID: blockID)
       }
 
-      let ready =
-        if let lessonReady {
-          lessonReady
-        } else {
-          try await api.lessonStatus(token: token, lessonID: lessonID) == "ready"
-        }
-
-      let lesson = StudyDestination.lesson(lessonID: lessonID, sessionID: sessionID)
-
-      if ready {
-        return try await startedDestination(
-          lesson, block: blockID, sessionID: sessionID, token: token)
+      return try await unwrittenLesson(block, blockID: blockID, sessionID: sessionID, token: token)
+    case .lesson:
+      let lesson = block.lessonId.map {
+        StudyDestination.lesson(lessonID: $0, sessionID: sessionID)
       }
-
-      // A lesson that isn't written is asked for right away (main's `unwrittenLesson`), without
-      // starting the block: the block's preparation would race the request and hide a refusal.
-      switch try await api.writeLesson(token: token, lessonID: lessonID) {
-      case .ready:
-        return try await startedDestination(
-          lesson, block: blockID, sessionID: sessionID, token: token)
-      case .writing:
-        return .lessonWait(blockID: blockID, writing: .writing)
-      case .setAside:
-        return .lessonWait(blockID: blockID, writing: .setAside)
-      case .refused(let refusal):
-        return .lessonWait(blockID: blockID, writing: .refused(refusal))
-      case .failed:
-        return .lessonWait(blockID: blockID, writing: .failed)
-      }
-    case .checkpoint:
+      return try await startedDestination(
+        lesson ?? .session, block: blockID, sessionID: sessionID, token: token)
+    case .challenge:
       if block.status != .active, let planItemID = block.planItemId {
-        return .challenge(planItemID: planItemID, sessionID: sessionID)
+        return try await waitingChallenge(
+          block, blockID: blockID, planItemID: planItemID, sessionID: sessionID, token: token)
       }
-
-      let destination: StudyDestination =
-        block.checkpoint?.mock == true
-        ? .mock(blockID: blockID, sessionID: sessionID)
-        : .checkpoint(blockID: blockID, sessionID: sessionID)
 
       return try await startedDestination(
-        destination, block: blockID, sessionID: sessionID, token: token)
-    case .produce:
+        challenge(block, blockID: blockID, sessionID: sessionID), block: blockID,
+        sessionID: sessionID, token: token)
+    case .essay:
       return try await startedDestination(
         .essay(blockID: blockID), block: blockID, sessionID: sessionID, token: token)
     }
+  }
+
+  private func screen(of block: StudyBlock, token: String) async throws -> StudyBlock.Screen {
+    guard block.screen == .unknown, let lessonID = block.lessonId else {
+      return block.screen
+    }
+
+    return try await api.lessonStatus(token: token, lessonID: lessonID) == "ready"
+      ? .lesson : .session
+  }
+
+  /// A step whose lesson the plan hasn't picked yet is prepared by the tap; the session waits. A
+  /// lesson that isn't written is asked for right away, without starting the block: the block's
+  /// preparation would race the request and hide a refusal.
+  private func unwrittenLesson(
+    _ block: StudyBlock, blockID: String, sessionID: String, token: String
+  ) async throws -> StudyDestination {
+    guard let lessonID = block.lessonId else {
+      try await api.prepareSession(token: token, sessionID: sessionID)
+      return .lessonWait(blockID: blockID, writing: .preparing)
+    }
+
+    switch try await api.writeLesson(token: token, lessonID: lessonID) {
+    case .ready:
+      return try await startedDestination(
+        .lesson(lessonID: lessonID, sessionID: sessionID), block: blockID, sessionID: sessionID,
+        token: token)
+    case .writing:
+      return .lessonWait(blockID: blockID, writing: .writing)
+    case .setAside:
+      return .lessonWait(blockID: blockID, writing: .setAside)
+    case .refused(let refusal):
+      return .lessonWait(blockID: blockID, writing: .refused(refusal))
+    case .failed:
+      return .lessonWait(blockID: blockID, writing: .failed)
+    }
+  }
+
+  /// Mirrors main's `toChallengeDestination`: a language goal's call opens on its own intro, which
+  /// starts it; any other challenge opens on the challenge's intro.
+  private func waitingChallenge(
+    _ block: StudyBlock, blockID: String, planItemID: String, sessionID: String, token: String
+  ) async throws -> StudyDestination {
+    switch try await api.languageCheckpointCall(token: token, blockID: blockID) {
+    case .earlierFirst:
+      throw DayChanged()
+    case .notLanguage, .plusRequired:
+      return .challenge(planItemID: planItemID, sessionID: sessionID)
+    case .ready, .notStarted, .preparing:
+      return challenge(block, blockID: blockID, sessionID: sessionID)
+    }
+  }
+
+  private func challenge(_ block: StudyBlock, blockID: String, sessionID: String)
+    -> StudyDestination
+  {
+    block.checkpoint?.mock == true
+      ? .mock(blockID: blockID, sessionID: sessionID)
+      : .checkpoint(blockID: blockID, sessionID: sessionID)
   }
 
   private func startedDestination(

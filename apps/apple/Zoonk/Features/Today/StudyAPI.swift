@@ -28,6 +28,8 @@ protocol StudyAPIClient: Sendable {
   func getSession(token: String, sessionID: String) async throws -> StudyDay
   func getSummary(token: String, sessionID: String) async throws -> SessionSummary
   func lessonStatus(token: String, lessonID: String) async throws -> String
+  func languageCheckpointCall(token: String, blockID: String) async throws
+    -> LanguageCheckpointCall
   /// Only on the learner's tap, since it runs AI.
   func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome
   func prepareSession(token: String, sessionID: String) async throws
@@ -261,6 +263,12 @@ struct StudyAPI: StudyAPIClient {
         throw APIError.unavailable
       }
     }
+  }
+
+  func languageCheckpointCall(token: String, blockID: String) async throws
+    -> LanguageCheckpointCall
+  {
+    try await LiveCallAPI(clients: clients).checkpointCall(blockId: blockID, token: token)
   }
 
   func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws {

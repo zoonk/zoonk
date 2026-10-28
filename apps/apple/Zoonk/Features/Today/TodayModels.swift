@@ -104,15 +104,6 @@ struct TodayView: Decodable, Equatable, Sendable {
     block.kind == .learn && block.lessonId.map { lessonStatus[$0] == "generating" } == true
   }
 
-  /// Nil when Today holds no state for it.
-  func isLessonReady(_ block: StudyBlock) -> Bool? {
-    guard let lessonId = block.lessonId, let status = lessonStatus[lessonId] else {
-      return nil
-    }
-
-    return status == "ready"
-  }
-
   /// Mirrors main's `useUpNextLessons`.
   var upNextLessons: [StudyDay.ExtraTime.Lesson] {
     let state = session.state

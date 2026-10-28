@@ -4,6 +4,7 @@ import OpenAPIRuntime
 typealias LanguageConversation = Components.Schemas.LanguageConversation
 typealias CompletedLanguageConversation = Components.Schemas.CompletedLanguageConversation
 typealias ConversationTurn = Components.Schemas.LanguageConversationTurn
+typealias LanguageCheckpointCall = Components.Schemas.LanguageCheckpointCall
 
 extension LanguageConversation {
   var speakingTask: Components.Schemas.ExamSpeakingTask? { examTask?.value1 }
@@ -99,6 +100,21 @@ struct LiveCallAPI: Sendable {
         return .refused(voiceRefusal(status: 429, error: try? response.body.json))
       case .serviceUnavailable(let response):
         return .refused(voiceRefusal(status: 503, error: try? response.body.json))
+      case .badRequest, .internalServerError, .undocumented:
+        throw APIError.unavailable
+      }
+    }
+  }
+
+  func checkpointCall(blockId: String, token: String) async throws -> LanguageCheckpointCall {
+    try await clients.perform(token: token) { client in
+      switch try await client.getLanguageCheckpointCall(path: .init(blockId: blockId)) {
+      case .ok(let response):
+        return try response.body.json
+      case .unauthorized:
+        throw APIError.unauthorized
+      case .notFound:
+        throw APIError.notFound
       case .badRequest, .internalServerError, .undocumented:
         throw APIError.unavailable
       }

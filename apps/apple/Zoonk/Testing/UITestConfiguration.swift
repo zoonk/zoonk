@@ -430,6 +430,12 @@
       throw APIError.network
     }
 
+    func languageCheckpointCall(token: String, blockID: String) async throws
+      -> LanguageCheckpointCall
+    {
+      throw APIError.network
+    }
+
     func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome {
       throw APIError.network
     }
