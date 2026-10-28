@@ -225,6 +225,13 @@ For a dated exam, turning `fullCourse` on keeps the schedule on or before the ex
 - **Reads:** `after.phases`, `after.items`, `after.goal`.
 - **Code:** `checkMocksInEveryPhase`.
 
+### R45. A challenge counts in its day's time
+
+- **Owner's words:** the owner (27 Oct) decided challenges count inside the learner's daily time for every goal, exams included, never split: "a challenge longer than the daily time makes that day as long as the challenge, shown upfront", and when it's shorter, lessons fill the rest of the day. It reverses the 24 Oct exam change, which ran an exam's challenges on top of their days.
+- **Check:** a phase challenge still to do leads its day, at the time its session plays (the bank-aware size the plan saved, `getBossSize`), and that day's lessons take no more than the day's minutes minus the challenge's; a challenge is never split across days; one longer than its day is alone on it and the day's `checkpointOverflow` is the difference. Two exceptions run on top of their day, never split: a challenge sharing a day the learner moved a mock onto (the mock holds the whole day), and an exam's challenge whose own teaching the time of earlier challenges ended past its day, which then goes on the first study day after that teaching (R40), or beside it on its last day when none is left.
+- **Reads:** `after.items`, `after.settings.weekdayMinutes`, `after.settings.checkpointOverflow`, `after.phases`.
+- **Code:** `phase-challenge-teaching.test.ts`, `boss-delivery.test.ts`, `mock-funding-composition.test.ts` and `funded-mock-session-budget.test.ts`.
+
 ### R39. Phases keep their order
 
 - **Owner's words:** "never claim something about the plan that isn't true" (round 11); the Journey shows the phases as a path, each ending with its challenge. Found by the learner simulator (10 Oct): a career plan dated its sixth phase before the second, and an undo left a language plan's fourth phase ending before its second.

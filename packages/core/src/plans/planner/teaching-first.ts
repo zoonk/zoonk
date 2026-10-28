@@ -6,7 +6,7 @@ import { fromIsoDate, toIsoDate } from "./plan-calendar";
 import { type PlannedItem } from "./plan-items";
 import { type PlanPhase, type PlanSettings } from "./plan-state";
 
-/** What teaching first needs of a built plan, and gives back (see `settleTeachingFirst`). */
+/** What placing an exam's challenges needs of a built plan, and gives back (see `settleExamBosses`). */
 export type SettlingPlan = {
   estimate: { endDate: Date | null; remainingMinutes: number; totalMinutes: number };
   items: PlannedItem[];
@@ -60,8 +60,8 @@ function putBosses({
   return placed;
 }
 
-/** The day's time each boss takes past it, with what the rest of the day's checkpoints take. */
-function addBossOverflow({
+/** The day's time each of `bosses` takes past it, with what the rest of the day's checkpoints take. */
+function addOnTop({
   base,
   bosses,
 }: {
@@ -84,50 +84,47 @@ function addBossOverflow({
 }
 
 /**
- * A plan with its bosses placed teaching first (see `settlePlannedBosses`): built once with every
- * boss (`bossKeys`) taking none of its day's time, its lessons, mocks' funding, past credits and
- * phase windows stay as that build has them; each boss then goes on the first study day after the
- * lessons it tests end, or beside them on their last day (see `placeExamBosses`), at the time its
- * session plays, all of it asked of its day on top (`checkpointOverflow`), as Today and the Plan
- * show it.
+ * A dated exam's plan with its challenges inside their days, as every goal's (R45): built once
+ * with none on any day, each goes on the first study day after its own phase's teaching ends (see
+ * `placeExamBosses`), and the plan is built once more with each taking its time there, the time its
+ * session played as the plan last saved it (`input.bossMinutes`), leading its day, the day's lessons
+ * after it; one longer than its day makes the day as long (`checkpointOverflow`). That time can end
+ * a later phase's teaching past its challenge's day: that challenge then goes on the first study
+ * day after it, or beside it on its last day when none is left, its time on top of that day, never
+ * before what it tests (R40). Each challenge's
+ * time is then what its session plays (`size`), which the next run starts from. Placed by the time
+ * it took on every pass instead, its lessons ended after it, then before it, and the plan was built
+ * a dozen times.
  */
-export function settleTeachingFirst<T extends SettlingPlan>({
-  bossDays,
-  bossKeys,
+export function settleExamBosses<T extends SettlingPlan>({
   build,
   input,
-  places,
+  place,
   size,
 }: {
-  bossDays: ExamBossDays | undefined;
-  bossKeys: readonly string[];
   build: (input: BuildPlanInput) => T;
   input: BuildPlanInput;
-  /** Where an exam's bosses go on a plan's fixed teaching (see `placeExamBosses`). */
-  places: ((built: T) => ExamBossDays) | null;
+  /** Where an exam's bosses go on a plan's teaching (see `placeExamBosses`). */
+  place: (built: T) => ExamBossDays;
   /** What each boss runs, read from the plan's items (see `sizeBosses`). */
   size: (built: T, items: readonly PlannedItem[]) => BossMinutes;
 }): T & { checkpointOverflow: PlanSettings["checkpointOverflow"] } {
-  const free: BossMinutes = new Map(bossKeys.map((key) => [key, null]));
-  const taught = build({ ...input, bossDays, bossMinutes: free });
-  const days = places?.(taught) ?? null;
+  const bossDays = place(build({ ...input, bossDays: new Map() }));
+  const built = build({ ...input, bossDays });
+  const days = place(built);
 
-  // The build puts each boss on the day it's given, kept and finished ones where the plan keeps
-  // them; one whose teaching ends elsewhere on this layout moves. Without days (an exam's without
-  // a date, or another goal's), bosses keep the days and places their build gives them.
-  const moved = taught.items.flatMap((item) => {
-    const day = item.kind === "boss" ? days?.get(item.key) : undefined;
-    const given = bossDays?.get(item.key);
+  const late = built.items.flatMap((item) => {
+    const day = item.kind === "boss" ? days.get(item.key) : undefined;
+    const given = bossDays.get(item.key);
 
-    return day && (day.date !== given?.date || day.beside !== given.beside)
+    // Later, or now beside the lessons it tests on their last day (no study day left after them).
+    return day && given && (day.date > given.date || (day.beside && !given.beside))
       ? [{ ...item, beside: day.beside, scheduledFor: fromIsoDate(day.date) }]
       : [];
   });
 
-  const placed =
-    moved.length > 0 ? putBosses({ bosses: moved, items: taught.items }) : taught.items;
-
-  const minutes = size(taught, placed);
+  const placed = late.length > 0 ? putBosses({ bosses: late, items: built.items }) : built.items;
+  const minutes = size(built, placed);
 
   const items = placed.map((item) =>
     item.kind === "boss"
@@ -142,28 +139,23 @@ export function settleTeachingFirst<T extends SettlingPlan>({
       : item,
   );
 
-  const bosses = items.filter((item) => item.kind === "boss");
-  const bossPhases = new Set(bosses.map((boss) => boss.phase));
-  const exam = input.goal.targetDate;
-
-  // The time the work after the exam takes counts its bosses at what they run, not at what the
-  // build laid them out with.
-  const afterExam = (list: readonly PlannedItem[]) =>
-    sumMinutes(
-      list.filter(
-        (item) => item.kind === "boss" && exam && item.scheduledFor && item.scheduledFor > exam,
-      ),
-    );
-
-  const afterExamGain = afterExam(items) - afterExam(taught.items);
-  const lastBoss = bosses.flatMap((boss) => (boss.scheduledFor ? [boss.scheduledFor] : [])).at(-1);
-  const endDate = taught.estimate.endDate;
+  const lateKeys = new Set(late.map((boss) => boss.key));
+  const bossPhases = new Set(items.flatMap((item) => (item.kind === "boss" ? [item.phase] : [])));
+  const lastBoss = items.findLast((item) => item.kind === "boss")?.scheduledFor ?? null;
+  const endDate = built.estimate.endDate;
 
   return {
-    ...taught,
-    checkpointOverflow: addBossOverflow({
-      base: listCheckpointOverflow({ bossMinutes: free, built: taught, input }),
-      bosses,
+    ...built,
+    checkpointOverflow: addOnTop({
+      base: listCheckpointOverflow({
+        bossMinutes: minutes,
+        built: {
+          items: items.filter((item) => !lateKeys.has(item.key)),
+          mockFunding: built.mockFunding,
+        },
+        input,
+      }),
+      bosses: items.filter((item) => lateKeys.has(item.key)),
     }),
     estimate: {
       endDate: lastBoss && (!endDate || lastBoss > endDate) ? lastBoss : endDate,
@@ -171,17 +163,13 @@ export function settleTeachingFirst<T extends SettlingPlan>({
       totalMinutes: Math.round(sumMinutes(items)),
     },
     items,
-    phases: taught.phases.map((phase, index) => {
-      if (phase.kind === "afterExam") {
-        return { ...phase, minutes: Math.round(phase.minutes + afterExamGain) };
-      }
-
-      return bossPhases.has(index)
+    phases: built.phases.map((phase, index) =>
+      bossPhases.has(index) && phase.kind !== "afterExam"
         ? {
             ...phase,
             minutes: Math.round(sumMinutes(items.filter((item) => item.phase === index))),
           }
-        : phase;
-    }),
+        : phase,
+    ),
   };
 }

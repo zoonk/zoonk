@@ -87,6 +87,7 @@ const input: Required<BuildPlanInput> = {
 
 /** What only says how a run was made, which the plan it saved already holds. */
 const RUN_FIELDS = new Set([
+  "bossMinutes",
   "bringBackSetAside",
   "carryOver",
   "examWindows",
@@ -107,11 +108,11 @@ const item = { key: "lesson:fractions-0" };
 const key = getPlanInputsKey({ input, items: [] });
 
 describe(getPlanInputsKey, () => {
-  // A plan saved before still reads as unchanged. Those saved before an exam's challenges ran on
-  // top of their days (their settings kept the mocks runs moved off them) plan once more.
+  // A plan saved before still reads as unchanged. Those saved before every challenge took its time
+  // inside its day (a run now starts from the times the plan saved) plan once more.
   it("keeps the bytes of the keys plans were saved with", () => {
     expect(getPlanInputsKey({ input, items: [{ ...item, status: "done" }] })).toBe(
-      "ccad572fad22d3bfc9f48361e60bf8b813f9f9356e52166ca7a942a0b03b0b5b",
+      "11c82c39f3b7681bff1d31e6cecd00d96e2fb6c769c988bc52071052eb132012",
     );
   });
 

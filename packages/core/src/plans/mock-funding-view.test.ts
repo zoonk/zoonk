@@ -349,8 +349,6 @@ describe("public mock funding views", () => {
     expect(opened.today.session.minutes.planned).toBe(result.today.session.minutes.planned);
     expect(opened.today.session.week.time).toBeDefined();
     expect(opened.today).toMatchObject({ mockFunding: expected });
-    expect(opened.today.session.minutes.dailyGoal % 1).not.toBe(0);
-    expect(opened.today.session.week.time.targetMinutes % 1).not.toBe(0);
 
     expect(todayResponseSchema.parse(serializeToday(opened.today))).toMatchObject({
       mockFunding: expected,

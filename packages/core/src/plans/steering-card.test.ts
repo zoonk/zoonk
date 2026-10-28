@@ -80,10 +80,10 @@ describe("a change of where to focus on a plan short on time", () => {
   // doesn't name, from 40 to 44 lessons, and the card said nothing (R2). Ethics already had every
   // lesson in, so the time strategy freed went to criminal procedure too.
   it("names on the card a subject it doesn't name whose lessons move by more than rounding", async () => {
-    // 20 minutes: short of every area's depth, which less exam strategy gives criminal law; at 25,
+    // 19 minutes: short of every area's depth, which less exam strategy gives criminal law; at 25,
     // criminal law is all but whole, and only rounding is left to move.
     const { after, before, result } = await changeShortExam({
-      dailyMinutes: 20,
+      dailyMinutes: 19,
       operations: [
         { areas: ["Ética"], kind: "focusAreas" },
         { areas: ["Estratégia"], kind: "reduceAreas" },

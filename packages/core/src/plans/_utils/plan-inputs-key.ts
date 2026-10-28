@@ -18,7 +18,7 @@ const KEYED_FIELDS = {
   bases: true,
   bossDays: true,
   bossFacts: true,
-  bossMinutes: true,
+  bossMinutes: "The time each challenge took as the plan saved it: the plan's own output.",
   bringBackSetAside: "Only a learner's change brings set-aside work back, and its plan holds it.",
   carryOver: "What earlier days left, which the plan the run saved already lays out first.",
   courseStart: true,

@@ -237,7 +237,7 @@ describe("notices for changes within an estimate", () => {
   // a stand-in for one more lesson after the exam beside all eight written ones.
   it("lands every lesson of a stand-in that goes on past the exam, keeping no stand-in", async () => {
     const { goal, library, plan } = await pacedPlanFixture({
-      dailyMinutes: 15,
+      dailyMinutes: 16,
       days: 14,
       fullCourse: true,
       kind: "exam",
@@ -322,8 +322,9 @@ describe("notices for changes within an estimate", () => {
     expect(countLessons(after) - countLessons(before)).toBe(8);
     expect(byDate(after)).toBe(byDate(before));
     expect(change?.effect?.lessonsAdded).toBe(8);
-    // The last lessons reclaim time no longer set aside for an omitted after-exam mock.
-    expect(change?.effect?.endDateAfter).toBe("2020-10-31");
+    // The last lessons reclaim time no longer set aside for an omitted after-exam mock, after the
+    // time each challenge takes inside its day (R45).
+    expect(change?.effect?.endDateAfter).toBe("2020-11-01");
   });
 
   it.each([4, 5])(

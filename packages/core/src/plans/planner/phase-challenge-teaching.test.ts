@@ -223,8 +223,9 @@ describe("overlapping phase teaching", () => {
 describe("a challenge near a mock", () => {
   // Core's challenge on Nov 4, inside the Nov 6 mock's funding window, moved Core's last lessons
   // past it; on Nov 9, outside it, they came back: the plan was built again and again, fell back
-  // and logged an error on every Plan view. Its time now runs on top of its day.
-  it("goes on the first study day after its teaching, its time asked of that day on top", () => {
+  // and logged an error on every Plan view. It goes where its teaching puts it, its time inside
+  // that day (R45): the day's lessons take what it leaves.
+  it("goes on the first study day after its teaching, its time inside that day", () => {
     const input: BuildPlanInput = {
       ...examInput(),
       goal: { dailyMinutes: 45, kind: "exam", targetDate: fromIsoDate("2026-11-20") },
@@ -265,14 +266,21 @@ describe("a challenge near a mock", () => {
     expect(built.mockFunding.map((mock) => mock.date)).toStrictEqual(["2026-11-06"]);
     expect(built.bossFallback).toBeUndefined();
     expect(day).toBe(built.studyDays.find((study) => study > end));
-    expect(built.checkpointOverflow).toContainEqual({ date: day, minutes: challenge!.minutes });
+    expect(built.checkpointOverflow.find((entry) => entry.date === day)).toBeUndefined();
+
+    const onDay = built.items.filter(
+      (item) => item.scheduledFor && toIsoDate(item.scheduledFor) === day,
+    );
+
+    expect(onDay.reduce((sum, item) => sum + item.minutes, 0)).toBeLessThanOrEqual(45 + 1e-6);
   });
 });
 
 describe("a finished challenge on a short day", () => {
   // The run after it priced it once at its full time and again inside the day it left: a learner
-  // studying 5 minutes a day saw 25 more minutes asked of that day instead of 15.
-  it("asks its day for its time once, on top", () => {
+  // studying 5 minutes a day saw 25 more minutes asked of that day instead of 10. Longer than the
+  // day, it makes the day as long as it (R45).
+  it("asks its day for its time once, the day as long as the challenge", () => {
     const input: BuildPlanInput = {
       ...examInput(),
       goal: { dailyMinutes: 5, kind: "exam", targetDate: fromIsoDate("2026-11-08") },
@@ -303,7 +311,7 @@ describe("a finished challenge on a short day", () => {
 
     expect(next.checkpointOverflow).toContainEqual({
       date: toIsoDate(day),
-      minutes: challenge.minutes,
+      minutes: challenge.minutes - 5,
     });
   });
 });

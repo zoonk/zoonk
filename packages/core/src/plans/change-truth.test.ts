@@ -489,7 +489,7 @@ describe("more of one subject and less of another", () => {
   // Ana's "more Linguagens", short on time: Linguagens gained 96 lessons and ended in October
   // instead of August, and her card said only that she'd finish it later.
   it("says how many more lessons the subject asked for gets when that ends it later", async () => {
-    const { goal, plan } = await setup({ dailyMinutes: 20, mockMinutes: 30 });
+    const { goal, plan } = await setup({ dailyMinutes: 22, mockMinutes: 30 });
     const before = await readAreas(plan.id);
 
     const changed = await change(goal.id, [{ areas: ["Direito"], kind: "focusAreas", parts: [] }]);

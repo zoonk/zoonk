@@ -33,10 +33,10 @@ function isBeside({ boss, items }: { boss: PlannedItem; items: readonly PlannedI
 
 /**
  * The time each day's checkpoints take past the learner's time, which the plan saves
- * (`PlanSettings.checkpointOverflow`) so the day asks for it too: a checkpoint that leads its day
- * takes what the day has and the rest past it; a phase's beside its lessons on their last day (no
- * study day left after them, see `placeBoss`) takes all of its time past them. The regular day is
- * the one Today reads (`getPlannedMinutes`).
+ * (`PlanSettings.checkpointOverflow`) so the day asks for it too: checkpoints that lead their day,
+ * with a mock that shares it, take what the day has and the rest past it; a phase's beside its
+ * lessons on their last day (no study day left after them, see `placeBoss`) takes all of its time
+ * past them. The regular day is the one Today reads (`getPlannedMinutes`).
  */
 export function listCheckpointOverflow({
   bossMinutes,
@@ -62,6 +62,12 @@ export function listCheckpointOverflow({
     toIsoDate(item.scheduledFor ?? new Date(0)),
   );
 
+  // A mock sharing a challenge's day (one the learner moved there) holds the day's own time.
+  const mocksOn = Map.groupBy(
+    built.items.filter((item) => item.kind === "mock" && item.scheduledFor !== null),
+    (item) => toIsoDate(item.scheduledFor ?? new Date(0)),
+  );
+
   return [...days].flatMap(([date, checkpoints]) => {
     const regular = getPlannedMinutes({
       calendar,
@@ -72,7 +78,8 @@ export function listCheckpointOverflow({
 
     const beside = checkpoints.filter((item) => isBeside({ boss: item, items: built.items }));
     const leading = checkpoints.filter((item) => !isBeside({ boss: item, items: built.items }));
-    const minutes = sum(beside) + Math.max(0, sum(leading) - regular);
+    const mocks = mocksOn.get(date) ?? [];
+    const minutes = sum(beside) + Math.max(0, sum(leading) + sum(mocks) - regular);
 
     return minutes > 0 ? [{ date, minutes }] : [];
   });

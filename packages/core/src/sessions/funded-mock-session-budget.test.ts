@@ -14,6 +14,7 @@ import { startChallenge } from "../checkpoints/start-challenge";
 import { getMock } from "../exams/mocks/get-mock";
 import { examStructureSchema } from "../library/exams/blueprint-contract";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
+import { parsePlanChangePayload } from "../plans/_utils/plan-change-payload";
 import { changeGoalPlan } from "../plans/change-goal-plan";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { getGoalPlan } from "../plans/get-goal-plan";
@@ -505,10 +506,11 @@ describe("funded mock sessions reserve all their fixed work", () => {
     });
   });
 
-  // A learner who moved the week's mock onto a day, then left the first two phases' challenges: a
-  // challenge's time runs on top of its day, so the run carries them past the day the learner moved
-  // the mock onto, to the next study day. The mock keeps its day and funding, and every lesson stays.
-  it("carries overdue challenges past the mock's day, keeping the mock and every lesson", async () => {
+  // A learner who moved the week's mock onto a day, then left the first two phases' challenges: the
+  // run carries them past the day the learner moved the mock onto, to the next study day, whose 30
+  // minutes they take inside it (R45). The mock keeps its day and funding, and a lesson that no
+  // longer fits by the date leaves only with a change that names it.
+  it("carries overdue challenges past the mock's day, keeping the mock and naming any lesson it leaves", async () => {
     const fixture = await setup({ withBoss: true });
     const original = await moveMock({ fixture, to: BOSS_DAY });
 
@@ -597,12 +599,27 @@ describe("funded mock sessions reserve all their fixed work", () => {
       overdue.map((item) => ({ id: item.id, scheduledFor: new Date(COEVENT_DAY), status: "todo" })),
     );
 
-    expect(parsePlanSettings(after.settings).checkpointOverflow).toContainEqual({
-      date: COEVENT_DAY,
-      minutes: 30,
-    });
+    expect(
+      parsePlanSettings(after.settings).checkpointOverflow.find(
+        (entry) => entry.date === COEVENT_DAY,
+      ),
+    ).toBeUndefined();
 
-    expect(writtenIds(after.items)).toStrictEqual(writtenIds(before.items));
+    const kept = new Set(writtenIds(after.items));
+
+    const gone = before.items
+      .filter((item) => item.kind === "lesson" && item.lessonId && !kept.has(item.lessonId))
+      .map((item) => item.titleSnapshot);
+
+    const changes = await prisma.planChange.findMany({ where: { planId: fixture.plan.id } });
+
+    const named = new Set(
+      changes.flatMap(
+        (change) => parsePlanChangePayload(change.payload).effect?.lessonsLeftOut ?? [],
+      ),
+    );
+
+    expect(gone.filter((title) => !named.has(title))).toStrictEqual([]);
     expect(doneTeaching(after.items)).toStrictEqual(doneTeaching(before.items));
   });
 

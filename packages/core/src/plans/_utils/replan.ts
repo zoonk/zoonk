@@ -7,6 +7,7 @@ import { getGoalsCacheTag, getLearnerModelCacheTag } from "../../cache/tags";
 import { readCourseStart } from "../../goals/course-start-details";
 import { getKnownSubjects } from "../../learner/placement/placement-contract";
 import { chooseBases } from "../planner/base-choices";
+import { type BossMinutes } from "../planner/boss-minutes";
 import { type BuiltPlan, type PlanningMode, buildPlan } from "../planner/build-plan";
 import { getChosenStandInLessons } from "../planner/chosen-bases";
 import { withPlannedLessons } from "../planner/core-first";
@@ -21,6 +22,7 @@ import { type PlanFeasibility, getPlanFeasibility } from "../planner/plan-feasib
 import { type Pace } from "../planner/plan-pace";
 import { toExamWindows } from "../planner/plan-phases";
 import { type PlanState } from "../planner/plan-state";
+import { getBossKey } from "../planner/plan-units";
 import { getRunEffect, withBuiltSettings } from "../planner/run-outcome";
 import { type SelectedItemFacts, listSelectedItemFacts } from "../planner/selected-item-facts";
 import { summarizeSelectedPlan } from "../planner/selected-plan-summary";
@@ -94,6 +96,20 @@ export type PlanChangeRecord = {
 
 /** Whether a writer expires screen data immediately or lets its caller do it. */
 export type PlanTagRevalidation = "now" | "skip";
+
+/**
+ * The time each challenge took as the plan last saved it, which a run starts from (see
+ * `settlePlannedBosses`): read again from the start, every run built its plan twice.
+ */
+function listSavedBossMinutes(items: PlanContext["items"]): BossMinutes {
+  return new Map(
+    items.flatMap((item) =>
+      item.kind === "boss" && typeof item.minutes === "number"
+        ? [[getBossKey(item.phase), item.minutes] as const]
+        : [],
+    ),
+  );
+}
 
 type ComputePlanRequest = {
   /** Reuse this request's settling facts; mutation callers load fresh facts by default. */
@@ -223,6 +239,7 @@ export async function computePlan({
   const { advise, input } = chooseBases({
     ...inputs,
     bossFacts: await bossFacts,
+    bossMinutes: listSavedBossMinutes(context.items),
     bringBackSetAside: options.bringBackSetAside ?? false,
     carryOver,
     courseStart:

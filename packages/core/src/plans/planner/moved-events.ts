@@ -53,9 +53,13 @@ export function withMovedEvents({
     const replaces = movedIn.some((event) => event.replacesDay);
     const takenOver = movedOut || movedIn.length > 0;
 
-    const staying = shape.events.filter(
-      (event) => !(takenOver && isMovable(event)) && !(replaces && event.kind === "review"),
-    );
+    // A phase's challenge on a day a mock moves onto runs beside it, its time on top of the mock's
+    // whole day (R43): taken from the day, it left the mock short of its funding.
+    const staying = shape.events
+      .filter((event) => !(takenOver && isMovable(event)) && !(replaces && event.kind === "review"))
+      .map((event) =>
+        replaces && event.kind === "boss" ? { ...event, beside: true, leads: undefined } : event,
+      );
 
     return { ...shape, events: [...staying, ...movedIn] };
   };
