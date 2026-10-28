@@ -666,7 +666,7 @@ final class ZoonkUITests: XCTestCase {
     app.buttons["Start a goal"].tap()
 
     XCTAssertTrue(
-      app.navigationBars["Start a goal"].waitForExistence(timeout: 5),
+      app.staticTexts["What do you want to achieve?"].waitForExistence(timeout: 5),
       "Expected the empty category action to open the goal start")
   }
 
@@ -687,7 +687,7 @@ final class ZoonkUITests: XCTestCase {
     searchField.typeText("leaves")
 
     let courseContinue = app.buttons.matching(
-      NSPredicate(format: "label BEGINSWITH %@", "Continue")
+      NSPredicate(format: "label == %@", "Build my plan")
     ).firstMatch
     let hiddenCourseHeader = XCTNSPredicateExpectation(
       predicate: NSPredicate(format: "exists == false"),
@@ -746,7 +746,7 @@ final class ZoonkUITests: XCTestCase {
     searchField.typeText("water")
 
     let chapterContinue = app.buttons.matching(
-      NSPredicate(format: "label BEGINSWITH %@", "Continue")
+      NSPredicate(format: "label == %@", "Build my plan")
     ).firstMatch
     let hiddenChapterHeader = XCTNSPredicateExpectation(
       predicate: NSPredicate(format: "exists == false"),
