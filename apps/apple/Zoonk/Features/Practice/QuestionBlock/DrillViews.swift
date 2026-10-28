@@ -56,7 +56,6 @@ struct DrillNoteView: View {
   let drill: PracticeDrill
   var lastAnswer: String?
   var isAnswered = false
-  @Environment(\.practiceHooks) private var hooks
 
   var body: some View {
     let lesson = drill.kind == .reteach ? drill.lesson : nil

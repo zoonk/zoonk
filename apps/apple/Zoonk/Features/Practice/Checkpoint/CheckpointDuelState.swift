@@ -35,6 +35,8 @@ struct CheckpointDuelState: Equatable {
   private(set) var failure: Failure?
   /// The last answer and its verdict, shown until the learner moves on.
   private(set) var feedback: Feedback?
+  /// The answers given in this visit, so the review marks the learner's own pick.
+  private(set) var given: [String: PracticeAnswer] = [:]
   private(set) var isPending = false
   private(set) var isResult: Bool
   private(set) var reinforcementLessons: Int
@@ -81,6 +83,7 @@ struct CheckpointDuelState: Equatable {
     transcript: [PracticeTranscriptLine]?, setId: String?
   ) {
     feedback = Feedback(answer: answer, isCorrect: isCorrect, itemId: itemId)
+    given[itemId] = answer
     isPending = false
     verdicts[itemId] = isCorrect
     self.reinforcementLessons = reinforcementLessons ?? self.reinforcementLessons

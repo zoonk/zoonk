@@ -95,9 +95,13 @@ struct ChallengeScreen: View {
               ? LocalizedStringResource(
                 "This week's topics", table: "Practice",
                 comment: "Heading over a weekly challenge's topics.")
-              : LocalizedStringResource(
-                "What he'll ask", table: "Practice",
-                comment: "Heading over a phase challenge's topics.")
+              : challenge.status == .done
+                ? LocalizedStringResource(
+                  "What he asked", table: "Practice",
+                  comment: "Heading over a finished phase challenge's topics.")
+                : LocalizedStringResource(
+                  "What he'll ask", table: "Practice",
+                  comment: "Heading over a phase challenge's topics.")
           )
           .font(.headline)
 
@@ -190,6 +194,7 @@ struct ChallengeScreen: View {
     } actions: {
       actions(challenge)
     }
+    .practiceActionsHidden(!hasActions(challenge))
     .navigationTitle(Text(title(challenge)))
   }
 
@@ -256,6 +261,14 @@ struct ChallengeScreen: View {
       )
       .font(.subheadline).foregroundStyle(.secondary)
     }
+  }
+
+  /// Before its day a challenge has nothing to do yet: no pinned bar.
+  private func hasActions(_ challenge: Components.Schemas.Challenge) -> Bool {
+    challenge.locked || challenge.status == .plusRequired || challenge.call != nil
+      || challenge.canMove
+      || challenge.waitReason != nil
+      || [.ready, .started, .done, .tried].contains(challenge.status)
   }
 
   // MARK: Copy

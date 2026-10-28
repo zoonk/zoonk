@@ -335,7 +335,7 @@ private struct CheckpointResultView: View {
 
           if let answers = result?.answers, !answers.isEmpty {
             DisclosureGroup(isExpanded: $showsReview) {
-              CheckpointReview(load: load, answers: answers)
+              CheckpointReview(load: load, answers: answers, given: state.given)
             } label: {
               Text(
                 "Review the answers", tableName: "Practice",
@@ -358,6 +358,8 @@ private struct CheckpointResultView: View {
 private struct CheckpointReview: View {
   let load: CheckpointLoad
   let answers: [Components.Schemas.StudyBlockCompletion.CheckpointPayload.AnswersPayloadPayload]
+  /// The learner's picks from this visit; an answer given before it was right or isn't known.
+  let given: [String: PracticeAnswer]
 
   var body: some View {
     VStack(alignment: .leading, spacing: 20) {
@@ -372,7 +374,7 @@ private struct CheckpointReview: View {
               PracticeItemView(
                 question: question, labels: load.trueFalseLabels,
                 result: PracticeItemResult(
-                  answer: answer.isCorrect ? correctAnswer : .dontKnow,
+                  answer: given[question.itemId] ?? (answer.isCorrect ? correctAnswer : .dontKnow),
                   correctAnswer: correctAnswer, isCorrect: answer.isCorrect),
                 isLocked: true, draft: .constant(nil))
             }

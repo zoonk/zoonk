@@ -46,6 +46,7 @@ struct PracticeSegmentsBar: View {
 /// A full-screen practice task: its content scrolls in a readable column, its progress stays at
 /// the top, and its actions stay pinned at the bottom.
 struct PracticeTaskLayout<Content: View, Actions: View>: View {
+  @Environment(\.practiceActionsHidden) private var actionsHidden
   var segments: [PracticeSegment]?
   var index = 0
   @ViewBuilder let content: () -> Content
@@ -73,15 +74,28 @@ struct PracticeTaskLayout<Content: View, Actions: View>: View {
       }
     }
     .safeAreaInset(edge: .bottom, spacing: 0) {
-      VStack(spacing: 10) {
-        actions()
+      if !actionsHidden {
+        VStack(spacing: 10) {
+          actions()
+        }
+        .frame(maxWidth: 680)
+        .padding(.horizontal)
+        .padding(.vertical, 12)
+        .frame(maxWidth: .infinity)
+        .background(.bar)
       }
-      .frame(maxWidth: 680)
-      .padding(.horizontal)
-      .padding(.vertical, 12)
-      .frame(maxWidth: .infinity)
-      .background(.bar)
     }
+  }
+}
+
+extension EnvironmentValues {
+  @Entry var practiceActionsHidden = false
+}
+
+extension View {
+  /// Hides a practice task's pinned action bar when the screen has nothing to do yet.
+  func practiceActionsHidden(_ hidden: Bool) -> some View {
+    environment(\.practiceActionsHidden, hidden)
   }
 }
 
