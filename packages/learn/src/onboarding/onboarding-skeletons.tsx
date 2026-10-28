@@ -18,10 +18,8 @@ import { StartOverMenuSkeleton } from "./start-over-menu";
 
 const EXAMPLE_ROWS = 5;
 
-/** The placeholder rows' title widths, so a list doesn't read as one block. */
 const ROW_WIDTHS = ["w-3/5", "w-4/5", "w-1/2", "w-2/3", "w-3/4"];
 
-/** A list's rows while they load: hairlines between them, a title and, when `twoLines`, a line. */
 function RowsSkeleton({ rows, twoLines = false }: { rows: number; twoLines?: boolean }) {
   return (
     <div className="flex flex-col [&>*+*]:border-t">
@@ -39,7 +37,6 @@ function RowsSkeleton({ rows, twoLines = false }: { rows: number; twoLines?: boo
   );
 }
 
-/** The rail while it loads: its label and its rows, in the page's aside from 72rem. */
 function RailSkeleton() {
   return (
     <div className="flex flex-col gap-2">
@@ -49,10 +46,6 @@ function RailSkeleton() {
   );
 }
 
-/**
- * A screen's title and its one line, at the title's size (two lines on a phone, one from tablets),
- * with the eyebrow's line over it like the page's header (`eyebrow` draws what will fill it).
- */
 function HeadingSkeleton({ eyebrow = false }: { eyebrow?: boolean }) {
   return (
     <OnboardingHeading>
@@ -63,11 +56,6 @@ function HeadingSkeleton({ eyebrow = false }: { eyebrow?: boolean }) {
   );
 }
 
-/**
- * `/start` while it loads, in the shape of its first screen: its question and line in their own
- * words, the goal's field (the words over its buttons where it's narrow, as the field lays out) and
- * the examples, with how it works in the page's aside from 72rem.
- */
 export function StartEntrySkeleton() {
   const t = useExtracted();
 
@@ -82,7 +70,6 @@ export function StartEntrySkeleton() {
             </OnboardingDescription>
           </OnboardingHeading>
 
-          {/* The field's padding around its height, so it changes shape at the field's width. */}
           <Skeleton className="@container w-full p-1.5 pl-4">
             <div className="h-24 @xl:h-11" />
           </Skeleton>
@@ -97,10 +84,6 @@ export function StartEntrySkeleton() {
   );
 }
 
-/**
- * This tab's own pending send keeps the real wait and rail while its new draft loads. The goal box
- * sends from the home page, the catalog and a plan without a goal, so the rail follows the account.
- */
 export function StartSentGoal({ goal, hasAccount }: { goal: string; hasAccount: boolean }) {
   return (
     <OnboardingRailProvider rail={<OnboardingHowItWorks hasAccount={hasAccount} />}>
@@ -111,10 +94,6 @@ export function StartSentGoal({ goal, hasAccount }: { goal: string; hasAccount: 
   );
 }
 
-/**
- * `/start` while a goal it was sent with loads (`?draft=`), in the shape of the wait that follows:
- * the learner's words on the right, the wait's title and line, the bar and its phases.
- */
 export function StartWaitSkeleton() {
   return (
     <OnboardingRailProvider rail={<RailSkeleton />}>
@@ -139,11 +118,6 @@ export function StartWaitSkeleton() {
   );
 }
 
-/**
- * A goal's onboarding steps while they load: the bar (the steps' segments, its "⋯"), the
- * question's eyebrow, title and line, its options under it, and the plan so far in the page's
- * aside from 72rem.
- */
 export function StepsSkeleton() {
   return (
     <OnboardingRailProvider rail={<RailSkeleton />}>

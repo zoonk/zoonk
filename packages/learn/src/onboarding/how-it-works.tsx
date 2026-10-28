@@ -4,11 +4,6 @@ import { useExtracted } from "next-intl";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
 import { OnboardingRailSection } from "./onboarding-rail";
 
-/**
- * How starting a goal goes, beside its first screens from `lg`, before there's a plan to show: the
- * goal in the learner's words (where they are), a few questions, then the plan with its dates and
- * the first lesson. Who has no account yet reads that starting needs none, in the home page's words.
- */
 export function OnboardingHowItWorks({ hasAccount }: { hasAccount: boolean }) {
   const t = useExtracted();
 

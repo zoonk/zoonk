@@ -30,22 +30,16 @@ import { RoleStep } from "./steps/role-step";
 import { ScheduleStep } from "./steps/schedule-step";
 import { SubjectsLevelStep } from "./steps/subjects-level-step";
 
-/** How the goal's questions name it: its subject, such as "quantum physics", or its title. */
 function getSubject(view: OnboardingView): string {
   const subject = view.goal.details.subject;
   return typeof subject === "string" && subject.trim() ? subject : view.goal.title;
 }
 
-/**
- * The language a language learner speaks best, as they told us, falling back to the interface
- * language the goal was typed in. The level test offers the app in it when they differ.
- */
 function getNativeLanguage(view: OnboardingView): string {
   const native = view.goal.details.nativeLanguage;
   return typeof native === "string" && native.trim() ? native : view.goal.language;
 }
 
-/** The exam's subjects the learner said they know well, as the goal saved them. */
 function readKnownSubjects(details: Record<string, unknown>): string[] {
   const known = details.knownSubjects;
   return Array.isArray(known) ? known.filter((name) => typeof name === "string") : [];
@@ -53,11 +47,6 @@ function readKnownSubjects(details: Record<string, unknown>): string[] {
 
 const EXAM_TARGETS: readonly ExamTarget[] = ["admission", "position", "score"];
 
-/**
- * What the exam's target question asks, from what onboarding understood: a course and score
- * unless the exam ranks a position or reports a score (the question isn't asked for an exam that
- * is only passed).
- */
 function getExamTarget(details: Record<string, unknown>): ExamTarget {
   return EXAM_TARGETS.find((target) => target === details.examTarget) ?? "admission";
 }
@@ -79,10 +68,6 @@ function isQuestionStep(step: OnboardingStep): step is QuestionStep {
   return QUESTION_STEPS.some((question) => question === step);
 }
 
-/**
- * A question about the goal: what it's for, the role, why, the target, the date, the exam's
- * choices or the level.
- */
 function QuestionStepScreen({
   onAnswer,
   pending,
@@ -133,8 +118,6 @@ function QuestionStepScreen({
     case "examChoice":
       return <ExamChoiceStep {...props} choices={view.examChoices} subject={subject} />;
     case "level":
-      // One level for nine subjects says little: an exam with several asks which they know.
-      // Back shows what was picked before.
       return view.examSubjects.length > 1 ? (
         <SubjectsLevelStep
           {...props}
@@ -150,7 +133,6 @@ function QuestionStepScreen({
   }
 }
 
-/** The screen for one onboarding step. Each answer goes back through the flow. */
 export function OnboardingStepScreen({
   actions,
   isGuest,
@@ -170,7 +152,6 @@ export function OnboardingStepScreen({
   pending: boolean;
   plan: { initialPlan: RevealedPlan | null; planActions: PlanActions };
   routes: OnboardingRoutes;
-  /** The run building the goal's skill map, questions and plan, when the host follows it. */
   run: GenerationRun | null;
   step: OnboardingStep;
   view: OnboardingView;

@@ -5,7 +5,6 @@ import {
 import { describe, expect, it } from "vitest";
 import { type FlowState, applyAnswer } from "./answered-step";
 
-/** The goal's view as a save returns it; only its remaining steps matter here. */
 function viewWith(steps: OnboardingStep[]): OnboardingView {
   return { steps } as unknown as OnboardingView;
 }
@@ -32,7 +31,6 @@ describe(applyAnswer, () => {
     const once = applyAnswer({ state: onPurpose, step: "purpose", view: saved });
     const twice = applyAnswer({ state: once, step: "purpose", view: saved });
 
-    // The second response would have skipped "role", the question nobody answered.
     expect(twice.current).toBe("role");
     expect(twice.history).toStrictEqual(["purpose"]);
   });

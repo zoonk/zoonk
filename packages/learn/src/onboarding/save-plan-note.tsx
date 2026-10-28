@@ -2,10 +2,6 @@
 
 import { useExtracted } from "next-intl";
 
-/**
- * A guest's soft prompt to keep their plan: under the plan reveal and again when their first
- * session ends. Signing up moves the guest's progress to the new account.
- */
 export function SavePlanNote({ signUpHref }: { signUpHref: string }) {
   const t = useExtracted();
 

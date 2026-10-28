@@ -10,27 +10,13 @@ import { useFormatDuration } from "../_utils/time-format";
 import { OnboardingRailSection } from "./onboarding-rail";
 import { useDetailRows, useLanguageRows } from "./understood/use-understood-rows";
 
-/** One thing the plan already knows: what it is, and its value, numbers in the mono face. */
-type ReceiptFact = {
-  /** A count beside the value, in the mono face ("41 days" beside the exam's day). */
-  count?: string;
-  id: string;
-  label: string;
-  mono?: boolean;
-  value: string;
-};
+type ReceiptFact = { count?: string; id: string; label: string; mono?: boolean; value: string };
 
-/** Whether the learner already answered a question, as the goal saves its answers. */
 function isAnswered({ goal, question }: { goal: GoalView; question: string }): boolean {
   const answered = goal.details.answered;
   return Array.isArray(answered) && answered.includes(question);
 }
 
-/**
- * What the goal's words and the learner's answers have set so far, in the order they read: the
- * goal, its date and the days left, the language, the course, target and role, the level they
- * said, and the time a day once it's chosen. Each answer that sets one adds it.
- */
 function useReceiptFacts(goal: GoalView): ReceiptFact[] {
   const t = useExtracted();
   const today = useMountTime();
@@ -69,10 +55,6 @@ function useReceiptFacts(goal: GoalView): ReceiptFact[] {
   return facts.filter((fact): fact is ReceiptFact => Boolean(fact));
 }
 
-/**
- * "Your plan so far", beside every question from 72rem: what the plan already knows, as label and
- * value rows that fill in with each answer, so the learner sees what each one changes.
- */
 export function PlanReceipt({ goal }: { goal: GoalView }) {
   const t = useExtracted();
   const facts = useReceiptFacts(goal);
@@ -105,7 +87,6 @@ export function PlanReceipt({ goal }: { goal: GoalView }) {
   );
 }
 
-/** The short facts a phone's chips show; the rest (why, the role, the level) stay in the rail. */
 const CHIP_FACTS = new Set([
   "title",
   "targetLanguage",
@@ -116,11 +97,6 @@ const CHIP_FACTS = new Set([
   "date",
 ]);
 
-/**
- * The plan so far as one row of chips at the top of the screen, until the page's aside shows it: the
- * goal, its language, course or target, and the days left ("ENEM 2026 · medicine · 41 days"). The
- * screen shows it where a decision depends on it, such as the time a day.
- */
 export function PlanReceiptChips({ className, goal }: { className?: string; goal: GoalView }) {
   const t = useExtracted();
   const facts = useReceiptFacts(goal).filter((fact) => CHIP_FACTS.has(fact.id));

@@ -41,8 +41,6 @@ function WhereItFits({ fit }: { fit: LessonFit }) {
         </div>
       )}
 
-      {/* The meter is the chapter's, named above it: under the course alone it read as the course's.
-          A part per lesson, as every meter of steps draws them: done in blue, the rest on the track. */}
       <div className="flex flex-col gap-1.5">
         <span className="flex items-baseline justify-between gap-3 text-xs">
           <span className="min-w-0 truncate font-medium">{chapter.title}</span>
@@ -67,12 +65,6 @@ function WhereItFits({ fit }: { fit: LessonFit }) {
   );
 }
 
-/**
- * What comes after a guest's lesson from a public page: where it fits, and two ways on. "Build
- * my plan" (`plan`, the host's control) starts a plan from this lesson's course without typing
- * it again; an account keeps the lesson and its review, since signing up moves the guest's
- * progress to it.
- */
 export function GuestLessonNext({
   fit,
   plan,

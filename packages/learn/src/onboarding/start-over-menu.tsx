@@ -24,18 +24,10 @@ import { LearnLink } from "../learn-link";
 import { goBackToApp } from "../shell/app-history";
 import { useOnboardingHost } from "./onboarding-host";
 
-/** The "⋯", its glyph on the page's right edge as the way back's sits on its left. */
 const MENU_TRIGGER_CLASS = "-mr-3 lg:-mr-2.5 [&_svg:not([class*='size-'])]:size-5";
 
-/** A menu row: what it does, and under it what happens to the answers. */
 const MENU_ROW_CLASS = "flex-col items-start gap-0.5 py-2";
 
-/**
- * The bar's end, one "⋯" at every size: finishing later, out to the app page the learner left for
- * onboarding with the answers kept (as the ✕ does where there's no way back), and starting over,
- * each saying what happens to the answers. In words in the bar, Start over read as starting the
- * test over beside placement's Start, and said nothing of the answers.
- */
 function OnboardingBarMenu({
   disabled,
   onStartOver,
@@ -82,11 +74,6 @@ function OnboardingBarMenu({
   );
 }
 
-/**
- * The end of a goal's onboarding bar: finishing later, so every step has a way out that keeps the
- * answers, and starting over, back to typing a goal, which asks first since the answers so far
- * are dropped.
- */
 export function StartOverMenu({
   disabled,
   onStartOver,
@@ -118,7 +105,6 @@ export function StartOverMenu({
   );
 }
 
-/** The bar's "⋯" while the steps load. */
 export function StartOverMenuSkeleton() {
   return (
     <ButtonSkeleton className={MENU_TRIGGER_CLASS} size="icon-bar" variant="ghost">

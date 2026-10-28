@@ -4,26 +4,9 @@ import { type EntitlementTier } from "@zoonk/core/entitlements/contract";
 import { useExtracted } from "next-intl";
 import { type GoalLimitReason, type StartUnderstandingOutcome } from "./onboarding-actions";
 
-/**
- * Why a goal couldn't be read or created, as the screen says it. These messages live in their
- * own namespace (`goalErrors`), which apps ship on every page, because a goal starts from public
- * pages too: the home page's goal box and a course's "Build my plan".
- */
-export type GoalError = {
-  /** The goal limit that refused it, when one did: one Plus lifts shows as the Plus notice. */
-  limit?: GoalLimitReason;
-  message: string;
-  /**
-   * A guest's one goal is taken, their small AI calls for today, or the guests' daily AI budget: an
-   * account keeps going.
-   */
-  needsAccount: boolean;
-};
+/** Its own namespace (`goalErrors`), which apps ship on every page, since a goal starts from public pages too. */
+export type GoalError = { limit?: GoalLimitReason; message: string; needsAccount: boolean };
 
-/**
- * Why a new goal couldn't start: a guest's one goal or the guests' daily AI budget, the free plan's
- * one, the day's, or haste.
- */
 export function useGoalLimitMessage() {
   const t = useExtracted("goalErrors");
 
@@ -51,11 +34,6 @@ export function useGoalLimitMessage() {
   return (reason: GoalLimitReason) => messages[reason];
 }
 
-/**
- * New words to read count toward the small AI calls of the day and the month: a guest who used
- * them up is asked to create an account (their words stay), a free learner comes back when they
- * start over or gets Plus, and Plus comes back tomorrow.
- */
 function useUnderstandingLimit() {
   const t = useExtracted("goalErrors");
 
@@ -96,7 +74,6 @@ function useUnderstandingLimit() {
   };
 }
 
-/** Why typed words couldn't be sent; the entry keeps them to send again. */
 export function useStartError() {
   const t = useExtracted("goalErrors");
   const limitError = useUnderstandingLimit();

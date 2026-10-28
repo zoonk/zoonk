@@ -37,10 +37,6 @@ type StartState =
   | { goal: string; kind: "sending" }
   | { draft: OnboardingDraftView; kind: "draft" };
 
-/**
- * The screen by its title, as drawn: the draft's wait replaces the sending wait's title with its
- * own, so it takes the focus that one lost.
- */
 function getScreenKey(state: StartState): string {
   if (state.kind === "draft") {
     return state.draft.status === "understood" ? `${state.draft.id}:read` : "wait";
@@ -49,7 +45,6 @@ function getScreenKey(state: StartState): string {
   return state.kind;
 }
 
-/** Back goes to writing the goal, with the words kept, from anywhere but the first screen. */
 function getBack({
   backToEntry,
   state,
@@ -64,26 +59,10 @@ function getBack({
   return state.kind === "draft" ? () => backToEntry(state.draft.prompt) : undefined;
 }
 
-/**
- * The first part of onboarding, at `/start`: the typed goal, a short wait while it's read, then
- * "Here's what I understood" to confirm. The goal is kept as a draft (`/start?draft=`), so a
- * refresh or coming back later shows the same screen: the wait, the card with the learner's
- * fixes, or the way to try again. A question goes on to its quick explanation, an instrument to
- * the waitlist with musicianship offered, and an unsafe goal is declined kindly. Confirming
- * creates the goals and continues on the goal's own onboarding screens. A guest whose one goal is
- * taken is asked to create an account instead, before typing anything; a learner whose plan can't
- * start another goal (`goalLimit`) is told up front, with the box open for quick questions, and a
- * goal they type anyway has Plus and the free way in place of "Looks right". Until
- * the goal is confirmed there's no plan to show in the page's aside from 72rem: how it works
- * instead.
- */
 export function StartFlow({
   needsAccount = false,
   ...props
-}: React.ComponentProps<typeof GoalStartFlow> & {
-  /** A guest whose one goal is taken: only an account adds another. */
-  needsAccount?: boolean;
-}) {
+}: React.ComponentProps<typeof GoalStartFlow> & { needsAccount?: boolean }) {
   if (needsAccount) {
     return (
       <OnboardingFrame>
@@ -97,16 +76,12 @@ export function StartFlow({
 
 type GoalStartFlowProps = {
   actions: OnboardingActions;
-  /** The learner's buddy; null is the resolved default, undefined is not known yet. */
+  /** `null` is the resolved default buddy; `undefined` isn't known yet. */
   buddy?: LearnBuddy | null;
-  /** An account can attach material; guests and visitors are asked to create one. */
   canAttach?: boolean;
   defaultGoal?: string;
-  /** Opened from someone's plan link: the goal starts from that plan. */
   fromSharedPlan?: boolean;
-  /** A goal limit the learner already reached, said before they type. */
   goalLimit?: GoalLimitReason | null;
-  /** The draft in the address, to show again after a refresh or when coming back. */
   initialDraft?: OnboardingDraftView | null;
   navigation: OnboardingNavigation;
   routes: OnboardingRoutes;
@@ -138,8 +113,6 @@ function GoalStartFlow({
   const screen = getScreenKey(state);
   const lastFocusedScreen = useRef(screen);
 
-  // A new screen takes the focus the old one lost, but the first one keeps it where the browser
-  // put it.
   useLayoutEffect(() => {
     if (lastFocusedScreen.current === screen) {
       return;
@@ -209,8 +182,6 @@ function GoalStartFlow({
     understanding: actions.understanding,
   });
 
-  // A draft this tab's click sent, shown once its words are read (sent here or from the home page,
-  // read while it showed, or already read when this page opened), carries the click on, once.
   const shownDraft = state.kind === "draft" ? state.draft : null;
   const settleShown = useEffectEvent((draft: OnboardingDraftView) => submission.settle(draft));
 
@@ -229,7 +200,6 @@ function GoalStartFlow({
 
   const backToEntry = (words: string) => showEntry({ words });
 
-  // Under Today's title the examples to start from move to the page's aside, with how it works.
   const rail = (
     <>
       {section && state.kind === "entry" && <GoalExamples onPick={submit} />}

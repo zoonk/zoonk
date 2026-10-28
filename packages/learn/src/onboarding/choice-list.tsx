@@ -20,15 +20,12 @@ import { useOnboardingAnnounce } from "./onboarding-announcer";
 
 export type Choice<Value extends string> = {
   description?: string;
-  /** Text, or a question's option with its emphasis (`ItemLine`). */
   label: React.ReactNode;
   value: Value;
 };
 
-/** Number keys reach the first nine options. */
 const NUMBER_KEY_COUNT = 9;
 
-/** A radio as a row's check: the ring, and a check over it once picked (its dot left out). */
 function ChoiceRadio<Value extends string>({ value }: { value: Value }) {
   return (
     <span className="relative flex shrink-0 self-center">
@@ -45,39 +42,20 @@ function ChoiceRadio<Value extends string>({ value }: { value: Value }) {
   );
 }
 
-/**
- * A choice as a flat row of one list: the whole row picks it, the picked one (`data-highlighted`)
- * on the pick's tint, the keyboard ring inside it.
- */
 export const CHOICE_ROW_CLASS = cn(
   LIST_ROW_INTERACTIVE_CLASS,
   CHOICE_PICKED_ROW_CLASS,
   "group/choice has-focus-visible:before:ring-ring/50 cursor-pointer has-focus-visible:before:ring-[3px]",
 );
 
-/**
- * A preset (an amount of time): the strong line, and the pick's ring and tint once picked;
- * the keyboard's focus is an outline, so a picked preset still shows it.
- */
 const CHIP_CLASS = cn(
   "ring-input press flex cursor-pointer items-center rounded-lg ring-1 [--press-scale:0.99] ring-inset",
   "hover:bg-muted has-data-checked:bg-selected-tint has-data-checked:ring-selected has-focus-visible:outline-ring has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-data-checked:ring-2",
 );
 
-/**
- * How the options sit: `rows` for answers with their own short explanation, `chips` for a short
- * list of plain values (amounts of time), several to a row.
- */
 type ChoiceListVariant = "chips" | "rows";
 
-/**
- * One answer from a short list: flat rows, each with its own short explanation and a check at its
- * end once picked, or compact presets for plain values. Number keys pick an option, unless another
- * list on the screen owns them; where there's a keyboard, each row shows its key. `onPick` hears a
- * deliberate pick (a tap, a click or a number key), so a one-answer question can move on with it,
- * and screen readers hear which answer it moved on with; the arrow keys only move the selection,
- * and Enter continues. `readOnly` keeps the pick as it is while the answer saves.
- */
+/** `onPick` hears only a deliberate pick (a tap, a click or a number key), never the arrow keys, so a one-answer question can move on with it. */
 export function ChoiceList<Value extends string>({
   choices,
   label,
@@ -91,9 +69,7 @@ export function ChoiceList<Value extends string>({
 }: {
   choices: Choice<Value>[];
   label: string;
-  /** Presets that save at once: arrows move focus; Enter, Space or a click applies. */
   manualActivation?: boolean;
-  /** Off for a second list on the same screen: number keys pick from the first. */
   numberKeys?: boolean;
   onChange: (value: Value) => void;
   onPick?: (value: Value) => void;
@@ -119,7 +95,6 @@ export function ChoiceList<Value extends string>({
     }
   };
 
-  // Number keys pick an option, so the keyboard answers as fast as a tap.
   useNumberKeys({
     count: choices.length,
     enabled: numberKeys && !readOnly,
@@ -148,8 +123,6 @@ export function ChoiceList<Value extends string>({
     }
   };
 
-  // Four to a row where each chip has room for its longest time on one line ("1 h 30 min"), three
-  // on a phone, two in a narrow column: the columns follow the room the list has, not the screen.
   if (variant === "chips") {
     return (
       <div className="@container">
@@ -183,7 +156,6 @@ export function ChoiceList<Value extends string>({
                 )}
               </span>
 
-              {/* A chip shows it's picked by its fill; its radio, invisible, still takes focus. */}
               <RadioGroupItem
                 className="pointer-events-none absolute inset-0 size-full opacity-0"
                 onFocus={(event) => {
@@ -233,7 +205,6 @@ export function ChoiceList<Value extends string>({
           }}
         >
           {numberKeys && index < NUMBER_KEY_COUNT && (
-            // Only where there's a keyboard, so on touch the titles start at the row's edge.
             <ListRowLeading className="hidden w-5 justify-center pointer-fine:flex">
               <ShortcutKbd>{index + 1}</ShortcutKbd>
             </ListRowLeading>

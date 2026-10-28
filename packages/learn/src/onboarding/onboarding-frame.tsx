@@ -21,15 +21,8 @@ import { PlanStartNoticeSlot } from "./steps/plan-start-notice";
 
 export { OnboardingEmbedded, OnboardingPage } from "./onboarding-host";
 
-/** A screen of its own: one centered column about 560px wide, its bar on the same edges. */
 const STANDALONE_COLUMN_CLASS = "mx-auto w-full max-w-xl px-4";
 
-/**
- * The page behind every onboarding screen, with the flow's bar (`bar`) and a line over the screen
- * (`notice`: a save that failed). On a page of the app's frame each screen draws the page from
- * them (`OnboardingColumn`); under a host's title they follow its top; a screen of its own puts
- * the bar over one centered column.
- */
 export function OnboardingFrame({
   bar = NO_BAR,
   children,
@@ -65,15 +58,6 @@ export function OnboardingFrame({
   );
 }
 
-/**
- * The screen's content, from the top like any working screen: what it asks, then the answer and
- * the next step under it, so the eye reads down from the question to its options to the button.
- * On phones its next step sits at the bottom, from tablets it follows the content. On a page of
- * the app's frame it draws the page (`OnboardingScreenPage`): from `lg` a task's column centered
- * in the page, with the flow's rail in its aside from 72rem (`rail` puts the screen's own there;
- * `null`, none); a `wide` screen, such as the plan's reveal, fills the room. Under a host's title
- * it's a section at the page's edges; on a screen of its own, one centered column.
- */
 export function OnboardingColumn({
   children,
   className,
@@ -103,7 +87,6 @@ export function OnboardingColumn({
     );
   }
 
-  // Under a host's title the host's `main` and edges hold it: the page's column, from its edge.
   if (host?.kind === "section") {
     return (
       <section
@@ -130,7 +113,6 @@ export function OnboardingColumn({
 export function OnboardingTitle({ children, className, ...props }: React.ComponentProps<"h1">) {
   const section = useOnboardingSection();
 
-  // Under the host's own title, the screen's title is a section's.
   if (section) {
     return (
       <h2
@@ -175,13 +157,7 @@ export function OnboardingDescription({
   );
 }
 
-/**
- * What the screen is about (the exam, the course or the subject) as the eyebrow above the question,
- * with the question's number on a test, whose bar shows how far along it is but not which question
- * (`position`: "ENEM 2026 · Question 3" in placement); on a page of the app's frame it's the page's
- * eyebrow. Naming it apart keeps each question natural in every language: an exam's name inside a
- * sentence would need an article that depends on the name ("sobre o ENEM", "über den SAT").
- */
+/** Named apart, since an exam's name inside a sentence would need an article that depends on the name ("sobre o ENEM", "über den SAT"). */
 export function OnboardingSubject({
   children,
   className,
@@ -218,11 +194,6 @@ export function OnboardingSubject({
   );
 }
 
-/**
- * The screen's title, what it's about over it and its one line under it. On a page of the app's
- * frame it's laid out as the page's header (`PageHeaderContent`): opening the screen, it keeps the
- * eyebrow's line even when it's empty, so the title sits where every page's does.
- */
 export function OnboardingHeading({
   children,
   className,
@@ -249,11 +220,6 @@ export function OnboardingHeading({
   return <div className={cn("flex flex-col gap-2", className)}>{children}</div>;
 }
 
-/**
- * The next step stays in reach at the bottom of the column on phones (above the home indicator;
- * the app's frame has no tab bar under onboarding), and right under the content from
- * tablets, where the bottom of the screen is far from it.
- */
 export function OnboardingFooter({ children, className, ...props }: React.ComponentProps<"div">) {
   const standalone = useOnboardingHost() === null;
 
@@ -272,10 +238,6 @@ export function OnboardingFooter({ children, className, ...props }: React.Compon
   );
 }
 
-/**
- * The screen's one main action, with its ⏎ hint where there's a keyboard. Enter presses it from
- * anywhere on the screen unless another control has focus.
- */
 export function OnboardingPrimaryButton({
   children,
   className,
@@ -297,7 +259,6 @@ export function OnboardingPrimaryButton({
   );
 }
 
-/** The screen's quiet second action ("I'm starting from scratch"): plain text under the main one. */
 export function OnboardingSecondaryButton({
   className,
   ...props

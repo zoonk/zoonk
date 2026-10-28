@@ -5,10 +5,6 @@ import { BookOpenIcon, ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LearnLink } from "../learn-link";
 
-/**
- * A ready-made Library course that teaches the goal, offered once the answers made the subject
- * clear: the learner can open it instead of, or next to, their own plan.
- */
 export function LibraryCourseOffer({
   course,
   href,
