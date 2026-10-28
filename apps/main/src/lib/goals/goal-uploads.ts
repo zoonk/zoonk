@@ -1,7 +1,6 @@
 "use client";
 
 import { getBrowserApiUrl } from "@/lib/browser-api-url";
-import { uploadPresigned } from "@vercel/blob/client";
 import { type AttachOutcome } from "@zoonk/learn/onboarding/actions";
 import { getUsageRefusal } from "@zoonk/player/usage-refusal";
 import { safeAsync } from "@zoonk/utils/error";
@@ -87,12 +86,17 @@ export async function attachGoalFile({
   goalId,
   language,
 }: AttachGoal & { file: File; language: string }): Promise<AttachOutcome> {
-  // The auth client loads with the first file, so the screens with a paperclip don't ship it.
-  const { data: auth, error: loadError } = await safeAsync(() => import("@zoonk/auth/client"));
+  // The auth and Blob clients load with the first file, so the screens with a paperclip don't
+  // ship them (Blob's brings a JWT library along).
+  const { data: clients, error: loadError } = await safeAsync(() =>
+    Promise.all([import("@zoonk/auth/client"), import("@vercel/blob/client")]),
+  );
 
   if (loadError) {
     return { status: "failed" };
   }
+
+  const [auth, { uploadPresigned }] = clients;
 
   const { data: session } = await auth.authClient.getSession();
 
