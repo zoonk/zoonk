@@ -24,7 +24,6 @@ function blobInfo(pathname: string) {
   };
 }
 
-/** What Blob storage serves for a stored file, from memory. */
 function storedFile({ bytes, pathname }: { bytes: string; pathname: string }) {
   return {
     blob: { ...blobInfo(pathname), contentType: "image/webp", size: bytes.length },
@@ -34,7 +33,6 @@ function storedFile({ bytes, pathname }: { bytes: string; pathname: string }) {
   };
 }
 
-/** What Blob answers when the ETag still matches: no body. */
 function unchangedFile(pathname: string) {
   return {
     blob: { ...blobInfo(pathname), contentType: null, size: null },
@@ -92,7 +90,6 @@ describe(readOwnFile, () => {
     await expect(response.text()).resolves.toBe("webp-bytes");
   });
 
-  // A call's better version of what the learner said, read aloud in a clip of their own.
   it("serves a learner the clips of their own words", async () => {
     const userId = randomUUID();
     const pathname = `audio/${userId}/it-a.mp3`;
