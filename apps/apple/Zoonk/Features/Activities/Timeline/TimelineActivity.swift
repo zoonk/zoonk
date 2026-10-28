@@ -309,12 +309,27 @@ private struct TimelineAxis: View {
         },
         with: .color(Color(.separator)), lineWidth: 2)
 
-      for tick in TimelineScale.ticks(start: fields.start, end: fields.end) {
-        context.draw(
-          Text(formatYear(tick)).font(.caption2.monospacedDigit()).foregroundStyle(.secondary),
-          at: CGPoint(x: x(tick), y: 0),
-          anchor: x(tick) < size.width * 0.15
-            ? .topLeading : x(tick) > size.width * 0.85 ? .topTrailing : .top)
+      // Both ends always show; a tick between them shows only where its year fits beside the
+      // others, so a narrow axis (a phone, a pane of the open iPhone Duo) never overlaps them.
+      let ticks = TimelineScale.ticks(start: fields.start, end: fields.end).map { tick in
+        let label = context.resolve(
+          Text(formatYear(tick)).font(.caption2.monospacedDigit()).foregroundStyle(.secondary))
+        let anchor: UnitPoint =
+          x(tick) < size.width * 0.15
+          ? .topLeading : x(tick) > size.width * 0.85 ? .topTrailing : .top
+        let labelWidth = label.measure(in: size).width
+        let minX = x(tick) - labelWidth * anchor.x
+        return (label: label, tick: tick, anchor: anchor, span: minX...(minX + labelWidth + 8))
+      }
+      var shown = [ticks.first, ticks.count > 1 ? ticks.last : nil].compactMap { $0 }
+
+      for tick in ticks.dropFirst().dropLast()
+      where !shown.contains(where: { $0.span.overlaps(tick.span) }) {
+        shown.append(tick)
+      }
+
+      for tick in shown {
+        context.draw(tick.label, at: CGPoint(x: x(tick.tick), y: 0), anchor: tick.anchor)
       }
 
       for (index, mark) in sorted.enumerated() {
