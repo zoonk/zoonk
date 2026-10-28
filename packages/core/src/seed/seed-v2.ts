@@ -47,10 +47,15 @@ async function planSeededLearner({
 export async function seedV2() {
   const { learners, now } = await writeSeedV2(prisma);
 
-  await Promise.all(
-    Object.values(learners).map(({ goalId, past, today }) =>
-      planSeededLearner({ goalId, now, past, today }),
-    ),
+  /**
+   * One learner at a time: planning is CPU work on this one thread, so planning them together saves
+   * nothing, and each learner's plan transaction waited on the others' planning to run its next
+   * statement. On a busy CI runner that wait passed Prisma's limits, and the seed failed.
+   */
+  await Object.values(learners).reduce<Promise<void>>(
+    (previous, { goalId, past, today }) =>
+      previous.then(() => planSeededLearner({ goalId, now, past, today })),
+    Promise.resolve(),
   );
 
   return { learners };
