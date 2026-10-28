@@ -199,6 +199,76 @@
         }
       }
     },
+    "%@, page %@" : {
+      "comment" : "Where an answer came from: a document's page",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, Seite %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, page %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, página %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, page %2$@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, página %2$@"
+          }
+        }
+      }
+    },
+    "%@, slide %@" : {
+      "comment" : "Where an answer came from: a deck's slide",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, Folie %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, slide %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, diapositiva %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, diapositive %2$@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, slide %2$@"
+          }
+        }
+      }
+    },
     "%@, to be confirmed" : {
       "comment" : "An exam date that isn't out yet, with the month the learner named\nAn exam date that isn't out yet, with the year the learner named",
       "localizations" : {
@@ -997,6 +1067,122 @@
         }
       }
     },
+    "Add link" : {
+      "comment" : "Adds the pasted link",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Link hinzufügen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir enlace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter le lien"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicionar link"
+          }
+        }
+      }
+    },
+    "Add text" : {
+      "comment" : "Adds the pasted text",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text hinzufügen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir texto"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter le texte"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicionar texto"
+          }
+        }
+      }
+    },
+    "Add your material" : {
+      "comment" : "Opens the ways to add a file, text or a link to a goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eigenes Material hinzufügen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añade tu material"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter ton contenu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicionar seu material"
+          }
+        }
+      }
+    },
+    "Adding your material…" : {
+      "comment" : "While material is added",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Material wird hinzugefügt…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadiendo tu material…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajout de ton contenu…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adicionando seu material…"
+          }
+        }
+      }
+    },
     "Adjust" : {
       "comment" : "Opens the plan's settings to change it",
       "localizations" : {
@@ -1055,6 +1241,64 @@
         }
       }
     },
+    "Answers come from your pages and show where they came from." : {
+      "comment" : "Under the title of questions about the learner's material",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Antworten stammen aus deinen Seiten und zeigen, woher sie kommen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las respuestas se basan en tus páginas e indican de dónde proceden."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les réponses s’appuient sur tes pages et indiquent d’où elles viennent."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As respostas vêm das suas páginas e mostram de onde foram tiradas."
+          }
+        }
+      }
+    },
+    "Answers show the page they came from" : {
+      "comment" : "Under the questions material intent",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Antworten zeigen, von welcher Seite sie stammen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las respuestas indican de qué página proceden"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les réponses indiquent la page dont elles viennent"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As respostas mostram de qual página vieram"
+          }
+        }
+      }
+    },
     "Apply it to real projects" : {
       "comment" : "Purpose choice detail",
       "localizations" : {
@@ -1080,6 +1324,93 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aplicar em projetos reais"
+          }
+        }
+      }
+    },
+    "Ask" : {
+      "comment" : "Sends a question about the material",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fragen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poser"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntar"
+          }
+        }
+      }
+    },
+    "Ask about your material" : {
+      "comment" : "Title of questions about the learner's material",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fragen zu deinem Material stellen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pregunta sobre tu material"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poser des questions sur ton contenu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pergunte sobre seu material"
+          }
+        }
+      }
+    },
+    "Ask questions" : {
+      "comment" : "Material intent: answers from it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fragen stellen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hacer preguntas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poser des questions"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fazer perguntas"
           }
         }
       }
@@ -1202,6 +1533,101 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Com base no teste. O resultado fica mais preciso a cada semana."
+          }
+        }
+      }
+    },
+    "Based on your %lld answers. It gets more accurate every day." : {
+      "comment" : "Under placement ended with a mock exam",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Basierend auf deiner %lld Antwort. Es wird jeden Tag genauer."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Basierend auf deinen %lld Antworten. Es wird jeden Tag genauer."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Based on your %lld answer. It gets more accurate every day."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Based on your %lld answers. It gets more accurate every day."
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Basado en tu respuesta de %lld. Cada día es más preciso."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Basado en tus respuestas de %lld. Cada día es más preciso."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Basé sur tes %lld réponse. La précision s’améliore chaque jour."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Basé sur tes %lld réponses. La précision s’améliore chaque jour."
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Com base na sua resposta de %lld. A cada dia, fica mais preciso."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Com base nas suas %lld respostas. A cada dia, fica mais preciso."
+                }
+              }
+            }
           }
         }
       }
@@ -1583,6 +2009,35 @@
         }
       }
     },
+    "Continue the mock exam" : {
+      "comment" : "Opens a placement mock left running",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probeprüfung fortsetzen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar el simulacro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer l’examen blanc"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar o simulado"
+          }
+        }
+      }
+    },
     "Course" : {
       "comment" : "Row with the course an exam aims for",
       "localizations" : {
@@ -1670,6 +2125,35 @@
         }
       }
     },
+    "Create a free account to add a PDF, a photo of your notes or any text to your goal." : {
+      "comment" : "Why a guest can't add material yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erstelle ein kostenloses Konto, um deinem Ziel ein PDF, ein Foto deiner Notizen oder einen beliebigen Text hinzuzufügen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea una cuenta gratuita para añadir un PDF, una foto de tus apuntes o cualquier texto a tu objetivo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crée un compte gratuit pour ajouter un PDF, une photo de tes notes ou du texte à ton objectif."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crie uma conta grátis para adicionar um PDF, uma foto das suas anotações ou qualquer texto à sua meta."
+          }
+        }
+      }
+    },
     "Create a free account to start another goal" : {
       "comment" : "Title when a guest with a goal opens the start flow",
       "localizations" : {
@@ -1700,7 +2184,7 @@
       }
     },
     "Create an account" : {
-      "comment" : "Opens sign-up from the plan",
+      "comment" : "Opens sign-up from the plan\nOpens sign-up to add material",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1753,6 +2237,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Crie uma conta para a gente avisar você."
+          }
+        }
+      }
+    },
+    "Create an account to add your own material." : {
+      "comment" : "Only accounts add material",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erstelle ein Konto, um eigenes Material hinzuzufügen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea una cuenta para añadir tu propio material."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crée un compte pour ajouter ton propre contenu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crie uma conta para adicionar seu próprio material."
+          }
+        }
+      }
+    },
+    "Create an account to ask about your material." : {
+      "comment" : "Only accounts ask about material",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erstelle ein Konto, um Fragen zu deinem Material zu stellen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crea una cuenta para preguntar sobre tu material."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crée un compte pour poser des questions sur ton contenu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crie uma conta para perguntar sobre seu material."
           }
         }
       }
@@ -2130,6 +2672,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ex.: professor, estudante"
+          }
+        }
+      }
+    },
+    "E.g., why does glycolysis net only 2 ATP?" : {
+      "comment" : "Placeholder of the box for a question about the learner's material",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zum Beispiel: Warum entstehen bei der Glykolyse netto nur 2 ATP?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por ejemplo, ¿por qué la glucólisis produce solo 2 ATP netos?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Par exemple, pourquoi la glycolyse ne produit-elle que 2 ATP nets ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por exemplo, por que a glicólise produz apenas 2 ATP líquidos?"
           }
         }
       }
@@ -2714,6 +3285,64 @@
         }
       }
     },
+    "Give a date and we'll plan up to it" : {
+      "comment" : "Under the exam material intent",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenne ein Datum, dann planen wir bis dahin"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indica una fecha y planificaremos hasta entonces"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indique une date et on planifiera jusqu’à cette échéance"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Informe uma data e a gente planeja até lá"
+          }
+        }
+      }
+    },
+    "Go on where you left it, or stop now: your plan starts from the questions you answered." : {
+      "comment" : "Under a placement mock left running",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mach dort weiter, wo du aufgehört hast, oder hör jetzt auf: Dein Plan baut auf den Fragen auf, die du beantwortet hast."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continúa donde lo dejaste o para ahora: tu plan empezará a partir de las preguntas que has respondido."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reprends là où tu en étais ou arrête-toi maintenant : ton plan commencera à partir des questions auxquelles tu as répondu."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue de onde parou ou encerre agora: seu plano começa pelas perguntas que você respondeu."
+          }
+        }
+      }
+    },
     "Go to your Plan" : {
       "comment" : "Opens the Plan, whose menu pauses the current goal",
       "localizations" : {
@@ -2884,6 +3513,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Quanto tempo você pode estudar por dia?"
+          }
+        }
+      }
+    },
+    "https://… an article, a class page or a PDF" : {
+      "comment" : "Placeholder of the box for a material link",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "https://… ein Artikel, eine Kursseite oder ein PDF"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "https://… un artículo, una página de clase o un PDF"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "https://… un article, une page de cours ou un PDF"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "https://… um artigo, uma página de aula ou um PDF"
           }
         }
       }
@@ -3087,6 +3745,70 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Estou começando do zero"
+          }
+        }
+      }
+    },
+    "In the exam's format, about %@." : {
+      "comment" : "How long a placement mock takes",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Im Format der Prüfung, etwa %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con el formato del examen, unos %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Au format de l’examen, environ %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No formato da prova, cerca de %@."
+          }
+        }
+      }
+    },
+    "In the exam's format, from %@ to %@. You pick how long." : {
+      "comment" : "How long a placement mock can take, shortest to longest",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Im Format der Prüfung, %1$@ bis %2$@. Du entscheidest, wie lange."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "In the exam's format, from %1$@ to %2$@. You pick how long."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con el formato del examen, de %1$@ a %2$@. Tú eliges cuánto tiempo dedicar."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Au format de l’examen, de %1$@ à %2$@. C’est toi qui choisis la durée."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No formato da prova, de %1$@ a %2$@. Você escolhe a duração."
           }
         }
       }
@@ -3555,6 +4277,35 @@
         }
       }
     },
+    "Link" : {
+      "comment" : "Title of the sheet to paste a link",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Link"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enlace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lien"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Link"
+          }
+        }
+      }
+    },
     "Listening" : {
       "comment" : "A language skill",
       "localizations" : {
@@ -3870,6 +4621,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Musicalidade para %@: reconheça acordes, leia melodias curtas e mantenha o ritmo. Não precisa de microfone."
+          }
+        }
+      }
+    },
+    "my notes" : {
+      "comment" : "Pasted material without a title, inside a goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "meine Notizen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mis apuntes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mes notes"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "minhas anotações"
           }
         }
       }
@@ -4251,6 +5031,35 @@
         }
       }
     },
+    "Or take a mock exam" : {
+      "comment" : "Offers a placement mock",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oder mach eine Probeprüfung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O haz un simulacro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ou passer un examen blanc"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ou faça um simulado"
+          }
+        }
+      }
+    },
     "Other time a day" : {
       "comment" : "Picks any time a day the presets don't have",
       "localizations" : {
@@ -4599,6 +5408,93 @@
         }
       }
     },
+    "Paste a link" : {
+      "comment" : "Adds a link as material",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Link einfügen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pega un enlace"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coller un lien"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cole um link"
+          }
+        }
+      }
+    },
+    "Paste text" : {
+      "comment" : "Adds pasted text as material",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text einfügen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pega texto"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coller du texte"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cole um texto"
+          }
+        }
+      }
+    },
+    "Paste the syllabus, your notes or a chapter" : {
+      "comment" : "Placeholder of the box for pasted material",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Füge den Lehrplan, deine Notizen oder ein Kapitel ein"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pega el temario, tus apuntes o un capítulo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Colle le programme, tes notes ou un chapitre"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cole o edital, suas anotações ou um capítulo"
+          }
+        }
+      }
+    },
     "Pick up what you left behind" : {
       "comment" : "Purpose choice detail",
       "localizations" : {
@@ -4798,6 +5694,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cargo"
+          }
+        }
+      }
+    },
+    "Prepare for an exam" : {
+      "comment" : "Material intent: an exam on it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auf eine Prüfung vorbereiten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepararme para un examen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparer un examen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparar-se para uma prova"
+          }
+        }
+      }
+    },
+    "Prepare for an exam on my material: %@" : {
+      "comment" : "A goal for an exam on the learner's material: its titles",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auf eine Prüfung zu meinem Material vorbereiten: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepararme para un examen sobre mi material: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparer un examen sur mon contenu : %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparar-me para uma prova com meu material: %@"
           }
         }
       }
@@ -5121,6 +6075,35 @@
         }
       }
     },
+    "Reading your material…" : {
+      "comment" : "While a question about the learner's material is answered",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Material wird gelesen…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leyendo tu material…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecture de ton contenu…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lendo seu material…"
+          }
+        }
+      }
+    },
     "Reading your question" : {
       "comment" : "A step of the wait while a quick explanation is written",
       "localizations" : {
@@ -5436,6 +6419,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Conhecer o Plus"
+          }
+        }
+      }
+    },
+    "Short lessons, in the right order" : {
+      "comment" : "Under the understand material intent",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurze Lektionen in der richtigen Reihenfolge"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecciones cortas en el orden adecuado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De courtes leçons, dans le bon ordre"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aulas curtas, na ordem certa"
           }
         }
       }
@@ -5939,6 +6951,35 @@
         }
       }
     },
+    "Stop and see my plan" : {
+      "comment" : "Stops a placement mock; its answers set the starting point",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aufhören und meinen Plan ansehen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parar y ver mi plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrêter et voir mon plan"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encerrar e ver meu plano"
+          }
+        }
+      }
+    },
     "Stop here and see my plan" : {
       "comment" : "Ends placement early",
       "localizations" : {
@@ -5993,6 +7034,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Estudar tudo, mesmo depois da prova"
+          }
+        }
+      }
+    },
+    "Study your own material" : {
+      "comment" : "Header over the learner's own material",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit eigenen Materialien lernen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estudia tu propio material"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Étudier ton propre contenu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estude seu próprio material"
           }
         }
       }
@@ -7041,6 +8111,35 @@
         }
       }
     },
+    "Understand my material: %@" : {
+      "comment" : "A goal to understand the learner's material: its titles",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mein Material verstehen: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entender mi material: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprendre mon contenu : %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entender meu material: %@"
+          }
+        }
+      }
+    },
     "Understand quantum physics" : {
       "comment" : "An example goal",
       "localizations" : {
@@ -7066,6 +8165,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Entender física quântica"
+          }
+        }
+      }
+    },
+    "Understand this material" : {
+      "comment" : "Material intent: lessons that teach it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Material verstehen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entender este material"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprendre ce contenu"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entender este material"
           }
         }
       }
@@ -7186,6 +8314,35 @@
         }
       }
     },
+    "Upload a file" : {
+      "comment" : "Adds a file as material",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datei hochladen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subir un archivo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importer un fichier"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar um arquivo"
+          }
+        }
+      }
+    },
     "Use it at work" : {
       "comment" : "Purpose choice",
       "localizations" : {
@@ -7298,6 +8455,93 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A gente não pode ajudar com essa meta"
+          }
+        }
+      }
+    },
+    "We can't read this file. Try a PDF, a photo, Word, PowerPoint or text." : {
+      "comment" : "A file of a kind that can't be read",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Datei können wir nicht lesen. Probiere es mit einem PDF, einem Foto, einer Word- oder PowerPoint-Datei oder einem Text."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No podemos leer este archivo. Prueba con un PDF, una foto, un documento de Word, una presentación de PowerPoint o un archivo de texto."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous ne pouvons pas lire ce fichier. Essaie avec un PDF, une photo, un document Word ou PowerPoint, ou du texte."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não conseguimos ler esse arquivo. Tente usar um PDF, uma foto, um arquivo do Word ou PowerPoint, ou um texto."
+          }
+        }
+      }
+    },
+    "We couldn't add that. Try again in a moment." : {
+      "comment" : "Adding material failed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das konnten wir nicht hinzufügen. Versuch es gleich noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hemos podido añadirlo. Vuelve a intentarlo dentro de un momento."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d’ajouter cet élément. Réessaie dans un instant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível adicionar isso. Tente de novo em instantes."
+          }
+        }
+      }
+    },
+    "We couldn't answer that. Try again in a moment." : {
+      "comment" : "Answering a material question failed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Darauf konnten wir nicht antworten. Versuch es gleich noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hemos podido responder. Vuelve a intentarlo dentro de un momento."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible de répondre. Réessaie dans un instant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível responder. Tente de novo em instantes."
           }
         }
       }
@@ -7733,6 +8977,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O que você quer alcançar?"
+          }
+        }
+      }
+    },
+    "What do you want to do?" : {
+      "comment" : "Header over what to do with attached material",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was möchtest du tun?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué quieres hacer?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Que veux-tu faire ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que você quer fazer?"
           }
         }
       }
@@ -8636,6 +9909,64 @@
         }
       }
     },
+    "You're adding material quickly. Try again in a few minutes." : {
+      "comment" : "Material is added too quickly",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du fügst gerade sehr schnell Material hinzu. Versuch es in ein paar Minuten noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estás añadiendo material demasiado rápido. Vuelve a intentarlo dentro de unos minutos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu ajoutes du contenu trop rapidement. Réessaie dans quelques minutes."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você está adicionando material muito rápido. Tente de novo em alguns minutos."
+          }
+        }
+      }
+    },
+    "You're asking quickly. Try again in a few minutes." : {
+      "comment" : "Material questions are asked too quickly",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du stellst gerade sehr schnell Fragen. Versuch es in ein paar Minuten noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estás haciendo preguntas demasiado rápido. Vuelve a intentarlo dentro de unos minutos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu poses des questions trop rapidement. Réessaie dans quelques minutes."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você está fazendo perguntas muito rápido. Tente de novo em alguns minutos."
+          }
+        }
+      }
+    },
     "You're on the list. We'll let you know when lessons for playing are ready." : {
       "comment" : "After joining the instrument waitlist",
       "localizations" : {
@@ -8694,6 +10025,93 @@
         }
       }
     },
+    "You've added as much material as the free plan allows this month. Try again next month, or get Plus to keep going now." : {
+      "comment" : "A free learner added as much material as allowed this month",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast diesen Monat so viel Material hinzugefügt, wie dein Free-Tarif erlaubt. Versuch es nächsten Monat noch einmal oder hol dir Plus, um jetzt weiterzumachen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has añadido todo el material que permite el plan gratuito este mes. Vuelve a intentarlo el mes que viene o pásate a Plus para seguir ahora."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as ajouté autant de contenu que ta formule gratuite le permet ce mois-ci. Réessaie le mois prochain ou passe à Plus pour continuer dès maintenant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você já adicionou todo o material permitido pelo plano Grátis neste mês. Tente de novo no próximo mês ou assine o Plus para continuar agora."
+          }
+        }
+      }
+    },
+    "You've added as much material as the free plan allows today. Try again tomorrow, or get Plus to keep going now." : {
+      "comment" : "A free learner added as much material as allowed today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast heute so viel Material hinzugefügt, wie dein Free-Tarif erlaubt. Versuch es morgen noch einmal oder hol dir Plus, um jetzt weiterzumachen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has añadido todo el material que permite el plan gratuito hoy. Vuelve a intentarlo mañana o pásate a Plus para seguir ahora."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as ajouté autant de contenu que ta formule gratuite le permet aujourd’hui. Réessaie demain ou passe à Plus pour continuer dès maintenant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você já adicionou todo o material permitido pelo plano Grátis hoje. Tente de novo amanhã ou assine o Plus para continuar agora."
+          }
+        }
+      }
+    },
+    "You've added as much material as your plan allows today. Try again tomorrow." : {
+      "comment" : "A Plus learner added as much material as allowed today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast heute so viel Material hinzugefügt, wie dein Tarif erlaubt. Versuch es morgen noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has añadido todo el material que permite tu plan hoy. Vuelve a intentarlo mañana."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as ajouté autant de contenu que ta formule le permet aujourd’hui. Réessaie demain."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você já adicionou todo o material permitido pelo seu plano hoje. Tente de novo amanhã."
+          }
+        }
+      }
+    },
     "You've asked as many new questions as the free plan allows this month. Try again next month, or get Plus to keep going now." : {
       "comment" : "A free learner asked as many quick questions as allowed this month",
       "localizations" : {
@@ -8748,6 +10166,93 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você já fez o máximo de perguntas novas que o plano Grátis permite hoje. Tente de novo amanhã ou assine o Plus para continuar agora."
+          }
+        }
+      }
+    },
+    "You've asked as many questions as the free plan allows this month. Ask again next month, or get Plus to keep going now." : {
+      "comment" : "A free learner asked as many material questions as allowed this month",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast diesen Monat so viele Fragen gestellt, wie dein Free-Tarif erlaubt. Frag nächsten Monat wieder oder hol dir Plus, um jetzt weiterzumachen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has hecho todas las preguntas que permite el plan gratuito este mes. Vuelve a preguntar el mes que viene o pásate a Plus para seguir ahora."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as posé autant de questions que ta formule gratuite le permet ce mois-ci. Réessaie le mois prochain ou passe à Plus pour continuer dès maintenant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você já fez todas as perguntas permitidas pelo plano Grátis neste mês. Tente de novo no próximo mês ou assine o Plus para continuar agora."
+          }
+        }
+      }
+    },
+    "You've asked as many questions as the free plan allows today. Ask again tomorrow, or get Plus to keep going now." : {
+      "comment" : "A free learner asked as many material questions as allowed today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast heute so viele Fragen gestellt, wie dein Free-Tarif erlaubt. Frag morgen wieder oder hol dir Plus, um jetzt weiterzumachen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has hecho todas las preguntas que permite el plan gratuito hoy. Vuelve a preguntar mañana o pásate a Plus para seguir ahora."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as posé autant de questions que ta formule gratuite le permet aujourd’hui. Réessaie demain ou passe à Plus pour continuer dès maintenant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você já fez todas as perguntas permitidas pelo plano Grátis hoje. Tente de novo amanhã ou assine o Plus para continuar agora."
+          }
+        }
+      }
+    },
+    "You've asked as many questions as your plan allows today." : {
+      "comment" : "A Plus learner asked as many material questions as allowed today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast heute so viele Fragen gestellt, wie dein Tarif erlaubt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has hecho todas las preguntas que permite tu plan hoy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as posé autant de questions que ta formule le permet aujourd’hui."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você já fez todas as perguntas permitidas pelo seu plano hoje."
           }
         }
       }
@@ -9164,6 +10669,93 @@
         }
       }
     },
+    "Your mock exam is waiting" : {
+      "comment" : "A placement mock left running",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Probeprüfung wartet"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu simulacro te está esperando"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton examen blanc t’attend"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu simulado está esperando"
+          }
+        }
+      }
+    },
+    "Your mock exam set your starting point" : {
+      "comment" : "Placement ended with a mock exam",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Probeprüfung hat deinen Startpunkt festgelegt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu simulacro ha marcado tu punto de partida"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton examen blanc a défini ton point de départ"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu simulado definiu seu ponto de partida"
+          }
+        }
+      }
+    },
+    "Your plan and lessons will use it." : {
+      "comment" : "Under the way to add material",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan und deine Lektionen richten sich danach."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan y tus lecciones lo tendrán en cuenta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan et tes leçons s’appuieront dessus."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano e suas aulas vão usar esse material."
+          }
+        }
+      }
+    },
     "Your plan gets you ready by the first day." : {
       "comment" : "Under an exam's dates over several days",
       "localizations" : {
@@ -9508,6 +11100,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sua meta"
+          }
+        }
+      }
+    },
+    "Your text" : {
+      "comment" : "Pasted material without a title\nTitle of the sheet to paste text",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Text"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu texto"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton texte"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu texto"
           }
         }
       }

@@ -73,6 +73,8 @@ private struct GuestGoalGate: View {
 
 private enum StartPage: Hashable {
   case draft
+  /// "Ask questions" about the material attached.
+  case questions
 }
 
 /// What the draft page shows: the words just sent, or the draft they became.
@@ -93,6 +95,8 @@ private struct GoalStartFlow: View {
   @State private var draft: DraftState?
   @State private var goalID: String?
   @State private var sending: Task<Void, Never>?
+  @State private var material: [AttachedSource] = []
+  @State private var intent: MaterialIntent?
 
   init(sentGoal: String?, prefill: String?, needsAccount: Bool, limit: GoalLimitReason?) {
     self.limit = limit
@@ -128,14 +132,24 @@ private struct GoalStartFlow: View {
               "Tell us in your own words. We'll build the plan.", tableName: "Onboarding",
               comment: "Under the start flow's first title"))
 
-          GoalEntrySections(words: $words, error: error, limit: limit) { goal in
-            send(goal)
-          }
+          GoalEntrySections(
+            words: $words, error: error, limit: limit,
+            canSubmitEmpty: !material.isEmpty && intent != nil,
+            onSubmit: submit,
+            attachment: {
+              GoalMaterialSections(material: $material, intent: $intent)
+            })
         }
         .closesTask()
-        .navigationDestination(for: StartPage.self) { _ in
-          draftPage
-            .closesTask()
+        .navigationDestination(for: StartPage.self) { page in
+          switch page {
+          case .draft:
+            draftPage
+              .closesTask()
+          case .questions:
+            MaterialQuestionsView(sources: material)
+              .closesTask()
+          }
         }
       }
       // Today's box sent the words with the tap that opened this screen.
@@ -166,10 +180,42 @@ private struct GoalStartFlow: View {
         onDraft: { draft = .draft($0, sentHere: sentHere) },
         onRewrite: send,
         onBack: { path = [] },
-        onCreated: { goalID = $0 })
+        onCreated: { goalID = $0 },
+        sourceIDs: material.map(\.id))
     case nil:
       EmptyView()
     }
+  }
+
+  /// With material attached, what the learner chose to do with it decides: questions open answers from its pages, and a plan without words is read from its titles.
+  private func submit(_ typed: String) {
+    let withMaterial = material.isEmpty ? nil : intent
+
+    if withMaterial == .questions {
+      path = [.questions]
+      return
+    }
+
+    send(typed.isEmpty ? materialGoal(exam: withMaterial == .exam) : typed)
+  }
+
+  /// A goal in words for material attached without any: what to do with it, and its titles.
+  private func materialGoal(exam: Bool) -> String {
+    let titles = material.map { source in
+      source.title.flatMap { $0.isEmpty ? nil : $0 }
+        ?? String(
+          localized: "my notes", table: "Onboarding",
+          comment: "Pasted material without a title, inside a goal")
+    }
+    .joined(separator: ", ")
+
+    return exam
+      ? String(
+        localized: "Prepare for an exam on my material: \(titles)", table: "Onboarding",
+        comment: "A goal for an exam on the learner's material: its titles")
+      : String(
+        localized: "Understand my material: \(titles)", table: "Onboarding",
+        comment: "A goal to understand the learner's material: its titles")
   }
 
   private func send(_ goal: String) {
@@ -213,6 +259,8 @@ private struct DraftView: View {
   let onRewrite: (String) -> Void
   let onBack: () -> Void
   let onCreated: (String) -> Void
+  /// The material attached, linked to the goal it becomes.
+  let sourceIDs: [String]
 
   @Environment(OnboardingStore.self) private var onboarding
   @State private var retryError: GoalError?
@@ -229,7 +277,7 @@ private struct DraftView: View {
     case .understood:
       ReadDraftView(
         draft: draft, sentHere: sentHere, onDraft: onDraft, onRewrite: onRewrite, onBack: onBack,
-        onCreated: onCreated)
+        onCreated: onCreated, sourceIDs: sourceIDs)
     }
   }
 

@@ -81,6 +81,8 @@ filter:
     - createStudySessionPreparation
     - createStudySessionStop
     - createSubjectQuestion
+    - createUpload
+    - createUploadToken
     - decidePlanChange
     - deleteCurrentSession
     - deleteCurrentUser

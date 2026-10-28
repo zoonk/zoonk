@@ -10,6 +10,8 @@ struct ReadDraftView: View {
   let onBack: () -> Void
   /// The main goal was created: its onboarding continues.
   let onCreated: (String) -> Void
+  /// The material attached, linked to the main goal.
+  var sourceIDs: [String] = []
 
   @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
@@ -25,7 +27,8 @@ struct ReadDraftView: View {
       ) {
         create {
           try await onboarding.createGoals(
-            understood.goals.map(\.draft.value1), schedule: understood.schedule)
+            understood.goals.map(\.draft.value1), schedule: understood.schedule,
+            sourceIDs: sourceIDs)
         } then: {
           onCreated($0)
         }

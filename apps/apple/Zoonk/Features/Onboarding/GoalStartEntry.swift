@@ -14,21 +14,25 @@ struct GoalStartEntry: View {
   }
 }
 
-/// The entry's sections, shared by Today's embed and the start flow's first screen: the box and "Build my plan", what stops a goal (an error, or a limit said up front), then the examples.
-struct GoalEntrySections: View {
+/// The entry's sections, shared by Today's embed and the start flow's first screen: the box (with the start flow's material under it) and "Build my plan", what stops a goal (an error, or a limit said up front), then the examples.
+struct GoalEntrySections<Attachment: View>: View {
   @Binding var words: String
   /// On Today, the box is the page's "Start a goal" section; the start flow has its own title.
   var isSection = false
   var error: GoalError?
   /// A goal limit Plus lifts, said before the learner types.
   var limit: GoalLimitReason?
+  /// With material and what to do with it, the box may stay empty.
+  var canSubmitEmpty = false
   let onSubmit: (String) -> Void
+  /// Under the box: the start flow's material.
+  @ViewBuilder var attachment: () -> Attachment
 
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @FocusState private var isFocused: Bool
 
   /// The same limit core applies to a typed goal.
-  private static let maxLength = 2000
+  private var maxLength: Int { 2000 }
 
   var body: some View {
     if let limit {
@@ -59,8 +63,8 @@ struct GoalEntrySections: View {
         .submitLabel(.send)
         .onSubmit(submit)
         .onChange(of: words) { _, value in
-          if value.count > Self.maxLength {
-            words = String(value.prefix(Self.maxLength))
+          if value.count > maxLength {
+            words = String(value.prefix(maxLength))
           }
 
           // Return sends: a vertical field takes it as a new line otherwise.
@@ -77,6 +81,8 @@ struct GoalEntrySections: View {
           comment: "Title of the section where a learner types a new goal")
       }
     }
+
+    attachment()
 
     Section {
       Button(action: submit) {
@@ -122,7 +128,7 @@ struct GoalEntrySections: View {
   private func submit() {
     let goal = words.trimmingCharacters(in: .whitespacesAndNewlines)
 
-    guard !goal.isEmpty else {
+    guard !goal.isEmpty || canSubmitEmpty else {
       isFocused = true
       return
     }
@@ -231,5 +237,19 @@ private enum LocalExample {
   static var language: String {
     let spoken = Locale.current.language.languageCode?.identifier == "en" ? "es" : "en"
     return Locale.current.localizedString(forLanguageCode: spoken) ?? spoken
+  }
+}
+
+extension GoalEntrySections where Attachment == EmptyView {
+  init(
+    words: Binding<String>,
+    isSection: Bool = false,
+    error: GoalError? = nil,
+    limit: GoalLimitReason? = nil,
+    onSubmit: @escaping (String) -> Void
+  ) {
+    self.init(
+      words: words, isSection: isSection, error: error, limit: limit, onSubmit: onSubmit,
+      attachment: { EmptyView() })
   }
 }

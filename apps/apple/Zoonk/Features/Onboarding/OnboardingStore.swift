@@ -103,12 +103,14 @@ final class OnboardingStore {
   /// Creates the goals the learner confirmed on the card; they share the day's time. Returns the main goal's id.
   func createGoals(
     _ goals: [Components.Schemas.GoalDraftOutput],
-    schedule: Components.Schemas.GoalUnderstanding.Case1Payload.SchedulePayload
+    schedule: Components.Schemas.GoalUnderstanding.Case1Payload.SchedulePayload,
+    sourceIDs: [String]
   ) async throws -> String {
     try await create(
       .init(
         dailyMinutes: schedule.dailyMinutes,
         goals: try goals.map { try PracticeJSON.recode($0) },
+        sourceIds: sourceIDs.isEmpty ? nil : sourceIDs,
         studyDays: schedule.studyDays,
         studyTime: schedule.studyTime,
         timeZone: TimeZone.current.identifier))
@@ -301,6 +303,36 @@ final class OnboardingStore {
     }
 
     return try await api.timeToCover(goalID: goalID, week: week, token: token)
+  }
+
+  /// Saves pasted text or a link as the learner's own material.
+  func attach(_ material: MaterialInput) async throws -> AttachedSource {
+    try await cache.onboardingWrite { [api] identity in
+      try await api.attach(material, token: identity.bearerToken)
+    }
+  }
+
+  /// A file the learner picked: uploaded into their own folder (`sources/{userId}/`), then saved like pasted text. A name can't nest folders or climb out with "..", and its own id keeps two files of the same name apart.
+  func attachFile(_ file: URL) async throws -> AttachedSource {
+    guard let userID = session.account?.user.id else {
+      throw OnboardingError.signUpRequired
+    }
+
+    let name = file.lastPathComponent.replacing("/", with: "-").replacing(/\.{2,}/, with: ".")
+    let pathname = "sources/\(userID)/\(UUID().uuidString.lowercased())-\(name)"
+
+    return try await cache.onboardingWrite { [api] identity in
+      try await api.upload(file: file, pathname: pathname, token: identity.bearerToken)
+      return try await api.attach(.file(pathname), token: identity.bearerToken)
+    }
+  }
+
+  /// A question about the learner's material, answered from its pages.
+  func askMaterial(question: String, sourceIDs: [String]) async throws -> MaterialAnswer {
+    try await cache.onboardingWrite { [api] identity in
+      try await api.askMaterial(
+        question: question, sourceIDs: sourceIDs, token: identity.bearerToken)
+    }
   }
 
   func placementMock(goalID: String) async throws -> PlacementMock {

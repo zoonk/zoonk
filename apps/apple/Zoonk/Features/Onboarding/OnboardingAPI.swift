@@ -18,7 +18,66 @@ enum OnboardingError: Error, Equatable, Sendable {
   case signUpRequired
   /// Too many new goals at once (`SLOW_DOWN`).
   case slowDown
+  /// Material in a format that can't be read.
+  case unsupported
   case failed(APIError)
+}
+
+/// Material the learner attached, saved as their own source: a chip on the goal box.
+struct AttachedSource: Decodable, Equatable, Identifiable, Sendable {
+  let id: String
+  let title: String?
+}
+
+/// What `POST /uploads` saves: pasted text, a link, or a file already uploaded to storage.
+struct MaterialInput: Encodable, Sendable {
+  let kind: String
+  let language = OnboardingAPI.language
+  var text: String?
+  var url: String?
+  var pathname: String?
+
+  static func text(_ text: String) -> MaterialInput { MaterialInput(kind: "text", text: text) }
+  static func link(_ url: String) -> MaterialInput { MaterialInput(kind: "link", url: url) }
+  static func file(_ pathname: String) -> MaterialInput {
+    MaterialInput(kind: "file", pathname: pathname)
+  }
+}
+
+/// An answer from the learner's material, with the pages it came from.
+struct MaterialAnswer: Decodable, Equatable, Sendable {
+  struct Citation: Decodable, Equatable, Hashable, Sendable {
+    let page: Int?
+    let title: String
+    /// `slide` for a deck's slide; a page or a section otherwise.
+    let unit: String
+  }
+
+  let answer: String
+  let citations: [Citation]
+}
+
+/// Vercel Blob's presigned-upload request for one file (`POST /uploads/tokens`).
+private struct BlobPresignRequest: Encodable {
+  struct Payload: Encodable {
+    let pathname: String
+    let clientPayload: String? = nil
+    let multipart = false
+
+    private enum CodingKeys: String, CodingKey {
+      case pathname, clientPayload, multipart
+    }
+
+    func encode(to encoder: any Encoder) throws {
+      var container = encoder.container(keyedBy: CodingKeys.self)
+      try container.encode(pathname, forKey: .pathname)
+      try container.encodeNil(forKey: .clientPayload)
+      try container.encode(multipart, forKey: .multipart)
+    }
+  }
+
+  let type = "blob.generate-presigned-url"
+  let payload: Payload
 }
 
 /// The week the time question shows: its study days (Sunday first), the weekend's own time when
@@ -521,6 +580,89 @@ struct OnboardingAPI: Sendable {
       throw APIError.unauthorized
     case .notFound:
       throw APIError.notFound
+    default:
+      throw APIError.unavailable
+    }
+  }
+
+  /// Saves material the learner attached (pasted text, a link, or a file already in their Blob
+  /// folder) as their own source, which the plan and lessons use once a goal links it.
+  func attach(_ material: MaterialInput, token: String) async throws -> AttachedSource {
+    let input = try PracticeJSON.recode(material, as: Components.Schemas.CreateUploadRequest.self)
+    let output = try await clients.perform(token: token) { client in
+      try await client.createUpload(body: .json(input))
+    }
+
+    switch output {
+    case .created(let response):
+      return try PracticeJSON.recode(try response.body.json.source)
+    case .code402(let response):
+      throw Self.error(try response.body.json)
+    case .forbidden(let response):
+      throw Self.error(try response.body.json)
+    case .tooManyRequests(let response):
+      throw Self.error(try response.body.json)
+    case .unprocessableContent:
+      throw OnboardingError.unsupported
+    case .unauthorized:
+      throw APIError.unauthorized
+    default:
+      throw APIError.unavailable
+    }
+  }
+
+  /// A file goes straight to Blob storage, which the API signs (once the plan's uploads allow
+  /// it), since requests to the API are capped at 4.5 MB; then it's saved like pasted text. The
+  /// storage request is Vercel Blob's presigned upload, as its browser client sends it.
+  func upload(file: URL, pathname: String, token: String) async throws {
+    let request = try PracticeJSON.recode(
+      BlobPresignRequest(payload: .init(pathname: pathname)),
+      as: Components.Schemas.UploadTokenRequest.self)
+    let output = try await clients.perform(token: token) { client in
+      try await client.createUploadToken(body: .json(request))
+    }
+
+    let presigned: Components.Schemas.UploadToken.PresignedUrlPayloadPayload
+    switch output {
+    case .ok(let response):
+      presigned = try response.body.json.presignedUrlPayload
+    case .code402(let response):
+      throw Self.error(try response.body.json)
+    case .forbidden(let response):
+      throw Self.error(try response.body.json)
+    case .tooManyRequests(let response):
+      throw Self.error(try response.body.json)
+    case .unauthorized:
+      throw APIError.unauthorized
+    default:
+      throw APIError.unavailable
+    }
+
+    try await BlobUpload.put(
+      file: file, pathname: pathname, delegationToken: presigned.delegationToken,
+      signature: presigned.signature, params: presigned.params.additionalProperties)
+  }
+
+  /// A question about the learner's material, answered from its pages.
+  func askMaterial(question: String, sourceIDs: [String], token: String) async throws
+    -> MaterialAnswer
+  {
+    let output = try await clients.perform(token: token) { client in
+      try await client.askMaterialQuestion(
+        body: .json(.init(language: Self.language, question: question, sourceIds: sourceIDs)))
+    }
+
+    switch output {
+    case .ok(let response):
+      return try PracticeJSON.recode(try response.body.json)
+    case .code402(let response):
+      throw Self.error(try response.body.json)
+    case .forbidden(let response):
+      throw Self.error(try response.body.json)
+    case .tooManyRequests(let response):
+      throw Self.error(try response.body.json)
+    case .unauthorized:
+      throw APIError.unauthorized
     default:
       throw APIError.unavailable
     }
