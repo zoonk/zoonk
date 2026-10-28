@@ -44,6 +44,7 @@ struct LessonStepView: View {
   private var context: LessonStepContext {
     LessonStepContext(
       lessonId: state.lessonId,
+      studySessionId: store.studySessionId,
       answer: state.answers[step.id],
       result: state.results[step.id],
       isLocked: state.phase != .playing,
@@ -56,6 +57,8 @@ struct LessonStepView: View {
 /// whether it still takes changes.
 struct LessonStepContext {
   let lessonId: String
+  /// The study session the lesson is a block of, if any.
+  let studySessionId: String?
   let answer: LessonAnswer?
   let result: LessonStepResult?
   let isLocked: Bool
@@ -325,7 +328,8 @@ private struct SpokenAnswerStepView: View {
       if mode == .speak, let input = recording.input {
         input(
           SpokenAnswerContext(
-            lessonId: context.lessonId, stepId: step.id, content: content,
+            lessonId: context.lessonId, studySessionId: context.studySessionId, stepId: step.id,
+            content: content,
             isLocked: context.isLocked,
             onGraded: context.resolveSpoken,
             onBlocked: { micBlocked = true }))

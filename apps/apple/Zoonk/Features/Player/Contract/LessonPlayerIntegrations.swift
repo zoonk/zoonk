@@ -50,6 +50,8 @@ struct SpokenAnswerVerdict: Hashable, Sendable {
 /// refusals (nothing heard, a limit reached), and reports the verdict.
 struct SpokenAnswerContext {
   let lessonId: String
+  /// The study session the lesson is a block of, so the answer counts toward it.
+  let studySessionId: String?
   let stepId: String
   let content: SpokenAnswerContent
   /// The screen was answered: the recorder shows no control.
