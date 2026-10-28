@@ -74,7 +74,7 @@ type SerializedSentence = {
   audioUrl: string | null;
 };
 
-/** An answer tile: its word, translation and audio, and romanization only for non-Latin scripts. */
+/** romanization is null for Latin-script words; never include respelling hints. */
 export type WordBankOption = {
   word: string;
   translation: string | null;
@@ -99,10 +99,6 @@ export type SerializedStep<Kind extends ExerciseKind = ExerciseKind> = {
 
 type OptionsContent = { options: readonly unknown[] };
 
-/**
- * Canonical lesson words travel through the player with lesson-scoped translations and
- * distractor arrays. This serializer keeps string IDs stable and copies arrays defensively.
- */
 function serializeWord(word: WordDataInput): SerializedWord {
   return {
     audioUrl: word.audioUrl,
@@ -115,15 +111,10 @@ function serializeWord(word: WordDataInput): SerializedWord {
   };
 }
 
-/** Every exercise offers the lesson's words as its vocabulary. */
 function serializeWords(words: WordDataInput[]): SerializedWord[] {
   return words.map((word) => serializeWord(word));
 }
 
-/**
- * Sentences carry the canonical translation plus the direct distractor arrays used by
- * reading and listening lessons.
- */
 function serializeSentence(sentence: SentenceDataInput): SerializedSentence {
   return {
     audioUrl: sentence.audioUrl,
@@ -137,21 +128,11 @@ function serializeSentence(sentence: SentenceDataInput): SerializedSentence {
   };
 }
 
-/**
- * Option-based lesson payloads share the same stored field name, so the
- * serializer can randomize them without repeating object-copying code.
- */
 function shuffleOptions<Content extends OptionsContent>(content: Content): Content {
   return { ...content, options: shuffle(content.options) };
 }
 
-/**
- * Parses step content and applies server-side shuffling where needed.
- *
- * Multiple choice options are shuffled during serialization so the client
- * receives a randomized order.
- * This avoids client-side shuffling which can cause hydration errors.
- */
+/** Shuffle on the server to avoid client-side randomization causing hydration mismatches. */
 function parseAndShuffleContent(kind: ExerciseKind, content: unknown) {
   if (kind === "multipleChoice") {
     return shuffleOptions(parseStepContent("multipleChoice", content));
@@ -188,10 +169,6 @@ function buildMatchColumnsRightItems(step: SerializedStep): string[] {
   return shuffle(content.pairs.map((pair) => pair.right));
 }
 
-/**
- * Only exercises reach the language player. Invalid content still gets dropped so the rest of
- * the lesson can play instead of failing the whole lesson.
- */
 function serializeStep(step: StepDataInput): SerializedStep | null {
   if (!isExerciseKind(step.kind)) {
     return null;
@@ -219,7 +196,6 @@ function serializeStep(step: StepDataInput): SerializedStep | null {
   }
 }
 
-/** The lesson's words and sentences with their translations, and the words behind the options. */
 export type ExerciseResources = {
   distractorWords: DistractorWordDataInput[];
   lessonSentences: SentenceDataInput[];
@@ -227,10 +203,7 @@ export type ExerciseResources = {
   sentenceWords: WordDataInput[];
 };
 
-/**
- * Serializes a lesson's language exercises with their shuffled option pools: word banks,
- * translation options and the lesson's vocabulary.
- */
+/** Serializes only supported exercises; malformed content is omitted rather than failing the lesson. */
 export function serializeExerciseSteps({
   resources,
   steps,

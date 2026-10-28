@@ -6,7 +6,6 @@ import { type DistractorWord } from "./translation-options";
 
 type SerializedSentence = NonNullable<SerializedStep["sentence"]>;
 
-/** Shuffles keep the order options are built in, unless a test shuffles them itself. */
 function keepOrder() {
   vi.mocked(shuffle).mockImplementation((items) => [...items]);
 }

@@ -11,7 +11,6 @@ function makeDistractorWord(overrides: Partial<DistractorWord> = {}): Distractor
 }
 
 describe(buildTranslationOptions, () => {
-  // Options keep the order they're built in.
   beforeEach(() => {
     vi.mocked(shuffle).mockImplementation((items) => [...items]);
   });
@@ -34,7 +33,6 @@ describe(buildTranslationOptions, () => {
       },
     });
 
-    // Tiles carry no respelling, and no romanization for words in Latin letters.
     expect(options).toStrictEqual([
       { audioUrl: "/audio/tea.mp3", id: "word-1", romanization: null, word: "Tea" },
       { audioUrl: "/audio/cafe.mp3", id: "distractor-1", romanization: null, word: "Café" },

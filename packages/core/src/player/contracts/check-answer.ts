@@ -11,11 +11,6 @@ export type AnswerResult = {
   feedback: string | null;
 };
 
-/**
- * Fill-blank feedback should show the full sentence learners were trying to
- * build, not only the isolated blank values. Replaying the template with the
- * canonical answers gives the player one readable correction string.
- */
 function getFillBlankCorrectAnswer(content: FillBlankStepContent): string {
   return content.template
     .split("[BLANK]")
@@ -62,18 +57,11 @@ export function checkSingleMatchPair(
   );
 }
 
-/**
- * Duplicate match-column labels are valid, so answer checking needs to compare full pair
- * multiplicity. JSON array keys avoid delimiter collisions between labels like ["a|b", "c"].
- */
+/** Duplicate label pairs are valid; JSON keys preserve multiplicity without delimiter collisions. */
 function getSortedMatchPairKeys(pairs: { left: string; right: string }[]): string[] {
   return pairs.map((pair) => JSON.stringify([pair.left, pair.right])).toSorted();
 }
 
-/**
- * The player submits label pairs, not visual ids. Sorting the serialized pairs gives us a small
- * multiset comparison so duplicate pairs must appear the same number of times in both lists.
- */
 function hasSameMatchPairCounts({
   correctPairs,
   userPairs,
@@ -95,7 +83,7 @@ export function checkMatchColumnsAnswer(
   userPairs: { left: string; right: string }[],
   mistakes: number,
 ): AnswerResult {
-  /** The player requires every pair to be solved and records wrong attempts separately. */
+  /** Every pair is solved before submission, so mistakes must still invalidate an otherwise complete board. */
   const isCorrect =
     mistakes === 0 && hasSameMatchPairCounts({ correctPairs: content.pairs, userPairs });
 

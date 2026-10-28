@@ -8,7 +8,6 @@ const answerTextSchema = z.string().max(MAX_ANSWER_TEXT_LENGTH);
 const answerItemsSchema = z.array(answerTextSchema).max(MAX_ANSWER_ITEMS);
 const matchPairSchema = z.object({ left: answerTextSchema, right: answerTextSchema });
 
-/** What a learner answers on a language exercise, in the shape the checks grade. */
 export const selectedAnswerSchema = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("fillBlank"), userAnswers: answerItemsSchema }),
   z.object({ arrangedWords: answerItemsSchema, kind: z.literal("listening") }),

@@ -2,7 +2,6 @@ import { type StepKind } from "@zoonk/db";
 import { z } from "zod";
 import { stepContentSchemas } from "../../library/steps/contract/step-contract";
 
-/** The step kinds a language lesson plays as exercises, with their word banks and options. */
 export const EXERCISE_KINDS = [
   "alphabet",
   "fillBlank",
@@ -27,12 +26,7 @@ function exerciseContentOf<TKind extends ExerciseKind, TShape extends z.ZodRawSh
   return z.object({ ...shape, content: stepContentSchemas[kind], kind: z.literal(kind) });
 }
 
-/**
- * An exercise's kind with its content, validated together, plus the fields `shape` adds: how the
- * API documents an exercise. It's one closed object per kind, since an intersection with another
- * closed object never decodes in a strict client (each side refuses the other's keys), which the
- * native apps' generated clients are.
- */
+/** Emit closed objects per kind; intersecting closed schemas makes strict generated clients reject each other's keys. */
 export function exerciseContentWith<TShape extends z.ZodRawShape>(shape: TShape) {
   return z.discriminatedUnion("kind", [
     exerciseContentOf("alphabet", shape),

@@ -190,11 +190,7 @@ describe(serializeExerciseSteps, () => {
       ],
     });
 
-    expect(result[0]?.fillBlankOptions).toStrictEqual([
-      wordOption("sky"),
-      // A word in Latin letters shows no romanization on its tile.
-      wordOption("ground"),
-    ]);
+    expect(result[0]?.fillBlankOptions).toStrictEqual([wordOption("sky"), wordOption("ground")]);
 
     expect(result[1]?.matchColumnsRightItems).toStrictEqual(["1", "2"]);
   });

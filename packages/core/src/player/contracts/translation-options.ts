@@ -7,7 +7,7 @@ const VOCABULARY_DISTRACTOR_COUNT = 3;
 const FIRST_LETTER_PATTERN = /\p{L}/u;
 const TERMINAL_PUNCTUATION_PATTERN = /[.!?…。！？؟]+$/u;
 
-/** A translation answer tile: its word and audio, and romanization only for non-Latin scripts. */
+/** romanization is null for Latin-script words. */
 export type TranslationOption = {
   id: string;
   word: string;
@@ -31,14 +31,10 @@ type TranslationSourceWord = {
   audioUrl: string | null;
 };
 
-/**
- * Direct distractor words do not need lesson translations, only render metadata.
- */
 export function serializeDistractorWord(word: DistractorWord): DistractorWord {
   return { audioUrl: word.audioUrl, id: word.id, romanization: word.romanization, word: word.word };
 }
 
-/** Translation options only need the target-language surface form, its audio and romanization. */
 function toTranslationOption(word: TranslationSourceWord | DistractorWord): TranslationOption {
   return {
     audioUrl: word.audioUrl,
@@ -48,19 +44,11 @@ function toTranslationOption(word: TranslationSourceWord | DistractorWord): Tran
   };
 }
 
-/**
- * Some scripts do not have uppercase/lowercase forms. Treat those as neutral so
- * translation options in scripts like Japanese or Chinese keep their original text.
- */
 function isCasedLetter(letter: string): boolean {
   return letter.toLocaleLowerCase() !== letter.toLocaleUpperCase();
 }
 
-/**
- * Translate options are standalone choices, so each visible label should start like a
- * sentence. This removes casing as an answer clue without trusting generated lowercase
- * answers like "i'm fine"; scripts without casing keep their original text.
- */
+/** Normalize visible option casing so formatting cannot identify the correct answer. */
 function capitalizeFirstCasedLetter(text: string): string {
   const firstLetter = FIRST_LETTER_PATTERN.exec(text)?.[0];
 
@@ -71,29 +59,16 @@ function capitalizeFirstCasedLetter(text: string): string {
   return text.replace(FIRST_LETTER_PATTERN, (letter) => letter.toLocaleUpperCase());
 }
 
-/**
- * The prompt is what learners are translating, so its terminal punctuation is the
- * reference for every answer option. Returning only the final punctuation run handles
- * cases like "Good morning!" and "Really?!" without changing internal punctuation.
- */
 function getTerminalPunctuation(text: string): string {
   const normalizedText = normalizePunctuation(text).trim();
 
   return TERMINAL_PUNCTUATION_PATTERN.exec(normalizedText)?.[0] ?? "";
 }
 
-/**
- * Distractors often arrive with punctuation that belongs to a different prompt. Strip
- * only terminal sentence punctuation so internal punctuation and accents stay intact.
- */
 function stripTerminalPunctuation(text: string): string {
   return normalizePunctuation(text).trim().replace(TERMINAL_PUNCTUATION_PATTERN, "").trimEnd();
 }
 
-/**
- * Rebuilds an option label from the two learner-visible references: answer casing from
- * the correct target word and ending punctuation from the prompt being translated.
- */
 function normalizeTranslationOptionWord(params: {
   optionWord: string;
   terminalPunctuation: string;
@@ -104,10 +79,7 @@ function normalizeTranslationOptionWord(params: {
   return capitalizeFirstCasedLetter(textWithPunctuation);
 }
 
-/**
- * Metadata and IDs must keep pointing at the original word records, but the visible label
- * should be normalized so option formatting cannot identify the correct answer.
- */
+/** Keep original metadata/ids while normalizing labels so formatting cannot reveal the correct answer. */
 function normalizeTranslationOption(params: {
   option: TranslationOption;
   terminalPunctuation: string;
@@ -121,20 +93,10 @@ function normalizeTranslationOption(params: {
   };
 }
 
-/**
- * Generated distractor text is still usable when we cannot hydrate it from a word
- * record. Keep the normalized key in the ID so the fallback stays stable across casing
- * and punctuation differences in regenerated content.
- */
 function buildFallbackDistractorOption(params: { key: string; word: string }): TranslationOption {
   return { audioUrl: null, id: `distractor:${params.key}`, romanization: null, word: params.word };
 }
 
-/**
- * Direct distractors are stored as text, while enriched distractors are fetched as word
- * records. This joins those paths before display normalization so both hydrated and
- * fallback distractors receive the same casing and punctuation treatment.
- */
 function buildDirectDistractorOption(params: {
   distractorLookup: Map<string, DistractorWord>;
   word: string;
@@ -149,21 +111,14 @@ function buildDirectDistractorOption(params: {
   return buildFallbackDistractorOption({ key: distractorKey, word: params.word });
 }
 
-/**
- * Target-language distractors are looked up by normalized surface text. Missing word
- * records still render as plain options so the lesson keeps working even if enrichment
- * underflows.
- */
+/** Missing enrichment still renders a plain distractor option. */
 export function buildDistractorWordLookup(
   distractorWords: DistractorWord[],
 ): Map<string, DistractorWord> {
   return new Map(distractorWords.map((word) => [normalizeDistractorKey(word.word), word] as const));
 }
 
-/**
- * Translation lessons read the stored direct distractor list from `ChapterWord`. The
- * player only sanitizes, hydrates what metadata exists, and shows the first three.
- */
+/** Uses stored direct distractors and shows at most three after normalization. */
 export function buildTranslationOptions(params: {
   distractorLookup: Map<string, DistractorWord>;
   kind: string;
