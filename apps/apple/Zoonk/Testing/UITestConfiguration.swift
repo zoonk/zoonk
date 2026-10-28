@@ -24,7 +24,7 @@
           privateImageLoader: .live(),
           subscriptionStore: .live(),
           courseCatalogAPI: courseCatalogAPI(snapshot: catalogSnapshot),
-          learnerSummaryAPI: UITestLearnerSummaryAPI(),
+          learnerSummaryAPI: UITestLearnerSummaryAPI(summary: learnerSummary(from: environment)),
           myCoursesAPI: myCoursesAPI(snapshot: catalogSnapshot),
           progressAPI: progressAPI(from: environment)),
         initiallyPresentsAccount: arguments.contains("--ui-testing-account-sheet"))
@@ -40,6 +40,21 @@
         return try JSONDecoder().decode(CurrentAccount.self, from: Data(accountJSON.utf8))
       } catch {
         preconditionFailure("ZOONK_UI_TEST_ACCOUNT must contain a valid CurrentAccount payload")
+      }
+    }
+
+    /// The summary as `GET /v1/me/summary` returns it, so the fixture follows the API's contract.
+    private static func learnerSummary(from environment: [String: String]) -> LearnerSummary? {
+      guard let summaryJSON = environment["ZOONK_UI_TEST_SUMMARY"] else {
+        return nil
+      }
+
+      do {
+        return makeLearnerSummary(
+          try JSONDecoder().decode(
+            Components.Schemas.LearnerSummary.self, from: Data(summaryJSON.utf8)))
+      } catch {
+        preconditionFailure("ZOONK_UI_TEST_SUMMARY must contain a valid learner summary")
       }
     }
 
@@ -521,15 +536,25 @@
 
   /// Keeps UI tests off the network: the frame gets a summary that doesn't change during a run.
   private struct UITestLearnerSummaryAPI: LearnerSummaryAPIClient {
+    let summary: LearnerSummary?
+
     func getSummary(token: String) async throws -> LearnerSummary {
-      LearnerSummary(
-        activeGoalID: nil,
-        identity: LearnerIdentity(isAnonymous: false, signedInAt: .now, userID: token),
-        nextChangeAt: .distantFuture,
-        readAt: .now,
-        tier: .free,
-        timeZone: nil)
+      summary
+        ?? LearnerSummary(
+          activeGoalID: nil,
+          buddyName: nil,
+          goals: [],
+          identity: LearnerIdentity(isAnonymous: false, signedInAt: .now, userID: token),
+          level: nil,
+          nextChangeAt: .distantFuture,
+          places: LearnerPlaces(exam: false, mindMaps: false, readyMistakes: 0, speaking: false),
+          readAt: .now,
+          tier: .free,
+          timeZone: nil,
+          todayBlocksLeft: nil)
     }
+
+    func switchGoal(token: String, goalID: String) async throws {}
   }
 
   private enum UITestProgressFailure: String, Sendable {

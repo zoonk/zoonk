@@ -7,10 +7,10 @@ struct ZoonkApp: App {
   @State private var myCourses: MyCoursesStore
   @State private var practice: PracticeStore
   @State private var progress: ProgressStore
+  @State private var router: AppRouter
   @State private var session: SessionStore
   @State private var subscriptions: AppStoreSubscriptionStore
   private let cache: AppCache
-  private let initiallyPresentsAccount: Bool
   private let lessonPlayerAPI: LessonPlayerAPI
   private let privateImages: PrivateImageLoader
 
@@ -18,10 +18,10 @@ struct ZoonkApp: App {
     #if DEBUG
       let configuration = UITestConfiguration.current
       let dependencies = configuration?.dependencies ?? .live()
-      initiallyPresentsAccount = configuration?.initiallyPresentsAccount ?? false
+      let initiallyPresentsAccount = configuration?.initiallyPresentsAccount ?? false
     #else
       let dependencies = AppDependencies.live()
-      initiallyPresentsAccount = false
+      let initiallyPresentsAccount = false
     #endif
 
     cache = dependencies.cache
@@ -32,13 +32,14 @@ struct ZoonkApp: App {
     _practice = State(initialValue: dependencies.practiceStore)
     privateImages = dependencies.privateImageLoader
     _progress = State(initialValue: dependencies.progressStore)
+    _router = State(initialValue: AppRouter(sheet: initiallyPresentsAccount ? .account : nil))
     _session = State(initialValue: dependencies.sessionStore)
     _subscriptions = State(initialValue: dependencies.subscriptionStore)
   }
 
   var body: some Scene {
     WindowGroup {
-      AppView(initiallyPresentsAccount: initiallyPresentsAccount)
+      AppView()
         .loads(learnerSummary.summary, refreshable: false)
         .task(id: learnerSummary.summary.value?.nextChangeAt) {
           await learnerSummary.refreshAtNextChange()
@@ -51,13 +52,16 @@ struct ZoonkApp: App {
         .environment(myCourses)
         .environment(practice)
         .environment(progress)
+        .environment(router)
         .environment(session)
         .environment(subscriptions)
         .environment(\.privateImageLoader, privateImages)
         .environment(\.lessonPlayerAPI, lessonPlayerAPI)
         .environment(\.lessonCompletionHook, .invalidating(cache))
         .onOpenURL { url in
-          session.handleGoogleSignInURL(url)
+          if !router.open(url: url) {
+            session.handleGoogleSignInURL(url)
+          }
         }
     }
   }

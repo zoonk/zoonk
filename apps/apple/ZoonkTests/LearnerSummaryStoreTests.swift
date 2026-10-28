@@ -43,12 +43,19 @@ private actor LearnerSummaryAPIStub: LearnerSummaryAPIClient {
 
     return LearnerSummary(
       activeGoalID: nil,
+      buddyName: nil,
+      goals: [],
       identity: LearnerIdentity(isAnonymous: false, signedInAt: .now, userID: "learner"),
+      level: nil,
       nextChangeAt: nextChanges.removeFirst(),
+      places: LearnerPlaces(exam: false, mindMaps: false, readyMistakes: 0, speaking: false),
       readAt: .now,
       tier: .free,
-      timeZone: "America/Sao_Paulo")
+      timeZone: "America/Sao_Paulo",
+      todayBlocksLeft: nil)
   }
+
+  func switchGoal(token: String, goalID: String) async throws {}
 }
 
 extension CurrentAccount {

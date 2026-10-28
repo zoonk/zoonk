@@ -1277,35 +1277,6 @@
         }
       }
     },
-    "My courses" : {
-      "comment" : "Account option that opens the learner's enrolled courses",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meine Kurse"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mis cursos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mes cours"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meus cursos"
-          }
-        }
-      }
-    },
     "Name" : {
       "comment" : "Profile name field label",
       "localizations" : {

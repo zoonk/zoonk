@@ -1,6 +1,194 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ a day" : {
+      "comment" : "How long the learner studies a goal each day, such as 45 min a day",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ am Tag"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ al día"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ par jour"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ por dia"
+          }
+        }
+      }
+    },
+    "%@, level %lld. Statistics" : {
+      "comment" : "Spoken label of the toolbar button with the learner's belt and level, which opens their statistics",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, Level %2$lld. Statistiken"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, level %2$lld. Statistics"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, nivel %2$lld. Estadísticas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, niveau %2$lld. Statistiques"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, nível %2$lld. Estatísticas"
+          }
+        }
+      }
+    },
+    "%lld days left" : {
+      "comment" : "Days until a goal's target date",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Tag übrig"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Tage übrig"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld day left"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld days left"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld día restante"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld días restantes"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld jour restant"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld jours restants"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld dia restante"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld dias restantes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Buddy" : {
+      "comment" : "Tab for the learner's study buddy, used until the buddy's name is known",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kumpel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compañero"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compagnon"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parceiro"
+          }
+        }
+      }
+    },
     "Cancel" : {
       "comment" : "Cancels catalog search and returns to browsing.",
       "localizations" : {
@@ -59,124 +247,356 @@
         }
       }
     },
-    "Home" : {
-      "comment" : "Navigation title for the app's primary home section.",
+    "Current goal. Switch goal" : {
+      "comment" : "Spoken hint of the goal switcher, after the current goal's title",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Startseite"
+            "value" : "Aktuelles Ziel. Ziel wechseln"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inicio"
+            "value" : "Objetivo actual. Cambiar objetivo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Accueil"
+            "value" : "Objectif actuel. Changer d’objectif"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Início"
+            "value" : "Meta atual. Trocar de meta"
           }
         }
       }
     },
-    "New" : {
-      "comment" : "Short tab label for the destination where the learner creates a course.",
+    "Exam" : {
+      "comment" : "Study place for the learner's exam and mock exams",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neu"
+            "value" : "Prüfung"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crear"
+            "value" : "Examen"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Créer"
+            "value" : "Examen"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Novo"
+            "value" : "Prova"
           }
         }
       }
     },
-    "New course" : {
-      "comment" : "Navigation title for the destination where the learner creates a course.",
+    "Explore courses" : {
+      "comment" : "Goal switcher option that opens the course catalog",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neuer Kurs"
+            "value" : "Kurse entdecken"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Curso nuevo"
+            "value" : "Explorar cursos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nouveau cours"
+            "value" : "Explorer les cours"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Novo curso"
+            "value" : "Explorar cursos"
           }
         }
       }
     },
-    "Progress" : {
-      "comment" : "Navigation title for the learner's progress overview.",
+    "Finished" : {
+      "comment" : "A goal the learner finished",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fortschritt"
+            "value" : "Abgeschlossen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Progreso"
+            "value" : "Completado"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Progression"
+            "value" : "Terminé"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Progresso"
+            "value" : "Concluída"
+          }
+        }
+      }
+    },
+    "Log in" : {
+      "comment" : "Opens sign-in",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anmelden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iniciar sesión"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se connecter"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entrar"
+          }
+        }
+      }
+    },
+    "Log in to continue" : {
+      "comment" : "Title shown instead of a page that needs an account, to someone signed out",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Melde dich an, um fortzufahren"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inicia sesión para continuar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connecte-toi pour continuer"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entre para continuar"
+          }
+        }
+      }
+    },
+    "Log in to pick up where you left off, or start free." : {
+      "comment" : "Explains the two ways on from a page that needs an account",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Melde dich an, um dort weiterzumachen, wo du aufgehört hast, oder starte kostenlos."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inicia sesión para continuar donde lo dejaste o empieza gratis."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connecte-toi pour reprendre là où tu en étais, ou commence gratuitement."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entre para continuar de onde parou ou comece de graça."
+          }
+        }
+      }
+    },
+    "Mind maps" : {
+      "comment" : "Study place with a mind map for each chapter",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mindmaps"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapas mentales"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cartes mentales"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mapas mentais"
+          }
+        }
+      }
+    },
+    "Mistakes notebook" : {
+      "comment" : "Study place listing the questions the learner got wrong",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fehlerheft"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuaderno de errores"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carnet d’erreurs"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caderno de erros"
+          }
+        }
+      }
+    },
+    "Paused" : {
+      "comment" : "A goal the learner paused",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausiert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En pausa"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En pause"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausada"
+          }
+        }
+      }
+    },
+    "Plan" : {
+      "comment" : "Tab for the learner's plan toward their goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plano"
+          }
+        }
+      }
+    },
+    "Quick explanations" : {
+      "comment" : "Heading over the quick explanations the learner hasn't finished",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurze Erklärungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explicaciones rápidas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explications rapides"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explicações rápidas"
           }
         }
       }
     },
     "Search" : {
-      "comment" : "Opens search on a catalog detail screen.",
+      "comment" : "Opens search on a catalog detail screen.\nTab for searching the plan and the catalog",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -200,6 +620,325 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pesquisar"
+          }
+        }
+      }
+    },
+    "Speaking" : {
+      "comment" : "Study place for speaking practice in the language the learner studies",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprechen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expresión oral"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expression orale"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversação"
+          }
+        }
+      }
+    },
+    "Start a goal" : {
+      "comment" : "Opens Today, where the learner starts a goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Ziel starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza un objetivo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer un objectif"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar uma meta"
+          }
+        }
+      }
+    },
+    "Start a new goal" : {
+      "comment" : "Goal switcher option that starts another goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein neues Ziel starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza un objetivo nuevo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer un nouvel objectif"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar uma nova meta"
+          }
+        }
+      }
+    },
+    "Start free" : {
+      "comment" : "Opens Today, where someone without an account starts a goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kostenlos starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza gratis"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer gratuitement"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar de graça"
+          }
+        }
+      }
+    },
+    "Start with a goal" : {
+      "comment" : "Title shown instead of a page that needs a goal, to a learner without one",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit einem Ziel starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza con un objetivo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commence par un objectif"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comece com uma meta"
+          }
+        }
+      }
+    },
+    "Statistics" : {
+      "comment" : "Study place with the learner's statistics",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Statistiken"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estadísticas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Statistiques"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estatísticas"
+          }
+        }
+      }
+    },
+    "Study" : {
+      "comment" : "Sidebar section with the study places",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lernen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estudio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Étudier"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estudo"
+          }
+        }
+      }
+    },
+    "Tell us what you want to learn, and we'll plan every day until you get there." : {
+      "comment" : "Explains what starting a goal does, on a page that needs one",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sag uns, was du lernen möchtest, und wir planen jeden Tag bis zu deinem Ziel."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuéntanos qué quieres aprender y planificaremos cada día hasta que lo consigas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dis-nous ce que tu veux apprendre et nous préparerons ton plan jour après jour jusqu’à ce que tu y arrives."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conte o que você quer aprender e a gente vai planejar cada dia até você chegar lá."
+          }
+        }
+      }
+    },
+    "The day is here" : {
+      "comment" : "A goal whose target date is today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der Tag ist da"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ha llegado el día"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le jour est arrivé"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O dia chegou"
+          }
+        }
+      }
+    },
+    "Today" : {
+      "comment" : "Tab for the learner's day of lessons and reviews",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aujourd’hui"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoje"
+          }
+        }
+      }
+    },
+    "Your goals" : {
+      "comment" : "Heading over the learner's goals in the goal switcher",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine Ziele"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus objetivos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tes objectifs"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suas metas"
           }
         }
       }

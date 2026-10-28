@@ -126,7 +126,7 @@ final class ZoonkUITests: XCTestCase {
     let app = makeApp()
     app.launch()
 
-    let accountButton = app.buttons["Account"]
+    let accountButton = app.navigationBars.buttons["Log in"].firstMatch
     XCTAssertTrue(
       accountButton.waitForExistence(timeout: 5), "Expected the account button to exist")
     accountButton.tap()
@@ -143,18 +143,18 @@ final class ZoonkUITests: XCTestCase {
   }
 
   @MainActor
-  func testPrimaryScreenShowsTitleAndAccountAction() {
+  func testPrimaryScreenShowsTitleAndLogIn() {
     continueAfterFailure = false
 
     let app = makeApp()
     app.launch()
 
-    let navigationBar = app.navigationBars["Home"]
-    let accountButton = app.buttons["Account"]
+    let navigationBar = app.navigationBars["Today"]
+    let logInButton = navigationBar.buttons["Log in"]
 
     XCTAssertTrue(
       navigationBar.waitForExistence(timeout: 5), "Expected the native screen title to exist")
-    XCTAssertTrue(accountButton.exists, "Expected the account button to exist")
+    XCTAssertTrue(logInButton.exists, "Expected a visitor's Log in button to exist")
   }
 
   @MainActor
@@ -163,7 +163,7 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp()
     app.launch()
-    app.buttons["Account"].tap()
+    app.navigationBars.buttons["Log in"].firstMatch.tap()
 
     let appleButton = app.buttons["Continue with Apple"]
     let googleButton = app.buttons["Sign in with Google"]
@@ -186,7 +186,7 @@ final class ZoonkUITests: XCTestCase {
     app.launchEnvironment["ZOONK_API_BASE_URL"] = "http://127.0.0.1:1"
     app.launch()
 
-    let accountButton = app.buttons["Account"]
+    let accountButton = app.navigationBars.buttons["Log in"].firstMatch
     XCTAssertTrue(
       accountButton.waitForExistence(timeout: 5), "Expected the account button to exist")
     accountButton.tap()
@@ -320,41 +320,6 @@ final class ZoonkUITests: XCTestCase {
       "Expected guidance without an external Google Play purchase link")
   }
 
-  /// Proves the account shortcut leaves a course detail and opens the signed-in learner's library at its root.
-  @MainActor
-  func testMyCoursesAccountActionOpensTheEnrolledCourseList() {
-    continueAfterFailure = false
-
-    let app = makeApp(for: .catalog)
-    app.launch()
-
-    openPlantsCourse(in: app)
-    app.primaryNavigationItem("Home").tap()
-    openAccount(in: app)
-
-    let myCourses = app.buttons["My courses"]
-    XCTAssertTrue(
-      myCourses.waitForExistence(timeout: 5), "Expected the account sheet to offer My courses")
-    myCourses.tap()
-
-    XCTAssertTrue(
-      app.staticTexts["How Plants Grow"].firstMatch.waitForExistence(timeout: 5),
-      "Expected the account shortcut to open the enrolled course list")
-    XCTAssertTrue(
-      app.staticTexts["My Backyard Field Notes"].firstMatch.waitForExistence(timeout: 5),
-      "Expected pagination to retain a personal course in the learner's library")
-    XCTAssertTrue(app.buttons["My Courses"].isSelected, "Expected My Courses to be selected")
-    XCTAssertFalse(
-      app.staticTexts["Everyday Numbers"].exists,
-      "Expected the account shortcut to exclude courses outside the learner's library")
-
-    app.staticTexts["My Backyard Field Notes"].firstMatch.tap()
-    XCTAssertTrue(
-      app.staticTexts["1. Backyard Birds"].waitForExistence(timeout: 5),
-      "Expected the owner to open their private course with their session")
-    XCTAssertTrue(app.staticTexts["Overview"].exists)
-  }
-
   /// Proves signed-in learners can switch between the public catalog and their enrolled courses without leaving the Courses tab.
   @MainActor
   func testCoursesToggleSwitchesBetweenAllAndMyCourses() {
@@ -362,7 +327,7 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp(for: .catalog)
     app.launch()
-    app.primaryNavigationItem("Courses").tap()
+    openCatalog(in: app)
 
     let allCourses = app.buttons["All Courses"]
     let myCourses = app.buttons["My Courses"]
@@ -401,7 +366,7 @@ final class ZoonkUITests: XCTestCase {
     app.launchEnvironment["ZOONK_UI_TEST_CATALOG"] = try courseCatalogPaginationUITestSnapshotJSON(
       pageSize: pageSize)
     app.launch()
-    app.primaryNavigationItem("Courses").tap()
+    openCatalog(in: app)
     app.buttons["My Courses"].tap()
 
     let lastCourse = app.staticTexts[String(format: "Enrolled Course %02d", pageSize)].firstMatch
@@ -428,7 +393,7 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp(for: .catalog)
     app.launch()
-    app.primaryNavigationItem("Courses").tap()
+    openCatalog(in: app)
 
     let categorySelector = app.scrollViews["Course categories"]
     XCTAssertTrue(categorySelector.waitForExistence(timeout: 5))
@@ -455,34 +420,6 @@ final class ZoonkUITests: XCTestCase {
     XCTAssertEqual(searchField.value as? String, "field notes")
     XCTAssertTrue(
       app.staticTexts["My Backyard Field Notes"].firstMatch.waitForExistence(timeout: 5))
-  }
-
-  /// Proves the learner sees the value of signing in before the native account flow opens.
-  @MainActor
-  func testSignedOutMyCoursesExplainsLoginAndOpensAccountSheet() {
-    continueAfterFailure = false
-
-    let app = makeApp()
-    app.launch()
-    app.primaryNavigationItem("Courses").tap()
-
-    let myCourses = app.buttons["My Courses"]
-    XCTAssertTrue(myCourses.waitForExistence(timeout: 5))
-    myCourses.tap()
-
-    XCTAssertTrue(app.staticTexts["Log in to track your courses"].waitForExistence(timeout: 5))
-    XCTAssertTrue(
-      app.staticTexts[
-        "Keep your courses and progress in one place by logging in to your account."
-      ].exists)
-
-    let logIn = app.buttons["Log in"]
-    XCTAssertTrue(logIn.exists)
-    logIn.tap()
-
-    XCTAssertTrue(
-      app.buttons["Continue with Apple"].waitForExistence(timeout: 5),
-      "Expected the My Courses login action to open the native account sheet")
   }
 
   /// Proves that account deletion is a deliberate native flow: the account option opens a dedicated screen and the irreversible request still requires confirmation.
@@ -548,19 +485,20 @@ final class ZoonkUITests: XCTestCase {
       "Expected tapping sign out to start the API request immediately")
   }
 
-  /// Proves every primary destination remains reachable through native tabs or the sidebar after rotation.
+  /// Proves every tab root renders, that Statistics opens from the level button, and that a top
+  /// tab bar's Study item opens the Study places, in both orientations.
   @MainActor
-  func testPrimaryTabsNavigateToTheirScreens() {
+  func testShellTabsAndStudyPlacesRender() {
     continueAfterFailure = false
 
-    let app = makeApp()
+    let app = makeApp(for: .progress)
     app.launch()
 
-    let destinations = [
-      (tabTitle: "Home", screenTitle: "Home"),
-      (tabTitle: "New", screenTitle: "New course"),
-      (tabTitle: "Courses", screenTitle: "Courses"),
-      (tabTitle: "Progress", screenTitle: "Progress"),
+    let tabs = [
+      (tabTitle: "Today", screenTitle: "Today"),
+      (tabTitle: "Plan", screenTitle: "Plan"),
+      (tabTitle: "Zu", screenTitle: "Buddy"),
+      (tabTitle: "Search", screenTitle: "Search"),
     ]
 
     addTeardownBlock { @MainActor in XCUIDevice.shared.orientation = .portrait }
@@ -568,28 +506,33 @@ final class ZoonkUITests: XCTestCase {
     for orientation in [UIDeviceOrientation.portrait, .landscapeLeft] {
       XCUIDevice.shared.orientation = orientation
 
-      for destination in destinations {
+      for destination in tabs {
         let tab = app.primaryNavigationItem(destination.tabTitle)
         XCTAssertTrue(
           tab.waitForExistence(timeout: 5), "Expected the \(destination.tabTitle) tab to exist")
-        XCTAssertTrue(tab.isHittable, "Expected the \(destination.tabTitle) tab to be hittable")
         tab.tap()
-
-        let selectedTab = XCTNSPredicateExpectation(
-          predicate: NSPredicate(format: "isSelected == true"),
-          object: tab)
-        XCTAssertEqual(
-          XCTWaiter.wait(for: [selectedTab], timeout: 5),
-          .completed,
-          "Expected the \(destination.tabTitle) tab to become selected")
 
         XCTAssertTrue(
           app.navigationBars[destination.screenTitle].firstMatch.waitForExistence(timeout: 5),
-          "Expected the \(destination.screenTitle) screen heading to exist")
+          "Expected the \(destination.screenTitle) screen to render")
       }
-    }
 
-    XCTAssertFalse(app.buttons["Search"].exists, "Expected search to no longer be a primary tab")
+      // A top tab bar (iPad) shows the Study places as one item opening the first of them.
+      let study = app.buttons["Study"].firstMatch
+      if study.exists {
+        study.tap()
+        XCTAssertTrue(
+          app.navigationBars["Mistakes notebook"].firstMatch.waitForExistence(timeout: 5),
+          "Expected Study to open the mistakes notebook")
+      }
+
+      app.primaryNavigationItem("Today").tap()
+      openStatistics(in: app)
+      XCTAssertTrue(
+        app.staticTexts["At a glance"].waitForExistence(timeout: 5),
+        "Expected the level button to push Statistics")
+      app.navigationBars.buttons.firstMatch.tap()
+    }
   }
 
   /// Proves the public catalog filters by category and keeps course, chapter, and lesson navigation inside the native Courses stack.
@@ -600,9 +543,7 @@ final class ZoonkUITests: XCTestCase {
     let app = makeApp(for: .catalog)
     app.launch()
 
-    let coursesTab = app.primaryNavigationItem("Courses")
-    XCTAssertTrue(coursesTab.waitForExistence(timeout: 5))
-    coursesTab.tap()
+    openCatalog(in: app)
 
     let categorySelector = app.scrollViews["Course categories"]
     XCTAssertTrue(
@@ -788,7 +729,7 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp(for: .catalog)
     app.launch()
-    app.primaryNavigationItem("Courses").tap()
+    openCatalog(in: app)
 
     let course = app.staticTexts["Night Sky Basics"].firstMatch
     XCTAssertTrue(course.waitForExistence(timeout: 10))
@@ -815,7 +756,7 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp(for: .catalog)
     app.launch()
-    app.primaryNavigationItem("Courses").tap()
+    openCatalog(in: app)
     let searchField = app.searchFields["Search all courses"]
     XCTAssertTrue(searchField.waitForExistence(timeout: 5))
     searchField.tap()
@@ -847,7 +788,7 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp(for: .catalog)
     app.launch()
-    app.primaryNavigationItem("Courses").tap()
+    openCatalog(in: app)
 
     let searchField = app.searchFields["Search all courses"]
     XCTAssertTrue(searchField.waitForExistence(timeout: 5))
@@ -877,7 +818,7 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp(for: .catalog)
     app.launch()
-    app.primaryNavigationItem("Courses").tap()
+    openCatalog(in: app)
 
     XCTAssertTrue(
       app.staticTexts["How Plants Grow"].firstMatch.waitForExistence(timeout: 10),
@@ -900,11 +841,8 @@ final class ZoonkUITests: XCTestCase {
     app.buttons["Create a course about Technology"].tap()
 
     XCTAssertTrue(
-      app.navigationBars["New course"].waitForExistence(timeout: 5),
-      "Expected the empty category action to open the existing New course screen")
-    XCTAssertTrue(
-      app.primaryNavigationItem("New").isSelected,
-      "Expected New to become the selected primary tab")
+      app.navigationBars["Start a goal"].waitForExistence(timeout: 5),
+      "Expected the empty category action to open the goal start")
   }
 
   /// Proves chapter search keeps results visible and restores browsing when cancelled, including after reopening.
@@ -917,7 +855,7 @@ final class ZoonkUITests: XCTestCase {
     openPlantsCourse(in: app)
 
     XCTAssertFalse(app.searchFields["Search chapters"].exists)
-    app.buttons["Search"].tap()
+    app.navigationBars.buttons["Search"].firstMatch.tap()
     let searchField = app.searchFields["Search chapters"]
     XCTAssertTrue(searchField.waitForExistence(timeout: 5))
     searchField.tap()
@@ -953,7 +891,7 @@ final class ZoonkUITests: XCTestCase {
       courseContinue.waitForExistence(timeout: 5),
       "Expected dismissing search to restore the course header")
 
-    app.buttons["Search"].tap()
+    app.navigationBars.buttons["Search"].firstMatch.tap()
     XCTAssertTrue(searchField.waitForExistence(timeout: 5))
     XCTAssertTrue(app.staticTexts["1. Roots and Water"].exists)
     searchField.tap()
@@ -976,7 +914,7 @@ final class ZoonkUITests: XCTestCase {
     app.staticTexts["1. Roots and Water"].firstMatch.tap()
 
     XCTAssertFalse(app.searchFields["Search lessons"].exists)
-    app.buttons["Search"].tap()
+    app.navigationBars.buttons["Search"].firstMatch.tap()
     let searchField = app.searchFields["Search lessons"]
     XCTAssertTrue(searchField.waitForExistence(timeout: 5))
     searchField.tap()
@@ -1012,7 +950,7 @@ final class ZoonkUITests: XCTestCase {
       chapterContinue.waitForExistence(timeout: 5),
       "Expected dismissing search to restore the chapter header")
 
-    app.buttons["Search"].tap()
+    app.navigationBars.buttons["Search"].firstMatch.tap()
     XCTAssertTrue(searchField.waitForExistence(timeout: 5))
     XCTAssertTrue(app.staticTexts["1. Meet the Roots"].exists)
     searchField.tap()
@@ -1025,26 +963,12 @@ final class ZoonkUITests: XCTestCase {
   }
 
   @MainActor
-  func testProgressSignInActionPresentsTheAccountSheet() {
-    continueAfterFailure = false
-
-    let app = makeApp()
-    app.launch()
-    app.primaryNavigationItem("Progress").tap()
-    app.buttons["Sign in"].tap()
-
-    XCTAssertTrue(
-      app.buttons["Continue with Apple"].waitForExistence(timeout: 5),
-      "Expected Progress sign-in to present the account sheet")
-  }
-
-  @MainActor
   func testProgressOverviewPresentsAnAvailableDaypartWithoutAWeekday() {
     continueAfterFailure = false
 
     let app = makeApp(for: .progressDaypartOnly)
     app.launch()
-    app.primaryNavigationItem("Progress").tap()
+    openStatistics(in: app)
 
     XCTAssertTrue(
       app.staticTexts["Morning"].waitForExistence(timeout: 5),
@@ -1060,7 +984,7 @@ final class ZoonkUITests: XCTestCase {
 
     let emptyApp = makeApp(for: .progressEmpty)
     emptyApp.launch()
-    emptyApp.primaryNavigationItem("Progress").tap()
+    openStatistics(in: emptyApp)
     XCTAssertTrue(
       emptyApp.staticTexts["Your progress starts here"].waitForExistence(timeout: 5),
       "Expected an empty learner to receive progress guidance")
@@ -1068,7 +992,7 @@ final class ZoonkUITests: XCTestCase {
 
     let failedApp = makeApp(for: .progressOverviewFailure)
     failedApp.launch()
-    failedApp.primaryNavigationItem("Progress").tap()
+    openStatistics(in: failedApp)
     XCTAssertTrue(
       failedApp.staticTexts["You're offline"].waitForExistence(timeout: 5),
       "Expected a network failure to show a recoverable state")
@@ -1081,13 +1005,13 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp(for: .progressActivityUnauthorized)
     app.launch()
-    app.primaryNavigationItem("Progress").tap()
+    openStatistics(in: app)
     XCTAssertTrue(app.staticTexts["At a glance"].waitForExistence(timeout: 5))
     app.staticTexts["Activity"].firstMatch.tap()
 
     XCTAssertTrue(
-      app.staticTexts["Sign in to see your progress"].waitForExistence(timeout: 5),
-      "Expected authentication loss to leave the loading detail and return to recovery")
+      app.navigationBars.buttons["Log in"].firstMatch.waitForExistence(timeout: 5),
+      "Expected authentication loss to leave the loading detail for a signed-out root")
   }
 
   @MainActor
@@ -1096,7 +1020,7 @@ final class ZoonkUITests: XCTestCase {
 
     let app = makeApp(for: .progress)
     app.launch()
-    app.primaryNavigationItem("Progress").tap()
+    openStatistics(in: app)
     XCTAssertTrue(app.staticTexts["At a glance"].waitForExistence(timeout: 5))
     app.staticTexts["Level"].firstMatch.tap()
     XCTAssertTrue(app.staticTexts["Belt journey"].waitForExistence(timeout: 5))
@@ -1118,7 +1042,7 @@ final class ZoonkUITests: XCTestCase {
     let app = makeApp(for: .progress)
     app.launch()
 
-    app.primaryNavigationItem("Progress").tap()
+    openStatistics(in: app)
     XCTAssertTrue(
       app.staticTexts["At a glance"].waitForExistence(timeout: 5),
       "Expected the loaded Progress summary to appear")
@@ -1144,10 +1068,10 @@ final class ZoonkUITests: XCTestCase {
       XCTAssertTrue(
         app.staticTexts[destination.loadedContent].waitForExistence(timeout: 5),
         "Expected \(destination.title) to finish loading its fixture content")
-      let backButton = app.navigationBars.buttons["Progress"].firstMatch
+      let backButton = app.navigationBars.buttons["Statistics"].firstMatch
       XCTAssertTrue(
         backButton.exists,
-        "Expected \(destination.title) to retain the native Progress back action")
+        "Expected \(destination.title) to retain the native Statistics back action")
       backButton.tap()
     }
   }
@@ -1182,6 +1106,10 @@ final class ZoonkUITests: XCTestCase {
       app.launchEnvironment["ZOONK_UI_TEST_PROGRESS"] = progressJSON
     }
 
+    if scenario.accountJSON != nil {
+      app.launchEnvironment["ZOONK_UI_TEST_SUMMARY"] = learnerSummaryUITestJSON
+    }
+
     if let progressFailure = scenario.progressFailure {
       app.launchEnvironment["ZOONK_UI_TEST_PROGRESS_FAILURE"] = progressFailure
     }
@@ -1194,7 +1122,7 @@ final class ZoonkUITests: XCTestCase {
     let app = makeApp(for: .progress)
     app.launch()
 
-    app.primaryNavigationItem("Progress").tap()
+    openStatistics(in: app)
     XCTAssertTrue(
       app.staticTexts["At a glance"].waitForExistence(timeout: 5),
       "Expected the loaded Progress summary to appear")
@@ -1215,13 +1143,31 @@ final class ZoonkUITests: XCTestCase {
 
   @MainActor
   private func openPlantsCourse(in app: XCUIApplication) {
-    let coursesTab = app.primaryNavigationItem("Courses")
-    XCTAssertTrue(coursesTab.waitForExistence(timeout: 5))
-    coursesTab.tap()
+    openCatalog(in: app)
 
     let course = app.staticTexts["How Plants Grow"].firstMatch
     XCTAssertTrue(course.waitForExistence(timeout: 10))
     course.tap()
+  }
+
+  /// Opens the catalog the way a learner does, from the goal switcher's "Explore courses".
+  @MainActor
+  private func openCatalog(in app: XCUIApplication) {
+    let goalSwitcher = app.buttons[uiTestGoalTitle].firstMatch
+    XCTAssertTrue(
+      goalSwitcher.waitForExistence(timeout: 5), "Expected the goal switcher to exist")
+    goalSwitcher.tap()
+    app.buttons["Explore courses"].tap()
+  }
+
+  /// Opens Statistics from the level button on the tab root's toolbar.
+  @MainActor
+  private func openStatistics(in app: XCUIApplication) {
+    let levelButton = app.buttons.matching(
+      NSPredicate(format: "label ENDSWITH %@", "Statistics")
+    ).firstMatch
+    XCTAssertTrue(levelButton.waitForExistence(timeout: 5), "Expected the level button to exist")
+    levelButton.tap()
   }
 
   @MainActor

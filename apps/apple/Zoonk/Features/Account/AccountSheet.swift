@@ -20,8 +20,6 @@ struct AccountSheet: View {
   @State private var isGooglePlayManagementPresented = false
   @State private var path = [AccountDestination]()
 
-  let openMyCourses: () -> Void
-
   var body: some View {
     NavigationStack(path: $path) {
       accountContent
@@ -115,7 +113,6 @@ struct AccountSheet: View {
           deleteAccount: { path.append(.deleteAccount(makeDeletionDestination(account))) },
           editProfile: { path.append(.profile) },
           manageAppStoreSubscription: { isAppStoreSubscriptionManagementPresented = true },
-          openMyCourses: showMyCourses,
           openSubscription: { showSubscription(for: account) },
           showGooglePlayManagement: { isGooglePlayManagementPresented = true }
         )
@@ -174,12 +171,6 @@ struct AccountSheet: View {
     }
   }
 
-  /// Closes the modal before returning to the root of the learner's course library.
-  private func showMyCourses() {
-    dismiss()
-    openMyCourses()
-  }
-
   private func showSubscription(for account: CurrentAccount) {
     guard let appAccountToken = UUID(uuidString: account.user.id) else {
       return
@@ -197,7 +188,6 @@ private struct SignedInAccountView: View {
   let deleteAccount: () -> Void
   let editProfile: () -> Void
   let manageAppStoreSubscription: () -> Void
-  let openMyCourses: () -> Void
   let openSubscription: () -> Void
   let showGooglePlayManagement: () -> Void
 
@@ -218,17 +208,6 @@ private struct SignedInAccountView: View {
           }
         }
         .padding(.vertical, 4)
-      }
-
-      Section {
-        Button(action: openMyCourses) {
-          AccountRowLabel(
-            title: Text(
-              "My courses",
-              tableName: "Account",
-              comment: "Account option that opens the learner's enrolled courses"),
-            systemImage: "books.vertical")
-        }
       }
 
       Section {
@@ -409,7 +388,7 @@ private struct AccountRowLabel: View {
 }
 
 #Preview {
-  AccountSheet {}
+  AccountSheet()
     .environment(SessionStore.preview())
     .environment(AppStoreSubscriptionStore.live())
 }
