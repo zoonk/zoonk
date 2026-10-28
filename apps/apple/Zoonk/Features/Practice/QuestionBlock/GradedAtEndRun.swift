@@ -44,6 +44,21 @@ struct GradedAtEndRun: View {
 
         PracticeQuestionView(
           question: question, labels: labels, isLocked: isPending || failed, draft: $draft)
+      } else if GradedRunStage(answered: index, asked: questions.count, total: total)
+        == .readyToSubmit
+      {
+        VStack(alignment: .leading, spacing: 8) {
+          Text(
+            "Every question is answered", tableName: "Practice",
+            comment: "Title of a test whose answers are all in, before they're graded."
+          )
+          .font(.title2.bold())
+          Text(
+            "Finish to see how it went.", tableName: "Practice",
+            comment: "Under the title of a block opened again with every answer in."
+          )
+          .foregroundStyle(.secondary)
+        }
       } else if total > questions.count {
         ContentUnavailableView {
           Label {
@@ -100,6 +115,16 @@ struct GradedAtEndRun: View {
             if let draft { answer(draft, total: total) }
           }
         }
+      } else if GradedRunStage(answered: index, asked: questions.count, total: total)
+        == .readyToSubmit,
+        !failed
+      {
+        // Answers kept on the device from a send that didn't go through: they go as the same test.
+        PracticeMainButton(
+          title: LocalizedStringResource(
+            "Finish", table: "Practice", comment: "Sends a test's answers to be graded."),
+          isBusy: isPending
+        ) { onFinish(answers) }
       } else if upcomingEnded, !failed {
         PracticeMainButton(
           title: LocalizedStringResource(
@@ -141,12 +166,30 @@ struct GradedAtEndRun: View {
     guard !resumed else { return }
     resumed = true
 
-    let ids = questions.map(\.itemId)
-    let saved = PracticeAnswerDraft.read(key: draftKey)
-    let resumable = Array(zip(saved, ids).prefix { $0.itemId == $1 }.map(\.0))
+    let resumable = PracticeAnswerDraft.resumable(
+      PracticeAnswerDraft.read(key: draftKey), questionIds: questions.map(\.itemId))
 
     if !resumable.isEmpty {
       answers = resumable
+    }
+  }
+}
+
+/// Where a run graded at its end is: asking a question, waiting for questions still being written,
+/// or holding every answer, ready to be sent (after a send that didn't go through, or reopened
+/// with the device's full draft).
+enum GradedRunStage: Equatable {
+  case asking
+  case readyToSubmit
+  case waiting
+
+  init(answered: Int, asked: Int, total: Int) {
+    if answered < asked {
+      self = .asking
+    } else if answered >= total, total > 0 {
+      self = .readyToSubmit
+    } else {
+      self = .waiting
     }
   }
 }
@@ -161,6 +204,13 @@ enum PracticeAnswerDraft {
 
   static func write(_ answers: [PracticeChoiceAnswer], key: String) {
     UserDefaults.standard.set(try? JSONEncoder().encode(answers), forKey: "practice.draft.\(key)")
+  }
+
+  /// The saved answers that still match the questions the test asks, in order.
+  static func resumable(_ saved: [PracticeChoiceAnswer], questionIds: [String])
+    -> [PracticeChoiceAnswer]
+  {
+    Array(zip(saved, questionIds).prefix { $0.itemId == $1 }.map(\.0))
   }
 
   static func requestId(key: String) -> String {

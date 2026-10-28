@@ -190,3 +190,45 @@ private func makeGrade(
     fixedMistakeIds: fixedIds, isCorrect: isCorrect, isStillOpen: stillOpen, reached: .nothing,
     trap: nil)
 }
+
+final class GradedRunTests: XCTestCase {
+  func testAFullDraftReopensReadyToSubmit() {
+    let saved = ["a", "b"].map {
+      PracticeChoiceAnswer(answer: .choice(0), durationMs: 1, itemId: $0)
+    }
+    let resumed = PracticeAnswerDraft.resumable(saved, questionIds: ["a", "b"])
+
+    XCTAssertEqual(resumed.count, 2)
+    XCTAssertEqual(GradedRunStage(answered: resumed.count, asked: 2, total: 2), .readyToSubmit)
+  }
+
+  func testADraftForOtherQuestionsStartsOver() {
+    let saved = [PracticeChoiceAnswer(answer: .dontKnow, durationMs: 1, itemId: "old")]
+    XCTAssertEqual(PracticeAnswerDraft.resumable(saved, questionIds: ["a", "b"]), [])
+  }
+
+  func testStages() {
+    XCTAssertEqual(GradedRunStage(answered: 1, asked: 2, total: 2), .asking)
+    XCTAssertEqual(GradedRunStage(answered: 2, asked: 2, total: 5), .waiting)
+    XCTAssertEqual(GradedRunStage(answered: 0, asked: 0, total: 0), .waiting)
+  }
+}
+
+final class OptionMarkTests: XCTestCase {
+  func testAWithheldAnswerMarksOnlyThePickByItsVerdict() {
+    let right = PracticeItemResult(answer: .choice(1), correctAnswer: nil, isCorrect: true)
+    let wrong = PracticeItemResult(answer: .choice(1), correctAnswer: nil, isCorrect: false)
+
+    XCTAssertEqual(right.optionMark(isRightAnswer: false, isPicked: true), .right)
+    XCTAssertNil(right.optionMark(isRightAnswer: false, isPicked: false))
+    XCTAssertEqual(wrong.optionMark(isRightAnswer: false, isPicked: true), .wrong)
+  }
+
+  func testADisclosedAnswerMarksItAndTheWrongPick() {
+    let result = PracticeItemResult(answer: .choice(1), correctAnswer: .choice(0), isCorrect: false)
+
+    XCTAssertEqual(result.optionMark(isRightAnswer: true, isPicked: false), .right)
+    XCTAssertEqual(result.optionMark(isRightAnswer: false, isPicked: true), .wrong)
+    XCTAssertNil(result.optionMark(isRightAnswer: false, isPicked: false))
+  }
+}

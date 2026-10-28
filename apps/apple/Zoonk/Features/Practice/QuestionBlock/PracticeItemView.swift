@@ -7,6 +7,18 @@ struct PracticeItemResult: Equatable {
   let correctAnswer: PracticeAnswer?
   let isCorrect: Bool
 
+  /// An option's mark: the right answer when the grade says it, and the learner's wrong pick. A
+  /// checkpoint keeps the right answer until it ends, so then only the pick is marked, by its
+  /// verdict, and no other option gives the answer away.
+  func optionMark(isRightAnswer: Bool, isPicked: Bool) -> AnswerOptionResult? {
+    guard correctAnswer != nil else {
+      return isPicked ? (isCorrect ? .right : .wrong) : nil
+    }
+
+    if isRightAnswer { return .right }
+    return isPicked ? .wrong : nil
+  }
+
   /// A typed or numeric answer's mark. "I don't know yet" leaves the field empty: nothing to mark.
   var mark: AnswerOptionResult? {
     answer.isDontKnow ? nil : (isCorrect ? .right : .wrong)
@@ -91,9 +103,7 @@ struct ChoiceItemView: View {
   }
 
   private func optionResult(_ index: Int, correct: [Int], picked: [Int]) -> AnswerOptionResult? {
-    guard result != nil else { return nil }
-    if correct.contains(index) { return .right }
-    return picked.contains(index) ? .wrong : nil
+    result?.optionMark(isRightAnswer: correct.contains(index), isPicked: picked.contains(index))
   }
 
   private func pick(_ index: Int) {
@@ -203,18 +213,11 @@ struct TrueFalseItemView: View {
   }
 
   /// The right answer when the grade says it; the learner's wrong pick. A blank is neither.
+  /// A blank is neither right nor wrong: it stays picked, never marked.
   private func optionResult(_ answer: PracticeAnswer) -> AnswerOptionResult? {
-    guard let result else { return nil }
-
-    if case .trueFalse(let isTrue) = answer, result.correctAnswer == .trueFalse(isTrue) {
-      return .right
-    }
-
-    if case .trueFalse = answer, result.answer == answer {
-      return .wrong
-    }
-
-    return nil
+    guard let result, case .trueFalse = answer else { return nil }
+    return result.optionMark(
+      isRightAnswer: result.correctAnswer == answer, isPicked: result.answer == answer)
   }
 
   /// A tap toggles its pick; a swipe keeps its side picked.
