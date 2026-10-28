@@ -6,6 +6,7 @@ import {
   reviewConversationCall,
   settleConversationReview,
 } from "@zoonk/core/language/conversations/review";
+import { isBlockedTestCall } from "@zoonk/utils/blocked-test-call";
 import { safeAsync } from "@zoonk/utils/error";
 
 export async function claimReviewStep(input: ConversationReviewInput & { runId: string }) {
@@ -19,10 +20,20 @@ export async function endReviewedCallStep(connectionId: string) {
   await safeAsync(() => endLiveCall({ connectionId, reason: "completion" }));
 }
 
-/** A model failure throws, so the step's retries try again before the call ends without feedback. */
+/**
+ * A model failure throws, so the step's retries try again before the call ends without feedback. A
+ * call the test kill switch stopped would fail every retry the same way, so it ends without
+ * feedback at once.
+ */
 export async function reviewCallStep(input: ConversationReviewInput & { runId: string }) {
   "use step";
-  return reviewConversationCall(input);
+  const { data, error } = await safeAsync(() => reviewConversationCall(input));
+
+  if (error && !isBlockedTestCall(error)) {
+    throw error;
+  }
+
+  return data;
 }
 
 export async function settleReviewStep(

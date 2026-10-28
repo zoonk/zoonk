@@ -6,6 +6,7 @@ import { getSession } from "@zoonk/core/users/session";
 import { prisma } from "@zoonk/db";
 import { RENTING_SCENARIO } from "@zoonk/testing/fixtures/language";
 import { userFixture } from "@zoonk/testing/fixtures/users";
+import { BLOCKED_TEST_CALL } from "@zoonk/utils/blocked-test-call";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
 import { conversationReviewWorkflow } from "./conversation-review-workflow";
@@ -132,6 +133,22 @@ describe(conversationReviewWorkflow, () => {
 
     expect(events).toBe(1);
     expect(connection).toMatchObject({ endReason: "completion", state: "ended" });
+  });
+
+  it("[3] settles a call whose review the test kill switch stopped at once, without feedback", async () => {
+    const call = await liveCall();
+    vi.mocked(writeConversationFeedback).mockRejectedValue(new Error(BLOCKED_TEST_CALL));
+
+    const run = await start(conversationReviewWorkflow, [
+      { ...call, spokenSeconds: 20, timeZone: "UTC", turns: TURNS, usedHelp: false },
+    ]);
+
+    await expect(run.returnValue).resolves.toMatchObject({ status: "completed" });
+    expect(writeConversationFeedback).toHaveBeenCalledOnce();
+
+    await expect(
+      prisma.languageConversation.findUniqueOrThrow({ where: { id: call.conversationId } }),
+    ).resolves.toMatchObject({ feedback: null, status: "completed" });
   });
 
   it("[3] gives two completions at once one review and one settlement", async () => {
