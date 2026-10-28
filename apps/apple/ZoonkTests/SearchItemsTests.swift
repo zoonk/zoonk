@@ -139,12 +139,12 @@ extension GoalSyllabus {
               ],
               "key": "math", "lessonsDone": 0, "lessonsKnown": 0, "lessonsTotal": 2,
               "name": "Math", "nextDate": null, "notPlannedReason": null, "preparation": null,
-              "questions": null, "source": "notice"
+              "questions": null, "source": "notice", "topics": []
             },
             {
               "chapters": [], "key": "physics", "lessonsDone": 0, "lessonsKnown": 0,
               "lessonsTotal": 0, "name": "Physics", "nextDate": null, "notPlannedReason": null,
-              "preparation": null, "questions": null, "source": "notice"
+              "preparation": null, "questions": null, "source": "notice", "topics": []
             }
           ],
           "topicCount": 2
