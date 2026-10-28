@@ -59,6 +59,7 @@ struct AppTabView: View {
       }
     }
     .tabViewStyle(.sidebarAdaptable)
+    .environment(\.isCoveredByTask, !router.tasks.isEmpty)
     .fullScreenCover(item: router.task(at: 0)) { route in
       PresentedTask(route: route, depth: 0)
     }

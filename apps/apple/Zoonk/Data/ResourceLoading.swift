@@ -11,7 +11,15 @@ extension View {
   }
 }
 
+extension EnvironmentValues {
+  /// Whether a full-screen task covers this screen. A covered screen doesn't count as showing its
+  /// resources: a mutation made in the task marks them stale instead of refetching them behind it,
+  /// and they revalidate once when the task closes. The shell sets it from its stack of tasks.
+  @Entry var isCoveredByTask = false
+}
+
 private struct ResourceLoading: ViewModifier {
+  @Environment(\.isCoveredByTask) private var isCovered
   @Environment(\.scenePhase) private var scenePhase
   @Environment(SessionStore.self) private var session
 
@@ -31,7 +39,14 @@ private struct ResourceLoading: ViewModifier {
 
   private func loading(_ content: Content) -> some View {
     content
-      .task(id: ResourceLoadingID(resources: resources, session: session.authenticatedSession)) {
+      .task(
+        id: ResourceLoadingID(
+          resources: resources, session: session.authenticatedSession, isCovered: isCovered)
+      ) {
+        guard !isCovered else {
+          return
+        }
+
         for resource in resources {
           resource.beginViewing()
         }
@@ -46,7 +61,7 @@ private struct ResourceLoading: ViewModifier {
         await untilCancelled()
       }
       .onChange(of: scenePhase) { _, scenePhase in
-        guard scenePhase == .active else {
+        guard scenePhase == .active, !isCovered else {
           return
         }
 
@@ -57,14 +72,17 @@ private struct ResourceLoading: ViewModifier {
   }
 }
 
-/// Restarts loading when the screen shows other resources or another session signs in.
+/// Restarts loading when the screen shows other resources, another session signs in, or a task
+/// covers or uncovers it.
 private struct ResourceLoadingID: Equatable {
   let resources: [ObjectIdentifier]
   let session: AuthenticatedSession?
+  let isCovered: Bool
 
-  init(resources: [any CachedResource], session: AuthenticatedSession?) {
+  init(resources: [any CachedResource], session: AuthenticatedSession?, isCovered: Bool) {
     self.resources = resources.map { ObjectIdentifier($0) }
     self.session = session
+    self.isCovered = isCovered
   }
 }
 

@@ -228,6 +228,33 @@ final class ResourceTests: XCTestCase {
     XCTAssertEqual(resource.state, .loaded(2))
   }
 
+  /// A screen a full-screen task covers stops viewing its resources (`isCoveredByTask` in
+  /// `ResourceLoading`): every answer in a session invalidates Today behind it without a request,
+  /// and Today revalidates once when the session closes and it's shown again.
+  func testACoveredScreenRevalidatesOnceWhenUncovered() async {
+    let cache = AppCache(session: .preview(account: .resourceTestAccount))
+    let requests = Requests(results: [.success(1), .success(2)])
+    let resource: Resource<Int> = cache.resource(
+      audience: .signedIn, domains: [.userProgress], fetch: requests.fetch)
+    resource.beginViewing()
+    await resource.load()
+
+    resource.endViewing()
+    for _ in 0..<3 {
+      cache.invalidate([.userProgress])
+      await Task.yield()
+    }
+    XCTAssertEqual(requests.count, 1)
+    XCTAssertEqual(resource.state, .loaded(1))
+
+    resource.beginViewing()
+    await resource.load()
+    await resource.load()
+
+    XCTAssertEqual(requests.count, 2)
+    XCTAssertEqual(resource.state, .loaded(2))
+  }
+
   func testAResponseThatPredatesAMutationIsDiscarded() async {
     let cache = AppCache(session: .preview(account: .resourceTestAccount))
     let requests = Requests(results: [.success(1)])

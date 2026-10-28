@@ -126,6 +126,7 @@ struct PresentedTask: View {
 
   var body: some View {
     route.destination
+      .environment(\.isCoveredByTask, router.tasks.count > depth + 1)
       .fullScreenCover(item: router.task(at: depth + 1)) { next in
         PresentedTask(route: next, depth: depth + 1)
       }

@@ -4,6 +4,7 @@ import SwiftUI
 /// plan stands); the session as a queue with the next block highlighted and one main action; what
 /// else the day offers; then the missions, the week and practice to do any time.
 struct TodayDayView: View {
+  @Environment(\.isCoveredByTask) private var isCovered
   @Environment(AppRouter.self) private var router
   @Environment(StudySessionStore.self) private var sessions
   @Environment(TodayStore.self) private var store
@@ -62,7 +63,7 @@ struct TodayDayView: View {
     .task(id: view.session.localDate) {
       await refreshAtDayEnd()
     }
-    .task(id: view.isWaitingForLessons) {
+    .task(id: [view.isWaitingForLessons, isCovered]) {
       await pollWhileWriting()
     }
     .onDisappear {
@@ -171,9 +172,10 @@ struct TodayDayView: View {
     await store.today.refresh()
   }
 
-  /// Reads Today again while a lesson of the day is written, for a few minutes at most.
+  /// Reads Today again while a lesson of the day is written, for a few minutes at most, and not
+  /// while a task covers Today.
   private func pollWhileWriting() async {
-    guard view.isWaitingForLessons else {
+    guard view.isWaitingForLessons, !isCovered else {
       return
     }
 
