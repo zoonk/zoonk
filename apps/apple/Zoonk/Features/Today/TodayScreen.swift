@@ -259,11 +259,21 @@ private struct TodayPreparing: View {
 /// another, which the Plan and the goal switcher do.
 private struct TodayGoalPaused: View {
   @Environment(AppRouter.self) private var router
+  @Environment(LearnerSummaryStore.self) private var learner
+
+  private var title: String? {
+    let summary = learner.summary.value
+    return summary?.goals.first { $0.id == summary?.activeGoalID }?.title
+  }
 
   var body: some View {
     ContentUnavailableView {
       Label {
-        Text("This goal is paused.", tableName: "Today", comment: "Today for a paused goal")
+        if let title {
+          Text("\(title) is paused.", tableName: "Today", comment: "Today for a paused goal")
+        } else {
+          Text("This goal is paused.", tableName: "Today", comment: "Today for a paused goal")
+        }
       } icon: {
         Image(systemName: "pause.circle")
       }

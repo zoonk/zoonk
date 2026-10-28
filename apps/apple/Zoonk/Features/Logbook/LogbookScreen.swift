@@ -252,7 +252,8 @@ struct LogbookScreen: View {
     let range = [recap.weekStart, recap.weekEnd].compactMap(studyDate)
     let text =
       range.count == 2
-      ? (range[0]..<range[1]).formatted(.interval.month(.abbreviated).day())
+      ? (range[0]..<range[1]).formatted(
+        Date.IntervalFormatStyle(timeZone: .gmt).month(.abbreviated).day())
       : recap.weekStart
 
     return String(

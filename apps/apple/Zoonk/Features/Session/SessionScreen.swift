@@ -103,8 +103,25 @@ private struct SessionContent: View {
           .buttonStyle(.bordered)
         }
       default:
-        ProgressView()
-          .frame(maxWidth: .infinity, maxHeight: .infinity)
+        if let moment = store.moment {
+          // A block that played here says what it earned at once, while the day is read.
+          List {
+            Section {
+              MomentSummary(moment: moment, title: nil)
+            }
+
+            DayMomentSections(result: moment.day)
+
+            Section {
+              ProgressView()
+                .frame(maxWidth: .infinity)
+            }
+            .listRowBackground(Color.clear)
+          }
+        } else {
+          ProgressView()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
       }
     }
     .loads(session)
@@ -420,13 +437,22 @@ private struct FollowedLesson: Equatable {
 /// many it got right and when it comes back; the missions it moved follow in the day's moment.
 private struct MomentSummary: View {
   let moment: BlockMoment
-  let title: String
+  /// The block's name as the day lists it; nil while the day is read.
+  let title: String?
 
   var body: some View {
     VStack(alignment: .leading, spacing: 4) {
-      Text("\(title) done", tableName: "Session", comment: "The block the learner just finished")
-        .font(.title2.bold())
-        .accessibilityAddTraits(.isHeader)
+      Group {
+        if let title {
+          Text(
+            "\(title) done", tableName: "Session", comment: "The block the learner just finished")
+        } else {
+          Text(
+            "Done", tableName: "Session", comment: "A block just finished, before its name loads")
+        }
+      }
+      .font(.title2.bold())
+      .accessibilityAddTraits(.isHeader)
 
       if moment.brainPower > 0 {
         Text("+\(moment.brainPower) Brain Power", tableName: "Session", comment: "Earned")
