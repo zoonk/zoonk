@@ -77,6 +77,18 @@ struct ExamView: Hashable, Decodable, Sendable {
     var estimated: Bool
   }
 
+  /// An exam held several times a year with no sitting in the learner's month: the closest ones.
+  struct NoSitting: Hashable, Decodable, Sendable {
+    var closest: [String]
+    var month: String
+  }
+
+  /// IELTS and TOEFL iBT: the exam whose speaking test runs as a live call.
+  enum SpeakingMock: String, Decodable, Sendable {
+    case ielts
+    case toefl
+  }
+
   struct Progress: Hashable, Decodable, Sendable {
     struct Point: Hashable, Decodable, Sendable, Identifiable {
       var finishedAt: Date
@@ -156,6 +168,7 @@ struct ExamView: Hashable, Decodable, Sendable {
   var mocksRequirePlus: Bool
   var namedMonth: Bool
   var nextMock: NextMock?
+  var noSitting: NoSitting?
   var noticeDay: NoticeDay?
   var passMarks: PassMarks?
   var prepared: Bool
@@ -164,6 +177,8 @@ struct ExamView: Hashable, Decodable, Sendable {
   var runningMocks: [RunningMock]
   var scoring: Scoring
   var sessionsDone: Int
+  var speakingMock: SpeakingMock?
+  var speakingMockPaused: Bool
   var stage: Stage
   var tools: [String]
 

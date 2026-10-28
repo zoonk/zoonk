@@ -242,6 +242,12 @@ private struct MockChooser: View {
           ForEach(examOptions) { optionRow($0) }
         } header: {
           Text("The exam", tableName: "Mock", comment: "Mocks of the whole exam or half of it")
+        } footer: {
+          if let pickedOption {
+            MockSizeNote(
+              document: view.examDocument, minutes: pickedOption.minutes,
+              questions: pickedOption.questions, source: view.sizeSource)
+          }
         }
 
         if !subjects.isEmpty {

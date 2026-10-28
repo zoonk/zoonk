@@ -843,10 +843,16 @@ private struct MockNotesSection: View {
   var body: some View {
     let lines = leftOutLines
 
-    if !lines.isEmpty || short != nil {
+    if !lines.isEmpty || short != nil || view.sizeSource.pastEdition != nil
+      || view.sizeSource.questions != .notice || view.sizeSource.time != .notice
+      || view.sizeSource.subjects == .even || view.sizeSource.formats == .even
+    {
       Section {
       } footer: {
         VStack(alignment: .leading, spacing: 4) {
+          MockSizeNote(
+            document: view.examDocument, minutes: view.minutes, questions: view.questions,
+            source: view.sizeSource)
           if let short { Text(short) }
           ForEach(lines, id: \.self) { Text($0) }
         }

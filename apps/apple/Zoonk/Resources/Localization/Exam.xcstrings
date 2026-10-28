@@ -441,6 +441,35 @@
         }
       }
     },
+    "A short speaking test with an examiner. After it, an estimated band for each criterion." : {
+      "comment" : "What the IELTS speaking mock is",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein kurzer mündlicher Test mit einer prüfenden Person. Danach erhältst du für jedes Kriterium eine geschätzte Punktzahl."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una breve prueba oral con un examinador. Al terminar, obtendrás una banda estimada para cada criterio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un court test d’expression orale avec un examinateur. À la fin, une note estimée pour chaque critère."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uma prova curta de conversação com um examinador. Depois, uma faixa estimada para cada critério."
+          }
+        }
+      }
+    },
     "A wrong answer cancels a right one" : {
       "comment" : "Net scoring",
       "localizations" : {
@@ -675,6 +704,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Melhor em %1$@. Ainda precisa melhorar em: %2$@."
+          }
+        }
+      }
+    },
+    "Calls are paused" : {
+      "comment" : "Live calls are paused",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gespräche sind pausiert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las llamadas están pausadas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les appels sont suspendus"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As conversas estão pausadas"
           }
         }
       }
@@ -1322,6 +1380,35 @@
         }
       }
     },
+    "IELTS speaking mock" : {
+      "comment" : "A speaking mock's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "IELTS-Sprechprüfung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulacro de expresión oral del IELTS"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Examen blanc d’expression orale IELTS"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulado de conversação do IELTS"
+          }
+        }
+      }
+    },
     "In your mock exams: sure, %lld of %lld right. Unsure, %lld of %lld right." : {
       "comment" : "Sure against unsure answers in mocks",
       "localizations" : {
@@ -1353,6 +1440,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nos seus simulados: das respostas com certeza, %1$lld de %2$lld certas. Das respostas com dúvida, %3$lld de %4$lld certas."
+          }
+        }
+      }
+    },
+    "It's the same for everyone right now. Try again later." : {
+      "comment" : "Why calls are paused",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das betrifft gerade alle. Versuch es später noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ahora mismo es igual para todo el mundo. Inténtalo más tarde."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C’est pareil pour tout le monde en ce moment. Réessaie plus tard."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isso está acontecendo com todo mundo agora. Tente de novo mais tarde."
           }
         }
       }
@@ -1560,6 +1676,35 @@
         }
       }
     },
+    "No exam date in %@" : {
+      "comment" : "An exam with no sitting in the learner's month",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Im %@ gibt es keinen Prüfungstermin"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay convocatoria en %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune date d’examen en %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sem data de prova em %@"
+          }
+        }
+      }
+    },
     "No subject has changed much yet." : {
       "comment" : "Mock trends",
       "localizations" : {
@@ -1585,6 +1730,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nenhuma matéria mudou muito até agora."
+          }
+        }
+      }
+    },
+    "Not enough call time this month for this mock" : {
+      "comment" : "The call time left this month can't fit the mock",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diesen Monat reicht die Gesprächszeit für diese Probeprüfung nicht aus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No tienes tiempo de llamada suficiente este mes para este simulacro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu n’as pas assez de temps d’appel ce mois-ci pour cet examen blanc"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você não tem tempo de conversa suficiente este mês para fazer este simulado"
+          }
+        }
+      }
+    },
+    "Not enough call time today for this mock" : {
+      "comment" : "The call time left today can't fit the mock",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute reicht die Gesprächszeit für diese Probeprüfung nicht aus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No tienes tiempo de llamada suficiente hoy para este simulacro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu n’as pas assez de temps d’appel aujourd’hui pour cet examen blanc"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você não tem tempo de conversa suficiente hoje para fazer este simulado"
           }
         }
       }
@@ -1672,6 +1875,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Documento com foto e cartão de inscrição"
+          }
+        }
+      }
+    },
+    "Repeat sentences, then a short interview with an examiner. After it, an estimated band from 1 to 6 for each criterion." : {
+      "comment" : "What the TOEFL speaking mock is",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wiederhole Sätze und führe danach ein kurzes Gespräch mit einer prüfenden Person. Anschließend erhältst du für jedes Kriterium eine geschätzte Punktzahl von 1 bis 6."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repite frases y, después, haz una breve entrevista con un examinador. Al terminar, obtendrás una banda estimada del 1 al 6 para cada criterio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répète des phrases, puis passe un court entretien avec un examinateur. À la fin, une note estimée de 1 à 6 pour chaque critère."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repita frases e depois faça uma entrevista curta com um examinador. Depois, você recebe uma faixa estimada de 1 a 6 para cada critério."
           }
         }
       }
@@ -1933,6 +2165,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prática de conversação"
+          }
+        }
+      }
+    },
+    "Start the mock" : {
+      "comment" : "Starts the speaking mock",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probeprüfung starten"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empezar el simulacro"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer l’examen blanc"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Começar o simulado"
+          }
+        }
+      }
+    },
+    "Starting…" : {
+      "comment" : "The speaking mock is starting",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wird gestartet…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iniciando…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Démarrage…"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iniciando…"
           }
         }
       }
@@ -2256,6 +2546,35 @@
         }
       }
     },
+    "The mock didn't start. Try again in a moment." : {
+      "comment" : "Starting the speaking mock failed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Probeprüfung konnte nicht gestartet werden. Versuch es gleich noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El simulacro no se ha iniciado. Inténtalo de nuevo dentro de un momento."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’examen blanc n’a pas démarré. Réessaie dans un instant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O simulado não começou. Tente de novo daqui a pouco."
+          }
+        }
+      }
+    },
     "The month you told us. We'll tell you the day once the notice sets it." : {
       "comment" : "A named month, before the notice",
       "localizations" : {
@@ -2575,6 +2894,35 @@
         }
       }
     },
+    "TOEFL speaking mock" : {
+      "comment" : "A speaking mock's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TOEFL-Sprechprüfung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulacro de expresión oral del TOEFL"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Examen blanc d’expression orale TOEFL"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simulado de conversação do TOEFL"
+          }
+        }
+      }
+    },
     "Trends by subject show once your mocks ask enough new questions of each one." : {
       "comment" : "Mock trends need more mocks",
       "localizations" : {
@@ -2629,6 +2977,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tentar de novo"
+          }
+        }
+      }
+    },
+    "Use %@" : {
+      "comment" : "Moves the plan to one of the closest sittings",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ verwenden"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utiliser %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar %@"
           }
         }
       }
@@ -3323,6 +3700,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Suas pontuações nos simulados, de %1$lld%% a %2$lld%%"
+          }
+        }
+      }
+    },
+    "Your plan keeps your date unless you switch to one of the closest." : {
+      "comment" : "The closest sittings to pick from",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan behält dein Datum bei, außer du wechselst zu einem der nächsten Termine."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan mantiene la fecha que elegiste, salvo que la cambies por una de las más cercanas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan conserve ta date, sauf si tu choisis l’une des dates les plus proches."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano mantém sua data, a menos que você escolha uma das datas mais próximas."
+          }
+        }
+      }
+    },
+    "Your plan keeps your date unless you switch to the closest one." : {
+      "comment" : "One closest sitting to pick",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan behält dein Datum bei, außer du wechselst zum nächstgelegenen Termin."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan mantiene la fecha que elegiste, salvo que la cambies por la más cercana."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan conserve ta date, sauf si tu choisis la date la plus proche."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano mantém sua data, a menos que você escolha a data mais próxima."
           }
         }
       }

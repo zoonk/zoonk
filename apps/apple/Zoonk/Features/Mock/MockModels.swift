@@ -304,6 +304,28 @@ struct MockLeftOut: Hashable, Decodable, Sendable {
   var part: Part
 }
 
+/// Where a mock's size comes from: said on the mock whenever it isn't the notice.
+struct MockSizeSource: Hashable, Decodable, Sendable {
+  enum Source: String, Decodable, Sendable {
+    case even
+    case notice
+    case pastEdition
+    case unstated
+  }
+
+  struct PastEdition: Hashable, Decodable, Sendable {
+    var edition: String?
+    var url: String
+  }
+
+  var formats: Source?
+  var material: Bool
+  var pastEdition: PastEdition?
+  var questions: Source
+  var subjects: Source?
+  var time: Source
+}
+
 /// What it takes to pass, in the notice's own words and language.
 struct PassMarks: Hashable, Decodable, Sendable {
   var language: String
@@ -383,6 +405,7 @@ struct MockView: Hashable, Decodable, Sendable {
   var sections: [MockSection]
   var sessionId: String?
   var shape: MockShape?
+  var sizeSource: MockSizeSource
   var speaking: MockSpeaking?
   var status: Status
   var trueFalseLabels: PracticeTrueFalseLabels
@@ -494,6 +517,7 @@ struct MockOptions: Hashable, Decodable, Sendable {
   var options: [MockOption]
   var placement: Placement?
   var running: Running?
+  var sizeSource: MockSizeSource
 
   /// Whether there's anything to offer: a mock running, or one to take.
   var offersMock: Bool { running != nil || !options.isEmpty }

@@ -4776,6 +4776,70 @@
         }
       }
     },
+    "Questions per subject in the %@, as counted by %@." : {
+      "comment" : "Where a mock's question counts come from",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fragen pro Fach im %1$@, gezählt von %2$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Questions per subject in the %1$@, as counted by %2$@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntas por materia en %1$@, según el recuento de %2$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre de questions par matière dans %1$@, selon %2$@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntas por matéria no %1$@, segundo %2$@."
+          }
+        }
+      }
+    },
+    "Questions per subject in the latest exam, as counted by %@." : {
+      "comment" : "Where a mock's question counts come from",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fragen pro Fach in der letzten Prüfung, gezählt von %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preguntas por materia en el examen más reciente, según el recuento de %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre de questions par matière au dernier examen, selon %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perguntas por matéria na prova mais recente, segundo %@."
+          }
+        }
+      }
+    },
     "Questions to review" : {
       "comment" : "The mock's questions to review",
       "localizations" : {
@@ -5908,6 +5972,238 @@
         }
       }
     },
+    "The notice doesn't give the exam's time." : {
+      "comment" : "No exam time in the notice",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In der Mitteilung steht nicht, wie lange die Prüfung dauert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El aviso no indica cuánto dura el examen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La notice n’indique pas la durée de l’examen."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O edital não informa a duração da prova."
+          }
+        }
+      }
+    },
+    "The notice doesn't say how many questions each format has, so they're split evenly." : {
+      "comment" : "Formats split evenly",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In der Mitteilung steht nicht, wie viele Fragen es je Aufgabenformat gibt. Deshalb werden sie gleichmäßig aufgeteilt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El aviso no indica cuántas preguntas tiene cada formato, así que se reparten por igual."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La notice n’indique pas le nombre de questions par format, elles sont donc réparties équitablement."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O edital não informa quantas perguntas há em cada formato, então elas são divididas igualmente."
+          }
+        }
+      }
+    },
+    "The notice doesn't say how many questions each subject has, so they're split evenly." : {
+      "comment" : "Subjects split evenly",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In der Mitteilung steht nicht, wie viele Fragen es je Fach gibt. Deshalb werden sie gleichmäßig aufgeteilt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El aviso no indica cuántas preguntas tiene cada materia, así que se reparten por igual."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La notice n’indique pas le nombre de questions par matière, elles sont donc réparties équitablement."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O edital não informa quantas perguntas há em cada matéria, então elas são divididas igualmente."
+          }
+        }
+      }
+    },
+    "The notice doesn't say how many questions the exam has." : {
+      "comment" : "The notice gives no question count",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In der Mitteilung steht nicht, wie viele Fragen die Prüfung hat."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El aviso no indica cuántas preguntas tiene el examen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La notice n’indique pas le nombre de questions de l’examen."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O edital não informa quantas perguntas há na prova."
+          }
+        }
+      }
+    },
+    "The official guide doesn't give the exam's time." : {
+      "comment" : "No exam time in the guide",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Im offiziellen Leitfaden steht nicht, wie lange die Prüfung dauert."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La guía oficial no indica cuánto dura el examen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le guide officiel n’indique pas la durée de l’examen."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O guia oficial não informa a duração da prova."
+          }
+        }
+      }
+    },
+    "The official guide doesn't say how many questions each format has, so they're split evenly." : {
+      "comment" : "Formats split evenly",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Im offiziellen Leitfaden steht nicht, wie viele Fragen es je Aufgabenformat gibt. Deshalb werden sie gleichmäßig aufgeteilt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La guía oficial no indica cuántas preguntas tiene cada formato, así que se reparten por igual."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le guide officiel n’indique pas le nombre de questions par format, elles sont donc réparties équitablement."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O guia oficial não informa quantas perguntas há em cada formato, então elas são divididas igualmente."
+          }
+        }
+      }
+    },
+    "The official guide doesn't say how many questions each part has, so they're split evenly." : {
+      "comment" : "Parts split evenly",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Im offiziellen Leitfaden steht nicht, wie viele Fragen es je Abschnitt gibt. Deshalb werden sie gleichmäßig aufgeteilt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La guía oficial no indica cuántas preguntas tiene cada parte, así que se reparten por igual."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le guide officiel n’indique pas le nombre de questions par partie, elles sont donc réparties équitablement."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O guia oficial não informa quantas perguntas há em cada parte, então elas são divididas igualmente."
+          }
+        }
+      }
+    },
+    "The official guide doesn't say how many questions the exam has." : {
+      "comment" : "The guide gives no question count",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Im offiziellen Leitfaden steht nicht, wie viele Fragen die Prüfung hat."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La guía oficial no indica cuántas preguntas tiene el examen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le guide officiel n’indique pas le nombre de questions de l’examen."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O guia oficial não informa quantas perguntas há na prova."
+          }
+        }
+      }
+    },
     "The question bank doesn't have more new ones for it yet." : {
       "comment" : "No more questions",
       "localizations" : {
@@ -6129,6 +6425,220 @@
         }
       }
     },
+    "This mock asks %lld questions, as a past edition did." : {
+      "comment" : "The mock's size from a past edition",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Diese Probeprüfung enthält %lld Frage, wie auch eine frühere Ausgabe."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Diese Probeprüfung enthält %lld Fragen, wie auch eine frühere Ausgabe."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "This mock asks %lld question, as a past edition did."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "This mock asks %lld questions, as a past edition did."
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Este simulacro tiene %lld pregunta, como una edición anterior."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Este simulacro tiene %lld preguntas, como una edición anterior."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Cet examen blanc comporte %lld questions, comme une édition précédente."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Cet examen blanc comporte %lld question, comme une édition précédente."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Cet examen blanc comporte %lld questions, comme une édition précédente."
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Este simulado tem %lld perguntas, como edições anteriores."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Este simulado tem %lld pergunta, como uma edição anterior."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Este simulado tem %lld perguntas, como uma edição anterior."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "This mock asks %lld questions." : {
+      "comment" : "The mock's own size",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Diese Probeprüfung enthält %lld Frage."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Diese Probeprüfung enthält %lld Fragen."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "This mock asks %lld question."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "This mock asks %lld questions."
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Este simulacro tiene %lld pregunta."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Este simulacro tiene %lld preguntas."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Cet examen blanc comporte %lld questions."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Cet examen blanc comporte %lld question."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Cet examen blanc comporte %lld questions."
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Este simulado tem %lld perguntas."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Este simulado tem %lld pergunta."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Este simulado tem %lld perguntas."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "This mock exam isn't here" : {
       "comment" : "A mock that doesn't exist",
       "localizations" : {
@@ -6154,6 +6664,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Este simulado não está disponível"
+          }
+        }
+      }
+    },
+    "This mock gives %@." : {
+      "comment" : "The mock's own time",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Probeprüfung dauert %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este simulacro dura %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cet examen blanc dure %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este simulado dura %@."
           }
         }
       }
@@ -7073,6 +7612,192 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seu último simulado"
+          }
+        }
+      }
+    },
+    "Your material doesn't say how long the test is. This mock asks %lld questions in %@." : {
+      "comment" : "A class test's size",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Material gibt nicht an, wie lange der Test dauert. Diese Probeprüfung enthält %#@questions@ in %2$@."
+          },
+          "substitutions" : {
+            "questions" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Frage"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Fragen"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Your material doesn't say how long the test is. This mock asks %#@questions@ in %2$@."
+          },
+          "substitutions" : {
+            "questions" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg question"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg questions"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El material no indica cuánto dura la prueba. Este simulacro incluye %#@questions@ en %2$@."
+          },
+          "substitutions" : {
+            "questions" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg pregunta"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg preguntas"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton support n’indique pas la durée du test. Cet examen blanc comporte %#@questions@ en %2$@."
+          },
+          "substitutions" : {
+            "questions" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "many" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg questions"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg question"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg questions"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu material não informa a duração da prova. Este simulado tem %#@questions@ em %2$@."
+          },
+          "substitutions" : {
+            "questions" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "many" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg perguntas"
+                    }
+                  },
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg pergunta"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg perguntas"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Your material doesn't say how many questions each format has, so they're split evenly." : {
+      "comment" : "A class test's formats",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Material gibt nicht an, wie viele Fragen es je Aufgabenformat gibt. Deshalb werden sie gleichmäßig aufgeteilt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El material no indica cuántas preguntas tiene cada formato, así que se reparten por igual."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton support n’indique pas le nombre de questions par format, elles sont donc réparties équitablement."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu material não informa quantas perguntas há em cada formato, então elas são divididas igualmente."
           }
         }
       }

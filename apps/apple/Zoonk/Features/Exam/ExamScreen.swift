@@ -88,7 +88,7 @@ private struct ExamList: View {
         ExamMapSection(map: map)
       }
 
-      ExamSpeakingSection()
+      ExamSpeakingSection(exam: exam)
       ExamScoringSection(exam: exam)
     }
     .navigationTitle(exam.examName)
@@ -184,6 +184,58 @@ private struct ExamHero: View {
           }
           .buttonStyle(.bordered)
           .disabled(usingDate)
+        }
+      }
+    }
+
+    noSittingSection
+  }
+
+  /// No sitting in the learner's month: the closest ones, each one tap away.
+  @ViewBuilder
+  private var noSittingSection: some View {
+    if exam.noticeDay == nil, let noSitting = exam.noSitting, let month = studyDate(noSitting.month)
+    {
+      Section {
+        VStack(alignment: .leading, spacing: 4) {
+          Text(
+            "No exam date in \(month.formatted(.studyDay.month(.wide)))", tableName: "Exam",
+            comment: "An exam with no sitting in the learner's month"
+          )
+          .font(.headline)
+          Group {
+            if noSitting.closest.count == 1 {
+              Text(
+                "Your plan keeps your date unless you switch to the closest one.",
+                tableName: "Exam", comment: "One closest sitting to pick")
+            } else {
+              Text(
+                "Your plan keeps your date unless you switch to one of the closest.",
+                tableName: "Exam", comment: "The closest sittings to pick from")
+            }
+          }
+          .foregroundStyle(.secondary)
+        }
+
+        ForEach(noSitting.closest, id: \.self) { closest in
+          if let date = studyDate(closest) {
+            Button {
+              Task { await useDate(closest) }
+            } label: {
+              Text(
+                "Use \(date.formatted(.studyDay.month(.wide).day().year()))", tableName: "Exam",
+                comment: "Moves the plan to one of the closest sittings")
+            }
+            .disabled(usingDate)
+          }
+        }
+
+        if dateFailed {
+          Text(
+            "That didn't go through. Try again in a moment.", tableName: "Exam",
+            comment: "Changing the date failed"
+          )
+          .foregroundStyle(.destructive)
         }
       }
     }
@@ -909,12 +961,16 @@ private struct ExamMapSection: View {
   }
 }
 
-/// The exam's speaking paper, task by task, in the Speaking place.
+/// The exam's speaking: DELE, DELF, Goethe and Cambridge practice their paper task by task in the
+/// Speaking place; IELTS and TOEFL goals take the speaking mock, a short test with an examiner.
 private struct ExamSpeakingSection: View {
   @Environment(LearnerSummaryStore.self) private var learner
+  let exam: ExamView
 
   var body: some View {
-    if learner.summary.value?.places.speaking == true {
+    if let mock = exam.speakingMock {
+      SpeakingMockSection(goalId: exam.goalId, mock: mock, paused: exam.speakingMockPaused)
+    } else if learner.summary.value?.places.speaking == true {
       Section {
         NavigationLink(value: AppRoute.speaking) {
           Label {
@@ -924,6 +980,127 @@ private struct ExamSpeakingSection: View {
           }
         }
       }
+    }
+  }
+}
+
+/// The speaking mock of the exam the goal prepares for: a short test with an examiner, then an
+/// estimated band per criterion. Start opens its call (a learner's tap writes it if it isn't yet).
+private struct SpeakingMockSection: View {
+  private enum Failure: Equatable {
+    case limit(CallLimit)
+    case failed
+  }
+
+  @Environment(VoiceServices.self) private var voice
+  @Environment(AppRouter.self) private var router
+  @State private var starting = false
+  @State private var failure: Failure?
+  let goalId: String
+  let mock: ExamView.SpeakingMock
+  let paused: Bool
+
+  var body: some View {
+    Section {
+      Label {
+        VStack(alignment: .leading, spacing: 4) {
+          Group {
+            switch mock {
+            case .ielts:
+              Text("IELTS speaking mock", tableName: "Exam", comment: "A speaking mock's name")
+            case .toefl:
+              Text("TOEFL speaking mock", tableName: "Exam", comment: "A speaking mock's name")
+            }
+          }
+          .font(.headline)
+          Group {
+            switch mock {
+            case .ielts:
+              Text(
+                "A short speaking test with an examiner. After it, an estimated band for each criterion.",
+                tableName: "Exam", comment: "What the IELTS speaking mock is")
+            case .toefl:
+              Text(
+                "Repeat sentences, then a short interview with an examiner. After it, an estimated band from 1 to 6 for each criterion.",
+                tableName: "Exam", comment: "What the TOEFL speaking mock is")
+            }
+          }
+          .foregroundStyle(.secondary)
+        }
+      } icon: {
+        KindDot(kind: .conversation)
+      }
+
+      if paused {
+        Label {
+          VStack(alignment: .leading, spacing: 2) {
+            Text("Calls are paused", tableName: "Exam", comment: "Live calls are paused")
+            Text(
+              "It's the same for everyone right now. Try again later.", tableName: "Exam",
+              comment: "Why calls are paused"
+            )
+            .foregroundStyle(.secondary)
+          }
+        } icon: {
+          Image(systemName: "phone.down")
+        }
+      } else {
+        Button {
+          Task { await start() }
+        } label: {
+          if starting {
+            Text("Starting…", tableName: "Exam", comment: "The speaking mock is starting")
+          } else {
+            Text("Start the mock", tableName: "Exam", comment: "Starts the speaking mock")
+          }
+        }
+        .disabled(starting)
+
+        switch failure {
+        case .limit(let limit):
+          Group {
+            if limit.period == .month {
+              Text(
+                "Not enough call time this month for this mock", tableName: "Exam",
+                comment: "The call time left this month can't fit the mock")
+            } else {
+              Text(
+                "Not enough call time today for this mock", tableName: "Exam",
+                comment: "The call time left today can't fit the mock")
+            }
+          }
+          .foregroundStyle(.destructive)
+        case .failed:
+          Text(
+            "The mock didn't start. Try again in a moment.", tableName: "Exam",
+            comment: "Starting the speaking mock failed"
+          )
+          .foregroundStyle(.destructive)
+        case nil:
+          EmptyView()
+        }
+      }
+    }
+  }
+
+  private func start() async {
+    starting = true
+    failure = nil
+    defer { starting = false }
+
+    switch await voice.startConversation(.case3(.init(goalId: goalId, kind: .speakingMock))) {
+    case .done(.done(let id)):
+      router.open(.conversation(conversationId: id))
+    case .done(.refused(let refusal)):
+      if case .limit(let limit) = CallReservation(refusal: refusal) {
+        failure = .limit(limit)
+      } else {
+        failure = .failed
+      }
+    case .failed:
+      failure = .failed
+    case .obsolete:
+      break
     }
   }
 }
