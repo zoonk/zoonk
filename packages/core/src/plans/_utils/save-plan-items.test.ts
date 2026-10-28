@@ -190,4 +190,59 @@ describe(savePlanItems, () => {
       [strayItem.id, 2],
     ]);
   });
+
+  // An exam plan holds about a thousand items and a refresh moves few of them. Rewriting every row
+  // twice per save held the learner's lock for as long as the save took, so only changed rows go.
+  it("writes only the rows a save changes", async () => {
+    const user = await userFixture();
+    const goal = await goalFixture({ userId: user.id });
+
+    const [plan, first, second, third] = await Promise.all([
+      planFixture({ goalId: goal.id }),
+      libraryLessonFixture(),
+      libraryLessonFixture(),
+      libraryLessonFixture(),
+    ]);
+
+    const [firstItem, secondItem, thirdItem] = await Promise.all([
+      planItemFixture({ lessonId: first.id, planId: plan.id, position: 0 }),
+      planItemFixture({ lessonId: second.id, planId: plan.id, position: 1 }),
+      planItemFixture({ lessonId: third.id, planId: plan.id, position: 2 }),
+    ]);
+
+    const readVersions = async () => {
+      const rows = await prisma.$queryRaw<{ id: string; version: string }[]>`
+        SELECT id, xmin::text AS version FROM plan_items WHERE plan_id = ${plan.id}::uuid`;
+
+      return new Map(rows.map((row) => [row.id, row.version]));
+    };
+
+    const save = (items: (typeof firstItem)[]) =>
+      prisma.$transaction((tx) =>
+        savePlanItems({
+          existing: [firstItem, secondItem, thirdItem],
+          items,
+          planId: plan.id,
+          standInLessons: new Map(),
+          tx,
+        }),
+      );
+
+    const before = await readVersions();
+    await save([firstItem, thirdItem, secondItem]);
+    const swapped = await readVersions();
+
+    const saved = await prisma.planItem.findMany({
+      orderBy: { position: "asc" },
+      where: { planId: plan.id },
+    });
+
+    expect(saved.map((item) => item.id)).toStrictEqual([firstItem.id, thirdItem.id, secondItem.id]);
+    expect(swapped.get(firstItem.id)).toBe(before.get(firstItem.id));
+    expect(swapped.get(secondItem.id)).not.toBe(before.get(secondItem.id));
+
+    await save([firstItem, thirdItem, secondItem]);
+
+    await expect(readVersions()).resolves.toStrictEqual(swapped);
+  });
 });

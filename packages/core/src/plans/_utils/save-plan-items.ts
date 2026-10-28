@@ -55,10 +55,14 @@ async function findLessonFinishes({
  * public page before "Build my plan" made the goal, is done from when it ended, as finishing it
  * checks it off in every plan that has it (`completeLessonPlanItems`).
  *
- * Every position moves out of the way first, past both the old and the new ones, so no row ever
- * takes a position another still holds (Postgres checks the plan's unique positions row by row). A
- * row the run left out that can't be deleted, such as a lesson finished meanwhile, then follows
- * the plan's items, so positions stay in order for the next save.
+ * Only rows the run changes are written: an exam plan holds about a thousand items and a refresh
+ * moves few of them, and rewriting each one twice per save kept the learner locked for longer than
+ * the save needs. Postgres compares each row as it stands when written, so a row changed after the
+ * plan was read is still judged by its saved values. A row that moves goes out of the way first,
+ * past both the old and the new positions, so no row ever takes a position another still holds
+ * (Postgres checks the plan's unique positions row by row). A row the run left out that can't be
+ * deleted, such as a lesson finished meanwhile, then follows the plan's items, so positions stay
+ * in order for the next save.
  */
 export async function savePlanItems({
   existing,
@@ -86,18 +90,26 @@ export async function savePlanItems({
   const kept = positioned.filter(({ item }) => item.id !== null && existingIds.has(item.id));
   const fresh = positioned.filter(({ item }) => item.id === null || !existingIds.has(item.id));
 
+  if (removedIds.length > 0) {
+    await tx.planItem.deleteMany({ where: { id: { in: removedIds }, planId, status: "todo" } });
+  }
+
   await tx.$executeRaw`
-    UPDATE plan_items
-    SET position = position + (
+    UPDATE plan_items AS p
+    SET position = p.position + (
       SELECT GREATEST(MAX(position) + 1, ${items.length}::int + COUNT(*)::int)
       FROM plan_items
       WHERE plan_id = ${planId}::uuid
     )
-    WHERE plan_id = ${planId}::uuid`;
-
-  if (removedIds.length > 0) {
-    await tx.planItem.deleteMany({ where: { id: { in: removedIds }, planId, status: "todo" } });
-  }
+    WHERE p.plan_id = ${planId}::uuid
+      AND NOT EXISTS (
+        SELECT 1
+        FROM unnest(
+          ${kept.map(({ item }) => item.id)}::uuid[],
+          ${kept.map(({ position }) => position)}::int[]
+        ) AS v(id, position)
+        WHERE v.id = p.id AND v.position = p.position
+      )`;
 
   if (kept.length > 0) {
     await tx.$executeRaw`
@@ -131,7 +143,14 @@ export async function savePlanItems({
         ${kept.map(({ item }) => item.minutes ?? null)}::double precision[],
         ${kept.map(({ item }) => (factsOf(item) ? JSON.stringify(factsOf(item)) : null))}::text[]
       ) AS v(id, position, phase, scheduled_for, chapter_id, skill_id, lessons, title_snapshot, set_aside, to_do, minutes, facts)
-      WHERE p.id = v.id AND p.plan_id = ${planId}::uuid`;
+      WHERE p.id = v.id AND p.plan_id = ${planId}::uuid
+        AND (
+          (p.position, p.phase, p.scheduled_for, p.chapter_id, p.skill_id, p.lessons, p.minutes, p.facts, p.title_snapshot)
+            IS DISTINCT FROM
+          (v.position, v.phase::smallint, v.scheduled_for, v.chapter_id, v.skill_id, v.lessons, v.minutes, v.facts::jsonb, v.title_snapshot)
+          OR (v.set_aside AND p.status = 'todo')
+          OR (v.to_do AND p.status = 'skipped')
+        )`;
   }
 
   if (fresh.length > 0) {
