@@ -27,10 +27,6 @@ import { useMarkdownPlugins } from "./tutor-markdown-plugins";
 
 const DISALLOWED_ANSWER_ELEMENTS = ["img"] as const;
 
-/**
- * Uses the app's accessible dialog primitive for external links because
- * Streamdown's default confirmation surface does not manage dialog focus.
- */
 function ExternalLinkConfirmation({ isOpen, onClose, onConfirm, url }: LinkSafetyModalProps) {
   const t = useExtracted();
 
@@ -87,20 +83,14 @@ const LESSON_QUESTION_LINK_SAFETY = {
   renderModal: renderExternalLinkConfirmation,
 } as const;
 
-/**
- * How a buddy answer links the app: through the host's own link, and one of today's blocks through
- * the host's way of opening it (as Today does), on a plain click; a click that opens a new tab or
- * window follows the link. `verified`: the text is the answer as the server saved it, its links
- * checked against the ones it was given; until then (while it streams, or when it failed) every
- * link reads as its words.
- */
+/** Set `verified` only after the saved answer's links have been checked against their allowlist. */
 export type TutorAnswerLinks = {
   Link: PlayerLinkComponent;
   openBlock?: (blockId: string) => void;
   verified: boolean;
 };
 
-/** A buddy answer reads no HTML of its own: the default plugins but the one that renders it raw. */
+// Buddy answers must never render raw HTML.
 const BUDDY_REHYPE_PLUGINS = [defaultRehypePlugins.sanitize, defaultRehypePlugins.harden].flatMap(
   (plugin) => (plugin ? [plugin] : []),
 );
@@ -109,14 +99,8 @@ function isPlainClick(event: MouseEvent<HTMLAnchorElement>) {
   return event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey;
 }
 
-/** The links of the buddy answer being drawn (see `TutorAnswerLinks`); null for the lesson tutor's. */
 const TutorAnswerLinksContext = createContext<TutorAnswerLinks | null>(null);
 
-/**
- * A link in a buddy answer: a link of the app only when the answer is verified and the link has
- * the shape of one the app gives (`isTutorAppPath`); anything else, its words. The renderer sees
- * every form a link takes (inline, reference, autolink, a bare address), so none gets past it.
- */
 function TutorAnswerLink({ children, href }: ComponentProps<"a"> & ExtraProps) {
   const links = use(TutorAnswerLinksContext);
 
@@ -144,13 +128,8 @@ function TutorAnswerLink({ children, href }: ComponentProps<"a"> & ExtraProps) {
   );
 }
 
-/** How a buddy answer draws its links: every one through `TutorAnswerLink`. */
 const TUTOR_ANSWER_COMPONENTS: Components = { a: TutorAnswerLink };
 
-/**
- * A tutor's answer drawn from its Markdown, loaded on demand through `LessonQuestionMarkdown`:
- * Streamdown, and KaTeX or Mermaid only for an answer with math or a diagram.
- */
 export function TutorMarkdown({
   answer,
   appLinks,
@@ -158,7 +137,6 @@ export function TutorMarkdown({
   isStreaming,
 }: {
   answer: string;
-  /** A buddy answer's links (see `TutorAnswerLinks`); a lesson tutor's answer has none. */
   appLinks?: TutorAnswerLinks;
   isAnimating: boolean;
   isStreaming: boolean;

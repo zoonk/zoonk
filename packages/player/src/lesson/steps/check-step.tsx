@@ -11,11 +11,6 @@ import { splitQuestionData } from "../_utils/lesson-aside";
 import { ExplainFirstButton } from "../controls/explain-first-button";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
 
-/**
- * A question in the middle of the lesson, with a reason behind every option. Its options can be
- * pictures, to tell separate things apart by how they look. A question about a picture still
- * being drawn waits for it.
- */
 export function CheckStepView({
   answer,
   isLocked,

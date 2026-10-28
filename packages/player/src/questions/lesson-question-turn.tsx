@@ -68,10 +68,6 @@ function AnswerFailureMessage({ error }: { error: LessonQuestionApiError | null 
   return <>{t("We couldn't finish this answer.")}</>;
 }
 
-/**
- * How a buddy answer links the app on this host: only a finished answer whose saved text arrived,
- * or was read from the server (`linksVerified`), links anything.
- */
 function useAnswerLinks({
   linksVerified,
   status,
@@ -139,7 +135,6 @@ function QuestionAnswer({
           />
         )}
         {limit ? (
-          // Why, and the one thing to do about it, take the composer's place under the thread.
           <p className="text-muted-foreground text-sm">{t("This one wasn't answered.")}</p>
         ) : (
           <>
@@ -215,10 +210,6 @@ function MemoryUpdate({ changes }: { changes: LessonQuestionMemoryChange[] | und
   return renderMemoryUpdate(changes);
 }
 
-/**
- * The way to the conversation's earlier turns, while it has more, saying so when they couldn't be
- * read. A page (the buddy tab) calls them messages.
- */
 export function EarlierTurns({ page = false }: { page?: boolean }) {
   const t = useExtracted();
   const { loadEarlier, state } = useLessonQuestionController();
@@ -250,11 +241,6 @@ export function EarlierTurns({ page = false }: { page?: boolean }) {
   );
 }
 
-/**
- * One question and the buddy's answer, from the tutor's state: its answer's text links the app
- * only as the server saved it (read from the server, or its saved text arrived after it streamed
- * here, see `streamedAnswerIds`).
- */
 export function QuestionTurn({
   identity,
   page = false,
@@ -262,17 +248,10 @@ export function QuestionTurn({
   question,
   toolOffer,
 }: {
-  /** The buddy who answers: its face and name beside every answer. */
   identity: TutorIdentity;
-  /**
-   * The conversation is a page of its own (the buddy tab): messages read at body size and leave
-   * out what each question is about, since it's always the goal.
-   */
   page?: boolean;
-  /** The plan change the answer proposed, drawn by the host under the answer. */
   planChange?: React.ReactNode;
   question: LessonQuestionController["state"]["questions"][number];
-  /** The app tool the answer offered, drawn by the host under the answer. */
   toolOffer?: React.ReactNode;
 }) {
   const t = useExtracted();
@@ -312,7 +291,6 @@ export function QuestionTurn({
             />
           </BubbleContent>
         </Bubble>
-        {/* The card comes with the words that say it, never alone under "Thinking…". */}
         {(question.answer || question.status !== "running") && (
           <>
             {planChange}

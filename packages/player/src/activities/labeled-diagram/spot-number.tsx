@@ -1,9 +1,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 
-/** How a spot looks: waiting, named, the one names go to, or right or wrong once checked. */
 export type SpotState = "active" | "correct" | "empty" | "filled" | "incorrect";
 
-/** A spot's number, as the picture shows it, in the spot's state. */
 export function SpotNumber({
   className,
   number,

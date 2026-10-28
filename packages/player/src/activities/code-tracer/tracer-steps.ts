@@ -4,7 +4,6 @@ type TraceValue = string | number | boolean;
 type TraceStep = { line: number; values: readonly { name: string; value: TraceValue }[] };
 type Pause = { step: number };
 
-/** A watched variable at one step: its value so far, the value before, and whether it changed. */
 export type WatchedValue = {
   changed: boolean;
   name: string;
@@ -21,10 +20,6 @@ function valueAt(trace: readonly TraceStep[], name: string, step: number): strin
   return last === undefined ? null : String(last.value);
 }
 
-/**
- * The watched variables at a step. A trace step lists only the values it shows, so a variable
- * keeps its last known value until a step changes it.
- */
 export function watchedValues({
   step,
   trace,
@@ -41,12 +36,10 @@ export function watchedValues({
   });
 }
 
-/** The first step shown: before the first line when the learner must predict it. */
 export function firstStep(pauses: readonly Pause[]): number {
   return pauses.some((pause) => pause.step === 0) ? -1 : 0;
 }
 
-/** The pause guarding the next step, if the learner hasn't predicted it yet. */
 export function blockingPause<TPause extends Pause>({
   pauses,
   predictions,
@@ -64,7 +57,6 @@ export function blockingPause<TPause extends Pause>({
   return pause ? { index, pause } : null;
 }
 
-/** The pause the learner is about to reach: the one right after the current step. */
 export function upcomingPause<TPause extends Pause>(
   pauses: readonly TPause[],
   step: number,
@@ -74,7 +66,6 @@ export function upcomingPause<TPause extends Pause>(
   return pause ? { index, pause } : null;
 }
 
-/** The answer once every pause has a prediction: pause position to the chosen option. */
 export function tracerAnswer(
   pauses: readonly Pause[],
   predictions: Readonly<Record<string, string>>,

@@ -10,10 +10,6 @@ function edgeAlign(index: number, count: number): string {
   return index === count - 1 ? "-translate-x-full" : "-translate-x-1/2";
 }
 
-/**
- * The lesson's sample sizes under the slider that picks one. The sizes sit at even steps, so a
- * jump from 100 to 400 reads as one move, whatever the numbers.
- */
 export function SampleSizeStops({ index, labels }: { index: number; labels: readonly string[] }) {
   const last = labels.length - 1;
 

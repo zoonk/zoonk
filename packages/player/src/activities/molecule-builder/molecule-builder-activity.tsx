@@ -34,7 +34,6 @@ import { useTweenedLayout } from "./use-tweened-layout";
 
 type MoleculeProps = ActivityRendererProps<"moleculeBuilder">;
 
-/** Past this, a build is a pile of atoms, not a molecule a lesson would ask for. */
 const MAX_ATOMS = 16;
 
 function answerFor(content: MoleculeProps["content"], build: Build): ActivityAnswer | null {
@@ -45,7 +44,6 @@ function answerFor(content: MoleculeProps["content"], build: Build): ActivityAns
   return moleculeAnswer(build);
 }
 
-/** What a change did, in words, for the live region. */
 function useChangeAnnouncement() {
   const t = useExtracted();
   const nameOf = useAtomName();
@@ -86,12 +84,6 @@ function useChangeAnnouncement() {
   };
 }
 
-/**
- * Atoms joined until every bond is filled, like carbon dioxide. The learner adds atoms from the
- * palette (bonded to the selected atom, if any) and taps two atoms to step the bond between them.
- * Dots show each atom's open bonds; code knows every element's valence and grades any complete
- * structure with the formula's atoms. After the check, one correct build appears when needed.
- */
 function MoleculeQuestion({ answer, content, labelId, onAnswerChange, phase }: MoleculeProps) {
   const t = useExtracted();
   const reducedMotion = useReducedMotion();
@@ -191,7 +183,6 @@ function MoleculeQuestion({ answer, content, labelId, onAnswerChange, phase }: M
   );
 }
 
-/** The molecule to build, or explored on an explanation screen as one complete build of it. */
 export function MoleculeBuilderActivity(props: MoleculeProps) {
   const target = parseMolecularFormula(props.content.fields.formula) ?? {};
 

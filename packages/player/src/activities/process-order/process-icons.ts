@@ -119,7 +119,6 @@ import {
   Zap,
 } from "lucide-react";
 
-/** Every icon a process step can name, drawn from Lucide. Core only accepts these names. */
 export const PROCESS_ICONS: Record<ProcessIconName, LucideIcon> = {
   activity: Activity,
   apple: Apple,

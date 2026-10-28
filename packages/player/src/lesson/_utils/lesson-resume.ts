@@ -3,7 +3,6 @@ import { type LessonPlayerState } from "../lesson-player-state";
 import { type LessonRunAnswers } from "../lesson-player-types";
 import { isRetryStep } from "./lesson-steps";
 
-/** Each answered screen's first verdict, in the order the learner answered them. */
 export function getRunVerdicts(answers: LessonRunAnswers): Record<string, boolean> {
   return Object.fromEntries(
     answers
@@ -14,7 +13,6 @@ export function getRunVerdicts(answers: LessonRunAnswers): Record<string, boolea
   );
 }
 
-/** Checks missed the first time and not answered again: they come back at the end of the lesson. */
 function getMissedOnce({
   answers,
   state,
@@ -30,16 +28,11 @@ function getMissedOnce({
   });
 }
 
-/** Screens answered more than once: their one retry is used. */
 function getRetried(answers: LessonRunAnswers): string[] {
   const stepIds = answers.map((answer) => answer.stepId);
   return [...new Set(stepIds.filter((stepId, index) => stepIds.indexOf(stepId) !== index))];
 }
 
-/**
- * Where a resumed lesson opens: the first screen still to answer (a missed check's second try
- * counts as one), after the reading that leads to it. The end of the queue when nothing is left.
- */
 function getResumePosition({
   answered,
   lessonLength,
@@ -72,12 +65,6 @@ function getResumePosition({
   return readingBefore === -1 ? 0 : open - readingBefore;
 }
 
-/**
- * A lesson the learner comes back to (a reload, or closing it and opening it again while its run is
- * still open) continues where they left off: the screens they answered count with their first
- * answer, a check they missed once comes back at the end, and the lesson opens at the first screen
- * still to answer. A run with every screen answered is ready to finish.
- */
 export function resumeLesson(
   state: LessonPlayerState,
   answers: LessonRunAnswers,

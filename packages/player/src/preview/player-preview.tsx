@@ -14,7 +14,6 @@ import { rightAnswer } from "./preview-answers";
 import { type PreviewState } from "./preview-catalog";
 import { localAdapters } from "./preview-lesson";
 
-/** A link that stays on the preview: following it would leave the screen being looked at. */
 function PreviewLink({
   "aria-keyshortcuts": keyShortcuts,
   children,
@@ -35,7 +34,6 @@ function PreviewLink({
   );
 }
 
-/** Without the speech service, sounds don't play: their buttons say so. */
 const noVoice: VoiceText = () => Promise.resolve({ limit: null, status: "failed" });
 
 const ROUTES = { exit: "/", exitTo: null, nextLesson: null, signUp: "/", upgrade: "/" } as const;
@@ -44,10 +42,6 @@ function noop() {
   return null;
 }
 
-/**
- * The local adapters, plus written answers given full credit without judging key points, since
- * only the server grades them.
- */
 function previewAdapters(lesson: PlayableLibraryLesson): LessonPlayerAdapters {
   const local = localAdapters(lesson);
 
@@ -76,12 +70,10 @@ function previewAdapters(lesson: PlayableLibraryLesson): LessonPlayerAdapters {
         status: "checked",
       });
     },
-    // No picture is ever drawn here, so a screen waiting on one keeps waiting, as it looks then.
     getLessonPictures: () => Promise.resolve([]),
   };
 }
 
-/** Checked gallery screens use only this preview's in-memory adapters, never an AI endpoint. */
 function CheckPreviewAnswer({ enabled }: { enabled: boolean }) {
   const { actions } = useLessonPlayer();
   const checked = useRef(false);
@@ -97,15 +89,6 @@ function CheckPreviewAnswer({ enabled }: { enabled: boolean }) {
   return null;
 }
 
-/**
- * One screen of the player's catalog (`previewEntries`) played in the real player, with the
- * server stood in for: answering, read, explored on an explanation screen, or checked with its
- * right answer. For the playground app; nothing it does is saved.
- *
- * ```tsx
- * <PlayerPreview lesson={previewLesson(entry, "checked")} state="checked" />
- * ```
- */
 export function PlayerPreview({
   lesson,
   state,

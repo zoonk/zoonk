@@ -11,7 +11,6 @@ import {
 } from "./player-choice-scene";
 import { StepImageView } from "./step-image";
 
-/** A choice question's picture, above its question, capped in height so the options stay in reach. */
 function ChoiceStepImage({ image }: { image: ExerciseImage }) {
   return (
     <div
@@ -23,13 +22,6 @@ function ChoiceStepImage({ image }: { image: ExerciseImage }) {
   );
 }
 
-/**
- * Shared layout for choice-based language steps: an optional picture and situation, the question
- * and the options, with numeric keyboard shortcuts and toggle-to-unselect. The picture and the
- * situation come first, right above the question, on every screen size. Once checked, the options
- * show the right answer and a wrong pick. Each step kind provides a thin wrapper that parses its
- * content and builds the answer shape.
- */
 export function ChoiceStepLayout({
   context,
   image,

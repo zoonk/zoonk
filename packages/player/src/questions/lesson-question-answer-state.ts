@@ -75,7 +75,6 @@ function reduceAnswerStarted({
   };
 }
 
-/** The answer as the server saved it, links checked, in place of what streamed. */
 function reduceAnswerSaved({
   action,
   state,
@@ -152,7 +151,6 @@ export function isLessonQuestionAnswerAction(
   return LESSON_QUESTION_ANSWER_ACTION_TYPES.has(action.type);
 }
 
-/** An answer on its way: started, streamed, saved, then finished or failed. */
 export function reduceLessonQuestionAnswerAction({
   action,
   state,

@@ -14,7 +14,6 @@ type Fact = State["facts"][number];
 
 const PERCENT = 100;
 
-/** The change in words, computed from core's ratio: "8.3 times less", "+15%" or "No change". */
 function useChangeLabel() {
   const t = useExtracted();
   const format = useFormatNumber();
@@ -34,11 +33,6 @@ function useChangeLabel() {
   };
 }
 
-/**
- * Starts the after bars at the before length and lets them move to their own on the next frame,
- * so revealing the after state shows the change happen. With reduced motion there's no
- * transition, so they simply appear at their length.
- */
 function useSettled(): boolean {
   const [isSettled, setIsSettled] = useState(false);
 
@@ -108,11 +102,6 @@ function FactRow({
   );
 }
 
-/**
- * One state: its label, each fact with a bar on the scale it shares with the other state, and
- * what it looked like. The after state is tinted so the two read as a pair; once checked, its
- * facts carry the change code computed.
- */
 export function BeforeAfterState({
   highlightId,
   isAfter,
@@ -124,7 +113,6 @@ export function BeforeAfterState({
   highlightId: string | null;
   isAfter: boolean;
   other: State;
-  /** After divided by before per fact, shown once checked. */
   ratios: Record<string, number | null> | null;
   ref?: React.Ref<HTMLElement>;
   state: State;

@@ -7,7 +7,6 @@ import { ArgumentCandidate, type ArgumentPart } from "./argument-parts";
 type Quote = { citation: string; id: string; quote: string };
 type Reasoning = { id: string; text: string };
 
-/** The options for the part waiting for a pick: the quotes first, then the reasoning. */
 export function ArgumentCandidates({
   evidence,
   onChoose,

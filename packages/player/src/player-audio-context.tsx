@@ -21,14 +21,6 @@ type PlayerAudioContextValue = {
 
 const PlayerAudioContext = createContext<PlayerAudioContextValue | null>(null);
 
-/**
- * Shares the active step's main audio prompt between duplicate controls.
- *
- * Vocabulary, alphabet, and listening screens can show the same play action in
- * the step content and in the mobile bottom bar. Keeping playback here makes
- * those controls reflect the same playing state instead of creating two
- * independent audio elements for one prompt.
- */
 export function PlayerAudioProvider({
   audioUrl,
   autoPlayAudio,
@@ -50,11 +42,6 @@ export function PlayerAudioProvider({
 
   const isPlaying = Boolean(audioUrl && playingAudioUrl === audioUrl);
 
-  /**
-   * Starts the active prompt and records that this step already had its automatic
-   * or manual playback attempt. That prevents an opt-in click or pause from
-   * immediately triggering another autoplay attempt for the same prompt.
-   */
   const startAudio = useCallback(
     async ({
       shouldEnableAutoplay,
@@ -104,7 +91,6 @@ export function PlayerAudioProvider({
 
     void startAudio({ shouldEnableAutoplay: false, targetAudioUrl: audioUrl });
 
-    /** Cleanup releases the audio source, so a new effect setup must be able to try again. */
     return () => {
       hasHandledAudioPromptRef.current = false;
     };
@@ -118,13 +104,7 @@ export function PlayerAudioProvider({
   return <PlayerAudioContext value={value}>{children}</PlayerAudioContext>;
 }
 
-/**
- * Returns shared prompt-audio controls when a button targets the active step.
- *
- * Buttons outside the active step, such as word-bank option sounds, should keep
- * their local playback hook. Returning null lets those buttons continue using
- * their existing standalone behavior.
- */
+/** Use local playback for option sounds; this hook shares controls only for the active prompt. */
 export function useSharedPlayerAudio(audioUrl: string) {
   const context = useContext(PlayerAudioContext);
 
@@ -135,16 +115,10 @@ export function useSharedPlayerAudio(audioUrl: string) {
   return { isPlaying: context.isPlaying, toggle: () => context.toggleAudio(audioUrl) };
 }
 
-/** The active step's prompt audio (a word, a letter, a sentence), or null without one. */
 export function usePromptAudioUrl(): string | null {
   return useContext(PlayerAudioContext)?.audioUrl ?? null;
 }
 
-/**
- * Connects the prompt-audio keyboard shortcut to the provider-owned audio
- * controller. Keeping this as a hook inside PlayerAudioProvider makes the
- * shortcut part of the same state owner as desktop and mobile play buttons.
- */
 function usePlayerAudioKeyboardShortcut({
   audioUrl,
   onToggleAudio,

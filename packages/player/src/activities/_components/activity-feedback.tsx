@@ -20,7 +20,6 @@ function FeedbackText({ children }: { children: string }) {
   );
 }
 
-/** The chosen option's reason; after a wrong pick, also the right option and why it's right. */
 function ChoiceFeedback({ answer, check }: { answer: ActivityAnswer | null; check: ChoiceCheck }) {
   const t = useExtracted();
 
@@ -50,7 +49,6 @@ function ChoiceFeedback({ answer, check }: { answer: ActivityAnswer | null; chec
   );
 }
 
-/** The learner's number next to the one code computed, then how it's worked out. */
 function NumericFeedback({
   answer,
   check,
@@ -96,11 +94,6 @@ function NumericFeedback({
   );
 }
 
-/**
- * The verdict and the why after an activity's check, on the same feedback panel as every other
- * answer. It reads the check's own explanation or option reasons and code's computed answer, never
- * a model's judgment of the learner.
- */
 export function ActivityFeedback({
   answer,
   content,

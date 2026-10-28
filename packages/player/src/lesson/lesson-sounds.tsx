@@ -4,10 +4,6 @@ import { useEffect, useRef } from "react";
 import { playLessonSound } from "./_utils/lesson-sounds";
 import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
 
-/**
- * Plays the optional sounds from Appearance: a chime when an answer is right and another when the
- * lesson ends. It only listens to the player's state, so the reducer stays free of side effects.
- */
 export function LessonSounds() {
   const { soundsEnabled } = useLessonPlayerConfig();
   const { screen, state } = useLessonPlayer();

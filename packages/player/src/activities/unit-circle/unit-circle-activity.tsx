@@ -23,7 +23,6 @@ import {
 type UnitCircleProps = ActivityRendererProps<"unitCircle">;
 type Content = UnitCircleProps["content"];
 
-/** The angle a numeric check asks about, in degrees, and the value it reads there. */
 function checkTarget(content: Content): { degrees: number; output: TrigName } | null {
   const { check, fields } = content;
 
@@ -44,12 +43,6 @@ function valueAt(content: Content, degrees: number, output: TrigName): number | 
   });
 }
 
-/**
- * Turn a point around a circle of radius 1: its height is the sine, its sideways distance the
- * cosine, and the waves they trace draw themselves as it turns. Values come from core's template
- * hook, the same one grading uses. With a numeric check, the value the check reads at the point's
- * angle is the learner's answer.
- */
 export function UnitCircleActivity({
   content,
   expected,
@@ -68,7 +61,6 @@ export function UnitCircleActivity({
   const [degrees, setDegrees] = useState(() => snapAngle(startDegrees, step));
   const isChecked = phase === "checked";
 
-  /* Core returns null for a value the lesson doesn't show, so only shown ones are drawn. */
   const values: Record<TrigName, number | null> = {
     cos: valueAt(content, degrees, "cos"),
     sin: valueAt(content, degrees, "sin"),
@@ -88,7 +80,6 @@ export function UnitCircleActivity({
     }
   }
 
-  /* Only the angle sits by the marked point; the value is in the feedback and said below. */
   const expectedMark =
     isChecked && target && expected?.kind === "numeric"
       ? { degrees: target.degrees, label: formatAngle(target.degrees), value: expected.value }

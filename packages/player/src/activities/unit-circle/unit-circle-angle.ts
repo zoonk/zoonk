@@ -26,10 +26,6 @@ function isMultiple(value: number, step: number): boolean {
   return Math.abs(ratio - Math.round(ratio)) < MULTIPLE_SLACK;
 }
 
-/**
- * The step the point moves in, in degrees: 5° when every angle the lesson names sits on it (so
- * the check's angle can be reached exactly), finer otherwise.
- */
 export function angleStep(anglesInDegrees: readonly number[]): number {
   return (
     ANGLE_STEPS.find((step) => anglesInDegrees.every((angle) => isMultiple(angle, step))) ??
@@ -41,7 +37,6 @@ export function snapAngle(degrees: number, step: number): number {
   return snapToStep(degrees, { max: FULL_TURN, min: 0, step });
 }
 
-/** The angle of a screen point around the center, counterclockwise from the right like on paper. */
 export function pointerAngle(
   center: { x: number; y: number },
   pixel: { x: number; y: number },
@@ -50,7 +45,6 @@ export function pointerAngle(
   return degrees < 0 ? degrees + FULL_TURN : degrees;
 }
 
-/** Arrows turn one step (right and up turn counterclockwise), Page keys an eighth of a turn. */
 export function angleAfterKey({
   degrees,
   key,
@@ -75,10 +69,6 @@ export function angleAfterKey({
   return turn === undefined ? null : snapAngle(degrees + turn, step);
 }
 
-/**
- * An angle in radians as the multiple of π people write, like "5π/6" or "2π", when it is one;
- * null otherwise, so the caller shows a decimal.
- */
 export function piFraction(degrees: number): string | null {
   const turns = degrees / HALF_TURN;
 

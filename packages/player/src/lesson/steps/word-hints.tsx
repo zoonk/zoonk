@@ -20,10 +20,6 @@ function WordHint({
   );
 }
 
-/**
- * How a word is used and how to say it, from the lesson's word notes and pronunciation tips, with
- * the letters and words they quote formatted as the writer marked them.
- */
 export function WordHints({ hints }: { hints: PlayableWordHints }) {
   const t = useExtracted();
 

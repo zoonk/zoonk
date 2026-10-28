@@ -24,14 +24,6 @@ type CodeRunnerProps = ActivityRendererProps<"codeRunner">;
 const RUNTIME_NAMES = { javascript: "JavaScript", python: "Python" } as const;
 const DEFAULT_FILE_NAMES = { javascript: "main.js", python: "main.py" } as const;
 
-/**
- * Real code in the browser: the learner edits the lines that are theirs, runs the program and
- * compares what it prints with what it should print. The output of the last run is the answer,
- * so editing after a run waits for the next run. Likely mistakes explain themselves by what
- * they print; errors point at their line. Explored on an explanation screen, the program starts
- * solved and shows only what it prints.
- */
-/** A saved output from an earlier visit, shown as the last run. */
 function runFromAnswer(answer: CodeRunnerProps["answer"]): ProgramRun | null {
   return answer?.kind === "output"
     ? { error: null, errorOutput: "", output: answer.output, stop: "done" }
@@ -55,7 +47,6 @@ export function CodeRunnerActivity({
   const [run, setRun] = useState<ProgramRun | null>(() => runFromAnswer(answer));
   const editorRun = useEditorRun();
   const { isRunning, isStale } = editorRun;
-  // Explored, the program starts solved: there's nothing to fix, only code to run and change.
   const program = programWithEdits(isExploring ? fields.solution : fields.starterCode, edits);
   const lines = program.split("\n");
   const highlighted = highlightCode(program, fields.language);

@@ -1,4 +1,3 @@
-/** How high a jump arcs for each pixel it covers, and the tallest it gets. */
 const ARC_RISE = 0.45;
 const MAX_ARC_HEIGHT = 64;
 const MIN_ARC_HEIGHT = 18;
@@ -11,11 +10,6 @@ const MAX_LABELLED_TICKS = 13;
 
 type JumpArc = { head: string; labelX: number; labelY: number; path: string };
 
-/**
- * A jump drawn as an arc over the number line from one pixel to another, with an arrowhead that
- * follows the arc's direction where it lands. Longer jumps arc higher, so a chain of jumps reads
- * as separate hops.
- */
 export function jumpArc({
   baseline,
   from,
@@ -43,7 +37,6 @@ export function jumpArc({
   };
 }
 
-/** Every stop of the writer's jumps, starting point first: where each arc begins and ends. */
 export function jumpStops(start: number, moves: readonly { by: number }[]): number[] {
   return moves.reduce<number[]>(
     (stops, move) => {
@@ -54,7 +47,6 @@ export function jumpStops(start: number, moves: readonly { by: number }[]): numb
   );
 }
 
-/** Tick values from min to max; long lines label every other tick so labels never collide. */
 export function numberLineTicks({ max, min, step }: { max: number; min: number; step: number }) {
   const count = Math.floor((max - min) / step + FLOAT_SLACK);
 

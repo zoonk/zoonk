@@ -6,7 +6,6 @@ type Fields = ActivityContentFor<"distributionExplorer">["fields"];
 export type Distribution = Fields["distribution"];
 export type Interval = Fields["handles"];
 
-/** How many standard deviations the axis shows on each side of the mean. */
 const NORMAL_REACH = 3.5;
 const UNIFORM_MARGIN = 0.25;
 const SAMPLES = 120;
@@ -18,7 +17,6 @@ const MULTIPLE_SLACK = 1e-9;
 const SD_TICKS = 3;
 const UNIFORM_TICKS = 4;
 
-/** The height of the curve at a value (the density), for drawing its shape. */
 function densityAt(distribution: Distribution, value: number): number {
   if (distribution.kind === "uniform") {
     const inside = value >= distribution.min && value <= distribution.max;
@@ -29,7 +27,6 @@ function densityAt(distribution: Distribution, value: number): number {
   return Math.exp(-(z * z) / 2) / (distribution.sd * Math.sqrt(2 * Math.PI));
 }
 
-/** The values the axis spans: the bulk of the curve, plus the target and handles if they're wider. */
 export function distributionDomain({
   distribution,
   handles,
@@ -65,7 +62,6 @@ function candidateSteps(span: number): number[] {
     .filter((step) => span / step >= MIN_POSITIONS && span / step <= MAX_POSITIONS);
 }
 
-/** Values a learner would want to land on: the average and whole standard deviations from it. */
 function landmarks(distribution: Distribution): number[] {
   if (distribution.kind === "uniform") {
     return [distribution.min, distribution.max];
@@ -77,11 +73,6 @@ function landmarks(distribution: Distribution): number[] {
   );
 }
 
-/**
- * The step handles snap to: the largest round step that lands exactly on the target (so the
- * check can be reached) and, when it can, on the handles' start, the average and whole standard
- * deviations too.
- */
 export function handleStep({
   distribution,
   domain,
@@ -105,12 +96,10 @@ export function handleStep({
   );
 }
 
-/** The domain widened to whole steps, so every snapped position is a round value. */
 export function snapDomain(domain: NumericDomain, step: number): NumericDomain {
   return [Math.floor(domain[0] / step) * step, Math.ceil(domain[1] / step) * step];
 }
 
-/** The curve's outline between two values, for the line and the shaded area under it. */
 export function densityCurve(
   distribution: Distribution,
   [from, to]: NumericDomain,
@@ -128,7 +117,6 @@ export function densityCurve(
   return xs.map((x) => ({ x, y: densityAt(distribution, x) }));
 }
 
-/** Axis labels: the average and each whole standard deviation, or round values for a uniform. */
 export function distributionTicks(distribution: Distribution, domain: NumericDomain): number[] {
   return distribution.kind === "normal"
     ? landmarks(distribution).filter((value) => value >= domain[0] && value <= domain[1])

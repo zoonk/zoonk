@@ -20,13 +20,9 @@ const TOKEN_CLASSES: Record<CodeTokenKind, string> = {
   string: "text-viz-highlight",
 };
 
-/**
- * Code text shared by every code surface. 16px on phones, where smaller inputs make iOS zoom in,
- * and 14px from `sm` up.
- */
+// Inputs below 16px trigger automatic zoom on iOS.
 const CODE_TEXT = "font-mono text-base leading-7 sm:text-sm sm:leading-6";
 
-/** One line of code, colored. Empty lines keep their height. */
 export function ActivityCodeTokens({ tokens }: { tokens: readonly CodeToken[] }) {
   if (tokens.length === 0) {
     return <span> </span>;
@@ -39,11 +35,6 @@ export function ActivityCodeTokens({ tokens }: { tokens: readonly CodeToken[] })
   ));
 }
 
-/**
- * Where code sits: monospace, never wrapped, scrolling sideways when a line is longer than the
- * screen. Lines inside keep one width, so a highlighted line spans the whole block. It takes focus
- * so keyboard learners can scroll a long line into view with the arrow keys.
- */
 export function ActivityCodeBlock({ className, children, ...props }: React.ComponentProps<"div">) {
   return (
     <div
@@ -67,7 +58,6 @@ function lineText(tokens: readonly CodeToken[]): string {
   return tokens.map((token) => token.text).join("");
 }
 
-/** A numbered line. The number is decoration; screen readers get the code. */
 export function ActivityCodeLine({
   children,
   className,
@@ -100,10 +90,6 @@ export function ActivityCodeLine({
   );
 }
 
-/**
- * A whole read-only program, colored and numbered. `toneOf` marks lines, like the one that just
- * ran or the one with an error.
- */
 export function ActivityCodeListing({
   code,
   label,
@@ -138,11 +124,6 @@ export function ActivityCodeListing({
 const FIELD_RESET =
   "col-start-1 row-start-1 m-0 min-w-0 resize-none overflow-hidden border-0 bg-transparent p-0 whitespace-pre text-transparent caret-foreground outline-none selection:bg-viz-accent-soft placeholder:text-muted-foreground";
 
-/**
- * An editable line of code that stays colored as the learner types: the colored text sits under
- * a transparent input with the same metrics, so the caret and selection line up with it. The line
- * is 44 px tall so it's easy to tap, with both layers centered in it.
- */
 export function ActivityCodeLineInput({
   className,
   language,
@@ -175,11 +156,6 @@ export function ActivityCodeLineInput({
   );
 }
 
-/**
- * A multi-line code editor with the same colored-underlay technique. It grows with its lines
- * instead of scrolling inside, so it never hides what the learner wrote, and is at least 44 px
- * tall so a one-line query is easy to tap.
- */
 export function ActivityCodeEditor({
   className,
   editorRef,
@@ -192,7 +168,6 @@ export function ActivityCodeEditor({
   editorRef?: React.Ref<HTMLTextAreaElement>;
   language: CodeLanguage;
   onChange: (value: string) => void;
-  /** Ctrl or Cmd + Enter, the usual "run" shortcut in code editors. */
   onSubmit?: () => void;
   value: string;
 }) {
@@ -239,10 +214,6 @@ export function ActivityCodeEditor({
   );
 }
 
-/**
- * Inserts a snippet where the cursor is in a text field and puts the cursor back, for snippet
- * buttons that save typing symbols on a phone keyboard.
- */
 export function useInsertSnippet({
   onChange,
   value,
@@ -253,11 +224,7 @@ export function useInsertSnippet({
   const fieldRef = useRef<HTMLInputElement & HTMLTextAreaElement>(null);
   const cursorRef = useRef<number | null>(null);
 
-  /*
-   * After React writes the new text (which moves the caret to the end), the caret goes back to
-   * just after the snippet. It runs after every render but only acts once per insert, before the
-   * next key or tap, so nothing lands elsewhere.
-   */
+  // React moves the caret when it writes the controlled value; restore it before the next input.
   useLayoutEffect(() => {
     const cursor = cursorRef.current;
     const field = fieldRef.current;
@@ -294,7 +261,6 @@ export function useInsertSnippet({
   return { fieldRef, insert };
 }
 
-/** Buttons that type symbols that are hard to reach on a phone keyboard. */
 export function ActivitySnippetBar({
   disabled,
   label,
@@ -315,7 +281,6 @@ export function ActivitySnippetBar({
     >
       {snippets.map((snippet) => (
         <button
-          // Spoken as it reads, then what it means: "\d, any digit".
           aria-label={
             snippet.name === snippet.label ? undefined : `${snippet.label}, ${snippet.name}`
           }
@@ -323,7 +288,6 @@ export function ActivitySnippetBar({
           disabled={disabled}
           key={snippet.label}
           onClick={() => onInsert(snippet)}
-          // Keeps the text field's cursor where it was while the button is pressed.
           onMouseDown={(event) => event.preventDefault()}
           type="button"
         >

@@ -12,11 +12,8 @@ const HALF_TURN = 180;
 const GRID_STEPS = [10, 5, 2, 1, 0.5, 0.25, 0.1, 0.05, 0.01] as const;
 const MIN_POSITIONS = 4;
 const MARGIN_SHARE = 0.25;
-/** The squares already fill the board around a Pythagoras triangle, so it needs less room. */
 const SQUARES_MARGIN_SHARE = 0.1;
-/** A corner may not flatten its shape below this share of the starting area. */
 const MIN_AREA_SHARE = 0.05;
-/** Corners closer than this many degrees to a straight line read as a missing corner. */
 const MIN_ANGLE = 3;
 
 function sub(to: Vector, from: Vector): Vector {
@@ -45,7 +42,6 @@ function around<T>(items: readonly T[], index: number): T {
   return item;
 }
 
-/** Positive when the corners go counterclockwise (with y pointing up), negative otherwise. */
 function signedArea(points: readonly Vector[]): number {
   return points.reduce((sum, point, index) => sum + cross(point, around(points, index + 1)), 0) / 2;
 }
@@ -61,10 +57,6 @@ export function sideLengths(points: readonly Vector[]): number[] {
   });
 }
 
-/**
- * Each corner's inside angle in degrees, reflex corners included: the turn at each corner,
- * signed by which way the polygon winds, subtracted from a straight line.
- */
 export function interiorAngles(points: readonly Vector[]): number[] {
   const winding = Math.sign(signedArea(points)) || 1;
 
@@ -77,10 +69,6 @@ export function interiorAngles(points: readonly Vector[]): number[] {
   });
 }
 
-/**
- * Rounds parts so they still add up to their rounded total (largest remainder), so a board never
- * shows 45° + 72° + 64° = 180° because each angle was rounded on its own.
- */
 export function roundParts(values: readonly number[], digits: number): number[] {
   const scale = 10 ** digits;
   const scaled = values.map((value) => value * scale);
@@ -99,7 +87,6 @@ export function roundParts(values: readonly number[], digits: number): number[] 
   return floors.map((floor, index) => (floor + (bumped.has(index) ? 1 : 0)) / scale);
 }
 
-/** The four corners of the square standing outward on each side, for the Pythagoras board. */
 export function sideSquares(points: readonly Vector[]): Vector[][] {
   const winding = Math.sign(signedArea(points)) || 1;
 
@@ -117,10 +104,6 @@ export function sideSquares(points: readonly Vector[]): Vector[][] {
   });
 }
 
-/**
- * The grid corners snap to: the largest round step that every starting corner sits on, with at
- * least a few positions across the shape, so each keyboard step lands on a grid point.
- */
 export function gridStep(points: readonly Vector[]): number {
   const values = points.flatMap((point) => [point.x, point.y]);
 
@@ -136,9 +119,6 @@ export function gridStep(points: readonly Vector[]): number {
   );
 }
 
-/**
- * Room to drag around the starting shape (and its squares, for Pythagoras), aligned to the grid.
- */
 export function boardBounds({
   measure,
   points,
@@ -171,7 +151,6 @@ function isInside(point: Vector, bounds: BoardBounds): boolean {
   );
 }
 
-/** Two segments cross when each one's ends sit on opposite sides of the other. */
 function segmentsCross(
   [start, end]: [Vector, Vector],
   [otherStart, otherEnd]: [Vector, Vector],
@@ -188,7 +167,6 @@ function segmentsCross(
   return splitsOther && splitsThis;
 }
 
-/** Whether two sides that don't share a corner cross, which would make a bow tie. */
 function crossesItself(points: readonly Vector[]): boolean {
   const sides = points.map((point, index): [Vector, Vector] => [point, around(points, index + 1)]);
 
@@ -202,10 +180,6 @@ function crossesItself(points: readonly Vector[]): boolean {
   );
 }
 
-/**
- * A shape the board can measure honestly: inside the board, not flattened into a line, no corner
- * so straight it disappears, and no sides crossing.
- */
 function isValidShape({
   bounds,
   measure,
@@ -232,10 +206,6 @@ export function minimumArea(points: readonly Vector[]): number {
   return polygonArea(points) * MIN_AREA_SHARE;
 }
 
-/**
- * Where a corner lands when the learner moves it toward `to`: snapped to the grid and kept on its
- * track. Returns null when that spot would break the shape, so the corner stays where it was.
- */
 export function moveCorner({
   bounds,
   index,
@@ -276,7 +246,6 @@ export function moveCorner({
   return isValidShape({ bounds, measure, minArea, points: next }) ? next : null;
 }
 
-/** Arrow keys move a corner one grid step; on a track, any arrow slides it along the track. */
 export function keyOffset({
   key,
   step,
@@ -303,7 +272,6 @@ export function keyOffset({
   return track === "horizontal" ? { x: amount, y: 0 } : { x: 0, y: amount };
 }
 
-/** Whether any corner sits somewhere other than where the lesson placed it. */
 export function hasMoved(points: readonly Vector[], start: readonly Vector[]): boolean {
   return points.some((point, index) => point.x !== start[index]?.x || point.y !== start[index]?.y);
 }

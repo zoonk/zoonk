@@ -16,18 +16,12 @@ import { StrugglePauseOffer } from "../controls/ask-buddy-offer";
 import { ExampleLine } from "./example-line";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
 
-/**
- * One idea per screen, in the column on every screen size: its picture first, like a story, then
- * the idea, its chart, timeline or an activity to explore, and a personal example. A learner who
- * stays far past its reading time is offered their buddy's help.
- */
 export function ExplanationStepView({ step }: LessonStepViewProps<StepOf<"explanation">>) {
   const { content } = step;
   const hasPicture = useHasStepPicture(step);
   const exploredPictureLost = useIsExploredPictureLost(step);
   const ideaId = useId();
 
-  // The idea comes first for screen readers; the screen still leads with the picture, like a story.
   return (
     <PlayerReadScene className={cn("gap-5 sm:gap-6", hasPicture && "max-sm:pt-0")}>
       <div className="flex w-full flex-col gap-2 sm:gap-3" id={ideaId}>
@@ -46,7 +40,6 @@ export function ExplanationStepView({ step }: LessonStepViewProps<StepOf<"explan
       )}
       <StrugglePauseOffer step={step} />
 
-      {/* Last on the screen, so the line arriving after the screen shows moves nothing. */}
       {content.exampleLineSlot && <ExampleLine key={step.id} stepId={step.id} />}
     </PlayerReadScene>
   );

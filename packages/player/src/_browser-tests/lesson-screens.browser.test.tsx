@@ -12,23 +12,15 @@ import { type ExampleLine, type LessonPlayerAdapters } from "../lesson/lesson-pl
 import { buildLesson } from "../preview/preview-lesson";
 import { explanationStep, languageStep, teachingStep } from "../preview/preview-steps";
 
-/**
- * What a lesson shows around its screens: the header's minutes and the summary card in the menu
- * once the lesson is done (a host's header over its own moment too), the right spelling of a typo,
- * a word's note and sound tip, and the dated Sources chip of a screen built from a public document.
- */
-
 const EXPLANATION_TITLE = "A cloud, not a little ball";
 const PHONE = { height: 844, width: 390 };
 const RIGHT_OPTION = "Where the electron is most likely to be found";
 const RIGHT_TYPED = "It shows where the electron is likely to be";
 
-/** A verdict as the player announces it. */
 function verdict(text: string) {
   return page.getByRole("status").filter({ hasText: text });
 }
 
-/** Answers the electron question right and goes on. */
 async function answerRight() {
   await page.getByRole("radio", { name: RIGHT_OPTION }).click();
   await page.getByRole("button", { name: /^Check/u }).click();
@@ -46,7 +38,6 @@ describe("lesson screens", () => {
 
       await expect.element(page.getByText(EXPLANATION_TITLE)).toBeVisible();
 
-      // The summary states the answers to the questions ahead, so it waits for the lesson's end.
       const knowThis = page.getByRole("menuitem", { name: "I already know this" });
       const summaryItem = page.getByRole("menuitem", { name: "Lesson summary" });
       await page.getByRole("button", { name: "Screen options" }).click();
@@ -79,7 +70,6 @@ describe("lesson screens", () => {
         lesson: buildLesson([teachingStep("check")], {
           summaryIdeas: ["Electrons live in clouds."],
         }),
-        // Like a session block's: the day's header takes the lesson's place once it's saved.
         slots: {
           completion: () => <h2>Block done</h2>,
           completionHeader: ({ completion, menu }) =>
@@ -109,7 +99,6 @@ describe("lesson screens", () => {
       const runId = crypto.randomUUID();
       const saving = Promise.withResolvers<{ status: "incomplete" }>();
 
-      // The second answer never arrived: the server only has the first one.
       const startLesson = vi
         .fn<LessonPlayerAdapters["startLesson"]>()
         .mockResolvedValueOnce(startedRun({ runId }))
@@ -138,7 +127,6 @@ describe("lesson screens", () => {
 
       saving.resolve({ status: "incomplete" });
 
-      // Back on the screen to answer again, whose answer the summary would give away.
       await expect
         .element(
           page.getByText("Your answer here didn't save. Answer it again to finish the lesson."),
@@ -152,7 +140,6 @@ describe("lesson screens", () => {
   it("shows a written answer nothing checked next to the sample answer, without calling it wrong", async () => {
     const lesson = buildLesson([teachingStep("typedAnswer"), teachingStep("summary")]);
 
-    // Past a few graded answers to the screen today, the server didn't check a paraphrase.
     const checkStep = vi.fn<LessonPlayerAdapters["checkStep"]>(() =>
       Promise.resolve({
         result: {
@@ -193,7 +180,6 @@ describe("lesson screens", () => {
   it("counts a typo as right and shows the spelling", async () => {
     const lesson = buildLesson([teachingStep("typedAnswer"), teachingStep("summary")]);
 
-    // The server grades written answers; this is its verdict on a typo of an accepted answer.
     const checkStep = vi.fn<LessonPlayerAdapters["checkStep"]>(() =>
       Promise.resolve({
         result: {
@@ -230,7 +216,6 @@ describe("lesson screens", () => {
     const lesson = buildLesson([teachingStep("typedAnswer"), teachingStep("summary")]);
     const answer = "It show where the electron is likely to be";
 
-    // The server's verdict on a language answer that states every idea with one form mistake.
     const checkStep = vi.fn<LessonPlayerAdapters["checkStep"]>(() =>
       Promise.resolve({
         result: {
@@ -261,7 +246,6 @@ describe("lesson screens", () => {
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(verdict("Almost there")).toBeVisible();
 
-    // The mistake as a diff: what they wrote, then its right form.
     const corrections = page.getByRole("status").getByRole("listitem");
     await expect.element(corrections.nth(0)).toMatchTextContent("Your answer: It show");
     await expect.element(corrections.nth(1)).toMatchTextContent("Correct answer: It shows");
@@ -276,7 +260,6 @@ describe("lesson screens", () => {
     const feedback =
       "Right: it's where the electron is likely to be. Its exact path can't be known.";
 
-    // The grader's verdict on an answer that shows the idea but leaves out one key point.
     const checkStep = vi.fn<LessonPlayerAdapters["checkStep"]>(() =>
       Promise.resolve({
         result: {
@@ -308,7 +291,6 @@ describe("lesson screens", () => {
     await expect.element(verdict("Correct!")).toBeVisible();
     await expect.element(page.getByRole("status").getByText(feedback)).toBeVisible();
 
-    // No "missing" list under "Correct!": the feedback names the detail instead.
     await expect.element(page.getByText("1 of 2 key points")).not.toBeInTheDocument();
     await expect.element(page.getByText("Missing:")).not.toBeInTheDocument();
   });
@@ -324,7 +306,6 @@ describe("lesson screens", () => {
     await expect.element(page.getByRole("region", { name: "Vocabulary: rent" })).toBeVisible();
     await expect.element(page.getByText("aluguel", { exact: true })).toBeVisible();
     await expect.element(page.getByText("Não confunda com renda, que é income.")).toBeVisible();
-    // Writers mark the word's letters as code and quotes in italics: shown formatted, never raw.
     await expect.element(page.getByText("O r do começo é suave, não como em rato.")).toBeVisible();
     await expect.element(page.getByText("r", { exact: true })).toHaveProperty("tagName", "CODE");
     await page.getByRole("button", { name: /^Next/u }).click();
@@ -340,7 +321,6 @@ describe("lesson screens", () => {
   });
 
   it("asks which one a definition means when the lesson is in the learner's own language", async () => {
-    // An IELTS candidate reading the app in English learns English words from definitions.
     const rent = { translation: "money you pay each month to live somewhere", word: "rent" };
 
     renderLessonPlayer({
@@ -383,7 +363,6 @@ describe("lesson screens", () => {
       .element(source.getByRole("link", { name: "Open the source" }))
       .toHaveAttribute("href", fromLaw.citation.url);
 
-    // Closing it leaves the lesson where it was.
     await press("Escape");
     await expect.element(source).not.toBeInTheDocument();
     await expect.element(page.getByText(EXPLANATION_TITLE)).toBeVisible();
@@ -415,7 +394,6 @@ describe("lesson screens", () => {
       [interest.id]: "Your scooter's 12 payments of $110 for $1,200 add $120 of interest.",
     };
 
-    // The server writes a lesson's lines together, each a different moment, or none.
     const getExampleLine = vi.fn<NonNullable<LessonPlayerAdapters["getExampleLine"]>>(
       ({ stepId }) => Promise.resolve({ line: lines[stepId] ?? null }),
     );
@@ -434,7 +412,6 @@ describe("lesson screens", () => {
     await expect.element(example).toHaveTextContent(lines[interest.id] ?? "");
     await page.getByRole("button", { name: /^Next/u }).click();
 
-    // Written as none: the screen stays as it is.
     await expect.element(page.getByText("Markups", { exact: true })).toBeVisible();
     await vi.waitFor(() => expect(getExampleLine).toHaveBeenCalledWith({ stepId: markup.id }));
     await expect.element(example).not.toBeInTheDocument();
@@ -460,7 +437,6 @@ describe("lesson screens", () => {
     const writing = Promise.withResolvers<ExampleLine | null>();
     const lessonLines = { written: false };
 
-    // Until the lesson's lines are written no screen has one; then each has its own or none.
     const getExampleLine = vi.fn<NonNullable<LessonPlayerAdapters["getExampleLine"]>>(
       ({ stepId }) =>
         Promise.resolve({ line: lessonLines.written && stepId === discount.id ? line : null }),
@@ -475,12 +451,10 @@ describe("lesson screens", () => {
       lesson,
     });
 
-    // Opening the lesson never starts AI work; the learner's first action does.
     await expect.element(page.getByText("Percents", { exact: true })).toBeVisible();
     expect(requestExampleLine).not.toHaveBeenCalled();
     await page.getByRole("button", { name: /^Next/u }).click();
 
-    // The screen shows at once, with nothing to tap, and its line arrives once it's written.
     const example = page.getByRole("complementary", { name: "Your example" });
     await expect.element(page.getByText("Discounts", { exact: true })).toBeVisible();
     expect(requestExampleLine).toHaveBeenCalledExactlyOnceWith({ stepId: discount.id });
@@ -491,7 +465,6 @@ describe("lesson screens", () => {
     writing.resolve({ line });
     await expect.element(example).toHaveTextContent(line);
 
-    // Nothing the learner shared fits this screen, so it shows nothing at all.
     await page.getByRole("button", { name: /^Next/u }).click();
     await expect.element(page.getByText("Interest", { exact: true })).toBeVisible();
     await vi.waitFor(() => expect(getExampleLine).toHaveBeenCalledWith({ stepId: interest.id }));
@@ -536,7 +509,6 @@ describe("lesson screens", () => {
     await page.getByRole("button", { name: /^Next/u }).click();
     await expect.element(page.getByText("A discount lowers the price.")).toBeVisible();
 
-    // Read once the write settled, the screen has no line, and nothing says so.
     await vi.waitFor(() => expect(readAfterWrite).toHaveBeenCalledWith());
     await expect.element(page.getByRole("button", { name: /example/iu })).not.toBeInTheDocument();
 
@@ -555,7 +527,6 @@ describe("lesson screens", () => {
       teachingStep("check"),
     ]);
 
-    // A quick explanation asks for its outline; other lessons keep the aside for the buddy.
     renderLessonPlayer({ lesson, outline: true });
 
     const outline = page
@@ -572,7 +543,6 @@ describe("lesson screens", () => {
     await expect.element(row("Molecules that spin")).not.toHaveAttribute("aria-current");
     await expect.element(row("Molecules that spin").getByText(", read")).toBeInTheDocument();
 
-    // The question at the end shows the last screen it's about instead.
     await page.getByRole("button", { name: /^Next/u }).click();
     await expect.element(outline).not.toBeInTheDocument();
 

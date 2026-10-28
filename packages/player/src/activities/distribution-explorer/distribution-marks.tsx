@@ -10,10 +10,8 @@ const PILL_PADDING = 10;
 const CHAR_WIDTH = 8;
 const PILL_OFFSET = 18;
 const TICK_OFFSET = 18;
-/** Axis labels sit a little lower than the pills' middle, level with their text. */
 const TICK_DROP = 4;
 const TARGET_LABEL_RISE = 4;
-/** Axis labels closer than this to a handle hide behind its pill. */
 const TICK_CLEARANCE = 28;
 const TAIL_GAP = 6;
 const TAIL_RISE = 14;
@@ -23,10 +21,6 @@ function pillWidth(label: string): number {
   return label.length * CHAR_WIDTH + 2 * PILL_PADDING;
 }
 
-/**
- * One of the two handles: a line across the curve with its value in a pill on the axis. It's a
- * slider for keyboards and screen readers and a drag target for pointers.
- */
 export function DistributionHandle({
   disabled,
   label,
@@ -84,7 +78,6 @@ export function DistributionHandle({
   );
 }
 
-/** The baseline and its labels (the average and whole SDs), hidden where a handle's pill sits. */
 export function DistributionTicks({
   format,
   handles,
@@ -120,7 +113,6 @@ export function DistributionTicks({
   );
 }
 
-/** The share of values beyond each handle, just outside it, when there's room to read it. */
 export function DistributionTails({
   below,
   above,
@@ -154,7 +146,6 @@ export function DistributionTails({
   );
 }
 
-/** Once checked, the range the check is about, outlined with its share. */
 export function DistributionTarget({
   label,
   target,
@@ -186,7 +177,6 @@ export function DistributionTarget({
   );
 }
 
-/** A dashed line at the average, the middle of a normal curve. */
 export function DistributionMean({ value }: { value: number }) {
   const { x, y } = usePlotScales();
   const [bottom, top] = y.range;

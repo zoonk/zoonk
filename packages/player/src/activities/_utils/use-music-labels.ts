@@ -4,10 +4,6 @@ import { type ChordQuality } from "@zoonk/core/library/activities/music";
 import { useExtracted, useLocale } from "next-intl";
 import { displayNoteName } from "./music-notes";
 
-/**
- * Note names as the learner reads them (E♭, or H in German) and as a screen reader says them
- * ("E flat"). Names come in with "#" and "b" and an optional octave, like "Eb4".
- */
 export function useNoteNames() {
   const t = useExtracted();
   const locale = useLocale();
@@ -30,7 +26,6 @@ export function useNoteNames() {
   return { display, spoken };
 }
 
-/** A chord's full name, like "C minor", with the root shown as the learner reads notes. */
 export function useChordName() {
   const t = useExtracted();
   const { display } = useNoteNames();

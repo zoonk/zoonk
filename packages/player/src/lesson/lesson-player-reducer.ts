@@ -77,7 +77,6 @@ function confirmCheck(
 ): LessonPlayerState {
   const current = state.results[action.stepId];
 
-  // The screen was answered again since: what the server says about the earlier answer is old.
   if (!current || current.attemptId !== action.attemptId) {
     return state;
   }
@@ -90,17 +89,12 @@ function confirmCheck(
   };
 }
 
-/** A typed or spoken answer is being graded: the screen waits for the verdict. */
 function startChecking(state: LessonPlayerState): LessonPlayerState {
   return state.phase === "playing"
     ? { ...state, checkFailed: false, checkIssue: null, phase: "checking" }
     : state;
 }
 
-/**
- * The server didn't grade the answer: the learner can try again, told why when it wasn't the
- * connection (nothing heard, or their small AI help needs a break or is used up).
- */
 function failCheck(state: LessonPlayerState, action: ActionOf<"checkFailed">): LessonPlayerState {
   if (state.phase !== "checking") {
     return state;
@@ -116,7 +110,6 @@ function setCompletionStatus(
   return state.completion ? { ...state, completion: { ...state.completion, status } } : state;
 }
 
-/** Whether two sets of first verdicts are the same answers. */
 function isSameProgress(a: Record<string, boolean>, b: Record<string, boolean>): boolean {
   const entries = Object.entries(a);
 
@@ -125,7 +118,6 @@ function isSameProgress(a: Record<string, boolean>, b: Record<string, boolean>):
   );
 }
 
-/** The lesson from the top, continued from the run's answers. */
 function resumeFrom(state: LessonPlayerState, answers: LessonRunAnswers): LessonPlayerState {
   const fresh = createInitialState(
     { id: state.lessonId, steps: Object.values(state.steps) },
@@ -155,15 +147,9 @@ function resumeFrom(state: LessonPlayerState, answers: LessonRunAnswers): Lesson
     unavailableStepIds: state.unavailableStepIds,
   };
 
-  // Rebuild the undo from reconciled progress, so it never returns to an already answered screen.
   return writingRestore ? skipWriting(resumed, { opening: true }) : resumed;
 }
 
-/**
- * The run started. When it already holds answers the screen doesn't show (the learner came back
- * to an open run), the lesson continues from them. Once the learner answered anything here, their
- * screen leads.
- */
 function startRun(state: LessonPlayerState, action: ActionOf<"runStarted">): LessonPlayerState {
   const startedAt = Date.parse(action.startedAt);
 
@@ -187,20 +173,11 @@ function startRun(state: LessonPlayerState, action: ActionOf<"runStarted">): Les
   return resumeFrom(started, answers);
 }
 
-/**
- * The server couldn't finish the lesson because an answer the screens show never reached it: the
- * lesson goes back to the first screen it's missing, never to a save that can't succeed. A
- * question left out because its picture was missing stays out of the run, as the server leaves it
- * out once its picture comes late (`isPictureLateForRun`). Only when nothing else is missing does
- * the server still ask for one: its picture came within its wait and this screen never got it, so
- * the question comes back with it.
- */
 function resyncRun(state: LessonPlayerState, action: ActionOf<"runResynced">): LessonPlayerState {
   if (state.phase !== "completed") {
     return state;
   }
 
-  /** A host returning another sitting cannot describe the answers or omissions of this run. */
   if (
     state.run.status === "started" &&
     action.runId !== undefined &&
@@ -237,15 +214,10 @@ function completionSaved(
     : state;
 }
 
-/** A verdict that lands after the lesson ended changes nothing. */
 function recordVerdict(state: LessonPlayerState, action: ActionOf<"checkResolved">) {
   return state.phase === "completed" ? state : resolveCheck(state, action);
 }
 
-/**
- * The one lesson reducer: every screen kind. It has no idea how the lesson looks; the player's
- * parts read its state. Network work happens outside it and reports back through actions.
- */
 export function lessonPlayerReducer(
   state: LessonPlayerState,
   action: LessonPlayerAction,

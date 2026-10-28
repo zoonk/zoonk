@@ -4,11 +4,6 @@ import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
 import { teachingStep } from "../preview/preview-steps";
 
-/**
- * A lesson built from the learner's own material says where each screen comes from: the slide it
- * cites, or that an explanation no slide supports isn't in their material.
- */
-
 const NOT_IN_MATERIAL = "Not in your material";
 
 describe("a lesson built from the learner's material", () => {

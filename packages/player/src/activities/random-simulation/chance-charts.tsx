@@ -50,12 +50,6 @@ function Bars({
   );
 }
 
-/**
- * How often each outcome came up, with the outcomes that count as a hit highlighted (amber, "look
- * here", never the red of wrong). The axis uses every run, so bars grow in place while the
- * simulation fills in. With only two outcomes (one trial a run: a prize or none) a 0 and a 1 say
- * nothing, so each bar says whether it's the hit the chart's label names: "No" and "Yes".
- */
 export function OutcomeHistogram({
   allOutcomes,
   isHit,
@@ -96,9 +90,6 @@ export function OutcomeHistogram({
   );
 }
 
-/**
- * The share of runs that hit, drawn as it settles run after run, against the learner's guess.
- */
 export function RunningShareChart({
   guess,
   guessLabel,

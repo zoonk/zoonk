@@ -2,7 +2,6 @@
 
 import { useExtracted } from "next-intl";
 
-/** Element names for screen readers, which would otherwise read "C" as a letter. */
 export function useElementName(): (element: string) => string {
   const t = useExtracted();
 

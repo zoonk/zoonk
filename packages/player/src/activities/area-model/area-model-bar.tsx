@@ -17,10 +17,6 @@ const PART_TONES = [
   "fill-viz-secondary-soft",
 ] as const;
 
-/**
- * The bar model: one bar for the whole, cut into parts that show their size, with the total
- * bracketed above it.
- */
 export function BarModel({
   bar,
   disabled,

@@ -8,7 +8,6 @@ import {
   SQL_WORKER_SOURCE,
 } from "./sandbox-sources";
 
-/** Messages a sandbox worker sends; `id` ties output to the run that produced it. */
 export type SandboxMessage =
   | { type: "ready" }
   | { type: "loadError"; message: string }
@@ -17,7 +16,6 @@ export type SandboxMessage =
   | { type: "done"; id: number; table?: { columns: string[]; rows: unknown[][] } }
   | { type: "error"; id: number; line?: number | null; message: string };
 
-/** How a run ended, before the page turns it into output for the learner. */
 type SandboxOutcome =
   | { status: "done"; table?: { columns: string[]; rows: unknown[][] } }
   | { status: "error"; line: number | null; message: string }
@@ -32,7 +30,6 @@ const SOURCES: Record<ProgramKind, { module: boolean; source: string }> = {
   sql: { module: false, source: SQL_WORKER_SOURCE },
 };
 
-/** Python and SQL keep one warm worker for the page; JavaScript gets a new one per run. */
 const hosts = new Map<ProgramKind, Host>();
 const runIds = { next: 1 };
 
@@ -84,10 +81,6 @@ function discardHost(kind: ProgramKind, host: Host) {
   }
 }
 
-/**
- * Starts loading a runtime ahead of the first run, so pressing Run doesn't wait for Pyodide or
- * sql.js to download. Resolves to whether it loaded.
- */
 export async function warmUpSandbox(kind: ProgramKind): Promise<boolean> {
   if (kind === "javascript") {
     return true;
@@ -105,17 +98,11 @@ export async function warmUpSandbox(kind: ProgramKind): Promise<boolean> {
 
 type RunRequest = {
   kind: ProgramKind;
-  /** Sent to the worker with the run's id. */
   payload: Record<string, unknown>;
   /** Called with every `output`/`log` message; return false to stop the run (too much output). */
   onMessage: (message: SandboxMessage) => boolean;
 };
 
-/**
- * Runs one program or query in the kind's worker and resolves when it finishes, fails, or runs
- * out of time. A run that times out or floods output terminates its worker; the next run starts
- * a new one.
- */
 export async function runInSandbox({
   kind,
   onMessage,

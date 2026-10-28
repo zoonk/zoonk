@@ -15,10 +15,6 @@ function slotState({ isActive, name }: { isActive: boolean; name: string | undef
   return name ? "filled" : "empty";
 }
 
-/**
- * Which spot it is, said before what it shows (its name, or "Pick a name" while it's the one names
- * go to), so the spot's name always holds its text. An empty spot that shows nothing says so.
- */
 function SpotPlace({ isEmpty, number }: { isEmpty: boolean; number: string }) {
   const t = useExtracted();
 
@@ -29,7 +25,6 @@ function SpotPlace({ isEmpty, number }: { isEmpty: boolean; number: string }) {
   );
 }
 
-/** A spot to fill: tap it to make it the one names go to, or to take its name back off. */
 function SlotButton({
   isActive,
   name,
@@ -74,7 +69,6 @@ function SlotButton({
   );
 }
 
-/** A spot after the check: the learner's name, right or wrong, the right one and the mix-up why. */
 function CheckedSlot({
   correct,
   mixUp,
@@ -129,7 +123,6 @@ export function DiagramSlots({
   slots,
 }: {
   activeKey: string | null;
-  /** Once checked, each spot's mix-up feedback (or null); null while answering. */
   checked: ReadonlyMap<string, string | null> | null;
   onSelect: (key: string) => void;
   placements: Readonly<Record<string, string>>;

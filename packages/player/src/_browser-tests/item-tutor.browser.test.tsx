@@ -9,27 +9,13 @@ import { TUTOR_ANSWER, stubTutorApi } from "../_test-utils/tutor-api";
 import { buildTutor } from "../_test-utils/tutor-config";
 import { getQuestionTutor } from "../questions/item-tutor";
 
-/**
- * The buddy in a run of questions (a session's block, mistakes practice), docked at the foot of
- * the run's aside from `lg`, the harness's own size. The API is faked at the tutor's connection
- * (`stubTutorApi`).
- */
-
-/** The buddy as a session's block and mistakes practice get it from their host. */
 const TUTOR = getQuestionTutor(buildTutor());
 
-/** A question of the item bank, as a run shows it. */
 type RunQuestion = Pick<TutorItem, "itemId" | "text">;
 
 const EVEN = { itemId: crypto.randomUUID(), text: "Which number is even?" };
 const ODD = { itemId: crypto.randomUUID(), text: "Which number is odd?" };
 
-/**
- * A run as a session's block and mistakes practice play it around the buddy: the buddy stays while
- * the question in view changes, Check grades it (a miss) and Continue moves on. Practice asks a
- * missed question again, in a later run or later in the same one. A question can share a text with
- * its set (`material`), read in the aside's body.
- */
 function QuestionRun({ material, questions }: { material?: string; questions: RunQuestion[] }) {
   const [position, setPosition] = useState(0);
   const [answered, setAnswered] = useState(false);
@@ -89,17 +75,14 @@ async function askFromAside(question: string) {
 
 const WHY_MISSED = "Why isn't it 7?";
 
-/** A text the questions of a set share, as long ones are read beside them. */
 const SHARED_TEXT = "Numbers that end in 0, 2, 4, 6 or 8 are even; the others are odd.";
 
-/** Misses the question in view, then asks the buddy why from the aside's composer. */
 async function missAndAskWhy() {
   await page.getByRole("button", { name: "Check" }).click();
   await askFromAside(WHY_MISSED);
   await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
 }
 
-/** Yesterday's conversation about a question: a hint, then why the learner's answer was wrong. */
 function earlierDayTurns(api: ReturnType<typeof stubTutorApi>) {
   return [
     {
@@ -134,7 +117,6 @@ describe("the buddy beside a run of questions", () => {
     expect(api.inputs).toMatchObject([{ context: { answered: false, kind: "item" } }]);
   });
 
-  // Its placeholder only names the buddy, so its name tells a screen reader what a question is about.
   it("names the composer for what the learner asks about: the question, then their answer", async () => {
     stubTutorApi({});
     render(<QuestionRun questions={[EVEN]} />);
@@ -187,8 +169,6 @@ describe("the buddy beside a run of questions", () => {
     await expect.element(conversation.getByText(WHY_MISSED)).toBeVisible();
   });
 
-  // The answer's stream broke after the server saved it, so the buddy read the question again: it
-  // still says it was about the learner's answer.
   it("keeps an answer read again after its stream broke out of the question asked again", async () => {
     const api = stubTutorApi({});
 
@@ -205,7 +185,6 @@ describe("the buddy beside a run of questions", () => {
     await page.getByRole("button", { name: "Check" }).click();
     await page.getByRole("button", { name: "Continue" }).click();
 
-    // Asking opens the conversation again, which reads it again: until then, what it holds shows.
     await expect.poll(() => api.requests.thread).toBe(2);
     const release = api.hold("thread");
     await askFromAside("Any hint?");
@@ -216,8 +195,6 @@ describe("the buddy beside a run of questions", () => {
     await release();
   });
 
-  // Practice asks yesterday's missed question first: what the buddy said about the miss then waits
-  // until today's answer is checked.
   it("keeps an earlier day's talk about the answer out of a question practiced again", async () => {
     const api = stubTutorApi({});
     api.questions = earlierDayTurns(api);
@@ -238,7 +215,6 @@ describe("the buddy beside a run of questions", () => {
     await expect.element(conversation.getByText("About your answer")).toBeVisible();
   });
 
-  // Back from the conversation, the aside's header leads to it again, as a lesson's screen does.
   it("leads back to the question's conversation from the aside's header", async () => {
     stubTutorApi({});
     render(<QuestionRun questions={[EVEN]} />);
@@ -253,8 +229,6 @@ describe("the buddy beside a run of questions", () => {
     await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
   });
 
-  // The conversation docks over the aside's body, where a question's shared text is read: the text
-  // gives way while it's open (drawn over it, it showed through), and comes back after.
   it("docks the conversation over the question's shared text, which comes back after", async () => {
     stubTutorApi({});
     render(<QuestionRun material={SHARED_TEXT} questions={[EVEN]} />);

@@ -3,7 +3,6 @@
 import { type HelpLimit, HelpLimitNotice } from "@zoonk/learn/help-limit";
 import { useLessonPlayerConfig } from "../lesson-player-context";
 
-/** The shared notice for small AI help the lesson can't give now, with the player's links. */
 export function LessonHelpLimitNotice({
   className,
   limit,

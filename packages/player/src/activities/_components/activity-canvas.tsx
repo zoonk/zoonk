@@ -1,10 +1,6 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 
-/**
- * The surface a template draws on, labelled by the activity's prompt. Renderers only use semantic
- * colors, so it follows light and dark.
- */
 export function ActivityCanvas({
   className,
   labelId,
@@ -20,10 +16,6 @@ export function ActivityCanvas({
   );
 }
 
-/**
- * What the canvas shows, in words, for screen readers: every renderer describes its current state
- * here (the curve's shape, where the dot is, which side is heavier), so nothing is visual only.
- */
 export function ActivityTextAlternative({
   className,
   ...props
@@ -37,7 +29,6 @@ export function ActivityTextAlternative({
   );
 }
 
-/** A small label above a canvas element, like an axis name or a legend. */
 export function ActivityCanvasLabel({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
@@ -48,7 +39,6 @@ export function ActivityCanvasLabel({ className, ...props }: React.ComponentProp
   );
 }
 
-/** The value the learner is changing, big enough to read at a glance. */
 export function ActivityReadout({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p

@@ -43,7 +43,6 @@ function getOptionIds(step: PlayableLibraryStep): string[] {
   return [];
 }
 
-/** The first screen's answer: an option id picked on the public page, or a whole answer. */
 function toFirstAnswer({
   first,
   firstAnswer,
@@ -64,12 +63,6 @@ function toFirstAnswer({
     : { kind: "check", optionId: firstAnswer };
 }
 
-/**
- * A lesson the learner comes back to opens where they left off (`resume`, the open run's answers
- * read with the page). A public lesson page lets a visitor answer the first question right there:
- * the player opens with that answer picked. A hook reveals its local answer immediately; a
- * graded question waits for Check because grading can start model work.
- */
 function createStartingState({
   firstAnswer,
   lesson,
@@ -88,7 +81,6 @@ function createStartingState({
     return resumeLesson(createInitialState(lesson, support), resume);
   }
 
-  /** The visitor already answered the first screen, so the lesson keeps its own order. */
   const state = createInitialState(lesson);
 
   return lessonPlayerReducer(state, { answer, stepId: first.id, type: "selectAnswer" });
@@ -96,42 +88,21 @@ function createStartingState({
 
 export type LessonPlayerProviderProps = {
   adapters: LessonPlayerAdapters;
-  /**
-   * The learner's colleagues in challenges, kept with their plan. Without it, a challenge's
-   * colleagues go by role.
-   */
   challengeTeam?: ChallengeTeam | null;
   children: React.ReactNode;
-  /**
-   * The first screen's answer, selected when the player opens: the option a visitor picked on
-   * the public page, or a whole answer for the playground. Only a hook reveals without Check.
-   */
+  /** Only a hook reveals `firstAnswer` immediately; graded screens still require Check. */
   firstAnswer?: LessonPlayerAnswer | string | null;
   lesson: PlayableLibraryLesson;
   linkComponent: PlayerLinkComponent;
-  /** Called by Escape. */
   onExit: () => void;
-  /**
-   * The lesson's outline beside its reading screens from `lg`: for a short story read screen by
-   * screen, such as a quick explanation, whose aside would otherwise stay empty.
-   */
   outline?: boolean;
-  /**
-   * The answers of the learner's open run of this lesson, read with the page, so a lesson they
-   * come back to opens where they left off before the run starts again. Empty for a new run.
-   */
   resume?: LessonRunAnswers;
   routes: LessonPlayerRoutes;
   slots?: LessonPlayerSlots;
-  /** Plays Appearance's sounds for right answers and finishing. Off unless the host turns it on. */
   soundsEnabled?: boolean;
-  /**
-   * How the lesson opens for this learner (new skills explanation first, partly known ones question
-   * first), read with the page; without it, the lesson plays in its own order.
-   */
+  /** Omit `support` to preserve the lesson's authored order. */
   support?: LessonSupport | null;
   track?: TrackEvent;
-  /** The tutor in the step. Without it, the lesson plays without questions. */
   tutor?: LessonTutorConfig;
   viewer: { hasSession: boolean };
 };
@@ -143,12 +114,6 @@ function noTracking() {
 const NO_SLOTS: LessonPlayerSlots = {};
 const NO_ANSWERS: LessonRunAnswers = [];
 
-/**
- * Plays one Library lesson. The host supplies the lesson, how to reach the server (adapters), its
- * links and routes; everything else, including the run on the server, lives here. A learner or
- * guest with a session starts the run as the lesson opens; a host that shows a lesson without one
- * starts it on the first answer (the web sends screens only with a session).
- */
 export function LessonPlayerProvider({
   adapters,
   challengeTeam = null,
@@ -190,7 +155,6 @@ export function LessonPlayerProvider({
   const pictureSteps = useMemo(() => Object.values(state.steps), [state.steps]);
 
   const onOpen = useEffectEvent(() => {
-    // "Can't write now" from earlier today, read once the device's storage is there.
     if (isChosenToday(CANT_WRITE_TODAY)) {
       dispatch({ opening: true, type: "skipWriting" });
     }
@@ -198,7 +162,6 @@ export function LessonPlayerProvider({
     const first = lesson.steps[0];
     const answer = state.answers[first?.id ?? ""];
 
-    // A hook only reveals stored words; real checks can grade text or classify a mistake.
     if (first?.kind === "hook" && answer?.kind === "hook" && firstAnswer) {
       actions.check();
       return;

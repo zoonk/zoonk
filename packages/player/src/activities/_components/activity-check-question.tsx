@@ -3,10 +3,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 
 const QUESTION_CLASS = "text-base leading-snug font-semibold";
 
-/**
- * The check's question: it asks about what the learner just saw or did. With `htmlFor` it labels
- * the answer's input.
- */
 export function ActivityCheckQuestion({
   children,
   className,

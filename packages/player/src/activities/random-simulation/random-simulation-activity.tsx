@@ -6,10 +6,6 @@ import { SamplingSimulation } from "./sampling-simulation";
 
 type RandomSimulationProps = ActivityRendererProps<"randomSimulation">;
 
-/**
- * Something random run hundreds of times: how often a hit comes up (guess first, then watch the
- * runs settle near the exact chance), or how the results of samples spread less as samples grow.
- */
 export function RandomSimulationActivity({ content, ...props }: RandomSimulationProps) {
   const { fields } = content;
 

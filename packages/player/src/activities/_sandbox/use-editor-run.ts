@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 
-/** A run may show old output, but only its unchanged editor revision can supply an answer. */
 export function useEditorRun() {
   const revision = useRef(0);
   const active = useRef<number | null>(null);

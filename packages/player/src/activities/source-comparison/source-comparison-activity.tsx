@@ -47,7 +47,6 @@ const PASSAGE_CLASS: Record<PassageState, string> = {
     "decoration-viz-accent/60 hover:bg-accent underline decoration-dotted decoration-2 underline-offset-4",
 };
 
-/** A passage the learner can mark: a checkbox inside the text, so it wraps like the sentence. */
 function Passage({
   disabled,
   onToggle,
@@ -158,11 +157,6 @@ function SourceCard({
   );
 }
 
-/**
- * Two eyewitness sources side by side, to see how who wrote a source shapes what it says. The
- * learner marks passages in each; with a selection check the marked passages are the answer and
- * the check shows which ones the question was about.
- */
 export function SourceComparisonActivity({
   content,
   labelId,

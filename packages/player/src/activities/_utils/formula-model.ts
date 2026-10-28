@@ -5,12 +5,10 @@ type Variable = { initial: number; max: number; min: number; name: string };
 
 export type ModelValues = Readonly<Record<string, number>>;
 
-/** Where every slider starts. */
 export function startingValues(variables: readonly Variable[]): Record<string, number> {
   return Object.fromEntries(variables.map((variable) => [variable.name, variable.initial]));
 }
 
-/** Whether any slider other than `except` moved from where it started. */
 export function othersMoved({
   except,
   values,
@@ -25,10 +23,6 @@ export function othersMoved({
   );
 }
 
-/**
- * An output's curve as one slider sweeps its range while everything else stays at `values`,
- * drawn with core's evaluator like the slider graph.
- */
 export function outputCurve({
   formula,
   values,
@@ -46,7 +40,6 @@ export function outputCurve({
   });
 }
 
-/** Every on/off combination of the events, from all off to all on. */
 export function eventCombinations(names: readonly string[]): Record<string, number>[] {
   return names.reduce<Record<string, number>[]>(
     (combinations, name) =>
@@ -58,10 +51,6 @@ export function eventCombinations(names: readonly string[]): Record<string, numb
   );
 }
 
-/**
- * A y axis that holds every curve the learner can reach by flipping events, so toggling one
- * moves the curve instead of rescaling the whole chart.
- */
 export function stableDomain(curves: readonly (readonly PlotPoint[])[]) {
   return niceDomain(curves.flatMap((curve) => curve.map((point) => point.y)));
 }

@@ -4,7 +4,6 @@ import { useExtracted } from "next-intl";
 import { type Build } from "./molecule-model";
 import { useAtomName } from "./use-atom-name";
 
-/** A build in words: each bond with its order, then any atom with no bonds at all. */
 export function useBuildDescription(): (build: Build) => string {
   const t = useExtracted();
   const nameOf = useAtomName();

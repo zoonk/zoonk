@@ -8,14 +8,8 @@ import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
 import { buildLesson, localAdapters } from "../preview/preview-lesson";
 import { teachingStep } from "../preview/preview-steps";
 
-/**
- * A milestone a lesson played on its own earned opens full screen before the lesson's end, and
- * hands over to it without a blank screen between them.
- */
-
 const RIGHT_OPTION = "Where the electron is most likely to be found";
 
-/** A press in a ceremony's first half second belongs to the screen before it, so it's ignored. */
 const CEREMONY_STEADY_MS = 600;
 
 const LEARN_ADAPTERS: React.ComponentProps<typeof LearnProvider>["adapters"] = {
@@ -28,7 +22,6 @@ const LEARN_ADAPTERS: React.ComponentProps<typeof LearnProvider>["adapters"] = {
   routes: { buddy: "/buddy", journey: "/plan", signUp: "/login", today: "/", upgrade: "/plus" },
 };
 
-/** The lesson saves as the server does, with a new Orange belt reached. */
 function completeWithBelt(lesson: ReturnType<typeof buildLesson>) {
   const local = localAdapters(lesson);
 
@@ -53,10 +46,6 @@ function completeWithBelt(lesson: ReturnType<typeof buildLesson>) {
   });
 }
 
-/**
- * Watches the page from now on, noting whether the ceremony and the lesson's end were ever both
- * there, and whether a change ever left neither.
- */
 function watchHandover() {
   const seen = { both: false, neither: false };
 

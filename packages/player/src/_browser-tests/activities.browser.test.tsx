@@ -130,7 +130,6 @@ describe("lesson activities", () => {
     await page.getByRole("radio", { name: /About 1 in 4/u }).click();
     await checkActivity();
 
-    // A 0 and a 1 would say nothing: the bars read "No" and "Yes" under the chart's "Win the prize".
     await expect.element(page.getByText("No", { exact: true })).toBeVisible();
     await expect.element(page.getByText("Yes", { exact: true })).toBeVisible();
     await expect.element(page.getByText("0", { exact: true })).not.toBeInTheDocument();
@@ -148,7 +147,6 @@ describe("lesson activities", () => {
     const unit = page.getByText("$", { exact: true });
     await expect.element(unit).toBeVisible();
 
-    // Before the field for screen readers, as the feedback writes "$3" after Check.
     expect(unit.element().compareDocumentPosition(field.element())).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING,
     );

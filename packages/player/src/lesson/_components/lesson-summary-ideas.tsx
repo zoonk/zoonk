@@ -1,9 +1,5 @@
 import { LessonRichText } from "./lesson-rich-text";
 
-/**
- * The lesson's ideas, numbered, one sentence each, as flat rows with a hairline between them: on
- * the page at the end of a lesson, and in the summary sheet from its menu.
- */
 export function LessonSummaryIdeas({ ideas }: { ideas: string[] }) {
   return (
     <ol className="divided-rows flex w-full flex-col">

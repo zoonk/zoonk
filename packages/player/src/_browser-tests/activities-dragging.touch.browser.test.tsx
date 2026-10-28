@@ -3,10 +3,8 @@ import { page } from "vitest/browser";
 import { openActivity } from "../_test-utils/activity-player";
 import { holdAndDrag, swipeUpFrom, tap } from "../_test-utils/touch-screen";
 
-/** Far enough to scroll the lesson; a phone scrolls well before this. */
 const SWIPE_PX = 200;
 
-/** Played on a phone's touch screen (the touch instance in vitest.config.mts), with a finger. */
 describe("dragging activity items with a finger", () => {
   it("labeled diagram: a name held and dragged onto a spot labels it", async () => {
     openActivity({ template: "labeledDiagram" });

@@ -7,23 +7,14 @@ import { page } from "vitest/browser";
 import { TestIntl, render } from "../_test-utils/render";
 import { wavClip } from "../_test-utils/speech-clips";
 
-/**
- * A listening exam's recording plays the way the exam plays it: once or twice, from start to end
- * with no pause, and nothing after the last play. A play counts once the sound starts, so one that
- * fails to load costs nothing. In review, the recording plays and pauses freely.
- */
-
-/** Long enough for a recording to play to its end. */
 const PLAY_TIMEOUT = 5000;
 
-/** A real recording the browser plays to its end. */
 function toneUrl(seconds: number): string {
   return URL.createObjectURL(wavClip(seconds));
 }
 
 const RECORDING_URL = toneUrl(0.4);
 
-/** The player as a mock or practice holds it: the parent keeps how many plays were used. */
 function Recording({
   onPlayed,
   played: initial = 0,
@@ -64,7 +55,6 @@ describe("listening recordings", () => {
 
     await page.getByRole("button", { name: "Play the recording" }).click();
 
-    // While it plays there is no pause: the one button waits for the end.
     await expect
       .element(page.getByText("Playing. It doesn't pause, like in the exam."))
       .toBeVisible();
@@ -131,12 +121,10 @@ const USED_UP = "You've used every play. Answer from what you heard.";
 const RESTARTED =
   "The recording stopped before the end, so you can play it once more from the start.";
 
-/** Stops the recording the way the system does mid-play: no learner control does this. */
 function cutOff() {
   document.querySelector("audio")?.pause();
 }
 
-/** A set's recording as practice and mocks get it, before its questions are answered. */
 function setView(url: string) {
   return {
     audio: { durationMs: 400, url },
@@ -162,7 +150,6 @@ describe("a set's recording", () => {
       })
       .toBeVisible();
 
-    // The next question of the set shows the same recording: its play is still used.
     unmount();
     render(<ListeningStimulus set={view} playsKey={playsKey} />);
 
@@ -176,7 +163,6 @@ describe("a set's recording", () => {
     await page.getByRole("button", { name: "Play the recording" }).click();
     await expect.element(page.getByText(USED_UP), { timeout: PLAY_TIMEOUT }).toBeVisible();
 
-    // A later block (a mistake's drill) or a mock asks the same recording: its own plays.
     unmount();
     render(<ListeningStimulus set={view} playsKey={`block-2:${view.title}`} />);
 
@@ -211,7 +197,6 @@ describe("a set's recording", () => {
       .element(page.getByText("Which day does Tom book in the end?"))
       .not.toBeInTheDocument();
 
-    // The learner can read them again while it plays.
     await list.click();
     await expect.element(page.getByText("Which day does Tom book in the end?")).toBeVisible();
   });
@@ -232,8 +217,6 @@ describe("a set's recording", () => {
     await page.getByRole("button", { name: "Play the recording" }).click();
     await expect.element(page.getByText(USED_UP), { timeout: PLAY_TIMEOUT }).toBeVisible();
 
-    // The page comes back from the server, which can't know the plays, and hydrates: the question
-    // on screen stays in view.
     unmount();
     const container = document.createElement("div");
     container.innerHTML = renderToString(<TestIntl>{ui}</TestIntl>);
@@ -266,12 +249,10 @@ describe("a set's recording", () => {
 
     const transcript = page.getByRole("region", { name: "Transcript" });
 
-    // Folded, so the last answer's feedback stays in view.
     await expect.element(transcript.getByText("Receptionist")).not.toBeInTheDocument();
     await transcript.getByRole("button", { name: "Transcript" }).click();
     await expect.element(transcript.getByText("Receptionist")).toBeVisible();
 
-    // One speaker's next paragraph goes on under their name, not a new one.
     expect(transcript.getByText("Tom", { exact: true }).elements()).toHaveLength(1);
 
     await expect
@@ -287,13 +268,11 @@ describe("a set's recording", () => {
     await page.getByRole("button", { name: "Play the recording" }).click();
     await expect.element(page.getByText(PLAYING)).toBeVisible();
 
-    // The system pauses it (a call, the app sent to the background): the play comes back.
     cutOff();
     await expect.element(page.getByText(RESTARTED)).toBeVisible();
     await page.getByRole("button", { name: "Play the recording" }).click();
     await expect.element(page.getByText(PLAYING)).toBeVisible();
 
-    // A second cut-off counts, like any play.
     cutOff();
     await expect.element(page.getByText(USED_UP)).toBeVisible();
     await expect.element(page.getByRole("button", { name: "Play it again" })).toBeDisabled();
@@ -393,7 +372,6 @@ describe("a set's recording", () => {
 
     await page.getByRole("button", { name: "Play the recording" }).click();
 
-    // Stopped right away, well before the 3-second recording's end.
     await expect.element(page.getByText(USED_UP), { timeout: 1000 }).toBeVisible();
     expect(record).toHaveBeenCalledOnce();
     expect(document.querySelector("audio")?.paused).toBe(true);

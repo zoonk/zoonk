@@ -83,7 +83,6 @@ async function waitForPictureDeadline() {
   await act(() => vi.advanceTimersByTimeAsync(WAIT_MS + POLL_MS));
 }
 
-/** Answers the first question and reads on to the end, where the lesson asks to be completed. */
 async function finishLesson({
   current,
   last,
@@ -116,7 +115,6 @@ describe("picture loss during a lesson", () => {
     const { picture, state } = openPictures({ getLessonPictures }, WAIT_MS - POLL_MS / 2);
     await expect.poll(() => getLessonPictures.mock.calls.length).toBeGreaterThan(0);
 
-    // The image lands after the last pre-deadline read. The adapter honors the requested IDs.
     getLessonPictures.mockImplementation(async (stepIds) =>
       stepIds?.includes(picture.id)
         ? [{ image: inlineImage({ alt: "Numbered parts" }), stepId: picture.id }]
@@ -187,7 +185,6 @@ describe("picture loss during a lesson", () => {
         },
       ]);
 
-      // The server has the first answer; only the question that waited for its picture is open.
       startLesson.mockResolvedValue(
         startedRun({ answers: [runAnswer({ stepId: current.id })], runId: resumedRun.runId }),
       );
@@ -327,7 +324,6 @@ describe("picture loss during a lesson", () => {
     const { current, last, picture, state } = openPictures({ completeLesson, getLessonPictures });
     await waitForPictureDeadline();
 
-    // Drawn once its wait was over: the server doesn't ask for it in this run, only the lost answer.
     getLessonPictures.mockResolvedValue([
       {
         image: inlineImage({ alt: picture.content.image?.alt ?? "Numbered parts" }),

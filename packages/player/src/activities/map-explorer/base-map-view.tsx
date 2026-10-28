@@ -23,13 +23,10 @@ export type MapPin = {
   isVisited: boolean;
   label: string;
   number: number;
-  /** Where the pin is drawn, in pixels, after nudging overlapping pins apart. */
   shown: MapPoint;
-  /** Where the place really is, in pixels. */
   spot: MapPoint;
 };
 
-/** The base map itself, cropped to the places and drawn at the canvas's real size. */
 function MapShapes({
   drawing,
   labelText,
@@ -37,7 +34,6 @@ function MapShapes({
 }: {
   drawing: BaseMapDrawing;
   labelText: (key: string | null, text: string) => string;
-  /** Map units per screen pixel, so text and strokes keep their size at any zoom. */
   pixelSize: number;
 }) {
   return (
@@ -106,11 +102,6 @@ function MapShapes({
   );
 }
 
-/**
- * A base map with numbered pins for the places to explore. The drawing is decorative for screen
- * readers; the pins are buttons named after their places, and the text alternative describes
- * the map.
- */
 export function BaseMapView({
   crop,
   drawing,

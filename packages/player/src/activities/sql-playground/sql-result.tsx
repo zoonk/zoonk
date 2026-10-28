@@ -10,10 +10,6 @@ import { SqlRowsTable } from "./sql-table";
 
 type ExpectedRows = Extract<ActivityExpectedAnswer, { kind: "rows" }>;
 
-/**
- * The rows the last run returned. After the check, rows the expected result doesn't have are
- * marked; a result from before the latest edit is dimmed until the next run.
- */
 export function SqlResult({
   expected,
   isStale,
@@ -35,7 +31,6 @@ export function SqlResult({
 
   return (
     <div className="flex flex-col gap-1.5">
-      {/* Only the old rows dim; the line saying what to do stays readable. */}
       <div className={cn("flex flex-col gap-1.5", isStale && "opacity-60")}>
         <ActivityCanvasLabel className="font-medium" role="status">
           {result.columns.length === 0

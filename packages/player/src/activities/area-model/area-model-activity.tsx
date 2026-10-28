@@ -36,7 +36,6 @@ function initialCuts(fields: Fields): SideCuts[] {
   }));
 }
 
-/** The grid keeps the rectangle's proportions within a readable height range. */
 function gridHeight(fields: Fields) {
   return (width: number) => {
     if (fields.model !== "area") {
@@ -54,7 +53,6 @@ function gridHeight(fields: Fields) {
   };
 }
 
-/** Each cell's product (area model) or each part (bar model), row by row. */
 function pieces(sides: readonly { parts: number[] }[]): number[] {
   const [first, second] = sides;
 
@@ -67,11 +65,6 @@ function pieces(sides: readonly { parts: number[] }[]): number[] {
     : first.parts;
 }
 
-/**
- * Splits a rectangle (or a bar) into easy parts by dragging split lines, with each part's size
- * worked out live. The parts always add up to the same total, which is the idea. The canvas
- * never answers a numeric check: the learner adds the parts and types the total.
- */
 export function AreaModelActivity({ content, labelId, phase }: AreaModelProps) {
   const t = useExtracted();
   const format = useFormatNumber();

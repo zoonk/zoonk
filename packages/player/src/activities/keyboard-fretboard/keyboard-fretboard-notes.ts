@@ -20,7 +20,6 @@ import { type ActivityExpected, type ActivityPhase } from "../activity-renderer"
 
 const OCTAVE = 12;
 
-/** The keyboard shows one octave from middle C: every note has one key. */
 export const KEYBOARD_FROM = 60;
 export const KEYBOARD_TO = 71;
 
@@ -51,10 +50,6 @@ function targetSpelling(target: NoteTarget | undefined): string[] {
     : target.notes.map((note) => note.replace(/\d$/u, ""));
 }
 
-/**
- * How each pitch class is spelled on screen: the way the target writes it (Eb in C minor), then
- * the start, then the usual chord-root names.
- */
 export function pitchSpelling(targets: readonly (NoteTarget | undefined)[]) {
   const spelled = new Map(
     targets
@@ -69,14 +64,12 @@ export function pitchSpelling(targets: readonly (NoteTarget | undefined)[]) {
   return (pitch: number): string => spelled.get(pitch % OCTAVE) ?? pitchClassName(pitch);
 }
 
-/** Pressing a key adds its note, or takes it away when it's already there. */
 export function togglePitch(pitches: readonly number[], pitch: number): number[] {
   return pitches.includes(pitch)
     ? pitches.filter((item) => item !== pitch)
     : [...pitches, pitch].toSorted((a, b) => a - b);
 }
 
-/** Keys to mark while answering: pressed notes, and start notes the learner took away. */
 export function answeringMarks({
   pressed,
   start,
@@ -94,7 +87,6 @@ export function answeringMarks({
   ]);
 }
 
-/** Keys to mark after the check: each pressed note right or wrong, and any note missing. */
 export function checkedMarks({
   expected,
   pressed,
@@ -112,26 +104,22 @@ export function checkedMarks({
   ]);
 }
 
-/** The notes of an answer, one per pressed key, named the way core grades them. */
 export function pitchesToNotes(pitches: readonly number[]): string[] {
   return pitches.map((pitch) => midiToNote(KEYBOARD_FROM + pitch));
 }
 
-/** The bass of a guitar shape: the chord's root when the notes form one, else the lowest note. */
 function bassOf(pitches: readonly number[]): number {
   const chord = nameChord(pitches);
   const root = chord ? notesPitchClasses([chord.root])?.[0] : undefined;
   return root ?? pitches[0] ?? 0;
 }
 
-/** A guitar shape for the pressed notes, or null when one hand can't play them. */
 export function voicingFor(pitches: readonly number[]): GuitarVoicing | null {
   return pitches.length === 0
     ? null
     : findGuitarVoicing({ bass: bassOf(pitches), pitchClasses: pitches });
 }
 
-/** The notes a guitar shape plays, as pitch classes. */
 export function voicingPitches(voicing: GuitarVoicing): number[] {
   const pitches = voicing.flatMap((fret, index) =>
     fret === null ? [] : [stringNoteMidi(index, fret) % OCTAVE],
@@ -140,12 +128,10 @@ export function voicingPitches(voicing: GuitarVoicing): number[] {
   return [...new Set(pitches)].toSorted((a, b) => a - b);
 }
 
-/** The notes a guitar shape plays, low to high, as MIDI numbers. */
 export function voicingMidis(voicing: GuitarVoicing): number[] {
   return voicing.flatMap((fret, index) => (fret === null ? [] : [stringNoteMidi(index, fret)]));
 }
 
-/** The window of frets that shows a shape: from the nut unless the shape sits higher up. */
 export function fretWindowStart(voicing: GuitarVoicing | null, span: number): number {
   const fretted = (voicing ?? []).filter((fret): fret is number => fret !== null && fret > 0);
   const highest = Math.max(0, ...fretted);
@@ -153,7 +139,6 @@ export function fretWindowStart(voicing: GuitarVoicing | null, span: number): nu
   return highest <= span ? 1 : Math.min(...fretted);
 }
 
-/** The pitch classes of the correct answer, from core's computed end state. */
 export function expectedPitches(
   expected: ActivityExpected | null,
   fallback: readonly number[],
@@ -161,11 +146,6 @@ export function expectedPitches(
   return expectedInteraction(expected, "pitchClasses")?.pitchClasses ?? [...fallback];
 }
 
-/**
- * Where the notes start: the learner's answer when there is one, else the start chord, else
- * (for a question about the target) the target itself to explore. A target found by ear stays
- * hidden until it's explored or answered.
- */
 export function initialPitches({
   answer,
   content,
@@ -193,10 +173,6 @@ export function initialPitches({
 const MELODY_GAP = 0.7;
 const CHORD_GAP = 0.03;
 
-/**
- * How a target sounds when it's found by ear: a chord struck together, and notes one after the
- * other, each above the one before, so an interval is heard as a leap up.
- */
 export function targetSound(target: NoteTarget): SoundEvent[] {
   if (target.kind === "chord") {
     return together(chordMidis(target.root, target.quality), { gap: CHORD_GAP });

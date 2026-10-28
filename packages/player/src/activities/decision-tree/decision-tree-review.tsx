@@ -5,10 +5,6 @@ import { Check, Dot, X } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type TreeNode, findNode, firstDivergence, walkSteps } from "./decision-tree-walk";
 
-/**
- * After the check: the walk code computed from the case, question by question, with the first
- * place the learner's walk left it.
- */
 export function DecisionTreeReview({
   expectedPath,
   nodes,

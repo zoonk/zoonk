@@ -12,10 +12,6 @@ function StepImageFallback({ prompt }: { prompt: string }) {
   );
 }
 
-/**
- * A language question's picture, or its prompt when the picture is missing or fails to load.
- * Contained, so diagrams and screenshots are not clipped.
- */
 export function StepImageView({ image }: { image: ExerciseImage }) {
   const [errorUrl, setErrorUrl] = useState<string | null>(null);
 

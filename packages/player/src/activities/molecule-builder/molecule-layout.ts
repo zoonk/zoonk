@@ -7,14 +7,12 @@ type LayoutBond = { from: string; to: string };
 
 export const ATOM_RADIUS = 23;
 
-/** Builds are laid out in these units and the drawing scales to the canvas. */
 export const LAYOUT_SIZE: LayoutSize = { height: 240, width: 320 };
 const BOND_LENGTH = 68;
 const MARGIN = ATOM_RADIUS + 10;
 const ITERATIONS = 160;
 const SPRING = 0.12;
 const PUSH = 0.06;
-/** Atoms closer than this push each other apart, so neighbors of one atom spread out. */
 const PUSH_RANGE = 110;
 const DIRECTIONS = 12;
 const GRID_STEP = 24;
@@ -30,7 +28,6 @@ function clampToCanvas(point: LayoutPoint, size: LayoutSize): LayoutPoint {
   };
 }
 
-/** The candidate farthest from every other atom; ties go to the one listed first. */
 function roomiest(candidates: readonly LayoutPoint[], others: readonly LayoutPoint[]): LayoutPoint {
   const room = (point: LayoutPoint) =>
     others.length === 0 ? 0 : Math.min(...others.map((other) => distance(point, other)));
@@ -38,7 +35,6 @@ function roomiest(candidates: readonly LayoutPoint[], others: readonly LayoutPoi
   return candidates.reduce((best, point) => (room(point) > room(best) + 1 ? point : best));
 }
 
-/** Where a new atom goes: next to the atom it's bonded to on its roomiest side, or anywhere free. */
 export function placeNewAtom({
   anchor,
   layout,
@@ -83,7 +79,6 @@ function isBonded(bonds: readonly LayoutBond[], first: string, second: string): 
   );
 }
 
-/** One step: bonds pull toward their length, atoms too close push apart. */
 function relaxStep(layout: Layout, bonds: readonly LayoutBond[], size: LayoutSize): Layout {
   const entries = Object.entries(layout);
 
@@ -115,11 +110,6 @@ function relaxStep(layout: Layout, bonds: readonly LayoutBond[], size: LayoutSiz
   );
 }
 
-/**
- * Settles a build so bonds keep about the same length and nothing overlaps, starting from where
- * atoms already are so the drawing moves as little as it can. Plain arithmetic, so it's the same
- * on every device.
- */
 export function relaxLayout({
   bonds,
   layout,
@@ -145,7 +135,6 @@ function partnersOf(bonds: readonly LayoutBond[], id: string): string[] {
   });
 }
 
-/** Places atoms one at a time, each beside the first already placed atom it bonds to. */
 function placeInTurn({
   atoms,
   bonds,
@@ -169,10 +158,6 @@ function placeInTurn({
   return placeInTurn({ atoms: rest, bonds, layout: placed, size });
 }
 
-/**
- * A finished build laid out from scratch: atoms placed one by one next to the first atom they
- * bond to, then settled. Used to draw a correct build after the check.
- */
 export function layoutBuild({
   atoms,
   bonds,

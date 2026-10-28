@@ -26,12 +26,6 @@ function useDescribeState() {
     ].join(" ");
 }
 
-/**
- * Two states of the same thing with what changed between them. The learner reads the before
- * state and the change, then shows the after state: its bars start at the before length and
- * move to their own, so the size of the change is seen. Once checked, each fact says how much it
- * changed, from core's ratio (the number a numeric check grades).
- */
 export function BeforeAfterActivity({ content, labelId, phase }: BeforeAfterProps) {
   const t = useExtracted();
   const describe = useDescribeState();
@@ -44,7 +38,6 @@ export function BeforeAfterActivity({ content, labelId, phase }: BeforeAfterProp
   const highlightId =
     check.kind === "numeric" ? (check.output ?? fields.before.facts[0]?.id ?? null) : null;
 
-  /* The button that revealed the after state is gone, so focus moves to what it revealed. */
   useEffect(() => {
     if (isRevealed) {
       afterRef.current?.focus();

@@ -1,7 +1,6 @@
 import { type BaseMapRegionTone } from "../../src/activities/_assets/base-maps/base-map-drawing";
 import { type Continent } from "./continents";
 
-/** Brazil's states by their two-letter codes, as Natural Earth lists them. */
 export const BRAZIL_STATES: Readonly<Record<string, string>> = {
   AC: "Acre",
   AL: "Alagoas",
@@ -32,7 +31,6 @@ export const BRAZIL_STATES: Readonly<Record<string, string>> = {
   TO: "Tocantins",
 };
 
-/** Neighboring continents never share a tone, so every border between them shows. */
 export const CONTINENT_TONES: Record<Continent, BaseMapRegionTone> = {
   africa: "groupC",
   antarctica: "context",

@@ -24,14 +24,6 @@ import { ArrangeWordsInteraction } from "./arrange-words";
 import { QuestionText } from "./question-text";
 import { ScreenChip } from "./screen-chip";
 
-/**
- * One prompt word can either be plain text or a small translation trigger.
- *
- * Reading learners tap the sentence they are translating, not the answer bank,
- * so the interactive affordance belongs on these prompt words. Inside a sentence a
- * word keeps the line's height, like a link in prose; a word shown on its own is a
- * 44 px target.
- */
 function ReadingPromptWord({
   hint,
   standalone,
@@ -66,13 +58,6 @@ function ReadingPromptWord({
   );
 }
 
-/**
- * Renders the visible reading prompt as tappable word tokens.
- *
- * The serialized lesson stores target-word metadata, while the prompt sentence
- * is learner-language text. `buildReadingPromptWordHints` aligns those two
- * shapes so this component can stay focused on rendering.
- */
 function ReadingPromptText({
   sentence,
   sentenceWordOptions,

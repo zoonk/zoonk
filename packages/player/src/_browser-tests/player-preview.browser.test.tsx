@@ -9,13 +9,6 @@ import {
   previewLesson,
 } from "../preview/preview-catalog";
 
-/**
- * The playground plays every screen of the catalog in the real player: each opens, and each
- * question opened checked shows its result as right, so the gallery never shows a broken screen.
- * Explored templates are drawn on their explanation screens in lesson-explore.browser.test.tsx.
- */
-
-/** A guess shows its answer, not a verdict. */
 function verdictOf(kind: string) {
   return kind === "hook" ? "Good guess!" : "Correct!";
 }

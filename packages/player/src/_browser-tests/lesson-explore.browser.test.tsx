@@ -6,12 +6,6 @@ import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { previewEntries } from "../preview/preview-catalog";
 import { buildLesson } from "../preview/preview-lesson";
 
-/**
- * An activity template an explanation screen shows to explore (a model to move, a process, a map,
- * a program to run) draws under the idea with nothing asked: labelled by the idea's words, and
- * accessible on a phone in light and dark.
- */
-
 const PHONE = { height: 812, width: 375 };
 
 const entries = previewEntries.filter((entry) => entry.states.includes("explore"));

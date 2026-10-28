@@ -6,11 +6,6 @@ export type PlotPoint = { x: number; y: number };
 
 const DEFAULT_SAMPLES = 64;
 
-/**
- * Evaluates a one-variable formula across a range with core's safe evaluator, for drawing its
- * curve. The validator already proved the formula works across the slider range, so a failing
- * point only drops out of the drawing instead of breaking the canvas.
- */
 export function sampleFormula({
   domain,
   fixed = {},
@@ -38,7 +33,6 @@ export function sampleFormula({
     .flatMap(({ result, x }) => (result.ok ? [{ x, y: result.value }] : []));
 }
 
-/** An SVG path through the points, already mapped to pixels. */
 export function linePath(points: readonly PlotPoint[]): string {
   return points
     .map((point, index) => `${index === 0 ? "M" : "L"}${point.x.toFixed(2)} ${point.y.toFixed(2)}`)

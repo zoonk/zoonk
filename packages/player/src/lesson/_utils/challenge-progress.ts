@@ -6,11 +6,6 @@ type ChallengeStep = Extract<PlayableLibraryStep, { kind: "challenge" }>;
 type DecidingWalk = Extract<ChallengeWalk, { status: "deciding" }>;
 type EndedWalk = Extract<ChallengeWalk, { status: "ended" }>;
 
-/**
- * Where a challenge stands. `shown` counts what's on screen: 0 is the intro, and each confirmed
- * decision shows one more. The answer holds the confirmed picks plus, while deciding, the pick
- * waiting for Confirm.
- */
 export type ChallengeProgress =
   | { stage: "intro" }
   | { confirmed: string[]; pendingChoiceId: string | null; stage: "deciding"; walk: DecidingWalk }
@@ -56,7 +51,6 @@ export function getChallengeProgress({
   };
 }
 
-/** The answer after picking (or clearing) the choice for the decision on screen. */
 export function pickChallengeChoice({
   choiceId,
   confirmed,

@@ -20,7 +20,6 @@ import {
 
 type BuilderState = { build: Build; layout: Layout; selectedId: string | null };
 
-/** What changed, so the canvas can announce it. */
 export type BuilderChange =
   | { atom: string; bondTo: string | null; kind: "added" }
   | { first: string; kind: "bonded"; order: number; second: string }
@@ -40,10 +39,6 @@ function initialState(answer: ActivityAnswer | null): BuilderState {
   return { build, layout: layoutBuild(build), selectedId: null };
 }
 
-/**
- * The build and its drawing, with undo. Adding with an atom selected bonds the new atom to it;
- * pressing a second atom steps the bond between them; every change settles the drawing again.
- */
 export function useMoleculeBuilder({
   answer,
   onBuildChange,

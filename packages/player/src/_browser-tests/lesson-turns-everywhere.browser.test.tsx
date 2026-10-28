@@ -7,32 +7,17 @@ import { previewEntries } from "../preview/preview-catalog";
 import { buildLesson } from "../preview/preview-lesson";
 import { explanationStep } from "../preview/preview-steps";
 
-/**
- * Every screen the player shows turns with the arrow keys and with a swipe: the left arrow and a
- * swipe right from the screen's text go back, and the right arrow reads on where the screen reads
- * on, while a question waiting for its answer stays until it's checked. A finger's own gestures
- * (scrolling, controls that keep their swipe, a quick flick read late) are played with real touches
- * in lesson-swipe.touch.browser.test.tsx; here the swipe is the touch events the page reads, at
- * whatever a finger would land on, which the swipe hook alone decides about.
- */
-
-/** More than a worked example's steps, each of which the right arrow reveals first. */
 const MAX_REVEALS = 10;
 const BEFORE = { text: "This screen comes first.", title: "Before" };
 const AFTER = { text: "This screen comes next.", title: "After" };
 const SWIPE_PX = 160;
 
-/**
- * A heading of the screen in view, in the lesson's content: from `lg` the aside's "From the lesson"
- * repeats the last reading screen's title beside a question.
- */
 function heading(text: string) {
   return page
     .getByRole("main", { name: "Lesson content" })
     .getByRole("heading", { exact: true, name: text });
 }
 
-/** The screen's text, top to bottom: where a learner's finger lands to turn the screen. */
 function textOnScreen(): Element[] {
   const screen = document.querySelector("[data-slot='lesson-screen']");
 
@@ -42,7 +27,6 @@ function textOnScreen(): Element[] {
   });
 }
 
-/** A quick swipe right as the page reads it, from whatever a finger touches at the text's center. */
 function swipeRightFrom(text: Element) {
   text.scrollIntoView({ behavior: "instant", block: "center" });
   const box = text.getBoundingClientRect();
@@ -65,7 +49,6 @@ function nextFrame() {
   });
 }
 
-/** Some of the screen's text turns it back with a swipe: a finger always has somewhere to swipe. */
 async function swipeBack() {
   for (const text of textOnScreen()) {
     swipeRightFrom(text);
@@ -93,10 +76,6 @@ async function readOnUntil(title: string) {
   await expect.element(heading(title)).toBeVisible();
 }
 
-/**
- * A reading screen reads on to the next one (and the left arrow comes back to it); a question
- * waiting for its answer stays where it is.
- */
 async function expectRightArrow({ readsOn }: { readsOn: boolean }) {
   if (readsOn) {
     await readOnUntil(AFTER.title);

@@ -11,11 +11,6 @@ const MATH_DELIMITERS = [
   { close: "\\]", kind: "displayMath" as const, open: "\\[" },
 ];
 
-/**
- * Finds the next LaTeX delimiter because generated lessons commonly use
- * standard inline math markers inside otherwise plain prose. The player only
- * needs to recognize those markers, not the full Markdown grammar.
- */
 function findNextMathDelimiter(text: string) {
   const matches = MATH_DELIMITERS.map((delimiter) => ({
     ...delimiter,
@@ -25,12 +20,6 @@ function findNextMathDelimiter(text: string) {
   return matches.toSorted((first, second) => first.index - second.index)[0] ?? null;
 }
 
-/**
- * Splits lesson prose into math and non-math regions so lightweight Markdown
- * markers never modify LaTeX commands such as \lambda or \theta. Outside math,
- * code and emphasis (angle-quoted words included) read the way every learner
- * text reads them.
- */
 function parseMathSegments(text: string): RichInlineSegment[] {
   const delimiter = findNextMathDelimiter(text);
 
@@ -56,10 +45,6 @@ function parseMathSegments(text: string): RichInlineSegment[] {
   ];
 }
 
-/**
- * Renders generated lesson copy with only the formatting primitives we support
- * in player content: LaTeX math, inline code, and bold/italic emphasis.
- */
 export function PlayerRichText({ text }: { text: string }) {
   return <RichInlineSegments segments={parseMathSegments(stripWrappingQuotes(text))} />;
 }

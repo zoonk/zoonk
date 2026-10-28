@@ -13,7 +13,6 @@ export type QueryRun =
   | { message: string; status: "error" }
   | { status: "timeout" | "unavailable" };
 
-/** Runs a query with SQLite in the browser against the lesson's tables. */
 export async function runQuery({
   query,
   tables,

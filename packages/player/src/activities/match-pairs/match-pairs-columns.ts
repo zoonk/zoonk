@@ -3,7 +3,6 @@ import { seededShuffle } from "@zoonk/utils/seeded-random";
 
 type MatchFields = ActivityContentFor<"matchPairs">["fields"];
 
-/** One card in a column. Pair cards share their pair's id on both sides; traps have their own. */
 export type MatchCard = { id: string; isTrap: boolean; text: string; why: string | null };
 
 const MAX_ATTEMPTS = 32;
@@ -32,11 +31,6 @@ function hasAlignedPair(left: readonly MatchCard[], right: readonly MatchCard[])
   return left.some((card, index) => !card.isTrap && right[index]?.id === card.id);
 }
 
-/**
- * Both columns in a shuffled order that's the same on every load, with no pair sitting side by
- * side, since a lined-up pair gives its answer away. The right column tries seeds until none
- * lines up, which takes one or two tries even with two pairs.
- */
 export function arrangeMatchColumns(fields: MatchFields): {
   left: MatchCard[];
   right: MatchCard[];
@@ -54,10 +48,6 @@ export function arrangeMatchColumns(fields: MatchFields): {
   return { left, right };
 }
 
-/**
- * Why two cards don't go together, from the writer's notes: the trap among them (the right one
- * first) with its own reason, or else the reason on the pairs the learner mixed up.
- */
 export function explainMismatch({ left, right }: { left: MatchCard; right: MatchCard }): {
   reason: string | null;
   trap: MatchCard | null;

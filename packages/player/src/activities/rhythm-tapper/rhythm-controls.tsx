@@ -4,7 +4,6 @@ import { Button } from "@zoonk/ui/components/button";
 import { Headphones, RotateCcw, Timer } from "lucide-react";
 import { useExtracted } from "next-intl";
 
-/** The tempo and, while tapping, which round is playing. */
 export function RhythmStatus({
   round,
   rounds,
@@ -32,10 +31,6 @@ export function RhythmStatus({
   );
 }
 
-/**
- * Listen to the rhythm first, then start (or try again) with a bar counted in. The sound check
- * can be redone anytime, for new headphones.
- */
 export function RhythmControls({
   hasTried,
   onCalibrate,

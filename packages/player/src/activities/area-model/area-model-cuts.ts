@@ -3,7 +3,6 @@ import { isMultiple, snapToStep } from "../_utils/snap-value";
 /* oxlint-disable-next-line no-magic-numbers -- These are the round split steps themselves. */
 const DECIMAL_STEPS = [1, 0.5, 0.25, 0.1, 0.05, 0.01] as const;
 
-/** Where the split lines sit: the running total of every part but the last. */
 export function partsToCuts(parts: readonly number[]): number[] {
   return parts.slice(0, -1).reduce<number[]>((cuts, part) => {
     cuts.push((cuts.at(-1) ?? 0) + part);
@@ -11,17 +10,12 @@ export function partsToCuts(parts: readonly number[]): number[] {
   }, []);
 }
 
-/** The parts between split lines, from the start of the side to its total. */
 export function cutsToParts(cuts: readonly number[], total: number): number[] {
   const edges = [0, ...cuts, total];
 
   return edges.slice(1).map((edge, index) => Number((edge - (edges[index] ?? 0)).toPrecision(12)));
 }
 
-/**
- * The finest round step that still reaches every split the writer chose: whole numbers when the
- * parts are whole, otherwise halves, quarters, tenths and so on.
- */
 export function splitStep(parts: readonly number[]): number {
   return (
     DECIMAL_STEPS.find((step) => parts.every((part) => isMultiple(part, step))) ??
@@ -30,10 +24,6 @@ export function splitStep(parts: readonly number[]): number {
   );
 }
 
-/**
- * Moves one split line, keeping it at least a step away from its neighbors and the edges, so a
- * part can shrink to one step but never vanish or swap places with the next.
- */
 export function moveCut({
   cuts,
   index,

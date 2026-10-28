@@ -1,11 +1,6 @@
 import { type LessonQuestionContextInput } from "@zoonk/core/lesson-questions/contract";
 import { type LessonQuestionContext } from "./lesson-question-context";
 
-/**
- * Reduces the rich frozen player context to trusted references and the
- * learner's own answer. The API reconstructs course content and feedback so a
- * browser cannot inject hidden instructions or canonical answers.
- */
 export function getLessonQuestionContextInput({
   context,
   lessonStepIds,

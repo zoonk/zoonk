@@ -43,11 +43,6 @@ function arcPath({
   return `M${round(center.x)} ${round(center.y)} L${round(start.x)} ${round(start.y)} A${radius} ${radius} 0 ${large} ${clockwise} ${round(end.x)} ${round(end.y)} Z`;
 }
 
-/**
- * The wedge marking a corner's inside angle on screen (y pointing down), and where its label
- * goes: along the middle of the angle, just past the wedge. The wedge turns from the next side
- * toward the previous one through the inside of the shape.
- */
 export function cornerWedge({
   angle,
   corner,
@@ -69,7 +64,6 @@ export function cornerWedge({
     toNext.x * toPrevious.x + toNext.y * toPrevious.y,
   );
 
-  /* The short way round is the inside for a corner under 180°; a dent goes the long way. */
   const direction = Math.sign(shortTurn) || 1;
   const sweep = angle > HALF_TURN ? -direction * toRadians(angle) : direction * toRadians(angle);
 
@@ -79,10 +73,6 @@ export function cornerWedge({
   };
 }
 
-/**
- * The corners torn off and laid side by side around one point, starting from the left along a
- * line and turning over the top, so a triangle's three angles visibly fill a straight line.
- */
 export function fanWedges({
   angles,
   center,

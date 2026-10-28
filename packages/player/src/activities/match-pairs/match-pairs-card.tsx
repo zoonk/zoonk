@@ -6,7 +6,6 @@ import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 
 export type MatchCardState = "idle" | "matched" | "missed" | "noMatch" | "selected";
 
-/** A card in one of the two columns: pick one on each side to try a match. */
 export function MatchPairsCard({
   isDisabled,
   label,

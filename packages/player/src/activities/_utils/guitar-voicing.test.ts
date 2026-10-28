@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { findGuitarVoicing } from "./guitar-voicing";
 
-/** Pitch classes: C 0, D 2, E 4, F 5, G 7, A 9, B 11, with Eb 3 and Bb 10. */
 function voicing(pitchClasses: number[], bass = pitchClasses[0] ?? 0) {
   return findGuitarVoicing({ bass, pitchClasses });
 }

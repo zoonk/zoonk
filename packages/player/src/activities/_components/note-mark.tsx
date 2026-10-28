@@ -1,9 +1,5 @@
 import { cn } from "@zoonk/ui/lib/utils";
 
-/**
- * How a note shows on an instrument: pressed by the learner (`new`), already there (`kept`),
- * taken away (`removed`), sounding (`heard`), and after a check right, wrong or missing.
- */
 export type NoteMarkKind = "correct" | "heard" | "kept" | "missed" | "new" | "removed" | "wrong";
 
 const MARK_CLASSES: Record<NoteMarkKind, string> = {
@@ -16,7 +12,6 @@ const MARK_CLASSES: Record<NoteMarkKind, string> = {
   wrong: "border-destructive text-destructive-text bg-background border-2",
 };
 
-/** A note's name in a circle, drawn on a piano key or a guitar string. */
 export function NoteMark({
   className,
   kind,

@@ -7,10 +7,6 @@ import { useActivityDraggable } from "../_components/activity-drag-drop";
 
 export type ChipResult = "correct" | "incorrect" | null;
 
-/**
- * An item to sort. Tap (or Enter/Space) picks it up; then a group takes it. Pointers can also
- * drag it onto a group. After the check it shows whether its group is right.
- */
 export function CategorizeChip({
   disabled,
   dragId,
@@ -22,9 +18,7 @@ export function CategorizeChip({
   text,
 }: {
   disabled: boolean;
-  /** The item's id, which the drop handler receives. */
   dragId: string;
-  /** The DOM id, so focus can move to the next item after a placement. */
   id: string;
   isSelected: boolean;
   label: string;

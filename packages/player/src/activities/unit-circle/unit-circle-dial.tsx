@@ -10,7 +10,6 @@ import { type TrigName, useTrigNames } from "./use-unit-circle-format";
 type Vector = { x: number; y: number };
 type TrigValues = Partial<Record<TrigName, number | null>>;
 
-/** Phone width of the canvas, used until the real width is measured. */
 const FALLBACK_WIDTH = 318;
 const MAX_SIZE = 300;
 const RADIUS_SHARE = 0.34;
@@ -23,12 +22,9 @@ const LABEL_GAP = 8;
 const ANGLE_LABEL_GAP = 16;
 const HALF_TURN = 180;
 const TARGET_LABEL_GAP = 14;
-/** Labels within this many degrees of the horizontal axis would sit on the cosine's side. */
 const AXIS_CLEARANCE = 25;
-/** How far from straight up or down a label still reads as centered over its point. */
 const SIDE_THRESHOLD = 0.35;
 
-/** Text beside a point on the circle reads outward: to the right on the right half, and so on. */
 function sideAnchor(degrees: number): "end" | "middle" | "start" {
   const across = Math.cos((degrees * Math.PI) / HALF_TURN);
 
@@ -39,12 +35,10 @@ function sideAnchor(degrees: number): "end" | "middle" | "start" {
   return across < -SIDE_THRESHOLD ? "end" : "middle";
 }
 
-/** The angle's label sits in the middle of its arc, kept off the horizontal axis. */
 function angleLabelDirection(degrees: number): number {
   return Math.min(Math.max(degrees / 2, AXIS_CLEARANCE), FULL_TURN - AXIS_CLEARANCE);
 }
 
-/** The point to turn: 44px to grab, a slider for keyboards and screen readers. */
 function DialHandle({
   disabled,
   label,
@@ -113,12 +107,6 @@ function DialHandle({
   );
 }
 
-/**
- * A circle of radius 1 with a point to turn around it. Its height is the sine and its sideways
- * distance the cosine, drawn as colored sides of the triangle they make with the radius. The
- * point is a slider for keyboards (arrows turn it, Page keys an eighth of a turn) and a drag
- * target for pointers.
- */
 export function UnitCircleDial({
   angleLabel,
   degrees,
@@ -140,7 +128,6 @@ export function UnitCircleDial({
   onChange: (degrees: number) => void;
   show: readonly TrigName[];
   step: number;
-  /** The angle the check asks about, marked once checked. */
   target: { degrees: number; label: string } | null;
   values: TrigValues;
   valueText: string;

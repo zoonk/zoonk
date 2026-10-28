@@ -61,7 +61,6 @@ function useFormulaSnippets(fields: Fields): NamedSnippet[] {
   ];
 }
 
-/** How many examples the current pattern gets right, for the summary and the text alternative. */
 function passingSummary(
   fields: Fields,
   pattern: string,
@@ -88,12 +87,6 @@ function passingSummary(
     : null;
 }
 
-/**
- * Write a regular expression or a spreadsheet formula and watch it tested against every example
- * as you type, the same way grading tests it. Symbol buttons save hunting on a phone keyboard,
- * and hints come one at a time on request. After the check, a pattern that works is shown.
- * Explored on an explanation screen, it starts with a pattern that works, to read and change.
- */
 export function PatternTesterActivity({
   answer,
   content,

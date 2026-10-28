@@ -45,10 +45,6 @@ import {
 import { useExtracted } from "next-intl";
 import { SCREEN_CHIP_CLASS } from "../../lesson/_components/lesson-step-text";
 
-/**
- * What the learner does in an activity, named in a small badge above the prompt. Each renderer
- * picks one in the registry; add a kind here when a template needs a new verb.
- */
 export type ActivityBadgeKind =
   | "beforeAfter"
   | "buildArgument"
@@ -92,7 +88,6 @@ export type ActivityBadgeKind =
   | "turnIt"
   | "whatIf";
 
-/** Each verb's icon: its shape says what the learner does; the chip itself stays colorless. */
 const BADGE_ICONS: Record<ActivityBadgeKind, LucideIcon> = {
   beforeAfter: GitCompareArrows,
   buildArgument: Puzzle,

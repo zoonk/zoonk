@@ -6,7 +6,6 @@ import { usePlayerInteractionState } from "../../player-context";
 const SPACE_CONTROLS =
   "button, a[href], summary, [role='button'], [role='radio'], [role='checkbox'], [role='switch'], [role='tab'], [role='slider']";
 
-/** Space taps while the rhythm plays; fields, popups and other controls keep their keys. */
 export function useSpaceToTap({
   enabled,
   onTap,

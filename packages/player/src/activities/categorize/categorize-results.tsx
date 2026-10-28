@@ -7,10 +7,6 @@ import { type Placements, misplacedItems } from "./categorize-placements";
 type Item = { groupId: string; id: string; text: string; why: string };
 type Group = { id: string; label: string };
 
-/**
- * After the check: how many items landed in the right group, and for each one that didn't,
- * where it belongs and why. Groups come from code, the reasons from the writer's `why`.
- */
 export function CategorizeResults({
   groups,
   items,

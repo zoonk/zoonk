@@ -8,11 +8,6 @@ import { musicRenderers } from "./activity-registry-music";
 import { scienceRenderers } from "./activity-registry-science";
 import { societyMoneyRenderers } from "./activity-registry-society-money";
 
-/**
- * One lazily loaded renderer for every template in core's catalog. The map is typed over
- * `ActivityTemplateId`, with the area files spread in, so a template added to core doesn't
- * compile until it has a renderer here or in one of those files.
- */
 export const activityRenderers: {
   [TId in ActivityTemplateId]: ActivityRendererEntry<TId>;
 } = {

@@ -14,39 +14,22 @@ import axe from "axe-core";
 import { expect } from "vitest";
 import { onDevice } from "./device-media";
 
-/**
- * Accessibility scans of the player's screens, by the rules the apps' E2E scans use
- * (`@zoonk/e2e/fixtures/accessibility`): axe-core reads the screen showing now, in light and dark
- * (the device's `prefers-color-scheme`, which the player follows), and a serious or critical
- * violation fails it, as does an interactive target under 44 px.
- */
-
-/** How long one check waits for running animations before it looks again. */
 const MAX_ANIMATION_WAIT_MS = 3000;
 
-/** Longer than any entrance animation or transition: a screen still moving by then is a finding. */
 const ANIMATIONS_TIMEOUT_MS = 15_000;
 
-/**
- * The player renders into a page its host app owns, which gives the document its title and
- * language. The test page has neither, so these rules would read the harness, not the player.
- */
+// The host app owns the document title and language; scanning them here would test the harness.
 const HOST_DOCUMENT_RULES = {
   "document-title": { enabled: false },
   "html-has-lang": { enabled: false },
 };
 
-/**
- * Lets entrance animations and theme transitions end, so contrast is read on the screen people
- * see rather than halfway through a fade.
- */
 async function waitForAnimations() {
   await expect
     .poll(() => settleAnimations(MAX_ANIMATION_WAIT_MS), { timeout: ANIMATIONS_TIMEOUT_MS })
     .toBe(0);
 }
 
-/** The screen's serious and critical violations and its targets under 44 px, described. */
 async function scanScreen(where: string): Promise<string[]> {
   await waitForAnimations();
 
@@ -62,11 +45,6 @@ async function scanScreen(where: string): Promise<string[]> {
   return [...describeViolations(results.violations, where).failing, ...smallTargets];
 }
 
-/**
- * The screen in light, then dark, on a device asking for more contrast: the app keeps WCAG AA
- * contrast there, while its regular look trades some of it for softer tones (the device's choice).
- * Dark mode and contrast are CSS alone, so switching them restyles the same screen in place.
- */
 async function scanInEachScheme(label: string): Promise<string[]> {
   const light = await onDevice({ colorScheme: "light", contrast: "more" }, () =>
     scanScreen(`${label} (light)`),
@@ -79,7 +57,6 @@ async function scanInEachScheme(label: string): Promise<string[]> {
   return [...light, ...dark];
 }
 
-/** The screen showing now, with its animations held at their end (`stillAnimations`). */
 async function scanCurrentScreen(label: string): Promise<string[]> {
   stillAnimations();
 
@@ -90,10 +67,6 @@ async function scanCurrentScreen(label: string): Promise<string[]> {
   }
 }
 
-/**
- * Fails with every finding when the screen showing now has a serious or critical violation or a
- * target under 44 px, in either scheme.
- */
 export async function expectAccessibleScreen(label: string) {
   await expect(scanCurrentScreen(label)).resolves.toStrictEqual([]);
 }

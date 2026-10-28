@@ -5,13 +5,6 @@ import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
 import { teachingStep } from "../preview/preview-steps";
 
-/**
- * A challenge (the A/B test case from `challengeCaseFixture`) played to a weak ending: the debrief
- * names one thing to improve and a practice for it. The strong path and the team kept with the
- * plan play through the app (`apps/main/e2e/lesson-challenge.test.ts`).
- */
-
-/** The learner's colleagues, in the case's order: the data scientist, then the product manager. */
 const TEAM = { language: "en", members: [{ name: "Priya" }, { name: "Tom" }] };
 
 describe("challenge lesson", () => {

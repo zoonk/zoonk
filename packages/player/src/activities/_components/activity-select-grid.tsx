@@ -4,10 +4,6 @@ import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, X } from "lucide-react";
 
-/**
- * A grid of things to tap: spans on a chart, a next move, cells to pick. Each item is a toggle
- * button (`aria-pressed`), so it works with a keyboard and says whether it's picked.
- */
 export function ActivitySelectGrid({
   className,
   columns = 2,
@@ -67,7 +63,6 @@ export function ActivitySelectGridItem({
       onClick={onToggle}
       type="button"
     >
-      {/* The mark sits on the label's first line when a long label wraps. */}
       <span className="flex items-start gap-1.5">
         {resultState && (
           <LineMarker>

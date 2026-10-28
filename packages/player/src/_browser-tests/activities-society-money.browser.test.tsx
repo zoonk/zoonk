@@ -20,12 +20,10 @@ import {
 
 const fixtures = activityContentFixtures;
 
-/** A cause or effect card, named by its year and label. */
 function chainNode(name: string) {
   return page.getByRole("button", { exact: true, name });
 }
 
-/** The timeline with a question instead of an order check: the learner reveals the dates. */
 const timelineQuestion = {
   ...fixtures.timeline,
   check: choiceCheck("Cleopatra lived closer in time to...", [
@@ -34,7 +32,6 @@ const timelineQuestion = {
   ]),
 };
 
-/** The chain with a question: each link is confirmed or turned down at once. */
 const chainQuestion = {
   ...fixtures.causeEffectChain,
   check: choiceCheck("Why did the storms get so bad?", [

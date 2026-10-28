@@ -20,12 +20,6 @@ import { SummarySheet } from "./controls/summary-sheet";
 import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
 import { useLessonInteraction } from "./lesson-player-interaction";
 
-/**
- * The lesson's summary card, one tap away from the menu once the lesson is done. The menu closes
- * as the sheet opens, so a ref (not state from the click's render) tells the menu to keep the
- * lesson's keys paused. A lesson that couldn't save can go back to a screen, whose answer the card
- * would give away, so it closes then.
- */
 function useSummarySheet(isDone: boolean) {
   const { setPaused } = useLessonInteraction();
   const [open, setOpen] = useState(false);
@@ -56,13 +50,6 @@ function useSummarySheet(isDone: boolean) {
   return { change, onMenuOpenChange, open };
 }
 
-/**
- * The screen's "…" menu, for what the learner rarely needs: that the lesson was made with AI and
- * may contain mistakes (said once here, not on every screen), "I already know this" on an
- * explanation, "Report a problem" from the host and, once the lesson is done, its summary card.
- * Not before: the summary states what the questions ahead ask. Closing it hands focus back to the
- * lesson, so Enter goes on instead of opening the menu again.
- */
 export function LessonScreenMenu() {
   const t = useExtracted();
   const { lesson, slots } = useLessonPlayerConfig();
@@ -76,7 +63,6 @@ export function LessonScreenMenu() {
 
   return (
     <>
-      {/* While the menu is open, Enter picks its items and Escape closes it: the lesson's keys wait. */}
       <DropdownMenu onOpenChange={summary.onMenuOpenChange}>
         <DropdownMenuTrigger
           render={

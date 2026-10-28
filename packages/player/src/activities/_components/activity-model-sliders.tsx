@@ -15,10 +15,6 @@ type Variable = {
   unit?: string;
 };
 
-/**
- * One slider per input of a formula model (calculators, scenarios). Each announces its value and
- * the output it drives, so a screen reader hears the effect of every move.
- */
 export function ActivityModelSliders({
   disabled,
   onChange,
@@ -28,7 +24,6 @@ export function ActivityModelSliders({
 }: {
   disabled: boolean;
   onChange: (name: string, value: number) => void;
-  /** The output each move changes, already formatted. */
   output: { label: string; value: string };
   values: ModelValues;
   variables: readonly Variable[];

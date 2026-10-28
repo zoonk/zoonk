@@ -17,7 +17,6 @@ function steps(pattern: string): { index: number; isHit: boolean }[] {
   return Array.from(pattern, (symbol, index) => ({ index, isHit: symbol === "x" }));
 }
 
-/** One round of the rhythm: a cell per step, beats spaced apart, dots for how each tap went. */
 function RoundRow({
   pattern,
   playingStep,
@@ -66,10 +65,6 @@ function RoundRow({
   );
 }
 
-/**
- * The rhythm on its beat grid, one row per round: hits in color, rests blank, the playhead
- * outlined, and after tapping a dot over each hit (on time, early or late, or missed).
- */
 export function RhythmGrid({
   pattern,
   position,

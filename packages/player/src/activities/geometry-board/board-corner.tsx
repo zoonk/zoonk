@@ -8,13 +8,11 @@ import { type BoardScale } from "./board-scale";
 
 type Vector = { x: number; y: number };
 
-/** Half of the 44px touch target around every corner. */
 const HIT_RADIUS = 22;
 const HALO_RADIUS = 17;
 const HANDLE_RADIUS = 9;
 const FIXED_RADIUS = 5.5;
 
-/** A corner that stays put: a small open dot, so what can move stands out. */
 export function BoardFixedCorner({ pixel }: { pixel: Vector }) {
   return (
     <circle
@@ -28,11 +26,6 @@ export function BoardFixedCorner({ pixel }: { pixel: Vector }) {
   );
 }
 
-/**
- * A corner the learner moves: dragged with a pointer (44px target) or moved one grid step per
- * arrow key. It's announced as a slider along its track (or across the board), with its position
- * and what the board measures in the spoken value.
- */
 export function BoardCorner({
   bounds,
   descriptionId,

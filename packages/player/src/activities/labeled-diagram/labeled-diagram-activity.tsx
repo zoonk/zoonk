@@ -140,7 +140,6 @@ function DiagramBoard({
   );
 }
 
-/** The picture's key: every number with its name, the diagram explored, nothing to place. */
 function DiagramKey({ fields, labelId }: { fields: Fields; labelId: string }) {
   const t = useExtracted();
 
@@ -158,12 +157,6 @@ function DiagramKey({ fields, labelId }: { fields: Fields; labelId: string }) {
   );
 }
 
-/**
- * Names go on the numbered parts of the screen's picture, drawn with a number on each part, like
- * the chambers of the heart. The learner taps a spot and a name, or drags a name onto a spot.
- * Once checked, every spot shows the right name next to theirs, with the writer's feedback for a
- * likely mix-up. Explored on an explanation screen, it's the picture's key.
- */
 export function LabeledDiagramActivity({
   answer,
   content,

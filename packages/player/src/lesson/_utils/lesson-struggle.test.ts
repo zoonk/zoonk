@@ -54,7 +54,6 @@ describe(getStruggleOffer, () => {
 
     expect(getStruggleOffer(twice)?.id).toBe("idea");
 
-    // Moving on to the next screen ends the moment.
     expect(getStruggleOffer(lessonPlayerReducer(twice, { type: "continue" }))).toBeNull();
   });
 

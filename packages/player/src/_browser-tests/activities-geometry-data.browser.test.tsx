@@ -80,7 +80,6 @@ describe("geometry and data activities", () => {
   it("random simulation by sampling: bigger samples bunch up", async () => {
     openActivity({ content: polls, template: "randomSimulation" });
     await expect.element(page.getByText("200 samples of 400")).toBeVisible();
-    // Its numbers are made up for the example, and it says so.
     await expect.element(page.getByText("Example numbers, not real data")).toBeVisible();
     await page.getByRole("radio", { name: /Half as big/u }).click();
     await checkActivity();

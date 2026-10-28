@@ -6,21 +6,14 @@ import { getTutorQuoteText } from "../_utils/lesson-aside";
 import { useLessonPlayer } from "../lesson-player-context";
 import { type LessonPlayerAnswer } from "../lesson-player-types";
 
-/** The learner's answer as the quote names it: picked from options, or written. */
 function isWritten(answer: LessonPlayerAnswer | undefined): boolean {
   return answer?.kind === "typedAnswer" || answer?.kind === "spokenAnswer";
 }
 
-/** The learner's answer in the quote, a step brighter than the words around it. */
 function strong(chunks: React.ReactNode) {
   return <span className="text-foreground font-medium">{chunks}</span>;
 }
 
-/**
- * The screen the learner asks about, quoted as the conversation's first line in the drawer that
- * covers the bottom of the lesson: the question, with their answer once it's checked ("You picked
- * 100% on “A price rises…”"). Screens without such a line aren't quoted.
- */
 export function TutorQuote() {
   const t = useExtracted();
   const { screen, state } = useLessonPlayer();

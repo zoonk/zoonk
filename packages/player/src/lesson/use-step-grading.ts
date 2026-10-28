@@ -10,38 +10,22 @@ import { type LessonPlayerAdapters, type PlayableLibraryStep } from "./lesson-pl
 
 export type CheckContext = { answer: LessonStepAnswer; step: PlayableLibraryStep };
 
-/** An answer graded on the device, with the id it's saved under however often it's sent. */
 type RecordContext = CheckContext & { attemptId: string };
 
-/**
- * How long a grade the screen waits on may take. A typed answer is graded in a second or two
- * (Flash Lite, 1.2 s p50 in its eval), but a busy server has queued it for 25 s: past `slowMs` the
- * screen says it's still checking, and past `timeoutMs` it stops waiting and offers to check again
- * (the server takes one retried answer per screen). A spoken answer is uploaded and transcribed first.
- */
 export const CHECK_BOUNDS = {
   slowMs: 15_000,
   timeoutMs: { spoken: 60_000, typed: 45_000 },
 } as const;
 
-/**
- * How long the learner took on the screen. A lesson left open overnight isn't hours of study, so
- * the time counts up to the server's answer limit and the answer still saves.
- */
 function getAnswerDurationMs(stepStartedAt: number): number {
   return Math.min(Math.max(Date.now() - stepStartedAt, 0), MAX_ANSWER_DURATION_MS);
 }
 
-/** The grade, or null when it failed, threw or took longer than the screen waits. */
 async function boundedGrade<T>(ms: number, request: () => Promise<T>): Promise<T | null> {
   const settled = await settleWithin({ ms, request }).catch(() => null);
   return settled?.status === "settled" ? settled.value : null;
 }
 
-/**
- * The server side of grading: recording answers the device already graded, waiting for the grade
- * of typed answers, and sending recordings to the spoken answer grader.
- */
 export function useStepGrading({
   adapters,
   dispatch,
@@ -53,7 +37,6 @@ export function useStepGrading({
   adapters: LessonPlayerAdapters;
   dispatch: Dispatch<LessonPlayerAction>;
   ensureRun: () => Promise<string | null>;
-  /** Sends a grade at once; the screen's later saves and the completion wait for it. */
   keepGrade: <T>(grade: { request: Promise<T>; stepId: string }) => Promise<T>;
   state: LessonPlayerState;
   trackCheck: (save: { check: () => Promise<boolean>; stepId: string }) => void;
@@ -77,8 +60,6 @@ export function useStepGrading({
             })
           : null;
 
-        // A refusal never changes on a retry: the completion goes on, and the server's answers
-        // decide whether the lesson is finished.
         if (outcome?.status === "refused") {
           return true;
         }
@@ -102,7 +83,6 @@ export function useStepGrading({
       dispatch({ stepId: step.id, type: "checkStarted" });
       const usedHelp = state.helped.includes(step.id);
 
-      // "Check again" after a timeout is a new grade, so each grade has its own id.
       const attemptId = crypto.randomUUID();
 
       const outcome = await boundedGrade(CHECK_BOUNDS.timeoutMs.typed, () =>
@@ -126,8 +106,6 @@ export function useStepGrading({
       if (outcome?.status === "checked") {
         const answerText = "text" in answer ? answer.text : "";
 
-        // A written answer that wasn't checked isn't a verdict: shown with the sample answer, it
-        // counts neither way and doesn't come back.
         dispatch({
           counts: outcome.result.checked,
           result: fromServerCheck({ answerText, result: outcome.result }),

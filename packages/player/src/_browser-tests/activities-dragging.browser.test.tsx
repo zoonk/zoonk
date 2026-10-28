@@ -4,7 +4,6 @@ import { dragOnto, openActivity } from "../_test-utils/activity-player";
 
 const MOVE_STEPS = 12;
 
-/** Brings the target on screen with the item still in view, as a learner sees both before a drag. */
 async function dragWithMouse({ from, to }: { from: Locator; to: Locator }) {
   await expect.element(to).toBeVisible();
   to.element().scrollIntoView({ block: "nearest" });

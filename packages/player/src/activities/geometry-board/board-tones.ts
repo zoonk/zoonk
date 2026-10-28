@@ -1,6 +1,5 @@
 type BoardTone = "accent" | "highlight" | "neutral" | "secondary";
 
-/** Class names per tone, written out whole so Tailwind finds them. */
 export const BOARD_TONES: Record<
   BoardTone,
   { ink: string; mark: string; soft: string; text: string }
@@ -33,10 +32,6 @@ export const BOARD_TONES: Record<
 
 const SEQUENCE: readonly BoardTone[] = ["accent", "highlight", "secondary", "neutral"];
 
-/**
- * A tone per corner, so each angle can be matched with its number in the sum. Neighbouring
- * corners never share one, including the last and the first.
- */
 export function cornerTone(index: number, count: number): BoardTone {
   const tone = SEQUENCE[index % SEQUENCE.length] ?? "accent";
   const wrapsOntoFirst = index === count - 1 && index % SEQUENCE.length === 0 && index > 0;
@@ -44,7 +39,6 @@ export function cornerTone(index: number, count: number): BoardTone {
   return wrapsOntoFirst ? "secondary" : tone;
 }
 
-/** Pythagoras: the two legs' squares in two tones, the square on the longest side in a third. */
 export function squareTone({
   index,
   totalIndex,

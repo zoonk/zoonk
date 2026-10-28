@@ -4,10 +4,6 @@ import { useExtracted } from "next-intl";
 import { type GridFill, sameCell, traitCounts } from "./grid-model";
 import { type GridTraits } from "./grid-parts";
 
-/**
- * One line under the grid: while filling, the tally of each trait (or how many cells are filled),
- * then either how many cells the check's question counts or how many the learner got right.
- */
 export function GridCaption({
   counted,
   expected,
@@ -15,9 +11,7 @@ export function GridCaption({
   outputName,
   traits,
 }: {
-  /** Cells the check's question counts, once checked or when the grid is shown to read. */
   counted: number | null;
-  /** The right values once checked; empty while answering. */
   expected: readonly string[];
   fill: GridFill;
   outputName: string | null;

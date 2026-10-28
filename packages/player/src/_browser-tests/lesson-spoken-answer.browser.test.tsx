@@ -8,16 +8,8 @@ import { CHECK_BOUNDS } from "../lesson/use-step-grading";
 import { buildLesson } from "../preview/preview-lesson";
 import { languageStep, spokenAnswerStep, teachingStep } from "../preview/preview-steps";
 
-/**
- * "Say it out loud": the learner records the sentence and the host grades it. When they can't talk
- * now, speaking screens play as listening, or as typing without a listening version, for the rest
- * of the day; a recording with no words, or one past today's help, says so and leaves typing as the
- * way on.
- */
-
 type GradeSpokenAnswer = NonNullable<LessonPlayerAdapters["gradeSpokenAnswer"]>;
 
-/** The lesson's sentence to say, with its listening exercise for "I can't talk now". */
 function spokenSentenceStep(): PlayableSpokenAnswerStep {
   return {
     ...spokenAnswerStep(),
@@ -42,10 +34,7 @@ function openSpokenLesson({
   return renderLessonPlayer({ adapters: buildAdapters(lesson, { gradeSpokenAnswer }), lesson });
 }
 
-/**
- * The test browser has no microphone, so a silent stream stands in for the one the learner
- * allowed, a new one per recording since each stops its own when it ends.
- */
+// The test browser has no microphone; each recording needs a fresh stream because stopping closes it.
 function allowMicrophone() {
   const audio = new AudioContext();
 
@@ -83,12 +72,10 @@ describe("spoken answers", () => {
     await expect.element(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
     expect(gradeSpokenAnswer).not.toHaveBeenCalled();
 
-    // The choice lasts for the day: the screen opens as listening again, until they can talk.
     first.unmount();
     const second = openSpokenLesson({ gradeSpokenAnswer, step });
     await expect.element(page.getByRole("group", { name: "Word bank" })).toBeVisible();
 
-    // A speaking screen without a listening version takes the sentence typed instead.
     second.unmount();
     const third = openSpokenLesson({ gradeSpokenAnswer });
     await expect.element(page.getByRole("textbox")).toBeVisible();
@@ -96,7 +83,6 @@ describe("spoken answers", () => {
     await page.getByRole("button", { name: "I can talk now" }).click();
     await expect.element(page.getByRole("button", { name: "Record" })).toBeVisible();
 
-    // Taken back, it's gone for the next speaking screen too.
     third.unmount();
     openSpokenLesson({ gradeSpokenAnswer, step });
     await expect.element(page.getByRole("button", { name: "Record" })).toBeVisible();
@@ -127,7 +113,6 @@ describe("spoken answers", () => {
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
 
-    // The spoken grade may still be recorded, so the listening answer's save goes after it.
     await vi.advanceTimersByTimeAsync(1000);
     expect(adapters.checkStep).not.toHaveBeenCalled();
 
@@ -154,7 +139,6 @@ describe("spoken answers", () => {
 
     await expect.element(page.getByRole("button", { name: "I can't talk now" })).toBeVisible();
 
-    // Trying again records and sends again.
     await sayIt();
     await expect.poll(() => gradeSpokenAnswer.mock.calls).toHaveLength(2);
   });
@@ -181,7 +165,6 @@ describe("spoken answers", () => {
     await expect.element(page.getByRole("button", { name: "I can't talk now" })).toBeVisible();
   });
 
-  // Pedro's microphone was blocked: the screen said "Type your answer instead" with nowhere to type.
   it("brings up the typing field when the microphone is blocked, and checks what's typed", async () => {
     vi.spyOn(navigator.mediaDevices, "getUserMedia").mockRejectedValue(
       new DOMException("Permission denied", "NotAllowedError"),
@@ -199,7 +182,6 @@ describe("spoken answers", () => {
       .element(page.getByText("The microphone is blocked. Type your answer instead."))
       .toBeVisible();
 
-    // The field that replaces Record takes its focus, so a keyboard learner can type right away.
     const field = page.getByRole("textbox", { name: "Pergunte quanto é o aluguel." });
     await expect.element(field).toHaveFocus();
     await field.fill("How much is the rent?");

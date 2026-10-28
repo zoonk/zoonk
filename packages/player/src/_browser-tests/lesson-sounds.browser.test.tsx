@@ -10,7 +10,6 @@ describe("lesson sounds", () => {
   });
 
   it("does not play a second chime when Previous returns to a right answer", async () => {
-    // Observe the browser's audio output while playing the real lesson and sound effects.
     const notes = vi.spyOn(OscillatorNode.prototype, "start");
 
     renderLessonPlayer({

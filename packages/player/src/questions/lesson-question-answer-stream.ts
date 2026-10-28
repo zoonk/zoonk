@@ -59,22 +59,14 @@ const fetchLessonQuestionAnswer: typeof fetch = async (input, init) => {
 type AnswerStreamHandlers = {
   onChunk: (chunk: string) => void;
   onMemory: (changes: LessonQuestionMemoryChange[]) => void;
-  /** The buddy proposed a plan change in this answer, waiting for the learner's tap. */
   onPlanChange: (change: PlanChangeView) => void;
-  /** Earlier proposals of the conversation the new one replaced. */
   onPlanChangesReplaced: (changeIds: string[]) => void;
-  /** The buddy offered one of the app's tools in this answer. */
   onToolOffer: (offer: TutorToolOffer) => void;
   /** The server sends `finish` once the answer is saved; memory changes may still follow. */
   onSaved: () => void;
-  /** A buddy answer as it was saved, its links checked, just before `finish`. */
   onSavedAnswer: (answer: string) => void;
 };
 
-/**
- * An answer may carry a plan change it proposed, an app tool it offered and, at its end, what it
- * changed in memory; a malformed part is ignored.
- */
 function readDataPart({
   chunk,
   onMemory,
@@ -168,11 +160,7 @@ async function readAnswerStream({
   return result.value.delta.length + (await readAnswerStream({ reader, ...handlers }));
 }
 
-/**
- * Streams a tutor answer. `onSaved` runs as soon as the server saved the answer, before what the
- * exchange taught memory arrives, so the learner can ask again at once; a stream cut after that
- * still counts as answered.
- */
+/** `onSaved` precedes memory updates; a stream cut after it still counts as answered. */
 export async function streamLessonQuestionAnswerRequest({
   connection,
   onChunk,
@@ -192,7 +180,6 @@ export async function streamLessonQuestionAnswerRequest({
   onToolOffer: (offer: TutorToolOffer) => void;
   questionId: string;
 }): Promise<LessonQuestionApiResult<{ memoryChanges: LessonQuestionMemoryChange[] }>> {
-  // The AI SDK's client (and the schemas it brings) loads when the learner asks, not with every lesson.
   const { DefaultChatTransport } = await import("ai");
 
   const transport = new DefaultChatTransport({

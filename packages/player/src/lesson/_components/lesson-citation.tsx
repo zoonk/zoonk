@@ -9,7 +9,6 @@ import { PlayerContentFrame } from "../../components/step-layouts";
 
 type MaterialStepCitation = Extract<LessonStepCitation, { kind: "material" }>;
 
-/** "Class 5, slide 4": the page of the learner's own material, so they can open it there. */
 function MaterialCitation({ citation }: { citation: MaterialStepCitation }) {
   const t = useExtracted();
   const label = useCitationLabel()(citation);
@@ -25,10 +24,6 @@ function MaterialCitation({ citation }: { citation: MaterialStepCitation }) {
   );
 }
 
-/**
- * An explanation in a lesson built from the learner's material that no page of it supports: it
- * says so, so the learner doesn't take it for something their class covered.
- */
 function NotInMaterial() {
   const t = useExtracted();
 
@@ -53,11 +48,6 @@ function CitationByKind({ citation }: { citation: LessonStepCitation }) {
   }
 }
 
-/**
- * Where a screen comes from: the page of the learner's own material for lessons built from it, the
- * dated Sources chip for screens whose facts come from a public document, or that an explanation
- * isn't in the learner's material.
- */
 export function LessonCitation({ citation }: { citation: LessonStepCitation | null }) {
   if (!citation) {
     return null;

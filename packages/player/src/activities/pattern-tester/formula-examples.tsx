@@ -44,10 +44,6 @@ function FormulaExampleRow({
   );
 }
 
-/**
- * The examples as a small spreadsheet: the input cells, the result each should give, and what
- * the learner's formula gives, marked when it matches.
- */
 export function FormulaExamples({
   examples,
   results,

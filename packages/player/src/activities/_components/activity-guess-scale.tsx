@@ -15,12 +15,10 @@ import {
   valueAtPosition,
 } from "../_utils/guess-scale";
 
-/** Tick labels are short, so only the ones right at the ends need pulling inside. */
 const TICK_EDGE_SHARE = 0.04;
 const HALF = 0.5;
 const PERCENT = 100;
 
-/** Keeps a tick label centered on its point, but inside the canvas at the ends. */
 function edgeAlign(share: number): string {
   if (share < TICK_EDGE_SHARE) {
     return "translate-x-0";
@@ -29,10 +27,6 @@ function edgeAlign(share: number): string {
   return share > 1 - TICK_EDGE_SHARE ? "-translate-x-full" : "-translate-x-1/2";
 }
 
-/**
- * A value's chip over its point: centered on it, but slid inside the track when it's wider than
- * the room on one side, so "Real value: 11.6 days" never hangs past the canvas.
- */
 function ScaleChip({
   children,
   className,
@@ -42,7 +36,6 @@ function ScaleChip({
 }: {
   children: React.ReactNode;
   className?: string;
-  /** The guess's chip sits under the real value's once both show. */
   isLower?: boolean;
   share: number;
   trackWidth: number;
@@ -65,7 +58,6 @@ function ScaleChip({
   );
 }
 
-/** The stretch of track between the guess and the real value, so the gap is seen, not computed. */
 function GapBand({ from, to }: { from: number; to: number }) {
   const [left, right] = [Math.min(from, to), Math.max(from, to)];
 
@@ -78,11 +70,6 @@ function GapBand({ from, to }: { from: number; to: number }) {
   );
 }
 
-/**
- * A guess placed on a linear or log scale before anything is revealed. Once checked, the guess is
- * locked and the real value appears on the same scale with the gap between them shaded. The guess
- * is rounded to two significant digits, so it reads as a guess (3,000, never 2,871.3).
- */
 export function ActivityGuessScale({
   actual,
   disabled,
@@ -91,7 +78,6 @@ export function ActivityGuessScale({
   scale,
   unit,
 }: {
-  /** The real value, once it can be shown. */
   actual: number | null;
   disabled: boolean;
   guess: number | null;
@@ -143,7 +129,6 @@ export function ActivityGuessScale({
         thumbAlignment="center"
         value={Math.round(share * SCALE_POSITIONS)}
       >
-        {/* Once locked, the guess and the real value stay crisp: the lock says it can't move. */}
         <SliderControl className="data-disabled:opacity-100">
           <SliderTrack>
             {guess !== null && actualShare !== null && <GapBand from={share} to={actualShare} />}

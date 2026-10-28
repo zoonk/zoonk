@@ -38,10 +38,6 @@ function StepNumber({ index, verdict }: { index: number; verdict: StepVerdict })
   );
 }
 
-/**
- * A worked step to pick, like an answer option: its number key picks it and Enter checks the pick,
- * even while the step has focus. After the check, the wrong one is struck through with its fix.
- */
 function FindErrorStep({
   correction,
   index,
@@ -78,7 +74,6 @@ function FindErrorStep({
       role="radio"
       type="button"
     >
-      {/* Centered on the step's first line, however many lines it wraps to. */}
       <LineMarker>
         <StepNumber index={index} verdict={isChecked ? verdict : "plain"} />
       </LineMarker>
@@ -103,11 +98,6 @@ function FindErrorStep({
   );
 }
 
-/**
- * A worked answer with one wrong step: the learner taps the step they think is wrong. After the
- * check the wrong step (from the fields, confirmed by code when it has math) is struck through
- * with its correction and why, and a different pick is marked.
- */
 export function FindErrorActivity({
   answer,
   content,

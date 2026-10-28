@@ -7,10 +7,6 @@ import { WordBankOptionButton } from "./word-bank-option-content";
 
 type WordTileData = { isUsed: boolean; key: string; option: WordBankOption };
 
-/**
- * Duplicate options need occurrence counting so selecting one copy of a word
- * hides only one matching tile and leaves any additional copies available.
- */
 function getWordOccurrenceNumber({
   index,
   option,
@@ -23,10 +19,6 @@ function getWordOccurrenceNumber({
   return options.slice(0, index + 1).filter((item) => item.word === option.word).length;
 }
 
-/**
- * Duplicate words are valid, so a tile is used only after that many copies of
- * the same word are already placed in blanks.
- */
 function isWordTileUsed({
   blanks,
   occurrenceNumber,
@@ -40,10 +32,6 @@ function isWordTileUsed({
   return usedCount >= occurrenceNumber;
 }
 
-/**
- * Builds the render model in one place so click selection and duplicate
- * visibility use the same occurrence-counting rule.
- */
 function getWordTileData({
   blanks,
   index,
@@ -64,10 +52,6 @@ function getWordTileData({
   };
 }
 
-/**
- * Keeps every fill-blank option in the bank so used words can become disabled
- * placeholders instead of causing the remaining options to shift position.
- */
 export function FillBlankWordBank({
   blanks,
   disabled,

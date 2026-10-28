@@ -23,7 +23,6 @@ import { useLessonQuestionController } from "./lesson-question-provider";
 import { QuestionThread } from "./lesson-question-thread";
 import { type LessonQuestionController } from "./use-lesson-questions";
 
-/** What the conversation is about: the screen or answer in view, or the thing asked about as a whole. */
 function LessonQuestionPanelDescription({
   context,
 }: {
@@ -53,7 +52,6 @@ function LessonQuestionPanelDescription({
   }
 }
 
-/** The buddy the learner is talking to, by face and name, and what the questions are about. */
 function LessonQuestionPanelHeader({
   controller,
   identity,
@@ -95,20 +93,10 @@ function LessonQuestionPanelHeader({
   );
 }
 
-/**
- * Inside a lesson, closing the drawer hands focus back to the lesson so Enter goes on; elsewhere
- * it returns to the button that opened it.
- */
 function getFinalFocus(): HTMLElement | true {
   return getLessonFocusTarget() ?? true;
 }
 
-/**
- * Where the learner talks to their buddy about where they are, in a drawer from the bottom that
- * leaves the screen they're asking about readable above it: the buddy's face and name, what the
- * questions are about (`quote`, in a lesson), the thread and, for learners who can ask, the
- * composer. A lesson on a wide screen docks the same conversation in its aside instead.
- */
 export function LessonQuestionDrawer({
   identity,
   navigation,
@@ -118,7 +106,6 @@ export function LessonQuestionDrawer({
   identity: TutorIdentity;
   navigation: LessonQuestionNavigation;
   open: boolean;
-  /** The screen or answer asked about, quoted as the conversation's first line. */
   quote?: React.ReactNode;
 }) {
   const controller = useLessonQuestionController();
@@ -128,7 +115,6 @@ export function LessonQuestionDrawer({
     <LessonQuestionNavigationContext value={navigation}>
       <Drawer onOpenChange={(next) => !next && controller.close()} open={open}>
         <DrawerPopup
-          // A light scrim: the screen asked about stays readable above the drawer.
           backdropClassName="[--backdrop-opacity:0.4] dark:[--backdrop-opacity:0.4]"
           className="h-[70dvh] max-h-[70dvh] outline-none"
           data-slot="lesson-question-drawer"

@@ -8,10 +8,6 @@ import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 
 type Hint = { hint: string; mistake: string };
 
-/**
- * Hints for likely mistakes, one at a time on request: the learner decides when they need one,
- * and each names the mistake it's for so they can tell whether it applies.
- */
 export function PatternHints({ hints, isChecked }: { hints: readonly Hint[]; isChecked: boolean }) {
   const t = useExtracted();
   const [shown, setShown] = useState(0);

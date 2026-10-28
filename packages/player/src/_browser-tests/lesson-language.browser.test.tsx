@@ -9,23 +9,13 @@ import {
 import { buildLesson } from "../preview/preview-lesson";
 import { languageStep, teachingStep } from "../preview/preview-steps";
 
-/**
- * A language lesson's own screens: sentences built from a word bank (reading builds the sentence,
- * listening its translation) that takes no more words than the answer, a blank that gets one
- * chance to fix a wrong word, and a sentence to write. In a script the learner can't read yet, the
- * words and sentences show their reading. A new script's lesson shows each letter with its reading
- * and sound, then matches them.
- */
-
 const SENTENCE = "How much is the rent?";
 const RIGHT_TYPED = "It shows where the electron is likely to be";
 
-/** Word-bank words keep their punctuation ("rent?"), which a name pattern must match as text. */
 function exactWord(word: string): RegExp {
   return new RegExp(`^${word.replaceAll(/[.*+?^${}()|[\]\\]/gu, String.raw`\$&`)}$`, "iu");
 }
 
-/** A verdict as the player announces it. */
 function verdict(text: string) {
   return page.getByRole("status").filter({ hasText: text });
 }
@@ -45,7 +35,6 @@ async function checkRightAndContinue() {
   await page.getByRole("button", { name: /^Continue/u }).click();
 }
 
-/** A letter's card as an alphabet lesson stores it; only some letters have a recorded clip. */
 function letter({
   audioUrl,
   reading,
@@ -85,7 +74,6 @@ describe("language lesson screens", () => {
 
     renderLessonPlayer({
       adapters: buildAdapters(lesson, {
-        // Written answers are graded only on the server; the rest the way it grades them.
         checkStep: (input) =>
           input.answer.kind === "typedAnswer" ? accepted(input) : graded(input),
       }),
@@ -95,7 +83,6 @@ describe("language lesson screens", () => {
     await expect.element(page.getByText("Translate", { exact: true })).toBeVisible();
     await pickWords(["How", "much", "is", "the", "rent?"]);
 
-    // The sentence is whole, so a word tapped after it stays in the bank.
     await pickWords(["many"]);
     await expectCount(page.getByRole("group", { name: "Your answer" }).getByRole("button"), 5);
     await checkRightAndContinue();
@@ -104,7 +91,6 @@ describe("language lesson screens", () => {
     await pickWords(["quanto", "é", "o", "aluguel?"]);
     await checkRightAndContinue();
 
-    // A wrong word gets one chance to fix it before the answer is shown.
     await expect.element(page.getByText("The electron is drawn as a")).toBeVisible();
     await pickWords(["orbit"]);
     await page.getByRole("button", { name: /^Check/u }).click();
@@ -159,7 +145,6 @@ describe("language lesson screens", () => {
       ),
     });
 
-    // The sentence's reading leaves its blank empty, so it doesn't give the answer away.
     await expect.element(page.getByText("okane ____ onegai shimasu.")).toBeVisible();
 
     const bank = page.getByRole("group", { name: "Word bank" });
@@ -217,7 +202,6 @@ describe("language lesson screens", () => {
       await page.getByRole("button", { exact: true, name: label }).click();
     }
 
-    // Matching gives feedback pair by pair, so Check moves straight on.
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
   });
@@ -234,7 +218,6 @@ describe("language lesson screens", () => {
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(verdict("Not quite")).toBeVisible();
 
-    // The header's segment for a language question turns red, like any question's.
     expect(document.querySelector<HTMLElement>("[data-segment]")?.dataset.segment).toBe("wrong");
 
     await expect
@@ -247,13 +230,11 @@ describe("language lesson screens", () => {
 
     await page.getByRole("button", { name: /^Continue/u }).click();
 
-    // A right pick stays on its own, marked; the other words step aside for the result.
     await page.getByRole("radio", { name: /^rent/iu }).click();
     await page.getByRole("button", { name: /^Check/u }).click();
     await expect.element(verdict("Correct!")).toBeVisible();
     await expectCount(page.getByRole("radio"), 1);
 
-    // The right pick is the learner's own: "Your answer", in green, under "Correct!".
     await expect
       .element(page.getByRole("radio", { name: /^rent/iu }))
       .toMatchTextContent(/Your answer/u);

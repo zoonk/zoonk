@@ -27,11 +27,6 @@ function WordHeader({ meaning, word }: { meaning?: string; word: string }) {
   );
 }
 
-/**
- * A full pattern for a model word, then the same pattern for a new word with cells left blank:
- * pick a blank, then its ending. The answer is each blank's ending, which core computes from the
- * written forms. After the check, each blank shows the learner's ending and the right one.
- */
 export function PatternTableActivity(props: PatternTableProps) {
   const t = useExtracted();
   const { answer, content, labelId, onAnswerChange, phase } = props;

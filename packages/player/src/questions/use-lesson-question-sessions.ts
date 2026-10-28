@@ -11,16 +11,11 @@ import {
 } from "./lesson-question-sessions";
 import { type LessonQuestionAction } from "./lesson-question-state";
 
-/**
- * A page of a thread the host already read: its questions and where the earlier ones continue. A
- * thread that doesn't exist yet is an empty page.
- */
 export type LessonQuestionThreadPage = Pick<
   LessonQuestionThreadResource,
   "hasMore" | "nextCursor" | "questions"
 >;
 
-/** The thread the page already read starts loaded, so the conversation shows without a wait. */
 function getInitialSessions({
   activeContext,
   initialThread,

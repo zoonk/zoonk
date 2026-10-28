@@ -6,28 +6,20 @@ import { GUITAR_TUNING, type GuitarVoicing, stringNoteMidi } from "../_utils/gui
 import { keepArrowKeys } from "../_utils/keep-arrow-keys";
 import { NoteMark, type NoteMarkKind } from "./note-mark";
 
-/** How tab and chord charts mark a string that isn't played. */
 const MUTED_MARK = "×";
 
-/** Frets shown at once: one hand's reach plus one. */
 export const FRETBOARD_SPAN = 4;
 
-/** Strings are drawn the way tab reads them: the high E on top. */
 const STRINGS_TOP_DOWN = GUITAR_TUNING.map((_, index) => index).toReversed();
 
 type FretboardProps = {
-  /** The first fret shown; 1 draws the nut. */
   firstFret: number;
   label: string;
-  /** How each played string is drawn, by string (low E is 0). Defaults to `new`. */
   markOf?: (stringIndex: number) => NoteMarkKind;
   nameOf: (midi: number) => string;
-  /** Picking a fret (or null to mute) for a string. Without it, the fretboard only shows. */
   onChange?: (stringIndex: number, fret: number | null) => void;
-  /** Screen reader names: a string ("Low E string") and a position ("Fret 3", "Open"). */
   positionLabel: (fret: number | null, midi: number | null) => string;
   stringLabel: (stringIndex: number) => string;
-  /** The short names on the left: E A D G B E. */
   stringNames: readonly string[];
   voicing: GuitarVoicing;
 };
@@ -36,7 +28,6 @@ function frets(firstFret: number): number[] {
   return Array.from({ length: FRETBOARD_SPAN }, (_, index) => firstFret + index);
 }
 
-/** The string names, then muted and open (one column when only shown), then the frets. */
 function gridColumns(isInput: boolean): React.CSSProperties {
   const before = isInput ? "2.75rem 2.75rem" : "2rem";
 
@@ -53,7 +44,6 @@ function OpenOrMuted({ fret }: { fret: number | null | undefined }) {
   return fret === 0 ? <span className="border-foreground size-3.5 rounded-full border-2" /> : null;
 }
 
-/** One string as a row of radio buttons: muted, open or a fret, so any keyboard can pick. */
 function StringPicker({
   firstFret,
   markOf,
@@ -182,11 +172,6 @@ function StringRow({
   );
 }
 
-/**
- * A guitar neck in standard tuning, drawn the way tab reads it (high E on top) with a window of
- * frets. It shows a chord shape, or, with `onChange`, lets the learner pick one fret per string
- * with a pointer or the keyboard (each string is a radio group).
- */
 export function GuitarFretboard(props: FretboardProps) {
   const name = useId();
   const { firstFret, label, onChange, stringNames } = props;

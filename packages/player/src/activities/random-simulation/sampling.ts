@@ -8,7 +8,6 @@ export type Population = Extract<
   { mode: "sampling" }
 >["population"];
 
-/** Up to this size a poll asks each person; larger ones use the normal curve, which matches it. */
 const EXACT_LIMIT = 1000;
 const MIDDLE_SHARE = 0.95;
 const DOMAIN_REACH = 3.5;
@@ -27,11 +26,6 @@ function spreadOf(population: Population): number {
     : population.sd;
 }
 
-/**
- * One result per run: the share of a random sample that says yes, or its average. Small polls
- * ask each person; big ones draw from the normal curve the count follows, so 1,000 polls of
- * 100,000 people stay instant. A seed replays the same runs.
- */
 export function simulateSamples({
   population,
   runs,
@@ -60,7 +54,6 @@ export function simulateSamples({
   });
 }
 
-/** Where the middle 95% of results landed: the range a poll's margin of error describes. */
 export function middleRange(results: readonly number[]): NumericDomain {
   const sorted = results.toSorted((first, second) => first - second);
   const tail = (1 - MIDDLE_SHARE) / 2;
@@ -71,10 +64,6 @@ export function middleRange(results: readonly number[]): NumericDomain {
   return [at(tail), at(1 - tail)];
 }
 
-/**
- * The axis every sample size shares, wide enough for the smallest (the most spread out), so
- * results visibly narrow as samples grow. Shares never go below 0% or above 100%.
- */
 export function samplingDomain(population: Population, smallest: number): NumericDomain {
   const reach = (DOMAIN_REACH * spreadOf(population)) / Math.sqrt(smallest);
   const truth = truthOf(population);
@@ -87,11 +76,9 @@ export function samplingDomain(population: Population, smallest: number): Numeri
 
 export type HistogramBin = { count: number; from: number; to: number };
 
-/** Counts per equal-width bin across the domain; results outside it go in the end bins. */
 export function histogram(results: readonly number[], [min, max]: NumericDomain): HistogramBin[] {
   const width = (max - min) / BIN_COUNT;
 
-  /* Counting in place keeps this linear; a copy per result would be quadratic. */
   const counts = results.reduce(
     (list, value) => {
       const index = clamp(Math.floor((value - min) / width), 0, BIN_COUNT - 1);
@@ -108,10 +95,6 @@ export function histogram(results: readonly number[], [min, max]: NumericDomain)
   }));
 }
 
-/**
- * Digits that tell results apart at the current spread, so a range reads "44% to 55%" rather
- * than "44.5% to 55%": whole numbers for results a few points apart, decimals for tighter ones.
- */
 export function valueDigits({ margin, population }: { margin: number; population: Population }) {
   const shown = population.kind === "proportion" ? margin * PERCENT : margin;
 

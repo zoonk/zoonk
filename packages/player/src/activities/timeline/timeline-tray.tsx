@@ -6,13 +6,8 @@ import { useRef } from "react";
 
 type PointerPoint = { clientX: number; clientY: number };
 
-/** How far a press must move before it counts as a drag rather than a tap. */
 const DRAG_DISTANCE = 6;
 
-/**
- * The next event to place. Dragging it onto the timeline drops it where the pointer lets go;
- * pressing it (or Enter and Space) puts it in the middle, to fine-tune with a drag or the arrows.
- */
 export function TimelineTray({
   label,
   onDragEnd,
@@ -77,7 +72,6 @@ export function TimelineTray({
         <span className="flex-1 text-sm font-medium">{label}</span>
       </button>
 
-      {/* Outside the button, so the button's name holds all the text it shows. */}
       <p aria-hidden="true" className="text-muted-foreground text-xs">
         {t("Drag onto the timeline")}
       </p>

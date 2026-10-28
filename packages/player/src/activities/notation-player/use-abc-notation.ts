@@ -15,7 +15,6 @@ type NotationStatus = "failed" | "loading" | "ready";
 const SECONDS_PER_MINUTE = 60;
 const DEFAULT_WIDTH = 320;
 
-/** The staff is drawn at the width it's shown, so notes keep their size on a phone. */
 const STAFF_MARGIN = 12;
 const WIDE_STAFF = 480;
 const BARS_PER_NARROW_LINE = 2;
@@ -24,7 +23,6 @@ const MIN_SPACING = 1.8;
 const MAX_SPACING = 2.7;
 const MS = 1000;
 
-/** The notes of a timed tune as sound events, each ringing for its written length. */
 export function tuneSound({
   bpm,
   beatLength,
@@ -45,7 +43,6 @@ export function tuneSound({
   );
 }
 
-/** The tune bar by bar, as the notes' MIDI numbers, for the words that describe it. */
 type TuneOutline = number[][];
 
 function outlineTune(abcjs: Abcjs, tune: TuneObject): TuneOutline {
@@ -62,11 +59,6 @@ function outlineTune(abcjs: Abcjs, tune: TuneObject): TuneOutline {
   );
 }
 
-/**
- * Draws ABC notation with abcjs (loaded only for this activity), as a staff or with guitar tab
- * under it, in the text color so it follows light and dark. The tune comes back ready to play:
- * its notes carry their pitches.
- */
 export function useAbcNotation({
   label,
   notation,

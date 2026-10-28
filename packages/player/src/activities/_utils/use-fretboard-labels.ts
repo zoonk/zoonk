@@ -7,7 +7,6 @@ import { useNoteNames } from "./use-music-labels";
 
 const OPEN_STRING_NAMES = ["E", "A", "D", "G", "B", "E"] as const;
 
-/** Names for a guitar neck: the strings on the left and what each position is called aloud. */
 export function useFretboardLabels() {
   const t = useExtracted();
   const { display, spoken } = useNoteNames();

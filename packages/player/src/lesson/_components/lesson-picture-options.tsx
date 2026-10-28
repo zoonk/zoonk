@@ -17,10 +17,6 @@ type PictureOption = {
   text: string;
 };
 
-/**
- * One option's picture: drawn, still on its way, or (when its drawing failed) what it looks like
- * in words, so the question can still be answered. Its name shows once the answer is checked.
- */
 function PictureOptionContent({
   isChecked,
   option,
@@ -71,11 +67,6 @@ function PictureOptionContent({
   );
 }
 
-/**
- * A question whose options are pictures, to tell separate things apart by how they look: two to
- * a row, with number-key shortcuts. Each is named by what it looks like until the answer is
- * checked; then only the right one and a wrong pick stay, marked and named.
- */
 export function LessonPictureOptions({
   isChecked,
   isLocked,

@@ -28,7 +28,6 @@ describe("today choices with readable storage", () => {
   });
 
   it("keeps a choice in this tab when storing it is rejected", () => {
-    // Storage can allow reads while rejecting writes, such as when its quota is exhausted.
     storage.setItem.mockImplementationOnce(() => {
       throw new Error("Storage write denied");
     });

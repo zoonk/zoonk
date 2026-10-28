@@ -16,7 +16,6 @@ type Workings = Extract<
   { kind: "computed" }
 >["workings"];
 
-/** How a computed value is worked out, each step's number computed from its expression. */
 function GuessWorkings({ workings }: { workings: Workings }) {
   const format = useFormatNumber();
 
@@ -36,11 +35,6 @@ function GuessWorkings({ workings }: { workings: Workings }) {
   );
 }
 
-/**
- * Guess first, on a linear or log scale, before anything is explained, so the gap to the real
- * value is felt. Once checked, the guess is locked and the real value appears on the same scale:
- * worked out by code with each step shown, or cited data. The comparison and the takeaway say why.
- */
 export function GuessRevealActivity({
   answer,
   content,

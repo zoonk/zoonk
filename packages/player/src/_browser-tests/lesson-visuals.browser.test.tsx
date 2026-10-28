@@ -9,15 +9,8 @@ import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
 import { inlineImage, lawTimeline, lettersChart, teachingStep } from "../preview/preview-steps";
 
-/**
- * A screen that points at something to see shows it: a table written in its text, a chart or a
- * timeline drawn from its data, and a picture, waited for while it's being drawn. Quoted words in
- * angle quotes read as italics.
- */
-
 const PHONE = { height: 812, width: 375 };
 
-/** The player asks again for pictures still being drawn every 4 seconds. */
 const PICTURE_POLL_MS = 4000;
 
 function check(content: object) {
@@ -151,7 +144,6 @@ describe("lesson visuals", () => {
       await expect.element(chart.getByRole("rowheader", { name: "Junho" })).toBeInTheDocument();
       await expect.element(chart.getByRole("cell", { name: "36" })).toBeInTheDocument();
 
-      // Each bar carries its value, since questions ask about exact numbers.
       expect(chart.element().querySelectorAll("rect")).toHaveLength(3);
       await expectAccessibleScreen("an explanation with a chart");
     });
@@ -211,7 +203,6 @@ describe("lesson visuals", () => {
   });
 
   it("waits on a question's picture while it's drawn, then shows it and takes answers", async () => {
-    // The clock keeps running on its own, as the lesson's does, so only the wait is skipped ahead.
     vi.useFakeTimers({ shouldAdvanceTime: true });
 
     onTestFinished(() => {
@@ -233,11 +224,9 @@ describe("lesson visuals", () => {
     await expect.element(page.getByRole("status")).toHaveTextContent("Drawing the picture…");
     await expect.element(page.getByText(request.alt)).not.toBeInTheDocument();
 
-    // Nobody answers about a picture they can't see yet.
     const firstOption = page.getByRole("radio").first();
     await expect.element(firstOption).toBeDisabled();
 
-    // The picture is drawn, and the next ask, a few seconds later, brings it.
     getLessonPictures.mockResolvedValue([{ image: drawn, stepId: step.id }]);
     await vi.advanceTimersByTimeAsync(PICTURE_POLL_MS);
 

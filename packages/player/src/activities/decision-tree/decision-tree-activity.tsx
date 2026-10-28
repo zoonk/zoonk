@@ -25,11 +25,6 @@ function outcomeLabel(node: { kind: string; label?: string } | null): string {
   return node?.kind === "outcome" ? (node.label ?? "") : "";
 }
 
-/**
- * Walk a branching key one question at a time, using what the case says. Each answer narrows
- * what's still possible; Undo steps back. Reaching an outcome is the answer; after the check,
- * the walk is compared with the one code computed from the case.
- */
 export function DecisionTreeActivity({
   answer,
   content,
@@ -87,7 +82,6 @@ export function DecisionTreeActivity({
         <ol aria-label={t("Your answers")} className="flex flex-col gap-2">
           {steps.map((step) => (
             <li className="flex items-start gap-2.5 text-sm" key={step.node.id}>
-              {/* The mark and the answer stay on the question's first line when it wraps. */}
               <LineMarker>
                 <CircleCheck aria-hidden="true" className="text-muted-foreground size-[18px]" />
               </LineMarker>

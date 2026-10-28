@@ -22,16 +22,11 @@ type ScreenTarget = Extract<TutorTarget, { kind: LessonQuestionScreenKind }>;
 
 const loadDrawer = () => import("./lesson-question-panel");
 
-/** A screen loads the drawer once the learner asks, and the answers' renderer with it. */
 const LessonQuestionDrawer = lazy(async () => {
   const panel = await loadDrawer();
   return { default: panel.LessonQuestionDrawer };
 });
 
-/**
- * Pointing at "Ask" (or focusing it, or pressing it) starts loading the drawer and the answers'
- * renderer, so the conversation opens without waiting for them.
- */
 function preloadDrawer() {
   loadDrawer().catch(() => null);
   preloadTutorMarkdown();
@@ -60,25 +55,13 @@ function useAskLabel({ kind, name }: { kind: LessonQuestionScreenKind; name: str
   }
 }
 
-/**
- * The button's size: small beside a screen's content, the bar's size in a page's top bar, and in
- * a task (a mock's result) where every task has its buddy: the icon every task's buddy has after
- * the main action on a phone and a tablet, and from `lg` its face and name, at the foot of the
- * task's aside level with the action bar, as the composer is there on other tasks (in the bar
- * when the task has no aside). Its accessible name says what it asks about.
- */
 type AskTutorSize = "bar" | "sm" | "task";
 
-/** A task's buddy (`task`): see `AskTutorSize`. */
 const TASK_ASK_CLASS = cn(
   "size-11 shrink-0 px-0 lg:w-auto lg:px-4 lg:pl-2",
   "lg:group-data-aside/task:fixed lg:group-data-aside/task:right-5 lg:group-data-aside/task:bottom-[max(1rem,env(safe-area-inset-bottom))] lg:group-data-aside/task:w-[calc(var(--task-aside)-2.5rem-1px)] lg:group-data-aside/task:justify-start",
 );
 
-/**
- * "Ask Zu about this subject" as a row of a page's list (its aside's "Also"), by the buddy's face:
- * the same drawer as the bar's button.
- */
 function AskTutorRow({
   identity,
   kind,
@@ -103,7 +86,6 @@ function AskTutorRow({
   );
 }
 
-/** "Ask Zu": the learner's buddy, by face and name, answers about what the screen shows. */
 function AskTutorButton({
   identity,
   kind,
@@ -160,7 +142,6 @@ function AskTutorButton({
   );
 }
 
-/** The drawer mounts the first time it opens and stays for its closing animation after that. */
 function ScreenTutorDrawer({
   identity,
   navigation,
@@ -186,11 +167,6 @@ function ScreenTutorDrawer({
   );
 }
 
-/**
- * The questions drawer of a screen outside the player (a chapter, a subject or a finished mock), mounted with
- * its "Ask {name}" button. Keep `target` and `tutor` stable across renders, as the tutor's requests
- * follow them.
- */
 function AskTutorProvider({
   children,
   identity,
@@ -220,16 +196,7 @@ function AskTutorProvider({
   );
 }
 
-/**
- * "Ask Zu" on a screen outside the player: the same questions drawer as in a lesson, where the
- * learner's buddy answers about what the screen shows, with suggested questions. Its thread loads
- * when the learner opens it, and only what the learner sends is answered. As a `row` it's a list
- * row saying what it asks about, for a page's aside.
- *
- * ```tsx
- * <AskTutor target={chapterTarget} tutor={tutorConfig} />
- * ```
- */
+/** Keep `target` and `tutor` stable across renders because requests follow their identity. */
 export function AskTutor({
   appearance = "button",
   size = "sm",

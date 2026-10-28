@@ -8,14 +8,7 @@ import {
 import { onTestFinished, vi } from "vitest";
 import { getContextSummary, getThreadPage } from "./tutor-api-requests";
 
-/** What a question carries before an answer proposes or offers anything. */
 const UNANSWERED = { planChange: null, toolOffer: null } as const;
-
-/**
- * The tutor's side of the public API (`/v1/.../questions`), faked in the page: the tutor talks to
- * it with `fetch` through its connection, so the stub sits there and answers like the API, with
- * the learner's saved questions in memory. Tests change what it says one request at a time.
- */
 
 export const TUTOR_API_URL = "https://api.zoonk.test";
 export const TUTOR_AUTHORIZATION = "Bearer tutor-test-token";
@@ -24,22 +17,17 @@ const HTTP_STATUS_UNAUTHORIZED = 401;
 const HTTP_STATUS_NOT_FOUND = 404;
 const HTTP_STATUS_CONFLICT = 409;
 
-/** One question, or its answer: any other path the tutor calls is a thread's questions. */
 const QUESTION_PATH = /^\/v1\/questions\/(?<questionId>[^/]+)(?<answers>\/answers)?$/u;
 
-/** What the API's answers say unless a test streams its own. */
 export const TUTOR_ANSWER =
   "Gravity keeps pulling while the satellite moves forward, bending its path.";
 
-/** The tutor's requests: a thread page, a new question, one question's status, and its answer. */
 type TutorRoute = "answer" | "create" | "question" | "thread";
 
-/** Answers one request: with the API's own response (`serve`), or with anything else. */
 type TutorResponder = (serve: () => Promise<Response>) => Promise<Response>;
 
 type QuestionFields = Pick<LessonQuestionResource, "question" | "status"> & {
   answer?: string | null;
-  /** The lesson screen it was asked on, by position. */
   step?: number;
 };
 
@@ -49,10 +37,6 @@ const ANSWER_STREAM_HEADERS = {
   "x-vercel-ai-ui-message-stream": "v1",
 };
 
-/**
- * An answer streamed as the API streams it (an AI SDK UI message stream), written as the test
- * goes: `finish` says the answer is saved, and what memory learned can follow before it closes.
- */
 export function tutorAnswerStream() {
   const { readable, writable } = new TransformStream<Uint8Array, Uint8Array>();
   const writer = writable.getWriter();
@@ -79,14 +63,12 @@ export function tutorAnswerStream() {
       send({ id: "answer", type: "text-end" });
       send({ type: "finish" });
     },
-    /** A data part, such as the plan change the buddy proposed (`data-plan-change`). */
     part: (type: `data-${string}`, data: unknown) => send({ data, type }),
     response: new Response(readable, { headers: ANSWER_STREAM_HEADERS, status: 200 }),
     write: (delta: string) => send({ delta, id: "answer", type: "text-delta" }),
   };
 }
 
-/** A whole answer at once, saved, as the API sends one it wrote quickly. */
 export function tutorAnswerResponse(answer: string) {
   const stream = tutorAnswerStream();
   stream.write(answer);
@@ -95,14 +77,12 @@ export function tutorAnswerResponse(answer: string) {
   return stream.response;
 }
 
-/** Two frames: whatever the tutor made of a response it just read is on screen by then. */
 export function nextFrames() {
   return new Promise<void>((resolve) => {
     requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
   });
 }
 
-/** Resolves once the tutor has read the response's body. */
 function whenRead(response: Response) {
   const read = Promise.withResolvers<null>();
   const readJson = response.json.bind(response);
@@ -120,7 +100,6 @@ function errorResponse(status: number) {
   return Response.json({ error: "The API refused this request" }, { status });
 }
 
-/** A question just asked, waiting for its answer, as the API saves it. */
 function toPendingQuestion({
   createdAt,
   input,
@@ -155,18 +134,11 @@ function toTutorRequest(request: Request): TutorRequest {
   return { request, route: request.method === "POST" ? "create" : "thread" };
 }
 
-/**
- * Fakes the tutor's API for one test and returns it: the saved `questions` (oldest first, which
- * tests change as another client would), every question `inputs` sent, and `requests` by route.
- * `next` answers the next request of a route its own way; `hold` and `fail` are the usual ones.
- * A session's or practice's questions are asked without a `lesson`.
- */
 export function stubTutorApi({
   lesson,
   pageSize,
 }: {
   lesson?: PlayableLibraryLesson;
-  /** How many questions a thread page holds; without it, the whole thread comes at once. */
   pageSize?: number;
 }) {
   const threadId = crypto.randomUUID();
@@ -178,7 +150,6 @@ export function stubTutorApi({
     thread: [],
   };
 
-  /** Saved questions sort by when they were made, so each one is made a second after the last. */
   const clock = { time: Date.parse("2026-01-01T00:00:00.000Z") };
 
   function stamp() {
@@ -189,7 +160,6 @@ export function stubTutorApi({
   const createdByRequestId = new Map<string, { input: string; questionId: string }>();
 
   const api = {
-    /** The server finishes a question's answer, as when it's generated elsewhere. */
     complete(questionId: string, answer = TUTOR_ANSWER) {
       api.questions = api.questions.map((question) =>
         question.id === questionId
@@ -197,15 +167,9 @@ export function stubTutorApi({
           : question,
       );
     },
-    /** The next request to `route` gets an error `status` instead. */
     fail(route: TutorRoute, status: number) {
       api.next(route, () => Promise.resolve(errorResponse(status)));
     },
-    /**
-     * The next request to `route` waits: the server answers as it would when the request arrives,
-     * and the response reaches the tutor once the test releases it. Releasing resolves once the
-     * tutor has read the response and the screen shows what it made of it.
-     */
     hold(route: TutorRoute) {
       const release = Promise.withResolvers<null>();
       const read = Promise.withResolvers<null>();
@@ -227,7 +191,6 @@ export function stubTutorApi({
     next(route: TutorRoute, respond: TutorResponder) {
       responders[route].push(respond);
     },
-    /** A question saved on the lesson's screen at `step`, made after every question before it. */
     question({
       answer = null,
       question,
@@ -260,7 +223,6 @@ export function stubTutorApi({
     );
   }
 
-  /** Like the API, a create is idempotent by its request id: a replay gets the same question. */
   async function serveCreate(request: Request) {
     const input = createLessonQuestionInputSchema.parse(await request.json());
     api.inputs = [...api.inputs, input];
@@ -321,7 +283,6 @@ export function stubTutorApi({
       return realFetch(input, init);
     }
 
-    // The API knows the learner by the bearer token the tutor's connection adds to each request.
     if (request.headers.get("Authorization") !== TUTOR_AUTHORIZATION) {
       return Promise.resolve(errorResponse(HTTP_STATUS_UNAUTHORIZED));
     }

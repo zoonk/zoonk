@@ -9,23 +9,15 @@ import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
 import { inlineImage, pictureCheckStep } from "../preview/preview-steps";
 
-/**
- * A question whose options are pictures, to tell separate things apart by how they look: each is
- * named by what it looks like until the answer is checked, waited for while it's drawn, and
- * described in words when its drawing never came.
- */
-
 const [GOTHIC, ROMANESQUE, BAROQUE] = pictureCheckContent.options;
 const PHONE = { height: 812, width: 375 };
 
-/** The player asks again for pictures still being drawn every 4 seconds. */
 const PICTURE_POLL_MS = 4000;
 
 function option(alt: string) {
   return page.getByRole("radio", { name: new RegExp(alt, "u") });
 }
 
-/** Checks the pick and waits for the verdict the check screen announces. */
 async function checkAnswer(expected: "Correct!" | "Not quite") {
   await page.getByRole("button", { name: /^Check/u }).click();
   await expect.element(page.getByRole("status").filter({ hasText: expected })).toBeVisible();
@@ -36,13 +28,11 @@ describe("picture options", () => {
     renderLessonPlayer({ lesson: buildLesson([pictureCheckStep()]) });
 
     await expect.element(page.getByRole("img", { name: GOTHIC?.picture.alt })).toBeVisible();
-    // The names would give the answer away, so they wait for the check.
     await expect.element(page.getByText("Romanesque", { exact: true })).not.toBeInTheDocument();
 
     await option(GOTHIC?.picture.alt ?? "").click();
     await checkAnswer("Correct!");
 
-    // Only the right pick stays, named; the others step aside for the result.
     await expect.element(page.getByText("Gothic", { exact: true })).toBeVisible();
     await expectCount(page.getByRole("radio"), 1);
     await expect.element(page.getByText("Romanesque", { exact: true })).not.toBeInTheDocument();
@@ -64,7 +54,6 @@ describe("picture options", () => {
   });
 
   it("holds the question while a picture is drawn, then takes answers once it arrives", async () => {
-    // The clock keeps running on its own, as the lesson's does, so only the wait is skipped ahead.
     vi.useFakeTimers({ shouldAdvanceTime: true });
 
     onTestFinished(() => {
@@ -86,10 +75,8 @@ describe("picture options", () => {
       .toBeInTheDocument();
 
     await expect.element(page.getByRole("radio").first()).toBeDisabled();
-    // Each ask names only the screen still waiting, not the whole lesson.
     expect(getLessonPictures).toHaveBeenLastCalledWith([step.id]);
 
-    // The picture is drawn, and the next ask, a few seconds later, brings it.
     getLessonPictures.mockResolvedValue([{ image: drawn, optionId: "baroque", stepId: step.id }]);
     await vi.advanceTimersByTimeAsync(PICTURE_POLL_MS);
 

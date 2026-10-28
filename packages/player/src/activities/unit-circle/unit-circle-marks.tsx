@@ -9,11 +9,8 @@ const HALF_TURN = 180;
 const LABEL_GAP = 8;
 const HALO = "[paint-order:stroke] stroke-background stroke-[4px] [stroke-linejoin:round]";
 const SEGMENT_WIDTH = 4;
-/** Clear of the point's 44px handle, which sits at the top of the sine's side. */
 const SIN_LABEL_GAP = 26;
-/** A bold small label's average character width, enough to tell whether it fits beside the point. */
 const LABEL_CHAR_WIDTH = 8.5;
-/** How far from the canvas's top or bottom edge a corner label sits. */
 const CORNER_INSET = 10;
 
 const TRIG_TONES: Record<TrigName, { stroke: string; text: string }> = {
@@ -59,10 +56,6 @@ export function DialLabel({
   );
 }
 
-/**
- * The tangent drawn where it lives: on the upright line touching the circle at angle 0, as far
- * up or down as the line through the center and the point reaches it. Clipped to the canvas.
- */
 export function TangentMark({
   center,
   formatValue,
@@ -110,11 +103,6 @@ export function TangentMark({
   );
 }
 
-/**
- * Where the sine's label goes: beside its side, away from the circle, or when that runs past the
- * canvas edge (a narrow phone, the point near the horizontal axis), in a corner on its side,
- * across the axis from the point: clear of the circle, the point, the target and the tangent.
- */
 function sinLabelPlacement({
   canvas,
   foot,
@@ -147,10 +135,6 @@ function sinLabelPlacement({
   };
 }
 
-/**
- * The sides of the triangle the radius makes: the cosine along the horizontal axis and the sine
- * straight up to the point, each labeled with its value.
- */
 export function TrigLegs({
   canvas,
   center,
@@ -160,7 +144,6 @@ export function TrigLegs({
   show,
   values,
 }: {
-  /** The canvas size, which the labels stay inside. */
   canvas: { height: number; width: number };
   center: Vector;
   formatValue: (value: number | null) => string;
@@ -171,7 +154,6 @@ export function TrigLegs({
 }) {
   const foot = { x: point.x, y: center.y };
   const isLeft = point.x < center.x;
-  /* On the axis the cosine's label goes under it, leaving the space above for the angle. */
   const isAbove = point.y <= center.y;
   const sinLabel = `${names.sin} = ${formatValue(values.sin ?? null)}`;
   const sinPlacement = sinLabelPlacement({ canvas, foot, isAbove, isLeft, label: sinLabel, point });

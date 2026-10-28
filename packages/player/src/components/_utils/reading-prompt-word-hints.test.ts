@@ -2,9 +2,6 @@ import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-lesson
 import { describe, expect, it } from "vitest";
 import { buildReadingPromptWordHints } from "./reading-prompt-word-hints";
 
-/**
- * Builds the smallest word-option shape needed by prompt hint tests.
- */
 function makeOption(overrides: Partial<WordBankOption>): WordBankOption {
   return { audioUrl: null, romanization: null, translation: null, word: "word", ...overrides };
 }

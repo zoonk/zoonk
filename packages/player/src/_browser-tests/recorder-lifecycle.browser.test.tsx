@@ -7,7 +7,6 @@ import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
 import { spokenAnswerStep } from "../preview/preview-steps";
 
-/** Permission and recorder events are controlled platform boundaries; no real microphone opens. */
 class TestRecorder extends EventTarget {
   static instances: TestRecorder[] = [];
   static startError = false;

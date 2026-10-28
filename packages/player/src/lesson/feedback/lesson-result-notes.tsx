@@ -4,7 +4,6 @@ import { FeedbackNote } from "@zoonk/learn/feedback-panel";
 import { useExtracted, useLocale } from "next-intl";
 import { type ReviewDate, describeReviewDate } from "../_utils/review-date";
 
-/** What happens next after an answer: saved as a mistake, and when the idea comes back. */
 export type LessonResultNext = {
   nextReviewAt: string | null;
   savedMistake: boolean;
@@ -20,10 +19,6 @@ function useReview(nextReviewAt: string | null): ReviewDate | null {
   return nextReviewAt ? describeReviewDate({ locale, reviewAt: nextReviewAt }) : null;
 }
 
-/**
- * The words of what happens next: a miss saved to the mistakes notebook and when it comes back,
- * or when an idea answered without a saved mistake comes back. Nothing when nothing comes back.
- */
 function ResultNextText({
   review,
   savedMistake,
@@ -64,7 +59,6 @@ function ResultNextText({
   );
 }
 
-/** Hyperdrive, from three right answers in a row: a quiet aside, never a reward to chase. */
 export function HyperdriveStreak({ count }: { count: number }) {
   const t = useExtracted();
 
@@ -75,10 +69,6 @@ export function HyperdriveStreak({ count }: { count: number }) {
   );
 }
 
-/**
- * The feedback panel's faint last line: what happens next (saved to the mistakes notebook, coming
- * back at the end of the lesson or in a review). None of it costs anything.
- */
 export function LessonResultNote({ nextReviewAt, savedMistake, willReturn }: LessonResultNext) {
   const review = useReview(nextReviewAt);
 
@@ -93,10 +83,6 @@ export function LessonResultNote({ nextReviewAt, savedMistake, willReturn }: Les
   );
 }
 
-/**
- * The same faint line under a screen that shows its own result (an activity, a challenge, a match),
- * with Hyperdrive first: "3 right in a row · This idea comes back in tomorrow's review".
- */
 export function LessonResultNotes({
   hyperdriveStreak,
   nextReviewAt,

@@ -14,10 +14,6 @@ import { useExtracted } from "next-intl";
 import { createContext, use, useState } from "react";
 import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context";
 
-/**
- * Leaves the lesson, or asks first when the screen holds an answer the learner wrote and hasn't
- * checked (`unsentAnswer`). Returns whether it left.
- */
 type LeaveLesson = () => boolean;
 
 const LessonLeaveContext = createContext<LeaveLesson | null>(null);
@@ -32,11 +28,6 @@ export function useLeaveLesson(): LeaveLesson {
   return leave;
 }
 
-/**
- * The way out of a lesson, shared by the ✕ and Escape. Leaving drops a written answer that wasn't
- * checked (its text lives only on the screen), so then it asks first, as an essay does; any other
- * screen leaves at once, its answers already saved.
- */
 export function LessonLeaveProvider({ children }: { children: React.ReactNode }) {
   const t = useExtracted();
   const { screen } = useLessonPlayer();

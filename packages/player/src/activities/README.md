@@ -19,10 +19,10 @@ Every template in core's catalog has a renderer. `activityRenderers` (`activity-
 ```ts
 type ActivityStepProps = {
   content: ActivityStepContent;
-  answer: ActivityAnswer | null; // lives in the player reducer
+  answer: ActivityAnswer | null;
   onAnswerChange: (answer: ActivityAnswer | null) => void;
   phase: "answering" | "checked";
-  isCorrect: boolean | null; // the server's grade once checked
+  isCorrect: boolean | null;
 };
 ```
 
@@ -40,18 +40,18 @@ After the check (`phase: "checked"`) the options and input are read-only, and `A
 
 ```ts
 type ActivityRendererProps<TId extends ActivityTemplateId> = {
-  content: ActivityContentFor<TId>; // narrowed: content.fields is typed
+  content: ActivityContentFor<TId>;
   answer: ActivityAnswer | null;
   onAnswerChange: (answer: ActivityAnswer | null) => void;
   phase: "answering" | "checked";
-  expected: ActivityExpected | null; // set once checked
-  labelId: string; // the prompt's id, for aria-labelledby
+  expected: ActivityExpected | null;
+  labelId: string;
 };
 
 type ActivityExpected =
   | { kind: "choice"; optionId: string }
   | { kind: "numeric"; value: number }
-  | { kind: "interaction"; answer: ActivityExpectedAnswer }; // core's computeExpected
+  | { kind: "interaction"; answer: ActivityExpectedAnswer };
 ```
 
 `expected` comes from the same values `checkActivityAnswer` grades with (the correct option, the check's answer that the validator recomputed, or the end state core computes from the fields), never from model-written text. Once checked, the canvas is read-only and draws the expected end state next to the learner's.

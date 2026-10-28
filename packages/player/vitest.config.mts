@@ -11,7 +11,6 @@ assertBrowserLaunchAllowed();
 const browserTests = ["src/**/*.browser.test.tsx"];
 const unitTests = ["src/**/*.test.ts", "src/**/*.test.tsx"];
 
-/** What only a finger does (hold to drag, swipe to scroll), played on a phone's touch screen. */
 const touchTests = ["src/**/*.touch.browser.test.tsx"];
 
 const launchOptions = process.env.CI ? { channel: "chrome" } : {};
@@ -24,10 +23,6 @@ const webHapticsShim = fileURLToPath(
   new URL("src/_test-utils/shims/web-haptics-react.ts", import.meta.url),
 );
 
-/**
- * Sets the device's light or dark scheme and its reduced-motion setting, which a page can only
- * read. Typed for tests in `src/_test-utils/device-media.ts`.
- */
 const emulateMedia: BrowserCommand<[Parameters<Page["emulateMedia"]>[0]]> = async (
   { page },
   media,
@@ -35,10 +30,6 @@ const emulateMedia: BrowserCommand<[Parameters<Page["emulateMedia"]>[0]]> = asyn
   await page.emulateMedia(media);
 };
 
-/**
- * One touch event of a finger, `waitMs` after the one before when given. `at` (ms since the epoch)
- * is when the finger did it; without it, it's when the browser gets the event.
- */
 type TouchStep = {
   at?: number;
   touchPoints: { x: number; y: number }[];
@@ -48,11 +39,6 @@ type TouchStep = {
 
 const touchSessions = new WeakMap<Page, Promise<CDPSession>>();
 
-/**
- * Plays a finger's touches through the browser's own touch input, all in one call: sent one at a
- * time from the test, each touch took a round trip to the driver, and a screen's swipes took
- * seconds. Typed for tests in `src/_test-utils/touch-screen.ts`.
- */
 const touch: BrowserCommand<[TouchStep[]]> = async ({ page }, steps) => {
   const opening = touchSessions.get(page) ?? page.context().newCDPSession(page);
   touchSessions.set(page, opening);
@@ -76,10 +62,7 @@ const touch: BrowserCommand<[TouchStep[]]> = async ({ page }, steps) => {
 };
 
 export default defineConfig({
-  /**
-   * Dependencies only code loaded on demand imports (the tutor's Markdown, KaTeX): bundled up
-   * front, since one found mid-run makes Vite reload the page under a test.
-   */
+  // Discovering a dependency mid-test makes Vite reload the page; prebundle lazy imports too.
   optimizeDeps: {
     include: [
       "@streamdown/math",
@@ -103,7 +86,6 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          // The player's screens played in a real browser: what learners see and do, in any app.
           browser: {
             commands: { emulateMedia, touch },
             enabled: true,
@@ -119,10 +101,8 @@ export default defineConfig({
                 viewport: { height: 812, width: 375 },
               },
             ],
-            // Playwright's matching: a name or text matches a substring unless `exact` is passed.
             locators: { exact: false },
             provider: playwright({ launchOptions }),
-            // Playwright's Desktop Chrome size, which the apps' E2E runs use.
             viewport: { height: 720, width: 1280 },
           },
           include: browserTests,

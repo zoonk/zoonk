@@ -30,7 +30,6 @@ const ENDPOINT_RADIUS = 4.5;
 const DELTA_OFFSET = -12;
 const PLAIN_NUMBER_LIMIT = 10_000;
 
-/** Years and other whole labels up to four digits read without a thousands separator. */
 function isPlainAxis(values: readonly number[]): boolean {
   return values.every((value) => Number.isInteger(value) && Math.abs(value) < PLAIN_NUMBER_LIMIT);
 }
@@ -56,12 +55,6 @@ function pointAt(fields: Fields, x: number): number {
   return fields.points.find((point) => point.x === x)?.y ?? 0;
 }
 
-/**
- * A real dataset to measure: the learner taps spans (like the 1960s and the 2010s) to see how much
- * the line changed in each, so a trend is read from the data instead of stated. Code measures
- * every span with the template's statistic; with a numeric check the last measured span is the
- * answer.
- */
 export function ChartReaderActivity({
   content,
   expected,

@@ -5,14 +5,8 @@ import { ActivitySoundButton } from "../_components/activity-sound-button";
 import { useChordName, useNoteNames } from "../_utils/use-music-labels";
 import { type NoteTarget } from "./keyboard-fretboard-notes";
 
-/** A target found by ear: how to play it, and whether it's named yet. */
 type ByEar = { isRevealed: boolean; onPlay: () => void };
 
-/**
- * What the learner is looking for (the chord's name, or how many notes) and the notes on the
- * keys now, with a button to hear them. Found by ear, the target isn't named until it's answered,
- * and a button plays it. The notes line is live, so screen readers hear each change.
- */
 export function KeyboardFretboardHeader({
   byEar,
   notes,

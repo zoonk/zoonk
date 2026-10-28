@@ -10,12 +10,6 @@ import {
 } from "@zoonk/ui/components/slider";
 import { cn } from "@zoonk/ui/lib/utils";
 
-/**
- * The slider every activity uses to change a value: its label and current value on top, what's
- * written under the track (`scale`: the range's ends, or its stops) underneath. `valueText` is what
- * screen readers announce as it moves, so it should name the value with its unit and anything the
- * move changes, like the output it produces.
- */
 export function ActivitySlider({
   className,
   disabled,

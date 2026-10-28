@@ -4,10 +4,8 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useId } from "react";
 import { type Link, type LinkResult, arcPath } from "./cause-effect-links";
 
-/** The gutter the arrows bow into, left of the cards. */
 export const ARC_GUTTER = 48;
 
-/** Arrows leave a card a little above its middle and arrive a little below, so pairs read apart. */
 const END_OFFSET = 5;
 
 type ArcState = LinkResult["state"] | "pending" | "made";
@@ -22,10 +20,6 @@ const ARC_CLASS: Record<ArcState, string> = {
   pending: "text-viz-highlight/70",
 };
 
-/**
- * The links drawn as arrows between the cards. Decorative: the list of links under the cards
- * says the same in words for screen readers.
- */
 export function CauseEffectArcs({
   centers,
   links,

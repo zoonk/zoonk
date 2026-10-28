@@ -8,7 +8,6 @@ const SILENCE = 128;
 const TONE = 40;
 const TONE_PERIOD = 20;
 
-/** A short, quiet 8-bit WAV the browser really plays and ends, so clips follow each other. */
 export function wavClip(seconds: number): Blob {
   const samples = Math.round(SAMPLE_RATE * seconds);
   const bytes = new Uint8Array(WAV_HEADER_BYTES + samples);
@@ -38,10 +37,6 @@ export function wavClip(seconds: number): Blob {
   return new Blob([bytes], { type: "audio/wav" });
 }
 
-/**
- * Stands in for the app's speech clips endpoint: each text gets its own short clip, ready at once
- * unless a test answers differently. `textOf` says which text a played file reads.
- */
 export function speechClips({ seconds = 0.15 }: { seconds?: number } = {}) {
   const texts = new Map<string, string>();
 
@@ -58,11 +53,6 @@ export function speechClips({ seconds = 0.15 }: { seconds?: number } = {}) {
 
 type PlayedClip = { preservesPitch: boolean; rate: number; src: string };
 
-/**
- * Records each clip the page starts playing, with its speed, as it starts (one audio element plays
- * them all, so its state changes from clip to clip). The silent clip that unlocks playback on
- * mobile Safari isn't a clip, so it's left out.
- */
 export function recordPlayedClips(): PlayedClip[] {
   const played: PlayedClip[] = [];
   // oxlint-disable-next-line typescript/unbound-method -- It's called with the element as `this`.

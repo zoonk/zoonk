@@ -13,7 +13,6 @@ import { ArrowDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useEffect } from "react";
 
-/** Reopening an explanation should show that answer, not the thread's latest turn. */
 function QuestionScrollTarget({ questionId }: { questionId: string | null | undefined }) {
   const { scrollToMessage } = useMessageScroller();
 

@@ -44,12 +44,6 @@ function usePercent() {
     });
 }
 
-/**
- * Guess how often something random happens, then watch hundreds of runs play out next to the
- * guess. The options come first (predict, then see); the runs start once the guess is checked.
- * Explored on an explanation screen, with nothing to guess, they start at once. The first run is
- * seeded by the lesson, so everyone sees the same one; "Run again" draws anew.
- */
 export function ChanceSimulation({ answer, content, labelId, phase }: ChanceProps) {
   const t = useExtracted();
   const format = useFormatNumber();
@@ -57,7 +51,6 @@ export function ChanceSimulation({ answer, content, labelId, phase }: ChanceProp
   const reducedMotion = useReducedMotion();
   const { fields } = content;
   const [runIndex, setRunIndex] = useState(0);
-  // The runs play once there's nothing left to guess: after the check, or explored.
   const isChecked = phase !== "answering";
   const seed = hashSeed(JSON.stringify(fields)) + runIndex;
 

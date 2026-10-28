@@ -19,10 +19,6 @@ const PLUS = "+";
 const EQUALS = "=";
 const UNKNOWN = "?";
 
-/**
- * The corners torn off and put side by side: a triangle's fill a straight line, a quadrilateral's
- * a full turn. It shows why the sum never changes, beyond the number.
- */
 function AngleFan({ reading }: { reading: BoardReading }) {
   const t = useExtracted();
   const isTriangle = reading.parts.length === TRIANGLE_CORNERS;
@@ -93,11 +89,6 @@ function partTone({
     : BOARD_TONES.neutral;
 }
 
-/**
- * What the board adds up, as one line under it: the parts in the colors they have on the board,
- * then the total. With a numeric check the total stays hidden until the answer is checked. The
- * canvas's text alternative says the same in words.
- */
 export function BoardSummary({
   hideTotal,
   isAnswer,
@@ -105,7 +96,6 @@ export function BoardSummary({
   reading,
 }: {
   hideTotal: boolean;
-  /** Once a numeric check is checked the total is its answer, marked as such. */
   isAnswer: boolean;
   measure: BoardMeasure;
   reading: BoardReading;

@@ -12,15 +12,10 @@ import { ActivityDataNote } from "./_components/activity-data-note";
 import { getActivityExpected } from "./_utils/activity-expected";
 import { activityRenderers } from "./activity-registry";
 
-/**
- * Renderers read the content an activity screen has, check included. Explored, nothing is asked:
- * a question without options puts each canvas in its free mode, where it never reports an answer.
- */
 function toCanvasContent(content: ExploreActivityContent): ActivityStepContent {
   return { ...content, check: { kind: "choice", options: [], question: "" }, prompt: "" };
 }
 
-/** What a canvas that only answers shows explored: the end state code computes from the fields. */
 function exploredEndState(content: ExploreActivityContent) {
   return exploresSolved(content.template)
     ? getActivityExpected({
@@ -35,15 +30,6 @@ function noAnswer() {
   return null;
 }
 
-/**
- * An activity template on an explanation screen, to explore: its canvas without a question or a
- * check, labelled by the screen's title, with the data note under it. Templates with a model to
- * move are played with freely; those whose canvas only answers show their solved state.
- *
- * ```tsx
- * <ActivityExplore content={content.explore} labelId={titleId} />
- * ```
- */
 export function ActivityExplore({
   content,
   labelId,

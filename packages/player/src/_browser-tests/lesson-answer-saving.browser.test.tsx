@@ -6,13 +6,6 @@ import { CHECK_BOUNDS } from "../lesson/use-step-grading";
 import { buildLesson } from "../preview/preview-lesson";
 import { teachingStep } from "../preview/preview-steps";
 
-/**
- * Answers graded on the device are saved in the background, each under its own id: one sent again
- * keeps its id, so the server saves it once. A screen's requests go one after another, so the
- * server records its answers in the order they were given, while other screens' go side by side;
- * the server's late word on an earlier answer never changes a newer answer to the same screen.
- */
-
 const RIGHT_OPTION = "Where the electron is most likely to be found";
 const WRONG_OPTION = "The electron's exact path";
 const UUID = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/u;
@@ -55,8 +48,6 @@ describe("saving answers", () => {
     const lesson = buildLesson([teachingStep("check")]);
     const late = Promise.withResolvers<LessonCheckOutcome>();
 
-    // The miss's save is slow; the right answer's save then doesn't get through (it's sent again
-    // at the end), so only the miss's late word could change the screen.
     const checkStep = vi
       .fn<LessonPlayerAdapters["checkStep"]>()
       .mockReturnValueOnce(late.promise)
@@ -67,7 +58,6 @@ describe("saving answers", () => {
     await answer(WRONG_OPTION, "Not quite");
     await page.getByRole("button", { name: /^Continue/u }).click();
 
-    // The missed check comes back at the end, and this time it's right.
     await answer(RIGHT_OPTION, "Correct!");
 
     late.resolve({
@@ -107,7 +97,6 @@ describe("saving answers", () => {
     const saved = buildAdapters(lesson).checkStep;
     const slow = Promise.withResolvers<null>();
 
-    // The miss's save is slow; the screen comes back at the end and is answered right meanwhile.
     const checkStep = vi
       .fn<LessonPlayerAdapters["checkStep"]>()
       .mockImplementationOnce(async (input) => {
@@ -123,7 +112,6 @@ describe("saving answers", () => {
     await page.getByRole("button", { name: /^Continue/u }).click();
     await answer(RIGHT_OPTION, "Correct!");
 
-    // The right answer's save waits for the miss's, so the miss stays the screen's first answer.
     expect(checkStep).toHaveBeenCalledOnce();
 
     slow.resolve(null);
@@ -143,7 +131,6 @@ describe("saving answers", () => {
     const lesson = buildLesson([teachingStep("check")]);
     const saved = buildAdapters(lesson).checkStep;
 
-    // The miss's save doesn't get through; the screen comes back at the end and is answered right.
     const checkStep = vi
       .fn<LessonPlayerAdapters["checkStep"]>()
       .mockResolvedValueOnce({ status: "failed" })
@@ -161,7 +148,6 @@ describe("saving answers", () => {
       option: input.answer.kind === "check" ? input.answer.optionId : null,
     }));
 
-    // The miss goes again under its id before the right answer, so it stays the first answer.
     expect(sent.map((save) => save.option)).toStrictEqual(["path", "path", "likely"]);
     expect(sent[1]?.attemptId).toBe(sent[0]?.attemptId);
     expect(sent[2]?.attemptId).not.toBe(sent[0]?.attemptId);
@@ -193,13 +179,11 @@ describe("saving answers", () => {
       .element(page.getByText("We couldn't check your answer this time. Try again."))
       .toBeVisible();
 
-    // Giving up shows a good answer first; the summary after it ends the lesson.
     await page.getByRole("button", { name: "I don't know yet" }).click();
     await page.getByRole("button", { name: /^Continue/u }).click();
     await expect.element(page.getByRole("heading", { name: "Summary" })).toBeVisible();
     await page.getByRole("button", { name: /^Continue/u }).click();
 
-    // The grade may still be recorded on the server, so the run isn't counted before it settles.
     await vi.advanceTimersByTimeAsync(1000);
     expect(adapters.completeLesson).not.toHaveBeenCalled();
 

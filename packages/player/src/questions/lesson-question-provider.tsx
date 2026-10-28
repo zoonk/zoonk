@@ -12,11 +12,7 @@ import {
 
 const LessonQuestionContext = createContext<LessonQuestionController | null>(null);
 
-/**
- * The tutor for any host: the host says what the thread is about (a lesson, chapter, plan or
- * mock), where the learner is and whether they may ask, and the tutor's controller reaches the
- * panel and the questions actions through context. Keep `target` stable across renders.
- */
+/** Keep `target` stable across renders because tutor requests follow its identity. */
 export function LessonQuestionHostProvider({
   children,
   connection,

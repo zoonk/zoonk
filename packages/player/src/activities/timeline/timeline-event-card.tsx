@@ -6,7 +6,6 @@ import { useExtracted } from "next-intl";
 import { type Ref } from "react";
 import { type TimelineAxis } from "./use-timeline-axis";
 
-/** Where cards start, from the left edge of the track: right of the axis and its dots. */
 export const CARD_LEFT = 96;
 
 export type TrackEvent = {
@@ -18,7 +17,6 @@ export type TrackEvent = {
   year: number;
 };
 
-/** Keys that move a placed event, in steps; down the screen is later in time. */
 const KEY_STEPS: Readonly<Record<string, number>> = {
   ArrowDown: 1,
   ArrowLeft: -1,
@@ -61,7 +59,6 @@ function ResultIcon({ result }: { result: TrackEvent["result"] }) {
   ) : null;
 }
 
-/** A placed event the learner can still move: a vertical slider for keyboards, draggable. */
 export function EventCard({
   axis,
   cardRef,

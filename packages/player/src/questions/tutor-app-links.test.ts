@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createAnswerLinks, isTutorAppPath } from "./tutor-app-links";
 
-/** The web app's link to what core points at. */
 const { toLink } = createAnswerLinks([]).links;
 
 const BLOCK_ID = "0199a8f2-6a1e-7c3d-9b0a-1d2e3f4a5b6c";

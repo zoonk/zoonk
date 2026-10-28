@@ -3,7 +3,6 @@
 import { useRef } from "react";
 import { snapYear } from "./timeline-scale";
 
-/** Space above the first year and below the last, so dots and cards never touch the edges. */
 const TRACK_INSET = 20;
 
 export type TimelineAxis = { end: number; height: number; start: number };
@@ -18,10 +17,6 @@ function yToYear(y: number, axis: TimelineAxis): number {
   return snapYear(axis.start + share * (axis.end - axis.start), axis);
 }
 
-/**
- * The track's element and a way to read the year under a pointer, so events can be dropped or
- * dragged anywhere along the axis, even from outside it (pointer capture keeps a drag going).
- */
 export function useTimelineAxis(axis: TimelineAxis) {
   const trackRef = useRef<HTMLDivElement>(null);
 

@@ -6,7 +6,6 @@ import { useExtracted } from "next-intl";
 import { keyedByPosition } from "../_utils/position-keys";
 import { type SampleResult, countPassing } from "./pattern-results";
 
-/** The sample with the part the pattern matched marked, so the learner sees what it found. */
 function MarkedSample({ result, shouldMatch }: { result: SampleResult; shouldMatch: boolean }) {
   const { match, sample } = result;
 
@@ -67,10 +66,6 @@ function SampleRow({ result, shouldMatch }: { result: SampleResult; shouldMatch:
   );
 }
 
-/**
- * One list of examples, "should match" or "should not match", with how many pass. Before the
- * learner types anything (or while the pattern can't run), the examples show without results.
- */
 export function RegexSampleList({
   label,
   results,

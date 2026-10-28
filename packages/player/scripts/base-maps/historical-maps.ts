@@ -14,14 +14,12 @@ import { COUNTRIES_50M, DETAIL, areaOf, countries, landWithin, widen } from "./m
 import { type MapSource } from "./render-map";
 import { PARTHIAN_EMPIRE, ROMAN_EMPIRE_117, ROMAN_LABELS } from "./roman-empire";
 
-/** How far the Soho map's land reaches past its area, in degrees: about a kilometer. */
 const SOHO_MARGIN = 0.01;
 
 function average(values: readonly number[]): number {
   return values.reduce((sum, value) => sum + value, 0) / values.length;
 }
 
-/** The middle of a small outline, as a label position. */
 function centerOf(polygon: string): string {
   const points = parsePoints(polygon);
   const [longitude, latitude] = [points.map((point) => point[0]), points.map((point) => point[1])];

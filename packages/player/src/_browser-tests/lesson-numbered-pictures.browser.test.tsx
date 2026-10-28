@@ -13,13 +13,6 @@ import {
   numberedCheckStep,
 } from "../preview/preview-steps";
 
-/**
- * A question about where a part sits in one whole: its picture has a number drawn on each part, and
- * the answer key comes from those numbers. Without the picture nobody can tell which number is
- * which, so a screen whose numbered picture never came is left out, and an explanation shows its
- * words without the diagram's key.
- */
-
 const heart = activityContentFixtures.labeledDiagram;
 const OVARY = numberedCheckContent.options.find((option) => option.isCorrect);
 const NEXT = { text: "Seeds grow inside the ovary.", title: "Inside the ovary" };
@@ -53,7 +46,6 @@ describe("numbered pictures", () => {
     await expect.element(page.getByText(NEXT.text)).toBeVisible();
     await expect.element(page.getByText(numberedCheckContent.question)).not.toBeInTheDocument();
 
-    // Nothing is left to go back to: neither question was played.
     await press("ArrowLeft");
     await expect.element(page.getByText(NEXT.text)).toBeVisible();
   });

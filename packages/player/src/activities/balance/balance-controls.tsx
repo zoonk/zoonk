@@ -62,11 +62,6 @@ function PanControls({
   );
 }
 
-/**
- * The learner's hands: take an unknown or a unit off either pan, split both pans into equal
- * groups once the unknowns stand alone, and undo. Taking from one pan only is allowed on purpose:
- * the beam tips, which is how "do the same to both sides" gets felt before it's a rule.
- */
 export function BalanceControls({
   canUndo,
   objects,

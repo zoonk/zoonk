@@ -8,16 +8,10 @@ type Readout = {
   id: string;
   isPrimary: boolean;
   label: string;
-  /** A comparison under the value, like "−84 months from the start". */
   note: string | null;
   value: string;
 };
 
-/**
- * The outputs a model computes, big enough to read at a glance: the one the check asks about in
- * the accent color, the rest beside it. Values are hidden from screen readers here because the
- * sliders announce them as they move and the text alternative describes them.
- */
 export function ActivityOutputReadouts({ items }: { items: readonly Readout[] }) {
   return (
     <dl
@@ -45,7 +39,6 @@ export function ActivityOutputReadouts({ items }: { items: readonly Readout[] })
   );
 }
 
-/** The readouts in words, for the canvas's text alternative. */
 export function useReadoutSentences(): (items: readonly Readout[]) => string {
   const t = useExtracted();
 

@@ -34,10 +34,6 @@ function useStateLabel() {
   };
 }
 
-/**
- * The links in words: what the learner joined, with a way to undo each one, and once confirmed
- * or checked, why each real link holds. This is what screen readers use instead of the arrows.
- */
 export function CauseEffectLinkList({
   canRemove,
   explanations,

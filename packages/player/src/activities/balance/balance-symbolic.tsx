@@ -7,7 +7,6 @@ import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activ
 type SymbolicStep = { equation: string; move: string };
 type WrongMove = { hint: string; move: string };
 
-/** The next step's move among the written wrong moves, in a stable order that varies by step. */
 function moveChoices(
   step: SymbolicStep,
   wrongMoves: readonly WrongMove[],
@@ -23,11 +22,6 @@ function moveChoices(
   return [...moves.slice(shift), ...moves.slice(0, shift)];
 }
 
-/**
- * For equations bags and blocks can't show (negative numbers, fractions, big counts), the learner
- * picks each next move in symbols. A wrong move shows the writer's hint for it, and the equation
- * only changes on a right move, so the balance stays true.
- */
 export function BalanceSymbolic({
   disabled,
   onSolved,

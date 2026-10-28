@@ -34,10 +34,8 @@ const CONTINENTS: readonly Continent[] = [
   "southAmerica",
 ];
 
-/** Alaska and Hawaii, drawn apart from the other states. */
 const US_INSETS = new Set(["02", "15"]);
 
-/** A continent's countries, with their neighbors drawn quieter. */
 function regionalMap({
   continents,
   detail,
@@ -47,7 +45,6 @@ function regionalMap({
   continents: readonly Continent[];
   detail: number;
   id: ActivityBaseMapId;
-  /** The projection's center, as d3 rotates to it: minus its longitude and latitude. */
   rotate: [number, number, number];
 }): MapSource {
   const area = areaOf(id);
@@ -150,7 +147,6 @@ function brazilMap(): MapSource {
   };
 }
 
-/** How each base map in core's catalog is drawn. */
 export const MAP_SOURCES: Record<ActivityBaseMapId, () => MapSource> = {
   africa: () =>
     regionalMap({

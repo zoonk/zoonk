@@ -10,11 +10,6 @@ import { type ActivityPhase } from "../activity-renderer";
 import { ActivityCheckQuestion } from "./activity-check-question";
 
 type ChoiceCheck = Extract<ActivityStepContent["check"], { kind: "choice" }>;
-/**
- * A question about what the learner saw on the canvas, answered with the player's option cards
- * (number keys pick an option). After the check, only the right option and a wrong pick stay,
- * marked.
- */
 export function ActivityChoiceCheck({
   answer,
   check,

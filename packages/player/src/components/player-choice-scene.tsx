@@ -13,10 +13,6 @@ import { InteractiveStepLayout } from "./step-layouts";
 
 type PlayerChoiceSceneOption = { content: React.ReactNode; isCorrect: boolean; key: string };
 
-/**
- * Once checked, the right option says so, and the learner's pick says it was theirs if wrong. A
- * guess that missed (a hook's "Guess first") is never a mistake: the pick stays neutral.
- */
 function getOptionResult({
   isChecked,
   isCorrect,
@@ -43,23 +39,10 @@ function getOptionResult({
   return isGuess ? "guess" : "wrong";
 }
 
-/**
- * Provides the shared shell for all choice-based scenes.
- *
- * Multiple choice and translation choices need the same top-aligned layout,
- * spacing, and action placement. Keeping that shell here means future layout
- * changes land once for the whole family.
- */
 export function PlayerChoiceScene({ children }: { children: React.ReactNode }) {
   return <InteractiveStepLayout data-slot="player-choice-scene">{children}</InteractiveStepLayout>;
 }
 
-/**
- * Keeps prompt copy grouped consistently above the option list.
- *
- * Some scenes show an eyebrow, some show context, some show only a question.
- * This wrapper gives all of them the same vertical rhythm.
- */
 export function PlayerChoiceScenePrompt({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-3" data-slot="player-choice-scene-prompt">
@@ -68,7 +51,6 @@ export function PlayerChoiceScenePrompt({ children }: { children: React.ReactNod
   );
 }
 
-/** The situation before a choice question, when it has one. */
 export function PlayerChoiceSceneContext({ children }: { children?: string | null }) {
   if (!children) {
     return null;
@@ -77,7 +59,6 @@ export function PlayerChoiceSceneContext({ children }: { children?: string | nul
   return <ContextText>{children}</ContextText>;
 }
 
-/** A choice question's line, when it has one. */
 export function PlayerChoiceSceneQuestion({ children }: { children?: string | null }) {
   if (!children) {
     return null;
@@ -86,13 +67,6 @@ export function PlayerChoiceSceneQuestion({ children }: { children?: string | nu
   return <QuestionText>{children}</QuestionText>;
 }
 
-/**
- * Keeps the primary option copy consistent across all choice scenes.
- *
- * Multiple choice and translation choices all present one tappable answer
- * label. Centralizing that text treatment here prevents each adapter from
- * quietly diverging when option typography changes in the future.
- */
 export function PlayerChoiceSceneOptionText({ children }: { children: React.ReactNode }) {
   return (
     <span data-slot="player-choice-scene-option-text">
@@ -101,15 +75,6 @@ export function PlayerChoiceSceneOptionText({ children }: { children: React.Reac
   );
 }
 
-/**
- * The answers of every choice question in the player (a check, a guess, a picture question, an
- * activity's question, a language lesson's multiple choice and translation), as the kit's
- * `AnswerOption`: numbered, picked with a tap or its number key. Once checked they lock, and only
- * the right answer and a wrong pick stay, marked "Correct" and "Your answer", so the question, both
- * answers and the result fit on a phone's screen without scrolling. A guess keeps every option, since
- * its reveal answers the question the learner just read and nothing in it was wrong, and so does
- * `keepsEveryOption`, where each option explains itself after the check.
- */
 export function PlayerChoiceSceneOptions({
   ariaLabel,
   isChecked = false,
@@ -123,14 +88,10 @@ export function PlayerChoiceSceneOptions({
 }: {
   ariaLabel?: string;
   isChecked?: boolean;
-  /** A guess that never counts (a hook's "Guess first"): a missed pick says "Your guess", not wrong. */
   isGuess?: boolean;
-  /** The answer is being graded or the screen waits on something: options can't be picked. */
   isLocked?: boolean;
   keepsEveryOption?: boolean;
-  /** `grid` lays picture options out side by side, two to a row. */
   layout?: "grid" | "list";
-  /** The option pressed or picked by its number key, by its key. */
   onSelect: (key: string) => void;
   options: readonly PlayerChoiceSceneOption[];
   selectedKey: string | null;

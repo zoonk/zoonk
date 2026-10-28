@@ -25,10 +25,6 @@ function targetIndex({ count, index, key }: { count: number; index: number; key:
   return target === null ? null : Math.min(Math.max(target, 0), count - 1);
 }
 
-/**
- * One tab stop for a row of controls, like piano keys: the arrows, Home and End move between
- * them and Enter or Space presses the focused one.
- */
 export function useRovingFocus(count: number) {
   const [active, setActive] = useState(0);
   const items = useRef<(HTMLElement | null)[]>([]);

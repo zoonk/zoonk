@@ -12,10 +12,6 @@ import { LessonQuestionHostProvider } from "./lesson-question-provider";
 import { TutorBuddyProvider } from "./tutor-buddy";
 import { TutorAskButton, TutorConversationLink, TutorDock } from "./tutor-dock";
 
-/**
- * The question asked about, quoted as the drawer's first line, so it stays in view: "About “…”",
- * or "About your answer to “…”" once it's checked.
- */
 function ItemQuote({ item }: { item: TutorItem }) {
   const t = useExtracted();
   const question = () => item.text;
@@ -32,10 +28,6 @@ function ItemQuote({ item }: { item: TutorItem }) {
   );
 }
 
-/**
- * The buddy about the question in view, by its place in the run, so a question asked again later
- * opens fresh. After a missed answer the aside offers two questions to send in one tap.
- */
 function ItemBuddy({
   children,
   context,
@@ -66,13 +58,6 @@ function ItemBuddy({
   );
 }
 
-/**
- * The learner's buddy for a run of questions (a session's block, mistakes practice), about the
- * question in view: a drawer that quotes it on phones and tablets in portrait, docked in the aside
- * from `lg` (`TutorDock`). Opening it reads the question's conversation, and from `lg`, where its
- * composer waits in the aside, it's read ahead, as a lesson's screen's is; only what the learner
- * sends is answered. Between questions (`item` null) nothing asks.
- */
 function ItemTutor({
   children,
   item,
@@ -120,11 +105,6 @@ function ItemTutor({
   );
 }
 
-/**
- * The buddy for a run of questions as its host places it (`QuestionTutor`): around the run, docked
- * at the foot of its aside from `lg` with the way back to its conversation on the aside's header,
- * and asked beside its main action under `lg`.
- */
 export function getQuestionTutor(tutor: LessonTutorConfig): QuestionTutor {
   return {
     aside: <TutorDock />,

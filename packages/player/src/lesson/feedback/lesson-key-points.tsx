@@ -5,7 +5,6 @@ import { CheckIcon, MinusIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { LessonRichText } from "../_components/lesson-rich-text";
 
-/** Which key points a typed answer stated, so partial credit is visible point by point. */
 export function LessonKeyPoints({ keyPoints }: { keyPoints: { met: boolean; text: string }[] }) {
   const t = useExtracted();
   const met = keyPoints.filter((point) => point.met).length;

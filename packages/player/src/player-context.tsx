@@ -18,7 +18,6 @@ type PlayerInteractionState = "active" | "paused";
 
 const PlayerInteractionContext = createContext<PlayerInteractionState>("active");
 
-/** While the tutor or a sheet is open over a step, its option keys pause. */
 export function usePlayerInteractionState(): PlayerInteractionState {
   return useContext(PlayerInteractionContext);
 }

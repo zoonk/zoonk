@@ -6,10 +6,6 @@ import { Button } from "@zoonk/ui/components/button";
 import { Volume2 } from "lucide-react";
 import { keepArrowKeys } from "../_utils/keep-arrow-keys";
 
-/**
- * A round speaker button that reads a line aloud; `label` says what it reads. It shows its
- * sound's state: loading the first time, stop while it plays, try again if it failed.
- */
 export function ActivitySpeakButton({
   label,
   onClick,

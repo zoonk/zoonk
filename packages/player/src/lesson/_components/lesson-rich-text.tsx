@@ -3,7 +3,6 @@ import { markRichInline, parseRichInline, toOneLine } from "@zoonk/learn/rich-te
 import { typesetNumbers } from "@zoonk/learn/rich-text/typography";
 import { useLocale } from "next-intl";
 
-/** Numbers in the learner's language, kept with their units; math and code stay as written. */
 function typeset({
   locale,
   segments,
@@ -18,10 +17,6 @@ function typeset({
   );
 }
 
-/**
- * One line of lesson text (a question, an option, a label) with its emphasis and math, and the
- * `mark` sentence highlighted when the line shows it.
- */
 export function LessonRichText({ mark, text }: { mark?: string | null; text: string }) {
   const locale = useLocale();
   const parsed = parseRichInline(toOneLine(text));

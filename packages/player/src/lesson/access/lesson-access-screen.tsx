@@ -9,21 +9,14 @@ import { useLessonPlayer, useLessonPlayerConfig } from "../lesson-player-context
 import { type LessonRunRefusal } from "../lesson-player-types";
 import { AccessLayout, LessonSlowDown } from "./lesson-slow-down";
 
-/** The screen's buttons match the lesson's main action: the same size and shape. */
 const PRIMARY_BUTTON = buttonVariants({ size: "xl" });
 const SECONDARY_BUTTON = buttonVariants({ size: "xl", variant: "outline" });
 
-/** Fair use spaces new lessons out; the run starts again when the wait is over. */
 function SlowDown({ retryAfterSeconds }: { retryAfterSeconds: number }) {
   const { actions } = useLessonPlayer();
   return <LessonSlowDown onRetry={actions.retryStart} retryAfterSeconds={retryAfterSeconds} />;
 }
 
-/**
- * The free plan's paywall: the learner started the new lessons their plan includes for the day or
- * the month. Reviews and mistakes stay open, so it says when new lessons come back and offers Plus
- * as a choice, not a wall.
- */
 function FreeLimitReached({ period }: { period: "day" | "month" | "total" }) {
   const t = useExtracted();
   const { linkComponent: LinkComponent, routes, track } = useLessonPlayerConfig();
@@ -60,10 +53,6 @@ function FreeLimitReached({ period }: { period: "day" | "month" | "total" }) {
   );
 }
 
-/**
- * A free exam plan past its first week: its new lessons come with Plus, while reviews and fixing
- * mistakes stay free, as Today says. Plus is a choice, with the way back beside it.
- */
 function FreeWeekOver() {
   const t = useExtracted();
   const { body, title } = useFreeWeekOverCopy();
@@ -173,11 +162,6 @@ function Unavailable({
   );
 }
 
-/**
- * When a lesson can't start: a calm wait for fair use, a sign-up for a guest who used their
- * lessons, Plus for a free learner (out of lessons, or past a free exam plan's first week), or a
- * retry when the connection failed. Never a dead end.
- */
 export function LessonAccessScreen({ refusal }: { refusal: LessonRunRefusal }) {
   if (refusal.reason === "slowDown") {
     return <SlowDown retryAfterSeconds={refusal.retryAfterSeconds} />;

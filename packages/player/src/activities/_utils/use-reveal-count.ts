@@ -4,10 +4,6 @@ import { useEffect, useState } from "react";
 
 const DURATION_MS = 1200;
 
-/**
- * How many runs to show while a simulation fills in: all of them over about a second, or all at
- * once when the device asks for reduced motion. A new `runKey` starts the count again.
- */
 export function useRevealCount({
   instant,
   runKey,

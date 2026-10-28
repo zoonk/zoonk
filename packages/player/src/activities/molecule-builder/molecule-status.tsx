@@ -5,7 +5,6 @@ import { useExtracted } from "next-intl";
 import { type Build, atomFill } from "./molecule-model";
 import { useAtomName } from "./use-atom-name";
 
-/** Where the build stands, from each atom's valence: what's still open or overfilled. */
 function useBuildState(build: Build) {
   const t = useExtracted();
   const nameOf = useAtomName();

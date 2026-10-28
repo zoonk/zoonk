@@ -26,26 +26,14 @@ import {
   teachingStep,
 } from "../preview/preview-steps";
 
-/** Below `lg`, where the buddy opens in a drawer over the lesson. */
 const TABLET_PORTRAIT = { height: 1180, width: 820 };
-
-/**
- * Accessibility of the lesson player, in light and dark: every kind of screen and all 43 activity
- * templates as the first screen of a lesson, then a lesson played by keyboard and scanned in each
- * state it reaches (an answer's feedback, the tutor, the screen's menu, the end).
- */
 
 type ActivityTemplate = keyof typeof activityContentFixtures;
 
 const ACTIVITY_TEMPLATES = Object.keys(activityContentFixtures) as ActivityTemplate[];
 
-/**
- * How long an activity's canvas may take to load: its code loads on first use, which takes the test
- * server a few seconds when it hasn't served it yet and other test files start at the same time.
- */
 const CANVAS_LOAD_TIMEOUT_MS = 10_000;
 
-/** Every screen a lesson can open on, by name, built the way the server serves it. */
 const SCREENS: [string, () => PlayableLibraryStep][] = [
   ["hook", () => teachingStep("hook")],
   ["explanation", () => teachingStep("explanation")],
@@ -69,10 +57,6 @@ const SCREENS: [string, () => PlayableLibraryStep][] = [
   ]),
 ];
 
-/**
- * The feedback an app puts in a lesson, as the web app does: "Report a problem" in the screen's
- * menu. Nothing is saved anywhere.
- */
 const FEEDBACK_SLOTS: LessonPlayerSlots = {
   reportMenuItem: (target) => <ReportProblemItem screen="lesson-step" target={target} />,
 };
@@ -87,27 +71,20 @@ const FEEDBACK_ADAPTERS: ContentFeedbackAdapters = {
 const RIGHT_TYPED = "It shows where the electron is likely to be";
 const RIGHT_OPTION = "Where the electron is most likely to be found";
 
-/** A screen's verdict, as the player announces it. */
 function verdict(text: string) {
   return page.getByRole("status").filter({ hasText: text });
 }
 
-/** Picks an option with its number key. */
 async function pick(key: string, option: string) {
   await press(key);
   await expect.element(page.getByRole("radio", { name: option })).toBeChecked();
 }
 
-/** Enter runs the screen's main action (check, then continue) when focus isn't on a control. */
 async function enterTo(next: Locator) {
   await press("Enter");
   await expect.element(next).toBeVisible();
 }
 
-/**
- * Opens a layer with its button by keyboard and scans it, then Escape closes only the layer and
- * hands focus to the screen's main action, not the button, so Enter goes on instead of reopening it.
- */
 async function scanLayer({ button, layer }: { button: string; layer: Locator }) {
   const opener = page.getByRole("button", { name: button });
 
@@ -120,11 +97,6 @@ async function scanLayer({ button, layer }: { button: string; layer: Locator }) 
   await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
 }
 
-/**
- * A lesson with every kind of feedback (a guess, a check answered wrong that comes back at the end,
- * a written answer the server accepts) and the summary, hosted as an app hosts it: with the tutor,
- * the app's feedback and the summary card in the screen's menu.
- */
 function openHostedLesson() {
   const typedAnswer = teachingStep("typedAnswer");
 
@@ -164,7 +136,7 @@ describe("lesson player accessibility", () => {
   it.each(SCREENS)("%s", async (name, buildStep) => {
     renderLessonPlayer({ lesson: buildLesson([buildStep()]) });
     await expect.element(page.getByRole("main", { name: "Lesson content" })).toBeVisible();
-    // An activity's canvas loads on its own; the scan waits for it, so it covers what's drawn.
+
     await expect
       .poll(() => document.querySelector("[data-slot='activity-canvas-skeleton']"), {
         timeout: CANVAS_LOAD_TIMEOUT_MS,
@@ -175,8 +147,6 @@ describe("lesson player accessibility", () => {
   });
 
   it("a lesson played by keyboard, in each state", async () => {
-    // Below `lg` the buddy opens in a drawer over the lesson, a layer of its own to scan; a wide
-    // screen docks it in the aside, which the screen's scans cover.
     await atViewport(TABLET_PORTRAIT, async () => {
       openHostedLesson();
 
@@ -190,7 +160,6 @@ describe("lesson player accessibility", () => {
 
       await scanLayer({ button: "Screen options", layer: page.getByRole("menu") });
 
-      // Closing the menu left focus on Next, so Enter goes on to the next screen.
       await enterTo(page.getByText('What does the electron "cloud" show?'));
       await pick("1", "The electron's exact path");
       await enterTo(verdict("Not quite"));
@@ -209,7 +178,6 @@ describe("lesson player accessibility", () => {
       await expectAccessibleScreen("a written answer's grade");
       await enterTo(page.getByRole("heading", { name: "Summary" }));
 
-      // The check answered wrong comes back once at the end; this time it's answered right.
       await enterTo(page.getByText('What does the electron "cloud" show?'));
       await pick("2", RIGHT_OPTION);
       await enterTo(verdict("Correct!"));

@@ -11,7 +11,6 @@ import {
 } from "../_test-utils/activity-player";
 import { inlineImage } from "../preview/preview-steps";
 
-/** The picture a decision tree's case asks for: the tree to name from one leaf. */
 const LEAF = {
   alt: "A long, thin needle growing in a bundle of two from the twig",
   prompt: "Two long pine needles joined at the base on a twig",

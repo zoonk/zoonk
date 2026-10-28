@@ -17,7 +17,6 @@ import { localAdapters } from "../preview/preview-lesson";
 import { render } from "./render";
 import { speechClips } from "./speech-clips";
 
-/** A link that stays on the page: following it would navigate away from the test's frame. */
 export function TestLink({
   "aria-keyshortcuts": keyShortcuts,
   children,
@@ -44,7 +43,6 @@ export function TestLink({
 
 const MS_PER_MINUTE = 60_000;
 
-/** An answer the server already has, given `minutesAgo` before now. */
 export function runAnswer({
   isCorrect = true,
   minutesAgo = 1,
@@ -61,7 +59,6 @@ export function runAnswer({
   };
 }
 
-/** A run the server just started: new, or resumed with the answers it already has. */
 export function startedRun({
   answers = [],
   hyperdrive = { knownStepIds: [], streak: 0 },
@@ -72,10 +69,6 @@ export function startedRun({
   return { answers, hyperdrive, optionalStepIds, reason: "started" as const, runId, startedAt };
 }
 
-/**
- * The preview's local adapters (`localAdapters`) as mocks, so tests see each call: answers are
- * graded the way the server grades them. Tests pass their own adapter to change one answer.
- */
 export function buildAdapters(
   lesson: PlayableLibraryLesson,
   overrides: Partial<LessonPlayerAdapters> = {},
@@ -90,10 +83,6 @@ export function buildAdapters(
   };
 }
 
-/**
- * The server settles an accepted written answer in code: full credit, without judging key points.
- * Written answers are graded only on the server, so this stands in for its verdict.
- */
 export function acceptedAnswerCheck(
   step: PlayableTeachingStepOf<"typedAnswer">,
 ): LessonPlayerAdapters["checkStep"] {
@@ -122,10 +111,6 @@ export function acceptedAnswerCheck(
   });
 }
 
-/**
- * Plays a lesson the way an app hosts it: the real provider and shell, with adapters standing in
- * for the server, and `voice` for the speech clips endpoint (short generated clips by default).
- */
 export function renderLessonPlayer({
   adapters,
   children = <LessonPlayerShell />,
@@ -136,7 +121,6 @@ export function renderLessonPlayer({
 }: Partial<Omit<LessonPlayerProviderProps, "children" | "lesson">> & {
   children?: ReactNode;
   lesson: PlayableLibraryLesson;
-  /** The lesson's formulas as the host's server drew them (`collectMathMarkup`). */
   mathMarkup?: ComponentProps<typeof MathMarkupProvider>["markup"];
   voice?: VoiceText;
 }) {

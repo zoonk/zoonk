@@ -7,11 +7,6 @@ import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
 import { explanationStep, inlineImage, teachingStep } from "../preview/preview-steps";
 
-/**
- * Lessons read like stories on every device: a new screen slides in from the side the learner
- * heads to (in place with reduced motion), and keyboards turn screens with the arrows as before.
- */
-
 const PHONE = { height: 812, width: 375 };
 
 const LOBES = {
@@ -27,7 +22,6 @@ function pictured({ alt, text, title }: typeof LOBES) {
   };
 }
 
-/** The screen in view, as the learner sees it move. */
 function shownScreen(): Element {
   const screen = document.querySelector("[data-slot='lesson-screen']");
 
@@ -89,14 +83,12 @@ describe("lessons that read like stories", () => {
         title: "A long read",
       });
 
-      // The next screen is long too, so a kept scroll position would hide its picture.
       const next = pictured({ ...LOBES, text: `${LOBES.text} ${text}`.slice(0, 1100) });
       renderLessonPlayer({ lesson: buildLesson([long, next]) });
 
       const scroller = page.getByRole("main", { name: "Lesson content" }).element();
       await expect.element(page.getByRole("heading", { name: "A long read" })).toBeVisible();
 
-      // Read down to the end of the long screen, then turn it.
       scroller.scrollTo({ top: scroller.scrollHeight });
       await expect.poll(() => scroller.scrollTop).toBeGreaterThan(0);
       await press("ArrowRight");

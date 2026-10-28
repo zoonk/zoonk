@@ -80,7 +80,6 @@ export function mergeLatestQuestions({
   ]);
 }
 
-/** Completed answers are immutable; an older HTTP response must never replace one with a running snapshot. */
 function getLatestQuestion({
   current,
   latest,
@@ -137,7 +136,6 @@ export function isSameDraftContext({
     return current.itemId === next.itemId;
   }
 
-  // A lesson, chapter, plan or mock has one conversation.
   return true;
 }
 
@@ -156,10 +154,6 @@ export function getReconciledAnswerError({
   return question?.status === "failed" ? answerError : null;
 }
 
-/**
- * The conversation's earlier proposals a newer one replaced (it changes the same thing): their
- * cards say so instead of offering Apply.
- */
 export function replacePlanChanges({
   changeIds,
   questions,
@@ -176,10 +170,6 @@ export function replacePlanChanges({
   );
 }
 
-/**
- * The answered change takes its new status. Only a plan's latest change can be undone, so once
- * one is applied or undone, no earlier change in the conversation offers its undo anymore.
- */
 export function answerPlanChange({
   change,
   questions,

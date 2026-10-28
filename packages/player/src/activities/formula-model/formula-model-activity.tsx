@@ -18,7 +18,6 @@ type FormulaModelProps = ActivityRendererProps<"formulaModel">;
 type Content = FormulaModelProps["content"];
 type Fields = Content["fields"];
 
-/** The output the chart draws: the one the check reads, the plotted one, or the first. */
 function chartedOutput({ check, fields }: Content): Output | undefined {
   const asked = check.kind === "interaction" ? undefined : check.output;
   const id = asked ?? fields.plot?.y;
@@ -26,14 +25,12 @@ function chartedOutput({ check, fields }: Content): Output | undefined {
   return fields.outputs.find((output) => output.id === id) ?? fields.outputs[0];
 }
 
-/** The slider the chart sweeps: the plot's x, or the first slider. */
 function chartAxis(fields: Fields) {
   return (
     fields.variables.find((variable) => variable.name === fields.plot?.x) ?? fields.variables[0]
   );
 }
 
-/** Where the check's answer sits on the chart, once checked: its slider positions and value. */
 function expectedPoint({
   axis,
   content,
@@ -53,13 +50,6 @@ function expectedPoint({
   return { x: input?.value ?? axis.initial, y: expected.value };
 }
 
-/**
- * A model of formulas to play with: sliders drive the outputs, and one output is drawn across one
- * slider's range (money growing at a rate, where a thrown ball lands, a loan paid off sooner, a
- * coffee cart's profit). What-ifs switch on and off over the sliders. A dashed curve keeps how
- * things were before the what-ifs, or where the sliders started, so the chart shows what a change
- * did. Values come from core's formula hooks, so the readouts and a numeric check always agree.
- */
 export function FormulaModelActivity(props: FormulaModelProps) {
   const charted = chartedOutput(props.content);
   const axis = chartAxis(props.content.fields);

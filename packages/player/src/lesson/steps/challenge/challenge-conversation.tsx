@@ -26,7 +26,6 @@ import { type ChallengeNames } from "./use-challenge-names";
 type ChallengeContent = StepOf<"challenge">["content"];
 type PlayingProgress = Exclude<ChallengeProgress, { stage: "intro" }>;
 
-/** One decision already taken: what was said, the learner's pick, the replies and any time jump. */
 function ChallengeTurn({
   content,
   names,
@@ -94,7 +93,6 @@ function ChallengeDecision({
               <LessonRichText text={names.fill(choice.text)} />
             </PlayerChoiceSceneOptionText>
           ),
-          // A decision has no right answer: it plays out in the story.
           isCorrect: false,
           key: choice.id,
         }))}
@@ -104,7 +102,6 @@ function ChallengeDecision({
   );
 }
 
-/** Keeps the newest part of the case in view as the conversation grows. */
 function useNewestInView(count: number) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -119,11 +116,6 @@ function useNewestInView(count: number) {
   return ref;
 }
 
-/**
- * The case as a conversation at work: what the decisions moved so far, what the team said, each
- * pick with its replies and time jumps, then the decision on screen (number keys pick, Confirm
- * sends) or, once the path ends, what happened.
- */
 export function ChallengeConversation({
   content,
   isLocked,

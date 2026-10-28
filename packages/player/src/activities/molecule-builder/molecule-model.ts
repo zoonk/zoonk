@@ -5,7 +5,6 @@ export type BuildAtom = { element: string; id: string };
 export type BuildBond = { from: string; order: number; to: string };
 export type Build = { atoms: readonly BuildAtom[]; bonds: readonly BuildBond[] };
 
-/** How full an atom's bonds are: some still open, all filled, or more than it can make. */
 type AtomFill = "full" | "open" | "over";
 
 export const EMPTY_BUILD: Build = { atoms: [], bonds: [] };
@@ -20,7 +19,6 @@ function isPair(bond: BuildBond, first: string, second: string): boolean {
   return touches(bond, first) && touches(bond, second);
 }
 
-/** The first free id for an element, like "o2" when "o1" is taken. */
 function nextAtomId(build: Build, element: string): string {
   const prefix = element.toLowerCase();
   const taken = new Set(build.atoms.map((atom) => atom.id));
@@ -29,7 +27,6 @@ function nextAtomId(build: Build, element: string): string {
   return `${prefix}${numbers.find((number) => !taken.has(`${prefix}${number}`)) ?? numbers.length}`;
 }
 
-/** Adds an atom, bonded once to `bondTo` when an atom is selected, which is how builds grow. */
 export function addAtom({
   bondTo,
   build,
@@ -58,7 +55,6 @@ export function bondOrder(build: Build, first: string, second: string): number {
   return build.bonds.find((bond) => isPair(bond, first, second))?.order ?? 0;
 }
 
-/** Tapping two atoms steps their bond: none, single, double, triple, then none again. */
 export function stepBond(build: Build, first: string, second: string): Build {
   const order = (bondOrder(build, first, second) + 1) % (MAX_BOND_ORDER + 1);
   const others = build.bonds.filter((bond) => !isPair(bond, first, second));
@@ -84,7 +80,6 @@ export function atomFill(build: Build, atom: BuildAtom): AtomFill {
   return used === valence ? "full" : "open";
 }
 
-/** How many of each element the build has, in the order the target formula lists them. */
 export function builtCounts(build: Build): Record<string, number> {
   const elements = [...new Set(build.atoms.map((atom) => atom.element))];
 
@@ -96,7 +91,6 @@ export function builtCounts(build: Build): Record<string, number> {
   );
 }
 
-/** "CO₂" from counts, elements in the given order and then the rest. */
 export function formulaText(
   counts: Readonly<Record<string, number>>,
   order: readonly string[],
@@ -119,12 +113,10 @@ export function formulaText(
     .join("");
 }
 
-/** The number a numeric check reads: every bond counted by its order, as core counts them. */
 export function bondTotal(build: Build): number {
   return build.bonds.reduce((sum, bond) => sum + bond.order, 0);
 }
 
-/** The build as an answer, once there's something to grade. */
 export function moleculeAnswer(build: Build): ActivityAnswer | null {
   return build.atoms.length === 0
     ? null

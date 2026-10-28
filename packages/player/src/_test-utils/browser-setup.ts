@@ -9,6 +9,5 @@ performance.setResourceTimingBufferSize(RESOURCE_ENTRIES);
 
 afterEach(() => {
   cleanup();
-  // A learner's choices for the day ("Can't write now", "I can't talk now") stay in their test.
   localStorage.clear();
 });

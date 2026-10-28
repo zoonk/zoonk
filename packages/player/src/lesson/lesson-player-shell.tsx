@@ -28,15 +28,10 @@ import { useRevealFeedback } from "./use-reveal-feedback";
 import { useScreenTurn, useScreenTurns } from "./use-screen-turns";
 import { useSwipeNavigation } from "./use-swipe-navigation";
 
-/** The prompt audio of a language screen (a word, a letter, a sentence to hear), if it has one. */
 function getPromptAudioUrl(step: PlayableLibraryStep | null): string | null {
   return step && isLanguageStep(step) ? getPlayerStepAudioUrl(step.exercise) : null;
 }
 
-/**
- * The lesson's completion moment, the host's or the player's, after the full-screen moment for a
- * milestone the lesson earned, which opens first, on its own.
- */
 function LessonCompletion() {
   const { slots } = useLessonPlayerConfig();
   const { actions, state } = useLessonPlayer();
@@ -62,10 +57,6 @@ function LessonCompletion() {
   );
 }
 
-/**
- * The lesson's header, or the host's once the lesson is done (a session block shows the day's
- * session there), when it has one to show, with the lesson's menu; until then the lesson's stays.
- */
 function LessonHeader() {
   const { slots } = useLessonPlayerConfig();
   const props = useCompletionProps();
@@ -106,15 +97,6 @@ function LessonContent() {
   );
 }
 
-/**
- * The lesson player: a header with ✕ and "…" in its corners and the lesson's title and progress
- * over the column, the screen in the column (everything it shows, its situation, picture or chart
- * included), and one next action at the bottom. No navigation bar: a lesson has the whole screen.
- * From `lg` an aside runs the window's full height at its right edge, behind a hairline, with what
- * helps with the screen (the text a question checks, the outline, the buddy), and the column is
- * centered in the room on its left. On a touch screen, a swipe turns reading screens like a story,
- * wherever the arrow keys do.
- */
 export function LessonPlayerShell() {
   return (
     <LessonLeaveProvider>
@@ -148,10 +130,6 @@ function LessonPlayerFrame() {
       <LessonHeader />
       <LessonSounds />
 
-      {/*
-       * Screens start at the top on every size, so nothing jumps from one screen to the next. A
-       * screen sliding in never scrolls the page sideways.
-       */}
       <main
         aria-label={t("Lesson content")}
         className="flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto outline-none"

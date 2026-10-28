@@ -11,7 +11,6 @@ import { createInitialState } from "../lesson-player-state";
 import { type PlayableLibraryStep } from "../lesson-player-types";
 import { orderLessonOpening } from "./lesson-opening";
 
-/** This sitting started now; answers in these tests were given in it. */
 const STARTED_AT = "2026-10-05T10:00:00.000Z";
 const ANSWERED_AT = "2026-10-05T10:01:00.000Z";
 

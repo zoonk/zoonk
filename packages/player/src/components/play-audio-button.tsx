@@ -10,12 +10,6 @@ import { useSharedPlayerAudio } from "../player-audio-context";
 import { PLAYER_AUDIO_KEYBOARD_SHORTCUT } from "../player-shortcuts";
 import { useWordAudio } from "../use-word-audio";
 
-/**
- * Picks the shared player audio controller when this button represents the
- * active step prompt, otherwise falls back to a local controller. That keeps
- * duplicate prompt buttons synchronized while preserving standalone audio
- * buttons in other contexts.
- */
 function usePlayAudioButtonState({ audioUrl, preload }: { audioUrl: string; preload: boolean }) {
   const sharedAudio = useSharedPlayerAudio(audioUrl);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -52,11 +46,6 @@ function usePlayAudioButtonState({ audioUrl, preload }: { audioUrl: string; prel
   };
 }
 
-/**
- * Plays a prompt's sound, as an outline button 44px tall. `icon` is the bare speaker beside the
- * lesson's next action; `labeled` says "Play" (or "Pause") beside it, with its key on a keyboard,
- * for a listening question whose sentence is the prompt.
- */
 export function PlayAudioButton({
   audioUrl,
   className,

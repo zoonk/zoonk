@@ -6,10 +6,6 @@ function rowKey(row: readonly ActivityCell[]): string {
   return JSON.stringify(row);
 }
 
-/**
- * Which result rows are also expected, and which expected rows the result is missing, compared
- * the way grading compares them: row by row in order when order matters, as a set otherwise.
- */
 export function compareRows({
   actual,
   expected,

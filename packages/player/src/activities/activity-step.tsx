@@ -14,7 +14,6 @@ import { getActivityExpected } from "./_utils/activity-expected";
 import { activityRenderers } from "./activity-registry";
 import { type ActivityStepProps } from "./activity-renderer";
 
-/** The check's own answer area: options for `choice`, a number for `numeric`, none otherwise. */
 function ActivityCheckArea({
   answer,
   content,
@@ -48,12 +47,6 @@ function ActivityCheckArea({
   return null;
 }
 
-/**
- * An `activity` step: the prompt, the picture of the case when it has one, the template's canvas
- * and the check tied to it. The player
- * reducer owns the answer; the canvas and the check area only report changes. After the check,
- * everything is read-only and shows the correct answer next to the learner's with the why.
- */
 export function ActivityStep({
   answer,
   content,
@@ -89,7 +82,6 @@ export function ActivityStep({
       {isCheckFirst && checkArea}
 
       <div className="flex flex-col gap-2">
-        {/* The canvas appears once the page can respond, so nothing is dragged or tapped in vain. */}
         {isMounted ? (
           <Suspense fallback={<ActivityCanvasSkeleton />}>
             <Canvas

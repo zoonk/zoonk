@@ -21,17 +21,14 @@ import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props"
 const MS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;
 
-/** A recording's length the way a timer shows it: 0:07, 1:12. */
 function formatSeconds(totalSeconds: number): string {
   const minutes = Math.floor(totalSeconds / SECONDS_PER_MINUTE);
   const seconds = totalSeconds % SECONDS_PER_MINUTE;
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
-/** The sentence to say, on the page under the prompt, with its reading and meaning under it. */
 function TargetText({ step }: { step: StepOf<"spokenAnswer"> }) {
   const { romanization, targetText, translation } = step.content;
-  // A lesson in the learner's own language has nothing to translate.
   const showsTranslation = translation && translation.trim() !== targetText.trim();
 
   return (
@@ -48,11 +45,6 @@ function TargetText({ step }: { step: StepOf<"spokenAnswer"> }) {
   );
 }
 
-/**
- * "Record", an outline button like every other in the lesson; while recording it gets a firm ring
- * and counts the seconds, and a tap stops and checks. `onBlocked` hears when the browser or the
- * learner blocks the microphone.
- */
 function RecordButton({ onBlocked, stepId }: { onBlocked: () => void; stepId: string }) {
   const t = useExtracted();
   const { actions, state } = useLessonPlayer();
@@ -79,7 +71,6 @@ function RecordButton({ onBlocked, stepId }: { onBlocked: () => void; stepId: st
   });
 
   const noSpeech = useNoSpeechMessage();
-  // While the microphone opens, Record waits and the line under it stays, so nothing jumps.
   const isIdle = recorder.status === "idle" || recorder.status === "acquiring";
   const issue = isIdle ? state.checkIssue : null;
   const limit = issue?.status === "noSpeech" ? null : issue;
@@ -157,12 +148,6 @@ function getAnswerMode({
   return cantTalk || micBlocked || !canSpeak ? "type" : "speak";
 }
 
-/**
- * How the learner answers now. Speaking is the default; "I can't talk now" plays the sentence as
- * listening when the screen has it, or as typing when it doesn't, on every speaking screen for the
- * rest of the day; typing also covers a browser that can't record and a microphone blocked when
- * they tap to speak, which brings up the typing field right away with a line saying why.
- */
 function useAnswerMode({
   onAnswer,
   step,
@@ -176,7 +161,6 @@ function useAnswerMode({
 
   const mode = getAnswerMode({ canListen, canSpeak, cantTalk, micBlocked });
 
-  /** An answer started one way doesn't carry over to another; asking to speak tries the mic again. */
   const switchTo = (next: { cantTalk: boolean }) => {
     onAnswer(null);
     setCantTalk(next.cantTalk);
@@ -194,7 +178,6 @@ function useAnswerMode({
   };
 }
 
-/** "I can't talk now": the same sentence as a listening exercise, heard and built from a word bank. */
 function ListeningInstead({
   props,
   step,
@@ -258,11 +241,6 @@ function ModeSwitch({
   );
 }
 
-/**
- * "Say it out loud": the learner records the sentence and the grader says how each word came out.
- * When they can't talk now, the screen plays as listening instead (hear the sentence and build
- * it), or as typing when there's no listening version.
- */
 export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAnswer">>) {
   const t = useExtracted();
   const { answer, isLocked, onAnswer, step } = props;
@@ -292,7 +270,6 @@ export function SpokenAnswerStepView(props: LessonStepViewProps<StepOf<"spokenAn
             </p>
           )}
 
-          {/* Replacing Record after a blocked microphone, the field takes Record's focus. */}
           <LessonAnswerField
             autoFocusOnPointer={answerMode.micBlocked}
             isLocked={isLocked}

@@ -12,11 +12,6 @@ type ChallengePanel = ChallengeContent["panels"][number];
 type ChallengeMessage = ChallengeContent["nodes"][number]["messages"][number];
 type ChallengeSlot = ChallengeContent["team"][number];
 
-/**
- * A panel's small label, like "Your mission" or a panel's title, in the kit's label face; a heading
- * when it names the panel. A group on the page takes a sentence-case title instead
- * (`PageSectionLabel`).
- */
 export function ChallengeLabel({
   as: Tag = "p",
   children,
@@ -35,7 +30,6 @@ export function ChallengeLabel({
   );
 }
 
-/** A colleague's initial, or a robot for the AI assistant. */
 export function ChallengeAvatar({ name, slot }: { name: string; slot: ChallengeSlot | undefined }) {
   return (
     <span
@@ -50,7 +44,6 @@ export function ChallengeAvatar({ name, slot }: { name: string; slot: ChallengeS
   );
 }
 
-/** The numbers a decision rests on: labeled values with an optional line under them. */
 export function ChallengePanelView({
   fill,
   panel,
@@ -69,7 +62,6 @@ export function ChallengePanelView({
         {panel.metrics.map((metric) => (
           <div className="flex min-w-0 flex-col gap-0.5" key={metric.label}>
             <dt className="text-muted-foreground text-xs">{fill(metric.label)}</dt>
-            {/* A note sits beside a short value and moves under a long one ("4 rolos de 12 m"). */}
             <dd className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
               <span className="text-foreground text-2xl font-semibold text-balance tabular-nums">
                 {metric.value}
@@ -91,7 +83,6 @@ export function ChallengePanelView({
   );
 }
 
-/** One line from a colleague, with who said it and their role. */
 export function ChallengeMessageView({
   message,
   names,
@@ -123,7 +114,6 @@ export function ChallengeMessageView({
   );
 }
 
-/** What the learner decided, as their reply in the conversation. */
 export function ChallengePickView({ text }: { text: string }) {
   const t = useExtracted();
 
@@ -137,7 +127,6 @@ export function ChallengePickView({ text }: { text: string }) {
   );
 }
 
-/** Time passes in the case: "One week later", with the new numbers. */
 export function ChallengeTimeJump({
   fill,
   jump,

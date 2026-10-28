@@ -8,10 +8,6 @@ import { useActivityDropTarget } from "../_components/activity-drag-drop";
 
 type Group = { id: string; label: string; rule: string };
 
-/**
- * A group the learner sorts into. With an item picked up, its header becomes the button that
- * puts the item here, stretched over the group for pointers; it's also where a drag drops.
- */
 export function CategorizeGroup({
   children,
   group,
@@ -23,7 +19,6 @@ export function CategorizeGroup({
   group: Group;
   isEmpty: boolean;
   onPlace: () => void;
-  /** The item picked up, if any; groups only take items while one is picked up. */
   selectedText: string | null;
 }) {
   const t = useExtracted();
@@ -50,11 +45,9 @@ export function CategorizeGroup({
         }
         className={cn(
           "focus-visible:ring-ring/50 flex min-h-11 flex-col items-start rounded-xl px-1.5 pt-1 pb-1.5 text-left outline-none focus-visible:ring-[3px]",
-          /* Stretched over the whole group, so tapping anywhere in it places the item. */
           canPlace &&
             "hover:bg-viz-accent-soft cursor-pointer after:absolute after:inset-0 after:rounded-2xl after:content-['']",
         )}
-        /* Stays focusable after the last placement, so keyboard focus isn't lost to the page. */
         aria-disabled={!canPlace}
         onClick={() => canPlace && onPlace()}
         type="button"

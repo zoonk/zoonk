@@ -20,11 +20,6 @@ type NotationPlayerProps = ActivityRendererProps<"notationPlayer">;
 
 const PERCENT = 100;
 
-/**
- * A short melody drawn on the staff (or with guitar tab under it) that plays while the sounding
- * note lights up. The learner can slow it down and switch views; the question below asks about
- * what they read and heard. A text version lists the notes bar by bar.
- */
 export function NotationPlayerActivity({ content, labelId }: NotationPlayerProps) {
   const t = useExtracted();
   const { spoken } = useNoteNames();

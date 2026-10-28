@@ -31,7 +31,6 @@ function picksFromAnswer(
   };
 }
 
-/** The part waiting for a pick: evidence first, then reasoning, then none. */
 function nextOpenPart(picks: Picks): ArgumentPart | null {
   if (picks.evidence === null) {
     return "evidence";
@@ -40,11 +39,6 @@ function nextOpenPart(picks: Picks): ArgumentPart | null {
   return picks.reasoning === null ? "reasoning" : null;
 }
 
-/**
- * Build an argument in three parts: the claim is given, the learner picks the quote that
- * supports it, then the reasoning that ties the quote to the claim. After the check each part
- * says whether the pick is strong, with why, and names the strong one when it wasn't.
- */
 export function ArgumentBuilderActivity({
   answer,
   content,

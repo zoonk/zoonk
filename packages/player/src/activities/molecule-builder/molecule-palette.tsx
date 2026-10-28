@@ -34,10 +34,6 @@ function ElementSwatch({ element }: { element: string }) {
   );
 }
 
-/**
- * The elements to add, each with how many bonds it makes. With an atom selected, a new atom
- * arrives already bonded to it.
- */
 export function MoleculeElements({
   canAdd,
   elements,
@@ -62,7 +58,6 @@ export function MoleculeElements({
           onClick={() => onAdd(element)}
           type="button"
         >
-          {/* Named by what it does, then by the bonds it shows, so its name holds its text. */}
           <span className="sr-only">
             {selectedName
               ? t("Add {element} bonded to {atom}", {
@@ -81,7 +76,6 @@ export function MoleculeElements({
   );
 }
 
-/** Undo the last change, or remove the selected atom with its bonds. */
 export function MoleculeTools({
   canUndo,
   onRemove,

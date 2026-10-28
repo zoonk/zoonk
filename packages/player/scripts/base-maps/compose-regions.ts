@@ -11,7 +11,6 @@ import {
 } from "./geo-ops";
 import { type SourceArea } from "./geo-sources";
 
-/** A region made of whole source areas, like Austria-Hungary from today's countries. */
 export type RegionRule = {
   id: string;
   members: readonly string[];
@@ -19,10 +18,7 @@ export type RegionRule = {
   tone: BaseMapRegionTone;
 };
 
-/**
- * Land that changes hands: the part of `sources` inside `polygon` goes to `owner`. Polygons are
- * coarse and may spill into the sea or other countries; only the listed sources move.
- */
+/** Only listed sources transfer land; coarse polygons may extend beyond them. */
 export type Transfer = {
   owner: string;
   /** "longitude latitude" pairs, like "5.8 49.6, 6.8 49.2". */
@@ -44,12 +40,6 @@ function shapesOf(areas: ReadonlyMap<string, Shape>, names: readonly string[]): 
   });
 }
 
-/**
- * Builds regions from whole areas plus transfers: each region is its members, minus land moved
- * to other regions, plus land moved to it. Areas no rule names are kept on their own as context,
- * so the map never has holes. Every area is first clipped to `within`, which keeps the polygon
- * work small and away from the antimeridian.
- */
 export function composeRegions({
   areas,
   rules,

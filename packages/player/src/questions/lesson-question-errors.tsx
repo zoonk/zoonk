@@ -8,11 +8,6 @@ import { type LessonQuestionApiError } from "./lesson-question-api";
 import { useLessonQuestionNavigation } from "./lesson-question-navigation";
 import { type LessonQuestionState } from "./lesson-question-state";
 
-/**
- * An allowance used up (the plan's questions for the day or the month, or a guest's that need an
- * account first) as the app's one usage limit, said by `QuestionLimitNotice`. A short break asked
- * by fair use isn't one: it says so and lets the learner try again.
- */
 export function toHelpLimit(error: LessonQuestionApiError | null): HelpLimit | null {
   if (error?.kind === "signUpRequired") {
     return { status: "signUpRequired" };
@@ -25,11 +20,6 @@ export function toHelpLimit(error: LessonQuestionApiError | null): HelpLimit | n
   return null;
 }
 
-/**
- * The learner's help is used up: their question was refused for it, or its answer was. Nothing can
- * be sent until it comes back (or the learner gets Plus, or a guest an account), so the composer
- * and the suggested questions give way to the limit.
- */
 export function getQuestionLimit(
   state: Pick<LessonQuestionState, "answerError" | "error" | "requestError">,
 ): HelpLimit | null {
@@ -37,11 +27,6 @@ export function getQuestionLimit(
   return refusedQuestion ?? toHelpLimit(state.answerError?.reason ?? null);
 }
 
-/**
- * Why the buddy can't answer now because of the learner's allowance, the way every limit in the
- * app says it: the reason in one line and the one thing to do (create a free account, see Plus),
- * or nothing but to wait.
- */
 export function QuestionLimitNotice({
   className,
   limit,
@@ -132,7 +117,6 @@ export function QuestionErrorAction({
     );
   }
 
-  // A limit says what to do in its own notice (`QuestionLimitNotice`).
   if (toHelpLimit(error)) {
     return null;
   }

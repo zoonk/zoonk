@@ -32,7 +32,6 @@ import {
 } from "../lesson-player-types";
 import { type LessonPictureFrame, LessonStepImage, PICTURE_FRAME_CLASS } from "./lesson-step-image";
 
-/** How often the player asks for pictures still being drawn. */
 const POLL_MS = 4000;
 
 const LessonPicturesContext = createContext<PicturesState>({ drawn: {}, pending: [] });
@@ -43,16 +42,10 @@ function toDrawn(pictures: readonly LessonPicture[]): Record<string, PlayableSte
   );
 }
 
-/** The screens a picture key belongs to (`pictureKey`), once each. */
 function toStepIds(keys: readonly string[]): string[] {
   return [...new Set(keys.map((key) => key.split(":")[0] ?? key))];
 }
 
-/**
- * Pictures are drawn in the background right after a lesson is written, so a learner who opens
- * it at once can reach a screen before its picture. While any is pending, this asks the host every
- * few seconds for the screens still waiting, and hands their pictures to them as they arrive.
- */
 export function LessonPicturesProvider({
   children,
   getLessonPictures,
@@ -61,7 +54,6 @@ export function LessonPicturesProvider({
 }: {
   children: React.ReactNode;
   getLessonPictures: LessonPlayerAdapters["getLessonPictures"];
-  /** Screens asking about a numbered picture that never came, to leave out of the lesson. */
   onPicturesLost: (stepIds: string[]) => void;
   steps: readonly PlayableLibraryStep[];
 }) {
@@ -85,8 +77,6 @@ export function LessonPicturesProvider({
     let cancelled = false;
 
     const poll = async () => {
-      // Read unresolved pictures once more before applying their deadline: one may have landed
-      // since the previous poll, even if this browser's next timer ran just after the deadline.
       const asked = pending.filter((key) => !drawnRef.current[key]);
       const pictures = (await getLessonPictures?.(toStepIds(asked)).catch(() => [])) ?? [];
 
@@ -133,10 +123,6 @@ export function LessonPicturesProvider({
   return <LessonPicturesContext value={state}>{children}</LessonPicturesContext>;
 }
 
-/**
- * A screen's picture: its own, one drawn since the lesson opened, or one still on its way. A
- * screen whose only pictures are its options' has none of its own to wait on.
- */
 function useStepPicture(step: PlayableLibraryStep) {
   const { drawn, pending: waiting } = use(LessonPicturesContext);
   const own = "image" in step ? step.image : null;
@@ -147,10 +133,6 @@ function useStepPicture(step: PlayableLibraryStep) {
   return { image, pending };
 }
 
-/**
- * One option's picture, on a question whose options are pictures: drawn with the lesson, drawn
- * since it opened, or still on its way.
- */
 export function useOptionPicture(step: PlayableLibraryStep, optionId: string) {
   const { drawn, pending: waiting } = use(LessonPicturesContext);
   const own = "optionPictures" in step ? step.optionPictures?.[optionId] : undefined;
@@ -160,10 +142,6 @@ export function useOptionPicture(step: PlayableLibraryStep, optionId: string) {
   return { image, pending };
 }
 
-/**
- * Whether a screen's pictures are still being drawn, its own or its options': a question about
- * them waits, so nobody answers about a picture they can't see yet.
- */
 export function useIsPictureDrawing(step: PlayableLibraryStep): boolean {
   const { pending } = use(LessonPicturesContext);
   const ownPending = useStepPicture(step).pending;
@@ -176,25 +154,16 @@ export function useIsPictureDrawing(step: PlayableLibraryStep): boolean {
   return ownPending || options.some((id) => pending.includes(pictureKey(step.id, id)));
 }
 
-/**
- * Whether the labeled diagram an explanation shows to explore lost its picture: its key would
- * name numbers on nothing, so the screen teaches with its words alone.
- */
 export function useIsExploredPictureLost(step: PlayableLibraryStep): boolean {
   const { image, pending } = useStepPicture(step);
   return step.kind === "explanation" && labeledDiagramOf(step) !== null && !image && !pending;
 }
 
-/** Whether a screen shows a picture, drawn or on its way, so a reading screen can lead with it. */
 export function useHasStepPicture(step: PlayableLibraryStep): boolean {
   const { image, pending } = useStepPicture(step);
   return image !== null || pending;
 }
 
-/**
- * Where a picture being drawn goes: a portrait box as tall as its frame lets a picture be, so
- * nothing moves when it arrives.
- */
 function LessonPicturePending({ frame }: { frame: LessonPictureFrame }) {
   const t = useExtracted();
 
@@ -212,10 +181,6 @@ function LessonPicturePending({ frame }: { frame: LessonPictureFrame }) {
   );
 }
 
-/**
- * A reading screen's picture leads it like a story: edge to edge on a phone, in the column from a
- * tablet up, on the text's left edge when its height cap leaves it narrower than the column.
- */
 function PictureFrame({
   children,
   className,
@@ -239,16 +204,6 @@ function PictureFrame({
   );
 }
 
-/**
- * A screen's picture, wherever it is: drawn, on its way, or (for a question about a picture whose
- * drawing failed) its description, so the question still reads. A question's picture keeps room
- * for its options; `hero` lets a reading screen's picture lead it.
- *
- * ```tsx
- * <LessonStepPicture asks priority step={step} />
- * <LessonStepPicture hero priority step={step} />
- * ```
- */
 export function LessonStepPicture({
   asks = false,
   className,
@@ -256,10 +211,8 @@ export function LessonStepPicture({
   priority = false,
   step,
 }: {
-  /** The screen's question is about the picture: without one, it shows the picture's description. */
   asks?: boolean;
   className?: string;
-  /** The picture leads a reading screen, as large as the screen allows. */
   hero?: boolean;
   priority?: boolean;
   step: PlayableLibraryStep;
@@ -309,11 +262,6 @@ function getFrame({ asks, hero }: { asks: boolean; hero: boolean }): LessonPictu
   return asks ? "question" : "inline";
 }
 
-/**
- * The next screens' pictures, fetched while the learner reads this one, so a swipe or Next shows
- * the next picture at once. Hidden, they render at a lower priority and never compete with the
- * screen in view.
- */
 export function UpcomingPictures({ steps }: { steps: readonly PlayableLibraryStep[] }) {
   const { drawn } = use(LessonPicturesContext);
 
@@ -331,7 +279,6 @@ export function UpcomingPictures({ steps }: { steps: readonly PlayableLibrarySte
   return (
     <Activity mode="hidden">
       {images.map((image) => (
-        // Hidden and nameless: screen readers meet the picture on its own screen.
         <LessonStepImage image={{ ...image, alt: "" }} key={image.id} loading="eager" />
       ))}
     </Activity>

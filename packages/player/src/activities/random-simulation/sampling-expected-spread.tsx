@@ -9,13 +9,8 @@ import { useSamplingFormat } from "./use-sampling-format";
 type Content = RandomSimulationMode<"sampling">["content"];
 
 const PERCENT = 100;
-/** 95% of a normal curve sits within this many standard errors of the middle. */
 const MIDDLE_95 = 1.96;
 
-/**
- * After the check, the margin each sample size should give, worked out from the standard error
- * by core (the same numbers that grade the check), next to what the runs showed.
- */
 export function SamplingExpectedSpread({ content }: { content: Content }) {
   const t = useExtracted();
   const format = useFormatNumber();

@@ -80,7 +80,6 @@ export function useLessonQuestionAnswers({
 
       dispatchToSession({ questionId, type: "answerStarted" });
 
-      // The answer is done once it's saved; what it taught memory arrives after, as its notice.
       const result = await streamLessonQuestionAnswerRequest({
         connection,
         onChunk: (chunk) => dispatchToSession({ chunk, questionId, type: "answerChunkReceived" }),
@@ -163,7 +162,6 @@ export function useLessonQuestionAnswers({
       }
 
       if (result.data.status === "running") {
-        // The server only reclaims abandoned generations and rejects ones still in progress.
         await streamAnswer({ context: state.context, questionId });
         return;
       }

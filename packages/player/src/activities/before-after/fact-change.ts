@@ -8,10 +8,6 @@ export type FactChange =
   | { kind: "less" | "more"; times: number }
   | { kind: "percent"; percent: number };
 
-/**
- * How a fact changed from before to after, the way people say it: "8.3 times less" for big
- * changes, "+15%" for small ones. The ratio (after divided by before) comes from core.
- */
 export function describeChange(ratio: number): FactChange {
   if (Math.abs(ratio - 1) < SAME_SLACK) {
     return { kind: "same" };
@@ -31,7 +27,6 @@ export function describeChange(ratio: number): FactChange {
   };
 }
 
-/** A bar length for each state's value, against the larger of the two, so both share a scale. */
 export function barShares(before: number, after: number): { after: number; before: number } {
   const largest = Math.max(Math.abs(before), Math.abs(after));
 

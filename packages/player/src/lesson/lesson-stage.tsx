@@ -21,10 +21,6 @@ import { type LessonPlayerState } from "./lesson-player-state";
 import { LessonStepView, showsOwnResult } from "./steps/lesson-step-view";
 import { type ScreenTurn } from "./use-screen-turns";
 
-/**
- * A quiet line over the screen it's about, its icon before it, read out when it shows, with the
- * one way to take it back at its end when there is one.
- */
 function NoticeLine({
   action,
   children,
@@ -45,7 +41,6 @@ function NoticeLine({
   );
 }
 
-/** "Write again" while the lesson can still go back to how it was before "Can't write now". */
 function WriteAgainButton() {
   const t = useExtracted();
   const { actions, state } = useLessonPlayer();
@@ -69,10 +64,6 @@ function WriteAgainButton() {
   );
 }
 
-/**
- * "I know this" in progress, a language answer to fix first, an answer that didn't save, a
- * question that waited for its picture, or writing left out for the rest of the day.
- */
 function LessonNotice() {
   const t = useExtracted();
   const { screen, state } = useLessonPlayer();
@@ -125,25 +116,14 @@ function LessonNotice() {
   }
 }
 
-/** How many screens ahead the player fetches pictures, so turning a screen never waits on one. */
 const PICTURES_AHEAD = 2;
 
-/**
- * A new screen slides in from the side the learner is heading, like turning a story: from the
- * right going on, from the left going back, on every screen size, since all of a screen is in its
- * column. Reduced motion shows it in place.
- */
 const TURN_CLASS: Record<ScreenTurn, string> = {
   back: "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-left-8 motion-safe:duration-base motion-safe:ease-out",
   forward:
     "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-right-8 motion-safe:duration-base motion-safe:ease-out",
 };
 
-/**
- * One screen of the lesson, sliding in from the side the learner turned to. It starts at its top,
- * like a turned page: the screen before, scrolled down to its result or its last line, never
- * leaves this one scrolled past its picture.
- */
 function LessonScreenFrame({
   children,
   turn,
@@ -172,14 +152,6 @@ function getUpcomingSteps(state: LessonPlayerState) {
     .flatMap((id) => state.steps[id] ?? []);
 }
 
-/**
- * The screen in view and, after a check, its result right under it on the feedback panel, so the
- * answered question stays in view, then, on a phone, "From the lesson" folded under them. The
- * screen keeps its place in both phases, so its state survives the check; a screen that shows its
- * own result, like an activity, gets only the panel's quiet last line under it. Every screen
- * starts at the top, like a page, so nothing jumps from one screen to the next, and the next
- * screens' pictures load while this one is read.
- */
 export function LessonStage({ turn }: { turn: ScreenTurn | null }) {
   const { actions, screen, state } = useLessonPlayer();
   const { step } = screen;
@@ -198,7 +170,6 @@ export function LessonStage({ turn }: { turn: ScreenTurn | null }) {
 
   return (
     <div className="flex w-full flex-col" data-slot="lesson-stage">
-      {/* Right above the question it's about, not floating at the top of the screen. */}
       <LessonNotice />
 
       <LessonScreenFrame key={`${step.id}-${state.position}`} turn={turn}>
@@ -215,7 +186,6 @@ export function LessonStage({ turn }: { turn: ScreenTurn | null }) {
 
       {state.phase === "feedback" && result && next && (
         <PlayerContentFrame className="flex flex-col gap-3 pb-6">
-          {/* A screen with its own result gets the panel's last line under it, quietly. */}
           {showsOwnResult(step) ? (
             <LessonResultNotes hyperdriveStreak={screen.hyperdriveStreak} {...next} />
           ) : (

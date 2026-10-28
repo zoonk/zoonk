@@ -8,10 +8,6 @@ import { LessonRichText } from "../_components/lesson-rich-text";
 import { useLessonPlayerConfig } from "../lesson-player-context";
 import { type LessonPlayerAdapters } from "../lesson-player-types";
 
-/**
- * The screen's line, read after the lesson's background write (once one started) settles, so the
- * read sees what it wrote. Null when the read didn't go through.
- */
 async function readExampleLine({
   getExampleLine,
   stepId,
@@ -26,12 +22,6 @@ async function readExampleLine({
   return data ?? null;
 }
 
-/**
- * The personal example under an explanation: one sentence about the learner's own life, set apart
- * by a rule on its leading edge, as a shared text is, rather than a box. The lesson writes its lines
- * in the background (`useExampleLines`), so the line simply appears once it's there, without
- * animating in, and a screen without one stays as it is, with nothing to ask for or explain.
- */
 export function ExampleLine({ stepId }: { stepId: string }) {
   const t = useExtracted();
   const { adapters, exampleLinesWriting } = useLessonPlayerConfig();
@@ -45,7 +35,6 @@ export function ExampleLine({ stepId }: { stepId: string }) {
 
     const read = { isCurrent: true };
 
-    // A read that didn't go through keeps what the screen shows.
     void readExampleLine({ getExampleLine, stepId, writing: exampleLinesWriting }).then((data) => {
       if (read.isCurrent && data) {
         setLine(data.line);

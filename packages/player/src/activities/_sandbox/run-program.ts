@@ -5,14 +5,11 @@ import { type SandboxMessage, runInSandbox } from "./sandbox-host";
 
 type ProgramLanguage = "javascript" | "python";
 
-/** Why a run ended: normally, with an error, out of time, flooding output, or no runtime. */
 type ProgramStop = "done" | "error" | "timeout" | "tooMuchOutput" | "unavailable";
 
 export type ProgramRun = {
   error: { line: number | null; message: string } | null;
-  /** What the program wrote to stderr, like `console.error` or warnings. */
   errorOutput: string;
-  /** What the program printed: the output the check compares. */
   output: string;
   stop: ProgramStop;
 };
@@ -25,10 +22,6 @@ function messageText(message: SandboxMessage): string {
   return message.type === "output" ? message.text : "";
 }
 
-/**
- * Runs a learner's program in the browser sandbox and collects what it printed. Output is kept
- * even when the program fails or runs out of time, so the learner sees how far it got.
- */
 export async function runProgram({
   code,
   language,

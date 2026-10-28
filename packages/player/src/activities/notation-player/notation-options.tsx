@@ -5,7 +5,6 @@ import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { type NotationView } from "./use-abc-notation";
 
-/** Staff, or staff with guitar tab under it. */
 export function ViewToggle({
   onChange,
   view,
@@ -52,7 +51,6 @@ export function ViewToggle({
   );
 }
 
-/** A slower tempo to follow along, as a native picker (the easiest to use on a phone). */
 export function TempoSelect({
   onChange,
   tempo,

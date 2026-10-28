@@ -55,10 +55,6 @@ export function isWave(name: TrigName): name is WaveName {
   return name !== "tan";
 }
 
-/**
- * The sine and cosine drawn as waves over one turn: solid up to the point's angle, dotted after,
- * so turning the point draws the wave.
- */
 export function UnitCircleWave({
   degrees,
   formatAngle,

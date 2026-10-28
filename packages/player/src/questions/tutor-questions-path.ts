@@ -1,6 +1,5 @@
 import { type TutorTarget } from "@zoonk/core/lesson-questions/contract";
 
-/** Where a thread's questions live in the public API, by what the thread is about. */
 export function getTutorQuestionsPath(target: TutorTarget): string {
   switch (target.kind) {
     case "chapter":

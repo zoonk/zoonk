@@ -4,15 +4,10 @@ import { useSpokenAudio } from "@zoonk/learn/speech";
 import { useCallback, useRef } from "react";
 import { useWordAudio } from "../../use-word-audio";
 
-/** Slow enough to hear each sound, fast enough to still sound like the word. */
 const SLOW_RATE = 0.7;
 
 type PracticeSound = { audioUrl: string | null; text: string };
 
-/**
- * Plays a word to practice: the native recording when the vocabulary has one, otherwise the word
- * read aloud in its language. `playBoth` plays it at normal speed, then slowly.
- */
 export function usePracticeWordAudio({
   audioUrls,
   language,
@@ -41,17 +36,13 @@ export function usePracticeWordAudio({
     [speech],
   );
 
-  /** Starts the recording, or says why it can't: no recording, or the browser refused. */
   const playRecording = useCallback(
     async (word: PracticeSound, rate: number) =>
       (await recording.play(word.audioUrl, { rate })) === "started",
     [recording],
   );
 
-  /**
-   * A word without a recording is read aloud right inside the tap, which mobile Safari needs to
-   * let the sound play; a recording that won't play is read aloud instead.
-   */
+  // Mobile Safari requires speech without a recording to start inside the tap handler.
   const play = useCallback(
     (word: PracticeSound, { slow }: { slow: boolean }) => {
       const rate = slow ? SLOW_RATE : 1;

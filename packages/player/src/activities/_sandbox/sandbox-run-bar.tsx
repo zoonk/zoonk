@@ -5,11 +5,6 @@ import { LoaderCircle, Play, RotateCcw } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type SandboxRuntimeStatus } from "./use-sandbox-runtime";
 
-/**
- * Run and reset for code the learner writes. Run is the main action until the first run, then
- * steps back to an outline so the screen's Check stands out. While the runtime downloads, Run
- * still works: the run starts as soon as it's ready.
- */
 export function SandboxRunBar({
   hasRun,
   isRunning,

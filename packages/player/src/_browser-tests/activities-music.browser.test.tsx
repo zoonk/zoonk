@@ -18,22 +18,15 @@ import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
 import { activityStep } from "../preview/preview-steps";
 
-/** Where the rhythm activities keep the device's measured sound delay. */
 const DEVICE_DELAY_KEY = "zoonk:rhythm-device-delay";
 
-/**
- * Two taps on the beat, one round, at the fixture's tempo: a real run as short as a valid rhythm
- * gets, since its count-in and its round each last the pattern.
- */
 const QUICK_RHYTHM = {
   ...activityContentFixtures.rhythmTapper,
   fields: { ...activityContentFixtures.rhythmTapper.fields, pattern: "x...x...", rounds: 1 },
 };
 
-/** When each tap should land, from the first, as core grades it. */
 const RHYTHM_TAPS_MS = rhythmTapTimes(QUICK_RHYTHM.fields);
 
-/** A rhythm plays in real time, past a browser test's default budget: it keeps the E2E's. */
 const REAL_TIME_TEST_TIMEOUT_MS = 30_000;
 
 const { byEar, byEarChoice } = engineModeFixtures.keyboardFretboard;
@@ -56,7 +49,6 @@ async function pickFret({ position, string }: { position: string; string: string
     .click();
 }
 
-/** Resolves on the first animation frame that shows `text`, checked in the page on every frame. */
 function waitForFrameWithText(text: string) {
   return new Promise<void>((resolve) => {
     function check() {
@@ -78,7 +70,6 @@ function sleepUntil(time: number) {
   });
 }
 
-/** Taps the rhythm on time: each Space press lands on its hit, measured from the first. */
 async function tapRhythm() {
   const start = performance.now();
 
@@ -91,7 +82,6 @@ async function tapRhythm() {
 }
 
 describe("music activities", () => {
-  /** Each test starts on a device that hasn't done the sound check, like a fresh browser. */
   beforeEach(() => {
     localStorage.removeItem(DEVICE_DELAY_KEY);
   });
@@ -151,14 +141,12 @@ describe("music activities", () => {
     await checkActivity();
     await expectVerdict("Not quite");
     await expect.element(page.getByText("A minor", { exact: true })).toBeVisible();
-    // The chord that played shows on the keys, named for screen readers in any order.
+
     await expect
       .element(page.getByText(/^On the keys: (?=.*\bA\b)(?=.*\bC\b)(?=.*\bE\b)/u))
       .toBeInTheDocument();
   });
 
-  // Reading the delay from the taps is `estimateDeviceDelay`'s (core's music tests): this is when
-  // the player asks for it, without the nine seconds of clicks a real reading takes.
   it("rhythm: the sound check is asked once per device and can be taken again", async () => {
     const lesson = buildLesson([activityStep({ content: activityContentFixtures.rhythmTapper })]);
 
@@ -167,7 +155,6 @@ describe("music activities", () => {
     await page.getByRole("button", { name: "Skip for now" }).click();
     await expect.element(page.getByRole("button", { name: "Start tapping" })).toBeVisible();
 
-    // Skipped or measured, the next visit goes straight to the rhythm.
     firstVisit.unmount();
     localStorage.setItem(DEVICE_DELAY_KEY, "180");
     renderLessonPlayer({ lesson });
@@ -179,8 +166,6 @@ describe("music activities", () => {
     await expect.element(page.getByRole("button", { name: "Start the sound check" })).toBeVisible();
   });
 
-  // Taps are graded against the audio clock, which only a real run plays: one quick round of the
-  // clave keeps that while the grading's details are core's (`rhythmTapOffsets`).
   it("rhythm: tapping on the beats is right", { timeout: REAL_TIME_TEST_TIMEOUT_MS }, async () => {
     openActivities({ contents: [QUICK_RHYTHM] });
     await page.getByRole("button", { name: "Skip for now" }).click();
@@ -190,7 +175,6 @@ describe("music activities", () => {
 
     await expect.element(page.getByText("2 of 2 taps on time."), { timeout: 15_000 }).toBeVisible();
 
-    // A run can always be tapped again before it's checked.
     await expect.element(page.getByRole("button", { name: "Try again" })).toBeVisible();
 
     await checkActivity();
@@ -225,7 +209,6 @@ describe("music activities with a keyboard only", () => {
     await expect.element(pianoKey("E")).toHaveAttribute("aria-pressed", "true");
     await expect.element(page.getByText("Same chord on guitar")).toBeVisible();
 
-    // One tab stop, the arrows move along the keys, Enter presses one.
     await focusOn(pianoKey("C"));
     await press("ArrowRight", 4);
     await expect.element(pianoKey("E")).toHaveFocus();

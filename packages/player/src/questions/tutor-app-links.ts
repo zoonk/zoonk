@@ -5,11 +5,6 @@ import {
 } from "@zoonk/core/lesson-questions/contract";
 import { keepAllowedMarkdownLinks } from "@zoonk/utils/markdown-links";
 
-/**
- * Where each of the app's pages the buddy may send the learner to lives in the web app, as its
- * router takes it (without the language: the app's `Link` adds it). Main checks every one against
- * its routes.
- */
 const TUTOR_PAGE_PATHS = {
   activity: "/activity",
   appearance: "/settings/appearance",
@@ -39,7 +34,6 @@ const TUTOR_PAGE_PATHS = {
   today: "/today",
 } as const satisfies Record<GoalTutorPage, string>;
 
-/** The session screen showing one of today's blocks, as Today's queue opens it. */
 const BLOCK_PATH = "/session?block=";
 const CHALLENGE_PATH = "/challenge/";
 const SUBJECT_PATH = "/plan/";
@@ -51,7 +45,6 @@ const SUBJECT_LINK = /^\/plan\/[^/?#\s]+$/u;
 
 const PAGE_PATHS = new Set<string>(Object.values(TUTOR_PAGE_PATHS));
 
-/** The web app's link to what core points at. */
 function toTutorAppPath(link: TutorLink): string {
   switch (link.kind) {
     case "block":
@@ -67,12 +60,7 @@ function toTutorAppPath(link: TutorLink): string {
   }
 }
 
-/**
- * Whether a link in a buddy answer has the shape of one the app gives it: one of its pages, or a
- * block, challenge or subject of the plan. Saved answers keep only the exact links their answer
- * was given; this keeps any other shape (an outside site, a path the app never links) from ever
- * being a link.
- */
+/** Checks path shape only; saved answer links must also match their exact allowlist. */
 export function isTutorAppPath(href: string): boolean {
   return (
     PAGE_PATHS.has(href) ||
@@ -82,19 +70,11 @@ export function isTutorAppPath(href: string): boolean {
   );
 }
 
-/** The block a buddy link opens, for hosts that start it as Today does; null for any other link. */
 export function readTutorBlockLink(href: string): string | null {
   return BLOCK_LINK.exec(href)?.[1] ?? null;
 }
 
-/**
- * The links one buddy answer may keep, as the web app writes them: the pages its guide lists
- * (`listGoalTutorPages` in `@zoonk/ai`) and every link its context and lookups give it, recorded
- * as the task reads them. `links` is what the task reads; `checkLinks` turns any other link in
- * the answer into its words, so the answer links only what it was given, never a link it made up,
- * an outside site or one a title smuggled in. The answers route saves what it returns, and the
- * buddy's eval scores the same check.
- */
+/** Save the answer returned by `checkLinks`; links outside the collected allowlist become plain text. */
 export function createAnswerLinks(pages: readonly GoalTutorPage[]): {
   checkLinks: (markdown: string) => ReturnType<typeof keepAllowedMarkdownLinks>;
   links: GoalTutorLinks;

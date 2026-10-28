@@ -1,18 +1,10 @@
 import { advanceHyperdrive } from "@zoonk/core/sessions/brain-power";
 import { type LessonPlayerState } from "../lesson-player-state";
 
-/** Hyperdrive's quiet line shows from this many right answers in a row. */
 const MIN_SHOWN_STREAK = 3;
 
 type StreakStep = { builds: boolean; streak: number };
 
-/**
- * The streak after each screen's first answer in this sitting, by the rule the server scores with:
- * in order, from the session's streak when the run started. A right answer on a screen answered
- * right before this run is a repeat and keeps the streak where it is; a wrong one resets it.
- * Answers from earlier sittings don't count: Hyperdrive never carries over from another day. Until
- * the run starts, the lesson counts from zero.
- */
 function getStreaks(state: LessonPlayerState): Map<string, StreakStep> {
   const { run } = state;
   const start = run.status === "started" ? run.hyperdrive : { knownStepIds: [], streak: 0 };
@@ -35,10 +27,6 @@ function getStreaks(state: LessonPlayerState): Map<string, StreakStep> {
   return new Map(steps);
 }
 
-/**
- * Hyperdrive on a screen's result: the right answers in a row its first answer made, once there
- * are three or more. Null for a wrong answer, a repeat, a second try or a shorter streak.
- */
 export function getHyperdriveStreak({
   state,
   stepId,

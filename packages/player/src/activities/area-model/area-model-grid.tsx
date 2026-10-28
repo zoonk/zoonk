@@ -20,7 +20,6 @@ const MIN_LABEL_CELL = 20;
 
 const CELL_TONES = ["fill-viz-accent-soft", "fill-viz-accent/25", "fill-viz-accent/40"] as const;
 
-/** Pixel edges of every part along one side. */
 function edgesOf(side: SideCuts, scale: LinearScale): number[] {
   return [0, ...side.cuts, side.total].map((edge) => scale.toPixel(edge));
 }
@@ -35,7 +34,6 @@ function cellTextClass(width: number, height: number): string {
   return size >= MEDIUM_CELL ? "text-base" : "text-xs";
 }
 
-/** A pill on the rectangle's edge (or at `cross`, across the side) that moves one split line. */
 export function CutHandle({
   cross,
   cut,
@@ -147,10 +145,6 @@ function EdgeLabels({
   );
 }
 
-/**
- * The area model: a rectangle cut into columns and rows, each cell showing its product. Split
- * lines move with pills on the top and left edges.
- */
 export function AreaGrid({
   disabled,
   height,

@@ -12,7 +12,6 @@ type RowState = "extra" | "missing" | "plain" | "right";
 /** SQL's own word, never translated. */
 const NULL_TEXT = "NULL";
 
-/** Numbers right-aligned without grouping, the way a query result prints them. */
 function Cell({ value }: { value: ActivityCell }) {
   const format = useFormatNumber();
 
@@ -56,10 +55,6 @@ function SqlRow({ row, state }: { row: readonly ActivityCell[]; state: RowState 
   );
 }
 
-/**
- * Rows in a table: the lesson's data, the learner's result or the expected result. After the
- * check, rows the result shouldn't have and rows it's missing are marked.
- */
 export function SqlRowsTable({
   caption,
   columns,
@@ -113,7 +108,6 @@ type Table = {
 
 const OPEN_ROW_LIMIT = 6;
 
-/** One of the lesson's tables: its name and columns, opening to show its rows. */
 export function SqlTableViewer({ table }: { table: Table }) {
   const t = useExtracted();
 

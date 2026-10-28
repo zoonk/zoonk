@@ -3,11 +3,6 @@ import {
   type LessonQuestionResource,
 } from "@zoonk/core/lesson-questions/contract";
 
-/**
- * How the faked tutor API (`stubTutorApi`) reads a request's query, as the API does: a thread
- * page's scope and cursor.
- */
-
 function isInScope({ question, url }: { question: LessonQuestionResource; url: URL }) {
   const stepId = url.searchParams.get("stepId");
   const contextKind = url.searchParams.get("contextKind");
@@ -33,10 +28,6 @@ export function getContextSummary(
   return { kind: context.kind, stepId: context.stepId, stepNumber: context.stepNumber };
 }
 
-/**
- * A page of the thread: its scope, latest last, ending
- * before `cursor` (an older page) when there's one.
- */
 export function getThreadPage({
   pageSize,
   questions,

@@ -27,32 +27,20 @@ import {
   teachingStep,
 } from "./preview-steps";
 
-/**
- * How a screen is shown: `reading` for screens that only read, `answering` before the check,
- * `checked` with the right answer checked, as the learner sees its result, and `explore` for an
- * activity template on an explanation screen, with nothing asked.
- */
 export type PreviewState = "answering" | "checked" | "explore" | "reading";
 
 export type PreviewEntry = {
-  /** Where it's listed: an activity's subject area, lesson screens, language or pictures. */
   group: string;
   id: string;
   label: string;
-  /** The one screen the preview plays in a state, built from the shared fixtures. */
   screen: (state: PreviewState) => PlayableLibraryStep;
   states: readonly PreviewState[];
 };
 
-/** Stable ids, so a screen keeps its id between the server's render and the browser's. */
 function previewId(entryId: string): string {
   return `preview-${entryId}`;
 }
 
-/**
- * Questions open answering and checked (only answering when only the server grades them, or no
- * single right answer can be built); screens that only read open as they are.
- */
 function statesOf(screen: PlayableLibraryStep): readonly PreviewState[] {
   if (rightAnswer(screen)) {
     return ["answering", "checked"];
@@ -69,7 +57,6 @@ function entry({
   label,
   screen,
 }: Omit<PreviewEntry, "screen" | "states"> & {
-  /** The same content on an explanation screen, for templates that can be explored. */
   explore?: (id: string) => PlayableLibraryStep;
   screen: (id: string) => PlayableLibraryStep;
 }): PreviewEntry {
@@ -80,7 +67,6 @@ function entry({
   return { group, id, label, screen: build, states: explore ? ["explore", ...states] : states };
 }
 
-/** An explored template's explanation: its prompt as the idea, and the canvas under it. */
 function exploreStep({
   content,
   id,
@@ -112,7 +98,6 @@ const activityEntries = activityFixtureAreas.flatMap(({ fixtures, title }) =>
   ),
 );
 
-/** The generic engines' other modes (a calculator, what-ifs, dice, break-even, by ear). */
 const engineModeEntries = Object.entries(engineModeFixtures).flatMap(([template, modes]) =>
   Object.entries(modes).map(([mode, content]: [string, ActivityContent]) =>
     entry({
@@ -310,11 +295,6 @@ const languageEntries = LANGUAGE_KINDS.map((kind) =>
   }),
 );
 
-/**
- * Every screen the player shows, for the playground app: each activity template, each lesson
- * screen kind, pictures and language exercises, built from the same fixtures as the player's
- * browser tests.
- */
 export const previewEntries: readonly PreviewEntry[] = [
   ...activityEntries,
   ...engineModeEntries,
@@ -327,10 +307,7 @@ export function getPreviewEntry(id: string): PreviewEntry | null {
   return previewEntries.find((item) => item.id === id) ?? null;
 }
 
-/**
- * The one-screen lesson that plays an entry in a state. Build it once, where the page renders, and
- * hand it to `PlayerPreview`: language screens shuffle their options each time they're built.
- */
+/** Build once per preview and reuse for PlayerPreview; rebuilding reshuffles language options. */
 export function previewLesson(
   { id, label, screen }: PreviewEntry,
   state: PreviewState,

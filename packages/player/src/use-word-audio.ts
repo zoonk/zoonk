@@ -13,10 +13,6 @@ type AudioPlaybackStatus = "failed" | "started";
 
 const AUDIO_PRELOAD_CONCURRENCY = 2;
 
-/**
- * Word banks can repeat the same audio URL or include empty entries. Normalizing the list in one
- * place keeps the preload effect focused on the small set of files that can actually be played.
- */
 function getUniqueAudioUrls(urls?: (string | null)[]): string[] {
   if (!urls) {
     return [];
@@ -25,10 +21,6 @@ function getUniqueAudioUrls(urls?: (string | null)[]): string[] {
   return [...new Set(urls.filter((url): url is string => Boolean(url)))];
 }
 
-/**
- * The blob preloader works in small waves so a word bank can warm its clips
- * without asking mobile Safari to start every media request at once.
- */
 function getPreloadBatches(urls: string[]): string[][] {
   return Array.from({ length: Math.ceil(urls.length / AUDIO_PRELOAD_CONCURRENCY) }, (_, index) =>
     urls.slice(
@@ -38,11 +30,6 @@ function getPreloadBatches(urls: string[]): string[][] {
   );
 }
 
-/**
- * Fetches audio bytes into a blob URL instead of creating a permanent media
- * element for each word. If fetch fails because a remote asset does not allow
- * CORS, playback still falls back to the original URL when the learner taps.
- */
 async function preloadAudioBlob({
   cache,
   signal,
@@ -76,16 +63,11 @@ async function preloadAudioBlob({
       sourceUrl,
     });
   } catch {
-    // Fetch preloading is opportunistic. Playback can still use the original URL.
+    // Cross-origin assets can reject preloading while their original URL still plays.
   }
 }
 
-/**
- * Runs one bounded preload wave. Keeping this separate makes the reducer below
- * read as a sequence of small concurrent batches instead of hiding fetch logic
- * inside promise chaining.
- */
-function preloadAudioBatch({
+async function preloadAudioBatch({
   batch,
   cache,
   signal,
@@ -95,21 +77,12 @@ function preloadAudioBatch({
   signal: AbortSignal;
 }): Promise<void> {
   if (signal.aborted) {
-    return Promise.resolve();
+    return;
   }
 
-  return Promise.all(batch.map((sourceUrl) => preloadAudioBlob({ cache, signal, sourceUrl }))).then(
-    () => {
-      // The ordered preloader only cares that the batch finished.
-    },
-  );
+  await Promise.all(batch.map((sourceUrl) => preloadAudioBlob({ cache, signal, sourceUrl })));
 }
 
-/**
- * Preloads a bounded set of audio blobs with limited concurrency. The hook
- * deliberately waits for each small wave before starting the next one so the
- * player warms audio without competing with step rendering and taps.
- */
 async function preloadAudioBlobs({
   cache,
   signal,
@@ -125,11 +98,6 @@ async function preloadAudioBlobs({
   );
 }
 
-/**
- * Reusing one playback element keeps Safari from holding a media element per
- * word-bank option. The preloader warms bytes separately; this element only
- * owns the clip the learner is actively playing.
- */
 function createAudioElement(onEnded: () => void): HTMLAudioElement {
   const audio = new Audio();
   audio.preload = "none";
@@ -137,11 +105,7 @@ function createAudioElement(onEnded: () => void): HTMLAudioElement {
   return audio;
 }
 
-/**
- * Starts a source from the beginning on the reusable playback element.
- * Reassigning the source on every tap avoids Safari's ended-element replay
- * bug while still keeping only one media element alive.
- */
+// Resetting the source avoids Safari's replay failure after a clip ends.
 function startAudioFromSource({
   audio,
   rate,
@@ -157,11 +121,7 @@ function startAudioFromSource({
   audio.playbackRate = rate;
 }
 
-/**
- * Browsers confirm media playback asynchronously and may reject audible audio
- * when the call is not tied to an accepted user gesture. Returning an explicit
- * status lets controls show the pause state only after playback really starts.
- */
+// Audible playback can be rejected without an accepted user gesture.
 async function getAudioPlaybackStatus(audio: HTMLAudioElement): Promise<AudioPlaybackStatus> {
   try {
     await audio.play();
@@ -171,12 +131,6 @@ async function getAudioPlaybackStatus(audio: HTMLAudioElement): Promise<AudioPla
   }
 }
 
-/**
- * Short language clips need to start as close to instantly as possible. This
- * hook warms audio bytes in a bounded blob cache, then plays those bytes through
- * one reusable media element so mobile Safari does not retain a media element
- * for every word-bank option.
- */
 export function useWordAudio(options?: UseWordAudioOptions): {
   pause: () => void;
   /** `rate` below 1 plays a slower version at the same pitch, for hearing each sound. */
@@ -193,8 +147,6 @@ export function useWordAudio(options?: UseWordAudioOptions): {
     audio.load();
   }, []);
 
-  // The media listener is installed once on a lazily created audio element. Keeping the latest
-  // consumer callback in a ref avoids rebuilding that element when its owner re-renders.
   useEffect(() => {
     onEndedRef.current = options?.onEnded;
   }, [options?.onEnded]);
@@ -206,9 +158,7 @@ export function useWordAudio(options?: UseWordAudioOptions): {
       return;
     }
 
-    // Safari can get stuck when replaying an element that naturally ended.
-    // Clearing the source leaves the reusable element alive but resets the
-    // browser media state before the next tap assigns a fresh source.
+    // Reset Safari's ended media state before the next tap reuses the element.
     releaseAudioSource(audio);
 
     onEndedRef.current?.();

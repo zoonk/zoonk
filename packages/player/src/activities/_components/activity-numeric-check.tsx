@@ -20,13 +20,6 @@ function answerValue(answer: ActivityAnswer | null): number | null {
   return answer?.kind === "numeric" ? answer.value : null;
 }
 
-/**
- * The number the canvas produced, in an input the learner can also type into. Moving the canvas
- * rewrites the input; typing leaves the canvas alone. Typed text is kept as written ("3,5") while
- * it still reads as the current answer, so the field never fights the learner. Its unit sits
- * where the learner's language writes it, as the feedback does: "R$" before the field in
- * Portuguese, "°C" or "€" in German after it.
- */
 export function ActivityNumericCheck({
   answer,
   check,

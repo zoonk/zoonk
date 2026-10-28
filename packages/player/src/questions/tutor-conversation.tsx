@@ -39,43 +39,24 @@ import { type LessonQuestionThreadPage } from "./use-lesson-question-sessions";
 import { type LessonQuestionHost } from "./use-lesson-questions";
 import { useTurnSignals } from "./use-turn-signals";
 
-/**
- * The conversation draws the cards under the buddy's answers as the host says (`getTutorCards`):
- * a plan change it proposed, telling the conversation how the learner answered, and an app tool.
- */
 type TutorConversationProps = TutorCards & {
-  /** What the composer is called for screen readers, such as "Message Zu". */
   composerLabel: string;
-  /**
-   * A question the learner brought from elsewhere (search's "Ask Buddy: …"): it waits in the
-   * composer for their own send, and is never sent for them.
-   */
+  /** Only seeds the composer; the learner must send it explicitly. */
   draft?: string;
-  /** The tutor's hello, always the conversation's first message. */
   greeting: string;
-  /** One action under the hello, such as picking a buddy before there's one. */
   greetingAction?: React.ReactNode;
   identity: TutorIdentity;
-  /** An answer the learner waited for came in, so the host's buddy can react to it. */
   onAnswered?: () => void;
-  /** The learner asked something, so the host's buddy can react to it. */
   onAsked?: () => void;
   placeholder: string;
-  /** Up to three questions the learner can send with one tap before the first message. */
   suggestions: readonly TutorSuggestion[];
 };
 
 const GOAL_CONTEXT = { kind: "plan" } as const;
 
-/**
- * The composer is always at the bottom of the screen, however short the conversation: under `lg`
- * right above the tab bar (4rem tall plus its border and the home indicator), from `lg` at the
- * screen's bottom edge.
- */
 const COMPOSER_POSITION =
   "sticky bottom-[calc(4rem+1px+env(safe-area-inset-bottom))] lg:bottom-0 z-10 -mx-4 bg-linear-to-t from-background from-75% to-transparent px-4 pt-6 pb-3 lg:pb-6";
 
-/** The conversation couldn't be read: why, and the one thing to do (try again, or what a limit asks). */
 function LoadError() {
   const controller = useLessonQuestionController();
   const error = controller.state.requestError;
@@ -95,10 +76,6 @@ function LoadError() {
   );
 }
 
-/**
- * In the composer's place for guests and visitors: where they'd type, the way to an account that
- * lets them.
- */
 function SignUpPrompt() {
   const t = useExtracted();
   const { linkComponent: Link, loginHref } = useLessonQuestionNavigation();
@@ -115,10 +92,6 @@ function SignUpPrompt() {
   );
 }
 
-/**
- * A question the learner just sent moves to the top, so its answer has the room to come in under
- * it; the latest exchange is in view when the conversation opens.
- */
 function useFollowLatest({ latestId, ready }: { latestId: string | null; ready: boolean }) {
   const reducedMotion = useReducedMotion();
   const turns = useRef(new Map<string, HTMLElement>());
@@ -191,7 +164,6 @@ function ConversationTurns({
   );
 }
 
-/** Puts a question brought from elsewhere in the composer, once for each question brought. */
 function useBroughtQuestion({
   changeDraft,
   draft,
@@ -282,22 +254,6 @@ function ConversationBody({
   );
 }
 
-/**
- * The learner's conversation with their tutor about one goal, as a page: the tutor's hello, their
- * messages and its answers (with the plan changes it proposed and the app tools it offered, drawn
- * by the host), a few
- * suggestions to start, and a composer that stays within reach. Signed-in learners talk;
- * visitors and guests are asked to create an account. It's the same tutor as the lesson's, over
- * the goal's thread in the public API.
- *
- * ```tsx
- * <TutorConversation goalId={goal.id} identity={{ avatar, name: "Zu" }} tutor={tutor} ... />
- * ```
- *
- * A host that read the thread on the server passes it as `initialThread`: the conversation shows
- * at once, without reading it again from the browser. Its page is read again as a whole when it
- * may be old (a new navigation, the tab shown again later).
- */
 export function TutorConversation({
   goalId,
   initialThread = null,
@@ -307,7 +263,6 @@ export function TutorConversation({
 }: TutorConversationProps & {
   goalId: string;
   initialThread?: LessonQuestionThreadPage | null;
-  /** A question completed one of the day's missions, so the host can read its day again. */
   onMissionMoment?: (moment: MissionMomentView) => void;
   tutor: LessonTutorConfig;
 }) {
@@ -327,7 +282,6 @@ export function TutorConversation({
     [initialThread, missionMoment.receive, tutor.canAsk],
   );
 
-  // Each goal has its own thread: another goal starts its conversation from its own history.
   return (
     <LessonQuestionNavigationContext value={tutor.navigation}>
       <LessonQuestionHostProvider

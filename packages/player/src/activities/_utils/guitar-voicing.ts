@@ -1,23 +1,16 @@
 import { noteToMidi } from "./music-notes";
 
-/*
- * Where notes sit on a guitar in standard tuning, and a playable shape for a set of pitch
- * classes: the kind of chord diagram a guitarist would pick, near the nut when possible.
- */
-
 const OCTAVE = 12;
 
-/** Open strings from the low E to the high E, as MIDI numbers. */
 export const GUITAR_TUNING: readonly number[] = ["E2", "A2", "D3", "G3", "B3", "E4"].map(
   (note) => noteToMidi(note) ?? 0,
 );
 
-/** Frets a hand spans without moving. */
 const HAND_SPAN = 4;
 const MAX_FINGERS = 4;
 const HIGHEST_POSITION = 10;
 
-/** One fret per string, low E first; null is a string that isn't played. */
+/** Strings are ordered low E first; null means the string is muted. */
 export type GuitarVoicing = readonly (number | null)[];
 
 export function stringNoteMidi(stringIndex: number, fret: number): number {
@@ -28,7 +21,6 @@ function stringPitch(stringIndex: number, fret: number): number {
   return stringNoteMidi(stringIndex, fret) % OCTAVE;
 }
 
-/** Fretted notes need fingers; the lowest fret can be barred when nothing open sits under it. */
 function fingersNeeded(voicing: GuitarVoicing): number {
   const fretted = voicing.flatMap((fret, index) => (fret ? [{ fret, index }] : []));
 
@@ -46,7 +38,6 @@ function fingersNeeded(voicing: GuitarVoicing): number {
   return canBarre ? fretted.length - barred.length + 1 : fretted.length;
 }
 
-/** Strings that sound must be next to each other, so a strum reaches them all. */
 function isContiguous(voicing: GuitarVoicing): boolean {
   const played = voicing.flatMap((fret, index) => (fret === null ? [] : [index]));
   const first = played[0] ?? 0;
@@ -76,10 +67,6 @@ function isPlayable({
   );
 }
 
-/**
- * Lower is better: full and near the nut together (each string played is worth a fret of
- * reach), then nearer the nut, then easier to finger.
- */
 function voicingCost(voicing: GuitarVoicing): number[] {
   const frets = voicing.filter((fret) => fret !== null);
   const highest = Math.max(0, ...frets);
@@ -97,7 +84,6 @@ function isCheaper(first: readonly number[], second: readonly number[]): boolean
   return index !== -1 && (first[index] ?? 0) < (second[index] ?? 0);
 }
 
-/** Every way to fill the strings from the given options, one choice per string. */
 function combinations(options: readonly (readonly (number | null)[])[]): GuitarVoicing[] {
   return options.reduce<GuitarVoicing[]>(
     (partials, choices) => partials.flatMap((partial) => choices.map((fret) => [...partial, fret])),
@@ -116,10 +102,6 @@ function voicingsAt(position: number, pitchClasses: readonly number[]): GuitarVo
   return combinations(options);
 }
 
-/**
- * A playable shape for these pitch classes with `bass` as the lowest note (the chord's root, or
- * the lowest key pressed), or null when one hand can't reach them all.
- */
 export function findGuitarVoicing({
   bass,
   pitchClasses,

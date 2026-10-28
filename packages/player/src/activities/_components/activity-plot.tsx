@@ -10,7 +10,6 @@ type PlotPadding = { bottom: number; left: number; right: number; top: number };
 
 type PlotScales = { height: number; width: number; x: LinearScale; y: LinearScale };
 
-/** Phone width of the canvas, used until the real width is measured. */
 const FALLBACK_WIDTH = 318;
 const DEFAULT_PADDING: PlotPadding = { bottom: 24, left: 44, right: 12, top: 12 };
 const LABEL_GAP = 6;
@@ -21,7 +20,6 @@ const GUIDE_STROKE = 1.5;
 
 const PlotContext = createContext<PlotScales | null>(null);
 
-/** Scales of the surrounding plot, for renderers that draw their own marks (bars, arrows). */
 export function usePlotScales(): PlotScales {
   const scales = use(PlotContext);
 
@@ -32,11 +30,6 @@ export function usePlotScales(): PlotScales {
   return scales;
 }
 
-/**
- * An SVG chart drawn at the canvas's real width, so text stays 12px on every screen. Children
- * are plot primitives in data coordinates. Decorative marks are hidden from screen readers; the
- * canvas's text alternative describes what the plot shows.
- */
 export function ActivityPlot({
   children,
   className,
@@ -47,7 +40,6 @@ export function ActivityPlot({
 }: {
   children: React.ReactNode;
   className?: string;
-  /** Pixels, or a function of the measured width for drawings that keep their proportions. */
   height: number | ((width: number) => number);
   padding?: Partial<PlotPadding>;
   xDomain: NumericDomain;
@@ -78,7 +70,6 @@ export function ActivityPlot({
   );
 }
 
-/** Horizontal gridlines with their labels on the left; the lowest one is the solid baseline. */
 export function ActivityPlotGridY({
   format,
   ticks,
@@ -114,7 +105,6 @@ export function ActivityPlotGridY({
   );
 }
 
-/** Labels under the plot at the given x values. */
 export function ActivityPlotAxisX({
   format,
   ticks,
@@ -167,7 +157,6 @@ export function ActivityPlotLine({
   );
 }
 
-/** The area between a line and the bottom of the plot. */
 export function ActivityPlotArea({
   className,
   points,
@@ -193,7 +182,6 @@ export function ActivityPlotArea({
   );
 }
 
-/** Dashed lines from a point down to the x axis and across to the y axis. */
 export function ActivityPlotGuide({
   className,
   x: dataX,
@@ -242,7 +230,6 @@ export function ActivityPlotDot({
   );
 }
 
-/** A shaded vertical band between two x values, like a measured span. */
 export function ActivityPlotBand({
   className,
   from,

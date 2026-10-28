@@ -35,13 +35,8 @@ const PLOT_HEIGHT = 196;
 const PLOT_PADDING = { bottom: 46, left: 12, right: 12, top: 22 };
 const HEADROOM = 1.08;
 const PERCENT_DIGITS = 1;
-/** Far enough past the curve's end that the share beyond it is zero to the digit shown. */
 const FAR_SDS = 40;
 
-/**
- * The percent of values in a range, from core's template hook with that range as the target: the
- * same math that grades the check, so the readout can't disagree with it.
- */
 function percentBetween(content: Content, range: Interval): number {
   return computeActivityValue({ ...content, fields: { ...content.fields, target: range } }) ?? 0;
 }
@@ -55,11 +50,6 @@ function farEnds(distribution: Content["fields"]["distribution"]): Interval {
     : { from: distribution.min, to: distribution.max };
 }
 
-/**
- * Drag two handles along a distribution and read the percent of values between them, with the
- * tails outside each handle. With a numeric check, the percent between the handles is the
- * learner's answer; once checked, the range the check asks about is outlined.
- */
 export function DistributionExplorerActivity({
   content,
   labelId,
@@ -107,7 +97,6 @@ export function DistributionExplorerActivity({
       value: formatValue(value),
     });
 
-  /* Computed like the readout, so the outline and the readout agree to the digit. */
   const targetShare = percentBetween(content, fields.target);
 
   return (
@@ -148,7 +137,6 @@ export function DistributionExplorerActivity({
           />
         )}
 
-        {/* Over the checked range's lines, so their halo keeps the shares readable. */}
         <DistributionTails
           above={percent(above)}
           below={percent(below)}

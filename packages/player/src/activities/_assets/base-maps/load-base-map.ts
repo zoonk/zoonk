@@ -6,7 +6,6 @@ import { type BaseMapDrawing, baseMapDrawingSchema } from "./base-map-drawing";
 
 type JsonModule = { default: unknown };
 
-/** One chunk per map, so a lesson downloads only the map it shows. */
 const DRAWINGS: Record<ActivityBaseMapId, () => Promise<JsonModule>> = {
   africa: () => import("./generated/africa.json"),
   americas: () => import("./generated/americas.json"),
@@ -29,11 +28,7 @@ async function loadDrawing(id: ActivityBaseMapId): Promise<BaseMapDrawing | null
   return parsed.success ? parsed.data : null;
 }
 
-/**
- * A base map's drawing, loaded once per page and shared by every activity that shows it. The
- * promise is stable, so components can read it with `use` under Suspense. Unknown ids (which
- * the validator rejects before publishing) resolve to null.
- */
+/** Returns a stable, Suspense-compatible promise; unknown IDs resolve to null. */
 export function loadBaseMap(id: string): Promise<BaseMapDrawing | null> {
   const cached = loaded.get(id);
 

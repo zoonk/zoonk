@@ -19,11 +19,9 @@ import { CANT_WRITE_TODAY, setChosenToday } from "./use-today-choice";
 type ActionsInput = {
   adapters: LessonPlayerAdapters;
   dispatch: Dispatch<LessonPlayerAction>;
-  /** The lesson's language, which grading writes a number's unit in, as the server does. */
   language: string;
   state: LessonPlayerState;
   track: (event: AnalyticsEvent) => void;
-  /** Starts writing the lesson's personal examples, once, from the learner's first action. */
   writeExampleLines: () => void;
 };
 
@@ -38,13 +36,6 @@ function analyticsFor(check: CheckContext, lessonId: string): AnalyticsEvent | n
   return null;
 }
 
-/**
- * Turns learner intent into reducer actions and server calls. Checks, activities and exercises
- * are graded on the device at once and recorded in the background; typed and spoken answers wait
- * for the server's grade. Reaching the end from a learner's click saves the run once every answer
- * is recorded; a resumed all-answered run waits for Finish first. Moving through the lesson or
- * checking an answer starts its personal examples, which opening it never does.
- */
 export function useLessonPlayerActions({
   adapters,
   dispatch,
@@ -69,14 +60,9 @@ export function useLessonPlayerActions({
     trackCheck,
   });
 
-  /**
-   * Saves the finished run. When the server is missing an answer (it never arrived), the lesson
-   * goes back to that screen with the run's answers instead of failing the save again and again.
-   */
   const saveCompletion = useEffectEvent(async () => {
     const [allSaved, runId] = await Promise.all([flushChecks(), ensureRun()]);
 
-    // A request that never reached the server (offline) fails like any other save.
     const outcome =
       allSaved && runId
         ? await adapters

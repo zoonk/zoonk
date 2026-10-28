@@ -96,7 +96,6 @@ function SortableRow({
         disabled={disabled}
         type="button"
       >
-        {/* Level with the item's first row (its 32px marks), not the middle of a long item. */}
         <span className="flex h-8 flex-none items-center">
           <GripVertical aria-hidden="true" className="text-muted-foreground size-4" />
         </span>
@@ -106,11 +105,6 @@ function SortableRow({
   );
 }
 
-/**
- * A list the learner puts in order by dragging or with the keyboard (Space to pick up, arrows to
- * move, Space to drop), with every move announced to screen readers. The order is controlled:
- * `onReorder` gets the new ids and the caller turns them into an `order` answer.
- */
 export function ActivitySortableList({
   disabled,
   items,

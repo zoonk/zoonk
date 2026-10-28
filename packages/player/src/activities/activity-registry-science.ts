@@ -4,10 +4,6 @@ import {
   defineActivityRenderer,
 } from "./_utils/define-activity-renderer";
 
-/**
- * Science: combination grids (Punnett squares), labeled diagrams, process order and molecules.
- * Spread into `activityRenderers`.
- */
 export const scienceRenderers: ActivityRendererMap<
   "combinationGrid" | "labeledDiagram" | "moleculeBuilder" | "processOrder"
 > = {

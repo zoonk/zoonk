@@ -10,10 +10,6 @@ function sameCenters(first: Record<string, number>, second: Record<string, numbe
   );
 }
 
-/**
- * The vertical middle of each card in a column, measured after layout (cards wrap their text,
- * so their heights vary), for drawing arrows between them. Re-measures when the column resizes.
- */
 export function useCardCenters() {
   const containerRef = useRef<HTMLOListElement>(null);
   const cards = useRef(new Map<string, HTMLElement>());
@@ -27,7 +23,6 @@ export function useCardCenters() {
     setCenters((current) => (sameCenters(current, next) ? current : next));
   });
 
-  /* Cards change height when their text wraps or a link list grows, so measure after each render. */
   useLayoutEffect(() => {
     measure();
   });

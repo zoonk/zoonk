@@ -8,7 +8,6 @@ import { blankStem, splitForm } from "./pattern-cells";
 
 type PatternRowData = ActivityRendererProps<"patternTable">["content"]["fields"]["rows"][number];
 
-/** A form with its ending in color, the part the pattern is about. */
 function Form({ form, stem }: { form: string; stem: string }) {
   const parts = splitForm(form, stem);
 
@@ -20,7 +19,6 @@ function Form({ form, stem }: { form: string; stem: string }) {
   );
 }
 
-/** A blank after the check: the learner's ending, and the right one when it differs. */
 function CheckedBlank({
   chosen,
   expected,
@@ -51,7 +49,6 @@ function CheckedBlank({
   );
 }
 
-/** A blank to fill: tap it to choose its ending below. */
 function OpenBlank({
   chosen,
   isActive,
@@ -101,7 +98,6 @@ function OpenBlank({
   );
 }
 
-/** One person of the pattern: its label, the model word's form and the new word's form. */
 export function PatternRow({
   choices,
   chosen,

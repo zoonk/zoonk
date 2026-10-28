@@ -3,11 +3,6 @@
 
 import { type ComponentProps } from "react";
 
-/**
- * Player browser tests only need image semantics. Using a plain img avoids the
- * Next.js image runtime while preserving accessible names and src assertions, and drops the
- * loading options only next/image understands.
- */
 export default function NextImage({
   alt,
   fill,

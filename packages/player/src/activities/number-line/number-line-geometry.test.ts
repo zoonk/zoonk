@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { jumpArc, jumpStops, numberLineTicks } from "./number-line-geometry";
 
-/** The arrowhead's two wing tips, averaged: where it points back from. */
 function wings(head: string) {
   const numbers = head.match(/-?\d+(?:\.\d+)?/gu)?.map(Number) ?? [];
   const [first, second] = [numbers.slice(0, 2), numbers.slice(4, 6)];

@@ -30,7 +30,6 @@ const LESSON_QUESTION_THREAD_ACTION_TYPES: ReadonlySet<LessonQuestionAction["typ
   "threadLoadStarted",
 ]);
 
-/** A refresh may skip a page of new questions; keep its cursor so those questions remain reachable. */
 function getRefreshedPagination({
   state,
   action,
@@ -48,12 +47,6 @@ function getRefreshedPagination({
   return { hasMore: action.hasMore, nextCursor: action.nextCursor };
 }
 
-/**
- * The questions as the server's latest read merges them, and the streamed answers that read
- * settled: one whose completed, saved text the merge took no longer waits for its saved text (see
- * `streamedAnswerIds`), so a stream cut before it doesn't leave its links as words. A partial
- * answer, or an older read the merge kept the local one over, still waits.
- */
 function mergeServerQuestions({
   latestQuestions,
   state,

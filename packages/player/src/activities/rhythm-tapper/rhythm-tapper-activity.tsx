@@ -18,7 +18,6 @@ import { useSpaceToTap } from "./use-space-to-tap";
 
 type RhythmTapperProps = ActivityRendererProps<"rhythmTapper">;
 
-/** How each hit went, judged against core's expected tap times. */
 function tapResults({
   deviceDelayMs,
   expected,
@@ -41,10 +40,6 @@ function tapResults({
   });
 }
 
-/**
- * The rhythm itself, with the device's measured delay: its taps go to core with that delay, and
- * the dots show the same judgment per tap.
- */
 function RhythmTapperRun({
   deviceDelayMs,
   onCalibrate,
@@ -140,12 +135,6 @@ function RhythmTapperRun({
   );
 }
 
-/**
- * Tap a rhythm over a steady click, timed by the device (no microphone). The first rhythm on a
- * device starts with a sound check that measures the delay its headphones or speakers add. Then
- * listen first to hear the rhythm, a bar counts in and every round is timed. The answer is the
- * taps with that delay, which core grades after taking it out.
- */
 export function RhythmTapperActivity(props: RhythmTapperProps) {
   const device = useDeviceDelay();
   const [isCalibrating, setIsCalibrating] = useState(false);

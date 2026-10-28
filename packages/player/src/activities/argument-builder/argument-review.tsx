@@ -7,10 +7,6 @@ type Candidate = { id: string; isStrong: boolean; why: string };
 type Quote = Candidate & { citation: string; quote: string };
 type Reasoning = Candidate & { text: string };
 
-/**
- * After the check, for each weak pick: the strong option and why it works. Which option is
- * strong comes from code's expected answer.
- */
 export function ArgumentReview({
   evidence,
   picks,

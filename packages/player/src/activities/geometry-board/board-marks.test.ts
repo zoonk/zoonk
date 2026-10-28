@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { cornerWedge, fanWedges } from "./board-marks";
 
 function numbers(path: string): number[] {
-  /* Adding zero turns -0 into 0, so "-0.00" in a path compares equal to 0. */
   return (path.match(/-?\d+(?:\.\d+)?/gu) ?? []).map((value) => Number(value) + 0);
 }
 
@@ -30,7 +29,6 @@ describe(cornerWedge, () => {
       radius: 4,
     });
 
-    /* The large-arc flag is the ninth number: M x y L x y A rx ry rotation large ... */
     expect(numbers(wedge.path)[8]).toBe(1);
     expect(wedge.label.x).toBeCloseTo(-12.73, 1);
     expect(wedge.label.y).toBeCloseTo(12.73, 1);

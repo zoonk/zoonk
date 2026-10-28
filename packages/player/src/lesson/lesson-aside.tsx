@@ -31,10 +31,8 @@ import { useLessonPlayer, useLessonPlayerConfig } from "./lesson-player-context"
 import { type PlayableLibraryStep } from "./lesson-player-types";
 import { useShowsMiss } from "./tutor/use-shows-miss";
 
-/** The reading text in the aside, at the aside's quieter size and a calm line height. */
 const RECAP_TEXT_CLASS = "text-foreground text-sm leading-relaxed";
 
-/** A worked example read again: its problem, every step and its result, compact. */
 function WorkedExampleRecap({
   mark,
   step,
@@ -88,7 +86,6 @@ function recapTitle(step: RecapStep): string | null {
   return step.content.title ?? null;
 }
 
-/** A reading screen read again: its title, its text (or a worked example's steps) and its chart. */
 function RecapBody({ mark, step }: { mark: string | null; step: RecapStep }) {
   const title = recapTitle(step);
 
@@ -111,11 +108,6 @@ function RecapBody({ mark, step }: { mark: string | null; step: RecapStep }) {
   );
 }
 
-/**
- * "From the lesson" beside a question from `lg`: the last reading screen before it, its title, text
- * and chart, to look back at while answering, with the sentence the question rests on marked after
- * a wrong answer. Under `lg` it folds under the question (`LessonRecapRow`).
- */
 function LessonRecap({ mark, step }: { mark: string | null; step: RecapStep }) {
   return (
     <TaskAsideContent className="flex flex-col gap-3 max-lg:hidden" data-slot="lesson-recap">
@@ -124,7 +116,6 @@ function LessonRecap({ mark, step }: { mark: string | null; step: RecapStep }) {
   );
 }
 
-/** The recap of the question in view and the sentence to mark in it, if any. */
 function useScreenRecap() {
   const { screen, state } = useLessonPlayer();
   const recap = getLessonRecap(state);
@@ -134,13 +125,6 @@ function useScreenRecap() {
   return { mark, recap };
 }
 
-/**
- * "From the lesson" on a phone or a tablet in portrait: the same recap as the aside's, folded into
- * one row under the question (and its result once it's checked) that names the screen it holds,
- * opening in place, so looking back never leaves the question. A question asked before its
- * explanation offers that explanation instead ("Explain first"), since an earlier screen isn't
- * what it's about. Wide screens have the recap beside the question.
- */
 export function LessonRecapRow() {
   const t = useExtracted();
   const { state } = useLessonPlayer();
@@ -171,11 +155,6 @@ export function LessonRecapRow() {
   );
 }
 
-/**
- * The lesson's outline beside a reading screen, for a short story (a quick explanation): its
- * screens by number and title, the one in view highlighted, the ones read checked, then the
- * questions at the end.
- */
 function LessonOutline() {
   const t = useExtracted();
   const { state } = useLessonPlayer();
@@ -225,19 +204,11 @@ function LessonOutline() {
   );
 }
 
-/** Whether a reading screen shows the lesson's outline beside it: when the host asks for it. */
 function useShowsOutline(step: PlayableLibraryStep): boolean {
   const { outline } = useLessonPlayerConfig();
   return outline && !isLanguageStep(step) && isReadStep(step);
 }
 
-/**
- * The aside beside a screen from `lg`, with what helps with it (what the screen shows itself, its
- * situation, picture or chart, stays with it in the column): beside a question, the last reading
- * screen ("From the lesson", with its place in the lesson); beside a reading screen, the lesson's
- * outline when the host asks for it; and the buddy's composer at its foot, level with the action
- * bar.
- */
 function ScreenAside({ step }: { step: PlayableLibraryStep }) {
   const t = useExtracted();
   const { mark, recap } = useScreenRecap();
@@ -260,7 +231,6 @@ function ScreenAside({ step }: { step: PlayableLibraryStep }) {
   );
 }
 
-/** The lesson's ideas beside its completion moment, one sentence each, to keep. */
 function CompletionAside() {
   const t = useExtracted();
   const { lesson } = useLessonPlayerConfig();
@@ -296,13 +266,6 @@ function CompletionAside() {
   );
 }
 
-/**
- * The lesson's aside from `lg` (tablets in landscape and up), at the window's right edge behind a
- * hairline, there on every screen so the screen's column stays in one place from the first screen
- * to the end. Once the lesson is done, the player's own moment shows the lesson's ideas there,
- * while a host's moment (a session block's queue, a quick explanation's recap) fills the aside
- * itself.
- */
 export function LessonAside() {
   const t = useExtracted();
   const { slots } = useLessonPlayerConfig();

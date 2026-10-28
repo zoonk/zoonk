@@ -33,7 +33,6 @@ function NodeCard({
   isCandidate: boolean;
   isCause: boolean;
   node: ChainNode;
-  /** Escape drops a picked cause instead of leaving the lesson. Returns whether it did. */
   onCancel: () => boolean;
   onPress: () => void;
   yearLabel: string | null;
@@ -71,13 +70,6 @@ function NodeCard({
   );
 }
 
-/**
- * Link causes to what they led to: the learner picks a cause, then its effect, and an arrow joins
- * them. Events are listed in time order, which never gives away the links. With a question check
- * each link is confirmed or turned down at once with why; with a links check the learner's set is
- * the answer and the check shows the right, wrong and missed links. Explored on an explanation
- * screen, every link is drawn with its why and nothing is picked.
- */
 export function CauseEffectChainActivity({
   content,
   labelId,

@@ -7,7 +7,6 @@ import { type ModelValues } from "../_utils/formula-model";
 
 type ModelEvent = { label: string; name: string };
 
-/** A what-if the learner switches on and off, like a toggle chip. */
 function EventToggle({
   disabled,
   isOn,
@@ -40,7 +39,6 @@ function EventToggle({
   );
 }
 
-/** The what-ifs as toggle chips over the sliders. */
 export function FormulaModelEvents({
   disabled,
   events,
@@ -69,10 +67,6 @@ export function FormulaModelEvents({
   );
 }
 
-/**
- * Tells the solid curve (now) from the dashed one: before the what-ifs switched on, or where the
- * sliders started.
- */
 export function FormulaModelLegend({ kind }: { kind: "start" | "whatIf" }) {
   const t = useExtracted();
 

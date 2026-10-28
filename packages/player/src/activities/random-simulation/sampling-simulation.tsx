@@ -52,12 +52,6 @@ function useRuns({
   };
 }
 
-/**
- * Run many samples of each size and watch the results bunch up around the truth as samples grow.
- * The runs are seeded by the lesson, so everyone sees the same first runs, and they fill in over
- * about a second (all at once with reduced motion). The chosen size is drawn over the smallest,
- * so the narrowing is seen, and the middle 95% of results gives the margin of error.
- */
 export function SamplingSimulation({ content, labelId, phase }: SamplingProps) {
   const t = useExtracted();
   const reducedMotion = useReducedMotion();
@@ -110,7 +104,6 @@ export function SamplingSimulation({ content, labelId, phase }: SamplingProps) {
 
   return (
     <ActivityCanvas labelId={labelId}>
-      {/* The margin moves under its label when both don't fit, like "±5,3 Prozentpunkte" on a phone. */}
       <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
         <div className="flex flex-col gap-0.5">
           <ActivityCanvasLabel className="text-sm">
@@ -184,7 +177,6 @@ export function SamplingSimulation({ content, labelId, phase }: SamplingProps) {
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-muted-foreground text-sm tabular-nums">
-          {/* Only the finished run is announced; the count while it fills in would be noise. */}
           <span aria-live="polite">
             {isDone &&
               t("{runs} samples of {size}", { runs: format(fields.runs), size: formatSize(size) })}

@@ -12,14 +12,12 @@ const MIN_STACK = 3;
 const GROUP_GAP = 6;
 const MAX_WHOLE_BLOCKS = 12;
 
-/** A drawn item's top-left corner, measured from the plate's left edge and top (y grows up). */
 type ItemPosition = { x: number; y: number };
 
 export type PanLayout = {
   bags: ItemPosition[];
   blocks: ItemPosition[];
   height: number;
-  /** A single weight with its value, for units that aren't a few whole blocks (like 3.5). */
   weight: ItemPosition | null;
 };
 
@@ -27,7 +25,6 @@ function isWholeBlocks(units: number): boolean {
   return Number.isInteger(units) && units >= 0 && units <= MAX_WHOLE_BLOCKS;
 }
 
-/** Block stacks get taller before bags wrap, so a pan keeps one row of bags when it can. */
 const STACK_HEIGHTS = [MIN_STACK, MIN_STACK + 1, MIN_STACK + 2] as const;
 
 function unitsWidth(pan: Pan, stack: number): number {
@@ -48,11 +45,6 @@ function blockPositions({ count, left, stack }: { count: number; left: number; s
   }));
 }
 
-/**
- * Where bags and blocks sit on a pan: bags side by side from the left, blocks stacked in short
- * columns next to them, so both groups rest on the plate and the pan reads at a glance. Stacks
- * grow taller before bags wrap to a second row.
- */
 export function panLayout(pan: Pan, width: number): PanLayout {
   const bagCount = Number.isInteger(pan.x) && pan.x > 0 ? pan.x : 0;
 

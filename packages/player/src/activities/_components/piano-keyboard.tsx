@@ -9,15 +9,10 @@ const OCTAVE = 12;
 const PERCENT = 100;
 const BLACK_KEY_SHARE = 0.62;
 
-/**
- * A key people press is at least 44 px wide: white keys at 4.5rem (72 px) keep the black keys at
- * 62% of that above 44 px, so a keyboard wider than the screen scrolls sideways.
- */
 const PRESSABLE_WHITE_KEY_REM = 4.5;
 
 type PianoKey = { isBlack: boolean; midi: number; whiteIndex: number };
 
-/** Keys from `from` to `to`; each black key sits over the line after the white keys before it. */
 function layoutKeys(from: number, to: number): { keys: PianoKey[]; whiteCount: number } {
   const midis = Array.from({ length: to - from + 1 }, (_, index) => from + index);
 
@@ -34,16 +29,11 @@ type KeyboardProps = {
   className?: string;
   disabled?: boolean;
   from: number;
-  /** Names the group of keys for screen readers, like "Piano keys". */
   label: string;
   marks: ReadonlyMap<number, NoteMarkKind>;
-  /** The note name drawn on a marked key. */
   nameOf: (midi: number) => string;
-  /** Pressing a key toggles it. Without it, the keyboard only shows notes. */
   onPress?: (midi: number) => void;
-  /** Whether a key counts as pressed, for `aria-pressed`. */
   pressed?: (midi: number) => boolean;
-  /** The note name read aloud, like "E flat". */
   spokenNameOf: (midi: number) => string;
   to: number;
 };
@@ -59,11 +49,6 @@ function keyPosition(key: PianoKey, whiteCount: number): React.CSSProperties {
   return { left: `${key.whiteIndex * whiteWidth - width / 2}%`, width: `${width}%` };
 }
 
-/**
- * A piano keyboard drawn to scale, for pressing notes or showing them. Pressing works with a
- * pointer or the keyboard: one tab stop, the arrows move between keys and Enter or Space presses
- * the focused key.
- */
 export function PianoKeyboard({
   className,
   disabled,

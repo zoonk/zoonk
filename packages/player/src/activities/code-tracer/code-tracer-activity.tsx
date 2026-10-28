@@ -22,7 +22,6 @@ type Pause = Fields["pauses"][number];
 
 const SHORT_OPTION_LENGTH = 8;
 
-/** Short values sit side by side; four make a 2 by 2 grid. */
 function optionColumns(options: Pause["options"]): 1 | 2 | 3 {
   if (options.some((option) => option.text.length > SHORT_OPTION_LENGTH)) {
     return 1;
@@ -43,7 +42,6 @@ function optionText(pause: Pause, optionId: string | undefined): string {
   return pause.options.find((option) => option.id === optionId)?.text ?? "";
 }
 
-/** What the learner does next: step on, or, at the end of the run, check their predictions. */
 function RunHint({ isExploring, isLastStep }: { isExploring: boolean; isLastStep: boolean }) {
   const t = useExtracted();
 
@@ -62,12 +60,6 @@ function RunHint({ isExploring, isLastStep }: { isExploring: boolean; isLastStep
   );
 }
 
-/**
- * Step through a program line by line and watch its variables change. At each pause the learner
- * predicts a value before stepping on to see it; the predictions are the answer. After the check
- * every pause shows the traced value next to the prediction, and the run can still be replayed.
- * Explored on an explanation screen, the program steps freely with nothing to predict.
- */
 export function CodeTracerActivity({
   answer,
   content,

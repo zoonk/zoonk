@@ -5,13 +5,6 @@ import { buildAdapters, renderLessonPlayer, startedRun } from "../_test-utils/re
 import { buildLesson } from "../preview/preview-lesson";
 import { teachingStep } from "../preview/preview-steps";
 
-/**
- * What a learner sees after answering, and the quiet controls around it: one why and one line on
- * what happens next, Hyperdrive from three in a row, "I already know this" in the menu with a miss
- * coming back at the end, Previous on every screen after the first, and Enter going on after the
- * screen's menu closes.
- */
-
 const QUESTION = 'What does the electron "cloud" show?';
 const RIGHT_OPTION = "Where the electron is most likely to be found";
 const WRONG_OPTION = "The electron's exact path";
@@ -41,14 +34,12 @@ describe("lesson feedback", () => {
       .element(page.getByText("The cloud shows chances, not a path.", { exact: false }))
       .toBeVisible();
 
-    // The options already show the pick and the answer: nothing repeats them.
     await expect.element(page.getByText("You chose:")).not.toBeInTheDocument();
     await expect.element(page.getByText("Answer:")).not.toBeInTheDocument();
 
     await next();
     await answer(WRONG_OPTION, "Not quite");
 
-    // Only the pick and the right answer stay, each saying what it is, so the result fits a phone.
     await expectCount(page.getByRole("radio"), 2);
 
     await expect
@@ -59,7 +50,6 @@ describe("lesson feedback", () => {
       .element(page.getByRole("radio", { name: RIGHT_OPTION }))
       .toMatchTextContent(/Correct/u);
 
-    // What happens next is the panel's last line.
     const panel = page.getByRole("region", { name: "Answer feedback" });
     await expect.element(panel.getByText("Saved to your mistakes", { exact: false })).toBeVisible();
 
@@ -123,7 +113,6 @@ describe("lesson feedback", () => {
     await answer(WRONG_OPTION, "Not quite");
     await next();
 
-    // Back where the learner was, without a banner; the missed check waits for the end.
     await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
     await expect.element(page.getByText("Let's go through it together")).not.toBeInTheDocument();
     await next(/^Next/u);
@@ -154,10 +143,8 @@ describe("lesson feedback", () => {
       .toMatchTextContent(/Your guess/u);
 
     await expect.element(page.getByRole("radio", { name: "No" })).toMatchTextContent(/Correct/u);
-    // Every option stays: a guess reveals the answer, and the third one vanishing read as a glitch.
     await expect.element(page.getByRole("radio", { name: "Sort of" })).toBeVisible();
     await expect.element(page.getByText("Your answer")).not.toBeInTheDocument();
-    // A guess never counts: its segment fills in as read, not red.
     expect(document.querySelector<HTMLElement>("[data-segment]")?.dataset.segment).toBe("read");
   });
 
@@ -208,7 +195,6 @@ describe("lesson feedback", () => {
     await page.getByRole("button", { name: "Explain first" }).click();
     await expect.element(page.getByText(QUESTION)).not.toBeInTheDocument();
 
-    // The button left with its screen, so focus goes on to the new screen's main action.
     await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
     await press("Enter");
     await expect.element(page.getByText(QUESTION)).toBeVisible();

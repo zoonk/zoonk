@@ -23,14 +23,6 @@ import {
 } from "@zoonk/testing/fixtures/playable-step-contents";
 import { isJsonObject } from "@zoonk/utils/json";
 
-/**
- * Lesson screens as the server serves them, from the shared valid fixtures unless a caller passes
- * its own content: stored content parsed the way the lesson read parses it. The player's browser
- * tests and the playground app build their screens here, so both show the same ones. Screens get a
- * new id each time unless `id` is given (the preview keeps them stable between renders).
- */
-
-/** Any activity step content; tests that vary a fixture pass plain objects built from it. */
 export type ActivityContent = { [field: string]: unknown; template: string };
 
 type ScreenKind = Exclude<TeachingStepKind, "activity" | "spokenAnswer">;
@@ -40,11 +32,9 @@ type StepOptions = {
   image?: PlayableStepImage | null;
   imagePending?: boolean;
   pictureWaitStartedAt?: number;
-  /** A picture question's drawn pictures, by option id. */
   optionPictures?: Readonly<Record<string, PlayableStepImage>>;
 };
 
-/** A screen of the given kind with its own stored content. */
 export function contentStep<TKind extends TeachingStepKind>(
   kind: TKind,
   {
@@ -70,10 +60,6 @@ export function contentStep<TKind extends TeachingStepKind>(
   };
 }
 
-/**
- * A question whose options are pictures, each drawn (an image of its description) unless it's
- * left out of `drawn`, still on its way while `imagePending`.
- */
 export function pictureCheckStep({
   drawn = pictureCheckContent.options.map((option) => option.id),
   ...options
@@ -87,10 +73,6 @@ export function pictureCheckStep({
   return contentStep("check", { content: pictureCheckContent, optionPictures, ...options });
 }
 
-/**
- * A question about where a part sits in one whole, its picture drawn with a number on each part
- * unless it's still on its way (`imagePending`) or never came.
- */
 export function numberedCheckStep({
   drawn = true,
   ...options
@@ -102,10 +84,6 @@ export function numberedCheckStep({
   });
 }
 
-/**
- * A labeled diagram's picture, drawn: its numbers are on the picture the screen shows, whether the
- * diagram is asked about or explored on an explanation.
- */
 export function diagramPicture(content: ActivityContent): PlayableStepImage | null {
   if (content.template !== "labeledDiagram") {
     return null;
@@ -129,7 +107,6 @@ export function activityStep({
   });
 }
 
-/** An explanation with its own stored content, such as its own personal example slot or none. */
 export function explanationStep(
   content: object,
   options: StepOptions = {},
@@ -137,7 +114,6 @@ export function explanationStep(
   return contentStep("explanation", { content, ...options });
 }
 
-/** A teaching screen of the shared stored content for its kind. */
 export function teachingStep<TKind extends ScreenKind>(
   kind: TKind,
   options: StepOptions = {},
@@ -145,22 +121,12 @@ export function teachingStep<TKind extends ScreenKind>(
   return contentStep(kind, { content: playableStepContent[kind], ...options });
 }
 
-/**
- * The shared "say it out loud" screen. No sentence of the lesson is behind it, so it has no
- * listening exercise to swap in for "I can't talk now".
- */
 export function spokenAnswerStep(options: StepOptions = {}): PlayableSpokenAnswerStep {
   return {
     ...contentStep("spokenAnswer", { content: playableStepContent.spokenAnswer, ...options }),
     listening: null,
   };
 }
-
-/**
- * Language exercises are served with their word banks, serialized by the function the lesson read
- * uses. Their pair is `languageLessonFixture`'s: English for Portuguese speakers, the word "rent"
- * and the sentence "How much is the rent?".
- */
 
 const RENT = {
   audioUrl: null,
@@ -185,7 +151,6 @@ const HOW_MUCH = {
 
 type PairWord = typeof RENT;
 
-/** The pair's resources, with `word` as its word ("rent" unless a test teaches another). */
 function pairWith(word: PairWord): ExerciseResources {
   return {
     distractorWords: [],
@@ -195,7 +160,6 @@ function pairWith(word: PairWord): ExerciseResources {
   };
 }
 
-/** Word screens show the word's note and sound tip for this language pair. */
 const RENT_HINTS = {
   note: "Não confunda com renda, que é income.",
   pronunciationTip: "O `r` do começo é suave, não como em _rato_.",
@@ -204,7 +168,6 @@ const RENT_HINTS = {
 const WORD_KINDS = new Set<ExerciseKind>(["translation", "vocabulary"]);
 const SENTENCE_KINDS = new Set<ExerciseKind>(["listening", "reading"]);
 
-/** Word and sentence screens read the pair; the others store their own content. */
 const STORED_CONTENT: Partial<Record<ExerciseKind, object>> = {
   alphabet: {
     audioText: "あ",
@@ -226,11 +189,6 @@ const STORED_CONTENT: Partial<Record<ExerciseKind, object>> = {
   multipleChoice: playableStepContent.multipleChoice,
 };
 
-/**
- * A language exercise of the given kind on the shared pair, with the word's hints where shown. A
- * kind that stores its own content takes `content` in place of the shared one, and a word screen
- * may teach another word or phrase (`word`, in place of "rent").
- */
 export function languageStep(
   kind: ExerciseKind,
   content: object = STORED_CONTENT[kind] ?? {},
@@ -269,7 +227,6 @@ export function languageStep(
   };
 }
 
-/** A bar chart a screen draws from its data. */
 export const lettersChart: ChartVisual = {
   axisStart: null,
   categories: ["Maio", "Junho", "Julho"],
@@ -283,7 +240,6 @@ export const lettersChart: ChartVisual = {
   valueLabel: "Ofícios",
 };
 
-/** A timeline a screen draws from its dated events. */
 export const lawTimeline: TimelineVisual = {
   events: [
     { date: "1988", detail: "Promulgada em 5 de outubro.", label: "Constituição Federal" },
@@ -302,10 +258,6 @@ function escapeSvgText(value: string) {
     .replaceAll("'", "&#39;");
 }
 
-/**
- * A drawn picture for a screen, portrait like the pictures lessons draw, inline so nothing depends
- * on an image host: the same `img` semantics without network errors or 404 fallbacks.
- */
 export function inlineImage({ alt, id }: { alt: string; id?: string }): PlayableStepImage {
   const svg = [
     '<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1280" viewBox="0 0 1024 1280">',

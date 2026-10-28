@@ -107,7 +107,6 @@ function NumberLineAxis({ baseline, fields }: { baseline: number; fields: Fields
   );
 }
 
-/** Before the check, one arc from the start to the dot; after it, the writer's jumps. */
 function NumberLineJumps({
   baseline,
   fields,
@@ -229,7 +228,6 @@ function NumberLineDrawing({
   );
 }
 
-/** "−3 + 3 + 5 = 5": the start, each jump with its sign, and where it lands. */
 function equation({
   format,
   jumps,
@@ -247,11 +245,6 @@ function equation({
     : `${[format(start), ...terms].join(" ")} = ${format(end)}`;
 }
 
-/**
- * The learner drags a dot to where a change lands. Before the check an arc shows the jump they
- * made; after it, the writer's jumps (like +3 to zero, then +5) show why, crossing zero step by
- * step. The dot's position is the numeric answer, and typing a number moves the dot.
- */
 export function NumberLineActivity({
   answer,
   content,

@@ -193,8 +193,6 @@ export async function getLessonQuestionRequest({
 }): Promise<LessonQuestionApiResult<LessonQuestionResource>> {
   const url = questionUrl({ connection, questionId });
 
-  // A polled item turn keeps saying whether it was about the learner's checked answer.
-
   const { data: response, error } = await safeAsync(async () =>
     fetch(url, { cache: "no-store", headers: await connection.getHeaders(), signal }),
   );

@@ -14,7 +14,6 @@ import { LessonKeyPoints } from "./lesson-key-points";
 import { HyperdriveStreak, type LessonResultNext, LessonResultNote } from "./lesson-result-notes";
 import { LessonSpokenWords } from "./lesson-spoken-words";
 
-/** Language screens whose options already show the right answer and the pick once checked. */
 const OPTION_LANGUAGE_KINDS = new Set<PlayableLibraryStep["kind"]>([
   "multipleChoice",
   "translation",
@@ -42,10 +41,6 @@ function getVerdict({
   return result.score !== null && result.score > 0 ? "almost" : "incorrect";
 }
 
-/**
- * The right answer, for screens that don't show it themselves: language answers built from words.
- * Options already show it, and a written answer has its key points.
- */
 function CorrectAnswerLine({
   result,
   step,
@@ -75,10 +70,6 @@ function CorrectAnswerLine({
   );
 }
 
-/**
- * A written answer nothing checked: why, and the sample answer to compare it with. One the learner
- * didn't know has nothing to compare: the sample answer alone.
- */
 function SampleAnswerLine({ result }: { result: LessonStepResult }) {
   const t = useExtracted();
 
@@ -119,10 +110,6 @@ function SpellingLine({ spelling }: { spelling: string }) {
   );
 }
 
-/**
- * A language answer's form mistakes as a diff: each as the learner wrote it, then its right form.
- * The ideas were stated (the key points say so), only how they were written needs fixing.
- */
 function CorrectionLines({ corrections }: { corrections: LessonStepResult["corrections"] }) {
   const t = useExtracted();
 
@@ -137,12 +124,6 @@ function CorrectionLines({ corrections }: { corrections: LessonStepResult["corre
   );
 }
 
-/**
- * A written answer's key points, unless they'd read against its verdict: a right answer that left
- * out a detail, or one marked wrong with every point stated, shows the grader's feedback instead,
- * which explains the verdict. A language answer's corrections already say why its stated ideas
- * aren't right yet, so its key points stay.
- */
 function getShownKeyPoints(result: LessonStepResult): LessonStepResult["keyPoints"] {
   if (!result.keyPoints || !result.feedback || result.corrections.length > 0) {
     return result.keyPoints;
@@ -152,13 +133,6 @@ function getShownKeyPoints(result: LessonStepResult): LessonStepResult["keyPoint
   return allMet === result.isCorrect ? result.keyPoints : null;
 }
 
-/**
- * The result of one screen, on the feedback panel under the question: the verdict (with
- * Hyperdrive's streak on its right), one why, and a faint last line on what happens next. The
- * options on screen already show what was picked and what was right, so nothing repeats them; a
- * written answer shows its key points instead of a paragraph (see `getShownKeyPoints`), a typo its
- * right spelling, a language answer's form mistakes as a diff, and a spoken one the words heard.
- */
 export function LessonStepResultView({
   hyperdriveStreak,
   next,

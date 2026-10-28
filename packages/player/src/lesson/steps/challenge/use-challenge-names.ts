@@ -7,10 +7,6 @@ import { type StepOf } from "../lesson-step-view-props";
 
 type ChallengeSlots = StepOf<"challenge">["content"]["team"];
 
-/**
- * Each role slot's name from the learner's team (the AI assistant by its role), and a way to put
- * those names into the case's text wherever it says `{{slotId}}`.
- */
 export function useChallengeNames(slots: ChallengeSlots) {
   const { challengeTeam } = useLessonPlayerConfig();
 

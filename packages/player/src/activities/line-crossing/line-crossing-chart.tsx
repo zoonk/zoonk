@@ -25,24 +25,17 @@ const PADDING = { bottom: 30, left: 22, right: 18, top: 26 };
 const HANDLE_RADIUS = 14;
 const CHEVRON = 4;
 
-/**
- * Where each line's handle sits along its visible stretch: toward the right end, away from where
- * the lines cross, so the handles never cover the crossing.
- */
 const HANDLE_SHARE = 0.82;
 
-/** The first line in the highlight color, the second in the secondary one. */
 const LINE_CLASSES = ["stroke-viz-highlight", "stroke-viz-secondary"] as const;
 const LINE_TEXT_CLASSES = ["text-viz-highlight", "text-viz-secondary"] as const;
 
-/** Two chevrons pointing the ways a handle moves: sideways, or up and down. */
 function chevrons({ axis, cx, cy }: { axis: ShiftAxis; cx: number; cy: number }): string {
   return axis === "horizontal"
     ? `M${cx - 2} ${cy - CHEVRON} l-${CHEVRON} ${CHEVRON} l${CHEVRON} ${CHEVRON} M${cx + 2} ${cy - CHEVRON} l${CHEVRON} ${CHEVRON} l-${CHEVRON} ${CHEVRON}`
     : `M${cx - CHEVRON} ${cy - 2} l${CHEVRON} -${CHEVRON} l${CHEVRON} ${CHEVRON} M${cx - CHEVRON} ${cy + 2} l${CHEVRON} ${CHEVRON} l${CHEVRON} -${CHEVRON}`;
 }
 
-/** A line's drag handle: a slider for keyboards, a 44px drag target for pointers. */
 function LineHandle({
   amount,
   axis,
@@ -114,11 +107,6 @@ function LineHandle({
   );
 }
 
-/**
- * Two straight lines the learner drags by their handles, left and right or up and down as the
- * real change moved one. A moved line's starting place stays dashed, both crossings are marked,
- * and arrows on the axes show what the move did. After the check, the real shift is drawn too.
- */
 export function LineCrossingChart({
   amount,
   answerLine,
@@ -132,7 +120,6 @@ export function LineCrossingChart({
   yLabel,
 }: {
   amount: number;
-  /** The line where it really moved, drawn after the check when the learner's move differs. */
   answerLine: Line | null;
   axis: ShiftAxis;
   handleText: (line: ChartLine) => { label: string; valueText: string };

@@ -42,7 +42,6 @@ function BondLines({ bond, from, to }: { bond: BuildBond; from: LayoutPoint; to:
   );
 }
 
-/** Small dots around an atom, one per bond it still needs. */
 function OpenBonds({ count }: { count: number }) {
   return (
     <g className="fill-warning stroke-background" strokeWidth={1.5}>
@@ -115,7 +114,6 @@ function AtomFace({
 const FIT_MARGIN = 14;
 const FIT_PADDING = ATOM_RADIUS + FIT_MARGIN;
 
-/** A view box around the atoms with room for their rings and open-bond dots. */
 function fittedViewBox(layout: Layout): string {
   const points = Object.values(layout);
 
@@ -131,10 +129,6 @@ function fittedViewBox(layout: Layout): string {
   return `${left} ${top} ${right - left} ${bottom - top}`;
 }
 
-/**
- * A build drawn as atoms and bonds. With `onAtomPress` each atom is a button (tap or Enter to
- * select it, then another to bond them); without it the drawing is a picture for after the check.
- */
 export function MoleculeCanvas({
   atomLabel,
   build,
@@ -148,9 +142,7 @@ export function MoleculeCanvas({
   atomLabel: (atom: BuildAtom) => string;
   build: Build;
   className?: string;
-  /** What a read-only drawing shows, for screen readers. */
   description?: string;
-  /** Crops the drawing to its atoms, for a compact picture instead of the whole work area. */
   fit?: boolean;
   layout: Layout;
   onAtomPress?: (id: string) => void;

@@ -6,10 +6,6 @@ import { useExtracted } from "next-intl";
 
 type BalanceStepRow = { equation: string; move: string };
 
-/**
- * The written solution as a checklist: steps the learner reached are ticked with their equation,
- * and the next one waits, dimmed, as a nudge. After the check every step shows.
- */
 export function BalanceSteps({
   reached,
   showAll,

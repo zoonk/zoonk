@@ -12,14 +12,7 @@ function hasExampleLineSlot(step: PlayableLibraryStep): boolean {
   return step.kind === "explanation" && Boolean(step.content.exampleLineSlot);
 }
 
-/**
- * The learner's personal examples for the lesson, written in the background so a screen with a
- * slot shows its line without the learner asking, or nothing when none fits. Writing starts from
- * the learner's first action in the lesson, never as it opens (a page load must not start AI
- * work), so the lines are usually ready by the time the learner reaches those screens. Asking for
- * one screen writes every screen's line in one call, so it's asked once, for the first. `writing`
- * is that call, null until it starts; it never rejects, and a refused or failed one isn't retried.
- */
+/** Start writing only from a learner action; `writing` never rejects and failed writes are not retried. */
 export function useExampleLines({
   adapters,
   steps,

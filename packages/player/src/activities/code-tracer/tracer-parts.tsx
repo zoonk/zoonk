@@ -9,7 +9,6 @@ import { ActivityCodeListing } from "../_components/activity-code";
 import { type CodeLanguage } from "../_utils/highlight-code";
 import { type WatchedValue } from "./tracer-steps";
 
-/** The watched variables at this step; a value that just changed shows what it was. */
 export function TracerVariables({ values }: { values: readonly WatchedValue[] }) {
   const t = useExtracted();
 
@@ -35,7 +34,6 @@ export function TracerVariables({ values }: { values: readonly WatchedValue[] })
           >
             {item.name}
           </dt>
-          {/* Values wrap rather than cut: a list or a string is what the learner traces. */}
           <dd className="text-base font-semibold wrap-anywhere tabular-nums">
             {item.changed && item.previous !== null && (
               <span className="text-viz-highlight mr-1 text-xs font-normal">
@@ -52,7 +50,6 @@ export function TracerVariables({ values }: { values: readonly WatchedValue[] })
   );
 }
 
-/** The program with the line that just ran highlighted. */
 export function TracerCode({
   code,
   currentLine,
@@ -74,7 +71,6 @@ export function TracerCode({
   );
 }
 
-/** Step back and forward through the run, with where the run is. */
 export function TracerControls({
   canGoBack,
   canGoForward,
@@ -122,7 +118,6 @@ export function TracerControls({
 
 type PauseResult = { guess: string; isRight: boolean; question: string; traced: string };
 
-/** Predictions already revealed: what the learner said and what the run showed. */
 export function TracerPredictionLog({ results }: { results: readonly PauseResult[] }) {
   const t = useExtracted();
 

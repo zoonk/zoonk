@@ -5,7 +5,6 @@ import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { CellValue, type GridTraits, Trait } from "./grid-parts";
 
-/** The values to put in the highlighted cell, each genotype with the trait it shows. */
 export function GridPalette({
   activeCell,
   isAllele,
@@ -40,7 +39,6 @@ export function GridPalette({
         {question()}
       </p>
 
-      {/* The question names the group, so each option is named by what it shows. */}
       <div
         aria-labelledby={questionId}
         className={cn("grid gap-2", isAllele ? "grid-cols-3" : "grid-cols-4")}

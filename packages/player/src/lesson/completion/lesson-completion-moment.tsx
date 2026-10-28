@@ -18,11 +18,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted, useFormatter } from "next-intl";
 import { type LessonCompletionSlotProps, useLessonPlayerConfig } from "../lesson-player-context";
 
-/**
- * The lesson's score and the Brain Power it earned as readouts, and when its idea comes back on the
- * quiet line under them, the way a session's moment says it. A lesson played again earns nothing
- * new: "+0" would only read as a loss.
- */
 function CompletionReadouts({
   answered,
   brainPower,
@@ -61,11 +56,6 @@ function NextLabel({ nextLesson }: { nextLesson: boolean }) {
   return nextLesson ? t("Next lesson") : t("Continue");
 }
 
-/**
- * Next lesson in the chapter as the main action, with the way back to it beside it, or one
- * Continue to where the lesson was opened, in the task's action bar. While the lesson saves
- * (`pending`), the main action is already in its place, waiting.
- */
 function CompletionLinks({ pending }: { pending: boolean }) {
   const { linkComponent: LinkComponent, routes } = useLessonPlayerConfig();
   const primaryRef = useEnterClick<HTMLAnchorElement>();
@@ -103,13 +93,6 @@ function CompletionLinks({ pending }: { pending: boolean }) {
   );
 }
 
-/**
- * The quick moment at the end of a lesson, at the top of the task's column like any other screen,
- * the same as a session block's: the title, the score and the Brain Power earned as readouts with
- * when the idea comes back under them, the belt level and the tenth of Energy it reached, then the
- * way on in the action bar at the bottom. A host's own next steps (a guest's) sit under them. The
- * session's bigger summary waits for the end of the session.
- */
 export function LessonCompletionMoment(props: LessonCompletionSlotProps) {
   const { completion, correctCount, incorrectCount, onRetry } = props;
   const t = useExtracted();

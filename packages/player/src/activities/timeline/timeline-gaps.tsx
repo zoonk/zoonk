@@ -6,7 +6,6 @@ import { roundedGap, yearsBetween } from "./timeline-scale";
 
 type Dated = { label: string; year: number };
 
-/** "About 2,500 years" once gaps are large enough to round, the exact count otherwise. */
 function useGapText() {
   const t = useExtracted();
 
@@ -19,10 +18,6 @@ function useGapText() {
   };
 }
 
-/**
- * How far apart neighboring dates really are, once the real dates show, in the colors of the
- * spans on the axis. This is where "Cleopatra lived closer to the Moon landing" becomes visible.
- */
 export function TimelineGaps({
   anchors,
   events,

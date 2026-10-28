@@ -2,14 +2,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { PlayerRichText } from "./player-rich-text";
 import { PlayerContentFrame } from "./step-layouts";
 
-/**
- * Shared read-only scene shell for player content, starting at the top like
- * the interactive screens.
- *
- * Static lesson copy and vocabulary steps live in the same visual family:
- * read something, then move forward. This component keeps that family on one
- * layout contract.
- */
 export function PlayerReadScene({
   children,
   className,
@@ -27,12 +19,6 @@ export function PlayerReadScene({
   );
 }
 
-/**
- * Groups related read-scene content into a consistent vertical stack.
- *
- * This prevents read screens from each inventing their own local spacing
- * rules for the same title/body pattern.
- */
 export function PlayerReadSceneStack({
   children,
   className,
@@ -50,12 +36,6 @@ export function PlayerReadSceneStack({
   );
 }
 
-/**
- * Shared body copy styling for read scenes.
- *
- * Static explanations should stay visually aligned, so the baseline body
- * typography lives here.
- */
 export function PlayerReadSceneBody({ children }: { children: React.ReactNode }) {
   return (
     <p

@@ -8,10 +8,6 @@ function textOf(side: readonly MatchCard[], id: string | undefined): string {
   return side.find((card) => card.id === id)?.text ?? "";
 }
 
-/**
- * After the check: the pairs whose first try was wrong, with the right match and why, then the
- * look-alike traps and what they really mean. The right match per pair comes from code.
- */
 export function MatchPairsResults({
   cards,
   expected,

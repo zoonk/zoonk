@@ -1,7 +1,6 @@
 import { Activity, useState } from "react";
 import { LessonPlayerShell } from "../lesson/lesson-player-shell";
 
-/** Cache Components hides an Activity's effects while retaining its editor and recorder state. */
 export function RetainedLesson() {
   const [visible, setVisible] = useState(true);
 

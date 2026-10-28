@@ -1,7 +1,6 @@
 type SolverChoice = { id: string; isCorrect: boolean };
 type SolverStep = { choices: readonly SolverChoice[]; id: string };
 
-/** Choices the learner picked on each step, in order. The first pick is the one that counts. */
 export type SolverPicks = Readonly<Record<string, readonly string[]>>;
 
 function correctChoiceId(step: SolverStep): string | null {
@@ -13,16 +12,11 @@ function isStepSolved(step: SolverStep, picks: SolverPicks): boolean {
   return correct !== null && (picks[step.id] ?? []).includes(correct);
 }
 
-/** The first step still waiting for its right move, or the step count when all are solved. */
 export function currentStepIndex(steps: readonly SolverStep[], picks: SolverPicks): number {
   const index = steps.findIndex((step) => !isStepSolved(step, picks));
   return index === -1 ? steps.length : index;
 }
 
-/**
- * The learner's answer once every step is solved: each step's first pick, so finding the right
- * move after a wrong one still teaches but doesn't count as knowing it.
- */
 export function firstPicks(
   steps: readonly SolverStep[],
   picks: SolverPicks,

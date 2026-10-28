@@ -228,13 +228,11 @@ function wordKind(word: string, language: CodeLanguage): CodeTokenKind {
   return builtins.has(word) ? "builtin" : "plain";
 }
 
-/** Every pattern is sticky (`y`), so it only matches at `index`. */
 function matchAt(pattern: RegExp, code: string, index: number): string | null {
   pattern.lastIndex = index;
   return pattern.exec(code)?.[0] || null;
 }
 
-/** The token that starts at `index`: the first rule that matches, else plain text. */
 function tokenAt(code: string, index: number, language: CodeLanguage): CodeToken {
   const space = matchAt(SPACE, code, index);
 
@@ -269,7 +267,6 @@ function tokenize(code: string, language: CodeLanguage): CodeToken[] {
   return tokens;
 }
 
-/** Splits tokens at line breaks, so a comment or string spanning lines colors each line. */
 function splitLines(tokens: readonly CodeToken[]): CodeToken[][] {
   return tokens.reduce<CodeToken[][]>(
     (lines, token) => {
@@ -287,10 +284,6 @@ function splitLines(tokens: readonly CodeToken[]): CodeToken[][] {
   );
 }
 
-/**
- * Colors code for reading: keywords, built-ins, literals and comments. It only needs to look
- * right for short lesson programs, so it scans tokens without parsing the language.
- */
 export function highlightCode(code: string, language: CodeLanguage): CodeToken[][] {
   return splitLines(tokenize(code, language));
 }

@@ -5,10 +5,6 @@ import { useState } from "react";
 
 const IDLE: SpokenAudioState = { status: "idle" };
 
-/**
- * Speak buttons of one activity that share its voice, one sound at a time: each button shows its
- * own sound loading, playing or failed, and pressing a button while its sound plays stops it.
- */
 export function useActivitySpeech(language: string) {
   const speech = useSpokenAudio(language);
   const [activeKey, setActiveKey] = useState<string | null>(null);

@@ -43,7 +43,6 @@ function PianoBoard(props: KeyboardFretboardProps) {
   const start = targetPitches(fields.start);
   const target = targetPitches(fields.target);
   const spell = pitchSpelling([fields.target, fields.start]);
-  // A target found by ear shows once answered, even when the question only asked to name it.
   const showAnswer = isChecked && (check.kind === "interaction" || Boolean(fields.byEar));
   const shown = showAnswer ? expectedPitches(expected, target) : pressed;
   const notes = pressed.map((pitch) => spell(pitch));
@@ -117,11 +116,6 @@ function PianoBoard(props: KeyboardFretboardProps) {
   );
 }
 
-/**
- * Press notes on a piano keyboard, or pick frets on a guitar, and see them on both. The keys
- * start with the start chord when there is one ("change one note"); the answer is the notes
- * pressed, graded by pitch class. With a choice check the instrument is free to explore.
- */
 export function KeyboardFretboardActivity(props: KeyboardFretboardProps) {
   if (props.content.fields.instruments.includes("piano")) {
     return <PianoBoard {...props} />;

@@ -10,7 +10,6 @@ import { type Build, bondTotal } from "./molecule-model";
 import { useAtomName } from "./use-atom-name";
 import { useBuildDescription } from "./use-build-description";
 
-/** A complete build drawn to fit, with its bonds counted. */
 function MoleculeStructure({ structure }: { structure: Build }) {
   const t = useExtracted();
   const nameOf = useAtomName();
@@ -37,7 +36,6 @@ function MoleculeStructure({ structure }: { structure: Build }) {
   );
 }
 
-/** One complete build for the formula, found by code, shown after the check to compare with. */
 export function MoleculeExample({ target }: { target: ElementCounts }) {
   const t = useExtracted();
   const structure = findMoleculeStructure(target);
@@ -54,7 +52,6 @@ export function MoleculeExample({ target }: { target: ElementCounts }) {
   );
 }
 
-/** The molecule explored on an explanation screen: one complete build of it, nothing to build. */
 export function ExploredMolecule({
   formula,
   labelId,

@@ -17,10 +17,6 @@ function hasKind<TKind extends ActivityExpectedAnswer["kind"]>(
   return answer.kind === kind;
 }
 
-/**
- * The interaction's expected end state when it has the kind a renderer draws (an assignment,
- * an order, rows...), or null before the check.
- */
 export function expectedInteraction<TKind extends ActivityExpectedAnswer["kind"]>(
   expected: ActivityExpected | null,
   kind: TKind,
@@ -30,10 +26,6 @@ export function expectedInteraction<TKind extends ActivityExpectedAnswer["kind"]
     : null;
 }
 
-/**
- * The correct answer shown after the check, taken from the same values the server grades with
- * (see `checkActivityAnswer`), so the canvas can never show a different answer than the grade.
- */
 export function getActivityExpected(content: ActivityStepContent): ActivityExpected | null {
   const { check } = content;
 

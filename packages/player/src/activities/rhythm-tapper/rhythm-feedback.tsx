@@ -3,10 +3,6 @@
 import { useExtracted } from "next-intl";
 import { type HitResult, worstHit } from "./rhythm-results";
 
-/**
- * How the taps went, in words: how many were on time and the one furthest off. It reads the
- * same per-tap judgment the dots show.
- */
 export function RhythmFeedback({
   extraTaps,
   hits,

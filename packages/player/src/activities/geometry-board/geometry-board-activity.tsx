@@ -26,18 +26,11 @@ import { useDescribeBoard } from "./use-describe-board";
 type GeometryBoardProps = ActivityRendererProps<"geometryBoard">;
 type Vector = { x: number; y: number };
 
-/** Phone width of the canvas, used until the real width is measured. */
 const FALLBACK_WIDTH = 318;
 const MAX_HEIGHT = 340;
 const PADDING = 20;
 const FIRST_LETTER = 65;
 
-/**
- * Drag the corners of a shape and watch what always stays true: the angles' sum, a² + b² = c² on
- * a right triangle, or an area. Code measures every position and rounds so the parts on screen
- * add up to the total on screen. With a numeric check the total stays hidden until checked: the
- * learner works it out from the parts, which is only asked when it never changes.
- */
 export function GeometryBoardActivity({ content, labelId, phase }: GeometryBoardProps) {
   const t = useExtracted();
   const describe = useDescribeBoard();

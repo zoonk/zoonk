@@ -6,7 +6,6 @@ import { CARD_LEFT, EventCard, type TrackEvent } from "./timeline-event-card";
 import { spreadLabels, yearTicks } from "./timeline-scale";
 import { type TimelineAxis, yearToY } from "./use-timeline-axis";
 
-/** Where the axis runs, from the left edge of the track. */
 const AXIS_X = 76;
 const DOT_RADIUS = 6;
 
@@ -39,7 +38,6 @@ function TickLabels({
   ));
 }
 
-/** Lines, dots and colored spans between known dates, drawn under the cards. */
 function TrackDrawing({
   axis,
   cardYs,
@@ -141,10 +139,6 @@ function AnchorCard({
   );
 }
 
-/**
- * The timeline itself: a to-scale vertical axis with dated anchors, the learner's placed events
- * and, once revealed, where each event really belongs next to the learner's guess.
- */
 export function TimelineTrack({
   anchors,
   axis,

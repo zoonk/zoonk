@@ -9,7 +9,6 @@ import { useActivityDraggable } from "../_components/activity-drag-drop";
 const CHIP_CLASS =
   "flex min-h-11 items-center gap-1.5 rounded-full border bg-background ps-2.5 pe-3.5 text-sm font-medium";
 
-/** How a name looks, lifted and tilted while it's dragged. */
 function NameChipFace({ isLifted, name }: { isLifted: boolean; name: string }) {
   return (
     <span className={cn(CHIP_CLASS, isLifted && "-rotate-3 shadow-lg")}>
@@ -19,10 +18,6 @@ function NameChipFace({ isLifted, name }: { isLifted: boolean; name: string }) {
   );
 }
 
-/**
- * A name to place. Tapping (or Enter) puts it on the highlighted spot; dragging drops it on any
- * spot or pin. The drag is a pointer shortcut only, so its keyboard hints are left out.
- */
 function NameChip({
   activeNumber,
   name,
@@ -61,7 +56,6 @@ function NameChip({
   );
 }
 
-/** The names not placed yet, with what tapping one does right now. */
 export function NameBank({
   activeNumber,
   names,
@@ -78,10 +72,6 @@ export function NameBank({
     return null;
   }
 
-  /**
-   * Keyboard users keep their place: focus moves to the chip after the placed one (or before it,
-   * for the last one) right away, before the placed chip leaves the list.
-   */
   function place(name: string, index: number) {
     const chips = listRef.current?.querySelectorAll("button");
     const hadFocus = listRef.current?.contains(document.activeElement) ?? false;

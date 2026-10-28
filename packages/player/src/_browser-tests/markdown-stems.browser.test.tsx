@@ -73,7 +73,6 @@ Which sensor has more readings?`),
       check(String.raw`At what speed \(v\) does it stay up?`),
     ]);
 
-    // The server's drawing, marked so the screen shows it wasn't drawn again in the browser.
     const keys = Object.keys(collectMathMarkup(lesson));
     renderLessonPlayer({ lesson, mathMarkup: Object.fromEntries(keys.map((key) => [key, drawn])) });
 

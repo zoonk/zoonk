@@ -14,12 +14,6 @@ import { type LessonPlayerAdapters, type PlayableLibraryStep } from "../lesson/l
 import { buildLesson } from "../preview/preview-lesson";
 import { activityStep, teachingStep } from "../preview/preview-steps";
 
-/**
- * The lesson player by keyboard alone, at desktop size: Enter runs the screen's main action from
- * anywhere, yet a focused control keeps its own keys; number keys answer; the arrows move between
- * reading screens; menus and sheets hold the lesson's keys while they're open.
- */
-
 const DESKTOP = { height: 900, width: 1280 };
 const RIGHT_TYPED = "It shows where the electron is likely to be";
 const SUMMARY_IDEA = "Electrons live in clouds.";
@@ -28,7 +22,6 @@ function openLesson({ steps }: { steps: PlayableLibraryStep[] }) {
   return renderLessonPlayer({ lesson: buildLesson(steps, { summaryIdeas: [SUMMARY_IDEA] }) });
 }
 
-/** A screen's verdict, as the player announces it. */
 function verdict(text: string) {
   return page.getByRole("status").filter({ hasText: text });
 }
@@ -39,7 +32,6 @@ describe("lesson by keyboard", () => {
       openLesson({ steps: [teachingStep("explanation"), teachingStep("check")] });
       await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
 
-      // Enter on the screen's menu opens it; it doesn't move the lesson on.
       await tabTo(page.getByRole("button", { name: "Screen options" }));
       await press("Enter");
 
@@ -48,8 +40,6 @@ describe("lesson by keyboard", () => {
       await press("End");
       await expect.element(knowThis).toHaveFocus();
 
-      // The arrows wait while the menu is open, and Escape closes only the menu, handing focus
-      // to Next rather than the menu, so Enter would go on instead of opening it again.
       await press("ArrowRight");
       await expect.element(page.getByRole("menu")).toBeVisible();
       await press("Escape");
@@ -57,7 +47,6 @@ describe("lesson by keyboard", () => {
       await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
       await expect.element(page.getByText("A cloud, not a little ball")).toBeVisible();
 
-      // Anywhere else, the keys move the lesson: the arrow to the check, a number, then Enter.
       await press("ArrowRight");
       await expect.element(page.getByText('What does the electron "cloud" show?')).toBeVisible();
       await press("2");
@@ -71,7 +60,6 @@ describe("lesson by keyboard", () => {
       await press("Enter");
       await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
 
-      // Once the lesson is done, its summary card opens from the menu and Escape closes only it.
       await tabTo(page.getByRole("button", { name: "Screen options" }));
       await press("Enter");
 
@@ -111,7 +99,6 @@ describe("lesson by keyboard", () => {
       await expect.element(answer).toHaveFocus();
       await userEvent.keyboard(RIGHT_TYPED);
 
-      // Escape while typing never leaves the lesson and its answer.
       await press("Escape");
       await expect.element(answer).toHaveValue(RIGHT_TYPED);
       expect(onExit).not.toHaveBeenCalled();
@@ -120,7 +107,6 @@ describe("lesson by keyboard", () => {
       await press("Enter");
       await expect.element(verdict("Correct!")).toBeVisible();
 
-      // Once checked, focus leaves the locked field for Continue, and the typing hint goes.
       await expect.element(page.getByRole("button", { name: /^Continue/u })).toHaveFocus();
 
       await expect
@@ -144,7 +130,6 @@ describe("lesson by keyboard", () => {
       await answer.click();
       await userEvent.keyboard(RIGHT_TYPED);
 
-      // The X asks before dropping the answer, and keeping it goes back to the text as it was.
       await page.getByRole("button", { name: "Close lesson" }).click();
       const leave = page.getByRole("alertdialog", { name: "Leave for now?" });
       await expect.element(leave).toBeVisible();
@@ -153,7 +138,6 @@ describe("lesson by keyboard", () => {
       await expect.element(answer).toHaveValue(RIGHT_TYPED);
       expect(onExit).not.toHaveBeenCalled();
 
-      // Escape away from the field asks the same, and leaving then leaves.
       await pressOnPage("Escape");
       await expect.element(leave).toBeVisible();
       await leave.getByRole("button", { exact: true, name: "Leave" }).click();
@@ -233,7 +217,6 @@ describe("lesson by keyboard", () => {
       await press("2");
       await expect.element(wrongStep).toBeChecked();
 
-      // A step clicked or tabbed to keeps focus; Enter still checks the pick, never drops it.
       await focusOn(wrongStep);
       await press("Enter");
       await expectVerdict("Correct!");

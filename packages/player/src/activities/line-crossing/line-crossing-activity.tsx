@@ -30,7 +30,6 @@ type FieldLine = Fields["lines"][number];
 
 const NOT_MOVED: LineOffsets = {};
 
-/** The move that really happened, as a signed offset along the shift's axis. */
 function realOffset(fields: Fields): number {
   const { amount, direction } = fields.shift;
   return direction === "right" || direction === "up" ? amount : -amount;
@@ -46,12 +45,6 @@ function crossingAfter(fields: Fields, offsets: LineOffsets, axis: ShiftAxis) {
   return first && second ? crossingPoint(first, second) : { x: 0, y: 0 };
 }
 
-/**
- * Two lines and where they cross: the learner drags one to explain a change (a supply shock, a
- * rent rise, a faster runner) and watches the crossing move, so which line moved and which way
- * feels different. The end state is the answer (which line, which way); a numeric check reads the
- * new crossing.
- */
 export function LineCrossingActivity({
   content,
   labelId,

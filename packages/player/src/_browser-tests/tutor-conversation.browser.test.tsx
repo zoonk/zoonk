@@ -16,17 +16,8 @@ import { teachingStep } from "../preview/preview-steps";
 import { TutorConversation } from "../questions/tutor-conversation";
 import { type LessonQuestionThreadPage } from "../questions/use-lesson-question-sessions";
 
-/**
- * The buddy's conversation as a page of its own: an answer that proposes a plan change or offers
- * one of the app's tools shows its card with the words that say it, an answer whose stream this
- * page lost is followed until it's done, without a reload, and the host hears when an answer the
- * learner waited for comes in, so the buddy's face can react.
- */
-
-/** The first poll for an answer still being written comes within 1.2 s (1 s, give or take 20%). */
 const FIRST_POLL_MS = 1200;
 
-/** Long enough for the page to read a streamed part and draw what it made of it. */
 const PART_READ_MS = 300;
 
 const PROPOSED_CHANGE: PlanChangeView = {
@@ -96,7 +87,6 @@ function renderConversation({
   );
 }
 
-/** One of today's blocks, as the buddy links it. */
 const BLOCK_ID = "01a11014-0000-7000-8000-00000000000b";
 
 async function ask(question: string) {
@@ -108,8 +98,6 @@ async function ask(question: string) {
 
 describe("the buddy's conversation", () => {
   it("puts a question brought from search in the composer: only the learner's own send asks it", async () => {
-    // The API answers as it does when it writes an answer quickly: saved, so nothing is left to
-    // follow once the test ends.
     const api = stubTutorApi({ lesson: buildLesson([teachingStep("check")]) });
     const question = "Why do two discounts in a row not add up?";
 
@@ -155,7 +143,6 @@ describe("the buddy's conversation", () => {
     renderConversation();
     await ask("No studying on Saturdays");
 
-    // The change is ready before the answer's first words: the card waits for them.
     stream.part(LESSON_QUESTION_PLAN_CHANGE_PART, PROPOSED_CHANGE);
 
     await new Promise((resolve) => {
@@ -276,7 +263,6 @@ describe("the buddy's conversation", () => {
 
     const api = stubTutorApi({ lesson: buildLesson([teachingStep("check")]) });
 
-    // The server took the answer and keeps writing it; the connection to this page drops.
     api.next("answer", () => {
       api.questions = api.questions.map((question) => ({ ...question, status: "running" }));
       return Promise.reject(new TypeError("Failed to fetch"));
@@ -286,8 +272,6 @@ describe("the buddy's conversation", () => {
     await ask("How many questions does the exam have?");
     await expect.element(page.getByText("Thinking…")).toBeVisible();
 
-    // The page sees its stream drop, then schedules the first poll. Time moves only once that poll
-    // is waiting: moved any earlier, it passes before the poll exists and the poll never comes.
     await expect.element(page.getByRole("button", { name: "Check again" })).toBeVisible();
     await expect.poll(() => vi.getTimerCount()).toBeGreaterThan(0);
 
@@ -308,7 +292,6 @@ describe("the buddy's conversation", () => {
     renderConversation({ openBlock });
     await ask("Which lesson first?");
 
-    // While it streams, every link reads as its words, even one to the app.
     stream.write(
       `Start with [Atoms](/session?block=${BLOCK_ID}), not [this site](https://example.com).`,
     );
@@ -316,7 +299,6 @@ describe("the buddy's conversation", () => {
     await expect.element(page.getByText("this site", { exact: false })).toBeVisible();
     await expect.element(page.getByRole("link", { name: "Atoms" })).not.toBeInTheDocument();
 
-    // Saved, the answer keeps only the links it was given: the outside one is words.
     stream.part(LESSON_QUESTION_SAVED_ANSWER_PART, {
       answer: `Start with [Atoms](/session?block=${BLOCK_ID}), not this site.`,
     });

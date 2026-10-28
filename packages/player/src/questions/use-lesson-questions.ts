@@ -23,32 +23,14 @@ import {
 import { useLessonQuestionThread } from "./use-lesson-question-thread";
 import { useSendLessonQuestion } from "./use-send-lesson-question";
 
-/**
- * What the host tells the tutor: where the learner is, whether they may ask (signed-in learners,
- * not visitors or guests), and a lesson's steps in the order they see them. A player loads the
- * thread about the screen in view ahead of time; a screen's "Ask" loads it when opened (`preload`).
- */
 export type LessonQuestionHost = {
   activeContext: LessonQuestionContext;
   canAskQuestions: boolean;
-  /**
-   * The thread as the page read it on the server: it shows at once, and the tutor still reads it
-   * again in the background for anything newer.
-   */
   initialThread?: LessonQuestionThreadPage | null;
   lessonStepIds: readonly string[];
-  /** What a question just asked did to the day's missions (null: none), for the host to say. */
   onMissionMoment?: (moment: MissionMomentView | null) => void;
-  /**
-   * The conversation is a page of its own (the buddy's), always on screen, not a sheet the learner
-   * opens: an answer still being written elsewhere is followed as soon as it shows.
-   */
   page?: boolean;
   preload?: boolean;
-  /**
-   * The tutor's suggestions for a lesson's screens, worded by the server in the lesson's language
-   * (`wordTutorSuggestions`): their chips read the words the question is stored with.
-   */
   suggestions?: readonly LessonTutorSuggestion[];
 };
 
@@ -59,41 +41,27 @@ type UseLessonQuestionsInput = LessonQuestionHost & {
   target: TutorTarget;
 };
 
-/** Where a question is going and what it says, sent at once (`ask`). */
 type LessonQuestionAsk = {
   context: LessonQuestionContext;
   question: string;
-  /** The lesson screen suggestion the learner sent unchanged. */
   suggestion?: LessonScreenSuggestion;
 };
 
 export type LessonQuestionController = {
-  /** The learner answered a plan change an answer proposed (Apply, Not now, Undo). */
   answerPlanChange: (change: PlanChangeView) => void;
-  /**
-   * Sends a question about `context` at once, whatever the thread was last opened about: a
-   * composer that is always on screen (the lesson's aside) asks about the screen in view.
-   */
   ask: (question: LessonQuestionAsk) => Promise<void>;
   canAskQuestions: boolean;
   changeDraft: (draft: string) => void;
   checkAnswer: (questionId: string) => Promise<void>;
-  /** Puts one of the tutor's suggested questions in the composer. */
   chooseSuggestion: (suggestion: OfferedSuggestion) => void;
   close: () => void;
   load: () => Promise<boolean>;
   loadEarlier: () => Promise<void>;
-  /**
-   * Shows the conversation about `context`. A draft written about something else is cleared,
-   * unless the composer stays on screen whatever is open (`keepDraft`), where it's the learner's.
-   */
   open: (context: LessonQuestionContext, options?: { keepDraft?: boolean }) => void;
   retryAnswer: (questionId: string) => Promise<void>;
   send: () => Promise<void>;
-  /** Sends one of the tutor's suggested questions right away. */
   sendSuggestion: (suggestion: OfferedSuggestion) => Promise<void>;
   state: LessonQuestionState;
-  /** The tutor's suggestions for a lesson's screens, as the host's payload words them. */
   suggestions: readonly LessonTutorSuggestion[];
   unresolvedQuestion: string | null;
 };
@@ -137,9 +105,6 @@ export function useLessonQuestions({
     }
   }, [activeContext, canAskQuestions, loadThread, preload]);
 
-  // A conversation with answers (read ahead for the screen in view, or on the page) gets their
-  // renderer, the math or diagrams they draw and the cards under them, before the learner opens it.
-  // A conversation that is the page loads the renderer at once, so a later answer draws at once.
   useEffect(() => {
     const answers = state.questions.flatMap(({ answer }) => (answer ? [answer] : []));
 
@@ -167,8 +132,6 @@ export function useLessonQuestions({
       openedScopes.current.add(scope);
 
       if (canAskQuestions && needsRefresh) {
-        // A press replayed at hydration can open the sheet before the preload effect runs; this
-        // load counts as the preload, so the effect doesn't fetch the thread a second time.
         preloadedScopes.current.add(scope);
         void loadThread(context);
       }

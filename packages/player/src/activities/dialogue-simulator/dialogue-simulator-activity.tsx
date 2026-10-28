@@ -64,7 +64,6 @@ function ChatLine({
   );
 }
 
-/** A reply as an option: the words, and after the check what they mean and why they fit or not. */
 function ReplyContent({ isChecked, reply }: { isChecked: boolean; reply: DialogueReply }) {
   return (
     <span className="flex flex-col gap-0.5">
@@ -79,11 +78,6 @@ function ReplyContent({ isChecked, reply }: { isChecked: boolean; reply: Dialogu
   );
 }
 
-/**
- * A real conversation in the target language: the lines so far (each with its meaning and a
- * voice), then replies to choose from. The best reply is the answer; after the check every reply
- * shows what it means and why it fits the moment or doesn't.
- */
 export function DialogueSimulatorActivity({
   answer,
   content,
@@ -125,7 +119,6 @@ export function DialogueSimulatorActivity({
         </ol>
       </div>
 
-      {/* Every reply stays after the check: each says what it means and why it fits or doesn't. */}
       <PlayerChoiceSceneOptions
         ariaLabel={t("Your reply")}
         isChecked={isChecked}

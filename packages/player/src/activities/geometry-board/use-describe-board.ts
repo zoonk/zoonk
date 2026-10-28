@@ -5,10 +5,6 @@ import { useExtracted } from "next-intl";
 import { type BoardMeasure } from "./board-geometry";
 import { type BoardReading } from "./board-measure";
 
-/**
- * What the board measures right now, in words: the canvas's text alternative and each corner's
- * spoken value, so moving a corner with a screen reader says what changed.
- */
 export function useDescribeBoard() {
   const t = useExtracted();
   const format = useFormatNumber();

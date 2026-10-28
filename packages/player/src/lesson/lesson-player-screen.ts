@@ -25,47 +25,23 @@ export type LessonPrimaryLabel =
 
 type LessonPrimaryAction = {
   action: "check" | "continue";
-  /** A grade is on its way, so the button waits instead of acting. */
   busy: boolean;
   disabled: boolean;
   label: LessonPrimaryLabel;
 };
 
-/**
- * What the learner can do on the screen in view. The shell, the header and the keyboard read this
- * one model, so the visible button and Enter always do the same thing.
- */
 export type LessonScreen = {
   canExplainFirst: boolean;
   canGoBack: boolean;
-  /**
-   * The screen moves on with the arrow key or a swipe, the way its main action does: a reading
-   * screen, and a question once its result shows. A question waiting for its answer moves on only
-   * through its main action, so a stray swipe never skips or checks one.
-   */
   canGoForward: boolean;
   canKnowThis: boolean;
-  /** Right answers in a row the result on screen made (Hyperdrive), from three on. */
   hyperdriveStreak: number | null;
   primary: LessonPrimaryAction | null;
   progress: { current: number; total: number };
-  /**
-   * Each screen of the lesson in its order, for the header's segments: read, answered right or
-   * wrong the first time it came, the one in view, or still ahead.
-   */
   segments: TaskSegment[];
-  /** Position within "I know this", when it's running. */
   quickCheck: { current: number; total: number } | null;
   step: PlayableLibraryStep | null;
-  /**
-   * The explanation of an idea missed twice in a row, so help can come at the moment the learner
-   * struggles.
-   */
   struggleOffer: ExplainingStep | null;
-  /**
-   * The screen holds an answer the learner wrote whose check hasn't saved successfully: leaving
-   * now could drop it, so the way out asks first, including while the check is pending.
-   */
   unsentAnswer: boolean;
 };
 
@@ -73,7 +49,6 @@ function hasText(text: string): boolean {
   return text.trim().length > 0;
 }
 
-/** Whether the answer on screen is complete enough to check. */
 function isAnswerReady(answer: LessonPlayerAnswer | undefined): boolean {
   if (!answer) {
     return false;
@@ -86,7 +61,6 @@ function isAnswerReady(answer: LessonPlayerAnswer | undefined): boolean {
   return true;
 }
 
-/** Words on the screen stay protected until their check saves successfully. */
 function hasUnsentAnswer(state: LessonPlayerState, step: PlayableLibraryStep | null): boolean {
   const awaitingCheck = state.phase === "playing" || state.phase === "checking";
   const answer = step && awaitingCheck ? state.answers[step.id] : undefined;
@@ -104,7 +78,6 @@ function getReadLabel(state: LessonPlayerState, step: PlayableLibraryStep): Less
   return state.position === state.queue.length - 1 ? "continue" : "next";
 }
 
-/** A challenge starts from its intro, confirms one decision at a time, then checks the path. */
 function getChallengeAction(
   state: LessonPlayerState,
   step: Extract<PlayableLibraryStep, { kind: "challenge" }>,
@@ -158,7 +131,6 @@ function getPrimaryAction(
   };
 }
 
-/** A reading screen, or a question showing its result, turns forward as its button would. */
 function canTurnForward(state: LessonPlayerState, step: PlayableLibraryStep | null): boolean {
   if (!step || state.run.status === "refused") {
     return false;
@@ -167,11 +139,6 @@ function canTurnForward(state: LessonPlayerState, step: PlayableLibraryStep | nu
   return state.phase === "feedback" || (state.phase === "playing" && isReadStep(step));
 }
 
-/**
- * A screen already passed: any answer that counted (a check, an activity, a language exercise, a
- * spoken or written answer) by the verdict it got there (its first one, or for a question that came
- * back at the end, the one it got then), any other screen read, a guess included.
- */
 function getPassedSegment(state: LessonPlayerState, index: number): TaskSegment {
   const stepId = state.queue[index] ?? "";
 
@@ -187,7 +154,6 @@ function getPassedSegment(state: LessonPlayerState, index: number): TaskSegment 
   return verdict ? "right" : "wrong";
 }
 
-/** The header's segments: passed screens by their verdict, the one in view, the rest ahead. */
 function getSegments(state: LessonPlayerState): TaskSegment[] {
   return state.queue.map((_, index) => {
     const answeredInView = index === state.position && state.phase === "feedback";
@@ -200,7 +166,6 @@ function getSegments(state: LessonPlayerState): TaskSegment[] {
   });
 }
 
-/** Derives the screen from the reducer state. */
 export function getLessonScreen(state: LessonPlayerState): LessonScreen {
   const step = state.phase === "completed" ? null : getCurrentStep(state);
   const isPlaying = state.phase === "playing" && state.run.status !== "refused";

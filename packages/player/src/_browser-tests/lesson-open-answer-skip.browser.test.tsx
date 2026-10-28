@@ -14,7 +14,6 @@ import { contentStep, teachingStep } from "../preview/preview-steps";
 const SAMPLE_ANSWER =
   "Because we can't pin down where the electron is. The cloud maps where it's most likely to be.";
 
-/** An explanation in the learner's own words: no accepted wordings to match, only key points. */
 function explanationStep() {
   return contentStep("typedAnswer", {
     content: {
@@ -52,7 +51,6 @@ describe("open answer skip", () => {
 
     renderLessonPlayer({ adapters, lesson });
 
-    // Two ways out at most: the explanation still ahead takes the place of "I don't know yet".
     await expect.element(page.getByText("In your own words")).toBeVisible();
     await expect.element(page.getByRole("button", { name: /^Check/u })).toBeDisabled();
     await expect.element(page.getByRole("button", { name: "Can't write now" })).toBeVisible();
@@ -68,7 +66,6 @@ describe("open answer skip", () => {
 
     await page.getByRole("button", { name: "I don't know yet" }).click();
 
-    // What a good answer says, before going on: no verdict on an answer the learner didn't give.
     await expect.element(verdict("Here's a good answer")).toBeVisible();
     await expect.element(verdict(SAMPLE_ANSWER)).toBeVisible();
     await expect.element(verdict("Not quite")).not.toBeInTheDocument();
@@ -113,8 +110,6 @@ describe("open answer skip", () => {
       await skip.click();
       await expect.element(page.getByRole("textbox")).not.toBeInTheDocument();
 
-      // The screen after it says writing is off for the day, and the keyboard stays in the lesson
-      // instead of falling back to the page with the button that left.
       await expect.element(writingSkippedNotice()).toBeVisible();
       await expect.element(page.getByRole("button", { name: "Write again" })).toBeVisible();
       await expect.element(page.getByRole("button", { name: /^Next/u })).toHaveFocus();
@@ -131,7 +126,6 @@ describe("open answer skip", () => {
         skippedWritingStepIds: [first.id, second.id],
       });
 
-      // The next lesson today leaves its writing out as it opens, and says so on its first screen.
       unmount();
       renderLessonPlayer({ lesson });
       await expect.element(writingSkippedNotice()).toBeVisible();
@@ -145,7 +139,6 @@ describe("open answer skip", () => {
     const lesson = buildLesson([teachingStep("explanation"), writing, teachingStep("summary")]);
     const earlier = renderLessonPlayer({ lesson: buildLesson([explanationStep()]) });
 
-    // Earlier today, in another lesson.
     await page.getByRole("button", { name: "Can't write now" }).click();
     earlier.unmount();
 
@@ -160,7 +153,6 @@ describe("open answer skip", () => {
     await page.getByRole("button", { name: /^Next/u }).click();
     await expect.element(page.getByRole("textbox")).toBeVisible();
 
-    // The next lesson asks for writing again.
     unmount();
     renderLessonPlayer({ lesson: buildLesson([writing]) });
     await expect.element(page.getByRole("textbox")).toBeVisible();
@@ -240,7 +232,6 @@ describe("open answer skip", () => {
     renderLessonPlayer({ lesson });
     await page.getByRole("button", { name: "Can't write now" }).click();
 
-    // Typing a number is the calculation's answer, not writing: it stays, as a question to answer.
     await expect.element(page.getByRole("textbox", { name: question })).toBeVisible();
     await expect.element(page.getByRole("button", { name: /^Check/u })).toBeDisabled();
     await expect.element(page.getByText("In your own words")).not.toBeInTheDocument();

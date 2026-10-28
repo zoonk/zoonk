@@ -12,16 +12,10 @@ import { type LessonPlayerAdapters } from "../lesson/lesson-player-types";
 import { buildLesson } from "../preview/preview-lesson";
 import { teachingStep } from "../preview/preview-steps";
 
-/**
- * Coming back to a lesson: the run on the server keeps the learner's answers, so the lesson opens
- * where they left off, and the end never asks to save again and again.
- */
-
 const QUESTION = 'What does the electron "cloud" show?';
 const RIGHT_OPTION = "Where the electron is most likely to be found";
 const TEN_HOURS_MS = 36_000_000;
 
-/** Explanation, check, explanation, check: the second check is still to answer. */
 function createLesson() {
   return buildLesson([
     teachingStep("explanation"),
@@ -126,7 +120,6 @@ describe("coming back to a lesson", () => {
     await page.getByRole("button", { name: /^Continue/u }).click();
 
     await expect.element(page.getByRole("heading", { name: "Lesson complete" })).toBeVisible();
-    // The first check was answered before the learner left: only the one shown here is new.
     expect(adapters.checkStep).toHaveBeenCalledOnce();
   });
 
@@ -141,7 +134,6 @@ describe("coming back to a lesson", () => {
     const [first, second] = checkIds(lesson);
     const twoDaysAgo = 2 * 24 * 60;
 
-    // Two right answers two days ago: they count, but don't build today's streak.
     const resume = [
       runAnswer({ minutesAgo: twoDaysAgo, stepId: first ?? "" }),
       runAnswer({ minutesAgo: twoDaysAgo - 1, stepId: second ?? "" }),
@@ -153,7 +145,6 @@ describe("coming back to a lesson", () => {
 
     renderLessonPlayer({ adapters, lesson, resume });
 
-    // Replaying the earlier sitting would make this the third in a row.
     await answerRight();
     await expect.element(page.getByText(/right in a row/u)).not.toBeInTheDocument();
     await page.getByRole("button", { name: /^Continue/u }).click();
@@ -187,7 +178,6 @@ describe("coming back to a lesson", () => {
     const [first] = checkIds(lesson);
     const finished = buildAdapters(lesson).completeLesson;
 
-    // The second answer never arrived: the server only has the first one.
     const runId = crypto.randomUUID();
 
     const startLesson = vi
@@ -250,7 +240,6 @@ describe("coming back to a lesson", () => {
       .element(page.getByText("That didn't go through. Your answers are kept."))
       .toBeVisible();
 
-    // The only way on, as the end's main action: one Try again, which Enter presses.
     await expect.element(page.getByRole("button", { name: /^Try again/u })).toBeVisible();
     await expect.element(page.getByRole("link", { name: /^Continue/u })).not.toBeInTheDocument();
     await userEvent.keyboard("{Enter}");
@@ -282,7 +271,6 @@ describe("coming back to a lesson", () => {
     const lesson = buildLesson([teachingStep("check")]);
     const graded = buildAdapters(lesson).checkStep;
 
-    // The server takes the answer only when it fits its contract, as `POST /v1/steps/{id}/checks` does.
     const checkStep = vi.fn<LessonPlayerAdapters["checkStep"]>((input) => {
       const { stepId, ...body } = input;
       const fits = lessonStepCheckInputSchema.safeParse({ ...body, timeZone: "UTC" }).success;

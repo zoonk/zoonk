@@ -4,7 +4,6 @@ import { type LessonQuestionNavigation } from "../questions/lesson-question-navi
 import { TestLink } from "./render-lesson-player";
 import { TUTOR_API_URL, TUTOR_AUTHORIZATION } from "./tutor-api";
 
-/** A learner's buddy as the host reads it: Zu, named Pip by the learner. */
 const TEST_BUDDY: NonNullable<LessonTutorConfig["buddy"]> = {
   beltColor: "white",
   energy: null,
@@ -13,18 +12,12 @@ const TEST_BUDDY: NonNullable<LessonTutorConfig["buddy"]> = {
   name: "Pip",
 };
 
-/** The lesson payload's tutor suggestions, as the server words them for an English lesson. */
 const ENGLISH_SUGGESTIONS: LessonTutorSuggestion[] = [
   { id: "simpler", label: "Explain it more simply" },
   { id: "deeper", label: "I want to go deeper" },
   { id: "example", label: "Give me another example" },
 ];
 
-/**
- * The tutor as a host app sets it up for a learner who may ask, reaching the faked API. The
- * learner's buddy (Pip) answers unless a test passes `buddy: null` (the default buddy); the
- * lesson's suggestions are English unless a test passes the payload's own.
- */
 export function buildTutor(
   navigation: Partial<LessonQuestionNavigation> = {},
   {

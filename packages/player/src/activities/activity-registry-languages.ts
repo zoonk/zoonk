@@ -3,7 +3,6 @@ import {
   defineActivityRenderer,
 } from "./_utils/define-activity-renderer";
 
-/** Languages: pattern tables and dialogues. Spread into `activityRenderers`. */
 export const languageRenderers: ActivityRendererMap<"dialogueSimulator" | "patternTable"> = {
   dialogueSimulator: defineActivityRenderer({
     badge: "reply",

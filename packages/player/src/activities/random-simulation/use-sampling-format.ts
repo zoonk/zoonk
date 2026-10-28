@@ -9,10 +9,6 @@ type Fields = Extract<ActivityContentFor<"randomSimulation">["fields"], { mode: 
 const PERCENT = 100;
 const SHARE_DIGITS = 1;
 
-/**
- * Results in the population's terms: shares as percents with margins in percentage points
- * ("±3 points"), averages in their unit ("±2.1 cm").
- */
 export function useSamplingFormat(fields: Fields) {
   const t = useExtracted();
   const format = useFormatNumber();

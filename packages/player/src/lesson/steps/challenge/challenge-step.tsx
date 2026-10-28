@@ -8,11 +8,6 @@ import { ChallengeDebriefView } from "./challenge-debrief";
 import { ChallengeIntro } from "./challenge-intro";
 import { useChallengeNames } from "./use-challenge-names";
 
-/**
- * A case solved like at work: the intro, then a conversation where each confirmed decision
- * brings the team's replies, moves the meters and may jump ahead in time, then the ending and,
- * once checked, the debrief. The path is the answer; the learner always finishes.
- */
 export function ChallengeStepView({
   answer,
   isLocked,

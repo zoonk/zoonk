@@ -52,13 +52,11 @@ describe(getLessonOutline, () => {
   });
 });
 
-/** A question that rests on the sentence `basis` quotes, when given. */
 function question(basis?: { position: number; quote: string }) {
   const content = { ...playableStepContent.check, basis: basis ?? null };
   return { ...contentStep("check", { content }), position: 3 };
 }
 
-/** What the recap marks beside `step`, once its answer shows. */
 function markOf(steps: PlayableLibraryStep[], step: PlayableLibraryStep) {
   const state = stateOf(steps, { position: steps.indexOf(step) });
   return getRecapMark({ recap: getLessonRecap(state), step });

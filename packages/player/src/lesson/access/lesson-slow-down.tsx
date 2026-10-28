@@ -7,10 +7,6 @@ import { PlayerContentFrame } from "../../components/step-layouts";
 
 const MS_PER_SECOND = 1000;
 
-/**
- * The shared layout of the screens shown when a lesson can't open yet, at the top of the column like
- * every task's screen: a quiet icon, the title and why, then its actions.
- */
 export function AccessLayout({
   children,
   description,
@@ -34,10 +30,6 @@ export function AccessLayout({
   );
 }
 
-/**
- * Fair use spaces lessons out, when starting them or reading their screens: the lesson opens by
- * itself (`onRetry`) when the wait is over.
- */
 export function LessonSlowDown({
   onRetry,
   retryAfterSeconds,

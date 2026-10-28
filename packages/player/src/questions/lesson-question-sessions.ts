@@ -27,12 +27,6 @@ export function getLessonQuestionSession({
   return sessions[getLessonQuestionScope(context)] ?? { ...INITIAL_LESSON_QUESTION_STATE, context };
 }
 
-/**
- * The conversation as the learner sees it from where they are. Before a question is checked the
- * buddy only gives hints, so what it said about an earlier answer to it (a question coming back at
- * the end of the lesson, or asked again in practice) waits until this one is checked. An answer
- * still unfinished stays, so the learner can finish it before asking more.
- */
 export function getShownLessonQuestionSession({
   context,
   session,
@@ -52,7 +46,6 @@ export function getShownLessonQuestionSession({
   return questions.length === session.questions.length ? session : { ...session, questions };
 }
 
-/** Late responses update their own step, while revisiting a step restores its saved conversation immediately. */
 export function lessonQuestionSessionsReducer(
   state: LessonQuestionSessions,
   { action, context }: LessonQuestionSessionAction,

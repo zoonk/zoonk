@@ -15,11 +15,6 @@ import { useLessonPlayer } from "../lesson-player-context";
 import { LessonAnswerField } from "./lesson-answer-field";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
 
-/**
- * Writing can wait for tomorrow, in any lesson, when the learner is on the bus, can't use a keyboard
- * or would rather not type now: the rest of today's lessons leave it out too, until "Write again".
- * Language goals also keep a permanent preference in Plan settings.
- */
 function SkipWritingButton() {
   const t = useExtracted();
   const { actions } = useLessonPlayer();
@@ -40,16 +35,6 @@ function SkipWritingButton() {
   );
 }
 
-/**
- * A written answer: an explanation in the learner's own words, graded one key point at a time, or
- * a short exact answer (it has accepted wordings), which needs no "own words" eyebrow. A question
- * whose answer is a number (every accepted answer is one) takes it in a number field instead,
- * answered like a calculation, with no way to leave it out.
- *
- * At most two quiet ways out, each saying what it does: "Explain first" when the explanation is
- * still ahead (the question comes back after it), otherwise "I don't know yet" (a good answer
- * shows, no verdict); and "Can't write now" (no writing for the rest of today).
- */
 export function TypedAnswerStepView({
   answer,
   isLocked,
@@ -88,7 +73,6 @@ export function TypedAnswerStepView({
         value={text}
       />
 
-      {/* The ways out, one set of quiet actions a touch target apart. */}
       <div className="flex flex-col gap-3.5 empty:hidden">
         <ExplainFirstButton />
         {!isLocked && !isNumber && (

@@ -1,6 +1,5 @@
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 
-/** What the check found, one card each with its why (a misplaced item, a missed pair, a mistake). */
 export function ActivityReasons({ children }: { children: React.ReactNode }) {
   return <ul className="flex flex-col gap-2">{children}</ul>;
 }

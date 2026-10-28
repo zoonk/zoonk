@@ -8,16 +8,12 @@ import {
 
 type Vector = { x: number; y: number };
 
-/** Digits each measure is shown with: whole degrees, lengths to a tenth, areas to a hundredth. */
 const DIGITS: Record<BoardMeasure, number> = { angleSum: 0, area: 2, perimeter: 1, pythagoras: 2 };
 
 export type BoardReading = {
-  /** What adds up: each corner's angle, each side's length, or the squares on the two legs. */
   parts: number[];
-  /** The side each part belongs to (for lengths and squares) or the corner (for angles). */
   partIndexes: number[];
   total: number;
-  /** For Pythagoras, the side whose square is the total. */
   totalIndex: number | null;
 };
 
@@ -26,10 +22,6 @@ function longestSide(points: readonly Vector[]): number {
   return lengths.indexOf(Math.max(...lengths));
 }
 
-/**
- * What the board shows for its shape right now, rounded so the parts on screen add up exactly to
- * the total on screen.
- */
 export function readBoard(points: readonly Vector[], measure: BoardMeasure): BoardReading {
   const digits = DIGITS[measure];
   const indexes = points.map((_, index) => index);

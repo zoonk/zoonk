@@ -6,11 +6,9 @@ import { type SnapRange, snapToStep, valueAfterKey } from "../_utils/snap-value"
 
 type Orientation = "horizontal" | "vertical";
 
-/** Half of the 44px touch target around every handle. */
 const HIT_RADIUS = 22;
 const FOCUS_RADIUS = 17;
 
-/** A pointer position in the SVG's own coordinates, whatever size the SVG is drawn at. */
 export function svgPoint(event: React.PointerEvent<SVGElement>): { x: number; y: number } | null {
   const svg = event.currentTarget.ownerSVGElement;
   const matrix = svg?.getScreenCTM();
@@ -23,7 +21,6 @@ export function svgPoint(event: React.PointerEvent<SVGElement>): { x: number; y:
   return { x: point.x, y: point.y };
 }
 
-/** A vertical handle whose value grows down the screen, like a cut measured from the top. */
 function growsDownward(orientation: Orientation, scale: LinearScale): boolean {
   return (
     orientation === "vertical" &&
@@ -31,7 +28,6 @@ function growsDownward(orientation: Orientation, scale: LinearScale): boolean {
   );
 }
 
-/** Arrow keys follow what the learner sees: the down arrow moves a handle down the screen. */
 function flipVerticalKey(key: string): string {
   if (key === "ArrowUp") {
     return "ArrowDown";
@@ -40,10 +36,6 @@ function flipVerticalKey(key: string): string {
   return key === "ArrowDown" ? "ArrowUp" : key;
 }
 
-/**
- * Pointer handlers that turn a press or drag anywhere on an element (a track, a handle) into a
- * snapped value along one axis. Pointer capture keeps the drag going outside the element.
- */
 export function usePlacePointer({
   disabled,
   onChange,
@@ -83,11 +75,6 @@ export function usePlacePointer({
   };
 }
 
-/**
- * Something the learner places along an axis: a dot on a number line, a split line on a
- * rectangle. It's a slider for keyboards and screen readers (arrows, Page Up/Down, Home/End,
- * a spoken value) and a drag target for pointers, with a 44px hit area around its drawing.
- */
 export function ActivityPlaceHandle({
   children,
   className,

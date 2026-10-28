@@ -19,10 +19,6 @@ function blend({ from, share, to }: { from: Layout; share: number; to: Layout })
   );
 }
 
-/**
- * The layout as drawn: atoms glide to their new places after each change, so bonds and atoms
- * move together. With reduced motion the new layout shows at once.
- */
 export function useTweenedLayout(target: Layout, instant: boolean): Layout {
   const [shown, setShown] = useState(target);
   const shownRef = useRef(target);

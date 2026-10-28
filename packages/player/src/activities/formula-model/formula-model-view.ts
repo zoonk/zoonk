@@ -19,15 +19,10 @@ export type Output = Fields["outputs"][number];
 
 type Baseline = { kind: "start" | "whatIf"; values: ModelValues };
 
-/** Every what-if switched off, as the model starts. */
 export function eventsOff(fields: Fields): Record<string, number> {
   return Object.fromEntries((fields.events ?? []).map((event) => [event.name, 0]));
 }
 
-/**
- * The model's state the learner compares with: before the what-ifs switched on (the same sliders,
- * every event off), or else where the sliders started, once a slider other than the chart's moved.
- */
 function baselineValues({
   axisName,
   events,
@@ -50,7 +45,6 @@ function baselineValues({
     : null;
 }
 
-/** The readouts compare with the start as soon as any slider moved, the chart's own included. */
 function readoutBaselineValues({
   baseline,
   events,
@@ -75,25 +69,19 @@ function readoutBaselineValues({
 
 export type ModelView = {
   activeLabels: string[];
-  /** What the chart's dashed curve keeps: before the what-ifs, or where other sliders started. */
   baseline: Baseline | null;
   baselineCurve: PlotPoint[] | null;
   chartedBefore: number | null;
   chartedNow: number | null;
-  /** The comparison the writer marked: the plotted slider's value and the output there. */
   compared: { x: number; y: number } | null;
   current: PlotPoint[];
-  /** How much the what-ifs changed the charted output at the slider. */
   delta: number;
   now: ModelValues;
-  /** What the readouts compare with: before the what-ifs, or the start once any slider moved. */
   readoutBaseline: Baseline | null;
   x: number;
-  /** One scale for every curve the learner can reach by flipping what-ifs. */
   yDomain: NumericDomain;
 };
 
-/** Everything the chart and readouts draw for the sliders and what-ifs where they are now. */
 export function modelView({
   axis,
   charted,
@@ -154,10 +142,6 @@ export function modelView({
   };
 }
 
-/**
- * The outputs as readouts: each one's value now, with how it changed since the start or since
- * before the what-ifs.
- */
 export function useModelReadouts({
   charted,
   formatOutput,

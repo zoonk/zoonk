@@ -16,12 +16,10 @@ import {
   valueInput,
 } from "../_test-utils/activity-player";
 
-/** The Punnett fixture graded on the filled square itself instead of a question about it. */
 const FILL_THE_SQUARE = { ...activityContentFixtures.combinationGrid, check: interactionCheck };
 
 const HEART_MIX_UP = "The picture faces you, so the heart's right side is on your left.";
 
-/** Spots number the heart's parts in the picture's order: the first part is 1. */
 const HEART_SPOTS = ["Right atrium", "Left atrium", "Right ventricle", "Left ventricle", "Aorta"];
 
 const PHOTOSYNTHESIS = [
@@ -41,11 +39,6 @@ async function labelSpots(names: readonly string[]) {
   }
 }
 
-/** The palette's genotype for the square being filled: the palette is named by its question. */
-/**
- * The palette's option for the square being filled: the palette is named by its question. A
- * genotype's option also names the trait it shows; a number's is the number alone.
- */
 function cellOption({ square, value }: { square: number; value: string }) {
   const isGenotype = /^[A-Za-z]+$/u.test(value);
 
@@ -70,7 +63,6 @@ function moveStatus() {
   return page.getByRole("status").filter({ hasText: /is over position|dropped at position/u });
 }
 
-/** A step's words, as its button is named: without the position and picture shown beside them. */
 function stepText(button: Element): string {
   const words = button.cloneNode(true);
 
@@ -93,12 +85,6 @@ function stepOrder(): string[] {
     .map((button) => stepText(button));
 }
 
-/**
- * Moves a step with the keyboard: Space picks it up, arrows move it, Space drops it. Each press
- * waits for the list to announce the last one: the list measures its rows only once the step is
- * picked up, and each arrow moves from where the list says the step is now. The move ends once the
- * step sits at its new place, so the next move reads the order this one left.
- */
 async function moveStep({ from, step, to }: { from: number; step: string; to: number }) {
   const key = to < from ? "ArrowUp" : "ArrowDown";
   const direction = to < from ? -1 : 1;
@@ -274,7 +260,6 @@ describe("science activities", () => {
   it("two dice grid: shown filled to read, then the sevens are counted", async () => {
     openActivity({ content: engineModeFixtures.combinationGrid.dice, template: "combinationGrid" });
 
-    // 36 squares are read, not filled: there is no palette to pick from.
     await expect
       .element(page.getByRole("group", { name: /goes in square/u }))
       .not.toBeInTheDocument();

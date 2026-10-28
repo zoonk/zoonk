@@ -5,7 +5,6 @@ import { PlayerReadScene } from "../../components/player-read-scene";
 import { LessonSummaryIdeas } from "../_components/lesson-summary-ideas";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
 
-/** The summary card: each idea of the lesson in one sentence, to keep. */
 export function SummaryStepView({ step }: LessonStepViewProps<StepOf<"summary">>) {
   const t = useExtracted();
   const { ideas } = step.content;

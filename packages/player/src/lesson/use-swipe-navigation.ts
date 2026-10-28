@@ -2,24 +2,14 @@
 
 import { type RefObject, useEffect, useEffectEvent } from "react";
 
-/** How far a finger travels sideways before a swipe turns the screen. */
 const SWIPE_DISTANCE = 48;
 
-/** Sideways must win clearly over up and down, so scrolling a long screen never turns it. */
 const SWIPE_RATIO = 1.2;
 
-/**
- * A swipe is a quick flick; a finger that rests first is selecting text or scrolling. Timed by the
- * touches themselves (`timeStamp`), so a page busy when the finger lifts never makes a flick slow.
- */
 const SWIPE_MAX_MS = 800;
 
 const ZOOMED_SCALE = 1.01;
 
-/**
- * Controls keep their own touch: tapping, dragging or sliding them never turns the screen. A
- * disabled one (a checked answer's options) takes no touch, so a swipe can start on it.
- */
 const INTERACTIVE_SELECTOR = [
   "a",
   "audio",
@@ -39,13 +29,8 @@ const INTERACTIVE_SELECTOR = [
 
 type Gesture = { id: number; startedAt: number; x: number; y: number };
 
-/** Touch handling a page leaves to the browser: anything else, an element handles itself. */
 const BROWSER_TOUCH_ACTIONS = new Set(["auto", "manipulation"]);
 
-/**
- * Content that scrolls sideways (a wide table, a line of code) scrolls under the finger, and an
- * element that handles touch itself (a handle to drag, a dial to turn) keeps it.
- */
 function handlesOwnTouch(element: Element): boolean {
   const { overflowX, touchAction } = getComputedStyle(element);
 
@@ -71,7 +56,6 @@ function startsOnOwnGesture(target: EventTarget | null, boundary: Element): bool
   return false;
 }
 
-/** Pinch-zoomed in, a finger pans the page to look closer, so it never turns the screen. */
 function isZoomed(): boolean {
   return (globalThis.visualViewport?.scale ?? 1) > ZOOMED_SCALE;
 }
@@ -80,24 +64,12 @@ function findTouch(touches: TouchList, id: number): Touch | null {
   return [...touches].find((touch) => touch.identifier === id) ?? null;
 }
 
-/**
- * Story-like screen turns on a touch screen: a quick swipe left moves to the next screen and a
- * swipe right goes back, exactly where the arrow keys do. The swipe is read when the finger lifts
- * (the content never follows the finger), anywhere on the screen except on controls and content
- * that scrolls sideways, and never while the page is zoomed in. Mice and keyboards are untouched.
- *
- * ```ts
- * useSwipeNavigation({ onBack, onForward, ref: mainRef });
- * ```
- */
 export function useSwipeNavigation({
   onBack,
   onForward,
   ref,
 }: {
-  /** A swipe right: goes back a screen when the learner can. */
   onBack: () => void;
-  /** A swipe left: moves to the next screen when the learner can. */
   onForward: () => void;
   ref: RefObject<HTMLElement | null>;
 }) {
@@ -113,7 +85,6 @@ export function useSwipeNavigation({
 
     let gesture: Gesture | null = null;
 
-    // A fast swipe can lift outside the screen, so its end is read from the whole window.
     const handleEnd = (event: TouchEvent) => {
       const start = gesture;
       const touch = start ? findTouch(event.changedTouches, start.id) : null;

@@ -7,10 +7,6 @@ import { ActivityCanvas, ActivityTextAlternative } from "./activity-canvas";
 import { ActivityGuessComparison } from "./activity-guess-comparison";
 import { ActivityGuessScale } from "./activity-guess-scale";
 
-/**
- * Guess on a linear or log scale first; once checked, the guess is locked and the real value
- * shows on the same scale beside it, followed by what explains it (the children).
- */
 export function ActivityGuessReveal({
   actual,
   children,

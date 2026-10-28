@@ -19,11 +19,6 @@ function statusOf(index: number, current: number): StepStatus {
   return index === current ? "current" : "later";
 }
 
-/**
- * A problem solved one step at a time: the learner picks each next move and sees it as a bar and
- * as math. Wrong picks explain themselves and can be retried, but the answer keeps each step's
- * first pick. A numeric check reads the value code computes for the target step.
- */
 export function StepSolverActivity({ content, labelId, onAnswerChange, phase }: StepSolverProps) {
   const t = useExtracted();
   const { check, fields } = content;

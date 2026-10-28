@@ -12,10 +12,6 @@ function startOfDay(date: Date): number {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
 }
 
-/**
- * When a review falls, in the words a learner uses: today, tomorrow, a weekday within the week,
- * or a date further out. Days follow the device's clock, like the rest of the learner's day.
- */
 export function describeReviewDate({
   locale,
   now = new Date(),

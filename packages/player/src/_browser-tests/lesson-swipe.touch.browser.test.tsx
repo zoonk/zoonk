@@ -6,13 +6,6 @@ import { getPreviewEntry } from "../preview/preview-catalog";
 import { buildLesson } from "../preview/preview-lesson";
 import { explanationStep, inlineImage, teachingStep } from "../preview/preview-steps";
 
-/**
- * Lessons on a phone's touch screen (the touch instance in vitest.config.mts) turn like stories: a
- * quick swipe left reads on and a swipe right goes back, wherever the arrow keys would. A swipe
- * never answers a question, and scrolling, controls and wide tables keep their own gestures.
- */
-
-/** Far past the swipe's threshold, as a quick flick across a phone is. */
 const SWIPE_PX = 160;
 
 const FRONTAL = {
@@ -27,7 +20,6 @@ const OCCIPITAL = {
   title: "The occipital lobe",
 };
 
-/** An explanation that leads with its drawn picture, as lessons about how something looks do. */
 function pictured({ alt, text, title }: typeof FRONTAL) {
   return {
     ...explanationStep({ image: { alt, prompt: alt }, text, title }),
@@ -39,7 +31,6 @@ function heading(text: string) {
   return page.getByRole("heading", { name: text });
 }
 
-/** A screen of the player's catalog (src/preview) waiting for its answer, as lessons show it. */
 function previewScreen(id: string) {
   const entry = getPreviewEntry(id);
 
@@ -50,10 +41,6 @@ function previewScreen(id: string) {
   return entry.screen("answering");
 }
 
-/**
- * Each kind of control real screens have, with the screen's own text: a swipe from the text turns
- * the screen, and a swipe from the control stays with the control.
- */
 const CONTROLS = [
   {
     control: () => page.getByRole("group", { name: "Word bank" }).getByRole("button").first(),
@@ -82,7 +69,6 @@ const CONTROLS = [
   },
 ] as const;
 
-/** The nearest element that scrolls sideways, as the swipe looks for one. */
 function sidewaysScroller(element: Element): Element | null {
   for (let node: Element | null = element; node; node = node.parentElement) {
     const { overflowX } = getComputedStyle(node);
@@ -107,7 +93,6 @@ describe("turning lesson screens with a finger", () => {
     await expect.element(page.getByRole("img", { name: OCCIPITAL.alt })).toBeVisible();
     await expect.element(heading(FRONTAL.title)).not.toBeInTheDocument();
 
-    // A swipe on the picture itself turns too: the whole screen is the page.
     await swipeFrom(page.getByRole("img", { name: OCCIPITAL.alt }), { x: SWIPE_PX });
     await expect.element(heading(FRONTAL.title)).toBeVisible();
   });
@@ -116,7 +101,6 @@ describe("turning lesson screens with a finger", () => {
     const lesson = buildLesson([pictured(FRONTAL), pictured(OCCIPITAL)]);
     renderLessonPlayer({ lesson });
 
-    // The finger was quick; the page only reads its lift a second later.
     await swipeFrom(page.getByText("It plans what you do next."), {
       liftReadAfterMs: 1000,
       x: -SWIPE_PX,
@@ -142,7 +126,6 @@ describe("turning lesson screens with a finger", () => {
     await expect.element(page.getByRole("button", { name: /^Check/u })).toBeDisabled();
     expect(adapters.checkStep).not.toHaveBeenCalled();
 
-    // Going back is still a swipe away, as it's an arrow key away.
     await swipeFrom(question, { x: SWIPE_PX });
     await expect.element(heading(FRONTAL.title)).toBeVisible();
   });
@@ -174,7 +157,6 @@ describe("turning lesson screens with a finger", () => {
 
     renderLessonPlayer({ lesson });
 
-    // A thumb scrolling up drifts sideways too, past what a straight swipe needs.
     await swipeFrom(page.getByText(/Sentence 1 explains/u), { x: -60, y: -220 });
 
     await expect.element(heading("How light reaches the eye")).toBeInTheDocument();
@@ -191,14 +173,12 @@ describe("turning lesson screens with a finger", () => {
       await expect.element(text()).toBeVisible();
       await expect.element(heading(FRONTAL.title)).not.toBeInTheDocument();
 
-      // Off the control, the same swipe goes back.
       await swipeFrom(text(), { x: SWIPE_PX });
       await expect.element(heading(FRONTAL.title)).toBeVisible();
     },
   );
 
   it("leaves a wide table's sideways swipe to the table", async () => {
-    // Wider than a phone in any font: its longest words alone pass the screen's 375 pixels.
     const table = [
       "| Planet | Distance from the Sun | Length of a year | Moons | Surface | Atmosphere | Temperature | Magnetosphere |",
       "|---|---:|---:|---:|---|---|---|---|",
@@ -232,7 +212,6 @@ describe("turning lesson screens with a finger", () => {
 
     await expect.element(heading(FRONTAL.title)).toBeVisible();
 
-    // Loaded in the background, out of sight and out of the screen reader's way.
     const waiting = [...document.querySelectorAll("img")].filter(
       (image) => image.getAttribute("src") === next.image.url,
     );

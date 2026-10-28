@@ -164,12 +164,6 @@ function BlockBalance({
   );
 }
 
-/**
- * An equation as a balance: the learner takes the same thing off both pans and watches it stay
- * level, until one unknown stands alone and its weight is the answer. Taking from one side only
- * tips the beam and shows the writer's hint. Equations bags and blocks can't draw are solved one
- * move at a time in symbols instead.
- */
 export function BalanceActivity({ content, labelId, onAnswerChange, phase }: BalanceProps) {
   const { fields } = content;
   const start = parseBalance(fields.equation, fields.variable);

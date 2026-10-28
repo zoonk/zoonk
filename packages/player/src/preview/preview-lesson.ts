@@ -3,7 +3,6 @@ import { gradeStepAnswer } from "@zoonk/core/lesson-player/grade";
 import { NOTHING_REACHED } from "@zoonk/core/sessions/reached";
 import { type LessonPlayerAdapters, type LessonStartOutcome } from "../lesson/lesson-player-types";
 
-/** A new run, started the moment the screen opens. */
 function startedRun(): Extract<LessonStartOutcome, { reason: "started" }> {
   return {
     answers: [],
@@ -14,7 +13,6 @@ function startedRun(): Extract<LessonStartOutcome, { reason: "started" }> {
   };
 }
 
-/** A lesson of the given screens, in the order given. */
 export function buildLesson(
   steps: PlayableLibraryLesson["steps"],
   overrides: Partial<PlayableLibraryLesson> = {},
@@ -36,11 +34,7 @@ export function buildLesson(
   };
 }
 
-/**
- * Adapters that answer like the server without one: the run starts, each answer is graded the way
- * the server grades it (with the same function the device uses), and the lesson completes. Written
- * and spoken answers are graded only on the server, so their checks fail here.
- */
+/** Written and spoken checks fail here; use a server adapter to grade them. */
 export function localAdapters(lesson: PlayableLibraryLesson): LessonPlayerAdapters {
   return {
     checkStep: ({ answer, stepId }) => {

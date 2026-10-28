@@ -3,10 +3,6 @@ import {
   defineActivityRenderer,
 } from "./_utils/define-activity-renderer";
 
-/**
- * Money and business, history and society: lines and their crossing (supply and demand,
- * break-even), timelines, maps, cause and effect, and sources. Spread into `activityRenderers`.
- */
 export const societyMoneyRenderers: ActivityRendererMap<
   "causeEffectChain" | "lineCrossing" | "mapExplorer" | "sourceComparison" | "timeline"
 > = {

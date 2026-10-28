@@ -7,7 +7,6 @@ import {
   getItemVisualState,
 } from "./match-columns";
 
-/** Two pairs share the left label "2", as authored content may. */
 const left = buildLeftMatchItems([
   { left: "2", right: "two" },
   { left: "2", right: "dos" },

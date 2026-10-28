@@ -35,7 +35,6 @@ function HeardWordLabel({ word }: { word: HeardWord }) {
   );
 }
 
-/** A word to practice is a button: tapping it opens its sounds and plays it, then slowly. */
 function PracticeWordButton({
   isSelected,
   onSelect,
@@ -65,10 +64,6 @@ function PracticeWordButton({
   );
 }
 
-/**
- * The chosen word's native and slow sounds, its respelling and its one tip, behind a rule on its
- * leading edge inside the feedback panel it opens in, as the explained answer is, never a box in it.
- */
 function PracticePanel({
   id,
   onPlay,
@@ -120,17 +115,11 @@ function findPracticeIndex(practice: readonly PracticeWord[], word: HeardWord): 
   return practice.findIndex((item) => item.text === word.text);
 }
 
-/**
- * What was heard, word by word: right, said differently or missed. At most two words to practice
- * stand out as buttons; tapping one plays its native audio and then a slow version, with the
- * respelling for the learner's language and its one sound tip.
- */
 export function LessonSpokenWords({
   heard,
   language,
 }: {
   heard: SpokenAnswerHeard;
-  /** The language spoken, to read a word aloud when it has no recording. */
   language: string;
 }) {
   const t = useExtracted();

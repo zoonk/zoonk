@@ -4,7 +4,6 @@ import { useExtracted } from "next-intl";
 import { ActivityTextAlternative } from "../_components/activity-canvas";
 import { useReadoutSentences } from "../_components/activity-output-readouts";
 
-/** The model in words: what the chart draws, the what-ifs switched on and every output now. */
 export function FormulaModelDescription({
   axis,
   compared,
@@ -13,9 +12,7 @@ export function FormulaModelDescription({
   readouts,
 }: {
   axis: string;
-  /** The marked comparison, formatted: the slider's value and the output there. */
   compared: { x: string; y: string } | null;
-  /** The what-ifs switched on, or null for a model without any. */
   events: readonly string[] | null;
   output: string;
   readouts: Parameters<ReturnType<typeof useReadoutSentences>>[0];

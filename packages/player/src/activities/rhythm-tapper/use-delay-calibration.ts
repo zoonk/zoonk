@@ -13,7 +13,6 @@ import { heardAtMs } from "./rhythm-clock";
 const LEAD_IN_SECONDS = 0.15;
 const MS = 1000;
 
-/** Waiting to start, counting in, tapping along with click `click`, then the reading. */
 export type CalibrationPhase =
   | { click: number; kind: "tapping" }
   | { delayMs: number | null; kind: "done" }
@@ -46,11 +45,6 @@ function scheduleClicks(context: AudioContext) {
   };
 }
 
-/**
- * Measures how late this device plays sound: a few clicks to count in, then the learner taps
- * along with steady clicks, and the reading is the middle of their taps' distances from the
- * clicks as heard. Taps are timed by the page like the rhythm's, so the reading fits them.
- */
 export function useDelayCalibration() {
   const [phase, setPhase] = useState<CalibrationPhase>({ kind: "idle" });
   const run = useRef<Run | null>(null);

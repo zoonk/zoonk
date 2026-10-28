@@ -38,10 +38,6 @@ function PrimaryLabel({ label }: { label: LessonPrimaryLabel }) {
   return labels[label];
 }
 
-/**
- * A card's sound (a word, a letter) beside Next; a listening question plays its own sentence.
- * Playing it once plays the next cards' sounds on arrival.
- */
 function PromptAudio() {
   const { screen } = useLessonPlayer();
   const audioUrl = usePromptAudioUrl();
@@ -53,14 +49,6 @@ function PromptAudio() {
   return <PlayAudioButton audioUrl={audioUrl} variant="icon" />;
 }
 
-/**
- * The task's action bar: the one next action, with Previous on every screen after the first and a
- * card's sound on reading screens. The buddy is always after the main action, an icon that says its
- * name after a wrong answer, when asking helps most, unless the buddy's own offer to help already
- * says it on the screen; from `lg` the buddy is in the aside instead. The bar stays pinned at the
- * bottom over a hairline on every size, so it never moves when a result appears, and Enter always
- * does what it says. Every button is 44px tall.
- */
 export function LessonActionBar() {
   const t = useExtracted();
   const { actions, screen } = useLessonPlayer();

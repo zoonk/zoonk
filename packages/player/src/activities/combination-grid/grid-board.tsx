@@ -5,10 +5,8 @@ import { useExtracted } from "next-intl";
 import { type GridCell, type GridFill, sameCell } from "./grid-model";
 import { CellValue, GridHeader, type GridTraits, Trait } from "./grid-parts";
 
-/** After the check: the right values, and which cells the check's question counts. */
 type GridChecked = { counted: ReadonlySet<number>; expected: readonly string[] };
 
-/** Past this many columns, cells shrink so a grid of two dice still fits a phone. */
 const ROOMY_COLUMNS = 3;
 
 function CheckedCell({
@@ -80,7 +78,6 @@ function CellButton({
 
   return (
     <button
-      // A filled cell is named by what it shows, after where it is, so its name holds its text.
       aria-label={value ? undefined : t("Square {number}, {row} and {column}: empty", place)}
       aria-pressed={isActive}
       className={cn(
@@ -107,10 +104,6 @@ function CellButton({
   );
 }
 
-/**
- * The grid: the column values across the top, the row values down the side, and one cell for each
- * pairing. The cell being filled lights up the two values it combines.
- */
 export function GridBoard({
   activeCell,
   cells,

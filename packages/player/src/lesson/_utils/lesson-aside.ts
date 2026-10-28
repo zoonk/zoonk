@@ -3,12 +3,6 @@ import { type LessonPlayerState } from "../lesson-player-state";
 import { type PlayableLibraryStep } from "../lesson-player-types";
 import { isLanguageStep, isQuestionStep, isReadStep } from "./lesson-steps";
 
-/**
- * A question written with a table of data ("The office logged its letters:", a table, then "Which
- * month had the fewest?") reads as that data, then the question itself: its last paragraph that
- * isn't a table. Data written after the question ("Which sensor…?", then the table) shows above it
- * too, so the heading never holds a table.
- */
 export function splitQuestionData(text: string): { data: string | null; question: string } {
   const lines = text.split(/\r?\n/u);
   const tableLines = findMarkdownTableLines(lines);
@@ -34,10 +28,8 @@ export function splitQuestionData(text: string): { data: string | null; question
 
 type HookStep = Extract<PlayableLibraryStep, { kind: "hook" }>;
 
-/** A hook that opens with a fact or a situation to read, not a guess. */
 type HookTextStep = HookStep & { content: Extract<HookStep["content"], { variant: "text" }> };
 
-/** The reading screens a question's "From the lesson" can show: their words and their chart. */
 export type RecapStep =
   | Extract<PlayableLibraryStep, { kind: "explanation" | "workedExample" }>
   | HookTextStep;
@@ -54,7 +46,6 @@ function isRecapStep(step: PlayableLibraryStep | undefined): step is RecapStep {
   );
 }
 
-/** Questions that teach an idea, which "From the lesson" helps answer. */
 const RECAP_QUESTION_KINDS = new Set<PlayableLibraryStep["kind"]>([
   "activity",
   "check",
@@ -62,11 +53,6 @@ const RECAP_QUESTION_KINDS = new Set<PlayableLibraryStep["kind"]>([
   "typedAnswer",
 ]);
 
-/**
- * A question's first place in the lesson: where it comes before a miss brings it back at the end.
- * A check missed in "I already know this" gave that place up for the end, so it goes by the
- * lesson's own order instead: before the first screen the lesson puts after it.
- */
 function getFirstPlace(
   state: Pick<LessonPlayerState, "queue" | "retried" | "steps">,
   step: PlayableLibraryStep,
@@ -82,12 +68,6 @@ function getFirstPlace(
   return later === -1 ? first : Math.min(first, later);
 }
 
-/**
- * "From the lesson" beside a question from `lg`: the last reading screen before it, by its place
- * in the lesson ("screen 3"). A missed question coming back at the end recaps the screen before its
- * first place, the one it checks, not the lesson's last. A language exercise has none (its card
- * would give the word away), nor does a reading screen, which is the lesson itself.
- */
 export function getLessonRecap(
   state: Pick<LessonPlayerState, "position" | "queue" | "retried" | "steps">,
 ): { position: number; step: RecapStep } | null {
@@ -112,11 +92,6 @@ export function getLessonRecap(
   return isRecapStep(step) ? { position, step } : null;
 }
 
-/**
- * The sentence "From the lesson" marks after a wrong answer: the one the question rests on (its
- * `basis`, which code found on that screen when the lesson was written), when the recap shows that
- * screen. Questions with no basis or whose basis is another screen mark nothing.
- */
 export function getRecapMark({
   recap,
   step,
@@ -133,12 +108,10 @@ export function getRecapMark({
   return basis?.position === recap.step.position ? basis.quote : null;
 }
 
-/** Where a reading screen of the outline is: read, in view, or still ahead. */
 type OutlineRowState = "ahead" | "current" | "read";
 
 export type OutlineRow = { id: string; number: number; state: OutlineRowState; title: string };
 
-/** A screen's place against the one in view. */
 function getRowState({ index, position }: { index: number; position: number }): OutlineRowState {
   if (index < position) {
     return "read";
@@ -147,7 +120,6 @@ function getRowState({ index, position }: { index: number; position: number }): 
   return index === position ? "current" : "ahead";
 }
 
-/** The title a reading screen goes by in the outline, if it has one. */
 function getReadingTitle(step: PlayableLibraryStep | undefined): string | null {
   if (!isRecapStep(step) || step.kind === "hook") {
     return null;
@@ -156,11 +128,6 @@ function getReadingTitle(step: PlayableLibraryStep | undefined): string | null {
   return step.content.title ?? null;
 }
 
-/**
- * The outline beside a short story read screen by screen (a quick explanation): its titled reading
- * screens in order, numbered, the one in view current and the ones before it read; and how many
- * questions come after them, each counted once even when a missed one comes back.
- */
 export function getLessonOutline(state: Pick<LessonPlayerState, "position" | "queue" | "steps">): {
   questions: number;
   rows: OutlineRow[];
@@ -193,10 +160,8 @@ export function getLessonOutline(state: Pick<LessonPlayerState, "position" | "qu
   };
 }
 
-/** About as much of a question as a quote's one line holds. */
 const QUOTE_LENGTH = 80;
 
-/** A long question cut at a word, with an ellipsis, so the quote still closes. */
 function shorten(text: string): string {
   const line = text.replaceAll(/\s+/gu, " ").trim();
 
@@ -210,10 +175,6 @@ function shorten(text: string): string {
   return `${(lastSpace > QUOTE_LENGTH / 2 ? cut.slice(0, lastSpace) : cut).trimEnd()}…`;
 }
 
-/**
- * The words the buddy's drawer quotes for the screen asked about: the question the learner
- * answers, or a reading screen's title. Screens without such a line aren't quoted.
- */
 export function getTutorQuoteText(step: PlayableLibraryStep): string | null {
   if (isLanguageStep(step)) {
     return null;

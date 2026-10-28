@@ -65,11 +65,6 @@ function getRunningQuestionId(questions: LessonQuestionState["questions"]) {
   return questions.find((question) => question.status === "running")?.id ?? null;
 }
 
-/**
- * While the conversation is on screen (`isShown`: an open sheet, or a page), a question waiting
- * for its answer or being written elsewhere is followed with read-only status requests. A pending
- * answer never starts from this effect; the learner can ask for it with Get answer.
- */
 export function useLessonQuestionRecovery({
   connection,
   canAskQuestions,

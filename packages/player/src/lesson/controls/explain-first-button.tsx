@@ -7,10 +7,6 @@ import { COLUMN_GHOST_ACTION_CLASS } from "../../components/step-layouts";
 import { focusLessonAfterTurn } from "../_utils/lesson-focus";
 import { useLessonPlayer } from "../lesson-player-context";
 
-/**
- * On a question that comes before its explanation, "Explain first" shows the explanation now and
- * brings the question back right after it.
- */
 export function ExplainFirstButton() {
   const t = useExtracted();
   const { actions, screen } = useLessonPlayer();

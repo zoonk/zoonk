@@ -9,11 +9,7 @@ export type Continent =
   | "oceania"
   | "southAmerica";
 
-/**
- * Countries by continent, by their Natural Earth names in world-atlas, separated by semicolons.
- * Countries spanning two continents are listed where most people live and split below where it
- * matters for learners.
- */
+// Countries spanning continents are assigned where most people live, then split where needed.
 const CONTINENT_COUNTRIES: Record<Continent, string> = {
   africa:
     "Algeria; Angola; Benin; Botswana; Burkina Faso; Burundi; Cabo Verde; Cameroon; Central African Rep.; Chad; Comoros; Congo; Côte d'Ivoire; Dem. Rep. Congo; Djibouti; Egypt; Eq. Guinea; Eritrea; eSwatini; Ethiopia; Gabon; Gambia; Ghana; Guinea; Guinea-Bissau; Kenya; Lesotho; Liberia; Libya; Madagascar; Malawi; Mali; Mauritania; Mauritius; Morocco; Mozambique; Namibia; Niger; Nigeria; Rwanda; S. Sudan; Saint Helena; São Tomé and Principe; Senegal; Seychelles; Sierra Leone; Somalia; Somaliland; South Africa; Sudan; Tanzania; Togo; Tunisia; Uganda; W. Sahara; Zambia; Zimbabwe",
@@ -59,7 +55,6 @@ function toContinent(value: string): Continent {
   return match;
 }
 
-/** Countries that belong to a second continent too, so regional maps of both show them. */
 const ALSO_ON: Readonly<Record<string, readonly Continent[]>> = {
   Cyprus: ["europe"],
   "N. Cyprus": ["europe"],
@@ -67,12 +62,10 @@ const ALSO_ON: Readonly<Record<string, readonly Continent[]>> = {
   Turkey: ["europe"],
 };
 
-/** Where a country is drawn on the map of continents. */
 export function continentOf(country: string): Continent | null {
   return CONTINENT_BY_COUNTRY.get(country) ?? null;
 }
 
-/** Whether a regional map of these continents is about this country. */
 export function isOnContinents(country: string, continents: readonly Continent[]): boolean {
   const home = continentOf(country);
   const others = ALSO_ON[country] ?? [];
@@ -83,11 +76,6 @@ export function countriesOf(continent: Continent): readonly string[] {
   return countryList(CONTINENT_COUNTRIES[continent]);
 }
 
-/**
- * Parts of countries that sit on another continent: Russia west of the Urals and the Caspian,
- * Istanbul's side of the Bosporus, and French Guiana. The lines are coarse; they only need to
- * be right on land.
- */
 export const CONTINENT_TRANSFERS: readonly Transfer[] = [
   {
     owner: "europe",

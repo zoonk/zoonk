@@ -32,7 +32,6 @@ function OutputText({ className, text }: { className?: string; text: string }) {
   );
 }
 
-/** Why a run stopped early, in words a learner can act on. */
 function StopNotice({ language, run }: { language: "javascript" | "python"; run: ProgramRun }) {
   const t = useExtracted();
   const seconds = String(PROGRAM_TIME_LIMIT_MS[language] / MS_PER_SECOND);
@@ -67,7 +66,6 @@ function StopNotice({ language, run }: { language: "javascript" | "python"; run:
   );
 }
 
-/** What the last run printed, colored right or wrong when there's an output to reach. */
 function PrintedOutput({
   hasTarget,
   matches,
@@ -95,11 +93,6 @@ function PrintedOutput({
   );
 }
 
-/**
- * What the program printed next to what it should print, plus why a run stopped and the
- * feedback written for a likely mistake. The expected output is part of the task, so it shows
- * from the start. A program explored on an explanation screen has no task: only its output shows.
- */
 export function CodeRunnerOutput({
   expectedOutput,
   isStale,
@@ -108,7 +101,6 @@ export function CodeRunnerOutput({
   mistake,
   run,
 }: {
-  /** Null when there's no output to reach, as when the program is explored. */
   expectedOutput: string | null;
   isStale: boolean;
   language: "javascript" | "python";
@@ -126,7 +118,6 @@ export function CodeRunnerOutput({
           expectedOutput !== null && "grid-cols-2",
         )}
       >
-        {/* Output from before an edit dims and isn't judged: it isn't this code's output. */}
         <OutputCell
           className={cn(isStale && run && "opacity-60")}
           label={expectedOutput === null ? t("Output") : t("Your output")}

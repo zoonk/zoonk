@@ -36,11 +36,6 @@ function chipResult(
   return pairs[itemId] === placements[itemId] ? "correct" : "incorrect";
 }
 
-/**
- * Sort examples into groups to find the rule that separates them. Tap an item, then its group
- * (or drag it there); every item needs a group before the check. Afterwards each item shows
- * whether it's in the right group, and the misplaced ones say where they belong and why.
- */
 export function CategorizeActivity({
   answer,
   content,
@@ -91,7 +86,6 @@ export function CategorizeActivity({
       }),
     );
 
-    /* The next item's button is already on the page, so focus moves before the next key. */
     if (nextId) {
       document.querySelector<HTMLElement>(`#${CSS.escape(domId(nextId))}`)?.focus();
     }

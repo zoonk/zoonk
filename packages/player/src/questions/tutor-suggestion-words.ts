@@ -5,11 +5,6 @@ import {
 import { DEFAULT_LOCALE, isValidLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 
-/**
- * The tutor's suggestions for a lesson's screens, worded once for every app, in one catalog: the
- * chips of the lesson payload (main's lesson page and the API's lesson) and the question the API
- * stores when one is tapped both read these words.
- */
 async function wordTutorSuggestionLabels(
   language: string,
 ): Promise<Record<LessonScreenSuggestion, string>> {
@@ -25,7 +20,6 @@ async function wordTutorSuggestionLabels(
   };
 }
 
-/** The tutor's suggestions for a lesson's screens, as their chips read, in the lesson's language. */
 export async function wordTutorSuggestions(language: string): Promise<LessonTutorSuggestion[]> {
   const words = await wordTutorSuggestionLabels(language);
 
@@ -36,7 +30,6 @@ export async function wordTutorSuggestions(language: string): Promise<LessonTuto
   ];
 }
 
-/** A tapped suggestion as the learner's question: the same words its chip read. */
 export async function wordTutorSuggestion({
   language,
   suggestion,

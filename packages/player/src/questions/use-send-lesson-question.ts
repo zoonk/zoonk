@@ -70,14 +70,13 @@ export function useSendLessonQuestion({
   getState: (context: LessonQuestionContext) => LessonQuestionState;
   target: TutorTarget;
   lessonStepIds: readonly string[];
-  /** What each question did to the day's missions, null when it completed none. */
   onMissionMoment?: (moment: MissionMomentView | null) => void;
   reconcileThread: (context: LessonQuestionContext) => Promise<boolean>;
   state: LessonQuestionState;
   streamAnswer: (input: { context: LessonQuestionContext; questionId: string }) => Promise<void>;
 }) {
   const createRequestsInFlight = useRef(new Set<string>());
-  /** A question whose answer never came back, sent again with its request id to resolve it. */
+
   const [pendingRequests, setPendingRequests] = useState(
     new Map<string, PendingQuestionCreateRequest>(),
   );
@@ -90,7 +89,6 @@ export function useSendLessonQuestion({
     }: {
       context: LessonQuestionContext;
       question: string;
-      /** The lesson screen suggestion the learner sent unchanged. */
       suggestion?: LessonScreenSuggestion;
     }) => {
       const scope = getLessonQuestionScope(context);
@@ -114,7 +112,6 @@ export function useSendLessonQuestion({
       }
 
       createRequestsInFlight.current.add(scope);
-      // The answer's renderer loads while the question is sent and the answer is written.
       preloadTutorMarkdown();
       dispatch({ type: "questionCreateStarted" });
 
@@ -176,7 +173,6 @@ export function useSendLessonQuestion({
     });
   }, [state.context, state.draft, state.suggestion, submitQuestion]);
 
-  /** Sends one of the tutor's suggested questions right away, as offered. */
   const sendSuggestion = useCallback(
     ({ question, suggestion }: OfferedSuggestion) =>
       submitQuestion({ context: state.context, question, suggestion }),

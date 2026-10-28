@@ -44,7 +44,6 @@ describe("lesson score", () => {
               const outcome = await local.completeLesson(input);
               const tally = tallyLessonRun({ attempts, steps: lesson.steps });
 
-              // The real completion counts each question's first answer for rewards and reviews.
               expect(tally).toMatchObject({ correctCount: 0, incorrectCount: 1, isComplete: true });
 
               if (outcome.status !== "completed") {

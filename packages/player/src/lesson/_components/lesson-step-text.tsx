@@ -3,7 +3,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { QUESTION_TEXT_CLASS } from "../../components/question-text";
 import { splitQuestionData } from "../_utils/lesson-aside";
 
-/** The question or prompt of a screen: the one line the learner answers. */
 export function LessonQuestion({ children, id }: { children: string; id?: string }) {
   const { data, question } = splitQuestionData(children);
 
@@ -19,7 +18,6 @@ export function LessonQuestion({ children, id }: { children: string; id?: string
   );
 }
 
-/** The situation before a question, read before answering. */
 export function LessonContext({ children }: { children?: string }) {
   if (!children) {
     return null;
@@ -28,10 +26,6 @@ export function LessonContext({ children }: { children?: string }) {
   return <RichTextBlocks className="text-base leading-relaxed" text={children} />;
 }
 
-/**
- * The main reading text of a screen, large and calm: a step up from a tablet, and kept to a
- * readable measure beside the aside on a wide screen.
- */
 export function LessonBody({ children }: { children: string }) {
   return (
     <RichTextBlocks
@@ -41,15 +35,9 @@ export function LessonBody({ children }: { children: string }) {
   );
 }
 
-/**
- * A screen's chip: a hairline outline, a 14px icon and a few muted words, square-cornered (no pill)
- * and colorless, since it names what the screen asks, not a state. "Guess first", "Worked example"
- * and an activity's verb ("Try it") all wear it.
- */
 export const SCREEN_CHIP_CLASS =
   "text-muted-foreground ring-border inline-flex min-h-5.5 w-fit items-center gap-1.5 rounded-[0.375rem] px-2 py-0.5 text-xs font-medium ring-1 ring-inset [&_svg]:size-3.5";
 
-/** A small chip above a screen's content, such as "Guess first" or "Worked example". */
 export function LessonEyebrow({
   children,
   className,

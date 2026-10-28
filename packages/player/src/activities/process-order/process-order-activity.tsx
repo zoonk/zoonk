@@ -35,10 +35,6 @@ function PositionBadge({
   );
 }
 
-/**
- * The step's number and picture, as tall as the picture: a step's text starts level with them
- * and a long one wraps below, instead of the marks floating to the middle of it.
- */
 function StepMarks({
   icon,
   position,
@@ -56,10 +52,6 @@ function StepMarks({
   );
 }
 
-/**
- * One step in the true order, with why it comes here: after the check, marked right or wrong,
- * with where the learner had a misplaced one; explored on an explanation screen, unmarked.
- */
 function OrderedStep({
   position,
   result,
@@ -103,12 +95,6 @@ function initialOrder(answer: ProcessOrderProps["answer"], shuffled: readonly Pr
   return answer?.kind === "order" ? answer.ids : shuffled.map((step) => step.id);
 }
 
-/**
- * The steps of a process, shuffled, to put in order by dragging or with the keyboard. Once
- * checked, they show in their true order with why each needs the one before, and where the
- * learner had the ones out of place. Explored on an explanation screen, they show in their true
- * order with each one's why, nothing to drag.
- */
 export function ProcessOrderActivity({
   answer,
   content,
@@ -132,8 +118,6 @@ export function ProcessOrderActivity({
     onAnswerChange({ ids, kind: "order" });
   }
 
-  // Explored or checked, the steps show in their true order; checked, each marked with the
-  // learner's place for it (`stepResults` keeps that order).
   if (phase !== "answering") {
     const results =
       phase === "checked" ? stepResults({ expected: steps.map((step) => step.id), order }) : [];

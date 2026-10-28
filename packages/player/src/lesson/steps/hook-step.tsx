@@ -69,10 +69,6 @@ function HookGuess({
   );
 }
 
-/**
- * The first screen opens with the idea: a guess that never counts, or a surprising fact or real
- * situation to read.
- */
 export function HookStepView(props: LessonStepViewProps<StepOf<"hook">>) {
   const { step } = props;
   const hasPicture = useHasStepPicture(step);
@@ -81,7 +77,6 @@ export function HookStepView(props: LessonStepViewProps<StepOf<"hook">>) {
     return <HookGuess {...props} />;
   }
 
-  // The text comes first for screen readers; the screen still leads with the picture, like a story.
   return (
     <PlayerReadScene className={cn("gap-5 sm:gap-6", hasPicture && "max-sm:pt-0")}>
       <LessonBody>{step.content.text}</LessonBody>

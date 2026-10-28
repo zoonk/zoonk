@@ -1,16 +1,5 @@
 import { CONSOLE_VALUE_SOURCE } from "@zoonk/core/library/activities/console-values";
 
-/**
- * Worker sources for running learner code in the browser, never on our servers. Each runs in its
- * own Web Worker, started from a data URL so it has no origin: a program can't touch the page or
- * use the learner's session, and a runaway loop is stopped by terminating the worker. Before any
- * learner code runs, each worker also removes its network and storage globals. That hides the
- * usual APIs but doesn't cut the network: `import()` can still reach other servers.
- *
- * Pyodide and sql.js load from jsDelivr only when a template that needs them appears, so the
- * player's own bundle doesn't grow. Versions are pinned: update both the URL and the note in
- * `README.md` together.
- */
 const PYODIDE_INDEX_URL = "https://cdn.jsdelivr.net/pyodide/v314.0.7/full/";
 const SQL_JS_BASE_URL = "https://cdn.jsdelivr.net/npm/sql.js@1.14.2/dist/";
 
@@ -29,7 +18,7 @@ const LOCKED_GLOBALS = [
   "indexedDB",
 ];
 
-/** Shared by every worker: hide network and storage globals on the scope and its prototypes. */
+// Removing network globals does not prevent learner code from reaching servers through dynamic import().
 const LOCK_DOWN = `
 function lockDown() {
   for (const name of ${JSON.stringify(LOCKED_GLOBALS)}) {
@@ -44,11 +33,6 @@ function lockDown() {
 }
 `;
 
-/**
- * JavaScript: one program per worker, so nothing a run leaves behind (globals, timers) leaks
- * into the next. `console` output is sent as structured-cloneable values and formatted on the
- * page. The run ends when the program and every timer it started have finished.
- */
 export const JAVASCRIPT_WORKER_SOURCE = `"use strict";
 ${LOCK_DOWN}
 const post = self.postMessage.bind(self);
@@ -144,11 +128,6 @@ self.onmessage = (event) => {
 post({ type: "ready" });
 `;
 
-/**
- * Python through Pyodide, in a module worker (Pyodide ships as an ES module). Booting takes a
- * few seconds, so one worker is kept for the page and every run gets fresh globals. The \`js\`
- * module sees an empty object instead of the worker's globals.
- */
 export const PYTHON_WORKER_SOURCE = `
 ${LOCK_DOWN}
 const INDEX_URL = ${JSON.stringify(PYODIDE_INDEX_URL)};
@@ -201,10 +180,6 @@ self.onmessage = async (event) => {
 };
 `;
 
-/**
- * SQLite through sql.js. Each query runs on a fresh in-memory database built from the lesson's
- * tables, so a DELETE or DROP never carries over, and the result of the last statement is sent.
- */
 export const SQL_WORKER_SOURCE = `"use strict";
 ${LOCK_DOWN}
 const BASE_URL = ${JSON.stringify(SQL_JS_BASE_URL)};

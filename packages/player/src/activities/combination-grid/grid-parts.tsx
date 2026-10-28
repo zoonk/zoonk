@@ -3,15 +3,12 @@
 import { isDominantPhenotype } from "@zoonk/core/library/activities/combination-grid";
 import { cn } from "@zoonk/ui/lib/utils";
 
-/** What each genotype shows, on a Punnett grid; null on a grid of numbers. */
 export type GridTraits = { dominant: string; recessive: string } | null;
 
-/** One allele, in the accent color when it's the dominant (uppercase) one. */
 function Allele({ value }: { value: string }) {
   return <span className={cn(value !== value.toLowerCase() && "text-viz-accent")}>{value}</span>;
 }
 
-/** A cell's value: a genotype with its dominant alleles in the accent color, or a number. */
 export function CellValue({
   className,
   isAllele,
@@ -35,7 +32,6 @@ export function CellValue({
   );
 }
 
-/** The trait a genotype shows: a filled dot for the dominant one, a ring for the recessive. */
 export function Trait({
   className,
   traits,
@@ -65,7 +61,6 @@ export function Trait({
   );
 }
 
-/** A row or column value heading the grid; it lights up while its cell is being filled. */
 export function GridHeader({
   isAllele,
   isLit,

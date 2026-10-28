@@ -1,10 +1,4 @@
-/**
- * Atoms keep the colors chemistry books use (carbon black, oxygen red, nitrogen blue), an identity
- * like a belt's, never a meaning of the app's. They're the softer tints of those colors with a dark
- * letter that passes AA, so no atom shouts; carbon and bromine stay dark with a white letter. Atoms
- * are their own surface, so these don't change with the theme; a thin ring keeps dark atoms visible
- * on dark backgrounds.
- */
+// Atom colors follow chemistry conventions rather than app status colors and stay fixed across themes.
 const ELEMENT_STYLES: ReadonlyMap<string, { fill: string; text: string }> = new Map([
   ["B", { fill: "fill-rose-300", text: "fill-neutral-900" }],
   ["Br", { fill: "fill-red-700", text: "fill-white" }],

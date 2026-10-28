@@ -23,19 +23,16 @@ import { GridPalette } from "./grid-palette";
 type CombinationGridProps = ActivityRendererProps<"combinationGrid">;
 type Content = CombinationGridProps["content"];
 
-/** What the check counts: its `output`, or the recessive trait on a Punnett grid. */
 function checkOutput({ check, fields }: Content): string | null {
   const fallback = fields.rule === "alleles" ? "recessive" : null;
   return check.kind === "interaction" ? fallback : (check.output ?? fallback);
 }
 
-/** The right values, computed by core from the rows and columns. */
 function expectedCells(content: Content): string[] {
   const expected = getActivityTemplate(content.template)?.computeExpected(content.fields);
   return expected?.kind === "grid" ? expected.cells : [];
 }
 
-/** A numeric check reads the share from the learner's fill; an interaction grades the full grid. */
 function answerFor({ content, fill }: { content: Content; fill: GridFill }): ActivityAnswer | null {
   const output = checkOutput(content);
 
@@ -51,10 +48,6 @@ function answerFor({ content, fill }: { content: Content; fill: GridFill }): Act
     : null;
 }
 
-/**
- * The cells the check's question counts, marked once checked (none for a filled-in grid, which is
- * graded cell by cell).
- */
 function countedCells({
   content,
   output,
@@ -77,7 +70,6 @@ function initialFill(answer: CombinationGridProps["answer"], size: number): Grid
     : Array.from({ length: size }, () => null);
 }
 
-/** How the check's output reads: the trait it names on a Punnett grid, or the value itself. */
 function outputName(fields: GridFields, output: string | null): string | null {
   if (fields.rule !== "alleles" || output === null) {
     return output;
@@ -124,13 +116,6 @@ function useGridDescription(fields: GridFields): string {
       );
 }
 
-/**
- * A grid where every cell combines its row and its column: a Punnett square's alleles, two dice
- * added, a times table. A small grid the learner fills cell by cell: the two values of the cell
- * being filled light up, and a tally follows. A bigger one is shown filled, to read and count. A
- * numeric check reads the share of cells its question asks about from the learner's own fill.
- * Explored on an explanation screen, the grid is filled in, with nothing to pick.
- */
 export function CombinationGridActivity({
   answer,
   content,
@@ -178,7 +163,6 @@ export function CombinationGridActivity({
         cells={cells}
         checked={counted ? { counted, expected: right } : null}
         columnLabel={fields.columns.label}
-        // A grid shown to read has no fill of the learner's to mark once checked.
         fill={isChecked && isReadOnly ? cells.map(() => null) : fill}
         isAllele={isAllele}
         onSelectCell={isLocked ? null : setActiveCell}

@@ -38,21 +38,15 @@ function toSelectedAnswer(answer: LessonPlayerAnswer | undefined): SelectedAnswe
   return answer && isExerciseAnswer(answer) ? answer : undefined;
 }
 
-/** A word's notes worth showing: how it's used, or how it's said. */
 function hasWordHints(hints: PlayableWordHints | null): hints is PlayableWordHints {
   return Boolean(hints?.note) || Boolean(hints?.pronunciationTip);
 }
 
-/** A lesson in the learner's own language (English for English readers) defines its words. */
 function useDefinesWords(): boolean {
   const { language, targetLanguage } = useLessonPlayerConfig().lesson;
   return targetLanguage ? isSameLanguage({ learnerLanguage: language, targetLanguage }) : false;
 }
 
-/**
- * Language exercises play through the exercise components in `src/components`, with their own
- * answers and inline feedback.
- */
 export function ExerciseStepView({
   answer,
   isLocked,
@@ -89,7 +83,6 @@ export function ExerciseStepView({
     case "vocabulary":
       return (
         <VocabularyStep step={exercise}>
-          {/* How the word is used and said, under the word it's about. */}
           {hasWordHints(step.wordHints) && <WordHints hints={step.wordHints} />}
         </VocabularyStep>
       );

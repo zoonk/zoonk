@@ -5,17 +5,10 @@ import { useExtracted } from "next-intl";
 import { type LessonQuestionContext } from "./lesson-question-context";
 import { type OfferedSuggestion } from "./lesson-question-state";
 
-/** A lesson's suggestions as chips: their words are the server's, and a tap sends their id. */
 function toOffered(suggestions: readonly LessonTutorSuggestion[]): OfferedSuggestion[] {
   return suggestions.map(({ id, label }) => ({ question: label, suggestion: id }));
 }
 
-/**
- * The buddy's suggested questions for what the learner is asking about; a few, never a list. In a
- * lesson they are what the old "Simpler" and "Go deeper" buttons did, as questions to the buddy,
- * worded by the server in the lesson's payload so the chip reads what the thread will. The empty
- * thread offers them, and so does the lesson's aside after a wrong answer.
- */
 export function useTutorSuggestions({
   context,
   lessonSuggestions,
@@ -52,7 +45,6 @@ export function useTutorSuggestions({
         { question: t("Does my plan cover all of it?") },
       ];
     case "item":
-      // A question checked: asked about the answer, not for a hint.
       return [
         context.answered
           ? { question: t("Walk me through this answer") }

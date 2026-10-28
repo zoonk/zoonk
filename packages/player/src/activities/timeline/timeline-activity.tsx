@@ -19,7 +19,6 @@ type Placement = { id: string; year: number };
 
 const FALLBACK_WIDTH = 318;
 const MIN_HEIGHT = 320;
-/** Rough width of a character at 14px, to guess how many lines a card's label takes. */
 const CHARACTER_WIDTH = 7.2;
 const CARD_CHROME = 150;
 const LINE_HEIGHT = 20;
@@ -41,7 +40,6 @@ function useFormatYear(start: number) {
   };
 }
 
-/** Space each card needs, from its longest label at the track's width. */
 function cardGap(labels: readonly string[], width: number): number {
   const longest = Math.max(...labels.map((label) => label.length), 1);
   const lines = Math.ceil((longest * CHARACTER_WIDTH) / Math.max(width - CARD_CHROME, 1));
@@ -64,10 +62,6 @@ function resultOf({
   return expected.answer.ids.indexOf(id) === order.indexOf(id) ? "correct" : "incorrect";
 }
 
-/**
- * Every event at its real date on the true-to-scale axis, with the years between them: the
- * timeline explored on an explanation screen, with nothing to place.
- */
 function ExploredTimeline({ content, labelId }: Pick<TimelineProps, "content" | "labelId">) {
   const t = useExtracted();
   const { fields } = content;
@@ -121,12 +115,6 @@ function ExploredTimeline({ content, labelId }: Pick<TimelineProps, "content" | 
   );
 }
 
-/**
- * Events placed on a true-to-scale axis, to feel how far apart they are. The learner drags each
- * event onto the timeline (or places it and moves it with the arrow keys), then sees where it
- * really belongs next to the guess, with the years between known dates. With an order check the
- * placed order is the answer; with a question the learner reveals the real dates first.
- */
 function TimelineQuestion({ content, expected, labelId, onAnswerChange, phase }: TimelineProps) {
   const t = useExtracted();
   const { check, fields } = content;
@@ -289,7 +277,6 @@ function TimelineQuestion({ content, expected, labelId, onAnswerChange, phase }:
   );
 }
 
-/** The timeline to place events on, or explored on an explanation screen with every date shown. */
 export function TimelineActivity(props: TimelineProps) {
   return props.phase === "explore" ? (
     <ExploredTimeline content={props.content} labelId={props.labelId} />

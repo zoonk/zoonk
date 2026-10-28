@@ -90,7 +90,6 @@ function PlacedWordTile({
   );
 }
 
-/** The word under the finger while it's dragged: lifted by a firm line, not a shadow. */
 function DragOverlayWord({ option }: { option: WordBankOption }) {
   return (
     <div className={cn(WORD_CHIP_CLASS, "bg-background ring-foreground")}>

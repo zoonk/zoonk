@@ -16,10 +16,6 @@ import { SqlRowsTable } from "./sql-table";
 type SqlContent = ActivityContentFor<"sqlPlayground">;
 type ExpectedRows = Extract<ActivityExpectedAnswer, { kind: "rows" }>;
 
-/**
- * The reference query, shown only once code has run it and its result passes the same check the
- * learner's did, so a solution the writer got wrong is never shown as one that works.
- */
 function useVerifiedSolution(content: SqlContent): string | null {
   const [verified, setVerified] = useState<string | null>(null);
 
@@ -48,10 +44,6 @@ function useVerifiedSolution(content: SqlContent): string | null {
   return verified;
 }
 
-/**
- * After the check: the expected rows (computed by core from the fields) with the ones the
- * learner's result missed marked, the feedback for likely mistakes, and a query that works.
- */
 export function SqlReview({
   content,
   expected,

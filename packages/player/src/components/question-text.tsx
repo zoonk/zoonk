@@ -2,15 +2,9 @@ import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { cn } from "@zoonk/ui/lib/utils";
 import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
 
-/**
- * The type of the line the learner answers, the same on every screen: a step up from a tablet,
- * where the column has the room. Once the answer is checked it steps back to the muted color, so
- * the result takes the focus.
- */
 export const QUESTION_TEXT_CLASS =
   "text-foreground in-data-[phase=feedback]:text-muted-foreground text-[1.1875rem] leading-[1.35] font-[560] tracking-[-0.02em] text-balance md:text-[1.3125rem]";
 
-/** The situation before a question, read before answering, quieter than the question itself. */
 export function ContextText({ children }: { children: React.ReactNode }) {
   return typeof children === "string" ? (
     <RichTextBlocks className="text-base leading-relaxed" text={stripWrappingQuotes(children)} />
@@ -19,7 +13,6 @@ export function ContextText({ children }: { children: React.ReactNode }) {
   );
 }
 
-/** The line the learner answers, in the same type as a lesson's other questions. */
 export function QuestionText({
   children,
   className,

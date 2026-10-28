@@ -37,12 +37,6 @@ function stateFromAnswer(answer: SqlPlaygroundProps["answer"]): QueryState {
     : null;
 }
 
-/**
- * Query the lesson's tables with real SQLite in the browser. The learner writes a query, runs
- * it and reads the result; the rows of the last run are the answer. After the check, missing
- * and extra rows are marked against the expected result, with a query that works. Explored on an
- * explanation screen, the editor starts with the query that works, to run and change.
- */
 export function SqlPlaygroundActivity({
   answer,
   content,

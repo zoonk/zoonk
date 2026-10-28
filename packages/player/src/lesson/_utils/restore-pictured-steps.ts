@@ -1,10 +1,6 @@
 import { type LessonPicture } from "@zoonk/core/lesson-player/contract";
 import { type LessonPlayerState } from "../lesson-player-state";
 
-/**
- * Questions left out while their picture was missing, playable again with it: for a server that
- * still asks for one (its picture came within its wait, but this screen never got it).
- */
 export function restorePicturedSteps(
   state: LessonPlayerState,
   pictures: readonly LessonPicture[],

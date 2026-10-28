@@ -30,7 +30,6 @@ const TOP_MARGIN = 8;
 const BAG_SYMBOL_X = 17;
 const BAG_SYMBOL_Y = 32;
 
-/** A rice bag drawn in a 34 by 44 box, with room for its symbol. */
 const BAG_PATH =
   "M13 2 H21 L19.5 8 C26 10 33 16 33 26 C33 37 26 43 17 43 C8 43 1 37 1 26 C1 16 8 10 14.5 8 Z";
 
@@ -151,7 +150,6 @@ function PanGroup({
   );
 }
 
-/** The drawing starts just above the tallest pan the activity can show, so it never jumps. */
 function viewTop(frame: BalanceState): number {
   const tallest = Math.max(
     panLayout(frame.left, ITEMS_WIDTH).height,
@@ -162,11 +160,6 @@ function viewTop(frame: BalanceState): number {
   return PIVOT_Y - PLATE_LIFT - PLATE_HEIGHT - tallest - MAX_TILT_LIFT - TOP_MARGIN;
 }
 
-/**
- * The balance itself: a beam that tips toward the heavier pan, with bags for the unknown and
- * blocks for units. It's a picture of the state the controls change, so it's hidden from screen
- * readers; the canvas's text alternative says what's on each pan and which side is heavier.
- */
 export function BalanceScale({
   className,
   formatUnits,
@@ -178,7 +171,6 @@ export function BalanceScale({
 }: {
   className?: string;
   formatUnits: (value: number) => string;
-  /** The starting pans, which size the drawing. */
   frame: BalanceState;
   heavierLabel: string;
   state: BalanceState;

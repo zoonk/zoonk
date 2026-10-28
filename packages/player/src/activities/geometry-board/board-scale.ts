@@ -4,16 +4,11 @@ type Vector = { x: number; y: number };
 
 export type BoardScale = {
   height: number;
-  /** Pixels per unit, the same on both axes so shapes and angles look true. */
   unit: number;
   toData: (pixel: Vector) => Vector;
   toPixel: (point: Vector) => Vector;
 };
 
-/**
- * Fits the board into the measured width, capped in height, with one scale for both axes (a
- * right angle must look right) and y pointing up like on paper.
- */
 export function createBoardScale({
   bounds,
   maxHeight,

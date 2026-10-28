@@ -20,22 +20,10 @@ import { buildLesson } from "../preview/preview-lesson";
 import { teachingStep } from "../preview/preview-steps";
 import { type LessonQuestionNavigation } from "../questions/lesson-question-navigation";
 
-/**
- * The tutor in a lesson ("Ask a question"): its sheet asks about the screen in view or the answer
- * just checked, streams answers, and keeps each screen's thread in step with the API as answers
- * finish elsewhere, requests fail or responses arrive late. The API is faked at the tutor's
- * connection (`stubTutorApi`).
- */
-
 const PHONE = { height: 812, width: 375 };
 
-/**
- * Below `lg` the conversation opens in a drawer over the lesson, which most of these tests read; a
- * wide screen docks the same conversation in the lesson's aside ("docked beside the lesson").
- */
 const TABLET_PORTRAIT = { height: 1180, width: 820 };
 
-/** The browser tests' own size (`viewport` in vitest.config.mts), wide enough for the aside. */
 const HARNESS_VIEWPORT = { height: 720, width: 1280 };
 
 async function showDrawerSize() {
@@ -46,10 +34,8 @@ async function restoreViewport() {
   await page.viewport(HARNESS_VIEWPORT.width, HARNESS_VIEWPORT.height);
 }
 
-/** The first poll for an answer still being written comes within 1.2 s (1 s, give or take 20%). */
 const FIRST_POLL_MS = 1200;
 
-/** The next one comes within 2.4 s of that. */
 const SECOND_POLL_MS = 2400;
 
 const FORMATTED_ANSWER = [
@@ -65,7 +51,6 @@ const FORMATTED_ANSWER = [
   "```mermaid\nflowchart TD\n  accTitle: How an orbit forms\n  accDescr: Gravity and forward motion produce an orbit.\n  A[Gravity] --> B[Orbit]\n  C[Forward motion] --> B\n```",
 ].join("\n\n");
 
-/** A lesson whose tutor reaches a fresh fake API; tests save questions on it before it opens. */
 function lessonWithTutor({
   pageSize,
   steps = [teachingStep("check")],
@@ -104,10 +89,6 @@ async function ask(sheet: Locator, question: string) {
   await sendButton(sheet).click();
 }
 
-/**
- * Polls wait on timers. A frozen clock moves only when the test moves it, so each poll comes
- * exactly when the test says.
- */
 function freezeClock() {
   vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout", "Date"] });
 
@@ -116,12 +97,10 @@ function freezeClock() {
   });
 }
 
-/** What a dropped connection does to `fetch`: the request may have reached the server. */
 function connectionLost() {
   return new TypeError("Failed to fetch");
 }
 
-/** How far the thread is scrolled from its end. */
 function distanceFromBottom(log: Locator) {
   const element = log.element();
   return element.scrollHeight - element.scrollTop - element.clientHeight;
@@ -161,7 +140,6 @@ describe("asking the tutor", () => {
     await releasePreload();
     await expect.element(sheet.getByText(first.question)).not.toBeInTheDocument();
 
-    // The arrows stay in the sheet while it's open; once it closes they move the lesson.
     await focusOn(sheet.getByRole("button", { name: "Close questions" }));
     await press("ArrowLeft");
     await expect.element(sheet.getByText("Ask about this screen")).toBeVisible();
@@ -184,7 +162,6 @@ describe("asking the tutor", () => {
     const [check] = lesson.steps;
     playLesson({ lesson });
 
-    // An icon beside Check on the question; after a wrong answer it says the buddy's name.
     await expect
       .element(page.getByRole("button", { name: "Ask Pip" }))
       .not.toHaveTextContent("Ask Pip");
@@ -226,7 +203,6 @@ describe("asking the tutor", () => {
     const connectionDrops = Promise.withResolvers<null>();
     const followUp = "How does that connect to free fall?";
 
-    // The question is saved, then the connection drops before its response arrives.
     api.next("create", async (serve) => {
       await serve();
       await connectionDrops.promise;
@@ -280,7 +256,6 @@ describe("asking the tutor", () => {
     await ask(sheet, "Explain this replay.");
     await expect.element(retry).toBeVisible();
 
-    // Meanwhile another session answered the question that was saved.
     const [saved] = api.questions;
     api.complete(saved?.id ?? "");
 
@@ -342,7 +317,6 @@ describe("asking the tutor", () => {
     await expect.element(sheet.getByRole("button", { name: "Try again" })).not.toBeInTheDocument();
     expect(api.requests.answer).toBe(1);
 
-    // The limit takes the composer's place: nothing looks ready to send until it comes back.
     await expect.element(composer(sheet)).not.toBeInTheDocument();
     await expect.element(sendButton(sheet)).not.toBeInTheDocument();
     await expect.element(limitReached).toHaveFocus();
@@ -421,7 +395,6 @@ describe("tutor answers", () => {
     stream.write("### Key idea\n\n");
 
     await expect.element(sheet.getByRole("heading", { level: 3, name: "Key idea" })).toBeVisible();
-    // The learner's buddy answers, by name for screen readers beside its face.
     await expect.element(sheet.getByText("Pip", { exact: true }).last()).toBeInTheDocument();
     await expect.element(sheet.getByText("Thinking…")).not.toBeInTheDocument();
 
@@ -446,8 +419,6 @@ describe("tutor answers", () => {
       .element(sheet.getByRole("table").getByRole("cell", { name: "km/s" }))
       .toBeVisible();
 
-    // KaTeX and Mermaid are chunks the answer started loading at its `$$` and its fence; they take as
-    // long as the server takes to send them (over a second on a busy CI runner), then draw at once.
     await Promise.all([import("@streamdown/math"), import("@streamdown/mermaid")]);
     await expectCount(sheet.getByRole("math"), 2);
     await expect.element(sheet.getByRole("document", { name: "How an orbit forms" })).toBeVisible();
@@ -472,7 +443,6 @@ describe("tutor answers", () => {
     stream.finish();
     await expect.element(sheet.getByText(TUTOR_ANSWER)).toBeVisible();
 
-    // Memory is still learning from the exchange, and the learner can already ask again.
     await composer(sheet).fill("And the Moon?");
     await expect.element(sendButton(sheet)).toBeEnabled();
     await expect.element(memoryUpdated).not.toBeInTheDocument();
@@ -678,7 +648,6 @@ describe("answers still being written", () => {
 
     api.questions = [running];
 
-    // By the time the tutor checks, the answer has finished where it was being written.
     api.next("question", (serve) => {
       api.complete(running.id);
       return serve();
@@ -708,7 +677,6 @@ describe("answers still being written", () => {
     await composer(sheet).fill("My follow-up question.");
     await expect.element(sendButton(sheet)).toBeDisabled();
 
-    // The API still says it's running; nothing is writing it, so the answer request takes it over.
     await sheet.getByRole("button", { name: "Check again" }).click();
     await expect.element(sheet.getByText(TUTOR_ANSWER)).toBeVisible();
     await expect.element(sendButton(sheet)).toBeEnabled();
@@ -727,7 +695,6 @@ describe("answers still being written", () => {
 
     api.questions = [running];
 
-    // The API turns away a second answer request while the first one is still being written.
     api.fail("answer", 409);
 
     playLesson({ lesson });
@@ -766,12 +733,10 @@ describe("answers still being written", () => {
     await sheet.getByRole("button", { name: "Check again" }).click();
     await expect.poll(() => api.requests.question).toBe(1);
 
-    // The answer finishes while the check is on its way, and the next poll brings it.
     api.complete(running.id);
     await vi.advanceTimersByTimeAsync(FIRST_POLL_MS);
     await expect.element(sheet.getByText(TUTOR_ANSWER)).toBeVisible();
 
-    // The check's response, still saying "running", arrives last.
     await releaseCheck();
     expect(sheet.getByText("Thinking…").query()).toBeNull();
     await expect.element(sheet.getByText(TUTOR_ANSWER)).toBeVisible();
@@ -1157,8 +1122,6 @@ describe("tutor history", () => {
     await expect.element(sheet.getByText(older.answer ?? "")).toBeVisible();
   });
 
-  // The latest page holds only what the buddy said about an earlier answer to the screen, which
-  // waits until it's checked; the hints before it are a tap away.
   it("offers earlier questions when the latest page waits for the screen's check", async () => {
     const { api, lesson } = lessonWithTutor({ pageSize: 1 });
 
@@ -1281,7 +1244,6 @@ describe("the learner's buddy", () => {
 
     await expect.element(sheet.getByText(TUTOR_ANSWER)).toBeVisible();
 
-    // The chip's words are the question the API stores for this suggestion.
     expect(api.inputs[0]).toMatchObject({ question: "Me dê outro exemplo", suggestion: "example" });
   });
 
@@ -1325,8 +1287,6 @@ describe("the learner's buddy", () => {
     });
   });
 
-  // Ana's phone showed "Ask Zu" twice after her second miss: the offer's button and the bar's.
-  // The offer says the buddy's name then, and the bar keeps its quiet icon.
   it("names the buddy once on a phone when it offers help", async () => {
     await atViewport(PHONE, async () => {
       const { lesson } = lessonWithTutor({
@@ -1357,25 +1317,20 @@ describe("the learner's buddy", () => {
   });
 });
 
-/** The lesson's aside from `lg`, the harness's own size: the buddy is docked at its foot. */
 function lessonAside() {
   return page.getByRole("complementary", { name: "Help with this screen" });
 }
 
-/** The buddy's composer at the aside's foot, named for what the learner would ask about. */
 function asideComposer() {
   return lessonAside().getByRole("textbox", { name: /^Ask .+ about /u });
 }
 
-/** The conversation docked in the aside, over what it showed. */
 function dockedConversation() {
   return page.getByRole("region", { name: "Questions to Pip" });
 }
 
-/** What the learner asks the buddy about a missed answer in the docked tests. */
 const WHY_MISSED = "Why isn't it the size?";
 
-/** Misses the check, then asks the buddy why from the aside's composer. */
 async function missAndAskWhy() {
   await page.getByRole("radio", { name: "The electron's size" }).click();
   await page.getByRole("button", { name: /^Check/u }).click();
@@ -1390,7 +1345,6 @@ describe("docked beside the lesson", () => {
     const [check] = lesson.steps;
     playLesson({ lesson });
 
-    // The bar leaves the buddy to the aside, where its composer is always in reach.
     await expect.element(page.getByRole("button", { name: "Ask Pip" })).not.toBeInTheDocument();
 
     await asideComposer().fill("Why does the cloud show chances?");
@@ -1409,12 +1363,10 @@ describe("docked beside the lesson", () => {
     await conversation.getByRole("button", { name: "From the lesson" }).click();
     await expect.element(conversation).not.toBeInTheDocument();
 
-    // The aside's header leads back to what was asked about this screen.
     await lessonAside().getByRole("button", { name: "1 question" }).click();
     await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
   });
 
-  // Its placeholder only names the buddy, so its name tells a screen reader what a question is about.
   it("names the aside's composer for what the learner asks about: the screen, then their answer", async () => {
     const { lesson } = lessonWithTutor();
     playLesson({ lesson });
@@ -1450,7 +1402,6 @@ describe("docked beside the lesson", () => {
       suggestion: "simpler",
     });
 
-    // Asked once, the screen's conversation is a tap away on the aside's header instead.
     await dockedConversation().getByRole("button", { name: "From the lesson" }).click();
     await expect.element(suggestions).not.toBeInTheDocument();
   });
@@ -1476,8 +1427,6 @@ describe("docked beside the lesson", () => {
     });
   });
 
-  // Once the learner has asked about the screen, a miss leaves them to that conversation, as a
-  // session's question does.
   it("offers no suggested questions after a miss once the learner asked about the screen", async () => {
     const { lesson } = lessonWithTutor();
     playLesson({ lesson });
@@ -1496,9 +1445,6 @@ describe("docked beside the lesson", () => {
       .not.toBeInTheDocument();
   });
 
-  // Maya asked Zu about a miss; when the question came back at the end, the conversation came
-  // back docked with the worked answer in it, and its composer took the number keys she answered
-  // with.
   it("opens a question coming back at the end fresh, its keys answering it", async () => {
     const { lesson } = lessonWithTutor();
     playLesson({ lesson });
@@ -1527,7 +1473,6 @@ describe("docked beside the lesson", () => {
     await press("Enter");
     await expect.element(page.getByRole("status").filter({ hasText: "Correct!" })).toBeVisible();
 
-    // Checked, the aside's header leads back to what was asked about it the first time.
     await lessonAside().getByRole("button", { name: "1 question" }).click();
     await expect.element(dockedConversation().getByText(WHY_MISSED)).toBeVisible();
   });
@@ -1538,7 +1483,6 @@ describe("docked beside the lesson", () => {
     await missAndAskWhy();
     await page.getByRole("button", { name: /^Continue/u }).click();
 
-    // Before it's checked, the buddy gives hints: its conversation holds only what's asked now.
     await asideComposer().fill("Any hint?");
     await press("Enter");
 
@@ -1565,7 +1509,6 @@ describe("docked beside the lesson", () => {
     await press("Enter");
     await expect.element(dockedConversation().getByText(TUTOR_ANSWER)).toBeVisible();
 
-    // The next screen has its own aside; coming back opens the screen, not its conversation.
     await page.getByRole("button", { name: /^Next/u }).click();
     await expect.element(dockedConversation()).not.toBeInTheDocument();
     await page.getByRole("button", { name: "Previous screen" }).click();
@@ -1581,8 +1524,6 @@ describe("docked beside the lesson", () => {
     await expect.element(dockedConversation().getByText("Why a cloud?")).toBeVisible();
   });
 
-  // A learner reading the buddy's answer beside an explanation was asked "Taking your time? Pip
-  // can explain it another way.", as if they hadn't found it.
   it("offers help after a long pause only on a screen the learner hasn't asked the buddy about", async () => {
     freezeClock();
     const reading = teachingStep("explanation");
@@ -1603,7 +1544,6 @@ describe("docked beside the lesson", () => {
     await pause();
     await expect.element(offer).not.toBeInTheDocument();
 
-    // Back on the screen, what they asked about it is a tap away on the aside.
     await page.getByRole("button", { name: /^Next/u }).click();
     await page.getByRole("button", { name: "Previous screen" }).click();
     await expect.element(lessonAside().getByRole("button", { name: "1 question" })).toBeVisible();
@@ -1611,7 +1551,6 @@ describe("docked beside the lesson", () => {
     await pause();
     await expect.element(offer).not.toBeInTheDocument();
 
-    // A screen they haven't asked about offers it.
     await page.getByRole("button", { name: /^Next/u }).click();
     await pause();
     await expect.element(offer).toBeVisible();

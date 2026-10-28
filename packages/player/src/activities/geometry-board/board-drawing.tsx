@@ -14,9 +14,7 @@ import { type BoardScale } from "./board-scale";
 
 type Vector = { x: number; y: number };
 
-/** Past this many lines the grid thins out, so it stays a quiet background on a phone. */
 const MAX_GRID_LINES = 24;
-/** Corner names sit outside the 44px handle around each corner. */
 const LABEL_GAP = 30;
 
 function gridValues(from: number, to: number, step: number): number[] {
@@ -61,7 +59,6 @@ function BoardGrid({
   );
 }
 
-/** The line a tracked corner slides on, across the whole board. */
 function BoardTrack({
   bounds,
   point,
@@ -93,10 +90,6 @@ function BoardTrack({
   );
 }
 
-/**
- * The board: a grid, the shape with what it measures drawn on it (angles, lengths, squares or
- * its area), where it started as a dashed outline once moved, and the corners.
- */
 export function BoardDrawing({
   bounds,
   cornerLabel,

@@ -43,7 +43,6 @@ function StepMarker({
   );
 }
 
-/** The step's value as a bar against the biggest value in the problem, with its math. */
 function StepWork({ maxValue, step }: { maxValue: number; step: SolverStep }) {
   const format = useFormatNumber();
 
@@ -68,10 +67,6 @@ function StepWork({ maxValue, step }: { maxValue: number; step: SolverStep }) {
   );
 }
 
-/**
- * One step of the solver: its question and the moves to pick from, then, once the right move is
- * found, its picture and math. A wrong pick shows why it's wrong and stays marked.
- */
 export function StepSolverStep({
   index,
   isChecked,

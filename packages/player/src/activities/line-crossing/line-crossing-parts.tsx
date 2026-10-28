@@ -15,7 +15,6 @@ type Change = "down" | "same" | "up";
 const Y_ARROWS = { down: ArrowDown, same: Minus, up: ArrowUp } as const;
 const X_ARROWS = { down: ArrowLeft, same: Minus, up: ArrowRight } as const;
 
-/** Words for how a move changed each axis, used on screen and by screen readers. */
 export function useChangeWords() {
   const t = useExtracted();
 
@@ -26,7 +25,6 @@ export function useChangeWords() {
   });
 }
 
-/** Words for a line's handle and for where the line is now. */
 export function useLineWords() {
   const t = useExtracted();
 
@@ -50,7 +48,6 @@ export function useLineWords() {
   };
 }
 
-/** What the move did to each axis, with arrows, or how to move a line before anything moved. */
 export function LineCrossingChanges({
   fields,
   moved,
@@ -91,7 +88,6 @@ export function LineCrossingChanges({
   );
 }
 
-/** The feedback for a wrong move: the other line moved, or this one moved the other way. */
 function wrongMoveFeedback(fields: Fields, offsets: LineOffsets, axis: ShiftAxis): string | null {
   const answer = lineShiftAnswer(offsets, axis);
 
@@ -102,7 +98,6 @@ function wrongMoveFeedback(fields: Fields, offsets: LineOffsets, axis: ShiftAxis
   return fields.feedback.wrongLine;
 }
 
-/** After the check, when the learner's move wasn't what happened: what did, and why theirs wasn't. */
 export function LineCrossingAnswer({
   axis,
   fields,
@@ -134,7 +129,6 @@ export function LineCrossingAnswer({
   );
 }
 
-/** The chart in words: both lines, where each one is, what the move did and the new crossing. */
 export function LineCrossingDescription({
   changes,
   computed,
@@ -142,10 +136,8 @@ export function LineCrossingDescription({
   movedText,
 }: {
   changes: string;
-  /** The new crossing a numeric check reads, once checked. */
   computed: number | null;
   fields: Fields;
-  /** Where each line is now, or null when neither has moved. */
   movedText: string | null;
 }) {
   const t = useExtracted();

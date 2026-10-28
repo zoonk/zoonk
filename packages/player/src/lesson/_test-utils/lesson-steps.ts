@@ -71,7 +71,6 @@ export function typedAnswerStep(id: string): PlayableTeachingStep {
   });
 }
 
-/** A typed question whose answer is a number, so it takes a number field. */
 export function numberAnswerStep(id: string): PlayableTeachingStep {
   return teachingStep("typedAnswer", id, {
     acceptedAnswers: ["20"],
@@ -82,7 +81,6 @@ export function numberAnswerStep(id: string): PlayableTeachingStep {
   });
 }
 
-/** A language exercise: fill the blank in a sentence. */
 export function fillBlankStep(id: string): PlayableLanguageStep {
   return {
     exercise: {
@@ -138,7 +136,6 @@ function note(kind: "good" | "improve", text: string) {
   return [{ kind, skill: "judge", text }];
 }
 
-/** A two-decision case: ask the AI (strong) or rush (weak), then ship (strong) or stop (weak). */
 export function challengeStep(id: string): PlayableTeachingStepOf<"challenge"> {
   return teachingStep("challenge", id, {
     endings: [

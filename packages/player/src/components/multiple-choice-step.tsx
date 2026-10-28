@@ -13,10 +13,6 @@ function getSelectedOptionId(selectedAnswer?: SelectedAnswer): string | null {
   return selectedAnswer.selectedOptionId;
 }
 
-/**
- * A language lesson's multiple-choice question. Once checked, its options show the right answer
- * and a wrong pick, like every other question in the lesson.
- */
 export function MultipleChoiceStep({
   onSelectAnswer,
   result,

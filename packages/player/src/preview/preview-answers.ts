@@ -9,16 +9,11 @@ import { type LessonPlayerAnswer } from "../lesson/lesson-player-types";
 
 const PITCH_NAMES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"] as const;
 
-/** The solution a pattern tester's examples are checked against, which a learner could type. */
 function patternSolution(content: ActivityStepContent): string | null {
   const { fields } = content;
   return "solution" in fields && typeof fields.solution === "string" ? fields.solution : null;
 }
 
-/**
- * The end state a learner who got it right leaves, from the expected answer code computes. A
- * molecule's bonds aren't part of what code expects, so it has none.
- */
 function interactionAnswer({
   content,
   expected,
@@ -72,11 +67,6 @@ function activityAnswer(content: ActivityStepContent): ActivityAnswer | null {
   return expected ? interactionAnswer({ content, expected }) : null;
 }
 
-/**
- * The right answer to a screen, for the playground to open it checked: the correct option, the
- * computed number or end state, or the accepted wording. Null where only the server grades
- * (spoken answers) or no single answer exists.
- */
 export function rightAnswer(step: PlayableLibraryStep): LessonPlayerAnswer | null {
   if (step.kind === "activity") {
     const answer = activityAnswer(step.content);

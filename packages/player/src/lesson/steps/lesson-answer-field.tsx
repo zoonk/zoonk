@@ -11,11 +11,6 @@ import { focusLessonAfterTurn } from "../_utils/lesson-focus";
 import { useLessonPlayer } from "../lesson-player-context";
 import { CHECK_BOUNDS } from "../use-step-grading";
 
-/**
- * Under the answer: that the check is still going or didn't work and, with a keyboard, how Enter
- * works in a written answer until it's sent. Touch screens have the button for that, so they get no
- * hint.
- */
 function AnswerHint({ id, isNumber }: { id: string; isNumber: boolean }) {
   const t = useExtracted();
   const { state } = useLessonPlayer();
@@ -57,12 +52,6 @@ function AnswerHint({ id, isNumber }: { id: string; isNumber: boolean }) {
   );
 }
 
-/**
- * A written answer. Enter checks it and Shift+Enter starts a new line, like a chat; once it's
- * checked, focus moves on to Continue, so Enter continues and the locked field doesn't look ready
- * for typing. A number takes one line with the number keyboard. It stays editable after a failed
- * check, so nothing typed is lost.
- */
 export function LessonAnswerField({
   autoFocusOnPointer = false,
   isLocked,
@@ -71,7 +60,6 @@ export function LessonAnswerField({
   onChange,
   value,
 }: {
-  /** Takes focus when it appears, with a mouse or trackpad; a phone waits for a tap. */
   autoFocusOnPointer?: boolean;
   isLocked: boolean;
   isNumber?: boolean;

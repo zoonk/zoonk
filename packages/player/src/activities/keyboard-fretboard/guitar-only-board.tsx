@@ -37,10 +37,6 @@ function withFret(voicing: GuitarVoicing, stringIndex: number, fret: number | nu
   return voicing.map((current, index) => (index === stringIndex ? fret : current));
 }
 
-/**
- * The guitar alone: pick one fret per string (or leave it muted) and hear the shape. Each string
- * is a radio group, and the window moves up the neck for shapes past the fourth fret.
- */
 export function GuitarOnlyBoard({
   answer,
   content,
@@ -64,7 +60,6 @@ export function GuitarOnlyBoard({
   const [firstFret, setFirstFret] = useState(() => fretWindowStart(voicing, FRETBOARD_SPAN));
   const played = voicingPitches(voicing);
   const expectedSet = expectedPitches(expected, targetPitches(fields.target));
-  // A target found by ear shows once answered, even when the question only asked to name it.
   const showAnswer = isChecked && (check.kind === "interaction" || Boolean(fields.byEar));
 
   function handleChange(stringIndex: number, fret: number | null) {

@@ -3,7 +3,6 @@ import {
   defineActivityRenderer,
 } from "./_utils/define-activity-renderer";
 
-/** Music: keyboard and fretboard (ear training included), notation and rhythm. Spread into `activityRenderers`. */
 export const musicRenderers: ActivityRendererMap<
   "keyboardFretboard" | "notationPlayer" | "rhythmTapper"
 > = {

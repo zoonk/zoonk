@@ -1,6 +1,5 @@
 import { evaluateFormula } from "@zoonk/core/library/activities/expression/evaluate";
 
-/** One pan: how many unknowns (bags) and how many units (1 kg blocks) sit on it. */
 export type Pan = { units: number; x: number };
 export type BalanceState = { left: Pan; right: Pan };
 export type PanSide = keyof BalanceState;
@@ -20,7 +19,6 @@ function evaluateAt(expression: string, variable: string, value: number): number
   return result.ok ? result.value : null;
 }
 
-/** Reads a linear side like `4*x + 1` as 4 unknowns and 1 unit. Null when it isn't linear. */
 function linearPan(expression: string, variable: string): Pan | null {
   const atZero = evaluateAt(expression, variable, 0);
   const atOne = evaluateAt(expression, variable, 1);
@@ -42,7 +40,6 @@ export function parseBalance(
   return left && right ? { left, right } : null;
 }
 
-/** The value of the unknown that keeps both pans level. */
 export function solveBalance({ left, right }: BalanceState): number | null {
   const slope = left.x - right.x;
   return Math.abs(slope) < SLACK ? null : (right.units - left.units) / slope;
@@ -52,10 +49,6 @@ function isCountable(value: number, max: number): boolean {
   return Number.isInteger(value) && value >= 0 && value <= max;
 }
 
-/**
- * Whether the equation can be drawn as bags and blocks: whole, non-negative counts that fit on a
- * pan, and a bag that weighs more than nothing. Anything else is solved in symbols instead.
- */
 export function canDrawBlocks(state: BalanceState, solution: number | null): boolean {
   const pans = [state.left, state.right];
 
@@ -71,7 +64,6 @@ function panWeight(pan: Pan, solution: number): number {
   return pan.x * solution + pan.units;
 }
 
-/** How far the beam tips, in degrees: positive when the right pan is heavier. */
 export function tiltDegrees(state: BalanceState, solution: number): number {
   const [left, right] = [panWeight(state.left, solution), panWeight(state.right, solution)];
   const heavier = Math.max(left, right);
@@ -83,7 +75,6 @@ export function tiltDegrees(state: BalanceState, solution: number): number {
   return ((right - left) / heavier) * MAX_TILT_DEGREES;
 }
 
-/** Split is possible when bags sit alone on one pan and only blocks on the other. */
 export function splitGroups({ left, right }: BalanceState): number | null {
   const [bags, blocks] = left.x > 0 ? [left, right] : [right, left];
   return bags.x > 1 && bags.units === 0 && blocks.x === 0 ? bags.x : null;
@@ -103,7 +94,6 @@ export function applyMove(state: BalanceState, move: BalanceMove): BalanceState 
   return { ...state, [move.side]: take(state[move.side], key) };
 }
 
-/** One bag alone against only blocks: the blocks' weight is the learner's answer. */
 export function isolatedValue({ left, right }: BalanceState): number | null {
   if (left.x === 1 && left.units === 0 && right.x === 0) {
     return right.units;
@@ -116,7 +106,6 @@ function samePan(first: Pan, second: Pan): boolean {
   return Math.abs(first.x - second.x) < SLACK && Math.abs(first.units - second.units) < SLACK;
 }
 
-/** Whether the pans hold the same things as a written step, on either side. */
 function matchesState(state: BalanceState, step: BalanceState): boolean {
   return (
     (samePan(state.left, step.left) && samePan(state.right, step.right)) ||
@@ -124,10 +113,6 @@ function matchesState(state: BalanceState, step: BalanceState): boolean {
   );
 }
 
-/**
- * How many written steps the learner has reached, in order. Reaching the answer counts every
- * step, since there's more than one good path to it.
- */
 export function reachedSteps({
   current,
   history,
@@ -156,7 +141,6 @@ export function reachedSteps({
   );
 }
 
-/** A pan in symbols, like "2x + 1", "x" or "7". */
 export function panText(pan: Pan, symbol: string, format: (value: number) => string): string {
   const unknown = pan.x === 0 ? "" : `${pan.x === 1 ? "" : format(pan.x)}${symbol}`;
   const units = pan.units === 0 && unknown ? "" : format(pan.units);

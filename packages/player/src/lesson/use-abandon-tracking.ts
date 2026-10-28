@@ -5,11 +5,6 @@ import { useEffect, useEffectEvent, useRef } from "react";
 import { getAbandonEvent } from "./_utils/lesson-abandon";
 import { type LessonPlayerState } from "./lesson-player-state";
 
-/**
- * Sends "Activity Abandoned" once when the learner leaves an unfinished lesson: by leaving the
- * player (it unmounts) or by closing the page (`pagehide`, sent at once so it isn't lost with the
- * page). Finishing the lesson never sends it.
- */
 export function useAbandonTracking({
   state,
   track,

@@ -1,6 +1,5 @@
 import { type ActivityAnswer } from "@zoonk/core/library/activities/answer-schema";
 
-/** Which group each item sits in; items not in the map are still waiting to be sorted. */
 export type Placements = Readonly<Record<string, string>>;
 
 type Item = { id: string };
@@ -12,7 +11,6 @@ export function unplacedItems<TItem extends Item>(
   return items.filter((item) => placements[item.id] === undefined);
 }
 
-/** The learner's answer once every item has a group, and nothing while some are left. */
 export function placementsAnswer(
   items: readonly Item[],
   placements: Placements,
@@ -27,7 +25,6 @@ export function placementsAnswer(
   };
 }
 
-/** Items in the wrong group, compared with the groups code computed from the fields. */
 export function misplacedItems<TItem extends Item>({
   expected,
   items,
@@ -40,10 +37,6 @@ export function misplacedItems<TItem extends Item>({
   return items.filter((item) => placements[item.id] !== expected[item.id]);
 }
 
-/**
- * The next item to sort after one is placed: the one after it in the list, wrapping around, so
- * keyboard focus keeps moving forward through what's left.
- */
 export function nextUnplacedId({
   items,
   placedId,

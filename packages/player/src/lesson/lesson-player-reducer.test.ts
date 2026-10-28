@@ -20,7 +20,6 @@ import {
 } from "./lesson-player-state";
 import { type PlayableLibraryStep } from "./lesson-player-types";
 
-/** This sitting started now; answers in these tests were given in it. */
 const STARTED_AT = "2026-10-05T10:00:00.000Z";
 const ANSWERED_AT = "2026-10-05T10:01:00.000Z";
 
@@ -91,7 +90,6 @@ describe(lessonPlayerReducer, () => {
     expect(backToQuiz).toMatchObject({ phase: "feedback", position: 0, reviewing: true });
     expect(backToQuiz.results.quiz?.isCorrect).toBe(true);
 
-    // The result in view stays put: Previous waits for the next screen.
     const stillQuiz = lessonPlayerReducer(backToQuiz, { direction: "prev", type: "navigate" });
     expect(stillQuiz.position).toBe(0);
 
@@ -115,7 +113,6 @@ describe(lessonPlayerReducer, () => {
     expect(skipped.skippedWritingStepIds).toStrictEqual(["write-1", "write-2"]);
     expect(skipped.firstVerdicts).toStrictEqual({});
 
-    // The screen that took the writing's place says so, until the learner moves on.
     expect(skipped.notice).toBe("writingSkipped");
     expect(lessonPlayerReducer(skipped, { type: "continue" }).notice).toBeNull();
   });
@@ -480,7 +477,6 @@ describe(lessonPlayerReducer, () => {
       { type: "continue" },
     ]);
 
-    // The retry is a plain, fresh question at the end: no quick check, no "Explain first".
     expect([getCurrentStep(retry)?.id, retry.quickCheck, retry.answers.quiz2]).toStrictEqual([
       "quiz2",
       null,

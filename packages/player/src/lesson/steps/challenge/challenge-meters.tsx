@@ -9,7 +9,6 @@ import { type StepOf } from "../lesson-step-view-props";
 
 type ChallengeContent = StepOf<"challenge">["content"];
 
-/** A change this big reads as "much" higher or lower. */
 const BIG_METER_CHANGE = 25;
 const METER_MAX = 100;
 
@@ -61,10 +60,6 @@ function MeterChange({ meter }: { meter: ChallengeMeterState }) {
   );
 }
 
-/**
- * How a pick moved the meters, right under it in the conversation. The meters above announce the
- * same change to screen readers, so this echo is only visual.
- */
 export function ChallengeEffectsView({
   choice,
   fill,
@@ -99,14 +94,12 @@ export function ChallengeEffectsView({
   );
 }
 
-/** What the decisions move, with how the last one moved each, announced as it changes. */
 export function ChallengeMeters({
   fill,
   hasMoved,
   meters,
 }: {
   fill: (text: string) => string;
-  /** Before the first decision nothing moved yet, so there's no change to show. */
   hasMoved: boolean;
   meters: ChallengeMeterState[];
 }) {

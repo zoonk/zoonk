@@ -37,10 +37,6 @@ export function LineMark({
   );
 }
 
-/**
- * A line's name at one end of it, kept inside the chart: it reads away from the nearer side, so a
- * label at the y axis never runs off the edge.
- */
 export function LineLabel({
   className,
   domain,
@@ -50,7 +46,6 @@ export function LineLabel({
 }: {
   className: string;
   domain: Point;
-  /** Which end of the line: the higher one or the lower one. */
   end: "lower" | "upper";
   label: string;
   line: Line;
@@ -103,7 +98,6 @@ export function Crossing({ isBefore, point }: { isBefore: boolean; point: Point 
   );
 }
 
-/** Arrows along the axes from the old crossing to the new one: what happened on each axis. */
 export function ChangeArrows({ after, before }: { after: Point; before: Point }) {
   const { x, y } = usePlotScales();
   const markerId = useId();

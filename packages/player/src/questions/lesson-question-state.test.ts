@@ -307,7 +307,6 @@ describe(lessonQuestionReducer, () => {
 
     expect(started.streamedAnswerIds).toStrictEqual([question.id]);
 
-    // A read while the server still writes it settles nothing.
     const stillRunning = lessonQuestionReducer(started, {
       questions: [questionResource({ answer: "Open [Today](/today)", status: "running" })],
       type: "latestThreadReconciled",
@@ -315,7 +314,6 @@ describe(lessonQuestionReducer, () => {
 
     expect(stillRunning.streamedAnswerIds).toStrictEqual([question.id]);
 
-    // The stream dropped before its saved text; reading the saved answer back settles it.
     const recovered = lessonQuestionReducer(stillRunning, {
       questions: [
         questionResource({

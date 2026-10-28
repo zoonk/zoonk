@@ -17,10 +17,6 @@ function runtimeStatus(
   return loaded.isReady ? "ready" : "failed";
 }
 
-/**
- * Loads a template's runtime (Pyodide, sql.js) as soon as the template appears, so the first run
- * doesn't wait for the download. `retry` tries again after a failed load, like when offline.
- */
 export function useSandboxRuntime(kind: ProgramKind): {
   retry: () => void;
   status: SandboxRuntimeStatus;

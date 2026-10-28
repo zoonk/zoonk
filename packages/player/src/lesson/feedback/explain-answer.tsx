@@ -12,10 +12,6 @@ import { type AnswerExplanationOutcome } from "../lesson-player-types";
 
 type ExplanationState = AnswerExplanationOutcome | { status: "idle" } | { status: "loading" };
 
-/**
- * "Explain answer" on a wrong typed answer. The explanation is shared by everyone who wrote the
- * same thing, so a common mistake is explained at once.
- */
 export function ExplainAnswer({ answer, stepId }: { answer: string; stepId: string }) {
   const t = useExtracted();
   const { adapters } = useLessonPlayerConfig();

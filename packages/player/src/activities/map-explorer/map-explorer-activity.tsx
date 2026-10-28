@@ -26,9 +26,7 @@ type MapExplorerProps = ActivityRendererProps<"mapExplorer">;
 type Place = MapExplorerProps["content"]["fields"]["places"][number];
 
 const FALLBACK_WIDTH = 318;
-/** Pins keep this much room around them, in pixels, so each stays easy to tap. */
 const PIN_SPACING = 40;
-/** The tallest the map gets, in pixels, so a wide screen doesn't turn it into a wall. */
 const MAX_MAP_HEIGHT = 440;
 
 const LEGEND_CLASS: Record<string, string> = {
@@ -94,7 +92,6 @@ function PlaceDetails({ number, place }: { number: number; place: Place | null }
   );
 }
 
-/** Pins in pixels: each place projected with the map's own projection, then nudged apart. */
 function layoutPins({
   drawing,
   places,
@@ -232,12 +229,6 @@ function MapUnavailable({ labelId }: { labelId: string }) {
   );
 }
 
-/**
- * Tap places on a map to uncover evidence, like John Snow's cholera map. The base map comes from
- * the checked library (loaded only when shown) and each place is projected onto it with the same
- * projection its shapes were drawn with. The canvas zooms to the places; the check question is
- * about what the learner found.
- */
 export function MapExplorerActivity({ content, labelId }: MapExplorerProps) {
   const drawing = use(loadBaseMap(content.fields.baseMapId));
 

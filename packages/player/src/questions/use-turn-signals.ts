@@ -4,11 +4,6 @@ import { useEffect, useEffectEvent, useRef } from "react";
 import { useLessonQuestionController } from "./lesson-question-provider";
 import { isLessonQuestionAnswerInProgress } from "./lesson-question-status";
 
-/**
- * Tells the host when the learner asks something in this conversation (`onAsked`) and when an
- * answer they waited for here comes in (`onAnswered`), so the host's buddy can react to each. What
- * was already there when the conversation loaded, or loads from earlier, stays quiet.
- */
 export function useTurnSignals({
   onAnswered,
   onAsked,

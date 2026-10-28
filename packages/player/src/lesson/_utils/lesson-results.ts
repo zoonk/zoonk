@@ -3,7 +3,6 @@ import { type GradedStepAnswer } from "@zoonk/core/lesson-player/grade";
 import { type SpokenAnswerGrade } from "@zoonk/core/library/language/spoken-answer-contract";
 import { type LessonStepResult, type PlayableLibraryStep } from "../lesson-player-types";
 
-/** A verdict reached on the device; the server adds when the idea comes back. */
 export function fromLocalGrade(graded: GradedStepAnswer): LessonStepResult {
   return {
     answerText: graded.answerText,
@@ -31,7 +30,6 @@ export function fromServerCheck({
   return { ...result, answerText, heard: null };
 }
 
-/** How a recording came out: the grader's words and explanation, and the sentence when missed. */
 export function fromSpokenGrade({
   grade,
   step,
@@ -61,7 +59,6 @@ export function fromSpokenGrade({
   };
 }
 
-/** A hook's guess reveals the answer whatever the pick; the reveal is the why. */
 export function revealGuess({
   optionId,
   step,

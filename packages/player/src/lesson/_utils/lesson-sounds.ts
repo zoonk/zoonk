@@ -1,6 +1,5 @@
 type LessonSound = "correct" | "finish";
 
-/** Notes in Hz, so no audio files ship with the player: E5 and A5, then a C major arpeggio. */
 const E5 = 659.25;
 const A5 = 880;
 const C5 = 523.25;
@@ -8,7 +7,6 @@ const G5 = 783.99;
 
 const NOTES: Record<LessonSound, number[]> = { correct: [E5, A5], finish: [C5, E5, G5] };
 const NOTE_SECONDS = 0.12;
-/** Each note swells quickly and fades over twice its length, so the chime sounds soft. */
 const ATTACK_SECONDS = 0.03;
 const PEAK_GAIN = 0.12;
 const SILENT_GAIN = 0.0001;
@@ -47,10 +45,6 @@ function playNote({
   oscillator.stop(startAt + NOTE_SECONDS * 2);
 }
 
-/**
- * A soft chime for a right answer and a short rising one for finishing a lesson. It follows a user
- * action, so browsers allow the audio, and it stays quiet when the device has no audio support.
- */
 export function playLessonSound(sound: LessonSound) {
   const audio = getAudioContext();
 

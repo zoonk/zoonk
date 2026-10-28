@@ -11,7 +11,6 @@ type Voice = {
   stop: () => void;
 };
 
-/** One velocity layer is enough to hear notes and keeps the download small. */
 const PIANO_VELOCITY = 76;
 const PIANO_LOWEST = 36;
 const PIANO_HIGHEST = 96;
@@ -23,10 +22,6 @@ const PIANO_NOTES = Array.from(
 
 const loads = new Map<InstrumentName, Promise<Voice>>();
 
-/**
- * Loads sampled instruments on first use: smplr is only downloaded for music activities, and
- * the samples come from its public sample host.
- */
 async function loadVoice(name: InstrumentName): Promise<Voice> {
   const { Soundfont: soundfont, SplendidGrandPiano: splendidGrandPiano } = await import("smplr");
   const context = getActivityAudioContext();
@@ -53,7 +48,6 @@ function getVoice(name: InstrumentName): Promise<Voice> {
   const load = loadVoice(name);
   loads.set(name, load);
 
-  /* A failed download can be retried the next time the learner asks for sound. */
   load.catch(() => loads.delete(name));
 
   return load;
@@ -64,11 +58,6 @@ const SCHEDULE_AHEAD = 0.03;
 
 export type InstrumentStatus = "loading" | "ready" | "unavailable";
 
-/**
- * Plays notes on a sampled instrument, each at its time in the sound. Samples start loading when the activity
- * appears, so the first tap sounds right away; when they can't load, `status` says so and the
- * activity still works without sound.
- */
 export function useInstrument(name: InstrumentName) {
   const [status, setStatus] = useState<InstrumentStatus>("loading");
 

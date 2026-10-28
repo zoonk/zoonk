@@ -1,12 +1,5 @@
-/**
- * One audio clock for every activity that makes sound, so instruments, clicks and taps share
- * the same time. Browsers only start it after a tap or key press, so `startActivityAudio` runs
- * from those handlers.
- */
-
 const clock: { context: AudioContext | null } = { context: null };
 
-/** The shared audio context. It may still be suspended until the learner interacts. */
 export function getActivityAudioContext(): AudioContext {
   clock.context ??= new AudioContext();
   return clock.context;
@@ -27,11 +20,6 @@ const CLICK_SECONDS = 0.05;
 const CLICK_ATTACK = 0.002;
 const CLICK_FLOOR = 0.0001;
 
-/**
- * A short percussive click, drawn by an oscillator instead of loaded from a file, so a metronome
- * or a clave never waits for the network: `accent` for the first beat, `hit` for a rhythm's
- * notes, `beat` for the rest.
- */
 export function scheduleClick({
   context,
   kind,

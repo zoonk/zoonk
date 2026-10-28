@@ -9,7 +9,6 @@ import { runInSandbox } from "../activities/_sandbox/sandbox-host";
 import { buildLesson } from "../preview/preview-lesson";
 import { activityStep, explanationStep } from "../preview/preview-steps";
 
-/** Delay only the worker/runtime boundary, while the real editors and output conversion run. */
 vi.mock("../activities/_sandbox/sandbox-host", () => ({
   runInSandbox: vi.fn(),
   warmUpSandbox: vi.fn(async () => true),

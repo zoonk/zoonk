@@ -6,23 +6,13 @@ import { CHECK_BOUNDS } from "../lesson/use-step-grading";
 import { buildLesson } from "../preview/preview-lesson";
 import { teachingStep } from "../preview/preview-steps";
 
-/**
- * Waits inside a lesson never hang: a typed answer's grade that takes longer than usual says it's
- * still going, and past its limit the screen stops waiting and offers to try again. The first
- * request never answers, like a stuck server; the next one does.
- */
-
 const TYPO = "It shows where the electorn is likely to be";
 
-/** A request that never answers. */
 function hang<T>(): Promise<T> {
-  return new Promise<T>(() => {
-    // Never settles, like a server that doesn't answer.
-  });
+  return new Promise<T>(() => {});
 }
 
 describe("bounded waits", () => {
-  // The clock keeps running on its own, as the lesson's does, so only the waits are skipped ahead.
   beforeEach(() => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
   });

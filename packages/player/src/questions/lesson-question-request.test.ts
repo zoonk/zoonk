@@ -6,7 +6,6 @@ const STEP_ID = "0198ca70-9c50-7000-8000-000000000010";
 
 describe("lesson question requests", () => {
   it("sends only the step reference and learner answer to the trusted API boundary", () => {
-    // A host may hand the tutor its whole step; none of its content may leave the device.
     const step = {
       content: { options: [{ feedback: "Hidden feedback", id: "answer-a", text: "Answer A" }] },
       id: STEP_ID,

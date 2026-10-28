@@ -3,16 +3,12 @@ import { clamp } from "../_utils/snap-value";
 export type MapPoint = { x: number; y: number };
 export type MapBox = { height: number; width: number; x: number; y: number };
 
-/** The crop keeps between these height-to-width ratios, so it's never a sliver on a phone. */
 const MIN_ASPECT = 0.62;
 const MAX_ASPECT = 1.05;
-/** Room around the places, as a share of their spread, so pins never sit on the edge. */
 const SPREAD_PADDING = 0.6;
-/** Room around the places, as a share of the map, for a single place or a tight cluster. */
 const EDGE_PADDING = 0.06;
 const RELAX_ROUNDS = 40;
 
-/** Grows the box to an aspect ratio a screen can show, around its center. */
 function withAspect(
   box: { height: number; width: number },
   maxAspect: number,
@@ -27,10 +23,6 @@ function withAspect(
   return aspect < minAspect ? { height: box.width * minAspect, width: box.width } : box;
 }
 
-/**
- * The part of a base map to show: every place with room around it, zoomed in no further than
- * the drawing's detail allows, at a shape a phone can show, and never past the map's edges.
- */
 export function fitViewport({
   map,
   maxAspect = MAX_ASPECT,
@@ -38,7 +30,6 @@ export function fitViewport({
   points,
 }: {
   map: { height: number; width: number };
-  /** The tallest shape the screen has room for, as height over width (never taller than a phone's). */
   maxAspect?: number;
   maxZoom: number;
   points: readonly MapPoint[];
@@ -78,10 +69,6 @@ export function fitViewport({
   };
 }
 
-/**
- * Nudges pins that would overlap apart until each has `distance` around it, staying inside the
- * frame. Pins that already have room don't move. Positions come back in the input's order.
- */
 export function spreadPins({
   distance,
   frame,
@@ -104,7 +91,6 @@ export function spreadPins({
             return total;
           }
 
-          /* Pins in the very same spot split along a fixed angle, earlier ones up and left. */
           const [ux, uy] = gap === 0 ? [otherIndex < index ? 1 : -1, 0] : [dx / gap, dy / gap];
           const overlap = (distance - gap) / 2;
           return { x: total.x + ux * overlap, y: total.y + uy * overlap };

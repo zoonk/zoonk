@@ -9,7 +9,6 @@ import {
 import { createBaseMapProjection } from "../../src/activities/_assets/base-maps/base-map-projection";
 import { type GeoRectangle, parsePoints } from "./geo-ops";
 
-/** Every map is drawn 1,000 units wide; its height follows the projection. */
 const WIDTH = 1000;
 const PATH_DIGITS = 1;
 const EDGE_SAMPLES = 24;
@@ -20,14 +19,11 @@ const QUARTER_TURN = 90;
 type Coordinates = [number, number];
 
 export type MapSource = {
-  /** What the projection is fitted to: the whole globe, the map's area or a shape. */
   fit:
     | { kind: "area"; area: GeoRectangle }
     | { kind: "shape"; shape: GeoPermissibleObjects }
     | { kind: "sphere" };
-  /** Shapes drawn apart from the rest, framed so they don't read as neighbors. */
   insets?: readonly GeoPermissibleObjects[];
-  /** Positions are "longitude latitude", like the outlines. */
   labels?: readonly { key: string | null; position: string; text: string }[];
   legend?: BaseMapDrawing["legend"];
   maxZoom: number;
@@ -49,7 +45,6 @@ function segmentLength(segment: { from: Coordinates; to: Coordinates }): number 
   return Math.hypot(segment.to[0] - segment.from[0], segment.to[1] - segment.from[1]);
 }
 
-/** The area's outline as points along its edges, so conic projections fit its curved sides. */
 function areaOutline(area: GeoRectangle): MultiPoint {
   const steps = Array.from({ length: EDGE_SAMPLES + 1 }, (_, index) => index / EDGE_SAMPLES);
 
@@ -81,7 +76,6 @@ function project(projection: GeoProjection, position: Coordinates): Coordinates 
   return point ? [round(point[0]), round(point[1])] : null;
 }
 
-/** Text runs along a street and never upside down. */
 function uprightAngle(from: Coordinates, to: Coordinates): number {
   const angle = (Math.atan2(to[1] - from[1], to[0] - from[0]) * HALF_TURN) / Math.PI;
 
@@ -92,7 +86,6 @@ function uprightAngle(from: Coordinates, to: Coordinates): number {
   return angle < -QUARTER_TURN ? angle + HALF_TURN : angle;
 }
 
-/** A street's label sits halfway along its longest stretch. */
 function streetLabel(projection: GeoProjection, street: NonNullable<MapSource["streets"]>[number]) {
   const points = street.coordinates.flatMap((position) => {
     const point = project(projection, position);
@@ -130,10 +123,6 @@ function insetFrame(path: ReturnType<typeof geoPath>, shape: GeoPermissibleObjec
   };
 }
 
-/**
- * Projects a map's sources into SVG paths at a fixed width and records the fitted projection,
- * so the player can put places exactly where the shapes are.
- */
 export function renderMap(source: MapSource): BaseMapDrawing {
   const fitted = createBaseMapProjection({ ...source.projection, scale: 1, translate: [0, 0] });
   const target = fitObject(source.fit);
@@ -142,7 +131,6 @@ export function renderMap(source: MapSource): BaseMapDrawing {
   const height = Math.ceil(geoPath(fitted).bounds(target)[1][1]);
   const spec = { ...source.projection, scale: fitted.scale(), translate: fitted.translate() };
 
-  /* The projection the player rebuilds from `spec` must match the one the paths use. */
   const projection = createBaseMapProjection(spec);
 
   if (source.fit.kind !== "shape") {

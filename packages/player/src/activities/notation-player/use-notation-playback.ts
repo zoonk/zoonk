@@ -13,10 +13,6 @@ function eventElements(event: NoteTimingEvent): Element[] {
   return (event.elements ?? []).flat();
 }
 
-/**
- * Plays a drawn tune on the piano and follows it on the page: the sounding note lights up and
- * the bar number counts along. Audio and the highlight start together on the same beat.
- */
 export function useNotationPlayback({
   abcjs,
   bpm,

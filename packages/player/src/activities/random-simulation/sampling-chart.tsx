@@ -15,7 +15,6 @@ const BRACKET_TICK = 4;
 const RANGE_LABEL_OFFSET = 42;
 const TRUTH_LABEL_OFFSET = 8;
 const AXIS_TICKS = 4;
-/** Axis labels this close to the middle range's label would collide with it. */
 const LABEL_CLEARANCE = 44;
 
 function Bars({ bins, className }: { bins: readonly HistogramBin[]; className: string }) {
@@ -69,7 +68,6 @@ function TruthLine({ label, truth }: { label: string; truth: number }) {
   );
 }
 
-/** The axis with round labels, and under it the bracket over the middle 95% of results. */
 function AxisWithRange({
   format,
   range,
@@ -123,11 +121,6 @@ function AxisWithRange({
   );
 }
 
-/**
- * The results of every run as a histogram: the chosen sample size in color over the smallest one
- * in gray, the true value as a dashed line, and the middle 95% of the chosen size's results
- * bracketed under the axis.
- */
 export function SamplingChart({
   comparison,
   domain,

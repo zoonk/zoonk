@@ -27,7 +27,6 @@ export function centroid(pixels: readonly Vector[]): Vector {
   };
 }
 
-/** A point pushed away from the shape's middle, for labels that sit just outside it. */
 export function awayFromMiddle(point: Vector, middle: Vector, distance: number): Vector {
   const length = Math.hypot(point.x - middle.x, point.y - middle.y) || 1;
 
@@ -163,7 +162,6 @@ function SideLengths({
   });
 }
 
-/** The squares sit under the shape; everything else sits on it, under the corners. */
 export function BoardMeasureUnderlay({
   hideTotal,
   ids,

@@ -1,9 +1,4 @@
-/**
- * Soho as John Snow mapped it in 1854, simplified to its main streets. Street names are the
- * 1854 ones (Broad Street is today's Broadwick Street, Cambridge Street today's Lexington
- * Street). Positions are approximate, to within a few dozen meters. Coordinates are
- * "longitude latitude" pairs, like the other outlines.
- */
+// Street names are the 1854 names; positions are approximate to within a few dozen meters.
 export const SOHO_1854_STREETS = [
   {
     coordinates:
@@ -76,7 +71,6 @@ export const SOHO_1854_STREETS = [
   { coordinates: "-0.1349 51.5126, -0.1334 51.5128", isLabelled: false, name: "Peter Street" },
 ] as const;
 
-/** The two squares, drawn as open spaces. */
 export const SOHO_1854_SQUARES = [
   {
     id: "golden-square",

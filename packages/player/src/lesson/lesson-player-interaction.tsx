@@ -8,11 +8,6 @@ type LessonInteraction = { isPaused: boolean; setPaused: (isPaused: boolean) => 
 
 const LessonInteractionContext = createContext<LessonInteraction | null>(null);
 
-/**
- * While a sheet is open over the lesson (the summary, the tutor's drawer), the lesson's keys pause
- * so Enter or a number can't answer the screen underneath. The shared option lists read the same
- * pause through the player's interaction context.
- */
 export function LessonInteractionProvider({ children }: { children: React.ReactNode }) {
   const buddy = useTutorBuddy();
   const [isSheetOpen, setIsSheetOpen] = useState(false);

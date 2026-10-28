@@ -6,12 +6,6 @@ import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
 import { contentStep, explanationStep } from "../preview/preview-steps";
 
-/**
- * "From the lesson" beside a question on a wide screen (folded under it on a phone), and the
- * sentence it marks there after a wrong answer: the one the question rests on, when the recap shows
- * that screen. Questions with no quoted basis still show the recap.
- */
-
 const RIGHT_OPTION = "Where the electron is most likely to be found";
 const WRONG_OPTION = "The electron's exact path";
 const RESTS_ON = "It spreads out into a **cloud of possibilities**: a map of where it might be.";
@@ -22,18 +16,15 @@ function aside() {
   return page.getByRole("complementary", { name: "Help with this screen" });
 }
 
-/** The words the recap marks, or null when it marks none. */
 function markedText(): string | null {
   return aside().element().querySelector("mark")?.textContent ?? null;
 }
 
-/** The title of the screen the phone's folded recap shows, while it's open. */
 function phoneRecapTitle(): string | null {
   const titles = document.querySelectorAll('[data-slot="lesson-recap-row"] h3');
   return [...titles].find((title) => title.checkVisibility())?.textContent ?? null;
 }
 
-/** A question on the electron cloud, resting on a sentence of the screen at `position`. */
 function question(basis?: { position: number; quote: string }) {
   return contentStep("check", { content: { ...playableStepContent.check, basis: basis ?? null } });
 }
@@ -88,7 +79,6 @@ describe("lesson recap", () => {
     renderLessonPlayer({ lesson });
     await page.getByRole("button", { name: /^Next/u }).click();
 
-    // A question with no quoted basis still shows the recap.
     await answer(WRONG_OPTION, "Not quite");
     await expect.element(aside().getByText("A cloud, not a little ball")).toBeVisible();
     expect(markedText()).toBeNull();
@@ -96,7 +86,6 @@ describe("lesson recap", () => {
     await page.getByRole("button", { name: /^Continue/u }).click();
     await page.getByRole("button", { name: /^Next/u }).click();
 
-    // The recap shows the screen just read, not the one the question rests on.
     await answer(WRONG_OPTION, "Not quite");
     await expect.element(aside().getByText("Where the cloud is densest")).toBeVisible();
     expect(markedText()).toBeNull();
@@ -118,7 +107,6 @@ describe("lesson recap", () => {
     await answer(RIGHT_OPTION, "Correct!");
     await page.getByRole("button", { name: /^Continue/u }).click();
 
-    // The missed question is back at the end: the recap is the screen before it the first time.
     await expect.element(page.getByRole("radio", { name: WRONG_OPTION })).not.toBeChecked();
     await expect.element(aside().getByText("A cloud, not a little ball")).toBeVisible();
     await expect.element(aside().getByText("screen 1")).toBeVisible();
@@ -139,7 +127,6 @@ describe("lesson recap", () => {
     await answer(WRONG_OPTION, "Not quite");
     await page.getByRole("button", { name: /^Continue/u }).click();
 
-    // Back on the first screen: the missed check left its place for the end, after screen 2.
     await page.getByRole("button", { name: /^Next/u }).click();
     await page.getByRole("button", { name: /^Next/u }).click();
     await answer(RIGHT_OPTION, "Correct!");
@@ -151,8 +138,6 @@ describe("lesson recap", () => {
     await expect.element(aside().getByText("Where the cloud is densest")).not.toBeInTheDocument();
   });
 
-  // A phone had no way to look back at the lesson from a question but leaving it for the screens
-  // before, which the wide screens' aside shows beside it.
   it("folds the recap under a phone's question, opening in place with the sentence marked", async () => {
     await atViewport(PHONE, async () => {
       const lesson = buildLesson([
@@ -165,7 +150,6 @@ describe("lesson recap", () => {
 
       const recap = page.getByRole("button", { name: /^From the lesson/u });
 
-      // Folded, it names the screen it holds by its title.
       await expect.element(recap).toHaveAttribute("aria-expanded", "false");
       expect(recap.element().textContent).toContain("A cloud, not a little ball");
       expect(phoneRecapTitle()).toBeNull();
@@ -182,8 +166,6 @@ describe("lesson recap", () => {
     });
   });
 
-  // A question asked before its explanation offers that explanation ("Explain first"); the screen
-  // before it is about something else, and a second help row under it only competed.
   it("folds no recap under a phone's question asked before its explanation", async () => {
     await atViewport(PHONE, async () => {
       const lesson = buildLesson([
@@ -201,7 +183,6 @@ describe("lesson recap", () => {
         .element(page.getByRole("button", { name: /^From the lesson/u }))
         .not.toBeInTheDocument();
 
-      // Picking an answer doesn't bring it in under the question.
       await page.getByRole("radio", { name: WRONG_OPTION }).click();
 
       await expect

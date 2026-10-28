@@ -60,23 +60,12 @@ function SubmitIcon({
 
 const CREATE_NAVIGATION_ERROR_KINDS = new Set(["authentication", "subscription", "unavailable"]);
 
-/**
- * Where the learner writes: one growing line on a panel with a square send button. On a page (the
- * buddy's conversation) it's a little larger; in a drawer or a lesson's aside (`compact`) it's 44px,
- * as tall as the action bar's buttons beside it.
- */
 type ComposerVariant = "compact" | "page";
 
-/**
- * Focus darkens the panel's hairline, as it does a field's border, in place of the input group's
- * 3px ring and the border it draws beside the hairline. With more contrast asked for, the hairline
- * is already the text color, so focus thickens it to 3px instead: a darker line can't show.
- */
 const FOCUS_CLASS =
   "has-[[data-slot=input-group-control]:focus-visible]:border-transparent has-[[data-slot=input-group-control]:focus-visible]:ring-1 has-[[data-slot=input-group-control]:focus-visible]:ring-foreground/35 contrast-more:has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] contrast-more:has-[[data-slot=input-group-control]:focus-visible]:ring-foreground";
 
 const FRAME_CLASS: Record<ComposerVariant, string> = {
-  // Its line is the inset ring, so it has no border: 44px whole, level with the action bar's.
   compact: cn(
     "bg-card ring-input rounded-option! items-end border-0 ring-1 ring-inset",
     FOCUS_CLASS,
@@ -88,17 +77,11 @@ const FRAME_CLASS: Record<ComposerVariant, string> = {
   ),
 };
 
-/** The panel the limit sits on in the composer's place, the composer's own. */
 const LIMIT_FRAME_CLASS: Record<ComposerVariant, string> = {
   compact: "bg-card ring-input rounded-option ring-1 ring-inset",
   page: TUTOR_COMPOSER_FRAME_CLASS,
 };
 
-/**
- * The placeholder keeps to one line, cut with "…" where it's longer than the field (a long buddy
- * name in a task's aside): the field sizes itself to its placeholder, so a second line would lift
- * the aside's composer above the action bar beside it.
- */
 const ONE_LINE_PLACEHOLDER_CLASS = "placeholder-shown:truncate placeholder:truncate";
 
 const TEXTAREA_CLASS: Record<ComposerVariant, string> = {
@@ -109,7 +92,6 @@ const TEXTAREA_CLASS: Record<ComposerVariant, string> = {
   ),
 };
 
-/** Where the send button sits on the line, centered on its first line of text. */
 const SEND_ADDON_CLASS: Record<ComposerVariant, string> = { compact: "py-1.75", page: "pb-2.25" };
 
 function useComposerPlaceholder(contextKind: LessonQuestionController["state"]["context"]["kind"]) {
@@ -126,7 +108,6 @@ function useComposerPlaceholder(contextKind: LessonQuestionController["state"]["
       return t("Ask about this subject…");
     case "item":
       return t("Ask about this question…");
-    // After an answer is checked, the thread is about that answer, as the aside's composer says.
     case "answer":
       return t("Ask about your answer…");
     case "lesson":
@@ -163,12 +144,6 @@ function getComposerAvailability({
   };
 }
 
-/**
- * In the composer's place once the learner's help is used up, on the composer's own panel, as the
- * sign-up prompt is for guests: why, and the one thing to do (see Plus, create a free account), or
- * nothing but to wait. There's no field to type into until it comes back. When it replaces the
- * field the learner was typing in, it takes the focus, so it's read out and keys stay in place.
- */
 function ComposerLimit({ limit, variant }: { limit: HelpLimit; variant: ComposerVariant }) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -197,12 +172,6 @@ function ComposerLimit({ limit, variant }: { limit: HelpLimit; variant: Composer
   );
 }
 
-/**
- * Where the learner writes, with the label and placeholder the host gives: at the bottom of a
- * drawer, of a lesson's aside (with the buddy's face, `avatar`, at its start), or of the buddy's
- * conversation page. Its errors show under it; once the learner's help is used up, the limit
- * takes its place.
- */
 export function QuestionComposer({
   avatar,
   className,
@@ -314,7 +283,6 @@ export function QuestionComposer({
         </div>
       )}
 
-      {/* On a page, where a keyboard is likely, the keys under the panel: Enter sends. */}
       {variant === "page" && (
         <p className="text-faint mt-2 hidden px-1 font-mono text-[0.6875rem] leading-4 pointer-fine:block">
           {t("⏎ send · ⇧⏎ new line")}

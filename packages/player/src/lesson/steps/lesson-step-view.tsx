@@ -14,10 +14,6 @@ import { SummaryStepView } from "./summary-step";
 import { TypedAnswerStepView } from "./typed-answer-step";
 import { WorkedExampleStepView } from "./worked-example-step";
 
-/**
- * Screens that show their own verdict: activities, challenges, and match columns, which are only
- * done once every pair is matched.
- */
 const OWN_RESULT_KINDS = new Set<PlayableLibraryStep["kind"]>([
   "activity",
   "challenge",
@@ -28,7 +24,6 @@ export function showsOwnResult(step: PlayableLibraryStep): boolean {
   return OWN_RESULT_KINDS.has(step.kind);
 }
 
-/** Renders one screen by its kind. */
 export function LessonStepView(props: LessonStepViewProps) {
   const { step } = props;
 

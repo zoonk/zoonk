@@ -7,7 +7,6 @@ import { heardAtMs } from "./rhythm-clock";
 
 type RhythmFields = { pattern: string; rounds: number; stepsPerBeat: number; tempo: number };
 
-/** Listening plays one round with the rhythm; tapping counts in one bar, then times the taps. */
 type RunKind = "listen" | "tap";
 
 type RunPhase = "countIn" | "done" | "idle" | "listening" | "tapping";
@@ -23,7 +22,6 @@ type Session = {
   end: number;
   frame: number;
   kind: RunKind;
-  /** Performance time (ms) when the first step of the first round is heard. */
   heardStartMs: number;
   roundsStart: number;
   stepSeconds: number;
@@ -76,11 +74,6 @@ function scheduleRun({
   return { end: roundsStart + rounds * beats * beatSeconds, roundsStart, stepSeconds };
 }
 
-/**
- * Runs the rhythm on the audio clock: clicks on every beat (the first one accented), a bar to
- * count in before tapping, and where the playhead is while it plays. Taps are kept in
- * milliseconds from the first step of the first round, as core grades them.
- */
 export function useRhythmRun({
   fields,
   onFinish,
@@ -165,7 +158,6 @@ export function useRhythmRun({
     };
   }
 
-  /** Records a tap at the event's time; taps outside the rounds (or while listening) don't count. */
   function tap(eventTimeMs: number) {
     const current = session.current;
 

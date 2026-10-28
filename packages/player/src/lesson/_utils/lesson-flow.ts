@@ -13,11 +13,6 @@ function omitKey<TValue>(record: Record<string, TValue>, key: string): Record<st
   return Object.fromEntries(Object.entries(record).filter(([entry]) => entry !== key));
 }
 
-/**
- * Shows the screen at `position`. A question coming back (after a miss, or after a missed quick
- * check) starts fresh: its old answer and verdict are cleared, while its first verdict still
- * counts.
- */
 export function enterPosition(state: LessonPlayerState, position: number): LessonPlayerState {
   const id = state.queue[position] ?? "";
 
@@ -45,10 +40,6 @@ function complete(
   };
 }
 
-/**
- * A missed quick check returns to where the learner was, without the checks they just got right,
- * which already count. The missed one comes back at the end of the lesson, like any missed check.
- */
 function leaveQuickCheck(state: LessonPlayerState): LessonPlayerState {
   const { quickCheck } = state;
 
@@ -76,7 +67,6 @@ function leaveQuickCheck(state: LessonPlayerState): LessonPlayerState {
   );
 }
 
-/** Moves past the current screen: to the next one, back to the lesson, or to the end. */
 export function advance(state: LessonPlayerState): LessonPlayerState {
   if (state.quickCheck?.missed) {
     return leaveQuickCheck(state);
@@ -96,10 +86,6 @@ export function advance(state: LessonPlayerState): LessonPlayerState {
   return enterPosition({ ...available, notice: null }, next);
 }
 
-/**
- * Leaves out the screens from the one in view on that `isLeftOut` names: the rest of the lesson
- * goes on from where the learner is, and a lesson with nothing left ends.
- */
 export function leaveOutAhead(
   state: LessonPlayerState,
   isLeftOut: (stepId: string) => boolean,
@@ -109,7 +95,6 @@ export function leaveOutAhead(
     return state;
   }
 
-  /** A busy current question keeps its verdict; only screens after it are removed. */
   const start = state.position + (state.phase === "playing" ? 0 : 1);
   const ahead = state.queue.slice(start).filter((id) => !isLeftOut(id));
 
@@ -128,10 +113,6 @@ export function leaveOutAhead(
     : enterPosition({ ...next, notice: null }, state.position);
 }
 
-/**
- * Leaves out screens that can't be played after all, such as a question about a numbered picture
- * that never came: without it, nobody can tell which number is which.
- */
 export function skipSteps(state: LessonPlayerState, stepIds: readonly string[]): LessonPlayerState {
   const added = stepIds.filter((id) => id in state.steps && !state.unavailableStepIds.includes(id));
 
@@ -150,11 +131,9 @@ export function skipSteps(state: LessonPlayerState, stepIds: readonly string[]):
     returnQueue: state.quickCheck.returnQueue.filter((id) => !isLeftOut(id)),
   };
 
-  // Picture recovery can run on mount; only a learner's Finish may save a terminal lesson.
   return leaveOutAhead({ ...state, quickCheck, unavailableStepIds }, isLeftOut, "ready");
 }
 
-/** Continue on a reading screen reveals a worked example one step at a time, then moves on. */
 export function continueReading(state: LessonPlayerState): LessonPlayerState {
   const step = getCurrentStep(state);
 
@@ -171,10 +150,6 @@ export function continueReading(state: LessonPlayerState): LessonPlayerState {
   return { ...state, revealed: { ...state.revealed, [step.id]: shown + 1 } };
 }
 
-/**
- * Continue in a challenge starts the case from its intro, then confirms the pick for the decision
- * on screen, which shows the replies and the next decision. The finished case is checked instead.
- */
 export function continueChallenge(state: LessonPlayerState): LessonPlayerState {
   const step = getCurrentStep(state);
 
@@ -191,10 +166,6 @@ export function continueChallenge(state: LessonPlayerState): LessonPlayerState {
   return canMove ? { ...state, revealed: { ...state.revealed, [step.id]: shown + 1 } } : state;
 }
 
-/**
- * Previous goes back one screen from any screen after the first. A screen already answered shows
- * its result again (Continue goes on); one not answered yet plays as it was.
- */
 export function goBack(state: LessonPlayerState): LessonPlayerState {
   const previousId = state.queue[state.position - 1];
 
@@ -218,7 +189,6 @@ export function goBack(state: LessonPlayerState): LessonPlayerState {
   };
 }
 
-/** Previous is on every screen after the first, while it's being played (not during "I know this"). */
 export function canGoBack(state: LessonPlayerState): boolean {
   return (
     state.phase === "playing" &&
@@ -228,10 +198,6 @@ export function canGoBack(state: LessonPlayerState): boolean {
   );
 }
 
-/**
- * A wrong language answer the learner built stays on screen, without the right form, for one
- * more try. The first verdict still counts; outside language practice the answer shows at once.
- */
 function offerSelfCorrection({
   isFirst,
   state,
@@ -251,7 +217,6 @@ function offerSelfCorrection({
   };
 }
 
-/** Counted answers missed in a row; a right one starts over. */
 function getMisses({
   counts,
   isCorrect,
@@ -270,11 +235,6 @@ function getMisses({
   return isCorrect ? [] : [...state.misses, { skillId: step.skillId, stepId: step.id }];
 }
 
-/**
- * Records a verdict. The first one on a screen is what counts. A missed check or activity comes
- * back once at the end of the lesson; during a quick check, a miss ends the quick check instead.
- * A missed language answer gets one chance to self-correct first.
- */
 export function resolveCheck(
   state: LessonPlayerState,
   { counts, result, stepId }: { counts: boolean; result: LessonStepResult; stepId: string },
@@ -316,14 +276,9 @@ export function resolveCheck(
     retried: willRetry ? [...state.retried, stepId] : state.retried,
   };
 
-  /** Matching pairs gives feedback pair by pair, so its check moves on without a second tap. */
   return step?.kind === "matchColumns" ? advance(resolved) : resolved;
 }
 
-/**
- * "Explain first" on a question that comes before its explanation: the explanation screens move
- * in front of it, and the answer counts as helped.
- */
 export function explainFirst(state: LessonPlayerState): LessonPlayerState {
   const step = getCurrentStep(state);
 
@@ -349,7 +304,6 @@ export function explainFirst(state: LessonPlayerState): LessonPlayerState {
   };
 }
 
-/** "I know this": ask the checks not yet answered right; passing them all ends the lesson. */
 export function startQuickCheck(state: LessonPlayerState): LessonPlayerState {
   const queue = getQuickCheckQueue(state);
 

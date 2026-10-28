@@ -1,10 +1,5 @@
-/** Text a snippet button adds: `before` goes in front of the selection, `after` behind it. */
 export type CodeSnippet = { after?: string; before: string };
 
-/**
- * Inserts a snippet at the cursor, wrapping any selected text (so `( )` around a selection
- * groups it), and returns where the cursor goes: after the selection, before the closing part.
- */
 export function insertAtCursor({
   selectionEnd,
   selectionStart,

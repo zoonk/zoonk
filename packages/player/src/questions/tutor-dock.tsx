@@ -19,10 +19,8 @@ import { type TutorBuddy, useTutorBuddy } from "./tutor-buddy";
 import { type LessonQuestionController } from "./use-lesson-questions";
 import { useTutorSuggestions } from "./use-tutor-suggestions";
 
-/** How many of the buddy's suggested questions the aside offers over its composer. */
 const SUGGESTED = 2;
 
-/** What the aside's composer asks about, for its label. */
 function useComposerLabel({ context, identity }: TutorBuddy): string {
   const t = useExtracted();
   const { name } = identity;
@@ -38,13 +36,6 @@ function useComposerLabel({ context, identity }: TutorBuddy): string {
   return t("Ask {name} about this screen", { name });
 }
 
-/**
- * The buddy's composer at the foot of the aside, always there beside the task: what the learner
- * writes is about where they are (the screen or question in view, or their answer once it's
- * checked), and sending it shows the conversation in the aside. Its placeholder only names the
- * buddy, by its face, so it fits the aside's one line in every language, and its label says what
- * the learner asks about.
- */
 function DockComposer({ buddy }: { buddy: TutorBuddy }) {
   const t = useExtracted();
   const controller = useLessonQuestionController();
@@ -53,15 +44,12 @@ function DockComposer({ buddy }: { buddy: TutorBuddy }) {
   const { docked } = buddy;
   const { state } = controller;
 
-  // Once the conversation shows in the aside, the learner writes (or sends a ready suggestion)
-  // without reaching for the composer.
   useEffect(() => {
     if (docked) {
       inputRef.current?.focus({ preventScroll: true });
     }
   }, [docked]);
 
-  // The composer sends about where the learner is, whatever the conversation last opened about.
   const dockController = useMemo<LessonQuestionController>(
     () => ({
       ...controller,
@@ -91,7 +79,6 @@ function DockComposer({ buddy }: { buddy: TutorBuddy }) {
   );
 }
 
-/** A visitor or guest sees where the buddy is, and the way to an account that can ask it. */
 function DockSignUp({ buddy }: { buddy: TutorBuddy }) {
   const t = useExtracted();
   const { linkComponent: LinkComponent, loginHref } = buddy.navigation;
@@ -113,10 +100,6 @@ function DockSignUp({ buddy }: { buddy: TutorBuddy }) {
   );
 }
 
-/**
- * Two of the buddy's suggested questions for where the learner is, each sent with one tap: about
- * the answer after a wrong one, or a lesson's own on its reading screens.
- */
 function DockSuggestions({ buddy }: { buddy: TutorBuddy }) {
   const t = useExtracted();
   const controller = useLessonQuestionController();
@@ -152,11 +135,6 @@ function DockSuggestions({ buddy }: { buddy: TutorBuddy }) {
   );
 }
 
-/**
- * The conversation docked over the aside from `lg`, above the dock, from the aside's top with its
- * own header row in place of the aside's, and the way back to what the aside showed: the task stays
- * beside it, and its keys keep working.
- */
 function DockedConversation({ buddy }: { buddy: TutorBuddy }) {
   const t = useExtracted();
 
@@ -229,12 +207,6 @@ function Dock({ buddy }: { buddy: TutorBuddy }) {
   );
 }
 
-/**
- * The buddy at the foot of a task's aside from `lg` (a lesson, a session's block, mistakes
- * practice), level with the action bar: its composer (for a visitor, the way to an account), two
- * suggested questions over it when the host offers them, and the conversation over the aside once
- * the learner asks. The aside's content ends where the dock starts.
- */
 export function TutorDock() {
   const buddy = useTutorBuddy();
   return buddy ? <Dock buddy={buddy} /> : null;
@@ -270,24 +242,11 @@ function ConversationLink({ buddy, fallback }: { buddy: TutorBuddy; fallback: Re
   );
 }
 
-/**
- * The way back to the conversation about where the learner is (a lesson's screen, a run's
- * question), on the task aside's header once they have asked about it: the buddy's face, as the
- * open conversation shows it in the same corner, and how many questions it holds, so beside
- * "Today" it never reads as questions left in the day. Until then, and without a buddy, the
- * header's own quiet fact (`fallback`: the screen's number, the minutes left) shows there.
- */
 export function TutorConversationLink({ fallback }: { fallback: React.ReactNode }) {
   const buddy = useTutorBuddy();
   return buddy ? <ConversationLink buddy={buddy} fallback={fallback} /> : fallback;
 }
 
-/**
- * One quiet way to ask the buddy about where the learner is, after the task's main action: an
- * icon, and "Ask {buddy}" in words after a wrong answer, when asking helps most, unless the screen
- * already offers the buddy by name (`quiet`). From `lg` the buddy's composer is in the aside, so
- * the bar leaves it out.
- */
 export function TutorAskButton({ quiet = false }: { quiet?: boolean }) {
   const t = useExtracted();
   const buddy = useTutorBuddy();

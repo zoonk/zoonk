@@ -19,11 +19,6 @@ import { WordBankOptionButton } from "./word-bank-option-content";
 type WordBankTile = { index: number; isUsed: boolean; key: string; option: WordBankOption };
 type PlacedWordWithBankIndex = PlacedWord & { wordBankIndex: number | null };
 
-/**
- * Submitted answers preserve only their words, so a restored result cannot
- * identify which duplicate bank tile originally supplied each word. Matching
- * those untracked words by occurrence keeps the completed-answer view stable.
- */
 function isUntrackedOccurrenceUsed({
   index,
   option,
@@ -46,10 +41,6 @@ function isUntrackedOccurrenceUsed({
   return usedCount >= occurrenceCount;
 }
 
-/**
- * Duplicate words are valid, so interactive selections use the original bank
- * index to keep the tapped tile attached to the placed answer.
- */
 function getWordBankTile({
   index,
   option,
@@ -68,10 +59,6 @@ function getWordBankTile({
   return { index, isUsed, key: `bank-${option.word}-${index}`, option };
 }
 
-/**
- * The word bank keeps used words in place as disabled placeholders so selecting
- * a tile does not make the remaining choices jump around.
- */
 function getWordBankTiles({
   placedWords,
   words,
@@ -111,10 +98,6 @@ function WordBank({
   );
 }
 
-/**
- * A sentence built from the word bank (reading, listening): `answer` is the sentence to build, and
- * any of its accepted wordings counts.
- */
 export function ArrangeWordsInteraction({
   answer,
   answerKind,

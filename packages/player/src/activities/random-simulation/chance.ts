@@ -18,7 +18,6 @@ function hasSharedBirthday(people: number, days: number, random: Random): boolea
   return new Set(birthdays).size < birthdays.length;
 }
 
-/** One run's outcome: successes, the dice total, or 1 when two people share a birthday. */
 function simulateRun(model: RandomModel, random: Random): number {
   if (model.kind === "binomial") {
     return binomialCount({ probability: model.probability, random, trials: model.trials });
@@ -58,7 +57,6 @@ export function runSimulation({
   return Array.from({ length: runs }, () => simulateRun(model, random));
 }
 
-/** Counts per outcome between the smallest and largest seen, for the histogram. */
 export function outcomeCounts(outcomes: readonly number[]): { count: number; outcome: number }[] {
   if (outcomes.length === 0) {
     return [];
@@ -77,11 +75,9 @@ export function outcomeCounts(outcomes: readonly number[]): { count: number; out
   }));
 }
 
-/** The share of hits after each run, thinned to at most `points` points for drawing. */
 export function runningShare(hits: readonly boolean[], points: number): { x: number; y: number }[] {
   const every = Math.max(Math.ceil(hits.length / points), 1);
 
-  /* Pushing into the running totals keeps this linear; a copy per run would be quadratic. */
   const totals = hits.reduce<number[]>((sums, hit) => {
     sums.push((sums.at(-1) ?? 0) + (hit ? 1 : 0));
     return sums;

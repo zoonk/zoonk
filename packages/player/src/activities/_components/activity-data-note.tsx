@@ -6,11 +6,6 @@ import {
 } from "@zoonk/core/library/activities/templates";
 import { useExtracted } from "next-intl";
 
-/**
- * Where the activity's numbers come from: a cited source, or a plain note that the data is an
- * example, so made-up numbers never pass as facts. An activity that shows no data (sorting,
- * matching) has no note, even when its content carries one.
- */
 export function ActivityDataNote({
   content,
 }: {

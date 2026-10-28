@@ -1,10 +1,6 @@
 import { type RegionRule, type Transfer } from "./compose-regions";
 
-/**
- * Europe in July 1914, built from today's countries (Natural Earth, public domain) plus the land
- * that has changed hands since. Borders that moved are simplified: they're right to within a few
- * dozen kilometers, which is enough to see who held what.
- */
+// Borders are approximate; the map teaches who held the land rather than exact boundaries.
 export const EUROPE_1914_RULES: readonly RegionRule[] = [
   {
     id: "unitedKingdom",

@@ -19,25 +19,15 @@ import { useEffect, useId, useRef } from "react";
 const POINTER_DISTANCE = 5;
 const TOUCH_DELAY_MS = 200;
 
-/**
- * The target under the pointer or finger wins, so a wide item dropped on a small pin lands on the
- * pin it's over rather than the neighbor it covers most; when nothing is under the pointer, the
- * target the item covers most takes it.
- */
 const dropUnderPointer: CollisionDetection = (args) => {
   const underPointer = pointerWithin(args);
   return underPointer.length > 0 ? underPointer : rectIntersection(args);
 };
 
-/** An empty announcement isn't read out. */
 function silent(): string {
   return "";
 }
 
-/**
- * Keyboard and screen reader users place items with the tap path, and the activity announces
- * every placement itself, so dragging says nothing more.
- */
 const SILENT = {
   announcements: {
     onDragCancel: silent,
@@ -48,16 +38,7 @@ const SILENT = {
   screenReaderInstructions: { draggable: "" },
 };
 
-/**
- * Dragging for pointers and touch, on top of a tap path that already does everything: tap an
- * item, then tap where it goes. Dragging is a shortcut, never the only way, so there's no
- * keyboard sensor; the buttons are the keyboard path.
- *
- * A finger lifts an item by pressing and holding it, so a quick swipe over the items still
- * scrolls the lesson. That needs the mouse and touch sensors: a pointer sensor would take the
- * touch first (pointer events come before touch events) and lose it to the browser's scroll as
- * soon as the finger moves.
- */
+/** Separate mouse and touch sensors preserve hold-to-drag alongside native touch scrolling. */
 export function ActivityDragDrop({
   children,
   onDrop,
@@ -93,12 +74,7 @@ export function ActivityDragDrop({
   );
 }
 
-/**
- * Makes an element draggable by mouse and touch; spread `dragProps` on it and give it
- * `touch-manipulation` (not `touch-none`), so a swipe that starts on it scrolls the lesson.
- * Browsers still fire a click when a drag ends on the element, so its onClick checks
- * `isClickAfterDrag()` first.
- */
+/** Use `touch-manipulation` and check `isClickAfterDrag()` in onClick; browsers click after a drag. */
 export function useActivityDraggable({ disabled, id }: { disabled?: boolean; id: string }) {
   const { isDragging, listeners, setNodeRef, transform } = useDraggable({ disabled, id });
   const draggedRef = useRef(false);

@@ -7,7 +7,6 @@ import {
 
 type Tolerance = Parameters<typeof formulaPassesExamples>[1]["tolerance"];
 
-/** A sample's result: where the pattern matched (for highlighting) and whether that's right. */
 export type SampleResult = {
   match: { end: number; start: number } | null;
   passes: boolean;
@@ -24,10 +23,6 @@ function testSample(regex: RegExp, sample: string, shouldMatch: boolean): Sample
   return { match, passes: shouldMatch ? found !== null : found === null, sample };
 }
 
-/**
- * Tests the learner's pattern against every example as they type, compiled exactly as grading
- * compiles it (core's `compileSafeRegex`), so a row that passes here passes the check.
- */
 export function testRegex(
   pattern: string,
   samples: { shouldMatch: readonly string[]; shouldNotMatch: readonly string[] },
@@ -51,10 +46,6 @@ export function testRegex(
 
 export type FormulaResult = { expected: number; passes: boolean; value: number | null };
 
-/**
- * The learner's formula on each example: the value it gives and whether that's within the
- * tolerance grading allows. A leading "=" is fine, like in a spreadsheet.
- */
 export function testFormula(
   formula: string,
   { examples, tolerance }: { examples: readonly ActivityFormulaExample[]; tolerance: Tolerance },

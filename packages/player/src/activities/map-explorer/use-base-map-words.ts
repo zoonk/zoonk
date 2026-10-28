@@ -3,10 +3,6 @@
 import { type ActivityBaseMapId } from "@zoonk/core/library/activities/base-maps";
 import { useExtracted } from "next-intl";
 
-/**
- * Names drawn on base maps and in their legends, translated. Street names stay as they were
- * written at the time, like "Broad Street".
- */
 export function useBaseMapLabels(): (key: string | null, text: string) => string {
   const t = useExtracted();
 
@@ -38,7 +34,6 @@ export function useBaseMapLabels(): (key: string | null, text: string) => string
   };
 }
 
-/** What each base map shows, for the map's caption and its text alternative. */
 export function useBaseMapName(): (id: ActivityBaseMapId) => string {
   const t = useExtracted();
 
@@ -61,7 +56,6 @@ export function useBaseMapName(): (id: ActivityBaseMapId) => string {
   };
 }
 
-/** Maps drawn from simplified outlines say so, so nobody takes their borders as exact. */
 export function useBaseMapNote(): (id: ActivityBaseMapId) => string | null {
   const t = useExtracted();
 

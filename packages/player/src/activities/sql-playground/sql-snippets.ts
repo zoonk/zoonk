@@ -15,10 +15,6 @@ const SQL_KEYWORDS = [
   "COUNT(*)",
 ];
 
-/**
- * Buttons for the SQL words a lesson query needs and the lesson's own table and column names,
- * so a phone keyboard only types values. Keywords add a space after themselves.
- */
 export function sqlSnippets(tables: readonly Table[]): NamedSnippet[] {
   const all = [
     ...SQL_KEYWORDS.map((keyword) => ({ before: `${keyword} `, label: keyword, name: keyword })),

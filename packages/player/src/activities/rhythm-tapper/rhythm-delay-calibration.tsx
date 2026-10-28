@@ -8,7 +8,6 @@ import { RhythmTapPad } from "./rhythm-tap-pad";
 import { type CalibrationPhase, useDelayCalibration } from "./use-delay-calibration";
 import { useSpaceToTap } from "./use-space-to-tap";
 
-/** A reading this close to zero is a device with no delay worth mentioning. */
 const ON_TIME_MS = 20;
 
 function CalibrationStatus({ phase }: { phase: CalibrationPhase }) {
@@ -43,11 +42,6 @@ function CalibrationStatus({ phase }: { phase: CalibrationPhase }) {
   );
 }
 
-/**
- * The one-time sound check before the first rhythm on a device: the learner taps along with
- * steady clicks, and the delay the device adds (Bluetooth headphones add up to half a second) is
- * taken out of every rhythm after. It can be skipped, and redone from any rhythm.
- */
 export function RhythmDelayCalibration({
   onDone,
   onSkip,

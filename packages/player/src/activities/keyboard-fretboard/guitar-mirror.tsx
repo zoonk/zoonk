@@ -8,17 +8,12 @@ import { useFretboardLabels } from "../_utils/use-fretboard-labels";
 import { useNoteNames } from "../_utils/use-music-labels";
 import { fretWindowStart, voicingFor } from "./keyboard-fretboard-notes";
 
-/**
- * The notes on the keys as a guitar shape a hand can play, so a learner sees one idea on both
- * instruments. It follows the keys; after the check it shows the answer.
- */
 export function GuitarMirror({
   caption,
   isChecked,
   pitches,
   spell,
 }: {
-  /** What the shape shows; by default "Same chord on guitar" or "Same notes on guitar". */
   caption?: string;
   isChecked: boolean;
   pitches: readonly number[];

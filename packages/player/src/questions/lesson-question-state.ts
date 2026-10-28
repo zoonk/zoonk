@@ -39,25 +39,15 @@ export type LessonQuestionState = {
   isOpen: boolean;
   isRefreshing: boolean;
   loadStatus: LessonQuestionLoadStatus;
-  /** What each answer changed in the learner's memory, for "Memory updated" under it. */
   memoryChanges: Record<string, LessonQuestionMemoryChange[]>;
   nextCursor: string | null;
   questions: LessonQuestionResource[];
   requestError: LessonQuestionApiError | null;
   revealedQuestionId: string | null;
-  /**
-   * Answers streamed here whose saved text hasn't arrived yet: a buddy answer links the app only
-   * once its saved text, links checked, replaces what streamed (or it's read from the server).
-   */
   streamedAnswerIds: string[];
-  /** The suggested question the learner picked, so sending it unchanged says which one it was. */
   suggestion: OfferedSuggestion | null;
 };
 
-/**
- * One of the tutor's suggested questions, as offered. A lesson screen's names its `suggestion`:
- * the server words that one itself and may answer it once for everyone who taps it.
- */
 export type OfferedSuggestion = { question: string; suggestion?: LessonScreenSuggestion };
 
 export type LessonQuestionAction =

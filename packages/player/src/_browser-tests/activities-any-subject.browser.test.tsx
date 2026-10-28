@@ -11,11 +11,7 @@ import {
   valueInput,
 } from "../_test-utils/activity-player";
 
-/**
- * Vitest's `toBeVisible` takes only HTML and SVG elements, so rendered math (a MathML `math` element)
- * is checked the way Playwright's `toBeVisible` checks any element: rendered, not hidden by style,
- * and with a box on the page.
- */
+// Vitest's visibility matcher excludes MathML elements, so math needs a rendered-box check.
 async function expectMathVisible(math: Locator) {
   await expect.poll(() => hasVisibleBox(math.query())).toBe(true);
 }

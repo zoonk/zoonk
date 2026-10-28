@@ -34,10 +34,6 @@ function TranslationOptionContent({ word }: { word: TranslationOption }) {
   );
 }
 
-/**
- * A word or chunk to translate, picked from words that each play their sound when tapped. Once
- * checked, the options show the right word and a wrong pick.
- */
 export function TranslationStep({
   definesWords = false,
   onSelectAnswer,
@@ -45,7 +41,6 @@ export function TranslationStep({
   selectedAnswer,
   step,
 }: {
-  /** The lesson is in the learner's own language: the prompt is a definition, not a translation. */
   definesWords?: boolean;
   onSelectAnswer: (answer: SelectedAnswer) => void;
   result?: StepResult;
@@ -72,8 +67,6 @@ export function TranslationStep({
   return (
     <PlayerChoiceScene>
       <PlayerChoiceScenePrompt>
-        {/* A word carries its article ("as colunas") and a chunk is several words ("Thanks for
-        having me"): the prompt names neither, so it never calls one the other. */}
         <ScreenChip>{definesWords ? t("Which one means this?") : t("Translate")}</ScreenChip>
         <PlayerChoiceSceneQuestion>{correctWord.translation}</PlayerChoiceSceneQuestion>
       </PlayerChoiceScenePrompt>

@@ -12,10 +12,6 @@ import { useLessonPlayer } from "../lesson-player-context";
 import { type LessonStepViewProps, type StepOf } from "./lesson-step-view-props";
 import { WorkedExampleContent } from "./worked-example-content";
 
-/**
- * A worked example revealed step by step with Continue, before the learner tries one alone, its
- * picture or chart under the problem it belongs to.
- */
 export function WorkedExampleStepView({ step }: LessonStepViewProps<StepOf<"workedExample">>) {
   const t = useExtracted();
   const { state } = useLessonPlayer();

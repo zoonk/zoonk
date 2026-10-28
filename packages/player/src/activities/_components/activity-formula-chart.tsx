@@ -21,7 +21,6 @@ const MIN_DELTA_PIXELS = 12;
 
 type Curve = { points: readonly PlotPoint[]; y: number | null };
 
-/** A dashed arrow from the "before" value to the current one at the slider, with the change. */
 function DeltaMark({ from, label, to, x }: { from: number; label: string; to: number; x: number }) {
   const scales = usePlotScales();
   const [px, top, bottom] = [scales.x.toPixel(x), scales.y.toPixel(from), scales.y.toPixel(to)];
@@ -53,12 +52,6 @@ function DeltaMark({ from, label, to, x }: { from: number; label: string; to: nu
   );
 }
 
-/**
- * One output drawn across one slider's range, with the slider's position marked. A dashed
- * baseline shows the same output before the learner's other changes (the starting sliders or the
- * what-if events), so the chart shows what those changes did. Everything is described in words
- * by the renderer's text alternative.
- */
 export function ActivityFormulaChart({
   baseline,
   compare = null,
@@ -72,12 +65,10 @@ export function ActivityFormulaChart({
   yDomain,
 }: {
   baseline: Curve | null;
-  /** A point marked to compare with, like the value at last year's rate. */
   compare?: { x: number; y: number } | null;
   current: Curve;
   deltaLabel: string | null;
   expected: { x: number; y: number } | null;
-  /** Short forms for the y axis, like "$300K". */
   formatTick: (value: number) => string;
   formatX: (value: number) => string;
   x: number;
@@ -96,7 +87,6 @@ export function ActivityFormulaChart({
         />
       )}
 
-      {/* Shading under the curve only reads right when the axis starts at zero. */}
       {yDomain[0] >= 0 && <ActivityPlotArea points={current.points} />}
       <ActivityPlotLine points={current.points} />
 

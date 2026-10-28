@@ -35,12 +35,6 @@ export type LessonQuestionUsageRefusal =
   | { kind: "slowDown"; retryAfterSeconds: number }
   | { kind: "usageLimit"; period: "day" | "month" | "total"; tier: "free" | "guest" | "plus" };
 
-/**
- * Which allowance refused an API request, read from its error body: fair use asks the learner to
- * slow down, a plan's cap asks guests to sign up and free learners to upgrade or wait, and the
- * day's AI budget all guests share asks a guest to create a free account. The tutor's answers and
- * the web player's "Simpler" and "Go deeper" read refusals this way.
- */
 export function getUsageRefusal(body: unknown): LessonQuestionUsageRefusal | null {
   const parsed = usageErrorSchema.safeParse(body);
 
@@ -59,7 +53,6 @@ export function getUsageRefusal(body: unknown): LessonQuestionUsageRefusal | nul
     : { kind: "usageLimit", ...error.details.limit };
 }
 
-/** Statuses whose body may say which allowance refused the request. */
 const REFUSAL_STATUSES = new Set([
   HTTP_STATUS_FORBIDDEN,
   HTTP_STATUS_PAYMENT_REQUIRED,

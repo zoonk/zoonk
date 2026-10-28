@@ -17,7 +17,6 @@ import { type ChallengeNames } from "./use-challenge-names";
 type ChallengeContent = StepOf<"challenge">["content"];
 type ChallengeDebrief = ReturnType<typeof getChallengeDebrief>;
 
-/** The short practice the debrief suggests for the weakest skill. */
 const PRACTICE_SECONDS = 300;
 
 function DebriefNotes({
@@ -88,11 +87,6 @@ function DebriefNotes({
   );
 }
 
-/**
- * After the case: how it ended, what the decisions did well and one thing to improve (praising the
- * strategy, not the learner), the skills it trained with the weakest one marked, and a short
- * practice for that skill.
- */
 export function ChallengeDebriefView({
   content,
   names,

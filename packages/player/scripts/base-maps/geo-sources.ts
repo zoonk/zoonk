@@ -21,7 +21,6 @@ const SOURCES = { countries110m, countries50m, southAmerica50m, usStates10m };
 
 export type SourceName = keyof typeof SOURCES;
 
-/** A country or state from the source data, with the name maps use. */
 export type SourceArea = { geometry: Polygon | MultiPolygon; id: string; name: string };
 
 type Describe = (properties: GeoJsonProperties, id: string) => string | null;
@@ -36,10 +35,7 @@ function isTopology(value: unknown): value is SourceTopology {
 
 const topologies = new Map<string, SourceTopology>();
 
-/**
- * A dataset's topology, simplified to `detail`: the smallest triangle (in steradians) a point must make with its
- * neighbors to stay. Simplifying the topology keeps shared borders identical on both sides.
- */
+/** `detail` is the minimum spherical triangle area in steradians retained by simplification. */
 function readTopology(source: SourceName, detail: number): SourceTopology {
   const key = `${source}@${detail}`;
   const cached = topologies.get(key);
@@ -73,10 +69,7 @@ function isArea(geometry: { type: string } | null): geometry is Polygon | MultiP
   return geometry?.type === "Polygon" || geometry?.type === "MultiPolygon";
 }
 
-/**
- * The polygons in one object of a topology, named by `describe`, which returns null for
- * features the map leaves out.
- */
+/** Return null from `describe` to exclude a feature. */
 export function readAreas({
   describe,
   detail = 0,
@@ -99,7 +92,6 @@ export function readAreas({
   });
 }
 
-/** Every polygon of an object merged into one shape, like all countries into land. */
 export function readMergedLand({
   detail,
   object,
@@ -124,7 +116,6 @@ export function readMergedLand({
   return merge(topology, polygons);
 }
 
-/** The `name` property features carry in world-atlas and us-atlas. */
 export function nameProperty(properties: GeoJsonProperties): string | null {
   const name: unknown = properties?.name;
   return typeof name === "string" ? name : null;

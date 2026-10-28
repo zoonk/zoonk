@@ -14,10 +14,6 @@ import { type LessonTutorConfig } from "./lesson-tutor-context";
 import { TutorQuote } from "./tutor-quote";
 import { useShowsMiss } from "./use-shows-miss";
 
-/**
- * Where the learner is, as the tutor sees it: the lesson once it's done, the answer they just
- * checked while its result shows, or the screen in view. A hook's guess isn't an answer.
- */
 function useTutorContext(): LessonQuestionContext {
   const { screen, state } = useLessonPlayer();
   const { step } = screen;
@@ -37,16 +33,10 @@ function useTutorContext(): LessonQuestionContext {
   }, [answer, showsResult, state.position, step]);
 }
 
-/** A screen that teaches by reading (an explanation, a worked example, a hook's fact). */
 function isTeachingRead(step: PlayableLibraryStep | null): boolean {
   return step !== null && !isLanguageStep(step) && isReadStep(step) && step.kind !== "summary";
 }
 
-/**
- * The buddy about the screen in view, by its place in the lesson, so a question coming back at the
- * end is another visit. The aside offers two questions over its composer after a wrong answer,
- * about it, and on a reading screen the lesson's own (simpler, deeper).
- */
 function LessonBuddy({
   children,
   identity,
@@ -87,7 +77,6 @@ function LessonTutorHost({
   const activeContext = useTutorContext();
   const identity = useTutorIdentity(tutor.buddy);
 
-  // Every screen once, in lesson order: a question coming back at the end is still one screen.
   const lessonStepIds = useMemo(() => Object.keys(state.steps), [state.steps]);
   const target = useMemo(() => ({ kind: "lesson" as const, lessonId: lesson.id }), [lesson.id]);
 
@@ -109,11 +98,6 @@ function LessonTutorHost({
   );
 }
 
-/**
- * The tutor in the step: the conversation about the screen in view or the answer just checked,
- * in a drawer that pauses the lesson's keys, or docked in the lesson's aside from `lg`. Without a
- * tutor from the host, the lesson plays without one.
- */
 export function LessonTutor({
   children,
   tutor,

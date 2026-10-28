@@ -47,10 +47,6 @@ function ChallengeTeamList({
   );
 }
 
-/**
- * The case before it starts: where and when, the question, the mission with its deadline, the
- * numbers to start from and the team, with a word that asking for help is part of it.
- */
 export function ChallengeIntro({
   content,
   names,

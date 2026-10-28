@@ -55,7 +55,6 @@ function ThreadLoadError({
   );
 }
 
-/** The conversation's name for screen readers, by what it's about. */
 function useThreadLabel(contextKind: LessonQuestionController["state"]["context"]["kind"]) {
   const t = useExtracted();
 
@@ -79,10 +78,6 @@ function useThreadLabel(contextKind: LessonQuestionController["state"]["context"
   }
 }
 
-/**
- * The buddy's hello before the first question, saying it's an AI that can be wrong, with questions
- * to send in one tap.
- */
 function EmptyThread({
   context,
   identity,
@@ -91,7 +86,6 @@ function EmptyThread({
 }: {
   context: LessonQuestionController["state"]["context"];
   identity: TutorIdentity;
-  /** None once the learner's help is used up: nothing could be sent. */
   lessonSuggestions: readonly LessonTutorSuggestion[] | null;
   onSelect: (suggestion: OfferedSuggestion) => void;
 }) {
@@ -153,12 +147,6 @@ function GuestThread() {
   );
 }
 
-/**
- * The answers' renderer loads with the first conversation that has any (usually ahead of time, see
- * `preloadTutorMarkdown`). Until it and the answers' math or diagrams are here, the thread keeps
- * its loading look rather than showing raw Markdown. Once shown it never goes back to it: answers
- * that change later (a new one, earlier ones) draw as soon as they can.
- */
 function WaitForFirstShow({
   children,
   questions,
@@ -166,7 +154,6 @@ function WaitForFirstShow({
   children: React.ReactNode;
   questions: LessonQuestionController["state"]["questions"];
 }) {
-  // The questions it opened with; null once they change, which means the thread has shown.
   const [firstQuestions, setFirstQuestions] = useState<typeof questions | null>(questions);
 
   if (firstQuestions && firstQuestions !== questions) {
@@ -176,7 +163,6 @@ function WaitForFirstShow({
   return <OnDemandWaitContext value={firstQuestions === questions}>{children}</OnDemandWaitContext>;
 }
 
-/** The thread's questions and answers, with the way to earlier ones. */
 function ThreadTurns({ identity }: { identity: TutorIdentity }) {
   const { renderPlanChange, renderToolOffer } = useLessonQuestionNavigation();
   const { answerPlanChange, state } = useLessonQuestionController();
@@ -191,7 +177,6 @@ function ThreadTurns({ identity }: { identity: TutorIdentity }) {
     >
       <MessageScrollerContent role="presentation">
         <EarlierTurns />
-        {/* Real message heights keep bottom-following stable as streamed content grows. */}
         {state.questions.map((question) => (
           <MessageScrollerItem
             className="[content-visibility:visible]"
@@ -214,7 +199,6 @@ function ThreadTurns({ identity }: { identity: TutorIdentity }) {
   );
 }
 
-/** The tutor's conversation, by `identity`, the buddy who answers, by face and name. */
 export function QuestionThread({ identity }: { identity: TutorIdentity }) {
   const controller = useLessonQuestionController();
   const { state } = controller;
@@ -239,7 +223,6 @@ export function QuestionThread({ identity }: { identity: TutorIdentity }) {
     );
   }
 
-  // A latest page whose turns wait for the question's check keeps the way to earlier ones.
   if (state.questions.length === 0 && !state.hasMore) {
     return (
       <ThreadViewport>

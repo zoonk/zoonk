@@ -17,18 +17,12 @@ export const COUNTRIES_50M: SourceName = "countries50m";
 export const US_STATES: SourceName = "usStates10m";
 export const SOUTH_AMERICA_50M: SourceName = "southAmerica50m";
 
-/** Land around a regional map, so its corners never show empty sea where land should be. */
 const MARGIN = 20;
 const WORLD_EAST = 180;
 const WORLD_NORTH = 90;
 
-/**
- * How much each source is simplified (see `readAreas`): continents drop more points than a
- * country-sized map, which the learner may zoom into.
- */
 export const DETAIL = { continent: 2e-6, country: 2e-7, region: 4e-7 } as const;
 
-/** The map's first area in core's catalog, which the projection is fitted to. */
 export function areaOf(id: ActivityBaseMapId): GeoRectangle {
   const area = getActivityBaseMap(id)?.areas[0];
 
@@ -57,7 +51,6 @@ export function countries(source: SourceName, detail = 0): SourceArea[] {
   });
 }
 
-/** Whether an area reaches into a rectangle; shapes across the antimeridian always count. */
 export function reaches(area: SourceArea, rectangle: GeoRectangle): boolean {
   const [[west, south], [east, north]] = geoBounds(area.geometry);
   const crossesAntimeridian = west > east;
@@ -69,7 +62,6 @@ export function reaches(area: SourceArea, rectangle: GeoRectangle): boolean {
   );
 }
 
-/** All land around a map's area, as one shape, for maps drawn over the coastline. */
 export function landWithin(area: GeoRectangle) {
   const land = readMergedLand({
     detail: DETAIL.region,

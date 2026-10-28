@@ -8,7 +8,6 @@ import { useActivityDraggable, useActivityDropTarget } from "../_components/acti
 
 export type ArgumentPart = "evidence" | "reasoning";
 
-/** A candidate's text: a quote with its citation, or a line of reasoning. */
 export function ArgumentText({ citation, text }: { citation?: string; text: string }) {
   if (citation === undefined) {
     return (
@@ -28,7 +27,6 @@ export function ArgumentText({ citation, text }: { citation?: string; text: stri
   );
 }
 
-/** Why a pick is strong or weak, shown after the check. */
 export function ArgumentWhy({ text }: { text: string }) {
   return (
     <p className="text-muted-foreground text-sm leading-snug">
@@ -37,10 +35,6 @@ export function ArgumentWhy({ text }: { text: string }) {
   );
 }
 
-/**
- * A candidate to build the argument with. Tapping it puts it in the open part; pointers can drag
- * it there too.
- */
 export function ArgumentCandidate({
   citation,
   disabled,
@@ -84,10 +78,6 @@ export function ArgumentCandidate({
 
 type SlotResult = "strong" | "weak" | null;
 
-/**
- * One part of the argument (evidence or reasoning): empty and waiting, open for the next pick, or
- * filled with a way to take the pick back out. After the check it says whether the pick is strong.
- */
 export function ArgumentSlot({
   children,
   clearLabel,

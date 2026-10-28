@@ -8,18 +8,10 @@ import { PlayerReadScene, PlayerReadSceneStack } from "./player-read-scene";
 type AlphabetContent = ReturnType<typeof getAlphabetContent>;
 type AlphabetForm = AlphabetContent["forms"][number];
 
-/**
- * Parses alphabet content at the component boundary so the renderer can pass a
- * normal serialized step while this component keeps a precise content shape.
- */
 function getAlphabetContent(step: SerializedStep) {
   return parseStepContent("alphabet", step.content);
 }
 
-/**
- * Renders the target symbol large enough for shape recognition, including
- * right-to-left or complex-script glyphs via automatic text direction.
- */
 function AlphabetSymbol({ children }: { children: React.ReactNode }) {
   return (
     <p className="text-[4rem] leading-none font-semibold" dir="auto">
@@ -28,10 +20,6 @@ function AlphabetSymbol({ children }: { children: React.ReactNode }) {
   );
 }
 
-/**
- * Keeps the reading cues grouped under the symbol so learners connect the
- * native shape, Latin reading aid, and pronunciation hint.
- */
 function AlphabetReading({
   pronunciation,
   readingAid,
@@ -47,10 +35,6 @@ function AlphabetReading({
   );
 }
 
-/**
- * Provides shape variants for scripts where the same symbol changes by
- * position or joining context, such as Arabic-family scripts.
- */
 function AlphabetForms({ forms }: { forms: AlphabetForm[] }) {
   if (forms.length === 0) {
     return null;
@@ -70,10 +54,6 @@ function AlphabetForms({ forms }: { forms: AlphabetForm[] }) {
   );
 }
 
-/**
- * Renders the dedicated writing-system card for non-Roman alphabet lessons.
- * The layout emphasizes recognition first, then pronunciation and script forms.
- */
 export function AlphabetStep({ step }: { step: SerializedStep }) {
   const t = useExtracted();
   const content = getAlphabetContent(step);
