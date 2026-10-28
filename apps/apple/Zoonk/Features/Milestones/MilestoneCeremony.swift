@@ -3,7 +3,8 @@ import SwiftUI
 /// A milestone's full-screen moment, shown once over the result that earned it: the buddy on its
 /// stage, a title and one line on what earned it, and one button; new glasses can go on the buddy
 /// right away, or not now. It marks itself as shown when it appears, so it never repeats; the buddy
-/// acts it out once, and only changes its face with Reduce Motion.
+/// acts it out once, and only changes its face with Reduce Motion. On a spread the buddy has the
+/// leading page and the words and buttons the trailing one.
 struct MilestoneCeremony: View {
   @Environment(BuddyStore.self) private var buddyStore
   @Environment(LearnerSummaryStore.self) private var learner
@@ -13,25 +14,54 @@ struct MilestoneCeremony: View {
   let onClose: () -> Void
 
   var body: some View {
-    VStack(spacing: 24) {
-      Spacer()
-
-      MilestoneStage(milestone: milestone, buddy: learner.summary.value?.buddy ?? BuddyLook())
-
-      VStack(spacing: 8) {
-        Text(title)
-          .font(.title.bold())
-          .multilineTextAlignment(.center)
-          .accessibilityAddTraits(.isHeader)
-
-        Text(detail)
-          .font(.body)
-          .foregroundStyle(.secondary)
-          .multilineTextAlignment(.center)
+    PaneSplit {
+      stage
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .scenePadding()
+    } secondary: {
+      VStack(spacing: 24) {
+        Spacer()
+        words
+        Spacer()
+        buttons
       }
+      .scenePadding()
+    } single: {
+      VStack(spacing: 24) {
+        Spacer()
+        stage
+        words
+        Spacer()
+        buttons
+          .keepsOffFold()
+      }
+      .scenePadding()
+    }
+    .task(id: milestone.id) {
+      await sessions.markShown(milestone)
+    }
+  }
 
-      Spacer()
+  private var stage: some View {
+    MilestoneStage(milestone: milestone, buddy: learner.summary.value?.buddy ?? BuddyLook())
+  }
 
+  private var words: some View {
+    VStack(spacing: 8) {
+      Text(title)
+        .font(.title.bold())
+        .multilineTextAlignment(.center)
+        .accessibilityAddTraits(.isHeader)
+
+      Text(detail)
+        .font(.body)
+        .foregroundStyle(.secondary)
+        .multilineTextAlignment(.center)
+    }
+  }
+
+  private var buttons: some View {
+    VStack(spacing: 24) {
       if let glasses = newGlasses, let summary = learner.summary.value {
         Button {
           // The buddy wears them at once; the save finishes after the ceremony closes.
@@ -66,10 +96,6 @@ struct MilestoneCeremony: View {
         .buttonStyle(.mainAction)
         .controlSize(.large)
       }
-    }
-    .scenePadding()
-    .task(id: milestone.id) {
-      await sessions.markShown(milestone)
     }
   }
 
