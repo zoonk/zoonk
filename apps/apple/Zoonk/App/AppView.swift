@@ -4,6 +4,7 @@ struct AppView: View {
   @Environment(\.scenePhase) private var scenePhase
   @Environment(SessionStore.self) private var session
   @Environment(AppStoreSubscriptionStore.self) private var subscriptions
+  @State private var wasInBackground = false
 
   var body: some View {
     AppTabView()
@@ -33,18 +34,23 @@ struct AppView: View {
         }
       }
       .onChange(of: scenePhase) { _, scenePhase in
-        reconcileSessionWhenActive(scenePhase)
+        reconcileSessionOnReturn(scenePhase)
       }
   }
 
-  /// Rechecks iCloud Keychain whenever the app returns to the foreground so a login or logout from another Apple device updates this UI without a process restart.
-  private func reconcileSessionWhenActive(_ scenePhase: ScenePhase) {
-    guard scenePhase == .active else {
-      return
-    }
+  /// Rechecks iCloud Keychain whenever the app returns from the background so a login or logout from another Apple device updates this UI without a process restart. Launch's first activation skips it: `restore()` just read the Keychain.
+  private func reconcileSessionOnReturn(_ scenePhase: ScenePhase) {
+    switch scenePhase {
+    case .background:
+      wasInBackground = true
+    case .active where wasInBackground:
+      wasInBackground = false
 
-    Task {
-      await session.reconcileSynchronizedCredential()
+      Task {
+        await session.reconcileSynchronizedCredential()
+      }
+    default:
+      break
     }
   }
 }
