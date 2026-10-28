@@ -43,6 +43,11 @@ struct PracticeSegmentsBar: View {
   }
 }
 
+enum PracticeLayout {
+  /// The column practice keeps its reading in on a wide screen.
+  static let readableWidth: CGFloat = 680
+}
+
 /// A full-screen practice task: its content scrolls in a readable column, its progress stays at
 /// the top, and its actions stay pinned at the bottom.
 struct PracticeTaskLayout<Content: View, Actions: View>: View {
@@ -57,7 +62,7 @@ struct PracticeTaskLayout<Content: View, Actions: View>: View {
       VStack(alignment: .leading, spacing: 20) {
         content()
       }
-      .frame(maxWidth: 680, alignment: .leading)
+      .frame(maxWidth: PracticeLayout.readableWidth, alignment: .leading)
       .frame(maxWidth: .infinity)
       .scenePadding()
     }
@@ -66,7 +71,7 @@ struct PracticeTaskLayout<Content: View, Actions: View>: View {
     .safeAreaBar(edge: .top) {
       if let segments, !segments.isEmpty {
         PracticeSegmentsBar(segments: segments, index: index)
-          .frame(maxWidth: 680)
+          .frame(maxWidth: PracticeLayout.readableWidth)
           .padding(.horizontal)
           .padding(.vertical, 8)
           .frame(maxWidth: .infinity)
@@ -77,7 +82,7 @@ struct PracticeTaskLayout<Content: View, Actions: View>: View {
         VStack(spacing: 10) {
           actions()
         }
-        .frame(maxWidth: 680)
+        .frame(maxWidth: PracticeLayout.readableWidth)
         .padding(.horizontal)
         .padding(.vertical, 12)
         .frame(maxWidth: .infinity)

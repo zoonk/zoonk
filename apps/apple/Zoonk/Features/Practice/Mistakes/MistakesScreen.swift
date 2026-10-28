@@ -11,6 +11,7 @@ struct MistakesScreen: View {
   @Environment(LearnerSummaryStore.self) private var summary
   @State private var showsFixed = false
   @State private var isLoadingMore = false
+  @State private var width: CGFloat = 0
 
   private var resource: Resource<Components.Schemas.MistakeList> {
     practice.mistakes(goalId: goalId, fixed: showsFixed)
@@ -104,6 +105,13 @@ struct MistakesScreen: View {
       }
     }
     .listStyle(.insetGrouped)
+    // On a wide screen the lists keep the reading column of the practice they open.
+    .safeAreaPadding(.horizontal, max(0, (width - PracticeLayout.readableWidth) / 2))
+    .onGeometryChange(for: CGFloat.self) {
+      $0.size.width
+    } action: {
+      width = $0
+    }
     .navigationTitle(
       Text("Mistakes notebook", tableName: "Practice", comment: "Title of the mistakes notebook.")
     )
