@@ -49,7 +49,6 @@ async function createUser({
   return user;
 }
 
-/** A new guest, as the browser signs one in, with the session cookie it sends back. */
 async function signInGuest() {
   const { headers, response } = await auth.api.signInAnonymous({ returnHeaders: true });
   const session = headers.getSetCookie().find((cookie) => cookie.includes("session_token="));
@@ -67,7 +66,6 @@ describe(deleteInactiveGuests, () => {
 
       const guest = await signInGuest();
 
-      // The guest comes back on days 20 and 38 and only reads its session, as a page does.
       for (const day of [20, 38]) {
         vi.setSystemTime(start + day * MS_PER_DAY);
 
@@ -158,7 +156,6 @@ describe(deleteInactiveGuests, () => {
       { email: null, message: "Loved the map", userId: null },
     ]);
 
-    // A guest who came back keeps their own answers.
     await expect(
       Promise.all([
         prisma.attempt.count({ where: { id: returningAttempt.id } }),
