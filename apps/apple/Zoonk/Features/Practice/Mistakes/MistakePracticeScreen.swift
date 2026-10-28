@@ -176,7 +176,8 @@ struct MistakePracticeScreen: View {
             : LocalizedStringResource(
               "I don't know yet", table: "Practice", comment: "Answers a question as not known yet."
             ),
-          systemImage: "questionmark.circle",
+          // As on main, only "I'm not sure" carries the question mark; "I don't know yet" is words.
+          systemImage: step.entry.drill.kind == .noGuessing ? "questionmark.circle" : nil,
           isDisabled: !state.acceptsAnswer
         ) { Task { await check(.dontKnow, timedOut: false) } }
 
