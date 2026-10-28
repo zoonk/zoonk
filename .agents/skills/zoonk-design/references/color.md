@@ -46,7 +46,7 @@ Everything else is neutral: titles, body and labels, panels and rows, tabs, navi
 
 ## Native apps
 
-Apple and Android take the same meanings and values with native controls. The tint of prominent buttons and toggles is the label color (black in light, white in dark), so Apple's `AccentColor` and Android's Material `primary` are that ink, and Android's dynamic color stays off (it would bring the wallpaper's hue in). Each token becomes a named color with light and dark values plus a high-contrast variant: Apple's asset catalog "High Contrast" appearance (Increase Contrast), and Android's contrast levels (`UiModeManager.getContrast()`, Android 14 and up) choosing the more-contrast values. Picks are ink, progress and the learner's place blue, wrong pink-red, Brain Power violet, kinds their hues on icons.
+Apple and Android take the same meanings, not the web's values: each meaning uses the closest platform color (Apple's system colors, Android's Material color roles), so dark mode and increased contrast come from the OS. The tint of prominent buttons and toggles is the label color (black in light, white in dark), so Apple's accent and Android's Material `primary` are that ink, and Android uses Zoonk's scheme rather than wallpaper dynamic color (it would bring the wallpaper's hue in). A meaning with no platform color gets one custom color with light, dark and high-contrast values. Picks are ink, progress and the learner's place blue, wrong pink-red, Brain Power violet, kinds their hues on icons. The [Apple](../../apple-human-interface-guidelines/SKILL.md) and [Android](../../android-material-guidelines/SKILL.md) skills give the mapping.
 
 ## Sources
 
