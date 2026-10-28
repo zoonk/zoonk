@@ -63,15 +63,17 @@ final class PlanEditor {
     }
 
     switch outcome {
-    case .applied(let change):
+    case .done(.applied(let change)):
       latest = .applied(change, sentence: sentence)
       return true
-    case .invalid:
+    case .done(.invalid):
       latest = .invalid
-    case .unchanged:
+    case .done(.unchanged):
       latest = .unchanged
-    case nil:
+    case .failed:
       failed = true
+    case .obsolete:
+      break
     }
 
     return false
@@ -94,10 +96,10 @@ final class PlanEditor {
       $0
     }
 
-    if undone == true {
-      latest = .undone
-    } else {
-      failed = true
+    switch undone {
+    case .done(true): latest = .undone
+    case .done(false), .failed: failed = true
+    case .obsolete: break
     }
   }
 }

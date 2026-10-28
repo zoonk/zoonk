@@ -62,46 +62,7 @@ struct LanguageUnit: Decodable, Equatable, Sendable {
   let words: Words?
 }
 
-/// What starting a unit's practice call came to.
-enum PracticeCallStart: Equatable, Sendable {
-  case paused
-  case plusRequired
-  case started(conversationId: String)
-  case unavailable
-}
-
-private struct PracticeCallRequest: Encodable {
-  let chapterId: String
-  let goalId: String
-  let kind = "practice"
-  let minutes: Int
-}
-
-private struct PracticeCallCreated: Decodable {
-  let conversationId: String
-}
-
 extension GoalContentAPI {
-  /// Starts the unit's practice call, from the learner's tap; the call screen (lane S8) takes it.
-  func startPracticeCall(token: String, goalId: String, chapterId: String, minutes: Int)
-    async throws -> PracticeCallStart
-  {
-    let body: Components.Schemas.LanguageConversationStartInput = try PracticeJSON.recode(
-      PracticeCallRequest(chapterId: chapterId, goalId: goalId, minutes: minutes))
-
-    return try await clients.perform(token: token) { client in
-      switch try await client.startLanguageConversation(body: .json(body)) {
-      case .created(let response):
-        let created: PracticeCallCreated = try PracticeJSON.recode(try response.body.json)
-        return .started(conversationId: created.conversationId)
-      case .code402: return .plusRequired
-      case .serviceUnavailable: return .paused
-      case .unauthorized: throw APIError.unauthorized
-      default: return .unavailable
-      }
-    }
-  }
-
   func unit(token: String, goalId: String, chapterId: String) async throws -> LanguageUnit {
     try await clients.perform(token: token) { client in
       switch try await client.getLanguageUnit(
@@ -352,10 +313,10 @@ private struct LanguageUnitContent: View {
 /// (longer ones come with Plus). The call itself is the conversation screen's.
 private struct UnitPracticeCallSection: View {
   @Environment(AppRouter.self) private var router
-  @Environment(GoalContentStore.self) private var store
   @Environment(LearnerSummaryStore.self) private var learner
+  @Environment(VoiceServices.self) private var voice
   @State private var minutes: Int?
-  @State private var outcome: PracticeCallStart?
+  @State private var outcome: CallReservation?
   @State private var isStarting = false
 
   let conversation: LanguageUnit.Conversation
@@ -367,7 +328,7 @@ private struct UnitPracticeCallSection: View {
     let picked = minutes ?? conversation.defaultMinutes
 
     Section {
-      if conversation.paused || outcome == .paused {
+      if conversation.paused || outcome == .callsPaused {
         VStack(alignment: .leading, spacing: 2) {
           Text(
             "Calls are paused", tableName: "Plan", comment: "Practice calls are paused for everyone"
@@ -408,7 +369,22 @@ private struct UnitPracticeCallSection: View {
           .disabled(isStarting)
         }
 
-        if outcome == .unavailable {
+        if case .limit(let limit) = outcome {
+          Group {
+            if limit.period == .month {
+              Text(
+                "Not enough call time this month.", tableName: "Plan",
+                comment: "The plan's call time this month is used")
+            } else {
+              Text(
+                "Not enough call time today.", tableName: "Plan",
+                comment: "The plan's call time today is used")
+            }
+          }
+          .foregroundStyle(.destructive)
+        } else if outcome == .failed || outcome == .callInProgress
+          || outcome == .previousConnectionClosing || outcome == .ended
+        {
           Text(
             "The call didn't start. Try again in a moment.", tableName: "Plan",
             comment: "Says the practice call didn't start"
@@ -427,16 +403,35 @@ private struct UnitPracticeCallSection: View {
     }
   }
 
+  /// Writes the call's card and opens it, only from the learner's tap.
   private func start(minutes: Int) async {
+    guard
+      let input: Components.Schemas.LanguageConversationStartInput = try? PracticeJSON.recode(
+        PracticeCallRequest(chapterId: chapterId, goalId: goalId, minutes: minutes))
+    else {
+      return
+    }
+
     isStarting = true
+    outcome = nil
     defer { isStarting = false }
 
-    let result = await store.startPracticeCall(
-      goalId: goalId, chapterId: chapterId, minutes: minutes)
-    outcome = result
-
-    if case .started(let id) = result {
+    switch await voice.startConversation(input) {
+    case .done(.done(let id)):
       router.open(.conversation(conversationId: id))
+    case .done(.refused(let refusal)):
+      outcome = CallReservation(refusal: refusal)
+    case .failed:
+      outcome = .failed
+    case .obsolete:
+      break
     }
   }
+}
+
+private struct PracticeCallRequest: Encodable {
+  let chapterId: String
+  let goalId: String
+  let kind = "practice"
+  let minutes: Int
 }

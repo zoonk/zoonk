@@ -684,13 +684,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Noch %lld Herausforderung"
+                  "value" : "%lld Herausforderung übrig"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Noch %lld Herausforderungen"
+                  "value" : "%lld Herausforderungen übrig"
                 }
               }
             }
@@ -720,13 +720,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Queda %lld desafío"
+                  "value" : "%lld desafío pendiente"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Quedan %lld desafíos"
+                  "value" : "%lld desafíos pendientes"
                 }
               }
             }
@@ -815,7 +815,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Un día por delante"
+                  "value" : "%lld día por delante"
                 }
               },
               "other" : {
@@ -910,7 +910,7 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Un día de retraso"
+                  "value" : "%lld día de retraso"
                 }
               },
               "other" : {
@@ -969,13 +969,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Noch %lld Tag"
+                  "value" : "%lld Tag übrig"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Noch %lld Tage"
+                  "value" : "%lld Tage übrig"
                 }
               }
             }
@@ -1005,13 +1005,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Queda %lld día"
+                  "value" : "%lld día restante"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Quedan %lld días"
+                  "value" : "%lld días restantes"
                 }
               }
             }
@@ -1159,13 +1159,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Lektion von früher ist zuerst dran. Sobald du sie abgeschlossen hast, bist du wieder im Tempo."
+                  "value" : "%lld Lektion von früheren Tagen kommt zuerst. Sobald du sie erledigt hast, bist du wieder im Tempo."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Lektionen von früher sind zuerst dran. Sobald du sie abgeschlossen hast, bist du wieder im Tempo."
+                  "value" : "%lld Lektionen von früheren Tagen kommen zuerst. Sobald du sie erledigt hast, bist du wieder im Tempo."
                 }
               }
             }
@@ -1195,13 +1195,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Primero va %lld lección de días anteriores: cuando la completes, volverás a ir al ritmo previsto."
+                  "value" : "Primero tienes que hacer %lld lección de días anteriores. Cuando la hayas hecho, volverás a ir al ritmo previsto."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Primero van %lld lecciones de días anteriores: cuando las completes, volverás a ir al ritmo previsto."
+                  "value" : "Primero tienes que hacer %lld lecciones de días anteriores. Cuando las hayas hecho, volverás a ir al ritmo previsto."
                 }
               }
             }
@@ -1213,13 +1213,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld leçon des jours précédents passe d’abord : une fois terminée, tu retrouves le bon rythme."
+                  "value" : "%lld leçon des jours précédents est à faire en priorité : une fois terminée, tu auras retrouvé ton rythme."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld leçons des jours précédents passent d’abord : une fois terminées, tu retrouves le bon rythme."
+                  "value" : "%lld leçons des jours précédents sont à faire en priorité : une fois terminées, tu auras retrouvé ton rythme."
                 }
               }
             }
@@ -1231,13 +1231,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld aula de dias anteriores vem primeiro: depois de concluí-la, você volta ao ritmo do plano."
+                  "value" : "%lld aula de dias anteriores vem primeiro. Depois que você fizer essa aula, volta a acompanhar o ritmo do plano."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld aulas de dias anteriores vêm primeiro: depois de concluí-las, você volta ao ritmo do plano."
+                  "value" : "%lld aulas de dias anteriores vêm primeiro. Depois que você fizer essas aulas, volta a acompanhar o ritmo do plano."
                 }
               }
             }
@@ -1254,13 +1254,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Noch %lld Lektion"
+                  "value" : "%lld Lektion übrig"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Noch %lld Lektionen"
+                  "value" : "%lld Lektionen übrig"
                 }
               }
             }
@@ -1290,13 +1290,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Queda %lld lección"
+                  "value" : "%lld lección pendiente"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Quedan %lld lecciones"
+                  "value" : "%lld lecciones pendientes"
                 }
               }
             }
@@ -1444,13 +1444,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Vor deiner Prüfung war noch %lld Lektion offen."
+                  "value" : "%lld Lektion war vor deiner Prüfung noch offen."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Vor deiner Prüfung waren noch %lld Lektionen offen."
+                  "value" : "%lld Lektionen waren vor deiner Prüfung noch offen."
                 }
               }
             }
@@ -1480,13 +1480,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Quedaba %lld lección antes de tu examen."
+                  "value" : "Te quedó %lld lección antes del examen."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Quedaban %lld lecciones antes de tu examen."
+                  "value" : "Te quedaron %lld lecciones antes del examen."
                 }
               }
             }
@@ -1498,13 +1498,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld leçon restait avant ton examen."
+                  "value" : "Il restait %lld leçon avant ton examen."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld leçons restaient avant ton examen."
+                  "value" : "Il restait %lld leçons avant ton examen."
                 }
               }
             }
@@ -1631,7 +1631,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@minutes@ pro Tag für %#@days@, dann bist du wieder im Tempo."
+            "value" : "%#@minutes@ an %#@days@ und du bist wieder im Tempo."
           },
           "substitutions" : {
             "days" : {
@@ -1648,7 +1648,7 @@
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg Tage"
+                      "value" : "%arg Tagen"
                     }
                   }
                 }
@@ -1662,13 +1662,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg Minute mehr"
+                      "value" : "%arg Minute mehr am Tag"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg Minuten mehr"
+                      "value" : "%arg Minuten mehr am Tag"
                     }
                   }
                 }
@@ -1775,7 +1775,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@minutes@ par jour pendant %#@days@ et tu retrouves le bon rythme."
+            "value" : "%#@minutes@ par jour pendant %#@days@ et tu auras retrouvé ton rythme."
           },
           "substitutions" : {
             "days" : {
@@ -1823,7 +1823,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@minutes@ por dia durante %#@days@ e você volta ao ritmo do plano."
+            "value" : "%#@minutes@ por dia durante %#@days@ e você volta a acompanhar o ritmo do plano."
           },
           "substitutions" : {
             "days" : {
@@ -1854,13 +1854,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "mais %arg minuto"
+                      "value" : "%arg minuto a mais"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "mais %arg minutos"
+                      "value" : "%arg minutos a mais"
                     }
                   }
                 }
@@ -2112,7 +2112,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld de %#@phases@ completadas"
+            "value" : "%1$lld de %#@phases@"
           },
           "substitutions" : {
             "phases" : {
@@ -2123,13 +2123,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg fase"
+                      "value" : "%arg fase completada"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg fases"
+                      "value" : "%arg fases completadas"
                     }
                   }
                 }
@@ -2140,7 +2140,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld sur %#@phases@ terminées"
+            "value" : "%1$lld phase%#@phases@ terminée%#@phases@ sur %#@phases@"
           },
           "substitutions" : {
             "phases" : {
@@ -2151,13 +2151,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg phase"
+                      "value" : "%arg"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg phases"
+                      "value" : "%arg"
                     }
                   }
                 }
@@ -2285,7 +2285,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld bonne(s) réponse(s) sur %#@answered@"
+            "value" : "%1$lld bonne%#@answered@ sur %#@answered@"
           },
           "substitutions" : {
             "answered" : {
@@ -2313,7 +2313,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld de %#@answered@ certas"
+            "value" : "%1$lld de %#@answered@ respostas certas"
           },
           "substitutions" : {
             "answered" : {
@@ -2430,7 +2430,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld sur %#@topics@"
+            "value" : "%1$lld sujet%#@topics@ sur %#@topics@"
           },
           "substitutions" : {
             "topics" : {
@@ -2441,13 +2441,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg sujet"
+                      "value" : "%arg"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg sujets"
+                      "value" : "%arg"
                     }
                   }
                 }
@@ -2837,13 +2837,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Noch etwa %lld Tag"
+                  "value" : "~%lld Tag übrig"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Noch etwa %lld Tage"
+                  "value" : "~%lld Tage übrig"
                 }
               }
             }
@@ -2873,13 +2873,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Queda ~%lld día"
+                  "value" : "~%lld día restante"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Quedan ~%lld días"
+                  "value" : "~%lld días restantes"
                 }
               }
             }
@@ -7239,6 +7239,64 @@
         }
       }
     },
+    "Not enough call time this month." : {
+      "comment" : "The plan's call time this month is used",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diesen Monat ist nicht genug Gesprächszeit übrig."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No te queda tiempo de llamada suficiente este mes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu n’as plus assez de temps d’appel pour ce mois-ci."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não há tempo suficiente para conversar neste mês."
+          }
+        }
+      }
+    },
+    "Not enough call time today." : {
+      "comment" : "The plan's call time today is used",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute ist nicht genug Gesprächszeit übrig."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No te queda tiempo de llamada suficiente hoy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu n’as plus assez de temps d’appel pour aujourd’hui."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não há tempo suficiente para conversar hoje."
+          }
+        }
+      }
+    },
     "Not in your plan" : {
       "comment" : "A subject the plan leaves out",
       "localizations" : {
@@ -10827,13 +10885,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Dein Termin ist gekommen, und eine Lektion ist noch offen."
+                  "value" : "Dein Termin ist gekommen, und %lld Lektion war noch offen."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Dein Termin ist gekommen, und %lld Lektionen sind noch offen."
+                  "value" : "Dein Termin ist gekommen, und %lld Lektionen waren noch offen."
                 }
               }
             }
@@ -10863,13 +10921,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Cuando llegó la fecha, te quedaba %lld lección."
+                  "value" : "Ha llegado la fecha que te marcaste y te queda %lld lección."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Cuando llegó la fecha, te quedaban %lld lecciones."
+                  "value" : "Ha llegado la fecha que te marcaste y te quedan %lld lecciones."
                 }
               }
             }
@@ -10881,13 +10939,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Ta date est arrivée avec %lld leçon restante."
+                  "value" : "La date de ton objectif est arrivée avec %lld leçon restante."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Ta date est arrivée avec %lld leçons restantes."
+                  "value" : "La date de ton objectif est arrivée avec %lld leçons restantes."
                 }
               }
             }

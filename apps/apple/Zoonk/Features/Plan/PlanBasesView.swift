@@ -210,8 +210,13 @@ struct PlanBasesView: View {
       false
     }
 
-    guard let answer, answer.ready, let choice = answer.recommended else {
-      advice = answer == nil ? .none : .building
+    guard case .done(let answer) = answer else {
+      advice = .none
+      return
+    }
+
+    guard answer.ready, let choice = answer.recommended else {
+      advice = .building
       return
     }
 
@@ -235,12 +240,15 @@ struct PlanBasesView: View {
 
     let goalId = goal.id
     let edits = [edit(changed)]
-    effect =
-      await store.write { api, token in
-        try await api.preview(token: token, goalId: goalId, edits: edits)
-      } changed: { _ in
-        false
-      } ?? nil
+    let preview = await store.write { api, token in
+      try await api.preview(token: token, goalId: goalId, edits: edits)
+    } changed: { _ in
+      false
+    }
+
+    if case .done(let previewed) = preview {
+      effect = previewed
+    }
   }
 
   private func save(_ changed: [GoalPlan.Bases.Item]) async {

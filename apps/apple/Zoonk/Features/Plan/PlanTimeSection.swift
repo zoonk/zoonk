@@ -220,9 +220,10 @@ struct PlanTimeSection: View {
     }
 
     switch time {
-    case .some(let time) where time.ready: found = .time(time)
-    case .some: found = .building
-    case nil: found = .failed
+    case .done(let time) where time.ready: found = .time(time)
+    case .done: found = .building
+    case .failed: found = .failed
+    case .obsolete: break
     }
   }
 
@@ -244,7 +245,11 @@ struct PlanTimeSection: View {
       false
     }
 
-    fullCourseEffect = FullCourseEffect(effect: effect ?? nil)
+    switch effect {
+    case .done(let effect): fullCourseEffect = FullCourseEffect(effect: effect)
+    case .failed: fullCourseEffect = FullCourseEffect(effect: nil)
+    case .obsolete: break
+    }
   }
 
   /// The times onboarding offers, with the learner's own among them.

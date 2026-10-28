@@ -123,9 +123,10 @@ struct FarTopicSheet: View {
     }
 
     switch answer {
-    case .started: request = .writing
-    case .limit: request = .limit
-    case nil: request = .unreachable
+    case .done(.started): request = .writing
+    case .done(.limit): request = .limit
+    case .failed: request = .unreachable
+    case .obsolete: break
     }
   }
 

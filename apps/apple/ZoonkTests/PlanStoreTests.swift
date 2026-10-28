@@ -129,6 +129,7 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertEqual(editor.latest, .applied(.stub, sentence: "Daily time changed."))
   }
 
+  /// An expired session signs out, and the change belongs to no one on screen: no message.
   func testExpiredSessionSignsOutInsteadOfSaving() async {
     let api = PlanAPIStub()
     let session = SessionStore.preview(account: .planTestAccount)
@@ -138,7 +139,8 @@ final class PlanStoreTests: XCTestCase {
     await api.setChangeError(APIError.unauthorized)
     await editor.change([.dailyMinutes(20)], sentence: "")
 
-    XCTAssertTrue(editor.failed)
+    XCTAssertFalse(editor.failed)
+    XCTAssertNil(editor.latest)
     XCTAssertNil(session.authenticatedSession)
   }
 

@@ -220,10 +220,17 @@ struct PlanMenu: View {
       let outcome = await store.setStatus(status, goalId: context.goal.id)
       isSaving = false
 
-      if outcome != .saved {
-        failure = outcome
-      } else if status == .archived {
-        router.showRoot(of: .today)
+      switch outcome {
+      case .done(.saved):
+        if status == .archived {
+          router.showRoot(of: .today)
+        }
+      case .done(let refused):
+        failure = refused
+      case .failed:
+        failure = .failed
+      case .obsolete:
+        break
       }
     }
   }

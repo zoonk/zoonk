@@ -108,57 +108,51 @@ final class PlanStore {
 
   /// Pauses, resumes or archives the goal. Goals change, so the summary (the switcher, the tabs),
   /// Today and the plan follow.
-  func setStatus(_ status: GoalStatusChange, goalId: String) async -> GoalStatusOutcome {
+  func setStatus(_ status: GoalStatusChange, goalId: String) async
+    -> MutationResult<GoalStatusOutcome>
+  {
     await write { api, token in
       try await api.setStatus(token: token, goalId: goalId, status: status)
     } changed: {
       $0 == .saved
-    } ?? .failed
+    }
   }
 
   /// Starts the next level of the plan's course; the Plan then follows its plan being built.
-  func continueAtNextLevel(goalId: String) async -> Bool {
+  func continueAtNextLevel(goalId: String) async -> MutationResult<Bool> {
     await write { api, token in
       try await api.continueAtNextLevel(token: token, goalId: goalId)
     } changed: {
       $0
-    } ?? false
+    }
   }
 
   /// "I can already read it": the alphabet lesson leaves the sessions.
-  func skipAlphabet(goalId: String) async -> Bool {
+  func skipAlphabet(goalId: String) async -> MutationResult<Bool> {
     await write { api, token in
       try await api.skipAlphabet(token: token, goalId: goalId)
     } changed: {
       $0
-    } ?? false
+    }
   }
 
-  /// Runs one of the Plan's writes for the signed-in learner. When `changed` says it changed the
-  /// plan, everything reading the goal revalidates, as main revalidates its goal tags. Nil when it
-  /// didn't reach the server or the session ended.
+  /// Runs one of the Plan's writes for the session that asked for it (see `AppCache.mutate`).
+  /// When `changed` says it changed the plan, everything reading the goal revalidates, as main
+  /// revalidates its goal tags.
   func write<Result: Sendable>(
     _ request: (any PlanAPIClient, String) async throws -> Result,
     changed: (Result) -> Bool
-  ) async -> Result? {
-    guard let session = cache.session.authenticatedSession else {
-      return nil
+  ) async -> MutationResult<Result> {
+    let api = api
+    let result = await cache.mutate { identity in
+      try await request(api, identity.bearerToken)
     }
 
-    do {
-      let result = try await request(api, session.bearerToken)
-
-      if changed(result) {
-        cache.invalidate([.goals, .learnerModel])
-      }
-
-      return result
-    } catch APIError.unauthorized {
-      await cache.session.expire(session)
-      return nil
-    } catch {
-      return nil
+    if case .done(let value) = result, changed(value) {
+      cache.invalidate([.goals, .learnerModel])
     }
+
+    return result
   }
 
   /// A keyed read of the learner's own data, created on first use and kept for the app's life.

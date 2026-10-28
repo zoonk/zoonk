@@ -135,7 +135,11 @@ struct PlanAlphabetRow: View {
 
   private func skip() async {
     isSkipping = true
-    failed = !(await store.skipAlphabet(goalId: goalId))
+    switch await store.skipAlphabet(goalId: goalId) {
+    case .done(let skipped): failed = !skipped
+    case .failed: failed = true
+    case .obsolete: break
+    }
     isSkipping = false
   }
 }

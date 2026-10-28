@@ -384,7 +384,11 @@ private struct PlanFinishedSlot: View {
 
   private func continueAtNextLevel() async {
     isStarting = true
-    failed = !(await store.continueAtNextLevel(goalId: context.goal.id))
+    switch await store.continueAtNextLevel(goalId: context.goal.id) {
+    case .done(let started): failed = !started
+    case .failed: failed = true
+    case .obsolete: break
+    }
     isStarting = false
   }
 }
