@@ -7,7 +7,6 @@ import { planChangeInputSchema } from "@zoonk/core/plans/contract";
 import { previewPlanChange } from "@zoonk/core/plans/preview";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** What a change would do to the learner's plan, before they make it; nothing is saved. */
 async function createPreview(
   request: NextRequest,
   context: RouteContext<"/v1/goals/[goalId]/plan/change-previews">,

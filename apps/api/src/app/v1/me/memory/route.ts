@@ -6,7 +6,6 @@ import { getCurrentUserMemory } from "@zoonk/core/memory/get";
 import { updateMemorySettings } from "@zoonk/core/memory/settings";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** Everything Zoonk remembers about the learner, with the memory switch. */
 async function getMemory() {
   const memory = await getCurrentUserMemory();
 
@@ -17,7 +16,6 @@ async function getMemory() {
   return NextResponse.json(memory);
 }
 
-/** Turns memory on or off; the facts stay listed either way. */
 async function updateSettings(request: NextRequest) {
   const parsed = await readBody(request, memorySettingsUpdateSchema);
 

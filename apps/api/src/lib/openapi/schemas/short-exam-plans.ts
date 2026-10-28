@@ -4,7 +4,6 @@ import { logicalDateSchema } from "./study-sessions";
 
 const isoDateSchema = z.iso.date();
 
-/** A test at most a week away is planned day by day; these say which day and what it's for. */
 const shortExamFocusSchema = z
   .enum(SHORT_EXAM_FOCUSES)
   .meta({

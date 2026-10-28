@@ -7,12 +7,6 @@ import { getPlayableLibraryLesson } from "@zoonk/core/lesson-player/get";
 import { wordTutorSuggestions } from "@zoonk/player/tutor/suggestion-words";
 import { NextResponse } from "next/server";
 
-/**
- * A Library lesson ready to play, or its outline while its content is written. Its screens need a
- * session (a guest's is enough); without one, a public lesson returns only its outline. A private
- * lesson is readable only by its owner. A lesson ready to play carries the tutor's suggestions for
- * its screens, worded in its language as the question a tap on one is stored with.
- */
 async function getLibraryLessonRoute(
   _request: Request,
   context: RouteContext<"/v1/library/lessons/[lessonId]">,

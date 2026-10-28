@@ -25,7 +25,6 @@ const commonErrors = {
   "404": notFoundResponse,
 };
 
-/** A running mock, section by section: its answers, its breaks and handing each section in. */
 export const mockSittingPaths = {
   "/mocks/{blockId}/answers": {
     put: {

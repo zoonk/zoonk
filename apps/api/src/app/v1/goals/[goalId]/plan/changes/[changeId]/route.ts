@@ -8,11 +8,6 @@ import { planChangeDecisionInputSchema } from "@zoonk/core/plans/contract";
 import { decidePlanChange } from "@zoonk/core/plans/decide-change";
 import { type NextRequest, NextResponse } from "next/server";
 
-/**
- * Accepts or declines a proposed change, undoes an applied one, or marks it seen ("Got it"). A
- * decision that changes the plan starts writing what it has soon, as a session's preparation does:
- * Carla's added case study waited, never outlined, for a lesson she would start.
- */
 async function decideChange(
   request: NextRequest,
   context: RouteContext<"/v1/goals/[goalId]/plan/changes/[changeId]">,

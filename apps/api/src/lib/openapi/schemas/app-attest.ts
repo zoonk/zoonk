@@ -32,10 +32,7 @@ export const appAttestKeyRequestBodySchema = appAttestKeyRequestSchema
   })
   .meta({ id: "AppAttestKeyRequest" });
 
-/**
- * The optional App Attest proof the iOS app sends where a browser would carry BotID's: all three
- * headers, or none.
- */
+/** All three headers, or none. */
 export const appAttestHeaderParamsSchema = z.object({
   [APP_ATTEST_HEADERS.assertion]: appAttestHeadersSchema.shape[APP_ATTEST_HEADERS.assertion]
     .optional()

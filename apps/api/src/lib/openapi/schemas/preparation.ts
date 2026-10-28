@@ -4,7 +4,7 @@ import { z } from "zod";
 
 const shareSchema = z.number().min(0).max(1);
 
-/** The SAT's 1,600 is the top of every scale estimates use (ENEM's runs to about 1,000). */
+/** The SAT's 1,600 tops every scale estimates use. */
 const MAX_ESTIMATE = 1600;
 
 export const estimatedScoreSchema = z

@@ -9,10 +9,6 @@ import { start } from "workflow/api";
 
 const ACCEPTED = 202;
 
-/**
- * An admin's "Rewrite now" on one flag in the review queue: the flagged lesson or law drills are
- * written again from the source as it is now, like the daily sweep does for every open flag.
- */
 async function createReviewFlagRewrite(
   _request: Request,
   context: RouteContext<"/v1/library/review-flags/[flagId]/rewrites">,

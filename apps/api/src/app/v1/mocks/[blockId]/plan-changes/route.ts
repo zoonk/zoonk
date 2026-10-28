@@ -6,7 +6,6 @@ import { adaptPlanFromMock } from "@zoonk/core/exams/mocks/adapt-plan";
 import { mockPlanOfferInputSchema } from "@zoonk/core/exams/mocks/contract";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** The learner's yes to what a finished mock offered: skip what it showed they know, or focus. */
 async function postPlanChange(
   request: NextRequest,
   context: RouteContext<"/v1/mocks/[blockId]/plan-changes">,

@@ -183,7 +183,6 @@ export const examBlueprintResourceSchema = z
   .object({
     board: z.string().nullable(),
     country: z.string(),
-    // The check of the reading is research's own bookkeeping, not part of the exam.
     edition: examEditionSchema.omit({ check: true }).meta({ id: "ExamEdition" }),
     examDate: z.iso.datetime().nullable(),
     id: z.uuid(),

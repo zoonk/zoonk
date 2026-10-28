@@ -11,10 +11,6 @@ const SSE_HEADERS = {
   "Content-Type": "text/event-stream",
 };
 
-/**
- * Validates a generation-events request and streams its durable workflow run
- * without changing the SSE chunks returned by Workflow.
- */
 async function streamGenerationEvents(
   request: Request,
   context: RouteContext<"/v1/generations/[generationId]/events">,
@@ -29,8 +25,7 @@ async function streamGenerationEvents(
     return errors.notFound("Generation not found");
   }
 
-  // A stalled run would hold the stream open forever: it ends at once, and the run's status
-  // (failed, see `readClientRunStatus`) has the client offer to start it again.
+  // A stalled run would hold the stream open forever.
   const stream = stalled
     ? ""
     : getRun(path.generationId).getReadable<string>({ startIndex: query.startIndex });

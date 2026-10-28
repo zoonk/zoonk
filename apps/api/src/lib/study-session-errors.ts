@@ -2,7 +2,6 @@ import { type ExtraStudyBlockResult } from "@zoonk/core/sessions/extra-block";
 import { type StartStudyBlockResult } from "@zoonk/core/sessions/start-block";
 import { createErrorResponse, errors, httpStatus } from "./api-errors";
 
-/** Stable codes clients use to recover from a session request that can't be applied. */
 export const studySessionErrorCodes = {
   alreadyAnswered: "ALREADY_ANSWERED",
   blockFinished: "BLOCK_FINISHED",
@@ -21,7 +20,6 @@ export const studySessionErrorCodes = {
   unanswered: "UNANSWERED_QUESTIONS",
 } as const;
 
-/** Why "10 more minutes" (or a bonus block like it) isn't available. */
 type ExtraTimeReason = Extract<ExtraStudyBlockResult, { status: "unavailable" }>["reason"];
 
 type StudySessionRefusal =
@@ -83,7 +81,6 @@ const REFUSALS = {
   },
 } as const;
 
-/** Maps a study-session capability's refusal to the shared error envelope. */
 export function studySessionError(refusal: StudySessionRefusal) {
   if (refusal.status === "unauthorized") {
     return errors.unauthorized();

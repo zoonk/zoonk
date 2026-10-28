@@ -5,7 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { dismissMistakePattern } from "@zoonk/core/language/patterns/dismiss";
 import { NextResponse } from "next/server";
 
-/** Takes a pattern off Today without practicing it, such as a note that it was only typos. */
 async function dismissPattern(
   _request: Request,
   context: RouteContext<"/v1/mistake-patterns/[patternId]/dismissals">,

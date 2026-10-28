@@ -11,7 +11,6 @@ export const phaseKindSchema = z
       "afterExam: an exam plan that studies everything goes on after the exam with what didn't fit before it",
   });
 
-/** A plan phase with its size and dates, its chapters and the checkpoint that closes it. */
 export const planPhaseSchema = z
   .object({
     chapterCount: z.int().min(0),

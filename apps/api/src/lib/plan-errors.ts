@@ -5,7 +5,6 @@ import { type z } from "zod";
 import { createErrorResponse, httpStatus, slowDownError } from "./api-errors";
 import { signUpRequiredError } from "./lesson-player-errors";
 
-/** Stable codes for the goal and plan endpoints. */
 export const planErrorCodes = {
   goalLimitReached: "GOAL_LIMIT_REACHED",
   goalReferenceNotFound: "GOAL_REFERENCE_NOT_FOUND",
@@ -32,7 +31,6 @@ const OPERATION_MESSAGES = {
   unknownTool: "That tool isn't in this plan",
 } as const;
 
-/** A change the plan can't take, with the reason clients show. */
 export function planChangeInvalid({
   error,
   unfundedMove,
@@ -57,11 +55,6 @@ export function planChangeInvalid({
   });
 }
 
-/**
- * A new target date outside the supported range (see `InputRangeError`): each refused date with
- * its path and nearest accepted bound (`limit`). Existing plan-edit past-date answers remain
- * `PLAN_CHANGE_INVALID`, `pastDate`; a new goal checks both bounds here.
- */
 export function targetDateOutOfRange(error: z.ZodError) {
   const [first] = error.issues;
 
@@ -85,10 +78,6 @@ export function planChangeConflict() {
   });
 }
 
-/**
- * A goal the learner's plan doesn't allow: a limit to show, a moment to wait, or (a guest) a free
- * account to create.
- */
 export function goalRefusedError(decision: GoalRefusal["decision"]) {
   if (decision.status === "signUpRequired") {
     return signUpRequiredError();

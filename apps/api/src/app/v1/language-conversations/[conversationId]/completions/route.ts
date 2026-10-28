@@ -7,12 +7,6 @@ import { completeLanguageConversation } from "@zoonk/core/language/conversations
 import { languageConversationCompletionInputSchema } from "@zoonk/core/language/conversations/contract";
 import { type NextRequest, NextResponse } from "next/server";
 
-/**
- * Ends a call with its transcript and the goals met: a durable run hangs it up, a separate model
- * writes the feedback, the call counts toward today, and a checkpoint call closes the unit when
- * won. It answers with the call and what it did to the day's missions. Repeating it returns the
- * same result.
- */
 async function completeConversation(
   request: NextRequest,
   context: RouteContext<"/v1/language-conversations/[conversationId]/completions">,

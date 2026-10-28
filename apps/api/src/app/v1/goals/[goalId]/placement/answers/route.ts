@@ -7,7 +7,6 @@ import { answerPlacementQuestion } from "@zoonk/core/learner/placement/answer";
 import { placementAnswerInputSchema } from "@zoonk/core/learner/placement/contract";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** Grades one placement answer and returns the updated placement. */
 async function createPlacementAnswer(
   request: NextRequest,
   context: RouteContext<"/v1/goals/[goalId]/placement/answers">,

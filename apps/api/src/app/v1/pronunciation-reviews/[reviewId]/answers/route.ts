@@ -9,7 +9,6 @@ import { answerPronunciationReview } from "@zoonk/core/language/pronunciation/an
 import { pronunciationAnswerFieldsSchema } from "@zoonk/core/language/pronunciation/contract";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** The learner said a review word again: grade the sound and move the word along its ladder. */
 async function createPronunciationAnswer(
   request: NextRequest,
   context: RouteContext<"/v1/pronunciation-reviews/[reviewId]/answers">,

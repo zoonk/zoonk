@@ -11,12 +11,10 @@ import { getCallbackHref } from "../_utils/auth-redirect";
 
 type SetupState = { status: "error" | "idle" | "usernameTaken" };
 
-/** Someone took the username between its availability check and the save. */
 function isUsernameTaken(error: unknown): boolean {
   return getAuthError(error)?.code === "USERNAME_IS_ALREADY_TAKEN";
 }
 
-/** Saves the new account's name and username, then goes on to where the learner was going. */
 export async function setupProfileAction(
   redirectTo: string | null,
   _prevState: SetupState,

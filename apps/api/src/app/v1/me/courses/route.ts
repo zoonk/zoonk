@@ -7,10 +7,6 @@ import { readQueryParams } from "@/lib/request-input";
 import { listCurrentUserCoursesPage } from "@zoonk/core/courses/list-current-user";
 import { NextResponse } from "next/server";
 
-/**
- * Lists the authenticated learner's course library in most-recently-started
- * order without accepting a caller-selected user identity.
- */
 async function listCurrentUserCourses(request: Request) {
   const parsed = readQueryParams(request, currentUserCoursesQuerySchema);
 

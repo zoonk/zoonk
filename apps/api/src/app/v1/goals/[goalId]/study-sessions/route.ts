@@ -8,7 +8,6 @@ import { serializeStudySession } from "@/lib/study-session-serializers";
 import { openStudyDay } from "@zoonk/core/sessions/open";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** Explicitly opens the selected owned day; GET previews never create or refresh it. */
 async function openDay(
   request: NextRequest,
   context: RouteContext<"/v1/goals/[goalId]/study-sessions">,

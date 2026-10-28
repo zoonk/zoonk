@@ -2,11 +2,6 @@ import { z } from "zod";
 
 const isoDateSchema = z.iso.date();
 
-/**
- * What the learner's own time covers by the goal's date, read from their plan: exact. What other
- * daily times or dates would do is found when the learner asks for it
- * (`POST /v1/goals/{goalId}/plan/time-to-cover`).
- */
 export const planFeasibilitySchema = z.object({
   coreFits: z
     .boolean()

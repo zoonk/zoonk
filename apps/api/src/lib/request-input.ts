@@ -2,10 +2,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { z } from "zod";
 import { resolveAudioMediaType } from "./audio-media-type";
 
-/**
- * A request whose path, query or body doesn't match its schema. `withApiErrorBoundary` answers it
- * with `VALIDATION_ERROR`, so a route reads its input in one line and only handles its own cases.
- */
+/** `withApiErrorBoundary` answers it with `VALIDATION_ERROR`. */
 export class InvalidRequestError extends Error {
   readonly zodError: z.ZodError;
 
@@ -16,7 +13,6 @@ export class InvalidRequestError extends Error {
   }
 }
 
-/** A request input refused for a reason no schema states. */
 function refuse(message: string): InvalidRequestError {
   return new InvalidRequestError(new z.ZodError([{ code: "custom", message, path: [] }]));
 }
@@ -48,7 +44,7 @@ async function readJson(request: Request, emptyBody: unknown): Promise<unknown> 
     return request.json();
   }
 
-  /** HTTP adapters can expose a nonnull stream with zero bytes for a bodyless POST. */
+  // HTTP adapters can expose a nonnull stream with zero bytes for a bodyless POST.
   const body = await request.text();
   return body.length === 0 ? emptyBody : JSON.parse(body);
 }
@@ -67,10 +63,6 @@ export async function readBody<T>(
   return parseInput(schema, data);
 }
 
-/**
- * A spoken answer's multipart body: the recording in its `audio` file field, and the other fields
- * as `schema` reads them.
- */
 export async function readAudioForm<T>(
   request: Request,
   schema: z.ZodType<T>,

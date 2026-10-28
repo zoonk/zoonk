@@ -32,11 +32,6 @@ import {
 } from "../schemas/responses";
 import { AUTHENTICATED_SECURITY } from "../security";
 
-/**
- * Every tutor thread has the same two routes: the learner's thread and a new question. Only what
- * the thread is about changes: a lesson, a chapter, a goal's plan or subject, a session's or
- * practice's question, or a finished mock.
- */
 function tutorQuestionPaths<TPath extends z.ZodObject>({
   about,
   context,

@@ -15,7 +15,6 @@ import {
 } from "../schemas/responses";
 import { AUTHENTICATED_SECURITY } from "../security";
 
-/** The Progress and Content tabs, read by the web and native apps. */
 export const learnViewPaths = {
   "/goals/{goalId}/area-practice": {
     post: {

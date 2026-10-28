@@ -7,7 +7,6 @@ import { choosePlanTools } from "@zoonk/core/plans/choose-tools";
 import { planToolChoiceInputSchema } from "@zoonk/core/plans/contract";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** The learner's answer on the "You'll use" card: have it, set it up, or go without. */
 async function createToolChoice(
   request: NextRequest,
   context: RouteContext<"/v1/goals/[goalId]/plan/tool-choices">,

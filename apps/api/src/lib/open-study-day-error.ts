@@ -3,7 +3,6 @@ import { createErrorResponse, httpStatus } from "./api-errors";
 import { studySessionError } from "./study-session-errors";
 import { todayErrorCodes } from "./today-errors";
 
-/** A conflict keeps the original goal and day for one separate-request retry. */
 export function openStudyDayError(result: Exclude<OpenStudyDayResult, { status: "opened" }>) {
   if (result.status === "preparing") {
     return createErrorResponse({

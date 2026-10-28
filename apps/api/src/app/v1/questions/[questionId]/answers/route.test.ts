@@ -29,7 +29,6 @@ vi.mock("@zoonk/core/lesson-questions/offer-tool", () => ({ offerTutorTool: vi.f
 
 vi.mock("@zoonk/core/lesson-questions/look-up", () => ({ lookUpTutorData: vi.fn() }));
 
-/** The source words, filled in: the catalogs' translations aren't what this adapter test checks. */
 vi.mock("next-intl/server", () => ({
   getExtracted:
     async () =>
@@ -37,8 +36,6 @@ vi.mock("next-intl/server", () => ({
       message.replaceAll(/\{(?<name>\w+)\}/gu, (_, name: string) => values[name] ?? ""),
 }));
 
-// Core integration tests own the conditional database writes. This adapter test injects their
-// explicit outcomes so every persistence race is covered without spending credits on a provider.
 vi.mock("@zoonk/core/lesson-questions/answer-lifecycle", () => ({
   claimLessonQuestionAnswer: vi.fn(),
   completeLessonQuestionAnswer: vi.fn(),
@@ -62,7 +59,6 @@ const ANSWER = "A grounded answer";
 const EMPTY_ANSWER_MESSAGE = "AI provider returned an empty lesson question answer";
 const afterTasks: Promise<unknown>[] = [];
 
-/** A provider that streams `text` as one answer and finishes. */
 const providerStreamOf =
   (text: string): MockLanguageModelV4["doStream"] =>
   async () => ({
@@ -91,7 +87,6 @@ const providerStreamOf =
 
 const successfulProviderStream = providerStreamOf(ANSWER);
 
-/** Words with em dashes, cut where a provider may cut them: a dash alone, a dash ending a piece. */
 const emDashProviderStream: MockLanguageModelV4["doStream"] = async () => ({
   stream: simulateReadableStream({
     chunks: [
@@ -113,7 +108,6 @@ const emDashProviderStream: MockLanguageModelV4["doStream"] = async () => ({
   }),
 });
 
-/** The run that answered: a fallback model, as AI Gateway's routing reports it. */
 const PROVENANCE = {
   generatedAt: "2026-09-04T12:00:01.000Z",
   latencyMs: 900,
@@ -137,7 +131,6 @@ function createTestGeneration(
   return { generation, provenance: Promise.resolve(PROVENANCE) };
 }
 
-/** Reads the streamed body until `text` has arrived, and returns what was read. */
 async function readUntil({
   read = "",
   reader,
@@ -160,7 +153,6 @@ async function readUntil({
   return readUntil({ read: read + value, reader, text });
 }
 
-/** What the buddy proposed in the conversation, as core saved it. */
 const PROPOSED_CHANGE: PlanChangeView = {
   behind: null,
   canApply: true,
@@ -196,7 +188,6 @@ type ProviderStreamPart =
     ? Part
     : never;
 
-/** The chapter test the buddy offered, as core saved it with the answer. */
 const OFFERED_TEST = {
   chapterId: "019c9bd7-bf11-73cb-9cc8-fe371298190e",
   chapterTitle: "Citações diretas e autoria",
@@ -205,7 +196,6 @@ const OFFERED_TEST = {
   lessonsLeft: 6,
 };
 
-/** Choosing a mock exam the buddy offered, as core saved it with the answer. */
 const OFFERED_MOCK = {
   access: "open" as const,
   goalId: "019c9bd7-bf11-73cb-9cc8-fe371298190f",
@@ -213,7 +203,6 @@ const OFFERED_MOCK = {
   subjects: ["Matemática"],
 };
 
-/** The buddy offers a mock exam in its first step, as the model would. */
 const MOCK_CALL: ProviderStreamPart = {
   input: JSON.stringify({ area: null, goal: null, tool: "mockExam", topic: null }),
   toolCallId: "call-mock",
@@ -221,14 +210,12 @@ const MOCK_CALL: ProviderStreamPart = {
   type: "tool-call",
 };
 
-/** The second step's words, as the model writes them after its tools. */
 const SECOND_STEP_WORDS: ProviderStreamPart[] = [
   { id: "answer", type: "text-start" as const },
   { delta: "Tap Apply to free your Saturdays.", id: "answer", type: "text-delta" as const },
   { id: "answer", type: "text-end" as const },
 ];
 
-/** The buddy's first step asks for a change and offers a chapter's test, as the model would. */
 const CHANGE_AND_TEST_CALLS: ProviderStreamPart[] = [
   {
     input: JSON.stringify({ request: "No study on Saturdays" }),
@@ -244,11 +231,6 @@ const CHANGE_AND_TEST_CALLS: ProviderStreamPart[] = [
   },
 ];
 
-/**
- * The buddy calls its tools in a first step (a change and a chapter's test unless `calls` says
- * otherwise), then answers in a second, as the model would; `silent`, it writes no words in
- * either step, as Gemini once did.
- */
 function createGoalTutorGeneration({
   calls = CHANGE_AND_TEST_CALLS,
   links,
@@ -259,7 +241,6 @@ function createGoalTutorGeneration({
   silent = false,
 }: Parameters<typeof streamGoalTutorAnswer>[0] & {
   calls?: ProviderStreamPart[];
-  /** The first step's words. */
   intro?: string;
   silent?: boolean;
 }) {
@@ -308,7 +289,6 @@ function createGoalTutorGeneration({
     },
   });
 
-  // The real stream also offers a search; this one calls the card tools and the lookup.
   return { generation, provenance: Promise.resolve(PROVENANCE) } as unknown as ReturnType<
     typeof streamGoalTutorAnswer
   >;
@@ -343,7 +323,6 @@ describe("lesson question answer route", () => {
       status: "ready",
     } as never);
 
-    // The route uses a real AI SDK stream with only the external model boundary replaced.
     vi.mocked(streamLessonQuestionAnswer).mockImplementation(() => createTestGeneration());
 
     vi.mocked(completeLessonQuestionAnswer).mockResolvedValue({ status: "updated" });
@@ -454,7 +433,6 @@ describe("lesson question answer route", () => {
     await vi.waitFor(() => expect(completeLessonQuestionAnswer).toHaveBeenCalledOnce());
     saving.resolve(null);
 
-    // The answer is done once it's saved: `finish` follows the save, while memory still learns.
     await expect(reading).resolves.toContain(`"delta":"${ANSWER}"`);
     expect(order).toStrictEqual(["saved", "finish"]);
 
@@ -645,13 +623,11 @@ describe("lesson question answer route", () => {
     const body = await response.text();
     await Promise.all(afterTasks);
 
-    // A goal's question goes to the buddy, whose model is the one the claim records.
     expect(streamLessonQuestionAnswer).not.toHaveBeenCalled();
     const [claim] = vi.mocked(claimLessonQuestionAnswer).mock.calls[0] ?? [];
     const requested = claim?.requestedModel;
     expect(typeof requested === "function" ? requested("plan") : requested).toBe(GOAL_TUTOR_MODEL);
 
-    // The buddy's calls count toward the learner's and the goal's AI cost.
     expect(streamGoalTutorAnswer).toHaveBeenCalledWith(
       expect.objectContaining({
         analytics: { contentScope: "personal", distinctId: USER_ID, goalId: GOAL_ID },
@@ -664,10 +640,8 @@ describe("lesson question answer route", () => {
       revision: 2,
     });
 
-    // One card per message: the test the model also asked for in the same step isn't offered.
     expect(offerTutorTool).not.toHaveBeenCalled();
 
-    // The buddy reads what the change does as the card says it, from its operations.
     expect(modelRead).toStrictEqual([
       {
         cautions: [],
@@ -679,10 +653,8 @@ describe("lesson question answer route", () => {
       },
     ]);
 
-    // The proposal reaches the client as a data part; the tool calls stay on the server.
     expect(body).toContain('"type":"data-plan-change"');
 
-    // The earlier proposal it replaced says so in the conversation.
     expect(body).toContain(
       `{"data":{"ids":["${REPLACED_CHANGE_ID}"]},"type":"data-plan-changes-replaced"}`,
     );
@@ -700,7 +672,6 @@ describe("lesson question answer route", () => {
     );
   });
 
-  // Marcos asked for a speaking call and for SQL lessons in one message, and the call's card won.
   it("gives the message's card to the plan change when the model offers a feature first", async () => {
     vi.mocked(claimLessonQuestionAnswer).mockResolvedValue({
       claim: {
@@ -835,7 +806,6 @@ describe("lesson question answer route", () => {
     const body = await response.text();
     await Promise.all(afterTasks);
 
-    // The message's one card is the change: the test asked for beside it isn't offered.
     const confirmation =
       "I've put the change to your plan below. Nothing changes until you apply it.";
 
@@ -920,11 +890,8 @@ describe("lesson question answer route", () => {
       topic: null,
     });
 
-    // The buddy reads what the card opens (locked when the plan doesn't include it), or why
-    // there's none, to say it in its words.
     expect(modelRead).toStrictEqual([read]);
 
-    // A mock that can't be built never reaches the conversation as a card; a locked one does.
     expect(body.includes('"type":"data-tool-offer"')).toBe(sent);
     expect(body.includes('"kind":"mockExam"')).toBe(sent);
   });
@@ -951,7 +918,6 @@ describe("lesson question answer route", () => {
 
     const modelRead: unknown[] = [];
 
-    // The model asks for two cards in one step; they run together.
     const startGoalCall: ProviderStreamPart = {
       input: JSON.stringify({
         area: null,
@@ -995,7 +961,6 @@ describe("lesson question answer route", () => {
     expect(body).not.toContain('"kind":"mockExam"');
   });
 
-  // Carla asked the chapter's buddy to fit a portfolio case study in, and it couldn't see her plan.
   it("answers a question from a chapter inside a goal as the buddy, with the plan and the chapter", async () => {
     const chapter = { chapter: { title: "Research methods" }, scope: { kind: "chapter" } };
     const snapshot = { language: "pt", scope: { kind: "plan" }, screen: chapter };

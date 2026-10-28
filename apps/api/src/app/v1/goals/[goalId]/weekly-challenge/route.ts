@@ -7,7 +7,6 @@ import { getWeeklyChallenge } from "@zoonk/core/checkpoints/weekly-challenge";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import { NextResponse } from "next/server";
 
-/** Returns the goal's next weekly checkpoint (the Big Challenge), or null when none is planned. */
 async function getChallenge(
   request: Request,
   context: RouteContext<"/v1/goals/[goalId]/weekly-challenge">,

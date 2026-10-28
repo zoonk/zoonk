@@ -7,7 +7,6 @@ import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import { getStudySession } from "@zoonk/core/sessions/get";
 import { NextResponse } from "next/server";
 
-/** Returns one of the learner's study sessions with its blocks and progress. */
 async function getSessionById(
   request: Request,
   context: RouteContext<"/v1/study-sessions/[sessionId]">,

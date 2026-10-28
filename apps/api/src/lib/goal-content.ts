@@ -15,7 +15,6 @@ type GoalRef = { id: string; kind: GoalKind };
 
 type GoalGeneration = z.infer<typeof goalGenerationSchema>;
 
-/** The run writing what one goal needs: its quick explanation, or its curriculum. */
 async function startGoalRun({
   goal,
   researchId,
@@ -34,13 +33,7 @@ async function startGoalRun({
   return { generationId: run.runId, goalId: goal.id, kind: "curriculum" };
 }
 
-/**
- * Starts what one goal needs written: an explain question's quick explanation (claimed against the
- * learner's allowance when the goal was created), or every other goal's curriculum, waiting for the
- * research run started with it (an exam's blueprint, a learn goal's references). The run carries
- * the client that asked, for analytics. It's saved on the goal before this answers, so the goal's
- * screens, opened right after, follow it at once instead of asking for it until the run saves it.
- */
+/** The run is saved on the goal before this answers, so the goal's screens follow it at once. */
 export async function startGoalGeneration({
   goal,
   researchId = null,
@@ -68,7 +61,6 @@ export async function startGoalGeneration({
 
 type GoalResearch = { goalId: string; researchId: string };
 
-/** Research for each new goal whose kind needs it (see `isResearchedGoalKind`). */
 async function startGoalResearch(goals: readonly GoalRef[]): Promise<GoalResearch[]> {
   const runs = await Promise.allSettled(
     goals
@@ -82,7 +74,6 @@ async function startGoalResearch(goals: readonly GoalRef[]): Promise<GoalResearc
   return runs.flatMap((run) => (run.status === "fulfilled" ? [run.value] : []));
 }
 
-/** The curriculum or explanation of each goal, waiting for the research run started with it. */
 async function startGoalContent({
   goals,
   research,
@@ -102,12 +93,7 @@ async function startGoalContent({
   return started.flatMap((entry) => (entry.status === "fulfilled" ? [entry.value] : []));
 }
 
-/**
- * Starts what goals the learner just got need, the same for every route that creates one (a new
- * goal, an exam move, the next level): research first, then each goal's curriculum or quick
- * explanation, so the skill graph and first lessons are written while onboarding and placement
- * run. A start that fails never undoes the goal; the client can start it again for that goal.
- */
+/** A start that fails never undoes the goal; the client can start it again. */
 export async function startGoalWork(goals: readonly GoalRef[]) {
   const research = await startGoalResearch(goals);
   const generations = await startGoalContent({ goals, research });

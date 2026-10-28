@@ -8,7 +8,6 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const CREATED = 201;
 
-/** "Practice now" on an area: a capped bonus block on that area's skills in today's session. */
 async function createAreaPractice(
   request: NextRequest,
   context: RouteContext<"/v1/goals/[goalId]/area-practice">,

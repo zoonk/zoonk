@@ -3,7 +3,6 @@ import { notLanguageError } from "./language-errors";
 
 type LevelTestRefusal = "invalid" | "notFound" | "notLanguage" | "notReady" | "unauthorized";
 
-/** Maps a level test outcome that isn't ready to the shared error envelope. */
 export function levelTestError(status: LevelTestRefusal) {
   if (status === "unauthorized") {
     return errors.unauthorized();

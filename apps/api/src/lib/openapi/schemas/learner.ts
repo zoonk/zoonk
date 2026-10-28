@@ -137,10 +137,6 @@ const areaStartSchema = z
   })
   .meta({ id: "AreaStart" });
 
-/**
- * A language goal's placement confirms a skill with a typed question, graded by understanding
- * (`confirmsInWriting`); other goals never get one.
- */
 const placementQuestionSchema = z
   .discriminatedUnion("format", [
     ...bankQuestionSchema.options,

@@ -7,10 +7,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getLoginHref } from "../_utils/auth-redirect";
 
-/**
- * Lets keyboard users leave the OTP step without hunting for the secondary
- * action (Escape), while preserving the real anchor for normal click navigation.
- */
 export function ChangeEmailLink({
   children,
   redirectTo,

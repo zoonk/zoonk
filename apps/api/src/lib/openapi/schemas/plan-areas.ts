@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-/** One of the plan's areas and how the learner shaped it, by the plan changes that do it. */
 export const planAreaSchema = z.object({
   focusPart: z
     .string()

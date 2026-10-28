@@ -6,7 +6,6 @@ import { toExamBlueprintResource } from "@/lib/source-resources";
 import { getExamBlueprint } from "@zoonk/core/library/exams/get";
 import { NextResponse } from "next/server";
 
-/** An exam's canonical blueprint for the exam map, plans and mocks. */
 async function getExamBlueprintResource(
   _request: Request,
   context: RouteContext<"/v1/exam-blueprints/[blueprintId]">,

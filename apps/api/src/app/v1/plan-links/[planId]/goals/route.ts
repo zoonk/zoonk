@@ -12,7 +12,6 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const CREATED = 201;
 
-/** A run that couldn't start is logged; the client can start it again for that goal. */
 async function startLinkedGoalGeneration(goal: Parameters<typeof startGoalGeneration>[0]["goal"]) {
   const { error } = await safeAsync(() => startGoalGeneration({ goal }));
 
@@ -21,12 +20,6 @@ async function startLinkedGoalGeneration(goal: Parameters<typeof startGoalGenera
   }
 }
 
-/**
- * Starts the viewer's own goal from a plan link: the same subject and plan structure at their own
- * time, and its run writing ahead what the plan needs (placement's questions, the first lessons).
- * A run that couldn't start never undoes the goal: POST /goals/{goalId}/generations starts it.
- * The owner gets their existing goal back.
- */
 async function startFromLink(
   request: NextRequest,
   context: RouteContext<"/v1/plan-links/[planId]/goals">,

@@ -47,7 +47,6 @@ const RESPONSE_HEADERS = {
 
 type AnswerTarget = { questionId: string; revision: number; shareAnswer: boolean };
 
-/** Rejects the response body when the claimed revision did not accept the generated answer. */
 async function persistLessonQuestionAnswer({
   completion,
   target,
@@ -62,14 +61,8 @@ async function persistLessonQuestionAnswer({
   }
 }
 
-/** What the answer says when the buddy only acted and wrote nothing; null otherwise. */
 type Confirm = () => string | null;
 
-/**
- * The answer with the run that wrote it: the model that actually answered and its prompt. An
- * answer whose model only acted (a card, a button) and wrote nothing says so (`confirmation`). A
- * buddy answer, confirmation included, keeps only the links it was given (`keepLinks`).
- */
 async function getLessonQuestionAnswerCompletion({
   answer,
   confirm,
@@ -109,11 +102,6 @@ async function getLessonQuestionAnswerCompletion({
   };
 }
 
-/**
- * Saves the answer and returns it as saved (without the em dashes the app never shows, as
- * `completeLessonQuestionAnswer` saves it) with the confirmation it wrote for a model that only
- * acted, if any.
- */
 async function finishLessonQuestionAnswer({
   confirm,
   run,
@@ -143,10 +131,6 @@ async function finishLessonQuestionAnswer({
   }
 }
 
-/**
- * Someone already asked this on the same screen: the saved answer goes out through the same UI
- * message stream a generated one does, so clients read both the same way.
- */
 function streamSharedAnswer(answer: string) {
   return createUIMessageStream({
     execute: ({ writer }) => {
@@ -157,10 +141,7 @@ function streamSharedAnswer(answer: string) {
   });
 }
 
-/**
- * What a personal exchange taught the learner's memory, learned once the answer is saved. The
- * answer is already done then, so a failure here is logged and changes nothing.
- */
+/** The answer is already saved by then, so a failure here is logged and changes nothing. */
 async function learnFromAnswer(target: AnswerTarget): Promise<MemoryChange[]> {
   if (target.shareAnswer) {
     return [];
@@ -178,7 +159,6 @@ async function learnFromAnswer(target: AnswerTarget): Promise<MemoryChange[]> {
   return data;
 }
 
-/** The confirmation of an answer that only acted, sent as its words. */
 function enqueueConfirmation({
   confirmation,
   controller,
@@ -192,13 +172,9 @@ function enqueueConfirmation({
 }
 
 /**
- * The answer streams as it's written. Its `finish` is held back until the answer is saved, so it
- * tells the client the answer is done: the learner can ask again while memory learns from the
- * exchange, whose changes follow as one data part for "Memory updated" with undo. A failed save
- * errors the stream before `finish`, so the client offers a retry. An answer whose model only
- * acted gets its confirmation as its words before `finish`. The answer then comes once more as it
- * was saved, its links checked (`keepLinks`), which the client shows in place of what streamed:
- * only that text links the app.
+ * `finish` is held back until the answer is saved, so it tells the client the answer is done, and
+ * a failed save errors the stream before it. The saved answer then replaces what streamed: only its
+ * checked links link the app.
  */
 function streamGeneratedAnswer({
   confirm,
@@ -242,10 +218,7 @@ function streamGeneratedAnswer({
   );
 }
 
-/**
- * Claims one durable turn before opening the response stream. The revision in the claim prevents
- * a late callback from overwriting a later explicit retry.
- */
+/** The revision in the claim keeps a late callback from overwriting a later explicit retry. */
 async function createLessonQuestionAnswer(
   _request: Request,
   context: RouteContext<"/v1/questions/[questionId]/answers">,

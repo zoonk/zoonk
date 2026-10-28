@@ -11,7 +11,6 @@ import {
 import { type NextRequest } from "next/server";
 import { createLearningProfileResponse } from "./_utils/learning-profile-response";
 
-/** Buddy, settings and active goal of the learner or guest in the session. */
 async function getProfile() {
   const profile = await getLearningProfile();
 
@@ -44,7 +43,6 @@ function getUpdateErrorResponse(
   });
 }
 
-/** Saves what a screen changed. */
 async function updateProfile(request: NextRequest) {
   const parsed = await readBody(request, learningProfileUpdateSchema);
 

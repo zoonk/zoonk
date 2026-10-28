@@ -7,7 +7,6 @@ import { moveWeeklyChallenge } from "@zoonk/core/checkpoints/move";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** "Move to Monday": the week's Big Challenge moves to the next Monday, with an undo. */
 async function moveChallenge(
   request: NextRequest,
   context: RouteContext<"/v1/checkpoints/[blockId]/moves">,

@@ -9,7 +9,6 @@ import { type NextRequest, NextResponse } from "next/server";
 
 type Context = RouteContext<"/v1/goal-understandings/[understandingId]">;
 
-/** A typed goal as it stands: being read (with its run), understood with the learner's fixes, or failed. */
 async function getGoalUnderstanding(_request: NextRequest, context: Context) {
   const path = await readPathParams(context, goalUnderstandingPathParamsSchema);
 
@@ -22,7 +21,6 @@ async function getGoalUnderstanding(_request: NextRequest, context: Context) {
   return NextResponse.json(result.draft);
 }
 
-/** One fix on the "Here's what I understood" card; the fields that depend on it follow. */
 async function reviseGoalUnderstanding(request: NextRequest, context: Context) {
   const [path, body] = await Promise.all([
     readPathParams(context, goalUnderstandingPathParamsSchema),

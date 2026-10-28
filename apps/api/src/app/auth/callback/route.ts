@@ -7,11 +7,6 @@ import { type NextRequest } from "next/server";
 import { getLoginHref, getSetupHref, readRedirectTo } from "../_utils/auth-redirect";
 import { createOneTimeTokenUrl, isTrustedRedirect } from "./handoff";
 
-/**
- * A sign-in that started on the API itself (no app asked for it) ends in the main app. Its login
- * hands the session over the usual way: it comes back here with its own address, and this session
- * goes straight through.
- */
 const MAIN_APP_LOGIN_URL = new URL("/login", MAIN_URL).toString();
 
 const UNTRUSTED_ORIGIN_PATH = "/auth/untrusted-origin";
@@ -24,13 +19,8 @@ function redirectTo(location: string): Response {
 }
 
 /**
- * Where a finished sign-in goes, answered as redirects before anything renders, so the screen the
- * learner pressed Continue on stays until the app it goes back to opens: the profile setup for an
- * account without a name or username, otherwise the app that asked (`redirectTo`) with a one-time
- * token for this session. Opened by the router (the setup's redirect), it runs as a document load
- * instead. A GET writes nothing of the account's: Google and Apple accounts get their username as
- * they're created, the setup saves the rest, and "Sign Up Completed" goes out when the account is
- * created, so opening this again only hands the session over again.
+ * Answers with redirects before anything renders, so the screen the learner pressed Continue on
+ * stays until the app it goes back to opens.
  */
 export async function GET(request: NextRequest) {
   const routerFallback = getRouterPayloadFallback(request);

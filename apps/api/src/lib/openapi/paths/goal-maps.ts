@@ -21,7 +21,6 @@ const readErrors = {
   "404": notFoundResponse,
 };
 
-/** The map of the field, the syllabus, each chapter's page, refresh mode and what to study next. */
 export const goalMapPaths = {
   "/goals/{goalId}/chapters/{chapterId}": {
     get: {

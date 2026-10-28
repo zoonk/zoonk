@@ -5,7 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { endMockBreak } from "@zoonk/core/exams/mocks/end-break";
 import { type NextRequest } from "next/server";
 
-/** Ends the break between two sections now: the next section's clock starts. */
 async function postBreakEnd(
   _request: NextRequest,
   context: RouteContext<"/v1/mocks/[blockId]/break-ends">,

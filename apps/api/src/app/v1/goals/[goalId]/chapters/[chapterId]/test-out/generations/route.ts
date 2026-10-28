@@ -10,11 +10,6 @@ import { start } from "workflow/api";
 
 const ACCEPTED = 202;
 
-/**
- * Gets a chapter's test-out ready when the learner asks for it: `ready` when it has a question for
- * every skill it samples, otherwise a run writes the missing ones (a second request joins it).
- * Each start counts as small AI help. Past a free exam plan's first week it comes with Plus (402).
- */
 async function createTestOutGeneration(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/chapters/[chapterId]/test-out/generations">,

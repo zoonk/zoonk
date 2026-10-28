@@ -10,10 +10,6 @@ import { type NextRequest, NextResponse } from "next/server";
 const CREATED = 201;
 const ACCEPTED = 202;
 
-/**
- * Saves a goal the learner typed as a draft and starts reading it, for the "Here's what I
- * understood" card: at once when the same words were understood today, otherwise in a run.
- */
 async function createGoalUnderstanding(request: NextRequest) {
   const parsed = await readBody(request, goalUnderstandingInputSchema);
 

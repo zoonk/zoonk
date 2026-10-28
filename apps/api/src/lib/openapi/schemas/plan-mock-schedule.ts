@@ -3,7 +3,6 @@ import { z } from "zod";
 const SUNDAY = 0;
 const SATURDAY = 6;
 
-/** When an exam plan's mock exams still to take fall (`PlanView["schedule"]["mocks"]`). */
 export const planMockScheduleSchema = z
   .object({
     count: z.int().min(1).meta({ description: "Mock exams still to take" }),

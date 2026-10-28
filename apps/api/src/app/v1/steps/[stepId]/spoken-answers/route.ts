@@ -13,10 +13,6 @@ import {
 } from "@zoonk/core/library/language/spoken-answer-contract";
 import { type NextRequest, NextResponse } from "next/server";
 
-/**
- * The learner said a "say it out loud" screen's sentence: grade what we heard
- * word by word, explain what didn't match and record the answer.
- */
 async function createSpokenAnswer(
   request: NextRequest,
   context: RouteContext<"/v1/steps/[stepId]/spoken-answers">,

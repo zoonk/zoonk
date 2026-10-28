@@ -2,13 +2,8 @@ import { type TutorToolOffer } from "@zoonk/core/lesson-questions/contract";
 import { getExtracted } from "next-intl/server";
 import { type AnswerRun } from "./tutor-answers";
 
-/** The words of one line after another's: a paragraph break, as the saved answer joins steps. */
 const LINE_BREAK = "\n\n";
 
-/**
- * The words a buddy answer says when the model only acted, read in the conversation's language
- * while the request starts, before its stream.
- */
 export async function loadConfirmationWords(language: string) {
   const t = await getExtracted({ locale: language });
 
@@ -59,11 +54,7 @@ function describeOffer({ offer, words }: { offer: TutorToolOffer; words: Confirm
   }
 }
 
-/**
- * What the answer says when the buddy only acted, a card or a button under its answer, and wrote
- * nothing (the model can end on its tools without words): the answer is done and saved, never an
- * error. Null when it did nothing either.
- */
+/** The model can end on its tools without words; that answer is done, never an error. */
 export function confirmToolsOnly({
   run,
   words,

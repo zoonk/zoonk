@@ -94,7 +94,6 @@ export const mistakeListResponseSchema = z
   })
   .meta({ id: "MistakeList" });
 
-/** How a mistake's drill plays, by its cause: in "Practice mistakes" and in today's practice. */
 export const mistakeDrillSchema = z
   .object({
     kind: z
@@ -125,7 +124,6 @@ export const mistakeDrillSchema = z
   })
   .meta({ id: "MistakeDrill" });
 
-/** A drill's question, with the passage, case, chart or recording it was asked with. */
 const mistakeQuestionSchema = bankQuestionWith({
   set: itemSetSchema
     .nullable()

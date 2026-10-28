@@ -6,7 +6,6 @@ import { mockPlayInputSchema } from "@zoonk/core/exams/mocks/answer-contract";
 import { recordMockPlay } from "@zoonk/core/exams/mocks/record-play";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** Counts a play of a recording in the running listening section, as it starts. */
 async function postPlay(request: NextRequest, context: RouteContext<"/v1/mocks/[blockId]/plays">) {
   const path = await readPathParams(context, mockPathParamsSchema);
 

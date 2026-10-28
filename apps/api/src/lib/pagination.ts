@@ -23,11 +23,6 @@ export type PaginatedResponse<T> = {
   pagination: { nextCursor: string | null; hasMore: boolean };
 };
 
-/**
- * Converts a core-owned page outcome into the API cursor envelope. Core
- * decides whether more domain results exist; this adapter only keeps the
- * transport cursor aligned with the number of serialized items.
- */
 export function createPaginatedResponse<T>({
   hasMore,
   items,

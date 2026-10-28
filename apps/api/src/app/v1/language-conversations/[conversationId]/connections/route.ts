@@ -9,7 +9,6 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const CREATED = 201;
 
-/** Reserves the call and persists a durable deadline receipt before any SDP can be redeemed. */
 async function connectConversation(
   request: NextRequest,
   context: RouteContext<"/v1/language-conversations/[conversationId]/connections">,

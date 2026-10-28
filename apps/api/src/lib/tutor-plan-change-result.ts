@@ -26,7 +26,6 @@ function list(items: readonly string[]): string {
   return items.join(", ");
 }
 
-/** A focus names the part of an area the learner asked for, when they named one. */
 function namePart({
   area,
   operation,
@@ -43,7 +42,6 @@ function hasAreas(operation: PlanOperation): operation is AreaOperation {
   return "areas" in operation;
 }
 
-/** A change to some of the plan's areas, naming the part of one the learner named. */
 function describeAreaOperation(operation: AreaOperation): string {
   switch (operation.kind) {
     case "focusAreas":
@@ -77,7 +75,6 @@ function isChoiceOperation(operation: PlanOperation): operation is ChoiceOperati
   return operation.kind === "setBaseChoices" || operation.kind === "setFullCourse";
 }
 
-/** Studying everything after the exam, or another way to study some prerequisites. */
 function describeChoice(operation: ChoiceOperation): string {
   if (operation.kind === "setBaseChoices") {
     return "some prerequisites are studied another way";
@@ -88,7 +85,6 @@ function describeChoice(operation: ChoiceOperation): string {
     : "the plan ends at the exam";
 }
 
-/** What core proposes from the exam's notice: its subjects, its exam day and the phase dates. */
 type NoticeOperation = Extract<
   PlanOperation,
   { kind: "fitPhaseDates" | "followNotice" | "setNoticeDate" }
@@ -115,7 +111,6 @@ function describeNoticeOperation(operation: NoticeOperation): string {
   }
 }
 
-/** One operation in a few plain words, as the card says it to the learner in their language. */
 function describeOperation(operation: PlanOperation): string {
   if (hasAreas(operation)) {
     return describeAreaOperation(operation);
@@ -165,11 +160,7 @@ function describeOperation(operation: PlanOperation): string {
   }
 }
 
-/**
- * What the change does, from its operations and where it moves the week's mocks or challenges:
- * the same facts the card says, so the answer never claims more than the change (the plan-edit
- * model's summary of the learner's words can).
- */
+/** The card's own facts, so the answer never claims more than the change. */
 function describeChange(change: PlanChangeView): string {
   const moved = change.effect?.weeklyEvents;
 
@@ -182,11 +173,7 @@ function describeChange(change: PlanChangeView): string {
     .join("; ");
 }
 
-/**
- * The effect as the model reads it, each area's first lesson named for which plan it's in, so
- * the answer gives the date the card gives. An end the change doesn't move isn't said: Carla read
- * "the plan would still end on April 7" about her goal of April 8, which the card never mentions.
- */
+/** An end the change doesn't move isn't said: the card never mentions it. */
 function toModelEffect(effect: PlanChangeView["effect"]): GoalTutorPlanChangeEffect {
   if (!effect) {
     return null;
@@ -217,7 +204,6 @@ function toModelEffect(effect: PlanChangeView["effect"]): GoalTutorPlanChangeEff
   };
 }
 
-/** What the buddy reads back after asking for a plan change; the learner sees the card instead. */
 export function toPlanChangeModelResult(
   result: Awaited<ReturnType<typeof proposeTutorPlanChange>>,
 ): GoalTutorPlanChangeResult {

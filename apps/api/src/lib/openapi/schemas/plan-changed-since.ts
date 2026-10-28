@@ -1,7 +1,6 @@
 import { planWatchSchema } from "@zoonk/core/plans/changed-since-contract";
 import { z } from "zod";
 
-/** The read a screen waiting on lessons asks about: when it read, and what it watches. */
 export const planChangedSinceQuerySchema = z
   .object({
     since: z.iso

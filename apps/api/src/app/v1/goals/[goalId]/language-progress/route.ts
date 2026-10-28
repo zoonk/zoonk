@@ -5,7 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { getLanguageProgressView } from "@zoonk/core/view-models/language/progress";
 import { NextResponse } from "next/server";
 
-/** Returns a language goal's Progress: levels by skill since the level test, "I can" checks and the last four weeks. */
 async function getLanguageView(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/language-progress">,

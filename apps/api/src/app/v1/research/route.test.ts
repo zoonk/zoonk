@@ -6,8 +6,6 @@ import { getRun, start } from "workflow/api";
 import { mockLastRunEvent } from "../../../../mocks/workflow-runtime";
 import { POST as createResearch } from "./route";
 
-// Core's integration tests cover who may research which goal and when an upload answers an ask;
-// this adapter test covers when a request starts a run and when it follows the goal's last one.
 vi.mock("@zoonk/core/library/sources/upload-request", () => ({ answerGoalUploadRequest: vi.fn() }));
 
 vi.mock("@/workflows/v2/research/research-workflow", () => ({ researchWorkflow: vi.fn() }));
@@ -85,7 +83,6 @@ describe("POST /v1/research", () => {
     goalWithRun("wrun_first");
     lastRun({ status: "running" });
 
-    // It started a step an hour ago and never recorded anything since.
     mockLastRunEvent("wrun_first", {
       createdAt: new Date(Date.now() - 60 * 60 * 1000),
       eventType: "step_started",

@@ -41,12 +41,6 @@ import { type LanguageModelUsage, type UIMessageChunk, toUIMessageStream } from 
 import { toAppToolResult } from "./tutor-app-tool-result";
 import { toPlanChangeModelResult } from "./tutor-plan-change-result";
 
-/**
- * The tutor's answers as the answers route streams them: a lesson's, chapter's or mock's from the
- * lesson tutor, and a goal's from the buddy, which may propose a plan change while it answers.
- */
-
-/** The words of one step after another's: a paragraph break, as the saved answer joins them. */
 const STEP_BREAK = "\n\n";
 
 export type ClaimedAnswer = Extract<
@@ -54,10 +48,6 @@ export type ClaimedAnswer = Extract<
   { status: "ready" }
 >["claim"];
 
-/**
- * What every tutor task streams, read by shape: a lesson's answer is one step; the buddy's may
- * propose a plan change in a first step and answer in a second.
- */
 export type AnswerGeneration = {
   generation: {
     finalStep: PromiseLike<{ finishReason: string; text: string }>;
@@ -72,34 +62,18 @@ export type AnswerGeneration = {
   >;
 };
 
-/**
- * A tutor answer on its way: its UI message chunks, and what its tools did, in order: the plan
- * changes it proposed and the app tools it offered.
- */
 export type AnswerRun = {
   answer: AnswerGeneration;
   chunks: ReadableStream<UIMessageChunk>;
-  /**
-   * What the answer keeps of its links when it's saved: a buddy answer only the ones it was given
-   * (`createAnswerLinks`); the lesson tutor's, which is given none of the app's, only web
-   * addresses (`keepWebLinks`), so no answer saves an app link nobody checked.
-   */
+  /** No answer saves an app link nobody checked. */
   keepLinks: (markdown: string) => string;
   offers: TutorToolOffer[];
-  /** Each plan change proposed, with the earlier proposals it replaced. */
   proposals: { change: PlanChangeView; replaced: string[] }[];
 };
 
-/** The tools whose output reaches the client as a data part, by the name the model calls them. */
 const PROPOSE_PLAN_CHANGE_TOOL = "proposePlanChange";
 const OFFER_APP_TOOL = "offerAppTool";
 
-/**
- * The buddy's answer in a goal's conversation. A plan change it asks for is saved as a proposal
- * tied to this answer, and an app tool it offers is saved with the answer; the stream sends each
- * as soon as it's ready. The buddy's tools keep one card per message (`createCardTools`). What it
- * looks up reaches the model only: its tool chunks never reach the client (`toClientChunks`).
- */
 function startGoalTutorAnswer({
   claim,
   contextSnapshot,
@@ -198,7 +172,6 @@ function startGoalTutorAnswer({
 
 const WEB_ADDRESS = /^https?:\/\//iu;
 
-/** The lesson tutor's answer as saved: its web links stay (the app asks before opening them). */
 function keepWebLinks(markdown: string): string {
   return keepAllowedMarkdownLinks({ isAllowed: (href) => WEB_ADDRESS.test(href), markdown })
     .markdown;
@@ -232,22 +205,13 @@ function isGoalSnapshot(snapshot: LessonQuestionContextSnapshot): snapshot is Pl
   return snapshot.scope.kind === "plan";
 }
 
-/**
- * A screen the lesson tutor can answer alone: a subject or a session's question is only asked
- * about with its goal's plan.
- */
 function isStandaloneScreen(
   screen: TutorScreenContext | undefined,
 ): screen is Exclude<TutorScreenContext, ItemScopeContext | SubjectScopeContext> {
   return screen !== undefined && screen.scope.kind !== "item" && screen.scope.kind !== "subject";
 }
 
-/**
- * A question inside one of the learner's goals goes to the buddy, the goal's tutor, with the plan
- * and the screen it was asked from. An answer written once for everyone who asks the same thing on
- * a lesson screen goes to the lesson tutor with the screen alone, never the learner's plan, and so
- * does a question from a learner without a goal.
- */
+/** An answer shared by everyone who asks the same thing on a screen never sees the learner's plan. */
 export function startTutorAnswer(claim: ClaimedAnswer): AnswerRun {
   const { contextSnapshot } = claim;
 
@@ -268,13 +232,8 @@ export function getTutorModel(contextKind: string): string {
   return contextKind === "plan" ? GOAL_TUTOR_MODEL : LESSON_QUESTION_MODEL;
 }
 
-/** How many of the run's proposals and offers already reached the client. */
 type SentParts = { offers: number; proposals: number };
 
-/**
- * The data parts a tool's output becomes on the client: a plan change (then the earlier proposals
- * it replaced, if any) or an app tool.
- */
 function toToolParts({
   run,
   sent,
@@ -313,16 +272,13 @@ function toToolParts({
   return [];
 }
 
-/** The conversation's language: a goal's plan names it; a lesson's answers need no words of ours. */
 export function getAnswerLanguage(snapshot: LessonQuestionContextSnapshot): string | null {
   return isGoalSnapshot(snapshot) ? snapshot.language : null;
 }
 
 /**
- * Tool calls stay on the server: a proposed plan change and an offered app tool reach the client
- * as one data part each (a search's results don't), and the words of each step read as one
- * answer, a paragraph apart, without the em dashes the app never shows (`createEmDashReplacer`
- * holds back a dash until the words after it arrive).
+ * Tool calls stay on the server: only a proposed plan change or an offered app tool reaches the
+ * client, as one data part each.
  */
 export function toClientChunks(run: AnswerRun) {
   const text = { pendingBreak: false, written: false };

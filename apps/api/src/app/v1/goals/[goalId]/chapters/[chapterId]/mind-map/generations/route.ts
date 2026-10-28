@@ -10,7 +10,6 @@ import { start } from "workflow/api";
 
 const ACCEPTED = 202;
 
-/** A run is making the map: 202 with its id, and its status URL once it has one. */
 function generating(generationId: string | null) {
   return NextResponse.json(
     { generationId, status: "generating" },
@@ -23,11 +22,6 @@ function generating(generationId: string | null) {
   );
 }
 
-/**
- * Makes a chapter's mind map when the learner asks for it: `ready` when it exists, otherwise a run
- * writes and draws it (a second request, from any learner of the chapter, joins it). A new map
- * counts toward the learner's mind map limits.
- */
 async function createMindMapGeneration(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/chapters/[chapterId]/mind-map/generations">,

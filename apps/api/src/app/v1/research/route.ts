@@ -8,10 +8,6 @@ import { answerGoalUploadRequest } from "@zoonk/core/library/sources/upload-requ
 import { type NextRequest, NextResponse } from "next/server";
 import { start } from "workflow/api";
 
-/**
- * A run that ended badly (a stalled one reads as failed) can be started again; any other is
- * followed instead of paid for twice. The new run stops a stalled one before it starts.
- */
 const RESTARTABLE_STATUSES = new Set(["cancelled", "failed"]);
 
 function researchResponse({ runId, status }: { runId: string; status: string }) {
@@ -21,7 +17,6 @@ function researchResponse({ runId, status }: { runId: string; status: string }) 
   );
 }
 
-/** The goal's last research run, unless it ended badly, stalled or no longer exists. */
 async function findFollowableRun(runId: string | null) {
   if (!runId) {
     return null;
@@ -31,15 +26,6 @@ async function findFollowableRun(runId: string | null) {
   return !status || RESTARTABLE_STATUSES.has(status) ? null : { runId, status };
 }
 
-/**
- * Starts research for one of the learner's goals: the exam's blueprint, the
- * current law or documentation a goal depends on, or a big learn goal's
- * reference syllabi. Research runs once per goal: asking again returns the run
- * that researched it (running or done) and only a failed run starts over. With
- * `sourceIds`, it answers the goal's open upload request, once: the ask is
- * cleared at once, and the goal's curriculum is rebuilt from the upload once
- * research has read it.
- */
 async function createResearch(request: NextRequest) {
   const parsed = await readBody(request, createResearchRequestSchema);
 

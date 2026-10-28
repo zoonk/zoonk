@@ -8,7 +8,6 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const CREATED = 201;
 
-/** "Refresh now": a capped bonus block on the goal's fading skills in today's session. */
 async function createRefreshPractice(
   request: NextRequest,
   context: RouteContext<"/v1/goals/[goalId]/refresh-practice">,

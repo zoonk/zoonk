@@ -16,12 +16,6 @@ import { sendVerificationOTPAction } from "./actions";
 const emailErrorId = "login-email-error";
 const initialEmailLoginState = { status: "idle" as const };
 
-/**
- * Owns the interactive email form because invalid-email feedback comes from
- * the Server Action result after Better Auth validates the submitted value.
- * Keeping this as a focused client component lets the login page itself stay a
- * Server Component while still showing recoverable form errors.
- */
 export function EmailLoginForm({ redirectTo }: { redirectTo: string | null }) {
   const t = useExtracted();
   const [state, formAction] = useActionState(sendVerificationOTPAction, initialEmailLoginState);

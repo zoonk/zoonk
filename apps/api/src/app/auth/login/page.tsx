@@ -22,40 +22,23 @@ import { getReturnAppUrl } from "../_utils/return-app";
 import { EmailLoginForm } from "./email-login-form";
 import { SocialLogin } from "./social-login";
 
-/** The terms and privacy policy live on this environment's main app. */
 const TERMS_URL = new URL("/terms", MAIN_URL).toString();
 const PRIVACY_URL = new URL("/privacy", MAIN_URL).toString();
 
-/**
- * Keeps the rich-text replacement stable between renders. The translation
- * parser calls this function only for the terms placeholder, so the login view
- * can pass a module-level renderer instead of creating a new component inside
- * the page render.
- */
 function TermsLink(children: ReactNode) {
   return <a href={TERMS_URL}>{children}</a>;
 }
 
-/**
- * Keeps the rich-text replacement stable between renders. The translation
- * parser calls this function only for the privacy placeholder, so the login
- * view can pass a module-level renderer instead of creating a new component
- * inside the page render.
- */
 function PrivacyLink(children: ReactNode) {
   return <a href={PRIVACY_URL}>{children}</a>;
 }
 
-/** Only a browser with a session cookie can be signed in already. */
 async function hasSessionCookie(): Promise<boolean> {
   const store = await cookies();
   return [true, false].some((secure) => store.has(getSessionCookieName({ secure })));
 }
 
-/**
- * A browser already signed in here goes straight back to the app, without the form. Only one with a
- * session cookie waits for the session's lookup, so everyone else gets the form at once.
- */
+/** Only a browser with a session cookie waits for the session's lookup; everyone else gets the form at once. */
 async function redirectWhenSignedIn({
   error,
   redirectTo,

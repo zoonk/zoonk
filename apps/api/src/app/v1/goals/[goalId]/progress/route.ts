@@ -5,7 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { getProgressView } from "@zoonk/core/view-models/progress/get";
 import { NextResponse } from "next/server";
 
-/** Returns the Progress tab's view model for one of the learner's goals. */
 async function getProgress(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/progress">,

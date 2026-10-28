@@ -6,7 +6,6 @@ import { readPathParams } from "@/lib/request-input";
 import { getMock } from "@zoonk/core/exams/mocks/get";
 import { NextResponse } from "next/server";
 
-/** Returns a mock exam: its conditions, the running section without answers, or its result. */
 async function getMockRoute(_request: Request, context: RouteContext<"/v1/mocks/[blockId]">) {
   const path = await readPathParams(context, mockPathParamsSchema);
 

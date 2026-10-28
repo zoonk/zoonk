@@ -2,7 +2,6 @@ import { MOCK_PURPOSES, MOCK_SCORINGS, mockShapeSchema } from "@zoonk/core/exams
 import { type ExamMockSummary } from "@zoonk/core/exams/view/contract";
 import { z } from "zod";
 
-/** One finished mock of the goal's history: the exam's mocks list and the mock chooser's last one. */
 export const examMockSummarySchema = z
   .object({
     blockId: z

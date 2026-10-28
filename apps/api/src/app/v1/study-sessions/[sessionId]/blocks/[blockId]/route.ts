@@ -6,7 +6,6 @@ import { studySessionError } from "@/lib/study-session-errors";
 import { getStudyBlock } from "@zoonk/core/sessions/block";
 import { NextResponse } from "next/server";
 
-/** Returns a block with its questions, never their answers, and what was answered already. */
 async function getBlock(
   _request: Request,
   context: RouteContext<"/v1/study-sessions/[sessionId]/blocks/[blockId]">,

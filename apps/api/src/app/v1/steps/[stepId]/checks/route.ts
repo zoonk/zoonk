@@ -7,10 +7,6 @@ import { checkLessonStep } from "@zoonk/core/lesson-player/check";
 import { lessonStepCheckInputSchema } from "@zoonk/core/lesson-player/contract";
 import { type NextRequest, NextResponse } from "next/server";
 
-/**
- * Grades one answer to a lesson screen and records it in the learner's memory and mistakes
- * notebook, as part of an open run of the screen's lesson.
- */
 async function createStepCheck(
   request: NextRequest,
   context: RouteContext<"/v1/steps/[stepId]/checks">,

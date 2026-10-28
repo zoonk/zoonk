@@ -14,11 +14,6 @@ import { type z } from "zod";
 
 type QuestionsRouteContext = { params: Promise<unknown> };
 
-/**
- * The questions routes of one kind of tutor thread (a lesson, chapter, plan or mock): the
- * learner's private thread, newest page first, and a new question. Each route says how its path
- * names what the thread is about; everything else is the same for every kind.
- */
 export function tutorQuestionRoutes<TPath>({
   pathSchema,
   toTarget,
@@ -44,10 +39,7 @@ export function tutorQuestionRoutes<TPath>({
     return NextResponse.json(result.thread);
   }
 
-  /**
-   * Persists the question before generation so a disconnect cannot lose the learner's turn and
-   * retries can target the same durable resource.
-   */
+  /** Saved before generation, so a disconnect can't lose the learner's turn. */
   async function postQuestion(request: NextRequest, context: QuestionsRouteContext) {
     const [body, path] = await Promise.all([
       readBody(request, createLessonQuestionInputSchema),

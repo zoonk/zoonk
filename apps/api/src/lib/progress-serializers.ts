@@ -22,34 +22,19 @@ const WEEKDAY_KEYS = [
 
 const DAYPART_KEYS = ["night", "morning", "afternoon", "evening"] as const;
 
-/**
- * Serializes a learner-local calendar date without turning it into an instant
- * that a native client could shift into the preceding or following day.
- */
+/** Never an instant, which a native client could shift into the day before or after. */
 function serializeLogicalDate(date: Date): string {
   return getContributionCalendarDateKey(date);
 }
 
-/**
- * Converts JavaScript's internal Sunday-based index into a stable semantic key
- * so API clients do not need to know the server runtime's weekday convention.
- */
 function serializeWeekday(dayOfWeek: number) {
   return WEEKDAY_KEYS.at(dayOfWeek) ?? WEEKDAY_KEYS[0];
 }
 
-/**
- * Converts the internal 0-to-3 daypart index into a descriptive API value that
- * remains understandable across web, native, CLI, and agent clients.
- */
 function serializeDaypart(period: number) {
   return DAYPART_KEYS.at(period) ?? DAYPART_KEYS[0];
 }
 
-/**
- * Renames the internal belt color identity to a domain field so clients remain
- * free to choose their own presentation color for each tier.
- */
 export function serializeLevel(level: BeltLevelDetails) {
   const { color: belt, nextBelt, ...progress } = level;
 
@@ -64,24 +49,14 @@ export function serializeLevel(level: BeltLevelDetails) {
   };
 }
 
-/**
- * Converts one internal weekday pattern into the semantic public API shape.
- */
 function serializeWeekdayPattern(pattern: WeekdayScorePattern) {
   return { ...pattern, dayOfWeek: serializeWeekday(pattern.dayOfWeek) };
 }
 
-/**
- * Converts one internal time pattern into the semantic public API shape.
- */
 function serializeTimePattern(pattern: TimeScorePattern) {
   return { ...pattern, period: serializeDaypart(pattern.period) };
 }
 
-/**
- * Converts the complete Score-pattern resource without changing its stable
- * seven-weekday and four-daypart ordering.
- */
 export function serializeScorePatterns(patterns: ScorePatternsData) {
   return {
     strongestTime: patterns.strongestTime ? serializeTimePattern(patterns.strongestTime) : null,
@@ -93,10 +68,6 @@ export function serializeScorePatterns(patterns: ScorePatternsData) {
   };
 }
 
-/**
- * Serializes the compact Home resource while keeping Core's numeric values
- * private and presenting semantic belt, weekday, and daypart identifiers.
- */
 export function serializeCurrentUserProgress(progress: CurrentUserProgress) {
   return {
     ...progress,
@@ -114,10 +85,6 @@ export function serializeCurrentUserProgress(progress: CurrentUserProgress) {
   };
 }
 
-/**
- * Converts Activity's bounded Date values into the OpenAPI date-only contract
- * while preserving the complete zero-filled calendar and lifetime totals.
- */
 export function serializeLearningActivity(activity: LearningActivityData) {
   return {
     ...activity,
@@ -129,10 +96,6 @@ export function serializeLearningActivity(activity: LearningActivityData) {
   };
 }
 
-/**
- * Converts Energy's bounded learner-local timeline into date-only JSON without
- * changing null gaps or the already calculated aggregate insights.
- */
 export function serializeEnergy(energy: EnergyData) {
   return {
     ...energy,
@@ -140,11 +103,7 @@ export function serializeEnergy(energy: EnergyData) {
   };
 }
 
-/**
- * Publishes raw Score dates and numeric performance while intentionally
- * dropping the server-rendered compatibility label so each client localizes
- * chart text using its own locale APIs.
- */
+/** Drops the server-rendered label: each client localizes chart text itself. */
 export function serializeScore(score: ScoreHistoryResource) {
   return {
     correctAnswers: score.correctAnswers,

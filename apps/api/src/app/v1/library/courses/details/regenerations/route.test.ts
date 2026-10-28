@@ -11,7 +11,6 @@ import {
   GET as previewCourseDetailsRegeneration,
 } from "./route";
 
-// The core DB suite owns authorization and claims; here only transport is replaced.
 vi.mock("@zoonk/core/library/courses/regenerate-details", () => ({
   getCourseDetailsRegenerationPreview: vi.fn(),
   regenerateCourseDetails: vi.fn(),

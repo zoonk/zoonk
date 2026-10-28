@@ -5,7 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { getChapterView } from "@zoonk/core/view-models/chapter/get";
 import { NextResponse } from "next/server";
 
-/** Returns a chapter of the learner's plan: its map, lessons, mistakes and summaries. */
 async function getChapter(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/chapters/[chapterId]">,

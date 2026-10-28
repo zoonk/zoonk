@@ -4,10 +4,6 @@ import { createErrorResponse, errors, httpStatus, slowDownError } from "./api-er
 
 type RefusedUsage = Exclude<UsageDecision, { status: "allowed" }>;
 
-/**
- * A hard cap asks guests to sign up (403), free learners to upgrade (402) and Plus learners to
- * come back after it resets (429). `details.limit` says which cap it was.
- */
 function getLimitStatus(tier: string): number {
   if (tier === "guest") {
     return httpStatus.forbidden;
@@ -16,10 +12,6 @@ function getLimitStatus(tier: string): number {
   return tier === "free" ? httpStatus.paymentRequired : httpStatus.tooManyRequests;
 }
 
-/**
- * A guest's new AI work once the day's budget all guests share is spent: the app asks them to
- * create a free account, where their work moves with them. It never says a cap's numbers.
- */
 export function signUpRequiredError() {
   return createErrorResponse({
     code: LESSON_PLAYER_ERROR_CODES.signUpRequired,
@@ -28,7 +20,6 @@ export function signUpRequiredError() {
   });
 }
 
-/** Maps a refused allowance claim to the shared error envelope. */
 export function usageDecisionError(decision: RefusedUsage) {
   if (decision.status === "unauthorized") {
     return errors.unauthorized();
@@ -54,10 +45,6 @@ export function usageDecisionError(decision: RefusedUsage) {
   });
 }
 
-/**
- * A free exam plan past its first week holds this new lesson of its plan, or its phase challenge,
- * for Plus: reviews and fixing mistakes stay free.
- */
 export function plusRequiredError() {
   return createErrorResponse({
     code: LESSON_PLAYER_ERROR_CODES.plusRequired,
@@ -66,7 +53,6 @@ export function plusRequiredError() {
   });
 }
 
-/** Every draft the lesson gets was held back by its checks: nothing writes it again. */
 export function lessonSetAsideError() {
   return createErrorResponse({
     code: LESSON_PLAYER_ERROR_CODES.lessonSetAside,
@@ -75,7 +61,6 @@ export function lessonSetAsideError() {
   });
 }
 
-/** A run that already finished takes no more answers; the player starts a new one. */
 export function runEndedError() {
   return createErrorResponse({
     code: LESSON_PLAYER_ERROR_CODES.runEnded,

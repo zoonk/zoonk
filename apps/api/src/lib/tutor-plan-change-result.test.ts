@@ -69,8 +69,6 @@ describe(toPlanChangeModelResult, () => {
     });
   });
 
-  // Carla's card added a project, and the buddy said "the plan would still end on April 7" about
-  // her goal of April 8.
   it("says when the added topics start, and the plan's end only when the change moves it", () => {
     const result = toPlanChangeModelResult({
       cautions: [],

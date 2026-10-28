@@ -26,7 +26,6 @@ export const paginationSchema = z
   })
   .meta({ id: "Pagination" });
 
-/** A question's dated "Sources" chip: the passage it quotes and the document it comes from. */
 export const itemCitationSchema = z
   .object({
     checkedAt: z.iso
@@ -45,16 +44,8 @@ export const itemCitationSchema = z
   })
   .nullable();
 
-/**
- * The picture a question is about (a diagram, a map, a geometry figure), drawn and checked before
- * the question was stored; null when the question shows none.
- */
 export const questionImageSchema = itemImageSchema.nullable();
 
-/**
- * A chart or timeline a question reads, drawn by the app from its data (the same shape lesson
- * screens use); null when the question shows none.
- */
 export const questionVisualSchema = lessonVisualSchema
   .meta({
     description:
@@ -63,14 +54,12 @@ export const questionVisualSchema = lessonVisualSchema
   })
   .nullable();
 
-/** How many options a multiple-choice question asks the learner to pick. */
 export const questionSelectSchema = optionSelectSchema.meta({
   description:
     'How many options to pick: 1 (answer with `selectedIndex`), an exact number ("choose two") or "all" ("select all that apply"), answered with `selectedIndexes`',
   id: "QuestionSelect",
 });
 
-/** A math question's unit beside its answer box, where the question's language writes it. */
 export const questionUnitSchema = z
   .object({
     position: z
@@ -81,7 +70,6 @@ export const questionUnitSchema = z
   .nullable()
   .meta({ description: "A math problem's unit, shown next to the answer field" });
 
-/** How a math question's answer box takes the number, as the exam's answer grid does. */
 export const questionEntrySchema = numericEntrySchema.meta({
   description:
     "How the answer is typed: `number` (any number, graded with a tolerance), `integer` (a whole number), `decimals` (rounded or cut to `places` decimal places) or `fraction` (a fraction such as 2/3, sent as its value, or a decimal with at least three places)",

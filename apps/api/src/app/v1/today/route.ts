@@ -7,7 +7,6 @@ import { todayStudySessionInputSchema } from "@zoonk/core/sessions/contract";
 import { getTodayView } from "@zoonk/core/view-models/today/get";
 import { NextResponse } from "next/server";
 
-/** Reads the saved goal and allocation. The learner's Start POST follows their device zone. */
 async function getToday(request: Request) {
   const query = readQueryParams(request, todayStudySessionInputSchema);
 

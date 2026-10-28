@@ -6,10 +6,6 @@ import { completeLibraryLesson } from "@zoonk/core/lesson-player/complete";
 import { libraryLessonCompletionInputSchema } from "@zoonk/core/lesson-player/completion-input-contract";
 import { type NextRequest, NextResponse } from "next/server";
 
-/**
- * Finishes a run once every screen that takes an answer was answered (or "I know this" got every
- * check right). Repeating it returns the same result without counting twice.
- */
 async function createLibraryLessonCompletion(
   request: NextRequest,
   context: RouteContext<"/v1/library/lessons/[lessonId]/completions">,

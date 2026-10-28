@@ -11,7 +11,6 @@ export default async function OTPPage({ searchParams }: PageProps<"/auth/otp">) 
   const redirectTo = readRedirectTo(params.redirectTo);
   const email = typeof params.email === "string" ? params.email : null;
 
-  /** Without an email there's no code to check: start over, still going back to the same app. */
   if (!email) {
     redirect(getLoginHref(redirectTo));
   }

@@ -12,10 +12,6 @@ import { AUTHENTICATED_SECURITY } from "../security";
 const requestTimeZoneDescription =
   "Calendar boundaries use the validated timezone resolved from the request and fall back to UTC.";
 
-/**
- * Builds the shared successful and authenticated error responses for one
- * current-user progress resource without weakening each operation's schema.
- */
 function getCurrentUserProgressResponses({
   description,
   schema,

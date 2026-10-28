@@ -6,10 +6,6 @@ import { readPathParams } from "@/lib/request-input";
 import { startMockSpeaking } from "@zoonk/core/exams/mocks/start-speaking";
 import { type NextRequest, NextResponse } from "next/server";
 
-/**
- * Starts the running mock's speaking section: its paper's task cards are written now (or the ones
- * written on an earlier start are returned), each task a live call to open.
- */
 async function postMockSpeaking(
   _request: NextRequest,
   context: RouteContext<"/v1/mocks/[blockId]/speaking">,

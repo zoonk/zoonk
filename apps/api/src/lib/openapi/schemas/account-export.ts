@@ -2,7 +2,6 @@ import { z } from "zod";
 import { learningProfileSchema } from "./learning-profile";
 import { memoryExportSchema } from "./memory";
 
-/** Stored rows keep their own columns, so an export is readable without a schema per table. */
 const rowsSchema = z.array(z.record(z.string(), z.unknown()));
 
 export const accountDataExportSchema = z

@@ -1,7 +1,6 @@
 import { sectionNavigationSchema } from "@zoonk/core/library/exams/blueprint-contract";
 import { z } from "zod";
 
-/** What a mock's result says about the real score, beside its own. */
 export const mockScoreNotesSchema = z
   .object({
     noticeScoring: z
@@ -45,7 +44,6 @@ export const mockScoreNotesSchema = z
   })
   .meta({ id: "MockScoreNotes" });
 
-/** One section of a mock, in the exam's order, with how it's moved through and what it allows. */
 export const mockSectionSchema = z.object({
   breakAfterMinutes: z
     .number()

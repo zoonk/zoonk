@@ -1,10 +1,6 @@
 import { createErrorResponse, errors, httpStatus } from "./api-errors";
 import { studySessionErrorCodes } from "./study-session-errors";
 
-/**
- * Stable codes clients use to recover from a mock or exam request that can't be applied. A mock
- * is a session block, so the block's own refusals keep the session's codes.
- */
 const examErrorCodes = {
   essayLimitReached: "ESSAY_LIMIT_REACHED",
   invalidMockOption: "INVALID_MOCK_OPTION",
@@ -159,7 +155,6 @@ const REFUSALS = {
   },
 } as const;
 
-/** Maps a mock or exam refusal to its response, with a code clients can act on. */
 export function examError(result: ExamRefusal) {
   if (result.status === "unauthorized") {
     return errors.unauthorized();

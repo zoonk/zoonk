@@ -5,9 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { getCatalogChapterProgress } from "@zoonk/core/catalog/progress";
 import { NextResponse } from "next/server";
 
-/**
- * Returns the learner's progress in a validated chapter.
- */
 async function getChapterProgress(
   _request: Request,
   context: RouteContext<"/v1/chapters/[chapterId]/progress">,

@@ -7,7 +7,6 @@ import { acknowledgeTodayPlanChange } from "@zoonk/core/plans/acknowledge-today-
 import { acknowledgeTodayPlanChangeInputSchema } from "@zoonk/core/plans/today-change-contract";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** A learner's Got it acknowledges a stored notice without opening a session. */
 async function acknowledgeChange(request: NextRequest) {
   const body = await readBody(request, acknowledgeTodayPlanChangeInputSchema);
 

@@ -8,7 +8,6 @@ import { NextResponse } from "next/server";
 type TestOutResultContext =
   RouteContext<"/v1/goals/[goalId]/chapters/[chapterId]/test-out/results/[requestId]">;
 
-/** Returns a sent test-out's result as it was recorded. */
 async function getTestOutResult(_request: Request, context: TestOutResultContext) {
   const path = await readPathParams(context, goalChapterTestOutResultPathParamsSchema);
 

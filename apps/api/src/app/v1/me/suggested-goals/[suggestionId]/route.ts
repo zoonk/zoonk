@@ -7,10 +7,6 @@ import { suggestedGoalAnswerSchema } from "@zoonk/core/goals/suggestions/contrac
 import { respondToSuggestedGoal } from "@zoonk/core/goals/suggestions/respond";
 import { type NextRequest, NextResponse } from "next/server";
 
-/**
- * Accepts or dismisses a suggested goal; after accepting, apps open its course's start, or
- * onboarding with its title when the course is gone (`courseId` null).
- */
 async function answerSuggestedGoal(
   request: NextRequest,
   context: RouteContext<"/v1/me/suggested-goals/[suggestionId]">,

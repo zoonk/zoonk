@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-/** What a mock leaves out of the real exam, shared by the mock, its options and its card. */
 export const mockLeftOutSchema = z
   .array(
     z

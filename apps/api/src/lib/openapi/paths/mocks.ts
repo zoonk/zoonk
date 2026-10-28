@@ -37,7 +37,6 @@ const commonErrors = {
   "404": notFoundResponse,
 };
 
-/** Mock exams: the plan's weekly ones by their session block, and the ones taken any time. */
 export const mockPaths = {
   "/goals/{goalId}/mocks": {
     get: {

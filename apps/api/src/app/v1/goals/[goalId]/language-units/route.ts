@@ -5,7 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { getLanguageUnitsView } from "@zoonk/core/view-models/language/units";
 import { NextResponse } from "next/server";
 
-/** A language goal's units in teaching order, with what's done in each. */
 async function getLanguageUnits(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/language-units">,

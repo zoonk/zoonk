@@ -5,7 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { getContentView } from "@zoonk/core/view-models/content/get";
 import { NextResponse } from "next/server";
 
-/** Returns the Content tab's view model for one of the learner's goals. */
 async function getContent(_request: Request, context: RouteContext<"/v1/goals/[goalId]/content">) {
   const path = await readPathParams(context, goalPathParamsSchema);
 

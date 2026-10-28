@@ -5,7 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { getMistakePattern } from "@zoonk/core/language/patterns/get";
 import { NextResponse } from "next/server";
 
-/** A pattern noticed in the learner's recent language mistakes, with its three-minute drill. */
 async function getPattern(
   _request: Request,
   context: RouteContext<"/v1/mistake-patterns/[patternId]">,

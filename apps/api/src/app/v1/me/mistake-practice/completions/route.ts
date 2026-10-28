@@ -5,10 +5,6 @@ import { mistakePracticeFinishInputSchema } from "@zoonk/core/mistakes/contract"
 import { finishMistakePractice } from "@zoonk/core/mistakes/practice-finish";
 import { type NextRequest, NextResponse } from "next/server";
 
-/**
- * Finishes a "Practice mistakes" run, at its end or stopped early, so it counts toward today.
- * Finishing the same answers again counts nothing new and returns what the run earned.
- */
 async function createMistakePracticeCompletion(request: NextRequest) {
   const body = await readBody(request, mistakePracticeFinishInputSchema);
 

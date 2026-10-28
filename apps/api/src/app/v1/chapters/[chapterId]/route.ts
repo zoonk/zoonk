@@ -5,10 +5,6 @@ import { readChapterContext } from "@/lib/chapter-context";
 import { getCatalogChapter } from "@zoonk/core/catalog/chapter";
 import { NextResponse } from "next/server";
 
-/**
- * Returns one chapter as a course the viewer can open places it: the course
- * from the query, or the chapter's home course.
- */
 async function getChapter(request: Request, context: RouteContext<"/v1/chapters/[chapterId]">) {
   const parsed = await readChapterContext({ context, request });
 

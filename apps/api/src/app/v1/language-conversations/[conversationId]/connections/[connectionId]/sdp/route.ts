@@ -6,7 +6,6 @@ import { liveCallSdpInputSchema } from "@zoonk/core/language/conversations/contr
 import { redeemLiveCallSdp } from "@zoonk/core/language/conversations/redeem-sdp";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** Core owns the authenticated single redemption and ignores the browser's session config. */
 async function redeemSdp(
   request: NextRequest,
   context: RouteContext<"/v1/language-conversations/[conversationId]/connections/[connectionId]/sdp">,

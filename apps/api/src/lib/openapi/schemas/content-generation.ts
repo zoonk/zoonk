@@ -77,7 +77,6 @@ export const goalGenerationRunSchema = z
   })
   .meta({ id: "GoalGenerationRun" });
 
-/** A curriculum started with its goal's research waits for it, as `POST /goals` does. */
 export const goalGenerationQuerySchema = z
   .object({
     researchId: z

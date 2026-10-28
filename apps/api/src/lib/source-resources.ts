@@ -24,10 +24,7 @@ function toReusePolicy(value: unknown) {
   return reusePolicySchema.safeParse(value).data ?? null;
 }
 
-/**
- * The public shape of a source. Storage details (its blob, identity key,
- * hash and owner) stay on the server.
- */
+/** Storage details (its blob, identity key, hash and owner) stay on the server. */
 export function toSourceResource(source: SourceRow) {
   return {
     fetchedAt: source.fetchedAt.toISOString(),
@@ -44,7 +41,6 @@ export function toSourceResource(source: SourceRow) {
   };
 }
 
-/** The edition as clients read it: the check of its reading is research's own bookkeeping. */
 function toEditionResource({ check: _check, ...edition }: ExamBlueprintView["edition"]) {
   return edition;
 }

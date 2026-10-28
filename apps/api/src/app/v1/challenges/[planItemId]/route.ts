@@ -6,7 +6,6 @@ import { getChallenge } from "@zoonk/core/checkpoints/challenge";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import { NextResponse } from "next/server";
 
-/** Returns a phase boss or the week's challenge by its plan item, before its day and on it. */
 async function getChallengeRoute(
   request: Request,
   context: RouteContext<"/v1/challenges/[planItemId]">,

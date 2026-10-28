@@ -6,7 +6,6 @@ import { mockTimeZoneInputSchema } from "@zoonk/core/exams/mocks/contract";
 import { gradeMockEssays } from "@zoonk/core/exams/mocks/grade-essays";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** Grades a finished full mock's essays with the exam's official rubric, right after hand-in. */
 async function postEssayGrades(
   request: NextRequest,
   context: RouteContext<"/v1/mocks/[blockId]/essay-grades">,

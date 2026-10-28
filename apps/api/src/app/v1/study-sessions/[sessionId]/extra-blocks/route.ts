@@ -7,7 +7,6 @@ import { NextResponse } from "next/server";
 
 const CREATED = 201;
 
-/** "10 more minutes": adds one bonus block after the day's session, capped. */
 async function createExtraBlock(
   _request: Request,
   context: RouteContext<"/v1/study-sessions/[sessionId]/extra-blocks">,

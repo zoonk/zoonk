@@ -18,11 +18,6 @@ const planErrors = {
   "404": notFoundResponse,
 } as const;
 
-/**
- * What the learner's own time covers, and what the app works out only when the learner asks: the
- * daily time that covers everything, and a recommendation for the plan's bases. Neither is part of
- * reading the plan.
- */
 export const planAdvicePaths = {
   "/goals/{goalId}/plan/bases-advice": {
     post: {

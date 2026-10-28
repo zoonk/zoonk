@@ -6,7 +6,6 @@ import { mistakePatternPracticeInputSchema } from "@zoonk/core/language/patterns
 import { practiceMistakePattern } from "@zoonk/core/language/patterns/practice";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** Finishes a pattern's drill: checks the answers, pays Brain Power and counts toward today. */
 async function practicePattern(
   request: NextRequest,
   context: RouteContext<"/v1/mistake-patterns/[patternId]/practices">,

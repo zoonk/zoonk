@@ -5,7 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { getLanguageConversation } from "@zoonk/core/language/conversations/get";
 import { NextResponse } from "next/server";
 
-/** One of the learner's live conversations: before the call, what it's about; after, its result. */
 async function getConversation(
   _request: Request,
   context: RouteContext<"/v1/language-conversations/[conversationId]">,

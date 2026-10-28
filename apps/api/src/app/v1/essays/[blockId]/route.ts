@@ -6,7 +6,6 @@ import { getEssay } from "@zoonk/core/exams/essays/get";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import { NextResponse } from "next/server";
 
-/** Returns a writing block: the essay prompt, its rubric and the graded drafts so far. */
 async function getEssayRoute(request: Request, context: RouteContext<"/v1/essays/[blockId]">) {
   const path = await readPathParams(context, essayPathParamsSchema);
 

@@ -11,10 +11,6 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const ACCEPTED = 202;
 
-/**
- * Starts reading a typed goal, or reads it again after its run failed or couldn't start. A run
- * still reading it is followed instead, and a goal already understood needs none.
- */
 async function createGoalUnderstandingGeneration(
   _request: NextRequest,
   context: RouteContext<"/v1/goal-understandings/[understandingId]/generations">,

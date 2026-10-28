@@ -10,8 +10,8 @@ if (process.env.NODE_ENV === "production") {
     tracesSampleRate: 0.1,
   });
 
-  // Sign-in and sign-up for every web app: the email form posts to its page, and the rest of
-  // Better Auth's requests (codes, social, guests) run through `botCheckPlugin` on the server.
+  // The rest of Better Auth's requests (codes, social, guests) run through `botCheckPlugin` on
+  // the server.
   initBotId({
     protect: [
       { method: "POST", path: "/auth/login" },
@@ -20,10 +20,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-/**
- * PostHog loads once the page has, so its SDK never delays the first paint. Sign-in pages don't
- * know the visitor's age, so they never record sessions.
- */
+/** Sign-in pages don't know the visitor's age, so they never record sessions. */
 void loadPostHog();
 
 export const onRouterTransitionStart = captureRouterTransitionStart;

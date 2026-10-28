@@ -14,10 +14,6 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const CREATED = 201;
 
-/**
- * Starts the goal's run, after research for an exam course nobody stored an exam for. A run that
- * couldn't start is logged; the client can start it again for that goal.
- */
 async function startCourseGoalGeneration(goal: GoalView) {
   const { error } = await safeAsync(async () => {
     await (isResearchedCourseStart(goal) ? startGoalWork([goal]) : startGoalGeneration({ goal }));
@@ -28,12 +24,6 @@ async function startCourseGoalGeneration(goal: GoalView) {
   }
 }
 
-/**
- * Starts a course (or one of its chapters) as the learner's goal, with its plan built from the
- * course, and the goal's run writing ahead what the plan needs. The learner's goal already on the
- * course comes back instead of a second one. A run that couldn't start never undoes the goal:
- * POST /goals/{goalId}/generations starts it.
- */
 async function startFromCourse(
   request: NextRequest,
   context: RouteContext<"/v1/courses/[courseId]/goals">,

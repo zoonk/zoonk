@@ -6,10 +6,6 @@ import { answerMaterialQuestion } from "@zoonk/core/library/sources/answer-quest
 import { materialQuestionInputSchema } from "@zoonk/core/library/sources/material-question-contract";
 import { type NextRequest, NextResponse } from "next/server";
 
-/**
- * Answers a question about the learner's own material from its pages, with the pages the answer
- * came from. Each question counts as a tutor message against the learner's allowance.
- */
 async function askMaterialQuestion(request: NextRequest) {
   const parsed = await readBody(request, materialQuestionInputSchema);
 

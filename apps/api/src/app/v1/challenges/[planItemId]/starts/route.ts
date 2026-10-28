@@ -7,12 +7,6 @@ import { startChallenge } from "@zoonk/core/checkpoints/challenge-start";
 import { studyBlockStartInputSchema } from "@zoonk/core/sessions/contract";
 import { type NextRequest, NextResponse } from "next/server";
 
-/**
- * Starts a challenge on its day and says where it's played. A phase challenge held by earlier
- * work answers `EARLIER_FIRST` with its reason. One the bank holds too few questions for answers
- * `QUESTIONS_NEEDED`: POST its generations, wait for the run to end, then start it again with
- * `afterWriting`.
- */
 async function startChallengeRoute(
   request: NextRequest,
   context: RouteContext<"/v1/challenges/[planItemId]/starts">,

@@ -2,10 +2,6 @@ import { getAuthError } from "@zoonk/auth/errors";
 import { createErrorResponse, httpStatus } from "./api-errors";
 import { sessionErrorCodes } from "./session-error-codes";
 
-/**
- * Better Auth's rate limit (by IP and path) as the shared error envelope, with `Retry-After` when
- * the limiter says how long to wait. Null for any other error.
- */
 export function authRateLimitError(error: unknown) {
   const authError = getAuthError(error);
 

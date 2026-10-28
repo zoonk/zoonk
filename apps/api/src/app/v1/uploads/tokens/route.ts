@@ -8,18 +8,12 @@ import { isRefusedUsage } from "@zoonk/core/entitlements/contract";
 import { createSourceUploadToken } from "@zoonk/core/library/sources/upload-token";
 import { type NextRequest, NextResponse } from "next/server";
 
-/**
- * `handleUploadPresigned` requires a key for verifying upload-completed callbacks before it signs
- * anything, even when no callback is asked for. This route never asks for one (the schema refuses
- * callbacks; the client registers the file with `POST /v1/uploads`), so no key is ever used.
- */
+/** `handleUploadPresigned` requires a callback key even when no callback is asked for. */
 const NO_CALLBACK_KEY = "unused: uploads are registered with POST /v1/uploads";
 
 /**
- * The route Vercel Blob's client `uploadPresigned()` calls before sending a file straight to the
- * private store, since function requests are capped at 4.5 MB. It speaks Blob's presigned-upload
- * protocol for URL requests only: completed uploads are registered with `POST /v1/uploads` instead
- * of a storage callback, which also works where callbacks can't reach.
+ * Files go straight to Blob because function requests are capped at 4.5 MB. Completed uploads are
+ * registered with `POST /v1/uploads`, not a storage callback, which can't reach every environment.
  */
 async function createUploadToken(request: NextRequest) {
   const parsed = await readBody(request, uploadTokenRequestSchema);

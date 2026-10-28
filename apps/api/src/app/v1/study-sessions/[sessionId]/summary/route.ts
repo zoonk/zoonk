@@ -7,7 +7,6 @@ import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import { getStudySessionSummary } from "@zoonk/core/sessions/summary";
 import { NextResponse } from "next/server";
 
-/** Returns what changed in a session: the end-of-session summary. */
 async function getSummary(
   request: Request,
   context: RouteContext<"/v1/study-sessions/[sessionId]/summary">,

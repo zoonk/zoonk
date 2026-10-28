@@ -7,14 +7,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { start } from "workflow/api";
 import { POST as startFromCourse } from "./route";
 
-// Core's DB suite covers who may start which course and the goal it makes; this adapter test
-// covers which runs a start sets off.
 vi.mock("@zoonk/core/goals/start-course", () => ({ startCourseGoal: vi.fn() }));
 vi.mock("@/workflows/v2/goals/goal-content-workflow", () => ({ goalContentWorkflow: vi.fn() }));
 vi.mock("@/workflows/v2/research/research-workflow", () => ({ researchWorkflow: vi.fn() }));
 
-// Its goal is a stand-in, not a stored one: the run starts as for a goal with none yet. Saving the
-// run on the goal is covered by POST /goals/{goalId}/generations' database tests.
 vi.mock("@zoonk/core/goals/generation-id", () => ({
   getGoalGenerationId: vi.fn(async () => ({ generationId: null, status: "ready" })),
 }));
@@ -51,8 +47,6 @@ describe("POST /v1/courses/{courseId}/goals", () => {
     );
   });
 
-  // An exam course from before the Library has no stored exam: its plan waited for nothing to
-  // read the exam's notice, so it was planned as a general course.
   it("reads the notice of an exam course nobody stored an exam for before writing its plan", async () => {
     createdGoal({ examBlueprintId: null, kind: "exam" });
 

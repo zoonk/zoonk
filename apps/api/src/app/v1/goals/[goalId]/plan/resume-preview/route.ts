@@ -5,7 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { getGoalResumePreview } from "@zoonk/core/plans/resume-preview";
 import { NextResponse } from "next/server";
 
-/** What resuming a paused goal would do to its plan, before the learner resumes it. */
 async function readResumePreview(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/plan/resume-preview">,

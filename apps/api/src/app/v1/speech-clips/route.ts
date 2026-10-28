@@ -12,11 +12,6 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const SERVICE_UNAVAILABLE = 503;
 
-/**
- * Text read aloud in its language. Clips are shared, so this returns the stored one or voices it
- * the first time anyone asks; voicing calls a model, so it only runs from this POST. A learner's
- * own words (`personal`) are theirs alone: the clip points at the file route only they can read.
- */
 async function postSpeechClip(request: NextRequest) {
   const body = await readBody(request, speechClipRequestSchema);
 

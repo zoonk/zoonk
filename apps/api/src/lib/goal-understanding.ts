@@ -5,7 +5,6 @@ import { type OnboardingDraftView } from "@zoonk/core/view-models/onboarding/con
 import { recordUnderstandingRun } from "@zoonk/core/view-models/onboarding/understanding-run";
 import { start } from "workflow/api";
 
-/** Whether the draft's words are being read by a run that is still working. */
 export async function isUnderstandingRunning(draft: OnboardingDraftView): Promise<boolean> {
   return (
     draft.status === "understanding" &&
@@ -14,10 +13,7 @@ export async function isUnderstandingRunning(draft: OnboardingDraftView): Promis
   );
 }
 
-/**
- * Starts the run that reads a draft's words and keeps it on the draft right away, so a second
- * start in the meantime follows it instead of starting another.
- */
+/** Saved on the draft right away, so a second start in the meantime follows it. */
 export async function startUnderstandingRun(
   draft: OnboardingDraftView,
 ): Promise<OnboardingDraftView> {

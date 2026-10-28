@@ -5,10 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { readOwnFile, toOwnFileResponse } from "@zoonk/core/files/read-own";
 import { type NextRequest } from "next/server";
 
-/**
- * Serves the signed-in learner one of their own private files from the private Blob store, such as
- * a private course's picture. Private files have no public URL, so API responses point here.
- */
 async function getOwnFileRoute(
   request: NextRequest,
   context: RouteContext<"/v1/files/[folder]/[ownerId]/[name]">,

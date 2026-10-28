@@ -23,7 +23,6 @@ const readErrors = {
   "404": notFoundResponse,
 } as const;
 
-/** A chapter's mind map, asking for one, and every map of a goal. */
 export const mindMapPaths = {
   "/goals/{goalId}/chapters/{chapterId}/mind-map": {
     get: {

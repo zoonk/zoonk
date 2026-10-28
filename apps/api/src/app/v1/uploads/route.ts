@@ -10,12 +10,6 @@ import { registerSourceUpload } from "@zoonk/core/library/sources/register-uploa
 import { type NextRequest, NextResponse } from "next/server";
 import { start } from "workflow/api";
 
-/**
- * Registers a file the learner uploaded to their Blob folder, or text they
- * pasted, as a source. A new document is private until the visibility check
- * (started here) confirms its publisher made it public; a document already
- * shared, such as a known exam notice, is linked at once.
- */
 async function createUpload(request: NextRequest) {
   const parsed = await readBody(request, createUploadRequestSchema);
 

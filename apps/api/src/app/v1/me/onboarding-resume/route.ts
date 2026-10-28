@@ -3,7 +3,6 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { getOnboardingResume } from "@zoonk/core/view-models/onboarding/resume";
 import { NextResponse } from "next/server";
 
-/** What the learner should continue: a typed goal to confirm, a goal's onboarding, or their day. */
 async function getMyOnboardingResume() {
   const result = await getOnboardingResume();
 

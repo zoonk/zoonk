@@ -2,7 +2,6 @@ import { type EssayView, essayGradeSchema } from "@zoonk/core/exams/essays/contr
 import { StudyBlockStatus } from "@zoonk/db";
 import { z } from "zod";
 
-/** Writing practice graded by an official rubric: an essay, a legal brief or an AP free response. */
 export const essayViewResponseSchema = z
   .object({
     blockId: z.uuid(),

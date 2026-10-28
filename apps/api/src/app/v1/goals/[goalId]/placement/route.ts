@@ -7,7 +7,6 @@ import { placementQuerySchema } from "@zoonk/core/learner/placement/contract";
 import { getGoalPlacement } from "@zoonk/core/learner/placement/get";
 import { NextResponse } from "next/server";
 
-/** Returns each phase's starting point and the next placement question. */
 async function getPlacement(
   request: Request,
   context: RouteContext<"/v1/goals/[goalId]/placement">,

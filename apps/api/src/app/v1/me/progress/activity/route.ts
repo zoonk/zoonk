@@ -4,10 +4,6 @@ import { serializeLearningActivity } from "@/lib/progress-serializers";
 import { getCurrentUserActivity } from "@zoonk/core/progress/get-learning-activity";
 import { NextResponse } from "next/server";
 
-/**
- * Returns the authenticated learner's lifetime Activity totals and bounded
- * date-only completion calendar.
- */
 async function getCurrentUserActivityRoute() {
   const resource = await getCurrentUserActivity();
 

@@ -11,10 +11,8 @@ import { type NextRequest, NextResponse } from "next/server";
 
 type FocusTestContext = RouteContext<"/v1/goals/[goalId]/plan/focus-test">;
 
-/** A plan with fewer than two areas has no focus to choose. */
 const UNAVAILABLE_MESSAGE = "This plan has no areas to choose a focus between";
 
-/** Returns the goal's focus test questions. */
 async function getTest(_request: Request, context: FocusTestContext) {
   const path = await readPathParams(context, goalPathParamsSchema);
 
@@ -31,7 +29,6 @@ async function getTest(_request: Request, context: FocusTestContext) {
   return NextResponse.json(withApiImageUrls(result.focusTest));
 }
 
-/** Grades the focus test and focuses the plan where the answers show it's needed most. */
 async function submitTest(request: NextRequest, context: FocusTestContext) {
   const [body, path] = await Promise.all([
     readBody(request, focusTestInputSchema),

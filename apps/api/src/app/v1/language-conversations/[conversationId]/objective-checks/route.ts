@@ -6,10 +6,6 @@ import { checkLanguageConversationObjectives } from "@zoonk/core/language/conver
 import { languageConversationObjectiveCheckInputSchema } from "@zoonk/core/language/conversations/contract";
 import { type NextRequest, NextResponse } from "next/server";
 
-/**
- * Marks the call's goals while the learner talks: the app sends what was said so far after each of
- * the learner's turns, and gets back every goal met so far.
- */
 async function checkObjectives(
   request: NextRequest,
   context: RouteContext<"/v1/language-conversations/[conversationId]/objective-checks">,

@@ -10,10 +10,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("Sign in to Zoonk") };
 }
 
-/**
- * The language comes from the request, so the document waits for it. Meanwhile there's only the
- * page's background: no loading screen flashes before the form, which follows in the same response.
- */
+/** Only the background shows while the request's language is read, so no loading screen flashes. */
 function AuthBackground() {
   return <div aria-hidden="true" className="bg-background fixed inset-0" />;
 }

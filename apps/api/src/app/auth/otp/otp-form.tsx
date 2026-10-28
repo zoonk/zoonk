@@ -22,10 +22,7 @@ import { ChangeEmailLink } from "./change-email-link";
 
 const TOO_MANY_REQUESTS = 429;
 
-/**
- * What the last try said. A code that expired or had too many wrong tries is gone for good (auth
- * deletes it), so those two wait for a new code instead of letting another try fail as "wrong".
- */
+/** Auth deletes a code that expired or had too many wrong tries, so those two wait for a new code. */
 type OTPStatus =
   | "idle"
   | "pending"
@@ -62,12 +59,10 @@ function needsNewCode(status: OTPStatus): boolean {
   return status === "expired" || status === "tooManyAttempts";
 }
 
-/** Only a wrong or failed try leaves the next code worth checking: the others answer any code. */
 function canTryAnotherCode(answer: OTPStatus | "signedIn"): boolean {
   return answer === "wrongCode" || answer === "error";
 }
 
-/** A try that never reaches auth, as when a phone loses its connection, can be tried again. */
 async function signInWithCode({
   email,
   otp,
@@ -84,7 +79,6 @@ async function signInWithCode({
   return result.error ? getErrorStatus(result.error) : "signedIn";
 }
 
-/** A new code that never reaches auth failed like any other, so it can be asked for again. */
 async function sendNewSignInCode(email: string): Promise<ResendStatus> {
   const { data: result, error } = await safeAsync(() =>
     authClient.emailOtp.sendVerificationOtp({ email, type: "sign-in" }),
@@ -152,7 +146,6 @@ function ResendMessage({ email, status }: { email: string; status: ResendStatus 
   return null;
 }
 
-/** Sends the same email a fresh code; the old one stops working. */
 function useResendCode(email: string) {
   const [status, setStatus] = useState<ResendStatus>("idle");
 
@@ -171,9 +164,8 @@ export function OTPForm({ email, redirectTo }: { email: string; redirectTo: stri
   const t = useExtracted();
   const formRef = useRef<HTMLFormElement>(null);
   /**
-   * Held while a code is checked, and once it's gone until a new one arrives. A ref, since status
-   * lags an answer until it renders: a code finished in between must be neither dropped nor tried
-   * against a gone code.
+   * A ref, since state lags an answer until it renders: a code finished in between must be neither
+   * dropped nor tried against a gone code.
    */
   const isLockedRef = useRef(false);
   const [status, setStatus] = useState<OTPStatus>("idle");
@@ -182,10 +174,7 @@ export function OTPForm({ email, redirectTo }: { email: string; redirectTo: stri
   const isCodeGone = needsNewCode(status);
   const isChecking = status === "pending";
 
-  /**
-   * Checks one code at a time: auth turns away a check that overlaps another. A different code
-   * finished while one was checked goes next, so the answer shown is always about the code in the box.
-   */
+  /** Auth turns away a check that overlaps another, so codes are checked one at a time. */
   const checkCode = async ({
     form,
     otp,
@@ -207,7 +196,6 @@ export function OTPForm({ email, redirectTo }: { email: string; redirectTo: stri
   const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    // A code finished while a new one is sent is about to be replaced, so it isn't tried.
     if (isLockedRef.current || resendCode.status === "sending") {
       return;
     }
@@ -236,7 +224,6 @@ export function OTPForm({ email, redirectTo }: { email: string; redirectTo: stri
     globalThis.location.assign(getCallbackHref(redirectTo));
   };
 
-  /** A new code starts a clean try: an empty input and no old error. */
   const sendNewCode = async () => {
     if (await resendCode.resend()) {
       isLockedRef.current = false;
@@ -247,8 +234,6 @@ export function OTPForm({ email, redirectTo }: { email: string; redirectTo: stri
 
   return (
     <OTPFormContainer onSubmit={handleSubmit} ref={formRef}>
-      {/* Focused on arrival (and after a new code), so the code can be typed or pasted right away.
-          The sixth digit sends it; Continue stays for the keyboard and for a try after an error. */}
       <OTPInput
         aria-label={t("Code from the email")}
         autoFocus

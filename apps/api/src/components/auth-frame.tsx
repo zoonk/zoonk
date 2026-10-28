@@ -5,11 +5,6 @@ import { getExtracted } from "next-intl/server";
 /** The product's name, the same in every language. */
 const BRAND_NAME = "Zoonk";
 
-/**
- * Every sign-in page as one centered column on the page itself, as Linear and Vercel draw theirs:
- * the brain on top, then the page's one step. The way back to the app the learner came from
- * (`appUrl`) says so in the top-left corner, so leaving sign-in is always one tap.
- */
 export async function AuthFrame({
   appUrl,
   children,

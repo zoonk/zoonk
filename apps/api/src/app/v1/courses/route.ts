@@ -9,10 +9,6 @@ import { NextResponse } from "next/server";
 
 type CoursePage = Awaited<ReturnType<typeof listCoursesPage>>;
 
-/**
- * Applies the shared cursor envelope and public DTO mapper to course collection
- * results.
- */
 function toCoursePageResponse({ offset, page }: { offset: number; page: CoursePage }) {
   return createPaginatedResponse({
     hasMore: page.hasMore,
@@ -21,10 +17,6 @@ function toCoursePageResponse({ offset, page }: { offset: number; page: CoursePa
   });
 }
 
-/**
- * Lists published courses in one language with an optional category filter.
- * Cross-resource search remains a separate catalog capability.
- */
 async function listCourses(request: Request) {
   const { category, cursor, language, limit } = readQueryParams(request, courseListQuerySchema);
   const offset = cursor ? decodeCursor(cursor) : 0;

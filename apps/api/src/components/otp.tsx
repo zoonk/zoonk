@@ -10,7 +10,6 @@ import { ShortcutKbd } from "@zoonk/ui/components/kbd";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
 
-/** Centered like the login page it follows, so the two steps read as one. */
 export function OTP({ children, className }: React.ComponentProps<"div">) {
   return (
     <div className={cn("flex w-full flex-col items-center gap-6 text-center", className)}>
@@ -54,7 +53,6 @@ export function OTPActions({ children, className }: React.ComponentProps<"div">)
   );
 }
 
-/** The quiet ways out under the main action, as one muted line: "Didn't get it? Send again · Change email". */
 export function OTPLinks({ children, className }: React.ComponentProps<"p">) {
   return (
     <p
@@ -68,18 +66,15 @@ export function OTPLinks({ children, className }: React.ComponentProps<"p">) {
   );
 }
 
-/** A text button inside `OTPLinks`, as tall as a touch target without growing the line's text. */
 export const OTP_LINK_CLASS =
   "text-foreground focus-visible:ring-ring/50 inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 font-medium underline-offset-4 outline-none hover:underline focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50";
 
-/** A pasted code keeps only its digits, so "123 456" or a copied line break still fills all six. */
 function keepDigits(text: string) {
   return text.replaceAll(/\D/gu, "");
 }
 
 export const OTP_LENGTH = 6;
 
-/** Six boxes, read as two groups of three: a little more room in the middle. */
 export function OTPInput({ ...props }: Partial<Omit<InputOTPProps, "render">>) {
   return (
     <InputOTP

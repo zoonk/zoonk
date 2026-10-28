@@ -28,7 +28,6 @@ const mockWrittenPartSchema = z
   })
   .meta({ id: "MockWrittenPart" });
 
-/** A full-length mock's written parts, shared by the week's challenge and the challenge screen. */
 export const mockWrittenPartsSchema = z
   .array(mockWrittenPartSchema)
   .meta({

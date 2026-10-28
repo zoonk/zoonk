@@ -20,7 +20,6 @@ import { useExtracted } from "next-intl";
 import { useActionState, useId, useState } from "react";
 import { setupProfileAction } from "./actions";
 
-/** Under the username: the rule, then whether the one typed is free as soon as it's checked. */
 function UsernameDescription({
   id,
   status,
@@ -70,7 +69,6 @@ function UsernameDescription({
   );
 }
 
-/** The username as one muted line, kept as it is unless the learner asks to change it. */
 function UsernameLine({ onChange, username }: { onChange: () => void; username: string }) {
   const t = useExtracted();
 
@@ -91,11 +89,6 @@ function UsernameLine({ onChange, username }: { onChange: () => void; username: 
   );
 }
 
-/**
- * A new account's name, the one question. The username starts from a free one made from the email,
- * shown under the name, so keeping it takes nothing; "Change" opens its field in place, and another
- * one is checked while it's typed.
- */
 export function SetupProfileForm({
   defaultName,
   defaultUsername,
@@ -120,7 +113,6 @@ export function SetupProfileForm({
         <SetupLabel htmlFor="name">{t("Name")}</SetupLabel>
         <SetupInput
           autoComplete="name"
-          // The first field, so it's ready to type on arrival.
           autoFocus
           defaultValue={defaultName}
           id="name"
@@ -140,7 +132,6 @@ export function SetupProfileForm({
               autoCapitalize="none"
               autoComplete="username"
               autoCorrect="off"
-              // Opened with "Change", so it's where the learner is about to type.
               autoFocus={Boolean(defaultUsername)}
               id="username"
               maxLength={USERNAME_MAX_LENGTH}

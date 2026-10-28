@@ -22,7 +22,6 @@ describe("POST /v1/goals/{goalId}/generations", () => {
     const goal = await goalFixture({ generationRunId: "wrun_old", userId: user.id });
     mockSession(user.id);
 
-    // While this request is starting A, another request's workflow acquires the token and saves B.
     vi.mocked(start).mockImplementationOnce(async () => {
       await prisma.goal.update({ data: { generationRunId: "wrun_newer" }, where: { id: goal.id } });
       return { runId: "wrun_delayed" } as Awaited<ReturnType<typeof start>>;
@@ -56,8 +55,6 @@ describe("POST /v1/goals/{goalId}/generations", () => {
     },
   );
 
-  // The client follows the run from the goal's own screens right after this answers: a run that
-  // saved its id only later made those screens poll for it.
   it.each([
     ["curriculum", "learn" as const],
     ["explanation", "explain" as const],

@@ -5,7 +5,6 @@ import { readQueryParams } from "@/lib/request-input";
 import { listEarlierQuestions } from "@zoonk/core/lesson-questions/earlier";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** A page of the learner's questions from an earlier version of their courses, as history. */
 async function listQuestions(request: NextRequest) {
   const query = readQueryParams(request, earlierQuestionsQuerySchema);
 

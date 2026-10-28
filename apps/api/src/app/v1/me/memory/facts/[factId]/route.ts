@@ -9,7 +9,6 @@ import { type NextRequest, NextResponse } from "next/server";
 
 type FactContext = RouteContext<"/v1/me/memory/facts/[factId]">;
 
-/** Saves the learner's correction of one fact. */
 async function updateFact(request: NextRequest, context: FactContext) {
   const [body, path] = await Promise.all([
     readBody(request, memoryFactUpdateSchema),
@@ -25,7 +24,6 @@ async function updateFact(request: NextRequest, context: FactContext) {
   return NextResponse.json({ fact: result.fact });
 }
 
-/** Deletes one fact with the facts it replaced; the returned change undoes it. */
 async function deleteFact(_request: NextRequest, context: FactContext) {
   const path = await readPathParams(context, memoryFactPathParamsSchema);
 

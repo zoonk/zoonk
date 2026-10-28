@@ -3,7 +3,6 @@ import { liveCallAdmissionResponseSchema } from "@zoonk/core/language/conversati
 
 type AdmissionView = Extract<Awaited<ReturnType<typeof getLiveCallAdmission>>, { status: "ready" }>;
 
-/** API dates cross the HTTP boundary as ISO strings; Admin shares the pure core DTO schema. */
 export function serializeLiveCallAdmission(result: AdmissionView) {
   return liveCallAdmissionResponseSchema.parse({
     ...result,

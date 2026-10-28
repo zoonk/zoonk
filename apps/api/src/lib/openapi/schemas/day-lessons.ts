@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-/** How a day's lessons stand while some are still being outlined: none yet, or more on the way. */
 export const emptyDaySchema = z
   .enum(["lessonsComing", "nothingNew"])
   .nullable()

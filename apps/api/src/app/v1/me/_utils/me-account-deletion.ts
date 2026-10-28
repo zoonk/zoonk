@@ -3,11 +3,6 @@ import { EmailAccountDeletionError } from "@zoonk/auth/email-deletion-contract";
 import { getAuthError } from "@zoonk/auth/errors";
 import { AppleAuthorizationError, NativeAppleAccountError } from "@zoonk/auth/native-apple";
 
-/**
- * Converts Better Auth's provider-specific OTP outcomes into stable product
- * API codes. Keeping each outcome distinct lets native clients offer the
- * correct recovery action without depending on Better Auth's public contract.
- */
 function getEmailOTPDeletionError(code?: string) {
   if (code === "INVALID_OTP") {
     return {
@@ -36,10 +31,6 @@ function getEmailOTPDeletionError(code?: string) {
   return null;
 }
 
-/**
- * Preserves the actionable authentication outcomes from Better Auth while
- * keeping the public product API on its standard JSON error envelope.
- */
 export function getAccountDeletionErrorResponse(error: unknown) {
   if (error instanceof EmailAccountDeletionError) {
     return createErrorResponse({

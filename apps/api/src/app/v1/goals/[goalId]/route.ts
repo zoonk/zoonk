@@ -8,7 +8,6 @@ import { getGoal } from "@zoonk/core/goals/get";
 import { updateGoal } from "@zoonk/core/goals/update";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** One of the learner's goals with a short summary of its plan. */
 async function readGoal(_request: Request, context: RouteContext<"/v1/goals/[goalId]">) {
   const path = await readPathParams(context, goalPathParamsSchema);
 
@@ -17,7 +16,6 @@ async function readGoal(_request: Request, context: RouteContext<"/v1/goals/[goa
   return result.status === "ready" ? NextResponse.json(result.goal) : accessError(result.status);
 }
 
-/** Edits a goal: title and details, time, study days and date (re-planning), or its status. */
 async function editGoal(request: NextRequest, context: RouteContext<"/v1/goals/[goalId]">) {
   const [body, path] = await Promise.all([
     readBody(request, goalUpdateInputSchema),

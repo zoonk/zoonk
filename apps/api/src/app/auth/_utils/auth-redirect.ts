@@ -1,8 +1,3 @@
-/**
- * Where sign-in goes back to. Apps send `?redirectTo=` with their callback address; a sign-in that
- * started on the API itself has none, and then ends in the main app (see `/auth/callback`). Every
- * auth page carries the same value forward, and none of them prints or follows a missing one.
- */
 export function readRedirectTo(value?: string | string[]): string | null {
   return typeof value === "string" && value.length > 0 ? value : null;
 }

@@ -53,11 +53,6 @@ const botCheckForbiddenResponse = {
   description: `The request had neither BotID's nor App Attest's proof, or it has browser fetch metadata (Sec-Fetch-*) without an Origin Zoonk trusts. Error codes: ${accessErrorCodes.botDetected}, ${accessErrorCodes.untrustedOrigin}.`,
 } as const;
 
-/**
- * Anonymous email sign-in creates accounts, so it needs bot proof: BotID in a browser, App Attest
- * from the iOS app. Existing native accounts can request their own deletion proof with a
- * still-active bearer, even when stale.
- */
 const EMAIL_CODE_BOT_CHECK = `Requests must pass Vercel BotID, which runs in a browser, or carry the iOS app's App Attest assertion in the \`X-App-Attest-*\` headers (see \`POST /v1/app-attest/challenges\`); without either they get 403 ${accessErrorCodes.botDetected}.`;
 
 const googleAuthorizationResponse = {
@@ -65,7 +60,6 @@ const googleAuthorizationResponse = {
   description: `Google authorization is invalid or expired. Error code: ${sessionErrorCodes.googleAuthorizationInvalid}.`,
 } as const;
 
-/** Better Auth's rate limit, by IP and path: the same answer on every auth endpoint. */
 export const authRateLimitResponse = {
   ...tooManyRequestsResponse,
   description: `Request rate limit exceeded. Error code: ${sessionErrorCodes.rateLimitExceeded}.`,

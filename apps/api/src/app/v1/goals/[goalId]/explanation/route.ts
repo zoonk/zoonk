@@ -6,7 +6,6 @@ import { readPathParams } from "@/lib/request-input";
 import { getExplanation } from "@zoonk/core/view-models/explain/get";
 import { NextResponse } from "next/server";
 
-/** A quick explanation: its story and check, or `preparing` while it's being written. */
 async function getGoalExplanation(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/explanation">,

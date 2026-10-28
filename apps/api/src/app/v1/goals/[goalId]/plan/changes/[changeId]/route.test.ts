@@ -5,8 +5,6 @@ import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { POST as decideChange } from "./route";
 
-// Core's integration tests cover what each decision does to the plan; this adapter test covers
-// which decisions start writing what the plan has soon (the preparation itself is a workflow).
 vi.mock("@zoonk/core/plans/decide-change", () => ({ decidePlanChange: vi.fn() }));
 vi.mock("@/lib/session-preparation", () => ({ scheduleGoalPreparation: vi.fn() }));
 

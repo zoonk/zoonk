@@ -5,7 +5,6 @@ import { studySessionError } from "@/lib/study-session-errors";
 import { markMilestoneShown } from "@zoonk/core/milestones/list";
 import { NextResponse } from "next/server";
 
-/** Records that a milestone was celebrated, so it's shown only once. */
 async function createView(
   _request: Request,
   context: RouteContext<"/v1/me/milestones/[milestoneId]/views">,

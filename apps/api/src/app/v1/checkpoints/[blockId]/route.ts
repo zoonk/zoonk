@@ -6,7 +6,6 @@ import { studySessionError } from "@/lib/study-session-errors";
 import { getCheckpoint } from "@zoonk/core/checkpoints/get";
 import { NextResponse } from "next/server";
 
-/** Returns a checkpoint of the learner's session: its questions, pass mark, reward and result. */
 async function getCheckpointRoute(
   _request: Request,
   context: RouteContext<"/v1/checkpoints/[blockId]">,

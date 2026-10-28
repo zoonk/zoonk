@@ -19,11 +19,6 @@ function errorResponse(code: string, message: string, status: number, details?: 
   return NextResponse.json({ error: { code, details, message } }, { status });
 }
 
-/**
- * Keeps feature-specific error codes on the same response envelope as the
- * shared HTTP errors. Native clients use these codes for actionable recovery
- * without parsing human-readable messages.
- */
 export function createErrorResponse({
   code,
   details,
@@ -38,7 +33,6 @@ export function createErrorResponse({
   return errorResponse(code, message, status, details);
 }
 
-/** Too much at once: `Retry-After` says when to try again. */
 export function slowDownError({
   details,
   message,
@@ -59,7 +53,7 @@ export function slowDownError({
   return response;
 }
 
-/** Signed out, or not found: a resource of another learner reads as missing too. */
+/** Another learner's resource reads as missing too. */
 export function accessError(status: "notFound" | "unauthorized", notFoundMessage?: string) {
   return status === "unauthorized" ? errors.unauthorized() : errors.notFound(notFoundMessage);
 }

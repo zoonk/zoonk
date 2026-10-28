@@ -10,7 +10,6 @@ import { gradeLevelTestSpeech } from "@zoonk/core/language/level-test/speech";
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-/** The level test's one sentence out loud: checked word by word, it sets the speaking level. */
 async function answerLevelTestOutLoud(
   request: NextRequest,
   context: RouteContext<"/v1/goals/[goalId]/language-level-test/spoken-answers">,

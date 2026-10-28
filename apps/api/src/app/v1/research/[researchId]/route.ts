@@ -7,11 +7,6 @@ import { researchResultSchema } from "@/workflows/v2/research/research-result";
 import { NextResponse } from "next/server";
 import { getRun } from "workflow/api";
 
-/**
- * A research run's status and, once done, its result: the blueprint to read,
- * or `needsUpload` when the learner should upload the notice. Like
- * generations, the unguessable run id is the capability.
- */
 async function getResearch(_request: Request, context: RouteContext<"/v1/research/[researchId]">) {
   const parsed = await readPathParams(context, researchPathParamsSchema);
 

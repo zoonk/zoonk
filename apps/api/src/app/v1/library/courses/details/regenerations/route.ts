@@ -28,7 +28,6 @@ async function createCourseDetailsRegeneration(request: NextRequest) {
 
 export const POST = withApiErrorBoundary(createCourseDetailsRegeneration);
 
-/** A count and estimate only: rendering admin never clears copy or starts a workflow. */
 async function previewCourseDetailsRegeneration() {
   const result = await getCourseDetailsRegenerationPreview({
     getInFlightCourseIds: listInFlightCourseDetails,

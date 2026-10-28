@@ -21,11 +21,6 @@ function refusedRegeneration(status: "forbidden" | "invalid" | "unauthorized") {
   return errors.badRequest("Send a model, a prompt version or both");
 }
 
-/**
- * Lets an admin rewrite the lessons a model or prompt version wrote (from the admin feedback
- * queue's downvote rates, for example). Core takes the lessons out of play; each gets a writing
- * run with the reasoning check, like a lesson that failed a later review.
- */
 async function createLessonRegeneration(request: NextRequest) {
   const parsed = await readBody(request, lessonRegenerationRequestSchema);
 

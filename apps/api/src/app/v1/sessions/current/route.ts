@@ -3,7 +3,6 @@ import { deleteCurrentSession } from "@zoonk/auth/native-sessions";
 import { safeAsync } from "@zoonk/utils/error";
 import { type NextRequest } from "next/server";
 
-/** Only a client signed in with cookies has any to change; a bearer app gets none to keep. */
 function getClientCookieHeaders({ headers, request }: { headers: Headers; request: NextRequest }) {
   if (!request.headers.has("cookie")) {
     return;

@@ -13,10 +13,6 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const ACCEPTED = 202;
 
-/**
- * The run writing the goal's curriculum (or its explanation), for a wait that opened before the
- * goal had one: it asks every few seconds, so it reads the one column, and never starts a run.
- */
 async function readGoalGeneration(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/generations">,
@@ -29,10 +25,6 @@ async function readGoalGeneration(
     : accessError(result.status);
 }
 
-/**
- * Starts a goal's curriculum (or its explanation) again, such as after a start failed or a run
- * gave up. The run only writes what is still missing, and a run already going is joined.
- */
 async function createGoalGeneration(
   request: NextRequest,
   context: RouteContext<"/v1/goals/[goalId]/generations">,

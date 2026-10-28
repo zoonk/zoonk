@@ -5,13 +5,7 @@ import { listListeningPartsToPrepare } from "@zoonk/core/exams/listening/prepare
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 
-/**
- * When a learner's session prepares and they heard every recording of a part of their exam, the
- * part's next one starts being made for their next practice, at the flex tier. Nothing starts for
- * a goal without listening or while they have recordings left to hear. `userId` comes from the
- * caller's session access. A failure is logged: the next session prepares again. For routes only:
- * it reads the database, which workflow code can't.
- */
+/** Routes only: it reads the database, which workflow code can't. `userId` comes from the session. */
 export async function startLearnerListeningSets({
   analytics,
   goalId,

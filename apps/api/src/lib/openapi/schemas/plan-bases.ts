@@ -3,11 +3,6 @@ import { z } from "zod";
 
 const minutesSchema = z.int().min(1);
 
-/**
- * The plan's bases: the skills its topics or final work build on, worth less to the goal than what
- * builds on them, which the learner chooses how to study (`setBaseChoices`). What the app
- * recommends is asked for (`POST /v1/goals/{goalId}/plan/bases-advice`).
- */
 export const planBasesSchema = z
   .object({
     daysLeft: z

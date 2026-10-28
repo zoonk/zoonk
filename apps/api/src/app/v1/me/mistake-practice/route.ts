@@ -6,7 +6,6 @@ import { mistakePracticeInputSchema } from "@zoonk/core/mistakes/contract";
 import { getMistakePractice } from "@zoonk/core/mistakes/practice";
 import { NextResponse } from "next/server";
 
-/** Returns the mistakes to practice now, each with its targeted drill. */
 async function getPractice(request: Request) {
   const query = readQueryParams(request, mistakePracticeInputSchema);
 

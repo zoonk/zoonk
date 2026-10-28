@@ -7,7 +7,6 @@ const authMocks = vi.hoisted(() => ({
   validateTrustedOrigin: vi.fn(),
 }));
 
-/** These adapter tests inject auth failures to check their presentation, without exercising persistence. */
 vi.mock("@zoonk/auth", () => ({ auth: { api: authMocks } }));
 
 const CALLBACK_URL = "http://main.zoonk.localhost:1355/auth/callback?state=login-state";

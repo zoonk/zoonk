@@ -7,7 +7,6 @@ import { joinInstrumentWaitlist } from "@zoonk/core/instrument-waitlist/join";
 import { listInstrumentWaitlist } from "@zoonk/core/instrument-waitlist/list";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** The instruments the learner is waiting to learn to play. */
 async function listEntries() {
   const entries = await listInstrumentWaitlist();
 
@@ -18,7 +17,6 @@ async function listEntries() {
   return NextResponse.json({ entries });
 }
 
-/** Adds an instrument to the learner's waitlist; joining again returns the same entry. */
 async function joinWaitlist(request: NextRequest) {
   const parsed = await readBody(request, instrumentWaitlistJoinSchema);
 

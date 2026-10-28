@@ -7,7 +7,6 @@ import { readQueryParams } from "@/lib/request-input";
 import { listCurrentUserMistakes } from "@zoonk/core/mistakes/list-current-user";
 import { NextResponse } from "next/server";
 
-/** Returns one page of the learner's mistakes notebook with counts for the filters. */
 async function listMistakes(request: Request) {
   const query = readQueryParams(request, mistakeListQuerySchema);
 

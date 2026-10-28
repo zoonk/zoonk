@@ -7,7 +7,6 @@ import { NextResponse } from "next/server";
 
 const LOGICAL_DATE_LENGTH = 10;
 
-/** Returns today's capped reviews and the coming week's review load. */
 async function getReviewSchedule(request: Request) {
   const query = readQueryParams(request, reviewScheduleInputSchema);
 

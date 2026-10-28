@@ -29,10 +29,6 @@ function getGuestErrorResponse(error: unknown) {
   return authRateLimitError(error);
 }
 
-/**
- * Starts a guest session: a learner without an account who can take up to three lessons before
- * signing up, when their progress moves to the new account.
- */
 async function createGuest(request: NextRequest) {
   const { data, error } = await safeAsync(() =>
     createGuestSession({ headers: request.headers, requestURL: request.url }),

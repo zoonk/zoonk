@@ -38,7 +38,6 @@ const learnerErrors = {
   "404": notFoundResponse,
 } as const;
 
-/** Past a free exam plan's first week a test-out comes with Plus (`ChapterView.testOut`). */
 const testOutPlusRequired = {
   ...paymentRequiredResponse,
   description: `A free exam plan past its first week takes the test-out with Plus only (\`testOut.plusRequired\` on the chapter): nothing is written, graded or skipped. Error code: ${LESSON_PLAYER_ERROR_CODES.plusRequired}.`,

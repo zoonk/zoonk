@@ -7,7 +7,6 @@ import { catchUpToday } from "@zoonk/core/sessions/catch-up";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** "Catch up today": the lessons earlier days left that today's time didn't fit join today. */
 async function createCatchUpBlocks(
   request: NextRequest,
   context: RouteContext<"/v1/study-sessions/[sessionId]/catch-up-blocks">,

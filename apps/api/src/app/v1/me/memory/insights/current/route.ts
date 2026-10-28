@@ -5,7 +5,6 @@ import { memoryInsightQuerySchema } from "@zoonk/core/memory/contract";
 import { getCurrentMemoryInsight } from "@zoonk/core/memory/insights/get-current";
 import { NextResponse } from "next/server";
 
-/** The insight Today shows, or null when there is none to answer. */
 async function getCurrentInsight(request: Request) {
   const query = readQueryParams(request, memoryInsightQuerySchema);
 

@@ -11,12 +11,6 @@ import { start } from "workflow/api";
 
 const ACCEPTED = 202;
 
-/**
- * Gets a mock's questions ready when the learner starts it: `ready` when the shared bank holds
- * them, `preparing` while the goal's skill map is drawn, otherwise a run writes the missing ones
- * and its listening sections' missing recordings (a second request joins it). Each start counts
- * as small AI help.
- */
 async function createMockQuestions(
   request: NextRequest,
   context: RouteContext<"/v1/goals/[goalId]/mocks/generations">,

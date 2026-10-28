@@ -6,7 +6,6 @@ import { pronunciationRoundInputSchema } from "@zoonk/core/language/pronunciatio
 import { finishPronunciationRound } from "@zoonk/core/language/pronunciation/finish";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** Counts a finished pronunciation round toward the learner's day, once. */
 async function completePronunciationRound(
   request: NextRequest,
   context: RouteContext<"/v1/pronunciation-rounds/[roundId]/completions">,

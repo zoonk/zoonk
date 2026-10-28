@@ -15,7 +15,6 @@ import { POST as createGuest } from "../guests/route";
 import { POST as createChallenge } from "./challenges/route";
 import { POST as createKey } from "./keys/route";
 
-/** Real auth and persistence; only Vercel BotID is external, and it always sees a bot here. */
 vi.mock("botid/server", () => ({ checkBotId: vi.fn() }));
 
 vi.mock("@zoonk/auth", async () => {

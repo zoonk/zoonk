@@ -6,7 +6,6 @@ import { readPathParams, readQueryParams } from "@/lib/request-input";
 import { getPlanChangedSince } from "@zoonk/core/plans/changed-since";
 import { NextResponse } from "next/server";
 
-/** Whether the plan, or Today, changed since the client read it. */
 async function readPlanChangedSince(
   request: Request,
   context: RouteContext<"/v1/goals/[goalId]/plan/changed-since">,

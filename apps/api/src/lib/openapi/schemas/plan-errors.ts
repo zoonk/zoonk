@@ -2,7 +2,6 @@ import { unfundedMoveSchema } from "@zoonk/core/plans/plan-error-contract";
 import { z } from "zod";
 import { errorSchema } from "./common";
 
-/** A refused plan edit, with recovery data when a mock's new day cannot fund it. */
 const planChangeInvalidErrorSchema = errorSchema
   .extend({
     error: errorSchema.shape.error.extend({
@@ -29,7 +28,6 @@ export const planChangeInvalidResponse = {
     "The change cannot apply and the prior plan is unchanged. For moveBeforeNextMonday, pick a day on or after next Monday in the learner's time zone. For mockCollision, two weekly events would share the day: pick another day. For unfundedMove, details.unfundedMove gives the requested day and real mock duration it cannot fund: pick a later day.",
 } as const;
 
-/** One refused date: where it was sent, and its nearest accepted calendar bound. */
 const outOfRangeDateSchema = z.object({
   bound: z
     .enum(["earliest", "latest"])
@@ -43,7 +41,6 @@ const outOfRangeDateSchema = z.object({
     .describe("Where the refused date was sent in the request body"),
 });
 
-/** A new target date outside the supported range (`TARGET_DATE_OUT_OF_RANGE`). */
 const targetDateOutOfRangeErrorSchema = errorSchema
   .extend({
     error: errorSchema.shape.error.extend({
@@ -61,7 +58,6 @@ export const targetDateOutOfRangeResponse = {
   description: TARGET_DATE_OUT_OF_RANGE_DESCRIPTION,
 } as const;
 
-/** A plan change refused by the plan (`PLAN_CHANGE_INVALID`) or for a date past what it reaches. */
 export const planDateChangeInvalidResponse = {
   content: {
     "application/json": {

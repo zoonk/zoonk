@@ -5,7 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { getPronunciationReviews } from "@zoonk/core/language/pronunciation/get";
 import { NextResponse } from "next/server";
 
-/** Returns the words a language goal's learner mispronounced that are due to be said again. */
 async function listPronunciationReviews(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/pronunciation-reviews">,

@@ -6,7 +6,6 @@ import { toChangeNoticeResource } from "@/lib/source-resources";
 import { listGoalChangeNotices } from "@zoonk/core/library/sources/notices";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** The recent one-line notices about changes to what a goal studies, for Today. */
 async function getChangeNotices(request: NextRequest) {
   const parsed = readQueryParams(request, changeNoticesQuerySchema);
 

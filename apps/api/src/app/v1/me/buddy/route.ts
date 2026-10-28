@@ -5,7 +5,6 @@ import { getBuddyStatus } from "@zoonk/core/milestones/buddy";
 import { buddyStatusInputSchema } from "@zoonk/core/milestones/contract";
 import { NextResponse } from "next/server";
 
-/** Returns the buddy's page: Energy, stage, what it ate this week and the glasses. */
 async function getBuddy(request: Request) {
   const query = readQueryParams(request, buddyStatusInputSchema);
 

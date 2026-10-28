@@ -6,7 +6,6 @@ import { toSourceResource } from "@/lib/source-resources";
 import { listLearnerSources } from "@zoonk/core/library/sources/list-learner";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** The learner's own material: their uploads and what research found for their goals. */
 async function getLearnerSources(request: NextRequest) {
   const parsed = readQueryParams(request, learnerSourcesQuerySchema);
 

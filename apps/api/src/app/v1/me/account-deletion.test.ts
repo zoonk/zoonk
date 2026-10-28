@@ -84,13 +84,11 @@ const SHARED: CurriculumScope = {
 
 const provenance = { generatedAt: new Date(), model: "test/model", promptVersion: "v1" };
 
-/** When the learner's study happened: the aggregates they leave keep only the day. */
 const MOCK_FINISHED_AT = new Date("2026-09-20T15:42:17.123Z");
 const LESSON_ENDED_AT = new Date("2026-09-21T09:13:51.456Z");
 const RESULT_REPORTED_AT = new Date("2026-11-10T21:07:33.789Z");
 const FEEDBACK = "The timer froze on question 12";
 
-/** The course a learner of the exam aims at, as research looks up its weights. */
 const COURSE_WEIGHTS_TARGET = {
   course: "Direito",
   exam: "Test Exam",
@@ -102,7 +100,6 @@ const COURSE_WEIGHTS_TARGET = {
 
 type Learner = Awaited<ReturnType<typeof userFixture>>;
 
-/** Turns a response's Set-Cookie headers into the Cookie header a browser would send next. */
 function toCookieHeaders(responseHeaders: Headers) {
   const cookie = responseHeaders
     .getSetCookie()
@@ -112,7 +109,6 @@ function toCookieHeaders(responseHeaders: Headers) {
   return new Headers({ cookie });
 }
 
-/** The learner signs in and deletes their account from Settings (`DELETE /v1/me`). */
 async function deleteOwnAccount(learner: Learner) {
   const signIn = await auth.api.signInEmail({
     body: { email: learner.email, password: learner.password },
@@ -155,11 +151,6 @@ function explanation(): QuickExplanation {
   };
 }
 
-/**
- * A quick explanation the learner asked for, shared since the question is general: the lesson,
- * its Overview course to go further and its related questions, written the way the explain
- * workflow writes them.
- */
 async function askGeneralQuestion(userId: string) {
   const [goal, skill, organization] = await Promise.all([
     goalFixture({ details: { question: "what is the market?" }, kind: "explain", userId }),
@@ -196,10 +187,6 @@ async function askGeneralQuestion(userId: string) {
   return { course, lessonId: saved.lessonId, skill };
 }
 
-/**
- * A law goal whose research found the law's text: a shared lesson about the law cites it, and the
- * learner's goal is linked to it the way research links the sources it finds.
- */
 async function studyLaw({ chapterId, userId }: { chapterId: string; userId: string }) {
   const [goal, law] = await Promise.all([
     goalFixture({ prompt: "Lei 8.112", title: "Lei 8.112", userId }),
@@ -229,11 +216,6 @@ async function studyLaw({ chapterId, userId }: { chapterId: string; userId: stri
   return { law, lesson };
 }
 
-/**
- * An exam goal on a public notice, with the exam's shared skill graph its run wrote, and the
- * Library content its study touched: the notice, its change notice and review flag, a target's
- * cut-off and a past question.
- */
 async function prepareForExam({
   courseId,
   lessonId,
@@ -298,7 +280,6 @@ async function prepareForExam({
     scope: SHARED,
   });
 
-  // Research looked up how the course the learner aims at weighs the exam's parts.
   await recordCourseWeights({
     finding: {
       edition: "SISU 2026",
@@ -314,7 +295,6 @@ async function prepareForExam({
   return { blueprint, changeNotice, cutoff, goal, notice, pastQuestion, plan, reviewFlag };
 }
 
-/** A Library decision and a tutor-question verdict, logged as `@zoonk/ai` logs evaluation runs. */
 async function logEvaluationRuns({ goalId, userId }: { goalId: string; userId: string }) {
   registerEvaluationRunLog();
 
@@ -349,11 +329,6 @@ async function logEvaluationRuns({ goalId, userId }: { goalId: string; userId: s
   return { personalHash: personal.inputHash, sharedHash: shared.inputHash };
 }
 
-/**
- * A learner whose study produced shared Library content of every kind, next to the personal rows
- * the same study left: their goals and plans, answers, mastery, sessions, questions, memory,
- * mocks, uploads and a private course with its own skill, picture and notice.
- */
 async function learnerWithSharedContent() {
   const learner = await userFixture();
   const userId = learner.id;
@@ -438,7 +413,6 @@ async function learnerWithSharedContent() {
     prepareForExam({ courseId: catalog.course.id, lessonId: lesson.id, skillId: skill.id, userId }),
     studyLaw({ chapterId: chapter.id, userId }),
     askGeneralQuestion(userId),
-    // An exam notice the learner uploaded, which the visibility check made everyone's.
     sourceFixture({
       blobUrl: `${PRIVATE_STORE}/sources/${userId}/edital.pdf`,
       kind: "upload",
@@ -496,9 +470,7 @@ async function learnerWithSharedContent() {
       userId,
     }),
     feedbackFixture({ email: learner.email, message: FEEDBACK, userId }),
-    // Sent signed out, with the same address in other casing.
     feedbackFixture({ email: learner.email.toUpperCase(), message: FEEDBACK }),
-    // Their first answer to the item was wrong; the right one came on review.
     attemptFixture({
       answeredAt: new Date("2026-09-01T10:00:00Z"),
       isCorrect: false,
@@ -643,10 +615,6 @@ async function learnerWithSharedContent() {
 
 type Built = Awaited<ReturnType<typeof learnerWithSharedContent>>;
 
-/**
- * A learner with one row behind each record everyone keeps: an answer that is also a mock's, a
- * finished lesson, an exam result and their feedback.
- */
 async function learnerWithKeptRecords() {
   const [learner, blueprint, skill, lesson] = await Promise.all([
     userFixture(),
@@ -709,7 +677,6 @@ async function learnerWithKeptRecords() {
   };
 }
 
-/** The files the private store holds in each of the learner's folders. */
 function storeFolders(built: Built) {
   const userId = built.learner.id;
 
@@ -735,7 +702,6 @@ function mockPrivateStore(built: Built) {
   );
 }
 
-/** Every shared row the learner's study produced is still there, unchanged where it links. */
 async function expectSharedContentKept({ aiCallRunId, shared }: Built) {
   const { catalog, exam, law, quick } = shared;
 
@@ -792,13 +758,11 @@ async function expectSharedContentKept({ aiCallRunId, shared }: Built) {
     prisma.evaluationRun.count({ where: { inputHash: shared.evaluationRunHash } }),
   ).resolves.toBe(1);
 
-  // The spend stays in the totals, no longer linked to the learner or their goal.
   await expect(
     prisma.aiCall.findFirstOrThrow({ where: { runId: aiCallRunId } }),
   ).resolves.toMatchObject({ goalId: null, userId: null });
 }
 
-/** A second learner gets everything the first one's study made, without anything being written again. */
 async function expectReusableByAnotherLearner({ shared }: Built) {
   const other = await userFixture();
 
@@ -820,7 +784,6 @@ async function expectReusableByAnotherLearner({ shared }: Built) {
     primaryCourseId: null,
   });
 
-  // Aiming at the same course, they get its weights with no new lookup.
   await expect(
     copyStoredCourseWeights({
       goalId: goal.id,
@@ -828,13 +791,11 @@ async function expectReusableByAnotherLearner({ shared }: Built) {
     }),
   ).resolves.toBe(true);
 
-  // The next learner who asks the same question reads its "Want to go further?".
   await expect(findExplanationGoFurther(shared.quick.lessonId)).resolves.toStrictEqual({
     courseId: shared.quick.course.id,
     relatedQuestions: ["What is an index fund?", "Why do stocks fall?"],
   });
 
-  // The lesson about the law is written again from the law's text, as its screens cite it.
   const spec = await loadLessonSpecInputs(shared.law.lesson.id);
 
   expect(spec?.prompt.sources).toContain(
@@ -842,7 +803,6 @@ async function expectReusableByAnotherLearner({ shared }: Built) {
   );
 }
 
-/** Nothing personal stays: the learner, their goals, answers, private content and private files. */
 async function expectPersonalDataGone({ learner, personal }: Built) {
   await expect(
     Promise.all([
@@ -874,7 +834,6 @@ async function expectPersonalDataGone({ learner, personal }: Built) {
   ).resolves.toStrictEqual(Array.from({ length: 24 }, () => 0));
 }
 
-/** What the learner's study still teaches everyone, kept with nothing that points at them. */
 async function expectAnonymousRecordsKept({ feedbackIds, learner, personal, shared }: Built) {
   const { blueprint, goal, pastQuestion } = shared.exam;
   const omit = { id: true } as const;
@@ -889,7 +848,6 @@ async function expectAnonymousRecordsKept({ feedbackIds, learner, personal, shar
     prisma.anonymousExamResult.findMany({ omit, where: { examBlueprintId: blueprint.id } }),
   ]);
 
-  // Each item's first answer only (the item's right answer on review doesn't count).
   expect(
     firstAnswers.toSorted((first, second) => first.itemId.localeCompare(second.itemId)),
   ).toStrictEqual(
@@ -910,7 +868,6 @@ async function expectAnonymousRecordsKept({ feedbackIds, learner, personal, shar
     },
   ]);
 
-  // Only the finished lesson, not the mock the ledger also holds.
   expect(paces).toStrictEqual([
     { lessonId: shared.lesson.id, localDate: new Date("2026-09-21T00:00:00Z"), seconds: 200 },
   ]);
@@ -927,7 +884,6 @@ async function expectAnonymousRecordsKept({ feedbackIds, learner, personal, shar
     },
   ]);
 
-  // Nothing kept names the learner or their rows, and the ids don't say when they were written.
   const kept = JSON.stringify([firstAnswers, mockAnswers, paces, results]);
 
   for (const id of [
@@ -942,7 +898,6 @@ async function expectAnonymousRecordsKept({ feedbackIds, learner, personal, shar
 
   expect(mockAnswers[0]?.id.charAt(14)).toBe("4");
 
-  // Their feedback stays for the team, without their address.
   await expect(
     prisma.feedback.findMany({
       select: { email: true, message: true, userId: true },
@@ -954,7 +909,6 @@ async function expectAnonymousRecordsKept({ feedbackIds, learner, personal, shar
   ]);
 }
 
-/** Every file deleted from the private store, in order. */
 function listDeletedFiles(): string[] {
   return vi
     .mocked(del)
@@ -971,8 +925,6 @@ describe("deleting a learner", () => {
     vi.unstubAllEnvs();
   });
 
-  // `pnpm dev:remove-test-learners` runs the same cleanup before deleting the user (see
-  // `removeTestLearner`'s own test).
   it("keeps every shared thing their study made and removes everything personal when the learner deletes their account (DELETE /v1/me)", async () => {
     const built = await learnerWithSharedContent();
     mockPrivateStore(built);
@@ -983,7 +935,6 @@ describe("deleting a learner", () => {
     await expectSharedContentKept(built);
     await expectAnonymousRecordsKept(built);
 
-    // The private store lost the learner's own files and nothing anyone else uses.
     expect(listDeletedFiles()).toStrictEqual(
       [built.personal.privatePicture.url, built.personal.privateUpload.blobUrl].toSorted(
         (first, second) => (first ?? "").localeCompare(second ?? ""),
@@ -997,7 +948,6 @@ describe("deleting a learner", () => {
     const { blueprintId, feedbackId, itemId, learner, lessonId } = await learnerWithKeptRecords();
     vi.mocked(list).mockResolvedValue({ blobs: [], hasMore: false } as never);
 
-    // The first try cleaned up before the account itself failed to go; the learner tries again.
     await deleteUserDependenciesBeforeAuthDelete(learner);
     await deleteOwnAccount(learner);
 

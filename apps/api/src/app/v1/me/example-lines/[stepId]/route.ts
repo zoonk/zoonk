@@ -10,10 +10,6 @@ import {
 } from "@zoonk/core/library/variants/example-line";
 import { type NextRequest, NextResponse } from "next/server";
 
-/**
- * The signed-in learner's example line for one explanation screen, written the first time. A POST,
- * since writing it calls a model: a GET never starts AI work.
- */
 async function exampleLine(
   request: NextRequest,
   context: RouteContext<"/v1/me/example-lines/[stepId]">,

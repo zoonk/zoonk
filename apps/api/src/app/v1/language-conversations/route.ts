@@ -7,11 +7,6 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const CREATED = 201;
 
-/**
- * Starts a live conversation: practice for a language unit, a language goal's checkpoint call, an
- * IELTS or TOEFL speaking mock, or a task of an exam's speaking paper (Plus, and only when the call
- * time left fits it). Nothing is charged until the call connects.
- */
 async function createLanguageConversation(request: NextRequest) {
   const parsed = await readBody(request, languageConversationStartInputSchema);
 

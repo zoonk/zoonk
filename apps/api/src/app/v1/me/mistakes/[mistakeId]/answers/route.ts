@@ -6,7 +6,6 @@ import { mistakePracticeAnswerInputSchema } from "@zoonk/core/mistakes/contract"
 import { answerMistakePractice } from "@zoonk/core/mistakes/practice-answer";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** Grades one mistake-practice answer; a right answer on a later day fixes the entry. */
 async function createMistakePracticeAnswer(
   request: NextRequest,
   context: RouteContext<"/v1/me/mistakes/[mistakeId]/answers">,

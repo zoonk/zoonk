@@ -12,18 +12,12 @@ type RefusedConversation =
   | Exclude<Awaited<ReturnType<typeof endLanguageConversationConnection>>, { status: "closed" }>
   | Exclude<StartLanguageConversationResult, { status: "ready" }>;
 
-/** What a refused call says, by the call time that ran out. */
 const CALL_LIMIT_MESSAGES = {
   day: "No more call time on your plan today",
   month: "No more call time on your plan this month",
   total: "Calls need a free account",
 } as const;
 
-/**
- * A live conversation that can't open now: the plan's call time for today or this month is used,
- * or a guest's plan has none (`details` names it: its period and limit in seconds), too many at
- * once, the call already ended, or it isn't the learner's.
- */
 export function conversationRefusalError(
   result: RefusedConversation,
   notFoundMessage = "Conversation not found",
@@ -79,7 +73,6 @@ export function conversationRefusalError(
   return languageError(result.status, notFoundMessage);
 }
 
-/** A recording the grader can't take: empty, too big, or not a format it reads. */
 export function invalidAudioError() {
   return createErrorResponse({
     code: "INVALID_AUDIO",
@@ -88,7 +81,6 @@ export function invalidAudioError() {
   });
 }
 
-/** A goal or unit that exists but isn't a language one. */
 export function notLanguageError() {
   return createErrorResponse({
     code: "NOT_LANGUAGE",
@@ -97,7 +89,6 @@ export function notLanguageError() {
   });
 }
 
-/** A conversation already ended: its result is final, start a new one. */
 function conversationEndedError() {
   return createErrorResponse({
     code: "CONVERSATION_ENDED",
@@ -106,7 +97,6 @@ function conversationEndedError() {
   });
 }
 
-/** A checkpoint call or exam speaking task requires Plus. */
 function plusRequiredError() {
   return createErrorResponse({
     code: "PLUS_REQUIRED",
@@ -130,7 +120,6 @@ type LanguageRefusal =
   | "takenOver"
   | "unauthorized";
 
-/** Maps a language capability's outcome that isn't ready to the shared error envelope. */
 export function languageError(status: LanguageRefusal, notFoundMessage = "Resource not found") {
   switch (status) {
     case "takenOver":

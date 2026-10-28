@@ -7,7 +7,6 @@ import { reportExamResult } from "@zoonk/core/exams/results/report";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** "How did it go?": stores the official result after the exam, replacing an earlier report. */
 async function putExamResult(
   request: NextRequest,
   context: RouteContext<"/v1/goals/[goalId]/exam-result">,

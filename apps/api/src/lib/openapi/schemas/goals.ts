@@ -107,7 +107,6 @@ export const goalCreateResponseSchema = z
   })
   .meta({ id: "GoalCreateResponse" });
 
-/** A goal that replaces another (the next level, or a language goal's exam) starts like a new one. */
 export const replacementGoalResponseSchema = goalCreateResponseSchema
   .pick({ generations: true, research: true })
   .extend({ goal: goalSchema });

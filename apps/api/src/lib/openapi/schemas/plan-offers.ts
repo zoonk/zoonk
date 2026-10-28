@@ -2,7 +2,6 @@ import { planChangeInputSchema } from "@zoonk/core/plans/contract";
 import { planEffectSchema } from "@zoonk/core/plans/effect-contract";
 import { z } from "zod";
 
-/** A change the Plan worked out before the learner sees it, with what it does (`PlanOffer`). */
 const planOfferSchema = z.object({
   effect: planEffectSchema,
   fits: z

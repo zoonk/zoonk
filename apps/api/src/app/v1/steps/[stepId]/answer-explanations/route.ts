@@ -7,10 +7,6 @@ import { answerExplanationInputSchema } from "@zoonk/core/lesson-player/contract
 import { explainAnswer } from "@zoonk/core/library/items/explain-answer";
 import { type NextRequest, NextResponse } from "next/server";
 
-/**
- * "Explain answer" for a wrong typed answer. The explanation is shared by everyone who gives the
- * same answer, so a repeated mistake is explained at once without a model.
- */
 async function createAnswerExplanation(
   request: NextRequest,
   context: RouteContext<"/v1/steps/[stepId]/answer-explanations">,

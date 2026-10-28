@@ -5,10 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { getChallengeTeam } from "@zoonk/core/library/challenges/get-team";
 import { NextResponse } from "next/server";
 
-/**
- * The learner's colleagues for a lesson's challenge, kept with their plan: picked from the plan,
- * so every challenge shows the same people. Reading it never saves anything.
- */
 async function getLessonChallengeTeam(
   _request: Request,
   context: RouteContext<"/v1/library/lessons/[lessonId]/challenge-team">,

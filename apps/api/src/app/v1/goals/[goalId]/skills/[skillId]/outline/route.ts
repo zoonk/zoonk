@@ -5,7 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { getSkillOutline } from "@zoonk/core/lookahead/skill-outline";
 import { NextResponse } from "next/server";
 
-/** Returns a far topic's lesson plan: its chapters, or whether they're being written or can be asked for. */
 async function getOutline(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/skills/[skillId]/outline">,

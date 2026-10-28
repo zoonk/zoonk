@@ -9,10 +9,6 @@ import { stopFreshnessChecks } from "@zoonk/core/library/exams/freshness-checks"
 import { type NextRequest, NextResponse } from "next/server";
 import { start } from "workflow/api";
 
-/**
- * Lets an admin check an exam or source now, read an exam's stored notice again (the only way a
- * reading is redone), or stop its checks until a learner's goal needs them again.
- */
 async function sendFreshnessCommand(request: NextRequest) {
   const parsed = await readBody(request, freshnessCommandRequestSchema);
 

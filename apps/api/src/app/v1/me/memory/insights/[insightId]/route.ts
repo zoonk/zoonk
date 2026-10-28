@@ -7,7 +7,6 @@ import { memoryInsightAnswerSchema } from "@zoonk/core/memory/contract";
 import { respondToMemoryInsight } from "@zoonk/core/memory/insights/respond";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** Accepts or dismisses an insight; accepting applies what it suggests. */
 async function answerInsight(
   request: NextRequest,
   context: RouteContext<"/v1/me/memory/insights/[insightId]">,

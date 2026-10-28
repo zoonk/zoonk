@@ -7,10 +7,6 @@ import { getUsernameAvailability } from "@zoonk/core/users/current";
 import { safeAsync } from "@zoonk/utils/error";
 import { NextResponse } from "next/server";
 
-/**
- * Returns Better Auth's canonical reserved-name and uniqueness result through
- * the stable public product contract used by profile clients.
- */
 async function getUsernameAvailabilityRoute(
   _request: Request,
   context: RouteContext<"/v1/usernames/[username]/availability">,

@@ -6,7 +6,6 @@ import { toSourceResource } from "@/lib/source-resources";
 import { getSource } from "@zoonk/core/library/sources/get";
 import { NextResponse } from "next/server";
 
-/** One source for a citation: public ones for anyone, private uploads for their owner only. */
 async function getSourceResource(
   _request: Request,
   context: RouteContext<"/v1/sources/[sourceId]">,

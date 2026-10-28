@@ -8,7 +8,6 @@ import { onboardingAnswerInputSchema } from "@zoonk/core/view-models/onboarding/
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** Saves one onboarding answer and returns the screens still ahead. */
 async function createOnboardingAnswer(
   request: NextRequest,
   context: RouteContext<"/v1/goals/[goalId]/onboarding/answers">,
@@ -33,8 +32,6 @@ async function createOnboardingAnswer(
     return errors.unprocessableEntity("This answer can't be applied to the goal");
   }
 
-  // The time a day re-plans the first days: the lessons and outlines they now hold start being
-  // written after the response, so Today doesn't wait on them after the plan's reveal.
   if (body.question === "schedule") {
     await scheduleGoalPreparation(goalId);
   }

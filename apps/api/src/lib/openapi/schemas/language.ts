@@ -5,11 +5,7 @@ import { LiveCallEndReason } from "@zoonk/db/live-call-enums";
 import { MAX_CEFR_SCORE } from "@zoonk/utils/cefr";
 import { z } from "zod";
 
-/**
- * The multipart body of a spoken answer: the recording plus its fields. The
- * route reads the fields with `spokenAnswerFieldsSchema`; this schema only
- * documents the whole form.
- */
+/** Only documents the multipart form: the route reads its fields with `spokenAnswerFieldsSchema`. */
 export const spokenAnswerRequestSchema = spokenAnswerFieldsSchema
   .extend({
     audio: z
@@ -61,7 +57,6 @@ export const languageUnitQuerySchema = z
   })
   .meta({ id: "LanguageUnitQuery" });
 
-/** The multipart body of the level test's sentence out loud. */
 export const levelTestSpokenAnswerRequestSchema = z
   .object({
     audio: z
@@ -129,7 +124,6 @@ export const languageLevelTestGenerationSchema = z
   })
   .meta({ id: "LanguageLevelTestGeneration" });
 
-/** The pattern the mistakes notebook offers for a goal. */
 export const goalMistakePatternSchema = z
   .object({
     pattern: noticedPatternSchema

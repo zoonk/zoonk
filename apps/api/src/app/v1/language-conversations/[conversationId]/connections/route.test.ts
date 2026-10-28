@@ -25,7 +25,6 @@ import { POST as end } from "./[connectionId]/end/route";
 import { POST as redeem } from "./[connectionId]/sdp/route";
 import { POST as reserve } from "./route";
 
-/** Auth and PostgreSQL are real; only Workflow enqueue and the AI provider are replaced. */
 vi.mock("@zoonk/ai/tasks/v2/language/live-call-session", () => ({
   createLiveCallSession: vi.fn(),
   hangUpLiveCallSession: vi.fn(),

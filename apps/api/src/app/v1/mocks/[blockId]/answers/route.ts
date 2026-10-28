@@ -8,7 +8,6 @@ import { type NextRequest } from "next/server";
 
 const NO_CONTENT = 204;
 
-/** Saves a draft answer in the running section; nothing says whether it's right until the end. */
 async function putAnswer(
   request: NextRequest,
   context: RouteContext<"/v1/mocks/[blockId]/answers">,

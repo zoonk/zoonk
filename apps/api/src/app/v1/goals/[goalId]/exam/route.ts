@@ -6,7 +6,6 @@ import { getExamView } from "@zoonk/core/exams/view/get";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import { NextResponse } from "next/server";
 
-/** Returns the exam screen for an exam goal: days, exam map, scoring, mocks and result. */
 async function getExam(request: Request, context: RouteContext<"/v1/goals/[goalId]/exam">) {
   const path = await readPathParams(context, goalPathParamsSchema);
 

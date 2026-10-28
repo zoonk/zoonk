@@ -49,5 +49,4 @@ const serializedStepResourceShape = {
   wordBankOptions: z.array(wordBankOptionSchema),
 };
 
-/** A language exercise with the words and sentences its screen needs. */
 export const serializedStepSchema = exerciseContentWith(serializedStepResourceShape);

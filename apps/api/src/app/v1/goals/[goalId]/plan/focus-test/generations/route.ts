@@ -10,11 +10,6 @@ import { start } from "workflow/api";
 
 const ACCEPTED = 202;
 
-/**
- * Gets the goal's focus test ready when the learner starts it: `ready` when every area has its
- * questions, otherwise a run writes the missing ones (a second request joins it). Each start
- * counts as small AI help.
- */
 async function createFocusTestGeneration(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/plan/focus-test/generations">,

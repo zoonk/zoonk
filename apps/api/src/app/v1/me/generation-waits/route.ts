@@ -7,7 +7,6 @@ import { type NextRequest } from "next/server";
 
 const NO_CONTENT = 204;
 
-/** Records how long the learner waited for content to be written (the Generation Waited event). */
 async function createGenerationWait(request: NextRequest) {
   const body = await readBody(request, generationWaitInputSchema);
 

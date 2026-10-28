@@ -22,10 +22,6 @@ function isCronRequest(request: Request): boolean {
   return expected.length === received.length && timingSafeEqual(expected, received);
 }
 
-/**
- * Vercel Cron's daily entry point. Internal, not part of the public API: it only starts the sweeps
- * workflow, which does the work durably.
- */
 async function startDailySweeps(request: Request) {
   if (!isCronRequest(request)) {
     return errors.unauthorized();

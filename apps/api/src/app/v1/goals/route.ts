@@ -11,10 +11,6 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const CREATED = 201;
 
-/**
- * A goal refused next to ones created. Never a guest's sign-up: once the guests' budget is spent,
- * every goal a guest asks for is refused, and a guest's second goal meets the one-goal cap first.
- */
 function toRefusalView(refusal: GoalRefusal) {
   const { decision, index } = refusal;
 
@@ -25,13 +21,11 @@ function toRefusalView(refusal: GoalRefusal) {
   };
 }
 
-/** The learner's goals, the main one first, with the day's total time. */
 async function listGoals() {
   const list = await listCurrentUserGoals();
   return list ? NextResponse.json(list) : errors.unauthorized();
 }
 
-/** Creates one goal, or several that share the day's time ("ENEM and English"). */
 async function createGoal(request: NextRequest) {
   const parsed = await readBody(request, goalCreateInputSchema);
 

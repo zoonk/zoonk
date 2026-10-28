@@ -29,7 +29,6 @@ import { mockLeftOutSchema } from "./mock-left-out";
 import { mockScoreNotesSchema, mockSectionSchema, mockSizeSourceSchema } from "./mock-parts";
 import { logicalDateSchema } from "./study-sessions";
 
-/** The formats a mock asks in, the exam's own. */
 const MOCK_QUESTION_FORMATS = ["multipleChoice", "numeric", "trueFalse", "typed"] as const;
 
 const mockQuestionSchema = z.object({

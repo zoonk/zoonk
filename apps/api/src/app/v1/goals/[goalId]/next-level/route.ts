@@ -28,10 +28,6 @@ function refuse({ status }: Refusal) {
     : errors.unprocessableEntity("This goal has no next level to continue at");
 }
 
-/**
- * "Continue at Beginner" once a plan is done: the finished goal is completed and a goal for the
- * next level of its course takes its place; its research and curriculum start right away.
- */
 async function postNextLevel(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/next-level">,

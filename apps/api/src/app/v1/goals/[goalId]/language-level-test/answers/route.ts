@@ -6,7 +6,6 @@ import { answerLanguageLevelTest } from "@zoonk/core/language/level-test/answer"
 import { levelTestAnswerInputSchema } from "@zoonk/core/language/level-test/contract";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** Records one level test answer ("I don't know" included) and returns what comes next. */
 async function answerLevelTest(
   request: NextRequest,
   context: RouteContext<"/v1/goals/[goalId]/language-level-test/answers">,

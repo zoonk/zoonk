@@ -5,7 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { getLanguageTodayView } from "@zoonk/core/view-models/language/today";
 import { NextResponse } from "next/server";
 
-/** Returns what Today adds for a language goal: the level across skills, the words to say again and the speaking tasks. */
 async function getLanguageView(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/language-today">,

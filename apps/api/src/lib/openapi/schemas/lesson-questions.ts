@@ -44,7 +44,6 @@ export const lessonQuestionResponseSchema = lessonQuestionResourceSchema.meta({
   id: "LessonQuestion",
 });
 
-/** A question just asked, with what it did to the day's missions (asking can be one of them). */
 export const createdLessonQuestionResponseSchema = createdLessonQuestionSchema.meta({
   id: "CreatedLessonQuestion",
 });

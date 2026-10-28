@@ -3,14 +3,11 @@ import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { POST as createUploadToken } from "./route";
 
-// Core's integration tests cover signing, folders and allowances; this adapter test covers
-// Vercel Blob's presigned-upload protocol and how each outcome maps to HTTP.
 vi.mock("@zoonk/core/library/sources/upload-token", () => ({ createSourceUploadToken: vi.fn() }));
 
 const PATHNAME = "sources/019c9bd7-bf11-73cb-9cc8-fe371298190b/edital.pdf";
 const VALID_UNTIL = Date.now() + 15 * 60 * 1000;
 
-/** A signed token shaped like the one Blob's API issues: its scope, readable, then a signature. */
 function signedToken() {
   const scope = {
     operations: ["put"],

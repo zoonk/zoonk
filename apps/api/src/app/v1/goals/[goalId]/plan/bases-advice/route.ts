@@ -5,11 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { getPlanBasesAdvice } from "@zoonk/core/plans/bases-advice";
 import { NextResponse } from "next/server";
 
-/**
- * What the app recommends for the plan's bases, when the learner asks for it ("Get a
- * recommendation"): it plans the goal with every base in depth, so it's a POST a learner sends,
- * never a read a page or prefetch makes.
- */
 async function adviseOnBases(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/plan/bases-advice">,

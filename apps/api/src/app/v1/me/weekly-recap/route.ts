@@ -6,7 +6,6 @@ import { weeklyRecapInputSchema } from "@zoonk/core/milestones/contract";
 import { getWeeklyRecap } from "@zoonk/core/milestones/weekly-recap";
 import { NextResponse } from "next/server";
 
-/** Returns the week's logbook: the learner's numbers against their own last week and more. */
 async function getRecap(request: Request) {
   const query = readQueryParams(request, weeklyRecapInputSchema);
 

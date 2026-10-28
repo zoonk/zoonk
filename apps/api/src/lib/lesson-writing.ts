@@ -11,13 +11,9 @@ import { logError } from "@zoonk/utils/logger";
 import { after } from "next/server";
 import { start } from "workflow/api";
 
-/** What asking for a lesson's content did: a run started here is followed like one already writing. */
 export type LessonWriting = Exclude<LessonGenerationRequest, { status: "start" }>;
 
-/**
- * A lesson whose run stopped without ending its claim (a crash, a deploy) would be followed
- * forever: its claim is freed and the lesson asked for again, so a fresh run writes it.
- */
+/** A lesson whose run stopped without ending its claim would otherwise be followed forever. */
 async function requestLiveGeneration(lessonId: string) {
   const result = await requestLessonGeneration({ lessonId });
 
@@ -30,12 +26,7 @@ async function requestLiveGeneration(lessonId: string) {
   return requestLessonGeneration({ lessonId });
 }
 
-/**
- * Gets a lesson written for the learner or guest in the session, who is about to open it: a
- * written lesson is `ready`, one being written is followed, otherwise a run starts, written at the
- * tier a learner's wait gets. Asking counts as the lesson start it leads to, so the allowance
- * decides first.
- */
+/** Asking counts as the lesson start it leads to, so the allowance decides first. */
 export async function startLessonWriting(lessonId: string): Promise<LessonWriting> {
   const result = await requestLiveGeneration(lessonId);
 
@@ -55,11 +46,7 @@ export async function startLessonWriting(lessonId: string): Promise<LessonWritin
   return { generationId: run.runId, status: "generating" };
 }
 
-/**
- * Starts writing a lesson the learner reaches next once the response is sent, so the request it
- * rides on isn't slowed down. Opening the lesson asks for it again, with its own wait and retry,
- * so a failure here is only logged.
- */
+/** Opening the lesson asks for it again, so a failure here is only logged. */
 export function scheduleLessonWriting(lessonId: string): void {
   after(async () => {
     const { error } = await safeAsync(() => startLessonWriting(lessonId));

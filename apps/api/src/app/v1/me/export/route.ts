@@ -4,10 +4,8 @@ import { withApiImageUrls } from "@/lib/file-urls";
 import { exportCurrentUserData } from "@zoonk/core/users/export";
 import { NextResponse } from "next/server";
 
-/** "2026-09-26", the date part of an ISO timestamp, names the file. */
 const ISO_DATE_LENGTH = 10;
 
-/** Everything Zoonk keeps about the learner, as a JSON file they can keep. */
 async function exportAccountData() {
   const exported = await exportCurrentUserData();
 

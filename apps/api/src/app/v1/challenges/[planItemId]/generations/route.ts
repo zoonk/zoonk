@@ -10,11 +10,6 @@ import { start } from "workflow/api";
 
 const ACCEPTED = 202;
 
-/**
- * Gets a challenge's questions ready when the learner starts it and the bank holds too few:
- * `ready` when it has them, otherwise a run writes what it lacks of its ten (a run already
- * writing them is joined). Each start counts as small AI help.
- */
 async function createChallengeGeneration(
   _request: Request,
   context: RouteContext<"/v1/challenges/[planItemId]/generations">,

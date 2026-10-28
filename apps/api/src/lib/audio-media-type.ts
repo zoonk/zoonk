@@ -12,19 +12,12 @@ const ascii = (text: string) => [...encoder.encode(text)];
 const MP4_BOX_TYPE_OFFSET = 4;
 const WAV_FORM_TYPE_OFFSET = 8;
 
-/** WebM's EBML header. */
 const EBML_HEADER = [...Buffer.from("1a45dfa3", "hex")];
 
 /** An MPEG audio frame starts with eleven set bits: FF, then a byte of at least E0. */
 const FRAME_SYNC_BYTE = 255;
 const FRAME_SYNC_SECOND_BYTE_MIN = 224;
 
-/**
- * The recording's media type: the one its part declared, or, when it declared none (OpenAPI
- * clients send `application/octet-stream` for a binary field), the container its first bytes
- * name: MP4/M4A (`ftyp` box), WebM (EBML header), WAV (`RIFF…WAVE`) or MP3 (ID3 tag or a frame
- * sync). Anything else keeps the declared type, which the grader then refuses.
- */
 export function resolveAudioMediaType({
   bytes,
   declared,

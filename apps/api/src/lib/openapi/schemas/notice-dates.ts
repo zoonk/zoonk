@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { logicalDateSchema } from "./study-sessions";
 
-/** The plan's and the exam page's word on the exam's date from its notice. */
 export const noticeDaySchema = z
   .object({
     date: logicalDateSchema,

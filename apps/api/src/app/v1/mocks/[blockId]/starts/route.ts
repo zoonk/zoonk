@@ -8,7 +8,6 @@ import { type NextRequest } from "next/server";
 
 const NO_CONTENT = 204;
 
-/** Starts the mock (or resumes it): its sections are fixed and the first section's clock starts. */
 async function postStart(
   request: NextRequest,
   context: RouteContext<"/v1/mocks/[blockId]/starts">,

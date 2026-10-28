@@ -5,7 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { getChapterMindMapStatus } from "@zoonk/core/mind-maps/status";
 import { NextResponse } from "next/server";
 
-/** A live status read for a chapter map's wait, without loading its full view. */
 async function getStatus(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/chapters/[chapterId]/mind-map/status">,

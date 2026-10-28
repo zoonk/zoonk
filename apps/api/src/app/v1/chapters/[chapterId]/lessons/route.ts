@@ -5,10 +5,6 @@ import { readChapterContext } from "@/lib/chapter-context";
 import { listCatalogChapterLessons } from "@zoonk/core/catalog/chapter-lessons";
 import { NextResponse } from "next/server";
 
-/**
- * Lists one chapter's lessons in order, read in the course from the query or
- * in the chapter's home course.
- */
 async function listChapterLessonResources(
   request: Request,
   context: RouteContext<"/v1/chapters/[chapterId]/lessons">,

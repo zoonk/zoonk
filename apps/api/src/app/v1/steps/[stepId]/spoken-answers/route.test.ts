@@ -3,8 +3,6 @@ import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { POST as createSpokenAnswer } from "./route";
 
-// Core's integration tests cover grading, explanations and attempts; this adapter test
-// covers the multipart body and how each outcome maps to HTTP.
 vi.mock("@zoonk/core/library/language/grade-spoken-answer", () => ({ gradeSpokenAnswer: vi.fn() }));
 
 const STEP_ID = "019c9bd7-bf11-73cb-9cc8-fe371298190b";
@@ -43,7 +41,6 @@ function post(request: NextRequest, stepId = STEP_ID) {
 const recording = () =>
   new File([new Uint8Array([1, 2, 3])], "answer.webm", { type: "audio/webm" });
 
-/** Today's small AI help is used up: guests sign up, free learners see Plus, Plus waits a day. */
 function limitReached({
   resource,
   tier,
@@ -112,7 +109,6 @@ describe("POST /v1/steps/{stepId}/spoken-answers", () => {
     [limitReached({ resource: "assist", tier: "guest" }), 403, "USAGE_LIMIT_REACHED"],
     [limitReached({ resource: "aiSpend", tier: "free" }), 402, "USAGE_LIMIT_REACHED"],
     [limitReached({ resource: "aiSpend", tier: "plus" }), 429, "USAGE_LIMIT_REACHED"],
-    // The day's AI budget all guests share is spent: never a cap's numbers, just the account.
     [{ status: "signUpRequired" as const }, 403, "SIGN_UP_REQUIRED"],
   ])("maps %o to HTTP %i", async (result, status, code) => {
     vi.mocked(gradeSpokenAnswer).mockResolvedValue(result);

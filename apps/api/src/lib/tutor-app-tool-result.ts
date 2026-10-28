@@ -5,7 +5,6 @@ import { type offerTutorTool } from "@zoonk/core/lesson-questions/offer-tool";
 
 type OfferedDetails = Extract<GoalTutorAppToolResult, { status: "offered" }>["offered"];
 
-/** What the card opens, in the few facts the buddy says about it; the learner sees the card. */
 function describeOffer(offer: TutorToolOffer): OfferedDetails {
   switch (offer.kind) {
     case "startGoal":
@@ -36,12 +35,10 @@ function describeOffer(offer: TutorToolOffer): OfferedDetails {
   }
 }
 
-/** A feature the learner's plan doesn't include: its card shows it locked, never hidden. */
 function isLocked(offer: TutorToolOffer): boolean {
   return "access" in offer && offer.access === "plusRequired";
 }
 
-/** What the model reads back after offering a feature; the learner sees its card instead. */
 export function toAppToolResult({
   result,
   tool,

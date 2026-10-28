@@ -6,7 +6,6 @@ import { essaySubmissionInputSchema } from "@zoonk/core/exams/essays/contract";
 import { submitEssay } from "@zoonk/core/exams/essays/submit";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** Grades a draft of the block's essay with the official rubric and records it. */
 async function postSubmission(
   request: NextRequest,
   context: RouteContext<"/v1/essays/[blockId]/submissions">,

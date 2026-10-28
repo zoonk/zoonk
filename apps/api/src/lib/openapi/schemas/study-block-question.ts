@@ -12,7 +12,6 @@ import { mistakeDrillSchema } from "./mistakes";
 
 const idSchema = z.uuid();
 
-/** One question of a study block, without its answer, with what was answered already. */
 export const studyBlockQuestionSchema = z.object({
   answered: z
     .object({

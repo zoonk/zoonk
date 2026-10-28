@@ -8,12 +8,6 @@ import { placementCompletionInputSchema } from "@zoonk/core/learner/placement/co
 import { finishGoalPlacement } from "@zoonk/core/learner/placement/finish";
 import { type NextRequest, NextResponse } from "next/server";
 
-/**
- * Ends placement ("Stop anytime" or "Start from scratch") and returns each phase's start. The
- * lesson the plan now opens with starts being written, guests' included, counted as its start
- * like opening it: Day 1 opens it minutes later. A learner with an account also gets Day 1's next
- * lessons and the next study day's first ones written, as a session's preparation would.
- */
 async function completePlacement(
   request: NextRequest,
   context: RouteContext<"/v1/goals/[goalId]/placement/completion">,

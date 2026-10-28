@@ -4,9 +4,6 @@ import { coursePathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
 import { getCatalogCourseNextLesson } from "@zoonk/core/catalog/next-lesson";
 
-/**
- * Returns where the learner goes next in a validated course.
- */
 async function getCourseNextLesson(
   _request: Request,
   context: RouteContext<"/v1/courses/[courseId]/next-lesson">,

@@ -8,10 +8,6 @@ import { readPathParams, readQueryParams } from "@/lib/request-input";
 import { getLanguageUnitView } from "@zoonk/core/view-models/language/unit";
 import { type NextRequest, NextResponse } from "next/server";
 
-/**
- * A language unit's page: its "I can" checks and lessons, grammar tips, words, the learner's open
- * mistakes on it by skill, and the conversation to practice.
- */
 async function getLanguageUnit(
   request: NextRequest,
   context: RouteContext<"/v1/language-units/[chapterId]">,

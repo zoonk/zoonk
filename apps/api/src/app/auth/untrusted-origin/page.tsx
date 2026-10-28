@@ -4,7 +4,6 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { MAIN_URL } from "@zoonk/utils/url";
 import { getExtracted } from "next-intl/server";
 
-/** A sign-in asked to return somewhere that isn't Zoonk: it says so and offers Zoonk instead. */
 export default async function UntrustedOriginPage() {
   const t = await getExtracted();
 

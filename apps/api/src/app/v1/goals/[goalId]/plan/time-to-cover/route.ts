@@ -6,11 +6,6 @@ import { readBody, readPathParams } from "@/lib/request-input";
 import { findPlanTimeToCover } from "@zoonk/core/plans/time-advice";
 import { type NextRequest, NextResponse } from "next/server";
 
-/**
- * The daily time that studies the goal's whole plan in depth by its date, found when the learner
- * asks for it ("Find the time that covers everything"): it plans the goal at each daily time, so
- * it's a POST a learner sends, never a read a page or prefetch makes.
- */
 async function findTimeToCover(
   request: NextRequest,
   context: RouteContext<"/v1/goals/[goalId]/plan/time-to-cover">,

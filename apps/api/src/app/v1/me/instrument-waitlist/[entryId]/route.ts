@@ -7,7 +7,6 @@ import { type NextRequest, NextResponse } from "next/server";
 
 type EntryContext = RouteContext<"/v1/me/instrument-waitlist/[entryId]">;
 
-/** Takes one instrument off the learner's waitlist. */
 async function leaveWaitlist(_request: NextRequest, context: EntryContext) {
   const path = await readPathParams(context, instrumentWaitlistEntryPathParamsSchema);
 

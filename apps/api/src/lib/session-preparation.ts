@@ -36,11 +36,6 @@ type SessionPreparationStart =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/**
- * Questions for the topics the learner was taken to know that practice has none to ask yet (see
- * `requestClaimQuestions`), decided while the request is still here; none when there are none to
- * write, the learner's AI help allowance doesn't cover them, or deciding fails.
- */
 async function readClaimQuestions(goalId: string): Promise<ClaimQuestions | null> {
   const { data, error } = await safeAsync(() => requestClaimQuestions({ goalId }));
 
@@ -56,11 +51,6 @@ async function readClaimQuestions(goalId: string): Promise<ClaimQuestions | null
 
 type ChallengeQuestions = Extract<UpcomingChallengeQuestionsRequest, { status: "start" }>;
 
-/**
- * The questions of challenges coming up soon that the bank is short of (see
- * `requestUpcomingChallengeQuestions`), decided while the request is still here; none when there
- * are none to write, the learner's AI help allowance doesn't cover them, or deciding fails.
- */
 async function readChallengeQuestions(goalId: string): Promise<ChallengeQuestions | null> {
   const { data, error } = await safeAsync(() => requestUpcomingChallengeQuestions({ goalId }));
 
@@ -72,7 +62,6 @@ async function readChallengeQuestions(goalId: string): Promise<ChallengeQuestion
   return data.status === "start" ? data : null;
 }
 
-/** One run per challenge, each joining a run that already writes the same skills' questions. */
 function startChallengeQuestions(request: ChallengeQuestions | null) {
   if (!request) {
     return [];
@@ -87,11 +76,6 @@ function startChallengeQuestions(request: ChallengeQuestions | null) {
   );
 }
 
-/**
- * `platform` is the client whose request started the work, which the preparation carries. A
- * learner who heard every listening recording of a part also gets its next one made, and the
- * challenges coming up soon get the questions they lack.
- */
 async function startFromAccess({
   access,
   challengeQuestions = null,
@@ -124,22 +108,12 @@ async function startFromAccess({
   return { preparationId: preparation.runId, status: "started" as const };
 }
 
-/**
- * A guest gets only the lesson they reach next written ahead, counted as its start like opening
- * it, so the day's first lesson isn't written only once they reach it; nothing else is prepared.
- */
 function writeGuestNextLesson(access: GuestAccess) {
   if (access.lessonId) {
     scheduleLessonWriting(access.lessonId);
   }
 }
 
-/**
- * Starts getting a study session's lessons ready: whenever a block starts and when the session
- * ends, the rest of today's lessons and the next study day's get written. A guest gets only the
- * next lesson (`writeGuestNextLesson`), and a free exam plan past its first week nothing, since
- * its new lessons come with Plus.
- */
 export async function startSessionPreparation({
   sessionId,
 }: {
@@ -169,11 +143,7 @@ export async function startSessionPreparation({
   return startFromAccess({ access, challengeQuestions, claimQuestions, platform });
 }
 
-/**
- * For session routes whose answer shouldn't wait on preparation: access and the client are read
- * from the request, and the run starts after the response is sent. A failure is logged; the next
- * block the learner starts prepares again.
- */
+/** Starts after the response is sent; a failure is logged, and the next block prepares again. */
 export async function scheduleSessionPreparation(sessionId: string): Promise<void> {
   const [access, platform] = await Promise.all([
     getSessionPreparationAccess({ sessionId }),
@@ -205,11 +175,6 @@ export async function scheduleSessionPreparation(sessionId: string): Promise<voi
   });
 }
 
-/**
- * Starts getting a goal's first lessons ready before its first session is built, right after
- * placement: today's first lessons and the next study day's, as a session's preparation writes
- * them. A guest gets only the plan's first lesson (`writeGuestNextLesson`).
- */
 export async function startGoalPreparation({
   goalId,
 }: {
@@ -233,11 +198,7 @@ export async function startGoalPreparation({
   return startFromAccess({ access, claimQuestions: null, platform: await getRequestPlatform() });
 }
 
-/**
- * For routes whose answer shouldn't wait on it, such as placement's completion or a plan change:
- * the goal's next lessons, and the outlines of the topics it has soon, start being written after
- * the response is sent. A failure is logged; the next block the learner opens prepares again.
- */
+/** Starts after the response is sent; a failure is logged, and the next block prepares again. */
 export async function scheduleGoalPreparation(goalId: string): Promise<void> {
   const [access, platform] = await Promise.all([
     getGoalPreparationAccess({ goalId }),

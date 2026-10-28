@@ -7,7 +7,6 @@ import { undoWeeklyChallengeMove } from "@zoonk/core/checkpoints/move";
 import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import { NextResponse } from "next/server";
 
-/** Undoes a move while the plan is as it left it: the challenge goes back to its day. */
 async function undoMove(
   request: Request,
   context: RouteContext<"/v1/checkpoints/[blockId]/moves/[changeId]">,

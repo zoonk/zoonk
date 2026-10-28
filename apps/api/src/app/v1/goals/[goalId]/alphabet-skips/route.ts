@@ -5,7 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { skipAlphabetIntro } from "@zoonk/core/language/alphabet/skip";
 import { NextResponse } from "next/server";
 
-/** The learner already reads the script, so their sessions stop opening with the alphabet. */
 async function skipAlphabet(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/alphabet-skips">,

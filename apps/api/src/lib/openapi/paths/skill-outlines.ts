@@ -19,7 +19,6 @@ const readErrors = {
   "404": notFoundResponse,
 } as const;
 
-/** A far topic's lesson plan, and asking for it before the plan gets close. */
 export const skillOutlinePaths = {
   "/goals/{goalId}/skills/{skillId}/outline": {
     get: {

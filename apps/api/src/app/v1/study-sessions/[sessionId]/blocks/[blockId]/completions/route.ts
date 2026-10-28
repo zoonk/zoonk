@@ -8,7 +8,6 @@ import { studySessionTimeZoneInputSchema } from "@zoonk/core/sessions/contract";
 import { finishStudyBlock } from "@zoonk/core/sessions/finish-block";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** Finishes a block and returns its completion moment. */
 async function createCompletion(
   request: NextRequest,
   context: RouteContext<"/v1/study-sessions/[sessionId]/blocks/[blockId]/completions">,
@@ -24,7 +23,6 @@ async function createCompletion(
     return studySessionError(result);
   }
 
-  // The last block ended the session: prepare the next one.
   if (result.completion.sessionCompleted) {
     await scheduleSessionPreparation(path.sessionId);
   }

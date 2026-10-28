@@ -8,7 +8,6 @@ import { chooseExamOption } from "@zoonk/core/exams/choices/choose";
 import { examChoiceInputSchema } from "@zoonk/core/exams/choices/contract";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** The option the learner takes of one of their exam's choices, such as ENEM's foreign language. */
 async function createExamChoice(
   request: NextRequest,
   context: RouteContext<"/v1/goals/[goalId]/plan/exam-choices">,
@@ -28,8 +27,6 @@ async function createExamChoice(
     return accessError(result.status);
   }
 
-  // The picked option's topics come into the plan: their lessons start being written after the
-  // response, as after any plan change.
   if (result.change) {
     await scheduleGoalPreparation(path.goalId);
   }

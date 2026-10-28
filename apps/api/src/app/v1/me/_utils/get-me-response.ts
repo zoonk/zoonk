@@ -5,10 +5,6 @@ import { getCurrentUserHasAppleAccount } from "@zoonk/core/users/has-apple-accou
 import { NextResponse } from "next/server";
 import { createMeResponse } from "./me-response";
 
-/**
- * Combines independently reusable account resources while their shared private
- * session resolver joins repeated authentication calls.
- */
 export async function getMeResponseData() {
   const [hasAppleAccount, subscription, user] = await Promise.all([
     getCurrentUserHasAppleAccount(),

@@ -9,7 +9,6 @@ import {
 import { liveCallAdmissionInputSchema } from "@zoonk/core/language/conversations/admission-contract";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** Admin reads use API's provider configuration; checking key presence never starts a session. */
 async function readAdmission() {
   const result = await getLiveCallAdmission();
 

@@ -10,7 +10,6 @@ import { type NextRequest, NextResponse } from "next/server";
 
 type TestOutContext = RouteContext<"/v1/goals/[goalId]/chapters/[chapterId]/test-out">;
 
-/** Returns the chapter's test-out questions. */
 async function getTestOut(_request: Request, context: TestOutContext) {
   const path = await readPathParams(context, goalChapterPathParamsSchema);
 
@@ -27,7 +26,6 @@ async function getTestOut(_request: Request, context: TestOutContext) {
   return NextResponse.json(withApiImageUrls(result.testOut));
 }
 
-/** Grades the test-out; passing tests out what the learner already knows. */
 async function submitTestOut(request: NextRequest, context: TestOutContext) {
   const [body, path] = await Promise.all([
     readBody(request, chapterTestOutInputSchema),

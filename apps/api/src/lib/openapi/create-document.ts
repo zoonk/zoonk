@@ -63,20 +63,12 @@ import { usernamePaths } from "./paths/usernames";
 import { internalErrorResponse } from "./schemas/responses";
 import { SECURITY_SCHEMES, createSecuritySchemes } from "./security";
 
-/**
- * Documents the JSON error returned when a public product handler fails before
- * producing its response.
- */
 function withInternalErrorResponse(
   operation: ZodOpenApiOperationObject,
 ): ZodOpenApiOperationObject {
   return { ...operation, responses: { ...operation.responses, "500": internalErrorResponse } };
 }
 
-/**
- * Adds the shared unexpected-error response to every standard operation on one
- * product API path.
- */
 function withInternalErrorResponsesForPath(
   pathItem: ZodOpenApiPathItemObject,
 ): ZodOpenApiPathItemObject {
@@ -93,10 +85,6 @@ function withInternalErrorResponsesForPath(
   };
 }
 
-/**
- * Keeps the generated contract aligned with the shared product route boundary.
- * The health check owns its small infrastructure response directly.
- */
 function withInternalErrorResponses(paths: ZodOpenApiPathsObject): ZodOpenApiPathsObject {
   return Object.fromEntries(
     Object.entries(paths).map(([path, pathItem]) => [

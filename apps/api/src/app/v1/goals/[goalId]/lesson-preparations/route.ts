@@ -7,12 +7,6 @@ import { NextResponse } from "next/server";
 
 const ACCEPTED = 202;
 
-/**
- * Gets a goal's first lessons written before its first study session is built: clients call it
- * when placement ends (the web app does, and placement's completion does for API clients), so Day
- * 1's lessons are ready when the learner taps them. Never on a screen view. Guests get only the
- * plan's first lesson, counted as its start.
- */
 async function createLessonPreparation(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/lesson-preparations">,

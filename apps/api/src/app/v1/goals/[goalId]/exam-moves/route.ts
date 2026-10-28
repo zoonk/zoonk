@@ -19,10 +19,6 @@ function refuseMove(status: "noExam" | "notFound" | "refused" | "unauthorized") 
     : examError({ status });
 }
 
-/**
- * "Pass an exam" inside a language goal: when its reason names a certificate, it moves to an
- * exam goal for it (research and the curriculum start), and the language goal is archived.
- */
 async function postExamMove(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/exam-moves">,

@@ -10,7 +10,6 @@ import { start } from "workflow/api";
 
 const ACCEPTED = 202;
 
-/** A run is writing the topic's lesson plan: 202 with its id, and its status URL once it has one. */
 function writing(generationId: string | null) {
   return NextResponse.json(
     { generationId, status: "writing" },
@@ -23,12 +22,6 @@ function writing(generationId: string | null) {
   );
 }
 
-/**
- * Writes a far topic's lesson plan when the learner asks to see it: `ready` when its chapters
- * exist; otherwise the outline of its course band, the chapter teaching the topic first, which
- * every later learner of the course shares. A request while its course is being outlined starts
- * nothing. A new one counts toward the learner's lesson plans.
- */
 async function createOutlineGeneration(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/skills/[skillId]/outline/generations">,

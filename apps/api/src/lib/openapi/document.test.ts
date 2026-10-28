@@ -168,10 +168,7 @@ const documentContractSchema = z
   })
   .loose();
 
-/**
- * OpenAPI 3.0 only knows singular `example`. A schema property that happens to be named
- * `examples` (an activity's formula examples) is data, not the keyword.
- */
+/** A schema property named `examples` (an activity's formula examples) is data, not the keyword. */
 function hasExamplesKeyword(value: unknown, parentKey?: string): boolean {
   if (Array.isArray(value)) {
     return value.some((item) => hasExamplesKeyword(item));
@@ -462,7 +459,6 @@ describe("OpenAPI document", () => {
     expect(document.paths["/generations/{generationId}/events"]?.get?.security).toStrictEqual([]);
   });
 
-  // Every product operation's 500 is checked above.
   it("documents every response status returned by account and feedback routes", () => {
     const document = documentContractSchema.parse(openAPIDocument);
 
@@ -615,7 +611,6 @@ describe("OpenAPI document", () => {
       type: "object",
     });
 
-    // The plan's "Ask" answers about its course; there is no course tutor.
     expect(document.paths).not.toHaveProperty("/courses/{courseId}/questions");
   });
 

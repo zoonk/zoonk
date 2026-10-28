@@ -5,7 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { getOnboarding } from "@zoonk/core/view-models/onboarding/get";
 import { NextResponse } from "next/server";
 
-/** The screens still ahead in a new goal's onboarding. */
 async function getGoalOnboarding(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/onboarding">,

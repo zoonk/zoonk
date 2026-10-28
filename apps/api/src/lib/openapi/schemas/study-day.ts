@@ -16,7 +16,6 @@ const previewMissionSchema = missionSchema
   .omit({ opens: true })
   .extend({ opens: previewMissionOpensSchema });
 
-/** An unopened day has the same display fields and logical work, with no invented persisted IDs. */
 const unstartedStudyDayResponseSchema = studySessionResponseSchema
   .omit({ blocks: true, catchUp: true, id: true, missions: true, nextBlockId: true, status: true })
   .extend({

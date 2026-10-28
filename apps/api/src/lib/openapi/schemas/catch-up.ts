@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-/** Catching up on lessons earlier days left: what Today's session says about it. */
 export const catchUpSchema = z
   .object({
     blockIds: z

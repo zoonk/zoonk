@@ -2,7 +2,6 @@ import { MOCK_SCORINGS } from "@zoonk/core/exams/mocks/contract";
 import { EXAM_SCALES } from "@zoonk/core/exams/scales";
 import { z } from "zod";
 
-/** How the exam is scored, from its notice, and what that changes for the learner. */
 export const examScoringSchema = z.object({
   method: z.enum(MOCK_SCORINGS).meta({ description: "How the exam's mocks score it" }),
   note: z.string().nullable(),

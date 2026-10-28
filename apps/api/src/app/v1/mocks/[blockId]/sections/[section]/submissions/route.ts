@@ -6,10 +6,6 @@ import { mockTimeZoneInputSchema } from "@zoonk/core/exams/mocks/contract";
 import { submitMockSection } from "@zoonk/core/exams/mocks/submit-section";
 import { type NextRequest, NextResponse } from "next/server";
 
-/**
- * Hands in the running section: the next one starts, or the mock ends and is graded, or its time ran
- * out while the learner was away and it isn't scored.
- */
 async function postSubmission(
   request: NextRequest,
   context: RouteContext<"/v1/mocks/[blockId]/sections/[section]/submissions">,

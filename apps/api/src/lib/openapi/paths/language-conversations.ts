@@ -51,7 +51,6 @@ const connectionConflictResponse = {
     "The call ended or its originating connection was replaced (CONVERSATION_ENDED; current connection is unaffected), was taken over (CALL_TAKEN_OVER; no feedback or reward), another call is in progress (CALL_IN_PROGRESS with its conversationId and connectionId; reserve with takeover: true to end it), a connection is still ending or its review is in progress (PREVIOUS_CONNECTION_CLOSING; retry after Retry-After), or this reservation expired/already redeemed (CONNECTION_EXPIRED / CONNECTION_USED).",
 };
 
-/** Live conversations: start one, read it, connect to GPT-Live, mark its goals, finish it. */
 export const languageConversationPaths = {
   "/language-conversations": {
     post: {

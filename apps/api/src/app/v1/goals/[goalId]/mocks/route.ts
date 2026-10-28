@@ -11,7 +11,6 @@ type MocksContext = RouteContext<"/v1/goals/[goalId]/mocks">;
 
 const CREATED = 201;
 
-/** The mocks the learner can take any time for an exam goal, with their size and time. */
 async function listMocks(_request: Request, context: MocksContext) {
   const path = await readPathParams(context, goalPathParamsSchema);
 
@@ -24,7 +23,6 @@ async function listMocks(_request: Request, context: MocksContext) {
   return NextResponse.json(result.view);
 }
 
-/** Starts one of the goal's mocks now, or the whole exam as placement in onboarding. */
 async function startMock(request: NextRequest, context: MocksContext) {
   const [body, path] = await Promise.all([
     readBody(request, anytimeMockInputSchema),

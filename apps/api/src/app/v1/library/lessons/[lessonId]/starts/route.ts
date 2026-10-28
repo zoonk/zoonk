@@ -9,11 +9,6 @@ import { type NextRequest, NextResponse } from "next/server";
 
 const CREATED = 201;
 
-/**
- * Starts (or resumes) a run of a Library lesson for the learner or guest in the session. The
- * lesson counts toward the allowance once; a refused start says whether to wait, sign up or
- * upgrade. A new lesson of a free exam plan past its first week answers 402 `PLUS_REQUIRED`.
- */
 async function createLibraryLessonStart(
   request: NextRequest,
   context: RouteContext<"/v1/library/lessons/[lessonId]/starts">,

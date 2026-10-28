@@ -9,7 +9,6 @@ import { sendVerificationOTP } from "../../../../../../packages/auth/src/plugins
 import { DELETE as deleteCurrentAccount } from "../me/route";
 import { POST as sendEmailCode } from "./route";
 
-/** Exercise production auth/core with real persistence; only Vercel BotID and email delivery are external. */
 vi.mock("botid/server", () => ({ checkBotId: vi.fn() }));
 
 vi.mock("../../../../../../packages/auth/src/plugins/otp", () => ({

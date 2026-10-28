@@ -15,12 +15,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("Create your profile") };
 }
 
-/**
- * A new account's one question, its name, with a username made from the email already picked and
- * shown under it to change in place. Accounts Google or Apple named on the web get their username
- * as they're created and never see this screen; an account with a name but no username sees it
- * with its name filled in.
- */
 export default async function SetupPage({ searchParams }: PageProps<"/auth/setup">) {
   const params = await searchParams;
   const redirectTo = readRedirectTo(params.redirectTo);

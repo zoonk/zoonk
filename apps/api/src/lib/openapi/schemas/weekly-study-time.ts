@@ -3,7 +3,6 @@ import { z } from "zod";
 
 const EXAMPLE_WEEKLY_MINUTES = 105;
 
-/** This week's study time against the learner's budget, as Today's week and the Plan's pace show it. */
 export const weeklyStudyTimeSchema = z.object({
   studiedMinutes: z
     .number()

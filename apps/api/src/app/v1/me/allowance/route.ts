@@ -3,7 +3,6 @@ import { withApiErrorBoundary } from "@/lib/api-handler";
 import { getAllowance } from "@zoonk/core/entitlements/get-allowance";
 import { NextResponse } from "next/server";
 
-/** The learner's plan and what they used: new lessons, tutor, uploads, conversations and goals. */
 async function getCurrentUserAllowance() {
   const allowance = await getAllowance();
 

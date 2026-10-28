@@ -15,16 +15,9 @@ type ChapterLessons = NonNullable<Awaited<ReturnType<typeof listCatalogChapterLe
 type CourseResource = NonNullable<Awaited<ReturnType<typeof getCourseDetail>>>;
 type CourseSummary = Awaited<ReturnType<typeof listCourses>>[number];
 
-/** The Library chapter fields both chapter resources share. */
 type ChapterFields = CatalogChapter["chapter"] | CourseChapter["chapter"];
 
-/**
- * Serializes one organization into the stable public subset shared by course
- * list, detail, and current-library responses. Billing and auth-provider fields
- * remain internal even when Core loaded the complete relation. A learner's
- * private course has no organization, so the relationship stays nullable
- * instead of inventing a synthetic brand.
- */
+/** Billing and auth-provider fields stay internal even when Core loaded the whole relation. */
 function toCourseOrganization(organization: CourseSummary["organization"] | null) {
   if (!organization) {
     return null;
@@ -38,7 +31,6 @@ function toCourseOrganization(organization: CourseSummary["organization"] | null
   };
 }
 
-/** Serializes the compact course shape of course lists: the catalog's and the learner's own. */
 export function toCourseSummary(
   course: Pick<CourseSummary, "description" | "id" | "imageUrl" | "language" | "slug" | "title"> & {
     organization: CourseSummary["organization"] | null;
@@ -55,16 +47,10 @@ export function toCourseSummary(
   };
 }
 
-/** The flag a language course shows instead of its picture, as main's course mark draws it. */
 function toLanguageFlag(targetLanguage: string | null) {
   return targetLanguage ? getLanguageFlagCode(targetLanguage) : null;
 }
 
-/**
- * A catalog course: its summary, what its outline holds (its lessons and their minutes), its
- * subject (the first category, which the list selects alone) and, for a language course, the
- * language it teaches and its flag.
- */
 export function toCatalogCourse(course: CourseSummary) {
   return {
     ...toCourseSummary(course),
@@ -76,13 +62,6 @@ export function toCatalogCourse(course: CourseSummary) {
   };
 }
 
-/**
- * Serializes the complete course metadata resource while excluding
- * persistence-only fields. The generation fields follow the course outline,
- * which a course without one is still waiting for. Categories come oldest first,
- * so the first is the course's subject, as its pages color it; the landing copy
- * is null until the course's details are written.
- */
 export function toCourseResource(course: CourseResource) {
   return {
     categories: course.categories
@@ -107,10 +86,6 @@ export function toCourseResource(course: CourseResource) {
   };
 }
 
-/**
- * A chapter's generation fields follow its lesson outline: the titles and
- * descriptions of its lessons.
- */
 function toChapterFields(chapter: ChapterFields) {
   return {
     description: chapter.description,
@@ -124,10 +99,6 @@ function toChapterFields(chapter: ChapterFields) {
   };
 }
 
-/**
- * Serializes a chapter as its course places it: the course it's read in, its
- * level band and its position across that course's outline.
- */
 export function toChapterResource({
   chapter,
   courseId,
@@ -137,10 +108,6 @@ export function toChapterResource({
   return { ...toChapterFields(chapter), courseId, level, position };
 }
 
-/**
- * Serializes a chapter inside a course collection with its visible lessons'
- * outline (titles and minutes, as the course's page lists them) and their count.
- */
 export function toCourseChapter(placement: CourseChapter) {
   const { lessons } = placement.chapter;
 
@@ -156,10 +123,6 @@ export function toCourseChapter(placement: CourseChapter) {
   };
 }
 
-/**
- * Serializes a chapter's lessons with the chapter and the course they're read
- * in. A lesson's generation fields follow its content.
- */
 export function toChapterLessons({ chapterId, courseId, lessons }: ChapterLessons) {
   return lessons.map((lesson) => ({
     chapterId,
@@ -176,10 +139,6 @@ export function toChapterLessons({ chapterId, courseId, lessons }: ChapterLesson
   }));
 }
 
-/**
- * Renames Core's route-neutral brand identity to the organization terminology
- * used by the public API while preserving the two bounded search collections.
- */
 export function toCatalogSearchResponse(results: CatalogSearch) {
   return {
     chapters: results.chapters.map((chapter) => ({

@@ -22,10 +22,7 @@ function getAccountDisabledErrorResponse(error: unknown) {
     : null;
 }
 
-/**
- * A request that says it comes from a browser page (fetch metadata) without an Origin header the
- * auth server trusts. Native apps send no fetch metadata; a browser page must be one of Zoonk's.
- */
+/** Native apps send no fetch metadata, so only a request claiming a browser page needs a trusted Origin. */
 function getUntrustedOriginErrorResponse(error: unknown) {
   return getAuthError(error)?.code === accessErrorCodes.untrustedOrigin
     ? createErrorResponse({

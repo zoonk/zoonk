@@ -6,7 +6,6 @@ import { memoryUndoInputSchema } from "@zoonk/core/memory/contract";
 import { undoMemoryChanges } from "@zoonk/core/memory/undo";
 import { type NextRequest, NextResponse } from "next/server";
 
-/** Undoes what a "Memory updated" notice or a delete showed, all together or not at all. */
 async function reverseChanges(request: NextRequest) {
   const parsed = await readBody(request, memoryUndoInputSchema);
 

@@ -7,11 +7,6 @@ import { changeOwnLevel } from "@zoonk/core/plans/own-level";
 import { ownLevelChangeInputSchema } from "@zoonk/core/plans/own-level-contract";
 import { type NextRequest, NextResponse } from "next/server";
 
-/**
- * Changes the learner's own level from the plan: lower adds foundations with an undo, higher
- * offers test-outs. Past work is never undone. The foundations it adds start being written right
- * away, as a session's preparation writes what the plan has soon.
- */
 async function updateOwnLevel(
   request: NextRequest,
   context: RouteContext<"/v1/goals/[goalId]/plan/own-level">,

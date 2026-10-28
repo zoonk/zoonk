@@ -5,10 +5,6 @@ import { readPathParams } from "@/lib/request-input";
 import { getLessonWaitingState } from "@zoonk/core/lookahead/lesson-waiting-state";
 import { NextResponse } from "next/server";
 
-/**
- * Whether a lesson is ready to play, which run is writing it (stream its progress) and, while it
- * isn't ready, a ready alternative from the learner's plan instead of a dead end.
- */
 async function getLessonReadiness(
   _request: Request,
   context: RouteContext<"/v1/library/lessons/[lessonId]/readiness">,

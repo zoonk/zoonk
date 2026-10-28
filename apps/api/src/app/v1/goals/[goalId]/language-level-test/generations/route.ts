@@ -9,11 +9,6 @@ import { NextResponse } from "next/server";
 
 const ACCEPTED = 202;
 
-/**
- * Starts writing the language pair's level test questions when nothing is writing them yet, such
- * as when the run started with the goal failed: the learner's own tap asks, never showing the test.
- * A run already writing them is joined, and written questions start nothing.
- */
 async function createLevelTestGeneration(
   _request: Request,
   context: RouteContext<"/v1/goals/[goalId]/language-level-test/generations">,
