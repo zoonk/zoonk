@@ -43,6 +43,10 @@ The [app source](app/src/main/kotlin/com/zoonk/android) is organized into `app/`
 
 Read [AGENTS.md](AGENTS.md) for architecture, platform, and contribution constraints.
 
+## Design system
+
+The theme (`ui/theme`), shared pieces (`ui/components`), formatters (`ui/format`), icons and the debug gallery follow the [design-system reference](../../.agents/skills/android-material-guidelines/references/design-system.md): what each Zoonk meaning maps to, how to regenerate the palette from `globals.css` (`pnpm --filter android palette`), add a Material Symbol (`pnpm --filter android symbol <name>`) and capture the gallery's review screenshots.
+
 ## Localization
 
 Author English copy in your feature's `app/src/main/res/values/strings_<feature>.xml`, with names prefixed by the feature (`today_blocks_left`); shared words live in [strings.xml](app/src/main/res/values/strings.xml). Each file is its own Eloqnt catalog. Then use `stringResource` or `pluralStringResource`. Android resources are explicit, not automatically extracted from Kotlin.
