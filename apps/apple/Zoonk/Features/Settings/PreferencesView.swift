@@ -27,11 +27,16 @@ struct PreferencesView: View {
             }
             .buttonStyle(.bordered)
           } label: {
-            Text(preferences.buddy.displayName)
-            Text(
-              "\(BuddyStage(belt: learner.summary.value?.level?.belt ?? .white).name) · \(preferences.buddy.glasses.worn)",
-              tableName: "Settings",
-              comment: "The buddy's growth stage and glasses, as in “Baby · Round glasses”")
+            Label {
+              Text(preferences.buddy.displayName)
+              Text(
+                "\(BuddyStage(belt: learner.summary.value?.level?.belt ?? .white).name) · \(preferences.buddy.glasses.worn)",
+                tableName: "Settings",
+                comment: "The buddy's growth stage and glasses, as in “Baby · Round glasses”")
+            } icon: {
+              BuddyFace(kind: preferences.buddy.kind, glasses: preferences.buddy.glasses)
+                .font(.title2)
+            }
           }
         } header: {
           Text("Your buddy", tableName: "Settings", comment: "Preferences section about the buddy")
