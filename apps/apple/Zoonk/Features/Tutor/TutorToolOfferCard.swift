@@ -58,13 +58,7 @@ struct TutorToolOfferCard: View {
         }
 
         if content.locked {
-          if let lockNote = content.lockNote {
-            lockNote
-              .font(.footnote)
-              .foregroundStyle(.secondary)
-          }
-
-          TutorRemedyButton(failure: .plusRequired, retry: {})
+          PlusNotice(description: content.lockNote, isInset: true)
         } else {
           Button {
             places.open(content.place)
@@ -81,12 +75,7 @@ struct TutorToolOfferCard: View {
 
         if content.locked {
           Spacer()
-          Text("Plus", tableName: "Tutor", comment: "Marks a feature that comes with Plus")
-            .chip()
-            .accessibilityLabel(
-              Text(
-                "Available with Plus", tableName: "Tutor",
-                comment: "VoiceOver: a feature that comes with Plus"))
+          PlusMark()
         }
       }
     }

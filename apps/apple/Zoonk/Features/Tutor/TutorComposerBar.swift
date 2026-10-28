@@ -162,12 +162,8 @@ struct TutorRemedyButton: View {
       }
       .buttonStyle(.bordered)
     case .seePlus:
-      Button {
-        places.open(.subscription)
-      } label: {
-        Text("See Plus", tableName: "Tutor", comment: "Opens the subscription from a limit")
-      }
-      .buttonStyle(.bordered)
+      SeePlusButton()
+        .buttonStyle(.bordered)
     case .signIn:
       Button {
         places.open(.account)

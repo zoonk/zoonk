@@ -1,35 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "“%@”" : {
-      "comment" : "The goal the learner said, quoted",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "„%@“"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "«%@»"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "« %@ »"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "“%@”"
-          }
-        }
-      }
-    },
     "%lld mistakes to fix, with practice that brings each one back." : {
       "comment" : "What the mistakes notebook holds",
       "localizations" : {
@@ -243,35 +214,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Uma conversa rápida em voz alta, no seu nível."
-          }
-        }
-      }
-    },
-    "About “%@”" : {
-      "comment" : "The practice question the panel is about",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zu „%@“"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sobre «%@»"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "À propos de « %@ »"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sobre “%@”"
           }
         }
       }
@@ -537,31 +479,31 @@
         }
       }
     },
-    "and %lld more" : {
-      "comment" : "More memory changes after the first one",
+    "About “%@”" : {
+      "comment" : "The practice question the panel is about",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "und %lld weitere"
+            "value" : "Zu „%@“"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "y %lld más"
+            "value" : "Sobre «%@»"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "et %lld de plus"
+            "value" : "À propos de « %@ »"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "e mais %lld"
+            "value" : "Sobre “%@”"
           }
         }
       }
@@ -1258,35 +1200,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fazer perguntas sobre seu plano"
-          }
-        }
-      }
-    },
-    "Available with Plus" : {
-      "comment" : "VoiceOver: a feature that comes with Plus",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit Plus verfügbar"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disponible con Plus"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disponible avec Plus"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disponível no Plus"
           }
         }
       }
@@ -2286,7 +2199,7 @@
       }
     },
     "Plus" : {
-      "comment" : "Marks a feature that comes with Plus\nThe buddy offers the subscription",
+      "comment" : "The buddy offers the subscription",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2526,7 +2439,7 @@
       }
     },
     "See Plus" : {
-      "comment" : "Opens the subscription\nOpens the subscription from a limit",
+      "comment" : "Opens the subscription",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -3343,6 +3256,35 @@
         }
       }
     },
+    "What Plus includes and its price." : {
+      "comment" : "What the subscription page shows",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was Plus beinhaltet und was es kostet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qué incluye Plus y cuánto cuesta."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce qui est inclus dans Plus et son prix."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que o Plus inclui e quanto custa."
+          }
+        }
+      }
+    },
     "What comes next?" : {
       "comment" : "A question to the buddy about the plan, sent with one tap",
       "localizations" : {
@@ -3426,35 +3368,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O que esta pergunta está pedindo?"
-          }
-        }
-      }
-    },
-    "What Plus includes and its price." : {
-      "comment" : "What the subscription page shows",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Was Plus beinhaltet und was es kostet."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Qué incluye Plus y cuánto cuesta."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ce qui est inclus dans Plus et son prix."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O que o Plus inclui e quanto custa."
           }
         }
       }
@@ -3662,35 +3575,6 @@
         }
       }
     },
-    "You: %@" : {
-      "comment" : "VoiceOver: the learner's question to the buddy",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du: %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tú: %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Toi : %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você: %@"
-          }
-        }
-      }
-    },
     "You've used the free help you can get without an account. Create a free account to keep going." : {
       "comment" : "A guest's help is used up",
       "localizations" : {
@@ -3836,6 +3720,35 @@
         }
       }
     },
+    "You: %@" : {
+      "comment" : "VoiceOver: the learner's question to the buddy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tú: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toi : %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você: %@"
+          }
+        }
+      }
+    },
     "Your plan and its billing." : {
       "comment" : "What the subscription page shows a subscriber",
       "localizations" : {
@@ -3919,6 +3832,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sua sessão expirou. Entre novamente."
+          }
+        }
+      }
+    },
+    "and %lld more" : {
+      "comment" : "More memory changes after the first one",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "und %lld weitere"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "y %lld más"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "et %lld de plus"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "e mais %lld"
+          }
+        }
+      }
+    },
+    "“%@”" : {
+      "comment" : "The goal the learner said, quoted",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„%@“"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "«%@»"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "« %@ »"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@”"
           }
         }
       }
