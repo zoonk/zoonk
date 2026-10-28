@@ -7,10 +7,7 @@ import { getPrivateImageFolder, getUserBlobFolders } from "@zoonk/utils/user-blo
 /** The Blob API lists and deletes up to 1,000 files per call. */
 const PAGE_SIZE = 1000;
 
-/**
- * An upload whose publisher made it public, such as an exam notice, is shared with every learner and
- * no longer belongs to its uploader, so it stays when they go.
- */
+/** A public upload, such as an exam notice, is shared with every learner, so it stays when its uploader goes. */
 async function withoutSharedUploads(urls: string[]): Promise<string[]> {
   const shared = await prisma.source.findMany({
     select: { blobUrl: true },
@@ -42,10 +39,7 @@ async function deleteFolderPage({
   }
 }
 
-/**
- * A guest's private course moves to the account they sign up with, and its pictures (its lessons'
- * and its chapters' mind maps) stay in the guest's folder, so the account's own rows find them.
- */
+/** Pictures of a course moved from a guest stay in the guest's folder. */
 async function deleteMovedPictures(userId: string): Promise<void> {
   const [pictures, maps] = await Promise.all([
     prisma.mediaAsset.findMany({ select: { url: true }, where: { ownerId: userId } }),
@@ -68,11 +62,8 @@ async function deleteMovedPictures(userId: string): Promise<void> {
 }
 
 /**
- * Deletes every private file a learner owns (source uploads, kept speech recordings and their
- * private courses' pictures) before the account goes: rows that point at them cascade away with the
- * user, and nothing else would ever find the files again. Deleting is idempotent, so a retried
- * account deletion finishes it. Without a private store nothing private was ever stored, and E2E
- * servers never reach the Blob store, like every other request that leaves the process.
+ * Call before the account goes: its rows cascade away with it and nothing else would find the files
+ * again. Idempotent, so a retried account deletion finishes it.
  */
 export async function deleteUserBlobs(userId: string): Promise<void> {
   if (!isPrivateBlobStoreConfigured() || getEnvironment() === "e2e") {

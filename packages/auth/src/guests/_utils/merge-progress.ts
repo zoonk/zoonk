@@ -1,6 +1,5 @@
 import { type GuestLinkContext } from "./merge-keyed-rows";
 
-/** Days add up atomically, including when another guest or an account write creates the day first. */
 export async function mergeDailyProgress({ guestUserId, transaction, userId }: GuestLinkContext) {
   await transaction.$executeRaw`
     WITH guest_days AS (
@@ -30,7 +29,6 @@ export async function mergeDailyProgress({ guestUserId, transaction, userId }: G
   `;
 }
 
-/** Brain Power adds up, while Energy and activity use the latest account values under the row lock. */
 export async function mergeUserProgress({ guestUserId, transaction, userId }: GuestLinkContext) {
   await transaction.$executeRaw`
     WITH guest_progress AS (
@@ -48,10 +46,7 @@ export async function mergeUserProgress({ guestUserId, transaction, userId }: Gu
   `;
 }
 
-/**
- * The account's settings and picked Buddy win; the guest's active goal wins with the account's as
- * fallback. Removing the guest profile first frees its unique active goal before the account takes it.
- */
+/** Removing the guest profile first frees its unique active goal before the account takes it. */
 export async function mergeLearningProfile({ guestUserId, transaction, userId }: GuestLinkContext) {
   await transaction.$executeRaw`
     WITH guest_profile AS (

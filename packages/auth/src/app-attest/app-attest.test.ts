@@ -16,12 +16,10 @@ import {
 
 const GUEST: AppAttestBinding = { fields: [], operation: APP_ATTEST_OPERATIONS.guest };
 
-/** The guard's check for a request that does what `binding` says. */
 function isAttested(headers: Headers, binding: AppAttestBinding = GUEST) {
   return hasAppAttestAssertion({ binding, headers });
 }
 
-/** The recorded attestations signed these challenges, so the test plays the server that issued them. */
 async function issueRecordedChallenge(challenge: string, expiresInMs = 60_000) {
   await prisma.verification.create({
     data: {

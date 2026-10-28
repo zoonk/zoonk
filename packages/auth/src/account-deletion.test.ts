@@ -18,17 +18,12 @@ vi.mock("./providers/apple-revocation", () => ({
   revokeStoredAppleAuthorization: mocks.revokeStoredAppleAuthorization,
 }));
 
-/** Vercel Blob is the external storage the learner's uploads and recordings live in. */
 vi.mock("@vercel/blob", () => ({ del: vi.fn(), list: vi.fn() }));
 
 vi.mock("./stripe/client", () => ({
   stripeClient: { subscriptions: { cancel: mocks.cancelStripeSubscription } },
 }));
 
-/**
- * Creates an isolated persisted user so cleanup assertions exercise the same
- * foreign keys and cascades as production instead of reproducing Prisma in a mock.
- */
 function createTestUser() {
   const id = randomUUID();
 
@@ -152,7 +147,6 @@ describe(deleteUserDependenciesBeforeAuthDelete, () => {
   });
 });
 
-/** One page of files in the private store, as Blob lists them. */
 function listed({ cursor, urls }: { cursor?: string; urls: string[] }) {
   return {
     blobs: urls.map((url) => ({ url })),

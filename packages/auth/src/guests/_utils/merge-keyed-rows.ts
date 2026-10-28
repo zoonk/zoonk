@@ -6,7 +6,6 @@ export type GuestLinkContext = {
   userId: string;
 };
 
-/** Delete and reinsert within one statement so concurrent account writes resolve at the unique constraint. */
 async function moveLearnerSkills({ guestUserId, transaction, userId }: GuestLinkContext) {
   await transaction.$executeRaw`
     WITH guest_rows AS (
@@ -68,7 +67,6 @@ async function moveLearnerSources({ guestUserId, transaction, userId }: GuestLin
 }
 
 async function moveLearnerWords({ guestUserId, transaction, userId }: GuestLinkContext) {
-  /** Resolve duplicates atomically, including words learned or linked concurrently on the account. */
   await transaction.$executeRaw`
     WITH guest_words AS (
       DELETE FROM learner_words
@@ -98,7 +96,6 @@ async function moveMemoryInsights({ guestUserId, transaction, userId }: GuestLin
   `;
 }
 
-/** How a typed goal was understood, so finishing the guest's onboarding never asks a model again. */
 async function moveGoalUnderstandings({ guestUserId, transaction, userId }: GuestLinkContext) {
   await transaction.$executeRaw`
     WITH guest_rows AS (
@@ -144,7 +141,7 @@ async function moveStepExampleLines({ guestUserId, transaction, userId }: GuestL
   `;
 }
 
-/** Moves guest rows with per-learner unique keys, keeping the account's on a clash; language levels merge separately. */
+/** Each move deletes and reinserts in one statement, so concurrent account writes resolve at the unique constraint. */
 export async function moveKeyedRows(context: GuestLinkContext) {
   await moveLearnerSkills(context);
   await moveMilestones(context);

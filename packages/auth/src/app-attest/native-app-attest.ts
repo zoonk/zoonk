@@ -2,7 +2,6 @@ import { auth } from "@zoonk/auth";
 import { getString } from "@zoonk/utils/json";
 import { callNativeAuthHandler } from "../native-auth-handler";
 
-/** A one-time challenge for the iOS app's next attestation or assertion. */
 export async function createAppAttestChallenge({
   headers,
   requestURL,
@@ -27,7 +26,6 @@ export async function createAppAttestChallenge({
   return { challenge };
 }
 
-/** Registers the key one install of the iOS app attested with Apple over a server challenge. */
 export async function createAppAttestKey({
   attestation,
   challenge,

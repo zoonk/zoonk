@@ -49,10 +49,7 @@ const liveDependencies: AppleRESTDependencies = {
   request: fetch,
 };
 
-/**
- * Rejects an incomplete Apple server setup before accepting a native
- * authorization code that can only be exchanged once.
- */
+/** Check before exchanging: Apple's authorization code can be exchanged only once. */
 function requireAppleConfiguration(configuration: AppleConfiguration | null) {
   if (!configuration) {
     throw new AppleAuthorizationError("configuration");
@@ -61,10 +58,6 @@ function requireAppleConfiguration(configuration: AppleConfiguration | null) {
   return configuration;
 }
 
-/**
- * Executes one Apple REST request and separates provider availability from an
- * invalid user credential without exposing Apple's response text to clients.
- */
 async function requestApple({
   body,
   dependencies,
@@ -86,11 +79,7 @@ async function requestApple({
   }
 }
 
-/**
- * Maps Apple's small OAuth error vocabulary to outcomes the API can act on.
- * A reused or expired code is recoverable through a new native authorization;
- * other 4xx responses indicate server-side Apple configuration drift.
- */
+/** Only `invalid_grant` (a reused or expired code) is the learner's to fix; other 4xx answers mean our Apple setup drifted. */
 async function getAppleFailure(response: Response): Promise<AppleAuthorizationError> {
   if (response.status >= HTTP_SERVER_ERROR_THRESHOLD) {
     return new AppleAuthorizationError("unavailable");
@@ -105,11 +94,7 @@ async function getAppleFailure(response: Response): Promise<AppleAuthorizationEr
   );
 }
 
-/**
- * Exchanges the five-minute, single-use code produced by Authentication
- * Services. Native requests omit redirect_uri and use the bundle identifier
- * for both client_id and the client-secret subject.
- */
+/** Native requests omit redirect_uri and use the bundle identifier as client_id and the client-secret subject. */
 export async function exchangeNativeAppleAuthorizationCode({
   authorizationCode,
   dependencies = liveDependencies,
@@ -148,11 +133,7 @@ export async function exchangeNativeAppleAuthorizationCode({
   };
 }
 
-/**
- * Invalidates the Apple authorization created for one client identifier.
- * Apple returns 200 both for the first successful revocation and for a token
- * that was already revoked, which makes deletion retries safe.
- */
+/** Apple answers 200 for a token already revoked too, so deletion retries are safe. */
 export async function revokeAppleToken({
   clientIdentifier,
   dependencies = liveDependencies,

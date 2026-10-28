@@ -57,10 +57,6 @@ const nativeSignInRequest = {
   requestURL: "http://localhost:4000/v1/sessions/apple",
 };
 
-/**
- * Uses persisted UUIDs in mocked provider responses so rollback tests exercise
- * real Prisma relationships instead of inventing a parallel database model.
- */
 function createTestUser() {
   const id = randomUUID();
 
@@ -69,20 +65,12 @@ function createTestUser() {
   });
 }
 
-/**
- * Represents the Apple link that Better Auth would have persisted before the
- * native orchestration verifies ownership and stores provider credentials.
- */
 function createAppleAccount({ subject, userId }: { subject: string; userId: string }) {
   return prisma.account.create({
     data: { accountId: subject, providerId: APPLE_PROVIDER_ID, userId },
   });
 }
 
-/**
- * Persists the session returned by the mocked Better Auth boundary so every
- * cleanup assertion observes the production cascade and unique-token behavior.
- */
 async function createSessionResponse({ userId }: { userId: string }) {
   const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
   const token = `native-apple-${randomUUID()}`;
@@ -99,10 +87,6 @@ async function createSessionResponse({ userId }: { userId: string }) {
   };
 }
 
-/**
- * Gives both Apple identity-token checks one request-unique subject so durable
- * accounts left by other integration tests cannot affect exact-owner lookup.
- */
 function verifySubject(subject: string) {
   mocks.verifyIdentityToken.mockResolvedValue({ issuer: APPLE_ISSUER, subject });
 }

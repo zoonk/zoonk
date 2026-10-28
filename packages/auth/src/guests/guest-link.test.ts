@@ -27,7 +27,6 @@ function daysAgo(milliseconds: number) {
   return new Date(Date.now() - milliseconds);
 }
 
-/** The input versions of the plans these goals have. */
 async function readMarks({ goalIds }: { goalIds: string[] }) {
   const plans = await prisma.plan.findMany({
     orderBy: { goalId: "asc" },
@@ -38,7 +37,6 @@ async function readMarks({ goalIds }: { goalIds: string[] }) {
   return { plans };
 }
 
-/** An account and a guest, each following a goal with a plan. */
 async function createLearnersWithPlans() {
   const [account, guest] = await Promise.all([
     createExistingAccount({ createdAt: daysAgo(THIRTY_DAYS_MS) }),
@@ -238,7 +236,6 @@ describe("guest accounts", () => {
   it("marks the account before it takes any lock of its own rows", async () => {
     const { account, guest } = await createLearnersWithPlans();
 
-    // A writer of the account holds its row; the link must wait there, holding nothing else yet.
     const writing = await holdTransaction(
       (transaction) =>
         transaction.$queryRaw`SELECT id FROM users WHERE id = ${account.userId}::uuid FOR UPDATE`,
@@ -286,7 +283,6 @@ describe("guest accounts", () => {
     await Promise.all(goalIds.map((goalId) => prisma.plan.create({ data: { goalId } })));
     const before = await readMarks({ goalIds });
 
-    // A writer holds the account, so both links read their plans before either moves its own.
     const writing = await holdTransaction(
       (transaction) =>
         transaction.$queryRaw`SELECT id FROM users WHERE id = ${account.userId}::uuid FOR UPDATE`,
@@ -306,7 +302,6 @@ describe("guest accounts", () => {
     await linking;
     const after = await readMarks({ goalIds });
 
-    // The first link's plan is marked again by the second, which merges into it too.
     expect(
       after.plans
         .map((plan, index) => plan.inputVersion - (before.plans[index]?.inputVersion ?? 0))

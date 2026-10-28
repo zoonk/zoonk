@@ -2,9 +2,8 @@ import { prisma } from "@zoonk/db";
 import { type GenericEndpointContext } from "better-auth";
 
 /**
- * Finds the guest behind the request's session cookie (the bearer plugin turns a bearer token into
- * the same cookie) before sign-up or sign-in replaces it. It reads the session store directly, so
- * looking up the guest never changes the session the running endpoint sees.
+ * Call before sign-up or sign-in replaces the session cookie. It reads the session store directly,
+ * so the lookup never changes the session the running endpoint sees.
  */
 export async function findRequestGuest(context: GenericEndpointContext) {
   const token = await context.getSignedCookie(

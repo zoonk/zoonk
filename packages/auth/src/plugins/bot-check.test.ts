@@ -47,7 +47,6 @@ function verdict({ isBot }: { isBot: boolean }) {
   });
 }
 
-/** A browser request to Better Auth's HTTP boundary, where the captcha plugin runs. */
 function post(path: string, body: unknown, headers: Record<string, string> = {}) {
   return auth.handler(
     new Request(`${BASE_URL}${BETTER_AUTH_BASE_PATH}${path}`, {
@@ -122,7 +121,6 @@ describe("bot check on auth requests", () => {
       provider: "google",
     });
 
-    // The token itself is checked next: this one is refused, but never as a bot.
     expect(response.status).not.toBe(403);
     await expect(readCode(response)).resolves.not.toBe("VERIFICATION_FAILED");
   });
@@ -163,8 +161,6 @@ describe("bot check on auth requests", () => {
     expect([guest.status, code.status]).toStrictEqual([200, 200]);
     expect(checkBotId).not.toHaveBeenCalled();
 
-    // A proof signed for one email or request proves nothing for another, nor does a counter the
-    // key already spent: BotID decides.
     const refused = await Promise.all([
       post(
         "/email-otp/send-verification-otp",

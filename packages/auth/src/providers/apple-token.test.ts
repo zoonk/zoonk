@@ -4,7 +4,6 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({ getApplePublicKey: vi.fn() }));
 
-/** Apple's remote key lookup is the only external boundary; token verification stays real. */
 vi.mock("better-auth/social-providers", async (importOriginal) => ({
   ...(await importOriginal<{ apple: typeof apple; getApplePublicKey: typeof getApplePublicKey }>()),
   getApplePublicKey: mocks.getApplePublicKey,

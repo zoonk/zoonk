@@ -10,7 +10,6 @@ import {
   getAppAttestClientData,
 } from "./app-attest-contract";
 
-/** A challenge is for the attestation or assertion the app makes right after asking for it. */
 const CHALLENGE_LIFETIME_MS = 300_000;
 const CHALLENGE_BYTES = 32;
 const CHALLENGE_IDENTIFIER_PREFIX = "app-attest-challenge:";
@@ -19,10 +18,6 @@ const CHALLENGE_IDENTIFIER_PREFIX = "app-attest-challenge:";
 const verifiedAttestationSchema = z.object({ publicKey: z.string().min(1) });
 const verifiedAssertionSchema = z.object({ signCount: z.number().int().positive() });
 
-/**
- * The app's App ID (team + bundle identifier), the same values Sign in with Apple uses. Each
- * environment names its own app: the production API the App Store app, previews the dev build.
- */
 function getAppIdentity() {
   const { APPLE_APP_BUNDLE_IDENTIFIER, APPLE_TEAM_ID } = process.env;
 
@@ -31,10 +26,6 @@ function getAppIdentity() {
     : null;
 }
 
-/**
- * Keeps a fresh challenge in auth's verifications, which the daily sweep clears once expired.
- * Each one proves a single attestation or assertion was made after the server asked for it.
- */
 export async function issueAppAttestChallenge(): Promise<string> {
   const challenge = randomBytes(CHALLENGE_BYTES).toString("base64url");
 
@@ -71,12 +62,8 @@ function attempt<T>(verify: () => T): T | null {
 }
 
 /**
- * Registers a key one install of the app made and Apple attested, after checking the
- * attestation's certificate chain to Apple's App Attest root, that it signed this server's
- * challenge, and that it names this app. Keys from App Attest's development environment count
- * everywhere but production. A build signed by our team can still choose the production
- * environment; only our team can sign this App ID, so that's accepted. Registering the same key
- * again changes nothing, so its counter never goes back.
+ * Keys from App Attest's development environment count everywhere but production. Registering the
+ * same key again changes nothing, so its counter never goes back.
  */
 export async function registerAppAttestKey({
   attestation,
@@ -123,10 +110,8 @@ export async function registerAppAttestKey({
 }
 
 /**
- * Checks a request's App Attest assertion: signed by a registered key over a challenge this
- * server issued and over the request itself (its operation and fields), for this app, with a
- * counter above the last one accepted. The challenge is spent first, so no assertion counts twice;
- * the stored counter only rises, even when requests race.
+ * The challenge is spent first, so no assertion counts twice; the stored counter only rises, even
+ * when requests race.
  */
 export async function hasAppAttestAssertion({
   binding,

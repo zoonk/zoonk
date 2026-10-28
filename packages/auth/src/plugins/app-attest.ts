@@ -7,10 +7,7 @@ import {
   appAttestKeyRequestSchema,
 } from "../app-attest/app-attest-contract";
 
-/**
- * App Attest's two steps before an assertion, as auth endpoints so Better Auth's IP rate limit
- * covers them like every sign-in: a one-time challenge, then registering the attested key.
- */
+/** Auth endpoints, so Better Auth's IP rate limit covers them like every sign-in. */
 export function appAttestPlugin() {
   return {
     endpoints: {

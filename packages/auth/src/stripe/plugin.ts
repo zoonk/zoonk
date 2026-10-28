@@ -15,10 +15,6 @@ function reportChange(change: "canceled" | "started", subscription: ReportedSubs
   });
 }
 
-/**
- * Stripe customers are created at the first checkout instead of at sign-up, so guests and learners
- * who never subscribe don't become billing records.
- */
 export function stripePlugin() {
   return stripe({
     createCustomerOnSignUp: false,

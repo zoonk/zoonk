@@ -4,13 +4,11 @@ import { type GenericEndpointContext } from "better-auth";
 import { describe, expect, it } from "vitest";
 import { nameProviderAccount } from "./provider-username";
 
-/** The user Better Auth is about to create, as the database hook receives it. */
 function newUser({ email, name }: { email: string; name: string }) {
   const now = new Date();
   return { createdAt: now, email, emailVerified: true, id: randomUUID(), name, updatedAt: now };
 }
 
-/** The endpoint creating the account, as Better Auth passes it to the hook. */
 function endpoint(path: string) {
   return { path } as GenericEndpointContext;
 }

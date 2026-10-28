@@ -6,16 +6,11 @@ import { isUsernameAllowed } from "./username-validator";
 const USERNAME_SUFFIX_TRIES = 3;
 const USERNAME_SUFFIX_RANGE = 10_000;
 
-/** A short random number for a username whose plain version is taken. */
 function getUsernameSuffix(): string {
   return String(randomInt(USERNAME_SUFFIX_RANGE));
 }
 
-/**
- * The first free username made from an email: its plain name part, or that with a few random
- * numbers. Null when every one is taken. Whoever saves it stays authoritative, since another
- * account can take it in between.
- */
+/** Another account can take the name before it's saved, so the save stays authoritative. */
 export async function findAvailableUsername(email: string): Promise<string | null> {
   const candidates = [
     suggestUsername({ email }),

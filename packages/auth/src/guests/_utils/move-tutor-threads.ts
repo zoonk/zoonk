@@ -2,10 +2,6 @@ import { type GuestLinkContext } from "./merge-keyed-rows";
 
 type ThreadPair = { accountThreadId: string; guestThreadId: string };
 
-/**
- * Locks threads in id order. A turn locks its one thread before writing, so one being asked or
- * answered finishes first, and a later one waits for the move.
- */
 async function lockThreads({
   threadIds,
   transaction,
@@ -18,7 +14,6 @@ async function lockThreads({
   `;
 }
 
-/** The account's threads about what a guest thread is about: one subject column each. */
 function findSameSubjectThreads({ guestUserId, transaction, userId }: GuestLinkContext) {
   return transaction.$queryRaw<ThreadPair[]>`
     SELECT guest.id AS "guestThreadId", account.id AS "accountThreadId"
@@ -38,10 +33,8 @@ function findSameSubjectThreads({ guestUserId, transaction, userId }: GuestLinkC
 }
 
 /**
- * A conversation answers the unfinished turns about one screen one at a time, oldest first, so a
- * joined thread keeps one open per screen: the account's turn being answered, else the latest.
- * The others close unanswered ("No answer available") and can be asked again, instead of two
- * turns each waiting for the other. Turns about other screens stay as they are.
+ * A conversation answers one screen's unfinished turns one at a time, so a joined thread keeps one
+ * open per screen. The others close unanswered and can be asked again.
  */
 async function closeExtraUnfinishedTurns({
   accountThreadIds,
@@ -73,9 +66,8 @@ async function closeExtraUnfinishedTurns({
 }
 
 /**
- * Joins each guest thread's questions to the account's thread about the same thing, in time order
- * with their ids kept. Request ids only dedupe one client's retries of a turn, so a guest question
- * reusing one the account's thread holds gets a new id, and the account's keeps answering it.
+ * Request ids only dedupe one client's retries, so a guest question reusing an id the account's
+ * thread holds gets a new one.
  */
 async function joinSameSubjectThreads({
   pairs,
@@ -115,12 +107,7 @@ async function joinSameSubjectThreads({
   await transaction.lessonQuestionThread.deleteMany({ where: { id: { in: guestThreadIds } } });
 }
 
-/**
- * Moves a guest's tutor threads, questions included, to the account. A thread about something the
- * account already asks about (the same lesson, chapter or question) joins the account's instead,
- * since a learner has one thread per thing. The guest's row is locked by then, so no new guest
- * thread appears; a turn on an existing one waits for its thread's lock.
- */
+/** Requires the guest's row lock, so no new guest thread appears meanwhile. */
 export async function moveTutorThreads(context: GuestLinkContext) {
   const { guestUserId, transaction, userId } = context;
 
@@ -137,10 +124,7 @@ export async function moveTutorThreads(context: GuestLinkContext) {
     await joinSameSubjectThreads({ pairs, transaction });
   }
 
-  /**
-   * A thread the account starts about the same thing after the lookup fails this update on its
-   * unique key; the link retries from the start and joins the two.
-   */
+  // A thread the account starts after the lookup fails this on its unique key; the link retries and joins them.
   await transaction.lessonQuestionThread.updateMany({
     data: { userId },
     where: { userId: guestUserId },

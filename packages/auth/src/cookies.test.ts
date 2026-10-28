@@ -10,7 +10,6 @@ describe(getSessionCookieName, () => {
   });
 });
 
-/** A request's cookies holding these names. */
 function store(names: string[]) {
   return { has: (name: string) => names.includes(name) };
 }

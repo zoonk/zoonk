@@ -1,9 +1,7 @@
 import { type TransactionClient, prisma } from "@zoonk/db";
 
-/** How long a test waits for the code under test to reach the held locks. */
 const WAIT_LIMIT_MS = 4000;
 
-/** Waits until `count` sessions wait on the blocker's locks, directly or behind each other. */
 export async function waitForBlocked({
   blocker,
   count,
@@ -38,7 +36,6 @@ export async function waitForBlocked({
   return waitForBlocked({ blocker, count, deadline });
 }
 
-/** Runs `work` in a transaction kept open until released, so code under test waits on its locks. */
 export async function holdTransaction<Result>(
   work: (transaction: TransactionClient) => Promise<Result>,
 ) {

@@ -11,7 +11,6 @@ vi.mock("botid/server", () => ({ checkBotId: vi.fn().mockResolvedValue({ isBot: 
 
 const OLDER = new Date("2026-09-01T00:00:00Z");
 
-/** A learner keeps one insight a day, so each seeded insight gets its own day. */
 const insightDays = { seeded: 0 };
 
 const TABLES = [
@@ -237,7 +236,6 @@ describe("guest keyed-row linking", () => {
       const release = Promise.withResolvers<null>();
       const ready = Promise.withResolvers<number>();
 
-      /** Block both ownership writes after the old implementation has read empty account keys. */
       const held = prisma.$transaction(
         async (transaction) => {
           await transaction.$queryRaw(sql`

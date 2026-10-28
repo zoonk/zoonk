@@ -1,11 +1,8 @@
 import { type GuestLinkContext } from "./merge-keyed-rows";
 
 /**
- * A level may fall as well as rise, so the latest assessment wins, never the highest score.
- * Equal timestamps keep the larger evidence window, then the account on a complete tie. Keep
- * the whole snapshot: adding windows from different baselines could invent a level change.
- * The database resolves collisions while locking the destination, even if its row didn't exist
- * when linking started. The source deletion and insert are atomic, and unique rows keep their IDs.
+ * A level can fall as well as rise, so the latest assessment wins whole, never the highest score.
+ * Adding windows from different baselines could invent a level change.
  */
 export async function mergeLanguageLevels({ guestUserId, transaction, userId }: GuestLinkContext) {
   await transaction.$executeRaw`

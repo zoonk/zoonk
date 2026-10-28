@@ -16,12 +16,6 @@ const e2ePluginOverrideIds = new Set([
   "session-hint",
 ]);
 
-/**
- * E2E-specific auth configuration.
- * - Enables email+password with plain-text matching (no bcrypt overhead)
- * - Bypasses rate limiting except guest requests opting into real limiter coverage
- * - Stores OTP and one-time tokens in plain text for E2E testing
- */
 export const auth = betterAuth({
   ...baseAuthConfig,
   emailAndPassword: {
@@ -52,7 +46,7 @@ export const auth = betterAuth({
   socialProviders,
 });
 
-/** Next's E2E alias replaces the package root with this module, so it must expose the same server capabilities as the production entrypoint while using test-safe OTP storage. */
+/** Next's E2E alias replaces the package root with this module, so it mirrors the production export. */
 export const reauthorizeEmailForAccountDeletion = createEmailDeletionReauthentication({
   rateLimit: { enabled: false },
   storeOTP: "plain",

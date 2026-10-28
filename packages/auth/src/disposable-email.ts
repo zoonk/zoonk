@@ -1,9 +1,8 @@
 import mailchecker from "mailchecker";
 
 /**
- * Mailchecker's list includes persistent privacy aliases. These domains and
- * their subdomains must remain usable even when the upstream list changes.
- * Apple: https://developer.apple.com/news/?id=1ptvdtcm
+ * Mailchecker lists some persistent privacy aliases as disposable; these domains and their
+ * subdomains stay allowed. Apple: https://developer.apple.com/news/?id=1ptvdtcm
  */
 const privacyEmailDomains = new Set([
   "icloud.com",
@@ -32,7 +31,6 @@ const privacyEmailDomains = new Set([
 
 const disposableDomains = mailchecker.blacklist();
 
-/** Checks only domain policy; Better Auth continues to own email syntax validation. */
 export function isDisposableEmail(email: string) {
   const domain = email.slice(email.lastIndexOf("@") + 1).toLowerCase();
   const labels = domain.split(".");

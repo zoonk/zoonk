@@ -30,11 +30,8 @@ function allocateTransfer({
 }
 
 /**
- * Courses keep their IDs so goals, chapters and plans keep referencing them. A destination's
- * existing course keeps its slug; a colliding guest course gets the first free numbered suffix,
- * under the caller's destination home lock. It holds the guest's user-row lock through deletion,
- * so source writers cannot commit another guest-owned course after this snapshot. Do not take
- * the source home lock here: a writer may hold it while waiting for the guest's user row.
+ * Requires the caller's destination home lock. Don't take the source home lock here: a writer may
+ * hold it while waiting for the guest's user row.
  */
 export async function movePrivateCourses({ guestUserId, transaction, userId }: GuestLinkContext) {
   const courses = await transaction.course.findMany({

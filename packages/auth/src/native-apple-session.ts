@@ -77,12 +77,6 @@ const nativeAppleDatabaseHooks = {
   },
 } satisfies BetterAuthOptions["databaseHooks"];
 
-/**
- * Builds an Apple-only Better Auth boundary for native ID-token sign-in. The
- * deletion variant disables signup. Both variants retain profile hooks but
- * defer Stripe customer creation until checkout so a failed native provider
- * transaction has no external billing resource to roll back.
- */
 function createNativeAppleAuth({ disableSignUp }: { disableSignUp: boolean }) {
   const appleProvider = getNativeAppleProvider();
 
@@ -112,11 +106,6 @@ export type NativeAppleSessionRequest = {
   requestURL: string;
 };
 
-/**
- * Runs one provider assertion inside request-local change tracking. If Better
- * Auth fails after creating any local auth rows, the caller receives their
- * exact IDs so it can roll back only this sign-in attempt.
- */
 async function attemptNativeAppleSignIn({
   signIn,
 }: {
@@ -142,7 +131,7 @@ function getNativeAppleSignInBody(credentials: NativeAppleCredentials) {
   } as const;
 }
 
-/** Rejects over-limit Apple attempts before consuming their single-use provider grant. */
+/** Call before signing in: an over-limit attempt must not consume Apple's single-use grant. */
 export async function enforceNativeAppleSignInRateLimit({
   headers,
   requestURL,
@@ -156,7 +145,6 @@ export async function enforceNativeAppleSignInRateLimit({
   });
 }
 
-/** Creates the normal native Apple session after the request has passed its rate-limit gate. */
 export function signInWithNativeAppleAccount({
   credentials,
   headers,
@@ -167,7 +155,6 @@ export function signInWithNativeAppleAccount({
   });
 }
 
-/** Creates a fresh session for a linked Apple account without permitting signup. */
 export function signInWithExistingAppleAccount(credentials: NativeAppleCredentials) {
   return attemptNativeAppleSignIn({
     signIn: () =>

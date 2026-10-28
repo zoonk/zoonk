@@ -12,7 +12,6 @@ const SESSION_COOKIE = "better-auth.session_token";
 const SESSION_MAX_AGE = String(60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS);
 const PASSWORD = "session-hint-password";
 
-/** Production's plugins in production's order, with email and password to sign learners in. */
 const auth = betterAuth({
   ...baseAuthConfig,
   baseURL: ORIGIN,
@@ -30,7 +29,6 @@ const auth = betterAuth({
 
 type SetCookie = { attributes: Map<string, string>; value: string };
 
-/** A response's cookies as the browser applies them: the last `Set-Cookie` for a name wins. */
 function readSetCookies(response: Response): Map<string, SetCookie> {
   return new Map(
     response.headers.getSetCookie().map((header) => {
@@ -47,7 +45,6 @@ function readSetCookies(response: Response): Map<string, SetCookie> {
   );
 }
 
-/** The `Cookie` header a browser sends after a response, from the cookies it kept. */
 function toCookieHeader(response: Response): string {
   return [...readSetCookies(response)]
     .filter(([, cookie]) => cookie.attributes.get("max-age") !== "0")
@@ -98,7 +95,6 @@ function getHint(response: Response): SetCookie | undefined {
   return readSetCookies(response).get(SESSION_HINT_COOKIE);
 }
 
-/** The hint says `1` beside a session cookie it shares its lifetime and scope with. */
 function expectHintBesideSession(response: Response) {
   const cookies = readSetCookies(response);
   const session = cookies.get(SESSION_COOKIE);
@@ -125,7 +121,6 @@ describe("session hint", () => {
     const again = await request({ body: { email, password: PASSWORD }, path: "/sign-in/email" });
     expectHintBesideSession(again);
 
-    // A session that ends with the browser leaves a hint that ends with it.
     const brief = await request({
       body: { email, password: PASSWORD, rememberMe: false },
       path: "/sign-in/email",
@@ -174,7 +169,6 @@ describe("session hint", () => {
     const { response: signedUp, userId } = await signUp();
     const session = readSetCookies(signedUp).get(SESSION_COOKIE);
 
-    // Old enough to renew; the request carries only the session cookie, so no cached copy answers.
     await prisma.session.updateMany({
       data: { expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 20) },
       where: { userId },

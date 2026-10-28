@@ -5,7 +5,6 @@ import { ACCESS_ERROR_CODES } from "../access-contract";
 import { findRequestGuest } from "../guests/guest-request";
 import { linkGuestAccount } from "../guests/link-guest-account";
 
-/** Guests need an account before buying Plus. */
 const guardPlusPurchase = createAuthMiddleware(async (context) => {
   const session = await getSessionFromCtx(context);
 
@@ -18,11 +17,8 @@ const guardPlusPurchase = createAuthMiddleware(async (context) => {
 });
 
 /**
- * A brand's slug and kind are in every one of its courses' public addresses, which search results,
- * shared links and the catalog's caches (kept by address) point to. Moving or deleting a brand
- * needs a deliberate migration with redirects and cache expiry, which doesn't exist yet, so the
- * auth API does neither: an update that sends a slug or a kind is refused whatever it targets,
- * and its other fields (the name, the logo) still change here.
+ * A brand's slug and kind are in all its courses' public addresses. Moving or deleting a brand
+ * needs a migration with redirects and cache expiry that doesn't exist yet.
  */
 const guardBrandAddress = createAuthMiddleware(async (context) => {
   const body: unknown = context.body;
@@ -37,11 +33,7 @@ const guardBrandAddress = createAuthMiddleware(async (context) => {
   }
 });
 
-/**
- * Apps sign in on the central auth host and receive the session through a one-time token, which the
- * anonymous plugin's own link hook doesn't see. Linking here keeps a guest's progress when the
- * sign-in comes back to the app that holds the guest cookie.
- */
+/** The anonymous plugin's link hook doesn't see one-time token sign-ins, which is how apps get a central-host session. */
 const linkGuestAfterTokenSignIn = createAuthMiddleware(async (context) => {
   const newSession = context.context.newSession;
 
@@ -58,7 +50,6 @@ const linkGuestAfterTokenSignIn = createAuthMiddleware(async (context) => {
   await linkGuestAccount({ account: newSession.user, guestUserId: guest.id });
 });
 
-/** Guest, purchase and brand rules that apply to the whole auth surface, not one endpoint. */
 export function accessGuardsPlugin() {
   return {
     hooks: {

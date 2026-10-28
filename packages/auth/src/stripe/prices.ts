@@ -3,7 +3,6 @@ import { getEnvironment } from "@zoonk/utils/environment";
 import { stripeClient } from "./client";
 import type Stripe from "stripe";
 
-/** A price in `targetCurrency` when Stripe has that currency's option, else in the price's own. */
 function extractPrice(price: Stripe.Price, targetCurrency: string): PriceInfo | null {
   const currencyOption = price.currency_options?.[targetCurrency];
 
@@ -18,7 +17,6 @@ function extractPrice(price: Stripe.Price, targetCurrency: string): PriceInfo | 
   return null;
 }
 
-/** Each lookup key's price in each currency (lowercase), from one Stripe request. */
 export type StripePriceTable = Record<string, Record<string, PriceInfo>>;
 
 function getPricesByCurrency(price: Stripe.Price, currencies: readonly string[]) {
@@ -31,11 +29,6 @@ function getPricesByCurrency(price: Stripe.Price, currencies: readonly string[])
   );
 }
 
-/**
- * Loads public prices from Stripe in every currency asked for, in one request, while keeping E2E
- * runs isolated from the external provider. E2E uses a deliberately invalid key and already
- * renders the same price-unavailable state represented by an empty result.
- */
 export async function getStripePriceTable(
   lookupKeys: string[],
   currencies: readonly string[],
@@ -56,7 +49,6 @@ export async function getStripePriceTable(
   );
 }
 
-/** Public prices from Stripe in one currency, by lookup key. */
 export async function getStripePrices(
   lookupKeys: string[],
   currency: string,

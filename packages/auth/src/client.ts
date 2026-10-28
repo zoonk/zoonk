@@ -16,12 +16,11 @@ import { ac, admin, member, owner } from "./permissions";
 
 const centralAuthClient = createAuthClient({ baseURL: new URL("/v1/auth", API_URL).href });
 
-/** The app host's sign-out: logging out and leaving a deleted account share it. */
 export function signOutAppHost() {
   return authClient.signOut();
 }
 
-/** Clear both hosts' cookies: the app and central auth can share a database session. */
+/** The app and central auth can share a database session, so this signs out of both. */
 export async function logout() {
   const { data } = await safeAsync(() =>
     Promise.all([signOutAppHost(), centralAuthClient.signOut()]),

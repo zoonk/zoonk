@@ -2,11 +2,6 @@ import { getNumber, getString, isJsonObject } from "@zoonk/utils/json";
 import { isAPIError } from "better-auth/api";
 import { ACCESS_ERROR_CODES } from "./access-contract";
 
-/**
- * Our product codes for Better Auth's, where they differ. Its captcha plugin rejects a request
- * BotID flags with `VERIFICATION_FAILED`. Its CSRF check rejects a request that says it comes from
- * a browser (fetch metadata, which Node's fetch also sends) without an Origin header it trusts.
- */
 const PRODUCT_CODES: Record<string, string> = {
   CROSS_SITE_NAVIGATION_LOGIN_BLOCKED: ACCESS_ERROR_CODES.untrustedOrigin,
   INVALID_ORIGIN: ACCESS_ERROR_CODES.untrustedOrigin,
@@ -47,7 +42,6 @@ export type AuthErrorDetails = {
   statusCode?: number;
 };
 
-/** Normalizes dependency and adapter errors at the auth package boundary so consumers do not depend on Better Auth internals. */
 export function getAuthError(error: unknown): AuthErrorDetails | null {
   if (!isAPIError(error) && !(error instanceof NativeAuthResponseError)) {
     return null;

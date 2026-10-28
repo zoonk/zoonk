@@ -13,11 +13,8 @@ function getRetryAfter(headers: Headers) {
 }
 
 /**
- * Runs native product facades through Better Auth's HTTP boundary so its
- * origin hooks and atomic IP rate limiter remain authoritative. A request
- * without a body is a GET. A refused or failed answer throws, so no caller
- * mistakes an outage for a missing session; a successful one keeps its
- * headers, and the caller decides who gets its cookies.
+ * Goes through Better Auth's HTTP boundary so its origin hooks and IP rate limiter apply. Without a
+ * body it's a GET. A refused or failed answer throws, so no caller mistakes an outage for no session.
  */
 export async function sendNativeAuthRequest({
   body,
@@ -66,7 +63,6 @@ export async function sendNativeAuthRequest({
   return { body: responseBody, headers: response.headers };
 }
 
-/** A native product facade's POST through Better Auth's HTTP boundary; answers its body. */
 export async function callNativeAuthHandler(request: {
   body: unknown;
   handler: (request: Request) => Promise<Response>;

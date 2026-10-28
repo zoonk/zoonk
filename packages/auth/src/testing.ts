@@ -7,7 +7,6 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     password: {
-      // Use no-op hashing for fast tests (no bcrypt/scrypt overhead)
       hash: async (password) => password,
       verify: async ({ hash, password }) => hash === password,
     },
@@ -15,7 +14,7 @@ export const auth = betterAuth({
   plugins: [...baseAuthPlugins],
 });
 
-/** Vitest aliases the package root to this module, so it must preserve the production entrypoint's deletion capability without requiring Next's cookie context. */
+/** Vitest aliases the package root to this module, so it mirrors the production export without Next's cookie context. */
 export const reauthorizeEmailForAccountDeletion = createEmailDeletionReauthentication({
   rateLimit: { enabled: false },
   storeOTP: "hashed",

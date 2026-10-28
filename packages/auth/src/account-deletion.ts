@@ -14,12 +14,7 @@ const accountDeletionCleanupReporter = new AsyncLocalStorage<AccountDeletionClea
 /** Keeping a long-time learner's anonymous records copies all their answers, past the default. */
 const ANONYMIZE_TIMEOUT_MS = 60_000;
 
-/**
- * Runs Better Auth's user deletion with a request-local channel for provider
- * cleanup results. Better Auth intentionally ignores beforeDelete return
- * values, so this keeps concurrent deletions isolated while still letting the
- * API tell one user whether their own Apple grant was revoked.
- */
+/** Better Auth ignores `beforeDelete`'s return value, so cleanup results travel through a request-local channel. */
 export async function captureAccountDeletionCleanup<Result>(operation: () => Promise<Result>) {
   const appleRevocation = Promise.withResolvers<boolean | null>();
 
@@ -31,12 +26,7 @@ export async function captureAccountDeletionCleanup<Result>(operation: () => Pro
   return { appleAuthorizationRevoked: await appleRevocation.promise, result };
 }
 
-/**
- * Revokes every Apple grant before its Account row is removed because Sign in
- * with Apple requires token revocation when a user deletes their account. The
- * provider helper deliberately converts missing legacy tokens and Apple outages
- * into false outcomes so users are never prevented from deleting Zoonk data.
- */
+/** Sign in with Apple requires revoking the token when a user deletes their account. */
 async function revokeAppleAuthorizations(userId: string) {
   const accounts = await prisma.account.findMany({ where: { providerId: "apple", userId } });
 
@@ -53,11 +43,7 @@ async function revokeAppleAuthorizations(userId: string) {
   return revocationResults.every(Boolean);
 }
 
-/**
- * Lists the exact Better Auth email OTP rows that may still contain the user's
- * normalized address. Change-email OTPs are excluded because that capability
- * is disabled; broad matching could remove another user's pending code.
- */
+/** Exact identifiers only: broad matching could remove another user's pending code. */
 function getEmailOTPIdentifiers(email: string) {
   const normalizedEmail = email.toLowerCase();
 
@@ -69,12 +55,8 @@ function getEmailOTPIdentifiers(email: string) {
 }
 
 /**
- * Removes local dependencies that must be gone before the User cascade runs.
- * The explicit subscription cleanup closes the normal deletion path promptly;
- * user-owned store rows also have a cascade so a concurrent notification cannot
- * survive the later User deletion. What the learner's study teaches everyone is
- * kept anonymously, and their feedback without their email. These steps are
- * idempotent, so a later Better Auth failure can be retried safely.
+ * What the learner's study teaches everyone is kept anonymously, and their feedback without their
+ * email. Idempotent, so a later Better Auth failure can be retried.
  */
 async function deleteLocalUserDependencies({ email, userId }: { email: string; userId: string }) {
   await Promise.all([
@@ -89,11 +71,7 @@ async function deleteLocalUserDependencies({ email, userId }: { email: string; u
   ]);
 }
 
-/**
- * Stops Stripe billing before its local lookup row is removed. App Store and
- * Google Play subscriptions remain store-managed because those providers do
- * not let Zoonk cancel a user's purchase from this server deletion hook.
- */
+/** App Store and Google Play don't let a server cancel a user's purchase, so only Stripe is canceled here. */
 async function cancelStripeSubscriptions(userId: string) {
   const subscriptions = await prisma.subscription.findMany({
     where: { provider: "stripe", referenceId: userId, stripeSubscriptionId: { not: null } },
@@ -108,15 +86,8 @@ async function cancelStripeSubscriptions(userId: string) {
   );
 }
 
-/**
- * Deletes the learner's private files, then cleans provider state and local
- * records that need work before the User foreign-key cascade. Better Auth
- * invokes this hook only after it validates the authoritative session and its
- * freshness, so stale credentials cannot revoke Apple access or remove data.
- */
 export async function deleteUserDependenciesBeforeAuthDelete(user: { email: string; id: string }) {
-  // First, before anything that can't be undone: a failure here stops the deletion, and a retry
-  // finishes it, so a learner's uploads and private pictures never outlive their account.
+  // First, before anything that can't be undone, so a failure stops the deletion and a retry finishes it.
   await deleteUserBlobs(user.id);
 
   const appleAuthorizationRevoked = await revokeAppleAuthorizations(user.id);

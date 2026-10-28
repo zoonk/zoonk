@@ -10,12 +10,7 @@ import {
 } from "../app-attest/app-attest-contract";
 import { getBotIdVerification } from "../request-guards/bot-id";
 
-/**
- * Every auth request that creates a session or emails a sign-in code, without the auth base path.
- * BotID protects anonymous email requests; authenticated native deletion proofs and App Attest
- * assertions are checked separately. Each app's `initBotId` protects main's `/api/auth/*` and the
- * API's `/v1/auth/*`.
- */
+/** Each app's `initBotId` must cover these: main's `/api/auth/*` and the API's `/v1/auth/*`. */
 const BOT_CHECKED_AUTH_PATHS = [
   "/email-otp/send-verification-otp",
   "/sign-in/anonymous",
@@ -23,10 +18,7 @@ const BOT_CHECKED_AUTH_PATHS = [
   "/sign-in/social",
 ];
 
-/**
- * Native apps sign in with the provider's ID token instead of a browser redirect, so BotID can't
- * run there; the provider's token vouches for the account instead.
- */
+/** BotID can't run in the native apps, so the provider's ID token vouches for the account instead. */
 async function isIdTokenSignIn(request: Request): Promise<boolean> {
   if (!new URL(request.url).pathname.endsWith("/sign-in/social")) {
     return false;
@@ -41,9 +33,8 @@ async function isIdTokenSignIn(request: Request): Promise<boolean> {
 }
 
 /**
- * A still-active native bearer can request a deletion proof only for its own account. The
- * authoritative lookup runs Better Auth's bearer hook, without refreshing the stale session or
- * trusting a cached cookie. Sending a code grants no fresh session or deletion authorization.
+ * A still-active native bearer may request a deletion code only for its own account. Sending a code
+ * grants no session or deletion authorization.
  */
 async function isAuthenticatedEmailCodeRequest({
   context,
@@ -87,10 +78,6 @@ async function isAuthenticatedEmailCodeRequest({
   );
 }
 
-/**
- * The request an App Attest assertion must have signed, read from what Better Auth will act on:
- * a guest, or the email (and code) of an email sign-in. Other bot-checked paths take no assertion.
- */
 async function readAppAttestBinding(
   path: string,
   request: Request,
@@ -119,11 +106,7 @@ async function readAppAttestBinding(
   return null;
 }
 
-/**
- * The iOS app can't run BotID, so a genuine copy proves itself with an App Attest assertion over
- * the request it sends, on the same requests BotID guards. A missing or failed assertion falls
- * through to BotID, which answers the usual 403.
- */
+/** A missing or failed assertion falls through to BotID, which answers the usual 403. */
 async function isAppAttestedRequest({
   context,
   request,
@@ -144,11 +127,6 @@ async function isAppAttestedRequest({
   return binding !== null && (await hasAppAttestAssertion({ binding, headers: request.headers }));
 }
 
-/**
- * The shared guard accepts local development and E2E without BotID proof. Deployed requests
- * without browser proof fail with 403, except a provider ID token, an existing account's bearer
- * requesting its own email proof, or the iOS app's App Attest assertion.
- */
 export function botCheckPlugin() {
   const plugin = captcha({
     checkBotId: getBotIdVerification,

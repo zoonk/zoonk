@@ -53,10 +53,6 @@ export async function createEmailCodeSession({
   return getSessionToken(response);
 }
 
-/**
- * Creates a guest session for a client that keeps a bearer token. BotID and Better Auth's rate
- * limit run first, like guest sign-in on the web.
- */
 export async function createGuestSession({
   headers,
   requestURL,
@@ -96,12 +92,8 @@ export async function createGoogleSession({
 }
 
 /**
- * Deletes the authoritative server session before clearing its cookie. Better
- * Auth's sign-out endpoint deliberately swallows persistence failures, which
- * is unsafe for native clients that clear Keychain only after this succeeds,
- * so a failed read or sign-out throws instead of answering signed out.
- * Both calls go through Better Auth's HTTP boundary, so the cookies their
- * answers set stay here and the caller decides who gets them.
+ * Throws when the session can't be read or deleted: Better Auth's sign-out swallows persistence
+ * failures, and native clients clear the Keychain only after this succeeds.
  */
 export async function deleteCurrentSession({
   headers,

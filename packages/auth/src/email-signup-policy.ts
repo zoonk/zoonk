@@ -14,14 +14,12 @@ function disposableEmailError() {
   });
 }
 
-/** Enforces signup policy for OTP, OAuth, and native user creation without restricting login. */
 export function assertSignUpEmailAllowed(email: string) {
   if (isDisposableEmail(email)) {
     throw disposableEmailError();
   }
 }
 
-/** Rejects new disposable signups before OTP storage and delivery; existing users retain access. */
 export const validateEmailBeforeOTP = createAuthMiddleware(async (context) => {
   if (context.path !== "/email-otp/send-verification-otp") {
     return;

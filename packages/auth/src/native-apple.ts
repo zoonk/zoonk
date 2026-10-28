@@ -37,10 +37,6 @@ type VerifiedAppleAuthorization = {
   subject: string;
 };
 
-/**
- * Requires native Apple configuration at the orchestration boundary so token
- * revocation always uses the same bundle identifier as the code exchange.
- */
 function getNativeClientIdentifier() {
   const configuration = getAppleConfiguration();
 
@@ -51,21 +47,12 @@ function getNativeClientIdentifier() {
   return configuration.appBundleIdentifier;
 }
 
-/**
- * Scopes the verified subject to Apple's provider so another provider using
- * the same subject cannot receive this account's credentials.
- */
 async function getExactAppleAccount({ subject }: { subject: string }) {
   return prisma.account.findUnique({
     where: { providerId_accountId: { accountId: subject, providerId: "apple" } },
   });
 }
 
-/**
- * Revokes a newly issued Apple refresh token before surfacing an error. This
- * prevents a failed Zoonk sign-in from leaving an unused Apple authorization
- * active on the user's account.
- */
 async function throwAfterAppleRevocation({
   authorization,
   clientIdentifier,
@@ -89,14 +76,6 @@ async function throwAfterAppleRevocation({
   throw error;
 }
 
-/**
- * Reverses only the rows captured by the request-local Better Auth hooks. A
- * failed new signup removes that user through local cascades; a failed link to
- * an existing user removes only the new Apple account; an ordinary existing
- * sign-in removes only its temporary session. The Apple-only Better Auth
- * boundary deliberately defers Stripe customer creation until checkout, so
- * this rollback never owns or deletes an external billing relationship.
- */
 async function rollbackNativeAppleAuthChanges({
   changes,
   responseSessionToken,
@@ -126,11 +105,6 @@ async function rollbackNativeAppleAuthChanges({
   }
 }
 
-/**
- * Rolls back local auth changes and revokes the provider grant before
- * surfacing a native sign-in failure. Cleanup errors are retained alongside
- * the original failure so an incomplete rollback is never hidden.
- */
 async function throwAfterSessionCleanup({
   authorization,
   changes,
@@ -166,11 +140,6 @@ async function throwAfterSessionCleanup({
   throw error;
 }
 
-/**
- * Exchanges Apple's single-use native code and proves that both tokens in the
- * Authentication Services result describe the same Apple account. A mismatch
- * revokes the exchanged authorization before it can be used.
- */
 async function exchangeVerifiedAuthorization(
   credentials: NativeAppleCredentials,
 ): Promise<VerifiedAppleAuthorization> {
@@ -209,12 +178,7 @@ async function exchangeVerifiedAuthorization(
   }
 }
 
-/**
- * Uses Better Auth's established account-linking rules to create the Zoonk
- * session, then requires the exact Apple account row before any provider token
- * is stored. This prevents email-based linking from persisting one person's
- * Apple grant on another person's account.
- */
+/** Requires the exact Apple account row first, so email-based linking can't store one person's grant on another's account. */
 async function createVerifiedSession({
   credentials,
   createSession,
@@ -265,11 +229,7 @@ async function createVerifiedSession({
   return { account, changes, session: response };
 }
 
-/**
- * Verifies that the Apple subject is already linked to the account requesting
- * deletion before any social sign-in runs. The dedicated Better Auth instance
- * still disables signup to close the race if that link changes afterward.
- */
+/** The deletion instance also disables signup, in case this link changes after the check. */
 async function requireExpectedAppleAccount({
   expectedUserId,
   verifiedAuthorization,
@@ -289,10 +249,6 @@ async function requireExpectedAppleAccount({
   }
 }
 
-/**
- * Persists the native grant on Better Auth's existing Account row and cleans
- * up both credentials if the database write cannot complete.
- */
 async function persistAppleAuthorization({
   accountId,
   changes,
@@ -326,12 +282,7 @@ async function persistAppleAuthorization({
   }
 }
 
-/**
- * Completes native Sign in with Apple while retaining Apple's refresh token on
- * Better Auth's existing Account model. Better Auth's current storage contract
- * is plaintext, so this deliberately stays compatible with all existing OAuth
- * accounts until token encryption receives its own migration plan.
- */
+/** Stores Apple's refresh token in plaintext, as Better Auth stores every OAuth account's. */
 export async function signInWithNativeApple(request: NativeAppleSessionRequest) {
   const { credentials } = request;
 
@@ -359,12 +310,7 @@ export async function signInWithNativeApple(request: NativeAppleSessionRequest) 
   return session;
 }
 
-/**
- * Creates a fresh Zoonk session from a new Apple authorization, proves it is
- * the currently authenticated account, and immediately revokes the Apple
- * refresh token. The returned session can satisfy Better Auth's freshness
- * requirement without retaining another provider grant during deletion.
- */
+/** Revokes the new Apple refresh token right away; the session only satisfies Better Auth's freshness check. */
 export async function reauthorizeAppleForAccountDeletion({
   credentials,
   expectedUserId,

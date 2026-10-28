@@ -18,7 +18,6 @@ const OLDER = new Date("2026-09-01T00:00:00Z");
 const NEWER = new Date("2026-09-02T00:00:00Z");
 const NEWEST = new Date("2026-09-03T00:00:00Z");
 
-/** A turn with the tutor, answered from the screen's shared answer like a guest's can be. */
 function askTutor({
   createdAt,
   libraryStepId,
@@ -28,7 +27,6 @@ function askTutor({
   threadId,
 }: {
   createdAt: Date;
-  /** The screen asked about; none for a question about the whole lesson. */
   libraryStepId?: string;
   question: string;
   requestId?: string;
@@ -52,7 +50,6 @@ function askTutor({
   });
 }
 
-/** Both sides' threads about one new lesson, and two of its screens. */
 async function createSameLessonThreads({
   accountUserId,
   guestUserId,
@@ -157,7 +154,6 @@ describe("guest tutor link", () => {
       }),
     ]);
 
-    // The same client retried one request as the guest and as the account: both turns stay.
     const sharedRequestId = randomUUID();
 
     const [accountQuestion, guestQuestion, guestRetry] = await Promise.all([
@@ -206,7 +202,6 @@ describe("guest tutor link", () => {
     expect(movedGuestQuestion).toStrictEqual({ ...guestQuestion, threadId: accountThread.id });
     expect(keptAccountQuestion).toStrictEqual(accountQuestion);
 
-    // Only the request id changes: it dedupes one client's retries, and the account kept its own.
     expect(movedRetry?.requestId).not.toBe(sharedRequestId);
 
     expect(movedRetry).toStrictEqual({
@@ -233,7 +228,6 @@ describe("guest tutor link", () => {
       threadId: guestThread.id,
     });
 
-    // The account asks about the same lesson elsewhere, still uncommitted when the move reaches it.
     const asking = await holdTransaction(async (transaction) => {
       const thread = await transaction.lessonQuestionThread.create({
         data: { kind: "lesson", libraryLessonId: lesson.id, userId: account.userId },
@@ -294,8 +288,6 @@ describe("guest tutor link", () => {
 
     const [firstScreen, secondScreen] = answeringLesson.steps;
 
-    // The account's answer about the first screen is being written: it stays, and so does its
-    // turn about the second screen; the guest's unanswered turns about the first screen close.
     const answering = await Promise.all([
       askTutor({
         createdAt: OLDER,
@@ -327,7 +319,6 @@ describe("guest tutor link", () => {
       }),
     ]);
 
-    // Nothing is being written about the lesson: its latest turn stays, the account's older closes.
     const waiting = await Promise.all([
       askTutor({
         createdAt: OLDER,

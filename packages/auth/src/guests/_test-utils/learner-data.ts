@@ -6,7 +6,7 @@ const STUDY_HOUR = 10;
 const STUDY_WEEKDAY = 0;
 const DAILY_MINUTES = 20;
 
-/** Creates a Library skill directly, since this package can't depend on the shared fixtures. */
+/** This package can't depend on the shared fixtures. */
 export async function createSkill() {
   const id = randomUUID();
 
@@ -37,7 +37,6 @@ export function createGoal(userId: string) {
   });
 }
 
-/** Creates a Library lesson directly, for rows a learner keeps about one. */
 export async function createLesson() {
   const id = randomUUID();
 
@@ -58,12 +57,6 @@ export async function createLesson() {
   });
 }
 
-/**
- * Gives a learner one row of everything a guest can create: a goal with its plan, a typed goal
- * not confirmed yet, a skill, an answer, a memory, a milestone, a day of stats, usage, an AI
- * call and its evaluation, a practice conversation, a mistake pattern, a mock and an exam result,
- * and a profile.
- */
 export async function seedLearnerData({
   brainPower,
   contentId,
@@ -170,7 +163,6 @@ export async function seedLearnerData({
   return { goal };
 }
 
-/** Counts a learner's rows in every table a guest link moves. */
 export async function countLearnerRows(userId: string) {
   const byUser = { where: { userId } };
 

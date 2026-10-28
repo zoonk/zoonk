@@ -12,15 +12,9 @@ import {
 import { movePrivateCourses } from "./_utils/move-private-courses";
 import { moveTutorThreads } from "./_utils/move-tutor-threads";
 
-/** Retry rolled-back transaction conflicts from competing writers without repeating external effects. */
 const TRANSFER_ATTEMPTS = 3;
 
-/**
- * Rolls a link back with its marks. `alreadyLinked`: another link moved the guest first, so this
- * one changed nothing. `plansChanged`: another link moved a goal into the account while this one
- * waited for its row, and this one's merge changes that plan's inputs too, so it starts over to
- * mark it.
- */
+/** `plansChanged`: another link moved a goal into the account while this one waited, so it starts over to mark that plan. */
 class LinkRollbackError extends Error {
   readonly reason: "alreadyLinked" | "plansChanged";
 
@@ -35,11 +29,7 @@ function isLinkRollbackError(error: unknown, reason: LinkRollbackError["reason"]
   return error instanceof LinkRollbackError && error.reason === reason;
 }
 
-/**
- * Worth a retry from the start: a competing writer's conflict, plans another link moved in, or a
- * tutor thread the account started about the same thing mid-move (a unique key), which the retry
- * joins instead.
- */
+/** A unique-key clash is a tutor thread the account started mid-move, which the retry joins. */
 function isRetryableTransferError(error: unknown) {
   return (
     isLinkRollbackError(error, "plansChanged") ||
@@ -48,11 +38,7 @@ function isRetryableTransferError(error: unknown) {
   );
 }
 
-/**
- * Marks every plan the move feeds as changed and locks the account, before any domain lock: the
- * plans (the account's and the guest's, which read the merged skills and evidence), then the
- * account, in the order every learner writer locks them.
- */
+/** Locks the plans, then the account, before any domain lock, in the order every learner writer locks them. */
 async function markAccountChanged({ guestUserId, transaction, userId }: GuestLinkContext) {
   const userIds = [userId, guestUserId];
 
@@ -70,7 +56,6 @@ async function markAccountChanged({ guestUserId, transaction, userId }: GuestLin
   }
 }
 
-/** Rows with no per-learner unique key move as they are, including private content below its course. */
 async function moveOwnedRows({ guestUserId, transaction, userId }: GuestLinkContext) {
   const fromGuest = { userId: guestUserId };
   const toAccount = { userId };
@@ -101,15 +86,6 @@ async function moveOwnedRows({ guestUserId, transaction, userId }: GuestLinkCont
   ]);
 }
 
-/**
- * Moves everything a guest did to the account they signed up or signed in with: goals and plans,
- * goals typed and how they were understood, sessions, attempts, mistakes and their patterns,
- * skills, memory and its insights, conversations with the tutor and in the language, mocks and
- * exam results, feedback, stats, language evidence, words and pronunciation reviews, example
- * lines, usage, AI calls (so the account's spend counts them) and their evaluation records, and
- * private content. It runs in one
- * transaction, so a failure leaves the guest untouched and the sign-in can be retried.
- */
 async function moveGuestData({
   attempt = 1,
   guestUserId,
@@ -125,14 +101,11 @@ async function moveGuestData({
 
       await markAccountChanged(context);
 
-      /** Serialize account merges, acquiring the home lock before any user FK lock like writers do. */
+      // The home lock comes before any user foreign-key lock, as in every writer.
       await lockCourseHome({ homeId: userId, transaction });
 
-      /**
-       * Every insert naming this guest needs a user-row key-share lock. Lock it before moving any
-       * table, so existing writers finish first and later writers wait until removal, then fail
-       * their foreign key safely. Course-home locks alone cannot protect chapters, skills or sources.
-       */
+      // Locking the guest row before moving any table lets existing writers finish first; later
+      // ones wait until removal and then fail their foreign key.
       const guests = await transaction.$queryRaw<{ id: string }[]>`
       SELECT id FROM users
       WHERE id = ${guestUserId}::uuid AND is_anonymous
@@ -149,16 +122,12 @@ async function moveGuestData({
       await moveKeyedRows(context);
       await mergeLanguageLevels(context);
 
-      /** Match settlements on the destination too: lifetime progress before the colliding day. */
+      // Lifetime progress before the day, in the order settlements lock them.
       await mergeUserProgress(context);
       await mergeDailyProgress(context);
       await mergeLearningProfile(context);
 
-      /**
-       * Keep the guest row locked through removal, even when it had no courses. A workflow with
-       * the old owner either committed before the snapshot or now fails its user foreign key;
-       * no course can be created between the transfer and Better Auth's post-link cleanup.
-       */
+      // Removed here, not in Better Auth's post-link cleanup, so no course is created for the guest in between.
       await transaction.user.delete({ where: { id: guestUserId } });
     }),
   );
@@ -174,7 +143,6 @@ async function moveGuestData({
   throw result.error;
 }
 
-/** Links a guest to the account that just signed in, moving everything the guest did to it. */
 export async function linkGuestAccount({
   account,
   guestUserId,

@@ -17,10 +17,6 @@ vi.mock("./server", () => ({ baseAuthConfig: {}, baseAuthPlugins: [] }));
 
 const credentials = { email: "learner@example.com", otp: "123456" };
 
-/**
- * Persists the user and session returned by the mocked OTP provider so identity
- * mismatch cleanup is verified through Prisma rather than a database-shaped spy.
- */
 async function createTestSession() {
   const userId = randomUUID();
   const token = `email-reauthentication-${randomUUID()}`;

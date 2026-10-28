@@ -35,30 +35,19 @@ const appleConfiguration: AppleConfiguration | null =
     ? { ...appleSigningConfiguration, appBundleIdentifier: APPLE_APP_BUNDLE_IDENTIFIER }
     : null;
 
-/**
- * Exposes the complete server-only Apple configuration to the native token
- * exchange without allowing any request to choose a client identifier.
- */
 export function getAppleConfiguration() {
   return appleConfiguration;
 }
 
 /**
- * Supplies Better Auth's required email field on repeat Apple sign-ins, where
- * Apple intentionally omits the email claim. The placeholder is never a
- * delivery address; the existing provider account remains anchored by the
- * stable Apple subject and keeps the real or relay email saved on first sign-in.
+ * Apple omits the email on repeat sign-ins, but Better Auth requires one. The placeholder is never a
+ * delivery address; the account keeps the email saved on first sign-in.
  */
 function mapAppleProfileToUser(profile: AppleProfile) {
   return { email: profile.email ?? `${profile.sub}@apple.placeholder.local` };
 }
 
-/**
- * Signs a client secret for the identifier that will be sent to Apple. Web
- * authorization codes use the Services ID, while native codes use the app's
- * bundle identifier, so one globally cached secret would be invalid for one of
- * those two flows.
- */
+/** Web codes use the Services ID and native codes the bundle ID, so each needs its own secret. */
 export async function getAppleClientSecret({
   clientIdentifier,
   configuration,
@@ -73,7 +62,7 @@ export async function getAppleClientSecret({
     return cached.token;
   }
 
-  const ttlSec = 2_592_000; // 1 month
+  const ttlSec = 30 * 24 * 60 * 60;
   const privateKeyPEM = configuration.privateKey.replaceAll(String.raw`\n`, "\n");
   const key = await importPKCS8(privateKeyPEM, "ES256");
 
@@ -106,19 +95,11 @@ export const appleProvider = appleSigningConfiguration
 
 const configuredAppleProvider = appleProvider.apple ? apple(appleProvider.apple) : null;
 
-/**
- * Uses Better Auth's built-in provider metadata as the source of truth for the
- * issuer required when verifying Apple identity tokens.
- */
 export function getAppleIdentityTokenIssuer() {
   return configuredAppleProvider?.idToken.issuer;
 }
 
-/**
- * Gives the private native auth boundary an Apple provider that validates the
- * app bundle audience. The public provider intentionally omits this option so
- * Better Auth's generic social endpoint accepts only the web Services ID.
- */
+/** The public provider omits the bundle audience, so Better Auth's social endpoint accepts only the web Services ID. */
 export function getNativeAppleProvider() {
   if (!appleConfiguration || !appleProvider.apple) {
     return {};

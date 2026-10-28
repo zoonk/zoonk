@@ -9,7 +9,6 @@ import { stripePlugin } from "../../stripe/plugin";
 
 const PASSWORD = "guest-test-password";
 
-/** A real Better Auth instance with the production guest, guard and hook wiring. */
 export const guestAuth = betterAuth({
   ...baseAuthConfig,
   baseURL: "http://localhost:3000",
@@ -30,7 +29,6 @@ export const guestAuth = betterAuth({
   secret: "guest-link-test-secret-with-enough-entropy",
 });
 
-/** Turns a response's Set-Cookie headers into the Cookie header a browser would send next. */
 function toCookieHeaders(responseHeaders: Headers) {
   const cookie = responseHeaders
     .getSetCookie()
@@ -40,7 +38,6 @@ function toCookieHeaders(responseHeaders: Headers) {
   return new Headers({ cookie });
 }
 
-/** Signs in as a new guest and returns the guest and the browser headers that carry its session. */
 export async function signInAsGuest() {
   const { headers, response } = await guestAuth.api.signInAnonymous({ returnHeaders: true });
 
@@ -51,7 +48,6 @@ export function createTestEmail() {
   return `guest-link-${randomUUID()}@example.test`;
 }
 
-/** Signs up through Better Auth, optionally from a browser that still holds a guest session. */
 export async function signUp({ email, headers }: { email: string; headers?: Headers }) {
   const result = await guestAuth.api.signUpEmail({
     body: { email, name: "Guest link learner", password: PASSWORD },
@@ -62,7 +58,6 @@ export async function signUp({ email, headers }: { email: string; headers?: Head
   return { headers: toCookieHeaders(result.headers), userId: result.response.user.id };
 }
 
-/** Creates an existing account with a password, as if it signed up long ago. */
 export async function createExistingAccount({ createdAt }: { createdAt: Date }) {
   const email = createTestEmail();
   const { userId } = await signUp({ email });
@@ -72,7 +67,6 @@ export async function createExistingAccount({ createdAt }: { createdAt: Date }) 
   return { email, userId };
 }
 
-/** Signs in from a browser that holds a guest session, the way the one-time token callback does. */
 export async function signInWithOneTimeToken({
   email,
   guestHeaders,

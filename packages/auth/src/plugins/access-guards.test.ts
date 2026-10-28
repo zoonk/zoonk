@@ -6,7 +6,6 @@ import { guestAuth, signInAsGuest } from "../guests/_test-utils/guest-auth";
 import { baseAuthConfig, baseAuthPlugins } from "../server";
 import { accessGuardsPlugin } from "./access-guards";
 
-/** Checkout must be blocked before any request reaches Stripe. */
 const stripeMocks = vi.hoisted(() => ({ create: vi.fn(), search: vi.fn() }));
 
 vi.mock("../stripe/client", () => ({
@@ -19,7 +18,6 @@ vi.mock("../stripe/client", () => ({
 
 const UPGRADE_BODY = { cancelUrl: "/", plan: "plus", successUrl: "/" };
 
-/** A real Better Auth instance with the production organization plugin and access guards. */
 const organizationAuth = betterAuth({
   ...baseAuthConfig,
   baseURL: "http://localhost:3000",
@@ -35,7 +33,6 @@ const organizationAuth = betterAuth({
   secret: "access-guards-test-secret-with-enough-entropy",
 });
 
-/** A brand and its owner, signed in, with the browser headers that carry the owner's session. */
 async function signInAsBrandOwner() {
   const [organization, signUp] = await Promise.all([
     prisma.organization.create({
@@ -76,8 +73,6 @@ describe("access guards", () => {
     expect(stripeMocks.create).not.toHaveBeenCalled();
   });
 
-  // A brand's slug and kind are in every one of its courses' public addresses. The refusal
-  // doesn't depend on which organization the update targets or how its session arrives.
   it("keeps a brand's address: its slug and kind don't change and it isn't deleted", async () => {
     const { headers, organization } = await signInAsBrandOwner();
     const organizationId = organization.id;
