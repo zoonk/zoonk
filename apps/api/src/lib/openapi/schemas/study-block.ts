@@ -77,7 +77,7 @@ export const studyBlockSchema = z
     reinforcement: z.boolean().meta({ description: "A short lesson before a boss rematch" }),
     screen: dayBlockScreenSchema.meta({
       description:
-        "Where a tap on the block opens it. `session`: the session screen, which plays questions and shows the wait of a lesson not written yet (or not picked yet). `lesson`: the lesson player, since its lesson is written. `challenge`: its own screen (a checkpoint or a mock), on its intro while it hasn't started. `essay`: the writing screen. `unknown`: a lesson block whose lesson this read didn't check (only Today checks them): ask for its lesson's readiness (`GET /v1/library/lessons/{lessonId}/readiness`) before opening it",
+        "Where a tap on the block opens it. `session`: the session screen, which plays questions and shows the wait of a lesson not written yet (or not picked yet). `lesson`: the lesson player, since its lesson is written. `challenge`: its own screen (a checkpoint or a mock), on its intro while it hasn't started. `essay`: the writing screen. `unknown`: a lesson block whose lesson this response didn't check (a block's questions read on their own): ask for its lesson's readiness (`GET /v1/library/lessons/{lessonId}/readiness`) before opening it",
     }),
     status: z.enum(StudyBlockStatus),
     subject: z

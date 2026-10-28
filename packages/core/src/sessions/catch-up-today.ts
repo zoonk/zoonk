@@ -2,6 +2,7 @@ import "server-only";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { loadLaterCatchUp } from "./_utils/catch-up";
 import { withSessionAppendLock } from "./_utils/extra-blocks";
+import { readLessonScreens } from "./_utils/lesson-screens";
 import { loadStudySessionView } from "./_utils/load-session-view";
 import { type StudySessionView } from "./_utils/session-view";
 import { findOwnedStudySession } from "./_utils/study-session-access";
@@ -86,7 +87,9 @@ export async function catchUpToday({
   }
 
   return {
-    session: await loadStudySessionView({ session: fresh.session, timeZone, userId }),
+    session: await readLessonScreens(
+      await loadStudySessionView({ session: fresh.session, timeZone, userId }),
+    ),
     status: "ready",
   };
 }

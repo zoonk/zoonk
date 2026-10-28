@@ -22,10 +22,10 @@ import {
 import { type MockFundingView } from "../../plans/mock-funding-contract";
 import { daysBetween } from "../../plans/planner/plan-calendar";
 import { type PlanStatus } from "../../preparation/plan-status";
+import { withLessonScreens } from "../../sessions/_utils/lesson-screens";
 import { type ReadStudyDay, readStudyDay } from "../../sessions/_utils/read-study-day";
 import { getSelectedCatchUpItems } from "../../sessions/_utils/selected-day-plan";
 import { type TodayStudySessionInput } from "../../sessions/contract";
-import { withLessonScreens } from "../../sessions/day-block";
 import { type DayView } from "../../sessions/day-view";
 import { loadNoticedPattern, selectDayPattern } from "../language/_utils/today-pattern";
 import { type NoticedPattern } from "../language/language-view-contract";

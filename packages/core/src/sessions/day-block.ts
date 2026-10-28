@@ -100,17 +100,6 @@ export function getBlockScreen(
   return getDayBlockScreen(block, { lessonReady });
 }
 
-/** The day with where each block plays by its lessons' states, once a read has them. */
-export function withLessonScreens<Day extends DayView>(
-  day: Day,
-  lessonStates: ReadonlyMap<string, { status: string }>,
-): Day {
-  return {
-    ...day,
-    blocks: day.blocks.map((block) => ({ ...block, screen: getBlockScreen(block, lessonStates) })),
-  };
-}
-
 export function toDayBlockRef(block: DayWork): DayBlockRef {
   return {
     areaId: block.areaId,

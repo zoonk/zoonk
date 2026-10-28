@@ -7,6 +7,7 @@ import {
   getLessonGenerationStates,
 } from "../library/generation/lesson-generation-state";
 import { getSession } from "../users/get-session";
+import { withLessonScreens } from "./_utils/lesson-screens";
 import { readSavedDayView } from "./_utils/read-saved-day-view";
 import { readStudyDay } from "./_utils/read-study-day";
 import { type StudySessionView } from "./_utils/session-view";
@@ -120,7 +121,9 @@ export async function getSessionPageView(
     userId,
   };
 
-  return session.status === "unstarted"
-    ? { ...fields, day: session, status: "unstarted" }
-    : { ...fields, session, status: "ready" };
+  const screened = withLessonScreens(session, lessons);
+
+  return screened.status === "unstarted"
+    ? { ...fields, day: screened, status: "unstarted" }
+    : { ...fields, session: screened, status: "ready" };
 }

@@ -6,6 +6,7 @@ import { getSession } from "../users/get-session";
 import { appendLandedLessons } from "./_utils/append-landed-lessons";
 import { isCurrentSession } from "./_utils/current-session";
 import { persistEntitlementLapseRefill } from "./_utils/entitlement-lapse-refill";
+import { readLessonScreens } from "./_utils/lesson-screens";
 import { loadStudySessionView } from "./_utils/load-session-view";
 import { findOpenDayTarget } from "./_utils/open-day-target";
 import { loadOpenedDayView } from "./_utils/open-day-view";
@@ -69,12 +70,14 @@ async function openDay(input: OpenStudyDayInput, attempt: number): Promise<OpenS
 
   const session =
     opened.status === "opened"
-      ? await loadOpenedDayView({
-          initialDay: opened.initialDay,
-          session: opened.session,
-          timeZone,
-          userId,
-        })
+      ? await readLessonScreens(
+          await loadOpenedDayView({
+            initialDay: opened.initialDay,
+            session: opened.session,
+            timeZone,
+            userId,
+          }),
+        )
       : null;
 
   const binding = { goalId: goal.id, localDate };
@@ -114,7 +117,10 @@ export async function openStudySession({
   const timeZone = getAnswerTimeZone({ goal: session.goal, timeZone: input.timeZone });
 
   if (!isCurrentSession({ now: new Date(), session, timeZone }) || !session.goal) {
-    return { session: await loadStudySessionView({ session, timeZone, userId }), status: "ready" };
+    return {
+      session: await readLessonScreens(await loadStudySessionView({ session, timeZone, userId })),
+      status: "ready",
+    };
   }
 
   if (session.goal.status !== "active") {
@@ -131,7 +137,9 @@ export async function openStudySession({
   const current = await appendLandedLessons({ goal: session.goal, session: selected, timeZone });
 
   return {
-    session: await loadOpenedDayView({ session: current, timeZone, userId }),
+    session: await readLessonScreens(
+      await loadOpenedDayView({ session: current, timeZone, userId }),
+    ),
     status: "ready",
   };
 }

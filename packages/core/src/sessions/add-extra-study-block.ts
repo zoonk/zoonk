@@ -6,9 +6,11 @@ import {
   planExtraBlocks,
   withSessionAppendLock,
 } from "./_utils/extra-blocks";
+import { readBlockLessonStates } from "./_utils/lesson-screens";
 import { type StudyBlockView } from "./_utils/session-view";
 import { findOwnedStudySession } from "./_utils/study-session-access";
 import { readBlockPayload } from "./block-payload";
+import { getBlockScreen } from "./day-block";
 import { type ExtraTimeReason, getExtraTime } from "./extra-time";
 import { getDailyTimeLimitStatus } from "./get-daily-time-limit";
 
@@ -39,7 +41,7 @@ export async function addExtraStudyBlock({
   const limit = await getDailyTimeLimitStatus();
   const skillIds = owned.session.goalId ? await loadGoalSkillIds(owned.session.goalId) : [];
 
-  return withSessionAppendLock({
+  const added = await withSessionAppendLock<ExtraStudyBlockResult>({
     run: async ({ session, transaction }) => {
       const extraTime = getExtraTime({
         blocks: session.blocks.map((block) => ({
@@ -74,4 +76,12 @@ export async function addExtraStudyBlock({
     },
     session: owned.session,
   });
+
+  if (added.status !== "ready") {
+    return added;
+  }
+
+  // Read after the append's lock: where a lesson block plays follows its lesson's state.
+  const lessonStates = await readBlockLessonStates([added.block]);
+  return { ...added, block: { ...added.block, screen: getBlockScreen(added.block, lessonStates) } };
 }

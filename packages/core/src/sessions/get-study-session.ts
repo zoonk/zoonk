@@ -1,5 +1,6 @@
 import "server-only";
 import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
+import { readLessonScreens } from "./_utils/lesson-screens";
 import { loadStudySessionView } from "./_utils/load-session-view";
 import { type StudySessionView } from "./_utils/session-view";
 import { findOwnedStudySession } from "./_utils/study-session-access";
@@ -25,11 +26,13 @@ export async function getStudySession({
   }
 
   return {
-    session: await loadStudySessionView({
-      session: owned.session,
-      timeZone: getAnswerTimeZone({ goal: owned.session.goal, timeZone: input.timeZone }),
-      userId: owned.userId,
-    }),
+    session: await readLessonScreens(
+      await loadStudySessionView({
+        session: owned.session,
+        timeZone: getAnswerTimeZone({ goal: owned.session.goal, timeZone: input.timeZone }),
+        userId: owned.userId,
+      }),
+    ),
     status: "ready",
   };
 }
