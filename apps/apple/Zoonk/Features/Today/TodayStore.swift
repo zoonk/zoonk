@@ -9,8 +9,28 @@ enum StudyDestination: Equatable, Sendable {
   case lesson(lessonID: String, sessionID: String)
   case mock(blockID: String, sessionID: String)
   case questionBlock(sessionID: String, blockID: String)
-  /// The session screen, which shows the step (a lesson still being written) or the summary.
+  /// The session screen, which shows the step or the summary.
   case session
+  /// The session screen waiting for the step's lesson, which the tap asked to be written (or the
+  /// plan to pick); it opens on its own once written, or says why it can't be written now.
+  case lessonWait(blockID: String, writing: LessonWriting)
+}
+
+/// Where a lesson the learner asked for stands after their tap.
+enum LessonWriting: Hashable, Sendable {
+  /// A run writes it now.
+  case writing
+  /// The plan picks the step's lesson first (session preparation), then it's written.
+  case preparing
+  /// Every draft was held back by its checks; the plan moved on without it.
+  case setAside
+  case refused(LessonRunRefusal)
+  case failed
+
+  /// Whether work runs for it, so the session waits instead of offering the step again.
+  var isRunning: Bool {
+    self == .writing || self == .preparing
+  }
 }
 
 /// Today for the learner's active goal, kept for the app's lifetime, and the taps that open and
@@ -20,9 +40,11 @@ enum StudyDestination: Equatable, Sendable {
 final class TodayStore {
   let today: Resource<TodayContent>
 
-  /// The saved session the learner's last tap opened, for the session screen while Today reads
-  /// the day again.
-  private(set) var openedSessionID: String?
+  /// The saved session the learner's last tap opened, for whom and for which day, so the session
+  /// screen can show it while Today reads the day again, and never for another learner or day.
+  private var opened: OpenedSession?
+  /// Lessons the learner asked to be written, by block, with whose tap asked.
+  private var writings: [String: (owner: AuthenticatedSession, writing: LessonWriting)] = [:]
 
   @ObservationIgnored private let api: any StudyAPIClient
   @ObservationIgnored private let cache: AppCache
@@ -52,9 +74,35 @@ final class TodayStore {
     return view
   }
 
-  /// The session the session screen shows: the one a tap just opened, or the day's saved one.
+  /// The session the session screen shows: Today's saved one, or the one a tap just opened for this
+  /// learner's same goal and day while Today reads it again.
   var sessionID: String? {
-    openedSessionID ?? day?.session.id
+    guard let day else {
+      return nil
+    }
+
+    if let saved = day.session.id {
+      return saved
+    }
+
+    guard let opened, opened.owner == cache.session.authenticatedSession,
+      opened.day == OpenedSession.Day(day)
+    else {
+      return nil
+    }
+
+    return opened.sessionID
+  }
+
+  /// Where the lesson of a step the learner asked for stands; nil until they ask.
+  func writing(for block: StudyBlock) -> LessonWriting? {
+    guard let blockID = block.id, let asked = writings[blockID],
+      asked.owner == cache.session.authenticatedSession
+    else {
+      return nil
+    }
+
+    return asked.writing
   }
 
   /// Opens one step of the day: its block on a saved day, or the day itself with the work the step
@@ -64,7 +112,7 @@ final class TodayStore {
   func open(_ block: StudyBlock, next: Bool, in view: TodayView) async -> MutationResult<
     StudyDestination
   > {
-    await openStep { token in
+    await openStep(for: OpenedSession.Day(view)) { token in
       let (sessionID, saved) = try await self.savedBlock(block, next: next, in: view, token: token)
       let destination = try await self.start(
         saved, sessionID: sessionID, lessonReady: view.isLessonReady(block), token: token)
@@ -74,7 +122,7 @@ final class TodayStore {
 
   /// Opens a block of a saved session the learner picked on the session screen, where it plays.
   func open(_ block: StudyBlock, sessionID: String) async -> MutationResult<StudyDestination> {
-    await openStep { token in
+    await openStep(for: day.map(OpenedSession.Day.init)) { token in
       (sessionID, try await self.start(block, sessionID: sessionID, lessonReady: nil, token: token))
     }
   }
@@ -82,7 +130,7 @@ final class TodayStore {
   /// "Keep learning" or "Practice for 10 minutes": opens the day when needed, adds the plan's next
   /// lessons (or practice) and opens the first.
   func addExtraTime(in view: TodayView) async -> MutationResult<StudyDestination> {
-    await openStep { token in
+    await openStep(for: OpenedSession.Day(view)) { token in
       let sessionID = try await self.keptSessionID(in: view, token: token)
       return (sessionID, try await self.addExtraBlock(sessionID: sessionID, token: token))
     }
@@ -90,7 +138,7 @@ final class TodayStore {
 
   /// Adds the plan's next lessons (or practice) to a saved session and opens the first.
   func addExtraTime(sessionID: String) async -> MutationResult<StudyDestination> {
-    await openStep { token in
+    await openStep(for: day.map(OpenedSession.Day.init)) { token in
       (sessionID, try await self.addExtraBlock(sessionID: sessionID, token: token))
     }
   }
@@ -184,8 +232,10 @@ final class TodayStore {
     case .review, .practice:
       return .questionBlock(sessionID: sessionID, blockID: blockID)
     case .learn:
+      // A step whose lesson the plan hasn't picked yet is prepared by the tap; the session waits.
       guard let lessonID = block.lessonId else {
-        return .session
+        try await api.prepareSession(token: token, sessionID: sessionID)
+        return .lessonWait(blockID: blockID, writing: .preparing)
       }
 
       let ready =
@@ -195,13 +245,28 @@ final class TodayStore {
           try await api.lessonStatus(token: token, lessonID: lessonID) == "ready"
         }
 
-      guard ready else {
-        return .session
+      let lesson = StudyDestination.lesson(lessonID: lessonID, sessionID: sessionID)
+
+      if ready {
+        return try await startedDestination(
+          lesson, block: blockID, sessionID: sessionID, token: token)
       }
 
-      return try await startedDestination(
-        .lesson(lessonID: lessonID, sessionID: sessionID), block: blockID, sessionID: sessionID,
-        token: token)
+      // A lesson that isn't written is asked for right away (main's `unwrittenLesson`), without
+      // starting the block: the block's preparation would race the request and hide a refusal.
+      switch try await api.writeLesson(token: token, lessonID: lessonID) {
+      case .ready:
+        return try await startedDestination(
+          lesson, block: blockID, sessionID: sessionID, token: token)
+      case .writing:
+        return .lessonWait(blockID: blockID, writing: .writing)
+      case .setAside:
+        return .lessonWait(blockID: blockID, writing: .setAside)
+      case .refused(let refusal):
+        return .lessonWait(blockID: blockID, writing: .refused(refusal))
+      case .failed:
+        return .lessonWait(blockID: blockID, writing: .failed)
+      }
     case .checkpoint:
       if block.status != .active, let planItemID = block.planItemId {
         return .challenge(planItemID: planItemID, sessionID: sessionID)
@@ -239,3 +304,20 @@ final class TodayStore {
 /// A step that can't open as Today showed it: the day no longer has it, today's time is used up, or
 /// it waits for earlier work. The tap fails and Today reads the day again.
 private struct DayChanged: Error {}
+
+/// A session a tap opened, for the learner who opened it and the goal and day it belongs to.
+private struct OpenedSession {
+  struct Day: Equatable {
+    let goalID: String
+    let localDate: String
+
+    init(_ view: TodayView) {
+      goalID = view.session.goalId ?? view.goal.id
+      localDate = view.session.localDate
+    }
+  }
+
+  let owner: AuthenticatedSession
+  let day: Day
+  let sessionID: String
+}

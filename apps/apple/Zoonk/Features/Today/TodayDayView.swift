@@ -214,7 +214,7 @@ extension AppRouter {
       open(.lesson(lessonId: lessonID, sessionId: sessionID))
     case .mock(let blockID, let sessionID):
       open(.mock(blockId: blockID, sessionId: sessionID))
-    case .questionBlock, .session:
+    case .questionBlock, .session, .lessonWait:
       break
     }
   }

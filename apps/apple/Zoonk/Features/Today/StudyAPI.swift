@@ -33,6 +33,11 @@ protocol StudyAPIClient: Sendable {
   func getSession(token: String, sessionID: String) async throws -> StudyDay
   func getSummary(token: String, sessionID: String) async throws -> SessionSummary
   func lessonStatus(token: String, lessonID: String) async throws -> String
+  /// Gets a lesson written now; only on the learner's tap, since it runs AI.
+  func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome
+  /// Gets the session's lessons picked and written in the background, for a step whose lesson the
+  /// plan hasn't picked yet.
+  func prepareSession(token: String, sessionID: String) async throws
   func answerInsight(token: String, insightID: String, accepted: Bool) async throws
   func markMilestoneShown(token: String, milestoneID: String) async throws
   func getWeeklyRecap(token: String, goalID: String?) async throws -> WeeklyRecap
@@ -274,6 +279,32 @@ struct StudyAPI: StudyAPIClient {
         return
       case .unauthorized:
         throw APIError.unauthorized
+      default:
+        throw APIError.unavailable
+      }
+    }
+  }
+
+  func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome {
+    // The player owns how a writing request answers (refusals included); a 401 is the session's.
+    let outcome = await LessonPlayerAPI(clients: clients).writeLesson(id: lessonID, token: token)
+
+    if outcome == .refused(.unauthorized) {
+      throw APIError.unauthorized
+    }
+
+    return outcome
+  }
+
+  func prepareSession(token: String, sessionID: String) async throws {
+    try await clients.perform(token: token) { client in
+      switch try await client.createStudySessionPreparation(path: .init(sessionId: sessionID)) {
+      case .accepted:
+        return
+      case .unauthorized:
+        throw APIError.unauthorized
+      case .notFound:
+        throw APIError.notFound
       default:
         throw APIError.unavailable
       }

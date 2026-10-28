@@ -17,10 +17,12 @@ final class TodayStoreTests: XCTestCase {
   }
 
   func testStartOnADayNotOpenedYetOpensItWithTheShownStep() async throws {
-    let api = StudyAPIStub(opened: try opened(target: block(position: 0, kind: "review", id: "b1")))
-    let store = TodayStore(api: api, cache: signedInCache())
     let view = try today(
       session: day(blocks: [block(position: 0, kind: "review")], nextPosition: 0))
+    let api = StudyAPIStub(
+      opened: try opened(target: block(position: 0, kind: "review", id: "b1")), today: .day(view))
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
 
     let destination = await store.open(view.session.blocks[0], next: true, in: view).destination
 
@@ -46,7 +48,9 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(starts, ["b1"])
   }
 
-  func testLessonNotWrittenYetWaitsOnTheSessionScreenWithoutStarting() async throws {
+  /// Sol's F14: the tap on a lesson nobody is writing asks for it (main's `unwrittenLesson`)
+  /// without starting its block, and the session waits for it.
+  func testAnUnwrittenLessonIsAskedForByTheTapWithoutStartingTheBlock() async throws {
     let api = StudyAPIStub()
     let store = TodayStore(api: api, cache: signedInCache())
     let lesson = try block(position: 0, kind: "learn", id: "b1", lessonID: "l1")
@@ -55,9 +59,25 @@ final class TodayStoreTests: XCTestCase {
 
     let destination = await store.open(view.session.blocks[0], next: false, in: view).destination
 
-    XCTAssertEqual(destination, .session)
+    XCTAssertEqual(destination, .lessonWait(blockID: "b1", writing: .writing))
+    XCTAssertEqual(store.writing(for: lesson), .writing)
+    let written = await api.writtenLessons
+    XCTAssertEqual(written, ["l1"])
     let starts = await api.startedBlocks
-    XCTAssertEqual(starts, [])
+    XCTAssertEqual(starts, [], "starting would prepare the session and race the request")
+  }
+
+  func testAStepWhoseLessonIsntPickedYetPreparesTheSession() async throws {
+    let api = StudyAPIStub()
+    let store = TodayStore(api: api, cache: signedInCache())
+    let placeholder = try block(position: 0, kind: "learn", id: "b1")
+    let view = try today(session: day(blocks: [placeholder], nextPosition: 0, id: "s1"))
+
+    let destination = await store.open(view.session.blocks[0], next: false, in: view).destination
+
+    XCTAssertEqual(destination, .lessonWait(blockID: "b1", writing: .preparing))
+    let prepared = await api.preparedSessions
+    XCTAssertEqual(prepared, ["s1"])
   }
 
   func testPlannedChallengeOpensOnItsIntro() async throws {
@@ -100,6 +120,51 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertTrue(stopped)
     XCTAssertNil(store.playingBlockID)
     XCTAssertEqual(store.stoppedSessionID, "s1")
+  }
+
+  /// Sol's F15 repro: A taps Start, A's session ends while the day opens, and B's Today is on
+  /// screen when A's answer arrives. Nothing opens over B, and the session screen doesn't pick A's.
+  func testAnOpeningAnsweredAfterItsLearnerLeftOpensNothing() async throws {
+    let api = StudyAPIStub(
+      opened: try opened(target: block(position: 0, kind: "review", id: "b1")), holdsOpening: true)
+    let cache = signedInCache()
+    let store = TodayStore(api: api, cache: cache)
+    let view = try today(
+      session: day(blocks: [block(position: 0, kind: "review")], nextPosition: 0))
+
+    let opening = Task { await store.open(view.session.blocks[0], next: true, in: view) }
+    await api.waitForHeldOpening()
+    await cache.session.expire(try XCTUnwrap(cache.session.authenticatedSession))
+    await api.releaseOpening()
+    let result = await opening.value
+
+    guard case .obsolete = result else {
+      return XCTFail("a destination for a learner who left must not open")
+    }
+
+    XCTAssertNil(store.sessionID)
+  }
+
+  /// The session a tap opened is the session screen's only for that learner's same goal and day:
+  /// after midnight (or a goal switch) Today's own day decides.
+  func testAnOpenedSessionDoesNotOutliveItsDay() async throws {
+    let review = try block(position: 0, kind: "review")
+    let shown = try today(session: day(blocks: [review], nextPosition: 0))
+    let api = StudyAPIStub(
+      opened: try opened(target: block(position: 0, kind: "review", id: "b1")),
+      today: .day(shown))
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
+
+    _ = await store.open(shown.session.blocks[0], next: true, in: shown)
+    XCTAssertEqual(store.sessionID, "s1", "the day it opened, before Today reads it again")
+
+    let tomorrow = try today(
+      session: day(blocks: [review], nextPosition: 0, localDate: "2026-10-29"))
+    await api.serve(.day(tomorrow))
+    await store.today.refresh()
+
+    XCTAssertNil(store.sessionID, "tomorrow isn't opened yet")
   }
 
   func testAnExpiredSessionSignsOutInsteadOfFailingTheTap() async throws {
@@ -186,7 +251,7 @@ private func block(
 
 private func dayJSON(
   blocks: [StudyBlock], nextPosition: Int?, id: String?, dailyGoal: Int, emptyDay: String?,
-  limitReached: Bool
+  limitReached: Bool, localDate: String
 ) -> String {
   let blockList = blocks.map {
     blockJSON(
@@ -202,7 +267,7 @@ private func dayJSON(
     "examAccess":{"includesMockExams":true,"trialEnded":false},"examTomorrow":false,
     "extraTime":{"available":false,"lessons":[],"minutes":10,"reason":null},"freshStart":null,
     "fullMeal":{"bonus":50,"earned":false,"ready":false},"goalId":"g1","lessonsComing":false,
-    "localDate":"2026-10-28","minutes":{"dailyGoal":\(dailyGoal),"done":0,"planned":15},
+    "localDate":"\(localDate)","minutes":{"dailyGoal":\(dailyGoal),"done":0,"planned":15},
     "missions":[],"nextPosition":\(nextPosition.map(String.init) ?? "null"),
     "pauseSuggested":false,"plusLessons":[],"sessionBar":{"completed":0,"total":1},
     "week":{"days":[],"daysHitGoal":0,"nextStudyDate":null,"studyDays":7,
@@ -213,12 +278,12 @@ private func dayJSON(
 
 private func day(
   blocks: [StudyBlock], nextPosition: Int?, id: String? = nil, dailyGoal: Int = 15,
-  emptyDay: String? = nil, limitReached: Bool = false
+  emptyDay: String? = nil, limitReached: Bool = false, localDate: String = "2026-10-28"
 ) throws -> StudyDay {
   try decode(
     dayJSON(
       blocks: blocks, nextPosition: nextPosition, id: id, dailyGoal: dailyGoal, emptyDay: emptyDay,
-      limitReached: limitReached))
+      limitReached: limitReached, localDate: localDate))
 }
 
 private func today(session: StudyDay, lessonStatus: [String: String] = [:]) throws -> TodayView {
@@ -241,16 +306,45 @@ private actor StudyAPIStub: StudyAPIClient {
   private let opened: OpenedStudyDay?
   private let startResult: BlockStart
   private let startError: APIError?
+  private var today: TodayContent
+  private let holdsOpening: Bool
+  private var heldOpening: CheckedContinuation<Void, Never>?
+  private var openingWaiter: CheckedContinuation<Void, Never>?
   private(set) var openedTargets: [String] = []
   private(set) var startedBlocks: [String] = []
+  private(set) var writtenLessons: [String] = []
+  private(set) var preparedSessions: [String] = []
 
-  init(opened: OpenedStudyDay? = nil, start: BlockStart = .started, startError: APIError? = nil) {
+  init(
+    opened: OpenedStudyDay? = nil, start: BlockStart = .started, startError: APIError? = nil,
+    today: TodayContent = .goalNotActive, holdsOpening: Bool = false
+  ) {
     self.opened = opened
     self.startResult = start
     self.startError = startError
+    self.today = today
+    self.holdsOpening = holdsOpening
   }
 
-  func getToday(token: String, timeZone: String) async throws -> TodayContent { .goalNotActive }
+  func serve(_ today: TodayContent) {
+    self.today = today
+  }
+
+  /// Waits until an opening is held, so the test can change who's signed in meanwhile.
+  func waitForHeldOpening() async {
+    guard heldOpening == nil else {
+      return
+    }
+
+    await withCheckedContinuation { openingWaiter = $0 }
+  }
+
+  func releaseOpening() {
+    heldOpening?.resume()
+    heldOpening = nil
+  }
+
+  func getToday(token: String, timeZone: String) async throws -> TodayContent { today }
 
   func openDay(
     token: String, goalID: String, shownDate: String, timeZone: String, target: DayTarget?
@@ -259,6 +353,14 @@ private actor StudyAPIStub: StudyAPIClient {
     case .next(let ref): openedTargets.append("next:\(ref.position)")
     case .ref(let ref): openedTargets.append("ref:\(ref.position)")
     case nil: openedTargets.append("none")
+    }
+
+    if holdsOpening {
+      await withCheckedContinuation { continuation in
+        heldOpening = continuation
+        openingWaiter?.resume()
+        openingWaiter = nil
+      }
     }
 
     guard let opened else {
@@ -295,6 +397,15 @@ private actor StudyAPIStub: StudyAPIClient {
   }
 
   func lessonStatus(token: String, lessonID: String) async throws -> String { "ready" }
+
+  func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome {
+    writtenLessons.append(lessonID)
+    return .writing
+  }
+
+  func prepareSession(token: String, sessionID: String) async throws {
+    preparedSessions.append(sessionID)
+  }
   func answerInsight(token: String, insightID: String, accepted: Bool) async throws {}
   func markMilestoneShown(token: String, milestoneID: String) async throws {}
 

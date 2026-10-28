@@ -175,39 +175,29 @@ private struct NextStopView: View {
           BlockRow(
             block: next, view: nil, isNext: true, countsTowardMission: false, showsDetail: true)
 
-          if isWaitingForLesson {
-            Label {
-              if lessonStatus == "generating" {
-                Text("Getting it ready…", tableName: "Session", comment: "A lesson being written")
-              } else {
-                Text(
-                  "This lesson isn't written yet.", tableName: "Session",
-                  comment: "A lesson nobody started writing")
-              }
-            } icon: {
-              ProgressView()
-            }
-            .foregroundStyle(.secondary)
+          if let lessonLine {
+            lessonLine
           }
         } header: {
           Text("Up next", tableName: "Session", comment: "The session's next block")
+        }
+
+        if case .refused(let refusal) = writing {
+          Section {
+            LessonUnavailableView(refusal: refusal) {
+              open(next)
+            }
+          }
         }
       }
 
       Section {
         VStack(spacing: 12) {
-          if let alternative, isWaitingForLesson {
-            mainButton(
-              Text(
-                "Do \(alternative.displayTitle) first", tableName: "Session",
-                comment: "A ready block to do while a lesson is written"),
-              block: alternative)
-          } else if let next {
-            mainButton(
-              Text("Continue", tableName: "Session", comment: "Opens the session's next block"),
-              block: next
-            )
-            .disabled(isWaitingForLesson)
+          if let alternative, isLessonWorkRunning || isLessonUnavailable {
+            mainButton(alternativeTitle(alternative), block: alternative)
+          } else if let next, !isLessonUnavailable {
+            mainButton(continueTitle, block: next)
+              .disabled(isLessonWorkRunning)
           }
 
           Button {
@@ -239,7 +229,7 @@ private struct NextStopView: View {
       .listRowBackground(Color.clear)
       .listRowInsets(EdgeInsets())
     }
-    .task(id: next?.lessonId) {
+    .task(id: FollowedLesson(lessonID: next?.lessonId, writing: writing)) {
       await followLesson()
     }
     .onDisappear {
@@ -253,9 +243,78 @@ private struct NextStopView: View {
       ?? String(localized: "Block", table: "Session", comment: "A finished block without a name")
   }
 
-  /// Whether the next stop is a lesson that isn't written yet.
-  private var isWaitingForLesson: Bool {
-    next?.kind == .learn && lessonStatus != nil && lessonStatus != "ready"
+  /// Where the next lesson the learner asked for stands; nil until they ask.
+  private var writing: LessonWriting? {
+    next.flatMap(today.writing(for:))
+  }
+
+  /// Whether work runs for the next lesson (written now, or picked by the plan first), so Continue
+  /// waits for it; a lesson nobody is writing keeps Continue, whose tap asks for it.
+  private var isLessonWorkRunning: Bool {
+    next?.kind == .learn && (lessonStatus == "generating" || writing?.isRunning == true)
+  }
+
+  /// A lesson that can't be written now: refused, or set aside by its checks.
+  private var isLessonUnavailable: Bool {
+    switch writing {
+    case .refused, .setAside: true
+    default: false
+    }
+  }
+
+  private var continueTitle: Text {
+    writing == .failed || lessonStatus == "failed"
+      ? Text("Try again", tableName: "Session", comment: "Asks again for a lesson that failed")
+      : Text("Continue", tableName: "Session", comment: "Opens the session's next block")
+  }
+
+  private func alternativeTitle(_ block: StudyBlock) -> Text {
+    isLessonUnavailable
+      ? Text(
+        "Instead: \(block.displayTitle)", tableName: "Session",
+        comment: "A ready block to do when the lesson can't be written now")
+      : Text(
+        "While you wait: \(block.displayTitle)", tableName: "Session",
+        comment: "A ready block to do while the lesson is written")
+  }
+
+  /// What the next lesson's writing says under it.
+  private var lessonLine: AnyView? {
+    guard next?.kind == .learn else {
+      return nil
+    }
+
+    if writing == .setAside {
+      return AnyView(
+        Text(
+          "This lesson can't be written now, so your plan goes on without it.",
+          tableName: "Session", comment: "A lesson set aside by its checks"
+        )
+        .foregroundStyle(.secondary))
+    }
+
+    if writing == .failed || lessonStatus == "failed" {
+      return AnyView(
+        Text(
+          "We couldn't write this lesson.", tableName: "Session",
+          comment: "Writing a lesson failed"
+        )
+        .foregroundStyle(.destructive))
+    }
+
+    guard isLessonWorkRunning else {
+      return nil
+    }
+
+    return AnyView(
+      Label {
+        Text(
+          "This lesson is being written for you. It's usually ready in about two minutes.",
+          tableName: "Session", comment: "A lesson being written")
+      } icon: {
+        ProgressView()
+      }
+      .foregroundStyle(.secondary))
   }
 
   /// A ready question block to do while the lesson is written (core's `findAlternativeStudyBlock`).
@@ -292,10 +351,13 @@ private struct NextStopView: View {
       isOpening = false
 
       switch result {
-      case .done(let destination) where destination != .session && !Task.isCancelled:
+      case .done(.session), .done(.lessonWait):
+        // The step waits here; its writing is followed from what the tap asked.
+        break
+      case .done(let destination) where !Task.isCancelled:
         router.openStudy(destination, sessions: store)
       case .done:
-        await followLesson()
+        break
       case .failed:
         failed = true
       case .obsolete:
@@ -317,18 +379,35 @@ private struct NextStopView: View {
     }
   }
 
-  /// Follows the next lesson while it's written, so Continue opens it once it's ready.
+  /// Follows the next lesson while it's written (or while the plan picks it, by reading the day
+  /// again), and opens it on its own once it's written when the learner asked for it.
   private func followLesson() async {
-    guard next?.kind == .learn, let lessonID = next?.lessonId else {
+    guard let next, next.kind == .learn else {
       lessonStatus = nil
       return
     }
 
     for _ in 0..<60 {
-      lessonStatus = await store.lessonStatus(lessonID: lessonID)
+      if let lessonID = next.lessonId {
+        lessonStatus = await store.lessonStatus(lessonID: lessonID)
 
-      guard lessonStatus == "generating" else {
-        return
+        if lessonStatus == "ready" {
+          if writing?.isRunning == true {
+            open(next)
+          }
+
+          return
+        }
+
+        guard lessonStatus == "generating" || writing?.isRunning == true else {
+          return
+        }
+      } else {
+        guard writing == .preparing else {
+          return
+        }
+
+        await store.session(id: sessionID).refresh()
       }
 
       do {
@@ -340,8 +419,14 @@ private struct NextStopView: View {
   }
 }
 
+/// The lesson the next stop follows, and what the learner's tap asked for it.
+private struct FollowedLesson: Equatable {
+  let lessonID: String?
+  let writing: LessonWriting?
+}
+
 /// What a block finished here earned, in a few quiet lines: its name done, its Brain Power, how
-/// many it got right, when it comes back, and the missions' bonus when it paid it.
+/// many it got right and when it comes back; the missions it moved follow in the day's moment.
 private struct MomentSummary: View {
   let moment: BlockMoment
   let title: String
