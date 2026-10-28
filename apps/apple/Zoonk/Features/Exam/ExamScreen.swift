@@ -101,6 +101,7 @@ private struct ExamList: View {
 /// (a mock exam any time), the notice's day when the plan counts down to another, and where the
 /// date comes from.
 private struct ExamHero: View {
+  @Environment(\.dynamicTypeSize) private var typeSize
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var plan
   @State private var usingDate = false
@@ -137,7 +138,10 @@ private struct ExamHero: View {
                 Text("Take a mock exam", tableName: "Exam", comment: "Opens the mock chooser")
               }
             } icon: {
-              Image(systemName: "timer")
+              // At the largest text sizes the words keep the button's width.
+              if !typeSize.isAccessibilitySize {
+                Image(systemName: "timer")
+              }
             }
             if options.access == .plusRequired, options.running == nil {
               PlusMark()

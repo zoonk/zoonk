@@ -203,6 +203,15 @@ private struct MockScoreSections: View {
       .monospacedDigit()
     }
 
+    if counts == nil, result.net == nil, result.blank > 0 {
+      Section {
+      } footer: {
+        Text(
+          "Blank answers count as wrong in this score.", tableName: "Mock",
+          comment: "Blank answers in right answers")
+      }
+    }
+
     if let passMarks = view.passMarks {
       Section {
         ForEach(passMarks.texts, id: \.self) { text in

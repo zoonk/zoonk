@@ -69,7 +69,6 @@ private enum EssaySendStatus: Equatable {
 private struct EssayContent: View {
   @Environment(ExamStore.self) private var store
   @Environment(PracticeStore.self) private var practice
-  @Environment(AppRouter.self) private var router
   @Environment(\.dismiss) private var dismiss
   @State private var writing: Bool?
   @State private var typed: String?
@@ -362,7 +361,7 @@ private struct EssayContent: View {
     }
   }
 
-  /// Finishes the block and goes on with the session.
+  /// Finishes the block and goes back to the session it's a block of.
   private func finish() async {
     finishing = true
     finishFailed = false
@@ -377,8 +376,8 @@ private struct EssayContent: View {
       })
     {
     case .done:
+      // The session under it (or Today) goes on with the next block.
       dismiss()
-      router.open(.session)
     case .failed:
       finishFailed = true
     case .obsolete:

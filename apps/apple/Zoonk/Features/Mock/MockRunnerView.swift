@@ -118,17 +118,23 @@ struct MockRunnerView: View {
   }
 }
 
-/// The question's subject and its place in the section, in one quiet line.
+/// The question's subject and its place in the section, in one quiet line (two at the largest
+/// text sizes, so the subject isn't cut).
 private struct MockQuestionMeta: View {
+  @Environment(\.dynamicTypeSize) private var typeSize
   let run: MockRun
   let view: MockView
   let question: MockQuestion
 
   var body: some View {
-    HStack {
+    let layout =
+      typeSize.isAccessibilitySize
+      ? AnyLayout(VStackLayout(alignment: .leading)) : AnyLayout(HStackLayout())
+
+    layout {
       Text(question.area ?? "")
-        .lineLimit(1)
-      Spacer()
+        .lineLimit(typeSize.isAccessibilitySize ? nil : 1)
+      Spacer(minLength: 0)
       if question.format == .essay {
         Text("Written part", tableName: "Mock", comment: "A full mock's essay part")
       } else if let place = sectionPlace {
@@ -259,8 +265,10 @@ private struct MockEssayBox: View {
   }
 }
 
-/// Flag the question to come back to it: orange while it's flagged.
+/// Flag the question to come back to it: orange while it's flagged. At the largest text sizes it
+/// keeps its mark only, so Next keeps its room.
 private struct FlagButton: View {
+  @Environment(\.dynamicTypeSize) private var typeSize
   let run: MockRun
 
   var body: some View {
@@ -275,6 +283,9 @@ private struct FlagButton: View {
         Image(systemName: flagged ? "flag.fill" : "flag")
       }
     }
+    .labelStyle(
+      typeSize.isAccessibilitySize ? AnyLabelStyle(.iconOnly) : AnyLabelStyle(.titleAndIcon)
+    )
     .buttonStyle(.bordered)
     .controlSize(.large)
     .tint(flagged ? .warning : nil)
@@ -523,5 +534,18 @@ private struct MockAnswerSheet: View {
 enum EssayWords {
   static func count(_ text: String) -> Int {
     text.split(whereSeparator: \.isWhitespace).count
+  }
+}
+
+/// A label style chosen at runtime.
+private struct AnyLabelStyle: LabelStyle {
+  private let make: (Configuration) -> AnyView
+
+  init(_ style: some LabelStyle) {
+    make = { AnyView(style.makeBody(configuration: $0)) }
+  }
+
+  func makeBody(configuration: Configuration) -> some View {
+    make(configuration)
   }
 }
