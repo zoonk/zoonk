@@ -2,9 +2,8 @@ import "server-only";
 import { type GenerationStatus, type Sql, sql } from "@zoonk/db";
 import { type MindMapRow, getMindMapStatus } from "./mind-map-view";
 
-/** What a chapter's map status reads (see `getMindMapStatus`), as `mindMapChapterRows` returns it. */
 export type MindMapChapterState = {
-  /** The learner finished it (every lesson studied or tested out) and it isn't a language's unit. */
+  /** Finished by study or test-out; never a language unit. */
   canHaveMap: boolean;
   hasWrittenLessons: boolean;
   mapImageHeight: number | null;
@@ -16,11 +15,10 @@ export type MindMapChapterState = {
   mapUpdatedAt: Date | null;
 };
 
-/** A chapter of a goal's saved plan as its mind map reads it (see `mindMapChapterRows`). */
 export type MindMapChapterRow = MindMapChapterState & {
   chapterId: string;
   goalId: string;
-  /** Its number in the plan: the chapters its items name, then those it only files lessons under. */
+  /** Explicit chapter items precede chapters inferred from lesson membership. */
   position: number;
   title: string;
 };
@@ -41,10 +39,6 @@ export function toMindMapRow(chapter: MindMapChapterState): MindMapRow | null {
   };
 }
 
-/**
- * The rule a goal's mind maps list a chapter by, and the summary's "this goal has maps": its map's
- * status is anything but `unavailable` (`getMindMapStatus`).
- */
 export function isListedMindMapChapter({
   chapter,
   now,
@@ -55,14 +49,7 @@ export function isListedMindMapChapter({
   return getMindMapStatus({ ...chapter, now, row: toMindMapRow(chapter) }) !== "unavailable";
 }
 
-/**
- * Every chapter the saved plans of the goals `goals` selects (a filter on `goals g`) file lessons
- * under, visible to the goal's learner, in one grouped statement, with what its map's status reads
- * (`isListedMindMapChapter` decides). The chapters its items name come first, finished once their
- * own lessons are (studied or tested out). Then, as the goal's map files skills (`expandItem`,
- * `firstPerSkill`, `getItemArea`), a lesson's home chapter where a lesson item saved without its
- * chapter or skill first teaches a skill: finished once the lessons whose first skill it files are.
- */
+/** goals must filter the goals g alias; returns learner-visible chapters in saved plan order. */
 export function mindMapChapterRows(goals: Sql): Sql {
   return sql`
     SELECT

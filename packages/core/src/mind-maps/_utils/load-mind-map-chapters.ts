@@ -11,24 +11,18 @@ import {
 } from "./listed-mind-map-chapters";
 import { type MindMapRow } from "./mind-map-view";
 
-/** A chapter of the goal's plan with what its map's status reads. */
 export type MindMapChapterFacts = {
-  /** The learner finished it and it isn't a language's unit. */
+  /** Finished by study or test-out; never a language unit. */
   canHaveMap: boolean;
   chapterId: string;
   hasWrittenLessons: boolean;
-  /** Its number in the plan; screens number it with `loadChapterNumbering`. */
+  /** Internal plan order; display numbering must use loadChapterNumbering. */
   position: number;
   row: MindMapRow | null;
   title: string;
 };
 
-/**
- * What a map's status reads for the saved plan's chapters (all of them, or the ones asked for), in
- * plan order: each one's number and state in the plan, whether its lessons are written and its
- * map's row, in one grouped statement (`mindMapChapterRows`). A chapter the learner can't see isn't
- * listed.
- */
+/** Returns only visible chapters, in saved plan order. */
 export async function loadMindMapChapters({
   chapterIds,
   goal,
@@ -53,12 +47,7 @@ export async function loadMindMapChapters({
   }));
 }
 
-/**
- * The chapter the learner is in, as the Plan marks it current: the one holding the lesson up next
- * (`findUpNextItem`), with the lessons left in it in that phase, as the Plan counts them
- * (`withinLessonScope`). Read from the saved plan and today's session, never building either. Null
- * when the lesson up next isn't a chapter's or nothing is left.
- */
+/** Read-only; null without a chapter-backed next lesson or remaining lessons. */
 export async function loadUpNextChapter(
   goal: Pick<Goal, "id" | "kind" | "targetDate" | "timezone" | "userId">,
 ): Promise<{ chapterId: string; lessonsLeft: number } | null> {

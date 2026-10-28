@@ -10,11 +10,7 @@ export type ChapterMindMapResult =
   | { mindMap: ChapterMindMapView; status: "ready" }
   | { status: "noGoal" | "notFound" | "unauthorized" };
 
-/**
- * A chapter's mind map for the learner (the active goal by default): ready with its outline and
- * picture, being made, or whether they can ask for it. Maps are for chapters they finished; the
- * map is shared by every learner of the chapter. A chapter outside the goal's plan isn't found.
- */
+/** Defaults to the active goal; returns notFound for chapters outside its plan. */
 export async function getChapterMindMap({
   chapterId,
   goalId,

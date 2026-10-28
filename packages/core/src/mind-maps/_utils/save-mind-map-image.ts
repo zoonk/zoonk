@@ -4,7 +4,6 @@ import sharp from "sharp";
 import { optimizeImage } from "../../images/optimize-image";
 import { uploadImage } from "../../images/upload-image";
 
-/** Lists of maps show this copy, about a fifth of the full picture's size. */
 const THUMBNAIL_WIDTH = 640;
 
 export type SavedMindMapImage = {
@@ -14,10 +13,6 @@ export type SavedMindMapImage = {
   width: number;
 };
 
-/**
- * A shared chapter's map goes to the public Library folder for the CDN; a private chapter's goes to
- * its owner's folder in the private store, so only they can open it and it leaves with them.
- */
 function getUploadTarget({ name, ownerId }: { name: string; ownerId: string | null }) {
   return ownerId
     ? { access: "private" as const, fileName: `${getPrivateImageFolder(ownerId)}${name}` }
@@ -42,7 +37,6 @@ async function upload({
   return data;
 }
 
-/** Stores a map's picture as webp with a small copy for lists, and returns where both are. */
 export async function saveMindMapImage({
   image,
   ownerId,

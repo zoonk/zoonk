@@ -9,13 +9,7 @@ import { findOwnedGoal } from "../learner/_utils/owned-goal";
 import { loadMindMapChapters } from "./_utils/load-mind-map-chapters";
 import { MIND_MAP_STALE_AFTER_MS, getMindMapStatus } from "./_utils/mind-map-view";
 
-/**
- * `ready`: the chapter has its map. `generating`: a run is making it (`generationId` once the run
- * saved it). `start`: the caller starts the run that writes and draws it, already claimed for
- * them; its analytics name the learner, their goal and the client that asked. `refused`: the
- * learner's plan doesn't cover a new map now (its mind map limits, fair use or AI budget). `unavailable`: maps are for chapters the
- * learner finished whose lessons are written, outside a language's units.
- */
+/** On start, the caller must start the claimed run; a generating result may lack generationId until the run records it. */
 export type ChapterMindMapRequest =
   | { status: "ready" }
   | { generationId: string | null; status: "generating" }
@@ -37,10 +31,6 @@ async function findRunId(chapterId: string): Promise<string | null> {
   return row?.runId ?? null;
 }
 
-/**
- * Marks the map as being made, once: a new row, or one whose last run failed or stopped, taken
- * over. False when another request claimed it first, so this one joins that run instead.
- */
 async function claimMindMap({ chapterId, now }: { chapterId: string; now: Date }) {
   const chapter = await prisma.chapter.findUniqueOrThrow({
     select: { language: true },
@@ -73,13 +63,7 @@ async function claimMindMap({ chapterId, now }: { chapterId: string; now: Date }
   return count > 0;
 }
 
-/**
- * Decides what asking for a chapter's mind map does, when the learner taps for it (never on a
- * screen view): a map that exists or is being made is returned as it is, free; otherwise making it
- * counts toward the learner's mind map limits (once per chapter, so asking again after a failed
- * run is free) and the caller starts the run that writes and draws it. The map is shared, so a
- * second learner's request joins the first one's run.
- */
+/** Learner action only; retries are free per chapter and concurrent learners join the same generation. */
 export async function requestChapterMindMap({
   chapterId,
   goalId,

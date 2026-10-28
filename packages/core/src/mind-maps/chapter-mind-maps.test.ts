@@ -80,10 +80,6 @@ const failed = {
   provenance,
 };
 
-/**
- * A learner who finished the first chapter (two lessons) of their course goal and is in the
- * second. `written` writes the first chapter's lessons, which a map is drawn from.
- */
 async function finishedChapter({ written = true }: { written?: boolean } = {}) {
   const fixture = await signedInCourseGoal({ statuses: ["done", "done", "todo", "todo"] });
   const [finished, current] = fixture.chapters;
@@ -132,7 +128,6 @@ describe("chapter mind maps", () => {
 
     vi.mocked(checkMindMapImage).mockResolvedValue(passed);
 
-    // Maps are stored in Vercel Blob, and the check reads the stored picture back from there.
     storeBlobUploads();
     readStoredFile = serveStoredFile({ data: image, mediaType: "image/webp" });
   });
@@ -145,7 +140,6 @@ describe("chapter mind maps", () => {
       status: "ready",
     });
 
-    // Finished, but nothing written to draw a map from (skipped with its test, say).
     await expect(getChapterMindMap({ chapterId: finished })).resolves.toMatchObject({
       mindMap: { status: "unavailable" },
     });
@@ -194,7 +188,6 @@ describe("chapter mind maps", () => {
     const nextLesson = lessons[2];
     const [firstSkill] = skills;
 
-    // Lucas's first chapter: its skill has more lessons in the next chapter, still to study.
     await prisma.lessonSkill.deleteMany({ where: { lessonId: nextLesson?.id } });
     await lessonSkillFixture({ lessonId: nextLesson?.id ?? "", skillId: firstSkill?.id ?? "" });
 
@@ -245,7 +238,6 @@ describe("chapter mind maps", () => {
     await requestChapterMindMap({ chapterId: finished, goalId: goal.id });
     await writeChapterMindMapStructure({ analytics, chapterId: finished });
 
-    // The structure is written from the chapter's written lessons, in the chapter's language.
     expect(generateMindMapStructure).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         analytics: expect.objectContaining({ contentScope: "shared", traceId: analytics.runId }),
@@ -263,13 +255,10 @@ describe("chapter mind maps", () => {
       }),
     );
 
-    // Drawing stores nothing: storing is its own step, so a store that fails never pays for the
-    // drawing again.
     const drawn = await drawChapterMindMap({ analytics, chapterId: finished });
     expect(put).not.toHaveBeenCalled();
     await showChapterMindMap({ chapterId: finished, drawn });
 
-    // Public chapters' maps go to the Library's public folder, with a small copy for lists.
     expect(
       vi.mocked(put).mock.calls.map(([pathname, , options]) => [options.access, pathname]),
     ).toStrictEqual([
@@ -284,7 +273,6 @@ describe("chapter mind maps", () => {
     expect(mindMap?.image).toMatchObject({ height: 32, width: 48 });
     expect(mindMap?.image?.thumbnailUrl).toMatch(/mind-map-thumb\.webp/u);
 
-    // Learners read the map's words, never the sketches the picture draws.
     expect(mindMap?.outline?.branches[0]).toStrictEqual({
       explanation: "Everything is made of tiny atoms.",
       points: ["Too small to see"],
@@ -301,7 +289,6 @@ describe("chapter mind maps", () => {
       status: "ready",
     });
 
-    // Another learner who finished the same chapter gets the same map, with nothing to make.
     const other = await signedInCourseGoal({ statuses: ["done", "done", "todo", "todo"] });
 
     await prisma.planItem.updateMany({
@@ -315,7 +302,6 @@ describe("chapter mind maps", () => {
 
     expect(generateMindMapStructure).toHaveBeenCalledOnce();
 
-    // Reading a map that exists never counts toward their limits.
     await expect(prisma.usageRecord.count({ where: { userId: other.user.id } })).resolves.toBe(0);
     expect(current).not.toBe(finished);
   });
@@ -332,14 +318,12 @@ describe("chapter mind maps", () => {
       drawn: await drawChapterMindMap({ analytics, chapterId: finished }),
     });
 
-    // Ready with its picture before anything checked it.
     expect(checkMindMapImage).not.toHaveBeenCalled();
 
     const shown = await getChapterMindMap({ chapterId: finished });
     const firstUrl = shown.status === "ready" ? shown.mindMap.image?.url : null;
     expect(firstUrl).toMatch(/mind-map\.webp/u);
 
-    // The check reads the stored picture back and quotes what's wrong.
     vi.mocked(checkMindMapImage).mockResolvedValue(failed);
 
     await expect(
@@ -352,7 +336,6 @@ describe("chapter mind maps", () => {
 
     expect(readStoredFile).toHaveBeenCalledWith(expect.stringContaining("mind-map.webp"));
 
-    // Drawn again with those corrections, the new picture replaces the old one at once.
     await showChapterMindMap({
       chapterId: finished,
       drawn: await drawChapterMindMap({
@@ -370,7 +353,6 @@ describe("chapter mind maps", () => {
     const secondUrl = replaced.status === "ready" ? replaced.mindMap.image?.url : null;
     expect(secondUrl).not.toBe(firstUrl);
 
-    // Taking the first picture off again does nothing: the map shows the second.
     await removeChapterMindMapImage({ chapterId: finished, imageUrl: firstUrl ?? "" });
 
     await expect(getChapterMindMap({ chapterId: finished })).resolves.toMatchObject({
@@ -383,7 +365,6 @@ describe("chapter mind maps", () => {
       mindMap: { image: null, outline: { title: "The very small world" }, status: "ready" },
     });
 
-    // Nothing left to check.
     await expect(
       checkChapterMindMapImage({ analytics, chapterId: finished }),
     ).resolves.toStrictEqual({ imageUrl: null, passed: true, problems: [] });
@@ -411,7 +392,6 @@ describe("chapter mind maps", () => {
       status: "refused",
     });
 
-    // Nothing was claimed, so the map isn't being made.
     await expect(getChapterMindMap({ chapterId: finished })).resolves.toMatchObject({
       mindMap: { status: "available" },
     });
@@ -431,7 +411,6 @@ describe("chapter mind maps", () => {
       requestChapterMindMap({ chapterId: finished, goalId: goal.id }),
     ).resolves.toMatchObject({ status: "start" });
 
-    // A run that stopped without saying so (a deploy) counts as failed after ten minutes.
     await prisma.chapterMindMap.update({
       data: { updatedAt: new Date(Date.now() - 11 * 60 * 1000) },
       where: { chapterId: finished },

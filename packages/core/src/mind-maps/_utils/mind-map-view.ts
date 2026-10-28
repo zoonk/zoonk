@@ -6,11 +6,6 @@ import {
   type MindMapStatus,
 } from "../mind-map-contract";
 
-/**
- * A run that hasn't touched its map for this long stopped (a crash or a deploy): the map counts
- * as failed, so the learner can ask again. Writing and drawing a map takes under a minute; its
- * check and any redraw run after it's shown.
- */
 export const MIND_MAP_STALE_AFTER_MS = 10 * 60 * 1000;
 
 export type MindMapRow = Pick<
@@ -18,7 +13,7 @@ export type MindMapRow = Pick<
   "imageHeight" | "imageUrl" | "imageWidth" | "status" | "structure" | "thumbnailUrl" | "updatedAt"
 >;
 
-/** The stored structure as learners read it, without the sketches the picture draws. */
+/** Excludes picture-only sketches; returns null for invalid stored structures. */
 export function toMindMapOutline(structure: unknown): MindMapOutline | null {
   const parsed = mindMapStructureSchema.safeParse(structure);
 
@@ -54,16 +49,11 @@ export function toMindMapImage(row: MindMapRow | null): ChapterMindMapView["imag
   };
 }
 
-/** A run still working on its map, as opposed to one that stopped without saying so. */
 function isRunActive({ now, row }: { now: Date; row: Pick<MindMapRow, "updatedAt"> }) {
   return now.getTime() - row.updatedAt.getTime() < MIND_MAP_STALE_AFTER_MS;
 }
 
-/**
- * Where a chapter's map stands for one learner. Maps are for chapters they finished, outside a
- * language's units; a finished chapter can get one once some of its lessons are written, since a
- * map is drawn from what they teach.
- */
+/** A completed non-language chapter still needs written lessons before its map can be generated. */
 export function getMindMapStatus({
   canHaveMap,
   hasWrittenLessons,

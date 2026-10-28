@@ -31,7 +31,6 @@ const { Client } = createRequire(import.meta.resolve("@zoonk/db"))("pg") as {
 
 const originalQuery = Client.prototype.query;
 
-/** The SQL the callback sends, besides running it. */
 async function recordStatements<T>(callback: () => Promise<T>) {
   const texts: string[] = [];
 
@@ -82,21 +81,18 @@ describe("mind maps read from the saved plan", () => {
       nextChapter: { chapterId: first?.id, lessonsLeft: 1, title: "The very small world" },
     });
 
-    // A lesson tested out counts as finished: the plan moves on to the second chapter.
     await prisma.planItem.update({ data: { status: "testedOut" }, where: { id: items[1]?.id } });
 
     await expect(readyMindMaps(goal.id)).resolves.toMatchObject({
       nextChapter: { chapterId: second?.id, lessonsLeft: 2, title: "Inside the atom" },
     });
 
-    // A plan without a deadline sets aside only what it can't teach: not a lesson left.
     await prisma.planItem.update({ data: { status: "skipped" }, where: { id: items[3]?.id } });
 
     await expect(readyMindMaps(goal.id)).resolves.toMatchObject({
       nextChapter: { chapterId: second?.id, lessonsLeft: 1 },
     });
 
-    // Today's session opens a lesson first: its chapter is the one the learner is in.
     await prisma.planItem.updateMany({
       data: { status: "todo" },
       where: { id: { in: [items[1]?.id ?? "", items[3]?.id ?? ""] } },
@@ -117,7 +113,6 @@ describe("mind maps read from the saved plan", () => {
       nextChapter: { chapterId: second?.id, lessonsLeft: 2 },
     });
 
-    // Nothing left to study: no chapter is next.
     await prisma.planItem.updateMany({
       data: { status: "done" },
       where: { planId: items[0]?.planId },
@@ -143,7 +138,6 @@ describe("mind maps read from the saved plan", () => {
     await Promise.all([
       writeLessons(written?.lessons.slice(0, 2).map((lesson) => lesson.id) ?? []),
       writeLessons(language?.lessons.slice(0, 2).map((lesson) => lesson.id) ?? []),
-      // A run that stopped long ago without its lessons written has nothing to show.
       prisma.chapterMindMap.create({
         data: {
           chapterId: stale?.chapters[0]?.id ?? "",
@@ -155,7 +149,6 @@ describe("mind maps read from the saved plan", () => {
       prisma.chapterMindMap.create({
         data: { chapterId: making?.chapters[0]?.id ?? "", language: "en", status: "running" },
       }),
-      // A map saved without an outline learners can read, and no lessons to draw it again from.
       prisma.chapterMindMap.create({
         data: {
           chapterId: broken?.chapters[0]?.id ?? "",
@@ -207,7 +200,6 @@ describe("mind maps read from the saved plan", () => {
       skillFixture({ name: "Wavelength" }),
     ]);
 
-    // A lesson item saved without its chapter or skill: the plan files it under its lesson's home.
     await Promise.all([
       lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
       chapterLessonFixture({ chapterId: beginner.id, lessonId: lesson.id, position: 0 }),
@@ -256,7 +248,6 @@ describe("mind maps read from the saved plan", () => {
         skillFixture({ mergedIntoId: atom?.id ?? null, name: "Atom (duplicate)" }),
       ]);
 
-      // The first chapter teaches the atom first, so the map files this lesson's skill there.
       await Promise.all([
         lessonSkillFixture({
           lessonId: lesson.id,
@@ -300,15 +291,12 @@ describe("mind maps read from the saved plan", () => {
     expect(result.status).toBe("ready");
     expect(writes).toBe(0);
 
-    // The goal's map reads every skill and the learner's state on each: the listing needs neither.
     expect(texts.filter((text) => /learner_skills/u.test(text))).toStrictEqual([]);
 
-    // One statement reads every chapter's facts from the saved plan; numbering reads it on its own.
     const grouped = texts.filter((text) => /JOIN plan_items i ON i\.plan_id = p\.id/u.test(text));
 
     expect(grouped).toHaveLength(1);
-    // Numbering's syllabus input reads the goal through the request's goal fact, which a request
-    // shares with the ownership check; tests run without that dedupe, so they count it again.
+    // Vitest lacks request-cache deduplication, so goal numbering reads the ownership fact again.
     expect(statements).toBeLessThanOrEqual(19);
   });
 });

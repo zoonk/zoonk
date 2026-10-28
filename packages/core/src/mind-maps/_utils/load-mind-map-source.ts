@@ -7,7 +7,6 @@ import { safeParseStepContent } from "../../library/steps/contract/step-contract
 
 type TeachingStep = Pick<Step, "content" | "kind">;
 
-/** A screen that teaches (an explanation or a worked example) as the map reads it. */
 function toScreen(step: TeachingStep): MindMapLesson["screens"] {
   if (step.kind === "explanation") {
     const parsed = safeParseStepContent("explanation", step.content);
@@ -26,11 +25,7 @@ function toScreen(step: TeachingStep): MindMapLesson["screens"] {
   return [{ text, title: title ?? null }];
 }
 
-/**
- * What a chapter's map is written from: its title, description and objectives, and each written
- * lesson in order with what the learner can do after it, its summary card and the screens that
- * teach (questions left out). Null for a chapter without written lessons.
- */
+/** Excludes questions; null without written lessons. */
 export async function loadMindMapSource(chapterId: string): Promise<MindMapChapter | null> {
   const chapter = await prisma.chapter.findUnique({
     select: {

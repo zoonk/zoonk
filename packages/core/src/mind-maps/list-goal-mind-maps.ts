@@ -15,13 +15,7 @@ function isListed(
   return status !== "unavailable";
 }
 
-/**
- * A goal's mind maps (the active goal by default): every chapter the learner finished, in plan
- * order, with its subject and its map (its picture and outline), being made, or ready to be made
- * with `POST .../mind-map/generations`. A finished chapter whose lessons were never written (one
- * skipped with its test) has nothing to draw a map from and isn't listed. It names the chapter the
- * learner is in, whose map comes once it's finished. Read from the saved plan, never building it.
- */
+/** Read-only saved-plan list, defaulting to the active goal; excludes finished chapters with no written lessons. */
 export async function listGoalMindMaps(
   input: { goalId?: string } = {},
 ): Promise<GoalMindMapsResult> {

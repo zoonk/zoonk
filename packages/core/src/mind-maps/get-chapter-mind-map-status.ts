@@ -10,11 +10,7 @@ export type ChapterMindMapStatusResult =
   | { mindMap: { status: MindMapStatus }; status: "ready" }
   | { status: "notFound" | "unauthorized" };
 
-/**
- * A waited-for map's live status: the full view's (`getChapterMindMap`) from the same one statement
- * (`loadMindMapChapters`), without the goal's chapter numbering, outline or picture. A chapter
- * outside the goal's plan isn't found.
- */
+/** Returns notFound for a chapter outside the selected goal's plan. */
 export async function getChapterMindMapStatus({
   chapterId,
   goalId,

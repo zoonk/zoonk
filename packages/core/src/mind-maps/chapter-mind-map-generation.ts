@@ -10,7 +10,6 @@ import { readStoredImage } from "../images/read-stored-image";
 import { loadMindMapSource } from "./_utils/load-mind-map-source";
 import { saveMindMapImage } from "./_utils/save-mind-map-image";
 
-/** Who asked and the run, so the map's AI cost adds up per learner and run. */
 export type MindMapAnalytics = Pick<AiGenerationContext, "distinctId" | "goalId"> & {
   runId: string;
 };
@@ -22,7 +21,6 @@ async function findMindMap(chapterId: string) {
   });
 }
 
-/** A private chapter's map is personal to its owner; a shared chapter's is shared content. */
 function toContext({
   analytics,
   ownerId,
@@ -38,13 +36,7 @@ function toContext({
   };
 }
 
-/**
- * Writes a chapter's mind map as text from its written lessons, the first part of the run a
- * learner's request claimed (`requestChapterMindMap`). The run takes the map as its own; a retry
- * that finds the text written keeps it.
- *
- * This is a workflow bridge, not an app authorization boundary.
- */
+/** Workflow bridge, not authorization; requires a learner-claimed run and preserves existing text on retries. */
 export async function writeChapterMindMapStructure({
   analytics,
   chapterId,
@@ -86,7 +78,6 @@ export async function writeChapterMindMapStructure({
   });
 }
 
-/** The picture's columns, empty: a map without a picture is its outline. */
 const NO_IMAGE = {
   imageHeight: null,
   imageModel: null,
@@ -95,17 +86,9 @@ const NO_IMAGE = {
   thumbnailUrl: null,
 } as const;
 
-/** A picture just drawn for a chapter's map, before it's stored. */
 export type DrawnMindMap = { image: Uint8Array; model: string };
 
-/**
- * Draws the map written for the chapter. `corrections` (what the text check found) draw it again
- * to replace the picture; without them, a retry that finds the picture stored draws nothing
- * (null). Storing it is `showChapterMindMap`, apart, so a store that fails never pays for the
- * drawing again.
- *
- * This is a workflow bridge, not an app authorization boundary.
- */
+/** Workflow bridge, not authorization; without corrections returns null for an already-stored picture. Store in a separate durable step to avoid paying twice. */
 export async function drawChapterMindMap({
   analytics,
   chapterId,
@@ -138,13 +121,7 @@ export async function drawChapterMindMap({
   return { image: data.image, model: provenance.model };
 }
 
-/**
- * Stores a picture just drawn, with a small copy for lists, and finishes the map, so learners see
- * it right away; its text is checked afterwards (`checkChapterMindMapImage`). Without a new picture
- * (a retry that found it stored), it only finishes the map.
- *
- * This is a workflow bridge, not an app authorization boundary.
- */
+/** Workflow bridge, not authorization; show immediately, then check text afterward. Null drawn only finishes an already-stored map. */
 export async function showChapterMindMap({
   chapterId,
   drawn,
@@ -184,16 +161,9 @@ export async function showChapterMindMap({
   });
 }
 
-/** What the text check found in the picture a map shows now (`imageUrl`, null without one). */
 export type MindMapImageCheck = { imageUrl: string | null; passed: boolean; problems: string[] };
 
-/**
- * Checks the words on the picture the map shows, read back from where it's stored, after learners
- * can already see it: it fails only on a serious problem (garbled or misspelled text, a part left
- * out), and its problems quote the words for the next drawing. A map without a picture passes.
- *
- * This is a workflow bridge, not an app authorization boundary.
- */
+/** Workflow bridge, not authorization; runs after display and treats maps without a picture as passed. */
 export async function checkChapterMindMapImage({
   analytics,
   chapterId,
@@ -228,13 +198,7 @@ export async function checkChapterMindMapImage({
   return { imageUrl: map.imageUrl, passed: data.passed, problems: data.problems };
 }
 
-/**
- * Takes a picture whose text failed its check again off the map, which is then its outline. A
- * picture drawn since is left alone. The file stays where it is, so a learner who has it open
- * keeps reading it.
- *
- * This is a workflow bridge, not an app authorization boundary.
- */
+/** Workflow bridge, not authorization; removes only the named current image link and preserves the file for open readers. */
 export async function removeChapterMindMapImage({
   chapterId,
   imageUrl,
@@ -245,12 +209,7 @@ export async function removeChapterMindMapImage({
   await prisma.chapterMindMap.updateMany({ data: NO_IMAGE, where: { chapterId, imageUrl } });
 }
 
-/**
- * Marks the run's map as failed after its last retry, so the learner can ask again. A map another
- * run has taken over since is left alone.
- *
- * This is a workflow bridge, not an app authorization boundary.
- */
+/** Workflow bridge, not authorization; runId must still own the map. */
 export async function failChapterMindMap({
   chapterId,
   runId,
