@@ -9,15 +9,30 @@ filter:
   operations:
     - createAppleSession
     - createAppleSubscription
+    - createChallengeGeneration
+    - createChapterTestOutGeneration
     - createEmailCodeSession
     - createEmailSignInCode
     - createFeedback
+    - createFocusTestGeneration
     - createGoogleSession
+    - createMistakePracticeAnswer
+    - createMistakePracticeCompletion
+    - createStudyAnswer
+    - createStudyBlockCompletion
+    - createStudyBlockStart
+    - createStudySessionStop
+    - decidePlanChange
     - deleteCurrentSession
     - deleteCurrentUser
+    - dismissMistakePattern
+    - getChallenge
     - getChapter
     - getChapterNextLesson
     - getChapterProgress
+    - getChapterTestOut
+    - getChapterTestOutResult
+    - getCheckpoint
     - getCourse
     - getCourseNextLesson
     - getCourseProgress
@@ -25,14 +40,28 @@ filter:
     - getCurrentUserActivity
     - getCurrentUserEnergy
     - getCurrentUserLevel
+    - getCurrentUserMistakePractice
     - getCurrentUserProgress
     - getCurrentUserScore
     - getCurrentUserScorePatterns
     - getCurrentUserSummary
+    - getFocusTest
+    - getGeneration
+    - getMistakePattern
+    - getStudyBlock
     - listChapterLessons
     - listCourseChapters
     - listCourses
     - listCurrentUserCourses
+    - listCurrentUserMistakes
+    - moveChallenge
+    - moveWeeklyChallenge
+    - practiceMistakePattern
     - searchCatalog
+    - startChallenge
     - streamGenerationEvents
+    - submitChapterTestOut
+    - submitFocusTest
+    - undoChallengeMove
+    - undoWeeklyChallengeMove
     - updateCurrentUser

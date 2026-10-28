@@ -1,0 +1,476 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@ · Fixed" : {
+      "comment" : "A fixed mistake's cause line."
+    },
+    "%lld available tomorrow" : {
+      "comment" : "Notebook count of today's mistakes."
+    },
+    "%lld fixed" : {
+      "comment" : "Notebook count of fixed mistakes."
+    },
+    "%lld mistakes fixed" : {
+      "comment" : "How many mistakes a run fixed."
+    },
+    "%lld ready to practice" : {
+      "comment" : "Notebook count of mistakes ready now."
+    },
+    "%lld right · %lld wrong · net %lld" : {
+      "comment" : "A net-scored block's live score: right, wrong and right minus wrong.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld right · %2$lld wrong · net %3$lld"
+          }
+        }
+      }
+    },
+    "%lld right in a row" : {
+      "comment" : "Hyperdrive's quiet mark beside a right answer's verdict."
+    },
+    "%lld seconds a question, like on the day." : {
+      "comment" : "How a timed drill goes."
+    },
+    "A few misses in a row. A short break often helps, and everything you did today counts." : {
+      "comment" : "Suggests a break after accuracy dropped."
+    },
+    "A few questions on an idea you missed." : {
+      "comment" : "How a content-gap drill goes, without ideas to show."
+    },
+    "A fraction, like 2/3, or a decimal." : {
+      "comment" : "Rule under a math answer field that takes a fraction."
+    },
+    "A whole number." : {
+      "comment" : "Rule under a math answer field that takes a whole number."
+    },
+    "A wrong answer cancels a right one. Not sure? Leave it blank." : {
+      "comment" : "Why a net-scored block offers 'Leave blank'."
+    },
+    "Answer feedback" : {
+      "comment" : "VoiceOver name of the feedback panel."
+    },
+    "Back" : {
+      "comment" : "Leaves a finished run.\nLeaves an empty practice."
+    },
+    "Back to the notebook" : {
+      "comment" : "VoiceOver label: leaves mistake practice."
+    },
+    "Bonus practice" : {
+      "comment" : "Title of an extra practice block."
+    },
+    "Brain Power" : {
+      "comment" : "Readout label: Brain Power earned."
+    },
+    "Challenge, second try" : {
+      "comment" : "Title of a lost phase challenge's rematch."
+    },
+    "Check" : {
+      "comment" : "Sends the answer to be graded."
+    },
+    "Check your connection and try again." : {
+      "comment" : "Description when a practice screen can't load."
+    },
+    "Checked %@" : {
+      "comment" : "When a quoted source was last found current."
+    },
+    "Choose %lld options." : {
+      "comment" : "Rule above a multiple-choice question asking for an exact number of options."
+    },
+    "Close. Your answers are saved." : {
+      "comment" : "VoiceOver label of a practice task's close button."
+    },
+    "Content gap" : {
+      "comment" : "Mistake cause: didn't know the idea."
+    },
+    "Continue" : {
+      "comment" : "Moves on after a grade."
+    },
+    "Correct" : {
+      "comment" : "Mark beside the right option once a question is graded."
+    },
+    "Correct!" : {
+      "comment" : "Verdict after a right answer."
+    },
+    "End practice. What you answered counts." : {
+      "comment" : "VoiceOver label: ends mistake practice early."
+    },
+    "Energy reached %lld%%." : {
+      "comment" : "A run's answers raised Energy to a new tenth."
+    },
+    "Every question is answered" : {
+      "comment" : "Title of a block opened again with every answer in."
+    },
+    "False" : {
+      "comment" : "Answer to a true-or-false statement."
+    },
+    "Fell for a trap" : {
+      "comment" : "Mistake cause: fell for a trap answer."
+    },
+    "Final challenge" : {
+      "comment" : "Title of the final challenge block."
+    },
+    "Fine-tuning your plan. A miss here is never saved as a mistake." : {
+      "comment" : "Note above a placement question in the first week's sessions."
+    },
+    "Finish" : {
+      "comment" : "Finishes a block opened with every answer in."
+    },
+    "Finish to see how it went." : {
+      "comment" : "Under the title of a block opened again with every answer in."
+    },
+    "Fixed %lld" : {
+      "comment" : "Notebook list of fixed mistakes, with its count."
+    },
+    "Full review" : {
+      "comment" : "Title of a full review block."
+    },
+    "Go over the lesson" : {
+      "comment" : "Opens the lesson a content-gap drill is about."
+    },
+    "Good call. Saying you're not sure beats a guess." : {
+      "comment" : "After saying 'I'm not sure' in a no-guessing drill."
+    },
+    "Guessed" : {
+      "comment" : "Mistake cause: guessed."
+    },
+    "How to solve it" : {
+      "comment" : "VoiceOver name of a math problem's worked steps."
+    },
+    "I don't know yet" : {
+      "comment" : "Answers a question as not known yet.\nVerdict after the learner said they don't know."
+    },
+    "I'm not sure" : {
+      "comment" : "Honest way out of a guess in a no-guessing drill."
+    },
+    "I've read it. Show the answers" : {
+      "comment" : "Shows a misread drill's answers once the question was read."
+    },
+    "Last time you answered: %@" : {
+      "comment" : "A mistake drill's note: what the learner answered when they got it wrong."
+    },
+    "Leave blank" : {
+      "comment" : "Answer that leaves a statement blank where a wrong answer cancels a right one."
+    },
+    "Left blank" : {
+      "comment" : "Verdict after leaving a net-scored statement blank."
+    },
+    "Lesson complete" : {
+      "comment" : "End of a lesson block."
+    },
+    "Listen again as often as you like." : {
+      "comment" : "Under a recording once its questions are answered."
+    },
+    "Match these" : {
+      "comment" : "VoiceOver name of the left column."
+    },
+    "Matched with %@" : {
+      "comment" : "VoiceOver value of a right-column entry already matched with a left entry."
+    },
+    "Misread" : {
+      "comment" : "Mistake cause: misread the question."
+    },
+    "Mistake fixed. It leaves your notebook." : {
+      "comment" : "After answering a saved mistake right."
+    },
+    "Mistakes" : {
+      "comment" : "VoiceOver name of the notebook's list picker."
+    },
+    "Mistakes come back for practice from the day after you make them." : {
+      "comment" : "Why no mistake is ready to practice yet.\nWhy today's mistakes can't be practiced yet."
+    },
+    "Mistakes notebook" : {
+      "comment" : "Title of the mistakes notebook."
+    },
+    "Mistakes you fix in practice show up here." : {
+      "comment" : "Empty fixed list of the notebook."
+    },
+    "Mixed practice" : {
+      "comment" : "Title of a mixed practice block."
+    },
+    "Mock exam" : {
+      "comment" : "Title of a weekly mock exam block."
+    },
+    "New lesson" : {
+      "comment" : "Title of a lesson block without a title yet."
+    },
+    "Not quite" : {
+      "comment" : "Verdict after a wrong answer."
+    },
+    "Not sorted yet" : {
+      "comment" : "Mistake cause not named yet."
+    },
+    "Nothing to fix right now. Mistakes from your lessons and reviews show up here." : {
+      "comment" : "Empty open list of the notebook."
+    },
+    "Nothing to practice yet" : {
+      "comment" : "Title when no mistake is ready to practice."
+    },
+    "On %@ this one tripped you up." : {
+      "comment" : "Time machine note: wrong last time, without the answer's text."
+    },
+    "On %@ you answered “%@”." : {
+      "comment" : "Time machine note: the learner's earlier wrong answer, quoted.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "On %1$@ you answered “%2$@”."
+          }
+        }
+      }
+    },
+    "Only answer when you're sure. Saying you're not sure is fine." : {
+      "comment" : "How a no-guessing drill goes."
+    },
+    "Open the lesson" : {
+      "comment" : "Opens the lesson that teaches a mistake's idea."
+    },
+    "Other questions" : {
+      "comment" : "Notebook group of mistakes without a skill."
+    },
+    "Past exam question · %@" : {
+      "comment" : "Source of a real past exam question shown with it."
+    },
+    "Phase challenge" : {
+      "comment" : "Title of a phase challenge block."
+    },
+    "Place %lld" : {
+      "comment" : "VoiceOver value of a step placed in an ordering question."
+    },
+    "Play it again" : {
+      "comment" : "Plays a recording another time."
+    },
+    "Play the recording" : {
+      "comment" : "Plays a set's recording."
+    },
+    "Playing" : {
+      "comment" : "The recording is playing."
+    },
+    "Playing. It doesn't pause, like in the exam." : {
+      "comment" : "Under a recording while it plays in exam conditions."
+    },
+    "Practice done" : {
+      "comment" : "End of a practice run."
+    },
+    "Practice mistakes" : {
+      "comment" : "Starts practicing the notebook's ready mistakes.\nTitle of a block that only fixes mistakes.\nTitle of the mistakes practice run."
+    },
+    "Practice this skill" : {
+      "comment" : "Practices only this skill's mistakes."
+    },
+    "Practice tomorrow" : {
+      "comment" : "A mistake from today, ready to practice tomorrow."
+    },
+    "Question %lld of %lld" : {
+      "comment" : "VoiceOver label of a run's progress: the question in view and how many there are.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Question %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "Question %lld of %lld on this case" : {
+      "comment" : "Where a question sits among the questions about the same case.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Question %1$lld of %2$lld on this case"
+          }
+        }
+      }
+    },
+    "Question %lld of %lld on this chart" : {
+      "comment" : "Where a question sits among the questions about the same chart.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Question %1$lld of %2$lld on this chart"
+          }
+        }
+      }
+    },
+    "Question %lld of %lld on this recording" : {
+      "comment" : "Where a question sits among the questions about the same recording.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Question %1$lld of %2$lld on this recording"
+          }
+        }
+      }
+    },
+    "Question %lld of %lld on this text" : {
+      "comment" : "Where a question sits among the questions about the same text.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Question %1$lld of %2$lld on this text"
+          }
+        }
+      }
+    },
+    "Questions on this recording (%lld)" : {
+      "comment" : "Folds the list of every question about a recording, to read before it plays."
+    },
+    "Quick review" : {
+      "comment" : "Title of a short review block."
+    },
+    "Ran out of time" : {
+      "comment" : "Mistake cause: ran out of time."
+    },
+    "Read every word before you answer." : {
+      "comment" : "How a misread drill goes."
+    },
+    "Read it all again" : {
+      "comment" : "Unfolds a shared text read before."
+    },
+    "Review done" : {
+      "comment" : "End of a review block."
+    },
+    "Reviews" : {
+      "comment" : "Title of a long review block."
+    },
+    "Right" : {
+      "comment" : "Judging an exam statement as right (Cebraspe style).\nReadout label: right answers out of the total."
+    },
+    "Right again, like on %@." : {
+      "comment" : "Time machine note: right today and the last time."
+    },
+    "Right answer: %@" : {
+      "comment" : "The right answer in words, under a wrong answer's verdict."
+    },
+    "Round to %lld decimal places." : {
+      "comment" : "Rule under a math answer field that takes a fixed number of decimal places."
+    },
+    "Saved to your mistakes · it comes back tomorrow" : {
+      "comment" : "After a wrong answer saved to the mistakes notebook."
+    },
+    "Select all that apply." : {
+      "comment" : "Rule above a multiple-choice question where every right option must be picked."
+    },
+    "Show less" : {
+      "comment" : "Folds a shared text read before."
+    },
+    "Show more" : {
+      "comment" : "Loads the notebook's next page."
+    },
+    "Start the questions" : {
+      "comment" : "Starts a content-gap drill's questions after its idea."
+    },
+    "Stop for today" : {
+      "comment" : "Stops today's session from the pause suggestion."
+    },
+    "Tap the steps in order." : {
+      "comment" : "Instruction above an ordering question."
+    },
+    "The idea first, then a few questions on it." : {
+      "comment" : "How a content-gap drill goes, when it shows the lesson's ideas first."
+    },
+    "The recording didn't load. Check your connection and try again." : {
+      "comment" : "Shown when a set's recording fails to load."
+    },
+    "The rest come back another day, when they stick better." : {
+      "comment" : "End of a mistakes practice run with a miss."
+    },
+    "The trap: %@" : {
+      "comment" : "The misconception a trap drill's wrong answer fell for."
+    },
+    "There's a trap in here. Find it before you answer." : {
+      "comment" : "How a trap drill goes."
+    },
+    "This didn't load" : {
+      "comment" : "Title when a practice screen can't load."
+    },
+    "Time left" : {
+      "comment" : "VoiceOver label of a timed drill's clock."
+    },
+    "Time's up. It counts as a miss, so it comes back." : {
+      "comment" : "After a timed drill's clock ran out."
+    },
+    "To fix %lld" : {
+      "comment" : "Notebook list of open mistakes, with its count."
+    },
+    "Transcript" : {
+      "comment" : "Folds who said what in a recording."
+    },
+    "True" : {
+      "comment" : "Answer to a true-or-false statement."
+    },
+    "Try again" : {
+      "comment" : "Loads a practice screen again.\nSends an answer that didn't save again."
+    },
+    "Try it again." : {
+      "comment" : "How a plain retry drill goes."
+    },
+    "Type a fraction, like 2/3, or a number, like %@." : {
+      "comment" : "Hint after typing something a fraction answer field can't read."
+    },
+    "Type a number, like %@." : {
+      "comment" : "Hint after typing something a number answer field can't read."
+    },
+    "Type a whole number, like 12." : {
+      "comment" : "Hint after typing something a whole-number answer field can't read."
+    },
+    "We couldn't stop the session. Try again." : {
+      "comment" : "Stopping the session failed."
+    },
+    "Weekly challenge" : {
+      "comment" : "Title of the weekly challenge block."
+    },
+    "What you already know" : {
+      "comment" : "Title of the first week's placement questions block."
+    },
+    "With these" : {
+      "comment" : "VoiceOver name of the right column."
+    },
+    "Writing practice" : {
+      "comment" : "Title of a writing block."
+    },
+    "Wrong" : {
+      "comment" : "Judging an exam statement as wrong (Cebraspe style)."
+    },
+    "You already answered this question." : {
+      "comment" : "Shown when an answer was saved before."
+    },
+    "You can listen one more time." : {
+      "comment" : "Under a recording with one play left."
+    },
+    "You got it right on %@. Reviewing it now helps it stick." : {
+      "comment" : "Time machine note: right last time, wrong today."
+    },
+    "You hear it once, like in the exam. Read the questions first." : {
+      "comment" : "Under a recording that plays once."
+    },
+    "You hear it twice, like in the exam. Read the questions first." : {
+      "comment" : "Under a recording that plays twice."
+    },
+    "You reached level %lld." : {
+      "comment" : "A run took the learner to a new level."
+    },
+    "You saw this on %@." : {
+      "comment" : "Time machine line above a question seen before."
+    },
+    "You're offline" : {
+      "comment" : "Title when a practice screen can't load offline."
+    },
+    "You've used every play. Answer from what you heard." : {
+      "comment" : "Under a recording with no plays left."
+    },
+    "Your answer" : {
+      "comment" : "Mark beside the learner's wrong pick once a question is graded.\nPlaceholder of an answer field."
+    },
+    "Your answer wasn't saved. Check your connection." : {
+      "comment" : "Shown over a run's actions when an answer or the finish didn't reach the server."
+    }
+  },
+  "version" : "1.0"
+}
