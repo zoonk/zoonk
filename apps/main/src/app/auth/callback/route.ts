@@ -1,5 +1,6 @@
 import { getPathname } from "@/i18n/navigation";
 import { SIGNED_IN_COOKIE } from "@/lib/auth/auth-change";
+import { escapeHtml } from "@/lib/http/escape-html";
 import { SESSION_HINT, SESSION_HINT_COOKIE } from "@zoonk/auth/session-hint";
 import { verifyOneTimeTokenCallback } from "@zoonk/core/auth/ott/callback";
 import { getSafeAppRelativePath } from "@zoonk/core/auth/ott/redirect";
@@ -9,15 +10,6 @@ import { getExtracted } from "next-intl/server";
 import { type NextRequest } from "next/server";
 
 const AUTH_FAILED_STATUS = 401;
-
-function escapeHtml(value: string): string {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
 
 export async function GET(request: NextRequest) {
   const response = await verifyOneTimeTokenCallback(request);

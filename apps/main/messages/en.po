@@ -3341,6 +3341,16 @@ msgctxt "KGN7UU"
 msgid "This chapter"
 msgstr "This chapter"
 
+#: src/app/auth/apple/route.ts
+msgctxt "5JUHBB"
+msgid "Go back to Zoonk"
+msgstr "Go back to Zoonk"
+
+#: src/app/auth/apple/route.ts
+msgctxt "99__Yc"
+msgid "Your browser didn't open the Zoonk app. Close this page and sign in with Apple again in the app."
+msgstr "Your browser didn't open the Zoonk app. Close this page and sign in with Apple again in the app."
+
 #: src/app/auth/callback/route.ts
 msgctxt "1KzRxp"
 msgid "We couldn't sign you in."

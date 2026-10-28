@@ -334,6 +334,7 @@ describe("proxy matcher", () => {
 
   it.each([
     "/api/auth/session",
+    "/auth/apple",
     "/auth/callback",
     "/_next/static/chunks/app.js",
     "/_next/image",
