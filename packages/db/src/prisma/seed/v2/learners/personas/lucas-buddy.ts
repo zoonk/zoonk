@@ -23,7 +23,7 @@ const lessonAnswers: SeedAttempt[] = (
 );
 
 /**
- * A learner with a grown buddy: Otto the octopus, wearing the Star glasses from his first boss, after
+ * A learner with a baby buddy (310 Brain Power is a white belt): Otto the octopus, wearing the Star glasses from his first boss, after
  * two Trickster checkpoints, whose questions core picks for his past sessions (see `SeededPast`). Lucas wants the ideas of quantum physics without the math, 15 minutes a
  * night.
  */
