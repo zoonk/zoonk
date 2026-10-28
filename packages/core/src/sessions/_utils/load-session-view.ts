@@ -5,6 +5,7 @@ import { withoutLockedPhaseChallenges } from "../../checkpoints/_utils/phase-cha
 import { getEntitlementViewer } from "../../entitlements/_utils/entitlement-viewer";
 import { getExamPrepAccess as getTierExamPrep } from "../../entitlements/limits";
 import { loadOftenTestedSkillIds } from "../../exams/map/load-often-tested";
+import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
@@ -77,14 +78,13 @@ async function loadLessonsComing({
   return isDayAwaitingOutlines({ goal: session.goal, localDate: session.localDate });
 }
 
+/** The plan's settings: a day just planned carries them, else the request's saved plan. */
 function loadViewPlan({ fresh, session }: { fresh?: PlannedStudyDay; session: StudySessionRow }) {
   if (fresh) {
     return { settings: fresh.plan.settings };
   }
 
-  return session.goalId
-    ? prisma.plan.findUnique({ select: { settings: true }, where: { goalId: session.goalId } })
-    : null;
+  return session.goalId ? readSavedPlan(session.userId, session.goalId) : null;
 }
 
 async function loadSessionBasics({
@@ -149,6 +149,7 @@ export async function loadStudySessionView({
             ),
           ],
           goalId: storedSession.goalId,
+          known: { source: readSavedPlan(userId, storedSession.goalId) },
           now: new Date(),
           timeZone,
           userId,

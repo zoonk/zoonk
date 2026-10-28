@@ -1,5 +1,6 @@
 import "server-only";
 import { type ExamBlueprint } from "@zoonk/db";
+import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { readBlockPayload } from "../block-payload";
 import { toDayBlockRef } from "../day-block";
@@ -46,6 +47,7 @@ export async function readSavedDayView({
         ...new Set(refill.blocks.flatMap((block) => readBlockPayload(block).chapterId ?? [])),
       ],
       goalId: session.goalId,
+      known: { source: readSavedPlan(userId, session.goalId) },
       now: new Date(),
       timeZone,
       userId,

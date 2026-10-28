@@ -2,11 +2,13 @@ import "server-only";
 import { type Goal, type GoalKind } from "@zoonk/db";
 import { loadGoalDateKind } from "../../exams/_utils/goal-date-estimate";
 import { type ExamChoiceView } from "../../exams/choices/exam-choice-contract";
-import { loadExamChoiceViews, loadExamChoices } from "../../exams/choices/load-exam-choices";
+import { readExamChoices } from "../../exams/choices/exam-choices";
+import { loadExamChoiceViews } from "../../exams/choices/load-exam-choices";
 import { type ExamMomentView } from "../../exams/view/exam-view-contract";
 import { loadExamMoment } from "../../exams/view/load-exam-moment";
 import { getCurrentSuggestedGoal } from "../../goals/suggestions/get-current-suggested-goal";
 import { type SuggestedGoalView } from "../../goals/suggestions/suggested-goal-contract";
+import { readSavedPlan } from "../../learner/facts/saved-plan";
 import {
   type LessonGenerationState,
   getLessonGenerationStates,
@@ -218,8 +220,10 @@ async function loadOpenExamChoice(goal: Goal): Promise<ExamChoiceView | null> {
     return null;
   }
 
+  const saved = await readSavedPlan(goal.userId, goal.id);
+
   const choices = await loadExamChoiceViews({
-    choices: await loadExamChoices(goal.id),
+    choices: readExamChoices(saved?.settings),
     examBlueprintId: goal.examBlueprintId,
   });
 

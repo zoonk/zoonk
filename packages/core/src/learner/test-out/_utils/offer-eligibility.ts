@@ -1,11 +1,11 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { CAPSULE_LEDGER_KIND } from "../../../milestones/award-milestones";
 import { getStartOfLocalDay } from "../../_utils/local-time";
 import { countSkippableItems, getChapterSkills } from "./chapter-items";
-import { type TestOutPlan, loadTestOutPlan } from "./test-out-plan";
+import { loadTestOutPlan } from "./test-out-plan";
 
 function failedTest(event: { contentIds: unknown }) {
   return isJsonObject(event.contentIds) && event.contentIds.testOutPassed === "false";
@@ -25,7 +25,7 @@ export async function loadBlockedTestOutChapters({
 }: {
   chapterIds: readonly string[];
   goalId: string;
-  known?: { goal?: Pick<Goal, "kind">; plan?: TestOutPlan };
+  known?: Parameters<typeof loadTestOutPlan>[1];
   now: Date;
   timeZone: string;
   userId: string;

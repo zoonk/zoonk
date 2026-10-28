@@ -1,5 +1,4 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
 import { cacheTag } from "next/cache";
@@ -9,6 +8,8 @@ import { loadGoalScoreEstimate } from "../../exams/estimates/load-goal-estimate"
 import { getStartOfLocalDay } from "../../learner/_utils/local-time";
 import { type OwnedGoal, findOwnedGoal } from "../../learner/_utils/owned-goal";
 import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
+import { type SavedPlan, readSavedPlan } from "../../learner/facts/saved-plan";
+import { readActiveSubscription } from "../../learner/facts/subscription";
 import { countSkillStates } from "../../learner/mastery-state";
 import { type PlanReadContext } from "../../plans/_utils/plan-read-projection";
 import { getStartOfWeek } from "../../plans/planner/plan-calendar";
@@ -17,7 +18,7 @@ import { loadCatchUpItems } from "../../sessions/_utils/catch-up";
 import { loadExamPrepAccess } from "../../sessions/_utils/plus-only-lessons";
 import { getAreaPreparations } from "../area-preparation";
 import { type GoalPreparationResult } from "../get-goal-preparation";
-import { PLAN_STATUS_ITEM_SELECT, getMinutesPerItem, getPlanStatus } from "../plan-status";
+import { getMinutesPerItem, getPlanStatus } from "../plan-status";
 import { measurePreparation } from "../section-preparation";
 import { loadPreparationInputs } from "./load-preparation-inputs";
 
@@ -27,24 +28,19 @@ type SelectedPreparationPlan = Pick<PlanReadContext, "items" | "plan" | "state" 
   catchUp?: number;
 };
 
-/** Status follows the selected allocation; only a saved read needs its schedule from the DB. */
-async function loadStatusSchedule({
-  goalId,
+/** Status follows the selected allocation, else the saved plan's items and estimate. */
+function getStatusSchedule({
+  savedPlan,
   selectedPlan,
 }: {
-  goalId: string;
+  savedPlan: SavedPlan | null;
   selectedPlan?: SelectedPreparationPlan;
 }) {
   if (selectedPlan) {
     return { estimateHours: selectedPlan.plan.estimateHours, items: selectedPlan.items };
   }
 
-  const schedule = await prisma.plan.findUnique({
-    select: { estimateHours: true, items: { select: PLAN_STATUS_ITEM_SELECT } },
-    where: { goalId },
-  });
-
-  return { estimateHours: schedule?.estimateHours ?? null, items: schedule?.items ?? [] };
+  return { estimateHours: savedPlan?.estimateHours ?? null, items: savedPlan?.items ?? [] };
 }
 
 /** Shared evidence and status rules; Today supplies its already authorized in-memory selection. */
@@ -96,13 +92,27 @@ export async function loadOwnedGoalPreparation({
   // Areas keep a rolling seven days: rebalancing reads their trend on any day, Mondays included.
   const weekAgo = new Date(now.getTime() - WEEK_DAYS * MS_PER_DAY);
 
-  const [inputs, catchUp, access, phaseChallengesRequired, schedule] = await Promise.all([
-    loadPreparationInputs({ goal, goalId, now, readPlan: readGoalPlan, userId }),
+  const [savedPlan, subscription] = await Promise.all([
+    readSavedPlan(userId, goalId),
+    readActiveSubscription(userId),
+  ]);
+
+  const [inputs, catchUp, access, phaseChallengesRequired] = await Promise.all([
+    loadPreparationInputs({
+      goal,
+      goalId,
+      now,
+      readPlan: readGoalPlan,
+      savedPlan,
+      subscription,
+      userId,
+    }),
     selectedPlan?.catchUp === undefined ? loadCatchUpItems(goalId) : [],
     loadExamPrepAccess({ goal, timeZone, today }),
     arePhaseChallengesRequired({ goalKind: goal.kind, userId }),
-    loadStatusSchedule({ goalId, selectedPlan }),
   ]);
+
+  const schedule = getStatusSchedule({ savedPlan, selectedPlan });
 
   const measure = (asOf: Date) => measurePreparation({ ...inputs, asOf });
   const { components, sections, stage, value } = measure(now);

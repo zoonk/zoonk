@@ -4,8 +4,10 @@ import {
   loadGoalListeningSkillIds,
   loadLearnerListeningSkillIds,
 } from "../exams/listening/listening-skills";
-import { loadGoalSkillScope } from "../learner/_utils/goal-skill-graph";
+import { getSkillOwners } from "../learner/_utils/goal-skill-graph";
 import { getStartOfLocalDay } from "../learner/_utils/local-time";
+import { readGoalPlan } from "../learner/_utils/read-goal-plan";
+import { readSavedPlan } from "../learner/facts/saved-plan";
 import { getGoalField } from "../library/items/item-field";
 import { type MistakeAvailability } from "./contract";
 import { filterMistakesWithPracticeMaterial } from "./mistake-practice-eligibility";
@@ -47,20 +49,26 @@ type MistakeScopeInput = {
 
 type AvailabilityInput = MistakeScopeInput & { localDate: Date; timeZone: string };
 
-/** The goal's row, its skill scope (`getSkillOwners` of its plan) and its listening skills. */
+/**
+ * The goal's row, its skill scope (`getSkillOwners` of its plan) and its listening skills, from the
+ * request's plan reads: every caller is a read the learner's screens show.
+ */
 async function loadGoalScope({
   blueprint,
   goal: known,
   goalId,
+  userId,
 }: {
   blueprint?: ExamBlueprint | null;
   goal?: Goal | null;
   goalId: string;
+  userId: string;
 }) {
   const isKnown = known?.id === goalId;
 
-  const [scope, goal] = await Promise.all([
-    loadGoalSkillScope(goalId),
+  const [plan, saved, goal] = await Promise.all([
+    readGoalPlan(goalId),
+    readSavedPlan(userId, goalId),
     isKnown ? known : prisma.goal.findUnique({ where: { id: goalId } }),
   ]);
 
@@ -68,11 +76,11 @@ async function loadGoalScope({
     ? await loadGoalListeningSkillIds({
         blueprint: isKnown ? blueprint : undefined,
         goal,
-        graph: scope.graph,
+        graph: saved?.graph ?? null,
       })
     : new Set<string>();
 
-  return { goal, listeningSkillIds, ownerOf: scope.ownerOf };
+  return { goal, listeningSkillIds, ownerOf: getSkillOwners(plan.skills) };
 }
 
 /**
@@ -87,7 +95,7 @@ async function loadPracticeEligibleMistakes({
   skillIds,
   userId,
 }: MistakeScopeInput) {
-  const scope = goalId ? await loadGoalScope({ blueprint, goal: knownGoal, goalId }) : null;
+  const scope = goalId ? await loadGoalScope({ blueprint, goal: knownGoal, goalId, userId }) : null;
   const ownerOf = scope?.ownerOf ?? new Map<string, string>();
   const scopedSkillIds = skillIds ?? (goalId ? [...ownerOf.keys()] : null);
 

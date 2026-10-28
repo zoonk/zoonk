@@ -1,6 +1,7 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
 import { readExamBlueprint } from "../../learner/facts/exam-blueprint";
+import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import {
   type ShortPlanToday,
@@ -8,9 +9,13 @@ import {
   loadShortPlanDay,
 } from "../../plans/_utils/load-short-plan-day";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
+import { parsePlanPhases } from "../../plans/planner/plan-state";
 import { getExamCalendar, toExamDates } from "../_utils/exam-calendar";
-import { getExamDayChecklist, getExamStage } from "../final-stretch/final-stretch-rules";
-import { loadFinalStretchStart } from "../final-stretch/load-final-stretch-start";
+import {
+  getExamDayChecklist,
+  getExamStage,
+  getFinalStretchStart,
+} from "../final-stretch/final-stretch-rules";
 import { listExamTools } from "./_utils/exam-tools";
 import { loadExamWork } from "./_utils/exam-work";
 import { type ExamMomentView } from "./exam-view-contract";
@@ -51,6 +56,7 @@ export async function loadExamMoment({
     | "targetDate"
     | "timezone"
     | "title"
+    | "userId"
   >;
   /** The learner's plan includes mock exams (Plus), such as a class test's short mock. */
   includesMockExams: boolean;
@@ -63,7 +69,9 @@ export async function loadExamMoment({
 
   const [blueprint, finalStretchStart] = await Promise.all([
     goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
-    loadFinalStretchStart(goal.id),
+    readSavedPlan(goal.userId, goal.id).then((plan) =>
+      getFinalStretchStart(parsePlanPhases(plan?.phases)),
+    ),
   ]);
 
   const calendar = getExamCalendar({ blueprint, goal });

@@ -1,5 +1,12 @@
 import "server-only";
-import { type Attempt, type Goal, type ItemFormat, type PlanItem, prisma } from "@zoonk/db";
+import {
+  type Attempt,
+  type Goal,
+  type ItemFormat,
+  type Plan,
+  type PlanItem,
+  prisma,
+} from "@zoonk/db";
 import { GRADABLE_ITEM_FORMATS } from "../../../learner/_utils/choice-items";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
 import { fitsExamChoice, getExamChoiceFormat } from "../../../library/exams/exam-choice-format";
@@ -47,11 +54,20 @@ function getLessonAreas({
  * graph lists the plan's skills; the skills its lessons teach take the area of the plan item
  * that schedules the lesson, so a mock knows the area of every question it may ask.
  */
-export async function loadSkillAreas(goalId: string): Promise<Map<string, string>> {
-  const plan = await prisma.plan.findUnique({
-    select: { graph: true, items: { select: { chapterId: true, lessonId: true, skillId: true } } },
-    where: { goalId },
-  });
+export async function loadSkillAreas(
+  goalId: string,
+  /** The saved plan a GET already read (`readSavedPlan`), so it isn't read again. */
+  known?: Pick<Plan, "graph"> & { items: Pick<PlanItem, "chapterId" | "lessonId" | "skillId">[] },
+): Promise<Map<string, string>> {
+  const plan =
+    known ??
+    (await prisma.plan.findUnique({
+      select: {
+        graph: true,
+        items: { select: { chapterId: true, lessonId: true, skillId: true } },
+      },
+      where: { goalId },
+    }));
 
   const graphAreas = new Map(
     parsePlanGraph(plan?.graph).skills.flatMap((skill) =>

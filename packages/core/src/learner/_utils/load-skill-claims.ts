@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Plan, type PlanItem, prisma } from "@zoonk/db";
 import { loadPassedOverClaims } from "../../plans/_utils/load-passed-over-claims";
 import { loadUndoneTestOuts } from "../../plans/_utils/undone-test-outs";
 import { listFocusedSkillIds } from "../../plans/planner/focus-targets";
@@ -20,6 +20,23 @@ import {
 const MAX_ANSWERS = 2000;
 
 /**
+ * The saved plan a GET already read (`readSavedPlan`), so its claims don't read it again; writes
+ * leave it out and read their own.
+ */
+export type ClaimPlan = Pick<Plan, "createdAt" | "graph" | "id" | "settings"> & {
+  items: Pick<PlanItem, "completedAt" | "kind" | "lessonId" | "skillId" | "status">[];
+};
+
+/** A plan's finished lessons and chapters, which claim their skills. */
+function isClaimingItem(item: ClaimPlan["items"][number]) {
+  return (
+    item.completedAt !== null &&
+    (item.kind === "chapter" || item.kind === "lesson") &&
+    (item.status === "done" || item.status === "testedOut")
+  );
+}
+
+/**
  * A goal's test-outs as claims on the skills they skipped, and its finished lessons as skills
  * studied: a stand-in's skill, or every skill its lesson teaches. A test-out claims the skill its
  * item counts for, which the learner showed they know (see `markPlanItemsTestedOut`), never one
@@ -30,23 +47,28 @@ const MAX_ANSWERS = 2000;
  */
 async function loadPlanEvents({
   goalId,
+  known,
   skillIds,
 }: {
   goalId: string;
+  known?: ClaimPlan | null;
   skillIds: ReadonlySet<string>;
 }): Promise<ClaimEvent[]> {
-  const [items, plan] = await Promise.all([
-    prisma.planItem.findMany({
-      select: { completedAt: true, lessonId: true, skillId: true, status: true },
-      where: {
-        completedAt: { not: null },
-        kind: { in: ["chapter", "lesson"] },
-        plan: { goalId },
-        status: { in: ["done", "testedOut"] },
-      },
-    }),
-    prisma.plan.findUnique({ select: { graph: true }, where: { goalId } }),
-  ]);
+  const [items, plan] =
+    known === undefined
+      ? await Promise.all([
+          prisma.planItem.findMany({
+            select: { completedAt: true, lessonId: true, skillId: true, status: true },
+            where: {
+              completedAt: { not: null },
+              kind: { in: ["chapter", "lesson"] },
+              plan: { goalId },
+              status: { in: ["done", "testedOut"] },
+            },
+          }),
+          prisma.plan.findUnique({ select: { graph: true }, where: { goalId } }),
+        ])
+      : [known?.items.filter((item) => isClaimingItem(item)) ?? [], known];
 
   const graphSkills = new Set(parsePlanGraph(plan?.graph).skills.map((skill) => skill.skillId));
 
@@ -148,16 +170,18 @@ export async function loadDatedClaims({
 /** Everything the learner model reads of a goal's skills (see `loadDatedClaims`). */
 export async function loadClaimEvents({
   goalId,
+  plan,
   skillIds,
   userId,
 }: {
   goalId: string;
+  plan?: ClaimPlan | null;
   skillIds: readonly string[];
   userId: string;
 }): Promise<ClaimEvent[]> {
   const [planEvents, passedOver, undone, answers] = await Promise.all([
-    loadPlanEvents({ goalId, skillIds: new Set(skillIds) }),
-    loadPassedOverClaims({ goalId, skillIds: new Set(skillIds) }),
+    loadPlanEvents({ goalId, known: plan, skillIds: new Set(skillIds) }),
+    loadPassedOverClaims({ goalId, known: plan, skillIds: new Set(skillIds) }),
     loadUndoneTestOuts({ goalId, skillIds: new Set(skillIds) }),
     loadAnswerEvents({ skillIds, userId }),
   ]);

@@ -1,7 +1,9 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
+import { readExamChoices } from "../../../exams/choices/exam-choices";
 import { loadClaimEvents } from "../../../learner/_utils/load-skill-claims";
 import { listKnownSkills } from "../../../learner/_utils/skill-claims";
+import { type SavedPlan } from "../../../learner/facts/saved-plan";
 import { loadSkillPrerequisites } from "../../../library/skills/skill-prerequisites";
 import { listTaughtStandInSkills } from "../../../lookahead/plan-outline-needs";
 import { hasPlanDeadline } from "../../../plans/_utils/plan-end";
@@ -165,10 +167,61 @@ async function loadChapterTitles(items: readonly SyllabusItem[]): Promise<Map<st
   return new Map(chapters.map((chapter) => [chapter.id, chapter.title]));
 }
 
+/** The syllabus's lessons and chapters of a saved plan, in plan order. */
+function fromSavedPlan(goal: Partial<Pick<Goal, "primaryCourseId">>, saved: SavedPlan | null) {
+  return saved
+    ? {
+        goal: { primaryCourseId: goal.primaryCourseId ?? null },
+        graph: saved.graph,
+        items: saved.items.filter((item) => item.kind === "lesson" || item.kind === "chapter"),
+        settings: saved.settings,
+      }
+    : null;
+}
+
+/** The plan the syllabus reads: a GET's saved plan, a selection being shown, or a fresh read. */
+function readSyllabusPlan(
+  goal: Pick<Goal, "id"> & Partial<Pick<Goal, "primaryCourseId">>,
+  {
+    savedPlan,
+    selectedPlan,
+  }: { savedPlan?: SavedPlan | null; selectedPlan?: Pick<PlanReadContext, "items" | "state"> },
+) {
+  if (savedPlan !== undefined) {
+    return fromSavedPlan(goal, savedPlan);
+  }
+
+  if (selectedPlan) {
+    return {
+      goal: { primaryCourseId: goal.primaryCourseId ?? null },
+      graph: selectedPlan.state.graph,
+      items: selectedPlan.items
+        .filter((item) => item.kind === "lesson" || item.kind === "chapter")
+        .map((item) => ({ ...item, id: item.id ?? getPlanReadItemKey(item) })),
+      settings: selectedPlan.state.settings,
+    };
+  }
+
+  return prisma.plan.findUnique({
+    select: {
+      goal: { select: { primaryCourseId: true } },
+      graph: true,
+      items: {
+        orderBy: { position: "asc" },
+        select: itemSelect,
+        where: { kind: { in: ["lesson", "chapter"] } },
+      },
+      settings: true,
+    },
+    where: { goalId: goal.id },
+  });
+}
+
 /**
  * Everything a goal's syllabus is built from: the notice (exams), the plan's graph and settings,
  * its lessons in plan order, their chapters' titles and each area's course. Null without a plan.
- * A GET passes the exam's blueprint it already read (see `loadNotice`).
+ * A GET passes the exam's blueprint and the saved plan it already read (see `loadNotice`,
+ * `readSavedPlan`).
  */
 export async function loadSyllabusInput(
   goal: Pick<
@@ -178,36 +231,17 @@ export async function loadSyllabusInput(
     Partial<Pick<Goal, "details" | "primaryCourseId">>,
   {
     blueprint,
+    savedPlan,
     selectedPlan,
   }: {
     blueprint?: ExamBlueprint | null | Promise<ExamBlueprint | null>;
+    savedPlan?: SavedPlan | null;
     selectedPlan?: Pick<PlanReadContext, "items" | "state">;
   } = {},
 ): Promise<SyllabusInput | null> {
   const [plan, notice] = await Promise.all([
-    selectedPlan
-      ? {
-          goal: { primaryCourseId: goal.primaryCourseId ?? null },
-          graph: selectedPlan.state.graph,
-          items: selectedPlan.items
-            .filter((item) => item.kind === "lesson" || item.kind === "chapter")
-            .map((item) => ({ ...item, id: item.id ?? getPlanReadItemKey(item) })),
-          settings: selectedPlan.state.settings,
-        }
-      : prisma.plan.findUnique({
-          select: {
-            goal: { select: { primaryCourseId: true } },
-            graph: true,
-            items: {
-              orderBy: { position: "asc" },
-              select: itemSelect,
-              where: { kind: { in: ["lesson", "chapter"] } },
-            },
-            settings: true,
-          },
-          where: { goalId: goal.id },
-        }),
-    loadNotice(goal, blueprint),
+    readSyllabusPlan(goal, { savedPlan, selectedPlan }),
+    loadNotice(goal, blueprint, savedPlan ? readExamChoices(savedPlan.settings) : undefined),
   ]);
 
   if (!plan) {
@@ -224,7 +258,12 @@ export async function loadSyllabusInput(
       ),
       loadAreaCourses(graph),
       loadChapterTitles(plan.items),
-      loadClaimEvents({ goalId: goal.id, skillIds: [...graphSkillIds], userId: goal.userId }),
+      loadClaimEvents({
+        goalId: goal.id,
+        plan: savedPlan,
+        skillIds: [...graphSkillIds],
+        userId: goal.userId,
+      }),
       loadSkillPrerequisites([...graphSkillIds]),
       listTaughtStandInSkills({
         goal: { ...goal, primaryCourseId: plan.goal.primaryCourseId },
@@ -277,19 +316,22 @@ export async function loadSyllabusInput(
  * Each of the goal's skills by its subject's short name ("Portuguese Language"), for labels on
  * Today's lessons; empty for goals with fewer than two subjects. Reads only the graph, the notice
  * and the areas' courses, so a session doesn't load the whole plan for it. A GET passes the exam's
- * blueprint it already read (see `loadNotice`).
+ * blueprint and the saved plan it already read (see `loadNotice`, `readSavedPlan`).
  */
 export async function loadSkillSubjects(
   goal: Pick<Goal, "examBlueprintId" | "id" | "kind"> | null,
   blueprint?: ExamBlueprint | null,
+  savedPlan?: Pick<SavedPlan, "graph" | "settings"> | null,
 ): Promise<Map<string, string>> {
   if (!goal) {
     return new Map();
   }
 
   const [plan, notice] = await Promise.all([
-    prisma.plan.findUnique({ select: { graph: true }, where: { goalId: goal.id } }),
-    loadNotice(goal, blueprint),
+    savedPlan === undefined
+      ? prisma.plan.findUnique({ select: { graph: true }, where: { goalId: goal.id } })
+      : savedPlan,
+    loadNotice(goal, blueprint, savedPlan ? readExamChoices(savedPlan.settings) : undefined),
   ]);
 
   const graph = parsePlanGraph(plan?.graph);

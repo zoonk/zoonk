@@ -1,5 +1,6 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
+import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadSkillSubjects } from "../../view-models/syllabus/_utils/load-syllabus";
 import { readBlockPayload } from "../block-payload";
 import { getBlockSubject } from "./block-subject";
@@ -19,7 +20,7 @@ export async function loadBlockSubjects({
   blocks: readonly DayBlockInput[];
   /** The goal's exam blueprint when a GET already read it (see `loadNotice`). */
   blueprint?: ExamBlueprint | null;
-  goal: Pick<Goal, "examBlueprintId" | "id" | "kind"> | null;
+  goal: Pick<Goal, "examBlueprintId" | "id" | "kind" | "userId"> | null;
 }): Promise<Map<number, string>> {
   const payloads = blocks.map((block) => ({ block, payload: readBlockPayload(block) }));
 
@@ -29,14 +30,12 @@ export async function loadBlockSubjects({
 
   const chapterIds = [...new Set(payloads.flatMap(({ payload }) => payload.chapterId ?? []))];
 
-  const [skillSubjects, planItems, chapterSkills] = await Promise.all([
-    loadSkillSubjects(goal, blueprint),
-    planItemIds.length > 0
-      ? prisma.planItem.findMany({
-          select: { id: true, skillId: true },
-          where: { id: { in: planItemIds } },
-        })
-      : [],
+  // The blocks' labels are read for the learner's screens, from the request's plan.
+  const plan = goal ? await readSavedPlan(goal.userId, goal.id) : null;
+  const blockItemIds = new Set(planItemIds);
+
+  const [skillSubjects, chapterSkills] = await Promise.all([
+    loadSkillSubjects(goal, blueprint, plan),
     chapterIds.length > 0
       ? prisma.chapterSkill.findMany({
           select: { chapterId: true, skillId: true },
@@ -49,7 +48,11 @@ export async function loadBlockSubjects({
     return new Map();
   }
 
-  const planItemSkills = new Map(planItems.map((item) => [item.id, item.skillId]));
+  const planItemSkills = new Map(
+    (plan?.items ?? []).flatMap((item) =>
+      blockItemIds.has(item.id) ? [[item.id, item.skillId] as const] : [],
+    ),
+  );
 
   return new Map(
     payloads.flatMap(({ block, payload }) => {

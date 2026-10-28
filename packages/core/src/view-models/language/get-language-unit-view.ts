@@ -8,6 +8,7 @@ import { CEFR_BANDS } from "../../language/levels/skill-level-rules";
 import { findFreshMistakePattern } from "../../language/patterns/find-fresh-pattern";
 import { loadDuePronunciation } from "../../language/pronunciation/load-due-pronunciation";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
 import { loadTestOutPlan } from "../../learner/test-out/_utils/test-out-plan";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
@@ -89,7 +90,9 @@ export async function getLanguageUnitView({
   const goal = await findLearnerLanguageGoal({ goalId, targetLanguage, userId });
   const lessonIds = chapter.lessons.map(({ lesson }) => lesson.id);
 
-  const plan = goal ? await loadTestOutPlan(goal.id, { goal }) : null;
+  const plan = goal
+    ? await loadTestOutPlan(goal.id, { goal, source: readSavedPlan(userId, goal.id) })
+    : null;
 
   const [todayBlocks, level, grammarTips, words, mistakes, pronunciation, blockedTestOutChapters] =
     await Promise.all([

@@ -1,7 +1,7 @@
 import "server-only";
 import { type ExamBlueprint, type Goal, prisma } from "@zoonk/db";
 import { namesMatch } from "../../../exams/_utils/name-match";
-import { toChosenStructure } from "../../../exams/choices/exam-choices";
+import { type ExamChoice, toChosenStructure } from "../../../exams/choices/exam-choices";
 import { loadExamChoices } from "../../../exams/choices/load-exam-choices";
 import { getSubjectShare } from "../../../exams/map/exam-map";
 import { type ExamStructure } from "../../../library/exams/blueprint-contract";
@@ -56,12 +56,13 @@ function getWrittenTasks({
 /**
  * The exam's notice subjects (with their short names), when the goal is an exam with a blueprint:
  * the exam as the learner takes it, with only the options of its choices they picked, and its pass
- * marks in the goal's language when the reading translated them. A GET passes the blueprint it
- * already read; without one, it's read fresh.
+ * marks in the goal's language when the reading translated them. A GET passes the blueprint and
+ * the learner's picks it already read; without them, they're read fresh.
  */
 export async function loadNotice(
   goal: Pick<Goal, "examBlueprintId" | "id" | "kind"> & Partial<Pick<Goal, "details" | "language">>,
   knownBlueprint?: ExamBlueprint | null | Promise<ExamBlueprint | null>,
+  knownChoices?: readonly ExamChoice[],
 ): Promise<SyllabusInput["notice"]> {
   if (goal.kind !== "exam" || !goal.examBlueprintId) {
     return null;
@@ -71,7 +72,7 @@ export async function loadNotice(
     knownBlueprint === undefined
       ? prisma.examBlueprint.findUnique({ where: { id: goal.examBlueprintId } })
       : knownBlueprint,
-    loadExamChoices(goal.id),
+    knownChoices ?? loadExamChoices(goal.id),
   ]);
 
   if (!blueprint) {

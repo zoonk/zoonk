@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Plan, prisma } from "@zoonk/db";
 import {
   type GoalPlanItem,
   type GoalSkillNode,
@@ -41,13 +41,18 @@ function getItemSkillSections({
 export async function loadMeasuredSkills({
   goalId,
   readPlan,
+  savedPlan,
 }: {
   goalId: string;
   readPlan: PlanReader;
+  /** A page's saved plan (`readSavedPlan`), so it isn't read again. */
+  savedPlan?: Pick<Plan, "graph" | "settings"> | null;
 }) {
   const [plan, row] = await Promise.all([
     readPlan(goalId),
-    prisma.plan.findUnique({ select: { graph: true, settings: true }, where: { goalId } }),
+    savedPlan === undefined
+      ? prisma.plan.findUnique({ select: { graph: true, settings: true }, where: { goalId } })
+      : savedPlan,
   ]);
 
   const graph = parsePlanGraph(row?.graph);

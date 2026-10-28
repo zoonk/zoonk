@@ -1,12 +1,16 @@
 import "server-only";
 import { type Goal, prisma } from "@zoonk/db";
+import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { topicFrequencySchema } from "../../library/exams/blueprint-contract";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { getOftenTestedSkillIds } from "./often-tested";
 
-/** An exam goal's "often tested" skills, from its board's past papers; empty for other goals. */
+/**
+ * An exam goal's "often tested" skills, from its board's past papers; empty for other goals. Read
+ * for the learner's screens, from the request's plan.
+ */
 export async function loadOftenTestedSkillIds(
-  goal: Pick<Goal, "examBlueprintId" | "id" | "kind"> | null,
+  goal: Pick<Goal, "examBlueprintId" | "id" | "kind" | "userId"> | null,
 ): Promise<Set<string>> {
   if (!goal || goal.kind !== "exam" || !goal.examBlueprintId) {
     return new Set();
@@ -17,7 +21,7 @@ export async function loadOftenTestedSkillIds(
       select: { topicFrequency: true },
       where: { id: goal.examBlueprintId },
     }),
-    prisma.plan.findUnique({ select: { graph: true }, where: { goalId: goal.id } }),
+    readSavedPlan(goal.userId, goal.id),
   ]);
 
   return getOftenTestedSkillIds({

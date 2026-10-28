@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { type Plan, prisma } from "@zoonk/db";
 import { type ClaimEvent } from "../../learner/_utils/skill-claims";
 import { loadSkillPrerequisites } from "../../library/skills/skill-prerequisites";
 import { listPassedOver } from "../planner/graph-areas";
@@ -15,15 +15,21 @@ import { parsePlanChangePayload } from "./plan-change-payload";
  */
 export async function loadPassedOverClaims({
   goalId,
+  known,
   skillIds,
 }: {
   goalId: string;
+  /** The saved plan a GET already read, so it isn't read again. */
+  known?: Pick<Plan, "createdAt" | "graph" | "id" | "settings"> | null;
   skillIds: ReadonlySet<string>;
 }): Promise<ClaimEvent[]> {
-  const plan = await prisma.plan.findUnique({
-    select: { createdAt: true, graph: true, id: true, settings: true },
-    where: { goalId },
-  });
+  const plan =
+    known === undefined
+      ? await prisma.plan.findUnique({
+          select: { createdAt: true, graph: true, id: true, settings: true },
+          where: { goalId },
+        })
+      : known;
 
   const graph = parsePlanGraph(plan?.graph);
   const settings = parsePlanSettings(plan?.settings);

@@ -1,5 +1,5 @@
 import "server-only";
-import { type Goal, type LearnerSkill, prisma } from "@zoonk/db";
+import { type Goal, type LearnerSkill, type Plan, type Subscription, prisma } from "@zoonk/db";
 import { getDateInTimeZone, isValidTimeZone } from "@zoonk/utils/time-zone";
 import { findActiveSubscription } from "../../auth/subscription";
 import { CHECKPOINT_LEDGER_KINDS } from "../../checkpoints/_utils/checkpoint-results";
@@ -158,21 +158,25 @@ type TestGoal = Pick<Goal, "createdAt" | "kind" | "timezone">;
 async function loadGoalTest({
   goal,
   now,
+  subscription,
   userId,
 }: {
   goal: TestGoal | null;
   now: Date;
+  subscription?: Subscription | null;
   userId: string;
 }): Promise<GoalTest> {
   if (goal?.kind !== "exam") {
     return { kind: "weeklyChallenges", mocksOnly: false, plusRequired: false };
   }
 
-  const subscription = await findActiveSubscription(userId);
+  const subscribed =
+    subscription === undefined ? await findActiveSubscription(userId) : subscription;
+
   const timeZone = goal.timezone && isValidTimeZone(goal.timezone) ? goal.timezone : "UTC";
 
   const access = getExamPrepAccess({
-    examPrep: getTierExamPrep(subscription ? "plus" : "free"),
+    examPrep: getTierExamPrep(subscribed ? "plus" : "free"),
     goal,
     timeZone,
     today: getDateInTimeZone({ date: now, timeZone }),
@@ -263,11 +267,13 @@ async function loadGoalWithTest({
   goal: providedGoal,
   goalId,
   now,
+  subscription,
   userId,
 }: {
   goal?: PreparationGoal;
   goalId: string;
   now: Date;
+  subscription?: Subscription | null;
   userId: string;
 }) {
   const goal =
@@ -277,7 +283,7 @@ async function loadGoalWithTest({
       where: { id: goalId },
     }));
 
-  return { goal, test: await loadGoalTest({ goal, now, userId }) };
+  return { goal, test: await loadGoalTest({ goal, now, subscription, userId }) };
 }
 
 /**
@@ -291,6 +297,8 @@ export async function loadPreparationInputs({
   goalId,
   now,
   readPlan = loadGoalPlan,
+  savedPlan,
+  subscription,
   userId,
 }: {
   /** Reuse a caller's already owned row; this does not authorize the read. */
@@ -299,6 +307,10 @@ export async function loadPreparationInputs({
   now: Date;
   /** How the goal's skills are read: a page's reads pass `readGoalPlan`, loaded once per request. */
   readPlan?: PlanReader;
+  /** A page's saved plan (`readSavedPlan`), so its graph and settings aren't read again. */
+  savedPlan?: Pick<Plan, "graph" | "settings"> | null;
+  /** A page's subscription (`readActiveSubscription`); writes check it fresh. */
+  subscription?: Subscription | null;
   userId: string;
 }) {
   // The goal's test needs only the goal, so it's read while the goal's skills load.
@@ -306,8 +318,8 @@ export async function loadPreparationInputs({
     { choices, fullCourse, graph, plan, skills: measured, survivorOf },
     { goal: measuredGoal, test },
   ] = await Promise.all([
-    loadMeasuredSkills({ goalId, readPlan }),
-    loadGoalWithTest({ goal, goalId, now, userId }),
+    loadMeasuredSkills({ goalId, readPlan, savedPlan }),
+    loadGoalWithTest({ goal, goalId, now, subscription, userId }),
   ]);
 
   const evidenceIds = [...new Set(measured.flatMap((skill) => skill.memberSkillIds))];

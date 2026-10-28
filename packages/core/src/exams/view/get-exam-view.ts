@@ -7,21 +7,23 @@ import { getAllowance } from "../../entitlements/get-allowance";
 import { readLiveCallAdmission } from "../../language/conversations/_utils/live-call-policy";
 import { loadSpeakingPaper } from "../../language/exam-speaking/_utils/exam-speaking-setup";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
+import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { readExamBlueprint } from "../../learner/facts/exam-blueprint";
 import { getRequestInstant } from "../../learner/facts/request-instant";
+import { type SavedPlan, readSavedPlan } from "../../learner/facts/saved-plan";
+import { readActiveSubscription } from "../../learner/facts/subscription";
 import { type ExamStructure } from "../../library/exams/blueprint-contract";
 import { type PassMarks, getPassMarks } from "../../library/exams/pass-marks";
 import { readBlueprintContent } from "../../library/exams/save-exam-blueprint";
 import { getDayBeforePlan, loadShortPlanDay } from "../../plans/_utils/load-short-plan-day";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
-import { parsePlanSettings } from "../../plans/planner/plan-state";
+import { parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
 import { loadPreparationInputs } from "../../preparation/_utils/load-preparation-inputs";
 import { getExamPrepAccess } from "../../sessions/_utils/exam-access";
 import { resolveViewGoal } from "../../view-models/_utils/resolve-view-goal";
 import { getExamCalendar, toExamDates } from "../_utils/exam-calendar";
 import { type NoticeDates, loadNoticeDates } from "../_utils/notice-day";
-import { toChosenStructure } from "../choices/exam-choices";
-import { loadExamChoices } from "../choices/load-exam-choices";
+import { readExamChoices, toChosenStructure } from "../choices/exam-choices";
 import { loadTargetCutoff } from "../cutoffs/load-target-cutoff";
 import { loadGoalScoreEstimate } from "../estimates/load-goal-estimate";
 import { getExamDocument } from "../exam-document";
@@ -29,8 +31,8 @@ import {
   getDaysToExam,
   getExamDayChecklist,
   getExamStage,
+  getFinalStretchStart,
 } from "../final-stretch/final-stretch-rules";
-import { loadFinalStretchStart } from "../final-stretch/load-final-stretch-start";
 import { getSpeakingMockExam } from "../language-exam";
 import { type ExamMap, buildExamMap } from "../map/exam-map";
 import { loadSkillAreas } from "../mocks/_utils/mock-candidates";
@@ -51,10 +53,12 @@ export type ExamViewResult =
 async function loadMap({
   blueprint,
   goalId,
+  plan,
   userId,
 }: {
   blueprint: ExamBlueprint | null;
   goalId: string;
+  plan: SavedPlan | null;
   userId: string;
 }): Promise<ExamMap | null> {
   if (!blueprint) {
@@ -62,7 +66,8 @@ async function loadMap({
   }
 
   const content = readBlueprintContent(blueprint);
-  const [areas, choices] = await Promise.all([loadSkillAreas(goalId), loadExamChoices(goalId)]);
+  const areas = await loadSkillAreas(goalId, plan ?? undefined);
+  const choices = readExamChoices(plan?.settings);
 
   const learnerSkills = await prisma.learnerSkill.findMany({
     select: { skillId: true, state: true },
@@ -83,20 +88,17 @@ async function loadMap({
  * The notice's exam day when the plan counts down to another, read against the day the plan took
  * from the notice, so the page offers it as Today does, or that the learner's month has no sitting.
  */
-async function loadExamNoticeDates({
+function loadExamNoticeDates({
   blueprint,
   goal,
+  plan,
   today,
 }: {
   blueprint: ExamBlueprint | null;
   goal: Pick<Goal, "details" | "examBlueprintId" | "id" | "kind" | "targetDate">;
+  plan: SavedPlan | null;
   today: Date;
 }): Promise<NoticeDates> {
-  const plan = await prisma.plan.findUnique({
-    select: { settings: true },
-    where: { goalId: goal.id },
-  });
-
   return loadNoticeDates({
     blueprint,
     goal,
@@ -213,9 +215,11 @@ export async function getExamView({
     return { status: "notExam" };
   }
 
-  const [blueprint, now] = await Promise.all([
+  const [blueprint, now, plan, subscription] = await Promise.all([
     goal.examBlueprintId ? readExamBlueprint(goal.examBlueprintId) : null,
     getRequestInstant(),
+    readSavedPlan(userId, goalId),
+    readActiveSubscription(userId),
   ]);
 
   const calendar = getExamCalendar({ blueprint, goal });
@@ -225,7 +229,14 @@ export async function getExamView({
   const scale = getExamScale({ blueprint, goal });
 
   const [inputs, allowance] = await Promise.all([
-    loadPreparationInputs({ goalId, now, userId }),
+    loadPreparationInputs({
+      goalId,
+      now,
+      readPlan: readGoalPlan,
+      savedPlan: plan,
+      subscription,
+      userId,
+    }),
     getAllowance(),
   ]);
 
@@ -243,7 +254,6 @@ export async function getExamView({
     estimate,
     result,
     shortPlan,
-    finalStretchStart,
     nextMock,
     running,
     cutoff,
@@ -251,22 +261,23 @@ export async function getExamView({
     speaking,
     admission,
   ] = await Promise.all([
-    loadMap({ blueprint, goalId, userId }),
+    loadMap({ blueprint, goalId, plan, userId }),
     loadExamHistory({ goalId, today }),
     loadGoalScoreEstimate({ blueprint, goal, ledgerMocks: inputs.mockResults }),
     prisma.examResult.findUnique({ where: { goalId } }),
-    loadShortPlanDay({ goal, today }),
-    loadFinalStretchStart(goalId),
+    plan ? loadShortPlanDay({ goal, source: plan, today }) : null,
     loadNextMock({ blueprint, goal, today }),
     loadRunningMocks({ goalId, userId }),
     loadTargetCutoff({ blueprint, details: goal.details, examBlueprintId: goal.examBlueprintId }),
-    loadExamNoticeDates({ blueprint, goal, today }),
+    loadExamNoticeDates({ blueprint, goal, plan, today }),
     loadSpeakingPaper({
       access: includesMockExams ? "open" : "plusRequired",
       goal: { ...goal, examBlueprint: blueprint },
     }),
     readLiveCallAdmission({ transaction: prisma, userId }),
   ]);
+
+  const finalStretchStart = getFinalStretchStart(parsePlanPhases(plan?.phases));
 
   return {
     exam: {

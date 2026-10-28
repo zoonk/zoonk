@@ -1,5 +1,6 @@
 import "server-only";
-import { type Goal, prisma } from "@zoonk/db";
+import { type Goal } from "@zoonk/db";
+import { readSavedPlan } from "../../../learner/facts/saved-plan";
 import { findMockFundingOn } from "../../../plans/planner/mock-funding";
 import { parsePlanSettings } from "../../../plans/planner/plan-state";
 
@@ -24,10 +25,7 @@ export async function loadDayMockFunding({
     });
   }
 
-  const plan = await prisma.plan.findUnique({
-    select: { settings: true },
-    where: { goalId: goal.id },
-  });
+  const plan = await readSavedPlan(goal.userId, goal.id);
 
   return plan
     ? findMockFundingOn({ date: localDate, funding: parsePlanSettings(plan.settings).mockFunding })

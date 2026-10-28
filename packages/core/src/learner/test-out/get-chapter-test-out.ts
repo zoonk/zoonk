@@ -5,6 +5,7 @@ import { ITEM_IMAGE_INCLUDE } from "../../library/items/item-image";
 import { loadExamStructure } from "../../sessions/_utils/exam-structure";
 import { type QuestionView, parseChoiceItem, toQuestionView } from "../_utils/choice-items";
 import { findOwnedGoal } from "../_utils/owned-goal";
+import { readSavedPlan } from "../facts/saved-plan";
 import { pickPlacementItem } from "../placement/placement-item-choice";
 import { countSkippableItems, getChapterSkills, loadSkillItems } from "./_utils/chapter-items";
 import { isTestOutPlusOnly } from "./_utils/test-out-access";
@@ -90,7 +91,7 @@ export async function loadChapterTestOut({
   goal: Pick<Goal, "createdAt" | "examBlueprintId" | "id" | "kind" | "timezone">;
   userId: string;
 }): Promise<Exclude<ChapterTestOutResult, { status: "unauthorized" }>> {
-  const plan = await loadTestOutPlan(goal.id, { goal });
+  const plan = await loadTestOutPlan(goal.id, { goal, source: readSavedPlan(userId, goal.id) });
   const chapterSkills = getChapterSkills({ chapterId, plan });
 
   if (chapterSkills.length === 0) {

@@ -118,15 +118,6 @@ function toMemberEntries({
   });
 }
 
-/** Plan items may still point at a merged skill; the learner's state lives on the survivor. */
-export async function toSurvivingSkills(
-  entries: readonly SkillEntry[],
-  tx: TransactionClient = prisma,
-): Promise<SkillEntry[]> {
-  const survivorOf = await loadSkillSurvivors(unique(entries.map((entry) => entry.skillId)), tx);
-  return entries.map((entry) => ({ ...entry, skillId: survivorOf(entry.skillId) }));
-}
-
 async function loadAreaTitles({
   entries,
   items,
@@ -206,7 +197,7 @@ type PlanRead = {
  * The raw teaching entries and rows shared by the full skill projection and test-out eligibility.
  * Null without a plan; a plan whose items lost every skill falls back to its skill graph's.
  */
-export async function loadPlanEntryRows({ goalId, source, withLeftOut, tx = prisma }: PlanRead) {
+async function loadPlanEntryRows({ goalId, source, withLeftOut, tx = prisma }: PlanRead) {
   const plan = source ?? (await loadSavedGoalPlanSource(goalId, tx));
 
   if (!plan) {
@@ -225,7 +216,11 @@ export async function loadPlanEntryRows({ goalId, source, withLeftOut, tx = pris
   return { allEntries: [...planned, ...leftOut], itemSkills, plan };
 }
 
-async function loadPlanEntries(input: PlanRead) {
+/**
+ * The plan's teaching entries with merged skills resolved to their survivors, and each goal skill's
+ * finer member skills: what the full projection (`loadPlan`) and test-outs build on.
+ */
+export async function loadPlanEntries(input: PlanRead) {
   const loaded = await loadPlanEntryRows(input);
 
   if (!loaded) {
@@ -350,28 +345,6 @@ export function getSkillOwners(
       .flatMap((skill) => skill.memberSkillIds.map((id): [string, string] => [id, skill.id])),
     ...skills.map((skill): [string, string] => [skill.id, skill.id]),
   ]);
-}
-
-/**
- * Which goal skill each answered skill counts for (`getSkillOwners` of the goal's plan), with the
- * plan's raw skill graph: all the mistakes notebook needs of the plan, without the titles,
- * prerequisites and bands its screens read. Empty without a plan.
- */
-export async function loadGoalSkillScope(
-  goalId: string,
-): Promise<{ graph: unknown; ownerOf: Map<string, string> }> {
-  const loaded = await loadPlanEntries({ goalId, withLeftOut: false });
-
-  if (!loaded) {
-    return { graph: null, ownerOf: new Map() };
-  }
-
-  const skills = loaded.entries.map((entry) => ({
-    id: entry.skillId,
-    memberSkillIds: toMemberSkillIds(entry.skillId, loaded.membersOf),
-  }));
-
-  return { graph: loaded.plan.graph, ownerOf: getSkillOwners(skills) };
 }
 
 /** The skills a goal's plan covers: what preparation, sessions and the plan's screens measure. */

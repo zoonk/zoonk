@@ -66,17 +66,6 @@ export type PlanStatusItem = Pick<
   "chapterId" | "kind" | "lessonId" | "lessons" | "scheduledFor" | "skillId" | "status"
 >;
 
-/** The plan item fields `PlanStatusItem` reads, for a Prisma select. */
-export const PLAN_STATUS_ITEM_SELECT = {
-  chapterId: true,
-  kind: true,
-  lessonId: true,
-  lessons: true,
-  scheduledFor: true,
-  skillId: true,
-  status: true,
-} as const;
-
 /** "10 more minutes a day for 4 days" fixes a small delay; more than a week of that doesn't. */
 const CATCH_UP_EXTRA_MINUTES = 10;
 const MAX_CATCH_UP_DAYS = 7;
