@@ -409,6 +409,67 @@ final class MusicActivitiesTests: XCTestCase {
     XCTAssertEqual(Array(frets.prefix(4)), ["2", "2", "3", "0"])
   }
 
+  func testReadsPastBrokenLengthsAndTupletsWithoutCrashing() {
+    let zeroTuplet = ABCTune(notation: "K:C\n(3:2:0C D E")
+    XCTAssertEqual(zeroTuplet.outline[0], [60, 62, 64])
+    XCTAssertNil(zeroTuplet.bars[0].elements[0].tuplet)
+    XCTAssertGreaterThan(
+      NotationDrawing(tune: zeroTuplet, width: 330, space: 8, tabSpace: nil, textHeight: 16).height,
+      0)
+
+    let zeroDivisor = ABCTune(notation: "K:C\nC/0 D")
+    XCTAssertTrue(zeroDivisor.bars[0].elements.allSatisfy { $0.sounding.isFinite })
+    XCTAssertTrue(NotationPlayback.schedule(zeroDivisor, bpm: 80).length.isFinite)
+  }
+
+  func testTiesEachNoteOfAChordOnItsOwn() {
+    let tune = ABCTune(notation: "M:4/4\nL:1/4\nK:C\n[C-EG] [CFA] |")
+    let sounds = NotationPlayback.schedule(tune, bpm: 60).sounds
+
+    // At 60 bpm a quarter lasts a second: C rings two, F and A are struck on the second beat.
+    XCTAssertEqual(sounds.filter { $0.midi == 60 }.map(\.duration), [2])
+    XCTAssertEqual(sounds.filter { $0.at == 1 }.map(\.midi).sorted(), [65, 69])
+    XCTAssertEqual(tune.outline[0], [60, 64, 67, 65, 69])
+  }
+
+  func testGivesAChordsNotesTheirOwnTabStrings() {
+    let tune = ABCTune(notation: "K:C\n[DE]")
+    let frets = NotationDrawing(tune: tune, width: 330, space: 8, tabSpace: 13, textHeight: 16)
+      .items
+      .compactMap { item -> String? in
+        if case .text(let text, _, .tabFret) = item.mark { text } else { nil }
+      }
+
+    // E4 on the D string's second fret, D4 on the A string's fifth.
+    XCTAssertEqual(frets, ["2", "5"])
+  }
+
+  func testRestsForEveryBarOfAMultibarRestAndChangesKeyWhereItSays() {
+    let rests = ABCTune(notation: "M:4/4\nK:C\nC | Z2 | D |")
+    XCTAssertEqual(rests.bars[1].elements[0].sounding, 2)
+
+    let change = ABCTune(notation: "K:C\nF | [K:G] F | F |")
+    XCTAssertEqual(change.fifths, 0)
+    XCTAssertEqual(change.bars[1].fifths, 1)
+    XCTAssertEqual(change.outline, [[65], [66], [66]])
+    XCTAssertGreaterThan(
+      NotationDrawing(tune: change, width: 700, space: 8, tabSpace: nil, textHeight: 16).height, 0)
+  }
+
+  @MainActor
+  func testLetsGoOfTheSoundOnceClosed() {
+    weak var released: MusicAudio?
+
+    do {
+      let audio = MusicAudio()
+      audio.onInterruption = { audio.stop() }
+      released = audio
+      audio.close()
+    }
+
+    XCTAssertNil(released)
+  }
+
   // MARK: - Sound
 
   func testSynthesizesPianoAndGuitarAtTheirPitch() throws {

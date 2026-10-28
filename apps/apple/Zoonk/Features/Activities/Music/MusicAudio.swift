@@ -117,6 +117,8 @@ final class MusicAudio {
 
   /// Stops and releases the engine and gives the audio back to other apps.
   func close() {
+    // The screen's handler holds what it stops (often this object): letting go breaks the loop.
+    onInterruption = nil
     idleTask?.cancel()
     idleTask = nil
 
@@ -307,9 +309,13 @@ final class MusicRenderer: @unchecked Sendable {
   }
 
   private static let voiceCount = 32
+  /// A written length past this rings no longer: no sound decays slower.
+  private static let longestNote = 30.0
   private static let partials = 6
   private static let delayLength = 2048
-  private static let pendingCapacity = 512
+  /// Room for every note of the longest melody core accepts (1,000 characters, played twice
+  /// through its repeats) before any of it sounds.
+  private static let pendingCapacity = 4096
   private static let pianoPartials: [Double] = [1, 0.45, 0.25, 0.14, 0.08, 0.05]
 
   private let sampleRate: Double
@@ -488,12 +494,12 @@ final class MusicRenderer: @unchecked Sendable {
     switch event.voice {
     case .piano:
       voice.gain = 0.22
-      voice.length = Int(event.duration * sampleRate)
+      voice.length = Int(min(event.duration, Self.longestNote) * sampleRate)
       voice.releaseFrames = Int(0.3 * sampleRate)
       startPiano(slot, frequency: voice.frequency)
     case .guitar:
       voice.gain = 0.5
-      voice.length = Int(event.duration * sampleRate)
+      voice.length = Int(min(event.duration, Self.longestNote) * sampleRate)
       voice.releaseFrames = Int(0.25 * sampleRate)
       startString(&voice, slot: slot)
     case .click:

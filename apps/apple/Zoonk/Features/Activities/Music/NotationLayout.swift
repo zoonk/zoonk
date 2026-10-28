@@ -50,6 +50,9 @@ private struct NotationLayout {
   let tabSpace: CGFloat?
   let textHeight: CGFloat
 
+  /// The key signature in force: the tune's, until a bar changes it.
+  private var fifths: Int
+
   private var items: [NotationDrawing.Item] = []
   private var scale: CGFloat { space / MusicGlyph.staffSpace }
   private var stemWidth: CGFloat { max(space * 0.12, 1) }
@@ -67,6 +70,7 @@ private struct NotationLayout {
     self.space = space
     self.tabSpace = tabSpace
     self.textHeight = textHeight
+    fifths = tune.fifths
   }
 
   // MARK: - Lines
@@ -157,6 +161,7 @@ private struct NotationLayout {
   private func idealWidth(of bar: Int) -> CGFloat {
     tune.bars[bar].elements.reduce(space * 1.6) { $0 + elementWidth($1) }
       + (tune.bars[bar].startsRepeat ? space * 1.5 : 0)
+      + (tune.bars[bar].fifths.map { CGFloat(abs($0)) * space * 1.05 + space * 1.1 } ?? 0)
   }
 
   /// Draws one line and returns how much it stretched its bars: full lines fill the width, and
@@ -164,6 +169,10 @@ private struct NotationLayout {
   private mutating func drawLine(_ bars: [Int], isFirst: Bool, isLast: Bool, previous: CGFloat?)
     -> CGFloat
   {
+    if let first = bars.first, let change = tune.bars[first].fifths {
+      fifths = change
+    }
+
     var x = drawHeader(isFirst: isFirst)
     let natural = bars.reduce(0) { $0 + idealWidth(of: $1) }
     let fill = (width - x) / max(natural, 1)
@@ -177,7 +186,7 @@ private struct NotationLayout {
       }
 
     for bar in bars {
-      x = drawBar(bar, from: x, stretch: stretch)
+      x = drawBar(bar, from: x, stretch: stretch, startsLine: bar == bars.first)
     }
 
     drawStaff(to: x)
@@ -238,27 +247,29 @@ private struct NotationLayout {
       glyph(.bassClef, x: x, y: y(6))
     }
 
-    x = space * 3.4
-
-    let sharps = [8, 5, 9, 6, 3, 7, 4]
-    let flats = [4, 7, 3, 6, 2, 5, 1]
-    let offset = tune.clef == .treble ? 0 : -2
-
-    for index in 0..<abs(tune.fifths) {
-      let position = (tune.fifths > 0 ? sharps : flats)[index] + offset
-      glyph(tune.fifths > 0 ? .sharp : .flat, x: x, y: y(position))
-      x += space * 1.05
-    }
-
-    if tune.fifths != 0 {
-      x += space * 0.6
-    }
+    x = drawKeySignature(at: space * 3.4)
 
     if isFirst {
       x = drawMeter(at: x)
     }
 
     return x
+  }
+
+  /// The sharps or flats of the key in force, on their lines; returns where the music goes on.
+  private mutating func drawKeySignature(at start: CGFloat) -> CGFloat {
+    let sharps = [8, 5, 9, 6, 3, 7, 4]
+    let flats = [4, 7, 3, 6, 2, 5, 1]
+    let offset = tune.clef == .treble ? 0 : -2
+    var x = start
+
+    for index in 0..<abs(fifths) {
+      let position = (fifths > 0 ? sharps : flats)[index] + offset
+      glyph(fifths > 0 ? .sharp : .flat, x: x, y: y(position))
+      x += space * 1.05
+    }
+
+    return fifths == 0 ? x : x + space * 0.6
   }
 
   private mutating func drawMeter(at start: CGFloat) -> CGFloat {
@@ -309,9 +320,18 @@ private struct NotationLayout {
     let headWidth: CGFloat
   }
 
-  private mutating func drawBar(_ bar: Int, from start: CGFloat, stretch: CGFloat) -> CGFloat {
+  private mutating func drawBar(_ bar: Int, from start: CGFloat, stretch: CGFloat, startsLine: Bool)
+    -> CGFloat
+  {
     let data = tune.bars[bar]
     var x = start
+
+    // A key change mid-line shows its new signature where it starts; at a line's start the
+    // header already shows it.
+    if let change = data.fifths, !startsLine {
+      fifths = change
+      x = drawKeySignature(at: x + space * 0.5)
+    }
 
     if data.startsRepeat {
       add(.fill(Path(CGRect(x: x + space * 0.2, y: 0, width: space * 0.45, height: space * 4))))
@@ -457,16 +477,16 @@ private struct NotationLayout {
         add(.text("\(tuplet.number)", at: CGPoint(x: centerX, y: edge), kind: .tupletNumber))
       }
 
-      if item.element.isTied {
-        // A tie over the bar line reaches it; the next bar's note carries on the sound.
+      // A tie over the bar line reaches it; the next bar's note carries on the sound.
+      for pitch in item.element.pitches where pitch.isTied {
         drawTie(
-          from: item,
+          from: item, pitch: pitch,
           toX: index + 1 < placed.count ? placed[index + 1].x - space * 0.2 : barEnd - space * 0.3)
       }
     }
 
     if tabSpace != nil {
-      for item in placed where !item.element.isRest && !item.element.continuesTie {
+      for item in placed where !item.element.isRest {
         drawTab(item)
       }
     }
@@ -765,11 +785,7 @@ private struct NotationLayout {
     add(.fill(path))
   }
 
-  private mutating func drawTie(from start: Placed, toX: CGFloat) {
-    guard let pitch = start.element.pitches.first else {
-      return
-    }
-
+  private mutating func drawTie(from start: Placed, pitch: ABCTune.Pitch, toX: CGFloat) {
     let up = stemsUp([start.element])
     let noteY = y(position(of: pitch.step))
     let direction: CGFloat = up ? 1 : -1
@@ -785,17 +801,25 @@ private struct NotationLayout {
 
   // MARK: - Tab
 
-  /// Each note's fret on the highest string that reaches it, as abcjs's guitar tab picks them.
-  /// The guitar reads an octave above how it sounds, so the strings are E3 A3 D4 G4 B4 E5 here.
+  /// Each note's fret on the highest string that reaches it, as abcjs's guitar tab picks them;
+  /// a chord's notes take one string each, the highest note first. A note a tie holds isn't
+  /// played again. The guitar reads an octave above how it sounds, so the strings are E3 A3 D4
+  /// G4 B4 E5 here.
   private mutating func drawTab(_ item: Placed) {
     guard let tabSpace else {
       return
     }
 
     let strings = [52, 57, 62, 67, 71, 76]
+    var used = Set<Int>()
 
-    for pitch in item.element.pitches {
-      let string = strings.lastIndex { $0 <= pitch.midi }
+    for pitch in item.element.pitches.sorted(by: { $0.midi > $1.midi }) where !pitch.continuesTie {
+      let string = strings.indices.last { strings[$0] <= pitch.midi && !used.contains($0) }
+
+      if let string {
+        used.insert(string)
+      }
+
       let fret = string.map { String(pitch.midi - strings[$0]) } ?? "?"
       let row = string.map { strings.count - 1 - $0 } ?? strings.count - 1
       let point = CGPoint(x: item.x + item.headWidth / 2, y: tabTop + CGFloat(row) * tabSpace)

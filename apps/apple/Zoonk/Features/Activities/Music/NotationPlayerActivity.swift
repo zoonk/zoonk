@@ -102,18 +102,22 @@ final class NotationPlayback {
     for (index, (id, element)) in played.enumerated() {
       events.append(Event(element: id, start: time))
 
-      if !element.isRest, !element.continuesTie {
+      for pitch in element.pitches where !pitch.continuesTie {
         var length = element.sounding
         var next = index
+        var isTied = pitch.isTied
 
-        while played[next].1.isTied, next + 1 < played.count, played[next + 1].1.continuesTie {
+        while isTied, next + 1 < played.count,
+          let held = played[next + 1].1.pitches.first(where: {
+            $0.midi == pitch.midi && $0.continuesTie
+          })
+        {
           next += 1
           length += played[next].1.sounding
+          isTied = held.isTied
         }
 
-        for pitch in element.pitches {
-          sounds.append(MusicSound(at: time, midi: pitch.midi, duration: length * secondsPerWhole))
-        }
+        sounds.append(MusicSound(at: time, midi: pitch.midi, duration: length * secondsPerWhole))
       }
 
       time += element.sounding * secondsPerWhole

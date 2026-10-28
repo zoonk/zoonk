@@ -57,6 +57,10 @@ struct ABCTune: Hashable, Sendable {
     let midi: Int
     /// The accidental written before it; one from the key or an earlier note isn't drawn.
     let accidental: Accidental?
+    /// Tied to the same note in the next chord or note, which rings on instead of being struck.
+    var isTied = false
+    /// Rings on from the previous note's tie: no new sound.
+    var continuesTie = false
   }
 
   struct Element: Hashable, Sendable {
@@ -69,20 +73,21 @@ struct ABCTune: Hashable, Sendable {
     var isInvisible = false
     /// A space before it: its beam doesn't join the previous note's.
     var breaksBeam = false
-    /// Tied to the next note, which then rings on instead of being struck again.
-    var isTied = false
-    /// Struck as part of the previous note's tie: no new sound.
-    var continuesTie = false
     var chordSymbol: String?
     /// The number over a tuplet, on its first note, with how many notes it spans.
     var tuplet: (number: Int, count: Int)?
 
     var isRest: Bool { pitches.isEmpty }
 
+    /// Some of its notes are tied to the next note or chord.
+    var isTied: Bool { pitches.contains(where: \.isTied) }
+
+    /// Every note rings on from a tie: nothing new is struck.
+    var continuesTie: Bool { !pitches.isEmpty && pitches.allSatisfy(\.continuesTie) }
+
     static func == (lhs: Element, rhs: Element) -> Bool {
       lhs.pitches == rhs.pitches && lhs.written == rhs.written && lhs.sounding == rhs.sounding
         && lhs.isInvisible == rhs.isInvisible && lhs.breaksBeam == rhs.breaksBeam
-        && lhs.isTied == rhs.isTied && lhs.continuesTie == rhs.continuesTie
         && lhs.chordSymbol == rhs.chordSymbol && lhs.tuplet?.number == rhs.tuplet?.number
         && lhs.tuplet?.count == rhs.tuplet?.count
     }
@@ -106,6 +111,8 @@ struct ABCTune: Hashable, Sendable {
     /// A first or second ending: played only on that pass through the repeat.
     var ending: Int?
     var end = BarLine.none
+    /// A new key signature from this bar on (sharps positive, flats negative).
+    var fifths: Int?
   }
 
   var title: String?
@@ -184,7 +191,7 @@ extension ABCTune {
     let lastWithNotes = bars.lastIndex { !$0.elements.isEmpty } ?? -1
 
     return bars.prefix(lastWithNotes + 1).map { bar in
-      bar.elements.filter { !$0.continuesTie }.flatMap { $0.pitches.map(\.midi) }
+      bar.elements.flatMap { $0.pitches.filter { !$0.continuesTie }.map(\.midi) }
     }
   }
 }
@@ -217,7 +224,8 @@ private struct ABCReader {
   private var chordSymbol: String?
   private var tuplet: (number: Int, count: Int, left: Int, factor: Double)?
   private var broken: Double?
-  private var tieNext = false
+  /// The notes the last note or chord tied over to the next one.
+  private var tiedMidis = Set<Int>()
   private var inBody = false
   private var voices = 0
 
@@ -258,9 +266,15 @@ private struct ABCReader {
     return (characters[0], String(characters.dropFirst(2)).trimmingCharacters(in: .whitespaces))
   }
 
+  /// Whether notes were read yet: later key and meter fields change only what follows.
+  private var hasMusic: Bool {
+    !tune.bars.isEmpty || !bar.elements.isEmpty
+  }
+
   private mutating func readField(_ field: Character, _ value: String) {
     switch field {
-    case "M":
+    case "M" where !hasMusic:
+      // The tune keeps its first meter: its beat sets the tempo of the whole melody.
       tune.meter = Self.meter(value)
     case "L":
       unitLength = Self.fraction(value)
@@ -347,23 +361,30 @@ private struct ABCReader {
     for word in rest {
       let lowered = word.lowercased()
 
-      if lowered == "bass" || lowered == "clef=bass" || lowered.hasPrefix("clef=bass") {
-        tune.clef = .bass
+      if lowered == "bass" || lowered.hasPrefix("clef=bass") {
+        tune.clef = hasMusic ? tune.clef : .bass
       } else if lowered == "treble" || lowered.hasPrefix("clef=treble") {
-        tune.clef = .treble
+        tune.clef = hasMusic ? tune.clef : .treble
       } else if let accidental = Self.explicitAccidental(word) {
         extras[accidental.letter] = accidental.semitones
       }
     }
 
-    tune.fifths = min(max(fifths, -7), 7)
+    let signature = min(max(fifths, -7), 7)
+
+    if hasMusic {
+      bar.fifths = signature
+    } else {
+      tune.fifths = signature
+    }
+
     keyAccidentals = [:]
 
-    for letter in Array("FCGDAEB").prefix(max(tune.fifths, 0)) {
+    for letter in Array("FCGDAEB").prefix(max(signature, 0)) {
       keyAccidentals[letter] = 1
     }
 
-    for letter in Array("BEADGCF").prefix(max(-tune.fifths, 0)) {
+    for letter in Array("BEADGCF").prefix(max(-signature, 0)) {
       keyAccidentals[letter] = -1
     }
 
@@ -421,9 +442,12 @@ private struct ABCReader {
       case "(":
         index = readTuplet(characters, from: index)
       case "-":
-        if !bar.elements.isEmpty {
-          bar.elements[bar.elements.count - 1].isTied = true
-          tieNext = true
+        if let last = bar.elements.indices.last {
+          for pitch in bar.elements[last].pitches.indices {
+            bar.elements[last].pitches[pitch].isTied = true
+          }
+
+          tiedMidis = Set(bar.elements[last].pitches.map(\.midi))
         }
 
         index += 1
@@ -486,7 +510,9 @@ private struct ABCReader {
       index += 1
     }
 
-    guard let notes = numbers.first ?? nil, notes > 1 else {
+    guard let notes = numbers.first ?? nil, notes > 1,
+      (numbers.dropFirst().compactMap { $0 }).allSatisfy({ $0 > 0 })
+    else {
       return index
     }
 
@@ -619,10 +645,17 @@ private struct ABCReader {
     var firstLength: Double?
 
     while index < characters.count, characters[index] != "]" {
-      if let (pitch, length, end) = readPitch(characters, from: index) {
+      if let (parsed, length, end) = readPitch(characters, from: index) {
+        var pitch = parsed
+        index = end
+
+        if index < characters.count, characters[index] == "-" {
+          pitch.isTied = true
+          index += 1
+        }
+
         pitches.append(pitch)
         firstLength = firstLength ?? length
-        index = end
       } else {
         index += 1
       }
@@ -638,7 +671,7 @@ private struct ABCReader {
     let symbol = characters[start]
     let (multiplier, end) = Self.length(characters, from: start + 1)
     let barLength = Double(tune.meter.fraction.num) / Double(tune.meter.fraction.den)
-    let length = symbol == "Z" || symbol == "X" ? barLength / unit : multiplier
+    let length = symbol == "Z" || symbol == "X" ? barLength / unit * multiplier : multiplier
 
     addElement(pitches: [], length: length, isInvisible: symbol == "x" || symbol == "X")
     return end
@@ -719,7 +752,8 @@ private struct ABCReader {
         index += 1
       }
 
-      value /= Double(divisor) ?? 2
+      // A zero (`C/0`) isn't a length: it's read past.
+      value /= divisor.isEmpty ? 2 : Double(divisor).flatMap { $0 > 0 ? $0 : nil } ?? 1
     }
 
     return (value, index)
@@ -749,16 +783,19 @@ private struct ABCReader {
         current.left > 1 ? (current.number, current.count, current.left - 1, current.factor) : nil
     }
 
-    var element = ABCTune.Element(
-      pitches: pitches, written: written, sounding: sounding, isInvisible: isInvisible,
-      breaksBeam: breaksBeam, chordSymbol: chordSymbol, tuplet: tupletMark)
+    var tied = pitches
 
-    if tieNext {
-      element.continuesTie = !pitches.isEmpty
-      tieNext = false
+    for index in tied.indices where tiedMidis.contains(tied[index].midi) {
+      tied[index].continuesTie = true
     }
 
-    bar.elements.append(element)
+    // A chord's own ties (`[C-EG]`) carry to the next note; a tie after it is read later.
+    tiedMidis = Set(tied.filter(\.isTied).map(\.midi))
+
+    bar.elements.append(
+      ABCTune.Element(
+        pitches: tied, written: written, sounding: sounding, isInvisible: isInvisible,
+        breaksBeam: breaksBeam, chordSymbol: chordSymbol, tuplet: tupletMark))
     breaksBeam = false
     chordSymbol = nil
   }
