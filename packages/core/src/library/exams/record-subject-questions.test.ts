@@ -94,7 +94,6 @@ describe(recordSubjectQuestions, () => {
       ],
     });
 
-    // Looked up just now: the next research doesn't ask again for the subject it couldn't count.
     await expect(findSubjectQuestionsLookup({ examBlueprintId: blueprint.id })).resolves.toBeNull();
   });
 

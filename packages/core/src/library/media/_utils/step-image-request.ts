@@ -2,7 +2,6 @@ import { type StepKind } from "@zoonk/db";
 import { labeledPictureRequest } from "../../activities/templates/labeled-diagram";
 import { safeParseStepContent } from "../../steps/contract/step-contract";
 
-/** The screen fields a picture sits next to, in reading order. */
 const SCREEN_TEXT_FIELDS = [
   "title",
   "question",
@@ -13,10 +12,6 @@ const SCREEN_TEXT_FIELDS = [
   "reveal",
 ] as const;
 
-/**
- * A picture a screen asks for. `parts` are the parts its numbers mark, in order, for a picture
- * whose numbers the screen asks about (a labeled diagram, "which number is the left ventricle?").
- */
 export type StepImageRequest = {
   alt: string;
   parts: readonly string[] | null;
@@ -30,13 +25,6 @@ function getScreenText(content: Record<string, unknown>): string {
     .join("\n");
 }
 
-/**
- * The picture a screen asks for, with the words shown next to it. A screen asks
- * only when it needs one (the learner would otherwise have to imagine what it
- * shows, a question is about it, or its words point at it), so every request is
- * drawn. Screens whose content doesn't follow the contract, or that ask for no
- * picture, have none.
- */
 export function getStepImageRequest({
   content,
   kind,
@@ -59,7 +47,6 @@ export function getStepImageRequest({
 
   const image = "image" in parsed.data ? parsed.data.image : null;
 
-  // Language kinds store an image with a URL; teaching and activity screens request a new picture.
   if (!image || !("alt" in image)) {
     return null;
   }
@@ -72,10 +59,6 @@ export function getStepImageRequest({
   };
 }
 
-/**
- * The labeled diagram a screen shows, if any: an activity screen's own, or one an explanation
- * shows to explore. Its picture is the screen's picture, numbered from its parts.
- */
 function labeledDiagramFields({ content, kind }: { content: unknown; kind: StepKind }) {
   if (kind === "activity") {
     const parsed = safeParseStepContent("activity", content);
@@ -92,7 +75,6 @@ function labeledDiagramFields({ content, kind }: { content: unknown; kind: StepK
   return null;
 }
 
-/** The picture one option of a question asks for: `optionId` names the option it shows. */
 export type OptionPictureRequest = {
   alt: string;
   optionId: string;
@@ -100,11 +82,6 @@ export type OptionPictureRequest = {
   screenText: string;
 };
 
-/**
- * The pictures a question whose options are pictures asks for, one per option, each drawn alone.
- * The screen text is the question, never an option's name, so no picture is drawn with the answer
- * written on it.
- */
 export function getOptionPictureRequests({
   content,
   kind,

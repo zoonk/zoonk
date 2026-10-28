@@ -37,7 +37,6 @@ async function findExactLesson({
   return lesson && isInRequestScope({ ownerId: request.ownerId, row: lesson }) ? lesson.id : null;
 }
 
-/** A lesson's search document: its own words and the names of the skills it teaches. */
 const LESSON_WITH_SKILLS_DOCUMENT = {
   language: LESSON_DOCUMENT.language,
   parts: sql`${LESSON_DOCUMENT.parts} || (
@@ -45,10 +44,6 @@ const LESSON_WITH_SKILLS_DOCUMENT = {
     WHERE ls.lesson_id = l.id)`,
 };
 
-/**
- * Public lessons in the request's language, level and target language. A skill's quick lesson is
- * never a lesson to reuse: it only stands in where a learner chose the short version.
- */
 function toEligibleLessonSql(request: LessonIdentityRequest): Sql {
   return sql`l.language = ${request.language}
     AND l.level = ${request.level}::"CourseLevel"
@@ -57,19 +52,11 @@ function toEligibleLessonSql(request: LessonIdentityRequest): Sql {
     AND l.identity_key !~ ${QUICK_LESSON_KEY_SQL_PATTERN}`;
 }
 
-/** Eligible lessons whose own words match the query. */
 function toLessonsHoldingSql({ eligible, query }: { eligible: Sql; query: Sql }): Sql {
   return sql`SELECT l.id FROM ${toIndexedMatchesSql({ document: LESSON_DOCUMENT, query })}
     WHERE ${eligible}`;
 }
 
-/**
- * Eligible lessons teaching a skill whose words match the query, reached from the matching skills
- * through their lessons, one step at a time. A lesson's skills share its language. Postgres can't
- * tell how many lessons the request's filters keep and guesses a handful, so joined freely it read
- * every eligible lesson and searched the skills again for each: with 2,000 lessons and skills
- * sharing a word, one search took 5 seconds instead of a few milliseconds.
- */
 function toLessonsTeachingSql({
   eligible,
   language,
@@ -79,8 +66,7 @@ function toLessonsTeachingSql({
   language: string;
   query: Sql;
 }): Sql {
-  // Each `OFFSET 0` keeps Postgres from merging steps. Resolve each lesson by id before applying
-  // eligibility: otherwise it can scan a language/level index again for every linked lesson.
+  // `OFFSET 0` keeps PostgreSQL from merging steps and rescanning eligibility indexes for each lesson.
   return sql`SELECT l.id FROM ${toIndexedMatchesSql({ document: SKILL_DOCUMENT, query })}
     CROSS JOIN LATERAL (
       SELECT ls.lesson_id FROM lesson_skills ls WHERE ls.skill_id = s.id OFFSET 0
@@ -97,10 +83,6 @@ function toWordQueries(term: SearchTerm): string[] {
   return term.map((spellings) => toWordTsQuery(spellings));
 }
 
-/**
- * The words of multi-word terms, whose skill matches find lessons holding a term partly in their
- * own words and partly in a skill's name. A word that's a term of its own is already searched.
- */
 function listSplitTermWords(terms: readonly SearchTerm[]): string[] {
   const searched = new Set(
     terms.filter((term) => term.length === 1).flatMap((term) => toWordQueries(term)),
@@ -111,14 +93,6 @@ function listSplitTermWords(terms: readonly SearchTerm[]): string[] {
   return [...new Set(words)].filter((word) => !searched.has(word));
 }
 
-/**
- * The lessons ranked for a search, found through the indexes with the request's filters: each
- * term's matches in lessons' own words and in their skills, plus lessons whose skills hold a word
- * that fewer than `MAX_MATCHES_PER_TERM` eligible lessons teach, since a term may be split between
- * a lesson's words and its skills. A broad word's lessons are left out: they rarely hold the
- * rest of its term. Only these are matched on the whole document and ranked, so the work stays
- * bounded as the Library grows.
- */
 async function findRankedLessonIds({
   request,
   search,
@@ -171,10 +145,6 @@ async function findRankedLessonIds({
   return rows.map((row) => row.id);
 }
 
-/**
- * The lessons a search found, with their skills and the courses placing them. They may come from
- * any course: the reuse decision judges from both sides' courses whether one can serve the other.
- */
 export async function loadLessonCandidates(
   ids: readonly string[],
 ): Promise<LibraryIdentityCandidate[]> {
@@ -213,15 +183,10 @@ export async function loadLessonCandidates(
   }));
 }
 
-/** What a lesson request says about itself, known before its skills are resolved to Library ids. */
 type LessonIdentitySubjectInput = Omit<LessonIdentityRequest, "kind" | "ownerId" | "skills"> & {
   skills: readonly { name: string }[];
 };
 
-/**
- * The lesson as search terms and the reuse decision read it: its skills by name, so a caller can
- * write its search terms while the skills are still being resolved.
- */
 export function toLessonIdentitySubject(
   request: LessonIdentitySubjectInput,
 ): LibraryIdentitySubject {

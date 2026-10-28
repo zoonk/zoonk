@@ -2,15 +2,11 @@ import { JAVASCRIPT_PRELUDE } from "./javascript-prelude";
 import { MAX_TRACE_STEPS, PROGRAM_TIME_LIMIT_MS, type ProgramKind } from "./program-limits";
 import { PYTHON_HARNESS } from "./python-harness";
 
-/** Where the runner loads each runtime from, as file URLs and paths it's allowed to read. */
 export type RunnerPaths = { pyodide: string; quickjs: string; quickjsWasm: string; sqlJs: string };
 
-/** More than any lesson's program logs; a flood stops the run. */
 const MAX_LOG_LENGTH = 50_000;
-/** QuickJS's heap for one run: 64 MiB, far more than a lesson program allocates. */
 const JAVASCRIPT_MEMORY_BYTES = 67_108_864;
 
-/** The runner's code after its settings: load, lock down, then answer one job per line. */
 const RUNNER_BODY = `const write = process.stdout.write.bind(process.stdout);
 const input = createInterface({ crlfDelay: Infinity, input: process.stdin });
 const send = (message) => write(JSON.stringify(message) + "\\n");
@@ -177,13 +173,6 @@ for await (const line of input) {
 }
 `;
 
-/**
- * The runner process: loads the runtimes a batch needs, removes what could reach the network or
- * the host from its globals, then runs one job per stdin line and answers with one JSON line.
- * JavaScript runs in QuickJS, Python in Pyodide and SQL in sql.js, all WebAssembly; the process
- * itself starts with no environment, read access only to the runtimes' own files and no child
- * processes, and the server stops it when a run goes over its time limit.
- */
 export function programRunnerSource({
   kinds,
   paths,

@@ -10,7 +10,6 @@ const NOTICE = [
 
 const documents = [{ sourceId: "notice", text: NOTICE }];
 
-/** A notice subject with its count, as a reading writes it; `extra` adds a choice's fields. */
 function noticeSubject(name: string, questions: number | null, extra: object = {}) {
   return {
     citation: { passage: name, sourceId: "notice" },
@@ -66,9 +65,7 @@ describe(findReadingProblems, () => {
       findings: {
         missingSubjects: [
           { document: 1, name: "Estatuto da Advocacia e da OAB", passage: ETHICS_PASSAGE },
-          // The reading has it, under a shorter name.
           { document: 1, name: "Filosofia do Direito e Ética", passage: ETHICS_PASSAGE },
-          // No such passage in the notice: the check made it up.
           { document: 1, name: "Direito Militar", passage: "Direito Militar terá 4 questões." },
         ],
         statedCounts: [],
@@ -159,11 +156,6 @@ describe(findReadingProblems, () => {
     ).toStrictEqual([]);
   });
 
-  /*
-   * TJ-SP's notice (read from a copy, 11 Oct 2026): the reading stated the objective test's 0 to 10
-   * scale, the exam's day and Língua Portuguesa's syllabus, and no check kept any of them, so the
-   * blueprint had no scale for the cut-off, no exam date and a subject without topics.
-   */
   it("finds what the reading stated that no check kept: the scale, the exam's day, a subject's topics", () => {
     const content = reading([
       { name: "Língua Portuguesa" },
@@ -178,11 +170,8 @@ describe(findReadingProblems, () => {
       mock: { scoring: { scale } },
       subjects: [
         { name: "Língua Portuguesa", topics: ["1. Crase", "2. Pontuação"] },
-        // A subject the notice lists without a syllabus has no topics to lose.
         { name: "Direitos Humanos", topics: [] },
-        // A subject the check dropped is a problem of its own, not of its topics.
         { name: "Direito Militar", topics: ["Hierarquia"] },
-        // An essay's themes are in the reading's words, not a syllabus's.
         { name: "Redação", topics: ["Texto dissertativo-argumentativo"] },
       ],
     };

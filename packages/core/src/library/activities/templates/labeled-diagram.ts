@@ -8,7 +8,6 @@ import {
 import { defineActivityTemplate } from "../define-activity-template";
 import { duplicateIssues, issue } from "./_utils/template-helpers";
 
-/** The picture draws one number per part legibly; past six, numbers crowd small parts. */
 const MAX_PARTS = 6;
 const MAX_DISTRACTORS = 3;
 const MAX_MIX_UPS = 4;
@@ -21,30 +20,20 @@ const labeledDiagramFields = z
         z.object({ feedback: explanationSchema, labels: z.array(labelSchema).length(2) }).strict(),
       )
       .max(MAX_MIX_UPS),
-    /**
-     * Each part in the picture's numbered order (the first is 1): its name in the lesson's
-     * language, and in English what its number marks, for the drawing.
-     */
     parts: z
       .array(z.object({ label: labelSchema, part: partSchema }).strict())
       .min(2)
       .max(MAX_PARTS),
-    /** The whole, drawn once with a number on each part and no names: what it shows, and alt text. */
     picture: pictureRequestSchema,
   })
   .strict();
 
 type LabeledDiagramFields = z.output<typeof labeledDiagramFields>;
 
-/** A part's spot on the picture: its number, as the learner reads it there. */
 export function spotNumber(index: number): string {
   return String(index + 1);
 }
 
-/**
- * The picture a labeled diagram asks for: its request with the parts its numbers mark, in order,
- * so the drawing's numbers and the answer key come from the same list.
- */
 export function labeledPictureRequest(fields: LabeledDiagramFields) {
   return { ...fields.picture, parts: fields.parts.map((part) => part.part) };
 }

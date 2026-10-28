@@ -7,11 +7,6 @@ import { CHALLENGE_NAME_PATTERN } from "./challenge-graph";
 const MAX_TEAM = 4;
 const MAX_NAME_LENGTH = 40;
 
-/**
- * The learner's colleagues in every challenge of a plan: up to four names, kept with the plan so
- * the same people show up across the course. Cases name colleagues by role; the team gives each
- * role slot a name when the case is played.
- */
 export const challengeTeamSchema = z
   .object({
     language: z.string().meta({ description: "The language the names were picked for" }),
@@ -25,11 +20,6 @@ export const challengeTeamSchema = z
 
 export type ChallengeTeam = z.infer<typeof challengeTeamSchema>;
 
-/**
- * Diverse by design: every list alternates women and men from different backgrounds, starting with
- * a woman, so any four names in a row from an even place are a woman, a man, a woman and a man,
- * with different origins. Names fit the language the case is in.
- */
 const TEAM_NAMES: Readonly<Record<string, readonly string[]>> = {
   de: [
     "Lena",
@@ -110,13 +100,7 @@ function getTeamLanguage(language: string): string {
   return base in TEAM_NAMES ? base : FALLBACK_LANGUAGE;
 }
 
-/**
- * Picks four names in a row from the language's list, starting at the woman the seed (the plan's
- * id) points to, so every team is a woman, a man, a woman and a man in that order: cases are
- * written before anyone plays them, and they write each colleague's role in that gender
- * (a UX researcher written as a woman for the first). No model is needed, and the same plan always gets the
- * same team, even if it's picked again.
- */
+/** Case role descriptions assume alternating genders, starting with a woman, so team names must match. */
 export function buildChallengeTeam({
   language,
   seed,
@@ -137,10 +121,6 @@ export function buildChallengeTeam({
   };
 }
 
-/**
- * The name each role slot goes by: the AI assistant by its role, and colleagues by the team's
- * names in order. Without a team, or past its size, a colleague goes by role.
- */
 export function getChallengeNames({
   slots,
   team,
@@ -159,7 +139,6 @@ export function getChallengeNames({
   );
 }
 
-/** Puts each colleague's name where the text says `{{slotId}}`. */
 export function fillChallengeNames(text: string, names: Readonly<Record<string, string>>): string {
   return text.replaceAll(CHALLENGE_NAME_PATTERN, (match, slotId: string) => names[slotId] ?? match);
 }

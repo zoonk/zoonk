@@ -1,24 +1,8 @@
 /* oxlint-disable no-magic-numbers -- Map areas are coordinates in degrees. */
-
-/** A rectangle on the globe in degrees: longitudes run west to east, latitudes south to north. */
 type GeoArea = { east: number; north: number; south: number; west: number };
 
-type BaseMapDefinition = {
-  /** What the map shows, for the writer's prompt. */
-  covers: string;
-  id: string;
-  /**
-   * Where places can go. Most maps are one rectangle; a map with insets (Alaska and Hawaii next
-   * to the other states) has one per part. The player draws every part of each area.
-   */
-  areas: readonly GeoArea[];
-};
+type BaseMapDefinition = { covers: string; id: string; areas: readonly GeoArea[] };
 
-/**
- * The checked base maps a map explorer can use. The player draws each one from public-domain
- * data (Natural Earth, the US Census Bureau) or from simplified historical outlines, so the
- * writer only picks a map and gives coordinates; it never draws a map.
- */
 export const activityBaseMaps = [
   {
     areas: [{ east: 180, north: 90, south: -90, west: -180 }],
@@ -93,7 +77,6 @@ export function getActivityBaseMap(id: string): ActivityBaseMap | null {
   return byId.get(id) ?? null;
 }
 
-/** Whether a point falls inside one of the map's areas, so the player can draw it there. */
 export function isOnBaseMap(
   map: BaseMapDefinition,
   point: { latitude: number; longitude: number },
@@ -111,7 +94,6 @@ function describeArea(area: GeoArea): string {
   return `latitude ${area.south} to ${area.north}, longitude ${area.west} to ${area.east}`;
 }
 
-/** The base maps as the writer reads them: id, what it shows and where places can go. */
 export function describeBaseMaps(): string {
   return activityBaseMaps
     .map(

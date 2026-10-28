@@ -1,8 +1,3 @@
-/**
- * One step of a word-level alignment between what was expected and what was
- * heard: a word heard as expected, heard as another word, not heard, or an
- * extra word nobody asked for.
- */
 export type AlignmentStep =
   | { kind: "match"; expected: number }
   | { kind: "substitute"; expected: number; heard: number }
@@ -13,12 +8,10 @@ const MIN_SUBSTITUTION_COST = 0.5;
 const EPSILON = 1e-9;
 const graphemes = new Intl.Segmenter(undefined, { granularity: "grapheme" });
 
-/** Letters as a reader sees them, so an accented letter counts as one. */
 function toGraphemes(text: string): string[] {
   return Array.from(graphemes.segment(text), (segment) => segment.segment);
 }
 
-/** Costs add up the same way both times they are computed, but compare with a margin anyway. */
 function isStep(from: number, cost: number, to: number): boolean {
   return Math.abs(from - (to + cost)) < EPSILON;
 }
@@ -45,12 +38,6 @@ function getCharacterDistance(from: readonly string[], to: readonly string[]): n
   return rows[from.length]?.[to.length] ?? Math.max(from.length, to.length);
 }
 
-/**
- * Replacing a word costs less the more it sounds and looks like the word
- * heard, so "two" pairs with "tree" rather than with a neighbouring "big".
- * It never drops below half, so a replacement still beats a miss plus an
- * extra word.
- */
 function getSubstitutionCost(expected: string, heard: string): number {
   if (expected === heard) {
     return 0;
@@ -86,12 +73,6 @@ function buildCostTable(expected: readonly string[], heard: readonly string[]): 
   return table;
 }
 
-/**
- * Aligns expected words with heard words by weighted edit distance, read back
- * from the end. Ties prefer a match, then a replacement, then a missed word,
- * so "hent" lines up with "rent" instead of counting as one missed word and
- * one extra.
- */
 export function alignWords(expected: readonly string[], heard: readonly string[]): AlignmentStep[] {
   const table = buildCostTable(expected, heard);
   const cell = (row: number, column: number) => table[row]?.[column] ?? Number.POSITIVE_INFINITY;

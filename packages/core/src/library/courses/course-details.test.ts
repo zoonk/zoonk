@@ -184,8 +184,6 @@ describe(writeCourseDetails, () => {
     expect(generateCourseDetails).not.toHaveBeenCalled();
   });
 
-  // A new shape for landing pages never rewrites stored ones: the change that moved the shape
-  // migrates them.
   it("keeps a landing page stored in an older shape", async () => {
     const course = await outlinedCourse({
       description: "A complete course",

@@ -18,10 +18,6 @@ export type SkillMergeResult =
 
 type SkillPair = { duplicate: Skill; survivor: Skill };
 
-/**
- * Two skills can only become one when a learner of either would see the same thing: the same
- * language pair, and the same audience (both public, or private to the same learner).
- */
 function canMerge({ duplicate, survivor }: SkillPair): boolean {
   return (
     duplicate.id !== survivor.id &&
@@ -33,7 +29,6 @@ function canMerge({ duplicate, survivor }: SkillPair): boolean {
   );
 }
 
-/** A learner who has both skills keeps the row with more reviews behind it. */
 function keepsDuplicateRow({
   duplicate,
   survivor,
@@ -44,10 +39,6 @@ function keepsDuplicateRow({
   return duplicate.reps > survivor.reps;
 }
 
-/**
- * Moves every learner's mastery to the survivor. A learner with rows on both keeps the one with
- * more reviews, so nobody's schedule restarts; the unique key allows one row per skill.
- */
 async function moveLearnerSkills(tx: TransactionClient, { duplicate, survivor }: SkillPair) {
   const rows = await tx.learnerSkill.findMany({ where: { skillId: duplicate.id } });
 
@@ -79,7 +70,6 @@ async function moveLearnerSkills(tx: TransactionClient, { duplicate, survivor }:
   return rows.map((row) => row.userId);
 }
 
-/** Answers, mistakes, plan steps, questions and screens now train the survivor. */
 async function movePointers(tx: TransactionClient, { duplicate, survivor }: SkillPair) {
   const move = { data: { skillId: survivor.id }, where: { skillId: duplicate.id } };
 
@@ -92,7 +82,6 @@ async function movePointers(tx: TransactionClient, { duplicate, survivor }: Skil
   ]);
 }
 
-/** Lessons, chapters and graph edges that named the duplicate name the survivor, without self-loops. */
 async function moveLinks(tx: TransactionClient, { duplicate, survivor }: SkillPair) {
   const [lessonLinks, chapterLinks, prerequisites, dependents] = await Promise.all([
     tx.lessonSkill.findMany({ where: { skillId: duplicate.id } }),
@@ -159,13 +148,6 @@ async function mergeInto(pair: SkillPair) {
   });
 }
 
-/**
- * Merges a duplicate skill that slipped past identity search into the skill that survives. Skills
- * are never deleted: the duplicate points at the survivor, and learners' mastery, answers,
- * mistakes and plans, and the lessons, questions and prerequisites that named it, move over, so a
- * learner's progress follows the one skill everyone shares. Merging into a skill that was itself
- * merged goes to where that one points. Only admins may do this.
- */
 export async function mergeSkillForAdmin({
   duplicateId,
   survivorId,

@@ -148,7 +148,6 @@ describe(toStepContent, () => {
       explore: { content: JSON.stringify(content), template: "numberLine" },
     });
 
-    // A prompt or check written out of habit is left out; the fields are what's explored.
     const valid = toStepContent(withExplore({ check: { kind: "numeric" }, fields }), {
       allowImage: false,
       language: "en",

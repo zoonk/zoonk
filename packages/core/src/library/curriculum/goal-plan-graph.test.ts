@@ -94,7 +94,6 @@ describe(toGoalPlanGraph, () => {
       "other",
     ]);
 
-    // The goal needs the merged skill in both subjects, so both courses' lessons can teach it.
     expect(result.skills[0]).toMatchObject({
       courseIds: ["course-math", "course-physics"],
       name: "Skill algebra",

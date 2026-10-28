@@ -1,6 +1,5 @@
 import { type QuickExplanation } from "@zoonk/ai/tasks/v2/explain/quick-explanation";
 
-/** A quick explanation that passes every check, as the fast model writes one. */
 export function marketExplanation(): QuickExplanation {
   return {
     check: {

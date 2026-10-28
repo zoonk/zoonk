@@ -26,11 +26,6 @@ type ItemRows = {
 
 const PICTURE_FAILED = "Its picture couldn't be drawn, so the question can't be asked.";
 
-/**
- * Stores one batch in a transaction. A retried step finds the rows its earlier attempt committed
- * (by run, skill and format, and whether they carry a picture, since pictured questions are
- * stored in a second batch) and returns them instead of storing copies.
- */
 async function storeBatch({
   entries,
   pictured,
@@ -74,7 +69,6 @@ async function storeBatch({
   });
 }
 
-/** An item after code repaired what it can (`repairItem`), with what its checks still find. */
 export function toCheckedItem({
   answerFormat,
   format,
@@ -103,7 +97,6 @@ export function toCheckedItem({
   return { index, item, problems };
 }
 
-/** Draws every picture the batch asks for at once; a question whose picture failed is dropped. */
 async function drawPictures({
   analytics,
   entries,
@@ -137,22 +130,7 @@ async function drawPictures({
   };
 }
 
-/**
- * Stores the generated items for a skill that pass the item checks, after code
- * repaired what it can (`repairItem`), and reports the rest, so a workflow can
- * log or regenerate them. Only checked
- * items reach learners. A question about a figure is stored only once its
- * picture is drawn, so no learner ever sees it without one; the questions
- * without a picture are stored meanwhile, so nobody waits on them. Pictures
- * drawn now (`unchecked`) get their model check in the background
- * (`checkImageAsset`): the caller starts it.
- *
- * A workflow step can retry after its insert committed, so a run that already
- * stored items for this skill in this format returns them instead of storing
- * copies (one run can write a skill's questions in several formats). This is
- * an internal workflow bridge: items are shared Library content. Each new batch
- * invalidates its dependent plans in the same transaction; retries change nothing.
- */
+/** Internal workflow bridge for shared content; callers must start background checks for returned `unchecked` pictures. */
 export async function createItems({
   analytics,
   entry,
@@ -168,15 +146,12 @@ export async function createItems({
   sourceCitation = null,
   sourceId = null,
 }: ItemAnswerFormat & {
-  /** Who the pictures are drawn for, so their cost is counted with the questions'. */
   analytics?: ImageAnalytics;
   examBlueprintId?: string | null;
   field?: string | null;
-  /** The format the items were generated for. */
   format: ItemFormat;
   items: readonly GeneratedItem[];
   language: string;
-  /** Options every multiple-choice item must have, from the exam format. */
   optionCount?: number | null;
   provenance: LibraryProvenance;
   skillId: string;

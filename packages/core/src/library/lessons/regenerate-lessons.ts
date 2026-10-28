@@ -12,13 +12,7 @@ export type LessonRegenerationResult =
   | { lessonIds: string[]; status: "pulled" }
   | { status: "forbidden" | "invalid" | "unauthorized" };
 
-/**
- * Takes the oldest published lessons written by a model or prompt version out of play so they
- * are written again (`pullLessonForFix`), up to `MAX_LESSONS_PER_REGENERATION` at a time. The
- * caller starts a writing run for each returned lesson. Learners keep their answers: attempts
- * point at steps with SetNull. Only admins may do this, and a filter is required so one click
- * never rewrites the whole Library.
- */
+/** Requires an admin and an explicit filter; the caller must start a writing run for each returned lesson. */
 export async function pullLessonsForRegeneration(
   filter: LessonRegenerationFilter,
 ): Promise<LessonRegenerationResult> {

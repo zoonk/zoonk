@@ -9,17 +9,10 @@ import { getOwnedGoal } from "../../learner/get-owned-goal";
 import { getSession } from "../../users/get-session";
 import { type ResearchAccess, getResearchAccess } from "../exams/research-access";
 
-/**
- * What Plan and Today ask when research couldn't find what a goal is built from: the exam's
- * official notice, a law's or a product's official source, or, for a teacher's test, the class's
- * own material. `reason` says why, so the ask says it too.
- */
 export type GoalUploadRequest = {
-  /** What the exam's official documents are, for the ask's words (see `ExamDocument`). */
   examDocument: ExamDocument;
   goalId: string;
   goalKind: GoalKind;
-  /** The goal's language, for uploads whose documents don't say their own. */
   language: string;
   reason: ResearchUploadReason;
 };
@@ -28,12 +21,6 @@ export type GoalUploadRequestResult =
   | { status: "notFound" | "unauthorized" }
   | { request: GoalUploadRequest | null; status: "ready" };
 
-/**
- * The upload research is waiting for on one of the learner's goals, or null when it needs
- * nothing. Private cached, so Today prefetches with it: research sets it from a workflow, and
- * answering or dismissing clears it (and the learner's cached views), so the card disappears as
- * soon as the learner acts.
- */
 export async function getGoalUploadRequest({
   goalId,
 }: {
@@ -62,10 +49,6 @@ export async function getGoalUploadRequest({
   return { request, status: "ready" };
 }
 
-/**
- * The learner doesn't have the document (the notice isn't out yet, the teacher shared nothing):
- * the ask leaves Plan and Today, and the plan keeps following the goal as typed.
- */
 export async function dismissGoalUploadRequest({
   goalId,
 }: {
@@ -91,13 +74,6 @@ export async function dismissGoalUploadRequest({
   return { status: "dismissed" };
 }
 
-/**
- * The learner answers research's ask with the documents they uploaded (or a shared one they
- * picked): each is linked to the goal as its material, so the rebuilt curriculum reads it, and
- * the ask is cleared at once. The delivery app then starts research with these sources. Uploads
- * only answer an open ask, once (`noUploadRequest` otherwise), since each answer rebuilds the
- * goal. Without sources, it only checks the learner may start research for the goal.
- */
 export async function answerGoalUploadRequest({
   goalId,
   sourceIds = [],
@@ -146,12 +122,7 @@ export async function answerGoalUploadRequest({
   return answered ? access : { status: "noUploadRequest" };
 }
 
-/**
- * Remembers the run researching a goal, so asking for research again follows it instead of
- * starting another.
- *
- * This is a workflow bridge: research runs for a goal the public boundary already checked.
- */
+/** Internal workflow bridge: the public boundary must already have authorized the goal. */
 export async function recordGoalResearchRun({
   goalId,
   runId,
@@ -162,12 +133,7 @@ export async function recordGoalResearchRun({
   await prisma.goal.updateMany({ data: { researchRunId: runId }, where: { id: goalId } });
 }
 
-/**
- * Keeps the goal's ask in step with its last research run: set when research needs an upload,
- * cleared when it found what it needed or needs nothing. A goal deleted meanwhile is skipped.
- *
- * This is a workflow bridge: research runs for a goal the public boundary already checked.
- */
+/** Internal workflow bridge: the public boundary must already have authorized the goal. */
 export async function recordGoalResearchOutcome({
   goalId,
   uploadReason,

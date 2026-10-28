@@ -30,11 +30,6 @@ function hasDuplicates(values: readonly string[], normalize = normalizeString): 
   return new Set(values.map((value) => normalize(value))).size !== values.length;
 }
 
-/**
- * The right options a question needs for its picks: exactly one, exactly as many as "choose k"
- * asks for (with more options than that), or for "select all that apply" at least one right and
- * one wrong, so picking every option is never a sure answer.
- */
 function checkPicks({
   options,
   select,
@@ -71,7 +66,6 @@ function checkMultipleChoice({
   optionCount: number | null;
   select: OptionSelect;
 }): Problem[] {
-  /** Checked as they're stored: without the letters a writer printed before them. */
   const options = stripOptionLabels(item.options);
   const texts = options.map((option) => option.text);
   const wrong = options.filter((option) => !option.isCorrect);
@@ -140,7 +134,6 @@ function getQuestion(item: GeneratedItem): string {
   return item.format === "trueFalse" ? item.statement : item.question;
 }
 
-/** Every text a learner reads with the question: its support text, command and options. */
 function getItemTexts(item: GeneratedItem): string[] {
   const context = "context" in item ? [item.context ?? ""] : [];
 
@@ -162,12 +155,6 @@ function getItemTexts(item: GeneratedItem): string[] {
   }
 }
 
-/**
- * A question shows what its words point at: a table in Markdown in its context, a chart or a
- * timeline as its `visual`, and a picture (a diagram, a map, a figure) as its `image`, drawn before
- * it's stored. Formats without an `image` (math problems, whose numbers change every time,
- * matching, ordering, spoken and essay questions) ask another way.
- */
 function checkVisuals(item: GeneratedItem, language: string): Problem[] {
   return getVisualProblems({
     canShowImage: "image" in item,
@@ -180,7 +167,6 @@ function checkVisuals(item: GeneratedItem, language: string): Problem[] {
   });
 }
 
-/** Markdown a learner would see as marks, and text a writer left unfinished. */
 function checkWriting(item: GeneratedItem): string[] {
   return getItemWriting(item).flatMap(({ layout, text }) => [
     ...findUnrenderedMarkdown({ layout, text }),
@@ -228,16 +214,6 @@ function checkFormat({
   }
 }
 
-/**
- * The code checks every item passes before it is stored: as many right options
- * as the learner picks, options a learner can tell apart that agree with the
- * item's data, a reason and a misconception for every wrong option, key points
- * for open answers and a sample answer that gives an accepted one, math
- * recomputed from its data in a form its answer box takes, Markdown the player
- * renders, nothing left unfinished and every table, chart, timeline or picture
- * its words point at shown with it.
- * Returns one line per problem, so an empty list means the item passes.
- */
 export function checkItem({
   entry = ANY_NUMBER,
   expectedFormat,
@@ -246,16 +222,11 @@ export function checkItem({
   optionCount = null,
   select = 1,
 }: {
-  /** How a numeric item's answer is typed, from the exam's format: any number by default. */
   entry?: NumericEntry;
-  /** The format the item was generated for; a model can answer in the wrong one. */
   expectedFormat?: GeneratedItem["format"];
   item: GeneratedItem;
-  /** The item's language, for the words that point at a table, chart or picture. */
   language: string;
-  /** Options every multiple-choice item must have, such as 5 for ENEM. */
   optionCount?: number | null;
-  /** How many options a multiple-choice learner picks, from the exam's format: one by default. */
   select?: OptionSelect;
 }): string[] {
   return [
@@ -269,11 +240,6 @@ export function checkItem({
   ].filter((problem) => typeof problem === "string");
 }
 
-/**
- * The em dashes a written item has in our own wording, which storing it takes out
- * (`toStoredItem`), for evals to report what the writer should have avoided. A quoted past
- * question or an item citing the source it reproduces keeps every word, so it's never checked.
- */
 export function findOwnEmDashes(item: GeneratedItem): string[] {
   return Object.entries(item).flatMap(([key, value]) =>
     isOwnWording(key) ? findEmDashes(value) : [],

@@ -6,7 +6,6 @@ import { getExamBlueprintCacheTag } from "../../cache/tags";
 import { canViewLibraryRow } from "../_utils/library-visibility";
 import { readBlueprintContent } from "./save-exam-blueprint";
 
-/** The same for every reader, so it's cached until a new notice changes the blueprint. */
 async function getCachedExamBlueprint(blueprintId: string) {
   "use cache";
 
@@ -36,12 +35,6 @@ async function getCachedExamBlueprint(blueprintId: string) {
   return { ...blueprint, ...readBlueprintContent(blueprint) };
 }
 
-/**
- * An exam's canonical blueprint with its current edition, the passage every
- * fact came from and the notice it was read from, for the exam map, plans,
- * mocks and the "updated in" line next to citations. A blueprint read from a
- * learner's private material is only theirs.
- */
 export async function getExamBlueprint({ blueprintId }: { blueprintId: string }) {
   if (!isUuid(blueprintId)) {
     return null;

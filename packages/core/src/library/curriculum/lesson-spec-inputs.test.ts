@@ -158,11 +158,6 @@ describe(loadLessonSpecInputs, () => {
     expect(inputs?.prompt.chapterLessons).toStrictEqual([]);
   });
 
-  /*
-   * A shared OAB lesson opened with "Brazil's lawyers' association, called the OAB" for law
-   * graduates: the planner didn't know who studies it. It now gets the exams of the goals that
-   * plan it, so it's written for their candidates (without naming them).
-   */
   it("plans a lesson for the candidates of the exams whose goals plan it", async () => {
     const [chapter, user] = await Promise.all([libraryChapterFixture(), userFixture()]);
 
@@ -204,11 +199,6 @@ describe(loadLessonSpecInputs, () => {
     expect(learnLesson?.prompt.exams).toStrictEqual([]);
   });
 
-  /*
-   * A hobby biology course asked the learner to write what Iara's cell diagram was missing:
-   * learners would rather pick, so only the exams of the goals that plan a lesson let it ask them
-   * to write a short answer.
-   */
   it("lets a lesson ask short written answers only when an exam of the goals that plan it does", async () => {
     const user = await userFixture();
 
@@ -228,7 +218,6 @@ describe(loadLessonSpecInputs, () => {
       goalFixture({ examBlueprintId: essay.id, kind: "exam", userId: user.id }),
       goalFixture({ userId: user.id }),
       goalFixture({ examBlueprintId: classTest.id, kind: "exam", userId: user.id }),
-      // Before its notice's blueprint is linked, an exam goal knows only the formats it states.
       goalFixture({
         details: { noticeFormats: [examFormat("shortAnswer")] },
         kind: "exam",
@@ -247,8 +236,6 @@ describe(loadLessonSpecInputs, () => {
 
     const inputs = await Promise.all(lessons.map((lesson) => loadLessonSpecInputs(lesson.id)));
 
-    // A hobby and an exam of choices and an essay (its own written block) ask what learners pick; a
-    // class test from the learner's material asks short answers though its lesson has no exams.
     expect(inputs.map((input) => input?.prompt.shortAnswers)).toStrictEqual([
       true,
       false,
@@ -259,11 +246,6 @@ describe(loadLessonSpecInputs, () => {
     expect(inputs[2]?.prompt.exams).toStrictEqual([]);
   });
 
-  /*
-   * Generation admits a newly outlined lesson through a plan's stand-in for its skill before the
-   * re-plan saves the lesson's link (`readGenerationManifest`): a goal learning that skill from a
-   * course other than its own still prepares for its exam in the lesson.
-   */
   it("plans a lesson for a goal whose stand-in for its skill it fills, in the course the goal learns it from", async () => {
     const [user, skill, secondary, other, ownCourse] = await Promise.all([
       userFixture(),
@@ -295,7 +277,6 @@ describe(loadLessonSpecInputs, () => {
       lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
     ]);
 
-    // Both goals wait on the skill with a stand-in; one learns it from the lesson's course.
     const goals = await Promise.all(
       [
         { blueprint: shortAnswers, course: secondary },
@@ -336,7 +317,6 @@ describe(loadLessonSpecInputs, () => {
       loadLessonSpecInputs(lesson.id),
     ]);
 
-    // The goal's plan takes the lesson in its stand-in's place, so the lesson is written for it.
     expect(manifest?.targets.map((target) => target.lessonId)).toStrictEqual([lesson.id]);
     expect(inputs?.prompt.shortAnswers).toBe(true);
     expect(inputs?.prompt.exams?.map((exam) => exam.name)).toStrictEqual(["Short answers exam"]);

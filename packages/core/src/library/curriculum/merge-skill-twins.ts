@@ -8,7 +8,6 @@ import { type GoalSkillGraph } from "./save-goal-skills";
 
 type GraphSkill = GoalSkillGraph["skills"][number];
 
-/** A skill as the reuse decision reads it, in its area, as identity search reads a graph's skills. */
 function toIdentityItem({
   scope,
   skill,
@@ -24,7 +23,6 @@ function toIdentityItem({
   };
 }
 
-/** The earlier skill a reuse decision says `skill` is, among the siblings it may repeat. */
 async function findTwinOf({
   analytics,
   scope,
@@ -56,11 +54,6 @@ async function findTwinOf({
   return twin ? [skill.key, twin.key] : null;
 }
 
-/**
- * The skills that may repeat an earlier one of their area, each with those earlier skills; with
- * `newKeys`, only new skills and their new siblings, since identity search finds twins of the
- * skills already saved.
- */
 function listQuestions({ graph, newKeys }: { graph: GoalSkillGraph; newKeys?: readonly string[] }) {
   const candidates = findTwinCandidates(graph.skills);
 
@@ -76,18 +69,6 @@ function listQuestions({ graph, newKeys }: { graph: GoalSkillGraph; newKeys?: re
   });
 }
 
-/**
- * A new shared graph with the skills it wrote twice in other words merged ("Interpret charts
- * and tables" and "Read and compare data in charts and tables" in one area), before its skills
- * reach the Library: identity search only finds rows already saved, and a graph's skills are saved
- * in slices at once, so two twins would each become a skill of their own. Each skill whose name
- * acts on what an earlier skill of its area acts on (`findTwinCandidates`) gets the reuse decision
- * skills get (`decideLibraryIdentity`), with those earlier skills as its candidates, and a twin
- * merges into the skill it repeats (`mergeSkillTwins`). `newKeys` limits it to skills about to be
- * saved, such as those a notice's reading added to a saved graph. A decision that fails keeps
- * both skills. A private graph keeps its skills: the decision's inputs are kept with shared runs,
- * and a private goal's words never are.
- */
 export async function mergeGraphSkillTwins({
   analytics,
   graph,

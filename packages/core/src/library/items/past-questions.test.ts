@@ -43,7 +43,6 @@ function topicFrequency(paperIds: string[]) {
   }));
 }
 
-/** An exam goal whose blueprint read its topic frequency from `papers`, with one skill planned. */
 async function examGoal({
   language = "pt",
   noticePublisher = "Inep",
@@ -175,7 +174,6 @@ describe(listPastQuestionPapers, () => {
   });
 });
 
-/** An allowed paper, listed for a new exam goal, ready to import. */
 async function listedPaper(): Promise<PastPaperTarget> {
   const paper = await paperFixture();
   const { goal } = await examGoal({ papers: [paper] });
@@ -220,7 +218,6 @@ describe(savePastQuestions, () => {
 
     const stored = item ? parseItemContent(item) : null;
 
-    // The paper's order, A to E, not shuffled like written questions.
     expect(stored?.content).toMatchObject({
       options: ["R$ 1.200,00", "R$ 1.210,00", "R$ 1.100,00", "R$ 1.020,00", "R$ 1.201,00"].map(
         (text) => ({ text }),

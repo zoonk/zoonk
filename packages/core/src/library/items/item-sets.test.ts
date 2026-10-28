@@ -13,7 +13,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { ITEM_SET_INCLUDE, listItemSetsForSkills, toItemSetView } from "./item-sets";
 
-/** A set's questions, in the order given, on the given skills. */
 async function setItems({ setId, skillIds }: { setId: string; skillIds: string[] }) {
   return Promise.all(
     skillIds.map((skillId, setPosition) =>
@@ -33,7 +32,6 @@ describe(listItemSetsForSkills, () => {
       examBlueprintFixture(),
     ]);
 
-    // Written one after another: sets never answered come in the order they were written.
     const answered = await itemSetFixture();
     const fresh = await itemSetFixture();
     const exams = await itemSetFixture({ examBlueprintId: blueprint.id });
@@ -49,7 +47,6 @@ describe(listItemSetsForSkills, () => {
       setItems({ setId: exams.id, skillIds: [reading.id] }),
       setItems({ setId: otherExams.id, skillIds: [reading.id] }),
       setItems({ setId: silent.id, skillIds: [reading.id] }),
-      // A question on its own isn't a set.
       itemFixture({ content: choiceItemContent(), skillId: reading.id }),
     ]);
 

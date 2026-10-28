@@ -10,18 +10,14 @@ const MAX_VARIABLES = 4;
 const MAX_OUTPUTS = 4;
 const MAX_EVENTS = 4;
 
-/** A "what if" the learner switches on and off: a 0/1 name the formulas use, off at the start. */
 const eventSchema = z.object({ label: labelSchema, name: identifierSchema }).strict();
 
 const formulaModelFields = z
   .object({
-    /** A value of the plotted slider marked on the curve, to compare with where the learner is. */
     compareAt: z.number().optional(),
     events: z.array(eventSchema).max(MAX_EVENTS).optional(),
     outputs: uniqueIdsSchema(outputSchema, { max: MAX_OUTPUTS, min: 1 }),
-    /** The slider on the x axis and the output on the y axis; by default the first of each. */
     plot: z.object({ x: identifierSchema, y: idSchema }).strict().optional(),
-    /** What the model is, like "Projectile" or "Coffee cart". */
     title: labelSchema.optional(),
     variables: z.array(variableSchema).min(1).max(MAX_VARIABLES),
   })
@@ -29,12 +25,10 @@ const formulaModelFields = z
 
 type FormulaModelFields = z.output<typeof formulaModelFields>;
 
-/** Every what-if switched off, as the model starts. */
 function eventsOff(fields: Pick<FormulaModelFields, "events">): Record<string, number> {
   return Object.fromEntries((fields.events ?? []).map((event) => [event.name, 0]));
 }
 
-/** The output a check reads when it names none: the plotted one, or the first. */
 function defaultOutputId(fields: FormulaModelFields): string | undefined {
   return fields.plot?.y ?? fields.outputs[0]?.id;
 }

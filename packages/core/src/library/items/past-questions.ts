@@ -16,15 +16,11 @@ import { toStoredItem } from "./item-content";
 import { repairItem } from "./item-repairs";
 import { checkPastQuestion } from "./past-question-checks";
 
-/** The goal's skills a paper's questions are matched to; more makes the prompt long for little. */
 const MAX_PAPER_SKILLS = 40;
 
-/** Namespaces the per-paper import lock so it never collides with other advisory locks. */
 const IMPORT_LOCK_NAMESPACE = 51_880;
 
-/** One allowed past paper of an exam, and what its questions are copied into. */
 export type PastPaperTarget = {
-  /** The exam as the paper names it, such as "Enem" or "Polícia Federal, Agent". */
   exam: string;
   examBlueprintId: string;
   format: PastQuestionFormat;
@@ -43,11 +39,6 @@ function readPolicies(source: PolicySource) {
   ].flatMap((policy) => (policy ? [policy.pastQuestions] : []));
 }
 
-/**
- * Whether a paper's questions may be copied: its stored terms or its board's checked policy allow
- * it with the source cited (Enem, Brazilian public-service boards), and nothing says otherwise
- * (College Board never). Unclear terms mean original questions only.
- */
 function canQuotePastQuestions(source: PolicySource): boolean {
   const policies = readPolicies(source);
   return policies.includes("allowedWithCitation") && !policies.includes("notAllowed");
@@ -70,14 +61,7 @@ async function loadGoalSkills(graph: unknown): Promise<PastPaperTarget["skills"]
   return skillIds.flatMap((skillId) => skills.find((skill) => skill.id === skillId) ?? []);
 }
 
-/**
- * The past papers of an exam goal whose questions may be quoted and aren't in the item bank yet:
- * the public papers its blueprint's topic frequency was read from, in the goal's language, when
- * the paper's reuse terms allow it and the exam's notice doesn't forbid it. Every other exam
- * keeps original questions only.
- *
- * This is a workflow bridge: the goal id comes from the goal the public boundary created.
- */
+/** Internal workflow bridge: the public boundary must already have authorized the goal. */
 export async function listPastQuestionPapers({
   goalId,
 }: {
@@ -132,7 +116,6 @@ export async function listPastQuestionPapers({
     }));
 }
 
-/** The paper's text as stored when it was fetched: what quoted parts are checked against. */
 export async function loadPastPaperText(paperId: string): Promise<string | null> {
   const paper = await prisma.source.findUnique({
     select: { extractedText: true },
@@ -144,10 +127,6 @@ export async function loadPastPaperText(paperId: string): Promise<string | null>
 
 type RejectedQuestion = { number: string; problems: string[] };
 
-/**
- * A copied question after code repaired what it can (`repairItem`), with what the item and quote
- * checks still find and the skill it tests.
- */
 function checkQuestion({
   paperText,
   question: written,
@@ -168,16 +147,7 @@ function checkQuestion({
   return { problems, question, skillId: target.skills[question.skill - 1]?.id };
 }
 
-/**
- * Stores the questions copied from a past paper that pass the item checks and the quote checks
- * once code repaired what it can (every quoted part is in the paper as printed, the citation
- * names the question), each on the
- * skill it tests, marked as quoted, in the paper's option order, citing it (`sourceCitation`)
- * and linked to it (`sourceId`), so practice shows where each came from. A paper is imported
- * once per exam: a second run for the same paper, even at the same moment, stores nothing.
- *
- * This is an internal workflow bridge: items are shared Library content.
- */
+/** Internal workflow bridge; callers must authorize the paper import target. */
 export async function savePastQuestions({
   paperText,
   provenance,
@@ -214,7 +184,6 @@ export async function savePastQuestions({
       return 0;
     }
 
-    // A plan of this exam made after the marks still counts these items, through their skills.
     await lockPlanSourceWrite(tx, {
       blueprintIds: [target.examBlueprintId],
       skillIds: [...new Set(passing.map(({ skillId }) => skillId))],

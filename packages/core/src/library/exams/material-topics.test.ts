@@ -7,7 +7,6 @@ const CITATION = { passage: "BIOLOGIA - 1º ANO B", sourceId: "notes" };
 const PEDRO_ANNOUNCEMENT =
   "A prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!";
 
-/** Pedro's class notes as he pasted them in persona pass 7. */
 const PEDRO_NOTES = `BIOLOGIA - 1º ANO B - Prof.ª Juliana
 Resumo pra prova de sábado (10/10): A CÉLULA
 
@@ -85,7 +84,6 @@ function content(topics: string[]): BlueprintContent {
   };
 }
 
-/** The topics and the stressed ones a reading of these headings stores. */
 function readHeadings(headings: string[]) {
   const cleaned = toMaterialContent({
     content: content(headings),
@@ -170,7 +168,6 @@ describe(toMaterialContent, () => {
     ]);
   });
 
-  // Both reads of Pedro's notes quoted the teacher's sentence for the table and dropped the essay.
   it("keeps every question format the teacher's announcement names", () => {
     const passage =
       "A prof disse: vai ter questão de completar a tabela das organelas e uma dissertativa sobre osmose!";
@@ -200,8 +197,6 @@ describe(toMaterialContent, () => {
     ]);
   });
 
-  // Pass 7: both reads of Pedro's notes, or the check of their claims, left no format at all, so
-  // his practice had no table to fill in and no essay on osmosis.
   it("reads the formats the learner's notes announce when the reading kept none", () => {
     const read = content([
       "1) Teoria celular",
@@ -311,8 +306,6 @@ describe(toMaterialContent, () => {
     ]);
   });
 
-  // Pedro's teacher announced an essay on osmosis, which his notes cover under "Plasma
-  // membrane": at 30 minutes a day his plan cut that topic first.
   describe("the topics the test announces a question about", () => {
     const NOTES = [
       "BIOLOGIA - 1º ANO B",
@@ -372,8 +365,6 @@ describe(toMaterialContent, () => {
     });
 
     it("marks nothing when the question's words are in several topics or in none", () => {
-      // Diffusion is under the membrane and the mitochondrion under the organelles; genetics is
-      // nowhere in the notes.
       expect(
         announced(["Dissertativa sobre difusão e mitocôndria", "Questão de genética"]),
       ).toStrictEqual([["Organelas", "high", "CAI MUITO!!"]]);

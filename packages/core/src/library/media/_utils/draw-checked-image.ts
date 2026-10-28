@@ -7,24 +7,18 @@ import { logInfo } from "@zoonk/utils/logger";
 import { isNearSolidImage } from "../../../images/image-quality";
 import { type LibraryProvenance } from "../../_utils/library-rows";
 
-/** A blank frame is drawn once more; a picture its check rejects, twice more in the background. */
 const DEFAULT_ATTEMPTS = 2;
 
 type ImageAnalytics = LessonImageParams["analytics"];
 
-export type DrawImageInput = Omit<LessonImageParams, "model" | "quality"> & {
-  /** How many images to try before giving up. */
-  attempts?: number;
-};
+export type DrawImageInput = Omit<LessonImageParams, "model" | "quality"> & { attempts?: number };
 
 export type DrawnImage = { image: Uint8Array; provenance: LibraryProvenance };
 
-/** Whether an image can be used and, when it can't, what to fix in the next attempt. */
 type ImageReview = { usable: boolean; problems: string[] };
 
 const BLANK_FRAME = "the image was a blank frame";
 
-/** A drawing that came out a single color: a code check, no model call. */
 async function isBlank(image: Uint8Array): Promise<boolean> {
   const { data: blank, error } = await isNearSolidImage({ image: Buffer.from(image) });
 
@@ -35,11 +29,6 @@ async function isBlank(image: Uint8Array): Promise<boolean> {
   return blank;
 }
 
-/**
- * The model check of a picture: a vision model confirms it shows the scene, is on style and has
- * only short, correctly spelled labels. It runs after the picture is shown, so it answers at the
- * tier of work nobody waits on (`serviceTier`).
- */
 export async function reviewImage({
   analytics,
   image,
@@ -76,11 +65,6 @@ export async function reviewImage({
   return { problems: verdict.problems, usable: verdict.passed };
 }
 
-/**
- * Draws an image to show at once: only the code check runs (a blank frame is drawn once more),
- * and the model check follows in the background (`checkImageAsset`). Null when every attempt came
- * out blank.
- */
 export async function drawImage({
   attempts = DEFAULT_ATTEMPTS,
   ...input
@@ -100,11 +84,6 @@ export async function drawImage({
   return drawImage({ ...input, attempts: attempts - 1, corrections: [BLANK_FRAME] });
 }
 
-/**
- * Draws an image and keeps it only when it passes the model check, trying again after a failure
- * with the check's findings in the prompt: the redraw of a picture its background check rejected.
- * Returns null when no attempt passes, so the screen goes without a picture instead of a wrong one.
- */
 export async function drawCheckedImage({
   attempts = DEFAULT_ATTEMPTS,
   serviceTier,

@@ -5,11 +5,6 @@ import { type KeptFacts, keptOr } from "./blueprint-kept";
 type Extraction = BlueprintExtraction;
 type MockConditions = NonNullable<ExamStructure["mock"]>;
 
-/**
- * The details a notice states only for some sections (what may be used, the break after it, how
- * candidates move through it), as keys of their own when their claims were kept, so readings that
- * never state them keep their shape.
- */
 function toSectionDetails({
   id,
   kept,
@@ -42,11 +37,6 @@ function toSectionDetails({
   };
 }
 
-/**
- * A section's navigation as the notice states it: none when it describes nothing a mock moves
- * differently for, and positive counts only, since a reading's 0 seconds or a review of 0 answers
- * means it gave none.
- */
 function toNavigation(
   section: NonNullable<Extraction["mock"]>["sections"][number],
 ): SectionNavigation | null {
@@ -70,10 +60,6 @@ function toNavigation(
   return rules.forwardOnly || rules.mustAnswer || rules.itemSeconds ? rules : null;
 }
 
-/**
- * How many times a listening part's recording is played: 1 or 2 when its claim was kept, as a key
- * of its own like the section details, so written tasks keep their shape.
- */
 function toPlays({
   id,
   kept,
@@ -87,10 +73,6 @@ function toPlays({
   return plays === 1 || plays === 2 ? plays : null;
 }
 
-/**
- * Sections only as a whole: a mock missing one of the exam's sections would misrepresent it.
- * Days too, since a mock splits its sections by day.
- */
 function toSections({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extraction["mock"]> }) {
   const ids = mock.sections.map((_, index) => `mock.sections.${index}`);
 
@@ -120,7 +102,6 @@ function toSections({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extract
 
       const plays = toPlays({ id, kept, task });
 
-      // A recording part's description is a claim of its own; a written task's is its claim.
       const description =
         section.kind === "listening"
           ? keptOr({ gap: "", id: `${id}.description`, kept, value: task.description })
@@ -132,7 +113,6 @@ function toSections({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extract
   }));
 }
 
-/** The exam's scoring when its claim was kept; otherwise "other" with no description: unknown. */
 function toScoring({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extraction["mock"]> }) {
   const { description, method, relative, scale, wrongPenalty } = mock.scoring;
 
@@ -140,7 +120,6 @@ function toScoring({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extracti
     return { description: "", method: "other" as const };
   }
 
-  // A ratio only where wrong answers lose points and the notice's numbers state it.
   const penalty =
     method === "wrongCancelsRight" && typeof wrongPenalty === "number"
       ? keptOr({ gap: null, id: "mock.scoring.wrongPenalty", kept, value: wrongPenalty })
@@ -158,10 +137,6 @@ function toScoring({ kept, mock }: { kept: KeptFacts; mock: NonNullable<Extracti
   };
 }
 
-/**
- * The notice's score scale when its claim was kept and it's a range at all; a conversion from the
- * share of right answers only when it lands on that range.
- */
 function toScale({
   kept,
   scale,
@@ -197,10 +172,6 @@ function toScale({
   };
 }
 
-/**
- * The mock's conditions when its scoring, sections, time or length was kept, each a gap when its
- * own claim wasn't: a mock can copy an exam's sections and time without knowing how it's scored.
- */
 export function toMock({ extraction, kept }: { extraction: Extraction; kept: KeptFacts }) {
   const { mock } = extraction;
   const citations = [...kept.entries()].find(([id]) => id.startsWith("mock."))?.[1];

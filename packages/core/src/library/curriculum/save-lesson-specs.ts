@@ -11,19 +11,16 @@ import { type IdentityCourse } from "../identity/_utils/identity-requests";
 import { type CurriculumAnalytics, type CurriculumScope } from "./curriculum-scope";
 import { resolveScopeLessons } from "./resolve-lesson-skills";
 
-/** Moves every placement out of the way first, so the new order never collides with the old one. */
 const POSITION_OFFSET = 1_000_000;
 
 export type SavedLessonSpecs = { status: "notClaimed" } | { lessonIds: string[]; status: "saved" };
 
-/** A run that lost its spec claim, even while it waited for plans, rolls its marks back. */
 class SpecClaimLostError extends Error {
   override name = "SpecClaimLostError";
 }
 
 type SplitContext = {
   analytics?: CurriculumAnalytics;
-  /** The course of the lesson's home chapter, where split lessons are placed. */
   course: IdentityCourse | null;
   homeChapterId: string | null;
   level: CourseLevel;
@@ -36,12 +33,6 @@ function toSpecData(spec: LessonSpec) {
   return { canDo: spec.canDo, estimatedMinutes: spec.estimatedMinutes, spec };
 }
 
-/**
- * Each spec the split rule cut off becomes its own lesson: the specs' skills go through identity
- * search together, a lesson of the same course that already teaches them at this level is reused
- * (or another course's the reuse decision finds on the same subject), and a new one is created with
- * its spec, so it never needs planning again. Returns each spec's lesson, in order.
- */
 async function saveSplitLessons({
   context,
   specs,
@@ -63,7 +54,6 @@ async function saveSplitLessons({
   });
 }
 
-/** Places split lessons right after the lesson they came from, keeping the rest of the order. */
 async function placeAfter({
   chapterId,
   lessonId,
@@ -74,7 +64,6 @@ async function placeAfter({
   splitIds: readonly string[];
 }): Promise<void> {
   await writePlanInputs(async (tx) => {
-    // Plans read the chapter's lessons in order, so the split parts change what they read.
     await lockPlanSourceWrite(tx, { chapterIds: [chapterId], lessonIds: splitIds });
 
     const placements = await tx.chapterLesson.findMany({
@@ -109,15 +98,7 @@ async function placeAfter({
   revalidateCacheTags(await getChapterCacheTags(chapterId));
 }
 
-/**
- * Stores a lesson's spec for the run that holds its spec claim and ends the claim. The spec keeps
- * the lesson's can-do line and minutes current. When the split rule cut the planned lesson into
- * several, the first part stays on this lesson and each other part becomes a lesson of its own,
- * placed right after it in the same chapter, so the plan picks the parts up in order. Returns the
- * ids of every lesson the specs now cover, this one first.
- *
- * This is a workflow bridge: Library content is shared and no learner's data is written.
- */
+/** Internal workflow bridge: the caller must hold the lesson's spec claim. */
 export async function saveLessonSpecs({
   analytics,
   homeChapterId,
@@ -166,7 +147,6 @@ export async function saveLessonSpecs({
 
   const claim = { id: lessonId, specRunId: workflowRunId, specStatus: "running" as const };
 
-  // The spec sets the minutes plans size the lesson by; a run that lost the claim marks nothing.
   const { error } = await safeAsync(() =>
     writePlanInputs(async (tx) => {
       if ((await tx.lesson.count({ where: claim })) === 0) {

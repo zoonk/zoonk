@@ -8,7 +8,6 @@ import { vi } from "vitest";
 export const TEST_IMAGE_WIDTH = 48;
 export const TEST_IMAGE_HEIGHT = 32;
 
-/** A small real WebP with shapes, so the blank-frame check and file storage run for real. */
 export function drawTestImage(): Promise<Buffer> {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${TEST_IMAGE_WIDTH}" height="${TEST_IMAGE_HEIGHT}">
     <rect width="100%" height="100%" fill="#f7f7f9"/>
@@ -19,7 +18,6 @@ export function drawTestImage(): Promise<Buffer> {
   return sharp(Buffer.from(svg)).webp().toBuffer();
 }
 
-/** One flat color: the kind of broken output the blank-frame check rejects. */
 export function drawBlankImage(): Promise<Buffer> {
   return sharp({
     create: {
@@ -57,13 +55,6 @@ const testImageProvenance = {
   usage: {},
 };
 
-/**
- * Image models are the one external boundary in these tests: the gateway is
- * blocked and real images aren't deterministic. Test files mock the scene,
- * drawing and check task modules with `vi.mock`; scene planning, the blank
- * frame check, identity search, storage rows and links run for real. The
- * results are partial because core reads only these fields of each task.
- */
 export function mockImageScene(scene: ImageScene) {
   return vi.mocked(generateImageScene).mockResolvedValue(
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Core reads only the scene.
@@ -85,7 +76,6 @@ function drawnImage(image: Buffer): DrawnImageResult {
   return result as unknown as DrawnImageResult;
 }
 
-/** Images in call order. */
 export function mockDrawnImages(images: readonly Buffer[]) {
   const mock = vi.mocked(generateLessonImage);
   images.forEach((image) => mock.mockResolvedValueOnce(drawnImage(image)));
@@ -107,14 +97,12 @@ function checkResult(passed: boolean): CheckResult {
   return result as CheckResult;
 }
 
-/** Verdicts in call order, for images checked one after another. */
 export function mockImageChecks(verdicts: readonly boolean[]) {
   const mock = vi.mocked(checkLessonImage);
   verdicts.forEach((passed) => mock.mockResolvedValueOnce(checkResult(passed)));
   return mock;
 }
 
-/** Clears queued scenes, images and verdicts between steps of one test. */
 export function resetImageModels(): void {
   vi.mocked(generateImageScene).mockReset();
   vi.mocked(generateLessonImage).mockReset();

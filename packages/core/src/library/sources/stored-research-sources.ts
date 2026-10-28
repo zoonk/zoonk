@@ -18,30 +18,22 @@ import {
 import { READABLE_SOURCE_FILTER } from "./_utils/readable-sources";
 import { type SourceTopic } from "./source-contract";
 
-/** Exams have their own lookup: the canonical blueprint, found by name and role. */
 export type ResearchSourceTopic = Exclude<SourceTopic, "exam">;
 
-/** What research wants to read, as its plan names it. */
 export type StoredSourcesRequest = {
   /** ISO 3166-1 alpha-2, or "ZZ" when any country fits (a product, most syllabi). */
   country: string;
-  /** The language of the documents research reads. */
   language: string;
-  /** The law, product or subject, as the research plan names it. */
   name: string;
-  /** The organizer the plan names, when it knows one. */
   publisher: string | null;
-  /** The plan's phrases for the same topic, including the full name and the acronym. */
   searchTerms: readonly string[];
   topic: ResearchSourceTopic;
 };
 
 const ANY_COUNTRY = "ZZ";
 
-/** Research stores at most this many documents per topic, so it reuses no more than that. */
 const MAX_REUSED_SOURCES = 4;
 
-/** The document research would fetch, which each stored candidate must be able to replace. */
 const WANTED_DOCUMENTS: Record<ResearchSourceTopic, string> = {
   regulation: "The current official text of this law or regulation",
   software: "The current official documentation or release notes of this product",
@@ -53,12 +45,6 @@ function describeWantedDocument({ country, topic }: StoredSourcesRequest): strin
   return `${WANTED_DOCUMENTS[topic]}${place}.`;
 }
 
-/**
- * Official public sources research stored for the same kind of topic that are still valid
- * (a law's text for 30 days, a product's docs for 90, a syllabus for a year) and readable (a page
- * without text would take a document's place), whose title, publisher or address match the plan's
- * name or search terms, best first.
- */
 async function searchStoredSources({
   search,
   topic,
@@ -88,11 +74,6 @@ async function searchStoredSources({
   }));
 }
 
-/**
- * The candidates whose own reuse verdict passes, not only the best one, since research can reuse
- * several documents (a law and its regulation, syllabi from two universities). One decision
- * judges every candidate, each on its own question.
- */
 async function findReusable({
   candidates,
   subject,
@@ -111,15 +92,7 @@ async function findReusable({
   return candidates.filter((candidate) => reusable.has(candidate.id));
 }
 
-/**
- * The sources another learner's research already stored for the same law, product or subject,
- * so this goal reuses them instead of searching the web and fetching them again. The Library
- * identity flow finds them: text search with the plan's own words over official sources that
- * are still valid, and the reuse decision on each candidate against the document research would
- * fetch. Empty when nothing stored fits, and research searches as usual.
- *
- * This is a workflow bridge: research runs for a goal the public boundary already checked.
- */
+/** Internal workflow bridge: the public boundary must already have authorized the goal. */
 export async function findStoredResearchSources(request: StoredSourcesRequest): Promise<string[]> {
   const search = toTextSearch({
     language: request.language,

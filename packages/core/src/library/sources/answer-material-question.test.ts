@@ -77,7 +77,6 @@ describe(answerMaterialQuestion, () => {
       '<page ref="S1:2" of="Aula 5, slide 2">',
     );
 
-    // Each question is a tutor message against the learner's allowance.
     await expect(
       prisma.usageRecord.count({ where: { kind: "tutorMessage", userId: user.id } }),
     ).resolves.toBe(1);

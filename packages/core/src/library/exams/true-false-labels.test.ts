@@ -38,7 +38,6 @@ describe(getTrueFalseLabels, () => {
     expect(getTrueFalseLabels(null)).toBe("trueFalse");
   });
 
-  // Rafaela's Câmara placement asked "True or false" until the notice's blueprint linked.
   it("judges statements right or wrong when the notice names its answers so, scoring unknown", () => {
     const format = {
       citation: {

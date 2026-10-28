@@ -11,11 +11,6 @@ function selectLessonPlan(lessonId: string) {
   } as const;
 }
 
-/**
- * The plan a learner plays a lesson for: their plan that has the lesson, most recently changed
- * first, or else the plan of their active goal. `items` are that plan's entries for the lesson,
- * with the chapter it sits in there (none for the active goal's plan without the lesson).
- */
 export async function findLearnerLessonPlan({
   lessonId,
   userId,

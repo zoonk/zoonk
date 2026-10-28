@@ -24,13 +24,6 @@ async function findExactChapter({
     : null;
 }
 
-/**
- * Public chapters in the same language, level and target language whose words match, from other
- * courses: a course on the same subject under another name can share them, which the reuse
- * decision judges from both sides' courses. The course's own chapters are only matched exactly
- * (a retry finds its chapter by its key): a chapter its outline writes is a new one, such as a
- * skill's next chapter, which reads like the one it continues.
- */
 async function findChapterCandidateIds({
   request,
   search,

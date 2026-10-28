@@ -13,7 +13,6 @@ import {
 } from "./exam-learners";
 import { readBlueprintContent } from "./save-exam-blueprint";
 
-/** What gets checked for freshness: an exam blueprint, or a source that isn't an exam notice. */
 export type FreshnessTarget =
   | { examBlueprintId: string; kind: "exam" }
   | { kind: "source"; sourceId: string };
@@ -29,29 +28,18 @@ export type SourceChange = {
   title: string;
 };
 
-/** Plain JSON, since a workflow step returns it. */
 export type FreshnessCheck =
   | { reason: FreshnessStopReason; status: "stopped" }
   | {
-      /** Set when the blueprint was read from an older version of its notice. */
       blueprintUpdate: { examBlueprintId: string; sourceId: string } | null;
       nextCheckAt: string;
-      /**
-       * Set when the stored edition's exam passed while learners prepare for a later one: the
-       * next notice is searched for, since the stored one will never announce it.
-       */
       nextNotice: { examBlueprintId: string } | null;
       sourceChange: SourceChange | null;
       status: "scheduled";
     };
 
-/** A search for an exam's next notice runs once a week, like a weekly check. */
 const NEXT_NOTICE_SEARCH_DAYS = 7;
 
-/**
- * A failed fetch (the board's site is down) must not stop the checks, so it's
- * logged and the source is simply checked again at the next scheduled time.
- */
 async function refreshSafely(sourceId: string) {
   const { data, error } = await safeAsync(() => refreshWebSource(sourceId));
 
@@ -101,7 +89,6 @@ function getSourceStopReason({
   return learners === 0 ? "noLearners" : null;
 }
 
-/** A failed fetch is checked again tomorrow instead of waiting a whole week. */
 function getNextCheckAfterRefresh({
   now,
   refreshed,
@@ -114,11 +101,6 @@ function getNextCheckAfterRefresh({
   return refreshed ? scheduled : new Date(now.getTime() + MS_PER_DAY);
 }
 
-/**
- * After the stored edition's exam, its notice has nothing more to say: learners preparing for a
- * later edition (an estimated date after it) need the next notice, so it's searched for every
- * week until one is read. Without them, the checks stop.
- */
 async function searchNextNotice({
   examBlueprintId,
   examDate,
@@ -277,13 +259,6 @@ async function checkSource({
   };
 }
 
-/**
- * One freshness check: stop when the exam has passed, nobody studies it or
- * there's nothing to fetch; otherwise fetch the source again, compare hashes
- * and schedule the next check. It never calls a model: the result says
- * whether the blueprint is behind its notice or a source changed, and the
- * workflow runs a model only then.
- */
 export function checkFreshness({
   now = new Date(),
   target,

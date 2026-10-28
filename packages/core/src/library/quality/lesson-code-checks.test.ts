@@ -383,10 +383,6 @@ describe(checkWrittenLesson, () => {
     expect(codesOf(withScreen(0, sensors))).toStrictEqual([[0, "optionData"]]);
   });
 
-  /*
-   * A hobby biology course asked "Iara" to write what her cell diagram was missing: learners would
-   * rather pick, so a typed answer is only for learners whose exams ask written answers.
-   */
   it("sends a typed answer to the fix pass unless the lesson's learners' exams ask written answers", () => {
     const typed = withScreen(6, writtenTypedAnswer());
 

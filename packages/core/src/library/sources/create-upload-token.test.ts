@@ -13,7 +13,6 @@ import {
 } from "./create-upload-token";
 import { MAX_SOURCE_UPLOAD_BYTES, SOURCE_UPLOAD_CONTENT_TYPES } from "./source-contract";
 
-/** A file the learner names for upload: its own id first, as the apps name them. */
 function uploadPathname(userId: string) {
   return `sources/${userId}/${randomUUID()}-edital.pdf`;
 }
@@ -67,7 +66,6 @@ describe(createSourceUploadToken, () => {
     expect(vi.mocked(issueSignedToken).mock.calls[0]?.[0].validUntil).toBeGreaterThan(Date.now());
   });
 
-  // A file stored without being registered takes storage all the same, so signing is what counts.
   it("counts each signed file, so a free account can't sign more uploads than its plan allows", async () => {
     const user = await userFixture();
     mockSession(user.id);
@@ -87,7 +85,6 @@ describe(createSourceUploadToken, () => {
       status: "limitReached",
     });
 
-    // Signing a path again stores no second file there, so it counts nothing more.
     await expect(createSourceUploadToken({ pathname: firstPathname })).resolves.toMatchObject({
       status: "ready",
     });
@@ -195,7 +192,6 @@ describe(isOwnUploadPathname, () => {
 });
 
 describe(getUploadClaimId, () => {
-  // It's also the id of the source the file becomes, which API clients send back.
   it("names each path's claim with a valid UUID, the same one every time", () => {
     const claim = getUploadClaimId("sources/user-1/a.pdf");
 

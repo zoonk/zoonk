@@ -14,7 +14,6 @@ const CHART = {
   valueLabel: "Ofícios",
 };
 
-/** Each kind of visual and a phrase of the problem a screen gets when it points at one unshown. */
 const MISSING_PHRASES = [
   ["chart", "of kind chart"],
   ["image", "point at a picture"],
@@ -23,7 +22,6 @@ const MISSING_PHRASES = [
   ["timeline", "of kind timeline"],
 ] as const;
 
-/** The kinds of visual a text points at, read from the problems it gets when nothing is shown. */
 function pointedAt(language: string, text: string): string[] {
   const problems = getVisualProblems({
     language,

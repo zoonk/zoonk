@@ -4,13 +4,10 @@ import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getCourseCurriculumCacheTag } from "../../cache/tags";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 
-/** Moves a band's placements out of the way first, so the new order never collides with the old. */
 const POSITION_OFFSET = 1_000_000;
 
-/** A continuation and the chapter it goes right after. */
 type ContinuationMove = { afterChapterId: string; chapterId: string };
 
-/** The band's chapters in order with each continuation right after the chapter it continues. */
 function orderWithContinuations({
   current,
   moves,
@@ -26,20 +23,13 @@ function orderWithContinuations({
     ...moves.filter((move) => move.afterChapterId === chapterId).map((move) => move.chapterId),
   ]);
 
-  // A continuation whose chapter left the band keeps its place at the end.
   return [
     ...placed,
     ...current.filter((chapterId) => moved.has(chapterId) && !placed.includes(chapterId)),
   ];
 }
 
-/**
- * Puts each continuation right after the chapter it continues, inside its band, so the course
- * reads in teaching order: a skill's chapters together, and what builds on them after. Positions
- * are unique in a band, so one transaction moves the band out of the way and writes the new order.
- *
- * This is a workflow bridge: the calling run holds the course's outline claim.
- */
+/** Internal: the calling workflow must hold the course's outline claim. */
 export async function placeContinuations({
   courseId,
   level,
@@ -70,7 +60,6 @@ export async function placeContinuations({
       return;
     }
 
-    // Plans read lessons in their chapters' order: only the chapters that move change it.
     await lockPlanSourceWrite(tx, { chapterIds: moved });
 
     await tx.courseChapter.updateMany({

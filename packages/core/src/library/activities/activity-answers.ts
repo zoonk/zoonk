@@ -4,12 +4,7 @@ import { type ActivityStepContent, getActivityTemplate } from "./activity-templa
 import { matchesExpectedAnswer } from "./templates/_utils/grade-interaction";
 import { withinTolerance } from "./templates/_utils/pattern-checks";
 
-/**
- * Grades a learner's answer to an activity with the same computed answer the validator checked
- * before publishing, so the player and the server can't disagree about what is right. A typed
- * number is right within the check's tolerance or rounded to the places the learner typed ("12"
- * for 11.88%), since a check stores no precision to hold the learner to.
- */
+/** Uses the same computed answer as publishing; numeric answers also accept rounding to the typed precision. */
 export function checkActivityAnswer(content: ActivityStepContent, answer: ActivityAnswer): boolean {
   const { check } = content;
 

@@ -2,12 +2,6 @@ import "server-only";
 import { getLessonRewriteModel } from "@zoonk/ai/tasks/v2/lesson-writer";
 import { type HeldBackDraft, MAX_LESSON_DRAFTS } from "../../generation/held-back-drafts";
 
-/**
- * Who writes a lesson's next draft and what it's told. A first draft comes from the writer's
- * default model (`model` undefined). After a draft was held back, the same writer drafts it
- * afresh, told every problem that held earlier drafts back; the last allowed draft comes from a
- * writer of another family (`getLessonRewriteModel`), told the same.
- */
 export function pickDraftWriter({ heldBackDrafts }: { heldBackDrafts: readonly HeldBackDraft[] }): {
   heldBackProblems: HeldBackDraft["problems"];
   model: string | undefined;

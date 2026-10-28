@@ -29,7 +29,6 @@ async function readChunks({
   return readChunks({ chunks, maxBytes, reader, size: nextSize });
 }
 
-/** Stops reading once a response is over the limit, instead of trusting its headers. */
 export async function readLimitedBody({
   maxBytes,
   response,

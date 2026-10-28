@@ -85,7 +85,6 @@ const placeSchema = z
 
 type MapExplorerFields = { baseMapId: string; places: z.output<typeof placeSchema>[] };
 
-/** The map must be one the player can draw, and every place must fall inside it. */
 function mapExplorerIssues(fields: MapExplorerFields): ActivityIssue[] {
   const map = getActivityBaseMap(fields.baseMapId);
 

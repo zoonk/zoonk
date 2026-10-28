@@ -31,11 +31,6 @@ const FORMAT_WORDS: Record<Extraction["formats"][number]["kind"], string> = {
   trueFalse: "items judged true or false (right or wrong)",
 };
 
-/**
- * A format as a claim about it names it: its kind and the line it quotes for itself. Never the
- * description, which the model writes and its own claim checks: a detail it adds that no line
- * states would drop every claim that names the format with it.
- */
 function nameFormat(format: Pick<Extraction["formats"][number], "kind" | "passage">): string {
   return `${FORMAT_WORDS[format.kind]} ("${format.passage}")`;
 }
@@ -54,11 +49,6 @@ function describeParts(parts: (string | false | null)[]): string {
   return parts.filter(Boolean).join("; ");
 }
 
-/**
- * A subject is kept when its passages name it; its question count, weight, group and choice are
- * claims of their own, often stated elsewhere in the notice. Its topics are checked by code
- * (`findStatedTopics`).
- */
 function subjectFacts({ documents, extraction, found }: FactSource): FactEntry[] {
   return extraction.subjects.flatMap((subject, index) => {
     const id = `subjects.${index}`;
@@ -103,13 +93,6 @@ const PARTIAL_CREDIT_WORDS: Record<PartialCreditRule, string> = {
   plusMinus: "each right pick earns a mark and each wrong pick loses one",
 };
 
-/**
- * How a format with several picks scores a question answered partly right, as its own claim: a
- * notice often states it with the scoring, away from the format, so it reads the passage quoted
- * for its marking (`markingPassage`) and the scoring's passages too. It names the format, since a
- * notice often marks one question type apart from the others, and a rule claimed for every
- * question that asks for several options says more than that passage.
- */
 function partialCreditFacts({
   documents,
   extraction,
@@ -139,12 +122,6 @@ const COUNT_PART_WORDS: Record<FormatCount["per"], string> = {
   subject: "in each subject",
 };
 
-/**
- * How many of the exam's questions a format takes, as its own claim stating the number its line
- * gives word for word: a notice counts them with its sections or its scoring, away from the
- * format, so it reads the line quoted for its count (`countPassage`). Code works out the share
- * from every format's kept count (`getFormatShares`), which no passage states.
- */
 function countFacts({
   documents,
   format,
@@ -177,7 +154,6 @@ function countFacts({
   });
 }
 
-/** A format is kept by its kind; its description, written by the model, is a claim of its own. */
 function formatFacts({ documents, extraction }: FactSource): FactEntry[] {
   return extraction.formats.flatMap((format, index) => {
     const id = `formats.${index}`;
@@ -279,12 +255,6 @@ function reusePolicyFacts({ documents, extraction }: FactSource): FactEntry[] {
   });
 }
 
-/**
- * Every claim of an extraction in words, with its passages and whether code found them. Each
- * claim states one thing, so the model check drops a detail its passages don't state without
- * dropping the subject, format or scoring it belongs to. The check reads claims in batches, never
- * a sibling's passages, so each claim carries every passage that states it.
- */
 export function listBlueprintFacts({
   documents,
   extraction,
@@ -305,18 +275,13 @@ export function listBlueprintFacts({
   ];
 }
 
-/**
- * Claims one check reads. The check's reasoning grows with its claims (48 of TCDF's took 30,000
- * output tokens in one call), so claims are checked in batches at once.
- */
+/** Checking many claims at once can exhaust the model's output budget. */
 const CHECK_BATCH_SIZE = 16;
 
-/** The cited facts in the batches the model check reads, one call each. */
 export function toCheckBatches(facts: CitedFact[]): CitedFact[][] {
   return splitEvenly({ items: facts, size: CHECK_BATCH_SIZE });
 }
 
-/** Facts the model check reads: only those whose passages code found in the documents. */
 export function toCitedFacts(facts: FactEntry[]): CitedFact[] {
   return facts
     .filter((item) => item.found)
@@ -327,11 +292,7 @@ export function toCitedFacts(facts: FactEntry[]): CitedFact[] {
     }));
 }
 
-/**
- * A subject's topics its own documents state word for word: the syllabus's item names, which
- * the extraction copies. A document without text (a photo, a scan) can't be searched, so its
- * topics stand on the model's reading, like its passages.
- */
+/** Without searchable document text, topics rely on the model's reading. */
 export function findStatedTopics({
   documents,
   subject,

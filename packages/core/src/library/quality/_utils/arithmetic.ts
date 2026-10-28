@@ -1,7 +1,6 @@
 import { getBaseLanguage } from "@zoonk/utils/languages";
 import { evaluateFormula } from "../../activities/expression/evaluate-expression";
 
-/** Languages that write 0,25 for a quarter and 2.400 for two thousand four hundred. */
 const DECIMAL_COMMA_LANGUAGES: ReadonlySet<string> = new Set(["de", "es", "fr", "it", "pt"]);
 
 const THOUSANDS_GROUP_DIGITS = 3;
@@ -20,7 +19,6 @@ const ATTACHED_AFTER = /[\p{L}\d%^*/]/u;
 
 type ParsedNumber = { decimals: number; value: number };
 
-/** LaTeX and typographic math written as plain arithmetic the expression language reads. */
 function normalizeMath(text: string): string {
   return text
     .replaceAll(/\\left|\\right/gu, "")
@@ -40,12 +38,6 @@ function isDecimalComma(language: string): boolean {
   return DECIMAL_COMMA_LANGUAGES.has(getBaseLanguage(language));
 }
 
-/**
- * Reads "2,400", "2.400", "0,25" or "1.234,5" the way the lesson's language
- * writes numbers: with both separators the last one is the decimal point, a
- * repeated one groups thousands, and a single one before exactly three digits
- * is the language's thousands separator.
- */
 function parseNumber(token: string, language: string): ParsedNumber | null {
   const thousands = isDecimalComma(language) ? "." : ",";
   const separators = [...token.matchAll(/[.,]/gu)].map((match) => match[0]);
@@ -82,7 +74,6 @@ function toExpression(text: string, language: string): string | null {
     .join("");
 }
 
-/** The arithmetic right before an equals sign, if it stands on its own ("20 / 80", not "x + 3"). */
 function getLeftExpression(segment: string): string | null {
   const run = TRAILING_ARITHMETIC.exec(segment)?.[0] ?? "";
   const leading = LEADING_PUNCTUATION.exec(run)?.[0].length ?? 0;
@@ -96,7 +87,6 @@ function getLeftExpression(segment: string): string | null {
   return expression;
 }
 
-/** The single number right after an equals sign, if nothing turns it into a percentage, a unit power or more math. */
 function getRightNumber(segment: string): string | null {
   const match = LEADING_NUMBER.exec(segment);
   const after = match?.groups?.after ?? "";
@@ -143,13 +133,6 @@ function checkEquation({
     : `"${left} = ${right}" is wrong: it gives ${Number(result.value.toPrecision(10))}.`;
 }
 
-/**
- * Recomputes plain arithmetic a lesson states, such as "20 ÷ 80 = 0.25" or
- * `\frac{20}{80} = 0.25`, in prose or LaTeX. It only judges equations it can
- * read with certainty (numbers and operators on the left, one number on the
- * right) and allows for rounding to the digits shown, so it never flags
- * algebra, units or percentages it can't evaluate.
- */
 export function findArithmeticErrors({
   language,
   text,
@@ -179,7 +162,6 @@ export function findArithmeticErrors({
   });
 }
 
-/** Every number a text states, in prose or LaTeX, read the way the lesson's language writes it. */
 export function readNumbers({ language, text }: { language: string; text: string }): number[] {
   return [...normalizeMath(text).matchAll(NUMBER_TOKEN)].flatMap(
     (match) => parseNumber(match[0], language)?.value ?? [],

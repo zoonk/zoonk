@@ -36,7 +36,6 @@ type CourseRoute = { brandSlug: string; courseSlug: string; language: string };
 export type ChapterRoute = CourseRoute & { chapterSlug: string };
 export type LessonRoute = ChapterRoute & { lessonSlug: string };
 
-/** Only a published, public brand course has a public URL a canonical link can point to. */
 function toCourseRoute(course: HomeCourse | null): CourseRoute | null {
   if (!course?.isPublished || course.visibility !== "public") {
     return null;
@@ -103,12 +102,6 @@ async function getCachedLessonHomeRoute(lessonId: string) {
   return chapterRoute && lesson ? { ...chapterRoute, lessonSlug: lesson.slug } : null;
 }
 
-/**
- * The URL of a shared chapter's home placement: the course it was made for.
- * Every other course that reuses the chapter points its canonical link here,
- * so search engines see one page per chapter. Null when the home has no
- * public URL.
- */
 export async function getChapterHomeRoute({
   chapterId,
 }: {
@@ -121,11 +114,6 @@ export async function getChapterHomeRoute({
   return getCachedChapterHomeRoute(chapterId);
 }
 
-/**
- * The URL of a shared lesson's home placement: the chapter it was made for,
- * inside that chapter's home course. Reused placements point their canonical
- * link here. Null when the home has no public URL.
- */
 export async function getLessonHomeRoute({
   lessonId,
 }: {

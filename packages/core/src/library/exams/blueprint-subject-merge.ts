@@ -8,12 +8,6 @@ function isSameName(first: Subject, second: Subject): boolean {
   return normalizeString(first.name) === normalizeString(second.name);
 }
 
-/**
- * The stored subject a new reading's subject is: the one of the same name, or else the one its
- * name's words match ("Essay test" for "Essay"), when that's the only stored subject it
- * matches and no other of the reading's subjects matches it. A stored subject another of the
- * reading's subjects has by name is never taken ("Civil Law" isn't "Civil Procedure Law").
- */
 function findStoredSubject({
   current,
   next,
@@ -71,10 +65,6 @@ function withStoredFacts({ stored, subject }: { stored: Subject; subject: Subjec
   };
 }
 
-/**
- * The stored subjects the new reading left out, each placed after the stored subject before it,
- * so the notice's order holds.
- */
 function addLeftOut({
   current,
   merged,
@@ -94,15 +84,6 @@ function addLeftOut({
   }, merged);
 }
 
-/**
- * A new reading's subjects with what the stored reading already knew: each subject it reads again
- * keeps its name, so plans, lookups and screens keep finding it, and its question count, weight,
- * group, choice, short name, topics and their headings wherever the new reading leaves them out; a subject
- * it leaves out stays. A reading that names a subject differently, reads fewer documents or skips
- * one hasn't changed the exam (ENEM read again from its reference matrix states no counts and
- * calls its essay "Essay test"; an OAB reading once missed ethics): one that states a new
- * count or group replaces it, and subjects it adds are added.
- */
 export function keepKnownSubjectFacts({
   current,
   next,

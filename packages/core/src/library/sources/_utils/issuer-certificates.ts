@@ -5,21 +5,15 @@ import { Agent, type Response, fetch } from "undici";
 import { isPublicUrl, publicLookup } from "./public-url";
 import { readLimitedBody } from "./read-limited-body";
 
-/** What Node reports when a server's certificate arrives without the one that issued it. */
 const MISSING_ISSUER_CODE = "UNABLE_TO_VERIFY_LEAF_SIGNATURE";
 const CA_ISSUERS_PREFIX = "CA Issuers - URI:";
 const HTTPS_PORT = 443;
 const WEB_URL_PATTERN = /^https?:/iu;
 const ISSUER_TIMEOUT_MS = 10_000;
-/** An intermediate certificate takes 1 to 2 KB; anything this large isn't one. */
 const MAX_ISSUER_BYTES = 32_768;
 
 type ChainRequest = {
   headers: Record<string, string>;
-  /**
-   * Resolves host names, refusing private addresses (see `publicLookup`); tests point public names
-   * at a local server.
-   */
   lookup?: LookupFunction;
   signal: AbortSignal;
   url: string;
@@ -29,20 +23,11 @@ function errorCode(error: unknown): unknown {
   return error instanceof Error && "code" in error ? error.code : undefined;
 }
 
-/**
- * Some servers send only their own certificate and leave out the intermediate that issued it,
- * which browsers download on their own. Node reports it as this one error, which fetch wraps as
- * the cause of its generic "fetch failed".
- */
 export function isMissingIssuerError(error: unknown): boolean {
   return errorCode(error instanceof Error ? error.cause : undefined) === MISSING_ISSUER_CODE;
 }
 
-/**
- * Reads the certificate a server presents without trusting it, only to learn where its issuer is
- * published. Nothing is sent on this connection and it closes as soon as the certificate arrives,
- * since nothing about the server was verified.
- */
+/** This unverified connection must send no application data; it only discovers the issuer certificate. */
 function readServerCertificate({
   lookup,
   url,
@@ -79,7 +64,6 @@ function readInfoAccessValue(value: string): string {
   return value.startsWith('"') ? String(JSON.parse(value)) : value;
 }
 
-/** The web address where a certificate's issuer is published (its AIA "CA Issuers" entry). */
 function getIssuerUrl(certificate: X509Certificate): string | undefined {
   return (certificate.infoAccess ?? "")
     .split("\n")
@@ -96,7 +80,6 @@ function parseCertificate({ bytes, url }: { bytes: Uint8Array; url: string }): X
   }
 }
 
-/** Takes DER or PEM, the two ways certificate authorities publish their certificates. */
 async function downloadCertificate({
   headers,
   lookup,
@@ -127,12 +110,7 @@ function isIssuerOf({ issuer, leaf }: { issuer: X509Certificate; leaf: X509Certi
   return issuer.ca && leaf.checkIssued(issuer) && leaf.verify(issuer.publicKey);
 }
 
-/**
- * The certificate authority that issued a server's certificate, downloaded from the address that
- * certificate names. A remote server picks that address, so it gets the public-address rule every
- * fetch gets, no redirects, and size and time limits, and the download is only used when it is a
- * certificate authority that really signed the server's certificate.
- */
+/** The server controls the issuer URL, so downloads require public-address, redirect, size and time restrictions. */
 async function findIssuer({
   headers,
   hostname,
@@ -163,11 +141,7 @@ async function findIssuer({
   return issuer;
 }
 
-/**
- * Retries a request whose server left out its intermediate certificate, trusting Node's default
- * authorities plus that intermediate. The chain is still verified up to a trusted root and the
- * host name still checked: the intermediate only fills the gap a browser fills on its own.
- */
+/** Adds only the missing intermediate; root trust and hostname verification remain required. */
 export async function fetchCompletingChain({
   headers,
   lookup = publicLookup,

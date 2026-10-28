@@ -16,16 +16,10 @@ type MissingSkill = Pick<
 
 type GraphSkill = GoalSkillGraph["skills"][number];
 
-/** A gap the references show is usually one idea: two short lessons until its outline says more. */
 const COVERAGE_SKILL_LESSONS = 2;
 
-/** A notice topic's weight when its subject has no weighted skill to take it from. */
 const DEFAULT_TOPIC_WEIGHT = 3;
 
-/**
- * Keys for the added skills that no skill in the graph uses yet: a graph checked again (an exam's
- * plan once research read its notice) may already have skills an earlier check added.
- */
 function toFreeKeys({ count, graph }: { count: number; graph: GoalSkillGraph }): string[] {
   const taken = new Set(graph.skills.map((skill) => skill.key));
 
@@ -34,7 +28,6 @@ function toFreeKeys({ count, graph }: { count: number; graph: GoalSkillGraph }):
     .slice(0, count);
 }
 
-/** Where a skill's first topic sits in its subject's syllabus; the end when it has none. */
 function getTopicOrder({
   outline,
   skill,
@@ -51,7 +44,6 @@ function getTopicOrder({
   return positions.length > 0 ? Math.min(...positions) : Infinity;
 }
 
-/** The last skill of the first run of the graph's skills in `area`, by index; -1 without one. */
 function findFirstRunEnd({ area, graph }: { area: string; graph: GoalSkillGraph }): number {
   const start = graph.skills.findIndex((skill) => skill.area === area);
   const end = graph.skills.findIndex((skill, index) => index > start && skill.area !== area);
@@ -63,11 +55,6 @@ function findFirstRunEnd({ area, graph }: { area: string; graph: GoalSkillGraph 
   return end === -1 ? graph.skills.length - 1 : end - 1;
 }
 
-/**
- * Where a subject the graph has no skill of starts: right after the first run of skills of the
- * nearest subject the notice lists before it, so ENEM's Spanish starts beside its languages area,
- * in its course and phase. -1 when no earlier subject has skills.
- */
 function findEarlierSubjectEnd({
   area,
   graph,
@@ -87,13 +74,6 @@ function findEarlierSubjectEnd({
   return ends.findLast((index) => index >= 0) ?? -1;
 }
 
-/**
- * The skill a new one goes after, by the index in the graph: its last prerequisite; for a notice
- * topic, the last skill of its subject that teaches an earlier topic (or, when none does, it goes
- * right before the subject's first skill), and for a subject the graph has no skill of yet (an
- * option the notice's reading named later), beside the subject the notice lists before it;
- * otherwise none, and it starts the graph.
- */
 function findAfter({
   graph,
   missing,
@@ -149,8 +129,6 @@ function toGraphSkill({
 
   const after = findAfter({ graph, missing, outline, prerequisites });
 
-  // The skill it sits next to lends it its course, band and phase: the one before it, or the one
-  // it goes in front of when it starts its subject.
   const neighbor = graph.skills[after] ?? graph.skills[after + 1];
   const phases = prerequisites.length > 0 ? prerequisites : [neighbor];
 
@@ -173,7 +151,6 @@ function toGraphSkill({
   };
 }
 
-/** A skill added for the notice's written test, kept whole like the graph's own (see `outcome`). */
 function isWrittenTestArea({
   area,
   outline,
@@ -185,13 +162,6 @@ function isWrittenTestArea({
   return Boolean(subject && isWrittenTestSubject(subject));
 }
 
-/**
- * Adds the skills a reference syllabus expects but the graph missed, with the exam weight the
- * check gave them and, for an exam's notice, the subject and topics they teach. Each goes right
- * after the last prerequisite the coverage check named, in that prerequisite's course, band and
- * phase; a notice topic without prerequisites goes among its subject's skills in the notice's
- * order; any other starts the graph. The graph stays in teaching order.
- */
 function addCoverageSkills({
   graph,
   missing,
@@ -222,11 +192,6 @@ function addCoverageSkills({
   return { ...graph, skills };
 }
 
-/**
- * Moves the exam weights the coverage check corrected: the notice's areas and topic frequency
- * show how much of the exam each skill is worth. Every other skill keeps its weight; none is
- * removed, so a skill the notice doesn't test stays, at weight 1 when the check says so.
- */
 function reweightExamSkills({
   examWeights,
   graph,
@@ -249,7 +214,6 @@ function reweightExamSkills({
   };
 }
 
-/** Puts the skills the check placed in their notice subject, with the topics they teach. */
 function placeExamSkills({
   graph,
   placements,
@@ -272,7 +236,6 @@ function placeExamSkills({
   };
 }
 
-/** A subject's usual weight in the graph, which a topic of it takes. */
 function getSubjectWeight({ graph, subject }: { graph: GoalSkillGraph; subject: string }) {
   const weights = graph.skills.flatMap((skill) =>
     skill.area === subject && skill.examWeight !== null ? [skill.examWeight] : [],
@@ -283,11 +246,6 @@ function getSubjectWeight({ graph, subject }: { graph: GoalSkillGraph; subject: 
     : Math.round(weights.reduce((total, weight) => total + weight, 0) / weights.length);
 }
 
-/**
- * Gives every notice topic no skill teaches a skill of its own, named as the notice names it, so
- * the plan always covers the whole syllabus a learner checks it against. The coverage check
- * writes these skills itself; this only catches a topic it left out.
- */
 function coverRemainingTopics({
   graph,
   outline,
@@ -311,11 +269,6 @@ function coverRemainingTopics({
   });
 }
 
-/**
- * A graph with what the coverage check found: weights corrected, skills placed in the notice's
- * subjects and topics, the missing skills added and, for an exam's notice, any topic still left
- * given its own skill. `changed` says whether anything moved.
- */
 export function applyGraphCoverage({
   coverage,
   graph,
@@ -339,10 +292,6 @@ export function applyGraphCoverage({
   return { changed: moved || covered !== checked, graph: covered };
 }
 
-/**
- * Whether a graph needs the coverage check: it has references to check against, or an exam's
- * notice has topics no skill teaches yet.
- */
 export function needsCoverageCheck({
   graph,
   outline,

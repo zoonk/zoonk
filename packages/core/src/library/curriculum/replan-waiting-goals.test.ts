@@ -11,7 +11,6 @@ import {
 } from "./_test-utils/waiting-goals";
 import { replanGoalsWaitingOnSkills, replanWaitingGoal } from "./replan-waiting-goals";
 
-/** A popular course's band: more waiting goals than a process's pool has connections. */
 const POPULAR_BAND_GOALS = 12;
 
 describe(replanGoalsWaitingOnSkills, () => {
@@ -28,10 +27,6 @@ describe(replanGoalsWaitingOnSkills, () => {
     vi.restoreAllMocks();
   });
 
-  // Other learners' outlines keep saving lessons of the shared course while a band lands, each
-  // marking one waiting plan's inputs changed: that plan can't be saved from what it read, so it's
-  // reported (and logged) for its run to plan again later, keeping its stand-in meanwhile, while
-  // the other goal takes the lessons. Once the lessons stop landing, planning it again takes them.
   it("reports a goal whose plan kept changing, for later, and re-plans the others", async () => {
     const skill = await skillFixture();
     const [busy, other] = await Promise.all([waitingGoal(skill), waitingGoal(skill)]);
@@ -62,7 +57,6 @@ describe(replanGoalsWaitingOnSkills, () => {
     await expect(plannedLessons(busy.plan.id)).resolves.toStrictEqual(lessonIds);
   });
 
-  // A popular course's band: every goal waiting on it takes the lessons.
   it("re-plans every goal waiting on a popular course's band", async () => {
     const skill = await skillFixture();
 

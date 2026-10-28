@@ -34,20 +34,14 @@ type GraphPrompt = Omit<SkillGraphParams, "analytics" | "model" | "reasoning" | 
 
 type Details = Record<string, unknown>;
 
-/** Each reference is cut to this many characters: enough for a syllabus, bounded for the prompt. */
 const MAX_REFERENCE_CHARACTERS = 30_000;
 const MAX_REFERENCES = 3;
 
 const PURPOSES = ["overview", "deep", "work", "careerChange", "refresh"] as const;
 const OWN_LEVELS = ["none", "basic", "intermediate", "advanced"] as const;
 
-/** Purposes with the scope university courses and official curricula are written for. */
 const SYLLABUS_PURPOSES = new Set<(typeof PURPOSES)[number]>(["deep", "careerChange"]);
 
-/**
- * Details the prompt already reads on their own lines, and onboarding's bookkeeping, so neither
- * is repeated in the context the model reads.
- */
 const OMITTED_CONTEXT_FIELDS = new Set([
   "answered",
   "courseStart",
@@ -56,7 +50,6 @@ const OMITTED_CONTEXT_FIELDS = new Set([
   "purpose",
 ]);
 
-/** The onboarding answers that change the skill graph, which the curriculum waits for. */
 const CURRICULUM_QUESTIONS = new Set<OnboardingQuestion>(["followUps", "level", "purpose", "role"]);
 
 export type GoalCurriculumInputs = {
@@ -71,66 +64,22 @@ export type GoalCurriculumInputs = {
     | "title"
     | "userId"
   >;
-  /** The skill graph's prompt for a private course: the goal as typed, what onboarding heard. */
   graphPrompt: GraphPrompt;
-  /** The details a shared curriculum reads instead (see `toScopedGraphPrompt`). */
   sharedContext: string | undefined;
-  /**
-   * The exam an exam goal prepares for, as its shared graph and outlines name it (see
-   * `toExamIdentity`); null for other goals.
-   */
   examIdentity: string | null;
-  /** The exam its shared outlines are written for (see `toGoalCandidateExams`). */
   exams: CandidateExam[];
-  /**
-   * The goal's exam blueprint as the skill graph reads it (`graphPrompt.examBlueprint`), titled
-   * for the coverage check: an exam's plan is built before research reads a new notice, then
-   * checked against it once it's in. Null when the goal has no blueprint.
-   */
   blueprintReference: { text: string; title: string } | null;
-  /**
-   * The goal's sources as references for the coverage check: its exam notice, a law's text or a
-   * product's docs, the syllabi research found for a big learn goal, or the learner's uploads.
-   * Empty when it has none.
-   */
   references: { text: string; title: string }[];
-  /**
-   * The goal is built from the learner's own material (class slides, notes): its curriculum is a
-   * private course that follows the material, and its lessons cite their pages.
-   */
   hasMaterial: boolean;
-  /** A plan already built from a skill graph: the goal's curriculum exists and nothing is redone. */
   hasPlanGraph: boolean;
-  /**
-   * The goal practices with tools of its own (see `usesTools`): false for an exam answered on
-   * paper or on screen, whose courses teach its skills in chapters without tools.
-   */
   usesTools: boolean;
-  /**
-   * The learner is still answering onboarding questions that change the skill graph (purpose,
-   * role, level, follow-ups), so the curriculum waits for them. Only goals typed in onboarding.
-   */
   awaitingAnswers: boolean;
   isGuest: boolean;
-  /**
-   * The exam subjects the learner said they know well: placement writes no questions on their
-   * basics, which it takes as known.
-   */
   knownSubjects: string[];
-  /**
-   * A test from the learner's own material (a private blueprint): placement asks every topic of
-   * it, so every skill gets placement questions (see `isOwnMaterialTest`).
-   */
   ownMaterialTest: boolean;
-  /**
-   * The Library course the learner started the goal from, when its plan couldn't come from the
-   * course's outline yet (nobody outlined it): the goal's curriculum is written into that course.
-   * Null for goals typed or started any other way.
-   */
   startedCourse: StartedCourse | null;
 };
 
-/** The allowed value the learner's answer names, or undefined for anything else. */
 function readChoice<T extends string>({
   allowed,
   value,
@@ -141,16 +90,8 @@ function readChoice<T extends string>({
   return allowed.find((choice) => choice === value);
 }
 
-/**
- * How much of the material the graph reads: a short handout whole, or the index of a long deck
- * (see `formatMaterialOverview`).
- */
 const MAX_MATERIAL_OVERVIEW = 12_000;
 
-/**
- * What the learner said beyond the goal, and their material (whole when it's short, else one line
- * per page), so a goal built from it covers what it teaches, in its order.
- */
 function toContext({
   details,
   material,
@@ -172,7 +113,6 @@ function toContext({
   return context || undefined;
 }
 
-/** What the notice says about how the exam is answered and scored, which skills prepare for too. */
 function toExamNotes(structure: ExamStructure | undefined): string[] {
   if (!structure) {
     return [];
@@ -187,12 +127,6 @@ function toExamNotes(structure: ExamStructure | undefined): string[] {
   ].filter((note) => note.trim().length > 0);
 }
 
-/**
- * The exam's notice as the curriculum reads it: each subject with its group, the choice it's an
- * option of (the exam's shared graph teaches every option), its share of the score and every topic
- * of its syllabus, what the notice says about format and scoring, and how often the board asks
- * each topic in past papers (read with the notice, or looked up).
- */
 export function toExamOutline(
   blueprint: Pick<ExamBlueprint, "name" | "structure" | "topicFrequency">,
 ): ExamOutline {
@@ -211,7 +145,6 @@ export function toExamOutline(
       }))
     : [];
 
-  // What past papers among the notice's documents say, then what the lookup of them found.
   const looked = structure ? listTopicLevels({ structure, topicFrequency: [] }) : [];
 
   return {
@@ -226,10 +159,6 @@ export function toExamOutline(
   };
 }
 
-/**
- * A test from the learner's own material days away (a class test on Friday) is taught in at most
- * the lessons its days hold (see `getLessonBudget`); null for any other goal.
- */
 function toLessonBudget({
   goal,
   hasMaterial,
@@ -247,7 +176,6 @@ function toLessonBudget({
   });
 }
 
-/** Goals typed in onboarding carry its id; other goals (plan links, API clients) are never asked. */
 function getUnansweredQuestions(
   goal: Pick<Goal, "kind" | "targetDate">,
   details: Details,
@@ -269,18 +197,8 @@ function isAwaitingAnswers(goal: Pick<Goal, "kind" | "targetDate">, details: Det
   );
 }
 
-/**
- * Whether research should find reference syllabi for a goal: `awaitingPurpose` while onboarding
- * may still ask why the learner wants it, since only that answer decides.
- */
 export type ReferenceSyllabusNeed = "awaitingPurpose" | "needed" | "notNeeded";
 
-/**
- * A learn goal big enough to check its curriculum against university courses and official
- * curricula: the learner wants to go deep or change careers, the scope those syllabi are
- * written for. An overview, a refresh or a skill for work is planned from the goal alone, and
- * so is a goal whose purpose nobody asked (plan links, API clients).
- */
 export function getReferenceSyllabusNeed(
   goal: Pick<Goal, "details" | "kind" | "targetDate">,
 ): ReferenceSyllabusNeed {
@@ -315,7 +233,6 @@ async function loadReferences(goalId: string) {
   );
 }
 
-/** The course a goal was started from, as its curriculum writes it; a private one is its owner's. */
 function toStartedCourse({
   course,
   details,
@@ -331,14 +248,7 @@ function toStartedCourse({
   return { id: course.id, ownerId, title: course.title };
 }
 
-/**
- * What writing a goal's curriculum reads: the goal as the learner typed it and as onboarding
- * understood it, its exam blueprint, the sources research or the learner linked to it (reference
- * syllabi for the coverage check), whether the learner is a guest, and whether a plan was already
- * built. Null when the goal no longer exists or is an explain question.
- *
- * This is a workflow bridge: the goal id comes from the public boundary that created the goal.
- */
+/** Internal workflow bridge: the public boundary must already have authorized the goal. */
 export async function loadGoalCurriculumInputs(
   goalId: string,
 ): Promise<GoalCurriculumInputs | null> {

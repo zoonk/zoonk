@@ -16,7 +16,6 @@ type UploadedSource = Omit<Source, "extractedText">;
 
 export type SourceUploadInput = {
   goalId?: string | null;
-  /** The learner's language, used when the document doesn't say its own. */
   language: string;
   title?: string | null;
 } & UploadRead;
@@ -29,7 +28,6 @@ export type SourceUploadResult =
   | RefusedUsage
   | { checkVisibility: boolean; source: UploadedSource; status: "ready" };
 
-/** Links the learner to a source and returns it; a second link to the same source is a no-op. */
 async function linkLearnerSource({
   goalId,
   sourceId,
@@ -49,7 +47,6 @@ async function linkLearnerSource({
   });
 }
 
-/** A public copy of the same document, or the learner's own earlier upload of it. */
 function findStoredCopy({ hash, userId }: { hash: string; userId: string }) {
   return prisma.source.findFirst({
     omit: { extractedText: true },
@@ -86,7 +83,6 @@ function createPrivateSource({
 
   const title = input.title?.trim() || getDefaultTitle(input);
 
-  // The marker serializes registrations of one file by one learner before their source write.
   return writeLearnerChange({ userId }, async (tx) => {
     const stored = await tx.source.findUnique({
       omit: { extractedText: true },
@@ -125,22 +121,12 @@ function createPrivateSource({
 
 type UsageRefusal = RefusedUsage | { status: "unauthorized" };
 
-/**
- * Counts the upload against the learner's plan before it's stored. Uploading
- * a document already stored for them claims the same target again, which is
- * free.
- */
 async function claimUpload(targetId: string): Promise<UsageRefusal | null> {
   const decision = await claimUsage({ kind: "upload", targetId });
 
   return decision.status === "allowed" ? null : decision;
 }
 
-/**
- * A refused or duplicate file isn't kept, so storage holds each registered
- * document once. A retried registration of the same file points at the stored
- * copy's own blob, which stays.
- */
 async function removeUnusedBlob({
   content,
   storedBlobUrl,
@@ -167,8 +153,6 @@ async function storeUpload({
     findStoredCopy({ hash: content.hash, userId }),
   ]);
 
-  // A file was claimed when its upload was signed, and a new source keeps that claim as its id, so
-  // pasting the same document later finds the claim too.
   const uploadId = input.kind === "file" ? getUploadClaimId(input.pathname) : randomUUID();
   const sourceId = storedCopy?.id ?? uploadId;
   const refusal = await claimUpload(input.kind === "file" ? uploadId : sourceId);
@@ -192,13 +176,6 @@ async function storeUpload({
   return { checkVisibility: true, source, status: "ready" };
 }
 
-/**
- * Stores a file the learner uploaded to their Blob folder, a link or text they
- * pasted, once the plan's upload allowance accepts it. A document already
- * shared publicly (the same exam notice, by hash) is linked instead of stored
- * again, so its blueprint is ready at once. Anything new is private to its
- * owner until the visibility check says its publisher made it public.
- */
 export async function registerSourceUpload(input: SourceUploadInput): Promise<SourceUploadResult> {
   const session = await getSession();
 

@@ -17,11 +17,6 @@ type NoticeData = Pick<
   | "sourceId"
 >;
 
-/**
- * Flags what was built on a source before it changed: lessons with a screen citing it and questions
- * written from it (a law's drills). Rows written after the change already use the new text. A
- * later notice for the same row adds another flag; each flag is resolved when its row is rewritten.
- */
 async function flagContentBuiltOnSource({
   notice,
   sourceIds,
@@ -58,12 +53,6 @@ async function flagContentBuiltOnSource({
   return count;
 }
 
-/**
- * Stores a change notice together with the review flags of everything built on its source, in the
- * caller's transaction, so a notice never exists without its flags. Source and exam notices both
- * go through here. A corrected exam notice can be a new document (an erratum), so what was built
- * on the document it replaces is flagged too (`replacedSourceId`).
- */
 export async function createSourceChangeNotice({
   data,
   replacedSourceId = null,
@@ -80,10 +69,6 @@ export async function createSourceChangeNotice({
   return notice;
 }
 
-/**
- * Marks a rewritten lesson's or question's open flags as done, in the transaction that saved the
- * new version. Flags raised after this version started stay open.
- */
 export async function resolveReviewFlags({
   target,
   tx,

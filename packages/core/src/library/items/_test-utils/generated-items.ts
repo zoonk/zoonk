@@ -4,7 +4,6 @@ import { type WrittenItemSet } from "@zoonk/ai/tasks/v2/items/write-set";
 
 type ItemOf<FORMAT extends GeneratedItem["format"]> = Extract<GeneratedItem, { format: FORMAT }>;
 
-/** A generated multiple-choice item that passes the item checks. */
 export function generatedMultipleChoice(attrs?: Partial<ItemOf<"multipleChoice">>) {
   return {
     context: null,
@@ -27,7 +26,6 @@ export function generatedMultipleChoice(attrs?: Partial<ItemOf<"multipleChoice">
   } satisfies ItemOf<"multipleChoice">;
 }
 
-/** A generated typed item with an accepted short answer and key points. */
 export function generatedTypedItem(attrs?: Partial<ItemOf<"typed">>) {
   return {
     acceptedAnswers: ["mitochondria"],
@@ -43,7 +41,6 @@ export function generatedTypedItem(attrs?: Partial<ItemOf<"typed">>) {
   } satisfies ItemOf<"typed">;
 }
 
-/** The provenance a task run returns, with a unique run id. */
 export function generatedProvenance() {
   return {
     generatedAt: "2026-09-26T12:00:00.000Z",
@@ -62,7 +59,6 @@ const PASSAGE = [
   "a pool needs lifeguards, who are harder to find than librarians.",
 ].join(" ");
 
-/** A written ENEM-style set: a passage and three true-or-false statements, two of them on skill 1. */
 export function writtenItemSet(attrs?: Partial<WrittenItemSet>): WrittenItemSet {
   return {
     kind: "text",

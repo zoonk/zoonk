@@ -4,12 +4,6 @@ import { type TextLayout } from "@zoonk/utils/text-flaws";
 type ItemText = { layout: TextLayout; text: string };
 type ItemTextMap = (entry: ItemText) => string;
 
-/**
- * Every text a learner reads with an item, its answer and its feedback, each rewritten by `map`
- * with how it shows: support text, questions and explanations as blocks (lines, lists, tables of
- * data), an option, pair, step, key point or rubric criterion as one line. Blocks come first, in
- * reading order. Empty texts are never mapped; they're the format checks' to report.
- */
 export function mapItemWriting(item: GeneratedItem, map: ItemTextMap): GeneratedItem {
   const as = (layout: TextLayout) => (text: string) => (text.trim() ? map({ layout, text }) : text);
   const [block, line] = [as("blocks"), as("inline")];
@@ -71,7 +65,6 @@ export function mapItemWriting(item: GeneratedItem, map: ItemTextMap): Generated
   }
 }
 
-/** Every text a learner reads with an item, with how it shows (see `mapItemWriting`). */
 export function getItemWriting(item: GeneratedItem): ItemText[] {
   const texts: ItemText[] = [];
 

@@ -52,7 +52,6 @@ async function staleCourse(attrs?: Parameters<typeof courseFixture>[0]) {
   return course;
 }
 
-/** Other suites can add courses between calls, so workflow activity must be read afresh. */
 async function otherCoursesInFlight({
   owned,
   inFlight = [],
@@ -68,7 +67,6 @@ async function otherCoursesInFlight({
   return new Set([...others.map((course) => course.id), ...inFlight]);
 }
 
-/** These tests share a DB with other files: remove only their unique course rows. */
 async function removeCourses(ids: string[]) {
   await prisma.course.deleteMany({ where: { id: { in: ids } } });
 }
@@ -289,7 +287,6 @@ describe(regenerateCourseDetails, () => {
 
     const owned = courses.map((course) => course.id);
 
-    // Workflow activity is the external boundary; other suites' courses stay protected.
     const active = () => otherCoursesInFlight({ owned });
     const startCourseDetails = vi.fn().mockResolvedValue(null);
 
@@ -348,7 +345,6 @@ describe(regenerateCourseDetails, () => {
       { data: details, provenance } as Awaited<ReturnType<typeof generateCourseDetails>>,
     );
 
-    /** Run the writer suite's shared producer after the ID query and before batch selection. */
     const active = async () => {
       const inFlight = await otherCoursesInFlight({ inFlight: [courses[2]!.id], owned });
       const course = await outlinedCourse();
@@ -359,7 +355,6 @@ describe(regenerateCourseDetails, () => {
 
     const startCourseDetails = vi.fn().mockResolvedValue(null);
 
-    /** Another suite can finish generated copy after this test first reads workflow activity. */
     await active();
     const lateCourse = await staleCourse({ detailsPromptVersion: null });
 
@@ -424,7 +419,6 @@ describe(regenerateCourseDetails, () => {
     const others = await prisma.course.findMany({ select: { id: true } });
     const active = async () => new Set(others.map((course) => course.id));
 
-    /** Match the estimate suite's public, outlined, empty fixture created after the snapshot. */
     const course = await courseFixture({
       createdAt: old,
       detailsPromptVersion: promptVersion,

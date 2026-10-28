@@ -4,18 +4,12 @@ import { normalizeStepContentValue } from "./contract/normalize-step-content";
 import { safeParseStepContent } from "./contract/step-contract";
 import { type ConvertedScreen } from "./written-screens";
 
-/**
- * A question's basis that holds: the question's and its reading screen's places in the written
- * lesson (0-based), and the quote as it's stored.
- */
 type QuestionBasis = { question: number; quote: string; reading: number };
 
-/** A basis that doesn't hold, and why, for the writer's eval: production leaves it out. */
 type QuestionBasisProblem = { problem: string; screen: number };
 
 type BasisVerdict = { basis: QuestionBasis; ok: true } | { ok: false; problem: string };
 
-/** The basis a written question gives, when it's a question that has one. */
 function getWrittenBasis(screen: WrittenScreen | undefined) {
   if (screen?.kind === "check" || screen?.kind === "mathCheck" || screen?.kind === "typedAnswer") {
     return screen.basis;
@@ -24,16 +18,11 @@ function getWrittenBasis(screen: WrittenScreen | undefined) {
   return null;
 }
 
-/** Text as its screen stores it: trimmed, then repaired like every string of step content. */
 function toStoredText(text: string): string {
   const stored = normalizeStepContentValue(text.trim());
   return typeof stored === "string" ? stored : text.trim();
 }
 
-/**
- * The texts of a reading screen as stored, the ones "From the lesson" shows: a hook's text, an
- * explanation's text, or a worked example's problem, steps and result. Null for any other screen.
- */
 function getReadingTexts(screen: ConvertedScreen | undefined): string[] | null {
   if (!screen?.ok) {
     return null;
@@ -60,7 +49,6 @@ function getReadingTexts(screen: ConvertedScreen | undefined): string[] | null {
     : null;
 }
 
-/** Why a quote can't be marked as it is, or null when it can. */
 function getQuoteProblem({
   quote,
   screen,
@@ -112,12 +100,6 @@ function checkBasis({
     : { basis: { question: index, quote, reading }, ok: true };
 }
 
-/**
- * The basis of each question in a written lesson (a check, a calculation or a typed answer) that
- * holds: an earlier reading screen the player can show (a hook's text, an explanation or a worked
- * example) whose stored text has the quote exactly, on one line. The others come back as problems
- * for the writer's eval; production leaves them out, since a question needs no basis.
- */
 export function findQuestionBases({
   lesson,
   screens,
@@ -138,11 +120,6 @@ export function findQuestionBases({
   };
 }
 
-/**
- * The lesson's converted screens with each question's basis that holds in its content, naming its
- * reading screen by the position it's stored at (`positions`, by written index; null when that
- * screen isn't stored, which leaves the question without one).
- */
 export function addQuestionBases({
   lesson,
   positions,

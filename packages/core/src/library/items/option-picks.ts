@@ -1,22 +1,11 @@
-/** How a learner's picks among a question's options went, for practice and for mock scoring. */
 export type OptionPicks = {
-  /** The question's right options. */
   correct: number;
-  /** Right only when the picks are exactly the right options. */
   isCorrect: boolean;
-  /** Right options left unpicked. */
   missed: number;
-  /** Right options picked. */
   right: number;
-  /** Wrong options picked, an index past the options included. */
   wrong: number;
 };
 
-/**
- * Grades the options a learner picked, in any order, against a question's right ones: it's right
- * only when they're exactly the right options, and the counts let a mock score partial credit the
- * way its exam does (a rule table in scoring, never here). A pick repeated counts once.
- */
 export function gradeOptionPicks({
   options,
   picked,

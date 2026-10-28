@@ -80,8 +80,6 @@ async function createSpokenStep(lesson: Parameters<typeof libraryLessonFixture>[
 }
 
 describe(gradeSpokenAnswer, () => {
-  // A missed word nobody voiced yet gets its native audio after the response; here text-to-speech
-  // fails, so the word stays silent.
   beforeEach(() => {
     vi.mocked(generateLanguageAudio).mockResolvedValue({
       data: null,
@@ -150,7 +148,6 @@ describe(gradeSpokenAnswer, () => {
 
     expect(explainSpokenAnswer).not.toHaveBeenCalled();
 
-    // Lessons take the transcription default (gpt-transcribe) in the step's language.
     expect(transcribeSpeech).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ language: "en" }),
     );
@@ -285,7 +282,6 @@ describe(gradeSpokenAnswer, () => {
 
     const tip = { skill_id: step.skillId, target_language: "en" };
 
-    // Each learner's tip is sent from work deferred past the response, so either can land first.
     expect(sentTips()).toHaveLength(2);
 
     expect(sentTips()).toStrictEqual(
@@ -390,7 +386,6 @@ describe(gradeSpokenAnswer, () => {
   });
 
   it("brings the words that sounded different back as pronunciation reviews", async () => {
-    // A word no lesson taught yet joins the AI organization's shared vocabulary.
     const [step, learner] = await Promise.all([
       createSpokenStep(),
       userFixture(),

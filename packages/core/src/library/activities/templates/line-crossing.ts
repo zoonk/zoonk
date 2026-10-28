@@ -8,7 +8,6 @@ import {
 import { defineActivityTemplate } from "../define-activity-template";
 import { isClose, issue } from "./_utils/template-helpers";
 
-/** A straight line on the chart: y = intercept + slope × x. */
 const lineSchema = z
   .object({ id: idSchema, intercept: z.number(), label: labelSchema, slope: z.number() })
   .strict();
@@ -17,7 +16,6 @@ const SHIFT_DIRECTIONS = ["left", "right", "up", "down"] as const;
 
 const lineCrossingFields = z
   .object({
-    /** What happened that moved a line, like "Bird flu cut the number of laying hens." */
     change: explanationSchema,
     feedback: z
       .object({ wrongDirection: explanationSchema, wrongLine: explanationSchema })
@@ -39,10 +37,6 @@ type LineCrossingFields = z.output<typeof lineCrossingFields>;
 type Line = { intercept: number; slope: number };
 type Shift = LineCrossingFields["shift"];
 
-/**
- * A line moved by `amount` in a direction: right means each y now goes with `amount` more x, up
- * means each x now goes with `amount` more y. The player draws shifted lines the same way.
- */
 export function shiftLine(line: Line, shift: Pick<Shift, "amount" | "direction">): Line {
   const { amount, direction } = shift;
 
@@ -54,7 +48,6 @@ export function shiftLine(line: Line, shift: Pick<Shift, "amount" | "direction">
   return { ...line, intercept: line.intercept - line.slope * offset };
 }
 
-/** Where two lines cross, or null when they never do. */
 export function crossing(first: Line, second: Line): { x: number; y: number } | null {
   if (isClose(first.slope, second.slope)) {
     return null;
@@ -64,7 +57,6 @@ export function crossing(first: Line, second: Line): { x: number; y: number } | 
   return { x, y: first.intercept + first.slope * x };
 }
 
-/** Both lines after the change: the shifted one moved, the other where it was. */
 function shiftedLines(fields: LineCrossingFields): Line[] {
   return fields.lines.map((line) =>
     line.id === fields.shift.line ? shiftLine(line, fields.shift) : line,

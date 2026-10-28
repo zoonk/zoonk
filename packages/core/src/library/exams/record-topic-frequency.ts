@@ -10,11 +10,9 @@ import {
 } from "./blueprint-contract";
 import { listUnratedSubjects, needsTopicFrequency } from "./topic-frequency";
 
-/** What research needs to look up how often a blueprint's topics are asked, when it needs it. */
 export type TopicFrequencyLookup = {
   board: string | null;
   exam: string;
-  /** The subjects whose topics nothing rates yet, with their topics in the notice's words. */
   subjects: { name: string; topics: string[] }[];
 };
 
@@ -22,12 +20,7 @@ function describeExam(blueprint: Pick<ExamBlueprint, "name" | "role">): string {
   return blueprint.role ? `${blueprint.name}, ${blueprint.role}` : blueprint.name;
 }
 
-/**
- * The lookup a shared blueprint needs for how often its topics are asked (see
- * `needsTopicFrequency`), with the subjects nothing rates yet; null when it needs none.
- *
- * This is a workflow bridge: the blueprint comes from the research run that linked it.
- */
+/** Internal workflow bridge: the blueprint must come from the research run that linked it. */
 export async function findTopicFrequencyLookup({
   examBlueprintId,
 }: {
@@ -56,14 +49,7 @@ export async function findTopicFrequencyLookup({
   };
 }
 
-/**
- * Stores what the lookup found on the blueprint's structure, next to what earlier lookups found
- * for other subjects, with when it ran (also when it found nothing): the plan's weights and the
- * subject pages read it from there. A lookup that couldn't reach every subject (`complete` false:
- * a subject's call failed) keeps what it found but no date, so the next lookup asks for the rest.
- *
- * This is a workflow bridge: the blueprint comes from the research run that looked it up.
- */
+/** Internal workflow bridge: the blueprint must come from the research run that requested the lookup. */
 export async function recordTopicFrequency({
   complete = true,
   examBlueprintId,
@@ -90,8 +76,6 @@ export async function recordTopicFrequency({
     ],
   };
 
-  // Plans weigh the exam's topics by it. One statement sets only this lookup, so the ones run at
-  // the same time are never overwritten.
   await writePlanInputs(async (tx) => {
     await lockPlanBlueprintWrite(tx, examBlueprintId);
 

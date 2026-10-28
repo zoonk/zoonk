@@ -5,7 +5,6 @@ import {
 
 const PERCENT = 100;
 
-/** The formats a share of the exam's objective questions is counted over: picked, numbers, words. */
 const SHARED_KINDS: ReadonlySet<QuestionFormat["kind"]> = new Set([
   "multipleChoice",
   "trueFalse",
@@ -15,7 +14,6 @@ const SHARED_KINDS: ReadonlySet<QuestionFormat["kind"]> = new Set([
 
 type CountedFormat = { count: FormatCount | null; kind: QuestionFormat["kind"] };
 
-/** Whether questions of this format make up an objective test: picked, typed as numbers or words. */
 export function isObjectiveFormat(kind: QuestionFormat["kind"]): boolean {
   return SHARED_KINDS.has(kind);
 }
@@ -24,13 +22,6 @@ function isSameMeasure(count: FormatCount, other: FormatCount): boolean {
   return count.per === other.per && count.unit === other.unit;
 }
 
-/**
- * Each format's share of the exam's objective questions, from 0 to 1, worked out from the counts
- * the notice states for them (`count`), in the formats' order: a number of questions out of every
- * objective format's, or a percent of the questions. It needs a count for every objective format,
- * all over the same part and in the same unit, since a format without one could take any share
- * of the rest; otherwise no format has a share. Written, oral and practical formats never have one.
- */
 export function getFormatShares(formats: readonly CountedFormat[]): (number | null)[] {
   const objective = formats.filter((format) => isObjectiveFormat(format.kind));
   const [first] = objective;

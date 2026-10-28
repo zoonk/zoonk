@@ -21,7 +21,6 @@ function describeScoring(scoring: Mock["scoring"]): string {
   return scoring.method === "other" ? scoring.description : SCORING_WORDS[scoring.method];
 }
 
-/** The notice's scale in one sentence, for its own claim. */
 function describeScale(scale: NonNullable<Mock["scoring"]["scale"]>): string {
   const name = scale.name ? `${scale.name}, ` : "";
   const pass = scale.passScore === null ? "" : `; ${scale.passScore} passes`;
@@ -33,7 +32,6 @@ function describeScale(scale: NonNullable<Mock["scoring"]["scale"]>): string {
   return `The result is reported on a scale (${name}from ${scale.min} to ${scale.max})${pass}${conversion}`;
 }
 
-/** How a section's navigation differs from moving freely, in one sentence for its claim. */
 function describeNavigation(
   name: string,
   navigation: NonNullable<Mock["sections"][number]["navigation"]>,
@@ -49,23 +47,11 @@ function describeNavigation(
   return `${name}: ${rules.join("; ")}`;
 }
 
-/**
- * A recording part as a claim about it names it: the line it quotes for itself, like a format.
- * Never the description, which the model writes and its own claim checks: a detail it adds that
- * no line states (a setting the notice gives for several parts at once) would drop every claim
- * that names the part with it.
- */
 function namePart({ task, taskIndex }: { task: Task; taskIndex: number }): string {
   const own = task.passages[0];
   return own ? `the recording part quoted as "${own.passage}"` : `recording part ${taskIndex + 1}`;
 }
 
-/**
- * What a section asks, one task each: a written task, kept by its count and description, or a
- * recording part, kept by its questions, with how often it's played and its description as claims
- * of their own. Each reads its own passages (a format page lists the parts, their questions and
- * their plays in separate sentences, away from the section's summary) and the section's.
- */
 function taskFacts({
   documents,
   id,
@@ -100,17 +86,11 @@ function taskFacts({
         },
       ],
       documents,
-      // The section's passages include the task's own that name the section.
       passages: uniquePassages([...task.passages, ...passages]),
     });
   });
 }
 
-/**
- * A section's claims read its own passages, the mock's and the found ones naming the section, like
- * a subject's: a format page states a section's time and count under its own heading, which a
- * summary line ("Summary … Number of questions: 40") doesn't name.
- */
 function sectionFacts({
   documents,
   found,
@@ -166,10 +146,6 @@ function sectionFacts({
   });
 }
 
-/**
- * The conditions a mock copies, one claim each: a notice states them in several places, and a
- * derived detail (a day's length given to one section) shouldn't drop the scoring with it.
- */
 export function mockFacts({ documents, extraction, found }: FactSource): FactEntry[] {
   const { mock } = extraction;
 

@@ -43,11 +43,6 @@ function toStructure({
   return { images: parsed.images.length, pages: parsed.pages, topic };
 }
 
-/**
- * Fetches a page or document research found and stores it once per canonical
- * address. A second research run for the same notice only refreshes the fetch
- * time; a new version replaces the stored text and hash.
- */
 export async function storeWebSource(input: StoreWebSourceInput): Promise<WebSource> {
   const fetched = await fetchAndParse(input.url);
   const identityKey = buildSourceIdentityKey({ contentHash: null, url: fetched.url });
@@ -81,12 +76,6 @@ export async function storeWebSource(input: StoreWebSourceInput): Promise<WebSou
   });
 }
 
-/**
- * The Library's copy of a document research found at another address (a mirror, or a copy on the
- * organizer's file server), found through search terms, text search and the reuse decision, so
- * it's reused without a fetch. Null when there is none, or when the Library holds this very
- * address: that one is fetched again, so a notice republished at its old address is read fresh.
- */
 export async function findWebSourceCopy({
   analytics,
   ...input
@@ -101,10 +90,6 @@ export async function findWebSourceCopy({
   return resolution.kind === "existing" && resolution.match === "search" ? resolution.id : null;
 }
 
-/**
- * The sources a model can read, in the order given. Research reads a few documents per goal, so a
- * page that stored no text (built with JavaScript) mustn't take the place of the notice itself.
- */
 export async function listReadableSourceIds(sourceIds: readonly string[]): Promise<string[]> {
   if (sourceIds.length === 0) {
     return [];
@@ -127,11 +112,6 @@ function getTopic(source: Source): SourceTopic {
   return sourceStructureSchema.safeParse(source.structure).data?.topic ?? "regulation";
 }
 
-/**
- * A freshness check: fetch the source again and compare hashes. Only a changed
- * hash stores the new text, and the excerpt of what changed lets a model
- * describe it without reading both versions.
- */
 export async function refreshWebSource(sourceId: string): Promise<SourceRefresh | null> {
   const source = await prisma.source.findUnique({ where: { id: sourceId } });
 

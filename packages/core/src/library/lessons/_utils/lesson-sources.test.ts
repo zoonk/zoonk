@@ -15,7 +15,6 @@ import { loadLessonDocuments } from "./lesson-sources";
 
 const QUERY = "Probationary period of a public servant: how long it lasts and how it is evaluated";
 
-/** A statute as research stores it: one PDF page per part, the second about probation. */
 const STATUTE_PAGES = [
   "Title I. Preliminary provisions. This law governs federal agencies and their budgets.",
   "Article 20. On taking office, the public servant starts a probationary period of 36 months, during which their aptitude is evaluated: attendance, discipline, initiative, productivity and responsibility.",
@@ -32,7 +31,6 @@ function statute(attrs: Parameters<typeof sourceFixture>[0] = {}) {
   });
 }
 
-/** A learner whose goal plans the lesson: directly, or through the lesson's chapter. */
 async function planningGoal({
   chapterId,
   examBlueprintId,

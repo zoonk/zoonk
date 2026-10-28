@@ -10,31 +10,19 @@ import { saveImageAsset } from "./save-image-asset";
 export type ImageAnalytics = ImageSceneParams["analytics"];
 
 export type LibraryImageRequest = {
-  /** What the writer wants the picture to show. */
   request: string;
   screenText?: string | null;
-  /** Where it sits: the course, chapter and lesson titles. */
   context?: string | null;
-  /** The content language, for labels. */
   language: string;
-  /** The course category that picks the palette. */
   category: string | null;
-  /** False for language courses: their images carry no text. */
   textAllowed: boolean;
-  /**
-   * The parts a numbered picture marks, in order: code writes the numbers as its only labels
-   * (1 on the first part), so the screen's answer key is this list. Numbers carry no language.
-   */
   numberedParts?: readonly string[] | null;
-  /** The owner of a private course; its images stay private and are never reused. */
   ownerId: string | null;
   analytics?: ImageAnalytics;
 };
 
-/** A Library picture: the asset, and whether it was drawn now (its model check is still to run). */
 export type LibraryPicture = { assetId: string; drawn: boolean };
 
-/** One number on each part, in order: "1" on the first. */
 function numberLabels(parts: readonly string[]): ImageScene["labels"] {
   return parts.map((part, index) => ({
     target: `pointing at the ${part}`,
@@ -42,14 +30,7 @@ function numberLabels(parts: readonly string[]): ImageScene["labels"] {
   }));
 }
 
-/**
- * One Library picture: a structured scene first, then the same agentic identity flow as lessons
- * (exact key, model search terms, text search and a "same scene?" decision), so each scene is
- * drawn once and reused. A new image is saved to show at once: only the code check runs here, and
- * the caller starts its model check in the background (`checkImageAsset`), which replaces a
- * picture it rejects. Null when the picture can't be stored (`canStorePicture`) or every drawing
- * came out blank.
- */
+/** The caller must dispatch the background image check when the returned picture is newly drawn. */
 export async function drawLibraryImage({
   analytics,
   category,
@@ -81,7 +62,6 @@ export async function drawLibraryImage({
 
   const scene = parts.length > 0 ? { ...planned, labels: numberLabels(parts) } : planned;
   const prompt = describeImageScene(scene);
-  // Numbers read the same in every language, so a numbered picture serves them all.
   const hasLabels = parts.length === 0 && scene.labels.length > 0;
 
   const resolution = await resolveLibraryIdentity({

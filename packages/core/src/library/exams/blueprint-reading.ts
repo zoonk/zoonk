@@ -1,7 +1,6 @@
 import { type ExamBlueprint } from "@zoonk/db";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 
-/** A stored edition stays current until a day after its exam; one without a date always is. */
 export function isCurrentEdition({
   blueprint,
   now,

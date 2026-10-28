@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import { type ActivityStepContent, activityContentSchema } from "../activity-templates";
 import { verifyActivityPrograms } from "./verify-activity-programs";
 
-/** Pyodide loads in a couple of seconds on the first Python run. */
 const PYTHON_TEST_TIMEOUT_MS = 30_000;
 
 function content(value: object): ActivityStepContent {

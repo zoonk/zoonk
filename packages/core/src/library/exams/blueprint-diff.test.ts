@@ -127,13 +127,11 @@ describe(mergeBlueprintContent, () => {
     const first = mergeBlueprintContent({ current: unread, next: read });
     const again = mergeBlueprintContent({ current: first.content, next: unread });
 
-    // How a goal learns its language isn't news for learners.
     expect([first.changes, again.changes]).toStrictEqual([[], []]);
     expect(first.content.structure.testedLanguage).toStrictEqual(testedLanguage);
     expect(again.content.structure.testedLanguage).toStrictEqual(testedLanguage);
   });
 
-  // DELE's pass mark, read before translations, showed in Spanish in a Portuguese screen.
   it("takes a new reading's translations of the same pass mark, which aren't news for learners", () => {
     const passMark = { citation: OLD_CITATION, kind: "passMark" as const, text: "Apto con 60." };
     const unread = content({ structure: { ...content().structure, rules: [passMark] } });
@@ -151,7 +149,6 @@ describe(mergeBlueprintContent, () => {
 
     expect([first.changes, again.changes]).toStrictEqual([[], []]);
     expect(first.content.structure.rules).toStrictEqual([{ ...passMark, translations }]);
-    // A reading whose translation failed keeps the ones a reading before it made.
     expect(again.content.structure.rules).toStrictEqual([{ ...passMark, translations }]);
   });
 
@@ -185,9 +182,6 @@ describe(mergeBlueprintContent, () => {
       structure: { ...content().structure, subjects: [...content().structure.subjects, ethics] },
     });
 
-    // The subjects the lookup was asked for weren't the exam's (ethics was missing), so the new
-    // subjects are asked for again, whether it found nothing or the other subjects' counts; a
-    // lookup that counts every new subject stays, and so does one for the same subjects.
     expect(
       mergeBlueprintContent({ current: withLookup(notFound), next }).content.structure
         .pastQuestions,
@@ -241,8 +235,6 @@ describe(mergeBlueprintContent, () => {
       },
     });
 
-    // ENEM read again from fewer documents: no counts, groups or headings, and "Essay
-    // test" for the part learners and plans call "Essay".
     const next = content({
       structure: {
         ...content().structure,
@@ -269,10 +261,8 @@ describe(mergeBlueprintContent, () => {
       { citation: NEW_CITATION, name: "Ética", questions: null, topics: [], weight: null },
     ]);
 
-    // Only the subject the reading added is a change.
     expect(merged.changes.map((change) => change.field)).toStrictEqual(["subjects"]);
 
-    // A subject a later reading leaves out stays where it was.
     const skipping = content({
       structure: { ...next.structure, subjects: [next.structure.subjects[2]!] },
     });
@@ -318,7 +308,6 @@ describe(mergeBlueprintContent, () => {
   it("compares stored JSON regardless of key order", () => {
     const current = content();
 
-    // Stored JSON comes back with its keys in another order.
     const reordered = current.structure.subjects.map(
       (subject) => Object.fromEntries(Object.entries(subject).toReversed()) as typeof subject,
     );

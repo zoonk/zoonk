@@ -13,23 +13,16 @@ const QUALITY_SCORES: Record<ChallengeChoice["quality"], number> = {
   weak: 0,
 };
 
-/** Half the best score or more counts as right: the learner always finishes the case either way. */
 const PASS_SCORE = 0.5;
 
 const METER_MIN = 0;
 const METER_MAX = 100;
 
-export type ChallengeMeterState = ChallengeMeter & {
-  /** How the last decision moved it, 0 when it didn't. */
-  change: number;
-  value: number;
-};
+export type ChallengeMeterState = ChallengeMeter & { change: number; value: number };
 
-/** What the case says after it ends: what went well, what to improve and what to practice. */
 type ChallengeDebrief = {
   good: ChallengeNote[];
   improve: ChallengeNote[];
-  /** The skill with the most to improve on this path, with its practice line; null when none. */
   practice: ChallengeContent["skills"][number] | null;
   skills: ChallengeContent["skills"];
 };
@@ -37,12 +30,10 @@ type ChallengeDebrief = {
 type ChallengeResult = {
   ending: ChallengeEnding;
   isCorrect: boolean;
-  /** From 0 to 1: strong decisions count 1, fair ones half and weak ones 0. */
   score: number;
   steps: ChallengeStep[];
 };
 
-/** The share of good decisions on a path, from 0 to 1. */
 function scoreChallengeSteps(steps: readonly ChallengeStep[]): number {
   if (steps.length === 0) {
     return 0;
@@ -52,7 +43,6 @@ function scoreChallengeSteps(steps: readonly ChallengeStep[]): number {
   return total / steps.length;
 }
 
-/** Grades a finished path: null when the picks don't make a path that ends. */
 export function gradeChallengePath(
   content: ChallengeContent,
   choiceIds: readonly string[],
@@ -72,7 +62,6 @@ function clampMeter(value: number): number {
   return Math.min(METER_MAX, Math.max(METER_MIN, value));
 }
 
-/** Each meter after the decisions so far, with how the last one moved it. */
 export function getChallengeMeters(
   content: ChallengeContent,
   steps: readonly ChallengeStep[],
@@ -95,11 +84,6 @@ function countImprovements(notes: readonly ChallengeNote[], skillId: string): nu
   return notes.filter((note) => note.skill === skillId).length;
 }
 
-/**
- * The debrief of a path: the notes its decisions earned, the skills the case trains and, when
- * something needs work, the practice for the skill with the most to improve (the first listed on
- * a tie). It praises the strategy, since the notes describe decisions, not the learner.
- */
 export function getChallengeDebrief(
   content: ChallengeContent,
   steps: readonly ChallengeStep[],

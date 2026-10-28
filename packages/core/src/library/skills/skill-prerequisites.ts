@@ -1,10 +1,6 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 
-/**
- * The Library's prerequisite edges between these skills: each skill's prerequisites among them.
- * Skills with none are left out.
- */
 export async function loadSkillPrerequisites(
   skillIds: readonly string[],
   tx: TransactionClient = prisma,

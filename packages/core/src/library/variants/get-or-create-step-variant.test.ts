@@ -80,7 +80,6 @@ describe(getOrCreateStepVariant, () => {
     expect(first).toMatchObject({ created: true, status: "ready" });
     expect(second).toMatchObject({ created: false, status: "ready" });
 
-    // The example changes, so the original's picture may not fit.
     expect(first.status === "ready" && first.variant.content).toStrictEqual({
       exampleLineSlot: original.exampleLineSlot,
       text: version.text,
@@ -99,7 +98,6 @@ describe(getOrCreateStepVariant, () => {
       status: "ready",
     });
 
-    // Expiring the lesson's tag from a Server Action would re-render the whole lesson page.
     expect(revalidateTag).not.toHaveBeenCalled();
   });
 

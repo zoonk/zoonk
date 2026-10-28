@@ -37,12 +37,6 @@ async function writeExplanation({
   });
 }
 
-/**
- * Explains the words that didn't match, in the learner's language. The same
- * transcript on the same step gets the stored explanation, so a common
- * mistake is explained once. The grade stands without it: a failed model
- * call leaves the explanation out instead of failing the answer.
- */
 export async function getSpokenAnswerExplanation({
   heard,
   normalizedHeard,

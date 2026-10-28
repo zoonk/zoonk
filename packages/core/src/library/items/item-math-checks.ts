@@ -18,7 +18,6 @@ type Problem = string | false;
 
 const EXACT = { kind: "absolute", value: 0 } as const;
 
-/** Problems with one expression: it must parse, use only declared variables and evaluate. */
 function checkExpression({
   declared,
   expression,
@@ -95,10 +94,6 @@ function checkMistakes(
   });
 }
 
-/**
- * The other answers a question takes are expressions like its solution: each parses, uses only
- * its variables, works for new numbers and gives an answer of its own (a repeat is repaired away).
- */
 function checkOtherSolutions({
   context,
   math,
@@ -143,11 +138,6 @@ function getNumbersInText(text: string): number[] {
   );
 }
 
-/**
- * New versions change every computed value, so a step that types one ("the
- * discount is R$ 45") would be wrong next time. Numbers that are also a
- * variable's value can't be told apart and are allowed.
- */
 function findFixedNumber({
   computed,
   text,
@@ -200,12 +190,6 @@ function checkStep({
   ];
 }
 
-/**
- * Recomputes a math item from its data: the solution must give the stated
- * answer, work for every value a new version can draw and differ from each
- * common mistake, and worked steps must use placeholders for anything
- * computed. That is what lets code grade answers and make new numbers.
- */
 export function checkMathProblem({
   context = null,
   entry = ANY_NUMBER,
@@ -213,12 +197,9 @@ export function checkMathProblem({
   otherSolutions = [],
   question,
 }: {
-  /** The support text, which can show variables too. */
   context?: string | null;
-  /** How the answer box takes the answer: an integer answer must be a whole number. */
   entry?: NumericEntry;
   math: GeneratedMathProblem;
-  /** Other answers the question takes, as expressions over the same variables. */
   otherSolutions?: readonly string[];
   question: string;
 }): string[] {

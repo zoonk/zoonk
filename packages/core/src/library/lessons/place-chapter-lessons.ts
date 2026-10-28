@@ -5,10 +5,6 @@ import { assertPlacementVisibility } from "../_utils/placement-visibility";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { getChapterCacheTags } from "../chapters/chapter-cache-tags";
 
-/**
- * Makes these shared lessons a chapter's outline, in this order. Placements an earlier attempt
- * left are cleared first, so a retried workflow step ends with exactly this order.
- */
 export async function placeChapterLessons({
   chapterId,
   lessonIds,
@@ -29,7 +25,6 @@ export async function placeChapterLessons({
 
   lessons.forEach((lesson) => assertPlacementVisibility({ child: lesson, container: chapter }));
 
-  // Plans read the chapter's lessons, the ones it had and the ones it gets.
   await writePlanInputs(async (tx) => {
     await lockPlanSourceWrite(tx, { chapterIds: [chapterId], lessonIds });
     await tx.chapterLesson.deleteMany({ where: { chapterId } });

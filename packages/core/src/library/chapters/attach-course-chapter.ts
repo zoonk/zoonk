@@ -5,10 +5,7 @@ import { getCourseCurriculumCacheTag } from "../../cache/tags";
 import { assertPlacementVisibility } from "../_utils/placement-visibility";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 
-/**
- * Places a shared chapter in a course outline inside one level band. Placing
- * the same chapter again moves it, so retried workflow steps stay idempotent.
- */
+/** Placing an already-attached chapter moves it; retries do not add a second placement. */
 export async function attachChapterToCourse({
   area,
   chapterId,
@@ -32,7 +29,6 @@ export async function attachChapterToCourse({
     container: { ownerId: course.userId, visibility: course.visibility },
   });
 
-  // Plans of the course's goals read its chapters, and other plans the chapter's lessons.
   const placement = await writePlanInputs(async (tx) => {
     await lockPlanSourceWrite(tx, { chapterIds: [chapterId], courseIds: [courseId] });
 

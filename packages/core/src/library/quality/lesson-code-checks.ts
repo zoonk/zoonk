@@ -20,7 +20,6 @@ import { getScreenTexts } from "./_utils/screen-texts";
 import { canHaveImage, getScreenVisualProblems } from "./_utils/screen-visuals";
 import { findTermsUsedBeforeExplained } from "./_utils/term-order";
 
-/** A summary idea is one sentence; two short ones are tolerated, a paragraph isn't. */
 const MAX_SUMMARY_SENTENCES = 2;
 const SENTENCE_END = /[.!?…](?:\s|$)/gu;
 
@@ -47,18 +46,15 @@ type LessonCheckCode =
   | "termOrder"
   | "visual";
 
-/** One reason a lesson can't be published yet. `screen` is a 0-based index, or null for the lesson. */
 export type LessonCheckProblem = { code: LessonCheckCode; problem: string; screen: number | null };
 
 type ScreenCheckInput = {
-  /** After the fix pass, an activity that couldn't be fixed may become a check. */
   allowActivityFallback: boolean;
   index: number;
   language: string;
   level: CourseLevel;
   screen: WrittenScreen;
   specScreen: LessonScreen;
-  /** The exams of the lesson's learners ask short written answers, so a check may be typed. */
   shortAnswers: boolean;
 };
 
@@ -90,7 +86,6 @@ function getKindProblems({
   ];
 }
 
-/** Screens whose options are shuffled before learners see them. */
 function hasShuffledOptions(screen: WrittenScreen): boolean {
   return screen.kind === "check" || screen.kind === "hookGuess";
 }
@@ -147,13 +142,6 @@ function getTextProblems({
   ];
 }
 
-/**
- * The text rules for one screen written on its own, such as a field or tool
- * version: no talk about the lesson, no filler, sentences and screens short
- * enough for the level, right arithmetic, Markdown the player renders, nothing
- * left unfinished, distinct options that agree with the screen's data and a
- * typed answer's sample that gives an accepted answer.
- */
 export function checkScreenText(input: {
   language: string;
   level: CourseLevel;
@@ -162,7 +150,6 @@ export function checkScreenText(input: {
   return getTextProblems(input).flatMap((problem) => (problem ? [problem.problem] : []));
 }
 
-/** Whether the converted screen kept a template to explore, which only passes when valid. */
 function exploresTemplate(converted: ConvertedScreen): boolean {
   return converted.ok && "explore" in converted.content;
 }
@@ -236,7 +223,6 @@ function getSummaryProblems({
     .map((problem) => ({ ...problem, screen: null }));
 }
 
-/** A term used on a screen before the screen that explains it: explain first, then use it. */
 function getTermOrderProblems(lesson: WrittenLesson): LessonCheckProblem[] {
   return findTermsUsedBeforeExplained(lesson.screens).map(({ introducedAt, term, usedAt }) => ({
     code: "termOrder",
@@ -253,7 +239,6 @@ function describeRepeat({ numbers, repeats }: RepeatedExample): string {
     : `The application reuses the numbers ${shared} from screen ${repeats.screen + 1}. Give it a new situation with its own numbers that takes one step further than the checks.`;
 }
 
-/** A screen that repeats an earlier lesson's example, or an application that repeats this lesson's. */
 function getRepeatProblems(
   input: Parameters<typeof findRepeatedExamples>[0],
 ): LessonCheckProblem[] {
@@ -264,7 +249,6 @@ function getRepeatProblems(
   }));
 }
 
-/** A check that asks an earlier check's question again with other numbers, names or objects. */
 function getRepeatedQuestionProblems(screens: readonly WrittenScreen[]): LessonCheckProblem[] {
   return findRepeatedQuestions(screens).map(({ repeats, screen }) => ({
     code: "repeatedQuestion",
@@ -273,11 +257,6 @@ function getRepeatedQuestionProblems(screens: readonly WrittenScreen[]): LessonC
   }));
 }
 
-/**
- * The lesson as the reviewer reads it: stored content where a screen
- * converted, so it sees what learners will see, and the written screen where
- * it didn't.
- */
 export function toReviewedLesson({
   lesson,
   screens,
@@ -297,19 +276,6 @@ export function toReviewedLesson({
   };
 }
 
-/**
- * The code half of the quality gate, run on every written lesson: one screen
- * per planned screen in an allowed kind, content that passes the step contract
- * and the activity validator, calculations recomputed from their data,
- * arithmetic in the text recomputed, no talk about "this lesson", no filler,
- * sentences and screens short enough for the level, no term used before the screen that explains
- * it, Markdown the player renders, nothing left unfinished, distinct options that agree with the
- * screen's data, typed answers whose sample gives an accepted answer, no example an earlier
- * lesson of the chapter already used (nor an
- * application that repeats one of this lesson's screens), no check that asks an earlier check's
- * question again and a summary card of one sentence per idea. Returns each screen converted to its
- * stored content next to the problems, written for the fix pass.
- */
 export function checkWrittenLesson({
   allowActivityFallback = false,
   chapterLessons,
@@ -322,17 +288,13 @@ export function checkWrittenLesson({
   shortAnswers = false,
 }: {
   allowActivityFallback?: boolean;
-  /** The chapter's other lessons, whose examples this one shouldn't reuse. */
   chapterLessons?: Parameters<typeof findRepeatedExamples>[0]["chapterLessons"];
   language: string;
   lesson: WrittenLesson;
   level: CourseLevel;
-  /** The learner's material the lesson is written from: numbers it states are facts, not cases. */
   material?: string;
-  /** The official sources the lesson is written from, whose numbers are facts too. */
   sources?: string;
   spec: LessonSpec;
-  /** The learners' exams ask short written answers: other lessons' typed answers go to the fix pass. */
   shortAnswers?: boolean;
 }): { problems: LessonCheckProblem[]; screens: ConvertedScreen[] } {
   const lessonInput = { allowActivityFallback, language, level, shortAnswers };

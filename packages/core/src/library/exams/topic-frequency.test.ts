@@ -12,7 +12,6 @@ function subject(name: string, shortName: string, topics: string[]) {
   return { citation, group: null, name, questions: 45, shortName, topics, weight: null };
 }
 
-/** ENEM's objective areas as its notice lists their contents, two of them. */
 const enem: ExamStructure = {
   formats: [{ citation, description: "Cinco opções", kind: "multipleChoice", options: 5 }],
   mock: null,
@@ -33,7 +32,6 @@ const enem: ExamStructure = {
   ],
 };
 
-/** A reading of past papers names the area by its short name and the topic by its usual name. */
 const papers: TopicFrequency = [
   {
     appearances: null,
@@ -72,7 +70,6 @@ const looked: ExamStructure = {
   },
 };
 
-/** ENEM after a lookup that found no source for any subject. */
 function lookedUpEmpty(checkedAt: string): ExamStructure {
   return { ...enem, pastTopicFrequency: { checkedAt, subjects: [] } };
 }
@@ -132,7 +129,6 @@ describe(needsTopicFrequency, () => {
   it("tries again a month later for the subjects a lookup didn't find", () => {
     const later = new Date("2026-11-20T12:00:00.000Z");
 
-    // Natural sciences are rated; human sciences aren't, so a month on it's looked up again.
     expect(needsTopicFrequency({ now: later, structure: looked, topicFrequency: [] })).toBe(true);
   });
 

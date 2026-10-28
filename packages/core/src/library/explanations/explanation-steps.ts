@@ -43,12 +43,6 @@ function toSteps(explanation: QuickExplanation): ExplanationStep[] {
   ];
 }
 
-/**
- * Turns a quick explanation into lesson screens: one explanation screen per story screen (with the
- * picture it asked for), the check with a reason on every option, and the "Now you know" recap as
- * the summary card. Every screen must pass the step contract and the explanation's own checks;
- * the problems say what failed, so nothing broken reaches a learner.
- */
 export function toExplanationSteps(explanation: QuickExplanation): {
   problems: string[];
   steps: ExplanationStep[];

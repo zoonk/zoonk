@@ -35,8 +35,6 @@ describe("image identity", () => {
     vi.resetAllMocks();
   });
 
-  // A picture drawn in an earlier style is still the scene's: a style change draws new scenes
-  // only, and redrawing stored pictures is a person's call.
   it("offers public images whose labels fit the lesson, whatever style drew them", async () => {
     const word = uniqueWord();
     const owner = await userFixture();

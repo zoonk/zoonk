@@ -86,14 +86,12 @@ import { toStepContent } from "./steps/written-screens";
 
 const SOURCE_ROOT = fileURLToPath(new URL("..", import.meta.url));
 
-/** The models a plan's inputs read, written through Prisma's client. */
 const PLANNER_MODELS =
   "skill|skillPrerequisite|lesson|lessonSkill|chapter|chapterLesson|chapterSkill|courseChapter|item|itemSet|examBlueprint|examSkillGraph";
 
 const WRITE_OPERATIONS =
   "create|createMany|createManyAndReturn|update|updateMany|updateManyAndReturn|upsert|delete|deleteMany";
 
-/** The same models' tables, written through raw SQL. */
 const PLANNER_TABLES =
   "skills|skill_prerequisites|library_lessons|lesson_skills|library_chapters|chapter_lessons|chapter_skills|course_chapters|items|item_sets|exam_blueprints|exam_skill_graphs";
 
@@ -107,10 +105,6 @@ const RAW_WRITE = new RegExp(
   "gu",
 );
 
-/**
- * The files a plan's inputs are loaded from. A field no write here reads can change without
- * changing a plan's inputs.
- */
 const LOADER_FILES = [
   "plans/_utils/boss-plan-facts.ts",
   "plans/_utils/exam-option-skills.ts",
@@ -135,14 +129,6 @@ const LOADER_FILES = [
   "exams/listening/prepare-listening-part.ts",
 ];
 
-/**
- * How each write of a planner-read model keeps plans honest:
- * - `marks`: it marks the plans reading what it changes and locks the sources they read it
- *   through (`lockPlanSourceWrite`, `lockPlanBlueprintWrite`);
- * - `covered`: it already runs a protocol that does, or plans can't read what it writes yet;
- * - `excluded`: it writes only `fields`, which no loader reads (`readElsewhere` names a loader
- *   that reads a field of that name from another model).
- */
 type Registration =
   | { verdict: "covered" | "marks"; why: string; writes: string[] }
   | {
@@ -439,7 +425,6 @@ function scanWrites(): Map<string, Set<string>> {
   return writes;
 }
 
-/** The database package's own source, beside core's (its client is generated, not written). */
 const DATABASE_ROOT = fileURLToPath(new URL("../../../db/src", import.meta.url));
 
 const PLAN_WRITE = new RegExp(
@@ -449,20 +434,14 @@ const PLAN_WRITE = new RegExp(
 
 const PLAN_SOURCE_FIELD = /\b(?:sourceSkillIds|source_skill_ids)\b/u;
 
-/**
- * The only writes of a plan's registered sources, which a plan's source publication will own:
- * anything else writing them would bypass it.
- */
 const PLAN_SOURCE_WRITERS: Record<string, string> = {
   "plans/_utils/write-plan.ts": "layouts register their sources",
 };
 
-/** Whether the code writes a plan and names its sources. */
 function writesPlanSources(code: string): boolean {
   return PLAN_WRITE.test(code) && PLAN_SOURCE_FIELD.test(code);
 }
 
-/** A source file's code without its comments, so a word in a doc comment never counts as a read. */
 function readCode(file: string): string {
   return readFileSync(join(SOURCE_ROOT, file), "utf8")
     .replaceAll(/\/\*[\s\S]*?\*\//gu, "")
@@ -568,11 +547,6 @@ describe("plan source writer coverage", () => {
   });
 });
 
-/**
- * The row lock a plan's source barrier takes while it reads, by table: a writer of what the plan
- * reads through that row must wait for the read with its own lock (`lockSourceRoots`,
- * `lockSourceBlueprint`).
- */
 const SHARE_LOCKS = {
   exam_blueprints: (tx: TransactionClient, id: string) =>
     tx.$queryRaw`SELECT id FROM exam_blueprints WHERE id = ${id}::uuid FOR SHARE`,
@@ -587,7 +561,6 @@ type SourceRoot = { id: string; table: keyof typeof SHARE_LOCKS };
 const WRITER_WAIT = { timeout: 10_000 };
 const READER_TIMEOUT_MS = 20_000;
 
-/** Holds a share lock on one root until `release`, as a plan's source barrier does while it reads. */
 function holdShare({ id, table }: SourceRoot) {
   const held = Promise.withResolvers<number>();
   const released = Promise.withResolvers<null>();
@@ -608,22 +581,14 @@ function holdShare({ id, table }: SourceRoot) {
 }
 
 type WriterCase = {
-  /** What must commit before the reader lets go, so the marks below are the call's only ones. */
   beforeRelease?: () => Promise<void>;
-  /** Asserts the writer's own write, once it committed. */
   expectWritten: () => Promise<void>;
-  /** How many of the call's writes change what the plan reads: each marks it once. */
   marks?: number;
   plan: Pick<Plan, "id" | "inputVersion">;
-  /** The row the plan reads the write through, which the writer must lock. */
   root: SourceRoot;
   write: () => Promise<unknown>;
 };
 
-/**
- * Runs the write while a reader holds its root, until the writer waits on the reader with its
- * source lock (after it marked the plan), and returns the plan as the committed write left it.
- */
 async function writeWhileRead({ beforeRelease, expectWritten, plan, root, write }: WriterCase) {
   const reader = holdShare(root);
   const readerPid = await reader.pid;
@@ -658,21 +623,18 @@ function blueprintRoot(id: string): SourceRoot {
 type GoalAttrs = Omit<Parameters<typeof goalFixture>[0], "userId">;
 type PlanAttrs = Omit<Parameters<typeof planFixture>[0], "goalId">;
 
-/** A learner's plan, with the sources it registered or its goal's exam or course. */
 async function learnerPlan({ goal, plan }: { goal?: GoalAttrs; plan?: PlanAttrs } = {}) {
   const user = await userFixture();
   const created = await goalFixture({ ...goal, userId: user.id });
   return planFixture({ ...plan, goalId: created.id });
 }
 
-/** A plan holding the lesson as one of its items. */
 async function planOnLesson(lessonId: string) {
   const plan = await learnerPlan();
   await planItemFixture({ lessonId, planId: plan.id });
   return plan;
 }
 
-/** A plan of a goal on the exam: it reads the exam's facts through its goal. */
 function examPlan(examBlueprintId: string) {
   return learnerPlan({ goal: { examBlueprintId, kind: "exam", language: "pt" } });
 }
@@ -703,7 +665,6 @@ function checkScreen(skillId: string): LessonScreenToSave {
   };
 }
 
-/** A lesson teaching a skill, whose content this run claimed. */
 async function claimedLesson() {
   const workflowRunId = randomUUID();
 
@@ -716,7 +677,6 @@ async function claimedLesson() {
   return { lesson, skill, workflowRunId };
 }
 
-/** A lesson teaching a skill, published at version 1. */
 async function publishedLesson() {
   const [lesson, skill] = await Promise.all([
     libraryLessonFixture({ contentStatus: "completed" }),
@@ -758,10 +718,6 @@ async function publishLessonCase(): Promise<WriterCase> {
   };
 }
 
-/**
- * Sol's counterexample: the plan has no item on the lesson and registered only the skill of the
- * math item a screen becomes, which it counts in its question bank through that skill.
- */
 async function mathItemCase(): Promise<WriterCase> {
   const { lesson, skill, workflowRunId } = await claimedLesson();
   const plan = await learnerPlan({ plan: { sourceSkillIds: [skill.id] } });
@@ -898,7 +854,6 @@ C R$ 1.100,00
 D R$ 1.020,00
 E R$ 1.201,00`;
 
-/** Question 91 of `PAPER_TEXT`, copied as printed, on the target's first skill. */
 function copiedQuestion(): PastQuestion {
   const options = ["R$ 1.200,00", "R$ 1.210,00", "R$ 1.100,00", "R$ 1.020,00", "R$ 1.201,00"];
 
@@ -978,7 +933,6 @@ async function placeLessonsCase(): Promise<WriterCase> {
   };
 }
 
-/** A spec the split rule cut in two: the second part becomes a lesson placed right after it. */
 async function lessonSpecsCase(): Promise<WriterCase> {
   const workflowRunId = randomUUID();
   const chapter = await libraryChapterFixture();
@@ -1011,7 +965,6 @@ async function lessonSpecsCase(): Promise<WriterCase> {
         2,
       );
     },
-    // Placing the split part locks the lesson first; the spec then marks the plan again.
     marks: 2,
     plan,
     root: lessonRoot(lesson.id),
@@ -1029,7 +982,6 @@ async function lessonSpecsCase(): Promise<WriterCase> {
 
 const TOOLS = [{ essential: true, name: "Spreadsheet (Google Sheets or Excel)" }];
 
-/** A new chapter tagged with the plan's goal skill, whose outline this run writes. */
 async function outlineCase(): Promise<WriterCase> {
   const [course, tag] = await Promise.all([courseFixture(), skillFixture()]);
   const plan = await learnerPlan({ plan: { sourceSkillIds: [tag.id] } });
@@ -1042,7 +994,6 @@ async function outlineCase(): Promise<WriterCase> {
     prisma.courseChapter.findFirst({ include: { chapter: true }, where: { courseId: course.id } });
 
   return {
-    // The placement can't read the tag before it's written, so it commits marking nothing.
     beforeRelease: () => vi.waitFor(() => expect(placement()).resolves.not.toBeNull(), WRITER_WAIT),
     expectWritten: async () => {
       const placed = await placement();
@@ -1052,7 +1003,6 @@ async function outlineCase(): Promise<WriterCase> {
         prisma.chapterSkill.count({ where: { chapterId: placed?.chapterId, skillId: tag.id } }),
       ).resolves.toBe(1);
     },
-    // The tag, then the chapter's lessons and its tools, which the plan now reads through the tag.
     marks: 3,
     plan,
     root: skillRoot(tag.id),
@@ -1079,7 +1029,6 @@ async function outlineCase(): Promise<WriterCase> {
   };
 }
 
-/** A chapter with a lesson, placed in a course whose goal's plan reads the course's chapters. */
 async function attachCase(): Promise<WriterCase> {
   const [course, chapter, lesson] = await Promise.all([
     courseFixture(),
@@ -1107,7 +1056,6 @@ async function attachCase(): Promise<WriterCase> {
   };
 }
 
-/** An early chapter whose outline failed, taken out of its course's band. */
 async function earlyOutlineCase(): Promise<WriterCase> {
   const [course, chapter, lesson] = await Promise.all([
     courseFixture(),
@@ -1137,7 +1085,6 @@ async function earlyOutlineCase(): Promise<WriterCase> {
   };
 }
 
-/** A continuation moved right after the chapter it continues, which moves the plan's chapter on. */
 async function continuationsCase(): Promise<WriterCase> {
   const [course, first, second, continuation, lesson] = await Promise.all([
     courseFixture(),
@@ -1176,7 +1123,6 @@ async function continuationsCase(): Promise<WriterCase> {
   };
 }
 
-/** A drill on a changed law's article, written again from its new text. */
 async function drillsCase(): Promise<WriterCase> {
   const [skill, law] = await Promise.all([
     skillFixture(),
@@ -1236,7 +1182,6 @@ async function drillsCase(): Promise<WriterCase> {
   };
 }
 
-/** A question's picture that fails its check and both redraws, so the question is removed. */
 async function pictureCase(): Promise<WriterCase> {
   const [asset, skill, image] = await Promise.all([
     mediaAssetFixture({ scene: testScene({ focalObject: `a ${randomUUID()} map` }) }),
@@ -1262,7 +1207,6 @@ async function pictureCase(): Promise<WriterCase> {
   };
 }
 
-/** A recording voiced for the first time, joining the recordings its questions' skill counts. */
 async function listeningCase(): Promise<WriterCase> {
   const [set, skill] = await Promise.all([listeningSetFixture(), skillFixture()]);
   await itemFixture({ setId: set.id, skillId: skill.id });
@@ -1300,7 +1244,6 @@ async function listeningCase(): Promise<WriterCase> {
   };
 }
 
-/** An exam's shared graph missing its language options, which the coverage check adds. */
 async function graphRepairCase(): Promise<WriterCase> {
   const [blueprint, course, reading, math] = await Promise.all([
     choiceBlueprintFixture(),
@@ -1408,7 +1351,6 @@ async function graphResetCase(): Promise<WriterCase> {
   };
 }
 
-/** The first graph written for an exam, kept as the exam's shared graph. */
 async function sharedGraphCase(): Promise<WriterCase> {
   const [blueprint, course, skill] = await Promise.all([
     examBlueprintFixture({ language: "pt" }),
@@ -1527,10 +1469,6 @@ const HANGUL = {
   title: "Your first Hangul",
 };
 
-/**
- * The alphabet lesson of a learner language of its own, its content already claimed by this run,
- * as on a retry: claiming it again writes nothing, so only publishing waits on the reader.
- */
 async function alphabetCase(): Promise<WriterCase> {
   const workflowRunId = randomUUID();
 
@@ -1561,7 +1499,6 @@ async function alphabetCase(): Promise<WriterCase> {
     userPrompt: "",
   });
 
-  // Cards without clips still publish.
   vi.mocked(generateLanguageAudio).mockResolvedValue({
     data: null,
     error: new Error("TTS failed"),
@@ -1584,7 +1521,6 @@ async function alphabetCase(): Promise<WriterCase> {
   };
 }
 
-/** Every writer the registry says marks, by file, with a case for each of its writes. */
 const WRITER_CASES: Record<string, Record<string, () => Promise<WriterCase>>> = {
   "library/chapters/attach-course-chapter.ts": { attachChapterToCourse: attachCase },
   "library/curriculum/early-outline-chapter.ts": { findEarlyOutlineChapter: earlyOutlineCase },
@@ -1629,7 +1565,6 @@ describe("plan source writers lock what plans read and mark them", () => {
   it.each(CASES)("$name ($file)", async ({ build }) => {
     const writer = await build();
 
-    // Each of the call's writes that changes what the plan reads marks it once, as changed content.
     await expect(writeWhileRead(writer)).resolves.toStrictEqual({
       inputVersion: writer.plan.inputVersion + (writer.marks ?? 1),
     });
@@ -1670,13 +1605,11 @@ describe(resolvePlanInputDependents, () => {
       resolvePlanInputDependents(prisma, { skillIds: [skill.id] }),
     );
 
-    // A skill merge resolves while it holds its locks: no lesson or chapter reads that find nothing.
     expect(counts.result).toStrictEqual([plan.id]);
     assertReadBudget(counts, 2);
   });
 });
 
-/** A multiple-choice exam whose notice doesn't say how many options its questions have. */
 const UNSTATED_OPTIONS = examStructureSchema.parse({
   formats: [
     { citation: CITATION, description: "Múltipla escolha", kind: "multipleChoice", options: null },
@@ -1721,7 +1654,6 @@ describe(recordChoiceOptions, () => {
       userId: user.id,
     });
 
-    // A saved pace, so both runs plan with the same one whatever other learners finish meanwhile.
     await planFixture({
       goalId: goal.id,
       graph: {
@@ -1762,7 +1694,6 @@ describe(recordChoiceOptions, () => {
       source: { title: "Prova 2025", url: "https://example.test/prova-2025.pdf" },
     });
 
-    // Every reader of the exam's formats now takes the four options the lookup found.
     const stored = await prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } });
 
     expect(getExamFormats(examStructureSchema.parse(stored.structure))).toMatchObject([
@@ -1773,7 +1704,6 @@ describe(recordChoiceOptions, () => {
   });
 });
 
-/** Holds a plan's row until `release`, as another writer of the plan does while it commits. */
 function holdPlan(planId: string) {
   const held = Promise.withResolvers<number>();
   const released = Promise.withResolvers<null>();
@@ -1801,7 +1731,6 @@ describe("a publisher that loses its claim while it waits for a plan", () => {
     const writing = write();
 
     try {
-      // Past its claim check, the publisher waits to mark the plan; meanwhile its claim ends.
       await waitForBlockedStatement(holderPid, /FOR UPDATE OF plan/u);
 
       await prisma.lesson.update({ data: { contentStatus: "failed" }, where: { id: root.id } });

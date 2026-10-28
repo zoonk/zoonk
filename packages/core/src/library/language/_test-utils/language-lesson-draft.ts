@@ -1,9 +1,5 @@
 import { type LanguageLessonContent } from "@zoonk/ai/tasks/v2/language/language-lesson";
 
-/**
- * A complete English lesson for Brazilian Portuguese speakers, as the writer
- * returns it, for tests of what code does with a draft.
- */
 export function languageLessonDraft(
   overrides: Partial<LanguageLessonContent> = {},
 ): LanguageLessonContent {
@@ -93,10 +89,6 @@ export function languageLessonDraft(
   };
 }
 
-/**
- * An English lesson for a learner who reads the app in English (an IELTS candidate), as the writer
- * returns it: words have definitions, and sentences come back as they are.
- */
 export function sameLanguageLessonDraft(
   overrides: Partial<LanguageLessonContent> = {},
 ): LanguageLessonContent {

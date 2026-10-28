@@ -32,15 +32,7 @@ function loadChallengeStep(stepId: string) {
   });
 }
 
-/**
- * The version of a chapter's work case set in one field ("nursing"), written the first time a
- * learner in that field reaches the challenge and then shared by everyone in it, as a `field`
- * version of the challenge screen. The case still trains the chapter's skills; only where it
- * happens changes. A "What if" (overview) challenge and a private course's challenge have none:
- * the first stays light by design, the second is already built for its learner.
- *
- * This is an internal workflow bridge: the field is a shared key, never the learner's words.
- */
+/** Internal workflow bridge: `field` must be a shared key, never the learner's free text. */
 export async function getOrCreateFieldChallenge({
   analytics,
   field,
@@ -85,7 +77,6 @@ export async function getOrCreateFieldChallenge({
 
   const { content, provenance } = drafted;
 
-  // Personal versions are read outside the shared lesson cache, so it isn't touched.
   const { created, row } = await createOrFindByIdentity({
     create: () =>
       prisma.stepVariant.create({

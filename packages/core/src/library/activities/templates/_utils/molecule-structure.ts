@@ -6,7 +6,6 @@ import {
   valenceOf,
 } from "./chemistry";
 
-/** Enough to settle any formula lessons use; a formula that needs more is treated as unbuildable. */
 const MAX_SEARCH_STEPS = 20_000;
 
 type SearchAtom = { element: string; id: string; valence: number };
@@ -16,7 +15,6 @@ function pairKey(first: number, second: number): string {
   return first < second ? `${first}|${second}` : `${second}|${first}`;
 }
 
-/** Atoms with the most bonds first, so the search grows a backbone before adding the ends. */
 function expandAtoms(counts: Readonly<ElementCounts>): SearchAtom[] {
   return Object.entries(counts)
     .toSorted(
@@ -59,10 +57,6 @@ function addBond(state: SearchState, first: number, second: number): SearchState
   return { bonds, remaining };
 }
 
-/**
- * Atoms the next bond from `index` can go to. Identical untouched atoms (any hydrogen) are tried
- * once, and atoms outside the growing molecule come first so it stays in one piece.
- */
 function bondCandidates(atoms: readonly SearchAtom[], state: SearchState, index: number) {
   const isUntouched = (atom: number) => state.remaining[atom] === atoms[atom]?.valence;
   const component = componentOf(state, new Set([index]));
@@ -116,10 +110,6 @@ function searchStructure(
   );
 }
 
-/**
- * One complete structure for the formula: every atom with all its bonds, at most triple bonds and
- * nothing floating. It shows a learner one correct build; any other complete build is right too.
- */
 export function findMoleculeStructure(counts: Readonly<ElementCounts>): MoleculeBuild | null {
   const atoms = expandAtoms(counts);
 
@@ -146,10 +136,6 @@ export function findMoleculeStructure(counts: Readonly<ElementCounts>): Molecule
   };
 }
 
-/**
- * Quick necessary conditions: an even number of bond ends, enough bonds to connect every atom,
- * and no atom needing more bonds than the rest can give.
- */
 function passesBondCounts(counts: Readonly<ElementCounts>): boolean {
   const entries = Object.entries(counts);
   const atomCount = entries.reduce((sum, [, count]) => sum + count, 0);
@@ -164,7 +150,6 @@ function passesBondCounts(counts: Readonly<ElementCounts>): boolean {
   );
 }
 
-/** Whether the formula can be built with every bond filled and at most triple bonds. */
 export function isBuildableMolecule(counts: Readonly<ElementCounts>): boolean {
   return passesBondCounts(counts) && findMoleculeStructure(counts) !== null;
 }

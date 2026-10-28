@@ -79,7 +79,6 @@ describe(toStoredItem, () => {
     };
 
     expect(toStoredItem(essay).content).toMatchObject({
-      // The motivating text quotes a source: it keeps its own punctuation.
       context: essay.context,
       keyPoints: ["Defende uma tese, com dois argumentos"],
       rubric: [

@@ -21,7 +21,6 @@ describe(getExamBlueprint, () => {
       source: { id: source.id, publisher: "INEP", title: "Edital ENEM 2026" },
     });
 
-    // The fixture's structure predates the contract, so it reads as empty sections.
     expect(result?.structure).toStrictEqual({ formats: [], mock: null, rules: [], subjects: [] });
     expect(result?.edition.dates).toStrictEqual([]);
   });

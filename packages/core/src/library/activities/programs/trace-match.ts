@@ -4,14 +4,12 @@ type TraceValue = boolean | number | string;
 type WrittenStep = { line: number; values: readonly { name: string; value: TraceValue }[] };
 type Language = "javascript" | "python";
 
-/** A value the tracer shows at a step: listed there, or kept from an earlier step. */
 type ShownValue = { listed: boolean; name: string; value: TraceValue };
 
 /** 0.1 + 0.2 may be written as 0.3. */
 const NUMBER_TOLERANCE = 1e-9;
 const NOTHING = new Set(["none", "null", "undefined"]);
 
-/** Lists and objects compare without spaces, quote style or case, so `[1, 'a']` matches `[1,"A"]`. */
 function canonical(text: string): string {
   return text.replaceAll(/\s+/gu, "").replaceAll('"', "'").toLowerCase();
 }
@@ -25,10 +23,6 @@ function sameNumber(written: TraceValue, actual: number): boolean {
   return Math.abs(value - actual) <= NUMBER_TOLERANCE * Math.max(1, Math.abs(actual));
 }
 
-/**
- * Whether a written trace value says what the run had, forgiving how it's written: numbers as
- * text, quotes around strings, Python's True for true, and spacing inside lists.
- */
 function sameValue(written: TraceValue, actual: TracedValue): boolean {
   switch (actual.kind) {
     case "boolean":
@@ -63,7 +57,6 @@ function describeValue(value: TracedValue, language: Language): string {
   }
 }
 
-/** What the tracer shows at each step: every watched value known so far, like the player. */
 function shownValues(trace: readonly WrittenStep[], watch: readonly string[]): ShownValue[][] {
   const initial: { known: ReadonlyMap<string, TraceValue>; shown: ShownValue[][] } = {
     known: new Map(),
@@ -88,10 +81,6 @@ function actualValue(event: TraceStep, watch: readonly string[], name: string) {
   return event.values[watch.indexOf(name)] ?? null;
 }
 
-/**
- * A listed value must exist and match; a kept one only has to match where the variable still
- * has a value, since the tracer can't show a variable going out of scope.
- */
 function showsTruth(item: ShownValue, actual: TracedValue | null): boolean {
   if (item.listed) {
     return actual !== null && sameValue(item.value, actual);
@@ -144,11 +133,6 @@ function stepMismatch({
   return `${where} and shows ${wrong.name} = ${String(wrong.value)}${kept}, but running the code, ${real} there`;
 }
 
-/**
- * Checks a written trace against a real run. Steps may skip lines but must follow the order the
- * lines ran, and every value the tracer shows at a step must be what the program had right after
- * that line. Returns the first step that doesn't hold, with a message for the writer's fix step.
- */
 export function findTraceMismatch({
   events,
   language,

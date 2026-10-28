@@ -17,18 +17,10 @@ type SpecPrompt = Omit<LessonSpecParams, "analytics" | "model" | "reasoning" | "
 
 export type LessonSpecInputs = {
   prompt: SpecPrompt;
-  /** Where split lessons go: the lesson's home chapter, and who owns it. */
   homeChapterId: string | null;
   scope: CurriculumScope;
 };
 
-/**
- * Loads what planning one lesson needs: its outline (title, description, can-do line and skills),
- * where it sits (course, chapter and what the chapter's other lessons teach and use so far, so it
- * stays in its own scope and adds something new), who owns it and, for a private lesson built
- * from the learner's material, the pages it teaches from, or for a lesson of a goal built from
- * sources, the passages its facts come from. Null when the lesson no longer exists.
- */
 export async function loadLessonSpecInputs(lessonId: string): Promise<LessonSpecInputs | null> {
   const lesson = await prisma.lesson.findUnique({
     include: {
@@ -76,7 +68,6 @@ export async function loadLessonSpecInputs(lessonId: string): Promise<LessonSpec
       chapterLessons,
       chapterTitle: chapter?.title ?? lesson.title,
       courseTitle: chapter?.homeCourse?.title ?? chapter?.title ?? lesson.title,
-      // A lesson built from the learner's own material follows that material, not an exam's style.
       exams: material.length > 0 ? [] : exams,
       language: lesson.language,
       lessonCanDo: lesson.canDo ?? undefined,

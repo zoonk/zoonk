@@ -58,8 +58,6 @@ describe(checkActivityAnswer, () => {
   });
 
   it("takes a number rounded to the places the learner typed, when it keeps two significant digits", () => {
-    // A persona typed 12 for an 11.88% rise the chart labels "+11.9%" (Oct 2026): the question
-    // asks no precision, so a fair rounding is right, and one too coarse to show the value isn't.
     const line = { label: "Rise", max: 20, min: 0, moves: [{ by: 2 }], start: 10, step: 1 };
 
     const check = (answer: number, tolerance: number) =>
@@ -124,7 +122,6 @@ describe(checkActivityAnswer, () => {
       tolerance: { kind: "relative", value: 0.25 },
     });
 
-    // The slider's nearest positions to 700,000 are 640,000 and 710,000: a guess can't do better.
     expect(grade(strict, { kind: "numeric", value: 710_000 })).toBe(true);
     expect(grade(strict, { kind: "numeric", value: 660_000 })).toBe(true);
     expect(grade(strict, { kind: "numeric", value: 790_000 })).toBe(false);
@@ -151,7 +148,6 @@ describe(checkActivityAnswer, () => {
       },
     );
 
-    // 1.1 - 1 is 0.10000000000000009 in floating point.
     expect(grade(guess, { kind: "numeric", value: 1.1 })).toBe(true);
     expect(grade(guess, { kind: "numeric", value: 0.9 })).toBe(true);
     expect(grade(guess, { kind: "numeric", value: 1.1001 })).toBe(false);
@@ -349,7 +345,6 @@ describe(checkActivityAnswer, () => {
     });
 
     expect(grade(sums, { cells: ["2", "12", "11", "21"], kind: "grid" })).toBe(true);
-    // 12 and 21 have the same digits but aren't the same number.
     expect(grade(sums, { cells: ["2", "21", "11", "12"], kind: "grid" })).toBe(false);
   });
 

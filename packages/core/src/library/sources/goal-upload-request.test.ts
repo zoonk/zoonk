@@ -120,7 +120,6 @@ describe(answerGoalUploadRequest, () => {
       sourceFixture(),
     ]);
 
-    // The upload route already linked this one to the learner, without a goal.
     await learnerSourceFixture({ sourceId: linkedElsewhere.id, userId: user.id });
     mockSession(user.id);
 

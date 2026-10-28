@@ -5,19 +5,12 @@ import { usesNonLatinScript } from "@zoonk/utils/languages";
 import { CAPSULE_LEDGER_KIND } from "../../../milestones/award-milestones";
 import { getAlphabetIdentityKey } from "./alphabet-identity";
 
-/** A reading level from A2 up (the level test's scale starts at A1 = 0) means they read the script. */
 const READS_SCRIPT_SCORE = 1;
 
-/** Where a skipped intro is kept on the goal's details. */
 export const ALPHABET_INTRO_DETAIL = "alphabetIntro";
 
 type IntroGoal = Pick<Goal, "details" | "kind" | "language" | "targetLanguage">;
 
-/**
- * The alphabet lesson of a language goal whose script isn't Latin: `pending` while it should open
- * the learner's sessions (they haven't finished it, haven't skipped it and the level test didn't
- * show they read the script). Practice stays open either way.
- */
 export type AlphabetIntro = {
   canDo: string | null;
   lessonId: string;
@@ -34,7 +27,6 @@ async function hasFinishedLesson({ lessonId, userId }: { lessonId: string; userI
   const finished = await prisma.learningEvent.findFirst({
     select: { id: true },
     where: {
-      // Capsule rows also name their lesson; they are reviews of it, not the lesson itself.
       OR: [{ lessonKind: null }, { lessonKind: { not: CAPSULE_LEDGER_KIND } }],
       contentIds: { equals: lessonId, path: ["lessonId"] },
       endedAt: { not: null },
@@ -55,7 +47,6 @@ async function readsScript({ language, userId }: { language: string; userId: str
   return (reading?.score ?? 0) >= READS_SCRIPT_SCORE;
 }
 
-/** The goal's published alphabet lesson and whether it still opens their sessions; null without one. */
 export async function loadAlphabetIntro({
   goal,
   userId,

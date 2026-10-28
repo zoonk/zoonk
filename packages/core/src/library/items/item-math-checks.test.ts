@@ -131,7 +131,6 @@ describe(checkMathProblem, () => {
       checkMathProblem({ math: discountMath, otherSolutions: ["price - total"], question }),
     ).toStrictEqual(["Other solution 1 uses undeclared total."]);
 
-    // The price paid and the discount are different questions: one of them is a mistake.
     expect(
       checkMathProblem({
         math: discountMath,

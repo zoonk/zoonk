@@ -19,16 +19,10 @@ const MAX_KEY_POINTS = 5;
 const MAX_SUMMARY_IDEAS = 5;
 const MAX_MATH_LENGTH = 300;
 
-/** Display math in LaTeX, like `3x + 2 = 11`. Only shown, never evaluated. */
 const mathSchema = z.string().min(1).max(MAX_MATH_LENGTH);
 
-/** A chart or a timeline the player draws from data, on a screen that is about one. */
 const visualSchema = lessonVisualSchema.optional();
 
-/**
- * The first screen opens with the idea: a guess that doesn't count, or a surprising fact or real
- * situation. A guess reveals the answer whatever the learner picks.
- */
 export const hookContentSchema = z.discriminatedUnion("variant", [
   z
     .object({
@@ -52,12 +46,6 @@ export const hookContentSchema = z.discriminatedUnion("variant", [
     .strict(),
 ]);
 
-/**
- * One idea in small steps. `exampleLineSlot` marks where the personal layer may add one sentence
- * tying the idea to this learner's life; `idea` says what that sentence should connect to.
- * `explore` is an activity template the screen shows to explore (a model to move, a process, a
- * map), with no question and no check.
- */
 export const explanationContentSchema = z
   .object({
     exampleLineSlot: z.object({ idea: explanationSchema }).strict().optional(),
@@ -69,7 +57,6 @@ export const explanationContentSchema = z
   })
   .strict();
 
-/** A solved problem shown one step at a time: the player reveals each step on tap. */
 export const workedExampleContentSchema = z
   .object({
     image: stepImageRequestSchema.optional(),
@@ -84,29 +71,18 @@ export const workedExampleContentSchema = z
   })
   .strict();
 
-/**
- * The sentence of an earlier reading screen (a hook's text, an explanation or a worked example)
- * that decides a question's right answer, and that screen's `position` in the lesson: after a
- * wrong answer, "From the lesson" marks it when it shows that screen. Code stores one only after
- * finding the quote on that screen (`findQuestionBases`).
- */
 const questionBasisSchema = z
   .object({ position: z.number().int().min(0), quote: explanationSchema })
   .strict();
 
 const MAX_PICTURE_OPTIONS = 4;
 
-/**
- * An option of a question whose options are pictures: `picture` asks for the thing alone, `alt`
- * says what it looks like without naming it, and `text` names it once the answer is checked.
- */
 const checkOptionSchema = choiceOptionSchema
   .extend({ picture: pictureRequestSchema.optional() })
   .strict();
 
 type CheckOption = z.infer<typeof checkOptionSchema>;
 
-/** Picture options come all together, two to four of them, on a question with no other picture. */
 function pictureOptionsIssue(content: {
   image?: unknown;
   options: readonly CheckOption[];
@@ -135,16 +111,11 @@ function pictureOptionsIssue(content: {
     : null;
 }
 
-/** Whether an option's picture description names the option, which would give the answer away. */
 function namesItself(option: CheckOption): boolean {
   const name = option.text.trim().toLocaleLowerCase();
   return name.length > 2 && (option.picture?.alt.toLocaleLowerCase().includes(name) ?? false);
 }
 
-/**
- * On a picture whose numbers mark parts, an option that is a number names one of them: the
- * answer key comes from the parts, so a number past the last one marks nothing.
- */
 function numberedOptionsIssue(content: {
   image?: { parts?: readonly string[] };
   options: readonly CheckOption[];
@@ -165,12 +136,6 @@ function numberedOptionsIssue(content: {
     : null;
 }
 
-/**
- * Multiple choice with exactly one right option and a reason for every option. Options can be
- * pictures, for telling separate things apart by how they look (which doorway is Gothic?), and
- * numbers, for where a part sits on a picture whose numbers mark its parts (which number is the
- * ovary?).
- */
 export const checkContentSchema = z
   .object({
     basis: questionBasisSchema.nullable(),
@@ -189,10 +154,6 @@ export const checkContentSchema = z
     }
   });
 
-/**
- * A written answer. Short answers listed in `acceptedAnswers` are matched by code; anything else
- * is graded later against the key points, one idea each.
- */
 export const typedAnswerContentSchema = z
   .object({
     acceptedAnswers: z.array(optionTextSchema).max(MAX_KEY_POINTS).optional(),
@@ -205,7 +166,6 @@ export const typedAnswerContentSchema = z
   })
   .strict();
 
-/** Say the target text out loud in `language`. */
 export const spokenAnswerContentSchema = z
   .object({
     language: languageCodeSchema,
@@ -216,7 +176,6 @@ export const spokenAnswerContentSchema = z
   })
   .strict();
 
-/** The summary card: each idea of the lesson in one sentence. */
 export const summaryContentSchema = z
   .object({
     ideas: z

@@ -19,19 +19,12 @@ import {
   workedExampleContentSchema,
 } from "./teaching-steps";
 
-/** The chart or timeline a screen or question shows, drawn from its data. */
 export type { ChartVisual, LessonVisual, TimelineVisual } from "@zoonk/ai/tasks/v2/visuals/schema";
 
-/** The contract version stored in `Step.contractVersion` and `StepVariant.contractVersion`. */
 export const STEP_CONTRACT_VERSION = 1;
 
-/**
- * Vocabulary, reading, listening and translation screens read their word or sentence through the
- * step's `wordId` or `sentenceId`, so their content carries nothing else.
- */
 const relationContentSchema = z.object({}).strict();
 
-/** One content schema per `StepKind`. */
 export const stepContentSchemas = {
   activity: activityContentSchema,
   alphabet: alphabetContentSchema,
@@ -56,27 +49,19 @@ type StepContentSchemas = typeof stepContentSchemas;
 
 export type StepContentByKind = { [TKind in StepKind]: z.output<StepContentSchemas[TKind]> };
 
-/** The same schemas typed per kind, so a generic `kind` narrows the parsed content. */
 const contentSchemaByKind: { [TKind in StepKind]: z.ZodType<StepContentByKind[TKind]> } =
   stepContentSchemas;
 
-/**
- * Generated JSON sometimes has a malformed backslash escape where LaTeX meant `\`, and NULs that
- * Postgres JSONB can't store. Both are repaired in string values before validation.
- */
 function parseNormalized<TSchema extends z.ZodType>(schema: TSchema, value: unknown) {
   return schema.safeParse(normalizeStepContentValue(value));
 }
 
-/** Validates and repairs a step's content for its kind; returns zod's result without throwing. */
+/** Returns a validation result; use `parseStepContent` when invalid stored content must throw. */
 export function safeParseStepContent<TKind extends StepKind>(kind: TKind, content: unknown) {
   return parseNormalized(contentSchemaByKind[kind], content);
 }
 
-/**
- * Reads stored step content. Content is only written after it validates, so a failure means
- * corrupted data and throws.
- */
+/** Throws on invalid stored content, which indicates corrupted data. */
 export function parseStepContent<TKind extends StepKind>(
   kind: TKind,
   content: unknown,
@@ -90,7 +75,6 @@ export function parseStepContent<TKind extends StepKind>(
   return parsed.data;
 }
 
-/** A content error as one line per issue, prefixed with its path, for the writer's fix step. */
 export function describeContentIssues(error: z.ZodError): string[] {
   return error.issues.map((issue) => {
     const path = issue.path.map(String).join(".");

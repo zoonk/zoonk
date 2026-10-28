@@ -289,8 +289,6 @@ describe(linkExplanationToGoal, () => {
       question: "what does it mean when the market is up 2%?",
     });
 
-    // Building the explain plan marks only that plan; a goal source change marks all of the
-    // learner's plans, so their other plan shows it.
     const otherGoal = await goalFixture({ userId: user.id });
     const otherPlan = await planFixture({ goalId: otherGoal.id });
 
@@ -302,7 +300,6 @@ describe(linkExplanationToGoal, () => {
       title: "What “the market is up 2%” means",
     });
 
-    // The Overview course became the goal's main course: a goal source the plan reads.
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { id: otherPlan.id } }),
     ).resolves.toMatchObject({ inputVersion: otherPlan.inputVersion + 1 });
@@ -371,7 +368,6 @@ describe(linkGoFurtherCourse, () => {
 
     mockSession(user.id);
 
-    // The learner reads the explanation before its course to go further is found.
     await expect(getExplanation({ goalId: goal.id })).resolves.toMatchObject({
       explanation: { goFurther: { course: null }, lesson: { id: saved.lessonId }, status: "ready" },
     });

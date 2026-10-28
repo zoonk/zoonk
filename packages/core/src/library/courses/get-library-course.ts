@@ -7,11 +7,6 @@ import { canViewLibraryRow, filterVisibleLibraryRows } from "../_utils/library-v
 
 const LEVEL_ORDER = Object.values(CourseLevel);
 
-/**
- * Outline lessons only carry what the outline writer sets once. Statuses and
- * specs change during generation and are read from the lesson itself, which
- * keeps a large course under the per-entry cache tag limit.
- */
 const outlineLessonSelect = {
   description: true,
   estimatedMinutes: true,
@@ -24,11 +19,6 @@ const outlineLessonSelect = {
   visibility: true,
 } as const;
 
-/**
- * Kept for the catalog's lifetime, like the public pages that list it. Tagged by the course alone:
- * a chapter's change refreshes the outlines that place it through their course's curriculum tag
- * (`getChapterCacheTags`), since a course can hold more chapters than one cache entry has tags for.
- */
 async function getCachedLibraryCourse(courseId: string) {
   "use cache";
   cacheTag(getCourseCacheTag(courseId), getCourseCurriculumCacheTag(courseId));
@@ -66,7 +56,6 @@ async function toOutlineChapter(placement: CachedPlacement) {
   return { ...chapter, lessons: visibleLessons, position: placement.position };
 }
 
-/** Bands follow the placement's level, since a shared chapter's band is the course's choice. */
 async function toLevelBands(placements: CachedPlacement[]) {
   const chapters = await Promise.all(
     placements.map(async (placement) => ({
@@ -88,12 +77,6 @@ async function getVisiblePlacements(placements: CachedPlacement[]): Promise<Cach
   return placements.filter((placement) => visibleIds.has(placement.chapterId));
 }
 
-/**
- * Loads a course with its full outline: level bands from overview to advanced,
- * each chapter in order with its objectives, and each lesson's title and
- * one-line description. Private courses, and private chapters or lessons
- * inside a shared outline, are only returned to their owner.
- */
 export async function getLibraryCourse({ courseId }: { courseId: string }) {
   if (!isUuid(courseId)) {
     return null;

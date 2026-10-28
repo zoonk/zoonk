@@ -23,7 +23,6 @@ const GOAL = {
 };
 
 describe(toResearchPlanInput, () => {
-  // The plan names the exam every learner of it shares: its identity, sources and searches.
   it("reads the exam the goal names, never the learner's own words", () => {
     const input = toResearchPlanInput(GOAL);
 
@@ -57,7 +56,6 @@ describe(toResearchPlanInput, () => {
       personal: false,
     });
 
-    // A public-service exam's notice has a part for each position: the position is which exam.
     const camara = toResearchPlanInput({
       ...GOAL,
       details: {

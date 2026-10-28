@@ -33,7 +33,6 @@ function logChoose(total: number, chosen: number): number {
   );
 }
 
-/** The chance a binomial count (heads in `trials` flips) meets the hit. */
 export function binomialHitProbability(params: {
   hit: HitComparison;
   probability: number;
@@ -61,7 +60,6 @@ function addDie(counts: readonly number[], sides: number): number[] {
   );
 }
 
-/** The chance the sum of `count` fair dice meets the hit, from the exact sum distribution. */
 export function diceSumHitProbability(params: {
   count: number;
   hit: HitComparison;
@@ -80,7 +78,6 @@ export function diceSumHitProbability(params: {
   );
 }
 
-/** The birthday problem: the chance at least two of `people` share one of `days` birthdays. */
 export function sharedBirthdayProbability(params: { days: number; people: number }): number {
   if (params.people > params.days) {
     return 1;

@@ -56,10 +56,6 @@ const populationSchema = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("mean"), mean: z.number(), sd: z.number().positive() }).strict(),
 ]);
 
-/**
- * `chance`: one random model run many times, plotted as how often a hit comes up. `sampling`: many
- * samples of each size from one population, plotted as the spread of their results.
- */
 const randomSimulationFields = z.discriminatedUnion("mode", [
   z
     .object({
@@ -80,9 +76,7 @@ const randomSimulationFields = z.discriminatedUnion("mode", [
         .array(z.number().int().min(2).max(MAX_SAMPLE_SIZE))
         .min(2)
         .max(MAX_SAMPLE_SIZES),
-      /** What a sample size counts, like "People per poll". */
       sizeLabel: labelSchema.optional(),
-      /** The unit of a mean population's values, like "cm". */
       unit: unitSchema.optional(),
     })
     .strict(),
@@ -113,10 +107,6 @@ function standardError(population: SamplingFields["population"], size: number): 
   return spread / Math.sqrt(size);
 }
 
-/**
- * The spread a sampling check reads: by default how much the error shrinks from the smallest to the
- * largest sample, or with `output` "standardError" and a `sampleSize` input that size's error.
- */
 function samplingValue(
   fields: SamplingFields,
   target: { inputs: Readonly<Record<string, number>>; output: string | null },

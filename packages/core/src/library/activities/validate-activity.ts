@@ -20,7 +20,6 @@ import { sampleExpression } from "./expression/sample-expression";
 import { withinTolerance } from "./templates/_utils/pattern-checks";
 import { issue } from "./templates/_utils/template-helpers";
 
-/** How far a choice's value may sit from the computed answer: "about 1 in 4" for 0.246 is fine. */
 const CHOICE_VALUE_TOLERANCE = 0.2;
 const MIN_CHOICE_GAP = 1e-9;
 
@@ -70,10 +69,6 @@ function numericIssues(
       ];
 }
 
-/**
- * A choice check can prove itself with numbers: each option carries the value it stands for, and
- * the one closest to the computed answer must be the correct one, with no tie.
- */
 function choiceIssues(
   template: ActivityTemplate,
   content: ActivityStepContent,
@@ -160,7 +155,6 @@ function formulaIssues(template: ActivityTemplate, fields: unknown): ActivityIss
   });
 }
 
-/** The rules a template's fields and data follow wherever it shows, asked about or explored. */
 function fieldIssues(
   template: ActivityTemplate,
   content: { data?: unknown; fields: unknown },
@@ -184,12 +178,6 @@ function ruleIssues(content: ActivityStepContent): ActivityIssue[] {
   return [...fieldIssues(template, content), ...checkIssues(template, content)];
 }
 
-/**
- * Runs every publishing rule on generated activity content: the template's schema and label
- * limits, a check tied to the interaction, formulas that work across their whole range, answers
- * recomputed by code, cited or example-labeled data, and the template's own consistency rules.
- * Issues say what to fix, so the writer can repair the activity and try again.
- */
 export function validateActivity(input: unknown): ActivityValidationResult {
   if (!isJsonObject(input)) {
     return { issues: [issue("invalidSchema", "", "An activity must be an object")], ok: false };
@@ -229,7 +217,6 @@ export function validateActivity(input: unknown): ActivityValidationResult {
     return { issues, ok: false };
   }
 
-  // A template that shows no data keeps no data label, which would read as a note on nothing.
   const content = showsActivityData(parsed.data)
     ? parsed.data
     : { ...parsed.data, data: undefined };
@@ -241,19 +228,12 @@ type ExploreValidationResult =
   | { content: ExploreActivityContent; ok: true }
   | { issues: ActivityIssue[]; ok: false };
 
-/** A template explored solved needs the end state code computes from its fields. */
 function solvedStateIssues(template: ActivityTemplate, fields: unknown): ActivityIssue[] {
   return exploresSolved(template.id) && !template.computeExpected(fields)
     ? [issue("answerMismatch", "fields", "Code can't compute the end state this template shows")]
     : [];
 }
 
-/**
- * The publishing rules for a template an explanation screen shows to explore: one of the
- * templates that can be explored, its schema and label limits, formulas that work across their
- * whole range, cited or example-labeled data and the template's own consistency rules. There's no
- * check to verify, since nothing is asked.
- */
 export function validateExploreActivity(input: unknown): ExploreValidationResult {
   if (!isJsonObject(input) || typeof input.template !== "string") {
     return {

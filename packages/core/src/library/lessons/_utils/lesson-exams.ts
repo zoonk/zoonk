@@ -5,19 +5,11 @@ import { readBlueprintContent } from "../../exams/save-exam-blueprint";
 import { asksShortAnswers, readGoalExamFormats } from "../../exams/short-answers";
 import { lessonGoalsFilter } from "../../sources/goal-material";
 
-/** A few exams are enough to set a lesson's depth and its questions' style. */
 const MAX_LESSON_EXAMS = 3;
 
 type LessonGoalsOf = Parameters<typeof lessonGoalsFilter>[0];
 
-/**
- * The exams the learners who study a shared lesson prepare for: the public notices of the exam
- * goals that plan the lesson, its chapter or its course. A shared lesson is written once, so it's
- * written for the candidates of those exams (at their depth, in their questions' style) without
- * naming any of them; a lesson no exam goal needs gets none and is written for everyone.
- *
- * This is a workflow bridge: the lesson comes from the workflow planning or writing it.
- */
+/** Internal workflow bridge: the lesson must come from the workflow planning or writing it. */
 export async function loadLessonExams(input: LessonGoalsOf): Promise<CandidateExam[]> {
   const blueprints = await prisma.examBlueprint.findMany({
     orderBy: { updatedAt: "desc" },
@@ -28,15 +20,7 @@ export async function loadLessonExams(input: LessonGoalsOf): Promise<CandidateEx
   return blueprints.map((blueprint) => toCandidateExam(blueprint));
 }
 
-/**
- * Whether the exam of any goal that plans the lesson, its chapter or its course asks short written
- * answers (`asksShortAnswers`), so the lesson may ask its learners to write one: a public notice's,
- * a class test's read from the learner's material (whose lesson gets no `EXAMS`), or, before its
- * blueprint is linked, the formats a first pass over the notice read. Every other lesson asks only
- * what learners pick.
- *
- * This is a workflow bridge: the lesson comes from the workflow planning or writing it.
- */
+/** Internal workflow bridge: the lesson must come from the workflow planning or writing it. */
 export async function loadLessonShortAnswers(input: LessonGoalsOf): Promise<boolean> {
   const goals = lessonGoalsFilter(input);
 

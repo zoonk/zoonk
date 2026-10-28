@@ -51,7 +51,6 @@ function missing(overrides: {
   };
 }
 
-/** The graph with the missing skills a check found, and nothing else changed. */
 function addCoverageSkills({
   graph: checked,
   missing: found,
@@ -65,7 +64,6 @@ function addCoverageSkills({
   }).graph;
 }
 
-/** The exam's graph with the missing skills a check found, placed in its notice. */
 function addCoverageSkillsTo({
   graph: checked,
   missing: found,
@@ -82,7 +80,6 @@ function addCoverageSkillsTo({
   }).graph;
 }
 
-/** The graph with the weights a check corrected, and nothing else changed. */
 function reweightExamSkills({
   examWeights,
   graph: checked,
@@ -261,8 +258,6 @@ describe(applyGraphCoverage, () => {
 
     expect(changed).toBe(true);
 
-    // The notice's topics the check left out get a skill each, among their subject's skills in the
-    // notice's order, with the subject's course, band, phase and usual weight.
     expect(
       covered.skills.map(({ area, course, key, phase, topics }) => [
         key,
@@ -332,8 +327,6 @@ describe(applyGraphCoverage, () => {
   });
 
   it("puts a subject the graph has no skill of after the subject the notice lists before it", () => {
-    // An option the notice's reading named after the graph was written (ENEM's Spanish, listed
-    // right after the languages area): it joins its neighbor in the notice, not the start of the graph.
     const outline: ExamOutline = {
       ...OUTLINE,
       subjects: [

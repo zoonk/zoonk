@@ -7,7 +7,6 @@ import {
 } from "./_test-utils/math-problems";
 import { checkMathAnswer, withNewNumbers } from "./item-math";
 
-/** Returns the given draws in order, so each variable's value is chosen by the test. */
 function sequence(...draws: number[]) {
   return () => draws.shift() ?? 0;
 }
@@ -38,7 +37,6 @@ describe(withNewNumbers, () => {
   });
 
   it("skips draws where a common mistake gives the right answer", () => {
-    // At 50% off, the discount equals the price paid, so the first draw is skipped.
     const result = withNewNumbers({
       math: discountMath,
       question,
@@ -121,7 +119,6 @@ describe(withNewNumbers, () => {
   });
 
   it("keeps the checked numbers when no new draw works", () => {
-    // Doubling and squaring agree at 0 and at 2, so every draw would let the mistake pass.
     const math: GeneratedMathProblem = {
       ...discountMath,
       answer: 4,
@@ -224,7 +221,6 @@ describe("numeric entry rules", () => {
   });
 
   it("takes any of the other answers that are right too", () => {
-    // x² - (a + b)x + ab = 0 has the roots a and b: "one possible value of x" takes either.
     const roots: GeneratedMathProblem = {
       ...discountMath,
       answer: 2,
@@ -249,7 +245,6 @@ describe("numeric entry rules", () => {
   });
 
   it("draws only numbers whose answer is a whole number for an integer answer", () => {
-    // 10% of 15 to 25 in steps of 1: only 20 gives a whole number.
     const math: GeneratedMathProblem = {
       ...discountMath,
       answer: 2,

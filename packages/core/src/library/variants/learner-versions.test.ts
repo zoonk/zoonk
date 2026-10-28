@@ -21,7 +21,6 @@ const toolExplanation = {
   title: "The mean in a spreadsheet",
 };
 
-/** A check whose right answer differs from the shared one, so grading shows which was used. */
 const toolCheck = {
   basis: null,
   options: [
@@ -33,10 +32,6 @@ const toolCheck = {
 
 type Choice = "have" | "none" | "setup";
 
-/**
- * A learner whose plan has the lesson in a chapter that uses a spreadsheet, having answered
- * `choice` for it on the "You'll use" card, and whose goal is a work goal in `field`.
- */
 async function setupLearner({
   choice,
   field = null,
@@ -64,7 +59,6 @@ async function setupLearner({
   return setup;
 }
 
-/** A served teaching screen's content; language exercises carry theirs differently. */
 function contentOf(steps: PlayableLibraryStep[], kind: string): unknown {
   const step = stepOfKind(steps, kind);
   return "content" in step ? step.content : null;

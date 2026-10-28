@@ -7,7 +7,6 @@ import { type IdentityKindSearch, type ImageIdentityRequest } from "../_utils/id
 import { IMAGE_SCENE_DOCUMENT } from "../_utils/search-documents";
 import { type TextSearch, findRankedIds } from "../_utils/text-search-sql";
 
-/** Scenes are written in English whatever the lesson's language, so they're searched in English. */
 const SCENE_LANGUAGE = "en";
 
 async function findExactImage({
@@ -29,10 +28,6 @@ async function findExactImage({
   return asset.id;
 }
 
-/**
- * Public images whose scene matches, whatever style drew them. Images without text serve any
- * language; images with labels only their own, and never a language course, which shows no text.
- */
 async function findImageCandidateIds({
   request,
   search,
@@ -40,7 +35,6 @@ async function findImageCandidateIds({
   request: ImageIdentityRequest;
   search: TextSearch;
 }): Promise<string[]> {
-  // A scene is English whatever language its labels are in.
   return findRankedIds({
     document: IMAGE_SCENE_DOCUMENT,
     filters: sql`m.kind = 'image'

@@ -49,7 +49,6 @@ describe(getOptionPictureRequests, () => {
       "baroque",
     ]);
 
-    // An option's name never reaches the picture: it would give the answer away.
     expect(requests.every((request) => request.screenText === "Which doorway is Gothic?")).toBe(
       true,
     );

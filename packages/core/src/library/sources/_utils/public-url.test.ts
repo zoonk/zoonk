@@ -5,10 +5,8 @@ import { type fetch } from "undici";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { publicAgent, publicLookup } from "./public-url";
 
-/** Undici's real fetch, which research's requests go through (other tests replace it). */
 const { fetch: realFetch } = await vi.importActual<{ fetch: typeof fetch }>("undici");
 
-/** Resolves a host name the way a connection does, through the public-address rule. */
 function resolve(hostname: string): Promise<LookupAddress[]> {
   return new Promise((resolveAddresses, reject) => {
     publicLookup(hostname, { all: true }, (error, addresses) => {
@@ -23,7 +21,6 @@ function resolve(hostname: string): Promise<LookupAddress[]> {
 }
 
 describe(publicLookup, () => {
-  // An address resolves to itself without asking DNS, so each network is checked offline.
   it.each([
     "0.0.0.0",
     "10.1.2.3",
@@ -61,7 +58,6 @@ describe(publicLookup, () => {
 });
 
 describe("fetching through the public agent", () => {
-  /** A server on this machine, which a public-looking name could point at. */
   let server: Server;
   const connected = vi.fn();
 

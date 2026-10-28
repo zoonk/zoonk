@@ -5,24 +5,14 @@ import {
   type ChallengeNode,
 } from "../steps/contract/challenge-content";
 
-/** Every path from the first decision to an ending takes this many decisions. */
 const CHALLENGE_DECISIONS = { max: 4, min: 2 } as const;
 
 type ChallengeGraphIssue = { message: string; path: (number | string)[] };
 
-/**
- * Text may name a colleague as `{{slotId}}`; the learner's team fills in the name when the case is
- * played, so shared content never stores one.
- */
 export const CHALLENGE_NAME_PATTERN = /\{\{(?<slotId>[\w-]+)\}\}/gu;
 
-/** One decision on the learner's path: where it was taken and what was picked. */
 export type ChallengeStep = { choice: ChallengeChoice; node: ChallengeNode };
 
-/**
- * Where a path of picks leads: the next decision, an ending, or nowhere (a pick that isn't on the
- * screen it claims, or a path that goes on past an ending).
- */
 export type ChallengeWalk =
   | { node: ChallengeNode; status: "deciding"; steps: ChallengeStep[] }
   | { ending: ChallengeEnding; status: "ended"; steps: ChallengeStep[] }
@@ -36,10 +26,6 @@ function findEnding(content: ChallengeContent, id: string): ChallengeEnding | un
   return content.endings.find((ending) => ending.id === id);
 }
 
-/**
- * Follows the learner's picks from the first decision. Code on the device and on the server
- * walks the same way, so they always agree on where a path ends.
- */
 export function walkChallenge(
   content: ChallengeContent,
   choiceIds: readonly string[],
@@ -76,7 +62,6 @@ export function walkChallenge(
 
 type PathSearch = { cycle: boolean; lengths: number[]; reached: Set<string> };
 
-/** Every path from the start, with the ids it reaches, the decisions each takes and any loop. */
 function explorePaths(content: ChallengeContent): PathSearch {
   const search: PathSearch = { cycle: false, lengths: [], reached: new Set() };
 
@@ -84,7 +69,6 @@ function explorePaths(content: ChallengeContent): PathSearch {
     search.reached.add(id);
     const node = findNode(content, id);
 
-    // Past the longest allowed path there's nothing new to learn, so the search stays small.
     if (!node || trail.length > CHALLENGE_DECISIONS.max) {
       search.lengths.push(trail.length);
       return;
@@ -148,7 +132,6 @@ function referenceIssues(content: ChallengeContent): ChallengeGraphIssue[] {
   });
 }
 
-/** A decision matters when it has a strong choice and at least one that isn't. */
 function decisionIssues(content: ChallengeContent): ChallengeGraphIssue[] {
   return content.nodes.flatMap((node, nodeIndex) => {
     const strong = node.choices.filter((choice) => choice.quality === "strong").length;
@@ -228,11 +211,6 @@ function pathIssues(content: ChallengeContent): ChallengeGraphIssue[] {
   ].filter((item) => item !== false);
 }
 
-/**
- * The rules code checks on every case before it's stored: every id it points at exists, every
- * decision is reachable and matters, every path ends after 2 to 4 decisions with no loops, at most
- * one AI colleague, and each skill is trained by some decision. An empty list means it passes.
- */
 export function getChallengeGraphIssues(content: ChallengeContent): ChallengeGraphIssue[] {
   return [
     ...shapeIssues(content),

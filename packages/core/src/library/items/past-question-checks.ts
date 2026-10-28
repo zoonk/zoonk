@@ -5,11 +5,6 @@ const SINGLE_QUOTES = /[‘’‚‛′]/gu;
 const DOUBLE_QUOTES = /[“”„‟″]/gu;
 const WHITESPACE = /\s+/gu;
 
-/**
- * Text as printed and as extracted from a PDF differ in line breaks, hyphenation at line ends,
- * spaces inside words and the shape of quotes and dashes, but never in the words and signs
- * themselves. Both sides drop spacing and dashes, so only a real change of wording fails.
- */
 function toComparableText(text: string): string {
   return text
     .normalize("NFKC")
@@ -19,7 +14,6 @@ function toComparableText(text: string): string {
     .replaceAll(WHITESPACE, "");
 }
 
-/** The parts of a question that must be copied as printed: support text, command and options. */
 function getQuotedParts(item: PastQuestion["item"]): { label: string; text: string }[] {
   const context = item.context ? [{ label: "The support text", text: item.context }] : [];
 
@@ -34,11 +28,6 @@ function getQuotedParts(item: PastQuestion["item"]): { label: string; text: stri
   ];
 }
 
-/**
- * What's wrong with one past question before it can be stored: every quoted part must appear in
- * the paper as printed, the citation must name the question's number, and it must be tagged with
- * one of the skills it was asked about. Empty when it can be quoted.
- */
 export function checkPastQuestion({
   paperText,
   question,
@@ -58,7 +47,6 @@ export function checkPastQuestion({
     return quoted && paper.includes(quoted) ? [] : [`${label} isn't in the paper as printed.`];
   });
 
-  // A printed question is copied as it is, never with a new drawing of its figure.
   const asksForPicture = "image" in question.item && question.item.image !== null;
 
   return [

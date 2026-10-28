@@ -10,7 +10,6 @@ import { type CurriculumAnalytics } from "../curriculum/curriculum-scope";
 import { createLibraryLesson } from "../lessons/create-library-lesson";
 import { createSkill } from "../skills/create-skill";
 
-/** Setting a tool up assumes nothing: it's the first thing a beginner does with it. */
 const SETUP_LEVEL = "beginner";
 
 export type SetupLesson = { lessonId: string; skillId: string; title: string };
@@ -38,15 +37,7 @@ async function findSetupLesson({
   return skill && lesson ? { lessonId: lesson.id, skillId: skill.id, title: lesson.title } : null;
 }
 
-/**
- * The short lesson that sets up a tool on a device ("Set up Python on Windows"), shared by every
- * learner who picks the same tool and device in the same language. The first one to need it has
- * a fast model write its outline; the lesson pipeline writes the lesson itself on demand, like
- * any outlined lesson. A tool that only private chapters use gets a private lesson, so a
- * company's tool name never reaches other learners.
- *
- * This is a workflow bridge: callers pass the owner their public boundary derived.
- */
+/** Internal workflow bridge: derive the owner from the authenticated public boundary. */
 export async function findOrCreateSetupLesson({
   analytics,
   language,
@@ -112,7 +103,6 @@ export async function findOrCreateSetupLesson({
     title: data.title,
   });
 
-  // Session tiles show the can-do line before the spec exists, as with outlined lessons.
   await prisma.lesson.updateMany({
     data: { canDo: data.canDo },
     where: { canDo: null, id: lesson.id },

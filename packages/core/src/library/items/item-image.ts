@@ -3,15 +3,10 @@ import { z } from "zod";
 
 type ItemImageAsset = Pick<MediaAsset, "height" | "url" | "width">;
 
-/**
- * What an item read includes so its question shows its picture: every read that turns bank items
- * into questions a learner sees uses it, so no surface asks about a figure it doesn't show.
- */
 export const ITEM_IMAGE_INCLUDE = {
   mediaAsset: { select: { height: true, url: true, width: true } },
 } as const;
 
-/** A question's picture as learners see it: the drawn file, with the writer's alt text. */
 export const itemImageSchema = z
   .object({
     alt: z.string().meta({ description: "What the picture shows, for screen readers" }),
@@ -23,10 +18,6 @@ export const itemImageSchema = z
 
 export type ItemImage = z.infer<typeof itemImageSchema>;
 
-/**
- * The picture a stored question shows, or null without one. Questions about a figure are stored
- * only once their picture is drawn, so a request always comes with its file.
- */
 export function toItemImage({
   content,
   mediaAsset,

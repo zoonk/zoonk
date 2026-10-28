@@ -24,20 +24,12 @@ export const materialQuestionInputSchema = z
 
 export type MaterialQuestionInput = z.infer<typeof materialQuestionInputSchema>;
 
-/**
- * A page of the learner's own material that an answer or a lesson screen came from: "Class 5,
- * slide 4". `page` is null for material without pages (Word, text).
- */
 export type MaterialCitation = {
   page: number | null;
   title: string;
   unit: "page" | "section" | "slide";
 };
 
-/**
- * An answer from the learner's own material with the pages it came from. `found` is false when
- * the material doesn't cover the question: the answer then says so instead of guessing.
- */
 export type MaterialQuestionAnswer = {
   answer: string;
   citations: MaterialCitation[];

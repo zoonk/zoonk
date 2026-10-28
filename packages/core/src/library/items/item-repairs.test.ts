@@ -13,7 +13,6 @@ function option(text: string, isCorrect = false) {
   return { ...(isCorrect ? RIGHT! : WRONG!), text };
 }
 
-/** The discount problem's expression with its variables in braces, as a text shows them. */
 function braced(expression: string): string {
   return expression.replaceAll(/\b(?<name>price|discount)\b/gu, "{$<name>}");
 }
@@ -59,7 +58,6 @@ describe(repairItem, () => {
       ["25", false],
     ]);
 
-    // Five options with a twin would leave four of the five the exam asks for: a writer's to fix.
     const short = generatedMultipleChoice({ options: options.slice(0, 5) });
 
     expect(repairItem({ item: short, language: "pt", optionCount: 5 })).toStrictEqual(short);

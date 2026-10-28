@@ -14,24 +14,17 @@ import { type GoalCurriculumInputs } from "./goal-curriculum-inputs";
 import { type PlanSkillGraph, buildPlanSkillGraph } from "./plan-skill-graph";
 import { isSharedExamGraph } from "./shared-graph-prompt";
 
-/** An exam's shared curriculum, with the course a plan made from it opens with. */
 export type ReusableCurriculum = PlanSkillGraph & { primaryCourseId: string | null };
 
 type SharedInputs = Parameters<typeof isSharedExamGraph>[0]["inputs"] & {
   goal: Pick<GoalCurriculumInputs["goal"], "examBlueprintId" | "id" | "language">;
 };
 
-/**
- * How many follow-up questions the learner answered: their answers shape a skill graph beyond the
- * notice, which a graph written for someone else wouldn't read. The level they gave doesn't: an
- * exam's shared graph is written without it (`toScopedGraphPrompt`).
- */
 function countFollowUps(details: unknown): number {
   const values = isJsonObject(details) ? details : {};
   return Array.isArray(values.followUps) ? values.followUps.length : 0;
 }
 
-/** Whether every course of a stored graph is shared: a private course's graph is its owner's. */
 async function hasOnlySharedCourses(courseIds: readonly string[]): Promise<boolean> {
   const privateCourses = await prisma.course.count({
     where: { id: { in: [...courseIds] }, visibility: "private" },
@@ -40,11 +33,6 @@ async function hasOnlySharedCourses(courseIds: readonly string[]): Promise<boole
   return courseIds.length > 0 && privateCourses === 0;
 }
 
-/**
- * The exam whose shared graph this goal's is: an exam goal of a shared scope (see
- * `isSharedExamGraph`) on a notice research linked, in the notice's language, whose learner
- * answered no follow-ups (those shape a graph for them alone). Null otherwise.
- */
 async function findSharedExam({
   inputs,
   scope,
@@ -70,15 +58,7 @@ async function findSharedExam({
   return examBlueprintId;
 }
 
-/**
- * Keeps a goal's freshly written graph as its exam's shared graph (`ExamSkillGraph`), when the goal's
- * graph is the exam's (`findSharedExam`): the first one written for the exam stays, whoever's run
- * wrote it, and only that same run can complete it (its reading of the notice adding skills).
- * Learners' plans keep their own copies; this one is the exam's, so deleting every learner of the
- * exam never loses it, and only an admin resets it (`resetExamSkillGraphForAdmin`, in `exam-skill-graph-reset`).
- *
- * This is a workflow bridge: the goal comes from the run its learner's request started.
- */
+/** Internal workflow bridge: the goal must come from the learner's authorized run. */
 export async function saveExamSkillGraph({
   graph,
   inputs,
@@ -109,18 +89,15 @@ export async function saveExamSkillGraph({
     where: { examBlueprintId },
   });
 
-  // Another run's graph stays the exam's.
   if (stored && stored.runId !== provenance.runId) {
     return;
   }
 
-  // A goal reusing the exam's graph saves it again unchanged: plans read only the graph.
   if (stored && isDeepStrictEqual(parsePlanGraph(stored.graph), parsePlanGraph(graph))) {
     await prisma.examSkillGraph.updateMany({ data: kept, where: current });
     return;
   }
 
-  // Plans of the exam add a picked option's skills from the shared graph.
   await writePlanInputs(async (tx) => {
     await lockPlanBlueprintWrite(tx, examBlueprintId);
 
@@ -135,12 +112,6 @@ export async function saveExamSkillGraph({
   });
 }
 
-/**
- * The exam whose shared graph a goal plans from: its shared exam (`findSharedExam`), or for a goal
- * started from a public course, the exam that course is (`loadCourseExam`, which linked the goal
- * to it), so its learner plans from the exam's graph in that course. A goal started from a private
- * course, or a course of another exam, writes its own. Null otherwise.
- */
 async function findReusableExam({
   inputs,
   scope,
@@ -163,19 +134,7 @@ async function findReusableExam({
   return exam?.blueprint.id === examBlueprintId ? examBlueprintId : null;
 }
 
-/**
- * The exam's shared curriculum (`ExamSkillGraph`) for a goal whose graph is the exam's
- * (`findReusableExam`), to plan from instead of writing a skill graph again, whatever prompt version
- * wrote it: a prompt change never rewrites an exam's graph on its own, only an admin's reset does.
- * Its skills and courses are already in the Library, outlined and often written, so the plan,
- * placement's questions and the first lessons come in seconds, at no cost. Whatever level either
- * learner gave, which decides where each starts, not the graph. A goal started from the exam's
- * course learns its part of the exam in that course (`pinPlanGraphToCourse`), as a graph it wrote
- * would be, so its outline is written there; it never becomes the exam's graph (`saveExamSkillGraph`). Null
- * when the exam has none, or one in a private course.
- *
- * This is a workflow bridge: the goal comes from the run its learner's request started.
- */
+/** Internal workflow bridge: the goal must come from the learner's authorized run. */
 export async function findReusableCurriculum({
   inputs,
   scope,
@@ -205,7 +164,6 @@ export async function findReusableCurriculum({
     })),
   };
 
-  // A course of the exam the graph gives no skill learns nothing from it: its goal writes its own.
   const teachesNothing = course && getExamCourseSkills({ course, examGraph: graph }).length === 0;
 
   if (teachesNothing || !(await hasOnlySharedCourses([...new Set(courseIds)]))) {

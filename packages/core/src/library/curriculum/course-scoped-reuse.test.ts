@@ -80,7 +80,6 @@ function outlineIn({
   });
 }
 
-/** Two courses on different subjects, as ENEM's foreign-language reading and Portuguese are. */
 async function twoSubjects(word: string) {
   return Promise.all([
     courseFixture({ language: "pt", title: `Leitura em língua estrangeira ${word}` }),
@@ -162,7 +161,6 @@ describe("reuse across courses", () => {
       ),
     );
 
-    // Skills are shared by design; the lesson that teaches them in another subject is not.
     expect(ownLesson?.skills.map((row) => row.skillId)).toStrictEqual(
       englishLesson?.skills.map((row) => row.skillId),
     );
@@ -191,8 +189,6 @@ describe("reuse across courses", () => {
 
     vi.mocked(decideLibraryIdentity).mockClear();
 
-    // Its one skill is created now, so no lesson in the Library can teach it yet, although the
-    // search would find the other course's lesson by its words.
     const own = await outlineIn({
       chapter: outlineChapter({
         lessons: [
@@ -236,8 +232,6 @@ describe("reuse across courses", () => {
   });
 
   it("writes a skill's next chapter as its own, never as a chapter the course already has", async () => {
-    // Helena's "Interpret historical sources": every next chapter the course wrote for the skill
-    // was matched to the chapter it continues, so its lessons were never written.
     const word = uniqueWord();
     const [, history] = await twoSubjects(word);
     mockSearchTerms([word]);
@@ -250,7 +244,6 @@ describe("reuse across courses", () => {
       courseId: history.id,
     });
 
-    // The reuse decision reads both as the same subject: the course's own chapter is never offered.
     mockDecision(first.chapterId);
 
     const next = await outlineIn({

@@ -6,7 +6,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { loadLessonReuse } from "./lesson-reuse";
 
-/** The given learner, or a new one. */
 async function learnerOrNew(userId?: string): Promise<string> {
   if (userId) {
     return userId;
@@ -16,7 +15,6 @@ async function learnerOrNew(userId?: string): Promise<string> {
   return user.id;
 }
 
-/** A goal of a learner (a new one by default) whose plan has the lesson, or the lesson's chapter. */
 async function planFor({
   chapterId = null,
   kind = "learn",
@@ -67,13 +65,11 @@ describe(loadLessonReuse, () => {
     const chapter = await libraryChapterFixture();
     const lesson = await libraryLessonFixture({ homeChapterId: chapter.id });
 
-    // The same learner's two goals are still one learner.
     const learner = await planFor({ lessonId: lesson.id });
     await planFor({ chapterId: chapter.id, userId: learner });
 
     await expect(loadLessonReuse({ lessonId: lesson.id })).resolves.toBe("library");
 
-    // Another learner's plan holds the lesson's chapter.
     await planFor({ chapterId: chapter.id });
 
     await expect(loadLessonReuse({ lessonId: lesson.id })).resolves.toBe("bounded");

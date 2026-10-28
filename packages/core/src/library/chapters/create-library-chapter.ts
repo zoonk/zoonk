@@ -11,7 +11,6 @@ import {
 import { assertHomeVisibility } from "../_utils/placement-visibility";
 
 export type CreateLibraryChapterInput = {
-  /** The key `resolveLibraryIdentity` returned with its `generate` outcome. */
   identityKey: string;
   language: string;
   targetLanguage: string | null;
@@ -19,9 +18,7 @@ export type CreateLibraryChapterInput = {
   title: string;
   description: string;
   objectives: string[];
-  /** The course whose outline first needed this chapter; it gives the chapter its URL. */
   homeCourseId: string | null;
-  /** Set for a private course's chapter, which only its owner ever sees. */
   ownerId: string | null;
   provenance: LibraryProvenance;
 };
@@ -79,15 +76,7 @@ async function insertChapter(input: CreateLibraryChapterInput): Promise<Chapter>
   });
 }
 
-/**
- * Creates a chapter outline row for a generation workflow, or returns the one
- * a concurrent request created under the same identity. Only the caller that
- * gets `created: true` should write this chapter's lesson outline.
- *
- * This is a workflow bridge, not an app authorization boundary: it accepts an
- * owner id only because the public core boundary that started the workflow
- * derived it from the authenticated session.
- */
+/** Internal workflow bridge: derive the owner from the authenticated boundary; only `created: true` owns outline generation. */
 export async function createLibraryChapter(
   input: CreateLibraryChapterInput,
 ): Promise<{ chapter: Chapter; created: boolean }> {

@@ -14,18 +14,15 @@ import { loadLessonReuse } from "../../lessons/lesson-reuse";
 import { readCurrentLessonVersion } from "../../lessons/lesson-versions";
 import { getStepImageRequest } from "../../media/_utils/step-image-request";
 
-/** Nobody waits on a lesson already published: its checks, fixes and redrafts answer at flex. */
 export const BACKGROUND_TIER = chooseServiceTier({ wait: "later" });
 
 export type CheckContext = {
   analytics?: LessonAnalytics;
-  /** The lesson was made for an exam goal, which makes it very likely read again. */
   forExam?: boolean;
   lessonId: string;
   workflowRunId: string;
 };
 
-/** Whose cost a check's calls are: a private course's lesson is its owner's; a shared one, the Library's. */
 export async function toTaskAnalytics({
   analytics,
   lessonId,
@@ -43,7 +40,6 @@ export async function toTaskAnalytics({
   };
 }
 
-/** What a version's check reads: the lesson's plan and context, if `version` is still current. */
 export async function loadCheck({
   context,
   version,
@@ -76,7 +72,6 @@ export async function loadCheck({
   };
 }
 
-/** The version's stored screens, by position: the run that wrote each and its picture. */
 export async function loadVersionSteps({
   lessonId,
   version,
@@ -110,10 +105,6 @@ export function toProvenance(step: VersionStep): LibraryProvenance {
   };
 }
 
-/**
- * Keeps the pictures the replaced version already had: a new screen asking for the same picture
- * shows it at once instead of drawing it again. The rest are drawn after publishing.
- */
 export function keepPictures({
   previous,
   screens,

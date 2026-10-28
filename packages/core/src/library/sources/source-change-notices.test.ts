@@ -96,7 +96,6 @@ describe(listGoalChangeNotices, () => {
       userId: user.id,
     });
 
-    // The goal's own research read a new edition six minutes in; the plan stopped waiting at ten.
     await planFixture({
       goalId: goal.id,
       noticeWaitEndedAt: new Date(Date.now() - 10 * MINUTE_MS),

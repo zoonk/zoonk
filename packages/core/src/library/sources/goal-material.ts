@@ -8,14 +8,8 @@ import {
   toMaterialPages,
 } from "./material-pages";
 
-/** A goal is built from at most this many of the learner's files, in the order they added them. */
 const MAX_MATERIAL_SOURCES = 5;
 
-/**
- * The learner's own material behind a goal: files and texts they uploaded that stayed private
- * (class slides, notes). Public documents they uploaded, such as an exam notice, are the goal's
- * syllabus, not teaching material, so they're left out.
- */
 async function findMaterial(goalIds: readonly string[]): Promise<MaterialSource[]> {
   if (goalIds.length === 0) {
     return [];
@@ -37,26 +31,14 @@ async function findMaterial(goalIds: readonly string[]): Promise<MaterialSource[
   );
 }
 
-/**
- * The material a goal is built from. A goal with material gets a private course: its lessons
- * teach from the learner's own files and cite their pages.
- *
- * This is a workflow bridge: the goal id comes from the public boundary that created the goal.
- */
+/** Internal workflow bridge: the public boundary must already have authorized the goal. */
 export function loadGoalMaterial(goalId: string): Promise<MaterialSource[]> {
   return findMaterial([goalId]);
 }
 
-/** A course outline reads a short handout whole, or the index of a long deck. */
 const MAX_COURSE_MATERIAL = 12_000;
 
-/**
- * The material a private course is built from, as its outline reads it: the uploads of its owner's
- * goals whose own course it is, whole when short (a teacher's summary), else one line per page.
- * Null for shared courses and courses without material, whose outlines cover their whole band.
- *
- * This is a workflow bridge: the course comes from the outline run that holds its claim.
- */
+/** Internal: the course must come from the outline workflow holding its claim. */
 export async function loadCourseMaterial(
   course: Pick<Course, "id" | "userId" | "visibility">,
 ): Promise<string | null> {
@@ -76,11 +58,6 @@ export async function loadCourseMaterial(
     : null;
 }
 
-/**
- * A goal whose plan waits on a skill the lesson teaches with a stand-in (no lesson yet) and learns
- * from the lesson's course: generation takes the lesson in the stand-in's place before the re-plan
- * saves its link (`readGenerationManifest`). Another learner's plan never names a private course.
- */
 function standInGoalsFilter({ courseId, lessonId }: { courseId: string; lessonId: string }) {
   return {
     plan: {
@@ -96,11 +73,6 @@ function standInGoalsFilter({ courseId, lessonId }: { courseId: string; lessonId
   };
 }
 
-/**
- * The goals a lesson is written for: those whose plan has the lesson or its chapter, or a stand-in
- * the lesson fills (`standInGoalsFilter`), or whose own course is the lesson's course. A Prisma goal
- * filter, to use inside other queries.
- */
 export function lessonGoalsFilter({
   chapterId,
   courseId,
@@ -121,12 +93,7 @@ export function lessonGoalsFilter({
   };
 }
 
-/**
- * The material a private lesson is written from: the uploads of its owner's goal that plans the
- * lesson, its chapter or its course. Shared lessons never read anyone's material.
- *
- * This is a workflow bridge: the lesson id comes from the workflow that holds its claim.
- */
+/** Internal: the lesson must come from the workflow holding its claim. */
 async function loadLessonMaterial(lessonId: string): Promise<MaterialSource[]> {
   const lesson = await prisma.lesson.findUnique({
     select: { homeChapter: { select: { homeCourseId: true } }, homeChapterId: true, ownerId: true },
@@ -152,11 +119,6 @@ async function loadLessonMaterial(lessonId: string): Promise<MaterialSource[]> {
   return findMaterial(goals.map((goal) => goal.id));
 }
 
-/**
- * The pages of its owner's material one private lesson is written from: those closest to what it
- * teaches (`query`: its title, description and skills). Empty for shared lessons and for goals
- * without material.
- */
 export async function loadLessonMaterialPages({
   lessonId,
   query,

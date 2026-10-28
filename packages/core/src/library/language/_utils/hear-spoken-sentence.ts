@@ -18,15 +18,6 @@ export function isValidSpokenAudio(audio: SpokenAudio): boolean {
 
 type HeardSentence = { match: SpokenAnswerMatch; transcript: string };
 
-/**
- * How closely a sentence is checked. `fast` transcribes it and compares the words in code (about
- * 1s). `thorough` has an audio model judge whether a listener would understand each word, which
- * also hears stress that turns a word into another one, at about 4s and 15 times the cost. On 24
- * labeled text-to-speech clips (September 2026) it matched 23 with no false flags; `fast` matched
- * 22, letting through a wrong form ("estar" for "está") and flagging an extra vowel ("bookie" for
- * "book"). Lessons stay `fast`; the level test's one sentence, which sets the speaking level, and
- * pronunciation reviews use `thorough`.
- */
 type SentenceCheck = "fast" | "thorough";
 
 type HearInput = {
@@ -73,12 +64,6 @@ async function assessWordByWord(input: HearInput): Promise<HeardSentence> {
   };
 }
 
-/**
- * Listens to a learner saying a sentence and compares it with the expected one word by word. The
- * audio only goes to the model. Checks flag what a listener wouldn't understand, not an accent: a
- * slip the transcription model understands would be understood by a person too. A thorough check
- * that fails falls back to the fast one, so the learner is never stuck on a model outage.
- */
 export async function hearSpokenSentence({
   check = "fast",
   ...input

@@ -3,7 +3,6 @@ import { type GeneratedMathProblem } from "@zoonk/ai/tasks/v2/items/schemas";
 export const discountQuestion =
   "A shirt costs {price} and is {discount}% off. How much do you pay?";
 
-/** A checked math problem: 25% off 80 is 60, with two realistic mistakes. */
 export const discountMath: GeneratedMathProblem = {
   answer: 60,
   commonMistakes: [
@@ -34,7 +33,6 @@ export const discountMath: GeneratedMathProblem = {
 export const thirdsQuestion =
   "A pizza has {slices} slices and you eat {eaten}. What share is left?";
 
-/** Two thirds of a pizza left: the SAT takes 2/3, .6666, .6667, .666 or .667, never .67. */
 export const thirdsMath: GeneratedMathProblem = {
   answer: 2 / 3,
   commonMistakes: [

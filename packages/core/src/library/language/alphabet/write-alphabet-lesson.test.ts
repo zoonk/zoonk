@@ -47,10 +47,6 @@ function mockContent(data: Content) {
   });
 }
 
-/**
- * Voices every clip except the one for `failing`, which leaves its card without audio. Each clip
- * is stored in Vercel Blob under its words.
- */
 function mockAudio({ failing }: { failing?: string } = {}) {
   storeBlobUploads();
 
@@ -78,10 +74,6 @@ function mockAudio({ failing }: { failing?: string } = {}) {
   );
 }
 
-/**
- * Alphabet lessons are shared per learner language, so each test uses a made-up language code (the
- * writer only stores it) to own its lesson.
- */
 function freshLearnerLanguage(): string {
   return `x${crypto.randomUUID().slice(0, 8)}`;
 }

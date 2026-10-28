@@ -27,7 +27,6 @@ const COLLEGE_BOARD_POLICY: ReusePolicy = {
   termsUrl: "https://www.collegeboard.org/site-terms",
 };
 
-/** Boards whose reuse terms were checked by hand. */
 const KNOWN_PUBLISHERS: readonly KnownPublisher[] = [
   { domains: ["inep.gov.br", "enem.inep.gov.br"], names: ["inep", "enem"], policy: INEP_POLICY },
   {
@@ -81,7 +80,6 @@ function matchesDomain({ domains, hostname }: { domains: readonly string[]; host
   return domains.some((domain) => hostname === domain || hostname.endsWith(`.${domain}`));
 }
 
-/** Word matching keeps "fgv" from matching inside another publisher's name. */
 function matchesName({ name, publisher }: { name: string; publisher: string }): boolean {
   return ` ${publisher} `.includes(` ${name} `);
 }
@@ -107,12 +105,7 @@ function findKnownPublisher({
   );
 }
 
-/**
- * Returns the checked policy of a known board, found by the source's domain or
- * its publisher's name. Unknown boards get null so the caller can read the
- * board's own terms; a policy that isn't `allowedWithCitation` means items are
- * written as original questions, never quoted.
- */
+/** Only `allowedWithCitation` permits quoting; null means the publisher's terms still need checking. */
 export function getKnownReusePolicy(input: {
   publisher?: string | null;
   url?: string | null;

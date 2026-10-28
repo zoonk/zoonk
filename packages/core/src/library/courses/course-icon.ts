@@ -11,14 +11,12 @@ import { type LibraryProvenance } from "../_utils/library-rows";
 
 type IconAnalytics = CourseIconParams["analytics"];
 
-/** A blank icon is drawn once more; if that fails too, the course keeps the generic icon. */
 const ICON_ATTEMPTS = 2;
 
 type IconCourse = { description: string | null; slug: string; title: string };
 
 type DrawnIcon = { image: Uint8Array; provenance: LibraryProvenance };
 
-/** Draws icons until one isn't a blank frame, or null after the last attempt. */
 async function drawIcon({
   analytics,
   attempts,
@@ -71,7 +69,6 @@ async function uploadIcon({ image, slug }: { image: Uint8Array; slug: string }):
   return upload.data;
 }
 
-/** The drawing run of the icon that was kept, not of the blank frames drawn before it. */
 function toIconProvenanceData(provenance: LibraryProvenance) {
   return {
     iconGeneratedAt: new Date(provenance.generatedAt),
@@ -81,14 +78,7 @@ function toIconProvenanceData(provenance: LibraryProvenance) {
   };
 }
 
-/**
- * Gives a shared course its icon in the style courses always had: one matte 3D object on white,
- * like an app icon, shown on course cards and search. A course that has one keeps it, private
- * courses are never listed, and language courses show their flag instead. Returns the icon's URL,
- * or null when the course goes without one.
- *
- * This is a workflow bridge, not an app authorization boundary.
- */
+/** Internal workflow bridge, not an app authorization boundary. */
 export async function createCourseIcon({
   analytics,
   courseId,

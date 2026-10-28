@@ -1,21 +1,11 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 
-/**
- * Library rows a learner's GET reads need, the same for everyone who reads the same ids, so they're
- * cached once for all of them ("use cache"). Each leaf is keyed by the ids of the rows themselves
- * (lessons, skills, chapters, courses), never by a parent whose children another app adds: a plan
- * that gains a lesson asks for a new key and reads it fresh. What can change under an existing id
- * (a renamed chapter) shows within the default revalidation, as the catalog does;
- * writes read these rows fresh. Callers pass ids through `toIdKey`, so equal sets share one entry.
- */
-
-/** Ids deduped and sorted, so equal sets share one cache key. */
+/** Use for shared-row cache arguments so equivalent id sets share a cache entry. */
 export function toIdKey(ids: Iterable<string | null | undefined>): string[] {
   return [...new Set([...ids].filter((id): id is string => Boolean(id)))].toSorted();
 }
 
-/** The skills each of these lessons teaches, oldest link first. */
 export async function getLessonSkillRows(lessonIds: string[]) {
   "use cache";
 
@@ -30,7 +20,6 @@ export async function getLessonSkillRows(lessonIds: string[]) {
   });
 }
 
-/** Each of these lessons' home chapter, where the skill projection files a lesson without one. */
 export async function getLessonHomeChapterRows(lessonIds: string[]) {
   "use cache";
 
@@ -46,7 +35,6 @@ export async function getLessonHomeChapterRows(lessonIds: string[]) {
 
 export type LessonSkillRow = Awaited<ReturnType<typeof getLessonSkillRows>>[number];
 
-/** The prerequisite edges between these skills. */
 export async function getSkillPrerequisiteRows(skillIds: string[]) {
   "use cache";
 
@@ -60,7 +48,6 @@ export async function getSkillPrerequisiteRows(skillIds: string[]) {
   });
 }
 
-/** Each of these skills' level band. */
 export async function getSkillLevelRows(skillIds: string[]) {
   "use cache";
 
@@ -74,7 +61,6 @@ export async function getSkillLevelRows(skillIds: string[]) {
   });
 }
 
-/** These chapters' titles. */
 export async function getChapterTitleRows(chapterIds: string[]) {
   "use cache";
 
@@ -88,7 +74,6 @@ export async function getChapterTitleRows(chapterIds: string[]) {
   });
 }
 
-/** These courses' titles and pictures. */
 export async function getCourseCardRows(courseIds: string[]) {
   "use cache";
 

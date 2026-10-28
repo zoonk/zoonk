@@ -21,7 +21,6 @@ import {
 } from "./_test-utils/identity-mocks";
 import { resolveLibraryIdentities, resolveLibraryIdentity } from "./resolve-library-identity";
 
-/** Every lesson request in these tests is for one course; other courses never match exactly. */
 const course = { id: randomUUID(), title: "Everyday math" };
 
 function lessonRequest(overrides: { title: string; skills: { id: string; name: string }[] }) {
@@ -95,7 +94,6 @@ describe(resolveLibraryIdentity, () => {
     mockSearchTerms([word]);
     const decisionSpy = mockDecision(target.id);
 
-    /** A title no other test's rows use, so only this test's lessons match its words. */
     const title = `Discounts ${uniqueWord()}`;
 
     const result = await resolveLibraryIdentity({
@@ -273,7 +271,6 @@ describe(resolveLibraryIdentity, () => {
     mockSearchTerms([word]);
     const decisionSpy = mockDecision(null);
 
-    // The name's own unique word keeps other tests' public skills out of its words' matches.
     await resolveLibraryIdentity({
       request: {
         description: "",
@@ -360,7 +357,6 @@ describe(resolveLibraryIdentities, () => {
     expect(results[0]).toMatchObject({ id: found.id, match: "search" });
     expect(results[1]).toMatchObject({ id: exact.id, match: "exact" });
     expect(searchedTitles()).toStrictEqual([[findsIt, findsNothing]]);
-    // Each request searched with its own terms: only the one whose terms find the skill was asked.
     expect(decisionSpy).toHaveBeenCalledOnce();
     expect(getCandidateIds(decisionSpy)).toStrictEqual([found.id]);
   });

@@ -3,12 +3,6 @@ import { ItemSetKind } from "@zoonk/db";
 import { z } from "zod";
 import { listeningSetViewSchema } from "../listening/listening-set-view";
 
-/**
- * The stimulus a set's question shows with it, never an answer: a text's or a case's words, a
- * chart's data and words, or a recording (`listening`: its file and how many times it plays, and
- * its transcript only once its questions are answered). `position` and `count` place the question
- * in its set.
- */
 export const itemSetViewSchema = z
   .object({
     count: z.number().int().min(1).meta({ description: "How many questions the set has" }),

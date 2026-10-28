@@ -15,7 +15,6 @@ const MAX_STEPS = 7;
 const MAX_ELEMENTS = 6;
 const MAX_FORMULA_LENGTH = 24;
 
-/** Past this many atoms a build no longer fits a phone screen or a few minutes of work. */
 const MAX_MOLECULE_ATOMS = 12;
 
 const processStepSchema = z

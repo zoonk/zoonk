@@ -11,7 +11,6 @@ import {
 
 const HOUR_MS = 3_600_000;
 
-/** Far from the dates other tests store, so only this test's rows are due at it. */
 const SWEEP_AT = new Date("1990-06-01T06:00:00.000Z");
 
 function mockSessionWithRole({ role, userId }: { role: "admin" | "user"; userId: string }) {
@@ -48,7 +47,6 @@ describe(listDueFreshnessTargets, () => {
       expect(targets).not.toContainEqual({ examBlueprintId: tomorrowExam.id, kind: "exam" });
       expect(targets).not.toContainEqual({ kind: "source", sourceId: unscheduledSource.id });
     } finally {
-      // Rows dated around 1990 would be due in this test's later runs, so they don't outlive it.
       await Promise.all([
         prisma.examBlueprint.deleteMany({
           where: { id: { in: [overdueExam.id, laterTodayExam.id, tomorrowExam.id] } },

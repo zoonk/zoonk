@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { writtenTemperatureLesson } from "./_test-utils/written-lessons";
 import { getReasoningCheckReason } from "./reasoning-check-policy";
 
-/** A lesson with no math anywhere, so only the sample can pick it. */
 function wordsOnlyLesson() {
   const lesson = writtenTemperatureLesson();
   return { ...lesson, screens: lesson.screens.filter((screen) => screen.kind === "hookGuess") };

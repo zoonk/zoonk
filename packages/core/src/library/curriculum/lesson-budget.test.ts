@@ -4,9 +4,6 @@ import { getLessonBudget } from "./lesson-budget";
 const day = (iso: string) => new Date(`${iso}T00:00:00.000Z`);
 
 describe(getLessonBudget, () => {
-  // The graph is written before the learner picks a daily time, so the budget never reads the
-  // goal's placeholder minutes: at 15 a test on Friday from Wednesday held one lesson, and Pedro's
-  // six headings became one skill.
   it("lets a test on Friday from Wednesday hold a lesson for every topic of a short handout", () => {
     expect(getLessonBudget({ targetDate: day("2026-10-09"), today: day("2026-10-07") })).toBe(15);
   });

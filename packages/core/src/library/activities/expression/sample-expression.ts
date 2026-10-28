@@ -4,7 +4,6 @@ import { parseExpression } from "./parse-expression";
 const MAX_SAMPLE_POINTS = 4096;
 const MAX_SAMPLES_PER_RANGE = 33;
 
-/** A variable's slider range. `step` snaps samples to the values a learner can actually reach. */
 export type ExpressionRange = { max: number; min: number; name: string; step?: number };
 
 export type SampleExpressionResult =
@@ -21,10 +20,6 @@ function snap(value: number, range: ExpressionRange): number {
   return Math.min(snapped, range.max);
 }
 
-/**
- * Samples evenly from `min` to `max`, both included, so the edges where formulas usually break
- * (zero, the largest input) are always tried.
- */
 function sampleRange(range: ExpressionRange, count: number): number[] {
   if (range.max <= range.min) {
     return [range.min];
@@ -55,10 +50,7 @@ function buildPoints(ranges: readonly ExpressionRange[]): Record<string, number>
   );
 }
 
-/**
- * Evaluates a formula across the whole range of every variable (a grid of up to 4,096 points)
- * and reports the first point where it fails, so a slider can never land on a broken value.
- */
+/** Samples a bounded grid; a successful result does not prove unsampled points are valid. */
 export function sampleExpression(params: {
   expression: string;
   ranges: readonly ExpressionRange[];

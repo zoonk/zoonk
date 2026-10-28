@@ -13,7 +13,6 @@ export class PlanInputWriteConflictError extends Error {
   override name = "PlanInputWriteConflictError";
 }
 
-/** Sources may gain dependents while marking waits; expansion restarts before any more locks. */
 export async function lockPlanInputWrite({
   loadPlanIds,
   lockSources,
@@ -34,12 +33,6 @@ export async function lockPlanInputWrite({
   }
 }
 
-/**
- * A content write's locks, before it changes its rows: it marks every plan that reads these roots
- * (`content`), locks the lessons and skills plans read them through (`loadPlanInputSources`), and
- * then finds the plans again, so a plan that started reading them meanwhile throws and the write
- * starts over (see `writePlanInputs`).
- */
 export function lockPlanSourceWrite(tx: TransactionClient, roots: PlanInputRoots): Promise<void> {
   return lockPlanInputWrite({
     loadPlanIds: () => resolvePlanInputDependents(tx, roots),
@@ -48,10 +41,6 @@ export function lockPlanSourceWrite(tx: TransactionClient, roots: PlanInputRoots
   });
 }
 
-/**
- * The same for a write of an exam's own facts (its shared graph, its structure): plans read them
- * through the goal's exam, so the exam's row is what it locks.
- */
 export function lockPlanBlueprintWrite(tx: TransactionClient, blueprintId: string): Promise<void> {
   return lockPlanInputWrite({
     loadPlanIds: () => resolvePlanInputDependents(tx, { blueprintIds: [blueprintId] }),
@@ -60,7 +49,6 @@ export function lockPlanBlueprintWrite(tx: TransactionClient, blueprintId: strin
   });
 }
 
-/** A retry releases every plan, user and source lock before collecting the complete union again. */
 export async function writePlanInputs<T>(
   write: (tx: TransactionClient) => Promise<T>,
   attempt = 1,

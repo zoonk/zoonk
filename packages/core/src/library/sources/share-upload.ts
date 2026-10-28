@@ -7,21 +7,14 @@ import { deleteUploadedBlob } from "./upload-blob";
 
 export type ShareUploadInput = {
   sourceId: string;
-  /** The document's language, which can differ from the uploader's. */
   language: string;
   publisher: string | null;
   title: string;
-  /** Where the publisher offers the document, found by the confirming search. */
   url: string | null;
 };
 
 export type SharedUpload = { merged: boolean; sourceId: string };
 
-/**
- * Moves every learner who uploaded the private copy onto the public one. A
- * learner already linked to it keeps that link, since one link per source is
- * enough.
- */
 async function mergeIntoPublicSource({
   privateSourceId,
   publicSourceId,
@@ -49,13 +42,6 @@ async function mergeIntoPublicSource({
   ]);
 }
 
-/**
- * Shares an upload the visibility check confirmed its publisher made public,
- * such as an exam notice, so the next learner who uploads it gets its
- * blueprint at once. It no longer belongs to its uploader, so deleting their
- * account keeps it for everyone else. When another learner's copy was shared
- * first, this copy merges into it and its file is removed.
- */
 export async function shareSourceUpload(input: ShareUploadInput): Promise<SharedUpload | null> {
   const source = await prisma.source.findUnique({
     omit: { extractedText: true },
@@ -98,7 +84,6 @@ export async function shareSourceUpload(input: ShareUploadInput): Promise<Shared
     }),
   );
 
-  // Another learner's copy was shared at the same moment: merge into it instead.
   if (shared.error && isPrismaUniqueConstraintError(shared.error)) {
     return shareSourceUpload(input);
   }

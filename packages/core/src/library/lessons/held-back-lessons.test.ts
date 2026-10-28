@@ -42,13 +42,8 @@ function taskResult<T>(data: T, model: string) {
   };
 }
 
-/** Filler the code checks flag on screen 4, which the fix pass in these tests leaves as it was. */
 const FILLER = "It's worth noting that zero is a mark.";
 
-/**
- * One draft by `model`. A `heldBack` draft has filler the code checks flag, and its fix pass
- * leaves it, so the checks hold the draft back.
- */
 function mockDraft({ heldBack, model }: { heldBack: boolean; model: string }) {
   const written = writtenTemperatureLesson();
 
@@ -87,7 +82,6 @@ async function claimedLesson(attrs: Parameters<typeof libraryLessonFixture>[0] =
   return { lesson, workflowRunId };
 }
 
-/** A learner's plan with the lesson and another one, and today's and yesterday's sessions. */
 async function plannedLesson(lessonId: string) {
   const user = await userFixture();
   const goal = await goalFixture({ userId: user.id });
@@ -152,7 +146,6 @@ describe("held-back lessons", () => {
       setAsideAt: null,
     });
 
-    // The second draft: a fresh one by the same writer, told what held the first back.
     mockDraft({ heldBack: true, model: SOL });
     await redraft({ lessonId: lesson.id, workflowRunId });
 
@@ -166,7 +159,6 @@ describe("held-back lessons", () => {
       setAsideAt: null,
     });
 
-    // The last draft: a writer from another family, told what held both back.
     mockDraft({ heldBack: true, model: OPUS });
     await redraft({ lessonId: lesson.id, workflowRunId });
 
@@ -174,7 +166,6 @@ describe("held-back lessons", () => {
     expect(lastDraft?.model).toBe(OPUS);
     expect(lastDraft?.heldBackProblems).toHaveLength(2);
 
-    // The reviewer reads drafts after publishing, so none ran on the way to the learner.
     expect(checkLessonQuality).not.toHaveBeenCalled();
 
     const setAside = await readLesson(lesson.id);
@@ -190,7 +181,6 @@ describe("held-back lessons", () => {
       prisma.studySessionBlock.findUniqueOrThrow({ where: { id: planned.pastBlock.id } }),
     ]);
 
-    // Plans and today's session move on; the rest of the plan and a finished day stay as they are.
     expect([item.status, otherItem.status]).toStrictEqual(["skipped", "todo"]);
 
     expect([block.status, nextBlock.status, pastBlock.status]).toStrictEqual([

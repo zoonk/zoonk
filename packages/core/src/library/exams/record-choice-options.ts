@@ -5,16 +5,10 @@ import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getExamBlueprintCacheTag } from "../../cache/tags";
 import { type ExamStructure, examStructureSchema } from "./blueprint-contract";
 
-/** A lookup that found nothing is tried again after this long: a paper may be published. */
 const RETRY_AFTER_DAYS = 30;
 
-/** What research needs to look up how many options a blueprint's questions have. */
 export type ChoiceOptionsLookup = { board: string | null; exam: string };
 
-/**
- * Whether research looks up the number of options: the exam asks multiple choice, its notice
- * doesn't say how many options, and no lookup found it (or one found nothing a month ago).
- */
 function needsPastOptions({ now, structure }: { now: Date; structure: ExamStructure }): boolean {
   const unstated = structure.formats.some(
     (format) => format.kind === "multipleChoice" && format.options === null,
@@ -31,12 +25,7 @@ function needsPastOptions({ now, structure }: { now: Date; structure: ExamStruct
   );
 }
 
-/**
- * The lookup a shared blueprint needs for its number of options (see `needsPastOptions`), or null
- * when it needs none. A private blueprint, read from a learner's material, is never searched.
- *
- * This is a workflow bridge: the blueprint comes from the research run that linked it.
- */
+/** Internal workflow bridge: the blueprint must come from the research run that linked it. */
 export async function findChoiceOptionsLookup({
   examBlueprintId,
   now = new Date(),
@@ -57,13 +46,7 @@ export async function findChoiceOptionsLookup({
   };
 }
 
-/**
- * Stores what the lookup found, or that it found nothing, on the blueprint's structure, where
- * every reader of its formats takes it (`getExamFormats`). One statement sets only this lookup,
- * so the subjects' counts looked up at the same time are never overwritten.
- *
- * This is a workflow bridge: the blueprint comes from the research run that looked it up.
- */
+/** Internal workflow bridge: the blueprint must come from the research run that requested the lookup. */
 export async function recordChoiceOptions({
   edition,
   examBlueprintId,
@@ -74,7 +57,6 @@ export async function recordChoiceOptions({
   edition: string | null;
   examBlueprintId: string;
   now?: Date;
-  /** Null when nothing was found. */
   options: number | null;
   source: { title: string | null; url: string } | null;
 }): Promise<void> {

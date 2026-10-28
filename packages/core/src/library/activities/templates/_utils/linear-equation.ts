@@ -2,11 +2,6 @@ import { evaluateOrNull, isClose } from "./template-helpers";
 
 const ZERO_SLOPE = 1e-12;
 
-/**
- * Solves `left = right` for one variable when both sides are linear in it, like
- * `4*x + 1 = 2*x + 7`. Returns null when there is no single solution, so a balance can never ask
- * for an answer that doesn't exist.
- */
 export function solveLinearEquation(params: {
   left: string;
   right: string;

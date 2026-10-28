@@ -15,10 +15,6 @@ type ScreenFlaw = {
   problem: string;
 };
 
-/**
- * Options a learner can't tell apart, options the screen's data disagrees with (sensors A to E
- * against options A to D) and a typed answer's sample that gives none of the answers code accepts.
- */
 export function findAnswerFlaws({
   language,
   screen,
@@ -49,10 +45,6 @@ export function findAnswerFlaws({
   ];
 }
 
-/**
- * Markdown the player would show as marks, and text a writer left unfinished. A formula (`layout`
- * null) is LaTeX, never Markdown.
- */
 export function findTextFlaws({
   layout,
   text,

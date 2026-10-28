@@ -25,7 +25,6 @@ describe(getLibraryCourse, () => {
   it("reads a public outline without a session, as catalog prerendering does", async () => {
     const { chapters, course, lessons } = await catalogCourseFixture();
 
-    // Vitest has no Next.js request context; fail this boundary if the public read tries to use one.
     mockSessionFailure(new Error("Prerendering has no active request."));
 
     await expect(getLibraryCourse({ courseId: course.id })).resolves.toMatchObject({
@@ -81,8 +80,6 @@ describe(getLibraryCourse, () => {
       { id: lesson.id, position: 0, title: "First lesson" },
     ]);
 
-    // Tagged by its course, never chapter by chapter: a course can hold more chapters than a cache
-    // entry has tags for, and a chapter's change refreshes it through the course's tag.
     const tags = vi.mocked(cacheTag).mock.calls.flat();
     expect(tags).toContain(getCourseCurriculumCacheTag(course.id));
     expect(tags).not.toContain(getLibraryChapterCacheTag(beginnerFirst.id));

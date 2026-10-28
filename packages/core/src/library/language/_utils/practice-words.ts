@@ -3,11 +3,6 @@ import { prisma } from "@zoonk/db";
 import { sentenceKey } from "../../activities/templates/_utils/language";
 import { type SpokenWordResult } from "../spoken-answer-match";
 
-/**
- * A word worth practicing after a spoken answer, with what the player needs to help: the native
- * audio, the respelling for speakers of the learner's language and its one sound tip. Words the
- * lessons never taught have none of them, and the player reads them aloud with a speech clip.
- */
 export type SpokenPracticeWord = SpokenWordResult & {
   audioUrl: string | null;
   respelling: string | null;
@@ -24,7 +19,6 @@ async function findWordDetails({
   targetLanguage,
 }: {
   learnerLanguage: string;
-  /** Lowercase and without the sentence's punctuation: "Rent?" is the word "rent". */
   surfaces: string[];
   targetLanguage: string;
 }): Promise<Map<string, WordDetails>> {
@@ -64,11 +58,6 @@ async function findWordDetails({
   }, new Map<string, WordDetails>());
 }
 
-/**
- * The words to practice after a spoken answer (at most two, picked by the grader), each with its
- * native audio, respelling and sound tip from the shared vocabulary when the word has them. Every
- * organization's copy of a word counts, since a word sounds the same whoever taught it.
- */
 export async function loadPracticeWords({
   learnerLanguage,
   targetLanguage,

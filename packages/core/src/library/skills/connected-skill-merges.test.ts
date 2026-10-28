@@ -9,10 +9,7 @@ import { mergeSkillForAdmin } from "./merge-skill";
 
 const GATE_NAMESPACE = 1_553_971;
 
-// The disposable run database removes these triggers. Dropping one here takes an exclusive
-// table lock and can block an unrelated test's source read behind its own held writer. Each
-// trigger matches only this test's unique skill rows, so it cannot gate another test's writes.
-
+// Leave these row-scoped triggers to run-database cleanup: dropping them here can block unrelated tests on an exclusive table lock.
 describe("concurrent merges joined by a prerequisite", () => {
   it.each(Array.from({ length: 10 }, (_, index) => index))(
     "completes both connected merges without a deadlock (%i)",

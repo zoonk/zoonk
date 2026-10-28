@@ -33,7 +33,6 @@ type ChapterContext = {
 
 export type SavedOutlineChapter = { chapterId: string; lessonIds: string[] };
 
-/** The outline's context with the course it's written for, which identity search scopes by. */
 type OutlineContext = ChapterContext & { course: IdentityCourse };
 
 async function resolveChapter({
@@ -81,11 +80,6 @@ async function resolveChapter({
   return created.chapter.id;
 }
 
-/**
- * Finds or creates the chapter's lessons together (see `resolveScopeLessons`), in the outline's
- * order. A new one is created with the outline's can-do line, so session tiles have it before the
- * spec exists.
- */
 async function resolveChapterLessons({
   chapter,
   chapterId,
@@ -111,12 +105,6 @@ async function resolveChapterLessons({
   });
 }
 
-/**
- * Writes the lessons of a chapter this run claimed, in the outline's order, and the tools they
- * use. A lesson that another chapter of the course already has (same skills, same level) is placed
- * here too instead of written again, so it keeps one home and one copy. Placements a failed earlier
- * attempt left are cleared first, so the chapter always ends with exactly this outline's order.
- */
 async function writeChapterLessons({
   chapter,
   chapterId,
@@ -128,7 +116,6 @@ async function writeChapterLessons({
 }): Promise<void> {
   const lessonIds = await resolveChapterLessons({ chapter, chapterId, context });
 
-  // The chapter ends with a challenge on the skills its lessons teach.
   const challengeId = await createChapterChallenge({
     chapterId,
     chapterTitle: chapter.title,
@@ -144,7 +131,6 @@ async function writeChapterLessons({
 
   await placeChapterLessons({ chapterId, lessonIds: placed });
 
-  // Plans read a chapter's tools to tell a tool chapter from the others.
   await writePlanInputs(async (tx) => {
     await lockPlanSourceWrite(tx, { chapterIds: [chapterId] });
 
@@ -155,10 +141,6 @@ async function writeChapterLessons({
   });
 }
 
-/**
- * Ends the chapter's outline claim as failed when writing its lessons throws, so a retry of the
- * same step (or a later run) can claim it again instead of waiting on a claim nobody finishes.
- */
 async function writeClaimedChapter({
   chapter,
   chapterId,
@@ -197,7 +179,6 @@ async function linkChapterGoalSkills({
     .filter((skill) => chapter.skillKeys.includes(skill.key))
     .map((skill) => skill.id);
 
-  // A plan may read the chapter through a tag it had or one it gets.
   await writePlanInputs(async (tx) => {
     await lockPlanSourceWrite(tx, { chapterIds: [chapterId], skillIds });
 
@@ -208,7 +189,6 @@ async function linkChapterGoalSkills({
   });
 }
 
-/** A chapter belongs to one area only when every tagged skill identifies that same area. */
 function getChapterArea({
   chapter,
   goalSkills,
@@ -223,18 +203,7 @@ function getChapterArea({
   return areas.size === 1 ? [...areas][0] || null : null;
 }
 
-/**
- * Puts one chapter of a course outline in the Library: the chapter itself (or the one identity
- * search found teaching the same scope), its place in the course's level band, the goal skills
- * the outline says it teaches, and, when this run claims the chapter's outline, every lesson's
- * title, description, can-do line and skills, and the tools the lessons use. Chapters and lessons
- * are only matched exactly inside this course; another course's are reused when the reuse
- * decision, seeing both courses, finds them on the same subject. A chapter whose lessons another
- * run wrote or is writing keeps them. Retries find everything by identity and placement, so
- * nothing is doubled.
- *
- * This is a workflow bridge: the scope's owner comes from the goal the public boundary loaded.
- */
+/** Internal workflow bridge: the owner must come from the goal the public boundary authorized. */
 export async function saveOutlineChapter({
   chapter,
   position,

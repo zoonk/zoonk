@@ -18,7 +18,6 @@ import { type AlphabetStepToSave, buildAlphabetLessonSteps } from "./alphabet-le
 
 type Analytics = Parameters<typeof generateAlphabetLesson>[0]["analytics"];
 
-/** About how long reading a handful of letter cards with their sounds takes. */
 const ALPHABET_LESSON_MINUTES = 5;
 
 export type WriteAlphabetLessonResult =
@@ -27,7 +26,6 @@ export type WriteAlphabetLessonResult =
 
 type LessonUpdate = Awaited<ReturnType<typeof generateAlphabetLesson>>["data"];
 
-/** Each unique clip once; a clip that fails leaves its card without audio rather than the lesson. */
 async function voiceLetters({
   content,
   targetLanguage,
@@ -55,12 +53,10 @@ async function voiceLetters({
   return new Map(clips.filter((clip) => clip !== null));
 }
 
-/** A run that lost its content claim, even while it waited for plans, rolls its marks back. */
 class AlphabetClaimLostError extends Error {
   override name = "AlphabetClaimLostError";
 }
 
-/** Publishes the lesson's screens while this run holds its claim; false when it lost it. */
 async function saveAlphabetLesson({
   content,
   lessonId,
@@ -82,7 +78,6 @@ async function saveAlphabetLesson({
         throw new AlphabetClaimLostError();
       }
 
-      // Plans read the lesson's title, which publishing sets.
       await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
 
       const claimed = await tx.lesson.updateMany({
@@ -134,7 +129,6 @@ async function saveAlphabetLesson({
   return saved;
 }
 
-/** The pair's lesson outline, found or created, until the run that claims it writes it. */
 async function findOrCreateAlphabetLesson({
   learnerLanguage,
   targetLanguage,
@@ -166,7 +160,6 @@ async function findOrCreateAlphabetLesson({
   return lesson;
 }
 
-/** Writes the claimed lesson: its content, a clip per letter and its screens. */
 async function writeClaimedLesson({
   analytics,
   learnerLanguage,
@@ -211,16 +204,7 @@ async function writeClaimedLesson({
   return { lessonId, status: saved ? "published" : "running" };
 }
 
-/**
- * Writes the alphabet lesson a new learner's first session opens with, for a language whose
- * script isn't Latin: one shared lesson per script and learner language, reused by every learner
- * of that pair. The first run to claim it writes the intro, letter cards with their clips,
- * matches and summary; later runs find it ready or being written. A draft without letters is held back so a
- * later run tries again, and so is a failed run's claim.
- *
- * This is an internal workflow bridge: Library content is shared and no learner's data is
- * written.
- */
+/** Internal workflow bridge; callers must authorize the language pair before starting generation. */
 export async function writeAlphabetLesson({
   analytics,
   learnerLanguage,
@@ -261,7 +245,6 @@ export async function writeAlphabetLesson({
       workflowRunId,
     });
   } catch (error) {
-    // A failed claim can be taken again, by this step's retry or the pair's next learner.
     await finishLibraryGeneration({
       id: lesson.id,
       status: "failed",

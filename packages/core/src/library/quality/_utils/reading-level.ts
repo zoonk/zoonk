@@ -1,9 +1,5 @@
 import { type CourseLevel } from "@zoonk/db";
 
-/**
- * The longest sentence each level allows, in words. Lessons aim much shorter;
- * these limits only catch walls of text a learner at that level can't follow.
- */
 const MAX_SENTENCE_WORDS: Readonly<Record<CourseLevel, number>> = {
   advanced: 45,
   beginner: 32,
@@ -11,7 +7,6 @@ const MAX_SENTENCE_WORDS: Readonly<Record<CourseLevel, number>> = {
   overview: 32,
 };
 
-/** One screen holds one idea: explanations stay short enough to read at a glance. */
 const MAX_EXPLANATION_CHARACTERS: Readonly<Record<CourseLevel, number>> = {
   advanced: 900,
   beginner: 650,
@@ -27,7 +22,6 @@ function countWords(sentence: string): number {
   return sentence.split(/\s+/u).filter((word) => WORD.test(word)).length;
 }
 
-/** Sentences longer than the level allows, with math spans counted as one word. */
 export function findLongSentences({ level, text }: { level: CourseLevel; text: string }): string[] {
   const maxWords = MAX_SENTENCE_WORDS[level];
 

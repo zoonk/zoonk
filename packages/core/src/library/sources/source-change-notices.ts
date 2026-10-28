@@ -9,7 +9,6 @@ import { getSession } from "../../users/get-session";
 import { type LibraryProvenance, toProvenanceData } from "../_utils/library-rows";
 import { createSourceChangeNotice } from "./content-review-flags";
 
-/** A notice is news for two weeks; after that the plan already reflects it. */
 const NOTICE_DAYS = 14;
 const MAX_GOAL_NOTICES = 3;
 
@@ -23,12 +22,7 @@ export type SourceNoticeInput = {
   sourceId: string;
 };
 
-/**
- * Records the one line learners see after a source they study changed, such
- * as a law or a tool's documentation, and flags the lessons and questions
- * built on it for a rewrite. Exam notices are recorded with their blueprint
- * update instead, in the same transaction.
- */
+/** For source changes; record exam notices through `saveExamBlueprint` so the notice and blueprint commit together. */
 export function recordSourceChangeNotice(input: SourceNoticeInput): Promise<SourceChangeNotice> {
   const { provenance, ...notice } = input;
 
@@ -40,10 +34,6 @@ export function recordSourceChangeNotice(input: SourceNoticeInput): Promise<Sour
   );
 }
 
-/**
- * The notices a change to the goal's plan already says, with its Apply and "Keep mine" (a new
- * exam date, say), so Today never shows the same news twice.
- */
 async function listNoticesInPlanChanges(goalId: string): Promise<Set<string>> {
   const changes = await prisma.planChange.findMany({
     select: { payload: true },
@@ -59,11 +49,6 @@ export type GoalChangeNoticesResult =
   | { notices: SourceChangeNotice[]; status: "ready" }
   | { status: "notFound" | "unauthorized" };
 
-/**
- * When the goal's news starts: after it started and, for an exam plan that waited for research to
- * read its notice, after that wait ended, since a reading before then shaped the plan the learner
- * saw (or the change Today offers for it). Older than two weeks is no longer news.
- */
 function getNewsStart({
   goal,
   now,
@@ -75,12 +60,6 @@ function getNewsStart({
   return new Date(Math.max(goal.createdAt.getTime(), waitEnded, now - NOTICE_DAYS * MS_PER_DAY));
 }
 
-/**
- * The recent change notices for one of the learner's goals, newest first, for
- * the line on Today: changes to its exam's blueprint and to the sources linked
- * to it, made after the goal's plan was built (see `getNewsStart`). Another learner's goal is not
- * found. Private cached, so Today prefetches with it.
- */
 export async function listGoalChangeNotices({
   goalId,
 }: {

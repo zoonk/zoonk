@@ -51,7 +51,6 @@ function noticeFor(sourceId: string) {
   });
 }
 
-/** A changed law with a lesson citing it and a drill on its Art. 13, both written before. */
 async function lawWithDependents() {
   const [law, skill] = await Promise.all([
     sourceFixture({
@@ -177,7 +176,6 @@ describe("a rewritten lesson", () => {
       workflowRunId,
     });
 
-    // The lesson's earlier screens stay as version 1 for learners playing them.
     expect(saved).toBe(2);
 
     await expect(

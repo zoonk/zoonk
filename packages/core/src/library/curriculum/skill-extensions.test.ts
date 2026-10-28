@@ -19,12 +19,9 @@ import { getRequestProgressDateContext } from "../../progress/get-request-date-c
 import { replanGoalsWaitingOnSkills } from "./replan-waiting-goals";
 import { listSkillExtensions, planSkillExtensions } from "./skill-extensions";
 
-/** A Monday in 2020, before the learning events other tests write, so no one's pace moves dates. */
 const NOW = new Date("2020-09-28T12:00:00Z");
-/** The Monday after `NOW`: this week's lessons come before it. */
 const NEXT_WEEK = new Date("2020-10-05T00:00:00Z");
 
-/** What the graph says describing work experience takes; the course has a chapter of five. */
 const SKILL_LESSONS = 20;
 const OUTLINED_LESSONS = 5;
 
@@ -73,7 +70,6 @@ async function addChapter({
   return chapter;
 }
 
-/** A course that teaches "describe work experience" in one chapter of five lessons. */
 async function courseSetup() {
   const [course, skill] = await Promise.all([
     courseFixture({ language: "pt", targetLanguage: "en", title: "Inglês" }),
@@ -96,10 +92,6 @@ async function courseSetup() {
   return { chapter, course, skill };
 }
 
-/**
- * A language goal planned from `courseSetup`'s course, while the graph gives the skill twenty
- * lessons: the plan holds a stand-in for the other fifteen.
- */
 async function setup({ dailyMinutes = 30 }: { dailyMinutes?: number } = {}) {
   const [user, { chapter, course, skill }] = await Promise.all([userFixture(), courseSetup()]);
 
@@ -136,10 +128,6 @@ async function setup({ dailyMinutes = 30 }: { dailyMinutes?: number } = {}) {
   return { chapter, course, goal, plan, skill, user };
 }
 
-/**
- * A learn goal like quantum physics from zero: each skill has a chapter of its own in one course,
- * with `outlined` lessons, while the graph gives it `lessons`.
- */
 async function learnSetup(skills: { lessons: number; outlined: number }[]) {
   const [user, course, ...created] = await Promise.all([
     userFixture(),
@@ -219,7 +207,6 @@ describe("skill extensions", () => {
           {
             extend: [
               {
-                // The plan's stand-in: the 15 of the graph's 20 lessons the course doesn't have.
                 lessons: SKILL_LESSONS - OUTLINED_LESSONS,
                 skill: {
                   area: "Inglês",
@@ -236,7 +223,6 @@ describe("skill extensions", () => {
           },
         ],
         courseId: course.id,
-        // The same learners the course's first chapters are written for, in a run with them.
         scope: {
           exams: [],
           generalGoal: goal.title,
@@ -290,8 +276,6 @@ describe("skill extensions", () => {
       ),
     ]);
 
-    // A first chapter of five lessons tagged with both situations, which the graph sizes at eight
-    // lessons each: five lessons in all, not five of each.
     const chapter = await addChapter({
       courseId: course.id,
       lessons: OUTLINED_LESSONS,
@@ -370,7 +354,6 @@ describe("skill extensions", () => {
   });
 
   it("waits while the stand-in is more than two weeks away", async () => {
-    // At 5 minutes a day, the five written lessons alone take about a week.
     const { goal } = await setup({ dailyMinutes: 5 });
 
     await expect(listSkillExtensions({ goalId: goal.id, timeZone: "UTC" })).resolves.toStrictEqual(
@@ -382,7 +365,6 @@ describe("skill extensions", () => {
     const { chapter, course, skill } = await courseSetup();
     const ref = { description: skill.description, id: skill.id, key: skill.id, name: skill.name };
 
-    // A stand-in of 15 lessons: capped at 10; of 5: those 5; none: no next chapter.
     const [capped, small, none] = await Promise.all(
       [15, 5, 0].map((lessons) =>
         planSkillExtensions({
@@ -428,8 +410,6 @@ describe("skill extensions", () => {
       tools: [{ essential: true, name: "Editor de vídeo" }],
     });
 
-    // A plan without tool chapters keeps a stand-in for its lessons, but the next chapter still
-    // repeats none of them.
     await expect(
       planSkillExtensions({
         courseId: course.id,
@@ -475,13 +455,9 @@ describe("skill extensions", () => {
       skill.id,
     ]);
 
-    // The skill keeps the graph's size: written lessons replace part of the stand-in.
     expect(after.estimateHours).toBeCloseTo(before.estimateHours ?? 0);
   });
 
-  // On a Monday the stand-in ended this week, which a refresh keeps as it is: the next chapter it
-  // was written for waited for the week after, behind the stand-in for the lessons that come after
-  // it and the phase's challenge.
   it("puts the next chapter in the stand-in's place this week, before the rest of the skill", async () => {
     const { course, goal, plan, skill } = await setup();
 

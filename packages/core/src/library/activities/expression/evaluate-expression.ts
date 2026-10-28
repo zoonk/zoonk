@@ -16,10 +16,6 @@ function failure(error: string): Failure {
   return { error, ok: false };
 }
 
-/**
- * Every intermediate value must be finite, so division by zero, `0^-1` or `sqrt(-1)` fail right
- * where they happen instead of silently turning into Infinity or NaN further up the tree.
- */
 function finite(value: number, description: string): EvaluateExpressionResult {
   return Number.isFinite(value)
     ? { ok: true, value }
@@ -127,11 +123,7 @@ function evaluateNode(
   }
 }
 
-/**
- * Evaluates a parsed formula with the given variable values. It never throws: unknown variables
- * and values outside a function's domain come back as `{ ok: false }` so validators can sample a
- * formula across its whole range safely.
- */
+/** Returns `{ ok: false }` for unknown variables or domain errors; never throws. */
 export function evaluateExpression(
   expression: ParsedExpression,
   variables: ExpressionVariables = {},
@@ -139,7 +131,6 @@ export function evaluateExpression(
   return evaluateNode(expression.ast, variables);
 }
 
-/** Parses and evaluates a formula in one call, for callers that only need the number. */
 export function evaluateFormula(
   source: string,
   variables: ExpressionVariables = {},

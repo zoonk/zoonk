@@ -28,7 +28,6 @@ async function generateAudio({
   return data;
 }
 
-/** The clip's URL with the text-to-speech run that voiced it. */
 function toAudioData({ provenance, url }: VoicedClip) {
   return {
     audioGeneratedAt: new Date(provenance.generatedAt),
@@ -77,12 +76,6 @@ async function fillSentenceAudio({
   }
 }
 
-/**
- * Audio belongs to the target language, not the pair, so a word or sentence
- * that any lesson already voiced is reused and only the silent ones are sent
- * to text-to-speech. A clip that fails stays missing: the screen still works
- * without it and the next lesson that uses the word tries again.
- */
 export async function fillMissingAudio({
   orgSlug,
   sentenceIds,

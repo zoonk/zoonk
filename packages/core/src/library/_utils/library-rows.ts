@@ -2,10 +2,6 @@ import "server-only";
 import { isPrismaUniqueConstraintError } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
-/**
- * What every generated Library row stores about the AI task run that wrote it
- * (the task's provenance, not the workflow's claim run id).
- */
 export type LibraryProvenance = {
   model: string;
   promptVersion: string;
@@ -22,20 +18,13 @@ export function toProvenanceData(provenance: LibraryProvenance) {
   };
 }
 
-/** Content made for one learner's too-specific goal is private to that learner. */
 export function toLibraryVisibility(ownerId: string | null) {
   return { ownerId, visibility: ownerId ? ("private" as const) : ("public" as const) };
 }
 
-/** One retry covers a slug taken by a different item between reading free slugs and inserting. */
 const CREATE_ATTEMPTS = 2;
 
-/**
- * Creates a row under its identity key, or returns the row another request
- * created first. The unique `(language, identityKey)` constraint is the lock:
- * two workflows racing on one key both end up with the same row, and `created`
- * tells the caller whether it owns generating that row's content.
- */
+/** `created: true` gives the caller ownership of generating the row's content. */
 export async function createOrFindByIdentity<T>({
   attempt = 1,
   create,

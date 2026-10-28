@@ -15,13 +15,6 @@ import { getSkillIdentitySearch, loadSkillCandidates } from "./kinds/skill-ident
 import { getSourceIdentitySearch, loadSourceCandidates } from "./kinds/source-identity";
 import { writeSearchTerms } from "./write-search-terms";
 
-/**
- * `existing`: reuse this row (`match` says how it was found, `probability` is
- * the reuse decision's estimate for search matches).
- * `generate`: nothing fits; create the row under `identityKey` so the next
- * request finds it by exact match, and so concurrent requests share one row.
- * `verdicts` lists every candidate the decision judged, for logs and tuning.
- */
 export type LibraryIdentityResolution =
   | {
       kind: "existing";
@@ -56,10 +49,6 @@ function getIdentitySearch(request: LibraryIdentityRequest): IdentityKindSearch 
   }
 }
 
-/**
- * Loads each kind's candidates by id. A candidate reads the same for every request that found it,
- * so requests resolved together load their candidates in one call per kind.
- */
 const CANDIDATE_LOADERS: Record<
   LibraryIdentityRequest["kind"],
   (ids: readonly string[]) => Promise<LibraryIdentityCandidate[]>
@@ -74,10 +63,6 @@ const CANDIDATE_LOADERS: Record<
 
 type IdentityAnalytics = SearchTermsParams["analytics"];
 
-/**
- * Postgres full-text search for public rows with the same language and level, on the item's own
- * words and the terms the model wrote for it. Returns the ids it found, best first.
- */
 async function findCandidateIds({
   search,
   terms,
@@ -92,7 +77,6 @@ async function findCandidateIds({
   return { ids, searchTerms };
 }
 
-/** Every candidate the searches found, by id, loaded once per kind. */
 async function loadCandidates(
   searched: readonly { ids: readonly string[]; kind: LibraryIdentityRequest["kind"] }[],
 ): Promise<Map<string, LibraryIdentityCandidate>> {
@@ -112,7 +96,6 @@ async function loadCandidates(
   return new Map(loaded.flat().map((candidate) => [candidate.id, candidate]));
 }
 
-/** A Jev decision on the candidates a search found, best first. */
 async function decideIdentity({
   analytics,
   candidates,
@@ -156,10 +139,6 @@ type IdentityEntry = {
   search: IdentityKindSearch;
 };
 
-/**
- * The terms of the requests that search, by entry: the ones the caller already wrote, or one
- * model call for all of them (a few for many; see `writeSearchTerms`).
- */
 async function getSearchTerms({
   analytics,
   searchTerms,
@@ -181,10 +160,6 @@ async function getSearchTerms({
   return new Map(searching.map((entry, position) => [entry, written[position] ?? []]));
 }
 
-/**
- * Private requests never search, and neither does a lesson whose skills are all new: no Library
- * lesson can teach them yet.
- */
 function isSearched(entry: IdentityEntry): boolean {
   const { request } = entry;
   const isNewLesson = request.kind === "lesson" && request.newSkills === true;
@@ -200,22 +175,7 @@ function resolveUnsearched(entry: IdentityEntry): LibraryIdentityResolution {
   return { identityKey: entry.search.identityKey, kind: "generate", searchTerms: [], verdicts: [] };
 }
 
-/**
- * Finds the Library items that already teach what each request needs, or says to generate them.
- * One flow serves courses, chapters, lessons, skills, sources and images: an exact identity-key
- * match first, then model-written search terms, Postgres text search filtered by language and
- * level, and one Jev decision on its candidates. Requests known together, such as a chapter's
- * lessons, resolve together: the terms of every request still unmatched are written in one model
- * call instead of one each, the candidates their searches find load in one call per kind, and the
- * results come back in the order of the requests. A caller that
- * already wrote the terms, beside other work, passes them in `searchTerms`, in the same order.
- * Private requests only match their owner's own rows: they are never reused and never reuse
- * other learners' private content. A lesson whose skills were all just created (`newSkills`) only
- * matches exactly, with no search or reuse decision.
- *
- * This is a workflow bridge, not an app authorization boundary: it accepts owner ids only because
- * the public core boundary that started the workflow derived them from the authenticated session.
- */
+/** Internal workflow bridge: owner ids must come from the authenticated public boundary. Results preserve request order. */
 export async function resolveLibraryIdentities({
   analytics,
   requests,
@@ -266,7 +226,6 @@ export async function resolveLibraryIdentities({
   );
 }
 
-/** `resolveLibraryIdentities` for one request, for callers that find one item at a time. */
 export async function resolveLibraryIdentity({
   analytics,
   request,

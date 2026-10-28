@@ -17,7 +17,6 @@ import { type SharedVocabulary, saveSharedVocabulary } from "./_utils/shared-voc
 
 type Analytics = Parameters<typeof generateLanguageLesson>[0]["analytics"];
 
-/** Fewer than this and there is nothing to build, listen to or say. */
 const MIN_SENTENCES = 2;
 
 type WriteLanguageLessonResult =
@@ -26,15 +25,10 @@ type WriteLanguageLessonResult =
   | { status: "heldBack" }
   | { sentenceCount: number; status: "published"; stepCount: number; wordCount: number };
 
-/** Shared words, sentences and audio belong to the AI organization, like the courses it writes. */
 async function getSharedOrganization() {
   return prisma.organization.findUniqueOrThrow({ where: { slug: AI_ORG_SLUG } });
 }
 
-/**
- * Keeps the words and sentences that have a shared row, with their ids in the
- * same order, so every link and screen points at a stored row.
- */
 function withSharedIds({
   content,
   shared,
@@ -63,18 +57,7 @@ function withSharedIds({
   };
 }
 
-/**
- * Writes a language lesson for its language pair, for the workflow run that
- * holds the lesson's content claim. The writer drafts the words, sentences,
- * tip, practice, writing prompt and summary; code repairs what it can; the
- * target-language words and sentences are stored where every pair can reuse
- * them, with audio made only for the ones nobody voiced yet; and the lesson is
- * published with its screens. A draft left without words or with too few
- * sentences is held back and the claim ends as failed, so a later run retries.
- *
- * This is an internal workflow bridge: Library content is shared and no
- * learner's data is written.
- */
+/** Internal workflow bridge: the caller must hold the lesson's content claim. */
 export async function writeLanguageLessonContent({
   analytics,
   lessonId,
@@ -83,7 +66,6 @@ export async function writeLanguageLessonContent({
 }: {
   analytics?: Analytics;
   lessonId: string;
-  /** `flex` when the lesson is written well before a learner reaches it. */
   serviceTier?: ServiceTier;
   workflowRunId: string;
 }): Promise<WriteLanguageLessonResult> {

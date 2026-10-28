@@ -95,7 +95,6 @@ describe(needsPastQuestions, () => {
       needsPastQuestions({ now: new Date("2026-11-15T00:00:00.000Z"), structure: empty }),
     ).toBe(true);
 
-    // The source didn't count electoral law on its own: the others keep their counts.
     const partial = { ...looked, subjects: [...looked.subjects, subject("Direito Eleitoral")] };
     const [civil] = partial.subjects;
 

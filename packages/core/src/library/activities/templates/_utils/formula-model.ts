@@ -13,10 +13,6 @@ import {
   variableIssues,
 } from "./template-helpers";
 
-/**
- * Sliders driving formula outputs (simulations, calculators, scenarios): every output formula is
- * sampled across every slider range, plus any extra ranges such as on/off events.
- */
 export function outputFormulas(params: {
   extraRanges?: readonly ExpressionRange[];
   outputs: readonly ActivityOutput[];
@@ -34,10 +30,6 @@ export function outputFormulas(params: {
   }));
 }
 
-/**
- * Reads the output a check names (or the default one) with the sliders where the check puts them.
- * `fixed` holds values that aren't sliders, like events that start switched off.
- */
 export function computeOutput(params: {
   defaultOutput: string | undefined;
   fixed?: Readonly<Record<string, number>>;

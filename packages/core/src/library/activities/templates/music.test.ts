@@ -49,7 +49,6 @@ describe("rhythm timing", () => {
       }),
     ).toStrictEqual([0, -20, 10]);
 
-    // Dragging 150 ms behind the beat on a measured device is the learner's, not the device's.
     expect(
       rhythmTapOffsets({ deviceDelayMs: 0, expectedMs: [0, 500, 1000], tapsMs: [150, 650, 1150] }),
     ).toStrictEqual([90, 90, 90]);
@@ -67,7 +66,6 @@ describe("rhythm timing", () => {
     expect(checkActivityAnswer(tapper, { kind: "rhythm", tapTimesMs: wrongBeats })).toBe(false);
     expect(checkActivityAnswer(tapper, { kind: "rhythm", tapTimesMs: oneRushed })).toBe(false);
 
-    // Bluetooth headphones 450 ms late: out of reach of the steady delay alone, fine once measured.
     const bluetooth = expected.map((time) => time + 450);
 
     expect(checkActivityAnswer(tapper, { kind: "rhythm", tapTimesMs: bluetooth })).toBe(false);

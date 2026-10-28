@@ -9,13 +9,11 @@ const TESTED_LANGUAGE_ID = "testedLanguage";
 const LANGUAGE_CODE_PATTERN = /^[a-z]{2}$/u;
 const LANGUAGE_NAMES = new Intl.DisplayNames(["en"], { fallback: "none", type: "language" });
 
-/** The reading's tested language as an ISO 639-1 code ("en" for "en-GB"), when it names a real one. */
 function toLanguageCode(tested: BlueprintExtraction["testedLanguage"]): string | null {
   const code = tested ? getBaseLanguage(tested.language.trim()) : "";
   return LANGUAGE_CODE_PATTERN.test(code) && LANGUAGE_NAMES.of(code) ? code : null;
 }
 
-/** The language the exam tests, as a claim of its own on the passage that says so. */
 export function testedLanguageFacts({ documents, extraction }: FactSource): FactEntry[] {
   const { testedLanguage } = extraction;
   const code = toLanguageCode(testedLanguage);
@@ -36,7 +34,6 @@ export function testedLanguageFacts({ documents, extraction }: FactSource): Fact
   });
 }
 
-/** The tested language as stored, once both checks kept its claim; a gap otherwise. */
 export function toTestedLanguage({
   extraction,
   kept,
@@ -52,10 +49,6 @@ export function toTestedLanguage({
 
 const storedTestedLanguageSchema = z.object({ testedLanguage: z.object({ language: z.string() }) });
 
-/**
- * The language a stored blueprint's notice says the exam tests ("en" for IELTS), read on its own
- * from its structure; null when it names none (a blueprint read before it was, too).
- */
 export function readTestedLanguage(structure: unknown): string | null {
   return storedTestedLanguageSchema.safeParse(structure).data?.testedLanguage.language ?? null;
 }

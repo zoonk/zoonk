@@ -6,10 +6,8 @@ export type AlphabetStepToSave = { content: object; kind: StepKind };
 
 type Letter = AlphabetLessonContent["letters"][number];
 
-/** Letters are learned a few at a time: this many cards at most, then they're matched. */
 const MAX_GROUP_SIZE = 5;
 
-/** A match with fewer pairs isn't a choice. */
 const MIN_MATCH_PAIRS = 2;
 
 function toCard({
@@ -32,10 +30,6 @@ function toCard({
   };
 }
 
-/**
- * Matching each symbol with its romanization. A symbol or romanization an earlier letter already
- * uses is left out, since each pair needs one right answer.
- */
 function toMatch(letters: readonly Letter[]): AlphabetStepToSave[] {
   const pairs = letters
     .filter(
@@ -49,7 +43,6 @@ function toMatch(letters: readonly Letter[]): AlphabetStepToSave[] {
   return pairs.length >= MIN_MATCH_PAIRS ? [{ content: { pairs }, kind: "matchColumns" }] : [];
 }
 
-/** Splits the letters into even groups of at most `MAX_GROUP_SIZE` (7 letters are 4 and 3). */
 function toGroups(letters: readonly Letter[]): Letter[][] {
   if (letters.length === 0) {
     return [];
@@ -62,18 +55,10 @@ function toGroups(letters: readonly Letter[]): Letter[][] {
   );
 }
 
-/**
- * Lays an alphabet lesson out as screens: the intro on how the script is read, then the letters a
- * few at a time, each group as cards (symbol, sound, romanization, forms and the clip a voice says,
- * null when none was made) followed by matching those symbols with their romanization, then the
- * summary. A letter without a symbol or romanization, or a screen that doesn't fit the step
- * contract, is left out.
- */
 export function buildAlphabetLessonSteps({
   audioUrls,
   content,
 }: {
-  /** Each letter's clip, by the text the voice said. */
   audioUrls: ReadonlyMap<string, string>;
   content: AlphabetLessonContent;
 }): AlphabetStepToSave[] {

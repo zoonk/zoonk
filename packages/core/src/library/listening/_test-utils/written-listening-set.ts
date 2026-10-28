@@ -41,7 +41,6 @@ function writtenSet(): ListeningSet {
   return {
     questions: [
       choice({ evidence: "Thursday the twelfth", skill: 2 }),
-      // A skill number off the list goes to the first skill.
       choice({ evidence: "the small hall", skill: 7 }),
     ],
     speakers: [
@@ -58,7 +57,6 @@ function writtenSet(): ListeningSet {
   };
 }
 
-/** The set the writer (a paid model call) returns; with `problems`, one it couldn't make clean. */
 export function mockWrittenListeningSet({ problems = [] }: { problems?: string[] } = {}) {
   const set = writtenSet();
   const provenance = generatedProvenance();

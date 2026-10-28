@@ -10,12 +10,10 @@ import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
 import { createSourceUploadToken } from "./create-upload-token";
 import { registerSourceUpload } from "./register-upload";
 
-/** The private store uploads live in. */
 const PRIVATE_STORE = { storeId: "store_test", token: undefined };
 
 const NOTICE_TEXT = "ENEM 2026: 180 questoes objetivas e uma redacao.";
 
-/** Blob storage serves the uploaded file from memory. */
 function mockUploadedFile({
   bytes,
   contentType,
@@ -27,7 +25,6 @@ function mockUploadedFile({
 }) {
   const url = `https://store.private.blob.vercel-storage.com/${pathname}`;
 
-  // Each read gets its own stream, as each request to Blob storage would.
   vi.mocked(get).mockImplementation(async () => ({
     blob: {
       cacheControl: "",
@@ -48,12 +45,10 @@ function mockUploadedFile({
   return url;
 }
 
-/** A unique notice text, so tests that share the database never share a hash. */
 function uniqueText() {
   return `${NOTICE_TEXT} ${randomUUID()}`;
 }
 
-/** A notice uploaded the way the apps name it: its own id, then the learner's file name. */
 function uploadNotice({ text, userId }: { text: string; userId: string }) {
   const pathname = `sources/${userId}/${randomUUID()}-edital.md`;
   const bytes = new TextEncoder().encode(text);
@@ -126,7 +121,6 @@ describe(registerSourceUpload, () => {
     mockSession(user.id);
     const text = uniqueText();
 
-    // The web is external: the page is served from memory.
     vi.mocked(fetch).mockResolvedValue(
       new PageResponse(`<p>${text}</p>`, { headers: { "content-type": "text/html" } }),
     );
@@ -339,7 +333,6 @@ describe(registerSourceUpload, () => {
     await expect(createSourceUploadToken({ pathname })).resolves.toMatchObject({ status: "ready" });
     await expect(countUploads()).resolves.toBe(3);
 
-    // Signing took the day's last upload: registering the file or pasting its text takes no other.
     await expect(
       registerSourceUpload({ kind: "file", language: "pt", pathname }),
     ).resolves.toMatchObject({ status: "ready" });

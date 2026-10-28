@@ -103,10 +103,6 @@ function binaryOperatorAt(token: Token, operators: readonly BinaryOperator[]) {
     : undefined;
 }
 
-/**
- * Left-associative operators (`a - b - c` is `(a - b) - c`) are parsed as a head followed by a
- * tail, so each operator wraps everything to its left.
- */
 function parseBinaryTail(params: {
   depth: number;
   index: number;
@@ -165,10 +161,6 @@ function parseMultiplicative(tokens: readonly Token[], index: number, depth: num
     : head;
 }
 
-/**
- * Unary minus binds looser than `^`, so `-2^2` is -4 as in written math, while `2^-1` still works
- * because the exponent is itself a unary expression.
- */
 function parseUnary(tokens: readonly Token[], index: number, depth: number): ParseStep {
   const token = tokenAt(tokens, index);
 
@@ -191,7 +183,6 @@ function parseUnary(tokens: readonly Token[], index: number, depth: number): Par
     : argument;
 }
 
-/** `^` is right-associative: `2^3^2` is `2^(3^2)`. */
 function parsePower(tokens: readonly Token[], index: number, depth: number): ParseStep {
   const base = parsePrimary(tokens, index, depth);
 
@@ -333,11 +324,6 @@ function collectVariables(node: ExpressionNode): string[] {
   }
 }
 
-/**
- * Parses a formula written by a model into an AST without ever running code: numbers, variables,
- * `+ - * / ^`, parentheses, unary minus, the constants `pi` and `e`, and whitelisted functions.
- * Implicit multiplication (`2x`) is rejected so every formula reads one way only.
- */
 export function parseExpression(source: string): ParseExpressionResult {
   if (source.length > MAX_EXPRESSION_LENGTH) {
     return fail(MAX_EXPRESSION_LENGTH, "Expression is too long");

@@ -28,17 +28,11 @@ export type BlueprintNotice = { message: string; provenance: LibraryProvenance }
 export type SaveExamBlueprintInput = {
   content: BlueprintContent;
   identity: ExamIdentity;
-  /** The notice or syllabus the blueprint was read from. */
   sourceId: string;
   provenance: LibraryProvenance;
-  /** The line shown to learners when an existing blueprint changed. */
   notice?: BlueprintNotice | null;
 };
 
-/**
- * What the exam's stored blueprint knows of a document research found for it (`findNoticeReading`):
- * whether it was read from that very document, and what that reading's check found it left out.
- */
 export type NoticeReading = { problems: ReadingProblem[]; read: boolean };
 
 const UNREAD: NoticeReading = { problems: [], read: false };
@@ -47,9 +41,7 @@ export type SavedExamBlueprint = {
   blueprint: ExamBlueprint;
   changes: BlueprintChange[];
   created: boolean;
-  /** The update moved the exam's own days (see `movesExamDays`), which learners' dates follow. */
   movesExamDays: boolean;
-  /** The learner notice the update recorded; null when nothing changed or it has none. */
   noticeId: string | null;
 };
 
@@ -68,10 +60,6 @@ const EMPTY_CONTENT: BlueprintContent = {
   topicFrequency: [],
 };
 
-/**
- * A stored blueprint in the current shape. Rows from before a shape change
- * read as empty sections, so the next reading replaces them instead of failing.
- */
 export function readBlueprintContent(blueprint: ExamBlueprint): BlueprintContent {
   return {
     edition: examEditionSchema.safeParse(blueprint.edition).data ?? EMPTY_CONTENT.edition,
@@ -87,7 +75,6 @@ function findLastDate(dates: ExamDate[], kind: ExamDate["kind"]): Date | null {
   return last ? new Date(`${last}T00:00:00.000Z`) : null;
 }
 
-/** The columns freshness and plans query, read from the edition's cited dates. */
 function toDateColumns(content: BlueprintContent) {
   const examDate = findLastDate(content.edition.dates, "exam");
 
@@ -107,22 +94,11 @@ function toContentColumns(content: BlueprintContent) {
   };
 }
 
-/**
- * Whether a reading is of an edition whose exam days have all passed: a notice found again after
- * its exam (the next one isn't out), whose new reading tells learners preparing for the next
- * edition nothing they'd act on, so it gets no learner notice.
- */
 export function isPastEdition({ content }: { content: BlueprintContent }): boolean {
   const examDate = findLastDate(content.edition.dates, "exam");
   return examDate !== null && examDate.getTime() + MS_PER_DAY <= Date.now();
 }
 
-/**
- * What a new reading would change on the stored blueprint, so the workflow
- * can ask a model for the learner notice before saving. Null when there's
- * nothing to tell learners: the exam has no blueprint yet, or the reading is of
- * the very document the blueprint was read from, so the exam didn't change.
- */
 export async function previewExamBlueprintChanges({
   content,
   identity,
@@ -210,13 +186,6 @@ async function updateBlueprint({
   };
 }
 
-/**
- * How the exam's stored blueprint stands with this document: unread when it wasn't read from this
- * very document (a new edition, a corrected notice, or no blueprint yet), which research reads;
- * otherwise read, with what its check found. Research never reads a notice it was read from again,
- * since every learner of the exam shares the one reading: only an admin does, told what the check
- * found.
- */
 export async function findNoticeReading({
   identity,
   sourceId,
@@ -241,11 +210,6 @@ export async function findNoticeReading({
   return { problems: edition.check?.problems ?? [], read: true };
 }
 
-/**
- * A notice is stored when research fetches it, before anyone has read its
- * dates, so it starts with the undated rule. Once the blueprint knows the exam
- * date, the notice stays valid until then. Uploads are never fetched again.
- */
 async function keepNoticeUntilExam({
   blueprint,
   sourceId,
@@ -263,12 +227,6 @@ async function keepNoticeUntilExam({
   });
 }
 
-/**
- * Stores an exam's canonical blueprint, or updates the existing one with only
- * what changed, recording the learner notice alongside. A new edition is a new
- * reading of the same exam, so lessons and items built on the blueprint carry
- * over and only changed sections are replaced.
- */
 export async function saveExamBlueprint(
   input: SaveExamBlueprintInput,
 ): Promise<SavedExamBlueprint> {

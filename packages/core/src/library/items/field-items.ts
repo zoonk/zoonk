@@ -2,10 +2,8 @@ import "server-only";
 import { type CourseLevel, prisma } from "@zoonk/db";
 import { parsePlanGraph } from "../../plans/planner/plan-state";
 
-/** Enough questions for a few days of practice and reviews on a skill; more can come later. */
 export const FIELD_ITEMS_PER_SKILL = 4;
 
-/** The skills one preparation writes field questions for, so a big phase doesn't write all at once. */
 const MAX_FIELD_SKILLS = 8;
 
 type FieldItemSkill = {
@@ -15,17 +13,11 @@ type FieldItemSkill = {
   language: string;
   level: CourseLevel | null;
   name: string;
-  /** Set for a private course's skill, whose questions are personal content. */
   ownerId: string | null;
 };
 
 export type FieldItemTarget = { field: string; skill: FieldItemSkill };
 
-/**
- * The skills, in the order given, that don't have a field's questions yet. Field questions are
- * shared by everyone in the field, so a skill another learner in it already has them for is
- * skipped and nothing is written twice.
- */
 async function findSkillsWithoutFieldItems({
   field,
   skillIds,
@@ -35,7 +27,6 @@ async function findSkillsWithoutFieldItems({
 }): Promise<FieldItemTarget[]> {
   const uniqueSkillIds = [...new Set(skillIds)];
 
-  // Counted on their own, for these skills only: a relation `_count` counts every skill's items.
   const [skills, fieldItemCounts] = await Promise.all([
     prisma.skill.findMany({
       select: {
@@ -68,12 +59,7 @@ async function findSkillsWithoutFieldItems({
     .map(({ targetLanguage: _targetLanguage, ...skill }) => ({ field, skill }));
 }
 
-/**
- * The first phase's skills that need questions in the goal's field: written while placement runs,
- * so the first practice and reviews are already set in the learner's work.
- *
- * This is a workflow bridge: the goal id comes from the goal the public boundary created.
- */
+/** Internal workflow bridge: the public boundary must already have authorized the goal. */
 export async function listGoalFieldItemTargets({
   field,
   goalId,
@@ -91,10 +77,6 @@ export async function listGoalFieldItemTargets({
   });
 }
 
-/**
- * The skills of the lessons a learner reaches soon that need questions in their field, written
- * ahead of the practice and reviews that follow those lessons.
- */
 export async function listLessonFieldItemTargets({
   field,
   lessonIds,

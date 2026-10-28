@@ -17,11 +17,7 @@ import {
   type GoalSkillRef,
 } from "./curriculum-scope";
 
-type LessonSkillName = {
-  name: string;
-  /** The idea in one sentence, for a skill the Library doesn't have yet. */
-  description: string;
-};
+type LessonSkillName = { name: string; description: string };
 
 type ResolvedLessonSkill = { id: string; name: string };
 
@@ -41,12 +37,10 @@ type ScopeLesson = NewLessonDetails & {
 type LessonContext = ScopeContext & {
   course: IdentityCourse | null;
   goalSkills: readonly GoalSkillRef[];
-  /** The chapter whose outline first needs these lessons; it gives a new lesson its URL. */
   homeChapterId: string | null;
   level: CourseLevel;
 };
 
-/** Pairs each item with the resolution of its request, which `resolveLibraryIdentities` keeps in order. */
 function withResolutions<T>(
   items: readonly T[],
   resolutions: readonly LibraryIdentityResolution[],
@@ -57,13 +51,11 @@ function withResolutions<T>(
   });
 }
 
-/** Each name once, as first asked for. */
 function uniqueByName<T extends { name: string }>(skills: readonly T[]): T[] {
   const names = skills.map((skill) => normalizeString(skill.name));
   return skills.filter((_, index) => names.indexOf(names[index] ?? "") === index);
 }
 
-/** A skill resolved to its Library row, and whether that row was created just now. */
 type ResolvedSkillRow = { created: boolean; id: string };
 
 async function toSkillRow({
@@ -95,14 +87,9 @@ async function toSkillRow({
 }
 
 type ScopeSkillsInput = ScopeContext & {
-  /**
-   * `course`: the course or plan area each is studied in, so a skill of one subject never resolves
-   * to another subject's skill of the same words.
-   */
   skills: readonly (LessonSkillName & { course?: string | null; level: CourseLevel })[];
 };
 
-/** `resolveScopeSkills`, with whether each skill's row was created just now. */
 async function resolveScopeSkillRows({
   analytics,
   provenance,
@@ -139,27 +126,14 @@ async function resolveScopeSkillRows({
   );
 }
 
-/**
- * Finds the Library skills that already teach these, or creates each under the identity key the
- * search returned, so two goals or lessons that need "Calculate a percentage" share one skill. The
- * skills resolve together, their search terms written in one model call, and a name asked for
- * twice resolves once. Returns each skill's id, in the order asked for.
- */
+/** Returns one skill id per requested name, preserving input order. */
 export async function resolveScopeSkills(input: ScopeSkillsInput): Promise<string[]> {
   const rows = await resolveScopeSkillRows(input);
   return rows.map((row) => row.id);
 }
 
-/** A lesson's skills, and whether every one of them was created for these lessons just now. */
 type ResolvedLessonSkills = { newSkills: boolean; skills: ResolvedLessonSkill[] };
 
-/**
- * Turns the 1 to 3 skill names each lesson has into Library skills. A name that is one of the
- * goal's own skills is that skill; the others resolve together (`resolveScopeSkillRows`), so
- * lessons in different courses that teach "Calculate a percentage" share one skill. Each lesson
- * keeps its names' order, and duplicates collapse. A lesson whose skills were all created just now
- * says so (`newSkills`): no Library lesson teaches them yet.
- */
 async function resolveLessonSkills({
   goalSkills,
   lessons,
@@ -218,10 +192,6 @@ function toLessonBase({ context, lesson }: { context: LessonContext; lesson: Sco
   };
 }
 
-/**
- * The lessons' search terms, written from their skill names while the skills resolve instead of
- * after. Private lessons never search, so they need none.
- */
 async function writeLessonSearchTerms({
   context,
   lessons,
@@ -241,7 +211,6 @@ async function writeLessonSearchTerms({
   });
 }
 
-/** A new lesson in the scope's language and level, with its own words and details. */
 function toNewLesson({
   context,
   identityKey,
@@ -272,7 +241,6 @@ function toNewLesson({
   };
 }
 
-/** A lesson's skills as one value, the same in any order: what its identity is made of. */
 function toSkillSet(skills: readonly ResolvedLessonSkill[]): string {
   return skills
     .map((skill) => skill.id)
@@ -280,27 +248,12 @@ function toSkillSet(skills: readonly ResolvedLessonSkill[]): string {
     .join("+");
 }
 
-/**
- * The skill sets more than one of these lessons teach. A lesson is its skills at one level of one
- * course, so an outline that splits one skill set into several lessons would otherwise save them
- * all as the first one.
- */
 function findSharedSkillSets(lessonSkills: readonly (readonly ResolvedLessonSkill[])[]) {
   const sets = lessonSkills.map((skills) => toSkillSet(skills));
   return new Set(sets.filter((set, index) => sets.indexOf(set) !== index));
 }
 
-/**
- * Finds the Library lessons that already teach these skills at this level (in this course, or
- * another course's the reuse decision finds on the same subject), or creates them in their home
- * chapter with what the caller already knows about them (`NewLessonDetails`). Lessons known
- * together, such as a chapter's, resolve together: their skills in one batch and, beside it, their
- * search terms in one model call, then the lessons themselves, the new ones created together
- * (`createHomeChapterLessons`). Lessons of the batch that teach the same skills stay apart by title
- * (`findSharedSkillSets`). A lesson whose skills were all created just now is matched exactly
- * only, with no reuse decision. Returns each lesson's id in the order asked for, or null for a
- * lesson none of whose skills resolve.
- */
+/** Preserves input order; returns null for a lesson whose skills cannot be resolved. */
 export async function resolveScopeLessons({
   lessons,
   ...context

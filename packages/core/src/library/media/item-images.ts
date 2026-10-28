@@ -9,7 +9,6 @@ import {
 
 type ImageRequest = NonNullable<Extract<GeneratedItem, { image: unknown }>["image"]>;
 
-/** Where a skill's pictures sit: its first course for the palette, and who may see them. */
 type ItemImageScope = {
   category: string | null;
   context: string;
@@ -17,12 +16,10 @@ type ItemImageScope = {
   textAllowed: boolean;
 };
 
-/** The picture a written question asks for, or null for formats and questions without one. */
 export function getItemImageRequest(item: GeneratedItem): ImageRequest | null {
   return "image" in item ? item.image : null;
 }
 
-/** What a learner reads next to the picture: the support text, the command and the options. */
 function getQuestionText(item: GeneratedItem): string {
   const question = item.format === "trueFalse" ? item.statement : item.question;
   const context = "context" in item ? item.context : null;
@@ -31,11 +28,6 @@ function getQuestionText(item: GeneratedItem): string {
   return [context, question, ...options].filter(Boolean).join("\n");
 }
 
-/**
- * Where a skill's question pictures belong: the course its first chapter sits in (for the
- * palette and the scene's context), and its owner when the skill is private. A language skill's
- * pictures carry no text, so a label never answers the question in the practiced language.
- */
 export async function loadItemImageScope(skillId: string): Promise<ItemImageScope> {
   const skill = await prisma.skill.findUniqueOrThrow({
     select: {
@@ -78,15 +70,7 @@ export async function loadItemImageScope(skillId: string): Promise<ItemImageScop
   };
 }
 
-/**
- * Draws the picture one question asks for, the way lesson pictures are drawn: a structured scene,
- * an existing image of the same scene when there is one, or a new image. A new image is used at
- * once and checked after (`drawn`: the caller starts its check). Null when no picture could be
- * drawn or stored (a private skill's, without the private store), so the question is never stored
- * without the picture it points at.
- *
- * This is a workflow bridge: it runs for Library questions a workflow is already writing.
- */
+/** Internal workflow bridge: the caller must check newly drawn pictures in the background. */
 export async function drawItemImage({
   analytics,
   item,

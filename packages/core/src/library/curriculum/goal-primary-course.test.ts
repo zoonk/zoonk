@@ -32,7 +32,6 @@ describe(setGoalPrimaryCourse, () => {
       inputVersion: plan.inputVersion + 1,
     });
 
-    // Marking is per learner, so their other plan is marked too.
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { id: otherPlan.id } }),
     ).resolves.toMatchObject({ inputVersion: otherPlan.inputVersion + 1 });

@@ -2,27 +2,9 @@ import "server-only";
 import { type CourseLevel, prisma } from "@zoonk/db";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 
-/**
- * The chapter a waiting learner's first lesson is in, saved while the rest of its band's outline
- * was still being written.
- */
-export type EarlyOutlineChapter = {
-  chapterId: string;
-  /** Goals re-planned with its lessons, which re-plan again once the whole band lands. */
-  goalIds: string[];
-  position: number;
-};
+export type EarlyOutlineChapter = { chapterId: string; goalIds: string[]; position: number };
 
-/**
- * The chapter an earlier attempt of a band's outline saved early before failing (the only one it
- * placed from the band's next position on), with the goals that already plan its lessons, so a
- * retry keeps it instead of writing it twice. A chapter the attempt didn't finish writing is taken
- * out of the band, so the retry writes it again; no goal plans its lessons yet, since goals
- * re-plan once it's finished. Null when nothing was placed. The course's outline claim keeps any
- * other run from writing this band meanwhile, so a chapter there is the earlier attempt's.
- *
- * This is a workflow bridge: the course comes from the run holding its outline claim.
- */
+/** Internal: the calling workflow must hold the course's outline claim. */
 export async function findEarlyOutlineChapter({
   courseId,
   level,
@@ -42,7 +24,6 @@ export async function findEarlyOutlineChapter({
   }
 
   if (placement.chapter.outlineStatus !== "completed") {
-    // Plans of the course's goals read its chapters, and other plans the chapter's lessons.
     await writePlanInputs(async (tx) => {
       await lockPlanSourceWrite(tx, { chapterIds: [placement.chapterId], courseIds: [courseId] });
 
@@ -71,12 +52,7 @@ export async function findEarlyOutlineChapter({
   };
 }
 
-/**
- * A band's early chapter is saved before its outline run ends, under the model the run asked for.
- * When a fallback model answered instead, the rows the run saved so far name it.
- *
- * This is a workflow bridge: the run id comes from the outline run that saved the rows.
- */
+/** Internal: the run id must come from the workflow that saved the outline. */
 export async function relabelOutlineRun({
   model,
   runId,

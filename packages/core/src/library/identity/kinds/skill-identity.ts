@@ -9,11 +9,6 @@ import { type IdentityKindSearch, type SkillIdentityRequest } from "../_utils/id
 import { SKILL_DOCUMENT } from "../_utils/search-documents";
 import { type TextSearch, findRankedIds } from "../_utils/text-search-sql";
 
-/**
- * An exact match on a merged duplicate returns the skill it was merged into.
- * Keys are scoped per owner already; the row check also keeps a private skill
- * away from every other learner, even under a wrongly scoped key.
- */
 async function findExactSkill({
   identityKey,
   request,
@@ -39,10 +34,6 @@ async function findExactSkill({
   return survivor.skill.id;
 }
 
-/**
- * Surviving public skills in the same language and target language whose words
- * match. Level isn't filtered: a skill is the same at every level.
- */
 async function findSkillCandidateIds({
   request,
   search,
@@ -60,10 +51,6 @@ async function findSkillCandidateIds({
   });
 }
 
-/**
- * The skills a search found, with the courses whose chapters teach them, so the reuse decision
- * judges from both sides' courses whether one can serve the other.
- */
 export async function loadSkillCandidates(
   ids: readonly string[],
 ): Promise<LibraryIdentityCandidate[]> {

@@ -23,7 +23,6 @@ function written(data: Written["data"]): Written {
   } as Written;
 }
 
-/** A case whose first decision points at nothing, so the step contract refuses it. */
 function brokenCase(): Written["data"] {
   return { ...writtenChallengeCaseFixture(), startNodeId: "missing" };
 }
@@ -56,7 +55,6 @@ describe(writeChallengeLessonContent, () => {
     vi.mocked(generateChallengeCase).mockReset();
   });
 
-  // A case nobody reaches for hours is written at the flex tier.
   it("publishes the case as the lesson's one screen with its summary card, at the tier asked", async () => {
     const { lessonId, workflowRunId } = await claimedChallenge();
     vi.mocked(generateChallengeCase).mockResolvedValue(written(writtenChallengeCaseFixture()));

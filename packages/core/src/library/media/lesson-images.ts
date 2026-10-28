@@ -10,12 +10,6 @@ import {
 } from "./_utils/draw-library-image";
 import { getOptionPictureRequests, getStepImageRequest } from "./_utils/step-image-request";
 
-/**
- * `reused`: an existing image showed the same scene. `generated`: a new image
- * passed its check. `failed`: two images failed the check, or a private
- * lesson's picture has no store to go to, so the screen has no picture.
- * `none`: the screen asks for no picture or already has one.
- */
 export type StepImageOutcome =
   | { status: "generated" | "reused"; mediaAssetId: string }
   | { status: "failed" | "none" };
@@ -52,7 +46,6 @@ function findStepForImage(stepId: string) {
 
 type StepForImage = NonNullable<Awaited<ReturnType<typeof findStepForImage>>>;
 
-/** Where a lesson's picture sits; a private lesson's pictures are its owner's, a shared one's shared. */
 function getLessonPictureScope(lesson: StepForImage["lesson"]) {
   const chapter = lesson.homeChapter;
 
@@ -68,11 +61,6 @@ function toOutcome(picture: LibraryPicture): StepImageOutcome {
   return { mediaAssetId: picture.assetId, status: picture.drawn ? "generated" : "reused" };
 }
 
-/**
- * The screens of a lesson whose picture isn't drawn yet, in screen order. Every picture a screen
- * asks for is one it needs, so all of them are drawn; screens that already have one are skipped,
- * so retries never draw twice.
- */
 export async function listLessonImageSteps({ lessonId }: { lessonId: string }): Promise<string[]> {
   const lesson = await prisma.lesson.findUnique({
     select: {
@@ -107,15 +95,7 @@ async function linkStepImage({
   revalidateCacheTags([getLibraryLessonCacheTag(lessonId)]);
 }
 
-/**
- * Gives one lesson screen its picture: a structured scene, an existing image
- * of the same scene when there is one, or a new image that passed its check.
- * Language courses get pictures without text, and a private lesson's picture
- * stays private. The alt text stays on the screen, written in its language.
- *
- * This is a workflow bridge, not an app authorization boundary: it runs for
- * Library content that a workflow is already generating.
- */
+/** Internal workflow bridge, not an app authorization boundary. */
 export async function createStepImage({
   analytics,
   stepId,
@@ -150,14 +130,8 @@ export async function createStepImage({
   return toOutcome(picture);
 }
 
-/** One option of one question, whose picture isn't drawn yet. */
 export type OptionPictureTarget = { optionId: string; stepId: string };
 
-/**
- * The options of a lesson's questions whose pictures aren't drawn yet, in screen order: each
- * picture option asks for one, drawn alone. Options that have one are skipped, so retries never
- * draw twice.
- */
 export async function listLessonOptionPictures({
   lessonId,
 }: {
@@ -188,15 +162,7 @@ export async function listLessonOptionPictures({
   });
 }
 
-/**
- * Gives one option of a question its picture, drawn alone and without text (its name would give
- * the answer away), or an existing image of the same scene. Like a screen's picture, it's planned
- * as a structured scene, a private lesson's stays private, and its check follows in the
- * background.
- *
- * This is a workflow bridge, not an app authorization boundary: it runs for Library content that
- * a workflow is already generating.
- */
+/** Internal workflow bridge, not an app authorization boundary. */
 export async function createStepOptionPicture({
   analytics,
   optionId,

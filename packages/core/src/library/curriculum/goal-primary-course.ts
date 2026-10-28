@@ -4,7 +4,6 @@ import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag } from "../../cache/tags";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 
-/** Language courses teach a language pair; private courses are one learner's; everything else is core. */
 export function getGoalCourseFormat({
   kind,
   ownerId,
@@ -19,10 +18,6 @@ export function getGoalCourseFormat({
   return kind === "language" ? "language" : "core";
 }
 
-/**
- * Points a goal at the course its first phase is taught in, unless the learner or onboarding
- * already chose one. Screens link to it as the goal's main course.
- */
 export async function setGoalPrimaryCourse({
   courseId,
   goalId,

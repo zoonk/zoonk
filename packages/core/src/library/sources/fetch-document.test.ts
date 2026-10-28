@@ -37,7 +37,6 @@ describe(fetchDocument, () => {
     expect(new TextDecoder().decode(document.bytes)).toBe("<p>Edital</p>");
   });
 
-  // A public page could otherwise redirect the fetch to an internal address.
   it("refuses a redirect to a private address", async () => {
     vi.mocked(fetch).mockResolvedValue(
       new PageResponse(null, { headers: { location: "http://127.0.0.1/admin" }, status: 302 }),
@@ -69,7 +68,6 @@ describe(fetchDocument, () => {
     await expect(fetchDocument("https://example.com/edital")).rejects.toThrow("status 503");
   });
 
-  // Only a missing intermediate certificate is worth a second request (see issuer-certificates).
   it("passes other connection failures on", async () => {
     const failure = new TypeError("fetch failed", {
       cause: Object.assign(new Error("socket hang up"), { code: "ECONNRESET" }),

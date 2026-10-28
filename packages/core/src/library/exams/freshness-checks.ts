@@ -4,16 +4,10 @@ import { MS_PER_DAY } from "@zoonk/utils/date";
 import { type FreshnessTarget } from "./check-freshness";
 import { type FreshnessCommandAccess, getFreshnessCommandAccess } from "./freshness-access";
 
-/** The sweep runs once a day, so a check due before tomorrow's sweep runs in today's. */
 const SWEEP_INTERVAL_MS = MS_PER_DAY;
-/** A sweep checks at most this many of each kind; the next sweep takes the rest. */
 const MAX_DUE_TARGETS = 200;
 
-/**
- * Starts checking an exam or sources a learner's goal now relies on: the first check runs at the
- * next daily sweep and sets the schedule. Ones that already have a check scheduled keep it. A
- * bridge for the research workflow, which found them for the goal.
- */
+/** Internal bridge for the research workflow that found the goal's sources. */
 export async function scheduleFreshnessChecks({
   now = new Date(),
   targets,
@@ -45,10 +39,6 @@ export async function scheduleFreshnessChecks({
   ]);
 }
 
-/**
- * An admin's "Stop": nothing is checked until a learner's goal schedules it again. Returns the
- * command's access, `ready` once stopped.
- */
 export async function stopFreshnessChecks(
   target: FreshnessTarget,
 ): Promise<FreshnessCommandAccess> {
@@ -68,12 +58,7 @@ export async function stopFreshnessChecks(
   return access;
 }
 
-/**
- * The exams and sources whose next check falls before the next daily sweep, the latest due first
- * (anything left stays due for the next sweep). A check a few hours early costs a fetch and a
- * hash compare, while waiting for the following sweep would make a daily check skip a day
- * whenever the cron starts a little before it was due. A bridge for the daily sweep.
- */
+/** Internal bridge for the daily sweep; includes checks due before the next sweep. */
 export async function listDueFreshnessTargets({ now = new Date() }: { now?: Date } = {}): Promise<
   FreshnessTarget[]
 > {

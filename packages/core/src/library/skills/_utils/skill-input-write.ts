@@ -37,7 +37,6 @@ async function loadLockIds(
       where: {
         OR: [
           { skillId: { in: [...skillIds] } },
-          // Merges move incoming edges too; a setter changes only its own outgoing edges.
           ...(masterySkillId ? [{ prerequisiteId: { in: [...skillIds] } }] : []),
         ],
       },
@@ -77,7 +76,6 @@ async function lockSources({
   }
 }
 
-/** Lock plans and users before the complete skill endpoint set, then verify both sets stayed complete. */
 export async function lockSkillPlanInputs({
   tx,
   ...input

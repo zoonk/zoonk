@@ -9,18 +9,12 @@ import {
 import { getChapterCacheTags } from "../chapters/chapter-cache-tags";
 import { startLessonVersion } from "../lessons/lesson-versions";
 
-/** The Library generation phases that one workflow at a time may run for a row. */
 export type LibraryGenerationTarget =
   | "chapterOutline"
   | "courseOutline"
   | "lessonContent"
   | "lessonSpec";
 
-/**
- * `claimed`: this run owns the work (also when it retries its own claim).
- * `running`: another run owns it; join that run instead of starting again.
- * `completed`: the work is done; read the result.
- */
 export type LibraryClaimResult = "claimed" | "completed" | "running";
 
 type ClaimInput = { id: string; workflowRunId: string };
@@ -30,7 +24,6 @@ type ClaimTargetOps = {
   claim: (db: TransactionClient, input: ClaimInput) => Promise<{ count: number }>;
   finish: (input: ClaimInput & { status: "completed" | "failed" }) => Promise<{ count: number }>;
   read: (db: TransactionClient, id: string) => Promise<ClaimState | null>;
-  /** Clears what a failed run left behind before the new owner starts. */
   reset?: (db: TransactionClient, id: string) => Promise<unknown>;
   tags: (id: string) => Promise<string[]> | string[];
 };
@@ -56,7 +49,6 @@ const CLAIM_TARGETS: Readonly<Record<LibraryGenerationTarget, ClaimTargetOps>> =
     tags: (id) => getChapterCacheTags(id),
   },
   courseOutline: {
-    /** Courses made before outlines existed have no outline status; their first run may claim them. */
     claim: (db, { id, workflowRunId }) =>
       db.course.updateMany({
         data: { outlineRunId: workflowRunId, outlineStatus: "running" },
@@ -92,7 +84,6 @@ const CLAIM_TARGETS: Readonly<Record<LibraryGenerationTarget, ClaimTargetOps>> =
 
       return lesson && { runId: lesson.contentRunId, status: lesson.contentStatus };
     },
-    // A pulled lesson's screens stay, retired, for whoever is playing them (`startLessonVersion`).
     reset: (db, id) => startLessonVersion(db, id),
     tags: (id) => [getLibraryLessonCacheTag(id)],
   },
@@ -119,11 +110,6 @@ const CLAIM_TARGETS: Readonly<Record<LibraryGenerationTarget, ClaimTargetOps>> =
   },
 };
 
-/**
- * Reports who owns work this run couldn't claim. A run that retries its own
- * claim still owns it, so a retried workflow step continues instead of waiting
- * on itself.
- */
 function toClaimResult({
   state,
   workflowRunId,
@@ -142,7 +128,6 @@ function toClaimResult({
   return "running";
 }
 
-/** Claims with `db`: the conditional update alone, or with the reset in the caller's transaction. */
 async function claimWith(
   db: TransactionClient,
   {
@@ -168,13 +153,7 @@ async function claimWith(
   return { changed: false, result: toClaimResult({ state, workflowRunId }) };
 }
 
-/**
- * Claims one generation phase of a Library row before any AI work starts. The status predicate
- * makes the claim atomic: when two workflows race for the same row, exactly one moves it to
- * `running` and the other learns who owns it. Claiming lesson content of a lesson taken out of play
- * retires its screens, in one transaction with the claim (learners playing them finish them); the
- * other phases need none.
- */
+/** Claim a phase before starting AI work; only `claimed` grants ownership of generation. */
 export async function claimLibraryGeneration({
   id,
   target,
@@ -194,11 +173,7 @@ export async function claimLibraryGeneration({
   return result;
 }
 
-/**
- * Ends a claimed phase as completed or failed. Only the run that holds the
- * claim can end it, so a stale run finishing late never overwrites the result
- * of the run that replaced it. Returns whether this run still held the claim.
- */
+/** Returns false if another run replaced the claim; callers must not treat that as completion. */
 export async function finishLibraryGeneration({
   id,
   status,

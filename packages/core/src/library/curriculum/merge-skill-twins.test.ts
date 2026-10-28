@@ -23,7 +23,6 @@ function skill(overrides: Partial<GraphSkill> & { key: string; name: string }): 
   };
 }
 
-// One graph can write a skill twice in other words, and both would become Library skills.
 const graph: GoalSkillGraph = {
   courses: [{ key: "portugues", levels: ["intermediate"], title: "Português" }],
   estimatedHours: 1.2,
@@ -86,7 +85,6 @@ describe(mergeGraphSkillTwins, () => {
   it("asks only about new skills among new siblings when the rest of the graph is saved", async () => {
     const decide = mockDecision("novo-generos");
 
-    // A notice's reading added the last two skills to a graph whose skills the Library has.
     const added = {
       ...graph,
       skills: [

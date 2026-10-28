@@ -6,7 +6,6 @@ import { type ChallengeLessonSpec } from "./challenge-lesson-spec";
 type WrittenPanel = WrittenChallengeCase["panels"][number];
 type WrittenNode = WrittenChallengeCase["nodes"][number];
 
-/** Models write null for "none"; the contract leaves an optional field out instead. */
 function optional<TValue>(value: TValue | null): TValue | undefined {
   return value ?? undefined;
 }
@@ -46,10 +45,6 @@ function toChoice(choice: WrittenNode["choices"][number]) {
   };
 }
 
-/**
- * Writers tend to list the strongest choice first, which teaches learners to pick the top one. The
- * order is shuffled once, from the case and decision, so it stays put on every replay.
- */
 function toChoices({ node, title }: { node: WrittenNode; title: string }) {
   return seededShuffle(
     node.choices.map((choice) => toChoice(choice)),
@@ -57,10 +52,6 @@ function toChoices({ node, title }: { node: WrittenNode; title: string }) {
   );
 }
 
-/**
- * Turns the case writer's output into challenge step content. The variant comes from the lesson's
- * spec, not the model; the step contract then checks the result.
- */
 function toChallengeContent({
   variant,
   written,
@@ -89,10 +80,6 @@ function toChallengeContent({
   };
 }
 
-/**
- * The case writer's output as stored challenge content, checked against the step contract (the
- * decision graph included). Problems say what to fix, for another draft or an eval.
- */
 export function checkWrittenChallenge({
   variant,
   written,

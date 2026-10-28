@@ -5,7 +5,6 @@ import { MAX_PROGRAM_OUTPUT_LENGTH, type ProgramKind } from "./program-limits";
 import { parsePythonError } from "./python-error";
 import { toSqlCell } from "./sql-setup";
 
-/** A watched value as the runner sends it; `value` is JavaScript's console-ready data. */
 const tracedWireSchema = z
   .union([
     z.tuple([z.literal("boolean"), z.boolean()]),
@@ -39,25 +38,21 @@ const resultSchema = z.object({
 
 export type RunnerResult = z.infer<typeof resultSchema>;
 
-/** The runner's stdout protocol: `ready` once its runtimes loaded, then one result per job. */
 export const runnerMessageSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("ready") }),
   z.object({ id: z.number(), result: resultSchema, type: z.literal("result") }),
 ]);
 
-/** A watched value at one step, typed where the language's value is plain, as text otherwise. */
 export type TracedValue =
   | { kind: "boolean"; value: boolean }
   | { kind: "number"; value: number }
   | { kind: "string"; value: string }
   | { kind: "text"; text: string };
 
-/** A line that ran, with each watched value (in watch order) or null where it doesn't exist. */
 export type TraceStep = { line: number; values: (TracedValue | null)[] };
 
 export type ProgramRun = {
   error: { line: number | null; message: string } | null;
-  /** What the program printed to stdout: the output the code runner compares. */
   output: string;
   status: z.infer<typeof statusSchema>;
   steps: TraceStep[];
@@ -85,7 +80,6 @@ function toTracedValue(wire: z.infer<typeof tracedWireSchema>): TracedValue | nu
   }
 }
 
-/** JavaScript logs print like the player prints them: one formatted line per call. */
 function streamsOf(result: RunnerResult): { stderr: string; stdout: string } {
   if (!result.logs) {
     return { stderr: result.stderr ?? "", stdout: result.stdout ?? "" };
@@ -112,10 +106,6 @@ function errorOf(kind: ProgramKind, error: RunnerResult["error"]): ProgramRun["e
   return kind === "python" ? parsePythonError(error) : { line: null, message: error };
 }
 
-/**
- * A runner result as the check reads it, with the player's output rules: logs formatted like
- * Node, stdout cut at the output limit, and a run that printed more than that counted as a flood.
- */
 export function toProgramRun(kind: ProgramKind, result: RunnerResult): ProgramRun {
   const { stderr, stdout } = streamsOf(result);
   const flooded = stdout.length + stderr.length > MAX_PROGRAM_OUTPUT_LENGTH;

@@ -11,10 +11,8 @@ import {
   pickToolVersion,
 } from "./learner-versions";
 
-/** Tool versions one preparation writes at most; the next preparation writes the rest. */
 const MAX_TOOL_VERSIONS = 40;
 
-/** A private course's screens are personal content, counted to their owner. */
 type VersionTarget = { ownerId: string | null; stepId: string };
 
 export type ToolVersionTarget = VersionTarget & ToolVersion;
@@ -56,16 +54,10 @@ async function loadToolByLesson({
   );
 }
 
-/**
- * A question asked about its pictures: options that are pictures, or numbers on the parts of one
- * picture. Versions are written without pictures, so it keeps its shared version: its pictures
- * show things as they look, whatever the learner's tool or field.
- */
 function asksAboutItsPictures(step: { content: unknown; kind: StepKind }): boolean {
   return getOptionPictureRequests(step).length > 0 || Boolean(getStepImageRequest(step)?.parts);
 }
 
-/** The screens a lesson's versions may replace. */
 async function loadVersionSteps(lessonIds: readonly string[]) {
   const steps = await prisma.step.findMany({
     orderBy: { position: "asc" },
@@ -123,7 +115,6 @@ function toChallengeTarget({
   field: string | null;
   step: VersionStep;
 }): FieldChallengeTarget[] {
-  // A private course is already built for its learner, so its challenge has no field version.
   if (
     !field ||
     step.kind !== "challenge" ||
@@ -136,14 +127,7 @@ function toChallengeTarget({
   return [{ field, ownerId: null, stepId: step.id }];
 }
 
-/**
- * The personal versions a learner's next lessons need and don't have yet: each hands-on screen
- * in the tool the learner chose for the lesson's chapter (or without installing anything), and
- * the chapter challenge set in their field. Only written lessons count: a lesson still being
- * written gets its versions at the next preparation, and plays the shared screens meanwhile.
- *
- * This is a workflow bridge: the goal id comes from `getSessionPreparationAccess`.
- */
+/** Internal workflow bridge: the goal must come from `getSessionPreparationAccess`. */
 export async function listLearnerVersionTargets({
   goalId,
   lessonIds,

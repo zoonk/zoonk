@@ -21,10 +21,8 @@ import { getSpokenAnswerExplanation } from "./_utils/spoken-answer-explanation";
 import { type GradeSpokenAnswerResult, type SpokenAnswerFields } from "./spoken-answer-contract";
 import { pickWordsToExplain } from "./spoken-answer-match";
 
-/** A sentence mostly said as expected counts as evidence the learner can say it at that level. */
 const SPOKEN_EVIDENCE_SCORE = 0.8;
 
-/** Private lessons are made for one learner, so only their owner can answer their steps. */
 async function findSpokenStep({ stepId, userId }: { stepId: string; userId: string }) {
   const step = await prisma.step.findFirst({
     include: { lesson: { select: { language: true, level: true } } },
@@ -48,7 +46,6 @@ async function findSpokenStep({ stepId, userId }: { stepId: string; userId: stri
   };
 }
 
-/** Links the attempt to today's study session only when it is the learner's own. */
 async function findOwnStudySessionId({
   studySessionId,
   userId,
@@ -68,16 +65,6 @@ async function findOwnStudySessionId({
   return session?.id ?? null;
 }
 
-/**
- * Grades a spoken answer to a lesson's "say it out loud" step: transcribes it
- * as said, compares it with the expected sentence word by word, explains at
- * most two words that didn't match (reusing the explanation when someone said
- * the same thing before) and records the attempt. Those words come back later
- * as pronunciation reviews. An accent never blocks progress: the result says
- * what we heard and the lesson goes on. The audio is only held in memory for
- * grading and never stored. Every answer calls a paid model, so each is claimed
- * as small AI help (`claimAssist`) first.
- */
 export async function gradeSpokenAnswer({
   audio,
   fields,

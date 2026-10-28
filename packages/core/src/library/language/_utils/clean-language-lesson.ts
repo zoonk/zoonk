@@ -5,7 +5,6 @@ import { normalizePunctuation, segmentWords } from "@zoonk/utils/string";
 
 const BLANK = "[BLANK]";
 
-/** The most right answers a typed answer step accepts. */
 const MAX_ACCEPTED_ANSWERS = 5;
 
 function cleanText(text: string): string {
@@ -36,7 +35,6 @@ function toWordKeys(text: string): Set<string> {
   return new Set(segmentWords(text).map((word) => normalizeDistractorKey(word)));
 }
 
-/** A wrong option must never be one of the words the answer itself is made of. */
 function withoutWordsOf({ distractors, text }: { distractors: string[]; text: string }): string[] {
   const keys = toWordKeys(text);
 
@@ -45,7 +43,6 @@ function withoutWordsOf({ distractors, text }: { distractors: string[]; text: st
   );
 }
 
-/** A word's meaning the learner can learn from: a definition never names its own word. */
 function hasMeaning({
   sameLanguage,
   word,
@@ -97,10 +94,6 @@ function cleanWords({
   }));
 }
 
-/**
- * In the learner's own language a sentence is read as it is: hearing it, the learner builds the
- * sentence itself from its words and its wrong options.
- */
 function readAsItIs(
   sentence: LanguageLessonContent["sentences"][number],
 ): LanguageLessonContent["sentences"][number] {
@@ -141,7 +134,6 @@ function cleanSentences({
     }));
 }
 
-/** A blank that isn't there, or a "wrong" option that is the answer, makes an unanswerable question. */
 function cleanPractice(content: LanguageLessonContent): LanguageLessonContent["practice"] {
   return content.practice
     .map((item) => ({
@@ -177,14 +169,6 @@ function cleanWriting(content: LanguageLessonContent): LanguageLessonContent["wr
   };
 }
 
-/**
- * Code repairs what a model gets subtly wrong before anything is stored:
- * whitespace before punctuation, repeated words or sentences, words the unit
- * already taught, wrong options that are really right, and practice questions
- * without exactly one blank. Items that can't be repaired are dropped. In the
- * learner's own language (`sameLanguage`), a word defined by itself is dropped
- * and sentences and the tip's examples are read as they are.
- */
 export function cleanLanguageLesson({
   content,
   knownWords,

@@ -18,7 +18,6 @@ const COUNT_PASSAGE =
 const SCORING_PASSAGE =
   "14.3 O cálculo das proficiências terá como base a Teoria de Resposta ao Item (TRI).";
 
-/** An ENEM-like reading of `NOTICE`, with one subject citing a document research never read. */
 export function blueprintExtraction(
   overrides: Partial<BlueprintExtraction> = {},
 ): BlueprintExtraction {

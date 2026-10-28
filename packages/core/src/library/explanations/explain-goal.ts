@@ -4,23 +4,15 @@ import { isJsonObject } from "@zoonk/utils/json";
 
 export type ExplainGoal = {
   id: string;
-  /** Asked by a guest: the answer is written, without pictures or a new course to go further. */
   isGuest: boolean;
   language: string;
-  /** The question as the learner asked it. */
   question: string;
   title: string;
   userId: string;
-  /** Its plan already points at a written explanation, so nothing is redone. */
   answered: boolean;
 };
 
-/**
- * What answering an explain goal reads: the question, the language and the learner. Null when the
- * goal no longer exists or isn't an explain question.
- *
- * This is a workflow bridge: the goal id comes from the public boundary that created the goal.
- */
+/** Internal workflow bridge: the public boundary must already have authorized the goal. */
 export async function loadExplainGoal(goalId: string): Promise<ExplainGoal | null> {
   const goal = await prisma.goal.findUnique({
     include: {

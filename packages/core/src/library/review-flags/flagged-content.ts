@@ -7,19 +7,13 @@ import {
   toStatuteShortName,
 } from "../../exams/statutes/statute-articles";
 
-/** Lessons and drill groups one run rewrites at most; the next day's run takes the rest. */
 const MAX_FLAGGED_LESSONS = 10;
 const MAX_DRILL_GROUPS = 10;
 
 type DrillFormat = Extract<ItemFormat, "multipleChoice" | "trueFalse" | "typed">;
 
-/** The board style that writes a drill in the format it had, so a rewrite keeps its format. */
 const STYLE_BY_FORMAT = { multipleChoice: "fgv", trueFalse: "cebraspe", typed: "generic" } as const;
 
-/**
- * Drills on one article of a changed law, in one format, rewritten together from the article's
- * new text. `itemIds` keep their ids, so answers, calibration and screens keep pointing at them.
- */
 export type FlaggedDrillGroup = {
   article: StatuteArticleText;
   citation: string;
@@ -45,7 +39,6 @@ function isDrillFormat(format: ItemFormat): format is DrillFormat {
   return format in STYLE_BY_FORMAT;
 }
 
-/** "Lei nº 8.112, Art. 13" names the article after the law's short name. */
 function readArticleReference(citation: string): string {
   return citation.split(",").at(-1)?.trim() ?? citation;
 }
@@ -70,7 +63,6 @@ function toDrillGroup({
     (candidate) => candidate.reference === reference,
   );
 
-  // An article the new text no longer has can't be drilled; its flags stay open for admin.
   if (!article) {
     return null;
   }
@@ -87,7 +79,6 @@ function toDrillGroup({
   };
 }
 
-/** Flagged drills on the letter of a law, grouped by article and format, read from its new text. */
 async function toDrillGroups(items: readonly FlaggedItem[]): Promise<FlaggedDrillGroup[]> {
   const drills = items.filter(
     (item) => item.source && isStatuteSource({ title: item.source.title, url: item.source.url }),
@@ -108,13 +99,7 @@ async function toDrillGroups(items: readonly FlaggedItem[]): Promise<FlaggedDril
   return [...groups.values()].flatMap((group) => toDrillGroup({ items: group, texts }) ?? []);
 }
 
-/**
- * What the flag sweep rewrites: published lessons with an open flag, and drills on a changed
- * law's articles. Other flagged questions wait in admin. Only the given flags when `flagIds` is
- * set, for an admin's "Rewrite now".
- *
- * This is a workflow bridge: the daily sweep and the admin API route call it.
- */
+/** Internal workflow bridge for the daily sweep and admin API. */
 export async function listFlaggedContent({
   flagIds,
 }: { flagIds?: readonly string[] } = {}): Promise<FlaggedContent> {
@@ -148,7 +133,6 @@ export async function listFlaggedContent({
   };
 }
 
-/** How many flags wait for a rewrite, so the daily sweep starts one only when there's work. */
 export function countOpenReviewFlags(): Promise<number> {
   return prisma.contentReviewFlag.count({ where: { status: "open" } });
 }

@@ -3,26 +3,12 @@ import { getBaseLanguage } from "@zoonk/utils/languages";
 import { findMarkdownTables, findRaggedTableRows } from "@zoonk/utils/markdown-table";
 import { normalizeString } from "@zoonk/utils/string";
 
-/**
- * What a learner can be asked to look at: a picture (a scene, a diagram, a map, an infographic),
- * numbered drawings or charts compared side by side (`panels`), a table, a chart or a timeline. A
- * screen or question whose words point at one ("in the diagram", "look at the photo", "Drawing 2", "the
- * table below", "in the chart") must show it, never describe it in words instead.
- */
 const VISUAL_KINDS = ["chart", "image", "panels", "table", "timeline"] as const;
 
 type VisualKind = (typeof VISUAL_KINDS)[number];
 
 type VisualPatterns = Readonly<Record<VisualKind, readonly RegExp[]>>;
 
-/**
- * Phrases that point the learner at something on the screen, compared without accents or case
- * and with punctuation as spaces. They need a pointing word ("in the", "the … below", "look at"),
- * so a picture that's part of a story ("the mayor's photo on the poster", "your personal image"),
- * a figure of speech or the periodic table never count. Numbered drawings ("Drawing 1"), a
- * second chart ("Chart 2") and "the two drawings" are panels: several drawings compared side
- * by side, which only a picture with numbered panels shows.
- */
 const EN_PATTERNS: VisualPatterns = {
   chart: [
     / (?:in|on|from) the (?:graph|chart|plot|bar chart|line chart|line graph|bar graph) /u,
@@ -123,12 +109,10 @@ function getPatterns(language: string): VisualPatterns {
   return PATTERNS[getBaseLanguage(language)] ?? EN_PATTERNS;
 }
 
-/** Lowercase, without accents, punctuation as spaces, padded so every word has a space around it. */
 function normalizeForPhrases(text: string): string {
   return ` ${normalizeString(text.replaceAll("’", "'")).replaceAll(/[^\p{L}\p{N}]+/gu, " ")} `;
 }
 
-/** The kinds of visual a text points the learner at, in the content's language. */
 function findVisualReferences({
   language,
   text,
@@ -146,19 +130,9 @@ function findVisualReferences({
   return new Set(kinds);
 }
 
-/**
- * Words that name the numbered panels of one picture ("in version 1 … in version 2", "scenes 1 and
- * 2"), in any language: the same word before 1 and then 2.
- */
 const NUMBERED_PANELS =
   /(?<!\p{L})(?<panel>\p{L}+) 1(?!\d)(?:.*(?<!\p{L})\k<panel> 2(?!\d)| \p{L}{1,3} 2(?!\d))/isu;
 
-/**
- * Whether a text points the learner at something drawn: a picture, numbered drawings or versions it
- * compares, a chart or a timeline. A chart the app can't draw (a pie, uneven intervals) can only be
- * a picture, so a screen that points at any of them may carry one; a table is always written in
- * Markdown instead.
- */
 export function pointsAtFigure({ language, text }: { language: string; text: string }): boolean {
   const kinds = findVisualReferences({ language, text });
 
@@ -171,10 +145,6 @@ export function pointsAtFigure({ language, text }: { language: string; text: str
   );
 }
 
-/**
- * What a screen or question shows: its picture, its tables in Markdown, its chart or timeline, and
- * on an explanation, an activity template to explore (a map, a diagram, a model, a timeline).
- */
 export type ShownVisuals = {
   explores?: boolean;
   hasImage: boolean;
@@ -182,12 +152,6 @@ export type ShownVisuals = {
   visual: LessonVisual | null;
 };
 
-/**
- * A picture shows a table, chart or timeline too (one about how a chart is drawn, with uneven
- * intervals or a 3D effect, can only be a picture); data is better as a Markdown table or a
- * visual the app draws, which the writers are told. A template explored on the screen (a map, a
- * diagram, a chart to read, a timeline) is what its words point at too.
- */
 const SHOWS: Readonly<Record<VisualKind, (shown: ShownVisuals) => boolean>> = {
   chart: (shown) => shown.hasImage || shown.explores === true || shown.visual?.kind === "chart",
   image: (shown) => shown.hasImage || shown.explores === true,
@@ -211,22 +175,12 @@ const MISSING: Readonly<Record<VisualKind, string>> = {
     "Its words point at a timeline, but it shows none: give it a `visual` of kind timeline with the dated events, or don't refer to a timeline.",
 };
 
-/**
- * Characters that draw bars, points and slopes: a chart drawn in text instead of shown. Box-drawing
- * lines stay allowed, since a terminal's output (a folder tree, a query result) uses them.
- */
 const DRAWING_CHARACTERS = /[█▇▆▅▄▃▂▁▌▐■●○◆╱╲]/u;
 
-/**
- * Whether a text draws a chart or a diagram with characters (bars of █, points of ●), which reads
- * as noise on a phone and is never accessible: data goes in a Markdown table or a visual, and
- * anything else is a picture.
- */
 function drawsWithCharacters(text: string): boolean {
   return DRAWING_CHARACTERS.test(text);
 }
 
-/** A chart whose series don't have one value per category draws bars and points in the wrong place. */
 function getChartProblems(visual: LessonVisual): string[] {
   if (visual.kind !== "chart") {
     return [];
@@ -255,12 +209,6 @@ function getChartProblems(visual: LessonVisual): string[] {
   ];
 }
 
-/**
- * What keeps a screen or question from showing what its words point at: a picture, a table, a
- * chart or a timeline it refers to but doesn't show, a table whose rows don't match its header,
- * a chart whose data doesn't fit, or a picture and a chart on the same screen. Problems are
- * written for the writer's fix pass. `canShowImage` is false where no picture can be drawn.
- */
 export function getVisualProblems({
   canShowImage = true,
   language,

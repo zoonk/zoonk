@@ -227,7 +227,6 @@ describe(checkItem, () => {
   });
 
   it("rejects Markdown a learner would see as marks and text a writer left unfinished", () => {
-    // ENEM placement, Oct 2026: a quoted speech in italics across lines showed its underscores.
     const quoted = {
       ...multipleChoice,
       context:
@@ -247,7 +246,6 @@ describe(checkItem, () => {
   });
 
   it("rejects options that print the worked-out values deciding the answer", () => {
-    // ENEM placement, Sep 2026: the unit prices were printed next to each pack.
     const leaking: MultipleChoice = {
       context:
         "No mercado, um pacote com 6 maçãs custa R$ 12,00, e outro com 4 maçãs custa R$ 10,00.",
@@ -283,7 +281,6 @@ describe(checkItem, () => {
       "Options show the worked-out values that decide the answer.",
     ]);
 
-    // The same question with the choices only, or asking for the value itself, is fine.
     const [first, second, third] = leaking.options;
 
     const choicesOnly = {
@@ -498,7 +495,6 @@ describe(checkItem, () => {
 
 describe(findOwnEmDashes, () => {
   it("finds em dashes in our own wording, such as an essay rubric, and not in quoted support text", () => {
-    // ENEM essays, Oct 2026: rubric rows named a competency with an em dash before storing took them out.
     const essay = {
       context: "A SRA. LORENA — Concluo minha comunicação.",
       difficulty: "medium" as const,

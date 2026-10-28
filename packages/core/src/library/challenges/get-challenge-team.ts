@@ -12,14 +12,6 @@ type ChallengeTeamOutcome =
   | { status: "ready"; team: ChallengeTeam }
   | { status: "unauthorized" };
 
-/**
- * The colleagues who play the role slots of a lesson's challenge for the signed-in learner (or
- * guest): the team kept with their plan, or names derived from its stable id in the lesson's
- * language. A learner without a plan gets a team picked from
- * their account, the same every time. A lesson that doesn't exist or isn't theirs to see is
- * `notFound`; without a session, colleagues go by role. Private cached, so a prefetched lesson
- * opens with its team. A read or prefetch never persists the deterministic fallback.
- */
 export async function getChallengeTeam({
   lessonId,
 }: {

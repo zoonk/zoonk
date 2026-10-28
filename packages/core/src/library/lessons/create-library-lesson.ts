@@ -18,30 +18,20 @@ import {
 import { assertHomeVisibility } from "../_utils/placement-visibility";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 
-/**
- * What a caller already knows about a new lesson beyond its outline, written with it: the can-do
- * line session tiles show before the spec exists, or the spec itself (then `specStatus` is
- * `completed`, with the run that wrote it).
- */
 export type NewLessonDetails = Partial<
   Pick<LessonUncheckedCreateInput, "canDo" | "spec" | "specRunId" | "specStatus">
 >;
 
 export type CreateLibraryLessonInput = NewLessonDetails & {
-  /** The key `resolveLibraryIdentity` returned with its `generate` outcome. */
   identityKey: string;
   language: string;
   targetLanguage: string | null;
   level: CourseLevel;
   title: string;
-  /** One line on why the lesson matters. */
   description: string;
   estimatedMinutes: number;
-  /** The 1 to 3 skills the lesson teaches, already resolved to Library skills. */
   skillIds: string[];
-  /** The chapter whose outline first needed this lesson; it gives the lesson its URL. */
   homeChapterId: string | null;
-  /** Set for a private course's lesson, which only its owner ever sees. */
   ownerId: string | null;
   provenance: LibraryProvenance;
 };
@@ -119,15 +109,7 @@ async function insertLesson({ input, slug }: { input: CreateLibraryLessonInput; 
   });
 }
 
-/**
- * Creates a lesson outline (title and description, content pending) for a
- * generation workflow, or returns the one a concurrent request created under
- * the same identity. Its spec and steps are written later, under a claim.
- *
- * This is a workflow bridge, not an app authorization boundary: it accepts an
- * owner id only because the public core boundary that started the workflow
- * derived it from the authenticated session.
- */
+/** Internal workflow bridge: derive the owner from the authenticated public boundary. */
 export async function createLibraryLesson(input: CreateLibraryLessonInput): Promise<CreatedLesson> {
   assertIdentityKeyScope({ key: input.identityKey, ownerId: input.ownerId });
   await assertLessonHome(input);
@@ -143,7 +125,6 @@ export async function createLibraryLesson(input: CreateLibraryLessonInput): Prom
   return { created, lesson: row };
 }
 
-/** Gives each new lesson a slug free in their home chapter and among the others, in order. */
 function assignSlugs<T extends { title: string }>({
   lessons,
   taken,
@@ -162,15 +143,7 @@ function assignSlugs<T extends { title: string }>({
   }, []);
 }
 
-/**
- * `createLibraryLesson` for lessons identity resolution just said to generate, all in one home
- * chapter, such as a chapter outline's: the chapter and the slugs taken there are read once, each
- * lesson gets its own free slug, and each is inserted without looking its key up again. A lesson
- * whose key or slug another request took in the meantime goes through `createLibraryLesson`,
- * which returns the row that won or retries with a free slug. Returns the lessons in order.
- *
- * A workflow bridge, like `createLibraryLesson`.
- */
+/** Internal workflow bridge with the same trust requirements as `createLibraryLesson`; results preserve input order. */
 export async function createHomeChapterLessons({
   homeChapterId,
   lessons,

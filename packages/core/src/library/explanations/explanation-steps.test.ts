@@ -25,7 +25,6 @@ describe(toExplanationSteps, () => {
 
     const check = steps[4]?.content as { options: { id: string; isCorrect: boolean }[] };
 
-    // Shuffled so the right answer's position gives nothing away; ids follow the shown order.
     expect(check.options.map((option) => option.id)).toStrictEqual(["a", "b", "c"]);
 
     expect(check.options).toContainEqual({

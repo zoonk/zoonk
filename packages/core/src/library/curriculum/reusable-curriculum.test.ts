@@ -38,7 +38,6 @@ const SHARED: CurriculumScope = {
 
 type GoalAttrs = { details?: Record<string, unknown>; language?: string };
 
-/** A new exam goal on the notice, before its graph, and what its curriculum reads. */
 async function newGoal({
   blueprintId,
   details = {},
@@ -68,10 +67,6 @@ async function newGoal({
   return inputs;
 }
 
-/**
- * An exam goal on the notice whose shared graph was written: two skills in one course, saved as
- * the exam's graph by the run that wrote it (`runId`, `promptVersion`).
- */
 async function builtGoal({
   blueprintId,
   details = {},
@@ -123,7 +118,6 @@ describe(findReusableCurriculum, () => {
   it("plans every later learner from the exam's graph, whatever prompt version wrote it", async () => {
     const blueprint = await examBlueprintFixture({ language: "pt" });
 
-    // Written long ago by instructions that changed since: still the exam's, with no new graph.
     const built = await builtGoal({ blueprintId: blueprint.id, promptVersion: "older" });
     const inputs = await newGoal({ blueprintId: blueprint.id });
 
@@ -144,7 +138,6 @@ describe(findReusableCurriculum, () => {
     const blueprint = await examBlueprintFixture({ language: "pt" });
     const built = await builtGoal({ blueprintId: blueprint.id });
 
-    // The only learner of the exam leaves: their goal and plan go, the exam's graph stays.
     await prisma.user.delete({ where: { id: built.inputs.goal.userId } });
 
     const inputs = await newGoal({ blueprintId: blueprint.id });
@@ -159,10 +152,8 @@ describe(findReusableCurriculum, () => {
     const runId = crypto.randomUUID();
     const first = await builtGoal({ blueprintId: blueprint.id, runId });
 
-    // Another learner's run wrote a graph at the same time: the exam keeps the first one.
     await builtGoal({ blueprintId: blueprint.id });
 
-    // The first run's reading of the notice adds a skill: the exam's graph gains it.
     const added = await skillFixture();
 
     await saveExamSkillGraph({
@@ -193,7 +184,6 @@ describe(findReusableCurriculum, () => {
     const built = await builtGoal({ blueprintId: blueprint.id, details: { level: "advanced" } });
     const inputs = await newGoal({ blueprintId: blueprint.id, details: { level: "none" } });
 
-    // Their level decides where they start, not which graph is written.
     await expect(findReusableCurriculum({ inputs, scope: SHARED })).resolves.toMatchObject({
       courseIdsByKey: { [built.course.id]: built.course.id },
     });
@@ -205,7 +195,6 @@ describe(findReusableCurriculum, () => {
       examBlueprintFixture({ language: "pt" }),
     ]);
 
-    // A graph in a private course is its learner's; a learner in another language gets their own.
     await Promise.all([
       builtGoal({ blueprintId: privateBlueprint.id, visibility: "private" }),
       builtGoal({ blueprintId: blueprint.id }),
@@ -226,7 +215,6 @@ describe(findReusableCurriculum, () => {
   it("never reuses or keeps a graph shaped by a learner's answers or scope", async () => {
     const blueprint = await examBlueprintFixture({ language: "pt" });
 
-    // A graph written from a learner's answers is theirs: the exam keeps none.
     await builtGoal({
       blueprintId: blueprint.id,
       details: { followUps: [{ answer: "Nurse", question: "What do you do?" }] },
@@ -244,7 +232,6 @@ describe(findReusableCurriculum, () => {
 
     await expect(findReusableCurriculum({ inputs: followedUp, scope: SHARED })).resolves.toBeNull();
 
-    // A private course is written for its learner.
     await expect(
       findReusableCurriculum({ inputs, scope: { ...SHARED, ownerId: inputs.goal.userId } }),
     ).resolves.toBeNull();
@@ -253,11 +240,6 @@ describe(findReusableCurriculum, () => {
   });
 });
 
-/**
- * An exam's shared graph across two public courses, opening with its own exam course (`ENEM`),
- * every skill of it the exam course's: one skill in both courses, an outcome skill with notice topics, an option skill set aside, and
- * a skill with no area.
- */
 async function storedExamGraph() {
   const [blueprint, examCourse, mathCourse, functions, english, reading] = await Promise.all([
     examBlueprintFixture({ language: "pt" }),
@@ -324,7 +306,6 @@ async function storedExamGraph() {
   return { blueprint, english, examCourse, functions, graph, reading };
 }
 
-/** A learner who started `course` from the Library, its exam linked, and where it's written. */
 async function courseStart({
   blueprintId,
   course,
@@ -356,7 +337,6 @@ describe("reusing an exam's graph for a learner who started its course", () => {
 
     const reused = await findReusableCurriculum({ inputs, scope });
 
-    // The course page's estimate reads the same graph from the stored one, without the Library.
     expect(reused ? toGoalPlanGraph(reused) : null).toStrictEqual(
       pinPlanGraphToCourse({ course: examCourse, graph: parsePlanGraph(graph) }),
     );
@@ -406,7 +386,6 @@ describe("reusing an exam's graph for a learner who started its course", () => {
   it("plans the course's written outline skills as outlined, through to the plan it creates", async () => {
     const { blueprint, examCourse, functions, reading } = await storedExamGraph();
 
-    // The course's outline already teaches a skill the exam's graph doesn't name.
     const [band] = await courseBandsFixture({ courseId: examCourse.id, levels: ["beginner"] });
     const { inputs, scope } = await courseStart({ blueprintId: blueprint.id, course: examCourse });
 
@@ -456,8 +435,6 @@ describe("reusing an exam's graph for a learner who started its course", () => {
       weight: 2,
     });
 
-    // The exam's graph says `declared` teaches none of the notice's topics, and knows nothing of
-    // `unknown`'s; `noticed` teaches one and isn't written yet.
     const graph = {
       phases: [{ milestone: null, name: "Fundamentos" }],
       skills: [examSkill(declared, []), examSkill(noticed, ["Funções"]), examSkill(unknown)],
@@ -475,7 +452,6 @@ describe("reusing an exam's graph for a learner who started its course", () => {
       },
     });
 
-    // Each chapter is tagged with one of them, and its written lesson teaches a narrower skill.
     await Promise.all(
       [
         { lessonSkill: written, position: 0, tag: declared },
@@ -521,8 +497,6 @@ describe("reusing an exam's graph for a learner who started its course", () => {
     expect(bySkill.get(older.id)).toMatchObject({ outlined: true });
     expect(bySkill.get(older.id)?.topics).toBeUndefined();
 
-    // The course page's estimate plans the pinned graph itself: both read the same skills as
-    // beyond the notice.
     const estimated = pinPlanGraphToCourse({
       chapters: await loadCourseOutline({ courseId: course.id, userId: null }),
       course,
@@ -599,7 +573,6 @@ describe("reusing an exam's graph for a learner who started its course", () => {
   });
 });
 
-/** A public chapter placed in a course, in `area`, whose one lesson teaches each of `skills`. */
 async function placedChapter({
   area = null,
   courseId,
@@ -620,17 +593,11 @@ async function placedChapter({
   ]);
 }
 
-/** A skill of an exam's stored graph, in `area` and the courses given. */
 const examGraphSkill = (
   skill: { id: string; name: string },
   { area, courseIds, phase = 0 }: { area: string; courseIds?: string[]; phase?: number },
 ) => ({ area, courseIds, lessons: 2, name: skill.name, phase, skillId: skill.id, weight: 2 });
 
-/**
- * An exam whose stored graph spans its whole-exam course and a subject course with a question
- * bank of its own: a skill of each, a skill of no course, and an option skill of the whole exam.
- * The subject's skill is the graph's only one in its second phase.
- */
 async function examOfTwoCourses() {
   const [blueprint, wholeCourse, subjectCourse, own, uncoursed, option, subject] =
     await Promise.all([
@@ -675,7 +642,6 @@ async function examOfTwoCourses() {
         runId: crypto.randomUUID(),
       },
     }),
-    // The subject course is the exam's through its own questions (`loadCourseExam`).
     itemFixture({ examBlueprintId: blueprint.id, language: "pt", skillId: subject.id }),
     placedChapter({
       area: "Matemática",
@@ -696,7 +662,6 @@ describe("the part of an exam's graph a started course plans", () => {
     const reused = await findReusableCurriculum({ inputs, scope });
     const planned = reused ? toGoalPlanGraph(reused) : null;
 
-    // The subject course's skill, and its phase with it, are that course's.
     expect(planned?.skills.map((skill) => skill.skillId)).toStrictEqual([
       own.id,
       option.id,
@@ -705,7 +670,6 @@ describe("the part of an exam's graph a started course plans", () => {
 
     expect(planned?.phases.map((phase) => phase.name)).toStrictEqual(["Fundamentos"]);
 
-    // An outline that teaches those three is the whole course: its start plans from it.
     const examGraph = parsePlanGraph(graph);
 
     const outline = (chapters: Awaited<ReturnType<typeof loadCourseOutline>>) =>
@@ -733,7 +697,6 @@ describe("the part of an exam's graph a started course plans", () => {
     const { blueprint, subject, subjectCourse, uncoursed } = await examOfTwoCourses();
     const extra = await skillFixture();
 
-    // A written chapter in an area of the whole exam's, not this course's.
     await placedChapter({
       area: "Linguagens",
       courseId: subjectCourse.id,
@@ -768,8 +731,6 @@ describe("the part of an exam's graph a started course plans", () => {
       skillFixture(),
     ]);
 
-    // As pt ENEM's graph: every skill a subject course's, opening with one of them, and the exam
-    // course named by none, linked to the exam by its own questions.
     const graph = {
       optionSkills: [
         {
@@ -820,7 +781,6 @@ describe("the part of an exam's graph a started course plans", () => {
 
     expect(planned?.skills.every((skill) => skill.courseIds?.[0] === enem.id)).toBe(true);
 
-    // Its outline is the whole course once it teaches the whole graph, options included.
     const examGraph = parsePlanGraph(graph);
 
     const outline = async () =>
@@ -848,7 +808,6 @@ describe("the part of an exam's graph a started course plans", () => {
       skillFixture(),
     ]);
 
-    // Not an exam course: being the graph's first course doesn't make it the whole exam.
     await prisma.examSkillGraph.create({
       data: {
         examBlueprintId: blueprint.id,
@@ -920,12 +879,10 @@ describe("saving an exam's graph again", () => {
     const save = (graph: typeof built.graph, run = provenance) =>
       saveExamSkillGraph({ graph, inputs: built.inputs, provenance: run, scope: SHARED });
 
-    // A goal reusing the exam's graph saves it again as it is: nothing a plan reads changes.
     await save(built.graph);
 
     await expect(readPlan()).resolves.toMatchObject({ inputVersion: plan.inputVersion });
 
-    // Another run's graph never replaces the exam's.
     await save(
       { ...built.graph, skills: built.graph.skills.slice(0, 1) },
       { ...provenance, runId: crypto.randomUUID() },
@@ -933,7 +890,6 @@ describe("saving an exam's graph again", () => {
 
     await expect(readPlan()).resolves.toMatchObject({ inputVersion: plan.inputVersion });
 
-    // The run that wrote it adding a skill changes what the exam's plans read.
     const added = await skillFixture();
 
     await save({

@@ -47,7 +47,6 @@ describe(lockPlanInputWrite, () => {
 
     await writePlanInputs((tx) =>
       lockPlanInputWrite({
-        // The first attempt's recheck finds a plan that started depending on the source meanwhile.
         loadPlanIds: async () => {
           loads += 1;
           return loads === 1 ? [first.id] : [first.id, joined.id];

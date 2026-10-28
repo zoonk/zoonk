@@ -1,16 +1,9 @@
 import { type Node, parse } from "acorn";
 
-/**
- * Probe names the program runner defines: `__zoonkStep(line, read)` records a line that ran with
- * the watched values `read()` returns, `__zoonkTest(line, value, read)` does the same for a
- * condition and passes its value through, and `__zoonkRead(get)` reads one value, or null when
- * the variable doesn't exist at that point.
- */
 const STEP = "__zoonkStep";
 const TEST = "__zoonkTest";
 const READ = "__zoonkRead";
 
-/** Statements whose line has run once they finish. */
 const AFTER = new Set([
   "ClassDeclaration",
   "ExpressionStatement",
@@ -18,7 +11,6 @@ const AFTER = new Set([
   "VariableDeclaration",
 ]);
 
-/** Statements that leave their block, so their line counts as run just before they do. */
 const BEFORE = new Set([
   "BreakStatement",
   "ContinueStatement",
@@ -26,7 +18,6 @@ const BEFORE = new Set([
   "ThrowStatement",
 ]);
 
-/** Where a node keeps a list of statements. */
 const STATEMENT_LISTS: Readonly<Record<string, string>> = {
   BlockStatement: "body",
   Program: "body",
@@ -34,7 +25,6 @@ const STATEMENT_LISTS: Readonly<Record<string, string>> = {
   SwitchCase: "consequent",
 };
 
-/** Statements that run another statement, which may be a single line without braces. */
 const BODIES: Readonly<Record<string, readonly string[]>> = {
   DoWhileStatement: ["body"],
   ForInStatement: ["body"],
@@ -45,7 +35,6 @@ const BODIES: Readonly<Record<string, readonly string[]>> = {
   WithStatement: ["body"],
 };
 
-/** Conditions and loop updates: their line runs each time they're evaluated. */
 const CONDITIONS: Readonly<Record<string, readonly string[]>> = {
   DoWhileStatement: ["test"],
   ForStatement: ["test", "update"],
@@ -92,7 +81,6 @@ function step(rewriter: Rewriter, line: number): string {
   return `${STEP}(${line}, ${rewriter.reader});`;
 }
 
-/** A loop whose body starts each pass without a condition to record it, like `for...of`. */
 function startsEachPass(parent: Node): boolean {
   return (
     parent.type === "ForInStatement" ||
@@ -111,7 +99,6 @@ function probed(rewriter: Rewriter, node: Node): string {
     : rewrite(rewriter, node);
 }
 
-/** A body gets braces when it has none, so its probes stay inside the branch or loop. */
 function body(rewriter: Rewriter, parent: Node, node: Node): string {
   const start = startsEachPass(parent) ? step(rewriter, lineOf(parent)) : "";
 
@@ -141,7 +128,6 @@ function transform(rewriter: Rewriter, parent: Node, child: Child): string {
     : rewrite(rewriter, child.node);
 }
 
-/** The node's source with its children rewritten; a node shared by two keys is written once. */
 function rewrite(rewriter: Rewriter, node: Node): string {
   const initial: { cursor: number; parts: string[] } = { cursor: node.start, parts: [] };
 
@@ -163,7 +149,6 @@ function rewrite(rewriter: Rewriter, node: Node): string {
   return [...parts, rewriter.code.slice(cursor, node.end)].join("");
 }
 
-/** Acorn's syntax errors carry the line they point to. */
 function syntaxError(error: SyntaxError): InstrumentedProgram {
   const location: unknown = Reflect.get(error, "loc");
 
@@ -179,12 +164,6 @@ function syntaxError(error: SyntaxError): InstrumentedProgram {
   };
 }
 
-/**
- * Adds probes to a JavaScript program so a run records each line it finishes with the watched
- * values at that moment, the way a code tracer shows it: a statement after it runs, a condition
- * each time it's checked, a `for...of` pass as it starts, and `return`, `break` and `throw` just
- * before they leave. Probes never add lines, so line numbers stay the program's own.
- */
 export function instrumentJavaScript({
   code,
   watch,

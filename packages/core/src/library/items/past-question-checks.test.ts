@@ -2,7 +2,6 @@ import { type PastQuestion } from "@zoonk/ai/tasks/v2/items/past-questions";
 import { describe, expect, it } from "vitest";
 import { checkPastQuestion } from "./past-question-checks";
 
-/** The paper's text as a PDF extractor writes it: broken lines, a hyphenated word and curly quotes. */
 const PAPER = `QUESTÃO 136
 Uma loja anunciou: “Tudo com 20% de desconto”. Depois, sobre o preço já com descon-
 to, deu mais 10% para pagamento à vista.

@@ -22,8 +22,7 @@ import { hashDocument } from "./parse-document";
 import { registerSourceUpload } from "./register-upload";
 import type * as ClaimUsage from "../../entitlements/claim-usage";
 
-// Which of two writers waiting on the learner's lock takes it first is Postgres's to decide, so a
-// test pauses an upload right after its usage claim commits to queue a writer behind it.
+// PostgreSQL does not guarantee which waiting writer takes the lock first; pause after the usage claim to queue the next writer.
 vi.mock("../../entitlements/claim-usage", async (importOriginal) => {
   const actual = await importOriginal<typeof ClaimUsage>();
   return { ...actual, claimUsage: vi.fn(actual.claimUsage) };
@@ -86,7 +85,6 @@ describe("source writes", () => {
           sourceIds: [source.id],
         }),
       ).resolves.toMatchObject({ status: "created" });
-      // Usage, goal creation and selection already have separate markers; only a new source link adds one.
 
       await expect(
         prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
@@ -171,8 +169,6 @@ describe("source writes", () => {
       const upload = registerSourceUpload({ kind: "text", language: "en", text });
       await claimed.promise;
 
-      // Another marked writer takes the lock once usage is committed, so the source write has to
-      // wait on its own marker.
       const holder = holdLearnerLock({ userId: user.id });
 
       try {

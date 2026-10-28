@@ -158,7 +158,6 @@ describe("guest linking during private curriculum persistence", () => {
     const release = Promise.withResolvers<null>();
     const ready = Promise.withResolvers<number>();
 
-    /** Hold the same home lock and user FK that the curriculum writer uses until linking waits. */
     const writing = prisma.$transaction(
       async (transaction) => {
         await lockCourseHome({ homeId: guest.guestId, transaction });
@@ -213,7 +212,6 @@ describe("guest linking during private curriculum persistence", () => {
     const ready = Promise.withResolvers<number>();
     const identityKey = scopeIdentityKey({ key: randomUUID(), ownerId: guest.guestId });
 
-    /** Delay a later merger after all private-content ownership updates have run. */
     const held = prisma.$transaction(
       async (transaction) => {
         await transaction.$queryRaw`
@@ -312,10 +310,9 @@ describe("guest linking during private curriculum persistence", () => {
 
     const writing = prisma.$transaction(
       async (transaction) => {
-        /** Make the linker detect this deliberate cycle first, so this case exercises its retry. */
         await transaction.$executeRaw`SET LOCAL deadlock_timeout = '5s'`;
 
-        /** Settlements now lock the owner first; deliberately retain the old order to test retry. */
+        /** Deliberately invert the settlement lock order to exercise the linker's retry. */
         await transaction.$queryRaw`
           SELECT id FROM user_progress WHERE user_id = ${guest.guestId}::uuid FOR UPDATE
         `;
@@ -356,7 +353,6 @@ describe("guest linking during private curriculum persistence", () => {
     ]);
 
     try {
-      /** The link holds the guest row and waits on progress before this writer inserts its day. */
       await waitForBlocked({ pid });
     } finally {
       write.resolve(null);

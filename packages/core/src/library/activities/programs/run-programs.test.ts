@@ -2,10 +2,7 @@ import { describe, expect, it } from "vitest";
 import { runPrograms } from "./run-programs";
 import { sqlSetupStatements } from "./sql-setup";
 
-/**
- * Pyodide loads in a couple of seconds, and an endless program runs out its 3-second limit: past
- * Vitest's default 5 second limit on a busy machine.
- */
+/** Pyodide startup plus an intentional infinite loop can exceed Vitest's default timeout. */
 const RUNNER_TEST_TIMEOUT_MS = 30_000;
 
 const countries = sqlSetupStatements([

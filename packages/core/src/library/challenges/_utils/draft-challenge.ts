@@ -4,7 +4,6 @@ import { type Lesson } from "@zoonk/db";
 import { checkWrittenChallenge } from "../challenge-case-content";
 import { type ChallengeLessonSpec } from "../challenge-lesson-spec";
 
-/** What the case writer reads about the chapter a challenge closes. */
 export type ChallengeCaseInputs = Omit<ChallengeCaseParams, "analytics" | "model" | "problems">;
 
 type ChallengeLesson = Pick<Lesson, "language" | "level" | "title"> & {
@@ -15,7 +14,6 @@ type ChallengeLesson = Pick<Lesson, "language" | "level" | "title"> & {
   } | null;
 };
 
-/** The case writer's inputs for a chapter's challenge lesson and its stored spec. */
 export function toChallengeCaseInputs({
   lesson,
   spec,
@@ -43,11 +41,6 @@ type DraftedChallenge = {
   summary: string[];
 };
 
-/**
- * Drafts a case and checks it against the step contract (every id it points at, 2 to 4 decisions
- * on every path, no loops, a decision that matters at every step); one more draft gets the
- * problems when the first fails. `content` is null when both fail.
- */
 export async function draftChallengeCase({
   analytics,
   inputs,

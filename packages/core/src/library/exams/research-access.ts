@@ -9,15 +9,8 @@ const MAX_RESEARCH_SOURCES = 5;
 export type ResearchAccess =
   | { status: "unauthorized" }
   | { status: "notFound" }
-  | {
-      goalId: string;
-      /** The goal's last research run, which asking again follows instead of paying again. */
-      researchRunId: string | null;
-      sourceIds: string[];
-      status: "ready";
-    };
+  | { goalId: string; researchRunId: string | null; sourceIds: string[]; status: "ready" };
 
-/** Sources research may read for this learner: shared ones and their own uploads. */
 async function findReadableSourceIds({
   sourceIds,
   userId,
@@ -39,11 +32,6 @@ async function findReadableSourceIds({
   return readable.length === ids.length ? ids : null;
 }
 
-/**
- * Checks that the learner may start research for a goal: it's their goal, and
- * any uploads they point at (the notice they were asked for) are theirs or
- * shared. Research itself runs as a workflow the delivery app starts.
- */
 export async function getResearchAccess({
   goalId,
   sourceIds = [],

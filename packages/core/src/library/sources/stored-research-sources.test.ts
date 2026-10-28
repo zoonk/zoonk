@@ -6,7 +6,6 @@ import { findStoredResearchSources } from "./stored-research-sources";
 
 const DAY_MS = 86_400_000;
 
-/** A law's text as research stores it: long enough for a model to read the law from. */
 const LAW_TEXT = [
   "Art. 1º Esta Lei dispõe sobre o tratamento de dados pessoais, inclusive nos meios digitais,",
   "por pessoa natural ou por pessoa jurídica de direito público ou privado, com o objetivo de",
@@ -14,10 +13,8 @@ const LAW_TEXT = [
   "personalidade da pessoa natural.",
 ].join(" ");
 
-/** What a page that builds its text with JavaScript stores. */
 const SCRIPT_PAGE_TEXT = "É necessário habilitar o javascript para ver esta página corretamente.";
 
-/** The reuse decision is a model call, the one external boundary: it accepts only `ids`. */
 function acceptOnly(ids: string[]) {
   return vi.mocked(decideLibraryIdentity).mockImplementation(({ candidates }) => {
     const verdicts = candidates.map((candidate) => ({
@@ -56,7 +53,6 @@ function request(word: string, topic: "regulation" | "software" | "syllabus" = "
     language: "pt",
     name: `LGPD ${word}`,
     publisher: null,
-    // Short phrases like the plan's: a term's words past the fifth aren't searched.
     searchTerms: [`Proteção de Dados ${word}`],
     topic,
   };
@@ -83,8 +79,6 @@ describe(findStoredResearchSources, () => {
     expect(found.toSorted()).toStrictEqual([lawText.id, guide.id].toSorted());
     expect(found).not.toContain(summary.id);
 
-    // Every stored document is judged in one decision, each on its own question, against the one
-    // research would fetch.
     expect(decision).toHaveBeenCalledOnce();
     expect(decision.mock.calls[0]?.[0].candidates).toHaveLength(3);
 
@@ -149,8 +143,6 @@ describe(findStoredResearchSources, () => {
     await expect(findStoredResearchSources(request(word, "syllabus"))).resolves.toStrictEqual([]);
   });
 
-  // How a broad term's matches are capped and ranked is `findRankedIds`', tested through
-  // `findSameExam`; this checks the decision gets the sources in that rank order.
   it("hands the decision the sources it found, best first", async () => {
     const [broad, specific] = [uniqueWord(), uniqueWord()];
     const partial = await storedSource({ title: `Lei ${broad}`, topic: "regulation", word: broad });

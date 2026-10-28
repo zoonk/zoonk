@@ -171,7 +171,6 @@ describe(createStepImage, () => {
 
     expect(outcome).toMatchObject({ status: "generated" });
 
-    // The model check follows in the background (`checkImageAsset`).
     expect(checkLessonImage).not.toHaveBeenCalled();
 
     const linked = await prisma.step.findUniqueOrThrow({
@@ -308,7 +307,6 @@ describe(createStepImage, () => {
       visibility: "private",
     });
 
-    // The file goes to the owner's folder in the private store, which account deletion empties.
     expect(put).toHaveBeenCalledWith(
       `images/${owner.id}/step.webp`,
       expect.any(Buffer),
@@ -326,7 +324,6 @@ describe(createStepImage, () => {
       expect.objectContaining({ language: "pt", textAllowed: false }),
     );
 
-    // A shared picture goes to the public store, which the CDN serves to everyone.
     expect(put).toHaveBeenLastCalledWith(
       "library/images/step.webp",
       expect.any(Buffer),
@@ -355,8 +352,6 @@ describe(createStepImage, () => {
     const sceneSpy = mockImageScene(testScene({ focalObject: `our ${randomUUID()} notes` }));
     const drawSpy = mockDrawnImages([await drawTestImage()]);
 
-    // The picture couldn't be kept, so it isn't planned or drawn: no AI is spent and the screen
-    // shows its description, once, instead of failing at the upload on every retry.
     await expect(createStepImage({ stepId: step.id })).resolves.toStrictEqual({ status: "failed" });
 
     await expect(
@@ -431,7 +426,6 @@ describe("pictures questions are asked about", () => {
 
     expect(outcome).toMatchObject({ status: "generated" });
 
-    // The question is the picture's context; the option's name would give the answer away.
     expect(sceneSpy).toHaveBeenCalledWith(
       expect.objectContaining({ screenText: pictureCheckContent.question, textAllowed: false }),
     );
@@ -462,7 +456,6 @@ describe("pictures questions are asked about", () => {
       lessonId: lesson.id,
     });
 
-    // Whatever words the planner suggests, the numbers are the picture's only labels.
     const sceneSpy = mockImageScene(
       testScene({
         focalObject: `a ${randomUUID()} flower cut in half`,
@@ -497,7 +490,6 @@ describe("pictures questions are asked about", () => {
       ],
     });
 
-    // Numbers read the same in every language, so one numbered picture serves them all.
     expect(linked.mediaAsset?.language).toBeNull();
   });
 });

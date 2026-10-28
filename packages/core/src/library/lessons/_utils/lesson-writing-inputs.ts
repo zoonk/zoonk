@@ -16,35 +16,22 @@ import { loadLessonExams, loadLessonShortAnswers } from "./lesson-exams";
 import { loadLessonDocuments } from "./lesson-sources";
 import { parseStoredLessonSpec } from "./stored-lesson-spec";
 
-/** What the writer, the checks and the save step need about the lesson being written. */
 export type LessonWritingInputs = {
   activityTemplates: WriterActivityTemplate[];
   categories: string[];
-  /** The chapter's other lessons, so this one doesn't repeat their examples, numbers or questions. */
   chapterLessons: ChapterLesson[];
   chapterTitle: string;
   courseTitle: string;
-  /** The exams the lesson's learners prepare for: it's written for their candidates (see `loadLessonExams`). */
   exams: NonNullable<LessonWritingContext["exams"]>;
-  /** Earlier drafts the quality gate held back, oldest first: the next draft is told why. */
   heldBackDrafts: HeldBackDraft[];
   language: string;
   level: CourseLevel;
-  /** The Library skill of each spec skill, in spec order, or null when none matches. */
   skillIds: (string | null)[];
   spec: LessonSpec;
-  /** The pages of the learner's own material a private lesson is written from; empty otherwise. */
   material: MaterialPage[];
-  /** The learner whose private course the lesson is in; null for a shared Library lesson. */
   ownerId: string | null;
-  /** A lesson that sets up a tool on the learner's device ("Set up Python on Windows"). */
   setup: boolean;
-  /**
-   * Passages of the public documents the lesson's facts come from (a law, an exam notice), for
-   * lessons of goals built from sources; empty for lessons built from material and all others.
-   */
   sources: MaterialPage[];
-  /** The exams of its learners ask short written answers (see `loadLessonShortAnswers`). */
   shortAnswers: boolean;
 };
 
@@ -53,11 +40,6 @@ type LessonWritingState =
   | { status: "missingSpec" }
   | { inputs: LessonWritingInputs; status: "ready" };
 
-/**
- * The spec may rename, merge or drop outline skills; lesson links have no spec position.
- * Match names where possible. Publishing repairs an unmatched question's skill from the lesson's
- * current links, after considering every skill the screen references (`toScreensToSave`).
- */
 function matchSpecSkills({
   lessonSkills,
   specSkills,
@@ -82,7 +64,6 @@ async function findLessonToWrite(lessonId: string) {
 
 type LessonToWrite = NonNullable<Awaited<ReturnType<typeof findLessonToWrite>>>;
 
-/** What the lesson teaches, to find the pages of the learner's material it's written from. */
 function toMaterialQuery(spec: LessonSpec): string {
   return [
     spec.title,
@@ -126,7 +107,6 @@ async function toWritingState(lesson: LessonToWrite): Promise<LessonWritingState
       chapterLessons,
       chapterTitle: lesson.homeChapter?.title ?? lesson.title,
       courseTitle: course?.title ?? lesson.homeChapter?.title ?? lesson.title,
-      // A lesson built from the learner's own material follows that material, not an exam's style.
       exams: material.length > 0 ? [] : exams,
       heldBackDrafts: parseHeldBackDrafts(lesson.heldBackDrafts),
       language: lesson.language,
@@ -146,11 +126,6 @@ async function toWritingState(lesson: LessonToWrite): Promise<LessonWritingState
   };
 }
 
-/**
- * Loads what writing a lesson's content needs, after confirming this workflow
- * run holds the lesson's content claim. A lesson without a valid stored spec
- * can't be written yet.
- */
 export async function loadLessonWritingInputs({
   lessonId,
   workflowRunId,
@@ -167,7 +142,6 @@ export async function loadLessonWritingInputs({
   return toWritingState(lesson);
 }
 
-/** The lesson plan and course context the writer and the quality gate read. */
 export function toWritingContext(inputs: LessonWritingInputs): LessonWritingContext {
   return {
     activityTemplates: inputs.activityTemplates,
@@ -185,11 +159,7 @@ export function toWritingContext(inputs: LessonWritingInputs): LessonWritingCont
   };
 }
 
-/**
- * What the writer read for a lesson, whatever its claim: for the check of a lesson already
- * published, which reviews it against the same plan and fixes it into a new version. Null when the
- * lesson is gone or has no readable spec.
- */
+/** Does not require a generation claim; use for reviewing already-published content. */
 export async function loadPublishedLessonInputs(
   lessonId: string,
 ): Promise<LessonWritingInputs | null> {
@@ -199,7 +169,6 @@ export async function loadPublishedLessonInputs(
   return state?.status === "ready" ? state.inputs : null;
 }
 
-/** The writing context of a lesson already published (see `loadPublishedLessonInputs`). */
 export async function loadLessonWritingContext(
   lessonId: string,
 ): Promise<LessonWritingContext | null> {

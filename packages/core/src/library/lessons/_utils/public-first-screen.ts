@@ -3,12 +3,6 @@ import { safeParseStepContent } from "../../steps/contract/step-contract";
 
 type PublicOption = { id: string; text: string };
 
-/**
- * The part of a lesson's first screen that a public page may show. Choice
- * screens keep only the question and the option texts: which option is right,
- * the reason behind each one and the hook's reveal stay in the player, so the
- * lesson can't be read from the page's HTML.
- */
 export type PublicFirstScreen =
   | {
       context: string | null;
@@ -23,11 +17,6 @@ export type PublicFirstScreen =
 const MARKDOWN_EMPHASIS = /(?<marker>\*\*|\*|`)(?<content>\S(?:.*?\S)?)\k<marker>/gu;
 const INLINE_MATH = /\$(?<math>[^$]+)\$/gu;
 
-/**
- * Public pages render rich text as plain prose, without the player's math and
- * Markdown renderer, so emphasis markers and math delimiters are removed and
- * their content kept.
- */
 function toPlainText(richText: string): string {
   return richText
     .replaceAll(MARKDOWN_EMPHASIS, "$<content>")
@@ -75,11 +64,6 @@ function toCheckScreen(content: unknown): PublicFirstScreen {
   };
 }
 
-/**
- * Maps a lesson's first screen to what the public lesson page shows. A guess
- * or a question becomes answerable options (any answer opens the player), a
- * text hook is shown as is, and every other screen only gets a start button.
- */
 export function toPublicFirstScreen(step: { content: unknown; kind: StepKind }): PublicFirstScreen {
   if (step.kind === "hook") {
     return toHookScreen(step.content);

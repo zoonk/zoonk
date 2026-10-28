@@ -75,11 +75,9 @@ describe(loadGoalCurriculumInputs, () => {
       hasPlanGraph: false,
       isGuest: false,
       references: [{ text: "Syllabus text", title: "Official syllabus" }],
-      // Answered on paper: its courses teach its skills in chapters without tools.
       usesTools: false,
     });
 
-    // Each subject with its group, weight and every topic, and how often the board asks each topic.
     expect(inputs?.graphPrompt.examBlueprint).toStrictEqual({
       name: "ENEM",
       notes: [],
@@ -106,7 +104,6 @@ describe(loadGoalCurriculumInputs, () => {
       topicFrequency: [{ level: "high", subject: "Mathematics", topic: "Percentages" }],
     });
 
-    // The coverage check reads it as the skill graph does, under the exam's name.
     expect(inputs?.blueprintReference).toStrictEqual({
       text: [
         "EXAM: ENEM",
@@ -175,7 +172,6 @@ describe(loadGoalCurriculumInputs, () => {
 
     expect(inputs.map((item) => item?.awaitingAnswers)).toStrictEqual([true, false, false, false]);
 
-    // Onboarding's bookkeeping stays out of what the model reads; the level is its own line.
     expect(inputs[1]?.graphPrompt).toMatchObject({ context: undefined, ownLevel: "none" });
   });
 
@@ -199,8 +195,6 @@ describe(loadGoalCurriculumInputs, () => {
     });
   });
 
-  // A learner's role ("teacher") once named a shared skill "Relate teaching experience to UX
-  // work", which other learners' plans could reuse.
   it("gives a shared curriculum the goal's general form and fixed choices, never the learner's words", async () => {
     const user = await userFixture();
 
@@ -242,16 +236,12 @@ describe(loadGoalCurriculumInputs, () => {
     expect(general.goal).toBe("Trabalhar como UX designer");
     expect(JSON.stringify(shared)).not.toMatch(/Joana|Pelotas|Professora|Maria|Santa Rita/u);
 
-    // The learner's own private course still reads everything they told onboarding.
     expect(owned.goal).toBe(goal.prompt);
     expect(owned.context).toMatch(/Professora/u);
 
-    // A learn goal's graph starts where the learner is.
     expect(shared.ownLevel).toBe("none");
   });
 
-  // The first learner's "750 points for medicine" once reached the shared ENEM graph every later
-  // learner plans from, through the goal's general form and its details.
   it("writes an exam's shared graph from the exam alone, never its first learner's words, target or level", async () => {
     const [user, blueprint] = await Promise.all([
       userFixture(),
@@ -279,7 +269,6 @@ describe(loadGoalCurriculumInputs, () => {
         title: "Passar no ENEM com 750 em Medicina",
         userId: user.id,
       }),
-      // Before research reads the notice, the exam is the one onboarding understood.
       goalFixture({
         details,
         kind: "exam",
@@ -298,7 +287,6 @@ describe(loadGoalCurriculumInputs, () => {
       throw new Error("Expected the goals' inputs");
     }
 
-    // The general form a model wrote from the learner's words is no exam's identity.
     const scope = {
       generalGoal: "Preparação para o ENEM com foco em 750 pontos para Medicina",
       ownerId: null,
@@ -315,7 +303,6 @@ describe(loadGoalCurriculumInputs, () => {
 
     expect(linkedInputs.examIdentity).toBe("ENEM");
 
-    // A private course is the learner's own and still reads what they told onboarding.
     const owned = toScopedGraphPrompt({
       inputs: linkedInputs,
       scope: { generalGoal: null, ownerId: user.id },
@@ -354,7 +341,6 @@ describe(getReferenceSyllabusNeed, () => {
       getReferenceSyllabusNeed({ ...learn, details: { answered: ["purpose"], onboardingId } }),
     ).toBe("notNeeded");
 
-    // Plan links and API clients never answer onboarding, so nothing is waited for.
     expect(getReferenceSyllabusNeed({ ...learn, details: {} })).toBe("notNeeded");
 
     expect(

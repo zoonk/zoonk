@@ -5,7 +5,6 @@ import { type ParsedDocument, hashDocument, parseDocument } from "./parse-docume
 import { MAX_PASTED_TEXT_LENGTH, isSourceUploadContentType } from "./source-contract";
 import { readUploadedBlob } from "./upload-blob";
 
-/** What the learner gave: a file in their Blob folder, a link or pasted text. */
 export type UploadRead =
   | { kind: "file"; pathname: string }
   | { kind: "link"; url: string }
@@ -16,17 +15,13 @@ export type UploadContent = {
   contentType: string;
   parsed: ParsedDocument;
   hash: string;
-  /** The page a pasted link points at, after redirects. */
   url?: string;
 };
 
-/** What a pasted link may point at: a web page, a PDF or plain text. */
 const LINK_CONTENT_TYPES = new Set(["application/pdf", "text/html", "text/markdown", "text/plain"]);
 
-/** The id an app puts before a file's name, so two files with the same name never share a path. */
 const UPLOAD_ID_PREFIX = /^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}-/iu;
 
-/** A page's address without the scheme, readable: "en.wikipedia.org/wiki/Glycolysis". */
 function getTitleFromUrl(value: string): string {
   const url = new URL(value);
   const path = decodeURIComponent(url.pathname).replace(/\/+$/u, "");
@@ -34,7 +29,6 @@ function getTitleFromUrl(value: string): string {
   return `${url.hostname.replace(/^www\./u, "")}${path}`;
 }
 
-/** The file's name, the link's address, or nothing for pasted text. */
 export function getDefaultTitle(input: UploadRead): string {
   switch (input.kind) {
     case "file":
@@ -48,7 +42,6 @@ export function getDefaultTitle(input: UploadRead): string {
   }
 }
 
-/** The file name the learner chose, without the upload's id and the extension. */
 function getTitleFromPathname(pathname: string): string {
   const fileName = pathname.split("/").at(-1) ?? pathname;
 
@@ -80,10 +73,6 @@ function readPastedText(text: string): ReadContent {
   };
 }
 
-/**
- * A link the learner pasted: an article or a public PDF, fetched once and read as text. Addresses
- * that aren't public web pages, and pages without text, can't be read.
- */
 async function readLinkedPage(value: string): Promise<ReadContent> {
   const url = toSourceUrl(value);
 
@@ -134,7 +123,6 @@ async function readUploadedFile(pathname: string): Promise<ReadContent> {
     return { status: "unsupported" };
   }
 
-  // A damaged or password-protected file is the learner's to fix, not a server error.
   const { data: parsed } = await safeAsync(() =>
     parseDocument({ bytes: blob.bytes, contentType: blob.contentType }),
   );
@@ -154,7 +142,6 @@ async function readUploadedFile(pathname: string): Promise<ReadContent> {
   };
 }
 
-/** Reads what the learner gave: their uploaded file, a pasted link or pasted text. */
 export function readUpload(input: UploadRead): Promise<ReadContent> | ReadContent {
   switch (input.kind) {
     case "file":

@@ -24,7 +24,6 @@ import {
 } from "./quick-lesson-identity";
 import { ensureQuickLessons, findQuickLessons } from "./quick-lessons";
 
-/** A skill of an ENEM biology chapter, taught there by one regular lesson. */
 async function taughtSkill() {
   const course = await courseFixture({ language: "pt", title: "Biologia" });
 
@@ -98,10 +97,8 @@ describe(ensureQuickLessons, () => {
 
     expect(isQuickLessonIdentityKey(lesson.identityKey)).toBe(true);
     expect(lesson.skills.map((entry) => entry.skillId)).toStrictEqual([skill.id]);
-    // It's never placed in a chapter: chapter pages and outlines never list it.
     expect(lesson.chapters).toStrictEqual([]);
 
-    // Another skill's, asked later, is its own lesson.
     const other = await skillFixture({ language: "pt", name: "Explicar a ação de uma enzima" });
     const both = await ensureQuickLessons({ skillIds: [skill.id, other.id] });
 
@@ -184,7 +181,6 @@ describe(findQuickLessons, () => {
 
     const made = await ensureQuickLessons({ skillIds: [skill.id, setAside.id] });
 
-    // A quick lesson whose drafts were all held back can't be taught: plans don't place it.
     await prisma.lesson.update({
       data: { setAsideAt: new Date() },
       where: { id: made.get(setAside.id)?.lessonId },

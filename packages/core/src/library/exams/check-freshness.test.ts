@@ -15,9 +15,7 @@ import { checkFreshness } from "./check-freshness";
 const NOW = new Date("2026-09-26T12:00:00.000Z");
 const DAY_MS = 86_400_000;
 
-// The board's site is an external boundary: each test serves its notice from memory.
 function servePage(text: string) {
-  // Each request gets its own response, since a body is read once.
   vi.mocked(fetch).mockImplementation(
     async () => new PageResponse(`<p>${text}</p>`, { headers: { "content-type": "text/html" } }),
   );
@@ -34,7 +32,6 @@ async function examWithLearner({
 }: {
   examDate: Date;
   registrationEndsAt?: Date | null;
-  /** The learner's own date: after a passed exam, the next edition they prepare for. */
   targetDate?: Date | null;
 }) {
   servePage("A prova terá 50 questões.");

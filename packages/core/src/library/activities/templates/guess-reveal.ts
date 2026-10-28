@@ -6,10 +6,6 @@ import { evaluateOrNull, guessScaleIssues, isClose, issue } from "./_utils/templ
 
 const MAX_WORKINGS = 5;
 
-/**
- * Where the real value comes from: worked out by code from an expression (each working shown), or
- * cited data, whose source the activity's `data` names.
- */
 const truthSchema = z.discriminatedUnion("kind", [
   z
     .object({
@@ -26,12 +22,10 @@ const truthSchema = z.discriminatedUnion("kind", [
 
 const guessRevealFields = z
   .object({
-    /** A concrete comparison that makes the real value feel its size. */
     comparison: explanationSchema.optional(),
     max: z.number(),
     min: z.number(),
     scale: z.enum(["linear", "log"]),
-    /** Why the real value is what it is, shown once the guess is in. */
     takeaway: explanationSchema,
     truth: truthSchema,
     unit: unitSchema,
@@ -81,11 +75,7 @@ export const guessRevealTemplate = defineActivityTemplate({
         ]
       : [],
   id: "guessReveal",
-  /**
-   * A guess within a tenth of the real value counts, whatever the check asks: on a log scale of
-   * nine powers of ten the slider's positions sit about 11% apart, so a tighter tolerance can leave
-   * every position wrong.
-   */
+  /** Log-scale slider positions can be about 11% apart, so a tighter tolerance may reject every reachable value. */
   minTolerance: { kind: "relative", value: 0.1 },
   needsData: (fields) => fields.truth.kind === "cited",
   value: (fields) => trueValue(fields),

@@ -11,10 +11,6 @@ import {
 } from "./search-documents";
 import { type IndexedDocument, toIndexedMatchesSql, toTermMatchesSql } from "./text-search-sql";
 
-/**
- * The plan of one term's search, as identity searches run it, with sequential scans ruled out:
- * only a matching index can serve it.
- */
 async function explainTermSearch({
   document,
   filters = sql`TRUE`,

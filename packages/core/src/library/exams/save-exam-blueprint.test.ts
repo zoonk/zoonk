@@ -20,7 +20,6 @@ import {
   saveExamBlueprint,
 } from "./save-exam-blueprint";
 
-/** The stored exams the search hands the identity decision for a request, best first. */
 async function searchedCandidates(request: Partial<ExamRequest> & Pick<ExamRequest, "name">) {
   vi.mocked(decideExamIdentity).mockClear();
   vi.mocked(decideExamIdentity).mockResolvedValue(null);
@@ -187,7 +186,6 @@ describe(saveExamBlueprint, () => {
       sourceId: source.id,
     });
 
-    // A lesson written from the first notice, before the correction replaced it.
     const citing = await libraryLessonFixture({ contentStatus: "completed" });
 
     await libraryStepFixture({
@@ -290,7 +288,6 @@ describe(saveExamBlueprint, () => {
       sourceId: source.id,
     });
 
-    // The same document, read again: a reading may word it differently, but the exam didn't change.
     const reread = content({ questions: 90, sourceHash: source.contentHash, sourceId: source.id });
 
     await expect(
@@ -367,7 +364,6 @@ describe(findNoticeReading, () => {
     const examIdentity = identity();
     const read = content({ questions: 80, sourceHash: source.contentHash, sourceId: source.id });
 
-    // Read by reading instructions older than today's, and its check found nothing left out.
     await saveExamBlueprint({
       content: { ...read, edition: { ...read.edition, check: { checkedAt, problems: [] } } },
       identity: examIdentity,
@@ -379,12 +375,10 @@ describe(findNoticeReading, () => {
       findNoticeReading({ identity: examIdentity, sourceId: source.id }),
     ).resolves.toStrictEqual({ problems: [], read: true });
 
-    // The board published a newer notice for the same exam.
     await expect(
       findNoticeReading({ identity: examIdentity, sourceId: next.id }),
     ).resolves.toStrictEqual({ problems: [], read: false });
 
-    // The same address now serves a corrected document.
     await prisma.source.update({
       data: { contentHash: `corrected-${randomUUID()}` },
       where: { id: source.id },
@@ -461,7 +455,6 @@ describe(findSameExam, () => {
       expect.objectContaining({ id: blueprint.id }),
     );
 
-    // The evaluation model's yes is what links it, compared in the match's country.
     vi.mocked(decideExamIdentity).mockResolvedValue({ id: blueprint.id, probability: 0.9 });
 
     const found = await findSameExam({

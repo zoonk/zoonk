@@ -5,7 +5,6 @@ import { defineActivityTemplate } from "../define-activity-template";
 import { isClose, issue } from "./_utils/template-helpers";
 
 const MAX_VALUES = 6;
-/** Past this many cells, filling every one by hand is busywork: ask about the grid instead. */
 const MAX_FILLED_CELLS = 9;
 
 const alleleSchema = z.string().regex(/^[A-Za-z]$/u);
@@ -18,24 +17,14 @@ const numberSideSchema = z
   .object({ label: labelSchema, values: z.array(z.number()).min(1).max(MAX_VALUES) })
   .strict();
 
-const numberGrid = {
-  columns: numberSideSchema,
-  rows: numberSideSchema,
-  /** What the grid shows, like "Two dice". */
-  title: labelSchema,
-};
+const numberGrid = { columns: numberSideSchema, rows: numberSideSchema, title: labelSchema };
 
-/**
- * How each cell combines its row and its column: two parents' alleles (a Punnett square, with
- * what each genotype shows), or two numbers added or multiplied (two dice, a times table).
- */
 const combinationGridFields = z.discriminatedUnion("rule", [
   z
     .object({
       columns: alleleSideSchema,
       rows: alleleSideSchema,
       rule: z.literal("alleles"),
-      /** The trait the gene sets, like "Flower color". */
       title: labelSchema,
       traits: z.object({ dominant: labelSchema, recessive: labelSchema }).strict(),
     })
@@ -46,12 +35,10 @@ const combinationGridFields = z.discriminatedUnion("rule", [
 
 type CombinationGridFields = z.output<typeof combinationGridFields>;
 
-/** Writes a genotype the standard way, dominant allele first: "pP" becomes "Pp". */
 export function genotype(first: string, second: string): string {
   return [first, second].toSorted().join("");
 }
 
-/** A genotype shows the dominant trait when it has at least one uppercase allele. */
 export function isDominantPhenotype(cell: string): boolean {
   return cell !== cell.toLowerCase();
 }
@@ -66,7 +53,6 @@ function combine(fields: CombinationGridFields, row: string | number, column: st
   );
 }
 
-/** Every cell, row by row: each row value combined with each column value by the grid's rule. */
 function gridCells(fields: CombinationGridFields): string[] {
   const columns: readonly (string | number)[] = fields.columns.values;
 
@@ -75,10 +61,6 @@ function gridCells(fields: CombinationGridFields): string[] {
   );
 }
 
-/**
- * Whether a cell counts toward a check's `output`. Alleles: "dominant", "recessive" or a genotype
- * like "Pp". Numbers: the cell's value, like "7".
- */
 export function cellMatches(cell: string, output: string): boolean {
   if (output === "dominant") {
     return isDominantPhenotype(cell);
@@ -96,7 +78,6 @@ export function cellMatches(cell: string, output: string): boolean {
   return Number.isFinite(number) && isClose(Number(cell), number);
 }
 
-/** What a check counts when it names nothing: the recessive trait on a Punnett square. */
 function defaultOutput(fields: CombinationGridFields): string | null {
   return fields.rule === "alleles" ? "recessive" : null;
 }
@@ -110,7 +91,6 @@ function shareOf(fields: CombinationGridFields, output: string | null): number |
   return cells.filter((cell) => cellMatches(cell, output)).length / cells.length;
 }
 
-/** Whether the learner fills the grid by hand; a bigger one is shown filled, to read. */
 export function isFillable(fields: CombinationGridFields): boolean {
   return gridCells(fields).length <= MAX_FILLED_CELLS;
 }

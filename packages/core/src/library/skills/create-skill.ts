@@ -14,30 +14,18 @@ import { writePlanInputs } from "../_utils/plan-input-write";
 import { lockSkillPlanInputs } from "./_utils/skill-input-write";
 
 export type CreateSkillInput = {
-  /** The key `resolveLibraryIdentity` returned with its `generate` outcome. */
   identityKey: string;
   language: string;
   targetLanguage: string | null;
   name: string;
-  /** The idea in one sentence: the front of the skill's study card. */
   description: string;
-  /** A worked example: the back of the study card. */
   example: string | null;
   level: CourseLevel | null;
-  /** The owner of a private course's skill: the skill is private to them and never reused. */
   ownerId: string | null;
   provenance: LibraryProvenance;
 };
 
-/**
- * Creates a skill for a curriculum workflow, or returns the one a concurrent
- * request created under the same identity, so two curricula that need the same
- * ability share one skill and its lessons.
- *
- * This is a workflow bridge, not an app authorization boundary: it accepts an
- * owner id only because the public core boundary that started the workflow
- * derived it from the authenticated session.
- */
+/** Internal workflow bridge: derive the owner from the authenticated public boundary. */
 export async function createSkill(
   input: CreateSkillInput,
 ): Promise<{ created: boolean; skill: Skill }> {
@@ -68,11 +56,6 @@ export async function createSkill(
   return { created, skill: row };
 }
 
-/**
- * Records the skills learned before `skillId`, as the caller decides them among `among`: an
- * edge to one of those it doesn't list is removed, edges to any other skill are kept, and a
- * skill never becomes its own prerequisite.
- */
 export async function setSkillPrerequisites({
   among,
   prerequisiteIds,

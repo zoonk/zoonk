@@ -3,12 +3,10 @@ import { type LanguageLessonParams } from "@zoonk/ai/tasks/v2/language/language-
 import { prisma } from "@zoonk/db";
 import { CEFR_BANDS } from "../../../language/levels/skill-level-rules";
 
-/** Enough earlier words to reuse in sentences without crowding the prompt. */
 const MAX_KNOWN_WORDS = 80;
 
 type LanguageLessonInputs = {
   learnerLanguage: string;
-  /** The Library skill the lesson's screens practice, so answers update its memory. */
   skillId: string | null;
   targetLanguage: string;
   writerInput: Omit<LanguageLessonParams, "analytics" | "model" | "reasoning" | "useFallback">;
@@ -19,10 +17,6 @@ type LanguageLessonState =
   | { status: "notLanguageLesson" }
   | { inputs: LanguageLessonInputs; status: "ready" };
 
-/**
- * Words the learner met in the lessons before this one in its unit, so the
- * writer reuses them instead of teaching them twice.
- */
 async function findKnownWords({
   chapterId,
   lessonId,
@@ -38,7 +32,6 @@ async function findKnownWords({
     where: { chapterId_lessonId: { chapterId, lessonId } },
   });
 
-  /** A lesson not placed in its unit yet comes after every lesson already there. */
   const before = placement ? { position: { lt: placement.position } } : {};
 
   const words = await prisma.lessonWord.findMany({
@@ -54,12 +47,7 @@ async function findKnownWords({
   return [...new Set(words.map((row) => row.word.word))];
 }
 
-/**
- * Loads what writing a language lesson needs, after confirming this workflow
- * run holds the lesson's content claim: the language pair, the unit's
- * situation and can-dos, the lesson's own can-do, the CEFR band and the words
- * taught before it in the unit.
- */
+/** Internal: the calling workflow must hold the lesson's content claim. */
 export async function loadLanguageLessonInputs({
   lessonId,
   workflowRunId,

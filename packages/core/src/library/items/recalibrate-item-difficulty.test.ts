@@ -7,15 +7,10 @@ import { recalibrateItemDifficulties } from "./recalibrate-item-difficulty";
 
 const HOUR_MS = 3_600_000;
 
-/**
- * A day far from other tests' answers: the sweep only reads items answered in the day before
- * `now`, so it sees this test's items alone.
- */
 function isolatedNow(): Date {
   return new Date(Date.UTC(2090, 0, 1) + Math.floor(Math.random() * 1_000_000) * HOUR_MS * 24);
 }
 
-/** Each learner's answer to the item at `answeredAt`, as attempts store it. */
 function attemptRows({
   answeredAt,
   itemId,
@@ -40,7 +35,6 @@ function attemptRows({
   }));
 }
 
-/** One new learner per result, each answering the item once, an hour before `now`. */
 async function answerByLearners({
   itemId,
   now,
@@ -116,9 +110,7 @@ describe(recalibrateItemDifficulties, () => {
       prisma.item.findUniqueOrThrow({ where: { id: hardForLearners.id } }),
     ]);
 
-    // Generated as hard, but almost everyone got it right: it reads as easy now.
     expect(easy.difficulty).toBeCloseTo(-1, 1);
-    // Generated as medium, but almost nobody typed it right, and typing leaves no lucky guess.
     expect(hard.difficulty).toBeCloseTo(1.09, 1);
   });
 
@@ -133,7 +125,6 @@ describe(recalibrateItemDifficulties, () => {
       results: repeat({ correct: 2, wrong: 18 }),
     });
 
-    // Every learner got it right on later reviews: none of that counts.
     await prisma.attempt.createMany({
       data: attemptRows({
         answeredAt: new Date(now.getTime() - HOUR_MS / 2),
@@ -168,7 +159,6 @@ describe(recalibrateItemDifficulties, () => {
     const result = await recalibrateItemDifficulties({ now });
     const updated = await prisma.item.findUniqueOrThrow({ where: { id: item.id } });
 
-    // Ten live learners alone are too few; with the ten who left, nobody got it right.
     expect(result.recalibrated).toBe(1);
     expect(updated.difficulty).toBeGreaterThan(1);
   });

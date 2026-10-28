@@ -16,7 +16,6 @@ import {
 import { MAX_MATCHES_PER_TERM } from "./_utils/text-search-sql";
 import { resolveLibraryIdentity } from "./resolve-library-identity";
 
-/** A request whose own title and skill match nothing, so only the mocked terms find lessons. */
 async function lessonRequest() {
   const skill = await skillFixture();
 
@@ -131,8 +130,6 @@ describe("lesson identity search", () => {
     expect(candidateIds).toHaveLength(5);
   });
 
-  // A whole core test run fills its database with fixture lessons and skills sharing words ("Test
-  // skill ..."), and the search for a lesson whose skill shares them took seconds per call.
   it("searches a Library holding thousands of lessons and skills that share the request's words", async () => {
     const word = uniqueWord();
     const many = 3000;

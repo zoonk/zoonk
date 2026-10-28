@@ -8,22 +8,11 @@ import {
 } from "../../sources/material-pages";
 import { type SourceTopic, sourceStructureSchema } from "../../sources/source-contract";
 
-/** Of its goals' public documents, a lesson reads the most recently checked ones. */
 const MAX_LESSON_SOURCES = 6;
-/** Excerpts, not whole notices: enough for the facts of one short lesson. */
 const LESSON_SOURCE_CHARACTERS = 6000;
-/** A passage shares at least this many of the lesson's words to count as being about it. */
 const MIN_SHARED_TERMS = 3;
 
-/**
- * Documents whose facts a lesson must get right: laws and official guidance, and product
- * documentation. An exam's notice isn't one: it says what one exam asks, its items and its board,
- * and a shared lesson is written once for every learner whose plan has it, whatever their exam
- * (a Portuguese lesson for a Câmara notice was served to a Polícia Federal learner quoting the
- * Câmara notice's subitems). Uploads (no topic) are notices a learner shared, for the same reason.
- * Anything else research stores, such as a university syllabus, guides what a curriculum covers
- * but states no facts.
- */
+/** Exam notices describe one exam's syllabus; using them as factual sources would leak that context into shared lessons. */
 const FACT_TOPICS: ReadonlySet<SourceTopic | null> = new Set(["regulation", "software"]);
 
 type LessonSourceRow = Pick<Source, "extractedText" | "id" | "mimeType" | "structure" | "title">;
@@ -37,14 +26,6 @@ function statesFacts(source: LessonSourceRow): boolean {
   return parsed.success && FACT_TOPICS.has(parsed.data.topic);
 }
 
-/**
- * The passages of public documents a lesson's facts come from, for lessons of goals built from
- * sources: what research found for a goal that plans the lesson (a law, a product's docs), or
- * what the lesson's own screens cite, which stays with the lesson after those goals' learners
- * leave; never an exam's notice (see `FACT_TOPICS`). Only public sources, so a learner's private
- * upload never reaches a shared lesson, and only passages about the lesson (`query`: its title,
- * description and skills), so a lesson the documents don't cover reads none.
- */
 async function loadLessonSourcePages({
   chapterId,
   courseId,
@@ -82,14 +63,7 @@ async function loadLessonSourcePages({
   });
 }
 
-/**
- * What a lesson is planned and written from, besides its outline: a private lesson built from the
- * learner's material follows those pages alone; any other lesson reads the passages of public
- * sources its facts come from, when its goals have them. `query` is what the lesson teaches (its
- * title, description and skills), to pick the pages about it.
- *
- * This is a workflow bridge: the lesson comes from the workflow planning or writing it.
- */
+/** Internal workflow bridge: the lesson must come from the workflow planning or writing it. */
 export async function loadLessonDocuments(input: {
   chapterId: string | null;
   courseId: string | null;

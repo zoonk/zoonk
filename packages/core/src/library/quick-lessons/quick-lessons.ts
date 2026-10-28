@@ -3,10 +3,8 @@ import { type CourseLevel, type LibraryVisibility, prisma } from "@zoonk/db";
 import { createLibraryLesson } from "../lessons/create-library-lesson";
 import { QUICK_LESSON_MINUTES, getQuickLessonIdentityKey } from "./quick-lesson-identity";
 
-/** A skill's quick lesson, as a plan places it: the lesson, its title and its minutes. */
 export type QuickLessonRef = { estimatedMinutes: number; lessonId: string; title: string };
 
-/** The quick lesson's title per content language; `{skill}` is the skill's name. */
 const QUICK_LESSON_TITLES: Readonly<Record<string, string>> = {
   de: "Kurzlektion: {skill}",
   en: "Quick lesson: {skill}",
@@ -44,10 +42,6 @@ async function loadSkills(skillIds: readonly string[]) {
 
 type QuickLessonSkill = Awaited<ReturnType<typeof loadSkills>>[number];
 
-/**
- * The first chapter teaching the skill with the lesson's own visibility and owner, which gives the
- * lesson its URL and its subject (course and chapter titles) when it's planned and written.
- */
 function pickHomeChapter({
   chapters,
   ownerId,
@@ -69,15 +63,10 @@ function getQuickLessonTitle({ language, name }: Pick<QuickLessonSkill, "languag
   return template.replace("{skill}", name);
 }
 
-/** A private skill's quick lesson is its owner's; a shared skill's is shared. */
 function getQuickLessonOwner(skill: Pick<QuickLessonSkill, "ownerId" | "visibility">) {
   return skill.visibility === "private" ? skill.ownerId : null;
 }
 
-/**
- * A quick lesson as a plan places it. One set aside after its last held-back draft can't be
- * taught, so plans don't place it (null), as they leave out any lesson set aside.
- */
 function toQuickLessonRef(lesson: {
   estimatedMinutes: number;
   id: string;
@@ -103,7 +92,6 @@ async function ensureQuickLesson(skill: QuickLessonSkill): Promise<QuickLessonRe
     language: skill.language,
     level: skill.level ?? home?.level ?? "beginner",
     ownerId,
-    // Nothing is written yet: the lesson pipeline writes it when a learner first needs it.
     provenance: {
       generatedAt: new Date(),
       model: "pending",
@@ -122,18 +110,7 @@ function toRefMap(entries: readonly (readonly [string, QuickLessonRef | null])[]
   return new Map(entries.flatMap(([skillId, ref]) => (ref ? [[skillId, ref] as const] : [])));
 }
 
-/**
- * Each skill's quick lesson ("Quick lesson"): one short lesson that sums up the skill's core ideas
- * with one worked example, for a learner who takes a short version of a base instead of its
- * lessons. It's shared Library content, one per skill and language (a private skill's stays its
- * owner's), created here as an outline without any AI and reused after that; the lesson pipeline
- * plans and writes it on demand like any lesson, at its quick variant (`isQuickLessonIdentityKey`).
- * It teaches its skill but is never placed in a chapter or planned as one of the skill's lessons:
- * plans place it only where a learner chose it. Skills that no longer exist, and quick lessons
- * set aside after their last held-back draft, are left out.
- *
- * Internal: callers pass the skills of a plan their public boundary loaded.
- */
+/** Internal: authorize the plan's skills first; use `findQuickLessons` where creating rows is forbidden. */
 export async function ensureQuickLessons({
   skillIds,
 }: {
@@ -148,12 +125,7 @@ export async function ensureQuickLessons({
   return toRefMap(entries);
 }
 
-/**
- * The quick lessons that already exist for these skills (see `ensureQuickLessons`), creating
- * none: for building a plan or previewing a change, where nothing may be written.
- *
- * Internal: callers pass the skills of a plan their public boundary loaded.
- */
+/** Internal: authorize the plan's skills first; creates no rows, unlike `ensureQuickLessons`. */
 export async function findQuickLessons({
   skillIds,
 }: {

@@ -16,17 +16,7 @@ type StepExampleLineResult =
   | { status: "unauthorized" }
   | { status: "notFound" }
   | RefusedUsage
-  | {
-      /**
-       * Whether asking for a line (`requestStepExampleLine`) can write one: the screen has a slot,
-       * the learner shares facts, and no line was written from them yet. A screen whose line was
-       * written as none, or a learner who shares nothing, has nothing to ask for. Asking can still
-       * be refused by the learner's help allowance.
-       */
-      canRequest: boolean;
-      line: string | null;
-      status: "ready";
-    };
+  | { canRequest: boolean; line: string | null; status: "ready" };
 
 type LessonLines =
   | { status: "unauthorized" }
@@ -38,22 +28,13 @@ type LessonLinesInput = {
   language: string;
   lessonId: string;
   userId: string;
-  /** The version of the lesson the asking screen belongs to. */
   version: number;
 };
 
-/** The learner's latest lines from other lessons the model sees, so new lines tell new moments. */
 const EARLIER_LINE_LIMIT = 8;
 
-/**
- * Lessons whose lines are being written on this server, by learner, lesson and what they shared,
- * so a screen asked for meanwhile (a quick tap ahead, a remount) waits for the same call instead of
- * paying again. Other servers rely on the (learner, screen) unique key: the lines stored first win,
- * so a lesson never mixes lines written apart.
- */
 const writing = new Map<string, Promise<LessonLines>>();
 
-/** The personal example slot an explanation's writer left, or undefined. */
 function getSlot(content: unknown) {
   const parsed = safeParseStepContent("explanation", content);
 
@@ -62,7 +43,6 @@ function getSlot(content: unknown) {
     : undefined;
 }
 
-/** An explanation the learner can see, with whether its writer left a slot for a personal example. */
 async function findExplanation(stepId: string) {
   const step = await prisma.step.findUnique({
     include: { lesson: { select: { language: true, ownerId: true, visibility: true } } },
@@ -81,11 +61,6 @@ async function findExplanation(stepId: string) {
   };
 }
 
-/**
- * The lesson's explanations with a slot, in lesson order: every screen whose line is written
- * together. They're the asking screen's version's, so a learner finishing a version a check
- * replaced gets lines for the screens they see.
- */
 async function loadSlotScreens({ lessonId, version }: { lessonId: string; version: number }) {
   const steps = await prisma.step.findMany({
     orderBy: { position: "asc" },
@@ -99,7 +74,6 @@ async function loadSlotScreens({ lessonId, version }: { lessonId: string; versio
   });
 }
 
-/** The learner's stored lines for these screens that were written from what they share now. */
 async function loadCurrentLines({
   contextKey,
   stepIds,
@@ -114,7 +88,6 @@ async function loadCurrentLines({
   });
 }
 
-/** The learner's latest lines from other lessons, newest first, so new lines tell new moments. */
 async function loadEarlierLines({
   lessonId,
   userId,
@@ -132,12 +105,6 @@ async function loadEarlierLines({
   return rows.flatMap((row) => row.text ?? []);
 }
 
-/**
- * Writes the lines of every slot in the lesson that has none from what the learner shares now, in
- * one model call, so each screen gets its own moment (or none): the model sees the screens
- * together, the lines this lesson already shows and the learner's latest ones. Lines written from
- * facts they no longer share are replaced, and lines another server stored first are kept.
- */
 async function writeLessonLines({
   context,
   language,
@@ -216,19 +183,12 @@ function writeLessonLinesOnce(input: LessonLinesInput): Promise<LessonLines> {
   return started;
 }
 
-/**
- * Reads only saved lines matching the learner's current facts and goal, and whether asking could
- * write a missing one. Never starts AI work.
- */
+/** Read-only: use `requestStepExampleLine` from a learner-action POST to generate missing lines. */
 export function getStepExampleLine({ stepId }: { stepId: string }): Promise<StepExampleLineResult> {
   return resolveStepExampleLine({ create: false, stepId });
 }
 
-/**
- * Requests a personal example. Missing lines for the lesson are written together and claimed as
- * one small AI help. Call only through a POST that follows a learner action (the web player sends
- * it in the background after the learner's first action in a lesson), never as a page opens.
- */
+/** Call only from a learner-action POST, never while opening a page. */
 export function requestStepExampleLine({
   stepId,
 }: {

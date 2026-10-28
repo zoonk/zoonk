@@ -23,7 +23,6 @@ type Extraction = BlueprintExtraction;
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/u;
 const CLOCK_TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/u;
 
-/** Items of a list whose own claim was kept, with that claim's first citation. */
 function keepItems<T>({ items, kept, prefix }: { items: T[]; kept: KeptFacts; prefix: string }) {
   return items.flatMap((item, index) => {
     const id = `${prefix}.${index}`;
@@ -36,23 +35,19 @@ function isValidDate(value: string): boolean {
   return ISO_DATE_PATTERN.test(value) && !Number.isNaN(Date.parse(value));
 }
 
-/** A start time the check kept is stored only when it reads as a clock time. */
 function toStartTime(value: string | null): string | null {
   return value && CLOCK_TIME_PATTERN.test(value) ? value : null;
 }
 
-/** The notice's clock, only when it names a real IANA zone. */
 function toTimeZone(value: string | null): string | null {
   return value && isValidTimeZone(value) ? value : null;
 }
 
-/** A label shorter than the subject's name, or none: the name serves when it's short already. */
 function toShortName({ name, shortName }: { name: string; shortName?: string | null }) {
   const short = shortName?.trim();
   return short && short.length < name.trim().length ? short : null;
 }
 
-/** A subject the check kept, with what its documents state of its syllabus, as stored. */
 function toSubject({
   documents,
   found,
@@ -84,11 +79,6 @@ function toSubject({
   };
 }
 
-/**
- * The groups a check confirmed for at least one subject. A group's heading sits above its first
- * subject, so the passages of the subjects after it rarely show it; the reading's own order puts
- * them under it.
- */
 function findKeptGroups({ extraction, kept }: { extraction: Extraction; kept: KeptFacts }) {
   return new Set(
     extraction.subjects.flatMap((subject, index) =>
@@ -97,11 +87,6 @@ function findKeptGroups({ extraction, kept }: { extraction: Extraction; kept: Ke
   );
 }
 
-/**
- * Subjects with only the choices that are choices: a choice the check kept for a single option
- * (one option is no choice) and a part of a subject the reading doesn't have are repaired away, so
- * that subject is studied and counted like any other.
- */
 function keepRealChoices(subjects: ExamStructure["subjects"]): ExamStructure["subjects"] {
   const choices = new Set(listChoiceGroups(subjects).map((choice) => choice.name));
   const names = new Set(subjects.map((subject) => subject.name));
@@ -113,10 +98,6 @@ function keepRealChoices(subjects: ExamStructure["subjects"]): ExamStructure["su
   }));
 }
 
-/**
- * The read formats with the share of the objective questions each takes, worked out from the
- * counts the check kept: a format the check dropped, or a count it dropped, leaves every share out.
- */
 function withFormatShares({ extraction, kept }: { extraction: Extraction; kept: KeptFacts }) {
   const shares = getFormatShares(
     extraction.formats.map((format, index) => ({
@@ -131,12 +112,6 @@ function withFormatShares({ extraction, kept }: { extraction: Extraction; kept: 
   return extraction.formats.map((format, index) => ({ ...format, share: shares[index] }));
 }
 
-/**
- * The exam's objective questions as the counts the check kept for its formats add them up, when
- * every objective format has one for the whole exam: "70 questões de múltipla escolha" is a
- * format's count and the exam's total at once, and a check may reject "70 questions in total" for
- * an exam that also has an essay while it keeps the format's count from the same line.
- */
 function countFormatQuestions({ extraction, kept }: { extraction: Extraction; kept: KeptFacts }) {
   const counts = extraction.formats.flatMap((format, index) => {
     if (!isObjectiveFormat(format.kind)) {
@@ -154,7 +129,6 @@ function countFormatQuestions({ extraction, kept }: { extraction: Extraction; ke
     return null;
   }
 
-  // A format's line often states its count too, so the same passage can cite both.
   const citations = counts.flatMap((count) => count?.citations ?? []);
 
   return {
@@ -208,11 +182,6 @@ function toStructure({
   };
 }
 
-/**
- * Builds the blueprint from the claims both checks kept. A dropped claim leaves a gap, never a
- * guess: a subject without a kept question count has none, and the caller asks the learner for
- * the notice when too little is left.
- */
 export function toBlueprintContent({
   documents,
   extraction,
@@ -284,11 +253,6 @@ export function toBlueprintContent({
   };
 }
 
-/**
- * What only an exam's own documents state: how its questions look or score, its days, its rules,
- * or how much each subject counts. A curriculum (the BNCC, a school syllabus) lists subjects and
- * topics too, but none of these.
- */
 function describesExam({ edition, structure }: BlueprintContent): boolean {
   return (
     structure.formats.length > 0 ||
@@ -300,16 +264,6 @@ function describesExam({ edition, structure }: BlueprintContent): boolean {
   );
 }
 
-/**
- * Enough to plan from: what the exam covers, or how and when it's taken. Anything less means the
- * documents weren't the notice, and the learner is asked to upload it. A shared blueprint, which
- * anyone naming the exam matches, also has to read as an exam (`describesExam`): a teacher's test
- * named after a school subject ("Biology test") never becomes a public notice built from a
- * curriculum. It also has to cover its objective test when it states one (`isObjectiveTestUnread`):
- * a news page about the notice gives the questions and the essay but no subject, and an exam page
- * listing the essay alone tells learners less than their plan. A learner's own material only needs
- * what it covers.
- */
 export function isUsableBlueprint({
   content,
   shared,
@@ -325,11 +279,6 @@ export function isUsableBlueprint({
   return plans && (!shared || (describesExam(content) && !isObjectiveTestUnread(content)));
 }
 
-/**
- * The organizer's own terms about reusing its questions, when a document states
- * them and both checks kept that fact. Boards whose terms were checked by hand
- * keep their stored policy.
- */
 export function toReusePolicy({
   extraction,
   facts,

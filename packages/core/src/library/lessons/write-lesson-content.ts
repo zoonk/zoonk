@@ -16,18 +16,11 @@ import { pickDraftWriter } from "./_utils/draft-writer";
 import { loadLessonWritingInputs, toWritingContext } from "./_utils/lesson-writing-inputs";
 import { saveLessonContent } from "./_utils/save-lesson-content";
 
-/**
- * What the background check of a version just published needs (`checkPublishedLesson`): the lesson
- * as written, which the reviewer reads and its fix pass rewrites, and what to do.
- */
 export type LessonCheckPlan = {
-  /** The lesson cites the documents it was written from: citations follow publishing. */
   cite: boolean;
   lesson: WrittenLesson;
-  /** The reasoning check reads it (see `getReasoningCheckReason`). */
   review: boolean;
   version: number;
-  /** The model that actually wrote it, so the reviewer comes from another family. */
   writerModel: string;
 };
 
@@ -37,31 +30,9 @@ type WriteLessonContentResult =
   | { status: "heldBack"; problems: LessonGateProblem[] }
   | { check: LessonCheckPlan; fixed: boolean; status: "published"; stepCount: number };
 
-/**
- * A private lesson serves one learner, so it gets no model check (only reusable content does, the
- * owner's rule): the free code checks decide, and a second cheap fix pass gets another try at what
- * they still flag, since a private lesson gets no fresh draft (`holdBackLessonDraft` sets it aside).
- */
 const PRIVATE_FIX_PASSES = 2;
 
-/**
- * Writes a lesson's content from its stored spec, for the workflow run that holds the lesson's
- * content claim, and publishes it as soon as the code checks pass: a learner waiting on it never
- * waits on a model check. The writer drafts every screen and the code checks read it (contract,
- * calculations, code in activities, wording, repetition); when they find something, a fix pass
- * repairs it and they run again (two passes for a private lesson). A lesson that passes is
- * published with its summary card and math items, each screen carrying the provenance of the run
- * that wrote it; one that still fails is held back: no steps are written, the claim ends as failed
- * and the draft is recorded, so the next draft is told what held it back (`pickDraftWriter` picks
- * its writer), or, for a private lesson, it's set aside.
- *
- * The model checks of a reusable (shared) lesson follow publishing, in the background (the
- * returned `check`): the cross-family reasoning check on advanced, exam, high-stakes and sourced
- * lessons and a sample of the rest. A problem it finds is fixed in a new version
- * (`checkPublishedLesson`). Every lesson written from documents gets its citations there too.
- *
- * This is an internal workflow bridge: Library content is shared and no learner's data is written.
- */
+/** Internal workflow bridge: the caller must hold the lesson's content claim and dispatch returned background checks. */
 export async function writeLessonContent({
   analytics,
   forExam = false,
@@ -72,20 +43,10 @@ export async function writeLessonContent({
   workflowRunId,
 }: {
   analytics?: LessonAnalytics;
-  /** The lesson is being made for an exam goal, so the reasoning check always runs. */
   forExam?: boolean;
-  /** A rewrite of a lesson that failed a later check: a shared lesson's reasoning check always runs. */
   forceReview?: boolean;
   lessonId: string;
-  /**
-   * How likely the lesson is to be read again (`loadLessonReuse`), which picks its reviewer: the
-   * strongest when unset.
-   */
   reuse?: CallReuse;
-  /**
-   * `flex` when the lesson is written well before a learner reaches it (a later study day): the
-   * writer and fix pass answer at about half the price.
-   */
   serviceTier?: ServiceTier;
   workflowRunId: string;
 }): Promise<WriteLessonContentResult> {
@@ -113,7 +74,6 @@ export async function writeLessonContent({
   const cite = getLessonDocuments(inputs).length > 0;
   const reusable = inputs.ownerId === null;
 
-  // A shared lesson built from public sources is always reviewed: it must match them.
   const review =
     reusable &&
     (forceReview ||

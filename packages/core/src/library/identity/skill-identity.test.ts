@@ -126,8 +126,6 @@ describe("skill identity search", () => {
     vi.resetAllMocks();
   });
 
-  // How a broad term's matches are capped and ranked is `findRankedIds`', tested through
-  // `findSameExam`; this checks the decision gets the skills in that rank order.
   it("hands the decision the skills it found, best first", async () => {
     const [broad, specific] = [uniqueWord(), uniqueWord()];
     const partial = await skillFixture({ name: `Read ${broad} charts` });

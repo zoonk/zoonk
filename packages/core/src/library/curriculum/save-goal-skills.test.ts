@@ -21,8 +21,6 @@ describe(linkGoalSkillPrerequisites, () => {
       skillFixture(),
     ]);
 
-    // An older graph put ecology behind comparing living beings' functions, and a graph without
-    // functions put it behind chemistry.
     await prisma.skillPrerequisite.createMany({
       data: [
         { prerequisiteId: functions.id, skillId: ecology.id },

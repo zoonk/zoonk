@@ -13,7 +13,6 @@ describe(asksShortAnswers, () => {
     expect(asksShortAnswers(null)).toBe(false);
   });
 
-  // An essay is practiced in its own written block (ENEM's redação): it opens no other typed question.
   it("asks none for an exam of choices and an essay", () => {
     expect(asksShortAnswers(examStructure(["multipleChoice", "essay"]))).toBe(false);
   });
@@ -45,7 +44,6 @@ describe(practicesShortAnswers, () => {
       false,
     );
 
-    // Only research on an exam's notice keeps its formats on a goal.
     expect(practicesShortAnswers({ goal: { ...goal, kind: "learn" }, structure: null })).toBe(
       false,
     );

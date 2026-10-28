@@ -27,7 +27,6 @@ const interestContent = {
 const discountScreen = { idea: slotContent.exampleLineSlot.idea, text: slotContent.text };
 const interestScreen = { idea: interestContent.exampleLineSlot.idea, text: interestContent.text };
 
-/** The model's lines for the screens it's handed, in their order. */
 function mockLines(lines: (string | null)[]) {
   vi.mocked(generateExampleLines).mockResolvedValueOnce({
     data: { lines },
@@ -52,7 +51,6 @@ async function createExplanation(content: object = slotContent) {
   return libraryStepFixture({ content, lessonId: lesson.id });
 }
 
-/** A lesson with a check, a discount screen with a slot, one without and an interest screen with one. */
 async function createTwoSlotLesson() {
   const lesson = await libraryLessonFixture({ contentStatus: "completed", language: "pt" });
 
@@ -131,8 +129,6 @@ describe(getStepExampleLine, () => {
     const stranger = await userFixture();
     mockSession(stranger.id);
 
-    // Nothing to ask for: a read says so, so the player offers no example to someone who shares
-    // nothing.
     await expect(getStepExampleLine({ stepId: withSlot.id })).resolves.toStrictEqual({
       canRequest: false,
       line: null,
@@ -224,7 +220,6 @@ describe(getStepExampleLine, () => {
       expect.objectContaining({ goal: "Pass the ENEM", language: "pt", screens: [discountScreen] }),
     );
 
-    // Every kind of fact, routine included, but never a sensitive or superseded one.
     expect(vi.mocked(generateExampleLines).mock.calls[0]?.[0].facts.toSorted()).toStrictEqual([
       "Likes examples about football",
       "Lives in Recife",
@@ -248,7 +243,6 @@ describe(getStepExampleLine, () => {
       "Se você parcelar um celular de R$ 1.000 em 10 vezes de R$ 110, paga R$ 100 de juros.",
     ]);
 
-    // The player can ask for two screens of a lesson before either line is written.
     const [onDiscount, onInterest] = await Promise.all([
       requestStepExampleLine({ stepId: discount.id }),
       requestStepExampleLine({ stepId: interest.id }),
@@ -270,7 +264,6 @@ describe(getStepExampleLine, () => {
       expect.objectContaining({ screens: [discountScreen, interestScreen] }),
     );
 
-    // Asked again, every screen reads what's stored: no new call.
     await expect(requestStepExampleLine({ stepId: interest.id })).resolves.toStrictEqual(
       onInterest,
     );
@@ -283,7 +276,6 @@ describe(getStepExampleLine, () => {
 
     expect(generateExampleLines).toHaveBeenCalledOnce();
 
-    // A slot left on a screen that isn't an explanation gets no line.
     await expect(requestStepExampleLine({ stepId: check.id })).resolves.toStrictEqual({
       status: "notFound",
     });
@@ -351,7 +343,6 @@ describe(getStepExampleLine, () => {
     mockLines(["No caixa da farmácia, o troco de R$ 50 por R$ 38 é R$ 12."]);
     await requestStepExampleLine({ stepId: newer.id });
 
-    // A lesson whose discount screen already has its line, and whose interest screen doesn't yet.
     const current = await libraryLessonFixture({ contentStatus: "completed", language: "pt" });
     const discount = await libraryStepFixture({ content: slotContent, lessonId: current.id });
     mockLines(["Na farmácia, 25% de desconto numa caixa de R$ 40 poupa R$ 10."]);
@@ -366,7 +357,6 @@ describe(getStepExampleLine, () => {
       status: "ready",
     });
 
-    // Written as none: reading it again offers nothing to ask for.
     await expect(getStepExampleLine({ stepId: interest.id })).resolves.toStrictEqual({
       canRequest: false,
       line: null,
@@ -384,7 +374,6 @@ describe(getStepExampleLine, () => {
       }),
     );
 
-    // The discount screen keeps the line the learner already read.
     await expect(requestStepExampleLine({ stepId: discount.id })).resolves.toStrictEqual({
       canRequest: false,
       line: "Na farmácia, 25% de desconto numa caixa de R$ 40 poupa R$ 10.",

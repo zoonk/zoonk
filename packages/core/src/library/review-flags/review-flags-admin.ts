@@ -9,10 +9,6 @@ type AdminFlagResult<T> =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/**
- * An admin decided a flagged lesson or question is still right after its source changed, so it
- * leaves the review queue. Dismissing it again changes nothing.
- */
 export async function dismissReviewFlagForAdmin(flagId: string): Promise<AdminFlagResult<object>> {
   const access = await getAdminAccess();
 
@@ -38,7 +34,6 @@ export async function dismissReviewFlagForAdmin(flagId: string): Promise<AdminFl
   return { status: "ready" };
 }
 
-/** The open flag an admin asked to rewrite now, for the API route that starts the rewrite. */
 export async function getOpenReviewFlagForAdmin(
   flagId: string,
 ): Promise<AdminFlagResult<{ flagId: string }>> {

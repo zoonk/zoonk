@@ -1,12 +1,6 @@
 import { type WrittenScreen } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
 import { type TextLayout } from "@zoonk/utils/text-flaws";
 
-/**
- * A piece of learner-facing text. `prose` is running text a learner reads, so
- * reading-level rules apply; labels, options and formulas aren't prose. Prose
- * shows as blocks (lines, lists, tables of data), a label as one line, and a
- * formula is LaTeX, never Markdown (`layout` null).
- */
 type ScreenText = { layout: TextLayout | null; prose: boolean; text: string };
 
 const PROSE = { layout: "blocks", prose: true } as const;
@@ -20,12 +14,6 @@ function mapOptional(text: string | null, rewrite: (text: string) => string): st
   return text === null ? null : rewrite(text);
 }
 
-/**
- * Every text a learner reads on a written screen, each rewritten by `map` with how it shows, in
- * the order learners read the kinds of text: prose, then labels (a title comes first). Empty texts
- * are never mapped. Calculations as data keep their placeholders and activities are JSON, so only
- * their prompts count.
- */
 export function mapScreenTexts(screen: WrittenScreen, map: TextMap): WrittenScreen {
   const as = (kind: TextKind) => (text: string) => (text ? map({ ...kind, text }) : text);
   const [prose, label, formula] = [as(PROSE), as(LABEL), as(FORMULA)];
@@ -81,7 +69,6 @@ export function mapScreenTexts(screen: WrittenScreen, map: TextMap): WrittenScre
   }
 }
 
-/** Every text a learner reads on a written screen, with how it shows (see `mapScreenTexts`). */
 export function getScreenTexts(screen: WrittenScreen): ScreenText[] {
   const texts: ScreenText[] = [];
 

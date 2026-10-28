@@ -1,7 +1,6 @@
 import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
 
-/** A beginner lesson plan with every screen kind the writer can produce, including an activity. */
 export function temperatureSpec(): LessonSpec {
   return {
     canDo: "Work out a temperature after it rises across zero",
@@ -101,7 +100,6 @@ const numberLineActivity = {
   prompt: "At 7 am it's −3 °C. By noon it's 8 degrees warmer.",
 };
 
-/** A written lesson for `temperatureSpec` that passes every code check. */
 export function writtenTemperatureLesson(): WrittenLesson {
   return {
     screens: [
@@ -252,10 +250,6 @@ export function writtenTemperatureLesson(): WrittenLesson {
   };
 }
 
-/**
- * The why check of `writtenTemperatureLesson` (screen 7) as a typed answer, which only a lesson
- * whose learners' exams ask written answers may have (`getWrittenKinds`).
- */
 export function writtenTypedAnswer(): Extract<WrittenScreen, { kind: "typedAnswer" }> {
   return {
     acceptedAnswers: [],

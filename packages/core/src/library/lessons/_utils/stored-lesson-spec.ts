@@ -37,7 +37,6 @@ const storedLessonSpecSchema: z.ZodType<LessonSpec> = z.object({
   title: z.string(),
 });
 
-/** The lesson's stored spec, or null when none was written yet or it doesn't match the spec shape. */
 export function parseStoredLessonSpec(spec: unknown): LessonSpec | null {
   const parsed = storedLessonSpecSchema.safeParse(spec);
   return parsed.success ? parsed.data : null;

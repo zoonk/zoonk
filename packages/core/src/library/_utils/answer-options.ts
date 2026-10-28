@@ -2,21 +2,15 @@ import { seededShuffle } from "@zoonk/utils/seeded-random";
 
 const OPTION_IDS = ["a", "b", "c", "d", "e"] as const;
 
-/**
- * Answer options in the order they're stored and shown. Writers tend to list the right answer
- * first, so options are shuffled once, the same way for the same options, and the position never
- * gives the answer away on any screen, review or public page.
- */
+/** Deterministic for the same option texts; shuffling prevents writer-order answer leakage. */
 export function shuffleAnswerOptions<T extends { text: string }>(options: readonly T[]): T[] {
   return seededShuffle(options, options.map((option) => option.text).join("\n"));
 }
 
-/** Option ids are letters in the order the options are stored and shown. */
 export function getOptionId(index: number): string {
   return OPTION_IDS[index] ?? String(index);
 }
 
-/** A letter printed before an option, as exam papers do: "A) ", "(b) ", "C. ". */
 const OPTION_LABEL = /^\s*(?:\((?<enclosed>[a-e])\)|(?<letter>[a-e])[).])\s+/iu;
 
 type OptionLabel = { length: number; letter: string; shape: string };
@@ -32,11 +26,6 @@ function readOptionLabel(text: string): OptionLabel | null {
   return { length: match[0].length, letter, shape: match[0].trim().replace(letter, "") };
 }
 
-/**
- * Letters are labels only when every option has one, printed the same way, and together they run
- * from A with no gaps in one case. Content that happens to start like a label ("C. elegans", "A)
- * and B) are both…") never passes all of that.
- */
 function isLabelSet(labels: readonly (OptionLabel | null)[]): labels is OptionLabel[] {
   const found = labels.filter((label) => label !== null);
   const letters = found.map((label) => label.letter);
@@ -54,10 +43,6 @@ function isLabelSet(labels: readonly (OptionLabel | null)[]): labels is OptionLa
   );
 }
 
-/**
- * Options without the letters a writer printed before them. Options are shuffled and every screen
- * shows its own badge, so a printed "D) " would read "A · D) …" and point at the wrong option.
- */
 export function stripOptionLabels<T extends { text: string }>(options: readonly T[]): T[] {
   const labels = options.map((option) => readOptionLabel(option.text));
 
@@ -107,10 +92,8 @@ const ORDINALS = [
 
 const PLAIN_ORDINALS = withoutAccents(ORDINALS);
 
-/** Words that only ever name an answer option, unlike "answer" or "statement". */
 const OPTION_NOUNS = ["opcao", "alternativa", "option", "choice", "opcion"].join("|");
 
-/** "the second option", Portuguese "a alternativa C", "it's the second." */
 const POSITION_PATTERNS: readonly { form: "plain" | "lower" | "accented"; pattern: RegExp }[] = [
   { form: "lower", pattern: new RegExp(`\\b(?:${PLAIN_ORDINALS}) (?:${OPTION_NOUNS})\\b`, "gu") },
   {
@@ -132,11 +115,6 @@ function withoutAccents(text: string): string {
   return text.normalize("NFD").replaceAll(/\p{M}/gu, "");
 }
 
-/**
- * Where feedback points at an answer option by its place ("it's the second one", "option C"). Options are
- * shuffled after they're written and every screen shows its own letters, so a position the writer
- * meant never matches the one the learner sees: feedback names an option by what it says.
- */
 export function findOptionPositionReferences(text: string): string[] {
   const plain = withoutAccents(text);
 

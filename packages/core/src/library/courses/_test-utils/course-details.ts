@@ -16,7 +16,6 @@ export const details = {
   },
 };
 
-/** The run that wrote the copy; the course keeps it apart from the run that named the course. */
 export const provenance = {
   generatedAt: "2026-09-27T12:00:00.000Z",
   model: "openai/gpt-6-luna",
@@ -24,7 +23,6 @@ export const provenance = {
   runId: "details-run-1",
 };
 
-/** A course as the outline writer leaves it: a title and chapters, nothing for its page yet. */
 export async function outlinedCourse(attrs?: Parameters<typeof courseFixture>[0]) {
   const course = await courseFixture({ title: "Immunology", ...attrs });
 

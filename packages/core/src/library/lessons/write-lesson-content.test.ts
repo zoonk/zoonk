@@ -84,7 +84,6 @@ function explanation(text: string): WrittenScreen {
   };
 }
 
-/** A lesson whose spec is written and whose content this run has claimed. */
 async function createClaimedLesson({
   homeChapterId = null,
   ownerId = null,
@@ -150,7 +149,6 @@ describe(writeLessonContent, () => {
 
     const result = await writeLessonContent({ lessonId: lesson.id, workflowRunId });
 
-    // A lesson with math gets the reasoning check, after publishing: nobody waits on it.
     expect(result).toStrictEqual({
       check: { cite: false, lesson: written, review: true, version: 1, writerModel: draft.model },
       fixed: false,
@@ -210,7 +208,6 @@ describe(writeLessonContent, () => {
       throw new Error("The application is a check.");
     }
 
-    // The application quotes the worked example in words it doesn't have.
     mockDraft(
       withScreen(written, 7, {
         ...application,
@@ -282,7 +279,6 @@ describe(writeLessonContent, () => {
     expect(steps).toStrictEqual([]);
     expect(stored.contentStatus).toBe("failed");
 
-    // A shared lesson gets one fix pass, then fresh drafts (see the workflow's redrafts).
     expect(fixLessonDraft).toHaveBeenCalledOnce();
     expect(stored.setAsideAt).toBeNull();
   });
@@ -323,8 +319,6 @@ describe(writeLessonContent, () => {
       throw new Error("The temperature lesson opens on a guess.");
     }
 
-    // Italics split across lines show their underscores, since the player reads line by line, and
-    // "2.0 °C" is the right answer written again.
     const twin = withScreen(written, 0, {
       ...guess,
       options: [...guess.options, { isCorrect: false, text: "2.0 °C" }],
@@ -346,7 +340,6 @@ describe(writeLessonContent, () => {
       "Zero is a mark.\nCount past it.",
     );
 
-    // Options are shuffled when stored.
     const content = opening?.content as { options?: { text: string }[] } | undefined;
     const options = content?.options ?? [];
 
@@ -360,7 +353,6 @@ describe(writeLessonContent, () => {
     const { lesson, workflowRunId } = await createClaimedLesson({ ownerId: user.id });
     const written = writtenTemperatureLesson();
 
-    // A slot the writer left to fill in.
     const unfinished = withScreen(written, 4, explanation("Zero is a mark. [Inserir exemplo]"));
 
     mockDraft(unfinished);
@@ -541,12 +533,10 @@ describe(writeLessonContent, () => {
     await learnerSourceFixture({ goalId: goal.id, sourceId: slides.id, userId: user.id });
     mockDraft(writtenTemperatureLesson());
 
-    // Only reusable lessons are reviewed: a private one is cited after publishing, never reviewed.
     await expect(writeLessonContent({ lessonId: lesson.id, workflowRunId })).resolves.toMatchObject(
       { check: { cite: true, review: false }, status: "published" },
     );
 
-    // The writer reads the slides, tagged so each page can be cited.
     expect(vi.mocked(writeLessonDraft).mock.calls.at(-1)?.[0].material).toContain(
       '<page ref="S1:2" of="Class 3, slide 2">',
     );
@@ -589,7 +579,6 @@ describe(writeLessonContent, () => {
       { check: { cite: true, review: true }, status: "published" },
     );
 
-    // The writer reads the passage about the lesson, not the rest of the document.
     const draftInput = vi.mocked(writeLessonDraft).mock.calls.at(-1)?.[0];
     expect(draftInput?.material).toBeUndefined();
 
@@ -622,7 +611,6 @@ describe(writeLessonContent, () => {
     const old = await libraryStepFixture({ lessonId: lesson.id, position: 0 });
     const workflowRunId = randomUUID();
 
-    // The lesson was pulled for a rewrite, and this run claims it.
     await prisma.lesson.update({
       data: { contentRunId: null, contentStatus: "failed" },
       where: { id: lesson.id },

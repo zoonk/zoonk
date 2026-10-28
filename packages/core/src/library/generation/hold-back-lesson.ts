@@ -10,32 +10,20 @@ import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { type HeldBackDraft, MAX_LESSON_DRAFTS, parseHeldBackDrafts } from "./held-back-drafts";
 
-/** A day that ended keeps what happened in it; days still running or ahead move on. */
 const OPEN_SESSION_STATUSES: StudySessionStatus[] = ["planned", "active"];
 
-/**
- * A private lesson serves one learner, so it gets no fresh draft (only reusable lessons get model
- * work beyond the first draft and its fix passes): its first held-back draft sets it aside.
- */
+/** Private content serves one learner, so only shared lessons receive fresh drafts. */
 const PRIVATE_LESSON_DRAFTS = 1;
 const PLAN_REFRESH_BATCH_SIZE = 4;
 
-/** A superseded claim must roll back plan/learner admission as well as the attempted draft. */
 class LessonClaimLostError extends Error {
   override name = "LessonClaimLostError";
 }
 
-/** A lesson item is one lesson; a stand-in, the lessons it was saved with. */
 function countSavedLessons(item: { lessonId: string | null; lessons?: number | null }): number {
   return item.lessonId ? 1 : (item.lessons ?? 1);
 }
 
-/**
- * Takes a set-aside lesson out of what learners have ahead: its todo plan items are skipped and
- * open session blocks for it are skipped, so Today goes to the next stop instead of waiting on a
- * lesson nothing will write. Other lessons that teach its skills stay in the plans. Returns the
- * plan IDs whose todo work changed.
- */
 export async function moveOnWithoutLesson(
   tx: TransactionClient,
   lessonId: string,
@@ -128,7 +116,6 @@ export async function moveOnWithoutLesson(
   return planIds;
 }
 
-/** The committed loss records retain exactly the plans changed by this quality hold. */
 export async function readHeldPlanIds(tx: TransactionClient, holdKey: string): Promise<string[]> {
   const losses = await tx.planChange.findMany({
     select: { planId: true },
@@ -138,7 +125,6 @@ export async function readHeldPlanIds(tx: TransactionClient, holdKey: string): P
   return [...new Set(losses.map((loss) => loss.planId))];
 }
 
-/** The quality write removes unplayable blocks immediately; its response also waits for the saved plan. */
 export async function refreshPlansWithoutLesson(planIds: readonly string[]): Promise<string[]> {
   const plans = await prisma.plan.findMany({
     select: { goal: { select: { userId: true } }, goalId: true },
@@ -148,8 +134,7 @@ export async function refreshPlansWithoutLesson(planIds: readonly string[]): Pro
   const failures: Error[] = [];
 
   for (let offset = 0; offset < plans.length; offset += PLAN_REFRESH_BATCH_SIZE) {
-    // Bound planning work while letting every affected plan refresh before a failed batch retries.
-    // oxlint-disable-next-line no-await-in-loop
+    // oxlint-disable-next-line no-await-in-loop -- Bound planning work while every affected plan settles before retry.
     const results = await Promise.allSettled(
       plans
         .slice(offset, offset + PLAN_REFRESH_BATCH_SIZE)
@@ -174,13 +159,6 @@ export async function refreshPlansWithoutLesson(planIds: readonly string[]): Pro
   return [...new Set(plans.map((plan) => plan.goal.userId))];
 }
 
-/**
- * Ends the content claim of a run whose draft the quality gate held back: the claim ends as
- * failed and the draft is recorded with its writer and problems, so the next draft is told what
- * held it back (and the last one comes from another writer). When that was the lesson's last
- * allowed draft (a private lesson's first), the lesson is set aside and every plan moves on
- * without it. Returns null when this run no longer held the claim.
- */
 export async function holdBackLessonDraft({
   lessonId,
   model,

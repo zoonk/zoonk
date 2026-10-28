@@ -7,17 +7,10 @@ import { vi } from "vitest";
 const MATCH_PROBABILITY = 0.9;
 const MISS_PROBABILITY = 0.1;
 
-/**
- * Model calls are the one external boundary in identity tests: the AI gateway
- * is blocked in tests and real verdicts aren't deterministic. Test files mock
- * both task modules with `vi.mock`; the database search between the two model
- * steps runs for real. This gives every subject of a call the same terms.
- */
 export function mockSearchTerms(terms: string[]) {
   return mockSearchTermsFor(() => terms);
 }
 
-/** Gives each subject of a call the terms `write` returns for it. */
 export function mockSearchTermsFor(write: (subject: LibraryIdentitySubject) => string[]) {
   return vi.mocked(generateSearchTerms).mockImplementation(({ subjects }) =>
     Promise.resolve(
@@ -29,7 +22,6 @@ export function mockSearchTermsFor(write: (subject: LibraryIdentitySubject) => s
   );
 }
 
-/** A decision that picks `matchId` when the search offered it, as the real one only picks a candidate. */
 export function mockDecision(matchId: string | null) {
   return vi
     .mocked(decideLibraryIdentity)
@@ -48,7 +40,6 @@ export function mockDecision(matchId: string | null) {
     );
 }
 
-/** A word no other test's rows contain, so text search results belong to this test. */
 export function uniqueWord(): string {
   return `zq${randomUUID().replaceAll("-", "").slice(0, 10)}`;
 }

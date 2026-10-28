@@ -1,8 +1,3 @@
-/**
- * Inside Pyodide: blocks the modules that reach JavaScript, and traces a run with
- * `sys.settrace`, recording each line of `main.py` once it has run (at the next line or return
- * of its frame) with the watched values at that moment.
- */
 export const PYTHON_HARNESS = `
 import json
 import sys

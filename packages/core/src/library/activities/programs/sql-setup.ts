@@ -12,16 +12,10 @@ export type SqlStatement = { params: ActivityCell[]; sql: string };
 
 const SQL_TYPES: Record<ColumnType, string> = { integer: "INTEGER", real: "REAL", text: "TEXT" };
 
-/** Identifiers are validated as letters, digits and `_`; quoting keeps words like "order" safe. */
 function quoteIdentifier(name: string): string {
   return `"${name.replaceAll('"', '""')}"`;
 }
 
-/**
- * The statements that build the lesson's tables on a fresh database: one CREATE TABLE each, then
- * one parameterized INSERT per row, so cell values are never pasted into SQL. The player's
- * browser sandbox and the server check before publishing build the same database.
- */
 export function sqlSetupStatements(tables: readonly SqlTable[]): SqlStatement[] {
   return tables.flatMap((table) => {
     const name = quoteIdentifier(table.name);
@@ -42,7 +36,6 @@ export function sqlSetupStatements(tables: readonly SqlTable[]): SqlStatement[] 
   });
 }
 
-/** A value SQLite returned as a cell the check compares: text, a number or null. */
 export function toSqlCell(value: unknown): ActivityCell {
   if (value === null || typeof value === "number" || typeof value === "string") {
     return value;

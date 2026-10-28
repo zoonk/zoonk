@@ -4,7 +4,6 @@ import { type LibraryProvenance, toProvenanceData } from "../../_utils/library-r
 type LibraryStepInput = {
   position: number;
   kind: StepKind;
-  /** Content already validated against the versioned step contract. */
   content: object;
   contractVersion?: number;
   skillId?: string | null;
@@ -15,7 +14,6 @@ type LibraryStepInput = {
   provenance: LibraryProvenance;
 };
 
-/** A step input as Prisma data, without the lesson and position that locate it. */
 export function toStepData(step: LibraryStepInput) {
   return {
     content: step.content,

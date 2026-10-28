@@ -16,15 +16,6 @@ import {
 } from "../claims/generation-claim";
 import { loadCourseMaterial } from "../sources/goal-material";
 
-/**
- * The goal skills this course doesn't teach yet: no lesson of its chapters teaches the skill and
- * none of its chapters tagged with it has a lesson. Only these need an outline. Skills are shared
- * across courses, but another subject's lessons for them teach other content (reading for the
- * main idea in English is not in Portuguese), so only this course's own chapters count; a course
- * on the same subject gets its chapters and lessons through identity search when the outline asks.
- * For a goal whose plan leaves out chapters that need a tool (`withToolChapters` false: an exam
- * answered without one), those chapters don't count either: its skills need chapters without them.
- */
 export async function findUntaughtSkills({
   courseId,
   ownerId,
@@ -78,11 +69,6 @@ export async function findUntaughtSkills({
   return skillIds.filter((skillId) => !taught.has(skillId));
 }
 
-/**
- * What writing one level band needs to know about the course: every chapter title it already has
- * (so the band doesn't repeat them), the first free position in the band, and, for a private
- * course built from the learner's own class material, that material (see `loadCourseMaterial`).
- */
 export async function getCourseBandContext({
   courseId,
   level,
@@ -116,11 +102,6 @@ export async function getCourseBandContext({
   };
 }
 
-/**
- * Claims the course's outline for this run. A course whose outline is already written can still
- * lack a later goal's skills; the caller only claims it when some are missing, so it is reopened
- * for this run to add the chapters that teach them.
- */
 export async function claimCourseOutline({
   courseId,
   workflowRunId,
@@ -152,10 +133,6 @@ export async function claimCourseOutline({
   return "claimed";
 }
 
-/**
- * Frees a course whose outline claim is held by a run that is no longer running, so the next run
- * can write the outline. Only that run's claim changes.
- */
 export async function releaseStaleCourseOutline({
   courseId,
   staleRunId,
@@ -169,7 +146,6 @@ export async function releaseStaleCourseOutline({
   });
 }
 
-/** The run holding a course's outline claim, or null when nobody is writing it. */
 export async function getCourseOutlineOwner(courseId: string): Promise<string | null> {
   const course = await prisma.course.findUnique({
     select: { outlineRunId: true, outlineStatus: true },
@@ -179,10 +155,6 @@ export async function getCourseOutlineOwner(courseId: string): Promise<string | 
   return course?.outlineStatus === "running" ? course.outlineRunId : null;
 }
 
-/**
- * What changes when a course is listed: its page, the catalog, and its public address, which
- * cached "not found" if anyone opened it while the course was still unlisted.
- */
 async function getListedCourseTags(courseId: string): Promise<string[]> {
   const course = await prisma.course.findUniqueOrThrow({
     select: { organization: { select: { slug: true } }, slug: true },
@@ -198,10 +170,6 @@ async function getListedCourseTags(courseId: string): Promise<string[]> {
   );
 }
 
-/**
- * Ends the course's outline claim. A shared course is listed once its first outline is written;
- * a private one never is.
- */
 export async function finishCourseOutline({
   courseId,
   status,

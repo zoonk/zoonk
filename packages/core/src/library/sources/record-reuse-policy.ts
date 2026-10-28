@@ -2,11 +2,6 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { type ReusePolicy } from "./source-contract";
 
-/**
- * Stores the reuse terms research read in a board's own documents. A policy
- * already on the source (a board checked by hand) is kept, since a model's
- * reading of terms is weaker evidence.
- */
 export async function recordReusePolicy({
   policy,
   sourceId,

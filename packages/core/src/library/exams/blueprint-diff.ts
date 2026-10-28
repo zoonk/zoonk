@@ -8,10 +8,6 @@ export type BlueprintMerge = { changes: BlueprintChange[]; content: BlueprintCon
 
 type Section = { after: unknown; before: unknown; field: string; isEmpty: boolean };
 
-/**
- * Citations say where a fact came from and a pass mark's translations say it again: a new passage
- * or wording for the same fact isn't a change.
- */
 const RESTATING_KEYS = new Set(["citation", "citations", "translations"]);
 
 function withoutRestatements(value: unknown): unknown {
@@ -31,17 +27,12 @@ function withoutRestatements(value: unknown): unknown {
   return value;
 }
 
-/** Key order differs between parsed output and stored JSON, so values are compared sorted. */
 function isSame(first: unknown, second: unknown): boolean {
   return JSON.stringify(withoutRestatements(first)) === JSON.stringify(withoutRestatements(second));
 }
 
 type ExamRule = ExamStructure["rules"][number];
 
-/**
- * The stored rules, when a new reading says the same, with the new reading's translation of each
- * pass mark it translated: a blueprint read before translations gets them when read again.
- */
 function keepRulesWithTranslations({
   current,
   next,
@@ -69,12 +60,6 @@ function isEmptyValue(value: unknown): boolean {
 
 type ExamFormat = ExamStructure["formats"][number];
 
-/**
- * A new reading's formats, where one that doesn't state its number of options (a notice that says
- * "180 objective questions" without "five options") is the stored format of the same kind that
- * does, with the passage that states it: a reading that leaves the count out hasn't changed it,
- * and items are written and picked by it (ENEM's five options).
- */
 function keepKnownOptions({
   current,
   next,
@@ -115,12 +100,6 @@ function getSections({
   }));
 }
 
-/**
- * A section changes only when the new documents say something different. An
- * empty or missing section in the new reading keeps the old one: a notice that
- * doesn't repeat the syllabus hasn't removed it, and an uncertain extraction
- * must never delete what learners study.
- */
 function isChanged(section: Section): boolean {
   return !section.isEmpty && !isSame(section.before, section.after);
 }
@@ -142,7 +121,6 @@ function mergeEdition({
     changedFields.has("edition.year") || changedFields.has("edition.questionCount");
 
   return {
-    // The check is of the reading that's stored now: the new one.
     check: next.check,
     citations: hasNewCount ? next.citations : current.citations,
     dates: pick({
@@ -161,7 +139,6 @@ function mergeEdition({
       next: next.questionCount,
     }),
     sourceHash: next.sourceHash ?? current.sourceHash,
-    // The time zone says how to read the dates' start times, so it follows whichever dates stay.
     timeZone: changedFields.has("edition.dates")
       ? (next.timeZone ?? current.timeZone)
       : (current.timeZone ?? next.timeZone),
@@ -173,12 +150,6 @@ function mergeEdition({
   };
 }
 
-/**
- * The subjects' counts the lookup gave, kept across readings, except a lookup that doesn't count
- * every subject of a reading that changes the subjects: it was asked for other subjects (a reading
- * that missed the OAB's ethics left 72 of 80 questions to match), so research asks again for the
- * new ones instead of waiting a month.
- */
 function keepPastQuestions({
   current,
   next,
@@ -195,11 +166,6 @@ function keepPastQuestions({
     : past;
 }
 
-/**
- * The lookups beside the notice's reading (the subjects' counts, the options per question, how
- * often each topic is asked), which a reading never sets: kept across readings, when there are any
- * to keep.
- */
 function withLookups({
   current,
   next,
@@ -220,7 +186,6 @@ function withLookups({
   };
 }
 
-/** The exam's own days, in order: what learners' dates follow, unlike registration days or times. */
 function listExamDays(edition: ExamEdition): string {
   return edition.dates
     .flatMap((date) => (date.kind === "exam" ? [date.date] : []))
@@ -228,10 +193,6 @@ function listExamDays(edition: ExamEdition): string {
     .join(",");
 }
 
-/**
- * Whether a merged reading moves the exam's own days: the one change of dates a learner's date
- * follows. A reading that adds registration days, start times or labels moves nothing.
- */
 export function movesExamDays({
   current,
   merged,
@@ -242,13 +203,6 @@ export function movesExamDays({
   return listExamDays(current.edition) !== listExamDays(merged.edition);
 }
 
-/**
- * Compares a blueprint with a new reading of its documents and keeps
- * everything that didn't change, so lessons and items built on it carry over,
- * including a number of options the new reading leaves out (`keepKnownOptions`)
- * and what it leaves out of a subject it reads again (`keepKnownSubjectFacts`).
- * The changes list what a learner-facing notice describes.
- */
 export function mergeBlueprintContent({
   current,
   next: reading,
@@ -313,7 +267,6 @@ export function mergeBlueprintContent({
           current: current.structure.subjects,
           next: next.structure.subjects,
         }),
-        // An exam doesn't stop testing its language: a reading that misses it keeps the known one.
         testedLanguage: next.structure.testedLanguage ?? current.structure.testedLanguage ?? null,
       },
       topicFrequency: pick({

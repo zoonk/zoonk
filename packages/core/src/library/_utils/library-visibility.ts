@@ -13,18 +13,12 @@ async function getViewerId(): Promise<string | null> {
   return session?.user.id ?? null;
 }
 
-/** A Prisma filter for rows a viewer may read: public ones and, with a viewer, their own private ones. */
 export function libraryRowsVisibleTo(viewerId: string | null) {
   return viewerId
     ? { OR: [{ visibility: "public" as const }, { ownerId: viewerId }] }
     : { visibility: "public" as const };
 }
 
-/**
- * Private content is built for one learner's too-specific goal and is never
- * shown to anyone else. Public rows skip the session lookup, so shared content
- * stays readable by visitors and cacheable.
- */
 export async function canViewLibraryRow(row: VisibleRow): Promise<boolean> {
   if (row.visibility === "public") {
     return true;
@@ -33,11 +27,7 @@ export async function canViewLibraryRow(row: VisibleRow): Promise<boolean> {
   return isVisibleTo({ row, viewerId: await getViewerId() });
 }
 
-/**
- * Removes private rows the viewer doesn't own from a list, reading the session
- * only when the list has a private row. Cached reads return every row and call
- * this after the cache, because the cache is shared by all viewers.
- */
+/** Apply after the shared cache: cached rows are not filtered for a particular viewer. */
 export async function filterVisibleLibraryRows<T extends VisibleRow>(
   rows: readonly T[],
 ): Promise<T[]> {

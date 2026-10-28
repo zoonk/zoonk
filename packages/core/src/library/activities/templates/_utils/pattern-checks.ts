@@ -72,11 +72,6 @@ function scanChar(state: ScanState, char: string): ScanState {
   return scanPlainChar(state, char);
 }
 
-/**
- * Compiles a pattern only when it can't backtrack for exponential time: a repeated group that
- * itself repeats or alternates (like `(a+)+` or `(a|aa)*`) is refused, as are backreferences.
- * Lesson patterns never need either, and this keeps grading safe on the server.
- */
 export function compileSafeRegex(pattern: string): RegExp | null {
   const initial: ScanState = {
     closedRiskyGroup: false,
@@ -127,11 +122,9 @@ export function withinTolerance({
   const distance = Math.abs(value - expected);
   const slack = RELATIVE_TOLERANCE_SLACK * Math.max(Math.abs(expected), Math.abs(value), allowed);
 
-  /** Relative slack includes rounded boundaries without overwhelming small-unit tolerances. */
   return distance <= allowed + slack || isClose(value, expected);
 }
 
-/** Spreadsheet formulas start with "=", which the expression language doesn't need. */
 function stripFormulaSign(formula: string): string {
   return formula.trim().replace(/^=/u, "");
 }

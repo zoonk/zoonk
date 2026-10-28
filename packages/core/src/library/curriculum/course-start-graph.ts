@@ -6,14 +6,8 @@ import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-ar
 import { type CurriculumScope } from "./curriculum-scope";
 import { type GoalSkillGraph } from "./save-goal-skills";
 
-/** The Library course a goal was started from, whose outline its first run writes. */
 export type StartedCourse = { id: string; ownerId: string | null; title: string };
 
-/**
- * A goal started from a Library course learns that course: every course its skill graph names
- * becomes that one, so the goal's skills are outlined in the course's own level bands and its
- * plan is built from the course, instead of from the other courses identity search would find.
- */
 export function pinGraphToCourse({
   course,
   graph,
@@ -31,15 +25,6 @@ export function pinGraphToCourse({
   };
 }
 
-/**
- * An exam's stored graph (`ExamSkillGraph`) as a goal started from its course plans from it
- * (`findReusableCurriculum`), the same as `pinGraphToCourse` pins a graph the goal writes: only the
- * part of the exam the course teaches (`getExamCourseSkills`, which its full outline teaches too),
- * every skill learned in that course, one skill learned in several courses is one, a skill with no
- * area takes the course's title, and the options of the exam's choices are back in the graph (the
- * learner's pick sets the others aside again). Phases with none of those skills go; sizes,
- * weights, outcomes and topics stay.
- */
 export function pinPlanGraphToCourse({
   chapters = [],
   course,
@@ -51,7 +36,6 @@ export function pinPlanGraphToCourse({
 }): PlanGraph {
   const skills = getExamCourseSkills({ course, examGraph: graph });
 
-  // A phase none of the course's skills is in is another course's: its checkpoint would check nothing.
   const phaseIndexes = [...new Set(skills.map((skill) => skill.phase))].toSorted((a, b) => a - b);
   const phases = phaseIndexes.map((index) => graph.phases[index] ?? { milestone: null, name: "" });
 
@@ -86,8 +70,6 @@ export function pinPlanGraphToCourse({
     subjects: areas.map((name) => ({ name })),
   });
 
-  // An earlier outline may teach more specific skills than the reused graph names. Keep its
-  // real lessons in their published exam area before that area's work still to be outlined.
   const additions = outlined.skills.flatMap((skill) => {
     const area = areas[matches.get(skill.area ?? "") ?? -1];
     const anchor = pinned.find((item) => item.area === area);
@@ -116,11 +98,6 @@ export function pinPlanGraphToCourse({
   };
 }
 
-/**
- * Who a started course's curriculum is for: the course's own audience, so a shared course stays
- * shared and the learner's private one stays theirs. The course already says what's shareable,
- * so no model decides it.
- */
 export function getStartedCourseScope({
   course,
   goal,
@@ -136,7 +113,6 @@ export function getStartedCourseScope({
   };
 }
 
-/** Each of the graph's course keys points at the started course. */
 export function toStartedCourseIds({
   course,
   graph,

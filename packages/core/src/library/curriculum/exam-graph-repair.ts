@@ -18,7 +18,6 @@ import {
 } from "./save-goal-skills";
 import { toExamIdentity } from "./shared-graph-prompt";
 
-/** An exam's shared content is written for the exam and read by every learner of it. */
 function toExamScope(blueprint: ExamBlueprint): CurriculumScope {
   const exams = toGoalCandidateExams({ blueprint, kind: "exam" });
 
@@ -31,11 +30,6 @@ function toExamScope(blueprint: ExamBlueprint): CurriculumScope {
   };
 }
 
-/**
- * The graph with the skills the coverage check finds missing, and nothing else changed: the
- * skills it has keep their subjects and weights (the check's moves are left out), so learners'
- * plans made from it stay as they are.
- */
 async function addCoverage({
   blueprint,
   curriculum,
@@ -74,10 +68,6 @@ async function addCoverage({
   return { graph, provenance: coverage.provenance };
 }
 
-/**
- * The stored graph with the added skills where the checked graph puts them, every skill it had
- * kept as stored. An added skill identity search found already in the graph adds nothing.
- */
 function insertAddedSkills({ added, stored }: { added: PlanGraph; stored: PlanGraph }): PlanGraph {
   const kept = new Map(stored.skills.map((skill) => [skill.skillId, skill]));
   const skills = added.skills.map((skill) => kept.get(skill.skillId) ?? skill);
@@ -91,7 +81,6 @@ function insertAddedSkills({ added, stored }: { added: PlanGraph; stored: PlanGr
   };
 }
 
-/** The skills of the checked graph that the stored one doesn't have, with no Library id yet. */
 function listAddedSkills({
   checked,
   curriculum,
@@ -102,16 +91,6 @@ function listAddedSkills({
   return checked.skills.filter((skill) => curriculum.idsByKey[skill.key] === undefined);
 }
 
-/**
- * Adds to an exam's shared graph (`ExamSkillGraph`) skills for the notice's topics none of its
- * skills teaches, after an admin had the notice read again: content a new reading names that the
- * graph is missing, such as the options of a choice (a language or an elective). It's a repair,
- * never a rewrite (the reset is the only rewrite): every skill the graph has keeps its place,
- * subject and weight, and each added skill goes through identity search, so a skill the Library
- * already has is reused, never written twice. One coverage call, none when every topic has a
- * skill. Learners' plans made before it bring a choice's option in from here once they pick it.
- * Returns the added skills' names.
- */
 export async function addMissingExamGraphSkills(examBlueprintId: string): Promise<string[]> {
   const [stored, blueprint] = await Promise.all([
     prisma.examSkillGraph.findUnique({ where: { examBlueprintId } }),
@@ -171,7 +150,6 @@ export async function addMissingExamGraphSkills(examBlueprintId: string): Promis
     stored: parsePlanGraph(stored.graph),
   });
 
-  // Plans of the exam add a picked option's skills from the shared graph.
   await writePlanInputs(async (tx) => {
     await lockPlanBlueprintWrite(tx, examBlueprintId);
     await tx.examSkillGraph.update({ data: { graph }, where: { examBlueprintId } });

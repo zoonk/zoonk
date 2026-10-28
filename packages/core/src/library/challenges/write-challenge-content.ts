@@ -44,14 +44,7 @@ async function loadChallengeInputs({
   return { inputs: toChallengeCaseInputs({ lesson, spec }), status: "ready" };
 }
 
-/**
- * Writes a chapter's challenge for the workflow run that holds its content claim
- * (`draftChallengeCase`). A case that passes is published as the lesson's one screen, with its
- * summary card; one that still fails is held back and the claim ends as failed, so a later run can
- * try again.
- *
- * This is an internal workflow bridge: Library content is shared and no learner's data is written.
- */
+/** Internal: the calling workflow must hold the lesson's content claim. */
 export async function writeChallengeLessonContent({
   analytics,
   lessonId,
@@ -61,9 +54,7 @@ export async function writeChallengeLessonContent({
 }: {
   analytics?: ChallengeCaseParams["analytics"];
   lessonId: string;
-  /** The writer model, when not the task's default: private courses use a cheaper one. */
   model?: string;
-  /** `flex` when the lesson is written well before a learner reaches it. */
   serviceTier?: ChallengeCaseParams["serviceTier"];
   workflowRunId: string;
 }): Promise<WriteChallengeResult> {

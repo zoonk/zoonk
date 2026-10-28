@@ -15,7 +15,6 @@ import {
 } from "./_test-utils/image-mocks";
 import { checkImageAsset } from "./check-image-asset";
 
-/** A picture already shown on a lesson screen and on a question about it, not checked yet. */
 async function shownPicture() {
   const [asset, lesson, skill] = await Promise.all([
     mediaAssetFixture({ scene: testScene({ focalObject: `a ${randomUUID()} map` }) }),
@@ -39,7 +38,6 @@ async function shownPicture() {
 describe(checkImageAsset, () => {
   let readStoredFile: ReturnType<typeof serveStoredFile>;
 
-  // The check reads the stored picture back from Vercel Blob, and a redraw is stored there.
   beforeEach(async () => {
     vi.resetAllMocks();
 
@@ -76,7 +74,6 @@ describe(checkImageAsset, () => {
       status: "replaced",
     });
 
-    // The redraw is told what the check found wrong.
     expect(drawSpy).toHaveBeenCalledWith(
       expect.objectContaining({ corrections: ["shows a different object"] }),
     );
@@ -87,8 +84,6 @@ describe(checkImageAsset, () => {
       prisma.item.findUniqueOrThrow({ where: { id: item.id } }),
     ]);
 
-    // Same asset, new file: the screen and the question show the redraw from now on, and their
-    // rows changed, so cached lessons read them again.
     expect(stored.url).not.toBe(asset.url);
     expect(screen.mediaAssetId).toBe(asset.id);
     expect(screen.pictureAvailableAt).toStrictEqual(step.pictureAvailableAt);
@@ -111,7 +106,6 @@ describe(checkImageAsset, () => {
       prisma.item.findUnique({ where: { id: item.id } }),
     ]);
 
-    // The screen shows its description instead; a question never goes without its picture.
     expect(stored).toBeNull();
     expect(screen.mediaAssetId).toBeNull();
     expect(screen.pictureAvailableAt).toBeNull();
@@ -148,7 +142,6 @@ describe(checkImageAsset, () => {
       prisma.step.findUniqueOrThrow({ where: { id: step.id } }),
     ]);
 
-    // The question stays and shows that option's description; its row changed for the cache.
     expect(option).toBeNull();
     expect(screen.updatedAt.getTime()).toBeGreaterThan(step.updatedAt.getTime());
   });

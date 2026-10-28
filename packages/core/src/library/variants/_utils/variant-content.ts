@@ -6,11 +6,6 @@ import { checkScreenText } from "../../quality/lesson-code-checks";
 import { safeParseStepContent } from "../../steps/contract/step-contract";
 import { toStepContent } from "../../steps/written-screens";
 
-/**
- * What a version keeps from the original screen: its example-line slot. A field or tool version
- * changes the example, so the original's picture or explored template may not fit and stays
- * behind.
- */
 function getCarriedFields(original: unknown): Record<string, unknown> {
   if (!isJsonObject(original) || original.exampleLineSlot === undefined) {
     return {};
@@ -19,10 +14,6 @@ function getCarriedFields(original: unknown): Record<string, unknown> {
   return { exampleLineSlot: original.exampleLineSlot };
 }
 
-/**
- * A version as a lesson screen. It's written alone, so it explores nothing, leaves the example
- * line to the original's slot and rests on no sentence of another screen.
- */
 function toWrittenScreen(written: WrittenVariant): WrittenScreen {
   switch (written.kind) {
     case "explanation":
@@ -36,11 +27,6 @@ function toWrittenScreen(written: WrittenVariant): WrittenScreen {
   }
 }
 
-/**
- * Turns a written variant into stored content of the original step's kind,
- * running the same contract and text checks as lessons. Problems mean the
- * variant can't be shown.
- */
 export function toVariantContent({
   language,
   level,

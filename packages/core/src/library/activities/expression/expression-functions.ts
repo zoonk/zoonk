@@ -11,10 +11,6 @@ function unary(apply: (value: number) => number): ExpressionFunctionSpec {
   return { apply: (args) => apply(args[0] ?? Number.NaN), maxArgs: 1, minArgs: 1 };
 }
 
-/**
- * Rounds like a calculator: `round(2.345, 2)` is 2.35. Digits must be a small whole number so a
- * generated formula can't ask for a precision JavaScript can't represent.
- */
 function roundTo(args: readonly number[]): number {
   const value = args[0] ?? Number.NaN;
   const digits = args[1] ?? 0;
@@ -28,11 +24,6 @@ function roundTo(args: readonly number[]): number {
   return Math.round(value * factor) / factor;
 }
 
-/**
- * The whitelist is the only way a formula can call code. Everything is plain math on numbers, and
- * anything outside the domain (like `sqrt(-1)`) returns NaN, which evaluation reports as an error.
- * `log` is the natural logarithm, as in JavaScript and Python; `log10` and `log2` are explicit.
- */
 export const expressionFunctions = {
   abs: unary(Math.abs),
   acos: unary(Math.acos),

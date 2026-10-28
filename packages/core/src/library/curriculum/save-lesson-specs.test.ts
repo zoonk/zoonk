@@ -203,7 +203,6 @@ describe(saveLessonSpecs, () => {
     const held = Promise.withResolvers<number>();
     const released = Promise.withResolvers<null>();
 
-    // Another writer of the plan holds it while the spec waits to mark it.
     const holder = prisma.$transaction(async (tx) => {
       await tx.$queryRaw`SELECT id FROM plans WHERE id = ${plan.id}::uuid FOR UPDATE`;
       const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;

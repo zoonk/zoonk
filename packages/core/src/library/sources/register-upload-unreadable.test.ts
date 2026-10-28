@@ -8,7 +8,6 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { registerSourceUpload } from "./register-upload";
 import { MAX_SOURCE_UPLOAD_BYTES } from "./source-contract";
 
-/** Blob storage serves the uploaded file from memory. */
 function mockStoredFile({
   bytes,
   contentType,
@@ -40,7 +39,6 @@ function mockStoredFile({
   });
 }
 
-/** The web is external: each test serves the page it needs from memory. */
 function servePage(response: PageResponse) {
   vi.mocked(fetch).mockResolvedValue(response);
 }
@@ -52,7 +50,6 @@ async function signedIn() {
   return { pathname: (name: string) => `sources/${user.id}/${name}`, user };
 }
 
-/** Nothing unreadable is stored or counted against the day's uploads. */
 async function expectNothingKept(userId: string) {
   const [sources, usage] = await Promise.all([
     prisma.source.count({ where: { ownerId: userId } }),

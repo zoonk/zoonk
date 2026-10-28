@@ -13,11 +13,6 @@ type CourseTitleRequest = Pick<
   "language" | "ownerId" | "targetLanguage" | "title"
 >;
 
-/**
- * The course with this exact title for the request's owner: a shared course of the AI
- * organization, or the learner's own private course. The oldest wins, so every goal that names
- * the same course lands on the same row.
- */
 export async function findCourseByTitle(
   request: CourseTitleRequest,
   client: TransactionClient = prisma,
@@ -40,7 +35,6 @@ async function findExactCourse(request: CourseIdentityRequest): Promise<string |
   return course?.id ?? null;
 }
 
-/** Shared courses in the same language and target language whose title or description match. */
 async function findCourseCandidateIds({
   request,
   search,
@@ -54,8 +48,6 @@ async function findCourseCandidateIds({
     return [];
   }
 
-  // By the organization's id rather than a join on its slug: Postgres then knows it owns most
-  // courses and reads the text-search index, instead of matching every shared course one by one.
   return findRankedIds({
     document: COURSE_DOCUMENT,
     filters: sql`c.organization_id = ${organization.id}::uuid

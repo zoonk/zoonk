@@ -20,10 +20,6 @@ function getTargetId(target: FreshnessTarget): string {
   return target.kind === "exam" ? target.examBlueprintId : target.sourceId;
 }
 
-/**
- * Only admins may check an exam or source now or stop its checks: a check costs
- * a fetch, and a change can cost a model run.
- */
 export async function getFreshnessCommandAccess(
   target: FreshnessTarget,
 ): Promise<FreshnessCommandAccess> {

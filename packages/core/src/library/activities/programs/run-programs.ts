@@ -13,22 +13,16 @@ import {
 } from "./program-runs";
 import { type SqlStatement } from "./sql-setup";
 
-/** A program to run: JavaScript or Python (traced when `watch` is set), or a SQL query. */
 export type ProgramJob =
   | { kind: "javascript"; code: string }
   | { kind: "python"; code: string; watch?: readonly string[] }
   | { kind: "sql"; query: string; setup: readonly SqlStatement[] };
 
-/** Pyodide takes a couple of seconds to load; more than this means the runner is broken. */
 const BOOT_TIMEOUT_MS = 30_000;
-/** Time for a result to arrive after the run's own limit, before the runner is stopped. */
 const RESULT_GRACE_MS = 1000;
-/** The runner's own JavaScript heap; WebAssembly memory is limited by each runtime. */
 const RUNNER_HEAP_MB = 256;
-/** Enough of the runner's stderr to say why it didn't start. */
 const STDERR_TAIL_LENGTH = 2000;
 
-/** What the runner said next: a line of JSON, nothing in time, or nothing because it exited. */
 type RunnerReply = { kind: "exit" } | { kind: "line"; value: unknown } | { kind: "timeout" };
 
 type Runner = {
@@ -38,11 +32,7 @@ type Runner = {
   stop: () => void;
 };
 
-/**
- * The runtimes' files, resolved from this package, and the folders the runner may read. The
- * runner needs paths on disk, and bundlers turn `require.resolve` from `node:module` imports into
- * module ids, so `require` comes from Node's built-in loader at run time.
- */
+/** Resolve through Node's runtime loader because bundlers replace imported `require.resolve` calls with module ids. */
 function resolveRuntimes() {
   const { createRequire } = process.getBuiltinModule("node:module");
   const require = createRequire(import.meta.url);
@@ -67,7 +57,6 @@ function toReply(line: string | null): RunnerReply {
   return line === null ? { kind: "exit" } : { kind: "line", value: JSON.parse(line) };
 }
 
-/** Reads the runner's stdout one JSON line at a time. */
 function lineReader(child: ChildProcess): Pick<Runner, "next"> {
   const lines: string[] = [];
   const waiters: ((line: string | null) => void)[] = [];
@@ -114,12 +103,6 @@ function lineReader(child: ChildProcess): Pick<Runner, "next"> {
   };
 }
 
-/**
- * Starts a runner process for the kinds a batch needs. Model-written code never runs in the
- * server's own process: the runner gets no environment variables besides `NODE_ENV` (which the
- * apps' environment types require), can only read the runtimes' files, can't start processes or
- * workers, can't turn strings into code, and runs each program inside a WebAssembly runtime.
- */
 function startRunner(kinds: readonly ProgramKind[]): Runner {
   const { folders, paths } = resolveRuntimes();
 
@@ -151,10 +134,6 @@ function startRunner(kinds: readonly ProgramKind[]): Runner {
 
 type IndexedJob = { id: number; job: ProgramJob };
 
-/**
- * Runs jobs one after another until one runs out of time or the runner dies. Returns the results
- * so far, the stopped job included, so the caller can start a fresh runner for the rest.
- */
 async function runUntilStopped(runner: Runner, jobs: readonly IndexedJob[]): Promise<ProgramRun[]> {
   const [current, ...rest] = jobs;
 
@@ -195,11 +174,7 @@ async function runBatch(jobs: readonly IndexedJob[]): Promise<ProgramRun[]> {
   }
 }
 
-/**
- * Runs lesson programs the way the player runs them in the browser, with the same time and
- * output limits, and returns one result per job in order. Runtimes load only for the kinds the
- * jobs use, so Pyodide loads only when there is Python. A runner that can't start throws.
- */
+/** Returns one result per job in input order; throws if the runner cannot start. */
 export async function runPrograms(jobs: readonly ProgramJob[]): Promise<ProgramRun[]> {
   return runBatch(jobs.map((job, id) => ({ id, job })));
 }

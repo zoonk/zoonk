@@ -25,7 +25,6 @@ export type MaterialQuestionResult =
   | { status: "notFound" }
   | Exclude<UsageDecision, { status: "allowed" }>;
 
-/** The learner's own copies of the sources they asked about, in the order they gave them. */
 async function findOwnMaterial({ sourceIds, userId }: { sourceIds: string[]; userId: string }) {
   const links = await prisma.learnerSource.findMany({
     select: { source: { select: { extractedText: true, id: true, mimeType: true, title: true } } },
@@ -51,12 +50,6 @@ function toCitations({
   });
 }
 
-/**
- * Answers a question about the learner's own material (files, links or text they added) from its
- * pages, with the pages the answer came from; a question the material doesn't cover gets a kind
- * "it isn't in your material" instead of a guess. Each question is a tutor message against the
- * learner's allowance and sends "Tutor Asked" after the response.
- */
 export async function answerMaterialQuestion(
   input: MaterialQuestionInput,
 ): Promise<MaterialQuestionResult> {

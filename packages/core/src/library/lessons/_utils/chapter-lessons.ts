@@ -10,10 +10,8 @@ import { toSummaryIdeas } from "./summary-ideas";
 
 export type ChapterLesson = NonNullable<WriteLessonDraftParams["chapterLessons"]>[number];
 
-/** Enough of a lesson's examples to steer clear of them without crowding the prompt. */
 const MAX_EXAMPLES = 6;
 
-/** Where a written screen sets up its case or asks its question. */
 const EXAMPLE_FIELDS: Partial<Record<StepKind, readonly string[]>> = {
   check: ["context", "question"],
   hook: ["question", "text"],
@@ -21,7 +19,6 @@ const EXAMPLE_FIELDS: Partial<Record<StepKind, readonly string[]>> = {
   workedExample: ["problem"],
 };
 
-/** The planned screens whose briefs carry the lesson's cases, numbers and questions. */
 const EXAMPLE_SCREENS: ReadonlySet<LessonSpec["screens"][number]["kind"]> = new Set([
   "application",
   "check",
@@ -61,11 +58,6 @@ function getPlannedExamples(spec: LessonSpec | null): string[] {
   ];
 }
 
-/**
- * What a sibling lesson teaches and uses, from the best of what exists: a written lesson's
- * summary card and screens, a planned lesson's skills and briefs, or nothing for a lesson that is
- * only outlined.
- */
 function describeLesson({
   spec,
   steps,
@@ -88,13 +80,6 @@ function describeLesson({
   };
 }
 
-/**
- * The other lessons of a lesson's home chapter in teaching order, each marked as coming before or
- * after it, with what it teaches and the examples it uses so far. It reads whatever exists now and
- * never waits: a sibling planned in parallel shows up with its title and can-do line only. Only
- * lessons the lesson's own audience can see count, so a learner's private lesson never shapes a
- * shared one.
- */
 export async function loadChapterLessons({
   chapterId,
   lessonId,
@@ -102,7 +87,6 @@ export async function loadChapterLessons({
 }: {
   chapterId: string | null;
   lessonId: string;
-  /** The lesson's owner, for a private lesson; null for a shared one. */
   ownerId: string | null;
 }): Promise<ChapterLesson[]> {
   if (!chapterId) {

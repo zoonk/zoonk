@@ -23,7 +23,6 @@ describe(storeWrittenItemSet, () => {
       language: "en",
       provenance: generatedProvenance(),
       skillIds: [reading.id, inference.id],
-      // The second question's evidence isn't in the passage: it's left out, the others kept.
       written: {
         ...written,
         questions: [first!, { ...second!, evidence: "Visits doubled." }, third!],

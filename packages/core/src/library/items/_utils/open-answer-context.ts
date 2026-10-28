@@ -4,7 +4,6 @@ import { parseStepContent } from "../../steps/contract/step-contract";
 import { type AnswerExplanationTarget } from "../answer-explanations";
 import { parseItemContent } from "../item-content";
 
-/** What explaining a typed answer needs, from an item or a lesson step. */
 export type OpenAnswerContext = {
   acceptedAnswers: string[];
   context: string | null;
@@ -30,7 +29,6 @@ async function getItemContext(itemId: string): Promise<OpenAnswerContext | null>
   return { ...parsed.content, language: item.language };
 }
 
-/** Private lessons are made for one learner, so only their owner can ask about their steps. */
 async function getStepContext({
   stepId,
   userId,
@@ -59,11 +57,7 @@ async function getStepContext({
   };
 }
 
-/**
- * Reads the question, key points and answers behind a typed answer from the
- * stored item or step, never from the caller, because the explanation is
- * shared with every learner who gives the same answer.
- */
+/** Use stored questions and keys, never client-supplied context: explanations are shared with later learners. */
 export function getOpenAnswerContext({
   target,
   userId,

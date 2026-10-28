@@ -86,7 +86,6 @@ describe(repairWrittenLesson, () => {
       screen.kind === "check" ? screen.options.map((option) => option.text) : [],
     );
 
-    // A question left with one option isn't one: the fix pass rewrites it.
     expect(texts).toStrictEqual([
       ["R$ 15,00", "R$ 20"],
       ["R$ 15", "R$ 15,00"],

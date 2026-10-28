@@ -23,11 +23,6 @@ async function findExactSource({
   return source && isInRequestScope({ ownerId: request.ownerId, row: source }) ? source.id : null;
 }
 
-/**
- * Public sources in the same language whose title, publisher or URL match: mirrors and re-uploads.
- * A copy that stored no text is never one, or research would read an empty page instead of
- * fetching the document it found.
- */
 async function findSourceCandidateIds({
   request,
   search,

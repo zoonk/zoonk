@@ -7,7 +7,6 @@ import { type BlueprintContent, type ReadingProblem } from "./blueprint-contract
 import { type ExtractionDocument } from "./blueprint-passages";
 import { isPassageInDocument } from "./passage-check";
 
-/** Below this share of shared words, two names are different subjects that share a word. */
 const MIN_OVERLAP = 0.5;
 
 type Subject = BlueprintContent["structure"]["subjects"][number];
@@ -22,7 +21,6 @@ function findSubject({ content, name }: { content: BlueprintContent; name: strin
   return content.structure.subjects.find((subject) => isNamed({ name, subject }));
 }
 
-/** A finding's passage, as a citation, when code finds it in its document. */
 function toCitation({
   documents,
   finding,
@@ -92,11 +90,6 @@ function toMissingCounts({
   });
 }
 
-/**
- * Objective subjects whose notice counts don't add up to the exam's questions, when every one has
- * a count and the exam's total is known: one of them was misread. A choice counts once and an option
- * counted inside another subject not again (`listCountedSubjects`).
- */
 function findTotalProblems(content: BlueprintContent): ReadingProblem[] {
   const { edition, structure } = content;
   const total = structure.mock?.totalQuestions ?? edition.questionCount;
@@ -115,7 +108,6 @@ function findTotalProblems(content: BlueprintContent): ReadingProblem[] {
   return sum === total ? [] : [{ kind: "countsOffTotal", sum, total }];
 }
 
-/** What a reading stated, as `findUnconfirmed` compares it with what the checks kept. */
 type ReadFacts = {
   dates: readonly { kind: string }[];
   mock: { scoring: { scale?: object | null } } | null;
@@ -126,12 +118,6 @@ function hasExamDate(dates: readonly { kind: string }[]): boolean {
   return dates.some((date) => date.kind === "exam");
 }
 
-/**
- * What the reading stated that no check kept from the passages it quoted: the scale the result is
- * reported on (the cut-off's scale), the exam's day, and a kept syllabus subject's topics, none of
- * which its documents state word for word. TJ-SP's reading lost all three: its mock quoted no line with
- * the scale, its date's label said more than the passage, and it numbered an unnumbered syllabus.
- */
 function findUnconfirmed({ content, read }: { content: BlueprintContent; read: ReadFacts }) {
   const { edition, structure } = content;
   const problems: ReadingProblem[] = [];
@@ -144,7 +130,6 @@ function findUnconfirmed({ content, read }: { content: BlueprintContent; read: R
     problems.push({ kind: "unconfirmed", part: "examDate", subject: null });
   }
 
-  // A written test's topics are the themes it asks, in the reading's words, not a syllabus's items.
   const topicless = read.subjects.filter(
     (subject) =>
       subject.topics.length > 0 &&
@@ -166,15 +151,6 @@ function findUnconfirmed({ content, read }: { content: BlueprintContent; read: R
   ];
 }
 
-/**
- * What a reading left out of its documents, from the check's findings (`checkExamReading`) on the
- * subjects it was given (`checked`, in its numbering) and from code: a subject the documents name
- * as part of the exam that no stored subject is, a subject's count they state that the stored
- * subject lacks, counts that don't add up to the exam's questions and, given the reading itself
- * (`read`), what it stated that no check kept (`findUnconfirmed`). A finding counts only when code
- * finds its passage in its document, and a "missing" subject the reading has under another name
- * doesn't count: a wrong finding only costs a reading, but it costs it every time.
- */
 export function findReadingProblems({
   checked,
   content,
@@ -196,11 +172,6 @@ export function findReadingProblems({
   ];
 }
 
-/**
- * A problem as a reading again is told it (`ReadingCorrection`): a passage by the number of the
- * document it's in, among `documents` in the order the reading got them. Nothing for a passage in
- * a document the reading doesn't have.
- */
 export function toReadingCorrections({
   documents,
   problem,

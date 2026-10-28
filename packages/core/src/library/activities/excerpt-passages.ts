@@ -2,13 +2,8 @@ type Passage = { id: string; text: string };
 
 type PassageRange = { end: number; id: string; start: number };
 
-/** A piece of an excerpt: plain text, or a passage the learner can mark. */
 export type ExcerptSegment = { passageId: string | null; text: string };
 
-/**
- * Where each passage sits in its excerpt: its first exact occurrence, in reading order. A passage
- * that isn't quoted from the excerpt has no place and is left out.
- */
 function locatePassages(excerpt: string, passages: readonly Passage[]): PassageRange[] {
   return passages
     .map((passage) => ({
@@ -21,17 +16,11 @@ function locatePassages(excerpt: string, passages: readonly Passage[]): PassageR
     .toSorted((first, second) => first.start - second.start);
 }
 
-/** Two passages share words, so marking one would mark part of the other. */
 export function hasOverlappingPassages(excerpt: string, passages: readonly Passage[]): boolean {
   const ranges = locatePassages(excerpt, passages);
   return ranges.some((range, index) => index > 0 && range.start < (ranges[index - 1]?.end ?? 0));
 }
 
-/**
- * Splits an excerpt into plain text and markable passages, in reading order, so the player draws
- * exactly the passages the validator checked. Overlapping passages are rejected before
- * publishing; here a later overlapping one is skipped.
- */
 export function splitExcerpt(excerpt: string, passages: readonly Passage[]): ExcerptSegment[] {
   const ranges: PassageRange[] = [];
 

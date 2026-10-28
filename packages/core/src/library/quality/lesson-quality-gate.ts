@@ -14,7 +14,6 @@ import {
 } from "./lesson-code-checks";
 import { checkLessonPrograms } from "./lesson-program-checks";
 
-/** The lesson plan and course context every writing task reads. */
 export type LessonWritingContext = Pick<
   WriteLessonDraftParams,
   | "activityTemplates"
@@ -33,7 +32,6 @@ export type LessonWritingContext = Pick<
 
 type AiAnalytics = CheckLessonQualityParams["analytics"];
 
-/** Code problems the fix pass should fix but that don't hold a fixed lesson back. */
 const LENIENT_AFTER_FIX = new Set<LessonCheckProblem["code"]>([
   "readingLevel",
   "repeatedExample",
@@ -41,7 +39,6 @@ const LENIENT_AFTER_FIX = new Set<LessonCheckProblem["code"]>([
   "termOrder",
 ]);
 
-/** A problem for the fix pass, from code or from the reviewer. */
 export type LessonGateProblem = {
   problem: string;
   screen: number | null;
@@ -49,14 +46,8 @@ export type LessonGateProblem = {
 };
 
 type LessonGateResult = {
-  /** Problems that keep the lesson from being published. */
   blocking: LessonGateProblem[];
-  /**
-   * The blocking problems the reviewer found wrong (a fact, a number, an answer key), the ones a
-   * fix that leaves their screen as it was can't have fixed.
-   */
   incorrect: LessonGateProblem[];
-  /** Improvements the reviewer suggested that don't block publishing. */
   minor: LessonGateProblem[];
   screens: ConvertedScreen[];
 };
@@ -97,8 +88,6 @@ async function reviewLesson({
     source: "review",
   });
 
-  // A fresh review of a fixed lesson always finds something new to polish, so after the fix pass
-  // only something wrong still holds the lesson back.
   const isBlocking = (issue: Issue) =>
     issue.severity === "blocking" && (!afterFix || issue.kind === "incorrect");
 
@@ -113,13 +102,6 @@ async function reviewLesson({
   };
 }
 
-/**
- * The quality gate for a written lesson: code checks on everything (including
- * running the code in code activities) and, when `review` is set, the
- * cross-family reasoning check. It returns each screen as stored content with
- * the problems that block publishing and the reviewer's minor suggestions, all
- * written for the fix pass.
- */
 export async function runLessonQualityGate({
   afterFix = false,
   allowActivityFallback = false,
@@ -131,22 +113,13 @@ export async function runLessonQualityGate({
   serviceTier,
   writerModel,
 }: {
-  /**
-   * The gate after the fix pass: only what's wrong still holds the lesson back. A sentence a
-   * little long for the level, a term used one screen early, an example another lesson already
-   * used, a check that asks an earlier one's question again or a style problem the reviewer still
-   * sees becomes a suggestion, because a learner
-   * waiting on a lesson is worse off than one reading a lesson that isn't perfect yet.
-   */
   afterFix?: boolean;
   allowActivityFallback?: boolean;
   analytics?: AiAnalytics;
   context: LessonWritingContext;
   lesson: WrittenLesson;
-  /** How likely the lesson is to be read again, which picks the reviewer (`getLessonCheckModels`). */
   reuse: CallReuse;
   review: boolean;
-  /** The reviewer's gateway tier: `flex` when the lesson is written well before a learner reaches it. */
   serviceTier?: ServiceTier;
   writerModel: string;
 }): Promise<LessonGateResult> {

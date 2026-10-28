@@ -4,7 +4,6 @@ import { checkWrittenChallenge } from "./challenge-case-content";
 
 type WrittenCase = ReturnType<typeof writtenChallengeCaseFixture>;
 
-/** Every decision with its choices in the order the writer listed them, strongest first. */
 function withStrongestFirst(written: WrittenCase): WrittenCase {
   return {
     ...written,

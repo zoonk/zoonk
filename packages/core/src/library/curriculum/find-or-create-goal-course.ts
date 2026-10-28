@@ -12,10 +12,6 @@ import { type CurriculumAnalytics, type CurriculumScope } from "./curriculum-sco
 type CourseScope = Pick<CurriculumScope, "language" | "ownerId" | "targetLanguage"> &
   Partial<Pick<CurriculumScope, "generalGoal">>;
 
-/**
- * Where a course lives, and where its slug has to be free: the AI organization for a shared
- * course, or the learner for their own.
- */
 async function getCourseHome(ownerId: string | null) {
   if (ownerId) {
     return { homeId: ownerId, organizationId: null };
@@ -45,7 +41,6 @@ async function getAvailableSlug(
   return pickAvailableSlug({ base, taken: taken.map((course) => course.slug) });
 }
 
-/** A new course row, or the one another goal naming the same title created first. */
 async function createCourse({
   format,
   provenance,
@@ -89,17 +84,7 @@ async function createCourse({
   });
 }
 
-/**
- * Finds the Library course a goal's skill graph names, or creates its row with an empty outline.
- * Shared courses belong to the AI organization and are found like every other Library item: the
- * same title first, then a course named differently for the same subject ("Newtonian mechanics"
- * for "Classical mechanics"), through search terms, text search and the reuse decision. A private
- * course belongs to its learner and is only ever matched for them, by title. Two goals naming the
- * same course at once end up with one row. The outline is written afterwards, under the course's
- * outline claim. A new course stores the provenance of the run that named it.
- *
- * This is a workflow bridge: the scope's owner comes from the goal the public boundary loaded.
- */
+/** Internal workflow bridge: the owner must come from the goal the public boundary authorized. */
 export async function findOrCreateGoalCourse({
   analytics,
   format,
@@ -109,7 +94,6 @@ export async function findOrCreateGoalCourse({
 }: {
   analytics?: CurriculumAnalytics;
   format: CourseFormat;
-  /** The run that named the course: the goal's skill graph or a quick explanation. */
   provenance: LibraryProvenance;
   scope: CourseScope;
   title: string;

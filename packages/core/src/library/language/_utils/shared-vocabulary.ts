@@ -7,23 +7,15 @@ type SharedVocabularyInput = {
   content: LanguageLessonContent;
   learnerLanguage: string;
   organizationId: string;
-  /** The lesson run that wrote the words, romanizations, respellings and tips. */
   provenance: LibraryProvenance;
   targetLanguage: string;
 };
 
 export type SharedVocabulary = {
-  /** Every `Word` row the lesson can show, by text: its words and their wrong options. */
   wordIdsByText: Map<string, string>;
   sentenceIdsByText: Map<string, string>;
 };
 
-/**
- * Words and sentences are shared by every language pair learning the target
- * language, so they are created once (concurrent lessons may add the same
- * word at the same moment) and a romanization is only added where none exists.
- * The run that wrote a row, or filled its romanization, is its provenance.
- */
 async function saveWords({
   content,
   organizationId,
@@ -68,11 +60,6 @@ async function saveWords({
   return new Map(rows.map((row) => [row.word, row.id]));
 }
 
-/**
- * Respellings and tips depend on the learner's language, not the lesson, so
- * each word keeps one per language. An existing respelling stays; a missing
- * tip (rows written before tips existed) is filled.
- */
 async function savePronunciations({
   content,
   learnerLanguage,
@@ -163,11 +150,6 @@ async function saveSentences({
   return new Map(rows.map((row) => [row.sentence, row.id]));
 }
 
-/**
- * Stores the target-language side of a lesson where every language pair can
- * reuse it: its words and their wrong options, its sentences, and the
- * respellings and tips for speakers of the lesson's language.
- */
 export async function saveSharedVocabulary(
   input: SharedVocabularyInput,
 ): Promise<SharedVocabulary> {

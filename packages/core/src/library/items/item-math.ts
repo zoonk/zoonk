@@ -7,11 +7,7 @@ import { ANY_NUMBER, fitsEntry, matchesEntry } from "./_utils/numeric-entry";
 const MAX_NEW_NUMBER_TRIES = 20;
 const DECIMAL_PRECISION = 12;
 
-/**
- * Steps like 0.1 accumulate binary error: (0.3 - 0.1) / 0.1 is 1.999…, which
- * would make the maximum unreachable, and 0.1 + 0.2 would show up in a question
- * as 0.30000000000000004.
- */
+/** Binary rounding can make slider endpoints unreachable or leak long decimals into questions. */
 function toDecimal(value: number): number {
   return Number(value.toPrecision(DECIMAL_PRECISION));
 }
@@ -32,14 +28,8 @@ function drawValues(math: GeneratedMathProblem, random: () => number): MathValue
   );
 }
 
-/**
- * How a numeric item takes its answer: the entry rule of its answer box and the other answers
- * that are right too. Lesson calculations and items written before either take any number and
- * their solution alone.
- */
 type AnswerRules = { entry?: NumericEntry; otherSolutions?: readonly string[] };
 
-/** The answers a draw takes: its solution's, then each other solution's; null when one fails. */
 function getAcceptedValues({
   math,
   otherSolutions = [],
@@ -58,11 +48,6 @@ function getAcceptedValues({
     : null;
 }
 
-/**
- * At some values a wrong method gives a right number (at 50% off, the
- * discount equals the price paid), so a learner making that mistake would be
- * marked right. Those draws are skipped.
- */
 function isMistakeIndistinct({
   accepted,
   entry,
@@ -86,10 +71,6 @@ function isMistakeIndistinct({
   });
 }
 
-/**
- * A draw the item can be asked with: every answer computes, the answer box takes the answer (a
- * whole number for an integer answer) and no common mistake gives a right one.
- */
 function isUsableDraw({
   entry,
   math,
@@ -110,7 +91,6 @@ function isUsableDraw({
   );
 }
 
-/** A version of a math item with its numbers in place: what the learner sees and what's right. */
 export type MathVersion = {
   answer: number;
   context: string | null;
@@ -143,7 +123,6 @@ function fillMathVersion({
   };
 }
 
-/** The version the item was checked with, for when no fresh draw works. */
 function checkedVersion(text: MathText): MathVersion {
   const values = getValues(text.math);
   const solution = evaluateFormula(text.math.solution, values);
@@ -155,16 +134,6 @@ function checkedVersion(text: MathText): MathVersion {
   });
 }
 
-/**
- * Makes a fresh version of a checked math item: new values within each
- * variable's range, the context, question and worked steps filled in (numbers
- * written the way `language` writes them) and the answer recomputed. Draws
- * again when a draw hits a value an answer can't use (such as a zero divisor),
- * gives an answer its answer box can't take (a fraction for an integer answer)
- * or makes a common mistake look right, and keeps the numbers the item was
- * checked with if none works. A seeded `random` gives the same version every
- * time, so one serving always shows and grades the same numbers.
- */
 export function withNewNumbers({
   entry = ANY_NUMBER,
   otherSolutions,
@@ -188,12 +157,6 @@ export function withNewNumbers({
   return fillMathVersion({ ...text, answer: found.result.value, values: found.values });
 }
 
-/**
- * Grades a number typed for a math item with the values the learner saw, the
- * way its answer box takes it (`matchesEntry`), against its solution and every
- * other answer that's right too. A wrong answer that matches a common mistake
- * returns that mistake, so the feedback can name what went wrong.
- */
 export function checkMathAnswer({
   answer,
   entry = ANY_NUMBER,

@@ -14,7 +14,6 @@ const HAND_WRITTEN_MODEL = "zoonk/hand-written";
 
 type ActiveCourseIds = () => Promise<ReadonlySet<string>>;
 
-/** Only public outlined copy without an explicit manual provenance marker is owned here. */
 function publicCopyWhere() {
   return {
     OR: [{ detailsModel: null }, { detailsModel: { not: HAND_WRITTEN_MODEL } }],
@@ -23,7 +22,6 @@ function publicCopyWhere() {
   };
 }
 
-/** Unknown provenance is legacy copy; empty copy is retryable after its dispatch grace period. */
 function staleDetailsWhere({
   inFlight,
   now,
@@ -61,7 +59,6 @@ function staleDetailsWhere({
   };
 }
 
-/** Reads only; the same legacy/stale/recovery selection the batch claims from. */
 export async function getCourseDetailsRegenerationPreview({
   getInFlightCourseIds,
   promptVersion,
@@ -92,7 +89,6 @@ export async function getCourseDetailsRegenerationPreview({
 type Dispatch = (courseId: string) => Promise<unknown>;
 type ClaimedCourse = { course: Course; claimedAt: Date };
 
-/** A conditional write: of two clicks that found the same course, only one claims it. */
 async function claimCourse({
   course,
   inFlight,
@@ -159,7 +155,6 @@ async function dispatchCourse({
   return { courseIds: [course.id], failed: 0 };
 }
 
-/** The owner's explicit POST: 25 stale public courses, the oldest copy first. */
 export async function regenerateCourseDetails({
   getInFlightCourseIds,
   promptVersion,

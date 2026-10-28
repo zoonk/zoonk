@@ -8,7 +8,6 @@ function number(value: number): TracedValue {
   return { kind: "number", value };
 }
 
-/** A run of: total = 0 / for item in ...: total += item (twice) / done = True. */
 const events: TraceStep[] = [
   { line: 1, values: [number(0), null, null] },
   { line: 2, values: [number(0), { kind: "text", text: "[ 2, 3 ]" }, null] },

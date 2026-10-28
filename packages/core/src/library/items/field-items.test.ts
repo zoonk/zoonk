@@ -42,7 +42,6 @@ describe(listGoalFieldItemTargets, () => {
       ...Array.from({ length: FIELD_ITEMS_PER_SKILL }, () =>
         itemFixture({ field: "nursing", skillId: covered.id }),
       ),
-      // One question short of enough: each skill's own questions count, not the field's in all.
       ...Array.from({ length: FIELD_ITEMS_PER_SKILL - 1 }, () =>
         itemFixture({ field: "nursing", skillId: partly.id }),
       ),

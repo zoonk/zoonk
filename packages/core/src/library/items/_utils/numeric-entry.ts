@@ -5,13 +5,11 @@ import { isClose } from "../../activities/templates/_utils/template-helpers";
 
 type Tolerance = { kind: "absolute" | "relative"; value: number };
 
-/** Any number, graded by the item's tolerance: how every numeric item read before entry rules. */
 export const ANY_NUMBER: NumericEntry = { kind: "number", places: null };
 
 /** A decimal the SAT's grid takes for a fraction: at least three places (.667 or .666, not .67). */
 const MIN_FRACTION_DECIMALS = 3;
 
-/** A fraction's exact value, or a decimal that fills the grid, rounded or cut short. */
 function matchesFraction({ expected, value }: { expected: number; value: number }): boolean {
   const places = countDecimalPlaces(value);
 
@@ -21,12 +19,6 @@ function matchesFraction({ expected, value }: { expected: number; value: number 
   );
 }
 
-/**
- * Whether a typed number is the expected answer, the way the item's answer box takes it: for any
- * number, within the tolerance or rounded to the places the learner typed (the question asks no
- * precision); the exact whole number for an integer answer; rounded or cut to the decimal places
- * asked; or a fraction's value (2/3, or .667 and .666 the way the SAT's grid takes it, never .67).
- */
 export function matchesEntry({
   entry,
   expected,
@@ -54,7 +46,6 @@ export function matchesEntry({
   }
 }
 
-/** Whether an answer is one the answer box can take: a whole number for an integer answer. */
 export function fitsEntry({ entry, value }: { entry: NumericEntry; value: number }): boolean {
   return entry.kind !== "integer" || isClose(value, Math.round(value));
 }

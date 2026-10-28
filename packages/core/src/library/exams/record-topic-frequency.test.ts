@@ -72,7 +72,6 @@ describe(recordTopicFrequency, () => {
 
     await expect(findTopicFrequencyLookup({ examBlueprintId: blueprint.id })).resolves.toBeNull();
 
-    // A later lookup that finds nothing keeps what the earlier one found.
     await recordTopicFrequency({ examBlueprintId: blueprint.id, subjects: [] });
 
     const again = await prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } });
@@ -104,7 +103,6 @@ describe(recordTopicFrequency, () => {
       },
     });
 
-    // Natural sciences' lookup answered; human sciences' failed, so this lookup didn't finish.
     await recordTopicFrequency({
       complete: false,
       examBlueprintId: blueprint.id,
@@ -121,7 +119,6 @@ describe(recordTopicFrequency, () => {
       ],
     });
 
-    // A retry of the step, or the next learner's research, looks up only the subject it missed.
     await expect(
       findTopicFrequencyLookup({ examBlueprintId: blueprint.id }),
     ).resolves.toMatchObject({

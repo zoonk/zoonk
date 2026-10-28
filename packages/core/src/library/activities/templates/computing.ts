@@ -54,15 +54,10 @@ const codeRunnerFields = z
 
 type CodeRunnerFields = z.output<typeof codeRunnerFields>;
 
-/** Lines compare without trailing spaces, which learners can't see. */
 function sameLine(first: string | undefined, second: string | undefined): boolean {
   return first?.trimEnd() === second?.trimEnd();
 }
 
-/**
- * The solution is what a learner can reach: the starter code with only their lines changed, and
- * at least one of them, so there's something to fix.
- */
 function solutionIssues(fields: CodeRunnerFields) {
   const [starter, solution] = [codeLines(fields.starterCode), codeLines(fields.solution)];
   const editable = new Set(fields.editableLines);
@@ -167,7 +162,6 @@ function tracedValue(fields: CodeTracerFields, pause: Pause): string | null {
   return value === undefined ? null : String(value);
 }
 
-/** The right prediction is read from the trace, so the options can't mark their own answer. */
 function matchingOptions(fields: CodeTracerFields, pause: Pause) {
   const value = tracedValue(fields, pause);
   return pause.options.filter((option) => option.text.trim() === value);

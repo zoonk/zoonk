@@ -14,7 +14,6 @@ import {
   saveAnswerExplanation,
 } from "./answer-explanations";
 
-/** Typed answers are short and spoken ones are transcripts; longer input is not an answer. */
 const MAX_EXPLAINED_ANSWER_LENGTH = 1000;
 
 type ExplainAnswerResult =
@@ -25,13 +24,6 @@ type ExplainAnswerResult =
   | RefusedUsage
   | { status: "explained"; explanation: string; explanationId: string; reused: boolean };
 
-/**
- * Explains why a typed or spoken answer to an item or a lesson step is wrong.
- * The explanation is stored by item or step and normalized answer, so the next
- * learner who makes the same mistake gets it at once and no model runs again.
- * An answer that matches an accepted answer has nothing to explain. Only a new
- * explanation is claimed as small AI help (`claimAssist`), since stored ones cost nothing.
- */
 export async function explainAnswer({
   answer,
   target,

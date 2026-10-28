@@ -73,7 +73,6 @@ function outlineLesson(title: string, skills: string[]) {
   };
 }
 
-/** Each search-terms call's subjects, as "kind:title", in the order the calls were made. */
 function searchTermsCalls(): string[][] {
   return vi
     .mocked(generateSearchTerms)
@@ -82,7 +81,6 @@ function searchTermsCalls(): string[][] {
     );
 }
 
-/** Reuses the first candidate that is one of `ids`, as the reuse decision would when it agrees. */
 function mockReuseOf(ids: readonly string[]) {
   vi.mocked(decideLibraryIdentity).mockImplementation(({ candidates }) => {
     const reused = candidates.find((candidate) => ids.includes(candidate.id));
@@ -206,7 +204,6 @@ describe(findOrCreateGoalCourse, () => {
     });
 
     expect(result).toStrictEqual({ course: existing, created: false });
-    // Only the AI organization's shared courses in the same language are candidates.
     expect(getCandidateIds(decision)).toStrictEqual([existing.id]);
   });
 
@@ -229,7 +226,6 @@ describe(findOrCreateGoalCourse, () => {
     expect(decision).toHaveBeenCalledOnce();
     expect(result.created).toBe(true);
 
-    // A new course keeps the provenance of the run that named it.
     expect(result.course).toMatchObject({
       generatedAt: provenance.generatedAt,
       model: provenance.model,
@@ -438,7 +434,6 @@ describe(saveOutlineChapter, () => {
     ]);
 
     expect(tags.map((tag) => tag.skillId)).toStrictEqual([goalSkill.id]);
-    // The outline's two lessons, then the chapter's challenge on their skills.
     expect(saved.lessonIds).toHaveLength(3);
 
     expect(lessons.find((lesson) => lesson.id === saved.lessonIds[2])).toMatchObject({
@@ -499,7 +494,6 @@ describe(saveOutlineChapter, () => {
       workflowRunId: randomUUID(),
     });
 
-    // The chapter first; then its skills (the goal's own skill needs no search) beside its lessons.
     const calls = searchTermsCalls();
 
     expect(calls[0]).toStrictEqual([`chapter:Dynamics ${word}`]);
@@ -535,7 +529,6 @@ describe(saveOutlineChapter, () => {
     expect(skillIdsOf(lessonTitles[1] ?? "")).toContain(sharedSkills[0]?.id);
   });
 
-  // A real outline gave tax assessment "ex officio", "by declaration" and "by approval" one skill.
   it("keeps lessons that split one skill set apart, and finds each of them again", async () => {
     const course = await courseFixture({ outlineStatus: "running" });
     const word = uniqueWord();
@@ -575,7 +568,6 @@ describe(saveOutlineChapter, () => {
 
     const titleOf = (id: string | undefined) => lessons.find((lesson) => lesson.id === id)?.title;
 
-    // The outline's four lessons, in order, then the chapter's challenge.
     expect(saved.lessonIds.slice(0, 4).map((id) => titleOf(id))).toStrictEqual([
       ...titles,
       `Notice of assessment ${word}`,
@@ -735,7 +727,6 @@ describe("course outline state", () => {
 
     const skillIds = [byConcept.id, byToolLesson.id, byToolChapter.id];
 
-    // By default, a skill counts as taught by a lesson or a tagged chapter, tools or not.
     await expect(
       findUntaughtSkills({ courseId: course.id, ownerId: null, skillIds }),
     ).resolves.toStrictEqual([]);
@@ -849,11 +840,6 @@ describe("course outline state", () => {
   });
 });
 
-/**
- * A Monday in 2020, before the learning events other tests write, which a plan's pace reads. A
- * plan made on the real day laid its lessons out differently on each weekday, and a test that ran
- * past midnight re-planned a new day.
- */
 const NOW = new Date("2020-09-28T12:00:00Z");
 
 describe(replanGoalsWaitingOnSkills, () => {
@@ -951,15 +937,11 @@ describe(replanGoalsWaitingOnSkills, () => {
     const ofSkill = (skillId: string) =>
       items.flatMap((item) => (item.skillId === skillId ? [item.lessonId ?? item.skillId] : []));
 
-    // The outlined lessons start where the stand-in was, in chapter order. Those past the time it
-    // held go on the next days with room, which the other skill's stand-in may come before.
     expect(items).toHaveLength(saved.lessonIds.length + 1);
     expect(ofSkill(first.id)).toStrictEqual(saved.lessonIds);
     expect(ofSkill(second.id)).toStrictEqual([second.id]);
     expect(items.slice(0, 2).every((item) => item.skillId === first.id)).toBe(true);
 
-    // A screen showing today's session still reaches it: the learner's next read brings it up to
-    // date with the real lessons, keeping the block it offers next.
     await expect(
       prisma.studySession.findUnique({ where: { id: planned.id } }),
     ).resolves.not.toBeNull();
@@ -999,7 +981,6 @@ describe(replanGoalsWaitingOnSkills, () => {
 
     const before = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
 
-    // A band landed for another course: the goal is asked to re-plan, and nothing in it moves.
     await expect(
       replanGoalsWaitingOnSkills({ goalIds: [goal.id], skillIds: [] }),
     ).resolves.toStrictEqual({ failedGoalIds: [], goalIds: [goal.id] });
@@ -1057,7 +1038,6 @@ describe(replanGoalsWaitingOnSkills, () => {
       });
     };
 
-    // The band's first chapter lands and the waiting learner is re-planned: no stand-in is left.
     const first = await saveChapter(0);
     const partway = await replanGoalsWaitingOnSkills({ skillIds: [skill.id] });
     const second = await saveChapter(1);

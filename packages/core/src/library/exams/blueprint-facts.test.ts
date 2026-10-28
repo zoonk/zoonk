@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { DOCUMENTS, NOTICE, blueprintExtraction } from "./_test-utils/blueprint-extraction";
 import { findStatedTopics, listBlueprintFacts, toCitedFacts } from "./blueprint-facts";
 
-/** A format whose count of questions in its section is quoted apart from it. */
 function countedFormat({
   countPassage,
   kind,
@@ -47,8 +46,6 @@ describe(listBlueprintFacts, () => {
     const statements = Object.fromEntries(facts.map((fact) => [fact.id, fact.statement]));
 
     expect(statements).toMatchObject({
-      // A kind is named by everything it covers, as the reading files it: picking words in a text is
-      // multiple choice too.
       "formats.0":
         "Question format: multiple-choice questions, answered by picking among given options or by picking words or items in a text",
       "formats.0.description": "Question format: Múltipla escolha com cinco alternativas",
@@ -90,7 +87,6 @@ describe(listBlueprintFacts, () => {
       "LINGUAGENS: 1 Língua Portuguesa. 2 Literatura.",
     ]);
 
-    // Mathematics' own passage cites a document research never read, so no claim borrows it.
     expect(passages["mock.sections.1"]).toHaveLength(2);
     expect(passages["mock.scoring"]).toHaveLength(2);
   });
@@ -185,7 +181,6 @@ describe(listBlueprintFacts, () => {
               tasks: [
                 {
                   count: 10,
-                  // "between two speakers" is the model's own: no line it quotes states it.
                   description: "Part 1: a conversation between two speakers in an everyday context",
                   passages: [
                     { document: 1, passage: part },
@@ -205,13 +200,10 @@ describe(listBlueprintFacts, () => {
     const cited = (id: string) =>
       facts.find((fact) => fact.id === id)?.citations.map((citation) => citation.passage);
 
-    // Each passage once: the section's include the task's own that name it.
     expect(cited("mock.sections.0.tasks.0")).toStrictEqual([part, count, once, summary]);
     expect(cited("mock.sections.0.tasks.0.plays")).toStrictEqual([part, count, once, summary]);
     expect(facts.find((fact) => fact.id === "mock.sections.0.tasks.0")?.found).toBe(true);
 
-    // Its questions and plays name the part by the line it quotes for itself, never by the
-    // description, whose detail no line states would drop them with it.
     expect(
       facts
         .filter((fact) => fact.id.startsWith("mock.sections.0.tasks.0"))
@@ -272,7 +264,6 @@ describe(listBlueprintFacts, () => {
     const cited = (id: string) =>
       facts.find((fact) => fact.id === id)?.citations.map((citation) => citation.passage);
 
-    // Each passage once: the section's own first, then the mock's.
     expect(cited("mock.sections.0.minutes")).toStrictEqual([time, count, overview]);
     expect(cited("mock.sections.0.questions")).toStrictEqual([time, count, overview]);
     expect(facts.find((fact) => fact.id === "mock.sections.0.minutes")?.found).toBe(true);
@@ -347,8 +338,6 @@ describe(listBlueprintFacts, () => {
       (id) => facts.find((fact) => fact.id === id)?.statement,
     );
 
-    // The description, written by the model, is checked on its own claim: a detail it adds that no
-    // line states must not drop the rule or the count.
     for (const statement of statements) {
       expect(statement).toContain(format);
       expect(statement).not.toContain("three tasks a test");

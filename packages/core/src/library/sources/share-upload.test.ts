@@ -6,7 +6,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { shareSourceUpload } from "./share-upload";
 
-/** The private store uploads live in. */
 const PRIVATE_STORE = { storeId: "store_test", token: undefined };
 
 async function privateUploadFixture({
@@ -72,7 +71,6 @@ describe(shareSourceUpload, () => {
 
     expect(shared.reusePolicy).toMatchObject({ pastQuestions: "allowedWithCitation" });
 
-    // Deleting the uploader keeps the shared document for everyone else.
     await prisma.user.delete({ where: { id: user.id } });
     await expect(prisma.source.findUnique({ where: { id: source.id } })).resolves.not.toBeNull();
   });

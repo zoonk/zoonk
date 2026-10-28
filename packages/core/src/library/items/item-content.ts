@@ -13,17 +13,8 @@ import { z } from "zod";
 import { shuffleAnswerOptions, stripOptionLabels } from "../_utils/answer-options";
 import { ANY_NUMBER } from "./_utils/numeric-entry";
 
-/**
- * A past exam question copied as printed, where its organizer allows it (see `past-questions.ts`):
- * its options keep the paper's order, and it cites the paper.
- */
 const quotedField = { quoted: z.literal(true).optional() };
 
-/**
- * `Item.content` for each format. It is the generated item without the fields
- * that live in their own columns (`format`, and `difficulty`, which real
- * answers recalibrate), so generation and storage share one shape.
- */
 const ITEM_CONTENT_SCHEMAS = {
   essay: GENERATED_ITEM_SCHEMAS.essay.omit({ difficulty: true, format: true }),
   matchPairs: GENERATED_ITEM_SCHEMAS.matchPairs.omit({ difficulty: true, format: true }),
@@ -45,32 +36,20 @@ type ItemContentByFormat = {
   [FORMAT in ItemFormat]: z.infer<(typeof ITEM_CONTENT_SCHEMAS)[FORMAT]>;
 };
 
-/** A stored item's format with its content, narrowed together. */
 export type ParsedItemContent = {
   [FORMAT in ItemFormat]: { format: FORMAT; content: ItemContentByFormat[FORMAT] };
 }[ItemFormat];
 
-/** Whether stored item content is a past exam question copied as printed, shown with its source. */
 export function isQuotedItem(content: unknown): boolean {
   return isJsonObject(content) && content.quoted === true;
 }
 
-/** Maps a checked item's generated difficulty to the IRT-style scale real answers refine. */
 const DIFFICULTY_SCALE = { easy: -1, hard: 1, medium: 0 } as const;
 
-/**
- * The support text (`context`) is where excerpts, transcripts and other quoted texts live, and they
- * keep their own punctuation (a transcript's speaker line keeps its em dash as printed); every
- * other field is our own wording.
- */
 export function isOwnWording(key: string): boolean {
   return key !== "context";
 }
 
-/**
- * Our own wording never uses em dashes, as lesson screens don't (`replaceEmDashes`): a written
- * item loses them everywhere but its support text.
- */
 function replaceOwnEmDashes<Content extends Record<string, unknown>>(content: Content): Content {
   const replaced = Object.fromEntries(
     Object.entries(content).map(([key, value]) => [
@@ -83,13 +62,8 @@ function replaceOwnEmDashes<Content extends Record<string, unknown>>(content: Co
   return replaced as Content;
 }
 
-/**
- * What the exam's format sets for how an item is answered, stored with it: how many options a
- * multiple-choice learner picks (`select`) and how a numeric answer is typed (`entry`).
- */
 export type ItemAnswerFormat = { entry?: NumericEntry; select?: OptionSelect };
 
-/** The answer format a format's content stores: picks for multiple choice, entry for numeric. */
 function withAnswerFormat<Content extends object>({
   content,
   entry = ANY_NUMBER,
@@ -103,16 +77,6 @@ function withAnswerFormat<Content extends object>({
   return format === "numeric" ? { ...content, entry } : content;
 }
 
-/**
- * Splits a generated item into its stored parts: the content JSON, its format
- * and the starting difficulty that answers later recalibrate, with how it's
- * answered (`select`, `entry`). Options never keep a printed letter, since
- * every screen shows its own. A quoted past question keeps its options in the
- * order the paper printed them, and so does a fixed set of options (True,
- * False, Not given); other options are shuffled once. Em dashes leave our own
- * wording; a quoted past question and an item that cites the source it
- * reproduces (a statute drill) keep every word as the source wrote it.
- */
 export function toStoredItem(
   item: GeneratedItem,
   {
@@ -147,10 +111,7 @@ export function toStoredItem(
   return { content: stored, difficulty: DIFFICULTY_SCALE[difficulty], format };
 }
 
-/**
- * Reads stored item content for its format. Content is written only after the
- * item checks pass, so a parse failure means corrupted data and throws.
- */
+/** Throws on invalid stored content, which indicates corrupted data. */
 export function parseItemContent({
   content,
   format,

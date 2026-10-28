@@ -26,7 +26,6 @@ import { createHomeChapterLessons, createLibraryLesson } from "./create-library-
 const WRITERS = ["publication", "creation", "pull"] as const;
 type Writer = (typeof WRITERS)[number];
 
-/** Pre-cut dependencies, a merged identity, and legacy lesson/chapter/course links. */
 async function selectionScope() {
   const [first, second, untouched, skill, course, chapter] = await Promise.all([
     userFixture(),
@@ -65,7 +64,6 @@ async function selectionScope() {
     goalFixture({ userId: untouched.id }),
   ]);
 
-  // The skills each plan's build read, as it saves them: its graph's, its items' and its lessons'.
   const sources = [[skill.id], [alias.id], [skill.id], [skill.id], [skill.id], [skill.id], []];
 
   const plans = await Promise.all(

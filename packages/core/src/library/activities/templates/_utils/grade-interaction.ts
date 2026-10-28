@@ -27,10 +27,6 @@ function linkKeys(links: readonly { from: string; to: string }[]): string[] {
   return links.map((link) => JSON.stringify([link.from, link.to]));
 }
 
-/**
- * Genotypes compare with the dominant allele first, however the learner ordered the pair; numbers
- * compare as written.
- */
 function cellKey(cell: string): string {
   const trimmed = cell.trim();
   return /^[A-Za-z]+$/u.test(trimmed) ? characters(trimmed).toSorted().join("") : trimmed;
@@ -81,7 +77,6 @@ function gradeRows(expected: ExpectedOf<"rows">, answer: ActivityAnswer): boolea
     : sameColumns && sameList(expectedRows.toSorted(), answerRows.toSorted());
 }
 
-/** Every tap lands within the tolerance once the device's steady delay is taken out. */
 function gradeRhythm(expected: ExpectedOf<"rhythm">, answer: ActivityAnswer): boolean {
   const offsets =
     answer.kind === "rhythm"
@@ -132,7 +127,6 @@ function gradePattern(expected: ExpectedOf<"formula" | "regex">, answer: Activit
     : regexPassesExamples(answer.pattern, expected);
 }
 
-/** Checks an interaction's end state against the expected answer code computed for it. */
 export function matchesExpectedAnswer(
   expected: ActivityExpectedAnswer,
   answer: ActivityAnswer,

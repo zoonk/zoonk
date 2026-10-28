@@ -4,8 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import { type getCachedBlueprintRow } from "./_utils/cached-blueprint-row";
 import { readExamBlueprint } from "./read-exam-blueprint";
 
-// Vitest does not run Next's cache transform. Retain this platform boundary's result by its
-// serialized arguments, as Main does when the API writes without expiring Main's cache.
+// Vitest does not apply Next.js's cache transform; model its argument-keyed cache at this boundary.
 vi.mock("./_utils/cached-blueprint-row", async (importOriginal) => {
   const actual = await importOriginal<{ getCachedBlueprintRow: typeof getCachedBlueprintRow }>();
   const entries = new Map<string, ReturnType<typeof actual.getCachedBlueprintRow>>();

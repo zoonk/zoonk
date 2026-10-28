@@ -19,17 +19,12 @@ import { startLessonVersion } from "../lessons/lesson-versions";
 import { STEP_CONTRACT_VERSION } from "../steps/contract/step-contract";
 import { type ExplanationStep } from "./explanation-steps";
 
-/** A quick explanation is a few short screens: about four minutes with its check. */
 const EXPLANATION_MINUTES = 4;
 
 type ExplanationScope = { language: string; ownerId: string | null };
 
 export type SavedExplanation = { lessonId: string; status: "busy" | "reused" | "saved" };
 
-/**
- * The explanation lesson that already answers a question skill: the first one written, visible
- * to this learner. Explanations are overview lessons teaching the question as their one skill.
- */
 export async function findExplanationLesson({
   ownerId,
   skillId,
@@ -72,7 +67,6 @@ async function publishSteps({
     prisma.$transaction(async (tx) => {
       const linkedSkills = await tx.lessonSkill.findMany({ where: { lessonId } });
 
-      /** Explicit skills include plans that still refer to a merged skill's identity. */
       const planIds = await resolvePlanInputDependents(tx, {
         lessonIds: [lessonId],
         skillIds: linkedSkills.map(({ skillId: linkedSkillId }) => linkedSkillId),
@@ -127,14 +121,7 @@ async function publishSteps({
   return saved;
 }
 
-/**
- * Stores a checked quick explanation as an overview lesson teaching the question skill, so the
- * next learner asking the same thing in other words (the skill's identity search) gets it at once.
- * A personal question's lesson is private to its learner. When another run already wrote the
- * lesson it is reused; when another run is writing it, `busy` says so.
- *
- * This is a workflow bridge: the scope's owner comes from the goal the public boundary created.
- */
+/** Internal workflow bridge: the owner must come from the goal the public boundary authorized. */
 export async function saveExplanationLesson({
   explanation,
   provenance,
@@ -196,11 +183,6 @@ export async function saveExplanationLesson({
   return { lessonId: lesson.id, status: saved ? "saved" : "busy" };
 }
 
-/**
- * Points an explain goal at its explanation: a one-item plan with the lesson (what the explain
- * screen and Today read), the subject's Overview course for "Want to go further?" and the related
- * questions to ask next.
- */
 export async function linkExplanationToGoal({
   courseId,
   goalId,
@@ -253,7 +235,6 @@ async function saveExplanationLink({
       return unchanged(false);
     }
 
-    // A concurrent course link changes which locks this write needs; retry in the global order.
     if ((current.primaryCourseId === null && courseId !== null) !== planInputs) {
       return unchanged(true);
     }
@@ -283,12 +264,6 @@ async function saveExplanationLink({
   revalidateCacheTags([getGoalsCacheTag(goal.userId)]);
 }
 
-/**
- * Points an explain goal and its explanation at the subject's Overview course for "Want to go
- * further?", unless they already have one. The lesson keeps it for every learner it's reused for
- * (`findExplanationGoFurther`). A new explanation is linked to its goal first, so the learner reads
- * it while the course is found.
- */
 export async function linkGoFurtherCourse({
   courseId,
   goalId,
@@ -329,7 +304,6 @@ export async function linkGoFurtherCourse({
   revalidateCacheTags([getGoalsCacheTag(goal.userId)]);
 }
 
-/** The follow-up questions stored on an explanation goal, without blanks. */
 export function readRelatedQuestions(details: Record<string, unknown>): string[] {
   const questions = details.relatedQuestions;
 
@@ -338,10 +312,6 @@ export function readRelatedQuestions(details: Record<string, unknown>): string[]
     : [];
 }
 
-/**
- * "Want to go further?" for an explanation someone already asked for: the shared Overview course
- * and related questions its lesson keeps, whoever asked first. Only a shared course is passed on.
- */
 export async function findExplanationGoFurther(
   lessonId: string,
 ): Promise<{ courseId: string | null; relatedQuestions: string[] }> {

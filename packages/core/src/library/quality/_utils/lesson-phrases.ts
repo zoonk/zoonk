@@ -1,10 +1,6 @@
 import { getBaseLanguage } from "@zoonk/utils/languages";
 import { normalizeString } from "@zoonk/utils/string";
 
-/**
- * Lessons open with the idea, so they never talk about "this lesson" or look
- * back at the last one. Phrases are compared without accents or case.
- */
 const LESSON_FRAMING: Readonly<Record<string, readonly string[]>> = {
   de: ["in dieser lektion", "in der letzten lektion", "am ende dieser lektion"],
   en: [
@@ -33,7 +29,6 @@ const LESSON_FRAMING: Readonly<Record<string, readonly string[]>> = {
   ],
 };
 
-/** Throat-clearing and textbook filler that never teaches anything. */
 const FILLER: Readonly<Record<string, readonly string[]>> = {
   de: ["es ist wichtig zu beachten", "seit anbeginn der zeit", "in der heutigen welt"],
   en: [
@@ -82,12 +77,10 @@ function getPhrases(
   return lists[getBaseLanguage(language)] ?? lists.en ?? [];
 }
 
-/** Matches whole words, so "vale destacar" never matches inside "equivale destacar". */
 function containsPhrase(normalizedText: string, phrase: string): boolean {
   return ` ${normalizedText.replaceAll(/[^\p{L}\p{N}'-]+/gu, " ")} `.includes(` ${phrase} `);
 }
 
-/** The framing and filler phrases a text uses, in the lesson's language. */
 export function findLessonPhrases({ language, text }: { language: string; text: string }): {
   filler: string[];
   framing: string[];

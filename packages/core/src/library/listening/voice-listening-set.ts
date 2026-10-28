@@ -11,18 +11,12 @@ import { type ListeningContent, listeningContentSchema } from "./listening-conte
 
 const AUDIO_MIME_TYPE = "audio/mpeg";
 
-/**
- * Recordings being voiced on this server, by reuse key, so two requests for the same script (two
- * learners starting the same set) wait for one voicing instead of paying twice. Other servers rely
- * on the reuse key's unique constraint.
- */
 const voicing = new Map<string, Promise<MediaAsset | null>>();
 
 function findRecording(reuseKey: string): Promise<MediaAsset | null> {
   return prisma.mediaAsset.findUnique({ where: { reuseKey } });
 }
 
-/** Voices the script, uploads it to the public Library folder and stores it under its key. */
 async function voiceRecording({
   analytics,
   content,
@@ -100,13 +94,7 @@ function voiceRecordingOnce(input: Parameters<typeof voiceRecording>[0]) {
   return started;
 }
 
-/**
- * The recording of an audio set, voiced the first time anyone needs it and shared after that: a
- * set already voiced plays its file, a set whose script another set already voiced gets that file
- * (one reuse key per script, voices and accents), and only a new script is voiced. Null when the
- * set isn't an audio set or the voicing failed; the set stays unvoiced and is voiced again the next
- * time it's needed. Called from work a learner or the goal's setup started, never on render.
- */
+/** Call only from learner-started or goal-setup work, never during rendering. */
 export async function voiceListeningSet({
   analytics,
   serviceTier,
@@ -134,7 +122,6 @@ export async function voiceListeningSet({
   const recording = await voiceRecordingOnce({ analytics, content, reuseKey, serviceTier });
 
   if (recording) {
-    // A voiced set joins the recordings a plan counts, through its questions' skills or exam.
     await writePlanInputs(async (tx) => {
       const questions = await tx.item.findMany({
         select: { examBlueprintId: true, skillId: true },

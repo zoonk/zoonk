@@ -14,7 +14,6 @@ function structure(rules: ExamStructure["rules"]): ExamStructure {
 }
 
 describe(getPassMarks, () => {
-  // DELE's pass mark showed in Spanish in a Portuguese screen.
   it("says the pass marks in the learner's language when the reading translated them", () => {
     const rules = structure([
       { citation, kind: "passMark", text: GROUPS, translations: { pt: "Grupos: 30 e 30." } },
@@ -62,7 +61,6 @@ describe(withPassMarkTranslations, () => {
 
     const texts = listPassMarkTexts(read);
 
-    // The checks dropped the first pass mark; the other rule is no pass mark.
     const kept = structure([
       { citation, kind: "other", text: "Sin penalización." },
       { citation, kind: "passMark", text: TOTAL },

@@ -17,16 +17,10 @@ import {
   type SkillExtension,
 } from "./curriculum-scope";
 
-/** One run adds one chapter to a skill, of at most this many lessons. */
 const MAX_EXTENSION_LESSONS = 10;
 
-/** A chapter that teaches a skill, as the next chapter's outline needs to continue it. */
 type SkillChapter = { lessons: string[]; title: string };
 
-/**
- * The next chapter a skill needs: after these chapters, placed right after the last of them
- * (`afterChapterId`) in its band, of about `lessons` lessons.
- */
 export type ExtensionPlan = {
   afterChapterId: string;
   chapters: SkillChapter[];
@@ -35,7 +29,6 @@ export type ExtensionPlan = {
   skill: GoalSkillRef;
 };
 
-/** A course whose band needs the next chapters of skills it teaches in part. */
 export type CourseExtensionRequest = {
   bands: CourseBandNeed[];
   courseId: string;
@@ -44,7 +37,6 @@ export type CourseExtensionRequest = {
 
 type Placement = Awaited<ReturnType<typeof loadSkillPlacements>>[number];
 
-/** The course's chapters that teach any of these skills, in course order, with their lessons. */
 function loadSkillPlacements({
   courseId,
   ownerId,
@@ -97,10 +89,6 @@ function loadSkillPlacements({
   });
 }
 
-/**
- * The lessons of a chapter that teach a skill: all of them when an outline tagged the chapter with
- * it, else those that name it. Chapter challenges aren't lessons of a skill, as plans count them.
- */
 function getSkillLessons({ placement, skillId }: { placement: Placement; skillId: string }) {
   const lessons = placement.chapter.lessons
     .map((entry) => entry.lesson)
@@ -120,8 +108,6 @@ function planExtension({
   extension: SkillExtension;
   placements: readonly Placement[];
 }): ExtensionPlan[] {
-  // Every chapter that teaches the skill says what the next one mustn't repeat, chapters the
-  // goal's plan leaves out (ones that need a tool) included.
   const teaching = placements
     .map((placement) => ({
       lessons: getSkillLessons({ placement, skillId: extension.skill.id }),
@@ -149,14 +135,7 @@ function planExtension({
   ];
 }
 
-/**
- * What the next chapter of each skill needs: the chapters of the course that teach it so far, in
- * order, with their lessons, the band of the last one, and how many lessons it should have: its
- * plan's stand-in, at most a chapter's worth. A skill the course doesn't teach at all is left out:
- * the regular outline writes its first chapters.
- *
- * This is a workflow bridge: the owner comes from the course a goal's plan already uses.
- */
+/** Internal workflow bridge: derive the owner from the course the authorized goal's plan uses. */
 export async function planSkillExtensions({
   courseId,
   extensions,
@@ -179,7 +158,6 @@ export async function planSkillExtensions({
   return extensions.flatMap((extension) => planExtension({ extension, placements }));
 }
 
-/** The skills whose stand-in (the lessons the Library hasn't outlined yet) is due soon. */
 async function loadSoonStandInSkillIds({ goalId, timeZone }: { goalId: string; timeZone: string }) {
   const today = getDateInTimeZone({ date: new Date(), timeZone });
 
@@ -229,10 +207,6 @@ function groupByBand({
   }));
 }
 
-/**
- * A course's extension request, outlined for the same learners as the course's other chapters the
- * plan needs (`toPlanCourseScope`), so one run for both writes for the goal's exam.
- */
 async function toCourseRequest({
   course,
   extensions,
@@ -257,7 +231,6 @@ async function toCourseRequest({
     : [];
 }
 
-/** The course a plan learns a skill in: the one its graph names, else the goal's own course. */
 function getSkillCourseId({
   goal,
   skill,
@@ -268,16 +241,7 @@ function getSkillCourseId({
   return skill.courseIds?.[0] ?? goal.primaryCourseId;
 }
 
-/**
- * The next chapters a goal's plan needs soon: for each skill whose stand-in (the part of the skill
- * the Library hasn't outlined, while a chapter's worth or more is missing; see
- * `getStandInLessons`) is due within two weeks, the next chapter of the course that already
- * teaches it in part, grouped by course and band. A course whose outline is being written is left
- * alone: that run may be writing them, and the next preparation asks again for what's still
- * missing.
- *
- * This is a workflow bridge: the goal comes from the learner's own session.
- */
+/** Internal workflow bridge: the goal must come from the learner's own session. */
 export async function listSkillExtensions({
   goalId,
   timeZone,
@@ -333,7 +297,6 @@ export async function listSkillExtensions({
     loadGoalPlannerLessons({ goal, graph, userId: goal.userId }),
   ]);
 
-  // The plan's own stand-ins, so the Library writes exactly the lessons the plan waits for.
   const standIns = getStandInLessons({ lessons, skills: graph.skills });
 
   const requests = await Promise.all(

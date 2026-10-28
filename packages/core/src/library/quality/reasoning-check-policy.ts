@@ -1,13 +1,8 @@
 import { type WrittenLesson, type WrittenScreen } from "@zoonk/ai/tasks/v2/lesson-writer/schema";
 import { type CourseLevel } from "@zoonk/db";
 
-/** Subjects where a wrong lesson can hurt: numbers, science, law and health. */
 const HIGH_STAKES_CATEGORIES: ReadonlySet<string> = new Set(["health", "law", "math", "science"]);
 
-/**
- * The share of other lessons a reviewer reads, so quality is measured
- * everywhere at a fraction of the cost.
- */
 const SAMPLE_RATE = 0.2;
 
 const INLINE_MATH = /\$[^$]+\$/u;
@@ -33,12 +28,6 @@ function screenHasMath(screen: WrittenScreen): boolean {
   }
 }
 
-/**
- * Whether a lesson gets the cross-family reasoning check, and why: every
- * advanced lesson, every lesson for an exam, every lesson in a high-stakes
- * subject or with math, and a random sample of the rest. Null means code
- * checks alone decide.
- */
 export function getReasoningCheckReason({
   categories,
   forExam,

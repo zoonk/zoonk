@@ -12,7 +12,6 @@ import { startLessonVersion } from "../../lessons/lesson-versions";
 import { STEP_CONTRACT_VERSION } from "../../steps/contract/step-contract";
 import { type LanguageStepToSave } from "./language-lesson-steps";
 
-/** A superseded publication must roll its plan and learner marks back too. */
 class LanguageLessonClaimLostError extends Error {
   override name = "LanguageLessonClaimLostError";
 }
@@ -74,14 +73,6 @@ function toLessonSentences({
   });
 }
 
-/**
- * Publishes a language lesson in one transaction: the summary card, the
- * pair's links to its shared words and sentences (with translations,
- * explanations and wrong options), every screen in order (a new version when
- * an earlier one exists), and the content claim marked completed. It
- * only writes while this run holds the claim, so a run that lost it changes
- * nothing and gets `false`.
- */
 export async function saveLanguageLesson(input: SaveLanguageLessonInput): Promise<boolean> {
   const { content, lessonId, provenance, skillId, steps, workflowRunId } = input;
 
@@ -97,7 +88,6 @@ export async function saveLanguageLesson(input: SaveLanguageLessonInput): Promis
         return false;
       }
 
-      /** Explicit skills also resolve older plans that still refer to a merged skill's identity. */
       const planIds = await resolvePlanInputDependents(tx, {
         lessonIds: [lessonId],
         skillIds: current.skills.map(({ skillId: linkedSkillId }) => linkedSkillId),

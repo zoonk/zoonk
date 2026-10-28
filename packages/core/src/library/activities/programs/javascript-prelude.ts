@@ -1,10 +1,5 @@
 import { CONSOLE_VALUE_SOURCE } from "./console-values";
 
-/**
- * Inside QuickJS, before the program: `console` and timers like the browser worker's, with
- * timers on a virtual clock so a run never waits, and the probes a traced program calls. Only
- * `__zoonkEmit` reaches the host, and it only records text.
- */
 export const JAVASCRIPT_PRELUDE = `"use strict";
 ${CONSOLE_VALUE_SOURCE}
 const __zoonkTimers = [];

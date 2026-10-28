@@ -7,21 +7,16 @@ import { type ExtractionDocument } from "./blueprint-passages";
 import { findNamedFormats } from "./material-formats";
 import { toStems, toTopicKey } from "./topic-key";
 
-/** A heading's number or bullet: "1)", "2.", "3.1", "b)", "IV -", "•". */
 const NUMBERING = /^\s*(?:\d+(?:\.\d+)*[.)]?|[A-Za-z][.)]|[IVXL]{1,4}\s*[.)–-]|[-–•*·])\s+/u;
 
-/** A remark after the topic's words: "(ALWAYS ON THE TEST!!)", "- IMPORTANT", or a run of "!". */
 const TRAILING_REMARK = /\s*(?:\((?<aside>[^()]*)\)|\s[-–]\s+(?<dash>.+)|(?<bang>!+))\s*$/u;
 
-/** No small letters: a remark in capitals stresses ("IMPORTANT"), unless it's an acronym. */
 const IN_CAPITALS = /^[^\p{Ll}]*$/u;
 
-/** An acronym in parentheses names the topic ("(DNA)", "(RE)"): a short word in capitals. */
 const MIN_SHOUTED_LETTERS = 6;
 
 type MaterialTopic = { emphasis: string | null; name: string };
 
-/** A remark that stresses the topic (in capitals or with "!") rather than saying what it holds. */
 function isEmphasis(remark: string): boolean {
   const letters = remark.replaceAll(/[^\p{L}]/gu, "").length;
   const isPhrase = /\s/u.test(remark) || letters >= MIN_SHOUTED_LETTERS;
@@ -29,11 +24,6 @@ function isEmphasis(remark: string): boolean {
   return remark.includes("!") || (letters > 0 && IN_CAPITALS.test(remark) && isPhrase);
 }
 
-/**
- * A heading of the learner's own material as a topic: its words without the numbering, and the
- * learner's own remark that it matters ("ALWAYS ON THE TEST!!") taken out of its name as emphasis. A remark
- * that says what the topic holds ("(mitochondria and chloroplast)") stays in it.
- */
 function cleanMaterialTopic(heading: string): MaterialTopic {
   const words = heading.replace(NUMBERING, "").trim();
   const remark = TRAILING_REMARK.exec(words);
@@ -47,7 +37,6 @@ function cleanMaterialTopic(heading: string): MaterialTopic {
     : { emphasis: null, name: heading.trim() };
 }
 
-/** The document a heading is written in, as the citation of the learner's emphasis on it. */
 function findSourceId({
   documents,
   fallback,
@@ -60,7 +49,6 @@ function findSourceId({
   return documents.find((document) => document.text?.includes(heading))?.sourceId ?? fallback;
 }
 
-/** What the learner's material stresses, as frequency: their "ALWAYS ON THE TEST!!" comes up a lot. */
 function toEmphasisFrequency({
   content,
   documents,
@@ -96,13 +84,8 @@ const toName = (topic: string) => cleanMaterialTopic(topic).name;
 
 type BlueprintFormat = ExamStructure["formats"][number];
 
-/** A heading's part of the material: the heading and what's under it, up to the next heading. */
 type Section = { heading: string; stems: Set<string> };
 
-/**
- * Each heading's part of the learner's documents, without the sentences that announce the test's
- * formats: the announcement sits under the last heading, but it's about every topic it names.
- */
 function listSections({
   announcements,
   documents,
@@ -131,12 +114,6 @@ function listSections({
   });
 }
 
-/**
- * The headings an announced format asks about ("an essay on osmosis"): the ones whose
- * name it says ("the organelles table"), else the one heading whose part of the material holds
- * a word of it that no other part does (osmosis is under "Plasma membrane"). None when its
- * words point at several topics or at none.
- */
 function findAnnouncedHeadings({
   format,
   headings,
@@ -170,11 +147,6 @@ function findAnnouncedHeadings({
   return pointed.size === 1 ? [...pointed] : [];
 }
 
-/**
- * What the test announces, as frequency: a topic the teacher said a question is about ("there will
- * be an essay on osmosis") comes up on the test, so it counts as coming up a lot, cited to
- * the announcement.
- */
 function toAnnouncedFrequency({
   content,
   documents,
@@ -205,15 +177,6 @@ function toAnnouncedFrequency({
 const toFrequencyKey = (entry: Pick<TopicFrequency[number], "subject" | "topic">) =>
   `${entry.subject}\n${toTopicKey(entry.topic)}`;
 
-/**
- * A blueprint read from the learner's own material (class notes, slides) as the plan and its
- * pages show it: each topic in the material's words without its numbering or the learner's
- * remarks; the topics they stressed ("4) Organelles (ALWAYS ON THE TEST!!)") and the ones the test announces
- * a question about ("an essay on osmosis") marked as coming up a lot, which gives them
- * more of the time and keeps them in a plan short on time, unless the reading already said how
- * often they come up; and every question format the material announces, so its practice rehearses
- * all of them.
- */
 export function toMaterialContent({
   content,
   documents,
@@ -234,7 +197,6 @@ export function toMaterialContent({
     ...toAnnouncedFrequency({ content, documents, formats }),
   ];
 
-  // Each topic once: what the reading said first, then the learner's own stress, then the test's.
   const frequency = marked.filter(
     (entry, index) =>
       marked.findIndex((other) => toFrequencyKey(other) === toFrequencyKey(entry)) === index,

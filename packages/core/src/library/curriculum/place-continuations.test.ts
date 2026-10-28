@@ -81,7 +81,6 @@ describe(placeContinuations, () => {
       goalFixture({ userId: user.id }),
     ]);
 
-    // Both chapters teach the skill, so a plan studying it reads their lessons in their order.
     const [reading, unrelated] = await Promise.all([
       planFixture({ goalId: readingGoal.id, sourceSkillIds: [skill.id] }),
       planFixture({ goalId: unrelatedGoal.id, sourceSkillIds: [other.id] }),
@@ -107,7 +106,6 @@ describe(placeContinuations, () => {
 
     const moved = await readPlans();
 
-    // The same move again leaves the order as it is: nothing is written or marked.
     await placeContinuations({ courseId: course.id, level: "beginner", moves: [move] });
 
     await expect(readPlans()).resolves.toStrictEqual(moved);

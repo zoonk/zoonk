@@ -11,7 +11,6 @@ import {
 } from "./activity-templates";
 import { validateActivity, validateExploreActivity } from "./validate-activity";
 
-/** Every template needs a fixture: the map won't satisfy this type with one missing. */
 const fixtures = activityContentFixtures satisfies Record<ActivityTemplateId, unknown>;
 
 function issueCodes(content: unknown): string[] {
@@ -407,12 +406,10 @@ describe(validateActivity, () => {
 
     expect(issueCodes({ ...polls, check: numericCheck(0.5) })).toStrictEqual([]);
 
-    // 36 cells are too many to fill by hand, so dice are read, never filled.
     expect(
       issueCodes({ ...dice, check: { explanation: "Here is why.", kind: "interaction" } }),
     ).toContain("checkNotAllowed");
 
-    // Polls choices can name an answer without a number; a guess at a chance can't.
     expect(
       issueCodes({
         ...polls,
@@ -487,7 +484,6 @@ describe(validateActivity, () => {
   });
 });
 
-/** An activity fixture without what only a question has: the prompt, the check and the picture. */
 function explored(id: ActivityTemplateId) {
   const { data, fields, template } = fixtures[id] as {
     data?: unknown;

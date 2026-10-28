@@ -8,12 +8,10 @@ import { createGoalPlan } from "../../../plans/create-goal-plan";
 import { uniqueWord } from "../../identity/_test-utils/identity-mocks";
 import { saveOutlineChapter } from "../save-outline-chapter";
 
-/** The day these goals start, a Monday in 2020: tests fake the clock to it. */
 export const WAITING_START = new Date("2020-09-28T12:00:00Z");
 
 type Skill = Awaited<ReturnType<typeof skillFixture>>;
 
-/** A learner's goal planned before the skill's lessons were outlined: its plan holds a stand-in. */
 export async function waitingGoal(skill: Skill, { dailyMinutes }: { dailyMinutes?: number } = {}) {
   const user = await userFixture();
   const goal = await goalFixture({ ...(dailyMinutes && { dailyMinutes }), userId: user.id });
@@ -42,7 +40,6 @@ export async function waitingGoal(skill: Skill, { dailyMinutes }: { dailyMinutes
   return { goal, plan };
 }
 
-/** An outline chapter lands, teaching the skill: its lessons, in order. */
 export async function outlineSkill(skill: Skill): Promise<string[]> {
   const course = await courseFixture({ outlineStatus: "running" });
   const word = uniqueWord();
@@ -79,7 +76,6 @@ export async function outlineSkill(skill: Skill): Promise<string[]> {
   return saved.lessonIds;
 }
 
-/** The plan's lessons in order: a lesson's id, or its skill's id while a stand-in holds its place. */
 export async function plannedLessons(planId: string): Promise<string[]> {
   const items = await prisma.planItem.findMany({
     orderBy: { position: "asc" },

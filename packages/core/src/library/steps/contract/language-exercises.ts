@@ -1,10 +1,5 @@
 import { z } from "zod";
 
-/**
- * A language exercise may show one picture: the prompt it was drawn from and, once drawn, its URL.
- * Teaching screens ask for images differently (`stepImageRequestSchema`) and link the file through
- * `Step.mediaAssetId`.
- */
 const exerciseImageSchema = z.object({ prompt: z.string(), url: z.string().optional() }).strict();
 
 const multipleChoiceOptionSchema = z

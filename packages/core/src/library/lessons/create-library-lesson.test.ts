@@ -199,13 +199,6 @@ describe("one row per lesson identity", () => {
   it("gives two concurrent requests for the same lesson one row", async () => {
     const skill = await skillFixture();
 
-    /**
-     * Model calls are the only mocked boundary (the gateway is blocked in
-     * tests). Search terms hold both requests until each has missed the exact
-     * match, so both reach creation together and only the unique identity key
-     * decides. If one request is slow enough to find the other's row by text
-     * search instead, the decision reuses it, which also yields one row.
-     */
     const bothSearched = Promise.withResolvers<null>();
     const arrivals: string[] = [];
 

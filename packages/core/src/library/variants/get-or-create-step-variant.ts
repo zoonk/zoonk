@@ -11,10 +11,8 @@ import { STEP_CONTRACT_VERSION } from "../steps/contract/step-contract";
 import { toVariantContent } from "./_utils/variant-content";
 import { toVariantKey } from "./variant-keys";
 
-/** One retry covers a draft that fails the checks; learners are waiting, so there's no third try. */
 const GENERATION_ATTEMPTS = 2;
 
-/** The versions written here; a field's case comes from the challenge writer (`field-challenge`). */
 const TOOL_KIND = "tool";
 
 type VariantScreenKind = (typeof VARIANT_SCREEN_KINDS)[number];
@@ -58,7 +56,6 @@ async function generateVariantContent({
 }: {
   analytics: GenerateStepVariantParams["analytics"];
   attempt?: number;
-  /** The tool as the model reads it, such as its full name. */
   key: string;
   step: VariantStep & { kind: VariantScreenKind };
 }): Promise<GeneratedVariant> {
@@ -90,17 +87,7 @@ async function generateVariantContent({
     : { problems: converted.problems };
 }
 
-/**
- * Returns the shared tool version of a lesson screen (or the version for a
- * learner who installs nothing), writing it the first time anyone needs it. The `(step, kind, key)` unique key makes it one
- * row for everyone: when two requests race, both end with the row that was
- * stored first. Drafts pass the same contract and text checks as lessons, with
- * one retry. No cache holds versions (lesson reads load them fresh), so a new
- * one expires nothing and is seen at once in every app.
- *
- * This is an internal capability: it doesn't read the session, so planner
- * workflows make the versions ahead of the lessons that show them.
- */
+/** Internal capability without a session check; callers must authorize access before requesting a version. */
 export async function getOrCreateStepVariant({
   analytics,
   key,
@@ -108,12 +95,7 @@ export async function getOrCreateStepVariant({
   stepId,
 }: {
   analytics?: GenerateStepVariantParams["analytics"];
-  /** The tool, stored as a slug such as "google-sheets", or "no-install". */
   key: string;
-  /**
-   * How the model reads the key when it says more than the slug: a tool's full name with its
-   * choices ("Spreadsheet (Google Sheets or Excel)") for the key "spreadsheet".
-   */
   label?: string;
   stepId: string;
 }): Promise<StepVariantResult> {

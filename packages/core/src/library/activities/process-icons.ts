@@ -1,7 +1,3 @@
-/**
- * Icons a process step can show, named as in Lucide. The list is closed so every name the writer
- * picks is one the player draws: the process order schema only accepts these.
- */
 export const processIconNames = [
   "activity",
   "apple",

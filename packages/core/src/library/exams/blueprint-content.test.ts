@@ -30,7 +30,6 @@ function readWith({
   });
 }
 
-/** The reading with a listening section after its two others, each part quoting a notice line. */
 function withListening() {
   const base = blueprintExtraction();
 
@@ -43,7 +42,6 @@ function withListening() {
     navigation: null,
     passages: [],
     questions: 40,
-    // Each part quotes a line the notice has; the check deciding is `keep`.
     tasks: [
       { count: 10, description: "Part 1: a conversation; form completion", plays: 1 },
       { count: 10, description: "Part 2: a monologue; multiple choice", plays: 2 },
@@ -67,10 +65,8 @@ const NEWS_TOTAL =
 const NEWS_ESSAY =
   "Já a discursiva (redação), de caráter eliminatório, avaliará as habilidades de escrita do candidato.";
 
-/** A court's news page about its notice (TJ-SP's, 1 Aug 2025): the objective test's size, no subjects. */
 const NEWS_DOCUMENTS = [{ sourceId: "news", text: `Prova\n${NEWS_TOTAL} ${NEWS_ESSAY}` }];
 
-/** The essay as the news page names it, and any subject a fuller document adds. */
 function readNewsPage({
   keep = () => true,
   subjects = [],
@@ -224,7 +220,6 @@ describe(toBlueprintContent, () => {
       keep: (id) => id !== "mock.sections.2.tasks.1.plays",
     });
 
-    // A count other than once or twice isn't a play limit any exam has, so it's left out too.
     expect(content.structure.mock?.sections[2]?.tasks).toStrictEqual([
       { count: 10, description: "Part 1: a conversation; form completion", plays: 1 },
       { count: 10, description: "Part 2: a monologue; multiple choice" },
@@ -239,7 +234,6 @@ describe(toBlueprintContent, () => {
         id !== "mock.sections.2.tasks.0.description" && id !== "mock.sections.2.tasks.2",
     });
 
-    // A part whose questions weren't kept is dropped whatever its description.
     expect(content.structure.mock?.sections[2]?.tasks).toStrictEqual([
       { count: 10, description: "", plays: 1 },
       { count: 10, description: "Part 2: a monologue; multiple choice", plays: 2 },
@@ -281,7 +275,6 @@ describe(toBlueprintContent, () => {
 
     expect(read({ keep: false, language: "en" }).content.structure.testedLanguage).toBeNull();
 
-    // A language's name isn't a code: there's nothing to check, so nothing is stored.
     const named = read({ language: "English" });
 
     expect(named.claim).toBeUndefined();
@@ -360,7 +353,6 @@ describe(toBlueprintContent, () => {
     const base = blueprintExtraction();
     const [first] = base.formats;
 
-    // JEE Main: 20 multiple-choice and 5 numeric questions in each subject.
     const extraction = {
       ...base,
       formats: first
@@ -376,7 +368,6 @@ describe(toBlueprintContent, () => {
 
     expect(shares(() => true)).toStrictEqual([0.8, 0.2]);
 
-    // A count the check dropped leaves every share out: that format could take any share.
     expect(shares((id) => id !== "formats.1.count")).toStrictEqual([undefined, undefined]);
   });
 
@@ -408,7 +399,6 @@ describe(toBlueprintContent, () => {
 
     const mock = readWith({ extraction, keep: () => true }).structure.mock;
 
-    // 700 plus 10 per percent reaches 1700, past the scale's 1300; 1500 can't pass on it either.
     expect(mock?.scoring.scale).toStrictEqual({
       fromPercent: null,
       max: 1300,
@@ -448,7 +438,6 @@ describe(toBlueprintContent, () => {
       wrongPenalty: 0.25,
     });
 
-    // A ratio the check couldn't find in the notice is left out: a wrong answer then reads as one.
     const unstated = readWith({ extraction, keep: (id) => id !== "mock.scoring.wrongPenalty" });
 
     expect(unstated.structure.mock?.scoring).toStrictEqual({
@@ -472,10 +461,6 @@ describe(toBlueprintContent, () => {
     expect(empty.structure.mock).toBeNull();
   });
 
-  /*
-   * Lucas's ENEM topics were the matrix's long competency and ability statements; candidates
-   * study its contents ("Heredity and the diversity of life"), with the statements as detail.
-   */
   it("keeps a skills matrix's statements as detail when the topics are its contents", () => {
     const documents = [
       {
@@ -699,12 +684,10 @@ describe(toBlueprintContent, () => {
       { choiceGroup: null, name: "Linguagens", partOf: null },
       { choiceGroup: "Língua Estrangeira", name: "Língua Inglesa", partOf: "Linguagens" },
       { choiceGroup: "Língua Estrangeira", name: "Língua Espanhola", partOf: "Linguagens" },
-      // The French option's parent isn't a subject of this reading.
       { choiceGroup: null, name: "Língua Francesa", partOf: null },
       { choiceGroup: null, name: "Matemática", partOf: null },
     ]);
 
-    // One option the check confirmed is no choice: that subject is studied like any other.
     expect(
       choices((id) => id !== "subjects.2.choiceGroup").map((subject) => subject.choiceGroup),
     ).toStrictEqual([null, null, null, null, null]);
@@ -739,8 +722,6 @@ describe(toBlueprintContent, () => {
   });
 
   it("shares only an exam's own documents: subjects alone may come from a curriculum", () => {
-    // What a curriculum like the BNCC states too: the subjects and their topics, nothing that
-    // says how an exam asks them, when, or how much each counts.
     const subjectsOnly = readWith({ keep: (id) => /^subjects\.\d+$/u.test(id) });
     const withDay = readWith({ keep: (id) => /^subjects\.\d+$/u.test(id) || id === "dates.0" });
 
@@ -750,14 +731,11 @@ describe(toBlueprintContent, () => {
   });
 
   it("takes the exam's questions from its formats' counts when the check drops the total", () => {
-    // The check rejected "70 questions in total" for an exam that also has an essay, and kept
-    // "70 multiple-choice questions in the exam" from the same line.
     const content = readNewsPage({ keep: (id) => id !== "edition.questionCount" });
 
     expect(content.edition.questionCount).toBe(70);
     expect(content.edition.citations).toStrictEqual([{ passage: NEWS_TOTAL, sourceId: "news" }]);
 
-    // Without the format's count either, nothing states the total.
     const uncounted = readNewsPage({
       keep: (id) => !id.startsWith("edition") && !id.endsWith(".count"),
     });
@@ -766,8 +744,6 @@ describe(toBlueprintContent, () => {
   });
 
   it("doesn't share a reading that has the objective test's questions but only its essay as a subject", () => {
-    // TJ-SP's notice answered 403, so research read the court's news page: 70 multiple-choice
-    // questions and an essay, and the essay became the exam's only subject.
     const newsOnly = readNewsPage();
 
     const withSubject = readNewsPage({
@@ -819,8 +795,6 @@ describe("a syllabus's topics", () => {
     }).structure.subjects.map((subject) => subject.topics);
   }
 
-  // TJ-SP's notice lists Língua Portuguesa's items unnumbered; the reading numbered them, so the
-  // check found none of them and the subject had no topics.
   it("keeps the items the syllabus doesn't number when the reading numbered them", () => {
     expect(
       readTopics([
@@ -842,7 +816,6 @@ describe("a syllabus's topics", () => {
       ]),
     ).toStrictEqual([
       ["Análise, compreensão e interpretação de diversos tipos de textos", "Crase", "Pontuação"],
-      // An item the syllabus numbers keeps its number.
       ["1. DIREITO PENAL: Código Penal - artigos 293 a 305"],
     ]);
   });

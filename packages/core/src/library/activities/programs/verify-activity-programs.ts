@@ -14,7 +14,6 @@ const MS_PER_SECOND = 1000;
 const PREVIEW_LENGTH = 300;
 const PREVIEW_ROWS = 10;
 
-/** The programs an activity needs run, and how their runs become issues. */
 type ProgramCheck = { jobs: ProgramJob[]; judge: (runs: readonly ProgramRun[]) => ActivityIssue[] };
 
 type ContentOf<TTemplate extends ActivityStepContent["template"]> = Extract<
@@ -47,7 +46,6 @@ function failure(run: ProgramRun, kind: ProgramKind): string | null {
   }
 }
 
-/** A run that didn't finish cleanly, as an issue on the field holding its code. */
 function runIssues({
   kind,
   path,
@@ -185,14 +183,6 @@ function programCheck(content: ActivityStepContent): ProgramCheck {
     : { jobs: [], judge: () => [] };
 }
 
-/**
- * Runs the code in code activities before they're published, so their answers are computed
- * rather than written: a code runner's solution must print the expected output (and its
- * starter code must not), a code tracer's trace must match a real run, and a SQL playground's
- * solution must return the expected rows. Programs run like the player runs them, in
- * WebAssembly runtimes outside the server's process. Returns each activity's issues, in order,
- * in the validator's format for the writer's fix step; other templates have none.
- */
 export async function verifyActivityPrograms(
   contents: readonly ActivityStepContent[],
 ): Promise<ActivityIssue[][]> {

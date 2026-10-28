@@ -12,7 +12,6 @@ import { type LibraryProvenance } from "../_utils/library-rows";
 
 type DetailsAnalytics = CourseDetailsParams["analytics"];
 
-/** Enough of the outline for the copy to name what the course covers, without a huge prompt. */
 const MAX_PROMPT_CHAPTERS = 30;
 
 function findCourse(courseId: string) {
@@ -31,10 +30,6 @@ function findCourse(courseId: string) {
 
 type DetailsCourse = NonNullable<Awaited<ReturnType<typeof findCourse>>>;
 
-/**
- * What the course's public page still lacks. Filled fields are never rewritten, not even a landing
- * page stored in an older shape: the change that moved the shape migrates it.
- */
 function findMissingDetails({ course, copyOnly }: { course: DetailsCourse; copyOnly: boolean }) {
   return {
     categories: !copyOnly && course.categories.length === 0,
@@ -45,10 +40,6 @@ function findMissingDetails({ course, copyOnly }: { course: DetailsCourse; copyO
 
 type MissingDetails = ReturnType<typeof findMissingDetails>;
 
-/**
- * Exam courses are listed under `exams` and language courses under `languages` because of what they
- * are, never by a model; a language exam such as IELTS is both.
- */
 function getFormatCategories(course: DetailsCourse): CourseCategory[] {
   return [
     ...(course.format === "exam" ? ["exams" as const] : []),
@@ -56,7 +47,6 @@ function getFormatCategories(course: DetailsCourse): CourseCategory[] {
   ];
 }
 
-/** A course whose categories its format sets only needs a model for its description and copy. */
 function needsModel({ course, missing }: { course: DetailsCourse; missing: MissingDetails }) {
   return (
     missing.description ||
@@ -76,7 +66,6 @@ function getCategories({
   return formatCategories.length > 0 ? formatCategories : (details?.categories ?? []);
 }
 
-/** The run that wrote the landing copy; metadata-only fills must not replace its provenance. */
 function toDetailsProvenanceData(provenance: LibraryProvenance) {
   return {
     detailsGeneratedAt: new Date(provenance.generatedAt),
@@ -118,16 +107,7 @@ async function saveMissingDetails({
   revalidateCacheTags([getCourseCacheTag(course.id), COURSE_LIST_CACHE_TAG]);
 }
 
-/**
- * Fills what a shared course's public page shows before anyone starts it: the description, the
- * landing copy (outcomes and who it's for) and its categories, which list it in the catalog and
- * give its images their subject's palette. It runs once the course has an outline, so the copy
- * names what the course covers. A course found through identity keeps what it has; only missing
- * fields are written. Private courses are never listed, so they're skipped. Returns whether
- * anything was written.
- *
- * This is a workflow bridge, not an app authorization boundary.
- */
+/** Internal workflow bridge, not an app authorization boundary. */
 export async function writeCourseDetails({
   analytics,
   courseId,

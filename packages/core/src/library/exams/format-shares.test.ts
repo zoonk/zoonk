@@ -6,7 +6,6 @@ const percent = (value: number) => ({ per: "section" as const, unit: "percent" a
 
 describe(getFormatShares, () => {
   it("works out each objective format's share from the questions counted for every format", () => {
-    // JEE Advanced Paper 1: four sections of four questions in each subject.
     expect(
       getFormatShares([
         { count: count(4), kind: "multipleChoice" },
@@ -16,7 +15,6 @@ describe(getFormatShares, () => {
       ]),
     ).toStrictEqual([0.25, 0.25, 0.25, 0.25]);
 
-    // JEE Main: 20 multiple-choice and 5 numeric questions in each subject, beside an essay.
     expect(
       getFormatShares([
         { count: { per: "subject", unit: "questions", value: 20 }, kind: "multipleChoice" },

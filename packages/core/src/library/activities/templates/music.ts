@@ -52,7 +52,6 @@ export const keyboardFretboardTemplate = defineActivityTemplate({
   },
   fields: z
     .object({
-      /** The target sounds but isn't named or shown until the learner answers. */
       byEar: z.boolean().optional(),
       instruments: z
         .array(z.enum(["guitar", "piano"]))

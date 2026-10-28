@@ -16,7 +16,6 @@ function explanation(text: string): WrittenScreen {
   };
 }
 
-/** The draft with new content on the given screens, as a fix pass returns it. */
 function rewrite(draft: WrittenLesson, screens: number[]): WrittenLesson {
   return {
     ...draft,
@@ -63,7 +62,6 @@ describe(getFixReach, () => {
 
     expect(getFixReach({ draft, fixed, incorrect: [], problems: [problem(3)] }).strayed).toBe(true);
 
-    // A problem with no screen is about the whole lesson, such as its summary card.
     expect(getFixReach({ draft, fixed, incorrect: [], problems: [problem(null)] })).toStrictEqual({
       strayed: true,
       unfixed: [],

@@ -12,13 +12,11 @@ import { loadLessonWritingContext } from "../lessons/_utils/lesson-writing-input
 import { loadLessonReuse } from "../lessons/lesson-reuse";
 import { CURRENT_STEPS } from "../lessons/lesson-versions";
 
-/** One lesson in five made ahead of time gets a later look, like the sample the gate reads. */
 const REVIEW_ONE_IN = 5;
 const DEFAULT_LIMIT = 100;
 const HEX_RADIX = 16;
 const HASH_DIGITS = 8;
 
-/** A stable sample: the same lesson is always in or out, so a retry picks the same lessons. */
 function isSampled(lessonId: string): boolean {
   return (
     Number.parseInt(lessonId.replaceAll("-", "").slice(-HASH_DIGITS), HEX_RADIX) % REVIEW_ONE_IN ===
@@ -26,11 +24,6 @@ function isSampled(lessonId: string): boolean {
   );
 }
 
-/**
- * Lessons made ahead of time in the last day (published, and nobody has answered a screen yet)
- * that get a later reasoning check at the flex tier. Advanced lessons are left out: every one got
- * the check right after it was published.
- */
 export async function listLessonsForLaterReview({
   limit = DEFAULT_LIMIT,
 }: { limit?: number } = {}): Promise<string[]> {
@@ -62,20 +55,11 @@ function readSummary(summary: unknown): string[] {
   );
 }
 
-/**
- * What the later check reads: the lesson's plan, its current screens as stored and the model that
- * wrote them, and the version they are.
- */
 export type LaterReviewInput = Omit<
   CheckLessonQualityParams,
   "analytics" | "model" | "reasoning" | "serviceTier" | "useFallback"
 > & { version: number };
 
-/**
- * The reviewer's input for one published lesson, checked against the plan it was written from by a
- * reviewer as strong as the lesson is likely to be read again. Null when the lesson has no readable
- * plan or no screens.
- */
 export async function prepareLaterReview(lessonId: string): Promise<LaterReviewInput | null> {
   const [context, reuse, lesson] = await Promise.all([
     loadLessonWritingContext(lessonId),
@@ -111,13 +95,6 @@ export async function prepareLaterReview(lessonId: string): Promise<LaterReviewI
   };
 }
 
-/**
- * What a later check found wrong in a published lesson, as a held-back draft's problems: the
- * fresh draft that replaces it is told them. The lesson already passed the gate, and a fresh
- * review always finds something new to polish, so like the gate after its fix pass only something
- * wrong (a blocking `incorrect` issue) counts; style, level, scope, repetition and weak checks
- * stay suggestions. Empty when the lesson passes.
- */
 export function toLaterReviewProblems(
   issues: readonly {
     fix: string;
@@ -132,17 +109,10 @@ export function toLaterReviewProblems(
     .map((issue) => ({ problem: `${issue.problem} Fix: ${issue.fix}`, screen: issue.screen }));
 }
 
-/** Another writer that pulled the lesson first must leave no admission marks behind. */
 class LessonPullLostError extends Error {
   override name = "LessonPullLostError";
 }
 
-/**
- * Takes a published lesson out of play until it's written again (a source it was built on
- * changed): nobody opens it until a new version passes the gate, and learners playing it finish
- * the version they opened. Only a lesson still published changes, so a lesson rewritten meanwhile
- * is left alone.
- */
 export async function pullLessonForFix(lessonId: string): Promise<boolean> {
   const { data: pulled, error } = await safeAsync(() =>
     prisma.$transaction(async (tx) => {

@@ -42,10 +42,6 @@ import {
 } from "./templates/reasoning-writing";
 import { moleculeBuilderTemplate, processOrderTemplate } from "./templates/science";
 
-/**
- * Every activity template in catalog order. Each is data: a field schema the writer fills and how
- * code computes its check. Adding a template means adding it here and to `activityContentSchema`.
- */
 export const activityTemplates = [
   formulaModelTemplate,
   numberLineTemplate,
@@ -86,10 +82,6 @@ export const activityTemplates = [
 
 export type ActivityTemplateId = (typeof activityTemplates)[number]["id"];
 
-/**
- * The `activity` step's content: `{ template, prompt, fields, check, data? }`, discriminated by
- * `template` so renderers get typed fields after checking the template id.
- */
 export const activityContentSchema = z.discriminatedUnion("template", [
   formulaModelTemplate.content,
   numberLineTemplate.content,
@@ -130,18 +122,11 @@ export const activityContentSchema = z.discriminatedUnion("template", [
 
 export type ActivityStepContent = z.infer<typeof activityContentSchema>;
 
-/** One template's content, narrowed by id: `ActivityContentFor<"formulaModel">["fields"]`. */
 export type ActivityContentFor<TId extends ActivityTemplateId> = Extract<
   ActivityStepContent,
   { template: TId }
 >;
 
-/**
- * The templates an explanation screen can show to explore, with no question and no check: a model
- * to move (a slider, a curve, a simulation), a process, a timeline, a tree, a map or a program to
- * run. Templates that only make sense as a question (sort, match, find the error, guess then see)
- * stay activities.
- */
 export const exploreActivitySchema = z.discriminatedUnion("template", [
   formulaModelTemplate.explore,
   numberLineTemplate.explore,
@@ -178,16 +163,10 @@ const exploreTemplateIds: ReadonlySet<string> = new Set(
   exploreActivitySchema.options.map((option) => option.shape.template.value),
 );
 
-/**
- * Whether the template shows its solved state when explored (the steps in order, the program that
- * prints its output): its canvas only answers, with every check an interaction. Others are played
- * with freely.
- */
 export function exploresSolved(template: string): boolean {
   return getActivityTemplate(template)?.checks.every((kind) => kind === "interaction") ?? false;
 }
 
-/** Whether an explanation screen can show the template to explore. */
 export function isExploreTemplate(id: string): id is ExploreTemplateId {
   return exploreTemplateIds.has(id);
 }
@@ -200,11 +179,6 @@ export function getActivityTemplate(id: string): ActivityTemplate | null {
   return templatesById.get(id) ?? null;
 }
 
-/**
- * Whether an activity shows data (a chart, a simulation's numbers), whose source it cites or which
- * it labels as an example. A sorting or matching activity shows none, so a data note on it would
- * say something false; an engine with modes decides from its fields.
- */
 export function showsActivityData(content: { fields: unknown; template: string }): boolean {
   return getActivityTemplate(content.template)?.showsData(content.fields) ?? false;
 }

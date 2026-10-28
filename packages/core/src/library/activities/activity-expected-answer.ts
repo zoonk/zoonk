@@ -6,11 +6,6 @@ type ActivityLink = { from: string; to: string };
 
 export type ActivityFormulaExample = { inputs: Record<string, number>; output: number };
 
-/**
- * The end state that makes an interaction check correct, computed by code from the template's
- * fields (timelines sort by date, Punnett squares combine alleles, trees are walked), never
- * written by the model.
- */
 export type ActivityExpectedAnswer =
   | { kind: "assignment"; pairs: Record<string, string> }
   | { kind: "curveShift"; curve: string; direction: "down" | "left" | "right" | "up" }

@@ -5,7 +5,6 @@ import { type RejectedItem } from "./create-items";
 import { MIN_SET_QUESTIONS, checkWrittenItemSet, repairWrittenItemSet } from "./item-set-checks";
 import { type ItemSetContent } from "./item-set-content";
 
-/** A written stimulus in the shape its kind stores. Written sets are original, so none cites a source. */
 function toSetContent(set: WrittenItemSet): ItemSetContent<"case" | "chart" | "text"> {
   const { text, title, visual } = set;
 
@@ -14,13 +13,7 @@ function toSetContent(set: WrittenItemSet): ItemSetContent<"case" | "chart" | "t
     : { source: null, text, title };
 }
 
-/**
- * Stores a written set (`writeItemSet`) after code repaired and checked it
- * (`repairWrittenItemSet`, `checkWrittenItemSet`): each question on the skill its number names,
- * in the order written, the ones a check rejects left out and reported, and the set only when its
- * stimulus passes and two questions are left at least. An internal workflow bridge: sets are
- * shared Library content and no learner's data is written.
- */
+/** Internal workflow bridge; not an app authorization boundary. */
 export async function storeWrittenItemSet({
   examBlueprintId,
   format,
@@ -35,7 +28,6 @@ export async function storeWrittenItemSet({
   language: string;
   optionCount?: number | null;
   provenance: LibraryProvenance;
-  /** The skills the call listed, in order: a question's `skill` number is its place here, from 1. */
   skillIds: readonly string[];
   written: WrittenItemSet;
 }): Promise<{ problems: string[]; rejected: RejectedItem[]; setId: string | null }> {

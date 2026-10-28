@@ -8,10 +8,6 @@ const answerTextSchema = z.string().max(MAX_ANSWER_TEXT);
 const answerIdsSchema = z.array(answerTextSchema).max(MAX_ANSWER_ITEMS);
 const cellSchema = z.union([answerTextSchema, z.number(), z.null()]);
 
-/**
- * What a learner submits for an activity. `choice` and `numeric` answer those check kinds; the
- * rest are interaction end states, one shape per kind of expected answer.
- */
 export const activityAnswerSchema = z.discriminatedUnion("kind", [
   z
     .object({ kind: z.literal("assignment"), pairs: z.record(answerTextSchema, answerTextSchema) })

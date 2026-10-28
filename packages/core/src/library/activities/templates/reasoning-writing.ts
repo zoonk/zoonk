@@ -155,10 +155,6 @@ export const argumentBuilderTemplate = defineActivityTemplate({
 
 const findErrorFields = z
   .object({
-    /**
-     * "Spot the AI's mistake": the worked answer is an AI assistant's reply to `problem`, shown as
-     * an AI answer to check. Left out, it's a plain worked answer.
-     */
     author: z.literal("ai").optional(),
     correction: explanationSchema,
     errorStepId: idSchema,
@@ -180,7 +176,6 @@ const findErrorFields = z
 
 type FindErrorFields = z.output<typeof findErrorFields>;
 
-/** Steps with math are checked by code: a step is wrong when its stated result isn't what its expression gives. */
 function wrongMathSteps(fields: FindErrorFields): string[] {
   return fields.steps.flatMap((step) => {
     if (step.expression === undefined || step.result === undefined) {
@@ -202,8 +197,7 @@ function findErrorIssues(fields: FindErrorFields) {
   return [
     !fields.steps.some((step) => step.id === fields.errorStepId) &&
       issue("inconsistentFields", "fields.errorStepId", "The wrong step isn't in the list"),
-    // Writers put the mistake in the final "So…" almost every time, which teaches learners to
-    // check only the last line: the conclusion should come out wrong because of an earlier step.
+    // Writers tend to put the error in the conclusion, teaching learners to check only the last line.
     fields.steps.at(-1)?.id === fields.errorStepId &&
       issue(
         "inconsistentFields",

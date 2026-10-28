@@ -1,4 +1,3 @@
-/** Shorter quotes ("Sim", "2026") would match almost any document. */
 const MIN_PASSAGE_LENGTH = 8;
 
 /** PDF text breaks lines and words, so a passage may lose a few words and still be the same one. */
@@ -30,10 +29,6 @@ function toNumbers(text: string): string[] {
 
 type CheckedDocument = { normalized: string; numbers: Set<string>; words: Set<string> };
 
-/**
- * The document the last passage was checked in. Callers check every passage of a document in turn,
- * and preparing a whole notice again for each passage took most of research's check.
- */
 let lastChecked: { document: CheckedDocument; text: string } | null = null;
 
 function checkedDocument(text: string): CheckedDocument {
@@ -71,21 +66,11 @@ function sharesWordsAndNumbers({
   return passageWords.length > 0 && found / passageWords.length >= MIN_WORD_SHARE;
 }
 
-/**
- * Words in order with single spaces around them, so a name matches whole words only. A hyphen
- * inside a word joins its halves, since PDF text often loses it ("well-known" read as "wellknown").
- */
 function toWordLine(text: string): string {
   const joined = normalizeText(text).replaceAll(/(?<=\p{L})-(?=\p{L})/gu, "");
   return ` ${toWords(joined).join(" ")} `;
 }
 
-/**
- * The names a document states word for word, such as a syllabus's item names quoted as a
- * subject's topics: case, spacing, punctuation and PDF line breaks aside, every word in order.
- * Names are checked this way instead of by a model because a syllabus lists more of them than
- * any passage quotes.
- */
 export function findNamesInDocument({
   names,
   text,
@@ -103,13 +88,6 @@ export function findNamesInDocument({
   );
 }
 
-/**
- * The code half of the citation check: the quoted passage must really be in
- * the document. A model can quote a sentence that isn't there, and a fact
- * with an invented passage is dropped before a second model checks the rest.
- * Every number in the passage must appear exactly, since numbers are what
- * learners plan with.
- */
 export function isPassageInDocument({ passage, text }: { passage: string; text: string }): boolean {
   const normalizedPassage = normalizeText(passage);
 

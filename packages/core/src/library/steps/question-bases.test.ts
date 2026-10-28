@@ -4,14 +4,12 @@ import { writtenTemperatureLesson } from "../quality/_test-utils/written-lessons
 import { addQuestionBases, findQuestionBases } from "./question-bases";
 import { toStepContent } from "./written-screens";
 
-/** The written temperature lesson: 1 guess, 2 explanation, 3 worked example, 4 calculation, 5 explanation, 6 activity, 7 why check, 8 application. */
 const CALCULATION = 3;
 const WHY_CHECK = 6;
 const APPLICATION = 7;
 
 type Basis = { quote: string; screen: number } | null;
 
-/** The lesson with one question's basis replaced, and, when given, one screen rewritten. */
 function lessonWith({
   basis,
   question,
@@ -100,7 +98,6 @@ describe(findQuestionBases, () => {
         (problem) => problem.screen,
       );
 
-    // Itself, a later explanation, the guess before it, a screen that doesn't exist.
     expect(named(4)).toStrictEqual([CALCULATION]);
     expect(named(5)).toStrictEqual([CALCULATION]);
     expect(named(1)).toStrictEqual([CALCULATION]);
@@ -148,7 +145,6 @@ describe(addQuestionBases, () => {
     converted[index]?.ok ? converted[index].content : null;
 
   it("stores each basis with the position its reading screen is stored at", () => {
-    // The guess isn't stored, so every later screen moves up one.
     const positions = screens.map((_, index) => (index === 0 ? null : index - 1));
     const withBases = addQuestionBases({ lesson, positions, screens });
 

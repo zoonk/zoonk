@@ -114,7 +114,6 @@ const writtenRight = () =>
     explanation("A rise moves the mark up, even below zero."),
   );
 
-/** A lesson published through the real write path (its code checks passed), with its check plan. */
 async function publishLesson({
   lesson: written = writtenTemperatureLesson(),
   ownerId = null,
@@ -122,7 +121,6 @@ async function publishLesson({
 }: {
   lesson?: WrittenLesson;
   ownerId?: string | null;
-  /** Links material or sources before writing. */
   prepare?: (lessonId: string) => Promise<unknown>;
 } = {}) {
   const workflowRunId = randomUUID();
@@ -184,7 +182,6 @@ describe(checkPublishedLesson, () => {
       checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() }),
     ).resolves.toStrictEqual({ status: "republished", version: 2 });
 
-    // The fix only rewrote the flagged screen: the code checks ran again, the reviewer didn't.
     expect(checkLessonQuality).toHaveBeenCalledOnce();
     expect(fixLessonDraft).toHaveBeenCalledWith(expect.objectContaining({ serviceTier: "flex" }));
 
@@ -196,7 +193,6 @@ describe(checkPublishedLesson, () => {
     const opened = steps.filter((step) => step.version === 1);
     const fixed = steps.filter((step) => step.version === 2);
 
-    // The version learners opened stays (retired) for them to finish; the next open gets the fix.
     expect(stored.contentStatus).toBe("completed");
     expect(opened).toHaveLength(8);
     expect(opened.every((step) => step.retiredAt !== null)).toBe(true);
@@ -253,7 +249,6 @@ describe(checkPublishedLesson, () => {
     mockFix({ changedScreens: [4], lesson: writtenRight() });
     await checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() });
 
-    // A second check of the version that was just replaced reads nothing and writes nothing.
     await expect(
       checkPublishedLesson({ lessonId: lesson.id, plan, workflowRunId: randomUUID() }),
     ).resolves.toStrictEqual({ status: "replaced" });
@@ -305,7 +300,6 @@ describe(redraftPublishedLesson, () => {
       }),
     ).resolves.toStrictEqual({ status: "republished", version: 2 });
 
-    // Nobody waits on it: the draft is reviewed before it's published, all at flex.
     expect(writeLessonDraft).toHaveBeenLastCalledWith(
       expect.objectContaining({ heldBackProblems: heldBack.problems, serviceTier: "flex" }),
     );
@@ -371,7 +365,6 @@ describe(citePublishedLesson, () => {
 
     const steps = await listSteps(published.lesson.id);
 
-    // A reference to a slide the lesson wasn't given is dropped.
     expect(steps.slice(0, 3).map((step) => [step.sourceId, step.sourcePage])).toStrictEqual([
       [null, null],
       [slides.id, 2],
@@ -494,7 +487,6 @@ describe(setAsidePublishedLesson, () => {
     expect(planItem.status).toBe("skipped");
     expect(steps.every((step) => step.retiredAt === null)).toBe(true);
 
-    // A version that was replaced meanwhile isn't set aside.
     await expect(setAsidePublishedLesson({ lessonId: lesson.id, version: 7 })).resolves.toBe(false);
   });
 });

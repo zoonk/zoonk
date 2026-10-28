@@ -51,10 +51,6 @@ function childIds(node: TreeNode): string[] {
   return node.kind === "question" ? node.branches.map((branch) => branch.next) : [];
 }
 
-/**
- * Walks the tree the way the case answers each question. Returns the node ids visited, ending at
- * an outcome, or null when an answer is missing or the walk loops.
- */
 function walkCase(
   fields: DecisionTreeFields,
   path: readonly string[] = [fields.rootId],

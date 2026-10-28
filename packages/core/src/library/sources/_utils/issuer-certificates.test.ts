@@ -21,14 +21,8 @@ import { fetch } from "undici";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { fetchCompletingChain, isMissingIssuerError } from "./issuer-certificates";
 
-/** Undici's real fetch, which research's requests go through (other tests replace it). */
 const { fetch: realFetch } = await vi.importActual<{ fetch: typeof fetch }>("undici");
 
-/*
- * Certificates are built here with node:crypto instead of committed fixtures, so each leaf can
- * name the issuer address of this run's local server (its port changes every run), and no test
- * needs openssl or the network. Only the DER needed for a TLS chain is encoded.
- */
 const OID = {
   authorityInfoAccess: "1.3.6.1.5.5.7.1.1",
   basicConstraints: "2.5.29.19",
@@ -38,7 +32,7 @@ const OID = {
   subjectAltName: "2.5.29.17",
 };
 
-/** DER tag bytes (X.690), in decimal because oxfmt and oxlint disagree on the case of hex digits. */
+/** DER tag bytes from X.690. */
 const TAG = {
   bitString: 3,
   boolean: 1,
@@ -55,7 +49,6 @@ const TAG = {
   version: 160,
 };
 
-/** How DER writes BOOLEAN true. */
 const TRUE = 255;
 
 const HOUR_MS = 3_600_000;
@@ -163,7 +156,6 @@ function issueCertificate({
   return { certificate, key: privateKey, name, pem: certificate.toString() };
 }
 
-/** Sends every host name to this machine, so the real public-address rule sees public names. */
 const lookup: LookupFunction = (_hostname, options, callback) => {
   if (options.all) {
     callback(null, [{ address: "127.0.0.1", family: 4 }]);
@@ -188,11 +180,8 @@ function close(server: HttpServer | HttpsServer): Promise<void> {
 
 describe(fetchCompletingChain, () => {
   const headers = { "user-agent": "ZoonkBot test" };
-  /** What the certificate authority's server publishes, by path. */
   const published = new Map<string, { body?: Buffer | string; location?: string }>();
-  /** Every path the certificate authority's server was asked for. */
   const downloads: string[] = [];
-  /** The leaf-only chain the document server presents, by the host name the client asks for. */
   const leafContexts = new Map<string, SecureContext>();
 
   let originalAuthorities: string[];
@@ -217,7 +206,6 @@ describe(fetchCompletingChain, () => {
     return issueCertificate({ ca: false, dnsName, issuer, issuerUrl, name: dnsName });
   }
 
-  /** Serves a document at `host` presenting only `leaf`, the way INEP's server does. */
   function serveLeaf({ host, leaf }: { host: string; leaf: TestCertificate }): string {
     const key = leaf.key.export({ format: "pem", type: "pkcs8" });
     leafContexts.set(host, createSecureContext({ cert: leaf.pem, key }));

@@ -5,24 +5,15 @@ import { getItemAudienceFilter, getPublicItemFilter, getPublicMaterialFilters } 
 import { parseItemSetContent } from "./item-set-content";
 import { type ItemSetView } from "./item-set-view";
 
-/** A set as practice and mocks pick it: its questions in order and the skills they test. */
 export type ItemSetPick = {
-  /** The exam the set was written for; null for a general one. */
   examBlueprintId: string | null;
   id: string;
   items: { id: string; skillId: string }[];
   kind: ItemSetKind;
-  /** When the learner last answered one of its questions; null when never. */
   lastAnsweredAt: Date | null;
   skillIds: string[];
 };
 
-/**
- * The sets a learner may get with a question on any of the skills, whole, for practice and mocks
- * to pick: general ones and the goal's exam's, never another exam's, and a recording only once
- * it's voiced. Never-answered sets come first, then the ones answered longest ago; within each,
- * the order they were written. Each set's questions are in the order a learner meets them.
- */
 export async function listItemSetsForSkills({
   examBlueprintId,
   skillIds,
@@ -30,10 +21,6 @@ export async function listItemSetsForSkills({
 }: {
   examBlueprintId: string | null;
   skillIds: readonly string[];
-  /**
-   * Null for no learner (a public estimate's): no answers to read, the sets in written order, and
-   * only public material (see `getPublicItemFilter`).
-   */
   userId: string | null;
 }): Promise<ItemSetPick[]> {
   const sets = await prisma.itemSet.findMany({
@@ -86,7 +73,6 @@ export async function listItemSetsForSkills({
     .toSorted((a, b) => Number(a.lastAnsweredAt ?? 0) - Number(b.lastAnsweredAt ?? 0));
 }
 
-/** What reads that show a set's questions include of each item: its set, with its file. */
 export const ITEM_SET_INCLUDE = {
   set: {
     include: {
@@ -126,12 +112,7 @@ function toStimulus({
   return { listening: null, source, text, title, visual };
 }
 
-/**
- * A question's set as it shows with the question (`ITEM_SET_INCLUDE` on the item), or null for a
- * question on its own; a recording's transcript only with `reveal`, once its questions are
- * answered. Stored content passed its checks, so a parse failure is logged and the question shows
- * without it instead of failing the learner.
- */
+/** A recording's transcript is included only with `reveal`; malformed content is logged and omitted. */
 export function toItemSetView({
   item,
   reveal = false,

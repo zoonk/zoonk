@@ -23,10 +23,6 @@ function linksOf(lessonId: string) {
   return prisma.lessonWord.findMany({ orderBy: { position: "asc" }, where: { lessonId } });
 }
 
-/**
- * Each test uses its own words, so shared rows (one per target language and
- * text) from other tests never make audio or pronunciations look reused.
- */
 function uniqueDraft(key: string): Draft {
   const draft = languageLessonDraft();
   const suffix = (text: string) => `${text} ${key}`;
@@ -75,7 +71,6 @@ const SPEECH_PROVENANCE = {
   usage: {},
 };
 
-/** Voices every clip, which is stored in Vercel Blob. */
 function mockAudio() {
   storeBlobUploads();
 
@@ -188,7 +183,6 @@ describe(writeLanguageLessonContent, () => {
       translation: "o aluguel",
     });
 
-    // Shared words keep the lesson run that wrote them and the speech run that voiced them.
     expect(saved.words[0]?.word).toMatchObject({
       audioModel: SPEECH_PROVENANCE.model,
       audioPromptVersion: SPEECH_PROVENANCE.promptVersion,
@@ -277,7 +271,6 @@ describe(writeLanguageLessonContent, () => {
 
     const allClips = vi.mocked(generateLanguageAudio).mock.calls.map(([call]) => call.text);
 
-    // The word voiced before was never sent to text-to-speech, and the second pair voiced nothing new.
     expect(firstLessonClips).not.toContain(rentText);
     expect(allClips).toStrictEqual(firstLessonClips);
 
@@ -297,7 +290,6 @@ describe(writeLanguageLessonContent, () => {
       where: { wordId: voicedRent.id },
     });
 
-    // The existing respelling stays; its missing tip is filled; Spanish speakers get their own.
     expect(
       pronunciations.map((row) => [row.userLanguage, row.pronunciation, Boolean(row.tip)]),
     ).toStrictEqual([

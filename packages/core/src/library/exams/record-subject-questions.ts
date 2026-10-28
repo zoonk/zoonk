@@ -6,7 +6,6 @@ import { lockPlanBlueprintWrite, writePlanInputs } from "../_utils/plan-input-wr
 import { type ExamStructure, examEditionSchema, examStructureSchema } from "./blueprint-contract";
 import { needsPastQuestions } from "./subject-questions";
 
-/** What research needs to look up a blueprint's subject counts, when it needs them. */
 export type SubjectQuestionsLookup = {
   board: string | null;
   exam: string;
@@ -18,12 +17,7 @@ function describeExam(blueprint: Pick<ExamBlueprint, "name" | "role">): string {
   return blueprint.role ? `${blueprint.name}, ${blueprint.role}` : blueprint.name;
 }
 
-/**
- * The lookup a shared blueprint needs for its subjects' counts (see `needsPastQuestions`), or null
- * when it needs none.
- *
- * This is a workflow bridge: the blueprint comes from the research run that linked it.
- */
+/** Internal workflow bridge: the blueprint must come from the research run that linked it. */
 export async function findSubjectQuestionsLookup({
   examBlueprintId,
 }: {
@@ -52,13 +46,7 @@ export async function findSubjectQuestionsLookup({
   };
 }
 
-/**
- * Stores what the lookup found for the subjects it was given (in their order), or that it found
- * nothing, on the blueprint's structure; the subjects' shares, the plan's weights and the screens
- * read it from there.
- *
- * This is a workflow bridge: the blueprint comes from the research run that looked it up.
- */
+/** Internal workflow bridge: the blueprint must come from the research run that requested the lookup. */
 export async function recordSubjectQuestions({
   edition,
   examBlueprintId,
@@ -68,10 +56,6 @@ export async function recordSubjectQuestions({
 }: {
   edition: string | null;
   examBlueprintId: string;
-  /**
-   * One count per subject, in the order of `subjects` (null for one the source gave no count);
-   * empty when nothing was found.
-   */
   questions: readonly (number | null)[];
   source: { title: string | null; url: string } | null;
   subjects: readonly string[];
@@ -97,8 +81,6 @@ export async function recordSubjectQuestions({
     subjects: counted,
   };
 
-  // Plans size the exam's mocks by its question counts. One statement sets only this lookup, so
-  // the options looked up at the same time (`recordChoiceOptions`) are never overwritten.
   await writePlanInputs(async (tx) => {
     await lockPlanBlueprintWrite(tx, examBlueprintId);
 

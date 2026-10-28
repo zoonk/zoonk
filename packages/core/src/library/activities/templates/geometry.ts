@@ -16,7 +16,6 @@ const TRIANGLE_POINTS = 3;
 const TANGENT_LIMIT = 1e-9;
 const RIGHT_ANGLE_SLACK = 1e-6;
 const FULL_TURN_DEGREES = 360;
-/** Radians written to a few digits, like 6.2832 for a full turn, still count as one turn. */
 const TURN_SLACK = 1e-3;
 
 const pointSchema = z
@@ -24,7 +23,6 @@ const pointSchema = z
     id: idSchema,
     label: labelSchema.optional(),
     movable: z.boolean(),
-    /** A moving corner that slides along one line instead of anywhere, to keep something true. */
     track: z.enum(["horizontal", "vertical"]).optional(),
     x: z.number(),
     y: z.number(),
@@ -45,14 +43,12 @@ function edgeLength([from, to]: [Point, Point]): number {
   return Math.hypot(to.x - from.x, to.y - from.y);
 }
 
-/** Shoelace formula: the polygon's area from its corners, in order. */
 function polygonArea(points: readonly Point[]): number {
   return (
     Math.abs(edges(points).reduce((sum, [from, to]) => sum + from.x * to.y - to.x * from.y, 0)) / 2
   );
 }
 
-/** Squares of the three sides, longest last, for the Pythagoras board. */
 function sortedSquares(points: readonly Point[]): number[] {
   return edges(points)
     .map((edge) => edgeLength(edge) ** 2)
@@ -66,17 +62,12 @@ function neighbours(points: readonly Point[], index: number): [Point, Point] | n
   return previous && next ? [previous, next] : null;
 }
 
-/** Whether two points sit on one line in the track's direction, the line a corner slides on. */
 function isAlong(track: Track, from: Point, to: Point): boolean {
   return track === "horizontal"
     ? isClose(from.y, to.y, RIGHT_ANGLE_SLACK)
     : isClose(from.x, to.x, RIGHT_ANGLE_SLACK);
 }
 
-/**
- * A corner sliding parallel to the line through its two fixed neighbours keeps the triangle they
- * make, and so the polygon's area, the same: same base, same height.
- */
 function keepsArea(points: readonly Point[]): boolean {
   return points.every((point, index) => {
     const pair = neighbours(points, index);
@@ -112,10 +103,6 @@ function isRightCorner(points: readonly Point[], index: number): boolean {
   return Math.abs(dot) <= RIGHT_ANGLE_SLACK * Math.max(1, scale);
 }
 
-/**
- * a² + b² = c² only holds while the triangle stays right: the right-angle corner stays put and
- * every other moving corner slides along its own side.
- */
 function keepsRightAngle(points: readonly Point[]): boolean {
   const corner = points.find((_, index) => isRightCorner(points, index));
 
@@ -141,11 +128,6 @@ const geometryBoardFields = z
 
 type GeometryBoardFields = z.output<typeof geometryBoardFields>;
 
-/**
- * The number a check can ask for: only a measure that never changes as the learner drags, so the
- * answer is the same wherever the corners end up. The angle sum always qualifies; the area does
- * when every moving corner slides parallel to its fixed neighbours.
- */
 function invariantMeasure(fields: GeometryBoardFields): number | null {
   if (fields.measure === "angleSum") {
     return (fields.points.length - 2) * HALF_TURN_DEGREES;
@@ -209,7 +191,6 @@ const unitCircleFields = z
 
 type UnitCircleFields = z.output<typeof unitCircleFields>;
 
-/** The learner turns the point once around, so reachable angles are one turn from zero. */
 function isWithinTurn(fields: UnitCircleFields, angle: number): boolean {
   const turn = fields.angleUnit === "degrees" ? FULL_TURN_DEGREES : 2 * Math.PI;
   return angle >= 0 && angle <= turn + TURN_SLACK;

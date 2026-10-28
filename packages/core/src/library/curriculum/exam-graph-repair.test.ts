@@ -26,10 +26,6 @@ const provenance = {
   runId: "coverage-run",
 };
 
-/**
- * ENEM's shared graph as it was written before its notice named the foreign language's options:
- * a Languages skill and a Math one, each teaching its subject's topic.
- */
 async function writtenGraph() {
   const [blueprint, course] = await Promise.all([choiceBlueprintFixture(), courseFixture()]);
 
@@ -69,10 +65,6 @@ async function writtenGraph() {
   return { blueprint, graph, reading };
 }
 
-/**
- * The check finds each option's reading skill missing (named with `word`, so another test's
- * skills never match it), and asks for a weight it mustn't move.
- */
 function mockMissingOptions({ readingId, word }: { readingId: string; word: string }) {
   const missing = [ENGLISH, SPANISH].map((area) => ({
     area,
@@ -121,7 +113,6 @@ describe(addMissingExamGraphSkills, () => {
       MATH,
     ]);
 
-    // The skills it had keep their weights and places; the check's weight change is left out.
     expect(repaired.skills[0]).toStrictEqual(stored);
     expect(repaired.skills[3]).toStrictEqual(storedMath);
     expect(repaired.phases).toStrictEqual(graph.phases);
@@ -140,7 +131,6 @@ describe(addMissingExamGraphSkills, () => {
       }),
     ).resolves.toHaveLength(2);
 
-    // Once every topic has a skill, it asks no model again.
     await expect(addMissingExamGraphSkills(blueprint.id)).resolves.toStrictEqual([]);
     expect(checkCoverage).toHaveBeenCalledOnce();
   });

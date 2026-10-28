@@ -27,11 +27,6 @@ async function getCachedLibraryChapter(chapterId: string) {
   return chapter;
 }
 
-/**
- * Loads a chapter with its lessons in order, each with its generation status
- * so a chapter view can tell which lessons are ready. A private chapter, and
- * private lessons inside a shared chapter, are only returned to their owner.
- */
 export async function getLibraryChapter({ chapterId }: { chapterId: string }) {
   if (!isUuid(chapterId)) {
     return null;

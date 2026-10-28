@@ -17,26 +17,21 @@ import {
   storeWebSource,
 } from "./web-sources";
 
-// The web is an external boundary: each test serves its own pages from memory.
 function servePage(html: string) {
-  // Each request gets its own response, since a body is read once.
   vi.mocked(fetch).mockImplementation(
     async () => new PageResponse(html, { headers: { "content-type": "text/html; charset=utf-8" } }),
   );
 }
 
-/** A notice's text as research stores it: long enough for a model to read the exam from. */
 const NOTICE_TEXT = [
   "Edital nº 1 de 2026. O concurso público destina-se ao provimento de vagas no cargo de",
   "analista. As provas objetivas serão constituídas de itens para julgamento, agrupados por",
   "comandos que deverão ser respeitados. O julgamento de cada item será CERTO ou ERRADO.",
 ].join(" ");
 
-/** What a page that builds its text with JavaScript stores. */
 const SCRIPT_PAGE_TEXT = "É necessário habilitar o javascript para ver esta página corretamente.";
 
 function noticePage({ questions, token }: { questions: number; token: string }) {
-  // The token changes on every fetch, like CSRF tokens do, and must not count as a change.
   return `<html><body><input type="hidden" value="${token}"><h1>Edital 2026</h1><p>A prova terá ${questions} questões.</p></body></html>`;
 }
 

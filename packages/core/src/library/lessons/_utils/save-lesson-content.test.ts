@@ -95,7 +95,6 @@ describe(saveLessonContent, () => {
     const held = Promise.withResolvers<number>();
     const released = Promise.withResolvers<null>();
 
-    // A merge of the lesson's skill holds the plan reading it, then moves the lesson to the survivor.
     const merge = prisma.$transaction(async (tx) => {
       await tx.$queryRaw`SELECT id FROM plans WHERE id = ${plan.id}::uuid FOR UPDATE`;
       const [backend] = await tx.$queryRaw<{ pid: number }[]>`SELECT pg_backend_pid() AS pid`;
@@ -266,7 +265,6 @@ describe(saveLessonContent, () => {
       prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } }),
     ).resolves.toMatchObject({ contentStatus: "running" });
 
-    // The plan's mark rolled back with the publication.
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion,
     });

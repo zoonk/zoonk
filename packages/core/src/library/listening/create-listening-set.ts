@@ -11,13 +11,10 @@ import { logError } from "@zoonk/utils/logger";
 import { createItemSet } from "../items/create-item-set";
 import { toListeningContent } from "./listening-content";
 
-/** One recording of an exam's listening paper, as its set is written and found again. */
 type ListeningSetPart = { count: number; plays: 1 | 2; task: string };
 
-/** A skill the set's questions may test, as its writer reads it. */
 type ListeningSetSkill = { description: string; name: string; skillId: string };
 
-/** The question's own skill, or the first one when its number isn't on the list. */
 function getSkillId({
   question,
   skills,
@@ -28,13 +25,7 @@ function getSkillId({
   return (skills[question.skill - 1] ?? skills[0]).skillId;
 }
 
-/**
- * Writes one listening set for a part of an exam's listening paper and stores its script and the
- * questions that pass the item checks (`createItemSet`), unvoiced: `voiceListeningSet` voices it.
- * Shared Library content: the call holds the exam, the part and its skills, never a learner's
- * words. A set the writer couldn't make clean, or with no question left, isn't stored; the next
- * request writes another. Returns the stored set's id. An internal workflow bridge.
- */
+/** Internal workflow bridge for shared Library content; contains no learner's words. */
 export async function createListeningSet({
   analytics,
   exam,
@@ -46,10 +37,8 @@ export async function createListeningSet({
 }: {
   analytics?: AiGenerationContext;
   exam: { blueprintId: string; name: string };
-  /** The learner's language (reasons and misconceptions), the exam blueprint's. */
   language: string;
   part: ListeningSetPart;
-  /** The language the recording is in, the exam's ("en" for IELTS). */
   scriptLanguage: string;
   serviceTier?: ServiceTier;
   skills: readonly ListeningSetSkill[];

@@ -32,7 +32,6 @@ const numberLineFields = z
   })
   .strict();
 
-/** Where the dot sits after each jump, starting point first. */
 function numberLinePositions(fields: z.output<typeof numberLineFields>): number[] {
   const landings = fields.moves.map(
     (_, index) =>

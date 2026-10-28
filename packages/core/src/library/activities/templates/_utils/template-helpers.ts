@@ -20,7 +20,7 @@ export function isClose(value: number, expected: number, slack = FLOAT_SLACK): b
   return Math.abs(value - expected) <= slack * Math.max(1, Math.abs(expected));
 }
 
-/** A string's UTF-16 characters. Patterns and genotypes are ASCII, so no grapheme handling is needed. */
+/** Splits UTF-16 code units; use only for ASCII patterns and genotypes. */
 export function characters(text: string): string[] {
   return Array.from({ length: text.length }, (_, index) => text.charAt(index));
 }
@@ -30,7 +30,6 @@ export function evaluateOrNull(formula: string, values: Readonly<Record<string, 
   return result.ok ? result.value : null;
 }
 
-/** Issues for anything listed twice, like two items with one id. */
 export function duplicateIssues(
   values: readonly string[],
   path: string,
@@ -43,10 +42,6 @@ export function duplicateIssues(
   );
 }
 
-/**
- * A scale the learner guesses on: it needs a range, a log scale starts above zero, and the true
- * value must sit on it.
- */
 export function guessScaleIssues(params: {
   max: number;
   min: number;
@@ -67,10 +62,6 @@ export function guessScaleIssues(params: {
   ].filter((item) => item !== false);
 }
 
-/**
- * A slider that can't move is decoration: the range must be real, the start inside it and the
- * step small enough to give the learner positions to explore.
- */
 export function variableIssues(variable: ActivityVariable, path: string): ActivityIssue[] {
   const positions = (variable.max - variable.min) / variable.step;
 
@@ -87,11 +78,6 @@ export function variableIssues(variable: ActivityVariable, path: string): Activi
   ].filter((item) => item !== false);
 }
 
-/**
- * Slider values for a check: each variable starts at its initial value and the check's inputs
- * move it. An input that names no slider or falls outside its range can't be reached by the
- * learner, so there is no answer to compute.
- */
 export function resolveSliderValues(
   variables: readonly ActivityVariable[],
   target: ActivityCheckTarget,
@@ -113,7 +99,6 @@ export function resolveSliderValues(
   };
 }
 
-/** A slider as an expression range, so formulas are sampled only where the learner can go. */
 export function toRange(variable: ActivityVariable) {
   return { max: variable.max, min: variable.min, name: variable.name, step: variable.step };
 }

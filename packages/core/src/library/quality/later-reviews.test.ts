@@ -15,7 +15,6 @@ import {
   toLaterReviewProblems,
 } from "./later-reviews";
 
-/** Lesson ids are sampled by their last hex digits; these land in and out of the one-in-five sample. */
 function sampledId(): string {
   return `${randomUUID().slice(0, -8)}0000000a`;
 }
@@ -58,7 +57,6 @@ describe(prepareLaterReview, () => {
     });
 
     const [, step] = await Promise.all([
-      // A version a check replaced stays for learners playing it, but isn't what's reviewed.
       libraryStepFixture({
         lessonId: lesson.id,
         model: "openai/gpt-6-luna",
@@ -79,7 +77,6 @@ describe(prepareLaterReview, () => {
         screens: [{ content: step.content, kind: step.kind }],
         summary: ["A rise moves up the thermometer."],
       },
-      // No goal plans it yet: a niche lesson, checked by the cheaper reviewer.
       reuse: "library",
       spec: { title: spec.title },
       version: 2,

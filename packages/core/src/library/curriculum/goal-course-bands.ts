@@ -2,11 +2,9 @@ import { type CourseLevel } from "@zoonk/db";
 import { type CourseBandNeed, type GoalSkillRef } from "./curriculum-scope";
 import { type GoalSkillGraph } from "./save-goal-skills";
 
-/** One course a goal needs, with the level bands it must outline and the goal's skills in each. */
 export type GoalCourseNeed = {
   key: string;
   title: string;
-  /** The earliest phase any of its skills sits in, so the learner's first course is outlined first. */
   firstPhase: number;
   bands: (CourseBandNeed & { firstPhase: number })[];
 };
@@ -54,12 +52,6 @@ function toBand({
   };
 }
 
-/**
- * Groups a goal's skills by the course and level band that teaches them, in the order the
- * learner reaches them: the course and band holding the first phase's skills come first, so
- * their outline is written while the learner is still in onboarding. Bands without a skill the
- * Library resolved are left out.
- */
 export function groupGoalCourseBands({
   graph,
   idsByKey,
@@ -86,10 +78,6 @@ export function groupGoalCourseBands({
   return courses.toSorted((a, b) => a.firstPhase - b.firstPhase);
 }
 
-/**
- * A private course has no levels: one band, at the level where its first skills sit, holds every
- * skill the goal needs from it.
- */
 function mergePrivateBands(need: GoalCourseNeed): GoalCourseNeed {
   const [first] = need.bands;
 
@@ -100,11 +88,6 @@ function mergePrivateBands(need: GoalCourseNeed): GoalCourseNeed {
   return { ...need, bands: [{ ...first, skills: need.bands.flatMap((band) => band.skills) }] };
 }
 
-/**
- * The courses a goal's skill graph names, in the order the learner reaches them (the phase of each
- * one's first skill), so the first is the goal's main course. Courses without skills are left out.
- * It needs only the graph, so the Library courses are found while the skills are.
- */
 export function orderGoalCourses(graph: GoalSkillGraph): { key: string; title: string }[] {
   const courses = graph.courses.flatMap((course) => {
     const phases = graph.skills
@@ -121,11 +104,6 @@ export function orderGoalCourses(graph: GoalSkillGraph): { key: string; title: s
     .map(({ key, title }) => ({ key, title }));
 }
 
-/**
- * Each course need with the Library course found for its graph course, in the needs' order. A
- * private course has one band with every skill. A goal answered without tools of its own (an exam
- * that isn't practical) has its skills taught in chapters without tools.
- */
 export function toGoalCourses({
   courseIdsByKey,
   needs,
@@ -147,11 +125,6 @@ export function toGoalCourses({
   });
 }
 
-/**
- * The goal's course bands that teach a skill the plan reaches within the learner's outline window
- * (`nearSkillIds`): those are outlined while the plan is built, and the rest wait until the plan
- * gets close to them. A band is written whole, so one near skill keeps the whole band.
- */
 export function keepNearCourseBands({
   nearSkillIds,
   needs,

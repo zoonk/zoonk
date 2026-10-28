@@ -59,10 +59,6 @@ const BOSS = {
   timeLimitMinutes: null,
 } as const;
 
-/**
- * An exam goal whose plan has one chapter, with a statement on its first skill that today's session
- * asks in practice, in the phase's boss and in the weekly mock.
- */
 async function examGoal({ name, structure }: { name: string; structure: ExamStructure }) {
   const user = await userFixture();
 
@@ -175,8 +171,6 @@ describe.each([
   });
 });
 
-// Rafaela's Câmara goal (Cebraspe) asked "True or false" until its notice's blueprint linked,
-// though the first pass over the notice had read "RIGHT or WRONG".
 describe("statements of an exam whose notice is still being read", () => {
   it("are judged right or wrong from the first question when its first reading names them so", async () => {
     const { blocks, goalId, sessionId } = await examGoal({

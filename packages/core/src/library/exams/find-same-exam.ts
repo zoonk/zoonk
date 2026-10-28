@@ -5,18 +5,11 @@ import { EXAM_BLUEPRINT_DOCUMENT } from "../identity/_utils/search-documents";
 import { findRankedIds, orderByIds, toTextSearch } from "../identity/_utils/text-search-sql";
 import { type ExamIdentity, buildExamIdentityKey, findExamBlueprintByKey } from "./exam-identity";
 
-/**
- * Shared blueprints of the same language (and country, when it's known) whose name, board or
- * role match one of the model's search terms, best first. An exact key match is checked
- * before this; the search catches the same exam under another name, such as
- * "Exame Nacional do Ensino Médio" for ENEM.
- */
 async function searchExamBlueprints({
   country,
   language,
   terms,
 }: {
-  /** Null for a learner who only named the exam: every country with exams in their language. */
   country: string | null;
   language: string;
   terms: string[];
@@ -40,16 +33,8 @@ async function searchExamBlueprints({
   return orderByIds(ids, blueprints);
 }
 
-/** An exam as a request names it; the country is null when only the learner's words name it. */
 export type ExamRequest = Omit<ExamIdentity, "country"> & { country: string | null };
 
-/**
- * The stored blueprint of the exam a request names: its exact key first, then shared blueprints
- * whose names match, each confirmed by an evaluation model, so "ENEM" and "Exame Nacional do Ensino
- * Médio", or a role written two ways, find one blueprint. Research and onboarding both read exams
- * through it, so the dates a learner confirms come from the notice research keeps. A request
- * without a country is compared in the country of its best match.
- */
 export async function findSameExam({
   request,
   searchTerms,
@@ -60,7 +45,6 @@ export async function findSameExam({
   const identityKey = buildExamIdentityKey(request);
   const exact = await findExamBlueprintByKey({ identityKey, language: request.language });
 
-  // Private blueprints only match their owner's exact key.
   if (exact || request.ownerId) {
     return exact;
   }

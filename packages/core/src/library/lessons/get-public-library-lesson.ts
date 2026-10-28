@@ -7,7 +7,6 @@ import { type PublicFirstScreen, toPublicFirstScreen } from "./_utils/public-fir
 import { toSummaryIdeas } from "./_utils/summary-ideas";
 import { CURRENT_STEPS } from "./lesson-versions";
 
-/** Kept for the catalog's lifetime, like the public pages that show it. */
 async function getCachedPublicLesson(lessonId: string) {
   "use cache";
   cacheTag(getLibraryLessonCacheTag(lessonId));
@@ -35,13 +34,6 @@ async function getCachedPublicLesson(lessonId: string) {
   });
 }
 
-/**
- * The public part of a shared lesson: title, why it matters, what you'll
- * learn (the summary ideas) and its first screen without the answer. The
- * first screen is null until the content is written; the page then offers to
- * start the lesson, which writes it. Everything else loads in the player.
- * Private lessons are never public.
- */
 export async function getPublicLibraryLesson({ lessonId }: { lessonId: string }) {
   if (!isUuid(lessonId)) {
     return null;

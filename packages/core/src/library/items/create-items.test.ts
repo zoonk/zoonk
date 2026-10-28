@@ -33,7 +33,6 @@ type ItemOf<FORMAT extends GeneratedItem["format"]> = Extract<GeneratedItem, { f
 
 const FIGURE_CONTEXT = "Na figura, uma seta aponta para uma organela da célula vegetal.";
 
-/** Fresh image models and uploads for a test that draws: queued results never leak between tests. */
 function mockUploads() {
   resetImageModels();
   storeBlobUploads();
@@ -44,7 +43,6 @@ const figure = {
   prompt: "A plant cell with the chloroplast, nucleus and cell wall labeled.",
 };
 
-/** A skill in a biology chapter, so its pictures take the subject's palette. */
 async function biologySkill() {
   const course = await courseFixture({ title: "Biologia" });
 
@@ -168,7 +166,6 @@ describe(createItems, () => {
 
     expect(rejected).toStrictEqual([]);
 
-    // The question is asked at once; its new picture's model check follows (`checkImageAsset`).
     expect(checkLessonImage).not.toHaveBeenCalled();
     expect(unchecked).toStrictEqual([created[1]?.mediaAssetId]);
 
@@ -359,11 +356,9 @@ describe(createItems, () => {
     const [right, wrong] = generatedMultipleChoice().options;
 
     const items = [
-      // ENEM placement, Oct 2026: italics split across lines showed their underscores.
       generatedMultipleChoice({
         context: "_Presidente: A audiência é aberta.\nMoradora: Escreveram aqui._",
       }),
-      // "5,0" is the right answer written again.
       generatedMultipleChoice({ options: [right!, wrong!, { ...wrong!, text: "5,0" }] }),
     ];
 
@@ -465,7 +460,6 @@ describe(createItems, () => {
 
     await expect(prisma.item.count({ where: { skillId: skill.id } })).resolves.toBe(2);
 
-    // The bank the plan reads changed once: the retry wrote nothing.
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
       inputVersion: plan.inputVersion + 1,
     });

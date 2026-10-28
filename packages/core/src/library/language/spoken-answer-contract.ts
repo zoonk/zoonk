@@ -3,10 +3,6 @@ import { z } from "zod";
 import { type RefusedUsage } from "../../entitlements/contract";
 import { answerTimeZoneSchema } from "../../learner/contract";
 
-/**
- * Recording formats browsers produce (WebM with Opus, or MP4 with AAC on
- * Safari) plus the file formats transcription models accept.
- */
 const SPOKEN_AUDIO_MEDIA_TYPES = [
   "audio/webm",
   "audio/mp4",
@@ -17,10 +13,8 @@ const SPOKEN_AUDIO_MEDIA_TYPES = [
   "audio/x-wav",
 ] as const;
 
-/** Two megabytes holds well over a minute of compressed speech; a sentence takes seconds. */
 export const MAX_SPOKEN_AUDIO_BYTES = 2_000_000;
 
-/** A spoken answer is one sentence; a longer recording is a microphone left on. */
 const MAX_SPOKEN_ANSWER_DURATION_MS = 60_000;
 
 export function isSpokenAudioMediaType(mediaType: string): boolean {
@@ -28,7 +22,6 @@ export function isSpokenAudioMediaType(mediaType: string): boolean {
   return SPOKEN_AUDIO_MEDIA_TYPES.some((type) => type === base);
 }
 
-/** The fields sent next to the recording. */
 export const spokenAnswerFieldsSchema = z
   .object({
     durationMs: z.coerce

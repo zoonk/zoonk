@@ -46,7 +46,6 @@ describe(listLearnerVersionTargets, () => {
       libraryLessonFixture(),
     ]);
 
-    // The worked example has its version already, and a check on an item stays as it is.
     const [, explanation, workedExample, itemCheck, plainCheck] = steps;
 
     await Promise.all([
@@ -98,7 +97,6 @@ describe(listLearnerVersionTargets, () => {
 
     const targets = await listLearnerVersionTargets({ goalId: goal.id, lessonIds: [lesson.id] });
 
-    // Versions are written without pictures: only the question in words gets one.
     expect(targets.tools.map((target) => target.stepId)).toStrictEqual([steps[0]?.id]);
   });
 

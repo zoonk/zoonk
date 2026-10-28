@@ -2,16 +2,12 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 
-/** Enough real questions to show a writer the exam's difficulty, few enough to keep prompts short. */
 const MAX_EXAMPLES = 2;
 
-/** A long support text says little more about difficulty than its start. */
 const MAX_EXAMPLE_LENGTH = 1200;
 
-/** Option letters as papers print them: a question has at most eight options. */
 const OPTION_LETTERS = "ABCDEFGH";
 
-/** A stored question as a writer reads it: its support text, its command and its options. */
 function toExampleText(content: unknown): string | null {
   if (!isJsonObject(content)) {
     return null;
@@ -34,11 +30,6 @@ function toExampleText(content: unknown): string | null {
   return text ? text.slice(0, MAX_EXAMPLE_LENGTH) : null;
 }
 
-/**
- * A few real questions from the exam's past papers (the ones its board lets us quote, already in
- * the bank), for a writer to match in difficulty, length and steps: the skills' own first, else
- * any of the exam's. Empty for an exam without quoted papers.
- */
 export async function listPastQuestionExamples({
   examBlueprintId,
   skillIds,

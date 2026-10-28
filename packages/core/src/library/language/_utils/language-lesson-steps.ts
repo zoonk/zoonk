@@ -4,7 +4,6 @@ import { normalizeDistractorKey } from "@zoonk/utils/distractors";
 import { isSameLanguage } from "@zoonk/utils/languages";
 import { safeParseStepContent } from "../../steps/contract/step-contract";
 
-/** One language screen before positions and provenance are added. */
 export type LanguageStepToSave = {
   kind: StepKind;
   content: object;
@@ -15,10 +14,8 @@ export type LanguageStepToSave = {
 type LanguageLessonStepsInput = {
   content: LanguageLessonContent;
   learnerLanguage: string;
-  /** The shared `Sentence` row of each sentence, in the content's order. */
   sentenceIds: readonly string[];
   targetLanguage: string;
-  /** The shared `Word` row of each word, in the content's order. */
   wordIds: readonly string[];
 };
 
@@ -29,12 +26,10 @@ function step(kind: StepKind, content: object, ids: Partial<LanguageStepToSave> 
   return { content, kind, sentenceId: ids.sentenceId ?? null, wordId: ids.wordId ?? null };
 }
 
-/** Recognizing words in the same order they were taught tests memory of the order, not the words. */
 function rotate<TItem>(items: readonly TItem[]): TItem[] {
   return [...items.slice(1), ...items.slice(0, 1)];
 }
 
-/** A translation that is the text itself, as in the learner's own language, says nothing new. */
 function isSameText(text: string, translation: string): boolean {
   return normalizeDistractorKey(text) === normalizeDistractorKey(translation);
 }
@@ -49,11 +44,6 @@ function getTipText(tip: LanguageLessonContent["tip"]): string {
   return [tip.text, examples.join("\n")].filter(Boolean).join("\n\n");
 }
 
-/**
- * Half the sentences are built from their translation (reading) and half from their sound
- * (listening). In the learner's own language there is nothing to translate, so every sentence is
- * heard and built.
- */
 function getSentenceSteps({
   content,
   learnerLanguage,
@@ -131,16 +121,6 @@ function getPracticeSteps(practice: LanguageLessonContent["practice"]) {
   );
 }
 
-/**
- * Lays a language lesson out in the session rhythm: meet each new word,
- * recognize it, read the tip, practice the pattern, build sentences, listen,
- * say one or two out loud, write one, and finish with the summary. Word and
- * sentence screens only reference their shared rows; the pair's translations
- * live on the lesson's word and sentence links. A screen that doesn't fit the
- * step contract (too long for a phone) is left out rather than stored broken.
- * In the learner's own language, a word's translation is its definition and
- * every sentence is heard rather than translated.
- */
 export function buildLanguageLessonSteps(input: LanguageLessonStepsInput): LanguageStepToSave[] {
   const { content, wordIds } = input;
   const wordStepIds = wordIds.map((wordId) => ({ wordId }));

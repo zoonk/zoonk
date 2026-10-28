@@ -15,7 +15,6 @@ function sortIds(ids: readonly string[]): string[] {
   return ids.toSorted((a, b) => a.localeCompare(b));
 }
 
-/** Two chapters no course places, each the home of one lesson. */
 async function unplacedChapters(title: string) {
   const chapters = await Promise.all(
     [1, 2].map((index) => libraryChapterFixture({ title: `${title} ${index}` })),
@@ -30,7 +29,6 @@ async function unplacedChapters(title: string) {
   return { chapters, lessons };
 }
 
-/** Tags each chapter with the skill one at a time, in this order, so the rows are stored in it. */
 async function tagInOrder({
   chapterIds,
   skillId,
@@ -60,7 +58,6 @@ describe(loadChapterTaughtLessons, () => {
       unplacedChapters("Linear equations"),
     ]);
 
-    // Both lessons sit at position 0 of a chapter no course places: they tie.
     await Promise.all(
       lessons.map((lesson, index) =>
         chapterLessonFixture({
@@ -73,8 +70,6 @@ describe(loadChapterTaughtLessons, () => {
 
     const byId = sortIds(chapters.map((chapter) => chapter.id));
 
-    // Tagged in reverse id order, and the lower-id chapter rewritten after: both its tag and its
-    // chapter row are stored after the other's, so a read in storage order returns it second.
     await tagInOrder({ chapterIds: byId.toReversed(), skillId: skill.id });
 
     await prisma.chapter.update({
@@ -93,7 +88,6 @@ describe(loadChapterTaughtLessons, () => {
       unplacedChapters("Quadratic equations"),
     ]);
 
-    // The chapter with the larger id holds the earlier lesson: the position decides, not the id.
     const [later, earlier] = sortIds(chapters.map((chapter) => chapter.id));
 
     await Promise.all(

@@ -8,14 +8,7 @@ import { repairItem } from "../items/item-repairs";
 import { resolveReviewFlags } from "../sources/content-review-flags";
 import { type FlaggedDrillGroup } from "./flagged-content";
 
-/**
- * Writes a changed article's new drills into the flagged drills it replaces, one for one and in
- * place, so their ids (and the answers, screens and practice pointing at them) stay. A new drill
- * that fails the item checks leaves its old one flagged for the next run. Returns how many were
- * rewritten.
- *
- * This is a workflow bridge: the flag sweep generated the drills from the group it listed.
- */
+/** Internal workflow bridge: the drills must come from the flagged group the sweep listed. */
 export async function replaceFlaggedDrills({
   drills,
   group,
@@ -50,7 +43,6 @@ export async function replaceFlaggedDrills({
   });
 
   await writePlanInputs(async (tx) => {
-    // A plan counts a drill in its question bank, through the drill's skill or exam.
     const rewritten = await tx.item.findMany({
       select: { examBlueprintId: true, skillId: true },
       where: { id: { in: pairs.map(({ itemId }) => itemId) } },
