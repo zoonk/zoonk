@@ -436,6 +436,36 @@ final class ZoonkUITests: XCTestCase {
     }
   }
 
+  /// Proves every tab root and Statistics, the Study place the fixtures fill, pass the system
+  /// accessibility audit.
+  @MainActor
+  func testTabsAndStatisticsPassTheAccessibilityAudit() throws {
+    continueAfterFailure = false
+
+    let app = makeApp(for: .progress)
+    launch(app)
+
+    for destination in [
+      (tabTitle: "Today", screenTitle: "Today"),
+      (tabTitle: "Plan", screenTitle: "Plan"),
+      (tabTitle: "Zu", screenTitle: "Zu"),
+      (tabTitle: "Search", screenTitle: "Search"),
+    ] {
+      app.primaryNavigationItem(destination.tabTitle).tap()
+      XCTAssertTrue(
+        app.navigationBars[destination.screenTitle].firstMatch.waitForExistence(timeout: 5),
+        "Expected the \(destination.screenTitle) screen to render")
+      try performAccessibilityAudit(in: app)
+    }
+
+    app.primaryNavigationItem("Today").tap()
+    openStatistics(in: app)
+    XCTAssertTrue(
+      app.staticTexts["Study days"].waitForExistence(timeout: 5),
+      "Expected the level button to push Statistics")
+    try performAccessibilityAudit(in: app)
+  }
+
   /// Proves the catalog lists only the categories that have courses, filters by one, and leads to
   /// a course's landing page and a chapter's page with their ways in.
   @MainActor
@@ -695,6 +725,22 @@ final class ZoonkUITests: XCTestCase {
     app.buttons.matching(
       NSPredicate(format: "label == %@ OR label BEGINSWITH %@", name, "\(name),")
     ).firstMatch
+  }
+
+  /// Audits the screen. Navigation and tab bar items keep their size at large Dynamic Type sizes
+  /// by design (a long press shows them in the Large Content Viewer), so the audit's Dynamic Type
+  /// issues for elements in those bars aren't the app's.
+  @MainActor
+  private func performAccessibilityAudit(in app: XCUIApplication) throws {
+    let bars = [app.navigationBars.firstMatch, app.tabBars.firstMatch].filter(\.exists).map(\.frame)
+
+    try app.performAccessibilityAudit { issue in
+      guard issue.auditType == .dynamicType, let element = issue.element else {
+        return false
+      }
+
+      return bars.contains { $0.contains(element.frame) }
+    }
   }
 
   /// Launches the app and, when it couldn't read a fixture this target passed, stops the test once
