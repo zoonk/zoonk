@@ -3,10 +3,7 @@ import { getAppleSubscriptionFromNotification } from "./apple-store";
 import { reconcileAppleSubscription } from "./reconcile-apple-subscription";
 import { findNotificationOwner, findStoreSubscription } from "./reconcile-store-subscription";
 
-/**
- * Reconciles signed server notifications so renewals, refunds, grace periods, and revocations
- * reach web clients even when the Apple app is closed.
- */
+/** Verifies server notifications and reconciles cross-platform entitlement without requiring the Apple app open. */
 export async function processAppleSubscriptionNotification({
   signedPayload,
 }: {

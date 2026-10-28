@@ -54,10 +54,7 @@ function getOptionalDate(value: number | undefined) {
   return getRequiredDate(value);
 }
 
-/**
- * Reads Apple's signed Zoonk account binding from either payload and rejects a transaction
- * whose renewal information names a different account.
- */
+/** Rejects payloads whose signed appAccountToken bindings disagree. */
 function getAccountToken({
   renewalInfo,
   transaction,
@@ -131,10 +128,7 @@ function getIsActive({
   return (!revocationDate || revocationDate > new Date()) && expirationDate > new Date();
 }
 
-/**
- * Notification status describes the current subscription chain, while the
- * attached transaction can be an older renewal involved in a refund event.
- */
+/** Notification status describes the current chain even when its attached transaction is an older refunded renewal. */
 function getRevocationDate({
   eventSignedDate,
   status,
@@ -178,10 +172,7 @@ function assertMatchingRenewalInfo({
   }
 }
 
-/**
- * Converts Apple's verified transaction and renewal payloads into the one entitlement shape
- * persisted by native purchase synchronization and server notifications.
- */
+/** Accepts verified Apple payloads only. */
 export function createVerifiedAppleSubscription({
   eventId,
   eventSignedDate,

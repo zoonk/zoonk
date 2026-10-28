@@ -14,10 +14,7 @@ function getSyncError(error: unknown) {
   return new AppleSubscriptionError(error.reason, { cause: error });
 }
 
-/**
- * Derives ownership from the authenticated session and requires Apple's signed appAccountToken
- * to match before granting cross-platform access.
- */
+/** Requires sign-in and a matching signed appAccountToken before granting access. */
 export async function syncCurrentUserAppleSubscription({
   signedTransaction,
 }: {

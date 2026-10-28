@@ -45,10 +45,7 @@ function getRecord(value: unknown) {
   return result.success ? result.data : null;
 }
 
-/**
- * Reads only enough untrusted JWS metadata to select Apple's environment-specific verifier.
- * The selected verifier still authenticates every claim before use.
- */
+/** Unverified metadata selects the environment only; the selected Apple verifier must authenticate every claim. */
 function getClaimedEnvironment({ kind, signedData }: { kind: SignedDataKind; signedData: string }) {
   const payload = getUnverifiedPayload(signedData);
 
@@ -88,10 +85,7 @@ function assertXcodeTransactionsAllowed() {
   }
 }
 
-/**
- * Live App Store data uses certificate revocation checks and app identity validation.
- * Xcode data stays behind a separate non-production gate.
- */
+/** Live verification requires revocation and app-identity checks; Xcode remains behind the non-production gate. */
 function createVerifier(environment: Environment) {
   if (environment === Environment.XCODE) {
     assertXcodeTransactionsAllowed();
@@ -124,10 +118,6 @@ export function getSignedDataVerifier({
   return { environment, verifier: createVerifier(environment) };
 }
 
-/**
- * Fails closed unless one complete In-App Purchase key is configured because partial
- * credentials cannot authenticate current-state lookups.
- */
 function getServerConfiguration() {
   const issuerId = process.env.APPLE_IAP_ISSUER_ID?.trim();
   const keyId = process.env.APPLE_IAP_KEY_ID?.trim();
