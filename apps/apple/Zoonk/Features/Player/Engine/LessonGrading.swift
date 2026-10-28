@@ -82,7 +82,7 @@ enum LessonGrading {
       }
 
       let isCorrect = isNumericAnswerRight(
-        value, expected: expected, tolerance: tolerance, template: content.template)
+        value, expected: expected, tolerance: tolerance, minTolerance: content.minTolerance)
 
       // One precision for both, as main's verdict shows them.
       let digits = exactFractionDigitsFor(expected: expected, tolerance: tolerance, value: value)
@@ -108,20 +108,14 @@ enum LessonGrading {
     }
   }
 
-  /// How far a number may always be from the right one when the check's own tolerance is tighter,
-  /// by template (core's `minTolerance`): a guess on `guessReveal`'s log slider can't land closer
-  /// than its positions, about 11% apart.
-  private static let minTolerances: [String: ActivityCheck.Tolerance] = [
-    "guessReveal": .init(kind: .relative, value: 0.1)
-  ]
-
-  /// A typed number is right within the check's tolerance, the template's minimum, or rounded to
-  /// the places the learner typed ("12" for 11.88%), since a check stores no precision to hold the
-  /// learner to.
+  /// A typed number is right within the check's tolerance, the template's floor the screen
+  /// carries, or rounded to the places the learner typed ("12" for 11.88%), since a check stores no
+  /// precision to hold the learner to.
   static func isNumericAnswerRight(
-    _ value: Double, expected: Double, tolerance: ActivityCheck.Tolerance, template: String
+    _ value: Double, expected: Double, tolerance: ActivityCheck.Tolerance,
+    minTolerance: ActivityCheck.Tolerance?
   ) -> Bool {
-    let tolerances = [tolerance] + [minTolerances[template]].compactMap { $0 }
+    let tolerances = [tolerance] + [minTolerance].compactMap { $0 }
 
     return tolerances.contains { isWithin(value, of: expected, tolerance: $0) }
       || isRoundedAnswer(value, expected: expected)

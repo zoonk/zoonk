@@ -279,12 +279,12 @@ final class LessonGradingTests: XCTestCase {
     let rise = { (typed: Double) in
       LessonGrading.isNumericAnswerRight(
         typed, expected: 11.88, tolerance: .init(kind: .absolute, value: 0.1),
-        template: "numberLine")
+        minTolerance: nil)
     }
     let share = { (typed: Double) in
       LessonGrading.isNumericAnswerRight(
         typed, expected: 0.38, tolerance: .init(kind: .absolute, value: 0.001),
-        template: "numberLine")
+        minTolerance: nil)
     }
 
     XCTAssertEqual([12, 11.9, 11.88].map(rise), [true, true, true])
@@ -306,7 +306,7 @@ final class LessonGradingTests: XCTestCase {
     let guess = { (typed: Double, tolerance: Double) in
       LessonGrading.isNumericAnswerRight(
         typed, expected: 700_000, tolerance: .init(kind: .relative, value: tolerance),
-        template: "guessReveal")
+        minTolerance: .init(kind: .relative, value: 0.1))
     }
 
     XCTAssertTrue(guess(710_000, 0.01))
@@ -316,15 +316,38 @@ final class LessonGradingTests: XCTestCase {
     XCTAssertFalse(
       LessonGrading.isNumericAnswerRight(
         710_000, expected: 700_000, tolerance: .init(kind: .relative, value: 0.01),
-        template: "numberLine"),
-      "only the scale's template has the minimum")
+        minTolerance: nil),
+      "without a floor, the check's own tolerance decides")
+  }
+
+  func testAnActivityIsGradedWithTheToleranceFloorItsScreenCarries() throws {
+    let guess = { (floor: String) in
+      try step(
+        teaching(
+          "guess", kind: "activity", minTolerance: floor,
+          content: #"""
+            {"template": "guessReveal", "prompt": "Guess", "fields": {},
+             "check": {"kind": "numeric", "question": "How many?", "answer": 700000,
+               "explanation": "Atoms.", "tolerance": {"kind": "relative", "value": 0.01}}}
+            """#))
+    }
+    let floored = try guess(#"{"kind": "relative", "value": 0.1}"#)
+    let strict = try guess("null")
+
+    XCTAssertEqual(
+      LessonGrading.grade(.activity(.numeric(710_000)), step: floored)?.isCorrect, true)
+    XCTAssertEqual(
+      LessonGrading.grade(.activity(.numeric(790_000)), step: floored)?.isCorrect, false)
+    XCTAssertEqual(
+      LessonGrading.grade(.activity(.numeric(710_000)), step: strict)?.isCorrect, false,
+      "a screen without a floor holds the guess to its check's tolerance")
   }
 
   func testAGuessExactlyATenthAwayCountsDespiteFloatingPoint() {
     let guess = { (typed: Double, expected: Double) in
       LessonGrading.isNumericAnswerRight(
         typed, expected: expected, tolerance: .init(kind: .relative, value: 0.01),
-        template: "guessReveal")
+        minTolerance: .init(kind: .relative, value: 0.1))
     }
 
     XCTAssertTrue(guess(1.1, 1))
@@ -396,11 +419,15 @@ private func step(_ json: String) throws -> LessonStep {
   try JSONDecoder().decode(LessonStep.self, from: Data(json.utf8))
 }
 
-private func teaching(_ id: String, kind: String, content: String) -> String {
-  """
-  {"id": "\(id)", "position": 0, "skillId": null, "citation": null, "image": null,
-   "imagePending": false, "kind": "\(kind)", "content": \(content)}
-  """
+/// `minTolerance` is an activity screen's tolerance floor, as JSON.
+private func teaching(
+  _ id: String, kind: String, minTolerance: String? = nil, content: String
+) -> String {
+  let floor = minTolerance.map { #""minTolerance": \#($0), "# } ?? ""
+  return """
+    {"id": "\(id)", "position": 0, "skillId": null, "citation": null, "image": null,
+     "imagePending": false, "kind": "\(kind)", \(floor)"content": \(content)}
+    """
 }
 
 private let textHook = teaching(

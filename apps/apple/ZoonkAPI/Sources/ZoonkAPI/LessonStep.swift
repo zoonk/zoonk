@@ -17,8 +17,8 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
   public var kind: LessonStepKind { content.kind }
 
   private enum CodingKeys: String, CodingKey {
-    case citation, content, exercise, id, image, imagePending, kind, listening, optionPictures
-    case pictureWaitStartedAt, position, skillId, wordHints
+    case citation, content, exercise, id, image, imagePending, kind, listening, minTolerance
+    case optionPictures, pictureWaitStartedAt, position, skillId, wordHints
   }
 
   public init(
@@ -73,7 +73,10 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
         try container.decode(SpokenAnswerContent.self, forKey: .content),
         listening: try container.decodeIfPresent(LanguageExercise.self, forKey: .listening))
     case "activity":
-      content = .activity(try container.decode(ActivityStepContent.self, forKey: .content))
+      var activity = try container.decode(ActivityStepContent.self, forKey: .content)
+      activity.minTolerance = try container.decodeIfPresent(
+        ActivityCheck.Tolerance.self, forKey: .minTolerance)
+      content = .activity(activity)
     case "summary":
       content = .summary(try container.decode(SummaryContent.self, forKey: .content))
     case "challenge":
@@ -113,7 +116,9 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
     case .spokenAnswer(let value, let listening):
       try container.encode(value, forKey: .content)
       try container.encode(listening, forKey: .listening)
-    case .activity(let value): try container.encode(value, forKey: .content)
+    case .activity(let value):
+      try container.encode(value, forKey: .content)
+      try container.encode(value.minTolerance, forKey: .minTolerance)
     case .summary(let value): try container.encode(value, forKey: .content)
     case .challenge(let value): try container.encode(value, forKey: .content)
     case .language: break
