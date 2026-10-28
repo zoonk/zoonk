@@ -1,0 +1,382 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@ augmented" : {
+      "comment" : "A chord's name: its root note, then augmented"
+    },
+    "%@ diminished" : {
+      "comment" : "A chord's name: its root note, then diminished"
+    },
+    "%@ dominant seventh" : {
+      "comment" : "A chord's name: its root note, then dominant seventh"
+    },
+    "%@ flat" : {
+      "comment" : "A note name read aloud, like “E flat”"
+    },
+    "%@ major" : {
+      "comment" : "A chord's name: its root note, then major"
+    },
+    "%@ major seventh" : {
+      "comment" : "A chord's name: its root note, then major seventh"
+    },
+    "%@ minor" : {
+      "comment" : "A chord's name: its root note, then minor"
+    },
+    "%@ minor seventh" : {
+      "comment" : "A chord's name: its root note, then minor seventh"
+    },
+    "%@ sharp" : {
+      "comment" : "A note name read aloud, like “F sharp”"
+    },
+    "%@ string" : {
+      "comment" : "A guitar string named by its open note, like “A string”"
+    },
+    "%lld bars" : {
+      "comment" : "How many bars the melody has",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld bar"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld bars"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld bpm" : {
+      "comment" : "A rhythm's tempo in beats per minute"
+    },
+    "%lld extra taps." : {
+      "comment" : "Taps that matched no beat",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld extra tap."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld extra taps."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld notes" : {
+      "comment" : "How many notes the target has, like “2 notes”",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld note"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld notes"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld of %lld taps on time." : {
+      "comment" : "How many of the rhythm's taps were on time",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld of %2$lld taps on time."
+          }
+        }
+      }
+    },
+    "%lld rounds" : {
+      "comment" : "How many times the rhythm repeats",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld round"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld rounds"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "A rhythm of %lld steps with a beat every %lld. Tap on steps %@, over a click on every beat." : {
+      "comment" : "VoiceOver description of a rhythm's grid",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "A rhythm of %1$lld steps with a beat every %2$lld. Tap on steps %3$@, over a click on every beat."
+          }
+        }
+      }
+    },
+    "Bar %lld of %lld" : {
+      "comment" : "Which bar of the melody is playing",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Bar %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "Bar %lld: %@." : {
+      "comment" : "VoiceOver: the notes of one bar of the melody",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Bar %1$lld: %2$@."
+          }
+        }
+      }
+    },
+    "By ear" : {
+      "comment" : "Title while the target is only heard, not named"
+    },
+    "Check the sound delay again" : {
+      "comment" : "Runs the sound check again, for new headphones"
+    },
+    "Continue" : {
+      "comment" : "Keeps the measured sound delay and opens the rhythm"
+    },
+    "Early or late" : {
+      "comment" : "Legend: a tap that missed its beat"
+    },
+    "Fret %lld, %@" : {
+      "comment" : "A fret on a guitar string, with the note it sounds",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Fret %1$lld, %2$@"
+          }
+        }
+      }
+    },
+    "Frets %lld to %lld" : {
+      "comment" : "Which frets of the guitar neck show, like “Frets 1 to 4”",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Frets %1$lld to %2$lld"
+          }
+        }
+      }
+    },
+    "Get ready…" : {
+      "comment" : "On the rhythm pad while a bar is counted in"
+    },
+    "Guitar strings" : {
+      "comment" : "VoiceOver name of the guitar neck"
+    },
+    "Headphones can play sound a little late. Tap along with %lld clicks once, and rhythms on this device are timed fairly." : {
+      "comment" : "Why the sound check runs, before it starts"
+    },
+    "Hear it" : {
+      "comment" : "Plays the notes on the keys"
+    },
+    "High E string" : {
+      "comment" : "The thinnest guitar string, read aloud"
+    },
+    "Higher frets" : {
+      "comment" : "Moves the guitar neck's window up the neck"
+    },
+    "Listen first" : {
+      "comment" : "Plays one round of the rhythm"
+    },
+    "Listen to the clicks…" : {
+      "comment" : "The sound check counts in"
+    },
+    "Low E string" : {
+      "comment" : "The thickest guitar string, read aloud"
+    },
+    "Lower frets" : {
+      "comment" : "Moves the guitar neck's window toward the nut"
+    },
+    "Melody" : {
+      "comment" : "A melody without a title"
+    },
+    "No notes yet" : {
+      "comment" : "Nothing is pressed on the instrument"
+    },
+    "Not played" : {
+      "comment" : "A guitar string left silent (muted)"
+    },
+    "On the keys: %@" : {
+      "comment" : "VoiceOver: the notes the instrument plays now"
+    },
+    "On time" : {
+      "comment" : "Legend: a tap that landed on its beat"
+    },
+    "One way to play the answer" : {
+      "comment" : "Above a guitar shape that plays the right notes, after the check"
+    },
+    "Open, %@" : {
+      "comment" : "A guitar string played open, with the note it sounds"
+    },
+    "Piano keys" : {
+      "comment" : "VoiceOver name of the piano keyboard"
+    },
+    "Play the melody" : {
+      "comment" : "Plays the melody on the staff"
+    },
+    "Play the sound" : {
+      "comment" : "Plays the chord or notes to find by ear"
+    },
+    "Rhythm hits" : {
+      "comment" : "Legend: the colored cells are the taps"
+    },
+    "Round %lld of %lld" : {
+      "comment" : "Which round of the rhythm is playing",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Round %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "Same chord on guitar" : {
+      "comment" : "Above a guitar shape that plays the chord on the keys"
+    },
+    "Same notes on guitar" : {
+      "comment" : "Above a guitar shape that plays the notes on the keys"
+    },
+    "Set up your sound" : {
+      "comment" : "Title of the rhythm sound check"
+    },
+    "Show the music as" : {
+      "comment" : "Chooses staff or guitar tab"
+    },
+    "Skip for now" : {
+      "comment" : "Opens the rhythm without measuring the sound delay"
+    },
+    "Sound on this device arrives about %lld ms late. Rhythms here take that out." : {
+      "comment" : "The sound check's reading, in milliseconds"
+    },
+    "Sound on this device arrives on time." : {
+      "comment" : "The sound check found no delay"
+    },
+    "Staff" : {
+      "comment" : "Shows the melody on a music staff"
+    },
+    "Start tapping" : {
+      "comment" : "Counts in a bar, then times the taps"
+    },
+    "Start the sound check" : {
+      "comment" : "Starts the clicks to tap along with"
+    },
+    "Stop" : {
+      "comment" : "Stops the melody"
+    },
+    "Tab" : {
+      "comment" : "Shows guitar tablature under the staff"
+    },
+    "Tap %lld came %lld ms early." : {
+      "comment" : "The tap furthest off the beat came early",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tap %1$lld came %2$lld ms early."
+          }
+        }
+      }
+    },
+    "Tap %lld came %lld ms late." : {
+      "comment" : "The tap furthest off the beat came late",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tap %1$lld came %2$lld ms late."
+          }
+        }
+      }
+    },
+    "Tap %lld was missed." : {
+      "comment" : "A beat of the rhythm got no tap"
+    },
+    "Tap here" : {
+      "comment" : "On the rhythm pad"
+    },
+    "Tap with each click · %lld of %lld" : {
+      "comment" : "The sound check: which click of how many",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Tap with each click · %1$lld of %2$lld"
+          }
+        }
+      }
+    },
+    "Tempo" : {
+      "comment" : "Chooses how fast the melody plays"
+    },
+    "The sound couldn't play. You can still see every note." : {
+      "comment" : "Under an instrument when the device couldn't play sound"
+    },
+    "These notes don't fit in one hand shape on the guitar." : {
+      "comment" : "Under the piano when the pressed notes can't be played as one guitar shape"
+    },
+    "This music couldn't be drawn." : {
+      "comment" : "When a melody's notation can't be read"
+    },
+    "Try again" : {
+      "comment" : "Runs the rhythm or the sound check again"
+    },
+    "We couldn't match enough taps to the clicks. Try again, tapping with each one." : {
+      "comment" : "The sound check got too few taps"
+    },
+    "none" : {
+      "comment" : "No notes are on the keys"
+    },
+    "or press Space" : {
+      "comment" : "Under the rhythm pad, with a hardware keyboard"
+    }
+  },
+  "version" : "1.0"
+}
