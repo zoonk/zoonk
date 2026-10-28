@@ -18,7 +18,6 @@ import { PAGE_SECTION_TITLE_CLASS } from "../_components/page";
 import { useFormatProgressShare } from "../_utils/percent";
 import { useFormatPlanDate } from "../plan/plan-date-text";
 
-/** What the subject's lessons are: studied, skipped because the learner knows them, still new. */
 function getCoverage(subject: SyllabusSubject) {
   if (subject.lessonsTotal === 0) {
     return { known: 0, new: 1, studied: 0 };
@@ -30,11 +29,6 @@ function getCoverage(subject: SyllabusSubject) {
   return { known, new: Math.max(0, 1 - studied - known), studied };
 }
 
-/**
- * How much practice backs an exam subject's preparation, as the Plan's sheet says it for the
- * goal: "Mastery 6 of 8 right", or that it shows after a few practice questions while the subject
- * has too few answers to count it, which is why a subject studied whole can still read low.
- */
 function SubjectMastery({ mastery }: { mastery: SyllabusSubject["mastery"] }) {
   const t = useExtracted();
 
@@ -50,11 +44,6 @@ function SubjectMastery({ mastery }: { mastery: SyllabusSubject["mastery"] }) {
   );
 }
 
-/**
- * An exam subject's preparation: the share the Plan's row has for it as a readout with its meter
- * under it, named where no section title above it does (under the subject's facts, below 72rem,
- * where the readout is a step smaller under the page's title), and how much practice backs it.
- */
 function SubjectPreparation({
   className,
   labelled,
@@ -83,19 +72,13 @@ function SubjectPreparation({
   );
 }
 
-/**
- * How far the learner is in the subject, the bar the Plan draws for it: an exam subject's
- * preparation with its share, or a module's lessons with each state's share under it: "Studied
- * 14% · Known 6% · New 80%". An exam subject out of the plan keeps its preparation while the goal
- * counts it (the exam tests it), as its Plan row does; any other subject out of it has nothing.
- */
+/** An exam subject out of the plan keeps its preparation, since the exam still tests it; any other subject out of it has nothing. */
 export function SubjectCoverage({
   className,
   labelled = false,
   subject,
 }: {
   className?: string;
-  /** Names the measure, where no section title above the bar does. */
   labelled?: boolean;
   subject: SyllabusSubject;
 }) {
@@ -142,7 +125,6 @@ export function SubjectCoverage({
   );
 }
 
-/** "45 · Enem 2025": the subject's questions on the exam, and the edition they were counted in. */
 function useQuestionsValue({
   source,
   subject,
@@ -157,7 +139,6 @@ function useQuestionsValue({
   return source?.edition ? `${subject.questions} · ${source.edition}` : String(subject.questions);
 }
 
-/** The subject's facts as properties: its questions, topics and chapters, and when it's next. */
 function SubjectDetails({
   questionsSource,
   subject,
@@ -213,12 +194,6 @@ function SubjectDetails({
   );
 }
 
-/**
- * The subject's aside: how far the learner is in it (an exam subject's preparation, a module's
- * coverage) and its facts as properties (from 72rem; on smaller screens that bar sits under its
- * facts and the facts line says the rest), then its mind maps and asking the buddy about it
- * (`ask`, from 72rem; on smaller screens "Ask" is in the page's bar).
- */
 export function SubjectAside({
   ask,
   mindMapsHref,

@@ -14,24 +14,14 @@ import { LEARN_TABS, type LearnTab } from "./learn-tabs";
 
 export type { LearnTab } from "./learn-tabs";
 
-/**
- * The learner's buddy, null for a host without a profile, undefined while it loads: until then the
- * tab has a visitor's default buddy, its face and name kept invisible on a page the host marked
- * signed in (`signed-in:`), so a learner's own buddy never follows another.
- */
+/** Undefined while it loads: the default buddy stays invisible on a page marked signed in, so another buddy never shows before the learner's own. */
 type TabBuddy = LearnBuddy | null | undefined;
 
-/**
- * The buddy's face and name while it loads, invisible on a page marked signed in, where the tab is
- * called "Buddy" instead until the learner's own is known.
- */
 const LOADING_BUDDY_CLASS = "signed-in:invisible";
 
-/** Today's missions, which ring the buddy's tab; null before today's session exists. */
 export type LearnTabMissions = MissionsCount | null;
 
 type LearnNavigationProps = {
-  /** The tab the current route belongs to; null outside the tabs. */
   activeTab: LearnTab | null;
   buddy?: TabBuddy;
   missions?: LearnTabMissions;
@@ -62,7 +52,6 @@ function TabLabel({ buddy, tab }: { buddy: TabBuddy; tab: LearnTab }) {
   return <BuddyTabName buddy={buddy} />;
 }
 
-/** Said with the buddy's tab, since its ring only shows the missions. */
 function MissionsLabel({ missions }: { missions: MissionsCount }) {
   const t = useExtracted();
 
@@ -76,16 +65,11 @@ function MissionsLabel({ missions }: { missions: MissionsCount }) {
   );
 }
 
-/** Icon and face sizes per bar, a step smaller inside the missions ring so it has room. */
 const GLYPH_SIZES = {
   md: { face: "size-7", icon: "size-5", ring: "size-8", ringedFace: "size-6" },
   sm: { face: "size-5", icon: "size-4", ring: "size-6", ringedFace: "size-4" },
 } as const;
 
-/**
- * Lucide icons for Today (the sun) and the Plan (the map); the buddy's own face once there is one,
- * wearing today's missions as a ring, so they're in sight from every tab.
- */
 function TabIcon({
   buddy,
   missions,
@@ -139,30 +123,19 @@ function NavigationRoot({ ...props }: React.ComponentProps<"nav">) {
   return <nav aria-label={t("Learning tabs")} {...props} />;
 }
 
-/**
- * Both placements mark the current tab the same way: the whole item (icon and label) sits on a
- * soft fill in full contrast, so it reads at a glance; black stays for the page's main action. A
- * tapped tab whose page is still on its way (the host marks its link `data-link-pending`, only
- * when the page's prefetch hadn't landed) takes the mark at once, and the tab being left lets go.
- */
+/** A tapped tab whose page is still on its way (its link marked `data-link-pending`) takes the mark at once. */
 const TAB_ITEM_CLASS =
   "focus-visible:ring-ring/50 text-muted-foreground hover:bg-foreground/5 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground has-data-link-pending:bg-muted has-data-link-pending:text-foreground press font-medium outline-none focus-visible:ring-[3px]";
 
-/** The sidebar's tabs take a pending tab's mark the same way, on the sidebar's fill. */
 const SIDE_TAB_ITEM_CLASS = cn(
   LEARN_SIDEBAR_ITEM_CLASS,
   "has-data-link-pending:bg-sidebar-accent has-data-link-pending:text-foreground",
 );
 
-/** While a tapped tab is pending, the current one looks like any other. */
 const PENDING_NAVIGATION_CLASS =
   "[&:has([data-link-pending])_[aria-current=page]]:bg-transparent [&:has([data-link-pending])_[aria-current=page]]:text-muted-foreground";
 
-/**
- * The three tabs in the sidebar from `lg` up, one under the other, the buddy's face wearing
- * today's missions and Today ending with what's left of the day (`todayCount`, the host's: it
- * streams in on its own). Place it inside `LearnSidebar`.
- */
+/** Place it inside `LearnSidebar`. */
 export function LearnSideNavigation({
   activeTab,
   buddy,
@@ -181,8 +154,6 @@ export function LearnSideNavigation({
               className={SIDE_TAB_ITEM_CLASS}
               href={routes[tab]}
             >
-              {/* As wide as the study links' icons, so every row's icon and name line up; the
-                  buddy's ringed face is a little wider and overflows it evenly. */}
               <span className="flex size-4 shrink-0 items-center justify-center">
                 <TabIcon buddy={buddy} missions={missions} size="sm" tab={tab} />
               </span>
@@ -199,19 +170,10 @@ export function LearnSideNavigation({
   );
 }
 
-/**
- * How far above the screen's bottom something docked over the tab bar on a phone sits (Today's
- * action): the bar's hairline, its 6px padding above and below its 52px tabs, and the home
- * indicator's inset. Kept beside the bar so the two change together.
- */
+/** The bar's hairline, its padding around its 52px tabs, and the home indicator's inset: change it with the bar. */
 export const ABOVE_BOTTOM_TABS_CLASS = "bottom-[calc(4rem+1px+env(safe-area-inset-bottom))]";
 
-/**
- * The three tabs at the bottom of the screen under `lg`, where the thumb is. Place it after
- * `LearnShellMain`: it stays on screen while the page scrolls and takes its own room at the end,
- * so it never covers the page, and it clears the home indicator on iPhones. Toasts rise above it
- * (`data-bottom-bar`).
- */
+/** Place it after `LearnShellMain`; toasts rise above it (`data-bottom-bar`). */
 export function LearnBottomNavigation({ activeTab, buddy, missions }: LearnNavigationProps) {
   const routes = useLearnRoutes();
 

@@ -35,20 +35,13 @@ import { getSubjectBar, getSubjectShare, useKnownLine } from "./use-subject-prog
 
 const TOPICS_TITLE_ID = "subject-topics-title";
 
-/** Where a subject's page leads: back, each chapter's page, and the plan's adjustments. */
 type SubjectHrefs = {
-  /** The Plan, where the plan is adjusted. */
   adjust: string;
   back: string;
   chapter: (chapterId: string) => string;
-  /**
-   * The goal's mind maps, opened at this subject's; absent until one of its finished chapters has a
-   * map or can get one (its lessons were written), and where chapters get none.
-   */
   mindMaps?: (subjectKey: string) => string;
 };
 
-/** What kind of part of the goal this is: the notice's group, a subject, a module, an extra. */
 function useKindWord({
   document,
   fromMaterial,
@@ -81,12 +74,10 @@ function useKindWord({
       });
 }
 
-/** What the subject weighs in the exam: its questions, or its share when the notice gives that. */
 function useWeightFact(subject: SyllabusSubject): string | null {
   const t = useExtracted();
   const format = useFormatter();
 
-  // A written test (an essay) has no questions to count.
   if (subject.questions) {
     return t("{count, plural, one {# question} other {# questions}}", { count: subject.questions });
   }
@@ -100,19 +91,12 @@ function useWeightFact(subject: SyllabusSubject): string | null {
   });
 }
 
-/** The line above the name: "Subject · 45 questions", what it is and what it weighs. */
 function useEyebrow(props: Parameters<typeof useKindWord>[0]): string {
   const kindWord = useKindWord(props);
   const weight = useWeightFact(props.subject);
   return [kindWord, weight].filter(Boolean).join(" · ");
 }
 
-/**
- * "9 chapters · 20% done": what the subject holds and how far the learner is, in one line, and
- * what they skipped because they know it under it. A module's share is its Plan row's, its lessons
- * studied or known. An exam subject's preparation has its own bar right under the line (in the
- * aside from 72rem), named, so the line doesn't say it twice.
- */
 function SubjectFacts({ subject }: { subject: SyllabusSubject }) {
   const t = useExtracted();
   const doneShare = useDoneShare();
@@ -135,10 +119,6 @@ function SubjectFacts({ subject }: { subject: SyllabusSubject }) {
   );
 }
 
-/**
- * "Continue" into the subject's next chapter (none once every chapter is done), and the subject's
- * "…" beside it.
- */
 function SubjectActionsRow({
   chapterHref,
   subject,
@@ -160,7 +140,6 @@ function SubjectActionsRow({
   );
 }
 
-/** The subject's name as the notice writes it, what it weighs and holds, and the way in. */
 function SubjectHeader({
   chapterHref,
   document,
@@ -234,14 +213,6 @@ function TopicsSection({
   );
 }
 
-/**
- * A subject of the goal, to answer "how far am I, what's next, and is all of it covered?", as
- * Linear's issue view: its name as the notice writes it with what it weighs and "Continue" beside
- * it, then its chapters (the next one marked, the way in), the notice's topics as the notice's own
- * outline, each ticked and opening to the chapters that teach it, and what its questions ask. Its
- * coverage and facts sit in the aside from 72rem (the coverage under its facts on smaller
- * screens), with its mind maps. A subject outside the plan says so, and why.
- */
 export function SubjectScreen({
   actions,
   ask,
@@ -250,10 +221,6 @@ export function SubjectScreen({
   syllabus,
 }: {
   actions: SubjectActions;
-  /**
-   * Asking the learner's buddy about the subject, such as the player's `AskTutor`: its button for
-   * the page's bar (under 72rem) and its row for the aside (from 72rem). The host decides who asks.
-   */
   ask?: { bar: React.ReactNode; row: React.ReactNode };
   hrefs: SubjectHrefs;
   subject: SyllabusSubject;

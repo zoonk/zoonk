@@ -29,7 +29,6 @@ import { SyllabusChapterRow } from "./syllabus-chapter-row";
 
 const CHAPTERS_TITLE_ID = "subject-chapters-title";
 
-/** Chapters after the next one in sight before "N more chapters". */
 const SHOWN_UPCOMING = 4;
 
 function ChapterRows({
@@ -53,10 +52,6 @@ function ChapterRows({
   ));
 }
 
-/**
- * "4 chapters done, 2 skipped because you already know them": the ones studied, and apart, the
- * ones skipped because the learner showed they know them.
- */
 function useDoneLine() {
   const t = useExtracted();
 
@@ -82,7 +77,6 @@ function useDoneLine() {
   };
 }
 
-/** The chapters already done, folded into the list's first row, opening them in place. */
 function DoneChapters({
   chapterHref,
   chapters,
@@ -96,7 +90,6 @@ function DoneChapters({
     <Collapsible>
       <CollapsibleTrigger className={cn(LIST_ROW_INTERACTIVE_CLASS, "group/done")}>
         <ListRowLeading>
-          {/* Every folded chapter skipped because the learner knows it: the skip mark, as each. */}
           <StatusMark status={chapters.every((chapter) => chapter.known) ? "skipped" : "done"} />
         </ListRowLeading>
         <ListRowContent>
@@ -116,12 +109,6 @@ function DoneChapters({
   );
 }
 
-/**
- * A subject's chapters under their header, the way in to study it: the ones done folded into the
- * list's first row, the next one marked, then the ones after it in the plan's order (the first few
- * in sight, the rest one tap away), so a subject with forty chapters still leads with what to do.
- * The header counts the chapters studied; the ones skipped because the learner knows them aren't.
- */
 export function SubjectChapters({
   chapterHref,
   chapters,
@@ -134,7 +121,6 @@ export function SubjectChapters({
   const done = chapters.filter((chapter) => chapter.state === "done");
   const studied = done.filter((chapter) => !chapter.known);
   const ahead = chapters.filter((chapter) => chapter.state !== "done");
-  // The next one and the few after it.
   const shown = showAll ? ahead : ahead.slice(0, SHOWN_UPCOMING + 1);
   const hidden = ahead.length - shown.length;
 

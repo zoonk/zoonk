@@ -8,14 +8,10 @@ import {
 import { useExtracted } from "next-intl";
 import { createContext, use } from "react";
 
-/**
- * Where a known topic comes back to be confirmed (see `SyllabusView.knownTopicsReturn`): a free
- * exam plan past its first week has no practice, so its quick review asks them.
- */
+/** A free exam plan past its first week has no practice, so its quick review asks known topics instead. */
 export const KnownTopicsReturnContext =
   createContext<SyllabusView["knownTopicsReturn"]>("practice");
 
-/** Why a topic isn't in the plan, in a few words under its name. */
 function ReasonText({ reason }: { reason: NotPlannedReason | null }) {
   const t = useExtracted();
 
@@ -34,11 +30,6 @@ function ReasonText({ reason }: { reason: NotPlannedReason | null }) {
   );
 }
 
-/**
- * A few words under a topic: why it isn't in the plan, or for one the learner showed they know,
- * that practice (or the quick review, see `KnownTopicsReturnContext`) still asks it: a miss there
- * brings its lessons back.
- */
 export function TopicNote({ topic }: { topic: SyllabusTopic }) {
   const t = useExtracted();
   const returnsIn = use(KnownTopicsReturnContext);

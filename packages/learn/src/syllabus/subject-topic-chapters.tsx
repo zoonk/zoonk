@@ -11,10 +11,6 @@ import { useWritingLine } from "../topic-outline/use-far-topic-line";
 const TOPIC_CHAPTER_CLASS =
   "text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 -mx-2 flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm transition-colors outline-none focus-visible:ring-[3px]";
 
-/**
- * A chapter that teaches a topic, one line under it, opening the chapter's page. One whose lessons
- * aren't written yet says what the plan knows and opens a sheet that can write them now.
- */
 function TopicChapterLink({
   chapter,
   chapterHref,

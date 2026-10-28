@@ -12,17 +12,11 @@ import { LearnLink } from "../learn-link";
 import { cameFromApp, goBackTo, goBackToApp, subscribeToHistory } from "./app-history";
 import { BAR_ROW_CLASS } from "./learn-shell";
 
-/** The bar's height, under which a page's title counts as scrolled away. */
 const BAR_HEIGHT_PX = 64;
 
 const BAR_SURFACE_CLASS =
   "bg-background/95 supports-backdrop-filter:bg-background/80 border-b backdrop-blur transition-colors motion-reduce:transition-none";
 
-/**
- * A page bar's surface: sticky at the page's top over the frame's padding, as wide as the page's
- * edges, its hairline drawn once the page scrolls. `children` is the bar's row, on the page's
- * measure (`LearnPageBar`'s, an onboarding screen's).
- */
 export function PageBarSurface({ children, className, ...props }: React.ComponentProps<"div">) {
   const scrolled = useScrolled();
 
@@ -42,10 +36,6 @@ export function PageBarSurface({ children, className, ...props }: React.Componen
   );
 }
 
-/**
- * Whether the page's own title (its first `h1`, next to the bar) has scrolled under the bar, so
- * the bar takes its name, as native apps do.
- */
 function useTitleScrolledAway(bar: React.RefObject<HTMLElement | null>) {
   const [away, setAway] = useState(false);
 
@@ -76,29 +66,14 @@ const BAR_ICON_LINK_CLASS = cn(
   "[&_svg:not([class*='size-'])]:size-5",
 );
 
-/**
- * A page's way back: a 44px chevron under `lg`; from `lg` the breadcrumb's first step ("‹ Plan",
- * onboarding's "‹ Back"), its chevron pulled onto the page's edge, so the bar starts where the
- * page's title does.
- */
 export const CRUMB_LINK_CLASS =
   "text-foreground hover:bg-muted lg:text-muted-foreground lg:hover:text-foreground focus-visible:ring-ring/50 hit-area relative inline-flex size-11 shrink-0 items-center justify-center rounded-lg outline-none transition-colors focus-visible:ring-[3px] [&_svg]:size-5 lg:-ml-1.5 lg:h-8 lg:w-auto lg:gap-0.5 lg:pr-1 lg:text-[0.8125rem] lg:hover:bg-transparent lg:[&_svg]:size-4";
 
-/** The way back's name: where it leads, or simply "Back". */
 function BackLinkName({ label }: { label?: string }) {
   const t = useExtracted();
   return label ? t("Back to {page}", { page: label }) : t("Back");
 }
 
-/**
- * The way back, on the left of a page's or a section's bar: a chevron, named for where it leads.
- * A page goes back to the page it was opened from (the same page as before, scroll and all, when
- * that's where the learner came from); a section goes back to the app page the learner left for
- * it (`toApp`). Escape presses it too, unless a menu, dialog or field has the key. A page's way
- * back is a breadcrumb from `lg` (`crumb`), with its destination's name beside the chevron. A
- * flow whose chevron means its previous screen leaves with an ✕ instead (`leave`), named "Leave"
- * as a task's close is, so going back and going out never look alike.
- */
 export function LearnBackLink({
   className,
   crumb = false,
@@ -109,9 +84,7 @@ export function LearnBackLink({
 }: {
   className?: string;
   crumb?: boolean;
-  /** Where it leads when the browser can't go back there itself. */
   href: string;
-  /** The destination's name, for its accessible name; a section's way back has none. */
   label?: string;
   leave?: boolean;
   toApp?: boolean;
@@ -152,13 +125,6 @@ export function LearnBackLink({
   );
 }
 
-/**
- * Where the page sits, from `lg`: its parent (the way back) and its own name, "‹ Plan /
- * Linguagens". Under `lg` the chevron is alone, and the page's name joins it once its title has
- * scrolled away, on up to two lines beside the bar's actions (a visitor's Pricing and Log in left a
- * course's name at "Física quâ…"). A page the sidebar lists (`root`) has neither from `lg`, where the sidebar says
- * where it is; its chevron returns to the app page the learner came from.
- */
 function PageBarStart({
   back,
   root = false,
@@ -200,41 +166,15 @@ function PageBarStart({
   );
 }
 
-/**
- * The bar of a page opened from a tab (a chapter, a subject, the exam, the mistakes notebook): it
- * takes the app bar's place under `lg`, with the way back on the left and the page's own actions on
- * the right; from `lg` it sits over the page beside the sidebar, which keeps the tabs, and the way
- * back is a breadcrumb with the page's name ("‹ Plan / Linguagens"). The page's title (its `h1`)
- * stays in the page; under `lg`, once it scrolls under the bar, the bar shows it. Place it first in
- * the page, beside the `h1`'s section, so it stays at the top while the page scrolls.
- *
- * ```tsx
- * <div className="flex flex-col gap-6">
- *   <LearnPageBar back={{ href: "/plan", label: t("Plan") }} title={chapter.title}>
- *     <ChapterMenu />
- *   </LearnPageBar>
- *   <header><h1>{chapter.title}</h1></header>
- * </div>
- * ```
- */
 export function LearnPageBar({
   back,
   children,
   root = false,
   title,
 }: {
-  /** Where the way back leads and its name; a `root` page's needs no name (see `root`). */
   back: { href: string; label?: string };
-  /** The page's actions, as icon buttons. */
   children?: React.ReactNode;
-  /**
-   * A page the sidebar lists from `lg` (the mistakes notebook, the exam, mind maps, speaking): the
-   * sidebar says where it is, so from `lg` the bar has no way back (and doesn't show without
-   * actions). Its way back under `lg`, and Escape, return to the app page the learner came from,
-   * whichever it was: `back.href` without one.
-   */
   root?: boolean;
-  /** The page's title, shown in the bar once its `h1` scrolls away. */
   title?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -242,8 +182,7 @@ export function LearnPageBar({
 
   return (
     <PageBarSurface className={cn(root && !children && "lg:hidden")} ref={ref}>
-      {/* As tall as an action's button even without one (a lesson's page has no "…"), so every
-          page's bar, and the skeletons drawn to it, share one height. */}
+      {/* As tall as an action's button even without one, so every page's bar, and its skeleton, share one height. */}
       {/* `data-title-away` lets an action give way to the page's name on a phone (a visitor's
           Pricing, `group-data-title-away/page-bar`). */}
       <div
@@ -263,14 +202,6 @@ export function LearnPageBar({
   );
 }
 
-/**
- * The bar of a section (settings, statistics) under `lg`, where it replaces the app's bars while
- * the learner is in it: the way back on the left, one action of the section's on the right. On the
- * section's own first page (its hub) the way back leaves the section for the app page the learner
- * left for it; on the pages under it (`parent`) it goes back to the hub, whose name it shows beside
- * it, unless the page was opened straight from the app (Plus from a locked feature), which it goes
- * back to.
- */
 export function LearnSectionBar({
   backHref,
   className,
@@ -278,17 +209,10 @@ export function LearnSectionBar({
   parent,
   title,
 }: {
-  /** Where the way back leads when there's no app page to return to. */
   backHref: string;
-  /** Its place in the page, such as bleeding to the column's edges. */
   className?: string;
   end?: React.ReactNode;
-  /** The section's hub, for a page under it: the way back leads there and the bar names it. */
   parent?: { href: string; label: string };
-  /**
-   * On the hub itself, its name beside the way back from `lg`, where its first page sits beside the
-   * sidebar instead of its large title.
-   */
   title?: string;
 }) {
   const scrolled = useScrolled();
@@ -326,7 +250,6 @@ function SectionBarStart({
   // Read after hydration: the server has no history, and its render goes to the hub.
   const fromApp = useSyncExternalStore(subscribeToHistory, cameFromApp, () => false);
 
-  // A page under the hub opened straight from the app goes back to that app page.
   if (!parent || fromApp) {
     return (
       <>

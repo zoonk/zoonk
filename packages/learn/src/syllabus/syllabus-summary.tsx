@@ -25,10 +25,7 @@ import { SubjectIcon } from "./subject-icon";
 import { CourseWeightsNote, QuestionsSourceNote, useGroupName } from "./syllabus-notes";
 import { SummaryTopics } from "./syllabus-summary-topics";
 
-/**
- * The topics the plan leaves out, and whether all of them are out only for lack of time. A
- * subject's basics the learner starts past aren't left out: the plan counts them as known.
- */
+/** A subject's basics the learner starts past aren't left out: the plan counts them as known. */
 function countLeftOut(syllabus: SyllabusView): { forTime: boolean; leftOut: number } {
   const topics = syllabus.subjects.flatMap((subject) => subject.topics);
 
@@ -42,7 +39,6 @@ function countLeftOut(syllabus: SyllabusView): { forTime: boolean; leftOut: numb
   };
 }
 
-/** "Ethics 8 · Civil 7 · Constitutional 6": the subjects that weigh most, for a notice without topics. */
 function useHeaviestSubjects(syllabus: SyllabusView): string | null {
   const t = useExtracted();
   const subjects = syllabus.subjects.filter((subject) => subject.source === "notice");
@@ -60,7 +56,6 @@ function useHeaviestSubjects(syllabus: SyllabusView): string | null {
   return t("Most questions: {subjects}", { subjects: heaviest });
 }
 
-/** What the plan leaves out: "18 of 70 topics don't fit in 2h a day", or that all of it is in. */
 function useCoverageLine({
   dailyMinutes,
   syllabus,
@@ -93,10 +88,6 @@ function useCoverageLine({
   });
 }
 
-/**
- * "9 subjects from the notice" and what the plan leaves out ("18 of 70 topics don't fit in 2h a
- * day"); "6 topics from your material" for a class test; "6 modules" for other goals.
- */
 function useSummaryLines({
   dailyMinutes,
   syllabus,
@@ -123,8 +114,8 @@ function useSummaryLines({
     };
   }
 
-  // The learner's material is never called a notice: a material that lists only headings (a
-  // teacher's "Cell theory, Organelles…") counts those as its topics.
+  // The learner's material is never called a notice; one that lists only headings counts those as its
+  // topics.
   if (syllabus.fromMaterial) {
     const title = t(
       "{count, plural, one {# topic from your material} other {# topics from your material}}",
@@ -158,7 +149,6 @@ function useSummaryLines({
   return { detail: coverage, title };
 }
 
-/** "8 questions · 7 topics, 2 out of your plan": what a subject weighs and what the plan leaves out. */
 function useSubjectLine(subject: SyllabusSubject): string | null {
   const t = useExtracted();
   const total = subject.topics.length;
@@ -181,7 +171,6 @@ function useSubjectLine(subject: SyllabusSubject): string | null {
   return parts.length > 0 ? parts.join(" · ") : null;
 }
 
-/** A subject in the sheet: its name, opening in place to its topics as the notice lists them. */
 function SummarySubject({ subject }: { subject: SyllabusSubject }) {
   const line = useSubjectLine(subject);
 
@@ -240,11 +229,6 @@ function SummaryGroup({
   );
 }
 
-/**
- * "See topics": the goal's structure in a sheet, one tap from the sentence that says what the plan
- * covers: every subject, what it weighs and its topics in the notice's own words, the ones left
- * out marked, so the learner sees it's all there before starting.
- */
 export function SyllabusTopicsSheet({ syllabus }: { syllabus: SyllabusView }) {
   const t = useExtracted();
   const groups = groupSubjects(syllabus.subjects, { modules: syllabus.kind === "modules" });
@@ -275,16 +259,10 @@ export function SyllabusTopicsSheet({ syllabus }: { syllabus: SyllabusView }) {
   );
 }
 
-/**
- * The goal's structure in one line, for the plan's reveal: "9 subjects from the notice · 18 of 70
- * topics don't fit in 2h a day", "6 topics from your material" for a class test, "6 modules" for
- * other goals. Null when the goal has no syllabus to show.
- */
 export function useSyllabusSummaryText({
   dailyMinutes,
   syllabus,
 }: {
-  /** The learner's time a day, so what doesn't fit says at which time. */
   dailyMinutes: number | null;
   syllabus: SyllabusView;
 }): string {

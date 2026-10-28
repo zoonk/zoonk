@@ -24,20 +24,16 @@ import { GoalMark } from "./goal-mark";
 
 type GoalKind = "exam" | "explain" | "language" | "learn";
 
-/** What the switcher shows about each goal. Archived goals aren't listed. */
 type SwitcherGoal = {
   dailyMinutes: number;
   id: string;
   kind: GoalKind;
   status: "active" | "completed" | "paused";
-  /** The goal's date (YYYY-MM-DD), for the days left; null without one. */
   targetDate: string | null;
-  /** The language a language goal learns, which shows its flag; null for other goals. */
   targetLanguage: string | null;
   title: string;
 };
 
-/** How many goal switches are on their way, from the switcher or the command palette. */
 const goalSwitches = { listeners: new Set<() => void>(), pending: 0 };
 
 function subscribeToGoalSwitches(listener: () => void): () => void {
@@ -53,10 +49,6 @@ function addGoalSwitch(change: 1 | -1) {
   }
 }
 
-/**
- * A transition that switches the learner's goal (the switcher's, the palette's): while it's on
- * its way, `useGoalSwitchPending` says so to the page, which still shows the previous goal's day.
- */
 export function useGoalSwitchTransition() {
   const [isPending, startTransition] = useTransition();
 
@@ -72,11 +64,7 @@ export function useGoalSwitchTransition() {
   return [isPending, startTransition] as const;
 }
 
-/**
- * Whether a goal switch is on its way. The page still shows the previous goal until the new one's
- * renders, so it dims and stays out of reach meanwhile: a tap on its Continue would open the
- * previous goal's session.
- */
+/** While a switch is on its way the page still shows the previous goal, so it dims: a tap on its Continue would open that goal's session. */
 export function useGoalSwitchPending(): boolean {
   return useSyncExternalStore(
     subscribeToGoalSwitches,
@@ -85,15 +73,11 @@ export function useGoalSwitchPending(): boolean {
   );
 }
 
-/**
- * "45 min a day · 32 days left" for a goal being followed (the days only when it has a date); a
- * paused or finished one says so instead. Mono, as every number of the app's is.
- */
 function GoalLine({ goal }: { goal: SwitcherGoal }) {
   const t = useExtracted("goalSwitcher");
   const today = useMountTime();
   const formatDuration = useFormatDuration();
-  // A date that passed has no days left to count.
+
   const days =
     goal.targetDate && !hasIsoDatePassed({ isoDate: goal.targetDate, today })
       ? daysUntilIsoDate({ isoDate: goal.targetDate, today })
@@ -114,16 +98,10 @@ function GoalLine({ goal }: { goal: SwitcherGoal }) {
   );
 }
 
-/** The menu's rows: 44px to tap, 36px where there's a mouse, at the sidebar's 13.5px. */
 const MENU_ROW_CLASS = "rounded-lg pl-2 text-[0.84375rem] pointer-fine:min-h-9";
 
-/** The menu's group names, quiet like every section's. */
 const MENU_LABEL_CLASS = "text-faint px-2 pt-1.5 pb-1 text-[0.71875rem] font-[550]";
 
-/**
- * One goal in the menu, with its mark, its time a day and days left (or that it's paused) under
- * the title. The menu is where a cut trigger title reads in full, so titles wrap.
- */
 function GoalOption({ goal }: { goal: SwitcherGoal }) {
   return (
     <DropdownMenuRadioItem
@@ -140,10 +118,6 @@ function GoalOption({ goal }: { goal: SwitcherGoal }) {
   );
 }
 
-/**
- * A quick explanation the learner hasn't finished: it has no day or Plan for the tabs to show, so
- * it opens the explanation itself. A finished one leaves the menu.
- */
 function ExplanationOption({ goal, href }: { goal: SwitcherGoal; href: string }) {
   return (
     <DropdownMenuItem
@@ -158,10 +132,6 @@ function ExplanationOption({ goal, href }: { goal: SwitcherGoal; href: string })
   );
 }
 
-/**
- * The switcher's trigger: the goal's mark, its name and a chevron, without a box. In the top bar
- * it's a 36px row that's 44px to tap; in the sidebar it's one of its 32px rows, the sidebar wide.
- */
 /** The bar's trigger hangs 8px into the gutter (`-ml-2`), so it may be that much wider than its slot. */
 const TRIGGER_CLASS = {
   bar: "hover:bg-muted aria-expanded:bg-muted focus-visible:ring-ring/50 hit-area relative -ml-2 flex h-9 max-w-[calc(100%+0.5rem)] min-w-0 items-center gap-2 rounded-lg px-2 text-[0.9375rem] font-semibold outline-none focus-visible:ring-[3px]",
@@ -171,7 +141,6 @@ const TRIGGER_CLASS = {
 
 type SwitcherPlacement = keyof typeof TRIGGER_CLASS;
 
-/** A learner without any goal starts one: there's nothing else for the menu to list. */
 function NoGoalLink({
   newGoalHref,
   placement,
@@ -189,15 +158,6 @@ function NoGoalLink({
   );
 }
 
-/**
- * The goal the tabs show, on the left of the top bar. Every tab reads the same goal, so switching
- * here changes Today, the Plan and the buddy at once. The choice shows immediately and the host
- * saves it (`onSelect`); until the tabs re-render with the new goal, the page dims
- * (`useGoalSwitchPending`). The menu only switches: it lists each goal with its time a day and
- * leads to a new goal or the course catalog. Quick explanations not read to the end follow the
- * goals, each opening itself (`explanationHref/{id}`), so a learner who only has one finds it here
- * too. What acts on one goal (pausing, archiving) lives on that goal's own page, the Plan.
- */
 export function GoalSwitcher({
   activeGoalId,
   explanationHref,
@@ -213,7 +173,6 @@ export function GoalSwitcher({
   goals: SwitcherGoal[];
   newGoalHref: string;
   onSelect: (goalId: string) => Promise<void>;
-  /** The top bar under `lg`, or the sidebar from `lg`. */
   placement?: SwitcherPlacement;
 }) {
   const t = useExtracted("goalSwitcher");
@@ -243,7 +202,6 @@ export function GoalSwitcher({
       <DropdownMenuTrigger
         aria-busy={isPending}
         className={TRIGGER_CLASS[placement]}
-        // A long title is cut on phones: hovering shows it whole, and tapping opens the full list.
         title={selected?.title}
       >
         {selected ? (

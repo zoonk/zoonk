@@ -10,16 +10,12 @@ import { NoticeCard } from "../_components/notice-card";
 import { ChangeSaveError } from "../_components/save-error";
 import { LearnLink } from "../learn-link";
 
-/**
- * Brings a subject the learner took out back into the plan, by the plan's areas it gathers, and
- * changes when the exam's written tests are practiced. Each resolves to whether it was saved.
- */
+/** Each resolves to whether it was saved. */
 export type SubjectActions = {
   restore: (areas: string[]) => Promise<boolean>;
   setWrittenCadence: (cadence: WrittenPractice["cadence"]) => Promise<boolean>;
 };
 
-/** "Bring it back" for a subject the learner took out: the plan makes room for it again. */
 function RestoreButton({
   areas,
   restore,
@@ -50,7 +46,6 @@ function RestoreButton({
   );
 }
 
-/** Says plainly when the subject isn't in the plan, and the way to bring it in. */
 export function NotPlannedCallout({
   actions,
   adjustHref,

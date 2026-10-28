@@ -74,7 +74,6 @@ describe("app history", () => {
     markAppEntry();
     history.refresh();
 
-    // A new document gets a new module instance and the same tab storage and history keys.
     vi.resetModules();
     const reloaded = await import("./app-history");
     history.open("/settings");

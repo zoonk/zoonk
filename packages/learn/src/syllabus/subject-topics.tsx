@@ -29,17 +29,14 @@ import { TopicNote } from "./topic-note";
 import { type TopicGroup, groupTopics } from "./topic-number";
 import { TopicNumber } from "./topic-number-label";
 
-/** Deeper sub-items ("1.1.1") sit one more step in. */
 const CHILD_INDENT = ["", "pl-0", "pl-5", "pl-10"] as const;
 
 type Group = TopicGroup<SyllabusTopic>;
 
-/** Every topic of a group: the item itself, then the ones numbered under it. */
 function groupItems(group: Group): SyllabusTopic[] {
   return [group.topic, ...group.children.map((child) => child.topic)];
 }
 
-/** The chapters that teach any of a group's topics, each once, in the order they first come. */
 function getGroupChapters(group: Group): SyllabusChapter[] {
   const chapters = groupItems(group).flatMap((topic) => topic.chapters);
   const keys = chapters.map((chapter) => chapter.chapterId ?? chapter.title);
@@ -66,10 +63,6 @@ function getTopicMark(topic: SyllabusTopic): TopicMarkState | null {
   return { kind: topic.status };
 }
 
-/**
- * A group's mark from its topics: out of the plan when all of them are, a check once every planned
- * one is studied, a ring of how much of it is studied once it's begun, else to study.
- */
 function getGroupMark(topics: readonly SyllabusTopic[]): TopicMarkState | null {
   if (topics.some((topic) => topic.status === null)) {
     return null;
@@ -128,7 +121,6 @@ function useStatusText() {
   };
 }
 
-/** A sub-item inside its open group: its tick and words, and why it's out. */
 function ChildTopic({ child }: { child: Group["children"][number] }) {
   const statusText = useStatusText();
   const mark = getTopicMark(child.topic);
@@ -150,7 +142,6 @@ function ChildTopic({ child }: { child: Group["children"][number] }) {
   );
 }
 
-/** "2/5": how many of a group's topics are studied, for groups with items under them. */
 function GroupCount({ group }: { group: Group }) {
   const t = useExtracted();
   const topics = groupItems(group);
@@ -176,15 +167,10 @@ function GroupCount({ group }: { group: Group }) {
   );
 }
 
-/** "Appears a lot" for an item past exams asked most, or one numbered under it. */
 function getGroupFrequency(group: Group): SyllabusTopic["frequency"] {
   return groupItems(group).some((topic) => topic.frequency === "high") ? "high" : null;
 }
 
-/**
- * A group's own line: its mark, its words (why it's out, when it is), "Appears a lot" when past
- * exams asked it most (`showFrequency`) and its count.
- */
 function GroupLine({ group, showFrequency }: { group: Group; showFrequency: boolean }) {
   const statusText = useStatusText();
   const mark = getGroupMark(groupItems(group));
@@ -210,11 +196,6 @@ function GroupLine({ group, showFrequency }: { group: Group; showFrequency: bool
   );
 }
 
-/**
- * One item of the notice's outline: one line with its tick, opening in place to the items the
- * notice numbers under it and the chapters that teach each. An item with nothing to open is one
- * line.
- */
 function TopicGroupRow({
   chapterHref,
   group,
@@ -264,7 +245,6 @@ function TopicGroupRow({
   );
 }
 
-/** The subject's topics in runs under the notice's headings ("Physics"), in its order. */
 type HeadingRun = { heading: string | null; topics: SyllabusTopic[] };
 
 function splitByHeading(topics: readonly SyllabusTopic[]): HeadingRun[] {
@@ -280,13 +260,6 @@ function splitByHeading(topics: readonly SyllabusTopic[]): HeadingRun[] {
 
 const getHeadingId = (index: number) => `subject-topics-heading-${index}`;
 
-/**
- * A subject's topics as the notice's own outline, in its words, numbers and order: each top-level
- * item one line with its tick, opening to the items under it and the chapters that teach them.
- * Under the notice's own headings ("Physics", "Chemistry", "Biology") when it has them, each a
- * label over its own list. "Appears a lot" marks the items past exams asked most, when it sets
- * some apart.
- */
 export function SubjectTopics({
   chapterHref,
   labelledBy,

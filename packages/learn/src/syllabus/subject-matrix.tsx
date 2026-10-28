@@ -27,13 +27,9 @@ import {
 import { type TopicGroup, groupTopics } from "./topic-number";
 import { TopicNumber } from "./topic-number-label";
 
-/** Competencies in sight before "See all". */
 const SHOWN_GROUPS = 2;
 
-/**
- * A named item's label and its words, as a matrix writes them ("Area competency 1 – Understand
- * the sciences…"): the label goes under the words, quietly, so the row leads with what it asks.
- */
+/** "Area competency 1 – Understand the sciences…": the label, then the words. */
 const NAMED_ITEM = /^(?<label>[^–—:-]{2,40}?\s\d{1,3})\s*[-–—:]\s+(?<text>\S.*)$/su;
 
 function splitNamedItem(text: string): { label: string | null; text: string } {
@@ -46,12 +42,10 @@ function splitNamedItem(text: string): { label: string | null; text: string } {
 
 type MatrixGroup = TopicGroup<{ name: string }>;
 
-/** One competency: its words, its label and skills under them, opening in place to its skills. */
 function MatrixGroupRow({ group }: { group: MatrixGroup }) {
   const t = useExtracted();
   const { label, text } = splitNamedItem(group.text);
 
-  // "Area competency 1 · 4 skills": the group's own label and how many skills it holds.
   const skills =
     group.children.length > 0
       ? t("{count, plural, one {# skill} other {# skills}}", { count: group.children.length })
@@ -97,12 +91,6 @@ function MatrixGroupRow({ group }: { group: MatrixGroup }) {
   );
 }
 
-/**
- * The notice's skills matrix for a subject (ENEM's competencies and abilities), under its
- * contents: what the questions ask the learner to do with them. Each competency is a row with its
- * label and how many skills it holds, opening in place to its skills with their codes, so a
- * learner can check every one against the notice; the first two are in sight, the rest a tap away.
- */
 export function SubjectMatrix({ matrix }: { matrix: readonly string[] }) {
   const t = useExtracted();
   const titleId = useId();

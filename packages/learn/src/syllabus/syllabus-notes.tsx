@@ -10,11 +10,6 @@ import { FrequencyChip, setsApart } from "./frequency-chip";
 import { type SubjectGroup } from "./group-subjects";
 import { type SyllabusSectionSubject, type SyllabusSectionView } from "./syllabus-section-view";
 
-/**
- * A group's heading: the notice's own ("Basic knowledge (P1)"), "Beyond the notice" for the
- * areas the plan adds outside it, or "Also in your plan" when the subjects come from the learner's
- * own material rather than a notice.
- */
 export function useGroupName({
   document,
   fromMaterial,
@@ -37,11 +32,6 @@ export function useGroupName({
       });
 }
 
-/**
- * Where the subjects' question counts come from when the notice gives none: "Questions per subject
- * in the 45th Exam, as counted by example.com", linked to the page. `lead` comes first on the same
- * line ("5 subjects · 46 topics"), so a list's counts and their source are one note.
- */
 export function QuestionsSourceNote({
   lead,
   source,
@@ -84,18 +74,10 @@ export function QuestionsSourceNote({
   );
 }
 
-/** "Appears a lot" inside a sentence, exactly as the rows show it. */
 function frequencyTag() {
   return <FrequencyChip className="mx-0.5" frequency="high" />;
 }
 
-/**
- * Where the subject's topic frequency comes from, under its topics: "Appears a lot" marks the
- * topics past exams asked most, when it sets some apart, and the plan gives them more of the
- * learner's time; when time is short the ones asked least wait. The source is cited when a lookup
- * found it; a reading of the exam's past papers has none to cite. In the learner's own material,
- * it marks the topics their notes stressed ("ALWAYS ON THE TEST!!").
- */
 export function TopicFrequencyNote({
   fromMaterial,
   subject,
@@ -173,8 +155,6 @@ export function TopicFrequencyNote({
   );
 }
 
-/** A source's site, not its page title: page titles run long ("UFMG's terms of participation in SiSU…"). */
-/** The parts of the exam the learner's course weighs more than the others, by their short names. */
 function getHeavierParts({
   subjects,
   weights,
@@ -189,11 +169,6 @@ function getHeavierParts({
     .map((part) => subjects.find((subject) => subject.name === part.name)?.shortName ?? part.name);
 }
 
-/**
- * How the learner's course weighs the exam's parts at their institution, under the card, with
- * where the weights come from: "Medicine at UFMG counts natural sciences and the essay more, so your plan
- * gives them more of your time. Weights from ufmg.br."
- */
 export function CourseWeightsNote({
   subjects,
   weights,
@@ -244,10 +219,6 @@ export function CourseWeightsNote({
   );
 }
 
-/**
- * What it takes to pass, as the notice says it, under the card: said once, where the plan starts,
- * with its language when it isn't the learner's.
- */
 export function PassMarks({ passMarks }: { passMarks: SyllabusView["passMarks"] }) {
   const note = usePassMarksNote(passMarks);
 

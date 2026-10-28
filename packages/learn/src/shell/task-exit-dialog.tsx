@@ -11,10 +11,6 @@ import {
   AlertDialogTitle,
 } from "@zoonk/ui/components/alert-dialog";
 
-/**
- * What leaving asks first, when it would leave something unsent behind (an essay being written):
- * the question, what happens to the work, and the two answers, in the screen's own words.
- */
 export type TaskExitConfirmation = {
   cancel: string;
   confirm: string;
@@ -22,11 +18,6 @@ export type TaskExitConfirmation = {
   title: string;
 };
 
-/**
- * The question a task's ✕ asks before leaving unsent work behind. It's its own chunk
- * (`TaskFrame` loads it once a screen has work to lose), so the tasks that never ask don't
- * download a dialog.
- */
 export function TaskExitDialog({
   confirmation,
   onLeave,

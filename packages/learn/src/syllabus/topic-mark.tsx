@@ -3,17 +3,12 @@ import { CircleMinusIcon } from "lucide-react";
 import { ProgressRing } from "../_components/progress-ring";
 import { StatusMark } from "../_components/status-mark";
 
-/** A topic just begun still shows a sliver of its ring. */
 const MIN_RING_SHARE = 0.15;
 
 export type TopicMarkState =
   | { kind: "known" | "notPlanned" | "studied" | "toStudy" }
   | { kind: "inProgress"; share: number };
 
-/**
- * A topic's tick, as the subject's chapters mark theirs: studied or known, begun (a ring), to
- * study, or out of the plan.
- */
 export function TopicMark({
   mark,
   small = false,

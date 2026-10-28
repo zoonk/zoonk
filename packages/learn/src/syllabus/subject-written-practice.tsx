@@ -7,10 +7,6 @@ import { useState, useTransition } from "react";
 import { WrittenCadenceChoice } from "../plan/written-cadence";
 import { type SubjectActions } from "./subject-not-planned";
 
-/**
- * A written test's page says when it's practiced and changes it in one tap, as "Adjust your plan"
- * does: the learner who opens their essay to see what's planned decides it there.
- */
 export function SubjectWrittenPractice({
   actions,
   practice,
@@ -27,7 +23,6 @@ export function SubjectWrittenPractice({
     return null;
   }
 
-  // As wide as the header's facts, so three short choices don't stretch across a wide page.
   return (
     <div className="lg:max-w-xl">
       <WrittenCadenceChoice
@@ -36,12 +31,9 @@ export function SubjectWrittenPractice({
           setFailed(false);
 
           startTransition(async () => {
-            // A request that never reaches the server says "didn't work" like one the server
-            // refused.
             const { data: saved } = await safeAsync(() => actions.setWrittenCadence(cadence));
 
-            // Updates after an `await` join the transition only when started in one again, so the
-            // tapped cadence gives way to the saved one with the refreshed page.
+            // Updates after an `await` join the transition only when started in one again.
             startTransition(() => {
               setFailed(!saved);
               answered();

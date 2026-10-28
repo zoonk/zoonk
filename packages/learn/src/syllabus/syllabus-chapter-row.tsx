@@ -20,7 +20,6 @@ import { FarTopicSheet } from "../topic-outline/far-topic-sheet";
 import { useTopicOutlineActions } from "../topic-outline/topic-outline-actions";
 import { useWritingLine } from "../topic-outline/use-far-topic-line";
 
-/** What sits at the end of a chapter's row: when the plan gets to it, or nothing once done. */
 function ChapterMeta({ chapter }: { chapter: SyllabusChapter }) {
   const formatPlanDate = useFormatPlanDate();
 
@@ -31,12 +30,6 @@ function ChapterMeta({ chapter }: { chapter: SyllabusChapter }) {
   return formatPlanDate(chapter.nextDate);
 }
 
-/**
- * The line under a chapter's name: for a topic whose lessons aren't written yet, that they're on
- * the way or the lessons the plan expects for it (its date is at the row's end), "4 lessons · 1
- * done" for the next one (its highlight says it's next), or that it was skipped because the
- * learner showed they know it.
- */
 function ChapterLine({ chapter }: { chapter: SyllabusChapter }) {
   const t = useExtracted();
   const writingLine = useWritingLine();
@@ -64,21 +57,13 @@ function ChapterLine({ chapter }: { chapter: SyllabusChapter }) {
   );
 }
 
-/**
- * A chapter of a subject: its mark, its number in the subject and name and when the plan gets to
- * it, opening its page (a chevron says so); the next one is highlighted with its lessons. A topic
- * whose lessons aren't written yet has no page: it opens a sheet that can write them now, or, on
- * the way and not yet openable, is a quiet row without a chevron.
- */
 export function SyllabusChapterRow({
   chapter,
   chapterHref,
   href,
 }: {
   chapter: SyllabusChapter;
-  /** A chapter's page, for the chapters a topic's sheet lists once written. */
   chapterHref: (chapterId: string) => string;
-  /** Its page; null while its lessons aren't written. */
   href: string | null;
 }) {
   const isNext = chapter.state === "current";
@@ -107,7 +92,6 @@ export function SyllabusChapterRow({
     </>
   );
 
-  // The next one is the highlighted row, as Today's next block is.
   const className = cn(isNext && CURRENT_ROW_CLASS);
 
   if (!href && chapter.writing && chapter.skillId && outlineActions) {
