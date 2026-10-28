@@ -1,0 +1,451 @@
+import SwiftUI
+
+/// A started checkpoint: the phase challenge's duel with the Trickster (his shield breaks with
+/// each right answer), or the weekly challenge. No hints: right or wrong after each answer, why at
+/// the end. A finished one opens on its result with a review of the answers.
+struct CheckpointScreen: View {
+  let blockId: String
+  var sessionId: String?
+
+  @Environment(SessionStore.self) private var session
+  @Environment(\.practiceAPI) private var api
+  @Environment(\.practiceHooks) private var hooks
+  @Environment(\.dismiss) private var dismiss
+  @State private var load: PracticeLoad<CheckpointLoad> = .loading
+  @State private var state: CheckpointDuelState?
+  @State private var draft: PracticeAnswer?
+  @State private var shownAt = Date.now
+  @State private var showsReview = false
+
+  init(blockId: String, sessionId: String? = nil) {
+    self.blockId = blockId
+    self.sessionId = sessionId
+  }
+
+  var body: some View {
+    NavigationStack {
+      Group {
+        switch load {
+        case .loading:
+          ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
+        case .failed(let error):
+          PracticeLoadFailureView(error: error) { Task { await read() } }
+        case .loaded(let loaded):
+          if let state {
+            if loaded.checkpoint.status == .pending, let planItemId = loaded.checkpoint.planItemId {
+              notStarted(planItemId: planItemId)
+            } else if state.isResult {
+              CheckpointResultView(load: loaded, state: state, showsReview: $showsReview) {
+                dismiss()
+              }
+            } else {
+              duel(loaded, state: state)
+            }
+          }
+        }
+      }
+      .navigationTitle(Text(title))
+      .navigationBarTitleDisplayMode(.inline)
+      .toolbar {
+        ToolbarItem(placement: .cancellationAction) {
+          PracticeCloseButton { dismiss() }
+        }
+      }
+    }
+    .task { await read() }
+  }
+
+  private var title: LocalizedStringResource {
+    guard case .loaded(let loaded) = load else {
+      return LocalizedStringResource(
+        "Phase challenge", table: "Practice", comment: "Title of a phase challenge block.")
+    }
+
+    return CheckpointCopy.title(loaded.checkpoint)
+  }
+
+  private func notStarted(planItemId: String) -> some View {
+    ContentUnavailableView {
+      Label {
+        Text(title)
+      } icon: {
+        Image(systemName: "shield.lefthalf.filled")
+      }
+    } actions: {
+      Button {
+        dismiss()
+        hooks.navigate(.challenge(planItemId: planItemId, sessionId: sessionId))
+      } label: {
+        Text(
+          "Open the challenge", tableName: "Practice",
+          comment: "Opens a checkpoint's challenge intro to start it.")
+      }
+      .buttonStyle(.glassProminent)
+    }
+  }
+
+  // MARK: Duel
+
+  private func duel(_ loaded: CheckpointLoad, state: CheckpointDuelState) -> some View {
+    let question = state.currentQuestion
+    let feedback = state.feedback
+
+    return PracticeTaskLayout(segments: state.segments, index: state.verdicts.count) {
+      if state.kind != .weekly {
+        ShieldGauge(correct: state.correct, passMark: state.passMark)
+      }
+
+      if let question {
+        PracticeQuestionView(
+          question: question, labels: loaded.trueFalseLabels,
+          result: feedback.map {
+            PracticeItemResult(answer: $0.answer, correctAnswer: nil, isCorrect: $0.isCorrect)
+          },
+          isLocked: state.isPending || feedback != nil,
+          askedIn: blockId,
+          transcript: question.set.flatMap { state.transcripts[$0.id] },
+          draft: $draft)
+
+        if let feedback {
+          PracticeFeedbackPanel(verdict: PracticeVerdict(isCorrect: feedback.isCorrect)) {
+            Text(
+              "You'll see why at the end.", tableName: "Practice",
+              comment: "A checkpoint keeps its answers until it ends."
+            )
+            .foregroundStyle(.secondary)
+          }
+        }
+      } else {
+        Text(
+          "Every question is answered.", tableName: "Practice",
+          comment: "A checkpoint with every answer in."
+        )
+        .font(.title3.weight(.semibold))
+      }
+    } actions: {
+      if state.failure != nil {
+        PracticeSaveError { Task { await retry() } }
+      }
+
+      if feedback != nil {
+        PracticeMainButton(
+          title: state.isDone
+            ? LocalizedStringResource(
+              "See how it went", table: "Practice",
+              comment: "Finishes a checkpoint to see its result.")
+            : LocalizedStringResource(
+              "Next", table: "Practice", comment: "Moves to a checkpoint's next question."),
+          isBusy: state.isPending
+        ) { Task { await next() } }
+      } else if question == nil {
+        PracticeMainButton(
+          title: LocalizedStringResource(
+            "See how it went", table: "Practice",
+            comment: "Finishes a checkpoint to see its result."),
+          isBusy: state.isPending
+        ) { Task { await finish() } }
+      } else {
+        PracticeMainButton(
+          title: LocalizedStringResource(
+            "Confirm", table: "Practice", comment: "Sends a checkpoint answer."),
+          isBusy: state.isPending, isDisabled: draft == nil
+        ) { Task { await confirm() } }
+      }
+    }
+  }
+
+  // MARK: Requests
+
+  private func read() async {
+    guard let identity = session.authenticatedSession else {
+      load = .failed(.unauthorized)
+      return
+    }
+
+    do {
+      let loaded = try await api.checkpoint(token: identity.bearerToken, blockId: blockId)
+      guard session.authenticatedSession == identity else { return }
+      state = CheckpointDuelState(load: loaded)
+      shownAt = .now
+      load = .loaded(loaded)
+    } catch let error as PracticeAPIError {
+      if error == .unauthorized { await session.expire(identity) }
+      load = .failed(error)
+    } catch {
+      load = .failed(.unavailable)
+    }
+  }
+
+  private func confirm() async {
+    guard case .loaded(let loaded) = load, let question = state?.currentQuestion,
+      let answer = draft,
+      state?.isPending == false, state?.feedback == nil, let identity = session.authenticatedSession
+    else { return }
+
+    state?.confirm()
+
+    do {
+      let outcome = try await api.answerStudy(
+        token: identity.bearerToken, sessionId: loaded.checkpoint.sessionId, blockId: blockId,
+        itemId: question.itemId, answer: answer,
+        durationMs: Int(Date.now.timeIntervalSince(shownAt) * 1000))
+
+      switch outcome {
+      case .answered(let feedback):
+        state?.answered(
+          answer, isCorrect: feedback.isCorrect, itemId: question.itemId,
+          reinforcementLessons: feedback.reinforcementLessons, transcript: feedback.transcript,
+          setId: question.set?.id)
+        hooks.didChange(.answered)
+      case .alreadyAnswered, .blockNotActive:
+        await read()
+      }
+    } catch {
+      state?.failed(.answer)
+    }
+  }
+
+  private func next() async {
+    state?.next()
+    draft = nil
+    shownAt = .now
+
+    if state?.isDone == true {
+      await finish()
+    }
+  }
+
+  private func finish() async {
+    guard case .loaded(let loaded) = load, let identity = session.authenticatedSession else {
+      return
+    }
+
+    state?.finishing()
+
+    do {
+      let completion = try await api.finishStudyBlock(
+        token: identity.bearerToken, sessionId: loaded.checkpoint.sessionId, blockId: blockId)
+      state?.finished(completion)
+      PracticeRevision.shared.bump()
+      hooks.didChange(.finished)
+    } catch {
+      state?.failed(.finish)
+    }
+  }
+
+  private func retry() async {
+    if state?.failure == .finish {
+      await finish()
+    } else {
+      await confirm()
+    }
+  }
+}
+
+/// The Trickster's shield as a gauge: each right answer breaks a piece, the pass mark breaks it.
+private struct ShieldGauge: View {
+  let correct: Int
+  let passMark: Int
+
+  var body: some View {
+    Gauge(value: Double(min(correct, passMark)), in: 0...Double(max(passMark, 1))) {
+      Label {
+        Text(
+          "The Trickster's shield", tableName: "Practice",
+          comment: "Label of the phase challenge's shield gauge.")
+      } icon: {
+        Image(systemName: "shield.lefthalf.filled")
+      }
+    } currentValueLabel: {
+      Text(
+        "\(min(correct, passMark)) of \(passMark) broken", tableName: "Practice",
+        comment: "How much of the Trickster's shield is broken."
+      )
+      .monospacedDigit()
+    }
+    .tint(.blue)
+    .font(.subheadline)
+  }
+}
+
+/// A checkpoint's result: won or not, its score, what comes next, its rewards, and its answers
+/// reviewed with why.
+private struct CheckpointResultView: View {
+  let load: CheckpointLoad
+  let state: CheckpointDuelState
+  @Binding var showsReview: Bool
+  let close: () -> Void
+  @Environment(\.practiceHooks) private var hooks
+  @State private var ceremonyClosed = false
+
+  var body: some View {
+    let checkpoint = load.checkpoint
+    let result = state.completion?.checkpoint
+    let passed = result?.passed ?? checkpoint.result?.passed ?? false
+    let correct = result?.correct ?? checkpoint.result?.correct ?? state.correct
+    let total = result?.total ?? checkpoint.result?.total ?? state.questionCount
+
+    if let milestone = state.completion?.ceremony?.value1, !ceremonyClosed,
+      let ceremony = hooks.ceremony
+    {
+      ceremony(milestone) { ceremonyClosed = true }
+    } else {
+      PracticeTaskLayout {
+        if checkpoint.endedWithoutQuestions == true {
+          PracticeResultHeader(
+            title: LocalizedStringResource(
+              "The questions were removed", table: "Practice",
+              comment: "A checkpoint ended without questions."),
+            detail: LocalizedStringResource(
+              "You hadn't answered any yet, so this challenge isn't scored. Nothing is lost.",
+              table: "Practice",
+              comment: "Why a checkpoint without questions isn't scored."))
+        } else {
+          PracticeResultHeader(
+            title: CheckpointCopy.resultTitle(kind: checkpoint.kind, passed: passed),
+            detail: CheckpointCopy.resultDetail(
+              kind: checkpoint.kind, passed: passed, lessons: state.reinforcementLessons),
+            correct: correct, total: total,
+            brainPower: state.completion?.brainPower ?? 0,
+            reached: PracticeReached(
+              energy: state.completion?.reached.energy,
+              level: state.completion?.reached.level.map {
+                .init(color: $0.color.rawValue, level: $0.level)
+              }))
+
+          if passed, let next = checkpoint.nextPhase?.value1 {
+            Label {
+              Text(
+                "The next phase, \(next.name), is already open.", tableName: "Practice",
+                comment: "After a won phase challenge.")
+            } icon: {
+              Image(systemName: "arrow.forward.circle")
+            }
+          }
+
+          if passed, checkpoint.reward.badge {
+            Label {
+              Text(
+                "Trap hunter badge", tableName: "Practice",
+                comment: "Reward of a won phase challenge.")
+            } icon: {
+              Image(systemName: "rosette")
+            }
+          }
+
+          if let answers = result?.answers, !answers.isEmpty {
+            DisclosureGroup(isExpanded: $showsReview) {
+              CheckpointReview(load: load, answers: answers)
+            } label: {
+              Text(
+                "Review the answers", tableName: "Practice",
+                comment: "Opens a finished checkpoint's answers with why."
+              )
+              .font(.headline)
+            }
+          }
+        }
+      } actions: {
+        PracticeMainButton(
+          title: LocalizedStringResource(
+            "Continue", table: "Practice", comment: "Moves on after a grade."), action: close)
+      }
+    }
+  }
+}
+
+/// Each question with its right answer and why, as the feedback after a question shows them.
+private struct CheckpointReview: View {
+  let load: CheckpointLoad
+  let answers: [Components.Schemas.StudyBlockCompletion.CheckpointPayload.AnswersPayloadPayload]
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 20) {
+      ForEach(load.questions) { question in
+        if let answer = answers.first(where: { $0.itemId == question.itemId }) {
+          let correctAnswer: PracticeAnswer? = try? PracticeJSON.recode(answer.correctAnswer)
+
+          VStack(alignment: .leading, spacing: 10) {
+            QuestionTitle(text: question.question, isMuted: true)
+
+            if let correctAnswer {
+              PracticeItemView(
+                question: question, labels: load.trueFalseLabels,
+                result: PracticeItemResult(
+                  answer: answer.isCorrect ? correctAnswer : .dontKnow,
+                  correctAnswer: correctAnswer, isCorrect: answer.isCorrect),
+                isLocked: true, draft: .constant(nil))
+            }
+
+            PracticeFeedbackPanel(
+              verdict: PracticeVerdict(isCorrect: answer.isCorrect),
+              correctAnswerText: correctAnswer.flatMap {
+                PracticeAnswerText.correctLine(
+                  feedbackIsCorrect: answer.isCorrect, correctAnswer: $0, question: question,
+                  labels: load.trueFalseLabels)
+              },
+              explanation: answer.explanation,
+              workedSteps: answer.isCorrect ? [] : answer.workedSteps)
+          }
+        }
+      }
+    }
+    .padding(.top, 8)
+  }
+}
+
+enum CheckpointCopy {
+  static func title(_ checkpoint: Components.Schemas.Checkpoint) -> LocalizedStringResource {
+    switch checkpoint.kind {
+    case .weekly:
+      checkpoint.mock
+        ? LocalizedStringResource(
+          "Mock exam", table: "Practice", comment: "Title of a weekly mock exam block.")
+        : LocalizedStringResource(
+          "Weekly challenge", table: "Practice", comment: "Title of the weekly challenge block.")
+    case .finalBoss:
+      LocalizedStringResource(
+        "Final challenge", table: "Practice", comment: "Title of the final challenge block.")
+    case .boss:
+      LocalizedStringResource(
+        "Phase challenge", table: "Practice", comment: "Title of a phase challenge block.")
+    }
+  }
+
+  static func resultTitle(kind: Components.Schemas.Checkpoint.KindPayload, passed: Bool)
+    -> LocalizedStringResource
+  {
+    if kind == .weekly {
+      return LocalizedStringResource(
+        "Weekly challenge done", table: "Practice", comment: "End of the weekly challenge.")
+    }
+
+    return passed
+      ? LocalizedStringResource(
+        "You beat the Trickster!", table: "Practice", comment: "A won phase challenge.")
+      : LocalizedStringResource(
+        "Not this time", table: "Practice", comment: "A lost phase challenge.")
+  }
+
+  static func resultDetail(
+    kind: Components.Schemas.Checkpoint.KindPayload, passed: Bool, lessons: Int
+  )
+    -> LocalizedStringResource?
+  {
+    if kind == .weekly { return nil }
+
+    if passed {
+      return LocalizedStringResource(
+        "His shield is broken. You won!", table: "Practice",
+        comment: "A won phase challenge's line.")
+    }
+
+    return lessons == 0
+      ? LocalizedStringResource(
+        "New try tomorrow. Nothing is lost.", table: "Practice",
+        comment: "A lost phase challenge comes back.")
+      : LocalizedStringResource(
+        "New try tomorrow, after \(lessons) short lessons. Nothing is lost.", table: "Practice",
+        comment: "A lost phase challenge comes back after short lessons.")
+  }
+}
