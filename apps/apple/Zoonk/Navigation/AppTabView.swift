@@ -142,8 +142,6 @@ private struct TabRoot: View {
 }
 
 struct AppSheetView: View {
-  @Environment(SessionStore.self) private var session
-
   let sheet: AppSheet
 
   var body: some View {
@@ -151,13 +149,7 @@ struct AppSheetView: View {
     case .account:
       AccountSheet()
     case .subscription:
-      if let account = session.account, let appAccountToken = UUID(uuidString: account.user.id) {
-        NavigationStack {
-          SubscriptionView(appAccountToken: appAccountToken)
-        }
-      } else {
-        AccountSheet()
-      }
+      SubscriptionScreen()
     }
   }
 }
