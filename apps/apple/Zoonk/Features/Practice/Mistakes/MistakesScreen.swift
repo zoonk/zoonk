@@ -29,7 +29,8 @@ struct MistakesScreen: View {
         NotebookHeader(list: list) { hooks.navigate(.mistakePractice(skillId: nil)) }
       }
       .listRowBackground(Color.clear)
-      .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+      // The row's own side margins: at the cell's edge, a wrapped line's first letter was clipped.
+      .listRowInsets(.vertical, 8)
 
       Section {
         Picker(selection: $showsFixed) {
