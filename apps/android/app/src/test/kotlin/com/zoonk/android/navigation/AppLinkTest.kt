@@ -144,7 +144,7 @@ class AppLinkTest {
         listOf(
             "/b/zoonk/c/biology",
             "/b/zoonk/c/biology/ch/cells/l/membranes",
-            "/auth/app?token=abc",
+            "/auth/apple?token=abc",
             "/catalog-not-found",
             "/settings/unknown",
             "/mistakes/unknown",

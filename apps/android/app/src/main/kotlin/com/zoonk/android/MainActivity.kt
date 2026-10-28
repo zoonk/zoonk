@@ -13,6 +13,7 @@ import com.zoonk.android.app.ZoonkApplication
 import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.theme.ZoonkTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private var pendingLink by mutableStateOf<AppRoute?>(null)
@@ -27,6 +28,7 @@ class MainActivity : ComponentActivity() {
         }
 
         val container = (application as ZoonkApplication).container
+        handleAppleLink(intent)
 
         setContent {
             ZoonkTheme {
@@ -37,7 +39,19 @@ class MainActivity : ComponentActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        handleAppleLink(intent)
         intent.appLink()?.let { pendingLink = it }
+    }
+
+    private fun handleAppleLink(intent: Intent) {
+        if (intent.action != Intent.ACTION_VIEW) return
+        val callback = intent.dataString?.let(AppLink::appleCallback) ?: return
+        val container = (application as ZoonkApplication).container
+        container.scope.launch {
+            val sessions = container.sessions
+            sessions.restore()
+            sessions.completeAppleSignIn(callback)
+        }
     }
 }
 

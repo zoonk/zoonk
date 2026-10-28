@@ -52,7 +52,7 @@ class MainActivityTest {
 
     @Test
     fun aLinkTheAppHasNoPlaceForOpensToday() {
-        Robolectric.buildActivity(MainActivity::class.java, link("https://zoonk.com/auth/app?token=abc")).setup()
+        Robolectric.buildActivity(MainActivity::class.java, link("https://zoonk.com/auth/apple?token=abc")).setup()
 
         rule.onNode(hasText("Today") and !hasClickAction()).assertIsDisplayed()
     }

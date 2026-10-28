@@ -34,7 +34,7 @@
                 <data android:host="www.zoonk.com" />
                 <data android:pathPrefix="/plan-link/" />
                 <data android:pathPattern="/.*/plan-link/.*" />
-                <data android:path="/auth/app" />
+                <data android:path="/auth/apple" />
             </intent-filter>
         </activity>
     </application>

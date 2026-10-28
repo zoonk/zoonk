@@ -1,5 +1,6 @@
 package com.zoonk.android.navigation
 
+import com.zoonk.android.data.AppleCallback
 import java.net.URI
 import java.net.URISyntaxException
 import java.net.URLDecoder
@@ -46,6 +47,25 @@ object AppLink {
             null
         }
     }
+
+    fun appleCallback(url: String): AppleCallback? =
+        try {
+            val uri = URI(url)
+            if (uri.scheme != "https" || uri.host != "zoonk.com" || uri.path != "/auth/apple" ||
+                uri.port != -1 || uri.rawUserInfo != null
+            ) {
+                null
+            } else {
+                val fields = query(uri.rawFragment)
+                fields["state"]?.let {
+                    AppleCallback(it, fields["code"], fields["id_token"], fields["user"], fields["error"])
+                }
+            }
+        } catch (_: IllegalArgumentException) {
+            null
+        } catch (_: URISyntaxException) {
+            null
+        }
 
     fun webUrl(
         page: AppRoute.WebPage,

@@ -25,6 +25,7 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "0.1.0"
+        buildConfigField("String", "APPLE_CLIENT_ID", "\"${providers.environmentVariable("APPLE_CLIENT_ID").getOrElse("")}\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

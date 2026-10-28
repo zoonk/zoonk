@@ -17,6 +17,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -32,11 +33,13 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import kotlinx.coroutines.launch
 
 /** Who the shell shows screens to, from the session and the learner summary. */
 enum class LearnerAccess {
     /** Restoring the stored session: gated screens wait, so no gate flashes before it's read. */
     Restoring,
+    Unavailable,
     Visitor,
 
     /** The stored session ended: log in again, since the plan is still there. */
@@ -87,6 +90,20 @@ fun ShellGate(
         when (access) {
             LearnerAccess.Visitor, LearnerAccess.SessionEnded -> {
                 SignInGate(ended = access == LearnerAccess.SessionEnded, navigator, padding)
+            }
+
+            LearnerAccess.Unavailable -> {
+                val scope = rememberCoroutineScope()
+                GateMessage(
+                    icon = R.drawable.ic_lock,
+                    title = stringResource(R.string.load_failed_title),
+                    description = stringResource(R.string.load_failed_description),
+                    padding = padding,
+                ) {
+                    Button(onClick = { scope.launch { app.sessions.retryRestore() } }) {
+                        Text(stringResource(R.string.load_failed_try_again))
+                    }
+                }
             }
 
             LearnerAccess.NoGoal -> {

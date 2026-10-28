@@ -47,6 +47,8 @@ class AppContainer private constructor(
     val sessions: SessionStore =
         SessionStore(
             api = LiveSessionApi(api),
+            appleClientId = BuildConfig.APPLE_CLIENT_ID,
+            appleReflectorUrl = api.baseUrl.resolve("/auth/apple/android").toString(),
             credentials = credentials,
             drafts = drafts,
             onChange = { previous, _ ->
@@ -88,8 +90,12 @@ internal fun learnerAccess(
 ): LearnerAccess =
     when (session) {
         // Gated screens wait while the stored session can't be checked, as while it's restored.
-        SessionState.Restoring, SessionState.Unavailable -> {
+        SessionState.Restoring -> {
             LearnerAccess.Restoring
+        }
+
+        SessionState.Unavailable -> {
+            LearnerAccess.Unavailable
         }
 
         is SessionState.SignedOut -> {
@@ -114,4 +120,8 @@ private object NoStoredSession : SessionCredentials {
     override suspend fun read(): StoredSession? = null
 
     override suspend fun write(session: StoredSession?) = Unit
+
+    override suspend fun pendingApple(): com.zoonk.android.data.PendingAppleSignIn? = null
+
+    override suspend fun writePendingApple(pending: com.zoonk.android.data.PendingAppleSignIn?) = Unit
 }

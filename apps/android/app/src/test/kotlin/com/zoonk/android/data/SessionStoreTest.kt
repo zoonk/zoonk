@@ -27,6 +27,11 @@ internal class FakeSessionApi : SessionApi {
         failure?.let { throw ApiException(it) }
             ?: account(accounts[token] ?: throw ApiException(ApiError.Unauthorized)).also { gate?.await() }
 
+    override suspend fun apple(
+        request: com.zoonk.api.models.AppleSessionRequest,
+        guest: AuthenticatedSession?,
+    ): String = "token-b"
+
     override suspend fun revoke(token: String) {
         failure?.let { throw ApiException(it) }
         revoked += token
@@ -36,6 +41,14 @@ internal class FakeSessionApi : SessionApi {
 internal class MemoryCredentials(
     var stored: StoredSession? = null,
 ) : SessionCredentials {
+    var pending: PendingAppleSignIn? = null
+
+    override suspend fun pendingApple() = pending
+
+    override suspend fun writePendingApple(pending: PendingAppleSignIn?) {
+        this.pending = pending
+    }
+
     override suspend fun read() = stored
 
     override suspend fun write(session: StoredSession?) {
@@ -68,7 +81,7 @@ class SessionStoreTest {
     @Test
     fun restoreShowsTheAccountOnlyAfterTheApiAcceptsTheToken() =
         runTest {
-            credentials.stored = StoredSession("token-a")
+            credentials.stored = StoredSession(AuthenticatedSession(ANA, "token-a", "local-a"))
             val sessions = store()
             assertEquals(SessionState.Restoring, sessions.state.value)
             sessions.restore()
@@ -80,15 +93,15 @@ class SessionStoreTest {
     @Test
     fun aRefusedStoredTokenIsClearedAndAnUnreachableOneIsKept() =
         runTest {
-            credentials.stored = StoredSession("expired")
+            credentials.stored = StoredSession(AuthenticatedSession(ANA, "expired", "local-a"))
             store().apply { restore() }.also { assertEquals(SessionState.SignedOut(sessionEnded = true), it.state.value) }
             assertNull(credentials.stored)
 
-            credentials.stored = StoredSession("token-a")
+            credentials.stored = StoredSession(AuthenticatedSession(ANA, "token-a", "local-a"))
             api.failure = ApiError.Network
             val offline = store().apply { restore() }
             assertEquals(SessionState.Unavailable, offline.state.value)
-            assertEquals(StoredSession("token-a"), credentials.stored)
+            assertEquals(StoredSession(AuthenticatedSession(ANA, "token-a", "local-a")), credentials.stored)
 
             api.failure = null
             offline.retryRestore()
@@ -104,7 +117,7 @@ class SessionStoreTest {
             assertNull(credentials.stored)
 
             assertEquals(SignInResult.SignedIn, sessions.signIn { "token-a" })
-            assertEquals(StoredSession("token-a"), credentials.stored)
+            assertEquals("token-a", credentials.stored?.session?.bearerToken)
             assertEquals(ANA, sessions.current?.accountId)
         }
 
@@ -121,7 +134,7 @@ class SessionStoreTest {
             gate.complete(Unit)
             assertEquals(SignInResult.Obsolete, slow.await())
             assertEquals(BIA, sessions.current?.accountId)
-            assertEquals(StoredSession("token-b"), credentials.stored)
+            assertEquals("token-b", credentials.stored?.session?.bearerToken)
             assertEquals(listOf("token-a"), api.revoked)
         }
 

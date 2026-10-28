@@ -1,6 +1,7 @@
 package com.zoonk.android.data
 
 /** [localId] is random and not secret, for keys that must tell sessions apart without the token. */
+@kotlinx.serialization.Serializable
 data class AuthenticatedSession(
     val accountId: String,
     val bearerToken: String,

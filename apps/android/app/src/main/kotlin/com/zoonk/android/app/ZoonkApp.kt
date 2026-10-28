@@ -65,6 +65,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppSection
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.navigation.LearnerAccess
 import com.zoonk.android.navigation.PlaceIcon
 import com.zoonk.android.navigation.StudyPlace
 import com.zoonk.android.navigation.appEntries
@@ -101,7 +102,14 @@ fun ZoonkApp(
         }
     }
 
-    AppShell(navigator, entryProvider, summary = summary.value)
+    AppShell(
+        navigator,
+        entryProvider,
+        summary =
+            summary.value.takeIf {
+                access.value == LearnerAccess.SignedIn || access.value == LearnerAccess.NoGoal || access.value == LearnerAccess.Learner
+            },
+    )
 }
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)

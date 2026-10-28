@@ -33,6 +33,30 @@ class ApiRuntimeTest {
     }
 
     @Test
+    fun appleExchangeSendsTheWebClientRawNonceAndOnlyTheStartingGuestBearer() =
+        runTest {
+            val request =
+                com.zoonk.api.models.AppleSessionRequest(
+                    authorizationCode = "code",
+                    idToken = "id-token",
+                    nonce = "raw-nonce",
+                    client = com.zoonk.api.models.AppleSessionRequest.Client.WEB,
+                )
+            for (guest in listOf(ana, null)) {
+                server.enqueue(json("""{"token":"new-token"}"""))
+                assertEquals("new-token", LiveSessionApi(api).apple(request, guest))
+                val sent = server.takeRequest()
+                assertEquals("POST", sent.method)
+                assertEquals("/v1/sessions/apple", sent.url.encodedPath)
+                assertEquals(guest?.let { "Bearer ${it.bearerToken}" }, sent.headers["Authorization"])
+                val body =
+                    com.zoonk.api.ApiJson
+                        .decodeFromString<com.zoonk.api.models.AppleSessionRequest>(sent.body!!.utf8())
+                assertEquals(request, body)
+            }
+        }
+
+    @Test
     fun eachRequestCarriesTheTokenOfTheSessionItWasMadeFor() =
         runTest {
             repeat(3) { server.enqueue(MockResponse.Builder().code(204).build()) }

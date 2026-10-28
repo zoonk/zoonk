@@ -34,7 +34,7 @@ class LearnerAccessTest {
     @Test
     fun theSessionDecidesBeforeTheSummaryIsRead() {
         assertEquals(LearnerAccess.Restoring, learnerAccess(SessionState.Restoring, LoadState.Idle))
-        assertEquals(LearnerAccess.Restoring, learnerAccess(SessionState.Unavailable, LoadState.Idle))
+        assertEquals(LearnerAccess.Unavailable, learnerAccess(SessionState.Unavailable, LoadState.Idle))
         assertEquals(LearnerAccess.Visitor, learnerAccess(SessionState.SignedOut(), LoadState.Idle))
         assertEquals(LearnerAccess.SessionEnded, learnerAccess(SessionState.SignedOut(sessionEnded = true), LoadState.Idle))
         assertEquals(LearnerAccess.SignedIn, learnerAccess(signedIn, LoadState.Loading))
