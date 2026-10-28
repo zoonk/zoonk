@@ -22,6 +22,17 @@ Use `type(scope): short message` for both commit messages and PR titles. Keep th
 | `refactor` | Restructuring without a behavior change              |
 | `chore`    | Maintenance, dependencies, configuration, or tooling |
 
+## Agent attribution
+
+Every commit an agent writes ends, after a blank line, with a `Co-Authored-By` trailer naming the model that wrote it and its provider's noreply address. For example, from Claude Code or Codex:
+
+```text
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Co-Authored-By: GPT-6.1-Sol <noreply@openai.com>
+```
+
+Use the model you are running as, from your system prompt or session settings, not the harness (`Codex`, `Claude Code`) and without suffixes such as `(1M context)`. The address is `noreply@anthropic.com` for Claude models and `noreply@openai.com` for OpenAI models. Leave the Git author as configured.
+
 ## Scope
 
 Use the owning app or package name: `main` for `apps/main`, `player` for `packages/player`. When several workspaces change, choose the owner of the user-facing behavior, then the main implementation, then the workspace a reviewer would inspect first. Supporting changes do not make a commit horizontal.
