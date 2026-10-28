@@ -1,280 +1,286 @@
 import SwiftUI
 
+/// A chapter's page in the catalog (main's `LibraryChapterPage`), for someone who landed on its
+/// topic: the course it belongs to, what the chapter teaches, what Zoonk does with it and the way
+/// to start; where it sits in the course and the chapters after it; its lessons, one tap each; what
+/// it teaches; and the plan it starts, with the way in again. It reads its course too, which a
+/// course page opening it has already.
 struct ChapterView: View {
   @Environment(CourseCatalogStore.self) private var catalog
-  @State private var searchText = ""
+  @State private var isFeedbackPresented = false
 
   let chapter: ChapterReference
 
   var body: some View {
+    let course = catalog.course(id: chapter.courseID)
+
     Group {
       switch catalog.chapter(chapter.key).state {
       case .idle, .loading:
-        ChapterLoadingView(chapter: chapter)
+        ProgressView()
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
+          .accessibilityLabel(
+            Text(
+              "Loading chapter", tableName: "Courses",
+              comment: "Accessibility status while a chapter loads."))
       case .loaded(let detail):
-        ChapterDetailContent(
-          chapter: chapter,
-          detail: detail,
-          searchText: $searchText)
+        ChapterLandingList(chapter: chapter, course: course.value, detail: detail)
       case .empty:
-        ChapterDetailContent(
-          chapter: chapter,
-          detail: ChapterDetail(chapter: nil, lessons: []),
-          searchText: $searchText)
+        ChapterLandingList(
+          chapter: chapter, course: course.value, detail: ChapterDetail(chapter: nil, lessons: []))
       case .failed(let failure):
         CatalogFailureRecoveryView(context: .chapter, failure: failure) {
           await catalog.chapter(chapter.key).refresh()
         }
       }
     }
-    .background(Color(uiColor: .systemBackground))
-    .loads(catalog.chapter(chapter.key))
-  }
-}
-
-private struct ChapterDetailContent: View {
-  @State private var isFeedbackPresented = false
-  @State private var isInformationPresented = false
-  @State private var isSearchPresented = false
-
-  let chapter: ChapterReference
-  let detail: ChapterDetail
-  @Binding var searchText: String
-
-  var body: some View {
-    ChapterDetailList(
-      chapter: resolvedChapter,
-      detail: detail,
-      isInformationPresented: $isInformationPresented,
-      searchText: $searchText,
-      showFeedback: { isFeedbackPresented = true },
-      showInformation: { isInformationPresented = true }
-    )
-    .catalogDetailSearchPresentation(
-      text: $searchText,
-      isPresented: $isSearchPresented,
-      prompt: Text(
-        "Search lessons",
-        tableName: "Courses",
-        comment: "Placeholder for searching within a chapter's lessons.")
-    )
+    .loads(catalog.chapter(chapter.key), course)
+    .toolbar {
+      CatalogOptionsMenu(
+        label: LocalizedStringResource(
+          "Chapter options", table: "Courses", comment: "The chapter page's menu of options"),
+        showFeedback: { isFeedbackPresented = true })
+    }
     .sheet(isPresented: $isFeedbackPresented) {
       FeedbackSheet(
         api: FeedbackAPI.live(),
         context: FeedbackContext(contentID: chapter.id, contentKind: .chapter))
     }
   }
-
-  private var resolvedChapter: ChapterReference {
-    guard let canonicalChapter = detail.chapter else {
-      return chapter
-    }
-
-    return ChapterReference((reference: chapter, chapter: canonicalChapter))
-  }
 }
 
-private struct ChapterDetailList: View {
-  @Environment(AppRouter.self) private var router
-  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-  @Environment(\.isSearching) private var isSearching
-
+private struct ChapterLandingList: View {
   let chapter: ChapterReference
+  /// The chapter's course with its outline, once it's read.
+  let course: CourseDetail?
   let detail: ChapterDetail
-  @Binding var isInformationPresented: Bool
-  @Binding var searchText: String
-  let showFeedback: () -> Void
-  let showInformation: () -> Void
 
   var body: some View {
-    // The header scrolls with the list, so large text on a short screen never squeezes it.
+    let outline = course?.chapters.sorted { $0.position < $1.position } ?? []
+    let index = outline.firstIndex { $0.id == chapter.id }
+    let hasLesson = !detail.lessons.isEmpty
+    // The course's first chapter, or one whose lessons aren't written yet, starts the course at
+    // the reader's level; any other starts the plan here.
+    let startsHere = hasLesson && (index ?? chapter.position ?? 0) > 0
+
     List {
       Section {
-        if !showsSearchResultsOnly {
-          detailHeader
-        }
-
-        CatalogCurriculumHeader(
-          title: Text(
-            "Lessons",
-            tableName: "Courses",
-            comment: "Heading above the ordered lesson list on a chapter screen."))
-      }
-      .listRowInsets(EdgeInsets())
-      .listRowSeparator(.hidden)
-
-      if filteredLessons.isEmpty {
-        emptyLessonsView
-          .listRowSeparator(.hidden)
-      } else {
-        ForEach(filteredLessons) { lesson in
-          Button {
-            router.open(.lesson(lessonId: lesson.id))
-          } label: {
-            CatalogNumberedRow(
-              description: lesson.displayDescription(),
-              imageURL: nil,
-              number: lesson.position + 1,
-              systemImage: "book.pages",
-              title: lesson.displayTitle()
-            )
-          }
-          .foregroundStyle(.primary)
-          .listRowInsets(
-            EdgeInsets(
-              top: CatalogDetailLayout.curriculumRowVerticalInset(
-                for: horizontalSizeClass),
-              leading: 0,
-              bottom: CatalogDetailLayout.curriculumRowVerticalInset(
-                for: horizontalSizeClass),
-              trailing: 0))
-        }
-      }
-    }
-    .listStyle(.plain)
-    .scrollContentBackground(.hidden)
-    .contentMargins(
-      .horizontal,
-      CatalogDetailLayout.horizontalInset(for: horizontalSizeClass),
-      for: .scrollContent
-    )
-    .frame(maxWidth: 900)
-    .frame(maxWidth: .infinity)
-  }
-
-  private var detailHeader: some View {
-    VStack(alignment: .leading, spacing: 16) {
-      CatalogDetailHeader(
-        configuration: CatalogDetailHeaderConfiguration(
-          imageURL: chapter.imageURL,
-          description: chapter.description,
-          systemImage: "rectangle.stack.fill",
-          title: numberedTitle),
-        showInformation: showInformation
-      )
-      .popover(isPresented: $isInformationPresented) {
-        ChapterInformationView(
-          chapter: chapter,
-          dismiss: { isInformationPresented = false }
-        )
-        .presentationCompactAdaptation(.sheet)
-      }
-
-      CatalogDetailActions(
-        courseID: chapter.courseID,
-        chapterID: chapter.id,
-        tryLessonID: detail.tryLessonID,
-        showFeedback: showFeedback)
-    }
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .padding(.top, 16)
-    .padding(.bottom, 12)
-  }
-
-  private var numberedTitle: String {
-    guard let position = chapter.position else {
-      return chapter.title
-    }
-
-    return "\((position + 1).formatted()). \(chapter.title)"
-  }
-
-  private var showsSearchResultsOnly: Bool {
-    isSearching || catalogText(searchText) != nil
-  }
-
-  private var filteredLessons: [CourseLesson] {
-    filterCourseLessons(CatalogSearchRequest(items: detail.lessons, query: searchText))
-  }
-
-  @ViewBuilder
-  private var emptyLessonsView: some View {
-    if catalogText(searchText) != nil {
-      ContentUnavailableView.search(text: searchText)
-    } else {
-      ContentUnavailableView {
-        Label {
-          Text(
-            "No lessons yet",
-            tableName: "Courses",
-            comment: "Title when a chapter does not have any published lessons.")
-        } icon: {
-          Image(systemName: "list.bullet.rectangle")
-        }
-      } description: {
-        Text(
-          "This chapter's lessons will appear here when they're available.",
-          tableName: "Courses",
-          comment: "Guidance when a chapter does not have any published lessons.")
-      }
-    }
-  }
-}
-
-private struct ChapterInformationView: View {
-  let chapter: ChapterReference
-  let dismiss: () -> Void
-
-  var body: some View {
-    CatalogInformationView(
-      dismiss: dismiss,
-      title: LocalizedStringResource(
-        "Chapter information",
-        table: "Courses",
-        comment: "Title for secondary information about a chapter.")
-    ) {
-      VStack(alignment: .leading, spacing: 16) {
-        if let description = catalogText(chapter.description) {
-          Text(description)
-            .fixedSize(horizontal: false, vertical: true)
-        }
-
-        if chapter.organizationSlug == "ai" {
+        VStack(alignment: .leading, spacing: 12) {
           Label {
-            Text(
-              "Created with AI",
-              tableName: "Courses",
-              comment: "Disclosure that a public course or chapter was created with AI.")
+            Text(chapter.courseTitle)
           } icon: {
-            Image(systemName: "sparkles")
+            SubjectGlyph(subject: course?.course.subject)
+          }
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+
+          Text(chapter.title)
+            .font(.largeTitle.bold())
+            .accessibilityAddTraits(.isHeader)
+
+          if let description = catalogText(detail.chapter?.description ?? chapter.description) {
+            Text(description)
+              .font(.title3)
+              .foregroundStyle(.secondary)
+          }
+
+          PlanLine(startsHere: startsHere)
+
+          ChapterStart(
+            chapter: chapter, hasLesson: hasLesson, startsHere: startsHere,
+            tryLessonID: detail.tryLessonID
+          )
+          .padding(.top, 4)
+        }
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets())
+      }
+
+      if let course, let index, outline.count > 1 {
+        ChapterStrip(course: course.course, index: index, outline: outline)
+      }
+
+      if hasLesson {
+        ChapterLessonsSection(
+          lessons: detail.lessons.sorted { $0.position < $1.position },
+          number: index.map { $0 + 1 }, total: outline.count)
+      }
+
+      if let objectives = detail.chapter?.objectives, !objectives.isEmpty {
+        Section {
+          ForEach(objectives, id: \.self) { CheckLine(text: $0) }
+        } header: {
+          Text(
+            "What you'll learn", tableName: "Courses", comment: "Header of what a chapter teaches")
+        }
+      }
+
+      Section {
+        VStack(alignment: .leading, spacing: 8) {
+          Group {
+            if startsHere {
+              Text(
+                "Your plan from this chapter", tableName: "Courses",
+                comment: "A chapter page's last call, when the plan starts there")
+            } else {
+              Text(
+                "Start today, at your level", tableName: "Courses",
+                comment: "A course page's last call")
+            }
+          }
+          .font(.title2.weight(.semibold))
+          .accessibilityAddTraits(.isHeader)
+
+          Group {
+            if startsHere {
+              Text(
+                "It follows the course from here, at your pace, with reviews before you forget.",
+                tableName: "Courses", comment: "Under a chapter page's last call")
+            } else {
+              Text(
+                "A few quick questions, then your plan and your first lesson.",
+                tableName: "Courses", comment: "Under a course page's last call")
+            }
           }
           .foregroundStyle(.secondary)
+
+          ChapterStart(
+            chapter: chapter, hasLesson: hasLesson, startsHere: startsHere, tryLessonID: nil
+          )
+          .padding(.top, 8)
+        }
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets())
+      }
+    }
+    .catalogReadableWidth()
+  }
+}
+
+/// The chapter's way in: "Build my plan" from this chapter (`startsHere`), or the course's at the
+/// reader's level; a chapter whose lessons aren't written yet says its start writes them.
+private struct ChapterStart: View {
+  let chapter: ChapterReference
+  let hasLesson: Bool
+  let startsHere: Bool
+  let tryLessonID: String?
+
+  var body: some View {
+    CatalogStartActions(
+      courseID: chapter.courseID, chapterID: startsHere ? chapter.id : nil,
+      tryLessonID: tryLessonID,
+      note: hasLesson
+        ? nil
+        : Text(
+          "Start here and Zoonk writes its lessons for your level.", tableName: "Courses",
+          comment: "Under a chapter's start when its lessons aren't written yet"))
+  }
+}
+
+/// Where the chapter sits in its course (main's `ChapterStrip`): the course's levels as a meter,
+/// each as long as its chapters, this chapter's level in ink, "Chapter 12 of 77 · Beginner" under
+/// it, then this chapter and the next ones, one tap each.
+private struct ChapterStrip: View {
+  private static let next = 3
+
+  let course: Course
+  let index: Int
+  let outline: [CourseChapter]
+
+  var body: some View {
+    let here = outline[index]
+    let bands = courseLevelBands(outline)
+
+    Section {
+      VStack(alignment: .leading, spacing: 8) {
+        MeterParts(
+          parts: bands.map { band in
+            MeterParts.Part(
+              weight: Double(band.chapters.count),
+              fill: band.level == here.level ? .color(.primary) : .track)
+          }
+        )
+
+        Text(
+          "Chapter \((index + 1).formatted()) of \(outline.count.formatted()) · \(Text(here.level.localizedTitle))",
+          tableName: "Courses", comment: "Where a chapter sits in its course, and its level"
+        )
+        .font(.footnote.monospacedDigit())
+        .foregroundStyle(.secondary)
+      }
+      .padding(.vertical, 4)
+
+      LabeledContent {
+        Text("This chapter", tableName: "Courses", comment: "Marks the open chapter in its course")
+      } label: {
+        Text(here.title)
+          .fontWeight(.semibold)
+      }
+
+      ForEach(outline.dropFirst(index + 1).prefix(Self.next)) { chapter in
+        NavigationLink(value: CourseDestination.chapter(ChapterReference((course, chapter)))) {
+          Text(chapter.title)
         }
       }
+    } header: {
+      Text(
+        "Where this chapter sits in the course", tableName: "Courses",
+        comment: "Header of where a chapter sits in its course")
     }
   }
 }
 
-/// The page as soon as it opens: what the tapped row already said about it, then a spinner where
-/// its list loads. Never a skeleton.
-private struct ChapterLoadingView: View {
-  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+/// The chapter's lessons in order, one tap each, with how long each takes; the header says where
+/// the chapter sits, how many lessons it has and how long they take.
+private struct ChapterLessonsSection: View {
+  @Environment(AppRouter.self) private var router
 
-  let chapter: ChapterReference
+  let lessons: [CourseLesson]
+  let number: Int?
+  let total: Int
 
   var body: some View {
-    VStack(spacing: 0) {
-      CatalogDetailHeader(
-        configuration: CatalogDetailHeaderConfiguration(
-          imageURL: chapter.imageURL,
-          description: chapter.description,
-          systemImage: "rectangle.stack.fill",
-          title: chapter.position.map { "\(($0 + 1).formatted()). \(chapter.title)" }
-            ?? chapter.title)
-      )
-      .padding(.horizontal, CatalogDetailLayout.horizontalInset(for: horizontalSizeClass))
-      .padding(.top, 16)
-      .padding(.bottom, 12)
-
-      ProgressView()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .accessibilityLabel(
-          Text(
-            "Loading chapter",
-            tableName: "Courses",
-            comment: "Accessibility status while a chapter loads."))
+    Section {
+      ForEach(Array(lessons.enumerated()), id: \.element.id) { offset, lesson in
+        Button {
+          router.open(.lesson(lessonId: lesson.id))
+        } label: {
+          LabeledContent {
+            Text(studyDuration(minutes: lesson.estimatedMinutes))
+              .monospacedDigit()
+          } label: {
+            HStack(alignment: .firstTextBaseline, spacing: 12) {
+              Text(offset + 1, format: .number)
+                .font(.footnote.monospacedDigit())
+                .foregroundStyle(.tertiary)
+              Text(lesson.displayTitle())
+                .foregroundStyle(.primary)
+            }
+          }
+        }
+      }
+    } header: {
+      HStack(alignment: .firstTextBaseline) {
+        Text("Lessons", tableName: "Courses", comment: "Header of a chapter's lessons")
+        Spacer()
+        Text(facts)
+          .monospacedDigit()
+      }
     }
-    .frame(maxWidth: 900)
-    .frame(maxWidth: .infinity)
+  }
+
+  /// "Chapter 1 of 12 · 5 short lessons · 32 min".
+  private var facts: String {
+    let lessonsText = String(
+      localized: "\(lessons.count) short lessons", table: "Courses",
+      comment: "How many lessons a course or a chapter has")
+    let minutes = catalogDurationText(minutes: lessons.reduce(0) { $0 + $1.estimatedMinutes })
+    let position = number.map {
+      String(
+        localized: "Chapter \($0.formatted()) of \(total.formatted())", table: "Courses",
+        comment: "Where a chapter sits in its course")
+    }
+
+    return [position, lessonsText, minutes].compactMap(\.self).joined(separator: " · ")
   }
 }

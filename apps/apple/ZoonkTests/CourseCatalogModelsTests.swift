@@ -3,42 +3,6 @@ import XCTest
 @testable import Zoonk
 
 final class CourseCatalogModelsTests: XCTestCase {
-  func testCatalogDetailRoundTripsThroughCodable() throws {
-    let organization = CourseOrganization(
-      id: "00000000-0000-7000-8000-000000000001",
-      logoURL: URL(string: "https://cdn.zoonk.test/organization.png"),
-      name: "Zoonk",
-      slug: "zoonk")
-    let course = Course(
-      categories: [.science, .tech],
-      description: "Understand the night sky.",
-      generationStatus: .completed,
-      id: "00000000-0000-7000-8000-000000000002",
-      imageURL: URL(string: "https://cdn.zoonk.test/course.png"),
-      language: "en",
-      organization: organization,
-      slug: "astronomy",
-      targetLanguage: nil,
-      title: "Astronomy")
-    let chapter = CourseChapter(
-      courseID: course.id,
-      description: "Meet our cosmic neighborhood.",
-      generationStatus: .completed,
-      id: "00000000-0000-7000-8000-000000000003",
-      language: "en",
-      lessonCount: 4,
-      level: .beginner,
-      position: 1,
-      slug: "solar-system",
-      title: "The Solar System")
-    let detail = CourseDetail(course: course, chapters: [chapter])
-
-    let encoded = try JSONEncoder().encode(detail)
-    let decoded = try JSONDecoder().decode(CourseDetail.self, from: encoded)
-
-    XCTAssertEqual(decoded, detail)
-  }
-
   func testCatalogEnumsPreservePublicAPIRawValues() {
     XCTAssertEqual(
       CourseCategory.allCases.map(\.rawValue),
@@ -91,20 +55,30 @@ extension CourseOrganization {
 extension CourseSummary {
   static let testFixture = CourseSummary(
     description: "Understand the night sky.",
+    estimatedMinutes: 45,
     id: "00000000-0000-7000-8000-000000000002",
     imageURL: URL(string: "https://cdn.zoonk.test/course.png"),
     language: "en",
+    languageFlag: nil,
+    lessonCount: 3,
     organization: .testFixture,
     slug: "astronomy",
+    subject: .science,
+    targetLanguage: nil,
     title: "Astronomy")
 
   static let secondTestFixture = CourseSummary(
     description: "Learn how computers work.",
+    estimatedMinutes: 0,
     id: "00000000-0000-7000-8000-000000000003",
     imageURL: nil,
     language: "en",
+    languageFlag: nil,
+    lessonCount: 0,
     organization: .testFixture,
     slug: "computer-science",
+    subject: .tech,
+    targetLanguage: nil,
     title: "Computer Science")
 }
 
@@ -112,10 +86,16 @@ extension Course {
   static let testFixture = Course(
     categories: [.science],
     description: "Understand the night sky.",
+    exam: nil,
     generationStatus: .completed,
     id: CourseSummary.testFixture.id,
     imageURL: CourseSummary.testFixture.imageURL,
+    isExam: false,
+    landingPage: CourseLandingPage(
+      audience: ["Anyone who looks up at night"], outcomes: ["Find the planets"],
+      valueProposition: "Find your way around the night sky."),
     language: "en",
+    languageFlag: nil,
     organization: .testFixture,
     slug: "astronomy",
     targetLanguage: nil,
@@ -130,7 +110,12 @@ extension CourseChapter {
     id: "00000000-0000-7000-8000-000000000004",
     language: "en",
     lessonCount: 2,
+    lessons: [
+      CourseOutlineLesson(
+        estimatedMinutes: 6, id: "00000000-0000-7000-8000-000000000005", title: "The Sun")
+    ],
     level: .beginner,
+    objectives: ["Name the planets"],
     position: 0,
     slug: "solar-system",
     title: "The Solar System")
@@ -142,7 +127,9 @@ extension CourseChapter {
     id: "00000000-0000-7000-8000-000000000004",
     language: "en",
     lessonCount: nil,
+    lessons: [],
     level: .beginner,
+    objectives: ["Name the planets"],
     position: 0,
     slug: "solar-system",
     title: "The Solar System")
@@ -159,6 +146,7 @@ extension CourseLesson {
     chapterID: CourseChapter.testFixture.id,
     courseID: Course.testFixture.id,
     description: "A first look at our star.",
+    estimatedMinutes: 6,
     generationStatus: .completed,
     id: "00000000-0000-7000-8000-000000000005",
     language: "en",
@@ -171,7 +159,8 @@ extension CourseLesson {
   func with(id: String, status: CatalogGenerationStatus) -> CourseLesson {
     CourseLesson(
       chapterID: chapterID, courseID: courseID, description: description,
-      generationStatus: status, id: id, language: language, position: position, slug: slug,
+      estimatedMinutes: estimatedMinutes, generationStatus: status, id: id, language: language,
+      position: position, slug: slug,
       title: title)
   }
 }

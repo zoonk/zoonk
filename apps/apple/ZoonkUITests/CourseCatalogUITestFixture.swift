@@ -10,7 +10,13 @@ let courseCatalogUITestSnapshotJSON =
         "description": "Discover how roots, stems, and leaves work together to help a plant thrive.",
         "generationStatus": "completed",
         "id": "course-plants",
+        "isExam": false,
         "imageURL": null,
+        "landingPage": {
+          "audience": ["Gardeners who want to know why"],
+          "outcomes": ["Explain how water reaches a leaf"],
+          "valueProposition": "Grow a plant from root to leaf."
+        },
         "language": "en",
         "organization": {
           "id": "organization-ai",
@@ -27,6 +33,7 @@ let courseCatalogUITestSnapshotJSON =
         "description": "Explore ocean habitats from sunlit shores to the deep sea.",
         "generationStatus": "completed",
         "id": "course-oceans",
+        "isExam": false,
         "imageURL": null,
         "language": "en",
         "organization": {
@@ -44,6 +51,7 @@ let courseCatalogUITestSnapshotJSON =
         "description": "Build confidence with the numbers and patterns you meet every day.",
         "generationStatus": "completed",
         "id": "course-numbers",
+        "isExam": false,
         "imageURL": null,
         "language": "en",
         "organization": {
@@ -61,6 +69,7 @@ let courseCatalogUITestSnapshotJSON =
         "description": "Find planets and constellations with your own eyes.",
         "generationStatus": "running",
         "id": "course-night-sky",
+        "isExam": false,
         "imageURL": null,
         "language": "en",
         "organization": {
@@ -78,6 +87,7 @@ let courseCatalogUITestSnapshotJSON =
         "description": "Keep private observations and experiments together.",
         "generationStatus": "completed",
         "id": "course-field-notes",
+        "isExam": false,
         "imageURL": null,
         "language": "en",
         "organization": null,
@@ -94,7 +104,12 @@ let courseCatalogUITestSnapshotJSON =
         "id": "chapter-roots",
         "language": "en",
         "lessonCount": 2,
+        "lessons": [
+          { "estimatedMinutes": 6, "id": "lesson-meet-roots", "title": "Meet the Roots" },
+          { "estimatedMinutes": 7, "id": "lesson-follow-water", "title": "Follow the Water" }
+        ],
         "level": "beginner",
+        "objectives": ["Explain how roots hold a plant in place"],
         "position": 0,
         "slug": "roots-and-water",
         "title": "Roots and Water"
@@ -106,7 +121,11 @@ let courseCatalogUITestSnapshotJSON =
         "id": "chapter-leaves",
         "language": "en",
         "lessonCount": 1,
+        "lessons": [
+          { "estimatedMinutes": 5, "id": "lesson-capture-light", "title": "Capture the Light" }
+        ],
         "level": "intermediate",
+        "objectives": [],
         "position": 1,
         "slug": "leaves-and-light",
         "title": "Leaves and Light"
@@ -118,7 +137,9 @@ let courseCatalogUITestSnapshotJSON =
         "id": "chapter-birds",
         "language": "en",
         "lessonCount": 0,
+        "lessons": [],
         "level": "overview",
+        "objectives": [],
         "position": 0,
         "slug": "backyard-birds",
         "title": "Backyard Birds"
@@ -129,6 +150,7 @@ let courseCatalogUITestSnapshotJSON =
         "chapterID": "chapter-roots",
         "courseID": "course-plants",
         "description": "Meet the root structures that hold a plant in place.",
+        "estimatedMinutes": 6,
         "id": "lesson-meet-roots",
         "language": "en",
         "position": 0,
@@ -140,6 +162,7 @@ let courseCatalogUITestSnapshotJSON =
         "chapterID": "chapter-roots",
         "courseID": "course-plants",
         "description": "Trace water as it moves from the soil through a plant.",
+        "estimatedMinutes": 7,
         "id": "lesson-follow-water",
         "language": "en",
         "position": 1,
@@ -151,6 +174,7 @@ let courseCatalogUITestSnapshotJSON =
         "chapterID": "chapter-leaves",
         "courseID": "course-plants",
         "description": "Explore how leaves capture sunlight.",
+        "estimatedMinutes": 5,
         "id": "lesson-capture-light",
         "language": "en",
         "position": 0,

@@ -1,44 +1,6 @@
 import Foundation
 import SwiftUI
 
-struct CatalogSearchRequest<Item> {
-  let items: [Item]
-  let locale: Locale
-  let query: String
-
-  init(items: [Item], query: String, locale: Locale = .current) {
-    self.items = items
-    self.locale = locale
-    self.query = query
-  }
-}
-
-func filterCourseChapters(
-  _ request: CatalogSearchRequest<CourseChapter>
-) -> [CourseChapter] {
-  let orderedChapters = request.items.sorted(by: CatalogOrder.chapters)
-  let searchTerm = CatalogSearchTerm(query: request.query, locale: request.locale)
-
-  guard !searchTerm.isEmpty else {
-    return orderedChapters
-  }
-
-  return orderedChapters.filter { searchTerm.matches($0) }
-}
-
-func filterCourseLessons(
-  _ request: CatalogSearchRequest<CourseLesson>
-) -> [CourseLesson] {
-  let orderedLessons = request.items.sorted(by: CatalogOrder.lessons)
-  let searchTerm = CatalogSearchTerm(query: request.query, locale: request.locale)
-
-  guard !searchTerm.isEmpty else {
-    return orderedLessons
-  }
-
-  return orderedLessons.filter { searchTerm.matches($0) }
-}
-
 func localizedCourseCategories(locale: Locale = .current) -> [CourseCategory] {
   CourseCategory.allCases.sorted {
     String(localized: $0.localizedTitle).compare(
@@ -106,27 +68,6 @@ extension CourseCategory {
         "Technology", table: "Courses", comment: "Course category for technology.")
     }
   }
-
-  var systemImage: String {
-    switch self {
-    case .arts: "paintpalette"
-    case .business: "briefcase"
-    case .communication: "bubble.left.and.bubble.right"
-    case .culture: "globe"
-    case .economics: "chart.line.uptrend.xyaxis"
-    case .engineering: "wrench.and.screwdriver"
-    case .exams: "graduationcap"
-    case .geography: "map"
-    case .health: "heart"
-    case .history: "clock.arrow.circlepath"
-    case .languages: "character.bubble"
-    case .law: "scale.3d"
-    case .math: "function"
-    case .science: "flask"
-    case .society: "person.3"
-    case .tech: "cpu"
-    }
-  }
 }
 
 extension CourseLevel {
@@ -174,53 +115,5 @@ extension CourseLesson {
       ?? String(
         localized: LocalizedStringResource(
           "Lesson", table: "Courses", comment: "Fallback title for a lesson without a title."))
-  }
-
-  func displayDescription() -> String? {
-    catalogText(description)
-  }
-}
-
-private struct CatalogSearchTerm {
-  let locale: Locale
-  let query: String
-
-  init(query: String, locale: Locale) {
-    self.locale = locale
-    self.query = query.trimmingCharacters(in: .whitespacesAndNewlines)
-  }
-
-  var isEmpty: Bool {
-    query.isEmpty
-  }
-
-  func matches(_ value: String?) -> Bool {
-    guard let value = catalogText(value) else {
-      return false
-    }
-
-    return value.range(
-      of: query,
-      options: [.caseInsensitive, .diacriticInsensitive],
-      range: nil,
-      locale: locale) != nil
-  }
-
-  func matches(_ chapter: CourseChapter) -> Bool {
-    matches(chapter.title) || matches(chapter.description)
-  }
-
-  func matches(_ lesson: CourseLesson) -> Bool {
-    matches(lesson.displayTitle()) || matches(lesson.displayDescription())
-  }
-}
-
-private enum CatalogOrder {
-  static func chapters(_ left: CourseChapter, _ right: CourseChapter) -> Bool {
-    left.position == right.position ? left.id < right.id : left.position < right.position
-  }
-
-  static func lessons(_ left: CourseLesson, _ right: CourseLesson) -> Bool {
-    left.position == right.position ? left.id < right.id : left.position < right.position
   }
 }

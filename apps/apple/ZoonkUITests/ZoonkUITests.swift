@@ -436,7 +436,8 @@ final class ZoonkUITests: XCTestCase {
     }
   }
 
-  /// Proves the public catalog filters by category and keeps course, chapter, and lesson navigation inside the native Courses stack.
+  /// Proves the catalog lists only the categories that have courses, filters by one, and leads to
+  /// a course's landing page and a chapter's page with their ways in.
   @MainActor
   func testCourseCatalogOpensCoursesAndChaptersWithTheirWayIn() {
     continueAfterFailure = false
@@ -446,6 +447,10 @@ final class ZoonkUITests: XCTestCase {
 
     openCatalog(in: app)
 
+    XCTAssertTrue(
+      app.buttons["Build my plan"].waitForExistence(timeout: 5),
+      "Expected the catalog's goal box for goals no course covers")
+
     let categorySelector = app.scrollViews["Course categories"]
     XCTAssertTrue(
       categorySelector.waitForExistence(timeout: 5),
@@ -453,15 +458,16 @@ final class ZoonkUITests: XCTestCase {
 
     let scienceCategory = app.buttons["Science"]
     categorySelector.scrollToReveal(scienceCategory)
+    XCTAssertTrue(scienceCategory.waitForExistence(timeout: 2))
+    XCTAssertTrue(app.buttons["Math"].exists)
+    XCTAssertFalse(
+      app.buttons["Technology"].exists,
+      "Expected a category without courses to stay out of the catalog")
+    scienceCategory.tap()
 
     XCTAssertTrue(
-      scienceCategory.waitForExistence(timeout: 2),
-      "Expected the App Store-style category selector to expose Science")
-    XCTAssertTrue(
-      categorySelector.frame.contains(
-        CGPoint(x: scienceCategory.frame.midX, y: scienceCategory.frame.midY)),
-      "Expected Science to be fully reachable inside the category selector")
-    scienceCategory.tap()
+      app.staticTexts["Courses in Science"].waitForExistence(timeout: 5),
+      "Expected the catalog's title to name the chosen category")
 
     let nonScienceCourse = app.staticTexts["Everyday Numbers"].firstMatch
     let filteredCatalog = XCTNSPredicateExpectation(
@@ -472,103 +478,60 @@ final class ZoonkUITests: XCTestCase {
       .completed,
       "Expected Science to remove courses from other categories")
 
-    let course = app.staticTexts["How Plants Grow"].firstMatch
     XCTAssertTrue(
-      course.waitForExistence(timeout: 5),
-      "Expected Science to load its deterministic fixture course")
+      app.staticTexts["3 lessons · 18 min"].waitForExistence(timeout: 5),
+      "Expected a course to state its lessons and their time")
+
+    let course = app.staticTexts["How Plants Grow"].firstMatch
+    XCTAssertTrue(course.waitForExistence(timeout: 5))
     course.tap()
 
-    XCTAssertFalse(
-      app.staticTexts["Zoonk AI"].exists,
-      "Expected course authorship to stay inside progressive disclosure")
-    XCTAssertFalse(
-      app.staticTexts["Created with AI"].exists,
-      "Expected the AI disclosure to stay inside progressive disclosure")
-
-    let courseDescription = app.buttons.matching(
-      NSPredicate(format: "label CONTAINS %@", "Discover how roots")
-    ).firstMatch
     XCTAssertTrue(
-      courseDescription.waitForExistence(timeout: 2),
-      "Expected the course description to reveal expanded information")
-    courseDescription.tap()
-
-    XCTAssertTrue(
-      app.staticTexts["Zoonk AI"].waitForExistence(timeout: 2),
-      "Expected the course information popover to identify its author")
-    XCTAssertTrue(
-      app.staticTexts["Created with AI"].exists,
-      "Expected the course information popover to disclose AI authorship")
-    XCTAssertFalse(app.staticTexts["Organization"].exists)
-    XCTAssertFalse(app.staticTexts["Categories"].exists)
-    app.buttons["Done"].tap()
-
-    app.buttons["More options"].tap()
-    XCTAssertFalse(
-      app.buttons["Course information"].exists,
-      "Expected information to be attached to the course description instead of duplicated")
-    XCTAssertTrue(
-      app.buttons["Send feedback"].waitForExistence(timeout: 2),
-      "Expected the course action menu to expose feedback")
-    app.tap()
-
-    XCTAssertTrue(
-      app.buttons["Build my plan"].waitForExistence(timeout: 2),
-      "Expected the course to offer Main's way in")
+      app.staticTexts["Grow a plant from root to leaf."].waitForExistence(timeout: 5),
+      "Expected the course page to lead with its promise")
+    XCTAssertTrue(app.buttons["Build my plan"].exists, "Expected the course's way in")
     XCTAssertTrue(
       app.buttons["Try a lesson"].exists,
       "Expected the course to offer its first written lesson to try")
 
+    app.buttons["Course options"].tap()
+    XCTAssertTrue(
+      app.buttons["Send feedback"].waitForExistence(timeout: 2),
+      "Expected the course's options to offer feedback")
+    app.tap()
+
+    app.swipeUp()
+    XCTAssertTrue(
+      app.staticTexts["Explain how water reaches a leaf"].waitForExistence(timeout: 5),
+      "Expected the course page to say what it makes someone able to do")
+
     let chapter = app.buttons.matching(
       NSPredicate(format: "label CONTAINS %@", "Roots and Water")
     ).firstMatch
+    if !chapter.exists {
+      app.swipeUp()
+    }
     XCTAssertTrue(
       chapter.waitForExistence(timeout: 5),
-      "Expected the course to expose its first chapter")
-    XCTAssertTrue(
-      app.staticTexts["1. Roots and Water"].exists,
-      "Expected the chapter number to be part of the title instead of a separate leading column")
+      "Expected the outline's first level to be open with its chapters")
     XCTAssertTrue(
       app.staticTexts["Beginner"].exists && app.staticTexts["Intermediate"].exists,
-      "Expected the chapters to be grouped into the course's level bands")
-    XCTAssertFalse(chapter.label.contains("2 lessons"))
+      "Expected the outline to group chapters by level")
     chapter.tap()
 
-    XCTAssertFalse(
-      app.staticTexts["Created with AI"].exists,
-      "Expected the chapter AI disclosure to stay inside progressive disclosure")
+    XCTAssertTrue(
+      app.staticTexts["Where this chapter sits in the course"].waitForExistence(timeout: 5),
+      "Expected the chapter page to place the chapter in its course")
+    XCTAssertTrue(app.staticTexts["Chapter 1 of 2 · Beginner"].exists)
+    XCTAssertTrue(app.buttons["Build my plan"].exists, "Expected the chapter's way in")
 
-    let chapterDescription = app.buttons.matching(
-      NSPredicate(format: "label CONTAINS %@", "See how plants anchor")
-    ).firstMatch
+    app.swipeUp()
     XCTAssertTrue(
-      chapterDescription.waitForExistence(timeout: 2),
-      "Expected the chapter description to reveal expanded information")
-    chapterDescription.tap()
-
+      app.staticTexts["Follow the Water"].waitForExistence(timeout: 5),
+      "Expected the chapter to list its lessons")
     XCTAssertTrue(
-      app.staticTexts["Created with AI"].waitForExistence(timeout: 2),
-      "Expected the chapter information popover to disclose AI authorship")
-    XCTAssertFalse(app.staticTexts["Organization"].exists)
-    XCTAssertFalse(app.staticTexts["Categories"].exists)
-    app.buttons["Done"].tap()
-
-    app.buttons["More options"].tap()
-    XCTAssertFalse(
-      app.buttons["Chapter information"].exists,
-      "Expected information to be attached to the chapter description instead of duplicated")
-    XCTAssertTrue(
-      app.buttons["Send feedback"].waitForExistence(timeout: 2),
-      "Expected the chapter action menu to expose feedback")
-    app.tap()
-
-    XCTAssertTrue(
-      app.buttons["Build my plan"].waitForExistence(timeout: 2),
-      "Expected the chapter to offer Main's way in")
-    XCTAssertTrue(
-      app.staticTexts["1. Meet the Roots"].exists,
-      "Expected the lesson number to be part of the title instead of a separate leading column")
-    XCTAssertTrue(app.staticTexts["2. Follow the Water"].exists)
+      app.staticTexts["Explain how roots hold a plant in place"].exists,
+      "Expected the chapter to say what it teaches")
   }
 
   /// Editing a search moves between matching and empty results without retaining the previous query's feedback.
@@ -603,7 +566,7 @@ final class ZoonkUITests: XCTestCase {
     add(screenshot)
   }
 
-  /// Proves catalog search replaces the removed Search tab and searches beyond the selected category.
+  /// Proves catalog search searches beyond the selected category and opens a chapter in its course.
   @MainActor
   func testCoursesSearchFindsCoursesAndChapters() {
     continueAfterFailure = false
@@ -628,160 +591,8 @@ final class ZoonkUITests: XCTestCase {
 
     app.staticTexts["Roots and Water"].firstMatch.tap()
     XCTAssertTrue(
-      app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "1. Roots and Water"))
-        .firstMatch.waitForExistence(timeout: 10),
-      "Expected a chapter search result to load its canonical position and metadata")
-  }
-
-  /// Proves an empty category turns unmet demand into the existing course-creation flow.
-  @MainActor
-  func testEmptyCategoryOffersToStartAGoal() {
-    continueAfterFailure = false
-
-    let app = makeApp(for: .catalog)
-    app.launch()
-    openCatalog(in: app)
-
-    XCTAssertTrue(
-      app.staticTexts["How Plants Grow"].firstMatch.waitForExistence(timeout: 10),
-      "Expected the catalog to finish loading before changing categories")
-
-    let categorySelector = app.scrollViews["Course categories"]
-    XCTAssertTrue(categorySelector.waitForExistence(timeout: 5))
-
-    let technologyCategory = app.buttons["Technology"]
-    categorySelector.scrollToReveal(technologyCategory)
-    XCTAssertTrue(
-      categorySelector.frame.contains(
-        CGPoint(x: technologyCategory.frame.midX, y: technologyCategory.frame.midY)),
-      "Expected the far-right Technology category to be reachable")
-    technologyCategory.tap()
-
-    XCTAssertTrue(
-      app.staticTexts["No Technology courses yet"].waitForExistence(timeout: 5),
-      "Expected the empty category to offer recovery")
-    app.buttons["Start a goal"].tap()
-
-    XCTAssertTrue(
-      app.staticTexts["What do you want to achieve?"].waitForExistence(timeout: 5),
-      "Expected the empty category action to open the goal start")
-  }
-
-  /// Proves chapter search keeps results visible and restores browsing when cancelled, including after reopening.
-  @MainActor
-  func testCourseSearchKeepsFilteredChaptersVisible() {
-    continueAfterFailure = false
-
-    let app = makeApp(for: .catalog)
-    app.launch()
-    openPlantsCourse(in: app)
-
-    XCTAssertFalse(app.searchFields["Search chapters"].exists)
-    app.navigationBars.buttons["Search"].firstMatch.tap()
-    let searchField = app.searchFields["Search chapters"]
-    XCTAssertTrue(searchField.waitForExistence(timeout: 5))
-    searchField.tap()
-    searchField.typeText("leaves")
-
-    let courseContinue = app.buttons.matching(
-      NSPredicate(format: "label == %@", "Build my plan")
-    ).firstMatch
-    let hiddenCourseHeader = XCTNSPredicateExpectation(
-      predicate: NSPredicate(format: "exists == false"),
-      object: courseContinue)
-    XCTAssertEqual(
-      XCTWaiter.wait(for: [hiddenCourseHeader], timeout: 5),
-      .completed,
-      "Expected active search to remove the detail header between search and results")
-    XCTAssertTrue(
-      app.staticTexts["2. Leaves and Light"].waitForExistence(timeout: 5),
-      "Expected the matching chapter to remain visible above the keyboard")
-    XCTAssertTrue(
-      app.staticTexts["2. Leaves and Light"].isHittable,
-      "Expected the filtered chapter to remain directly interactive during search")
-    XCTAssertFalse(app.staticTexts["1. Roots and Water"].exists)
-
-    let cancelSearch = app.buttons.matching(
-      NSPredicate(format: "label ==[c] %@ OR label ==[c] %@", "Cancel", "close")
-    ).firstMatch
-    XCTAssertTrue(cancelSearch.waitForExistence(timeout: 5))
-    cancelSearch.tap()
-    XCTAssertTrue(
-      app.staticTexts["1. Roots and Water"].waitForExistence(timeout: 5),
-      "Expected dismissing search to restore the unfiltered chapters")
-    XCTAssertTrue(
-      courseContinue.waitForExistence(timeout: 5),
-      "Expected dismissing search to restore the course header")
-
-    app.navigationBars.buttons["Search"].firstMatch.tap()
-    XCTAssertTrue(searchField.waitForExistence(timeout: 5))
-    XCTAssertTrue(app.staticTexts["1. Roots and Water"].exists)
-    searchField.tap()
-    searchField.typeText("leaves")
-    XCTAssertFalse(app.staticTexts["1. Roots and Water"].exists)
-    cancelSearch.tap()
-    XCTAssertTrue(
-      courseContinue.waitForExistence(timeout: 5),
-      "Expected search to remain dismissible after reopening")
-  }
-
-  /// Proves lesson search restores the unfiltered list and header when cancelled, including after reopening.
-  @MainActor
-  func testChapterSearchKeepsFilteredLessonsVisible() {
-    continueAfterFailure = false
-
-    let app = makeApp(for: .catalog)
-    app.launch()
-    openPlantsCourse(in: app)
-    app.staticTexts["1. Roots and Water"].firstMatch.tap()
-
-    XCTAssertFalse(app.searchFields["Search lessons"].exists)
-    app.navigationBars.buttons["Search"].firstMatch.tap()
-    let searchField = app.searchFields["Search lessons"]
-    XCTAssertTrue(searchField.waitForExistence(timeout: 5))
-    searchField.tap()
-    searchField.typeText("water")
-
-    let chapterContinue = app.buttons.matching(
-      NSPredicate(format: "label == %@", "Build my plan")
-    ).firstMatch
-    let hiddenChapterHeader = XCTNSPredicateExpectation(
-      predicate: NSPredicate(format: "exists == false"),
-      object: chapterContinue)
-    XCTAssertEqual(
-      XCTWaiter.wait(for: [hiddenChapterHeader], timeout: 5),
-      .completed,
-      "Expected active search to remove the detail header between search and results")
-    XCTAssertTrue(
-      app.staticTexts["2. Follow the Water"].waitForExistence(timeout: 5),
-      "Expected the matching lesson to remain visible above the keyboard")
-    XCTAssertTrue(
-      app.staticTexts["2. Follow the Water"].isHittable,
-      "Expected the filtered lesson to remain directly interactive during search")
-    XCTAssertFalse(app.staticTexts["1. Meet the Roots"].exists)
-
-    let cancelSearch = app.buttons.matching(
-      NSPredicate(format: "label ==[c] %@ OR label ==[c] %@", "Cancel", "close")
-    ).firstMatch
-    XCTAssertTrue(cancelSearch.waitForExistence(timeout: 5))
-    cancelSearch.tap()
-    XCTAssertTrue(
-      app.staticTexts["1. Meet the Roots"].waitForExistence(timeout: 5),
-      "Expected dismissing search to restore the unfiltered lessons")
-    XCTAssertTrue(
-      chapterContinue.waitForExistence(timeout: 5),
-      "Expected dismissing search to restore the chapter header")
-
-    app.navigationBars.buttons["Search"].firstMatch.tap()
-    XCTAssertTrue(searchField.waitForExistence(timeout: 5))
-    XCTAssertTrue(app.staticTexts["1. Meet the Roots"].exists)
-    searchField.tap()
-    searchField.typeText("water")
-    XCTAssertFalse(app.staticTexts["1. Meet the Roots"].exists)
-    cancelSearch.tap()
-    XCTAssertTrue(
-      chapterContinue.waitForExistence(timeout: 5),
-      "Expected search to remain dismissible after reopening")
+      app.staticTexts["Chapter 1 of 2 · Beginner"].waitForExistence(timeout: 10),
+      "Expected a chapter search result to read its course and its place there")
   }
 
   @MainActor
@@ -915,15 +726,6 @@ final class ZoonkUITests: XCTestCase {
     }
 
     return app
-  }
-
-  @MainActor
-  private func openPlantsCourse(in app: XCUIApplication) {
-    openCatalog(in: app)
-
-    let course = app.staticTexts["How Plants Grow"].firstMatch
-    XCTAssertTrue(course.waitForExistence(timeout: 10))
-    course.tap()
   }
 
   /// Opens the catalog the way a learner does, from the goal switcher's "Explore courses".

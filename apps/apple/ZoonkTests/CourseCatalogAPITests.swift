@@ -34,6 +34,9 @@ final class CourseCatalogAPITests: XCTestCase {
                   "slug": "zoonk"
                 },
                 "slug": "astronomy",
+                "subject": "science",
+                "targetLanguage": null,
+                "languageFlag": null,
                 "title": "Astronomy"
               }
             ],
@@ -54,6 +57,161 @@ final class CourseCatalogAPITests: XCTestCase {
     XCTAssertEqual(page.nextCursor, "next-page")
   }
 
+  func testCountCoursesMapsEachCategory() async throws {
+    let api = makeCourseCatalogAPI(
+      transport: CourseCatalogResponseTransport(
+        expectedOperationID: "listCourseCategoryCounts",
+        expectedPath: "/catalog/categories",
+        expectedQuery: ["language": "en"],
+        responseBody:
+          #"""
+          {
+            "categories": [
+              { "category": "science", "courseCount": 2 },
+              { "category": "math", "courseCount": 0 }
+            ],
+            "total": 2
+          }
+          """#,
+        status: .ok))
+
+    let counts = try await api.countCourses(language: "en")
+
+    XCTAssertEqual(counts, CourseCategoryCounts(counts: [.science: 2, .math: 0], total: 2))
+  }
+
+  func testEstimateMapsAPlanToTheCoursesEnd() async throws {
+    let api = makeCourseCatalogAPI(
+      transport: CourseCatalogResponseTransport(
+        expectedOperationID: "estimateCoursePlan",
+        expectedPath: "/courses/00000000-0000-7000-8000-000000000002/estimate",
+        expectedQuery: ["dailyMinutes": "15.0", "studyDays": "1,2,3,4,5"],
+        responseBody:
+          #"""
+          {
+            "chapters": [
+              {
+                "chapterId": "00000000-0000-7000-8000-000000000004",
+                "endWeek": 2,
+                "week": 1,
+                "workKinds": ["original"]
+              }
+            ],
+            "endDate": "2027-02-01",
+            "firstDay": [
+              {
+                "chapterId": "00000000-0000-7000-8000-000000000004",
+                "dayMinutes": 12.5,
+                "estimatedMinutes": 6,
+                "lessonId": "00000000-0000-7000-8000-000000000005",
+                "title": "The Sun"
+              }
+            ],
+            "numbers": \#(planNumbersJSON),
+            "publishedContent": { "lessons": 3, "minutes": 45 },
+            "weeks": 14,
+            "workload": {
+              "checkpointMinutes": 20,
+              "lessonMinutes": 45,
+              "practiceMinutes": 30,
+              "unwrittenLessonMinutes": 0
+            }
+          }
+          """#,
+        status: .ok))
+
+    let estimate = try await api.estimateCoursePlan(
+      CoursePlanExampleQuery(course: .testFixture, exam: nil)!)
+
+    XCTAssertEqual(
+      estimate?.reach,
+      .toEnd(
+        weeks: 14, endDate: "2027-02-01",
+        firstDay: [
+          CoursePlanEstimate.FirstDayLesson(
+            chapterID: "00000000-0000-7000-8000-000000000004", dayMinutes: 12.5,
+            id: "00000000-0000-7000-8000-000000000005", title: "The Sun")
+        ]))
+    XCTAssertEqual(estimate?.chapters.first?.week, 1)
+    XCTAssertEqual(estimate?.scheduledMinutes, 95)
+    XCTAssertEqual(estimate?.workload.practiceMinutes, 30)
+    XCTAssertEqual(estimate?.fromDate, "2026-11-09")
+  }
+
+  func testEstimateMapsAnExamPlanByItsAreas() async throws {
+    let api = makeCourseCatalogAPI(
+      transport: CourseCatalogResponseTransport(
+        expectedOperationID: "estimateCoursePlan",
+        expectedPath: "/courses/00000000-0000-7000-8000-000000000002/estimate",
+        expectedQuery: ["dailyMinutes": "15.0", "studyDays": "1,2,3,4,5"],
+        responseBody:
+          #"""
+          {
+            "areas": [
+              {
+                "area": "Math",
+                "fitting": 2,
+                "plannedMinutes": 40,
+                "quickLessons": 1,
+                "total": 3,
+                "unwrittenMinutes": 0
+              }
+            ],
+            "chapters": [
+              {
+                "area": "Math",
+                "chapterId": "00000000-0000-7000-8000-000000000004",
+                "endWeek": null,
+                "lessonsInPlan": 2,
+                "studyOrder": 1,
+                "week": 1,
+                "workKinds": ["original", "quick"]
+              }
+            ],
+            "fittingLessons": 2,
+            "numbers": \#(planNumbersJSON),
+            "publishedContent": { "lessons": 3, "minutes": 45 },
+            "workload": {
+              "checkpointMinutes": 20,
+              "lessonMinutes": 45,
+              "practiceMinutes": 30,
+              "unwrittenLessonMinutes": 0
+            }
+          }
+          """#,
+        status: .ok))
+
+    let estimate = try await api.estimateCoursePlan(
+      CoursePlanExampleQuery(course: .testFixture, exam: nil)!)
+
+    XCTAssertEqual(
+      estimate?.reach,
+      .byDate(
+        fittingLessons: 2, publishedLessons: 3,
+        areas: [
+          CoursePlanEstimate.Area(
+            fitting: 2, name: "Math", plannedMinutes: 40, quickLessons: 1, total: 3,
+            unwrittenMinutes: 0)
+        ]))
+    XCTAssertEqual(estimate?.chapters.first?.workKinds, [.original, .quick])
+    XCTAssertEqual(estimate?.chapters.first?.studyOrder, 1)
+  }
+
+  func testNoEstimateMapsToNil() async throws {
+    let api = makeCourseCatalogAPI(
+      transport: CourseCatalogResponseTransport(
+        expectedOperationID: "estimateCoursePlan",
+        expectedPath: "/courses/00000000-0000-7000-8000-000000000002/estimate",
+        expectedQuery: ["dailyMinutes": "15.0", "studyDays": "1,2,3,4,5"],
+        responseBody: "null",
+        status: .ok))
+
+    let estimate = try await api.estimateCoursePlan(
+      CoursePlanExampleQuery(course: .testFixture, exam: nil)!)
+
+    XCTAssertNil(estimate)
+  }
+
   func testGetCourseMapsPublicCourseMetadata() async throws {
     let api = makeCourseCatalogAPI(
       transport: CourseCatalogResponseTransport(
@@ -70,7 +228,13 @@ final class CourseCatalogAPITests: XCTestCase {
             "generationStatus": "completed",
             "id": "00000000-0000-7000-8000-000000000002",
             "imageUrl": "https://cdn.zoonk.test/course.png",
+            "landingPage": {
+              "audience": ["Anyone who looks up at night"],
+              "outcomes": ["Find the planets"],
+              "valueProposition": "Find your way around the night sky."
+            },
             "language": "en",
+            "languageFlag": null,
             "organization": {
               "id": "00000000-0000-7000-8000-000000000001",
               "logo": "https://cdn.zoonk.test/organization.png",
@@ -105,6 +269,7 @@ final class CourseCatalogAPITests: XCTestCase {
             "id": "00000000-0000-7000-8000-000000000004",
             "language": "en",
             "level": "beginner",
+            "objectives": ["Name the planets"],
             "position": 0,
             "slug": "solar-system",
             "title": "The Solar System"
@@ -135,7 +300,16 @@ final class CourseCatalogAPITests: XCTestCase {
                 "id": "00000000-0000-7000-8000-000000000004",
                 "language": "en",
                 "lessonCount": 2,
+                "lessons": [
+                  {
+                    "estimatedMinutes": 6,
+                    "id": "00000000-0000-7000-8000-000000000005",
+                    "slug": "the-sun",
+                    "title": "The Sun"
+                  }
+                ],
                 "level": "beginner",
+                "objectives": ["Name the planets"],
                 "position": 0,
                 "slug": "solar-system",
                 "title": "The Solar System"
@@ -194,6 +368,7 @@ final class CourseCatalogAPITests: XCTestCase {
             "id": "00000000-0000-7000-8000-000000000004",
             "language": "en",
             "level": "beginner",
+            "objectives": ["Name the planets"],
             "position": 0,
             "slug": "solar-system",
             "title": "The Solar System"
@@ -222,6 +397,7 @@ final class CourseCatalogAPITests: XCTestCase {
                 "chapterId": "00000000-0000-7000-8000-000000000004",
                 "courseId": "00000000-0000-7000-8000-000000000002",
                 "description": "A first look at our star.",
+                "estimatedMinutes": 6,
                 "generationId": null,
                 "generationStatus": "completed",
                 "id": "00000000-0000-7000-8000-000000000005",
@@ -441,3 +617,30 @@ private struct CourseCatalogFailureTransport: ClientTransport {
     }
   }
 }
+
+private let planNumbersJSON = #"""
+  {
+    "afterDeadlineMinutes": null,
+    "availableBeforeDeadlineMinutes": null,
+    "beforeDeadlineMinutes": null,
+    "context": {
+      "dailyMinutes": 15,
+      "fromDate": "2026-11-09",
+      "fullCourse": true,
+      "ownLevel": null,
+      "paceFactor": 1,
+      "targetDate": null,
+      "weekdayMinutes": [0, 15, 15, 15, 15, 15, 0]
+    },
+    "coverage": null,
+    "milestoneExtraMinutesBeforeDeadline": null,
+    "scheduledMinutes": 95,
+    "studyDaysBeforeDeadline": null,
+    "workload": {
+      "checkpointMinutes": 20,
+      "lessonMinutes": 45,
+      "practiceMinutes": 30,
+      "unwrittenLessonMinutes": 0
+    }
+  }
+  """#

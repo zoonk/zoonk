@@ -1,6 +1,308 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ in all" : {
+      "comment" : "An example plan's whole time"
+    },
+    "%@ of %lld lessons" : {
+      "comment" : "How many of a chapter's lessons fit in an exam's example plan",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %#@total@"
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg lesson"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg lessons"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%@ of %lld lessons fit" : {
+      "comment" : "How many of an exam area's lessons fit in an example plan",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %#@total@ fit"
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg lesson"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg lessons"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%@ of study" : {
+      "comment" : "The study time an exam area gets in an example plan\nThe study time an exam course's example plan has by the exam"
+    },
+    "%lld chapters" : {
+      "comment" : "How many chapters a course or an exam area has",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld chapter"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld chapters"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld chapters left out" : {
+      "comment" : "How many of an exam area's chapters an example plan leaves out",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld chapter left out"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld chapters left out"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld days left" : {
+      "comment" : "How long until an exam's sitting",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld day left"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld days left"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld lessons" : {
+      "comment" : "How many lessons a course has, before how long it takes",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lesson"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lessons"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld lessons · %@" : {
+      "comment" : "How many lessons an example plan's first day has, and how long",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%#@lessons@ · %2$@"
+          },
+          "substitutions" : {
+            "lessons" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg lesson"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg lessons"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld quick lessons" : {
+      "comment" : "The quick lessons an exam area is studied through",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld quick lesson"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld quick lessons"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%lld short lessons" : {
+      "comment" : "How many lessons a course or a chapter has",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld short lesson"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld short lessons"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "+ %lld more lessons · %@" : {
+      "comment" : "The rest of an example plan's first day, folded",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "+ %#@lessons@ · %2$@"
+          },
+          "substitutions" : {
+            "lessons" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg more lesson"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg more lessons"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "+ %lld quick lessons" : {
+      "comment" : "Quick lessons an exam area adds in an example plan",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "+ %lld quick lesson"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "+ %lld quick lessons"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "A few quick questions, then your plan and your first lesson." : {
+      "comment" : "Under a course page's last call"
+    },
     "Advanced" : {
       "comment" : "Heading above a course's advanced chapters.",
       "localizations" : {
@@ -58,6 +360,9 @@
           }
         }
       }
+    },
+    "An example. Your plan follows your answers, so it can start later and end sooner." : {
+      "comment" : "Caption of a course's example plan"
     },
     "Arts" : {
       "comment" : "Course category for the arts.",
@@ -146,6 +451,9 @@
         }
       }
     },
+    "Build your plan and Zoonk writes this course's chapters and lessons for you, starting at your level." : {
+      "comment" : "A course outline before its chapters are written"
+    },
     "Business" : {
       "comment" : "Course category for business.",
       "localizations" : {
@@ -175,31 +483,30 @@
         }
       }
     },
-    "Chapter information" : {
-      "comment" : "Title for secondary information about a chapter.",
+    "Challenges" : {
+      "comment" : "A part of an example plan's time"
+    },
+    "Challenges and mock exams" : {
+      "comment" : "A part of an exam plan's time"
+    },
+    "Chapter %@ of %@" : {
+      "comment" : "Where a chapter sits in its course",
       "localizations" : {
-        "de" : {
+        "en" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kapitelinformationen"
+            "state" : "new",
+            "value" : "Chapter %1$@ of %2$@"
           }
-        },
-        "es" : {
+        }
+      }
+    },
+    "Chapter %@ of %@ · %@" : {
+      "comment" : "Where a chapter sits in its course, and its level",
+      "localizations" : {
+        "en" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Información del capítulo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Informations sur le chapitre"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Informações do capítulo"
+            "state" : "new",
+            "value" : "Chapter %1$@ of %2$@ · %3$@"
           }
         }
       }
@@ -233,6 +540,9 @@
         }
       }
     },
+    "Chapter options" : {
+      "comment" : "The chapter page's menu of options"
+    },
     "Chapter unavailable" : {
       "comment" : "Title when a chapter cannot be loaded.",
       "localizations" : {
@@ -263,7 +573,7 @@
       }
     },
     "Chapters" : {
-      "comment" : "Heading above matching chapter search results.\nHeading above the ordered chapter list on a course screen.",
+      "comment" : "Heading above matching chapter search results.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -436,35 +746,6 @@
         }
       }
     },
-    "Course information" : {
-      "comment" : "Title for secondary information about a course.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kursinformationen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Información del curso"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Informations sur le cours"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Informações do curso"
-          }
-        }
-      }
-    },
     "Course not found" : {
       "comment" : "Title when a course cannot be found.",
       "localizations" : {
@@ -493,6 +774,12 @@
           }
         }
       }
+    },
+    "Course options" : {
+      "comment" : "The course page's menu of options"
+    },
+    "Course outline" : {
+      "comment" : "Header of a course's outline"
     },
     "Course unavailable" : {
       "comment" : "Title when a course cannot be loaded.",
@@ -581,63 +868,8 @@
         }
       }
     },
-    "Courses will appear here when they're available." : {
-      "comment" : "Guidance when no public courses are available.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verfügbare Kurse werden hier angezeigt."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Los cursos aparecerán aquí cuando estén disponibles."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les cours apparaîtront ici dès qu'ils seront disponibles."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Os cursos vão aparecer aqui quando estiverem disponíveis."
-          }
-        }
-      }
-    },
-    "Created with AI" : {
-      "comment" : "Disclosure that a public course or chapter was created with AI.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit KI erstellt"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Creado con IA"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Créé avec l'IA"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Criado com IA"
-          }
-        }
-      }
+    "Courses in %@" : {
+      "comment" : "Title of the catalog on one category, such as Courses in Science"
     },
     "Culture" : {
       "comment" : "Course category for culture.",
@@ -664,35 +896,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cultura"
-          }
-        }
-      }
-    },
-    "Done" : {
-      "comment" : "Closes catalog information presented in a popover or sheet.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fertig"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Listo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terminé"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "OK"
           }
         }
       }
@@ -754,6 +957,31 @@
           }
         }
       }
+    },
+    "Exam around %@ · %@" : {
+      "comment" : "An exam course's estimated next sitting: its days, then how long until it",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Exam around %1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "Exam on %@ · %@" : {
+      "comment" : "An exam course's next sitting: its days, then how long until it",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Exam on %1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "Example plan" : {
+      "comment" : "Header of a course's example plan"
     },
     "Exams" : {
       "comment" : "Course category for exam preparation courses, such as the SAT or ENEM.",
@@ -958,6 +1186,9 @@
         }
       }
     },
+    "It follows the course from here, at your pace, with reviews before you forget." : {
+      "comment" : "Under a chapter page's last call"
+    },
     "Languages" : {
       "comment" : "Course category for languages.",
       "localizations" : {
@@ -1016,6 +1247,9 @@
         }
       }
     },
+    "Left out" : {
+      "comment" : "A chapter or an area the example plan leaves out"
+    },
     "Lesson" : {
       "comment" : "Fallback title for a lesson without a title.",
       "localizations" : {
@@ -1046,7 +1280,7 @@
       }
     },
     "Lessons" : {
-      "comment" : "Heading above the ordered lesson list on a chapter screen.",
+      "comment" : "A part of an example plan's time\nHeader of a chapter's lessons",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1073,6 +1307,12 @@
           }
         }
       }
+    },
+    "Lessons not written yet" : {
+      "comment" : "A part of an example plan's time"
+    },
+    "Lessons not written yet are written as you reach them." : {
+      "comment" : "Under an example plan with lessons still to be written"
     },
     "Loading chapter" : {
       "comment" : "Accessibility status while a chapter loads.",
@@ -1219,179 +1459,17 @@
         }
       }
     },
-    "More options" : {
-      "comment" : "Accessibility label for secondary catalog actions.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Weitere Optionen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Más opciones"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Plus d’options"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mais opções"
-          }
-        }
-      }
+    "No courses" : {
+      "comment" : "Title when the catalog has no courses"
     },
-    "No %@ courses yet" : {
-      "comment" : "Title when a selected category does not contain any courses.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noch keine Kurse in der Kategorie %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Todavía no hay cursos de %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucun cours de la catégorie %@ pour le moment"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ainda não há cursos de %@"
-          }
-        }
-      }
+    "No courses available yet." : {
+      "comment" : "Guidance when the catalog or a category has no courses"
     },
-    "No chapters yet" : {
-      "comment" : "Title when a course does not have any published chapters.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noch keine Kapitel"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Todavía no hay capítulos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucun chapitre pour le moment"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ainda não há capítulos"
-          }
-        }
-      }
+    "Not all of it fits by then. Before you start, you see how much fits at your level and your time." : {
+      "comment" : "An exam course's example plan doesn't cover everything"
     },
-    "No courses yet" : {
-      "comment" : "Title when the public course catalog is empty.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noch keine Kurse"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Todavía no hay cursos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucun cours pour le moment"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ainda não há cursos"
-          }
-        }
-      }
-    },
-    "No lessons yet" : {
-      "comment" : "Title when a chapter does not have any published lessons.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noch keine Lektionen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Todavía no hay lecciones"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aucune leçon pour le moment"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ainda não há aulas"
-          }
-        }
-      }
-    },
-    "Opens the course" : {
-      "comment" : "Accessibility hint for a course in the catalog.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Öffnet den Kurs"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abre el curso"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ouvre le cours"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abre o curso"
-          }
-        }
-      }
+    "Of this, %@ comes after the exam." : {
+      "comment" : "How much of an exam plan's time comes after the exam"
     },
     "Overview" : {
       "comment" : "Heading above a course's overview chapters.",
@@ -1480,6 +1558,9 @@
         }
       }
     },
+    "Reviews and practice" : {
+      "comment" : "A part of an example plan's time"
+    },
     "Science" : {
       "comment" : "Course category for science.",
       "localizations" : {
@@ -1534,64 +1615,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Buscar em todos os cursos"
-          }
-        }
-      }
-    },
-    "Search chapters" : {
-      "comment" : "Placeholder for searching within a course's chapters.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kapitel suchen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buscar capítulos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rechercher des chapitres"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buscar capítulos"
-          }
-        }
-      }
-    },
-    "Search lessons" : {
-      "comment" : "Placeholder for searching within a chapter's lessons.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lektionen suchen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buscar lecciones"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rechercher des leçons"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buscar aulas"
           }
         }
       }
@@ -1654,34 +1677,31 @@
         }
       }
     },
-    "Shows more information" : {
-      "comment" : "Accessibility hint for expandable course or chapter information.",
+    "Show %lld more chapters" : {
+      "comment" : "Unfolds the rest of a long list of chapters",
       "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zeigt weitere Informationen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Muestra más información"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Affiche plus d’informations"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mostra mais informações"
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Show %lld more chapter"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Show %lld more chapters"
+                }
+              }
+            }
           }
         }
       }
+    },
+    "Show fewer chapters" : {
+      "comment" : "Folds a long list of chapters"
     },
     "Society" : {
       "comment" : "Course category for society.",
@@ -1713,7 +1733,7 @@
       }
     },
     "Start a goal" : {
-      "comment" : "Opens the start of a new goal from an empty catalog",
+      "comment" : "Opens the start of a new goal from an empty category",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1770,6 +1790,18 @@
         }
       }
     },
+    "Start from a course, or tell Zoonk what you're getting ready for." : {
+      "comment" : "The line under the catalog's title"
+    },
+    "Start here and Zoonk writes its lessons for your level." : {
+      "comment" : "Under a chapter's start when its lessons aren't written yet"
+    },
+    "Start today, at your level" : {
+      "comment" : "A course page's last call"
+    },
+    "Starting today, you'd finish around %@." : {
+      "comment" : "When a course's example plan ends: a month and year"
+    },
     "Technology" : {
       "comment" : "Course category for technology.",
       "localizations" : {
@@ -1799,34 +1831,14 @@
         }
       }
     },
-    "This chapter's lessons will appear here when they're available." : {
-      "comment" : "Guidance when a chapter does not have any published lessons.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die Lektionen dieses Kapitels erscheinen hier, sobald sie verfügbar sind."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Las lecciones de este capítulo aparecerán aquí cuando estén disponibles."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les leçons de ce chapitre apparaîtront ici dès qu’elles seront disponibles."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As aulas deste capítulo vão aparecer aqui quando estiverem disponíveis."
-          }
-        }
-      }
+    "That's every exam topic in the course, in depth." : {
+      "comment" : "An exam course's example plan covers every exam topic"
+    },
+    "That's every topic in the course, in depth." : {
+      "comment" : "An example plan covers the whole course"
+    },
+    "This chapter" : {
+      "comment" : "Marks the open chapter in its course"
     },
     "This content may have moved or is no longer available." : {
       "comment" : "Guidance when a course or chapter cannot be found.",
@@ -1857,34 +1869,8 @@
         }
       }
     },
-    "This course's chapters will appear here when they're available." : {
-      "comment" : "Guidance when a course does not have any published chapters.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die Kapitel dieses Kurses erscheinen hier, sobald sie verfügbar sind."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Los capítulos de este curso aparecerán aquí cuando estén disponibles."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les chapitres de ce cours apparaîtront ici dès qu’ils seront disponibles."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Os capítulos deste curso vão aparecer aqui quando estiverem disponíveis."
-          }
-        }
-      }
+    "Today" : {
+      "comment" : "Header of an example plan's first day"
     },
     "Try a lesson" : {
       "comment" : "Opens one of the course's lessons to try before starting a plan",
@@ -1944,6 +1930,33 @@
         }
       }
     },
+    "Week %lld" : {
+      "comment" : "The week a chapter starts in a plan"
+    },
+    "What fills the time" : {
+      "comment" : "Header of an example plan's workload"
+    },
+    "What you studied comes back right before you'd forget it." : {
+      "comment" : "Why an example plan has reviews"
+    },
+    "What you'll be able to do" : {
+      "comment" : "Header of what a course makes someone able to do"
+    },
+    "What you'll learn" : {
+      "comment" : "Header of what a chapter teaches"
+    },
+    "Where this chapter sits in the course" : {
+      "comment" : "Header of where a chapter sits in its course"
+    },
+    "Who it's for" : {
+      "comment" : "Header of who a course is for"
+    },
+    "With Zoonk, your plan starts at this chapter and fits your schedule." : {
+      "comment" : "On a chapter's page, what Zoonk does with it"
+    },
+    "With Zoonk, your plan starts at your level and fits your schedule." : {
+      "comment" : "On a course's page, what Zoonk does with it"
+    },
     "You're offline" : {
       "comment" : "Title when catalog content cannot load because the device is offline.",
       "localizations" : {
@@ -1969,6 +1982,226 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você está sem conexão"
+          }
+        }
+      }
+    },
+    "Your plan at %lld minutes a day, from scratch" : {
+      "comment" : "Over a course's outline: the example plan it marks",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Your plan at %lld minute a day, from scratch"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Your plan at %lld minutes a day, from scratch"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Your plan from this chapter" : {
+      "comment" : "A chapter page's last call, when the plan starts there"
+    },
+    "Your plan until %@, at %@ a day" : {
+      "comment" : "Over an exam course's outline: the example plan it marks",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Your plan until %1$@, at %2$@ a day"
+          }
+        }
+      }
+    },
+    "about %lld days left" : {
+      "comment" : "How long until an exam's estimated sitting",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "about %lld day left"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "about %lld days left"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "by %@, at %@ a day, Monday to Friday, in quick lessons on what comes up most. The full lessons come once there's more time." : {
+      "comment" : "What an exam course's example plan holds in quick lessons",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "by %1$@, at %2$@ a day, Monday to Friday, in quick lessons on what comes up most. The full lessons come once there's more time."
+          }
+        }
+      }
+    },
+    "by %@, at %@ a day, Monday to Friday, what comes up most first: %@ of the course's %lld lessons." : {
+      "comment" : "What an exam course's example plan holds of its lessons",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "by %1$@, at %2$@ a day, Monday to Friday, what comes up most first: %3$@ of the course's %#@total@."
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 4,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg lesson"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg lessons"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "by %@, at %@ a day, Monday to Friday, what comes up most first: %lld lessons already in the course, and more written as you reach them." : {
+      "comment" : "What an exam course's example plan holds",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "by %1$@, at %2$@ a day, Monday to Friday, what comes up most first: %#@lessons@ already in the course, and more written as you reach them."
+          },
+          "substitutions" : {
+            "lessons" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg lesson"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg lessons"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "by %@, at %@ a day, Monday to Friday, what comes up most first: lessons written as you reach them." : {
+      "comment" : "What an exam course's example plan holds with no written lessons",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "by %1$@, at %2$@ a day, Monday to Friday, what comes up most first: lessons written as you reach them."
+          }
+        }
+      }
+    },
+    "lessons written as you reach them" : {
+      "comment" : "What part of a course is studied through in an example plan"
+    },
+    "quick lessons" : {
+      "comment" : "What part of a course is studied through in an example plan"
+    },
+    "quick lessons and lessons written as you reach them" : {
+      "comment" : "What part of a course is studied through in an example plan"
+    },
+    "to finish the whole course at %lld minutes a day, Monday to Friday, from scratch." : {
+      "comment" : "Under the weeks a course's example plan takes",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "to finish the whole course at %lld minute a day, Monday to Friday, from scratch."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "to finish the whole course at %lld minutes a day, Monday to Friday, from scratch."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "today" : {
+      "comment" : "An exam's sitting is today, after its days"
+    },
+    "week %lld" : {
+      "comment" : "The one week a level takes in a plan"
+    },
+    "weeks %lld–%lld" : {
+      "comment" : "The weeks a level takes in a plan",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "weeks %1$lld–%2$lld"
+          }
+        }
+      }
+    },
+    "~%lld weeks" : {
+      "comment" : "How many weeks a course's example plan takes",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "~%lld week"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "~%lld weeks"
+                }
+              }
+            }
           }
         }
       }

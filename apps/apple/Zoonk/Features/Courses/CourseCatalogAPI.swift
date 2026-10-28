@@ -2,8 +2,10 @@ import Foundation
 import OpenAPIRuntime
 
 protocol CourseCatalogAPIClient: Sendable {
+  func countCourses(language: String) async throws -> CourseCategoryCounts
   func listCourses(query: CourseCatalogQuery) async throws -> CourseCatalogPage
   func getCourse(id: String) async throws -> Course
+  func estimateCoursePlan(_ query: CoursePlanExampleQuery) async throws -> CoursePlanEstimate?
   func getChapter(_ key: CatalogChapterKey) async throws -> CourseChapter
   func listCourseChapters(courseID: String) async throws -> [CourseChapter]
   func listChapterLessons(_ key: CatalogChapterKey) async throws -> [CourseLesson]
@@ -15,6 +17,28 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
 
   init(clients: APIClientFactory) {
     self.clients = clients
+  }
+
+  func countCourses(language: String) async throws -> CourseCategoryCounts {
+    try await clients.perform(token: nil) { client in
+      let output = try await client.listCourseCategoryCounts(
+        .init(query: .init(language: language)))
+
+      switch output {
+      case .ok(let response):
+        let payload = try response.body.json
+
+        return CourseCategoryCounts(
+          counts: Dictionary(
+            payload.categories.compactMap { item in
+              CourseCategory(rawValue: item.category.rawValue).map { ($0, item.courseCount) }
+            },
+            uniquingKeysWith: +),
+          total: payload.total)
+      case .badRequest, .internalServerError, .undocumented:
+        throw APIError.unavailable
+      }
+    }
   }
 
   func listCourses(query: CourseCatalogQuery) async throws -> CourseCatalogPage {
@@ -45,6 +69,25 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
         return makeCourse(try response.body.json)
       case .notFound:
         throw APIError.notFound
+      case .badRequest, .internalServerError, .undocumented:
+        throw APIError.unavailable
+      }
+    }
+  }
+
+  func estimateCoursePlan(_ query: CoursePlanExampleQuery) async throws -> CoursePlanEstimate? {
+    try await clients.perform(token: nil) { client in
+      let output = try await client.estimateCoursePlan(
+        .init(
+          path: .init(courseId: query.courseID),
+          query: .init(
+            dailyMinutes: Double(query.dailyMinutes),
+            studyDays: CoursePlanExampleQuery.studyDays.map(String.init).joined(separator: ","),
+            targetDate: query.targetDate)))
+
+      switch output {
+      case .ok(let response):
+        return try response.body.json.flatMap { makeCoursePlanEstimate($0.value1) }
       case .badRequest, .internalServerError, .undocumented:
         throw APIError.unavailable
       }
@@ -153,11 +196,16 @@ private func makeCourseSummary(
 ) -> CourseSummary {
   CourseSummary(
     description: payload.description,
+    estimatedMinutes: payload.estimatedMinutes,
     id: payload.id,
     imageURL: payload.imageUrl.flatMap(URL.init(string:)),
     language: payload.language,
+    languageFlag: payload.languageFlag,
+    lessonCount: payload.lessonCount,
     organization: makeCourseOrganization(payload.organization),
     slug: payload.slug,
+    subject: payload.subject.flatMap { CourseCategory(rawValue: $0.rawValue) },
+    targetLanguage: payload.targetLanguage,
     title: payload.title)
 }
 
@@ -167,10 +215,21 @@ private func makeCourse(
   Course(
     categories: payload.categories.map(makeCourseCategory),
     description: payload.description,
+    exam: payload.exam.map {
+      CourseExamDays(
+        days: $0.value1.days, estimated: $0.value1.estimated, timeZone: $0.value1.timeZone)
+    },
     generationStatus: makeCatalogGenerationStatus(payload.generationStatus),
     id: payload.id,
     imageURL: payload.imageUrl.flatMap(URL.init(string:)),
+    isExam: payload.format == .exam,
+    landingPage: payload.landingPage.map {
+      CourseLandingPage(
+        audience: $0.value1.audience, outcomes: $0.value1.outcomes,
+        valueProposition: $0.value1.valueProposition)
+    },
     language: payload.language,
+    languageFlag: payload.languageFlag,
     organization: payload.organization.map { makeCourseOrganization($0.value1) },
     slug: payload.slug,
     targetLanguage: payload.targetLanguage,
@@ -230,7 +289,11 @@ private func makeCourseChapter(
     id: payload.id,
     language: payload.language,
     lessonCount: payload.lessonCount,
+    lessons: payload.lessons.map {
+      CourseOutlineLesson(estimatedMinutes: $0.estimatedMinutes, id: $0.id, title: $0.title)
+    },
     level: makeCourseLevel(payload.level),
+    objectives: payload.objectives,
     position: payload.position,
     slug: payload.slug,
     title: payload.title)
@@ -246,7 +309,9 @@ private func makeCourseChapter(
     id: payload.id,
     language: payload.language,
     lessonCount: nil,
+    lessons: [],
     level: makeCourseLevel(payload.level),
+    objectives: payload.objectives,
     position: payload.position,
     slug: payload.slug,
     title: payload.title)
@@ -259,6 +324,7 @@ private func makeCourseLesson(
     chapterID: payload.chapterId,
     courseID: payload.courseId,
     description: payload.description,
+    estimatedMinutes: payload.estimatedMinutes,
     generationStatus: makeCatalogGenerationStatus(payload.generationStatus),
     id: payload.id,
     language: payload.language,
@@ -309,4 +375,76 @@ private func makeCatalogCourseSearchResult(
     organizationSlug: payload.organizationSlug,
     slug: payload.slug,
     title: payload.title)
+}
+
+/// The estimate's two shapes: to the course's end, or against a date by the exam's areas.
+private func makeCoursePlanEstimate(
+  _ payload: Components.Schemas.CoursePlanEstimate
+) -> CoursePlanEstimate? {
+  if let toEnd = payload.value1 {
+    return makeCoursePlanEstimate(
+      numbers: toEnd.numbers,
+      reach: .toEnd(
+        weeks: toEnd.weeks,
+        endDate: toEnd.endDate,
+        firstDay: toEnd.firstDay.map {
+          CoursePlanEstimate.FirstDayLesson(
+            chapterID: $0.chapterId, dayMinutes: $0.dayMinutes, id: $0.lessonId, title: $0.title)
+        }),
+      chapters: toEnd.chapters.map {
+        CoursePlanEstimate.ChapterPlace(
+          area: nil, chapterID: $0.chapterId, endWeek: $0.endWeek, lessonsInPlan: nil,
+          studyOrder: nil, week: $0.week,
+          workKinds: Set(
+            $0.workKinds.compactMap { CoursePlanEstimate.WorkKind(rawValue: $0.rawValue) }))
+      },
+      unwrittenLessonMinutes: toEnd.workload.unwrittenLessonMinutes)
+  }
+
+  guard let byDate = payload.value2 else {
+    return nil
+  }
+
+  return makeCoursePlanEstimate(
+    numbers: byDate.numbers,
+    reach: .byDate(
+      fittingLessons: byDate.fittingLessons,
+      publishedLessons: byDate.publishedContent.lessons,
+      areas: byDate.areas.map {
+        CoursePlanEstimate.Area(
+          fitting: $0.fitting, name: $0.area, plannedMinutes: $0.plannedMinutes,
+          quickLessons: $0.quickLessons, total: $0.total, unwrittenMinutes: $0.unwrittenMinutes)
+      }),
+    chapters: byDate.chapters.map {
+      CoursePlanEstimate.ChapterPlace(
+        area: $0.area, chapterID: $0.chapterId, endWeek: $0.endWeek,
+        lessonsInPlan: $0.lessonsInPlan, studyOrder: $0.studyOrder, week: $0.week,
+        workKinds: Set(
+          $0.workKinds.compactMap { CoursePlanEstimate.WorkKind(rawValue: $0.rawValue) }))
+    },
+    unwrittenLessonMinutes: byDate.workload.unwrittenLessonMinutes)
+}
+
+private func makeCoursePlanEstimate(
+  numbers: Components.Schemas.PlanNumbers,
+  reach: CoursePlanEstimate.Reach,
+  chapters: [CoursePlanEstimate.ChapterPlace],
+  unwrittenLessonMinutes: Double
+) -> CoursePlanEstimate {
+  CoursePlanEstimate(
+    reach: reach,
+    chapters: chapters,
+    afterDeadlineMinutes: numbers.afterDeadlineMinutes,
+    beforeDeadlineMinutes: numbers.beforeDeadlineMinutes,
+    coverage: numbers.coverage.map {
+      CoursePlanEstimate.Coverage(coveredShare: $0.coveredShare, measuresGoal: $0.measure == .goal)
+    },
+    fromDate: numbers.context.fromDate,
+    scheduledMinutes: numbers.scheduledMinutes,
+    unwrittenLessonMinutes: unwrittenLessonMinutes,
+    workload: CoursePlanEstimate.Workload(
+      checkpointMinutes: numbers.workload.checkpointMinutes,
+      lessonMinutes: numbers.workload.lessonMinutes,
+      practiceMinutes: numbers.workload.practiceMinutes,
+      unwrittenLessonMinutes: numbers.workload.unwrittenLessonMinutes))
 }

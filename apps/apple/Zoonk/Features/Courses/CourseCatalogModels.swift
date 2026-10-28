@@ -44,29 +44,61 @@ struct CourseOrganization: Codable, Equatable, Identifiable, Sendable {
   let slug: String
 }
 
+/// A course in the catalog's list: what its cell shows, its mark, subject, words and numbers.
 struct CourseSummary: Codable, Equatable, Identifiable, Sendable {
   let description: String?
+  /// Every lesson of its outline added up, as its page states its length.
+  let estimatedMinutes: Int
   let id: String
   let imageURL: URL?
   let language: String
+  let languageFlag: String?
+  /// 0 while its lessons aren't written yet.
+  let lessonCount: Int
   let organization: CourseOrganization
   let slug: String
+  let subject: CourseCategory?
+  let targetLanguage: String?
   let title: String
 }
 
 /// A course's details. A learner's own private course has no organization and is only readable with
 /// their session.
 struct Course: Codable, Equatable, Identifiable, Sendable {
+  /// Oldest first: the first is the course's subject.
   let categories: [CourseCategory]
   let description: String?
+  /// An exam course's sittings, estimated from past editions when the next one's notice isn't
+  /// stored; nil for any other course.
+  let exam: CourseExamDays?
   let generationStatus: CatalogGenerationStatus
   let id: String
   let imageURL: URL?
+  let isExam: Bool
+  /// The page's copy; nil until the course's details are written.
+  let landingPage: CourseLandingPage?
   let language: String
+  let languageFlag: String?
   let organization: CourseOrganization?
   let slug: String
   let targetLanguage: String?
   let title: String
+
+  var subject: CourseCategory? { categories.first }
+}
+
+/// A course page's own words: its promise, who it's for and what it makes them able to do.
+struct CourseLandingPage: Codable, Equatable, Sendable {
+  let audience: [String]
+  let outcomes: [String]
+  let valueProposition: String
+}
+
+/// An exam's sitting days (ISO dates) in the exam's own time zone.
+struct CourseExamDays: Codable, Equatable, Sendable {
+  let days: [String]
+  let estimated: Bool
+  let timeZone: String
 }
 
 /// A chapter as one course places it. Chapters can be shared by several courses, so `courseID`,
@@ -79,9 +111,20 @@ struct CourseChapter: Codable, Equatable, Identifiable, Sendable {
   let id: String
   let language: String
   let lessonCount: Int?
+  /// The chapter's lessons as its course's outline lists them; empty when read on its own.
+  let lessons: [CourseOutlineLesson]
   let level: CourseLevel
+  /// What the chapter teaches, one line each.
+  let objectives: [String]
   let position: Int
   let slug: String
+  let title: String
+}
+
+/// A lesson in a course's outline: its title and how long it takes.
+struct CourseOutlineLesson: Codable, Equatable, Identifiable, Sendable {
+  let estimatedMinutes: Int
+  let id: String
   let title: String
 }
 
@@ -91,6 +134,7 @@ struct CourseLesson: Codable, Equatable, Identifiable, Sendable {
   let chapterID: String
   let courseID: String
   let description: String?
+  let estimatedMinutes: Int
   let generationStatus: CatalogGenerationStatus
   let id: String
   let language: String
@@ -109,6 +153,12 @@ struct CourseLesson: Codable, Equatable, Identifiable, Sendable {
 struct CatalogChapterKey: Hashable, Sendable {
   let chapterID: String
   let courseID: String
+}
+
+/// How many listed courses the catalog has in all and in each category, in one language.
+struct CourseCategoryCounts: Equatable, Sendable {
+  let counts: [CourseCategory: Int]
+  let total: Int
 }
 
 struct CourseCatalogPage: Codable, Equatable, Sendable {

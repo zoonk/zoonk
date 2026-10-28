@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct CourseCatalogSearchResultsView: View {
-  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(CourseCatalogStore.self) private var catalog
 
   let query: String
@@ -75,11 +74,6 @@ struct CourseCatalogSearchResultsView: View {
       }
     }
     .listStyle(.plain)
-    .contentMargins(
-      .horizontal,
-      CatalogDetailLayout.horizontalInset(for: horizontalSizeClass),
-      for: .scrollContent
-    )
     .scrollDismissesKeyboard(.immediately)
   }
 }

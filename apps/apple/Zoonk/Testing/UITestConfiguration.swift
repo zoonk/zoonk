@@ -161,6 +161,19 @@
       self.snapshot = snapshot
     }
 
+    func countCourses(language: String) async throws -> CourseCategoryCounts {
+      let courses = publicCourses.filter { $0.language == language }
+
+      return CourseCategoryCounts(
+        counts: Dictionary(
+          courses.flatMap(\.categories).map { ($0, 1) }, uniquingKeysWith: +),
+        total: courses.count)
+    }
+
+    func estimateCoursePlan(_ query: CoursePlanExampleQuery) async throws -> CoursePlanEstimate? {
+      nil
+    }
+
     func listCourses(query: CourseCatalogQuery) async throws -> CourseCatalogPage {
       let matchingCourses = publicCourses.filter { course in
         course.language == query.language
@@ -218,14 +231,21 @@
     }
 
     private func makeCourseSummary(_ course: Course) -> CourseSummary? {
-      course.organization.map { organization in
+      let lessons = snapshot.chapters.filter { $0.courseID == course.id }.flatMap(\.lessons)
+
+      return course.organization.map { organization in
         CourseSummary(
           description: course.description,
+          estimatedMinutes: lessons.reduce(0) { $0 + $1.estimatedMinutes },
           id: course.id,
           imageURL: course.imageURL,
           language: course.language,
+          languageFlag: course.languageFlag,
+          lessonCount: lessons.count,
           organization: organization,
           slug: course.slug,
+          subject: course.subject,
+          targetLanguage: course.targetLanguage,
           title: course.title)
       }
     }

@@ -2,6 +2,10 @@ import SwiftUI
 
 /// "Start a goal" on Today, for a visitor or a learner without a goal: one box for the goal in the learner's own words, the paperclip for their own material, and examples that start it in one tap. Today embeds it inside its `List`; sending opens the start flow as a task, which reads the words right away (the tap is what starts it). A visitor becomes a guest when they send, as on main.
 struct GoalStartEntry: View {
+  /// The catalog's box under its title (main's `GoalForm` there): only the words and "Build my
+  /// plan", since the courses below are its examples.
+  var isBoxOnly = false
+
   @Environment(AppRouter.self) private var router
   @Environment(OnboardingStore.self) private var onboarding
   @State private var words = ""
@@ -10,13 +14,16 @@ struct GoalStartEntry: View {
 
   var body: some View {
     GoalEntrySections(
-      words: $words, isSection: true, canSubmitEmpty: !material.isEmpty && intent != nil,
+      words: $words, isSection: !isBoxOnly, showsExamples: !isBoxOnly,
+      canSubmitEmpty: !material.isEmpty && intent != nil,
       onSubmit: { goal in
         onboarding.send(SentGoal(words: goal, material: material, intent: intent))
         router.open(.startGoal())
       },
       attachment: {
-        GoalMaterialSections(material: $material, intent: $intent)
+        if !isBoxOnly {
+          GoalMaterialSections(material: $material, intent: $intent)
+        }
       })
   }
 }
@@ -69,6 +76,7 @@ struct GoalEntrySections<Attachment: View>: View {
   @Binding var words: String
   /// On Today, the box is the page's "Start a goal" section; the start flow has its own title.
   var isSection = false
+  var showsExamples = true
   var error: GoalError?
   /// A goal limit Plus lifts, said before the learner types.
   var limit: GoalLimitReason?
@@ -152,6 +160,12 @@ struct GoalEntrySections<Attachment: View>: View {
       GoalErrorSection(error: error)
     }
 
+    if showsExamples {
+      examplesSection
+    }
+  }
+
+  private var examplesSection: some View {
     Section {
       ForEach(examples, id: \.label.key) { example in
         Button {

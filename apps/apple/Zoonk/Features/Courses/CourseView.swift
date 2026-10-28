@@ -1,8 +1,12 @@
 import SwiftUI
 
+/// A course's page in the catalog (main's `LibraryCoursePage`), written for someone who doesn't
+/// know Zoonk yet: the course and its ways in, its example plan, who it's for and what it makes
+/// them able to do, the full outline with each chapter's place in that plan, and the way in again.
+/// The Plan's "See the full course" and Search open it too.
 struct CourseView: View {
   @Environment(CourseCatalogStore.self) private var catalog
-  @State private var searchText = ""
+  @State private var isFeedbackPresented = false
 
   let course: CourseReference
 
@@ -10,9 +14,14 @@ struct CourseView: View {
     Group {
       switch catalog.course(id: course.id).state {
       case .idle, .loading:
-        CourseLoadingView(course: course)
+        ProgressView()
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
+          .accessibilityLabel(
+            Text(
+              "Loading course", tableName: "Courses",
+              comment: "Accessibility status while a course loads."))
       case .loaded(let detail):
-        CourseDetailContent(detail: detail, searchText: $searchText)
+        CourseLandingList(detail: detail)
       case .empty:
         CourseDetailEmptyView()
       case .failed(let failure):
@@ -21,272 +30,267 @@ struct CourseView: View {
         }
       }
     }
-    .background(Color(uiColor: .systemBackground))
     .loads(catalog.course(id: course.id))
-  }
-}
-
-private struct CourseDetailContent: View {
-  @State private var isFeedbackPresented = false
-  @State private var isInformationPresented = false
-  @State private var isSearchPresented = false
-
-  let detail: CourseDetail
-  @Binding var searchText: String
-
-  var body: some View {
-    CourseDetailList(
-      detail: detail,
-      isInformationPresented: $isInformationPresented,
-      searchText: $searchText,
-      showFeedback: { isFeedbackPresented = true },
-      showInformation: { isInformationPresented = true }
-    )
-    .catalogDetailSearchPresentation(
-      text: $searchText,
-      isPresented: $isSearchPresented,
-      prompt: Text(
-        "Search chapters",
-        tableName: "Courses",
-        comment: "Placeholder for searching within a course's chapters.")
-    )
+    .toolbar {
+      CatalogOptionsMenu(
+        label: LocalizedStringResource(
+          "Course options", table: "Courses", comment: "The course page's menu of options"),
+        showFeedback: { isFeedbackPresented = true })
+    }
     .sheet(isPresented: $isFeedbackPresented) {
       FeedbackSheet(
         api: FeedbackAPI.live(),
-        context: FeedbackContext(contentID: detail.course.id, contentKind: .course))
+        context: FeedbackContext(contentID: course.id, contentKind: .course))
     }
   }
 }
 
-private struct CourseDetailList: View {
-  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-  @Environment(\.isSearching) private var isSearching
+private struct CourseLandingList: View {
+  @Environment(CourseCatalogStore.self) private var catalog
 
   let detail: CourseDetail
-  @Binding var isInformationPresented: Bool
-  @Binding var searchText: String
-  let showFeedback: () -> Void
-  let showInformation: () -> Void
 
   var body: some View {
-    // The header scrolls with the list, so large text on a short screen never squeezes it.
-    List {
-      Section {
-        if !showsSearchResultsOnly {
-          detailHeader
-        }
+    let exam = UpcomingExam(course: detail.course)
+    let query = CoursePlanExampleQuery(course: detail.course, exam: exam)
 
-        CatalogCurriculumHeader(
-          title: Text(
-            "Chapters",
-            tableName: "Courses",
-            comment: "Heading above the ordered chapter list on a course screen."))
-      }
-      .listRowInsets(EdgeInsets())
-      .listRowSeparator(.hidden)
+    if let query {
+      let plan = catalog.examplePlan(query)
 
-      if filteredChapters.isEmpty {
-        emptyChaptersView
-          .listRowSeparator(.hidden)
-      } else {
-        ForEach(courseLevelBands(filteredChapters)) { band in
-          Section {
-            ForEach(band.chapters) { chapter in
-              chapterRow(chapter)
-            }
-          } header: {
-            // Section headers don't take the list's content margins, so they align with the rows here.
-            Text(band.level.localizedTitle)
-              .font(.subheadline.weight(.medium))
-              .foregroundStyle(Color(uiColor: .secondaryLabel))
-              .accessibilityAddTraits(.isHeader)
-              .listRowInsets(
-                EdgeInsets(
-                  top: 16,
-                  leading: CatalogDetailLayout.horizontalInset(for: horizontalSizeClass),
-                  bottom: 4,
-                  trailing: 0))
-          }
-        }
-      }
-    }
-    .listStyle(.plain)
-    .scrollContentBackground(.hidden)
-    .contentMargins(
-      .horizontal,
-      CatalogDetailLayout.horizontalInset(for: horizontalSizeClass),
-      for: .scrollContent
-    )
-    .frame(maxWidth: 900)
-    .frame(maxWidth: .infinity)
-  }
-
-  private func chapterRow(_ chapter: CourseChapter) -> some View {
-    NavigationLink(
-      value: CourseDestination.chapter(
-        ChapterReference((course: detail.course, chapter: chapter)))
-    ) {
-      CatalogNumberedRow(
-        description: chapter.description,
-        imageURL: detail.course.imageURL,
-        number: chapter.position + 1,
-        systemImage: "rectangle.stack.fill",
-        title: chapter.title
-      )
-    }
-    .listRowInsets(
-      EdgeInsets(
-        top: CatalogDetailLayout.curriculumRowVerticalInset(
-          for: horizontalSizeClass),
-        leading: 0,
-        bottom: CatalogDetailLayout.curriculumRowVerticalInset(
-          for: horizontalSizeClass),
-        trailing: 0))
-  }
-
-  private var detailHeader: some View {
-    VStack(alignment: .leading, spacing: 16) {
-      CatalogDetailHeader(
-        configuration: CatalogDetailHeaderConfiguration(
-          imageURL: detail.course.imageURL,
-          description: detail.course.description,
-          systemImage: "book.closed.fill",
-          title: detail.course.title),
-        showInformation: showInformation
-      )
-      .popover(isPresented: $isInformationPresented) {
-        CourseInformationView(
-          course: detail.course,
-          dismiss: { isInformationPresented = false }
-        )
-        .presentationCompactAdaptation(.sheet)
-      }
-
-      CatalogDetailActions(
-        courseID: detail.course.id,
-        tryLessonID: detail.tryLessonID,
-        showFeedback: showFeedback)
-    }
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .padding(.top, 16)
-    .padding(.bottom, 12)
-  }
-
-  private var showsSearchResultsOnly: Bool {
-    isSearching || catalogText(searchText) != nil
-  }
-
-  private var filteredChapters: [CourseChapter] {
-    filterCourseChapters(CatalogSearchRequest(items: detail.chapters, query: searchText))
-  }
-
-  @ViewBuilder
-  private var emptyChaptersView: some View {
-    if catalogText(searchText) != nil {
-      ContentUnavailableView.search(text: searchText)
+      list(exam: exam, estimate: plan.value, minutes: query.dailyMinutes)
+        .loads(plan, refreshable: false)
     } else {
-      ContentUnavailableView {
-        Label {
-          Text(
-            "No chapters yet",
-            tableName: "Courses",
-            comment: "Title when a course does not have any published chapters.")
-        } icon: {
-          Image(systemName: "rectangle.stack")
-        }
-      } description: {
-        Text(
-          "This course's chapters will appear here when they're available.",
-          tableName: "Courses",
-          comment: "Guidance when a course does not have any published chapters.")
-      }
+      list(exam: exam, estimate: nil, minutes: nil)
     }
+  }
+
+  private func list(exam: UpcomingExam?, estimate: CoursePlanEstimate?, minutes: Int?) -> some View
+  {
+    let estimate = estimate?.hasStudyToShow == true ? estimate : nil
+
+    return List {
+      CourseHeroSection(detail: detail, exam: exam)
+
+      if let estimate, let minutes {
+        CoursePlanSections(
+          chapters: detail.chapters, estimate: estimate, exam: exam, isExam: detail.course.isExam,
+          minutes: minutes)
+      }
+
+      CourseFitSections(landingPage: detail.course.landingPage)
+
+      CourseOutlineSections(
+        detail: detail, estimate: estimate, exam: exam, lead: outlineLead, minutes: minutes)
+
+      CourseClosingSection(courseID: detail.course.id)
+    }
+    .catalogReadableWidth()
+  }
+
+  /// The course's description over the outline, when the hero led with its promise instead.
+  private var outlineLead: String? {
+    detail.course.landingPage == nil ? nil : catalogText(detail.course.description)
   }
 }
 
-private struct CourseInformationView: View {
-  let course: Course
-  let dismiss: () -> Void
+/// The course: its mark, its subject (and an exam course's next sitting) over its name, what it
+/// makes someone able to do, what Zoonk does with it in one line and the ways in.
+private struct CourseHeroSection: View {
+  let detail: CourseDetail
+  let exam: UpcomingExam?
 
   var body: some View {
-    CatalogInformationView(
-      dismiss: dismiss,
-      title: LocalizedStringResource(
-        "Course information",
-        table: "Courses",
-        comment: "Title for secondary information about a course.")
-    ) {
-      VStack(alignment: .leading, spacing: 16) {
-        if let description = catalogText(course.description) {
-          Text(description)
-            .fixedSize(horizontal: false, vertical: true)
-        }
+    Section {
+      VStack(alignment: .leading, spacing: 12) {
+        CourseMark(detail.course)
 
-        VStack(alignment: .leading, spacing: 12) {
-          if let organization = course.organization {
-            Text(organization.name)
-              .font(.subheadline.weight(.semibold))
-              .foregroundStyle(.secondary)
-          }
-
-          if !course.categories.isEmpty {
-            Text(categoryDescription)
-              .chip()
-          }
-
-          if course.organization?.slug == "ai" {
-            Label {
-              Text(
-                "Created with AI",
-                tableName: "Courses",
-                comment: "Disclosure that a public course or chapter was created with AI.")
-            } icon: {
-              Image(systemName: "sparkles")
+        if detail.course.subject != nil || exam != nil {
+          HStack(spacing: 8) {
+            if let subject = detail.course.subject {
+              CourseSubjectLabel(subject: subject)
             }
-            .foregroundStyle(.secondary)
+
+            if let exam {
+              CourseExamEyebrow(exam: exam)
+            }
           }
         }
+
+        Text(detail.course.title)
+          .font(.largeTitle.bold())
+          .accessibilityAddTraits(.isHeader)
+
+        if let promise {
+          Text(promise)
+            .font(.title3)
+            .foregroundStyle(.secondary)
+        }
+
+        PlanLine(startsHere: false)
+
+        CatalogStartActions(courseID: detail.course.id, tryLessonID: detail.tryLessonID)
+          .padding(.top, 4)
       }
+      .listRowBackground(Color.clear)
+      .listRowInsets(EdgeInsets())
     }
   }
 
-  private var categoryDescription: String {
-    course.categories
-      .map { String(localized: $0.localizedTitle) }
-      .formatted(.list(type: .and, width: .short))
+  /// The page's promise in the course's own words, or its description before they're written.
+  private var promise: String? {
+    catalogText(detail.course.landingPage?.valueProposition)
+      ?? catalogText(detail.course.description)
   }
 }
 
-/// The page as soon as it opens: what the tapped row already said about it, then a spinner where
-/// its list loads. Never a skeleton.
-private struct CourseLoadingView: View {
-  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-
-  let course: CourseReference
+/// An exam course's next sitting, "Exam on Nov 8 and Nov 15 · 26 days left"; "Exam around…" while
+/// its days are estimated from past editions.
+private struct CourseExamEyebrow: View {
+  let exam: UpcomingExam
 
   var body: some View {
-    VStack(spacing: 0) {
-      CatalogDetailHeader(
-        configuration: CatalogDetailHeaderConfiguration(
-          imageURL: course.imageURL,
-          description: course.description ?? "",
-          systemImage: "book.closed.fill",
-          title: course.title)
-      )
-      .padding(.horizontal, CatalogDetailLayout.horizontalInset(for: horizontalSizeClass))
-      .padding(.top, 16)
-      .padding(.bottom, 12)
-
-      ProgressView()
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .accessibilityLabel(
-          Text(
-            "Loading course",
-            tableName: "Courses",
-            comment: "Accessibility status while a course loads."))
+    Group {
+      if exam.estimated {
+        Text(
+          "Exam around \(dates) · \(daysLeft)", tableName: "Courses",
+          comment: "An exam course's estimated next sitting: its days, then how long until it")
+      } else {
+        Text(
+          "Exam on \(dates) · \(daysLeft)", tableName: "Courses",
+          comment: "An exam course's next sitting: its days, then how long until it")
+      }
     }
-    .frame(maxWidth: 900)
-    .frame(maxWidth: .infinity)
+    .font(.footnote.monospacedDigit())
+    .foregroundStyle(.secondary)
+  }
+
+  private var dates: String {
+    exam.days.compactMap(catalogDay).formatted(.list(type: .and))
+  }
+
+  private var daysLeft: String {
+    if exam.daysLeft == 0 {
+      return String(
+        localized: "today", table: "Courses", comment: "An exam's sitting is today, after its days")
+    }
+
+    return exam.estimated
+      ? String(
+        localized: "about \(exam.daysLeft) days left", table: "Courses",
+        comment: "How long until an exam's estimated sitting")
+      : String(
+        localized: "\(exam.daysLeft) days left", table: "Courses",
+        comment: "How long until an exam's sitting")
+  }
+}
+
+/// A calendar day as core sends it ("2026-11-08") written as its day and month, "Nov 8", read at
+/// UTC midnight so no time zone moves it to another day.
+func catalogDay(_ isoDate: String) -> String? {
+  let style = Date.ISO8601FormatStyle(timeZone: .gmt).year().month().day()
+
+  guard let date = try? style.parse(isoDate) else {
+    return nil
+  }
+
+  var format = Date.FormatStyle.dateTime.month(.abbreviated).day()
+  format.timeZone = .gmt
+  return date.formatted(format)
+}
+
+/// What Zoonk does with the page's course, in one line: a plan that starts at the reader's level,
+/// or at the page's chapter (`startsHere`), and fits their schedule, after the Plan's map.
+struct PlanLine: View {
+  let startsHere: Bool
+
+  var body: some View {
+    Label {
+      if startsHere {
+        Text(
+          "With Zoonk, your plan starts at this chapter and fits your schedule.",
+          tableName: "Courses", comment: "On a chapter's page, what Zoonk does with it")
+      } else {
+        Text(
+          "With Zoonk, your plan starts at your level and fits your schedule.",
+          tableName: "Courses", comment: "On a course's page, what Zoonk does with it")
+      }
+    } icon: {
+      Image(systemName: "map")
+    }
+    .font(.subheadline)
+    .foregroundStyle(.secondary)
+  }
+}
+
+/// Whether the course fits the reader, in its own words: who it's for, then what it makes them
+/// able to do. Nothing before the course's details are written.
+private struct CourseFitSections: View {
+  let landingPage: CourseLandingPage?
+
+  var body: some View {
+    if let audience = landingPage?.audience, !audience.isEmpty {
+      Section {
+        ForEach(audience, id: \.self) { line in
+          Text(line)
+        }
+      } header: {
+        Text("Who it's for", tableName: "Courses", comment: "Header of who a course is for")
+      }
+    }
+
+    if let outcomes = landingPage?.outcomes, !outcomes.isEmpty {
+      Section {
+        ForEach(outcomes, id: \.self) { line in
+          CheckLine(text: line)
+        }
+      } header: {
+        Text(
+          "What you'll be able to do", tableName: "Courses",
+          comment: "Header of what a course makes someone able to do")
+      }
+    }
+  }
+}
+
+/// A line after a tick: what a course or a chapter makes someone able to do.
+struct CheckLine: View {
+  let text: String
+
+  var body: some View {
+    Label {
+      Text(text)
+    } icon: {
+      Image(systemName: "checkmark")
+        .foregroundStyle(.success)
+    }
+  }
+}
+
+/// The page's last word: the one way in again.
+private struct CourseClosingSection: View {
+  let courseID: String
+
+  var body: some View {
+    Section {
+      VStack(alignment: .leading, spacing: 8) {
+        Text(
+          "Start today, at your level", tableName: "Courses", comment: "A course page's last call"
+        )
+        .font(.title2.weight(.semibold))
+        .accessibilityAddTraits(.isHeader)
+
+        Text(
+          "A few quick questions, then your plan and your first lesson.", tableName: "Courses",
+          comment: "Under a course page's last call"
+        )
+        .foregroundStyle(.secondary)
+
+        CatalogStartActions(courseID: courseID, tryLessonID: nil)
+          .padding(.top, 8)
+      }
+      .listRowBackground(Color.clear)
+      .listRowInsets(EdgeInsets())
+    }
   }
 }
 
@@ -307,5 +311,24 @@ private struct CourseDetailEmptyView: View {
         tableName: "Courses",
         comment: "Guidance when a course request returns no content.")
     }
+  }
+}
+
+extension View {
+  /// Keeps a course's or a chapter's page in a readable column on a wide screen, as main's pages
+  /// keep their measure, while its background still fills the window.
+  func catalogReadableWidth() -> some View {
+    modifier(CatalogReadableWidth())
+  }
+}
+
+private struct CatalogReadableWidth: ViewModifier {
+  @ScaledMetric(relativeTo: .body) private var column = 720
+  @State private var width: CGFloat = 0
+
+  func body(content: Content) -> some View {
+    content
+      .safeAreaPadding(.horizontal, max((width - column) / 2, 0))
+      .onGeometryChange(for: CGFloat.self, of: \.size.width) { width = $0 }
   }
 }

@@ -1,7 +1,10 @@
 import SwiftUI
 
+/// The catalog's categories, one tap to filter it (main's `CategoryNav`): "All", then the
+/// categories that have courses, each after its subject's glyph, in a row that scrolls sideways.
 struct CourseCategorySelector: View {
   @Environment(\.accessibilityReduceMotion) private var accessibilityReduceMotion
+  let categories: [CourseCategory]
   @Binding var selection: CourseCategory?
 
   var body: some View {
@@ -15,7 +18,7 @@ struct CourseCategorySelector: View {
           )
           .id(scrollID(for: nil))
 
-          ForEach(localizedCourseCategories(), id: \.rawValue) { category in
+          ForEach(categories, id: \.rawValue) { category in
             CourseCategoryButton(
               category: category,
               isSelected: selection == category,
@@ -24,8 +27,9 @@ struct CourseCategorySelector: View {
             .id(scrollID(for: category))
           }
         }
-        .padding(.horizontal, 16)
       }
+      // The row scrolls to the screen's edges while its first chip lines up with the courses.
+      .scrollClipDisabled()
       .scrollIndicators(.hidden)
       .accessibilityElement(children: .contain)
       .accessibilityLabel(
@@ -62,10 +66,12 @@ private struct CourseCategoryButton: View {
     Button {
       selection = category
     } label: {
-      Label {
+      HStack(spacing: 6) {
+        if let category {
+          SubjectGlyph(subject: category)
+        }
+
         title
-      } icon: {
-        Image(systemName: category?.systemImage ?? "square.grid.2x2")
       }
       .font(.subheadline.weight(.semibold))
       .foregroundStyle(isSelected ? selectedForegroundStyle : Color.primary)
@@ -104,5 +110,5 @@ private struct CourseCategoryButton: View {
 #Preview {
   @Previewable @State var selection: CourseCategory?
 
-  CourseCategorySelector(selection: $selection)
+  CourseCategorySelector(categories: localizedCourseCategories(), selection: $selection)
 }
