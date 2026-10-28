@@ -3,9 +3,7 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
-import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
-import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
@@ -30,15 +28,11 @@ test.describe("Today without a session to start", () => {
       userId: user.id,
     });
 
-    const [{ lesson }, skill] = await Promise.all([
-      playableLessonFixture({ steps: ["check"] }),
-      skillFixture(),
-    ]);
+    const { lesson } = await playableLessonFixture({ steps: ["check"] });
 
     await Promise.all([
       learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
-      lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
-      planFixture({ goalId: goal.id, items: [{ lessonId: lesson.id, skillId: skill.id }] }),
+      planFixture({ goalId: goal.id, items: [{ lessonId: lesson.id }] }),
     ]);
 
     const context = await browser.newContext({
@@ -75,35 +69,28 @@ test.describe("Today without a session to start", () => {
       weekday === today.getUTCDay() ? 0 : goal.dailyMinutes,
     );
 
-    const [session, upcoming, skill] = await Promise.all([
+    const [session, upcoming] = await Promise.all([
       studySessionFixture({ goalId: goal.id, plannedMinutes: 0, userId: user.id }),
       Promise.all(
         ["Next lesson 1", "Next lesson 2"].map((title) =>
           playableLessonFixture({ lesson: { estimatedMinutes: 3, title }, steps: ["check"] }),
         ),
       ),
-      skillFixture(),
       learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
     ]);
 
     // The plan's next lessons were saved first; settling the missed day then put the two lessons
     // an earlier day left ahead of them.
-    await Promise.all([
-      planFixture({
-        goalId: goal.id,
-        items: upcoming.map(({ lesson }, index) => ({
-          lessonId: lesson.id,
-          position: 3 + index,
-          scheduledFor: new Date(today.getTime() + 2 * MS_PER_DAY),
-          skillId: skill.id,
-          titleSnapshot: lesson.title,
-        })),
-        settings: { weekdayMinutes },
-      }),
-      ...upcoming.map(({ lesson }) =>
-        lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
-      ),
-    ]);
+    await planFixture({
+      goalId: goal.id,
+      items: upcoming.map(({ lesson }, index) => ({
+        lessonId: lesson.id,
+        position: 3 + index,
+        scheduledFor: new Date(today.getTime() + 2 * MS_PER_DAY),
+        titleSnapshot: lesson.title,
+      })),
+      settings: { weekdayMinutes },
+    });
 
     const missed = await carryLessons({ count: 2, goalId: goal.id });
 

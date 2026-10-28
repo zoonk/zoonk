@@ -3,12 +3,14 @@ import { request } from "@playwright/test";
 import { chapterMindMapSchema, goalMindMapsSchema } from "@zoonk/core/mind-maps/contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
+  lessonSkillFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
+import { skillsFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { mindMapGenerationSchema } from "../src/lib/openapi/schemas/mind-maps";
 import { createAuthenticatedApiContext } from "./helpers/auth";
@@ -25,32 +27,34 @@ const UNPROCESSABLE = 422;
 async function createGoal(userId: string) {
   const suffix = randomUUID().slice(0, 6);
 
-  const [goal, finished, current, finishedLesson, currentLesson] = await Promise.all([
+  const [goal, finished, current, finishedLesson, currentLesson, skills] = await Promise.all([
     goalFixture({ title: "Cells", userId }),
     libraryChapterFixture({ title: `Cell parts ${suffix}` }),
     libraryChapterFixture({ title: `Cell energy ${suffix}` }),
     libraryLessonFixture({ contentStatus: "completed" }),
     libraryLessonFixture({ contentStatus: "completed" }),
+    skillsFixture([`Cell parts ${suffix}`, `Cell energy ${suffix}`]),
   ]);
 
-  const plan = await planFixture({ goalId: goal.id });
+  const [partsSkill, energySkill] = skills;
 
   await Promise.all([
     chapterLessonFixture({ chapterId: finished.id, lessonId: finishedLesson.id, position: 0 }),
     chapterLessonFixture({ chapterId: current.id, lessonId: currentLesson.id, position: 0 }),
-    planItemFixture({
-      chapterId: finished.id,
-      completedAt: new Date(),
-      lessonId: finishedLesson.id,
-      planId: plan.id,
-      position: 0,
-      status: "done",
-    }),
-    planItemFixture({
-      chapterId: current.id,
-      lessonId: currentLesson.id,
-      planId: plan.id,
-      position: 1,
+    lessonSkillFixture({ lessonId: finishedLesson.id, skillId: partsSkill?.id ?? "" }),
+    lessonSkillFixture({ lessonId: currentLesson.id, skillId: energySkill?.id ?? "" }),
+    planFixture({
+      goalId: goal.id,
+      items: [
+        {
+          chapterId: finished.id,
+          completedAt: new Date(),
+          lessonId: finishedLesson.id,
+          skillId: partsSkill?.id ?? null,
+          status: "done",
+        },
+        { chapterId: current.id, lessonId: currentLesson.id, skillId: energySkill?.id ?? null },
+      ],
     }),
   ]);
 

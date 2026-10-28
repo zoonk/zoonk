@@ -4,7 +4,7 @@ import { fieldMapViewSchema } from "@zoonk/core/view-models/map/contract";
 import { type PlanItemStatus, prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import {
   courseChapterFixture,
@@ -63,19 +63,20 @@ async function createCourseGoal({
     userId,
   });
 
-  const plan = await planFixture({ goalId: goal.id });
+  // The phase's challenge closes it once its lessons are done.
+  const challenge = statuses.every((status) => status === "done") ? "done" : "todo";
 
-  await Promise.all(
-    lessons.map((lesson, position) =>
-      planItemFixture({
+  await planFixture({
+    goalId: goal.id,
+    items: [
+      ...lessons.map((lesson, position) => ({
         chapterId: chapter.id,
         lessonId: lesson.id,
-        planId: plan.id,
-        position,
         status: statuses[position] ?? "todo",
-      }),
-    ),
-  );
+      })),
+      { kind: "boss", status: challenge },
+    ],
+  });
 
   return { chapter, course, goal, lessons, skills };
 }

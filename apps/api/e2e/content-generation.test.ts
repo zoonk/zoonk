@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import {
   heldBackDraftFixture,
   libraryLessonFixture,
@@ -209,13 +209,12 @@ test.describe("Content generation API", () => {
   test("writes only the plan's first lesson for a guest's goal, counted as its start", async () => {
     const { guestApi, userId } = await createGuest(baseURL);
     const goal = await goalFixture({ userId });
-    const plan = await planFixture({ goalId: goal.id });
     const [first, second] = await Promise.all([libraryLessonFixture(), libraryLessonFixture()]);
 
-    await Promise.all([
-      planItemFixture({ lessonId: first.id, planId: plan.id, position: 0 }),
-      planItemFixture({ lessonId: second.id, planId: plan.id, position: 1 }),
-    ]);
+    await planFixture({
+      goalId: goal.id,
+      items: [first, second].map((lesson) => ({ lessonId: lesson.id })),
+    });
 
     await expect(
       readBody({

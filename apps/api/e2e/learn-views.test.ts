@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
@@ -22,21 +22,21 @@ async function createGoal(userId: string) {
     skillFixture({ name: "Percentages" }),
   ]);
 
-  const [plan, lesson] = await Promise.all([
-    planFixture({ goalId: goal.id }),
-    libraryLessonFixture({ homeChapterId: chapter.id }),
-  ]);
+  const lesson = await libraryLessonFixture({ homeChapterId: chapter.id });
 
   await Promise.all([
     chapterLessonFixture({ chapterId: chapter.id, lessonId: lesson.id, position: 0 }),
     lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id }),
-    planItemFixture({
-      chapterId: chapter.id,
-      lessonId: lesson.id,
-      planId: plan.id,
-      position: 0,
-      skillId: skill.id,
-      titleSnapshot: lesson.title,
+    planFixture({
+      goalId: goal.id,
+      items: [
+        {
+          chapterId: chapter.id,
+          lessonId: lesson.id,
+          skillId: skill.id,
+          titleSnapshot: lesson.title,
+        },
+      ],
     }),
   ]);
 

@@ -196,7 +196,7 @@ test.describe("Checkpoints API", () => {
     const goal = await createGoalAtBoss(userId);
 
     const boss = await prisma.planItem.findFirstOrThrow({
-      where: { kind: "boss", plan: { goalId: goal.id } },
+      where: { kind: "boss", phase: 0, plan: { goalId: goal.id } },
     });
 
     const path = `/v1/challenges/${boss.id}`;
@@ -256,7 +256,7 @@ test.describe("Checkpoints API", () => {
     const goal = await createGoalAtBoss(userId);
 
     const boss = await prisma.planItem.findFirstOrThrow({
-      where: { kind: "boss", plan: { goalId: goal.id } },
+      where: { kind: "boss", phase: 0, plan: { goalId: goal.id } },
     });
 
     const path = `/v1/challenges/${boss.id}`;
@@ -339,7 +339,7 @@ test.describe("Checkpoints API", () => {
     const goal = await createGoalAtBoss(userId, 1);
 
     const boss = await prisma.planItem.findFirstOrThrow({
-      where: { kind: "boss", plan: { goalId: goal.id } },
+      where: { kind: "boss", phase: 0, plan: { goalId: goal.id } },
     });
 
     const path = `/v1/challenges/${boss.id}`;

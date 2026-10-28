@@ -9,6 +9,8 @@ import {
 import { toUTCMidnight } from "@zoonk/utils/date";
 import { isJsonObject } from "@zoonk/utils/json";
 import { type FixtureAttrs } from "./_utils/fixture-attrs";
+import { lessonSkillFixture } from "./library-lessons";
+import { skillFixture } from "./skills";
 
 const DEFAULT_DAILY_MINUTES = 20;
 
@@ -32,8 +34,29 @@ type PlanAttrs = FixtureAttrs<Plan, "graph" | "phases" | "settings" | "summary">
 type PlanItemAttrs = Omit<Parameters<typeof planItemFixture>[0], "planId">;
 
 /**
+ * The item with the skill the planner gives it: its lesson's, or one that lesson then teaches when
+ * no skill links to it yet.
+ */
+async function withLessonSkill(item: PlanItemAttrs): Promise<PlanItemAttrs> {
+  if (item.skillId || !item.lessonId) {
+    return item;
+  }
+
+  const linked = await prisma.lessonSkill.findFirst({ where: { lessonId: item.lessonId } });
+
+  if (linked) {
+    return { ...item, skillId: linked.skillId };
+  }
+
+  const skill = await skillFixture();
+  await lessonSkillFixture({ lessonId: item.lessonId, skillId: skill.id });
+  return { ...item, skillId: skill.id };
+}
+
+/**
  * Creates the plan of a goal with one phase. With `items` (in their order unless they say) it's the
- * plan the planner laid out with them (see `layOutPlanFixture`), returned with the items created.
+ * plan the planner laid out with them (see `layOutPlanFixture`), each lesson teaching a skill (see
+ * `withLessonSkill`), returned with the items created.
  */
 export async function planFixture(
   attrs: PlanAttrs & { items: PlanItemAttrs[] },
@@ -49,7 +72,9 @@ export async function planFixture({ items, ...attrs }: PlanAttrs & { items?: Pla
   }
 
   const created = await Promise.all(
-    items.map((item, position) => planItemFixture({ position, ...item, planId: plan.id })),
+    items.map(async (item, position) =>
+      planItemFixture({ position, ...(await withLessonSkill(item)), planId: plan.id }),
+    ),
   );
 
   const laidOut = await layOutPlanFixture(plan.id);

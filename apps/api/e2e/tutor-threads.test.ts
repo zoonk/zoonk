@@ -55,15 +55,11 @@ async function readCreated(response: APIResponse) {
 async function createPlannedGoal(userId: string) {
   const goal = await goalFixture({ timezone: "UTC", userId });
 
-  const [plan, skill] = await Promise.all([
-    planFixture({ goalId: goal.id }),
-    skillFixture({ name: "Scientific notation" }),
-  ]);
+  const skill = await skillFixture({ name: "Scientific notation" });
 
-  await planItemFixture({
-    planId: plan.id,
-    skillId: skill.id,
-    titleSnapshot: "Scientific notation",
+  await planFixture({
+    goalId: goal.id,
+    items: [{ skillId: skill.id, titleSnapshot: "Scientific notation" }],
   });
 
   return goal;

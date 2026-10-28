@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
@@ -40,8 +40,6 @@ async function createMistakeGoal({
     ]),
   ]);
 
-  const plan = await planFixture({ goalId: goal.id });
-
   const [items] = await Promise.all([
     Promise.all(
       Array.from({ length: 3 }, () =>
@@ -51,16 +49,15 @@ async function createMistakeGoal({
     ...lessons.map((lesson, index) =>
       lessonSkillFixture({ lessonId: lesson.id, skillId: skills[index]?.id ?? "" }),
     ),
-    ...lessons.map((lesson, position) =>
-      planItemFixture({
-        kind: "lesson",
+    planFixture({
+      goalId: goal.id,
+      items: lessons.map((lesson, position) => ({
         lessonId: lesson.id,
-        planId: plan.id,
-        position,
-        status: position === 0 ? "done" : "todo",
+        skillId: skills[position]?.id ?? null,
+        status: position === 0 ? ("done" as const) : ("todo" as const),
         titleSnapshot: lesson.title,
-      }),
-    ),
+      })),
+    }),
   ]);
 
   const [mistake] = await Promise.all([

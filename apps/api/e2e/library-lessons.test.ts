@@ -8,7 +8,7 @@ import {
 import { createdLessonQuestionSchema } from "@zoonk/core/lesson-questions/contract";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
@@ -328,12 +328,12 @@ test.describe("Library lessons API", () => {
       userId,
     });
 
-    const plan = await planFixture({ goalId: goal.id });
-
     await Promise.all([
       learningProfileFixture({ activeGoalId: goal.id, userId }),
-      planItemFixture({ lessonId: lesson.id, planId: plan.id, position: 0 }),
-      planItemFixture({ lessonId: unwritten.id, planId: plan.id, position: 1 }),
+      planFixture({
+        goalId: goal.id,
+        items: [lesson, unwritten].map((planned) => ({ lessonId: planned.id })),
+      }),
     ]);
 
     const plusRequired = { error: { code: "PLUS_REQUIRED" } };

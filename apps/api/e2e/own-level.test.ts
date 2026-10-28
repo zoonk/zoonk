@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -17,19 +17,13 @@ async function createGoal(userId: string) {
     Promise.all([1, 2, 3, 4].map((index) => skillFixture({ name: `Skill ${index}` }))),
   ]);
 
-  const plan = await planFixture({ goalId: goal.id });
-
-  await Promise.all(
-    skills.map((skill, position) =>
-      planItemFixture({
-        chapterId: chapters[Math.floor(position / 2)]?.id ?? null,
-        phase: 0,
-        planId: plan.id,
-        position,
-        skillId: skill.id,
-      }),
-    ),
-  );
+  await planFixture({
+    goalId: goal.id,
+    items: skills.map((skill, position) => ({
+      chapterId: chapters[Math.floor(position / 2)]?.id ?? null,
+      skillId: skill.id,
+    })),
+  });
 
   return { chapters, goal };
 }

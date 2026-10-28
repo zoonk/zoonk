@@ -5,11 +5,10 @@ import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
-import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { playableStepContent } from "@zoonk/testing/fixtures/playable-step-contents";
-import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { expect, test } from "./fixtures";
 import { openAs } from "./study-day";
 
@@ -65,19 +64,13 @@ async function createWaitingLearner() {
     playableLessonFixture({ lesson: { title: `Simple interest ${randomUUID().slice(0, 6)}` } }),
   ]);
 
-  const [goal, skill] = await Promise.all([
-    goalFixture({ timezone: "UTC", userId: user.id }),
-    skillFixture({ name: "Interest" }),
-  ]);
-
-  const lessons = [unwritten, written.lesson];
+  const goal = await goalFixture({ timezone: "UTC", userId: user.id });
 
   await Promise.all([
     planFixture({
       goalId: goal.id,
-      items: lessons.map((lesson) => ({ lessonId: lesson.id, skillId: skill.id })),
+      items: [unwritten, written.lesson].map((lesson) => ({ lessonId: lesson.id })),
     }),
-    ...lessons.map((lesson) => lessonSkillFixture({ lessonId: lesson.id, skillId: skill.id })),
     learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
   ]);
 
