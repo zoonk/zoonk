@@ -2,10 +2,12 @@ import { AsyncLocalStorage } from "node:async_hooks";
 import { type BetterAuthPlugin } from "better-auth";
 import { createAuthEndpoint } from "better-auth/api";
 import { betterAuth } from "better-auth/minimal";
+import { bearer } from "better-auth/plugins";
 import { type BetterAuthOptions } from "better-auth/types";
 import { z } from "zod";
 import { type NativeAppleCredentials } from "./native-apple-contract";
 import { callNativeAuthHandler } from "./native-auth-handler";
+import { guestPlugin } from "./plugins/guest";
 import { getNativeAppleProvider } from "./providers/apple";
 import { baseAuthConfig, baseAuthPlugins } from "./server";
 import { stripePlugin } from "./stripe/plugin";
@@ -77,6 +79,7 @@ const nativeAppleDatabaseHooks = {
   },
 } satisfies BetterAuthOptions["databaseHooks"];
 
+/** A guest sends its bearer, which the guest plugin reads to move its progress to the Apple account. */
 function createNativeAppleAuth({ disableSignUp }: { disableSignUp: boolean }) {
   const appleProvider = getNativeAppleProvider();
 
@@ -87,7 +90,13 @@ function createNativeAppleAuth({ disableSignUp }: { disableSignUp: boolean }) {
   return betterAuth({
     ...baseAuthConfig,
     databaseHooks: nativeAppleDatabaseHooks,
-    plugins: [...baseAuthPlugins, stripePlugin(), nativeAppleRateLimitPlugin()],
+    plugins: [
+      ...baseAuthPlugins,
+      bearer(),
+      stripePlugin(),
+      guestPlugin(),
+      nativeAppleRateLimitPlugin(),
+    ],
     rateLimit: { enabled: true, storage: "database" },
     socialProviders: nativeAppleProvider,
   });
