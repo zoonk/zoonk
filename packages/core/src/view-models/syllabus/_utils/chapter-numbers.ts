@@ -3,7 +3,7 @@ import { type Goal, prisma } from "@zoonk/db";
 import { libraryRowsVisibleTo } from "../../../library/_utils/library-visibility";
 import { hasSubjectPages } from "../subject-pages";
 import { buildSyllabus } from "./build-syllabus";
-import { loadSyllabusInput } from "./load-syllabus";
+import { readSyllabusInput } from "./read-syllabus-input";
 
 /** A chapter's number as every screen gives it, and the subject (or module) whose page numbers it. */
 type ChapterNumber = { position: number; subject: { key: string; name: string } | null };
@@ -41,7 +41,7 @@ async function loadCourseNumbers(goal: Goal): Promise<Map<string, number>> {
  */
 export async function loadChapterNumbering(goal: Goal): Promise<ChapterNumbering> {
   const [input, courseNumbers] = await Promise.all([
-    loadSyllabusInput(goal),
+    readSyllabusInput(goal.userId, goal.id),
     loadCourseNumbers(goal),
   ]);
 

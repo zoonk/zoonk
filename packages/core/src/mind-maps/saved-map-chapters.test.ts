@@ -307,6 +307,8 @@ describe("mind maps read from the saved plan", () => {
     const grouped = texts.filter((text) => /JOIN plan_items i ON i\.plan_id = p\.id/u.test(text));
 
     expect(grouped).toHaveLength(1);
-    expect(statements).toBeLessThanOrEqual(18);
+    // Numbering's syllabus input reads the goal through the request's goal fact, which a request
+    // shares with the ownership check; tests run without that dedupe, so they count it again.
+    expect(statements).toBeLessThanOrEqual(19);
   });
 });

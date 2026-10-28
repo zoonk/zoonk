@@ -12,6 +12,17 @@ import { readActiveGoal, readLearningProfile } from "../../learner/facts/learnin
 import { getOwnedGoal } from "../../learner/get-owned-goal";
 import { getSession } from "../../users/get-session";
 
+/** Everything a tab reads (the active goal, the plan, the learner model and finished lessons). */
+export function tagViewGoalReads(userId: string) {
+  cacheTag(
+    getGoalsCacheTag(userId),
+    getLearnerModelCacheTag(userId),
+    getLearningProfileCacheTag(userId),
+    getUserProgressCacheTag(userId),
+    getUserSubscriptionCacheTag(userId),
+  );
+}
+
 export type ViewGoalResult =
   | { goal: Goal; status: "ready" }
   | { status: "noGoal" | "notFound" | "unauthorized" };
@@ -31,14 +42,7 @@ export async function resolveViewGoal(goalId?: string): Promise<ViewGoalResult> 
   }
 
   const userId = session.user.id;
-
-  cacheTag(
-    getGoalsCacheTag(userId),
-    getLearnerModelCacheTag(userId),
-    getLearningProfileCacheTag(userId),
-    getUserProgressCacheTag(userId),
-    getUserSubscriptionCacheTag(userId),
-  );
+  tagViewGoalReads(userId);
 
   if (goalId === undefined) {
     const goal = await readActiveGoal(userId);
