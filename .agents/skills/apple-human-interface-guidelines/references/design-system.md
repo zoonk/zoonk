@@ -150,7 +150,8 @@ Open, the Duo reads like an open wallet: two panes either side of the fold, each
 | List and detail: Statistics                      | the list                                                          | the selected item                                                                        | 0.5            |
 
 - In the lesson player, Previous and the main action stay at the bottom of the trailing page on every screen. A screen with a picture, visual or canvas puts it on the trailing page; a text-only screen leaves the trailing page empty above Continue, so Continue never moves.
-- Side panels (Ask, the buddy's day, the mock answer sheet, the call aside) stay `.inspector` on regular widths and sheets on compact widths: partially folded, the system moves the inspector's edge to the fold.
+- Side panels in a task (Ask, the mock answer sheet, the call aside) stay `.inspector` on regular widths and sheets on compact widths: partially folded, the system moves the inspector's edge to the fold. A tab's side panel (the buddy's day) is `PaneSplit`'s trailing pane instead: SwiftUI turns a presented inspector into a sheet when the width turns compact, and a hidden tab's would cover the tab on show.
+- A pane is about a phone wide even where the size class is regular. A view inside it that picks a wide layout from the regular size class overflows, so give the pane `.environment(\.horizontalSizeClass, .compact)` (as Statistics does) or choose by the measured width.
 - One-column screens (onboarding, results, celebrations) let their scrolling content cross the fold and move their bottom action off it with `.keepsOffFold()`.
 
 ## Pitfalls
