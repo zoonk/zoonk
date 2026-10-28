@@ -6,10 +6,6 @@ import {
 
 const MS_PER_SECOND = 1000;
 
-/**
- * One turn of a live call as it builds up: GPT-Live sends each speaker's transcript in fragments,
- * with where each one falls on the session's timeline. A typed reply has no timeline.
- */
 export type TranscriptTurn = ConversationTurn & { endMs: number | null; startMs: number | null };
 
 type TranscriptFragment = {
@@ -19,10 +15,7 @@ type TranscriptFragment = {
   startMs: number;
 };
 
-/**
- * Adds a fragment to the speaker's turn when they spoke last, or starts their next turn. Fragments
- * are appended exactly as received, since they carry their own spaces.
- */
+/** Fragments carry their own spaces, so they're appended exactly as received. */
 export function addTranscriptFragment(
   turns: readonly TranscriptTurn[],
   fragment: TranscriptFragment,
@@ -47,12 +40,10 @@ export function addTranscriptFragment(
   ];
 }
 
-/** A reply the learner typed: a turn of its own. */
 export function addTypedReply(turns: readonly TranscriptTurn[], text: string): TranscriptTurn[] {
   return [...turns, { endMs: null, speaker: "learner", startMs: null, text }];
 }
 
-/** How long the learner spoke: each spoken turn from its first word to its last. */
 export function getSpokenSeconds(turns: readonly TranscriptTurn[]): number {
   const spokenMs = turns
     .filter((turn) => turn.speaker === "learner")
@@ -65,7 +56,6 @@ export function getSpokenSeconds(turns: readonly TranscriptTurn[]): number {
   return Math.round(spokenMs / MS_PER_SECOND);
 }
 
-/** The turns as the app saves and checks them: trimmed, without empty ones, within the limits. */
 export function toConversationTurns(turns: readonly TranscriptTurn[]): ConversationTurn[] {
   return turns
     .map((turn) => ({

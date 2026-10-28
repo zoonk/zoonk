@@ -9,19 +9,12 @@ import { type RefObject, useCallback, useEffect, useMemo, useRef, useState } fro
 import { sendLiveCallCue } from "./live-call-commands";
 import { type LiveCallSession } from "./live-call-session";
 
-/** The character's answer has settled once its transcript stays quiet this long. */
 const REPLY_SETTLED_MS = 1500;
 
 type CheckObjectives = (turns: ConversationTurn[]) => Promise<string[] | null>;
 
 const skipObjectiveChecks = () => Promise.resolve(null);
 
-/**
- * The call's goals, marked while the learner talks: once the character has answered a learner
- * turn, the host checks the transcript so far, so an agreement or a test part moving on is in it.
- * One check runs at a time; a turn that ends meanwhile is checked right after it. `onChange` hears
- * every change, so the voice model can be told where the learner is.
- */
 function useObjectiveChecks({
   checkObjectives,
   conversation,
@@ -75,13 +68,11 @@ function useObjectiveChecks({
     }
   }, []);
 
-  /** The learner is talking or typed a reply: the next answer from the character gets checked. */
   const onLearnerTurn = useCallback(() => {
     learnerSpoke.current = true;
     clearSettle();
   }, [clearSettle]);
 
-  /** The character is answering: check once its answer settles. */
   const onCharacterTurn = useCallback(() => {
     if (!learnerSpoke.current) {
       return;
@@ -100,10 +91,6 @@ function useObjectiveChecks({
   return { metLabels, onCharacterTurn, onLearnerTurn };
 }
 
-/**
- * The call's goals, checked after each of the character's answers, and GPT-Live told where the
- * learner is so it wraps up once everything is done.
- */
 export function useCallObjectives({
   checkObjectives,
   conversation,
@@ -133,7 +120,6 @@ export function useCallObjectives({
     [labels, sessionRef],
   );
 
-  // An exam task's one goal is the task itself, graded when the call ends: nothing to check.
   const check = conversation.examTask ? skipObjectiveChecks : checkObjectives;
   return useObjectiveChecks({ checkObjectives: check, conversation, getTurns, onChange });
 }

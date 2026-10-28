@@ -32,7 +32,6 @@ import { useExamTaskTitle } from "./exam-task-intro";
 type Grade = ExamSpeakingFeedback["criteria"][number];
 type GradedCriterion = { criterion: SpeakingCriterionView; grade: Grade };
 
-/** The task's criteria in the order its paper lists them, each with its estimate, if it has one. */
 function listCriteria({
   examTask,
   feedback,
@@ -69,10 +68,6 @@ function CriterionName({
   );
 }
 
-/**
- * The band every numbered scale of the task names for the exam's level ("On these scales, 2 is
- * the B2 level"), so "1–2 of 3" reads against it; null for letters and points, or mixed levels.
- */
 function useLevelLine({ examTask }: { examTask: ExamTaskView }): string | null {
   const t = useExtracted();
   const bands = new Set(examTask.criteria.map((criterion) => criterion.levelBand));
@@ -89,10 +84,6 @@ function useLevelLine({ examTask }: { examTask: ExamTaskView }): string | null {
   });
 }
 
-/**
- * What the estimate rests on, said once above the criteria: typed replies leave out how the
- * learner sounds, and a brief task leaves little to judge.
- */
 function useEvidenceNotes({ feedback }: { feedback: ExamSpeakingFeedback }): string[] {
   const t = useExtracted();
 
@@ -105,7 +96,6 @@ function useEvidenceNotes({ feedback }: { feedback: ExamSpeakingFeedback }): str
   ].filter((note) => typeof note === "string");
 }
 
-/** One criterion's estimate and where it stands against the exam's level; the focus marked. */
 function CriterionEstimate({
   focus,
   graded,
@@ -135,10 +125,6 @@ function CriterionEstimate({
   );
 }
 
-/**
- * Each criterion's estimate on its official scale and where it stands against the exam's level,
- * and the ones typed replies can't show left unrated.
- */
 function CriteriaStep({
   conversation,
   examTask,
@@ -194,7 +180,6 @@ function CriteriaStep({
   );
 }
 
-/** The criterion to work on first: what was heard, and one concrete tip. */
 function FocusStep({ focus, language }: { focus: GradedCriterion; language: string }) {
   const t = useExtracted();
   const gloss = useCriterionGloss();
@@ -218,7 +203,6 @@ function FocusStep({ focus, language }: { focus: GradedCriterion; language: stri
   );
 }
 
-/** Nothing to grade, never the learner's fault. */
 function NoGradeStep() {
   const t = useExtracted();
 
@@ -247,15 +231,6 @@ function TryAgainButton({ onTryAgain }: { onTryAgain: () => Promise<void> }) {
   );
 }
 
-/**
- * After an exam's speaking task, one thing at a time: each official criterion the task is rated on
- * with its estimate on the exam's own scale (DELE's 0 to 3, Goethe's A to E, Cambridge's 0 to 5 in
- * half bands, DELF's points) and the ones at the exam's level marked, with what the call did to
- * the day, then the one to work on first with what was heard and a tip. A milestone the call earned
- * opens before them. One task gives no total: the paper's points come from all its tasks. It's an
- * estimate, never an official score, and pronunciation counts how easy the learner is to
- * understand, never their accent.
- */
 export function ExamSpeakingResult({
   ceremony,
   conversation,
@@ -267,16 +242,13 @@ export function ExamSpeakingResult({
   nextTaskHref,
   onTryAgain,
 }: {
-  /** The full-screen moment for a milestone the call earned, before the first step. */
   ceremony?: StepsItem["moment"];
   conversation: LanguageConversationView;
-  /** What the call just did to the day (`DayMoment`), last on the first step. */
   dayMoment: React.ReactNode;
   examTask: ExamTaskView;
   exitHref: string;
   feedback: ExamSpeakingFeedback | null;
   nextHref: string;
-  /** The paper's next task, opened in its list; null after the last one. */
   nextTaskHref: string | null;
   onTryAgain: (() => Promise<void>) | null;
 }) {

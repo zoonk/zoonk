@@ -19,7 +19,6 @@ type Result = NonNullable<LanguageConversationView["result"]>;
 
 type Objective = LanguageConversationView["objectives"][number];
 
-/** The goals the learner got across and the phrases they said well. */
 function WentWellStep({
   feedback,
   language,
@@ -61,7 +60,6 @@ function WentWellStep({
   );
 }
 
-/** A word to practice saying: how it sounds in the learner's spelling, a tip and its sound. */
 function PronunciationTip({
   item,
   language,
@@ -87,10 +85,6 @@ function PronunciationTip({
   );
 }
 
-/**
- * One thing to say better, as a change: what was said on a red line, the better way on a blue
- * one, then why, with the better way's sound beside it.
- */
 function BetterWay({
   improve,
   language,
@@ -121,7 +115,6 @@ function BetterWay({
   );
 }
 
-/** One thing to say better (with its sound), the goals still to get across and words to practice. */
 function ImproveStep({
   feedback,
   language,
@@ -164,13 +157,6 @@ function ImproveStep({
   );
 }
 
-/**
- * After a call, one thing at a time: the stars (and whether a checkpoint was passed) with what the
- * call came to and what it did to the day, what went well (the goals got across, the phrases said
- * well), then what to improve: one better way to say something, with its sound, the goals still
- * missing and words to practice. A milestone the call earned opens before the stars. A lost
- * checkpoint costs nothing and shows whether another try needs Plus.
- */
 export function ConversationResult({
   ceremony,
   conversation,
@@ -179,10 +165,8 @@ export function ConversationResult({
   nextHref,
   result,
 }: {
-  /** The full-screen moment for a milestone the call earned, before the stars. */
   ceremony?: StepsItem["moment"];
   conversation: LanguageConversationView;
-  /** What the call just did to the day (`DayMoment`), under the stars. */
   dayMoment: React.ReactNode;
   exitHref: string;
   nextHref: string;

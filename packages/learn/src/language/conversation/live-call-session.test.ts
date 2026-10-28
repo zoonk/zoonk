@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createLiveCallSession, watchConnection } from "./live-call-session";
 
-/** The browser's WebRTC, as far as a call needs it: one peer with its events data channel. */
 function fakeDataChannel() {
   const channel = {
     bufferedAmount: 0,
@@ -57,7 +56,6 @@ class FakePeerConnection {
     this.localDescription = offer;
   });
 
-  /** GPT-Live answers: the events channel opens and the session starts. */
   setRemoteDescription = vi.fn(async () => {
     this.channel.open();
     this.channel.emit({ session: { id: "live_session" }, type: "session.started" });
@@ -81,7 +79,6 @@ function installWebRTC() {
   return { getAudioTracks: () => [track], getTracks: () => [track] } as unknown as MediaStream;
 }
 
-/** A live call whose events channel then closes without `session.closed`, as a hangup leaves it. */
 async function closedWithoutConfirmation(endedByServer: () => Promise<boolean>) {
   const stream = installWebRTC();
   const call = { phase: "connecting" };

@@ -39,10 +39,6 @@ function MistakeItem({ mistake }: { mistake: UnitMistake }) {
   );
 }
 
-/**
- * The learner's open mistakes on this unit, each with the question, what they answered, the right
- * answer and why, a hairline between them, and which skill it was.
- */
 export function UnitMistakes({ mistakes }: { mistakes: UnitMistake[] }) {
   const t = useExtracted();
 

@@ -16,13 +16,8 @@ type ReviewWord = PronunciationReviewsView["words"][number];
 
 type Pace = "normal" | "slow";
 
-/** Slow enough to hear each sound, close enough to real speech to still sound like the word. */
 const SLOW_RATE = 0.7;
 
-/**
- * Listen and Listen slowly: the native recording when the word has one, otherwise the word read
- * aloud in its language. The button that started the sound shows it loading, playing or failed.
- */
 function WordListenButtons({ language, word }: { language: string; word: ReviewWord }) {
   const t = useExtracted();
   const speech = useSpokenAudio(language);
@@ -83,10 +78,6 @@ function WordListenButtons({ language, word }: { language: string; word: ReviewW
   );
 }
 
-/**
- * The word on the page, as large as a title, as a native speaker says it, then slowly, with how
- * to spell the sound (in the mono face, letter by letter) and how to fix it.
- */
 export function PronunciationWord({ language, word }: { language: string; word: ReviewWord }) {
   const t = useExtracted();
 
@@ -118,7 +109,6 @@ export function PronunciationWord({ language, word }: { language: string; word: 
   );
 }
 
-/** Why the last recording wasn't graded, or null to ask for the word. */
 function useNoticeMessage(notice: PronunciationNotice | null): string | null {
   const t = useExtracted();
 
@@ -133,10 +123,6 @@ function useNoticeMessage(notice: PronunciationNotice | null): string | null {
   return notice === "failed" ? t("That didn't go through. Try again.") : null;
 }
 
-/**
- * The microphone for the word: whether this browser can record at all (it's false once the
- * learner blocked it), and the recorder the action bar's Record button drives.
- */
 export function useWordRecorder(
   onRecorded: (recording: { audio: Blob; durationMs: number }) => void,
 ) {
@@ -146,11 +132,6 @@ export function useWordRecorder(
   return { available: canRecord && recorder.status !== "denied", recorder };
 }
 
-/**
- * What the microphone is doing, in one line under the word: say it, recording, listening to how
- * it sounded, or why the last try wasn't graded. A guest whose free tries are used gets the way
- * to an account.
- */
 export function RecorderStatus({
   available,
   notice,

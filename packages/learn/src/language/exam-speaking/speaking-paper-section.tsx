@@ -25,13 +25,8 @@ import { CallLimitMessage } from "../conversation/call-limit-message";
 import { useCallStart } from "../conversation/use-call-start";
 import { TaskRow, getTaskRowId } from "./speaking-task-row";
 
-/**
- * How starting a task went: it opened (true), it didn't (false), or the plan's call time left
- * can't fit the task's official length, so it waits (`limit`).
- */
 export type ExamTaskStart = boolean | { limit: CallLimit };
 
-/** The task a link asked for (a result's "Next: Tarea 2"), brought into view with its row open. */
 function useOpenTask(openTask: string | null) {
   useEffect(() => {
     if (!openTask) {
@@ -44,15 +39,6 @@ function useOpenTask(openTask: string | null) {
   }, [openTask]);
 }
 
-/**
- * The speaking paper of the exam the goal prepares for (DELE, DELF or DALF, the Goethe-Zertifikat,
- * Cambridge English), its tasks in the paper's order under their official names with the exam's
- * timing. A tap starts that task's call with a new card; while the card is written the section
- * shows the wait, and the call opens when it's ready. Without Plus the tasks show all the same,
- * under the one notice of what Plus unlocks, read before them. The AI stands in for the human examiner or the
- * other candidate, and each task ends with an estimate on the official criteria, never a score. A
- * task the call time left can't fit says until when, like any call, and writes nothing.
- */
 export function SpeakingPaperSection({
   onStart,
   openTask = null,
@@ -60,19 +46,14 @@ export function SpeakingPaperSection({
   resultHref,
   title,
 }: {
-  /** Starts the task's call and opens it; resolves to how that went. */
   onStart: (task: string) => Promise<ExamTaskStart>;
-  /** The task to open and bring into view: a result's "Next" link asks for the next one. */
   openTask?: string | null;
   paper: SpeakingPaperView;
-  /** Where a finished try's result opens. */
   resultHref: (conversationId: string) => string;
-  /** The section's name on a page that already names the paper ("Tasks"); "Speaking" otherwise. */
   title?: string;
 }) {
   const t = useExtracted();
   const titleId = useId();
-  // The start reads the task from the ref; the row that started shows it from the state.
   const selected = useRef<string | null>(null);
   const [startedTask, setStartedTask] = useState<string | null>(null);
   const [limit, setLimit] = useState<CallLimit | null>(null);
@@ -124,7 +105,7 @@ export function SpeakingPaperSection({
       )}
 
       <ListGroup>
-        {/* The router keeps the page: a link asking for another task opens it as on a first visit. */}
+        {/* The router keeps the page, so the key remounts the list for a link asking for another task. */}
         <ol key={openTask}>
           {paper.tasks.map((task, index) => (
             <li key={task.key}>
@@ -165,7 +146,6 @@ export function SpeakingPaperSection({
         <CallLimitMessage
           className="py-4"
           limit={limit}
-          // Shorter calls may still fit, so it's this task that waits, not every call.
           title={
             limit.period === "month"
               ? t("Not enough call time this month for this task")

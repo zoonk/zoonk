@@ -13,7 +13,7 @@ import { LevelBar } from "../level-bar";
 
 type LanguageSkillLevel = LanguageProgressView["levels"][number];
 
-/** Name, bar and level columns; the target line is placed over the bar column with the same sizes. */
+/** `BAR_START` and `BAR_WIDTH` repeat these columns and gaps, so the target line sits over the bars. */
 const ROW_GRID = "grid grid-cols-[8rem_1fr_3.5rem] items-center gap-x-3";
 const BAR_START = "8rem + 0.75rem";
 const BAR_WIDTH = "100% - 8rem - 3.5rem - 1.5rem";
@@ -67,14 +67,12 @@ function LevelRow({ level }: { level: LanguageSkillLevel }) {
             className="text-muted-foreground size-3.5 shrink-0"
           />
         )}
-        {/* An empty arrow's width keeps every level in one column, moved or not. */}
         {level.trend === "same" && <span aria-hidden="true" className="size-3.5 shrink-0" />}
       </span>
     </li>
   );
 }
 
-/** Every skill with an up arrow, so the sentence and the arrows always agree. */
 function RiseLine({ levels }: { levels: LanguageSkillLevel[] }) {
   const t = useExtracted();
   const format = useFormatter();
@@ -107,11 +105,6 @@ function RiseLine({ levels }: { levels: LanguageSkillLevel[] }) {
   );
 }
 
-/**
- * Level by skill on the A1 to C2 scale, flat: one hairline row per skill with its segmented bar and
- * its level in the mono face, the learner's target as a dashed line across them, an arrow for each
- * skill that moved since the level test, and the biggest rise.
- */
 export function SkillLevelsCard({ progress }: { progress: LanguageProgressView }) {
   const t = useExtracted();
   const { levels, target } = progress;

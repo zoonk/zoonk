@@ -25,11 +25,6 @@ type Result = NonNullable<LanguageConversationView["result"]>;
 
 const MAX_STARS = 3;
 
-/**
- * The call's stars, from what the learner did and never at random, as a readout ("2/3") after one
- * small star in progress's blue (what the call reached): the result's anchor. Its star lands as
- * the result shows, unless the call lost its challenge.
- */
 function Stars({ lost, stars }: { lost: boolean; stars: number }) {
   const t = useExtracted();
   const celebrate = useCelebration();
@@ -57,7 +52,6 @@ function Stars({ lost, stars }: { lost: boolean; stars: number }) {
   );
 }
 
-/** A checkpoint says whether it was passed; a practice call or a mock is named by its title. */
 function useHeadline({
   conversation,
   result,
@@ -74,10 +68,6 @@ function useHeadline({
   return result.passed ? t("Challenge passed") : t("Not this time");
 }
 
-/**
- * What the call came to, as tiles: the goals got across of all of them, and the Brain Power it
- * paid. Each shows only when it has something to say.
- */
 function CallFacts({
   conversation,
   result,
@@ -103,7 +93,6 @@ function CallFacts({
           label={t("Goals")}
           tone="success"
           value={
-            // "2/3", as the stars count over it; screen readers hear "2 of 3".
             <>
               <span aria-hidden="true">
                 {met}
@@ -133,12 +122,6 @@ function CallFacts({
   );
 }
 
-/**
- * The stars, the call's verdict or name, what it came to as tiles under them, how to earn the
- * missing stars in one quiet line, and last, what the call did to the day. A lost
- * checkpoint says it comes back to try again, or, once the learner's plan leaves it to Plus
- * (`locked`: Plus lapsed), says so as its challenge does, with "See Plus" beside Continue.
- */
 export function StarsStep({
   conversation,
   dayMoment,
@@ -146,7 +129,6 @@ export function StarsStep({
   result,
 }: {
   conversation: LanguageConversationView;
-  /** What the call just did to the day (`DayMoment`). */
   dayMoment: React.ReactNode;
   feedback: CallFeedback | null;
   result: Result;

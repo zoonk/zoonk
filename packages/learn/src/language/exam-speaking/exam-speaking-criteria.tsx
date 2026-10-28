@@ -13,7 +13,6 @@ type GradedCriterion = {
   grade: ExamSpeakingFeedback["criteria"][number];
 };
 
-/** Every criterion the task was rated on, with its estimate, where it stands, what was heard and a tip. */
 export function CriteriaDetails({
   graded,
   language,

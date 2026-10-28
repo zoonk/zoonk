@@ -12,26 +12,22 @@ import { useTimeLeft } from "../../_utils/use-time-left";
 const MS_PER_MINUTE = 60_000;
 const TICK_MS = 500;
 
-/** A preparation started this long ago belongs to another sitting, so the card starts over. */
 const STALE_MINUTES = 360;
 
 function getStorageKey(cardId: string): string {
   return `zoonk:exam-prep:${cardId}`;
 }
 
-/** When this card's preparation started on this device, if it did and isn't stale. */
 function readStartedAt(cardId: string): number | null {
   const value = Number(deviceStorage.get(getStorageKey(cardId)));
   return value > 0 && Date.now() - value < STALE_MINUTES * MS_PER_MINUTE ? value : null;
 }
 
-/** Another tab of the same card starting its clock starts this one too. */
 function subscribeToStorage(onChange: () => void) {
   globalThis.addEventListener("storage", onChange);
   return () => globalThis.removeEventListener("storage", onChange);
 }
 
-/** The preparation's time left, ticking twice a second, and a line once it's over. */
 function PrepTimeLeft({ deadline }: { deadline: number }) {
   const t = useExtracted();
   const leftMs = useTimeLeft({ deadline, tickMs: TICK_MS });
@@ -47,7 +43,6 @@ function PrepTimeLeft({ deadline }: { deadline: number }) {
   return <p className="text-readout text-2xl leading-tight">{formatClock(leftMs)}</p>;
 }
 
-/** "The exam gives 10 min…", or the shared time and this task's share of it. */
 function usePrepLine() {
   const t = useExtracted();
   const format = useFormatter();
@@ -65,18 +60,10 @@ function usePrepLine() {
         });
 }
 
-/**
- * The exam's preparation time before a task, as the exam room's clock in the mono face, like a
- * mock's timer: the learner starts it when they turn to the card, can start it again, and can
- * start the call any time. The clock keeps running through a reload or a locked phone (its start
- * is kept on the device, per card), and nothing is charged while it runs, since the call hasn't
- * connected.
- */
 export function PrepTimer({
   cardId,
   task,
 }: {
-  /** The task's call, whose card this preparation is for. */
   cardId: string;
   task: Pick<SpeakingTaskView, "prepMinutes" | "prepShared">;
 }) {

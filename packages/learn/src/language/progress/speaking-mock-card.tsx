@@ -30,12 +30,6 @@ function useSpeakingMockDescription() {
   return (exam: SpeakingMockExam) => descriptions[exam];
 }
 
-/**
- * The speaking mock of the exam the goal prepares for (IELTS or TOEFL iBT), flat on its page or
- * sheet with the conversation kind's dot: a short test with an examiner, then an estimated band per
- * criterion. The host starts the call and opens it; false means it didn't. A mock is usually
- * written ahead and opens at once; when it isn't, the card shows it being written until it opens.
- */
 export function SpeakingMockCard({
   exam,
   onStart,

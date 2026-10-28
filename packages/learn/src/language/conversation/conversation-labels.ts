@@ -7,7 +7,6 @@ import {
 } from "@zoonk/core/language/conversations/contract";
 import { useExtracted } from "next-intl";
 
-/** A speaking mock's name, as its card and call header say it. */
 export function useSpeakingMockTitle() {
   const t = useExtracted();
 
@@ -19,7 +18,6 @@ export function useSpeakingMockTitle() {
   return (exam: SpeakingMockExam) => titles[exam];
 }
 
-/** What kind of call this is, as the header says it; an exam task names its exam ("DELE B2"). */
 export function useConversationTitle(
   conversation: Pick<LanguageConversationView, "exam" | "examTask" | "kind">,
 ) {
@@ -41,10 +39,6 @@ export function useConversationTitle(
   return t("Practice call");
 }
 
-/**
- * The speaking criteria of both exams, as learners read them: IELTS's four, and TOEFL's Listen and
- * Repeat accuracy with the four read from the interview.
- */
 export function useCriterionName() {
   const t = useExtracted();
 

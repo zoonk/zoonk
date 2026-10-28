@@ -27,10 +27,6 @@ import { LearnPageBar } from "../../shell/learn-bar";
 import { type ExamTaskStart, SpeakingPaperSection } from "./speaking-paper-section";
 import { useTaskMinutes } from "./speaking-task-row";
 
-/**
- * A language goal's exam-style speaking tasks as a row of "Practice anytime", marked Plus when
- * the learner's plan doesn't include them.
- */
 export function SpeakingPracticeRow({
   entry,
   href,
@@ -60,12 +56,6 @@ export function SpeakingPracticeRow({
   );
 }
 
-/**
- * A language goal's speaking practice in an exam's format, at the level the learner aims for: the
- * paper named under its tile with how many tasks and how long, and that it's an official exam
- * the learner needn't take (a goal that names none practices its language's), then its tasks to
- * open one at a time. A result's "Next" comes back here with the next task open (`openTask`).
- */
 export function SpeakingPracticeScreen({
   backHref,
   onStart,

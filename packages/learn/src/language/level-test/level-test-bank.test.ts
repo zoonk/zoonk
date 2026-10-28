@@ -9,7 +9,6 @@ import {
 
 const ASKED_AT = Date.parse("2026-09-28T10:00:00Z");
 
-/** Runs claim a pair's questions within seconds; one that hasn't after 45 s was lost. */
 const BANK_START_MS = 45_000;
 
 const idle = { expectedSeconds: 120, startedAt: null, status: "preparing" as const };

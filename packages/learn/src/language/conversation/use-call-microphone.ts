@@ -8,10 +8,7 @@ function stopTracks(stream: MediaStream) {
   }
 }
 
-/**
- * The learner's microphone, or silence when it's blocked. A GPT-Live session only moves on while
- * audio streams in, so a call the learner types in still sends silence.
- */
+/** Silence when the microphone is blocked: a GPT-Live session only moves on while audio streams in. */
 export async function openCallAudio(): Promise<{
   blocked: boolean;
   stop: () => void;
@@ -30,7 +27,7 @@ export async function openCallAudio(): Promise<{
 
     return {
       blocked: true,
-      // The call stops its audio when it fails, ends and closes: only the first stop closes it.
+      // Called on fail, end and close; an AudioContext closes only once.
       stop: () => {
         stopTracks(destination.stream);
 
@@ -45,13 +42,7 @@ export async function openCallAudio(): Promise<{
 
 export type CallAudio = Awaited<ReturnType<typeof openCallAudio>>;
 
-/**
- * The microphone a tap opened before its call's screen existed (a checkpoint's Start creates the
- * call first). Safari on iOS asks for it, and asks again after "Don't Allow", only while the tap is
- * still active, so the tap asks and the call's first start takes what it got. It's taken once:
- * `release` lets it go unless a start took it first, and every later `take` finds nothing. It's
- * part of the intro's own code, so the tap asks before the call's screen loads or anything waits.
- */
+/** Safari on iOS asks for the microphone only while a tap is active, so the tap opens it before the call's screen exists. It's taken once. */
 export function openCallAudioInTap() {
   const held: { audio: Promise<CallAudio> | null } = { audio: openCallAudio() };
 
@@ -66,17 +57,12 @@ export function openCallAudioInTap() {
 
 export type TappedCallAudio = ReturnType<typeof openCallAudioInTap>;
 
-/**
- * The call's microphone: open for the whole call, closed when the call fails or ends and when the
- * screen closes, even a screen left while the call was still opening. It must not close when the
- * session is set: that would cut the audio GPT-Live needs before it says a word.
- */
+/** It must not close when the session is set: GPT-Live needs the audio before it says a word. */
 export function useCallMicrophone() {
   const [blocked, setBlocked] = useState(false);
   const stopAudio = useRef<(() => void) | null>(null);
   const screenClosed = useRef(false);
 
-  /** Keeps the audio for the call; false when the screen closed meanwhile, and the audio with it. */
   const keep = useCallback((audio: CallAudio): boolean => {
     if (screenClosed.current) {
       audio.stop();
@@ -90,9 +76,8 @@ export function useCallMicrophone() {
 
   const stop = useCallback(() => stopAudio.current?.(), []);
 
-  // React runs this cleanup and setup again without unmounting (Strict Mode in development, a
-  // screen kept hidden in an Activity and shown again), so setup reopens the screen: otherwise
-  // every later call would drop its audio and never connect.
+  // React reruns this cleanup and setup without unmounting (Strict Mode, Activity), so setup reopens
+  // the screen, or every later call would drop its audio.
   useEffect(() => {
     screenClosed.current = false;
 

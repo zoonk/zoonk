@@ -4,12 +4,6 @@ import { ProgressCell } from "../../_components/progress-cells";
 
 const HALF_STEPS_PER_LEVEL = 2;
 
-/**
- * A language goal's level on the CEFR scale, A1 to C2: each level's two half steps as cells (C2
- * has one), the steps reached in blue and the ones up to the level the learner aims for outlined,
- * each level's name under its cells. Decoration: the level's words ("A2+ → B1+") are beside it.
- * Nothing for a label off the scale.
- */
 export function LevelLadder({
   className,
   label,

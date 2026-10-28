@@ -18,32 +18,13 @@ import { CharacterRow, MicNote } from "./conversation-parts";
 import { loadLiveCallSession } from "./load-live-call-session";
 import { type TappedCallAudio, openCallAudioInTap } from "./use-call-microphone";
 
-/**
- * Where a checkpoint's Start stands until its call takes the intro's place: Plus lapsed meanwhile
- * (`plusRequired`) stays, and only `failed` asks for another try.
- */
 type CheckpointStart = "failed" | "idle" | "plusRequired" | "starting";
 
-/** What the intro's footer shows: Start's state, or today's study time used up. */
 type CallIntroFooterState = CheckpointStart | "dailyLimitReached";
 
-/**
- * What the start command came to. `changed`: the checkpoint changed since the page showed it
- * (including today's study time used up meanwhile), and the host reads the page again
- * (`rereading`), which opens where it stands.
- */
 type CheckpointStartResult = "cancelled" | "changed" | "failed" | "plusRequired" | "ready";
 
-/**
- * The same intro and Start click, before the start command has created the conversation. The tap
- * opens the microphone (Safari on iOS asks for it only while the tap is active): the host hands it
- * to the call once it's created, and it's let go of when the call isn't. Start says it's starting
- * while the call is created, and the host then opens the call in its place. A start that didn't go
- * through says so above Start, which tries again; Plus lapsed meanwhile locks it. Today's study time
- * used up (`dailyLimitReached`, as the page read it) says when the call is back, with the way back
- * to Today in Start's place, so nothing asks for the microphone. Leaving abandons a start still on
- * its way: back on the page, Start is ready again, and that start's answer changes nothing.
- */
+/** The tap opens the microphone, since Safari on iOS asks for it only during a tap; the host hands it to the call. */
 export function CheckpointCallIntro({
   conversation,
   dailyLimitReached,
@@ -58,7 +39,7 @@ export function CheckpointCallIntro({
   const [start, setStart] = useState<CheckpointStart>("idle");
   const attempt = useRef(0);
 
-  // A screen kept hidden after leaving runs this too, and shows Start ready when it's back.
+  // Activity runs this when the screen hides too, so Start is ready when it's back.
   useEffect(
     () => () => {
       attempt.current += 1;
@@ -79,8 +60,6 @@ export function CheckpointCallIntro({
       audio.release();
     }
 
-    // A ready call replaces the intro. A start dropped for another learner leaves Start ready, and
-    // so does a change, busy while the page is read again.
     if (mine === attempt.current && result !== "ready") {
       setStart(result === "cancelled" || result === "changed" ? "idle" : result);
     }
@@ -100,7 +79,6 @@ export function CheckpointCallIntro({
   );
 }
 
-/** The page's own reading comes first: busy while it's read again, then its daily limit. */
 function toFooterState({
   dailyLimitReached,
   rereading,
@@ -117,14 +95,6 @@ function toFooterState({
   return dailyLimitReached ? "dailyLimitReached" : start;
 }
 
-/**
- * Before the call, on the page: how long it lasts and the level it's written for, its title and
- * why, who the learner talks to, the goals to get across as a checklist, and that they can speak
- * or type and the microphone is only used during the call. One button (or Enter) starts it;
- * Escape leaves, since nothing has started. A call the learner's plan leaves to Plus (`locked`)
- * says what Plus unlocks, with "See Plus" in place of Start, as its challenge intro does. An exam's
- * speaking task shows its card instead (`ExamTaskIntro`), with the same footer.
- */
 export function ConversationIntro({
   conversation,
   exitHref,
@@ -151,16 +121,11 @@ export function ConversationIntro({
   );
 }
 
-/** Reaching for Start loads the call's realtime client, so the call connects as soon as before. */
 function preloadLiveCall() {
   void loadLiveCallSession();
 }
 
-/**
- * The call intro's action bar: a status region mounted from the start, so today's study time used up
- * (`dailyLimitReached`), which can replace a refused Start, is read out as it arrives, then the
- * actions.
- */
+/** Its status region is mounted from the start, so a line that replaces a refused Start is read out. */
 function CallIntroFooter({ onStart, start }: { onStart: () => void; start: CallIntroFooterState }) {
   return (
     <>
@@ -172,11 +137,6 @@ function CallIntroFooter({ onStart, start }: { onStart: () => void; start: CallI
   );
 }
 
-/**
- * Start, or "See Plus" for a locked call. A start on its way (`starting`) shows a spinner in the
- * phone's place, and one that didn't go through (`failed`) says so above it. Past today's study
- * time, the way back to Today takes Start's place.
- */
 function CallIntroActions({
   onStart,
   start,
@@ -237,8 +197,6 @@ function CallIntro({
   const eyebrow = useConversationTitle(conversation);
   const { character } = conversation;
 
-  // From `lg` the goals sit beside the intro, where the live call keeps them, so the call's column
-  // stays put when it starts.
   return (
     <TaskFrame
       aside={{ label: t("What to get across"), title: t("What to get across") }}

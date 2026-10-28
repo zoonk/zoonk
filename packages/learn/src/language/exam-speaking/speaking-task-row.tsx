@@ -25,10 +25,7 @@ import { useFormatDuration } from "../../_utils/time-format";
 import { LearnLink } from "../../learn-link";
 import { useCriterionGloss, useTaskRoleLabel } from "./exam-speaking-labels";
 
-/**
- * "6–7 min", or "2 min" when the exam gives one length: the exam's own timing. The shared duration
- * has no range form, so a range keeps its own minute label.
- */
+/** A range keeps its own label, since the shared duration has no range form. */
 export function useTaskMinutes() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -39,7 +36,6 @@ export function useTaskMinutes() {
       : t("{min}–{max} min", { max: String(max), min: String(min) });
 }
 
-/** The exam's preparation for a task: its own, or the time it shares with other tasks. */
 function usePrepFact() {
   const t = useExtracted();
   const format = useFormatter();
@@ -59,7 +55,6 @@ function usePrepFact() {
   };
 }
 
-/** A task's facts in one line: whom the learner talks to, the exam's timing, its preparation. */
 function useTaskFacts() {
   const roleLabel = useTaskRoleLabel();
   const minutes = useTaskMinutes();
@@ -71,10 +66,6 @@ function useTaskFacts() {
       .join(" · ");
 }
 
-/**
- * "Last try: 3 of 5 at B2", else how many came near it ("5 of 5 near B2"), else "below B2", or that
- * it has no estimate.
- */
 function useLastTryText() {
   const t = useExtracted();
 
@@ -104,11 +95,6 @@ function useLastTryText() {
   };
 }
 
-/**
- * A task of the paper as a row that opens in place: its official name, whom the learner talks to,
- * its timing and their last try; opened, what it's rated on, its start (Plus) and the last try's
- * result. Without Plus it opens the same, under the paper's one Plus notice, with nothing to start.
- */
 export function TaskRow({
   busy,
   defaultOpen,

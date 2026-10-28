@@ -37,9 +37,8 @@ import {
 
 export type { PatternPracticeResult } from "./use-pattern-drill";
 
-/** The host saves the drill's answers through core; null when that didn't go through. */
+/** `practice` resolves to null when the save didn't go through. */
 type LanguagePatternActions = {
-  /** Takes the pattern off Today without a drill, once its typos note was read. */
   dismiss: () => Promise<void>;
   practice: (drill: PatternDrillAnswers) => Promise<PatternPracticeResult | null>;
 };
@@ -47,7 +46,6 @@ type LanguagePatternActions = {
 const PERCENT = 100;
 const DRILL_MINUTES = 3;
 
-/** Leaving the pattern once it's done, as the task's one main action. */
 function DoneAction({ exitHref }: { exitHref: string }) {
   const t = useExtracted();
 
@@ -60,7 +58,6 @@ function DoneAction({ exitHref }: { exitHref: string }) {
   );
 }
 
-/** A note that the mistakes were only typos: reading it is all it asks, so it leaves Today. */
 function TyposPattern({
   dismiss,
   exitHref,
@@ -88,10 +85,6 @@ function TyposPattern({
   );
 }
 
-/**
- * The drill's "…" under `lg`, where the rule isn't beside the question: "See the rule" opens it in
- * a sheet, with the learner's own slip under it.
- */
 function RuleMenu({ pattern }: { pattern: MistakePatternView }) {
   const t = useExtracted();
   const [open, setOpen] = useState(false);
@@ -136,18 +129,6 @@ function RuleMenu({ pattern }: { pattern: MistakePatternView }) {
   );
 }
 
-/**
- * A mistake pattern, full screen: the rule ("We noticed a pattern") led by one of the learner's
- * own mistakes, a three-minute fill-in-the-blank drill one sentence at a time (pick, then Check,
- * as a lesson asks), and the result. While drilling, the rule and the learner's slip sit beside
- * the question on a wide screen and a tap away in the "…" on smaller ones. A milestone the drill
- * earned opens before its result, on its own. A pattern that was only typos gets the kind note and
- * Done. Leaving goes back where the pattern was opened (Today, a unit).
- *
- * ```tsx
- * <LanguagePatternScreen actions={actions} exitHref="/today" pattern={pattern} />
- * ```
- */
 export function LanguagePatternScreen({
   actions,
   buddy,
@@ -156,11 +137,9 @@ export function LanguagePatternScreen({
   renderCeremony,
 }: {
   actions: LanguagePatternActions;
-  /** The learner's buddy, glad about the missions the drill completes. */
   buddy?: LearnBuddy | null;
   exitHref: string;
   pattern: MistakePatternView;
-  /** The full-screen moment for a milestone the drill earned (a new belt, new glasses). */
   renderCeremony?: MomentCeremony;
 }) {
   const t = useExtracted();

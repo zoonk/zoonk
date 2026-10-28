@@ -22,10 +22,6 @@ import { type LiveCall } from "./use-live-call";
 
 const MS_PER_SECOND = 1000;
 
-/**
- * What was said, as the buddy's chats show it: the character's words as plain text on the left,
- * the learner's in a soft bubble on the right.
- */
 function Transcript({
   call,
   conversation,
@@ -40,8 +36,7 @@ function Transcript({
       {call.turns.map((turn, index) =>
         turn.speaker === "learner" ? (
           <LearnerBubble
-            // Turns only grow at the end, so their position identifies them.
-            // oxlint-disable-next-line react/no-array-index-key
+            // oxlint-disable-next-line react/no-array-index-key -- Turns only grow at the end, so their position identifies them.
             key={index}
             lang={conversation.targetLanguage}
           >
@@ -51,7 +46,7 @@ function Transcript({
         ) : (
           <p
             className="max-w-[80%] self-start text-[0.9375rem] leading-relaxed text-pretty"
-            // oxlint-disable-next-line react/no-array-index-key
+            // oxlint-disable-next-line react/no-array-index-key -- Turns only grow at the end, so their position identifies them.
             key={index}
             lang={conversation.targetLanguage}
           >
@@ -64,7 +59,6 @@ function Transcript({
   );
 }
 
-/** Typing works from the first ring: what's sent while the call connects goes out once it does. */
 function TypedReply({ call }: { call: LiveCall }) {
   const t = useExtracted();
   const [text, setText] = useState("");
@@ -102,7 +96,6 @@ function TypedReply({ call }: { call: LiveCall }) {
   );
 }
 
-/** The phrases Help offers, in a list to glance at while talking. */
 function Phrases({ conversation }: { conversation: LanguageConversationView }) {
   const t = useExtracted();
   const titleId = useId();
@@ -125,7 +118,6 @@ function Phrases({ conversation }: { conversation: LanguageConversationView }) {
   );
 }
 
-/** An 8px dot before the clock: blue once the call is live, quiet while it's still ringing. */
 function LiveDot({ live }: { live: boolean }) {
   return (
     <span
@@ -138,7 +130,6 @@ function LiveDot({ live }: { live: boolean }) {
   );
 }
 
-/** A limit takes priority over the next goal's tip, wherever the call's context sits. */
 function CallTip({
   limitNear,
   next,
@@ -169,13 +160,6 @@ function CallTip({
   ) : null;
 }
 
-/**
- * The call itself: who the learner talks to, the goals as they're met, what was said with the
- * call's status under it, and a tip for the next goal (or, when the plan's call time is running
- * out, that it is); the call's title and its clock on top; in the action bar a typed reply and
- * three controls (Help with phrases to use, the microphone, which mutes, and End). Nothing is
- * graded while talking. An exam task shows its card where the goals would be.
- */
 export function ConversationLive({
   call,
   conversation,
@@ -213,7 +197,6 @@ export function ConversationLive({
           </>
         ),
         label: t("Call goals and phrases"),
-        // Named in the aside's header row, as every task's aside is.
         meta: examTask
           ? undefined
           : `${countMetGoals(conversation, call.metLabels)}/${conversation.objectives.length}`,
@@ -221,8 +204,6 @@ export function ConversationLive({
       }}
       exitHref={null}
       footer={
-        // A call's controls stay under its transcript, at the column's measure, rather than in the
-        // bar's corners.
         <div className="lg:max-w-column flex w-full flex-col gap-2 lg:mx-auto lg:px-4">
           <TypedReply call={call} />
           <CallControls call={call} onEnd={onEnd} onHelp={onHelp} />

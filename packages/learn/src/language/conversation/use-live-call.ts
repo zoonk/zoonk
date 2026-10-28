@@ -39,12 +39,6 @@ import {
 } from "./use-call-microphone";
 import { useCallObjectives } from "./use-objective-checks";
 
-/**
- * Why a call couldn't go on: it never connected, it dropped after connecting, it's past the time it
- * could reopen, the plan's call time is used (`CallLimit` says which), it's a call the learner's
- * plan leaves to Plus (Plus lapsed since it was opened), calls are paused, or another call of the
- * learner's is open (in another tab or on another device).
- */
 export type LiveCallError =
   | "callInProgress"
   | "callsPaused"
@@ -54,12 +48,8 @@ export type LiveCallError =
   | "limit"
   | "plusRequired";
 
-/**
- * What the host does for the call: reserve it, close it on the server, and mark its goals from the
- * transcript.
- */
 export type LiveCallActions = CallConnectionActions & {
-  /** Every goal met so far, from what was said; null when the check didn't run. */
+  /** Every goal met so far; null when the check didn't run. */
   checkObjectives: (turns: ConversationTurn[]) => Promise<string[] | null>;
 };
 
@@ -80,11 +70,8 @@ const noSubscription = () => () => {
 const emptySnapshot = () => EMPTY_STATE;
 
 /**
- * What a call needs before it's reserved, since the server's deadline starts when it is: the
- * microphone first (`tapped`: the one the Start tap opened), so the permission prompt never takes
- * time from the call (a blocked one still sends silence), and the realtime client loaded
- * meanwhile, usually already in from the learner reaching for Start. Null when the start was
- * cancelled meanwhile; `live` is null when the client didn't load.
+ * The microphone opens before the call is reserved, since the server's deadline starts then and a
+ * permission prompt would take its time. Null when the start was cancelled meanwhile.
  */
 async function openCall({
   isCurrent,
@@ -114,7 +101,6 @@ async function openCall({
 function toConnectionError(
   status: Exclude<ConversationConnection["status"], "ready">,
 ): LiveCallError {
-  // A last connection still closing after the second try is a call that didn't connect yet.
   if (status === "failed" || status === "previousConnectionClosing") {
     return "connect";
   }
@@ -122,10 +108,6 @@ function toConnectionError(
   return status;
 }
 
-/**
- * Why the call stopped, while it's stopped, and the plan's call time that ran out when that's why:
- * the call is closed on the server and the call shows the problem until it starts again.
- */
 function useCallProblem({
   phase,
   release,
@@ -153,11 +135,7 @@ function useCallProblem({
   return { error: shown?.error ?? null, fail, limit: shown?.limit ?? null };
 }
 
-/**
- * Ending the call. `hangUp` silences it at once on this side (the microphone, what's sent and what
- * plays) and ends the call. `release` silences it and has the server hang it up: true once OpenAI
- * confirmed the session is over, and only then does the browser drop its peer.
- */
+/** `release` resolves true once OpenAI confirmed the session is over; only then does the browser drop its peer. */
 function useCallEnding({
   endConnection,
   sessionRef,
@@ -193,17 +171,6 @@ function useCallEnding({
   return { hangUp, release };
 }
 
-/**
- * Runs a live call on GPT-Live in the browser. The microphone opens first (or silence, so typing
- * still works), then the host reserves the call on the server, which fixes its absolute deadline
- * and creates the session; the browser sends its audio and plays the character's voice over
- * WebRTC. The transcript builds up from both sides, the goals are checked once the character
- * answers each learner turn, and the call wraps up before its deadline. Ending it, from here or by
- * the server, silences it at once; the server then hangs it up and confirms before the peer goes
- * and before anything is saved. Typing always works, even while the call connects (those replies go
- * out once it does). A call that doesn't connect within a few seconds fails with a way to try
- * again.
- */
 export function useLiveCall({
   actions,
   conversation,
@@ -211,7 +178,6 @@ export function useLiveCall({
 }: {
   actions: LiveCallActions;
   conversation: LanguageConversationView;
-  /** The microphone the tap that created the call opened, for its first start. */
   tappedAudio?: TappedCallAudio;
 }) {
   const [session, setSession] = useState<LiveCallSession | null>(null);
@@ -243,7 +209,6 @@ export function useLiveCall({
     session: phase === "live" ? session : null,
   });
 
-  // Every word the learner says or types keeps the call from ending on its silence timeout.
   const objectivesLearnerTurn = objectives.onLearnerTurn;
 
   const onLearnerTurn = useCallback(() => {
@@ -290,8 +255,6 @@ export function useLiveCall({
 
   const start = useCallback(
     async (takeover = false) => {
-      // Each start is its own attempt, and leaving the screen cancels it for good: a microphone or
-      // a reservation that arrives later is let go, even if the screen is shown again meanwhile.
       const mine = attempt.current + 1;
       attempt.current = mine;
       const isCurrent = () => attempt.current === mine;
@@ -304,7 +267,6 @@ export function useLiveCall({
         return;
       }
 
-      // A realtime client that didn't load can't connect.
       if (!opened.live) {
         fail("connect");
         return;
@@ -313,7 +275,6 @@ export function useLiveCall({
       const { audio, live } = opened;
       const answer = await reserve({ isCurrent, takeover });
 
-      // The start was cancelled meanwhile; a reservation it got was ended, so it never connects.
       if (!answer || !isCurrent()) {
         return;
       }
@@ -340,7 +301,6 @@ export function useLiveCall({
       watchConnection({
         endedByServer,
         isOpen: () => phaseRef.current === "connecting" || phaseRef.current === "live",
-        // Our server hung it up at its deadline: the call ended, and is saved with its transcript.
         onEnded: hangUp,
         onLost: () => fail(phaseRef.current === "live" ? "dropped" : "connect"),
         session: created,
@@ -348,8 +308,7 @@ export function useLiveCall({
 
       sessionRef.current = created;
       setSession(created);
-      // The session reports its own failures through its state, which `watchConnection` follows;
-      // only a second connect on one session rejects, and this run connects each session once.
+      // Failures come through the session's state (`watchConnection`); connect only rejects when called twice.
       void created.connect({ stream: audio.stream }).catch(() => null);
     },
     [endedByServer, fail, handleEvent, hangUp, keepAudio, phaseRef, reserve, setPhase, tappedAudio],
@@ -357,12 +316,11 @@ export function useLiveCall({
 
   const finish = useCallFinish({ getConnectionId, release, turnsRef });
 
-  // Leaving the screen ends the call too. A screen kept hidden in an Activity shows the call as
-  // dropped when it's back, with its transcript, since the call can't go on from there.
+  // Leaving ends the call; a screen kept hidden in an Activity shows it dropped when it's back.
   useEffect(
     () => () => {
-      // Cancels a start still waiting on the microphone or its reservation. React's first setup
-      // and cleanup in Strict Mode run before any start, so they cancel nothing.
+      // Cancels a start still waiting; Strict Mode's first setup and cleanup run before any start, so they
+      // cancel nothing.
       attempt.current += 1;
 
       if (phaseRef.current === "connecting" || phaseRef.current === "live") {

@@ -26,7 +26,6 @@ const LISTENING_RATE = 0.9;
 type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
 type LevelView = ReadyTest["levels"][number];
 
-/** The voice message of a listening question, read aloud in the language it tests. */
 export function ListeningMessage({ language, text }: { language: string; text: string }) {
   const t = useExtracted();
   const speech = useSpokenAudio(language);
@@ -85,7 +84,6 @@ export function ListeningMessage({ language, text }: { language: string; text: s
   );
 }
 
-/** The one sentence out loud: record, stop, and it's checked word by word. */
 export function SpeakingPrompt({
   error,
   onRecorded,
@@ -134,10 +132,6 @@ export function SpeakingPrompt({
   );
 }
 
-/**
- * The level of each skill as the Plan's level sheet lists it: flat hairline rows, each a
- * segmented bar on the A1 to C2 scale with its label in the mono face.
- */
 export function LevelBars({ levels }: { levels: LevelView[] }) {
   const skillName = useSkillName();
 

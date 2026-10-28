@@ -25,12 +25,6 @@ function toRun({ retry, state }: { retry: () => void; state: WriteState }): Gene
     : { failure: null, status: "following", steps: { writeCall: "started" } };
 }
 
-/**
- * A language goal's checkpoint whose call isn't written yet, on the page as a call's intro is: a
- * session's preparation usually writes it ahead, so this is rare. Opening the screen writes
- * nothing; the learner's tap starts writing it for their speaking level, the wait shows it
- * happening, and the host opens the call once it's ready (false when it didn't start).
- */
 export function CheckpointCallPreparing({
   exitHref,
   onStart,

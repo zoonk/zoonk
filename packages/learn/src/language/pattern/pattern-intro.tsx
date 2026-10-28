@@ -10,7 +10,6 @@ import { PageEyebrow, PageSectionTitle, PageTitle } from "../../_components/page
 
 type PatternExample = MistakePatternView["examples"][number];
 
-/** "since + when it started": the word stands out, what it goes with stays quiet. */
 function ContrastLabel({ label }: { label: string }) {
   const [head, ...rest] = label.split(" + ");
 
@@ -22,10 +21,6 @@ function ContrastLabel({ label }: { label: string }) {
   );
 }
 
-/**
- * The rule, led by one of the learner's own mistakes as a change: what they said on a red line,
- * the correct version on a blue one, then the rule.
- */
 function RuleExample({ example, rule }: { example: PatternExample | undefined; rule: string }) {
   const t = useExtracted();
 
@@ -45,7 +40,6 @@ function RuleExample({ example, rule }: { example: PatternExample | undefined; r
   );
 }
 
-/** When each form is used, one per row: the word bold, what it goes with quiet, then an example. */
 function ContrastRows({ contrast }: { contrast: MistakePatternView["contrast"] }) {
   if (contrast.length === 0) {
     return null;
@@ -63,10 +57,6 @@ function ContrastRows({ contrast }: { contrast: MistakePatternView["contrast"] }
   );
 }
 
-/**
- * The rule beside a drill's question on a wide screen, and in its sheet on a phone: when each form
- * is used, then the rule in a sentence.
- */
 export function PatternRule({ pattern }: { pattern: MistakePatternView }) {
   return (
     <div className="flex flex-col gap-3">
@@ -76,7 +66,6 @@ export function PatternRule({ pattern }: { pattern: MistakePatternView }) {
   );
 }
 
-/** "Where you slipped": the learner's own mistake as a change, so the drill stays about them. */
 export function PatternSlip({ pattern }: { pattern: MistakePatternView }) {
   const t = useExtracted();
   const titleId = useId();
@@ -126,17 +115,12 @@ function AlsoCameUp({ examples }: { examples: PatternExample[] }) {
   );
 }
 
-/**
- * "We noticed a pattern", with the pattern as its title: one mistake as the example, the rule, the
- * contrast and where else.
- */
 export function PatternIntro({ pattern }: { pattern: MistakePatternView }) {
   const t = useExtracted();
   const [first, ...others] = pattern.examples;
 
   return (
     <>
-      {/* The pattern itself is the big thing; that it was noticed is its label. */}
       <header className="flex flex-col gap-2">
         <PageEyebrow>{t("We noticed a pattern")}</PageEyebrow>
         <PageTitle className="text-balance">{pattern.title}</PageTitle>
@@ -155,7 +139,6 @@ export function PatternIntro({ pattern }: { pattern: MistakePatternView }) {
   );
 }
 
-/** The kind note when the mistakes were only typos: nothing to learn, nothing to practice. */
 export function TyposNote({ pattern }: { pattern: MistakePatternView }) {
   const t = useExtracted();
 

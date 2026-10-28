@@ -7,17 +7,10 @@ import { PageSectionTitle } from "../../_components/page";
 import { ChecklistRow, ChecklistRows } from "../checklist-rows";
 import { SpeakingCard } from "../exam-speaking/speaking-card";
 
-/** How many of the call's goals are across, for the "1/3" beside their name. */
 export function countMetGoals(conversation: LanguageConversationView, met: string[]): number {
   return conversation.objectives.filter((objective) => met.includes(objective.label)).length;
 }
 
-/**
- * What the learner works toward during the call: the goals as a checklist, each turning to a blue
- * dot as it's met, with how many are across ("1/3"). An exam task shows its card instead, as the
- * sheet stays on the table through the exam; its one goal is the task itself, graded once it ends.
- * In the aside from `lg`, the aside's own header names them (`titled={false}`).
- */
 export function CallObjectives({
   conversation,
   met,

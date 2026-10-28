@@ -22,10 +22,6 @@ import { ListeningMessage, SpeakingPrompt } from "./level-test-parts";
 type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
 type NextStep = ReadyTest["next"];
 
-/**
- * A reading or listening question, as placement asks it: a listening one plays a voice message
- * instead of showing the text, and "I don't know" says the audio wasn't understood.
- */
 export function LevelTestQuestion({
   answer,
   onStop,
@@ -37,7 +33,7 @@ export function LevelTestQuestion({
   answer: (input: LevelTestAnswerInput) => Promise<LanguageLevelTestView | null>;
   onStop: () => void;
   onView: (view: LanguageLevelTestView) => void;
-  /** How far into the test the learner is, from 0 to 1. */
+  /** 0 to 1. */
   progress: number;
   question: Extract<NextStep, { kind: "question" }>["question"];
   targetLanguage: string;
@@ -83,10 +79,6 @@ export function LevelTestQuestion({
   );
 }
 
-/**
- * The one sentence out loud: record it, and it's checked word by word. Like the test's other
- * questions, it has no way back, and the bar shows how far into the test the learner is.
- */
 export function SpeakingStep({
   onSkip,
   onView,
@@ -96,7 +88,7 @@ export function SpeakingStep({
 }: {
   onSkip: () => void;
   onView: (view: LanguageLevelTestView) => void;
-  /** How far into the test the learner is, from 0 to 1. */
+  /** 0 to 1. */
   progress: number;
   sentence: Extract<NextStep, { kind: "speaking" }>;
   speak: (audio: Blob) => Promise<LanguageLevelTestView | "noSpeech" | "signUpRequired" | null>;

@@ -7,22 +7,17 @@ import {
 import { getLevelStanding } from "@zoonk/core/language/exam-speaking/standing";
 import { useExtracted, useFormatter } from "next-intl";
 
-/** Goethe's letters, A the best: band 4 is A and band 0 is E. */
+/** Goethe's letters by band: 0 is E, 4 is A. */
 const LETTERS = ["E", "D", "C", "B", "A"];
 
 const POINT_DIGITS = 2;
 
 type BandRange = { bandHigh: number; bandLow: number };
 
-/** "2", or "1–2" for a range. */
 function span(low: string, high: string): string {
   return low === high ? low : `${low}–${high}`;
 }
 
-/**
- * What each official criterion rates, in the learner's words, beside its official name in the
- * exam's language: "Fluidez" reads as fluency to a Portuguese speaker, "Aufgabenerfüllung" doesn't.
- */
 export function useCriterionGloss() {
   const t = useExtracted();
 
@@ -51,7 +46,7 @@ export function useCriterionGloss() {
     glosses[criterion.key] ?? criterion.name;
 }
 
-/** Whom the AI plays in a task, as its row says it: always marked as the AI. */
+/** Always marked as the AI. */
 export function useTaskRoleLabel() {
   const t = useExtracted();
 
@@ -59,10 +54,6 @@ export function useTaskRoleLabel() {
     role === "partner" ? t("With another candidate (AI)") : t("With an examiner (AI)");
 }
 
-/**
- * The AI's part in the learner's language ("examiner", "other candidate"), one word wherever the
- * app names it; the card keeps the exam's own word ("entrevistador") in the exam's language.
- */
 export function useTaskRoleNoun() {
   const t = useExtracted();
 
@@ -70,10 +61,6 @@ export function useTaskRoleNoun() {
     role === "partner" ? t("other candidate") : t("examiner");
 }
 
-/**
- * A criterion's estimate on its official scale: a band ("2–3 of 3", Cambridge's "3.5 of 5"), a
- * letter ("B–C", A the best) or the points its line gives ("3–4 of 5 points").
- */
 export function useBandText() {
   const t = useExtracted();
   const format = useFormatter();
@@ -101,10 +88,6 @@ export function useBandText() {
   };
 }
 
-/**
- * Where an estimate stands against the exam's level, as its row says it: "At B2", "Near B2" (only
- * the top of its range reaches the level) or "Below B2".
- */
 export function useStandingText() {
   const t = useExtracted();
 

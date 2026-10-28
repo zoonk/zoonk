@@ -1,9 +1,6 @@
 import { type LiveCallSession } from "./live-call-session";
 
-/**
- * Tells GPT-Live something during the call. `instructions` makes it act now; `thinking` only adds
- * context. A cue that can't be delivered, because the call is closing, is dropped.
- */
+/** A cue sent while the call is closing is dropped. */
 export function sendLiveCallCue({
   channel = "instructions",
   content,
@@ -29,10 +26,6 @@ export function sendLiveCallCue({
   }
 }
 
-/**
- * Mutes or unmutes the learner's microphone in the call. GPT-Live keeps listening for the audio
- * stream but ignores it while muted; a call that's closing ignores the change.
- */
 export function setLiveCallMuted({ muted, session }: { muted: boolean; session: LiveCallSession }) {
   try {
     void session

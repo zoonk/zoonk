@@ -32,7 +32,6 @@ import { useCallStart } from "../conversation/use-call-start";
 
 type LengthChoice = { locked: boolean; minutes: number };
 
-/** The lengths that fit, and the longer ones that come with Plus, in order. */
 function toLengthChoices(conversation: LanguageUnitView["conversation"]): LengthChoice[] {
   return [
     ...conversation.minutes.map((minutes) => ({ locked: false, minutes })),
@@ -82,12 +81,6 @@ function MinuteChips({
   );
 }
 
-/**
- * The sheet's body: how long the call is and "Start the call", or the wait while it's written.
- * Only the lengths that fit what's left of the learner's call time are offered; the longer ones
- * Plus holds show locked, and picking one shows what Plus unlocks in place of the start. Once no
- * length fits, the sheet says until when calls come back.
- */
 function CallSetup({
   conversation,
   onStart,
@@ -151,12 +144,6 @@ function CallSetup({
   );
 }
 
-/**
- * "Practice a conversation": a row of the unit's practice list that opens a sheet for the call
- * with the unit's character, a few minutes at the learner's speaking level. The host starts it
- * and opens the call; false means it didn't start. The unit's call is written once per level for
- * every learner, so the first learner at a level waits for it in the sheet until it opens.
- */
 export function PracticeConversation({
   conversation,
   onStart,

@@ -2,10 +2,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { LIST_GROUP_CLASS } from "../../_components/list-group";
 import { PageSectionTitle } from "../../_components/page";
 
-/**
- * A few facts of a call's result, one per row, flat with a hairline between them and as wide as
- * the step: each criterion with its estimate, the phrases said well, the words to practice.
- */
 export function ResultRows({ className, ...props }: React.ComponentProps<"ul">) {
   return (
     <ul
@@ -16,7 +12,6 @@ export function ResultRows({ className, ...props }: React.ComponentProps<"ul">) 
   );
 }
 
-/** One row: what it is first, what it's worth at the end. */
 export function ResultRow({ className, ...props }: React.ComponentProps<"li">) {
   return (
     <li
@@ -30,7 +25,6 @@ export function ResultRow({ className, ...props }: React.ComponentProps<"li">) {
   );
 }
 
-/** A group of rows under its quiet label, inside a result step. */
 export function ResultGroup({
   children,
   id,
@@ -48,7 +42,6 @@ export function ResultGroup({
   );
 }
 
-/** What an estimate rests on, in one quiet line under its step: it's never an official score. */
 export function EstimateNote({ children }: { children: React.ReactNode }) {
   return (
     <p className="text-muted-foreground text-[0.8125rem] leading-snug text-pretty">{children}</p>

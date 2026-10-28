@@ -6,10 +6,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { SectionLabel } from "../../_components/section-label";
 
-/**
- * A can-do statement's mark: an 8px ring still to reach, a blue dot once reached. Lighter than a
- * lesson's mark, so "I can…" never reads as a lesson left undone.
- */
 export function CanDoMark({ done }: { done: boolean }) {
   return (
     <span aria-hidden="true" className="flex size-4 shrink-0 items-center justify-center">
@@ -23,12 +19,6 @@ export function CanDoMark({ done }: { done: boolean }) {
   );
 }
 
-/**
- * "I can already…": what the learner can do in real life, from the units they finished (checked),
- * and the one thing they're working toward next (still open), in the words of each unit's
- * objectives, with the marks a unit's page gives them. The rest of the unit they're in waits for
- * its page.
- */
 export function CanDoList({ canDo: all }: { canDo: LanguageProgressView["canDo"] }) {
   const t = useExtracted();
   const next = all.find((item) => !item.done);

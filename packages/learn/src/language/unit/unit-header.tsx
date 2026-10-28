@@ -29,10 +29,6 @@ function UnitEyebrow({ unit }: { unit: LanguageUnitView["unit"] }) {
   });
 }
 
-/**
- * "4 lessons · 26 min · 25% done": how much the unit holds and how far the learner is. The time is
- * its lessons' minutes added up, so it reads like the rows under it.
- */
 function UnitFacts({ lessons }: { lessons: LanguageUnitView["lessons"] }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -53,10 +49,6 @@ function UnitFacts({ lessons }: { lessons: LanguageUnitView["lessons"] }) {
   return <DetailFacts>{facts.join(" · ")}</DetailFacts>;
 }
 
-/**
- * "Unit 2 · A1–A2", the unit's title, how much it holds and how far the learner is, and "Continue"
- * into the next lesson with the unit's "…" beside it (beside the title from `md`).
- */
 export function UnitHeader({
   lessonHref,
   view,
@@ -98,10 +90,6 @@ export function UnitHeader({
   );
 }
 
-/**
- * The unit's bar, as a chapter's: back to the Plan, and "Ask" on the right (`children`); the
- * unit's "…" sits beside its main action.
- */
 export function UnitBar({
   backHref,
   children,

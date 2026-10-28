@@ -26,23 +26,14 @@ const POLL_MS = 3000;
 
 type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
 
-/** How the test reaches the server; the host implements these over its actions or the API. */
 export type LanguageLevelTestActions = {
   answer: (input: LevelTestAnswerInput) => Promise<LanguageLevelTestView | null>;
   finish: () => Promise<boolean>;
-  /** The test's next step; read-only, so it never starts writing questions. */
+  /** Read-only: it never starts writing questions. */
   get: () => Promise<LanguageLevelTestView | null>;
-  /**
-   * Asks for the pair's questions to be written when nothing is writing them: only from the
-   * learner's tap (Start or Try again), never when the screen opens. False when it couldn't start.
-   */
+  /** Only from the learner's tap, never when the screen opens; false when it couldn't start. */
   prepare: () => Promise<boolean>;
-  /**
-   * The sentence out loud; "noSpeech" when nothing was heard, "signUpRequired" when a guest is
-   * asked to create an account (the day's AI budget all guests share is spent).
-   */
   speak: (audio: Blob) => Promise<LanguageLevelTestView | "noSpeech" | "signUpRequired" | null>;
-  /** Shows the app in the learner's own language. */
   switchLanguage: (language: string) => void;
 };
 
@@ -52,10 +43,6 @@ function toReadyPhase(view: ReadyTest): Phase {
   return view.next.kind === "done" ? { kind: "done" } : { kind: "test", test: view };
 }
 
-/**
- * Where the test was before a refresh: its next step once started, following a writer at work,
- * else its start. A writer that stopped waits for the learner's tap to ask again.
- */
 function toResumedPhase({
   started,
   view,
@@ -79,14 +66,6 @@ function getLanguageName(goal: { language: string; targetLanguage: string }): st
   );
 }
 
-/**
- * The three-minute level test of a language goal, in onboarding's placement step: reading and
- * listening questions that adapt to each answer, one sentence out loud, and the level of each
- * skill. It also offers the app in the learner's own language and, for a new script, says its
- * first session starts with the alphabet. When the pair's questions don't exist yet, the
- * learner's tap asks for them and the test waits with their progress, moving on by itself. A
- * refresh comes back to where it was. Skipping keeps the level the learner gave.
- */
 export function LanguageLevelTestStep({
   actions,
   goal,
@@ -129,7 +108,6 @@ export function LanguageLevelTestStep({
     read: actions.get,
   });
 
-  // A writer that stopped or a start that failed waits for the learner's "Try again".
   const poll = usePoll({
     active: phase.kind === "waiting" && !isBankStopped(bank),
     intervalMs: POLL_MS,
@@ -144,10 +122,6 @@ export function LanguageLevelTestStep({
     },
   });
 
-  /**
-   * The learner's tap (Start, or Try again after a failure): opens the test, and asks for its
-   * questions when nothing writes them. The wait shows at once, with Skip in reach.
-   */
   const begin = async () => {
     rememberStepStart({ goalId, step: "levelTest" });
     setBank(INITIAL_BANK_WAIT);
@@ -155,7 +129,6 @@ export function LanguageLevelTestStep({
 
     const { data: view } = await safeAsync(actions.get);
 
-    // Ready opens the test and a writer at work is followed; a failed read shows by polling.
     if (view?.status !== "preparing" || view.startedAt) {
       if (view) {
         show(view);
@@ -219,10 +192,6 @@ export function LanguageLevelTestStep({
   }
 }
 
-/**
- * The test's next question, or its one sentence out loud, with how far into the test the learner
- * is (`progress`: its answers over the most it asks).
- */
 function TestStep({
   actions,
   next,

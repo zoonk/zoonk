@@ -12,13 +12,8 @@ import {
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../../_components/page";
 import { CanDoMark } from "../progress/can-do-list";
 
-/** "By the end of this unit" says a few things, so it stays a glance. */
 const SHOWN_OBJECTIVES = 3;
 
-/**
- * The unit's "I can" objectives, at most three, with the marks of "I can already…": a blue dot
- * once every lesson is done, an 8px ring until then, so they never read as lessons left undone.
- */
 export function UnitObjectives({ view }: { view: LanguageUnitView }) {
   const t = useExtracted();
   const { lessons, unit } = view;
@@ -51,10 +46,6 @@ export function UnitObjectives({ view }: { view: LanguageUnitView }) {
   );
 }
 
-/**
- * Grammar tips pinned from the unit's lessons, each title over its text. Tip text is lesson text
- * (emphasis, short lists), so the host renders it the way lessons do.
- */
 export function UnitGrammarTips({
   renderText,
   tips,
@@ -74,7 +65,6 @@ export function UnitGrammarTips({
   );
 }
 
-/** The first few words the unit teaches, and how many more. */
 export function UnitWords({ words }: { words: LanguageUnitView["words"] }) {
   const t = useExtracted();
   const more = words.count - words.sample.length;

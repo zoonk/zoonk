@@ -12,21 +12,13 @@ import { type LiveCallSession } from "./live-call-session";
 
 const MS_PER_SECOND = 1000;
 const SECONDS_PER_MINUTE = 60;
-/** The character starts wrapping up this long before the call's time is over. */
 const WRAP_UP_SECONDS = 20;
-/** The learner quiet this long (no word said or typed): the character asks if they're there. */
 const SILENCE_NUDGE_SECONDS = 20;
-/** Still quiet this long after their last word, the call ends on its own and shows its feedback. */
 const SILENCE_END_SECONDS = 45;
 const TICK_MS = 500;
-/** GPT-Live usually opens within a second; still silent after this, it's told again once. */
 const OPENING_RETRY_MS = 5000;
 
-/**
- * Opens the call right after `session.started`: GPT-Live only speaks first when told to. If the
- * character hasn't said a word a few seconds later, the cue goes out once more. `cancel` stops the
- * retry once the character talks.
- */
+/** GPT-Live only speaks first when told to, so the call opens with a cue, sent once more if the character stays silent. */
 export function useOpeningCue(openingLine: string) {
   const retry = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -55,28 +47,14 @@ export function useOpeningCue(openingLine: string) {
   return useMemo(() => ({ cancel, open }), [cancel, open]);
 }
 
-/**
- * When a connected call's own length ends, on this device's clock (the time the server said was
- * left, from when its answer arrived), and the plan's call time it reaches by then, if any.
- */
+/** `endsAt` is on this device's clock: the time the server said was left, from when its answer arrived. */
 export type CallLength = { endsAt: number } & Pick<LanguageConversationSetup, "endsAtLimit">;
 
-/** What the app tells the voice model when the call has run this long, as an examiner keeps time. */
 type TimedCue = { atSeconds: number; say: string };
 
 const NO_CUES: readonly TimedCue[] = [];
 
-/**
- * The call's clock while it's live. It runs until the call's length ends as the server's deadline
- * fixed it (`startClock`), so the time spent connecting is already gone and nothing starts it over;
- * the limit shown is what's left of it when the call went live, less than the call's length when
- * it reaches the plan's call time. Near the end the character wraps up, and when that's the plan's
- * call time running out, today's or this month's, `limitNear` says which; at the end the call ends
- * on its own, when the server hangs it up too. A learner quiet for a while (nothing said or
- * typed, `markLearnerActive` marks both) is asked once whether they're there, and the call ends if
- * they stay quiet: the voice session is paid by the second, silence included. An exam task's `cues`
- * go out once each when the call has run that long (the examiner moving to the questions).
- */
+/** A quiet learner is asked once whether they're there, then the call ends: the voice session is paid by the second, silence included. */
 export function useCallClock({
   cues = NO_CUES,
   hangUp,

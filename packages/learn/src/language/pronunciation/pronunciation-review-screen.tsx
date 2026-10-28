@@ -36,7 +36,6 @@ export type {
 
 const PERCENT = 100;
 
-/** What the grader heard, and when the word comes back. */
 function GradeNote({ grade }: { grade: PronunciationAnswerGrade }) {
   const t = useExtracted();
   const format = useFormatter();
@@ -61,12 +60,6 @@ function GradeNote({ grade }: { grade: PronunciationAnswerGrade }) {
   );
 }
 
-/**
- * The round's end, as every task's end reads, at the top of the task's column: "Practice done"
- * with what an accent means under it, the tries that sounded right ("2 of 3 sounded right", as
- * each try's verdict says it) and the Brain Power it paid as readouts, then what it did to the day
- * 24px under them; with nothing said, its own title.
- */
 function RoundResult({
   buddy,
   result,
@@ -104,7 +97,6 @@ function RoundResult({
   );
 }
 
-/** The screen's "…" menu, for skipping a word the learner can't say right now. */
 function WordMenu({ disabled, onSkip }: { disabled: boolean; onSkip: () => void }) {
   const t = useExtracted();
 
@@ -132,18 +124,6 @@ function WordMenu({ disabled, onSkip }: { disabled: boolean; onSkip: () => void 
   );
 }
 
-/**
- * Pronunciation reviews, full screen: each word the learner mispronounced comes back on the page
- * with its native sound, a slow version, the respelling and the tip; they record it, see what we
- * heard, and try again or go on, and the round counts toward their day at the end. A word they
- * can't say right now is skipped from the "…" menu (or from the action bar, when there's no
- * microphone). A milestone the round earned opens before its result, on its own. Nothing due
- * shows a short note. Leaving goes back where the round was opened (Today, a unit).
- *
- * ```tsx
- * <PronunciationReviewScreen actions={actions} exitHref="/today" reviews={reviews} />
- * ```
- */
 export function PronunciationReviewScreen({
   actions,
   buddy,
@@ -152,10 +132,8 @@ export function PronunciationReviewScreen({
   reviews,
 }: {
   actions: PronunciationRoundActions;
-  /** The learner's buddy, glad about the missions the round completes. */
   buddy?: LearnBuddy | null;
   exitHref: string;
-  /** The full-screen moment for a milestone the round earned (a new belt, new glasses). */
   renderCeremony?: MomentCeremony;
   reviews: PronunciationReviewsView;
 }) {
@@ -247,10 +225,6 @@ export function PronunciationReviewScreen({
   );
 }
 
-/**
- * The action bar's one row: Record (Stop while recording) before the word is graded, or Skip when
- * there's no microphone; once graded, Try again beside Continue when it didn't sound right.
- */
 function WordActions({
   available,
   graded,

@@ -41,10 +41,6 @@ function InterfaceOffer({
   );
 }
 
-/**
- * The level test's start: what it is in one sentence, Start, and skipping it as the quiet way
- * around; the app in the learner's own language when it isn't already.
- */
 export function TestIntro({
   goal,
   onScratch,
@@ -60,7 +56,6 @@ export function TestIntro({
 }) {
   const t = useExtracted();
   const locale = useLocale();
-  // Named in the language the screen is in, which can differ from the goal's.
   const target = new Intl.DisplayNames([locale], { type: "language" }).of(goal.targetLanguage);
 
   return (

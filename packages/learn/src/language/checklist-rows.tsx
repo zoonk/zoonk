@@ -6,18 +6,6 @@ import { useExtracted } from "next-intl";
 import { LIST_GROUP_CLASS } from "../_components/list-group";
 import { DoneMark } from "../_components/status-mark";
 
-/**
- * A few things to get across, flat on the page with a hairline between them: a call's goals
- * before, during and after it, and what a unit lets the learner do ("I can…"). One look for all
- * of them, so a goal reads the same on the intro, in the call and on the result.
- *
- * ```tsx
- * <ChecklistRows aria-label="Goals of the call">
- *   <ChecklistRow done description="Say when you can visit">Book a viewing</ChecklistRow>
- *   <ChecklistRow done={false}>Ask about the deposit</ChecklistRow>
- * </ChecklistRows>
- * ```
- */
 export function ChecklistRows({ className, ...props }: React.ComponentProps<"ul">) {
   return (
     <ul
@@ -28,11 +16,6 @@ export function ChecklistRows({ className, ...props }: React.ComponentProps<"ul"
   );
 }
 
-/**
- * One thing to get across: an 8px ring while it's still ahead, the done mark every list shares once
- * it's done, on the first line of its words however many lines they wrap to. Screen readers hear
- * "done" or "not yet" after it.
- */
 export function ChecklistRow({
   children,
   className,
@@ -42,10 +25,8 @@ export function ChecklistRow({
 }: {
   children: React.ReactNode;
   className?: string;
-  /** One quiet line under it: why, or how. */
   description?: React.ReactNode;
   done: boolean;
-  /** The language its words are in, when it isn't the screen's (a call's goals). */
   lang?: string;
 }) {
   const t = useExtracted();

@@ -16,14 +16,8 @@ import {
 import { ChangeSaveError } from "../../_components/save-error";
 import { useFormatDuration } from "../../_utils/time-format";
 
-/** The script's alphabet lesson as Content lists it, and whether it still opens the sessions. */
 export type AlphabetLink = { href: string; minutes: number; pending: boolean; title: string };
 
-/**
- * The alphabet lesson of a script that isn't Latin, on the lesson kind's tile, open as practice
- * anytime. While it still opens the learner's sessions, they can say they already read the script
- * and skip it.
- */
 export function AlphabetRow({
   alphabet,
   onSkip,

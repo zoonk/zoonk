@@ -46,7 +46,6 @@ function useBandRange() {
     bandHigh === bandLow ? band(bandLow) : `${band(bandLow)}–${band(bandHigh)}`;
 }
 
-/** Each exam's own scale, so a TOEFL 4.5 isn't read as an IELTS 4.5. */
 function useBandLabel() {
   const t = useExtracted();
 
@@ -58,7 +57,6 @@ function useBandLabel() {
   return (exam: SpeakingMockExam) => labels[exam];
 }
 
-/** The band overall, big, on its exam's scale, and that it's an estimate. */
 function BandStep({
   conversation,
   feedback,
@@ -88,11 +86,6 @@ function BandStep({
   );
 }
 
-/**
- * Each of the exam's criteria with its band; the one to work on first is marked. A mock answered
- * only by typing has no band for how the learner sounds (pronunciation, TOEFL's delivery): that
- * row says it isn't rated, as a certificate task's does, and the step says why.
- */
 function CriteriaStep({ feedback }: { feedback: SpeakingMockFeedback }) {
   const t = useExtracted();
   const criterionName = useCriterionName();
@@ -136,7 +129,6 @@ function CriteriaStep({ feedback }: { feedback: SpeakingMockFeedback }) {
   );
 }
 
-/** The criterion to work on first: what was heard, and one concrete tip. */
 function FocusStep({ criterion }: { criterion: Criterion }) {
   const t = useExtracted();
   const criterionName = useCriterionName();
@@ -159,7 +151,6 @@ function FocusStep({ criterion }: { criterion: Criterion }) {
   );
 }
 
-/** Every criterion's evidence and tip, one text link away. */
 function CriteriaDetails({ feedback }: { feedback: SpeakingMockFeedback }) {
   const t = useExtracted();
   const criterionName = useCriterionName();
@@ -179,7 +170,6 @@ function CriteriaDetails({ feedback }: { feedback: SpeakingMockFeedback }) {
   );
 }
 
-/** Nothing to grade, never the learner's fault. */
 function NoScoreStep() {
   const t = useExtracted();
 
@@ -208,13 +198,6 @@ function TryAgainButton({ onTryAgain }: { onTryAgain: () => Promise<void> }) {
   );
 }
 
-/**
- * After a speaking mock, one thing at a time: the estimated band on its exam's scale (IELTS 0 to
- * 9, TOEFL 1 to 6) with what the call did to the day, each criterion's band, then the one to work
- * on first with what was heard and a concrete tip. A milestone the call earned opens before the
- * band. Every criterion's comments wait behind a link, and another try is one tap away. It's an
- * estimate from a short mock, never an official score, and says so.
- */
 export function SpeakingMockResult({
   ceremony,
   conversation,
@@ -224,10 +207,8 @@ export function SpeakingMockResult({
   nextHref,
   onTryAgain,
 }: {
-  /** The full-screen moment for a milestone the call earned, before the band. */
   ceremony?: StepsItem["moment"];
   conversation: LanguageConversationView;
-  /** What the call just did to the day (`DayMoment`), last on the first step. */
   dayMoment: React.ReactNode;
   exitHref: string;
   feedback: SpeakingMockFeedback | null;

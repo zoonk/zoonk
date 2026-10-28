@@ -7,7 +7,6 @@ import { useState } from "react";
 import { RichTable } from "../../_components/rich-table";
 import { SURFACE_CLASS } from "../../_components/surface";
 
-/** Task photos are drawn landscape, as an exam's sheet prints them. */
 const PHOTO_WIDTH = 1536;
 const PHOTO_HEIGHT = 1024;
 
@@ -83,13 +82,6 @@ function CardTable({ table }: { table: NonNullable<SpeakingCardData["table"]> })
   );
 }
 
-/**
- * An exam task's card as the candidate gets it, in the exam's language: the instructions, the
- * points or questions it lists, and the material it works from (photos, a text or figures). It
- * stays on screen through the call, as the sheet stays on the table in the exam; there it's
- * `compact` (photos side by side and lower, a long text scrolling in its box), so what was said
- * stays close on a phone.
- */
 export function SpeakingCard({
   card,
   className,
@@ -99,7 +91,6 @@ export function SpeakingCard({
   card: SpeakingCardData;
   className?: string;
   compact?: boolean;
-  /** The exam's language, for screen readers and hyphenation. */
   language: string;
 }) {
   const t = useExtracted();

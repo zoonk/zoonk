@@ -24,44 +24,27 @@ import { type LiveCallActions, useLiveCall } from "./use-live-call";
 export type { ConversationConnection } from "./use-call-connection";
 export type { TappedCallAudio } from "./use-call-microphone";
 
-/**
- * Saving a finished call: it with its result and what it did to the day's missions, or why it
- * wasn't saved: it ended or another call took it over (nothing is reviewed), or saving failed.
- */
 type ConversationCompletion =
   | { conversation: CompletedLanguageConversation; status: "completed" }
   | { status: "ended" | "failed" | "takenOver" };
 
 export type ConversationActions = LiveCallActions & {
-  /** Saves the finished call, under the connection it ran on. */
   complete: (
     input: Omit<LanguageConversationCompletionInput, "timeZone">,
   ) => Promise<ConversationCompletion>;
-  /** Starts another speaking mock, or the same exam task with a new card, and opens it. */
   startAgain?: () => Promise<void>;
 };
 
-/**
- * Where the call leads: out (`exit`), on after its result (`next`), and for an exam task, the
- * paper's next task opened where its list is (`nextTask`, by key; nothing is written until the
- * learner starts it).
- */
 export type ConversationHrefs = { exit: string; next: string; nextTask?: (task: string) => string };
 
-/**
- * How a call run begins: on its intro, calling right away after "Try again", or calling right away
- * after ending the learner's other call ("End that call and start this one").
- */
 type RunStart = "call" | "intro" | "takeover";
 
-/** Where saving a finished call stands. */
 type SaveState = "closing" | "ended" | "failed" | "saving" | "takenOver";
 
 const FIRST_RUN = { attempt: 0, startWith: "intro" } as const;
 
 const SAVE_FAILED = { status: "failed" } as const;
 
-/** One call from the first ring to hanging up, then saved once with what was said. */
 function LiveCallRun({
   actions,
   callAudio,
@@ -105,7 +88,6 @@ function LiveCallRun({
     setSaving(completion.status);
   }, [actions, finish, onSaved, usedHelp]);
 
-  // Hanging up, or the call reaching its length, saves it once.
   const saved = useRef(false);
 
   useEffect(() => {
@@ -115,10 +97,7 @@ function LiveCallRun({
     }
   }, [call.phase, save]);
 
-  // "Try again" and the takeover call right away, once per run (the intro waits for its button).
-  // The start waits a microtask that this effect's cleanup cancels: when React replays the effect
-  // (Strict Mode), the first one never starts a call its own cleanup would cancel, and the replay
-  // starts it.
+  // The start waits a microtask the cleanup cancels, so Strict Mode's replayed effect starts the call only once.
   const autoStarted = useRef(false);
 
   useEffect(() => {
@@ -140,12 +119,8 @@ function LiveCallRun({
     return () => replaced.abort();
   }, [start, startWith]);
 
-  // A call that hasn't connected yet has nothing to save: ending it goes back to the intro.
   const end = call.phase === "connecting" ? () => onRestart("intro") : call.hangUp;
 
-  // A call the learner's plan leaves to Plus shows its intro locked, with "See Plus" in place of
-  // Start: from the start (`locked`), or once a call is refused for it (Plus lapsed while its intro
-  // was open).
   const locked = conversation.locked || call.error === "plusRequired";
 
   if (locked || (call.phase === "idle" && startWith === "intro")) {
@@ -197,13 +172,6 @@ function LiveCallRun({
   );
 }
 
-/**
- * A live conversation from its intro to its result: a unit's practice call, a language goal's
- * checkpoint, an IELTS or TOEFL speaking mock, or a task of a DELE, DELF, Goethe or Cambridge
- * speaking paper. The host supplies the view model, how to save the call and where to go after.
- * Every kind of result says what the call did to the day under its first step, and a milestone it
- * earned opens before that step, on its own.
- */
 export function ConversationScreen({
   actions,
   buddy,
@@ -214,26 +182,14 @@ export function ConversationScreen({
   renderCeremony,
 }: {
   actions: ConversationActions;
-  /** The learner's buddy, glad about the missions the call completes. */
   buddy?: LearnBuddy | null;
-  /**
-   * Continues a Start tap that first had to create the checkpoint's conversation: the call starts
-   * at once, with the microphone that tap opened.
-   */
   callAudio?: TappedCallAudio;
   conversation: LanguageConversationView;
   hrefs: ConversationHrefs;
-  /**
-   * Leads on once the call is saved instead of showing its result: a running mock's task, since a
-   * mock gives no feedback until it's over (its result opens each task's then, and says what its
-   * calls did to the day's missions: see `MockView.missionMoment`).
-   */
   onSaved?: () => void;
-  /** The full-screen moment for a milestone the call earned (a new belt, new glasses). */
   renderCeremony?: MomentCeremony;
 }) {
-  // The call as it was last saved here: once it ends, with what it did to the day. A call opened
-  // after it ended was celebrated then.
+  // A call opened after it ended was celebrated then, so it gets no ceremony.
   const [view, setView] = useState<CompletedLanguageConversation>({
     ...conversation,
     ceremony: null,
@@ -246,7 +202,6 @@ export function ConversationScreen({
     startWith: callAudio ? "call" : "intro",
   });
 
-  // A result opened again later is a record: only a call that ended here celebrates its stars.
   // oxlint-disable-next-line react/hook-use-state -- Read once as the screen opens, never updated.
   const [openedWithResult] = useState(Boolean(conversation.result));
   const { result } = view;

@@ -6,19 +6,13 @@ import { type ProgressCelebration } from "@zoonk/core/sessions/progress-celebrat
 import { useMemo, useState, useTransition } from "react";
 import { type TaskSegment } from "../../_components/task-header";
 
-/**
- * What the drill earned, from core: right answers of the total, the Brain Power paid, and the
- * level, tenth of Energy and milestone it's celebrated with.
- */
 export type PatternPracticeResult = ProgressCelebration & {
   brainPower: number;
   correct: number;
-  /** The day's missions the drill completed; null when it completed none. */
   missionMoment?: MissionMomentView | null;
   total: number;
 };
 
-/** A finished drill as the host saves it: its answers in order and the drill's own id. */
 export type PatternDrillAnswers = { answers: string[]; requestId: string };
 
 type DrillStep =
@@ -26,12 +20,6 @@ type DrillStep =
   | { index: number; kind: "question" }
   | { kind: "result"; result: PatternPracticeResult };
 
-/**
- * The drill's steps: the pattern card, one question per screen, then the result once core has
- * saved every answer. A question is answered as a lesson's is: the learner picks an option (and
- * can change their mind), then Check grades it against the drill and shows why; nothing is saved
- * until the last one.
- */
 export function usePatternDrill({
   drill,
   practice,
@@ -65,8 +53,6 @@ export function usePatternDrill({
     });
   };
 
-  // Each question's segment in the header: blue or red once checked, the one in view, the rest
-  // ahead.
   const segments = drill.map((item, position): TaskSegment => {
     const checked = answers[position];
 
@@ -78,7 +64,6 @@ export function usePatternDrill({
   });
 
   return {
-    /** The checked answer to the question in view, or null before Check. */
     answer,
     check: () => {
       if (step.kind === "question" && answer === null && picked !== null) {
@@ -103,7 +88,6 @@ export function usePatternDrill({
         setPicked(option);
       }
     },
-    /** The option shown as chosen: the checked answer, or the pick waiting for Check. */
     picked: answer ?? picked,
     question,
     retry: () => save(answers),

@@ -9,7 +9,6 @@ import { type TranscriptTurn, addTranscriptFragment } from "./live-call-transcri
 import { type LiveCallPhase } from "./use-call-controls";
 import { type CallLength } from "./use-call-cues";
 
-/** Before the call is live, only its start, or the server closing it early, means anything. */
 function movesCall({ event, phase }: { event: RealtimeServerEvent; phase: LiveCallPhase }) {
   if (phase === "live") {
     return true;
@@ -20,16 +19,6 @@ function movesCall({ event, phase }: { event: RealtimeServerEvent; phase: LiveCa
   );
 }
 
-/**
- * What the call does with GPT-Live's events. Once the session starts, the clock runs to the call's
- * end, the character opens, and replies typed while it connected go out. Transcripts build what was
- * said and time the goal checks; a delegation is told there's no backend to ask. A session our
- * server closed (its deadline, another call taking over, an admin) ends the call here as well, or,
- * closed before it went live, is a call that didn't connect (`onClosedEarly`). Only the run's own
- * session moves it, and only while that's meant to: a session that starts after the call failed or
- * ended can't bring it back, and words after the end (which the learner no longer hears) don't join
- * what's saved.
- */
 export function useCallEvents({
   hangUp,
   onCharacterTurn,

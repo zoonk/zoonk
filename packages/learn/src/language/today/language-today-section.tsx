@@ -27,7 +27,6 @@ import {
 
 type Pronunciation = NonNullable<LanguageTodayView["pronunciation"]>;
 
-/** A pattern noticed in recent mistakes (or that they were only typos), as a row of a list. */
 export function PatternRow({ href, pattern }: { href: string; pattern: NoticedPattern }) {
   const t = useExtracted();
   const isTypos = pattern.kind === "typos";
@@ -49,7 +48,6 @@ export function PatternRow({ href, pattern }: { href: string; pattern: NoticedPa
   );
 }
 
-/** The words to say again today, as a row of a list, with the microphone their review uses. */
 export function PronunciationRow({
   href,
   pronunciation,
@@ -81,7 +79,6 @@ export function PronunciationRow({
   );
 }
 
-/** The practice due, as Today's notice: what it is, the words or the pattern, and the way in. */
 function PracticeNotice({
   action,
   description,
@@ -119,12 +116,6 @@ function PracticeNotice({
   );
 }
 
-/**
- * A language goal's practice that's due, as Today's one notice: the words mispronounced earlier
- * that are due to be said again (they're due today), else a pattern noticed in recent mistakes
- * (or the kind note that they were only typos), which waits a week. The host renders it only when
- * there's one.
- */
 export function LanguagePracticeRow({
   hrefs,
   today,

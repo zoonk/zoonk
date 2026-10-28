@@ -6,12 +6,7 @@ import { useLearnRoutes } from "../../learn-context";
 import { LearnLink } from "../../learn-link";
 import { CallOffMessage } from "./conversation-parts";
 
-/**
- * The plan's call time is used: until when, and the one thing to do about it (a free account for
- * a guest, Plus's higher call limits for a free learner). Never how much call time a plan has. The
- * call's screen and the sheet that picks a call's length say it the same way; a call that needs
- * more time than is left, while shorter ones still fit, passes its own `title`.
- */
+/** Never says how much call time a plan has. */
 export function CallLimitMessage({
   className,
   limit,

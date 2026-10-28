@@ -1,7 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ComponentProps } from "react";
 
-/** A call's tip or limit as one quiet line, with a small glyph beside its words. */
 export function CallNote({ children, className, ...props }: ComponentProps<"p">) {
   return (
     <p

@@ -12,10 +12,8 @@ import { CallLimitMessage } from "./call-limit-message";
 import { CallOffMessage } from "./conversation-parts";
 import { type LiveCallError } from "./use-live-call";
 
-/** Why a call can't go on: the live call's problem, or a finished call another call took over. */
 type CallProblemKind = LiveCallError | "takenOver";
 
-/** Why the call can't go on: one title and one sentence. */
 function ProblemMessage({ text, title }: { text: string; title: string }) {
   return (
     <CallOffMessage title={title}>
@@ -24,7 +22,6 @@ function ProblemMessage({ text, title }: { text: string; title: string }) {
   );
 }
 
-/** A problem with nothing to retry: the call's screen with one way back. */
 function ProblemWithBack({
   children,
   exitHref,
@@ -51,12 +48,6 @@ function ProblemWithBack({
   );
 }
 
-/**
- * Why the call stopped, never the learner's fault, with the one thing to do next: try again (a
- * dropped call can also end here, which saves what was said), end the learner's other call and
- * start this one, or go back when there's nothing to retry. Calls paused (switched off, or not
- * available right now) says so plainly instead of pretending the call failed.
- */
 export function CallProblem({
   error,
   exitHref,
@@ -173,13 +164,9 @@ export function CallProblem({
   );
 }
 
-/**
- * Past this a save says it's still working: a call's feedback takes a few seconds, an exam's grade
- * 13 to 33 (about 23 for most).
- */
+/** A call's feedback takes a few seconds, an exam's grade 13 to 33 s (about 23 for most). */
 const SLOW_SAVE_MS = { feedback: 20_000, grade: 45_000 } as const;
 
-/** What the wait is doing, and when it's taking longer than it usually does. */
 function SavingLine({ grading }: { grading: boolean }) {
   const t = useExtracted();
   const afterMs = SLOW_SAVE_MS[grading ? "grade" : "feedback"];
@@ -196,19 +183,12 @@ function SavingLine({ grading }: { grading: boolean }) {
     : t("Writing your feedback…");
 }
 
-/**
- * Saving a finished call: its feedback being written (a mock's or an exam task's grade, which takes
- * longer, says so), or why not yet, with Try again as the screen's main action. While the server
- * hasn't confirmed the call closed, nothing is saved and the transcript waits here; trying again
- * asks the server to close it again.
- */
 export function SavingCall({
   grading,
   onRetry,
   state,
   title,
 }: {
-  /** The call is graded on its exam's criteria (a speaking mock, a certificate's task). */
   grading: boolean;
   onRetry: () => void;
   state: "closing" | "failed" | "saving";

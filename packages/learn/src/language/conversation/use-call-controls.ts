@@ -14,10 +14,6 @@ import {
 
 export type LiveCallPhase = "connecting" | "ended" | "failed" | "idle" | "live";
 
-/**
- * Where the call is. The connection's own events read the ref, so they act on the phase of the
- * moment, not the one they were created in.
- */
 export function useCallPhase() {
   const [current, setCurrent] = useState<LiveCallPhase>("idle");
   const phaseRef = useRef<LiveCallPhase>("idle");
@@ -30,10 +26,6 @@ export function useCallPhase() {
   return { phase: current, phaseRef, setPhase };
 }
 
-/**
- * What was said so far, as it builds up: the ref holds the latest turns for the call's event
- * handlers, the state renders them.
- */
 export function useCallTranscript() {
   const [turns, setTurns] = useState<TranscriptTurn[]>([]);
   const turnsRef = useRef<TranscriptTurn[]>([]);
@@ -48,10 +40,6 @@ export function useCallTranscript() {
   return { getTurns, savedTurns, turnsRef, updateTurns };
 }
 
-/**
- * Replies the learner types: each one joins the transcript at once. While the call connects they
- * wait, and go out once the call is live; then each goes straight to GPT-Live.
- */
 export function useTypedReplies({
   isConnecting,
   liveSession,
@@ -60,7 +48,6 @@ export function useTypedReplies({
   updateTurns,
 }: {
   isConnecting: boolean;
-  /** The session while the call is live; null before and after. */
   liveSession: LiveCallSession | null;
   onLearnerTurn: () => void;
   turnsRef: RefObject<TranscriptTurn[]>;
@@ -97,7 +84,6 @@ export function useTypedReplies({
   return { sendText, sendWaitingReplies };
 }
 
-/** The big microphone button mutes the learner during a live call, and unmutes them. */
 export function useCallMute(liveSession: LiveCallSession | null) {
   const [muted, setMuted] = useState(false);
 
@@ -113,17 +99,9 @@ export function useCallMute(liveSession: LiveCallSession | null) {
   return { muted, toggleMute };
 }
 
-/**
- * What a finished call saves: the connection it ran on (this run's own, never a newer one), what
- * was said and how long the learner spoke.
- */
 type LiveCallSummary = Omit<LanguageConversationCompletionInput, "timeZone" | "usedHelp">;
 
-/**
- * Asks the server to hang the call up, then returns what it saves, whether or not the hangup went
- * through: the review that completing starts hangs the call up itself before anything is reviewed,
- * and the deadline does if that fails too. Null only for a call that never got a connection.
- */
+/** Returns what it saves whether or not the hangup went through: completing hangs the call up itself, and the deadline does if that fails too. */
 export function useCallFinish({
   getConnectionId,
   release,

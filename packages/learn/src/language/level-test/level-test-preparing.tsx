@@ -12,18 +12,12 @@ import {
   OnboardingTitle,
 } from "../../onboarding/onboarding-frame";
 
-/**
- * The wait of a language pair's first learner, while its questions are written: what's happening
- * and why, the progress as it goes, and a way out that keeps the level they gave. Later learners
- * of the pair never see it, and it moves on to the test by itself.
- */
 export function LevelTestPreparing({
   language,
   onSkip,
   run,
   skipping,
 }: {
-  /** The language being tested, named in the learner's language. */
   language: string;
   onSkip: () => void;
   run: GenerationRun;

@@ -15,11 +15,7 @@ import { type PatternPracticeResult } from "./use-pattern-drill";
 
 type DrillQuestion = MistakePatternView["drill"][number];
 
-/**
- * A drill sentence as the shared choice question draws it, with its options in order. The drill
- * isn't a bank item: the question reads only the format, options and text, so the ids just name
- * the sentence.
- */
+/** Not a bank item: the question reads only its format, options and text, so the ids just name the sentence. */
 function toChoiceQuestion({
   index,
   question,
@@ -58,11 +54,6 @@ function toFeedback({
   };
 }
 
-/**
- * One fill-in-the-blank sentence, answered as a lesson's question is: tap an option or press its
- * number (`picked`, which can still change), then Check shows the right answer and why
- * (`answer`). Nothing is saved until the last one.
- */
 export function PatternDrillQuestion({
   answer,
   index,
@@ -70,7 +61,6 @@ export function PatternDrillQuestion({
   picked,
   question,
 }: {
-  /** The checked answer, or null before Check. */
   answer: string | null;
   index: number;
   onPick: (option: string) => void;
@@ -96,11 +86,6 @@ export function PatternDrillQuestion({
   );
 }
 
-/**
- * The drill's end, as every task's end reads, at the top of the task's column: "Practice done"
- * with what the drill showed under it, right answers and the Brain Power it paid as readouts, then
- * what it did to the day 24px under them.
- */
 export function PatternDrillResult({
   buddy,
   result,

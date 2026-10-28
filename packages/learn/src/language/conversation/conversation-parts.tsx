@@ -8,10 +8,6 @@ import { useExtracted } from "next-intl";
 import { SpeechStatusIcon, useSpeechActionLabel } from "../../speech/speech-parts";
 import { useSpokenAudio } from "../../speech/use-spoken-audio";
 
-/**
- * The character's initial in a small circle: calls show a person, never a stock face. While they
- * talk, a thin ring around it shows it.
- */
 function CharacterAvatar({ name, talking }: { name: string; talking: boolean }) {
   return (
     <span
@@ -27,10 +23,6 @@ function CharacterAvatar({ name, talking }: { name: string; talking: boolean }) 
   );
 }
 
-/**
- * Who the learner talks to, in one row at the column's edge: their initial, their name, and who
- * they are ("Landlord · Toronto"), quiet beside it.
- */
 export function CharacterRow({
   detail,
   name,
@@ -52,10 +44,6 @@ export function CharacterRow({
   );
 }
 
-/**
- * Why the call can't go on (it didn't connect, it dropped, it ended, or the plan's call time is
- * used), at the column's edge: one title and what to do, never the learner's fault.
- */
 export function CallOffMessage({
   children,
   className,
@@ -75,14 +63,12 @@ export function CallOffMessage({
   );
 }
 
-/** Plays a phrase read aloud in its language; the phrase is on screen if the audio fails. */
 export function SpeakButton({
   language,
   personal = false,
   text,
 }: {
   language: string;
-  /** The learner's own words, read in a clip of theirs alone. */
   personal?: boolean;
   text: string;
 }) {
@@ -113,7 +99,6 @@ export function SpeakButton({
   );
 }
 
-/** How the call hears the learner, in one quiet line at the end of an intro. */
 export function MicNote({ children }: { children: React.ReactNode }) {
   return (
     <p className="text-muted-foreground flex items-start gap-2 text-[0.8125rem] leading-snug text-pretty">

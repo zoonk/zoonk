@@ -22,16 +22,12 @@ import { UnitMistakes } from "./unit-mistakes";
 import { UnitPracticeRows } from "./unit-rows";
 import { UnitGrammarTips, UnitObjectives, UnitWords } from "./unit-sections";
 
-/**
- * The host starts a practice call for the unit and opens it (false when it didn't start), and
- * asks for the unit's test-out and opens it.
- */
+/** `startConversation` resolves to false when the call didn't start. */
 type LanguageUnitActions = {
   startConversation: (minutes: number) => Promise<boolean>;
   startTestOut: () => Promise<TestOutStart>;
 };
 
-/** Where the unit links: back, a lesson, a noticed pattern and the words to say again. */
 type LanguageUnitHrefs = {
   back: string;
   lesson: (lessonId: string) => string;
@@ -43,7 +39,6 @@ const PRACTICE_TITLE_ID = "unit-practice-title";
 const PROGRESS_TITLE_ID = "unit-progress-title";
 const EXTRAS_TITLE_ID = "unit-extras-title";
 
-/** The unit's folded extras: its grammar tips, its words and its summaries. */
 function UnitExtras({
   renderLessonText,
   unit,
@@ -110,10 +105,6 @@ function UnitExtras({
   );
 }
 
-/**
- * The unit's practice: a conversation with its character, a test to skip it, its open mistakes
- * (folded), and the practice due in it (a noticed pattern, words to say again).
- */
 function UnitPractice({
   actions,
   hrefs,
@@ -152,7 +143,6 @@ function UnitPractice({
   );
 }
 
-/** How far the learner is in the unit, as one segment per lesson ("1 of 3"), in the aside. */
 function UnitProgress({ unit }: { unit: LanguageUnitView }) {
   const t = useExtracted();
   const done = unit.lessons.filter((lesson) => lesson.done).length;
@@ -173,24 +163,6 @@ function UnitProgress({ unit }: { unit: LanguageUnitView }) {
   );
 }
 
-/**
- * A language unit's page, one real situation and the only page for it, as a chapter's: its name
- * with "Continue" into the next lesson beside it, its lessons in order (the next one marked while
- * the unit is the plan's current one, `upNext`) and what the learner will be able to do; in the
- * aside from 72rem (after them under it) how far they are, practice (a conversation, a test to
- * skip it, its open mistakes, a noticed pattern, words to say again) and, for reference, its
- * grammar tips, words and summaries.
- *
- * ```tsx
- * <LanguageUnitScreen
- *   actions={actions}
- *   hrefs={hrefs}
- *   renderLessonText={(text) => <LessonText text={text} />}
- *   unit={unit}
- *   upNext
- * />
- * ```
- */
 export function LanguageUnitScreen({
   actions,
   ask,
@@ -200,13 +172,10 @@ export function LanguageUnitScreen({
   upNext = false,
 }: {
   actions: LanguageUnitActions;
-  /** "Ask" about the unit, such as the player's `AskTutor`; the host decides who can ask. */
   ask?: React.ReactNode;
   hrefs: LanguageUnitHrefs;
-  /** Grammar tips and summaries are lesson text (emphasis, short lists): drawn as lessons do. */
   renderLessonText: (text: string) => React.ReactNode;
   unit: LanguageUnitView;
-  /** The unit holds the plan's next lesson, which its list marks. */
   upNext?: boolean;
 }) {
   const t = useExtracted();

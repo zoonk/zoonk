@@ -15,7 +15,6 @@ import { PrepTimer } from "./prep-timer";
 import { SpeakingCard } from "./speaking-card";
 import { useTaskMinutes } from "./speaking-task-row";
 
-/** "DELE B2 · Task 1 of 3", as the task's header names it. */
 export function useExamTaskTitle() {
   const t = useExtracted();
 
@@ -27,7 +26,6 @@ export function useExamTaskTitle() {
     });
 }
 
-/** That an AI plays the examiner or the other candidate in place of a person. */
 function StandInNote({ examTask, name }: { examTask: ExamTaskView; name: string }) {
   const t = useExtracted();
 
@@ -44,14 +42,6 @@ function StandInNote({ examTask, name }: { examTask: ExamTaskView; name: string 
   );
 }
 
-/**
- * Before an exam task's call, as the exam room has it, on the page like every call's intro: the
- * task's official timing and name, what to do in the learner's language, who they talk to, that an
- * AI stands in for the examiner or partner, the preparation time the exam gives, then the card
- * itself in the exam's language. The `footer` is every call intro's: one button (or Enter) starts
- * the call, or a task the learner's plan leaves to Plus shows the Plus notice with "See Plus".
- * Escape leaves, since nothing has started.
- */
 export function ExamTaskIntro({
   conversation,
   examTask,
@@ -72,7 +62,6 @@ export function ExamTaskIntro({
   const heading = useRef<HTMLHeadingElement>(null);
   const { character } = conversation;
 
-  // The task opens on its name, so the keyboard and screen readers start where the eyes do.
   useEffect(() => {
     heading.current?.focus({ preventScroll: true });
   }, []);
@@ -107,14 +96,12 @@ export function ExamTaskIntro({
         </p>
       </header>
 
-      {/* Every task happens in the exam room, so its place says nothing; the role says who. */}
       <CharacterRow detail={roleNoun(examTask.task.role)} name={character.name} />
 
       <StandInNote examTask={examTask} name={character.name} />
 
       {examTask.task.prepMinutes > 0 && <PrepTimer cardId={conversation.id} task={examTask.task} />}
 
-      {/* Beside the intro from `lg`, where the live call keeps it, so the column stays put. */}
       <TaskAsideContent className="w-full">
         <SpeakingCard card={examTask.card} language={conversation.targetLanguage} />
       </TaskAsideContent>
