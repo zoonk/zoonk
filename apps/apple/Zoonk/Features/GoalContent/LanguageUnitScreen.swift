@@ -144,162 +144,184 @@ private struct LanguageUnitContent: View {
   let unit: LanguageUnit
 
   var body: some View {
+    // Where there's room, the unit and its lessons lead and main's aside follows: its practice
+    // call, grammar tips, words, test and mistakes.
+    PaneSplit(primaryShare: 0.55) {
+      List {
+        unitAndLessons
+      }
+    } secondary: {
+      List {
+        practice
+      }
+    } single: {
+      List {
+        unitAndLessons
+        practice
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var unitAndLessons: some View {
     let lessons = unit.lessons
     let done = lessons.filter { $0.state == .done }.count
     let next = lessons.first { $0.state == .next }
 
-    List {
-      Section {
-        VStack(alignment: .leading, spacing: 6) {
-          eyebrow
-            .font(.subheadline)
+    Section {
+      VStack(alignment: .leading, spacing: 6) {
+        eyebrow
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+
+        Text(unit.unit.title)
+          .font(.title2.weight(.semibold))
+
+        if let description = unit.unit.description, !description.isEmpty {
+          Text(description)
             .foregroundStyle(.secondary)
-
-          Text(unit.unit.title)
-            .font(.title2.weight(.semibold))
-
-          if let description = unit.unit.description, !description.isEmpty {
-            Text(description)
-              .foregroundStyle(.secondary)
-          }
-
-          if let next {
-            Button {
-              router.open(.lesson(lessonId: next.lessonId))
-            } label: {
-              Group {
-                if done > 0 {
-                  Text("Continue", tableName: "Plan", comment: "Opens the unit's next lesson")
-                } else {
-                  Text("Start", tableName: "Plan", comment: "Opens the unit's first lesson")
-                }
-              }
-              .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.mainAction)
-            .controlSize(.large)
-            .padding(.top, 8)
-          }
         }
-        .padding(.vertical, 4)
-      }
 
-      if !unit.unit.objectives.isEmpty {
-        Section {
-          ForEach(unit.unit.objectives, id: \.self) { objective in
-            Label {
-              Text(objective)
-            } icon: {
-              Image(systemName: "checkmark.circle")
-                .foregroundStyle(.secondary)
-            }
-          }
-        } header: {
-          Text("You'll be able to", tableName: "Plan", comment: "Section of what a unit teaches")
-        }
-      }
-
-      if !lessons.isEmpty {
-        Section {
-          ForEach(lessons) { lesson in
-            Button {
-              router.open(.lesson(lessonId: lesson.lessonId))
-            } label: {
-              LessonRow(
-                lesson: GoalChapter.Lesson(
-                  lessonId: lesson.lessonId, minutes: lesson.minutes, plusRequired: false,
-                  state: lesson.state, title: lesson.title))
-            }
-          }
-        } header: {
-          HStack {
-            Text("Lessons", tableName: "Plan", comment: "Section of a chapter's lessons")
-            Spacer()
-            Text(
-              "\(done) of \(lessons.count)", tableName: "Plan",
-              comment: "Lessons done of the chapter's lessons"
-            )
-            .monospacedDigit()
-          }
-        }
-      }
-
-      if let conversation = unit.conversation {
-        UnitPracticeCallSection(
-          conversation: conversation, chapterId: unit.unit.chapterId, goalId: goalId)
-      }
-
-      if !unit.grammarTips.isEmpty {
-        Section {
-          ForEach(unit.grammarTips, id: \.self) { tip in
-            DisclosureGroup {
-              Text((try? AttributedString(markdown: tip.text)) ?? AttributedString(tip.text))
-                .foregroundStyle(.secondary)
-            } label: {
-              Text(tip.title)
-            }
-          }
-        } header: {
-          Text("Grammar tips", tableName: "Plan", comment: "Section of a unit's grammar tips")
-        }
-      }
-
-      if let words = unit.words, words.count > 0 {
-        Section {
-          Text(words.sample.formatted(.list(type: .and)))
-            .foregroundStyle(.secondary)
-        } header: {
-          Text(
-            "\(words.count) words", tableName: "Plan",
-            comment: "Section of a unit's words, with how many it teaches")
-        }
-      }
-
-      if unit.canTestOut {
-        Section {
+        if let next {
           Button {
-            router.open(.testOut(chapterId: unit.unit.chapterId))
+            router.open(.lesson(lessonId: next.lessonId))
           } label: {
-            VStack(alignment: .leading, spacing: 2) {
-              Text(
-                "Already know this?", tableName: "Plan", comment: "Offers the chapter's test-out"
-              )
-              .foregroundStyle(.primary)
-
-              Text(
-                "Take the test and skip the unit", tableName: "Plan",
-                comment: "What the unit's test-out does"
-              )
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
+            Group {
+              if done > 0 {
+                Text("Continue", tableName: "Plan", comment: "Opens the unit's next lesson")
+              } else {
+                Text("Start", tableName: "Plan", comment: "Opens the unit's first lesson")
+              }
             }
+            .frame(maxWidth: .infinity)
+          }
+          .buttonStyle(.mainAction)
+          .controlSize(.large)
+          .padding(.top, 8)
+        }
+      }
+      .padding(.vertical, 4)
+    }
+
+    if !unit.unit.objectives.isEmpty {
+      Section {
+        ForEach(unit.unit.objectives, id: \.self) { objective in
+          Label {
+            Text(objective)
+          } icon: {
+            Image(systemName: "checkmark.circle")
+              .foregroundStyle(.secondary)
+          }
+        }
+      } header: {
+        Text("You'll be able to", tableName: "Plan", comment: "Section of what a unit teaches")
+      }
+    }
+
+    if !lessons.isEmpty {
+      Section {
+        ForEach(lessons) { lesson in
+          Button {
+            router.open(.lesson(lessonId: lesson.lessonId))
+          } label: {
+            LessonRow(
+              lesson: GoalChapter.Lesson(
+                lessonId: lesson.lessonId, minutes: lesson.minutes, plusRequired: false,
+                state: lesson.state, title: lesson.title))
+          }
+        }
+      } header: {
+        HStack {
+          Text("Lessons", tableName: "Plan", comment: "Section of a chapter's lessons")
+          Spacer()
+          Text(
+            "\(done) of \(lessons.count)", tableName: "Plan",
+            comment: "Lessons done of the chapter's lessons"
+          )
+          .monospacedDigit()
+        }
+      }
+    }
+
+  }
+
+  @ViewBuilder
+  private var practice: some View {
+    if let conversation = unit.conversation {
+      UnitPracticeCallSection(
+        conversation: conversation, chapterId: unit.unit.chapterId, goalId: goalId)
+    }
+
+    if !unit.grammarTips.isEmpty {
+      Section {
+        ForEach(unit.grammarTips, id: \.self) { tip in
+          DisclosureGroup {
+            Text((try? AttributedString(markdown: tip.text)) ?? AttributedString(tip.text))
+              .foregroundStyle(.secondary)
+          } label: {
+            Text(tip.title)
+          }
+        }
+      } header: {
+        Text("Grammar tips", tableName: "Plan", comment: "Section of a unit's grammar tips")
+      }
+    }
+
+    if let words = unit.words, words.count > 0 {
+      Section {
+        Text(words.sample.formatted(.list(type: .and)))
+          .foregroundStyle(.secondary)
+      } header: {
+        Text(
+          "\(words.count) words", tableName: "Plan",
+          comment: "Section of a unit's words, with how many it teaches")
+      }
+    }
+
+    if unit.canTestOut {
+      Section {
+        Button {
+          router.open(.testOut(chapterId: unit.unit.chapterId))
+        } label: {
+          VStack(alignment: .leading, spacing: 2) {
+            Text(
+              "Already know this?", tableName: "Plan", comment: "Offers the chapter's test-out"
+            )
+            .foregroundStyle(.primary)
+
+            Text(
+              "Take the test and skip the unit", tableName: "Plan",
+              comment: "What the unit's test-out does"
+            )
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
           }
         }
       }
+    }
 
-      if !unit.mistakes.isEmpty {
-        Section {
-          ForEach(unit.mistakes) { mistake in
-            VStack(alignment: .leading, spacing: 4) {
-              Text(mistake.question)
+    if !unit.mistakes.isEmpty {
+      Section {
+        ForEach(unit.mistakes) { mistake in
+          VStack(alignment: .leading, spacing: 4) {
+            Text(mistake.question)
 
-              Text(
-                "You answered: \(mistake.answer)", tableName: "Plan",
-                comment: "The learner's wrong answer to a unit question"
-              )
-              .foregroundStyle(.destructive)
+            Text(
+              "You answered: \(mistake.answer)", tableName: "Plan",
+              comment: "The learner's wrong answer to a unit question"
+            )
+            .foregroundStyle(.destructive)
 
-              Text(
-                "Answer: \(mistake.correctAnswer)", tableName: "Plan",
-                comment: "The right answer to a unit question"
-              )
-              .foregroundStyle(.secondary)
-            }
-            .font(.subheadline)
+            Text(
+              "Answer: \(mistake.correctAnswer)", tableName: "Plan",
+              comment: "The right answer to a unit question"
+            )
+            .foregroundStyle(.secondary)
           }
-        } header: {
-          Text("Your mistakes", tableName: "Plan", comment: "Section of a unit's mistakes")
+          .font(.subheadline)
         }
+      } header: {
+        Text("Your mistakes", tableName: "Plan", comment: "Section of a unit's mistakes")
       }
     }
   }

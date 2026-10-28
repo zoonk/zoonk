@@ -72,105 +72,138 @@ private struct SubjectContent: View {
   let subject: SyllabusSubject
 
   var body: some View {
-    let isExam = goal.kind == .exam
-    let chapters = subject.chapters
-    let done = chapters.filter { $0.state == .done || $0.known }.count
-    let next = chapters.first { $0.state == .current && $0.chapterId != nil }
-
-    List {
-      Section {
-        VStack(alignment: .leading, spacing: 8) {
-          Group {
-            if isExam {
-              Text("Subject", tableName: "Plan", comment: "Eyebrow of an exam subject's page")
-            } else {
-              Text("Module", tableName: "Plan", comment: "Eyebrow of a plan module's page")
-            }
-          }
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
-
-          Text(subject.name)
-            .font(.title2.weight(.semibold))
-
-          if let reason = subject.notPlannedReason, !reason.isEmpty {
-            Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
-          }
-
-          if let next, let chapterId = next.chapterId {
-            Button {
-              router.open(chapterRoute(chapterId))
-            } label: {
-              Text("Continue", tableName: "Plan", comment: "Opens the subject's next chapter")
-                .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.mainAction)
-            .controlSize(.large)
-            .padding(.top, 4)
-          }
-        }
-        .padding(.vertical, 4)
+    // Where there's room, the subject and its chapters lead, and how far the learner is in it and
+    // its topics follow, as main's aside.
+    PaneSplit(primaryShare: 0.55) {
+      List {
+        header
+        chaptersSection
       }
+    } secondary: {
+      List {
+        numbers
+        topics
+      }
+    } single: {
+      List {
+        header
+        numbers
+        topics
+        chaptersSection
+      }
+    }
+  }
 
-      Section {
-        if isExam, let preparation = subject.preparation {
-          meter(
-            label: Text(
-              "Preparation", tableName: "Plan", comment: "Label of a subject's preparation"),
-            share: preparation)
+  private var isExam: Bool { goal.kind == .exam }
+
+  private var header: some View {
+    Section {
+      VStack(alignment: .leading, spacing: 8) {
+        Group {
+          if isExam {
+            Text("Subject", tableName: "Plan", comment: "Eyebrow of an exam subject's page")
+          } else {
+            Text("Module", tableName: "Plan", comment: "Eyebrow of a plan module's page")
+          }
+        }
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
+
+        Text(subject.name)
+          .font(.title2.weight(.semibold))
+
+        if let reason = subject.notPlannedReason, !reason.isEmpty {
+          Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
         }
 
+        if let next = subject.chapters.first(where: { $0.state == .current && $0.chapterId != nil }
+        ),
+          let chapterId = next.chapterId
+        {
+          Button {
+            router.open(chapterRoute(chapterId))
+          } label: {
+            Text("Continue", tableName: "Plan", comment: "Opens the subject's next chapter")
+              .frame(maxWidth: .infinity)
+          }
+          .buttonStyle(.mainAction)
+          .controlSize(.large)
+          .padding(.top, 4)
+        }
+      }
+      .padding(.vertical, 4)
+    }
+  }
+
+  /// Where the learner stands in the subject.
+  private var numbers: some View {
+    Section {
+      if isExam, let preparation = subject.preparation {
         meter(
           label: Text(
-            "Lessons studied", tableName: "Plan", comment: "Label of a subject's lessons studied"),
-          share: subject.lessonShare)
+            "Preparation", tableName: "Plan", comment: "Label of a subject's preparation"),
+          share: preparation)
+      }
 
-        if subject.lessonsKnown > 0 {
-          LabeledContent {
-            Text(subject.lessonsKnown, format: .number).monospacedDigit()
-          } label: {
-            Text("Known", tableName: "Plan", comment: "Lessons the learner already knew")
-          }
-        }
+      meter(
+        label: Text(
+          "Lessons studied", tableName: "Plan", comment: "Label of a subject's lessons studied"),
+        share: subject.lessonShare)
 
-        if isExam, subject.preparation != nil {
-          LabeledContent {
-            if let mastery = subject.mastery {
-              Text(
-                "\(mastery.correct) of \(mastery.answered) right", tableName: "Plan",
-                comment: "A subject's first answers to unseen questions that were right")
-            } else {
-              Text(
-                "Shows after a few practice questions", tableName: "Plan",
-                comment: "Mastery isn't counted yet")
-            }
-          } label: {
-            Text("Mastery", tableName: "Plan", comment: "Label of a subject's mastery")
-          }
+      if subject.lessonsKnown > 0 {
+        LabeledContent {
+          Text(subject.lessonsKnown, format: .number).monospacedDigit()
+        } label: {
+          Text("Known", tableName: "Plan", comment: "Lessons the learner already knew")
         }
       }
 
-      if !subject.topics.isEmpty {
-        SubjectTopicsSection(goal: goal, subject: subject)
-      }
-
-      if !chapters.isEmpty {
-        Section {
-          ForEach(chapters) { chapter in
-            SubjectChapterRow(goal: goal, chapter: chapter)
-          }
-        } header: {
-          HStack {
-            Text("Chapters", tableName: "Plan", comment: "Section of a subject's chapters")
-            Spacer()
+      if isExam, subject.preparation != nil {
+        LabeledContent {
+          if let mastery = subject.mastery {
             Text(
-              "\(done) of \(chapters.count)", tableName: "Plan",
-              comment: "Chapters done of the subject's chapters"
-            )
-            .monospacedDigit()
+              "\(mastery.correct) of \(mastery.answered) right", tableName: "Plan",
+              comment: "A subject's first answers to unseen questions that were right")
+          } else {
+            Text(
+              "Shows after a few practice questions", tableName: "Plan",
+              comment: "Mastery isn't counted yet")
           }
+        } label: {
+          Text("Mastery", tableName: "Plan", comment: "Label of a subject's mastery")
+        }
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var topics: some View {
+    if !subject.topics.isEmpty {
+      SubjectTopicsSection(goal: goal, subject: subject)
+    }
+  }
+
+  @ViewBuilder
+  private var chaptersSection: some View {
+    let chapters = subject.chapters
+    let done = chapters.filter { $0.state == .done || $0.known }.count
+
+    if !chapters.isEmpty {
+      Section {
+        ForEach(chapters) { chapter in
+          SubjectChapterRow(goal: goal, chapter: chapter)
+        }
+      } header: {
+        HStack {
+          Text("Chapters", tableName: "Plan", comment: "Section of a subject's chapters")
+          Spacer()
+          Text(
+            "\(done) of \(chapters.count)", tableName: "Plan",
+            comment: "Chapters done of the subject's chapters"
+          )
+          .monospacedDigit()
         }
       }
     }

@@ -73,128 +73,158 @@ private struct ChapterContent: View {
   let chapter: GoalChapter
 
   var body: some View {
-    let lessons = chapter.lessons
-    let done = lessons.filter { $0.state == .done }.count
-    let next = lessons.first { $0.state == .next }
+    // Where there's room, the chapter and its lessons lead and main's aside follows: its practice
+    // and what it leaves for reference.
+    PaneSplit(primaryShare: 0.55) {
+      List {
+        header
+        lessonsSection
+      }
+    } secondary: {
+      List {
+        practiceSection
+        referenceSection
+      }
+    } single: {
+      List {
+        header
+        lessonsSection
+        practiceSection
+        referenceSection
+      }
+    }
+  }
 
-    List {
-      Section {
-        VStack(alignment: .leading, spacing: 6) {
-          eyebrow
+  private var lessons: [GoalChapter.Lesson] { chapter.lessons }
+
+  private var done: Int { lessons.filter { $0.state == .done }.count }
+
+  private var header: some View {
+    Section {
+      VStack(alignment: .leading, spacing: 6) {
+        eyebrow
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+
+        Text(chapter.chapter.title)
+          .font(.title2.weight(.semibold))
+
+        if !lessons.isEmpty {
+          facts(done: done)
             .font(.subheadline)
             .foregroundStyle(.secondary)
+        }
 
-          Text(chapter.chapter.title)
-            .font(.title2.weight(.semibold))
+        if let next = lessons.first(where: { $0.state == .next }) {
+          Button {
+            router.open(.lesson(lessonId: next.lessonId))
+          } label: {
+            Group {
+              if done > 0 {
+                Text("Continue", tableName: "Plan", comment: "Opens the chapter's next lesson")
+              } else {
+                Text("Start", tableName: "Plan", comment: "Opens the chapter's first lesson")
+              }
+            }
+            .frame(maxWidth: .infinity)
+          }
+          .buttonStyle(.mainAction)
+          .controlSize(.large)
+          .padding(.top, 8)
+        }
+      }
+      .padding(.vertical, 4)
+    }
+  }
 
-          if !lessons.isEmpty {
-            facts(done: done)
+  @ViewBuilder
+  private var lessonsSection: some View {
+    if !lessons.isEmpty {
+      Section {
+        ForEach(lessons) { lesson in
+          Button {
+            router.open(.lesson(lessonId: lesson.lessonId))
+          } label: {
+            LessonRow(lesson: lesson)
+          }
+        }
+      } header: {
+        HStack {
+          Text("Lessons", tableName: "Plan", comment: "Section of a chapter's lessons")
+          Spacer()
+          Text(
+            "\(done) of \(lessons.count)", tableName: "Plan",
+            comment: "Lessons done of the chapter's lessons"
+          )
+          .monospacedDigit()
+        }
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var practiceSection: some View {
+    if chapter.testOut.available || chapter.mistakes.open > 0 {
+      Section {
+        if chapter.testOut.available {
+          Button {
+            router.open(.testOut(chapterId: chapter.chapter.chapterId))
+          } label: {
+            VStack(alignment: .leading, spacing: 2) {
+              HStack {
+                Text(
+                  "Already know this?", tableName: "Plan",
+                  comment: "Offers the chapter's test-out"
+                )
+                .foregroundStyle(.primary)
+
+                if chapter.testOut.plusRequired {
+                  PlusMark()
+                }
+              }
+
+              Text(
+                "Take the test and skip the chapter", tableName: "Plan",
+                comment: "What the chapter's test-out does"
+              )
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
+            }
+          }
+        }
+
+        if chapter.mistakes.open > 0 {
+          Button {
+            practice()
+          } label: {
+            Label {
+              Text(
+                "Practice this chapter", tableName: "Plan",
+                comment: "Adds practice on the chapter"
+              )
+              .foregroundStyle(.primary)
+            } icon: {
+              KindMark(kind: .practice)
+            }
+          }
+          .disabled(isPracticing)
+
+          if let practiceNote {
+            practiceNote
               .font(.subheadline)
               .foregroundStyle(.secondary)
           }
-
-          if let next {
-            Button {
-              router.open(.lesson(lessonId: next.lessonId))
-            } label: {
-              Group {
-                if done > 0 {
-                  Text("Continue", tableName: "Plan", comment: "Opens the chapter's next lesson")
-                } else {
-                  Text("Start", tableName: "Plan", comment: "Opens the chapter's first lesson")
-                }
-              }
-              .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.mainAction)
-            .controlSize(.large)
-            .padding(.top, 8)
-          }
         }
-        .padding(.vertical, 4)
+      } header: {
+        Text("Practice", tableName: "Plan", comment: "Section of a chapter's practice")
       }
+    }
+  }
 
-      if !lessons.isEmpty {
-        Section {
-          ForEach(lessons) { lesson in
-            Button {
-              router.open(.lesson(lessonId: lesson.lessonId))
-            } label: {
-              LessonRow(lesson: lesson)
-            }
-          }
-        } header: {
-          HStack {
-            Text("Lessons", tableName: "Plan", comment: "Section of a chapter's lessons")
-            Spacer()
-            Text(
-              "\(done) of \(lessons.count)", tableName: "Plan",
-              comment: "Lessons done of the chapter's lessons"
-            )
-            .monospacedDigit()
-          }
-        }
-      }
-
-      if chapter.testOut.available || chapter.mistakes.open > 0 {
-        Section {
-          if chapter.testOut.available {
-            Button {
-              router.open(.testOut(chapterId: chapter.chapter.chapterId))
-            } label: {
-              VStack(alignment: .leading, spacing: 2) {
-                HStack {
-                  Text(
-                    "Already know this?", tableName: "Plan",
-                    comment: "Offers the chapter's test-out"
-                  )
-                  .foregroundStyle(.primary)
-
-                  if chapter.testOut.plusRequired {
-                    PlusMark()
-                  }
-                }
-
-                Text(
-                  "Take the test and skip the chapter", tableName: "Plan",
-                  comment: "What the chapter's test-out does"
-                )
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-              }
-            }
-          }
-
-          if chapter.mistakes.open > 0 {
-            Button {
-              practice()
-            } label: {
-              Label {
-                Text(
-                  "Practice this chapter", tableName: "Plan",
-                  comment: "Adds practice on the chapter"
-                )
-                .foregroundStyle(.primary)
-              } icon: {
-                KindMark(kind: .practice)
-              }
-            }
-            .disabled(isPracticing)
-
-            if let practiceNote {
-              practiceNote
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            }
-          }
-        } header: {
-          Text("Practice", tableName: "Plan", comment: "Section of a chapter's practice")
-        }
-      }
-
-      if !chapter.skills.isEmpty || !chapter.summaries.isEmpty || chapter.chapter.state == "done" {
-        ChapterReferenceSection(chapter: chapter)
-      }
+  @ViewBuilder
+  private var referenceSection: some View {
+    if !chapter.skills.isEmpty || !chapter.summaries.isEmpty || chapter.chapter.state == "done" {
+      ChapterReferenceSection(chapter: chapter)
     }
   }
 
