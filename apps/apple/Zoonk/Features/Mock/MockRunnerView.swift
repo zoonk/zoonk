@@ -8,7 +8,11 @@ import SwiftUI
 /// for the learner.
 struct MockRunnerView: View {
   @Environment(\.horizontalSizeClass) private var sizeClass
-  @State private var showsSheet = false
+  /// The answer sheet beside the question: the learner's open panel, kept through folding and
+  /// unfolding iPhone Duo, and never turned into a sheet over the question when the screen narrows.
+  @State private var showsSheetBeside = false
+  /// The answer sheet over the question on a phone, only from a tap there.
+  @State private var showsSheetOver = false
   @State private var confirmsHandIn = false
   @Bindable var run: MockRun
   let view: MockView
@@ -43,7 +47,11 @@ struct MockRunnerView: View {
       ToolbarItem(placement: .principal) { MockClock(deadline: current.deadline) }
       ToolbarItem(placement: .primaryAction) {
         Button {
-          showsSheet.toggle()
+          if sizeClass == .compact {
+            showsSheetOver.toggle()
+          } else {
+            showsSheetBeside.toggle()
+          }
         } label: {
           Label {
             Text("Answer sheet", tableName: "Mock", comment: "Opens the mock's answer sheet")
@@ -54,18 +62,24 @@ struct MockRunnerView: View {
       }
     }
     .deadline(current.deadline, run: run)
-    .inspector(isPresented: $showsSheet) {
-      MockAnswerSheet(run: run, view: view) {
-        showsSheet = false
-        confirmsHandIn = true
-      } onPick: { position in
-        run.go(to: position)
-        // On a phone the sheet covers the question it opens; beside it, it stays.
-        if sizeClass == .compact {
-          showsSheet = false
-        }
+    .inspector(
+      isPresented: Binding(
+        get: { showsSheetBeside && sizeClass != .compact }, set: { showsSheetBeside = $0 })
+    ) {
+      answerSheet
+    }
+    .sheet(
+      isPresented: Binding(
+        get: { showsSheetOver && sizeClass == .compact }, set: { showsSheetOver = $0 })
+    ) {
+      answerSheet.presentationDetents([.medium, .large])
+    }
+    // A sheet opened on the phone moves beside the question once there's room for it.
+    .onChange(of: sizeClass) { _, size in
+      if size != .compact, showsSheetOver {
+        showsSheetOver = false
+        showsSheetBeside = true
       }
-      .presentationDetents([.medium, .large])
     }
     .alert(handInTitle, isPresented: $confirmsHandIn) {
       Button(role: .cancel) {
@@ -82,6 +96,18 @@ struct MockRunnerView: View {
         verbatim:
           "\(MockSectionCounts(run: run).leftOpen) \(String(localized: "After this, your answers can't change.", table: "Mock", comment: "Handing in is final"))"
       )
+    }
+  }
+
+  private var answerSheet: some View {
+    MockAnswerSheet(run: run, view: view) {
+      showsSheetBeside = false
+      showsSheetOver = false
+      confirmsHandIn = true
+    } onPick: { position in
+      run.go(to: position)
+      // Over the question it opens, the sheet closes; beside it, it stays.
+      showsSheetOver = false
     }
   }
 
