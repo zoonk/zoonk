@@ -1,5 +1,6 @@
 import { type TeachingStepKind } from "@zoonk/core/lesson-player/contract";
 import { lessonTutorSuggestionSchema } from "@zoonk/core/lesson-questions/contract";
+import { toleranceSchema } from "@zoonk/core/library/activities/schemas";
 import { stepContentSchemas } from "@zoonk/core/library/steps/contract";
 import { EXERCISE_KINDS } from "@zoonk/core/player/contracts/exercise-content";
 import { type LessonFit } from "@zoonk/core/view-models/onboarding/get-lesson-fit";
@@ -98,6 +99,15 @@ const languageStepSchema = z
   })
   .meta({ description: "A language exercise screen: `exercise` holds what it shows and checks" });
 
+const activityStepSchema = teachingStepSchema("activity").extend({
+  minTolerance: toleranceSchema
+    .nullable()
+    .meta({
+      description:
+        "How far a `numeric` answer may always be from the right one on this template, when the check's own tolerance is tighter (a guess on a slider can't land closer than its steps): right within either. Null when the template has none",
+    }),
+});
+
 const spokenAnswerStepSchema = teachingStepSchema("spokenAnswer").extend({
   listening: serializedStepSchema
     .nullable()
@@ -109,7 +119,7 @@ const spokenAnswerStepSchema = teachingStepSchema("spokenAnswer").extend({
 
 const playableStepSchema = z
   .union([
-    teachingStepSchema("activity"),
+    activityStepSchema,
     teachingStepSchema("challenge"),
     teachingStepSchema("check"),
     teachingStepSchema("explanation"),

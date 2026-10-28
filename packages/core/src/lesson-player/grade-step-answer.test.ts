@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { parseStepContent } from "../library/steps/contract/step-contract";
 import { serializeExerciseSteps } from "../player/contracts/prepare-lesson-data";
 import {
+  type PlayableActivityStep,
   type PlayableLanguageStep,
   type PlayableTeachingStepOf,
   type TeachingStepKind,
@@ -23,6 +24,11 @@ function teachingStep<TKind extends TeachingStepKind>(
     position: 0,
     skillId: null,
   };
+}
+
+/** The fixture's `numberLine` template has no tolerance floor. */
+function activityStep(content: unknown): PlayableActivityStep {
+  return { ...teachingStep("activity", content), minTolerance: null };
 }
 
 function exerciseStep(kind: PlayableLanguageStep["kind"], content: object): PlayableLanguageStep {
@@ -76,7 +82,7 @@ describe(gradeStepAnswer, () => {
   });
 
   it("grades a numeric activity within its tolerance with the check's explanation", () => {
-    const activity = teachingStep("activity", playableStepContent.activity);
+    const activity = activityStep(playableStepContent.activity);
 
     const right = gradeStepAnswer({
       answer: { answer: { kind: "numeric", value: 5 }, kind: "activity" },
@@ -112,7 +118,7 @@ describe(gradeStepAnswer, () => {
   it("writes a money answer the way the lesson's language does, for the mistakes notebook", () => {
     const { activity } = playableStepContent;
 
-    const step = teachingStep("activity", {
+    const step = activityStep({
       ...activity,
       check: { ...activity.check, answer: 52, explanation: "0,65 × 80 = R$ 52.", unit: "R$" },
     });
@@ -135,7 +141,7 @@ describe(gradeStepAnswer, () => {
     ({ answerText, correctAnswer, language, value }) => {
       const { activity } = playableStepContent;
 
-      const step = teachingStep("activity", {
+      const step = activityStep({
         ...activity,
         check: {
           ...activity.check,

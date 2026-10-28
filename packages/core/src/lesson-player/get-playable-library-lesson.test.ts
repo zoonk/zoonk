@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
+import { activityContentFixtures } from "@zoonk/testing/fixtures/activity-contents";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import {
@@ -138,6 +139,19 @@ describe(getPlayableLibraryLesson, () => {
     ).toStrictEqual(kinds);
 
     expect(validateActivity(playableStepContent.activity)).toMatchObject({ ok: true });
+  });
+
+  it("sends each activity's tolerance floor from its template, so apps grade a guess as core does", async () => {
+    const { lesson } = await playableLessonFixture({
+      steps: [{ content: activityContentFixtures.guessReveal, kind: "activity" }, "activity"],
+    });
+
+    const result = await getPlayableLibraryLesson({ lessonId: lesson.id });
+    const steps = result?.status === "ready" ? result.lesson.steps : [];
+
+    expect(
+      steps.map((step) => (step.kind === "activity" ? step.minTolerance : undefined)),
+    ).toStrictEqual([{ kind: "relative", value: 0.1 }, null]);
   });
 
   it("serves language screens with the pair's translation, note, sound tip and word banks", async () => {

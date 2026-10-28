@@ -1,11 +1,13 @@
 /* oxlint-disable no-magic-numbers -- Fixture content is literal lesson data. */
 import {
+  type PlayableActivityStep,
   type PlayableLanguageStep,
   type PlayableSpokenAnswerStep,
   type PlayableStepImage,
   type PlayableTeachingStepOf,
   type TeachingStepKind,
 } from "@zoonk/core/lesson-player/contract";
+import { getActivityTemplate } from "@zoonk/core/library/activities/templates";
 import {
   type ChartVisual,
   type TimelineVisual,
@@ -96,15 +98,19 @@ export function diagramPicture(content: ActivityContent): PlayableStepImage | nu
     : null;
 }
 
+/** An activity screen, its diagram drawn unless `image` is null. */
 export function activityStep({
   content,
   ...options
-}: StepOptions & { content: ActivityContent }): PlayableTeachingStepOf<"activity"> {
-  return contentStep("activity", {
-    content,
-    ...options,
-    image: options.image ?? diagramPicture(content),
-  });
+}: StepOptions & { content: ActivityContent }): PlayableActivityStep {
+  return {
+    ...contentStep("activity", {
+      content,
+      ...options,
+      image: options.image === undefined ? diagramPicture(content) : options.image,
+    }),
+    minTolerance: getActivityTemplate(content.template)?.minTolerance ?? null,
+  };
 }
 
 export function explanationStep(

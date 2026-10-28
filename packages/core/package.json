@@ -231,6 +231,7 @@
     "./library/activities/process-icons": "./src/library/activities/process-icons.ts",
     "./library/activities/program-limits": "./src/library/activities/programs/program-limits.ts",
     "./library/activities/python-error": "./src/library/activities/programs/python-error.ts",
+    "./library/activities/schemas": "./src/library/activities/activity-schemas.ts",
     "./library/activities/sql-setup": "./src/library/activities/programs/sql-setup.ts",
     "./library/activities/templates": "./src/library/activities/activity-templates.ts",
     "./library/activities/text-normalizers": "./src/library/activities/templates/_utils/text-normalizers.ts",

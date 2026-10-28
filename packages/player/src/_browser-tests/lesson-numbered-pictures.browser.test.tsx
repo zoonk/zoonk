@@ -7,7 +7,7 @@ import { press } from "../_test-utils/activity-player";
 import { renderLessonPlayer } from "../_test-utils/render-lesson-player";
 import { buildLesson } from "../preview/preview-lesson";
 import {
-  contentStep,
+  activityStep,
   explanationStep,
   inlineImage,
   numberedCheckStep,
@@ -33,7 +33,7 @@ describe("numbered pictures", () => {
   });
 
   it("leaves out numbered questions whose picture never came, and goes on", async () => {
-    const diagram = contentStep("activity", { content: heart });
+    const diagram = activityStep({ content: heart, image: null });
 
     const lesson = buildLesson([
       diagram,

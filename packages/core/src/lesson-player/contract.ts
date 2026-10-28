@@ -3,6 +3,7 @@ import { z } from "zod";
 import { answerDurationSchema, answerTimeZoneSchema } from "../learner/contract";
 import { activityAnswerSchema } from "../library/activities/activity-answer-schema";
 import { activityExpectedSchema } from "../library/activities/activity-expected-answer";
+import { type ActivityTolerance } from "../library/activities/activity-schemas";
 import { type MaterialCitation } from "../library/sources/material-question-contract";
 import { type SourceCitation } from "../library/sources/source-citation";
 import { type StepContentByKind } from "../library/steps/contract/step-contract";
@@ -132,9 +133,19 @@ export type PlayableSpokenAnswerStep = PlayableTeachingStepOf<"spokenAnswer"> & 
   listening: SerializedStep | null;
 };
 
-type OtherTeachingStepKind = Exclude<TeachingStepKind, "spokenAnswer">;
+/**
+ * An activity screen. `minTolerance` is its template's floor for a `numeric` answer (a guess on a
+ * slider can't land closer than the slider's steps), so apps grade it as `checkActivityAnswer`
+ * does; null when the template has none.
+ */
+export type PlayableActivityStep = PlayableTeachingStepOf<"activity"> & {
+  minTolerance: ActivityTolerance | null;
+};
+
+type OtherTeachingStepKind = Exclude<TeachingStepKind, "activity" | "spokenAnswer">;
 
 export type PlayableTeachingStep =
+  | PlayableActivityStep
   | PlayableSpokenAnswerStep
   | { [TKind in OtherTeachingStepKind]: PlayableTeachingStepOf<TKind> }[OtherTeachingStepKind];
 

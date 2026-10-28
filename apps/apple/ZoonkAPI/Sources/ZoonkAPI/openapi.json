@@ -54487,6 +54487,29 @@
                 "type": "integer",
                 "minimum": -9007199254740991,
                 "maximum": 9007199254740991
+              },
+              "minTolerance": {
+                "nullable": true,
+                "description": "How far a `numeric` answer may always be from the right one on this template, when the check's own tolerance is tighter (a guess on a slider can't land closer than its steps): right within either. Null when the template has none",
+                "type": "object",
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "absolute",
+                      "relative"
+                    ]
+                  },
+                  "value": {
+                    "type": "number",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "kind",
+                  "value"
+                ],
+                "additionalProperties": false
               }
             },
             "required": [
@@ -54497,7 +54520,8 @@
               "content",
               "image",
               "imagePending",
-              "kind"
+              "kind",
+              "minTolerance"
             ],
             "additionalProperties": false
           },

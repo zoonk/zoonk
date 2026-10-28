@@ -8,6 +8,7 @@ import {
 } from "@zoonk/db";
 import { normalizeDistractorKey } from "@zoonk/utils/distractors";
 import { logError } from "@zoonk/utils/logger";
+import { getActivityTemplate } from "../../library/activities/activity-templates";
 import { safeParseStepContent } from "../../library/steps/contract/step-contract";
 import { type ExerciseKind, isExerciseKind } from "../../player/contracts/exercise-content";
 import {
@@ -16,6 +17,7 @@ import {
   serializeExerciseSteps,
 } from "../../player/contracts/prepare-lesson-data";
 import {
+  type PlayableActivityStep,
   type PlayableLanguageStep,
   type PlayableLibraryStep,
   type PlayableSpokenAnswerStep,
@@ -95,6 +97,18 @@ function buildTeachingStep<TKind extends TeachingStepKind>(
   };
 }
 
+/** An activity screen, with its template's tolerance floor for apps that grade on the device. */
+function buildActivityStep(row: PlayableStepRow): PlayableActivityStep | null {
+  const step = buildTeachingStep("activity", row);
+
+  return (
+    step && {
+      ...step,
+      minTolerance: getActivityTemplate(step.content.template)?.minTolerance ?? null,
+    }
+  );
+}
+
 function buildSpokenAnswerStep({
   listening,
   row,
@@ -117,7 +131,7 @@ function toTeachingStep({
 }): PlayableTeachingStep | null {
   switch (kind) {
     case "activity":
-      return buildTeachingStep("activity", row);
+      return buildActivityStep(row);
     case "challenge":
       return buildTeachingStep("challenge", row);
     case "check":
