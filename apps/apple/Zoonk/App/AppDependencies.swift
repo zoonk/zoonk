@@ -1,5 +1,6 @@
 @MainActor
 struct AppDependencies {
+  let buddyStore: BuddyStore
   let cache: AppCache
   let courseCatalogStore: CourseCatalogStore
   let goalContentStore: GoalContentStore
@@ -36,6 +37,7 @@ struct AppDependencies {
     session: SessionStore,
     privateImageLoader: PrivateImageLoader,
     subscriptionStore: AppStoreSubscriptionStore,
+    buddyAPI: (any BuddyAPIClient)? = nil,
     courseCatalogAPI: (any CourseCatalogAPIClient)? = nil,
     learnerSummaryAPI: (any LearnerSummaryAPIClient)? = nil,
     myCoursesAPI: (any MyCoursesAPIClient)? = nil,
@@ -45,6 +47,7 @@ struct AppDependencies {
   ) {
     let cache = AppCache(session: session)
     self.cache = cache
+    buddyStore = BuddyStore(api: buddyAPI ?? BuddyAPI(clients: clients), cache: cache)
     courseCatalogStore = CourseCatalogStore(
       api: courseCatalogAPI ?? CourseCatalogAPI(clients: clients),
       language: currentCourseCatalogLanguage(),

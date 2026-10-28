@@ -2,6 +2,7 @@ import SwiftUI
 
 @main
 struct ZoonkApp: App {
+  @State private var buddy: BuddyStore
   @State private var courseCatalog: CourseCatalogStore
   @State private var goalContent: GoalContentStore
   @State private var learnerSummary: LearnerSummaryStore
@@ -31,6 +32,7 @@ struct ZoonkApp: App {
       let initiallyPresentsAccount = false
     #endif
 
+    _buddy = State(initialValue: dependencies.buddyStore)
     cache = dependencies.cache
     _courseCatalog = State(initialValue: dependencies.courseCatalogStore)
     _goalContent = State(initialValue: dependencies.goalContentStore)
@@ -62,6 +64,7 @@ struct ZoonkApp: App {
         .onChange(of: session.authenticatedSession) {
           cache.followSession()
         }
+        .environment(buddy)
         .environment(courseCatalog)
         .environment(goalContent)
         .environment(learnerSummary)
