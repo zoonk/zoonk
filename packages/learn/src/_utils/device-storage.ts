@@ -1,8 +1,4 @@
-/**
- * Web Storage that can be blocked (a private window, the browser's settings) or missing (the
- * server's render): then nothing is found and nothing is kept, so what it would keep lasts as long
- * as the page.
- */
+/** Web Storage can be blocked (a private window) or missing (the server's render); then nothing is found or kept. */
 function createDeviceStorage(name: "localStorage" | "sessionStorage") {
   return {
     get(key: string): string | null {
@@ -12,7 +8,6 @@ function createDeviceStorage(name: "localStorage" | "sessionStorage") {
         return null;
       }
     },
-    /** The value kept as JSON, or null when it's missing or unreadable. */
     getJson(key: string): unknown {
       try {
         return JSON.parse(globalThis[name].getItem(key) ?? "null");
@@ -20,7 +15,6 @@ function createDeviceStorage(name: "localStorage" | "sessionStorage") {
         return null;
       }
     },
-    /** Whether the browser removed it. */
     remove(key: string): boolean {
       try {
         globalThis[name].removeItem(key);
@@ -29,7 +23,6 @@ function createDeviceStorage(name: "localStorage" | "sessionStorage") {
         return false;
       }
     },
-    /** Whether the browser kept it: a full storage can refuse a write it would read. */
     set(key: string, value: string): boolean {
       try {
         globalThis[name].setItem(key, value);

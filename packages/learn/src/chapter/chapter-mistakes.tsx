@@ -12,10 +12,6 @@ import { PracticeOutcomeMessage } from "../_components/practice-outcome-message"
 import { usePracticeRun } from "../_utils/use-practice-run";
 import { useChapterScreen } from "./chapter-context";
 
-/**
- * General practice on a chapter that has open mistakes. The notebook owns targeted mistake
- * correction; this row adds area practice or opens the next teaching lesson.
- */
 export function ChapterMistakes() {
   const t = useExtracted();
   const { actions, chapter } = useChapterScreen();

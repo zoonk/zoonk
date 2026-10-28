@@ -3,13 +3,7 @@
 import { useEffect, useState } from "react";
 import { type WaitState, getWaitChanges, getWaitState } from "./wait-state";
 
-/**
- * How long a pending action has been waiting, so a button never just greys out: nothing for a
- * quick one, then that it's on its way, then that it's slow and needs no second tap. A wait a tap
- * started before this screen showed it (`since`, the tap's `Date.now()`) counts from that tap and
- * starts with the line it's already at, so the line neither starts over nor blinks when the screen
- * showing it changes.
- */
+/** `since` is the `Date.now()` of a tap made before this screen showed the wait, so its line doesn't start over. */
 export function useSlowWait(isPending: boolean, { since }: { since?: number } = {}): WaitState {
   const [state, setState] = useState<WaitState>(() =>
     isPending && since !== undefined ? getWaitState(Date.now() - since) : "none",

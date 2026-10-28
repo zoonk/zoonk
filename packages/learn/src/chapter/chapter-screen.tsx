@@ -34,10 +34,6 @@ export type { AreaPracticeOutcome } from "../_utils/use-practice-run";
 export type { TestOutStart } from "../_components/test-out-start-link";
 export type { ChapterActions, ChapterHrefs } from "./chapter-context";
 
-/**
- * The chapter's mind map and what the host does for it, with the cap of the learner's plan its
- * maps already reached (`cap`); null for a language's unit.
- */
 type ChapterMindMap = {
   actions: MindMapActions;
   cap?: MindMapLimit | null;
@@ -48,11 +44,6 @@ const PRACTICE_TITLE_ID = "chapter-practice-title";
 const PROGRESS_TITLE_ID = "chapter-progress-title";
 const REFERENCE_TITLE_ID = "chapter-reference-title";
 
-/**
- * "For reference": once the learner finished the chapter, its mind map (or the tap that makes it);
- * then, folded, the chapter's skills with their state and the summaries its lessons left. Screen
- * readers hear the map in words as its picture's description.
- */
 function ChapterSummary({
   mindMap,
   renderLessonText,
@@ -108,7 +99,6 @@ function ChapterSummary({
   );
 }
 
-/** Other study actions on the chapter: general practice and testing past lessons already known. */
 function ChapterPractice() {
   const t = useExtracted();
   const { actions, chapter } = useChapterScreen();
@@ -138,7 +128,6 @@ function ChapterPractice() {
   );
 }
 
-/** How far the learner is in the chapter, as one segment per lesson ("1 of 3"), in the aside. */
 function ChapterProgress() {
   const t = useExtracted();
   const { chapter } = useChapterScreen();
@@ -193,7 +182,6 @@ function ChapterBody({
           <LessonList
             lessonHref={(lessonId) => `${hrefs.lessonBasePath}/${lessonId}`}
             lessons={chapter.lessons}
-            // In any chapter, the lesson "Start" or "Continue" opens is marked as next.
             upNext
           />
         )}
@@ -202,21 +190,6 @@ function ChapterBody({
   );
 }
 
-/**
- * A chapter of the learner's plan: its number and lessons done with "Continue" beside its name, its
- * lessons in order (the next one marked), and in the aside from 72rem (after the lessons under
- * it) how far the learner is, a test that skips a chapter they may already know, its mistakes when
- * there are some, and for reference its mind map, its skills and the summaries its lessons left.
- *
- * ```tsx
- * <ChapterScreen
- *   actions={{ practice, startTestOut }}
- *   chapter={chapter}
- *   hrefs={{ back: "/plan", lessonBasePath: "/learn" }}
- *   renderLessonText={(text) => <LessonRichText text={text} />}
- * />
- * ```
- */
 export function ChapterScreen({
   actions,
   ask,
@@ -226,12 +199,10 @@ export function ChapterScreen({
   renderLessonText,
 }: {
   actions: ChapterActions;
-  /** "Ask" about the chapter, such as the player's `AskTutor`; the host decides who can ask. */
   ask?: React.ReactNode;
   chapter: ChapterView;
   hrefs: ChapterHrefs;
   mindMap?: ChapterMindMap | null;
-  /** Summary ideas are lesson text (math, emphasis): the host draws them as lessons do. */
   renderLessonText: (text: string) => React.ReactNode;
 }) {
   return (

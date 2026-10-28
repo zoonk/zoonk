@@ -11,11 +11,7 @@ import { useExtracted, useLocale } from "next-intl";
 import { useId } from "react";
 import { SelectSettingRow } from "../_components/setting-rows";
 
-/**
- * The app's language on this device. Each language is named in itself, so anyone can find theirs
- * whatever the screen is in. The host changes it, since that's a navigation to the new language's
- * page.
- */
+/** Each language is named in itself, so anyone can find theirs. */
 export function LanguageSetting({ onChange }: { onChange: (locale: SupportedLocale) => void }) {
   const t = useExtracted();
   const locale = useLocale();

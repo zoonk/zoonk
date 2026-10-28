@@ -4,11 +4,7 @@ import { useEffect, useEffectEvent, useRef, useState } from "react";
 
 const MS_PER_SECOND = 1000;
 
-/**
- * The time left to a deadline in milliseconds, never below 0 (Infinity without one), read again
- * every `tickMs`: every second for a clock that ticks, less often for one that says whole minutes,
- * more often for a bar that slides. `onTimeUp` runs once per deadline, when it's reached.
- */
+/** Never below 0 (`Infinity` without a deadline); `onTimeUp` runs once per deadline. */
 export function useTimeLeft({
   deadline,
   onTimeUp,

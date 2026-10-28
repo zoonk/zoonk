@@ -7,7 +7,6 @@ function pad(value: number): string {
   return String(value).padStart(TWO_DIGITS, "0");
 }
 
-/** "1:24:36" or "12:05", like an exam room's clock or a call's timer. */
 export function formatClock(ms: number): string {
   const totalSeconds = Math.ceil(ms / MS_PER_SECOND);
   const hours = Math.floor(totalSeconds / (SECONDS_PER_MINUTE * MINUTES_PER_HOUR));

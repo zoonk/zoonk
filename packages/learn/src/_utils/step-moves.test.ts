@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getStepMoves } from "./step-moves";
 
-// A mock's result: the score, its essays, then the plan and what's next, which sit beside it from `lg`.
 const STEPS = [{}, {}, { beside: true }, { beside: true }];
 
 describe(getStepMoves, () => {

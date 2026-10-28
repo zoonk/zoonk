@@ -5,40 +5,30 @@ import { type DateTimeFormatOptions, useFormatter } from "next-intl";
 import { use } from "react";
 import { PlanScreenContext } from "../plan/plan-context";
 
-/**
- * View models send calendar days as "YYYY-MM-DD" labels in the learner's day. Reading them as UTC
- * midnight and formatting in UTC keeps the day from shifting in the viewer's timezone.
- */
+/** UTC midnight, formatted in UTC, so the day never shifts in the viewer's timezone. */
 export function isoDateToUtc(isoDate: string): Date {
   return new Date(`${isoDate}T00:00:00Z`);
 }
 
-/** The viewer's own calendar day as "YYYY-MM-DD", as view models label days. */
 export function toLocalIsoDate(date: Date): string {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${date.getFullYear()}-${month}-${day}`;
 }
 
-/** Whole days from the viewer's today to a view model's calendar day, never below zero. */
 export function daysUntilIsoDate({ isoDate, today }: { isoDate: string; today: Date }): number {
   return Math.max(0, countDaysUntil({ isoDate, today }));
 }
 
-/** Whole days from the browser's `today` to a YYYY-MM-DD date, negative once it passed. */
 function countDaysUntil({ isoDate, today }: { isoDate: string; today: Date }): number {
   const start = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
   return Math.round((isoDateToUtc(isoDate).getTime() - start) / MS_PER_DAY);
 }
 
-/**
- * The date is behind the browser's `today`: a goal's date that passed has no days left to count.
- */
 export function hasIsoDatePassed({ isoDate, today }: { isoDate: string; today: Date }): boolean {
   return countDaysUntil({ isoDate, today }) < 0;
 }
 
-/** Whole days from `from` to `to`, both YYYY-MM-DD. */
 export function daysBetween(from: string, to: string): number {
   return Math.round((isoDateToUtc(to).getTime() - isoDateToUtc(from).getTime()) / MS_PER_DAY);
 }
@@ -68,11 +58,6 @@ const DATE_STYLES: Record<DateStyle, DateTimeFormatOptions> = {
   weekdayShort: { weekday: "short" },
 };
 
-/**
- * Day-and-month styles that name the year once the day isn't in this year, so a plan's end in
- * 2028 never reads as this year's date. `dayMonth` never does: for lists whose year is stated
- * right beside them.
- */
 const YEAR_WHEN_ANOTHER_YEAR = new Set<DateStyle>(["day", "long"]);
 
 function getDateOptions({ date, style, today }: { date: Date; style: DateStyle; today?: string }) {
@@ -85,7 +70,6 @@ function getDateOptions({ date, style, today }: { date: Date; style: DateStyle; 
     : options;
 }
 
-/** Formats a view model's calendar day in the viewer's language. */
 export function useFormatIsoDate() {
   const format = useFormatter();
   const plan = use(PlanScreenContext);
@@ -100,10 +84,6 @@ export function useFormatIsoDate() {
   };
 }
 
-/**
- * A goal's date as the learner gave it: the month they named ("December 2026") when the date
- * stands for that month (`namedMonth`), else the day in `style`.
- */
 export function useFormatGoalDate() {
   const formatDate = useFormatIsoDate();
 

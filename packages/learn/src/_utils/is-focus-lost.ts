@@ -1,7 +1,4 @@
-/**
- * Whether focus is on the page itself, on a sheet (the dialog takes focus back when its focused
- * control leaves), or on a control hidden with the screen it left.
- */
+/** A sheet counts: the dialog takes focus back when its focused control leaves. */
 export function isFocusLost(active: Element | null): boolean {
   return (
     active === null ||

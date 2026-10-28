@@ -5,7 +5,6 @@ import { useFormatter, useLocale } from "next-intl";
 
 const SECONDS_PER_MINUTE = 60;
 
-/** A compact duration in the learner's locale, from minutes. */
 export function useFormatDuration() {
   const locale = useLocale();
 
@@ -13,7 +12,7 @@ export function useFormatDuration() {
     formatDuration({ locale, totalSeconds: totalMinutes * SECONDS_PER_MINUTE });
 }
 
-/** A time of day sent as "13:30", in the viewer's clock, like "1:30 PM". */
+/** Takes a time of day as "13:30". */
 export function useFormatTimeOfDay() {
   const format = useFormatter();
 

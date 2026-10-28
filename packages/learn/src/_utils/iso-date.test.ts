@@ -3,7 +3,6 @@ import { daysUntilIsoDate, hasIsoDatePassed } from "./iso-date";
 
 describe(daysUntilIsoDate, () => {
   it("counts whole days from the viewer's calendar day, whatever the time of day", () => {
-    // Local times: late evening and early morning of the same calendar day count the same.
     const lateEvening = new Date(2026, 8, 28, 23, 30);
     const earlyMorning = new Date(2026, 8, 28, 0, 15);
 

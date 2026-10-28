@@ -5,10 +5,6 @@ import { useExtracted } from "next-intl";
 
 type ScoreRange = Pick<NonNullable<ExamView["estimate"]>, "high" | "low" | "scale">;
 
-/**
- * An estimated score range the way the exam reports it: "61% to 72%", "1130 to 1260" on the SAT's
- * scale, "3 to 4" for AP, "Band 4.5 to 5" for TOEFL. A range whose ends meet reads as one score.
- */
 export function useScoreRange() {
   const t = useExtracted();
 

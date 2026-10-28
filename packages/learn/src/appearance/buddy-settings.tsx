@@ -28,15 +28,10 @@ import { useBuddyName } from "../buddies/use-buddy-name";
 
 export type AppearanceBuddy = { glasses: BuddyGlasses; kind: BuddyKind; name: string | null };
 
-/** Preferences knows which pairs are earned, not how far the rest are. */
 function toGlassesOptions(available: BuddyGlasses[]): BuddyGlassesOption[] {
   return BUDDY_GLASSES.map((glasses) => ({ earned: available.includes(glasses), glasses }));
 }
 
-/**
- * Changing the buddy, its name and its glasses in one dialog. Preferences opens it with the
- * glasses; the buddy's tab opens it without them, since that tab has its own glasses sheet.
- */
 export function BuddyEditor({
   glasses,
   initial,
@@ -120,11 +115,6 @@ function CurrentBuddy({ look, buddy }: { look: BuddyLook; buddy: AppearanceBuddy
   );
 }
 
-/**
- * The buddy as a row of the page's list: who it is and how it looks, with a way to change it,
- * rename it or pick earned glasses at the row's end. Growth and glow come from the belt and
- * Energy, so only kind, name and glasses are saved.
- */
 export function BuddySettings({
   availableGlasses,
   look,

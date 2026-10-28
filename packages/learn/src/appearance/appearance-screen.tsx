@@ -17,10 +17,6 @@ import { LanguageSetting } from "./language-setting";
 
 export type { AppearanceBuddy } from "./buddy-settings";
 
-/**
- * What Preferences shows: the learning profile's buddy and sounds, plus the belt and Energy the
- * buddy is drawn with. Visitors without a session have nothing to personalize but the language.
- */
 export type AppearanceView = {
   availableGlasses: BuddyGlasses[];
   canPersonalize: boolean;
@@ -75,11 +71,6 @@ function useAppearance({ actions, view }: { actions: AppearanceActions; view: Ap
   };
 }
 
-/**
- * Preferences: the buddy, then the lessons' sounds and daily limit as one list, then the app's
- * language, each a row with its control at its end. Light, dark and reduced motion follow the
- * device, so there's no theme picker.
- */
 export function AppearanceScreen({
   actions,
   onLanguageChange,

@@ -1,7 +1,6 @@
 import { type MaterialCitation } from "@zoonk/core/library/sources/material-question-contract";
 import { useExtracted } from "next-intl";
 
-/** "Class 5, slide 4": the page of the learner's own material, so they can open it there. */
 export function useCitationLabel() {
   const t = useExtracted();
 

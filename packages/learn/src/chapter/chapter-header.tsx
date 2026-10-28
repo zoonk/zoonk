@@ -16,10 +16,6 @@ import { ContentFeedbackMenu } from "../feedback/content-feedback-menu";
 import { LearnPageBar } from "../shell/learn-bar";
 import { useChapterScreen } from "./chapter-context";
 
-/**
- * "11 lessons · 40 min · 33% done": how much the chapter holds and how far the learner is. The time
- * is its lessons' minutes added up, so it reads like the rows under it and the public chapter page.
- */
 function ChapterFacts() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -42,11 +38,6 @@ function ChapterFacts() {
   return <DetailFacts>{facts.join(" · ")}</DetailFacts>;
 }
 
-/**
- * The chapter's subject and number there (as the subject's page numbers it), its title, how much it
- * holds and how far the learner is, and "Continue" into the next lesson with the chapter's "…"
- * beside it (beside the title from `md`).
- */
 export function ChapterHeader() {
   const t = useExtracted();
   const { chapter, hrefs } = useChapterScreen();
@@ -88,10 +79,6 @@ export function ChapterHeader() {
   );
 }
 
-/**
- * The chapter's bar: back to the Plan (or the subject it was opened from), and "Ask" on the
- * right; the chapter's "…" sits beside its main action.
- */
 export function ChapterBar() {
   const t = useExtracted();
   const { ask, chapter, hrefs } = useChapterScreen();

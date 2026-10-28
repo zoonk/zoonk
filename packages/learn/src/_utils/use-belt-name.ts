@@ -3,15 +3,11 @@
 import { BELT_COLORS_ORDER, type BeltColor } from "@zoonk/utils/belt-level";
 import { useExtracted } from "next-intl";
 
-/** Reads a belt color sent as a plain string by a view model. */
 export function toBeltColor(value: string): BeltColor | null {
   return BELT_COLORS_ORDER.find((color) => color === value) ?? null;
 }
 
-/**
- * "Orange belt", "Yellow belt, level 5": the belt as the learner reads it. Its own namespace, since
- * the avatar shows it on every page, public ones included (see `learnSiteMessages`).
- */
+/** Its own namespace, since the avatar shows it on every page (`learnSiteMessages`). */
 export function useBeltName() {
   const t = useExtracted("belts");
 

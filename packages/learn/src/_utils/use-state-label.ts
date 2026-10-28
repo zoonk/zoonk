@@ -3,7 +3,6 @@
 import { type MapSkill } from "@zoonk/core/view-models/map/contract";
 import { useExtracted } from "next-intl";
 
-/** A skill's state in words. */
 export function useStateLabel() {
   const t = useExtracted();
 

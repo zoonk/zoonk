@@ -9,7 +9,6 @@ import { useFormatDuration } from "../_utils/time-format";
 
 const NO_LIMIT = "none";
 
-/** The learner's own daily study limit, for healthy use: after it, today's session ends kindly. */
 export function DailyLimitSetting({
   minutes,
   onChange,

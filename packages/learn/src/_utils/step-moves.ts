@@ -1,11 +1,6 @@
-/** A step as the moves between steps see it: from `lg` a step `beside` is in the aside instead. */
 type StepPlace = { beside?: boolean };
 
-/**
- * Where a step stands among the steps one screen size shows (`wide`: from `lg`, which skips the
- * steps beside it): its place and how many there are, for the dots, and where Back and Continue
- * lead (-1 for nowhere).
- */
+/** Back and Continue lead to -1 when there's nowhere to go. */
 export function getStepMoves({
   current,
   steps,

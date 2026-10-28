@@ -34,24 +34,16 @@ import { type CeremonyMilestone, toBuddyGlasses, useCeremonyCopy } from "./use-c
 export type { CeremonyMilestone } from "./use-ceremony-copy";
 
 type CeremonyProps = {
-  /** Draws the buddy in its new belt, stage or glasses; null resolves to the default buddy. */
+  /** `null` draws the default buddy. */
   buddy: LearnBuddy | null;
   milestone: CeremonyMilestone;
-  /** Called once it's closed, by its button or Escape. */
   onClose?: () => void;
-  /** Records that it was celebrated, so it shows only once. Called when it appears. */
   onShown: (milestoneId: string) => void;
-  /** New glasses can go on right away; without this, the ceremony only celebrates them. */
   onWearGlasses?: (glasses: BuddyGlasses) => Promise<boolean>;
 };
 
-/** How analytics names the milestones that get a moment. */
 const CEREMONY_EVENTS = { belt: "belt", buddyStage: "buddy_stage", glasses: "glasses" } as const;
 
-/**
- * Marks the milestone as shown once, so closing, skipping or reloading never repeats it, and
- * counts its moment (a badge has none).
- */
 function useMarkShown({ milestone, onShown }: Pick<CeremonyProps, "milestone" | "onShown">) {
   const analytics = useLearnAnalytics();
   const marked = useRef<string | null>(null);
@@ -73,11 +65,7 @@ function useMarkShown({ milestone, onShown }: Pick<CeremonyProps, "milestone" | 
   }, [analytics, milestone.id, milestone.kind, onShown]);
 }
 
-/**
- * The stage's disc, in the milestone's own color when it is one (a new belt's, soft behind the
- * buddy wearing it; White and Black would vanish, so they take the quiet fill), the quiet fill for
- * a stage or glasses. Decorative.
- */
+/** White and Black would vanish behind the buddy, so they take the quiet fill. */
 function stageClass(belt: BeltColor | null): string {
   if (!belt || belt === "white" || belt === "black") {
     return "bg-muted";
@@ -86,10 +74,7 @@ function stageClass(belt: BeltColor | null): string {
   return cn(beltColorClasses[belt], "opacity-20 dark:opacity-25");
 }
 
-/**
- * The burst behind the buddy as it lands: sparks fly out from behind it, past the disc's edge, so
- * they show around it on every screen (in px from the stage's middle).
- */
+/** In px from the stage's middle. */
 const STAGE_SPARKS: readonly Spark[] = [
   { size: 13, x: -128, y: -50 },
   { size: 10, x: -68, y: -118 },
@@ -101,14 +86,6 @@ const STAGE_SPARKS: readonly Spark[] = [
   { size: 10, x: -108, y: 84 },
 ];
 
-/**
- * The picture: the buddy in its new belt, at its new stage or in its new glasses, large on its
- * stage, a disc in the new belt's color (`data-slot="ceremony-stage"`). As it opens, for a belt or
- * a stage (both grown from Brain Power), violet sparks burst from behind it and the buddy cheers
- * with its whole body: a dip, then a stretch with its arms up, its antennae swinging last. New
- * glasses come from other achievements, so they get no burst: the buddy shows them off, proud, its
- * chin up. It acts with its parts, never as one block (the `zoonk-motion` skill).
- */
 function CeremonyArt({
   buddy: learnerBuddy,
   milestone,
@@ -147,7 +124,6 @@ function CeremonyArt({
   );
 }
 
-/** What was earned, at a public page's headline size: the loudest title the app has. */
 function CeremonyText({ detail, title }: { detail: string; title: string }) {
   return (
     <div className="flex max-w-sm flex-col items-center gap-2" data-slot="ceremony-text">
@@ -159,11 +135,6 @@ function CeremonyText({ detail, title }: { detail: string; title: string }) {
   );
 }
 
-/**
- * The moment's action in the pinned action bar, where every task's main action is: focused as it
- * opens, so Enter presses it. "Not now" beside it (`onDecline`) when the action changes something,
- * such as putting new glasses on.
- */
 function CeremonyBar({
   action,
   onConfirm,
@@ -199,13 +170,6 @@ function CeremonyBar({
   );
 }
 
-/**
- * One full-screen moment for a new belt, the buddy's next stage or new glasses, right after the
- * block that earned it or over the summary: the app's loudest moment, so a stage rather than a
- * column. The buddy large on its disc, the title at headline size and one line, centered a little
- * above the middle, and one button in the pinned action bar (focused, so Enter presses it; a press
- * still meant for the screen before it is ignored). Escape closes it too.
- */
 function CeremonyMoment({
   buddy,
   milestone,
@@ -219,7 +183,6 @@ function CeremonyMoment({
   const isSteady = useSteady(SCREEN_STEADY_MS);
   const onClosing = useCeremonyClosing();
 
-  // What it crowned is drawn under it as it begins to fade, so the fade ends on the result.
   function close() {
     setOpen(false);
     onClosing();
@@ -262,7 +225,6 @@ function CeremonyMoment({
           className="data-open:animate-in data-open:fade-in data-closed:animate-out data-closed:fade-out duration-base fixed inset-0 z-50 flex flex-col overflow-y-auto"
           data-slot="milestone-ceremony"
         >
-          {/* A stage, centered a little above the middle: the one screen that isn't a column. */}
           <TaskBody className="items-center justify-center gap-8 pt-12 pb-20 text-center">
             <CeremonyArt buddy={buddy} milestone={milestone} />
             <CeremonyText detail={copy.detail} title={copy.title} />
@@ -279,12 +241,7 @@ function CeremonyMoment({
   );
 }
 
-/**
- * The session's one milestone, if it has one, as a full-screen moment over the end-of-session
- * summary; it marks itself as shown, so it never repeats. A badge is already on the checkpoint's
- * result and in the logbook, so it gets no second moment: it closes as it's marked, and what waits
- * for it shows at once.
- */
+/** A badge already shows on the checkpoint's result and in the logbook, so it gets no moment. */
 export function MilestoneCeremony({ onShown, ...props }: CeremonyProps) {
   useMarkShown({ milestone: props.milestone, onShown });
   const isBadge = props.milestone.kind === "badge";
