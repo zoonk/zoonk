@@ -52,6 +52,33 @@ enum ChartsActivities {
     ) { context in
       ChartsFields(context: context) { PatternTesterCanvas(context: context, fields: $0) }
     },
+    ActivityRenderer(template: "areaModel") { context in
+      ChartsFields(context: context) { AreaModelCanvas(context: context, fields: $0) }
+    },
+    ActivityRenderer(template: "balance") { context in
+      ChartsFields(context: context) { BalanceCanvas(context: context, fields: $0) }
+    },
+    ActivityRenderer(template: "unitCircle") { context in
+      ChartsFields(context: context) { UnitCircleCanvas(context: context, fields: $0) }
+    },
+    ActivityRenderer(template: "geometryBoard") { context in
+      ChartsFields(context: context) { GeometryBoardCanvas(context: context, fields: $0) }
+    },
+    ActivityRenderer(
+      template: "moleculeBuilder",
+      grade: { content, answer in
+        guard let fields = try? content.fields(as: MoleculeBuilderFields.self),
+          let target = MoleculeModel.parse(fields.formula),
+          let build = try? answer.decode(as: MoleculeBuild.self), build.kind == "molecule"
+        else {
+          return false
+        }
+
+        return MoleculeModel.isComplete(build, target)
+      }
+    ) { context in
+      ChartsFields(context: context) { MoleculeBuilderCanvas(context: context, fields: $0) }
+    },
   ]
 }
 

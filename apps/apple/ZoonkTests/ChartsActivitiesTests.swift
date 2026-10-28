@@ -263,6 +263,156 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertFalse(price.grade(try ActivityAnswer(encoding: PatternTesterAnswer(pattern: "A1*B1"))))
   }
 
+  // MARK: - Figures
+
+  func testAreaModelSplitsKeepTheirParts() {
+    let side = AreaModelSide(.init(label: nil, parts: [20, 3], total: 23))
+    XCTAssertEqual(side.cuts, [20])
+    XCTAssertEqual(side.step, 1)
+    XCTAssertEqual(side.moving(0, to: 10.4).parts, [10, 13])
+    XCTAssertEqual(side.moving(0, to: 30).parts, [22, 1], "A part never vanishes")
+
+    let halves = AreaModelSide(.init(label: nil, parts: [1.5, 2.5], total: 4))
+    XCTAssertEqual(halves.step, 0.5)
+  }
+
+  func testBalanceMovesLikeMain() throws {
+    let start = try XCTUnwrap(BalanceModel.parse(left: "4*x + 1", right: "2*x + 7", variable: "x"))
+    XCTAssertEqual(start.left, .init(units: 1, x: 4))
+    XCTAssertEqual(BalanceModel.solve(start), 3)
+    XCTAssertTrue(BalanceModel.canDrawBlocks(start, solution: 3))
+    XCTAssertEqual(BalanceModel.tilt(start, solution: 3), 0)
+
+    let oneSided = BalanceModel.apply(.takeX(.left), to: start)
+    XCTAssertGreaterThan(BalanceModel.tilt(oneSided, solution: 3), 0, "The right pan is heavier")
+
+    var state = start
+    for move in [BalanceModel.Move.takeX(.left), .takeX(.right), .takeX(.left), .takeX(.right)] {
+      state = BalanceModel.apply(move, to: state)
+    }
+    state = BalanceModel.apply(.takeUnit(.left), to: state)
+    state = BalanceModel.apply(.takeUnit(.right), to: state)
+    XCTAssertEqual(BalanceModel.splitGroups(state), 2)
+    state = BalanceModel.apply(.split(2), to: state)
+    XCTAssertEqual(BalanceModel.isolatedValue(state), 3)
+
+    let steps = [
+      BalanceModel.parse(left: "2*x + 1", right: "7", variable: "x"),
+      BalanceModel.parse(left: "2*x", right: "6", variable: "x"),
+      BalanceModel.parse(left: "x", right: "3", variable: "x"),
+    ]
+    XCTAssertEqual(
+      BalanceModel.reachedSteps(current: state, history: [], solution: 3, steps: steps), 3)
+    XCTAssertEqual(
+      BalanceModel.reachedSteps(current: start, history: [], solution: 3, steps: steps), 0)
+
+    let symbolic = try XCTUnwrap(BalanceModel.parse(left: "2*x - 3", right: "7", variable: "x"))
+    XCTAssertFalse(
+      BalanceModel.canDrawBlocks(symbolic, solution: 5), "Negative blocks are solved in symbols")
+    XCTAssertEqual(BalanceModel.text(.init(units: 1, x: 2), symbol: "x") { "\(Int($0))" }, "2x + 1")
+    XCTAssertEqual(BalanceModel.text(.init(units: 0, x: 1), symbol: "x") { "\(Int($0))" }, "x")
+    XCTAssertEqual(
+      BalanceModel.moveChoices(next: "B", wrongMoves: ["A", "B", "C"], index: 1), ["A", "C", "B"])
+  }
+
+  func testUnitCircleStepsAndAngles() throws {
+    XCTAssertEqual(UnitCircleAngle.step([0, 30]), 5)
+    XCTAssertEqual(UnitCircleAngle.step([0, 32]), 1)
+    XCTAssertEqual(UnitCircleAngle.step([0, 32.5]), 0.5)
+    XCTAssertEqual(UnitCircleAngle.piFraction(150), "5π/6")
+    XCTAssertEqual(UnitCircleAngle.piFraction(360), "2π")
+    XCTAssertEqual(UnitCircleAngle.piFraction(180), "π")
+    XCTAssertNil(UnitCircleAngle.piFraction(50))
+
+    let fields: UnitCircleFields = try decode(
+      """
+      {"angleUnit":"degrees","frame":"A seat.","show":["sin","tan"],"startAngle":0}
+      """)
+    XCTAssertEqual(fields.value(.sin, degrees: 30)!, 0.5, accuracy: 1e-12)
+    XCTAssertNil(fields.value(.cos, degrees: 30), "Not shown")
+    XCTAssertNil(fields.value(.tan, degrees: 90), "Undefined")
+  }
+
+  func testGeometryBoardReadsAndMovesLikeMain() throws {
+    let fields: GeometryBoardFields = try decode(
+      """
+      {"invariant":"180°.","measure":"angleSum","points":[{"id":"a","movable":true,"x":0,"y":0},
+       {"id":"b","movable":false,"x":4,"y":0},{"id":"c","movable":true,"x":1,"y":3}]}
+      """)
+
+    let reading = GeometryBoardModel.read(fields.points, measure: .angleSum)
+    XCTAssertEqual(reading.parts.reduce(0, +), 180)
+    XCTAssertEqual(reading.total, 180)
+    XCTAssertEqual(GeometryBoardModel.roundParts([33.4, 33.3, 33.3], digits: 0), [34, 33, 33])
+
+    let step = GeometryBoardModel.gridStep(fields.points)
+    XCTAssertEqual(step, 1)
+    let bounds = GeometryBoardModel.bounds(fields.points, measure: .angleSum, step: step)
+    let minArea = GeometryBoardModel.area(fields.points) * 0.05
+    let moved = GeometryBoardModel.move(
+      fields.points, index: 2, to: (2.2, 4.4), bounds: bounds, measure: .angleSum, minArea: minArea,
+      step: step)
+    XCTAssertEqual(moved?[2].x, 2)
+    XCTAssertEqual(moved?[2].y, 4)
+    XCTAssertNil(
+      GeometryBoardModel.move(
+        fields.points, index: 1, to: (5, 0), bounds: bounds, measure: .angleSum, minArea: minArea,
+        step: step), "A fixed corner never moves")
+    XCTAssertNil(
+      GeometryBoardModel.move(
+        fields.points, index: 2, to: (2, 0), bounds: bounds, measure: .angleSum, minArea: minArea,
+        step: step), "A flattened shape is refused")
+
+    let right: GeometryBoardFields = try decode(
+      """
+      {"invariant":"a² + b² = c²","measure":"pythagoras","points":[{"id":"a","movable":false,"x":0,"y":0},
+       {"id":"b","movable":true,"track":"horizontal","x":3,"y":0},{"id":"c","movable":true,"track":"vertical","x":0,"y":4}]}
+      """)
+    let squares = GeometryBoardModel.read(right.points, measure: .pythagoras)
+    XCTAssertEqual(squares.parts.sorted(), [9, 16])
+    XCTAssertEqual(squares.total, 25)
+  }
+
+  func testMoleculeBuildsLikeCore() throws {
+    let target = try XCTUnwrap(MoleculeModel.parse("CO2"))
+    XCTAssertEqual(target.map(\.element), ["C", "O"])
+    XCTAssertEqual(target.map(\.count), [1, 2])
+    XCTAssertNil(MoleculeModel.parse("C2x"))
+    XCTAssertEqual(MoleculeModel.bondCount(target), 4)
+    XCTAssertEqual(MoleculeModel.formulaText(target), "CO₂")
+
+    // The browser test builds carbon dioxide from a selected carbon.
+    let (withCarbon, carbon) = MoleculeModel.add("C", to: .empty, bondTo: nil)
+    let (withOne, firstOxygen) = MoleculeModel.add("O", to: withCarbon, bondTo: carbon)
+    let (withTwo, secondOxygen) = MoleculeModel.add("O", to: withOne, bondTo: carbon)
+    var build = withTwo
+    XCTAssertEqual([carbon, firstOxygen, secondOxygen], ["c1", "o1", "o2"])
+    XCTAssertFalse(MoleculeModel.isComplete(build, target), "Single bonds leave bonds open")
+    XCTAssertEqual(
+      build.atoms.filter {
+        MoleculeModel.bondsUsed(build, $0.id) < MoleculeModel.valence(of: $0.element)
+      }.count, 3)
+
+    build = MoleculeModel.stepBond(build, carbon, firstOxygen)
+    build = MoleculeModel.stepBond(build, carbon, secondOxygen)
+    XCTAssertTrue(MoleculeModel.isComplete(build, target))
+
+    for _ in 0..<3 {
+      build = MoleculeModel.stepBond(build, carbon, firstOxygen)
+    }
+    XCTAssertEqual(
+      MoleculeModel.bondOrder(build, carbon, firstOxygen), 1, "Triple wraps to none, then single")
+
+    let removed = MoleculeModel.remove("o1", from: build)
+    XCTAssertEqual(MoleculeModel.add("O", to: removed, bondTo: nil).1, "o1", "A free id is reused")
+
+    let ethanol = try XCTUnwrap(
+      MoleculeModel.findStructure(XCTUnwrap(MoleculeModel.parse("C2H6O"))))
+    XCTAssertTrue(MoleculeModel.isComplete(ethanol, try XCTUnwrap(MoleculeModel.parse("C2H6O"))))
+    let dioxide = try XCTUnwrap(MoleculeModel.findStructure(target))
+    XCTAssertEqual(Set(dioxide.bonds.map(\.order)), [2])
+  }
+
   // MARK: - Renderers
 
   func testRegistersEveryChartTemplate() {
@@ -270,12 +420,14 @@ final class ChartsActivitiesTests: XCTestCase {
 
     for template in [
       "chartReader", "distributionExplorer", "randomSimulation", "numberLine", "lineCrossing",
-      "formulaModel", "patternTable", "patternTester",
+      "formulaModel", "patternTable", "patternTester", "areaModel", "balance", "unitCircle",
+      "geometryBoard", "moleculeBuilder",
     ] {
       XCTAssertNotNil(registry.renderer(for: template), template)
     }
 
     XCTAssertNotNil(registry.renderer(for: "lineCrossing")?.grade)
+    XCTAssertNotNil(registry.renderer(for: "moleculeBuilder")?.grade)
   }
 
   private func decode<Value: Decodable>(_ json: String) throws -> Value {
