@@ -209,7 +209,15 @@ async function handle({
   const session = sessions.get(decodeURIComponent(route.groups.id));
 
   if (!session) {
-    json(response, { error: "Unknown session" }, HTTP_NOT_FOUND);
+    // A session this peer never made (one OpenAI made before a run switched to this peer) is gone
+    // as far as the API can tell: its hangup answers as OpenAI's does, so the call can settle.
+    json(
+      response,
+      !route.groups.scope && route.groups.operation === "hangup"
+        ? { error: { code: "session_id_not_found", message: "No session found" } }
+        : { error: "Unknown session" },
+      HTTP_NOT_FOUND,
+    );
     return;
   }
 
