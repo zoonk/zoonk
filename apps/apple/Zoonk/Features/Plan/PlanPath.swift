@@ -53,8 +53,10 @@ struct PlanPathRows: View {
     let last = beforeFinish.last?.index
 
     ForEach(beforeFinish) { phase in
-      PlanPhaseRow(context: context, phase: phase, isOpen: phase.index == open, isLast: phase.index == last)
-        .id("\(phase.index)-\(phase.index == open)")
+      PlanPhaseRow(
+        context: context, phase: phase, isOpen: phase.index == open, isLast: phase.index == last
+      )
+      .id("\(phase.index)-\(phase.index == open)")
     }
 
     LabeledContent {
@@ -218,7 +220,8 @@ private struct PlanPhaseRow: View {
   private var meta: Text? {
     switch phase.state {
     case .leftOut:
-      return Text("Not in your plan", tableName: "Plan", comment: "A phase the plan holds nothing of")
+      return Text(
+        "Not in your plan", tableName: "Plan", comment: "A phase the plan holds nothing of")
     case .unfinished:
       let leftOut = phase.lessonsTotal - phase.lessonsDone
 
@@ -250,7 +253,9 @@ private struct PlanPhaseRow: View {
       }
 
       return next == context.plan.today
-        ? Text("Continues today", tableName: "Plan", comment: "When the current phase's lessons continue")
+        ? Text(
+          "Continues today", tableName: "Plan", comment: "When the current phase's lessons continue"
+        )
         : Text(
           "Continues \(PlanDate.text(next, today: context.plan.today))", tableName: "Plan",
           comment: "When the current phase's lessons continue")

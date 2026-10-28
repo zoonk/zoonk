@@ -175,7 +175,9 @@ struct AdjustPlanSheet: View {
               .tag(minutes)
           }
         } label: {
-          Text("Time on weekends", tableName: "Plan", comment: "Setting: study time on Saturday and Sunday")
+          Text(
+            "Time on weekends", tableName: "Plan",
+            comment: "Setting: study time on Saturday and Sunday")
         }
       }
     }

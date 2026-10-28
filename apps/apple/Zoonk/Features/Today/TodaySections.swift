@@ -240,8 +240,9 @@ struct TodayMissionsSection: View {
         } else {
           Text(
             "Today's +\(bonus) Brain Power is already earned.", tableName: "Today",
-            comment: "Another goal already earned the day's missions reward")
-            .foregroundStyle(.secondary)
+            comment: "Another goal already earned the day's missions reward"
+          )
+          .foregroundStyle(.secondary)
         }
       }
     } else {
@@ -412,9 +413,10 @@ private struct WeekChallengeRow: View {
           Text("Full review", tableName: "Today", comment: "A free plan's mock day")
           Text(
             "\(day) · every topic, your weakest first", tableName: "Today",
-            comment: "When a free plan's full review is and what it asks")
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+            comment: "When a free plan's full review is and what it asks"
+          )
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
         }
       } icon: {
         KindMark(kind: .review)
