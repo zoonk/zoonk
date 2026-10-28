@@ -2,11 +2,65 @@
   "sourceLanguage" : "en",
   "strings" : {
     "%@ in all" : {
-      "comment" : "An example plan's whole time"
+      "comment" : "An example plan's whole time",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ insgesamt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ en total"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ au total"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ no total"
+          }
+        }
+      }
     },
     "%@ of %lld lessons" : {
       "comment" : "How many of a chapter's lessons fit in an exam's example plan",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ von %#@total@"
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Lektion"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Lektionen"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -34,12 +88,124 @@
               }
             }
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ de %#@total@"
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lección"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lecciones"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ sur %#@total@"
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg leçon"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg leçons"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ de %#@total@"
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg aula"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg aulas"
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
     "%@ of %lld lessons fit" : {
       "comment" : "How many of an exam area's lessons fit in an example plan",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ von %#@total@ passen hinein"
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Lektion"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Lektionen"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -67,15 +233,143 @@
               }
             }
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Caben %1$@ de %#@total@"
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lección"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lecciones"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ sur %#@total@ tiennent dans le temps prévu"
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg leçon"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg leçons"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cabem %1$@ de %#@total@"
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg aula"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg aulas"
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
     "%@ of study" : {
-      "comment" : "The study time an exam area gets in an example plan\nThe study time an exam course's example plan has by the exam"
+      "comment" : "The study time an exam area gets in an example plan\nThe study time an exam course's example plan has by the exam",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Lernzeit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ de estudio"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ d’étude"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ de estudo"
+          }
+        }
+      }
     },
     "%lld chapters" : {
       "comment" : "How many chapters a course or an exam area has",
       "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Kapitel"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Kapitel"
+                }
+              }
+            }
+          }
+        },
         "en" : {
           "variations" : {
             "plural" : {
@@ -93,12 +387,84 @@
               }
             }
           }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld capítulo"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld capítulos"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld chapitre"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld chapitres"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld capítulo"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld capítulos"
+                }
+              }
+            }
+          }
         }
       }
     },
     "%lld chapters left out" : {
       "comment" : "How many of an exam area's chapters an example plan leaves out",
       "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld ausgelassenes Kapitel"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld ausgelassene Kapitel"
+                }
+              }
+            }
+          }
+        },
         "en" : {
           "variations" : {
             "plural" : {
@@ -116,12 +482,84 @@
               }
             }
           }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld capítulo omitido"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld capítulos omitidos"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld chapitre laissé de côté"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld chapitres laissés de côté"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld capítulo ficou de fora"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld capítulos ficaram de fora"
+                }
+              }
+            }
+          }
         }
       }
     },
     "%lld days left" : {
       "comment" : "How long until an exam's sitting",
       "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Tag übrig"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Tage übrig"
+                }
+              }
+            }
+          }
+        },
         "en" : {
           "variations" : {
             "plural" : {
@@ -139,12 +577,84 @@
               }
             }
           }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld día restante"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld días restantes"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld jour restant"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld jours restants"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "falta %lld dia"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "faltam %lld dias"
+                }
+              }
+            }
+          }
         }
       }
     },
     "%lld lessons" : {
       "comment" : "How many lessons a course has, before how long it takes",
       "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Lektion"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Lektionen"
+                }
+              }
+            }
+          }
+        },
         "en" : {
           "variations" : {
             "plural" : {
@@ -162,12 +672,94 @@
               }
             }
           }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lección"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lecciones"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçon"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçons"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aula"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aulas"
+                }
+              }
+            }
+          }
         }
       }
     },
     "%lld lessons · %@" : {
       "comment" : "How many lessons an example plan's first day has, and how long",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@lessons@ · %2$@"
+          },
+          "substitutions" : {
+            "lessons" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Lektion"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Lektionen"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -195,12 +787,114 @@
               }
             }
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@lessons@ · %2$@"
+          },
+          "substitutions" : {
+            "lessons" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lección"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lecciones"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@lessons@ · %2$@"
+          },
+          "substitutions" : {
+            "lessons" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg leçon"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg leçons"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@lessons@ · %2$@"
+          },
+          "substitutions" : {
+            "lessons" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg aula"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg aulas"
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
     "%lld quick lessons" : {
       "comment" : "The quick lessons an exam area is studied through",
       "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld kurze Lektion"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld kurze Lektionen"
+                }
+              }
+            }
+          }
+        },
         "en" : {
           "variations" : {
             "plural" : {
@@ -218,12 +912,84 @@
               }
             }
           }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lección rápida"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lecciones rápidas"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçon rapide"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçons rapides"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aula rápida"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aulas rápidas"
+                }
+              }
+            }
+          }
         }
       }
     },
     "%lld short lessons" : {
       "comment" : "How many lessons a course or a chapter has",
       "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld kurze Lektion"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld kurze Lektionen"
+                }
+              }
+            }
+          }
+        },
         "en" : {
           "variations" : {
             "plural" : {
@@ -241,12 +1007,94 @@
               }
             }
           }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lección breve"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lecciones breves"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçon courte"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçons courtes"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aula curta"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aulas curtas"
+                }
+              }
+            }
+          }
         }
       }
     },
     "+ %lld more lessons · %@" : {
       "comment" : "The rest of an example plan's first day, folded",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ %#@lessons@ · %2$@"
+          },
+          "substitutions" : {
+            "lessons" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg weitere Lektion"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg weitere Lektionen"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -274,12 +1122,114 @@
               }
             }
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ %#@lessons@ · %2$@"
+          },
+          "substitutions" : {
+            "lessons" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lección más"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lecciones más"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ %#@lessons@ · %2$@"
+          },
+          "substitutions" : {
+            "lessons" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg leçon de plus"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg leçons de plus"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ %#@lessons@ · %2$@"
+          },
+          "substitutions" : {
+            "lessons" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "mais %arg aula"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "mais %arg aulas"
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
     "+ %lld quick lessons" : {
       "comment" : "Quick lessons an exam area adds in an example plan",
       "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "+ %lld kurze Lektion"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "+ %lld kurze Lektionen"
+                }
+              }
+            }
+          }
+        },
         "en" : {
           "variations" : {
             "plural" : {
@@ -297,11 +1247,281 @@
               }
             }
           }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "+ %lld lección rápida"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "+ %lld lecciones rápidas"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "+ %lld leçon rapide"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "+ %lld leçons rapides"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "+ %lld aula rápida"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "+ %lld aulas rápidas"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "~%lld weeks" : {
+      "comment" : "How many weeks a course's example plan takes",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "~%lld Woche"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "~%lld Wochen"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "~%lld week"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "~%lld weeks"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "~%lld semana"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "~%lld semanas"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "~%lld semaine"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "~%lld semaines"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "~%lld semana"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "~%lld semanas"
+                }
+              }
+            }
+          }
         }
       }
     },
     "A few quick questions, then your plan and your first lesson." : {
-      "comment" : "Under a course page's last call"
+      "comment" : "Under a course page's last call",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein paar kurze Fragen, dann dein Plan und deine erste Lektion."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unas pocas preguntas rápidas y tendrás tu plan y tu primera lección."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quelques questions rapides, puis ton plan et ta première leçon."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algumas perguntas rápidas e pronto: seu plano e sua primeira aula."
+          }
+        }
+      }
+    },
+    "about %lld days left" : {
+      "comment" : "How long until an exam's estimated sitting",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "noch etwa %lld Tag"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "noch etwa %lld Tage"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "about %lld day left"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "about %lld days left"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "queda aproximadamente %lld día"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "quedan aproximadamente %lld días"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "environ %lld jour restant"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "environ %lld jours restants"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "falta cerca de %lld dia"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "faltam cerca de %lld dias"
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "Advanced" : {
       "comment" : "Heading above a course's advanced chapters.",
@@ -362,7 +1582,33 @@
       }
     },
     "An example. Your plan follows your answers, so it can start later and end sooner." : {
-      "comment" : "Caption of a course's example plan"
+      "comment" : "Caption of a course's example plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Beispiel. Dein Plan richtet sich nach deinen Antworten und kann deshalb später beginnen und früher enden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es un ejemplo. Tu plan se adapta a tus respuestas, así que puede empezar más tarde y terminar antes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un exemple. Ton plan s’adapte à tes réponses : il peut commencer plus tard et se terminer plus tôt."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um exemplo. Seu plano acompanha suas respostas, então pode começar mais tarde e terminar mais cedo."
+          }
+        }
+      }
     },
     "Arts" : {
       "comment" : "Course category for the arts.",
@@ -452,7 +1698,33 @@
       }
     },
     "Build your plan and Zoonk writes this course's chapters and lessons for you, starting at your level." : {
-      "comment" : "A course outline before its chapters are written"
+      "comment" : "A course outline before its chapters are written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erstelle deinen Plan und Zoonk erstellt die Kapitel und Lektionen dieses Kurses passend zu deinem Level."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prepara tu plan y Zoonk preparará los capítulos y las lecciones de este curso para ti, según tu nivel."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crée ton plan et Zoonk prépare les chapitres et les leçons de ce cours à partir de ton niveau."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Monte seu plano e o Zoonk cria os capítulos e as aulas deste curso para você, começando pelo seu nível."
+          }
+        }
+      }
     },
     "Business" : {
       "comment" : "Course category for business.",
@@ -483,19 +1755,455 @@
         }
       }
     },
+    "by %@, at %@ a day, Monday to Friday, in quick lessons on what comes up most. The full lessons come once there's more time." : {
+      "comment" : "What an exam course's example plan holds in quick lessons",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bis %1$@, mit %2$@ täglich, Montag bis Freitag, in kurzen Lektionen zu den häufigsten Themen. Die vollständigen Lektionen kommen, wenn mehr Zeit ist."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "by %1$@, at %2$@ a day, Monday to Friday, in quick lessons on what comes up most. The full lessons come once there's more time."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hasta %1$@, con %2$@ al día, de lunes a viernes, en lecciones rápidas sobre lo que más suele caer. Las lecciones completas llegarán cuando haya más tiempo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "d’ici le %1$@, avec %2$@ par jour, du lundi au vendredi, en leçons courtes sur les sujets les plus fréquents. Les leçons complètes viendront quand tu auras plus de temps."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "até %1$@, com %2$@ por dia, de segunda a sexta, em aulas rápidas sobre o que mais cai. As aulas completas ficam para quando houver mais tempo."
+          }
+        }
+      }
+    },
+    "by %@, at %@ a day, Monday to Friday, what comes up most first: %@ of the course's %lld lessons." : {
+      "comment" : "What an exam course's example plan holds of its lessons",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bis %1$@, mit %2$@ täglich, Montag bis Freitag, zuerst die häufigsten Themen: %3$@ von %#@total@ des Kurses."
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 4,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Lektion"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Lektionen"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "by %1$@, at %2$@ a day, Monday to Friday, what comes up most first: %3$@ of the course's %#@total@."
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 4,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg lesson"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg lessons"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hasta %1$@, con %2$@ al día, de lunes a viernes, primero lo que más suele caer: %3$@ de las %#@total@ del curso."
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 4,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lección"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lecciones"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "d’ici le %1$@, avec %2$@ par jour, du lundi au vendredi, en commençant par les sujets les plus fréquents : %3$@ sur les %#@total@ du cours."
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 4,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg leçon"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg leçons"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "até %1$@, com %2$@ por dia, de segunda a sexta, começando pelo que mais cai: %3$@ das %#@total@ do curso."
+          },
+          "substitutions" : {
+            "total" : {
+              "argNum" : 4,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg aula"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg aulas"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "by %@, at %@ a day, Monday to Friday, what comes up most first: %lld lessons already in the course, and more written as you reach them." : {
+      "comment" : "What an exam course's example plan holds",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bis %1$@, mit %2$@ täglich, Montag bis Freitag, zuerst die häufigsten Themen: %#@lessons@ sind schon im Kurs enthalten. Weitere Lektionen werden erstellt, sobald du sie erreichst."
+          },
+          "substitutions" : {
+            "lessons" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Lektion"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg Lektionen"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "by %1$@, at %2$@ a day, Monday to Friday, what comes up most first: %#@lessons@ already in the course, and more written as you reach them."
+          },
+          "substitutions" : {
+            "lessons" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg lesson"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "new",
+                      "value" : "%arg lessons"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hasta %1$@, con %2$@ al día, de lunes a viernes, primero lo que más suele caer: %#@lessons@ ya disponibles en el curso y más preparadas a medida que avances."
+          },
+          "substitutions" : {
+            "lessons" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lección"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg lecciones"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "d’ici le %1$@, avec %2$@ par jour, du lundi au vendredi, en commençant par les sujets les plus fréquents : %#@lessons@ déjà dans le cours, puis d’autres préparées au fur et à mesure."
+          },
+          "substitutions" : {
+            "lessons" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg leçon"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg leçons"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "até %1$@, com %2$@ por dia, de segunda a sexta, começando pelo que mais cai: %#@lessons@ já disponíveis no curso, e outras criadas conforme você avança."
+          },
+          "substitutions" : {
+            "lessons" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg aula"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg aulas"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "by %@, at %@ a day, Monday to Friday, what comes up most first: lessons written as you reach them." : {
+      "comment" : "What an exam course's example plan holds with no written lessons",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bis %1$@, mit %2$@ täglich, Montag bis Freitag, zuerst die häufigsten Themen: Lektionen werden erstellt, sobald du sie erreichst."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "by %1$@, at %2$@ a day, Monday to Friday, what comes up most first: lessons written as you reach them."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hasta %1$@, con %2$@ al día, de lunes a viernes, primero lo que más suele caer: lecciones preparadas a medida que avances."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "d’ici le %1$@, avec %2$@ par jour, du lundi au vendredi, en commençant par les sujets les plus fréquents : des leçons préparées au fur et à mesure."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "até %1$@, com %2$@ por dia, de segunda a sexta, começando pelo que mais cai: aulas criadas conforme você avança."
+          }
+        }
+      }
+    },
     "Challenges" : {
-      "comment" : "A part of an example plan's time"
+      "comment" : "A part of an example plan's time",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herausforderungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desafíos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Défis"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desafios"
+          }
+        }
+      }
     },
     "Challenges and mock exams" : {
-      "comment" : "A part of an exam plan's time"
+      "comment" : "A part of an exam plan's time",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Herausforderungen und Probeprüfungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desafíos y simulacros de examen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Défis et examens blancs"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desafios e simulados"
+          }
+        }
+      }
     },
     "Chapter %@ of %@" : {
       "comment" : "Where a chapter sits in its course",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapitel %1$@ von %2$@"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Chapter %1$@ of %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capítulo %1$@ de %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chapitre %1$@ sur %2$@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capítulo %1$@ de %2$@"
           }
         }
       }
@@ -503,10 +2211,34 @@
     "Chapter %@ of %@ · %@" : {
       "comment" : "Where a chapter sits in its course, and its level",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapitel %1$@ von %2$@ · %3$@"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Chapter %1$@ of %2$@ · %3$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capítulo %1$@ de %2$@ · %3$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chapitre %1$@ sur %2$@ · %3$@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capítulo %1$@ de %2$@ · %3$@"
           }
         }
       }
@@ -541,7 +2273,33 @@
       }
     },
     "Chapter options" : {
-      "comment" : "The chapter page's menu of options"
+      "comment" : "The chapter page's menu of options",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapiteloptionen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opciones del capítulo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Options du chapitre"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opções do capítulo"
+          }
+        }
+      }
     },
     "Chapter unavailable" : {
       "comment" : "Title when a chapter cannot be loaded.",
@@ -660,7 +2418,33 @@
       }
     },
     "Continue your plan" : {
-      "comment" : "Takes a learner whose goal follows this course back to Today"
+      "comment" : "Takes a learner whose goal follows this course back to Today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Setze deinen Plan fort"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continúa tu plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer ton plan"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar seu plano"
+          }
+        }
+      }
     },
     "Couldn't load more courses." : {
       "comment" : "Message when another course page cannot be loaded.",
@@ -779,10 +2563,62 @@
       }
     },
     "Course options" : {
-      "comment" : "The course page's menu of options"
+      "comment" : "The course page's menu of options",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kursoptionen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opciones del curso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Options du cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opções do curso"
+          }
+        }
+      }
     },
     "Course outline" : {
-      "comment" : "Header of a course's outline"
+      "comment" : "Header of a course's outline",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kursübersicht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contenido del curso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan du cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conteúdo do curso"
+          }
+        }
+      }
     },
     "Course unavailable" : {
       "comment" : "Title when a course cannot be loaded.",
@@ -872,7 +2708,33 @@
       }
     },
     "Courses in %@" : {
-      "comment" : "Title of the catalog on one category, such as Courses in Science"
+      "comment" : "Title of the catalog on one category, such as Courses in Science",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurse in %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cursos de %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cours de %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cursos em %@"
+          }
+        }
+      }
     },
     "Culture" : {
       "comment" : "Course category for culture.",
@@ -964,10 +2826,34 @@
     "Exam around %@ · %@" : {
       "comment" : "An exam course's estimated next sitting: its days, then how long until it",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prüfung voraussichtlich %1$@ · %2$@"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Exam around %1$@ · %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Examen aproximadamente en %1$@ · %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Examen vers %1$@ · %2$@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prova prevista para %1$@ · %2$@"
           }
         }
       }
@@ -975,16 +2861,66 @@
     "Exam on %@ · %@" : {
       "comment" : "An exam course's next sitting: its days, then how long until it",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prüfung am %1$@ · %2$@"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Exam on %1$@ · %2$@"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Examen el %1$@ · %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Examen le %1$@ · %2$@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prova em %1$@ · %2$@"
+          }
         }
       }
     },
     "Example plan" : {
-      "comment" : "Header of a course's example plan"
+      "comment" : "Header of a course's example plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beispielplan"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plan de ejemplo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exemple de plan"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plano de exemplo"
+          }
+        }
+      }
     },
     "Exams" : {
       "comment" : "Course category for exam preparation courses, such as the SAT or ENEM.",
@@ -1190,7 +3126,33 @@
       }
     },
     "It follows the course from here, at your pace, with reviews before you forget." : {
-      "comment" : "Under a chapter page's last call"
+      "comment" : "Under a chapter page's last call",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Von hier aus geht es in deinem Tempo durch den Kurs, mit Wiederholungen, bevor du etwas vergisst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sigue el curso desde aquí, a tu ritmo, con repasos antes de que olvides lo aprendido."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il suit le cours à partir d’ici, à ton rythme, avec des révisions avant que tu oublies."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daqui em diante, ele acompanha o curso no seu ritmo, com revisões antes que você esqueça."
+          }
+        }
+      }
     },
     "Languages" : {
       "comment" : "Course category for languages.",
@@ -1251,7 +3213,33 @@
       }
     },
     "Left out" : {
-      "comment" : "A chapter or an area the example plan leaves out"
+      "comment" : "A chapter or an area the example plan leaves out",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ausgelassen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Omitido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laissé de côté"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ficou de fora"
+          }
+        }
+      }
     },
     "Lesson" : {
       "comment" : "Fallback title for a lesson without a title.",
@@ -1312,10 +3300,91 @@
       }
     },
     "Lessons not written yet" : {
-      "comment" : "A part of an example plan's time"
+      "comment" : "A part of an example plan's time",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch nicht erstellte Lektionen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lecciones aún sin preparar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leçons pas encore préparées"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aulas ainda não criadas"
+          }
+        }
+      }
     },
     "Lessons not written yet are written as you reach them." : {
-      "comment" : "Under an example plan with lessons still to be written"
+      "comment" : "Under an example plan with lessons still to be written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch nicht erstellte Lektionen werden erstellt, sobald du sie erreichst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las lecciones aún sin preparar se preparan cuando llegas a ellas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les leçons pas encore préparées le seront au fur et à mesure."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As aulas ainda não criadas serão criadas conforme você avança."
+          }
+        }
+      }
+    },
+    "lessons written as you reach them" : {
+      "comment" : "What part of a course is studied through in an example plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lektionen, die erstellt werden, sobald du sie erreichst"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lecciones preparadas a medida que avances"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "leçons préparées au fur et à mesure"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aulas criadas conforme você avança"
+          }
+        }
+      }
     },
     "Loading chapter" : {
       "comment" : "Accessibility status while a chapter loads.",
@@ -1463,16 +3532,120 @@
       }
     },
     "No courses" : {
-      "comment" : "Title when the catalog has no courses"
+      "comment" : "Title when the catalog has no courses",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Kurse"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hay cursos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nenhum curso"
+          }
+        }
+      }
     },
     "No courses available yet." : {
-      "comment" : "Guidance when the catalog or a category has no courses"
+      "comment" : "Guidance when the catalog or a category has no courses",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es sind noch keine Kurse verfügbar."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún no hay cursos disponibles."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun cours disponible pour le moment."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ainda não há cursos disponíveis."
+          }
+        }
+      }
     },
     "Not all of it fits by then. Before you start, you see how much fits at your level and your time." : {
-      "comment" : "An exam course's example plan doesn't cover everything"
+      "comment" : "An exam course's example plan doesn't cover everything",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bis dahin passt nicht alles hinein. Bevor du startest, siehst du, wie viel du auf deinem Level und in deiner verfügbaren Zeit schaffst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No da tiempo a cubrirlo todo. Antes de empezar, verás cuánto puedes estudiar según tu nivel y el tiempo que tienes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout ne tient pas dans ce délai. Avant de commencer, tu vois ce qui tient compte de ton niveau et du temps dont tu disposes."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não dá para estudar tudo até lá. Antes de começar, você vê quanto cabe no seu nível e no tempo que tem."
+          }
+        }
+      }
     },
     "Of this, %@ comes after the exam." : {
-      "comment" : "How much of an exam plan's time comes after the exam"
+      "comment" : "How much of an exam plan's time comes after the exam",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Davon liegt %@ nach der Prüfung."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De todo esto, %@ va después del examen."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sur cette durée, %@ vient après l’examen."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desse tempo, %@ fica para depois da prova."
+          }
+        }
+      }
     },
     "Overview" : {
       "comment" : "Heading above a course's overview chapters.",
@@ -1561,8 +3734,92 @@
         }
       }
     },
+    "quick lessons" : {
+      "comment" : "What part of a course is studied through in an example plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kurze Lektionen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lecciones rápidas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "leçons courtes"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aulas rápidas"
+          }
+        }
+      }
+    },
+    "quick lessons and lessons written as you reach them" : {
+      "comment" : "What part of a course is studied through in an example plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kurze Lektionen und Lektionen, die erstellt werden, sobald du sie erreichst"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "lecciones rápidas y lecciones preparadas a medida que avances"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "leçons courtes et leçons préparées au fur et à mesure"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aulas rápidas e aulas criadas conforme você avança"
+          }
+        }
+      }
+    },
     "Reviews and practice" : {
-      "comment" : "A part of an example plan's time"
+      "comment" : "A part of an example plan's time",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wiederholungen und Übungen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repasos y práctica"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Révisions et entraînement"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisões e prática"
+          }
+        }
+      }
     },
     "Science" : {
       "comment" : "Course category for science.",
@@ -1683,6 +3940,24 @@
     "Show %lld more chapters" : {
       "comment" : "Unfolds the rest of a long list of chapters",
       "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Zeige %lld weiteres Kapitel"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Zeige %lld weitere Kapitel"
+                }
+              }
+            }
+          }
+        },
         "en" : {
           "variations" : {
             "plural" : {
@@ -1700,11 +3975,91 @@
               }
             }
           }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mostrar %lld capítulo más"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mostrar %lld capítulos más"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Afficher %lld chapitre de plus"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Afficher %lld chapitres de plus"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mostrar mais %lld capítulo"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mostrar mais %lld capítulos"
+                }
+              }
+            }
+          }
         }
       }
     },
     "Show fewer chapters" : {
-      "comment" : "Folds a long list of chapters"
+      "comment" : "Folds a long list of chapters",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weniger Kapitel anzeigen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar menos capítulos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher moins de chapitres"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar menos capítulos"
+          }
+        }
+      }
     },
     "Society" : {
       "comment" : "Course category for society.",
@@ -1794,16 +4149,120 @@
       }
     },
     "Start from a course, or tell Zoonk what you're getting ready for." : {
-      "comment" : "The line under the catalog's title"
+      "comment" : "The line under the catalog's title",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähle einen Kurs oder sag Zoonk, worauf du dich vorbereitest."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza por un curso o cuéntale a Zoonk para qué te estás preparando."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisis un cours ou dis à Zoonk ce que tu prépares."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comece por um curso ou conte ao Zoonk para o que você está se preparando."
+          }
+        }
+      }
     },
     "Start here and Zoonk writes its lessons for your level." : {
-      "comment" : "Under a chapter's start when its lessons aren't written yet"
+      "comment" : "Under a chapter's start when its lessons aren't written yet",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starte hier und Zoonk erstellt die Lektionen passend zu deinem Level."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza aquí y Zoonk preparará las lecciones según tu nivel."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commence ici et Zoonk prépare les leçons à ton niveau."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comece por aqui e o Zoonk cria as aulas no seu nível."
+          }
+        }
+      }
     },
     "Start today, at your level" : {
-      "comment" : "A course page's last call"
+      "comment" : "A course page's last call",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starte heute auf deinem Level"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza hoy, a tu nivel"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer aujourd’hui, à ton niveau"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comece hoje, no seu nível"
+          }
+        }
+      }
     },
     "Starting today, you'd finish around %@." : {
-      "comment" : "When a course's example plan ends: a month and year"
+      "comment" : "When a course's example plan ends: a month and year",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wenn du heute startest, bist du voraussichtlich um %@ fertig."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si empiezas hoy, terminarás más o menos en %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En commençant aujourd’hui, tu terminerais vers %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se começar hoje, você termina por volta de %@."
+          }
+        }
+      }
     },
     "Technology" : {
       "comment" : "Course category for technology.",
@@ -1835,13 +4294,91 @@
       }
     },
     "That's every exam topic in the course, in depth." : {
-      "comment" : "An exam course's example plan covers every exam topic"
+      "comment" : "An exam course's example plan covers every exam topic",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Damit behandelst du alle Prüfungsthemen des Kurses ausführlich."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incluye todos los temas del curso que entran en el examen, en profundidad."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tous les sujets de l’examen sont traités en détail dans ce cours."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O curso aborda a fundo todos os tópicos da prova."
+          }
+        }
+      }
     },
     "That's every topic in the course, in depth." : {
-      "comment" : "An example plan covers the whole course"
+      "comment" : "An example plan covers the whole course",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Damit behandelst du alle Themen des Kurses ausführlich."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Incluye todos los temas del curso, en profundidad."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tous les sujets du cours sont traités en détail."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O curso aborda a fundo todos os tópicos."
+          }
+        }
+      }
     },
     "This chapter" : {
-      "comment" : "Marks the open chapter in its course"
+      "comment" : "Marks the open chapter in its course",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Kapitel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este capítulo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce chapitre"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Este capítulo"
+          }
+        }
+      }
     },
     "This content may have moved or is no longer available." : {
       "comment" : "Guidance when a course or chapter cannot be found.",
@@ -1872,8 +4409,158 @@
         }
       }
     },
+    "to finish the whole course at %lld minutes a day, Monday to Friday, from scratch." : {
+      "comment" : "Under the weeks a course's example plan takes",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "um den ganzen Kurs von Grund auf mit %lld Min. täglich von Montag bis Freitag abzuschließen."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "um den ganzen Kurs von Grund auf mit %lld Min. täglich von Montag bis Freitag abzuschließen."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "to finish the whole course at %lld minute a day, Monday to Friday, from scratch."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "to finish the whole course at %lld minutes a day, Monday to Friday, from scratch."
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "para completar todo el curso desde cero, con %lld minuto al día, de lunes a viernes."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "para completar todo el curso desde cero, con %lld minutos al día, de lunes a viernes."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "pour terminer tout le cours à partir de zéro, avec %lld minute par jour, du lundi au vendredi."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "pour terminer tout le cours à partir de zéro, avec %lld minutes par jour, du lundi au vendredi."
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "para concluir o curso inteiro começando do zero, com %lld minuto por dia, de segunda a sexta."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "para concluir o curso inteiro começando do zero, com %lld minutos por dia, de segunda a sexta."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "Today" : {
-      "comment" : "Header of an example plan's first day"
+      "comment" : "Header of an example plan's first day",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aujourd’hui"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoje"
+          }
+        }
+      }
+    },
+    "today" : {
+      "comment" : "An exam's sitting is today, after its days",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "heute"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "aujourd’hui"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hoje"
+          }
+        }
+      }
     },
     "Try a lesson" : {
       "comment" : "Opens one of the course's lessons to try before starting a plan",
@@ -1934,31 +4621,329 @@
       }
     },
     "Week %lld" : {
-      "comment" : "The week a chapter starts in a plan"
+      "comment" : "The week a chapter starts in a plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Woche %lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semana %lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semaine %lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Semana %lld"
+          }
+        }
+      }
+    },
+    "week %lld" : {
+      "comment" : "The one week a level takes in a plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Woche %lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "semana %lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "semaine %lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "semana %lld"
+          }
+        }
+      }
+    },
+    "weeks %lld–%lld" : {
+      "comment" : "The weeks a level takes in a plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wochen %1$lld–%2$lld"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "weeks %1$lld–%2$lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "semanas %1$lld–%2$lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "semaines %1$lld–%2$lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "semanas %1$lld–%2$lld"
+          }
+        }
+      }
     },
     "What fills the time" : {
-      "comment" : "Header of an example plan's workload"
+      "comment" : "Header of an example plan's workload",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was in dieser Zeit ansteht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En qué emplearás el tiempo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comment le temps est réparti"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Como o tempo é dividido"
+          }
+        }
+      }
     },
     "What you studied comes back right before you'd forget it." : {
-      "comment" : "Why an example plan has reviews"
+      "comment" : "Why an example plan has reviews",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du wiederholst den Lernstoff kurz bevor du ihn vergessen würdest."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repasarás lo que has estudiado justo antes de que se te olvide."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu revois ce que tu as appris juste avant de l’oublier."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você revisa o que estudou pouco antes de esquecer."
+          }
+        }
+      }
     },
     "What you'll be able to do" : {
-      "comment" : "Header of what a course makes someone able to do"
+      "comment" : "Header of what a course makes someone able to do",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was du können wirst"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qué podrás hacer"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que tu sauras faire"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que você vai saber fazer"
+          }
+        }
+      }
     },
     "What you'll learn" : {
-      "comment" : "Header of what a chapter teaches"
+      "comment" : "Header of what a chapter teaches",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was du lernst"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qué aprenderás"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que tu vas apprendre"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que você vai aprender"
+          }
+        }
+      }
     },
     "Where this chapter sits in the course" : {
-      "comment" : "Header of where a chapter sits in its course"
+      "comment" : "Header of where a chapter sits in its course",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wo dieses Kapitel im Kurs steht"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dónde encaja este capítulo en el curso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La place de ce chapitre dans le cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Onde este capítulo se encaixa no curso"
+          }
+        }
+      }
     },
     "Who it's for" : {
-      "comment" : "Header of who a course is for"
+      "comment" : "Header of who a course is for",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Für wen der Kurs gedacht ist"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para quién es"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À qui s’adresse ce cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para quem é"
+          }
+        }
+      }
     },
     "With Zoonk, your plan starts at this chapter and fits your schedule." : {
-      "comment" : "On a chapter's page, what Zoonk does with it"
+      "comment" : "On a chapter's page, what Zoonk does with it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit Zoonk beginnt dein Plan mit diesem Kapitel und passt in deinen Zeitplan."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con Zoonk, tu plan empieza en este capítulo y se adapta a tu horario."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec Zoonk, ton plan commence à ce chapitre et s’adapte à ton emploi du temps."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com o Zoonk, seu plano começa neste capítulo e cabe na sua rotina."
+          }
+        }
+      }
     },
     "With Zoonk, your plan starts at your level and fits your schedule." : {
-      "comment" : "On a course's page, what Zoonk does with it"
+      "comment" : "On a course's page, what Zoonk does with it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit Zoonk beginnt dein Plan auf deinem Level und passt in deinen Zeitplan."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Con Zoonk, tu plan empieza en tu nivel y se adapta a tu horario."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avec Zoonk, ton plan commence à ton niveau et s’adapte à ton emploi du temps."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Com o Zoonk, seu plano começa no seu nível e cabe na sua rotina."
+          }
+        }
+      }
     },
     "You're offline" : {
       "comment" : "Title when catalog content cannot load because the device is offline.",
@@ -1992,6 +4977,24 @@
     "Your plan at %lld minutes a day, from scratch" : {
       "comment" : "Over a course's outline: the example plan it marks",
       "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Dein Plan mit %lld Min. täglich, von Grund auf"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Dein Plan mit %lld Min. täglich, von Grund auf"
+                }
+              }
+            }
+          }
+        },
         "en" : {
           "variations" : {
             "plural" : {
@@ -2009,205 +5012,152 @@
               }
             }
           }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tu plan desde cero, con %lld minuto al día"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Tu plan desde cero, con %lld minutos al día"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Ton plan, à partir de zéro, avec %lld minute par jour"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Ton plan, à partir de zéro, avec %lld minutes par jour"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Seu plano, começando do zero, com %lld minuto por dia"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Seu plano, começando do zero, com %lld minutos por dia"
+                }
+              }
+            }
+          }
         }
       }
     },
     "Your plan follows this course" : {
-      "comment" : "A course page's last call for a learner whose goal follows the course"
+      "comment" : "A course page's last call for a learner whose goal follows the course",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan folgt diesem Kurs"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan sigue este curso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan suit ce cours"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano acompanha este curso"
+          }
+        }
+      }
     },
     "Your plan from this chapter" : {
-      "comment" : "A chapter page's last call, when the plan starts there"
+      "comment" : "A chapter page's last call, when the plan starts there",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan ab diesem Kapitel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan empieza en este capítulo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan à partir de ce chapitre"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano a partir deste capítulo"
+          }
+        }
+      }
     },
     "Your plan until %@, at %@ a day" : {
       "comment" : "Over an exam course's outline: the example plan it marks",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan bis %1$@, mit %2$@ täglich"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
             "value" : "Your plan until %1$@, at %2$@ a day"
           }
-        }
-      }
-    },
-    "about %lld days left" : {
-      "comment" : "How long until an exam's estimated sitting",
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "about %lld day left"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "about %lld days left"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "by %@, at %@ a day, Monday to Friday, in quick lessons on what comes up most. The full lessons come once there's more time." : {
-      "comment" : "What an exam course's example plan holds in quick lessons",
-      "localizations" : {
-        "en" : {
+        },
+        "es" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "by %1$@, at %2$@ a day, Monday to Friday, in quick lessons on what comes up most. The full lessons come once there's more time."
+            "state" : "translated",
+            "value" : "Tu plan hasta %1$@, con %2$@ al día"
           }
-        }
-      }
-    },
-    "by %@, at %@ a day, Monday to Friday, what comes up most first: %@ of the course's %lld lessons." : {
-      "comment" : "What an exam course's example plan holds of its lessons",
-      "localizations" : {
-        "en" : {
+        },
+        "fr" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "by %1$@, at %2$@ a day, Monday to Friday, what comes up most first: %3$@ of the course's %#@total@."
-          },
-          "substitutions" : {
-            "total" : {
-              "argNum" : 4,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "new",
-                      "value" : "%arg lesson"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "new",
-                      "value" : "%arg lessons"
-                    }
-                  }
-                }
-              }
-            }
+            "state" : "translated",
+            "value" : "Ton plan jusqu’au %1$@, avec %2$@ par jour"
           }
-        }
-      }
-    },
-    "by %@, at %@ a day, Monday to Friday, what comes up most first: %lld lessons already in the course, and more written as you reach them." : {
-      "comment" : "What an exam course's example plan holds",
-      "localizations" : {
-        "en" : {
+        },
+        "pt" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "by %1$@, at %2$@ a day, Monday to Friday, what comes up most first: %#@lessons@ already in the course, and more written as you reach them."
-          },
-          "substitutions" : {
-            "lessons" : {
-              "argNum" : 3,
-              "formatSpecifier" : "lld",
-              "variations" : {
-                "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "new",
-                      "value" : "%arg lesson"
-                    }
-                  },
-                  "other" : {
-                    "stringUnit" : {
-                      "state" : "new",
-                      "value" : "%arg lessons"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "by %@, at %@ a day, Monday to Friday, what comes up most first: lessons written as you reach them." : {
-      "comment" : "What an exam course's example plan holds with no written lessons",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "by %1$@, at %2$@ a day, Monday to Friday, what comes up most first: lessons written as you reach them."
-          }
-        }
-      }
-    },
-    "lessons written as you reach them" : {
-      "comment" : "What part of a course is studied through in an example plan"
-    },
-    "quick lessons" : {
-      "comment" : "What part of a course is studied through in an example plan"
-    },
-    "quick lessons and lessons written as you reach them" : {
-      "comment" : "What part of a course is studied through in an example plan"
-    },
-    "to finish the whole course at %lld minutes a day, Monday to Friday, from scratch." : {
-      "comment" : "Under the weeks a course's example plan takes",
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "to finish the whole course at %lld minute a day, Monday to Friday, from scratch."
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "to finish the whole course at %lld minutes a day, Monday to Friday, from scratch."
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "today" : {
-      "comment" : "An exam's sitting is today, after its days"
-    },
-    "week %lld" : {
-      "comment" : "The one week a level takes in a plan"
-    },
-    "weeks %lld–%lld" : {
-      "comment" : "The weeks a level takes in a plan",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "weeks %1$lld–%2$lld"
-          }
-        }
-      }
-    },
-    "~%lld weeks" : {
-      "comment" : "How many weeks a course's example plan takes",
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "~%lld week"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "new",
-                  "value" : "~%lld weeks"
-                }
-              }
-            }
+            "state" : "translated",
+            "value" : "Seu plano até %1$@, com %2$@ por dia"
           }
         }
       }
