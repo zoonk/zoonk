@@ -75,6 +75,12 @@ export const courseResourceSchema = z
       .array(z.enum(COURSE_CATEGORIES))
       .meta({ description: "Oldest first: the first is the course's subject, its pages' color" }),
     description: z.string().nullable(),
+    editions: z
+      .array(z.object({ id: z.uuid(), language: z.string(), title: z.string() }))
+      .meta({
+        description:
+          "The course's published editions in every language, itself included; empty for a learner's private course",
+      }),
     exam: courseExamDaysSchema
       .nullable()
       .meta({

@@ -20,7 +20,13 @@ async function getCachedCourseEditions(courseId: string) {
 
   const editions = await prisma.course.findMany({
     orderBy: { language: "asc" },
-    select: { id: true, language: true, organization: { select: { slug: true } }, slug: true },
+    select: {
+      id: true,
+      language: true,
+      organization: { select: { slug: true } },
+      slug: true,
+      title: true,
+    },
     where: getListedCourseWhere({ familyId: course.familyId }),
   });
 
@@ -34,6 +40,7 @@ async function getCachedCourseEditions(courseId: string) {
             courseSlug: edition.slug,
             id: edition.id,
             language: edition.language,
+            title: edition.title,
           },
         ]
       : [],

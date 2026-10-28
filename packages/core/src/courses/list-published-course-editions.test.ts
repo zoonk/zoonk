@@ -41,8 +41,20 @@ describe(listPublishedCourseEditions, () => {
     ]);
 
     await expect(listPublishedCourseEditions({ courseId: english.id })).resolves.toStrictEqual([
-      { brandSlug: org.slug, courseSlug: english.slug, id: english.id, language: "en" },
-      { brandSlug: org.slug, courseSlug: portuguese.slug, id: portuguese.id, language: "pt" },
+      {
+        brandSlug: org.slug,
+        courseSlug: english.slug,
+        id: english.id,
+        language: "en",
+        title: english.title,
+      },
+      {
+        brandSlug: org.slug,
+        courseSlug: portuguese.slug,
+        id: portuguese.id,
+        language: "pt",
+        title: portuguese.title,
+      },
     ]);
   });
 
