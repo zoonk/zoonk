@@ -1,8 +1,9 @@
 name: Android App
 
 on:
+  # Every branch, so each push writes its branch's Gradle cache and the next push starts warm.
   push:
-    branches: [main]
+    branches: ["**"]
     paths: [apps/android/**, .github/workflows/android.yml]
   pull_request:
     branches: [main]
@@ -17,9 +18,23 @@ permissions:
   contents: read
 
 jobs:
-  quality:
+  gradle:
+    name: ${{ matrix.job }}
+    # A pull request from this repository already shows its branch push's checks; forks run here.
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
+    # Parallel jobs keep each one under 5 minutes as the app grows; `make check` runs all three.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - job: checks
+            target: lint
+          - job: tests
+            target: test
+          - job: release
+            target: build
     steps:
       - name: Check out code
         uses: actions/checkout@v7
@@ -39,8 +54,9 @@ jobs:
         uses: gradle/actions/setup-gradle@v6
         with:
           cache-provider: basic
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
 
-      - name: Check Android app
+      - name: Run Gradle
         env:
           GRADLE_ARGUMENTS: --no-daemon --console=plain
-        run: make -C apps/android check
+        run: make -C apps/android ${{ matrix.target }}
