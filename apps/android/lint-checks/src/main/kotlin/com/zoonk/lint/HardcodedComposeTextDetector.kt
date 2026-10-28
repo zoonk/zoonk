@@ -69,7 +69,6 @@ class HardcodedComposeTextDetector :
         context: JavaContext,
         expression: UExpression?,
     ) {
-        // Inspect result branches only: conditions and case labels are not displayed text.
         when (expression) {
             null -> {
                 return
@@ -126,7 +125,6 @@ class HardcodedComposeTextDetector :
     companion object {
         private const val COMPOSABLE = "androidx.compose.runtime.Composable"
 
-        // Recognize common display-text parameters without treating routes, keys, and IDs as copy.
         private val TEXT_PARAMETERS =
             setOf(
                 "content",

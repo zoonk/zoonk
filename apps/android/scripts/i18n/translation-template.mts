@@ -33,7 +33,6 @@ function omitNonTranslatable(element: unknown) {
   return { ...element, resources: resources.filter((resource) => isTranslatable(resource)) };
 }
 
-/** Preserve source attributes for the codec without duplicating Android's fallback-only resources. */
 export function translationTemplate(source: string) {
   const document: unknown = new XMLParser(OPTIONS).parse(source);
 

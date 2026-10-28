@@ -14,11 +14,8 @@ function decodeXml(content: string) {
 }
 
 /**
- * Treat stale values as missing so Eloqnt's existing lint and translate commands handle them.
- * Fingerprints travel with each locale's XML; CI needs neither Git history nor model credentials.
- *
- * `readSources` returns every catalog's source XML: Eloqnt doesn't tell a codec which file it
- * reads, and Android resource names are unique across catalogs, so a message's ID finds its source.
+ * Decodes stale translations as missing, so Eloqnt's lint and translate commands handle them.
+ * `readSources` returns every catalog's source XML because Eloqnt doesn't tell a codec which file it reads.
  */
 export function createTrackedAndroidXmlCodec({
   readSources,

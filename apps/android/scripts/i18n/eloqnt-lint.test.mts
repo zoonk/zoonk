@@ -30,10 +30,6 @@ function translate({ source, translation }: { source: string; translation: strin
   );
 }
 
-/**
- * A project with two catalogs translated into Spanish. The `strings_today` catalog's English now
- * reads `today`, and it has no Spanish file at all when `translated` is false.
- */
 async function fixture({ today = TODAY, translated = true } = {}) {
   const directory = await mkdtemp(join(tmpdir(), "zoonk-android-i18n-"));
   onTestFinished(() => rm(directory, { force: true, recursive: true }));
@@ -86,7 +82,6 @@ async function fixture({ today = TODAY, translated = true } = {}) {
 
 const execFileAsync = promisify(execFile);
 
-/** `eloqnt lint --strict` in the project: its exit status and everything it printed. */
 async function lint(directory: string) {
   try {
     const { stderr, stdout } = await execFileAsync(process.execPath, [CLI, "lint", "--strict"], {
@@ -96,7 +91,6 @@ async function lint(directory: string) {
 
     return { output: `${stdout}${stderr}`, status: 0 };
   } catch (error) {
-    // A lint that finds problems exits with 1, which `execFile` rejects with, output included.
     if (!(error instanceof Error && "code" in error && typeof error.code === "number")) {
       throw error;
     }
@@ -106,8 +100,6 @@ async function lint(directory: string) {
   }
 }
 
-// Each case is its own project, linted at the same time: one CLI start at a time took over 5 s on a
-// busy CI runner.
 test("the real Eloqnt CLI rejects stale, missing, and removed entries in any catalog without model credentials", async () => {
   const [clean, stale, missingLocale, removed] = await Promise.all([
     fixture().then(lint),

@@ -51,8 +51,7 @@ android {
         abortOnError = true
         checkDependencies = true
         warningsAsErrors = true
-        // These only report that a newer version exists, so with warnings as errors an unchanged
-        // tree would fail on the day a release ships. Version upgrades are a deliberate choice.
+        // With warnings as errors, these newer-version checks would fail an unchanged tree whenever a release ships.
         disable +=
             setOf(
                 "AndroidGradlePluginVersion",

@@ -29,7 +29,6 @@ async function write({ content, path }: { content: string; path: string }) {
   await writeFile(path, content);
 }
 
-/** A project with the `strings` and `strings_today` catalogs translated into Spanish. */
 async function fixture() {
   const root = await mkdtemp(join(tmpdir(), "zoonk-android-sync-"));
   onTestFinished(() => rm(root, { force: true, recursive: true }));
