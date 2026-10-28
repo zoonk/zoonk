@@ -311,7 +311,9 @@ struct GeometryBoardCanvas: View {
         let color = partColor(index, reading: reading)
         let path = Path { path in
           path.move(to: at)
-          wedge.points.forEach { path.addLine(to: $0) }
+          for point in wedge.points {
+            path.addLine(to: point)
+          }
           path.closeSubpath()
         }
         canvas.fill(path, with: .style(color.opacity(0.18)))
