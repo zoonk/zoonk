@@ -1,13 +1,17 @@
 import { getSession } from "../users/get-session";
-import { getGooglePlaySubscription } from "./google-play-api";
 import { GooglePlayError } from "./google-play-error";
-import { getGooglePlaySubscriptionProduct } from "./google-play-products";
-import { reconcileGooglePlaySubscription } from "./reconcile-google-play-subscription";
+import {
+  findGooglePlayLineOwner,
+  getGooglePlayRenewalCheck,
+  saveGooglePlayPurchase,
+} from "./reconcile-google-play-subscription";
 import { isActiveStoreSubscription } from "./reconcile-store-subscription";
 
 /**
- * Derives ownership from the authenticated session and requires the account id the app set at
- * purchase (`obfuscatedAccountId`), when the purchase has one, to match before granting access.
+ * Derives ownership from the authenticated session. A purchase line that already belongs to an
+ * account (the id the app set at purchase, `obfuscatedAccountId`, or the stored owner of the
+ * purchase it replaced) must be the learner's; one made in the Play Store that names no account,
+ * such as with a promo code, becomes theirs.
  */
 export async function syncCurrentUserGooglePlaySubscription({
   purchaseToken,
@@ -20,29 +24,24 @@ export async function syncCurrentUserGooglePlaySubscription({
     throw new GooglePlayError("unauthorized");
   }
 
-  const purchase = await getGooglePlaySubscription(purchaseToken);
+  const userId = session.user.id.toLowerCase();
 
-  if (!purchase) {
-    return { isActive: false };
-  }
-
-  /** A purchase made in the Play Store (a promo code) names no account: it's the learner's on this device. */
-  if (purchase.accountId && purchase.accountId !== session.user.id.toLowerCase()) {
-    throw new GooglePlayError("accountMismatch");
-  }
-
-  const product = getGooglePlaySubscriptionProduct(purchase);
-
-  if (!product) {
-    throw new GooglePlayError("invalidProduct");
-  }
-
-  const subscription = await reconcileGooglePlaySubscription({
+  const subscription = await saveGooglePlayPurchase({
     eventId: null,
-    product,
-    purchase,
-    referenceId: session.user.id,
+    findOwner: async (purchase) => {
+      const owner = await findGooglePlayLineOwner(purchase);
+
+      if (owner && owner !== userId) {
+        throw new GooglePlayError("accountMismatch");
+      }
+
+      return session.user.id;
+    },
+    purchaseToken,
   });
 
-  return { isActive: isActiveStoreSubscription(subscription) };
+  return {
+    isActive: subscription ? isActiveStoreSubscription(subscription) : false,
+    renewalCheck: getGooglePlayRenewalCheck(subscription),
+  };
 }

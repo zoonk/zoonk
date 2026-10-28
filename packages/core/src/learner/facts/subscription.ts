@@ -1,12 +1,8 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { type SubscriptionProvider } from "@zoonk/utils/subscription";
 import { cacheTag } from "next/cache";
 import { getUserSubscriptionCacheTag } from "../../cache/tags";
 import { getRequestInstant } from "./request-instant";
-
-/** App stores report a period end, so their access lapses on time even if a notification is lost. */
-const STORE_PROVIDERS: SubscriptionProvider[] = ["apple", "google"];
 
 /** The shared eligibility query; permission callers supply their own fresh clock and client. */
 export function getActiveSubscriptionQuery({ now, userId }: { now: Date; userId: string }) {
@@ -14,8 +10,18 @@ export function getActiveSubscriptionQuery({ now, userId }: { now: Date; userId:
     orderBy: { id: "desc" as const },
     where: {
       OR: [
-        { provider: { notIn: STORE_PROVIDERS } },
-        { endedAt: null, periodEnd: { gt: now }, provider: { in: STORE_PROVIDERS } },
+        { provider: { notIn: ["apple" as const, "google" as const] } },
+        { endedAt: null, periodEnd: { gt: now }, provider: "apple" as const },
+        /**
+         * Google keeps a renewing subscription through its renewal and the silent grace after a
+         * failed payment, until a read of it says otherwise (`checkGooglePlayRenewal`); a canceled
+         * one lapses at its period end.
+         */
+        {
+          OR: [{ cancelAtPeriodEnd: false }, { periodEnd: { gt: now } }],
+          endedAt: null,
+          provider: "google" as const,
+        },
       ],
       referenceId: userId,
       status: { in: ["active", "trialing"] },

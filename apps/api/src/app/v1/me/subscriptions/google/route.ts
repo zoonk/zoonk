@@ -1,6 +1,7 @@
 import { getMeResponseData } from "@/app/v1/me/_utils/get-me-response";
 import { errors } from "@/lib/api-errors";
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { scheduleGooglePlayRenewalCheck } from "@/lib/google-play-renewal";
 import { readBody } from "@/lib/request-input";
 import { googlePlaySubscriptionRequestSchema } from "@zoonk/core/subscriptions/google-play-contract";
 import { syncCurrentUserGooglePlaySubscription } from "@zoonk/core/subscriptions/google-play-sync";
@@ -23,6 +24,10 @@ async function createGooglePlaySubscription(request: NextRequest) {
     }
 
     throw error;
+  }
+
+  if (result.renewalCheck) {
+    await scheduleGooglePlayRenewalCheck(result.renewalCheck);
   }
 
   const currentAccount = await getMeResponseData();

@@ -1,4 +1,5 @@
 import { withApiErrorBoundary } from "@/lib/api-handler";
+import { scheduleGooglePlayRenewalCheck } from "@/lib/google-play-renewal";
 import { readBody } from "@/lib/request-input";
 import { googlePlayNotificationSchema } from "@zoonk/core/subscriptions/google-play-contract";
 import { processGooglePlayNotification } from "@zoonk/core/subscriptions/google-play-notification";
@@ -13,7 +14,7 @@ const PUSH_AUDIENCE = new URL("/v1/subscriptions/google/notifications", API_URL)
 async function createGooglePlayNotification(request: NextRequest) {
   const { message } = await readBody(request, googlePlayNotificationSchema);
 
-  const { error } = await safeAsync(() =>
+  const { data: result, error } = await safeAsync(() =>
     processGooglePlayNotification({
       audience: PUSH_AUDIENCE,
       authorization: request.headers.get("authorization"),
@@ -29,6 +30,10 @@ async function createGooglePlayNotification(request: NextRequest) {
     }
 
     throw error;
+  }
+
+  if (result?.renewalCheck) {
+    await scheduleGooglePlayRenewalCheck(result.renewalCheck);
   }
 
   return new Response(null, { status: 204 });

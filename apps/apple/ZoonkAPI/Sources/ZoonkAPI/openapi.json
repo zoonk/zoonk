@@ -11927,7 +11927,7 @@
     },
     "/me/subscriptions/google": {
       "post": {
-        "description": "The app sets the learner's user id as the purchase's obfuscatedAccountId; a purchase made for another account is refused, and one made in the Play Store, which names no account, becomes the learner's. Zoonk acknowledges the purchase, so the app doesn't.",
+        "description": "The app sets the learner's user id as the purchase's obfuscatedAccountId; a purchase made for another account, or replacing one that belongs to another account, is refused, and one made in the Play Store, which names no account, becomes the learner's. Zoonk acknowledges the purchase, so the app doesn't.",
         "operationId": "createGooglePlaySubscription",
         "security": [
           {

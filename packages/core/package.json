@@ -518,6 +518,7 @@
     "./subscriptions/google-play-contract": "./src/subscriptions/google-play-contract.ts",
     "./subscriptions/google-play-error": "./src/subscriptions/google-play-error.ts",
     "./subscriptions/google-play-notification": "./src/subscriptions/process-google-play-notification.ts",
+    "./subscriptions/google-play-renewal": "./src/subscriptions/check-google-play-renewal.ts",
     "./subscriptions/google-play-sync": "./src/subscriptions/sync-google-play-subscription.ts",
     "./users/current": "./src/users/current-user.ts",
     "./users/delete-current": "./src/users/delete-current-user.ts",

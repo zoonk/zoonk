@@ -7,6 +7,8 @@ export type VerifiedGooglePlaySubscription = {
   basePlanId: string | null;
   canceledAt: Date | null;
   environment: "production" | "test";
+  /** A resubscription from the Play Store: the purchase that expired before it. */
+  expiredPurchaseToken: string | null;
   expiryTime: Date;
   isAcknowledged: boolean;
   isActive: boolean;
@@ -49,7 +51,10 @@ const subscriptionPurchaseSchema = z.object({
     .optional(),
   linkedPurchaseToken: z.string().optional(),
   outOfAppPurchaseContext: z
-    .object({ expiredExternalAccountIdentifiers: accountIdentifiersSchema })
+    .object({
+      expiredExternalAccountIdentifiers: accountIdentifiersSchema,
+      expiredPurchaseToken: z.string().optional(),
+    })
     .optional(),
   startTime: timestampSchema.optional(),
   subscriptionState: z.string(),
@@ -58,10 +63,12 @@ const subscriptionPurchaseSchema = z.object({
 
 type SubscriptionPurchase = z.infer<typeof subscriptionPurchaseSchema>;
 
-/** Google keeps access through a grace period and until a canceled period ends; never on hold or paused. */
+/**
+ * Google keeps access while a subscription is active (also through the silent grace after a failed
+ * renewal, when its expiry has passed) or in a grace period, and a canceled one until its expiry.
+ */
 const ENTITLED_STATES = new Set([
   "SUBSCRIPTION_STATE_ACTIVE",
-  "SUBSCRIPTION_STATE_CANCELED",
   "SUBSCRIPTION_STATE_IN_GRACE_PERIOD",
 ]);
 
@@ -131,7 +138,10 @@ export function createVerifiedGooglePlaySubscription({
     throw new GooglePlayError("invalidPurchase");
   }
 
-  const isActive = ENTITLED_STATES.has(purchase.subscriptionState) && lineItem.expiryTime > readAt;
+  const isActive =
+    ENTITLED_STATES.has(purchase.subscriptionState) ||
+    (purchase.subscriptionState === "SUBSCRIPTION_STATE_CANCELED" && lineItem.expiryTime > readAt);
+
   const isAutoRenewEnabled = lineItem.autoRenewingPlan?.autoRenewEnabled ?? false;
 
   return {
@@ -143,6 +153,7 @@ export function createVerifiedGooglePlaySubscription({
       readAt,
     }),
     environment: purchase.testPurchase ? "test" : "production",
+    expiredPurchaseToken: purchase.outOfAppPurchaseContext?.expiredPurchaseToken ?? null,
     expiryTime: lineItem.expiryTime,
     isAcknowledged: purchase.acknowledgementState === "ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED",
     isActive,

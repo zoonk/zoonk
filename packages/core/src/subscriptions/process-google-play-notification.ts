@@ -1,9 +1,12 @@
 import { z } from "zod";
-import { GOOGLE_PLAY_PACKAGE_NAME, getGooglePlaySubscription } from "./google-play-api";
-import { getGooglePlaySubscriptionProduct } from "./google-play-products";
+import { GOOGLE_PLAY_PACKAGE_NAME } from "./google-play-api";
 import { verifyGooglePlayPush } from "./google-play-push";
-import { reconcileGooglePlaySubscription } from "./reconcile-google-play-subscription";
-import { findNotificationOwner, findStoreSubscription } from "./reconcile-store-subscription";
+import {
+  findGooglePlayLineOwner,
+  getGooglePlayRenewalCheck,
+  saveGooglePlayPurchase,
+} from "./reconcile-google-play-subscription";
+import { findNotificationOwner } from "./reconcile-store-subscription";
 
 const PRODUCT_TYPE_SUBSCRIPTION = 1;
 
@@ -43,7 +46,9 @@ function getNotifiedPurchaseToken(data: string) {
 /**
  * Reconciles Real-time Developer Notifications from the Pub/Sub push subscription so renewals,
  * holds, refunds and revocations reach every client even when the Android app is closed. A
- * notification only says which purchase changed: its state comes from Google's API.
+ * notification only says which purchase changed: its state comes from Google's API. A first
+ * delivery saves the purchase only for its line's owner (`findGooglePlayLineOwner`) while that
+ * user exists; a known purchase keeps its owner.
  */
 export async function processGooglePlayNotification({
   audience,
@@ -62,36 +67,18 @@ export async function processGooglePlayNotification({
     return null;
   }
 
-  const existing = await findStoreSubscription({
-    provider: "google",
-    providerSubscriptionId: purchaseToken,
-  });
-
-  /** Pub/Sub delivers at least once: a message already saved needs no second read from Google. */
-  if (existing?.providerEventId === message.messageId) {
-    return existing;
-  }
-
-  const purchase = await getGooglePlaySubscription(purchaseToken);
-  const product = purchase && getGooglePlaySubscriptionProduct(purchase);
-
-  if (!purchase || !product) {
-    return null;
-  }
-
-  const referenceId = await findNotificationOwner({
-    accountId: purchase.accountId,
-    existingReferenceId: existing?.referenceId ?? null,
-  });
-
-  if (!referenceId) {
-    return null;
-  }
-
-  return reconcileGooglePlaySubscription({
+  const subscription = await saveGooglePlayPurchase({
     eventId: message.messageId,
-    product,
-    purchase,
-    referenceId,
+    findOwner: async (purchase, seen) =>
+      seen?.referenceId ??
+      findNotificationOwner({
+        accountId: await findGooglePlayLineOwner(purchase),
+        existingReferenceId: null,
+      }),
+    purchaseToken,
   });
+
+  return subscription
+    ? { renewalCheck: getGooglePlayRenewalCheck(subscription), subscription }
+    : null;
 }
