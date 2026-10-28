@@ -266,8 +266,8 @@ final class ZoonkUITests: XCTestCase {
       app.navigationBars["Zoonk Plus"].waitForExistence(timeout: 5),
       "Expected the free account to reach the native subscription screen")
     XCTAssertTrue(
-      app.staticTexts["Learn anything. It’s all included."].waitForExistence(timeout: 5),
-      "Expected the subscription screen to use the product's Plus value proposition")
+      app.staticTexts["Subscribe to Zoonk Plus"].waitForExistence(timeout: 5),
+      "Expected the subscription screen to use main's Plus offer")
     XCTAssertTrue(
       app.staticTexts["Plus Monthly"].waitForExistence(timeout: 5),
       "Expected StoreKit to load the localized monthly subscription")
@@ -333,10 +333,16 @@ final class ZoonkUITests: XCTestCase {
       accountButton.waitForExistence(timeout: 5), "Expected the account button to exist")
     accountButton.tap()
 
-    let deleteAccountButton = app.buttons["Delete account"]
+    // As on main, deletion lives on the profile, which the account's own row opens.
+    let profile = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "@")).firstMatch
+    XCTAssertTrue(
+      profile.waitForExistence(timeout: 5), "Expected the settings hub to open the profile")
+    profile.tap()
+
+    let deleteAccountButton = app.buttons["Delete my account"]
     XCTAssertTrue(
       deleteAccountButton.waitForExistence(timeout: 5),
-      "Expected the signed-in account sheet to offer account deletion")
+      "Expected the profile to offer account deletion")
     deleteAccountButton.tap()
 
     XCTAssertTrue(
@@ -371,10 +377,10 @@ final class ZoonkUITests: XCTestCase {
       accountButton.waitForExistence(timeout: 5), "Expected the account button to exist")
     accountButton.tap()
 
-    let signOutButton = app.buttons["Sign out"]
+    let signOutButton = app.buttons["Log out"]
     XCTAssertTrue(
       signOutButton.waitForExistence(timeout: 5),
-      "Expected the signed-in account sheet to offer sign out")
+      "Expected the settings hub to offer Log out")
     signOutButton.tap()
 
     XCTAssertTrue(
@@ -427,7 +433,7 @@ final class ZoonkUITests: XCTestCase {
       app.primaryNavigationItem("Today").tap()
       openStatistics(in: app)
       XCTAssertTrue(
-        app.staticTexts["At a glance"].waitForExistence(timeout: 5),
+        app.staticTexts["Study days"].waitForExistence(timeout: 5),
         "Expected the level button to push Statistics")
       app.navigationBars.buttons.firstMatch.tap()
     }
@@ -825,7 +831,7 @@ final class ZoonkUITests: XCTestCase {
     let app = makeApp(for: .progressActivityUnauthorized)
     app.launch()
     openStatistics(in: app)
-    XCTAssertTrue(app.staticTexts["At a glance"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.staticTexts["Study days"].waitForExistence(timeout: 5))
     app.staticTexts["Activity"].firstMatch.tap()
 
     XCTAssertTrue(
@@ -840,7 +846,7 @@ final class ZoonkUITests: XCTestCase {
     let app = makeApp(for: .progress)
     app.launch()
     openStatistics(in: app)
-    XCTAssertTrue(app.staticTexts["At a glance"].waitForExistence(timeout: 5))
+    XCTAssertTrue(app.staticTexts["Study days"].waitForExistence(timeout: 5))
     app.staticTexts["Level"].firstMatch.tap()
     XCTAssertTrue(app.staticTexts["Belt journey"].waitForExistence(timeout: 5))
 
@@ -863,7 +869,7 @@ final class ZoonkUITests: XCTestCase {
 
     openStatistics(in: app)
     XCTAssertTrue(
-      app.staticTexts["At a glance"].waitForExistence(timeout: 5),
+      app.staticTexts["Study days"].waitForExistence(timeout: 5),
       "Expected the loaded Progress summary to appear")
 
     let destinations = [
@@ -943,7 +949,7 @@ final class ZoonkUITests: XCTestCase {
 
     openStatistics(in: app)
     XCTAssertTrue(
-      app.staticTexts["At a glance"].waitForExistence(timeout: 5),
+      app.staticTexts["Study days"].waitForExistence(timeout: 5),
       "Expected the loaded Progress summary to appear")
     app.staticTexts[destination].firstMatch.tap()
 
