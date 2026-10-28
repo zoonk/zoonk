@@ -58,6 +58,7 @@ const BLOCK: StudyBlockDetail["block"] = {
   questions: 2,
   refresh: false,
   reinforcement: false,
+  screen: "session",
   status: "active",
   subject: null,
   title: null,
