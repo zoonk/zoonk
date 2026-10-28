@@ -17,10 +17,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 /**
- * Main's quiet chip: a few words beside a title or in a row of facts (the Plus mark, a plan
- * change's "1 week", "Focus"), in the quiet text step on the stronger line, never a colored badge.
- * It isn't tappable; a chip people tap or toggle is Material's `AssistChip` or `FilterChip`.
- * `icon` is decorative: the words say the fact.
+ * Main's quiet chip beside a title, never a colored badge. Not tappable: a chip people tap is
+ * Material's `AssistChip` or `FilterChip`.
  */
 @Composable
 fun LabelChip(

@@ -3,11 +3,7 @@ package com.zoonk.android.navigation
 import androidx.annotation.DrawableRes
 import com.zoonk.android.R
 
-/**
- * The Material Symbol of each of the app's places: the closest to main's lucide icon and Apple's
- * SF Symbol, so a place looks the same on every platform. Navigation draws `icon`, and
- * `selectedIcon` (filled) for the selected item. Add a symbol with `pnpm --filter android symbol`.
- */
+/** The closest Material Symbols to main's lucide icons and Apple's SF Symbols, named below. */
 enum class PlaceIcon(
     @param:DrawableRes val icon: Int,
     @param:DrawableRes val selectedIcon: Int,

@@ -17,10 +17,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 /**
- * Zoonk's Material theme: the design system's colors on Material's roles, in a light and a dark
- * scheme, each with a more-contrast twin the device's contrast level picks, and Material's default
- * type scale and shapes. Never the wallpaper's colors: they would drop what each color means. How
- * each meaning maps: `.agents/skills/android-material-guidelines/references/design-system.md`.
+ * Never the wallpaper's colors: they would drop what each color means. The mapping:
+ * `.agents/skills/android-material-guidelines/references/design-system.md`.
  */
 @Composable
 fun ZoonkTheme(
@@ -41,10 +39,7 @@ fun ZoonkTheme(
     }
 }
 
-/**
- * Whether the device asks for more contrast: a contrast level of medium or high (Android 14 and
- * up), followed while the app runs. The web has one more-contrast mode, so both share it.
- */
+/** The web has one more-contrast mode, so medium and high contrast share it. */
 @Composable
 fun rememberMoreContrast(): Boolean =
     Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE &&
@@ -79,12 +74,9 @@ private val LightMoreContrast = scheme(LightMoreContrastPalette, dark = false, f
 private val DarkMoreContrast = scheme(DarkMoreContrastPalette, dark = true, fixed = LightMoreContrastPalette)
 
 /**
- * The palette on Material's roles. Neutral roles stay neutral: `primary` is ink (the main action,
- * picks, the selected item), `secondary` the quiet text step and its container the neutral
- * indicator. `tertiary` is progress's soft blue, which Material doesn't draw by default, so
- * progress indicators, done marks and the learner's place pass it. `error` takes the deeper
- * `destructive-text`, since Material writes field errors in it. `fixed` holds the light palette of
- * the same contrast, as Material's fixed roles don't change with the mode.
+ * `tertiary` is progress's blue, which Material never draws by default, so progress indicators
+ * pass it. `error` takes the deeper `destructive-text` because Material writes field errors in it.
+ * Material's fixed roles don't change with the mode, so they take the light palette.
  */
 private fun scheme(
     palette: ZoonkPalette,

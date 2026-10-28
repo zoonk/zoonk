@@ -20,21 +20,15 @@ import kotlin.math.abs
 import kotlin.math.roundToLong
 
 /*
- * Numbers, durations, dates and times in the learner's language, written as main writes them
- * (`@zoonk/utils/{duration,localized-number}`, `@zoonk/learn` `iso-date` and `percent`) so a
- * value reads the same on every platform. ICU, like the web's `Intl`, rounds half away from zero.
+ * These write what main's `@zoonk/utils` and `@zoonk/learn` formatters write, so a value reads the
+ * same on every platform; ICU rounds half-even unless told to round half up as `Intl` does.
  */
 
-/** The app's language, for the formatters below. */
 @Composable
 @ReadOnlyComposable
 fun currentLocale(): Locale = LocalConfiguration.current.locales[0]
 
-/**
- * A number the way people read it in their language, rounded for display only. `signed` adds a
- * plus to positive amounts ("+50"); negatives take a typographic minus ("−3"). `grouping` is off
- * for numbers like years, which read wrong as "1,960".
- */
+/** Turn `grouping` off for numbers like years, which read wrong as "1,960". */
 fun formatNumber(
     value: Double,
     locale: Locale,
@@ -58,7 +52,6 @@ fun formatNumber(
     }
 }
 
-/** A share from 0 to 1 as a whole percentage ("46%", "46 %"). */
 fun formatPercent(
     share: Double,
     locale: Locale,
@@ -70,10 +63,7 @@ fun formatPercent(
             roundingMode = BigDecimal.ROUND_HALF_UP
         }.format(share)
 
-/**
- * A share of something done, honest at its ends: begun reads "<1%", never "0%" beside a bar that
- * shows it begun, and nearly done reads ">99%", never "100%" before all of it is.
- */
+/** Begun never reads "0%" beside a bar that shows it begun, nor nearly done "100%". */
 fun formatProgressShare(
     share: Double,
     locale: Locale,
@@ -84,11 +74,7 @@ fun formatProgressShare(
         else -> formatPercent(share, locale)
     }
 
-/**
- * Compact learning time: seconds below a minute, rounded minutes below an hour, then hours and
- * minutes ("45 sec", "12 min", "1 hr 30 min"). Each number keeps its unit on its line; a line may
- * break only between hours and minutes.
- */
+/** Each number keeps its unit on its line; a line may break only between hours and minutes. */
 fun formatDuration(
     totalSeconds: Long,
     locale: Locale,
@@ -114,63 +100,45 @@ fun formatDuration(
     return if (minutes == 0L) hours else "$hours ${unit(minutes, MeasureUnit.MINUTE)}"
 }
 
-/** Study time given in minutes ("45 min", "1 hr 30 min"), as `formatDuration` writes it. */
 fun formatMinutes(
     minutes: Int,
     locale: Locale,
 ): String = formatDuration(minutes * SECONDS_PER_MINUTE, locale)
 
-/**
- * A time of day ("13:30" from the API) on the device's clock: "1:30 PM" or "13:30", following the
- * device's 24-hour setting (`android.text.format.DateFormat.is24HourFormat`).
- */
+/** Pass the device's clock setting, `android.text.format.DateFormat.is24HourFormat`. */
 fun formatTimeOfDay(
     time: LocalTime,
     locale: Locale,
     is24Hour: Boolean,
 ): String = formatUtc(Date(time.toSecondOfDay() * MILLIS_PER_SECOND), if (is24Hour) "Hm" else "hm", locale)
 
-/** How a calendar day reads, by what the screen needs (main's `useFormatIsoDate` styles). */
 enum class DateStyle(
     internal val skeleton: String,
     /** Names the year once the day isn't in this year, so a date in 2028 never reads as this year's. */
     internal val yearWhenAnotherYear: Boolean = false,
 ) {
-    /** "Oct 26" ("Oct 26, 2027" in another year). */
     Day("MMMd", yearWhenAnotherYear = true),
 
-    /** "October 26", never with a year: for lists whose year is stated beside them. */
+    /** Never with a year: for lists whose year is stated beside them. */
     DayMonth("MMMMd"),
 
-    /** "October 26" ("October 26, 2027" in another year). */
     Long("MMMMd", yearWhenAnotherYear = true),
 
-    /** "October 26, 2026". */
     LongYear("yMMMMd"),
 
-    /** "October 2026". */
     Month("yMMMM"),
 
-    /** "Oct 2026". */
     MonthShort("yMMM"),
 
-    /** "Oct 26, 2026". */
     Short("yMMMd"),
 
-    /** "Monday". */
     Weekday("EEEE"),
 
-    /** "Monday, October 26". */
     WeekdayDay("MMMMEEEEd"),
 
-    /** "Mon". */
     WeekdayShort("EEE"),
 }
 
-/**
- * A calendar day (the API's "YYYY-MM-DD", the learner's own day) in the learner's language.
- * `today` decides whether a day falls in another year.
- */
 fun formatDate(
     date: LocalDate,
     locale: Locale,
@@ -181,7 +149,7 @@ fun formatDate(
     return formatUtc(Date(date.toEpochDay() * MILLIS_PER_DAY), skeleton, locale)
 }
 
-/** Calendar days and times of day carry no time zone, so they're written as UTC instants in UTC. */
+/** Calendar days and times of day carry no time zone, so they're formatted as UTC instants in UTC. */
 private fun formatUtc(
     date: Date,
     skeleton: String,
@@ -200,5 +168,4 @@ private const val MINUTES_PER_HOUR = 60L
 private const val MILLIS_PER_SECOND = 1_000L
 private const val MILLIS_PER_DAY = 86_400_000L
 
-/** The least share a whole percentage shows: under half of it, a begun share would read "0%". */
 private const val WHOLE_PERCENT = 0.01

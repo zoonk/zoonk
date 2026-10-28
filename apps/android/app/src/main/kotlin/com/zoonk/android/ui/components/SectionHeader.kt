@@ -7,10 +7,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 
-/**
- * An app page's block named by a real title in sentence case ("This week"), a TalkBack heading so
- * the page can be skimmed by its parts.
- */
 @Composable
 fun SectionHeader(
     title: String,

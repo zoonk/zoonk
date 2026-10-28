@@ -21,11 +21,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
 /**
- * A share filled in on a thin track, under or beside the number it explains: a lesson's progress,
- * a mission, Energy. Progress's soft blue by default; Energy passes `MaterialTheme.zoonk.energy`
- * and Brain Power `MaterialTheme.zoonk.brain`. Material's end dot stays off, since a blue dot is
- * the learner's place. Hidden from TalkBack, where the words beside it say the number, unless
- * `contentDescription` names it.
+ * Material's end dot stays off: a blue dot is the learner's place. Hidden from TalkBack, since
+ * the words beside a meter say its number, unless `contentDescription` names it.
  */
 @Composable
 fun Meter(
@@ -47,32 +44,23 @@ fun Meter(
     )
 }
 
-/** One part of `MeterParts`, as long as its `weight`. */
 @Immutable
 data class MeterPart(
     val fill: Fill,
     val weight: Float = 1f,
 ) {
     sealed interface Fill {
-        /** What's still to do: the track. */
         data object Track : Fill
 
-        /** The learner's place, the edge of their progress: a ring in progress's blue. */
         data object Place : Fill
 
-        /** What it measures: `tertiary` for done, `error` for wrong, a kind's color. */
         data class Solid(
             val color: Color,
         ) : Fill
     }
 }
 
-/**
- * A meter made of parts under the number it explains (main's `MeterParts`): each part as long as
- * its weight and filled by what it measures, so the number's make-up reads at a glance (a day's
- * blocks by their minutes, a lesson's answers). A single share is a `Meter`. Hidden from TalkBack
- * like `Meter`.
- */
+/** Main's `MeterParts`, hidden from TalkBack like `Meter`. */
 @Composable
 fun MeterParts(
     parts: List<MeterPart>,

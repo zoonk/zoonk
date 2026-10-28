@@ -12,30 +12,20 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.theme.zoonk
 
-/**
- * How a checked answer turned out: the right answer, the learner's wrong pick, or their pick on a
- * guess that never counts (a lesson's "Guess first"), which isn't a mistake.
- */
+/** A guess never counts (a lesson's "Guess first"), so it isn't a mistake. */
 enum class AnswerResult { Guess, Right, Wrong }
 
-/**
- * An answer piece's line, fill and words (`answerTone`), for a `Surface(color = container,
- * contentColor = contentColor, border = border)`.
- */
 @Immutable
 data class AnswerTone(
     val border: BorderStroke,
     val container: Color,
-    /** The words stay in the text color whatever the result: only the line and fill change. */
+    /** The words stay in the text color whatever the result. */
     val contentColor: Color,
 )
 
 /**
- * The look of an answer piece (an option, a word tile, a match item), the same everywhere: the
- * stronger line at rest, the learner's 2dp ink ring and faint tint when picked, and once checked
- * a blue (right) or pink-red (wrong) ring on its tint, so checking always changes a pick's color
- * while its words stay in `onSurface`. A guess keeps a quiet ring with no tint. Color is never the
- * only cue: a checked piece shows its `AnswerTag`.
+ * A pick is ink and checking turns it blue or pink-red, so a pick never looks right before it's
+ * checked. Color is never the only cue: a checked piece shows its `AnswerTag`.
  */
 @Composable
 fun answerTone(
@@ -55,11 +45,7 @@ fun answerTone(
     return AnswerTone(border = border, container = container, contentColor = colors.onSurface)
 }
 
-/**
- * The word a checked answer piece shows in its result's color: "Correct" on the right answer the
- * learner didn't pick, "Your answer" on their pick (right or wrong, so a right pick isn't called
- * correct twice under its verdict) and "Your guess" on a guess.
- */
+/** A right pick says "Your answer", so it isn't called correct twice under its verdict. */
 @Composable
 fun AnswerTag(
     picked: Boolean,

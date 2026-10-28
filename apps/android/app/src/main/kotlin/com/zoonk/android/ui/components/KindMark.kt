@@ -14,11 +14,8 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.theme.zoonk
 
 /**
- * The kinds of things a learner meets, each with one color and one Material Symbol everywhere
- * (main's `KIND_MARKS`, Apple's `LearnKind`). A lesson, the default, is neutral. Kinds that do
- * the same job share a hue and differ by their symbol: review, practice and mistakes go back over
- * what was learned, a mock and a challenge test what the learner knows. A list of one kind marks
- * each row's state (`StatusMark`) instead.
+ * Main's `KIND_MARKS`. Kinds that do the same job share a hue and differ by their symbol, and a
+ * lesson, the default, stays neutral.
  */
 enum class LearnKind(
     @param:DrawableRes val icon: Int,
@@ -51,7 +48,6 @@ enum class LearnKind(
     Review(R.drawable.ic_replay),
 }
 
-/** A kind's color, for its mark, its dot or its part of a meter. */
 val LearnKind.color: Color
     @Composable
     @ReadOnlyComposable
@@ -64,11 +60,7 @@ val LearnKind.color: Color
             LearnKind.MindMap -> MaterialTheme.zoonk.kindMindMap
         }
 
-/**
- * A kind's symbol in its color where kinds sit side by side (the day's queue, the missions, a
- * plan's events), as big as the `StatusMark` that takes its place once done. The shape tells
- * kinds apart where hue alone wouldn't. Decorative: the row's words name the thing.
- */
+/** Only where kinds sit side by side; a list of one kind shows each row's `StatusMark`. */
 @Composable
 fun KindMark(
     kind: LearnKind,
@@ -82,7 +74,6 @@ fun KindMark(
     )
 }
 
-/** A kind as a small dot in its color, the quieter mark of a row in a queue. Decorative. */
 @Composable
 fun KindDot(
     kind: LearnKind,

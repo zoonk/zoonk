@@ -23,7 +23,6 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 
-/** The ten belts in order, each with its full name ("Yellow belt"), as `@zoonk/utils/belt-level`. */
 enum class Belt(
     @param:StringRes val label: Int,
 ) {
@@ -39,7 +38,7 @@ enum class Belt(
     Black(R.string.belt_black),
 }
 
-/** A belt's color: its full color in every scheme, the learner's identity. */
+/** Full strength in every scheme: a belt is the learner's identity, not a meaning. */
 val Belt.color: Color
     @Composable
     @ReadOnlyComposable
@@ -59,10 +58,6 @@ val Belt.color: Color
             }
         }
 
-/**
- * The learner's belt as a dot in its color, with a hairline so white and black never vanish into
- * the page. Decorative: the words beside it, or the caller's description, name the belt.
- */
 @Composable
 fun BeltDot(
     belt: Belt,
@@ -78,11 +73,7 @@ fun BeltDot(
     }
 }
 
-/**
- * The learner's belt and level as the top bar's level button and the account row show them: the
- * belt's dot and the level's number, read by TalkBack as "Yellow belt, level 3". The button around
- * it says where it goes (`onClickLabel`).
- */
+/** Read as "Yellow belt, level 3"; the button around it says where it goes (`onClickLabel`). */
 @Composable
 fun BeltLevel(
     belt: Belt,
@@ -109,5 +100,5 @@ fun BeltLevel(
 
 private const val BELT_DOT_SHARE = 0.45f
 
-/** Enough edge for white on a light page and black on a dark one, quiet on every other belt. */
+/** Enough edge for white on a light page and black on a dark one. */
 private const val EDGE_ALPHA = 0.25f

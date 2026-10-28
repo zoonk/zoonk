@@ -17,16 +17,11 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.unit.Dp
 import com.zoonk.android.R
 
-/** Where a thing in a list stands. */
 enum class MarkStatus { Done, Next, Skipped, Todo }
 
 /**
- * Where a thing in a list stands, the same in every list (chapters, lessons, phases): progress's
- * blue check once done, a quiet fast-forward once skipped because the learner showed they know
- * it, the learner's place as a blue dot with a halo (a place is never a fill: a fill is done) and
- * a faint dot ahead. Every mark takes one line of body text, so rows' words start in one
- * place and marks grow with the font. Decorative unless `contentDescription` names the state the
- * row's words don't.
+ * The learner's place is a dot with a halo, never a fill: a fill means done. Decorative unless
+ * `contentDescription` names a state the row's words don't.
  */
 @Composable
 fun StatusMark(
@@ -73,10 +68,6 @@ fun StatusMark(
     }
 }
 
-/**
- * The one mark for something done, wherever it shows: progress's blue check. Decorative: the
- * row's words say it's done.
- */
 @Composable
 fun DoneMark(modifier: Modifier = Modifier) {
     Icon(
@@ -87,7 +78,7 @@ fun DoneMark(modifier: Modifier = Modifier) {
     )
 }
 
-/** A mark's box: one line of body text, so it grows with the font and sits on a row's first line. */
+/** One line of body text, so marks grow with the font and rows' words start in one place. */
 @Composable
 internal fun markSize(): Dp =
     with(LocalDensity.current) {
@@ -95,7 +86,6 @@ internal fun markSize(): Dp =
             .toDp()
     }
 
-/** Hidden from TalkBack, or read as one image when it says what the words beside it don't. */
 internal fun Modifier.markSemantics(contentDescription: String?): Modifier =
     clearAndSetSemantics {
         if (contentDescription != null) {
@@ -104,14 +94,12 @@ internal fun Modifier.markSemantics(contentDescription: String?): Modifier =
         }
     }
 
-/** An icon mark's share of the box. */
 internal const val ICON_SHARE = 0.75f
 private const val SKIPPED_SHARE = 0.55f
 
-/** A dot's share of the box, and its halo around it. */
 internal const val DOT_SHARE = 1 / 3f
 private const val HALO_SCALE = 1.75f
 private const val HALO_ALPHA = 0.25f
 
-/** Ahead stays faint in every scheme, so it never outshouts the learner's place. */
+/** Faint in every scheme, so ahead never outshouts the learner's place. */
 private const val TODO_ALPHA = 0.2f

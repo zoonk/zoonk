@@ -8,7 +8,10 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.util.Locale
 
-/** Expected values are what main's formatters (`@zoonk/utils`, `Intl`) write for the same input. */
+/**
+ * Expected values are what main's formatters write for the same input, except the narrow no-break
+ * space ICU puts before "PM", which V8 swaps for a plain space.
+ */
 @RunWith(AndroidJUnit4::class)
 class FormattersTest {
     private val en = Locale.ENGLISH

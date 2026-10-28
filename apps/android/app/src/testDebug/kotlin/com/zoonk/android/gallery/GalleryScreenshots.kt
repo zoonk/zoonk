@@ -91,7 +91,6 @@ class GalleryScreenshots {
         write(name, compose.onRoot().captureToImage().asAndroidBitmap())
     }
 
-    /** Each section side by side in `schemes`, one image per section. */
     private fun captureSections(
         prefix: String,
         schemes: List<Scheme>,

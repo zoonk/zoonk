@@ -25,11 +25,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 
-/**
- * What a screen that couldn't show says, as one centered unit: a quiet symbol (bare, never on a
- * tile), what happened in plain words as its heading, a line on why, and the way on, the one main
- * action first. Failed loads and missing pages share it, so they read the same.
- */
 @Composable
 fun StatusMessage(
     @DrawableRes icon: Int,
@@ -72,11 +67,7 @@ fun StatusMessage(
     }
 }
 
-/**
- * A screen whose data didn't load says so calmly and offers to try again. It can't tell a dropped
- * connection from a failure on Zoonk's side, so it blames neither. Inside the app's frame the
- * navigation stays, so the learner can also go elsewhere; `actions` adds a quieter way on.
- */
+/** It can't tell a dropped connection from a failure on Zoonk's side, so it blames neither. */
 @Composable
 fun LoadFailedMessage(
     onRetry: () -> Unit,
@@ -102,10 +93,6 @@ fun LoadFailedMessage(
     }
 }
 
-/**
- * A place with nothing in it yet, said plainly where its content would be: a quiet symbol, a short
- * heading, one line and the one thing to do, aligned to the content's start edge. No card, no tile.
- */
 @Composable
 fun EmptyState(
     @DrawableRes icon: Int,
@@ -136,5 +123,5 @@ fun EmptyState(
     }
 }
 
-/** A readable line for a message's words, however wide the window (main's `max-w-md`). */
+/** Main's `max-w-md`: a readable line however wide the window. */
 private val READABLE_WIDTH = 448.dp

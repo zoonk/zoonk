@@ -86,7 +86,6 @@ import com.zoonk.android.ui.theme.zoonk
 import java.time.LocalDate
 import java.time.LocalTime
 
-/** One part of the gallery: a primitive or a group of theme roles, with its samples. */
 internal class GallerySection(
     val title: String,
     val content: @Composable () -> Unit,
@@ -109,7 +108,6 @@ internal val gallerySections =
         GallerySection("Formatting") { Formatting() },
     )
 
-/** Every theme role and shared primitive in the current scheme, one section per card. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ComponentGallery() {

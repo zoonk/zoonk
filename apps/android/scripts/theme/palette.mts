@@ -1,16 +1,9 @@
-/**
- * Reads Zoonk's color tokens from `packages/ui/src/styles/globals.css` in its four modes and turns
- * them into opaque sRGB colors for the Android theme. See `generate-palette.mts`.
- */
-
-/** An sRGB color, each channel from 0 to 1 and gamma-encoded, as browsers composite it. */
 type Rgba = { alpha: number; blue: number; green: number; red: number };
 
 type CssBlock = { children: CssBlock[]; declarations: Map<string, string>; prelude: string };
 
 export type Mode = "dark" | "darkMoreContrast" | "light" | "lightMoreContrast";
 
-/** The tokens the theme maps onto Material roles and `ZoonkColors`, in the palette's order. */
 export const PALETTE_TOKENS = [
   "background",
   "foreground",
@@ -49,10 +42,7 @@ export const PALETTE_TOKENS = [
   "belt-black",
 ] as const;
 
-/**
- * Tints main draws with opacity on a token (`bg-success/9` under a right answer), kept as their
- * own colors so Material's container roles can hold them.
- */
+/** Main draws these with opacity (`bg-success/9`); Material's container roles need a color. */
 export const TINTS = {
   "destructive-tint": { share: 0.09, token: "destructive" },
   "success-tint": { share: 0.09, token: "success" },
@@ -78,7 +68,6 @@ const LMS_TO_SRGB = {
   red: { long: 4.0767416621, medium: -3.3077115913, short: 0.2309699292 },
 };
 
-/** The sRGB transfer function. */
 const SRGB = {
   exponent: 2.4,
   linearLimit: 0.0031308,
@@ -104,10 +93,7 @@ function toGamma(linear: number): number {
     : SRGB.scale * channel ** (1 / SRGB.exponent) - SRGB.offset;
 }
 
-/**
- * OKLCH to sRGB, clipped per channel the way browsers draw an out-of-gamut color on an sRGB
- * screen.
- */
+/** Clipped per channel, the way browsers draw an out-of-gamut color on an sRGB screen. */
 export function oklchToRgb({
   chroma,
   hue,
@@ -158,7 +144,6 @@ function hexChannel(value: number): string {
     .padStart(2, "0");
 }
 
-/** `0xFFRRGGBB`, as Compose's `Color(Long)` takes it. */
 export function toArgbHex(color: Rgba): string {
   return `0xFF${hexChannel(color.red)}${hexChannel(color.green)}${hexChannel(color.blue)}`;
 }
@@ -167,10 +152,7 @@ function stripComments(css: string): string {
   return css.replaceAll(/\/\*[\s\S]*?\*\//gu, "");
 }
 
-/**
- * Splits a stylesheet into nested blocks and their `--custom-property` declarations. Enough CSS for
- * `globals.css`: blocks, declarations, at-rule statements and quoted strings.
- */
+/** Only as much CSS as `globals.css` uses: blocks, custom properties, statements and strings. */
 function parseCss(css: string): CssBlock {
   const text = stripComments(css);
   const root: CssBlock = { children: [], declarations: new Map(), prelude: "" };
@@ -212,7 +194,6 @@ function parseCss(css: string): CssBlock {
   return root;
 }
 
-/** The declarations of the block reached through `preludes`, one nesting level per prelude. */
 function tokensAt(root: CssBlock, preludes: string[]): Map<string, string> {
   const search = (blocks: CssBlock[], path: string[]): Map<string, string> | undefined => {
     const [head, ...rest] = path;
@@ -237,10 +218,7 @@ function tokensAt(root: CssBlock, preludes: string[]): Map<string, string> {
   return tokens;
 }
 
-/**
- * Each mode's tokens as the browser cascades them: light is `:root`, the more-contrast and dark
- * blocks override it, and dark with more contrast overrides dark.
- */
+/** As the browser cascades them: dark with more contrast overrides dark, which overrides light. */
 export function readModes(globalsCss: string): Record<Mode, Map<string, string>> {
   const root = parseCss(globalsCss);
   const light = tokensAt(root, [":root"]);
@@ -263,7 +241,6 @@ export function readModes(globalsCss: string): Record<Mode, Map<string, string>>
   };
 }
 
-/** Tailwind's palette (`--color-blue-800`), which `globals.css` refers to with `var(--color-*)`. */
 export function readTailwindPalette(themeCss: string): Map<string, string> {
   const palette = new Map<string, string>();
 
@@ -280,7 +257,6 @@ export function readTailwindPalette(themeCss: string): Map<string, string> {
 
 type Lookup = { palette: Map<string, string>; tokens: Map<string, string> };
 
-/** A variable's value: a mode's token, or Tailwind's palette color. */
 function lookUp(variable: string, { palette, tokens }: Lookup): string {
   // `var(--color-primary)` is Tailwind's name for the `--primary` token.
   const value =
@@ -325,7 +301,6 @@ function parseHex(value: string): Rgba | undefined {
   return { alpha: 1, blue, green, red };
 }
 
-/** A CSS color value as `globals.css` writes them, variables followed. */
 function parseColor(value: string, lookup: Lookup): Rgba {
   const variable = VARIABLE.exec(value)?.groups?.name;
 
@@ -352,13 +327,12 @@ function parseColor(value: string, lookup: Lookup): Rgba {
   return color;
 }
 
-/** A mode's token as an opaque color: see-through colors are laid on the mode's background. */
+/** See-through colors are laid on the mode's background, so every role is opaque. */
 export function resolveColor({ name, ...lookup }: Lookup & { name: string }): Rgba {
   const background = parseColor(lookUp("background", lookup), lookup);
   return over(parseColor(lookUp(name, lookup), lookup), background);
 }
 
-/** Every palette color of one mode, tints included, as `0xFFRRGGBB`. */
 export function modePalette(lookup: Lookup): Map<string, string> {
   const background = resolveColor({ ...lookup, name: "background" });
   const colors = new Map<string, string>();

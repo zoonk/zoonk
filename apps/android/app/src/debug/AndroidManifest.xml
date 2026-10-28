@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application>
-        <!-- The design system's gallery, debug builds only:
-             adb shell am start -n com.zoonk.debug/com.zoonk.android.gallery.GalleryActivity -->
         <activity
             android:name="com.zoonk.android.gallery.GalleryActivity"
             android:exported="true" />

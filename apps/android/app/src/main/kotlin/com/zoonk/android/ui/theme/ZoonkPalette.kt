@@ -6,10 +6,8 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 
 /**
- * Zoonk's color tokens in one mode as opaque sRGB, each named after its token in `globals.css`
- * (`successTint` and `destructiveTint` are main's `bg-success/9` and `bg-destructive/9`).
- * See-through tokens are laid on the mode's background. `ZoonkTheme` maps them onto Material roles
- * and `ZoonkColors`; composables read those, never this.
+ * `successTint` and `destructiveTint` are main's `bg-success/9` and `bg-destructive/9`.
+ * Composables read Material roles and `ZoonkColors`, never this.
  */
 @Immutable
 internal data class ZoonkPalette(
@@ -52,7 +50,6 @@ internal data class ZoonkPalette(
     val successTint: Color,
 )
 
-/** Light. */
 internal val LightPalette =
     ZoonkPalette(
         background = Color(0xFFFFFFFF),
@@ -94,7 +91,6 @@ internal val LightPalette =
         successTint = Color(0xFFEFF6FD),
     )
 
-/** Dark. */
 internal val DarkPalette =
     ZoonkPalette(
         background = Color(0xFF0A0A0B),
@@ -136,7 +132,6 @@ internal val DarkPalette =
         successTint = Color(0xFF141A20),
     )
 
-/** Light with `prefers-contrast: more`. */
 internal val LightMoreContrastPalette =
     ZoonkPalette(
         background = Color(0xFFFFFFFF),
@@ -178,7 +173,6 @@ internal val LightMoreContrastPalette =
         successTint = Color(0xFFEAEDF9),
     )
 
-/** Dark with `prefers-contrast: more`. */
 internal val DarkMoreContrastPalette =
     ZoonkPalette(
         background = Color(0xFF000000),
