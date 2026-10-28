@@ -1,6 +1,11 @@
+import {
+  activityContentFixtures,
+  engineModeFixtures,
+} from "@zoonk/testing/fixtures/activity-contents";
 import { describe, expect, it } from "vitest";
 import { getActivityExpected } from "./activity-expected";
-import { activityContentSchema } from "./activity-templates";
+import { activityExpectedSchema } from "./activity-expected-answer";
+import { activityContentSchema, getActivityTemplate } from "./activity-templates";
 
 const numberLine = {
   check: {
@@ -89,5 +94,25 @@ describe(getActivityExpected, () => {
       answer: { kind: "assignment", pairs: { discount: "a", tax: "b" } },
       kind: "interaction",
     });
+  });
+
+  // Native clients decode the step check's `expected` as closed objects: a key the contract
+  // doesn't list fails the whole answer there.
+  it("computes every template's end state with only the keys the contract publishes", () => {
+    const contents = [
+      ...Object.values(activityContentFixtures),
+      ...Object.values(engineModeFixtures).flatMap((modes): unknown[] => Object.values(modes)),
+    ].map((content) => activityContentSchema.parse(content));
+
+    const ends = contents.flatMap(
+      (content) => getActivityTemplate(content.template)?.computeExpected(content.fields) ?? [],
+    );
+
+    expect(new Set(ends.map((end) => end.kind)).size).toBeGreaterThan(10);
+
+    for (const answer of ends) {
+      const expected = { answer, kind: "interaction" };
+      expect(activityExpectedSchema.parse(expected)).toStrictEqual(expected);
+    }
   });
 });
