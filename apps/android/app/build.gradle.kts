@@ -120,7 +120,11 @@ dependencies {
     implementation(libs.kotlinx.serialization.core)
 
     implementation(project(":api"))
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.datastore)
+    implementation(libs.androidx.datastore.tink)
     implementation(libs.okhttp.sse)
+    implementation(libs.tink.android)
 
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
