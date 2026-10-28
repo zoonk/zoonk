@@ -14,7 +14,7 @@ Read the PNGs. Images aren't committed and CI doesn't compare pixels. A render s
 
 ## Set up the emulator
 
-- Start the checkout's backend (`pnpm dev` to iterate, `pnpm start` for timings). Debug builds call the URL it writes to `apps/android/local-development.properties`; on the emulator, `localhost` names resolve to the Mac at `10.0.2.2`.
+- Start the checkout's backend (`pnpm dev` to iterate, `pnpm start` for timings). Debug builds call the URL it writes to `apps/android/local-development.properties`; on the emulator, `localhost` names resolve to the Mac at `10.0.2.2`. A request that fails after 30 seconds with `SocketTimeoutException` means the app lacks `ACCESS_LOCAL_NETWORK` (see the README's "Local API").
 - Boot your AVD once and keep it: `emulator -avd Medium_Phone -no-snapshot-save &`, then `adb wait-for-device`. Install and launch: `pnpm android:phone -- Medium_Phone`.
 - Sign in as a persona copy (`pnpm dev:persona <name>`) with the token recipe in `apps/android/README.md`'s "Local API".
 - Other agents may run Zoonk on another emulator: pass `-s <serial>` to every `adb` command (`adb devices`), and take your app's process: `PID=$(adb -s $SERIAL shell pidof com.zoonk.debug)`.
@@ -37,7 +37,7 @@ The line: returning to a tab or screen whose data is fresh makes no request; ope
 adb shell dumpsys meminfo com.zoonk.debug | grep -E 'TOTAL PSS|Java Heap|Native Heap|Graphics'
 ```
 
-Repeat the same navigation loop ten times and compare `TOTAL PSS` and the Java heap after the first loop and the last: they must stay flat. Then open 30 different lessons, courses or tutor threads one after another and back out of each: memory may grow by the few recent ones the keyed stores keep, then stays flat, and reopening a recent one makes no request while an old one reloads. `adb shell am send-trim-memory com.zoonk.debug BACKGROUND` releases the rest.
+Repeat the same navigation loop ten times and compare `TOTAL PSS` and the Java heap after the first loop and the last: they must stay flat. Then open 30 different lessons, courses or tutor threads one after another and back out of each: memory may grow by the few recent ones the keyed stores keep, then stays flat, and reopening a recent one makes no request while an old one reloads. Press Home, then `adb shell am send-trim-memory com.zoonk.debug BACKGROUND` releases the rest (it refuses a process in the foreground).
 
 LeakCanary runs in debug builds and reports a retained object after the screen holding it closes:
 
@@ -79,7 +79,7 @@ Each reported leak has a trace in the LeakCanary app on the device. For a heap t
 ## State across recreation and process death
 
 - Rotation, fold and resize: rotate in the emulator, `adb shell wm size 1280x800` then `adb shell wm size reset`, or fold a foldable AVD from its extended controls. The screen keeps its scroll, its tab and the learner's input, and sends no request.
-- Process death: open a screen with work in progress, press Home (`adb shell input keyevent KEYCODE_HOME`), kill the process (`adb shell am kill com.zoonk.debug`), reopen it from Recents. The tab, back stack, scroll and drafts come back; each screen reads its data once. "Don't keep activities" (`adb shell settings put global always_finish_activities 1`, then `0`) recreates on every leave.
+- Process death: open a screen with work in progress, press Home (`adb shell input keyevent KEYCODE_HOME`), wait a few seconds, kill the process (`adb shell am kill com.zoonk.debug`; check `adb shell pidof com.zoonk.debug` is empty), reopen it from Recents. The tab, back stack, scroll and drafts come back; each screen reads its data once. "Don't keep activities" (`adb shell settings put global always_finish_activities 1`, then `0`) recreates on every leave.
 
 ## Settings to test against
 

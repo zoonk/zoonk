@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Android 17 counts the emulator's host (10.0.2.2) and .local names as the local network. -->
+    <uses-permission android:name="android.permission.ACCESS_LOCAL_NETWORK" />
+
     <application android:networkSecurityConfig="@xml/network_security_config">
         <activity
             android:name="com.zoonk.android.gallery.GalleryActivity"

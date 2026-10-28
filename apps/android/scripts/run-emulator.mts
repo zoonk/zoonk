@@ -559,7 +559,8 @@ function installAndLaunchApp({
   process.stdout.write(`Installing ${APK_FILE_NAME} on ${serial}...\n`);
 
   runCommand({
-    arguments: ["-s", serial, "install", "-r", apkPath],
+    // -g grants the debug build's local network permission, which Android 17 requires to reach the Mac's API.
+    arguments: ["-s", serial, "install", "-r", "-g", apkPath],
     command: adbPath,
     environment,
     workingDirectory: androidDirectory,
