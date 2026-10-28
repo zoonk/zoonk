@@ -14,11 +14,6 @@ function getElements(ids: string[]): Element[] {
   });
 }
 
-/**
- * Watches where the page's own start controls are, so the bottom bar only
- * appears once the first one has scrolled up out of view and never while one
- * of them (or the footer) is on screen.
- */
 function useShowAfterScrollingPast({
   afterId,
   hideWhileVisibleIds,
@@ -58,13 +53,6 @@ function useShowAfterScrollingPast({
   return isShown;
 }
 
-/**
- * On phones, a page's one action stays one thumb away: once the control that
- * holds it (`afterId`) scrolls away, this action bar offers it at the bottom of
- * the screen, edge to edge behind a hairline, and it steps aside while any
- * element in `hideWhileVisibleIds` is on screen, like a second goal box or the
- * footer. It fades rather than slides, since it follows the reader's scroll.
- */
 export function StickyStartBar({
   afterId,
   children,

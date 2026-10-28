@@ -3,10 +3,6 @@ import { Link } from "@/i18n/navigation";
 import { type getChapterHref } from "@/lib/public/public-hrefs";
 import { type ReactNode } from "react";
 
-/**
- * Where a chapter or lesson page belongs, as a quiet link over its title: context for visitors
- * from a search result, without a breadcrumb trail.
- */
 export function PublicEyebrowLink({
   children,
   href,

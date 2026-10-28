@@ -5,10 +5,8 @@ import { HERO_CLASS } from "./landing-styles";
 import { PublicFooter } from "./public-footer";
 import { PublicHeader } from "./public-header";
 
-/** One centered reading column, for the legal pages. */
 export const PUBLIC_COLUMN_CLASS = "mx-auto w-full max-w-[704px] px-5 sm:px-8";
 
-/** A public page: the quiet top bar, the page and the footer. */
 export function PublicPage({
   children,
   className,
@@ -16,7 +14,6 @@ export function PublicPage({
 }: {
   children: ReactNode;
   className?: string;
-  /** The page's own path without the language, for the footer's language links. */
   pathname?: string;
 }) {
   return (
@@ -28,10 +25,6 @@ export function PublicPage({
   );
 }
 
-/**
- * Holds the shape of a public course, chapter or lesson page while its content streams in: the top
- * bar, then the hero's words and start button beside the outline's panel (below them on phones).
- */
 export function PublicPageSkeleton() {
   return (
     <div aria-hidden="true" className="flex min-h-dvh flex-col">

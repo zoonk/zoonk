@@ -32,7 +32,6 @@ function FailureAction({
     );
   }
 
-  // The free way goes under Plus: their Plan, whose "…" pauses the goal they're on.
   if (remedy === "upgrade") {
     return (
       <>
@@ -57,11 +56,6 @@ function FailureAction({
   );
 }
 
-/**
- * Why a course didn't start, where the learner pressed start: a goal limit in onboarding's words
- * with what they can do about it (the free plan's one goal: Plus, and the free way under it), or a
- * failure with another try.
- */
 export function CourseStartFailureNote({
   actionClassName,
   className,
@@ -69,12 +63,10 @@ export function CourseStartFailureNote({
   onRetry,
   secondaryActionClassName,
 }: {
-  /** The action's look where the note sits; an outline button by default. */
   actionClassName?: string;
   className?: string;
   failure: CourseStartFailure | null;
   onRetry: () => void;
-  /** The quieter way's look, under the action where there is one; an outline button by default. */
   secondaryActionClassName?: string;
 }) {
   const t = useExtracted();

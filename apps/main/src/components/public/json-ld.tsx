@@ -6,7 +6,6 @@ function serialize(data: JsonLdObject): string {
   return JSON.stringify(data).replaceAll("<", String.raw`\u003c`);
 }
 
-/** Structured data for search engines, one script per schema.org item. */
 export function JsonLd({ items }: { items: JsonLdObject[] }) {
   return items.map((item, index) => (
     <script

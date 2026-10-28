@@ -20,20 +20,12 @@ import { useState } from "react";
 
 type RequestState = "answered" | "asking" | "dismissed";
 
-/**
- * Research's ask for a document, as Today's notice: one line that opens the ask in a sheet on a
- * phone or a tablet, the ask itself in the aside from 72rem. The card's actions are bound to the
- * goal (uploads linked to it, then research with them); the line follows what they did. "Not now"
- * takes the ask away for good.
- */
 export function UploadRequestClient({
   answered = false,
   onAnswered,
   request,
 }: {
-  /** The learner answered it here this visit (the host keeps that), so it shows its thanks. */
   answered?: boolean;
-  /** The learner answered it here: the host keeps it, and its thanks, while they stay. */
   onAnswered?: () => void;
   request: GoalUploadRequest;
 }) {
@@ -42,8 +34,7 @@ export function UploadRequestClient({
   const copy = useRequestCopy(request);
   const [answer, setAnswer] = useState<RequestState>("asking");
 
-  // The host's word that it was answered here wins over this instance's own, so an ask shown
-  // again before the answer arrived (a read that dropped it, then one that brought it back) thanks.
+  // The host's word wins, so an ask shown again before the answer arrived still thanks.
   const state: RequestState = answered ? "answered" : answer;
   const { goalId } = request;
 
@@ -52,8 +43,7 @@ export function UploadRequestClient({
       setAnswer(done);
     }
 
-    // The answer goes to the API, which leaves the page alone: the page reads itself again, so the
-    // ask stays answered when the learner comes back to it. A dismissal renders it again itself.
+    // The API leaves the page alone, so the page reads itself again to keep the ask answered.
     if (saved && done === "answered") {
       onAnswered?.();
       router.refresh();

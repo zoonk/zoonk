@@ -5,13 +5,9 @@ import { type ReactNode } from "react";
 import { PUBLIC_CONTAINER_CLASS } from "./landing-styles";
 import { PublicTopBarSurface } from "./public-top-bar-surface";
 
-/** The product's name, the same in every language. */
 const BRAND_NAME = "Zoonk";
 
-/**
- * The brain, going home: the public pages' only logo. It's named by the brand it shows, so
- * screen readers and voice control call it what the page calls it.
- */
+/** Named by the brand it shows, so screen readers and voice control call it what the page calls it. */
 export function PublicHomeLink() {
   return (
     <Link
@@ -24,12 +20,7 @@ export function PublicHomeLink() {
   );
 }
 
-/**
- * The public top bar: the brain goes home (or what `start` puts there instead), and the page's
- * actions on the right, on the public pages' one container, over a hairline once the page scrolls.
- * Pages that never show the account menu (the visitor home) use it directly, so its code never
- * ships to them; the others use `PublicHeader`.
- */
+/** Pages that never show the account menu use it directly, so its code never ships to them. */
 export function PublicTopBar({ actions, start }: { actions: ReactNode; start?: ReactNode }) {
   return (
     <PublicTopBarSurface>

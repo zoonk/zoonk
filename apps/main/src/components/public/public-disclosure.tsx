@@ -3,11 +3,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronDownIcon } from "lucide-react";
 import { type ReactNode } from "react";
 
-/**
- * Detail that can wait, one tap away: a native `<details>`, so what it holds stays in the page's
- * HTML for search engines and works before scripts load. `aside` says how much is inside. A line
- * only separates one disclosure from the next, never frames a list, so a group stays quiet.
- */
+/** A native `<details>`, so what it holds stays in the HTML for search engines and works before scripts. */
 export function PublicDisclosure({
   aside,
   children,
@@ -18,13 +14,11 @@ export function PublicDisclosure({
   aside?: ReactNode;
   children: ReactNode;
   className?: string;
-  /** Open on arrival, for the one a page expects most visitors to want. */
   open?: boolean;
   summary: ReactNode;
 }) {
   return (
     <details className={cn("group not-first:border-t", className)} open={open}>
-      {/* The aside and the chevron stay on the summary's first line when it wraps. */}
       <summary className="hover:text-foreground focus-visible:ring-ring/50 flex cursor-pointer list-none gap-4 rounded-md py-4 text-[15px] leading-snug font-semibold outline-none select-none focus-visible:ring-[3px] sm:text-base [&::-webkit-details-marker]:hidden">
         <span className="flex min-w-0 flex-1 flex-col gap-0.5 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4">
           <span className="text-pretty">{summary}</span>

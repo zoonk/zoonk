@@ -4,10 +4,6 @@ type PlanPrices = { monthlyPrice: PriceInfo | null; yearlyPrice: PriceInfo | nul
 
 const MONTHS_PER_YEAR = 12;
 
-/**
- * Turns the yearly total into the closest monthly amount the currency can
- * display. The exact yearly charge stays visible beside this comparison.
- */
 export function getMonthlyEquivalent({
   yearlyPrice,
 }: {
@@ -23,11 +19,7 @@ export function getMonthlyEquivalent({
   };
 }
 
-/**
- * The single Plus offer can make a yearly-savings claim only when Stripe proves
- * that its monthly and yearly prices use the same currency and the annual total
- * is genuinely lower. Missing or incomparable prices produce no claim.
- */
+/** A yearly-savings claim only when Stripe's prices share a currency and the annual total is really lower. */
 export function getYearlyPriceComparison({ monthlyPrice, yearlyPrice }: PlanPrices) {
   if (!monthlyPrice || !yearlyPrice) {
     return null;

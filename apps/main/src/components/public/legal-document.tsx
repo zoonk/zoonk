@@ -2,17 +2,12 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode } from "react";
 import { PUBLIC_COLUMN_CLASS, PublicPage } from "./public-page";
 
-/**
- * Terms and privacy read like the other public pages: the public top bar and footer, and the text
- * in the same reading column, so long lines stay comfortable on wide screens. Headings clear the
- * sticky top bar when a link jumps to one, like the pricing page's link to fair use.
- */
+/** Headings clear the sticky top bar when a link jumps to one. */
 export function LegalDocument({
   children,
   pathname,
 }: {
   children: ReactNode;
-  /** The page's own path without the language, so the footer's language links open it. */
   pathname: "/privacy" | "/terms";
 }) {
   return (

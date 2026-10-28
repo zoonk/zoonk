@@ -5,13 +5,8 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 import { JourneyPageBar } from "./journey-page-bar";
 
-/** A list's rows while a page loads, when the page doesn't say how many it shows. */
 const DEFAULT_ROWS = 5;
 
-/**
- * The page's header while it loads, as `DetailHero` lays it out: what it belongs to, its name (the
- * page's own when it's always the same), its facts, and its main action with its "…".
- */
 function HeroSkeleton({ title }: { title?: string }) {
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between md:gap-6">
@@ -36,10 +31,6 @@ function HeroSkeleton({ title }: { title?: string }) {
   );
 }
 
-/**
- * A list's rows while a page loads, flat as `ListGroup` draws them: a mark, a title over its line
- * and a trailing value, a hairline between rows.
- */
 function RowsSkeleton({ rows }: { rows: number }) {
   return (
     <div className="flex flex-col [&>*+*]:border-t">
@@ -57,7 +48,6 @@ function RowsSkeleton({ rows }: { rows: number }) {
   );
 }
 
-/** A section's label, in its header's height, while its page loads. */
 export function SectionLabelSkeleton() {
   return (
     <span className="flex h-6 items-center">
@@ -66,7 +56,6 @@ export function SectionLabelSkeleton() {
   );
 }
 
-/** A section of a list while its page loads: its label over its flat rows. */
 export function ListSectionSkeleton({ rows = DEFAULT_ROWS }: { rows?: number }) {
   return (
     <div className="flex flex-col gap-3">
@@ -76,11 +65,6 @@ export function ListSectionSkeleton({ rows = DEFAULT_ROWS }: { rows?: number }) 
   );
 }
 
-/**
- * The page's column while it loads: its bar, its header (with the tabs under it of a page that has
- * them, `tabs`) and its sections (`children`). A page whose name is always the same (the
- * mistakes notebook) shows it (`title`); what the page says about itself waits as bars.
- */
 function DetailColumnSkeleton({
   bar,
   children,
@@ -115,7 +99,6 @@ function DetailColumnSkeleton({
   );
 }
 
-/** An aside's first block while its page loads: its label over its properties. */
 function AsideSkeleton() {
   return (
     <div className="hidden flex-col gap-3 min-[72rem]:flex">
@@ -127,14 +110,6 @@ function AsideSkeleton() {
   );
 }
 
-/**
- * A page opened from the Plan (a subject, a chapter, a unit, the exam, the mistakes notebook) while
- * it loads, in its own shape: its bar (back to the Plan, unless the page leads back elsewhere:
- * `bar`), its header with the main action beside the name from `md` (under it on a phone), its
- * tabs when it has them, a list's flat rows (or the page's own sections, `children`) and, from
- * 72rem, its aside's first block (or the page's own, `aside`; a page without an aside, such as the
- * notebook's inbox, says so: `aside={false}`), so nothing moves when the page arrives.
- */
 export async function DetailSkeleton({
   aside,
   bar,
@@ -144,16 +119,12 @@ export async function DetailSkeleton({
   tabs = false,
   title,
 }: {
-  /** The aside's blocks when they aren't one list of properties; `false` for a page without one. */
   aside?: React.ReactNode;
   bar?: React.ReactNode;
-  /** The page's sections, when they're more than one list (`ListSectionSkeleton`). */
   children?: React.ReactNode;
-  /** The column's own width, as the page's `DetailLayout` takes it (the notebook's inbox). */
   className?: string;
   rows?: number;
   tabs?: boolean;
-  /** The page's name when it's always the same, in the very words the page shows. */
   title?: string;
 }) {
   const column = (

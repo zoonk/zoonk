@@ -16,7 +16,6 @@ import { PageErrorMessage } from "./page-error-message";
 
 type Catalog = { locale: SupportedLocale; messages: Record<string, unknown> };
 
-/** The visitor's language: the URL's prefix, then the language they picked, then the default. */
 function getVisitorLocale(): SupportedLocale {
   const [, prefix = ""] = globalThis.location.pathname.split("/");
 
@@ -39,7 +38,6 @@ async function loadCatalog(locale: SupportedLocale): Promise<Catalog> {
   return { locale, messages: translations.default };
 }
 
-/** Loads the visitor's catalog, then English if that fails. */
 function useErrorCatalog(): Catalog | "failed" | null {
   const [catalog, setCatalog] = useState<Catalog | "failed" | null>(null);
 
@@ -52,7 +50,6 @@ function useErrorCatalog(): Catalog | "failed" | null {
   return catalog;
 }
 
-/** Home with a full page load: after the whole app failed, starting fresh is the safest way back. */
 function HomeLink() {
   const t = useExtracted();
 
@@ -64,11 +61,6 @@ function HomeLink() {
   );
 }
 
-/**
- * The global error page's content, in the visitor's language. It loads on demand (with only that
- * language's messages), since the global error boundary ships with every page. If no catalog
- * loads at all, the framework's own error page is the last resort.
- */
 export default function GlobalErrorContent({ onRetry }: { onRetry: () => void }) {
   const catalog = useErrorCatalog();
 

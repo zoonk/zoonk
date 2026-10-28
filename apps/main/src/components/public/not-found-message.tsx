@@ -4,15 +4,10 @@ import { type SupportedLocale } from "@zoonk/utils/locale";
 import { ArrowRightIcon, SearchXIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 
-/**
- * What a missing page says, in plain words, with one way on: home, unless the place it's missing
- * from has a better one (the catalog's courses). Every 404 shows it, so they read the same.
- */
 export async function NotFoundMessage({
   children,
   locale,
 }: {
-  /** The way on, in place of the home page. */
   children?: React.ReactNode;
   locale?: SupportedLocale;
 }) {

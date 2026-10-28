@@ -17,35 +17,23 @@ import { getExtracted } from "next-intl/server";
 
 const COVERS_TITLE_ID = "pricing-covers";
 
-/** A month's weekdays, which the free plan's lessons a month spread over. */
 const WEEKDAYS_A_MONTH = 20;
 
 const DAYS_PER_WEEK = 7;
 
-/** Days of room the free band gets past its own, so "Diagnostic and week 1" fits. */
+/** So "Diagnostic and week 1" fits. */
 const FREE_BAND_ROOM = 5;
 
-/**
- * The example plan's Plus phases in proportion: closing gaps, then practice, then a week's final
- * review. Named by what they're for, not by week numbers, since a real plan's length follows the
- * learner's exam date.
- */
+/** Named by what they're for, not by week numbers, since a real plan's length follows the exam date. */
 const GAPS_WEEKS = 3;
 const PRACTICE_WEEKS = 5;
 
-/** Where the example's mock exams fall within their phase, as shares of its length. */
 const PRACTICE_FIRST_MOCK_SHARE = 0.35;
 const PRACTICE_SECOND_MOCK_SHARE = 0.8;
 const FINAL_MOCK_SHARE = 0.4;
 
-/** The legend's swatch for what the free plan covers and what only Plus does, as the road draws them. */
 const SWATCH_CLASS = "inline-block h-2.5 w-3.5 rounded-[3px] ring-1 ring-inset";
 
-/**
- * An exam plan on the Plan's road, its phases by what they're for: the diagnostic and the first
- * week free (as raised as the Plan's current phase, today at its start), the weeks after it Plus
- * (hatched), mock exams on their days and the exam's flag at the end.
- */
 async function getExamRoad(): Promise<RoadBand[]> {
   const t = await getExtracted();
   const freeDays = getFreePlanLimits().examPrepDays ?? DAYS_PER_WEEK;
@@ -59,7 +47,6 @@ async function getExamRoad(): Promise<RoadBand[]> {
       ),
       state: "current",
       todayShare: 0,
-      // A little wider than its days, so its name reads whole: the bands after it say their weeks.
       weight: freeDays + FREE_BAND_ROOM,
     },
     { id: "gaps", name: t("Closing gaps"), state: "plus", weight: GAPS_WEEKS * DAYS_PER_WEEK },
@@ -80,7 +67,6 @@ async function getExamRoad(): Promise<RoadBand[]> {
   ];
 }
 
-/** The example exam plan's road under its legend: what's free, what's Plus and where mocks fall. */
 async function ExamPlanRoad() {
   const t = await getExtracted();
   const bands = await getExamRoad();
@@ -91,7 +77,6 @@ async function ExamPlanRoad() {
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
         <p className="text-sm font-semibold">{t("An exam plan")}</p>
 
-        {/* The legend names the full road's marks; the phone's bar says them in words instead. */}
         <p
           aria-hidden="true"
           className="text-muted-foreground hidden flex-wrap gap-x-4 gap-y-1.5 text-xs lg:flex"
@@ -130,10 +115,6 @@ async function ExamPlanRoad() {
   );
 }
 
-/**
- * Any other goal's free month: its lessons a month and a day, and what that comes to each weekday
- * when the month's allowance spreads over them.
- */
 async function FreeMonth() {
   const t = await getExtracted();
   const limits = getFreePlanLimits();
@@ -162,11 +143,6 @@ async function FreeMonth() {
   );
 }
 
-/**
- * What the free plan covers, on the plan's own road: an exam plan's diagnostic and first week free,
- * the rest Plus with its mock exams; then any other goal's month and its lessons a weekday. Every
- * number comes from the rules the allowance enforces.
- */
 export async function PricingCovers() {
   const t = await getExtracted();
 

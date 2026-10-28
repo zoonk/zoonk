@@ -19,7 +19,6 @@ import { PLAN_CARD_CLASS } from "./plan-includes";
 import { type BillingPeriod, PlusLoginLink, PlusPlan, type PlusViewerState } from "./plus-plan";
 import { PlusQuestions } from "./plus-questions";
 
-/** The public pricing page and the subscription page describe the same offer. */
 export async function getPlusPricingMetadata(): Promise<Pick<Metadata, "description" | "title">> {
   const t = await getExtracted();
 
@@ -35,10 +34,6 @@ function renderRest(chunks: ReactNode) {
   return <span className="text-muted-foreground">{chunks}</span>;
 }
 
-/**
- * The pricing page's first words: its name as a quiet eyebrow, the offer as the headline (starting
- * free in the text color, Plus muted after it) and one line on what each covers.
- */
 export async function PricingHero() {
   const t = await getExtracted();
 
@@ -60,16 +55,10 @@ export async function PricingHero() {
   );
 }
 
-/** The pricing page's billing period switch, which its closing "Get Plus" follows too. */
 const PRICING_BILLING_SWITCH = "pricing-billing";
 
-/** The two plans side by side from `md`, one under the other on phones, Free first. */
 const PLANS_GRID_CLASS = "grid grid-cols-1 gap-4 md:grid-cols-2 lg:gap-5";
 
-/**
- * The plans on the public pricing page, Free and Plus, two cards of one height with each one's next
- * step for whoever is reading on the same line (the browser picks the reader's).
- */
 export function PricingPlans({
   monthlyPrice,
   yearlyPrice,
@@ -94,7 +83,6 @@ export function PricingPlans({
   );
 }
 
-/** A plan card while the reader's prices load: its rows in their places. */
 function PlanCardSkeleton() {
   return (
     <div className={cn(SURFACE_CLASS, PLAN_CARD_CLASS, "gap-4")}>
@@ -111,7 +99,6 @@ function PlanCardSkeleton() {
   );
 }
 
-/** The questions under the plans, their title beside them from `lg`. */
 export function PricingQuestions() {
   return (
     <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-24 lg:pt-32")}>
@@ -120,11 +107,6 @@ export function PricingQuestions() {
   );
 }
 
-/**
- * The page's last word for a visitor: starting free needs no account, with both plans' steps again,
- * starting free first. "Get Plus" keeps the billing period picked on Plus's card (`hasChoice`
- * when there's one to pick). Anyone with a session already started, so it's the visitor's alone.
- */
 async function VisitorPricingClose({ hasChoice }: { hasChoice: boolean }) {
   const t = await getExtracted();
 
@@ -157,10 +139,6 @@ async function VisitorPricingClose({ hasChoice }: { hasChoice: boolean }) {
   );
 }
 
-/**
- * The pricing page's closing call: in the HTML for visitors, gone once the browser's learner
- * summary reads someone with a session.
- */
 export function PricingClose({ hasChoice }: { hasChoice: boolean }) {
   return (
     <ForViewer
@@ -169,18 +147,12 @@ export function PricingClose({ hasChoice }: { hasChoice: boolean }) {
   );
 }
 
-/**
- * The Plus offer inside the app for whoever is looking (the subscription page), then what people
- * ask before paying. A visitor also sees the free plan under it, with its free start, since
- * Plus's card keeps one action.
- */
 export function PlusPricing({
   defaultPeriod,
   monthlyPrice,
   viewerState,
   yearlyPrice,
 }: {
-  /** The billing period its switch opens on: the one picked on the pricing page before logging in. */
   defaultPeriod?: BillingPeriod;
   monthlyPrice: PriceInfo | null;
   viewerState: PlusViewerState;
@@ -209,7 +181,6 @@ export function PlusPricing({
   );
 }
 
-/** The Plus offer while the reader's prices load. */
 export function PlusPricingSkeleton() {
   return (
     <div aria-hidden="true" className="max-w-form">

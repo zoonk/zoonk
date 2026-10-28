@@ -6,10 +6,6 @@ import { MeterPart, MeterParts } from "@zoonk/learn/meter";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 
-/**
- * A part of the plan's time: the kinds of work in it, as the app marks them on Today, and its color
- * in the meter (a lesson's neutral, a kind's hue).
- */
 type WorkloadPart = {
   fill: string;
   id: string;
@@ -18,24 +14,7 @@ type WorkloadPart = {
   minutes: number;
 };
 
-/**
- * What fills the plan's days at one time a day, so its headline reads against the outline's lesson
- * time: the whole of it beside the title, a meter of its parts, each as long as its time, then
- * each part on its row after its kind's mark, the one the app marks it with on Today: the lessons,
- * those the course hasn't written yet (written as the learner reaches them), reviews and practice,
- * and challenges and mocks, from the same plan numbers as the headline. A part with no time isn't
- * listed. The reviews' time, often as long as the lessons', says what it's for. Work an exam's plan
- * leaves for after its date (none unless it studies the whole course) is said apart, since the
- * headline counts up to it.
- */
-export async function PlanWorkload({
-  exam,
-  numbers,
-}: {
-  /** An exam's plan has mock exams beside its challenges; a course's has challenges only. */
-  exam: boolean;
-  numbers: PlanNumbers;
-}) {
+export async function PlanWorkload({ exam, numbers }: { exam: boolean; numbers: PlanNumbers }) {
   const t = await getExtracted();
   const { workload } = numbers;
 
@@ -62,7 +41,6 @@ export async function PlanWorkload({
       minutes: workload.practiceMinutes,
     },
     {
-      // One color for the part on every course: the challenge's, the kind both plans hold.
       fill: kindFillClass("challenge"),
       id: "checkpoints",
       kinds: exam ? ["challenge", "mock"] : ["challenge"],

@@ -20,10 +20,6 @@ import { PlusBenefits } from "./plus-benefits";
 import { PLAN_ACTION_NOTE_CLASS, PLUS_CTA_CLASS } from "./plus-cta";
 import { SubscribeButton } from "./subscribe-button";
 
-/**
- * Who is looking at the offer. A `guest` tried lessons without an account; a `visitor` has no
- * session and can start free before deciding; a `subscribed` learner already has Plus.
- */
 export type PlusViewerState =
   | { status: "free" }
   | { status: "guest" }
@@ -36,21 +32,12 @@ const PLUS_PLAN_ID = "plus-plan";
 
 export type BillingPeriod = (typeof PERIODS)[number];
 
-/**
- * The subscription page's `period`: the billing period a visitor picked on the pricing page before
- * logging in, which the page's switch opens on.
- */
 export const BILLING_PERIOD_PARAM = "period";
 
 export function readBillingPeriod(value: string | string[] | undefined): BillingPeriod {
   return value === "yearly" ? "yearly" : DEFAULT_PERIOD;
 }
 
-/**
- * "Get Plus" for someone who logs in first: logging in opens the subscription page on the period
- * picked here (a link per period, the picked one showing), or on its default when there's no
- * choice to make.
- */
 export async function PlusLoginLink({
   billingSwitch,
   className,
@@ -91,11 +78,6 @@ function renderMono(chunks: React.ReactNode) {
   return <span className={NUMERIC_CLASS}>{chunks}</span>;
 }
 
-/**
- * Plus's next step for whoever is reading: visitors and guests get it by signing in first (signing
- * in creates the account), a learner on the free plan starts checkout with the period the switch
- * shows, and a subscriber manages their plan.
- */
 async function PlusAction({
   billingSwitch,
   hasChoice,
@@ -131,11 +113,6 @@ async function PlusAction({
   );
 }
 
-/**
- * Plus's price for each billing period, the picked one showing: the monthly price billed every
- * month, or the yearly one with what it comes to a month. Without a yearly price there's no choice
- * to make, and without any price checkout says it.
- */
 async function PlusPrices({
   billingSwitch,
   monthlyPrice,
@@ -183,16 +160,7 @@ async function PlusPrices({
   );
 }
 
-/**
- * The one Plus offer: its name and the billing period (the app's segmented control, native radios
- * the server renders, so it works before scripts and without them), its price for that period, its
- * one next step with "Cancel anytime." under it, then what it includes. Its stronger line sets it
- * apart from the free plan's card; its rows sit level with the free plan's beside it.
- *
- * `billingSwitch` names the switch's radios, unique on the page: the pricing page's and the
- * subscription page's, which the router may keep in the document together. `defaultPeriod` is the
- * one it opens on (the period picked before logging in).
- */
+/** `billingSwitch` must be unique: the router may keep the pricing and subscription pages in the document together. */
 export async function PlusPlan({
   billingSwitch,
   defaultPeriod = DEFAULT_PERIOD,
@@ -203,7 +171,6 @@ export async function PlusPlan({
   billingSwitch: string;
   defaultPeriod?: BillingPeriod;
   monthlyPrice: PriceInfo | null;
-  /** Who's reading, when the server knows; the static pricing page leaves it to the browser. */
   viewerState?: PlusViewerState;
   yearlyPrice: PriceInfo | null;
 }) {

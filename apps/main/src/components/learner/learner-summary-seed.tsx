@@ -20,16 +20,13 @@ async function readSeed(): Promise<LearnerSummarySeedValue> {
   }
 }
 
-/** Read as the learner opens one of the section's pages: never for a prefetch or the static shell. */
+/** Never for a prefetch or the static shell. */
 async function readSeedOnNavigation(): Promise<LearnerSummarySeedValue> {
   await navigation();
   return readSeed();
 }
 
-/**
- * Streams the learner summary into the frame on navigation, behind its neutral fallbacks.
- * The meta prevents the browser from fetching the same summary again while it streams.
- */
+/** The meta keeps the browser from fetching the same summary again while it streams. */
 export function LearnerSummarySeed() {
   const seed = readSeedOnNavigation();
 

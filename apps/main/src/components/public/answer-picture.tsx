@@ -10,11 +10,6 @@ import { LineMarker } from "@zoonk/ui/components/line-marker";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode } from "react";
 
-/**
- * An answer as the player draws it, on a public page's picture of a question: its key in a keycap,
- * its words, a firm ring when picked, blue or red once checked with its word on the right
- * ("Correct", "Your answer"). Nothing to press: the question is an example.
- */
 export function AnswerPicture({
   children,
   lang,
@@ -24,7 +19,6 @@ export function AnswerPicture({
   tag,
 }: {
   children: ReactNode;
-  /** The answer's language when it isn't the page's (a sentence in the language being learned). */
   lang?: string;
   marker: number;
   picked?: boolean;
@@ -57,7 +51,6 @@ export function AnswerPicture({
   );
 }
 
-/** A question's answers, one under the other like an exam's answer sheet. */
 export function AnswerPictures({ className, ...props }: React.ComponentProps<"ol">) {
   return <ol className={cn("flex flex-col gap-2", className)} {...props} />;
 }

@@ -7,34 +7,6 @@ import {
   STOP_TITLE_CLASS,
 } from "./landing-styles";
 
-/*
- * A stop on a public page's story, from Day 1 to the big day: a band across the page (on `ground`
- * with `band`, so neighbors alternate), and in the page's container an eyebrow with the app's own
- * mark for that moment, one short heading, one lead line, then one product moment. Stops that tell
- * a story in order (`rail`, the landing's) hang their marks on one line in the left margin once
- * there's room for it, from the first stop's mark to the last one's; a stop alone draws no line.
- *
- * ```tsx
- * <Stop aria-labelledby="stop-day-one">
- *   <StopHeader>
- *     <StopEyebrow>
- *       <StopMark><KindDot kind="lesson" /></StopMark>
- *       Day 1 · 2 minutes
- *     </StopEyebrow>
- *     <StopTitle id="stop-day-one">Your plan starts where you are.</StopTitle>
- *     <StopLead>A few quick questions find what you already know.</StopLead>
- *   </StopHeader>
- *   <StopBody>…</StopBody>
- * </Stop>
- * ```
- */
-
-/**
- * Where the rail runs, and its marks: from 88rem, where the margin has room for them, 44px left of
- * the container's content (`PUBLIC_CONTAINER_CLASS`: 84rem with 2rem gutters), through each stop's
- * band, so the stops' lines meet. It starts at the first stop's mark and ends at the last one's
- * (the band's padding, then half the eyebrow).
- */
 const RAIL_LINE_CLASS = cn(
   "min-[88rem]:before:bg-border min-[88rem]:before:absolute min-[88rem]:before:inset-y-0 min-[88rem]:before:left-[calc((100%-84rem)/2-0.75rem)] min-[88rem]:before:w-px",
   "min-[88rem]:first:before:top-[calc(var(--spacing)*24+0.5rem)]",
@@ -89,11 +61,7 @@ export function StopEyebrow({ className, ...props }: React.ComponentProps<"p">) 
   );
 }
 
-/**
- * The stop's mark, the app's own for that moment (a kind's dot, the fast-forward of what's skipped,
- * Zu's face, the flag), beside the eyebrow; on the rail from 88rem when its stop has one, cut out
- * of it in its band's surface. Decorative: the eyebrow says it.
- */
+/** Decorative: the eyebrow says it. */
 export function StopMark({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span

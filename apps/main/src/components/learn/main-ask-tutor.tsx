@@ -6,22 +6,13 @@ import { type LessonTutorConfig } from "@zoonk/player/lesson/types";
 import { AskTutor } from "@zoonk/player/tutor";
 import { useMemo } from "react";
 
-/**
- * Who asks the tutor on a screen, the buddy who answers and the goal whose plan it reads and
- * changes there, as `getTutorViewer` reads them.
- */
 export type TutorViewer = {
   buddy: LessonTutorConfig["buddy"];
   canAsk: boolean;
   goalId: string | null;
 };
 
-/**
- * "Ask" the learner's buddy on a learn screen, with main's tutor connection and links, so server
- * pages can place it with plain props (`buddy` from `getLearnerBuddy`). Inside a goal, its answers
- * show the plan changes and features the buddy offers, as on the buddy tab. Pages that render it
- * need the learn catalog (`scope="learn"`), which includes the player's messages.
- */
+/** Pages that render it need the learn catalog (`scope="learn"`). */
 export function MainAskTutor({
   buddy,
   canAsk,

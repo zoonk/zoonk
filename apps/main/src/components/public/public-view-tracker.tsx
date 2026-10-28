@@ -7,10 +7,7 @@ type PublicView =
   | { contentId: string; page: "chapter" | "course" | "lesson" }
   | { contentId?: undefined; page: "home" };
 
-/**
- * Records a visit to a public page from the browser, so the pages themselves
- * stay server-rendered and cacheable.
- */
+/** From the browser, so the pages stay server-rendered and cacheable. */
 export function PublicViewTracker({ contentId, page }: PublicView) {
   useEffect(() => {
     if (page === "home") {

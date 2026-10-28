@@ -6,9 +6,8 @@ import { safeAsync } from "@zoonk/utils/error";
 import { sendFeedbackRequest } from "./feedback-request";
 
 /**
- * Guests are anonymous accounts whose email isn't theirs, so only real accounts fill the form. If
- * the session can't be read, the learner types their email. The auth client loads only when the
- * form opens, since this provider wraps every page.
+ * A guest's email isn't theirs, so only real accounts fill the form. The auth client loads only when
+ * the form opens, since this provider wraps every page.
  */
 async function getViewerEmail(): Promise<string | null> {
   const { data: session } = await safeAsync(async () => {
@@ -28,10 +27,6 @@ const MAIN_FEEDBACK_ADAPTERS: ContentFeedbackAdapters = {
   track: trackEvent,
 };
 
-/**
- * Gives every page the feedback form: messages go through the public API, with the same validation
- * and quotas as native apps.
- */
 export function MainFeedbackProvider({ children }: { children: React.ReactNode }) {
   return (
     <ContentFeedbackProvider adapters={MAIN_FEEDBACK_ADAPTERS}>{children}</ContentFeedbackProvider>

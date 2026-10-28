@@ -1,9 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 
-/**
- * A quiet outlined number on a row of a window, pointing to its caption under it. Decorative: the
- * caption says what it points at.
- */
+/** Decorative: the caption says what it points at. */
 export function AnnotationMark({ children, className }: { children: number; className?: string }) {
   return (
     <span
@@ -18,7 +15,6 @@ export function AnnotationMark({ children, className }: { children: number; clas
   );
 }
 
-/** The captions under a window, numbered as its marks: two up on phones, side by side from `lg`. */
 export function AnnotationCaptions({ className, ...props }: React.ComponentProps<"ol">) {
   return (
     <ol
@@ -29,7 +25,6 @@ export function AnnotationCaptions({ className, ...props }: React.ComponentProps
   );
 }
 
-/** One caption: its number, a short title and one line. */
 export function AnnotationCaption({
   children,
   number,

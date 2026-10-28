@@ -9,18 +9,9 @@ import { PUBLIC_FOOTER_ID } from "./public-ids";
 /** Read once when the server starts, so rendering never depends on the clock. */
 const COPYRIGHT_YEAR = String(new Date().getFullYear());
 
-/**
- * Each link is 44 px tall so it's easy to tap, and a short one reaches 44 px wide through its hit
- * area, so the gaps between links look even; the rows sit closer to make up for the height.
- */
 const FOOTER_LINK_CLASS =
   "hover:text-foreground focus-visible:ring-ring/50 hit-area relative inline-flex min-h-11 items-center rounded-md outline-none transition-colors focus-visible:ring-[3px]";
 
-/**
- * The public pages' footer: the catalog (its popular courses and the categories that have
- * courses), then where to find courses, pricing, help and the legal pages, and every language the
- * site speaks, on the public pages' one container.
- */
 export async function PublicFooter({ pathname }: { pathname?: string }) {
   const t = await getExtracted();
 

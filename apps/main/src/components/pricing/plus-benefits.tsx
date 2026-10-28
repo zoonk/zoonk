@@ -1,11 +1,7 @@
 import { getExtracted } from "next-intl/server";
 import { PlanIncludes } from "./plan-includes";
 
-/**
- * What Plus gives: every goal and every lesson, then a few short lines. The offer shows it before
- * paying and a subscriber's plan shows it after, so both promise the same thing. Call minutes stay
- * off it, as on every plan: Plus has higher call limits, never a number.
- */
+/** Call minutes stay off it, as on every plan: Plus has higher call limits, never a number. */
 export async function PlusBenefits() {
   const t = await getExtracted();
 

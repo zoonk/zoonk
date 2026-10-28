@@ -10,18 +10,10 @@ import { CATALOG_TOP_TARGET_ID } from "./catalog-top-target";
 
 const BACK_TO_TOP_VISIBLE_SCROLL_Y = 360;
 
-/**
- * The floating top action should appear only after the reader has left the
- * page header; showing it immediately would add chrome before it can help.
- */
 function isBackToTopVisible(): boolean {
   return globalThis.scrollY > BACK_TO_TOP_VISIBLE_SCROLL_Y;
 }
 
-/**
- * The anchor href stays as a no-JS fallback, but hydrated catalog pages can
- * scroll smoothly so the jump does not feel harsh.
- */
 function scrollToCatalogTop(event: MouseEvent<HTMLAnchorElement>) {
   event.preventDefault();
 
@@ -30,11 +22,6 @@ function scrollToCatalogTop(event: MouseEvent<HTMLAnchorElement>) {
     ?.scrollIntoView({ behavior: getScrollBehavior(), block: "start" });
 }
 
-/**
- * Long course grids need a reachable escape hatch while scrolling, so this
- * action follows the viewport instead of waiting for the reader to reach the
- * end of the collection. Under `lg` it floats above the app's tab bar.
- */
 export function CatalogBackToTop() {
   const t = useExtracted();
   const [isVisible, setIsVisible] = useState(false);

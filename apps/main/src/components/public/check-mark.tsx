@@ -7,11 +7,7 @@ const SIZES = {
   sm: { box: "size-5", icon: "size-3.5" },
 } as const;
 
-/**
- * The public pages' check: something included or taught, a plain muted check centered in the room
- * a marker takes. It's not blue, since blue means a right answer in the app. Put it in a
- * `LineMarker` to sit on the first line of a list item's text.
- */
+/** Not blue: blue means a right answer in the app. */
 export function CheckMark({ size }: { size: keyof typeof SIZES }) {
   return (
     <span className={cn("flex items-center justify-center", SIZES[size].box)}>

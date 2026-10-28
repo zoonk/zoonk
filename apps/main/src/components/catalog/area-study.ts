@@ -2,16 +2,9 @@ import { getTotalDurationFormatter } from "@/lib/public/public-labels";
 import { type DatedEstimate } from "@zoonk/core/catalog/course-plan-example-contract";
 import { getExtracted } from "next-intl/server";
 
-/** One exam area in a plan against the exam's date, at one time a day. */
 export type EstimateArea = DatedEstimate["areas"][number];
 
-/**
- * How an exam area reads in a plan, at one time a day: the study time it gets first (its lessons,
- * quick ones and those still to be written; reviews and practice aside), then what fills it: how
- * many of the course's lessons fit, with the quick lessons that stand in for others, or, when none
- * of its own lessons fit, what it's studied through instead ("0 of 113 lessons fit" beside its
- * minutes read as a contradiction). Only an area with no time at all is left out.
- */
+/** When none of its own lessons fit, it says what the area is studied through: "0 of 113 lessons fit" read as a contradiction. */
 export async function getAreaStudyText(): Promise<
   (area: EstimateArea) => { detail: string; studied: boolean; time: string }
 > {
@@ -61,7 +54,6 @@ export async function getAreaStudyText(): Promise<
   };
 }
 
-/** The area's entry in a pace's plan; core names an unknown area null. */
 export function findEstimateArea(
   estimate: DatedEstimate,
   area: string | null,

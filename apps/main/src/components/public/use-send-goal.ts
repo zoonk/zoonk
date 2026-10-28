@@ -8,12 +8,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { useLocale } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 
-/**
- * Sends a typed goal, then opens its draft, where `/start` waits for it to be read and carries the
- * click on. A question read at once (stored from someone's earlier words) starts its explanation
- * from that click instead. Loaded on the first tap, so the page doesn't ship the account and
- * actions code to visitors who only read it.
- */
+/** Loaded on the first tap, so the page doesn't ship the account and actions code to visitors who only read. */
 async function sendHomeGoal({
   goal,
   language,
@@ -42,7 +37,6 @@ async function sendHomeGoal({
     return { explanationId: null, outcome };
   }
 
-  // Read at once: this click goes on here, so `/start` doesn't carry it on again.
   const sentAt = takeSentGoal(outcome.draft.id) ?? Date.now();
   const { understanding } = outcome.draft;
 
@@ -73,7 +67,6 @@ async function sendHomeGoal({
   return { explanationId: explanation?.status === "created" ? explanation.goalId : null, outcome };
 }
 
-/** The home page's way into onboarding: the typed goal is saved, then `/start` opens on its wait. */
 export function useSendGoal() {
   const locale = useLocale();
   const router = useRouter();
@@ -82,8 +75,7 @@ export function useSendGoal() {
   const [error, setError] = useState<GoalError | null>(null);
   const submitted = useRef<AbortController | null>(null);
 
-  // Leaving the page ends its send: the router may keep the page and show it again on the way
-  // back, with the visitor's words still in the box and the box free to send again.
+  // The router may keep the page and show it again on the way back, with the box free to send again.
   useEffect(
     () => () => {
       submitted.current?.abort();

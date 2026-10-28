@@ -12,13 +12,7 @@ import { useEffect, useMemo } from "react";
 
 type LessonPlayerSlots = NonNullable<LessonPlayerProviderProps["slots"]>;
 
-/**
- * A lesson played as one of today's blocks: the session's completion moment, whose Continue opens
- * the next block, under the session's header (the day as one segment per block) in place of the
- * lesson's once the lesson is saved, like between every other block, with the learner's buddy
- * cheering a mission it completed. Null for a lesson on its own. The session screen's frame is
- * static: holding it, Continue opens the next block there at once.
- */
+/** The session screen's frame is static, so Continue opens the next block there at once. */
 export function useLessonSessionSlots({
   buddy,
   session,
@@ -61,7 +55,6 @@ export function useLessonSessionSlots({
           />
         </MainLearnProvider>
       ),
-      // Until the lesson is saved there's no moment yet, and the lesson's header stays.
       completionHeader: ({ completion, menu }) =>
         completion.result?.studyBlock ? (
           <MainLearnProvider>

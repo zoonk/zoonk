@@ -2,10 +2,6 @@ import { CheckMark } from "@/components/public/check-mark";
 import { BigQuantity } from "@zoonk/learn/big-quantity";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
 
-/**
- * What a plan includes: one big line that sums it up, then a few short lines, each with the quiet
- * check the public pages use for what's included.
- */
 export function PlanIncludes({
   items,
   summary,
@@ -33,10 +29,6 @@ export function PlanIncludes({
   );
 }
 
-/**
- * A plan's price, a readout: its number large, its currency small and muted beside it, so a long
- * code ("ISK 2,299") never crowds the number, with what it's per after it.
- */
 export function PlanPrice({ amount, per }: { amount: string; per?: string }) {
   return (
     <p className="flex items-baseline gap-2">
@@ -46,11 +38,10 @@ export function PlanPrice({ amount, per }: { amount: string; per?: string }) {
   );
 }
 
-/** A plan card's surface and its rows: name, price, action, then what it includes. */
 export const PLAN_CARD_CLASS = "flex flex-col p-6 sm:p-7";
 
-/** The name row, as tall as the billing switch beside Plus's, so both cards' rows line up. */
+/** As tall as the billing switch beside Plus's, so both cards' rows line up. */
 export const PLAN_NAME_ROW_CLASS = "flex min-h-11 flex-wrap items-center justify-between gap-3";
 
-/** The price rows, as tall as Plus's price and its billing line. */
+/** As tall as Plus's price and its billing line. */
 export const PLAN_PRICE_CLASS = "mt-4 flex min-h-[4.5rem] flex-col gap-2";

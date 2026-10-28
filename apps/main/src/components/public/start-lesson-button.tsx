@@ -12,12 +12,7 @@ import { useExtracted } from "next-intl";
 import { type ReactNode, useEffect, useRef, useState, useTransition } from "react";
 import { START_FAILURE_SLOT, getStartControlClassName } from "./public-start";
 
-/**
- * Opens a lesson that isn't written yet from the visitor's tap: they become a guest first (behind
- * BotID; nothing is created before that tap, so crawlers following the page create nothing), then
- * the tap asks for writing before navigating and hands the run to the player, which follows the
- * writing. Pending lasts until the player shows.
- */
+/** Nothing is created before the tap, so crawlers following the page create nothing. */
 function useLessonStart({ lessonId, origin }: { lessonId: string; origin: string }) {
   const router = useRouter();
   const [failed, setFailed] = useState(false);
@@ -93,12 +88,7 @@ function StartFailure() {
   );
 }
 
-/**
- * "Start this lesson" on the public page of a lesson that isn't written yet: one tap makes the
- * visitor a guest and opens the lesson being written. Without JavaScript it's a form that opens
- * the player, which has its own start button. Pending and failures show right here. Either way the
- * player gets the lesson's page (`origin`), which closing the lesson returns to.
- */
+/** Without JavaScript it's a form that opens the player, which has its own start button. */
 export function StartLessonButton({
   action,
   children,
@@ -106,7 +96,6 @@ export function StartLessonButton({
   lessonId,
   origin,
 }: {
-  /** The player's path, for the form without JavaScript. */
   action: string;
   children: ReactNode;
   className?: string;

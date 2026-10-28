@@ -1,11 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { type ReactNode } from "react";
 
-/**
- * What a page that couldn't show says, as one centered unit: a quiet glyph (bare, as every empty
- * state draws it, never on a tile), what happened in plain words as the page's title, a line on
- * why, and the way on. The 404 and the error pages share it, so they read the same.
- */
 export function StatusMessage({
   children,
   className,
@@ -13,7 +8,6 @@ export function StatusMessage({
   icon,
   title,
 }: {
-  /** The way on: the one main action first. */
   children: ReactNode;
   className?: string;
   description: string;

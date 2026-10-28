@@ -3,11 +3,8 @@ import { ChevronDownIcon } from "lucide-react";
 import { type ReactNode } from "react";
 
 /**
- * The rest of a list one tap away, after the part in sight: a native `<details>`, so it's in the
- * page's HTML for search engines and opens before any script loads. Its toggle is drawn after what
- * it holds, where the list ends, and folds it back from there ("Show fewer"). Its group is named,
- * so it opens on its own inside another disclosure (an outline's level). `className` places the
- * toggle (on the list's text edge).
+ * A native `<details>`, so the rest is in the HTML for search engines and opens before any script.
+ * Its group is named, so it opens on its own inside another disclosure.
  */
 export function ShowMore({
   children,
@@ -17,9 +14,7 @@ export function ShowMore({
 }: {
   children: ReactNode;
   className?: string;
-  /** The toggle once open, such as "Show fewer". */
   less: string;
-  /** The toggle while folded, with how much it holds: "Show 3 more". */
   more: string;
 }) {
   return (

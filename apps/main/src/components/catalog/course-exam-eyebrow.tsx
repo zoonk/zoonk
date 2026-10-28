@@ -3,11 +3,6 @@ import { getIsoDayFormatter } from "@/lib/public/public-labels";
 import { type CoursePlanExample } from "@zoonk/core/catalog/course-plan-example-contract";
 import { getExtracted, getFormatter } from "next-intl/server";
 
-/**
- * An exam course's next sitting over its name, "Exam on Nov 8 and Nov 15 · 26 days left", from the
- * days the course start and its plan use; "Exam around…" while they're estimated from past
- * editions.
- */
 export async function CourseExamEyebrow({
   exam,
 }: {

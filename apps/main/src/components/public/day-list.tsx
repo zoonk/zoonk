@@ -15,10 +15,8 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 import { type ReactNode } from "react";
 
-/** One of an example day's steps: its kind, what it is, how long it takes and how far along it is. */
 export type DayListStep = {
   detail?: string;
-  /** A number on the row, pointing to its caption under the window (`AnnotationMark`). */
   annotation?: ReactNode;
   id: string;
   kind: LearnKind;
@@ -33,10 +31,6 @@ const SEGMENT_STATE: Record<DayListStep["state"], DaySegmentState> = {
   done: "done",
 };
 
-/**
- * One of the day's steps as Today lists it: its kind's icon (the done mark and a quiet name once
- * done, never struck), its name over its detail, its minutes, the one under way highlighted.
- */
 function DayRow({ minutesText, step }: { minutesText: string; step: DayListStep }) {
   const done = step.state === "done";
 
@@ -47,7 +41,6 @@ function DayRow({ minutesText, step }: { minutesText: string; step: DayListStep 
       </ListRowLeading>
 
       <ListRowContent>
-        {/* The row's number sits after its name, as a footnote's mark, away from the minutes. */}
         <span className="flex items-center gap-2">
           <ListRowTitle className={cn(done && "text-muted-foreground")}>{step.title}</ListRowTitle>
           {step.annotation}
@@ -60,10 +53,6 @@ function DayRow({ minutesText, step }: { minutesText: string; step: DayListStep 
   );
 }
 
-/**
- * An example day as Today lists it, flat rows with a hairline between them, each step's minutes in
- * the app's compact durations (`minutesText`).
- */
 export function DayList({
   className,
   minutesText,
@@ -82,11 +71,6 @@ export function DayList({
   );
 }
 
-/**
- * The example day at a glance, as under Today's title: a segment per step, as long as its
- * minutes, done ones blue, the one under way outlined, and one ahead that isn't a lesson tinted in
- * its kind's hue. Screen readers hear how far along it is.
- */
 export async function DaySegments({
   className,
   steps,

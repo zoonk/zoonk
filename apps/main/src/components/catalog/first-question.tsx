@@ -11,13 +11,11 @@ import { type ReactNode } from "react";
 import { LessonProgressSwitch } from "./course-progress";
 import { FirstScreenChoices } from "./first-screen-choices";
 
-/** A lesson's first screen when it's a question. */
 export type FirstChoiceScreen = Extract<
   NonNullable<PublicLibraryLesson["firstScreen"]>,
   { kind: "choice" }
 >;
 
-/** The quiet line under a lesson's way in: what it takes to start. */
 export function StartNote({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <p
@@ -43,13 +41,7 @@ type FirstQuestionProps = {
   screen: FirstChoiceScreen;
 };
 
-/**
- * A lesson's first question, answerable right where it's shown: "Guess first. It doesn't count."
- * (or "Quick question"), its context, the question and its options, any of which opens the
- * player with that answer, and what that starts. The lesson's page shows it as its first screen,
- * and the course's and the chapter's as "Try a lesson". `questionId` names the options' group, so
- * it's unique on its page; `origin` is that page, which closing the lesson returns to.
- */
+/** `questionId` names the options' group, so it must be unique on its page. */
 async function QuestionScreen({
   lessonId,
   minutes,
@@ -101,11 +93,6 @@ async function QuestionScreen({
   );
 }
 
-/**
- * A lesson the learner left partway: its way back in, where the question would be, since the
- * player picks up after the screens they answered and the question would only lead there anyway.
- * `secondary` keeps it beside the page's own main action (a course's "Build my plan").
- */
 async function ContinueLesson({ href, secondary }: { href: string; secondary: boolean }) {
   const t = await getExtracted();
   const label = t("Continue the lesson");
@@ -133,12 +120,6 @@ async function ContinueLesson({ href, secondary }: { href: string; secondary: bo
   );
 }
 
-/**
- * A lesson's first question, or, for a learner partway through the lesson (a guest who tried it
- * and closed it), "Continue the lesson" in its place. The page is the same for everyone, so the
- * browser asks once it shows (`CourseProgressScope` names the lesson); until then, and for everyone
- * else, the question.
- */
 export function FirstQuestion({
   secondary = false,
   ...props

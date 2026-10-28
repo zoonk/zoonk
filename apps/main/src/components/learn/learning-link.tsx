@@ -9,18 +9,9 @@ import { type ComponentProps, useEffect, useRef, useState, useTransition } from 
 
 const LESSON_PATH = /^\/learn\/(?<lessonId>[\da-f-]{36})$/u;
 
-/**
- * How long a navigation runs before its link shows it's pending. Next marks a link pending for
- * every navigation, and a prefetched page takes up to ~300 ms to render on a slow phone, so only a
- * tap that waits on the network (its prefetch hadn't landed) outlasts it.
- */
+/** Next marks a link pending for every navigation, and a prefetched page takes up to ~300 ms on a slow phone. */
 const PENDING_MARK_DELAY_MS = 400;
 
-/**
- * Marks its link while a tap waits on the network: a tab styles the mark as its current look
- * (`@zoonk/learn`'s navigation), so the learner sees the tap was taken while the page is on its
- * way. A prefetched page opens before the mark would show.
- */
 function LinkPendingMark() {
   const { pending } = useLinkStatus();
   const [late, setLate] = useState(false);
@@ -41,10 +32,7 @@ function LinkPendingMark() {
   return pending && late ? <span data-link-pending="" hidden /> : null;
 }
 
-/**
- * Only lessons not known to be written ask for writing before navigation. Prefetches only read.
- * While that request is out, the link dims, so the tap shows it was taken before the wait opens.
- */
+/** Only lessons not known to be written ask for writing before navigation; prefetches only read. */
 export function LearningLink({
   children,
   className,

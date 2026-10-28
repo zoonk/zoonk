@@ -24,7 +24,6 @@ function CurrentPageLink(props: LoginLinkProps) {
   );
 }
 
-/** Login leaves the app through a route handler, with this page as its return address. */
 export function CurrentPageLoginLink(props: LoginLinkProps) {
   const locale = useLocale();
 

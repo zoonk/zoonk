@@ -16,14 +16,7 @@ import { LockIcon } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
 import { cookies } from "next/headers";
 
-/**
- * What a page that needs an account shows where its content would be, under the page's own title,
- * to someone without one, instead of sending them elsewhere: a visitor logs in and comes back to
- * this page (`next`), or starts free; a guest, whose session isn't an account yet, creates one. A
- * browser whose session ended (its cookie names no session; `ended` says so for a page that
- * already knows) is told so on every page, since its plan is still there, with starting something
- * new as the second way on.
- */
+/** A browser whose session ended is told so on every page, since its plan is still there. */
 export async function AuthGate({
   className,
   ended: knownEnded,
@@ -32,7 +25,6 @@ export async function AuthGate({
 }: {
   className?: string;
   ended?: boolean;
-  /** `h1` on a screen of its own (`AuthGateScreen`), with no page title over it. */
   heading?: "h1" | "h2";
   next: string;
 }) {
@@ -94,10 +86,6 @@ export async function AuthGate({
   );
 }
 
-/**
- * The gate on a screen of its own, for task pages that have no app frame around them (a lesson, a
- * mock, a practice): the public bar's brain goes home, and the gate stands in the page's column.
- */
 export function AuthGateScreen({ next }: { next: string }) {
   return (
     <div className="flex min-h-dvh flex-col">
@@ -109,11 +97,6 @@ export function AuthGateScreen({ next }: { next: string }) {
   );
 }
 
-/**
- * A tab or page shown without its content (no account, or no goal yet): its own header, its title
- * and one line on what it is, then what to do where the content would be. Every such page keeps
- * its title where the page has it, and the gate right under it.
- */
 export function GatedPage({
   children,
   description,
@@ -137,7 +120,6 @@ export function GatedPage({
   );
 }
 
-/** A page that needs an account, for someone without one: its header, then the gate. */
 export function AuthGatePage({
   description,
   ended,

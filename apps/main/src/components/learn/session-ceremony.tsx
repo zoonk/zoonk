@@ -5,10 +5,6 @@ import { type LearnBuddy } from "@zoonk/learn/buddy-name";
 import { type CeremonyMilestone, MilestoneCeremony } from "@zoonk/learn/ceremony";
 import { markMilestoneShownAction } from "./milestone-actions";
 
-/**
- * A milestone's full-screen moment, right after the block that earned it or between the session
- * summary's steps, marked as shown once it appears. New glasses can go on the buddy right away.
- */
 export function SessionCeremony({
   milestone,
   buddy,

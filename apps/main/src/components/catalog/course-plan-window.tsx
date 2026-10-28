@@ -17,47 +17,30 @@ import { getExtracted, getFormatter } from "next-intl/server";
 import { type ReactNode } from "react";
 import { PlanWorkload } from "./plan-workload";
 
-/** Today's rows the window lists before folding the rest into one line. */
 const TODAY_ROWS = 3;
 
-/**
- * A plan ending within this many days names no finish month: its few weeks already say when, and
- * the Plan names a near end by its day rather than its month.
- */
 const NEAR_ESTIMATE_DAYS = 42;
 const MS_PER_DAY = 86_400_000;
 
-/**
- * The plan lays itself out by the room it gets: one column beside the hero or on a phone, two from
- * 48rem (the page's width), the result and what fills it on the left and the first day on the
- * right. It sits flat on the page: it's the course's example, not a panel of the app.
- */
 const PLAN_BODY_CLASS =
   "grid grid-cols-1 gap-10 @3xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] @3xl:gap-x-16";
 
-/** The headline number, a public page's readout, its word beside it. */
 function renderBig(chunks: ReactNode) {
   const parts: unknown[] = Array.isArray(chunks) ? chunks : [chunks];
   const text = parts.filter((part) => typeof part === "string").join("");
   return <BigQuantity className="text-foreground text-5xl sm:text-[3.5rem]">{text}</BigQuantity>;
 }
 
-/** The finish month in the sentence's own face, a step heavier, so it reads as the line's answer. */
 function renderStrong(chunks: ReactNode) {
   return <strong className="font-semibold">{chunks}</strong>;
 }
 
-/** The readout's line: its word small and muted beside the number, as a readout's unit. */
 const BIG_LINE_CLASS =
   "text-muted-foreground flex flex-wrap items-baseline gap-x-2 text-lg font-medium tracking-[-0.01em]";
 
 const RESULT_LINE_CLASS =
   "text-muted-foreground max-w-[30rem] text-[0.9375rem] leading-relaxed text-pretty";
 
-/**
- * When the example plan ends, as the Plan writes a far estimate, by its month ("February 2027");
- * null for one ending within a few weeks.
- */
 async function getEndMonthText({ endDate, fromDate }: { endDate: string; fromDate: string }) {
   const format = await getFormatter();
   const end = new Date(`${endDate}T00:00:00Z`);
@@ -68,10 +51,6 @@ async function getEndMonthText({ endDate, fromDate }: { endDate: string; fromDat
     : null;
 }
 
-/**
- * The course to its end at one time a day: how many weeks it takes from scratch, and the month it
- * ends for someone starting today, the estimate the Plan's road ends with.
- */
 async function UndatedHeadline({
   estimate,
   minutes,
@@ -121,12 +100,7 @@ async function UndatedHeadline({
   );
 }
 
-/**
- * The plan's first day as Today lists it: its first few lessons and the rest folded into one line.
- * Each row is the part of its lesson the day holds (`dayMinutes`), not the whole lesson: a 20-minute
- * lesson on a 15-minute day shows 15. Minutes stay exact until they're written, so the totals are
- * the day's own time, never a sum of rounded rows.
- */
+/** Minutes stay exact until they're written, so the totals are the day's own time, never a sum of rounded rows. */
 async function UndatedToday({
   chapterTitles,
   estimate,
@@ -178,11 +152,8 @@ async function UndatedToday({
 }
 
 /**
- * An exam course against the exam's day at one time a day: the time it studies by then, from the
- * plan's own numbers (never only the lessons, which undercount a plan that also reviews, practices
- * and writes lessons ahead), then what that time holds: the course's lessons that fit, and whether
- * all of it fits. Never how much: that share assumes a start from scratch and shrinks with the
- * course's size, so onboarding's time question says it, at the visitor's level and time.
+ * Never only the lessons' time, which undercounts a plan that also reviews and practices. Never how
+ * much fits: that share assumes a start from scratch, so onboarding says it at the visitor's level.
  */
 async function DatedHeadline({
   date,
@@ -196,7 +167,6 @@ async function DatedHeadline({
   const t = await getExtracted();
   const minutesText = await getMinutesFormatter();
   const durationText = await getTotalDurationFormatter();
-  // The big number as a readout, "~3 hr", its words beside it.
   const studyTime = durationText(getStudyMinutes(estimate));
 
   const hasQuickLessons = estimate.areas.some((area) => area.quickLessons > 0);
@@ -229,7 +199,6 @@ async function DatedHeadline({
     );
   };
 
-  /** Whether all of it fits in depth by the exam, by the exam's topics or by the goal's. */
   const fitText = ({ coveredShare, measure }: NonNullable<typeof coverage>) => {
     if (coveredShare < 1) {
       return t(
@@ -255,12 +224,6 @@ async function DatedHeadline({
   );
 }
 
-/**
- * The course's selected public example: its result at one time a day (the weeks to its end and
- * when that is, or what fits by the exam), what fills that time and its first day, under its title
- * (a stop of the course's route when it's one, `onRoute`). The outline reads the same estimate.
- * With no estimate it's hidden; the caption explains the example.
- */
 export async function CoursePlanWindow({
   chapterTitles,
   className,
@@ -272,14 +235,10 @@ export async function CoursePlanWindow({
 }: {
   chapterTitles: Map<string, string>;
   className?: string;
-  /** An exam course, with or without a known sitting: its plan holds mock exams. */
   isExam: boolean;
-  /** The exam's first day as the page writes it, for an exam course read against it. */
   examDate: string | null;
-  /** A stop on the course's route, its title a station, rather than beside the course's name. */
   onRoute?: boolean;
   plan: CoursePlanExample;
-  /** Names the plan's section, unique in the document. */
   titleId: string;
 }) {
   const t = await getExtracted();
@@ -292,8 +251,6 @@ export async function CoursePlanWindow({
   const { estimate } = pace;
   const workload = <PlanWorkload exam={isExam} numbers={estimate.numbers} />;
 
-  // The first day, when there's one, fills the right half; the time and what fills it stay
-  // together on the left. An exam's plan has no first day to show, so what fills it moves over.
   const today = !isDatedEstimate(estimate) && estimate.firstDay.length > 0 && (
     <UndatedToday chapterTitles={chapterTitles} estimate={estimate} />
   );

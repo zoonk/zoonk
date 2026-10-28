@@ -6,16 +6,11 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { type ReactNode, createContext, use, useEffect, useSyncExternalStore } from "react";
 import { type CourseProgress } from "./course-progress-contract";
 
-/** The page's course and its one lesson question (the lesson's own, or "Try a lesson"'s). */
 type ProgressScope = { courseId: string; lessonId: string | null };
 
-/** The current learner's key for the page's answer, or null for a visitor or while unknown. */
 const ProgressKeyContext = createContext<string | null>(null);
 
-/**
- * Answers by learner and address, held for the tab's life: a page shown again starts from what it
- * showed last while it reads again.
- */
+/** Held for the tab's life, so a page shown again starts from what it showed last while it reads again. */
 const progressByKey = new Map<string, CourseProgress>();
 const pendingKeys = new Set<string>();
 
@@ -45,11 +40,7 @@ function toProgress(body: unknown): CourseProgress | null {
     : null;
 }
 
-/**
- * A failed read keeps what the page shows (the visitor's version, or the last answer). A read asked
- * for while the same one is out runs again once it settles, so a page shown again gets an answer
- * read after its show, not one from before it.
- */
+/** A read asked for while the same one is out runs again once it settles, so a page shown again gets a fresh answer. */
 async function readProgress({ key, url }: { key: string; url: string }): Promise<void> {
   if (pendingKeys.has(key)) {
     rereadKeys.add(key);
@@ -74,7 +65,6 @@ async function readProgress({ key, url }: { key: string; url: string }): Promise
   }
 }
 
-/** The page's answer for the current learner: null (the visitor's version) until it's read. */
 function useCourseProgress(): CourseProgress | null {
   const key = use(ProgressKeyContext);
 
@@ -86,13 +76,8 @@ function useCourseProgress(): CourseProgress | null {
 }
 
 /**
- * The learner's own bits of a static catalog page, read in the browser for the switches inside it:
- * whether a goal of theirs follows the course and whether they're partway through the page's one
- * question's lesson. Null (the visitor's version) on the server, while hydrating and until the read
- * answers, and always for a visitor. It's read once the learner summary knows who it's for, and
- * again each time the page shows (the router keeps a page it left, hidden, and shows it again on a
- * return), once per show for the whole page. Keyed by the learner and their sign-in, so one
- * learner's answer never shows for another.
+ * Read again each time the page shows, since the router keeps a page it left. Keyed by the learner and
+ * their sign-in, so one learner's answer never shows for another.
  */
 export function CourseProgressScope({
   children,
@@ -113,7 +98,6 @@ export function CourseProgressScope({
   return <ProgressKeyContext value={key}>{children}</ProgressKeyContext>;
 }
 
-/** "Continue your plan" for a learner whose goal follows the course; "Build my plan" otherwise. */
 export function CourseGoalSwitch({
   continueLink,
   startLinks,
@@ -124,14 +108,8 @@ export function CourseGoalSwitch({
   return useCourseProgress()?.followsCourse ? continueLink : startLinks;
 }
 
-/** One of the question's two versions, in the one place both take. */
 const LESSON_VERSION_CLASS = "col-start-1 row-start-1 flex min-w-0 flex-col";
 
-/**
- * "Continue the lesson" for a learner partway through it; its first question otherwise. The HTML
- * has the question, and "Continue the lesson" takes its place, in the room the question holds, once
- * the browser reads the learner: the card and everything under it stay where they were.
- */
 export function LessonProgressSwitch({
   continueLesson,
   question,

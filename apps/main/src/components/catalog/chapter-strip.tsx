@@ -6,15 +6,12 @@ import { ROUTE_CLASS, getRouteStationClass } from "@zoonk/learn/route-line";
 import { cn } from "@zoonk/ui/lib/utils";
 import { getExtracted } from "next-intl/server";
 
-/** How many of the chapters after this one the page links to. */
 const NEXT_CHAPTERS = 3;
 
 type OutlineChapter = LibraryOutline["levels"][number]["chapters"][number];
 
-/** A run of the map: a level's chapters, or an exam area's. */
 type StripGroup = { chapters: OutlineChapter[]; key: string; label: string };
 
-/** The exam's areas in the order the outline first reaches each, every chapter under its own. */
 function groupByArea(chapters: OutlineChapter[], areas: Map<string, string>): StripGroup[] {
   const groups = new Map<string, StripGroup>();
 
@@ -28,14 +25,6 @@ function groupByArea(chapters: OutlineChapter[], areas: Map<string, string>): St
   return [...groups.values()];
 }
 
-/**
- * The course as a map of its route: each level (an exam course's area) a zone at its share of the
- * course, each chapter a station on the pale line through them, this one an ink ring (a visitor's
- * place on a course they haven't started), each zone named with its count under it. On a phone the
- * zones are too narrow for names and their chapters for stations, so only this chapter's ring
- * shows and one line under the map says where it is. Decorative for screen readers, who hear that
- * line as its name.
- */
 function CourseMap({
   chapterId,
   groups,
@@ -70,7 +59,6 @@ function CourseMap({
               ))}
             </span>
 
-            {/* Its name over its count, so a short zone keeps both; the last one ends at the map's edge. */}
             <span
               className={cn(
                 "hidden min-w-0 flex-col text-xs leading-4 sm:flex",
@@ -98,13 +86,6 @@ function CourseMap({
   );
 }
 
-/**
- * Where a chapter sits in its course, for a visitor who landed on it from a search: the course's
- * map (`CourseMap`), which screen readers hear as "chapter 12 of 77" (in an exam area, its place
- * there) and its level, then a close-up of its stretch of the route: this chapter and the next ones, one tap each, across on
- * wider screens and down on a phone, the line running on past them. Nothing for a course of one
- * chapter.
- */
 export async function ChapterStrip({
   areas = null,
   chapterId,
@@ -136,7 +117,6 @@ export async function ChapterStrip({
   // Unique in the document, which may keep a visited chapter's page beside this one.
   const stripId = `chapter-strip-${chapterId}`;
 
-  // A course of one chapter has nowhere else for it to sit, and no chapter after it.
   if (chapters.length < 2 || !chapter) {
     return null;
   }
@@ -173,7 +153,6 @@ export async function ChapterStrip({
                 className="relative flex flex-col gap-0.5 pb-5 pl-7 last:pb-0 sm:gap-1 sm:pt-7 sm:pr-4 sm:pb-0 sm:pl-0"
                 key={item.id}
               >
-                {/* The line on to the next station, down on a phone and across from `sm`; past the last one it fades, the course going on. */}
                 <span
                   aria-hidden="true"
                   className={cn(
@@ -192,7 +171,6 @@ export async function ChapterStrip({
                   )}
                 />
 
-                {/* Across, every station keeps the label's row, so the names line up. */}
                 <span className="text-muted-foreground min-h-4 text-xs leading-4 empty:max-sm:hidden">
                   {isHere && t("This chapter")}
                   {offset === 1 && t("After this chapter")}

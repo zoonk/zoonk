@@ -2,11 +2,7 @@
 
 import { useCallback } from "react";
 
-/**
- * A swipe row takes the keyboard's focus only while it scrolls: the server renders it focusable
- * (so it scrolls by keyboard before scripts run), and from then on it leaves the tab order
- * whenever its items fit, as they do side by side from `lg`.
- */
+/** The server renders the row focusable, so it scrolls by keyboard before scripts run. */
 export function useScrollRowFocus<Element extends HTMLElement>() {
   return useCallback((element: Element | null) => {
     if (!element) {

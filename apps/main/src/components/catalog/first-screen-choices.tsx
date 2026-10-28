@@ -5,12 +5,7 @@ import { FIRST_ANSWER_PARAM, ORIGIN_PARAM } from "@/lib/public/public-hrefs";
 import { trackEvent } from "@zoonk/core/analytics/client";
 import { cn } from "@zoonk/ui/lib/utils";
 
-/**
- * The lesson's first question, answerable right on the page. Each option is a
- * submit button of a plain GET form, so any answer opens the player with it
- * (and still works before the page's scripts load), and with the page it was answered on
- * (`origin`), which closing the lesson returns to.
- */
+/** Each option submits a plain GET form, so an answer opens the player even before the page's scripts load. */
 export function FirstScreenChoices({
   action,
   lessonId,
@@ -20,7 +15,6 @@ export function FirstScreenChoices({
 }: {
   action: string;
   lessonId: string;
-  /** The catalog page the question is on, without the language (`getLessonHref`…). */
   origin: string;
   options: { id: string; text: string }[];
   questionId: string;

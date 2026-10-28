@@ -19,10 +19,6 @@ import { type PlusViewerState } from "./plus-plan";
 
 const FREE_PLAN_ID = "free-plan";
 
-/**
- * The free plan's next step for whoever is reading: a visitor starts free, a guest creates the
- * account the free plan comes with, and a learner on it sees that it's theirs.
- */
 async function FreePlanAction({ viewerState }: { viewerState: PlusViewerState }) {
   const t = await getExtracted();
 
@@ -58,20 +54,11 @@ async function FreePlanAction({ viewerState }: { viewerState: PlusViewerState })
   return null;
 }
 
-/**
- * The free plan as a plan of its own, on a card like Plus's: what it costs (nothing, in the
- * reader's currency), its next step with "No card needed." under it for whoever hasn't started,
- * then what it includes, its numbers read from the rules the allowance enforces, so they can't
- * drift from what learners get. Its rows sit level with Plus's beside it, so the two plans read
- * across.
- */
 export async function FreePlan({
   currency,
   viewerState,
 }: {
-  /** The reader's currency, the one Plus is priced in; unknown, the price isn't shown. */
   currency: string | null;
-  /** Who's reading, when the server knows; the static pricing page leaves it to the browser. */
   viewerState?: PlusViewerState;
 }) {
   const t = await getExtracted();

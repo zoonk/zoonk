@@ -1,20 +1,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 
-type NumberedRow = {
-  /** A line under the title, such as the first chapters of a level. */
-  description?: string;
-  id: string;
-  /** The row's name: text, or a component that writes it (a plan phase's name). */
-  title: React.ReactNode;
-  /** A count or a length at the row's end. */
-  trailing?: string;
-};
+type NumberedRow = { description?: string; id: string; title: React.ReactNode; trailing?: string };
 
-/**
- * The highlight is drawn behind the row, a little past the list's edges, so the hairlines keep its
- * width; the ones touching it turn transparent (`divided-rows`). Rows touch each other, so each is
- * 44px tall to press, even with one line.
- */
 const ROW_CLASS =
   "relative isolate flex items-start gap-3 py-3 before:pointer-events-none before:absolute before:-inset-x-2.5 before:inset-y-0.5 before:-z-10 before:rounded-[0.625rem] before:transition-colors";
 
@@ -45,10 +32,6 @@ function NumberedRowContent({ number, row }: { number: number; row: NumberedRow 
   );
 }
 
-/**
- * An outline as flat rows: a quiet mono number, the title and a count or a length at the end, with
- * a hairline between rows. Where the outline starts (`startId`) stands out on a soft fill.
- */
 export function NumberedRows({ rows, startId }: { rows: NumberedRow[]; startId: string }) {
   return (
     <ol className="divided-rows flex flex-col">

@@ -16,10 +16,8 @@ import { useExtracted } from "next-intl";
 import { type ReactNode, useId, useRef, useState } from "react";
 import { useSendGoal } from "./use-send-goal";
 
-/** The words in the box and the example under them share one grid cell, so they line up. */
 const FIELD_TEXT_CLASS = cn(GOAL_FIELD_TEXT_CLASS, "col-start-1 row-start-1");
 
-/** Why the goal wasn't sent; a guest out of today's goals gets the way to an account. */
 function SendErrorAlert({ error, id }: { error: GoalError; id: string }) {
   const t = useExtracted();
 
@@ -36,22 +34,9 @@ function SendErrorAlert({ error, id }: { error: GoalError; id: string }) {
 }
 
 /**
- * Where a visitor writes a goal in their own words: what they write goes straight to reading it,
- * and `/start` opens on the wait, prefetched once the box has focus so the wait paints at once.
- * Nothing written puts the cursor in the box instead of sending the example it shows. Without
- * scripts it's a plain GET form to onboarding (`/start?goal=`), which only fills the box there:
- * reading a goal always starts from a tap.
- *
- * `example` sits under the words as the box's example, rendered on the server (the landing's
- * follows the example goal the visitor picked). It wraps rather than being cut, so the box is as
- * tall as its example. Screen readers hear it as the field's description, from a copy of their own
- * (the drawn one is hidden from them), so a page with hidden variants reads only the one shown.
- * The visitor's first letter hides it at once, before scripts run too, so their words never sit
- * on top of it. On phones "Build my plan" sits under the words, so the words keep the field's
- * width.
- *
- * Sending an empty box puts the cursor in it and says what to do in the line under it, in the
- * place of `note` (what starting takes), so nothing moves.
+ * Without scripts it's a plain GET form that only fills onboarding's box: reading a goal always
+ * starts from a tap. Screen readers hear the example from a copy of their own, so a page with hidden
+ * variants reads only the one shown.
  */
 export function GoalForm({
   action,
@@ -62,7 +47,6 @@ export function GoalForm({
   action: string;
   example: ReactNode;
   id: string;
-  /** A short line under the box, such as "Start free, no account needed." */
   note?: ReactNode;
 }) {
   const t = useExtracted();
@@ -75,7 +59,6 @@ export function GoalForm({
   const [hinted, setHinted] = useState(false);
   const { error, send, sending } = useSendGoal();
   const line = hinted ? t("Write your goal in the box first, in your own words.") : note;
-  // A new empty send says what to do now, over why an earlier one didn't go.
   const shownError = hinted ? null : error;
 
   return (

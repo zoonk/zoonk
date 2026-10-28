@@ -12,7 +12,6 @@ const PLUS_QUESTIONS_ID = "plus-questions";
 const ANSWER_CLASS = "text-muted-foreground text-[15px] leading-relaxed text-pretty sm:text-base";
 const ANSWER_LINK_CLASS = "text-foreground font-medium underline underline-offset-4";
 
-/** Keeps each number on the line of the word after it, so a narrow answer never strands a "3". */
 function keepNumbersWithWords(text: string) {
   return text.replaceAll(/(?<=\d) /gu, "\u00A0");
 }
@@ -33,16 +32,10 @@ function renderSupportLink(chunks: ReactNode) {
   );
 }
 
-/** Whether the reader has no account yet: a visitor, or a guest trying lessons without one. */
 function hasNoAccount(viewerState: PlusViewerState): boolean {
   return viewerState.status === "guest" || viewerState.status === "visitor";
 }
 
-/**
- * The free plan's limits, read from the same rules the allowance enforces, so the answer can't
- * drift from what learners get. Trying lessons without an account only matters to someone who
- * doesn't have one.
- */
 async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }) {
   const t = await getExtracted();
   const limits = getFreePlanLimits();
@@ -95,19 +88,12 @@ async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }
   );
 }
 
-/**
- * What people ask before paying, one tap away under the offer, and where to ask anything else. Plus's
- * limits only stop automated use, except speaking calls, which have daily and monthly limits: one
- * answer says so honestly (never how many minutes, on any plan) and links the fair use policy. The
- * free plan's limits live here in full, for whoever wants the details. A wide page sets the title
- * beside the questions (`className`).
- */
+/** Speaking calls have daily and monthly limits, said honestly but never in minutes, on any plan. */
 export async function PlusQuestions({
   className,
   viewerState,
 }: {
   className?: string;
-  /** Who's reading, when the server knows; the static pricing page leaves it to the browser. */
   viewerState?: PlusViewerState;
 }) {
   const t = await getExtracted();

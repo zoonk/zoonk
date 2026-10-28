@@ -6,20 +6,16 @@ import { preloadLessonPlayer } from "@/app/[lang]/explain/[goalId]/lesson-player
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { useEffect } from "react";
 
-/** A link's language prefix (`/pt` in `/pt/stats`), absent for the default language. */
 const LOCALE_PREFIX = new RegExp(`^/(?:${SUPPORTED_LOCALES.join("|")})(?=/|$)`, "u");
 
-/** Reaching for a link: the pointer over it, focus on it, a press (a tap starts with one). */
 const INTENT_EVENTS = ["focusin", "pointerdown", "pointerover"] as const;
 
-/** The code a page loads on its own (out of its first load), by the page's path. */
 function preloadFor(pathname: string): (() => void) | null {
   if (pathname === "/score") {
     return preloadScoreChart;
   }
 
   if (pathname === "/stats") {
-    // The overview draws Score's chart only from a tablet up.
     return globalThis.matchMedia(OVERVIEW_CHART_MEDIA).matches ? preloadScoreChart : null;
   }
 
@@ -34,12 +30,6 @@ function preloadLinkTarget(event: Event) {
   }
 }
 
-/**
- * Reaching for a link starts loading the code its page draws on its own, so the page opens with
- * it: Score's chart for Score and (from a tablet up) the overview, the lesson player for an
- * explanation. One listener for every link in the app (the sidebar, the bars, the goal switcher,
- * search, the stats pages' tiles and tabs) instead of a handler on each.
- */
 export function LinkIntentPreloads() {
   useEffect(() => {
     for (const type of INTENT_EVENTS) {

@@ -12,18 +12,11 @@ import { safeAsync } from "@zoonk/utils/error";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useState, useTransition } from "react";
 
-/** Why a start didn't go on, for the button to say in place. */
 export type CourseStartFailure = Exclude<CourseStartOutcome, { status: "started" }>;
 
 /**
- * Starting a course from the learner's tap. A whole course first asks the learner's level on its
- * start page, so a tap without one (a course page's button, "Build my plan") goes there and
- * creates nothing: leaving that question leaves no goal and no plan being written. A chapter, or
- * the start page with the level answered, starts it: the learner becomes a guest first when they
- * have no session (crawlers following the page create nothing), then the goal starts and they go
- * on to its remaining onboarding, or to their day when it's their goal already. Pending lasts
- * until the next page shows; a refusal or failure stays for the button to say, with a way to try
- * again.
+ * A whole course asks the learner's level on its start page first, so a tap without one creates
+ * nothing: leaving that question leaves no goal and no plan being written.
  */
 export function useCourseStart({
   chapterId,
@@ -33,9 +26,7 @@ export function useCourseStart({
 }: {
   chapterId?: string | null;
   courseId: string;
-  /** The time a day picked on the course's page, which the plan starts with. */
   dailyMinutes?: number | null;
-  /** Why the start page's form came back without JavaScript, until the next try. */
   initialFailure?: CourseStartFailure | null;
 }) {
   const router = useRouter();
@@ -82,7 +73,6 @@ export function useCourseStart({
     failure,
     pending,
     start: () => run(),
-    /** The start page's start, with the level it asked (null for a quick test). */
     startWithLevel: (level: OnboardingOwnLevel | null) => run(level),
   };
 }

@@ -7,12 +7,7 @@ import { getQuestionTutor } from "@zoonk/player/tutor/item";
 import { useMemo } from "react";
 import { type TutorViewer } from "./main-ask-tutor";
 
-/**
- * The learner's buddy for a run of questions (a session's block, mistakes practice), with main's
- * tutor connection and links: the question in view is asked about in a drawer on phones and
- * tablets in portrait and docked in the aside from `lg`. Pages that use it need the learn catalog
- * (`scope="learn"`), which includes the player's messages.
- */
+/** Pages that use it need the learn catalog (`scope="learn"`). */
 export function useQuestionTutor({ buddy, canAsk, goalId }: TutorViewer): QuestionTutor {
   const cards = useTutorCards(goalId);
   const tutor = useMemo(() => getTutorConfig({ buddy, canAsk, cards }), [buddy, canAsk, cards]);

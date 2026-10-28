@@ -1,9 +1,5 @@
 import { type ReactNode } from "react";
 
-/**
- * A block beside a public page's main column (a shared plan's phases): its title, a quiet line of
- * mono facts and its rows, flat, as Today's aside draws its blocks.
- */
 export function CatalogAsideBlock({
   children,
   facts,
@@ -11,9 +7,7 @@ export function CatalogAsideBlock({
   title,
 }: {
   children: ReactNode;
-  /** The block's numbers in one line ("37 short lessons · ~2 hr"). */
   facts?: ReactNode;
-  /** Names the block for screen readers by its label. */
   id: string;
   title: ReactNode;
 }) {

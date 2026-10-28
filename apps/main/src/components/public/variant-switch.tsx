@@ -14,12 +14,7 @@ function getVariantSelector({ name, value }: { name: string; value: string }) {
   return `[data-variant="${name}:${value}"]`;
 }
 
-/**
- * The switch's rules: a variant shows only while its option is checked. A stacked variant keeps
- * its room (`visibility`), so a window as tall as its tallest variant doesn't jump; the others
- * leave the page (`display`). Both hide what screen readers would read too. Without `:has()` the
- * default variant shows and the rest stay hidden.
- */
+/** A stacked variant keeps its room (`visibility`) so nothing jumps. Without `:has()` the default variant shows. */
 function getVariantSwitchCss({
   defaultValue,
   name,
@@ -52,22 +47,8 @@ function getVariantSwitchCss({
 }
 
 /**
- * A choice a visitor makes to see the product respond (an example goal, yesterday studied or not,
- * a pace, a billing period), with no client code: native radios in a labeled group, and every
- * variant the server renders, of which CSS shows the one checked (`Variant`). The group is a
- * `radiogroup`: Tab reaches the checked option, the arrow keys move between them, each option
- * draws the focus ring, and only the chosen variant is in the page for screen readers.
- *
- * `name` names the radios, so it's unique in the document, as the router keeps visited pages:
- * a page's name, plus its course for a course page's.
- *
- * ```tsx
- * <VariantSwitch aria-labelledby="pace-label" defaultValue="15" name="pace-c1" values={["10", "15"]}>
- *   <VariantSwitchOption defaultValue="15" name="pace-c1" value="10">10 min</VariantSwitchOption>
- *   <VariantSwitchOption defaultValue="15" name="pace-c1" value="15">15 min</VariantSwitchOption>
- * </VariantSwitch>
- * <Variant name="pace-c1" value="10">…</Variant>
- * ```
+ * No client code: native radios, every variant rendered, CSS showing the checked one. `name` must be
+ * unique in the document, since the router keeps visited pages.
  */
 export function VariantSwitch({
   children,
@@ -94,12 +75,7 @@ export function VariantSwitch({
   );
 }
 
-/**
- * One option: its label, which holds the radio, so a tap anywhere on it picks it. The radio is
- * hidden from sight, not from the keyboard or screen readers; the label draws its checked state
- * (`has-checked:`) and its focus ring (`has-focus-visible:`) through `className`, or one of the
- * looks below.
- */
+/** The radio is hidden from sight, not from the keyboard or screen readers. */
 export function VariantSwitchOption({
   children,
   className,
@@ -109,7 +85,6 @@ export function VariantSwitchOption({
 }: {
   children: ReactNode;
   className?: string;
-  /** The switch's default, which this option is checked as when it's the same. */
   defaultValue: string;
   name: string;
   value: string;
@@ -128,10 +103,7 @@ export function VariantSwitchOption({
   );
 }
 
-/**
- * What one option shows. `stacked` variants share one place and keep their room, so switching
- * between them never moves what's under them; the caller stacks them (one grid cell).
- */
+/** The caller stacks `stacked` variants in one grid cell. */
 export function Variant({
   as: Element = "div",
   children,
@@ -158,10 +130,8 @@ export function Variant({
   );
 }
 
-/** A switch as the app's segmented control: a muted track with the chosen option raised on it. */
 export const SEGMENTED_TRACK_CLASS = "bg-muted inline-flex rounded-lg p-[3px]";
 
-/** An option on the segmented track: 32px, 44px on touch screens. */
 export const SEGMENTED_OPTION_CLASS = cn(
   "text-muted-foreground hover:text-foreground inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-transparent px-3 text-[0.8125rem] font-medium whitespace-nowrap transition-colors motion-reduce:transition-none pointer-coarse:h-11",
   "has-checked:bg-background has-checked:text-foreground has-checked:border-input dark:has-checked:bg-surface-3",

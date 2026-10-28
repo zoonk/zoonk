@@ -7,16 +7,13 @@ import { getSupportedLocaleFromLanguage } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
 import { lang } from "next/root-params";
 
-/** Two rows of three columns, so the list stays short. */
 const POPULAR_COURSES_LIMIT = 6;
 
-/** Each link is a 44 px row, so the lists need no gap between them. */
 const LINK_CLASS =
   "hover:text-foreground focus-visible:ring-ring/50 inline-flex min-h-11 min-w-11 items-center rounded-md text-pretty outline-none transition-colors focus-visible:ring-[3px]";
 
 const LIST_TITLE_CLASS = "text-[0.8125rem] font-semibold";
 
-/** Only what the links need is cached, keyed by the language alone. */
 async function getPopularCourses(language: string) {
   "use cache";
 
@@ -29,7 +26,6 @@ async function getPopularCourses(language: string) {
   }));
 }
 
-/** The most popular courses in the page's language, a link each. */
 async function PopularCourses({ language }: { language: string }) {
   const t = await getExtracted();
   const courses = await getPopularCourses(language);
@@ -56,10 +52,7 @@ async function PopularCourses({ language }: { language: string }) {
   );
 }
 
-/**
- * The categories that have courses in the page's language, in its alphabetical order: an empty
- * category's page would only offer to start a goal, so the footer leaves it out.
- */
+/** An empty category's page would only offer to start a goal, so the footer leaves it out. */
 async function CourseCategories({ language }: { language: string }) {
   const t = await getExtracted();
   const categories = await getCategories();
@@ -95,11 +88,7 @@ async function CourseCategories({ language }: { language: string }) {
   );
 }
 
-/**
- * The catalog from every public page's footer, so visitors and search engines go straight to it:
- * the most popular courses and the categories that have courses. Both lists are cached, so they're
- * part of every page's static HTML rather than streamed after it.
- */
+/** Both lists are cached, so they're part of every page's static HTML rather than streamed after it. */
 export async function FooterExploreLinks() {
   const language = getSupportedLocaleFromLanguage(await lang());
 

@@ -3,13 +3,11 @@
 import { usePathname } from "@/i18n/navigation";
 import { LearnSectionBar } from "@zoonk/learn/bar";
 
-/** Whether the page is one under the section's hub, which goes back to it. */
 function usePageUnderHub(hub?: { href: string }): boolean {
   const pathname = usePathname();
   return Boolean(hub && pathname !== hub.href);
 }
 
-/** The section's bar: a page under the hub goes back to it and names it; the hub leaves the section. */
 export function SectionBarFrame({
   backHref,
   className,

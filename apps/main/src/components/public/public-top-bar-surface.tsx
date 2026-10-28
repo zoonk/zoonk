@@ -3,10 +3,6 @@
 import { useScrolled } from "@zoonk/ui/hooks/scrolled";
 import { cn } from "@zoonk/ui/lib/utils";
 
-/**
- * The public top bar's surface: sticky over the page, its hairline drawn once the page scrolls, as
- * the app's bars draw theirs, so what passes under the blur keeps an edge.
- */
 export function PublicTopBarSurface({ className, ...props }: React.ComponentProps<"header">) {
   const scrolled = useScrolled();
 

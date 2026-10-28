@@ -23,7 +23,6 @@ const STRIPE_LOCALE_OVERRIDES: Readonly<Record<string, StripeLocaleOverride | un
   pt: "pt-BR",
 };
 
-/** The period the billing switch has checked (its radios, `billingSwitch`): monthly by default. */
 function readBillingPeriod(billingSwitch: string): "monthly" | "yearly" {
   const checked = document.querySelector<HTMLInputElement>(
     `input[name="${billingSwitch}"]:checked`,
@@ -32,11 +31,7 @@ function readBillingPeriod(billingSwitch: string): "monthly" | "yearly" {
   return checked?.value === "yearly" ? "yearly" : "monthly";
 }
 
-/**
- * "Subscribe" for a signed-in learner on the free plan: checkout starts with the period the card's
- * billing switch shows, which the server rendered as native radios. Stripe confirms the price.
- * The auth client loads on the tap, so the pricing page doesn't ship it up front.
- */
+/** The auth client loads on the tap, so the pricing page doesn't ship it up front. */
 export function SubscribeButton({ billingSwitch }: { billingSwitch: string }) {
   const t = useExtracted();
   const locale = useLocale();

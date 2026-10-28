@@ -5,10 +5,6 @@ import { useEffect } from "react";
 import { PageErrorMessage } from "./page-error-message";
 import { getPageRetry } from "./page-retry";
 
-/**
- * A page of the app's frame (the tabs, the catalog, settings) that failed: the message takes the
- * page's place while the bar and the tab bar stay, so the learner can try again or go elsewhere.
- */
 export function FramePageError({
   error,
   retry,

@@ -19,7 +19,6 @@ const MAIN_LEARN_ADAPTERS: LearnAdapters = {
   },
 };
 
-/** Gives `@zoonk/learn` screens main's links and analytics. */
 export function MainLearnProvider({ children }: { children: React.ReactNode }) {
   const locale = useLocale();
 

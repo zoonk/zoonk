@@ -4,7 +4,6 @@ import { PlanNextStepVersion, ViewerVersion, type ViewerVersions } from "./viewe
 
 type RenderForViewer = (viewerState: PlusViewerState) => ReactNode;
 
-/** `render`'s version for every reader, for the browser to show the reader's. */
 function renderEveryVersion(render: RenderForViewer): ViewerVersions {
   return {
     free: render({ status: "free" }),
@@ -14,11 +13,6 @@ function renderEveryVersion(render: RenderForViewer): ViewerVersions {
   };
 }
 
-/**
- * What `render` shows whoever is reading: the reader the server knows (`viewerState`, the
- * subscription page), or on the static pricing page every reader's version, of which the browser
- * shows the reader's (`ViewerVersion`).
- */
 export function ForViewer({
   render,
   viewerState,
@@ -33,11 +27,6 @@ export function ForViewer({
   return <ViewerVersion versions={renderEveryVersion(render)} />;
 }
 
-/**
- * A plan card's next step (`render`: its action and the line under it) for whoever is reading, as
- * `ForViewer` picks it. The static page's versions share the visitor's room
- * (`PlanNextStepVersion`), so the card doesn't move when the reader's arrives.
- */
 export function PlanNextStep({
   render,
   viewerState,

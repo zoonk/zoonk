@@ -10,25 +10,16 @@ const PERCENT = 100;
 /** A label reads leftward from its line past the middle of its band, so it stays inside. */
 const MIDDLE_SHARE = 0.5;
 
-/**
- * A band's state on an example road: the Plan's own (done, the current one, ahead), or `plus`,
- * what only Plus reaches, hatched, for the pricing page's free plan against Plus.
- */
 type RoadBandState = "current" | "done" | "plus" | "upcoming";
 
 export type RoadBand = {
   id: string;
   name: string;
   state: RoadBandState;
-  /** How long the band is, in any unit the road's bands share (days, weeks). */
   weight: number;
-  /** Under a band ahead of today: its first day ("Dec"). */
   startLabel?: string;
-  /** Where today falls in the current band, 0 to 1. */
   todayShare?: number;
-  /** How much of the current band's work is done, 0 to 1, as the Plan underlines it in blue. */
   share?: number;
-  /** The mock exams in the band, each where it falls, 0 to 1. */
   mocks?: readonly number[];
 };
 
@@ -39,7 +30,6 @@ const BAND_LOOK: Record<RoadBandState, string> = {
   upcoming: BAND_STATE_CLASS.upcoming,
 };
 
-/** On the phone's compact bar a band is a segment, as the Plan draws its phases there. */
 const SEGMENT_STATE: Record<RoadBandState, DaySegmentState> = {
   current: "current",
   done: "done",
@@ -47,21 +37,18 @@ const SEGMENT_STATE: Record<RoadBandState, DaySegmentState> = {
   upcoming: "ahead",
 };
 
-/** Where the full road takes over from the compact bar. */
 const FULL_FROM = {
   lg: { compact: "lg:hidden", full: "lg:flex" },
   md: { compact: "md:hidden", full: "md:flex" },
   xl: { compact: "xl:hidden", full: "xl:flex" },
 } as const;
 
-/** A label's place on its band's line, from the side it reads toward. */
 function getLabelStyle(share: number): React.CSSProperties {
   return share < MIDDLE_SHARE
     ? { left: `${share * PERCENT}%` }
     : { right: `${(1 - share) * PERCENT}%` };
 }
 
-/** Today's place in the current band: a short line over it and under it, as the Plan marks it. */
 function TodayTicks({ share }: { share: number }) {
   const style = { left: `${share * PERCENT}%` };
 
@@ -73,7 +60,6 @@ function TodayTicks({ share }: { share: number }) {
   );
 }
 
-/** The band itself, its name inside (a check before a done one's), the current one underlined. */
 function RoadBandFace({ band }: { band: RoadBand }) {
   return (
     <span className={cn(BAND_CLASS, BAND_LOOK[band.state])}>
@@ -95,7 +81,6 @@ function RoadBandFace({ band }: { band: RoadBand }) {
   );
 }
 
-/** Under a band: its mock exams on their days, and the goal's flag at the end of the last one. */
 function RoadLane({ band, isLast }: { band: RoadBand; isLast: boolean }) {
   return (
     <span className="relative mt-1 block h-4">
@@ -114,11 +99,7 @@ function RoadLane({ band, isLast }: { band: RoadBand; isLast: boolean }) {
   );
 }
 
-/**
- * The band's stretch of the road's one line of days: today in the current one, the first day of
- * one ahead, the goal's date at the end of the last. A label that wouldn't fit beside its
- * neighbors is left out, as the Plan does.
- */
+/** A label that wouldn't fit beside its neighbors is left out, as the Plan does. */
 function RoadAxis({
   band,
   end,
@@ -158,12 +139,7 @@ function RoadAxis({
   );
 }
 
-/**
- * A plan's road as the Plan draws it: one band per phase, as long as its days, done ones blue,
- * today's line in the current one, the mock exams on their days and the goal's flag and date at
- * the end. Below `fullFrom` it's the Plan's compact bar with the road in words under it. A
- * picture: screen readers hear `caption` instead.
- */
+/** A picture: screen readers hear `caption` instead. */
 export function PlanRoad({
   bands,
   caption,
@@ -173,10 +149,8 @@ export function PlanRoad({
   todayLabel,
 }: {
   bands: readonly RoadBand[];
-  /** The road in words ("Phase 2 of 5 · Reading and Writing"). */
   caption: string;
   className?: string;
-  /** The goal's date, at the road's end. */
   end: string;
   fullFrom?: keyof typeof FULL_FROM;
   todayLabel: string;

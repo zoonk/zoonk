@@ -8,19 +8,14 @@ import { GlobeIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
 import { Suspense } from "react";
 
-/** `MouseEvent.button` for the middle button, which opens a link in a new tab. */
 const MIDDLE_BUTTON = 1;
 
-/** Each language is a 44 px row to tap, like the footer's other links. */
 const LANGUAGE_LINK_CLASS =
   "hover:text-foreground focus-visible:ring-ring/50 hit-area relative inline-flex min-h-11 items-center rounded-md outline-none transition-colors focus-visible:ring-[3px] aria-[current=true]:text-foreground aria-[current=true]:font-medium";
 
 /**
- * Every language by its own name, each opening this page in it. A link carries its language's
- * prefix, even English's, and picking one (a click, or a middle click for a new tab) saves the
- * choice (`rememberLocale`), so the site's unprefixed addresses keep sending a visitor to the
- * language they last chose. English is the unprefixed default, so `/en/…` only leads there: a
- * pick that can't save (without scripts) opens the page in the saved language.
+ * A pick saves the choice (`rememberLocale`), a middle click included. English is unprefixed, so
+ * `/en/…` only leads there: a pick that can't save (without scripts) opens the saved language.
  */
 function LanguageLinks({ pathname }: { pathname: string }) {
   const t = useExtracted();
@@ -39,7 +34,6 @@ function LanguageLinks({ pathname }: { pathname: string }) {
           key={locale}
           lang={locale}
           onAuxClick={(event) => {
-            // A middle click opens the language in a new tab: it's a pick too.
             if (event.button === MIDDLE_BUTTON) {
               rememberLocale(locale);
             }
@@ -57,11 +51,7 @@ function CurrentPageLanguageLinks() {
   return <LanguageLinks pathname={usePathname()} />;
 }
 
-/**
- * The footer's language switch. A page that says its own path (`pathname`, without the language)
- * has it in its HTML, so a tap before scripts load opens the same page in another language; any
- * other reads it in the browser, showing each language's home page until then.
- */
+/** With `pathname` the links are in the HTML, so a tap before scripts load opens the same page. */
 export function FooterLanguages({ pathname }: { pathname?: string }) {
   if (pathname) {
     return <LanguageLinks pathname={pathname} />;

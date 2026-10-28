@@ -6,13 +6,7 @@ import { RotateCwIcon, TriangleAlertIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { StatusMessage } from "./status-message";
 
-/**
- * A page that failed to load says so calmly and offers to try again, with a quieter way home,
- * instead of the framework's bare error screen. It can't tell a dropped connection from a failure
- * on Zoonk's side, so it blames neither. Pages pass their own home link: the app's router
- * link, or a plain link when the whole app failed. Inside the app's frame (`inFrame`), the bar and
- * the tabs are still there to go elsewhere, so it fills the frame's page instead of the screen.
- */
+/** It can't tell a dropped connection from a failure on Zoonk's side, so it blames neither. */
 export function PageErrorMessage({
   homeLink,
   inFrame = false,
